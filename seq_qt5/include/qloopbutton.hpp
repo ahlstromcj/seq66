@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-04-13
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -130,9 +130,11 @@ private:
      *  events in the tiny box centered in the pattern button.
      */
 
+    bool m_show_min_max;
     bool m_fingerprint_inited;
     size_t m_fingerprint_size;
-    std::vector<midibyte> m_fingerprint;
+    std::vector<midibyte> m_fingerprint_min;
+    std::vector<midibyte> m_fingerprint_max;
 
     /**
      *  Provides a pointer to the sequence displayed by this button.  Note that
@@ -218,8 +220,6 @@ protected:
     virtual void draw_progress (QPainter & p, midipulse tick) override;
     void draw_progress_box (QPainter & painter);
     void draw_pattern (QPainter & painter);
-
-    void initialize_sine_table ();
     void initialize_fingerprint ();
 
     bool vert_compressed () const
@@ -230,16 +230,6 @@ protected:
     void vert_compressed (bool f)
     {
         m_vert_compressed = f;
-    }
-
-    int sine_table_y (int i) const
-    {
-        return m_fingerprint[i];
-    }
-
-    int sine_table_size () const
-    {
-        return m_fingerprint_size;
     }
 
 private:

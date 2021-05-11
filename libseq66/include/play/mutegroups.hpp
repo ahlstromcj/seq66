@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-04-27
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -100,6 +100,20 @@ public:
         mutes,              /**< Save mute groups to the 'mutes' file.      */
         midi,               /**< Write mute groups only to the MIDI file.   */
         both,               /**< Write the mute groups to both files.       */
+        maximum             /**< Keep this last... it is only a size value. */
+    };
+
+    /**
+     *  More codes, better than booleans.  Legacy values of 'true' convert to
+     *  'mutes'; 'false' converts to 'midi'.
+     */
+
+    enum class loading
+    {
+        none,               /**< Do not load any mute groups.               */
+        mutes,              /**< Load mute groups only from 'mutes' file.   */
+        midi,               /**< Load from MIDI, ignoring the 'mutes' file. */
+        both,               /**< Read from 'mutes'; if none, then MIDI.     */
         maximum             /**< Keep this last... it is only a size value. */
     };
 
@@ -242,17 +256,18 @@ private:
     bool m_group_present;
 
     /**
-     *  If true, the mute-groups in the 'mutes' file will be loaded.
-     *  Otherwise, they will be ignored.
-     */
-
-    bool m_load_mute_groups;
-
-    /**
-     *  Indicates if empty mute-groups get saved to the MIDI file.
+     *  Indicates if non-empty mute-groups get saved to the mutes file, MIDI
+     *  file, or both.
      */
 
     saving m_group_save;
+
+    /**
+     *  Indicates if non-empty mute-groups get loaded from the mutes file,
+     *  MIDI file, or attempted load from both.
+     */
+
+    loading m_group_load;
 
     /**
      *  If true (the default is false), then, when turning off mutes via
@@ -391,11 +406,6 @@ public:
     bool group_save (bool midi, bool mutes);
     std::string group_save_label () const;
 
-    /**
-     * \return
-     *      Returns true if mute-group-saving is set to 'mutes' or 'both'.
-     */
-
     bool group_save_to_mutes () const
     {
         return
@@ -404,15 +414,52 @@ public:
         );
     }
 
-    /**
-     *  Returns true if mute-group-saving is set to 'midi' or 'both'.
-     */
-
     bool group_save_to_midi () const
     {
         return
         (
             m_group_save == saving::midi || m_group_save == saving::both
+        );
+    }
+
+    loading group_load () const
+    {
+        return m_group_load;
+    }
+
+    bool group_load (const std::string & v);
+    bool group_load (loading mgh);
+    bool group_load (bool midi, bool mutes);
+    std::string group_load_label () const;
+
+    void load_mute_groups (bool flag)
+    {
+        if (flag)
+        {
+            m_group_load = loading::mutes;
+        }
+        else
+        {
+            if (m_group_load == loading::both)
+                m_group_load = loading::midi;
+            else
+                m_group_load = loading::none;
+        }
+    }
+
+    bool group_load_from_mutes () const
+    {
+        return
+        (
+            m_group_load == loading::mutes || m_group_load == loading::both
+        );
+    }
+
+    bool group_load_from_midi () const
+    {
+        return
+        (
+            m_group_load == loading::midi || m_group_load == loading::both
         );
     }
 
@@ -529,11 +576,6 @@ public:
         return (group >= 0) && (group < count());
     }
 
-    bool load_mute_groups () const
-    {
-        return m_load_mute_groups;
-    }
-
     bool toggle_active_only () const
     {
         return m_toggle_active_only;
@@ -575,11 +617,6 @@ private:
     {
         if (group_valid(mg) || mg == smc_null_mute_group)
             m_group_selected = mg;
-    }
-
-    void load_mute_groups (bool flag)
-    {
-        m_load_mute_groups = flag;
     }
 
     void toggle_active_only (bool flag)

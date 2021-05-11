@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-05-04
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -65,13 +65,6 @@
 #define SEQ66_USE_BACKGROUND_ROLE_COLOR
 
 /**
- *  Selects showing a sine wave versus the real data.  More for build-time
- *  playing and testing than run-time configuration.
- */
-
-const bool s_use_sine = false;
-
-/**
  *  Alpha values for various states, not yet members, not yet configurable.
  */
 
@@ -101,10 +94,10 @@ qloopbutton::progress_box_size (double w, double h)
     }
     else
     {
-        if (w >= 0.50 && w <= 1.0)
+        if (w >= 0.50 && w <=1.0)
             sm_progress_w_fraction = w;
 
-        if (h >= 0.10 && h <= 0.50)
+        if (h >= 0.10 && h <=1.0)
             sm_progress_h_fraction = h;
     }
 }
@@ -173,9 +166,11 @@ qloopbutton::qloopbutton
     QWidget * parent
 ) :
     qslotbutton         (slotparent, slotnumber, label, hotkey, parent),
+    m_show_min_max      (false),                    /* dot versus line      */
     m_fingerprint_inited(false),
     m_fingerprint_size  (usr().fingerprint_size()),
-    m_fingerprint       (m_fingerprint_size),       /* reserve vector space */
+    m_fingerprint_min   (m_fingerprint_size),       /* reserve vector space */
+    m_fingerprint_max   (m_fingerprint_size),       /* reserve vector space */
     m_seq               (seqp),                     /* loop()               */
     m_is_checked        (loop()->playing()),
     m_prog_back_color   (Qt::black),
@@ -296,31 +291,6 @@ qloopbutton::initialize_text ()
 }
 
 /**
- *  Creates an array of absolute locations for a sine-wave in the
- *  progress-box.
- */
-
-void
-qloopbutton::initialize_sine_table ()
-{
-    if (! m_fingerprint_inited)
-    {
-        int count = int(m_fingerprint_size);
-        if (count > 0)
-        {
-            int y = m_event_box.y();
-            int h = m_event_box.h();
-            double r = 0.0;
-            double dr = 2.0 * M_PI / double(count);
-            for (int i = 0; i < count; ++i, r += dr)
-                m_fingerprint[i] = y + int((1.0 + sin(r)) * h) / 2;
-
-            m_fingerprint_inited = true;
-        }
-    }
-}
-
-/**
  *  This function examines the current sequence to determine how many notes it
  *  has, and the range of note values (pitches).
  */
@@ -330,35 +300,44 @@ qloopbutton::initialize_fingerprint ()
 {
     int n0, n1;
     bool have_notes = loop()->minmax_notes(n0, n1);     /* fill n0 and n1   */
+    if (have_notes)
+        have_notes = loop()->event_threshold();
+
     if (! m_fingerprint_inited && have_notes)
     {
-        int i1 = int(m_fingerprint_size);
+        midipulse t1 = loop()->get_length();            /* t0 = 0           */
+        if (t1 == 0)
+            return;
+
+        const int i1 = int(m_fingerprint_size);
         int x0 = m_event_box.x();
         int x1 = x0 + m_event_box.w();
         int xw = x1 - x0;
         int y0 = m_event_box.y();
         int y1 = y0 + m_event_box.h();
         int yh = y1 - y0;
-        midipulse t1 = loop()->get_length();            /* t0 = 0           */
-        if (t1 == 0)
-            return;
-
-        int nh = c_midibyte_value_max;
-        for (int i = 0; i < i1; ++i)
-            m_fingerprint[i] = 0;
 
         /*
-         * Added an octave of padding above and below for looks.
+         * Added an octave of padding above and below for looks. Also use
+         * n0 and n1 as the min/max notes of the whole sequence.
          */
 
-        n1 += 12;
+        n1 += 12 / 6;
         n1 = clamp_midibyte_value(midibyte(n1));
-        n0 -= 12;
+        n0 -= 12 / 6;
         if (n0 < 0)
             n0 = 0;
         else
-            nh = n1 - n0;
+            n0 = clamp_midibyte_value(midibyte(n0));
 
+        for (int i = 0; i < i1; ++i)
+        {
+            m_fingerprint_min[i] = m_fingerprint_max[i] = c_midibyte_max;
+//          m_fingerprint_min[i] = y0 + yh;         /* maximum y */
+//          m_fingerprint_max[i] = y0;              /* minimum y */
+        }
+
+        int nh = n1 - n0;
         auto cev = loop()->cbegin();
         while (! loop()->cend(cev))
         {
@@ -366,20 +345,38 @@ qloopbutton::initialize_fingerprint ()
             sequence::draw dt = loop()->get_next_note(ni, cev);  /* ++cev */
             if (dt != sequence::draw::finish)
             {
-                int x = (ni.start() * xw) / t1 + x0;
-                int y = yh * (ni.note() - n0) / nh + y0;
+                int x = x0 + (ni.start() * xw) / t1;
+                int y = y0 + yh * (ni.note() - n0) / nh;
                 int i = i1 * (x - x0) / xw;
                 if (i < 0)
                     i = 0;
-                else if (i > i1)
-                    i = i1;
+                else if (i >= i1)
+                    i = i1 - 1;
 
-                m_fingerprint[i] = y;
+                m_fingerprint_min[i] = y;
+#if 0
+                if (y < m_fingerprint_min[i])
+                    m_fingerprint_min[i] = y;
+
+                if (y > m_fingerprint_max[i])
+                    m_fingerprint_max[i] = y;
+#endif
             }
             else
                 break;
         }
         m_fingerprint_inited = true;
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        for (int i = 0; i < i1; ++i)
+        {
+            printf
+            (
+                "fingerprintf[%3d] = %d to %d\n",
+                i, int(m_fingerprint_min[i]), int(m_fingerprint_max[i])
+            );
+        }
+#endif
     }
 }
 
@@ -580,11 +577,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                     painter.drawText(box, m_top_left.m_flags, title);
                 }
             }
-            if (s_use_sine)
-                initialize_sine_table();
-            else
-                initialize_fingerprint();
-
+            initialize_fingerprint();
             if (sm_draw_progress_box)
                 draw_progress_box(painter);
 
@@ -687,7 +680,7 @@ qloopbutton::draw_progress_box (QPainter & painter)
  *  Draws the progress box, progress bar, and and indicator for non-empty
  *  pattern slots.  Two style of drawing are done:
  *
- *      -   If sequence::measure_threshold() is true, then the calculated
+ *      -   If sequence::event_threshold() is true, then the calculated
  *          number of measures is greater than 4.  We don't need to draw the
  *          whole set of notes.  Instead, we draw the calculated finger print.
  *      -   Otherwise, the sequence is short and we draw it normally.
@@ -705,25 +698,41 @@ qloopbutton::draw_pattern (QPainter & painter)
         int ly0 = m_event_box.y();
         int lxw = m_event_box.w();
         int lyh = m_event_box.h();
-        pen.setWidth(1);
-        if (loop()->measure_threshold())
+        if (m_fingerprint_inited)       // loop()->event_threshold()
         {
             if (loop()->transposable())
                 pen.setColor(text_color());
             else
                 pen.setColor(drum_color());
 
-            pen.setWidth(2);
-            painter.setPen(pen);
             if (m_fingerprint_size > 1)
             {
                 float x = float(m_event_box.x());
                 float dx = float(m_event_box.w()) / (m_fingerprint_size - 1);
-                for (int i = 0; i < int(m_fingerprint_size); ++i, x += dx)
+                if (m_show_min_max)
                 {
-                    int y = m_fingerprint[i];
-                    if (y > 0)
-                        painter.drawPoint(int(x), y);
+                    pen.setWidth(1);
+                    painter.setPen(pen);
+                    for (int i = 0; i < int(m_fingerprint_size); ++i, x += dx)
+                    {
+                        int y0 = m_fingerprint_min[i];
+                        int y1 = m_fingerprint_max[i];
+                        painter.drawLine(int(x), y0, int(x), y1);
+                    }
+                }
+                else
+                {
+                    pen.setWidth(2);
+                    painter.setPen(pen);
+                    for (int i = 0; i < int(m_fingerprint_size); ++i, x += dx)
+                    {
+                        if (m_fingerprint_min[i] != c_midibyte_max)
+                        {
+                            int y = m_fingerprint_min[i];
+//                          if (y > 0)
+                                painter.drawPoint(int(x), y);
+                        }
+                    }
                 }
             }
         }
@@ -746,37 +755,40 @@ qloopbutton::draw_pattern (QPainter & painter)
 
                 height = highest - lowest;
             }
+            pen.setWidth(1);
             if (loop()->transposable())
                 pen.setColor(pen_color());      /* issue #50 text_color()   */
             else
                 pen.setColor(drum_color());
 
-        auto cev = loop()->cbegin();
-        while (! loop()->cend(cev))
-        {
-            sequence::note_info ni;
-            sequence::draw dt = loop()->get_next_note(ni, cev); /* ++cev */
-            if (dt == sequence::draw::finish)
-                break;
+            painter.setPen(pen);
 
-            int tick_s_x = (ni.start() * lxw) / t1;
-            int tick_f_x = (ni.finish() * lxw) / t1;
-            if (! sequence::is_draw_note(dt) || tick_f_x <= tick_s_x)
-                tick_f_x = tick_s_x + 1;
+            auto cev = loop()->cbegin();
+            while (! loop()->cend(cev))
+            {
+                sequence::note_info ni;
+                sequence::draw dt = loop()->get_next_note(ni, cev); /* ++cev */
+                if (dt == sequence::draw::finish)
+                    break;
 
-            int y = lyh * (highest - ni.note()) / height;
+                int tick_s_x = (ni.start() * lxw) / t1;
+                int tick_f_x = (ni.finish() * lxw) / t1;
+                if (! sequence::is_draw_note(dt) || tick_f_x <= tick_s_x)
+                    tick_f_x = tick_s_x + 1;
+
+                int y = lyh * (highest - ni.note()) / height;
 
 #if defined DRAW_TEMPO_LINE_DISABLED
-            if (dt == sequence::draw::tempo)
-                pen.setColor(tempo_paint());    /* NEED A MEMBER    */
+                if (dt == sequence::draw::tempo)
+                    pen.setColor(tempo_paint());    /* NEED A MEMBER    */
 #endif
 
-            int sx = lx0 + tick_s_x;            /* start x          */
-            int fx = lx0 + tick_f_x;            /* finish x         */
-            y += ly0;                           /* start & finish y */
-            painter.setPen(pen);
-            painter.drawLine(sx, y, fx, y);
-        }
+                int sx = lx0 + tick_s_x;            /* start x          */
+                int fx = lx0 + tick_f_x;            /* finish x         */
+                y += ly0;                           /* start & finish y */
+//              painter.setPen(pen);
+                painter.drawLine(sx, y, fx, y);
+            }
         }
     }
 }

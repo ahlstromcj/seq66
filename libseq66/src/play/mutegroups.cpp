@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-04-27
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -74,6 +74,7 @@ mutegroups::mutegroups (int rows, int columns) :
     m_group_selected            (smc_null_mute_group),
     m_group_present             (false),
     m_group_save                (saving::both),     /* midi and mutes files */
+    m_group_load                (loading::both),    /* midi and mutes files */
     m_toggle_active_only        (false)
 {
     // no code needed
@@ -501,6 +502,66 @@ mutegroups::group_save_label () const
     else if (m_group_save == saving::midi)
         result = "midi";
     else if (m_group_save == saving::both)
+        result = "both";
+
+    return result;
+}
+
+bool
+mutegroups::group_load (loading mgh)
+{
+    if (mgh >= loading::none && mgh < loading::maximum)
+    {
+        m_group_load = mgh;
+        return true;
+    }
+    else
+        return false;
+}
+
+bool
+mutegroups::group_load (const std::string & v)
+{
+    if (v == "none")
+        return group_load(loading::none);
+    else if (v == "both" || v == "stomp")
+        return group_load(loading::both);
+    else if (v == "mutes")
+        return group_load(loading::mutes);
+    else if (v == "midi" || v == "preserve")
+        return group_load(loading::midi);
+    else
+        return false;
+}
+
+bool
+mutegroups::group_load (bool midi, bool mutes)
+{
+    if (midi && mutes)
+        return group_load(loading::both);
+    else if (mutes)
+        return group_load(loading::mutes);
+    else if (midi)
+        return group_load(loading::midi);
+    else
+        return group_load(loading::none);
+}
+
+/**
+ * \getter m_mute_group_load, string version
+ */
+
+std::string
+mutegroups::group_load_label () const
+{
+    std::string result = "bad";
+    if (m_group_load == loading::none)
+        result = "none";
+    else if (m_group_load == loading::mutes)
+        result = "mutes";
+    else if (m_group_load == loading::midi)
+        result = "midi";
+    else if (m_group_load == loading::both)
         result = "both";
 
     return result;

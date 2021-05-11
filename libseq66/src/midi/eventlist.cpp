@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-02-20
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -445,6 +445,18 @@ eventlist::clear_links ()
         e.unmark();
         e.unlink();
     }
+}
+
+int
+eventlist::note_count () const
+{
+    int result = 0;
+    for (const auto & e : m_events)
+    {
+        if (e.is_note_on())
+            ++result;
+    }
+    return result;
 }
 
 /**

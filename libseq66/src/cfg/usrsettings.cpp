@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-05-10
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -483,6 +483,21 @@ usrsettings::mainwnd_y () const
         return m_window_scale > 1.0f ?
             m_mainwnd_y : int(scale_size_y(m_mainwnd_y)) ;
     }
+}
+
+/**
+ *  Ultimately validated in the qloopbutton class.  Ignored if either is
+ *  less than 0.0.
+ */
+
+void
+usrsettings::progress_box_size (double w, double h)
+{
+    if (w >= 0.0)
+        m_progress_box_width = w;
+
+    if (h >= 0.0)
+        m_progress_box_height = h;
 }
 
 /**

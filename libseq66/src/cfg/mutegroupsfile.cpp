@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-04-27
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -132,13 +132,20 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     bool update_needed = s.empty();
     if (update_needed)
     {
-        mutes.load_mute_groups(true);
         mutes.toggle_active_only(false);
         mutes.group_save("mutes");
+        mutes.group_load("none");
     }
     else
     {
-        mutes.load_mute_groups(string_to_bool(s));
+        if (s == "true")
+            s = "mutes";
+        else if (s == "false")
+            s = "midi";
+
+        if (! s.empty())
+            mutes.group_load(s);
+
         s = get_variable(file, "[mute-group-flags]", "save-mutes-to");
         if (! s.empty())
             mutes.group_save(s);
@@ -165,20 +172,29 @@ mutegroupsfile::parse_stream (std::ifstream & file)
         mutes.toggle_active_only(string_to_bool(s));
     }
 
-    bool load = mutes.load_mute_groups();
+    bool load = mutes.group_load_from_mutes();
     mutegroups & mutestorage = load ? mutes : internal_mutegroups() ;
     bool good = line_after(file, "[mute-groups]");
     mutes.clear();
-    while (good)                            /* not at end of section?   */
+    if (good)
     {
-        if (! line().empty())               /* any value in section?    */
+        bool ok = true;
+        while (ok)                              /* not at end of section?   */
         {
-            good = parse_mutes_stanza(mutestorage);
-            if (good)
-                good = next_data_line(file);
-
-            if (! good)
-                break;
+            if (! line().empty())               /* any value in section?    */
+            {
+                ok = parse_mutes_stanza(mutestorage);
+                if (ok)
+                {
+                    ok = next_data_line(file);
+                }
+                else
+                {
+                    file_error("Add mute stanza", line());
+                    good = false;
+                    break;
+                }
+            }
         }
     }
     if (good)
@@ -267,10 +283,13 @@ mutegroupsfile::write_stream (std::ofstream & file)
         "# The 'mutes' file holds the global mute-groups configuration.\n"
         "# It follows the format of the 'rc' configuration file, but is\n"
         "# stored separately for convenience.  It is always stored in the\n"
-        "# configuration directory.  To use this 'mutes' file, replace the\n"
-        "# [mute-group] section in the 'rc' file, and its contents, with a\n"
-        "# [mute-group-file] tag, and add the basename (e.g. 'nanomute.mutes')\n"
-        "# on a separate line.\n"
+        "# configuration directory.  To use this 'mutes' file, set it in the\n"
+        "# [mute-group-file] tag in the 'rc' file; use the basename (e.g.\n"
+        "# 'nanomute.mutes') on a separate line.\n"
+        "#\n"
+        "# load-mute-groups: set to 'none', or 'mutes' to load only from the\n"
+        "# 'mutes' file, 'midi' to load from the song, or 'both' to try to\n"
+        "# to read from the 'mutes' first, then the 'midi' if empty.\n"
         "#\n"
         "# save-mutes-to: 'both' writes the mutes value to both the mutes\n"
         "# and the MIDI file; 'midi' writes only to the MIDI file; and\n"
@@ -283,15 +302,14 @@ mutegroupsfile::write_stream (std::ofstream & file)
         "# to write them as hexadecimal numbers (e.g. 0xff), which is useful\n"
         "# larger set sizes.\n"
         "#\n"
-        "# group-selected: if 0 to 31, and mutes are available either from\n"
+        "# mute-group-selected: if 0 to 31, and mutes are available either from\n"
         "# this file or from the MIDI file, then the mute-group is applied at\n"
         "# startup.  This is useful in restoring a session.\n"
         "#\n"
-        "# toggle-active-only: normally, when a mute-group is toggled off, all\n"
-        "# patterns, even those outside the mute-group, are muted.  If this\n"
-        "# flag is set to true, only the patterns in the mute-group are muted.\n"
-        "# Any patterns unmuted directly by the user remain unmuted.\n"
-        "# toggle-active-only: normally, when a mute-group is toggled off, all\n"
+        "# toggle-active-only: when a mute-group is toggled off, all patterns\n"
+        "# even those outside the mute-group, are muted.  If this flag is set\n"
+        "# to true, only patterns in the mute-group are muted. Any patterns\n"
+        "# unmuted directly by the user remain unmuted.\n"
         ;
 
     bool result = write_mute_groups(file);
@@ -361,7 +379,7 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
     {
         const mutegroups & mutes = rc_ref().mute_groups();
         bool usehex = mutes.group_format_hex();
-        std::string loadstr = bool_to_string(mutes.load_mute_groups());
+        std::string loadstr = mutes.group_load_label();
         std::string savestr = mutes.group_save_label();
         std::string gf = usehex ? "hex" : "binary" ;
         std::string togonly = bool_to_string(mutes.toggle_active_only());
@@ -387,7 +405,7 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
         "\n"
             ;
 
-        bool load = mutes.load_mute_groups();
+        bool load = mutes.group_load_from_mutes();
         const mutegroups & mutestorage = load ? mutes : internal_mutegroups() ;
         if (mutestorage.empty())
         {

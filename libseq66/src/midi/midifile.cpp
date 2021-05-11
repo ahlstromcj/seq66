@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-05-07
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1671,13 +1671,30 @@ midifile::parse_proprietary_track (performer & p, int file_size)
          *
          * Furthermore, we would need to load these control settings into a
          * midicontrolin (see ctrl/midicontrolin modules).
-         *
          * And, lastly, Seq24 never wrote these controls to the file.  It
          * merely wrote the c_midictrl code, followed by a long 0.
-         *
          * For now, we are going to evade this functionality.  We will
          * continue to write this section, and try to read it, but expect it
          * to be empty.
+         *
+         * Track-specific SeqSpecs handled in parse_smf_1():
+         *
+         *  c_midibus          c_timesig         c_midich         c_musickey *
+         *  c_musicscale *     c_backsequence *  c_transpose *    c_seq_color
+         *  c_seq_edit_mode !  c_seq_loopcount   c_triggers       c_triggers_ex
+         *  c_trig_transpose
+         *
+         * Global SeqSpecs handled here:
+         *
+         *  c_midictrl         c_midiclocks      c_notes          c_bpmtag
+         *  c_mutegroups       c_musickey *      c_musicscale *
+         *  c_backsequence *   c_perf_bp_mes     c_perf_bw        c_tempo_map !
+         *  c_reserved_1 !     c_reserved_2 !    c_tempo_track
+         *  c_seq_edit_mode !
+         *
+         * Not handled:
+         *
+         *  c_gap_A to _F      c_reserved_3 and _4
          */
 
         if (seqspec == c_midictrl)
@@ -1931,7 +1948,10 @@ bool
 midifile::parse_mute_groups (performer & p)
 {
     mutegroups & mutes = p.mutes();
-    bool result = ! mutes.loaded_from_mutes();      /* loaded from config?  */
+    bool result = mutes.group_load_from_midi();
+    if (result)
+        result = ! mutes.loaded_from_mutes();       /* loaded from config?  */
+
     if (result)
     {
         unsigned high, low;
@@ -2745,7 +2765,7 @@ midifile::write_proprietary_track (performer & p)
     unsigned groupcount = c_max_groups;         /* 32, the maximum          */
     unsigned setsize = p.seqs_in_set();
     int gmutesz = 0;
-    if (mutes.any())
+    if (mutes.group_save_to_midi() && mutes.any())
     {
         groupcount = unsigned(mutes.count());   /* no. of existing groups  */
         setsize = unsigned(mutes.group_size());

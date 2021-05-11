@@ -1374,11 +1374,18 @@ usrfile::write ()
         "# If specified, changes the default size of the progress box in the\n"
         "# live-loop grid buttons.  The numbers are in fractions.  The width\n"
         "# ranges from 0.50 to 1.0; the height from 0.10 to 0.50.  If either\n"
-        "# is 0, then the box isn't drawn.  If either is -1.0, the defaults\n"
+        "# is 0, then the box isn't drawn.  If either is 'default', defaults\n"
         "# are used.\n\n"
-        << "progress-box-width = " << usr().progress_box_width() << "\n"
-        << "progress-box-height = " << usr().progress_box_height() << "\n"
         ;
+    if (usr().progress_box_width() < 0.0)
+        file << "progress-box-width = default\n";
+    else
+        file << "progress-box-width = " << usr().progress_box_width() << "\n";
+
+    if (usr().progress_box_height() < 0.0)
+        file << "progress-box-height = default\n";
+    else
+        file << "progress-box-height = " << usr().progress_box_height() << "\n";
 
     /*
      * [user-session]

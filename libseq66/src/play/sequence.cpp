@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-04-27
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -82,6 +82,8 @@ namespace seq66
 
 static const int c_song_record_incr = 16;
 static const int c_maxbeats         = 0xFFFF;
+
+int sequence::sm_fingerprint_size   = 0;
 
 /**
  *  Shows the note_info values. Purely for dev trouble-shooting.
@@ -192,6 +194,7 @@ sequence::sequence (int ppqn)
     m_background_sequence       (sequence::limit()),
     m_mutex                     ()
 {
+    sm_fingerprint_size = usr().fingerprint_size();
     m_events.set_length(m_length);
     m_triggers.set_ppqn(int(m_ppqn));
     m_triggers.set_length(m_length);
@@ -383,7 +386,7 @@ int
 sequence::event_count () const
 {
     automutex locker(m_mutex);
-    return int(m_events.count());
+    return m_events.count();
 }
 
 /**
@@ -958,7 +961,7 @@ sequence::play
                  * unmuting shorter patterns, which play() relentlessly.
                  */
 
-                if (measure_threshold())
+////////        if (event_threshold())
                     (void) microsleep(1);
             }
         }
@@ -3759,16 +3762,10 @@ sequence::minmax_notes (int & lowest, int & highest) // const
 }
 
 int
-sequence::note_count ()
+sequence::note_count () const
 {
     automutex locker(m_mutex);
-    int result = 0;
-    for (auto & er : m_events)
-    {
-        if (er.is_note_on())
-            ++result;
-    }
-    return result;
+    return m_events.note_count();
 }
 
 /**

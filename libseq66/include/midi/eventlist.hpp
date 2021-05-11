@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-04-22
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -191,6 +191,11 @@ public:
         // No code needed
     }
 
+    /*
+     * These operators are used in the scales, eventlist, editable_events,
+     * and sequence classes.
+     */
+
     event::buffer::iterator begin ()
     {
         return m_events.begin();
@@ -349,6 +354,7 @@ private:                                /* functions for friend sequence    */
 
     void link_new ();
     void clear_links ();
+    int note_count () const;
 #if defined USE_FILL_TIME_SIG_AND_TEMPO
     void scan_meta_events ();
 #endif

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-10
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  */
 
@@ -224,60 +224,60 @@ qt_keys (int i)
          * and automation.  Too much chance of interfering with the normal user interface.
          */
 
-        { 0x00,        0x40,   0x60,  "NUL",        KCTRL  },    // ^@: Null
-        { 0x01,        0x41,   0x61,  "SOH",        KCTRL  },    // ^A: Start of Heading
-        { 0x02,        0x42,   0x62,  "STX",        KCTRL  },    // ^B: Start of Text
-        { 0x03,        0x43,   0x63,  "ETX",        KCTRL  },    // ^C: End of Text
-        { 0x04,        0x44,   0x64,  "EOT",        KCTRL  },    // ^D: End of Transmision
-        { 0x05,        0x45,   0x65,  "ENQ",        KCTRL  },    // ^E: Enquiry
-        { 0x06,        0x46,   0x66,  "ACK",        KCTRL  },    // ^F: Acknowledge
-        { 0x07,        0x47,   0x67,  "BEL",        KCTRL  },    // ^G: Bell/beep
-        { 0x08,        0x48,   0x68,  "BS",         KCTRL  },    // ^H: Backspace
-        { 0x09,        0x49,   0x69,  "HT",         KCTRL  },    // ^I: Horizontal Tab
-        { 0x0a,        0x4a,   0x6a,  "LF",         KCTRL  },    // ^J: Line Feed
-        { 0x0b,        0x4b,   0x6b,  "VT",         KCTRL  },    // ^K: Vertical Tab
-        { 0x0c,        0x4c,   0x6c,  "FF",         KCTRL  },    // ^L: Form Feed
-        { 0x0d,        0x4d,   0x6d,  "CR",         KCTRL  },    // ^M: Carriage Return
-        { 0x0e,        0x4e,   0x60,  "SO",         KCTRL  },    // ^N: Shift Out
-        { 0x0f,        0x4f,   0x6e,  "SI",         KCTRL  },    // ^O: Shift In
-        { 0x10,        0x50,   0x7f,  "DLE",        KCTRL  },    // ^P: Data Link Escape
-        { 0x11,        0x51,   0x71,  "DC1",        KCTRL  },    // ^Q: Device Control 1
-        { 0x12,        0x52,   0x72,  "DC2",        KCTRL  },    // ^R: Device Control 2
-        { 0x13,        0x53,   0x73,  "DC3",        KCTRL  },    // ^S: Device Control 3
-        { 0x14,        0x54,   0x74,  "DC4",        KCTRL  },    // ^T: Device Control 4
-        { 0x15,        0x55,   0x75,  "NAK",        KCTRL  },    // ^U: Negative ACK
-        { 0x16,        0x56,   0x76,  "SYN",        KCTRL  },    // ^V: Synchronous Idle
-        { 0x17,        0x57,   0x77,  "ETB",        KCTRL  },    // ^W: End of Trans Block
-        { 0x18,        0x58,   0x78,  "CAN",        KCTRL  },    // ^X: Cancel
-        { 0x19,        0x59,   0x79,  "EM",         KCTRL  },    // ^Y: End of Medium
-        { 0x1a,        0x5a,   0x7a,  "SUB",        KCTRL  },    // ^Z: Substitute
-        { 0x1b,        0x5b,   0x7b,  "ESC",        KCTRL  },    // ^[: Escape
-        { 0x1c,        0x5c,   0x7c,  "FS",         KCTRL  },    // ^\: File Separator
-        { 0x1d,        0x5d,   0x7d,  "GS",         KCTRL  },    // ^]: Group Separator
-        { 0x1e,        0x5e,   0x7e,  "RS",    KCTRLSHIFT  },    // ^^: Record Separator
-        { 0x1f,        0x5f,   0x7f,  "US",    KCTRLSHIFT  },    // ^_???: Unit Separator
+        { 0x00,        0x40,   0x60,  "NUL",        KCTRL  }, // ^@: Null
+        { 0x01,        0x41,   0x61,  "SOH",        KCTRL  }, // ^A: Start of Heading
+        { 0x02,        0x42,   0x62,  "STX",        KCTRL  }, // ^B: Start of Text
+        { 0x03,        0x43,   0x63,  "ETX",        KCTRL  }, // ^C: End of Text
+        { 0x04,        0x44,   0x64,  "EOT",        KCTRL  }, // ^D: End of Transmision
+        { 0x05,        0x45,   0x65,  "ENQ",        KCTRL  }, // ^E: Enquiry
+        { 0x06,        0x46,   0x66,  "ACK",        KCTRL  }, // ^F: Acknowledge
+        { 0x07,        0x47,   0x67,  "BEL",        KCTRL  }, // ^G: Bell/beep
+        { 0x08,        0x48,   0x68,  "BS",         KCTRL  }, // ^H: Backspace
+        { 0x09,        0x49,   0x69,  "HT",         KCTRL  }, // ^I: Horizontal Tab
+        { 0x0a,        0x4a,   0x6a,  "LF",         KCTRL  }, // ^J: Line Feed
+        { 0x0b,        0x4b,   0x6b,  "VT",         KCTRL  }, // ^K: Vertical Tab
+        { 0x0c,        0x4c,   0x6c,  "FF",         KCTRL  }, // ^L: Form Feed
+        { 0x0d,        0x4d,   0x6d,  "CR",         KCTRL  }, // ^M: Carriage Return
+        { 0x0e,        0x4e,   0x60,  "SO",         KCTRL  }, // ^N: Shift Out
+        { 0x0f,        0x4f,   0x6e,  "SI",         KCTRL  }, // ^O: Shift In
+        { 0x10,        0x50,   0x7f,  "DLE",        KCTRL  }, // ^P: Data Link Escape
+        { 0x11,        0x51,   0x71,  "DC1",        KCTRL  }, // ^Q: Device Control 1
+        { 0x12,        0x52,   0x72,  "DC2",        KCTRL  }, // ^R: Device Control 2
+        { 0x13,        0x53,   0x73,  "DC3",        KCTRL  }, // ^S: Device Control 3
+        { 0x14,        0x54,   0x74,  "DC4",        KCTRL  }, // ^T: Device Control 4
+        { 0x15,        0x55,   0x75,  "NAK",        KCTRL  }, // ^U: Negative ACK
+        { 0x16,        0x56,   0x76,  "SYN",        KCTRL  }, // ^V: Synchronous Idle
+        { 0x17,        0x57,   0x77,  "ETB",        KCTRL  }, // ^W: End of Trans Block
+        { 0x18,        0x58,   0x78,  "CAN",        KCTRL  }, // ^X: Cancel
+        { 0x19,        0x59,   0x79,  "EM",         KCTRL  }, // ^Y: End of Medium
+        { 0x1a,        0x5a,   0x7a,  "SUB",        KCTRL  }, // ^Z: Substitute
+        { 0x1b,        0x5b,   0x7b,  "ESC",        KCTRL  }, // ^[: Escape
+        { 0x1c,        0x5c,   0x7c,  "FS",         KCTRL  }, // ^\: File Separator
+        { 0x1d,        0x5d,   0x7d,  "GS",         KCTRL  }, // ^]: Group Separator
+        { 0x1e,        0x5e,   0x7e,  "RS",    KCTRLSHIFT  }, // ^^: Record Separator
+        { 0x1f,        0x5f,   0x7f,  "US",    KCTRLSHIFT  }, // ^_???: Unit Separator
 
         /*
          * Code        Qt           Key Name      Modifier
          *          Key Event
          */
 
-        { 0x20,        0x20,   0x20,  "Space",      KNONE  },    // Space (" " not good)
-        { 0x21,        0x21,   0x21,  "!",          KSHIFT },    // Exclam
-        { 0x22,        0x22,   0x22,  "\"",         KSHIFT },    // QuoteDbl
-        { 0x23,        0x23,   0x23,  "#",          KSHIFT },    // NumberSign
-        { 0x24,        0x24,   0x24,  "$",          KSHIFT },    // Dollar
-        { 0x25,        0x25,   0x25,  "%",          KSHIFT },    // Percent
-        { 0x26,        0x26,   0x26,  "&",          KSHIFT },    // Ampersand
-        { 0x27,        0x27,   0x27,  "'",          KSHIFT },    // Apostrophe
-        { 0x28,        0x28,   0x28,  "(",          KSHIFT },    // ParenLeft
-        { 0x29,        0x29,   0x29,  ")",          KSHIFT },    // ParenRight
-        { 0x2a,        0x2a,   0x2a,  "*",          KSHIFT },    // Asterisk
-        { 0x2b,        0x2b,   0x2b,  "+",          KSHIFT },    // Plus
-        { 0x2c,        0x2c,   0x2c,  ",",          KNONE  },    // Comma
-        { 0x2d,        0x2d,   0x2d,  "-",          KNONE  },    // Minus
-        { 0x2e,        0x2e,   0x2e,  ".",          KNONE  },    // Period
-        { 0x2f,        0x2f,   0x2f,  "/",          KNONE  },    // Slash
+        { 0x20,        0x20,   0x20,  "Space",      KNONE  }, // Space (" " not good)
+        { 0x21,        0x21,   0x21,  "!",          KSHIFT }, // Exclam
+        { 0x22,        0x22,   0x22,  "\"",         KSHIFT }, // QuoteDbl
+        { 0x23,        0x23,   0x23,  "#",          KSHIFT }, // NumberSign
+        { 0x24,        0x24,   0x24,  "$",          KSHIFT }, // Dollar
+        { 0x25,        0x25,   0x25,  "%",          KSHIFT }, // Percent
+        { 0x26,        0x26,   0x26,  "&",          KSHIFT }, // Ampersand
+        { 0x27,        0x27,   0x27,  "'",          KSHIFT }, // Apostrophe
+        { 0x28,        0x28,   0x28,  "(",          KSHIFT }, // ParenLeft
+        { 0x29,        0x29,   0x29,  ")",          KSHIFT }, // ParenRight
+        { 0x2a,        0x2a,   0x2a,  "*",          KSHIFT }, // Asterisk
+        { 0x2b,        0x2b,   0x2b,  "+",          KSHIFT }, // Plus
+        { 0x2c,        0x2c,   0x2c,  ",",          KNONE  }, // Comma
+        { 0x2d,        0x2d,   0x2d,  "-",          KNONE  }, // Minus
+        { 0x2e,        0x2e,   0x2e,  ".",          KNONE  }, // Period
+        { 0x2f,        0x2f,   0x2f,  "/",          KNONE  }, // Slash
         { 0x30,        0x30,   0x30,  "0",          KNONE  },
         { 0x31,        0x31,   0x31,  "1",          KNONE  },
         { 0x32,        0x32,   0x32,  "2",          KNONE  },
@@ -295,7 +295,7 @@ qt_keys (int i)
         { 0x3e,        0x3e,   0x3e,  ">",          KSHIFT },
         { 0x3f,        0x3f,   0x3f,  "?",          KSHIFT },
         { 0x40,        0x40,   0x40,  "@",          KSHIFT },
-        { 0x41,        0x41,   0x41,  "A",          KSHIFT },    /* Shift key modifier  */
+        { 0x41,        0x41,   0x41,  "A",          KSHIFT }, // Shift key modifier
         { 0x42,        0x42,   0x42,  "B",          KSHIFT },
         { 0x43,        0x43,   0x43,  "C",          KSHIFT },
         { 0x44,        0x44,   0x44,  "D",          KSHIFT },
@@ -321,12 +321,12 @@ qt_keys (int i)
         { 0x58,        0x58,   0x58,  "X",          KSHIFT },
         { 0x59,        0x59,   0x59,  "Y",          KSHIFT },
         { 0x5a,        0x5a,   0x5a,  "Z",          KSHIFT },
-        { 0x5b,        0x5b,   0x5b,  "[",          KNONE  },    // BracketLeft
-        { 0x5c,        0x5c,   0x5c,  "\\",         KNONE  },    // Backslash
-        { 0x5d,        0x5d,   0x5d,  "]",          KNONE  },    // BracketRight
-        { 0x5e,        0x5e,   0x5e,  "^",          KSHIFT },    // AsciiCircumflex
-        { 0x5f,        0x5f,   0x5f,  "_",          KSHIFT },    // Underscore
-        { 0x60,        0x60,   0x60,  "`",          KNONE  },    // QuoteLeft, Backtick
+        { 0x5b,        0x5b,   0x5b,  "[",          KNONE  }, // BracketLeft
+        { 0x5c,        0x5c,   0x5c,  "\\",         KNONE  }, // Backslash
+        { 0x5d,        0x5d,   0x5d,  "]",          KNONE  }, // BracketRight
+        { 0x5e,        0x5e,   0x5e,  "^",          KSHIFT }, // AsciiCircumflex
+        { 0x5f,        0x5f,   0x5f,  "_",          KSHIFT }, // Underscore
+        { 0x60,        0x60,   0x60,  "`",          KNONE  }, // QuoteLeft, Backtick
         { 0x61,        0x41,   0x61,  "a",          KNONE  },
         { 0x62,        0x42,   0x62,  "b",          KNONE  },
         { 0x63,        0x43,   0x63,  "c",          KNONE  },
@@ -353,10 +353,10 @@ qt_keys (int i)
         { 0x78,        0x58,   0x78,  "x",          KNONE  },
         { 0x79,        0x59,   0x79,  "y",          KNONE  },
         { 0x7a,        0x5a,   0x7a,  "z",          KNONE  },
-        { 0x7b,        0x7b,   0x7b,  "{",          KSHIFT },   // BraceLeft
-        { 0x7c,        0x7c,   0x7c,  "|",          KSHIFT },   // Bar
-        { 0x7d,        0x7d,   0x7d,  "}",          KSHIFT },   // BraceRight
-        { 0x7e,        0x7e,   0x7e,  "~",          KSHIFT },   // AsciiTilde
+        { 0x7b,        0x7b,   0x7b,  "{",          KSHIFT }, // BraceLeft
+        { 0x7c,        0x7c,   0x7c,  "|",          KSHIFT }, // Bar
+        { 0x7d,        0x7d,   0x7d,  "}",          KSHIFT }, // BraceRight
+        { 0x7e,        0x7e,   0x7e,  "~",          KSHIFT }, // AsciiTilde
         { 0x7f,        0x7f,   0x7f,  "DEL",        KNONE  },
 
         /*
@@ -366,15 +366,15 @@ qt_keys (int i)
          */
 
         { 0x80,  0x01000000, 0xff1b,  "Esc",        KNONE  },
-        { 0x81,  0x01000001, 0xff09,  "Tab",        KNONE  },   // avoid, moves focus
-        { 0x82,  0x01000002, 0xff09,  "BkTab",      KSHIFT },   // avoid, moves focus
-        { 0x83,  0x01000003, 0xff08,  "BkSpace",    KNONE  },   // differs from Ctrl-H !
+        { 0x81,  0x01000001, 0xff09,  "Tab",        KNONE  }, // avoid, moves focus
+        { 0x82,  0x01000002, 0xff09,  "BkTab",      KSHIFT }, // avoid, moves focus
+        { 0x83,  0x01000003, 0xff08,  "BkSpace",    KNONE  }, // differs from Ctrl-H !
         { 0x84,  0x01000004, 0xff0d,  "Return",     KNONE  },
-        { 0x85,  0x01000005, 0xff8d,  "Enter",      KEYPAD },   // Keypad-Enter
+        { 0x85,  0x01000005, 0xff8d,  "Enter",      KEYPAD }, // Keypad-Enter
         { 0x86,  0x01000006, 0xff63,  "Ins",        KNONE  },
         { 0x87,  0x01000007, 0xffff,  "Del",        KNONE  },
-        { 0x88,        0x88,   0x88,  "0x88",       KNONE  },   // was "Pause", a duplicate
-        { 0x89,        0x89,   0x89,  "0x88",       KNONE  },   // was "Print", a duplicate
+        { 0x88,        0x88,   0x88,  "0x88",       KNONE  }, // was "Pause", a duplicate
+        { 0x89,        0x89,   0x89,  "0x88",       KNONE  }, // was "Print", a duplicate
         { 0x8a,  0x0100000a,   0x8a,  "SysReq",     KNONE  },
         { 0x8b,  0x0100000b,   0x8b,  "Clear",      KNONE  },
         { 0x8c,  0x0100000c,   0x8c,  "0x8c",       KNONE  },
@@ -394,13 +394,13 @@ qt_keys (int i)
          * See starting around 0xd7 for the Right versions of these keys.
          */
 
-        { 0x98,  0x01000020, 0xffe1,  "Shift",      KSHIFT },   // Left-Shift
-        { 0x99,  0x01000021, 0xffe3,  "Ctrl",       KCTRL  },   // Left-Ctrl
+        { 0x98,  0x01000020, 0xffe1,  "Shift",      KSHIFT }, // Left-Shift
+        { 0x99,  0x01000021, 0xffe3,  "Ctrl",       KCTRL  }, // Left-Ctrl
         { 0x9a,  0x01000022,   0x9a,  "Meta",       KMETA  },
-        { 0x9b,  0x01000023, 0xffe9,  "Alt",        KALT   },   // Left-Alt
-        { 0x9c,  0x01000024, 0xffe5,  "CapsLk",     KNONE  },   // Shift-Lock too???
+        { 0x9b,  0x01000023, 0xffe9,  "Alt",        KALT   }, // Left-Alt
+        { 0x9c,  0x01000024, 0xffe5,  "CapsLk",     KNONE  }, // Shift-Lock too???
         { 0x9d,  0x01000025, 0xff7f,  "NumLk",      KNONE  },
-        { 0x9e,  0x01000026, 0xff14,  "ScrlLk",     KNONE  },   // Good?
+        { 0x9e,  0x01000026, 0xff14,  "ScrlLk",     KNONE  }, // Good?
         { 0x9f,  0x01000027,   0x9f,  "0x9f",       KNONE  },
         { 0xa0,  0x01000030, 0xffbe,  "F1",         KNONE  },
         { 0xa1,  0x01000031, 0xffbf,  "F2",         KNONE  },
@@ -414,14 +414,14 @@ qt_keys (int i)
         { 0xa9,  0x01000039, 0xffc7,  "F10",        KNONE  },
         { 0xaa,  0x0100003a, 0xffc8,  "F11",        KNONE  },
         { 0xab,  0x0100003b, 0xffc9,  "F12",        KNONE  },
-        { 0xac,  0x01000053, 0xffeb,  "Super_L",    KNONE  },   // Left-Windows
-        { 0xad,  0x01000054, 0xffec,  "Super_R",    KNONE  },   // Right-Windows, good code?
-        { 0xae,  0x01000055, 0xff67,  "Menu",       KNONE  },   // Win-Menu key
+        { 0xac,  0x01000053, 0xffeb,  "Super_L",    KNONE  }, // Left-Windows
+        { 0xad,  0x01000054, 0xffec,  "Super_R",    KNONE  }, // Right-Windows, good code?
+        { 0xae,  0x01000055, 0xff67,  "Menu",       KNONE  }, // Win-Menu key
         { 0xaf,  0x01000056,   0xaf,  "Hyper_L",    KNONE  },
         { 0xb0,  0x01000057,   0xb0,  "Hyper_R",    KNONE  },
         { 0xb1,  0x01000058,   0xb1,  "Help",       KNONE  },
         { 0xb2,  0x01000059,   0xb2,  "Dir_L",      KNONE  },
-        { 0xb3,  0x01000060,   0xb3,  "Dir_R",      KNONE  },    // Direction_R
+        { 0xb3,  0x01000060,   0xb3,  "Dir_R",      KNONE  }, // Direction_R
         { 0xb4,  0x01000030, 0xffbe,  "Sh_F1",      KSHIFT },
         { 0xb5,  0x01000031, 0xffbf,  "Sh_F2",      KSHIFT },
         { 0xb6,  0x01000032, 0xffc0,  "Sh_F3",      KSHIFT },
@@ -457,36 +457,35 @@ qt_keys (int i)
         { 0xc9,  0x01000015, 0xff99,  "KP_Down",    KEYPAD },
         { 0xca,  0x01000016, 0xff9a,  "KP_PageUp",  KEYPAD },
         { 0xcb,  0x01000017, 0xff9b,  "KP_PageDn",  KEYPAD },
-        { 0xcc,  0x01000099, 0xff9d,  "KP_Begin",   KNONE  },   // KP_Begin
+        { 0xcc,  0x01000099, 0xff9d,  "KP_Begin",   KNONE  }, // KP_Begin
         { 0xcd,  0x01000099,   0xcd,  "0xcd",       KNONE  },
         { 0xce,  0x01000099,   0xce,  "0xce",       KNONE  },
         { 0xcf,  0x01000099,   0xcf,  "0xcf",       KNONE  },
-        { 0xd0,        0x2a, 0xffaa,  "KP_*",       KEYPAD },    // Asterisk, KP_Multiply
-        { 0xd1,        0x2b, 0xffab,  "KP_+",       KEYPAD },    // Plus, KP_Add
-        { 0xd2,        0x2c, 0xffac,  "KP_,",       KEYPAD },    // Comma, KP_Separator
-        { 0xd3,        0x2d, 0xffad,  "KP_-",       KEYPAD },    // Minus, KP_Subtract
-        { 0xd4,        0x2e, 0xff0e,  "KP_.",       KNONE  },    // Period, KP_Decimal
-        { 0xd5,        0x2f, 0xffaf,  "KP_/",       KEYPAD },    // Slash, KP_Divide
+        { 0xd0,        0x2a, 0xffaa,  "KP_*",       KEYPAD }, // Asterisk, KP_Multiply
+        { 0xd1,        0x2b, 0xffab,  "KP_+",       KEYPAD }, // Plus, KP_Add
+        { 0xd2,        0x2c, 0xffac,  "KP_,",       KEYPAD }, // Comma, KP_Separator
+        { 0xd3,        0x2d, 0xffad,  "KP_-",       KEYPAD }, // Minus, KP_Subtract
+        { 0xd4,        0x2e, 0xffae,  "KP_.",    KPADSHIFT }, // Period, KP_Decimal
+        { 0xd5,        0x2f, 0xffaf,  "KP_/",       KEYPAD }, // Slash, KP_Divide
         { 0xd6,  0x01000099,   0xd6,  "0xd6",       KNONE  },
 
         /*
          *              Remainders
          */
 
-        { 0xd7,  0x01000020, 0xffe2,  "Shift",      KSHIFT },   // Right-Shift
-        { 0xd8,  0x01000021, 0xffe4,  "Ctrl",       KCTRL  },   // Right-Ctrl
-        { 0xd9,        0xd9,   0xd9,  "0xd9",       KNONE  },
-        { 0xda,  0x01000023, 0xffea,  "Alt",        KALT   },   // Right-Alt
-        { 0xdb,        0xdb,   0xdb,  "0xdb",       KNONE  },
-
-        { 0xdc,  0x01000099,   0xdc,  "0xdc",       KNONE  },
-        { 0xdd,  0x01000099,   0xdd,  "0xdd",       KNONE  },
-        { 0xde,  0x01000099,   0xde,  "0xde",       KNONE  },
-        { 0xdf,  0x01000099,   0xdf,  "0xdf",       KNONE  },
+        { 0xd7,  0x01000020, 0xffe2,  "Shift",      KSHIFT }, // Right-Shift
+        { 0xd8,  0x01000021, 0xffe4,  "Ctrl",       KCTRL  }, // Right-Ctrl
+        { 0xd9,        0xd9,   0xd9,  "0xd9",       KNONE  }, // available
+        { 0xda,  0x01000023, 0xffea,  "Alt",        KALT   }, // Right-Alt
+        { 0xdb,  0x01000020, 0xffe1,  "Shift",      KNONE  }, // L-Shift release
+        { 0xdc,  0x01000020, 0xffe2,  "Shift",      KNONE  }, // R-Shift release
+        { 0xdd,  0x01000021, 0xffe3,  "Ctrl",       KNONE  }, // L-Ctrl release
+        { 0xde,  0x01000021, 0xffe4,  "Ctrl",       KNONE  }, // R-Ctrl release
+        { 0xdf,  0x01000099,   0xdf,  "0xdf",       KNONE  }, // available
 
         /*
          * This section is currently useful to fill in for future expansion or
-         * for extended ASCII characters.
+         * for extended ASCII characters.  See setup_qt_azerty_fr_keys().
          */
 
         { 0xe0,  0x01000099,   0xe0,  "0xe0",       KNONE  },
@@ -520,7 +519,7 @@ qt_keys (int i)
         { 0xfc,  0x01000099,   0xfc,  "0xfc",       KNONE  },
         { 0xfd,  0x01000099,   0xfd,  "0xfd",       KNONE  },
         { 0xfe,  0x01000099,   0xfe,  "0xfe",       KNONE  },
-        { 0xff,  0xffffffff,   0xff,  "Null_ff",    KNONE  }     // end-of-list
+        { 0xff,  0xffffffff,   0xff,  "Null_ff",    KNONE  }  // end-of-list
     };
     if (i < 0 || i > 0xff)
         i = 0;

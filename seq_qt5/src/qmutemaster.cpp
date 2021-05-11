@@ -199,7 +199,10 @@ qmutemaster::qmutemaster
         this, SLOT(slot_clear_all_mutes())
     );
     ui->m_check_load_mutes->setEnabled(true);
-    ui->m_check_load_mutes->setChecked(cb_perf().mutes().load_mute_groups());
+    ui->m_check_load_mutes->setChecked
+    (
+        cb_perf().mutes().group_load_from_mutes()
+    );
     connect
     (
         ui->m_check_load_mutes, SIGNAL(stateChanged(int)),

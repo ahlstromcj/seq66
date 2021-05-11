@@ -1,7 +1,7 @@
 # Seq66 0.92.2 (and above) 'usr' configuration file
 #
 # /home/ahlstrom/.config/seq66/qseq66.usr
-# Written on 2021-04-13 09:49:02
+# Written on 2021-05-11 08:03:55
 #
 # This is a seq66.usr file. Edit it and place it in the
 # $HOME/.config/seq66 directory. It allows one to provide an
@@ -401,11 +401,11 @@ fingerprint-size = 128
 # If specified, changes the default size of the progress box in the
 # live-loop grid buttons.  The numbers are in fractions.  The width
 # ranges from 0.50 to 1.0; the height from 0.10 to 0.50.  If either
-# is 0, then the box isn't drawn.  If either is -1.0, the defaults
+# is 0, then the box isn't drawn.  If either is 'default', defaults
 # are used.
 
-progress-box-width = -1
-progress-box-height = -1
+progress-box-width = default
+progress-box-height = default
 
 [user-session]
 

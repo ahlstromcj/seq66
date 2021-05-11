@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2021-03-31
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -213,17 +213,41 @@ songsummary::write_sequence (std::ofstream & file, seq::pointer s)
 void
 songsummary::write_mute_groups
 (
-    std::ofstream & /*file*/, const performer & /*p*/
+    std::ofstream & file, const performer & p
 )
 {
-    /*
     const mutegroups & mutes = p.mutes();
     for (const auto & stz : mutes.list())
     {
         int groupnumber = stz.first;
         const mutegroup & m = stz.second;
         midibooleans mutebits = m.get();
-        result = mutebits.size() > 0;
+        bool ok = mutebits.size() > 0;
+        if (ok)
+        {
+            int count = 0;
+            file << "Mute group #" << groupnumber << ": ";
+            for (auto mutestatus : mutebits)
+            {
+                if (count == 8)
+                {
+                    file << " ";
+                    count = 0;
+                }
+                else
+                {
+                    file << (bool(mutestatus) ? "1" : "0");
+                    ++count;
+                }
+            }
+            file << std::endl;
+        }
+        else
+        {
+            file << "Mute group #" << groupnumber << " empty" << std::endl;
+        }
+    }
+    /*
         write_long(groupnumber);
         for (auto mutestatus : mutebits)
             write_long(bool(mutestatus) ? 1 : 0);

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-05-09
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -199,6 +199,12 @@ private:
      */
 
     static eventlist sm_clipboard;      /* shared between sequences */
+
+    /*
+     * For fingerprinting check with speed.
+     */
+
+    static int sm_fingerprint_size;
 
     /**
      *  For pause support, we need a way for the sequence to find out if JACK
@@ -897,7 +903,7 @@ public:
     bool loop_count_max (int m);
     void modify (bool notifychange = true);
     int event_count () const;
-    int note_count ();
+    int note_count () const;
     bool minmax_notes (int & lowest, int & highest);
 
     void set_have_undo ()
@@ -936,9 +942,9 @@ public:
     int calculate_measures () const;
     int get_measures () const;
 
-    bool measure_threshold () const
+    bool event_threshold () const
     {
-        return calculate_measures() > 4;
+        return note_count() > sm_fingerprint_size;
     }
 
     int get_ppqn () const

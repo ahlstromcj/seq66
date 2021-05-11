@@ -67,7 +67,7 @@ qt_keystroke_test (QKeyEvent * event, keystroke::action act)
 
     printf
     (
-        "Event key #0x%02x mod %s '%s' %s: scan 0x%x key 0x%x ord %u\n",
+        "Event key #0x%02x mod %s '%s' %s: scan 0x%x key 0x%x ord 0x%x\n",
         k, modifiers.c_str(), ktext.c_str(), press ? "press" : "release",
         scode, kcode, ordinal
     );

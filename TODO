@@ -1,6 +1,6 @@
 TO DO for Seq66 0.93.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-05-09
+2019-04-13 to 2021-05-10
 
 From: zigmhount <notifications@github.com>
 Subject: [Question/Feature request] Live midi pattern recording (#188)
@@ -82,6 +82,9 @@ UI:
 
     Running in JACK now shows "seq66" for all automatic connections, instead
     of the official name of the connected device or software port!
+
+    Change the pattern finger print to show a vertical bar from min to max
+    notes, instead of one dot.
 
 Automation:
 

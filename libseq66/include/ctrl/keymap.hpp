@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-10
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -86,6 +86,7 @@ using modifiers = enum kmod_t
     KALTGR      = KCTRL|KALT,       /* 0x08000000 */
     KMETA       = 0x10000000,
     KEYPAD      = 0x20000000,
+    KPADSHIFT   = KEYPAD|KSHIFT,
     KGROUP      = 0x40000000
 };
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-05-10
+ * \updates       2021-05-11
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -1849,20 +1849,7 @@ public:         // used in main application module and the usrfile class
             m_fingerprint_size = sz;
     }
 
-    /**
-     *  Ultimately validated in the qloopbutton class.  Ignored if either is
-     *  less than 0.0.
-     */
-
-    void progress_box_size (double w, double h)
-    {
-        if (w >= 0.0 && h >= 0.0)
-        {
-            m_progress_box_width = w;
-            m_progress_box_height = h;
-        }
-    }
-
+    void progress_box_size (double w, double h);
     void session_manager (const std::string & sm);
 
     void in_session (bool f)
