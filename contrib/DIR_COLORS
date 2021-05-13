@@ -6,7 +6,7 @@
 # \author          Chris Ahlstrom
 # \date            2008-02-26
 # \updates         2014-12-01
-# \updates         2021-03-22
+# \updates         2021-05-12
 # \version         $Revision$
 # \license         $XPC_SUITE_GPL_LICENSE$
 #
@@ -361,36 +361,36 @@ EXEC 01;32
 .webm 01;35
 
 # Source-code formats (cyan)
-#
-# TODO:  what is the extension for a C# file
 
+.C 00;36
+.CPP 00;36
+.H 00;36
+.asm 00;36
 .awk 00;36
-.h 00;36
 .c 00;36
-.hh 00;36
-.cc 00;36
 .c++ 00;36
-.cpp 00;36
+.cc 00;36
 .ch 00;36
+.cpp 00;36
+.cs 00;36
 .cxx 00;36
 .f77 00;36
 .for 00;36
+.groovy 00;36
+.h 00;36
+.hh 00;36
 .hpp 00;36
 .hxx 00;36
 .java 00;36
 .js 00;36
-.asm 00;36
 .m 00;36
 .mc 00;36
-.s 00;36
-.H 00;36
-.C 00;36
-.CPP 00;36
 .pas 00;36
 .pl 00;36
 .pm 00;36
 .py 00;36
 .pyw 01;36
+.s 00;36
 .sl 00;36
 
 # Project files and configuration files, thin and dark red

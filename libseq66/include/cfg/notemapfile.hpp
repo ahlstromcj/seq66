@@ -107,7 +107,7 @@ private:
  *  Free functions for working with note-mapfiles.
  */
 
-extern bool save_notemapper
+extern bool copy_notemapper
 (
     notemapper & pl,
     const std::string & source,

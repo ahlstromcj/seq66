@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-07
+ * \updates       2021-05-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -973,8 +973,6 @@ public:
         const std::string & fn,
         std::string & errmsg
     );
-    bool open_note_mapper (const std::string & notefile);
-    bool save_note_mapper (const std::string & notefile = "");
 
     bool notemap_exists () const
     {
@@ -1002,8 +1000,10 @@ public:
         return m_play_list->reset_list(listindex);
     }
 
+    bool open_note_mapper (const std::string & notefile);
+    bool save_note_mapper (const std::string & notefile = "");
     bool open_mutegroups (const std::string & mfg);
-    bool save_mutegroups (const std::string & mfg);
+    bool save_mutegroups (const std::string & mfg = "");
     bool open_playlist (const std::string & pl, bool show_on_stdout = false);
     bool save_playlist (const std::string & pl = "");
 

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-05-11
+ * \updates       2021-05-12
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -276,6 +276,13 @@ private:
      */
 
     bool m_toggle_active_only;
+
+    /**
+     *  Indicates the old Seq24/32/64/66 mute-group format, where all values
+     *  were stored as longs.
+     */
+
+    bool m_legacy_mutes;
 
 public:
 
@@ -581,6 +588,11 @@ public:
         return m_toggle_active_only;
     }
 
+    bool legacy_mutes () const
+    {
+        return m_legacy_mutes;
+    }
+
 private:
 
     bool add (mutegroup::number gmute, const mutegroup & m);
@@ -622,6 +634,11 @@ private:
     void toggle_active_only (bool flag)
     {
         m_toggle_active_only = flag;
+    }
+
+    void legacy_mutes (bool flag)
+    {
+        m_legacy_mutes = flag;
     }
 
 };              // class mutegroups

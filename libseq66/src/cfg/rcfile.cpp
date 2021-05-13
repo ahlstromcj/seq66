@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-04-22
+ * \updates       2021-05-12
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -249,7 +249,6 @@ rcfile::parse ()
                 return make_error_message("midi-control-file", info);
             }
         }
-        rc_ref().use_midi_control_file(ok);             /* did it work?     */
     }
     else
     {
@@ -260,7 +259,6 @@ rcfile::parse ()
          */
 
         ok = parse_midi_control_section(name());
-        rc_ref().use_midi_control_file(false);
     }
 
     if (line_after(file, "[mute-group-file]"))
@@ -282,7 +280,6 @@ rcfile::parse ()
                 return make_error_message("mute-group-file", info);
             }
         }
-        rc_ref().use_mute_group_file(ok);               /* did it work?     */
     }
     else
     {
@@ -296,7 +293,6 @@ rcfile::parse ()
          */
 
         ok = parse_mute_group_section(name());
-        rc_ref().use_mute_group_file(true);             /* allow new stuff  */
     }
 
     if (line_after(file, "[usr-file]"))
@@ -868,66 +864,64 @@ rcfile::write ()
         << "\n[comments]\n\n" << rc_ref().comments_block().text() << "\n"
         ;
 
-    if (rc_ref().use_midi_control_file())
-    {
-        /*
-         * Before using this [midi-control-file] file-name, change, if
-         * necessary, the extension, from ".rc" to ".ctrl".  This will also be
-         * changed in the [midi-control-file] section.  Also note that, if
-         * there are no controls (e.g. there were none to read, as occurs the
-         * first time Seq66 is run), then we create one and populate it with
-         * blanks.
-         */
+    /*
+     * Note that, if there are no controls (e.g. there were none to read, as
+     * occurs the first time Seq66 is run), then we create one and populate it
+     * with blanks.
+     *
+     * rc_ref().use_midi_control_file() is now always true.  The check and the
+     * else clause removed on 2021-05-12.
+     */
 
-        std::string mcfname = rc_ref().midi_control_filespec();
-        const midicontrolin & ctrls = rc_ref().midi_control_in();
-        bool result = ctrls.count() > 0;
+    std::string mcfname = rc_ref().midi_control_filespec();
+    const midicontrolin & ctrls = rc_ref().midi_control_in();
+    bool result = ctrls.count() > 0;
+    if (result)
+    {
+        midicontrolfile mcf(mcfname, rc_ref());
+        result = mcf.container_to_stanzas(ctrls);
         if (result)
         {
-            midicontrolfile mcf(mcfname, rc_ref());
-            result = mcf.container_to_stanzas(ctrls);
-            if (result)
-            {
-                mcfname = rc_ref().trim_home_directory(mcfname);
-                mcfname = add_quotes(mcfname);
-                file << "[midi-control-file]\n\n" << mcfname << "\n";
-                ok = mcf.write();
-            }
-        }
-        else
-        {
-            keycontainer keys;              /* call the default constructor */
-            midicontrolin & ctrls = rc_ref().midi_control_in();
-            midicontrolfile mcf(mcfname, rc_ref());
-            ctrls.add_blank_controls(keys);
-            result = mcf.container_to_stanzas(ctrls);
-            if (result)
-            {
-                mcfname = rc_ref().trim_home_directory(mcfname);
-                mcfname = add_quotes(mcfname);
-                file << "[midi-control-file]\n\n" << mcfname << "\n";
-                ok = mcf.write();
-            }
+            mcfname = rc_ref().trim_home_directory(mcfname);
+            mcfname = add_quotes(mcfname);
+            file << "[midi-control-file]\n\n" << mcfname << "\n";
+            ok = mcf.write();
         }
     }
     else
-        ok = write_midi_control(file);
-
-    if (rc_ref().use_mute_group_file())
     {
+        keycontainer keys;              /* call the default constructor */
+        midicontrolin & ctrls = rc_ref().midi_control_in();
+        midicontrolfile mcf(mcfname, rc_ref());
+        ctrls.add_blank_controls(keys);
+        result = mcf.container_to_stanzas(ctrls);
+        if (result)
+        {
+            mcfname = rc_ref().trim_home_directory(mcfname);
+            mcfname = add_quotes(mcfname);
+            file << "[midi-control-file]\n\n" << mcfname << "\n";
+            ok = mcf.write();
+        }
+    }
+
+    /*
+     * rc_ref().use_mute_group_file() is now always true.  The check and the
+     * else clause removed on 2021-05-12.
+     */
+
+    bool addfilename = ! rc().mute_group_filename().empty();
+    if (addfilename)
+    {
+        std::string mgfname = rc_ref().mute_group_filespec();
+        mutegroupsfile mgf(mgfname, rc_ref());
+        mgfname = rc_ref().trim_home_directory(mgfname);
+        mgfname = add_quotes(mgfname);
+        file << "\n[mute-group-file]\n\n" << mgfname << "\n";
+
         const mutegroups & mgroups = rc().mute_groups();
         if (mgroups.group_save_to_mutes())
-        {
-            std::string mgfname = rc_ref().mute_group_filespec();
-            mutegroupsfile mgf(mgfname, rc_ref());
-            mgfname = rc_ref().trim_home_directory(mgfname);
-            mgfname = add_quotes(mgfname);
-            file << "\n[mute-group-file]\n\n" << mgfname << "\n";
             ok = mgf.write();
-        }
     }
-    else
-        ok = write_mute_groups(file);
 
     std::string usrname = rc_ref().user_filespec();
     usrname = rc_ref().trim_home_directory(usrname);

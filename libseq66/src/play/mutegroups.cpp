@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-05-11
+ * \updates       2021-05-12
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -75,7 +75,8 @@ mutegroups::mutegroups (int rows, int columns) :
     m_group_present             (false),
     m_group_save                (saving::both),     /* midi and mutes files */
     m_group_load                (loading::both),    /* midi and mutes files */
-    m_toggle_active_only        (false)
+    m_toggle_active_only        (false),
+    m_legacy_mutes              (false)
 {
     // no code needed
 }

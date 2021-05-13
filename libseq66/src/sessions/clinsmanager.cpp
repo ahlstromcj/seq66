@@ -497,7 +497,7 @@ clinsmanager::create_project
                         nmp.reset(new (std::nothrow) notemapper());
                         result = bool(nmp);
                         file_message("Note-mapper save", destination);
-                        (void) save_notemapper(*nmp, srcnotefile, destination);
+                        (void) copy_notemapper(*nmp, srcnotefile, destination);
                     }
                 }
             }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-05-11
+ * \updates       2021-05-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -175,7 +175,10 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     bool load = mutes.group_load_from_mutes();
     mutegroups & mutestorage = load ? mutes : internal_mutegroups() ;
     bool good = line_after(file, "[mute-groups]");
-    mutes.clear();
+    if (! load)
+        internal_mutegroups() = mutes;
+
+    mutestorage.clear();
     if (good)
     {
         bool ok = true;
@@ -199,12 +202,18 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     }
     if (good)
     {
-        if (mutes.count() <= 1)                 /* merely a sanity check    */
+        if (mutestorage.count() <= 1)           /* merely a sanity check    */
             good = false;
     }
+
+    /*
+     * Whether we loaded to internal storage or not, we have to make the
+     * visible mutegroups reflect the actual situation.
+     */
+
     if (good)
     {
-        mutes.loaded_from_mutes(load);          /* loaded to non-internal   */
+        mutes.loaded_from_mutes(load);          /* loaded to non-internal?  */
     }
     else
     {
@@ -475,15 +484,13 @@ bool
 mutegroupsfile::parse_mutes_stanza (mutegroups & mutes)
 {
     int group = string_to_int(line());
-    bool result = group >= 0 && group < 512;            /* a sanity check   */
+    bool result = group >= 0 && group < c_max_groups;   /* a sanity check   */
     if (result)
     {
         midibooleans groupmutes;
         result = parse_stanza_bits(groupmutes, line());
         if (result)
             result = mutes.load(group, groupmutes);
-
-//          result = rc_ref().mute_groups().load(group, groupmutes);
     }
     return result;
 }

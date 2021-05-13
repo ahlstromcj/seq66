@@ -102,16 +102,17 @@ private:
     int m_columns;
 
     /**
-     *  Holds a master set of sets.
+     *  Holds a reference to the master set of sets.  This is currently always
+     *  supplied by the performer object.
      */
 
     setmaster & m_set_master;
 
     /**
-     *  Keeps track of created sequences, whether or not they are active.  Used
-     *  by the install_sequence() function.  Note that this value is not a
-     *  suitable replacement for m_sequence_max, because there can be inactive
-     *  sequences amidst the active sequences.
+     *  Keeps track of created sequences, whether or not they are active.
+     *  Used by the install_sequence() function.  Note that this value is not
+     *  a suitable replacement for m_sequence_max, because there can be
+     *  inactive sequences amidst the active sequences.
      */
 
     int m_sequence_count;

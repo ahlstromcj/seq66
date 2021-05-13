@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-05-11
+ * \updates       2021-05-13
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -102,6 +102,32 @@
 
 namespace seq66
 {
+
+/**
+ *  Magic numbers for handling mute-group formats.
+ */
+
+const unsigned c_compact_mutes_shift    = 8;                /* 1 << 8 = 256 */
+const unsigned c_legacy_mute_group      = 1024;             /* 0x0400       */
+const unsigned c_compact_mute_group     = 256 << 16;
+
+static unsigned
+to_compact_byte (unsigned value)
+{
+    if (value > 0)
+        value <<= c_compact_mutes_shift;
+
+    return value;
+}
+
+static unsigned
+from_compact_byte (unsigned value)
+{
+    if (value > 0)
+        value >>= c_compact_mutes_shift;
+
+    return value;
+}
 
 /**
  *  Name of the initial text meta events (00 through 07).
@@ -319,8 +345,8 @@ midifile::read_long ()
 midilong
 midifile::read_split_long (unsigned & highbytes, unsigned & lowbytes)
 {
-    midilong result = read_long();
-    if (result == 1024)
+    midilong result = read_long();              /* amount of data           */
+    if (result == c_legacy_mute_group)
     {
         highbytes = 32U;
         lowbytes = 32U;
@@ -332,8 +358,16 @@ midifile::read_split_long (unsigned & highbytes, unsigned & lowbytes)
     }
     else
     {
-        highbytes = result & 0xFFFF0000 >> 8;
-        lowbytes = result & 0x0000FFFF;
+        if (result >= c_compact_mute_group)
+        {
+            highbytes = from_compact_byte(result & 0xFFFF0000 >> 16);
+            lowbytes = from_compact_byte(result & 0x0000FFFF);
+        }
+        else
+        {
+            highbytes = result & 0xFFFF0000 >> 16;      /* was 8, bug! */
+            lowbytes = result & 0x0000FFFF;
+        }
     }
     return result;
 }
@@ -1942,6 +1976,10 @@ midifile::parse_proprietary_track (performer & p, int file_size)
  *  mutegroups, and more variable setup.  Lots to do yet!
  *
  *  Also need to check for any mutes being present.
+ *
+ *  What about rows & columns?  Ultimately, the set-size must
+ *  match that specified by the application's user-interface as
+ *  must the rows and columns.
  */
 
 bool
@@ -1954,36 +1992,49 @@ midifile::parse_mute_groups (performer & p)
 
     if (result)
     {
-        unsigned high, low;
-        long len = long(read_split_long(high, low));
+        unsigned groupcount, groupsize;
+        long len = long(read_split_long(groupcount, groupsize));
         if (len > 0)
         {
-            unsigned groupcount = c_max_groups;     /* 32 groups by fiat    */
-            unsigned setsize = p.seqs_in_set();     /* 32 seqs by default   */
-            p.mutes().clear();                      /* makes it empty       */
-            if (len != 1024)
-            {
-                groupcount = high;
-                setsize = low;
+            /*
+             * Alternative: legacyformat = len < c_compact_mute_group;
+             */
 
-                /*
-                 * What about rows & columns?  Ultimately, the set-size must
-                 * match that specified by the application's user-interface as
-                 * must the rows and columns.
-                 */
-            }
-            for (unsigned g = 0; g < groupcount; ++g)
+            bool legacyformat = len == c_legacy_mute_group;
+            p.mutes().clear();                      /* makes it empty       */
+            if (legacyformat)
             {
-                midibooleans mutebits;
-                midilong group = read_long();
-                for (unsigned s = 0; s < setsize; ++s)
+                mutes.legacy_mutes(true);
+                for (unsigned g = 0; g < groupcount; ++g)
                 {
-                    midilong gmutestate = read_long();  /* long for a bit!? */
-                    bool status = gmutestate != 0;
-                    mutebits.push_back(midibool(status));
+                    midibooleans mutebits;
+                    midilong group = read_long();
+                    for (unsigned s = 0; s < groupsize; ++s)
+                    {
+                        midilong gmutestate = read_long();  /* long bit !?  */
+                        bool status = gmutestate != 0;
+                        mutebits.push_back(midibool(status));
+                    }
+                    if (! mutes.load(group, mutebits))
+                        break;                              /* a duplicate? */
                 }
-                if (! mutes.load(group, mutebits))
-                    break;                              /* often duplicate  */
+            }
+            else
+            {
+                mutes.legacy_mutes(false);
+                for (unsigned g = 0; g < groupcount; ++g)
+                {
+                    midibooleans mutebits;
+                    midilong group = read_byte();
+                    for (unsigned s = 0; s < groupsize; ++s)
+                    {
+                        midibyte gmutestate = read_byte();  /* byte for a bit */
+                        bool status = gmutestate != 0;
+                        mutebits.push_back(midibool(status));
+                    }
+                    if (! mutes.load(group, mutebits))
+                        break;                              /* often duplicate  */
+                }
             }
         }
     }
@@ -2005,6 +2056,7 @@ midifile::write_mute_groups (const performer & p)
     bool result = mutes.group_save_to_midi();
     if (result)
     {
+#if USE_LEGACY_MUTE_GROUPS
         for (const auto & stz : mutes.list())
         {
             int groupnumber = stz.first;
@@ -2015,11 +2067,28 @@ midifile::write_mute_groups (const performer & p)
             {
                 write_long(groupnumber);
                 for (auto mutestatus : mutebits)
-                    write_long(bool(mutestatus) ? 1 : 0);   /* long! wasteful!  */
+                    write_long(bool(mutestatus) ? 1 : 0);   /* long! waste! */
             }
             else
                 break;
         }
+#else
+        for (const auto & stz : mutes.list())
+        {
+            int groupnumber = stz.first;
+            const mutegroup & m = stz.second;
+            midibooleans mutebits = m.get();
+            result = mutebits.size() > 0;
+            if (result)
+            {
+                write_byte(groupnumber);
+                for (auto mutestatus : mutebits)
+                    write_byte(bool(mutestatus) ? 1 : 0);   /* byte better! */
+            }
+            else
+                break;
+        }
+#endif
     }
     return result;
 }
@@ -2044,17 +2113,21 @@ midifile::write_long (midilong x)
 /**
  *  Writes 4 bytes in the style readable by read_split_long().  If the values
  *  are both 32 (note that 32 x 32 = 1024), then 1024, the legacy value, is
- *  written out in the normal way, via write_long().
+ *  written out in the normal way, via write_long().  Otherwise, the highbytes
+ *  and lowbytes values are each written out in two bytes each, with the most
+ *  significant byte written first.
  *
  * \param [out] highbytes
  *      Provides the value of the most significant 2 bytes of the four-byte
  *      ("long") value.  The most significant bytes are masked out; the values
- *      are limited to range from 0 to 65535, a short value.
+ *      are limited to range from 0 to 65535, a short value. For mute-groups,
+ *      this is the number of mute-groups.
  *
  * \param [out] lowbytes
  *      Provides the value of the least significant 2 bytes of the four-byte
  *      ("long") value.  The most significant bytes are masked out; the values
- *      are limited to range from 0 to 65535, a short value.
+ *      are limited to range from 0 to 65535, a short value. For mute-groups,
+ *      this is the number of patterns in the mute-groups.
  */
 
 void
@@ -2763,13 +2836,18 @@ midifile::write_proprietary_track (performer & p)
     }
 
     unsigned groupcount = c_max_groups;         /* 32, the maximum          */
-    unsigned setsize = p.seqs_in_set();
+    unsigned groupsize = p.seqs_in_set();
     int gmutesz = 0;
     if (mutes.group_save_to_midi() && mutes.any())
     {
         groupcount = unsigned(mutes.count());   /* no. of existing groups  */
-        setsize = unsigned(mutes.group_size());
-        gmutesz = 4 + groupcount * (4 + setsize * 4);
+        groupsize = unsigned(mutes.group_size());
+#if USE_LEGACY_MUTE_GROUPS
+        gmutesz = 4 + groupcount * (4 + groupsize * 4);
+#else
+        // gmutesz = 4 + groupcount * 1 + groupcount * (groupsize * 1);
+        gmutesz = 4 + groupcount * (1 + groupsize);   /* g# and g bytes */
+#endif
     }
     tracklength += seq_number_size();           /* bogus sequence number    */
     tracklength += track_name_size(PROP_TRACK_NAME);
@@ -2827,7 +2905,15 @@ midifile::write_proprietary_track (performer & p)
     if (gmutesz > 0)
     {
         write_prop_header(c_mutegroups, gmutesz);   /* mute groups tag etc. */
-        write_split_long(groupcount, setsize);
+
+#if USE_LEGACY_MUTE_GROUPS
+        write_split_long(groupcount, groupsize);
+#else
+        write_split_long
+        (
+            to_compact_byte(groupcount), to_compact_byte(groupsize)
+        );
+#endif
         (void) write_mute_groups(p);
     }
     if (m_global_bgsequence)

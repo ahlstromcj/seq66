@@ -1,0 +1,289 @@
+# Seq66 0.94.0 (and above) keyboard remapping configuration file
+#
+# /home/ahlstrom/.config/seq66/qseq66-qwerty-us.keys
+# Written on 2021-05-12 14:52:54
+#
+# This file holds keystroke remappings for the AZERTY FR keyboard.
+# If specified it modifies the internal key-map with the changes
+# shown below.
+#
+# Note that the internal keymap is shown in doc/control-keys.ods and in
+# data/linux/qseq66-qwerty-us.keys.
+#
+# Also note that this file is only read... it is never written over.
+
+[Seq66]
+
+config-type = "keys"
+version = 0
+
+[comments]
+
+This file matches the internal key-mappings for Seq66.  No need to load it,
+really.  Also see the doc/control-keys.ods spreadsheet.
+
+[key-mappings]
+
+# Internal Qt          Qt      Key
+# Ordinal Evkey      VirtKey   Name        Modifier
+
+0x00      0x40        0x60     "NUL"        "Ctrl"         # ^@: Null
+0x01      0x41        0x61     "SOH"        "Ctrl"         # ^A: Start of Heading
+0x02      0x42        0x62     "STX"        "Ctrl"         # ^B: Start of Text
+0x03      0x43        0x63     "ETX"        "Ctrl"         # ^C: End of Text
+0x04      0x44        0x64     "EOT"        "Ctrl"         # ^D: End of Transmision
+0x05      0x45        0x65     "ENQ"        "Ctrl"         # ^E: Enquiry
+0x06      0x46        0x66     "ACK"        "Ctrl"         # ^F: Acknowledge
+0x07      0x47        0x67     "BEL"        "Ctrl"         # ^G: Bell/beep
+0x08      0x48        0x68     "BS"         "Ctrl"         # ^H: Backspace
+0x09      0x49        0x69     "HT"         "Ctrl"         # ^I: Horizontal Tab
+0x0a      0x4a        0x6a     "LF"         "Ctrl"         # ^J: Line Feed
+0x0b      0x4b        0x6b     "VT"         "Ctrl"         # ^K: Vertical Tab
+0x0c      0x4c        0x6c     "FF"         "Ctrl"         # ^L: Form Feed
+0x0d      0x4d        0x6d     "CR"         "Ctrl"         # ^M: Carriage Return
+0x0e      0x4e        0x60     "SO"         "Ctrl"         # ^N: Shift Out
+0x0f      0x4f        0x6e     "SI"         "Ctrl"         # ^O: Shift In
+0x10      0x50        0x7f     "DLE"        "Ctrl"         # ^P: Data Link Escape
+0x11      0x51        0x71     "DC1"        "Ctrl"         # ^Q: Device Control 1
+0x12      0x52        0x72     "DC2"        "Ctrl"         # ^R: Device Control 2
+0x13      0x53        0x73     "DC3"        "Ctrl"         # ^S: Device Control 3
+0x14      0x54        0x74     "DC4"        "Ctrl"         # ^T: Device Control 4
+0x15      0x55        0x75     "NAK"        "Ctrl"         # ^U: Negative ACK
+0x16      0x56        0x76     "SYN"        "Ctrl"         # ^V: Synchronous Idle
+0x17      0x57        0x77     "ETB"        "Ctrl"         # ^W: End of Trans Block
+0x18      0x58        0x78     "CAN"        "Ctrl"         # ^X: Cancel
+0x19      0x59        0x79     "EM"         "Ctrl"         # ^Y: End of Medium
+0x1a      0x5a        0x7a     "SUB"        "Ctrl"         # ^Z: Substitute
+0x1b      0x5b        0x7b     "ESC"        "Ctrl"         # ^[: Escape
+0x1c      0x5c        0x7c     "FS"         "Ctrl"         # ^\: File Separator
+0x1d      0x5d        0x7d     "GS"         "Ctrl"         # ^]: Group Separator
+0x1e      0x5e        0x7e     "RS"         "Ctrl-Shift"   # ^^: Record Separator
+0x1f      0x5f        0x7f     "US"         "Ctrl-Shift"   # ^_???: Unit Separator
+0x20      0x20        0x20     "Space"      "None"         # Space (" " not good)
+0x21      0x21        0x21     "!"          "Shift"        # Exclam
+0x22      0x22        0x22     "\""         "Shift"        # QuoteDbl
+0x23      0x23        0x23     "#"          "Shift"        # NumberSign
+0x24      0x24        0x24     "$"          "Shift"        # Dollar
+0x25      0x25        0x25     "%"          "Shift"        # Percent
+0x26      0x26        0x26     "&"          "Shift"        # Ampersand
+0x27      0x27        0x27     "'"          "Shift"        # Apostrophe
+0x28      0x28        0x28     "("          "Shift"        # ParenLeft
+0x29      0x29        0x29     ")"          "Shift"        # ParenRight
+0x2a      0x2a        0x2a     "*"          "Shift"        # Asterisk
+0x2b      0x2b        0x2b     "+"          "Shift"        # Plus
+0x2c      0x2c        0x2c     ""           "None"         # Comma
+0x2d      0x2d        0x2d     "-"          "None"         # Minus
+0x2e      0x2e        0x2e     "."          "None"         # Period
+0x2f      0x2f        0x2f     "/"          "None"         # Slash
+0x30      0x30        0x30     "0"          "None"
+0x31      0x31        0x31     "1"          "None"
+0x32      0x32        0x32     "2"          "None"
+0x33      0x33        0x33     "3"          "None"
+0x34      0x34        0x34     "4"          "None"
+0x35      0x35        0x35     "5"          "None"
+0x36      0x36        0x36     "6"          "None"
+0x37      0x37        0x37     "7"          "None"
+0x38      0x38        0x38     "8"          "None"
+0x39      0x39        0x39     "9"          "None"
+0x3a      0x3a        0x3a     ":"          "Shift"
+0x3b      0x3b        0x3b     ";"          "None"
+0x3c      0x3c        0x3c     "<"          "Shift"
+0x3d      0x3d        0x3d     "="          "None"
+0x3e      0x3e        0x3e     ">"          "Shift"
+0x3f      0x3f        0x3f     "?"          "Shift"
+0x40      0x40        0x40     "@"          "Shift"
+0x41      0x41        0x41     "A"          "Shift"
+0x42      0x42        0x42     "B"          "Shift"
+0x43      0x43        0x43     "C"          "Shift"
+0x44      0x44        0x44     "D"          "Shift"
+0x45      0x45        0x45     "E"          "Shift"
+0x46      0x46        0x46     "F"          "Shift"
+0x47      0x47        0x47     "G"          "Shift"
+0x48      0x48        0x48     "H"          "Shift"
+0x49      0x49        0x49     "I"          "Shift"
+0x4a      0x4a        0x4a     "J"          "Shift"
+0x4b      0x4b        0x4b     "K"          "Shift"
+0x4c      0x4c        0x4c     "L"          "Shift"
+0x4d      0x4d        0x4d     "M"          "Shift"
+0x4e      0x4e        0x4e     "N"          "Shift"
+0x4f      0x4f        0x4f     "O"          "Shift"
+0x50      0x50        0x50     "P"          "Shift"
+0x51      0x51        0x51     "Q"          "Shift"
+0x52      0x52        0x52     "R"          "Shift"
+0x53      0x53        0x53     "S"          "Shift"
+0x54      0x54        0x54     "T"          "Shift"
+0x55      0x55        0x55     "U"          "Shift"
+0x56      0x56        0x56     "V"          "Shift"
+0x57      0x57        0x57     "W"          "Shift"
+0x58      0x58        0x58     "X"          "Shift"
+0x59      0x59        0x59     "Y"          "Shift"
+0x5a      0x5a        0x5a     "Z"          "Shift"
+0x5b      0x5b        0x5b     "["          "None"         # BracketLeft
+0x5c      0x5c        0x5c     "\\"         "None"         # Backslash
+0x5d      0x5d        0x5d     "]"          "None"         # BracketRight
+0x5e      0x5e        0x5e     "^"          "Shift"        # AsciiCircumflex
+0x5f      0x5f        0x5f     "_"          "Shift"        # Underscore
+0x60      0x60        0x60     "`"          "None"         # QuoteLeft Backtick
+0x61      0x41        0x61     "a"          "None"
+0x62      0x42        0x62     "b"          "None"
+0x63      0x43        0x63     "c"          "None"
+0x64      0x44        0x64     "d"          "None"
+0x65      0x45        0x65     "e"          "None"
+0x66      0x46        0x66     "f"          "None"
+0x67      0x47        0x67     "g"          "None"
+0x68      0x48        0x68     "h"          "None"
+0x69      0x49        0x69     "i"          "None"
+0x6a      0x4a        0x6a     "j"          "None"
+0x6b      0x4b        0x6b     "k"          "None"
+0x6c      0x4c        0x6c     "l"          "None"
+0x6d      0x4d        0x6d     "m"          "None"
+0x6e      0x4e        0x6e     "n"          "None"
+0x6f      0x4f        0x6f     "o"          "None"
+0x70      0x50        0x50     "p"          "None"
+0x71      0x51        0x71     "q"          "None"
+0x72      0x52        0x72     "r"          "None"
+0x73      0x53        0x73     "s"          "None"
+0x74      0x54        0x74     "t"          "None"
+0x75      0x55        0x75     "u"          "None"
+0x76      0x56        0x76     "v"          "None"
+0x77      0x57        0x77     "w"          "None"
+0x78      0x58        0x78     "x"          "None"
+0x79      0x59        0x79     "y"          "None"
+0x7a      0x5a        0x7a     "z"          "None"
+0x7b      0x7b        0x7b     "{"          "Shift"        # BraceLeft
+0x7c      0x7c        0x7c     "|"          "Shift"        # Bar
+0x7d      0x7d        0x7d     ""           "Shift"        # BraceRight
+0x7e      0x7e        0x7e     "~"          "Shift"        # AsciiTilde
+0x7f      0x7f        0x7f     "DEL"        "None"
+0x80      0x01000000  0xff1b   "Esc"        "None"
+0x81      0x01000001  0xff09   "Tab"        "None"         # avoid moves focus
+0x82      0x01000002  0xff09   "BkTab"      "Shift"        # avoid moves focus
+0x83      0x01000003  0xff08   "BkSpace"    "None"         # differs from Ctrl-H !
+0x84      0x01000004  0xff0d   "Return"     "None"
+0x85      0x01000005  0xff8d   "Enter"      "Keypad"       # Keypad-Enter
+0x86      0x01000006  0xff63   "Ins"        "None"
+0x87      0x01000007  0xffff   "Del"        "None"
+0x88      0x88        0x88     "0x88"       "None"         # was "Pause" a duplicate
+0x89      0x89        0x89     "0x88"       "None"         # was "Print" a duplicate
+0x8a      0x0100000a  0x8a     "SysReq"     "None"
+0x8b      0x0100000b  0x8b     "Clear"      "None"
+0x8c      0x0100000c  0x8c     "0x8c"       "None"
+0x8d      0x0100000d  0x8d     "0x8d"       "None"
+0x8e      0x0100000e  0x8e     "0x8e"       "None"
+0x8f      0x0100000f  0x8f     "0x8f"       "None"
+0x90      0x01000010  0xff50   "Home"       "None"
+0x91      0x01000011  0xff57   "End"        "None"
+0x92      0x01000012  0xff51   "Left"       "None"
+0x93      0x01000013  0xff52   "Up"         "None"
+0x94      0x01000014  0xff53   "Right"      "None"
+0x95      0x01000015  0xff54   "Down"       "None"
+0x96      0x01000016  0xff55   "PageUp"     "None"
+0x97      0x01000017  0xff56   "PageDn"     "None"
+0x98      0x01000020  0xffe1   "Shift_L"    "Shift"        # Left-Shift
+0x99      0x01000021  0xffe3   "Ctrl_L"     "Ctrl"         # Left-Ctrl
+0x9a      0x01000022  0x9a     "Meta"       "Meta"
+0x9b      0x01000023  0xffe9   "Alt_L"      "Alt"          # Left-Alt
+0x9c      0x01000024  0xffe5   "CapsLk"     "None"         # Shift-Lock too???
+0x9d      0x01000025  0xff7f   "NumLk"      "None"
+0x9e      0x01000026  0xff14   "ScrlLk"     "None"         # Good?
+0x9f      0x01000027  0x9f     "0x9f"       "None"
+0xa0      0x01000030  0xffbe   "F1"         "None"
+0xa1      0x01000031  0xffbf   "F2"         "None"
+0xa2      0x01000032  0xffc0   "F3"         "None"
+0xa3      0x01000033  0xffc1   "F4"         "None"
+0xa4      0x01000034  0xffc2   "F5"         "None"
+0xa5      0x01000035  0xffc3   "F6"         "None"
+0xa6      0x01000036  0xffc4   "F7"         "None"
+0xa7      0x01000037  0xffc5   "F8"         "None"
+0xa8      0x01000038  0xffc6   "F9"         "None"
+0xa9      0x01000039  0xffc7   "F10"        "None"
+0xaa      0x0100003a  0xffc8   "F11"        "None"
+0xab      0x0100003b  0xffc9   "F12"        "None"
+0xac      0x01000053  0xffeb   "Super_L"    "None"         # Left-Windows
+0xad      0x01000054  0xffec   "Super_R"    "None"         # Right-Windows
+0xae      0x01000055  0xff67   "Menu"       "None"         # Win-Menu key
+0xaf      0x01000056  0xaf     "Hyper_L"    "None"
+0xb0      0x01000057  0xb0     "Hyper_R"    "None"
+0xb1      0x01000058  0xb1     "Help"       "None"
+0xb2      0x01000059  0xb2     "Dir_L"      "None"
+0xb3      0x01000060  0xb3     "Dir_R"      "None"         # Direction_R
+0xb4      0x01000030  0xffbe   "Sh_F1"      "Shift"
+0xb5      0x01000031  0xffbf   "Sh_F2"      "Shift"
+0xb6      0x01000032  0xffc0   "Sh_F3"      "Shift"
+0xb7      0x01000033  0xffc1   "Sh_F4"      "Shift"
+0xb8      0x01000034  0xffc2   "Sh_F5"      "Shift"
+0xb9      0x01000035  0xffc3   "Sh_F6"      "Shift"
+0xba      0x01000036  0xffc4   "Sh_F7"      "Shift"
+0xbb      0x01000037  0xffc5   "Sh_F8"      "Shift"
+0xbc      0x01000038  0xffc6   "Sh_F9"      "Shift"
+0xbd      0x01000039  0xffc7   "Sh_F10"     "Shift"
+0xbe      0x0100003a  0xffc8   "Sh_F11"     "Shift"
+0xbf      0x0100003b  0xffc9   "Sh_F12"     "Shift"
+0xc0      0x01000006  0xff9e   "KP_Ins"     "Keypad"
+0xc1      0x01000007  0xff9f   "KP_Del"     "Keypad"
+0xc2      0x01000008  0xffe1   "Pause"      "Shift"
+0xc3      0x01000009  0xff61   "Print"      "Shift"
+0xc4      0x01000010  0xff95   "KP_Home"    "Keypad"
+0xc5      0x01000011  0xff9c   "KP_End"     "Keypad"
+0xc6      0x01000012  0xff96   "KP_Left"    "Keypad"
+0xc7      0x01000013  0xff97   "KP_Up"      "Keypad"
+0xc8      0x01000014  0xff98   "KP_Right"   "Keypad"
+0xc9      0x01000015  0xff99   "KP_Down"    "Keypad"
+0xca      0x01000016  0xff9a   "KP_PageUp"  "Keypad"
+0xcb      0x01000017  0xff9b   "KP_PageDn"  "Keypad"
+0xcc      0x01000099  0xff9d   "KP_Begin"   "None"         # KP_Begin
+0xcd      0x01000099  0xcd     "0xcd"       "None"
+0xce      0x01000099  0xce     "0xce"       "None"
+0xcf      0x01000099  0xcf     "0xcf"       "None"
+0xd0      0x2a        0xffaa   "KP_*"       "Keypad"       # Asterisk KP_Multiply
+0xd1      0x2b        0xffab   "KP_+"       "Keypad"       # Plus KP_Add
+0xd2      0x2c        0xffac   "KP_""       "Keypad"       # Comma KP_Separator
+0xd3      0x2d        0xffad   "KP_-"       "Keypad"       # Minus KP_Subtract
+0xd4      0x2e        0xffae   "KP_."       "Keypad-Shift  # Period KP_Decimal
+0xd5      0x2f        0xffaf   "KP_/"       "Keypad"       # Slash KP_Divide
+0xd6      0x01000099  0xd6     "0xd6"       "None"         # available
+0xd7      0x01000020  0xffe2   "Shift_R"    "Shift"        # Right-Shift
+0xd8      0x01000021  0xffe4   "Ctrl_R"     "Ctrl"         # Right-Ctrl
+0xd9      0x2e        0xffae    "KP_."      "Keypad"       # KP_Decimal release
+0xda      0x01000023  0xffea   "Alt_R"      "Alt"          # Right-Alt
+0xdb      0x01000020  0xffe1   "Shift_Lr"   "None"         # L-Shift release
+0xdc      0x01000020  0xffe2   "Shift_Rr"   "None"         # R-Shift release
+0xdd      0x01000021  0xffe3   "Ctrl_Lr"    "None"         # L-Ctrl release
+0xde      0x01000021  0xffe4   "Ctrl_Rr"    "None"         # R-Ctrl release
+0xdf      0x01000099   0xdf    "0xdf"       "None"         # available
+0xe0      0x01000099   0xe0    "0xe0"       "None"
+0xe1      0x01000099   0xe1    "0xe1"       "None"
+0xe2      0x01000099   0xe2    "0xe2"       "None"
+0xe3      0x01000099   0xe3    "0xe3"       "None"
+0xe4      0x01000099   0xe4    "0xe4"       "None"
+0xe5      0x01000099   0xe5    "0xe5"       "None"
+0xe6      0x01000099   0xe6    "0xe6"       "None"
+0xe7      0x01000099   0xe7    "0xe7"       "None"
+0xe8      0x01000099   0xe8    "0xe8"       "None"
+0xe9      0x01000099   0xe9    "0xe9"       "None"
+0xea      0x01000099   0xea    "0xea"       "None"
+0xeb      0x01000099   0xeb    "0xeb"       "None"
+0xec      0x01000099   0xec    "0xec"       "None"
+0xed      0x01000099   0xed    "0xed"       "None"
+0xee      0x01000099   0xee    "0xee"       "None"
+0xef      0x01000099   0xef    "0xef"       "None"
+0xf0      0x01000099   0xf0    "0xf0"       "None"
+0xf1      0x01000099   0xf1    "0xf1"       "None"
+0xf2      0x01000099   0xf2    "0xf2"       "None"
+0xf3      0x01000099   0xf3    "0xf3"       "None"
+0xf4      0x01000099   0xf4    "0xf4"       "None"
+0xf5      0x01000099   0xf5    "0xf5"       "None"
+0xf6      0x01000099   0xf6    "0xf6"       "None"
+0xf7      0x01000099   0xf7    "0xf7"       "None"
+0xf8      0x01000099   0xf8    "0xf8"       "None"
+0xf9      0x01000099   0xf9    "0xf9"       "None"
+0xfa      0x01000099   0xfa    "0xfa"       "None"
+0xfb      0x01000099   0xfb    "0xfb"       "None"
+0xfc      0x01000099   0xfc    "0xfc"       "None"
+0xfd      0x01000099   0xfd    "0xfd"       "None"
+0xfe      0x01000099   0xfe    "0xfe"       "None"
+0xff      0xffffffff   0xff    "Null_ff"    "None"         # end-of-list
+
+# End of /home/ahlstrom/.config/seq66/qseq66-azerty.ctrl
+#
+# vim: sw=4 ts=4 wm=4 et ft=dosini

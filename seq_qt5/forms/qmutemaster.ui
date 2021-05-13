@@ -473,8 +473,8 @@ adhere strictly to the mute-group.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>If checked, load the mute-group section in the
-'mutes' file.</string>
+         <string>If checked, load the mute-group section from the
+'mutes' file.  Disables loading it from the MIDI file.</string>
         </property>
         <property name="text">
          <string>Load Mutes from File</string>
@@ -517,7 +517,8 @@ tab can be used to toggle the mute-groups.</string>
         <property name="toolTip">
          <string>Saves the current mute-group modifications to
 the mute-group settings.  One still needs to save
-the MIDI file as applicable to preserve this mute-group.</string>
+the MIDI file or 'mutes' file, as applicable, to
+preserve this mute-group.</string>
         </property>
         <property name="text">
          <string>Update Group</string>

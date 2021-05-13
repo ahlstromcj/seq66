@@ -209,7 +209,10 @@ qmutemaster::qmutemaster
         this, SLOT(slot_load_mutes())
     );
     ui->m_check_toggle_active->setEnabled(true);
-    ui->m_check_toggle_active->setChecked(cb_perf().mutes().toggle_active_only());
+    ui->m_check_toggle_active->setChecked
+    (
+        cb_perf().mutes().toggle_active_only()
+    );
     connect
     (
         ui->m_check_toggle_active, SIGNAL(stateChanged(int)),
@@ -226,6 +229,7 @@ qmutemaster::qmutemaster
     ui->m_button_save->setEnabled(false);
 
     cb_perf().enregister(this);         /* register this for notifications  */
+    group_needs_update();               /* guarantee the initial load       */
     m_timer = new QTimer(this);         /* timer for regular redraws        */
     m_timer->setInterval(100);          /* doesn't need to be super fast    */
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
@@ -476,9 +480,9 @@ qmutemaster::closeEvent (QCloseEvent * event)
  *  if a smaller set number (count) is used, some buttons will be unlabelled
  *  and disabled.
  *
- *  Note that the largest number of sets is 4 x 8 = 32.  This limitation is
- *  necessary because there are only so many available keys on the keyboard
- *  for pattern, mute-group, and set control.
+ *  Note that the largest number of mute-groups is 4 x 8 = 32.  This
+ *  limitation is practically necessary because there are only so many
+ *  available keys on the keyboard for pattern, mute-group, and set control.
  */
 
 void
@@ -694,9 +698,7 @@ qmutemaster::slot_save ()
 
         /*
          *  Set the base-name of the 'mutes' files, then pass the mute-group
-         *  bits to performer to update the group and its rcsettings copy..
-         *
-         * bool ok = cb_perf().set_mutes(current_group(), bits, true);
+         *  bits to performer to update the group and its rcsettings copy.
          */
 
         midibooleans bits = m_pattern_mutes;

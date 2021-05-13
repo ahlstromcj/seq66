@@ -387,7 +387,7 @@ notemapfile::write_map_entries (std::ofstream & file) const
  */
 
 bool
-save_notemapper
+copy_notemapper
 (
     notemapper & nm,
     const std::string & source,

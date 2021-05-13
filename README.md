@@ -1,7 +1,7 @@
 # README for Seq66 0.93.2
 
 Chris Ahlstrom
-2015-09-10 to 2021-05-10
+2015-09-10 to 2021-05-12
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -88,12 +88,13 @@ Windows, and using a conventional source tarball.
             progress boxes, or eliminate them completely.
         *   Refactored keymaps for better progress on issue #47, using native
             key-codes. Added a spreadsheet listing the supported names of the
-            keys.
+            keys.  Laid the groundwork for a 'keys' mapping file.
         *   Removed excess spurious events when Seq66 shuts down under JACK.
         *   Implemented the control-toggling of "follow JACK transport".
         *   Minor tweaks to the transposed-trigger functionality.
         *   Fixed a bug in the pattern editor that created unnecessary empty
             screen-sets.
+        *   Further fixes and flexibility for handling mute-groups.
     *   Version 0.93.1:
         *   Work in progress on issue #47; added a keyboard-layout option to the
             'ctrl' file to disable auto-shift and tweak the internal key-map for

@@ -1,6 +1,6 @@
 TO DO for Seq66 0.93.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-05-10
+2019-04-13 to 2021-05-13
 
 From: zigmhount <notifications@github.com>
 Subject: [Question/Feature request] Live midi pattern recording (#188)
@@ -40,6 +40,11 @@ Loops:
 
     Remove the old qseqeditframe and the use-new-seqedit option (now the
     default).
+
+Mutes:
+
+    Upon File / New, need to make sure qmutemaster is cleared.
+    Same before reading in the next file if accepted.
 
 NSM:
 

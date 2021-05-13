@@ -1,0 +1,96 @@
+# Seq66 0.94.0 (and above) keyboard remapping configuration file
+#
+# /home/ahlstrom/.config/seq66/qseq66-azerty-fr.keys
+# Written on 2021-05-12 14:52:54
+#
+# This file holds keystroke remappings for the AZERTY FR keyboard.
+# If specified, it modifies the internal key-map with the changes
+# shown below.
+#
+# Note that the internal keymap is shown in doc/control-keys.ods and in
+# data/linux/qseq66-qwerty-us.keys.
+#
+# Also note that this file is only read... it is never written over.
+
+[Seq66]
+
+config-type = "keys"
+version = 0
+
+[comments]
+
+This French AZERTY configuration was provided by Sylvain Margueritat
+(user name 'tripayou') as part of issue #47 "Change key map".  Some of the
+issues are:
+  
+ 1. BPM+ and BPM- defaults '"' and ';' are replaced in AZERTY by '*' and 'ù',
+    but neither work.
+ 2. Auto-shift for group-learn for top line doesn't work.  With '!' replaced by
+    '&', the error is "Key '!' (code = 33) is not a configured mute-group key."
+    The "azerty" option disables auto-shift.
+ 3. Assign a mute group to key 'a'; loop control mute/unmute by pressing this
+    key does not work.
+  
+Here are the extended ASCII keys that appear in this file using special names
+(see the table below).  Other keys need some modification to their mappings as
+well, mainly changes in keystroke modifiers.
+  
+        Key #0xa3  '£'
+        Key #0xa7  '§'
+        Key #0xb0  '°'
+        Key #0xb2  '²'
+        Key #0xc0  'à'
+        Key #0xc7  'ç'
+        Key #0xc8  'è'
+        Key #0xc9  'é'
+        Key #0xd9  'ù'
+        Key #0x39c 'µ'
+
+[key-mappings]
+
+# Internal Qt          Qt      Key
+# Ordinal Evkey      VirtKey   Name        Modifier
+
+0x23      0x21        0x21     "!"          "None"         # Exclam
+0x22      0x22        0x22     """          "None"         # QuoteDbl
+0x23      0x23        0x23     "#"          "Alt-Gr"       # NumberSign
+0x26      0x26        0x26     "&"          "None"         # Ampersand
+0x27      0x27        0x27     "'"          "None"         # Apostrophe
+0x28      0x28        0x28     "("          "None"         # ParenLeft
+0x29      0x29        0x29     ")"          "None"         # ParenRight
+0x2a      0x2a        0x2a     "*"          "None"         # Asterisk
+0x2e      0x2e        0x2e     "."          "Shift"        # Period
+0x2f      0x2f        0x2f     "/"          "Shift"        # Slash
+0x3a      0x3a        0x3a     ":"          "None"         # Colon
+0x3c      0x3c        0x3c     "<"          "None"         # Less-than
+0x40      0x40        0x40     "@"          "Alt-Gr"       # AtSign
+0x5b      0x5b        0x5b     "["          "Alt-Gr"       # BracketLeft
+0x5c      0x5c        0x5c     "\"          "Alt-Gr"       # Backslash
+0x5d      0x5d        0x5d     "]"          "Alt-Gr"       # BracketRight
+0x5e      0x5e        0x5e     "^"          "Alt-Gr"       # AsciiCircumflex
+0x5f      0x5f        0x5f     "_"          "None"         # Underscore
+0x60      0x60        0x60     "`"          "Alt-Gr"       # QuoteLeft  Backtick
+0x7b      0x7b        0x7b     "{"          "Alt-Gr"       # BraceLeft
+0x7c      0x7c        0x7c     "|"          "Alt-Gr"       # Bar
+0x7d      0x7d        0x7d     "}"          "Alt-Gr"       # BraceRight
+0x7e      0x7e        0x7e     "~"          "Alt-Gr"       # Tilde (dead key)
+0xe0      0xa3        0xa3     "L_pound"    "None"         # £
+0xe1      0xa4        0xa4     "Currency"   "Alt-Gr"       # ¤
+0xe2      0xa7        0xa7     "Silcrow"    "Shift"        # §
+0xe3      0xb0        0xb0     "Degrees"    "Shift"        # °
+0xe4      0x01000022  0xffec   "Super_2"    "Meta"         # ²
+0xe5      0xc0        0xe0     "a_grave"    "None"         # à
+0xe6      0xc7        0xe7     "c_cedilla"  "None"         # ç
+0xe7      0xc8        0xe8     "e_grave"    "None"         # è
+0xe8      0xc9        0xe9     "e_acute"    "None"         # é
+0xe9      0xd9        0xf9     "u_grave"    "None"         # ù
+0xea      0x039c      0xb5     "Mu"         "Shift"        # µ
+0xeb      0x20ac      0xb6     "Euro"       "Alt-Gr"       # €
+0xec      0x01001252  0xfe52   "Circflex"   "None"         # ^ Not the ASCII caret
+0xed      0x01001257  0xfe57   "Umlaut"     "Shift"        # ¨ Diaeresis
+0xee      0x01000022  0xffec   "Super_2r"   "None"         # ² Release
+0xff      0xffffffff  0xff     "?"          "None"         # terminator
+
+# End of /home/ahlstrom/.config/seq66/qseq66-azerty.ctrl
+#
+# vim: sw=4 ts=4 wm=4 et ft=dosini

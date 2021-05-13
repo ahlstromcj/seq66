@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-05-07
+ * \updates       2021-05-12
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -324,11 +324,10 @@ private:
     /**
      *  Indicates if the user wants to use a [midi-control] section from a
      *  separate file, for the convenience of changing the MIDI control setup
-     *  without a lot of editing.  This value is set to true if a
-     *  [midi-control-file] section is encountered.
+     *  without a lot of editing.  This value is now permanently set to true.
+     *
+     *      bool m_use_midi_control_file;
      */
-
-    bool m_use_midi_control_file;
 
     /**
      *  The base name of the MIDI control file, if applicable.  This file is
@@ -341,11 +340,12 @@ private:
     /**
      *  Indicates if the user wants to use a [mute-group] section from a
      *  separate file, for the convenience of changing the setup
-     *  without a lot of editing.  This value is set to true if a
-     *  [mute-group] section is encountered.
+     *  without a lot of editing.  This value is now permanently
+     *  set to true.  A user with an old setup will have to adapt manually if
+     *  necessary.
+     *
+     *      bool m_use_mute_group_file;
      */
-
-    bool m_use_mute_group_file;
 
     /**
      *  The base name of the mute-group file, if applicable.  This file is
@@ -891,7 +891,7 @@ public:
 
      bool use_midi_control_file () const
      {
-        return m_use_midi_control_file;
+        return true;
      }
 
      const std::string & midi_control_filename () const
@@ -906,7 +906,7 @@ public:
 
      bool use_mute_group_file () const
      {
-        return m_use_mute_group_file;
+        return true;
      }
 
     const std::string application_name () const
@@ -1068,16 +1068,6 @@ public:
     void print_keys (bool flag)
     {
         m_print_keys = flag;
-    }
-
-    void use_midi_control_file (bool flag)
-    {
-       m_use_midi_control_file = flag;
-    }
-
-    void use_mute_group_file (bool flag)
-    {
-       m_use_mute_group_file = flag;
     }
 
     void midi_control_filename (const std::string & name)

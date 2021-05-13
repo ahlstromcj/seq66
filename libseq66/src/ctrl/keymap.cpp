@@ -25,13 +25,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-11
+ * \updates       2021-05-12
  * \license       GNU GPLv2 or above
  */
 
 #include <map>                          /* std::map and std::multimap       */
 
 #include "ctrl/keymap.hpp"              /* keymap function declarations     */
+#include "util/strfunctions.hpp"        /* contains()                       */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -68,6 +69,34 @@ modifier_names (unsigned kmod)
         if (kmod & keyboard::KGROUP)
             result += "Group ";
     }
+    return result;
+}
+
+unsigned
+modifier_code (const std::string & name)
+{
+    unsigned result = keyboard::KNONE;
+    if (contains(name, "Shift"))
+        result |= keyboard::KSHIFT;
+
+    if (contains(name, "Ctrl"))
+        result |= keyboard::KCTRL;
+
+    if (contains(name, "Alt"))
+        result |= keyboard::KALT;
+
+    if (contains(name, "Alt-Gr"))
+        result |= keyboard::KCTRLALT;
+
+    if (contains(name, "Keypad"))
+        result |= keyboard::KEYPAD;
+
+    if (contains(name, "Meta"))
+        result |= keyboard::KMETA;
+
+    if (contains(name, "Group"))
+        result |= keyboard::KGROUP;
+
     return result;
 }
 
@@ -220,8 +249,9 @@ qt_keys (int i)
          *  Code        Qt      Qt      Key
          * Ordinal   Key Event Virt Key Name        Modifier
          *
-         * Ctrl-key section. It is best to avoid using Control keys to control loops, mutes,
-         * and automation.  Too much chance of interfering with the normal user interface.
+         * Ctrl-key section. It is best to avoid using Control keys to control
+         * loops, mutes, and automation.  Too much chance of interfering with
+         * the normal user interface.
          */
 
         { 0x00,        0x40,   0x60,  "NUL",        KCTRL  }, // ^@: Null
@@ -394,10 +424,10 @@ qt_keys (int i)
          * See starting around 0xd7 for the Right versions of these keys.
          */
 
-        { 0x98,  0x01000020, 0xffe1,  "Shift",      KSHIFT }, // Left-Shift
-        { 0x99,  0x01000021, 0xffe3,  "Ctrl",       KCTRL  }, // Left-Ctrl
+        { 0x98,  0x01000020, 0xffe1,  "Shift_L",    KSHIFT }, // Left-Shift
+        { 0x99,  0x01000021, 0xffe3,  "Ctrl_L",     KCTRL  }, // Left-Ctrl
         { 0x9a,  0x01000022,   0x9a,  "Meta",       KMETA  },
-        { 0x9b,  0x01000023, 0xffe9,  "Alt",        KALT   }, // Left-Alt
+        { 0x9b,  0x01000023, 0xffe9,  "Alt_L",      KALT   }, // Left-Alt
         { 0x9c,  0x01000024, 0xffe5,  "CapsLk",     KNONE  }, // Shift-Lock too???
         { 0x9d,  0x01000025, 0xff7f,  "NumLk",      KNONE  },
         { 0x9e,  0x01000026, 0xff14,  "ScrlLk",     KNONE  }, // Good?
@@ -415,7 +445,7 @@ qt_keys (int i)
         { 0xaa,  0x0100003a, 0xffc8,  "F11",        KNONE  },
         { 0xab,  0x0100003b, 0xffc9,  "F12",        KNONE  },
         { 0xac,  0x01000053, 0xffeb,  "Super_L",    KNONE  }, // Left-Windows
-        { 0xad,  0x01000054, 0xffec,  "Super_R",    KNONE  }, // Right-Windows, good code?
+        { 0xad,  0x01000054, 0xffec,  "Super_R",    KNONE  }, // Right-Windows
         { 0xae,  0x01000055, 0xff67,  "Menu",       KNONE  }, // Win-Menu key
         { 0xaf,  0x01000056,   0xaf,  "Hyper_L",    KNONE  },
         { 0xb0,  0x01000057,   0xb0,  "Hyper_R",    KNONE  },
@@ -467,20 +497,21 @@ qt_keys (int i)
         { 0xd3,        0x2d, 0xffad,  "KP_-",       KEYPAD }, // Minus, KP_Subtract
         { 0xd4,        0x2e, 0xffae,  "KP_.",    KPADSHIFT }, // Period, KP_Decimal
         { 0xd5,        0x2f, 0xffaf,  "KP_/",       KEYPAD }, // Slash, KP_Divide
-        { 0xd6,  0x01000099,   0xd6,  "0xd6",       KNONE  },
 
         /*
-         *              Remainders
+         *  Remainders.  Provides the Right version and key-release versions
+         *  of some keys.
          */
 
-        { 0xd7,  0x01000020, 0xffe2,  "Shift",      KSHIFT }, // Right-Shift
-        { 0xd8,  0x01000021, 0xffe4,  "Ctrl",       KCTRL  }, // Right-Ctrl
-        { 0xd9,        0xd9,   0xd9,  "0xd9",       KNONE  }, // available
-        { 0xda,  0x01000023, 0xffea,  "Alt",        KALT   }, // Right-Alt
-        { 0xdb,  0x01000020, 0xffe1,  "Shift",      KNONE  }, // L-Shift release
-        { 0xdc,  0x01000020, 0xffe2,  "Shift",      KNONE  }, // R-Shift release
-        { 0xdd,  0x01000021, 0xffe3,  "Ctrl",       KNONE  }, // L-Ctrl release
-        { 0xde,  0x01000021, 0xffe4,  "Ctrl",       KNONE  }, // R-Ctrl release
+        { 0xd6,  0x01000099,   0xd6,  "0xd6",       KNONE  }, // available
+        { 0xd7,  0x01000020, 0xffe2,  "Shift_R",    KSHIFT }, // Right-Shift
+        { 0xd8,  0x01000021, 0xffe4,  "Ctrl_R",     KCTRL  }, // Right-Ctrl
+        { 0xd9,        0x2e, 0xffae,   "KP_.",      KEYPAD }, // KP_Decimal release
+        { 0xda,  0x01000023, 0xffea,  "Alt_R",      KALT   }, // Right-Alt
+        { 0xdb,  0x01000020, 0xffe1,  "Shift_Lr",   KNONE  }, // L-Shift release
+        { 0xdc,  0x01000020, 0xffe2,  "Shift_Rr",   KNONE  }, // R-Shift release
+        { 0xdd,  0x01000021, 0xffe3,  "Ctrl_Lr",    KNONE  }, // L-Ctrl release
+        { 0xde,  0x01000021, 0xffe4,  "Ctrl_Rr",    KNONE  }, // R-Ctrl release
         { 0xdf,  0x01000099,   0xdf,  "0xdf",       KNONE  }, // available
 
         /*
@@ -929,7 +960,7 @@ setup_qt_azerty_fr_keys ()
         { 0x5d,   0x5d,     0x5d,   "]",         KALTGR }, // BracketRight
         { 0x5e,   0x5e,     0x5e,   "^",         KALTGR }, // AsciiCircumflex
         { 0x5f,   0x5f,     0x5f,   "_",         KNONE  }, // Underscore
-        { 0x60,   0x60,     0x60,   "`",         KALTGR },    // QuoteLeft, Backtick
+        { 0x60,   0x60,     0x60,   "`",         KALTGR }, // QuoteLeft, Backtick
         { 0x7b,   0x7b,     0x7b,   "{",         KALTGR }, // BraceLeft
         { 0x7c,   0x7c,     0x7c,   "|",         KALTGR }, // Bar
         { 0x7d,   0x7d,     0x7d,   "}",         KALTGR }, // BraceRight
@@ -938,7 +969,7 @@ setup_qt_azerty_fr_keys ()
         { 0xe1,   0xa4,     0xa4,   "Currency",  KALTGR }, // ¤ <--F?
         { 0xe2,   0xa7,     0xa7,   "Silcrow",   KSHIFT }, // § <--F8
         { 0xe3,   0xb0,     0xb0,   "Degrees",   KSHIFT }, // ° <--Hyper_R
-        { 0xe4,   0xb2,     0xb2,   "Super_2",   KNONE  }, // ² <--Dir_L
+        { 0xe4, 0x01000022, 0xffec, "Super_2",   KMETA  }, // ² <--Dir_L press
         { 0xe5,   0xc0,     0xe0,   "a_grave",   KNONE  }, // à <--KP_Ins
         { 0xe6,   0xc7,     0xe7,   "c_cedilla", KNONE  }, // ç <--KP_Up
         { 0xe7,   0xc8,     0xe8,   "e_grave",   KNONE  }, // è <--KP_Right
@@ -948,6 +979,7 @@ setup_qt_azerty_fr_keys ()
         { 0xeb,   0x20ac,   0xb6,   "Euro",      KALTGR }, // € <--(new)
         { 0xec, 0x1001252,  0xfe52, "Circflex",  KNONE  }, // ^ <--Caret
         { 0xed, 0x1001257,  0xfe57, "Umlaut",    KSHIFT }, // ¨ <--Diaeresis
+        { 0xee, 0x01000022, 0xffec, "Super_2r",  KNONE  }, // ² <--Dir_L release
         { 0x00, 0xffffffff, 0xff,   "?",         KNONE  }  // terminator
     };
     for (int i = 0; s_fr_keys[i].qtk_keyevent != 0xffffffff; ++i)

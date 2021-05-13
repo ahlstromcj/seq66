@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-05-07
+ * \updates       2021-05-12
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -117,9 +117,7 @@ rcsettings::rcsettings () :
     m_config_filename           (SEQ66_CONFIG_NAME),    /* updated in body  */
     m_full_config_directory     (),
     m_user_filename             (SEQ66_CONFIG_NAME),    /* updated in body  */
-    m_use_midi_control_file     (true),
     m_midi_control_filename     (SEQ66_CONFIG_NAME),    /* updated in body  */
-    m_use_mute_group_file       (true),
     m_mute_group_filename       (SEQ66_CONFIG_NAME),    /* updated in body  */
     m_playlist_active           (false),
     m_playlist_filename         (SEQ66_CONFIG_NAME),    /* updated in body  */
@@ -220,9 +218,7 @@ rcsettings::set_defaults ()
     m_config_filename           += ".rc";
     m_full_config_directory.clear();
     m_user_filename = SEQ66_CONFIG_NAME;
-    m_use_midi_control_file = true;
     m_midi_control_filename = SEQ66_CONFIG_NAME;
-    m_use_mute_group_file = true;
     m_mute_group_filename = SEQ66_CONFIG_NAME;
     m_playlist_active = false;
     m_playlist_filename = SEQ66_CONFIG_NAME;

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-05-09
+ * \updates       2021-05-12
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -711,9 +711,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
          * af += "/drums/playlist", later maybe?
          */
 
-        rc().use_midi_control_file(true);
         rc().midi_control_filename(cf);
-        rc().use_mute_group_file(true);
         rc().mute_group_filename(mf);
         rc().user_filename(uf);
         rc().playlist_filename(pl);

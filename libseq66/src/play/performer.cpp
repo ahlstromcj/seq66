@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-05-05
+ * \updates       2021-05-12
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -6282,7 +6282,7 @@ performer::save_note_mapper (const std::string & notefile)
 
         if (nfname.empty())
         {
-            // TODO?
+            result = false;
         }
         else
         {
@@ -6332,12 +6332,24 @@ performer::open_mutegroups (const std::string & mgf)
 bool
 performer::save_mutegroups (const std::string & mgf)
 {
-    rc().mute_groups() = m_mute_groups;         /* copy to rcsettings       */
+    bool result = false;
+    std::string mgfname = rc().mute_group_filename();
+    if (! mgf.empty())
+        mgfname = mgf;
 
-    bool result = seq66::save_mutegroups(mgf);  /* saves rcsettings groups  */
-    if (result)
+    if (mgfname.empty())
     {
-        // nothing to do
+        // what to do?
+    }
+    else
+    {
+        rc().mute_groups() = m_mute_groups;         /* copy to rcsettings       */
+
+        bool result = seq66::save_mutegroups(mgf);  /* saves rcsettings groups  */
+        if (result)
+        {
+            // nothing to do
+        }
     }
     return result;
 }

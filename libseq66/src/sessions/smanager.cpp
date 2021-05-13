@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2021-04-22
+ * \updates       2021-05-12
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -530,6 +530,10 @@ smanager::save_session (std::string & msg, bool ok)
             bool save = rc().auto_option_save(); // && ! usr().in_session();
             if (save)
             {
+                /*
+                 * Saves the 'rc' file and, conditionally, the 'usr' file.
+                 */
+
                 file_message("Save session", "Options");
                 if (! cmdlineopts::write_options_files())
                 {
@@ -541,8 +545,18 @@ smanager::save_session (std::string & msg, bool ok)
 
             if (save)
             {
+                file_message("Save session", "Mutes");
+                result = perf()->save_mutegroups();         // add msg return?
+            }
+            if (save)
+            {
                 file_message("Save session", "Play-list");
                 result = perf()->save_playlist();           // add msg return?
+            }
+            if (save)
+            {
+                file_message("Save session", "Note-mapper");
+                result = perf()->save_note_mapper();        // add msg return?
             }
             if (save)
             {
