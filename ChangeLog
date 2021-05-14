@@ -1,5 +1,402 @@
+2021-05-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/Makefile.in, libsessions/include/Makefile.in: New
+	Makefile.ins for the libs.
+	* README.md, TODO, contrib/DIR_COLORS, contrib/midi/README,
+	contrib/notes/git.txt, data/linux/{qseq66-azerty-fr.keys =>
+	qseq66-azerty-fr.keymap}, data/linux/{qseq66-qwerty-us.keys =>
+	qseq66-qwerty-us.keymap}, data/linux/qseq66.mutes,
+	data/linux/qseq66.rc, data/samples/nanomap.ctrl,
+	data/samples/rowclipsmap.ctrl, data/samples/rowclipsmap.mutes,
+	data/samples/rowclipsmap.rc, doc/latex/tex/configuration.tex,
+	libseq66/include/Makefile.am, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/mutegroups.hpp,
+	libseq66/include/play/performer.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/mutegroups.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, libsessions/include/Makefile.am,
+	resources/pixmaps/route66.xpm, seq_qt5/include/qloopbutton.hpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qmutemaster.cpp,
+	seq_qt5/src/qsmainwnd.cpp: More fixes to mutes, interim check-in.
+
+2021-05-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, contrib/DIR_COLORS,
+	data/linux/qseq66-azerty-fr.keys, data/linux/qseq66-qwerty-us.keys,
+	data/linux/qseq66.mutes, libseq66/include/cfg/notemapfile.hpp,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/ctrl/keymap.hpp,
+	libseq66/include/play/mutegroups.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/mutegroupsfile.cpp,
+	libseq66/src/cfg/notemapfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/ctrl/keymap.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/mutegroups.cpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/forms/qmutemaster.ui,
+	seq_qt5/src/qmutemaster.cpp: Fixes to mute groups, encoding change
+	to save about 3K in writing them.
+
+2021-05-11  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, data/linux/qseq66-azerty.ctrl, data/linux/qseq66.mutes,
+	data/linux/qseq66.usr, libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/ctrl/keymap.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/mutegroups.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/cfg/mutegroupsfile.cpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/ctrl/keymap.cpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/midi/songsummary.cpp,
+	libseq66/src/play/mutegroups.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qloopbutton.hpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qmutemaster.cpp, seq_qt5/src/qt5_helpers.cpp: Adjusting
+	fingerprints, tightening mute-groups, more fixes for issue #47.
+
+2021-05-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, data/linux/qseq66.mutes, data/linux/qseq66.usr,
+	data/samples/dark-gradient.qss, data/samples/flat-rounded.qss,
+	data/samples/grey-ghost.qss, data/samples/qseq66.qss,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/ctrl/keymap.hpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/ctrl/keymap.cpp,
+	seq_qt5/include/qloopbutton.hpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qslivegrid.cpp: Fixes for issue #47, progress box
+	configuration, new style-sheets.
+	* doc/latex/tex/configuration.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/src/cfg/cmdlineopts.cpp, seq_qt5/forms/Makefile.in,
+	seq_qt5/include/Makefile.in, seq_qt5/src/Makefile.in: Updated
+	Makefile.ins.
+
+2021-05-09  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, {seq_qt5/forms => contrib/code}/qseqeditframe.ui,
+	contrib/vim-syntax/cpp.vim, data/linux/qseq66-azerty.ctrl,
+	doc/latex/tex/midi_formats.tex,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/midi/midifile.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/triggers.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/keycontainer.cpp, libseq66/src/ctrl/keymap.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/triggers.cpp,
+	seq_qt5/forms/Makefile.am, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/include/qseqbase.hpp, seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qseqroll.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_rtmidi/src/mastermidibus.cpp: Finished trigger-transpose
+	handling, fixed bug in reading 'ctrl' file for azerty keyboard.
+
+2021-05-08  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, {seq_qt5/src => contrib/code}/qseqeditframe.cpp,
+	{seq_qt5/include => contrib/code}/qseqeditframe.hpp,
+	doc/latex/tex/configuration.tex, doc/latex/tex/references.tex,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/triggers.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/triggers.cpp,
+	seq_qt5/include/Makefile.am, seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qseqroll.hpp, seq_qt5/seq_qt5.pro,
+	seq_qt5/src/Makefile.am, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qsmainwnd.cpp: Fixed
+	song-editor infinite loop, removed old qseqeditframe, fixed unneeded
+	screenset creation in making background-seq menu.
+
+2021-05-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/ctrl/keymap.hpp,
+	libseq66/include/ctrl/keystroke.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/triggers.hpp, libseq66/src/ctrl/keymap.cpp,
+	libseq66/src/ctrl/keystroke.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/triggers.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp: Keystroke
+	refactoring and trigger updates, but currently has issue with Song
+	Editor causing infinite loop.
+
+2021-05-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure, contrib/scripts/timid,
+	libseq66/include/ctrl/keystroke.hpp: Minor tweaks to timid script
+	and dead code in keystroke class.
+	* NEWS, README.md, Seqtool/Makefile.am, Seqtool/Seqtool.pro,
+	Seqtool/forms/Makefile.am, Seqtool/forms/qtestframe.ui,
+	Seqtool/include/Makefile.am, Seqtool/include/converter.hpp,
+	Seqtool/include/faker.hpp, Seqtool/include/gdk_basic_keys.hpp,
+	Seqtool/include/midi_control_helpers.hpp,
+	Seqtool/include/midi_control_unit_test.hpp,
+	Seqtool/include/optionsfile.hpp, Seqtool/include/qtcore_task.hpp,
+	Seqtool/include/qtestframe.hpp, Seqtool/include/unit_tests.hpp,
+	Seqtool/include/util_unit_test.hpp, Seqtool/src/Makefile.am,
+	Seqtool/src/converter.cpp, Seqtool/src/faker.cpp,
+	Seqtool/src/gdk_basic_keys.cpp,
+	Seqtool/src/midi_control_helpers.cpp,
+	Seqtool/src/midi_control_unit_test.cpp,
+	Seqtool/src/optionsfile.cpp, Seqtool/src/qtcore_task.cpp,
+	Seqtool/src/qtestframe.cpp, Seqtool/src/seqtool.cpp,
+	Seqtool/src/unit_tests.cpp, Seqtool/src/util_unit_test.cpp, TODO,
+	VERSION, configure.ac, configure.help, contrib/vim-syntax/c.vim,
+	data/license.txt, data/linux/qseq66-azerty.ctrl,
+	data/linux/qseq66.ctrl, data/readme.txt, doc/dox/doxy-common.cfg,
+	doc/latex/tex/seq66-user-manual.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/include/ctrl/keymap.hpp,
+	libseq66/include/ctrl/keystroke.hpp,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/keycontainer.cpp, libseq66/src/ctrl/keymap.cpp,
+	libseq66/src/play/performer.cpp, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/include/qslivebase.hpp, seq_qt5/include/qsliveframe.hpp,
+	seq_qt5/include/qslivegrid.hpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qmutemaster.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qt5_helpers.cpp, seq_rtmidi/src/midi_api.cpp,
+	seq_rtmidi/src/midi_info.cpp, seq_rtmidi/src/midi_jack.cpp: Removed
+	Seqtool, upgraded keymap, JACK tweaks.
+
+2021-05-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, VERSION, configure.ac, data/license.txt,
+	data/readme.txt, doc/dox/doxy-common.cfg,
+	doc/latex/tex/event_editor.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/src/cfg/midicontrolfile.cpp: Version 0.93.1 AKA 'Show
+	Stopper' merged to master.
+	* README.md, contrib/scripts/make-checkout: Version 0.93.1 pending,
+	fixed issue #51.
+
+2021-05-02  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.in, libseq66/src/play/listsbase.cpp: Improvements to port
+	nick-naming.
+	* README.md, TODO, contrib/scripts/timid, data/linux/qseq66.ctrl,
+	libseq66/include/midi/jack_assistant.hpp,
+	libseq66/src/midi/jack_assistant.cpp, seq_rtmidi/src/midi_jack.cpp: 
+	Fixed issue #51, a JACK transport failure.
+
+2021-05-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* : commit 407779a8fabeca0568521912fc000f4966591218 Author: Chris
+	Ahlstrom <ahlstromcj@gmail.com> Date:   Sat May 1 08:26:41 2021
+	-0400
+
+2021-04-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.in, Seq66cli/Makefile.in, Seq66qt5/Makefile.in,
+	Seqtool/Makefile.in, Seqtool/forms/Makefile.in,
+	Seqtool/include/Makefile.in, Seqtool/src/Makefile.in, configure,
+	configure.help, data/Makefile.in, doc/Makefile.in,
+	doc/latex/Makefile.in, doc/latex/tex/Makefile.in,
+	libseq66/Makefile.in, libseq66/include/Makefile.in,
+	libseq66/src/Makefile.in, libsessions/Makefile.in,
+	libsessions/include/Makefile.in, libsessions/src/Makefile.in,
+	m4/Makefile.in, man/Makefile.in, resources/pixmaps/Makefile.in,
+	seq_portmidi/Makefile.in, seq_portmidi/include/Makefile.in,
+	seq_portmidi/src/Makefile.in, seq_qt5/Makefile.in,
+	seq_qt5/forms/Makefile.in, seq_qt5/include/Makefile.in,
+	seq_qt5/src/Makefile.am, seq_qt5/src/Makefile.in,
+	seq_rtmidi/Makefile.in, seq_rtmidi/include/Makefile.in,
+	seq_rtmidi/src/Makefile.in: Removal of XPCCUT unit test symbols from
+	the official build.
+	* README.md, TODO, contrib/notes/styling.text,
+	data/linux/qseq66-azerty.ctrl, data/linux/qseq66-default.palette,
+	data/linux/qseq66.palette, data/samples/qseq66-sample.palette,
+	data/samples/qseq66.qss, doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/include/gui_palette_qt5.hpp,
+	seq_qt5/include/qslotbutton.hpp, seq_qt5/include/qt5_helpers.hpp,
+	seq_qt5/src/gui_palette_qt5.cpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qslotbutton.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp: Fixed issue
+	#50, palette upgrades, reduced length of window caption.
+
+2021-04-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, Seq66qt5/seq66qt5.cpp, TODO,
+	data/linux/qseq66-azerty.ctrl, doc/latex/tex/configuration.tex,
+	libseq66/include/ctrl/keycontainer.hpp,
+	libseq66/include/ctrl/keymap.hpp,
+	libseq66/include/ctrl/keystroke.hpp,
+	libseq66/src/ctrl/keycontainer.cpp, libseq66/src/ctrl/keymap.cpp,
+	libseq66/src/ctrl/keystroke.cpp, seq_qt5/include/qt5_helpers.hpp,
+	seq_qt5/src/qmutemaster.cpp, seq_qt5/src/qsetmaster.cpp,
+	seq_qt5/src/qsliveframe.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp: More
+	progress in working with an AZERTY (FR) keyboard.
+
+2021-04-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, contrib/scripts/Jack,
+	contrib/scripts/seq66-nsm-proxy, data/linux/qseq66.mutes,
+	doc/latex/tex/configuration.tex,
+	libseq66/include/cfg/mutegroupsfile.hpp,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/mutegroups.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/src/cfg/mutegroupsfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/mutegroups.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/setmapper.cpp,
+	seq_qt5/forms/qmutemaster.ui, seq_qt5/include/qmutemaster.hpp,
+	seq_qt5/src/qmutemaster.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_rtmidi/src/midi_alsa.cpp, seq_rtmidi/src/midi_alsa_info.cpp: A
+	reasonable fix to issue #49 plus some additiona mutes-file options
+	and improved handling thereof.
+
+2021-04-25  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* .gitignore, Makefile.am, TODO, bootstrap, configure.ac,
+	contrib/midi/README, contrib/scripts/make-checkout,
+	data/linux/qseq66-azerty.ctrl, doc/latex/tex/palettes.tex,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/include/app_limits.h,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/ctrl/midicontrolin.cpp, pack, seq66.pro,
+	seq_qt5/forms/qseqeventframe.ui: Removed Seqtool build, will remove
+	its source files in a future release.
+	* contrib/control-map.rc, data/linux/qseq66-azerty.ctrl,
+	data/linux/qseq66-lp-mini-8x8.ctrl,
+	data/linux/qseq66-lp-mini-alt.ctrl, data/linux/qseq66-lp-mini.ctrl,
+	data/samples/nanomap.ctrl, data/samples/rowclipsmap.ctrl,
+	data/win/qpseq66.ctrl, libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/keycontrol.cpp,
+	libseq66/src/ctrl/midicontrol.cpp,
+	libseq66/src/ctrl/midicontrolin.cpp,
+	libseq66/src/play/performer.cpp: Fixed the part of issue #47 where
+	the default ctrl configuration was saved at exit.
+
+2021-04-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/cfg/midicontrolfile.hpp,
+	libseq66/include/ctrl/keycontainer.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/keycontainer.cpp, libseq66/src/ctrl/keymap.cpp,
+	seq_qt5/include/qslotbutton.hpp: Interim check-in MIDI key control
+	bug.
+
+2021-04-23  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, Seqtool/src/converter.cpp,
+	contrib/notes/qw-az-keys.text, data/linux/qseq66-azerty.ctrl,
+	data/linux/qseq66.ctrl, libseq66/include/ctrl/keycontainer.hpp,
+	libseq66/include/ctrl/midicontrolin.hpp,
+	libseq66/include/ctrl/opcontrol.hpp,
+	libseq66/include/os/timing.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/keycontainer.cpp, libseq66/src/os/timing.cpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/util/basic_macros.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_rtmidi/src/rtmidi.cpp, seq_rtmidi/src/rtmidi_info.cpp: More
+	progress on support French AZERTY layout.
+	* README.md, TODO, data/linux/qseq66-azerty.ctrl,
+	doc/latex/tex/configuration.tex, libseq66/include/app_limits.h,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/recent.cpp, libseq66/src/ctrl/keymap.cpp,
+	libseq66/src/midi/eventlist.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qslivebase.cpp, seq_qt5/src/qsliveframe.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Work on issue
+	#47 to improve AZERTY support.
+
+2021-04-21  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, contrib/midi/play-pattern-1.text,
+	contrib/scripts/valgrind-leaks.sh,
+	doc/latex/tex/pattern_editor.tex,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/src/midi/editable_event.cpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/sessions/smanager.cpp,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qbase.hpp,
+	seq_qt5/include/qloopbutton.hpp, seq_qt5/include/qperfroll.hpp,
+	seq_qt5/include/qseqtime.hpp, seq_qt5/src/qeditbase.cpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqframe.cpp,
+	seq_qt5/src/qseqtime.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: Mostly small tweaks, and why is
+	get_deleter for the smanager unique_ptr so slow in the destructor.
+
+2021-04-20  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/latex/tex/configuration.tex,
+	doc/latex/tex/midi_formats.tex, doc/latex/tex/playlist.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qperfeditframe64.ui,
+	seq_qt5/forms/qseqeditframe64.ui, seq_qt5/include/qeditbase.hpp,
+	seq_qt5/include/qseqdata.hpp, seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Basically finished one-shot/N-shot live
+	pattern playback and saving to the pattern.
+
+2021-04-19  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, TODO, VERSION, configure.ac,
+	contrib/scripts/timid, data/linux/ca_ports.rc,
+	data/midi/Kraftwerk-Europe_Endless.text,
+	doc/latex/tex/patterns_panel.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/seq66_features.h,
+	libseq66/include/util/strfunctions.hpp,
+	libseq66/src/cfg/configfile.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/os/timing.cpp, libseq66/src/play/listsbase.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/util/strfunctions.cpp, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat, packages,
+	seq_qt5/include/qseqframe.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_rtmidi/src/midi_alsa_info.cpp: Minor
+	refactoring, clearing patterns on File / New....
+
+2021-04-17  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/README, data/license.txt, data/readme.txt,
+	data/readme.windows, doc/README, doc/dox/doxy-common.cfg,
+	doc/latex/tex/launchpad_mini.tex, doc/latex/tex/windows.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, nsis/build_release_package.bat: 
+	Updates and fixes for the Windows installer.
+
 2021-04-16  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* ChangeLog: Updated change-log, oops.
+	* : Update Seq66 user-manual, version 0.93.0 pending.
+	* configure, data/Makefile.in: Updating automake files.
 	* : Update Seq66 user-manual, version 0.93.0 pending.
 	* configure, data/Makefile.in: Updating automake files.
 	* README.md, TODO, data/Makefile.am, data/linux/qseq66.rc,
