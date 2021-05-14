@@ -108,7 +108,6 @@ qmutemaster::qmutemaster
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     clear_pattern_mutes();              /* empty the pattern bits           */
-
     connect
     (
         ui->m_mute_basename, SIGNAL(textChanged()),

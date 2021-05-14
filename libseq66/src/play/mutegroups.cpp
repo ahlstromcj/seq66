@@ -568,6 +568,14 @@ mutegroups::group_load_label () const
     return result;
 }
 
+bool
+mutegroups::clear ()
+{
+    bool result = const_cast<mutegroups *>(this)->any();
+    m_container.clear();
+    return result;
+}
+
 /**
  *  Loads all empty mute-groups.  Useful in writing an "empty" mutegroups
  *  file.

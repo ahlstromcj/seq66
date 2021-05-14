@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-05-12
+ * \updates       2021-05-13
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -737,6 +737,10 @@ rcfile::parse ()
         s = get_variable(file, "[auto-option-save]", "save-old-triggers");
         savethem = string_to_bool(s, false);
         rc_ref().save_old_triggers(savethem);
+
+        s = get_variable(file, "[auto-option-save]", "save-old-mutes");
+        savethem = string_to_bool(s, false);
+        rc_ref().save_old_mutes(savethem);
     }
     file.close();               /* done parsing the "rc" file               */
     return true;
@@ -1276,9 +1280,9 @@ rcfile::write ()
     std::string autosave = bool_to_string(rc_ref().auto_option_save());
     file << "\n"
         "[auto-option-save]\n\n"
-        "# Set the following value to 0 to disable the automatic saving of the\n"
-        "# current configuration to the 'rc' and 'user' files.  Set it to 1 to\n"
-        "# follow seq24 behavior of saving the configuration at exit.\n"
+        "# Set this value to false to disable the automatic saving of the\n"
+        "# current configuration to 'rc' and other files.  Set it to true to\n"
+        "# follow Seq24 behavior of saving the configuration at exit.\n"
         "# Note that, if auto-save is set, many of the command-line settings,\n"
         "# such as the JACK/ALSA settings, are saved to the configuration,\n"
         "# which can confuse one at first.  Also note that one currently needs\n"
@@ -1288,11 +1292,14 @@ rcfile::write ()
         ;
 
     std::string oldtrigs = bool_to_string(rc_ref().save_old_triggers());
+    std::string oldmutes = bool_to_string(rc_ref().save_old_mutes());
     file << "\n"
-        "# Set the following value to true to save triggers in a format\n"
-        "# compatible with Seq64/Seq66.  Otherwise, triggers are saved with\n"
-        "# a new additional 'transpose' setting.\n\n"
+        "# Set the following values to true to save triggers in a format\n"
+        "# compatible with Seq24.  Otherwise, triggers are saved with an\n"
+        "# additional 'transpose' setting, and mutes are saved as a byte,\n"
+        "# instead of a long value.\n\n"
         << "save-old-triggers = " << oldtrigs << "\n"
+        << "save-old-mutes = " << oldmutes << "\n"
         ;
 
     std::string lud = rc_ref().last_used_dir();

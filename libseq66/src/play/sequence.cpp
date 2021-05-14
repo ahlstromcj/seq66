@@ -959,10 +959,13 @@ sequence::play
                  * but it does prevent one CPU from being hammered at 100%.
                  * millisleep(1) made the live-grid progress bar jittery when
                  * unmuting shorter patterns, which play() relentlessly.
+                 *
+                 * Test commented out:
+                 *
+                 *  if (measure_threshold())
                  */
 
-////////        if (event_threshold())
-                    (void) microsleep(1);
+                (void) microsleep(1);
             }
         }
     }

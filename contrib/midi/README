@@ -1,6 +1,6 @@
 MIDI Sample and Test Files
 Chris Ahlstrom
-2015-09-11 to 2020-04-25
+2015-09-11 to 2020-05-13
 
 This directory contains contributed MIDI files for examples and testing.
 Also see the test files from the midicvt as described in
@@ -39,6 +39,17 @@ the "example1" file.
    click_4_4.midi:
    
       Holds a click-track for use with the Seq24-session script.
+
+   mutes-long.midi:
+
+      This tune has 10 mute-groups saved in the old mute-group format,
+      where each mute-group setting is represented by a long integer
+      value!
+
+   mutes-test.midi:
+
+      This is the same tune as above, but saved in the new mute-group
+      format, where only a byte is used.  Saves 3168 bytes!
 
    reset.mid:
    

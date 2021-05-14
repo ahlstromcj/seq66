@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-05-11
+ * \updates       2021-05-14
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -166,11 +166,11 @@ qloopbutton::qloopbutton
     QWidget * parent
 ) :
     qslotbutton         (slotparent, slotnumber, label, hotkey, parent),
-    m_show_min_max      (false),                    /* dot versus line      */
+    m_show_average      (false),                    /* last versus average  */
     m_fingerprint_inited(false),
     m_fingerprint_size  (usr().fingerprint_size()),
-    m_fingerprint_min   (m_fingerprint_size),       /* reserve vector space */
-    m_fingerprint_max   (m_fingerprint_size),       /* reserve vector space */
+    m_fingerprint       (m_fingerprint_size),       /* reserve vector space */
+    m_fingerprint_count (m_fingerprint_size),       /* reserve vector space */
     m_seq               (seqp),                     /* loop()               */
     m_is_checked        (loop()->playing()),
     m_prog_back_color   (Qt::black),
@@ -331,11 +331,7 @@ qloopbutton::initialize_fingerprint ()
             n0 = clamp_midibyte_value(midibyte(n0));
 
         for (int i = 0; i < i1; ++i)
-        {
-            m_fingerprint_min[i] = m_fingerprint_max[i] = c_midibyte_max;
-//          m_fingerprint_min[i] = y0 + yh;         /* maximum y */
-//          m_fingerprint_max[i] = y0;              /* minimum y */
-        }
+            m_fingerprint[i] = m_fingerprint_count[i] = 0;
 
         int nh = n1 - n0;
         auto cev = loop()->cbegin();
@@ -353,30 +349,23 @@ qloopbutton::initialize_fingerprint ()
                 else if (i >= i1)
                     i = i1 - 1;
 
-                m_fingerprint_min[i] = y;
-#if 0
-                if (y < m_fingerprint_min[i])
-                    m_fingerprint_min[i] = y;
-
-                if (y > m_fingerprint_max[i])
-                    m_fingerprint_max[i] = y;
-#endif
+                if (m_show_average)                         /* EXPERIMENTAL */
+                {
+                    ++m_fingerprint_count[i];
+                    m_fingerprint[i] += midishort(y);
+                }
+                else
+                    m_fingerprint[i] = midishort(y);
             }
             else
                 break;
         }
-        m_fingerprint_inited = true;
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
         for (int i = 0; i < i1; ++i)
         {
-            printf
-            (
-                "fingerprintf[%3d] = %d to %d\n",
-                i, int(m_fingerprint_min[i]), int(m_fingerprint_max[i])
-            );
+            if (m_fingerprint_count[i] > 1)
+                m_fingerprint[i] /= m_fingerprint_count[i];
         }
-#endif
+        m_fingerprint_inited = true;
     }
 }
 
@@ -709,29 +698,14 @@ qloopbutton::draw_pattern (QPainter & painter)
             {
                 float x = float(m_event_box.x());
                 float dx = float(m_event_box.w()) / (m_fingerprint_size - 1);
-                if (m_show_min_max)
+                pen.setWidth(2);
+                painter.setPen(pen);
+                for (int i = 0; i < int(m_fingerprint_size); ++i, x += dx)
                 {
-                    pen.setWidth(1);
-                    painter.setPen(pen);
-                    for (int i = 0; i < int(m_fingerprint_size); ++i, x += dx)
+                    if (m_fingerprint[i] != c_midibyte_max)
                     {
-                        int y0 = m_fingerprint_min[i];
-                        int y1 = m_fingerprint_max[i];
-                        painter.drawLine(int(x), y0, int(x), y1);
-                    }
-                }
-                else
-                {
-                    pen.setWidth(2);
-                    painter.setPen(pen);
-                    for (int i = 0; i < int(m_fingerprint_size); ++i, x += dx)
-                    {
-                        if (m_fingerprint_min[i] != c_midibyte_max)
-                        {
-                            int y = m_fingerprint_min[i];
-//                          if (y > 0)
-                                painter.drawPoint(int(x), y);
-                        }
+                        int y = m_fingerprint[i];
+                        painter.drawPoint(int(x), y);
                     }
                 }
             }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-12
+ * \updates       2021-05-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -2231,7 +2231,7 @@ public:
     );
     bool put_mutes ();
     bool learn_mutes (mutegroup::number group);
-    bool clear_mutes ();
+    bool clear_mutes ();                /* can cause a modify()             */
     bool apply_session_mutes ();
     bool apply_mutes (mutegroup::number group);
     bool unapply_mutes (mutegroup::number group);
@@ -3074,6 +3074,11 @@ public:                                 /* access functions for the containers *
     bool clear_mute_groups ()
     {
         return mutes().clear();
+    }
+
+    bool reset_mute_groups ()
+    {
+        return mutes().reset_defaults();
     }
 
 private:

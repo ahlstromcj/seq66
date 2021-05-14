@@ -5,8 +5,7 @@
 # \file            DIR_COLORS
 # \author          Chris Ahlstrom
 # \date            2008-02-26
-# \updates         2014-12-01
-# \updates         2021-05-12
+# \updates         2021-05-13
 # \version         $Revision$
 # \license         $XPC_SUITE_GPL_LICENSE$
 #
@@ -14,7 +13,7 @@
 #     LS_COLORS environment variable used by GNU ls with the --color option.
 #
 #     Many edits and updates by Chris Ahlstrom, and updates from GNU,
-#     Debian, Gentoo.
+#     Debian, Gentoo.  Also adds file extensions used by Seq66.
 #
 #     The keywords COLOR, OPTIONS, and EIGHTBIT (honored by the slackware
 #     version of dircolors) are recognized but ignored.
@@ -410,6 +409,7 @@ EXEC 01;32
 .header 00;31
 .in 00;31
 .ini 00;31
+.keymap 00;31
 .mutes 00;31
 .pc 00;31
 .PL 00;31
@@ -424,6 +424,7 @@ EXEC 01;32
 .rc 00;31
 .rh 00;31
 .resp 00;31
+.state 00;31
 .sub 00;31
 .ui 00;31
 .usr 00;31

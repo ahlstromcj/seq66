@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2021-01-22
+# \update      2021-05-14
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -74,9 +74,14 @@ AM_CXXFLAGS = \
 
 #******************************************************************************
 # Source files
+#
+#  We have replace pkginclude_HEADERS with the nobase version in order to have
+#  the header subdirectories created and used during "make install".  This
+#  is necessary so that the #include statements are valid.
+#
 #----------------------------------------------------------------------------
 
-pkginclude_HEADERS = \
+nobase_include_HEADERS = \
  app_limits.h \
  seq66_features.h \
  seq66_features.hpp \

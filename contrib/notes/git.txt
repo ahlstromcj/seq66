@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2021-01-10
+2015-09-09 to 2021-05-14
 
 Creating a GitHub Repository:
 
@@ -382,6 +382,14 @@ Listing files:
     To list only untracked files:
 
         $ git ls-files --others --exclude-standard
+
+    From https://jayenashar.wordpress.com/2014/03/07/
+                git-status-sorted-by-last-modified-timestamp/,
+
+    here’s a command that will show the modified, but unstaged files,
+    sorted by time:
+
+        $ ls -lrtd $(git status --porcelain | grep '^.[?M]' | sed 's/^.. //')
 
 Listing issues:
 

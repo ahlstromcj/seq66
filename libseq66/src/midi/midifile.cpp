@@ -2056,39 +2056,42 @@ midifile::write_mute_groups (const performer & p)
     bool result = mutes.group_save_to_midi();
     if (result)
     {
-#if USE_LEGACY_MUTE_GROUPS
-        for (const auto & stz : mutes.list())
+        if (rc().save_old_mutes())
         {
-            int groupnumber = stz.first;
-            const mutegroup & m = stz.second;
-            midibooleans mutebits = m.get();
-            result = mutebits.size() > 0;
-            if (result)
+            for (const auto & stz : mutes.list())
             {
-                write_long(groupnumber);
-                for (auto mutestatus : mutebits)
-                    write_long(bool(mutestatus) ? 1 : 0);   /* long! waste! */
+                int groupnumber = stz.first;
+                const mutegroup & m = stz.second;
+                midibooleans mutebits = m.get();
+                result = mutebits.size() > 0;
+                if (result)
+                {
+                    write_long(groupnumber);
+                    for (auto mutestatus : mutebits)
+                        write_long(bool(mutestatus) ? 1 : 0);   /* waste!   */
+                }
+                else
+                    break;
             }
-            else
-                break;
         }
-#else
-        for (const auto & stz : mutes.list())
+        else
         {
-            int groupnumber = stz.first;
-            const mutegroup & m = stz.second;
-            midibooleans mutebits = m.get();
-            result = mutebits.size() > 0;
-            if (result)
+            for (const auto & stz : mutes.list())
             {
-                write_byte(groupnumber);
-                for (auto mutestatus : mutebits)
-                    write_byte(bool(mutestatus) ? 1 : 0);   /* byte better! */
+                int groupnumber = stz.first;
+                const mutegroup & m = stz.second;
+                midibooleans mutebits = m.get();
+                result = mutebits.size() > 0;
+                if (result)
+                {
+                    write_byte(groupnumber);
+                    for (auto mutestatus : mutebits)
+                        write_byte(bool(mutestatus) ? 1 : 0);   /* better!  */
+                }
+                else
+                    break;
             }
-            else
-                break;
         }
-#endif
     }
     return result;
 }
@@ -2842,12 +2845,10 @@ midifile::write_proprietary_track (performer & p)
     {
         groupcount = unsigned(mutes.count());   /* no. of existing groups  */
         groupsize = unsigned(mutes.group_size());
-#if USE_LEGACY_MUTE_GROUPS
-        gmutesz = 4 + groupcount * (4 + groupsize * 4);
-#else
-        // gmutesz = 4 + groupcount * 1 + groupcount * (groupsize * 1);
-        gmutesz = 4 + groupcount * (1 + groupsize);   /* g# and g bytes */
-#endif
+        if (rc().save_old_mutes())
+            gmutesz = 4 + groupcount * (4 + groupsize * 4); /* 4-->longs    */
+        else
+            gmutesz = 4 + groupcount * (1 + groupsize);     /* 1-->bytes    */
     }
     tracklength += seq_number_size();           /* bogus sequence number    */
     tracklength += track_name_size(PROP_TRACK_NAME);
@@ -2905,15 +2906,16 @@ midifile::write_proprietary_track (performer & p)
     if (gmutesz > 0)
     {
         write_prop_header(c_mutegroups, gmutesz);   /* mute groups tag etc. */
-
-#if USE_LEGACY_MUTE_GROUPS
-        write_split_long(groupcount, groupsize);
-#else
-        write_split_long
-        (
-            to_compact_byte(groupcount), to_compact_byte(groupsize)
-        );
-#endif
+        if (rc().save_old_mutes())
+        {
+            write_split_long(groupcount, groupsize);
+        }
+        else
+        {
+            unsigned gcount = to_compact_byte(groupcount);
+            unsigned gsize = to_compact_byte(groupsize);
+            write_split_long(gcount, gsize);
+        }
         (void) write_mute_groups(p);
     }
     if (m_global_bgsequence)

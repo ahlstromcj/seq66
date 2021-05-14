@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-05-12
+ * \updates       2021-05-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -5266,13 +5266,16 @@ bool
 performer::clear_mutes ()
 {
     bool result = mutes().any();
-    mutes().reset_defaults();               /* clears and adds all zeros    */
     if (result)
     {
-        change c = mutes().group_save_to_midi() ?
-            change::yes : change:: no ;
+        result = mutes().reset_defaults();      /* clears and adds all 0s   */
+        if (result)
+        {
+            change c = mutes().group_save_to_midi() ?
+                change::yes : change::no ;
 
-        notify_mutes_change(mutegroup::unassigned(), c);
+            notify_mutes_change(mutegroup::unassigned(), c);
+        }
     }
     return result;
 }

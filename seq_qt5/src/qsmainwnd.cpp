@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-05-08
+ * \updates       2021-05-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1114,6 +1114,8 @@ qsmainwnd::load_into_session (const std::string & selectedfile)
             show_message_box(msg);
             m_is_title_dirty = false;
             result = true;
+            if (not_nullptr(m_mute_master))
+                m_mute_master->group_needs_update();
         }
         else
         {
@@ -1133,7 +1135,13 @@ qsmainwnd::select_and_load_file ()
 {
     std::string selectedfile;
     if (show_open_file_dialog(selectedfile))
-        (void) open_file(selectedfile);
+    {
+        if (open_file(selectedfile))
+        {
+            if (not_nullptr(m_mute_master))
+                m_mute_master->group_needs_update();
+        }
+    }
 }
 
 /**
@@ -1653,6 +1661,9 @@ qsmainwnd::new_file ()
         m_is_title_dirty = true;
         redo_live_frame();
         remove_all_editors();
+        (void) perf().reset_mute_groups();          /* no modify() call     */
+        if (not_nullptr(m_mute_master))
+            m_mute_master->group_needs_update();
     }
 }
 
@@ -1694,6 +1705,9 @@ qsmainwnd::new_session ()
                 m_is_title_dirty = true;
                 redo_live_frame();
                 remove_all_editors();
+                (void) perf().reset_mute_groups();  /* no modify() call     */
+                if (not_nullptr(m_mute_master))
+                    m_mute_master->group_needs_update();
             }
             if (text.isEmpty())
             {
@@ -2625,7 +2639,13 @@ qsmainwnd::open_recent_file ()
         QString fname = QVariant(action->data()).toString();
         std::string actionfile = fname.toStdString();
         if (! actionfile.empty())
-            (void) open_file(actionfile);
+        {
+            if (open_file(actionfile))
+            {
+                if (not_nullptr(m_mute_master))
+                    m_mute_master->group_needs_update();
+            }
+        }
     }
 }
 
@@ -3171,6 +3191,8 @@ qsmainwnd::reload_mute_groups ()
  *  Clear all mute-group settings.  Sets all values to false/zero.  Also,
  *  since the intent might be to clean up the MIDI file, the user is prompted
  *  to save.
+ *
+ *  Should we use reset_mute_groups() instead?
  */
 
 void

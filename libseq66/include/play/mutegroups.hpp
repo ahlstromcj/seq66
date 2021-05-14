@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-05-12
+ * \updates       2021-05-13
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -498,12 +498,7 @@ public:
         return mute_group(gmute).name();
     }
 
-    bool clear ()
-    {
-        bool result = const_cast<mutegroups *>(this)->any();
-        m_container.clear();
-        return result;
-    }
+    bool clear ();
 
     const container & list () const
     {

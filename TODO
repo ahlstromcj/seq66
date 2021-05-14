@@ -1,6 +1,6 @@
 TO DO for Seq66 0.93.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-05-13
+2019-04-13 to 2021-05-14
 
 From: zigmhount <notifications@github.com>
 Subject: [Question/Feature request] Live midi pattern recording (#188)
@@ -26,12 +26,6 @@ Subject: [Question/Feature request] Live midi pattern recording (#188)
 
     TODO:  See what have done with this one so far....
 
-Library installation:
-
-    The installation of library headers currently puts them all into
-    $prefix/include/seq66-0.93/seq66!  Needs to install to subdirectories.
-    The library headers seem fine, going to $prefix/lib/seq66-0.93.
-
 Loops:
 
     Remove the old-style Live grid completely and deprecate that option in
@@ -40,11 +34,6 @@ Loops:
 
     Remove the old qseqeditframe and the use-new-seqedit option (now the
     default).
-
-Mutes:
-
-    Upon File / New, need to make sure qmutemaster is cleared.
-    Same before reading in the next file if accepted.
 
 NSM:
 
@@ -60,10 +49,9 @@ NSM:
 
 Port-Mapping:
 
-    No issues noted at present.
-
     Running qpseq66 on Linux:  "QSynth" is named "PortMidi"! See
-    seq_portmidi/src/midibus.cpp.
+    seq_portmidi/src/midibus.cpp.  The workaround is to specify long port
+    names in the 'rc' file.
 
 Main Window:
 
@@ -79,17 +67,7 @@ UI:
     See the mouse wheel scroll event requests for both the song and
     pattern editors.
 
-    Try to mitigate issue #50, where the yellow background of a new pattern
-    and the white text of the breeze-dark theme make the button unreadable.
-    Make sure the palette line color is being followed.
-
     Clean out all of the unused options in the 'usr' file.
-
-    Running in JACK now shows "seq66" for all automatic connections, instead
-    of the official name of the connected device or software port!
-
-    Change the pattern finger print to show a vertical bar from min to max
-    notes, instead of one dot.
 
 Automation:
 
@@ -98,6 +76,11 @@ Automation:
 
     Can we leverage continuous controllers (CC) to support modifying synth
     parameters through input automation?
+
+JACK:
+
+    In the 'rc' file, change transport, etc., to use "variable = value"
+    format.
 
 From Testing:
 

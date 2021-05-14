@@ -130,11 +130,11 @@ private:
      *  events in the tiny box centered in the pattern button.
      */
 
-    bool m_show_min_max;
+    bool m_show_average;
     bool m_fingerprint_inited;
     size_t m_fingerprint_size;
-    std::vector<midibyte> m_fingerprint_min;
-    std::vector<midibyte> m_fingerprint_max;
+    std::vector<midishort> m_fingerprint;
+    std::vector<midishort> m_fingerprint_count;
 
     /**
      *  Provides a pointer to the sequence displayed by this button.  Note that

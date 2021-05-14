@@ -1,7 +1,7 @@
 # README for Seq66 0.93.2
 
 Chris Ahlstrom
-2015-09-10 to 2021-05-12
+2015-09-10 to 2021-05-14
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -82,6 +82,11 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.93.2:
+        *   Changed the mute-group format inside the MIDI file to use a much
+            less disk space (about 3K less).  Can be set in the 'rc' file to
+            write the old format.
+        *   Minor tweaks to the transposed-trigger functionality.  Can be set in
+            the 'rc' file to write the old format.
         *   Removed the code for the essentially unused Seqtool application.
         *   Removed the now unnecessary old-style qseqeditframe.
         *   Add 'usr' tweaks options to change the size of the live-grid
@@ -91,10 +96,12 @@ Windows, and using a conventional source tarball.
             keys.  Laid the groundwork for a 'keys' mapping file.
         *   Removed excess spurious events when Seq66 shuts down under JACK.
         *   Implemented the control-toggling of "follow JACK transport".
-        *   Minor tweaks to the transposed-trigger functionality.
         *   Fixed a bug in the pattern editor that created unnecessary empty
             screen-sets.
         *   Further fixes and flexibility for handling mute-groups.
+        *   Fixed the installation of libseq66 and libsession library header
+            files in "make install" to preserve their base subdirectories.
+            (The other libraries currently don't use base subdirectories.)
     *   Version 0.93.1:
         *   Work in progress on issue #47; added a keyboard-layout option to the
             'ctrl' file to disable auto-shift and tweak the internal key-map for

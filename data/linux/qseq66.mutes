@@ -29,6 +29,10 @@ look empty with a space.
 # [mute-group-file] tag, and add the basename (e.g. 'nanomute.mutes')
 # on a separate line.
 #
+# load-mute-groups: set to 'none', or 'mutes' to load only from the
+# 'mutes' file, 'midi' to load from the song, or 'both' to try to
+# to read from the 'mutes' first, then the 'midi' if empty.
+#
 # save-mutes-to: 'both' writes the mutes value to both the mutes
 # and the MIDI file; 'midi' writes only to the MIDI file; and
 # and 'mutes' only to the mutes file.
@@ -52,7 +56,7 @@ look empty with a space.
 
 [mute-group-flags]
 
-load-mute-groups = true
+load-mute-groups = midi
 save-mutes-to = midi
 mute-group-rows = 4
 mute-group-columns = 8

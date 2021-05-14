@@ -283,11 +283,13 @@ look empty with a space.
 
 auto-save-rc = true
 
-# Set the following value to true to save triggers in a format
-# compatible with Seq64/Seq66.  Otherwise, the triggers are saved with
-# an additional 'transpose' setting.
+# Set the following values to true to save triggers in a format
+# compatible with Seq24.  Otherwise, triggers are saved with an
+# additional 'transpose' setting, and mutes are saved as a byte,
+# instead of a long value.
 
 save-old-triggers = false
+save-old-mutes = false
 
 [last-used-dir]
 
