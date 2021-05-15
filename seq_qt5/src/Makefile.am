@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2021-05-07
+# \update      2021-05-15
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -265,7 +265,6 @@ moc_qt_headers = \
  ../include/qsessionframe.hpp \
  ../include/qsetmaster.hpp \
  ../include/qseventslots.hpp \
- ../include/qsliveframe.hpp \
  ../include/qslivegrid.hpp \
  ../include/qsmaintime.hpp \
  ../include/qsmainwnd.hpp \
@@ -289,7 +288,6 @@ uic_qt_forms = \
  $(formsdir)/qseqeventframe.ui \
  $(formsdir)/qsessionframe.ui \
  $(formsdir)/qsetmaster.ui \
- $(formsdir)/qsliveframe.ui \
  $(formsdir)/qslivegrid.ui \
  $(formsdir)/qsmainwnd.ui
 
@@ -339,7 +337,6 @@ libseq_qt5_la_SOURCES = \
  qseventslots.cpp \
  qskeymaps.cpp \
  qslivebase.cpp \
- qsliveframe.cpp \
  qslivegrid.cpp \
  qslotbutton.cpp \
  qsmaintime.cpp \

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-05-14
+ * \updates       2021-05-15
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -298,75 +298,80 @@ qloopbutton::initialize_text ()
 void
 qloopbutton::initialize_fingerprint ()
 {
-    int n0, n1;
-    bool have_notes = loop()->minmax_notes(n0, n1);     /* fill n0 and n1   */
-    if (have_notes)
-        have_notes = loop()->event_threshold();
-
-    if (! m_fingerprint_inited && have_notes)
+    const int i1 = int(m_fingerprint_size);
+    if (i1 > 0)
     {
-        midipulse t1 = loop()->get_length();            /* t0 = 0           */
-        if (t1 == 0)
-            return;
+        int n0, n1;
+        bool have_notes = loop()->minmax_notes(n0, n1);     /* fill n0 and n1   */
+        if (have_notes)
+            have_notes = loop()->event_threshold();
 
-        const int i1 = int(m_fingerprint_size);
-        int x0 = m_event_box.x();
-        int x1 = x0 + m_event_box.w();
-        int xw = x1 - x0;
-        int y0 = m_event_box.y();
-        int y1 = y0 + m_event_box.h();
-        int yh = y1 - y0;
-
-        /*
-         * Added an octave of padding above and below for looks. Also use
-         * n0 and n1 as the min/max notes of the whole sequence.
-         */
-
-        n1 += 12 / 6;
-        n1 = clamp_midibyte_value(midibyte(n1));
-        n0 -= 12 / 6;
-        if (n0 < 0)
-            n0 = 0;
-        else
-            n0 = clamp_midibyte_value(midibyte(n0));
-
-        for (int i = 0; i < i1; ++i)
-            m_fingerprint[i] = m_fingerprint_count[i] = 0;
-
-        int nh = n1 - n0;
-        auto cev = loop()->cbegin();
-        while (! loop()->cend(cev))
+        if (! m_fingerprint_inited && have_notes)
         {
-            sequence::note_info ni;
-            sequence::draw dt = loop()->get_next_note(ni, cev);  /* ++cev */
-            if (dt != sequence::draw::finish)
-            {
-                int x = x0 + (ni.start() * xw) / t1;
-                int y = y0 + yh * (ni.note() - n0) / nh;
-                int i = i1 * (x - x0) / xw;
-                if (i < 0)
-                    i = 0;
-                else if (i >= i1)
-                    i = i1 - 1;
+            midipulse t1 = loop()->get_length();            /* t0 = 0           */
+            if (t1 == 0)
+                return;
 
-                if (m_show_average)                         /* EXPERIMENTAL */
+            int x0 = m_event_box.x();
+            int x1 = x0 + m_event_box.w();
+            int xw = x1 - x0;
+            int y0 = m_event_box.y();
+            int y1 = y0 + m_event_box.h();
+            int yh = y1 - y0;
+
+            /*
+             * Added an octave of padding above and below for looks. Also use
+             * n0 and n1 as the min/max notes of the whole sequence.
+             */
+
+            n1 += 12 / 6;
+            n1 = clamp_midibyte_value(midibyte(n1));
+            n0 -= 12 / 6;
+            if (n0 < 0)
+                n0 = 0;
+            else
+                n0 = clamp_midibyte_value(midibyte(n0));
+
+            for (int i = 0; i < i1; ++i)
+                m_fingerprint[i] = m_fingerprint_count[i] = 0;
+
+            int nh = n1 - n0;
+            auto cev = loop()->cbegin();
+            while (! loop()->cend(cev))
+            {
+                sequence::note_info ni;
+                sequence::draw dt = loop()->get_next_note(ni, cev);  /* ++cev */
+                if (dt != sequence::draw::finish)
                 {
-                    ++m_fingerprint_count[i];
-                    m_fingerprint[i] += midishort(y);
+                    int x = x0 + (ni.start() * xw) / t1;
+                    int y = y0 + yh * (ni.note() - n0) / nh;
+                    int i = i1 * (x - x0) / xw;
+                    if (i < 0)
+                        i = 0;
+                    else if (i >= i1)
+                        i = i1 - 1;
+
+                    if (m_show_average)                         /* EXPERIMENTAL */
+                    {
+                        ++m_fingerprint_count[i];
+                        m_fingerprint[i] += midishort(y);
+                    }
+                    else
+                        m_fingerprint[i] = midishort(y);
                 }
                 else
-                    m_fingerprint[i] = midishort(y);
+                    break;
             }
-            else
-                break;
+            for (int i = 0; i < i1; ++i)
+            {
+                if (m_fingerprint_count[i] > 1)
+                    m_fingerprint[i] /= m_fingerprint_count[i];
+            }
+            m_fingerprint_inited = true;
         }
-        for (int i = 0; i < i1; ++i)
-        {
-            if (m_fingerprint_count[i] > 1)
-                m_fingerprint[i] /= m_fingerprint_count[i];
-        }
-        m_fingerprint_inited = true;
     }
+    else
+        m_fingerprint_inited = true;
 }
 
 /**
@@ -397,9 +402,9 @@ qloopbutton::setup ()
         pal.setColor(QPalette::Button, backcolor);
         m_prog_back_color = backcolor;
     }
-    if (usr().grid_is_white())
-        setAutoFillBackground(false);
-    else
+//  if (usr().grid_is_white())
+//      setAutoFillBackground(false);
+//  else
         setAutoFillBackground(true);
 
     setPalette(pal);

@@ -1,6 +1,6 @@
-TO DO for Seq66 0.93.2 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.94.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-05-14
+2019-04-13 to 2021-05-15
 
 From: zigmhount <notifications@github.com>
 Subject: [Question/Feature request] Live midi pattern recording (#188)
@@ -28,12 +28,7 @@ Subject: [Question/Feature request] Live midi pattern recording (#188)
 
 Loops:
 
-    Remove the old-style Live grid completely and deprecate that option in
-    the 'usr' file.  Should the old-style qsliveframe be removed? Yes.  Remove
-    the old-style qseqeditframe.
-
-    Remove the old qseqeditframe and the use-new-seqedit option (now the
-    default).
+    No issues pending.
 
 NSM:
 
@@ -347,12 +342,6 @@ seq_qt5/src/qseqbase.cpp:
 seq_qt5/src/qseqbase.cpp:
 
     mouseReleaseEvent():  Implement undirtying when undoing.
-
-seq_qt5/src/qsliveframe.cpp:
-
-    new_seq(): handle reenable/disable of the editor for each new sequence.
-    cut_seq(): add the warning dialog.
-    delete_seq(): add the warning dialog.
 
 seq_qt5/src/qperfroll.cpp:
 

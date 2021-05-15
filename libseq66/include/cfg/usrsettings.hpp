@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-05-11
+ * \updates       2021-05-15
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -199,8 +199,6 @@ private:
      *  These are not labelled, but are present in the "user" configuration
      *  file in the following order:
      *
-     *      -#  grid-style
-     *      -#  grid-brackets
      *      -#  mainwnd-rows
      *      -#  mainwnd-cols
      *      -#  max-set
@@ -218,19 +216,11 @@ private:
      */
 
     /**
-     *  Specifies the current grid style.
+     *  Specified the current grid style.  Removed 2021-05-15.
+     *
+     *      grid m_grid_style;
+     *      int m_grid_brackets;
      */
-
-    grid m_grid_style;
-
-    /**
-     *  Specify drawing brackets (like the old Seq24) or a solid box.
-     *  0 = no brackets, 1 and above is the thickness of the brakcets.
-     *  1 is the normal thickness of the brackets, 2 is a two-pixel thickness,
-     *  and so on.
-     */
-
-    int m_grid_brackets;
 
     /**
      *  Number of rows in the Patterns Panel.  The current value is 4, and if
@@ -1169,36 +1159,6 @@ public:
         return int(m_window_scale_y * value + 0.5);
     }
 
-    int grid_style () const
-    {
-        return static_cast<int>(m_grid_style);
-    }
-
-    bool grid_is_normal () const
-    {
-        return m_grid_style == grid::normal;
-    }
-
-    bool grid_is_white () const
-    {
-        return m_grid_style == grid::white;
-    }
-
-    bool grid_is_button () const
-    {
-        return m_grid_style == grid::button;
-    }
-
-    bool grid_is_black () const
-    {
-        return m_grid_style == grid::black;
-    }
-
-    int grid_brackets () const
-    {
-        return m_grid_brackets;
-    }
-
     int mainwnd_rows () const
     {
         return m_mainwnd_rows;
@@ -1475,13 +1435,6 @@ public:
 
 protected:
 
-    void grid_brackets (int thickness)
-    {
-        if (thickness >= (-30) && thickness <= 30)
-            m_grid_brackets = thickness;
-    }
-
-    void set_grid_style (int gridstyle);
     void mainwnd_rows (int value);
     void mainwnd_cols (int value);
 
@@ -1491,7 +1444,6 @@ protected:
      */
 
     void max_sets (int value);
-
     void text_x (int value);
     void text_y (int value);
     void seqchars_x (int value);
@@ -1845,7 +1797,7 @@ public:         // used in main application module and the usrfile class
 
     void fingerprint_size (int sz)
     {
-        if (sz >= 32 && sz <= 128)
+        if ((sz >= 32 && sz <= 128) || sz == 0)
             m_fingerprint_size = sz;
     }
 

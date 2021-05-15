@@ -144,7 +144,9 @@ midi_queue::add (const midi_message & mmsg)
     }
     else
     {
-        errprintfunc("message queue limit reached");
+        /*
+         * errprintfunc("message queue limit reached");
+         */
     }
     return result;
 }

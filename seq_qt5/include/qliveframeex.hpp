@@ -54,9 +54,9 @@ namespace seq66
     class qsmainwnd;
 
 /**
- *  Provides a container for a qslivebase (the base class for qsliveframe and
- *  qslivegrid) object.  Thus, the Qt 5 version of Seq66 has an (additional)
- *  external seqedit window like its Gtkmm-2.4 counterpart.
+ *  Provides a container for a qslivebase (the base class for qslivegrid)
+ *  object.  Thus, the Qt 5 version of Seq66 has an (additional) external
+ *  seqedit window like its Gtkmm-2.4 counterpart.
  */
 
 class qliveframeex final : public QWidget

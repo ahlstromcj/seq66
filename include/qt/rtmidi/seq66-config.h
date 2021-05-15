@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-31
- * \updates       2021-05-03
+ * \updates       2021-05-29
  * \license       GNU GPLv2 or above
  *
  *  Qt Rtmidi Linux and Windows versions, hardwired for use with
@@ -70,11 +70,11 @@
 #endif
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2021-05-03"
+#define SEQ66_VERSION_DATE_SHORT "2021-05-29"
 #endif
 
 #ifndef SEQ66_VERSION
-#define SEQ66_VERSION "0.93.2"
+#define SEQ66_VERSION "0.94.0"
 #endif
 
 #ifndef SEQ66_GIT_VERSION
@@ -163,7 +163,7 @@
  */
 
 #ifndef SEQ66_DBGFLAGS
-#define SEQ66_DBGFLAGS -O3 -DDEBUG -D_DEBUG -fno-inline
+#define SEQ66_DBGFLAGS -O0 -DDEBUG -D_DEBUG -fno-inline
 #endif
 
 /* Define to 1 if you have the <ctype.h> header file. */
@@ -354,7 +354,7 @@
 
 /* Define to the full name and version of this package. */
 #ifndef SEQ66_PACKAGE_STRING
-#define SEQ66_PACKAGE_STRING "Seq66 0.93.2"
+#define SEQ66_PACKAGE_STRING "Seq66 0.94.0"
 #endif
 
 /* Define to the one symbol short name of this package. */

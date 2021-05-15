@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-05-02
+ * \updates       2021-05-15
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -250,6 +250,7 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
         jack_midi_event_t jmevent;
         jack_time_t jtime;
         int evcount = jack_midi_get_event_count(buff);
+        bool overflow = false;
         for (int j = 0; j < evcount; ++j)
         {
             int rc = jack_midi_event_get(&jmevent, buff, j);
@@ -285,7 +286,10 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
                     else
 #endif
                     if (! rtindata->queue().add(message))
-                        break;              /* EXPERIMENTAL ca 2021-05-02   */
+                    {
+                        printf("~");
+                        overflow = true;
+                    }
                 }
             }
             else
@@ -309,6 +313,8 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
                 }
             }
         }
+        if (overflow)
+            printf(" message overflow\n");
     }
     else
     {
@@ -781,13 +787,18 @@ midi_jack::api_init_in_sub ()
 }
 
 /**
- *  EXPERIMENTAL
+ *  EXPERIMENTAL. Commented out.  See the discussion at api_deinit_in().
  */
 
 bool
 midi_jack::api_deinit_out ()
 {
-    set_port_suspended(true);
+    /*
+     *  Seems, in retrospect, to be ill-advised.
+     *
+     *      set_port_suspended(true);
+     */
+
     return true;
 }
 
@@ -796,20 +807,24 @@ midi_jack::api_deinit_out ()
  *
  *  This function is mis-named at this time; it actually leaves the port open
  *  now, and simply disables the reading of MIDI data.  We need to improve on
- *  the life-cycle.
+ *  the life-cycle.  Also, this suspension seems to cause an issue where
+ *  the application hangs on exit.
  */
 
 bool
 midi_jack::api_deinit_in ()
 {
     /*
-     * Do not close.  We still have callbacks responding, and they bitch about
-     * exercising a closed port.
+     *  Do not close.  We still have callbacks responding, and they bitch about
+     *  exercising a closed port.
      *
      * close_port();
+     *
+     *  Seems to cause an application hang upon exit.
+     *
+     *      set_port_suspended(true);
      */
 
-    set_port_suspended(true);
     return true;
 }
 
@@ -866,7 +881,7 @@ midi_jack::send_message (const midi_message & message)
     bool result = nbytes > 0;
     if (result)
     {
-#ifdef SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         message.show();
 #endif
         int count1 = jack_ringbuffer_write
@@ -1405,9 +1420,7 @@ midi_in_jack::api_get_midi_event (event * inev)
              */
 
             midibyte st = mm[0];
-
-#if defined SEQ66_PLATFORM_DEBUG
-            if (rc().verbose() && st >= EVENT_MIDI_REALTIME)
+            if (st >= EVENT_MIDI_REALTIME && rc().verbose())
             {
                 static int s_count = 0;
                 char c = '.';
@@ -1434,8 +1447,6 @@ midi_in_jack::api_get_midi_event (event * inev)
                 }
                 fflush(stdout);
             }
-#endif  // defined SEQ66_PLATFORM_DEBUG
-
             if (event::is_sense_or_reset(st))
                 result = false;
             else

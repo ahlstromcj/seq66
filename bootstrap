@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2021-04-25
+# \update         2021-05-15
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,9 +33,9 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2021-04-25"
-export SEQ66_LIBRARY_API_VERSION="0.90"
-export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.90.0"
+export SEQ66_SCRIPT_EDIT_DATE="2021-05-15"
+export SEQ66_LIBRARY_API_VERSION="0.94"
+export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.94.0"
 
 #******************************************************************************
 #  Version info
@@ -96,7 +96,7 @@ EXTRAFLAGS=""
 if [ "$1" == "--help" ] ; then
 
    cat << E_O_F
-Usage: ./bootstrap [options]                             (0.93.1-2021-04-25)
+Usage: ./bootstrap [options]                             (0.94.0-2021-05-15)
 
 'bootstrap' sets up GNU automake and libtool support for the Seq66 project
 and creates the 'configure' script.  It can super-clean the project, removing

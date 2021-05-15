@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-16
- * \updates       2020-07-27
+ * \updates       2021-05-15
  * \license       GNU GPLv2 or above
  *
  *  This frame holds an external "Live" window that shows the grid of buttons
@@ -39,7 +39,6 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "play/sequence.hpp"            /* seq66::sequence class            */
 #include "qliveframeex.hpp"
-#include "qsliveframe.hpp"
 #include "qslivegrid.hpp"
 #include "qsmainwnd.hpp"
 
@@ -88,11 +87,7 @@ qliveframeex::qliveframeex (performer & p, int ssnum, qsmainwnd * parent) :
     ui->setupUi(this);
 
     QGridLayout * layout = new QGridLayout(this);
-    if (usr().grid_is_button())
-        m_live_frame = new qslivegrid(p, parent, nullptr);
-    else
-        m_live_frame = new qsliveframe(p, parent, nullptr);
-
+    m_live_frame = new qslivegrid(p, parent, nullptr);
     layout->addWidget(m_live_frame);
     if (usr().window_is_scaled())           /* use scaling if applicable    */
     {

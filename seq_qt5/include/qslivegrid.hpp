@@ -28,19 +28,19 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-03-06
+ * \updates       2021-05-15
  * \license       GNU GPLv2 or above
  *
  *
- *  The qslivegrid is Sequencer66's alternative to the qsliveframe class.
- *  But instead of a large pixmap, it consists of a grid of pushbuttons.
+ *  The qslivegrid is Sequencer66's alternative to the qsliveframe class (now
+ *  moved to contrib/code for posterity).  But instead of a large pixmap, it
+ *  consists of a grid of pushbuttons.
  */
 
 #include <functional>                   /* std::function, function objects  */
 #include <vector>                       /* std::vector<>                    */
 
 #include "qslivebase.hpp"               /* seq66::qslivebase ABC            */
-// #include "midi/midibytes.hpp"           /* seq66::ctrlkey alias             */
 #include "play/screenset.hpp"           /* seq66::screenset class           */
 
 class QMenu;

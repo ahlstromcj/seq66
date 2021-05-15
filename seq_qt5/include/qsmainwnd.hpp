@@ -112,7 +112,6 @@ class qsmainwnd final : public QMainWindow, protected performer::callbacks
     friend class qsessionframe;
     friend class qsetmaster;
     friend class qslivebase;
-    friend class qsliveframe;
     friend class qslivegrid;
     friend class qt5nsmanager;
 

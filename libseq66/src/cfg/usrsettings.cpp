@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-05-11
+ * \updates       2021-05-15
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -199,8 +199,6 @@ usrsettings::usrsettings () :
      * [user-interface-settings]
      */
 
-    m_grid_style                (grid::button), // button is better!
-    m_grid_brackets             (1),
     m_mainwnd_rows              (SEQ66_DEFAULT_SET_ROWS),
     m_mainwnd_cols              (SEQ66_DEFAULT_SET_COLUMNS),
     m_max_sets                  (SEQ66_DEFAULT_SET_MAX),
@@ -319,8 +317,6 @@ usrsettings::set_defaults ()
 {
     m_midi_buses.clear();
     m_instruments.clear();
-    m_grid_style = grid::button;
-    m_grid_brackets = 1;                        // range: -30 to 0 to 30
     m_mainwnd_rows = SEQ66_DEFAULT_SET_ROWS;    // range: 4-8
     m_mainwnd_cols = SEQ66_DEFAULT_SET_COLUMNS; // range: 8-8
     m_max_sets = SEQ66_DEFAULT_SET_MAX;         // range: 32-64
@@ -693,19 +689,6 @@ usrsettings::scale_font_size (int value) const
             scale_size(value) : scale_size_y(value) ;
     }
     return result;
-}
-
-void
-usrsettings::set_grid_style (int gridstyle)
-{
-    if
-    (
-        gridstyle >= static_cast<int>(grid::normal) &&
-        gridstyle < static_cast<int>(grid::max)
-    )
-    {
-        m_grid_style = static_cast<grid>(gridstyle);
-    }
 }
 
 /**

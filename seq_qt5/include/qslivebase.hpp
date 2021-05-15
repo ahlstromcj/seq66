@@ -28,17 +28,16 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2021-03-06
+ * \updates       2021-05-15
  * \license       GNU GPLv2 or above
  *
- *  The qslivebase and its child classes, qsliveframe and qslivegride, are
- *  Sequencer66's analogue to the Gtkmm mainwid class.  These classes display
- *  a grid of patterns (loops) that can be controlled via the grid.
+ *  The qslivebase and its child class, qslivegride, are Sequencer66's
+ *  analogue to the Gtkmm mainwid class.  These classes display a grid of
+ *  patterns (loops) that can be controlled via the grid.
  */
 
 #include <QFrame>
 
-// #include "midi/midibytes.hpp"           /* seq66::ctrlkey alias             */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "play/screenset.hpp"           /* seq66::screenset class           */
 
@@ -146,12 +145,12 @@ protected:
 
     virtual void update_bank_name (const std::string & /*name*/)
     {
-        // no code, see qslivegrid versus qsliveframe
+        // no code, see qslivegrid
     }
 
     virtual void update_sequence (seq::number /*seqno*/, bool /*redo*/)
     {
-        // no code (yet), see qslivegrid versus qsliveframe
+        // no code (yet), see qslivegrid
     }
 
     virtual void color_by_number (int i) = 0;   /* implemented!!!   */
@@ -231,7 +230,7 @@ protected:
     qsmainwnd * m_parent;
 
     /**
-     *  Provide the font used for drawing text in qsliveframe.  Note that text
+     *  Provide the font used for drawing text in qslivegrid.  Note that text
      *  in the qslivegrid's qslotbuttons will use setText() for drawing the
      *  slot numbers, and qloopbutton has its own font for the buttons.
      */

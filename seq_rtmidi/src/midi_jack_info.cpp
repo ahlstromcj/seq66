@@ -527,6 +527,7 @@ midi_jack_info::api_port_start
 /**
  *  We might be able to eliminate this function.
  */
+
 int
 midi_jack_info::api_poll_for_midi ()
 {

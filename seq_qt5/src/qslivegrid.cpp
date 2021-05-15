@@ -24,14 +24,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-05-10
+ * \updates       2021-05-15
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
- *  meant to replace (eventually) qsliveframe, and uses buttons and draws
- *  faster.  However, we had to disable button callbacks and use keypresses
- *  directly in order to implement double-click and drag-and-drop
- *  functionality.
+ *  replaces qsliveframe, and uses buttons and draws faster.  However, we had
+ *  to disable button callbacks and use keypresses directly in order to
+ *  implement double-click and drag-and-drop functionality.
  *
  *  A two-dimensional vector of buttons containing a vector of rows, each
  *  row being a vector of columns.
@@ -76,7 +75,7 @@
 #include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "gui_palette_qt5.hpp"
 #include "qloopbutton.hpp"              /* seq66::qloopbutton (qslotbutton) */
-#include "qslivegrid.hpp"               /* seq66::qslivegrid (qsliveframe)  */
+#include "qslivegrid.hpp"               /* seq66::qslivegrid                */
 #include "qsmacros.hpp"                 /* QS_TEXT_CHAR() macro             */
 #include "qsmainwnd.hpp"                /* the true parent of this class    */
 #include "qt5_helpers.hpp"              /* seq66::qt_keystroke() etc.       */

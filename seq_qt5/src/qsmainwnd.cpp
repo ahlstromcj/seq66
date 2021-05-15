@@ -100,7 +100,6 @@
 #include "qsetmaster.hpp"               /* shows a map of all sets          */
 #include "qsmaintime.hpp"
 #include "qsmainwnd.hpp"
-#include "qsliveframe.hpp"
 #include "qslivegrid.hpp"
 #include "qt5_helpers.hpp"              /* seq66::qt_set_icon() etc.        */
 #include "sessions/smanager.hpp"        /* attach_session()                 */
@@ -364,16 +363,7 @@ qsmainwnd::qsmainwnd
     m_dialog_about = new qsabout(this);
     m_dialog_build_info = new qsbuildinfo(this);
     make_perf_frame_in_tab();           /* create m_song_frame64 pointer    */
-
-    /*
-     * LATER:  See if we can leverage redo_live_frame().
-     */
-
-    if (usr().grid_is_button())
-        m_live_frame = new qslivegrid(perf(), this, ui->LiveTab);
-    else
-        m_live_frame = new qsliveframe(perf(), this, ui->LiveTab);
-
+    m_live_frame = new qslivegrid(perf(), this, ui->LiveTab);
     if (not_nullptr(m_live_frame))
     {
         ui->LiveTabLayout->addWidget(m_live_frame);
@@ -1361,11 +1351,7 @@ qsmainwnd::redo_live_frame ()
     if (not_nullptr(m_live_frame))
         delete m_live_frame;
 
-    if (usr().grid_is_button())
-        m_live_frame = new qslivegrid(perf(), this, ui->LiveTab);
-    else
-        m_live_frame = new qsliveframe(perf(), this, ui->LiveTab);
-
+    m_live_frame = new qslivegrid(perf(), this, ui->LiveTab);
     if (not_nullptr(m_live_frame))
     {
         ui->LiveTabLayout->addWidget(m_live_frame);
@@ -2699,9 +2685,9 @@ qsmainwnd::quit_session ()
 }
 
 /**
- *  By experimenting, we see that qsliveframe gets all of the keystrokes.  So
- *  we moved much of the processing to that class.  If the event isn't handled
- *  there, then qsmainwnd::handle_key_press() is called.
+ *  By experimenting, we see that the live frame gets all of the keystrokes.
+ *  So we moved much of the processing to that class.  If the event isn't
+ *  handled there, then qsmainwnd::handle_key_press() is called.
  *
  *  If we reimplement this handler, it is very important to call the base
  *  class implementation if the key is no acted on.
@@ -2737,9 +2723,9 @@ qsmainwnd::keyReleaseEvent (QKeyEvent * event)
  *  control-key processing is performed.
  *
  *  The arrow keys support moving forward and backward through the playlists
- *  and the songs they specify.  These functions are also supported by the MIDI
- *  automation apparatus, but are not yet supported by the keystroke automation
- *  apparatus. [Is this still true???]
+ *  and the songs they specify.  These functions are also supported by the
+ *  MIDI automation apparatus, but are not supported by the keystroke
+ *  automation apparatus.  They are considered dedicated keys.
  *
  *  Note that changing the playlist name will cause a reupdate of all of the
  *  window, including the pattern buttons in qslivegrid, causing flickering of
@@ -2799,7 +2785,7 @@ qsmainwnd::handle_key_press (const keystroke & k)
 }
 
 /**
- *  See qsliveframe::handle_key_release().
+ *  See qslivegrid::handle_key_release().
  */
 
 bool

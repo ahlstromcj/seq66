@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2021-04-29
+ * \updates       2021-05-15
  * \license       GNU GPLv2 or above
  *
  *  This object is just a QPushButton with number label.  See seq66::qslivegrid
@@ -110,6 +110,7 @@ qslotbutton::qslotbutton
 void
 qslotbutton::setup ()
 {
+#if defined USE_OLD_GRID_STYLE      /* permanently removed 2021-05-15 */
     QPalette pal = palette();
     if (usr().grid_is_normal())
     {
@@ -137,6 +138,7 @@ qslotbutton::setup ()
 
     std::string snstring = std::to_string(m_slot_number);
     setText(snstring.c_str());
+#endif
 }
 
 /**

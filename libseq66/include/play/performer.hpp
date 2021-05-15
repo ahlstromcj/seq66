@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-13
+ * \updates       2021-05-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -80,7 +80,6 @@ class performer
     friend class playlist;
     friend class qperfeditframe64;
     friend class qplaylistframe;
-    friend class qsliveframe;
     friend class qsmainwnd;
     friend class sequence;
     friend class wrkfile;
