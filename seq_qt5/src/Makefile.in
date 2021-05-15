@@ -21,7 +21,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2021-05-07
+# \update      2021-05-15
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -179,9 +179,8 @@ am__objects_1 = ../include/qclocklayout.moc.lo \
 	../include/qseqkeys.moc.lo ../include/qseqroll.moc.lo \
 	../include/qseqtime.moc.lo ../include/qsessionframe.moc.lo \
 	../include/qsetmaster.moc.lo ../include/qseventslots.moc.lo \
-	../include/qsliveframe.moc.lo ../include/qslivegrid.moc.lo \
-	../include/qsmaintime.moc.lo ../include/qsmainwnd.moc.lo \
-	../include/qstriggereditor.moc.lo \
+	../include/qslivegrid.moc.lo ../include/qsmaintime.moc.lo \
+	../include/qsmainwnd.moc.lo ../include/qstriggereditor.moc.lo \
 	../include/qt5nsmanager.moc.lo
 am__objects_2 = $(am__objects_1)
 am_libseq_qt5_la_OBJECTS = gui_palette_qt5.lo palettefile.lo qbase.lo \
@@ -193,9 +192,9 @@ am_libseq_qt5_la_OBJECTS = gui_palette_qt5.lo palettefile.lo qbase.lo \
 	qseqdata.lo qseqeditex.lo qseqeditframe64.lo qseqeventframe.lo \
 	qseqframe.lo qseqkeys.lo qseqroll.lo qseqstyle.lo \
 	qsessionframe.lo qseqtime.lo qsetmaster.lo qseventslots.lo \
-	qskeymaps.lo qslivebase.lo qsliveframe.lo qslivegrid.lo \
-	qslotbutton.lo qsmaintime.lo qsmainwnd.lo qstriggereditor.lo \
-	qt5_helpers.lo qt5nsmanager.lo $(am__objects_2)
+	qskeymaps.lo qslivebase.lo qslivegrid.lo qslotbutton.lo \
+	qsmaintime.lo qsmainwnd.lo qstriggereditor.lo qt5_helpers.lo \
+	qt5nsmanager.lo $(am__objects_2)
 libseq_qt5_la_OBJECTS = $(am_libseq_qt5_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -625,7 +624,6 @@ moc_qt_headers = \
  ../include/qsessionframe.hpp \
  ../include/qsetmaster.hpp \
  ../include/qseventslots.hpp \
- ../include/qsliveframe.hpp \
  ../include/qslivegrid.hpp \
  ../include/qsmaintime.hpp \
  ../include/qsmainwnd.hpp \
@@ -648,7 +646,6 @@ uic_qt_forms = \
  $(formsdir)/qseqeventframe.ui \
  $(formsdir)/qsessionframe.ui \
  $(formsdir)/qsetmaster.ui \
- $(formsdir)/qsliveframe.ui \
  $(formsdir)/qslivegrid.ui \
  $(formsdir)/qsmainwnd.ui
 
@@ -696,7 +693,6 @@ libseq_qt5_la_SOURCES = \
  qseventslots.cpp \
  qskeymaps.cpp \
  qslivebase.cpp \
- qsliveframe.cpp \
  qslivegrid.cpp \
  qslotbutton.cpp \
  qsmaintime.cpp \
@@ -837,8 +833,6 @@ clean-libLTLIBRARIES:
 	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qseventslots.moc.lo: ../include/$(am__dirstamp) \
 	../include/$(DEPDIR)/$(am__dirstamp)
-../include/qsliveframe.moc.lo: ../include/$(am__dirstamp) \
-	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qslivegrid.moc.lo: ../include/$(am__dirstamp) \
 	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qsmaintime.moc.lo: ../include/$(am__dirstamp) \
@@ -888,7 +882,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qsessionframe.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qsetmaster.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qseventslots.moc.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qsliveframe.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qslivegrid.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qsmaintime.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qsmainwnd.moc.Plo@am__quote@
@@ -931,7 +924,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qseventslots.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qskeymaps.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qslivebase.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qsliveframe.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qslivegrid.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qslotbutton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qsmaintime.Plo@am__quote@

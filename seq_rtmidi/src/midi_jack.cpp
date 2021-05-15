@@ -289,6 +289,8 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
                     {
                         printf("~");
                         overflow = true;
+
+                        break;   // EXPERIMENTAL
                     }
                 }
             }
