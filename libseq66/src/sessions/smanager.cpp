@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2021-05-12
+ * \updates       2021-05-16
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -106,9 +106,9 @@ smanager::smanager (const std::string & caps) :
 
 smanager::~smanager ()
 {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("~smanager()\n"); // currently no additional code needed
-#endif
+    /*
+     * printf("~smanager()\n"); // currently no additional code needed
+     */
 }
 
 /**

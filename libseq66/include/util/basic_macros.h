@@ -162,25 +162,6 @@
 
 #endif  // SEQ66_PLATFORM_GNU
 
-/**
- *  Usage:      apiprint(function_name, context_tag);
- *
- *  This macro can be enabled in JACK modules in order to see the flow of
- *  calls to the JACK or ALSA API.  It also disables the hiding of JACK/ALSA
- *  information messages.
- */
-
-#if defined SEQ66_SHOW_API_CALLS
-#if defined __cplusplus
-#define apiprint(name, tag)    fprintf(stderr, "= %s(%s)\n", name ## .c_str(), \
- tag ## .c_str())
-#else
-#define apiprint(name, tag)    fprintf(stderr, "= %s(%s)\n", name, tag)
-#endif
-#else
-#define apiprint(name, tag)
-#endif
-
 #if ! defined __cplusplus
 
 /**

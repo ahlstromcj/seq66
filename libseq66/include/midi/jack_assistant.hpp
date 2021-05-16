@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2021-04-06
+ * \updates       2021-05-16
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -37,6 +37,7 @@
 
 #include "app_limits.h"                 /* SEQ66 defined macros             */
 #include "midi/midibytes.hpp"           /* seq66::midipulse alias           */
+#include "cfg/rcsettings.hpp"           /* seq66::timebase enum class       */
 
 #if defined SEQ66_JACK_SUPPORT
 
@@ -99,27 +100,6 @@ public:
 #if defined SEQ66_JACK_SUPPORT
 
 /**
- *  Indicates whether Seq66 or another program is the JACK timebase master.
- *
- * \var none
- *      JACK transport is not being used.
- *
- * \var slave
- *      An external program is timebase master and we disregard all local
- *      tempo information. Instead, we use onl the BPM provided by JACK.
- *
- * \var master
- *      Whether by force or conditionally, this program is JACK master.
- */
-
-enum class timebase
-{
-    none,
-    slave,
-    master
-};
-
-/**
  *  Provides an internal type to make it easier to display a specific and
  *  accurate human-readable message when a JACK operation fails.
  */
@@ -147,7 +127,7 @@ using jack_status_pair_t = struct
 class jack_assistant
 {
     friend int jack_transport_callback (jack_nframes_t nframes, void * arg);
-    friend void jack_shutdown_callback (void * arg);
+    friend void jack_transport_shutdown (void * arg);
 
 #if defined USE_JACK_SYNC_CALLBACK
     friend int jack_sync_callback
@@ -511,18 +491,7 @@ public:
         set_follow_transport(! m_follow_transport);
     }
 
-#if defined SEQ66_PLATFORM_DEBUG
-
     jack_client_t * client () const;
-
-#else
-
-    jack_client_t * client () const
-    {
-        return m_jack_client;
-    }
-
-#endif
 
     const std::string & client_name () const
     {
@@ -594,7 +563,7 @@ extern int jack_sync_callback
 );
 #endif
 
-extern void jack_shutdown_callback (void * arg);
+extern void jack_transport_shutdown (void * arg);
 extern void jack_timebase_callback
 (
     jack_transport_state_t state,

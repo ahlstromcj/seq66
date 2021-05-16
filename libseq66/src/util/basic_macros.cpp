@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-04-23
+ * \updates       2021-05-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -36,6 +36,10 @@
 
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "util/basic_macros.hpp"        /* basic macros-cum-functions       */
+
+#if defined SEQ66_PLATFORM_UNIX
+#include <unistd.h>                     /* C::write(2)                      */
+#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -276,6 +280,20 @@ toggleprint (const std::string & tag, bool flag)
 {
     std::string fmt = tag + " %s";
     msgprintf(msg_level::info, fmt, flag ? "on" : "off");
+}
+
+/**
+ *  Meant for use in signal handlers.
+ */
+
+void
+async_safe_strprint (const std::string & msg)
+{
+#if defined SEQ66_PLATFORM_UNIX
+    (void) write(STDOUT_FILENO, msg.data(), msg.length() - 1);
+#else
+    puts(msg.c_str());              /* TODO: find a Windows way for this    */
+#endif
 }
 
 /**

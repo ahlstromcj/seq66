@@ -124,7 +124,6 @@ midi_jack::open_client_impl (bool input)
             }
         }
     }
-    apiprint("open_client_impl", "jack");
     return result;
 }
 

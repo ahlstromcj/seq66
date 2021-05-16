@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2020-12-16
+ * \updates       2021-05-16
  * \license       See the rtexmidi.lic file.  Too big.
  *
  *  This class is meant to collect a whole bunch of JACK information
@@ -61,6 +61,7 @@ namespace seq66
 
 extern int jack_process_rtmidi_input (jack_nframes_t nframes, void * arg);
 extern int jack_process_rtmidi_output (jack_nframes_t nframes, void * arg);
+extern void jack_shutdown_callback (void * arg);
 
 /**
  *  Provides a JACK callback function that uses the callbacks defined in the
@@ -95,7 +96,11 @@ jack_process_io (jack_nframes_t nframes, void * arg)
             {
                 midi_jack_data * mjp = &mj->jack_data();
                 if (mj->parent_bus().is_input_port())
-                    (void) jack_process_rtmidi_input(nframes, mjp);
+                {
+                    int rc = jack_process_rtmidi_input(nframes, mjp);
+                    if (rc == (-1))
+                        break;
+                }
                 else
                     (void) jack_process_rtmidi_output(nframes, mjp);
             }
@@ -162,12 +167,6 @@ midi_jack_info::connect ()
     jack_client_t * result = m_jack_client;
     if (is_nullptr(result))
     {
-        /*
-         * int jacksize = jack_port_name_size();
-         * infoprintf("JACK PORT NAME SIZE = %d\n", jacksize); // = 320
-         * const char * clientname = rc().app_client_name().c_str();
-         */
-
         const char * clientname = seq_client_name().c_str();
         result = create_jack_client(clientname);    /* see jack_assistant   */
         if (not_nullptr(result))
@@ -190,6 +189,8 @@ midi_jack_info::connect ()
                 std::string uuid = get_jack_client_uuid(result);
                 if (! uuid.empty())
                     rc().jack_session_uuid(uuid);
+
+        jack_on_shutdown(m_jack_client, jack_shutdown_callback, (void *) this);
             }
             else
             {
@@ -218,8 +219,6 @@ midi_jack_info::disconnect ()
         jack_deactivate(m_jack_client);
         jack_client_close(m_jack_client);
         m_jack_client = nullptr;
-        apiprint("jack_deactivate", "info");
-        apiprint("jack_client_close", "info");
     }
 }
 
@@ -436,7 +435,6 @@ midi_jack_info::api_connect ()
     if (result)
     {
         int rc = jack_activate(client_handle());
-        apiprint("jack_activate", "info");
         result = rc == 0;
     }
     if (result)

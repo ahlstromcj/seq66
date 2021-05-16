@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-05-02
+ * \updates       2021-05-16
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -232,7 +232,8 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
 
             jack_position_t pos;
             jack_transport_state_t s = jack_transport_query(j->client(), &pos);
-            if (! j->is_master())                       /* j->is_slave()    */
+////        if (! j->is_master())                       /* j->is_slave()    */
+            if (j->is_slave())                          /* j->is_master()   */
             {
                 if (pos.beats_per_minute > 1.0)         /* a sanity check   */
                 {
@@ -351,7 +352,6 @@ create_jack_client
         options = (jack_options_t) (JackNoStartServer | JackSessionID);
         result = jack_client_open(name, options, ps, uid);
     }
-    apiprint("jack_client_open", clientname.c_str());
     if (not_nullptr(result))
     {
         if (status & JackServerStarted)
@@ -706,7 +706,7 @@ jack_assistant::init ()
     {
         std::string package = rc().app_client_name() + "_transport";
         m_jack_running = true;              /* determined surely below      */
-        m_timebase = timebase::master;
+        m_timebase = timebase::master;      /* WHYYYYYYYYYYYYYYYYY?????     */
         m_jack_client = client_open(package);
         if (m_jack_client == NULL)
         {
@@ -718,8 +718,7 @@ jack_assistant::init ()
             m_jack_frame_rate = jack_get_sample_rate(m_jack_client);
 
         get_jack_client_info();
-        jack_on_shutdown(m_jack_client, jack_shutdown_callback, (void *) this);
-        apiprint("jack_on_shutdown", "sync");
+        jack_on_shutdown(m_jack_client, jack_transport_shutdown, (void *) this);
 
         /*
          * Stazed JACK support uses only the jack_transport_callback().  Makes
@@ -730,7 +729,6 @@ jack_assistant::init ()
         (
             m_jack_client, jack_transport_callback, (void *) this
         );
-        apiprint("jack_set_process_callback", "sync");
         if (jackcode != 0)
         {
             m_jack_running = false;
@@ -752,7 +750,6 @@ jack_assistant::init ()
         (
             m_jack_client, jack_session_callback, (void *) this
         );
-        apiprint("jack_set_session_callback", "sync");
         if (jackcode != 0)
         {
             m_jack_running = false;
@@ -774,7 +771,6 @@ jack_assistant::init ()
             (
                 m_jack_client, cond, jack_timebase_callback, (void *) this
             );
-            apiprint("jack_set_timebase_callback", "sync");
             if (jackcode == 0)
             {
                 (void) info_message("JACK transport master");
@@ -825,7 +821,9 @@ jack_assistant::deinit ()
         if (is_master())
         {
             m_timebase = timebase::none;
-            if (jack_release_timebase(m_jack_client) != 0)
+            if (jack_release_timebase(m_jack_client) == 0)
+                (void) info_message("JACK timebase released");
+            else
                 (void) error_message("Cannot release JACK timebase");
         }
 
@@ -835,18 +833,23 @@ jack_assistant::deinit ()
          * thus important as well.
          */
 
-        apiprint("jack_deactivate", "sync");
-        if (jack_deactivate(m_jack_client) != 0)
+        if (jack_deactivate(m_jack_client) == 0)
         {
-            (void) error_message("Can't deactivate JACK transport client");
+            (void) info_message("JACK transport deactivated");
+        }
+        else
+        {
+            (void) error_message("Can't deactivate JACK transport");
             result = false;
         }
-
-        if (jack_client_close(m_jack_client) != 0)
+        if (jack_client_close(m_jack_client) == 0)
         {
-            (void) error_message("Can't close JACK transport client");
+            (void) info_message("JACK transport closed");
         }
-        apiprint("deinit", "sync");
+        else
+        {
+            (void) error_message("Can't close JACK transport");
+        }
     }
     if (m_jack_running)
         (void) info_message("JACK transport not disabled");
@@ -878,7 +881,6 @@ jack_assistant::activate ()
     {
         int rc = jack_activate(m_jack_client);
         result = rc == 0;
-        apiprint("jack_activate", "sync");
         if (! result)
         {
             m_jack_running = false;
@@ -910,7 +912,6 @@ jack_assistant::start ()
     if (m_jack_running)
     {
         jack_transport_start(m_jack_client);
-        apiprint("jack_transport_start", "sync");
     }
     else if (rc().with_jack())
         (void) error_message("Sync start: JACK not running");
@@ -927,7 +928,6 @@ jack_assistant::stop ()
     if (m_jack_running)
     {
         jack_transport_stop(m_jack_client);
-        apiprint("jack_transport_stop", "sync");
     }
     else if (rc().with_jack())
         (void) error_message("Sync stop: JACK not running");
@@ -954,10 +954,9 @@ jack_assistant::set_beats_per_minute (midibpm bpminute)
             (void) jack_transport_query(m_jack_client, &m_jack_pos);
             m_jack_pos.beats_per_minute = bpminute;
             int jackcode = jack_transport_reposition(m_jack_client, &m_jack_pos);
-            apiprint("jack_transport_reposition", "set bpm");
             if (jackcode != 0)
             {
-                errprint("jack_transport_reposition(): bad position structure");
+                errprint("jack transport reposition: bad position structure");
             }
         }
     }
@@ -1039,7 +1038,7 @@ jack_assistant::position (bool songmode, midipulse tick)
          */
 
         if (jack_transport_locate(m_jack_client, jack_frame) != 0)
-            (void) info_message("jack_transport_locate() failed");
+            (void) error_message("jack transport locate failed");
     }
 
     if (parent().is_running())
@@ -1113,10 +1112,9 @@ jack_assistant::set_position (midipulse tick)
 #endif
 
     int jackcode = jack_transport_reposition(m_jack_client, &pos);
-    apiprint("jack_transport_reposition", "sync");
     if (jackcode != 0)
     {
-        errprint("jack_assistant::set_position(): bad position structure");
+        errprint("set position: bad position structure");
     }
 }
 
@@ -1162,7 +1160,6 @@ jack_assistant::sync (jack_transport_state_t state)
     int result = 0;                     /* seq66 always returns 1   */
     m_jack_frame_current = jack_get_current_transport_frame(m_jack_client);
     (void) jack_transport_query(m_jack_client, &m_jack_pos);
-    apiprint("jack_transport_query", "sync");
 
     jack_nframes_t rate = m_jack_pos.frame_rate;
     if (rate == 0)
@@ -1706,8 +1703,6 @@ jack_assistant::current_jack_position () const
     }
 }
 
-#if defined SEQ66_PLATFORM_DEBUG
-
 jack_client_t *
 jack_assistant::client () const
 {
@@ -1716,7 +1711,7 @@ jack_assistant::client () const
     {
         if (s_preserved_client != m_jack_client)
         {
-            errprint("JACK transport client pointer corrupt, JACK disabled!");
+            errprint("JACK transport pointer corrupt, JACK disabled!");
             s_preserved_client = m_jack_client = nullptr;
         }
     }
@@ -1726,8 +1721,6 @@ jack_assistant::client () const
     }
     return m_jack_client;
 }
-
-#endif  // SEQ66_PLATFORM_DEBUG
 
 /*
  *  JACK callbacks.
@@ -1894,7 +1887,7 @@ jack_timebase_callback
  */
 
 void
-jack_shutdown_callback (void * arg)
+jack_transport_shutdown (void * arg)
 {
     jack_assistant * jack = (jack_assistant *)(arg);
     if (not_nullptr(jack))
@@ -1904,7 +1897,7 @@ jack_shutdown_callback (void * arg)
     }
     else
     {
-        errprint("jack_shutdown_callback(): null JACK pointer");
+        errprint("jack shutdown callback: null JACK pointer");
     }
 }
 

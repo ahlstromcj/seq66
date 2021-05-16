@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-05-13
+ * \updates       2021-05-16
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -106,7 +106,7 @@ namespace seq66
 rcfile::rcfile (const std::string & name, rcsettings & rcs) :
     configfile  (name, rcs)
 {
-    // Empty body
+    version("1");                       /* new version on 2021-05-16    */
 }
 
 /**
@@ -329,24 +329,41 @@ rcfile::parse ()
      * messed up.
      */
 
-    if (line_after(file, "[jack-transport]"))
+    s = get_variable(file, "[jack-transport]", "transport-type");
+    if (s.empty())
     {
-        sscanf(scanline(), "%d", &flag);                /* 1 */
-        rc_ref().with_jack_transport(bool(flag));
-        next_data_line(file);
-        sscanf(scanline(), "%d", &flag);                /* 2 */
-        rc_ref().with_jack_master(bool(flag));
-        next_data_line(file);
-        sscanf(scanline(), "%d", &flag);                /* 3 */
-        rc_ref().with_jack_master_cond(bool(flag));
-        next_data_line(file);
-        sscanf(scanline(), "%d", &flag);                /* 4 */
-        rc_ref().song_start_mode(bool(flag));
-        if (next_data_line(file))
+        if (line_after(file, "[jack-transport]"))
         {
-            sscanf(scanline(), "%d", &flag);            /* 5 */
-            rc_ref().with_jack_midi(bool(flag));
+            sscanf(scanline(), "%d", &flag);                /* 1 */
+            rc_ref().with_jack_transport(bool(flag));
+            next_data_line(file);
+            sscanf(scanline(), "%d", &flag);                /* 2 */
+            rc_ref().with_jack_master(bool(flag));
+            next_data_line(file);
+            sscanf(scanline(), "%d", &flag);                /* 3 */
+            rc_ref().with_jack_master_cond(bool(flag));
+            next_data_line(file);
+            sscanf(scanline(), "%d", &flag);                /* 4 */
+            rc_ref().song_start_mode(bool(flag));
+            if (next_data_line(file))
+            {
+                sscanf(scanline(), "%d", &flag);            /* 5 */
+                rc_ref().with_jack_midi(bool(flag));
+            }
         }
+    }
+    else
+    {
+        rc_ref().set_jack_transport(s);
+        s = get_variable(file, "[jack-transport]", "song-start-mode");
+        if (s == "live")
+            s = "false";
+        else if (s == "song")
+            s = "true";
+
+        rc_ref().song_start_mode(string_to_bool(s, false));
+        s = get_variable(file, "[jack-transport]", "jack-midi");
+        rc_ref().with_jack_midi(string_to_bool(s, true));
     }
 
     bool use_manual_ports = false;
@@ -1234,31 +1251,40 @@ rcfile::write ()
         << "   # allow_click_edit\n"
         ;
 
+    std::string jacktransporttype = "none";
+    if (rc_ref().with_jack_master())
+        jacktransporttype = "master";
+    else if (rc_ref().with_jack_transport())
+        jacktransporttype = "slave";
+    else if (rc_ref().with_jack_master_cond())
+        jacktransporttype = "conditional";
+
     file
         << "\n[jack-transport]\n\n"
         "# jack_transport - Enable slave synchronization with JACK Transport.\n"
-        "# Also contains the new flag to use JACK MIDI.\n\n"
-        << rc_ref().with_jack_transport() << "   # with_jack_transport\n\n"
-        "# jack_master - Seq66 attempts to serve as JACK Master.\n"
-        "# Also must enable jack_transport (the user interface forces this,\n"
-        "# and also disables jack_master_cond).\n\n"
-        << rc_ref().with_jack_master() << "   # with_jack_master\n\n"
-        "# jack_master_cond - Seq66 is JACK master if no other JACK\n"
-        "# master exists. Also must enable jack_transport (the user interface\n"
-        "# forces this, and disables jack_master).\n\n"
-        << rc_ref().with_jack_master_cond()  << "   # with_jack_master_cond\n\n"
-        "# song_start_mode applies to JACK/ALSA/PortMidi.\n"
+        "# Also contains the new flag to use JACK MIDI. Now simplified to\n"
+        "# use variables instead of 0/1 flags. JACK transport values can be\n"
+        "# 'none', 'slave', 'master', and 'conditional'.\n"
         "#\n"
-        "# 0 = Playback in Live mode. Allows muting and unmuting of loops.\n"
-        "#     from the main (patterns) window.  Disables both manual and\n"
-        "#     automatic muting and unmuting from the performance window.\n"
-        "# 1 = Playback uses the Song (performance) editor's data and mute\n"
-        "#     controls, regardless of which window was used to start the\n"
-        "#     playback.\n\n"
-        << rc_ref().song_start_mode() << "   # song_start_mode\n\n"
-        "# jack_midi - Enable JACK MIDI, which is a separate option from\n"
-        "# JACK Transport.\n\n"
-        << rc_ref().with_jack_midi() << "   # with_jack_midi\n"
+        "#   none: No JACK Transport in use.\n"
+        "#   slave: Seq66 attempts to use JACK Transport as Slave.\n"
+        "#   master: Seq66 attempts to serve as JACK Transport Master.\n"
+        "#   conditional: Seq66 is JACK master if no JACK master exists.\n\n"
+        << "transport-type = " << jacktransporttype << "\n\n"
+        ;
+
+    std::string songmodeflag = bool_to_string(rc_ref().song_start_mode());
+    std::string jackmidiflag = bool_to_string(rc_ref().with_jack_midi());
+    file
+        << "# song-start-mode is one of the following value:\n"
+        "#\n"
+        "# false: Playback in Live mode. Allows muting and unmuting of loops.\n"
+        "#        from the main (patterns) window.\n"
+        "# true:  Playback uses the Song (performance) editor's data and mute\n"
+        "#        controls.\n\n"
+        << "song-start-mode = " << songmodeflag << "\n\n"
+        "# jack-midi sets/unsets JACK MIDI, separate from JACK Transport.\n\n"
+        << "jack-midi = " << jackmidiflag << "\n"
         ;
 
 #if defined SEQ66_LASH_SUPPORT_MOVED

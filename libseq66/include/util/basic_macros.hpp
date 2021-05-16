@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2020-08-25
+ * \updates       2021-05-16
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -110,6 +110,7 @@ extern bool file_error (const std::string & tag, const std::string & filename);
 extern void file_message (const std::string & tag, const std::string & path);
 extern void boolprint (const std::string & tag, bool flag);
 extern void toggleprint (const std::string & tag, bool flag);
+extern void async_safe_strprint (const std::string & msg);
 extern void msgprintf (seq66::msg_level lev, std::string fmt, ...);
 extern std::string msgsnprintf (std::string fmt, ...);
 extern bool is_debug ();

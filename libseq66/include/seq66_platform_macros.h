@@ -145,7 +145,7 @@
 #define SEQ66_PLATFORM_POSIX_API
 #define SEQ66_PLATFORM_PTHREADS
 
-#endif                                  /* SEQ66_PLATFORM_LINUX                   */
+#endif                                 /* SEQ66_PLATFORM_LINUX              */
 
 /**
  *  Provides a "MacOSX" macro, in case the environment doesn't provide it.

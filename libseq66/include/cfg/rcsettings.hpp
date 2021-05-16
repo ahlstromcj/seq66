@@ -90,6 +90,31 @@ const int c_max_sets = SEQ66_DEFAULT_SET_MAX;
 const int c_max_set_keys = SEQ66_SET_KEYS_MAX;
 
 /**
+ *  Indicates whether Seq66 or another program is the JACK timebase master.
+ *
+ * \var none
+ *      JACK transport is not being used.
+ *
+ * \var slave
+ *      An external program is timebase master and we disregard all local
+ *      tempo information. Instead, we use onl the BPM provided by JACK.
+ *
+ * \var master
+ *      Whether by force or conditionally, this program is JACK master.
+ *
+ * \var conditional
+ *      This value is just for requesting conditional master in the 'rc' file.
+ */
+
+enum class timebase
+{
+    none,
+    slave,
+    master,
+    conditional
+};
+
+/**
  *  This class contains "global" options that can be read from the "rc" file
  *  (class rcfile) and its related "mutes" and "ctrl" files.
  */
@@ -647,16 +672,11 @@ public:
         return m_song_start_mode;
     }
 
+    void set_jack_transport (const std::string & value);
+
     void with_jack_transport (bool flag)
     {
         m_with_jack_transport = flag;
-
-        /*
-         * Let's not do this, too confusing.
-         *
-         * if (flag)
-         *     m_with_jack_master = false;
-         */
     }
 
     void with_jack_master (bool flag)

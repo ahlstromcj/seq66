@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-05-15
+ * \updates       2021-05-16
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -139,12 +139,14 @@
  *      We need to study the source code to the jack_midi_clock application to
  *      make sure we're doing this correctly.
  *
- *  GitHub issue #165: enabled a build and run with no JACK support.
+ *  GitHub issue #165: enabled a build and run with no JACK support.  Weird is
+ *  that removing or moving the calculations.hpp header into the support macro
+ *  section causes midi_jack member functions to be unresolved!
  */
 
-#include "util/calculations.hpp"        /* seq66::extract_port_name()       */
+#include "seq66-config.h"               /* SEQ66_JACK_SUPPORT                */
 
-#ifdef SEQ66_JACK_SUPPORT
+#if defined SEQ66_JACK_SUPPORT
 
 #include <sstream>
 
@@ -195,8 +197,7 @@ namespace seq66
  *  We're still working exactly how it will work best.
  *
  *  This function used to be static, but now we make it available to
- *  midi_jack_info.  Also note the s_null_detected flag.  It is used only to
- *  have the apiprint() debug messages appear only once, for trouble-shooting.
+ *  midi_jack_info.  Also note the s_null_detected flag.
  *
  * \param nframes
  *    The frame number to be processed.
@@ -213,7 +214,7 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
 {
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
 
-#if defined SEQ66_USE_DEBUG_OUTPUT
+#if defined SEQ66_USE_DEBUG_OUTPUT                  /* non-asynchronous!!!  */
     rtmidi_in_data * rtindata = jackdata->m_jack_rtmidiin;
     static bool s_null_detected = false;
     if (is_nullptr(jackdata->m_jack_port))          /* is port created?     */
@@ -221,7 +222,7 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
         if (! s_null_detected)
         {
             s_null_detected = true;
-            apiprint("jack_process_rtmidi_input", "null jack port");
+            printf("rtmidi input: null jack port");
         }
         return 0;
     }
@@ -230,7 +231,7 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
         if (! s_null_detected)
         {
             s_null_detected = true;
-            apiprint("jack_process_rtmidi_input", "null rtmidi_in_data");
+            printf("rtmidi input null rtmidi_in_data");
         }
         return 0;
     }
@@ -287,10 +288,9 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
 #endif
                     if (! rtindata->queue().add(message))
                     {
-                        printf("~");
+                        async_safe_strprint("~");
                         overflow = true;
-
-                        break;   // EXPERIMENTAL
+                        break;                  /* EXPERIMENTAL */
                     }
                 }
             }
@@ -302,7 +302,9 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
                      * ENODATA = 61: No data available.
                      */
 
-                    errprintf("process rtmidi input: ENODATA = %d", rc);
+                    std::string s = "rtmidi input: ENODATA = ";
+                    s += std::to_string(rc);
+                    async_safe_strprint(s);
                 }
                 else
                 {
@@ -310,13 +312,18 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
                      * ENOBUFS = 105: No buffer space available can happen.
                      */
 
-                    errprintf("process rtmidi input: ERROR = %d", rc);
+                    std::string s = "rtmidi input: ERROR = ";
+                    s += std::to_string(rc);
+                    async_safe_strprint(s);
                     break;
                 }
             }
         }
         if (overflow)
-            printf(" message overflow\n");
+        {
+            async_safe_strprint(" Message overflow");
+            return (-1);
+        }
     }
     else
     {
@@ -370,14 +377,14 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
     static size_t s_offset = 0;
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
 
-#if defined SEQ66_USE_DEBUG_OUTPUT
+#if defined SEQ66_USE_DEBUG_OUTPUT                  /* non-asynchronous!!!  */
     static bool s_null_detected = false;
     if (is_nullptr(jackdata->m_jack_port))          /* is port created?     */
     {
         if (! s_null_detected)
         {
             s_null_detected = true;
-            apiprint("jack_process_rtmidi_output", "null jack port");
+            printf("rtmidi output null jack port");
         }
         return 0;
     }
@@ -386,7 +393,7 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
         if (! s_null_detected)
         {
             s_null_detected = true;
-            apiprint("jack_process_rtmidi_output", "null jack buffer");
+            printf("rtmidi output null jack buffer");
         }
         return 0;
     }
@@ -394,14 +401,6 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
 
     void * buf = jack_port_get_buffer(jackdata->m_jack_port, nframes);
     jack_midi_clear_buffer(buf);                    /* no nullptr test      */
-
-#ifdef SEQ66_SHOW_API_CALLS_TMI
-    printf
-    (
-        "%d frames for jack port %lx\n",
-        int(nframes), (unsigned long)(jackdata->m_jack_port)
-    );
-#endif
 
     /*
      * A for-loop over the number of nframes?  See discussion above.
@@ -431,21 +430,37 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
             (
                 jackdata->m_jack_buffmessage, mididata, size_t(space)
             );
-
-#ifdef SEQ66_SHOW_API_CALLS_TMI
-            printf("%d bytes read: ", space);
-            for (int i = 0; i < space; ++i)
-                printf("%x ", (unsigned char)(mididata[i]));
-
-            printf("\n");
-#endif
         }
         else
         {
-            errprint("jack_midi_event_reserve() returned a null pointer");
+            async_safe_strprint("midi event reserve returned a null pointer");
         }
     }
     return 0;
+}
+
+/**
+ *  This callback is to shut down JACK by clearing the jack_assistant ::
+ *  m_jack_running flag.
+ *
+ * \param arg
+ *      Points to the jack_assistant in charge of JACK support for the performer
+ *      object.
+ */
+
+void
+jack_shutdown_callback (void * arg)
+{
+    midi_jack_info * jack = (midi_jack_info *)(arg);
+    if (not_nullptr(jack))
+    {
+        // jack->set_jack_running(false);
+        async_safe_strprint("[JACK shutdown.]");
+    }
+    else
+    {
+        async_safe_strprint("jack shutdown callback: null JACK pointer");
+    }
 }
 
 /*
@@ -496,8 +511,6 @@ midi_jack::~midi_jack ()
 
     if (not_nullptr(m_jack_data.m_jack_buffmessage))
         jack_ringbuffer_free(m_jack_data.m_jack_buffmessage);
-
-    apiprint("~midi_jack", "jack");
 }
 
 void
@@ -851,15 +864,11 @@ midi_jack::api_play (event * e24, midibyte channel)
     if (e24->is_two_bytes())
         message.push(d1);
 
-#ifdef SEQ66_SHOW_API_CALLS_TMI
-    printf("midi_jack::play()\n");
-#endif
-
     if (m_jack_data.valid_buffer())
     {
         if (! send_message(message))
         {
-            errprint("JACK api_play failed");
+            errprint("JACK API play failed");
         }
     }
 }
@@ -894,7 +903,6 @@ midi_jack::send_message (const midi_message & message)
         (
             m_jack_data.m_jack_buffsize, (char *) &nbytes, sizeof nbytes
         );
-        apiprint("send_message", "jack");
         result = (count1 > 0) && (count2 > 0);
     }
     return result;
@@ -956,7 +964,6 @@ midi_jack::api_continue_from (midipulse tick, midipulse /*beats*/)
     send_byte(EVENT_MIDI_CONTINUE);
     api_flush();                                /* currently does nothing   */
     send_byte(EVENT_MIDI_SONG_POS);
-    apiprint("api_continue_from", "jack");
 }
 
 /**
@@ -970,7 +977,6 @@ midi_jack::api_start ()
 {
     jack_transport_start(client_handle());
     send_byte(EVENT_MIDI_START);
-    apiprint("jack_transport_start", "jack");
 }
 
 /**
@@ -984,7 +990,6 @@ midi_jack::api_stop ()
 {
     jack_transport_stop(client_handle());
     send_byte(EVENT_MIDI_STOP);
-    apiprint("jack_transport_stop", "jack");
 }
 
 /**
@@ -1095,7 +1100,6 @@ midi_jack::close_client ()
     if (not_nullptr(client_handle()))
     {
         int rc = jack_client_close(client_handle());
-        apiprint("jack_client_close", "jack");
         client_handle(nullptr);
         if (rc != 0)
         {
@@ -1163,15 +1167,6 @@ midi_jack::connect_port
             (
                 client_handle(), srcportname.c_str(), destportname.c_str()
             );
-#ifdef SEQ66_SHOW_API_CALLS_TMI
-            printf("Parent bus:\n");
-            parent_bus().show_bus_values();
-            printf
-            (
-                "jack_connect(src = '%s', dest = '%s')\n",
-                srcportname.c_str(), destportname.c_str()
-            );
-#endif
             result = rc == 0;
             if (! result)
             {
@@ -1244,18 +1239,6 @@ midi_jack::register_port (bool input, const std::string & portname)
             client_handle(), portname.c_str(), JACK_DEFAULT_MIDI_TYPE,
             flag, buffsize
         );
-#ifdef SEQ66_SHOW_API_CALLS_TMI
-        std::string flagname = input ? "JackPortIsOutput" : "JackPortIsInput" ;
-        printf("Parent bus:\n");
-        parent_bus().show_bus_values();
-        printf
-        (
-            "%lx = jack_port_register(name = '%s', flag(%s) = '%s')\n",
-            (unsigned long)(p), portname.c_str(), input ? "input" : "output",
-            flagname.c_str()
-        );
-        printf("  Full port name: '%s'\n", portname.c_str());
-#endif
         if (not_nullptr(p))
         {
             port_handle(p);
@@ -1288,7 +1271,6 @@ midi_jack::close_port ()
     {
         jack_port_unregister(client_handle(), port_handle());
         port_handle(nullptr);
-        apiprint("jack_port_unregister", "jack");
     }
 }
 

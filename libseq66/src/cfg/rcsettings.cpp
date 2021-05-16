@@ -247,6 +247,31 @@ rcsettings::set_defaults ()
     set_config_files(SEQ66_CONFIG_NAME);
 }
 
+void
+rcsettings::set_jack_transport (const std::string & value)
+{
+    if (value == "slave")
+    {
+        with_jack_transport(true);
+    }
+    else if (value == "master")
+    {
+        with_jack_transport(true);
+        with_jack_master(true);
+    }
+    else if (value == "conditional")
+    {
+        with_jack_transport(true);
+        with_jack_master_cond(true);
+    }
+    else
+    {
+        with_jack_transport(false);
+        with_jack_master(false);
+        with_jack_master_cond(false);
+    }
+}
+
 /**
  *  Holds the client name for the application.  This is much like the
  *  application name, but in the future will be a configuration option.
