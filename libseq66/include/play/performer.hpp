@@ -28,9 +28,10 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-15
+ * \updates       2021-05-17
  * \license       GNU GPLv2 or above
  *
+ *  The main player!
  */
 
 #include <set>                          /* std::set, arbitary selection     */
@@ -1769,7 +1770,7 @@ public:
 
     void FF_rewind ();
     bool FF_RW_timeout ();          /* called by free-function of same name */
-    void conditional_reposition (midipulse tick, midipulse stoptick);
+    void jack_reposition (midipulse tick, midipulse stoptick);
 
     void set_reposition (bool postype)
     {

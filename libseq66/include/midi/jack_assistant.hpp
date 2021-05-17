@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2021-05-16
+ * \updates       2021-05-17
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -36,8 +36,8 @@
  */
 
 #include "app_limits.h"                 /* SEQ66 defined macros             */
+#include "cfg/rcsettings.hpp"           /* seq66::enum class timebase       */
 #include "midi/midibytes.hpp"           /* seq66::midipulse alias           */
-#include "cfg/rcsettings.hpp"           /* seq66::timebase enum class       */
 
 #if defined SEQ66_JACK_SUPPORT
 
@@ -61,14 +61,6 @@
 namespace seq66
 {
     class performer;                      /* forward reference                */
-
-/**
- *  Apparently, MIDI pulses are 10 times the size of JACK ticks. So we need,
- *  in some places, to convert pulses (ticks) to JACK ticks by multiplying by
- *  10.  And we provide a data type.
- */
-
-const int c_jack_factor = 10;
 
 /**
  *  Provide a temporary structure for passing data and results between a
@@ -106,6 +98,27 @@ public:
 };
 
 #if defined SEQ66_JACK_SUPPORT
+
+/**
+ *  Indicates whether Seq66 or another program is the JACK timebase master.
+ *
+ * \var none
+ *      JACK transport is not being used.
+ *
+ * \var slave
+ *      An external program is timebase master and we disregard all local
+ *      tempo information. Instead, we use onl the BPM provided by JACK.
+ *
+ * \var master
+ *      Whether by force or conditionally, this program is JACK master.
+
+enum class timebase
+{
+    none,
+    slave,
+    master
+};
+ */
 
 /**
  *  Provides an internal type to make it easier to display a specific and
@@ -499,7 +512,18 @@ public:
         set_follow_transport(! m_follow_transport);
     }
 
+#if defined SEQ66_PLATFORM_DEBUG
+
     jack_client_t * client () const;
+
+#else
+
+    jack_client_t * client () const
+    {
+        return m_jack_client;
+    }
+
+#endif
 
     const std::string & client_name () const
     {
@@ -543,7 +567,7 @@ private:
     jack_client_t * client_open (const std::string & clientname);
     void get_jack_client_info ();
     int sync (jack_transport_state_t state = (jack_transport_state_t)(-1));
-    midipulse current_jack_position () const;
+    long current_jack_position () const;
 
 #if defined ENABLE_PROPOSED_FUNCTIONS
     void update_timebase_master (jack_transport_state_t s);

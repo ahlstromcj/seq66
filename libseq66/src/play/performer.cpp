@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-05-13
+ * \updates       2021-05-17
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -2893,7 +2893,7 @@ performer::set_jack_mode (bool connect)
  */
 
 void
-performer::conditional_reposition (midipulse tick, midipulse stoptick)
+performer::jack_reposition (midipulse tick, midipulse stoptick)
 {
     midipulse diff = tick - stoptick;
     if (diff != 0)
