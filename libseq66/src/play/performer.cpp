@@ -681,7 +681,7 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     rcs.clocks() = m_clocks;
     rcs.inputs() = m_inputs;
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     m_clocks.show("Clocks");
     m_inputs.show("Inputs");
 #endif
@@ -2856,7 +2856,7 @@ performer::set_thru (seq::number seqno, bool thruon, bool toggle)
 bool
 performer::set_jack_mode (bool connect)
 {
-    if (! is_running())                         /* was global_is_running    */
+    if (! is_running())
     {
         if (connect)
             (void) init_jack_transport();
@@ -2881,6 +2881,27 @@ performer::set_jack_mode (bool connect)
         set_start_tick(get_tick());
 
     return is_jack_running();
+}
+
+/**
+ *
+ * \param tick
+ *      The current JACK position in ticks.
+ *
+ * \param stoptick
+ *      The current JACK stop-tick.
+ */
+
+void
+performer::conditional_reposition (midipulse tick, midipulse stoptick)
+{
+    midipulse diff = tick - stoptick;
+    if (diff != 0)
+    {
+        set_reposition(true);
+        set_start_tick(tick);
+        m_jack_asst.jack_stop_tick(tick);
+    }
 }
 
 /**
@@ -5194,7 +5215,7 @@ performer::populate_default_ops ()
         else
             break;
     }
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     if (rc().verbose())
         m_operations.show();
 #endif
@@ -5427,9 +5448,6 @@ performer::loop_control
         if (m_seq_edit_pending || m_event_edit_pending)
         {
             result = false;             /* let the caller handle it */
-#if defined SEQ66_PLATFORM_DEBUG
-            infoprint("loop_control(): edit pending");
-#endif
         }
         else
         {

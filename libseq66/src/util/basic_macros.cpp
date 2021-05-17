@@ -287,12 +287,13 @@ toggleprint (const std::string & tag, bool flag)
  */
 
 void
-async_safe_strprint (const std::string & msg)
+async_safe_strprint (const char * msg, size_t count)
 {
 #if defined SEQ66_PLATFORM_UNIX
-    (void) write(STDOUT_FILENO, msg.data(), msg.length() - 1);
+    (void) write(STDOUT_FILENO, msg, count);
 #else
-    puts(msg.c_str());              /* TODO: find a Windows way for this    */
+    /* TODO: find a Windows way for this    */
+    (void) write(STDOUT_FILENO, msg, count);
 #endif
 }
 

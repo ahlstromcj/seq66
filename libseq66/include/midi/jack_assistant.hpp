@@ -63,6 +63,14 @@ namespace seq66
     class performer;                      /* forward reference                */
 
 /**
+ *  Apparently, MIDI pulses are 10 times the size of JACK ticks. So we need,
+ *  in some places, to convert pulses (ticks) to JACK ticks by multiplying by
+ *  10.  And we provide a data type.
+ */
+
+const int c_jack_factor = 10;
+
+/**
  *  Provide a temporary structure for passing data and results between a
  *  performer and jack_assistant object.  The jack_assistant class already
  *  has access to the members of performer, but it needs access to and
@@ -535,7 +543,7 @@ private:
     jack_client_t * client_open (const std::string & clientname);
     void get_jack_client_info ();
     int sync (jack_transport_state_t state = (jack_transport_state_t)(-1));
-    long current_jack_position () const;
+    midipulse current_jack_position () const;
 
 #if defined ENABLE_PROPOSED_FUNCTIONS
     void update_timebase_master (jack_transport_state_t s);

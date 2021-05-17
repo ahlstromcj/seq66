@@ -110,7 +110,7 @@ extern bool file_error (const std::string & tag, const std::string & filename);
 extern void file_message (const std::string & tag, const std::string & path);
 extern void boolprint (const std::string & tag, bool flag);
 extern void toggleprint (const std::string & tag, bool flag);
-extern void async_safe_strprint (const std::string & msg);
+extern void async_safe_strprint (const char * msg, size_t count);
 extern void msgprintf (seq66::msg_level lev, std::string fmt, ...);
 extern std::string msgsnprintf (std::string fmt, ...);
 extern bool is_debug ();

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-05-07
+ * \updates       2021-05-17
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -137,6 +137,13 @@ using eventkey = unsigned;
  */
 
 using colorbyte = char;
+
+/**
+ *  Distinguishes a JACK tick from a MIDI tick (pulse).  The latter are ten
+ *  times as long as the JACK tick.
+ */
+
+using jacktick = long;
 
 /**
  *  Distinguishes a long value from the unsigned long values implicit in MIDI

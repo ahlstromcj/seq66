@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-28
-% \update      2021-02-07
+% \update      2021-05-17
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -20,17 +20,12 @@
    This section describes some details concerning the JACK support of
    \textsl{Seq66}.
    As with \textsl{Seq24}, \textsl{Seq66} has JACK transport support.
-   JACK supposedl works with \textsl{Windows}, but we do not provide a JACK
+   JACK supposedly works with \textsl{Windows}, but we do not provide a JACK
    MIDI engine for that system.
-   The JACK support is loosely based on the RtMIDI project
+   The JACK support is very loosely based on the RtMIDI project
    (see \cite{rtmidi}).
    This mode also supports fallback-to-ALSA if the JACK
    server is not running.
-
-   If one wants to use \textsl{Seq66} and USB devices
-   with JACK MIDI, one needs to expose the USB ports to JACK using
-   \texttt{a2jmidid -{}-export-hw}, and connect the resultant MIDI JACK ports
-   oneself, using \textsl{QJackCtl}, for example.
 
    To enable the JACK transport support at run-time on
    \textsl{Linux}, the options
@@ -38,6 +33,12 @@
    \texttt{-J}/\texttt{-{}-jack-master},
    \texttt{-C}/\texttt{-{}-jack-master-cond},
    and \texttt{-t}/\texttt{-{}-jack-midi} are available.
+   Also see \sectionref{subsubsec:configuration_rc_jack_transport}.
+
+   If one wants to use \textsl{Seq66} and USB devices
+   with JACK MIDI, one needs to expose the USB ports to JACK using
+   \texttt{a2jmidid -{}-export-hw}, and connect the resultant MIDI JACK ports
+   oneself, using \textsl{QJackCtl}, for example.
 
    The following sections discuss the JACK transport support and the native
    JACK MIDI support.
@@ -51,21 +52,76 @@
    \textsl{QJackCtl}, and the ports created are part of the
    "seq66" client.
 
-%  TRUE? :
-%  The first thing to note about JACK transport with \textsl{Seq66} is
-%  that the progress bars will not move unless \textsl{Seq66} is
-%  connected to a JACK client, such as \textsl{Hydrogen} (in JACK MIDI mode)
-%  or \textsl{Yoshimi}.
-
-   \textsl{Seq66} can be configure to run without JACK transport, with JACK
+   \textsl{Seq66} can be configured to run without JACK transport, with JACK
    transport as a "slave" (i.e. "client"), as JACK master, or as JACK master if
    there is no other master detected.
+   Transport clients were formerly known as "transport slaves", and that
+   term seems more clear than "client".
+
+   The \textsl{timebase master}
+   continuously updates extended position information, counting beats,
+   timecode, etc., while the transport is rolling.
+   There is at most one master active at a time. If no
+   timebase master, frame numbers are the only position information available.
+   If a new client takes over, the former master timebase is no longer used.
+   Taking over the timebase may be done conditionally, in which case the takeover
+   fails when there is a master already. The existing master can release it
+   voluntarily, if desired.
+
+   There are some playback functions that JACK transport does not address:
+
+   \begin{itemize}
+      \item Variable speed playback.
+      \item Reverse playback.
+      \item Looping.
+   \end{itemize}
 
    As per the rules of JACK, any client can start and stop the transport, and
    the other clients will follow suit.  When \textsl{Seq66} is a JACK client,
    it will accept beats/minute (BPM) changes from another client that is
    running as master.  When \textsl{Seq66} is master, changes to its BPM will
    be transmitted to the other clients.
+
+   \textbf{Rules of JACK Transport}:
+
+   \begin{itemize}
+      \item Any client can be master, no need for one master client.
+      \item Multiple clients can change the transport state;
+         any client can start/stop playback or seek to a new location.
+      \item The transport timebase (tempo) is set and maintained by
+         one of the clients.
+   \end{itemize}
+
+   Here are some test JACK Transport scenarios using
+   \textsl{Seq66} and \textsl{Hydrogen} running under JACK.
+   We currently have to restart Seq66 between each scenario.
+
+   \textsl{Seq66 as JACK Slave, Hydrogen as JACK Slave}
+
+      Either application can start and stop playback on both applications.
+      The BPM (beats-per-minute) are changed independently on each application.
+
+   \textsl{Seq66 as JACK Slave, Hydrogen as JACK Master}
+
+      Either application can start and stop playback on both applications.
+      Changing BPM on Hydrogen also changes it on Seq66, but not the other way
+      around. Seq66 cannot change its BPM via the user-interface.
+
+   \textsl{Seq66 as JACK Master, Hydrogen as JACK Slave}
+
+      Either application can start and stop playback on both applications.
+      Changing BPM on Seq66 also changes it on Hydrogen.  If changed on Hydrogen,
+      the BPM immediately returns to Seq66's BPM.
+
+   \textsl{Seq66 as JACK Master, Hydrogen as JACK Master}
+
+      If Hydrogen is already running, as soon as Seq66 starts, Hydrogren
+      relinquishes JACK Master.
+      If Hydrogen comes up after Seq66, it retains JACK Master status.  Both
+      applications can control start/stop and BPM
+
+   Note that, in \textsl{Seq66}, a changed BPM resets to the file-value after
+   restart.  Bug or feature?
 
 \subsection{Seq66 Native JACK MIDI}
 \label{subsec:jack_native_midi}

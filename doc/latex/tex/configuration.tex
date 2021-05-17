@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-05-04
+% \update      2021-05-17
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -316,6 +316,11 @@
       \textsl{Seq66} will run with JACK, which is the default is JACK is
       running.
 
+   The following options can be configured in the 'rc' file. (But note that, since
+   version \textsl{Seq66} 0.94.0, the format of that section of the file has been
+   simplified.
+   See \sectionref{subsubsec:configuration_rc_jack_transport}.
+
       \configref{rc}{jack-transport}{with\_jack\_midi}
 
    \optionline{-j}{-{}-jack-transport}
@@ -621,6 +626,9 @@
    The JACK Transport options are also command-line options.
    See \sectionref{subsec:configuration_command_line}.
 
+   For \textsl{Seq66} \textsl{before} 0.94.0, simple boolean digit settings were
+   used.
+
    \begin{verbatim}
       [jack-transport]
       0   # with_jack_transport
@@ -630,13 +638,20 @@
       0   # with_jack_midi
    \end{verbatim}
 
-   These options are described well in the 'rc' file.
+   For \textsl{Seq66} \textsl{after} 0.94.0, the settings are a bit simpler:
 
+   \begin{verbatim}
+      [jack-transport]
+      transport-type = slave        # "none", "slave", "master", or "conditional"
+      song-start-mode = true        # "true" or "false" ("song" and "live" work, too)
+      jack-midi = true              # "true" or "false"
+   \end{verbatim}
+
+   These options are described well in the 'rc' file.
    Please note that the JACK transport options are set to make sense, no
    matter what the user specifies.
    Also note that JACK transport is separately configurable from
    JACK MIDI, and each uses a different JACK client internally.
-   We might combine them at some point, if necessary.
 
 \subsubsection{'rc' File / MIDI Input}
 \label{subsubsec:configuration_rc_midi_input}

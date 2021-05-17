@@ -288,7 +288,7 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
 #endif
                     if (! rtindata->queue().add(message))
                     {
-                        async_safe_strprint("~");
+                        async_safe_strprint("~", 1);
                         overflow = true;
                         break;                  /* EXPERIMENTAL */
                     }
@@ -304,7 +304,7 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
 
                     std::string s = "rtmidi input: ENODATA = ";
                     s += std::to_string(rc);
-                    async_safe_strprint(s);
+                    async_safe_strprint(s.data(), s.length() - 1);
                 }
                 else
                 {
@@ -314,14 +314,14 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
 
                     std::string s = "rtmidi input: ERROR = ";
                     s += std::to_string(rc);
-                    async_safe_strprint(s);
+                    async_safe_strprint(s.data(), s.length() - 1);
                     break;
                 }
             }
         }
         if (overflow)
         {
-            async_safe_strprint(" Message overflow");
+            async_safe_strprint(" Message overflow \n", 19);
             return (-1);
         }
     }
@@ -433,7 +433,7 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
         }
         else
         {
-            async_safe_strprint("midi event reserve returned a null pointer");
+            async_safe_strprint("midi event reserve null pointer", 31);
         }
     }
     return 0;
@@ -455,11 +455,11 @@ jack_shutdown_callback (void * arg)
     if (not_nullptr(jack))
     {
         // jack->set_jack_running(false);
-        async_safe_strprint("[JACK shutdown.]");
+        async_safe_strprint("[JACK shutdown]", 15);
     }
     else
     {
-        async_safe_strprint("jack shutdown callback: null JACK pointer");
+        async_safe_strprint("JACK shutdown callback null pointer", 35);
     }
 }
 

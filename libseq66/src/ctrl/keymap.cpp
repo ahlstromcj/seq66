@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-15
+ * \updates       2021-05-17
  * \license       GNU GPLv2 or above
  */
 
@@ -500,14 +500,16 @@ qt_keys (int i)
 
         /*
          *  Remainders.  Provides the Right version and key-release versions
-         *  of some keys.
+         *  of some keys.  Keys not yet covered:
+         *
+         *      Alt and Alt_R releases.
          */
 
         { 0xd6,  0x01000099,   0xd6,  "0xd6",       KNONE  }, // available
         { 0xd7,  0x01000020, 0xffe2,  "Shift_R",    KSHIFT }, // Right-Shift
         { 0xd8,  0x01000021, 0xffe4,  "Ctrl_R",     KCTRL  }, // Right-Ctrl
         { 0xd9,        0x2e, 0xffae,   "KP_.",      KEYPAD }, // KP_Decimal release
-        { 0xda,  0x01000023, 0xffea,  "Alt_R",      KALT   }, // Right-Alt
+        { 0xda,  0x01000023, 0xffea,  "Alt_R",      KGROUP }, // Right-Alt
         { 0xdb,  0x01000020, 0xffe1,  "Shift_Lr",   KNONE  }, // L-Shift release
         { 0xdc,  0x01000020, 0xffe2,  "Shift_Rr",   KNONE  }, // R-Shift release
         { 0xdd,  0x01000021, 0xffe3,  "Ctrl_Lr",    KNONE  }, // L-Ctrl release
@@ -924,8 +926,8 @@ qt_ordinal_keyname (ctrlkey ordinal)
         Key #0xd9   'ù' scan = 0x30; keycode = 0xf9
         Key #0x039c  'µ' scan = 0x33; keycode = 0xb5
         Key #0x20ac '€' scan = 0x1a; keycode = 0x20ac
-        Key #0x1001257 '¨' scan = 0x22; keycode = 0xfe57
         Key #0x1001252 '^' scan = 0x22; keycode = 0xfe52
+        Key #0x1001257 '¨' scan = 0x22; keycode = 0xfe57
 \endverbatim
  *
  *  Just call this function once.

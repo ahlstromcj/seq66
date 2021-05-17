@@ -1769,8 +1769,9 @@ public:
 
     void FF_rewind ();
     bool FF_RW_timeout ();          /* called by free-function of same name */
+    void conditional_reposition (midipulse tick, midipulse stoptick);
 
-    void set_reposition (bool postype = true)
+    void set_reposition (bool postype)
     {
         m_reposition = postype;
     }

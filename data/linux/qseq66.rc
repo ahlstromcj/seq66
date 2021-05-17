@@ -1,7 +1,7 @@
 # Seq66 0.91.5 (and above) 'rc' configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written on 2021-04-13 10:23:26
+# Written on 2021-05-17 11:59:53
 #
 # This file holds the main configuration options for Seq66.
 # It loosely follows the format of the seq24 'rc' configuration
@@ -20,7 +20,7 @@
 # shows all the numbers and the long port name.
 
 config-type = "rc"
-version = 0
+version = 1
 verbose = false
 sets-mode = normal
 port-naming = long
@@ -238,37 +238,29 @@ look empty with a space.
 [jack-transport]
 
 # jack_transport - Enable slave synchronization with JACK Transport.
-# Also contains the new flag to use JACK MIDI.
-
-0   # with_jack_transport
-
-# jack_master - Seq66 attempts to serve as JACK Master.
-# Also must enable jack_transport (the user interface forces this,
-# and also disables jack_master_cond).
-
-0   # with_jack_master
-
-# jack_master_cond - Seq66 is JACK master if no other JACK
-# master exists. Also must enable jack_transport (the user interface
-# forces this, and disables jack_master).
-
-0   # with_jack_master_cond
-
-# song_start_mode applies to JACK/ALSA/PortMidi.
+# Also contains the new flag to use JACK MIDI. Now simplified to
+# use variables instead of 0/1 flags. JACK transport values can be
+# 'none', 'slave', 'master', and 'conditional'.
 #
-# 0 = Playback in Live mode. Allows muting and unmuting of loops.
-#     from the main (patterns) window.  Disables both manual and
-#     automatic muting and unmuting from the performance window.
-# 1 = Playback uses the Song (performance) editor's data and mute
-#     controls, regardless of which window was used to start the
-#     playback.
+#   none: No JACK Transport in use.
+#   slave: Seq66 attempts to use JACK Transport as Slave.
+#   master: Seq66 attempts to serve as JACK Transport Master.
+#   conditional: Seq66 is JACK master if no JACK master exists.
 
-1   # song_start_mode
+transport-type = slave
 
-# jack_midi - Enable JACK MIDI, which is a separate option from
-# JACK Transport.
+# song-start-mode is one of the following value:
+#
+# false: Playback in Live mode. Allows muting and unmuting of loops.
+#        from the main (patterns) window.
+# true:  Playback uses the Song (performance) editor's data and mute
+#        controls.
 
-0   # with_jack_midi
+song-start-mode = true
+
+# jack-midi sets/unsets JACK MIDI, separate from JACK Transport.
+
+jack-midi = true
 
 [auto-option-save]
 
