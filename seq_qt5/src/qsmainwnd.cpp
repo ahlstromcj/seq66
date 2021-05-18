@@ -272,7 +272,7 @@ qsmainwnd::qsmainwnd
 
     (void) set_ppqn_combo();
 
-    int ppqn = perf().ppqn();                   /* usr().default_ppqn() */
+    int ppqn = perf().ppqn();
     std::string pstring = std::to_string(ppqn);
     set_ppqn_text(pstring);
     ui->lineEditPpqn->setReadOnly(true);
@@ -3393,8 +3393,10 @@ qsmainwnd::update_set_change (int setno)
 }
 
 bool
-qsmainwnd::on_resolution_change (int /*ppqn*/, midibpm bpm)
+qsmainwnd::on_resolution_change (int ppqn, midibpm bpm)
 {
+    std::string pstring = std::to_string(ppqn);
+    set_ppqn_text(pstring);
     ui->spinBpm->setValue(bpm);
     return true;
 }

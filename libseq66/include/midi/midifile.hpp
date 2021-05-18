@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-05-09
+ * \updates       2021-05-18
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -275,7 +275,7 @@ public:
     midifile
     (
         const std::string & name,
-        int ppqn            = SEQ66_USE_DEFAULT_PPQN,
+        int ppqn,
         bool globalbgs      = true,
         bool playlistmode   = false
     );
@@ -355,6 +355,11 @@ protected:
     void file_ppqn (int p)
     {
         m_file_ppqn = p;
+    }
+
+    void scaled (bool flag)
+    {
+        m_use_scaled_ppqn = flag;
     }
 
     /**

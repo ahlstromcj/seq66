@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-05-29
+% \update      2021-05-18
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -304,8 +304,10 @@
    loaded tune, and this change can then be saved, if desired, with the file.
    As with \textsl{Seq24}, the default PPQN is 192.  This can be changed to
    to other values:
-   \texttt{32, 48, 96, 192, 384, 768, 960, 1920, 3840, 7680, 9600,
-   19200}.
+%  \texttt{32, 48, 96, 192, 384, 768, 960, 1920, 3840, 7680, 9600, 19200}.
+   \texttt{32, 48, 96, 192, 384, 768, 960, 1920}.
+   Currently, 1920 is the limit, because redrawing starts to really slow down
+   after that.
    Values, even weird ones, can be entered by typing them.
    If a MIDI file is loaded, this modifies that file, rescaling all the
    pattern events and pattern triggers.

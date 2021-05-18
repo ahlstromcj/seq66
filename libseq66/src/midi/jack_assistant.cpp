@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-05-02
+ * \updates       2021-05-18
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -43,15 +43,14 @@
  *
  * JACK clients and BPM:
  *
- *  Does a JACK client need to be JACK Master before it can foist BPM changes on
- *  other clients?  What are the conventions?
+ *  Does a JACK client need to be JACK Master before it can foist BPM changes
+ *  on other clients?  What are the conventions?
  *
  *      -   https://linuxmusicians.com/viewtopic.php?t=14913&start=15
  *      -   http://jackaudio.org/api/transport-design.html
  *
- *  Lastly, one might be curious as to the origin of the name
- *  "jack_assistant".  Well, it is simply so this class can be called
- *  "jack_ass" for short :-D.
+ *  One might be curious as to the origin of the name "jack_assistant".  Well,
+ *  it is simply so this class can be called "jack_ass" for short :-D.
  *
  *  Note the confusing (but necessary) orientation of the JACK driver backend
  *  ports: playback ports are "input" to the backend, and capture ports are
@@ -62,12 +61,13 @@
 #include <string.h>                     /* strdup() <gasp!>                 */
 
 #include "midi/jack_assistant.hpp"      /* this seq66::jack_ass class       */
-#include "midi/midifile.hpp"            /* seq66::midifile class            */
 #include "util/automutex.hpp"           /* seq66::mutex, automutex          */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "cfg/settings.hpp"             /* "rc" and "user" settings         */
 
-#define apiprint(x, y)
+#if defined SEQ66_JACK_SESSION          /* deprecated, use Non Session Mgr. */
+#include "midi/midifile.hpp"            /* seq66::midifile class            */
+#endif
 
 #define USE_JACK_BBT_OFFSET             /* another experiment               */
 
@@ -222,11 +222,11 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
     jack_assistant * j = (jack_assistant *)(arg);
     if (not_nullptr(j))
     {
-        performer & p = j->m_jack_parent;
+        jack_position_t pos;
+        jack_transport_state_t s = jack_transport_query(j->client(), &pos);
+        performer & p = j->parent();
         if (p.is_running())         // EXPERIMENTAL
         {
-            jack_position_t pos;
-            jack_transport_state_t s = jack_transport_query(j->client(), &pos);
             if (j->is_slave())
             {
                 if (pos.beats_per_minute > 1.0)         /* a sanity check   */
@@ -235,7 +235,6 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
                     if (pos.beats_per_minute != s_old_bpm)
                     {
                         s_old_bpm = pos.beats_per_minute;
-                        infoprintf("BPM = %f\n", pos.beats_per_minute);
                         j->parent().set_beats_per_minute(pos.beats_per_minute);
                     }
                 }
@@ -247,14 +246,10 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
         else
         {
             /*
-             * For start or for FF/RW/key-p when not running.  If we're stopped,
-             * we need to start, otherwise we need to reposition the transport
-             * marker.  Not sure if the code in the ! j->m_jack_master
-             * clause is necessary, it's not in Seq32.
+             * For start or for FF/RW/key-p when not running.  If stopped,
+             * start or reposition the transport marker.
              */
 
-            jack_position_t pos;
-            jack_transport_state_t s = jack_transport_query(j->client(), &pos);
             if (! j->is_master())                       /* j->is_slave()    */
             {
                 if (pos.beats_per_minute > 1.0)         /* a sanity check   */
@@ -263,7 +258,6 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
                     if (pos.beats_per_minute != s_old_bpm)
                     {
                         s_old_bpm = pos.beats_per_minute;
-                        infoprintf("BPM = %f\n", pos.beats_per_minute);
                         j->parent().set_beats_per_minute(pos.beats_per_minute);
                     }
                 }
@@ -320,16 +314,6 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
  *      So we add a static mutex to use with our automutex.  Does not prevent
  *      that message..... WHY?
  *
- * We've never disabled the SEQ66_JACK_SESSION macro, and we like the
- * error-reporting we get by that method.  So we've commented out the
- * following code in favor of using the session-uuid code:
- *
- *  # if defined SEQ66_JACK_SESSION
- *  # else
- *      jack_status_t * ps = NULL;
- *      result = jack_client_open(name, JackNullOption, ps);
- *  # endif
- *
  * \param clientname
  *      Provides the name of the client, used in the call to
  *      jack_client_open().  By default, this name is the macro SEQ66_PACKAGE
@@ -368,7 +352,6 @@ create_jack_client
         options = (jack_options_t) (JackNoStartServer | JackSessionID);
         result = jack_client_open(name, options, ps, uid);
     }
-    apiprint("jack_client_open", clientname.c_str());
     if (not_nullptr(result))
     {
         if (status & JackServerStarted)
@@ -736,7 +719,6 @@ jack_assistant::init ()
 
         get_jack_client_info();
         jack_on_shutdown(m_jack_client, jack_transport_shutdown, (void *) this);
-        apiprint("jack_on_shutdown", "sync");
 
         /*
          * Stazed JACK support uses only the jack_transport_callback().  Makes
@@ -747,7 +729,6 @@ jack_assistant::init ()
         (
             m_jack_client, jack_transport_callback, (void *) this
         );
-        apiprint("jack_set_process_callback", "sync");
         if (jackcode != 0)
         {
             m_jack_running = false;
@@ -769,7 +750,6 @@ jack_assistant::init ()
         (
             m_jack_client, jack_session_callback, (void *) this
         );
-        apiprint("jack_set_session_callback", "sync");
         if (jackcode != 0)
         {
             m_jack_running = false;
@@ -791,7 +771,6 @@ jack_assistant::init ()
             (
                 m_jack_client, cond, jack_timebase_callback, (void *) this
             );
-            apiprint("jack_set_timebase_callback", "sync");
             if (jackcode == 0)
             {
                 (void) info_message("JACK transport master");
@@ -814,7 +793,7 @@ jack_assistant::init ()
     else
     {
         if (m_jack_running)
-            (void) info_message("JACK transport still enabled");
+            (void) info_message("JACK transport enabled");
         else
             (void) info_message("Initialized, running without JACK transport");
     }
@@ -852,7 +831,6 @@ jack_assistant::deinit ()
          * thus important as well.
          */
 
-        apiprint("jack_deactivate", "sync");
         if (jack_deactivate(m_jack_client) != 0)
         {
             (void) error_message("Can't deactivate JACK transport client");
@@ -863,7 +841,6 @@ jack_assistant::deinit ()
         {
             (void) error_message("Can't close JACK transport client");
         }
-        apiprint("deinit", "sync");
     }
     if (m_jack_running)
         (void) info_message("JACK transport not disabled");
@@ -895,7 +872,6 @@ jack_assistant::activate ()
     {
         int rc = jack_activate(m_jack_client);
         result = rc == 0;
-        apiprint("jack_activate", "sync");
         if (! result)
         {
             m_jack_running = false;
@@ -925,10 +901,7 @@ void
 jack_assistant::start ()
 {
     if (m_jack_running)
-    {
         jack_transport_start(m_jack_client);
-        apiprint("jack_transport_start", "sync");
-    }
     else if (rc().with_jack())
         (void) error_message("Sync start: JACK not running");
 }
@@ -942,10 +915,7 @@ void
 jack_assistant::stop ()
 {
     if (m_jack_running)
-    {
         jack_transport_stop(m_jack_client);
-        apiprint("jack_transport_stop", "sync");
-    }
     else if (rc().with_jack())
         (void) error_message("Sync stop: JACK not running");
 }
@@ -971,7 +941,6 @@ jack_assistant::set_beats_per_minute (midibpm bpminute)
             (void) jack_transport_query(m_jack_client, &m_jack_pos);
             m_jack_pos.beats_per_minute = bpminute;
             int jackcode = jack_transport_reposition(m_jack_client, &m_jack_pos);
-            apiprint("jack_transport_reposition", "set bpm");
             if (jackcode != 0)
             {
                 errprint("jack_transport_reposition(): bad position structure");
@@ -1130,7 +1099,6 @@ jack_assistant::set_position (midipulse tick)
 #endif
 
     int jackcode = jack_transport_reposition(m_jack_client, &pos);
-    apiprint("jack_transport_reposition", "sync");
     if (jackcode != 0)
     {
         errprint("jack_assistant::set_position(): bad position structure");
@@ -1138,6 +1106,8 @@ jack_assistant::set_position (midipulse tick)
 }
 
 #endif  // USE_JACK_ASSISTANT_SET_POSITION
+
+#if defined USE_JACK_SYNC_CALLBACK
 
 /**
  *  A helper function for syncing up with JACK parameters.  Seq66 is not a
@@ -1179,7 +1149,6 @@ jack_assistant::sync (jack_transport_state_t state)
     int result = 0;                     /* seq66 always returns 1   */
     m_jack_frame_current = jack_get_current_transport_frame(m_jack_client);
     (void) jack_transport_query(m_jack_client, &m_jack_pos);
-    apiprint("jack_transport_query", "sync");
 
     jack_nframes_t rate = m_jack_pos.frame_rate;
     if (rate == 0)
@@ -1209,13 +1178,10 @@ jack_assistant::sync (jack_transport_state_t state)
     if (state == JackTransportStarting)
         parent().inner_start();
 
-    /*
-     * 2021-05-02 for issue #51.  Added this code found in the
-     * switch statement in the Seq64 version of this function.
-     */
-
     return result;
 }
+
+#endif  // defined USE_JACK_SYNC_CALLBACK
 
 #if defined USE_JACK_SYNC_CALLBACK
 
@@ -1293,14 +1259,14 @@ jack_assistant::session_event ()
         cmd += " \"${SESSION_DIR}file.mid\"";
 
         midifile f(fname, m_ppqn, usr().global_seq_feature());
-        f.write(m_jack_parent);
+        f.write(parent());
         m_jsession_ev->command_line = strdup(cmd.c_str());
         jack_session_reply(m_jack_client, m_jsession_ev);
 
         /****
          *
         if (m_jsession_ev->type == JackSessionSaveAndQuit)
-            m_jack_parent.gui().quit();
+            parent().gui().quit();
          *
          */
 
@@ -1382,8 +1348,6 @@ jack_assistant::output (jack_scratchpad & pad)
 {
     if (m_jack_running)
     {
-        double jack_ticks_converted;
-        double jack_ticks_delta;
         pad.js_init_clock = false;              /* no init until a good lock */
         m_jack_transport_state = jack_transport_query(m_jack_client, &m_jack_pos);
 
@@ -1426,11 +1390,11 @@ jack_assistant::output (jack_scratchpad & pad)
             m_jack_tick = m_jack_pos.frame * m_jack_pos.ticks_per_beat *
                 m_jack_pos.beats_per_minute / (m_jack_pos.frame_rate * 60.0);
 
-            jack_ticks_converted = m_jack_tick * tick_multiplier();
-            m_jack_parent.set_last_ticks(long(jack_ticks_converted));
+            double midi_ticks = m_jack_tick * tick_multiplier() + 0.5;
+            parent().set_last_ticks(midipulse(midi_ticks));
             pad.js_init_clock = true;
             pad.js_current_tick = pad.js_clock_tick = pad.js_total_tick =
-                pad.js_ticks_converted_last = jack_ticks_converted;
+                pad.js_ticks_converted_last = midi_ticks;
 
             /*
              * We need to make sure another thread can't modify these values.
@@ -1438,17 +1402,17 @@ jack_assistant::output (jack_scratchpad & pad)
 
             if (pad.js_looping && pad.js_playback_mode)
             {
-                while (pad.js_current_tick >= m_jack_parent.get_right_tick())
+                while (pad.js_current_tick >= parent().get_right_tick())
                 {
-                    pad.js_current_tick -= m_jack_parent.left_right_size();
+                    pad.js_current_tick -= parent().left_right_size();
                 }
 
                 /*
                  * Not sure that either of these lines have any effect!
                  */
 
-                m_jack_parent.off_sequences();
-                m_jack_parent.set_last_ticks(long(pad.js_current_tick));
+                parent().off_sequences();
+                parent().set_last_ticks(long(pad.js_current_tick));
             }
         }
         if
@@ -1489,16 +1453,19 @@ jack_assistant::output (jack_scratchpad & pad)
                 m_jack_frame_last = m_jack_frame_current;
             }
 
-            jack_ticks_converted = m_jack_tick * tick_multiplier();
-            jack_ticks_delta = jack_ticks_converted - pad.js_ticks_converted_last;
-            pad.js_clock_tick += jack_ticks_delta;
-            pad.js_current_tick += jack_ticks_delta;
-            pad.js_total_tick += jack_ticks_delta;
+            double midi_ticks = m_jack_tick * tick_multiplier();
+            double delta = midi_ticks - pad.js_ticks_converted_last;
+            if (delta != 0.0)
+            {
+                pad.js_clock_tick += delta;
+                pad.js_current_tick += delta;
+                pad.js_total_tick += delta;
+            }
             m_jack_transport_state_last = m_jack_transport_state;
-            pad.js_ticks_converted_last = jack_ticks_converted;
+            pad.js_ticks_converted_last = midi_ticks;
 
 #if defined USE_JACK_DEBUG_PRINT
-            jack_debug_print(*this, pad.js_current_tick, jack_ticks_delta);
+            jack_debug_print(*this, pad.js_current_tick, delta);
 #endif
         }                               /* if dumping (sane state)  */
     }                                   /* if m_jack_running        */
@@ -1837,12 +1804,6 @@ jack_timebase_callback
     void * arg
 )
 {
-    if (is_nullptr(pos))
-    {
-        errprint("jack_timebase_callback(): null position pointer");
-        return;
-    }
-
     jack_assistant * jack = (jack_assistant *)(arg);
     pos->beats_per_minute = jack->get_beats_per_minute();   /* sooperlooper */
     pos->beats_per_bar = jack->beats_per_measure();

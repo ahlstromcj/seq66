@@ -1,7 +1,7 @@
 # README for Seq66 0.94.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-05-16
+2015-09-10 to 2021-05-18
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -87,8 +87,9 @@ Windows, and using a conventional source tarball.
         *   Removed the old-style live frame; use themes and style-sheets to
             create the old look if you like it.
         *   Removed a lot of debugging material of no use now.
-        *   Code to fix (we hope) a weird back causing the application to hang
+        *   Fixed (mostly) a weird bug causing the application to hang
             on exit when set as JACK Master.  Pretty damn weird.
+            Still wrestling with other aspects of JACK Transport.
     *   Version 0.93.2:
         *   Changed the mute-group format inside the MIDI file to use a much
             less disk space (about 3K less).  Can be set in the 'rc' file to

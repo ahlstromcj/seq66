@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-05-17
+ * \updates       2021-05-18
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1315,14 +1315,9 @@ performer::set_ppqn (int p)
 
 /**
  *  Goes through all sets and sequences, updating the PPQN of the events and
- *  triggers.
+ *  triggers.  It also, via notify_resolution_change(), sets the modify flag.
  *
- *  Currently operates only on the current screenset.  We will fix this using a
- *  lamdba function.
- *
- *  Note the it also, via notify_resolution_change(), sets the modify flag.
- *
- *  ISSUE?  Do we need to pass this to the master MIDI bus object?
+ *  Currently operates only on the current screenset.
  */
 
 bool
@@ -3132,16 +3127,7 @@ performer::output_func ()
             }
             if (pad().js_dumping)
             {
-                bool perfloop = looping();
-
-                /*
-                 *  Let's allow looping anytime the loop flag is set.
-                 *
-                if (perfloop)
-                    perfloop = song_mode() || start_from_perfedit();
-                 */
-
-                if (perfloop)
+                if (looping())
                 {
                     /*
                      * This stazed JACK code works better than the original
@@ -3160,8 +3146,9 @@ performer::output_func ()
 
                         double leftover_tick = pad().js_current_tick - rtick;
                         if (jack_transport_not_starting())  /* no FF/RW xrun */
+                        {
                             play(rtick - 1);
-
+                        }
                         reset_sequences();
 
                         midipulse ltick = get_left_tick();
@@ -3178,7 +3165,9 @@ performer::output_func ()
                  */
 
                 if (jack_transport_not_starting())
+                {
                     play(midipulse(pad().js_current_tick));
+                }
 
                 /*
                  * The next line enables proper pausing in both old and seq32
@@ -3754,6 +3743,13 @@ performer::auto_stop ()
  *  offloading all these calls to a new sequence function.  Hence the new
  *  sequence::play_queue() function.
  *
+ *  2021-05-18:
+ *
+ *  This function is called twice in a row with the same tick value, causing
+ *  notes to be played twice. This happens because JACK "ticks" are 10 times
+ *  as fast as MIDI ticks, and the conversion can result in the same MIDI tick
+ *  value consecutively.
+ *
  * \param tick
  *      Provides the tick at which to start playing.  This value is also
  *      copied to m_tick.
@@ -3762,30 +3758,16 @@ performer::auto_stop ()
 void
 performer::play (midipulse tick)
 {
-    set_tick(tick);
-    bool songmode = song_mode();
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    int count = 0;
-    for (auto seqi : m_play_set.seq_container())
+    if (tick > get_tick() || tick == 0)                 /* avoid replays    */
     {
-        if (not_nullptr(seqi))
-        {
+        bool songmode = song_mode();
+        set_tick(tick);
+        for (auto seqi : m_play_set.seq_container())
             seqi->play_queue(tick, songmode, resume_note_ons());
-        }
-        else
-        {
-            printf("Null sequence at play() count = %d\n", count);
-            break;
-        }
-        ++count;
-    }
-#else
-    for (auto seqi : m_play_set.seq_container())
-        seqi->play_queue(tick, songmode, resume_note_ons());
-#endif
 
-    if (not_nullptr(m_master_bus))
-        m_master_bus->flush();                      /* flush MIDI buss  */
+        if (not_nullptr(m_master_bus))
+            m_master_bus->flush();                      /* flush MIDI buss  */
+    }
 }
 
 void
@@ -3795,7 +3777,7 @@ performer::play_all_sets (midipulse tick)
     sequence::playback songmode = song_start_mode();
     mapper().play_all_sets(tick, songmode, resume_note_ons());
     if (not_nullptr(m_master_bus))
-        m_master_bus->flush();                      /* flush MIDI buss  */
+        m_master_bus->flush();                          /* flush MIDI buss  */
 }
 
 /**

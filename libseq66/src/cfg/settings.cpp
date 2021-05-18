@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2021-03-20
+ * \updates       2021-05-18
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -81,14 +81,19 @@ combo::ctoi (int index) const
     return result;
 }
 
+/**
+ *  This list is useful in the user-interface.  Also see ppqn_list_value()
+ *  below for internal integer versions.
+ */
+
 const combo::container &
 default_ppqns ()
 {
     static combo::container s_default_ppqn_list =
     {
         "32", "48", "96", "192",
-        "384", "768", "960", "1920",
-        "3840", "7680", "9600", "19200"
+        "384", "768", "960", "1920"
+        // "3840", "7680", "9600", "19200"
     };
     return s_default_ppqn_list;
 }
@@ -161,8 +166,8 @@ ppqn_list_value (int index)
     {
         0,                          /* place-holder for default PPQN    */
         32, 48, 96, 192,
-        384, 768, 960, 1920,
-        3840, 7680, 9600, 19200
+        384, 768, 960, 1920
+        // 3840, 7680, 9600, 19200
     };
     static const int s_count = sizeof(s_ppqn_list) / sizeof(int);
     int result = 0;
@@ -198,21 +203,12 @@ choose_ppqn (int ppqn)
 {
     int result = ppqn;
     if (result == SEQ66_USE_DEFAULT_PPQN)
-        result = usr().default_ppqn();
+        result = usr().midi_ppqn();                 /* usr().default_ppqn() */
     else if (result == SEQ66_USE_FILE_PPQN)
         result = usr().file_ppqn();
+    else if (result < SEQ66_MINIMUM_PPQN || result > SEQ66_MAXIMUM_PPQN)
+        result = usr().midi_ppqn();                 /* usr().default_ppqn() */
 
-    if (result < SEQ66_MINIMUM_PPQN || result > SEQ66_MAXIMUM_PPQN)
-    {
-        result = usr().default_ppqn();
-        if (rc().verbose())
-        {
-            if (result != SEQ66_USE_FILE_PPQN)      /* "usr" was 0          */
-            {
-                warnprintf("PPQN %d bad, setting it to default", result);
-            }
-        }
-    }
     return result;
 }
 

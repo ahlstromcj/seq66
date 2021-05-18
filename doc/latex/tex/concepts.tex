@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2019-08-15
+% \update      2021-05-18
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -173,7 +173,7 @@
    When applied, the mute-group enables one or more patterns in the current
    screenset.
 
-\subsubsection{Concepts / Terms / PPQN, pulses ticks, clocks, divisions}
+\subsubsection{Concepts / Terms / PPQN, pulses, ticks, clocks, divisions}
 \label{subsubsec:concepts_terms_pulses}
 
    \index{pulses}
@@ -183,6 +183,8 @@
    To make it even more confusing, there are separate timing concepts to
    understand, such as "tempo", "beats per measure", "beats per minute", and
    "MIDI clocks".
+   And, when JACK is involved, one must remember that JACK "ticks" come at 10
+   times the rate of MIDI ticks.
    A full description of all these terms, and how they are calculated, is
    beyond the scope of this document.  Check out the source code.
 

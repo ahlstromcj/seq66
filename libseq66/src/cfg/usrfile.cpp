@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-05-15
+ * \updates       2021-05-18
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -444,9 +444,10 @@ usrfile::parse ()
     {
         int scratch = 0;
         sscanf(scanline(), "%d", &scratch);
-        if (! ppqn_settings_made)
-            usr().midi_ppqn(scratch);   /* ignored if set earlier */
+        if (ppqn_settings_made)
+            scratch = usr().default_ppqn();
 
+        usr().midi_ppqn(scratch);
         next_data_line(file);
         sscanf(scanline(), "%d", &scratch);
         usr().midi_beats_per_bar(scratch);
@@ -1112,9 +1113,15 @@ usrfile::write ()
     file << "\n"
         "[user-midi-ppqn]\n"
         "\n"
-        "# These settings replace the midi_ppqn setting below.  We need to\n"
-        "# separate the file-ppqn flag from the default PPQN that the user\n"
-        "# wants Seq66 to support.\n"
+        "# These settings overwrite the midi_ppqn setting below.  We need to\n"
+        "# separate the file PPQN from the default PPQN that the user wants\n"
+        "# Seq66 to support.\n"
+        "#\n"
+        "# default-ppqn specifies parts-per-quarter note to use by default. It\n"
+        "# is the starting PPQN for Seq66. The classic default is 192, but now\n"
+        "# can range from 32 to 1920.\n"
+        "#\n"
+        "# use-file-ppqn, if true, indicates to use the file PPQN.\n"
         "\n"
         "default-ppqn = " << std::to_string(usr().default_ppqn()) << "\n"
         "use-file-ppqn = " << bool_to_string(usr().use_file_ppqn()) << "\n"
@@ -1130,12 +1137,9 @@ usrfile::write ()
         "# These settings specify MIDI-specific value that might be\n"
         "# better off as variables, rather than constants.\n"
         "\n"
-        "# Specifies parts-per-quarter note to use, if the MIDI file.\n"
-        "# does not override it.  Default is 192, but we'd like to go\n"
-        "# lower and higher than that. Set to 0 to use the PPQN from the\n"
-        "# MIDI files, rather than scaling its PPQN re midi_ppqn().\n"
+        "# This value is no longer used.  See above.\n"
         "\n"
-        << usr().midi_ppqn() << "       # midi_ppqn, --ppqn p\n"
+        << usr().midi_ppqn() << "       # midi_ppqn, --ppqn p, default PPQN\n"
         ;
 
     file << "\n"

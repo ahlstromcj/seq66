@@ -173,7 +173,7 @@ ppqn_is_valid (int ppqn)
  *  Formalizes the rescaling of ticks base on changing the PPQN.  For speed
  *  the parameters are all assumed to be valid.  The PPQN values supported
  *  explicity range from SEQ66_MINIMUM_PPQN (32) to SEQ66_MAXIMUM_PPQN
- *  (19200).  The maximum tick value for 32-bit code is 2147483647.  At the
+ *  (1920).  The maximum tick value for 32-bit code is 2147483647.  At the
  *  highest PPQN that's almost 28000 measures.  64-bit code maxes at over
  *  9E18.
  *

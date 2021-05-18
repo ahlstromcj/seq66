@@ -96,7 +96,6 @@ qperfroll::qperfroll
     m_timer             (nullptr),
     m_font              ("Monospace"),
     m_measure_length    (0),
-    m_beat_length       (0),
     m_trigger_transpose (0),
     m_drop_sequence     (-1),
     m_tick_s            (0),
@@ -230,7 +229,7 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
 #endif
 
     midipulse tick = perf().get_tick();         /* draw progresss playhead  */
-    int progress_x = tick / scale_zoom();
+    int progress_x = tix_to_pix(tick);          /* tick / scale_zoom()      */
     pen.setColor(progress_color());             // Qt::red
     pen.setStyle(Qt::SolidLine);
     if (usr().progress_bar_thick())
@@ -825,7 +824,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
             else
                 backcolor.setAlpha(s_alpha_muted);
 
-            int lenw = lens / scale_zoom();
+            int lenw = tix_to_pix(lens);
             trigger trig;
             seq->reset_draw_trigger_marker();
             while (seq->next_trigger(trig))

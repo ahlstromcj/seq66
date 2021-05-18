@@ -891,7 +891,7 @@ usrsettings::default_ppqn (int value)
 
 /**
  * \setter m_midi_ppqn
- *      This value can be set from 96 to 19200 (this upper limit will be
+ *      This value can be set from 32 to 19200 (this upper limit will be
  *      determined by what Seq66 can actually handle).  The default
  *      value is 192.
  */
@@ -900,9 +900,16 @@ void
 usrsettings::midi_ppqn (int value)
 {
     if (value >= SEQ66_MINIMUM_PPQN && value <= SEQ66_MAXIMUM_PPQN)
+    {
         m_midi_ppqn = value;
+    }
     else
+    {
+        if (value == 0)
+            m_use_file_ppqn = true;
+
         m_midi_ppqn = default_ppqn();
+    }
 }
 
 /**

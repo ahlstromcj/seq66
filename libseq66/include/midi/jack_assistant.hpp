@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2021-05-17
+ * \updates       2021-05-18
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -566,13 +566,15 @@ private:
 
     jack_client_t * client_open (const std::string & clientname);
     void get_jack_client_info ();
-    int sync (jack_transport_state_t state = (jack_transport_state_t)(-1));
     long current_jack_position () const;
 
+
+#if defined USE_JACK_SYNC_CALLBACK
+    int sync (jack_transport_state_t state = (jack_transport_state_t)(-1));
+#endif
 #if defined ENABLE_PROPOSED_FUNCTIONS
     void update_timebase_master (jack_transport_state_t s);
 #endif
-
 #if defined USE_JACK_ASSISTANT_SET_POSITION
     void set_position (midipulse currenttick);
 #endif

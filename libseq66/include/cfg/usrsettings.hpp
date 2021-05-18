@@ -546,11 +546,12 @@ private:
 
     /**
      *  Provides the universal PPQN setting for the duration of this session.
-     *  This variable replaces the global ppqn.  The default value of this
+     *  It is either the default PPQN or the MIDI file's PPQN.
+     *  The default value of this
      *  setting is 192 parts-per-quarter-note (PPQN).  There is still a lot of
      *  work to get a different PPQN to work properly in speed of playback,
      *  scaling of the user interface, and other issues.  Note that this value
-     *  can be changed by the still-experimental --ppqn option.
+     *  can be changed by the --ppqn option, as well as in the 'rc' file.
      */
 
     int m_midi_ppqn;                     /* PPQN, parts per QN       */
@@ -1474,7 +1475,7 @@ public:
 
     int midi_ppqn () const
     {
-        return m_midi_ppqn;     /* current PPQN */
+        return m_midi_ppqn;     /* current PPQN, either default or file */
     }
 
     bool use_file_ppqn () const

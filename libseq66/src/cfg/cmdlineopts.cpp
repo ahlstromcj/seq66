@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-05-12
+ * \updates       2021-05-18
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -107,6 +107,7 @@ cmdlineopts::s_long_options [] =
     {"playlist",            required_argument, 0, 'X'},
 #if defined SEQ66_JACK_SUPPORT
     {"jack-transport",      0, 0, 'j'},
+    {"no-jack-transport",   0, 0, 'g'},
     {"jack-master",         0, 0, 'J'},
     {"jack-master-cond",    0, 0, 'C'},
     {"jack-start-mode",     required_argument, 0, 'M'},
@@ -151,7 +152,7 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         @AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz#
-         xxxxxx x  xx  xx xxxxxxlxxxx *xx xxx xxxxxxx  xx  aax
+         xxxxxx x  xx xxx xxxxxxlxxxx *xx xxx xxxxxxx  xx  aax
 \endverbatim
  *
  *  * Note that 'o' options arguments cannot be included here due to issues
@@ -173,7 +174,7 @@ cmdlineopts::s_long_options [] =
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:dF:f:H:h:iJjKkLl:M:mNnoPpq:RrTtsU:uVvX:x:Zz#";
+    "AaB:b:Cc:dF:f:gH:h:iJjKkLl:M:mNnoPpq:RrTtsU:uVvX:x:Zz#";
 
 /**
  *  Provides help text.
@@ -234,7 +235,8 @@ cmdlineopts::s_help_2 =
 "   -k, --show-keys          Prints pressed key value.\n"
 "   -K, --inverse            Inverse/night color scheme for seq/perf editors.\n"
 #if defined SEQ66_JACK_SUPPORT
-"   -j, --jack-transport     Synchronize to JACK transport.\n"
+"   -j, --jack-transport     Synchronize to JACK transport (as Slave).\n"
+"   -g, --no-jack-transport  Turn off JACK transport.\n"
 "   -J, --jack-master        Try to be JACK Master. Also sets -j.\n"
 "   -C, --jack-master-cond   Fail if there's already a Jack Master; sets -j.\n"
 "   -M, --jack-start-mode m  When synced to JACK, the following play modes are\n"
@@ -939,6 +941,12 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'f':                           /* --rc option                  */
             rc().config_filename(soptarg);
+            break;
+
+        case 'g':
+            rc().with_jack_transport(false);
+            rc().with_jack_master(false);
+            rc().with_jack_master_cond(false);
             break;
 
         case 'H':

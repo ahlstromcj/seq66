@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-05-13
+ * \updates       2021-05-18
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -206,7 +206,7 @@ midifile::midifile
     m_data                      (),
     m_char_list                 (),
     m_global_bgsequence         (globalbgs),
-    m_use_scaled_ppqn           (ppqn != SEQ66_USE_FILE_PPQN),
+    m_use_scaled_ppqn           (false),                /* scaled()         */
     m_ppqn                      (ppqn),                 /* can start as 0   */
     m_file_ppqn                 (0),                    /* can change       */
     m_smf0_splitter             ()
@@ -955,10 +955,10 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
     {
         p.file_ppqn(file_ppqn());                   /* let performer know   */
         ppqn(file_ppqn());                          /* PPQN == file PPQN    */
-        m_use_scaled_ppqn = false;                  /* do not scale time    */
+        scaled(false);                              /* do not scale time    */
     }
     else
-        m_use_scaled_ppqn = file_ppqn() != usr().default_ppqn();
+        scaled(file_ppqn() != usr().default_ppqn());
 
     for (midishort track = 0; track < NumTracks; ++track)
     {
@@ -1261,7 +1261,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             {
                                 int sz = trigger::datasize(c_triggers_ex);
                                 int num_triggers = len / sz;
-                                midishort p = scaled() ?  m_file_ppqn : 0 ;
+                                midishort p = scaled() ? m_file_ppqn : 0 ;
                                 for (int i = 0; i < num_triggers; ++i)
                                 {
                                     add_trigger(s, p, false);
@@ -1272,7 +1272,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             {
                                 int sz = trigger::datasize(c_trig_transpose);
                                 int num_triggers = len / sz;
-                                midishort p = scaled() ?  m_file_ppqn : 0 ;
+                                midishort p = scaled() ? m_file_ppqn : 0 ;
                                 for (int i = 0; i < num_triggers; ++i)
                                 {
                                     add_trigger(s, p, true);
@@ -3197,14 +3197,20 @@ read_midi_file
     {
         bool is_wrk = file_extension_match(fn, "wrk");
         if (usr().use_file_ppqn())
-            ppqn = SEQ66_USE_FILE_PPQN;         /* no usr().file_ppqn() yet */
-        else
-            ppqn = usr().default_ppqn();
+            ppqn = SEQ66_USE_FILE_PPQN;
 
-        midifile * fp = is_wrk ? new wrkfile(fn, ppqn) : new midifile(fn, ppqn) ;
+        ppqn = choose_ppqn(ppqn);           /* but no usr().file_ppqn() yet */
+
+        midifile * fp = is_wrk ?
+            new (std::nothrow) wrkfile(fn, ppqn) :
+            new (std::nothrow) midifile(fn, ppqn) ;
+
         std::unique_ptr<midifile> f(fp);
-        p.clear_all();                          /* see banner notes         */
-        result = f->parse(p, 0);
+        p.clear_all();                      /* see banner notes             */
+        result = bool(f);
+        if (result)
+            result = f->parse(p, 0);
+
         if (result)
         {
             if (usr().use_file_ppqn())
@@ -3212,7 +3218,8 @@ read_midi_file
                 ppqn = f->ppqn();               /* get & return file PPQN   */
                 usr().file_ppqn(ppqn);          /* save the value from file */
             }
-            p.set_ppqn(choose_ppqn(ppqn));      /* set chosen PPQN for MIDI */
+            usr().midi_ppqn(ppqn);              /* save the current value   */
+            p.set_ppqn(ppqn);                   /* set up PPQN for MIDI     */
             rc().last_used_dir(fn.substr(0, fn.rfind("/") + 1));
             rc().midi_filename(fn);             /* save current file-name   */
             rc().add_recent_file(fn);           /* Oli Kester's Kepler34!   */

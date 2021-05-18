@@ -189,7 +189,7 @@ It does not change Seq66's default PPQN.</string>
          <bool>true</bool>
         </property>
         <property name="currentText">
-         <string notr="true">19200</string>
+         <string notr="true">1920</string>
         </property>
         <property name="insertPolicy">
          <enum>QComboBox::NoInsert</enum>

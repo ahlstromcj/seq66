@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2021-05-09
+% \update      2021-05-18
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -998,11 +998,11 @@
    The first thing in a MIDI file is The data of the header:
 
    \begin{verbatim}
-      Header ID:        "MThd"         4 bytes
-      MThd length:      6              4 bytes
-      Format:           0, 1, or 2     2 bytes (format 2 is rare)
-      No. of tracks:    1 or more      2 bytes
-      PPQN:             192            2 bytes (bit 15 = 0)
+      Header ID:        "MThd"         0x00: 4 bytes
+      MThd length:      6              0x04: 4 bytes
+      Format:           0, 1, or 2     0x08: 2 bytes (format 2 is rare)
+      No. of tracks:    1 or more      0x0a: 2 bytes
+      PPQN:             192            0x0c: 2 bytes (bit 15 = 0)
    \end{verbatim}
 
    The header ID and its length are always the values above, "MThd" and 6.
@@ -1015,8 +1015,10 @@
    PPQN value, which specifies the "pulses per quarter note", the
    basic time-resolution of events in the MIDI file.  Common values are 96 or
    192, but higher values are also common.
-   \textsl{Seq66} and its precursor,
-   \textsl{Seq24}, default to 192.
+   (The highest possible value is 0x7FFF = 32767 but
+   \textsl{Seq66} limits it to 1920 for performance reasons.)
+   \textsl{Seq66} and its precursor, \textsl{Seq24}, default to 192.
+   For \textsl{Seq66}, this can be changed in the 'rc' file.
 
 \subsubsection{MIDI Track, MTrk}
 \label{subsubsec:midi_format_track}

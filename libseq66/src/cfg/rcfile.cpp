@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-05-16
+ * \updates       2021-05-18
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -1276,12 +1276,12 @@ rcfile::write ()
     std::string songmodeflag = bool_to_string(rc_ref().song_start_mode());
     std::string jackmidiflag = bool_to_string(rc_ref().with_jack_midi());
     file
-        << "# song-start-mode is one of the following value:\n"
+        << "# song-start-mode is one of the following values:\n"
         "#\n"
         "# false: Playback in Live mode. Allows muting and unmuting of loops.\n"
-        "#        from the main (patterns) window.\n"
+        "#        from the main (patterns) window. Same as 'live'.\n"
         "# true:  Playback uses the Song (performance) editor's data and mute\n"
-        "#        controls.\n\n"
+        "#        controls. Same as 'song'.\n\n"
         << "song-start-mode = " << songmodeflag << "\n\n"
         "# jack-midi sets/unsets JACK MIDI, separate from JACK Transport.\n\n"
         << "jack-midi = " << jackmidiflag << "\n"

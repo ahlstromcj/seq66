@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2021-04-25
+ * \updates       2021-05-18
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -258,25 +258,29 @@
 
 /**
  *  Maximum value for PPQN.  Mostly for sanity checking, with higher values
- *  possibly useful for debugging.
+ *  possibly useful for debugging. However, although 1920 is okay, but slow,
+ *  19200 is unusable.  Until we can make it usable, we stick with the smaller
+ *  value.  In the webs, people argue that 96 is generally sufficient.
+ *  Reaper used 960.  Others use 480.
  */
 
-#define SEQ66_MAXIMUM_PPQN             19200
+#define SEQ66_MAXIMUM_PPQN              1920
 
 /**
- *  This value represent the smallest horizontal unit in a Sequencer66 grid.  It
- *  is the number of pixels in the smallest increment between vertical lines in
+ *  This value represent the smallest horizontal unit in a Sequencer66 grid.
+ *  It is the number of pixels in the smallest increment between vertical
+ *  lines in
  *  the grid.
  */
 
-#define SEQ66_PIXELS_PER_SUBSTEP            6
+#define SEQ66_PIXELS_PER_SUBSTEP           6
 
 /**
  *  Minimum possible value for zoom, indicating that one pixel represents one
  *  tick.
  */
 
-#define SEQ66_MINIMUM_ZOOM                  1
+#define SEQ66_MINIMUM_ZOOM                 1
 
 /**
  *  The default value of the zoom, indicating that one pixel represents two
