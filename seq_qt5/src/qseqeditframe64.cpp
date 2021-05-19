@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-05-07
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -180,8 +180,8 @@ namespace seq66
  *  feature of Seq24, but strikes us as a bit surprising.
  *
  *  If we just double the PPQN, then the snap divisor becomes 32, and the snap
- *  interval is a 32nd note.  We would like to keep it at a 16th note.  We correct
- *  the snap ticks to the actual PPQN ratio.
+ *  interval is a 32nd note.  We would like to keep it at a 16th note.  We
+ *  correct the snap ticks to the actual PPQN ratio.
  */
 
 int qseqeditframe64::sm_initial_snap         = SEQ66_DEFAULT_PPQN / 4;
@@ -760,14 +760,17 @@ qseqeditframe64::qseqeditframe64
         this, SLOT(reset_grid_snap())
     );
 
-    set_snap(sm_initial_snap * perf().ppqn() / SEQ66_DEFAULT_PPQN);
+//  set_snap(sm_initial_snap * perf().ppqn() / SEQ66_DEFAULT_PPQN);
+//  set_note_length(sm_initial_note_length * perf().ppqn() / SEQ66_DEFAULT_PPQN);
+
+    set_snap(rescale_tick(sm_initial_snap, perf().ppqn()));
+    set_note_length(rescale_tick(sm_initial_note_length, perf().ppqn()));
     qt_set_icon(note_length_xpm, ui->m_button_note);
     connect
     (
         ui->m_button_note, SIGNAL(clicked(bool)),
         this, SLOT(reset_note_length())
     );
-    set_note_length(sm_initial_note_length * perf().ppqn() / SEQ66_DEFAULT_PPQN);
 
     /*
      *  Zoom In and Zoom Out:  Rather than two buttons, we use one and
@@ -2431,8 +2434,10 @@ bool
 qseqeditframe64::change_ppqn (int ppqn)
 {
     int zoom = usr().zoom();
-    set_snap(sm_initial_snap * ppqn / SEQ66_DEFAULT_PPQN);
-    set_note_length(sm_initial_note_length * ppqn / SEQ66_DEFAULT_PPQN);
+//  set_snap(sm_initial_snap * ppqn / SEQ66_DEFAULT_PPQN);
+//  set_note_length(sm_initial_note_length * ppqn / SEQ66_DEFAULT_PPQN);
+    set_snap(rescale_tick(sm_initial_snap, ppqn));
+    set_note_length(rescale_tick(sm_initial_note_length, ppqn));
     if (usr().zoom() == SEQ66_USE_ZOOM_POWER_OF_2)      /* i.e. 0 */
         zoom = zoom_power_of_2(ppqn);
 

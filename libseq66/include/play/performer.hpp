@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-17
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  The main player!
@@ -1890,8 +1890,8 @@ public:
         mapper().unqueue(hotseq);
     }
 
-    bool panic ();                                  /* from kepler43    */
-    void set_tick (midipulse tick);
+    bool panic ();                                      /* from kepler43    */
+    void set_tick (midipulse tick, bool dontreset = false);
     void set_left_tick (midipulse tick);
     void set_left_tick_seq (midipulse tick, midipulse snap);
 

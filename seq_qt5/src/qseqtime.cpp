@@ -66,6 +66,7 @@ qseqtime::qseqtime
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_font.setBold(true);
     m_font.setPointSize(6);
+    setMouseTracking(true);         /* track mouse movement without a click */
     m_timer = new QTimer(this);
     m_timer->setInterval(2 * usr().window_redraw_rate());
     QObject::connect
@@ -167,7 +168,7 @@ qseqtime::paintEvent (QPaintEvent *)
     int end_x = xoffset(length) - scroll_offset_x() - 20;
     midipulse left = perf().get_left_tick();
     midipulse right = perf().get_right_tick();
-    int left_x = xoffset(left) - scroll_offset_x() + 4;
+    int left_x = xoffset(left) - scroll_offset_x() + 4;   // position_pixel()?
     int right_x = xoffset(right) - scroll_offset_x() - 7;
 
     /*
@@ -183,7 +184,7 @@ qseqtime::paintEvent (QPaintEvent *)
     {
         painter.setBrush(brush);
         painter.drawRect(left_x, 10, 8, 24);        // black background
-        pen.setColor(Qt::white);                        // white label text
+        pen.setColor(Qt::white);                    // white label text
         painter.setPen(pen);
         painter.drawText(left_x + 1, 18, "L");
     }
@@ -203,6 +204,20 @@ qseqtime::paintEvent (QPaintEvent *)
         painter.setPen(pen);
         painter.drawText(right_x + 1, 18, "R");
     }
+
+#if defined SHOW_JACK_START_STOP_TICK
+    int jpos = perf().get_start_tick();                 // position_pixel()?
+    int jack_x = xoffset(jpos) - scroll_offset_x() + 4;
+    if (jpos != left && jpos != right)
+    {
+        if (jpos >= snap() && jpos < length - snap())
+        {
+            pen.setColor(Qt::red);
+            painter.setPen(pen);
+            painter.drawText(jpos - 2, 18, "S");
+        }
+    }
+#endif
 }
 
 void
@@ -229,9 +244,16 @@ qseqtime::resizeEvent (QResizeEvent * qrep)
 void
 qseqtime::mousePressEvent (QMouseEvent * event)
 {
+    /*
     midipulse tick = midipulse(event->x());
     tick *= scale_zoom();
     tick -= (tick % snap());
+     */
+
+    midipulse tick = pix_to_tix(event->x());
+    if (snap() > 0)
+        tick -= (tick % snap());
+
     if (event->y() > height() * 0.5)                    /* see banner note  */
     {
         bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
@@ -269,9 +291,16 @@ qseqtime::mouseReleaseEvent (QMouseEvent *)
 }
 
 void
-qseqtime::mouseMoveEvent(QMouseEvent *)
+qseqtime::mouseMoveEvent(QMouseEvent * event)
 {
-    // no code
+    if (event->y() > height() * 0.5)
+    {
+        setCursor(Qt::PointingHandCursor);
+    }
+    else
+    {
+        setCursor(Qt::ArrowCursor);
+    }
 }
 
 QSize

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2020-12-09
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -747,7 +747,8 @@ zoom_power_of_2 (int ppqn)
  *      Provides the actual PPQN used by the currently-loaded tune.
  *
  * \param zoom
- *      Provides the current zoom value.
+ *      Provides the current zoom value.  Defaults to 1, but is normally
+ *      another value.
  *
  * \return
  *      The result of the above equation is returned.
@@ -760,13 +761,36 @@ pulses_per_substep (midipulse ppqn, int zoom)
 }
 
 /**
- *  Similar to pulses_per_substep(), but for a single pixel.
+ *  Similar to pulses_per_substep(), but for a single pixel.  Actually, what
+ *  this function does is scale the PPQN against SEQ66_DEFAULT_PPQN (192).
+ *
+ * \param ppqn
+ *      Provides the actual PPQN used by the currently-loaded tune.
+ *
+ * \param zoom
+ *      Provides the current zoom value.  Defaults to 1, which can be used
+ *      to simply get the ratio between the actual PPQN, but only when PPQN >=
+ *      SEQ66_DEFAULT_PPQN.  Use pulses_scaled() instead.
+ *
+ * \return
+ *      The result of the above equation is returned.
  */
 
 midipulse
 pulses_per_pixel (midipulse ppqn, int zoom)
 {
-    return (ppqn * zoom) / SEQ66_DEFAULT_PPQN;
+    midipulse result = (ppqn * zoom) / SEQ66_DEFAULT_PPQN;
+    if (result == 0)
+        result = 1;
+
+    return result;
+}
+
+midipulse
+pulses_scaled (midipulse tick, midipulse ppqn, int zoom)
+{
+    double factor = (double(ppqn) * zoom) / SEQ66_DEFAULT_PPQN;
+    return midipulse(tick * factor + 0.5);
 }
 
 /**

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-05-18
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -820,7 +820,7 @@ midifile::checklen (midilong len, midibyte type)
  * \param seq
  *      Provides the sequence to which the trigger is to be added.
  *
- * \param ppqn
+ * \param oldppqn
  *      Provides the ppqn value to use to scale the tick values if
  *      scaled() is true.  If 0, the ppqn value is not used.
  *
@@ -830,7 +830,7 @@ midifile::checklen (midilong len, midibyte type)
  */
 
 void
-midifile::add_trigger (sequence & seq, midishort ppqn, bool transposable)
+midifile::add_trigger (sequence & seq, midishort oldppqn, bool transposable)
 {
     midilong on = read_long();
     midilong off = read_long();
@@ -839,11 +839,11 @@ midifile::add_trigger (sequence & seq, midishort ppqn, bool transposable)
     if (transposable)
         tpose = read_byte();
 
-    if (ppqn > 0)
+    if (oldppqn > 0)
     {
-        on = rescale_tick(on, ppqn, m_ppqn);        /* old PPQN, new PPQN   */
-        off = rescale_tick(off, ppqn, m_ppqn);
-        offset = rescale_tick(offset, ppqn, m_ppqn);
+        on = rescale_tick(on, m_ppqn, oldppqn);         /* new and old PPQN */
+        off = rescale_tick(off, m_ppqn, oldppqn);
+        offset = rescale_tick(offset, m_ppqn, oldppqn);
     }
     seq.add_trigger(on, off - on + 1, offset, tpose, false);
 }
@@ -1020,7 +1020,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                 runningtime += delta;           /* add in the time          */
                 if (scaled())                   /* adjust time via ppqn     */
                 {
-                    currenttime = runningtime * m_ppqn / m_file_ppqn;
+                    currenttime = runningtime * m_ppqn / file_ppqn();
                     e.set_timestamp(currenttime);
                 }
                 else
@@ -1033,18 +1033,18 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                 midibyte channel = event::get_channel(status);      /* 0F */
                 switch (eventcode)
                 {
-                case EVENT_NOTE_OFF:          /* cases for 2-data-byte events */
+                case EVENT_NOTE_OFF:                    /* 3-byte events    */
                 case EVENT_NOTE_ON:
                 case EVENT_AFTERTOUCH:
                 case EVENT_CONTROL_CHANGE:
                 case EVENT_PITCH_WHEEL:
 
-                    d0 = read_byte();                     /* was data[0]      */
-                    d1 = read_byte();                     /* was data[1]      */
+                    d0 = read_byte();
+                    d1 = read_byte();
                     if (is_note_off_velocity(eventcode, d1))
                         e.set_channel_status(EVENT_NOTE_OFF, channel);
 
-                    e.set_data(d0, d1);                   /* set data and add */
+                    e.set_data(d0, d1);               /* set data and add   */
 
                     /*
                      * s.append_event() doesn't sort events; sort after we
@@ -1261,7 +1261,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             {
                                 int sz = trigger::datasize(c_triggers_ex);
                                 int num_triggers = len / sz;
-                                midishort p = scaled() ? m_file_ppqn : 0 ;
+                                midishort p = scaled() ? file_ppqn() : 0 ;
                                 for (int i = 0; i < num_triggers; ++i)
                                 {
                                     add_trigger(s, p, false);
@@ -1272,7 +1272,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             {
                                 int sz = trigger::datasize(c_trig_transpose);
                                 int num_triggers = len / sz;
-                                midishort p = scaled() ? m_file_ppqn : 0 ;
+                                midishort p = scaled() ? file_ppqn() : 0 ;
                                 for (int i = 0; i < num_triggers; ++i)
                                 {
                                     add_trigger(s, p, true);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2021-05-18
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -91,9 +91,9 @@ default_ppqns ()
 {
     static combo::container s_default_ppqn_list =
     {
-        "32", "48", "96", "192",
-        "384", "768", "960", "1920"
-        // "3840", "7680", "9600", "19200"
+        "32", "48", "96", "192", "240",
+        "384", "768", "960", "1920", "2400",
+        "3840", "7680", "9600", "19200"
     };
     return s_default_ppqn_list;
 }
@@ -165,9 +165,9 @@ ppqn_list_value (int index)
     static int s_ppqn_list [] =
     {
         0,                          /* place-holder for default PPQN    */
-        32, 48, 96, 192,
-        384, 768, 960, 1920
-        // 3840, 7680, 9600, 19200
+        32, 48, 96, 192, 240,
+        384, 768, 960, 1920, 2400,
+        3840, 7680, 9600, 19200
     };
     static const int s_count = sizeof(s_ppqn_list) / sizeof(int);
     int result = 0;
@@ -206,7 +206,7 @@ choose_ppqn (int ppqn)
         result = usr().midi_ppqn();                 /* usr().default_ppqn() */
     else if (result == SEQ66_USE_FILE_PPQN)
         result = usr().file_ppqn();
-    else if (result < SEQ66_MINIMUM_PPQN || result > SEQ66_MAXIMUM_PPQN)
+    else if (! ppqn_in_range(result))               /* file, in-range PPQN  */
         result = usr().midi_ppqn();                 /* usr().default_ppqn() */
 
     return result;

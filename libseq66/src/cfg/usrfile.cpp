@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-05-18
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -1121,7 +1121,8 @@ usrfile::write ()
         "# is the starting PPQN for Seq66. The classic default is 192, but now\n"
         "# can range from 32 to 1920.\n"
         "#\n"
-        "# use-file-ppqn, if true, indicates to use the file PPQN.\n"
+        "# use-file-ppqn, if true, indicates to use the file PPQN. Usually,\n"
+        "# this is the best setting, to avoid changing the file's PPQN.\n"
         "\n"
         "default-ppqn = " << std::to_string(usr().default_ppqn()) << "\n"
         "use-file-ppqn = " << bool_to_string(usr().use_file_ppqn()) << "\n"

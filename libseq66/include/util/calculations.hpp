@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-03-25
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -136,16 +136,6 @@ extern unsigned short combine_bytes (midibyte b0, midibyte b1);
 extern midibpm note_value_to_tempo (midibyte note);
 
 /**
- *  Indicates if the PPQN value is in the legal range of usable PPQN values.
- */
-
-inline bool
-ppqn_in_range (int ppqn)
-{
-    return ppqn >= SEQ66_MINIMUM_PPQN && ppqn <= SEQ66_MAXIMUM_PPQN;
-}
-
-/**
  *  Common code for handling PPQN settings.  Validates a PPQN value.
  *  The value SEQ66_USE_FILE_PPQN (0) is considered invalid by this function.
  *  Very few classes need that macro.
@@ -172,28 +162,31 @@ ppqn_is_valid (int ppqn)
 /**
  *  Formalizes the rescaling of ticks base on changing the PPQN.  For speed
  *  the parameters are all assumed to be valid.  The PPQN values supported
- *  explicity range from SEQ66_MINIMUM_PPQN (32) to SEQ66_MAXIMUM_PPQN
- *  (1920).  The maximum tick value for 32-bit code is 2147483647.  At the
+ *  explicity range from SEQ66_MINIMUM_PPQN (24) to SEQ66_MAXIMUM_PPQN
+ *  (19200).  The maximum tick value for 32-bit code is 2147483647.  At the
  *  highest PPQN that's almost 28000 measures.  64-bit code maxes at over
  *  9E18.
+ *
+ *  This function is similar to pulses_scaled(), but that function always
+ *  scales against SEQ66_DEFAULT_PPQN and allows for a zoom factor.
  *
  * \param tick
  *      The tick value to be rescaled.
  *
- * \param oldppqn
- *      The original PPQN.
- *
  * \param newppqn
  *      The new PPQN.
+ *
+ * \param oldppqn
+ *      The original PPQN.  Defaults to SEQ66_DEFAULT_PPQN = 192.
  *
  * \return
  *      Returns the new tick value.
  */
 
 inline midipulse
-rescale_tick (midipulse tick, int oldppqn, int newppqn)
+rescale_tick (midipulse tick, int newppqn, int oldppqn = SEQ66_DEFAULT_PPQN)
 {
-    return tick * newppqn / oldppqn;
+    return midipulse(double(tick) * newppqn / oldppqn + 0.5);
 }
 
 /**
@@ -417,8 +410,8 @@ double_ticks_from_ppqn (int ppqn)
  *  Calculates the pulses per measure.  This calculation is extremely simple,
  *  and it provides an important constraint to pulse (ticks) calculations:
  *  the number of pulses in a measure is always 4 times the PPQN value,
- *  regardless of the time signature.  The number pulses in a 7/8 measure is the
- *  the same as in a 4/4 measure.
+ *  regardless of the time signature.  The number pulses in a 7/8 measure is
+ *  the the same as in a 4/4 measure.
  */
 
 inline midipulse
@@ -517,11 +510,14 @@ ticks_to_beats (midipulse p, int P, int B, int W)
  *  Free functions in the seq66 namespace.
  */
 
-extern midipulse pulses_per_substep (midipulse ppqn, int zoom);
-extern midipulse pulses_per_pixel (midipulse ppqn, int zoom);
+extern midipulse pulses_per_substep (midipulse ppqn, int zoom = 1);
+extern midipulse pulses_per_pixel (midipulse ppqn, int zoom = 1);
+extern midipulse pulses_scaled (midipulse tick, midipulse ppqn, int zoom = 1);
 extern midipulse pulse_divide
 (
-    midipulse numerator, midipulse denominator, midipulse & remainder
+    midipulse numerator,
+    midipulse denominator,
+    midipulse & remainder
 );
 extern double wave_func (double angle, wave wavetype);
 extern bool extract_port_names

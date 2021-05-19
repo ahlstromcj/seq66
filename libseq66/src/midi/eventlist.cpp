@@ -1605,15 +1605,15 @@ eventlist::get_selected_events_interval
 }
 
 bool
-eventlist::rescale (int oldppqn, int newppqn)
+eventlist::rescale (int newppqn, int oldppqn)
 {
     bool result = oldppqn > 0;
     if (result)
     {
         for (auto & er : m_events)
-            er.rescale(oldppqn, newppqn);
+            er.rescale(newppqn, oldppqn);
 
-        set_length(rescale_tick(get_length(), oldppqn, newppqn));
+        set_length(rescale_tick(get_length(), newppqn, oldppqn));
     }
     return result;
 }

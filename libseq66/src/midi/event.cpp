@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-02-18
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -769,9 +769,9 @@ event::to_string () const
 }
 
 void
-event::rescale (int oldppqn, int newppqn)
+event::rescale (int newppqn, int oldppqn)
 {
-    set_timestamp(rescale_tick(timestamp(), oldppqn, newppqn));
+    set_timestamp(rescale_tick(timestamp(), newppqn, oldppqn));
 }
 
 /**

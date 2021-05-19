@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2021-05-18
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -250,27 +250,27 @@
 
 /**
  *  Minimum value for PPQN.  Mostly for sanity checking.  This was set to 96,
- *  but there have been tunes set to 32 PPQN, I think.  At this setting,
- *  the Gtkmm-2.4 maintime bar moves pretty jerkily.
+ *  but there have been tunes set to 32 PPQN, I think.  The minimum value is
+ *  32, because the minimum number of pulses in a pixel is
+ *  SEQ66_PIXELS_PER_SUBSTEP = 6, and at 24, the number of pulses in a pixel
+ *  truncates to 0; bad for dividing!
  */
 
 #define SEQ66_MINIMUM_PPQN                32
 
 /**
  *  Maximum value for PPQN.  Mostly for sanity checking, with higher values
- *  possibly useful for debugging. However, although 1920 is okay, but slow,
- *  19200 is unusable.  Until we can make it usable, we stick with the smaller
+ *  possibly useful for debugging or for marketing claims :-D.
  *  value.  In the webs, people argue that 96 is generally sufficient.
- *  Reaper used 960.  Others use 480.
+ *  Reaper uses 960.  Finale uses 1024 (not a multiple of 24). Others use 480.
  */
 
-#define SEQ66_MAXIMUM_PPQN              1920
+#define SEQ66_MAXIMUM_PPQN              19200
 
 /**
  *  This value represent the smallest horizontal unit in a Sequencer66 grid.
  *  It is the number of pixels in the smallest increment between vertical
- *  lines in
- *  the grid.
+ *  lines in the grid.
  */
 
 #define SEQ66_PIXELS_PER_SUBSTEP           6
@@ -288,7 +288,7 @@
  *  default zoom to the PPQN, in addition to allowing some extra zoom values.
  */
 
-#define SEQ66_DEFAULT_ZOOM                  2
+#define SEQ66_DEFAULT_ZOOM                 2
 
 /**
  *  The maximum value of the zoom, indicating that one pixel represents 512
@@ -296,38 +296,38 @@
  *  we need a couple of extra entries.
  */
 
-#define SEQ66_MAXIMUM_ZOOM                512
+#define SEQ66_MAXIMUM_ZOOM               512
 
 /**
  *  The default value of the snap in the sequence editors.
  */
 
-#define SEQ66_DEFAULT_SNAP                 16
+#define SEQ66_DEFAULT_SNAP                16
 
 /**
  *  Minimum possible value for the global redraw rate.
  */
 
-#define SEQ66_MINIMUM_REDRAW               10
+#define SEQ66_MINIMUM_REDRAW              10
 
 /**
  *  The default value global redraw rate.
  */
 
-#define SEQ66_DEFAULT_REDRAW               40     /* or 25 for Windows */
+#define SEQ66_DEFAULT_REDRAW              40     /* or 25 for Windows */
 
 /**
  *  The maximum value for the global redraw rate.
  */
 
-#define SEQ66_MAXIMUM_REDRAW              100
+#define SEQ66_MAXIMUM_REDRAW             100
 
 /**
  *  Defines the callback rate for gtk_timeout_add() as used by perfedit.
  *  As usual, this value is in milliseconds.
  */
 
-#define SEQ66_FF_RW_TIMEOUT               120
+#define SEQ66_FF_RW_TIMEOUT              120
 
 /**
  *  Defines a scale value for BPM so that we can store a higher-precision
@@ -342,7 +342,7 @@
  *  values, in milliseconds.
  */
 
-#define SEQ66_TAP_BUTTON_TIMEOUT         5000L
+#define SEQ66_TAP_BUTTON_TIMEOUT        5000L
 
 /**
  *  Default value for c_beats_per_minute (global beats-per-minute, also known
@@ -350,7 +350,7 @@
  *  measure".
  */
 
-#define SEQ66_DEFAULT_BPM                120.0
+#define SEQ66_DEFAULT_BPM               120.0
 
 /**
  *  Minimum value for c_beats_per_minute (global beats-per-minute, also known
@@ -359,53 +359,53 @@
  *  running in Slave mode, BPM alternates between 1.0 and 120.0!
  */
 
-#define SEQ66_MINIMUM_BPM                  2.0       /* 1.0, 20.0   */
+#define SEQ66_MINIMUM_BPM                 2.0       /* 1.0, 20.0   */
 
 /**
  *  Maximum value for c_beats_per_minute (global beats-per-minute, also known
  *  as "BPM").  Mostly for sanity-checking.
  */
 
-#define SEQ66_MAXIMUM_BPM                600.0       /* 500  */
+#define SEQ66_MAXIMUM_BPM               600.0       /* 500  */
 
 /**
  *  Provides a fallback value for the BPM precision.  This is the "legacy"
  *  value.
  */
 
-#define SEQ66_DEFAULT_BPM_PRECISION        0
+#define SEQ66_DEFAULT_BPM_PRECISION       0
 
 /**
  *  Provides a minimum value for the BPM precision.  That is, no decimal
  *  point.
  */
 
-#define SEQ66_MINIMUM_BPM_PRECISION        0
+#define SEQ66_MINIMUM_BPM_PRECISION       0
 
 /**
  *  Provides a maximum value for the BPM precision, two decimal points.
  */
 
-#define SEQ66_MAXIMUM_BPM_PRECISION        2
+#define SEQ66_MAXIMUM_BPM_PRECISION       2
 
 /**
  *  Provides a fallback value for the BPM increment.  This is the "legacy"
  *  value.
  */
 
-#define SEQ66_DEFAULT_BPM_INCREMENT        1.0
+#define SEQ66_DEFAULT_BPM_INCREMENT       1.0
 
 /**
  *  Provides a minimum value for the BPM increment.
  */
 
-#define SEQ66_MINIMUM_BPM_INCREMENT        0.01
+#define SEQ66_MINIMUM_BPM_INCREMENT       0.01
 
 /**
  *  Provides a maximum value for the BPM increment.
  */
 
-#define SEQ66_MAXIMUM_BPM_INCREMENT       25.0
+#define SEQ66_MAXIMUM_BPM_INCREMENT      25.0
 
 /**
  *  Provides a fallback value for the BPM step increment.  This is the "legacy"

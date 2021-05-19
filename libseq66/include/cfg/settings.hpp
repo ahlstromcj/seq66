@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2021-03-20
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  A couple of universal helper functions remain as inline functions in the
@@ -129,6 +129,17 @@ extern int choose_ppqn (int ppqn = SEQ66_USE_DEFAULT_PPQN);
 extern int ppqn_list_value (int index = (-1));
 extern const combo::container & default_ppqns();
 extern void set_configuration_defaults ();
+
+/**
+ *  Indicates if the PPQN value is in the legal range of usable PPQN values.
+ */
+
+inline bool
+ppqn_in_range (int ppqn)
+{
+    return usr().use_file_ppqn() ||
+        (ppqn >= SEQ66_MINIMUM_PPQN && ppqn <= SEQ66_MAXIMUM_PPQN);
+}
 
 }           // namespace seq66
 

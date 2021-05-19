@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2021-04-19
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -153,8 +153,7 @@ protected:
     int m_snap;
 
     /**
-     *  The permanent snap for drawing the grid.  This is not meant to change,
-     *  at least externally... there is no public setter provided.
+     *  The permanent snap for drawing the grid, barring a change in the PPQN.
      */
 
     int m_grid_snap;
@@ -470,9 +469,13 @@ public:
         return m_snap;
     }
 
+    /*
+     * This value changes only when the PPQN changes.
+     */
+
     int grid_snap () const
     {
-        return m_grid_snap;             /* never changes */
+        return m_grid_snap;
     }
 
     midipulse beat_length () const
@@ -618,9 +621,14 @@ public:
         m_snap = int(snap);
     }
 
+    void set_grid_snap (midipulse snap)
+    {
+        m_grid_snap = int(snap);
+    }
+
 protected:
 
-    int horizSizeHint () const;
+    virtual int horizSizeHint () const;
 
     void old_rect (seq66::rect & r)
     {

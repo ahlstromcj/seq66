@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-10
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -61,8 +61,8 @@ namespace seq66
  *  Alpha values for various states, not yet members, not yet configurable.
  */
 
-const int s_alpha_playing       = 255;
-const int s_alpha_muted         = 100;
+const int s_alpha_playing    = 255;
+const int s_alpha_muted      = 100;
 
 /**
  *  Initial sizing for the perf-roll.
@@ -115,14 +115,8 @@ qperfroll::qperfroll
     m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     m_font.setBold(true);
     m_font.setPointSize(8);
-
-    /*
-     * Done in order to be able to track mouse movement without a click.
-     */
-
-    setMouseTracking(true);
-
-    m_timer = new QTimer(this);                         // redraw timer
+    setMouseTracking(true);         /* track mouse movement without a click */
+    m_timer = new QTimer(this);                         /* the redraw timer */
     m_timer->setInterval(2 * usr().window_redraw_rate());
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
     m_timer->start();
@@ -503,11 +497,11 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
     {
         convert_x(x, tick);
         tick -= m_drop_tick_offset;
-        if (perf().song_record_snap())      /* apply to move/grow too   */
+        if (perf().song_record_snap())          /* apply to move/grow too   */
             if (snap() > 0)
                 tick -= tick % snap();
 
-        if (moving())                       /* move selected triggers   */
+        if (moving())                           /* move selected triggers   */
         {
 #if defined USE_SONG_BOX_SELECT
             midipulse lastoffset = tick - m_last_tick;
@@ -527,7 +521,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
         if (growing())
         {
             midipulse lastoffset = tick - m_last_tick;
-            if (m_grow_direction)           // grow start, selected triggers
+            if (m_grow_direction)               /* grow start & trigger(s)  */
             {
                 triggers::grow ts = triggers::grow::start;
                 for (int seqid = m_seq_l; seqid <= m_seq_h; ++seqid)
@@ -540,7 +534,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
                     }
                 }
             }
-            else                            // grow end, selected triggers
+            else                                /* grow end & trigger(s)    */
             {
                 triggers::grow te = triggers::grow::end;
                 for (int seqid = m_seq_l; seqid <= m_seq_h; ++seqid)
@@ -757,13 +751,13 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.drawRect(0, 0, width(), height());          /* full width       */
-    pen.setColor(step_color());                         /* Qt::lightGray    */
+//  pen.setColor(step_color());                         /* Qt::lightGray    */
     for (int i = 0; i < height(); i += c_names_y)       /* horizontal lines */
         painter.drawLine(0, i, xwidth, i);
 
     /*
      *  Draw the vertical lines for the measures and the beats. Incrementing by
-     *  the beat-length makes drawing go faster.
+     *  the beat-length (PPQN) makes drawing go faster.
      */
 
     midipulse tick0 = scroll_offset();
@@ -773,18 +767,17 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
     int penwidth = 1;
     for (midipulse tick = tick0; tick < tick1; tick += tickstep)
     {
+        int x_pos = position_pixel(tick);
         if (tick % measure_length() == 0)               /* measure          */
         {
             pen.setColor(fore_color());                 /* Qt::black        */
             penwidth = 2;
         }
-        else if (tick % beat_length() == 0)             /* measure          */
+        else if (tick % beat_length() == 0)             /* beat             */
         {
-            pen.setColor(step_color());                 /* Qt::lightGray    */
+            pen.setColor(beat_color());
             penwidth = 1;
         }
-
-        int x_pos = position_pixel(tick);
         pen.setWidth(penwidth);
         painter.setPen(pen);
         painter.drawLine(x_pos, 0, x_pos, yheight);

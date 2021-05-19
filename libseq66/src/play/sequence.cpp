@@ -51,7 +51,7 @@
 #include <cstring>                      /* std::memset()                    */
 
 #include "cfg/scales.hpp"               /* seq66 scales functions           */
-#include "cfg/settings.hpp"             /* seq66::rc()                      */
+#include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
 #include "seq66_features.hpp"           /* various feature #defines         */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "midi/mastermidibus.hpp"       /* seq66::mastermidibus             */
@@ -4982,16 +4982,16 @@ bool
 sequence::change_ppqn (int p)
 {
     automutex locker(m_mutex);
-    bool result = p >= SEQ66_MINIMUM_PPQN && p <= SEQ66_MAXIMUM_PPQN;
+    bool result = p != m_ppqn;
     if (result)
-        result = p != m_ppqn;
+        result = ppqn_in_range(p);
 
     if (result)
     {
-        result = m_events.rescale(m_ppqn, p);
+        result = m_events.rescale(p, m_ppqn);           /* new & old PPQNs  */
         if (result)
         {
-            m_length = rescale_tick(m_length, m_ppqn, p);
+            m_length = rescale_tick(m_length, p, m_ppqn);
             m_ppqn = p;
             result = apply_length
             (

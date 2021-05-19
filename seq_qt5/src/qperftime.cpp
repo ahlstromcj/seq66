@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-04
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -65,6 +65,7 @@ qperftime::qperftime
     setFocusPolicy(Qt::StrongFocus);
     m_font.setBold(true);
     m_font.setPointSize(6);
+    setMouseTracking(true);         /* track mouse movement without a click */
     connect
     (
         m_timer, SIGNAL(timeout()), this, SLOT(conditional_update())
@@ -118,7 +119,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
     midipulse tick0 = scroll_offset();
     midipulse windowticks = pix_to_tix(xwidth);
     midipulse tick1 = tick0 + windowticks;
-    midipulse tickstep = 1;
+    midipulse tickstep = beat_length();                 /* versus 1         */
     int measure = 0;
     for (midipulse tick = tick0; tick < tick1; tick += tickstep)
     {
@@ -127,10 +128,11 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
             printf("qperftime measure-length is 0, cannot draw\n");
             break;
         }
+
+        int x_pos = position_pixel(tick);
         if (tick % measure_length() == 0)
         {
-            int x_pos = position_pixel(tick);
-            pen.setColor(Qt::black);                        /* measure */
+            pen.setColor(fore_color());                     /* measure */
             pen.setWidth(2);
             painter.setPen(pen);
             painter.drawLine(x_pos, 0, x_pos, yheight);
@@ -149,10 +151,41 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
             }
             ++measure;
         }
+        else if (tick % beat_length() == 0)             /* beat             */
+        {
+            pen.setColor(beat_color());
+            pen.setWidth(1);
+            painter.setPen(pen);
+            painter.drawLine(x_pos, 0, x_pos, yheight);
+        }
     }
 
     int left = position_pixel(perf().get_left_tick());
     int right = position_pixel(perf().get_right_tick());
+
+#if defined SHOW_JACK_START_STOP_TICK
+    int jpos = position_pixel(perf().get_start_tick());
+    if (jpos != left && jpos != right)
+    {
+        if (jpos >= scroll_offset_x() && jpos <= scroll_offset_x() + xwidth)
+        {
+            pen.setColor(Qt::red);
+            painter.setPen(pen);
+            painter.drawText(jpos - 2, 18, "S");
+        }
+    }
+#endif
+
+    int now = position_pixel(perf().get_tick());
+    if (now != left && now != right)
+    {
+        if (now >= scroll_offset_x() && now <= scroll_offset_x() + xwidth)
+        {
+            pen.setColor(progress_color());
+            painter.setPen(pen);
+            painter.drawText(now - 2, 18, "O");
+        }
+    }
     if (left >= scroll_offset_x() && left <= scroll_offset_x() + xwidth)
     {
         pen.setColor(Qt::black);
@@ -250,8 +283,7 @@ qperftime::keyPressEvent (QKeyEvent * event)
 void
 qperftime::mousePressEvent (QMouseEvent * event)
 {
-    midipulse tick = midipulse(event->x());
-    tick *= scale_zoom();
+    midipulse tick = pix_to_tix(event->x());
     if (snap() > 0)
         tick -= (tick % snap());
 
@@ -261,7 +293,7 @@ qperftime::mousePressEvent (QMouseEvent * event)
         if (event->button() == Qt::LeftButton)          /* move L/R markers */
         {
             if (isctrl)
-                perf().set_start_tick(tick);
+                perf().set_tick(tick, true);  /// perf().set_start_tick(tick);
             else
                 perf().set_left_tick(tick);
 
@@ -269,7 +301,7 @@ qperftime::mousePressEvent (QMouseEvent * event)
         }
         else if (event->button() == Qt::MiddleButton)    /* set start tick  */
         {
-            perf().set_start_tick(tick);
+            perf().set_tick(tick, true);  /// perf().set_start_tick(tick);
             set_dirty();
         }
         else if (event->button() == Qt::RightButton)
@@ -280,7 +312,7 @@ qperftime::mousePressEvent (QMouseEvent * event)
     }
     else
     {
-        perf().set_tick(tick);                          /* reposition time  */
+        perf().set_tick(tick, true);                    /* reposition time  */
         set_dirty();
     }
 }
@@ -292,9 +324,16 @@ qperftime::mouseReleaseEvent (QMouseEvent *)
 }
 
 void
-qperftime::mouseMoveEvent (QMouseEvent *)
+qperftime::mouseMoveEvent (QMouseEvent * event)
 {
-    // no code
+    if (event->y() > height() * 0.5)
+    {
+        setCursor(Qt::PointingHandCursor);
+    }
+    else
+    {
+        setCursor(Qt::ArrowCursor);
+    }
 }
 
 void

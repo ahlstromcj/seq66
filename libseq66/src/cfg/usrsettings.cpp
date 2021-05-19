@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-05-15
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -868,10 +868,10 @@ usrsettings::control_height (int value)
 
 /**
  * \setter m_current_zoom
- *      This value is not modified unless the value parameter is
- *      between 1 and 512, inclusive.  The default value is 2.  Note that 0 is
- *      allowed as a special case, which allows the default zoom to be
- *      adjusted when the PPQN value is different from the default.
+ *      This value is not modified unless the value parameter is between 1 and
+ *      512, inclusive.  The default value is 2.  Note that 0 is allowed as a
+ *      special case, which allows the default zoom to be adjusted when the
+ *      PPQN value is different from the default.
  */
 
 void
@@ -891,9 +891,10 @@ usrsettings::default_ppqn (int value)
 
 /**
  * \setter m_midi_ppqn
- *      This value can be set from 32 to 19200 (this upper limit will be
- *      determined by what Seq66 can actually handle).  The default
- *      value is 192.
+ *      This value can be set from 32 to 1920 (this upper limit will be
+ *      determined by what Seq66 can actually handle).  The default value is
+ *      192. However, if we're using file-ppqn as per the 'usr' file, then the
+ *      given value will be used even if out-of-range.
  */
 
 void
@@ -908,7 +909,10 @@ usrsettings::midi_ppqn (int value)
         if (value == 0)
             m_use_file_ppqn = true;
 
-        m_midi_ppqn = default_ppqn();
+        if (m_use_file_ppqn)
+            m_midi_ppqn = value;
+        else
+            m_midi_ppqn = default_ppqn();
     }
 }
 

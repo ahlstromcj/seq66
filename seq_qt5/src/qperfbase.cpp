@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-14
- * \updates       2021-04-15
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -66,11 +66,14 @@ qperfbase::qperfbase
     // no code needed
 }
 
+/*
+ * int hint = perf().get_max_trigger() / scale_zoom() + 2000;
+ */
+
 int
 qperfbase::horizSizeHint () const
 {
-    int hint = perf().get_max_trigger() / scale_zoom() + 2000;
-    return hint;
+    return tix_to_pix(perf().get_max_trigger()) + 200;
 }
 
 /**

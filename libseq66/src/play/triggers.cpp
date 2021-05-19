@@ -101,11 +101,11 @@ trigger::trigger
 }
 
 void
-trigger::rescale (int oldppqn, int newppqn)
+trigger::rescale (int newppqn, int oldppqn)
 {
-    m_tick_start = rescale_tick(m_tick_start, oldppqn, newppqn);
-    m_tick_end = rescale_tick(m_tick_end, oldppqn, newppqn);
-    m_offset = rescale_tick(m_offset, oldppqn, newppqn);
+    m_tick_start = rescale_tick(m_tick_start, newppqn, oldppqn);
+    m_tick_end = rescale_tick(m_tick_end, newppqn, oldppqn);
+    m_offset = rescale_tick(m_offset, newppqn, oldppqn);
 }
 
 std::string
@@ -201,15 +201,15 @@ triggers::operator = (const triggers & rhs)
 }
 
 bool
-triggers::rescale (int oldppqn, int newppqn)
+triggers::rescale (int newppqn, int oldppqn)
 {
     bool result = oldppqn > 0;
     if (result)
     {
         for (auto & t : m_triggers)
-            t.rescale(oldppqn, newppqn);
+            t.rescale(newppqn, oldppqn);
 
-        set_length(rescale_tick(m_length, oldppqn, newppqn));
+        set_length(rescale_tick(m_length, newppqn, oldppqn));
     }
     return result;
 }
@@ -248,7 +248,7 @@ triggers::change_ppqn (int p)
     bool result = p > 0;
     if (result)
     {
-        bool result = rescale(m_ppqn, p);
+        bool result = rescale(p, m_ppqn);               /* new & old PPQN   */
         if (result)
             set_ppqn(p);
     }

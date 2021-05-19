@@ -74,7 +74,7 @@ public:
 
 protected:
 
-    int horizSizeHint () const;
+    virtual int horizSizeHint () const override;
     void force_resize (QWidget *);
 
 protected:

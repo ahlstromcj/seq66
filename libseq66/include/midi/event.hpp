@@ -1380,7 +1380,7 @@ public:
     void print_note (bool showlink = true) const;
     std::string to_string () const;
     int get_rank () const;
-    void rescale (int oldppqn, int newppqn);
+    void rescale (int newppqn, int oldppqn);
 
 };          // class event
 

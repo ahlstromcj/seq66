@@ -2459,32 +2459,12 @@ performer::activate ()
  * -------------------------------------------------------------------------
  */
 
-/**
- *  This version for song-recording not only logs m_tick, it also does JACK
- *  positioning (if applicable), and calls the master bus's continue_from()
- *  function.
- *
- *  For debugging: Display the tick values; normally this is too much
- *  information.
- */
-
 void
-performer::set_tick (midipulse tick)
+performer::set_tick (midipulse tick, bool dontreset)
 {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static midipulse s_last_tick = 0;
-    midipulse difference = tick - s_last_tick;
-    if (difference > 100)
-    {
-        s_last_tick = tick;
-        infoprintf("perform tick = %ld", m_tick);
-        fflush(stdout);
-    }
-    if (tick == 0)
-        s_last_tick = 0;
-#endif
-
     m_tick = tick;
+    if (dontreset)
+        m_dont_reset_ticks = true;
 }
 
 /**

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2021-01-04
+ * \updates       2021-05-19
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -77,7 +77,8 @@ qeditbase::qeditbase
     m_scale_zoom            (m_scale * zoom()),     /* see change_ppqn()    */
     m_padding_x             (padding),
     m_snap                  (snap),
-    m_grid_snap             (snap),
+//  m_grid_snap             (snap),
+    m_grid_snap             (rescale_tick(snap, p.ppqn())),
     m_beat_length           (p.ppqn()),             /* see change_ppqn()    */
     m_measure_length        (m_beat_length * 4),    /* see change_ppqn()    */
     m_selecting             (false),
@@ -106,13 +107,15 @@ qeditbase::qeditbase
 }
 
 /**
+ * int hint = perf().get_max_trigger() / scale_zoom() + 2000;
+ *
  *  Why 2000?  I forget!
  */
 
 int
 qeditbase::horizSizeHint () const
 {
-    return perf().get_max_trigger() / scale_zoom() + 2000;
+    return tix_to_pix(perf().get_max_trigger()) + 200;
 }
 
 bool

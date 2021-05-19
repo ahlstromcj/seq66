@@ -1015,10 +1015,12 @@
    PPQN value, which specifies the "pulses per quarter note", the
    basic time-resolution of events in the MIDI file.  Common values are 96 or
    192, but higher values are also common.
-   (The highest possible value is 0x7FFF = 32767 but
-   \textsl{Seq66} limits it to 1920 for performance reasons.)
-   \textsl{Seq66} and its precursor, \textsl{Seq24}, default to 192.
+   (The highest possible value is 0x7FFF = 32767 but the MIDI functional limit
+   is 31250, and anyway,
+   \textsl{Seq66} limits it to 19200 for performance reasons.)
+   \textsl{Seq66} and its precursor, \textsl{Seq24}, default to PPQN = 192.
    For \textsl{Seq66}, this can be changed in the 'rc' file.
+   Any MIDI file can also be rescale to another PPQN, and saved.
 
 \subsubsection{MIDI Track, MTrk}
 \label{subsubsec:midi_format_track}
