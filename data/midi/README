@@ -1,6 +1,6 @@
-Data/Midi Directory for Seq66 0.93.0
+Data/Midi Directory for Seq66 0.94.0
 Chris Ahlstrom
-2021-04-14 to 2021-04-16
+2021-04-14 to 2021-05-20
 
 This directory contains sample MIDI files to be installed for
 instructional purposes.
@@ -13,6 +13,20 @@ instructional purposes.
         to Seq66 format, though each pattern is very long and only one trigger
         per pattern is used in the song editor.  It makes a good way to verify
         that the basics work.
+
+    carptsun.midi
+
+        "The Carpet of the Sun", a beautiful song from Renaissance.  This
+        file was converted from an initial effort, done for the nifty
+        consumer keyboard, the Yamaha PSS-790, a couple decades ago, using
+        our midicvtpp project (available on GitHub) and an INI file to
+        convert the drum and patches from PSS-790 to General MIDI:
+
+        $ midicvtpp --m2m data/samples/GM_PSS-790_Multi.ini \
+            carptsun.mid data/midi/carptsun.midi
+
+        We will do some more chopping on this file, eventually, to use short
+        loops where possible and lay them out using the song editor.
 
     Chameleon-HHancock-Ov.midi
 
