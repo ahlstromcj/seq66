@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-05-18
+ * \updates       2021-05-20
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -386,7 +386,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_one_measure           (0),
     m_left_tick             (0),
     m_right_tick            (0),
-    m_starting_tick         (0),
+    m_start_tick            (0),
     m_tick                  (0),
     m_jack_pad              (),                 /* data for JACK... & ALSA  */
     m_jack_tick             (0),
@@ -430,13 +430,8 @@ performer::performer (int ppqn, int rows, int columns) :
 
 performer::~performer ()
 {
-    m_io_active = m_is_running = false;
-    cv().signal();                          /* signal the end of play       */
-    if (m_out_thread_launched && m_out_thread.joinable())
-        m_out_thread.join();
-
-    if (m_in_thread_launched && m_in_thread.joinable())
-        m_in_thread.join();
+    if (m_io_active)
+        (void) finish();
 }
 
 /**
@@ -2423,8 +2418,15 @@ performer::finish ()
 {
     reset_sequences();                      /* stop all output upon exit    */
     panic();                                /* go even further 2021-03-18   */
-    m_io_active = m_is_running = false;     /* also done in constructor     */
+    m_io_active = m_is_running = false;     /* also done in destructor      */
     announce_exit(true);                    /* blank device completely      */
+
+    cv().signal();                          /* signal the end of play       */
+    if (m_out_thread_launched && m_out_thread.joinable())
+        m_out_thread.join();
+
+    if (m_in_thread_launched && m_in_thread.joinable())
+        m_in_thread.join();
 
     bool ok = deinit_jack_transport();
     bool result = bool(m_master_bus);
@@ -2464,7 +2466,11 @@ performer::set_tick (midipulse tick, bool dontreset)
 {
     m_tick = tick;
     if (dontreset)
+    {
         m_dont_reset_ticks = true;
+        set_start_tick(tick);
+        set_needs_update();         // EXPERIMENTAL
+    }
 }
 
 /**
@@ -2489,7 +2495,10 @@ performer::set_left_tick (midipulse tick)
     set_start_tick(tick);
     m_reposition = false;
     if (is_jack_master())                       /* don't use in slave mode  */
+    {
         position_jack(true, tick);
+        set_tick(tick);
+    }
     else if (! is_jack_running())
         set_tick(tick);
 
@@ -2903,7 +2912,7 @@ performer::jack_reposition (midipulse tick, midipulse stoptick)
  *  While running, we:
  *
  *      -#  Before the "is-running" loop:  If in the performance view (song
- *          editor), we care about starting from the m_starting_tick offset.
+ *          editor), we care about starting from the m_start_tick offset.
  *          However, if the pause key is what resumes playback, we do not want
  *          to reset the position.  So how to detect that situation, since
  *          m_is_pause is now false?
@@ -2962,8 +2971,12 @@ performer::output_func ()
         /*
          * If song-mode Master, then start the left tick marker if the Stazed
          * "key-p" position was set.  If live-mode master, start at 0.
+         *
+         * This code is already present at about line #3209, and that covers
+         * more complexities.
          */
 
+#if defined USE_REDUNDANT_CODE
         if (song_mode())
         {
             if (is_jack_master() && m_reposition)
@@ -2971,6 +2984,7 @@ performer::output_func ()
         }
         else
             position_jack(false, 0);
+#endif
 
         /*
          *  See note 1 in the function banner.
@@ -3001,7 +3015,7 @@ performer::output_func ()
         long current;                           /* current time             */
         long delta, delta_us;                   /* current - last           */
         long last = microtime();                /* beginning time           */
-        m_resolution_change = false;            /* BPM/PPQN. EXPERIMENTAL.  */
+        m_resolution_change = false;            /* BPM/PPQN                 */
         while (is_running())
         {
             if (m_resolution_change)
@@ -3061,9 +3075,9 @@ performer::output_func ()
                 if (song_mode() && ! m_usemidiclock && m_reposition)
                 {
                     current_tick = clock_tick;
-                    delta_tick = m_starting_tick - clock_tick;
+                    delta_tick = m_start_tick - clock_tick;
                     init_clock = true;
-                    m_starting_tick = get_left_tick();
+                    m_start_tick = get_left_tick();
                     m_reposition = false;
                     m_reset_tempo_list = true;
                 }
@@ -3089,8 +3103,8 @@ performer::output_func ()
 
             if (change_position)
             {
-                set_last_ticks(m_starting_tick);
-                m_starting_tick = get_left_tick();  /* restart at L marker  */
+                set_last_ticks(m_start_tick);
+                m_start_tick = get_left_tick();     /* restart at L marker  */
                 m_reposition = false;
             }
 #endif
@@ -3192,28 +3206,16 @@ performer::output_func ()
          * perfroll, and the slots in the mainwid) to stay visible where
          * they paused.  However, the progress still restarts when playback
          * begins again, without some other changes.  m_tick is the progress
-         * play tick that displays the progress bar.
+         * play tick that determines the progress bar location.
          */
 
-        if (song_mode())
+        if (! m_dont_reset_ticks)
         {
-            if (is_jack_master())                       // running Song Master
-                position_jack(song_mode(), get_left_tick());
-        }
-        else
-        {
-            if (is_jack_master())                       // running Live Master
-                position_jack(song_mode(), 0);
-        }
-        if (! m_usemidiclock)                           // stop by MIDI event?
-        {
-            if (! is_jack_running())
-            {
-                if (song_mode())
-                    set_tick(get_left_tick());          // song mode default
-                else if (! m_dont_reset_ticks)
-                    set_tick(0);                        // live mode default
-            }
+            midipulse start = song_mode() ? get_left_tick() : 0 ;
+            if (is_jack_master())
+                position_jack(song_mode(), start);
+            else if (! m_usemidiclock && ! is_jack_running())
+                set_tick(start);
         }
 
         /*
@@ -3570,8 +3572,6 @@ performer::start_playing ()
         *   m_jack_asst.position(true, m_left_tick);    // position_jack()
         *
         * The "! m_reposition" doesn't seem to make sense.
-        *
-        *       if (is_jack_master() && ! m_reposition)
         */
 
        if (is_jack_master() && ! m_reposition)            // ca 2021-01-20
@@ -3579,7 +3579,7 @@ performer::start_playing ()
     }
     else
     {
-        if (is_jack_master())
+        if (is_jack_master() && ! m_dont_reset_ticks)       // ca 2021-05-20
             position_jack(false, 0);
 
         if (resume_note_ons())                          /* for issue #5     */

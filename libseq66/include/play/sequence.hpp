@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-05-11
+ * \updates       2021-05-20
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1115,6 +1115,7 @@ public:
         return m_length;
     }
 
+    midipulse get_tick () const;
     midipulse get_last_tick () const;
     void set_last_tick (midipulse tick = c_null_midipulse);
 
@@ -1741,6 +1742,11 @@ private:
     mastermidibus * master_bus ()
     {
         return m_master_bus;
+    }
+
+    const performer * perf () const
+    {
+        return m_parent;
     }
 
     performer * perf ()

@@ -78,11 +78,9 @@ const int c_size_box_click_w = c_size_box_w + 1 ;
 
 qperfroll::qperfroll
 (
-    performer & p,
-    int zoom,
-    int snap,
+    performer & p, int zoom, int snap,
     qperfnames * seqnames,
-    QWidget * frame,        // must be a qseqeditframe/64 widget
+    qperfeditframe64 * frame,
     QWidget * parent
 ) :
     QWidget             (parent),
@@ -91,7 +89,7 @@ qperfroll::qperfroll
         p, zoom, snap, c_names_y,
         c_names_y * p.sequences_in_sets()       // p.sequence_max()
     ),
-    m_parent_frame      (reinterpret_cast<qperfeditframe64 *>(frame)),
+    m_parent_frame      (frame),
     m_perf_names_wid    (seqnames),
     m_timer             (nullptr),
     m_font              ("Monospace"),

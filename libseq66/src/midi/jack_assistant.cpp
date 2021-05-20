@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-05-18
+ * \updates       2021-05-20
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -901,7 +901,13 @@ void
 jack_assistant::start ()
 {
     if (m_jack_running)
+    {
         jack_transport_start(m_jack_client);
+#if defined USE_JACK_ASSISTANT_SET_POSITION
+        if (is_master())                        // EXPERIMENTAL
+            set_position(parent().get_tick());
+#endif
+    }
     else if (rc().with_jack())
         (void) error_message("Sync start: JACK not running");
 }
@@ -923,8 +929,8 @@ jack_assistant::stop ()
 /**
  *  performer::set_beats_per_minute() validates the BPM.  Also, since
  *  jack_transport_reposition() can be "called at any time by any client", we
- *  have removed the check for "is master".  We do seem to see more "bad position
- *  structure" messages, though.
+ *  have removed the check for "is master".  We do seem to see more "bad
+ *  position structure" messages, though.
  *
  * \param bpminute
  *      Provides the beats/minute value to set.

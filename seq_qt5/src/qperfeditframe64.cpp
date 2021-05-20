@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-04-16
+ * \updates       2021-05-20
  * \license       GNU GPLv2 or above
  *
  *  Note that, as of version 0.9.11, the z and Z keys, when focus is on the
@@ -177,7 +177,7 @@ qperfeditframe64::qperfeditframe64
     m_perftime = new qperftime
     (
         m_mainperf, SEQ66_DEFAULT_ZOOM, SEQ66_DEFAULT_SNAP,
-        ui->timeScrollArea
+        this, ui->timeScrollArea
     );
     ui->timeScrollArea->setWidget(m_perftime);
     ui->timeScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

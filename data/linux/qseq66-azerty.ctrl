@@ -29,14 +29,28 @@ This French AZERTY configuration was provided by Sylvain Margueritat
 issues are:
   
  1. BPM+ and BPM- defaults '"' and ';' are replaced in AZERTY by '*' and 'ù',
-    but neither work.
+    but neither work.  Fixed by a (currently internal) remapping of some
+    keystrokes for AZERTY keyboards.
  2. Auto-shift for group-learn for top line doesn't work.  With '!' replaced by
     '&', the error is "Key '!' (code = 33) is not a configured mute-group key."
-    The "azerty" option disables auto-shift.
- 3. Assign a mute group to key 'a'; loop control mute/unmute by pressing this
-    key does not work.
+    The "azerty" option disables auto-shift, since digits require using the
+    Shift key.
+ 3. The AZERTY keyboard can have the following "dead keys", which modify the
+    next keystroke:
+  
+    -   Circumflex accent (^, on the key to the right of "P")
+    -   Diaeresis (umlaut, on the key to the right of "P")
+    -   Grave accent (`)
+    -   Acute accent (')
+    -   Tilde (~, the superscript "2")
  
-Here are the keys that appear in this file using the hex-code as their names:
+The first two keys are not usable as control keys on some setups.  See the
+following site for information about the related system configuration files:
+ 
+    https://medium.com/@damko/a-simple-humble-but-comprehensive-guide-to-xkb-for-linux-6f1ad5e13450
+ 
+Here are the keys that appear in this file using made-up names (e.g.
+c_cedilla) to be used in the MIDI control settings.
  
         Key #0xa3  '£'
         Key #0xa7  '§'

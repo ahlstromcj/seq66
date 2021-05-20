@@ -74,10 +74,10 @@ public:
     (
         performer & p,
         int zoom,
-        int snap                = SEQ66_DEFAULT_SNAP,
-        qperfnames * seqnames   = nullptr, ///// NEW
-        QWidget * frame         = nullptr,
-        QWidget * parent        = nullptr
+        int snap                 = SEQ66_DEFAULT_SNAP,
+        qperfnames * seqnames    = nullptr,
+        qperfeditframe64 * frame = nullptr,
+        QWidget * parent         = nullptr
     );
 
     virtual ~qperfroll ();

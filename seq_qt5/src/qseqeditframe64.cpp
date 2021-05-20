@@ -1256,7 +1256,7 @@ qseqeditframe64::initialize_panels ()
     ui->keysScrollArea->verticalScrollBar()->setRange(0, height);
     m_seqtime = new qseqtime
     (
-        perf(), seq_pointer(), zoom(), ui->timeScrollArea
+        perf(), seq_pointer(), zoom(), ui->timeScrollArea, this
     );
     ui->timeScrollArea->setWidget(m_seqtime);
     ui->timeScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -3216,6 +3216,7 @@ qseqeditframe64::set_dirty ()
         m_seqroll->set_redraw();        // also calls set_dirty();
         m_seqdata->set_dirty();         // update(); neither cause a refresh
         m_seqevent->set_dirty();        // how about this?
+        m_seqtime->set_dirty();
     }
     update_draw_geometry();
 }

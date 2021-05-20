@@ -705,7 +705,7 @@ private:
      *  functionality. Note that "tick" is actually "pulses".
      */
 
-    midipulse m_starting_tick;
+    midipulse m_start_tick;
 
     /**
      *  MIDI Clock support.  The m_tick member holds the tick to be used in
@@ -717,7 +717,7 @@ private:
     mutable midipulse m_tick;
 
     /**
-     *  EXPERIMENTAL
+     *  Holds a bunch of jack_assistant settings.
      */
 
     jack_scratchpad m_jack_pad;
@@ -1917,12 +1917,12 @@ public:
 
     void set_start_tick (midipulse tick)
     {
-        m_starting_tick = tick;         /* starting JACK tick/pulse value   */
+        m_start_tick = tick;         /* starting JACK tick/pulse value   */
     }
 
     midipulse get_start_tick () const
     {
-        return m_starting_tick;
+        return m_start_tick;
     }
 
     void set_right_tick (midipulse tick);

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2021-05-18
+ * \updates       2021-05-20
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -40,19 +40,16 @@
 #include "midi/midibytes.hpp"           /* seq66::midipulse alias           */
 
 #if defined SEQ66_JACK_SUPPORT
-
 #include <jack/jack.h>
 #include <jack/transport.h>
-
 #if defined SEQ66_JACK_SESSION
 #include <jack/session.h>
 #endif
-
-#else       // ! SEQ66_JACK_SUPPORT
-
+#else
 #undef SEQ66_JACK_SESSION
+#endif
 
-#endif      // SEQ66_JACK_SUPPORT
+#undef USE_JACK_ASSISTANT_SET_POSITION  /* EXPERIMENTAL         */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -60,7 +57,7 @@
 
 namespace seq66
 {
-    class performer;                      /* forward reference                */
+    class performer;                    /* forward reference    */
 
 /**
  *  Provide a temporary structure for passing data and results between a
@@ -434,7 +431,6 @@ public:
     bool activate ();
     void start ();
     void stop ();
-
     void position (bool state, midipulse tick = 0);
     bool output (jack_scratchpad & pad);
 

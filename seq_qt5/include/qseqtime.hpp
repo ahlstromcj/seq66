@@ -48,6 +48,7 @@
 namespace seq66
 {
     class performer;
+    class qseqeditframe64;
 
 /**
  * The timebar for the sequence editor
@@ -61,8 +62,9 @@ public:
 
     qseqtime
     (
-        performer & p, seq::pointer seqp,
-        int zoom, QWidget * parent
+        performer & p, seq::pointer seqp, int zoom,
+        QWidget * parent,        /* QScrollArea */
+        qseqeditframe64 * frame
     );
 
     virtual ~qseqtime ();
@@ -83,6 +85,16 @@ private:
         // TODO
     }
 
+    qseqeditframe64 * frame64 ()
+    {
+        return m_parent_frame;
+    }
+
+    const qseqeditframe64 * frame64 () const
+    {
+        return m_parent_frame;
+    }
+
 signals:
 
 private slots:
@@ -91,6 +103,7 @@ private slots:
 
 private:
 
+    qseqeditframe64 * m_parent_frame;
     QTimer * m_timer;
     QFont m_font;
 

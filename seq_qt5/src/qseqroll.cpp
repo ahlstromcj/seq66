@@ -113,16 +113,9 @@ qseqroll::qseqroll
     setAttribute(Qt::WA_StaticContents);
     setAttribute(Qt::WA_OpaquePaintEvent);          /* no erase on repaint  */
     setFocusPolicy(Qt::StrongFocus);
-//  setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
     set_snap(seqp->snap());
-
-    /*
-     * Done in order to be able to track mouse movement without a click.
-     * See the call to m_seqkeys_wid->set_preview_key(note).
-     */
-
-    setMouseTracking(true);
+    setMouseTracking(true);         /* track mouse movement without a click */
     show();
     m_timer = new QTimer(this);
     m_timer->setInterval(1 * usr().window_redraw_rate());
@@ -355,13 +348,12 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     pen.setColor(Qt::lightGray);
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
     painter.setPen(pen);
-
     draw_grid(painter, view);
     set_initialized();
 
     /*
-     * Draw the events. This currently draws all of them.  Drawing all them only
-     * needs to be drawn once.
+     * Draw the events. This currently draws all of them.  Drawing all them
+     * only needs to be drawn once.
      */
 
     call_draw_notes(painter, view);
@@ -375,21 +367,21 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(m_progbar_width);
     painter.setPen(pen);
-    painter.drawLine(progress_x(), r.y(), progress_x(), r.y() + r.height());
     old_progress_x(progress_x());
-    progress_x(xoffset(seq_pointer()->get_last_tick()));
+    progress_x(xoffset(seq_pointer()->get_tick()));
+    painter.drawLine(progress_x(), r.y(), progress_x(), r.y() + r.height());
 
     /*
      * End of draw_progress_on_window().  The next step is to restore
      * the "empty" brush style in case the user draws a selection box.
      */
 
-    brush.setStyle(Qt::NoBrush);        /* painter reset                */
+    brush.setStyle(Qt::NoBrush);            /* painter reset                */
     painter.setBrush(brush);
-    if (select_action())                /* select/move/paste/grow       */
+    if (select_action())                    /* select/move/paste/grow       */
         pen.setStyle(Qt::SolidLine);
 
-    int x, y, w, h;                     /* draw selections              */
+    int x, y, w, h;                         /* draw selections              */
     if (selecting())
     {
         rect::xy_to_rect_get

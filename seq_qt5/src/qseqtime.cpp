@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-21
+ * \updates       2021-05-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -34,6 +34,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
+#include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qseqtime.hpp"
 
 /*
@@ -44,10 +45,14 @@ namespace seq66
 {
 
 /*
- *  Tweaks
+ *  Tweaks. The presence of these corrections means we need to coordinate
+ *  between GUI elements better.
  */
 
-static const int s_x_tick_fix  = 2;
+static const int s_x_tick_fix  =  2;        /* adjusts vertical grid lines  */
+static const int s_time_fix    = 10;        /* seqtime offset from seqroll  */
+static const int s_o_fix       =  6;        /* adjust position of "O" mark  */
+static const int s_end_fix     = 10;        /* adjust position of "END" box */
 
 /**
  *  Principal constructor.
@@ -56,10 +61,13 @@ static const int s_x_tick_fix  = 2;
 qseqtime::qseqtime
 (
     performer & p, seq::pointer seqp,
-    int zoom, QWidget * parent
+    int zoom,
+    QWidget * parent,       /* QScrollArea */
+    qseqeditframe64 * frame
 ) :
     QWidget                 (parent),
     qseqbase                (p, seqp, zoom, SEQ66_DEFAULT_SNAP),
+    m_parent_frame          (frame),
     m_timer                 (nullptr),
     m_font                  ()
 {
@@ -105,6 +113,7 @@ qseqtime::conditional_update ()
 void
 qseqtime::paintEvent (QPaintEvent *)
 {
+    int xwidth = width();       // int yheight = height();
     QPainter painter(this);
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
     QPen pen(Qt::black);
@@ -164,60 +173,56 @@ qseqtime::paintEvent (QPaintEvent *)
         }
     }
 
+    int xoff_left = scroll_offset_x();
+    int xoff_right = scroll_offset_x() + xwidth;
     midipulse length = seq_pointer()->get_length();
-    int end_x = xoffset(length) - scroll_offset_x() - 20;
-    midipulse left = perf().get_left_tick();
-    midipulse right = perf().get_right_tick();
-    int left_x = xoffset(left) - scroll_offset_x() + 4;   // position_pixel()?
-    int right_x = xoffset(right) - scroll_offset_x() - 7;
+    int end = position_pixel(length) - s_end_fix;
+    midipulse left = position_pixel(perf().get_left_tick()) + s_time_fix;
+    midipulse right = position_pixel(perf().get_right_tick());
+    midipulse now = position_pixel(perf().get_tick() % length) + s_o_fix;
 
     /*
      * Draw end of seq label, label background.
      */
 
+    if (! perf().is_running() && (now != left) && (now != right))
+    {
+        if (now >= xoff_left && now <= xoff_right)
+        {
+            pen.setColor(progress_color());
+            painter.setPen(pen);
+            painter.drawText(now, 18, "O");
+        }
+    }
     pen.setColor(Qt::black);
     brush.setColor(Qt::black);
     brush.setStyle(Qt::SolidPattern);
     painter.setBrush(brush);
     painter.setPen(pen);
-    if (left >= snap() && left < length - snap())
+    if (left >= xoff_left && left <= xoff_right)
     {
         painter.setBrush(brush);
-        painter.drawRect(left_x, 10, 8, 24);        // black background
+        painter.drawRect(left, 10, 8, 24);          // black background
         pen.setColor(Qt::white);                    // white label text
         painter.setPen(pen);
-        painter.drawText(left_x + 1, 18, "L");
+        painter.drawText(left + 1, 18, "L");
     }
     pen.setColor(Qt::black);
     painter.setPen(pen);
-    painter.drawRect(end_x, 10, 20, 24);            // black background
+    painter.drawRect(end, 10, 16, 24);              // black background
     pen.setColor(Qt::white);                        // white label text
     painter.setPen(pen);
-    painter.drawText(end_x + 2, 18, tr("END"));
-    if (right > left && right < length - snap())
+    painter.drawText(end + 1, 18, "END");
+    if (right >= xoff_left && right <= xoff_right)
     {
         pen.setColor(Qt::black);
         painter.setBrush(brush);
         painter.setPen(pen);
-        painter.drawRect(right_x, 10, 8, 24);       // black background
+        painter.drawRect(right, 10, 8, 24);         // black background
         pen.setColor(Qt::white);                    // white label text
         painter.setPen(pen);
-        painter.drawText(right_x + 1, 18, "R");
+        painter.drawText(right + 2, 18, "R");
     }
-
-#if defined SHOW_JACK_START_STOP_TICK
-    int jpos = perf().get_start_tick();                 // position_pixel()?
-    int jack_x = xoffset(jpos) - scroll_offset_x() + 4;
-    if (jpos != left && jpos != right)
-    {
-        if (jpos >= snap() && jpos < length - snap())
-        {
-            pen.setColor(Qt::red);
-            painter.setPen(pen);
-            painter.drawText(jpos - 2, 18, "S");
-        }
-    }
-#endif
 }
 
 void
@@ -244,31 +249,25 @@ qseqtime::resizeEvent (QResizeEvent * qrep)
 void
 qseqtime::mousePressEvent (QMouseEvent * event)
 {
-    /*
-    midipulse tick = midipulse(event->x());
-    tick *= scale_zoom();
-    tick -= (tick % snap());
-     */
-
     midipulse tick = pix_to_tix(event->x());
     if (snap() > 0)
         tick -= (tick % snap());
 
-    if (event->y() > height() * 0.5)                    /* see banner note  */
+    if (event->y() > height() / 2)                      /* see banner note  */
     {
         bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
         if (event->button() == Qt::LeftButton)          /* move L/R markers */
         {
             if (isctrl)
-                perf().set_start_tick(tick);
+                perf().set_tick(tick, true);            /* set_start_tick() */
             else
                 perf().set_left_tick_seq(tick, snap());
 
             set_dirty();
         }
-        else if (event->button() == Qt::MiddleButton)    /* set start tick  */
+        else if (event->button() == Qt::MiddleButton)   /* set start tick   */
         {
-            perf().set_start_tick(tick);
+            perf().set_tick(tick, true);                /* set_start_tick() */
             set_dirty();
         }
         else if (event->button() == Qt::RightButton)
@@ -279,9 +278,11 @@ qseqtime::mousePressEvent (QMouseEvent * event)
     }
     else
     {
-        perf().set_tick(tick);                          /* reposition time  */
+        perf().set_tick(tick, true);                    /* reposition time  */
         set_dirty();
     }
+    if (is_dirty())
+        frame64()->set_dirty();
 }
 
 void
@@ -293,14 +294,10 @@ qseqtime::mouseReleaseEvent (QMouseEvent *)
 void
 qseqtime::mouseMoveEvent(QMouseEvent * event)
 {
-    if (event->y() > height() * 0.5)
-    {
-        setCursor(Qt::PointingHandCursor);
-    }
-    else
-    {
-        setCursor(Qt::ArrowCursor);
-    }
+    setCursor
+    (
+        event->y() > height() / 2 ? Qt::PointingHandCursor : Qt::UpArrowCursor
+    );
 }
 
 QSize

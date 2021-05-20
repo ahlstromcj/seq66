@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-04
+ * \updates       2021-05-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -63,7 +63,6 @@ namespace seq66
 class qperftime final : public QWidget, public qperfbase
 {
     friend class qperfeditframe64;  /* for scrolling a horizontal page  */
-    friend class qperfeditframe;    /* for scrolling a horizontal page  */
 
     Q_OBJECT
 
@@ -73,8 +72,9 @@ public:
     (
         performer & a_perf,
         int zoom,
-        int snap            = SEQ66_DEFAULT_SNAP,
-        QWidget * parent    = nullptr
+        int snap                 = SEQ66_DEFAULT_SNAP,
+        qperfeditframe64 * frame = nullptr,
+        QWidget * parent         = nullptr
     );
 
     virtual ~qperftime ();
@@ -104,6 +104,7 @@ protected:      // override Qt event handlers
 
 private:
 
+    qperfeditframe64 * m_parent_frame;      // NEW
     QTimer * m_timer;
     QFont m_font;
     midipulse m_measure_length;

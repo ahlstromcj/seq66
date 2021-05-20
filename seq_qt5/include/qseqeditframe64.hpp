@@ -100,6 +100,7 @@ class qseqeditframe64 final : public qseqframe, protected performer::callbacks
     friend class qlfoframe;
     friend class qseqeditex;
     friend class qseqroll;
+    friend class qseqtime;
 
     Q_OBJECT
 

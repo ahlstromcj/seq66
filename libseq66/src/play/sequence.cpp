@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-05-11
+ * \updates       2021-05-20
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4098,6 +4098,20 @@ sequence::set_last_tick (midipulse tick)
         tick = m_length;
 
     m_last_tick = tick;
+}
+
+/**
+ *  Get the performer's current tick so that setting position by a click works
+ *  properly.
+ */
+
+midipulse
+sequence::get_tick () const
+{
+    if (get_length() > 0)
+        return perf()->get_tick() % get_length();
+    else
+        return perf()->get_tick();
 }
 
 /**
