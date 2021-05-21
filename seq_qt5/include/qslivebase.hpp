@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2021-05-15
+ * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child class, qslivegride, are Sequencer66's
@@ -136,6 +136,7 @@ protected:
     bool cut_seq ();
     bool delete_seq ();
     bool paste_seq ();
+    bool merge_seq ();
     virtual void update_bank (int bank);
 
     virtual void update_bank ()

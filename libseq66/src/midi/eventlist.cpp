@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-05-11
+ * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -253,29 +253,16 @@ eventlist::sort ()
 void
 eventlist::merge (const event::buffer & evlist)
 {
-    m_events.reserve(m_events.size() + evlist.size());
+    std::size_t totalsize = m_events.size() + evlist.size();
+    m_events.reserve(totalsize);
     m_events.insert(m_events.end(), evlist.begin(), evlist.end());
-    std::sort(m_events.begin(), m_events.end());
+    sort();
 }
 
 /**
- *  Provides a merge operation for the event multimap analogous to the merge
- *  operation for the event list.  We have certain constraints to preserve, as
- *  the following discussion shows.
- *
- *  For std::list, sequence merges list T into list A by first calling
- *  T.sort(), and then A.merge(T).  The merge() operation merges T into A by
- *  transferring all of its elements, at their respective ordered positions,
- *  into A.  Both containers must already be ordered.
- *
- *  The merge effectively removes all the elements in T (which becomes empty),
- *  and inserts them into their ordered position within container (which
- *  expands in size by the number of elements transferred). The operation is
- *  performered without constructing nor destroying any element, whether T is an
- *  lvalue or an rvalue, or whether the value-type supports move-construction
- *  or not.
- *
- *  std::vector::insert(iterator pos, InputIterator 1st, InputIterator 2nd)
+ *  Provides a merge operation for the event container managed by this
+ *  eventlist.  The event::buffer container is a vector.  We don't have to
+ *  presort the container in this case.
  *
  *  Each element of T is inserted at the position that corresponds to its
  *  value according to the strict weak ordering defined by operator <. The
@@ -297,15 +284,24 @@ eventlist::merge (const event::buffer & evlist)
  *      for the std::multimap implementation (which no longer exists).
  */
 
-void
-eventlist::merge (eventlist & el, bool presort)
+bool
+eventlist::merge (const eventlist & el, bool presort)
 {
     if (presort)                            /* not really necessary here    */
-        el.sort();                          /* el.m_events.sort();          */
-
-    m_events.reserve(m_events.size() + el.m_events.size());
+    {
+        eventlist & el_nc = const_cast<eventlist &>(el);
+        el_nc.sort();
+    }
+    std::size_t totalsize = m_events.size() + el.m_events.size();
+    m_events.reserve(totalsize);
     m_events.insert(m_events.end(), el.m_events.begin(), el.m_events.end());
-    std::sort(m_events.begin(), m_events.end());
+    sort();
+
+    bool result = m_events.size() == totalsize;
+    if (result)
+        verify_and_link();
+
+    return result;
 }
 
 /**

@@ -188,6 +188,7 @@ private slots:
     void copy_sequence ();
     void cut_sequence ();
     void paste_sequence ();
+    void merge_sequence ();
     void delete_sequence ();
     void new_live_frame ();
 

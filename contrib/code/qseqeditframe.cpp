@@ -1048,7 +1048,7 @@ bool
 qseqeditframe::change_ppqn (int ppqn)
 {
     int zoom = usr().zoom();
-    if (usr().zoom() == SEQ66_USE_ZOOM_POWER_OF_2)      /* i.e. 0 */
+    if (usr().adapt_zoom())
         zoom = zoom_power_of_2(ppqn);
 
     set_zoom(zoom);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-05-19
+ * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -701,8 +701,8 @@ zoom_power_of_2 (int ppqn)
     if (ppqn > SEQ66_DEFAULT_PPQN)
     {
         int zoom = result * ppqn / SEQ66_DEFAULT_PPQN;
-        zoom >>= 2;                     /* "divide" by 2    */
-        zoom <<= 2;                     /* "multiply" by 2  */
+        zoom >>= 1;                                     /* "divide" by 2    */
+        zoom <<= 1;                                     /* "multiply" by 2  */
         result = zoom;
         if (result > SEQ66_MAXIMUM_ZOOM)
             result = SEQ66_MAXIMUM_ZOOM;
@@ -807,11 +807,13 @@ pulses_scaled (midipulse tick, midipulse ppqn, int zoom)
  */
 
 int
-beat_pow2 (int logbase2)
+beat_power_of_2 (int logbase2)
 {
     int result;
     if (logbase2 == 0)
+    {
         result = 1;
+    }
     else
     {
         result = 2;

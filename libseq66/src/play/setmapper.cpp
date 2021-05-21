@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-04-27
+ * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -533,6 +533,32 @@ setmapper::apply_song_transpose (seq::number seqno)
         if (setiterator != sets().end())
             setiterator->second.apply_song_transpose(seqno);
     }
+}
+
+midipulse
+setmapper::max_timestamp () const
+{
+    midipulse result = 0;
+    for (const auto & sset : sets())
+    {
+        midipulse t = sset.second.max_timestamp();
+        if (t > result)
+            result = t;
+    }
+    return result;
+}
+
+midipulse
+setmapper::max_extent () const
+{
+    midipulse result = 0;
+    for (const auto & sset : sets())
+    {
+        midipulse t = sset.second.max_extent();
+        if (t > result)
+            result = t;
+    }
+    return result;
 }
 
 /*

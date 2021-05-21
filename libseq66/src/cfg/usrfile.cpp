@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-05-19
+ * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -913,10 +913,9 @@ usrfile::write ()
         ;
 
     file << "\n"
-        "# Specifies the initial zoom for the piano rolls.  Ranges from 1.\n"
-        "# to 512 (the legacy maximum was 32), and defaults to 2 unless\n"
-        "# changed here.  Note that large PPQN values will require larger\n"
-        "# zoom values in order to look good in the sequence editor.\n"
+        "# Specifies the initial zoom for the piano rolls.  Ranges from 1 to\n"
+        "# 512, and defaults to 2 unless changed here. Larger PPQNs require\n"
+        "# larger zoom values in order to look good in the sequence editor.\n"
         "# Seq66 adapts the zoom to the PPQN, if zoom is set to 0.\n"
         "\n"
         << usr().zoom() << "      # default zoom (0 = auto-adjust to PPQN)\n"

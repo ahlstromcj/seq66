@@ -191,7 +191,7 @@ int qseqeditframe64::sm_initial_chord        = 0;
 /**
  * To reduce the amount of written code, we use a static array to
  * initialize the beat-width entries.  Nope, now we go from 1 to 16 and tack on
- * 32 to match the main-windows global time signature handling.
+ * 32 to match the main-window's global time signature handling.
  *
  *  static const int s_width_items [] = { 1, 2, 4, 8, 16, 32 };
  *  static const int s_width_count = sizeof(s_width_items) / sizeof(int);
@@ -760,9 +760,6 @@ qseqeditframe64::qseqeditframe64
         this, SLOT(reset_grid_snap())
     );
 
-//  set_snap(sm_initial_snap * perf().ppqn() / SEQ66_DEFAULT_PPQN);
-//  set_note_length(sm_initial_note_length * perf().ppqn() / SEQ66_DEFAULT_PPQN);
-
     set_snap(rescale_tick(sm_initial_snap, perf().ppqn()));
     set_note_length(rescale_tick(sm_initial_note_length, perf().ppqn()));
     qt_set_icon(note_length_xpm, ui->m_button_note);
@@ -798,7 +795,7 @@ qseqeditframe64::qseqeditframe64
     );
 
     int zoom = usr().zoom();
-    if (usr().zoom() == SEQ66_USE_ZOOM_POWER_OF_2)      /* i.e. 0 */
+    if (usr().adapt_zoom())
         zoom = zoom_power_of_2(perf().ppqn());
 
     set_zoom(zoom);
@@ -2434,11 +2431,9 @@ bool
 qseqeditframe64::change_ppqn (int ppqn)
 {
     int zoom = usr().zoom();
-//  set_snap(sm_initial_snap * ppqn / SEQ66_DEFAULT_PPQN);
-//  set_note_length(sm_initial_note_length * ppqn / SEQ66_DEFAULT_PPQN);
     set_snap(rescale_tick(sm_initial_snap, ppqn));
     set_note_length(rescale_tick(sm_initial_note_length, ppqn));
-    if (usr().zoom() == SEQ66_USE_ZOOM_POWER_OF_2)      /* i.e. 0 */
+    if (usr().adapt_zoom())
         zoom = zoom_power_of_2(ppqn);
 
     set_zoom(zoom);

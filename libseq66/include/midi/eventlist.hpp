@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-05-11
+ * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -309,7 +309,7 @@ public:
     }
 
     void sort ();
-    void merge (eventlist & el, bool presort = true);
+    bool merge (const eventlist & el, bool presort = true);
 
     bool sort_in_progress () const
     {

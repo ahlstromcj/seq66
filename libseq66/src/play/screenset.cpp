@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-03-12
+ * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -552,6 +552,38 @@ screenset::set_dirty (seq::number seqno)
         if (sp)
             sp->set_dirty();
     }
+}
+
+midipulse
+screenset::max_timestamp () const
+{
+    midipulse result = 0;
+    for (const auto & s : m_container)
+    {
+        if (s.active())
+        {
+            midipulse t = s.loop()->get_max_timestamp();
+            if (t > result)
+                result = t;
+        }
+    }
+    return result;
+}
+
+midipulse
+screenset::max_extent () const
+{
+    midipulse result = 0;
+    for (const auto & s : m_container)
+    {
+        if (s.active())
+        {
+            midipulse t = s.loop()->get_length();
+            if (t > result)
+                result = t;
+        }
+    }
+    return result;
 }
 
 /*

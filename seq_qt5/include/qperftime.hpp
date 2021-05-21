@@ -93,6 +93,16 @@ private:
         // TODO
     }
 
+    qperfeditframe64 * frame64()
+    {
+        return m_parent_frame;
+    }
+
+    const qperfeditframe64 * frame64() const
+    {
+        return m_parent_frame;
+    }
+
 protected:      // override Qt event handlers
 
     virtual void paintEvent (QPaintEvent *) override;

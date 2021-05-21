@@ -1183,33 +1183,52 @@ performer::copy_sequence (seq::number seqno)
 }
 
 bool
-performer::cut_sequence (seq::number seq)
+performer::cut_sequence (seq::number seqno)
 {
-    bool result = is_seq_active(seq) && ! is_seq_in_edit(seq);
+    bool result = is_seq_active(seqno) && ! is_seq_in_edit(seqno);
     if (result)
     {
-        seq::pointer s = get_sequence(seq);
+        seq::pointer s = get_sequence(seqno);
         result = bool(s);
         if (result)
         {
             m_seq_clipboard.partial_assign(*s);
-            result = remove_sequence(seq);
+            result = remove_sequence(seqno);
         }
     }
     return result;
 }
 
 bool
-performer::paste_sequence (seq::number seq)
+performer::paste_sequence (seq::number seqno)
 {
-    bool result = ! is_seq_active(seq);
+    bool result = ! is_seq_active(seqno);
     if (result)
     {
-        if (new_sequence(seq))
+        if (new_sequence(seqno))
         {
-            get_sequence(seq)->partial_assign(m_seq_clipboard);
-            get_sequence(seq)->set_dirty();
+            seq::pointer s = get_sequence(seqno);
+            s->partial_assign(m_seq_clipboard);
+            s->set_dirty();
         }
+    }
+    return result;
+}
+
+bool
+performer::merge_sequence (seq::number seqno)
+{
+    bool result = false;
+    if (! is_seq_active(seqno))
+    {
+        result = paste_sequence(seqno);
+    }
+    else
+    {
+        seq::pointer s = get_sequence(seqno);
+        result = s->merge_events(m_seq_clipboard);
+        if (result)
+            s->set_dirty();
     }
     return result;
 }
@@ -1220,28 +1239,28 @@ performer::paste_sequence (seq::number seq)
  */
 
 bool
-performer::move_sequence (seq::number seq)
+performer::move_sequence (seq::number seqno)
 {
-    bool result = is_seq_active(seq);
+    bool result = is_seq_active(seqno);
     if (result)
     {
-        seq::pointer s = get_sequence(seq);
-        m_old_seqno = seq;
+        seq::pointer s = get_sequence(seqno);
+        m_old_seqno = seqno;
         m_moving_seq.partial_assign(*s);
-        result = remove_sequence(seq);
+        result = remove_sequence(seqno);
     }
     return result;
 }
 
 bool
-performer::finish_move (seq::number seq)
+performer::finish_move (seq::number seqno)
 {
     bool result = false;
-    if (! is_seq_active(seq))             /* is_mseq_available(seq)   */
+    if (! is_seq_active(seqno))
     {
-        if (new_sequence(seq))
+        if (new_sequence(seqno))
         {
-            get_sequence(seq)->partial_assign(m_moving_seq);
+            get_sequence(seqno)->partial_assign(m_moving_seq);
             result = true;
         }
     }
@@ -3951,6 +3970,21 @@ performer::box_offset_triggers (midipulse offset)
  * -------------------------------------------------------------------------
  */
 
+midipulse
+performer::get_max_extent () const
+{
+    midipulse timelen = get_max_timestamp();
+    midipulse triglen = get_max_trigger();
+    midipulse result = mapper().max_extent();
+    if (triglen > result)
+        result = triglen;
+
+    if (timelen > result)
+        result = timelen;
+
+    return result;
+}
+
 /**
  *  Selectes a trigger for the given sequence.
  *
@@ -5521,6 +5555,13 @@ performer::increment_screenset (int amount)
     screenset::number newnumber = playscreen_number() + amount;
     return set_playing_screenset(newnumber);
 }
+
+
+/*
+ * -------------------------------------------------------------------------
+ *  Automation functions
+ * -------------------------------------------------------------------------
+ */
 
 /**
  *  Implements a no-op function for reserved slots not yet implemented, or it

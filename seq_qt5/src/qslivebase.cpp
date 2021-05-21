@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2020-08-11
+ * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.
@@ -180,7 +180,8 @@ qslivebase::copy_seq ()
 }
 
 /**
- * Need a dialog warning that the editor is the reason this seq cant be cut.
+ * Need a dialog warning that the editor is the reason this sequence cannot be
+ * cut.
  */
 
 bool
@@ -209,6 +210,12 @@ bool
 qslivebase::paste_seq ()
 {
     return m_can_paste ? perf().paste_sequence(m_current_seq) : false ;
+}
+
+bool
+qslivebase::merge_seq ()
+{
+    return m_can_paste ? perf().merge_sequence(m_current_seq) : false ;
 }
 
 }           // namespace seq66

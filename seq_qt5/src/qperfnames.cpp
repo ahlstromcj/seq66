@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-15
+ * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -226,8 +226,9 @@ qperfnames::paintEvent (QPaintEvent *)
 QSize
 qperfnames::sizeHint () const
 {
-    int count = perf().sequences_in_sets();     // perf().sequence_max() + 1
-    return QSize(c_names_x, m_nametext_y * count);
+    int count = perf().sequences_in_sets();
+    int height = m_nametext_y * count;
+    return QSize(c_names_x, height);
 }
 
 /**

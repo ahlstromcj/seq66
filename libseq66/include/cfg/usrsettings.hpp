@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-05-15
+ * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -1314,6 +1314,11 @@ public:
     }
 
     void zoom (int value);      /* seqedit can change this one */
+
+    bool adapt_zoom () const
+    {
+        return m_current_zoom == SEQ66_USE_ZOOM_POWER_OF_2;
+    }
 
     bool global_seq_feature () const
     {

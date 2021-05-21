@@ -579,7 +579,9 @@ private:
     }
 
     void apply_song_transpose (seq::number seqno = seq::all());
+    midipulse max_timestamp () const;
     midipulse max_trigger () const;
+    midipulse max_extent () const;
     void select_triggers_in_range
     (
         seq::number seqlow, seq::number seqhigh,

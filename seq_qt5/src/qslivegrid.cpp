@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-05-15
+ * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1278,6 +1278,13 @@ qslivegrid::paste_sequence ()
         alter_sequence(m_current_seq);
 }
 
+void
+qslivegrid::merge_sequence ()
+{
+    if (qslivebase::merge_seq())
+        alter_sequence(m_current_seq);
+}
+
 /**
  *  This is not called when focus changes.  Instead, we have to call this from
  *  qsliveframeex::changeEvent().
@@ -1477,15 +1484,31 @@ qslivegrid::popup_menu ()
             actionDelete, SIGNAL(triggered(bool)),
             this, SLOT(delete_sequence())
         );
+
+        QAction * actionMerge = new QAction(tr("&Merge into pattern"), m_popup);
+        m_popup->addAction(actionMerge);
+        connect
+        (
+            actionMerge, SIGNAL(triggered(bool)),
+            this, SLOT(merge_sequence())
+        );
     }
     else if (m_can_paste)
     {
-        QAction * actionPaste = new QAction(tr("&Paste pattern"), m_popup);
+        QAction * actionPaste = new QAction(tr("&Paste to pattern"), m_popup);
         m_popup->addAction(actionPaste);
         connect
         (
             actionPaste, SIGNAL(triggered(bool)),
             this, SLOT(paste_sequence())
+        );
+
+        QAction * actionMerge = new QAction(tr("&Merge into pattern"), m_popup);
+        m_popup->addAction(actionMerge);
+        connect
+        (
+            actionMerge, SIGNAL(triggered(bool)),
+            this, SLOT(merge_sequence())
         );
     }
     if (perf().is_seq_active(m_current_seq))

@@ -127,6 +127,16 @@ private:
 
     virtual void set_adding (bool adding);
 
+    qperfeditframe64 * frame64()
+    {
+        return m_parent_frame;
+    }
+
+    const qperfeditframe64 * frame64() const
+    {
+        return m_parent_frame;
+    }
+
     // We could add these functions to performer and here:
     //
     //  cut_selected_trigger()

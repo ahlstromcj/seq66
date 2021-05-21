@@ -1,0 +1,54 @@
+Deconstructing and Reconstructing "Carpet of the Sun" with Seq66
+Chris Ahlstrom
+2021-05-21 to 2021-05-21
+
+"Carpet of the Sun" is a great tune from Renaissance that we tried to transcribe
+to MIDI by ear a long time ago.  I've been told that the transcription is
+out-of-key, unfortunately.  I still like it and want to convert it from scoring
+for the Yamaha PSS-790 to General MIDI.
+
+The original file, carptsun.mid, had the following setups:
+
+Track  0: Ch 1. Time Sig and Tempo.
+Track  1: Ch 3. Melody, notes only, no patching or control events.  Needs an
+                instrument with long sustain during the note.
+Track  2: Ch 8. "Guitar" chords, full-measure and half-measure long.
+Track  3: Ch 8. A feeble attempt to imitate guitar strumming.  Annoying now.
+                Needs a slower decay.
+Track  4: Ch 5. Chord accompaniment.
+Track  5: Ch 1. Piano accompaniment and flavor.
+Track  6: Ch 1. Improvisational Piano accompaniment and flavor.
+Track  7: Ch 6. Woodwind, oboe.  Flavor for the melody.
+Track  8: Ch 3. Bass Cello or bass guitar.
+Track  9: Ch 1. Another bass line.
+Track 10: Ch 6. Strings.
+Track 11: Ch 1. Harpsichord.
+Track 12: Ch 2. Conga Low, note 91. Weird, next track's title is appended to
+                this track's title in the Event Editor. BUG in Seq66 or in
+                EditTrack?
+Track 13: Ch 2. Conga High, note 89. Same BUG.
+Track 14: Ch 2. Bass Drum, note 36. Same BUG.
+Track 15: Ch 2. Snare Drum 2, note 43. Same BUG.
+Track 16: Ch 2. Crash Cymbal 1, note 53. Same BUG.
+Track 17: Ch 2. Closed Hi Hat 1, note 47. Same BUG.
+Track 18: Ch 5 and 6. Ch 5 --> Program 10, Control 64 at 127, then 0.
+                Ch 6 --> Program 7.
+Track 19: Chs 1, 2, & 3.  Various program changes and some control 64s.
+Track 20: Ch. 7. "My" track, some extra flair, a few sour notes.
+Track 21: Ch. 2. A copy of the "Melody" track.
+Track 22: Ch. 2. Snare Drum 1, note 41.
+
+Translated drums:  midicvtpp failed to translate them!  And the Conga values are
+weird.
+
+Track 12: Ch 2. Conga Low, note 91 --> 
+Track 13: Ch 2. Conga High, note 89 --> 
+Track 14: Ch 2. Bass Drum, note 36 --> 
+Track 15: Ch 2. Snare Drum 2, note 43 --> 
+Track 16: Ch 2. Crash Cymbal 1, note 53 --> 
+Track 17: Ch 2. Closed Hi Hat 1, note 47 --> 
+Track 22: Ch. 2. Snare Drum 1, note 41 --> 
+
+
+
+# vim: sw=4 ts=4 wm=2 et ft=markdown

@@ -1169,7 +1169,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 int logbase2 = int(read_byte());    // dd
                                 int cc = read_byte();               // cc
                                 int bb = read_byte();               // bb
-                                int bw = beat_pow2(logbase2);
+                                int bw = beat_power_of_2(logbase2);
                                 s.set_beats_per_bar(bpm);
                                 s.set_beat_width(bw);
                                 s.clocks_per_metronome(cc);

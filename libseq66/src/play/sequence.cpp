@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-05-20
+ * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -166,7 +166,9 @@ sequence::sequence (int ppqn)
     m_dirty_perf                (true),
     m_dirty_names               (true),
     m_seq_in_edit               (false),
+#if 0
     m_raise                     (false),
+#endif
     m_status                    (0),
     m_cc                        (0),
     m_scale                     (0),
@@ -1961,6 +1963,23 @@ sequence::paste_selected (midipulse tick, int note)
     return result;
 }
 
+bool
+sequence::merge_events (const sequence & source)
+{
+    automutex locker(m_mutex);
+    const eventlist & clipbd = source.events();
+    push_undo();                                /* push undo, no lock   */
+    bool result = m_events.merge(clipbd);
+    if (result)
+    {
+        // DO WE NEED TO UPDATE ALL CHANNEL INFO???????????
+
+        modify();
+    }
+
+    return result;
+}
+
 /**
  *  Changes the event data range.  Changes only selected events, if there are
  *  any selected events.  Otherwise, all events intersected are changed.  This
@@ -3490,6 +3509,13 @@ sequence::get_max_trigger () const
 {
     automutex locker(m_mutex);
     return m_triggers.get_maximum();
+}
+
+midipulse
+sequence::get_max_timestamp () const
+{
+    automutex locker(m_mutex);
+    return m_events.get_max_timestamp();
 }
 
 /**
@@ -5261,7 +5287,7 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
 midipulse
 sequence::handle_size (midipulse start, midipulse finish)
 {
-    static const long s_handlesize = 16;
+    static const midipulse s_handlesize = 16;
     midipulse result = s_handlesize * m_ppqn / SEQ66_DEFAULT_PPQN;
     midipulse notelength = finish - start;
     if (notelength < result / 3)

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-05-20
+ * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -561,9 +561,9 @@ private:
     /**
      *  Used in seqmenu and seqedit.  It allows a sequence editor window to
      *  pop up if not already raised, in seqedit::timeout().
-     */
 
     bool m_raise;
+     */
 
     /**
      *  Set by seqedit for the handle_action() function to use.
@@ -1063,6 +1063,7 @@ public:
         return m_seq_in_edit;
     }
 
+#if 0
     void set_raise (bool edit)
     {
         m_raise = edit;
@@ -1072,6 +1073,7 @@ public:
     {
         return m_raise;
     }
+#endif
 
     /*
      * Documented at the definition point in the cpp module.
@@ -1428,6 +1430,7 @@ public:
     );
     midipulse selected_trigger_start ();
     midipulse selected_trigger_end ();
+    midipulse get_max_timestamp () const;
     midipulse get_max_trigger () const;
     void move_triggers (midipulse start_tick, midipulse distance, bool direction);
     void copy_triggers (midipulse start_tick, midipulse distance);
@@ -1506,6 +1509,7 @@ public:
     bool copy_selected ();
     bool cut_selected (bool copyevents = true);
     bool paste_selected (midipulse tick, int note);
+    bool merge_events (const sequence & source);
     bool selected_box
     (
         midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l

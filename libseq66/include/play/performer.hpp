@@ -28,10 +28,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-19
+ * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
- *  The main player!
+ *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
+ *  it!
  */
 
 #include <set>                          /* std::set, arbitary selection     */
@@ -1858,6 +1859,7 @@ public:
     bool copy_sequence (seq::number seq);
     bool cut_sequence (seq::number seq);
     bool paste_sequence (seq::number seq);
+    bool merge_sequence (seq::number seq);
     bool move_sequence (seq::number seq);
     bool finish_move (seq::number seq);
     bool remove_set (screenset::number setno);
@@ -2468,10 +2470,17 @@ public:
     bool intersect_triggers (seq::number seqno, midipulse tick);
 #endif
 
+    midipulse get_max_timestamp () const
+    {
+        return mapper().max_timestamp();
+    }
+
     midipulse get_max_trigger () const
     {
         return mapper().max_trigger();
     }
+
+    midipulse get_max_extent () const;
 
     /**
      *  Indicates that the desired sequence is active, unmuted, and has

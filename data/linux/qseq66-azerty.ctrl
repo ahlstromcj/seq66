@@ -1,7 +1,7 @@
 # Seq66 0.93.1 (and above) MIDI control configuration file
 #
 # /home/ahlstrom/.config/seq66/qseq66-azerty.ctrl
-# Written on 2021-05-09 14:52:54
+# Written on 2021-05-21 18:00:00
 #
 # This file holds the MIDI control configuration for Seq66. It follows
 # the format of the 'rc' configuration file, but is stored separately for
@@ -49,19 +49,20 @@ following site for information about the related system configuration files:
  
     https://medium.com/@damko/a-simple-humble-but-comprehensive-guide-to-xkb-for-linux-6f1ad5e13450
  
-Here are the keys that appear in this file using made-up names (e.g.
+Especially check out the file "/usr/share/X11/xkb/symbols/fr".
+  
+Here are some of the keys that appear in this file using made-up names (e.g.
 c_cedilla) to be used in the MIDI control settings.
  
-        Key #0xa3  '£'
-        Key #0xa7  '§'
-        Key #0xb0  '°'
-        Key #0xb2  '²'
-        Key #0xc0  'à'
-        Key #0xc7  'ç'
-        Key #0xc8  'è'
-        Key #0xc9  'é'
-        Key #0xd9  'ù'
-        Key #0x39c 'µ'
+        L_pound     '£'
+        Silcrow     '§'
+        Super_2     '²'
+        a_grave     'à'
+        c_cedilla   'ç'
+        e_grave     'è'
+        e_acute     'é'
+        u_grave     'ù'
+        Circflex    '^'
 
 [midi-control-settings]
 

@@ -59,7 +59,7 @@ qperftime::qperftime
 ) :
     QWidget             (parent),
     qperfbase           (p, zoom, snap, 1, 1 * 1),
-    m_parent_frame      (frame),
+    m_parent_frame      (frame),                /* frame64() accessor   */
     m_timer             (new QTimer(this)),     /* refresh/redraw timer */
     m_font              (),
     m_move_left         (false)
@@ -206,6 +206,10 @@ qperftime::sizeHint () const
 {
     int height = 24;
     int width = horizSizeHint();
+    int w = frame64()->width();
+    if (width < w)
+        width = w;
+
     return QSize(width, height);
 }
 
@@ -307,7 +311,7 @@ qperftime::mousePressEvent (QMouseEvent * event)
         set_dirty();
     }
     if (is_dirty())
-        m_parent_frame->set_dirty();
+        frame64()->set_dirty();
 }
 
 void

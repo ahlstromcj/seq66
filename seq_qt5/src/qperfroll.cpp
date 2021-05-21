@@ -89,7 +89,7 @@ qperfroll::qperfroll
         p, zoom, snap, c_names_y,
         c_names_y * p.sequences_in_sets()       // p.sequence_max()
     ),
-    m_parent_frame      (frame),
+    m_parent_frame      (frame),                /* frame64() accessor   */
     m_perf_names_wid    (seqnames),
     m_timer             (nullptr),
     m_font              ("Monospace"),
@@ -153,8 +153,8 @@ qperfroll::conditional_update ()
 void
 qperfroll::follow_progress ()
 {
-    if (not_nullptr(m_parent_frame))
-        m_parent_frame->follow_progress();
+    if (not_nullptr(frame64()))
+        frame64()->follow_progress();
 }
 
 /**
@@ -243,7 +243,7 @@ qperfroll::sizeHint () const
     int count = perf().sequences_in_sets();         // perf().sequence_max()
     int height = c_names_y * count;
     int width = horizSizeHint();
-    int w = m_parent_frame->width();
+    int w = frame64()->width();
     if (width < w)
         width = w;
 
@@ -657,23 +657,23 @@ qperfroll::keyPressEvent (QKeyEvent * event)
             if (event->key() == Qt::Key_Z)
             {
                 handled = true;
-                m_parent_frame->zoom_in();
+                frame64()->zoom_in();
             }
         }
         else if (event->key() == Qt::Key_Z)
         {
             handled = true;
-            m_parent_frame->zoom_out();
+            frame64()->zoom_out();
         }
         else if (event->key() == Qt::Key_0)
         {
             handled = true;
-            m_parent_frame->reset_zoom();
+            frame64()->reset_zoom();
         }
     }
     if (handled)
     {
-        m_parent_frame->set_dirty();
+        frame64()->set_dirty();
         if (dirty)
             set_dirty();
     }
@@ -722,7 +722,7 @@ qperfroll::set_adding (bool a)
     else
         setCursor(Qt::ArrowCursor);
 
-    m_parent_frame->update_entry_mode(a);       /* updates checkable button */
+    frame64()->update_entry_mode(a);            /* updates checkable button */
     set_dirty();
 }
 

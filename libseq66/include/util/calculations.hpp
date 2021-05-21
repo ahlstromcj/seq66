@@ -125,7 +125,7 @@ extern midipulse string_to_pulses
 );
 extern int log2_time_sig_value (int tsd);
 extern int zoom_power_of_2 (int ppqn);
-extern int beat_pow2 (int logbase2);
+extern int beat_power_of_2 (int logbase2);
 extern int power (int base, int exponent);
 extern midibyte beat_log2 (int value);
 extern midibpm tempo_us_from_bytes (const midibyte tt[3]);
