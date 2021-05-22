@@ -402,11 +402,7 @@ qloopbutton::setup ()
         pal.setColor(QPalette::Button, backcolor);
         m_prog_back_color = backcolor;
     }
-//  if (usr().grid_is_white())
-//      setAutoFillBackground(false);
-//  else
-        setAutoFillBackground(true);
-
+    setAutoFillBackground(true);
     setPalette(pal);
     setEnabled(true);
     setCheckable(is_checkable());

@@ -41,13 +41,13 @@ Track 22: Ch. 2. Snare Drum 1, note 41.
 Translated drums:  midicvtpp failed to translate them!  And the Conga values are
 weird.
 
-Track 12: Ch 2. Conga Low, note 91 --> 
-Track 13: Ch 2. Conga High, note 89 --> 
-Track 14: Ch 2. Bass Drum, note 36 --> 
-Track 15: Ch 2. Snare Drum 2, note 43 --> 
-Track 16: Ch 2. Crash Cymbal 1, note 53 --> 
-Track 17: Ch 2. Closed Hi Hat 1, note 47 --> 
-Track 22: Ch. 2. Snare Drum 1, note 41 --> 
+Track 12: Ch 2. Conga Low,       note 91 - 27 --> 64
+Track 13: Ch 2. Conga High,      note 89 - 26 --> 63
+Track 14: Ch 2. Bass Drum,       note 36 +  0 --> 36
+Track 15: Ch 2. Snare Drum 2,    note 43 -  3 --> 40
+Track 16: Ch 2. Crash Cymbal 1,  note 53 -  4 --> 49
+Track 17: Ch 2. Closed Hi Hat 1, note 47 -  5 --> 42
+Track 22: Ch. 2. Snare Drum 1,   note 41 -  3 --> 38
 
 
 

@@ -203,7 +203,7 @@ screenset::remove (seq::number seqno)
     seq::pointer sp = seqinfo(seqno).loop();
     if (sp && ! sp->seq_in_edit())
     {
-        seq newseq;                         /* non-functiona object         */
+        seq newseq;                         /* non-functional pattern       */
         sp->set_playing(false);             /* turns off all notes as well  */
         m_container[seqno - offset()] = newseq;
         result = true;

@@ -95,7 +95,7 @@ qseqkeys::qseqkeys
 
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
     setMouseTracking(true);
-    m_font.setPointSize(6);
+    m_font.setPointSize(7);                         /* 6 is tiny            */
 }
 
 /*

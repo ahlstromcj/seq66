@@ -76,13 +76,12 @@ const int s_pointsize = 7;
  * Sequence labels for the side of the song editor
  */
 
-qperfnames::qperfnames (performer & p, QWidget * parent)
- :
+qperfnames::qperfnames (performer & p, QWidget * parent) :
     QWidget             (parent),
     qperfbase           (p),
     m_font              ("Monospace"),
-    m_nametext_x        (6 * 2 + 6 * 20),       // not used!
-    m_nametext_y        (c_names_y),
+    m_nametext_x        (6 * 2 + 6 * 20),                   /* see name_x() */
+    m_nametext_y        (c_names_y),                        /* see name_y() */
     m_set_text_y        (m_nametext_y * p.seqs_in_set() / 2),
     m_preview_color     (progress_paint()),
     m_is_previewing     (false),

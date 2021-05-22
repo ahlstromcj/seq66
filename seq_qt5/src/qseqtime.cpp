@@ -50,7 +50,7 @@ namespace seq66
  */
 
 static const int s_x_tick_fix  =  2;        /* adjusts vertical grid lines  */
-static const int s_time_fix    = 10;        /* seqtime offset from seqroll  */
+static const int s_time_fix    =  9;        /* seqtime offset from seqroll  */
 static const int s_o_fix       =  6;        /* adjust position of "O" mark  */
 static const int s_end_fix     = 10;        /* adjust position of "END" box */
 
@@ -138,6 +138,7 @@ qseqtime::paintEvent (QPaintEvent *)
     midipulse ticks_per_bar = bpbar * ticks_per_beat;
     int measures_per_line = zoom() * bwidth * bpbar * 2;
     int ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
+    int ticks_per_four = ticks_per_step * 4;
     midipulse starttick = scroll_offset() - (scroll_offset() % ticks_per_step);
     midipulse endtick = pix_to_tix(width()) + scroll_offset();
     if (measures_per_line <= 0)
@@ -157,6 +158,7 @@ qseqtime::paintEvent (QPaintEvent *)
         if (tick % ticks_per_bar == 0)
         {
             pen.setWidth(2);                    // two pixels
+            pen.setStyle(Qt::SolidLine);
             painter.setPen(pen);
             painter.drawLine(x_offset, 0, x_offset, size().height());
             snprintf(bar, sizeof bar, "%ld", tick / ticks_per_bar + 1);
@@ -167,8 +169,15 @@ qseqtime::paintEvent (QPaintEvent *)
         else if (tick % ticks_per_beat == 0)
         {
             pen.setWidth(1);                    // back to one pixel
+            pen.setStyle(Qt::SolidLine);
             painter.setPen(pen);
-            pen.setStyle(Qt::SolidLine);        // pen.setColor(Qt::DashLine)
+            painter.drawLine(x_offset, 0, x_offset, size().height());
+        }
+        else if (tick % (ticks_per_four) == 0)
+        {
+            pen.setWidth(1);                    // back to one pixel
+            pen.setStyle(Qt::DotLine);
+            painter.setPen(pen);
             painter.drawLine(x_offset, 0, x_offset, size().height());
         }
     }

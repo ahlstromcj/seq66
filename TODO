@@ -1,6 +1,6 @@
 TO DO for Seq66 0.94.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-05-15
+2019-04-13 to 2021-05-22
 
 From: zigmhount <notifications@github.com>
 Subject: [Question/Feature request] Live midi pattern recording (#188)
@@ -63,6 +63,9 @@ UI:
     pattern editors.
 
     Clean out all of the unused options in the 'usr' file.
+
+    The "L" and "R" markers do not work correctly in the seqedit; also seems
+    to cause start/stop to becomes disabled, as JACK master.
 
 Automation:
 

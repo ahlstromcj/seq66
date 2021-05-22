@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-05-20
+ * \updates       2021-05-22
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -317,10 +317,11 @@ namespace seq66
 {
 
 /**
- *  Need to document this.
+ *  This value is the "trigger width" in microseconds, a Seq24 concept.
+ *  It also had a "lookahead" time of 2 ms, not used however.
  */
 
-static const int c_thread_trigger_width_us = SEQ66_DEFAULT_TRIGWIDTH_MS * 1000;
+static const int c_thread_trigger_width_us = 4 * 1000;
 static const int c_thread_priority = 1;
 
 /**
@@ -1420,8 +1421,7 @@ performer::inner_start ()
 {
     if (! is_running())
     {
-        bool songmode = song_mode();
-        if (songmode)
+        if (song_mode())
             off_sequences();            /* mute in prep for song playback   */
 
         is_running(true);
@@ -2436,10 +2436,22 @@ bool
 performer::finish ()
 {
     reset_sequences();                      /* stop all output upon exit    */
-    panic();                                /* go even further 2021-03-18   */
-    m_io_active = m_is_running = false;     /* also done in destructor      */
-    announce_exit(true);                    /* blank device completely      */
 
+#if defined USE_PANIC_AT_EXIT
+
+    /*
+     * We are wondering if this is what is causing the recent "message
+     * overflow" and possibilities of a hang at exit. Let's disable this.
+     * However, as soon as we tested it, it hung at exit, though just once.
+     * Fap!
+     */
+
+    panic();                                /* go even further 2021-03-18   */
+
+#endif
+
+    announce_exit(true);                    /* blank device completely      */
+    m_io_active = m_is_running = false;
     cv().signal();                          /* signal the end of play       */
     if (m_out_thread_launched && m_out_thread.joinable())
         m_out_thread.join();
@@ -2908,27 +2920,20 @@ performer::jack_reposition (midipulse tick, midipulse stoptick)
 }
 
 /**
- *  Set up the performance and start the thread.  We rely on C++11's thread
- *  handling to set up the thread properly on Linux and Windows.
- *  Here's how it works:
- *
- *      -   It runs while m_io_active is true, which is set in the constructor,
- *          stays that way basically for the duration of the application.
- *
- *  We do not use std::unique_lock<std::mutex>, because we want a recursive
- *  mutex.
+ *  Set up the performance and start the thread.  This function should be
+ *  considered the "worker thread".  We rely on C++11's thread handling to set
+ *  up the thread properly on Linux and Windows.  It runs while m_io_active is
+ *  true, which is set in the constructor, stays that way basically for the
+ *  duration of the application.  We do not use std::unique_lock<std::mutex>,
+ *  because we want a recursive mutex.
  *
  * \warning
  *      Valgrind shows that output_func() is being called before the JACK
  *      client pointer is being initialized!!!
  *
- *  See the old global output_thread_func() in Sequencer64.
- *  This locking is similar to that of inner_start(), except that
- *  signalling (notification) is not done here.
- *
- *  This function should be considered the "worker thread".
- *
- *  While running, we:
+ *  See the old global output_thread_func() in Sequencer64.  This locking is
+ *  similar to that of inner_start(), except that signalling (notification) is
+ *  not done here. While running, we:
  *
  *      -#  Before the "is-running" loop:  If in the performance view (song
  *          editor), we care about starting from the m_start_tick offset.
@@ -2950,6 +2955,11 @@ performer::jack_reposition (midipulse tick, midipulse stoptick)
  *
  * microsleep() call:
  *
+ *      Figure out how much time we need to sleep, and do it.  Then we want to
+ *      trigger every c_thread_trigger_width_us; it took delta_us microseconds
+ *      to play().  Also known as the "sleeping_us".  Check the MIDI clock
+ *      adjustment:  60000000.0f / m_ppqn * / bpm.
+ *
  *      With the long patterns in a rendition of Kraftwerk's "Europe Endless",
  *      we found that that the Qt thread was getting starved, as evidenced by
  *      a great slow-down in counting in the timer function in qseqroll. And
@@ -2963,13 +2973,17 @@ performer::jack_reposition (midipulse tick, midipulse stoptick)
  *      we were using milliseconds, not microseconds!  Once corrected, we
  *      were getting sleep deltas from 3800, down to around 1000 as the load
  *      level (number of playing patterns) increased.
+ *
+ *      Now, why the 2.0 factor in this?
+ *
+ *          if (next_clock_delta_us < (c_thread_trigger_width_us * 2.0))
  */
 
 void
 performer::output_func ()
 {
     if (! set_timer_services(true))         /* wrapper for Win-only func.   */
-        return
+        return;
 
     show_cpu();
     while (m_io_active)                     /* this variable is now atomic  */
@@ -3032,7 +3046,7 @@ performer::output_func ()
         double dct = double_ticks_from_ppqn(ppqn);
         double pus = pulse_length_us(bpmfactor, ppqn);
         long current;                           /* current time             */
-        long delta, delta_us;                   /* current - last           */
+        long elapsed_us, delta_us;              /* current - last           */
         long last = microtime();                /* beginning time           */
         m_resolution_change = false;            /* BPM/PPQN                 */
         while (is_running())
@@ -3054,7 +3068,7 @@ performer::output_func ()
              */
 
             current = microtime();
-            delta_us = delta = current - last;
+            delta_us = elapsed_us = current - last;
 
             long long delta_tick_num = bpm_times_ppqn * delta_us +
                 pad().js_delta_tick_frac;
@@ -3191,17 +3205,14 @@ performer::output_func ()
                 m_master_bus->emit_clock(midipulse(pad().js_clock_tick));
             }
 
-            /**
-             *  Figure out how much time we need to sleep, and do it.
-             *  Then we want to trigger every c_thread_trigger_width_us; it
-             *  took us delta_us to play().  Also known as the "sleeping_us".
-             *  Check MIDI clock adjustment:  60000000.0f / m_ppqn * / bpm.
+            /*
+             *  See "microsleep() call" in banner.
              */
 
             last = current;
             current = microtime();
-            delta = current - last;
-            delta_us = c_thread_trigger_width_us - delta;
+            elapsed_us = current - last;
+            delta_us = c_thread_trigger_width_us - elapsed_us;
 
             double next_clock_delta = dct - 1;
             double next_clock_delta_us = next_clock_delta * pus;
@@ -3210,11 +3221,12 @@ performer::output_func ()
 
             if (delta_us > 0)
             {
-                (void) microsleep(delta_us);                /* timing.hpp   */
+                (void) microsleep(int(delta_us));           /* timing.hpp   */
             }
             else
             {
-                printf("Underrun in playback %ld us\r", delta_us);
+                printf("underrun in playback %ld us     \r", delta_us);
+                (void) microsleep(1);
             }
             if (pad().js_jack_stopped)
                 inner_stop();
@@ -3566,34 +3578,32 @@ performer::poll_cycle ()
  *  bewteen jack_transport_callback() and start_playing() here.  Is inline
  *  function access of a boolean atomic?
  *
- * \param songmode
- *      Indicates if the caller wants to start the playback in Song mode
- *      (sometimes erroneously referred to as "JACK mode").  In the seq32 code
- *      at GitHub, this flag was identical to the "global_jack_start_mode"
- *      flag, which is true for Song mode, and false for Live mode.  False
- *      disables Song mode, and is the default, which matches seq24.
- *      Generally, we pass true in this parameter if we're starting playback
- *      from the perfedit window.  It alters the m_start_from_perfedit member,
- *      not the m_song_start_mode member (which replaces the global flag now).
+ *  song_mode() indicates if the caller wants to start the playback in Song
+ *  mode (sometimes erroneously referred to as "JACK mode").  In the seq32
+ *  code at GitHub, this flag was identical to the "global_jack_start_mode"
+ *  flag, which is true for Song mode, and false for Live mode.  False
+ *  disables Song mode, and is the default, which matches seq24.  Generally,
+ *  we pass true in this parameter if we're starting playback from the
+ *  perfedit window.  It alters the m_start_from_perfedit member, not the
+ *  m_song_start_mode member (which replaces the global flag now).
  */
 
 void
 performer::start_playing ()
 {
-    bool songmode = song_mode();
-    if (songmode)
+    if (song_mode())
     {
        /*
         * Allow to start at key-p position if set; for cosmetic reasons,
         * to stop transport line flicker on start, position to the left
         * tick.
         *
-        *   m_jack_asst.position(true, m_left_tick);    // position_jack()
+        *   m_jack_asst.position(true, m_left_tick);        // position_jack()
         *
         * The "! m_reposition" doesn't seem to make sense.
         */
 
-       if (is_jack_master() && ! m_reposition)            // ca 2021-01-20
+       if (is_jack_master() && ! m_reposition)              // ca 2021-01-20
            position_jack(true, get_left_tick());
     }
     else
@@ -3601,7 +3611,7 @@ performer::start_playing ()
         if (is_jack_master() && ! m_dont_reset_ticks)       // ca 2021-05-20
             position_jack(false, 0);
 
-        if (resume_note_ons())                          /* for issue #5     */
+        if (resume_note_ons())                              /* for issue #5 */
         {
             for (auto seqi : m_play_set.seq_container())
                 seqi->resume_note_ons(get_tick());
@@ -3767,6 +3777,10 @@ performer::play (midipulse tick)
         if (not_nullptr(m_master_bus))
             m_master_bus->flush();                      /* flush MIDI buss  */
     }
+    else
+    {
+        printf("performer tick %ld replay\n", long(tick));
+    }
 }
 
 void
@@ -3801,14 +3815,13 @@ bool
 performer::panic ()
 {
     bool result = bool(m_master_bus);
+    stop_playing();
+    inner_stop();                               /* force inner stop     */
+    mapper().panic();
     if (result)
-    {
-        stop_playing();
-        inner_stop();                               /* force inner stop     */
-        mapper().panic();
         m_master_bus->panic();                      /* flush the MIDI buss  */
-        set_tick(0);
-    }
+
+    set_tick(0);
     return result;
 }
 

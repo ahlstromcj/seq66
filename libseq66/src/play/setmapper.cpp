@@ -486,7 +486,10 @@ setmapper::remove_sequence (int seqno)
     {
         result = sset.remove(seqno);        /* it exists, remove it!        */
         if (result)
-            --m_sequence_count;
+        {
+            if (m_sequence_count > 1)       /* allow for the dummy sequence */
+                --m_sequence_count;
+        }
     }
     return result;
 }

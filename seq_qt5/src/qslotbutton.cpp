@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2021-05-15
+ * \updates       2021-05-22
  * \license       GNU GPLv2 or above
  *
  *  This object is just a QPushButton with number label.  See seq66::qslivegrid
@@ -93,42 +93,16 @@ qslotbutton::qslotbutton
 }
 
 /**
- *  QPalette::setColor(QPalette::ColorRole role, const QColor &color).
- *  Sets the color used for the given color role, in all color groups, to the
- *  specified solid color.
- *
- *  This is also an option, but let the desktop theme handle it.
- *
- *      pb->setFlat(true);
- *
- *  This sets a garish red background, even outside the cells.
- *
- *      pb->setAutoFillBackground(true);
- *      setStyleSheet(s_style.c_str());
+ *  This function is called by qslivegrid::setup_button() for inactive slots,
+ *  and it is responsible for presenting a clean button.  If not called, then
+ *  the original pattern information remains on the button, inactive so that
+ *  it looks ghostly.
  */
 
 void
 qslotbutton::setup ()
 {
-#if defined USE_OLD_GRID_STYLE      /* permanently removed 2021-05-15 */
-    QPalette pal = palette();
-    if (usr().grid_is_normal())
-    {
-        pal.setColor(QPalette::Button, QColor(Qt::gray));
-        pal.setColor(QPalette::ButtonText, QColor(Qt::blue));
-    }
-    else if (usr().grid_is_black())
-    {
-        pal.setColor(QPalette::Button, QColor(Qt::black));
-        pal.setColor(QPalette::ButtonText, QColor(Qt::yellow));
-    }
-    else if (usr().grid_is_white())
-    {
-        pal.setColor(QPalette::Button, QColor(Qt::white));
-        pal.setColor(QPalette::ButtonText, QColor(Qt::black));
-    }
     setAutoFillBackground(true);
-    setPalette(pal);
     setEnabled(true);
     setCheckable(is_checkable());
 
@@ -138,7 +112,6 @@ qslotbutton::setup ()
 
     std::string snstring = std::to_string(m_slot_number);
     setText(snstring.c_str());
-#endif
 }
 
 /**

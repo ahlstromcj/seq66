@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2021-05-19
+ * \updates       2021-05-22
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -497,12 +497,6 @@
  */
 
 #define SEQ66_DEFAULT_PERFEDIT_SNAP         8
-
-/**
- *  Default value for c_thread_trigger_width_ms.
- */
-
-#define SEQ66_DEFAULT_TRIGWIDTH_MS          4
 
 /**
  *  Defines the minimum Note On velocity.
