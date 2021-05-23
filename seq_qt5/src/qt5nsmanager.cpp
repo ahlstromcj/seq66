@@ -87,6 +87,9 @@ qt5nsmanager::qt5nsmanager
 qt5nsmanager::~qt5nsmanager ()
 {
     m_timer->stop();
+#if defined SEQ66_PLATFORM_DEBUG
+    printf("~qt5nsmanager\n");
+#endif
 }
 
 /**

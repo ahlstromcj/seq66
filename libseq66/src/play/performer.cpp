@@ -2424,6 +2424,7 @@ performer::launch_input_thread ()
                     "need root priviledges."
                 );
                 pthread_exit(0);
+                m_in_thread_launched = false;
             }
         }
     }
@@ -2461,10 +2462,22 @@ performer::finish ()
     m_io_active = m_is_running = false;
     cv().signal();                          /* signal the end of play       */
     if (m_out_thread_launched && m_out_thread.joinable())
+    {
         m_out_thread.join();
+        m_out_thread_launched = false;
+#if defined SEQ66_PLATFORM_DEBUG
+        printf("output thread joined\n");
+#endif
+    }
 
     if (m_in_thread_launched && m_in_thread.joinable())
+    {
         m_in_thread.join();
+        m_in_thread_launched = false;
+#if defined SEQ66_PLATFORM_DEBUG
+        printf("input thread joined\n");
+#endif
+    }
 
     bool ok = deinit_jack_transport();
     bool result = bool(m_master_bus);
@@ -3277,7 +3290,6 @@ performer::output_func ()
     printf("output func exit\n");
 #endif
     set_timer_services(false);
-    m_out_thread_launched = false;
 }
 
 /**
@@ -3426,7 +3438,6 @@ performer::input_func ()
                 break;
         }
         set_timer_services(false);
-        m_in_thread_launched = false;
 #if defined SEQ66_PLATFORM_DEBUG
         printf("input func exit\n");
 #endif
@@ -3804,7 +3815,8 @@ performer::play (midipulse tick)
     }
     else
     {
-        printf("performer tick %ld replay\n", long(tick));
+        if (rc().verbose())
+            printf("performer tick %ld replay\n", long(tick));
     }
 }
 

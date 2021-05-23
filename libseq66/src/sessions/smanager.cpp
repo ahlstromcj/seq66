@@ -106,9 +106,9 @@ smanager::smanager (const std::string & caps) :
 
 smanager::~smanager ()
 {
-    /*
-     * printf("~smanager()\n"); // currently no additional code needed
-     */
+#if defined SEQ66_PLATFORM_DEBUG
+    printf("~smanager\n");
+#endif
 }
 
 /**

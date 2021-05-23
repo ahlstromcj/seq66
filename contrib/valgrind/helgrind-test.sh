@@ -15,6 +15,6 @@ HELGRIND_OPTS="$TOOL $CALLERS $LOCKTRACK $SUPPRESS"
 
 echo "$QTGLIB valgrind $HELGRIND_OPTS --log-file=helgrind-qt.log $* . . ."
 
-valgrind $HELGRIND_OPTS --log-file=helgrind-qt.log $*
+$QTGLIB valgrind $HELGRIND_OPTS --log-file=helgrind-qt.log $*
 
 # vim: ts=3 sw=3 wm=4 et ft=sh

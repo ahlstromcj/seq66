@@ -201,8 +201,12 @@ qslivegrid::~qslivegrid()
 {
     m_timer->stop();
     clear_loop_buttons();               /* currently we use raw pointers    */
-    if (not_nullptr(m_msg_box))
-        delete m_msg_box;
+    /*
+     * This should not be necessary; the "this" destructor should remove it.
+     *
+     * if (not_nullptr(m_msg_box))
+     *     delete m_msg_box;
+     */
 
     delete ui;
 }
@@ -1145,9 +1149,6 @@ qslivegrid::handle_key_release (const keystroke & k)
 void
 qslivegrid::keyPressEvent (QKeyEvent * event)
 {
-#if defined SEQ66_KEY_TESTING
-    (void) qt_keystroke(event, keystroke::action::press, true);
-#else
     bool show = rc().verbose();
     keystroke k = qt_keystroke(event, keystroke::action::press, show);
     bool done = handle_key_press(k);
@@ -1155,15 +1156,11 @@ qslivegrid::keyPressEvent (QKeyEvent * event)
         update();
     else
         QWidget::keyPressEvent(event);              /* event->ignore()?     */
-#endif
 }
 
 void
 qslivegrid::keyReleaseEvent (QKeyEvent * event)
 {
-#if defined SEQ66_KEY_TESTING
-    (void) qt_keystroke(event, keystroke::action::release, true);
-#else
     bool show = rc().verbose();
     keystroke k = qt_keystroke(event, keystroke::action::release, show);
     bool done = handle_key_release(k);
@@ -1171,7 +1168,6 @@ qslivegrid::keyReleaseEvent (QKeyEvent * event)
         update();
     else
         QWidget::keyReleaseEvent(event);            /* event->ignore()?     */
-#endif
 }
 
 void
