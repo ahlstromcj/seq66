@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-05-20
+ * \updates       2021-05-23
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -312,7 +312,8 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
 \endverbatim
  *
  *      So we add a static mutex to use with our automutex.  Does not prevent
- *      that message..... WHY?
+ *      that message..... WHY? Now (2021-05-23) we're making the string
+ *      parameters copies.
  *
  * \param clientname
  *      Provides the name of the client, used in the call to
@@ -331,11 +332,7 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
  */
 
 jack_client_t *
-create_jack_client
-(
-    const std::string & clientname,
-    const std::string & uuid
-)
+create_jack_client (std::string clientname, std::string uuid)
 {
     jack_client_t * result = nullptr;
     const char * name = clientname.c_str();

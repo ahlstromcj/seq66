@@ -190,7 +190,10 @@ midi_jack_info::connect ()
                 if (! uuid.empty())
                     rc().jack_session_uuid(uuid);
 
-        jack_on_shutdown(m_jack_client, jack_shutdown_callback, (void *) this);
+                jack_on_shutdown
+                (
+                    m_jack_client, jack_shutdown_callback, (void *) this
+                );
             }
             else
             {

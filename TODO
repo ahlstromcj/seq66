@@ -1,6 +1,6 @@
 TO DO for Seq66 0.94.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-05-22
+2019-04-13 to 2021-05-23
 
 From: zigmhount <notifications@github.com>
 Subject: [Question/Feature request] Live midi pattern recording (#188)
@@ -29,6 +29,11 @@ Subject: [Question/Feature request] Live midi pattern recording (#188)
 Loops:
 
     No issues pending.
+
+Helgrind:
+
+    terminate called without an active exception
+    Aborted (core dumped)
 
 NSM:
 

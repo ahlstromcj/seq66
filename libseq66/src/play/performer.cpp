@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-05-22
+ * \updates       2021-05-23
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -2368,25 +2368,29 @@ performer::launch_output_thread ()
         unsigned num_cpus = std::thread::hardware_concurrency();
         infoprintf("%u CPUs detected", num_cpus);
     }
-    m_out_thread = std::thread(&performer::output_func, this);
-    m_out_thread_launched = true;
-    if (rc().priority())                        /* Not in MinGW RCB     */
+    if (! m_out_thread_launched)
     {
-        bool ok = set_thread_priority(m_out_thread, c_thread_priority);
-        if (ok)
+        m_out_thread = std::thread(&performer::output_func, this);
+        m_out_thread_launched = true;
+        if (rc().priority())                        /* Not in MinGW RCB     */
         {
+            bool ok = set_thread_priority(m_out_thread, c_thread_priority);
+            if (ok)
+            {
 #if defined SEQ66_PLATFORM_LINUX
-            infoprint("Output priority elevated");
+                infoprint("Output priority elevated");
 #endif
-        }
-        else
-        {
-            errprint
-            (
-                "output_thread: couldn't set scheduler to FIFO, "
-                "need root priviledges."
-            );
-            pthread_exit(0);
+            }
+            else
+            {
+                errprint
+                (
+                    "output_thread: couldn't set scheduler to FIFO, "
+                    "need root priviledges."
+                );
+                pthread_exit(0);
+                m_out_thread_launched = false;
+            }
         }
     }
 }
@@ -2399,25 +2403,28 @@ performer::launch_output_thread ()
 void
 performer::launch_input_thread ()
 {
-    m_in_thread = std::thread(&performer::input_func, this);
-    m_in_thread_launched = true;
-    if (rc().priority())                        /* Not in MinGW RCB     */
+    if (!  m_in_thread_launched)
     {
-        bool ok = set_thread_priority(m_in_thread, c_thread_priority);
-        if (ok)
+        m_in_thread = std::thread(&performer::input_func, this);
+        m_in_thread_launched = true;
+        if (rc().priority())                        /* Not in MinGW RCB     */
         {
+            bool ok = set_thread_priority(m_in_thread, c_thread_priority);
+            if (ok)
+            {
 #if defined SEQ66_PLATFORM_LINUX
-            infoprint("Input priority elevated");
+                infoprint("Input priority elevated");
 #endif
-        }
-        else
-        {
-            errprint
-            (
-                "input_thread: couldn't set scheduler to FIFO, "
-                "need root priviledges."
-            );
-            pthread_exit(0);
+            }
+            else
+            {
+                errprint
+                (
+                    "input_thread: couldn't set scheduler to FIFO, "
+                    "need root priviledges."
+                );
+                pthread_exit(0);
+            }
         }
     }
 }
@@ -2995,9 +3002,18 @@ performer::output_func ()
             {
                 cv().wait();
                 if (done())                 /* if stopping, kill the thread */
+                {
+#if defined SEQ66_PLATFORM_DEBUG
+                    printf("output wait done\n");
+#endif
                     break;
+                }
             }
         }
+        // NEW CODE 2021-05-23
+
+        if (! m_io_active)
+            break;
 
         pad().initialize(0, looping(), song_mode());
 
@@ -3257,7 +3273,11 @@ performer::output_func ()
         m_master_bus->flush();
         m_master_bus->stop();
     }
+#if defined SEQ66_PLATFORM_DEBUG
+    printf("output func exit\n");
+#endif
     set_timer_services(false);
+    m_out_thread_launched = false;
 }
 
 /**
@@ -3403,14 +3423,16 @@ performer::input_func ()
         while (m_io_active)             /* should we lock/atomic this one?  */
         {
             if (! poll_cycle())
-            {
-                set_timer_services(false);
-                return;
-            }
+                break;
         }
         set_timer_services(false);
+        m_in_thread_launched = false;
+#if defined SEQ66_PLATFORM_DEBUG
+        printf("input func exit\n");
+#endif
     }
 }
+
 
 /**
  *  A helper function for input_func().
@@ -3425,7 +3447,10 @@ performer::poll_cycle ()
         do
         {
             if (! m_io_active)
+            {
+                result = false;
                 break;                              /* spurious exit events */
+            }
 
             event ev;
             if (m_master_bus->get_midi_event(&ev))

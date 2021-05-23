@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2021-05-20
+ * \updates       2021-05-23
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -611,8 +611,8 @@ extern void jack_timebase_callback
 extern int jack_transport_callback (jack_nframes_t nframes, void * arg);
 extern jack_client_t * create_jack_client
 (
-    const std::string & clientname,
-    const std::string & uuid = ""       /* deprecated */
+    std::string clientname,
+    std::string uuid = ""       /* deprecated */
 );
 extern std::string get_jack_client_uuid (jack_client_t * jc);
 extern void show_jack_statuses (unsigned bits);

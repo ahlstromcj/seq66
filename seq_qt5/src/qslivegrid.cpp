@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-05-21
+ * \updates       2021-05-23
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -991,22 +991,16 @@ qslivegrid::mouseMoveEvent (QMouseEvent * event)
 void
 qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
 {
-    bool showframe = true;
     if (m_adding_new)
-    {
         new_sequence();
-        // showframe = false;
-    }
-    else        ////////  if (showframe)
+
+    m_current_seq = seq_id_from_xy(event->x(), event->y());
+    if (! perf().is_seq_active(m_current_seq))
     {
-        m_current_seq = seq_id_from_xy(event->x(), event->y());
-        if (! perf().is_seq_active(m_current_seq))
-        {
-            if (perf().new_sequence(m_current_seq))
-                perf().get_sequence(m_current_seq)->set_dirty();
-        }
-        signal_call_editor_ex(m_current_seq);
+        if (perf().new_sequence(m_current_seq))
+            perf().get_sequence(m_current_seq)->set_dirty();
     }
+    signal_call_editor_ex(m_current_seq);
 }
 
 void
