@@ -69,7 +69,6 @@
 #include "midi/midifile.hpp"            /* seq66::midifile class            */
 #endif
 
-#define USE_NEWEST_CODE                 // EXPERIMENTALLY disabled 2021-05-23
 #define USE_JACK_BBT_OFFSET             /* another experiment               */
 
 /*
@@ -217,8 +216,6 @@ jack_dummy_callback (jack_nframes_t nframes, void * arg)
  *      Returns 0 on success, non-zero on error.
  */
 
-#if defined USE_NEWEST_CODE             // EXPERIMENTALLY disabled 2021-05-23
-
 int
 jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
 {
@@ -279,46 +276,6 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
     }
     return 0;
 }
-
-#else
-
-int
-jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
-{
-    jack_assistant * j = (jack_assistant *)(arg);
-    if (not_nullptr(j))
-    {
-        jack_position_t pos;
-        performer & p = j->m_jack_parent;   /* if (! p.is_running()) */
-        jack_transport_state_t s = jack_transport_query(j->client(), &pos);
-        if (j->is_slave())
-        {
-            if (j->parent().jack_set_beats_per_minute(pos.beats_per_minute))
-            {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                printf("BPM = %f\n", pos.beats_per_minute);
-#endif
-            }
-        }
-        if (s == JackTransportStopped)
-        {
-            /*
-             * Don't start, just reposition transport marker.
-             */
-
-            long tick = j->current_jack_position();
-            p.jack_reposition(tick, j->jack_stop_tick());
-        }
-        else /* if (s==JackTransportStarting || s==JackTransportRolling) */
-        {
-            j->m_jack_transport_state_last = JackTransportStarting;
-            p.inner_start();
-        }
-    }
-    return 0;
-}
-
-#endif  // USE_NEWEST_CODE
 
 /**
  *  A more full-featured initialization for a JACK client, which is meant to

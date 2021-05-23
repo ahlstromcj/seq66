@@ -110,9 +110,6 @@ main (int argc, char * argv [])
     else
         exit_status = EXIT_FAILURE;
 
-#if defined SEQ66_PLATFORM_DEBUG
-    printf("~app-exit\n");
-#endif
     return exit_status;
 }
 

@@ -1419,19 +1419,22 @@ performer::ui_change_set_bus (int buss)
 void
 performer::inner_start ()
 {
-    if (! is_running())
+    if (m_io_active)                    // NEW CODE 2021-05-23
     {
-        if (song_mode())
-            off_sequences();            /* mute in prep for song playback   */
+        if (! is_running())
+        {
+            if (song_mode())
+                off_sequences();                /* mute for song playback   */
 
-        is_running(true);
+            is_running(true);
 
 #if ! defined SEQ66_PLATFORM_WINDOWS
-        automutex lk(cv().locker());    /* use the condition's recmutex     */
+            automutex lk(cv().locker());        /* use condition's recmutex */
 #endif
-        cv().signal();
-        send_onoff_event(midicontrolout::uiaction::play, true);
-        send_onoff_event(midicontrolout::uiaction::panic, false);
+            cv().signal();
+            send_onoff_event(midicontrolout::uiaction::play, true);
+            send_onoff_event(midicontrolout::uiaction::panic, false);
+        }
     }
 }
 
@@ -2465,7 +2468,7 @@ performer::finish ()
     {
         m_out_thread.join();
         m_out_thread_launched = false;
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("output thread joined\n");
 #endif
     }
@@ -2474,7 +2477,7 @@ performer::finish ()
     {
         m_in_thread.join();
         m_in_thread_launched = false;
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("input thread joined\n");
 #endif
     }
@@ -3016,16 +3019,15 @@ performer::output_func ()
                 cv().wait();
                 if (done())                 /* if stopping, kill the thread */
                 {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                     printf("output wait done\n");
 #endif
                     break;
                 }
             }
         }
-        // NEW CODE 2021-05-23
 
-        if (! m_io_active)
+        if (! m_io_active)                  // NEW CODE 2021-05-23
             break;
 
         pad().initialize(0, looping(), song_mode());
@@ -3286,7 +3288,7 @@ performer::output_func ()
         m_master_bus->flush();
         m_master_bus->stop();
     }
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     printf("output func exit\n");
 #endif
     set_timer_services(false);
@@ -3438,7 +3440,7 @@ performer::input_func ()
                 break;
         }
         set_timer_services(false);
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("input func exit\n");
 #endif
     }
