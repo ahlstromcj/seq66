@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-05-23
+ * \updates       2021-05-24
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -264,7 +264,7 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
             }
             if (s == JackTransportRolling || s == JackTransportStarting)
             {
-                j->m_jack_transport_state_last = JackTransportStarting;
+                j->m_transport_state_last = JackTransportStarting;
                 p.inner_start();
             }
             else                            /* reposition transport marker  */
@@ -493,6 +493,32 @@ show_jack_statuses (unsigned bits)
 
 /*
  * -------------------------------------------------------------------------
+ *  JACK helper functions
+ * -------------------------------------------------------------------------
+ */
+
+static double
+jack_ticks (const jack_position_t & pos)
+{
+    return
+    (
+        pos.frame * pos.ticks_per_beat *
+        pos.beats_per_minute / (pos.frame_rate * 60.0)
+    );
+}
+
+static double
+jack_ticks_delta (int framediff, const jack_position_t & pos)
+{
+    return
+    (
+        framediff * pos.ticks_per_beat *
+        pos.beats_per_minute / (pos.frame_rate * 60.0)
+    );
+}
+
+/*
+ * -------------------------------------------------------------------------
  *  JACK Assistant
  * -------------------------------------------------------------------------
  */
@@ -535,11 +561,11 @@ jack_assistant::jack_assistant
     m_jack_client               (nullptr),
     m_jack_client_name          (),
     m_jack_client_uuid          (),
-    m_jack_frame_current        (0),
-    m_jack_frame_last           (0),
+    m_frame_current             (0),
+    m_frame_last                (0),
     m_jack_pos                  (),
-    m_jack_transport_state      (JackTransportStopped),
-    m_jack_transport_state_last (JackTransportStopped),
+    m_transport_state           (JackTransportStopped),
+    m_transport_state_last      (JackTransportStopped),
     m_jack_tick                 (0.0),
 #if defined SEQ66_JACK_SESSION
     m_jsession_ev               (nullptr),
@@ -549,7 +575,7 @@ jack_assistant::jack_assistant
 #if defined ENABLE_PROPOSED_FUNCTIONS
     m_timebase_tracking         (-1),
 #endif
-    m_jack_frame_rate           (0),
+    m_frame_rate                (0),
     m_toggle_jack               (false),
     m_jack_stop_tick            (0),
     m_follow_transport          (true),
@@ -689,7 +715,7 @@ jack_assistant::get_jack_client_info ()
  *      The "If TRUE" line seems to be the issue. It seems that qjackctl does
  *      not always set pos.frame_rate so we get garbage and some strange BBT
  *      calculations that display in qjackctl. So we need to set it here and
- *      just use m_jack_frame_rate for calculations instead of pos.frame_rate.
+ *      just use m_frame_rate for calculations instead of pos.frame_rate.
  *
  * \return
  *      Returns true if JACK is now considered to be running (or if it was
@@ -712,7 +738,7 @@ jack_assistant::init ()
             return error_message("JACK server not running, transport disabled");
         }
         else
-            m_jack_frame_rate = jack_get_sample_rate(m_jack_client);
+            m_frame_rate = jack_get_sample_rate(m_jack_client);
 
         get_jack_client_info();
         jack_on_shutdown(m_jack_client, jack_transport_shutdown, (void *) this);
@@ -1015,7 +1041,7 @@ jack_assistant::position (bool songmode, midipulse tick)
 
     int ticks_per_beat = m_ppqn * c_jack_factor;
     int beats_per_minute = parent().get_beats_per_minute();
-    uint64_t tick_rate = (uint64_t(m_jack_frame_rate) * tick * 60.0);
+    uint64_t tick_rate = (uint64_t(m_frame_rate) * tick * 60.0);
     long tpb_bpm = ticks_per_beat * beats_per_minute * 4.0 / m_beat_width;
     uint64_t jack_frame = tick_rate / tpb_bpm;
     if (is_master())
@@ -1150,7 +1176,7 @@ int
 jack_assistant::sync (jack_transport_state_t state)
 {
     int result = 0;                     /* seq66 always returns 1   */
-    m_jack_frame_current = jack_get_current_transport_frame(m_jack_client);
+    m_frame_current = jack_get_current_transport_frame(m_jack_client);
     (void) jack_transport_query(m_jack_client, &m_jack_pos);
 
     jack_nframes_t rate = m_jack_pos.frame_rate;
@@ -1167,11 +1193,11 @@ jack_assistant::sync (jack_transport_state_t state)
     else
         result = 1;
 
-    m_jack_tick = m_jack_frame_current * m_jack_pos.ticks_per_beat *
+    m_jack_tick = m_frame_current * m_jack_pos.ticks_per_beat *
         m_jack_pos.beats_per_minute / (rate * 60.0) ;
 
-    m_jack_frame_last = m_jack_frame_current;
-    m_jack_transport_state_last = m_jack_transport_state = state;
+    m_frame_last = m_frame_current;
+    m_transport_state_last = m_transport_state = state;
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
     std::string sname = jack_state_name(state);
@@ -1338,6 +1364,14 @@ jack_session_callback (jack_session_event_t * ev, void * arg)
  *      internal. Also, if there is no Master set, then we would need to plug
  *      it here to follow the JACK frame anyways.
  *
+ * Issue #48 "Non-JACK-Master p'back not working if built for non-seq32 JACK":
+ *
+ *      Using the seq32 code here works to solve issue #48, We scrapped the
+ *      old code entirely.  As for the setting of beats/minute, we had thought
+ *      that we wanted to force a change in BPM only if we are JACK Master,
+ *      but this is not true, and prevents Seq66 from playing back when not
+ *      the Master.
+ *
  * \param pad
  *      Provides a JACK scratchpad for sharing certain items between the
  *      performer object and the jack_assistant object.
@@ -1352,119 +1386,102 @@ jack_assistant::output (jack_scratchpad & pad)
     if (m_jack_running)
     {
         pad.js_init_clock = false;              /* no init until a good lock */
-        m_jack_transport_state = jack_transport_query(m_jack_client, &m_jack_pos);
+        m_transport_state = jack_transport_query(m_jack_client, &m_jack_pos);
 
-        /*
-         *  Using the seq32 code here works to solve issue #48,
-         *  non-JACK-Master playback not working if built for non-seq32 JACK
-         *  transport.  So we scrapped the old code entirely.
-         *
-         *  As for the setting of beats/minute, we had thought that we
-         *  wanted to force a change in BPM only if we are JACK Master,
-         *  but this is not true, and prevents Seq66 from playing
-         *  back when not the Master.
-         */
+        /* See Issue #48 above */
 
         m_jack_pos.beats_per_bar = m_beats_per_measure;
         m_jack_pos.beat_type = m_beat_width;
         m_jack_pos.ticks_per_beat = m_ppqn * c_jack_factor;
         m_jack_pos.beats_per_minute = parent().get_beats_per_minute();
-        if
-        (
-            m_jack_transport_state_last == JackTransportStarting &&
-            m_jack_transport_state == JackTransportRolling
-        )
+        if (transport_rolling_now())
         {
-            /*
-             * This is a second time we get the frame number.
-             */
-
-            m_jack_frame_current =
-                jack_get_current_transport_frame(m_jack_client);
-
-            m_jack_frame_last = m_jack_frame_current;
-            pad.js_dumping = true;
+            midipulse midi_ticks;
+            m_frame_current = jack_get_current_transport_frame(m_jack_client);
+            m_frame_last = m_frame_current;
+            pad.js_dumping = true;              /* "[Start JACK Playback]"  */
 
             /*
              * Here, Seq32 uses the tempo map if in song mode, instead of
              * making these calculations.
              */
 
-            m_jack_tick = m_jack_pos.frame * m_jack_pos.ticks_per_beat *
-                m_jack_pos.beats_per_minute / (m_jack_pos.frame_rate * 60.0);
-
-            double midi_ticks = m_jack_tick * tick_multiplier() + 0.5;
-            parent().set_last_ticks(midipulse(midi_ticks));
+            m_jack_tick = jack_ticks(m_jack_pos);
+            midi_ticks = midipulse(m_jack_tick * tick_multiplier() + 0.5);
+            parent().set_last_ticks(midi_ticks);
+            pad.set_current_tick_ex(midi_ticks);
             pad.js_init_clock = true;
-            pad.js_current_tick = pad.js_clock_tick = pad.js_total_tick =
-                pad.js_ticks_converted_last = midi_ticks;
-
-            /*
-             * We need to make sure another thread can't modify these values.
-             */
-
             if (pad.js_looping && pad.js_playback_mode)
             {
-                while (pad.js_current_tick >= parent().get_right_tick())
+                if (pad.js_current_tick >= parent().get_right_tick())
                 {
-                    pad.js_current_tick -= parent().left_right_size();
+                    /*
+                     * Let C = pad.js_current_tick, R and L be the looping
+                     * ticks.  This loop should continue about C / (R-L)
+                     * times, if R and L remain the same.
+                     */
+
+                    double r_minus_l = parent().left_right_size();
+#define USE_BRUTE_FORCE
+#if defined USE_BRUTE_FORCE
+                    while (pad.js_current_tick >= parent().get_right_tick())
+                        pad.js_current_tick -= r_minus_l;
+#else
+                    int count = int(pad.js_current_tick / r_minus_l);
+                    pad.js_current_tick -= count * r_minus_l;
+#endif
+
+                    parent().off_sequences();
+                    parent().set_last_ticks(midipulse(pad.js_current_tick));
                 }
-
-                /*
-                 * Not sure that either of these lines have any effect!
-                 */
-
-                parent().off_sequences();
-                parent().set_last_ticks(long(pad.js_current_tick));
             }
         }
-        if
-        (
-            m_jack_transport_state_last == JackTransportRolling &&
-            m_jack_transport_state == JackTransportStopped
-        )
+        if (transport_stopped_now())
         {
-            m_jack_transport_state_last = JackTransportStopped;
-            pad.js_jack_stopped = true;     // info_message("Stop playback");
+            m_transport_state_last = JackTransportStopped;
+            pad.js_jack_stopped = true;
         }
 
         /*
-         * Jack Transport is Rolling Now !!!  Transport is in a sane state if
+         * Jack Transport is Rolling Now!??  Transport is in a sane state if
          * dumping == true.
          */
 
         if (pad.js_dumping)
         {
-            m_jack_frame_current =
-                jack_get_current_transport_frame(m_jack_client);
-
-            if (m_jack_frame_current > m_jack_frame_last)   /* moving ahead? */
+            m_frame_current = jack_get_current_transport_frame(m_jack_client);
+            if (m_frame_current > m_frame_last)         /* moving ahead?    */
             {
                 /*
                  * Seq32 uses tempo map if in song mode here, instead.
                  */
 
-                if (m_jack_pos.frame_rate > 1000)           /* usually 48000 */
+                if (m_jack_pos.frame_rate > 0)          /* usually 48000    */
                 {
-                    m_jack_tick += (m_jack_frame_current - m_jack_frame_last) *
-                        m_jack_pos.ticks_per_beat * m_jack_pos.beats_per_minute /
-                        (m_jack_pos.frame_rate * 60.0);
+                    int diff = int(m_frame_current - m_frame_last);
+                    m_jack_tick += jack_ticks_delta(diff, m_jack_pos);
                 }
                 else
                     info_message("jack_assistant::output() 2: zero frame rate");
 
-                m_jack_frame_last = m_jack_frame_current;
+                m_frame_last = m_frame_current;
             }
 
             double midi_ticks = m_jack_tick * tick_multiplier();
             double delta = midi_ticks - pad.js_ticks_converted_last;
             if (delta != 0.0)
             {
+                /*
+                 * On one system, a PPQN of 192 yields deltas around 1.5,
+                 * and PPQN yields deltas of around 0.8, leading to many more
+                 * "replays" of the same tick value.
+                 */
+
                 pad.js_clock_tick += delta;
                 pad.js_current_tick += delta;
                 pad.js_total_tick += delta;
             }
-            m_jack_transport_state_last = m_jack_transport_state;
+            m_transport_state_last = m_transport_state;
             pad.js_ticks_converted_last = midi_ticks;
 
 #if defined USE_JACK_DEBUG_PRINT
@@ -1771,7 +1788,7 @@ jack_assistant::client () const
  *  The "If TRUE" line seems to be the issue. It seems that qjackctl does not
  *  always set pos.frame_rate so we get garbage and some strange BBT
  *  calculations that display in qjackctl. So we need to set it here and just
- *  use m_jack_frame_rate for calculations instead of pos.frame_rate.
+ *  use m_frame_rate for calculations instead of pos.frame_rate.
  *
  * \param state
  *      Indicates the current state of JACK transport.
@@ -1985,6 +2002,14 @@ jack_scratchpad::set_current_tick (midipulse curtick)
 {
     double ct = double(curtick);
     js_current_tick = js_total_tick = js_clock_tick = ct;
+}
+
+void
+jack_scratchpad::set_current_tick_ex (midipulse curtick)
+{
+    double ct = double(curtick);
+    js_current_tick = js_total_tick = js_clock_tick =
+        js_ticks_converted_last = ct;
 }
 
 void

@@ -28,11 +28,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-01-09
+ * \updates       2021-05-24
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the globals module.  Includes the
  *  chord-generation data.
+ *
+ *  Phrygian scales added by user WinkoErades.  Thank you!
  */
 
 #include <string>
@@ -132,6 +134,7 @@ enum class scales
     blues,
     major_pentatonic,
     minor_pentatonic,
+    phrygian,
     max                             /* a "maximum" or "size of set" value   */
 };
 
@@ -224,6 +227,10 @@ c_scales_policy[c_scales_max][c_octave_size] =
         true, false, false, true, false, true,
         false, true, false, false, true, false
     },
+    {                                                   /* phrygian         */
+        true, true, false, true, false, true,
+        false, true, true, false, true, false
+    }
 };
 
 /**
@@ -280,6 +287,12 @@ c_scales_policy[c_scales_max][c_octave_size] =
     Transpose up        3  .  .  2  .  2  .  3  .  .  2  .
     Result up           Eb .  .  F  .  G  .  Bb .  .  C  .
 \endverbatim
+ *
+ \verbatim
+    Phrygian            C  Db .  Eb .  F  .  G  Ab .  Bb .
+    Transpose up        2  2  .  2  .  2  .  1  2  .  2  .
+    Result up           D  Eb .  F  .  G  .  A  Bb .  C  .
+\endverbatim
  */
 
 const int
@@ -294,6 +307,7 @@ c_scales_transpose_up[c_scales_max][c_octave_size] =
     { 3, 0, 0, 2, 0, 1, 1, 3, 0, 0, 2, 0},              /* blues           */
     { 2, 0, 2, 0, 3, 0, 0, 2, 0, 3, 0, 0},              /* maj pentatonic  */
     { 3, 0, 0, 2, 0, 2, 0, 3, 0, 0, 2, 0},              /* min pentatonic  */
+    { 2, 2, 0, 2, 0, 2, 0, 1, 2, 0, 2, 0}               /* phrygian        */
 };
 
 /**
@@ -348,6 +362,11 @@ c_scales_transpose_up[c_scales_max][c_octave_size] =
     Result down         Bb .  .  C  .  Eb .  F  .  .  G  .
 \endverbatim
  *
+  \verbatim
+    Phrygian            C  Db .  Eb .  F  .  G  Ab .  Bb .
+    Transpose down      1  1  .  1  .  1  .  1  1  .  1  .
+    Result down         B  C  .  D  .  E  .  Fb G  .  A  .
+\endverbatim
  */
 
 const int
@@ -362,6 +381,7 @@ c_scales_transpose_dn[c_scales_max][c_octave_size] =
     { -2,  0,  0, -3,  0, -2, -1, -1,  0,  0, -3,  0},  /* blues           */
     { -3,  0, -2, -0,  2,  0,  0, -3,  0, -2,  0,  0},  /* maj pentatonic  */
     { -2,  0,  0, -3,  0, -2,  0, -2,  0,  0, -3,  0},  /* min pentatonic  */
+    { -1, -1,  0, -1,  0, -1,  0, -1, -1,  0, -1,  0}   /* phrygian        */
 };
 
 #if defined USE_C_SCALES_TRANSPOSE_DN_NEG

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-05-23
+ * \updates       2021-05-24
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1419,7 +1419,7 @@ performer::ui_change_set_bus (int buss)
 void
 performer::inner_start ()
 {
-    if (m_io_active)                    // NEW CODE 2021-05-23
+    if (m_io_active)                            /* don't start when exiting */
     {
         if (! is_running())
         {
@@ -2441,11 +2441,18 @@ performer::launch_input_thread ()
  *  Also gets the settings made/changed while the application was running from
  *  the mastermidibase class to here.  This action is the converse of calling
  *  the set_port_statuses() function defined in the mastermidibase module.
+ *
+ *  Note that we call stop_playing().  This will stop JACK transport. If we
+ *  restart Seq66 without doing this, transport keeps running (as can be seen
+ *  in QJackCtl).  So playback starts while loading a MIDI file while Seq66
+ *  starts.  Not only is this kind of surprising, it can lead to a seqfault at
+ *  random times.
  */
 
 bool
 performer::finish ()
 {
+    stop_playing();                         /* see notes in banner          */
     reset_sequences();                      /* stop all output upon exit    */
 
 #if defined USE_PANIC_AT_EXIT
@@ -2958,7 +2965,7 @@ performer::jack_reposition (midipulse tick, midipulse stoptick)
  *  similar to that of inner_start(), except that signalling (notification) is
  *  not done here. While running, we:
  *
- *      -#  Before the "is-running" loop:  If in the performance view (song
+ *      -#  Before the "is-running" loop:  If in any view (song, grid, or pattern
  *          editor), we care about starting from the m_start_tick offset.
  *          However, if the pause key is what resumes playback, we do not want
  *          to reset the position.  So how to detect that situation, since
@@ -3000,6 +3007,15 @@ performer::jack_reposition (midipulse tick, midipulse stoptick)
  *      Now, why the 2.0 factor in this?
  *
  *          if (next_clock_delta_us < (c_thread_trigger_width_us * 2.0))
+ *
+ * Stazed code (when ready):
+ *
+ *      If we reposition key-p, FF, rewind, adjust delta_tick for change then
+ *      reset to adjusted starting.  We have to grab the clock tick if looping
+ *      is unchecked while we are running the performance; we have to
+ *      initialize the MIDI clock (send EVENT_MIDI_SONG_POS); we have to
+ *      restart at the left marker; and reset the tempo list (which Seq64
+ *      doesn't have).
  */
 
 void
@@ -3018,29 +3034,22 @@ performer::output_func ()
             {
                 cv().wait();
                 if (done())                 /* if stopping, kill the thread */
-                {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                    printf("output wait done\n");
-#endif
                     break;
-                }
             }
         }
 
-        if (! m_io_active)                  // NEW CODE 2021-05-23
+        if (! m_io_active)                  /* we're done, quit working     */
             break;
 
         pad().initialize(0, looping(), song_mode());
 
         /*
          * If song-mode Master, then start the left tick marker if the Stazed
-         * "key-p" position was set.  If live-mode master, start at 0.
-         *
-         * This code is already present at about line #3209, and that covers
-         * more complexities.
+         * "key-p" position was set.  If live-mode master, start at 0.  This
+         * code is also present at about line #3209, and covers more
+         * complexities.
          */
 
-#if defined USE_REDUNDANT_CODE
         if (song_mode())
         {
             if (is_jack_master() && m_reposition)
@@ -3048,7 +3057,6 @@ performer::output_func ()
         }
         else
             position_jack(false, 0);
-#endif
 
         /*
          *  See note 1 in the function banner.
@@ -3082,7 +3090,7 @@ performer::output_func ()
         m_resolution_change = false;            /* BPM/PPQN                 */
         while (is_running())
         {
-            if (m_resolution_change)
+            if (m_resolution_change)            /* an atomic boolean        */
             {
                 bwdenom = 4.0 / get_beat_width();
                 bpmfactor = m_master_bus->get_beats_per_minute() * bwdenom;
@@ -3118,7 +3126,7 @@ performer::output_func ()
                 }
             }
 
-            bool jackrunning = jack_output(pad());  // m_jack_asst.output(pad());
+            bool jackrunning = jack_output(pad());
             if (jackrunning)
             {
                 // No additional code needed besides the output() call above.
@@ -3126,16 +3134,6 @@ performer::output_func ()
             else
             {
 #if defined USE_THIS_STAZED_CODE_WHEN_READY
-                /*
-                 * If we reposition key-p, FF, rewind, adjust delta_tick for
-                 * change then reset to adjusted starting.  We have to grab
-                 * the clock tick if looping is unchecked while we are
-                 * running the performance; we have to initialize the MIDI
-                 * clock (send EVENT_MIDI_SONG_POS); we have to restart at
-                 * the left marker; and reset the tempo list (which Seq64
-                 * doesn't have).
-                 */
-
                 if (song_mode() && ! m_usemidiclock && m_reposition)
                 {
                     current_tick = clock_tick;
@@ -3145,14 +3143,8 @@ performer::output_func ()
                     m_reposition = false;
                     m_reset_tempo_list = true;
                 }
-#endif  // USE_THIS_STAZED_CODE_WHEN_READY
-
-                /*
-                 * The default if JACK is not compiled in, or is not
-                 * running.  Add the delta to the current ticks.
-                 */
-
-                pad().add_delta_tick(delta_tick);
+#endif
+                pad().add_delta_tick(delta_tick);   /* add to current ticks */
             }
 
 #if defined USE_ODD_CHANGE_POSITION_CODE            // ca 2021-04-05 EXPERIMENT
@@ -3194,6 +3186,13 @@ performer::output_func ()
 
                     static bool jack_position_once = false;
                     midipulse rtick = get_right_tick();     /* can change? */
+                    printf
+                    (
+                        "C = %ld, L = %ld, R = %ld\n",
+                        long(pad().js_current_tick),
+                        long(get_left_tick()),
+                        long(rtick)
+                    );
                     if (pad().js_current_tick >= rtick)
                     {
                         if (is_jack_master() && ! jack_position_once)
@@ -3237,7 +3236,8 @@ performer::output_func ()
             }
 
             /*
-             *  See "microsleep() call" in banner.
+             *  See "microsleep() call" in banner.  Code is similar to line
+             *  3096 above.
              */
 
             last = current;
@@ -3256,7 +3256,7 @@ performer::output_func ()
             }
             else
             {
-                printf("underrun in playback %ld us     \r", delta_us);
+                printf("play underrun %ld us          \r", delta_us);
                 (void) microsleep(1);
             }
             if (pad().js_jack_stopped)
@@ -3790,12 +3790,10 @@ performer::auto_stop ()
  *  offloading all these calls to a new sequence function.  Hence the new
  *  sequence::play_queue() function.
  *
- *  2021-05-18:
- *
  *  This function is called twice in a row with the same tick value, causing
  *  notes to be played twice. This happens because JACK "ticks" are 10 times
  *  as fast as MIDI ticks, and the conversion can result in the same MIDI tick
- *  value consecutively.
+ *  value consecutively, especially at lower PPQN.
  *
  * \param tick
  *      Provides the tick at which to start playing.  This value is also
@@ -3805,7 +3803,7 @@ performer::auto_stop ()
 void
 performer::play (midipulse tick)
 {
-    if (tick > get_tick() || tick == 0)                 /* avoid replays    */
+    if (tick != get_tick() || tick == 0)                /* avoid replays    */
     {
         bool songmode = song_mode();
         set_tick(tick);
@@ -3815,21 +3813,26 @@ performer::play (midipulse tick)
         if (not_nullptr(m_master_bus))
             m_master_bus->flush();                      /* flush MIDI buss  */
     }
+#if defined SEQ66_PLATFORM_DEBUG
     else
     {
         if (rc().verbose())
-            printf("performer tick %ld replay\n", long(tick));
+            printf("tick %ld replay\n", long(tick));
     }
+#endif
 }
 
 void
 performer::play_all_sets (midipulse tick)
 {
-    set_tick(tick);
-    sequence::playback songmode = song_start_mode();
-    mapper().play_all_sets(tick, songmode, resume_note_ons());
-    if (not_nullptr(m_master_bus))
-        m_master_bus->flush();                          /* flush MIDI buss  */
+    if (tick > get_tick() || tick == 0)                 /* avoid replays    */
+    {
+        set_tick(tick);
+        sequence::playback songmode = song_start_mode();
+        mapper().play_all_sets(tick, songmode, resume_note_ons());
+        if (not_nullptr(m_master_bus))
+            m_master_bus->flush();                      /* flush MIDI buss  */
+    }
 }
 
 /**

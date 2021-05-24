@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2021-01-06
+ * \updates       2021-05-24
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of all the scale interval patterns if you are working with
@@ -40,6 +40,7 @@
     Mixolydian Mode is:             R, W, W, H, W, W, H, W
     Ahava Raba Mode is:             R, H, X, H, W, H, W, W
     Minor Pentatonic Blues (no #5): R, X, W, W, X, W
+    Phrygian:                       R, W, W, W, H, W, W
 \endverbatim
  *
 \verbatim
@@ -116,7 +117,8 @@ musical_scale_name (int s)
         "Whole Tone",
         "Blues",
         "Pentatonic Major",
-        "Pentatonic Minor"
+        "Pentatonic Minor",
+        "Phrygian"
     };
     std::string result = "Unsupported";
     if (legal_scale(s))

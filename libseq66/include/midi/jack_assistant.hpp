@@ -91,6 +91,7 @@ public:
     void initialize (midipulse currenttick, bool islooping, bool songmode);
     void set_current_tick (midipulse curtick);
     void add_delta_tick (midipulse deltick);
+    void set_current_tick_ex (midipulse curtick);
 
 };
 
@@ -211,14 +212,14 @@ private:
      *  call to jack_get_current_transport_frame().
      */
 
-    jack_nframes_t m_jack_frame_current;
+    jack_nframes_t m_frame_current;
 
     /**
      *  Holds the last frame number we got from JACK, so that progress can be
      *  tracked.  Also used in incrementing m_jack_tick.
      */
 
-    jack_nframes_t m_jack_frame_last;
+    jack_nframes_t m_frame_last;
 
     /**
      *  Provides positioning information on JACK playback.  This structure is
@@ -234,13 +235,13 @@ private:
      *  JackTransportStopped, JackTransportRolling, and JackTransportLooping.
      */
 
-    jack_transport_state_t m_jack_transport_state;
+    jack_transport_state_t m_transport_state;
 
     /**
      *  Holds the last JACK transport state.
      */
 
-    jack_transport_state_t m_jack_transport_state_last;
+    jack_transport_state_t m_transport_state_last;
 
     /**
      *  The tick/pulse value derived from the current frame number, the
@@ -279,7 +280,7 @@ private:
      *  calculations displayed in qjackctl.
      */
 
-    jack_nframes_t m_jack_frame_rate;
+    jack_nframes_t m_frame_rate;
 
     /**
      *  Ostensibly a toggle, the functions that access this member are called
@@ -409,7 +410,7 @@ public:
 
     jack_transport_state_t transport_state () const
     {
-        return m_jack_transport_state;
+        return m_transport_state;
     }
 
     /**
@@ -418,7 +419,25 @@ public:
 
     bool transport_not_starting () const
     {
-        return m_jack_transport_state != JackTransportStarting;
+        return m_transport_state != JackTransportStarting;
+    }
+
+    bool transport_rolling_now () const
+    {
+        return
+        (
+            m_transport_state_last == JackTransportStarting &&
+            m_transport_state == JackTransportRolling
+        );
+    }
+
+    bool transport_stopped_now () const
+    {
+        return
+        (
+            m_transport_state_last == JackTransportRolling &&
+            m_transport_state == JackTransportStopped
+        );
     }
 
     bool init ();
@@ -490,7 +509,7 @@ public:
 
     jack_nframes_t jack_frame_rate () const
     {
-        return m_jack_frame_rate;
+        return m_frame_rate;
     }
 
     bool get_follow_transport () const
