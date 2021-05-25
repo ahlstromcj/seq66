@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2021-02-09
+ * \updates       2021-05-25
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -304,7 +304,15 @@ playlist::verify (bool strong)
     bool result = ! m_play_lists.empty();
     if (result)
     {
-        result = m_play_lists[0].ls_song_count > 0;
+        /*
+         * This can add a new (and empty) play-list :-( Not good to access a
+         * map via operator [].
+         *
+         *  result = m_play_lists[0].ls_song_count > 0;
+         */
+
+        auto beginning = m_play_lists.cbegin();
+        result = beginning->second.ls_song_count > 0;
         if (! result)
             return true;                /* no songs to verify */
     }

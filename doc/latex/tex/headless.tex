@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-09-30
-% \update      2021-02-08
+% \update      2021-05-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -55,11 +55,15 @@
 
    Sometimes odd problems, such as the output synthesizer not working, not
    appearing in the list of outputs, can prove a real puzzle.
-   Here are the steps used in this test; adapt them to your setup.  For
+   Here are the steps used in this test, based on sample files provided in the
+   \texttt{contrib/midi}, \texttt{data/midi}, and \texttt{data/samples}
+   directory; adapt them to your setup.  For
    simplicity, JACK is not running, and so ALSA is in force.
 
    \textbf{First}, after booting, plug in the MIDI keyboard or MIDI control
    pad.  Our example here will use the \textsl{Korg nanoKEY2} keyboard.  
+   (For a more powerful and exhaustive setup, see
+   \sectionref{sec:launchpad_mini}.)
 
    \textbf{Second}, start the desired (software) synthesizer.  We will use the
    synth \textsl{Yoshimi}, with a stock setup from the
@@ -67,26 +71,14 @@
    The order of starting the keyboard/pad and the synthesiser
    will alter the port numbers of these items.  Best to do things in the same
    order every time... be consistent.
-
-   \textbf{Third}, to validate the setup, run a command from the command-line
-   such as:
+   Run the following command in order to verify the ALSA buss numbers for
+   the controller and the synthesizer:
 
    \begin{verbatim}
-      seq66 -b 2 -v -X data/sample.playlist
+      $ aplaymidi -l
    \end{verbatim}
 
-   The buss number ("2") may need to be different on your setup to get sound
-   routed to the correct synthesizer.  Also, the path to the playlist might
-   need to be an absolute path; normally playlists are stored in the
-   \texttt{HOME/.config/seq66} directory and accessed from there.
-   Verify that the main window shows the playlist name, and that the arrow keys
-   modify the play-list or song selection.  If that works, verify that the MIDI
-   keyboard or pad controller works to change the selection.
-   Verify that the current song plays through the synthesizer that was started.
-   If this setup works (MIDI controls have the proper effect and the tunes play
-   through the synthesizer), proceed to the next step.
-
-   \textbf{Fourth}, edit the \texttt{seq66cli.rc}
+   \textbf{Third}, edit the \texttt{seq66cli.rc}
    file as described below so that the correct settings of
    \texttt{[midi-clock]}, \texttt{[midi-input]} and
    \texttt{[midi-control-file]} are entered into the 'rc' configuration.
@@ -115,15 +107,72 @@
       "nanomap.ctrl"
    \end{verbatim}
 
-   The \texttt{nanomap.ctrl} file is included in the
-   \texttt{data/samples} directory of the source-code package or the
-   installation directory.
+   The \texttt{seq66cli.rc} file should also enabled the desired MIDI input
+   control device:
+
+   \begin{verbatim}
+      [midi-input]
+      4 1    "[1] 0:1 nanoKEY2 MIDI 1"
+   \end{verbatim}
+
+   This setting should match the \texttt{control-buss} setting in the
+   the \texttt{nanomap.ctrl} file.  The \texttt{nanomap.ctrl} file is included
+   in the \texttt{data/samples} directory of the source-code package or the
+   installation directory.  The following initial settings in this file are
+   relevant:
+
+   \begin{verbatim}
+		load-key-controls = true
+		load-midi-controls = true
+		control-buss = 4					# adjust based on "aplaymidi -l"
+		midi-enabled = true
+   \end{verbatim}
+
+   The various "midi-control-out" settings are not relevant for this test since
+   the nanoKEY2 cannot display statuses.
+
+   For the rest of the setup, do these steps:
+
+   \begin{enumerate}
+      \item Run \texttt{seq66cli} and then stop it (Ctrl-C) to generate the
+         initial configuration files,
+         \texttt{\$HOME/.config/seq66/seq66cli.*}.
+      \item Copy the contents of of \texttt{data/seq66cli/} to
+         \texttt{\$HOME/.config/seq66}.
+      \item Copy \texttt{data/samples/sample.playlist} and
+         \texttt{data/samples/sample.playlist} to
+         \texttt{\$HOME/.config/seq66}.
+      \item In your HOME directory, create a soft link to the Seq66 project
+         (source code and data) directory: \texttt{ln -s path/to/seq66}.
+   \end{enumerate}
+
+   \textbf{Fourth}, to validate the setup visibly, run a command from the
+   command-line such as:
+
+   \begin{verbatim}
+      $ qseq66 --config seq66cli --buss 2 --verbose
+   \end{verbatim}
+
+%  --playlist data/sample.playlist
+
+   The buss number ("2") may need to be different on your setup to get sound
+   routed to the correct synthesizer.  Also, the path to the playlist might
+   need to be an absolute path; normally playlists are stored in the
+   \texttt{HOME/.config/seq66} directory and accessed from there.
+   Verify that the main window shows the playlist name, and that the arrow keys
+   modify the play-list or song selection.  If that works, verify that the MIDI
+   keyboard or pad controller works to change the selection.
+   Verify that the current song plays through the synthesizer that was started.
+   Also verify that all songs have been directed to the desired port(s) for
+   each song.
+   If this setup works (MIDI controls have the proper effect and the tunes play
+   through the synthesizer), proceed to the next step.
 
    \textbf{Fifth}, test the command-line \textsl{Seq66} by running the
    following command (your setup might vary) on the command line:
 
    \begin{verbatim}
-      $ seq66cli -b 2 -X data/sample.playlist -v
+      $ seq66cli --buss 2 --verbose --playlist data/sample.playlist
    \end{verbatim}
 
    There is a play-list option to automatically unmute the sets when a new song
@@ -132,7 +181,7 @@
    output and the proper playback), then run \texttt{seq66cli} as a daemon:
 
    \begin{verbatim}
-      $ seq66cli -b 2 -X data/sample.playlist -o daemonize
+      $ seq66cli --buss 2 --verbose -o daemonize --playlist data/sample.playlist
    \end{verbatim}
 
    The keyboard controls and sound output should work.

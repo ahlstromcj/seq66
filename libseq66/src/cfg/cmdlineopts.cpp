@@ -209,7 +209,7 @@ cmdlineopts::s_help_1b =
 "   -R, --hide-ports         Use the 'usr' definitions for port names.\n"
 "   -A, --alsa               Do not use JACK, use ALSA. A sticky option.\n"
 "   -b, --bus b              Global override of bus number (for testing).\n"
-"   -B, --buss b             Avoids the 'bus' versus 'buss' confusion.\n"
+"   -B, --buss b             Covers the 'bus' versus 'buss' confusion.\n"
 "   -l, --client-name label  Replaces the client name 'seq66' with a new label.\n"
 "                            Will be overridden by a session manager.\n"
 "   -q, --ppqn qn            Specify default PPQN to replace 192.  The MIDI\n"

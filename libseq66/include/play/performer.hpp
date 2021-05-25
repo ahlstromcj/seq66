@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-21
+ * \updates       2021-05-25
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -199,6 +199,7 @@ public:
             ui_change,              /**< Indicates a user-interface action. */
             trigger_change,         /**< A trigger changed pattern muting.  */
             resolution_change,      /**< A change in PPQN or BPM.           */
+            song_change             /**< A different MIDI tune was loaded.  */
         };
 
     public:
@@ -257,6 +258,11 @@ public:
         }
 
         virtual bool on_resolution_change (int /* ppqn */, midibpm /* bpm */)
+        {
+            return false;
+        }
+
+        virtual bool on_song_change ()
         {
             return false;
         }
@@ -932,6 +938,7 @@ public:
     (
         int ppqn, midibpm bpm, change mod = change::yes
     );
+    void notify_song_change ();
 
     bool error_pending () const
     {
@@ -1170,35 +1177,12 @@ public:
         return m_play_list->remove_song(index);
     }
 
-    bool open_next_list (bool opensong = true, bool loading = false)
-    {
-        return m_play_list->open_next_list(opensong, loading);
-    }
-
-    bool open_previous_list (bool opensong = true)
-    {
-        return m_play_list->open_previous_list(opensong);
-    }
-
-    bool open_select_song_by_index (int index, bool opensong = true)
-    {
-        return m_play_list->open_select_song(index, opensong);
-    }
-
-    bool open_select_song_by_midi (int ctrl, bool opensong = true)
-    {
-        return m_play_list->open_select_song_by_midi(ctrl, opensong);
-    }
-
-    bool open_next_song (bool opensong = true)
-    {
-        return m_play_list->open_next_song(opensong);
-    }
-
-    bool open_previous_song (bool opensong = true)
-    {
-        return m_play_list->open_previous_song(opensong);
-    }
+    bool open_next_list (bool opensong = true, bool loading = false);
+    bool open_previous_list (bool opensong = true);
+    bool open_select_song_by_index (int index, bool opensong = true);
+    bool open_select_song_by_midi (int ctrl, bool opensong = true);
+    bool open_next_song (bool opensong = true);
+    bool open_previous_song (bool opensong = true);
 
     /*
      * End of playlist accessors.
@@ -1880,6 +1864,7 @@ public:
             m_master_bus->print();
     }
 
+    void delay_stop ();         // EXPERIMENTAL
     void auto_stop ();
     void auto_pause ();
     void auto_play ();
@@ -3375,6 +3360,10 @@ public:
         automation::action a, int d0, int d1, bool inverse
     );
     bool automation_mutes_clear
+    (
+        automation::action a, int d0, int d1, bool inverse
+    );
+    bool automation_quit
     (
         automation::action a, int d0, int d1, bool inverse
     );

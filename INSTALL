@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.93.0
+INSTALL for Seq66 v. 0.94.0
 Chris Ahlstrom
-2015-09-10 to 2021-03-28
+2015-09-10 to 2021-05-25
 
 Getting Seq66 requires building the code or going to the
 "sequencer64-packages/seq66" project directory on GitHub.
@@ -16,9 +16,8 @@ the instructions below.  Different versions of the program can be built:
         via qmake and suitable for loading in QtCreator installed with mingw32
         tools. To build it in Windows, specify the Mingw library and tools when
         installing QtCreator.  See "Qmake-based Install" below.
-    -   seq66cli.  A GUI-less version of Seq66, which can run from the
+    -   seq66cli.  A headless version of Seq66, which can run from the
         console or as a daemon, controlled via MIDI and playlists.
-        Still being worked on.
 
     We provide a Windows installer in the "sequencer64-packages" project in
     GitHub, in the "seq66" subdirectory.  It is also fairly easy to build the
@@ -39,9 +38,9 @@ from source code:
 
 Linux Distro Package (seq66):
 
-    Your favorite Linux distro may have put seq66/sequencer64 into a distro
-    package.  For example, Arch Linux and KXStudio have packages.  Here is a
-    pointer to how one user installs it on a Raspberry Pi 3b+ running Raspian:
+    Your favorite Linux distro may have put seq66 into a distro package.  For
+    example, Arch Linux and KXStudio have packages.  Here is a pointer to how
+    one user installs it on a Raspberry Pi 3b+ running Raspian:
 
         Installed it from from KXStudio repo using Muon:
         https://kde.org/applications/en/system/org.kde.muon
@@ -98,18 +97,17 @@ Advanced Steps:
        show other branches not yet deleted.  See GitHub.
 
    2.  The first thing to do is decide what version of Seq66 you want to
-       build.  There are now 5 versions:
+       build:
 
-       2.   Seq64cli/seq66cli:           ./bootstrap -er -cli
-       3.   Seq64qt5/qseq66:             ./bootstrap -er -qt
+       1. Seq66qt5/qseq66:      ./bootstrap -er
+       2. Seq66cli/seq66cli:    ./bootstrap -er -cli
+       3. qpseq66 Linux:        Qmake/qbuild/Qtcreator in shadow directory
+       4. qpseq66 Windows:      Qmake/Qtcreator/build_release_package.bat
 
-       (Currently, one can use "-cli" and "-rm" together to build both
-       versions in one pass.  However, there are issues still to resolve,
-       so do not do it!)
-   
-       From the top project directory, run one of the commands above (they
-       auto-configure) or run the following commands, which set up a release
-       build of seq66 (native JACK, native ALSA fallback).
+       For the first two: from the top project directory, run one of the
+       commands above (they auto-configure) or run the following commands,
+       which set up a release build of seq66 (native JACK, native ALSA
+       fallback).
 
        $ ./bootstrap            (only if the configure script does not exist)
        $ ./configure [options]
@@ -118,8 +116,8 @@ Advanced Steps:
        option "--enable-silent-rules" can be added to the ./configure command.
        Otherwise:
 
-       $ ./bootstrap --enable-release [ -rm | -cli | -qt ]
-       $ ./bootstrap -er [ -rm | -cli | -qt ]
+       $ ./bootstrap --enable-release [ -cli | -qt ]
+       $ ./bootstrap -er [ -cli | -qt ]
 
        Note that the options in brackets are optional.  The default is
        equivalent to "-rm -qt".
@@ -128,8 +126,8 @@ Advanced Steps:
        following command, which will add the --enable-debug and
        --disable-shared options to a configure run:
 
-       $ ./bootstrap --enable-debug [ -rm | -cli | -qt ]
-       $ ./bootstrap -ed [ -rm | -cli | -qt ]
+       $ ./bootstrap --enable-debug [ -cli | -qt ]
+       $ ./bootstrap -ed [ -cli | -qt ]
 
        There are also configure options as described below, and conditional
        macros in the header files.  The configure options can be supplied to
@@ -139,6 +137,10 @@ Advanced Steps:
        To learn more, run
 
        $ ./bootstrap --help
+
+       If there are build issues, try again after running:
+
+       $ ./bootstrap --full-clean
 
    3.  Run the make command:
 
@@ -166,12 +168,9 @@ Advanced Steps:
    5.  See the additional features that can be enabled, below, using 
        build macros.
 
-   6.  Also grab the Sequencer64 User Manual from:
-
-            http://github.com/ahlstromcj/sequencer64-doc.git
-
+   6.  Also grab the Seq66 User Manual from the "doc" directory.
        It contains a prebuilt PDF version of the manual, as well as the
-       LaTeX files needed to rebuild it.
+       LaTeX and make files needed to rebuild it.
 
    7.  If you want to generate your own source/configure tarball for
        distributing Seq66, use the pack script:
@@ -380,9 +379,9 @@ REPORTING ISSUES:
    error, if we cannot replicate it:
 
         $ ./bootstrap --full-clean
-        $ ./bootstrap -ed -rm
+        $ ./bootstrap -ed
         $ make &> make.log
-        $ gdb ./Seq64rtmidi/seq66
+        $ gdb ./Seq66qt5/seq66
         (gdb) r    [add your command-line arguments here if needed]
                    [replicate the crash]
         (gdb) bt   [does a backtrace]

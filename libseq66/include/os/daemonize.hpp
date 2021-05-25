@@ -89,6 +89,13 @@ extern void session_setup ();
 extern bool session_close ();
 extern bool session_save ();
 
+/*
+ *  Useful for the performer to flag an application exit.  Be freakin' careful
+ *  with this one!  :-D
+ */
+
+extern void signal_for_exit ();
+
 }        // namespace seq66
 
 #endif   // SEQ66_DAEMONIZE_HPP

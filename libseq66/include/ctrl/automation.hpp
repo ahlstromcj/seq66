@@ -221,7 +221,7 @@ enum class slot
     keep_queue,         /**< 32: Set keep-queue (the "Q" button).           */
     slot_shift,         /**< 33: Used for sets > 32 patterns.               */
     mutes_clear,        /**< 34: Set all mute groups to unarmed.            */
-    reserved_35,        /**< 35: Reserved for expansion.                    */
+    quit,               /**< 35: Quit (close and exit) the application.     */
     pattern_edit,       /**< 36: GUI action, bring up pattern for editing.  */
     event_edit,         /**< 37: GUI action, bring up the event editor.     */
     song_mode,          /**< 38: GUI. Toggle between Song Mode & Live Mode. */

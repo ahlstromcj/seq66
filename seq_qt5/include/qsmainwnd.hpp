@@ -191,6 +191,7 @@ protected:
         performer::change ctype
     ) override;
     virtual bool on_resolution_change (int ppqn, midibpm bpm) override;
+    virtual bool on_song_change () override;
     virtual void keyPressEvent (QKeyEvent * event) override;
     virtual void keyReleaseEvent (QKeyEvent *) override;
 

@@ -3401,6 +3401,13 @@ qsmainwnd::on_resolution_change (int ppqn, midibpm bpm)
     return true;
 }
 
+bool
+qsmainwnd::on_song_change ()
+{
+    m_is_title_dirty = true;
+    return true;
+}
+
 /**
  *  This is called when focus changes in the main window.
  */

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2021-02-23
+ * \updates       2021-05-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -199,7 +199,7 @@ opcontrol::slot_name (slot s)
         "Keep Queue",           // 32 keep_queue
         "Slot Shift",           // 33 slot_shift
         "Mutes Clear",          // 34 reserved_34
-        "Reserved 35",          // 35 reserved_35
+        "Quit",                 // 35 quit
         "Loop Edit",            // 36 pattern_edit
         "Event Edit",           // 37 event_edit
         "Song Mode",            // 38 song_mode

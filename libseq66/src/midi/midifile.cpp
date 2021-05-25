@@ -960,6 +960,10 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
     else
         scaled(file_ppqn() != usr().default_ppqn());
 
+    if (buss_override != c_bussbyte_max && rc().verbose())
+    {
+        infoprintf("Buss override %d", int(buss_override));
+    }
     for (midishort track = 0; track < NumTracks; ++track)
     {
         midilong ID = read_long();                  /* get track marker     */

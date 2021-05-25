@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-05-24
+ * \updates       2021-05-25
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -77,7 +77,7 @@
  *  slot_shift:         Each instance of this control add the set size to
  *                      the key's configured slot/pattern value.
  *  mutes_clear:        Set all mute groups to unarmed.
- *  reserved_35:        Reserved for expansion.
+ *  quit:               Quit, close, exit the application.
  *  pattern_edit:       GUI action, bring up pattern for editing.
  *  event_edit:         GUI action, bring up the event editor.
  *  song_mode:          GUI. Toggle between Song Mode and Live Mode.
@@ -305,6 +305,7 @@
 #include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/performer.hpp"           /* seq66::performer, this class     */
+#include "os/daemonize.hpp"             /* seq66::signal_for_exit()         */
 #include "os/timing.hpp"                /* seq66::microsleep(), microtime() */
 #include "util/filefunctions.hpp"       /* seq66::filename_base()           */
 #include "util/strfunctions.hpp"        /* seq66::shorten_file_spec()       */
@@ -360,7 +361,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_in_thread             (),
     m_out_thread_launched   (false),
     m_in_thread_launched    (false),
-    m_io_active             (true),             /* must start out true      */
+    m_io_active             (false),            /* set true in launch()     */
     m_is_running            (false),
     m_is_pattern_playing    (false),
     m_needs_update          (true),
@@ -432,7 +433,7 @@ performer::performer (int ppqn, int rows, int columns) :
 performer::~performer ()
 {
     if (m_io_active)
-        (void) finish();
+        (void) finish();                /* sets m_io_active to false, etc.  */
 }
 
 /**
@@ -552,6 +553,17 @@ performer::notify_resolution_change (int ppqn, midibpm bpm, change mod)
 
     if (mod == change::yes)
         modify();
+}
+
+/**
+ *  Notifies when the use selects a new song or playlist.
+ */
+
+void
+performer::notify_song_change ()
+{
+    for (auto notify : m_notify)
+        (void) notify->on_song_change();
 }
 
 /*
@@ -1419,7 +1431,7 @@ performer::ui_change_set_bus (int buss)
 void
 performer::inner_start ()
 {
-    if (m_io_active)                            /* don't start when exiting */
+    if (m_io_active)                            /* won't start when exiting */
     {
         if (! is_running())
         {
@@ -2092,6 +2104,7 @@ performer::launch (int ppqn)
         bool ok = activate();
         if (ok)
         {
+            m_io_active = true;
             launch_input_thread();
             launch_output_thread();
             (void) set_playing_screenset(0);
@@ -3779,6 +3792,13 @@ performer::auto_stop ()
 {
     stop_playing();
     is_pattern_playing(false);
+}
+
+void
+performer::delay_stop ()
+{
+    auto_stop();
+    millisleep(500);
 }
 
 /**
@@ -6398,6 +6418,81 @@ performer::playlist_activate (bool on)
 }
 
 bool
+performer::open_next_list (bool opensong, bool loading)
+{
+    delay_stop();
+
+    bool result = m_play_list->open_next_list(opensong, loading);
+    if (result)
+    {
+        notify_song_change();
+    }
+
+    return result;
+}
+
+bool
+performer::open_previous_list (bool opensong)
+{
+    delay_stop();
+
+    bool result = m_play_list->open_previous_list(opensong);
+    if (result)
+        notify_song_change();
+
+    return result;
+}
+
+bool
+performer::open_select_song_by_index (int index, bool opensong)
+{
+    delay_stop();
+
+    bool result = m_play_list->open_select_song(index, opensong);
+    if (result)
+        notify_song_change();
+
+    return result;
+}
+
+bool
+performer::open_select_song_by_midi (int ctrl, bool opensong)
+{
+    delay_stop();
+
+    bool result = m_play_list->open_select_song_by_midi(ctrl, opensong);
+    if (result)
+        notify_song_change();
+
+    return result;
+}
+
+bool
+performer::open_next_song (bool opensong)
+{
+    delay_stop();
+
+    bool result = m_play_list->open_next_song(opensong);
+    if (result)
+    {
+        notify_song_change();
+    }
+    return result;
+}
+
+bool
+performer::open_previous_song (bool opensong)
+{
+    delay_stop();
+
+    bool result = m_play_list->open_previous_song(opensong);
+    if (result)
+        notify_song_change();
+
+    return result;
+}
+
+bool
 performer::open_mutegroups (const std::string & mgf)
 {
     bool result = seq66::open_mutegroups(mgf);  /* fills rcsettings groups  */
@@ -6787,6 +6882,27 @@ performer::automation_mutes_clear
 }
 
 /**
+ *  Signals that the application should exit.
+ */
+
+bool
+performer::automation_quit
+(
+    automation::action a, int d0, int d1, bool inverse
+)
+{
+    std::string name = "Exit";
+    print_parameters(name, a, d0, d1, inverse);
+    if (a == automation::action::on)
+    {
+        printf("[ Q U I T ! ]\n"); // TO DO
+        stop_playing();
+        signal_for_exit();              /* provided by the daemonize module */
+    }
+    return true;
+}
+
+/**
  *  Toggles the Song/Live mode, but only on a key press, not on a key release.
  *
  * \return
@@ -6949,7 +7065,7 @@ performer::sm_auto_func_list [] =
     { automation::slot::keep_queue, &performer::automation_keep_queue    },
     { automation::slot::slot_shift, &performer::automation_slot_shift    },
     { automation::slot::mutes_clear, &performer::automation_mutes_clear  },
-    { automation::slot::reserved_35, &performer::automation_no_op        },
+    { automation::slot::quit, &performer::automation_quit                },
     {
         automation::slot::pattern_edit,
         &performer::automation_edit_pending

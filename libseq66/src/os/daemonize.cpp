@@ -58,6 +58,7 @@
  *      it is available, and Windows XP seems to use it quite a bit.
  */
 
+#include <atomic>                       /* std::atomic<bool>                */
 #include <stdlib.h>                     /* EXIT_FAILURE for 32-bit builds   */
 #include <string.h>                     /* strlen() etc.                    */
 
@@ -358,8 +359,8 @@ reroute_stdio (const std::string & logfile, bool closem)
  *  Make these values atomic?
  */
 
-static bool sg_needs_close = false;
-static bool sg_needs_save = false;
+static std::atomic<bool> sg_needs_close {};
+static std::atomic<bool> sg_needs_save {};
 
 /**
  *  Provides a basic session handler, called upon receipt of a POSIX signal.
@@ -440,6 +441,11 @@ session_save ()
 #endif
     sg_needs_save = false;
     return result;
+}
+
+void signal_for_exit ()
+{
+    sg_needs_close = true;
 }
 
 /**

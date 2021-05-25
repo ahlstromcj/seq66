@@ -196,7 +196,7 @@ keyboard-layout = qwerty
 32 "\"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ]  # Keep Queue
 33 "/"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ]  # Slot Shift
 34 "0"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ]  # Mutes Clear
-35 "0xf1"    [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ]  # Reserved 35
+35 "Quit"    [ 0 0x00   0   0   0 ] [ 0 0x90  24   1 127 ] [ 0 0x00   0   0   0 ]  # Quit
 36 "="       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ]  # Loop Edit
 37 "-"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ]  # Event Edit
 38 "F10"     [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ]  # Song Mode
@@ -223,19 +223,13 @@ button-columns = 8
 [midi-control-out]
 
 #   --------------------- Pattern number (as applicable)
-#  |   ------------------ on/off (indicate if action is enabled)
-#  |  |  ---------------- MIDI channel (0-15)
-#  |  | |  -------------- MIDI status/event byte (e.g. Note On)
-#  |  | | |  ------------ data 1 (e.g. note number)
-#  |  | | | |  ---------- data 2 (e.g. velocity)
-#  |  | | | | |
-#  v  v v v v v
-# 31 [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0]
+#  |     ---------------- MIDI status+channel (e.g. Note On)
+#  |    |    ------------ data 1 (e.g. note number)
+#  |    |   |  ---------- data 2 (e.g. velocity)
+#  |    |   | |
+#  v    v   v v
+# 31 [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0]
 #       Arm         Mute       Queue      Delete
-
-# These control events are laid out in this order: 
-#
-#     [ /*enabled channel*/ status d0 d1 ]
 #
 # This is a change (2021-02-10) from version 1 of this file.
 # A test of the status/event byte determines the enabled status,

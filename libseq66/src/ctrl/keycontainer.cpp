@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-05-09
+ * \updates       2021-05-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -420,7 +420,7 @@ keycontainer::add_defaults ()
         { "\\",        automation::action::toggle  },  // 32 keep_queue
         { "/",         automation::action::off     },  // 33 slot_shift
         { "0",         automation::action::on      },  // 34 mutes_clear
-        { "0xf1",      automation::action::off     },  // 35 reserved_35
+        { "Quit",      automation::action::off     },  // 35 quit
         { "=",         automation::action::on      },  // 36 pattern_edit
         { "-",         automation::action::on      },  // 37 event_edit
         { "F10",       automation::action::on      },  // 38 song_mode

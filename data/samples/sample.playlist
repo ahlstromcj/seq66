@@ -66,10 +66,10 @@ file to your ~/.config/seq66 directory and add it to the qseq66.rc file's
 
 70 allofarow.mid
 71 CountryStrum.midi
-72 colours-qt.midi
-73 1Bar.midi
-74 2Bars.midi
-75 click_4_4.midi
+72 1Bar.midi
+73 2Bars.midi
+74 click_4_4.midi
+75 NR_Route_66.midi
 
 [playlist]
 
@@ -92,9 +92,10 @@ file to your ~/.config/seq66 directory and add it to the qseq66.rc file's
 # own path.
 
 70 b4uacuse-gm-patchless.midi
-71 colours.midi
-72 Chameleon-HHancock-Ov.midi
-73 If_You_Could_Read_My_Mind.mid
+71 Chameleon-HHancock-Ov.midi
+72 If_You_Could_Read_My_Mind.mid
+73 Kraftwerk-Europe_Endless-reconstructed.midi
+74 Peter_Gunn-reconstructed.midi
 
 [playlist]
 

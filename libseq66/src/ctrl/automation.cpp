@@ -263,7 +263,7 @@ s_slotnamelist [] =
     { slot::keep_queue,       "keep_queue"      },
     { slot::slot_shift,       "slot_shift"      },
     { slot::mutes_clear,      "mutes_clear"     },
-    { slot::reserved_35,      "reserved_35"     },
+    { slot::quit,             "quit"            },
     { slot::pattern_edit,     "pattern_edit"    },
     { slot::event_edit,       "event_edit"      },
     { slot::song_mode,        "song_mode"       },
