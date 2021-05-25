@@ -1,0 +1,108 @@
+# Seq66 0.93.1 (and above) mute-groups configuration file
+#
+# /home/ahlstrom/.config/seq66/seq66cli.mutes
+# Written on 2021-05-25 07:13:05
+#
+# This file replaces the [mute-group] section in the 'rc' file,
+# making it easier to manage multiple sets of mute groups.
+
+[Seq66]
+
+config-type = "mutes"
+version = 0
+
+# The [comments] section can document this file.  Lines starting
+# with '#' and '[' are ignored.  Blank lines are ignored.  Show a
+# blank line by adding a space character to the line.
+
+[comments]
+
+Comments added to this section are preserved.  Lines starting with
+a '#' or '[', or that are blank, are ignored.  Start lines that must
+look empty with a space.
+
+# The 'mutes' file holds the global mute-groups configuration.
+# It follows the format of the 'rc' configuration file, but is
+# stored separately for convenience.  It is always stored in the
+# configuration directory.  To use this 'mutes' file, set it in the
+# [mute-group-file] tag in the 'rc' file; use the basename (e.g.
+# 'nanomute.mutes') on a separate line.
+#
+# load-mute-groups: set to 'none', or 'mutes' to load only from the
+# 'mutes' file, 'midi' to load from the song, or 'both' to try to
+# to read from the 'mutes' first, then the 'midi' if empty.
+#
+# save-mutes-to: 'both' writes the mutes value to both the mutes
+# and the MIDI file; 'midi' writes only to the MIDI file; and
+# and 'mutes' only to the mutes file.
+#
+# mute-group-rows and mute-group-columns: Specifies the size of the
+# grid.  For now, keep these values at 4 and 8.
+#
+# groups-format: 'binary' means write the mutes as 0 or 1; 'hex' means
+# to write them as hexadecimal numbers (e.g. 0xff), which is useful
+# larger set sizes.
+#
+# mute-group-selected: if 0 to 31, and mutes are available either from
+# this file or from the MIDI file, then the mute-group is applied at
+# startup.  This is useful in restoring a session.
+#
+# toggle-active-only: when a mute-group is toggled off, all patterns
+# even those outside the mute-group, are muted.  If this flag is set
+# to true, only patterns in the mute-group are muted. Any patterns
+# unmuted directly by the user remain unmuted.
+
+[mute-group-flags]
+
+load-mute-groups = both
+save-mutes-to = both
+mute-group-rows = 4
+mute-group-columns = 8
+mute-group-selected = -1
+groups-format = binary
+toggle-active-only = false
+
+[mute-groups]
+
+# All mute-group values are saved in this 'mutes' file, even if they
+# all are zero; but if all are zero, they can be stripped out of the
+# MIDI file by the strip-empty-mutes functionality. If a hex number
+# is found, each number represents a bit mask, rather than a single
+# bit.
+
+ 0 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 1 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 2 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 3 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 4 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 5 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 6 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 7 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 8 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 9 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+10 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+11 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+12 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+13 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+14 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+15 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+16 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+17 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+18 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+19 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+20 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+21 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+22 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+23 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+24 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+25 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+26 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+27 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+28 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+29 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+30 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+31 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+
+# End of /home/ahlstrom/.config/seq66/seq66cli.mutes
+#
+# vim: sw=4 ts=4 wm=4 et ft=dosini
