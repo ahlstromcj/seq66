@@ -149,7 +149,7 @@ midi_port_info::add (const midibus * m)
 bussbyte
 midi_port_info::get_port_index (int client, int port)
 {
-    bussbyte result = c_bussbyte_max;
+    bussbyte result = null_buss();
     for (int i = 0; i < m_port_count; ++i)
     {
         if (m_port_container[i].m_client_number != client)
@@ -182,7 +182,7 @@ midi_info::midi_info
     m_input             (),                 /* midi_port_info for inputs    */
     m_output            (),                 /* midi_port_info for outputs   */
     m_bus_container     (),
-    m_global_queue      (SEQ66_NO_QUEUE),   /* a la mastermidibase; created */
+    m_global_queue      (c_bad_id),         /* a la mastermidibase; created */
     m_midi_handle       (nullptr),          /* usually looked up or created */
     m_app_name          (appname),
     m_ppqn              (ppqn),

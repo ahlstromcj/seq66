@@ -1375,7 +1375,7 @@ public:
     );
     bool append_event (const event & er);
     void sort_events ();
-    void notify_change ();
+    void notify_change (bool userchange = true);
     void notify_trigger ();
     void print_triggers () const;
     void add_trigger

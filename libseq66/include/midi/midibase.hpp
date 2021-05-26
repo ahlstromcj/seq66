@@ -233,9 +233,9 @@ public:
         const std::string & busname     = "",       /* subsystem name       */
         const std::string & portname    = "",       /* rarely needed now    */
         int index                       = 0,        /* a display ordinal    */
-        int bus_id                      = SEQ66_NO_BUS,
-        int port_id                     = SEQ66_NO_PORT,
-        int queue                       = SEQ66_NO_QUEUE,
+        int bus_id                      = null_buss(),
+        int port_id                     = bad_id(),
+        int queue                       = bad_id(),
         int ppqn                        = SEQ66_USE_DEFAULT_PPQN,
         midibpm bpm                     = SEQ66_DEFAULT_BPM,
         bool makevirtual                = false,

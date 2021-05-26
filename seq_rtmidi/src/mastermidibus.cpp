@@ -191,7 +191,7 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
                 midibus * m = new (std::nothrow) midibus
                 (
                     m_midi_master, i, isvirtual, isinput,
-                    SEQ66_NO_BUS, issystem
+                    null_buss(), issystem
                 );
                 if (not_nullptr(m))
                 {
@@ -213,7 +213,7 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
                 midibus * m = new (std::nothrow) midibus
                 (
                     m_midi_master, i, isvirtual, isoutput,
-                    SEQ66_NO_BUS, issystem
+                    null_buss(), issystem
                 );
                 if (not_nullptr(m))
                 {

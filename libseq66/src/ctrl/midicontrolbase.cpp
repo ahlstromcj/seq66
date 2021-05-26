@@ -47,8 +47,8 @@ namespace seq66
 
 midicontrolbase::midicontrolbase (const std::string & name) :
     m_name              (name),
-    m_buss              (c_bussbyte_max),       /* 0xFF */
-    m_true_buss         (c_bussbyte_max),       /* 0xFF */
+    m_buss              (null_buss()),       /* 0xFF */
+    m_true_buss         (null_buss()),       /* 0xFF */
     m_is_blank          (true),
     m_is_enabled        (false),
     m_offset            (0),

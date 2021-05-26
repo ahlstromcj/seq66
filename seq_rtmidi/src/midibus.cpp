@@ -97,7 +97,7 @@ midibus::midibus
         rt.get_bus_name(index),
         rt.get_port_name(index),
         index,
-        bussoverride != SEQ66_NO_BUS ? bussoverride : rt.get_bus_id(index),
+        is_good_buss(bussoverride) ? bussoverride : rt.get_bus_id(index),
         index,
         rt.global_queue(),
         rt.ppqn(), rt.bpm(),
@@ -117,7 +117,7 @@ midibus::midibus
          * number.
          */
 
-        if (bus_id() == SEQ66_NO_BUS)
+        if (is_null_buss(bus_id()))
             set_bus_id(0);
 
         std::string pname = "midi ";

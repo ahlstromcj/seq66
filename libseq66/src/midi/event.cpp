@@ -99,10 +99,10 @@ namespace seq66
  */
 
 event::event () :
-    m_input_buss    (c_bussbyte_max),       /* 0xFF                 */
+    m_input_buss    (null_buss()),          /* 0xFF                 */
     m_timestamp     (0),
     m_status        (EVENT_NOTE_OFF),
-    m_channel       (c_midibyte_max),       /* 0xFF                 */
+    m_channel       (max_midibyte()),       /* 0xFF                 */
     m_data          (),                     /* a two-element array  */
     m_sysex         (),                     /* an std::vector       */
     m_linked        (nullptr),
@@ -133,10 +133,10 @@ event::event () :
  */
 
 event::event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1) :
-    m_input_buss    (c_bussbyte_max),       /* 0xFF                 */
+    m_input_buss    (null_buss()),          /* 0xFF                 */
     m_timestamp     (tstamp),
     m_status        (mask_status(status)),  /* remove the channel   */
-    m_channel       (c_midibyte_max),       /* 0xFF                 */
+    m_channel       (max_midibyte()),       /* 0xFF                 */
     m_data          (),                     /* a two-element array  */
     m_sysex         (),                     /* an std::vector       */
     m_linked        (nullptr),

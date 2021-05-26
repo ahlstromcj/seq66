@@ -67,10 +67,11 @@ public:
 
     enum class action
     {
-        off = 0,
-        on = 1,
-        toggle = 2,
-        toggle_active = 3
+        off,
+        on,
+        toggle,
+        toggle_active,
+        max
     };
 
     /**

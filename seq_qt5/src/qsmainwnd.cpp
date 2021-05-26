@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-05-13
+ * \updates       2021-05-26
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -623,9 +623,15 @@ qsmainwnd::qsmainwnd
     );
 
     /*
-     * Global buss combo-box
+     * Global buss combo-box.  If we set the buss override, we have to add 1
+     * to it to allow for the "None" entry.
      */
 
+    midibyte buss_override = usr().midi_buss_override();
+    if (is_good_buss(buss_override))
+    {
+        ui->cmb_global_bus->setCurrentIndex(int(buss_override) + 1);
+    }
     connect
     (
         ui->cmb_global_bus, SIGNAL(currentIndexChanged(int)),
@@ -1546,7 +1552,12 @@ qsmainwnd::refresh ()
             if (not_nullptr(m_live_frame))
             {
                 if (perf().playlist_active())
+                {
                     m_live_frame->set_playlist_name(perf().playlist_song());
+
+                    /* Added 2021-05-26 */
+                    update_window_title(perf().playlist_song_basename());
+                }
                 else
                     m_live_frame->set_playlist_name(rc().midi_filename());
             }
@@ -2379,7 +2390,7 @@ qsmainwnd::update_midi_bus (int index)
     {
         if (index == 0)
         {
-            /* Anything to do for the "None" entry? */
+            usr().midi_buss_override(null_buss());  /* for the "None" entry */
         }
         else
         {

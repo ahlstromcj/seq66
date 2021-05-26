@@ -232,10 +232,10 @@ build_output_port_map (const clockslist & cl)
  *
  * \return
  *      If the port map exists, the looked-up port/buss number is returned. If
- *      that port cannot be found by name, then c_bussbyte_max (0xFF) is
+ *      that port cannot be found by name, then null_buss() (0xFF) is
  *      returned.  Otherwise, the nominal buss parameter is returned, which
  *      preserves the legacy behavior of the pattern buss number. Also,
- *      c_bussbyte_max will be returned if the nomimal buss is that value.
+ *      null_buss() will be returned if the nomimal buss is that value.
  */
 
 bussbyte
@@ -249,7 +249,7 @@ true_output_bus (const clockslist & cl, bussbyte nominalbuss)
         {
             std::string shortname = cloutref.port_name_from_bus(nominalbuss);
             if (shortname.empty())
-                result = c_bussbyte_max;                    /* no such buss */
+                result = null_buss();
             else
                 result = cl.bus_from_nick_name(shortname);
 

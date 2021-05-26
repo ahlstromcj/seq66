@@ -102,10 +102,10 @@ int midibase::m_clock_mod = 16 * 4;
  * \param bus_id
  *      Provides the ID code for this bus.  It is an index into the midibus
  *      definitions array, and is also used in the constructed human-readable
- *      buss name.  Defaults to SEQ66_NO_BUS.
+ *      buss name.  Defaults to null_buss().
  *
  *          -   ALSA (seq66).  This is the ALSA buss number, ranging from 1 on
- *              upwards.  If SEQ66_NO_BUS, the derived class will get the buss
+ *              upwards.  If null_buss(), the derived class will get the buss
  *              ID at port-setup time.
  *          -   PortMidi.  This number is not yet used in PortMidi.  Perhaps
  *              this should be used instead of the queue parameter.
@@ -117,7 +117,7 @@ int midibase::m_clock_mod = 16 * 4;
  *
  * \param queue
  *      Provides the queue ID.  It has different meanings in each of the MIDI
- *      implementations.  Defaults to SEQ66_NO_QUEUE.
+ *      implementations.  Defaults to bad_id().
  *
  *          -   ALSA (seq66).  This is the ALSA queue number, which is an ALSA
  *              concept.

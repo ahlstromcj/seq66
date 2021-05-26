@@ -32,26 +32,18 @@
 
 #define SEQ66_RTMIDI_VERSION "2.1.1"        /* revision at fork time        */
 
-/**
- *  Like the SEQ66_NO_BUS and SEQ66_NO_PORT macros in
- *  libseq66/include/app_limits.h, this value indicates an unspecified or
- *  invalid index into the list of available ports.
- */
-
-#define SEQ66_NO_INDEX          (-1)        /* good values start at 0       */
-
-/**
- *  Default size of the MIDI queue.
- */
-
-#define SEQ66_DEFAULT_QUEUE_SIZE    100
-
 /*
  * Do not document the namespace; it breaks Doxygen.
  */
 
 namespace seq66
 {
+
+/**
+ *  Default size of the MIDI queue.
+ */
+
+const int c_default_queue_size  = 100;
 
 /**
  *    MIDI API specifier arguments.  These items used to be nested in
@@ -245,7 +237,7 @@ public:
     bool add (const midi_message & mmsg);
     void pop ();
     midi_message pop_front ();
-    void allocate (unsigned queuesize = SEQ66_DEFAULT_QUEUE_SIZE);
+    void allocate (unsigned queuesize = c_default_queue_size);
     void deallocate ();
 
 };          // class midi_queue

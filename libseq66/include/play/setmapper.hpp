@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-04-27
+ * \updates       2021-05-26
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -579,8 +579,9 @@ private:
     }
 
     void apply_song_transpose (seq::number seqno = seq::all());
-    midipulse max_timestamp () const;
+    int trigger_count () const;
     midipulse max_trigger () const;
+    midipulse max_timestamp () const;
     midipulse max_extent () const;
     void select_triggers_in_range
     (

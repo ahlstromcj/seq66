@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-05-25
+ * \updates       2021-05-26
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -323,7 +323,25 @@ namespace seq66
  */
 
 static const int c_thread_trigger_width_us = 4 * 1000;
+
+/**
+ *  This high-priority value is used if the --priorit option is specified.
+ *  Needs more testing, we really haven't needed it yet.
+ */
+
 static const int c_thread_priority = 1;
+
+/**
+ *  When operating a playlist, especially from a headless seq66cli run, and
+ *  with JACK transport active, the change from a playing tune to the next
+ *  tune would really jack up JACK, crashing the app (corrupted double-linked
+ *  list, double frees in destructors, etc.) and sometimes leaving a loud tone
+ *  buzzing.  So after we stop the current tune, we delay a little bit to
+ *  allow JACK playback to exit.  See the delay_stop() member function and its
+ *  usages herein.
+ */
+
+static const int c_delay_stop_ms = 100;
 
 /**
  *  Principal constructor.
@@ -1106,7 +1124,7 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
         if (s->get_length() < barlength)    /* pad sequence to a measure    */
             s->set_length(barlength, false);
 
-        if (buss_override != c_bussbyte_max)
+        if (! is_null_buss(buss_override))
             s->set_midi_bus(buss_override);
 
         if (! fileload)
@@ -1400,6 +1418,30 @@ performer::ui_change_set_bus (int buss)
         notify_set_change(setno, change::yes);
     }
     return result;
+}
+
+/**
+ *  This function provides a way to set the song-mode depending on if the
+ *  loaded song has triggers or not.  If there are no triggers, then all
+ *  tracks are unmuted automatically.  This feature is useful for headless
+ *  play.
+ */
+
+void
+performer::next_song_mode ()
+{
+    int triggercount = mapper().trigger_count();
+    if (triggercount > 0)
+    {
+        song_mode(true);
+        set_song_mute(mutegroups::action::off);
+    }
+    else
+    {
+        song_mode(false);
+        song_recording(false);
+        mute_all_tracks(false);
+    }
 }
 
 /**
@@ -2015,10 +2057,7 @@ performer::set_song_mute (mutegroups::action op)
         break;
 
     case mutegroups::action::toggle_active:
-
-        /*
-         * No action yet.
-         */
+    default:
 
         break;
     }
@@ -3798,7 +3837,7 @@ void
 performer::delay_stop ()
 {
     auto_stop();
-    millisleep(500);
+    millisleep(c_delay_stop_ms);
 }
 
 /**
@@ -6425,9 +6464,11 @@ performer::open_next_list (bool opensong, bool loading)
     bool result = m_play_list->open_next_list(opensong, loading);
     if (result)
     {
+        if (opensong)
+            next_song_mode();
+
         notify_song_change();
     }
-
     return result;
 }
 
@@ -6438,8 +6479,12 @@ performer::open_previous_list (bool opensong)
 
     bool result = m_play_list->open_previous_list(opensong);
     if (result)
-        notify_song_change();
+    {
+        if (opensong)
+            next_song_mode();
 
+        notify_song_change();
+    }
     return result;
 }
 
@@ -6450,8 +6495,12 @@ performer::open_select_song_by_index (int index, bool opensong)
 
     bool result = m_play_list->open_select_song(index, opensong);
     if (result)
-        notify_song_change();
+    {
+        if (opensong)
+            next_song_mode();
 
+        notify_song_change();
+    }
     return result;
 }
 
@@ -6462,8 +6511,12 @@ performer::open_select_song_by_midi (int ctrl, bool opensong)
 
     bool result = m_play_list->open_select_song_by_midi(ctrl, opensong);
     if (result)
-        notify_song_change();
+    {
+        if (opensong)
+            next_song_mode();
 
+        notify_song_change();
+    }
     return result;
 }
 
@@ -6475,6 +6528,9 @@ performer::open_next_song (bool opensong)
     bool result = m_play_list->open_next_song(opensong);
     if (result)
     {
+        if (opensong)
+            next_song_mode();
+
         notify_song_change();
     }
     return result;
@@ -6487,8 +6543,12 @@ performer::open_previous_song (bool opensong)
 
     bool result = m_play_list->open_previous_song(opensong);
     if (result)
-        notify_song_change();
+    {
+        if (opensong)
+            next_song_mode();
 
+        notify_song_change();
+    }
     return result;
 }
 

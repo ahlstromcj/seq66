@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-05-21
+ * \updates       2021-05-26
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -394,6 +394,7 @@ private:
     void restore_snapshot ();
     void set_last_ticks (midipulse tick);
 
+    int trigger_count () const;
     midipulse max_trigger () const;
     midipulse max_timestamp () const;
     midipulse max_extent () const;

@@ -19,13 +19,13 @@
 /**
  * \file          songsummary.cpp
  *
- *  This module declares/defines a class for writing summary information about a
- *  MIDI file.
+ *  This module declares/defines a class for writing summary information about
+ *  a MIDI file.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2021-05-11
+ * \updates       2021-05-26
  * \license       GNU GPLv2 or above
  *
  */
@@ -226,19 +226,12 @@ songsummary::write_mute_groups
         if (ok)
         {
             int count = 0;
-            file << "Mute group #" << groupnumber << ": ";
+            file << "Mute group #" << std::setw(2) << groupnumber << ": ";
             for (auto mutestatus : mutebits)
             {
-                if (count == 8)
-                {
+                file << (bool(mutestatus) ? "1" : "0");
+                if (++count % 8 == 0)
                     file << " ";
-                    count = 0;
-                }
-                else
-                {
-                    file << (bool(mutestatus) ? "1" : "0");
-                    ++count;
-                }
             }
             file << std::endl;
         }
@@ -247,12 +240,6 @@ songsummary::write_mute_groups
             file << "Mute group #" << groupnumber << " empty" << std::endl;
         }
     }
-    /*
-        write_long(groupnumber);
-        for (auto mutestatus : mutebits)
-            write_long(bool(mutestatus) ? 1 : 0);
-    }
-    */
 }
 
 bool

@@ -355,7 +355,7 @@ listsbase::extract_nickname (const std::string & name) const
 bussbyte
 listsbase::bus_from_nick_name (const std::string & nick) const
 {
-    bussbyte result = c_bussbyte_max;           /* a "null", unusable value */
+    bussbyte result = null_buss();
     for (const auto & iopair : m_master_io)
     {
         if (nick == iopair.second.io_nick_name)

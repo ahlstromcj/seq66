@@ -1742,6 +1742,8 @@ public:
         return m_song_start_mode;
     }
 
+    void next_song_mode ();
+
     void song_mode (bool flag)
     {
         m_song_start_mode = flag ?

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-05-19
+ * \updates       2021-05-26
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -209,6 +209,7 @@ midifile::midifile
     m_use_scaled_ppqn           (false),                /* scaled()         */
     m_ppqn                      (ppqn),                 /* can start as 0   */
     m_file_ppqn                 (0),                    /* can change       */
+    m_ppqn_ratio                (1.0),                  /* for scaled()     */
     m_smf0_splitter             ()
 {
     // no other code needed
@@ -958,9 +959,12 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
         scaled(false);                              /* do not scale time    */
     }
     else
+    {
         scaled(file_ppqn() != usr().default_ppqn());
-
-    if (buss_override != c_bussbyte_max && rc().verbose())
+        if (scaled())
+            ppqn_ratio(double(ppqn()) / double(file_ppqn()));
+    }
+    if (! is_null_buss(buss_override) && rc().verbose())
     {
         infoprintf("Buss override %d", int(buss_override));
     }
@@ -1022,16 +1026,11 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                  */
 
                 runningtime += delta;           /* add in the time          */
+                currenttime = runningtime;
                 if (scaled())                   /* adjust time via ppqn     */
-                {
-                    currenttime = runningtime * m_ppqn / file_ppqn();
-                    e.set_timestamp(currenttime);
-                }
-                else
-                {
-                    currenttime = runningtime;
-                    e.set_timestamp(currenttime);
-                }
+                    currenttime = midipulse(currenttime * ppqn_ratio());
+
+                e.set_timestamp(currenttime);
 
                 midibyte eventcode = event::mask_status(status);    /* F0 */
                 midibyte channel = event::get_channel(status);      /* 0F */
@@ -1465,7 +1464,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
             if (seqnum < PROP_SEQ_NUMBER)
             {
-                if (buss_override != c_bussbyte_max)
+                if (! is_null_buss(buss_override))
                     s.set_midi_bus(buss_override);
 
                 if (is_smf0)

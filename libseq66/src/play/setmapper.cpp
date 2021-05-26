@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-05-21
+ * \updates       2021-05-26
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -569,6 +569,21 @@ setmapper::max_extent () const
  * Triggers
  * -------------------------------------------------------------------------
  */
+
+/**
+ *  Counts all the triggers in all the sequences in all the sets.
+ */
+
+int
+setmapper::trigger_count () const
+{
+    int result = 0;
+    for (const auto & sset : sets())
+    {
+        result += sset.second.trigger_count();
+    }
+    return result;
+}
 
 /**
  *  Locates the largest trigger value among the active sequences.

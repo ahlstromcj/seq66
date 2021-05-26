@@ -323,7 +323,7 @@ private:
 
     /**
      *  Indicates the input buss on which this event came in.  The default
-     *  value is unusable: c_bussbyte_max from the midibytes.hpp module.
+     *  value is unusable: null_buss() from the midibytes.hpp module.
      */
 
     bussbyte m_input_buss;
@@ -436,7 +436,7 @@ public:
 
     void set_input_bus (bussbyte b)
     {
-        if (b < c_bussbyte_max)                 /* unsigned, so always > 0  */
+        if (is_good_buss(b))
             m_input_buss = b;
     }
 

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-04
- * \updates       2019-11-24
+ * \updates       2021-05-26
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the WRK format, see, for example:
@@ -78,6 +78,7 @@ enum wrk_chunk_t
     WC_TRKNAME_CHUNK    = 24, ///< Track name.
     WC_VARIABLE_CHUNK   = 26, ///< Variable record chunk.
     WC_NTRKOFS_CHUNK    = 27, ///< Track offset.
+    WC_PUZZLING_CHUNK   = 29, ///< Common, but unknow purpose.
     WC_TRKBANK_CHUNK    = 30, ///< Track bank.
     WC_NTRACK_CHUNK     = 36, ///< Track prefix.
     WC_NSYSEX_CHUNK     = 44, ///< System exclusive bank.
@@ -208,7 +209,7 @@ private:
     std::string m_track_name;
 
     /**
-     *  Saves the track channel for the End_chunk() function.
+     *  Saves the track channel for the EndChunk() function.
      */
 
     int m_track_channel;
@@ -250,6 +251,8 @@ public:
 
 private:
 
+    void Set_timestamp (event & e, midipulse rawtime);
+
     /**
      *  Returns an integer version of a midibyte, returning -1 if it was 255.
      */
@@ -258,10 +261,6 @@ private:
     {
         return b == 255 ? (-1) : int(b) ;
     }
-
-    /**
-     * \getter m_performer
-     */
 
     performer * perfp ()
     {
@@ -292,16 +291,16 @@ private:
     void read_raw_data (int size);
     int read_chunk ();
     void NoteArray (int track, int events);
-    void Track_chunk ();
-    void Vars_chunk ();
-    void Timebase_chunk ();
-    void Stream_chunk ();
-    void Meter_chunk ();
-    void Tempo_chunk (int factor = 1);
-    void Sysex_chunk ();
-    void Sysex2_chunk ();
-    void NewSysex_chunk ();
-    void Thru_chunk ();
+    void TrackChunk ();
+    void VarsChunk ();
+    void TimebaseChunk ();
+    void StreamChunk ();
+    void MeterChunk ();
+    void TempoChunk (int factor = 1);
+    void SysexChunk ();
+    void Sysex2Chunk ();
+    void NewSysexChunk ();
+    void ThruChunk ();
     void TrackOffset ();
     void TrackReps ();
     void TrackPatch ();
@@ -316,11 +315,12 @@ private:
     void LyricsStream ();
     void TrackVol ();
     void NewTrackOffset ();
-    void MeterKey_chunk ();
-    void Segment_chunk ();
+    void MeterKeyChunk ();
+    void SegmentChunk ();
     void NewStream ();
-    void Unknown (int id);
-    void End_chunk ();
+    void UnknownChunk (int id);
+    void PuzzleChunk ();
+    void EndChunk ();
 
 };          // class wrkfile
 

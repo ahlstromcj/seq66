@@ -90,8 +90,8 @@ public:
         rtmidi_info & rt,
         int index,
         bool makevirtual    = SEQ66_MIDI_NORMAL_PORT,
-        bool isinput        = SEQ66_MIDI_OUTPUT_PORT,   /* gotcha! */
-        int bussoverride    = SEQ66_NO_BUS,             /* was 0!! */
+        bool isinput        = SEQ66_MIDI_OUTPUT_PORT,
+        int bussoverride    = null_buss(),
         bool makesystem     = false
     );
 

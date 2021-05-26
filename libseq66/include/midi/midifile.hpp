@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-05-18
+ * \updates       2021-05-26
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -264,6 +264,12 @@ private:
     int m_file_ppqn;
 
     /**
+     *  Provides the ratio of the main PPQN to the file PPQN, for use with scaling.
+     */
+
+    double m_ppqn_ratio;
+
+    /**
      *  Provides support for SMF 0. This object holds all of the information
      *  needed to split a multi-channel sequence.
      */
@@ -314,6 +320,11 @@ public:
         return m_file_ppqn;
     }
 
+    double ppqn_ratio () const
+    {
+        return m_ppqn_ratio;
+    }
+
     bool scaled () const
     {
         return m_use_scaled_ppqn;
@@ -355,6 +366,11 @@ protected:
     void file_ppqn (int p)
     {
         m_file_ppqn = p;
+    }
+
+    void ppqn_ratio (double r)
+    {
+        m_ppqn_ratio = r;
     }
 
     void scaled (bool flag)

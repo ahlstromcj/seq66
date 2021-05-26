@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-04
- * \updates       2020-08-08
+ * \updates       2021-05-26
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the WRK format, see, for example:
@@ -404,8 +404,7 @@ wrkfile::read_var_string ()
  *
  * void signalWRKHeader(int verh, int verl);
  *
- *  Note that the filename is set during the construction of this
- *  object.
+ *  Note that the filename is set during the construction of this object.
  */
 
 bool
@@ -420,7 +419,7 @@ wrkfile::parse (performer & p, int screenset, bool importing)
     if (result)
     {
         clear_errors();
-        m_performer = &p;                 /* get address, access via perfp()  */
+        m_performer = &p;               /* get address, access via perfp()  */
         m_screen_set = screenset;
         m_importing = importing;
         read_gap(1);                    /* bypasses a 0x1a [SUB] character  */
@@ -428,8 +427,8 @@ wrkfile::parse (performer & p, int screenset, bool importing)
         int vme = int(read_byte());     /* minor WRK version number         */
         int vma = int(read_byte());     /* major WRK version number         */
         int ck_id;
-        if (rc().show_midi())
-            printf("WRK Version : %d.%d\n", vma, vme);
+        if (rc().verbose())
+            printf("[WRK Version: %d.%d]\n", vma, vme);
 
         do
         {
@@ -440,7 +439,7 @@ wrkfile::parse (performer & p, int screenset, bool importing)
         if (! at_end())
             result = set_error("Corrupted WRK file.");
         else
-            End_chunk();
+            EndChunk();
     }
     else
         result = set_error("Invalid WRK file format.");
@@ -542,7 +541,7 @@ wrkfile::finalize_sequence
  */
 
 void
-wrkfile::Track_chunk ()
+wrkfile::TrackChunk ()
 {
     std::string name[2];
     int trackno = int(read_16_bit());       /* used as provisional seq number   */
@@ -585,7 +584,7 @@ wrkfile::Track_chunk ()
 }
 
 /**
- *  Called from NewTrack() or Track_chunk().  It finalizes the current track and
+ *  Called from NewTrack() or TrackChunk().  It finalizes the current track and
  *  sets up for the next track.
  *
  *  Handle a new track.  All the events in a Cakewalk track are contiguous.
@@ -594,7 +593,7 @@ wrkfile::Track_chunk ()
  *
  *  Unanswered yet is what to do with the hanging sequence if no more tracks are
  *  found?  And we have to have another way to finish off the last track.
- *  This is now done in End_chunk().
+ *  This is now done in EndChunk().
  */
 
 void
@@ -632,7 +631,8 @@ wrkfile::next_track
 }
 
 /**
- *  This override finalizes a WRK track, if the sequence doesn't already exist.
+ *  This override finalizes a WRK track, if the sequence doesn't already
+ *  exist.
  */
 
 void
@@ -640,7 +640,11 @@ wrkfile::finalize_track ()
 {
     if (not_nullptr(m_current_seq))     /* a sequence currently exists  */
     {
-        m_current_seq->set_length(m_track_time);
+        midipulse duration = m_track_time;
+        if (scaled())
+            duration = midipulse(duration * ppqn_ratio());
+
+        m_current_seq->set_length(duration);
         (void) finalize_sequence
         (
             *m_performer, *m_current_seq, m_track_number, m_screen_set
@@ -675,7 +679,7 @@ wrkfile::finalize_track ()
  */
 
 void
-wrkfile::Vars_chunk ()
+wrkfile::VarsChunk ()
 {
     m_wrk_data.m_Now            = read_32_bit();
     m_wrk_data.m_From           = read_32_bit();
@@ -729,25 +733,25 @@ wrkfile::Vars_chunk ()
  *      - timebase ticks per quarter note
  *
  * void signalWRKTimeBase(int timebase);
- *
- * TODO: set file PPQN etc!!!
  */
 
 void
-wrkfile::Timebase_chunk ()
+wrkfile::TimebaseChunk ()
 {
     midishort timebase = read_16_bit();
     m_wrk_data.m_division = timebase;
-    if (timebase >= SEQ66_MINIMUM_PPQN && timebase <= SEQ66_MAXIMUM_PPQN)
+    file_ppqn(int(timebase));                       /* original file PPQN   */
+    if (usr().use_file_ppqn())
     {
-        ppqn(timebase);
-        m_performer->set_ppqn(timebase);
+        m_performer->file_ppqn(file_ppqn());        /* let performer know   */
+        ppqn(file_ppqn());                          /* PPQN == file PPQN    */
+        scaled(false);                              /* do not scale time    */
     }
     else
     {
-        infoprint("[Setting default PPQN]");
-        ppqn(SEQ66_DEFAULT_PPQN);
-        m_performer->set_ppqn(SEQ66_DEFAULT_PPQN);
+        scaled(file_ppqn() != usr().default_ppqn());
+        if (scaled())
+            ppqn_ratio(double(ppqn()) / double(file_ppqn()));
     }
 
     // Q_EMIT signalWRKTimeBase(timebase);
@@ -860,9 +864,8 @@ wrkfile::NoteArray (int track, int events)
             }
 
             bool isnoteoff = false;
-            e.set_timestamp(time);
+            Set_timestamp(e, time);             /* e.set_timestamp(time)    */
             e.set_status(status);                           /* w/channel    */
-
             switch (eventcode)
             {
             case EVENT_NOTE_OFF:                                // 0x80
@@ -886,14 +889,16 @@ wrkfile::NoteArray (int track, int events)
                 {
                     event e;
                     timemax = time + midilong(dur);
-                    e.set_timestamp(timemax);
+                    Set_timestamp(e, timemax);  /* e.set_timestamp(timemax) */
                     e.set_channel_status(EVENT_NOTE_OFF, channel);
                     e.set_data(d0, 0);
                     m_current_seq->append_event(e);
                 }
                 m_current_seq->set_midi_channel(channel);
                 if (timemax > m_track_time)
+                {
                     m_track_time = timemax;
+                }
                 break;
 
             case EVENT_PROGRAM_CHANGE:                          // 0xC0
@@ -1131,7 +1136,7 @@ wrkfile::NoteArray (int track, int events)
  */
 
 void
-wrkfile::Stream_chunk ()
+wrkfile::StreamChunk ()
 {
     midishort track = read_16_bit();
     int events = read_16_bit();
@@ -1148,13 +1153,13 @@ wrkfile::Stream_chunk ()
         midibyte d0 = read_byte();
         midibyte d1 = read_byte();
         midishort dur = read_16_bit();
-        int value = 0;
+        int value;
         event e;
         if ((status & 0x80) == 0x00)                /* is it a status bit?      */
             status = laststatus;                    /* no, it's running status  */
 
         bool isnoteoff = false;
-        e.set_timestamp(time);
+        Set_timestamp(e, time);                     /* e.set_timestamp(time)    */
         e.set_status(status);                       /* includes the channel     */
         if (eventcode == EVENT_NOTE_OFF)
         {
@@ -1184,7 +1189,7 @@ wrkfile::Stream_chunk ()
             {
                 event e;
                 timemax = time + midilong(dur);
-                e.set_timestamp(timemax);
+                Set_timestamp(e, timemax);      /* e.set_timestamp(timemax) */
                 e.set_channel_status(EVENT_NOTE_OFF, channel);
                 e.set_data(d0, 0);
                 m_current_seq->append_event(e);
@@ -1266,11 +1271,11 @@ wrkfile::Stream_chunk ()
  *  only for the first bar (measure).  Also, Cakewalk WRK files do not seem to
  *  handle clocks-per-metronome and 32nds-per-quarter.
  *
- *  See MeterKey_chunk().
+ *  See MeterKeyChunk().
  */
 
 void
-wrkfile::Meter_chunk ()
+wrkfile::MeterChunk ()
 {
     int count = read_16_bit();
     for (int i = 0; i < count; ++i)
@@ -1331,7 +1336,7 @@ wrkfile::Meter_chunk ()
  */
 
 void
-wrkfile::MeterKey_chunk ()
+wrkfile::MeterKeyChunk ()
 {
     int count = read_16_bit();
     for (int i = 0; i < count; ++i)
@@ -1430,7 +1435,7 @@ wrkfile::get_real_time (long ticks) const
  */
 
 void
-wrkfile::Tempo_chunk (int factor)
+wrkfile::TempoChunk (int factor)
 {
     double division = 1.0 * m_wrk_data.m_division;
     int count = read_16_bit();
@@ -1492,10 +1497,23 @@ wrkfile::Tempo_chunk (int factor)
         bool ok = e.append_meta_data(EVENT_META_SET_TEMPO, bt, 3);
         if (ok)
         {
-            e.set_timestamp(time);
+            Set_timestamp(e, time);             /* e.set_timestamp(time)    */
             m_current_seq->append_event(e);
         }
     }
+}
+
+/**
+ *  Allows for the timestamp to be scaled, if requested.
+ */
+
+void
+wrkfile::Set_timestamp (event & e, midipulse rawtime)
+{
+    if (scaled())                   /* adjust time via ppqn     */
+        rawtime = midipulse(rawtime * ppqn_ratio());
+
+    e.set_timestamp(rawtime);
 }
 
 /**
@@ -1512,7 +1530,7 @@ wrkfile::Tempo_chunk (int factor)
  */
 
 void
-wrkfile::Sysex_chunk ()
+wrkfile::SysexChunk ()
 {
     midistring data;
     int bank = read_byte();
@@ -1540,7 +1558,7 @@ wrkfile::Sysex_chunk ()
 }
 
 void
-wrkfile::Sysex2_chunk ()
+wrkfile::Sysex2Chunk ()
 {
     midistring data;
     int bank = read_16_bit();
@@ -1570,7 +1588,7 @@ wrkfile::Sysex2_chunk ()
 }
 
 void
-wrkfile::NewSysex_chunk ()
+wrkfile::NewSysexChunk ()
 {
     std::string name;
     midistring data;
@@ -1617,7 +1635,7 @@ wrkfile::NewSysex_chunk ()
  */
 
 void
-wrkfile::Thru_chunk ()
+wrkfile::ThruChunk ()
 {
     read_gap(2);
     midibyte port = read_byte();            // 0 -> 127
@@ -1813,7 +1831,7 @@ wrkfile::VariableRecord (int max)
  */
 
 void
-wrkfile::Unknown (int id)
+wrkfile::UnknownChunk (int id)
 {
     // Q_EMIT signalWRKUnknownChunk(id, m_wrk_data.m_lastChunkData);
 
@@ -1895,7 +1913,6 @@ wrkfile::NewTrack ()
             int(vol), int(vel), int(pan)
         );
     }
-
     next_track(trackno, channel, trackname);
 
 #if defined USE_Q_EMIT_CODE
@@ -2097,7 +2114,7 @@ wrkfile::TrackBank ()
  */
 
 void
-wrkfile::Segment_chunk ()
+wrkfile::SegmentChunk ()
 {
     int track = read_16_bit();
     int offset = read_32_bit();
@@ -2144,6 +2161,15 @@ wrkfile::NewStream()
     NoteArray(track, events);
 }
 
+void
+wrkfile::PuzzleChunk ()
+{
+    if (rc().show_midi())
+    {
+        printf("Puzzle chunk: At seq number %d\n", m_seq_number);
+    }
+}
+
 /**
  *  After reading the last chunk of a WRK file, this function finalizes any
  *  last track that was extant.
@@ -2155,7 +2181,7 @@ wrkfile::NewStream()
  */
 
 void
-wrkfile::End_chunk ()
+wrkfile::EndChunk ()
 {
     // Q_EMIT signalWRKEnd();
 
@@ -2180,39 +2206,39 @@ wrkfile::read_chunk ()
         switch (ck)
         {
         case WC_TRACK_CHUNK:
-            Track_chunk();          // names, number, velocity, mute/loop status
+            TrackChunk();          // names, number, velocity, mute/loop status
             break;
 
         case WC_VARS_CHUNK:
-            Vars_chunk();           // Cakewalk global variables
+            VarsChunk();           // Cakewalk global variables
             break;
 
         case WC_TIMEBASE_CHUNK:
-            Timebase_chunk();       // gets PPQN value m_division for whole tune
+            TimebaseChunk();       // gets PPQN value m_division for whole tune
             break;
 
         case WC_STREAM_CHUNK:
-            Stream_chunk();         // note, control, program, pitchbend, etc.
+            StreamChunk();         // note, control, program, pitchbend, etc.
             break;
 
         case WC_METER_CHUNK:
-            Meter_chunk();          // gets a time signature
+            MeterChunk();          // gets a time signature
             break;
 
         case WC_TEMPO_CHUNK:
-            Tempo_chunk(100);       // gets the BPM tempo
+            TempoChunk(100);       // gets the BPM tempo
             break;
 
         case WC_NTEMPO_CHUNK:
-            Tempo_chunk();          // gets the BPM tempo
+            TempoChunk();          // gets the BPM tempo
             break;
 
         case WC_SYSEX_CHUNK:
-            Sysex_chunk();          // handle SysEx messages (TODO)
+            SysexChunk();          // handle SysEx messages (TODO)
             break;
 
         case WC_THRU_CHUNK:
-            Thru_chunk();           // Extended Thru: mode, port, channel, ...
+            ThruChunk();           // Extended Thru: mode, port, channel, ...
             break;
 
         case WC_TRKOFFS_CHUNK:
@@ -2267,24 +2293,28 @@ wrkfile::read_chunk ()
             NewTrackOffset();       // "long" track offset
             break;
 
+        case WC_PUZZLING_CHUNK:
+            PuzzleChunk();
+            break;
+
         case WC_TRKBANK_CHUNK:
             TrackBank();            // the bank ID of the track
             break;
 
         case WC_METERKEY_CHUNK:
-            MeterKey_chunk();       // gets a time signature and key (scale)
+            MeterKeyChunk();       // gets a time signature and key (scale)
             break;
 
         case WC_SYSEX2_CHUNK:
-            Sysex2_chunk();         // handle SysEx messages (TODO)
+            Sysex2Chunk();         // handle SysEx messages (TODO)
             break;
 
         case WC_NSYSEX_CHUNK:
-            NewSysex_chunk();
+            NewSysexChunk();
             break;
 
         case WC_SGMNT_CHUNK:
-            Segment_chunk();        // processes a note array
+            SegmentChunk();        // processes a note array
             break;
 
         case WC_NSTREAM_CHUNK:
@@ -2292,7 +2322,7 @@ wrkfile::read_chunk ()
             break;
 
         default:
-            Unknown(ck);
+            UnknownChunk(ck);
             break;
         }
         read_seek(final_pos);           // TODO: check the return value

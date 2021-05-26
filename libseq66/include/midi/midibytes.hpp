@@ -238,6 +238,13 @@ const int c_busscount_max           = 48;
 const int c_midichannel_max         = 16;
 const int c_midichannel_null        = 0x80;
 
+/**
+ *  Indicates an integer that is not a valid ID.  IDs normally start from 0,
+ *  this value is negative.
+ */
+
+const int c_bad_id                  = (-1);
+
 /*
  * -------------------------------------------------------------------------
  *  midi_measures
@@ -533,6 +540,12 @@ is_null_buss (bussbyte b)
     return b == c_bussbyte_max;
 }
 
+inline bussbyte
+null_buss ()
+{
+    return c_bussbyte_max;
+}
+
 inline bool
 is_good_buss (bussbyte b)
 {
@@ -558,6 +571,12 @@ is_good_midibyte (midibyte b)
 }
 
 inline midibyte
+max_midibyte ()
+{
+    return c_midibyte_max;
+}
+
+inline midibyte
 clamp_midibyte_value (midibyte b)
 {
     return b > c_midibyte_value_max ? c_midibyte_value_max : b ;
@@ -571,6 +590,12 @@ inline bool
 is_null_channel (midibyte c)
 {
     return c >= c_midichannel_null;     /* c_midibyte_max */
+}
+
+inline int
+bad_id ()
+{
+    return c_bad_id;
 }
 
 /**

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-05-19
+ * \updates       2021-05-26
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -247,7 +247,7 @@ usrsettings::usrsettings () :
     m_midi_beats_per_minute     (SEQ66_DEFAULT_BPM),
     m_midi_bpm_maximum          (c_midibyte_value_max),
     m_midi_beat_width           (SEQ66_DEFAULT_BEAT_WIDTH),
-    m_midi_buss_override        (c_bussbyte_max),       /* is_null_buss()   */
+    m_midi_buss_override        (null_buss()),
     m_velocity_override         (SEQ66_PRESERVE_VELOCITY),
     m_bpm_precision             (SEQ66_DEFAULT_BPM_PRECISION),
     m_bpm_step_increment        (SEQ66_DEFAULT_BPM_STEP_INCREMENT),
@@ -355,7 +355,7 @@ usrsettings::set_defaults ()
     m_midi_beats_per_minute = SEQ66_DEFAULT_BPM;
     m_midi_bpm_maximum = c_midibyte_value_max;
     m_midi_beat_width = SEQ66_DEFAULT_BEAT_WIDTH;
-    m_midi_buss_override = c_bussbyte_max;          // 0xFF
+    m_midi_buss_override = null_buss();             // 0xFF
     m_velocity_override = SEQ66_PRESERVE_VELOCITY;  // -1, 0 to 127
     m_bpm_precision = SEQ66_DEFAULT_BPM_PRECISION;
     m_bpm_step_increment = SEQ66_DEFAULT_BPM_STEP_INCREMENT;
@@ -996,7 +996,7 @@ usrsettings::midi_beat_width (int bw)
 void
 usrsettings::midi_buss_override (bussbyte buss)
 {
-    if (is_good_buss(buss) || is_null_buss(buss))
+    if (is_valid_buss(buss))                /* good value or a null value   */
         m_midi_buss_override = buss;
 }
 

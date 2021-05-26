@@ -178,32 +178,6 @@
 #define SEQ66_OUTPUT_BUSS_DEFAULT          8
 
 /**
- *  Flags an unspecified buss number.  Two spellings are provided, one for
- *  youngsters and one for old men.  :-D
- *
- *  Also note that the bussbyte type is an unsigned character. The
- *  midibytes.hpp file defines c_bussbyte_max as the "no bus" value, 0xFF.
- */
-
-#define SEQ66_NO_BUS                    (0xFF)
-#define SEQ66_BAD_BUS_ID                (unsigned(-1))
-
-/**
- *  Flags an unspecified port number, or indicates a bad client ID or port
- *  number.
- */
-
-#define SEQ66_NO_PORT                   (-1)
-#define SEQ66_BAD_PORT_ID               (unsigned(-1))
-
-/**
- *  Flags an unspecified queue number.
- */
-
-#define SEQ66_NO_QUEUE                  (-1)
-#define SEQ66_BAD_QUEUE_ID              (unsigned(-1))
-
-/**
  *  Guessing that this has to do with the width of the performerance piano roll.
  *  See perfroll::init_before_show().
  */

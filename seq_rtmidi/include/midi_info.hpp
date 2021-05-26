@@ -47,9 +47,10 @@
 
 namespace seq66
 {
-    class event;
-    class mastermidibus;
-    class midibus;
+
+class event;
+class mastermidibus;
+class midibus;
 
 /**
  *  A class for holding port information.
@@ -103,7 +104,7 @@ public:
         bool makevirtual,                   // SEQ66_MIDI_VIRTUAL_PORT
         bool makesystem,                    // SEQ66_MIDI_SYSTEM_PORT
         bool makeinput,                     // SEQ66_MIDI_INPUT_PORT
-        int queuenumber = SEQ66_BAD_QUEUE_ID
+        int queuenumber = bad_id()
     );
     void add (const midibus * m);
 
@@ -130,7 +131,7 @@ public:
         if (index < get_port_count())
             return m_port_container[index].m_client_number;
         else
-            return SEQ66_BAD_BUS_ID;
+            return bad_id();
     }
 
     std::string get_bus_name (int index) const
@@ -146,7 +147,7 @@ public:
         if (index < get_port_count())
             return m_port_container[index].m_port_number;
         else
-            return SEQ66_BAD_PORT_ID;
+            return bad_id();
     }
 
     std::string get_port_name (int index) const
@@ -186,7 +187,7 @@ public:
         if (index < get_port_count())
             return m_port_container[index].m_queue_number;
         else
-            return SEQ66_BAD_QUEUE_ID;
+            return bad_id();
     }
 
     /**

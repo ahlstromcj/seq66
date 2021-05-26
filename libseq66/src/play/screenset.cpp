@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-05-21
+ * \updates       2021-05-26
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -591,6 +591,22 @@ screenset::max_extent () const
  * Triggers
  * -------------------------------------------------------------------------
  */
+
+/**
+ *  Counts the triggers in the screenset.
+ */
+
+int
+screenset::trigger_count () const
+{
+    int result = 0;
+    for (const auto & s : m_container)
+    {
+        if (s.active())
+            result += s.loop()->trigger_count();
+    }
+    return result;
+}
 
 /**
  *  Finds the maximum trigger in the screenset.

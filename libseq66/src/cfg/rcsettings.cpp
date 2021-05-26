@@ -71,7 +71,7 @@ rcsettings::rcsettings () :
     m_load_key_controls         (true),
     m_keycontainer              ("rc"),
     m_load_midi_controls        (true),
-    m_midi_control_buss         (c_bussbyte_max),
+    m_midi_control_buss         (null_buss()),
     m_midi_control_in           ("rc"),
     m_midi_control_out          ("rc"),
     m_show_ui_sequence_key      (true),
@@ -167,7 +167,7 @@ rcsettings::set_defaults ()
      */
 
     m_load_midi_controls        = true;
-    m_midi_control_buss         = c_bussbyte_max;
+    m_midi_control_buss         = null_buss();
 
     /*
      * m_midi_control_in.clear();           // what is best?

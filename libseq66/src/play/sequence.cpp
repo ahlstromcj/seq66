@@ -134,7 +134,7 @@ sequence::sequence (int ppqn)
     m_midi_channel              (0),
     m_no_channel                (false),
     m_nominal_bus               (0),
-    m_true_bus                  (c_bussbyte_max),
+    m_true_bus                  (null_buss()),
     m_song_mute                 (false),
     m_transposable              (true),
     m_notes_on                  (0),
@@ -4192,12 +4192,12 @@ sequence::set_midi_bus (bussbyte nominalbus, bool user_change)
                 m_true_bus = nominalbus;    /* named buss no longer exists  */
         }
         else
-            m_true_bus = c_bussbyte_max;    /* provides an invalid value    */
+            m_true_bus = null_buss();       /* provides an invalid value    */
 
         if (user_change)
             modify();                       /* no easy way to undo this     */
 
-        notify_change();                    /* more reliable than set dirty */
+        notify_change(user_change);         /* more reliable than set dirty */
         set_dirty();                        /* this is for display updating */
     }
     return result;
@@ -4356,13 +4356,22 @@ sequence::extend (midipulse len)
  *  changed in some way not based on a trigger or action, and is hence a
  *  modify action.  [The default change value is "yes" for performer ::
  *  notify_sequence_change().]
+ *
+ * \param userchange
+ *      Indicates if the change was requested by a user or done in the
+ *      "normal" course of operations.
  */
 
 void
-sequence::notify_change ()
+sequence::notify_change (bool userchange)
 {
     if (not_nullptr(perf()))
-        perf()->notify_sequence_change(seq_number());
+    {
+        performer::change mod = userchange ?
+            performer::change::yes : performer::change::no ;
+
+        perf()->notify_sequence_change(seq_number(), mod);
+    }
 }
 
 /**
