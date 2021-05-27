@@ -222,6 +222,13 @@ midicontrolfile::parse_stream (std::ifstream & file)
 {
     bool result = true;
     file.seekg(0, std::ios::beg);                   /* seek to the start    */
+
+    /*
+     * This is iffy, because we're setting the code version variable
+     * from the version value in the file, and it might be an old file.
+     * This will cause trouble later when we forget about it.
+     */
+
     version(parse_version(file));
 
     std::string s = parse_comments(file);

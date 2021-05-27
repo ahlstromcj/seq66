@@ -151,9 +151,11 @@ usrfile::parse ()
     }
     else
     {
-        int fileversion = string_to_int(comments);
-        int codeversion = string_to_int(version());
-        if (fileversion < codeversion)
+//      int fileversion = string_to_int(comments);
+//      int codeversion = string_to_int(version());
+//      if (fileversion < codeversion)
+
+        if (file_version_old(file))
             usr().save_user_config(true);
     }
 
@@ -1267,8 +1269,8 @@ usrfile::write ()
         "# This value specifies an optional log-file that replaces output\n"
         "# to standard output and standard error.  To indicate no log-file,\n"
         "# the string \"\" is used.  Currently, this option works best from\n"
-        "# the command line, as in '-o log=filename.log'.  However, the\n"
-        "# name here is used only if the bare option '-o log' is specified.\n"
+        "# the command line, as in '-o log=filename.log'.  The name here is\n"
+        "# used only for the no-name '-o log' option.\n"
         "\n"
         ;
     std::string logfile = usr().option_logfile();
@@ -1284,25 +1286,13 @@ usrfile::write ()
     file << "\n"
         "[user-work-arounds]\n"
         "\n"
-        "# These settings specify application-specific values that work\n"
-        "# around issues that we have not been able to truly fix for all\n"
-        "# users.\n"
-        "\n"
-        "# The work_around_play_image option can be set to 0 or 1.  0 is\n"
-        "# the normal setting. Set it to 1 if multiple-clicks of the play\n"
-        "# button (or the equivalent play/pause/stop actions) cause the\n"
-        "# seq66 application to crash.\n"
+        "# These settings were application-specific values for issues that\n"
+        "# no longer apply.\n"
         "\n"
         ;
 
     uscratch = usr().work_around_play_image() ? 1 : 0 ;
-    file
-        << uscratch << "       # work_around_play_image\n"
-        "\n"
-        "# The work_around_transpose_image option is similar, for an issue\n"
-        "# some users have setting the transpose button in seqedit.\n"
-        "\n"
-        ;
+    file << uscratch << "       # work_around_play_image\n";
 
     uscratch = usr().work_around_transpose_image() ? 1 : 0 ;
     file << uscratch << "       # work_around_transpose_image\n";

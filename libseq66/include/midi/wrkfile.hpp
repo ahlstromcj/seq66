@@ -78,7 +78,7 @@ enum wrk_chunk_t
     WC_TRKNAME_CHUNK    = 24, ///< Track name.
     WC_VARIABLE_CHUNK   = 26, ///< Variable record chunk.
     WC_NTRKOFS_CHUNK    = 27, ///< Track offset.
-    WC_PUZZLING_CHUNK   = 29, ///< Common, but unknow purpose.
+    WC_TNUMPLUS_CHUNK   = 29, ///< Common, but unknow purpose.
     WC_TRKBANK_CHUNK    = 30, ///< Track bank.
     WC_NTRACK_CHUNK     = 36, ///< Track prefix.
     WC_NSYSEX_CHUNK     = 44, ///< System exclusive bank.
@@ -319,7 +319,7 @@ private:
     void SegmentChunk ();
     void NewStream ();
     void UnknownChunk (int id);
-    void PuzzleChunk ();
+    void TrackNumPlusChunk ();
     void EndChunk ();
 
 };          // class wrkfile

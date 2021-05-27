@@ -1,4 +1,4 @@
-.TH Sequencer66 "April 2021" "Version 0.93.0" "Seq66 Manual Page"
+.TH Sequencer66 "May 2021" "Version 0.94.0" "Seq66 Manual Page"
 
 .SH NAME
 Seq66 (qseq66) - Real-time live MIDI loop sequencer refactored from
@@ -238,7 +238,11 @@ or for "alsa".
 Provides additional options, including the no-GUI version of
 Seq66.  Here are the opvalues supported:
 
-daemonize     Fork the command-line application to background.
+daemonize     Fork the command-line application to background.  The base
+              configuration files are "seq66cli.rc", etc.  This feature
+              currently does not work properly, needs to fork with the
+              proper settings still. For now, create a keyboard or desktop
+              shortcut for a seq66cli command.
 
 no-daemonize  Makes the command-line application not fork.
 

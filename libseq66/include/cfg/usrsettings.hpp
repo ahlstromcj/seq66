@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-05-21
+ * \updates       2021-05-27
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -818,6 +818,14 @@ private:
     bool m_save_user_config;
 
     /**
+     *  Indicates if the application is running headless.  That is, from the
+     *  seq66cli command-line application/daemon.  We can do things when
+     *  headless without having to worry about signalling Qt.
+     */
+
+    bool m_app_is_headless;
+
+    /**
      *  Indicates if the application should be daemonized.  All options that
      *  begin with "option_" are options specific to a particular version of
      *  Seq66.  We don't anticipate having a lot of such options,
@@ -1573,6 +1581,11 @@ public:
         return mc_baseline_ppqn;
     }
 
+    bool app_is_headless () const
+    {
+        return m_app_is_headless;
+    }
+
     bool option_daemonize () const
     {
         return m_user_option_daemonize;
@@ -1748,6 +1761,11 @@ public:         // used in main application module and the usrfile class
     void block_independent (bool flag)
     {
         m_mainwid_block_independent = flag;
+    }
+
+    void app_is_headless (bool flag)
+    {
+        m_app_is_headless = flag;
     }
 
     void option_daemonize (bool flag)

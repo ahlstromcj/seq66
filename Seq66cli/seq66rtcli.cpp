@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License along with
- *  seq66; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- *  Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -24,7 +24,7 @@
  * \library       seq66rtcli application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-02-09
- * \updates       2020-11-11
+ * \updates       2021-05-27
  * \license       GNU GPLv2 or above
  *
  *  This application is seq66 without a GUI, control must be done via MIDI.
@@ -32,17 +32,11 @@
 
 #include <stdio.h>
 
-#include "seq66_platform_macros.h"      /* determine the environment        */
-#include "sessions/clinsmanager.hpp"    /* an seq66::smanager for CLI use   */
-
-#if defined SEQ66_PLATFORM_LINUX
-#include <unistd.h>                     /* for usleep(3)                    */
-#endif
-
 #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "os/daemonize.hpp"             /* seq66::daemonize()               */
 #include "play/performer.hpp"           /* seq66::perform, the main object  */
+#include "sessions/clinsmanager.hpp"    /* an seq66::smanager for CLI use   */
 
 /**
  *  The standard C/C++ entry point to this application.  This first thing
@@ -85,9 +79,12 @@
 int
 main (int argc, char * argv [])
 {
-    int exit_status = EXIT_SUCCESS;         /* EXIT_FAILURE                 */
+#if defined SEQ66_PLATFORM_LINUX
     uint32_t usermask = 0;                  /* used in daemonization        */
+#endif
+    int exit_status = EXIT_SUCCESS;         /* EXIT_FAILURE                 */
     seq66::clinsmanager sm;
+    usr().app_is_headless(true);
     if (seq66::cmdlineopts::parse_o_options(argc, argv))
     {
         std::string logfile = seq66::usr().option_logfile();
@@ -98,20 +95,17 @@ main (int argc, char * argv [])
     bool result = sm.create(argc, argv);
     if (result)
     {
-        std::string msg;
-
 #if defined SEQ66_PLATFORM_LINUX
         if (seq66::usr().option_daemonize())
         {
+            seq66::set_app_type("daemon");
+            seq66::set_app_name("seq66daemon");
             infoprint("Forking to background...");
             usermask = seq66::daemonize(seq66::seq_app_name(), ".");
         }
-        else
-        {
-            /// sm.perf()->print_busses();
-        }
 #endif
 
+        std::string msg;
         bool result = sm.run();
         exit_status = result ? EXIT_SUCCESS : EXIT_FAILURE ;
         (void) sm.close_session(msg, result);

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-05-09
+ * \updates       2021-05-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -191,7 +191,7 @@ protected:
         performer::change ctype
     ) override;
     virtual bool on_resolution_change (int ppqn, midibpm bpm) override;
-    virtual bool on_song_change () override;
+    virtual bool on_song_change (bool signal) override;
     virtual void keyPressEvent (QKeyEvent * event) override;
     virtual void keyReleaseEvent (QKeyEvent *) override;
 
@@ -389,6 +389,7 @@ private:
 signals:
 
     void signal_set_change (int setno);
+    void signal_song_change ();         /* name of song as parameter?       */
 
 private slots:
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-05-26
+ * \updates       2021-05-27
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -201,7 +201,7 @@ usrsettings::usrsettings () :
 
     m_mainwnd_rows              (SEQ66_DEFAULT_SET_ROWS),
     m_mainwnd_cols              (SEQ66_DEFAULT_SET_COLUMNS),
-    m_max_sets                  (SEQ66_DEFAULT_SET_MAX),
+    m_max_sets                  (c_max_sets),
     m_window_scale              (c_window_scale_default),
     m_window_scale_y            (c_window_scale_default),
     m_mainwid_border            (0),
@@ -277,6 +277,7 @@ usrsettings::usrsettings () :
      */
 
     m_save_user_config          (false),
+    m_app_is_headless           (false),
     m_user_option_daemonize     (false),
     m_user_use_logfile          (false),
     m_user_option_logfile       (),
@@ -319,7 +320,7 @@ usrsettings::set_defaults ()
     m_instruments.clear();
     m_mainwnd_rows = SEQ66_DEFAULT_SET_ROWS;    // range: 4-8
     m_mainwnd_cols = SEQ66_DEFAULT_SET_COLUMNS; // range: 8-8
-    m_max_sets = SEQ66_DEFAULT_SET_MAX;         // range: 32-64
+    m_max_sets = c_max_sets;                    // range: 32-64
     m_window_scale = c_window_scale_default;    // range: 0.5 to 1.0 to 3.0
     m_window_scale_y = c_window_scale_default;
     m_mainwid_border = c_mainwid_border;        // range: 0-3, try 2 or 3
@@ -379,6 +380,7 @@ usrsettings::set_defaults ()
      */
 
     m_save_user_config = false;
+    m_app_is_headless = false;
     m_user_option_daemonize = false;
     m_user_use_logfile = false;
     m_user_option_logfile.clear();
@@ -741,7 +743,7 @@ usrsettings::mainwnd_cols (int value)
 void
 usrsettings::max_sets (int value)
 {
-    if (value > 0 && value <= SEQ66_DEFAULT_SET_MAX)
+    if (value > 0 && value <= c_max_sets)
         m_max_sets = value;
 
     normalize();

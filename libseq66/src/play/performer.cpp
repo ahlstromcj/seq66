@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-05-26
+ * \updates       2021-05-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -427,6 +427,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_have_redo             (false),
     m_redo_vect             (),
     m_notify                (),
+    m_signal_changes        (! usr().app_is_headless()),
     m_seq_edit_pending      (false),
     m_event_edit_pending    (false),
     m_pending_loop          (seq::unassigned()),
@@ -578,10 +579,10 @@ performer::notify_resolution_change (int ppqn, midibpm bpm, change mod)
  */
 
 void
-performer::notify_song_change ()
+performer::notify_song_change (bool signal)
 {
     for (auto notify : m_notify)
-        (void) notify->on_song_change();
+        (void) notify->on_song_change(signal);
 }
 
 /*
@@ -1338,10 +1339,7 @@ performer::set_ppqn (int p)
         {
             m_ppqn = p;
             m_one_measure = 0;
-
-#if defined SEQ66_JACK_SUPPORT
-            m_jack_asst.set_ppqn(p);
-#endif
+            (void) jack_set_ppqn(p);
             m_master_bus->set_ppqn(p);
         }
         else
@@ -2997,7 +2995,7 @@ performer::jack_reposition (midipulse tick, midipulse stoptick)
     {
         set_reposition(true);
         set_start_tick(tick);
-        m_jack_asst.jack_stop_tick(tick);
+        jack_stop_tick(tick);
     }
 }
 
@@ -6459,15 +6457,22 @@ performer::playlist_activate (bool on)
 bool
 performer::open_next_list (bool opensong, bool loading)
 {
-    delay_stop();
-
-    bool result = m_play_list->open_next_list(opensong, loading);
-    if (result)
+    bool result;
+    if (signal_changes())
     {
-        if (opensong)
-            next_song_mode();
+        result = m_play_list->open_next_list(opensong, loading);
+    }
+    else
+    {
+        delay_stop();
+        result = m_play_list->open_next_list(opensong, loading);
+        if (result)
+        {
+            if (opensong)
+                next_song_mode();
 
-        notify_song_change();
+            notify_song_change();
+        }
     }
     return result;
 }
@@ -6475,15 +6480,22 @@ performer::open_next_list (bool opensong, bool loading)
 bool
 performer::open_previous_list (bool opensong)
 {
-    delay_stop();
-
-    bool result = m_play_list->open_previous_list(opensong);
-    if (result)
+    bool result;
+    if (signal_changes())
     {
-        if (opensong)
-            next_song_mode();
+        result = m_play_list->open_previous_list(opensong);
+    }
+    else
+    {
+        delay_stop();
+        result = m_play_list->open_previous_list(opensong);
+        if (result)
+        {
+            if (opensong)
+                next_song_mode();
 
-        notify_song_change();
+            notify_song_change();
+        }
     }
     return result;
 }
@@ -6491,15 +6503,22 @@ performer::open_previous_list (bool opensong)
 bool
 performer::open_select_song_by_index (int index, bool opensong)
 {
-    delay_stop();
-
-    bool result = m_play_list->open_select_song(index, opensong);
-    if (result)
+    bool result;
+    if (signal_changes())
     {
-        if (opensong)
-            next_song_mode();
+        result = m_play_list->open_select_song(index, opensong);
+    }
+    else
+    {
+        delay_stop();
+        result = m_play_list->open_select_song(index, opensong);
+        if (result)
+        {
+            if (opensong)
+                next_song_mode();
 
-        notify_song_change();
+            notify_song_change();
+        }
     }
     return result;
 }
@@ -6507,15 +6526,22 @@ performer::open_select_song_by_index (int index, bool opensong)
 bool
 performer::open_select_song_by_midi (int ctrl, bool opensong)
 {
-    delay_stop();
-
-    bool result = m_play_list->open_select_song_by_midi(ctrl, opensong);
-    if (result)
+    bool result;
+    if (signal_changes())
     {
-        if (opensong)
-            next_song_mode();
+        result = m_play_list->open_select_song_by_midi(ctrl, opensong);
+    }
+    else
+    {
+        delay_stop();
+        result = m_play_list->open_select_song_by_midi(ctrl, opensong);
+        if (result)
+        {
+            if (opensong)
+                next_song_mode();
 
-        notify_song_change();
+            notify_song_change();
+        }
     }
     return result;
 }
@@ -6523,15 +6549,30 @@ performer::open_select_song_by_midi (int ctrl, bool opensong)
 bool
 performer::open_next_song (bool opensong)
 {
-    delay_stop();
-
-    bool result = m_play_list->open_next_song(opensong);
-    if (result)
+    bool result;
+    if (signal_changes())
     {
-        if (opensong)
-            next_song_mode();
+        result = m_play_list->open_next_song(opensong);
+#if 0
+        NEED TO USE SIGNALS!!!!!!!!!!!!!!!!!!
+        if (result)
+        {
+            if (opensong)
+                next_song_mode();
+        }
+#endif
+    }
+    else
+    {
+        delay_stop();
+        result = m_play_list->open_next_song(opensong);
+        if (result)
+        {
+            if (opensong)
+                next_song_mode();
 
-        notify_song_change();
+            notify_song_change();
+        }
     }
     return result;
 }
@@ -6539,15 +6580,22 @@ performer::open_next_song (bool opensong)
 bool
 performer::open_previous_song (bool opensong)
 {
-    delay_stop();
-
-    bool result = m_play_list->open_previous_song(opensong);
-    if (result)
+    bool result;
+    if (signal_changes())
     {
-        if (opensong)
-            next_song_mode();
+        result = m_play_list->open_previous_song(opensong);
+    }
+    else
+    {
+        delay_stop();
+        result = m_play_list->open_previous_song(opensong);
+        if (result)
+        {
+            if (opensong)
+                next_song_mode();
 
-        notify_song_change();
+            notify_song_change();
+        }
     }
     return result;
 }

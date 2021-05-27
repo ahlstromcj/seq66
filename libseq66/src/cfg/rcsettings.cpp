@@ -99,8 +99,8 @@ rcsettings::rcsettings () :
 #endif
     m_song_start_mode           (false),
     m_manual_ports              (false),
-    m_manual_port_count         (SEQ66_OUTPUT_BUSS_DEFAULT),
-    m_manual_in_port_count      (SEQ66_INPUT_BUSS_DEFAULT),
+    m_manual_port_count         (c_output_buss_default),
+    m_manual_in_port_count      (c_input_buss_default),
     m_reveal_ports              (false),
     m_print_keys                (false),
     m_interaction_method        (interaction::seq24),
@@ -199,8 +199,8 @@ rcsettings::set_defaults ()
 #endif
     m_song_start_mode           = false;
     m_manual_ports              = false;
-    m_manual_port_count         = SEQ66_OUTPUT_BUSS_DEFAULT;
-    m_manual_in_port_count      = SEQ66_INPUT_BUSS_DEFAULT;
+    m_manual_port_count         = c_output_buss_default;
+    m_manual_in_port_count      = c_input_buss_default;
     m_reveal_ports              = false;
     m_print_keys                = false;
     m_interaction_method        = interaction::seq24;

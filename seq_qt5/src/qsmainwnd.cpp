@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-05-26
+ * \updates       2021-05-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -3380,7 +3380,7 @@ qsmainwnd::on_trigger_change (seq::number seqno)
 bool
 qsmainwnd::on_set_change (screenset::number setno, performer::change /*ctype*/)
 {
-    signal_set_change(int(setno));
+    emit signal_set_change(int(setno));
     return true;
 }
 
@@ -3413,9 +3413,16 @@ qsmainwnd::on_resolution_change (int ppqn, midibpm bpm)
 }
 
 bool
-qsmainwnd::on_song_change ()
+qsmainwnd::on_song_change (bool signal)
 {
-    m_is_title_dirty = true;
+    if (signal)
+    {
+        emit signal_song_change();
+    }
+    else
+    {
+        m_is_title_dirty = true;
+    }
     return true;
 }
 

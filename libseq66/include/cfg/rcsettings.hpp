@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-05-13
+ * \updates       2021-05-27
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -59,9 +59,27 @@ namespace seq66
  *  Increasing these value spreads out the pattern grids a little bit and
  *  makes the Patterns panel slightly bigger.  Seems like it would be
  *  useful to make these values user-configurable.
- *
- *  Copped from globals.h.
  */
+
+/**
+ *  The number of default virtual ALSA input busses supported in the
+ *  manual-ports mode.  This value used to implicitly be 1, but it would be
+ *  useful to allow a few more.  Now expanded per user request.  Let the user
+ *  beware!  See issue #42.
+ */
+
+const int c_input_buss_max      = 48;
+const int c_input_buss_default  =  4;
+
+/**
+ *  The number of ALSA I/O busses supported.  See mastermidibus::init().
+ *  Currently, this is also the default number of "manual" (virtual) output
+ *  ports created in the manual-ports mode.  Now expanded per user request.
+ *  Let the user beware!  See issue #42.
+ */
+
+const int c_output_buss_max     = 48;
+const int c_output_buss_default =  8;
 
 /**
  *  Maximum number of groups that can be supported.  Basically, the number of
@@ -70,7 +88,7 @@ namespace seq66
  *  selecting a mute-group.
  */
 
-const int c_max_groups = SEQ66_DEFAULT_GROUP_MAX;
+const int c_max_groups = 32;
 
 /**
  *  Maximum number of screen sets that can be supported.  Basically, the number
@@ -79,7 +97,7 @@ const int c_max_groups = SEQ66_DEFAULT_GROUP_MAX;
  *  keystrokes to support selecting a screenset.
  */
 
-const int c_max_sets = SEQ66_DEFAULT_SET_MAX;
+const int c_max_sets   = 32;
 
 /**
  *  Maximum number of set keys that can be supported.  32 keys can be assigned
@@ -1077,16 +1095,16 @@ public:
 
     void manual_port_count (int count)
     {
-        if (count <= 0 || count > SEQ66_OUTPUT_BUSS_MAX)
-            count = SEQ66_OUTPUT_BUSS_DEFAULT;
+        if (count <= 0 || count > c_output_buss_max)
+            count = c_output_buss_default;
 
         m_manual_port_count = count;
     }
 
     void manual_in_port_count (int count)
     {
-        if (count <= 0 || count > SEQ66_INPUT_BUSS_MAX)
-            count = SEQ66_INPUT_BUSS_DEFAULT;
+        if (count <= 0 || count > c_input_buss_max)
+            count = c_input_buss_default;
 
         m_manual_in_port_count = count;
     }

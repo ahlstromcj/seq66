@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-09-30
-% \update      2021-05-25
+% \update      2021-05-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -185,6 +185,15 @@
    \end{verbatim}
 
    The keyboard controls and sound output should work.
+   However, at present the daemon doesn't get the proper settings, so that is
+   something to work on for version 0.95.
+   For now, create a shortcut to run the application in the background.
+   In a \textsl{Fluxbox} menu:
+
+   \begin{verbatim}
+   [exec] (Seq66 Headless) {/usr/bin/seq66cli --jack-midi --jack-master --bus 6}
+   \end{verbatim}
+
    For a more sophisticated setup, see \sectionref{sec:launchpad_mini}.
 
 %-------------------------------------------------------------------------------

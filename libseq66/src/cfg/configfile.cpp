@@ -28,6 +28,24 @@
  * \updates       2021-04-19
  * \license       GNU GPLv2 or above
  *
+ *  std::streamoff is a signed integral type (usually long long) that can
+ *  represent the maximum possible file size supported by the operating
+ *  system.  It is used to represent offsets from std::streampos. -1
+ *  is used to represent error conditions by some I/O library
+ *  functions.
+ *
+ *  Relationship with std::streampos (a specialization of std::fpos):
+ *
+ *  -   The difference between two std::streampos objects is a value of type
+ *      std::streamoff.
+ *  -   An std::streamoff value may be added or subtracted from std::fpos,
+ *      yielding a different std::fpos.
+ *  -   An std::streampos is implicitly convertible to std::streamoff (the
+ *      result is the offset from the beginning of the file).
+ *  -   An std::streampos is constructible from an std::streamoff.
+ *  -   An std::streampos contains an std::streamoff.
+ *
+ *  istream::tellg() returns a streampos.
  */
 
 #include <cctype>                       /* std::isspace(), std::isdigit()   */
@@ -74,7 +92,7 @@ configfile::configfile (const std::string & name, rcsettings & rcs) :
     m_version       ("0"),
     m_line          (),
     m_line_number   (0),
-    m_prev_pos      (0)
+    m_line_pos      (0)
 {
     // no code needed
 }
@@ -140,6 +158,15 @@ configfile::parse_version (std::ifstream & file)
     return result;
 }
 
+bool
+configfile::file_version_old (std::ifstream & file)
+{
+    std::string file_version_string = parse_version(file);
+    int file_version = std::stoi(file_version_string);
+    int code_version = version_number();
+    return file_version < code_version;
+}
+
 /**
  *  Helper function for error-handling.  It assembles a message and then
  *  passes it to error_message().
@@ -195,7 +222,7 @@ configfile::make_error_message
 bool
 configfile::get_line (std::ifstream & file, bool strip)
 {
-    m_prev_pos = file.tellg();
+    m_line_pos = file.tellg();
     (void) std::getline(file, m_line);
     if (strip)
     {
@@ -211,10 +238,10 @@ configfile::get_line (std::ifstream & file, bool strip)
 }
 
 /**
- *  Gets the next line of data from an input stream.  If the line starts with a
- *  number-sign, or a null, it is skipped, to try the next line.  This occurs
- *  until a section marker ("[") or an EOF is encountered.  Member m_line is a
- *  "return" value (side-effect).
+ *  Gets the next line of data from an input stream.  If the line starts with
+ *  a number-sign, or a null, it is skipped, to try the next line.  This
+ *  occurs until a section marker ("[") or an EOF is encountered.  Member
+ *  m_line is a "return" value (side-effect).
  *
  * \param file
  *      Points to an input stream.  We converted this item to a reference;
@@ -229,9 +256,10 @@ configfile::get_line (std::ifstream & file, bool strip)
  *
  * \return
  *      Returns true if a presumed data line was found.  False is returned if
- *      not found before an EOF or a section marker ("[") is found.  This is a a
- *      new (ca 2016-02-14) feature of this function, to assist in adding new
- *      data to the file without crapping out on old-style configuration files.
+ *      not found before an EOF or a section marker ("[") is found.  This is a
+ *      a new (ca 2016-02-14) feature of this function, to assist in adding
+ *      new data to the file without crapping out on old-style configuration
+ *      files.
  */
 
 bool
@@ -309,11 +337,16 @@ configfile::next_data_line (std::ifstream & file, bool strip)
  * \param variablename
  *      Provides the variablename to be found in the specified tag section.
  *
+ * \param position
+ *      Indicates the position to seek to, which defaults to 0
+ *      (std::iso::beg).  A non-default value is useful to speed up parsing in
+ *      cases where sections are always ordered.
+ *
  * \return
  *      If the "variablename = value" clause is found, then the the value that
  *      is read is returned.  Otherwise, an empty string is returned, which
- *      might be an error.  If the name is surrounded by single or double
- *      quotes, these are trimmed.
+ *      might be an error, or signify a default value.  If the name is
+ *      surrounded by single or double quotes, these are trimmed.
  */
 
 std::string
@@ -529,7 +562,8 @@ configfile::line_after
 /**
  *  Like line_after, finds a tag, but merely marks the position preceding the
  *  tag.  The idea is to find a number of tags that might be ordered by number.
- *  Also useful when changes are made to tag names, to handle legacy versions.
+ *  Also useful when changes are made to tag names, to detect legacy names for
+ *  section tags.
  *
  * \param file
  *      Points to the input file stream.
@@ -557,7 +591,7 @@ configfile::find_tag (std::ifstream & file, const std::string & tag)
         bool match = strncompare(m_line, tag);
         if (match)
         {
-            result = int(m_prev_pos);
+            result = line_position();           /* int(m_line_pos)          */
             break;
         }
         else

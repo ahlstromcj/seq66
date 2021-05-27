@@ -101,7 +101,14 @@ private:
     std::string m_name;
 
     /**
-     *  Provides the current version of the derived configuration file.  Mostly
+     *  Provides the current version of the derived configuration file format.
+     *  This value is set in the constructor of the configfile-derived object,
+     *  and is incremented in that object whenever a new way of reading, writing,
+     *  or formatting the configuration file is created.  For example, a new
+     *  version of the MIDI control file code might be incremented to "3".
+     *  If the user's MIDI control file specifies "version = 2", that means
+     *  that the code for this file must revert to the old format for reading the
+     *  data.  When saved, the old file is upgraded to the new version.  Also
      *  useful to turn on the "--user-save" option for changes in the format of
      *  the "usr" file.
      */
@@ -127,7 +134,7 @@ protected:
      *  Holds the stream position before a line is obtained.
      */
 
-    std::streampos m_prev_pos;
+    std::streampos m_line_pos;
 
 public:
 
@@ -136,13 +143,6 @@ public:
     configfile () = delete;
     configfile (const configfile &) = delete;
     configfile & operator = (const configfile &) = delete;
-
-    /*
-     * WTF?
-     *
-    configfile (configfile &&) = default;
-    configfile & operator = (configfile &&) = default;
-     */
 
     /**
      *  A rote destructor needed for a base class.
@@ -158,6 +158,7 @@ public:
 
     std::string parse_comments (std::ifstream & file);
     std::string parse_version (std::ifstream & file);
+    bool file_version_old (std::ifstream & file);
 
     const std::string & name () const
     {
@@ -182,6 +183,11 @@ public:
     bool bad_position (int p) const
     {
         return p < 0;
+    }
+
+    int line_position () const
+    {
+        return int(std::streamoff(m_line_pos));
     }
 
     static const std::string & error_message ()

@@ -952,7 +952,7 @@ rcfile::write ()
     file
         << "[playlist]\n\n"
         "# Provides a configured play-list file and a flag to activate it.\n"
-        "# playlist_active: 1 = active, 0 = do not use it\n\n"
+        "# playlist_active: 1 = active, 0 = do not use it.\n\n"
         << (rc_ref().playlist_active() ? "1" : "0")
         << "\n"
         ;
@@ -969,11 +969,10 @@ rcfile::write ()
     file << plname << "\n";
 
     file << "\n"
-		"# Optional MIDI file base directory for play-list files.\n"
-		"# If present, sets the base directory in which to find all of\n"
-		"# the MIDI files in all playlists.  This is helpful when moving a\n"
-		"# complete set of playlists from one directory to another,\n"
-		"# preserving the sub-directories.\n"
+		"# Optional MIDI-file base-directory for play-list files. If given, it\n"
+		"# sets the base directory which holds all MIDI files in all playlists.\n"
+		"# Helpful when moving a complete set of playlists from one directory\n"
+		"# to another. It preserves the sub-directories.\n"
         "\n"
 		;
 
@@ -984,7 +983,7 @@ rcfile::write ()
     file << "\n"
         "[note-mapper]\n\n"
         "# Provides a configured note-map and a flag to activate it.\n"
-        "# notemap_active: 1 = active, 0 = do not use it\n\n"
+        "# notemap_active: 1 = active, 0 = do not use it.\n\n"
         << (rc_ref().notemap_active() ? "1" : "0") << "\n\n"
         << "# Provides the name of the note-map file. If none, use '\"\"'.\n"
            "# Use the extension '.drums'.  This file is used only when the user\n"
@@ -1019,11 +1018,10 @@ rcfile::write ()
     file
         << "\n[midi-meta-events]\n\n"
            "# This section defines some features of MIDI meta-event handling.\n"
-           "# Normally, tempo events are supposed to occur in the first track\n"
-           "# (pattern 0).  But one can move this track elsewhere to accomodate\n"
-           "# one's existing body of tunes.  If affects where tempo events are\n"
-           "# recorded.  The default value is 0, the maximum is 1023.\n"
-           "# A pattern must exist at this number for it to work.\n"
+           "# Normally, tempo events occur in the first track (pattern 0), but\n"
+           "# one can move this track elsewhere to accomodate an existing body\n"
+           "# tunes.  It affects where tempo events are recorded.  The default\n"
+           "# is 0, the maximum is 1023. A pattern must exist at this number.\n"
            "\n"
         << rc_ref().tempo_track_number() << "    # tempo_track_number\n"
         ;
@@ -1034,11 +1032,10 @@ rcfile::write ()
 
     file
         << "\n[manual-ports]\n\n"
-           "# Set to 1 to have Seq66 create its own ALSA/JACK I/O ports and not\n"
-           "# auto-connect to other clients.  It allows up to 16 output ports.\n"
-           "# and 8 input ports. Set the first value (the flag) to 0 to\n"
+           "# Set to 1 to have Seq66 create virtual ALSA/JACK I/O ports and not\n"
+           "# auto-connect to other clients.  It allows up to 48 output ports\n"
+           "# and 48 input ports (defaults to 8 and 4). Set the flag to 0 to\n"
            "# auto-connect Seq66 to the system's existing ALSA/JACK MIDI ports.\n"
-           "# A new feature is to change the number of ports; see below.\n"
            "\n"
         << (rc_ref().manual_ports() ? "1" : "0")
         << "   # flag for manual (virtual) ALSA or JACK ports\n"
@@ -1051,11 +1048,10 @@ rcfile::write ()
     int inbuses = bussbyte(rc_ref().inputs().count());
     file <<
            "\n[midi-input]\n\n"
-           "# These ports can be used for input into Seq66.\n"
-           "# From JACK's perspective, these are 'playback' devices.\n"
-           "# The first number is the port/buss number, and the second number\n"
-           "# is the input status, disabled (0) or enabled (1). The item in\n"
-           "# quotes is the input-buss name.\n"
+           "# These ports can be used for input into Seq66. From JACK's view,\n"
+           "# these are 'playback' devices. The first number is a buss number,\n"
+           "# and the second number is the input status, disabled (0) or\n"
+           "# enabled (1). The item in quotes is the input-buss name.\n"
            "\n"
         << int(inbuses) << "   # number of input MIDI busses\n\n"
         ;
@@ -1103,17 +1099,17 @@ rcfile::write ()
     bussbyte outbuses = bussbyte(rc_ref().clocks().count());
     file << "\n"
        "[midi-clock]\n\n"
-       "# These ports can be used for output from Seq66, for playback/control.\n"
-       "# From JACK's perspective, these are 'capture' devices.\n"
-       "# The first line shows the count of MIDI 'capture' ports. Each line\n"
-       "# contains the buss/port number (re 0) and clock status of that buss:\n"
+       "# These ports are used for output from Seq66, for playback/control.\n"
+       "# From JACK's view, these are 'capture' devices. The first line shows\n"
+       "# the count of MIDI 'capture' ports. Each line shows the buss number\n"
+       "# and clock status of that buss:\n"
        "#\n"
        "#   0 = MIDI Clock is off.\n"
        "#   1 = MIDI Clock on; Song Position and MIDI Continue will be sent.\n"
        "#   2 = MIDI Clock Module.\n"
        "#  -1 = The output port is disabled.\n"
        "#\n"
-       "# With Clock Modulo, MIDI clocking will not begin until the song\n"
+       "# With Clock Modulo, MIDI clocking doesn't begin until the song\n"
        "# position reaches the start modulo value [midi-clock-mod-ticks].\n"
        "# One can disable a port manually for devices that are present, but\n"
        "# not available, perhaps because another application has exclusive\n"

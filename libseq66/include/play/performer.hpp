@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-25
+ * \updates       2021-05-27
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -262,7 +262,7 @@ public:
             return false;
         }
 
-        virtual bool on_song_change ()
+        virtual bool on_song_change (bool /* signal */)
         {
             return false;
         }
@@ -475,8 +475,6 @@ private:                            /* key, midi, and op container section  */
      */
 
     int m_transpose;
-
-private:
 
     /**
      *  Provides information for managing threads.  Provides a "handle" to
@@ -777,8 +775,6 @@ private:
 
     bool m_dont_reset_ticks;
 
-private:
-
     /**
      *  It may be a good idea to eventually centralize all of the dirtiness of
      *  a performance here.  All the GUIs use a performer.
@@ -856,7 +852,13 @@ private:
 
     callbacks::clients m_notify;
 
-private:
+    /**
+     *  If true, indicate certain events, like song-changes, via a signal.
+     *  In a headless run, there's no conflict with Qt's threads, but when Qt is
+     *  running, hoo boy!
+     */
+
+    bool m_signal_changes;
 
     /**
      *  Set to true if automation_edit_pending() is called.  It is reset by the
@@ -938,7 +940,7 @@ public:
     (
         int ppqn, midibpm bpm, change mod = change::yes
     );
-    void notify_song_change ();
+    void notify_song_change (bool signal = true);
 
     bool error_pending () const
     {
@@ -1628,6 +1630,18 @@ public:
         return m_jack_asst.jack_stop_tick();
 #else
         return 0;
+#endif
+    }
+
+    bool jack_set_beats_per_minute (midibpm bpm);
+
+    bool jack_set_ppqn (int p)
+    {
+#if defined SEQ66_JACK_SUPPORT
+        m_jack_asst.set_ppqn(p);
+        return true;
+#else
+        return p > 0;
 #endif
     }
 
@@ -2942,7 +2956,6 @@ public:         /* GUI-support functions */
     }
 
     bool set_beats_per_minute (midibpm bpm);        /* more than a setter   */
-    bool jack_set_beats_per_minute (midibpm bpm);
     bool set_ppqn (int p);
     bool change_ppqn (int p);
     bool ui_change_set_bus (int b);
@@ -3130,6 +3143,11 @@ private:
     );
 
 public:
+
+    bool signal_changes () const
+    {
+        return m_signal_changes;
+    }
 
     void clear_seq_edits ();
 

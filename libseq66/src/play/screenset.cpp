@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-05-26
+ * \updates       2021-05-27
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -144,32 +144,15 @@ screenset::initialize (int rows, int columns)
 bool
 screenset::add (sequence * s, seq::number seqno)
 {
-#ifdef USE_ORIGINAL_CODE
-    seq & sseq = seqinfo(seqno);
-    bool result = ! sseq.active();              /* seq already in place?    */
-    if (result)                                 /* no, we can add it        */
-    {
-        result = not_nullptr(s);
-        if (result)
-        {
-            seq newseq(s);                      /* stored in shared pointer */
-            result = newseq.activate(seqno);    /* activate sequence        */
-            if (result)
-            {
-                seq::number index = seqno - offset();
-                m_container[index] = newseq;
-            }
-        }
-    }
-#else
     bool result = false;
     if (not_nullptr(s))
     {
         for (seq::number i = seqno - offset(); i < m_set_maximum; ++i)
         {
-            seq sseq = seqinfo(i);
+            seq sseq = seqinfo(i);          /* get seq info in the set  */
             if (! sseq.active())            /* seq already in slot?     */
             {
+                seqno = i + offset();       /* change to unused seqno   */
                 result = sseq.activate(s, seqno);
                 if (result)
                 {
@@ -179,7 +162,6 @@ screenset::add (sequence * s, seq::number seqno)
             }
         }
     }
-#endif
     return result;
 }
 

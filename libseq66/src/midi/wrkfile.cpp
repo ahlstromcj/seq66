@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-04
- * \updates       2021-05-26
+ * \updates       2021-05-27
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the WRK format, see, for example:
@@ -198,7 +198,7 @@ wrkfile::not_supported (const std::string & tag)
 {
     if (rc().show_midi())
     {
-        warnprintf("! Cakewalk '%s' not supported\n", tag.c_str());
+        warnprintf("! Cakewalk '%s' not supported", tag.c_str());
     }
 }
 
@@ -1153,7 +1153,7 @@ wrkfile::StreamChunk ()
         midibyte d0 = read_byte();
         midibyte d1 = read_byte();
         midishort dur = read_16_bit();
-        int value;
+        int value = 0;
         event e;
         if ((status & 0x80) == 0x00)                /* is it a status bit?      */
             status = laststatus;                    /* no, it's running status  */
@@ -2162,11 +2162,11 @@ wrkfile::NewStream()
 }
 
 void
-wrkfile::PuzzleChunk ()
+wrkfile::TrackNumPlusChunk ()
 {
     if (rc().show_midi())
     {
-        printf("Puzzle chunk: At seq number %d\n", m_seq_number);
+        printf("TrackNumPlus: At seq number %d\n", m_seq_number);
     }
 }
 
@@ -2293,8 +2293,8 @@ wrkfile::read_chunk ()
             NewTrackOffset();       // "long" track offset
             break;
 
-        case WC_PUZZLING_CHUNK:
-            PuzzleChunk();
+        case WC_TNUMPLUS_CHUNK:
+            TrackNumPlusChunk();
             break;
 
         case WC_TRKBANK_CHUNK:

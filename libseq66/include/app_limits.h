@@ -50,14 +50,6 @@
  */
 
 /**
- *  Default value for c_max_sets.  This is now a constant limit, as we can
- *  always support 32 sets, and have enough keystrokes for no more than that
- *  number.
- */
-
-#define SEQ66_DEFAULT_SET_MAX             32
-
-/**
  *  Default MIDI control input buss.  This value preserves the old behavior,
  *  where the incoming MIDI events of a device on any buss would be acted on
  *  (if specified in the MIDI control stanzas).  This value is the same as
@@ -131,16 +123,6 @@
 #define SEQ66_MAX_SET_COLUMNS             12
 
 /**
- *  Default value for c_max_groups.  This value replaces c_seqs_in_set for
- *  usage in obtaining mute-group information from the "rc" file.  Its value
- *  is only "coincidentally" equal to 32.  However, given that we have limited
- *  numbers of mute-group keys, this will be the highest value that could be
- *  used.
- */
-
-#define SEQ66_DEFAULT_GROUP_MAX           32
-
-/**
  *  Default value of number of slot toggle keys (shortcut keys) that
  *  can be defined.  Even if we end up adding more slots to a set, this
  *  would be about the maximum number of keys we could really support.
@@ -156,26 +138,6 @@
 #define SEQ66_SEQKEY_HEIGHT_MIN            6
 #define SEQ66_SEQKEY_HEIGHT_DEFAULT       10
 #define SEQ66_SEQKEY_HEIGHT_MAX           32    /* useful on touch-screens  */
-
-/**
- *  The number of default virtual ALSA input busses supported in the
- *  manual-ports mode.  This value used to implicitly be 1, but it would be
- *  useful to allow a few more.  Now expanded per user request.  Let the user
- *  beware!  See issue #42.
- */
-
-#define SEQ66_INPUT_BUSS_MAX              48
-#define SEQ66_INPUT_BUSS_DEFAULT           4
-
-/**
- *  The number of ALSA I/O busses supported.  See mastermidibus::init().
- *  Currently, this is also the default number of "manual" (virtual) output
- *  ports created in the manual-ports mode.  Now expanded per user request.
- *  Let the user beware!  See issue #42.
- */
-
-#define SEQ66_OUTPUT_BUSS_MAX             48
-#define SEQ66_OUTPUT_BUSS_DEFAULT          8
 
 /**
  *  Guessing that this has to do with the width of the performerance piano roll.
