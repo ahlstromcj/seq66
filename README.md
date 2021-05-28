@@ -1,7 +1,7 @@
 # README for Seq66 0.94.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-05-27
+2015-09-10 to 2021-05-28
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -82,6 +82,7 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.94.0:
+        *   Major improvements to the stability of MIDI control of playlists.
         *   Added Phrygian scale thanks to user WinkoErades.
         *   Update the 'rc' file for a simpler specification of JACK MIDI and
             JACK transport.

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-05-27
+ * \updates       2021-05-28
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -714,6 +714,11 @@ qsmainwnd::qsmainwnd
         this, SIGNAL(signal_set_change(int)),
         this, SLOT(update_set_change(int))
     );
+    connect
+    (
+        this, SIGNAL(signal_song_action(int)),
+        this, SLOT(update_song_action(int))
+    );
 
     /*
      *  The MIDI file is now opened and read in the performer before the
@@ -1032,35 +1037,6 @@ qsmainwnd::slot_summary_save ()
             write_song_summary(perf(), fname);
     }
 }
-
-/**
- *  A test of playlist saving.
- */
-
-#if defined SEQ66_PLATFORM_DEBUG_PLAYLIST_SAVE
-
-void
-qsmainwnd::test_playlist_save ()
-{
-    (void) perf().save_playlist();
-    (void) perf().copy_playlist("~/tmp/playlists");
-}
-
-#endif
-
-/**
- *  A test of note-map saving.
- */
-
-#if defined SEQ66_PLATFORM_DEBUG_NOTEMAP_SAVE
-
-void
-qsmainwnd::test_notemap_save ()
-{
-    (void) perf().save_note_mapper();
-}
-
-#endif
 
 /**
  *  For NSM usage, this function replaces the "Open" operation.  It will
@@ -1554,8 +1530,6 @@ qsmainwnd::refresh ()
                 if (perf().playlist_active())
                 {
                     m_live_frame->set_playlist_name(perf().playlist_song());
-
-                    /* Added 2021-05-26 */
                     update_window_title(perf().playlist_song_basename());
                 }
                 else
@@ -2742,6 +2716,11 @@ qsmainwnd::keyReleaseEvent (QKeyEvent * event)
  *  window, including the pattern buttons in qslivegrid, causing flickering of
  *  all armed pattern buttons.
  *
+ *  Also note that we have switched from direct calls the performer playlist
+ *  actions to using signals.  We have to use signals with MIDI control
+ *  because of thread conflicts, so we might as well use them with the
+ *  keystrokes as well.
+ *
  * \param k
  *      Provides a wrapper for the key event.
  */
@@ -2749,35 +2728,33 @@ qsmainwnd::keyReleaseEvent (QKeyEvent * event)
 bool
 qsmainwnd::handle_key_press (const keystroke & k)
 {
-    bool result = false;
     bool done = false;
     if (k.is_press())
     {
+        playlist::action act = playlist::action::none;
         if (k.is_right())
         {
-            result = perf().open_next_song();
+            act = playlist::action::next_song;
             done = true;
         }
         else if (k.is_left())
         {
-            result = perf().open_previous_song();
+            act = playlist::action::previous_song;
             done = true;
         }
         else if (k.is_down())
         {
-            result = perf().open_next_list();
+            act = playlist::action::next_list;
             done = true;
         }
         else if (k.is_up())
         {
-            result = perf().open_previous_list();
+            act = playlist::action::previous_list;
             done = true;
         }
-        if (result)
-        {
-            if (perf().playlist_active())
-                m_live_frame->set_playlist_name(perf().playlist_song());
-        }
+
+        int actcode = playlist::action_to_int(act);
+        emit signal_song_action(actcode);
     }
     if (! done)
     {
@@ -2791,7 +2768,6 @@ qsmainwnd::handle_key_press (const keystroke & k)
             done = true;
         }
     }
-    m_is_title_dirty = result;
     return done;
 }
 
@@ -3413,17 +3389,57 @@ qsmainwnd::on_resolution_change (int ppqn, midibpm bpm)
 }
 
 bool
-qsmainwnd::on_song_change (bool signal)
+qsmainwnd::on_song_action (bool signal, playlist::action act)
 {
     if (signal)
     {
-        emit signal_song_change();
+        int a = playlist::action_to_int(act);
+        emit signal_song_action(a);
     }
     else
     {
         m_is_title_dirty = true;
     }
     return true;
+}
+
+void
+qsmainwnd::update_song_action (int playaction)
+{
+    bool result = false;
+    playlist::action a = playlist::int_to_action(playaction);
+    switch (a)
+    {
+    case playlist::action::next_list:
+
+        result = perf().open_next_list();
+        break;
+
+    case playlist::action::next_song:
+
+        result = perf().open_next_song();
+        break;
+
+    case playlist::action::previous_song:
+
+        result = perf().open_previous_song();
+        break;
+
+    case playlist::action::previous_list:
+
+        result = perf().open_previous_list();
+        break;
+
+    default:
+
+        result = true;
+        break;
+    }
+    if (result)
+    {
+        perf().next_song_mode();
+        m_is_title_dirty = true;
+    }
 }
 
 /**

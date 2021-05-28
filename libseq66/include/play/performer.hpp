@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-27
+ * \updates       2021-05-28
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -262,7 +262,7 @@ public:
             return false;
         }
 
-        virtual bool on_song_change (bool /* signal */)
+        virtual bool on_song_action (bool /* sig */, playlist::action /* a */)
         {
             return false;
         }
@@ -853,12 +853,12 @@ private:                            /* key, midi, and op container section  */
     callbacks::clients m_notify;
 
     /**
-     *  If true, indicate certain events, like song-changes, via a signal.
-     *  In a headless run, there's no conflict with Qt's threads, but when Qt is
-     *  running, hoo boy!
+     *  If true, indicate certain events, like song-changes, occur via a
+     *  signal.  In a headless run, there's no conflict with Qt's threads, but
+     *  when Qt is running, hoo boy!
      */
 
-    bool m_signal_changes;
+    bool m_signalled_changes;
 
     /**
      *  Set to true if automation_edit_pending() is called.  It is reset by the
@@ -940,7 +940,11 @@ public:
     (
         int ppqn, midibpm bpm, change mod = change::yes
     );
-    void notify_song_change (bool signal = true);
+    void notify_song_action
+    (
+        bool signalit = true,
+        playlist::action act = playlist::action::none
+    );
 
     bool error_pending () const
     {
@@ -3144,9 +3148,9 @@ private:
 
 public:
 
-    bool signal_changes () const
+    bool signalled_changes () const
     {
-        return m_signal_changes;
+        return m_signalled_changes;
     }
 
     void clear_seq_edits ();

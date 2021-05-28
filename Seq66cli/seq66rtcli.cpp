@@ -24,7 +24,7 @@
  * \library       seq66rtcli application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-02-09
- * \updates       2021-05-27
+ * \updates       2021-05-28
  * \license       GNU GPLv2 or above
  *
  *  This application is seq66 without a GUI, control must be done via MIDI.
@@ -84,7 +84,7 @@ main (int argc, char * argv [])
 #endif
     int exit_status = EXIT_SUCCESS;         /* EXIT_FAILURE                 */
     seq66::clinsmanager sm;
-    usr().app_is_headless(true);
+    seq66::usr().app_is_headless(true);
     if (seq66::cmdlineopts::parse_o_options(argc, argv))
     {
         std::string logfile = seq66::usr().option_logfile();

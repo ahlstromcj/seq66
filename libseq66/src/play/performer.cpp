@@ -427,7 +427,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_have_redo             (false),
     m_redo_vect             (),
     m_notify                (),
-    m_signal_changes        (! usr().app_is_headless()),
+    m_signalled_changes     (! usr().app_is_headless()),
     m_seq_edit_pending      (false),
     m_event_edit_pending    (false),
     m_pending_loop          (seq::unassigned()),
@@ -576,13 +576,16 @@ performer::notify_resolution_change (int ppqn, midibpm bpm, change mod)
 
 /**
  *  Notifies when the use selects a new song or playlist.
+ *
+ * \param signalit
+ *      If true, emit a signal, to avoid conflict with the GUI.
  */
 
 void
-performer::notify_song_change (bool signal)
+performer::notify_song_action (bool signalit, playlist::action act)
 {
     for (auto notify : m_notify)
-        (void) notify->on_song_change(signal);
+        (void) notify->on_song_action(signalit, act);
 }
 
 /*
@@ -6346,9 +6349,25 @@ performer::automation_playlist
         if (a == automation::action::toggle)            /* select-by-value  */
             result = open_select_list_by_midi(d1);
         else if (a == automation::action::on)           /* select-next      */
-            result = open_next_list();
+        {
+            if (signalled_changes())
+            {
+                notify_song_action(true, playlist::action::next_list);
+                result = true;
+            }
+            else
+                result = open_next_list();
+        }
         else if (a == automation::action::off)          /* select-previous  */
-            result = open_previous_list();
+        {
+            if (signalled_changes())
+            {
+                notify_song_action(true, playlist::action::previous_list);
+                result = true;
+            }
+            else
+                result = open_previous_list();
+        }
     }
     return result;
 }
@@ -6381,6 +6400,9 @@ performer::read_midi_file
 {
     errmsg.clear();
     bool result = seq66::read_midi_file(*this, fn, ppqn(), errmsg);
+    if (result)
+        next_song_mode();
+
     return result;
 }
 
@@ -6449,17 +6471,16 @@ performer::playlist_activate (bool on)
         }
     }
     else
-    {
         rc().playlist_active(false);
-    }
 }
 
 bool
 performer::open_next_list (bool opensong, bool loading)
 {
     bool result;
-    if (signal_changes())
+    if (signalled_changes())
     {
+        delay_stop();
         result = m_play_list->open_next_list(opensong, loading);
     }
     else
@@ -6471,7 +6492,7 @@ performer::open_next_list (bool opensong, bool loading)
             if (opensong)
                 next_song_mode();
 
-            notify_song_change();
+            notify_song_action(false);
         }
     }
     return result;
@@ -6481,8 +6502,9 @@ bool
 performer::open_previous_list (bool opensong)
 {
     bool result;
-    if (signal_changes())
+    if (signalled_changes())
     {
+        delay_stop();
         result = m_play_list->open_previous_list(opensong);
     }
     else
@@ -6494,7 +6516,7 @@ performer::open_previous_list (bool opensong)
             if (opensong)
                 next_song_mode();
 
-            notify_song_change();
+            notify_song_action(false);
         }
     }
     return result;
@@ -6504,8 +6526,9 @@ bool
 performer::open_select_song_by_index (int index, bool opensong)
 {
     bool result;
-    if (signal_changes())
+    if (signalled_changes())
     {
+        delay_stop();
         result = m_play_list->open_select_song(index, opensong);
     }
     else
@@ -6517,7 +6540,7 @@ performer::open_select_song_by_index (int index, bool opensong)
             if (opensong)
                 next_song_mode();
 
-            notify_song_change();
+            notify_song_action(false);
         }
     }
     return result;
@@ -6527,8 +6550,9 @@ bool
 performer::open_select_song_by_midi (int ctrl, bool opensong)
 {
     bool result;
-    if (signal_changes())
+    if (signalled_changes())
     {
+        delay_stop();
         result = m_play_list->open_select_song_by_midi(ctrl, opensong);
     }
     else
@@ -6540,7 +6564,7 @@ performer::open_select_song_by_midi (int ctrl, bool opensong)
             if (opensong)
                 next_song_mode();
 
-            notify_song_change();
+            notify_song_action(false);
         }
     }
     return result;
@@ -6550,17 +6574,10 @@ bool
 performer::open_next_song (bool opensong)
 {
     bool result;
-    if (signal_changes())
+    if (signalled_changes())
     {
+        delay_stop();
         result = m_play_list->open_next_song(opensong);
-#if 0
-        NEED TO USE SIGNALS!!!!!!!!!!!!!!!!!!
-        if (result)
-        {
-            if (opensong)
-                next_song_mode();
-        }
-#endif
     }
     else
     {
@@ -6571,7 +6588,7 @@ performer::open_next_song (bool opensong)
             if (opensong)
                 next_song_mode();
 
-            notify_song_change();
+            notify_song_action(false);
         }
     }
     return result;
@@ -6581,8 +6598,9 @@ bool
 performer::open_previous_song (bool opensong)
 {
     bool result;
-    if (signal_changes())
+    if (signalled_changes())
     {
+        delay_stop();
         result = m_play_list->open_previous_song(opensong);
     }
     else
@@ -6594,7 +6612,7 @@ performer::open_previous_song (bool opensong)
             if (opensong)
                 next_song_mode();
 
-            notify_song_change();
+            notify_song_action(false);
         }
     }
     return result;
@@ -6746,9 +6764,25 @@ performer::automation_playlist_song
         if (a == automation::action::toggle)            /* select-by-value  */
             result = open_select_song_by_midi(d1);
         else if (a == automation::action::on)           /* select-next      */
-            result = open_next_song();
+        {
+            if (signalled_changes())
+            {
+                notify_song_action(true, playlist::action::next_song);
+                result = true;
+            }
+            else
+                result = open_next_song();
+        }
         else if (a == automation::action::off)          /* select-previous  */
-            result = open_previous_song();
+        {
+            if (signalled_changes())
+            {
+                notify_song_action(true, playlist::action::previous_song);
+                result = true;
+            }
+            else
+                result = open_previous_song();
+        }
     }
     return result;
 }
