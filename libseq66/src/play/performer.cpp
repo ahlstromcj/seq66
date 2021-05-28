@@ -1918,7 +1918,7 @@ performer::swap_sets (seq::number set0, seq::number set1)
  */
 
 bool
-performer::clear_all (bool clearplaylist)
+performer::clear_all (bool /* clearplaylist */ )
 {
     bool result = clear_song();
     if (result)
