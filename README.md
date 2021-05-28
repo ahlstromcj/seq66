@@ -22,8 +22,6 @@ Dark-Cold Fluxbox")
 
 # Major Features
 
-    Also see **Recent Changes** below.
-
 ##  User interface
 
     *   Qt 5 (good cross-platform support).  A grid of loop buttons and a song
@@ -64,6 +62,7 @@ Dark-Cold Fluxbox")
 
     *   Transposable triggers for re-using patterns more comprehensively.
         Works with Song Export. Can be disabled in the 'rc' file.
+    *   Improved non-U.S. keyboard support.
     *   See **Recent Changes** below.
 
 ##  Internal
@@ -91,7 +90,6 @@ Windows, and using a conventional source tarball.
         *   Removed a lot of debugging material of no use now.
         *   Fixed (mostly) a weird bug causing the application to hang
             on exit when set as JACK Master.  Pretty damn weird.
-            Still wrestling with other aspects of JACK Transport.
         *   Improving support for non-default PPQNs.
         *   Patterns can now be copied and merged into a new pattern to combine
             (for example) separate percussion tracks.
