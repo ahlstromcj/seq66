@@ -225,7 +225,7 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
         jack_position_t pos;
         jack_transport_state_t s = jack_transport_query(j->client(), &pos);
         performer & p = j->parent();
-        if (p.is_running())         // EXPERIMENTAL
+        if (p.is_running())
         {
             if (j->is_slave())
             {
@@ -927,7 +927,7 @@ jack_assistant::start ()
     {
         jack_transport_start(m_jack_client);
 #if defined USE_JACK_ASSISTANT_SET_POSITION
-        if (is_master())                        // EXPERIMENTAL
+        if (is_master())
             set_position(parent().get_tick());
 #endif
     }
@@ -1710,7 +1710,7 @@ jack_assistant::current_jack_position () const
     }
 }
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
 
 jack_client_t *
 jack_assistant::client () const

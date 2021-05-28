@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2021-05-25
+ * \updates       2021-05-28
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -42,6 +42,8 @@
 #include "play/performer.hpp"           /* seq66::performer anchor class    */
 #include "util/filefunctions.hpp"       /* functions for file-names         */
 #include "util/strfunctions.hpp"        /* strip_quotes()                   */
+
+#define USE_PERFORMER_READ_MIDI_FILE   // EXPERIMENTAL, not yet working
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -90,9 +92,7 @@ playlist::playlist
     m_midi_base_directory       (rc().midi_base_directory()),
     m_show_on_stdout            (show_on_stdout)
 {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    file_message("Playlist created", file_name());
-#endif
+    // No code
 }
 
 /**
@@ -101,9 +101,7 @@ playlist::playlist
 
 playlist::~playlist ()
 {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    file_message("Playlist deleted", file_name());
-#endif
+    // No code
 }
 
 /**
@@ -175,6 +173,41 @@ playlist::check_song_list (const play_list_t & plist)
  *      song file to verify it.
  */
 
+#if defined USE_PERFORMER_READ_MIDI_FILE
+
+bool
+playlist::open_song (const std::string & fname, bool verifymode)
+{
+    bool result = not_nullptr(m_performer);
+    if (result)
+    {
+        if (m_performer->is_running())
+            m_performer->stop_playing();
+
+        result = m_performer->clear_song();
+    }
+    if (result)
+    {
+        std::string errmsg_dummy;
+        result = m_performer->read_midi_file(fname, errmsg_dummy, false);
+    }
+    if (result)
+    {
+        if (verifymode)
+        {
+            /* nothing to do yet */
+        }
+        else
+        {
+//          if (unmute_set_now())
+//              m_performer->toggle_playing_tracks();
+        }
+    }
+    return result;
+}
+
+#else   // defined USE_PERFORMER_READ_MIDI_FILE
+
 bool
 playlist::open_song (const std::string & fname, bool verifymode)
 {
@@ -210,9 +243,7 @@ playlist::open_song (const std::string & fname, bool verifymode)
             if (verifymode)
             {
                 /*
-                 * This needs to be done only after all songs have been
-                 * verified.
-                 *
+                 * Do only after all songs have been verified:
                  * (void) m_performer.clear_all(false);    // reset playlist
                  */
             }
@@ -229,11 +260,13 @@ playlist::open_song (const std::string & fname, bool verifymode)
                 if (unmute_set_now())
                     m_performer->toggle_playing_tracks();
             }
-            m_performer->announce_playscreen();
+            m_performer->announce_playscreen(); // hmm, done in read_midi_file()
         }
     }
     return result;
 }
+
+#endif  //defined USE_PERFORMER_READ_MIDI_FILE
 
 /**
  *  Selects the song based on the index (row) value, and optionally opens it.

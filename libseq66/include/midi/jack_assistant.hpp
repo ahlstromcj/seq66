@@ -49,7 +49,7 @@
 #undef SEQ66_JACK_SESSION
 #endif
 
-#undef USE_JACK_ASSISTANT_SET_POSITION  /* EXPERIMENTAL         */
+#undef USE_JACK_ASSISTANT_SET_POSITION  /* currently not needed             */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -57,7 +57,7 @@
 
 namespace seq66
 {
-    class performer;                    /* forward reference    */
+    class performer;                    /* forward reference                */
 
 /**
  *  Provide a temporary structure for passing data and results between a
@@ -527,7 +527,7 @@ public:
         set_follow_transport(! m_follow_transport);
     }
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
 
     jack_client_t * client () const;
 

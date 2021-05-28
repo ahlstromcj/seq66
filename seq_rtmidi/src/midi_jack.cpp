@@ -290,7 +290,7 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
                     {
                         async_safe_strprint("~", 1);
                         overflow = true;
-                        break;                  /* EXPERIMENTAL */
+                        break;
                     }
                 }
             }
@@ -802,7 +802,7 @@ midi_jack::api_init_in_sub ()
 }
 
 /**
- *  EXPERIMENTAL. Commented out.  See the discussion at api_deinit_in().
+ *  Commented out.  See the discussion at api_deinit_in().
  */
 
 bool

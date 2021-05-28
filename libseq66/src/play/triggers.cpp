@@ -1283,7 +1283,7 @@ triggers::paste (midipulse paste_tick)
             m_clipboard.offset(adjust_offset(m_clipboard.offset()));
             set_trigger_paste_tick(c_no_paste_trigger);         /* reset */
         }
-        m_trigger_copied = false;   // NEW TRIAL EXPERIMENTAL 2019-08-10
+        m_trigger_copied = false;
     }
 }
 

@@ -658,17 +658,16 @@ qslivegrid::refresh (seq::number seqno)
         seq::pointer s = perf().get_sequence(seqno);
         if (not_nullptr(s))
         {
-            bool armed = s->playing();
             qslotbutton * pb = button(row, column);
             if (not_nullptr(pb))
             {
+                bool armed = s->playing();
                 pb->set_checked(armed);
                 pb->reupdate(true);
 #if defined SEQ66_PLATFORM_DEBUG_TMI
                 printf
                 (
-                    "button(%d, %d) = %s\n", row, column,
-                    armed ? "on" : "off"
+                    "button(%d, %d) %s\n", row, column, armed ? "on" : "off"
                 );
 #endif
             }

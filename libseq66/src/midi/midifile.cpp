@@ -990,9 +990,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                 return false;
             }
             sequence & s = *sp;                     /* references better    */
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            int eventcounter = 0;
-#endif
             while (! done)                          /* get events in track  */
             {
                 event e;
@@ -1446,9 +1443,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     return true;        /* allow further processing */
                     break;
                 }
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                ++eventcounter;
-#endif
             }                          /* while not done loading Trk chunk */
 
             /*
@@ -1472,10 +1466,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                 else
                     finalize_sequence(p, s, seqnum, screenset);
             }
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            s.print();
-#endif
         }
         else
         {
@@ -3192,7 +3182,8 @@ read_midi_file
     performer & p,
     const std::string & fn,
     int ppqn,                                   /* might get altered        */
-    std::string & errmsg
+    std::string & errmsg,
+    bool addtorecent
 )
 {
     bool result = file_accessible(fn);
@@ -3223,9 +3214,12 @@ read_midi_file
             }
             usr().midi_ppqn(ppqn);              /* save the current value   */
             p.set_ppqn(ppqn);                   /* set up PPQN for MIDI     */
-            rc().last_used_dir(fn.substr(0, fn.rfind("/") + 1));
             rc().midi_filename(fn);             /* save current file-name   */
-            rc().add_recent_file(fn);           /* Oli Kester's Kepler34!   */
+            if (addtorecent)
+            {
+                rc().last_used_dir(fn.substr(0, fn.rfind("/") + 1));
+                rc().add_recent_file(fn);       /* Oli Kester's Kepler34!   */
+            }
             p.announce_playscreen();            /* tell MIDI control out    */
             file_message("Read MIDI file", fn);
         }
@@ -3233,7 +3227,10 @@ read_midi_file
         {
             errmsg = f->error_message();
             if (f->error_is_fatal())
-                rc().remove_recent_file(fn);
+            {
+                if (addtorecent)
+                    rc().remove_recent_file(fn);
+            }
         }
     }
     else

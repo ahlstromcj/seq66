@@ -944,7 +944,7 @@ tokenize
 /**
  *  Simplifies a string by tokenizing it based on spaces, and dropping tokens
  *  that have some special characters and don't start with a letter, then
- *  reassembling the remaining tokens with spaces in between.  EXPERIMENTAL.
+ *  reassembling the remaining tokens with spaces in between.
  */
 
 std::string

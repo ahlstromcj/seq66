@@ -411,7 +411,6 @@ private:                            /* key, midi, and op container section  */
     midicontrolin m_midi_control_in;
 
     /**
-     *  EXPERIMENTAL.
      *  Specifies a single buss that is allowed to apply MIDI control to the
      *  application.  If set to c_bussbyte_max, any buss can control the
      *  application.
@@ -985,7 +984,8 @@ public:
     bool read_midi_file
     (
         const std::string & fn,
-        std::string & errmsg
+        std::string & errmsg,
+        bool addtorecent = true
     );
 
     bool notemap_exists () const
@@ -1884,7 +1884,7 @@ public:
             m_master_bus->print();
     }
 
-    void delay_stop ();         // EXPERIMENTAL
+    void delay_stop ();
     void auto_stop ();
     void auto_pause ();
     void auto_play ();

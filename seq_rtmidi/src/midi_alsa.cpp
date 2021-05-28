@@ -458,7 +458,7 @@ midi_alsa::api_init_in_sub ()
 }
 
 /**
- *  EXPERIMENTAL
+ *  Not used.
  */
 
 bool

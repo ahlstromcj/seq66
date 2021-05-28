@@ -1474,7 +1474,7 @@ eventlist::select_note_events
                  * verify_and_link() call!
                  */
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                 errprint("sequence::select_note_events(): unlinked note");
 #endif
                 stick = ftick = er.timestamp();

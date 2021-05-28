@@ -36,7 +36,7 @@
 
 #include "qt5nsmanager.hpp"             /* an seq66::smanager for Qt 5      */
 
-#define SEQ66_LOCALE_SUPPORT            /* EXPERIMENTAL */
+#define SEQ66_LOCALE_SUPPORT            /* needs more testing               */
 #undef  SEQ66_TRANSLATOR_SUPPORT
 
 /**

@@ -51,7 +51,7 @@ namespace seq66
 /**
  *  Provides an encapsulation of editable combo-box support.  Currently used
  *  only for PPQN combo-boxes.  The 0th item in this combo list always
- *  contains the default or current value. EXPERIMENTAL.
+ *  contains the default or current value.
  */
 
 class combo

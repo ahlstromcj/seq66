@@ -542,7 +542,7 @@ midibase::init_in_sub ()
 }
 
 /**
- *  EXPERIMENTAL
+ *  Deinitialize the MIDI output.
  */
 
 bool
@@ -710,7 +710,7 @@ midibase::start ()
 }
 
 /**
- *  EXPERIMENTAL.
+ *  EXPERIMENTAL.  Need to revisit this at some point.
  *
  * \param clocktype
  *      The value used to set the clock-type.

@@ -351,7 +351,7 @@ qloopbutton::initialize_fingerprint ()
                     else if (i >= i1)
                         i = i1 - 1;
 
-                    if (m_show_average)                         /* EXPERIMENTAL */
+                    if (m_show_average)     /* not sure how useful this is  */
                     {
                         ++m_fingerprint_count[i];
                         m_fingerprint[i] += midishort(y);
@@ -796,7 +796,7 @@ void
 qloopbutton::resizeEvent (QResizeEvent * qrep)
 {
     QSize s = qrep->size();
-    vert_compressed(s.height() < 90);        // HARDWIRED EXPERIMENTALLY
+    vert_compressed(s.height() < 90);        // hardwired experimentally
     QWidget::resizeEvent(qrep);
 }
 

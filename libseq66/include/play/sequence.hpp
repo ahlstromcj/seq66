@@ -363,7 +363,6 @@ private:
     bool m_recording;
 
     /**
-     *  EXPERIMENTAL
      *  If true, the first incoming event in the step-edit (auto-step) part of
      *  stream_event() will reset the starting tick to 0.  Useful when
      *  recording a stock pattern from a drum machine.

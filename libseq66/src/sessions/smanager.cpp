@@ -286,7 +286,7 @@ smanager::create_performer ()
         (void) p->get_settings(rc(), usr());
         m_perf_pointer = std::move(p);              /* change the ownership */
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         if (rc().verbose())                         /* for trouble-shooting */
         {
             rc().key_controls().show();

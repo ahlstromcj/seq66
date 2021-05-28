@@ -342,7 +342,7 @@ midibus::api_init_in_sub ()
 }
 
 /**
- *  EXPERIMENTAL
+ *  Seems to cause no ill effects. :-D
  */
 
 bool

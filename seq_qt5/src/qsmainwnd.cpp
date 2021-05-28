@@ -3432,7 +3432,6 @@ qsmainwnd::update_song_action (int playaction)
 
     default:
 
-        result = true;
         break;
     }
     if (result)

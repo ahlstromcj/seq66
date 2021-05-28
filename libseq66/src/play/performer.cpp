@@ -1924,12 +1924,16 @@ performer::clear_all (bool clearplaylist)
     if (result)
     {
         m_play_set.clear();             /* dump active patterns             */
+
+#if defined WE_REALLY_NEED_TO_RESET_PLAYLIST
         if (m_play_list)
         {
             m_is_busy = true;
             (void) m_play_list->reset_list(clearplaylist);
+            m_is_busy = false;
         }
-        m_is_busy = false;
+#endif
+
         set_needs_update();             /* tell all GUIs to refresh. BUG!   */
         announce_exit();
         announce_playscreen();
@@ -2528,18 +2532,12 @@ performer::finish ()
     {
         m_out_thread.join();
         m_out_thread_launched = false;
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("output thread joined\n");
-#endif
     }
 
     if (m_in_thread_launched && m_in_thread.joinable())
     {
         m_in_thread.join();
         m_in_thread_launched = false;
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("input thread joined\n");
-#endif
     }
 
     bool ok = deinit_jack_transport();
@@ -2583,7 +2581,7 @@ performer::set_tick (midipulse tick, bool dontreset)
     {
         m_dont_reset_ticks = true;
         set_start_tick(tick);
-        set_needs_update();         // EXPERIMENTAL
+        set_needs_update();
     }
 }
 
@@ -3341,9 +3339,6 @@ performer::output_func ()
         m_master_bus->flush();
         m_master_bus->stop();
     }
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("output func exit\n");
-#endif
     set_timer_services(false);
 }
 
@@ -3493,9 +3488,6 @@ performer::input_func ()
                 break;
         }
         set_timer_services(false);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("input func exit\n");
-#endif
     }
 }
 
@@ -6395,11 +6387,12 @@ bool
 performer::read_midi_file
 (
     const std::string & fn,
-    std::string & errmsg
+    std::string & errmsg,
+    bool addtorecent
 )
 {
     errmsg.clear();
-    bool result = seq66::read_midi_file(*this, fn, ppqn(), errmsg);
+    bool result = seq66::read_midi_file(*this, fn, ppqn(), errmsg, addtorecent);
     if (result)
         next_song_mode();
 
