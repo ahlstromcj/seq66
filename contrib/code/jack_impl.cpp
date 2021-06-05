@@ -1,5 +1,7 @@
 
-// Unused code from midi_jack.hpp and .cpp
+/*
+ * Unused code from midi_jack.hpp and .cpp
+ */
 
 #if defined SEQ64_USE_OPEN_CLIENT_IMPL
 
@@ -89,11 +91,11 @@ midi_jack::open_client_impl (bool input)
             parent_bus().set_multi_name(appname, clientname, rpname);
         }
 
-        const char * name = bus_name().c_str();                 // modified
-        jack_client_t * clipointer = create_jack_client(name); // , uuid);
+        const char * name = bus_name().c_str();
+        jack_client_t * clipointer = create_jack_client(name);
         if (not_nullptr(clipointer))
         {
-            client_handle(clipointer);          // midi_handle() too???
+            client_handle(clipointer);
             if (input)
             {
                 int rc = jack_set_process_callback
@@ -127,5 +129,5 @@ midi_jack::open_client_impl (bool input)
     return result;
 }
 
-#endif  // defined SEQ64_USE_OPEN_CLIENT_IMPL
+#endif      // defined SEQ64_USE_OPEN_CLIENT_IMPL
 

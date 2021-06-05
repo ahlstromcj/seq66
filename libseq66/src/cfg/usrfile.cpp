@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-05-21
+ * \updates       2021-06-04
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -134,6 +134,7 @@ usrfile::parse ()
         return false;
     }
     file.seekg(0, std::ios::beg);                       /* seek to start    */
+    (void) parse_version(file);
 
     /*
      * [comments] Header commentary is skipped during parsing.  However, we
@@ -145,19 +146,8 @@ usrfile::parse ()
         usr().comments_block().set(comments);
 
     comments = parse_version(file);
-    if (comments.empty())
-    {
+    if (comments.empty() || file_version_old(file))
         usr().save_user_config(true);
-    }
-    else
-    {
-//      int fileversion = string_to_int(comments);
-//      int codeversion = string_to_int(version());
-//      if (fileversion < codeversion)
-
-        if (file_version_old(file))
-            usr().save_user_config(true);
-    }
 
     usr().clear_buses_and_instruments();
     if (! rc_ref().reveal_ports())
@@ -429,6 +419,7 @@ usrfile::parse ()
     if (! s.empty())
     {
         usr().default_ppqn(std::stoi(s));
+#if 0
         s = get_variable(file, "[user-midi-ppqn]", "use-file-ppqn");
         if (! s.empty())
         {
@@ -436,6 +427,10 @@ usrfile::parse ()
             usr().use_file_ppqn(use_it);
             ppqn_settings_made = true;
         }
+#endif
+        bool flag = get_boolean(file, "[user-midi-ppqn]", "use-file-ppqn");
+        usr().use_file_ppqn(flag);
+        ppqn_settings_made = true;
     }
 
     /*
@@ -582,9 +577,10 @@ usrfile::parse ()
              */
         }
 
-        std::string s = get_variable(file, "[user-ui-tweaks]", "note-resume");
-        usr().resume_note_ons(string_to_bool(s));
-        s = get_variable(file, "[user-ui-tweaks]", "style-sheet");
+        bool flag = get_boolean(file, "[user-ui-tweaks]", "note-resume");
+        usr().resume_note_ons(flag);
+
+        std::string s = get_variable(file, "[user-ui-tweaks]", "style-sheet");
         usr().style_sheet(strip_quotes(s));
         s = get_variable(file, "[user-ui-tweaks]", "fingerprint-size");
         usr().fingerprint_size(string_to_int(s, 32));
@@ -602,6 +598,7 @@ usrfile::parse ()
     s = get_variable(file, "[user-session]", "url");
     usr().session_url(s);
 
+#if 0
     s = get_variable(file, "[new-pattern-editor]", "armed");
     usr().new_pattern_armed(string_to_bool(s));
 
@@ -613,6 +610,18 @@ usrfile::parse ()
 
     s = get_variable(file, "[new-pattern-editor]", "qrecord");
     usr().new_pattern_qrecord(string_to_bool(s));
+#endif
+    bool flag = get_boolean(file, "[new-pattern-editor]", "armed");
+    usr().new_pattern_armed(flag);
+
+    flag = get_boolean(file, "[new-pattern-editor]", "thru");
+    usr().new_pattern_thru(flag);
+
+    flag = get_boolean(file, "[new-pattern-editor]", "record");
+    usr().new_pattern_record(flag);
+
+    flag = get_boolean(file, "[new-pattern-editor]", "qrecord");
+    usr().new_pattern_qrecord(flag);
 
     recordstyle rs = recordstyle::merge;
     s = get_variable(file, "[new-pattern-editor]", "record-style");
@@ -659,18 +668,13 @@ usrfile::write ()
      * Header commentary.  Write out comments about the nature of this file.
      */
 
-    file
-        << "# Seq66 0.92.2 (and above) 'usr' configuration file\n"
-        << "#\n"
-        << "# " << name() << "\n"
-        << "# Written on " << current_date_time() << "\n"
-        << "#\n"
-        <<
+    write_date(file, "user ('usr')");
+    file <<
         "# This is a seq66.usr file. Edit it and place it in the\n"
         "# $HOME/.config/seq66 directory. It allows one to provide an\n"
         "# alias (alternate name) to each MIDI bus, MIDI channel, and MIDI\n"
         "# control codes per channel. It has additional options not present\n"
-        "# in Sequencer64, and also supports DOS INI variable setting.\n"
+        "# in Seq24, and also supports DOS INI variable setting.\n"
         ;
 
     file <<

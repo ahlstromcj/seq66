@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2021-01-04
+ * \updates       2021-06-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -95,6 +95,7 @@ palettefile::parse_stream (std::ifstream & file)
 {
     bool result = true;
     file.seekg(0, std::ios::beg);                   /* seek to start    */
+    (void) parse_version(file);
 
     std::string s = parse_comments(file);
     if (! s.empty())

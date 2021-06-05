@@ -1731,7 +1731,7 @@ jack_assistant::client () const
     return m_jack_client;
 }
 
-#endif  // SEQ66_PLATFORM_DEBUG
+#endif  // SEQ66_PLATFORM_DEBUG_TMI
 
 /*
  *  JACK callbacks.

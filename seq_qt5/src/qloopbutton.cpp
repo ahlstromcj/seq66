@@ -761,7 +761,6 @@ qloopbutton::draw_pattern (QPainter & painter)
                 int sx = lx0 + tick_s_x;            /* start x          */
                 int fx = lx0 + tick_f_x;            /* finish x         */
                 y += ly0;                           /* start & finish y */
-//              painter.setPen(pen);
                 painter.drawLine(sx, y, fx, y);
             }
         }

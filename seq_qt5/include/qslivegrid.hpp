@@ -167,7 +167,7 @@ private:
     void popup_menu ();
     void sequence_key_check ();
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     void show_loop_buttons ();
 #endif
 

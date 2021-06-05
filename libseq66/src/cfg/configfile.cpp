@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-04-19
+ * \updates       2021-06-05
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -52,7 +52,7 @@
 
 #include "cfg/configfile.hpp"           /* seq66:: configfile class         */
 #include "cfg/settings.hpp"             /* seq66::rc() accessor             */
-#include "util/calculations.hpp"        /* seq66::string_to_integer() etc.  */
+#include "util/calculations.hpp"        /* seq66::current_date_time() etc.  */
 #include "util/strfunctions.hpp"        /* strncompare() for std::string    */
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
@@ -90,6 +90,7 @@ configfile::configfile (const std::string & name, rcsettings & rcs) :
     m_rc            (rcs),
     m_name          (name),
     m_version       ("0"),
+    m_file_version  ("0"),
     m_line          (),
     m_line_number   (0),
     m_line_pos      (0)
@@ -155,6 +156,9 @@ std::string
 configfile::parse_version (std::ifstream & file)
 {
     std::string result = get_variable(file, "[Seq66]", "version");
+    if (! result.empty())
+        m_file_version = result;
+
     return result;
 }
 
@@ -423,6 +427,66 @@ configfile::get_variable
     return result;
 }
 
+bool
+configfile::get_boolean
+(
+    std::ifstream & file,
+    const std::string & tag,
+    const std::string & variablename,
+    int position
+)
+{
+    std::string value = get_variable(file, tag, variablename, position);
+    return string_to_bool(value);
+}
+
+void
+configfile::write_boolean
+(
+    std::ofstream & file,
+    const std::string & name,
+    bool status
+)
+{
+    file << name << " = " << bool_to_string(status) << "\n";
+}
+
+/**
+ *  Gets the active flag and the name of the file from the given tag section.
+ *  Very useful for all "included" configuration files.
+ */
+
+bool
+configfile::get_file_status
+(
+    std::ifstream & file,
+    const std::string & tag,
+    std::string & filename,     /* side-effect */
+    int position
+)
+{
+    bool result = get_boolean(file, tag, "active", position);
+    filename = strip_quotes(get_variable(file, tag, "file", position));
+    return result;
+}
+
+void
+configfile::write_file_status
+(
+    std::ofstream & file,
+    const std::string & tag,
+    const std::string & filename,
+    bool status
+)
+{
+    std::string quoted = add_quotes(filename);
+    file
+        << "\n" << tag << "\n\n"
+        << "active = " << bool_to_string(status) << "\n"
+        << "name = " << quoted << "\n"
+        ;
+}
+
 /**
  *  Looks for the next named section.  Unlike line_after(), it does not
  *  restart from the beginning of the file.  Like next_data_line(), it starts
@@ -631,6 +695,17 @@ configfile::get_tag_value (const std::string & tag)
         errprintf("[%s] tag has no intger value", tag.c_str());
     }
     return result;
+}
+
+void
+configfile::write_date (std::ofstream & file, const std::string & tag)
+{
+    file
+        << "# Seq66 0.94.1 (and above)" << tag << "configuration file\n\n"
+        << "# " << name() << "\n"
+        << "# Written on " << current_date_time() << "\n"
+        << "#\n"
+        ;
 }
 
 /**

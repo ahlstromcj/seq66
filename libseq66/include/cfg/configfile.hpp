@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-02-10
+ * \updates       2021-06-05
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -103,17 +103,24 @@ private:
     /**
      *  Provides the current version of the derived configuration file format.
      *  This value is set in the constructor of the configfile-derived object,
-     *  and is incremented in that object whenever a new way of reading, writing,
-     *  or formatting the configuration file is created.  For example, a new
-     *  version of the MIDI control file code might be incremented to "3".
-     *  If the user's MIDI control file specifies "version = 2", that means
-     *  that the code for this file must revert to the old format for reading the
-     *  data.  When saved, the old file is upgraded to the new version.  Also
-     *  useful to turn on the "--user-save" option for changes in the format of
-     *  the "usr" file.
+     *  and is incremented in that object whenever a new way of reading,
+     *  writing, or formatting the configuration file is created.  For
+     *  example, a new version of the MIDI control file code might be
+     *  incremented to "3".  If the user's MIDI control file specifies
+     *  "version = 2", that means that the code for this file must revert to
+     *  the old format for reading the data.  When saved, the old file is
+     *  upgraded to the new version.  Also useful to turn on the "--user-save"
+     *  option for changes in the format of the "usr" file.
      */
 
     std::string m_version;
+
+    /**
+     *  The actual version specified in the configuration file, which could be
+     *  older than the newest version supported in the code.
+     */
+
+    std::string m_file_version;
 
 protected:
 
@@ -178,6 +185,16 @@ public:
     int version_number () const
     {
         return version().empty() ? 0 : std::stoi(version()) ;
+    }
+
+    const std::string & file_version () const
+    {
+        return m_file_version;
+    }
+
+    int file_version_number () const
+    {
+        return file_version().empty() ? 0 : std::stoi(file_version()) ;
     }
 
     bool bad_position (int p) const
@@ -277,6 +294,7 @@ protected:
     );
     int find_tag (std::ifstream & file, const std::string & tag);
     int get_tag_value (const std::string & tag);
+    void write_date (std::ofstream & file, const std::string & tag);
     bool next_data_line (std::ifstream & file, bool strip = true);
     bool next_section (std::ifstream & file, const std::string & tag);
     std::string get_variable
@@ -285,6 +303,33 @@ protected:
         const std::string & tag,
         const std::string & variablename,
         int position = 0
+    );
+    bool get_boolean
+    (
+        std::ifstream & file,
+        const std::string & tag,
+        const std::string & variablename,
+        int position = 0
+    );
+    void write_boolean
+    (
+        std::ofstream & file,
+        const std::string & name,
+        bool status
+    );
+    bool get_file_status
+    (
+        std::ifstream & file,
+        const std::string & tag,
+        std::string & filename,     /* side-effect */
+        int position = 0
+    );
+    void write_file_status
+    (
+        std::ofstream & file,
+        const std::string & tag,
+        const std::string & filename,
+        bool status
     );
 
 };          // class configfile

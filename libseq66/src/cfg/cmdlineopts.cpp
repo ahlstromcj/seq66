@@ -603,8 +603,8 @@ cmdlineopts::parse_log_option (int argc, char * argv [])
         std::string logfile = usr().option_logfile();
         if (! logfile.empty())
         {
-#if defined SEQ66_PLATFORM_LINUX_MOVED              /* let main() call this */
-            (void) reroute_stdio(logfile);
+#if defined SEQ66_PLATFORM_LINUX_MOVED      /* in smanager::main_settings() */
+            (void) reroute_stdio(logfile);  /* also in daemonize()          */
 #endif
             result = true;
         }

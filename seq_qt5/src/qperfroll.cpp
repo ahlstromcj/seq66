@@ -749,7 +749,6 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.drawRect(0, 0, width(), height());          /* full width       */
-//  pen.setColor(step_color());                         /* Qt::lightGray    */
     for (int i = 0; i < height(); i += c_names_y)       /* horizontal lines */
         painter.drawLine(0, i, xwidth, i);
 

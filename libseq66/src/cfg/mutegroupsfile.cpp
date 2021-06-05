@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-05-12
+ * \updates       2021-06-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -36,7 +36,7 @@
 #include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile class      */
 #include "cfg/settings.hpp"             /* seq66::rc(), as rc_ref()         */
 #include "play/mutegroups.hpp"          /* seq66::mutegroups, etc.          */
-#include "util/calculations.hpp"        /* seq66::string_to_bool(), etc.    */
+#include "util/calculations.hpp"        /* seq66::current_data_time(), etc. */
 #include "util/strfunctions.hpp"        /* seq66::write_stanza_bits()       */
 
 /*
@@ -116,6 +116,7 @@ mutegroupsfile::parse_stream (std::ifstream & file)
 {
     bool result = true;
     file.seekg(0, std::ios::beg);                   /* seek to start    */
+    (void) parse_version(file);
 
     /*
      * [comments] Header commentary is skipped during parsing.  However, we
@@ -129,6 +130,7 @@ mutegroupsfile::parse_stream (std::ifstream & file)
         mutes.comments_block().set(s);
 
     s = get_variable(file, "[mute-group-flags]", "load-mute-groups");
+
     bool update_needed = s.empty();
     if (update_needed)
     {
@@ -168,8 +170,12 @@ mutegroupsfile::parse_stream (std::ifstream & file)
             bool usehex = (s == "hex");
             mutes.group_format_hex(usehex);     /* otherwise it is binary   */
         }
-        s = get_variable(file, "[mute-group-flags]", "toggle-active-only");
-        mutes.toggle_active_only(string_to_bool(s));
+
+        bool flag = get_boolean
+        (
+            file, "[mute-group-flags]", "toggle-active-only"
+        );
+        mutes.toggle_active_only(flag);
     }
 
     bool load = mutes.group_load_from_mutes();
@@ -265,13 +271,9 @@ mutegroupsfile::parse ()
 bool
 mutegroupsfile::write_stream (std::ofstream & file)
 {
-    file
-        << "# Seq66 0.93.1 (and above) mute-groups configuration file\n"
-           "#\n"
-        << "# " << name() << "\n"
-        << "# Written on " << current_date_time() << "\n"
-        << "#\n"
-           "# This file replaces the [mute-group] section in the 'rc' file,\n"
+    write_date(file, "mute-groups");
+    file <<
+           "# This file replaces the [mute-group] section of the 'rc' file,\n"
            "# making it easier to manage multiple sets of mute groups.\n"
            "\n"
         ;

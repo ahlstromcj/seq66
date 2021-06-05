@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2021-02-07
+ * \updates       2021-06-04
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -208,6 +208,7 @@ playlistfile::parse ()
         file_message("Reading 'playlist'", name());
         file.seekg(0, std::ios::beg);                   /* seek to start    */
         play_list().clear();
+        (void) parse_version(file);
 
         /*
          * [comments]
@@ -460,12 +461,8 @@ playlistfile::write ()
      * Initial comments and MIDI control section.
      */
 
-    file
-        << "# Seq66 0.91.0 (and above) playlist file\n"
-           "#\n"
-           "# " << name() << "\n"
-           "# Written on " << current_date_time() << "\n"
-           "#\n"
+    write_date(file, "playlist");
+    file <<
            "# This file holds multiple playlists for Seq66. It consists of 1 or\n"
            "# more [playlist] sections.  Each has a user-specified number for\n"
            "# for sorting and for MIDI control, ranging from 0 to 127.\n"

@@ -1583,7 +1583,6 @@ wrkfile::Sysex2Chunk ()
             );
         }
     }
-
     not_supported("Sysex 2 Chunk");
 }
 
@@ -1613,7 +1612,6 @@ wrkfile::NewSysexChunk ()
             );
         }
     }
-
     not_supported("New Sysex Chunk");
 }
 
@@ -2011,7 +2009,7 @@ wrkfile::StringTable()
         int len = read_byte();
         std::string name = read_string(len);
         int idx = read_byte();
-        table.push_back(name);      // TODO: table.insert(idx, name);
+        table.push_back(name);
         if (rc().show_midi())
         {
             printf(" %d. %s", idx, name.c_str());
@@ -2202,7 +2200,7 @@ wrkfile::read_chunk ()
         size_t start_pos = pos();
         size_t final_pos = start_pos + ck_len;
         read_raw_data(ck_len);
-        read_seek(start_pos);       // TODO: check the return value
+        read_seek(start_pos);
         switch (ck)
         {
         case WC_TRACK_CHUNK:
@@ -2234,7 +2232,7 @@ wrkfile::read_chunk ()
             break;
 
         case WC_SYSEX_CHUNK:
-            SysexChunk();          // handle SysEx messages (TODO)
+            SysexChunk();          // handle SysEx messages
             break;
 
         case WC_THRU_CHUNK:
@@ -2306,7 +2304,7 @@ wrkfile::read_chunk ()
             break;
 
         case WC_SYSEX2_CHUNK:
-            Sysex2Chunk();         // handle SysEx messages (TODO)
+            Sysex2Chunk();         // handle SysEx messages
             break;
 
         case WC_NSYSEX_CHUNK:
@@ -2325,7 +2323,7 @@ wrkfile::read_chunk ()
             UnknownChunk(ck);
             break;
         }
-        read_seek(final_pos);           // TODO: check the return value
+        read_seek(final_pos);
     }
     return ck;
 }

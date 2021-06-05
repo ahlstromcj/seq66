@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-05-09
+ * \updates       2021-06-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -37,7 +37,6 @@
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "ctrl/keymap.hpp"              /* seq66::qt_keyname_ordinal()      */
 #include "play/setmaster.hpp"           /* seq66::setmaster::Size() static  */
-#include "util/calculations.hpp"        /* seq66::string_to_bool(), etc.    */
 #include "util/strfunctions.hpp"        /* seq66::strip_quotes()            */
 
 /*
@@ -227,9 +226,11 @@ midicontrolfile::parse_stream (std::ifstream & file)
      * This is iffy, because we're setting the code version variable
      * from the version value in the file, and it might be an old file.
      * This will cause trouble later when we forget about it.
+     *
+     * version(parse_version(file));
      */
 
-    version(parse_version(file));
+    (void) parse_version(file);
 
     std::string s = parse_comments(file);
     if (! s.empty())
@@ -239,19 +240,17 @@ midicontrolfile::parse_stream (std::ifstream & file)
     if (bad_position(find_tag(file, mctag)))
         mctag = "[midi-control-flags]";             /* earlier name for it  */
 
-    s = get_variable(file, mctag, "load-key-controls");
-    rc_ref().load_key_controls(string_to_bool(s));
-    s = get_variable(file, mctag, "load-midi-controls");
-    rc_ref().load_midi_control_in(string_to_bool(s));
+    bool flag = get_boolean(file, mctag, "load-key-controls");
+    rc_ref().load_key_controls(flag);
+    flag = get_boolean(file, mctag, "load-midi-controls");
+    rc_ref().load_midi_control_in(flag);
 
     bool loadmidi = rc_ref().load_midi_control_in();
     bool loadkeys = rc_ref().load_key_controls();
     s = get_variable(file, mctag, "control-buss");
 
     int buss = string_to_int(s, SEQ66_MIDI_CONTROL_IN_BUSS);
-    s = get_variable(file, mctag, "midi-enabled");
-
-    bool enabled = string_to_bool(s);
+    bool enabled = get_boolean(file, mctag, "midi-enabled");
     int offset = 0, rows = 0, columns = 0;
     result = parse_control_sizes(file, mctag, offset, rows, columns);
     if (! result)
@@ -510,16 +509,21 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         s = get_variable(file, mctag, "buss");          /* the old tag name */
 
     int buss = string_to_int(s, SEQ66_MIDI_CONTROL_OUT_BUSS);
+    bool enabled = false;
     s = get_variable(file, mctag, "midi-enabled");
     if (s.empty())
+    {
         s = get_variable(file, mctag, "enabled");       /* the old tag name */
+        enabled = string_to_bool(s);
+    }
+    else
+        enabled = string_to_bool(s);
 
     /*
      * We need to read them anyway, for saving back at exit.  The enabled-flag
      * will determine if they are used.
      */
 
-    bool enabled = string_to_bool(s);
     int offset = 0, rows = 0, columns = 0;
     result = parse_control_sizes(file, mctag, offset, rows, columns);
     if (! result)
@@ -539,7 +543,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
             mco.is_enabled(enabled);
             mco.offset(offset);
         }
-        if (version_number() < 2)
+        if (file_version_number() < 2)
         {
             infoprint("Reading version 1 'ctrl' file, will upgrade at exit");
             for (int i = 0; i < sequences; ++i)
@@ -608,7 +612,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
          */
 
         bool ok = true;
-        bool mute_out_enabled = version_number() > 0;
+        bool mute_out_enabled = file_version_number() > 0;
         if (mute_out_enabled)
         {
             if (line_after(file, "[mute-control-out]"))
@@ -627,7 +631,8 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
 
         /* Non-sequence (automation) actions */
 
-        if (version_number() >= 3)
+        bool newtriples = file_version_number() > 3;
+        if (newtriples)
         {
             if (ok)
                 ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::panic);
@@ -640,9 +645,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
 
             if (ok)
                 ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::play);
-        }
-        if (version_number() >= 3)
-        {
+
             if (ok)
             {
                 ok = read_ctrl_triple
@@ -685,7 +688,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         if (ok)
             read_ctrl_triple(file, mco, midicontrolout::uiaction::learn);
 
-        if (version_number() >= 3)
+        if (newtriples)
         {
             if (ok)
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_up);
@@ -753,7 +756,7 @@ midicontrolfile::read_ctrl_triple
 )
 {
     int enabled, ev_on[4], ev_off[4], ev_del[4];
-    if (version_number() < 2)
+    if (file_version_number() < 2)
     {
         int count = std::sscanf
         (
@@ -836,12 +839,8 @@ midicontrolfile::read_mutes_triple
 bool
 midicontrolfile::write_stream (std::ofstream & file)
 {
-    file << "# Seq66 0.93.1 (and above) MIDI control configuration file\n"
-        << "#\n"
-        << "# " << name() << "\n"
-        << "# Written on " << current_date_time() << "\n"
-        << "#\n"
-        <<
+    write_date(file, "MIDI control");
+    file    <<
     "# This file holds the MIDI control configuration for Seq66. It follows\n"
     "# the format of the 'rc' configuration file, but is stored separately for\n"
     "# flexibility.  It is always stored in the main configuration directory.\n"
@@ -1295,7 +1294,7 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
     automation::slot opslot = automation::slot::none;
     std::string keyname;
     int count = 0;
-    if (version_number() < 2)
+    if (file_version_number() < 2)
     {
         count = std::sscanf
         (
@@ -1422,7 +1421,7 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
             }
             if (ok)
             {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                 if (rc_ref().verbose())
                     kc.show();
 #endif

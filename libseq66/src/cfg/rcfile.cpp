@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-05-18
+ * \updates       2021-06-04
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -50,8 +50,6 @@
  *  too much has changed.
  */
 
-// #include <iomanip>                      /* std::setw manipulator            */
-
 #include "cfg/midicontrolfile.hpp"      /* seq66::midicontrolfile class     */
 #include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile class      */
 #include "cfg/rcfile.hpp"               /* seq66::rcfile class              */
@@ -60,6 +58,8 @@
 #include "util/calculations.hpp"        /* seq66::current_date_time()       */
 #include "util/filefunctions.hpp"       /* seq66::file_extension_set()      */
 #include "util/strfunctions.hpp"        /* seq66::strip_quotes() function   */
+
+#if defined SEQ66_USE_FRUITY_CODE         /* will not be supported in seq66   */
 
 /**
  *  Provides names for the mouse-handling used by the application.  The fruity
@@ -85,6 +85,8 @@ static const std::string c_interaction_method_descs[3] =
     ""
 };
 
+#endif // defined SEQ66_USE_FRUITY_CODE
+
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -94,6 +96,11 @@ namespace seq66
 
 /**
  *  Principal constructor.
+ *
+ * Versions:
+ *
+ *      1:  2021-05-16
+ *      2:  2021-06-04  Transition of get-variable for booleans.
  *
  * \param rcs
  *      The source/destination for the configuration information.
@@ -106,7 +113,7 @@ namespace seq66
 rcfile::rcfile (const std::string & name, rcsettings & rcs) :
     configfile  (name, rcs)
 {
-    version("1");                       /* new version on 2021-05-16    */
+    version("2");
 }
 
 /**
@@ -188,9 +195,10 @@ rcfile::rcfile (const std::string & name, rcsettings & rcs) :
  *      currently the path must start with a "/", so it is not suitable for
  *      Windows.
  *
- *  [interaction-method]
+ *  [interaction-method] (obsolete)
  *
- *      This section specified the kind of mouse interaction.
+ *      This section specified the kind of mouse interaction.  We're keeping
+ *      the code, macro'd out, in case someone clamors for it eventually.
  *
  *      -   0 = 'seq66' (original Seq24 method).
  *      -   1 = 'fruity' (similar to a certain fruity sequencer we like).
@@ -208,14 +216,14 @@ bool
 rcfile::parse ()
 {
     std::ifstream file(name(), std::ios::in | std::ios::ate);
-    if (!  set_up_ifstream(file))           /* verifies [Seq66]: version */
+    if (! set_up_ifstream(file))            /* verifies [Seq66]: version */
         return false;
 
-    std::string s = get_variable(file, "[Seq66]", "verbose");
-
-    bool verby = string_to_bool(s, false);
+    bool verby = get_boolean(file, "[Seq66]", "verbose");
     rc().verbose(verby);
-    s = get_variable(file, "[Seq66]", "sets-mode");
+    (void) parse_version(file);
+
+    std::string s = get_variable(file, "[Seq66]", "sets-mode");
     rc().sets_mode(s);
     s = get_variable(file, "[Seq66]", "port-naming");
     rc().port_naming(s);
@@ -306,19 +314,30 @@ rcfile::parse ()
     }
 
     int flag = 0;
-    if (line_after(file, "[palette-file]"))
+
+    if (file_version_number() < 2)
     {
-        sscanf(scanline(), "%d", &flag);
-        rc_ref().palette_active(flag != 0);
-        if (next_data_line(file))
+        if (line_after(file, "[palette-file]"))
         {
-            ok = ! is_missing_string(line());
-            if (ok)
+            sscanf(scanline(), "%d", &flag);
+            rc_ref().palette_active(flag != 0);
+            if (next_data_line(file))
             {
-                std::string pfname = strip_quotes(line());
-                rc_ref().palette_filename(pfname);      /* base name        */
+                ok = ! is_missing_string(line());
+                if (ok)
+                {
+                    std::string pfname = strip_quotes(line());
+                    rc_ref().palette_filename(pfname);      /* base name    */
+                }
             }
         }
+    }
+    else
+    {
+        std::string pfname;
+        bool active = get_file_status(file, "[palette-file]", pfname);
+        rc_ref().palette_active(active);
+        rc_ref().palette_filename(pfname);              /* base name    */
     }
 
     /*
@@ -362,8 +381,9 @@ rcfile::parse ()
             s = "true";
 
         rc_ref().song_start_mode(string_to_bool(s, false));
-        s = get_variable(file, "[jack-transport]", "jack-midi");
-        rc_ref().with_jack_midi(string_to_bool(s, true));
+
+        bool flag = get_boolean(file, "[jack-transport]", "jack-midi");
+        rc_ref().with_jack_midi(flag);
     }
 
     bool use_manual_ports = false;
@@ -737,7 +757,6 @@ rcfile::parse ()
 #endif
 
     int method = 1;             /* preserve seq24 option if not present     */
-    bool savethem = false;
     if (line_after(file, "[auto-option-save]"))
     {
         int count = sscanf(scanline(), "%d", &method);
@@ -747,17 +766,17 @@ rcfile::parse ()
         }
         else
         {
-            s = get_variable(file, "[auto-option-save]", "auto-save-rc");
-            savethem = string_to_bool(s, true);
+            bool flag = get_boolean(file, "[auto-option-save]", "auto-save-rc");
+            rc_ref().auto_option_save(flag);
         }
 
-        s = get_variable(file, "[auto-option-save]", "save-old-triggers");
-        savethem = string_to_bool(s, false);
-        rc_ref().save_old_triggers(savethem);
-
-        s = get_variable(file, "[auto-option-save]", "save-old-mutes");
-        savethem = string_to_bool(s, false);
-        rc_ref().save_old_mutes(savethem);
+        bool flag = get_boolean
+        (
+            file, "[auto-option-save]", "save-old-triggers"
+        );
+        rc_ref().save_old_triggers(flag);
+        flag = get_boolean(file, "[auto-option-save]", "save-old-mutes");
+        rc_ref().save_old_mutes(flag);
     }
     file.close();               /* done parsing the "rc" file               */
     return true;
@@ -844,20 +863,14 @@ rcfile::write ()
      * Initial comments and MIDI control section.
      */
 
-    file
-        << "# Seq66 0.91.5 (and above) 'rc' configuration file\n"
-           "#\n"
-           "# " << name() << "\n"
-           "# Written on " << current_date_time() << "\n"
-           "#\n"
-        <<
+    write_date(file, "main ('rc')");
+    file <<
             "# This file holds the main configuration options for Seq66.\n"
             "# It loosely follows the format of the seq24 'rc' configuration\n"
-            "# file, but adds some new options, and is no longer compatible.\n"
+            "# file, but adds many new options, and is no longer compatible.\n"
             "\n"
             "[Seq66]\n"
             "\n"
-            "# Most of the options in these section are self-explanatory.\n"
             "# The sets-mode determines if sets are muted when going to the\n"
             "# next play-screen ('normal'), while 'autoarm' will automatically\n"
             "# unmute the next set.  The 'additive' options keeps the previous\n"
@@ -999,6 +1012,7 @@ rcfile::write ()
      * New section for palette file.
      */
 
+#if 0
     std::string palfilename = rc_ref().palette_filename();
     palfilename = add_quotes(palfilename);
     file
@@ -1010,6 +1024,18 @@ rcfile::write ()
         << "     # palette_active\n\n"
         << palfilename << "\n"
         ;
+#endif
+    file <<
+       "\n"
+       "# This section provides a flag and a file-name to allow modifying the\n"
+       "# palette using the file given below.  Use '\"\"' to indicate no\n"
+       "# palette file.\n"
+       ;
+    write_file_status
+    (
+        file, "[palette-file]",
+        rc_ref().palette_filename(), rc_ref().palette_active()
+    );
 
     /*
      * New section for MIDI meta events.

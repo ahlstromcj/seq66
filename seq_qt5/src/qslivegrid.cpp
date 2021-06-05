@@ -1594,7 +1594,7 @@ qslivegrid::popup_menu ()
     millisleep(10);
 }
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
 
 /**
  *  By default, the rectangle for each slot is (0, 0, 91, 94).  The rectangle
@@ -1622,7 +1622,7 @@ qslivegrid::show_loop_buttons ()
     }
 }
 
-#endif      // defined SEQ66_PLATFORM_DEBUG
+#endif      // defined SEQ66_PLATFORM_DEBUG_TMI
 
 }           // namespace seq66
 

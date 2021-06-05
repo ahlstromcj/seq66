@@ -374,8 +374,4 @@ libseq66/src/midi/editable_event.cpp:
 
     set_status_from_string(): Implement the to-do functionality if practical.
 
-libseq66/src/midi/wrkfile.cpp:
-
-    Implement the to-dos.
-
 # vim: sw=4 ts=4 wm=4 et ft=sh

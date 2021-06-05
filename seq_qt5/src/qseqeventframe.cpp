@@ -919,7 +919,7 @@ qseqeventframe::handle_save ()
             cb_perf().notify_sequence_change(seqno);
             ui->button_save->setEnabled(false);
             m_is_dirty = false;
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
             if (rc().verbose())
             {
                 std::string dump = m_eventslots->events_to_string();

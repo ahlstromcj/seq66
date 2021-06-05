@@ -77,7 +77,6 @@ qeditbase::qeditbase
     m_scale_zoom            (m_scale * zoom()),     /* see change_ppqn()    */
     m_padding_x             (padding),
     m_snap                  (snap),
-//  m_grid_snap             (snap),
     m_grid_snap             (rescale_tick(snap, p.ppqn())),
     m_beat_length           (p.ppqn()),             /* see change_ppqn()    */
     m_measure_length        (m_beat_length * 4),    /* see change_ppqn()    */

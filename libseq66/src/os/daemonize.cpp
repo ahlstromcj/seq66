@@ -421,7 +421,7 @@ session_close ()
     bool result = sg_needs_close;
 #if defined SEQ66_PLATFORM_DEBUG
     if (result)
-        printf("Application marked for close....\n");
+        printf("App marked for close....\n");
 #endif
     sg_needs_close = false;
     return result;
@@ -437,7 +437,7 @@ session_save ()
     bool result = sg_needs_save;
 #if defined SEQ66_PLATFORM_DEBUG
     if (result)
-        printf("Application marked for file_save....\n");
+        printf("App marked for file_save....\n");
 #endif
     sg_needs_save = false;
     return result;

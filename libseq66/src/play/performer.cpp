@@ -68,10 +68,10 @@
  *  playlist:           MIDI only, arrow keys hardwired.
  *  playlist_song:      MIDI only, arrow keys hardwired.
  *  tap_bpm,            Tap key for estimating BPM.
- *  start:              TODO.
- *  stop:               TODO.
+ *  start:              auto_stop() and auto_play()
+ *  stop:               auto_stop()
  *  reserved_29         No longer use snapshot 2.
- *  toggle_mutes        TODO.
+ *  toggle_mutes        Mute-groups actions toggle, on, and off.
  *  song_pointer        TODO.
  *  keep_queue:         Key: Toggle (compare to "queue").
  *  slot_shift:         Each instance of this control add the set size to
@@ -2226,10 +2226,14 @@ performer::announce_exit (bool playstatesoff)
         }
         if (playstatesoff)
         {
-            announce_automation(false);
+            announce_automation(false);                 /* annount_mutes()  */
             for (int g = 0; g < mutegroups::Size(); ++g)
                 send_mutes_inactive(g);
         }
+        // send_onoff_play_states(midicontrolout::uiaction::stop);
+        // send_onoff_play_states(midicontrolout::uiaction::pause);
+        // send_onoff_play_states(midicontrolout::uiaction::play);
+        // send_onoff_play_states(midicontrolout::uiaction::panic);
     }
 }
 
@@ -3865,7 +3869,7 @@ performer::play (midipulse tick)
         if (not_nullptr(m_master_bus))
             m_master_bus->flush();                      /* flush MIDI buss  */
     }
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     else
     {
         if (rc().verbose())
