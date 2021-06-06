@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-17
+ * \updates       2021-06-06
  * \license       GNU GPLv2 or above
  */
 
@@ -217,26 +217,31 @@ struct qt_keycodes
  *  By using the modifier, we can distinguish between various version of the
  *  same key, such as the normal PageDn and the keypad's PageDn.
  *
- *  A number of these keys (e.g. the keypad keys) are defined in Seq64's gdk_basic_keys.h
- *  file, which we do not use here.
+ *  A number of these keys (e.g. the keypad keys) are defined in Seq64's
+ *  gdk_basic_keys.h file, which we do not use here.
  *
  *  Also note that we restrict the keystroke names to 9 characters or less, to
  *  keep the MIDI control section readable.
  *
+ *  Also note that, currently, "Quit" is a fake key, a placeholder for
+ *  the new MIDI control for quitting the application (especially when running
+ *  headless.
+ *
  *  For alternate keyboards such as AZERTY, we have many characters in the
  *  Extened ASCII (code >= 0x80) set, besides the usual items (e.g. keypad
- *  characters) that Qt provides.  And, because the exact character can, as far as
- *  we know, depend on the code page, we cannot use the extended character itself
- *  as the name of the character.  Instead, we use the hex code (e.g. "0xe9") as
- *  the name of the character.  This affects the display of pattern and mute group
- *  keys as obtained by keycontainer::slot_key() and mute_key().
+ *  characters) that Qt provides.  And, because the exact character can, as
+ *  far as we know, depend on the code page, we cannot use the extended
+ *  character itself as the name of the character.  Instead, we use the hex
+ *  code (e.g. "0xe9") as the name of the character.  This affects the display
+ *  of pattern and mute group keys as obtained by keycontainer::slot_key() and
+ *  mute_key().
  *
  *  This array can be modified at run-time.  See setup_qt_azerty_fr_keys(),
  *  for example.
  *
- *  Finally, we started encountering uninitialized static variables.  A g++ bug,
- *  or bug fix?  So now we enforce initialization by wrapping static values in
- *  accessor functions.
+ *  Finally, we started encountering uninitialized static variables.  A g++
+ *  bug, or bug fix?  So now we enforce initialization by wrapping static
+ *  values in accessor functions.
  */
 
 static qt_keycodes &
@@ -508,13 +513,13 @@ qt_keys (int i)
         { 0xd6,  0x01000099,   0xd6,  "0xd6",       KNONE  }, // available
         { 0xd7,  0x01000020, 0xffe2,  "Shift_R",    KSHIFT }, // Right-Shift
         { 0xd8,  0x01000021, 0xffe4,  "Ctrl_R",     KCTRL  }, // Right-Ctrl
-        { 0xd9,        0x2e, 0xffae,   "KP_.",      KEYPAD }, // KP_Decimal release
+        { 0xd9,        0x2e, 0xffae,  "KP_.",       KEYPAD }, // KP_Decimal release
         { 0xda,  0x01000023, 0xffea,  "Alt_R",      KGROUP }, // Right-Alt
         { 0xdb,  0x01000020, 0xffe1,  "Shift_Lr",   KNONE  }, // L-Shift release
         { 0xdc,  0x01000020, 0xffe2,  "Shift_Rr",   KNONE  }, // R-Shift release
         { 0xdd,  0x01000021, 0xffe3,  "Ctrl_Lr",    KNONE  }, // L-Ctrl release
         { 0xde,  0x01000021, 0xffe4,  "Ctrl_Rr",    KNONE  }, // R-Ctrl release
-        { 0xdf,  0x01000099,   0xdf,  "0xdf",       KNONE  }, // available
+        { 0xdf,  0x01000099,   0xdf,  "Quit",       KNONE  }, // fake key, MIDI control only
 
         /*
          * This section is currently useful to fill in for future expansion or

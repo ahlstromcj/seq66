@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-05-27
+ * \updates       2021-06-06
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -372,6 +372,13 @@ private:
      *
      *      bool m_use_midi_control_file;
      */
+
+    /**
+     *  A new flag for indicating if MIDI Control I/O is to be active.
+     *  Useful for temporarily disabling a 'ctrl' file.
+     */
+
+    bool m_midi_control_active;
 
     /**
      *  The base name of the MIDI control file, if applicable.  This file is
@@ -938,6 +945,11 @@ public:
         return true;
      }
 
+     bool midi_control_active () const
+     {
+        return m_midi_control_active;
+     }
+
      const std::string & midi_control_filename () const
      {
         return m_midi_control_filename;
@@ -1117,6 +1129,11 @@ public:
     void print_keys (bool flag)
     {
         m_print_keys = flag;
+    }
+
+    void midi_control_active (bool flag)
+    {
+        m_midi_control_active = flag;
     }
 
     void midi_control_filename (const std::string & name)

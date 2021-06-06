@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-04
+ * \updates       2021-06-06
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -1102,10 +1102,9 @@ usrfile::write ()
         ;
 
     file << "\n"
-        "# Specifies a scaling of the main window of Seq66 at startup.\n"
-        "# The norm is 1.0x1.0, which is the legacy sizing.  If this value\n"
-        "# value is between 0.8 and 3.0, it will change the size of the main\n"
-        "# window proportionately. Same as the '-o scale=m.n[xp.q]' option.\n"
+        "# Specifies scaling the main window of Seq66 at startup. The norm is\n"
+        "# 1.0x1.0.  If this value is between 0.8 and 3.0, it changes the size\n"
+        "# of the main window proportionately. Option '-o scale=m.n[xp.q]'.\n"
         "\n"
         << usr().window_scale() << " " << usr().window_scale_y()
         << "      # window_scale (scales main window width x height)\n"
@@ -1118,16 +1117,14 @@ usrfile::write ()
     file << "\n"
         "[user-midi-ppqn]\n"
         "\n"
-        "# These settings overwrite the midi_ppqn setting below.  We need to\n"
-        "# separate the file PPQN from the default PPQN that the user wants\n"
-        "# Seq66 to support.\n"
+        "# These settings replace the midi_ppqn setting below.  Seq66 separates\n"
+        "# the file PPQN from the default PPQN that the user wants to use.\n"
         "#\n"
-        "# default-ppqn specifies parts-per-quarter note to use by default. It\n"
-        "# is the starting PPQN for Seq66. The classic default is 192, but now\n"
-        "# can range from 32 to 1920.\n"
+        "# default-ppqn specifies the PPQN to use by default. The classic\n"
+        "# default is 192, but can range from 32 to 19200.\n"
         "#\n"
-        "# use-file-ppqn, if true, indicates to use the file PPQN. Usually,\n"
-        "# this is the best setting, to avoid changing the file's PPQN.\n"
+        "# use-file-ppqn, if true, indicates to use the file PPQN. Usually this\n"
+        "# is the best setting, to avoid changing the file's PPQN.\n"
         "\n"
         "default-ppqn = " << std::to_string(usr().default_ppqn()) << "\n"
         "use-file-ppqn = " << bool_to_string(usr().use_file_ppqn()) << "\n"
@@ -1142,7 +1139,6 @@ usrfile::write ()
         "\n"
         "# These settings specify MIDI-specific value that might be\n"
         "# better off as variables, rather than constants.\n"
-        "\n"
         "# This value is no longer used.  See above.\n"
         "\n"
         << usr().midi_ppqn() << "       # midi_ppqn, --ppqn p, default PPQN\n"
@@ -1150,15 +1146,15 @@ usrfile::write ()
 
     file << "\n"
         "# Specifies the default beats per measure, or beats per bar.\n"
-        "# The default value is 4, the range is 1 to 20.\n"
+        "# The default value is 4, the range is 1 to 32.\n"
         "\n"
         << usr().midi_beats_per_bar()
         << "       # midi_beats_per_measure/bar\n"
         ;
 
     file << "\n"
-        "# Specifies the default beats per minute.  The default value\n"
-        "# is 120, and the legal range is 20 to 600. Also see the value of\n"
+        "# Specifies the default beats per minute.  The default value is 120;\n"
+        "# the legal range is 2 to 600. Also see the value of\n"
         "# midi_bpm_minimum and midi_bpm_maximum below.\n"
         "\n"
         << usr().midi_beats_per_minute() << "       # midi_beats_per_minute\n"
@@ -1171,13 +1167,11 @@ usrfile::write ()
         ;
 
     file << "\n"
-        "# Specifies the buss-number override, the same as the --bus\n"
-        "# command-line option. The default value is -1, which means that\n"
-        "# there is no buss override.  If a value from 0 to 31 is given,\n"
-        "# then that buss value overrides all buss values in all patterns.\n"
-        "# Change this value from -1 only to use a single output buss,\n"
-        "# either for testing or convenience.  And don't save the MIDI file\n"
-        "# afterwards, unless you want to overwrite all the buss values!\n"
+        "# Specifies the buss-number override, the same as --buss. The default\n"
+        "# is -1 (no buss override).  If a value from 0 to 31 is given, that\n"
+        "# buss value overrides the busses for all patterns, for testing or\n"
+        "# convenience.  Do not save the MIDI file afterwards, unless you want\n"
+        "# to overwrite all the buss values!\n"
         "\n"
         ;
 
@@ -1199,10 +1193,9 @@ usrfile::write ()
     file << vel      << "       # velocity_override (-1 = 'Free')\n";
 
     file << "\n"
-        "# Specifies the precision of the beats-per-minutes spinner and\n"
-        "# MIDI control over the BPM value.  The default is 0, which means\n"
-        "# the BPM is an integer.  Other values are 1 and 2 decimal digits\n"
-        "# of precision.\n"
+        "# Specifies the precision of the beats-per-minutes spinner and MIDI\n"
+        "# control of the BPM value.  The default is 0 (BPM is an integer).\n"
+        "# Other values are 1 and 2 decimal digits of precision.\n"
         "\n"
         ;
 
@@ -1210,11 +1203,10 @@ usrfile::write ()
     file << precision << "       # bpm_precision\n";
 
     file << "\n"
-        "# Specifies the step increment of the beats/minute spinner and\n"
-        "# MIDI control over the BPM value.  The default is 1. For a\n"
-        "# precision of 1 decimal point, 0.1 is a good value.  For a\n"
-        "# precision of 2 decimal points, 0.01 is a good value, but one\n"
-        "# might want somethings a little faster, like 0.05.\n"
+        "# Specifies the step increment of the beats/minute spinner and MIDI\n"
+        "# control over the BPM value.  The default is 1. For 1 decimal point,\n"
+        "# 0.1 is a good value.  For a precision of 2 decimal points, 0.01 is\n"
+        "# a good value, but one might want something faster, like 0.05.\n"
         "\n"
         ;
 

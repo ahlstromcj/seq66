@@ -960,11 +960,19 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         else
             file << "control-buss = " << bb << "\n";
 
+        int defaultrows = mci.rows();
+        int defaultcolumns = mci.columns();
+        if (defaultrows == 0)
+            defaultrows = usr().mainwnd_rows();
+
+        if (defaultcolumns == 0)
+            defaultcolumns = usr().mainwnd_cols();
+
         file
             << "midi-enabled = " << (disabled ? "false" : "true") << "\n"
             << "button-offset = " << mci.offset() << "\n"
-            << "button-rows = " << mci.rows() << "\n"
-            << "button-columns = " << mci.columns() << "\n"
+            << "button-rows = " << defaultrows << "\n"
+            << "button-columns = " << defaultcolumns << "\n"
             << "keyboard-layout = " <<
                 rc_ref().key_controls().kbd_layout_to_string() << "\n";
             ;

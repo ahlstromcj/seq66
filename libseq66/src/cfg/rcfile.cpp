@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-04
+ * \updates       2021-06-06
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -238,35 +238,47 @@ rcfile::parse ()
         rc_ref().comments_block().set(comments);
 
     bool ok = true;                                     /* start hopefully! */
-    if (line_after(file, "[midi-control-file]"))
+    if (file_version_number() < 2)
     {
-        ok = ! is_missing_string(line());               /* "", "?", empty   */
-        if (ok)
+        if (line_after(file, "[midi-control-file]"))
         {
-            std::string mcfname = strip_quotes(line());
-            rc_ref().midi_control_filename(mcfname);    /* set base name    */
-
-            std::string fullpath = rc_ref().midi_control_filespec();
-            file_message("Reading 'ctrl'", fullpath);
-            ok = parse_midi_control_section(fullpath, true);
-            if (! ok)
+            ok = ! is_missing_string(line());               /* "", "?", empty   */
+            if (ok)
             {
-                std::string info = "'";
-                info += fullpath;
-                info += "'";
-                return make_error_message("midi-control-file", info);
+                std::string mcfname = strip_quotes(line());
+                rc_ref().midi_control_filename(mcfname);    /* set base name    */
+
+                std::string fullpath = rc_ref().midi_control_filespec();
+                file_message("Reading 'ctrl'", fullpath);
+                ok = parse_midi_control_section(fullpath, true);
+                if (! ok)
+                {
+                    std::string info = "'";
+                    info += fullpath;
+                    info += "'";
+                    return make_error_message("midi-control-file", info);
+                }
             }
         }
+#if defined USE_OBSOLETE_CODE
+        else
+        {
+            /*
+             * This call causes parsing to skip all of the header material.  Note
+             * that line_after() starts from the beginning of the file every time,
+             * a lot a rescanning!  But it goes fast these days.
+             */
+
+            ok = parse_midi_control_section(name());
+        }
+#endif
     }
     else
     {
-        /*
-         * This call causes parsing to skip all of the header material.  Note
-         * that line_after() starts from the beginning of the file every time,
-         * a lot a rescanning!  But it goes fast these days.
-         */
-
-        ok = parse_midi_control_section(name());
+        std::string pfname;
+        bool active = get_file_status(file, "[midi-control-file]", pfname);
+        rc_ref().midi_control_active(active);
+        rc_ref().midi_control_filename(pfname);             /* base name    */
     }
 
     if (line_after(file, "[mute-group-file]"))
@@ -908,35 +920,49 @@ rcfile::write ()
      */
 
     std::string mcfname = rc_ref().midi_control_filespec();
+    bool exists = file_exists(mcfname);
+    bool active = rc_ref().midi_control_active();
     const midicontrolin & ctrls = rc_ref().midi_control_in();
     bool result = ctrls.count() > 0;
     if (result)
     {
-        midicontrolfile mcf(mcfname, rc_ref());
-        result = mcf.container_to_stanzas(ctrls);
-        if (result)
+        if (active || ! exists)
         {
-            mcfname = rc_ref().trim_home_directory(mcfname);
-            mcfname = add_quotes(mcfname);
-            file << "[midi-control-file]\n\n" << mcfname << "\n";
-            ok = mcf.write();
+            /*
+             * Eventually we should provide a write_midi_contro_file() function
+             * in the midicontrolfile module to do this work.
+             */
+
+            midicontrolfile mcf(mcfname, rc_ref());
+            result = mcf.container_to_stanzas(ctrls);
+            if (result)
+                ok = mcf.write();
         }
     }
     else
     {
-        keycontainer keys;              /* call the default constructor */
-        midicontrolin & ctrls = rc_ref().midi_control_in();
-        midicontrolfile mcf(mcfname, rc_ref());
-        ctrls.add_blank_controls(keys);
-        result = mcf.container_to_stanzas(ctrls);
-        if (result)
+        if (active || ! exists)
         {
-            mcfname = rc_ref().trim_home_directory(mcfname);
-            mcfname = add_quotes(mcfname);
-            file << "[midi-control-file]\n\n" << mcfname << "\n";
-            ok = mcf.write();
+            keycontainer keys;              /* call the default constructor */
+            midicontrolin & ctrls = rc_ref().midi_control_in();
+            midicontrolfile mcf(mcfname, rc_ref());
+            ctrls.add_blank_controls(keys);
+            result = mcf.container_to_stanzas(ctrls);
+            if (result)
+                ok = mcf.write();
         }
     }
+    file <<
+       "\n"
+       "# This section provides a flag and a file-name for MIDI-control I/O\n"
+       "# settings. Use '\"\"' to indicate no 'ctrl' file. If none, the default\n"
+       "# internal keystrokes are used, with no MIDI control I/O.\n"
+       ;
+    write_file_status
+    (
+        file, "[midi-control-file]",
+        rc_ref().midi_control_filename(), rc_ref().midi_control_active()
+    );
 
     /*
      * rc_ref().use_mute_group_file() is now always true.  The check and the
@@ -1012,24 +1038,11 @@ rcfile::write ()
      * New section for palette file.
      */
 
-#if 0
-    std::string palfilename = rc_ref().palette_filename();
-    palfilename = add_quotes(palfilename);
-    file
-        << "\n[palette-file]\n\n"
-           "# This provides a flag to allow modifying the palette from the\n"
-           "# file-name given below.  Use '\"\"' to indicate no palette file.\n"
-           "\n"
-        << (rc_ref().palette_active() ? "1" : "0")
-        << "     # palette_active\n\n"
-        << palfilename << "\n"
-        ;
-#endif
     file <<
        "\n"
        "# This section provides a flag and a file-name to allow modifying the\n"
        "# palette using the file given below.  Use '\"\"' to indicate no\n"
-       "# palette file.\n"
+       "# 'palette' file. If none, the internal palette is used.\n"
        ;
     write_file_status
     (
@@ -1043,11 +1056,11 @@ rcfile::write ()
 
     file
         << "\n[midi-meta-events]\n\n"
-           "# This section defines some features of MIDI meta-event handling.\n"
+           "# This section defines features of MIDI meta-event handling.\n"
            "# Normally, tempo events occur in the first track (pattern 0), but\n"
-           "# one can move this track elsewhere to accomodate an existing body\n"
-           "# tunes.  It affects where tempo events are recorded.  The default\n"
-           "# is 0, the maximum is 1023. A pattern must exist at this number.\n"
+           "# one can move tempo elsewhere to accomodate existing tunes. It\n"
+           "# affects where tempo events are recorded.  The default is 0, the\n"
+           "# maximum is 1023. A pattern must exist at this number.\n"
            "\n"
         << rc_ref().tempo_track_number() << "    # tempo_track_number\n"
         ;
