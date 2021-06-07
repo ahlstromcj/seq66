@@ -117,9 +117,11 @@ rcsettings::rcsettings () :
     m_config_directory          (SEQ66_CLIENT_NAME),
     m_config_filename           (SEQ66_CONFIG_NAME),    /* updated in body  */
     m_full_config_directory     (),
+    m_user_file_active          (true),
     m_user_filename             (SEQ66_CONFIG_NAME),    /* updated in body  */
     m_midi_control_active       (false),
     m_midi_control_filename     (SEQ66_CONFIG_NAME),    /* updated in body  */
+    m_mute_group_active         (false),
     m_mute_group_filename       (SEQ66_CONFIG_NAME),    /* updated in body  */
     m_playlist_active           (false),
     m_playlist_filename         (SEQ66_CONFIG_NAME),    /* updated in body  */
@@ -220,9 +222,11 @@ rcsettings::set_defaults ()
     m_config_filename           = SEQ66_CONFIG_NAME;
     m_config_filename           += ".rc";
     m_full_config_directory.clear();
+    m_user_file_active = true;
     m_user_filename = SEQ66_CONFIG_NAME;
     m_midi_control_active = false;
     m_midi_control_filename = SEQ66_CONFIG_NAME;
+    m_mute_group_active = false;
     m_mute_group_filename = SEQ66_CONFIG_NAME;
     m_playlist_active = false;
     m_playlist_filename = SEQ66_CONFIG_NAME;

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-06-06
+ * \updates       2021-06-07
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -359,6 +359,13 @@ private:
     mutable std::string m_full_config_directory;
 
     /**
+     *  Indicates if the 'usr' file is actually to be used.
+     *  Useful for temporarily disabling a radically modified file.
+     */
+
+    bool m_user_file_active;
+
+    /**
      *  Holds the current "user" configuration filename.  This value is
      *  "qseq66.usr" by default.
      */
@@ -397,6 +404,13 @@ private:
      *
      *      bool m_use_mute_group_file;
      */
+
+    /**
+     *  Indicates if the mute-group file is actually to be used.
+     *  Useful for temporarily disabling a 'mutes' file.
+     */
+
+    bool m_mute_group_active;
 
     /**
      *  The base name of the mute-group file, if applicable.  This file is
@@ -697,6 +711,11 @@ public:
         return m_song_start_mode;
     }
 
+    std::string song_mode () const
+    {
+        return m_song_start_mode ? "song" : "live" ;
+    }
+
     void set_jack_transport (const std::string & value);
 
     void with_jack_transport (bool flag)
@@ -935,6 +954,11 @@ public:
         return m_palette_filename;
     }
 
+    bool user_file_active () const
+    {
+        return m_user_file_active;
+    }
+
     const std::string & user_filename () const
     {
         return m_user_filename;
@@ -953,6 +977,11 @@ public:
      const std::string & midi_control_filename () const
      {
         return m_midi_control_filename;
+     }
+
+     bool mute_group_active () const
+     {
+        return m_mute_group_active;
      }
 
      const std::string & mute_group_filename () const
@@ -1060,9 +1089,9 @@ public:
         m_lash_support = flag;
     }
 
-    void allow_mod4_mode (bool flag)
+    void allow_mod4_mode (bool /*flag*/)
     {
-        m_allow_mod4_mode = flag;
+        m_allow_mod4_mode = false;
     }
 
     void allow_snap_split (bool flag)
@@ -1093,6 +1122,11 @@ public:
     void song_start_mode (bool flag)
     {
         m_song_start_mode = flag;
+    }
+
+    void song_start_mode (const std::string & s)
+    {
+        m_song_start_mode = s == "true" || s == "song";
     }
 
     void filter_by_channel (bool flag)
@@ -1139,6 +1173,11 @@ public:
     void midi_control_filename (const std::string & name)
     {
        m_midi_control_filename = name;
+    }
+
+    void mute_group_active (bool flag)
+    {
+        m_mute_group_active = flag;
     }
 
     void mute_group_filename (const std::string & name)
@@ -1192,6 +1231,12 @@ public:
     void config_filename (const std::string & value);
     void playlist_filename (const std::string & value);
     bool playlist_filename_checked (const std::string & value);
+
+    void user_file_active (bool flag)
+    {
+        m_user_file_active = flag;
+    }
+
     void user_filename (const std::string & value);
 
     void notemap_filename (const std::string & fn)

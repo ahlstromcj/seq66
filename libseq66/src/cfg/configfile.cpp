@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-05
+ * \updates       2021-06-07
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -451,6 +451,30 @@ configfile::write_boolean
     file << name << " = " << bool_to_string(status) << "\n";
 }
 
+int
+configfile::get_integer
+(
+    std::ifstream & file,
+    const std::string & tag,
+    const std::string & variablename,
+    int position
+)
+{
+    std::string value = get_variable(file, tag, variablename, position);
+    return string_to_int(value);
+}
+
+void
+configfile::write_integer
+(
+    std::ofstream & file,
+    const std::string & name,
+    int value
+)
+{
+    file << name << " = " << value << "\n";
+}
+
 /**
  *  Gets the active flag and the name of the file from the given tag section.
  *  Very useful for all "included" configuration files.
@@ -466,7 +490,7 @@ configfile::get_file_status
 )
 {
     bool result = get_boolean(file, tag, "active", position);
-    filename = strip_quotes(get_variable(file, tag, "file", position));
+    filename = strip_quotes(get_variable(file, tag, "name", position));
     return result;
 }
 
@@ -701,9 +725,9 @@ void
 configfile::write_date (std::ofstream & file, const std::string & tag)
 {
     file
-        << "# Seq66 0.94.1 (and above)" << tag << "configuration file\n\n"
-        << "# " << name() << "\n"
-        << "# Written on " << current_date_time() << "\n"
+        << "# Seq66 0.94.1 (and above) " << tag << " configuration file\n"
+        << "#\n# " << name() << "\n"
+        << "# Written " << current_date_time() << "\n"
         << "#\n"
         ;
 }

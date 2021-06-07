@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-06
+ * \updates       2021-06-07
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -59,7 +59,7 @@
 #include "util/filefunctions.hpp"       /* seq66::file_extension_set()      */
 #include "util/strfunctions.hpp"        /* seq66::strip_quotes() function   */
 
-#if defined SEQ66_USE_FRUITY_CODE         /* will not be supported in seq66   */
+#if defined SEQ66_USE_FRUITY_CODE       /* will not be supported in seq66   */
 
 /**
  *  Provides names for the mouse-handling used by the application.  The fruity
@@ -99,8 +99,10 @@ namespace seq66
  *
  * Versions:
  *
- *      1:  2021-05-16
- *      2:  2021-06-04  Transition of get-variable for booleans.
+ *      0:  The initial version, close to the Seq64 format.
+ *      1:  2021-05-16. More modern JACK configuration settings.
+ *      2:  2021-06-04. Transition to get-variable for booleans and integers,
+ *                      finished on 2021-06-07.
  *
  * \param rcs
  *      The source/destination for the configuration information.
@@ -216,7 +218,7 @@ bool
 rcfile::parse ()
 {
     std::ifstream file(name(), std::ios::in | std::ios::ate);
-    if (! set_up_ifstream(file))            /* verifies [Seq66]: version */
+    if (! set_up_ifstream(file))            /* verifies [Seq66]: version    */
         return false;
 
     bool verby = get_boolean(file, "[Seq66]", "verbose");
@@ -238,15 +240,16 @@ rcfile::parse ()
         rc_ref().comments_block().set(comments);
 
     bool ok = true;                                     /* start hopefully! */
+    std::string tag = "[midi-control-file]";
     if (file_version_number() < 2)
     {
-        if (line_after(file, "[midi-control-file]"))
+        if (line_after(file, tag))
         {
-            ok = ! is_missing_string(line());               /* "", "?", empty   */
+            ok = ! is_missing_string(line());           /* "", "?", empty   */
             if (ok)
             {
                 std::string mcfname = strip_quotes(line());
-                rc_ref().midi_control_filename(mcfname);    /* set base name    */
+                rc_ref().midi_control_filename(mcfname);    /* base name    */
 
                 std::string fullpath = rc_ref().midi_control_filespec();
                 file_message("Reading 'ctrl'", fullpath);
@@ -256,7 +259,38 @@ rcfile::parse ()
                     std::string info = "'";
                     info += fullpath;
                     info += "'";
-                    return make_error_message("midi-control-file", info);
+                    return make_error_message(tag, info);
+                }
+            }
+        }
+    }
+    else
+    {
+        std::string pfname;
+        bool active = get_file_status(file, tag, pfname);
+        rc_ref().midi_control_active(active);
+        rc_ref().midi_control_filename(pfname);             /* base name    */
+    }
+    tag = "[mute-group-file]";
+    if (file_version_number() < 2)
+    {
+        if (line_after(file, tag))
+        {
+            ok = ! is_missing_string(line());
+            if (ok)
+            {
+                std::string mgfname = strip_quotes(line());
+                rc_ref().mute_group_filename(mgfname);      /* base name        */
+
+                std::string fullpath = rc_ref().mute_group_filespec();
+                file_message("Reading 'mutes'", fullpath);
+                ok = parse_mute_group_section(fullpath, true);
+                if (! ok)
+                {
+                    std::string info = "cannot parse file '";
+                    info += fullpath;
+                    info += "'";
+                    return make_error_message(tag, info);
                 }
             }
         }
@@ -264,74 +298,53 @@ rcfile::parse ()
         else
         {
             /*
-             * This call causes parsing to skip all of the header material.  Note
-             * that line_after() starts from the beginning of the file every time,
-             * a lot a rescanning!  But it goes fast these days.
+             * After parsing the mute-groups, see if there is another value for
+             * the mute_group_handling enumeration.  One little issue...  the
+             * parse_mute_group_section() function actually re-opens the file
+             * itself, and once it exits, it's as if the section never existed.
+             * So we also have to parse the new mute-group handling feature there
+             * as well.
              */
 
-            ok = parse_midi_control_section(name());
+            ok = parse_mute_group_section(name());
         }
 #endif
     }
     else
     {
         std::string pfname;
-        bool active = get_file_status(file, "[midi-control-file]", pfname);
-        rc_ref().midi_control_active(active);
-        rc_ref().midi_control_filename(pfname);             /* base name    */
+        bool active = get_file_status(file, tag, pfname);
+        rc_ref().mute_group_active(active);
+        rc_ref().mute_group_filename(pfname);               /* base name    */
     }
-
-    if (line_after(file, "[mute-group-file]"))
+    tag = "[usr-file]";
+    if (file_version_number() < 2)
     {
-        ok = ! is_missing_string(line());
-        if (ok)
+        if (line_after(file, tag))
         {
-            std::string mgfname = strip_quotes(line());
-            rc_ref().mute_group_filename(mgfname);      /* base name        */
-
-            std::string fullpath = rc_ref().mute_group_filespec();
-            file_message("Reading 'mutes'", fullpath);
-            ok = parse_mute_group_section(fullpath, true);
-            if (! ok)
+            ok = ! is_missing_string(line());
+            if (ok)
             {
-                std::string info = "cannot parse file '";
-                info += fullpath;
-                info += "'";
-                return make_error_message("mute-group-file", info);
+                std::string mgfname = strip_quotes(line());
+                rc_ref().user_filename(mgfname);            /* base name    */
             }
         }
     }
     else
     {
-        /*
-         * After parsing the mute-groups, see if there is another value for
-         * the mute_group_handling enumeration.  One little issue...  the
-         * parse_mute_group_section() function actually re-opens the file
-         * itself, and once it exits, it's as if the section never existed.
-         * So we also have to parse the new mute-group handling feature there
-         * as well.
-         */
-
-        ok = parse_mute_group_section(name());
-    }
-
-    if (line_after(file, "[usr-file]"))
-    {
-        ok = ! is_missing_string(line());
-        if (ok)
-        {
-            std::string mgfname = strip_quotes(line());
-            rc_ref().user_filename(mgfname);             /* base name        */
-        }
+        std::string pfname;
+        bool active = get_file_status(file, tag, pfname);
+        rc_ref().user_file_active(active);
+        rc_ref().user_filename(pfname);                     /* base name    */
     }
 
     int flag = 0;
-
+    tag = "[palette-file]";
     if (file_version_number() < 2)
     {
-        if (line_after(file, "[palette-file]"))
+        if (line_after(file, tag))
         {
-            sscanf(scanline(), "%d", &flag);
+            std::sscanf(scanline(), "%d", &flag);
             rc_ref().palette_active(flag != 0);
             if (next_data_line(file))
             {
@@ -347,7 +360,7 @@ rcfile::parse ()
     else
     {
         std::string pfname;
-        bool active = get_file_status(file, "[palette-file]", pfname);
+        bool active = get_file_status(file, tag, pfname);
         rc_ref().palette_active(active);
         rc_ref().palette_filename(pfname);              /* base name    */
     }
@@ -360,25 +373,26 @@ rcfile::parse ()
      * messed up.
      */
 
-    s = get_variable(file, "[jack-transport]", "transport-type");
+    tag = "[jack-transport]";
+    s = get_variable(file, tag, "transport-type");
     if (s.empty())
     {
-        if (line_after(file, "[jack-transport]"))
+        if (line_after(file, tag))
         {
-            sscanf(scanline(), "%d", &flag);                /* 1 */
+            std::sscanf(scanline(), "%d", &flag);                /* 1 */
             rc_ref().with_jack_transport(bool(flag));
             next_data_line(file);
-            sscanf(scanline(), "%d", &flag);                /* 2 */
+            std::sscanf(scanline(), "%d", &flag);                /* 2 */
             rc_ref().with_jack_master(bool(flag));
             next_data_line(file);
-            sscanf(scanline(), "%d", &flag);                /* 3 */
+            std::sscanf(scanline(), "%d", &flag);                /* 3 */
             rc_ref().with_jack_master_cond(bool(flag));
             next_data_line(file);
-            sscanf(scanline(), "%d", &flag);                /* 4 */
+            std::sscanf(scanline(), "%d", &flag);                /* 4 */
             rc_ref().song_start_mode(bool(flag));
             if (next_data_line(file))
             {
-                sscanf(scanline(), "%d", &flag);            /* 5 */
+                std::sscanf(scanline(), "%d", &flag);            /* 5 */
                 rc_ref().with_jack_midi(bool(flag));
             }
         }
@@ -386,91 +400,109 @@ rcfile::parse ()
     else
     {
         rc_ref().set_jack_transport(s);
-        s = get_variable(file, "[jack-transport]", "song-start-mode");
-        if (s == "live")
-            s = "false";
-        else if (s == "song")
-            s = "true";
+        s = get_variable(file, tag, "song-start-mode");
+        rc_ref().song_start_mode(s);
 
-        rc_ref().song_start_mode(string_to_bool(s, false));
-
-        bool flag = get_boolean(file, "[jack-transport]", "jack-midi");
+        bool flag = get_boolean(file, tag, "jack-midi");
         rc_ref().with_jack_midi(flag);
     }
 
     bool use_manual_ports = false;
-    if (line_after(file, "[manual-ports]"))
+    tag = "[manual-ports]";
+    if (file_version_number() < 2)
     {
-        sscanf(scanline(), "%d", &flag);
-        use_manual_ports = bool(flag);
-        rc_ref().manual_ports(use_manual_ports);
-        if (next_data_line(file))
+        if (line_after(file, tag))
         {
-            int count;
-            sscanf(scanline(), "%d", &count);
-            rc().manual_port_count(count);
+            std::sscanf(scanline(), "%d", &flag);
+            use_manual_ports = bool(flag);
+            rc_ref().manual_ports(use_manual_ports);
+            if (next_data_line(file))
+            {
+                int count;
+                std::sscanf(scanline(), "%d", &count);
+                rc().manual_port_count(count);
+            }
+            if (next_data_line(file))
+            {
+                int count;
+                std::sscanf(scanline(), "%d", &count);
+                rc().manual_in_port_count(count);
+            }
         }
-        if (next_data_line(file))
-        {
-            int count;
-            sscanf(scanline(), "%d", &count);
-            rc().manual_in_port_count(count);
-        }
+        else
+            (void) make_error_message(tag, "section missing");
     }
     else
-        (void) make_error_message("manual-ports", "data line missing");
+    {
+        bool flag = get_boolean(file, tag, "virtual-ports");
+        use_manual_ports = flag;
+        rc_ref().manual_ports(flag);
+
+        int count = get_integer(file, tag, "output-port-count");
+        rc().manual_port_count(count);
+        count = get_integer(file, tag, "input-port-count");
+        rc().manual_in_port_count(count);
+    }
 
     /*
-     *  We are taking a slightly different approach to this section.  When
-     *  Seq66 exits, it saves all of the inputs it has.  If an input is
-     *  removed from the system (e.g. unplugging a MIDI controller), then
-     *  there will be too many entries in this section.  The user might remove
-     *  one, and forget to update the buss count.  So we basically ignore the
-     *  buss count.  But we also have to read the  channel-filter boolean.  If
-     *  an error occurs, we abort... the user must fix the "rc" file.
+     *  When Seq66 exits, it saves all of the inputs it has.  If an input is
+     *  removed from the system (e.g. unplugging a MIDI controller), then there
+     *  will be too many entries in this section.  The user might remove one, and
+     *  forget to update the buss count.  So we ignore the buss count. But we also
+     *  have to read the channel-filter boolean.  If an error occurs, we abort...
+     *  the user must fix the 'rc' file.
      */
 
-    if (! use_manual_ports && line_after(file, "[midi-input]"))
+    tag = "[midi-input]";
+    if (! use_manual_ports)
     {
-        int inbuses = 0;
-        int count = sscanf(scanline(), "%d", &inbuses);
-        if (count > 0 && inbuses > 0)
+        if (line_after(file, tag))
         {
-            int b = 0;
-            rc_ref().inputs().clear();
-            while (next_data_line(file))
+            int inbuses = 0;
+            int count = std::sscanf(scanline(), "%d", &inbuses);
+            if (count > 0 && inbuses > 0)
             {
-                int bus, bus_on;
-                count = sscanf(scanline(), "%d %d", &bus, &bus_on);
-                if (count == 2)
+                int b = 0;
+                rc_ref().inputs().clear();
+                while (next_data_line(file))
                 {
-                    rc_ref().inputs().add(bus, bool(bus_on), line());
-                    ++b;
+                    int bus, bus_on;
+                    count = std::sscanf(scanline(), "%d %d", &bus, &bus_on);
+                    if (count == 2)
+                    {
+                        rc_ref().inputs().add(bus, bool(bus_on), line());
+                        ++b;
+                    }
+                    /*
+                     * This is BOGUS
+                     *
+                    else if (count == 1)
+                    {
+                        bool flag = bool(bus);
+                        rc_ref().filter_by_channel(flag);
+                        toggleprint("Filter-by-channel", flag);
+                    }
+                     */
                 }
-                else if (count == 1)
-                {
-                    bool flag = bool(bus);
-                    rc_ref().filter_by_channel(flag);
-                    toggleprint("Filter-by-channel", flag);
-                }
+                if (b < inbuses)
+                    return make_error_message(tag, "too few buses");
             }
-            if (b < inbuses)
-                return make_error_message("midi-input", "too few buses");
         }
+        else
+            return make_error_message(tag, "section missing");
     }
-    else
-        return make_error_message("midi-input", "data lines missing");
 
     /*
      *  Check for an optional input port map section.
      */
 
-    if (line_after(file, "[midi-input-map]"))
+    tag = "[midi-input-map]";
+    if (line_after(file, tag))
     {
         inputslist & inputref = input_port_map();
         int activeflag;
         inputref.clear();
-        (void) sscanf(scanline(), "%d", &activeflag);
+        (void) std::sscanf(scanline(), "%d", &activeflag);
         inputref.active(activeflag != 0);
         for ( ; next_data_line(file); )
         {
@@ -482,34 +514,33 @@ rcfile::parse ()
             }
         }
     }
+    tag = "[midi-clock]";
     if (ok)
-        ok = ! use_manual_ports && line_after(file, "[midi-clock]");
+        ok = ! use_manual_ports && line_after(file, tag);
 
     int outbuses = 0;
     if (ok)
     {
-        sscanf(scanline(), "%d", &outbuses);
+        std::sscanf(scanline(), "%d", &outbuses);
         ok = next_data_line(file) && is_good_busscount(outbuses);
     }
     if (ok)
     {
-        /**
-         * One thing about MIDI clock values.  If a device (e.g. Korg
-         * nanoKEY2) is present in a system when Seq66 is exited, it will be
-         * saved in the [midi-clock] list.  When unplugged, it will be read
-         * here at startup, but won't be shown.  The next exit will find it
-         * removed from this list.
-         *
-         * Also, we want to pre-allocate the number of clock entries needed,
-         * and then use the buss number to populate the list of clocks, in the
-         * odd event that the user changed the bus-order of the entries.
+        /*
+         * One thing about MIDI clock values.  If a device (e.g. Korg nanoKEY2)
+         * is present in a system when Seq66 is exited, it will be saved in the
+         * [midi-clock] list.  When unplugged, it will be read here at startup,
+         * but won't be shown.  The next exit finds it removed from this list.
+         * Also, we want to pre-allocate the number of clock entries needed, and
+         * then use the buss number to populate the list of clocks, in the odd
+         * event that the user changed the bus-order of the entries.
          */
 
         rc_ref().clocks().clear();
         for (int i = 0; i < outbuses; ++i)
         {
             int bus, bus_on;
-            int count = sscanf(scanline(), "%d %d", &bus, &bus_on);
+            int count = std::sscanf(scanline(), "%d %d", &bus, &bus_on);
             ok = count == 2;
             if (ok)
             {
@@ -517,10 +548,10 @@ rcfile::parse ()
                 rc_ref().clocks().add(bus, e, line());
                 ok = next_data_line(file);
                 if (! ok && i < (outbuses-1))
-                    return make_error_message("midi-clock", "missing data line");
+                    return make_error_message(tag, "missing data line");
             }
             else
-                return make_error_message("midi-clock", "data line error");
+                return make_error_message(tag, "data line error");
         }
     }
     else
@@ -542,12 +573,13 @@ rcfile::parse ()
      *  Check for an optional output port map section.
      */
 
-    if (line_after(file, "[midi-clock-map]"))
+    tag = "[midi-clock-map]";
+    if (line_after(file, tag))
     {
         clockslist & clocsref = output_port_map();
         int activeflag;
         clocsref.clear();
-        (void) sscanf(scanline(), "%d", &activeflag);
+        (void) std::sscanf(scanline(), "%d", &activeflag);
         clocsref.active(activeflag != 0);
         for ( ; next_data_line(file); )
         {
@@ -560,39 +592,122 @@ rcfile::parse ()
         }
     }
 
-    if (line_after(file, "[midi-clock-mod-ticks]"))
+    int ticks = 64;
+    bool recordbychannel = false;
+    tag = "[midi-clock-mod-ticks]";
+    if (file_version_number() < 2)
     {
-        int ticks = 64;
-        sscanf(scanline(), "%d", &ticks);
-        rc_ref().set_clock_mod(ticks);
+        if (line_after(file, tag))
+        {
+            int count = std::sscanf(scanline(), "%d", &ticks);
+            if (count > 0)
+            {
+                int flag = 0;
+                count = std::sscanf(scanline(), "%d", &flag);
+                recordbychannel = flag != 0;
+            }
+        }
+        else
+            return make_error_message(tag, "section missing");
     }
     else
-        return make_error_message("midi-clock-mod-ticks", "data line missing");
-
-    if (line_after(file, "[midi-meta-events]"))
     {
-        int track = 0;
-        sscanf(scanline(), "%d", &track);
-        rc_ref().tempo_track_number(track); /* MIDI file can override this  */
+        ticks = get_integer(file, tag, "ticks");
+        recordbychannel = get_boolean(file, tag, "record-by-channel");
+    }
+    rc_ref().set_clock_mod(ticks);
+    rc_ref().filter_by_channel(recordbychannel);
+
+    int track = 0;
+    tag = "[midi-meta-events]";
+    if (file_version_number() < 2)
+    {
+        if (line_after(file, tag))
+            (void) std::sscanf(scanline(), "%d", &track);
+        else
+            return make_error_message(tag, "section missing");
     }
     else
-        return make_error_message("midi-meta_events", "data line missing");
+    {
+        track = get_integer(file, tag, "tempo-track");
+    }
+    rc_ref().tempo_track_number(track);     /* MIDI file can override this  */
 
-    if (line_after(file, "[reveal-ports]"))
+    tag = "[reveal-ports]";
+    if (file_version_number() < 2)
+    {
+        if (line_after(file, tag))
+        {
+            std::sscanf(scanline(), "%d", &flag);
+            if (! rc_ref().reveal_ports())
+                rc_ref().reveal_ports(bool(flag));
+        }
+        else
+            (void) make_error_message(tag, "data line missing");
+    }
+    else
     {
         /*
          * If this flag is already raised, it was raised on the command line,
          * and we don't want to change it.  An ugly special case.
          */
 
-        sscanf(scanline(), "%d", &flag);
         if (! rc_ref().reveal_ports())
+        {
+            bool flag = get_boolean(file, tag, "show-system-ports");
             rc_ref().reveal_ports(bool(flag));
+        }
+    }
+
+    tag = "[interaction-method]";
+    if (file_version_number() < 2)
+    {
+        if (line_after(file, tag))
+        {
+            int method = 0;
+            std::sscanf(scanline(), "%d", &method);
+
+#if defined SEQ66_USE_FRUITY_CODE         /* will not be supported in seq66   */
+            /*
+             * This now returns true if the value was correct, we should check it.
+             */
+
+            if (! rc_ref().interaction_method(method))
+                (void) make_error_message(tag, "illegal value");
+
+#endif  // SEQ66_USE_FRUITY_CODE
+
+            if (next_data_line(file))
+            {
+                std::sscanf(scanline(), "%d", &method);
+                rc_ref().allow_mod4_mode(method != 0);
+            }
+            if (next_data_line(file))
+            {
+                std::sscanf(scanline(), "%d", &method);
+                rc_ref().allow_snap_split(method != 0);
+            }
+            if (next_data_line(file))
+            {
+                std::sscanf(scanline(), "%d", &method);
+                rc_ref().allow_click_edit(method != 0);
+            }
+        }
+        else
+        {
+            /* A missing interaction-method section is not an error. */
+        }
     }
     else
-        (void) make_error_message("reveal-ports", "data line missing");
+    {
+        bool flag = get_boolean(file, tag, "allow-snap-split");
+        rc_ref().allow_snap_split(flag);
+        flag = get_boolean(file, tag, "allow-click-edit");
+        rc_ref().allow_click_edit(flag);
+    }
 
-    if (line_after(file, "[last-used-dir]"))
+    tag = "[last-used-dir]";
+    if (line_after(file, tag))
     {
         if (! is_missing_string(line()))
         {
@@ -601,12 +716,13 @@ rcfile::parse ()
         }
     }
     else
-         (void) make_error_message("last-used-dir", "data line missing");
+         (void) make_error_message(tag, "data line missing");
 
-    if (line_after(file, "[recent-files]"))
+    tag = "[recent-files]";
+    if (line_after(file, tag))
     {
         int count, loadrecent;
-        int number = sscanf(scanline(), "%d %d", &count, &loadrecent);
+        int number = std::sscanf(scanline(), "%d %d", &count, &loadrecent);
         if (number > 1)
             rc_ref().load_most_recent(loadrecent != 0);
 
@@ -627,70 +743,89 @@ rcfile::parse ()
         }
     }
     else
-        (void) make_error_message("recent-files", "data line missing");
+        (void) make_error_message(tag, "data line missing");
 
+    bool playlistpresent = true;
     rc_ref().playlist_active(false);
-    if (line_after(file, "[playlist]"))
+    tag = "[playlist]";
+    if (file_version_number() < 2)
     {
-        bool exists = false;
-        int flag = 0;
-        sscanf(scanline(), "%d", &flag);                /* playlist-active? */
-        if (next_data_line(file))
+        playlistpresent = line_after(file, tag);
+        if (playlistpresent)
         {
-            std::string fname = strip_quotes(line());
-            exists = ! is_missing_string(fname);
-            if (exists)
+            bool exists = false;
+            int flag = 0;
+            std::sscanf(scanline(), "%d", &flag);       /* playlist-active? */
+            if (next_data_line(file))
             {
-                /*
-                 * Prepend the home configuration directory and, if needed,
-                 * the playlist extension.  Also, even if we can't find the
-                 * playlist file, leave the name set for when the 'rc' file is
-                 * saved.
-                 */
-
-                bool active = flag != 0;
-                fname = rc_ref().make_config_filespec(fname, ".playlist");
-                exists = file_exists(fname);
+                std::string fname = strip_quotes(line());
+                exists = ! is_missing_string(fname);
                 if (exists)
                 {
-                    rc_ref().playlist_filename(fname);
-                    rc_ref().playlist_active(active);
+                    /*
+                     * Prepend the home configuration directory and, if
+                     * needed, the playlist extension.  Also, even if we can't
+                     * find the playlist file, leave the name set for when the
+                     * 'rc' file is saved.
+                     */
+
+                    bool active = flag != 0;
+                    fname = rc_ref().make_config_filespec(fname, ".playlist");
+                    exists = file_exists(fname);
+                    if (exists)
+                    {
+                        rc_ref().playlist_filename(fname);
+                        rc_ref().playlist_active(active);
+                    }
+                    else
+                    {
+                        rc_ref().clear_playlist(true);
+                        if (active)
+                            file_error("No such playlist", fname);
+                    }
                 }
-                else
+            }
+            if (next_data_line(file))
+            {
+                std::string midibase = trimline();
+                if (! is_missing_string(midibase))
                 {
-                    rc_ref().clear_playlist(true);
-                    if (active)
-                        file_error("No such playlist", fname);
+                    file_message("Playlist MIDI base directory", midibase);
+                    rc_ref().midi_base_directory(midibase);
                 }
             }
         }
-        if (next_data_line(file))
+        else
         {
-            std::string midibase = trimline();
-            if (! is_missing_string(midibase))
-            {
-                file_message("Playlist MIDI base directory", midibase);
-                rc_ref().midi_base_directory(midibase);
-            }
+            /* A missing playlist section is not an error. */
         }
     }
     else
     {
-        /* A missing playlist section is not an error. */
+        std::string pfname;
+        bool active = get_file_status(file, tag, pfname);
+        rc_ref().playlist_active(active);
+        rc_ref().playlist_filename(pfname);                 /* base name    */
+        pfname = get_variable(file, tag, "base-directory");
+        if (! is_missing_string(pfname))
+        {
+            file_message("Playlist MIDI base directory", pfname);
+            rc_ref().midi_base_directory(pfname);
+        }
     }
 
     rc_ref().notemap_active(false);
-    if (line_after(file, "[note-mapper]"))
+    tag = "[note-mapper]";
+    if (file_version_number() < 2)
     {
-        bool exists = false;
-        int flag = 0;
-        sscanf(scanline(), "%d", &flag);        /* note-mapper-active flag  */
-        if (next_data_line(file))
+        if (line_after(file, tag))
         {
-            std::string fname = strip_quotes(line());
-            exists = ! is_missing_string(fname);
-            if (exists)
+            int flag = 0;
+            std::sscanf(scanline(), "%d", &flag);
+            if (next_data_line(file))
             {
+                std::string fname = strip_quotes(line());
+
                 /*
                  * Prepend the home configuration directory and, if needed,
                  * the drums extension.  The name, if set, is always set, even
@@ -698,8 +833,8 @@ rcfile::parse ()
                  */
 
                 bool active = flag != 0;
-                fname = rc_ref().make_config_filespec(fname, ".drums");
-                exists = file_exists(fname);
+                std::string f = rc_ref().make_config_filespec(fname, ".drums");
+                bool exists = file_exists(f);
                 rc_ref().notemap_filename(fname);
                 if (exists)
                 {
@@ -712,84 +847,40 @@ rcfile::parse ()
                 }
             }
         }
-    }
-    else
-    {
-        /* A missing note-mapper section is not an error. */
-    }
-
-
-    if (line_after(file, "[interaction-method]"))
-    {
-        int method = 0;
-        sscanf(scanline(), "%d", &method);
-
-#if defined SEQ66_USE_FRUITY_CODE         /* will not be supported in seq66   */
-        /*
-         * This now returns true if the value was correct, we should check it.
-         */
-
-        if (! rc_ref().interaction_method(method))
-            (void) make_error_message("interaction-method", "illegal value");
-
-#endif  // SEQ66_USE_FRUITY_CODE
-
-        if (next_data_line(file))
-        {
-            sscanf(scanline(), "%d", &method);
-            rc_ref().allow_mod4_mode(method != 0);
-        }
-        if (next_data_line(file))
-        {
-            sscanf(scanline(), "%d", &method);
-            rc_ref().allow_snap_split(method != 0);
-        }
-        if (next_data_line(file))
-        {
-            sscanf(scanline(), "%d", &method);
-            rc_ref().allow_click_edit(method != 0);
-        }
-    }
-    else
-    {
-        /* A missing interaction-method section is not an error. */
-    }
-
-#if defined SEQ66_LASH_SUPPORT_MOVED
-
-        /*
-         * This option is moved to the "usr" file's [user-session] section.
-         */
-
-        if (line_after(file, "[lash-session]"))
-        {
-            sscanf(scanline(), "%d", &method);
-            rc().lash_support(method != 0);
-        }
-#endif
-
-    int method = 1;             /* preserve seq24 option if not present     */
-    if (line_after(file, "[auto-option-save]"))
-    {
-        int count = sscanf(scanline(), "%d", &method);
-        if (count == 1)
-        {
-            rc_ref().auto_option_save(bool(method));
-        }
         else
         {
-            bool flag = get_boolean(file, "[auto-option-save]", "auto-save-rc");
-            rc_ref().auto_option_save(flag);
+            /* A missing note-mapper section is not an error. */
         }
-
-        bool flag = get_boolean
-        (
-            file, "[auto-option-save]", "save-old-triggers"
-        );
-        rc_ref().save_old_triggers(flag);
-        flag = get_boolean(file, "[auto-option-save]", "save-old-mutes");
-        rc_ref().save_old_mutes(flag);
     }
+    else
+    {
+        std::string pfname;
+        bool active = get_file_status(file, tag, pfname);
+        rc_ref().notemap_active(active);
+        rc_ref().notemap_filename(pfname);                  /* base name    */
+    }
+
+    int method = 1;             /* preserve seq24 option if not present     */
+    tag = "[auto-option-save]";
+    if (file_version_number() < 2)
+    {
+        if (line_after(file, tag))
+        {
+            int count = std::sscanf(scanline(), "%d", &method);
+            if (count == 1)
+                rc_ref().auto_option_save(bool(method));
+        }
+    }
+    else
+    {
+        bool flag = get_boolean(file, tag, "auto-save-rc");
+        rc_ref().auto_option_save(flag);
+    }
+
+    bool f = get_boolean(file, tag, "save-old-triggers");
+    rc_ref().save_old_triggers(f);
+    f = get_boolean(file, tag, "save-old-mutes");
+    rc_ref().save_old_mutes(f);
     file.close();               /* done parsing the "rc" file               */
     return true;
 }
@@ -877,26 +968,29 @@ rcfile::write ()
 
     write_date(file, "main ('rc')");
     file <<
-            "# This file holds the main configuration options for Seq66.\n"
-            "# It loosely follows the format of the seq24 'rc' configuration\n"
-            "# file, but adds many new options, and is no longer compatible.\n"
-            "\n"
-            "[Seq66]\n"
-            "\n"
-            "# The sets-mode determines if sets are muted when going to the\n"
-            "# next play-screen ('normal'), while 'autoarm' will automatically\n"
-            "# unmute the next set.  The 'additive' options keeps the previous\n"
-            "# set unmuted when moving to the next set.\n"
-            "#\n"
-            "# The port-naming values are 'short' or 'long'.  The short style\n"
-            "# just shows the port number and short port name; the long style\n"
-            "# shows all the numbers and the long port name.\n"
-            "\n"
-            "config-type = \"rc\"\n"
-            "version = " << version() << "\n"
-            "verbose = " << bool_to_string(rc().verbose()) << "\n"
-            "sets-mode = " << rc().sets_mode_string() << "\n"
-            "port-naming = " << rc().port_naming_string() << "\n"
+        "# This file holds the main configuration for Seq66. It loosely\n"
+        "# follows the format of the seq24rc configuration file, but adds\n"
+        "# many new options, and is no longer compatible.\n"
+        "#\n"
+        "# 'version' is set by Seq66; it is used to detect older configuration\n"
+        "# files, which are upgraded to the new version when saved.\n"
+        "#\n"
+        "# 'sets-mode' affect if sets are muted when going to the next\n"
+        "# play-screen ('normal'), while 'autoarm' automatically unmutes the\n"
+        "# next set.  The 'additive' option keeps the previous set unmuted\n"
+        "# when moving to the next set.\n"
+        "#\n"
+        "# 'port-naming' values are 'short' or 'long'.  The short style just\n"
+        "# shows the port number and short port name; the long style shows\n"
+        "# all the numbers and long port name.\n"
+        "\n"
+        "[Seq66]\n"
+        "\n"
+        "config-type = \"rc\"\n"
+        "version = " << version() << "\n"
+        "verbose = " << bool_to_string(rc().verbose()) << "\n"
+        "sets-mode = " << rc().sets_mode_string() << "\n"
+        "port-naming = " << rc().port_naming_string() << "\n"
         ;
 
     /*
@@ -904,10 +998,9 @@ rcfile::write ()
      */
 
     file << "\n"
-    "# The [comments] section holds the user's documentation for this file.\n"
-    "# Lines starting with '#' and '[' are ignored.  Blank lines are ignored;\n"
-    "# add a blank line by adding a space character to the line.\n"
-        << "\n[comments]\n\n" << rc_ref().comments_block().text() << "\n"
+        "# The [comments] section holds the user's documentation for this file.\n"
+        "# The first completely empty, comment, or tag line ends the comment.\n"
+        "\n[comments]\n\n" << rc_ref().comments_block().text()
         ;
 
     /*
@@ -952,11 +1045,10 @@ rcfile::write ()
                 ok = mcf.write();
         }
     }
-    file <<
-       "\n"
-       "# This section provides a flag and a file-name for MIDI-control I/O\n"
-       "# settings. Use '\"\"' to indicate no 'ctrl' file. If none, the default\n"
-       "# internal keystrokes are used, with no MIDI control I/O.\n"
+    file << "\n"
+        "# This section provides a flag and a file-name for MIDI-control I/O\n"
+        "# settings. Use '\"\"' to indicate no 'ctrl' file. If none, the default\n"
+        "# internal keystrokes are used, with no MIDI control I/O.\n"
        ;
     write_file_status
     (
@@ -964,82 +1056,74 @@ rcfile::write ()
         rc_ref().midi_control_filename(), rc_ref().midi_control_active()
     );
 
-    /*
-     * rc_ref().use_mute_group_file() is now always true.  The check and the
-     * else clause removed on 2021-05-12.
-     */
+    std::string mgfname = rc_ref().mute_group_filespec();
+    mutegroupsfile mgf(mgfname, rc_ref());
+    mgfname = rc_ref().trim_home_directory(mgfname);
 
-    bool addfilename = ! rc().mute_group_filename().empty();
-    if (addfilename)
-    {
-        std::string mgfname = rc_ref().mute_group_filespec();
-        mutegroupsfile mgf(mgfname, rc_ref());
-        mgfname = rc_ref().trim_home_directory(mgfname);
-        mgfname = add_quotes(mgfname);
-        file << "\n[mute-group-file]\n\n" << mgfname << "\n";
+    const mutegroups & mgroups = rc().mute_groups();
+    if (mgroups.group_save_to_mutes())
+        ok = mgf.write();
 
-        const mutegroups & mgroups = rc().mute_groups();
-        if (mgroups.group_save_to_mutes())
-            ok = mgf.write();
-    }
+    file << "\n"
+        "# This section provides a flag and a file-name for mute-groups settings.\n"
+        "# Use '\"\"' to indicate no 'mutes' file. If none, there are no mute\n"
+        "# groups unless the MIDI file contains some.\n"
+       ;
+    write_file_status
+    (
+        file, "[mute-group-file]",
+        rc_ref().mute_group_filename(), rc_ref().mute_group_active()
+    );
 
     std::string usrname = rc_ref().user_filespec();
     usrname = rc_ref().trim_home_directory(usrname);
-    usrname = add_quotes(usrname);
-    file << "\n[usr-file]\n\n" << usrname << "\n\n";
-
-    file
-        << "[playlist]\n\n"
-        "# Provides a configured play-list file and a flag to activate it.\n"
-        "# playlist_active: 1 = active, 0 = do not use it.\n\n"
-        << (rc_ref().playlist_active() ? "1" : "0")
-        << "\n"
-        ;
 
     file << "\n"
-        "# Provides the name of a play-list file. If there is none, use '\"\"',\n"
-        "# or set the flag above to 0. Use the extension '.playlist'.\n"
-        "\n"
+        "# This section provides a flag and a file-name for 'user' settings.\n"
+        "# Use '\"\"' to indicate no 'usr' file. If none, there are no special\n"
+        "# user settings.  Using no 'usr' file should be considered EXPERIMENTAL.\n"
+       ;
+    write_file_status
+    (
+        file, "[usr-file]",
+        rc_ref().user_filename(), rc_ref().user_file_active()
+    );
+
+    file << "\n"
+        "# Provides a configured play-list file and a flag to activate it.\n"
+        "# Provide the name of a play-list file. If there is none, use '\"\"',\n"
+        "# or set the active flag to false. Use the extension '.playlist'.\n"
+		"# 'base-directory' is optional. If non-empty, it sets the base\n"
+		"# directory holding all MIDI files in all playlists. Helpful when\n"
+		"# moving a set of playlists and tunes from one directory to another.\n"
+		"# That action preserves the sub-directories.\n"
         ;
 
     std::string plname = rc_ref().playlist_filename();
-    plname = rc_ref().trim_home_directory(plname);
-    plname = add_quotes(plname);
-    file << plname << "\n";
-
-    file << "\n"
-		"# Optional MIDI-file base-directory for play-list files. If given, it\n"
-		"# sets the base directory which holds all MIDI files in all playlists.\n"
-		"# Helpful when moving a complete set of playlists from one directory\n"
-		"# to another. It preserves the sub-directories.\n"
-        "\n"
-		;
-
 	std::string mbasedir = rc_ref().midi_base_directory();
+    plname = rc_ref().trim_home_directory(plname);
+    write_file_status(file, "[playlist]", plname, rc_ref().playlist_active());
     mbasedir = add_quotes(mbasedir);
-    file << mbasedir << "\n";
+    file << "base-directory = " << mbasedir << "\n";
 
     file << "\n"
-        "[note-mapper]\n\n"
-        "# Provides a configured note-map and a flag to activate it.\n"
-        "# notemap_active: 1 = active, 0 = do not use it.\n\n"
-        << (rc_ref().notemap_active() ? "1" : "0") << "\n\n"
-        << "# Provides the name of the note-map file. If none, use '\"\"'.\n"
-           "# Use the extension '.drums'.  This file is used only when the user\n"
-           "# invokes the note-conversion operation in the pattern editor.\n\n"
-        ;
+       "# This section provides a flag and file-name for note-mapping settings.\n"
+       "# Use '\"\"' to indicate no 'drums' file. Use the extension '.drums'.\n"
+       "# This file is used when the user invokes the note-conversion operation\n"
+       "# in the pattern editor on a transposable pattern. For percussion,\n"
+       "# make the pattern temporarily transposable to do this operation.\n"
+       ;
 
-    std::string nmname = rc_ref().notemap_filespec();
-    nmname = rc_ref().trim_home_directory(nmname);
-    nmname = add_quotes(nmname);
-    file << nmname << "\n";
+    std::string drumfile = rc_ref().notemap_filename();
+    std::string drumname = rc_ref().trim_home_directory(drumfile);
+    bool drumactive = rc_ref().notemap_active();
+    write_file_status(file, "[note-mapper]", drumname, drumactive);
 
     /*
      * New section for palette file.
      */
 
-    file <<
-       "\n"
+    file << "\n"
        "# This section provides a flag and a file-name to allow modifying the\n"
        "# palette using the file given below.  Use '\"\"' to indicate no\n"
        "# 'palette' file. If none, the internal palette is used.\n"
@@ -1054,45 +1138,38 @@ rcfile::write ()
      * New section for MIDI meta events.
      */
 
-    file
-        << "\n[midi-meta-events]\n\n"
-           "# This section defines features of MIDI meta-event handling.\n"
-           "# Normally, tempo events occur in the first track (pattern 0), but\n"
-           "# one can move tempo elsewhere to accomodate existing tunes. It\n"
-           "# affects where tempo events are recorded.  The default is 0, the\n"
-           "# maximum is 1023. A pattern must exist at this number.\n"
-           "\n"
-        << rc_ref().tempo_track_number() << "    # tempo_track_number\n"
-        ;
+    file << "\n"
+       "# This section defines features of MIDI meta-event handling. Tempo\n"
+       "# events occur in the first track (pattern 0), but one can move tempo\n"
+       "# elsewhere. It changes where tempo events are recorded.  The default\n"
+       "# is 0, the maximum is 1023. A pattern must exist at this number.\n"
+       "\n[midi-meta-events]\n\n"
+           ;
+    write_integer(file, "tempo-track", rc_ref().tempo_track_number());
 
     /*
      * Manual ports
      */
 
-    file
-        << "\n[manual-ports]\n\n"
-           "# Set to 1 to have Seq66 create virtual ALSA/JACK I/O ports and not\n"
-           "# auto-connect to other clients.  It allows up to 48 output ports\n"
-           "# and 48 input ports (defaults to 8 and 4). Set the flag to 0 to\n"
-           "# auto-connect Seq66 to the system's existing ALSA/JACK MIDI ports.\n"
-           "\n"
-        << (rc_ref().manual_ports() ? "1" : "0")
-        << "   # flag for manual (virtual) ALSA or JACK ports\n"
-        << rc().manual_port_count()
-        << "   # number of manual/virtual output ports\n"
-        << rc().manual_in_port_count()
-        << "   # number of manual/virtual input ports\n"
+    file << "\n"
+       "# Set to true to have Seq66 create virtual ALSA/JACK I/O ports and not\n"
+       "# auto-connect to other clients.  It allows up to 48 output ports and\n"
+       "# 48 input ports (defaults to 8 and 4). Set to false to auto-connect\n"
+       "# Seq66 to the system's existing ALSA/JACK MIDI ports.\n"
+        "\n[manual-ports]\n\n"
         ;
+    write_boolean(file, "virtual-ports", rc_ref().manual_ports());
+    write_integer(file, "output-port-count", rc_ref().manual_port_count());
+    write_integer(file, "input-port-count", rc_ref().manual_in_port_count());
 
     int inbuses = bussbyte(rc_ref().inputs().count());
-    file <<
-           "\n[midi-input]\n\n"
-           "# These ports can be used for input into Seq66. From JACK's view,\n"
-           "# these are 'playback' devices. The first number is a buss number,\n"
-           "# and the second number is the input status, disabled (0) or\n"
-           "# enabled (1). The item in quotes is the input-buss name.\n"
-           "\n"
-        << int(inbuses) << "   # number of input MIDI busses\n\n"
+    file << "\n"
+       "# These system ports are available for input. From JACK's view, these\n"
+       "# are 'playback' devices. The first number is a buss number, and the\n"
+       "# second number is the input status, disabled (0) or\n"
+       "# enabled (1). The item in quotes is the input-buss name.\n"
+       "\n[midi-input]\n\n"
+        << int(inbuses) << "      # number of input MIDI busses\n\n"
         ;
 
     for (bussbyte bus = 0; bus < inbuses; ++bus)
@@ -1115,10 +1192,10 @@ rcfile::write ()
             mapstatus += "not ";
 
         mapstatus += "active";
-        file
-        << "\n[midi-input-map]\n\n"
-        << "# This table is similar to the [midi-clock-map] section.\n"
-           "# Port-mapping is disabled in manual/virtual port mode.\n\n"
+        file << "\n"
+           "# This table is similar to the [midi-clock-map] section.\n"
+           "# Port-mapping is disabled in manual/virtual port mode.\n"
+           "\n[midi-input-map]\n\n"
         << activestring << "   # " << mapstatus << "\n\n"
         << input_port_map_list()
         ;
@@ -1137,23 +1214,23 @@ rcfile::write ()
 
     bussbyte outbuses = bussbyte(rc_ref().clocks().count());
     file << "\n"
-       "[midi-clock]\n\n"
-       "# These ports are used for output from Seq66, for playback/control.\n"
-       "# From JACK's view, these are 'capture' devices. The first line shows\n"
-       "# the count of MIDI 'capture' ports. Each line shows the buss number\n"
-       "# and clock status of that buss:\n"
-       "#\n"
-       "#   0 = MIDI Clock is off.\n"
-       "#   1 = MIDI Clock on; Song Position and MIDI Continue will be sent.\n"
-       "#   2 = MIDI Clock Module.\n"
-       "#  -1 = The output port is disabled.\n"
-       "#\n"
-       "# With Clock Modulo, MIDI clocking doesn't begin until the song\n"
-       "# position reaches the start modulo value [midi-clock-mod-ticks].\n"
-       "# One can disable a port manually for devices that are present, but\n"
-       "# not available, perhaps because another application has exclusive\n"
-       "# access to the device (e.g. on Windows).\n\n"
-        << int(outbuses) << "    # number of MIDI clocks (output busses)\n\n"
+        "# These system ports are available for output, for playback/control.\n"
+        "# From JACK's view, these are 'capture' devices. The first line shows\n"
+        "# the count of MIDI 'capture' ports. Each line shows the buss number\n"
+        "# and clock status of that buss:\n"
+        "#\n"
+        "#   0 = MIDI Clock is off.\n"
+        "#   1 = MIDI Clock on; Song Position and MIDI Continue will be sent.\n"
+        "#   2 = MIDI Clock Modulo.\n"
+        "#  -1 = The output port is disabled.\n"
+        "#\n"
+        "# With Clock Modulo, MIDI clocking doesn't begin until song position\n"
+        "# reaches the start modulo value [midi-clock-mod-ticks]. One can\n"
+        "# disable a port manually for devices that are present, but not\n"
+        "# available (because another application has exclusive access to the\n"
+        "# device (e.g. the MIDI Mapper on Windows).\n"
+        "\n[midi-clock]\n\n"
+        << int(outbuses) << "      # number of MIDI clocks (output busses)\n\n"
         ;
 
     for (bussbyte bus = 0; bus < outbuses; ++bus)
@@ -1175,73 +1252,69 @@ rcfile::write ()
             mapstatus += "not ";
 
         mapstatus += "active";
-        file
-        << "\n[midi-clock-map]\n\n"
+        file << "\n"
            "# This table, if present, allows the pattern to set buss numbers\n"
            "# as usual, but the use the table to look up the true buss number\n"
            "# by the short form of the port name. Thus, if the ports change\n"
            "# their order in the MIDI system, the pattern can still output to\n"
            "# the proper port. The short names are the same with ALSA or with\n"
            "# JACK with the a2jmidi bridge running. Note that port-mapping is\n"
-           "# disabled in manual/virtual port mode.\n\n"
+           "# disabled in manual/virtual port mode.\n"
+           "\n[midi-clock-map]\n\n"
         << activestring << "   # " << mapstatus << "\n\n"
         << output_port_map_list()
         ;
     }
 
     /*
-     * MIDI clock modulo value
+     * MIDI clock modulo value, and filter by channel, new option as of
+     * 2016-08-20.
      */
 
-    file << "\n[midi-clock-mod-ticks]\n\n"
-        "# The Song Position (in 16th notes) at which clocking will begin\n"
-        "# if the buss is set to MIDI Clock mod setting.\n"
-        "\n"
-        << midibus::get_clock_mod() << "\n"
+    file << "\n"
+        "# 'ticks' provides the Song Position (in 16th notes) at which\n"
+        "# clocking begins if the buss is set to MIDI Clock Mod setting.\n"
+        "# 'record-by-channel' allows the master MIDI bus to record/filter\n"
+        "# incoming MIDI data by channel, adding each new MIDI event to the\n"
+        "# pattern that is set to that channel.  This option adopted from the\n"
+        "# Seq32 project at GitHub.\n"
+        "\n[midi-clock-mod-ticks]\n\n"
        ;
-
-    /*
-     * Filter by channel, new option as of 2016-08-20
-     */
-
-    file
-        << "\n"
-        << "# If set to 1, this option allows the master MIDI bus to record\n"
-           "# (filter) incoming MIDI data by channel, allocating each incoming\n"
-           "# MIDI event to the sequence that is set to that channel.\n"
-           "# This is an option adopted from the Seq32 project at GitHub.\n"
-           "\n"
-        << (rc_ref().filter_by_channel() ? "1" : "0")
-        << "   # flag to record incoming data by channel\n"
-        ;
+    write_integer(file, "ticks", midibus::get_clock_mod());
+    write_boolean(file, "record-by-channel", rc_ref().filter_by_channel());
 
     /*
      * Reveal ports
      */
 
-    file
-        << "\n[reveal-ports]\n\n"
-           "# Set to 1 to have Seq66 ignore any system port names\n"
-           "# declared in the 'user' configuration file.  Use this option to\n"
-           "# be able to see the port names as detected by ALSA/JACK.\n"
-           "\n"
-        << (rc_ref().reveal_ports() ? "1" : "0")
-        << "   # flag for reveal ports\n"
-        ;
+    file << "\n"
+       "# Set to true to have Seq66 ignore port names defined in the 'usr'\n"
+       "# file.  Use this option to to see the system ports as detected\n"
+       "# by ALSA/JACK.\n"
+       "\n[reveal-ports]\n\n"
+       ;
+    write_boolean(file, "show-system-ports", rc_ref().reveal_ports());
 
     /*
      * Interaction-method
      */
 
-    file
-        << "\n[interaction-method]\n\n"
-           "# Sets the mouse handling style for drawing and editing a pattern\n"
-           "# This feature is currently NOT supported in Seq66. However, \n"
-           "# there are some other interaction settings available.\n"
+    file << "\n"
+       "# Sets the mouse usage for drawing and editing a pattern. The\n"
+       "# 'fruity' mode is currently NOT supported in Seq66. Also obsolete\n"
+       "# is the Mod4 feature. Other interaction settings are available.\n"
+       "# 'snap-split' enables splitting performance editor triggers at the\n"
+       "# closest snap position, instead of exactly in its middle. The split\n"
+       "# is activated by a middle click or Ctrl-left click.\n"
+       "# 'click-edit' allows a double-click on a slot to bring it up in\n"
+       "# the pattern editor.  This is the default.  Set it to false if\n"
+       "# it interferes with muting/unmuting a pattern.\n"
+       "\n[interaction-method]\n\n"
         ;
+    write_boolean(file, "snap-split", rc_ref().allow_snap_split());
+    write_boolean(file, "click-edit", rc_ref().allow_click_edit());
 
 #if defined SEQ66_USE_FRUITY_CODE         /* will not be supported in seq66   */
-
     int x = 0;
     while (c_interaction_method_names[x] && c_interaction_method_descs[x])
     {
@@ -1255,36 +1328,11 @@ rcfile::write ()
     file
         << "\n" << rc_ref().interaction_method() << "   # interaction_method\n\n"
         ;
-
 #endif  // SEQ66_USE_FRUITY_CODE
 
-    file
-        << "\n# Set to 1 to allow Seq66 to stay in note-adding mode when\n"
-           "# the right-click is released while holding the Mod4 (Super or\n"
-           "# Windows) key.\n"
-           "\n"
-        << (rc_ref().allow_mod4_mode() ? "1" : "0")
-        << "   # allow_mod4_mode\n\n"
-        ;
-
-    file
-        << "# Set to 1 to allow Seq66 to split performance editor\n"
-           "# triggers at the closest snap position, instead of splitting the\n"
-           "# trigger exactly in its middle.  Remember that the split is\n"
-           "# activated by a middle click or Ctrl-left click.\n"
-           "\n"
-        << (rc_ref().allow_snap_split() ? "1" : "0")
-        << "   # allow_snap_split\n\n"
-        ;
-
-    file
-        << "# Set to 1 to allow a double-click on a slot to bring it up in\n"
-           "# the pattern editor.  This is the default.  Set it to 0 if\n"
-           "# it interferes with muting/unmuting a pattern.\n"
-           "\n"
-        << (rc_ref().allow_click_edit() ? "1" : "0")
-        << "   # allow_click_edit\n"
-        ;
+    /*
+     * JACK Settings
+     */
 
     std::string jacktransporttype = "none";
     if (rc_ref().with_jack_master())
@@ -1294,80 +1342,52 @@ rcfile::write ()
     else if (rc_ref().with_jack_master_cond())
         jacktransporttype = "conditional";
 
-    file
-        << "\n[jack-transport]\n\n"
-        "# jack_transport - Enable slave synchronization with JACK Transport.\n"
-        "# Also contains the new flag to use JACK MIDI. Now simplified to\n"
-        "# use variables instead of 0/1 flags. JACK transport values can be\n"
-        "# 'none', 'slave', 'master', and 'conditional'.\n"
-        "#\n"
-        "#   none: No JACK Transport in use.\n"
-        "#   slave: Seq66 attempts to use JACK Transport as Slave.\n"
-        "#   master: Seq66 attempts to serve as JACK Transport Master.\n"
-        "#   conditional: Seq66 is JACK master if no JACK master exists.\n\n"
-        << "transport-type = " << jacktransporttype << "\n\n"
-        ;
-
-    std::string songmodeflag = bool_to_string(rc_ref().song_start_mode());
-    std::string jackmidiflag = bool_to_string(rc_ref().with_jack_midi());
-    file
-        << "# song-start-mode is one of the following values:\n"
-        "#\n"
-        "# false: Playback in Live mode. Allows muting and unmuting of loops.\n"
-        "#        from the main (patterns) window. Same as 'live'.\n"
-        "# true:  Playback uses the Song (performance) editor's data and mute\n"
-        "#        controls. Same as 'song'.\n\n"
-        << "song-start-mode = " << songmodeflag << "\n\n"
-        "# jack-midi sets/unsets JACK MIDI, separate from JACK Transport.\n\n"
-        << "jack-midi = " << jackmidiflag << "\n"
-        ;
-
-#if defined SEQ66_LASH_SUPPORT_MOVED
-        /*
-         * This option is moved to the "usr" file's [user-session] section.
-         */
-
-        file << "\n"
-            "[lash-session]\n\n"
-            "# Set this value to 0 to disable LASH session management.\n"
-            "# Set it to 1 to enable LASH session management.\n"
-            "# This value will have no effect if LASH support is not built in.\n"
-            "\n"
-            << (rc().lash_support() ? "1" : "0")
-            << "     # LASH session management support flag\n"
-            ;
-#endif
-
-    std::string autosave = bool_to_string(rc_ref().auto_option_save());
     file << "\n"
-        "[auto-option-save]\n\n"
-        "# Set this value to false to disable the automatic saving of the\n"
-        "# current configuration to 'rc' and other files.  Set it to true to\n"
-        "# follow Seq24 behavior of saving the configuration at exit.\n"
-        "# Note that, if auto-save is set, many of the command-line settings,\n"
-        "# such as the JACK/ALSA settings, are saved to the configuration,\n"
-        "# which can confuse one at first.  Also note that one currently needs\n"
-        "# this option set to true to save the configuration; there is no\n"
-        "# user-interface control for it at present.\n\n"
-        << "auto-save-rc = " << autosave << "\n"
+        "# 'transport-type' enables synchronization with JACK Transport. Values\n"
+        "# can be:\n"
+        "#\n"
+        "# 'none':        No JACK Transport in use.\n"
+        "# 'slave':       Use JACK Transport as Slave.\n"
+        "# 'master':      Attempt to serve as JACK Transport Master.\n"
+        "# 'conditional': Serve as JACK master if no JACK master exists.\n"
+        "#\n"
+        "# 'song-start-mode' is one of the following values:\n"
+        "#\n"
+        "# live: Playback in Live mode. Allows muting and unmuting of loops\n"
+        "#       from the main (patterns) window. Same as false.\n"
+        "# song: Playback uses the Song (performance) editor's data and mute\n"
+        "#       controls. Same as true.\n"
+        "#\n"
+        "# 'jack-midi' sets/unsets JACK MIDI, separate from JACK transport.\n"
+        "\n[jack-transport]\n\n"
+        << "transport-type = " << jacktransporttype << "\n"
+        << "song-start-mode = " << rc_ref().song_mode() << "\n"
         ;
+    write_boolean(file, "jack-midi", rc_ref().with_jack_midi());
 
-    std::string oldtrigs = bool_to_string(rc_ref().save_old_triggers());
-    std::string oldmutes = bool_to_string(rc_ref().save_old_mutes());
     file << "\n"
-        "# Set the following values to true to save triggers in a format\n"
+        "# 'auto-save-rc' enables/disables the automatic saving of the running\n"
+        "# configuration to 'rc' and other files.  True is the old Seq24\n"
+        "# behavior.  If auto-save is set, many of the command-line settings,\n"
+        "# (e.g. JACK/ALSA), are saved to some of the configuration files.\n"
+        "# There is no user-interface control for this setting at present.\n"
+        "#\n"
+        "# The old-triggers value indicates to save triggers in a format\n"
         "# compatible with Seq24.  Otherwise, triggers are saved with an\n"
-        "# additional 'transpose' setting, and mutes are saved as a byte,\n"
-        "# instead of a long value.\n\n"
-        << "save-old-triggers = " << oldtrigs << "\n"
-        << "save-old-mutes = " << oldmutes << "\n"
+        "# additional 'transpose' setting. Similarly, the old-mutes value,\n"
+        "# if true, saves mute-groups as long values (!) instead of bytes.\n"
+        "\n[auto-option-save]\n\n"
         ;
+
+    write_boolean(file, "auto-save-rc", rc_ref().auto_option_save());
+    write_boolean(file, "save-old-triggers", rc_ref().save_old_triggers());
+    write_boolean(file, "save-old-mutes", rc_ref().save_old_mutes());
 
     std::string lud = rc_ref().last_used_dir();
     lud = add_quotes(lud);
     file << "\n"
-        "[last-used-dir]\n\n"
-        "# Last-used and currently-active directory:\n\n"
+        "# Specifies the last-used and currently-active directory.\n"
+        "\n[last-used-dir]\n\n"
         << lud << "\n"
         ;
 
@@ -1377,14 +1397,14 @@ rcfile::write ()
 
     int count = rc_ref().recent_file_count();
     file << "\n"
-        "[recent-files]\n\n"
         "# Holds a list of the last few recently-loaded MIDI files. The first\n"
         "# number is the number of items in the list.  The second value\n"
         "# indicates if to load the most recent file (the top of the list)\n"
-        "# at startup (1 = load it, 0 = do not load it).\n\n"
-        << count << " " << (rc_ref().load_most_recent() ? "1" : "0") << "\n\n"
+        "# at startup.\n"
+        "\n[recent-files]\n\n"
         ;
-
+    write_integer(file, "count", count);
+    write_boolean(file, "load-most-recent", rc_ref().load_most_recent());
     if (count > 0)
     {
         for (int i = 0; i < count; ++i)
@@ -1396,9 +1416,12 @@ rcfile::write ()
         file << "\n";
     }
 
-    file
-        << "# End of " << name() << "\n#\n"
-        << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
+    /*
+     * EOF
+     */
+
+    file << "\n# End of " << name()
+        << "\n#\n# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
         ;
 
     file.close();

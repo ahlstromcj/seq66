@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq24 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq24 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq24 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq24 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq24; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq24; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-26
- * \updates       2020-08-04
+ * \updates       2021-06-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -49,13 +49,7 @@ comments::comments (const std::string & comtext) :
     m_comment_is_set    (false)
 {
     if (comtext.empty())
-    {
-        m_comments_block =
-        "Comments added to this section are preserved.  Lines starting with\n"
-        "a '#' or '[', or that are blank, are ignored.  Start lines that must\n"
-        "look empty with a space.\n"
-        ;
-    }
+        m_comments_block = "Add your comment block here\n";
 }
 
 void
