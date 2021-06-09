@@ -661,7 +661,11 @@ save_playlist
     if (result)
     {
         playlistfile plf(destination, pl, rc(), false); /* false --> quiet  */
-        file_message("Play-list save", destination);
+
+        /*
+         * Redundant: file_message("Play-list save", destination);
+         */
+
         pl.file_name(destination);
         result = plf.write();
         if (! result)

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-07
+ * \updates       2021-06-08
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -94,6 +94,8 @@ static const std::string c_interaction_method_descs[3] =
 namespace seq66
 {
 
+static const int s_rc_file_version = 2;
+
 /**
  *  Principal constructor.
  *
@@ -115,7 +117,7 @@ namespace seq66
 rcfile::rcfile (const std::string & name, rcsettings & rcs) :
     configfile  (name, rcs)
 {
-    version("2");
+    version(s_rc_file_version);
 }
 
 /**
@@ -222,26 +224,28 @@ rcfile::parse ()
         return false;
 
     bool verby = get_boolean(file, "[Seq66]", "verbose");
-    rc().verbose(verby);
-    (void) parse_version(file);
+    std::string s = parse_version(file);
+    if (s.empty() || file_version_old(file))
+        rc_ref().auto_option_save(true);
 
-    std::string s = get_variable(file, "[Seq66]", "sets-mode");
+    rc().verbose(verby);
+    s = get_variable(file, "[Seq66]", "sets-mode");
     rc().sets_mode(s);
     s = get_variable(file, "[Seq66]", "port-naming");
     rc().port_naming(s);
 
     /*
-     * [comments] Header comments (hash-tag lead) is skipped during parsing.
+     * [comments] Header comments (hash-tag lead) are skipped during parsing.
      * However, we now try to read an optional comment block.
      */
 
-    std::string comments = parse_comments(file);
-    if (! comments.empty())
-        rc_ref().comments_block().set(comments);
+    s = parse_comments(file);
+    if (! s.empty())
+        rc_ref().comments_block().set(s);
 
     bool ok = true;                                     /* start hopefully! */
     std::string tag = "[midi-control-file]";
-    if (file_version_number() < 2)
+    if (file_version_number() < s_rc_file_version)
     {
         if (line_after(file, tag))
         {
@@ -272,7 +276,7 @@ rcfile::parse ()
         rc_ref().midi_control_filename(pfname);             /* base name    */
     }
     tag = "[mute-group-file]";
-    if (file_version_number() < 2)
+    if (file_version_number() < s_rc_file_version)
     {
         if (line_after(file, tag))
         {
@@ -318,7 +322,7 @@ rcfile::parse ()
         rc_ref().mute_group_filename(pfname);               /* base name    */
     }
     tag = "[usr-file]";
-    if (file_version_number() < 2)
+    if (file_version_number() < s_rc_file_version)
     {
         if (line_after(file, tag))
         {
@@ -340,7 +344,7 @@ rcfile::parse ()
 
     int flag = 0;
     tag = "[palette-file]";
-    if (file_version_number() < 2)
+    if (file_version_number() < s_rc_file_version)
     {
         if (line_after(file, tag))
         {
@@ -409,7 +413,7 @@ rcfile::parse ()
 
     bool use_manual_ports = false;
     tag = "[manual-ports]";
-    if (file_version_number() < 2)
+    if (file_version_number() < s_rc_file_version)
     {
         if (line_after(file, tag))
         {
@@ -446,11 +450,11 @@ rcfile::parse ()
 
     /*
      *  When Seq66 exits, it saves all of the inputs it has.  If an input is
-     *  removed from the system (e.g. unplugging a MIDI controller), then there
-     *  will be too many entries in this section.  The user might remove one, and
-     *  forget to update the buss count.  So we ignore the buss count. But we also
-     *  have to read the channel-filter boolean.  If an error occurs, we abort...
-     *  the user must fix the 'rc' file.
+     *  removed from the system (e.g. unplugging a MIDI controller), then
+     *  there will be too many entries in this section.  The user might remove
+     *  one, and forget to update the buss count.  So we ignore the buss
+     *  count. But we also have to read the channel-filter boolean.  If an
+     *  error occurs, we abort...  the user must fix the 'rc' file.
      */
 
     tag = "[midi-input]";
@@ -595,7 +599,7 @@ rcfile::parse ()
     int ticks = 64;
     bool recordbychannel = false;
     tag = "[midi-clock-mod-ticks]";
-    if (file_version_number() < 2)
+    if (file_version_number() < s_rc_file_version)
     {
         if (line_after(file, tag))
         {
@@ -620,7 +624,7 @@ rcfile::parse ()
 
     int track = 0;
     tag = "[midi-meta-events]";
-    if (file_version_number() < 2)
+    if (file_version_number() < s_rc_file_version)
     {
         if (line_after(file, tag))
             (void) std::sscanf(scanline(), "%d", &track);
@@ -634,7 +638,7 @@ rcfile::parse ()
     rc_ref().tempo_track_number(track);     /* MIDI file can override this  */
 
     tag = "[reveal-ports]";
-    if (file_version_number() < 2)
+    if (file_version_number() < s_rc_file_version)
     {
         if (line_after(file, tag))
         {
@@ -660,7 +664,7 @@ rcfile::parse ()
     }
 
     tag = "[interaction-method]";
-    if (file_version_number() < 2)
+    if (file_version_number() < s_rc_file_version)
     {
         if (line_after(file, tag))
         {
@@ -716,16 +720,26 @@ rcfile::parse ()
         }
     }
     else
-         (void) make_error_message(tag, "data line missing");
+         (void) make_error_message(tag, "section missing");
 
     tag = "[recent-files]";
-    if (line_after(file, tag))
+    if (line_after(file, tag))              /* now at the line for "count"  */
     {
-        int count, loadrecent;
-        int number = std::sscanf(scanline(), "%d %d", &count, &loadrecent);
-        if (number > 1)
-            rc_ref().load_most_recent(loadrecent != 0);
-
+        int count;
+        if (file_version_number() < s_rc_file_version)
+        {
+            int loadrecent;
+            int number = std::sscanf(scanline(), "%d %d", &count, &loadrecent);
+            if (number > 1)
+                rc_ref().load_most_recent(loadrecent != 0);
+        }
+        else
+        {
+            bool loadem = get_boolean(file, tag, "load-most-recent");
+            count = get_integer(file, tag, "count");
+            rc_ref().load_most_recent(loadem);
+            (void) next_data_line(file);    /* skip "load-most-recent" line */
+        }
         rc_ref().clear_recent_files();
         for (int i = 0; i < count; ++i)
         {
@@ -743,12 +757,12 @@ rcfile::parse ()
         }
     }
     else
-        (void) make_error_message(tag, "data line missing");
+        (void) make_error_message(tag, "section missing");
 
     bool playlistpresent = true;
     rc_ref().playlist_active(false);
     tag = "[playlist]";
-    if (file_version_number() < 2)
+    if (file_version_number() < s_rc_file_version)
     {
         playlistpresent = line_after(file, tag);
         if (playlistpresent)
@@ -816,7 +830,7 @@ rcfile::parse ()
 
     rc_ref().notemap_active(false);
     tag = "[note-mapper]";
-    if (file_version_number() < 2)
+    if (file_version_number() < s_rc_file_version)
     {
         if (line_after(file, tag))
         {
@@ -862,7 +876,7 @@ rcfile::parse ()
 
     int method = 1;             /* preserve seq24 option if not present     */
     tag = "[auto-option-save]";
-    if (file_version_number() < 2)
+    if (file_version_number() < s_rc_file_version)
     {
         if (line_after(file, tag))
         {
@@ -1046,9 +1060,9 @@ rcfile::write ()
         }
     }
     file << "\n"
-        "# This section provides a flag and a file-name for MIDI-control I/O\n"
-        "# settings. Use '\"\"' to indicate no 'ctrl' file. If none, the default\n"
-        "# internal keystrokes are used, with no MIDI control I/O.\n"
+        "# Provides a flag and a file-name for MIDI-control I/O settings. Use\n"
+        "# '\"\"' to indicate no 'ctrl' file. If none, the default internal\n"
+        "# keystrokes are used, with no MIDI control I/O.\n"
        ;
     write_file_status
     (
@@ -1065,8 +1079,8 @@ rcfile::write ()
         ok = mgf.write();
 
     file << "\n"
-        "# This section provides a flag and a file-name for mute-groups settings.\n"
-        "# Use '\"\"' to indicate no 'mutes' file. If none, there are no mute\n"
+        "# Provides a flag and a file-name for mute-groups settings. Use\n"
+        "# '\"\"' to indicate no 'mutes' file. If none, there are no mute\n"
         "# groups unless the MIDI file contains some.\n"
        ;
     write_file_status
@@ -1079,9 +1093,9 @@ rcfile::write ()
     usrname = rc_ref().trim_home_directory(usrname);
 
     file << "\n"
-        "# This section provides a flag and a file-name for 'user' settings.\n"
-        "# Use '\"\"' to indicate no 'usr' file. If none, there are no special\n"
-        "# user settings.  Using no 'usr' file should be considered EXPERIMENTAL.\n"
+        "# Provides a flag and a file-name for 'user' settings. Use '\"\"' \n"
+        "# to indicate no 'usr' file. If none, there are no special user\n"
+        "# settings.  Using no 'usr' file should be considered EXPERIMENTAL.\n"
        ;
     write_file_status
     (
@@ -1090,13 +1104,13 @@ rcfile::write ()
     );
 
     file << "\n"
-        "# Provides a configured play-list file and a flag to activate it.\n"
-        "# Provide the name of a play-list file. If there is none, use '\"\"',\n"
-        "# or set the active flag to false. Use the extension '.playlist'.\n"
-		"# 'base-directory' is optional. If non-empty, it sets the base\n"
-		"# directory holding all MIDI files in all playlists. Helpful when\n"
-		"# moving a set of playlists and tunes from one directory to another.\n"
-		"# That action preserves the sub-directories.\n"
+        "# Provides a play-list file and a flag to activate it. If no list,\n"
+        "# use '\"\"' and set 'active' to false. Use the extension '.playlist'.\n"
+		"# Even if not active, the play-list file is read, which adds to the\n"
+        "# startup time.  The 'base-directory' is optional. If non-empty, it\n"
+        "# sets the directory holding all MIDI files in all play-lists, helpful\n"
+        "# when play-lists and tunes from one directory to another, preserving\n"
+		"# the sub-directories.\n"
         ;
 
     std::string plname = rc_ref().playlist_filename();
@@ -1107,11 +1121,11 @@ rcfile::write ()
     file << "base-directory = " << mbasedir << "\n";
 
     file << "\n"
-       "# This section provides a flag and file-name for note-mapping settings.\n"
-       "# Use '\"\"' to indicate no 'drums' file. Use the extension '.drums'.\n"
-       "# This file is used when the user invokes the note-conversion operation\n"
-       "# in the pattern editor on a transposable pattern. For percussion,\n"
-       "# make the pattern temporarily transposable to do this operation.\n"
+       "# Provides a flag and file-name for note-mapping settings. Use '\"\"'\n"
+       "# to indicate no 'drums' file. Use the extension '.drums'. This file is\n"
+       "# used when the user invokes the note-conversion operation in the\n"
+       "# pattern editor on a transposable pattern. For percussion, make the\n"
+       "# pattern temporarily transposable to allow this operation.\n"
        ;
 
     std::string drumfile = rc_ref().notemap_filename();
@@ -1124,9 +1138,9 @@ rcfile::write ()
      */
 
     file << "\n"
-       "# This section provides a flag and a file-name to allow modifying the\n"
-       "# palette using the file given below.  Use '\"\"' to indicate no\n"
-       "# 'palette' file. If none, the internal palette is used.\n"
+       "# Provides a flag and a file-name to allow modifying the palette\n"
+       "# using the file given below.  Use '\"\"' to indicate no 'palette'\n"
+       "# file. If none or not active, the internal palette is used.\n"
        ;
     write_file_status
     (
@@ -1139,10 +1153,10 @@ rcfile::write ()
      */
 
     file << "\n"
-       "# This section defines features of MIDI meta-event handling. Tempo\n"
-       "# events occur in the first track (pattern 0), but one can move tempo\n"
-       "# elsewhere. It changes where tempo events are recorded.  The default\n"
-       "# is 0, the maximum is 1023. A pattern must exist at this number.\n"
+       "# Defines features of MIDI meta-event handling. Tempo events occur in\n"
+       "# the first track (pattern 0), but one can move tempo elsewhere. It\n"
+       "# It changes where tempo events are recorded.  The default is 0, the\n"
+       "# maximum is 1023. A pattern must exist at this number.\n"
        "\n[midi-meta-events]\n\n"
            ;
     write_integer(file, "tempo-track", rc_ref().tempo_track_number());
@@ -1413,7 +1427,6 @@ rcfile::write ()
             rfilespec = add_quotes(rfilespec);
             file << rfilespec << "\n";
         }
-        file << "\n";
     }
 
     /*

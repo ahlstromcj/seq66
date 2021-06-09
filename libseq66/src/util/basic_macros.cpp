@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-05-16
+ * \updates       2021-06-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -290,7 +290,10 @@ void
 async_safe_strprint (const char * msg, size_t count)
 {
 #if defined SEQ66_PLATFORM_UNIX
-    (void) write(STDOUT_FILENO, msg, count);
+    if (write(STDOUT_FILENO, msg, count) == 0)
+    {
+        // ignore -Wunused-result warning
+    }
 #else
     /* TODO: find a Windows way for this    */
     (void) write(STDOUT_FILENO, msg, count);

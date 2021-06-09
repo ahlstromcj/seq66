@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2019-03-26
+ * \updates       2021-06-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -70,15 +70,7 @@ public:
     usrfile () = delete;
     usrfile (const usrfile &) = delete;
     usrfile & operator = (const usrfile &) = delete;
-
-    /*
-     * WTF?
-     *
-    usrfile (usrfile &&) = default;
-    usrfile & operator = (usrfile &&) = default;
-     */
-
-    virtual ~usrfile ();
+    virtual ~usrfile () = default;
 
     virtual bool parse () override;
     virtual bool write () override;

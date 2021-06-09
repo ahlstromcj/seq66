@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-05-27
+ * \updates       2021-06-08
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -71,17 +71,6 @@
 
 namespace seq66
 {
-
-/**
- *  Provides the redraw time when recording, in ms.  Can Windows actually
- *  draw faster? :-D
- */
-
-#if defined SEQ66_PLATFORM_WINDOWS
-const int c_redraw_ms = 20;
-#else
-const int c_redraw_ms = 40;
-#endif
 
 /**
  *  Provides the supported looping recording modes.  These values are used
@@ -201,25 +190,10 @@ private:
      *
      *      -#  mainwnd-rows
      *      -#  mainwnd-cols
-     *      -#  max-set
-     *      -#  mainwid-border
-     *      -#  control-height
      *      -#  zoom
      *      -#  global-seq-feature
-     *      -#  use-new-font
-     *      -#  allow-two-perfedits
-     *      -#  perf-h-page-increment
-     *      -#  perf-v-page-increment
-     *      -#  progress-bar-colored (new)
-     *      -#  progress-bar-thick (new)
-     *      -#  window-redraw-rate-ms (new)
-     */
-
-    /**
-     *  Specified the current grid style.  Removed 2021-05-15.
-     *
-     *      grid m_grid_style;
-     *      int m_grid_brackets;
+     *      -#  progress-bar-thick
+     *      -#  window-redraw-rate-ms
      */
 
     /**
@@ -243,16 +217,6 @@ private:
      */
 
     int m_mainwnd_cols;
-
-    /**
-     *  Maximum number of screen sets that can be supported.  Basically,
-     *  that the number of times the Patterns Panel can be filled.  32
-     *  sets can be created.  Although this value is part of the "user"
-     *  configuration file, it is likely that it will never change.  Rather,
-     *  the number of sequences per set would change.  We'll see.
-     */
-
-    int m_max_sets;
 
     /**
      *  Provide a scale factor to increase the size of the main window
@@ -285,17 +249,7 @@ private:
      *  like it would be useful to make these values user-configurable.
      */
 
-    int m_mainwid_border;   /* c_mainwid_border = 0;  try 2 or 3 instead    */
     int m_mainwid_spacing;  /* c_mainwid_spacing = 2; try 4 or 6 instead    */
-
-    /**
-     *  This constants seems to be created for a future purpose, perhaps
-     *  to reserve space for a new bar on the mainwid pane.  But it is
-     *  used only in this header file, to define m_mainwid_y, but doesn't
-     *  add anything to that value.
-     */
-
-    int m_control_height;   /* c_control_height = 0;                        */
 
     /**
      *  Provides the initial zoom value, in units of ticks per pixel.  The
@@ -371,48 +325,6 @@ private:
     int m_seqedit_bgsequence;
 
     /**
-     *  Sets the usage of the font.  By default, in normal mode, the new font
-     *  is used.  In legacy mode, the old font is used.
-     */
-
-    bool m_use_new_font;
-
-    /**
-     *  Enables the usage of two perfedit windows, for added convenience in
-     *  editing multi-set songs.  Defaults to true.
-     */
-
-    bool m_allow_two_perfedits;
-
-    /**
-     *  Allows a changed to the page size for the horizontal scroll bar.
-     *  The value used to be hardwired to 1 (in four-measure units), now it
-     *  defaults to 4 (16 measures at a time).  The value of 1 is already
-     *  covered by the scrollbar arrows.
-     */
-
-    int m_h_perf_page_increment;
-
-    /**
-     *  Allows a changed to the page size for the vertical scroll bar.
-     *  The value used to be hardwired to 1 (in single-track units), now it
-     *  defaults to 8.  The value of 1 is already covered by the scrollbar
-     *  arrows.
-     */
-
-    int m_v_perf_page_increment;
-
-    /**
-     *  If set, makes progress bars have the "progress_color()", instead of
-     *  black.  This value is no longer hardwired in the gui_palette_gtk2
-     *  module to be red.  Now we want to let the color select from a slightly
-     *  large palette.  We chande this from a boolean to an integer to allow
-     *  the selection of more colors.
-     */
-
-    int m_progress_bar_colored;
-
-    /**
      *  If set, makes progress bars thicker than 1 pixel... 2 pixels.
      *  It isn't useful to support anything thicker.  The default is true --
      *  use two pixels.
@@ -429,95 +341,12 @@ private:
 
     /**
      *  Provides the global setting for redraw rate of windows.  Not all
-     *  windows use this yet.  The default is 40 ms (c_redraw_ms, which is 20
+     *  windows use this yet.  The default is 40 ms (c_redraw_ms, which is 25
      *  ms in Windows builds)), but some windows originally used 25 ms, so
      *  beware of side-effects.
      */
 
     int m_window_redraw_rate_ms;
-
-    /**
-     *  Another [user-interface-settings] item.  If set to 1, icons will
-     *  be used for more buttons.  This setting affects only a few buttons
-     *  so far, such as the buttons at the top of the main window.
-     */
-
-    bool m_use_more_icons;
-
-    /**
-     *  New section [user-main-window]
-     *
-     *  This section adds to the [user-interface-settings] configuration
-     *  section.  That section is big enough, and the new section is for newer
-     *  features.
-     *
-     *  Currently these value are not saved; we want to test the viability of
-     *  the concept, first.
-     */
-
-    /**
-     *  This value specifies the number of rows of main windows.  The default
-     *  is the legacy value, 1, to support the original paradigm of one set
-     *  shown in the user interface.  For now, we will restrict this value to
-     *  range from 1 to 3, which will fit onto a 1920 x 1080 screen.
-     */
-
-    int m_mainwid_block_rows;
-
-    /**
-     *  This value specifies the number of columns of main windows.  The default
-     *  is the legacy value, 1, to support the original paradigm of one set
-     *  shown in the user interface.  For now, we will restrict this value to
-     *  range from 1 to 2, which will fit onto a 1920 x 1080 screen.
-     */
-
-    int m_mainwid_block_cols;
-
-    /**
-     *  If true, this value will enable individual set-controls for the
-     *  multiple mainwid objects shown in the main window.  If false, then the
-     *  main set spinner is the only one shown, and it makes all sets track
-     *  the main set, which is always shown in the upper-right mainwid slot.
-     *  If there is only a single window, this value is set to true, but it
-     *  really doesn't matter what behavior is enabled for a single mainwid.
-     *
-     *  Not used except in usrfile.
-     */
-
-    bool m_mainwid_block_independent;
-
-    /**
-     *  Constants for the mainwid class.  These items are not read from the
-     *  "usr", and are not currently part of any configuration section.
-     *
-     *  The m_text_x and m_text_y constants help define the "seqarea" size.
-     *  It looks like these two values are the character width (x) and height
-     *  (y) in pixels.  Thus, these values would be dependent on the font
-     *  chosen.  But that, currently, is hard-wired.  See the m_font_6_12[]
-     *  array for the default font specification.
-     *
-     *  However, please not that font files are not used.  Instead, the
-     *  fonts are provided by two pixmaps in the <code> src/pixmap </code>
-     *  directory: <code> font_b.xpm </code> (black lettering on a white
-     *  background) and <code> font_w.xpm </code> (white lettering on a black
-     *  background).
-     *
-     *  We have added black-on-yellow and yellow-on-black versions of the
-     *  fonts, to support the highlighting of pattern boxes if they are empty
-     *  of actual MIDI events.
-     *
-     *  We have also added a set of four new font files that are roughly the
-     *  same size, and are treated as the same size, but look smooth and less
-     *  like a DOS-era font.
-     *
-     *  The font module does not use these values directly, but does define
-     *  some similar variables that differ slightly between the two styles of
-     *  font.  There are a lot of tricks and hard-wired places to fix before
-     *  further work can be done with fonts in Seq66.
-     */
-
-    int m_text_x;       /* c_text_x =  6, does not include inner padding    */
-    int m_text_y;       /* c_text_y = 12, does include inner padding        */
 
     /**
      *  Constants for the mainwid class.  The m_seqchars_x and
@@ -546,12 +375,12 @@ private:
 
     /**
      *  Provides the universal PPQN setting for the duration of this session.
-     *  It is either the default PPQN or the MIDI file's PPQN.
-     *  The default value of this
-     *  setting is 192 parts-per-quarter-note (PPQN).  There is still a lot of
-     *  work to get a different PPQN to work properly in speed of playback,
-     *  scaling of the user interface, and other issues.  Note that this value
-     *  can be changed by the --ppqn option, as well as in the 'rc' file.
+     *  It is either the default PPQN or the MIDI file's PPQN.  The default
+     *  value of this setting is 192 parts-per-quarter-note (PPQN).  There is
+     *  still a lot of work to get a different PPQN to work properly in speed
+     *  of playback, scaling of the user interface, and other issues.  Note
+     *  that this value can be changed by the --ppqn option, as well as in the
+     *  'rc' file.
      */
 
     int m_midi_ppqn;                     /* PPQN, parts per QN       */
@@ -690,11 +519,7 @@ private:
      *  The maximum number of patterns supported is given by the number of
      *  patterns supported in the panel (32) times the maximum number of
      *  sets (32), or 1024 patterns.  It is basically the same value as
-     *  m_max_sequence by default.  It is a derived value, and not stored in
-     *  the "usr" file.  We might make it equal to the maximum number of
-     *  sequences the currently-loaded MIDI file.
-     *
-     *      m_total_seqs = m_seqs_in_set * m_max_sets;
+     *  m_max_sequence by default.
      */
 
     int m_total_seqs;                   /* not included in .usr file    */
@@ -725,26 +550,21 @@ private:
     /**
      *  The maximum number of patterns supported is given by the number of
      *  patterns supported in the panel (32) times the maximum number of
-     *  sets (32), or 1024 patterns.  It is a derived value, and not stored in
-     *  the "user" file.
-     *
-     *      m_max_sequence = m_seqs_in_set * m_max_sets;
+     *  sets (32), or 1024 patterns.
      */
 
     int m_max_sequence;
 
     /**
      *  The width of the main pattern/sequence grid, in pixels.  Affected by
-     *  the m_mainwid_border and m_mainwid_spacing values, as well as
-     *  m_window_scale.  Replaces c_mainwid_x.
+     *  the m_mainwid_spacing value and m_window_scale.  Replaces c_mainwid_x.
      */
 
     int m_mainwid_x;
 
     /**
-     *  The height of the main pattern/sequence grid, in pixels.  Affected by
-     *  the m_mainwid_border and m_control_height values, as well as
-     *  m_window_scale or m_window_scale_y. Replaces c_mainwid_y.
+     *  The height of the main pattern/sequence grid, in pixels.
+     *  Replaces c_mainwid_y.
      */
 
     int m_mainwid_y;
@@ -859,23 +679,6 @@ private:
     /*
      *  [user-work-arounds]
      */
-
-    /**
-     *  We have an issue on some user's machines where toggling the image on
-     *  the play button from the "play" image to the "pause" images causes
-     *  segfaults.  We can't duplicate on the developer's machines, so while
-     *  we try to figure how to avoid the issue, this flag is provided
-     *  to simply leave the play-button image alone.
-     */
-
-    bool m_work_around_play_image;
-
-    /**
-     *  Another similar issue occurs in setting the tranposable image in
-     *  seqedit, even though there should be no thread conflicts!  Weird.
-     */
-
-    bool m_work_around_transpose_image;
 
     /*
      *  [user-ui-tweaks]
@@ -1229,11 +1032,6 @@ public:
         return m_gmute_tracks;
     }
 
-    int max_sets () const
-    {
-        return m_max_sets;
-    }
-
     int max_sequence () const
     {
         return m_max_sequence;
@@ -1242,24 +1040,6 @@ public:
     int total_seqs () const
     {
         return m_total_seqs;            /* not included in .usr file    */
-    }
-
-    /**
-     * \getter m_text_x, not user modifiable, not saved
-     */
-
-    int text_x () const
-    {
-        return m_text_x;
-    }
-
-    /**
-     * \getter m_text_y, not user modifiable, not saved.
-     */
-
-    int text_y () const
-    {
-        return m_text_y;
     }
 
     /**
@@ -1280,11 +1060,6 @@ public:
         return m_seqchars_y;
     }
 
-    int mainwid_border () const
-    {
-        return m_mainwid_border;
-    }
-
     int mainwid_spacing () const
     {
         return scale_size(m_mainwid_spacing);
@@ -1292,29 +1067,6 @@ public:
 
     int mainwnd_x () const;
     int mainwnd_y () const;
-
-    /**
-     *  Returns the mainwid border thickness plus a fudge constant.
-     */
-
-    int mainwid_border_x () const
-    {
-        return scale_size(m_mainwid_border);
-    }
-
-    /**
-     *  Returns the mainwid border thickness plus a fudge constant.
-     */
-
-    int mainwid_border_y () const
-    {
-        return scale_size(m_mainwid_border);
-    }
-
-    int control_height () const
-    {
-        return m_control_height;
-    }
 
     int zoom () const
     {
@@ -1377,31 +1129,6 @@ public:
         m_seqedit_bgsequence = seqnum;
     }
 
-    bool use_new_font () const
-    {
-        return m_use_new_font;
-    }
-
-    bool allow_two_perfedits () const
-    {
-        return m_allow_two_perfedits;
-    }
-
-    int perf_h_page_increment () const
-    {
-        return m_h_perf_page_increment;
-    }
-
-    int perf_v_page_increment () const
-    {
-        return m_v_perf_page_increment;
-    }
-
-    int progress_bar_colored () const
-    {
-        return m_progress_bar_colored;
-    }
-
     bool progress_bar_thick () const
     {
         return m_progress_bar_thick;
@@ -1415,26 +1142,6 @@ public:
     int window_redraw_rate () const
     {
         return m_window_redraw_rate_ms;
-    }
-
-    bool use_more_icons () const
-    {
-        return m_use_more_icons;
-    }
-
-    int block_rows () const
-    {
-        return m_mainwid_block_rows;
-    }
-
-    int block_columns () const
-    {
-        return m_mainwid_block_cols;
-    }
-
-    int block_independent () const
-    {
-        return m_mainwid_block_independent;
     }
 
     bool save_user_config () const
@@ -1457,14 +1164,9 @@ protected:
      * this at some point; it is currently a usrfile option!
      */
 
-    void max_sets (int value);
-    void text_x (int value);
-    void text_y (int value);
     void seqchars_x (int value);
     void seqchars_y (int value);
-    void mainwid_border (int value);
     void mainwid_spacing (int value);
-    void control_height (int value);
 
     /*
      *  These values are calculated from other values in the normalize()
@@ -1598,16 +1300,6 @@ public:
 
     std::string option_logfile () const;
 
-    bool work_around_play_image () const
-    {
-        return m_work_around_play_image;
-    }
-
-    bool work_around_transpose_image () const
-    {
-        return m_work_around_transpose_image;
-    }
-
     int key_height () const
     {
         return m_user_ui_key_height;
@@ -1712,29 +1404,6 @@ public:
 
 public:         // used in main application module and the usrfile class
 
-    void use_new_font (bool flag)
-    {
-        m_use_new_font = flag;
-    }
-
-    /**
-     *  Sets the value of allowing two perfedits to be created and shown to
-     *  the user.
-     */
-
-    void allow_two_perfedits (bool flag)
-    {
-        m_allow_two_perfedits = flag;
-    }
-
-    void perf_h_page_increment (int inc);
-    void perf_v_page_increment (int inc);
-
-    void progress_bar_colored (int palcode)
-    {
-        m_progress_bar_colored = palcode;
-    }
-
     void progress_bar_thick (bool flag)
     {
         m_progress_bar_thick = flag;
@@ -1745,23 +1414,7 @@ public:         // used in main application module and the usrfile class
         m_inverse_colors = flag;
     }
 
-    void window_redraw_rate (int ms)
-    {
-        m_window_redraw_rate_ms = ms;
-    }
-
-    void use_more_icons (bool flag)
-    {
-        m_use_more_icons = flag;
-    }
-
-    void block_rows (int count);
-    void block_columns (int count);
-
-    void block_independent (bool flag)
-    {
-        m_mainwid_block_independent = flag;
-    }
+    void window_redraw_rate (int ms);
 
     void app_is_headless (bool flag)
     {
@@ -1783,31 +1436,11 @@ public:         // used in main application module and the usrfile class
         m_user_option_logfile = logfile;
     }
 
-    void work_around_play_image (bool flag)
-    {
-        m_work_around_play_image = flag;
-    }
-
-    void work_around_transpose_image (bool flag)
-    {
-        m_work_around_transpose_image = flag;
-    }
-
     void key_height (int h)
     {
         if (valid_key_height(h))
             m_user_ui_key_height = h;
     }
-
-
-    /*
-     * Deprecated and removed.  See the getter above.
-     *
-     *  void use_new_seqedit (bool f)
-     *  {
-     *      m_user_ui_seqedit_in_tab = f;
-     *  }
-     */
 
     void style_sheet (const std::string & s)
     {

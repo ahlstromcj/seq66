@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-07
+ * \updates       2021-06-08
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -470,6 +470,30 @@ configfile::write_integer
     std::ofstream & file,
     const std::string & name,
     int value
+)
+{
+    file << name << " = " << value << "\n";
+}
+
+float
+configfile::get_float
+(
+    std::ifstream & file,
+    const std::string & tag,
+    const std::string & variablename,
+    int position
+)
+{
+    std::string value = get_variable(file, tag, variablename, position);
+    return float(string_to_double(value));
+}
+
+void
+configfile::write_float
+(
+    std::ofstream & file,
+    const std::string & name,
+    float value
 )
 {
     file << name << " = " << value << "\n";

@@ -566,8 +566,7 @@ qseqeditframe64::qseqeditframe64
         ui->m_toggle_transpose, SIGNAL(toggled(bool)),
         this, SLOT(transpose(bool))
     );
-    if (! usr().work_around_transpose_image())
-        set_transpose_image(can_transpose);
+    set_transpose_image(can_transpose);
 
     /*
      * Chord button and combox-box.  See c_chord_table_text[c_chord_number][]
@@ -1601,9 +1600,7 @@ void
 qseqeditframe64::transpose (bool ischecked)
 {
     seq_pointer()->set_transposable(ischecked);
-    if (! usr().work_around_transpose_image())
-        set_transpose_image(ischecked);
-
+    set_transpose_image(ischecked);
     ui->m_map_notes->setEnabled(ischecked);
 }
 

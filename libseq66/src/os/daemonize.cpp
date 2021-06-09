@@ -3,7 +3,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2020-09-07
+ * \updates       2021-06-08
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -373,10 +373,7 @@ static std::atomic<bool> sg_needs_save {};
 static void
 session_handler (int sig)
 {
-    printf("sig = %d\n", sig);
-#if defined SEQ66_PLATFORM_DEBUG
     psignal(sig, "Signal caught");
-#endif
     switch (sig)
     {
     case SIGINT:                        /* 2: Ctrl-C "terminal interrupt"   */

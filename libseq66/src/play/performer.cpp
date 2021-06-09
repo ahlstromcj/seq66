@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-05-27
+ * \updates       2021-06-08
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -51,7 +51,7 @@
  *  mod_gmute:          Key: Toggle. MIDI: Toggle/On/Off. Group On/Off.
  *  mod_glearn:         Key: Press-On/Release-Off.
  *  play_ss:            Key, MIDI:  All events set the screenset.
- *  playback:    T      Key pause, and MIDI for pause/start/stop.
+ *  playback:           Key pause, and MIDI for pause/start/stop.
  *  song_record:        Key, MIDI: Toggle/On/Off song_recording() status.
  *  solo:               TODO, intended to solo track.
  *  thru:               Key: Toggle. MIDI: Toggle/On/Off.
@@ -390,13 +390,13 @@ performer::performer (int ppqn, int rows, int columns) :
     m_resume_note_ons       (usr().resume_note_ons()),
     m_ppqn                  (choose_ppqn(ppqn)),
     m_file_ppqn             (0),
-    m_bpm                   (SEQ66_DEFAULT_BPM),
+    m_bpm                   (usr().midi_beats_per_minute()),
     m_resolution_change     (true),
     m_current_beats         (0),
     m_base_time_ms          (0),
     m_last_time_ms          (0),
-    m_beats_per_bar         (4),
-    m_beat_width            (4),
+    m_beats_per_bar         (usr().midi_beats_per_bar()),
+    m_beat_width            (usr().midi_beat_width()),
     m_tempo_track_number    (0),
     m_clocks_per_metronome  (24),
     m_32nds_per_quarter     (0),
@@ -6431,7 +6431,7 @@ performer::save_note_mapper (const std::string & notefile)
     bool result = bool(m_note_mapper);
     if (result)
     {
-        std::string nfname = rc().notemap_filename();
+        std::string nfname = rc().notemap_filespec();
         if (! notefile.empty())
             nfname = notefile;
 
@@ -6630,7 +6630,7 @@ bool
 performer::save_mutegroups (const std::string & mgf)
 {
     bool result = false;
-    std::string mgfname = rc().mute_group_filename();
+    std::string mgfname = rc().mute_group_filespec();
     if (! mgf.empty())
         mgfname = mgf;
 

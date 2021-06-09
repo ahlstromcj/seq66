@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2021-05-22
+ * \updates       2021-06-08
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -66,15 +66,6 @@
  */
 
 #define SEQ66_MIDI_CONTROL_OUT_BUSS       15
-
-/**
- *  Maximum value for c_max_sets.
- *  Note that the largest number of sets is 4 x 8 = 32.  This limitation is
- *  necessary because there are only so many available keys on the keyboard for
- *  pattern, mute-group, and set control.
- */
-
-#define SEQ66_MAX_SET_MAX                 32
 
 /**
  *  Default number of rows in the main-window's grid.  This value applies to the
@@ -239,24 +230,6 @@
  */
 
 #define SEQ66_DEFAULT_SNAP                16
-
-/**
- *  Minimum possible value for the global redraw rate.
- */
-
-#define SEQ66_MINIMUM_REDRAW              10
-
-/**
- *  The default value global redraw rate.
- */
-
-#define SEQ66_DEFAULT_REDRAW              40     /* or 25 for Windows */
-
-/**
- *  The maximum value for the global redraw rate.
- */
-
-#define SEQ66_MAXIMUM_REDRAW             100
 
 /**
  *  Defines the callback rate for gtk_timeout_add() as used by perfedit.

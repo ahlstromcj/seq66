@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-05-28
+ * \updates       2021-06-08
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -126,7 +126,6 @@
 #include "pixmaps/learn.xpm"
 #include "pixmaps/learn2.xpm"
 #include "pixmaps/loop.xpm"
-#include "pixmaps/live_mode.xpm"        /* #include "pixmaps/song_mode.xpm" */
 #include "pixmaps/panic.xpm"
 #include "pixmaps/pause.xpm"
 #include "pixmaps/perfedit.xpm"
@@ -518,8 +517,6 @@ qsmainwnd::qsmainwnd
         this, SLOT(set_song_mode(bool))
     );
     ui->btnSongPlay->setCheckable(false);
-    if (usr().use_more_icons())
-        qt_set_icon(live_mode_xpm, ui->btnSongPlay);
 
     /*
      * Record-Song button.
@@ -955,15 +952,13 @@ qsmainwnd::show_song_mode (bool songmode)
     if (songmode)
     {
         ui->btnRecord->setEnabled(true);
-        if (! usr().use_more_icons())
-            ui->btnSongPlay->setText("Song");
+        ui->btnSongPlay->setText("Song");
     }
     else
     {
         ui->btnRecord->setChecked(false);
         ui->btnRecord->setEnabled(false);
-        if (! usr().use_more_icons())
-            ui->btnSongPlay->setText("Live");
+        ui->btnSongPlay->setText("Live");
     }
 }
 

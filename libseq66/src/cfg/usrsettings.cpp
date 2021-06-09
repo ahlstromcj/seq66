@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-05-27
+ * \updates       2021-06-08
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -122,24 +122,34 @@ const double c_window_scale_default     = 1.0f;
 const double c_window_scale_max         = 3.0f;
 
 /**
+ *  Minimum and maximum possible values for the global redraw rate.
+ */
+
+const int c_minimum_redraw              =  10;
+const int c_maximum_redraw              = 100;
+
+/**
+ *  Provides the redraw time when recording, in ms.  Can Windows actually
+ *  draw faster? :-D
+ */
+
+#if defined SEQ66_PLATFORM_WINDOWS
+const int c_default_redraw_ms           = 25;
+#else
+const int c_default_redraw_ms           = 40;
+#endif
+
+/**
  *  These control sizes.  We'll try changing them and see what happens.
  *  Increasing these value spreads out the pattern grids a little bit and
  *  makes the Patterns panel slightly bigger.  Seems like it would be
  *  useful to make these values user-configurable.
  *
- *  Copped from globals.h.
- *
  *  Constants for the font class.  The c_text_x and c_text_y constants
  *  help define the "seqarea" size.  It looks like these two values are
  *  the character width (x) and height (y) in pixels.  Thus, these values
  *  would be dependent on the font chosen.  But that, currently, is
- *  hard-wired.  See the c_font_6_12[] array for the default font
- *  specification.
- *
- *  However, please note that font files are not used.  Instead, the fonts
- *  are provided by pixmaps in the <code> src/pixmap </code> directory.
- *  These pixmaps lay out all the characters of the font in a grid.
- *  See the font module for a full description of this grid.
+ *  hard-wired.
  */
 
 const int c_text_x =  6;            /* does not include the inner padding   */
@@ -174,17 +184,8 @@ const int c_seqarea_y = c_text_y * c_seqchars_y;
  *  useful to make these values user-configurable.
  */
 
-const int c_mainwid_border = 0;             // try 2 or 3 instead of 0
+// const int c_mainwid_border = 0;             // try 2 or 3 instead of 0
 const int c_mainwid_spacing = 2;            // try 4 or 6 instead of 2
-
-/**
- *  This constants seems to be created for a future purpose, perhaps to
- *  reserve space for a new bar on the mainwid pane.  But it is used only
- *  in this header file, to define c_mainwid_y, but doesn't add anything
- *  to that value.
- */
-
-const int c_control_height = 0;
 
 /**
  *  Default constructor.
@@ -201,36 +202,22 @@ usrsettings::usrsettings () :
 
     m_mainwnd_rows              (SEQ66_DEFAULT_SET_ROWS),
     m_mainwnd_cols              (SEQ66_DEFAULT_SET_COLUMNS),
-    m_max_sets                  (c_max_sets),
     m_window_scale              (c_window_scale_default),
     m_window_scale_y            (c_window_scale_default),
-    m_mainwid_border            (0),
     m_mainwid_spacing           (0),
-    m_control_height            (0),
     m_current_zoom              (0),            // 0 is unsafe, but a feature
     m_global_seq_feature_save   (true),
     m_seqedit_scale             (c_scales_off),
     m_seqedit_key               (c_key_of_C),
     m_seqedit_bgsequence        (seq::limit()),
-    m_use_new_font              (false),
-    m_allow_two_perfedits       (false),
-    m_h_perf_page_increment     (1),
-    m_v_perf_page_increment     (1),
-    m_progress_bar_colored      (0),
     m_progress_bar_thick        (true),
     m_inverse_colors            (false),
-    m_window_redraw_rate_ms     (c_redraw_ms),  // 40 ms or 20 ms; 25 ms
-    m_use_more_icons            (false),
-    m_mainwid_block_rows        (1),
-    m_mainwid_block_cols        (1),
-    m_mainwid_block_independent (false),
+    m_window_redraw_rate_ms     (c_default_redraw_ms),
 
     /*
      * The members that follow are not yet part of the .usr file.
      */
 
-    m_text_x                    (0),
-    m_text_y                    (0),
     m_seqchars_x                (0),
     m_seqchars_y                (0),
 
@@ -260,7 +247,7 @@ usrsettings::usrsettings () :
     m_total_seqs                (0),
     m_seqs_in_set               (0),                /* set in normalize()   */
     m_gmute_tracks              (0),                /* same as max-tracks   */
-    m_max_sequence              (0),
+    m_max_sequence              (seq::maximum()),
     m_mainwnd_x                 (780),              /* constant             */
     m_mainwnd_y                 (412),              /* constant             */
 
@@ -281,8 +268,6 @@ usrsettings::usrsettings () :
     m_user_option_daemonize     (false),
     m_user_use_logfile          (false),
     m_user_option_logfile       (),
-    m_work_around_play_image    (false),
-    m_work_around_transpose_image (false),
 
     /*
      * [user-ui-tweaks]
@@ -320,31 +305,17 @@ usrsettings::set_defaults ()
     m_instruments.clear();
     m_mainwnd_rows = SEQ66_DEFAULT_SET_ROWS;    // range: 4-8
     m_mainwnd_cols = SEQ66_DEFAULT_SET_COLUMNS; // range: 8-8
-    m_max_sets = c_max_sets;                    // range: 32-64
     m_window_scale = c_window_scale_default;    // range: 0.5 to 1.0 to 3.0
     m_window_scale_y = c_window_scale_default;
-    m_mainwid_border = c_mainwid_border;        // range: 0-3, try 2 or 3
     m_mainwid_spacing = c_mainwid_spacing;      // range: 2-6, try 4 or 6
-    m_control_height = 0;                       // range: 0-4?
     m_current_zoom = SEQ66_DEFAULT_ZOOM;        // range: 1-128
     m_global_seq_feature_save = true;
     m_seqedit_scale = c_scales_off;             // scales::off to < scales::max
     m_seqedit_key = c_key_of_C;                 // range: 0-11
     m_seqedit_bgsequence = seq::limit();        // range -1, 0, 1, 2, ...
-    m_use_new_font = true;
-    m_allow_two_perfedits = true;
-    m_h_perf_page_increment = 4;
-    m_v_perf_page_increment = 8;
-    m_progress_bar_colored = 0;
     m_progress_bar_thick = true;
     m_inverse_colors = false;
-    m_window_redraw_rate_ms = c_redraw_ms;
-    m_use_more_icons = false;
-    m_mainwid_block_rows = 1;
-    m_mainwid_block_cols = 1;
-    m_mainwid_block_independent = false;
-    m_text_x =  6;                          // range: 6-6
-    m_text_y = 12;                          // range: 12-12
+    m_window_redraw_rate_ms = c_default_redraw_ms;
     m_seqchars_x = 15;                      // range: 15-15
     m_seqchars_y =  5;                      // range: 5-5
     m_default_ppqn = SEQ66_DEFAULT_PPQN;    // range: 32 to 19200, default 192
@@ -384,8 +355,6 @@ usrsettings::set_defaults ()
     m_user_option_daemonize = false;
     m_user_use_logfile = false;
     m_user_option_logfile.clear();
-    m_work_around_play_image = false;
-    m_work_around_transpose_image = false;
     m_user_ui_key_height = SEQ66_SEQKEY_HEIGHT_DEFAULT;
     m_user_ui_seqedit_in_tab = true;
     m_user_ui_style_sheet = "";
@@ -420,10 +389,8 @@ void
 usrsettings::normalize ()
 {
     m_seqs_in_set = m_mainwnd_rows * m_mainwnd_cols;
-    m_max_sets = seq::maximum() / m_seqs_in_set;            /* 16 to 32...  */
-    m_max_sequence = m_seqs_in_set * m_max_sets;
     m_gmute_tracks = m_seqs_in_set * m_seqs_in_set;
-    m_total_seqs = m_seqs_in_set * m_max_sets;
+    m_total_seqs = m_seqs_in_set * c_max_sets;
 }
 
 std::string
@@ -461,10 +428,7 @@ usrsettings::session_manager (const std::string & sm)
 int
 usrsettings::mainwnd_x () const
 {
-    if (block_rows() != 1 || block_columns() != 1)
-        return 0;
-    else
-        return scale_size(m_mainwnd_x);
+    return scale_size(m_mainwnd_x);
 }
 
 /**
@@ -474,13 +438,8 @@ usrsettings::mainwnd_x () const
 int
 usrsettings::mainwnd_y () const
 {
-    if (block_rows() != 1 || block_columns() != 1)
-        return 0;
-    else
-    {
-        return m_window_scale > 1.0f ?
-            m_mainwnd_y : int(scale_size_y(m_mainwnd_y)) ;
-    }
+    return m_window_scale > 1.0f ?
+        m_mainwnd_y : int(scale_size_y(m_mainwnd_y)) ;
 }
 
 /**
@@ -728,64 +687,6 @@ usrsettings::mainwnd_cols (int value)
 }
 
 /**
- * \deprecated
- *
- * \setter m_max_sets
- *      This value is not modified unless the value parameter is between 16
- *      and 32.  The default value is 32.  Dependent values are recalculated
- *      after the assignment.
- *
- * \param value
- *      Provides the desired setting.  It might be modified by the call to
- *      normalize().  Not sure we really need this function.
- */
-
-void
-usrsettings::max_sets (int value)
-{
-    if (value > 0 && value <= c_max_sets)
-        m_max_sets = value;
-
-    normalize();
-}
-
-/**
- * \setter m_text_x
- *      This value is not modified unless the value parameter is between 6 and
- *      6, inclusive.  The default value is 6.  Dependent values are
- *      recalculated after the assignment.  This value is currently
- *      restricted, until we can code up a bigger font.
- */
-
-void
-usrsettings::text_x (int value)
-{
-    if (value == 6)
-    {
-        m_text_x = value;
-        normalize();
-    }
-}
-
-/**
- * \setter m_text_y
- *      This value is not modified unless the value parameter is between 12
- *      and 12, inclusive.  The default value is 12.  Dependent values are
- *      recalculated after the assignment.  This value is currently
- *      restricted, until we can code up a bigger font.
- */
-
-void
-usrsettings::text_y (int value)
-{
-    if (value == 12)
-    {
-        m_text_y = value;
-        normalize();
-    }
-}
-
-/**
  * \setter m_seqchars_x
  *      This affects the size or crampiness of a pattern slot, and for now
  *      we will hardwire it to 15.
@@ -818,23 +719,6 @@ usrsettings::seqchars_y (int value)
 }
 
 /**
- * \setter m_mainwid_border
- *      This value is not modified unless the value parameter is
- *      between 0 and 3, inclusive.  The default value is 0.
- *      Dependent values are recalculated after the assignment.
- */
-
-void
-usrsettings::mainwid_border (int value)
-{
-    if (value >= 0 && value <= 3)
-    {
-        m_mainwid_border = value;
-        normalize();
-    }
-}
-
-/**
  * \setter m_mainwid_spacing
  *      This value is not modified unless the value parameter is
  *      between 2 and 16, inclusive.  The default value is 2.
@@ -847,23 +731,6 @@ usrsettings::mainwid_spacing (int value)
     if (value >= 2 && value <= 16)
     {
         m_mainwid_spacing = value;
-        normalize();
-    }
-}
-
-/**
- * \setter m_control_height
- *      This value is not modified unless the value parameter is
- *      between 0 and 4, inclusive.  The default value is 0.
- *      Dependent values are recalculated after the assignment.
- */
-
-void
-usrsettings::control_height (int value)
-{
-    if (value >= 0 && value <= 4)
-    {
-        m_control_height = value;
         normalize();
     }
 }
@@ -1028,10 +895,6 @@ usrsettings::bpm_precision (int precision)
     m_bpm_precision = precision;
 }
 
-/**
- * \setter m_bpm_step_increment
- */
-
 void
 usrsettings::bpm_step_increment (midibpm increment)
 {
@@ -1043,10 +906,6 @@ usrsettings::bpm_step_increment (midibpm increment)
     m_bpm_step_increment = increment;
 }
 
-/**
- * \setter m_bpm_page_increment
- */
-
 void
 usrsettings::bpm_page_increment (midibpm increment)
 {
@@ -1056,34 +915,6 @@ usrsettings::bpm_page_increment (midibpm increment)
         increment = SEQ66_MINIMUM_BPM_INCREMENT;
 
     m_bpm_page_increment = increment;
-}
-
-/**
- *  Sets the horizontal page increment size for the horizontal scrollbar of a
- *  perfedit window.  This value ranges from 1 (the original value, really too
- *  small for a "page" operation) to 6 (which is 24 measures, the same as
- *  the typical width of the perfroll)
- */
-
-void
-usrsettings::perf_h_page_increment (int inc)
-{
-    if (inc >= 1 && inc <= 6)
-        m_h_perf_page_increment = inc;
-}
-
-/**
- *  Sets the vertical page increment size for the vertical scrollbar of a
- *  perfedit window.  This value ranges from 1 (the original value, really too
- *  small for a "page" operation) to 18 (which is 18 tracks, slightly more
- *  than the typical height of the perfroll)
- */
-
-void
-usrsettings::perf_v_page_increment (int inc)
-{
-    if (inc >= 1 && inc <= 18)
-        m_v_perf_page_increment = inc;
 }
 
 /**
@@ -1115,28 +946,11 @@ usrsettings::option_logfile () const
     return result;
 }
 
-/**
- * \setter m_mainwid_block_rows
- * \deprecated
- */
-
 void
-usrsettings::block_rows (int count)
+usrsettings::window_redraw_rate (int ms)
 {
-    if (count == 1)
-        m_mainwid_block_rows = count;
-}
-
-/**
- * \setter m_mainwid_block_cols
- * \deprecated
- */
-
-void
-usrsettings::block_columns (int count)
-{
-    if (count == 1)
-        m_mainwid_block_cols = count;
+    if (ms >= c_minimum_redraw && ms <= c_maximum_redraw)
+        m_window_redraw_rate_ms = ms;
 }
 
 /**
@@ -1170,29 +984,21 @@ usrsettings::dump_summary ()
         "   mainwnd_cols() = %d\n"
         "   seqs_in_set() = %d\n"
         "   gmute_tracks() = %d\n"
-        "   max_sets() = %d\n"
         "   max_sequence() = %d\n"
-        "   text_x(), _y() = %d, %d\n"
         ,
         mainwnd_rows(),
         mainwnd_cols(),
         seqs_in_set(),
         gmute_tracks(),
-        max_sets(),
-        max_sequence(),
-        text_x(), text_y()
+        max_sequence()
     );
     printf
     (
         "   seqchars_x(), _y() = %d, %d\n"
-        "   mainwid_border() = %d\n"
         "   mainwid_spacing() = %d\n"
-        "   control_height() = %d\n"
         ,
         seqchars_x(), seqchars_y(),
-        mainwid_border(),
-        mainwid_spacing(),
-        control_height()
+        mainwid_spacing()
     );
     printf("\n");
     printf

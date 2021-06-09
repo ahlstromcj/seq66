@@ -347,7 +347,11 @@ open_palette
     if (result)
     {
         palettefile palfile(pal, source, rc());     /* add msg? */
-        file_message("Palette open", source);       /* no msg   */
+
+        /*
+         * Redundant: file_message("Palette open", source);
+         */
+
         result = palfile.parse();
         if (result)
         {

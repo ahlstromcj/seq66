@@ -88,9 +88,9 @@ class seq
 public:
 
     /**
-     *  Provides a more descriptive alias for the sequences numbers (which range
-     *  from 0 to the maximum sequence number allowed for a given run o fthe
-     *  application.
+     *  Provides a more descriptive alias for the sequences numbers (which
+     *  range from 0 to the maximum sequence number allowed for a given run
+     *  of the application.
      */
 
     using number = int;

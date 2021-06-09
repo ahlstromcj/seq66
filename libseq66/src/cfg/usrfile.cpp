@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-06
+ * \updates       2021-06-08
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -49,8 +49,16 @@
 namespace seq66
 {
 
+static const int s_usr_file_version = 5;
+
 /**
  *  Principal constructor.
+ *
+ * Versions:
+ *
+ *      0:  The initial version, close to the Seq64 format.
+ *      4:  2021-05-15. Disabled using grid-style and grid-brackets settings.
+ *      5:  2021-06-08. Transition to get-variable for booleans/integers.
  *
  * \param name
  *      Provides the full file path specification to the configuration file.
@@ -64,16 +72,7 @@ namespace seq66
 usrfile::usrfile (const std::string & name, rcsettings & rcs) :
     configfile (name, rcs)
 {
-    version("4");                       /* new version on 2021-05-15    */
-}
-
-/**
- *  A rote destructor needed for a derived class.
- */
-
-usrfile::~usrfile ()
-{
-    // Empty body
+    version(s_usr_file_version);
 }
 
 /**
@@ -128,26 +127,16 @@ bool
 usrfile::parse ()
 {
     std::ifstream file(name().c_str(), std::ios::in | std::ios::ate);
-    if (! file.is_open())
-    {
-        errprintf("usrfile::parse(): error opening %s\n", name().c_str());
+    if (! set_up_ifstream(file))            /* verifies [Seq66]: version    */
         return false;
-    }
-    file.seekg(0, std::ios::beg);                       /* seek to start    */
-    (void) parse_version(file);
 
-    /*
-     * [comments] Header commentary is skipped during parsing.  However, we
-     * now try to read an optional comment block.
-     */
-
-    std::string comments = parse_comments(file);
-    if (! comments.empty())
-        usr().comments_block().set(comments);
-
-    comments = parse_version(file);
-    if (comments.empty() || file_version_old(file))
+    std::string temp = parse_version(file);
+    if (temp.empty() || file_version_number() < s_usr_file_version)
         usr().save_user_config(true);
+
+    temp = parse_comments(file);
+    if (! temp.empty())
+        usr().comments_block().set(temp);
 
     usr().clear_buses_and_instruments();
     if (! rc_ref().reveal_ports())
@@ -268,274 +257,222 @@ usrfile::parse ()
      */
 
     int scratch = 0;
-    if (line_after(file, "[user-interface-settings]"))
+    std::string tag = "[user-interface-settings]";
+    if (file_version_number() < s_usr_file_version)
     {
-        /*
-         * The next two have been removed (2021-05-15) but we still must
-         * scan for them, for now.
-         */
-
-        sscanf(scanline(), "%d", &scratch); // usr().set_grid_style(scratch)
-        (void) next_data_line(file);
-        sscanf(scanline(), "%d", &scratch); // usr().grid_brackets(scratch);
-
-        (void) next_data_line(file);
-        sscanf(scanline(), "%d", &scratch);
-        usr().mainwnd_rows(scratch);
-
-        (void) next_data_line(file);
-        sscanf(scanline(), "%d", &scratch);
-        usr().mainwnd_cols(scratch);
-
-        (void) next_data_line(file);
-        sscanf(scanline(), "%d", &scratch);
-        usr().max_sets(scratch);                /* this setting deprecated  */
-
-        (void) next_data_line(file);
-        sscanf(scanline(), "%d", &scratch);
-        usr().mainwid_border(scratch);
-
-        (void) next_data_line(file);
-        sscanf(scanline(), "%d", &scratch);
-        usr().mainwid_spacing(scratch);
-
-        (void) next_data_line(file);
-        sscanf(scanline(), "%d", &scratch);
-        usr().control_height(scratch);
-
-        (void) next_data_line(file);
-        sscanf(scanline(), "%d", &scratch);
-        usr().zoom(scratch);
-
-        /*
-         * This boolean affects the behavior of the scale, key, and
-         * background sequence features, but their actual values are
-         * stored in the MIDI file, not in the "user" configuration file.
-         */
-
-        (void) next_data_line(file);
-        sscanf(scanline(), "%d", &scratch);
-        usr().global_seq_feature(scratch != 0);
-
-        /*
-         * The user-interface font is now selectable at run time.  Old
-         * versus new font.
-         */
-
-        (void) next_data_line(file);
-        sscanf(scanline(), "%d", &scratch);
-        usr().use_new_font(scratch != 0);
-
-        (void) next_data_line(file);
-        sscanf(scanline(), "%d", &scratch);
-        usr().allow_two_perfedits(scratch != 0);
-
-        if (next_data_line(file))
+        if (line_after(file, tag))
         {
+            (void) next_data_line(file); // usr().set_grid_style(scratch)
+            (void) next_data_line(file); // usr().grid_brackets(scratch);
             sscanf(scanline(), "%d", &scratch);
-            usr().perf_h_page_increment(scratch);
-        }
-
-        if (next_data_line(file))
-        {
+            usr().mainwnd_rows(scratch);
+            (void) next_data_line(file);
             sscanf(scanline(), "%d", &scratch);
-            usr().perf_v_page_increment(scratch);
-        }
-
-        /*
-         *  Here, we start checking the lines, on the theory that these
-         *  very new (2016-02-14) items might mess up people who already
-         *  have older Seq66 "user" configuration files.
-         */
-
-        if (next_data_line(file))
-        {
-            sscanf(scanline(), "%d", &scratch);             /* now an int   */
-            usr().progress_bar_colored(scratch);        /* pick a color */
-            if (next_data_line(file))
+            usr().mainwnd_cols(scratch);
+            (void) next_data_line(file);
+            (void) next_data_line(file); // usr().max_sets(scratch);
+            (void) next_data_line(file); // usr().mainwid_border(scratch);
+            sscanf(scanline(), "%d", &scratch);
+            usr().mainwid_spacing(scratch);
+            (void) next_data_line(file);
+            (void) next_data_line(file); // usr().control_height(scratch);
+            sscanf(scanline(), "%d", &scratch);
+            usr().zoom(scratch);
+            (void) next_data_line(file);
+            sscanf(scanline(), "%d", &scratch);
+            usr().global_seq_feature(scratch != 0);
+            (void) next_data_line(file);
+            (void) next_data_line(file); // usr().use_new_font(scratch != 0);
+            (void) next_data_line(file); // usr().allow_two_perfedits(...);
+            (void) next_data_line(file); // usr().perf_h_page_increment(...);
+            if (next_data_line(file))    // usr().perf_v_page_increment(...);
             {
+                (void) next_data_line(file); // usr().progress_bar_colored(...);
                 sscanf(scanline(), "%d", &scratch);
                 usr().progress_bar_thick(scratch != 0);
-            }
-            if (next_data_line(file))
-            {
+                (void) next_data_line(file);
                 sscanf(scanline(), "%d", &scratch);
-                if (scratch <= 1)                       /* boolean?     */
-                {
-                    usr().inverse_colors(scratch != 0);
-                    if (next_data_line(file))
-                        sscanf(scanline(), "%d", &scratch); /* get redraw   */
-                }
-                if (scratch < SEQ66_MINIMUM_REDRAW)
-                    scratch = SEQ66_MINIMUM_REDRAW;
-                else if (scratch > SEQ66_MAXIMUM_REDRAW)
-                    scratch = SEQ66_MAXIMUM_REDRAW;
-
+                usr().inverse_colors(scratch != 0);
+                (void) next_data_line(file);
+                sscanf(scanline(), "%d", &scratch);
                 usr().window_redraw_rate(scratch);
-            }
-            if (next_data_line(file))
-            {
-                sscanf(scanline(), "%d", &scratch);
-                if (scratch <= 1)                       /* boolean?     */
-                    usr().use_more_icons(scratch != 0);
-            }
-            if (next_data_line(file))
-            {
-                sscanf(scanline(), "%d", &scratch);
-                if (scratch > 0)
-                    usr().block_rows(scratch);
-            }
-            if (next_data_line(file))
-            {
-                sscanf(scanline(), "%d", &scratch);
-                if (scratch > 0)
-                    usr().block_columns(scratch);
-            }
-            if (next_data_line(file))
-            {
-                sscanf(scanline(), "%d", &scratch);
-                usr().block_independent(scratch != 0);
-            }
-            if (next_data_line(file))
-            {
-                float scale = 1.0f;
-                float scaley = 1.0f;
-                int count = sscanf(scanline(), "%f %f", &scale, &scaley);
-                if (count == 1)
-                    usr().window_scale(scale);          /* x & y the same   */
-                else if (count == 2)
-                    usr().window_scale(scale, scaley);  /* x != y scale     */
+                (void) next_data_line(file);
+                (void) next_data_line(file); // usr().use_more_icons(scratch != 0);
+                (void) next_data_line(file); // usr().block_rows(scratch);
+                (void) next_data_line(file); // usr().block_columns(scratch);
+                if (next_data_line(file))    // usr().block_independent(...);
+                {
+                    float scale = 1.0f;
+                    float scaley = 1.0f;
+                    int count = sscanf(scanline(), "%f %f", &scale, &scaley);
+                    if (count == 1)
+                        usr().window_scale(scale);          /* x & y the same   */
+                    else if (count == 2)
+                        usr().window_scale(scale, scaley);  /* x != y scale     */
+                }
             }
         }
     }
-    usr().normalize();    /* calculate derived values */
+    else
+    {
+        int scratch = get_integer(file, tag, "mainwnd-rows");
+        usr().mainwnd_rows(scratch);
+        scratch = get_integer(file, tag, "mainwnd-columns");
+        usr().mainwnd_cols(scratch);
+        scratch = get_integer(file, tag, "mainwnd-spacing");
+        usr().mainwid_spacing(scratch);
+        scratch = get_integer(file, tag, "default-zoom");
+        usr().zoom(scratch);
+
+        bool flag = get_boolean(file, tag, "global-seq-feature");
+        usr().global_seq_feature(flag);
+        flag = get_boolean(file, tag, "progress-bar-thick");
+        usr().progress_bar_thick(flag);
+        flag = get_boolean(file, tag, "inverse-colors");
+        usr().inverse_colors(flag);
+        scratch = get_integer(file, tag, "window-redraw-rate");
+        usr().window_redraw_rate(scratch);
+
+        double scale = get_float(file, tag, "window-scale");
+        double scaley = get_float(file, tag, "window-scale-y");
+        usr().window_scale(scale, scaley);              /* x & y the same   */
+    }
+    usr().normalize();                                  /* recalculate      */
 
     /*
      * [user-midi-ppqn]
      */
 
-    bool ppqn_settings_made = false;
-    std::string s = get_variable(file, "[user-midi-ppqn]", "default-ppqn");
-    if (! s.empty())
-    {
-        usr().default_ppqn(std::stoi(s));
-#if 0
-        s = get_variable(file, "[user-midi-ppqn]", "use-file-ppqn");
-        if (! s.empty())
-        {
-            bool use_it = string_to_bool(s);
-            usr().use_file_ppqn(use_it);
-            ppqn_settings_made = true;
-        }
-#endif
-        bool flag = get_boolean(file, "[user-midi-ppqn]", "use-file-ppqn");
-        usr().use_file_ppqn(flag);
-        ppqn_settings_made = true;
-    }
+    tag = "[user-midi-ppqn]";
+    int ppqn = get_integer(file, tag, "default-ppqn");
+    bool flag = get_boolean(file, tag, "use-file-ppqn");
+    usr().default_ppqn(ppqn);
+    usr().midi_ppqn(ppqn);              /* can change based on file PPQN    */
+    usr().use_file_ppqn(flag);
 
     /*
      * [user-midi-settings]
      */
 
-    if (line_after(file, "[user-midi-settings]"))
+    tag = "[user-midi-settings]";
+    if (file_version_number() < s_usr_file_version)
     {
-        int scratch = 0;
-        sscanf(scanline(), "%d", &scratch);
-        if (ppqn_settings_made)
-            scratch = usr().default_ppqn();
+        if (line_after(file, tag))
+        {
+            int scratch = 0;
+            (void) next_data_line(file);
+            sscanf(scanline(), "%d", &scratch);
+            usr().midi_beats_per_bar(scratch);
 
-        usr().midi_ppqn(scratch);
-        next_data_line(file);
-        sscanf(scanline(), "%d", &scratch);
+            float beatspm;
+            (void) next_data_line(file);
+            sscanf(scanline(), "%f", &beatspm);
+            usr().midi_beats_per_minute(midibpm(beatspm));
+
+            (void) next_data_line(file);
+            sscanf(scanline(), "%d", &scratch);
+            usr().midi_beat_width(scratch);
+
+            (void) next_data_line(file);
+            sscanf(scanline(), "%d", &scratch);
+            usr().midi_buss_override(char(scratch));
+
+            if (next_data_line(file))
+            {
+                sscanf(scanline(), "%d", &scratch);
+                usr().velocity_override(scratch);
+            }
+            if (next_data_line(file))
+            {
+                sscanf(scanline(), "%d", &scratch);
+                usr().bpm_precision(scratch);
+            }
+            if (next_data_line(file))
+            {
+                float inc;
+                sscanf(scanline(), "%f", &inc);
+                usr().bpm_step_increment(midibpm(inc));
+            }
+            if (next_data_line(file))
+            {
+                float inc;
+                sscanf(scanline(), "%f", &inc);
+                usr().bpm_page_increment(midibpm(inc));
+            }
+            if (next_data_line(file))
+            {
+                sscanf(scanline(), "%f", &beatspm);
+                usr().midi_bpm_minimum(midibpm(beatspm));
+            }
+            if (next_data_line(file))
+            {
+                sscanf(scanline(), "%f", &beatspm);
+                usr().midi_bpm_maximum(midibpm(beatspm));
+            }
+        }
+    }
+    else
+    {
+        int scratch = get_integer(file, tag, "beats-per-bar");
         usr().midi_beats_per_bar(scratch);
 
-        float beatspm;
-        next_data_line(file);
-        sscanf(scanline(), "%f", &beatspm);
-        usr().midi_beats_per_minute(midibpm(beatspm));
-
-        next_data_line(file);
-        sscanf(scanline(), "%d", &scratch);
+        float f = get_float(file, tag, "beats-per-minute");
+        usr().midi_beats_per_minute(midibpm(f));
+        scratch = get_integer(file, tag, "beat-width");
         usr().midi_beat_width(scratch);
-
-        next_data_line(file);
-        sscanf(scanline(), "%d", &scratch);
-        usr().midi_buss_override(char(scratch));
-
-        if (next_data_line(file))
-        {
-            sscanf(scanline(), "%d", &scratch);
-            usr().velocity_override(scratch);
-        }
-        if (next_data_line(file))
-        {
-            sscanf(scanline(), "%d", &scratch);
-            usr().bpm_precision(scratch);
-        }
-        if (next_data_line(file))
-        {
-            float inc;
-            sscanf(scanline(), "%f", &inc);
-            usr().bpm_step_increment(midibpm(inc));
-        }
-        if (next_data_line(file))
-        {
-            float inc;
-            sscanf(scanline(), "%f", &inc);
-            usr().bpm_page_increment(midibpm(inc));
-        }
-        if (next_data_line(file))
-        {
-            sscanf(scanline(), "%f", &beatspm);
-            usr().midi_bpm_minimum(midibpm(beatspm));
-        }
-        if (next_data_line(file))
-        {
-            sscanf(scanline(), "%f", &beatspm);
-            usr().midi_bpm_maximum(midibpm(beatspm));
-        }
+        scratch = get_integer(file, tag, "buss-override");
+        usr().midi_buss_override(bussbyte(scratch));
+        scratch = get_integer(file, tag, "velocity-override");
+        usr().velocity_override(scratch);
+        scratch = get_integer(file, tag, "bpm-precision");
+        usr().bpm_precision(scratch);
+        f = get_float(file, tag, "bpm-step-increment");
+        usr().bpm_step_increment(midibpm(f));
+        f = get_float(file, tag, "bpm-page-increment");
+        usr().bpm_page_increment(midibpm(f));
+        f = get_float(file, tag, "bpm-minimum");
+        usr().midi_bpm_minimum(midibpm(f));
+        f = get_float(file, tag, "bpm-maximum");
+        usr().midi_bpm_maximum(midibpm(f));
     }
 
     /*
      * -o special options support.
      */
 
-    if (line_after(file, "[user-options]"))
+    tag = "[user-options]";
+    if (file_version_number() < s_usr_file_version)
     {
-        int scratch = 0;
-        sscanf(scanline(), "%d", &scratch);
-        usr().option_daemonize(scratch != 0);
-
-        char temp[256];
-        if (next_data_line(file))
+        if (line_after(file, tag))
         {
-            sscanf(scanline(), "%s", temp);
-            std::string logfile = std::string(temp);
-            if (is_empty_string(logfile))
-                logfile.clear();
-            else
+            int scratch = 0;
+            sscanf(scanline(), "%d", &scratch);
+            usr().option_daemonize(scratch != 0);
+
+            char temp[256];
+            if (next_data_line(file))
             {
-                logfile = strip_quotes(logfile);
-                printf("[option_logfile: '%s']\n", logfile.c_str());
+                sscanf(scanline(), "%s", temp);
+                std::string logfile = std::string(temp);
+                if (is_empty_string(logfile))
+                    logfile.clear();
+                else
+                {
+                    logfile = strip_quotes(logfile);
+                    printf("[option_logfile: '%s']\n", logfile.c_str());
+                }
+                usr().option_logfile(logfile);
             }
-            usr().option_logfile(logfile);
         }
     }
-
-    /*
-     * Work-arounds for sticky issues
-     */
-
-    if (line_after(file, "[user-work-arounds]"))
+    else
     {
-        int scratch = 0;
-        sscanf(scanline(), "%d", &scratch);
-        usr().work_around_play_image(scratch != 0);
-        if (next_data_line(file))
-        {
-            sscanf(scanline(), "%d", &scratch);
-            usr().work_around_transpose_image(scratch != 0);
-        }
+        bool flag = get_boolean(file, tag, "daemonize");
+        usr().option_daemonize(flag);
+
+        std::string logfile = get_variable(file, tag, "log");
+        logfile = strip_quotes(logfile);
+        usr().option_logfile(logfile);
     }
 
     /*
@@ -545,81 +482,46 @@ usrfile::parse ()
      * The note-resume option is now implemented as per issue #5.
      */
 
-    if (line_after(file, "[user-ui-tweaks]"))
+    tag = "[user-ui-tweaks]";
+    if (line_after(file, tag))
     {
         int scratch = 0;
         int count = sscanf(scanline(), "%d", &scratch);
         if (count == 1)
         {
-            usr().save_user_config(true);
             usr().key_height(scratch);
-            if (next_data_line(file))
-            {
-                sscanf(scanline(), "%d", &scratch);
-
-                /*
-                 * usr().use_new_seqedit(scratch != 0);
-                 */
-
-                warnprintf("use-new-seqedit = %d now always true\n", scratch);
-            }
+            (void) next_data_line(file);    // usr().use_new_seqedit()
         }
         else
         {
-            std::string s = get_variable(file, "[user-ui-tweaks]", "key-height");
-            usr().key_height(string_to_int(s, 10));
-
-            /*
-             * Disabled 2021-05-07
-             *
-             *  s = get_variable(file, "[user-ui-tweaks]", "use-new-seqedit");
-             *  usr().use_new_seqedit(string_to_bool(s));
-             */
+            int h = get_integer(file, tag, "key-height");
+            usr().key_height(h);
         }
 
-        bool flag = get_boolean(file, "[user-ui-tweaks]", "note-resume");
+        bool flag = get_boolean(file, tag, "note-resume");
         usr().resume_note_ons(flag);
 
-        std::string s = get_variable(file, "[user-ui-tweaks]", "style-sheet");
+        std::string s = get_variable(file, tag, "style-sheet");
         usr().style_sheet(strip_quotes(s));
-        s = get_variable(file, "[user-ui-tweaks]", "fingerprint-size");
-        usr().fingerprint_size(string_to_int(s, 32));
-        s = get_variable(file, "[user-ui-tweaks]", "progress-box-width");
 
-        double w = string_to_double(s, -1.0);
-        s = get_variable(file, "[user-ui-tweaks]", "progress-box-height");
+        int v = get_integer(file, tag, "fingerprint-size");
+        usr().fingerprint_size(v);
 
-        double h = string_to_double(s, -1.0);
+        double w = double(get_float(file, tag, "progress-box-width"));
+        double h = double(get_float(file, tag, "progress-box-height"));
         usr().progress_box_size(w, h);
     }
-    s = get_variable(file, "[user-session]", "session");
+    std::string s = get_variable(file, "[user-session]", "session");
     usr().session_manager(s);
 
     s = get_variable(file, "[user-session]", "url");
-    usr().session_url(s);
-
-#if 0
-    s = get_variable(file, "[new-pattern-editor]", "armed");
-    usr().new_pattern_armed(string_to_bool(s));
-
-    s = get_variable(file, "[new-pattern-editor]", "thru");
-    usr().new_pattern_thru(string_to_bool(s));
-
-    s = get_variable(file, "[new-pattern-editor]", "record");
-    usr().new_pattern_record(string_to_bool(s));
-
-    s = get_variable(file, "[new-pattern-editor]", "qrecord");
-    usr().new_pattern_qrecord(string_to_bool(s));
-#endif
-    bool flag = get_boolean(file, "[new-pattern-editor]", "armed");
+    usr().session_url(strip_quotes(s));
+    flag = get_boolean(file, "[new-pattern-editor]", "armed");
     usr().new_pattern_armed(flag);
-
     flag = get_boolean(file, "[new-pattern-editor]", "thru");
     usr().new_pattern_thru(flag);
-
     flag = get_boolean(file, "[new-pattern-editor]", "record");
     usr().new_pattern_record(flag);
-
     flag = get_boolean(file, "[new-pattern-editor]", "qrecord");
     usr().new_pattern_qrecord(flag);
 
@@ -697,17 +599,18 @@ usrfile::write ()
     file << "\n[comments]\n\n" << usr().comments_block().text() << "\n";
 
     file <<
-        "# 1. Define your instruments and their control-code names,\n"
-        "#    if they have them.\n"
-        "# 2. Define a MIDI bus, its name, and what instruments are\n"
-        "#    on which channel.\n"
+        "# [user-midi-bus-definitions]\n"
         "#\n"
-        "# In the following MIDI buss definitions, channels are counted\n"
-        "# from 0 to 15, not 1 to 16.  Instruments not set here are set to\n"
-        "# -1 (SEQ66_GM_INSTRUMENT_FLAG) and are GM (General MIDI).\n"
-        "# These replacement MIDI buss labels are shown in MIDI Clocks,\n"
-        "# MIDI Inputs, and in the Pattern Editor buss drop-down.\n"
+        "# 1. Define your instruments and their control-code names, if they\n"
+        "#    have them.\n"
+        "# 2. Define a MIDI bus, its name, and what instruments are on which\n"
+        "#    channel.\n"
         "#\n"
+        "# In the following MIDI buss definitions, channels are counted from\n"
+        "# 0 to 15, not 1 to 16.  Instruments not set here are set to -1\n"
+        "# (SEQ66_GM_INSTRUMENT_FLAG) and are GM (General MIDI). These\n"
+        "# replacement MIDI buss labels are shown in MIDI Clocks, MIDI Inputs\n"
+        "# and in the Pattern Editor buss and channel drop-downs.\n"
         "# To temporarily disable the entries, set the count values to 0.\n"
         ;
 
@@ -715,8 +618,9 @@ usrfile::write ()
      * [user-midi-bus-definitions]
      */
 
-    file
-        << "\n[user-midi-bus-definitions]\n\n"
+    file << "\n"
+        "[user-midi-bus-definitions]\n"
+        "\n"
         << usr().bus_count()
         << "     # number of user-defined MIDI busses\n"
         ;
@@ -853,532 +757,232 @@ usrfile::write ()
      */
 
     file << "\n"
-        "# ======== Seq66-Specific Variables Section ========\n"
-        "\n"
-        "[user-interface-settings]\n"
-        "\n"
-        "# These settings specify the modifiable configuration\n"
-        "# of some of the Seq66 user-interface elements.\n"
-        ;
-
-    file << "\n"
-        "# The main-window pattern grid is now always made using push-buttons.\n"
-        "# To use the old flat style, using Qt themes and style-sheets.\n"
-        "\n"
-        "0       # grid_style\n"
-        ;
-
-    file << "\n"
-        "# Specified the box style of an empty slot in the main-window\n"
-        "# grid, for the GTK user-interface. Removed.\n"
-        "\n"
-        "0       # grid_brackets\n"
-        ;
-
-    file << "\n"
-        "# Specifies the number of rows in the main window.\n"
-        "# Values of 4 (the default) through 8 (the best alternative value)\n"
-        "# are allowed. Same as R in the '-o sets=RxC' option.\n"
-        "\n"
-        << usr().mainwnd_rows() << "       # mainwnd_rows\n"
-        ;
-
-    file << "\n"
-        "# Specifies the number of columns in the main window.\n"
-        "# At present, values from 8 (the default) to 12 are supported.\n"
-        "# are allowed. Same as C in the '-o sets=RxC' option.\n"
-        "\n"
-        << usr().mainwnd_cols() << "       # mainwnd_cols\n"
-        ;
-
-    file << "\n"
-        "# Specifies the maximum number of sets, which defaults to 32. It is\n"
-        "# never necessary to change this value. It is based on set-size now.\n"
-        "# Do not change it. It is just informative.\n"
-        "\n"
-        << usr().max_sets() << "      # max_sets\n"
-        ;
-
-    file << "\n"
-        "# Specifies the border width in the main window.\n"
-        "\n"
-        << usr().mainwid_border() << "      # mainwid_border\n"
-        ;
-
-    file << "\n"
-        "# Specifies the border spacing in the main window. Normally 2, it\n"
-        "# can range from 2 to 16.\n"
-        "\n"
-        << usr().mainwid_spacing() << "      # mainwid_spacing\n"
-        ;
-
-    file << "\n"
-        "# Specifies a quantity that affects the height of the main window.\n"
-        "\n"
-        << usr().control_height() << "      # control_height\n"
-        ;
-
-    file << "\n"
-        "# Specifies the initial zoom for the piano rolls.  Ranges from 1 to\n"
-        "# 512, and defaults to 2 unless changed here. Larger PPQNs require\n"
-        "# larger zoom values in order to look good in the sequence editor.\n"
-        "# Seq66 adapts the zoom to the PPQN, if zoom is set to 0.\n"
-        "\n"
-        << usr().zoom() << "      # default zoom (0 = auto-adjust to PPQN)\n"
-        ;
-
-    /*
-     * This boolean affects the behavior of the scale, key, and background
-     * sequence features.
-     */
-
-    file << "\n"
-        "# Specifies if the key, scale, and background sequence are to be\n"
-        "# applied to all sequences, or to individual sequences.  The\n"
-        "# behavior of Seq24 was to apply them to all sequences.  But\n"
-        "# Seq66 takes it further by applying it immediately, and\n"
-        "# by saving to the end of the MIDI file.  Note that these three\n"
-        "# values are stored in the MIDI file, not this configuration file.\n"
-        "# Also note that reading MIDI files not created with this feature\n"
-        "# will pick up this feature if active, and the file gets saved.\n"
-        "# It is contagious.\n"
-        ;
-
-    file << "#\n"
-        "# 0 = Allow each sequence to have its own key/scale/background.\n"
-        "#     Settings are saved with each sequence.\n"
-        "# 1 = Apply these settings globally (similar to seq66).\n"
-        "#     Settings are saved in the global final section of the file.\n"
-        "\n"
-        << (usr().global_seq_feature() ? "1" : "0")
-        << "      # global_seq_feature\n"
-        ;
-
-    /*
-     * The usage of the old versus new font is now a run-time option.
-     */
-
-    file << "\n"
-        "# Specifies if the old, console-style font, or the new anti-\n"
-        "# aliased font, is to be used as the font throughout the GUI.\n"
-        "# In legacy mode, the old font is the default.\n"
+        "# [user-interface-settings]\n"
         "#\n"
-        "# 0 = Use the old-style font.\n"
-        "# 1 = Use the new-style font.\n"
-        "\n"
-        << (usr().use_new_font() ? "1" : "0")
-        << "      # use_new_font\n"
-        ;
-
-    file << "\n"
-        "# Specifies if the user-interface will support two song editor\n"
-        "# windows being shown at the same time.  This makes it easier to\n"
-        "# edit songs with a large number of sequences.\n"
+        "# Specifies the configuration of some user-interface elements.  Many\n"
+        "# items were rendered obsolete and removed in version 5 of this file.\n"
+        "# The main grid-style is now Qt buttons. To use a flat style, use\n"
+        "# Qt themes/style-sheets.\n"
         "#\n"
-        "# 0 = Allow only one song editor (performer editor).\n"
-        "# 1 = Allow two song editors.\n"
-        "\n"
-        << (usr().allow_two_perfedits() ? "1" : "0")
-        << "      # allow_two_perfedits\n"
+        "# 'mainwnd-rows' and 'mainwnd-columns' (option '-o sets=RxC') specify\n"
+        "# rows/columns in the main grid. R ranges from 4 to 8, C from 8 to 12.\n"
+        "# Values other than 4x8 have not been tested, use at your own risk.\n"
+        "#\n"
+        "# 'mainwnd-spacing' specifies spacing in the main window. It ranges\n"
+        "# from 2 (default) to 16.\n"
+        "#\n"
+        "# 'default-zoom' specifies initial zoom for the piano rolls. Ranges\n"
+        "# from 1 to 512; defaults to 2. Larger PPQNs require larger zoom to\n"
+        "# look good in the editors.  Seq66 adapts the zoom to the PPQN\n"
+        "# if 'default-zoom' zoom is set to 0. The unit of zoon is ticks/pixel.\n"
+        "#\n"
+        "# 'global-seq-feature' specifies if the key, scale, and background\n"
+        "# pattern are to be applied globally to all patterns, or separately\n"
+        "# to each. These three values are stored in the MIDI file, either in\n"
+        "# the global SeqSpec section, or in each track.\n"
+        "#\n"
+        "#   false: Each pattern has its own key/scale/background.\n"
+        "#   true:  Apply these settings globally to all patterns.\n"
+        "#\n"
+        "# 'progress-bar-thick specifies a thicker progress bar.  Default is 1\n"
+        "# pixel; thick is 2 pixels. Set it to true to enable the feature\n"
+        "#\n"
+        "# 'inverse-colors' (option -K/--inverse) specifies use of an inverse\n"
+        "# color palette. Palettes are for Seq66 drawing areas, not for the\n"
+        "# Qt theme. Normal/inverse palettes are changed via a 'palette' file.\n"
+        "#\n"
+        "# 'window-redraw-rate' specifies the base window redraw rate for all\n"
+        "# windows. The default is 40 ms (25 ms for Windows).\n"
+        "#\n"
+        "# Window-scale (option '-o scale=m.n[xp.q]') specifies scaling the\n"
+        "# main window at startup. Defaults to 1.0 x 1.0. If between 0.8 and\n"
+        "# 3.0, it changes the size of the main window proportionately. If the\n"
+        "# y-value is 0, the first value applies to both dimensions.\n"
+        "\n[user-interface-settings]\n\n"
         ;
 
-    file << "\n"
-        "# Specifies the number of 4-measure blocks for horizontal page\n"
-        "# scrolling in the song editor.  The old default, 1, is a bit\n"
-        "# small.  The new default is 4.  The legal range is 1 to 6, where\n"
-        "# 6 is the width of the whole performer piano roll view.\n"
-        "\n"
-        << usr().perf_h_page_increment()
-        << "      # perf_h_page_increment\n"
-        ;
-
-    file << "\n"
-        "# Specifies the number of 1-track blocks for vertical page\n"
-        "# scrolling in the song editor.  The old default, 1, is a bit\n"
-        "# small.  The new default is 8.  The legal range is 1 to 18, where\n"
-        "# 18 is about the height of the whole performer piano roll view.\n"
-        "\n"
-        << usr().perf_v_page_increment()
-        << "      # perf_v_page_increment\n"
-        ;
-
-    file << "\n"
-        "# Specifies if the progress bar is colored black, or a different\n"
-        "# color.  The following integer color values are supported:\n"
-        "# \n"
-        "# 0 = black\n"
-        "# 1 = dark red\n"
-        "# 2 = dark green\n"
-        "# 3 = dark orange\n"
-        "# 4 = dark blue\n"
-        "# 5 = dark magenta\n"
-        "# 6 = dark cyan\n"
-        "\n"
-        << usr().progress_bar_colored() // (usr().progress_bar_colored() ? "1" : "0")
-        << "      # progress_bar_colored\n"
-        ;
-
-    file << "\n"
-        "# Specifies if the progress bar is thicker.  The default is 1\n"
-        "# pixel.  The 'thick' value is 2 pixels.  (More than that is not\n"
-        "# useful.  Set this value to 1 to enable the feature, 0 to disable\n"
-        "# it.\n"
-        "\n"
-        << (usr().progress_bar_thick() ? "1" : "0")
-        << "      # progress_bar_thick\n"
-        ;
-
-    file << "\n"
-        "# Specifies using an alternate (darker) color palette.  The\n"
-        "# default is the normal palette.  Not all items in the user\n"
-        "# interface are altered by this setting, and it's not perfect.\n"
-        "# Set this value to 1 to enable the feature, 0 to disable it.\n"
-        "# Same as the -K or --inverse command-line options.\n"
-        "\n"
-        << (usr().inverse_colors() ? "1" : "0")
-        << "      # inverse_colors\n"
-        ;
-
-    file << "\n"
-        "# Specifies the window redraw rate for all windows that support\n"
-        "# that concept.  The default is 40 ms.  Some windows used 25 ms,\n"
-        "# which is faster.\n"
-        "\n"
-        << usr().window_redraw_rate()
-        << "      # window_redraw_rate\n"
-        ;
-
-    file << "\n"
-        "# Specifies using icons for some of the user-interface buttons\n"
-        "# instead of text buttons.  This is purely a preference setting.\n"
-        "# If 0, text is used in some buttons (the main window buttons).\n"
-        "# Otherwise, icons are used.  One will have to experiment :-).\n"
-        "\n"
-        << usr().use_more_icons()
-        << "      # use_more_icons (currently affects only main window)\n"
-        ;
-
-
-    file << "\n"
-        "# Specifies the number of set-window ('wid') rows to show.\n"
-        "# The long-standing default is 1, but 2 or 3 may also be set.\n"
-        "# Corresponds to R in the '-o wid=RxC,F' option.\n"
-#if ! defined SEQ66_MULTI_MAINWID
-        "# Support for this option is obsolete in Seq66.\n"
-#endif
-        "\n"
-        << usr().block_rows()
-        << "      # block_rows (number of rows of set blocks/wids)\n"
-        ;
-
-    file << "\n"
-        "# Specifies the number of set window ('wid') columns to show.\n"
-        "# The long-standing default is 1, but 2 may also be set.\n"
-        "# Corresponds to C in the '-o wid=RxC,F' option.\n"
-#if ! defined SEQ66_MULTI_MAINWID
-        "# Support for this option is obsolete in Seq66.\n"
-#endif
-        "\n"
-        << usr().block_columns()
-        << "      # block_columns (number of columns of set blocks/wids)\n"
-        ;
-
-    file << "\n"
-        "# Specifies if the multiple set windows are 'in sync' or can\n"
-        "# be set to arbitrary set numbers independently.\n"
-        "# The default is false (0), means that there is a single set\n"
-        "# spinner, which controls the set number of the upper-left 'wid',\n"
-        "# and the rest of the set numbers follow sequentially.  If true\n"
-        "# (1), then each 'wid' can be set to any set-number.\n"
-        "# Corresponds to the 'f' (true, false, or 'indep') in the\n"
-        "# '-o wid=RxC,F' option.  Here, 1 is the same as 'indep' or false,\n"
-        "# and 0 is the same as f = true.  Backwards, so be careful.\n"
-#if ! defined SEQ66_MULTI_MAINWID
-        "# Support for this option is obsolete in Seq66.\n"
-#endif
-        "\n"
-        << (usr().block_independent() ? "1" : "0")
-        << "      # block_independent (set spinners for each block/wid)\n"
-        ;
-
-    file << "\n"
-        "# Specifies scaling the main window of Seq66 at startup. The norm is\n"
-        "# 1.0x1.0.  If this value is between 0.8 and 3.0, it changes the size\n"
-        "# of the main window proportionately. Option '-o scale=m.n[xp.q]'.\n"
-        "\n"
-        << usr().window_scale() << " " << usr().window_scale_y()
-        << "      # window_scale (scales main window width x height)\n"
-        ;
+    write_integer(file, "mainwnd-rows", usr().mainwnd_rows());
+    write_integer(file, "mainwnd-columns", usr().mainwnd_cols());
+    write_integer(file, "mainwnd-spacing", usr().mainwid_spacing());
+    write_integer(file, "default-zoom", usr().zoom());
+    write_boolean(file, "global-seq-feature", usr().global_seq_feature());
+    write_boolean(file, "progress-bar-thick", usr().progress_bar_thick());
+    write_boolean(file, "inverse-colors", usr().inverse_colors());
+    write_integer(file, "window-redraw-rate", usr().window_redraw_rate());
+    write_float(file, "window-scale", usr().window_scale());
+    write_float(file, "window-scale-y", usr().window_scale_y());
 
     /*
      * [user-midi-ppqn]
      */
 
     file << "\n"
-        "[user-midi-ppqn]\n"
-        "\n"
-        "# These settings replace the midi_ppqn setting below.  Seq66 separates\n"
-        "# the file PPQN from the default PPQN that the user wants to use.\n"
+        "# [user-midi-ppqn]\n"
         "#\n"
-        "# default-ppqn specifies the PPQN to use by default. The classic\n"
+        "# Seq66 separates the file PPQN from the Seq66 PPQN the user wants\n"
+        "# to use.\n"
+        "#\n"
+        "# 'default-ppqn' specifies the PPQN to use by default. The classic\n"
         "# default is 192, but can range from 32 to 19200.\n"
         "#\n"
-        "# use-file-ppqn, if true, indicates to use the file PPQN. Usually this\n"
-        "# is the best setting, to avoid changing the file's PPQN.\n"
-        "\n"
-        "default-ppqn = " << std::to_string(usr().default_ppqn()) << "\n"
-        "use-file-ppqn = " << bool_to_string(usr().use_file_ppqn()) << "\n"
+        "# 'use-file-ppqn' indicates to use the file PPQN. This is the best\n"
+        "# setting, to avoid changing the file's PPQN.\n"
+        "\n[user-midi-ppqn]\n\n"
         ;
+
+    write_integer(file, "default-ppqn", usr().default_ppqn());
+    write_boolean(file, "use-file-ppqn", usr().use_file_ppqn());
 
     /*
      * [user-midi-settings] and [user-options]
      */
 
     file << "\n"
-        "[user-midi-settings]\n"
-        "\n"
-        "# These settings specify MIDI-specific value that might be\n"
-        "# better off as variables, rather than constants.\n"
-        "# This value is no longer used.  See above.\n"
-        "\n"
-        << usr().midi_ppqn() << "       # midi_ppqn, --ppqn p, default PPQN\n"
+        "# [user-midi-settings]\n"
+        "#\n"
+        "# These settings specify MIDI-specific values better off as variables,\n"
+        "# rather than constants. Values of -1 mean the value won't be used.\n"
+        "#\n"
+        "# 'beats-per-bar':      default = 4      range = 1 to 32.\n"
+        "# 'beats-per-minute':   default = 120.0  range = 2.0 to 600.0.\n"
+        "# 'beat-width':         default = 4      range = 1 to 32.\n"
+        "# 'buss-override':      default = -1     range = 0 to 48.\n"
+        "# 'velocity-override':  default = -1     range = 0 to 127.\n"
+        "# 'bpm-precision':      default = 0      range = 0 to 2.\n"
+        "# 'bpm-step-increment': default = 1.0    range = 0.01 to 25.0.\n"
+        "# 'bpm-page-increment': default = 1.0    range = 0.01 to 25.0.\n"
+        "# 'bpm-minimum':        default = 0.0    range = 127.0\n"
+        "# 'bpm-maximum':        default = 0.0    range = 127.0\n"
+        "#\n"
+        "# A buss-override from 0 to 48 overrides the busses for all patterns,\n"
+        "# for testing or convenience.  Do not save the MIDI file afterwards\n"
+        "# unless you want to overwrite all the buss values!\n"
+        "#\n"
+        "# The velocity override when adding notes in the pattern editor is set\n"
+        "# via the 'Vol' button.  -1 ('Free'), preserves incoming velocity.\n"
+        "#\n"
+        "# Precision of the BPM spinner and MIDI control of BPM is 0, 1, or 2.\n"
+        "# The step increment affects the beats/minute spinner and MIDI control\n"
+        "# of BPM.  For 1 decimal point, 0.1 is good.  For 2 decimal points,\n"
+        "# 0.01 is good, but one might want something faster, like 0.05.\n"
+        "# Set the page increment to a larger value than the step increment;\n"
+        "# it is used when the Page-Up/Page-Down keys are pressed when the BPM\n"
+        "# spinner has keyboard focus.\n"
+        "# The BPM-minimum and maximum set the range BPM in tempo graphing.\n"
+        "# By default, the tempo graph ranges from 0.0 to 127.0. This range\n"
+        "# decreased to give a magnified view of tempo.\n"
+        "\n[user-midi-settings]\n\n"
         ;
 
-    file << "\n"
-        "# Specifies the default beats per measure, or beats per bar.\n"
-        "# The default value is 4, the range is 1 to 32.\n"
-        "\n"
-        << usr().midi_beats_per_bar()
-        << "       # midi_beats_per_measure/bar\n"
-        ;
+        write_integer(file, "beats-per-bar", usr().midi_beats_per_bar());
+        write_integer(file, "beats-per-minute", usr().midi_beats_per_minute());
+        write_integer(file, "beat-width", usr().midi_beat_width());
 
-    file << "\n"
-        "# Specifies the default beats per minute.  The default value is 120;\n"
-        "# the legal range is 2 to 600. Also see the value of\n"
-        "# midi_bpm_minimum and midi_bpm_maximum below.\n"
-        "\n"
-        << usr().midi_beats_per_minute() << "       # midi_beats_per_minute\n"
-        ;
+        int bo = int(usr().midi_buss_override());   /* writing char no good */
+        float increment = float(usr().bpm_step_increment());
+        if (is_null_buss(bussbyte(bo)))
+            bo = (-1);
 
-    file << "\n"
-        "# Specifies the default beat width. The default value is 4.\n"
-        "\n"
-        << usr().midi_beat_width() << "       # midi_beat_width\n"
-        ;
-
-    file << "\n"
-        "# Specifies the buss-number override, the same as --buss. The default\n"
-        "# is -1 (no buss override).  If a value from 0 to 31 is given, that\n"
-        "# buss value overrides the busses for all patterns, for testing or\n"
-        "# convenience.  Do not save the MIDI file afterwards, unless you want\n"
-        "# to overwrite all the buss values!\n"
-        "\n"
-        ;
-
-    int bo = int(usr().midi_buss_override());   /* writing char no good */
-    if (is_null_buss(bussbyte(bo)))
-        file << "-1" << "       # midi_buss_override (disabled)\n";
-    else
-        file << bo   << "       # midi_buss_override (enabled, careful!)\n";
-
-    file << "\n"
-        "# Specifies the default velocity override when adding notes in the\n"
-        "# sequence/pattern editor.  This value is obtained via the 'Vol'\n"
-        "# button, and ranges from 0 (not recommended :-) to 127.  If the\n"
-        "# value is -1, then the incoming note velocity is preserved.\n"
-        "\n"
-        ;
-
-    int vel = usr().velocity_override();
-    file << vel      << "       # velocity_override (-1 = 'Free')\n";
-
-    file << "\n"
-        "# Specifies the precision of the beats-per-minutes spinner and MIDI\n"
-        "# control of the BPM value.  The default is 0 (BPM is an integer).\n"
-        "# Other values are 1 and 2 decimal digits of precision.\n"
-        "\n"
-        ;
-
-    int precision = usr().bpm_precision();
-    file << precision << "       # bpm_precision\n";
-
-    file << "\n"
-        "# Specifies the step increment of the beats/minute spinner and MIDI\n"
-        "# control over the BPM value.  The default is 1. For 1 decimal point,\n"
-        "# 0.1 is a good value.  For a precision of 2 decimal points, 0.01 is\n"
-        "# a good value, but one might want something faster, like 0.05.\n"
-        "\n"
-        ;
-
-    midibpm increment = usr().bpm_step_increment();
-    file << increment << "       # bpm_step_increment\n";
-
-    file << "\n"
-        "# Specifies the page increment of the beats/minute field. It is\n"
-        "# used when the Page-Up/Page-Down keys are pressed while the BPM\n"
-        "# field has the keyboard focus.  The default value is 10.\n"
-        "\n"
-        ;
-
-    increment = usr().bpm_page_increment();
-    file << increment << "       # bpm_page_increment\n";
-
-    file << "\n"
-        "# Specifies the minimum value of beats/minute in tempo graphing.\n"
-        "# By default, the tempo graph ranges from 0.0 to 127.0.\n"
-        "# This value can be increased to give a magnified view of tempo.\n"
-        "\n"
-        ;
-
-    increment = usr().midi_bpm_minimum();
-    file << increment << "       # midi_bpm_minimum\n";
-
-    file << "\n"
-        "# Specifies the maximum value of beats/minute in tempo graphing.\n"
-        "# By default, the tempo graph ranges from 0.0 to 127.0.\n"
-        "# This value can be increased to give a magnified view of tempo.\n"
-        "\n"
-        ;
-
-    increment = usr().midi_bpm_maximum();
-    file << increment << "       # midi_bpm_maximum\n";
+        write_integer(file, "buss-override", bo);
+        write_integer(file, "velocity-override", usr().velocity_override());
+        write_integer(file, "bpm-precision", usr().bpm_precision());
+        write_float(file, "bpm-step-increment", increment);
+        increment = float(usr().bpm_page_increment());
+        write_float(file, "bpm-page-increment", increment);
+        increment = float(usr().midi_bpm_minimum());
+        write_float(file, "bpm-minimum", increment);
+        increment = float(usr().midi_bpm_maximum());
+        write_float(file, "bpm-maximum", increment);
 
     /*
      * [user-options]
      */
 
     file << "\n"
-        "[user-options]\n"
-        "\n"
-        "# These settings specify application-specific values that are\n"
-        "# set via the -o or --option switch, which help expand the number\n"
-        "# of options the Seq66 options can support.\n"
-        "\n"
+        "# [user-options]\n"
+        "#\n"
+        "# These settings specify values set via the -o or --option switch,\n"
+        "# which helps expand the number of options supported.\n"
         "# The 'daemonize' option is used in seq66cli to indicate that the\n"
         "# application should be gracefully run as a service.\n"
-        "\n"
+        "# The 'log' value specifies a log-file that replaces output to\n"
+        "# standard output/error.  For no log-file, use \"\".  This option\n"
+        "# also works from the command line: '-o log=filename.log'. The name\n"
+        "# here is used for the no-name '-o log' option.\n"
+        "\n[user-options]\n\n"
         ;
 
-    int uscratch = usr().option_daemonize() ? 1 : 0 ;
-    file << uscratch << "       # option_daemonize\n";
-    file << "\n"
-        "# This value specifies an optional log-file that replaces output\n"
-        "# to standard output and standard error.  To indicate no log-file,\n"
-        "# the string \"\" is used.  Currently, this option works best from\n"
-        "# the command line, as in '-o log=filename.log'.  The name here is\n"
-        "# used only for the no-name '-o log' option.\n"
-        "\n"
-        ;
-    std::string logfile = usr().option_logfile();
-    if (logfile.empty())
-        file << "\"\"\n";
-    else
-        file << logfile << "\n";
-
-    /*
-     * [user-work-arounds]
-     */
-
-    file << "\n"
-        "[user-work-arounds]\n"
-        "\n"
-        "# These settings were application-specific values for issues that\n"
-        "# no longer apply.\n"
-        "\n"
-        ;
-
-    uscratch = usr().work_around_play_image() ? 1 : 0 ;
-    file << uscratch << "       # work_around_play_image\n";
-
-    uscratch = usr().work_around_transpose_image() ? 1 : 0 ;
-    file << uscratch << "       # work_around_transpose_image\n";
+    write_boolean(file, "daemonize", usr().option_daemonize());
+    std::string logfile = add_quotes(usr().option_logfile());
+    file << "log = " << logfile << "\n";
 
     /*
      * [user-ui-tweaks]
      */
 
     file << "\n"
-        "[user-ui-tweaks]\n"
-        "\n"
-        "# This first value specifies the height of the keys in the\n"
-        "# sequence editor.  Defaults to 12 (pixels), but 8 is better.\n"
-        "\n"
-        ;
-
-    std::string v = std::to_string(usr().key_height());
-    file << "key-height = " << v << "\n";
-
-    file << "\n"
-        "# The Qt version of Seq66 now always uses the new pattern editor in\n"
-        "# the 'Edit' tab.  So, the 'use-new-seqedit' option is removed.\n"
-        "\n"
-        ;
-
-    /*
-     * Disabled 2021-05-07
-     *
-     *      v = bool_to_string(usr().use_new_seqedit());
-     *      file << "use-new-seqedit = " << v << "\n";
-     */
-
-    v = bool_to_string(usr().resume_note_ons());
-    file << "\n"
+        "# [user-ui-tweaks]\n"
+        "#\n"
+        "# The key-height value specifies the initial height (before vertical\n"
+        "# zoom) of the keys in the pattern editor.  Defaults to 10 pixels,\n"
+        "# ranges from 6 to 32.\n"
+        "#\n"
         "# The note-resume option, if active, causes any notes in progress\n"
-        "# to be resumed when the pattern is toggled back on.\n\n"
-        << "note-resume = " << v << "\n"
+        "# to be resumed when the pattern is toggled back on.\n"
+        "#\n"
+        "# If specified, a style-sheet (e.g. 'qseq66.qss') is applied at\n"
+        "# startup.  Normally just a base-name, it can contain a file-path\n"
+        "# to provide a style usable in many other applications.\n"
+        "#\n"
+        "# A fingerprint is a condensation of the note events in a long track,\n"
+        "# to reduce the amount of drawing in the grid buttons. Ranges from 32\n"
+        "# (the default) to 128. Set to 0 to not use a fingerprint.\n"
+        "#\n"
+        "# The progress-box width and height settings change the size of the\n"
+        "# progress box in the live-loop grid buttons.  Width ranges from 0.50\n"
+        "# to 1.0; the height from 0.10 to 0.50.  If either is 0, then the box\n"
+        "# isn't drawn.  If either is 'default', defaults are used.\n"
+        "\n[user-ui-tweaks]\n\n"
         ;
 
-    v = add_quotes(usr().style_sheet());
-    file << "\n"
-        "# If specified, this style-sheet (e.g. 'qseq66.qss') is applied\n"
-        "# at startup.  Although normally just a base-name, it can contain\n"
-        "# a file-path, to provide a style usable in many applications,\n"
-        "# outside the Seq66 configuration directory.\n\n"
-        << "style-sheet = " << v << "\n"
-        ;
+    write_integer(file, "key-height", usr().key_height());
+    write_boolean(file, "note-resume", usr().resume_note_ons());
 
-    file << "\n"
-        "# If specified, the fingerprint size is adjusted to this value.  The\n"
-        "# fingerprint is a condensation of the note events in a long track,\n"
-        "# which reduces the amount of drawing in the grid buttons. Ranges\n"
-        "# from 32 (the default) to 128.\n\n"
-        << "fingerprint-size = " << usr().fingerprint_size() << "\n"
-        ;
+    std::string v = add_quotes(usr().style_sheet());
+    file << "style-sheet = " << v << "\n";
 
-    file << "\n"
-        "# If specified, changes the default size of the progress box in the\n"
-        "# live-loop grid buttons.  The numbers are in fractions.  The width\n"
-        "# ranges from 0.50 to 1.0; the height from 0.10 to 0.50.  If either\n"
-        "# is 0, then the box isn't drawn.  If either is 'default', defaults\n"
-        "# are used.\n\n"
-        ;
+    write_integer(file, "fingerprint-size", usr().fingerprint_size());
+
     if (usr().progress_box_width() < 0.0)
         file << "progress-box-width = default\n";
     else
-        file << "progress-box-width = " << usr().progress_box_width() << "\n";
+        write_float(file, "progress-box-width", usr().progress_box_width());
 
     if (usr().progress_box_height() < 0.0)
         file << "progress-box-height = default\n";
     else
-        file << "progress-box-height = " << usr().progress_box_height() << "\n";
+        write_float(file, "progress-box-height", usr().progress_box_height());
 
     /*
      * [user-session]
      */
 
-    v = usr().session_url();
-    if (v.empty())
-        v = double_quotes();
-
-    file <<
+    file << "\n"
+        "# [user-session]\n"
+        "#\n"
+        "# This section specifies the session manager to use, if any. The\n"
+        "# 'session' variable can be set to 'none' (the default), 'nsm'\n"
+        "# (Non or New Session Manager), or 'lash' (LASH, not yet supported).\n"
+        "# 'url' can be set to the value of the NSM_URL environment variable\n"
+        "# set by nsmd when run outside of the Non Session Manager user-\n"
+        "# interface. Set the URL only if running nsmd standalone with a\n"
+        "# matching --osc-port number.\n"
         "\n[user-session]\n\n"
-        "# This section specifies the session manager to use, if any.  It\n"
-        "# contains only one variable, 'session', which can be set to 'none'\n"
-        "# (the default), 'nsm' (Non or New Session Manager), or 'lash' (the\n"
-        "# LASH session manager.  The 'url' variable can be set to the value\n"
-        "# of the NSM_URL environment variable set by nsmd when run outside\n"
-        "# of the Non Session Manager user-interface. Set the URL only if\n"
-        "# running nsmd standalone with a matching --osc-port number.\n\n"
+        ;
+
+    v = usr().session_url();
+    v = add_quotes(v);
+    file
         << "session = " << usr().session_manager_name() << "\n"
         << "url = " << v << "\n"
         ;
@@ -1387,27 +991,21 @@ usrfile::write ()
      * [new-pattern-editor]
      */
 
-    file <<
-        "\n[new-pattern-editor]\n\n"
+    file << "\n"
+        "# [new-pattern-editor]\n"
+        "#\n"
         "# This section contains the setup values for recording when a new\n"
         "# pattern is opened. For flexibility, a new pattern means only that\n"
         "# the loop has the default name, 'Unititled'. These values save time\n"
         "# during a live recording session. Note that the valid values for\n"
         "# record-style are 'merge', 'overwrite', and 'expand'.\n"
-        "\n"
+        "\n[new-pattern-editor]\n\n"
         ;
 
-    v = bool_to_string(usr().new_pattern_armed());
-    file << "armed = " << v << "\n";
-
-    v = bool_to_string(usr().new_pattern_thru());
-    file << "thru = " << v << "\n";
-
-    v = bool_to_string(usr().new_pattern_record());
-    file << "record = " << v << "\n";
-
-    v = bool_to_string(usr().new_pattern_qrecord());
-    file << "qrecord = " << v << "\n";
+    write_boolean(file, "armed", usr().new_pattern_armed());
+    write_boolean(file, "thru", usr().new_pattern_thru());
+    write_boolean(file, "record", usr().new_pattern_record());
+    write_boolean(file, "qrecord", usr().new_pattern_qrecord());
 
     std::string rs = "merge";
     if (usr().new_pattern_recordstyle() == recordstyle::overwrite)
@@ -1418,14 +1016,13 @@ usrfile::write ()
     file << "record-style = " << rs << "\n";
 
     /*
-     * End of file.
+     * EOF
      */
 
-    file
-        << "\n"
-        << "# End of " << name() << "\n#\n"
-        << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
+    file << "\n"
+        << "# End of " << name() << "\n#\n# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
         ;
+
     file.close();
     return true;
 }

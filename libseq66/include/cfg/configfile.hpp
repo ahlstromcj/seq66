@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-07
+ * \updates       2021-06-08
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -234,6 +234,11 @@ protected:
             m_version = v;
     }
 
+    void version (int v)
+    {
+        m_version = std::to_string(v);
+    }
+
     rcsettings & rc_ref ()
     {
         return m_rc;
@@ -328,7 +333,20 @@ protected:
     (
         std::ofstream & file,
         const std::string & name,
-        int status
+        int value
+    );
+    float get_float
+    (
+        std::ifstream & file,
+        const std::string & tag,
+        const std::string & variablename,
+        int position = 0
+    );
+    void write_float
+    (
+        std::ofstream & file,
+        const std::string & name,
+        float value
     );
     bool get_file_status
     (
