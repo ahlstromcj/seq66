@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -24,21 +24,21 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-05-26
+ * \updates       2021-06-10
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
  *
  *  http://www.mobilefish.com/tutorials/midi/midi_quickguide_specification.html
  *
- *  It is important to note that most sequencers have taken a shortcut or
- *  two in reading the MIDI format.  For example, most will silently
- *  ignored an unadorned control tag (0x242400nn) which has not been
- *  packaged up as a proper sequencer-specific meta event.  The midicvt
- *  program (https://github.com/ahlstromcj/midicvt, derived from midicomp,
- *  midi2text, and mf2t/t2mf) does not ignore this lack of a SeqSpec wrapper,
- *  and hence we decided to provide a new, more strict input and output format
- *  for the the proprietary/SeqSpec track in Seq66.
+ *  It is important to note that most sequencers have taken a shortcut or two
+ *  in reading the MIDI format.  For example, most will silently ignored an
+ *  unadorned control tag (0x242400nn) which has not been packaged up as a
+ *  proper sequencer-specific meta event.  The midicvt program
+ *  (https://github.com/ahlstromcj/midicvt, derived from midicomp, midi2text,
+ *  and mf2t/t2mf) does not ignore this lack of a SeqSpec wrapper, and hence
+ *  we decided to provide a new, more strict input and output format for the
+ *  the proprietary/SeqSpec track in Seq66.
  *
  *  Elements written:
  *
@@ -62,8 +62,8 @@
  *      -   Track end.
  *      -   Proprietary SeqSpec data.
  *
- *  Uses the new format for the proprietary footer section of the Seq24
- *  MIDI file.
+ *  Uses the new format for the proprietary footer section of the Seq24 MIDI
+ *  file.
  *
  *  In the new format, each sequencer-specfic value (0x242400xx) is preceded
  *  by the sequencer-specific prefix, 0xFF 0x7F len). By default, the new
@@ -107,9 +107,104 @@ namespace seq66
  *  Magic numbers for handling mute-group formats.
  */
 
-const unsigned c_compact_mutes_shift    = 8;                /* 1 << 8 = 256 */
-const unsigned c_legacy_mute_group      = 1024;             /* 0x0400       */
-const unsigned c_compact_mute_group     = 256 << 16;
+static const unsigned c_compact_mutes_shift    = 8;         /* 1 << 8 = 256 */
+static const unsigned c_legacy_mute_group      = 1024;      /* 0x0400       */
+static const unsigned c_compact_mute_group     = 256 << 16;
+
+/**
+ *  A manifest constant for controlling the length of the stream buffering
+ *  array in a MIDI file.
+ */
+
+static const int c_midi_line_max = 1024;
+
+/**
+ *  The maximum length of a Seq24/Seq66 track nam3.
+ */
+
+static const int c_trackname_max =  256;
+
+/**
+ *  The maximum allowed variable length value for a MIDI file, which allows
+ *  the length to fit in a 32-bit integer.
+ */
+
+static const int c_varlength_max = 0x0FFFFFFF;
+
+/**
+ *  Highlights the MIDI file header value, "MThd".
+ */
+
+static const miditag c_mthd_tag  = 0x4D546864;      /* magic number 'MThd'  */
+
+/**
+ *  Highlights the MIDI file track-marker (chunk) value, "MTrk".
+ */
+
+static const miditag c_mtrk_tag  = 0x4D54726B;      /* magic number 'MTrk'  */
+
+/**
+ *  The chunk header value for the Seq66 proprietary/SeqSpec section.  We
+ *  might try other chunks, as well, since, as per the MIDI specification,
+ *  unknown chunks should not cause an error in a sequencer (or our midicvt
+ *  program).  For now, we stick with "MTrk".
+ */
+
+static const miditag c_prop_chunk_tag = c_mtrk_tag;
+
+/**
+ *  Provides the sequence number for the proprietary/SeqSpec data when using
+ *  the new format.  (There is no sequence number for the legacy format.)
+ *  Can't use numbers, such as 0xFFFF, that have MIDI meta tags in them,
+ *  confuses our "proprietary" track parser.
+ */
+
+static const midishort c_prop_seq_number     = 0x3FFF;
+static const midishort c_prop_seq_number_old = 0x7777;
+
+/**
+ *  Provides the track name for the "proprietary" data when using the new
+ *  format.  (There is no track-name for the "proprietary" footer track when
+ *  the legacy format is in force.)  This is more useful for examining a hex
+ *  dump of a Seq66 song than for checking its validity.  It's overkill
+ *  that causes needless error messages.
+ */
+
+static const std::string c_prop_track_name = "Seq66-S";
+
+/**
+ *  This const is used for detecting SeqSpec data that Seq66 does not handle.
+ *  If this word is found, then we simply extract the expected number of
+ *  characters specified by that construct, and skip them when parsing a MIDI
+ *  file.
+ */
+
+static const miditag c_prop_tag_word = 0x24240000;
+
+/**
+ *  Defines the size of the time-signature and tempo information.  The sizes of
+ *  these meta events consists of the delta time of 0 (1 byte), the event and
+ *  size bytes (3 bytes), and the data (4 bytes for time-signature and 3 bytes
+ *  for the tempo.  So, 8 bytes for the time-signature and 7 bytes for the
+ *  tempo.  Unused, so commented out.
+ *
+ *      static const int c_time_tempo_size  = 15;
+ */
+
+/*
+ *  Internal functions.
+ */
+
+/**
+ *  An easier, shorter test for the c_prop_tag_word part of a long
+ *  value, that clients can use.
+ */
+
+static bool
+is_proptag (midilong p)
+{
+    return (miditag(p) & c_prop_tag_word) == c_prop_tag_word;
+}
 
 static unsigned
 to_compact_byte (unsigned value)
@@ -694,7 +789,7 @@ midifile::parse (performer & p, int screenset, bool importing)
 
         midilong ID = read_long();                      /* hdr chunk info   */
         midilong hdrlength = read_long();               /* MThd length      */
-        if (ID != SEQ66_MTHD_TAG && hdrlength != 6)     /* magic 'MThd'     */
+        if (ID != c_mthd_tag && hdrlength != 6)     /* magic 'MThd'     */
             return set_error_dump("Invalid MIDI header chunk detected", ID);
 
         midishort Format = read_short();                /* 0, 1, or 2       */
@@ -790,7 +885,7 @@ midifile::parse_smf_0 (performer & p, int screenset)
 bool
 midifile::checklen (midilong len, midibyte type)
 {
-    bool result = len <= SEQ66_VARLENGTH_MAX;               /* 0x0FFFFFFF */
+    bool result = len <= c_varlength_max;                   /* 0x0FFFFFFF */
     if (result)
     {
         result = len > 0;
@@ -972,9 +1067,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
     {
         midilong ID = read_long();                  /* get track marker     */
         midilong TrackLength = read_long();         /* get track length     */
-        if (ID == SEQ66_MTRK_TAG)                   /* magic number 'MTrk'  */
+        if (ID == c_mtrk_tag)                       /* magic number 'MTrk'  */
         {
-            char TrackName[SEQ66_TRACKNAME_MAX];    /* track name from file */
+            char trackname[c_trackname_max];        /* track name from file */
             bool timesig_set = false;               /* seq66 style wins     */
             midipulse runningtime = 0;              /* reset time           */
             midipulse currenttime = 0;              /* adjusted by PPQN     */
@@ -1099,14 +1194,14 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 for (int i = 0; i < int(len); ++i)
                                 {
                                     char ch = char(read_byte());
-                                    if (count < SEQ66_TRACKNAME_MAX)
+                                    if (count < c_trackname_max)
                                     {
-                                        TrackName[count] = ch;
+                                        trackname[count] = ch;
                                         ++count;
                                     }
                                 }
-                                TrackName[count] = '\0';
-                                s.set_name(TrackName);
+                                trackname[count] = '\0';
+                                s.set_name(trackname);
                             }
                             else
                                 return false;
@@ -1317,7 +1412,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 s.loop_count_max(int(read_short()));
                                 len -= 2;
                             }
-                            else if (SEQ66_IS_PROPTAG(seqspec))
+                            else if (is_proptag(seqspec))
                             {
                                 (void) set_error_dump
                                 (
@@ -1456,7 +1551,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
             if (seqnum == c_midishort_max)
                 seqnum = track;
 
-            if (seqnum < PROP_SEQ_NUMBER)
+            if (seqnum < c_prop_seq_number)
             {
                 if (! is_null_buss(buss_override))
                     s.set_midi_bus(buss_override);
@@ -1636,7 +1731,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
 {
     bool result = true;
     midilong ID = read_long();                      /* Get ID + Length      */
-    if (ID == PROP_CHUNK_TAG)                       /* magic number 'MTrk'  */
+    if (ID == c_prop_chunk_tag)                      /* magic number 'MTrk'  */
     {
         midilong tracklength = read_long();
         if (tracklength > 0)
@@ -1648,7 +1743,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
              */
 
             int sn = read_seq_number();
-            bool ok = (sn == PROP_SEQ_NUMBER) || (sn == PROP_SEQ_NUMBER_OLD);
+            bool ok = (sn == c_prop_seq_number) || (sn == c_prop_seq_number_old);
             if (ok)                                 /* sanity check         */
             {
                 std::string trackname = read_track_name();
@@ -1660,7 +1755,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
                  * to scan in the new format.  Let the "MTrk" and 0x3FFF
                  * markers be enough.
                  *
-                 * if (trackname != PROP_TRACK_NAME)
+                 * if (trackname != c_prop_track_name)
                  *     result = false;
                  */
             }
@@ -2431,7 +2526,7 @@ void
 midifile::write_track (const midi_vector & lst)
 {
     midilong tracksize = midilong(lst.size());
-    write_long(SEQ66_MTRK_TAG);             /* magic number 'MTrk'          */
+    write_long(c_mtrk_tag);             /* magic number 'MTrk'          */
     write_long(tracksize);
     while (! lst.done())                    /* write the track data         */
         write_byte(lst.get());
@@ -2570,7 +2665,7 @@ midifile::write (performer & p, bool doseqspec)
         );
         if (file.is_open())
         {
-            char file_buffer[SEQ66_MIDI_LINE_MAX];  /* enable bufferization */
+            char file_buffer[c_midi_line_max];  /* enable bufferization */
             file.rdbuf()->pubsetbuf(file_buffer, sizeof file_buffer);
             for (auto c : m_char_list)              /* list of midibytes    */
             {
@@ -2760,7 +2855,7 @@ midifile::write_song (performer & p)
         );
         if (file.is_open())
         {
-            char file_buffer[SEQ66_MIDI_LINE_MAX];  /* enable bufferization */
+            char file_buffer[c_midi_line_max];  /* enable bufferization */
             file.rdbuf()->pubsetbuf(file_buffer, sizeof file_buffer);
             for (auto c : m_char_list)
             {
@@ -2844,7 +2939,7 @@ midifile::write_proprietary_track (performer & p)
             gmutesz = 4 + groupcount * (1 + groupsize);     /* 1-->bytes    */
     }
     tracklength += seq_number_size();           /* bogus sequence number    */
-    tracklength += track_name_size(PROP_TRACK_NAME);
+    tracklength += track_name_size(c_prop_track_name);
     tracklength += prop_item_size(4);           /* c_midictrl               */
     tracklength += prop_item_size(4);           /* c_midiclocks             */
     tracklength += prop_item_size(cnotesz);     /* c_notes                  */
@@ -2863,10 +2958,10 @@ midifile::write_proprietary_track (performer & p)
     }
     tracklength += track_end_size();            /* Meta TrkEnd              */
 
-    write_long(PROP_CHUNK_TAG);                 /* "MTrk" or something else */
+    write_long(c_prop_chunk_tag);               /* "MTrk" or something else */
     write_long(tracklength);
-    write_seq_number(PROP_SEQ_NUMBER);          /* bogus sequence number    */
-    write_track_name(PROP_TRACK_NAME);          /* bogus track name         */
+    write_seq_number(c_prop_seq_number);        /* bogus sequence number    */
+    write_track_name(c_prop_track_name);        /* bogus track name         */
 
     write_prop_header(c_midictrl, 4);           /* midi control tag + 4     */
     write_long(0);                              /* Seq24 writes only a zero */

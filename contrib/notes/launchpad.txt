@@ -1,6 +1,6 @@
 Quick Reference for Launchpad Mini
 Chris Ahlstrom
-2020-08-03 to 2020-08-10
+2020-08-03 to 2021-06-11
 
 Some of this information was adopted from the PDF file
 launchpad-programmers-reference.pdf. That document notes that a Launchpad
@@ -9,21 +9,23 @@ controller change (B0h).  However, on our Mini, we do not receive not offs
 (in ALSA)... we receive Note Ons with velocity 0.
 
 The Launchpad Mini has a top row of circular buttons numbered from 1 to 8.
-The next 8 rows start with 8 unlabeled square buttons with a circular button on
-the right, labelled with letters A through H.
+The next 8 rows start with 8 unlabeled square buttons with a circular
+button on the right, labelled with letters A through H.
 
-The top row emits 0xB0 ## 0x7f on press, and 0xB0 ## 0x00 on release, where:
-
-    0xB0    Control Change on channel 0 (i.e. channel 1).
-    ##      Ranges from 0x68 (104) to 0x6f (111) which are in the range of
-            undefined MIDI controllers.
-
-The other buttons also issue 0x90 ## 0x7f on press, and 0x90 ## 0x0 on release,
+The top row emits 0xB0 xxx 0x7f on press, and 0xB0 xxx 0x00 on release,
 where:
 
+    0xB0    Control Change on channel 0 (i.e. channel 1).
+    xxx     Ranges from 0x68 (104) to 0x6f (111) which are in the range of
+            undefined MIDI controllers. 
+
+The other buttons also issue 0x90 xxx 0x7f on press, and 0x90 xxx 0x0 on
+release, where:
+
     0x90    Note On message on channel 0 (i.e. channel 1).
-    ##      The hex value of the note, as shown by the two-digit hex values
-            shown below.
+    xxx     The hex or decimal value of the note, as shown by the
+            two-digit hex values shown below (the decimals are shown in
+            the launchpad-mini.ods file in the doc directory.
 
 X-Y Key Layout (mapping mode 1):
 

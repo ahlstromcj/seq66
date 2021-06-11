@@ -1,6 +1,6 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2021-05-28"
+#define VERSION_DATE_SHORT "2021-06-09"
 #define VERSION "0.94.1"
 
 
@@ -178,11 +178,11 @@
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 
-#ifdef SEQ66_PORTMIDI_SUPPORT
+#if defined SEQ66_PORTMIDI_SUPPORT
 #/**/undef/**/ SEQ66_RTMIDI_SUPPORT
 #endif
 
-#ifdef SEQ66_WINDOWS_SUPPORT
+#if defined SEQ66_WINDOWS_SUPPORT
 #/**/undef/**/ SEQ66_RTMIDI_SUPPORT
 #endif
 

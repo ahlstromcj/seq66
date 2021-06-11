@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -29,15 +29,14 @@
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
- * send feedback to an external control surface in order to reflect the state of
- * seq66. This includes updates on the playing and queueing status of the
+ * send feedback to an external control surface in order to reflect the state
+ * of seq66. This includes updates on the playing and queueing status of the
  * sequences.
  */
 
-#include <iomanip>                      /* std::ostringstream class         */
+#include <iomanip>                      /* std::setw() manipulator          */
 #include <sstream>                      /* std::ostringstream class         */
 
-#include "cfg/settings.hpp"             /* seq66::usr() function            */
 #include "ctrl/midicontrolout.hpp"      /* seq66::midicontrolout class      */
 #include "play/mutegroups.hpp"          /* seq66::mutegroups::Size()        */
 
@@ -271,7 +270,7 @@ midicontrolout::send_seq_event (int index, seqaction what, bool flush)
             event ev = m_seq_events[index][w].apt_action_event;
             if (not_nullptr(m_master_bus))
             {
-#ifdef SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                 std::string act = seqaction_to_string(w);
                 std::string evstring = to_string(ev);
                 printf

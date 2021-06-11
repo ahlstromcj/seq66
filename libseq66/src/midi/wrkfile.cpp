@@ -2,18 +2,18 @@
  *  WRK File component
  *  Copyright (C) 2010-2018, Pedro Lopez-Cabanillas <plcl\users.sf.net>
  *
- *  This library is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  This library is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
  *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  This library is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ *  for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -81,7 +81,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::rc().show_midi() etc.     */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile                   */
-#include "play/performer.hpp"           /* must precede wrkfile.hpp !       */
+#include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/seq.hpp"                 /* seq66::sequence, seq66::seq      */
 #include "util/strfunctions.hpp"        /* seq66::bool_to_string()          */
 
@@ -95,8 +95,7 @@ namespace seq66
  * This class is not related to or based on the ALSA library.
  */
 
-wrkfile::wrkfile_private::wrkfile_private ()
- :
+wrkfile::wrkfile_private::wrkfile_private () :
     m_Now           (0),
     m_From          (0),
     m_Thru          (11930),

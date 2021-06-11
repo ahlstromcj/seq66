@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-24
- * \updates       2019-09-05
+ * \updates       2021-06-10
  * \license       GNU GPLv2 or above
  *
  *  Seq66 can also split an SMF 0 file into multiple tracks, effectively
@@ -36,9 +36,6 @@
  */
 
 #include <string>
-#include <map>
-
-#include "app_limits.h"                 /* SEQ66_USE_DEFAULT_PPQN   */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -50,9 +47,7 @@ namespace seq66
     class sequence;
 
 /**
- *  This class handles the parsing and writing of MIDI files.  In addition to
- *  the standard MIDI tracks, it also handles some "private" or "proprietary"
- *  tracks specific to Seq24.  It does not, however, handle SYSEX events.
+ *  This class handles the parsing and writing of SMF 0 files.
  */
 
 class midi_splitter
@@ -94,7 +89,9 @@ private:
 public:
 
     midi_splitter ();
-    ~midi_splitter ();
+    midi_splitter (const midi_splitter &) = delete;
+    midi_splitter & operator = (const midi_splitter &) = delete;
+    ~midi_splitter () = default;
 
     bool log_main_sequence (sequence & seq, int seqnum);
     void initialize ();

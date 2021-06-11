@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2021-05-09
+ * \updates       2021-06-10
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -54,8 +54,7 @@ namespace seq66
  *      holds MIDI data.
  */
 
-midi_vector_base::midi_vector_base (sequence & seq)
- :
+midi_vector_base::midi_vector_base (sequence & seq) :
     m_sequence          (seq),
     m_position_for_get  (0)
 {
@@ -517,8 +516,8 @@ midi_vector_base::song_fill_seq_event
     );
 #endif
 
-    int note_is_used[c_midi_notes];
-    for (int i = 0; i < c_midi_notes; ++i)
+    int note_is_used[c_num_keys];
+    for (int i = 0; i < c_num_keys; ++i)
         note_is_used[i] = 0;                        /* initialize to off    */
 
     for (int p = 0; p <= times_played; ++p, time_offset += len)

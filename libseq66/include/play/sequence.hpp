@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -194,6 +194,16 @@ private:
 
 private:
 
+    /**
+     *  The number of MIDI notes in what?  This value is used in the sequence
+     *  module.  It looks like it is the maximum number of notes that
+     *  seq24/seq66 can have playing at one time.  In other words, "only" 256
+     *  simultaneously-playing notes can be managed.  Defines the maximum
+     *  number of notes playing at one time that the application will support.
+     */
+
+    static const int c_playing_notes_max   = 256;
+
     /*
      * Documented at the definition point in the cpp module.
      */
@@ -339,7 +349,7 @@ private:
      *  come close to the unsigned short limit of 65535.
      */
 
-    unsigned short m_playing_notes[SEQ66_PLAYING_NOTES_MAX];
+    unsigned short m_playing_notes[c_playing_notes_max];
 
     /**
      *  Indicates if the sequence was playing.  This value is set at the end

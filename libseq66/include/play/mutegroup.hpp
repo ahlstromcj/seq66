@@ -4,32 +4,32 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
  * \file          mutegroup.hpp
  *
- *  This module declares a linear vector class solely to hold the
- *  mute status of a number of sequences in a set, while also able to access
- *  patterns/loops by row, column.
+ *  This module declares a linear vector class solely to hold the mute status
+ *  of a number of sequences in a set, while also able to access
+ *  patterns/loops by row and column.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-02-12
+ * \updates       2021-06-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -38,18 +38,8 @@
 #include <vector>
 
 #include "app_limits.h"                 /* default rows and columns macros  */
-#include "midi/midibytes.hpp"           /* seq66::midibool                  */
-
-/**
- *  Mutes sizes.
- */
-
-#define SEQ66_MUTE_ROWS                    4
-#define SEQ66_MIN_MUTE_ROWS                4
-#define SEQ66_MAX_MUTE_ROWS                4
-#define SEQ66_MUTE_COLUMNS                 8
-#define SEQ66_MIN_MUTE_COLUMNS             8
-#define SEQ66_MAX_MUTE_COLUMNS             8
+#include "midi/midibytes.hpp"           /* seq66::midibooleans, etc.        */
+#include "play/screenset.hpp"           /* seq66::screenset constants       */
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -60,8 +50,11 @@ namespace seq66
 {
 
 /**
- *  Provides a class that represents an array the same size as a screenset, but
- *  holding armed statuses that can be saved an applied later.
+ *  Provides a class that represents an array the same size as a screenset,
+ *  but holding armed statuses that can be saved an applied later.  Note that,
+ *  unlike the array of mute-groups represented by the mutegroups class, the
+ *  size and layout of each mute-group (mutegroup class), like screen-sets, is
+ *  potentially modifiable by the configuration.
  */
 
 class mutegroup
@@ -82,14 +75,8 @@ public:
 
     using grouphandler = std::function<bool (mutegroup &, mutegroup::number)>;
 
-    /**
-     *  Provides an alias for a group number
-     *
-     * static const int MUTEGROUP_DEFAULT = ROWS_DEFAULT * COLS_DEFAULT;
-     */
-
-    static const int ROWS_DEFAULT = SEQ66_DEFAULT_SET_ROWS;
-    static const int COLS_DEFAULT = SEQ66_DEFAULT_SET_COLUMNS;
+    static const int c_default_rows    = screenset::c_default_rows;
+    static const int c_default_columns = screenset::c_default_columns;
 
 private:
 
@@ -168,8 +155,8 @@ public:
     mutegroup
     (
         number group    = 0,
-        int rows        = SEQ66_DEFAULT_SET_COLUMNS,
-        int columns     = SEQ66_DEFAULT_SET_ROWS
+        int rows        = c_default_rows,
+        int columns     = c_default_columns
     );
 
     /*

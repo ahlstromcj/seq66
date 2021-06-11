@@ -1,6 +1,24 @@
 #if ! defined SEQ66_BASIC_MACROS_HPP
 #define SEQ66_BASIC_MACROS_HPP
 
+/*
+ *  This file is part of seq66.
+ *
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
+ *
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 /**
  * \file          basic_macros.hpp
  *
@@ -25,11 +43,10 @@
  *  This module replaces Seq64's easy_macros.
  */
 
-#include <cstdio>
+#include <cstdio>                       /* std::printf()                    */
 #include <string>
 
-#include "seq66_features.hpp"           /* platform and config macros       */
-#include "util/basic_macros.h"          /* C-compatible definitions         */
+#include "util/basic_macros.h"          /* C-style definitions/features     */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

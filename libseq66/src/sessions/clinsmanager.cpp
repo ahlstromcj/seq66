@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -37,7 +37,7 @@
 #include "cfg/playlistfile.hpp"         /* seq66::playlistfile class        */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "midi/midifile.hpp"            /* seq66::write_midi_file()         */
-#include "os/daemonize.hpp"             /* seq66::pid_exists()              */
+#include "os/daemonize.hpp"             /* seq66::session_setup(), _close() */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "play/playlist.hpp"            /* seq66::playlist class            */
 #include "sessions/clinsmanager.hpp"    /* seq66::clinsmanager class        */
@@ -109,7 +109,7 @@ clinsmanager::detect_session (std::string & url)
         result = true;
         url = tenturl;
     }
-#if defined SEQ66_PLATFORM_DEBUG_TESTING
+#if defined SEQ66_PLATFORM_DEBUG_PID
     /*
      * This test is overly strict because there are remote instances of nsmd
      * and NSM-compliant daemons from raysession and Carla.
@@ -532,12 +532,11 @@ clinsmanager::read_configuration
     if (result)
     {
         /*
-         * Perhaps at some point, the "rc"/"usr" options might affect
-         * NSM usage.  In the meantime, we still need command-line
-         * options, if present, to override the file-specified
-         * options.  One big example is the --buss override. The
-         * smanager::main_settings() function is called way before
-         * create_project();
+         * Perhaps at some point, the "rc"/"usr" options might affect NSM
+         * usage.  In the meantime, we still need command-line options, if
+         * present, to override the file-specified options.  One big example
+         * is the --buss override. The smanager::main_settings() function is
+         * called way before create_project();
          */
 
         if (argc > 1)

@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -65,8 +65,6 @@ namespace Ui
 
 namespace seq66
 {
-    class mutegroups;
-    class performer;
     class qsmainwnd;
 
 /**
@@ -246,7 +244,7 @@ private:
      *  mutegroups::Columns(), but C++ does not allow functions as array sizes.
      */
 
-    QPushButton * m_group_buttons [SEQ66_MUTE_ROWS][SEQ66_MUTE_COLUMNS];
+    QPushButton * m_group_buttons [mutegroups::c_rows][mutegroups::c_columns];
 
     /**
      *  Access to all the pattern buttons.  It is the same size as the group
@@ -254,7 +252,7 @@ private:
      *  m_pattern_offset member.
      */
 
-    QPushButton * m_pattern_buttons [SEQ66_MUTE_ROWS][SEQ66_MUTE_COLUMNS];
+    QPushButton * m_pattern_buttons [mutegroups::c_rows][mutegroups::c_columns];
 
     /**
      *  Indicates the currently-selected group number.

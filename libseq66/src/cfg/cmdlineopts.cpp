@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -30,21 +30,19 @@
  *
  *  The "rc" command-line options override setting that are first read from
  *  the "rc" configuration file.  These modified settings are always saved
- *  when Seq66 exits, on the theory that somebody may have modified
- *  these settings in the user-interface (there is currently no "dirty flag"
- *  for this operation), and that command-line modifications to
- *  system-dependent settings such as the JACK setup should be saved for
- *  convenience.
+ *  when Seq66 exits, on the theory that somebody may have modified these
+ *  settings in the user-interface (there is currently no "dirty flag" for
+ *  this operation), and that command-line modifications to system-dependent
+ *  settings such as the JACK setup should be saved for convenience.
  *
- *  The "user" settings are mostly not available from the command-line
- *  (--bus being one exception).  They, too, are partly system-dependent, but
- *  there is no user-interface for changing the "user" options at this time.
- *  So the "user" configuration file is not saved unless it does not exist in
- *  the first place, or the "--user-save" option isprovided on the ommand
- *  line.
+ *  The "user" settings are mostly not available from the command-line (--bus
+ *  being one exception).  They, too, are partly system-dependent, but there
+ *  is no user-interface for changing the "user" options at this time.  So the
+ *  "user" configuration file is not saved unless it does not exist in the
+ *  first place, or the "--user-save" option isprovided on the ommand line.
  *
- *  We should backup the old versions of any saved configuration files
- *  at some point.
+ *  We should backup the old versions of any saved configuration files at some
+ *  point.
  */
 
 #include <iostream>                     /* std::cout, etc.                  */

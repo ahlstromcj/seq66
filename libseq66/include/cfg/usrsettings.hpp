@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-06-08
+ * \updates       2021-06-09
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -986,41 +986,10 @@ public:
         return m_mainwnd_rows * m_mainwnd_cols;
     }
 
-    /**
-     * \getter m_mainwnd_rows and m_mainwnd_cols
-     *  Returns true if either value is not the default.
-     */
-
-    bool is_variset () const
-    {
-        return (m_mainwnd_rows != SEQ66_DEFAULT_SET_ROWS) ||
-            (m_mainwnd_cols != SEQ66_DEFAULT_SET_COLUMNS);
-    }
-
-    /**
-     * \getter m_mainwnd_rows and m_mainwnd_cols
-     *  Returns true if both values are the default.  This function is the
-     *  "opposite" of is_variset().
-     */
-
-    bool is_default_mainwid_size () const
-    {
-        return
-        (
-            m_mainwnd_cols == SEQ66_DEFAULT_SET_COLUMNS &&
-            m_mainwnd_rows == SEQ66_DEFAULT_SET_ROWS
-        );
-    }
-
-    bool vertically_compressed () const
-    {
-        return m_mainwnd_rows > SEQ66_DEFAULT_SET_ROWS;
-    }
-
-    bool horizontally_compressed () const
-    {
-        return m_mainwnd_cols > SEQ66_DEFAULT_SET_COLUMNS;
-    }
+    bool is_variset () const;
+    bool is_default_mainwid_size () const;
+    bool vertically_compressed () const;
+    bool horizontally_compressed () const;
 
     int seqs_in_set () const
     {

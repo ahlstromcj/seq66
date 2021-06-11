@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-06-04
+ * \updates       2021-06-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -45,6 +45,8 @@
 
 namespace seq66
 {
+
+static const int s_ctrl_file_version = 4;
 
 /*
  * -------------------------------------------------------------------------
@@ -102,7 +104,7 @@ midicontrolfile::stanza::set (const midicontrol & mc)
     automation::action a = mc.action_code();
     if (a > automation::action::none && a < automation::action::max)
     {
-        int index = static_cast<int>(a) - 1;   /* skips "none"         */
+        int index = static_cast<int>(a) - 1;        /* skips "none"         */
         m_settings[index][0] = int(mc.inverse_active());
         m_settings[index][1] = int(mc.status());
         m_settings[index][2] = int(mc.d0());        /* note: d1 not needed  */
@@ -162,7 +164,8 @@ midicontrolfile::midicontrolfile
     m_temp_midi_ctrl_in     ("ctrl"),                       /* reading only */
     m_stanzas               ()
 {
-    version("3");                               /* adds more automation out */
+    // version("3");                            /* adds more automation out */
+    version(s_ctrl_file_version);
 }
 
 /**
@@ -379,8 +382,10 @@ midicontrolfile::parse_control_sizes
 
     bool result =
     (
-        rows >= SEQ66_MIN_SET_ROWS && rows <= SEQ66_MAX_SET_ROWS &&
-        columns >= SEQ66_MIN_SET_COLUMNS && columns <= SEQ66_MAX_SET_COLUMNS
+        (rows >= screenset::c_minimum_rows) &&
+        (rows <= screenset::c_maximum_rows) &&
+        (columns >= screenset::c_minimum_columns) &&
+        (columns <= screenset::c_maximum_columns)
     );
     return result;
 }
@@ -632,99 +637,62 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         /* Non-sequence (automation) actions */
 
         bool newtriples = file_version_number() > 3;
+        ok = true;
         if (newtriples)
         {
-            if (ok)
-                ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::panic);
-
-            if (ok)
-                ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
-
-            if (ok)
-                ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::pause);
-
-            if (ok)
-                ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::play);
-
+            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::panic);
             if (ok)
             {
-                ok = read_ctrl_triple
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::pause);
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::play);
+                read_ctrl_triple
                 (
                     file, mco, midicontrolout::uiaction::toggle_mutes
                 );
-            }
-            if (ok)
-            {
-                ok = read_ctrl_triple
+                read_ctrl_triple
                 (
                     file, mco, midicontrolout::uiaction::song_record
                 );
-            }
-            if (ok)
-            {
-                ok = read_ctrl_triple
+                read_ctrl_triple
                 (
                     file, mco, midicontrolout::uiaction::slot_shift
                 );
             }
-            if (ok)
-                ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::free);
         }
         if (ok)
-            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::queue);
-
-        if (ok)
-            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::oneshot);
-
-        if (ok)
-            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::replace);
-
-        if (ok)
-            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::snap);
-
-        if (ok)
-            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::song);
-
-        if (ok)
-            read_ctrl_triple(file, mco, midicontrolout::uiaction::learn);
-
-        if (newtriples)
         {
+            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::queue);
             if (ok)
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_up);
-
+            {
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::oneshot);
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::replace);
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::snap);
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::song);
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::learn);
+            }
+        }
+        if (ok && newtriples)
+        {
+            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_up);
             if (ok)
+            {
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_dn);
-
-            if (ok)
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::list_up);
-
-            if (ok)
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::list_dn);
-
-            if (ok)
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::song_up);
-
-            if (ok)
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::song_dn);
-
-            if (ok)
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::set_up);
-
-            if (ok)
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::set_dn);
-
-            if (ok)
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::tap_bpm);
-
-            if (ok)
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::free_2);
+            }
         }
         if (! ok)
         {
              (void) make_error_message
              (
-                "midi-control-out", "not enough control-pairs provided"
+                "midi-control-out", "control-triple error"
             );
         }
         if (result)
@@ -841,12 +809,11 @@ midicontrolfile::write_stream (std::ofstream & file)
 {
     write_date(file, "MIDI control");
     file    <<
-    "# This file holds the MIDI control configuration for Seq66. It follows\n"
-    "# the format of the 'rc' configuration file, but is stored separately for\n"
-    "# flexibility.  It is always stored in the main configuration directory.\n"
-    "# To use this file, replace the [midi-control] section in the 'rc' file,\n"
-    "# and its contents with a [midi-control-file] tag, and simply add the\n"
-    "# basename (e.g. nanomap.ctrl) on a separate line.\n"
+    "# This file holds MIDI I/O control setups for Seq66. It follows the format\n"
+    "# of the 'rc' configuration file, but is stored separately for flexibility\n"
+    "# It is always stored in the main configuration directory. To use this\n"
+    "# file, specify it in the [midi-control-file] section in the 'rc' file.\n"
+    "# Use the base-name (e.g. nanomap.ctrl).\n"
     "\n"
     "# Version 1 adds the [mute-control-out] and [automation-control-out]\n"
     "# sections. Versions 2 and 3 simplify the data items.\n"
@@ -860,14 +827,12 @@ midicontrolfile::write_stream (std::ofstream & file)
      * [comments]
      */
 
-    file << "\n"
-    "# [comments] holds the user's documentation for this control file.\n"
-    "# Lines starting with '#' and '[' are ignored.  Blank lines are ignored;\n"
-    "# add an empty line by adding a space character to the line.\n"
-        ;
-
     std::string s = rc_ref().midi_control_in().comments_block().text();
-    file << "\n[comments]\n\n" << s;
+    file << "\n"
+        "# The [comments] section holds the user documentation for this file.\n"
+        "# The first completely empty, comment, or tag line ends the comment.\n"
+        << "\n[comments]\n\n" << s
+        ;
 
     bool result = write_midi_control(file);
     if (result)
@@ -944,9 +909,12 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         "\n[midi-control-settings]\n\n"
         "# Setting 'load-midi-control' to 'false' will cause an empty MIDI\n"
         "# control setup to be written!  Keep backups! The control-buss value\n"
-        "# ranges from 0 to the maximum system buss provided by the hardware.\n"
-        "# If set, then only that buss will be allowed to send MIDI control.\n"
-        "# A value of 255 (0xFF) means any buss can send MIDI control.\n"
+        "# ranges from 0 to the maximum system input buss. If set, then that\n"
+        "# buss will be allowed to send MIDI control. 255 (0xFF) means any\n"
+        "# buss can send MIDI control. The buss(es) must be enabled in the\n"
+        "# 'rc' file.  With ALSA, there is an extra 'announce' buss, which\n"
+        "# will alter the numbering compared to JACK.\n"
+        "#\n"
         "# The 'midi-enabled' flag applies to the MIDI controls; keystrokes\n"
         "# are always enabled. Supported keyboard layouts are 'qwerty' (the\n"
         "# default), 'qwertz', and 'azerty'. AZERTY turns off the auto-shift\n"
@@ -978,13 +946,12 @@ midicontrolfile::write_midi_control (std::ofstream & file)
             ;
         file <<
         "\n"
-        "# This style of control stanza incorporates key control as well,\n"
-        "# but keys support only 'toggle', and key-release is an 'invert'.\n"
-        "# The leftmost number on each line here is the pattern number (e.g.\n"
-        "# 0 to 31); the group number, same range, for up to 32 groups; or it\n"
-        "# it is an automation control number, again a similar range.\n"
-        "# This internal MIDI control number is followed by three groups of\n"
-        "# bracketed numbers, each providing three different type of control:\n"
+        "# The control stanza incorporates key control as well as MIDI, but\n"
+        "# keys support only 'toggle', and key-release is an 'invert'. The\n"
+        "# leftmost number on each line here is the pattern number (e.g.\n"
+        "# 0 to 31); the group number, same range; or an automation control\n"
+        "# number. This internal control number is followed by three groups of\n"
+        "# bracketed numbers, each providing three different types of control:\n"
         "#\n"
         "#    Normal:           [toggle]    [on]        [off]\n"
         "#    Increment/Decr:   [increment] [increment] [decrement]\n"
@@ -1158,7 +1125,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         {
             mco.initialize
             (
-                buss, SEQ66_DEFAULT_SET_ROWS, SEQ66_DEFAULT_SET_COLUMNS
+                buss, screenset::c_default_rows, screenset::c_default_columns
             );
             setsize = mco.screenset_size();
         }
@@ -1215,7 +1182,10 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
                 file << std::setw(2) << seq << std::setw(0);
                 for (int a = minimum; a < maximum; ++a)
                 {
-                    event ev = mco.get_seq_event(seq, midicontrolout::seqaction(a));
+                    event ev = mco.get_seq_event
+                    (
+                        seq, midicontrolout::seqaction(a)
+                    );
                     midibyte d0, d1;
                     char temp[48];
                     ev.get_data(d0, d1);
@@ -1229,7 +1199,6 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
                 file << "\n";
             }
         }
-
         file <<
             "\n[mute-control-out]\n\n"
             "# The format of the mute and automation output events is simpler:\n"

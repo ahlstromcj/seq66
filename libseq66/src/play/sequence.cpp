@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -50,13 +50,12 @@
 
 #include <cstring>                      /* std::memset()                    */
 
-#include "cfg/scales.hpp"               /* seq66 scales functions           */
-#include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
 #include "seq66_features.hpp"           /* various feature #defines         */
+#include "cfg/scales.hpp"               /* seq66 scales functions, values   */
+#include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "midi/mastermidibus.hpp"       /* seq66::mastermidibus             */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
-#include "midi/midi_vector_base.hpp"    /* seq66::c_midi_notes              */
 #include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
@@ -64,7 +63,6 @@
 #include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "util/automutex.hpp"           /* seq66::mutex, automutex          */
 #include "util/calculations.hpp"        /* measures_to_ticks()              */
-#include "util/palette.hpp"             /* enum class ThumbColor            */
 #include "util/strfunctions.hpp"        /* bool_to_string()                 */
 
 /*
@@ -83,7 +81,25 @@ namespace seq66
 static const int c_song_record_incr = 16;
 static const int c_maxbeats         = 0xFFFF;
 
+/*
+ * Member value.  A fingerprint size of 0 means to not use a fingerprint...
+ * display the whole track in the progress box, no matter how long.
+ */
+
 int sequence::sm_fingerprint_size   = 0;
+
+/**
+ *  Provides the default name/title for the sequence.
+ */
+
+const std::string sequence::sm_default_name = "Untitled";
+
+/**
+ *  A static clipboard for holding pattern/sequence events.  Being static
+ *  allows for copy/paste between patterns.
+ */
+
+eventlist sequence::sm_clipboard;
 
 /**
  *  Shows the note_info values. Purely for dev trouble-shooting.
@@ -98,19 +114,6 @@ sequence::note_info::show () const
         ni_note, ni_tick_start, ni_tick_finish, ni_velocity
     );
 }
-
-/**
- *  A static clipboard for holding pattern/sequence events.  Being static
- *  allows for copy/paste between patterns.
- */
-
-eventlist sequence::sm_clipboard;
-
-/**
- *  Provides the default name/title for the sequence.
- */
-
-const std::string sequence::sm_default_name = "Untitled";
 
 /**
  *  Principal constructor.
@@ -2312,12 +2315,13 @@ sequence::change_event_data_lfo
  *          SEQ66_PRESERVE_VELOCITY
  *      -   Input from a MIDI keyboard.  Velocity ranges from 0 to 127.
  *
- *  If the recording-volume is SEQ66_DEFAULT_NOTE_ON_VELOCITY, then we have to set
- *  a default value, 100.
+ *  If the recording-volume is SEQ66_DEFAULT_NOTE_ON_VELOCITY, then we have to
+ *  set a default value, 100.
  *
- *  Will be consistent with how Note On velocity is handled; enable 0 velocity (a
- *  standard?) for Note Off when not playing. Note that the event constructor sets
- *  channel to 0xFF, while event::set_data() currently sets it to 0!!!
+ *  Will be consistent with how Note On velocity is handled; enable 0 velocity
+ *  (a standard?) for Note Off when not playing. Note that the event
+ *  constructor sets channel to 0xFF, while event::set_data() currently sets
+ *  it to 0!!!
  *
  *  The paint parameter indicates if we care about the painted event, so then
  *  the function runs though the events and deletes the painted ones that
@@ -2821,7 +2825,7 @@ sequence::stream_event (event & ev)
                     if (keepvelocity)
                     {
                         if (velocity == 0)
-                            velocity = SEQ66_DEFAULT_NOTE_ON_VELOCITY;
+                            velocity = m_note_on_velocity;
                     }
                     else
                         velocity = m_rec_vol;
@@ -4768,7 +4772,7 @@ sequence::off_playing_notes ()
     automutex locker(m_mutex);
     event e;
     e.set_status(EVENT_NOTE_OFF);
-    for (int x = 0; x < c_midi_notes; ++x)
+    for (int x = 0; x < c_playing_notes_max; ++x)
     {
         while (m_playing_notes[x] > 0)
         {

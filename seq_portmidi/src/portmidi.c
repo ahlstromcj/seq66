@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66, adapted from the PortMIDI project.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -33,23 +33,23 @@
  *      errors.  When an error does not map to one of the more specific
  *      PmErrors, the catch-all code pmHostError is returned. This means that
  *      PortMidi has retained a more specific system-dependent error code. The
- *      caller can get more information by calling Pm_HasHostError() to test if
- *      there is a pending host error, and Pm_GetHostErrorText() to get a text
- *      string describing the error. Host errors are reported on a per-device
- *      basis because only after you open a device does PortMidi have a place
- *      to record the host error code. I.e. only those routines that receive a
- *      (PortMidiStream *) argument check and report errors. One exception to
- *      this is that Pm_OpenInput() and Pm_OpenOutput() can report errors even
- *      though when an error occurs, there is no PortMidiStream* to hold the
- *      error. Fortunately, both of these functions return any error
- *      immediately, so we do not really need per-device error memory. Instead,
- *      any host error code is stored in a global, pmHostError is returned, and
- *      the user can call Pm_GetHostErrorText() to get the error message (and
- *      the invalid stream parameter will be ignored.) The functions pm_init
- *      and pm_term do not fail or raise errors. The job of pm_init is to
- *      locate all available devices so that the caller can get information via
- *      PmDeviceInfo(). If an error occurs, the device is simply not listed as
- *      available.
+ *      caller can get more information by calling Pm_HasHostError() to test
+ *      if there is a pending host error, and Pm_GetHostErrorText() to get a
+ *      text string describing the error. Host errors are reported on a
+ *      per-device basis because only after you open a device does PortMidi
+ *      have a place to record the host error code. I.e. only those routines
+ *      that receive a (PortMidiStream *) argument check and report errors.
+ *      One exception to this is that Pm_OpenInput() and Pm_OpenOutput() can
+ *      report errors even though when an error occurs, there is no
+ *      PortMidiStream* to hold the error. Fortunately, both of these
+ *      functions return any error immediately, so we do not really need
+ *      per-device error memory. Instead, any host error code is stored in a
+ *      global, pmHostError is returned, and the user can call
+ *      Pm_GetHostErrorText() to get the error message (and the invalid stream
+ *      parameter will be ignored.) The functions pm_init and pm_term do not
+ *      fail or raise errors. The job of pm_init is to locate all available
+ *      devices so that the caller can get information via PmDeviceInfo(). If
+ *      an error occurs, the device is simply not listed as available.
  *
  *      Host errors come in two flavors:
  *
@@ -68,8 +68,8 @@
  *    DEBUG assumes stdio and a console. Use this if you want automatic,
  *    simple error reporting, e.g. for prototyping. If you are using MFC or
  *    some other graphical interface with no console, DEBUG probably should be
- *    undefined.  Actually, for Seq66, the output can be re-routed to
- *    a log-file for trouble-shooting.
+ *    undefined.  Actually, for Seq66, the output can be re-routed to a
+ *    log-file for trouble-shooting.
  *
  *    For Seq66, we want to see these errors, all the time, and they can be
  *    redirected to a log file via the "-o log=filename.log" or "--option
@@ -79,8 +79,8 @@
 #include <string.h>                     /* C::strcasestr() GNU function.    */
 
 #if defined _MSC_VER
-#pragma warning(disable: 4244) // stop warnings about downsize typecasts
-#pragma warning(disable: 4018) // stop warnings about signed/unsigned
+#pragma warning(disable: 4244)          // warnings about downsize typecasts
+#pragma warning(disable: 4018)          // warnings about signed/unsigned
 
 /*
  *  We will need an implementation of strcasestr() in terms of a Microsoft

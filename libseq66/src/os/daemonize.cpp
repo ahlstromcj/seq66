@@ -1,3 +1,21 @@
+/*
+ *  This file is part of seq66.
+ *
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
+ *
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 /**
  * \file          daemonize.cpp
  * \library       seq66 application (from PSXC library)
@@ -7,21 +25,7 @@
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
- *  Copyright (C) 2005-2020 by Chris Ahlstrom
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but WITHOUT
- *  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- *  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- *  more details.
- *
- *  You should have received a copy of the GNU General Public License along with
- *  this program; if not, write to the Free Software Foundation, Inc., 51
- *  Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *  Copyright (C) 2005-2021 by Chris Ahlstrom
  *
  *  Provides a function to make it easy to run an application as a (Linux)
  *  daemon.  There are large differences between POSIX daemons and Win32
@@ -62,6 +66,7 @@
 #include <stdlib.h>                     /* EXIT_FAILURE for 32-bit builds   */
 #include <string.h>                     /* strlen() etc.                    */
 
+#include "seq66_features.hpp"           /* seq66::seq_app_name()            */
 #include "os/daemonize.hpp"             /* daemonization functions & macros */
 #include "util/calculations.hpp"        /* seq66::current_date_time()       */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path() etc.      */

@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -28,15 +28,15 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-08
+ * \updates       2021-06-11
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
  *  respects its limitations.
  */
 
-#include <fstream>
-#include <string>
+#include <fstream>                      /* std::streampos                   */
+#include <string>                       /* std::string, the ubiquitous one  */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -44,10 +44,11 @@
 
 namespace seq66
 {
+    class rcsettings;
 
 /**
  *  Currently these strings are just for reference, and not yet used in the
- *  code.
+ *  code for each type of configuration file.
  *
  *  std::string filetag = "config-type";
  *  std::string ctrltag = "ctrl";
@@ -55,14 +56,7 @@ namespace seq66
  *  std::string rctag   = "rc";
  *  std::string usrtag  = "usr";
  *  std::string playtag = "playlist";
- *
  */
-
-/*
- * Forward references.
- */
-
-class rcsettings;
 
 /**
  *    This class is the abstract base class for rcfile and usrfile.
@@ -308,6 +302,11 @@ protected:
         const std::string & tag,
         const std::string & variablename,
         int position = 0
+    );
+    std::string extract_variable
+    (
+        const std::string & line,
+        const std::string & variablename
     );
     bool get_boolean
     (

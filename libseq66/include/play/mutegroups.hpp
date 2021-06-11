@@ -4,34 +4,46 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
  * \file          mutegroups.hpp
  *
- *  This module declares a container for a number of optional mutegroup objects.
+ *  This module declares a container for a number of optional mutegroup
+ *  objects.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-05-13
+ * \updates       2021-06-09
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
- *  from the 'mutes' file.
+ *  from the 'mutes' file.  For practical reasons, we hold the number of
+ *  mute-groups to a constant (32) with a constant layout of 4 rows by 8
+ *  columns.  This is a good upper limit for the number of mute-groups a user
+ *  might want during a performance, and 4x8 fits well with the main keys
+ *  (also used for pattern muting) on the center-left of the keyboard:
+ *
+\verbatim
+        ! @ # $ % ^ & *
+        Q W E R T Y U I
+        A S D F G H J K
+        Z X C V B N M <
+\endverbatim
  */
 
 #include <map>                          /* std::map<> for mutegroup storage */
@@ -132,29 +144,34 @@ public:
 private:
 
     /**
-     *  The virtual number of rows in a grid of mute-groups.
+     *  The virtual number of rows in a grid of mute-groups.  This number is
+     *  constant in order to indicate that there are always 4 rows in the
+     *  whole collection of mute-groups.  Why?  Because we can, in all
+     *  practicality, only support 4 x 8 mute-groups with the keystrokes on a
+     *  keyboard without interfering with other automation keys.
      */
 
-    static const int smc_rows     = SEQ66_MUTE_ROWS;
+    static const int c_rows = 4;
 
     /**
-     *  The virtual number of columns in a grid of mute-groups.
+     *  The virtual number of columns in a grid of mute-groups.  Similarly,
+     *  this item reflects that we will always have 4 x 8 mute-groups.
      */
 
-    static const int smc_columns  = SEQ66_MUTE_COLUMNS;
+    static const int c_columns = 8;
 
     /**
      *  This value indicates that there is no mute-group selected.
      */
 
-    static const int smc_null_mute_group = (-1);
+    static const int c_null_mute_group = (-1);
 
     /**
      *  We force a maximum number of mute-groups.  We really only have enough
      *  keys available for 32 mute-groups.
      */
 
-    static const int smc_mute_groups_max = 32;
+    static const int c_mute_groups_max = 32;
 
     /**
      *  Holds a set of mutegroup objects keyed by the configured mute
@@ -241,7 +258,7 @@ private:
      *  selected for the saving and restoring of the status of all patterns in
      *  that set.  The value of -1 (SEQ66_NO_MUTE_GROUP_SELECTED) to indicate
      *  the value should not be used.  The test for a valid value is simple,
-     *  just check for group >= 0 and a limit of smc_mute_groups_max (32) at
+     *  just check for group >= 0 and a limit of c_mute_groups_max (32) at
      *  mute-group setup time.
      */
 
@@ -289,14 +306,14 @@ public:
 
     mutegroups
     (
-        int rows = SEQ66_DEFAULT_SET_ROWS,
-        int columns = SEQ66_DEFAULT_SET_COLUMNS
+        int rows    = c_rows,
+        int columns = c_columns
     );
     mutegroups
     (
         const std::string & name,
-        int rows = SEQ66_DEFAULT_SET_ROWS,
-        int columns = SEQ66_DEFAULT_SET_COLUMNS
+        int rows    = c_rows,
+        int columns = c_columns
     );
 
     /*
@@ -312,17 +329,17 @@ public:
 
     static int Rows ()
     {
-        return smc_rows;
+        return c_rows;
     }
 
     static int Columns ()
     {
-        return smc_columns;
+        return c_columns;
     }
 
     static int Size ()
     {
-        return smc_rows * smc_columns;
+        return c_rows * c_columns;
     }
 
     static mutegroup::number grid_to_group (int row, int column);
@@ -330,7 +347,7 @@ public:
 
     static int null_mute_group ()
     {
-        return smc_null_mute_group;
+        return c_null_mute_group;
     }
 
     const std::string & name () const
@@ -487,7 +504,7 @@ public:
     bool any (mutegroup::number gmute) const;
     const mutegroup & mute_group (mutegroup::number gmute) const;
     mutegroup & mute_group (mutegroup::number gmute);
-    void show (mutegroup::number gmute = smc_null_mute_group) const;
+    void show (mutegroup::number gmute = c_null_mute_group) const;
 
     int armed_count (mutegroup::number gmute) const
     {
@@ -540,7 +557,7 @@ public:
 
     bool group_valid (int g) const
     {
-        return g >= 0 && g < smc_mute_groups_max;
+        return g >= 0 && g < c_mute_groups_max;
     }
 
     bool group_present () const
@@ -623,7 +640,7 @@ private:
 
     void group_selected (mutegroup::number mg)
     {
-        if (group_valid(mg) || mg == smc_null_mute_group)
+        if (group_valid(mg) || mg == c_null_mute_group)
             m_group_selected = mg;
     }
 

@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2021-05-28
+dnl \update        2021-06-11
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -466,7 +466,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2021-05-28"
+#define VERSION_DATE_SHORT "2021-06-11"
 #define VERSION "0.94.1"
 
 )
@@ -550,11 +550,11 @@ dnl statement it sees.  Don't like this one bit.
 
 AH_BOTTOM(
 
-#ifdef SEQ66_PORTMIDI_SUPPORT
+#if defined SEQ66_PORTMIDI_SUPPORT
 #/**/undef/**/ SEQ66_RTMIDI_SUPPORT
 #endif
 
-#ifdef SEQ66_WINDOWS_SUPPORT
+#if defined SEQ66_WINDOWS_SUPPORT
 #/**/undef/**/ SEQ66_RTMIDI_SUPPORT
 #endif
 

@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-05-12
+ * \updates       2021-06-09
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -35,7 +35,7 @@
  *  processing of mute-group selections.
  */
 
-#include <iomanip>                      /* std::setw manipulator            */
+#include <iomanip>                      /* std::setw() manipulator          */
 #include <iostream>                     /* std::cerr to note errors         */
 
 #include "play/mutegroups.hpp"          /* seq66::mutegroups class          */
@@ -49,14 +49,16 @@ namespace seq66
 {
 
 /**
- *  Creates an empty, default mutegroups object.
+ *  Creates an empty, default mutegroups object.  The default size is 4 x 8,
+ *  but this is currently the only size we will support.  32 mute-groups.
  *
  * \param rows
- *      Provides the number of virtual rows in each mutegroup.  This will match
+ *      Provides the number of virtual rows in the set of mute-groups.
+ *      This value is treated like a constant.
  *
  * \param columns
- *      Provides the number of virtual columns in each mutegroup.  This will
- *      match the number of virtual columns in a screenset.
+ *      Provides the number of virtual columns the set of mute-groups.
+ *      This value is treated like a constant.
  */
 
 mutegroups::mutegroups (int rows, int columns) :
@@ -71,7 +73,7 @@ mutegroups::mutegroups (int rows, int columns) :
     m_group_error               (false),
     m_group_mode                (true),             /* see its description  */
     m_group_learn               (false),
-    m_group_selected            (smc_null_mute_group),
+    m_group_selected            (c_null_mute_group),
     m_group_present             (false),
     m_group_save                (saving::both),     /* midi and mutes files */
     m_group_load                (loading::both),    /* midi and mutes files */
@@ -90,11 +92,10 @@ mutegroups::mutegroups (int rows, int columns) :
  *      troubleshooting.
  *
  * \param rows
- *      Provides the number of virtual rows in each mutegroup.  This will match
+ *      Provides the number of virtual rows in the set of mute-groups.
  *
  * \param columns
- *      Provides the number of virtual columns in each mutegroup.  This will
- *      match the number of virtual columns in a screenset.
+ *      Provides the number of virtual columns in the set of mute-groups.
  *
  */
 
@@ -319,7 +320,7 @@ mutegroups::apply (mutegroup::number group, midibooleans & bits)
 }
 
 /**
- *  Unapplies a mute group. If less than zero (see smc_null_mute_group), then
+ *  Unapplies a mute group. If less than zero (see c_null_mute_group), then
  *  the unapply is applied (heh heh) to the current group.
  */
 
@@ -339,7 +340,7 @@ mutegroups::unapply (mutegroup::number group, midibooleans & bits)
             {
                 bits = mg.zeroes();
                 mg.group_state(false);
-                m_group_selected = smc_null_mute_group;
+                m_group_selected = c_null_mute_group;
             }
         }
     }
@@ -386,7 +387,7 @@ mutegroups::toggle (mutegroup::number group, midibooleans & bits)
             bool mgnewstate = ! mg.group_state();
             bits = mgnewstate ? mg.get() : mg.zeroes() ;
             mg.group_state(mgnewstate);
-            m_group_selected = mgnewstate ? group : smc_null_mute_group ;
+            m_group_selected = mgnewstate ? group : c_null_mute_group ;
         }
     }
     return result;
@@ -432,7 +433,7 @@ mutegroups::toggle_active (mutegroup::number group, midibooleans & armedbits)
             }
             active = ! active;
             mg.group_state(active);
-            m_group_selected = active ? group : smc_null_mute_group ;
+            m_group_selected = active ? group : c_null_mute_group ;
         }
     }
     return result;
@@ -448,7 +449,7 @@ mutegroups::group_learn (bool flag)
     else
     {
         m_group_learn = false;
-        m_group_selected = smc_null_mute_group;
+        m_group_selected = c_null_mute_group;
     }
 }
 
@@ -588,7 +589,7 @@ bool
 mutegroups::reset_defaults ()
 {
     bool result = false;
-    int count = smc_mute_groups_max;          /* not m_rows * m_columns   */
+    int count = c_mute_groups_max;          /* not m_rows * m_columns   */
     clear();
     for (int gmute = 0; gmute < count; ++gmute)
     {
@@ -663,7 +664,7 @@ void
 mutegroups::show (mutegroup::number gmute) const
 {
     std::cout << "Mute-group size: " << count() << std::endl;
-    if (gmute == smc_null_mute_group)
+    if (gmute == c_null_mute_group)
     {
         int index = 0;
         for (const auto & mgpair : m_container)

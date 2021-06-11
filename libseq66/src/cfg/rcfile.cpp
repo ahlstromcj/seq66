@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-08
+ * \updates       2021-06-11
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -254,17 +254,6 @@ rcfile::parse ()
             {
                 std::string mcfname = strip_quotes(line());
                 rc_ref().midi_control_filename(mcfname);    /* base name    */
-
-                std::string fullpath = rc_ref().midi_control_filespec();
-                file_message("Reading 'ctrl'", fullpath);
-                ok = parse_midi_control_section(fullpath, true);
-                if (! ok)
-                {
-                    std::string info = "'";
-                    info += fullpath;
-                    info += "'";
-                    return make_error_message(tag, info);
-                }
             }
         }
     }
@@ -274,6 +263,17 @@ rcfile::parse ()
         bool active = get_file_status(file, tag, pfname);
         rc_ref().midi_control_active(active);
         rc_ref().midi_control_filename(pfname);             /* base name    */
+    }
+
+    std::string fullpath = rc_ref().midi_control_filespec();
+    file_message("Reading 'ctrl'", fullpath);
+    ok = parse_midi_control_section(fullpath, true);
+    if (! ok)
+    {
+        std::string info = "'";
+        info += fullpath;
+        info += "'";
+        return make_error_message(tag, info);
     }
     tag = "[mute-group-file]";
     if (file_version_number() < s_rc_file_version)
@@ -982,9 +982,8 @@ rcfile::write ()
 
     write_date(file, "main ('rc')");
     file <<
-        "# This file holds the main configuration for Seq66. It loosely\n"
-        "# follows the format of the seq24rc configuration file, but adds\n"
-        "# many new options, and is no longer compatible.\n"
+        "# This file holds the main configuration for Seq66. It no longer\n"
+        "# follows the format of the seq24rc configuration file very much.\n"
         "#\n"
         "# 'version' is set by Seq66; it is used to detect older configuration\n"
         "# files, which are upgraded to the new version when saved.\n"
@@ -1012,7 +1011,7 @@ rcfile::write ()
      */
 
     file << "\n"
-        "# The [comments] section holds the user's documentation for this file.\n"
+        "# The [comments] section holds user documentation for this file.\n"
         "# The first completely empty, comment, or tag line ends the comment.\n"
         "\n[comments]\n\n" << rc_ref().comments_block().text()
         ;

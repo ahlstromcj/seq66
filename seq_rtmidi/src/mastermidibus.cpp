@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-10-25
+ * \updates       2021-06-10
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -145,8 +145,8 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
             midibus * m = new (std::nothrow) midibus
             (
                 m_midi_master, i,
-                SEQ66_MIDI_VIRTUAL_PORT,
-                SEQ66_MIDI_OUTPUT_PORT,
+                midibase::c_virtual_port,
+                midibase::c_output_port,
                 i /* bussoverride */                    /* breaks ALSA?     */
             );
             if (not_nullptr(m))
@@ -161,8 +161,8 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
             midibus * m = new (std::nothrow) midibus    /* input buss       */
             (
                 m_midi_master, i,
-                SEQ66_MIDI_VIRTUAL_PORT,
-                SEQ66_MIDI_INPUT_PORT,
+                midibase::c_virtual_port,
+                midibase::c_input_port,
                 i
             );
             if (not_nullptr(m))
@@ -177,12 +177,15 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
     {
         unsigned nports = m_midi_master.full_port_count();
         bool swap_io = rc().with_jack_midi();
-        bool isinput = swap_io ? SEQ66_MIDI_OUTPUT_PORT : SEQ66_MIDI_INPUT_PORT;
-        bool isoutput = swap_io ? SEQ66_MIDI_INPUT_PORT : SEQ66_MIDI_OUTPUT_PORT;
+        bool isinput = swap_io ?
+            midibase::c_output_port : midibase::c_input_port;
+        bool isoutput = swap_io ?
+            midibase::c_input_port : midibase::c_output_port;
+
         port_list("rtmidi");
         if (nports > 0)
         {
-            m_midi_master.midi_mode(SEQ66_MIDI_INPUT_PORT);     /* ugh! */
+            m_midi_master.midi_mode(midibase::c_input_port);     /* ugh! */
             unsigned inports = m_midi_master.get_port_count();
             for (unsigned i = 0; i < inports; ++i)
             {
@@ -203,7 +206,7 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
                     m_midi_master.add_bus(m);           /* must come 2nd    */
                 }
             }
-            m_midi_master.midi_mode(SEQ66_MIDI_OUTPUT_PORT);    /* ugh! */
+            m_midi_master.midi_mode(midibase::c_output_port);    /* ugh! */
 
             unsigned outports = m_midi_master.get_port_count();
             for (unsigned i = 0; i < outports; ++i)

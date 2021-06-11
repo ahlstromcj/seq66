@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -35,12 +35,6 @@
  *  option.  Sequences that don't have events show up as black-on-yellow.
  *  This feature is enabled by default.  To disable this feature, configure
  *  the build with the "--disable-highlight" option.
- *
- * \todo
- *      When bringing up this dialog, and starting play from it, some
- *      extra horizontal lines are drawn for some of the sequences.  This
- *      happens even in seq64, so this is long standing behavior.  Is it
- *      useful, and how?  Where is it done?  In perfroll?
  */
 
 #include <QMouseEvent>
@@ -57,7 +51,6 @@
 
 namespace seq66
 {
-    class performer;
 
 /**
  *  Alpha for coloring the names brightly, or not.

@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2020-12-19
+ * \updates       2021-06-10
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations
@@ -39,36 +39,6 @@
 #include "midi/midibus_common.hpp"      /* values and e_clock enumeration   */
 #include "midi/midibytes.hpp"           /* seq66::midibyte alias            */
 #include "util/automutex.hpp"           /* seq66::recmutex recursive mutex  */
-
-/**
- *  Macros for selecting input versus output ports in a more obvious way.
- *  These items are needed for the midi_mode() setter function.  Note that
- *  midi_mode() has no functionality in the midi_api base class, which has a
- *  number of such stub functions so that we can use the midi_info and midi_api
- *  derived classes.  Tested by the is_input_port() functions.
- */
-
-#define SEQ66_MIDI_OUTPUT_PORT  false       /* the MIDI mode is not input   */
-#define SEQ66_MIDI_INPUT_PORT   true        /* the MIDI mode is input       */
-
-/**
- *  Macros for selecting virtual versus normal ports in a more obvious way.
- *  Used in the rtmidi midibus constructors.  Tested by the is_virtual_port()
- *  functions.  But note the overload usage of the SEQ66_MIDI_NORMAL_PORT
- *  macro.
- */
-
-#define SEQ66_MIDI_NORMAL_PORT  false       /* the MIDI port is not virtual */
-#define SEQ66_MIDI_VIRTUAL_PORT true        /* the MIDI port is virtual     */
-
-/**
- *  Macros for indicating if the port is a built-in system port versus a port
- *  that exists because a MIDI device is plugged in or some application has
- *  set up a virtual port.  Tested by the is_system_port() functions.  But
- *  note the overload usage of the SEQ66_MIDI_NORMAL_PORT macro.
- */
-
-#define SEQ66_MIDI_SYSTEM_PORT  true        /* API always exposes this port */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -89,6 +59,38 @@ class midibase
      */
 
     friend class mastermidibus;
+
+public:
+
+    /**
+     *  Constants for selecting input versus output ports in a more obvious
+     *  way.  These items are needed for the midi_mode() setter function.
+     *  Note that midi_mode() has no functionality in the midi_api base class,
+     *  which has a number of such stub functions so that we can use the
+     *  midi_info and midi_api derived classes.  Tested by the is_input_port()
+     *  functions.
+     */
+
+static const bool c_output_port  = false;   /* the MIDI mode is not input   */
+static const bool c_input_port   = true;    /* the MIDI mode is input       */
+
+    /**
+     *  Constants for selecting virtual versus normal ports in a more obvious
+     *  way.  Used in the rtmidi midibus constructors.  Tested by the
+     *  is_virtual_port() functions.
+     */
+
+static const bool c_normal_port  = false;   /* the MIDI port is not virtual */
+static const bool c_virtual_port = true;    /* the MIDI port is virtual     */
+
+    /**
+     *  Constants for indicating if the port is a built-in system port versus
+     *  a port that exists because a MIDI device is plugged in or some
+     *  application has set up a virtual port.  Tested by the is_system_port()
+     *  functions.
+     */
+
+static const bool c_system_port  = true;    /* API always exposes this port */
 
 private:
 

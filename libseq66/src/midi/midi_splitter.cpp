@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -25,14 +25,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-24
- * \updates       2019-09-08
+ * \updates       2021-06-10
  * \license       GNU GPLv2 or above
  *
  *  We have recently updated this module to put Set Tempo events into the
  *  first track (channel 0).
  */
-
-#include <fstream>
 
 #include "cfg/settings.hpp"             /* seq66::usr().seqs_in_set()       */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
@@ -52,23 +50,13 @@ namespace seq66
  *
  */
 
-midi_splitter::midi_splitter ()
- :
+midi_splitter::midi_splitter () :
     m_smf0_channels_count   (0),
     m_smf0_channels         (),         /* array, initialized in parse()    */
     m_smf0_main_sequence    (nullptr),
     m_smf0_seq_number       (-1)
 {
     initialize();
-}
-
-/**
- *  A rote destructor.
- */
-
-midi_splitter::~midi_splitter ()
-{
-    // empty body
 }
 
 /**

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-24
-% \update      2021-02-23
+% \update      2021-06-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -149,13 +149,10 @@
    controls, mapped to the top row of circular buttons (tentative):
 
    \begin{verbatim}
-                                      Song*     Keep*   Grou*
-      Panic*  Stop    Pause   Play    Record    Queue   Learn     ???*
-       68h     69h     6ah     6bh     6ch       6dh     6eh      6fh
-       104     105     106     107     108       109     110      111
+        Panic   Stop    Pause   Play    (free)    (free)  Set Dn   Set Up
+   Dec   68h     69h     6ah     6bh     6ch       6dh     6eh      6fh
+   Hex   104     105     106     107     108       109     110      111
    \end{verbatim}
-
-   \texttt{*} means not yet supported.
 
    The Mini also supports power levels, but that feature is not used by
    \textsl{Seq66}.
@@ -180,9 +177,9 @@
    \end{verbatim}
 
    Note the "Timer" device, which \textsl{Seq66} does not show, and the
-   "Announce" device, which it does show (as disabled).  The device/port we're
-   interested in is the \texttt{Launchpad Mini MIDI 1}, port 2 for input from the
-   Mini, and port 1 for output to the Mini.
+   "Announce" device, which it does show (as disabled).  The device/port of
+   interest is the \texttt{Launchpad Mini MIDI 1}, port 2 for input from
+   the Mini, and port 1 for output to the Mini.
 
 \subsection{Control Setup}
 \label{subsec:launchpad_mini_control_setup}

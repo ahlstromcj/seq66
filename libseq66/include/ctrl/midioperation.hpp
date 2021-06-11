@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -37,8 +37,6 @@
  *  handling automation keystrokes.
  *
  *  It requires C++11 and above.
- *
- * #include <memory>                    // std::enable_shared_from_this
  */
 
 #include <functional>                   /* std::function<>                  */
@@ -67,8 +65,8 @@ public:
      *  Provides the function object with a signature needed to handle any
      *  MIDI control operation.  The integers are generally the values of MIDI
      *  d0 and d1, but the second value can also hold a pattern number or a
-     *  group number, and then it is called an "index".  For keystrokes, the d0
-     *  value is always 0 [perhaps it should be -1?]. The boolean holds the
+     *  group number, and then it is called an "index".  For keystrokes, the
+     *  d0 value is always 0 [perhaps it should be -1?]. The boolean holds the
      *  state of the inverse setting for MIDI control, and is always false for
      *  key-control.
      */

@@ -1,3 +1,21 @@
+/*
+ *  This file is part of seq66.
+ *
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
+ *
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 /**
  * \file          midi_alsa_info.cpp
  *
@@ -6,16 +24,16 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-04-19
- * \license       See the rtexmidi.lic file.  Too big.
+ * \updates       2021-06-10
+ * \license       See above.
  *
  *  API information found at:
  *
  *      - http://www.alsa-project.org/documentation.php#Library
  *
- *  This class is meant to collect a whole bunch of ALSA information
- *  about client number, port numbers, and port names, and hold them
- *  for usage when creating ALSA midibus objects and midi_alsa API objects.
+ *  This class is meant to collect a whole bunch of ALSA information about
+ *  client number, port numbers, and port names, and hold them for usage when
+ *  creating ALSA midibus objects and midi_alsa API objects.
  *
  *  This was to be a function to create an ALSA "announce" bus.  But it turned
  *  out to be feasible and simpler to add it as a special input port in the
@@ -256,7 +274,7 @@ midi_alsa_info::get_all_port_info ()
     int count = 0;
     if (not_nullptr(m_alsa_seq))
     {
-        snd_seq_port_info_t * pinfo;                    /* point to member  */
+        snd_seq_port_info_t * pinfo;                /* point to member      */
         snd_seq_client_info_t * cinfo;
         snd_seq_client_info_alloca(&cinfo);
         snd_seq_client_info_set_client(cinfo, -1);
@@ -266,16 +284,16 @@ midi_alsa_info::get_all_port_info ()
         (
             SND_SEQ_CLIENT_SYSTEM, "system",
             SND_SEQ_PORT_SYSTEM_ANNOUNCE, "announce",
-            SEQ66_MIDI_NORMAL_PORT,                 /* false = not virtual  */
+            midibase::c_normal_port,                /* false = not virtual  */
             true,                                   /* system port          */
-            SEQ66_MIDI_INPUT_PORT,                  /* input port           */
+            midibase::c_input_port,                 /* input port           */
             global_queue()
         );
         ++count;
         while (snd_seq_query_next_client(m_alsa_seq, cinfo) >= 0)
         {
             int client = snd_seq_client_info_get_client(cinfo);
-            if (client == SND_SEQ_CLIENT_SYSTEM)        /* i.e. 0 in seq.h  */
+            if (client == SND_SEQ_CLIENT_SYSTEM)    /* i.e. 0 in seq.h      */
             {
                 /*
                  * Client 0 won't have ports (timer and announce) that match
@@ -302,8 +320,8 @@ midi_alsa_info::get_all_port_info ()
                     input_ports().add
                     (
                         client, clientname, portnumber, portname,
-                        SEQ66_MIDI_NORMAL_PORT, SEQ66_MIDI_NORMAL_PORT,
-                        SEQ66_MIDI_INPUT_PORT, global_queue()
+                        midibase::c_normal_port, midibase::c_normal_port,
+                        midibase::c_input_port, global_queue()
                     );
                     ++count;
                 }
@@ -312,8 +330,8 @@ midi_alsa_info::get_all_port_info ()
                     output_ports().add
                     (
                         client, clientname, portnumber, portname,
-                        SEQ66_MIDI_NORMAL_PORT, SEQ66_MIDI_NORMAL_PORT,
-                        SEQ66_MIDI_OUTPUT_PORT
+                        midibase::c_normal_port, midibase::c_normal_port,
+                        midibase::c_output_port
                     );
                     ++count;
                 }

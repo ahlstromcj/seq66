@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2019-02-09
+ * \updates       2021-06-10
  * \license       GNU GPLv2 or above
  *
  *  This midibus module is the RtMidi version of the midibus
@@ -36,7 +36,7 @@
  */
 
 #include "midi/midibase.hpp"            /* seq66::midibase class (new)      */
-#include "rtmidi_types.hpp"             /* SEQ66_MIDI_NORMAL_PORT           */
+#include "rtmidi_types.hpp"             /* midibase::c_normal_port          */
 
 /*
  * Do not document a namespace; it breaks Doxygen.
@@ -89,8 +89,8 @@ public:
     (
         rtmidi_info & rt,
         int index,
-        bool makevirtual    = SEQ66_MIDI_NORMAL_PORT,
-        bool isinput        = SEQ66_MIDI_OUTPUT_PORT,
+        bool makevirtual    = midibase::c_normal_port,
+        bool isinput        = midibase::c_output_port,
         int bussoverride    = null_buss(),
         bool makesystem     = false
     );

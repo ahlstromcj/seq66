@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -128,8 +128,8 @@ musical_scale_name (int s)
 }
 
 /**
- *  Convert a MIDI note number to frequency.  The formula, based on A4 (note 69)
- *  being the concert pitch, 440 Hz, is:
+ *  Convert a MIDI note number to frequency.  The formula, based on A4 (note
+ *  69) being the concert pitch, 440 Hz, is:
  *
 \verbatim
                    (n-69)/12
@@ -154,7 +154,7 @@ midi_note_frequency (midibyte note)
 
 /**
  *  Analyzes one note to see what key (0 to 11, keys::C to keys::B) it is, and
- *  the octave (0 to xxxx) it resides in.
+ *  the octave (0 to 9) it resides in.
  *
 \verbatim
       0: C-1
@@ -176,12 +176,7 @@ midi_note_frequency (midibyte note)
  */
 
 bool
-analyze_note
-(
-    midibyte note,
-    keys & outkey,
-    int & outoctave
-)
+analyze_note (midibyte note, keys & outkey, int & outoctave)
 {
     bool result = note < c_midibyte_data_max;
     if (result)
@@ -207,12 +202,7 @@ analyze_note
  */
 
 bool
-analyze_notes
-(
-    const eventlist & evlist,
-    keys & outkey,
-    scales & outscale
-)
+analyze_notes (const eventlist & evlist, keys & outkey, scales & outscale)
 {
     bool result = evlist.count() > 0;
     if (result)

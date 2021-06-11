@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -74,8 +74,7 @@ namespace seq66
  *      the qsmainwnd user-interface.
  */
 
-qseqeditex::qseqeditex (performer & p, int seqid, qsmainwnd * parent)
- :
+qseqeditex::qseqeditex (performer & p, int seqid, qsmainwnd * parent) :
     QWidget             (nullptr),
     ui                  (new Ui::qseqeditex),
     m_performer         (p),
@@ -105,8 +104,8 @@ qseqeditex::~qseqeditex()
 }
 
 /**
- *  Tells the parent window to remove this container frame when the user closes
- *  it.
+ *  Tells the parent window to remove this container frame when the user
+ *  closes it.
  */
 
 void

@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -27,11 +27,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-11
- * \updates       2020-12-07
+ * \updates       2021-06-09
  * \license       GNU GPLv2 or above
  *
- *  We want to be able to survey the existing screen-sets and sequences, and be
- *  able to pick them via buttons and keystrokes rather then using the
+ *  We want to be able to survey the existing screen-sets and sequences, and
+ *  be able to pick them via buttons and keystrokes rather then using the
  *  set-spinner in the live frame.
  *
  *  Also, we want to get a quick idea of what screen-sets and sequences are
@@ -42,7 +42,7 @@
 
 #include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */
 #include "ctrl/opcontainer.hpp"         /* class seq66::opcontainer         */
-#include "play/performer.hpp"           /* seq66::performer class           */
+#include "play/performer.hpp"           /* class seq66::performer           */
 
 /**
  *  Forward references.
@@ -217,7 +217,9 @@ private:
      *  Access to all the screenset buttons.
      */
 
-    QPushButton * m_set_buttons [SEQ66_DEFAULT_SET_ROWS][SEQ66_DEFAULT_SET_COLUMNS];
+    QPushButton * m_set_buttons
+        [screenset::c_default_rows]
+            [screenset::c_default_columns];
 
     /**
      *  Indicates the currently-selected set number.

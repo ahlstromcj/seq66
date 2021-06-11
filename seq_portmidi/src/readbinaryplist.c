@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66, adapted from the PortMIDI project.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -34,26 +34,26 @@
  *  Used only for the Mac OSX implementation.
  *
  *  Note that this code is intended to read preference files and has an upper
- *  bound on file size (currently 100MB) and assumes in some places that 32 bit
- *  offsets are sufficient.
+ *  bound on file size (currently 100MB) and assumes in some places that 32
+ *  bit offsets are sufficient.
  *
  *  Here are his comments:
  *
  *  Reader for binary property list files (version 00).
  *
  *  This has been found to work on all 566 binary plists in my
- *  ~/Library/Preferences/ and /Library/Preferences/ directories. This probably
- *  does not provide full test coverage. It has also been found to provide
- *  different data to Apple's implementation when presented with a key-value
- *  archive. This is because Apple's implementation produces undocumented
- *  CFKeyArchiverUID objects. My implementation produces dictionaries instead,
- *  matching the in-file representation used in XML and OpenStep plists. See
- *  extract_uid().
+ *  ~/Library/Preferences/ and /Library/Preferences/ directories. This
+ *  probably does not provide full test coverage. It has also been found to
+ *  provide different data to Apple's implementation when presented with a
+ *  key-value archive. This is because Apple's implementation produces
+ *  undocumented CFKeyArchiverUID objects. My implementation produces
+ *  dictionaries instead, matching the in-file representation used in XML and
+ *  OpenStep plists. See extract_uid().
  *
  *  Full disclosure: in implementing this software, I read one comment and one
- *  struct defintion in CFLite, Apple's implementation, which is under the APSL
- *  license. I also deduced the information about CFKeyArchiverUID from that
- *  code.  However, none of the implementation was copied.
+ *  struct defintion in CFLite, Apple's implementation, which is under the
+ *  APSL license. I also deduced the information about CFKeyArchiverUID from
+ *  that code.  However, none of the implementation was copied.
  *
  *  Copyright (C) 2007 Jens Ayton
  *
@@ -69,8 +69,8 @@
  *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  *  DEALINGS IN THE SOFTWARE.
@@ -84,9 +84,9 @@
  *  allocate memory from blocks of 1024 bytes and keep the blocks in a list
  *  associated with but private to this module. So the user should access this
  *  module by calling: bplist_read_file() or bplist_read_user_pref() or
- *  bplist_read_system_pref() which returns a value. When you are done with the
- *  value, call bplist_free_data().  This will of course free the value_ptr
- *  returned by bplist_read_*().
+ *  bplist_read_system_pref() which returns a value. When you are done with
+ *  the value, call bplist_free_data().  This will of course free the
+ *  value_ptr returned by bplist_read_*().
  *
  *  To deal with memory exhaustion (what happens when malloc returns NULL?),
  *  use setjmp/longjmp -- a single setjmp protects the whole parser, and
@@ -141,7 +141,6 @@
 #else
 #define bplist_log_verbose(...)
 #endif
-
 
 /********* MEMORY MANAGEMENT ********/
 

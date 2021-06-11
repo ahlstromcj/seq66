@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-05-26
+ * \updates       2021-06-09
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -50,8 +50,7 @@
 
 namespace seq66
 {
-
-class playset;
+    class playset;
 
 /**
  *  Holds the various statuses, including the pointer, for a single sequence
@@ -94,6 +93,53 @@ public:
      */
 
     using sethandler = std::function<bool (screenset &, screenset::number)>;
+
+
+    /**
+     *  Default number of rows in the main-window's grid.  This value applies
+     *  to the layout of the pattern and, by default, mute-group keystrokes,
+     *  as well as the virtual layout of sets into rows and columns.
+     */
+
+    static const int c_default_rows    =  4;
+
+    /**
+     *  Minimum number of rows in the main-window's grid.  This will remain
+     *  the same as the default number of rows; we will not reduce the number
+     *  of sequences per set, at least at this time.
+     */
+
+    static const int c_minimum_rows    =  4;
+
+    /**
+     *  Maximum number of rows in the main-window's grid.  With the default
+     *  number of columns, this will double the number of sequences per set
+     *  from 32 to 64, hence the name "seq66".
+     */
+
+    static const int c_maximum_rows    = 12;    /* that is, 4 * 3 */
+
+    /**
+     *  Default number of columns in the main-window's grid.
+     */
+
+    static const int c_default_columns =  8;
+
+    /**
+     *  Minimum number of columns in the main-window's grid.  Currently the
+     *  same as the default number.  We currently cannot support more sets
+     *  than 32, which would happen if we let rows or columns go below the
+     *  default 4 x 8 settings.
+     */
+
+    static const int c_minimum_columns =  8;
+
+    /**
+     *  Maximum number of columns in the main-window's grid.  Currently the
+     *  same as the default number.
+     */
+
+    static const int c_maximum_columns =  8;
 
 private:
 
@@ -191,8 +237,8 @@ public:
     screenset
     (
         number setnum   = sm_number_none,
-        int rows        = SEQ66_DEFAULT_SET_ROWS,
-        int columns     = SEQ66_DEFAULT_SET_COLUMNS
+        int rows        = c_default_rows,
+        int columns     = c_default_columns
     );
 
     /**

@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2021-01-22
+# \update      2021-06-10
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -120,8 +120,7 @@ HEADERS += include/app_limits.h \
  include/util/palette.hpp \
  include/util/recmutex.hpp \
  include/util/rect.hpp \
- include/util/strfunctions.hpp \
- include/util/victor.hpp
+ include/util/strfunctions.hpp
 
 SOURCES += src/seq66_features.cpp \
  src/cfg/basesettings.cpp \

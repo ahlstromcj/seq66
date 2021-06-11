@@ -1,3 +1,21 @@
+/*
+ *  This file is part of seq66.
+ *
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
+ *
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 /**
  * \file          midi_info.cpp
  *
@@ -6,8 +24,8 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-06
- * \updates       2020-08-04
- * \license       See the rtexmidi.lic file.  Too big.
+ * \updates       2021-06-10
+ * \license       See above.
  *
  *  This class is meant to collect a whole bunch of system MIDI information
  *  about client/buss number, port numbers, and port names, and hold it
@@ -249,7 +267,7 @@ midi_info::port_list () const
     std::ostringstream os;
     midi_info * nc_this = const_cast<midi_info *>(this);
 
-    nc_this->midi_mode(SEQ66_MIDI_INPUT_PORT);
+    nc_this->midi_mode(midibase::c_input_port);
     os << "Input ports (" << inportcount << "):" << std::endl;
     for (int i = 0; i < inportcount; ++i)
     {
@@ -271,7 +289,7 @@ midi_info::port_list () const
         os << std::endl;
     }
 
-    nc_this->midi_mode(SEQ66_MIDI_OUTPUT_PORT);
+    nc_this->midi_mode(midibase::c_output_port);
     os << "Output ports (" << outportcount << "):" << std::endl;
     for (int o = 0; o < outportcount; ++o)
     {

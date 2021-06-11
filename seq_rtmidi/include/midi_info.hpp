@@ -1,21 +1,39 @@
 #if ! defined SEQ66_MIDI_INFO_HPP
 #define SEQ66_MIDI_INFO_HPP
 
+/*
+ *  This file is part of seq66.
+ *
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
+ *
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 /**
  * \file          midi_info.hpp
  *
- *      A class for holding the current status of the MIDI system on the host.
+ *  A class for holding the current status of the MIDI system on the host.
  *
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-12-05
- * \updates       2020-08-04
- * \license       See the rtexmidi.lic file.  Too big for a header file.
+ * \updates       2021-06-10
+ * \license       See above.
  *
- *      We need to have a way to get all of the API information from each
- *      framework, without supporting the full API.  The Seq66
- *      masteridibus and midibus classes require certain information to be
- *      known when they are created:
+ *  We need to have a way to get all of the API information from each
+ *  framework, without supporting the full API.  The Seq66 masteridibus and
+ *  midibus classes require certain information to be known when they are
+ *  created:
  *
  *      -   Port counts.  The number of input ports and output ports needs to
  *          be known so that we can iterate properly over them to create
@@ -26,14 +44,14 @@
  *      -   Client information.  We want to assemble client names or numbers
  *          just once.
  *
- *      Note that, while the other midi_api-based classes access port via the
- *      port numbers assigned by the MIDI subsystem, midi_info-based classes
- *      use the concept of an "index", which ranges from 0 to one less than
- *      the number of input or output ports.  These values are indices into a
- *      vector of port_info structures, and are easily looked up when
- *      mastermidibus creates a midibus object.
+ *  Note that, while the other midi_api-based classes access port via the port
+ *  numbers assigned by the MIDI subsystem, midi_info-based classes use the
+ *  concept of an "index", which ranges from 0 to one less than the number of
+ *  input or output ports.  These values are indices into a vector of
+ *  port_info structures, and are easily looked up when mastermidibus creates
+ *  a midibus object.
  *
- *      An alternate name for this class could be "midi_master".  :-)
+ *  An alternate name for this class could be "midi_master".  :-)
  */
 
 #include "app_limits.h"                 /* SEQ66_DEFAULT_PPQN etc.  */
@@ -101,9 +119,9 @@ public:
         const std::string & clientname,     // buss name
         int portnumber,
         const std::string & portname,
-        bool makevirtual,                   // SEQ66_MIDI_VIRTUAL_PORT
-        bool makesystem,                    // SEQ66_MIDI_SYSTEM_PORT
-        bool makeinput,                     // SEQ66_MIDI_INPUT_PORT
+        bool makevirtual,                   // midibase::c_virtual_port
+        bool makesystem,                    // midibase::c_system_port
+        bool makeinput,                     // midibase::c_input_port
         int queuenumber = bad_id()
     );
     void add (const midibus * m);
@@ -163,7 +181,7 @@ public:
         if (index < get_port_count())
             return m_port_container[index].m_is_input;
         else
-            return SEQ66_MIDI_OUTPUT_PORT;          /* i.e. false */
+            return midibase::c_output_port;          /* i.e. false */
     }
 
     bool get_virtual (int index) const
@@ -171,7 +189,7 @@ public:
         if (index < get_port_count())
             return m_port_container[index].m_is_virtual;
         else
-            return SEQ66_MIDI_NORMAL_PORT;          /* i.e. false */
+            return midibase::c_normal_port;          /* i.e. false */
     }
 
     bool get_system (int index) const
@@ -528,7 +546,7 @@ private:
      *      Used for retrieving values from the input or output containers.
      *      The caller must insure the proper container by calling the
      *      midi_mode() function with the value of true
-     *      (SEQ66_MIDI_INPUT_PORT) or false (SEQ66_MIDI_OUTPUT_PORT) first.
+     *      (midibase::c_input_port) or false (midibase::c_output_port) first.
      *      Ugly stuff.  I hate it.
      */
 

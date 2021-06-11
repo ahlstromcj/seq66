@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -31,11 +31,11 @@
  *  change drawing of the lines and pixmaps, opening up the way for night
  *  views and color schemes that match the desktop theme.
  *
- *  There are some predefined QColor objects: white, black, red, darkRed, green,
- *  darkGreen, blue, darkBlue, cyan, darkCyan, magenta, darkMagenta, yellow,
- *  darkYellow, gray, darkGray, lightGray, color0 and color1, accessible as
- *  members of the Qt namespace (ie. Qt::red).  Many of these colors can now be
- *  modified from a 'palette' file.
+ *  There are some predefined QColor objects: white, black, red, darkRed,
+ *  green, darkGreen, blue, darkBlue, cyan, darkCyan, magenta, darkMagenta,
+ *  yellow, darkYellow, gray, darkGray, lightGray, color0 and color1,
+ *  accessible as members of the Qt namespace (ie. Qt::red).  Many of these
+ *  colors can now be modified from a 'palette' file.
  *
  *  These uses are made of each color:
  *
@@ -76,7 +76,6 @@
 #include "cfg/settings.hpp"             /* seq66::rc() or seq66::usr()      */
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */
 #include "util/basic_macros.hpp"        /* seq66::file_error() function     */
-#include "util/palette.hpp"             /* enum class ProgressColors        */
 #include "util/strfunctions.hpp"        /* seq66 string functions           */
 
 /*
@@ -89,8 +88,8 @@ namespace seq66
 /**
  *  Provide access to the internal, basic color palette.  We use a static
  *  function to access this item (plus a couple of things we don't need).
- *  Note that we have to associate a file-name later, if any.  A little clumsy;
- *  but we don't want to move this into a non-Qt-GUI module.
+ *  Note that we have to associate a file-name later, if any.  A little
+ *  clumsy; but we don't want to move this into a non-Qt-GUI module.
  */
 
 gui_palette_qt5 &

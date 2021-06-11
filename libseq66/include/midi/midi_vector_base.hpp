@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -35,48 +35,10 @@
  *  MIDI data, which can then be dumped to a MIDI file.
  */
 
-#include <cstddef>                      /* std::size_t type             */
-#include <string>                       /* std::string class            */
+#include <string>                       /* std::string class                */
 
-#include "app_limits.h"                 /* SEQ66_NULL_SEQUENCE          */
-#include "midi/midibytes.hpp"           /* seq66::midibyte              */
-
-/**
- *  The number of MIDI notes in what?  This value is used in the sequence
- *  module.  It looks like it is the maximum number of notes that
- *  seq24/seq66 can have playing at one time.  In other words,
- *  "only" 256 simultaneously-playing notes can be managed.
- *  Internal global.  Will hide later.
- */
-
-const int c_midi_notes = SEQ66_PLAYING_NOTES_MAX;
-
-/**
- *  This macro is used for detecting SeqSpec data that Seq66 does not
- *  handle.  If this word is found, then we simply extract the expected number
- *  of characters specified by that construct, and skip them when parsing a
- *  MIDI file.
- */
-
-#define SEQ66_PROPTAG_HIGHWORD          0x24240000
-
-/**
- *  An easier, shorter test for the SEQ66_PROPTAG_HIGHWORD part of a long
- *  value, that clients can use.
- */
-
-#define SEQ66_IS_PROPTAG(p) \
-    (((p) & SEQ66_PROPTAG_HIGHWORD) == SEQ66_PROPTAG_HIGHWORD)
-
-/**
- *  Defines the size of the time-signature and tempo information.  The sizes of
- *  these meta events consists of the delta time of 0 (1 byte), the event and
- *  size bytes (3 bytes), and the data (4 bytes for time-signature and 3 bytes
- *  for the tempo.  So, 8 bytes for the time-signature and 7 bytes for the
- *  tempo.
- */
-
-#define SEQ66_TIME_TEMPO_SIZE           15
+#include "app_limits.h"                 /* SEQ66_NULL_SEQUENCE              */
+#include "midi/midibytes.hpp"           /* seq66::midibyte                  */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

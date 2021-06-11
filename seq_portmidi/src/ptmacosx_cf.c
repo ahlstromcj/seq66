@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66, adapted from the PortMIDI project.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -50,12 +50,12 @@ static CFRunLoopRef timerRunLoop;
 typedef struct
 {
     int resolution;
-    PtCallback *callback;
-    void *userData;
+    PtCallback * callback;
+    void * userData;
 } PtThreadParams;
 
 
-void Pt_CFTimerCallback(CFRunLoopTimerRef timer, void *info)
+void Pt_CFTimerCallback(CFRunLoopTimerRef timer, void * info)
 {
     PtThreadParams *params = (PtThreadParams*)info;
     (*params->callback)(Pt_Time(), params->userData);
@@ -67,9 +67,9 @@ static void* Pt_Thread(void *p)
     CFRunLoopTimerContext timerContext;
     CFRunLoopTimerRef timer;
     PtThreadParams *params = (PtThreadParams*)p;
-    //CFTimeInterval timeout;
 
     /* raise the thread's priority */
+
     kern_return_t error;
     thread_extended_policy_data_t extendedPolicy;
     thread_precedence_policy_data_t precedencePolicy;
@@ -93,6 +93,7 @@ static void* Pt_Thread(void *p)
     }
 
     /* set up the timer context */
+
     timerContext.version = 0;
     timerContext.info = params;
     timerContext.retain = NULL;
@@ -100,6 +101,7 @@ static void* Pt_Thread(void *p)
     timerContext.copyDescription = NULL;
 
     /* create a new timer */
+
     timerInterval = (double)params->resolution / 1000.0;
     timer = CFRunLoopTimerCreate(NULL, startTime + timerInterval, timerInterval,
                                  0, 0, Pt_CFTimerCallback, &timerContext);
@@ -108,6 +110,7 @@ static void* Pt_Thread(void *p)
     CFRunLoopAddTimer(timerRunLoop, timer, CFSTR("PtTimeMode"));
 
     /* run until we're told to stop by Pt_Stop() */
+
     CFRunLoopRunInMode(CFSTR("PtTimeMode"), LONG_TIME, false);
 
     CFRunLoopRemoveTimer(CFRunLoopGetCurrent(), timer, CFSTR("PtTimeMode"));
@@ -124,24 +127,21 @@ PtError Pt_Start(int resolution, PtCallback *callback, void *userData)
 
     printf("Pt_Start() called\n");
 
-    // /* make sure we're not already playing */
+    /* make sure we're not already playing */
+
     if (time_started_flag) return ptAlreadyStarted;
     startTime = CFAbsoluteTimeGetCurrent();
 
     if (callback)
     {
-
         params->resolution = resolution;
         params->callback = callback;
         params->userData = userData;
-
         pthread_create(&pthread_id, NULL, Pt_Thread, params);
     }
-
     time_started_flag = TRUE;
     return ptNoError;
 }
-
 
 PtError Pt_Stop()
 {
@@ -152,19 +152,16 @@ PtError Pt_Stop()
     return ptNoError;
 }
 
-
 int Pt_Started()
 {
     return time_started_flag;
 }
-
 
 PtTimestamp Pt_Time()
 {
     CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
     return (PtTimestamp)((now - startTime) * 1000.0);
 }
-
 
 void Pt_Sleep(int32_t duration)
 {

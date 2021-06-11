@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2021-05-14
+# \update      2021-06-10
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -162,8 +162,7 @@ nobase_include_HEADERS = \
  util/palette.hpp \
  util/recmutex.hpp \
  util/rect.hpp \
- util/strfunctions.hpp \
- util/victor.hpp
+ util/strfunctions.hpp
 
 #******************************************************************************
 # uninstall-hook

@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -30,7 +30,7 @@
  *
  *  The first part of this file defines a couple of global structure
  *  instances, followed by the global variables that these structures
- *  completely replace.
+ *  completely replace.  The second part includes some convenience functions.
  */
 
 #include "cfg/settings.hpp"
@@ -46,14 +46,12 @@ namespace seq66
  *  The combo default constructor.
  */
 
-combo::combo () :
-    m_list_items ()
+combo::combo () : m_list_items ()
 {
     m_list_items.push_back("");
 }
 
-combo::combo (const container & slist) :
-    m_list_items ()
+combo::combo (const container & slist) : m_list_items ()
 {
     m_list_items.push_back("");
     for (const auto & s : slist)

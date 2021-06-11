@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -33,14 +33,14 @@
  *  seq66::seq class holds state data that is an adjunct to the data already
  *  stored in a sequence.
  *
- *  The state-saving buffers are incorporated into a seq object, which,
- *  in a way, simply adds some more state variables to the seq66::sequence class.
+ *  The state-saving buffers are incorporated into a seq object, which, in a
+ *  way, simply adds some more state variables to the seq66::sequence class.
  *  These state-saving buffers were arrays of hardwired size.
  */
 
-#include <iomanip>                      /* std::setw manipulator            */
+#include <iomanip>                      /* std::setw() manipulator          */
 #include <iostream>                     /* std::cout                        */
-#include <sstream>                      /* std::stringstream                */
+#include <sstream>                      /* std::ostringstream               */
 
 #include "play/seq.hpp"                 /* seq66::seq class                 */
 

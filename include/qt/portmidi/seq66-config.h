@@ -1,6 +1,6 @@
-#ifdef SEQ66_PORTMIDI_SUPPORT
+#if defined SEQ66_PORTMIDI_SUPPORT
 
-#ifndef SEQ66_QT_MIDILIB_CONFIG
+#if ! defined SEQ66_QT_MIDILIB_CONFIG
 #define SEQ66_QT_MIDILIB_CONFIG
 
 #undef SEQ66_RTMIDI_SUPPORT
@@ -62,19 +62,19 @@
 #error Automake-generated include file seq66-config.h already included.
 #endif
 
-#ifndef SEQ66_VERSION_DATE_SHORT
+#if ! defined SEQ66_VERSION_DATE_SHORT
 #define SEQ66_VERSION_DATE_SHORT "2021-05-28"
 #endif
 
-#ifndef SEQ66_VERSION
+#if ! defined SEQ66_VERSION
 #define SEQ66_VERSION "0.94.1"
 #endif
 
-#ifndef SEQ66_GIT_VERSION
+#if ! defined SEQ66_GIT_VERSION
 #define SEQ66_GIT_VERSION SEQ66_VERSION
 #endif
 
-#ifndef SEQ66_PACKAGE_VERSION
+#if ! defined SEQ66_PACKAGE_VERSION
 #define SEQ66_PACKAGE_VERSION SEQ66_VERSION
 #endif
 
@@ -86,13 +86,13 @@
  *  It's almost enough to make you use Cmake.  :-D
  */
 
-#ifndef SEQ66_QMAKE_RULES
+#if ! defined SEQ66_QMAKE_RULES
 #define SEQ66_QMAKE_RULES
 #endif
 
 /* "Distro where build was done" */
 
-#ifndef SEQ66_APP_BUILD_OS
+#if ! defined SEQ66_APP_BUILD_OS
 #define SEQ66_APP_BUILD_OS "'Windows/Mac/qmake'"
 #endif
 
@@ -102,15 +102,15 @@
  * "qp" means "Qmake/Qt PortMidi-based".
  */
 
-#ifndef SEQ66_APP_ENGINE
+#if ! defined SEQ66_APP_ENGINE
 #define SEQ66_APP_ENGINE "portmidi"
 #endif
 
-#ifndef SEQ66_APP_NAME
+#if ! defined SEQ66_APP_NAME
 #define SEQ66_APP_NAME "qpseq66"
 #endif
 
-#ifndef SEQ66_APP_TYPE
+#if ! defined SEQ66_APP_TYPE
 #define SEQ66_APP_TYPE "qt5"
 #endif
 
@@ -122,7 +122,7 @@
  * configuration directory in the "home" area of the user.
  */
 
-#ifndef SEQ66_CLIENT_NAME
+#if ! defined SEQ66_CLIENT_NAME
 #define SEQ66_CLIENT_NAME "seq66"
 #endif
 
@@ -137,7 +137,7 @@
  * stands for Qt, and the "p" stands for "portmidi".
  */
 
-#ifndef SEQ66_CONFIG_NAME
+#if ! defined SEQ66_CONFIG_NAME
 #define SEQ66_CONFIG_NAME "qpseq66"
 #endif
 
@@ -152,132 +152,132 @@
  * Define DBGFLAGS=-ggdb -O0 -DDEBUG -fno-inline if debug support is wanted.
  */
 
-#ifndef SEQ66_DBGFLAGS
+#if ! defined SEQ66_DBGFLAGS
 #define SEQ66_DBGFLAGS -O3 -DDEBUG -D_DEBUG -fno-inline
 #endif
 
 /* Define to 1 if you have the <ctype.h> header file. */
-#ifndef SEQ66_HAVE_CTYPE_H
+#if ! defined SEQ66_HAVE_CTYPE_H
 #define SEQ66_HAVE_CTYPE_H 1
 #endif
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
-#ifndef SEQ66_HAVE_DLFCN_H
+#if ! defined SEQ66_HAVE_DLFCN_H
 #define SEQ66_HAVE_DLFCN_H 1
 #endif
 
 /* Define to 1 if you have the <errno.h> header file. */
-#ifndef SEQ66_HAVE_ERRNO_H
+#if ! defined SEQ66_HAVE_ERRNO_H
 #define SEQ66_HAVE_ERRNO_H 1
 #endif
 
 /* Define to 1 if you have the <fcntl.h> header file. */
-#ifndef SEQ66_HAVE_FCNTL_H
+#if ! defined SEQ66_HAVE_FCNTL_H
 #define SEQ66_HAVE_FCNTL_H 1
 #endif
 
 /* Define to 1 if you have the <getopt.h> header file. */
-#ifndef SEQ66_HAVE_GETOPT_H
+#if ! defined SEQ66_HAVE_GETOPT_H
 #define SEQ66_HAVE_GETOPT_H 1
 #endif
 
 /* Define to 1 if you have the <inttypes.h> header file. */
-#ifndef SEQ66_HAVE_INTTYPES_H
+#if ! defined SEQ66_HAVE_INTTYPES_H
 #define SEQ66_HAVE_INTTYPES_H 1
 #endif
 
 /* Define to 1 if you have the `asound' library (-lasound). */
-#ifndef SEQ66_HAVE_LIBASOUND
+#if ! defined SEQ66_HAVE_LIBASOUND
 #define SEQ66_HAVE_LIBASOUND 1
 #endif
 
 /* Define to 1 if you have the <limits.h> header file. */
-#ifndef SEQ66_HAVE_LIMITS_H
+#if ! defined SEQ66_HAVE_LIMITS_H
 #define SEQ66_HAVE_LIMITS_H 1
 #endif
 
 /* Define to 1 if you have the <memory.h> header file. */
-#ifndef SEQ66_HAVE_MEMORY_H
+#if ! defined SEQ66_HAVE_MEMORY_H
 #define SEQ66_HAVE_MEMORY_H 1
 #endif
 
 /* Define if you have POSIX threads libraries and header files. */
-#ifndef SEQ66_HAVE_PTHREAD
+#if ! defined SEQ66_HAVE_PTHREAD
 #define SEQ66_HAVE_PTHREAD 1
 #endif
 
 /* Have PTHREAD_PRIO_INHERIT. */
-#ifndef SEQ66_HAVE_PTHREAD_PRIO_INHERIT
+#if ! defined SEQ66_HAVE_PTHREAD_PRIO_INHERIT
 #define SEQ66_HAVE_PTHREAD_PRIO_INHERIT 1
 #endif
 
 /* Define to 1 if you have the <stdarg.h> header file. */
-#ifndef SEQ66_HAVE_STDARG_H
+#if ! defined SEQ66_HAVE_STDARG_H
 #define SEQ66_HAVE_STDARG_H 1
 #endif
 
 /* Define to 1 if you have the <stddef.h> header file. */
-#ifndef SEQ66_HAVE_STDDEF_H
+#if ! defined SEQ66_HAVE_STDDEF_H
 #define SEQ66_HAVE_STDDEF_H 1
 #endif
 
 /* Define to 1 if you have the <stdint.h> header file. */
-#ifndef SEQ66_HAVE_STDINT_H
+#if ! defined SEQ66_HAVE_STDINT_H
 #define SEQ66_HAVE_STDINT_H 1
 #endif
 
 /* Define to 1 if you have the <stdio.h> header file. */
-#ifndef SEQ66_HAVE_STDIO_H
+#if ! defined SEQ66_HAVE_STDIO_H
 #define SEQ66_HAVE_STDIO_H 1
 #endif
 
 /* Define to 1 if you have the <stdlib.h> header file. */
-#ifndef SEQ66_HAVE_STDLIB_H
+#if ! defined SEQ66_HAVE_STDLIB_H
 #define SEQ66_HAVE_STDLIB_H 1
 #endif
 
 /* Define to 1 if you have the <strings.h> header file. */
-#ifndef SEQ66_HAVE_STRINGS_H
+#if ! defined SEQ66_HAVE_STRINGS_H
 #define SEQ66_HAVE_STRINGS_H 1
 #endif
 
 /* Define to 1 if you have the <string.h> header file. */
-#ifndef SEQ66_HAVE_STRING_H
+#if ! defined SEQ66_HAVE_STRING_H
 #define SEQ66_HAVE_STRING_H 1
 #endif
 
 /* Define to 1 if you have the <syslog.h> header file. */
-#ifndef SEQ66_HAVE_SYSLOG_H
+#if ! defined SEQ66_HAVE_SYSLOG_H
 #define SEQ66_HAVE_SYSLOG_H 1
 #endif
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
-#ifndef SEQ66_HAVE_SYS_STAT_H
+#if ! defined SEQ66_HAVE_SYS_STAT_H
 #define SEQ66_HAVE_SYS_STAT_H 1
 #endif
 
 /* Define to 1 if you have the <sys/sysctl.h> header file. */
-#ifndef SEQ66_HAVE_SYS_SYSCTL_H
+#if ! defined SEQ66_HAVE_SYS_SYSCTL_H
 #define SEQ66_HAVE_SYS_SYSCTL_H 1
 #endif
 
 /* Define to 1 if you have the <sys/time.h> header file. */
-#ifndef SEQ66_HAVE_SYS_TIME_H
+#if ! defined SEQ66_HAVE_SYS_TIME_H
 #define SEQ66_HAVE_SYS_TIME_H 1
 #endif
 
 /* Define to 1 if you have the <sys/types.h> header file. */
-#ifndef SEQ66_HAVE_SYS_TYPES_H
+#if ! defined SEQ66_HAVE_SYS_TYPES_H
 #define SEQ66_HAVE_SYS_TYPES_H 1
 #endif
 
 /* Define to 1 if you have the <time.h> header file. */
-#ifndef SEQ66_HAVE_TIME_H
+#if ! defined SEQ66_HAVE_TIME_H
 #define SEQ66_HAVE_TIME_H 1
 #endif
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#ifndef SEQ66_HAVE_UNISTD_H
+#if ! defined SEQ66_HAVE_UNISTD_H
 #define SEQ66_HAVE_UNISTD_H 1
 #endif
 
@@ -292,7 +292,7 @@
 #undef SEQ66_NSM_SUPPORT
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
-#ifndef SEQ66_LT_OBJDIR
+#if ! defined SEQ66_LT_OBJDIR
 #define SEQ66_LT_OBJDIR ".libs/"
 #endif
 
@@ -303,32 +303,32 @@
 #undef SEQ66_MULTI_MAINWID
 
 /* Name of package */
-#ifndef SEQ66_PACKAGE
+#if ! defined SEQ66_PACKAGE
 #define SEQ66_PACKAGE "seq66"
 #endif
 
 /* Define to the address where bug reports for this package should be sent. */
-#ifndef SEQ66_PACKAGE_BUGREPORT
+#if ! defined SEQ66_PACKAGE_BUGREPORT
 #define SEQ66_PACKAGE_BUGREPORT "ahlstromcj@gmail.com"
 #endif
 
 /* Define to the full name of this package. */
-#ifndef SEQ66_PACKAGE_NAME
+#if ! defined SEQ66_PACKAGE_NAME
 #define SEQ66_PACKAGE_NAME "Seq66"
 #endif
 
 /* Define to the full name and version of this package. */
-#ifndef SEQ66_PACKAGE_STRING
+#if ! defined SEQ66_PACKAGE_STRING
 #define SEQ66_PACKAGE_STRING "Seq66 0.94.1"
 #endif
 
 /* Define to the one symbol short name of this package. */
-#ifndef SEQ66_PACKAGE_TARNAME
+#if ! defined SEQ66_PACKAGE_TARNAME
 #define SEQ66_PACKAGE_TARNAME "seq66"
 #endif
 
 /* Define to the home page for this package. */
-#ifndef SEQ66_PACKAGE_URL
+#if ! defined SEQ66_PACKAGE_URL
 #define SEQ66_PACKAGE_URL ""
 #endif
 
@@ -336,7 +336,7 @@
  * Define PROFLAGS=-pg (gprof) or -p (prof) if profile support is wanted.
  */
 
-#ifndef SEQ66_PROFLAGS
+#if ! defined SEQ66_PROFLAGS
 #define SEQ66_PROFLAGS
 #endif
 
@@ -346,15 +346,15 @@
  * any module, but....
  */
 
-#ifndef SEQ66_QTMIDI_SUPPORT
+#if ! defined SEQ66_QTMIDI_SUPPORT
 #define SEQ66_QTMIDI_SUPPORT 1
 #endif
 
-#ifndef SEQ66_STDC_HEADERS
+#if ! defined SEQ66_STDC_HEADERS
 #define SEQ66_STDC_HEADERS 1
 #endif
 
-#ifndef SEQ66__GNU_SOURCE
+#if ! defined SEQ66__GNU_SOURCE
 #define SEQ66__GNU_SOURCE 1
 #endif
 

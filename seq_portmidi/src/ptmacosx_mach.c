@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66, adapted from the PortMIDI project.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -65,11 +65,9 @@ static void *Pt_CallbackProc(void *p)
 {
     pt_callback_parameters *parameters = (pt_callback_parameters *) p;
     int mytime = 1;
-
     kern_return_t error;
     thread_extended_policy_data_t extendedPolicy;
     thread_precedence_policy_data_t precedencePolicy;
-
     extendedPolicy.timeshare = 0;
     error = thread_policy_set(mach_thread_self(), THREAD_EXTENDED_POLICY,
                               (thread_policy_t)&extendedPolicy,
@@ -88,12 +86,12 @@ static void *Pt_CallbackProc(void *p)
         mach_error("Couldn't set thread precedence policy", error);
     }
 
-
     /* to kill a process, just increment the pt_callback_proc_id */
-    /* printf("pt_callback_proc_id %d, id %d\n", pt_callback_proc_id, parameters->id); */
+
     while (pt_callback_proc_id == parameters->id)
     {
         /* wait for a multiple of resolution ms */
+
         UInt64 wait_time;
         int delay = mytime++ * parameters->resolution - Pt_Time();
         PtTimestamp timestamp;
@@ -108,12 +106,10 @@ static void *Pt_CallbackProc(void *p)
     return NULL;
 }
 
-
 PtError Pt_Start(int resolution, PtCallback *callback, void *userData)
 {
     if (time_started_flag) return ptAlreadyStarted;
     start_time = AudioGetCurrentHostTime();
-
     if (callback)
     {
         int res;
@@ -128,11 +124,9 @@ PtError Pt_Start(int resolution, PtCallback *callback, void *userData)
         res = pthread_create(&pt_thread_pid, NULL, Pt_CallbackProc, parms);
         if (res != 0) return ptHostError;
     }
-
     time_started_flag = TRUE;
     return ptNoError;
 }
-
 
 PtError Pt_Stop()
 {
@@ -143,12 +137,10 @@ PtError Pt_Stop()
     return ptNoError;
 }
 
-
 int Pt_Started()
 {
     return time_started_flag;
 }
-
 
 PtTimestamp Pt_Time()
 {
@@ -157,7 +149,6 @@ PtTimestamp Pt_Time()
     nsec_time = AudioConvertHostTimeToNanos(clock_time);
     return (PtTimestamp)(nsec_time / NSEC_PER_MSEC);
 }
-
 
 void Pt_Sleep(int32_t duration)
 {

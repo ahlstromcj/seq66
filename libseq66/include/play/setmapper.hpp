@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -31,11 +31,11 @@
  * \updates       2021-05-26
  * \license       GNU GPLv2 or above
  *
- *  This module also creates a small structure for managing sequence variables,
- *  to save on a bunch of arrays.  It manages screen-sets and mute-groups.
- *  This class is meant to support the main mute groups, the mute groups from
- *  the 'mutes' file, the saved 'armed' statuses, and the current states of the
- *  tracks or sets.
+ *  This module also creates a small structure for managing sequence
+ *  variables, to save on a bunch of arrays.  It manages screen-sets and
+ *  mute-groups.  This class is meant to support the main mute groups, the
+ *  mute groups from the 'mutes' file, the saved 'armed' statuses, and the
+ *  current states of the tracks or sets.
  *
  *  In this class, access is either to a given set, the playing set, or to a
  *  sequence number that ranges from 0 up to the maximum number of sequences
@@ -189,8 +189,8 @@ public:
     (
         setmaster & mc,
         mutegroups & mgs,
-        int rows        = SEQ66_DEFAULT_SET_ROWS,
-        int columns     = SEQ66_DEFAULT_SET_COLUMNS
+        int rows        = screenset::c_default_rows,
+        int columns     = screenset::c_default_columns
     );
 
     /*

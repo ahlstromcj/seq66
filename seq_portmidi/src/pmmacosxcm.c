@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66, adapted from the PortMIDI project.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -38,14 +38,14 @@
  * \note
  *      Since the input and output streams are represented by MIDIEndpointRef
  *      values and almost no other state, we store the MIDIEndpointRef on
- *      descriptors[midi->device_id].descriptor. The only other state we need is
- *      for errors: we need to know if there is an error and if so, what is the
- *      error text. We use a structure with two kinds of host error: "error" and
- *      "callback_error". That way, asynchronous callbacks do not interfere with
- *      other error information.
+ *      descriptors[midi->device_id].descriptor. The only other state we need
+ *      is for errors: we need to know if there is an error and if so, what is
+ *      the error text. We use a structure with two kinds of host error:
+ *      "error" and "callback_error". That way, asynchronous callbacks do not
+ *      interfere with other error information.
  *
- *      OS X does not seem to have an error-code-to-text function, so we will just
- *      use text messages instead of error codes.
+ *      OS X does not seem to have an error-code-to-text function, so we will
+ *      just use text messages instead of error codes.
  */
 
 #include <stdlib.h>

@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-08
+ * \updates       2021-06-11
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -51,7 +51,7 @@
 #include <cctype>                       /* std::isspace(), std::isdigit()   */
 
 #include "cfg/configfile.hpp"           /* seq66:: configfile class         */
-#include "cfg/settings.hpp"             /* seq66::rc() accessor             */
+#include "cfg/rcsettings.hpp"           /* seq66::rcsettings class          */
 #include "util/calculations.hpp"        /* seq66::current_date_time() etc.  */
 #include "util/strfunctions.hpp"        /* strncompare() for std::string    */
 
@@ -71,7 +71,7 @@ namespace seq66
  *  errors from all the configuration files can be displayed at once.
  */
 
-std::string configfile::sm_error_message = "";
+std::string configfile::sm_error_message;
 bool configfile::sm_is_error = false;
 
 /**
@@ -100,8 +100,8 @@ configfile::configfile (const std::string & name, rcsettings & rcs) :
 
 /**
  *  Returns a pre-trimmed line from the configuration file.  As part of this
- *  trimming, double quotes or single quotes at the beginning and end are also
- *  removed.  The check is not robust at this time.
+ *  trimming, double quotes (not single quotes) at the beginning and end are
+ *  also removed.  The check is not robust at this time.
  *
  * \return
  *      Returns a copy of line(), but trimmed of white space and, if present,
@@ -114,10 +114,10 @@ configfile::trimline () const
     std::string result = line();
     result = trim(result);
 
-    auto bpos = result.find_first_of("\"'");
+    auto bpos = result.find_first_of("\"");
     if (bpos != std::string::npos)
     {
-        auto epos = result.find_last_of("\"'");
+        auto epos = result.find_last_of("\"");
         int len;
         if (epos != std::string::npos)
             len = int(epos - bpos - 1);
@@ -311,22 +311,8 @@ configfile::next_data_line (std::ifstream & file, bool strip)
  *  <code>std::string s = next_variable(f, "[loop-control]", "name");</code>
  *  will return <code>s = "Funky"</code>.
  *
- *  The spaces around the '=' are optional.  This function is meant to
- *  better support an "INI" style of value specification.  The variable name
- *  should be obvious, whereas in the Seq24 implementation we had to append a
- *  comment to make it easier for the user to comprehend the configuration file.
- *
- *  Check-point 1:
- *
- *      See if there is any space after the variable name, but before the "="
- *      sign.  If so, the first space, not the "=" sign, terminates the variable
- *      name.
- *
- *  Check-point 2:
- *      Now get the first non-space after the "=" sign.  If there is a quote
- *      character ("=" or "'"), then see if there a match quote, and get
- *      everything inside the quotes.  Otherwise, grab the first token on the
- *      value (right) side.
+ *  See the extract_value() function for information on the parsing of the
+ *  line.
  *
  * \warning
  *      This function assumes that the next_data_line() function
@@ -335,8 +321,8 @@ configfile::next_data_line (std::ifstream & file, bool strip)
  *      Provides the file-stream that is being read.
  *
  * \param tag
- *      Provides the section tag (e.g. "[midi-control]") to be found before the
- *      variable name parameter can be processed.
+ *      Provides the section tag (e.g. "[midi-control]") to be found before
+ *      the variable name parameter can be processed.
  *
  * \param variablename
  *      Provides the variablename to be found in the specified tag section.
@@ -365,64 +351,109 @@ configfile::get_variable
     std::string result;
     for
     (
-        bool done = ! line_after(file, tag, position); ! done;
-        done = ! next_data_line(file)
+        bool done = ! line_after(file, tag, position);
+        ! done; done = ! next_data_line(file)
     )
     {
         if (! line().empty())                   /* any value in section?    */
         {
-            auto epos = line().find_first_of("=");
-            if (epos != std::string::npos)
+            std::string value = extract_variable(line(), variablename);
+            if (! is_questionable_string(value))
             {
-                /*
-                 *  Check-point 1
-                 */
+                result = value;
+                break;
+            }
+        }
+    }
+    return result;
+}
 
-                auto spos = line().find_first_of(" ");
-                if (spos > epos)
-                    spos = epos;
+/**
+ *  Parses a line of the form "name = value".  Now exposed for used outside of
+ *  the get_variable() function.  This function assumes that the line has been
+ *  found.
+ *
+ *  The spaces around the '=' are optional.  This function is meant to better
+ *  support an "INI" style of value specification.  The variable name should
+ *  be obvious, whereas in the Seq24 implementation we had to append a comment
+ *  to make it easier for the user to comprehend the configuration file.
+ *
+ *  Check-point 1:
+ *
+ *      See if there is any space after the variable name, but before the "="
+ *      sign.  If so, the first space, not the "=" sign, terminates the
+ *      variable name.
+ *
+ *  Check-point 2:
+ *
+ *      Now get the first non-space after the "=" sign.  If there is a
+ *      double-quote character ('"'), then see if there a match quote, and get
+ *      everything inside the quotes.  Otherwise, grab the first token on the
+ *      value (right) side.  Note that single-quotes are not treated as quote
+ *      characters.
+ *
+ * \param line
+ *      A line of the form "name = value".
+ *
+ * \param variablename
+ *      The "name" of the variable whose value is to be extracted.
+ *
+ * \return
+ *      If the extracted name matches the \a name parameter, then the value is
+ *      returned; it might be empty.  Otherwise, a question mark is returned.
+ */
 
-                std::string vname = line().substr(0, spos);
-                if (vname == variablename)
-                {
-                    /*
-                     *  Check-point 2
-                     */
+std::string
+configfile::extract_variable
+(
+    const std::string & line,
+    const std::string & variablename
+)
+{
+    std::string result = questionable_string();     /* a fancy name for "?" */
+    auto epos = line.find_first_of("=");
+    if (epos != std::string::npos)
+    {
+        /*
+         *  Check-point 1
+         */
 
-                    bool havequotes = false;
-                    char quotechar[2] = { 'x', 0 };
-                    auto qpos = line().find_first_of("'\"", epos + 1);
-                    auto qpos2 = std::string::npos;
-                    if (qpos != std::string::npos)
-                    {
-                        quotechar[0] = line()[qpos];
-                        qpos2 = line().find_first_of(quotechar, qpos + 1);
-                        if (qpos2 != std::string::npos)
-                            havequotes = true;
-                    }
-                    if (havequotes)
-                    {
-                        result = line().substr(qpos + 1, qpos2 - qpos - 1);
-                    }
-                    else
-                    {
-                        spos = line().find_first_not_of(" ", epos + 1);
-                        if (spos != std::string::npos)
-                        {
-                            epos = line().find_first_of(" ", spos);
-                            result = line().substr(spos, epos-spos);
-                            break;
-                        }
-                    }
-                }
-                else
-                    continue;
+        auto spos = line.find_first_of(" ");
+        if (spos > epos)
+            spos = epos;
+
+        std::string vname = line.substr(0, spos);
+        if (vname == variablename)
+        {
+            /*
+             *  Check-point 2
+             */
+
+            bool havequotes = false;
+            char quotechar[2] = { 'x', 0 };
+            auto qpos = line.find_first_of("\"", epos + 1);
+            auto qpos2 = std::string::npos;
+            if (qpos != std::string::npos)
+            {
+                quotechar[0] = line[qpos];
+                qpos2 = line.find_first_of(quotechar, qpos + 1);
+                if (qpos2 != std::string::npos)
+                    havequotes = true;
+            }
+            if (havequotes)
+            {
+                result = line.substr(qpos + 1, qpos2 - qpos - 1);
             }
             else
-                continue;
+            {
+                spos = line.find_first_not_of(" ", epos + 1);
+                if (spos != std::string::npos)
+                {
+                    epos = line.find_first_of(" ", spos);
+                    result = line.substr(spos, epos-spos);
+                }
+            }
         }
-        else
-            break;
     }
     return result;
 }
@@ -803,11 +834,15 @@ configfile::set_up_ifstream (std::ifstream & instream)
         }
         else
         {
-            int version = string_to_int(s);
-            if (version != rc_ref().ordinal_version())
-            {
-                warnprint("'rc' file version changed!");
-            }
+            /*
+             * This test is kind of iffy, so disabled for now.
+             *
+             *      int version = string_to_int(s);
+             *      if (version != rc_ref().ordinal_version())
+             *      {
+             *          warnprint("'rc' file version changed!");
+             *      }
+             */
         }
     }
     else

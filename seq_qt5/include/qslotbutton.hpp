@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -31,12 +31,11 @@
  * \updates       2021-04-29
  * \license       GNU GPLv2 or above
  *
- *  All this button can do is enable a new pattern to be created.
- *  It is impossible to recreate live-frame features like drag-and-drop
- *  patterns, using Qt slots for toggle or press actions.  The qslivegrid
- *  class disables the use of slots.  Instead, it calculates the button number
- *  based on the mouse pointer and handles the button operation on behalf of
- *  the button.
+ *  All this button can do is enable a new pattern to be created.  It is
+ *  impossible to recreate live-frame features like drag-and-drop patterns,
+ *  using Qt slots for toggle or press actions.  The qslivegrid class disables
+ *  the use of slots.  Instead, it calculates the button number based on the
+ *  mouse pointer and handles the button operation on behalf of the button.
  */
 
 #include <QPushButton>

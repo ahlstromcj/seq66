@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -47,14 +47,14 @@
  *          '*', '+', '-', and '.', are in the range of 0xff00 and up, and
  *          not in the range 0x2a to to 0x39.
  *
- *  For Qt 5 keystrokes, this level of distinguishing the characters from their
- *  keyboard keys is not done.  Qt 5 allows two ways to retrieve key events:
- *  QKeyEvent::key() and QKeyEvent::text().  For ASCII keys, these functions
- *  yield the same value, the ASCII value of the character/keystroke.  For
- *  special keys, however, QKeyEvent::key() returns number from 0x01000000 on
- *  up, and QKeyEvent::text() yields only 0x00.  Also, the key() function
- *  doesn't distinguish between upper and lower case keys, so the text()
- *  function must be used.
+ *  For Qt 5 keystrokes, this level of distinguishing the characters from
+ *  their keyboard keys is not done.  Qt 5 allows two ways to retrieve key
+ *  events: QKeyEvent::key() and QKeyEvent::text().  For ASCII keys, these
+ *  functions yield the same value, the ASCII value of the
+ *  character/keystroke.  For special keys, however, QKeyEvent::key() returns
+ *  number from 0x01000000 on up, and QKeyEvent::text() yields only 0x00.
+ *  Also, the key() function doesn't distinguish between upper and lower case
+ *  keys, so the text() function must be used.
  */
 
 #include <map>                          /* std::map                         */

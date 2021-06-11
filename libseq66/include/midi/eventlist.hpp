@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -39,8 +39,8 @@
  *  purposes, #if defined might be simplest, and we only want to pick the
  *  fastest one, ultimately.
  *
- *  It turns out the the std::multimap implementation is a little bit faster in
- *  release mode, and a lot faster in debug mode.  Why?  Probably because
+ *  It turns out the the std::multimap implementation is a little bit faster
+ *  in release mode, and a lot faster in debug mode.  Why?  Probably because
  *  the std::list implementation calls std::list::sort() a lot, and the
  *  std::multimap implementation is a lot faster at sorting.  But since the
  *  map iterator is slower, we stick with std::list.
@@ -49,7 +49,7 @@
  *
  * https://baptiste-wicht.com/posts/2012/12/cpp-benchmark-vector-list-deque.html
  *
- *  We will now use std::vector for the event list.
+ *  we will now use std::vector for the event list.
  */
 
 #include <algorithm>                    /* std::sort(), std::merge()    */

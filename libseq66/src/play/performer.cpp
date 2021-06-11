@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-06-08
+ * \updates       2021-06-11
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -293,7 +293,6 @@
 #include <algorithm>                    /* std::find() for std::vector      */
 #include <iostream>                     /* std::cout                        */
 #include <cmath>                        /* std::round()                     */
-#include <cstring>                      /* std::memset()                    */
 
 #include "cfg/cmdlineopts.hpp"          /* cmdlineopts::parse_mute_groups   */
 #include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile            */
@@ -302,7 +301,6 @@
 #include "cfg/settings.hpp"             /* seq66::rcsettings rc(), etc.     */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "midi/midifile.hpp"            /* seq66::read_midi_file()          */
-#include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/performer.hpp"           /* seq66::performer, this class     */
 #include "os/daemonize.hpp"             /* seq66::signal_for_exit()         */
@@ -2226,14 +2224,10 @@ performer::announce_exit (bool playstatesoff)
         }
         if (playstatesoff)
         {
-            announce_automation(false);                 /* annount_mutes()  */
+            announce_automation(false);
             for (int g = 0; g < mutegroups::Size(); ++g)
                 send_mutes_inactive(g);
         }
-        // send_onoff_play_states(midicontrolout::uiaction::stop);
-        // send_onoff_play_states(midicontrolout::uiaction::pause);
-        // send_onoff_play_states(midicontrolout::uiaction::play);
-        // send_onoff_play_states(midicontrolout::uiaction::panic);
     }
 }
 
@@ -2241,10 +2235,10 @@ performer::announce_exit (bool playstatesoff)
  *  Announces the initial and ending statues of the automation output display.
  *
  * \param activate
- *      If true, then we try to set the status of each control to "off", which
- *      means active, but not yet used.  If false, all are set to the "del"
- *      state, which normal display as an unilluminated button. Defaults to
- *      true, to be used at start-up.
+ *      If true (the default), then we try to set the status of each control to
+ *      "off", which means active, but not yet used.  If false, all are set to
+ *      the "del" state, which normally display as an unilluminated button.
+ *      Defaults to true, to be used at start-up.
  */
 
 void
@@ -6525,7 +6519,9 @@ performer::open_select_song_by_index (int index, bool opensong)
     bool result;
     if (signalled_changes())
     {
-        delay_stop();
+        if (opensong)
+            delay_stop();
+
         result = m_play_list->open_select_song(index, opensong);
     }
     else

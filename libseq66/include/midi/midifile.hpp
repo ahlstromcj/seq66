@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -31,12 +31,12 @@
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
- *  "proprietary" tracks that hold information needed to set up the song
- *  in Seq24.
+ *  "proprietary" tracks that hold information needed to set up the song in
+ *  Seq24.
  *
- *  Seq66 can write out the Seq24 file with the "proprietary" tracks
- *  written in a format more palatable for strict MIDI programs, such as
- *  midicvt (a MIDI-to-ASCII conversion program available at the
+ *  Seq66 can write out the Seq24 file with the "proprietary" tracks written
+ *  in a format more palatable for strict MIDI programs, such as midicvt (a
+ *  MIDI-to-ASCII conversion program available at the
  *  https://github.com/ahlstromcj/midicvt.git repository.
  *
  *  Seq66 can also split an SMF 0 file into multiple tracks, effectively
@@ -52,77 +52,12 @@
 #include "midi/midi_splitter.hpp"       /* seq66::midi_splitter             */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
 
-/**
- *  A manifest constant for controlling the length of a line-reading
- *  array in a configuration file.
- */
-
-#define SEQ66_MIDI_LINE_MAX         1024
-
-/**
- *  The maximum length of a Seq24 track name.
- */
-
-#define SEQ66_TRACKNAME_MAX         c_midibyte_value_max
-
-/**
- *  The maximum allowed variable length value for a MIDI file, which allows
- *  the length to fit in a 32-bit integer.
- */
-
-#define SEQ66_VARLENGTH_MAX         0x0FFFFFFF
-
-/**
- *  Highlights the MIDI file header value, "MThd".
- */
-
-#define SEQ66_MTHD_TAG              0x4D546864      /* magic number 'MThd'  */
-
-/**
- *  Highlights the MIDI file track-marker (chunk) value, "MTrk".
- */
-
-#define SEQ66_MTRK_TAG              0x4D54726B      /* magic number 'MTrk'  */
-
-/**
- *  The chunk header value for the Seq66 proprietary/SeqSpec section.
- *  We might try other chunks, as well, since, as per the MIDI
- *  specification, unknown chunks should not cause an error in a sequencer
- *  (or our midicvt program).  For now, we stick with "MTrk".
- */
-
-#define PROP_CHUNK_TAG              SEQ66_MTRK_TAG
-
-/**
- *  Provides the sequence number for the proprietary/SeqSpec data when using
- *  the new format.  (There is no sequence number for the legacy format.)
- *  Can't use numbers, such as 0xFFFF, that have MIDI meta tags in them,
- *  confuses our "proprietary" track parser.
- */
-
-#define PROP_SEQ_NUMBER             0x3FFF
-#define PROP_SEQ_NUMBER_OLD         0x7777
-
-/**
- *  Provides the track name for the "proprietary" data when using the new
- *  format.  (There is no track-name for the "proprietary" footer track when
- *  the legacy format is in force.)  This is more useful for examining a hex
- *  dump of a Seq66 song than for checking its validity.  It's overkill
- *  that causes needless error messages.
- */
-
-#define PROP_TRACK_NAME             "Seq66-S"
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
 
 namespace seq66
 {
-    /*
-     * Forward references.
-     */
-
     class event;
     class midi_splitter;
     class midi_vector;
@@ -140,9 +75,9 @@ class midifile
 public:
 
     /**
-     *  Instead of having two save options, we now have three. These values were
-     *  used in seq_gtkmm2/src/mainwnd.cpp.  Should use them in qsmainwnd.
-     *  Currently unused; distinguished by function call.
+     *  Instead of having two save options, we now have three. These values
+     *  were used in seq_gtkmm2/src/mainwnd.cpp.  Should use them in
+     *  qsmainwnd.  Currently unused; distinguished by function call.
      */
 
     enum class save_option

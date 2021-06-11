@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -101,6 +101,7 @@
 
 #include "seq66_features.hpp"           /* SEQ66_USE_ZOOM_POWER_OF_2        */
 #include "cfg/settings.hpp"             /* seq66::rc(), seq66::usr()        */
+#include "play/screenset.hpp"           /* seq66::screenset constants       */
 #include "play/seq.hpp"                 /* seq66::seq::limit()              */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 
@@ -184,7 +185,6 @@ const int c_seqarea_y = c_text_y * c_seqchars_y;
  *  useful to make these values user-configurable.
  */
 
-// const int c_mainwid_border = 0;             // try 2 or 3 instead of 0
 const int c_mainwid_spacing = 2;            // try 4 or 6 instead of 2
 
 /**
@@ -200,8 +200,8 @@ usrsettings::usrsettings () :
      * [user-interface-settings]
      */
 
-    m_mainwnd_rows              (SEQ66_DEFAULT_SET_ROWS),
-    m_mainwnd_cols              (SEQ66_DEFAULT_SET_COLUMNS),
+    m_mainwnd_rows              (screenset::c_default_rows),
+    m_mainwnd_cols              (screenset::c_default_columns),
     m_window_scale              (c_window_scale_default),
     m_window_scale_y            (c_window_scale_default),
     m_mainwid_spacing           (0),
@@ -303,8 +303,8 @@ usrsettings::set_defaults ()
 {
     m_midi_buses.clear();
     m_instruments.clear();
-    m_mainwnd_rows = SEQ66_DEFAULT_SET_ROWS;    // range: 4-8
-    m_mainwnd_cols = SEQ66_DEFAULT_SET_COLUMNS; // range: 8-8
+    m_mainwnd_rows = screenset::c_default_rows;    // range: 4-8
+    m_mainwnd_cols = screenset::c_default_columns; // range: 8-8
     m_window_scale = c_window_scale_default;    // range: 0.5 to 1.0 to 3.0
     m_window_scale_y = c_window_scale_default;
     m_mainwid_spacing = c_mainwid_spacing;      // range: 2-6, try 4 or 6
@@ -662,7 +662,11 @@ usrsettings::scale_font_size (int value) const
 void
 usrsettings::mainwnd_rows (int value)
 {
-    if (value >= SEQ66_MIN_SET_ROWS && value <= SEQ66_MAX_SET_ROWS)
+    if
+    (
+        (value >= screenset::c_minimum_rows) &&
+        (value <= screenset::c_maximum_rows)
+    )
     {
         m_mainwnd_rows = value;
         normalize();
@@ -679,7 +683,11 @@ usrsettings::mainwnd_rows (int value)
 void
 usrsettings::mainwnd_cols (int value)
 {
-    if (value >= SEQ66_MIN_SET_COLUMNS && value <= SEQ66_MAX_SET_COLUMNS)
+    if
+    (
+        (value >= screenset::c_minimum_columns) &&
+        (value <= screenset::c_maximum_columns)
+    )
     {
         m_mainwnd_cols = value;
         normalize();
@@ -951,6 +959,38 @@ usrsettings::window_redraw_rate (int ms)
 {
     if (ms >= c_minimum_redraw && ms <= c_maximum_redraw)
         m_window_redraw_rate_ms = ms;
+}
+
+bool
+usrsettings::is_variset () const
+{
+    return
+    (
+        (m_mainwnd_rows != screenset::c_default_rows) ||
+        (m_mainwnd_cols != screenset::c_default_columns)
+    );
+}
+
+bool
+usrsettings::is_default_mainwid_size () const
+{
+    return
+    (
+        (m_mainwnd_rows == screenset::c_default_rows) &&
+        (m_mainwnd_cols == screenset::c_default_columns)
+    );
+}
+
+bool
+usrsettings::vertically_compressed () const
+{
+    return m_mainwnd_rows > screenset::c_default_rows;
+}
+
+bool
+usrsettings::horizontally_compressed () const
+{
+    return m_mainwnd_cols > screenset::c_default_columns;
 }
 
 /**

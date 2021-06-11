@@ -15,7 +15,7 @@
 
     virtual bool open_client ()
     {
-        return open_client_impl(SEQ66_MIDI_INPUT_PORT);
+        return open_client_impl(midibase::c_input_port);
     }
 
     /**
@@ -26,7 +26,7 @@
 
     virtual bool open_client ()
     {
-        return open_client_impl(SEQ66_MIDI_OUTPUT_PORT);
+        return open_client_impl(midibase::c_output_port);
     }
 
 /**

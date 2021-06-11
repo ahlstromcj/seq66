@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -67,14 +67,13 @@
  *      -#  Enter learn-mode, then obtain the number of the desired mute-group
  *          from the keyboard or a MIDI control.
  *      -#  Notify all subscribers.
- *      -#  Copy the current armed/muted statuses of the playing screen into the
- *          desired mute-group.
+ *      -#  Copy the current armed/muted statuses of the playing screen into
+ *          the desired mute-group.
  *      -#  Exit learn-mode and notify all subscribers.
  *      -#  TO BE CONTINUED...
  */
 
 #include <iostream>                     /* std::cout                        */
-#include <sstream>                      /* std::stringstream                */
 
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "play/mutegroups.hpp"          /* seq66::mutegroups class          */

@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -48,22 +48,23 @@
  *  -#  Just before drawing the next progress bar, erase the previous one by
  *      covering it with the portion of the saved pixmap from before.
  *
- *
- *          <----------- m_frame_size -------------->
- *          t0            Frame 0                   t1
- *          |                                       |   Frame
- *          :       .       .       .       :       :   Bars
- *          |                                       |   Window
- *           ---------------------------------------
- *
- *  void QWidget::render
- *  (
- *      QPaintDevice * target,
- *      const QPoint & targetOffset = QPoint(),
- *      const QRegion & sourceRegion = QRegion(),
- *      QWidget::RenderFlags renderFlags =
- *          RenderFlags(DrawWindowBackground | DrawChildren)
- *  )
+\verbatim
+            <----------- m_frame_size -------------->
+            t0            Frame 0                   t1
+            |                                       |   Frame
+            :       .       .       .       :       :   Bars
+            |                                       |   Window
+             ---------------------------------------
+
+    void QWidget::render
+    (
+        QPaintDevice * target,
+        const QPoint & targetOffset = QPoint(),
+        const QRegion & sourceRegion = QRegion(),
+        QWidget::RenderFlags renderFlags =
+            RenderFlags(DrawWindowBackground | DrawChildren)
+    )
+\endverbatim
  *
  *  But QPixmap doesn't have a render() function.
  *
@@ -74,7 +75,6 @@
  *
  *  Ensure that you call QPainter::end() for the target device's active
  *  painter (if any) before rendering.
- *
  */
 
 #include <QPainter>

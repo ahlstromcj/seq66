@@ -1,3 +1,21 @@
+/*
+ *  This file is part of seq66.
+ *
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
+ *
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 /**
  * \file          midi_jack_info.cpp
  *
@@ -6,8 +24,8 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2021-05-16
- * \license       See the rtexmidi.lic file.  Too big.
+ * \updates       2021-06-10
+ * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information
  *  about client number, port numbers, and port names, and hold them
@@ -309,8 +327,8 @@ midi_jack_info::get_all_port_info ()
             input_ports().add
             (
                 clientnumber, clientname, portnumber, portname,
-                SEQ66_MIDI_VIRTUAL_PORT, SEQ66_MIDI_NORMAL_PORT,
-                SEQ66_MIDI_INPUT_PORT
+                midibase::c_virtual_port, midibase::c_normal_port,
+                midibase::c_input_port
             );
             ++result;
         }
@@ -333,8 +351,8 @@ midi_jack_info::get_all_port_info ()
                 input_ports().add
                 (
                     client, clientname, count, portname,
-                    SEQ66_MIDI_NORMAL_PORT, SEQ66_MIDI_NORMAL_PORT,
-                    SEQ66_MIDI_INPUT_PORT
+                    midibase::c_normal_port, midibase::c_normal_port,
+                    midibase::c_input_port
                 );
                 ++count;
             }
@@ -362,8 +380,8 @@ midi_jack_info::get_all_port_info ()
             output_ports().add
             (
                 client, clientname, 0, portname,
-                SEQ66_MIDI_VIRTUAL_PORT, SEQ66_MIDI_NORMAL_PORT,
-                SEQ66_MIDI_OUTPUT_PORT
+                midibase::c_virtual_port, midibase::c_normal_port,
+                midibase::c_output_port
             );
             ++result;
         }
@@ -386,8 +404,8 @@ midi_jack_info::get_all_port_info ()
                 output_ports().add
                 (
                     client, clientname, count, portname,
-                    SEQ66_MIDI_NORMAL_PORT, SEQ66_MIDI_NORMAL_PORT,
-                    SEQ66_MIDI_OUTPUT_PORT
+                    midibase::c_normal_port, midibase::c_normal_port,
+                    midibase::c_output_port
                 );
                 ++count;
             }

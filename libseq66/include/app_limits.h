@@ -4,19 +4,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2021-06-08
+ * \updates       2021-06-10
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -66,52 +66,6 @@
  */
 
 #define SEQ66_MIDI_CONTROL_OUT_BUSS       15
-
-/**
- *  Default number of rows in the main-window's grid.  This value applies to the
- *  layout of the pattern and mute-group keystrokes, as well as the virtual
- *  layout of sets into rows and columns.
- */
-
-#define SEQ66_DEFAULT_SET_ROWS             4
-
-/**
- *  Minimum number of rows in the main-window's grid.  This will remain
- *  the same as the default number of rows; we will not reduce the number of
- *  sequences per set, at least at this time.
- */
-
-#define SEQ66_MIN_SET_ROWS                 4
-
-/**
- *  Maximum number of rows in the main-window's grid.  With the default number
- *  of columns, this will double the number of sequences per set from 32 to
- *  64, hence the name "seq66".
- */
-
-#define SEQ66_MAX_SET_ROWS                12
-
-/**
- *  Default number of columns in the main-window's grid.
- */
-
-#define SEQ66_DEFAULT_SET_COLUMNS          8
-
-/**
- *  Minimum number of columns in the main-window's grid.  Currently the same
- *  as the default number.  We currently cannot support more sets than 32,
- *  which would happen if we let rows or columns go below the default 4 x 8
- *  settings.
- */
-
-#define SEQ66_MIN_SET_COLUMNS              4
-
-/**
- *  Maximum number of columns in the main-window's grid.  Currently the same
- *  as the default number.
- */
-
-#define SEQ66_MAX_SET_COLUMNS             12
 
 /**
  *  Default value of number of slot toggle keys (shortcut keys) that
@@ -408,12 +362,6 @@
 #define SEQ66_DEFAULT_PERFEDIT_SNAP         8
 
 /**
- *  Defines the minimum Note On velocity.
- */
-
-#define SEQ66_MIN_NOTE_ON_VELOCITY          0
-
-/**
  *  Defines the default Note On velocity, a new "stazed" feature.
  */
 
@@ -447,18 +395,15 @@
 #define SEQ66_DEFAULT_NOTE_OFF_VELOCITY   64
 
 /**
- *  Defines the maximum number of notes playing at one time that the
- *  application will support.
- */
-
-#define SEQ66_PLAYING_NOTES_MAX          256
-
-/**
  *  Provides a sanity check for transposition values.
  */
 
 #define SEQ66_TRANSPOSE_UP_LIMIT        (128 / 2)
 #define SEQ66_TRANSPOSE_DOWN_LIMIT      (-128 / 2)
+
+/*
+ *  This section converts the macros to values.
+ */
 
 #endif      // SEQ66_APP_LIMITS_H
 

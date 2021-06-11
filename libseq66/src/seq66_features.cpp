@@ -230,7 +230,7 @@ seq_build_details ()
         << "; type " << seq_app_type()
         << "; engine " << seq_app_engine() << "\n"
         << "  Build OS: " << seq_app_build_os() << "\n"
-#ifdef SEQ66_RTMIDI_SUPPORT
+#if defined SEQ66_RTMIDI_SUPPORT
         << "  Native JACK/ALSA (rtmidi)\n"
 #endif
 #if defined SEQ66_PORTMIDI_SUPPORT

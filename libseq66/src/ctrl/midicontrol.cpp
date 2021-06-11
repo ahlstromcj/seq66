@@ -1,26 +1,26 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
  * \file          midicontrol.cpp
  *
- *  This module declares/defines a class for extended and flexible MIDI control,
- *  unified with keyboard control.
+ *  This module declares/defines a class for extended and flexible MIDI
+ *  control, unified with keyboard control.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
@@ -28,17 +28,18 @@
  * \updates       2019-02-24
  * \license       GNU GPLv2 or above
  *
- *  The idea behind the MIDI control automation setup is that an incoming event
- *  can be looked up in a midicontrolin object, based on its event status byte,
- *  the first data byte, and a range for values for the second data byte.
+ *  The idea behind the MIDI control automation setup is that an incoming
+ *  event can be looked up in a midicontrolin object, based on its event
+ *  status byte, the first data byte, and a range for values for the second
+ *  data byte.
  *
- *  The control also contains an automation slot number with indicates which of
- *  roughly 50 functions is to be called.  Two of these functions handle pattern
- *  toggling and mute-groups, and use a third value to determine which
+ *  The control also contains an automation slot number with indicates which
+ *  of roughly 50 functions is to be called.  Two of these functions handle
+ *  pattern toggling and mute-groups, and use a third value to determine which
  *  sequences in a set or mutes in a group are to be operated on.
  *
- *  A MIDI control object can appear more than once in the container, to affect,
- *  for example, multiple patterns.
+ *  A MIDI control object can appear more than once in the container, to
+ *  affect, for example, multiple patterns.
  */
 
 #include <iomanip>                      /* std::setw() manipulator          */

@@ -1,3 +1,21 @@
+/*
+ *  This file is part of seq66.
+ *
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
+ *
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 /**
  * \file          midi_jack.cpp
  *
@@ -6,8 +24,8 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-05-16
- * \license       See the rtexmidi.lic file.  Too big for a header file.
+ * \updates       2021-06-10
+ * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
  *  Gary Scavone, April 2011.
@@ -533,7 +551,9 @@ midi_jack::set_port_suspended (bool flag)
  *  port, and the destination/input is....
  *
  *  Note that connect_port() [which calls jack_connect()] cannot usefully be
- *  called until jack_activate() has been called.
+ *  called until jack_activate() has been called.  We cannot connect ports
+ *  until we are activated, and we cannot activate until all ports are
+ *  properly set up.
  *
  * \return
  *      Returns true unless setting up JACK MIDI failed in some way.
@@ -563,18 +583,7 @@ midi_jack::api_init_out ()
             (
                 rc().application_name(), rc().app_client_name(), remoteportname
             );
-            result = register_port(SEQ66_MIDI_OUTPUT_PORT, port_name());
-
-            /*
-             * Note that we cannot connect ports until we are activated, and
-             * we cannot activate until all ports are properly set up.
-             * Otherwise, we'd call:
-             *
-             *  std::string localname = connect_name();
-             *  result = connect_port(SEQ66_MIDI_OUTPUT, localname,
-             *      remoteportname);
-             *  if (result) set_port_open();
-             */
+            result = register_port(midibase::c_output_port, port_name());
         }
     }
     return result;
@@ -605,6 +614,10 @@ midi_jack::api_init_out ()
  *  Unlike the corresponding virtual port, this input port is actually an
  *  output port.
  *
+ *  Note that we cannot connect ports until we are activated, and we cannot be
+ *  activated until all ports are properly set up.  We also need to fill in
+ *  the m_jack_data member here.
+ *
  * \return
  *      Returns true if the function was successful, and sets the flag
  *      indicating that the port is open.
@@ -630,19 +643,7 @@ midi_jack::api_init_in ()
         (
             rc().application_name(), rc().app_client_name(), remoteportname
         );
-        result = register_port(SEQ66_MIDI_INPUT_PORT, port_name());
-
-        /*
-         * Note that we cannot connect ports until we are activated, and we
-         * cannot be activated until all ports are properly set up.
-         * Otherwise, we'd call:
-         *
-         *  std::string localname = connect_name();
-         *  result = connect_port(SEQ66_MIDI_INPUT, localname, remoteportname);
-         *  if (result) set_port_open();
-         *
-         * We also need to fill in the m_jack_data member here.
-         */
+        result = register_port(midibase::c_input_port, port_name());
     }
     return result;
 }
@@ -662,9 +663,9 @@ midi_jack::api_connect ()
     std::string localname = connect_name();     /* modified!    */
     bool result;
     if (is_input_port())
-        result = connect_port(SEQ66_MIDI_INPUT_PORT, remotename, localname);
+        result = connect_port(midibase::c_input_port, remotename, localname);
     else
-        result = connect_port(SEQ66_MIDI_OUTPUT_PORT, localname, remotename);
+        result = connect_port(midibase::c_output_port, localname, remotename);
 
     if (result)
         set_port_open();
@@ -728,7 +729,7 @@ midi_jack::set_virtual_name (int portid, const std::string & portname)
 bool
 midi_jack::api_init_out_sub ()
 {
-    master_midi_mode(SEQ66_MIDI_OUTPUT_PORT);    /* this is necessary */
+    master_midi_mode(midibase::c_output_port);      /* this is necessary */
     int portid = parent_bus().port_id();
     bool result = portid >= 0;
     if (! result)
@@ -748,7 +749,7 @@ midi_jack::api_init_out_sub ()
             portname += " ";
             portname += std::to_string(portid);
         }
-        result = register_port(SEQ66_MIDI_OUTPUT_PORT, portname);
+        result = register_port(midibase::c_output_port, portname);
         if (result)
         {
             set_virtual_name(portid, portname);
@@ -768,7 +769,7 @@ midi_jack::api_init_out_sub ()
 bool
 midi_jack::api_init_in_sub ()
 {
-    master_midi_mode(SEQ66_MIDI_INPUT_PORT);
+    master_midi_mode(midibase::c_input_port);
     int portid = parent_bus().port_id();
     bool result = portid >= 0;
     if (! result)
@@ -791,7 +792,7 @@ midi_jack::api_init_in_sub ()
             portname += " ";
             portname += std::to_string(portid);
         }
-        result = register_port(SEQ66_MIDI_INPUT_PORT, portname);
+        result = register_port(midibase::c_input_port, portname);
         if (result)
         {
             set_virtual_name(portid, portname);
@@ -1124,8 +1125,8 @@ midi_jack::close_client ()
  *
  * \param input
  *      Indicates true if the port to register and connect is an input port,
- *      and false if the port is an output port.  Useful macros for readability:
- *      SEQ66_MIDI_INPUT_PORT and SEQ66_MIDI_OUTPUT_PORT.
+ *      and false if the port is an output port.  Useful macros for
+ *      readability: midibase::c_input_port and midibase::c_output_port.
  *
  * \param srcportname
  *      Provides the destination port-name for the connection.  For input,
@@ -1212,8 +1213,8 @@ midi_jack::connect_port
  *
  * \param input
  *      Indicates true if the port to register input port, and false if the
- *      port is an output port.  Two macros can be used for this purpose:
- *      SEQ66_MIDI_INPUT_PORT and SEQ66_MIDI_OUTPUT_PORT.
+ *      port is an output port.  Two boolean constants can be used for this
+ *      purpose: midibase::c_input_port and midibase::c_output_port.
  *
  * \param portname
  *      Provides the local name of the port.  This is the full name

@@ -1,19 +1,19 @@
 /*
  *  This file is part of seq66.
  *
- *  seq66 is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
  *
- *  seq66 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /**
@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2021-06-04
+ * \updates       2021-06-11
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -59,6 +59,8 @@
 namespace seq66
 {
 
+static const int s_playlist_file_version = 1;
+
 /**
  *  Principal constructor.
  *
@@ -90,7 +92,7 @@ playlistfile::playlistfile
     m_play_list         (pl),
     m_show_on_stdout    (show_on_stdout)
 {
-    // No code needed
+    version(s_playlist_file_version);
 }
 
 /**
@@ -232,36 +234,47 @@ playlistfile::parse ()
          * [playlist-options]
          */
 
-        if (line_after(file, "[playlist-options]"))
+        std::string tag = "[playlist-options]";
+        if (file_version_number() < s_playlist_file_version)
         {
-            int unmute = 0;
-            sscanf(scanline(), "%d", &unmute);
-            play_list().unmute_set_now(unmute != 0);
-            if (next_data_line(file))
+            if (line_after(file, tag))
             {
+                int unmute = 0;
                 sscanf(scanline(), "%d", &unmute);
-                play_list().deep_verify(unmute != 0);
+                play_list().unmute_set_now(unmute != 0);
+                if (next_data_line(file))
+                {
+                    sscanf(scanline(), "%d", &unmute);
+                    play_list().deep_verify(unmute != 0);
+                }
+                else
+                    play_list().deep_verify(false);
             }
-            else
-                play_list().deep_verify(false);
         }
-
-        /*
-         * See banner notes.
-         */
+        else
+        {
+            bool flag = get_boolean(file, tag, "unmute-new-song");
+            play_list().unmute_set_now(flag);
+            flag = get_boolean(file, tag, "deep-verify");
+            play_list().deep_verify(flag);
+        }
 
         int listcount = 0;
         bool have_section = line_after(file, "[playlist]");
         if (! have_section)
         {
-            result = set_error_message("empty/missing section");
+            result = set_error_message("empty/missing [playlist] section");
         }
         while (have_section)
         {
             int listnumber = -1;
             int songcount = 0;
             playlist::play_list_t plist;            /* current playlist     */
-            sscanf(scanline(), "%d", &listnumber);  /* playlist number      */
+            if (file_version_number() < s_playlist_file_version)
+                sscanf(scanline(), "%d", &listnumber);  /* playlist number      */
+            else
+                sscanf(scanline(), "number = %d", &listnumber);
+
             if (m_show_on_stdout)
                 printf("Processing playlist #%d\n", listnumber);
 
@@ -269,19 +282,30 @@ playlistfile::parse ()
             {
                 std::string listline = line();
                 playlist::song_list slist;
-                listline = strip_quotes(listline);
+                if (file_version_number() < s_playlist_file_version)
+                {
+                    listline = strip_quotes(listline);
+                }
+                else
+                {
+                    listline = extract_variable(line(), "name");
+                }
+
                 plist.ls_list_name = listline;
                 if (m_show_on_stdout)
                     printf("Playlist name '%s'\n", listline.c_str());
 
                 if (next_data_line(file))
                 {
-                    /*
-                     * MIDI control number and directory name. See the banner.
-                     */
-
                     listline = line();
-                    listline = strip_quotes(listline);
+                    if (file_version_number() < s_playlist_file_version)
+                    {
+                        listline = strip_quotes(listline);
+                    }
+                    else
+                    {
+                        listline = extract_variable(line(), "directory");
+                    }
                     plist.ls_file_directory = clean_path(listline);
                     slist.clear();
                     if (m_show_on_stdout)
@@ -463,26 +487,24 @@ playlistfile::write ()
 
     write_date(file, "playlist");
     file <<
-           "# This file holds multiple playlists for Seq66. It consists of 1 or\n"
-           "# more [playlist] sections.  Each has a user-specified number for\n"
-           "# for sorting and for MIDI control, ranging from 0 to 127.\n"
-           "# Next comes a quoted display name for this list, followed by the\n"
-           "# name of the song directory, always using the UNIX-style separator\n"
-           "# (the '/', or solidus).  It should be accessible from wherever\n"
-           "# Seq66 was run.\n"
-           "#\n"
-           "# The last items are lines starting with a MIDI control number,\n"
-           "# followed by the name of the MIDI file.  They are sorted by the\n"
-           "# control number, starting from 0.  They can be simple 'base.ext'\n"
-           "# file-names; the playlist directory will be prepended before the\n"
-           "# song is accessed. If the MIDI file-name already has a path, that\n"
-           "# directory will be used.\n"
-        ;
-
-    file << "#\n"
-        "# The [comments] section can document this file.  Lines starting\n"
-        "# with '#' are ignored.  Blank lines are ignored.  Show a\n"
-        "# blank line by adding a space character to the line.\n"
+        "# This file holds multiple playlists for Seq66. It consists of 1 or\n"
+        "# more [playlist] sections.  Each has a user-specified number for\n"
+        "# sorting and MIDI control, ranging from 0 to 127. Next comes a\n"
+        "# quoted display name for this list, followed by the quoted name of\n"
+        "# the song directory, always using the UNIX-style separator\n"
+        "# (the '/').  It should be accessible from wherever Seq66 was run.\n"
+        "#\n"
+        "# Then comes a list of tunes, eachstarting with a MIDI control number\n"
+        "# followed by the quoted name of the MIDI file.  They are sorted by\n"
+        "# the control number, starting from 0.  They can be simple 'base.midi'\n"
+        "# file-names; the playlist directory is prepended before the song is\n"
+        "# accessed. If the MIDI file-name already has a path, that will be\n"
+        "# used.\n"
+        "\n"
+        "[Seq66]\n"
+        "\n"
+        "config-type = \"playlist\"\n"
+        "version = " << version() << "\n"
         ;
 
     /*
@@ -490,23 +512,29 @@ playlistfile::write ()
      */
 
     std::string c = play_list().comments_block().text();
-    if (c.empty())
-        c = "(Put your comment line(s) here as per the explanation above.)";
-
-    file << "\n[comments]\n\n" << c << "\n";
+    file << "\n"
+        "# The [comments] section holds user documentation for this file.\n"
+        "# The first completely empty, comment, or tag line ends the comment.\n"
+        "\n[comments]\n\n"
+        << play_list().comments_block().text()
+        ;
 
     /*
      * [playlist-options]
      */
 
-    file
-        << "\n" << "[playlist-options]\n" << "\n"
-        << (play_list().unmute_set_now() ? "1" : "0")
-        << "     # If set to 1, when a new song is selected, "
-           "immediately unmute it.\n\n"
-        << (play_list().deep_verify() ? "1" : "0")
-        << "     # If set to 1, every MIDI song is opened to verify it.\n"
+    file << "\n"
+        << "[playlist-options]\n" << "\n"
         ;
+    write_boolean(file, "unmute-new-song", play_list().unmute_set_now());
+    write_boolean(file, "deep-verify", play_list().deep_verify());
+    file << "\n"
+       "# First provide the playlist settings, then its default storage folder\n"
+       "# and then list each tune with its control number. The playlist\n"
+       "# number is arbitrary but unique. 0 to 127 recommended for use with\n"
+       "# the MIDI playlist control. Similar for the tune numbers. Each \n"
+       "# tune can include a path; it overrides the base directory.\n"
+       ;
 
     /*
      * [playlist] sections
@@ -516,26 +544,14 @@ playlistfile::write ()
     for (const auto & plpair : play_list().play_list_map())
     {
         const playlist::play_list_t & pl = plpair.second;
-        std::string listname = pl.ls_list_name;
-        std::string dirname = pl.ls_file_directory;
-        listname = add_quotes(listname);
-        dirname = add_quotes(dirname);
-        file
-        << "\n"
-           "[playlist]\n"
-           "\n"
-           "# Playlist number, arbitrary but unique. 0 to 127 recommended\n"
-           "# for use with the MIDI playlist control.\n\n"
-        << pl.ls_midi_number << "\n\n"
-        << "# Display name of this play list.\n\n"
-        << listname << "\n\n"
-        << "# Default storage directory for the song-files in this playlist.\n\n"
-        << dirname << "\n\n"
-        << "# Provides the MIDI song-control number (0 to 127), and also the\n"
-           "# base file-name (tune.midi) of each song in this playlist.\n"
-           "# The playlist directory is used, unless the file-name contains its\n"
-           "# own path.\n\n"
-        ;
+        std::string listname = add_quotes(pl.ls_list_name);
+        std::string dirname = add_quotes(pl.ls_file_directory);
+        file << "\n"
+            "[playlist]\n\n"
+            << "number = " << pl.ls_midi_number << "\n"
+            << "name = " << listname << "\n"
+            << "directory = " << dirname << "\n\n"
+            ;
 
         /*
          * For each song, write the MIDI control number, followed only by
@@ -556,14 +572,8 @@ playlistfile::write ()
     {
         file
         << "\n[playlist]\n\n"
-           "# THIS IS A NON-FUNCTIONAL PLAYLIST SAMPLE. See one of the\n"
+           "# This is a NON-FUNCTIONAL playlist SAMPLE. Please see one of the\n"
            "# sample playlist files shipping with Seq66.\n\n"
-           "0   # playlist number, ranging from 0 to 127.\n\n"
-           "\"My Midi Files\"    # display name for the play-list.\n\n"
-           "\"~/My Songs\"       # storage directory for tunes in the list.\n\n"
-           "0 \"b4uacufm.midi\"  # first tune, selected by d1 value 0\n"
-           "1 \"brecluse.midi\"  # second tune...\n"
-           " . . .\n"
             ;
     }
     file
