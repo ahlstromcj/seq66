@@ -1,64 +1,53 @@
-# Seq66 0.91.0 (and above) playlist file
+# Seq66 0.94.1 (and above) playlist configuration file
 #
-# /home/ahlstrom/.config/seq66/ca_midi.playlist
-# Written on 2021-01-07 10:03:47
+# /home/user/.config/seq66/ca_midi.playlist
+# Written 2021-06-13 08:18:13
 #
-# This file holds multiple playlists for Seq66. It consists of one
-# or more '[playlist]' sections.  Each section has a user-specified
-# number, which serves for sorting and for MIDI control, ranging
-# from 0 to 127, or higher if the user doesn't use MIDI control on
-# playlist files.
+# This file holds multiple playlists for Seq66. It consists of 1 or
+# more [playlist] sections.  Each has a user-specified number for
+# sorting and MIDI control, ranging from 0 to 127. Next comes a
+# quoted display name for this list, followed by the quoted name of
+# the song directory, always using the UNIX-style separator ('/').
+# It should be accessible from wherever Seq66 is run.
 #
-# Next comes a display name for this list, with or without quotes.
-#
-# Next comes the name of the directory, always using the UNIX-style
-# separator, a forward slash (solidus).  It can optionally be
-# terminated with a slash.  It should be accessible from wherever
-# Seq66 was run.
-#
-# The last items are lines starting with a MIDI control number,
-# followed by the name of the MIDI file.  They are sorted by the
-# control number, starting from 0.  They can be simple 'base.ext'
-# file-names; the playlist directory will be prepended before the
-# song is accessed. If the MIDI file-name already has a path, that
-# directory will be used.
-#
-# The [comments] section can document this file.  Lines starting
-# with '#' are ignored.  Blank lines are ignored.  Show a
-# blank line by adding a space character to the line.
+# Then comes a list of tunes, each starting with a MIDI control number
+# and the quoted name of the MIDI file.  They are sorted by the
+# control number, starting from 0.  They can be simple 'base.midi'
+# file-names; the playlist directory is prepended before the song is
+# accessed. If the MIDI file-name already has a path, that will be
+# used.
+
+[Seq66]
+
+config-type = "playlist"
+version = 1
+
+# The [comments] section holds user documentation for this file.
+# The first completely empty, comment, or tag line ends the comment.
 
 [comments]
 
 This playlist points to files on my Debian laptop.  I created these files
 long, long ago.
+  
 Ah, such memories.
-
 
 [playlist-options]
 
-1     # If set to 1, when a new song is selected, immediately unmute it.
+unmute-new-song = true
+deep-verify = false
 
-0     # If set to 1, every MIDI song is opened to verify it.
+# First provide the playlist settings, then its default storage folder
+# and then list each tune with its control number. The playlist
+# number is arbitrary but unique. 0 to 127 recommended for use with
+# the MIDI playlist control. Similar for the tune numbers. Each 
+# tune can include a path; it overrides the base directory.
 
 [playlist]
 
-# Playlist number, arbitrary but unique. 0 to 127 recommended
-# for use with the MIDI playlist control.
-
-0
-
-# Display name of this play list.
-
-"CA's Legacy Midi Files"
-
-# Default storage directory for the song-files in this playlist.
-
-"/pub/Audio/MIDI/archives/Ca/mid/FM Synth/"
-
-# Provides the MIDI song-control number (0 to 127), and also the
-# base file-name (tune.midi) of each song in this playlist.
-# The playlist directory is used, unless the file-name contains its
-# own path.
+number = 0
+name = "CA's Legacy Midi Files"
+directory = "/pub/Audio/MIDI/archives/Ca/mid/FM Synth/"
 
 0 "b4uacufm.mid"
 1 "brecluse.mid"
@@ -81,23 +70,9 @@ Ah, such memories.
 
 [playlist]
 
-# Playlist number, arbitrary but unique. 0 to 127 recommended
-# for use with the MIDI playlist control.
-
-1
-
-# Display name of this play list.
-
-"CA's PSS-790 Midi Files"
-
-# Default storage directory for the song-files in this playlist.
-
-"/pub/Audio/MIDI/PSS-790/"
-
-# Provides the MIDI song-control number (0 to 127), and also the
-# base file-name (tune.midi) of each song in this playlist.
-# The playlist directory is used, unless the file-name contains its
-# own path.
+number = 1
+name = "CA's PSS-790 Midi Files"
+directory = "/pub/Audio/MIDI/PSS-790/"
 
 0 "ancestor.mid"
 10 "carptsun.mid"
@@ -106,6 +81,6 @@ Ah, such memories.
 40 "pss790_1.mid"
 50 "pss790_2.mid"
 
-# End of /home/ahlstrom/.config/seq66/ca_midi.playlist
+# End of /home/user/.config/seq66/ca_midi.playlist
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

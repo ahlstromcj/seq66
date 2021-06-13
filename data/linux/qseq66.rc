@@ -1,7 +1,7 @@
 # Seq66 0.94.1 (and above) main ('rc') configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written 2021-06-08 09:08:16
+# Written 2021-06-13 09:08:16
 #
 # This file holds the main configuration for Seq66. It loosely
 # follows the format of the seq24rc configuration file, but adds
@@ -27,12 +27,14 @@ verbose = false
 sets-mode = normal
 port-naming = short
 
-# The [comments] section holds the user's documentation for this file.
+# The [comments] section holds user documentation for this file.
 # The first completely empty, comment, or tag line ends the comment.
 
 [comments]
 
 This is a test of the newly refactored 'rc' file.
+  
+This is the second line (after a space-blank) line.
 
 # Provides a flag and a file-name for MIDI-control I/O settings. Use
 # '""' to indicate no 'ctrl' file. If none, the default internal
@@ -228,7 +230,7 @@ show-system-ports = false
 [interaction-method]
 
 snap-split = false
-click-edit = false
+click-edit = true
 
 # 'transport-type' enables synchronization with JACK Transport. Values
 # can be:
@@ -274,7 +276,7 @@ save-old-mutes = false
 
 [last-used-dir]
 
-"/home/user/Home/ca/mls/git/seq66/data/midi/"
+"/home/user/data/midi/"
 
 # Holds a list of the last few recently-loaded MIDI files. The first
 # number is the number of items in the list.  The second value
@@ -285,8 +287,8 @@ save-old-mutes = false
 
 count = 2
 load-most-recent = true
-"/home/user/Home/ca/mls/git/seq66/data/midi/Chameleon-HHancock-Ov.midi"
-"/home/user/Home/ca/mls/git/seq66/data/midi/carptsun-2.midi"
+"/home/user/data/midi/Chameleon-HHancock-Ov.midi"
+"/home/user/data/midi/carptsun-2.midi"
 
 
 # End of /home/user/.config/seq66/qseq66.rc

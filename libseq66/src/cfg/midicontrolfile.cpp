@@ -178,35 +178,37 @@ midicontrolfile::~midicontrolfile ()
 }
 
 /**
- *  Parse the ~/.config/seq66/qseq66.rc file-stream or the
- *  ~/.config/seq66/qseq66.ctrl file-stream.
+ *  Parse the ~/.config/seq66/qseq66.ctrl file-stream.
  *
  *  [comments]
  *
- *      [comments] Header commentary is skipped during parsing.  However, we now
- *      try to read an optional comment block.  This block is part of the MIDI
- *      container object, not part of the rcsettings object.
+ *      [comments] Header commentary is skipped during parsing.  However, we
+ *      now try to read an optional comment block.  This block is part of the
+ *      MIDI container object, not part of the rcsettings object.
  *
  *  [midi-control-settings]  (was "midi-control-flags")
  *
- *      load-key-controls
- *      load-midi-controls
- *      control-buss
- *      midi-enabled
- *      button-offset
- *      button-rows
- *      button-columns
+\verbatim
+        load-key-controls
+        load-midi-controls
+        control-buss
+        midi-enabled
+        button-offset
+        button-rows
+        button-columns
+\endverbatim
  *
  *  [midi-control] and [midi-control-file]
  *
  *      Get the number of sequence definitions provided in the following
- *      section.  Ranges from 32 on up.  Then read in all of the sequence lines.
- *      The first 32 apply to the first screen set.  There can also be a comment
- *      line "# mute in group" followed by 32 more lines.  Then there are
- *      additional comments and single lines for BPM up, BPM down, Screen Set Up,
- *      Screen Set Down, Mod Replace, Mod Snapshot, Mod Queue, Mod Gmute, Mod
- *      Glearn, and Screen Set Play.  These are all forms of MIDI automation
- *      useful to control the playback while not sitting near the computer.
+ *      section.  Ranges from 32 on up.  Then read in all of the sequence
+ *      lines.  The first 32 apply to the first screen set.  There can also be
+ *      a comment line "# mute in group" followed by 32 more lines.  Then
+ *      there are additional comments and single lines for BPM up, BPM down,
+ *      Screen Set Up, Screen Set Down, Mod Replace, Mod Snapshot, Mod Queue,
+ *      Mod Gmute, Mod Glearn, and Screen Set Play.  These are all forms of
+ *      MIDI automation useful to control the playback while not sitting near
+ *      the computer.
  *
  *  [loop-control]
  *  [mute-group-control]
@@ -215,8 +217,8 @@ midicontrolfile::~midicontrolfile ()
  *      Provides the stanzas that define the various controls, both keys and
  *      MIDI controls.
  *
- *      Note that there are no default MIDI controls, but there are default key
- *      controls.  See the keys defined in keycontainer::add_defaults().
+ *      Note that there are no default MIDI controls, but there are default
+ *      key controls.  See the keys defined in keycontainer::add_defaults().
  */
 
 bool
@@ -226,9 +228,9 @@ midicontrolfile::parse_stream (std::ifstream & file)
     file.seekg(0, std::ios::beg);                   /* seek to the start    */
 
     /*
-     * This is iffy, because we're setting the code version variable
-     * from the version value in the file, and it might be an old file.
-     * This will cause trouble later when we forget about it.
+     * This is iffy, because we're setting the code version variable from the
+     * version value in the file, and it might be an old file.  This will
+     * cause trouble later when we forget about it.
      *
      * version(parse_version(file));
      */

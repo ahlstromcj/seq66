@@ -25,14 +25,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-11
+ * \updates       2021-06-13
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
  *  represent the maximum possible file size supported by the operating
- *  system.  It is used to represent offsets from std::streampos. -1
- *  is used to represent error conditions by some I/O library
- *  functions.
+ *  system.  It is used to represent offsets from std::streampos. -1 is used
+ *  to represent error conditions by some I/O library functions.
  *
  *  Relationship with std::streampos (a specialization of std::fpos):
  *
@@ -54,10 +53,6 @@
 #include "cfg/rcsettings.hpp"           /* seq66::rcsettings class          */
 #include "util/calculations.hpp"        /* seq66::current_date_time() etc.  */
 #include "util/strfunctions.hpp"        /* strncompare() for std::string    */
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-#include <iostream>                     /* std::cout, std::cerr             */
-#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -132,8 +127,8 @@ configfile::trimline () const
 /**
  * [comments]
  *
- * Header commentary is skipped during parsing.  However, we now try to
- * read an optional comment block.
+ * Header commentary is skipped during parsing.  However, we provide an
+ * optional comment block.  Trimming of spaces is disabled for this operation.
  */
 
 std::string
@@ -147,7 +142,7 @@ configfile::parse_comments (std::ifstream & file)
             result += line();
             result += "\n";
 
-        } while (next_data_line(file, false));  /* ditto                    */
+        } while (next_data_line(file, false));      /* no strip here either */
     }
     return result;
 }
@@ -203,8 +198,8 @@ configfile::make_error_message
 }
 
 /**
- *  A useful intermediate function to save a call and allow for debugging.
- *  In addition, it also trims basic white-space from the beginning and end of
+ *  A useful intermediate function to save a call and allow for debugging.  In
+ *  addition, it also trims basic white-space from the beginning and end of
  *  the line, to make parsing a little more robust.
  *
  *  Also replaces file.get_line(m_line, sizeof m_line) with an std::string
@@ -256,20 +251,20 @@ configfile::get_line (std::ifstream & file, bool strip)
  *
  * \param strip
  *      If true (the default), trims white space and strips out hash-tag
- *      comments.
+ *      comments.  Some sections, such as '[comments]', need this to be set to
+ *      false.
  *
  * \return
  *      Returns true if a presumed data line was found.  False is returned if
- *      not found before an EOF or a section marker ("[") is found.  This is a
- *      a new (ca 2016-02-14) feature of this function, to assist in adding
- *      new data to the file without crapping out on old-style configuration
- *      files.
+ *      not found before an EOF or a section marker ("[") is found.  This
+ *      feature assists in adding new data to the file without crapping out on
+ *      old-style configuration files.
  */
 
 bool
 configfile::next_data_line (std::ifstream & file, bool strip)
 {
-    bool result = get_line(file, strip);        /* zaps whitespace/comments */
+    bool result = get_line(file, strip);        /* optional white zappage   */
     if (result)
     {
         char ch = m_line[0];
@@ -280,7 +275,7 @@ configfile::next_data_line (std::ifstream & file, bool strip)
                 result = false;
                 break;
             }
-            if (get_line(file))                 /* trims the white space    */
+            if (get_line(file, strip))          /* may trim white space     */
             {
                 ch = m_line[0];
             }
@@ -297,9 +292,9 @@ configfile::next_data_line (std::ifstream & file, bool strip)
 }
 
 /**
- *  Acts like a combination of line_after() and next_data_line(), but
- *  requires a specific variable-name to be found.  For example, given the
- *  following lines (blank lines are simply ignored):
+ *  Acts like a combination of line_after() and next_data_line(), but requires
+ *  a specific variable-name to be found.  For example, given the following
+ *  lines (blank lines are simply ignored):
  *
 \verbatim
         [loop-control]
@@ -414,22 +409,14 @@ configfile::extract_variable
     auto epos = line.find_first_of("=");
     if (epos != std::string::npos)
     {
-        /*
-         *  Check-point 1
-         */
-
-        auto spos = line.find_first_of(" ");
+        auto spos = line.find_first_of(" ");        /* Check-point 1        */
         if (spos > epos)
             spos = epos;
 
         std::string vname = line.substr(0, spos);
         if (vname == variablename)
         {
-            /*
-             *  Check-point 2
-             */
-
-            bool havequotes = false;
+            bool havequotes = false;                /* Check-point 2        */
             char quotechar[2] = { 'x', 0 };
             auto qpos = line.find_first_of("\"", epos + 1);
             auto qpos2 = std::string::npos;

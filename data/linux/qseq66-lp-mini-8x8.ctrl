@@ -23,14 +23,14 @@ version = 4
 
 This file is the 8 x 8 version of the Launchpad Mini control file
 for Seq66.
-     
+  
 It is NOT READY.
- 
+  
 This file was created by copying the default qseq66.ctrl file and
 changing the MIDI control section to the values found in the
 sequencer64-laumchpad.rc file.  This section provides for controlling
 the following actions:
-  
+   
 o Patterns 0 to 31.  Patterns can be toggled by sending Note Ons on
   on channel 1.  Observe that the Toggle entries are marked active.
   This works with the Launchpad Mini.
@@ -42,24 +42,24 @@ o Muting 32 to 64 (mute groups 0 to 31).
 o Automation control 64 to 73.  This covers only part of the actions
   that can be controlled via MIDI in Seq66; we still need to upgrade
   the rest once we get familiar with our new LaunchPad Mini.
-  
+   
 The default setup for the LaunchPad Mini is shown in the "Launchpad
 programmer's reference" file (launchpad-programmers-reference.pdf).
 Since, by default, the Mini uses Note Ons of velocity 0 instead of
 Note Offs, we set the data range from 1 to 127 instead of 0 to 127.
- 
+  
 For MIDI output to the Launchpad Mini, we make the following color
 mappings:
-   
+    
      Arm         Mute       Queue      Deleted/Empty
      Green       Red        Yellow     Off
      60          15         62         12
- 
+  
 A sample line.  Just need to fill in the key (note value) needed for this
 row and set the pattern number at the left:
- 
+  
  2 [1 0 0x90 key 60] [1 0 0x90 key 15] [1 0 0x90 key 62] [1 0 0x90 key 12]
- 
+  
 The Play, Pause, and Stop controls are all mapped to the top left button (#1)
 on the Mini, with states of off, green (play), red (stop), and yellow (pause).
 

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-09-15
-% \update      2021-04-20
+% \update      2021-06-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -71,15 +71,16 @@
 
    \begin{verbatim}
    [playlist-options]
-   1   # If set to 1, when a new song is selected, unmute all its patterns
-   0   # If set to 1, every MIDI song is opened to verify it.
+   unmute-new-song = true   # a new song selection unmutes its patterns
+   deep-verify = false      # If true, every MIDI song is opened and verified
    \end{verbatim}
 
    The first option allows the load of the next song to enable the patterns in
    that song.
    The second option causes each MIDI file to be opened to verify that it is an
    error-free play-list.  This process can be time-consuming for large
-   playlists.
+   playlists.  If set to false, \textsl{Seq66} still makes sure each MIDI
+   file exists.
 
    Following the options section are one or more \texttt{[playlist]} sections.
    Here is the layout of a sample playlist section.
@@ -87,23 +88,19 @@
    \begin{verbatim}
    [playlist]
 
-   # Playlist number, arbitrary but unique. 0 to 127 recommended
-   # for use with MIDI playlist control.
-   126
+   # Playlist number, arbitrary but unique. 0 to 127 recommended for MIDI control
 
-   # Display name of this play list.
-   "Music for Serious Dogs"
+   number = 126
+   name = "Music for Serious Dogs"  # Display name of this play list
+   directory = "contrib/midi/"      # Storage directory for the tunes
 
-   # Storage directory for the song-files in this play list.
-   contrib/midi/
+   # Provides the song-control number and the base file-name of each song in
+   # this playlist.  The playlist directory is used, unless the
+   # file-name contains a path.
 
-   # Provides the MIDI song-control number, and also the
-   # base file-name (tune.midi) of each song in this playlist.
-   # The playlist directory is used, unless the file-name contains its
-   # own path.
-   70 allofarow.mid
-   71 CountryStrum.midi
-   72 contrib/wrk/longhair.wrk
+   70 "allofarow.mid"
+   71 "CountryStrum.midi"
+   72 "contrib/wrk/longhair.wrk"
    \end{verbatim}
 
    \index{playlist!tag}
@@ -169,9 +166,9 @@
    the layout is the same:
 
    \begin{verbatim}
-                Pick-by-number       Next              Previous
-      24 "F2" [1 0 144 2 1 127] [1 0 144 4 1 127] [1 0 144 0 1 127] # Play List
-      25 "F3" [1 0 144 5 1 127] [1 0 144 3 1 127] [1 0 144 1 1 127] # Play Song
+                Pick-by-number     Next            Previous
+      24 "F2" [ 144 2 1 127 ] [ 144 4 1 127 ] [ 144 0 1 127 ] # Play List
+      25 "F3" [ 144 5 1 127 ] [ 144 3 1 127 ] [ 144 1 1 127 ] # Play Song
    \end{verbatim}
 
    Both lines specify setting the next playlist or song according to a number,
@@ -183,7 +180,7 @@
    So, the following setting,
 
    \begin{verbatim}
-      24 "F2" [1 0 144   2   1 127] . . .
+      24 "F2" [ 0x90  2  1 127] . . .
    \end{verbatim}
 
    specifies that a \textsl{Note On} event with channel 0 (144 = 0x90) on note

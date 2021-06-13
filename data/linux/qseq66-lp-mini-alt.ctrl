@@ -1,7 +1,7 @@
 # Seq66 0.94.1 (and above) MIDI control configuration file
 #
-# /home/ahlstrom/.config/seq66/qseq66-lp-mini-alt.ctrl
-# Written 2021-06-11 13:53:26
+# /home/user/.config/seq66/qseq66-lp-mini-alt.ctrl
+# Written 2021-06-13 13:53:26
 #
 # This file holds MIDI I/O control setups for Seq66. It follows the format
 # of the 'rc' configuration file, but is stored separately for flexibility
@@ -24,10 +24,9 @@ version = 4
 
 This file is similar to qseq66-lp-mini.ctrl, except that is uses the
 buttons for mute-groups 24 to 31 for handling playlists and sets,
-allow 8 fewer mute-groups for enhanced automation control.
- 
-See contrib/notes/launchpad-mini.ods for the mappings implemented
-by this 'ctrl' file.
+allowing 8 fewer mute-groups in return for enhanced automation control.
+  
+See doc/launchpad-mini.ods for the mappings implemented by this 'ctrl' file.
 
 [midi-control-settings]
 
@@ -312,14 +311,14 @@ button-columns = 8
 21 [ 0x90  85  60 ] [ 0x90  85  15 ] [ 0x90  85  12 ]
 22 [ 0x90 101  60 ] [ 0x90 101  15 ] [ 0x90 101  12 ]
 23 [ 0x90 117  60 ] [ 0x90 117  15 ] [ 0x90 117  12 ]
-24 [ 0x90  70  60 ] [ 0x90  70  15 ] [ 0x90  70  12 ]
-25 [ 0x90  86  60 ] [ 0x90  86  15 ] [ 0x90  86  12 ]
-26 [ 0x90 102  60 ] [ 0x90 102  15 ] [ 0x90 102  12 ]
-27 [ 0x90 118  60 ] [ 0x90 118  15 ] [ 0x90 118  12 ]
-28 [ 0x90  71  60 ] [ 0x90  71  15 ] [ 0x90  71  12 ]
-29 [ 0x90  87  60 ] [ 0x90  87  15 ] [ 0x90  87  12 ]
-30 [ 0x90 103  60 ] [ 0x90 103  15 ] [ 0x90 103  12 ]
-31 [ 0x90 119  60 ] [ 0x90 119  15 ] [ 0x90 119  12 ]
+24 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
+25 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
+26 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
+27 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
+28 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
+29 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
+30 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
+31 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
 
 [automation-control-out]
 
@@ -328,31 +327,31 @@ button-columns = 8
 # The stanzas are on/off/inactive, except for 'snap', which is
 # store/restore/inactive.
 
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Panic
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Stop
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Pause
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Play
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Toggle_mutes
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Song_record
+1 [ 0xb0 104  60 ] [ 0xb0 104  15 ] [ 0xb0 104  12 ]  # Panic
+1 [ 0xb0 105  60 ] [ 0xb0 105  15 ] [ 0xb0 105  12 ]  # Stop
+1 [ 0xb0 106  60 ] [ 0xb0 106  15 ] [ 0xb0 106  12 ]  # Pause
+1 [ 0xb0 107  60 ] [ 0xb0 107  15 ] [ 0xb0 107  12 ]  # Play
+1 [ 0xb0 108  60 ] [ 0xb0 108  15 ] [ 0xb0 108  12 ]  # Toggle_mutes
+1 [ 0xb0 109  60 ] [ 0xb0 109  15 ] [ 0xb0 109  12 ]  # Song_record
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Slot_shift
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Free
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Queue
-1 [ 0xb0 104  15 ] [ 0xb0 104  60 ] [ 0xb0 104  12 ]  # Oneshot
-1 [ 0xb0 105  15 ] [ 0xb0 105  13 ] [ 0xb0 105  12 ]  # Replace
-1 [ 0xb0 106  62 ] [ 0xb0 106  29 ] [ 0xb0 106  12 ]  # Snap
-1 [ 0xb0 107  60 ] [ 0xb0 107  28 ] [ 0xb0 107  12 ]  # Song
-1 [ 0xb0 108  60 ] [ 0xb0 108  29 ] [ 0xb0 108  12 ]  # Learn
-1 [ 0xb0 109  60 ] [ 0xb0 109  29 ] [ 0xb0 109  12 ]  # BPM_Up
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # BPM_Dn
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # List_Up
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # List_Dn
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Song_Up
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Song_Dn
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Set_Up
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Set_Dn
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Tap_BPM
+1 [ 0x90   8  60 ] [ 0x90   8  15 ] [ 0x90   8  12 ]  # Queue
+1 [ 0x90  24  60 ] [ 0x90  24  15 ] [ 0x90  24  12 ]  # Oneshot
+1 [ 0x90  40  60 ] [ 0x90  40  15 ] [ 0x90  40  12 ]  # Replace
+1 [ 0x90  56  60 ] [ 0x90  56  15 ] [ 0x90  56  12 ]  # Snap
+1 [ 0x90  72  60 ] [ 0x90  72  15 ] [ 0x90  72  12 ]  # Song
+1 [ 0x90  88  60 ] [ 0x90  88  15 ] [ 0x90  88  12 ]  # Learn
+1 [ 0x90 104  60 ] [ 0x90 104  15 ] [ 0x90 104  12 ]  # BPM_Up
+1 [ 0x90 120  60 ] [ 0x90 120  15 ] [ 0x90 120  12 ]  # BPM_Dn
+1 [ 0x90  70  60 ] [ 0x90  70  15 ] [ 0x90  70  12 ]  # List_Up
+1 [ 0x90  86  60 ] [ 0x90  86  15 ] [ 0x90  86  12 ]  # List_Dn
+1 [ 0x90 102  60 ] [ 0x90 102  15 ] [ 0x90 102  12 ]  # Song_Up
+1 [ 0x90 118  60 ] [ 0x90 118  15 ] [ 0x90 118  12 ]  # Song_Dn
+1 [ 0x90  71  60 ] [ 0x90  71  15 ] [ 0x90  71  12 ]  # Set_Up
+1 [ 0x90  87  60 ] [ 0x90  87  15 ] [ 0x90  87  12 ]  # Set_Dn
+1 [ 0x90 103  60 ] [ 0x90 103  15 ] [ 0x90 103  12 ]  # Tap_BPM
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Free_2
 
-# End of /home/ahlstrom/.config/seq66/qseq66-lp-mini-alt.ctrl
+# End of /home/user/.config/seq66/qseq66-lp-mini-alt.ctrl
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

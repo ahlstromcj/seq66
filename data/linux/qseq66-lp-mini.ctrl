@@ -39,8 +39,7 @@ o Automation control 64 to 73.  This covers only part of the actions
   that can be controlled via MIDI in Seq66; we still need to upgrade
   the rest once we get familiar with our new LaunchPad Mini.
  
-See contrib/notes/launchpad-mini.ods for the mappings implemented
-by this 'ctrl' file.
+See doc/launchpad-mini.ods for the mappings implemented by this 'ctrl' file.
  
 The default setup for the LaunchPad Mini is shown in the "Launchpad
 programmer's reference" file (launchpad-programmers-reference.pdf).
@@ -58,7 +57,6 @@ A sample line.  Just need to fill in the key (note value) needed for this
 row and set the pattern number at the left:
  
  2 [1 0 0x90 key 60] [1 0 0x90 key 15] [1 0 0x90 key 62] [1 0 0x90 key 12]
- 
 
 [midi-control-settings]
 

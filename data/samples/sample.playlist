@@ -1,31 +1,29 @@
-# Seq66 0.91.0 (and above) playlist file
+# Seq66 0.94.1 (and above) playlist file
 #
-# /home/user/Home/ca/mls/git/seq66/data/samples/sample.playlist
-# Written on 2020-11-17 15:15:20
+# /home/user/data/samples/sample.playlist
+# Written 2021-06-13 08:18:13
 #
-# This file holds multiple playlists for Seq66. It consists of one
-# or more '[playlist]' sections.  Each section has a user-specified
-# number, which serves for sorting and for control numbers ranging
-# from 0 to 127, or higher if the user doesn't use MIDI control on
-# playlistfiles.
+# This file holds multiple playlists for Seq66. It consists of 1 or
+# more [playlist] sections.  Each has a user-specified number for
+# sorting and MIDI control, ranging from 0 to 127. Next comes a
+# quoted display name for this list, followed by the quoted name of
+# the song directory, always using the UNIX-style separator ('/').
+# It should be accessible from wherever Seq66 is run.
 #
-# Next comes a display name for this list, with or without quotes.
-#
-# Next comes the name of the directory, always using the UNIX-style
-# separator, a forward slash (solidus).  It can optionally be
-# terminated with a slash.  It should be accessible from wherever
-# Seq66 was run.
-#
-# The last item is a line containing the MIDI song-control number,
-# followed by the name of the MIDI files.  They are sorted by the
-# control number, starting from 0.  They can be simple 'base.ext'
-# file-names; the playlist directory will be prepended before the
-# song is accessed. If the MIDI file-name already has a path, that
-# directory will be used.
-#
-# The [comments] section can document this file.  Lines starting
-# with '#' are ignored.  Blank lines are ignored.  Show a
-# blank line by adding a space character to the line.
+# Then comes a list of tunes, each starting with a MIDI control number
+# and the quoted name of the MIDI file.  They are sorted by the
+# control number, starting from 0.  They can be simple 'base.midi'
+# file-names; the playlist directory is prepended before the song is
+# accessed. If the MIDI file-name already has a path, that will be
+# used.
+
+[Seq66]
+
+config-type = "playlist"
+version = 1
+
+# The [comments] section holds user documentation for this file.
+# The first completely empty, comment, or tag line ends the comment.
 
 [comments]
 
@@ -40,86 +38,51 @@ file to your ~/.config/seq66 directory and add it to the qseq66.rc file's
 
 [playlist-options]
 
-1     # If set to 1, when a new song is selected, immediately unmute it.
-
-0     # If set to 1, every MIDI song is opened to verify it.
-
-[playlist]
-
-# Playlist number, arbitrary but unique. 0 to 127 recommended
-# for use with the MIDI playlist control.
-
-125
-
-# Display name of this play list.
-
-"Music for Serious Dogs"
-
-# Default storage directory for the song-files in this playlist.
-
-~/seq66/contrib/midi/
-
-# Provides the MIDI song-control number (0 to 127), and also the
-# base file-name (tune.midi) of each song in this playlist.
-# The playlist directory is used, unless the file-name contains its
-# own path.
-
-70 allofarow.mid
-71 CountryStrum.midi
-72 1Bar.midi
-73 2Bars.midi
-74 click_4_4.midi
-75 NR_Route_66.midi
+unmute-new-song = true
+deep-verify = false
 
 [playlist]
 
 # Playlist number, arbitrary but unique. 0 to 127 recommended
 # for use with the MIDI playlist control.
 
-126
+number = 125
+name = "Music for Serious Dogs"
+directory = "~/seq66/contrib/midi/"
 
-# Display name of this play list.
-
-"Data Ditties"
-
-# Default storage directory for the song-files in this playlist.
-
-~/seq66/data/midi/
-
-# Provides the MIDI song-control number (0 to 127), and also the
-# base file-name (tune.midi) of each song in this playlist.
-# The playlist directory is used, unless the file-name contains its
-# own path.
-
-70 b4uacuse-gm-patchless.midi
-71 Chameleon-HHancock-Ov.midi
-72 If_You_Could_Read_My_Mind.mid
-73 Kraftwerk-Europe_Endless-reconstructed.midi
-74 Peter_Gunn-reconstructed.midi
+70 "allofarow.mid"
+71 "CountryStrum.midi"
+72 "1Bar.midi"
+73 "2Bars.midi"
+74 "click_4_4.midi"
+75 "NR_Route_66.midi"
 
 [playlist]
 
-# Playlist number, arbitrary but unique. 0 to 127 recommended
-# for use with the MIDI playlist control.
+number = 126
+name = "Data Ditties"
+directory = "~/seq66/data/midi/"
 
-127
+70 "b4uacuse-gm-patchless.midi"
+71 "Chameleon-HHancock-Ov.midi"
+72 "If_You_Could_Read_My_Mind.mid"
+73 "Kraftwerk-Europe_Endless-reconstructed.midi"
+74 "Peter_Gunn-reconstructed.midi"
 
-# Display name of this play list.
+[playlist]
 
-"Cakewalk Files"
-
-# Default storage directory for the song-files in this playlist.
-
-~/seq66/data/wrk/
+number = 127
+name = "Cakewalk Files"
+directory = "~/seq66/data/wrk/"
 
 # Provides the MIDI song-control number (0 to 127), and also the
 # base file-name (tune.midi) of each song in this playlist.
 # The playlist directory is used, unless the file-name contains its
 # own path.
 
-70 oxygen4b.wrk
-71 longhair.wrk
+70 "oxygen4b.wrk"
+71 "longhair.wrk"
 
-# End of /home/user/Home/ca/mls/git/seq66/data/samples/sample.playlist
+# End of /home/user/data/samples/sample.playlist
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

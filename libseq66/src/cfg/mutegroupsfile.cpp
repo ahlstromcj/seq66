@@ -118,12 +118,6 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     file.seekg(0, std::ios::beg);                   /* seek to start    */
     (void) parse_version(file);
 
-    /*
-     * [comments] Header commentary is skipped during parsing.  However, we
-     * now try to read an optional comment block.  This block is part of the
-     * mutegroups container, not part of the rcsettings object.
-     */
-
     std::string s = parse_comments(file);
     mutegroups & mutes = rc_ref().mute_groups();
     if (! s.empty())
@@ -278,38 +272,32 @@ mutegroupsfile::write_stream (std::ofstream & file)
            "\n"
         ;
 
-    /*
-     * [comments]
-     */
-
     file <<
         "[Seq66]\n\n"
         "config-type = \"mutes\"\n"
         "version = " << version() << "\n\n"
         "# The [comments] section documents this file.  Lines starting with\n"
-        "# '#', '[', or that a blank are ignored. Show a blank line using a\n"
-        "# a space character.\n\n"
+        "# '#', '[', or that have no characters end the comment.\n"
         "[comments]\n\n" << rc_ref().comments_block().text() << "\n"
         <<
-        "# The 'mutes' file holds the global mute-groups configuration. It's\n"
-        "# format is like the 'rc' file, but is stored separately for\n"
-        "# flexibility.  It is always stored in the configuration directory.\n"
-        "# To use this 'mutes' file, specify it in the [mute-group-file] tag\n"
-        "# in the 'rc' file and set 'active' to true.\n"
+        "# The 'mutes' file holds the global mute-groups configuration. It is\n"
+        "# is stored separately for flexibility, always in the configuration\n"
+        "# directory.  To use this file, specify it in the [mute-group-file]\n"
+        "# tag in the 'rc' file and set 'active' to true.\n"
         "#\n"
         "# load-mute-groups: set to 'none', or 'mutes' to load only from the\n"
         "# 'mutes' file, 'midi' to load from the song, or 'both' to try to\n"
         "# to read from the 'mutes' first, then the 'midi' if empty.\n"
         "#\n"
-        "# save-mutes-to: 'both' writes the mutes values to both the mutes\n"
-        "# and the MIDI file; 'midi' writes only to the MIDI file; and\n"
-        "# and 'mutes' only to the mutes file.\n"
+        "# save-mutes-to: 'both' writes the mutes values to both the mutes and\n"
+        "# the MIDI file; 'midi' writes only to the MIDI file; and the 'mutes'\n"
+        "# only to the mutes file.\n"
         "#\n"
         "# mute-group-rows and mute-group-columns: Specifies the size of the\n"
         "# grid.  For now, keep these values at 4 and 8.\n"
         "#\n"
-        "# groups-format: 'binary' means write the mutes as 0 or 1; 'hex' means\n"
-        "# to write them as hexadecimal numbers (e.g. 0xff), which is useful\n"
+        "# groups-format: 'binary' means write mutes as 0 or 1; 'hex' means to\n"
+        "# write them as hexadecimal numbers (e.g. 0xff), which is useful for\n"
         "# larger set sizes.\n"
         "#\n"
         "# mute-group-selected: if 0 to 31, and mutes are available either from\n"

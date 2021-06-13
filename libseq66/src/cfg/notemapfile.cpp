@@ -101,12 +101,6 @@ notemapfile::parse_stream (std::ifstream & file)
     file.seekg(0, std::ios::beg);                   /* seek to start    */
     (void) parse_version(file);
 
-    /*
-     * [comments] Header commentary is skipped during parsing.  However, we
-     * now try to read an optional comment block.  This block is part of the
-     * notemap container, not part of the rcsettings object.
-     */
-
     std::string s = parse_comments(file);
     if (! s.empty())
         mapper().comments_block().set(s);
@@ -239,15 +233,13 @@ notemapfile::write_stream (std::ofstream & file)
         "config-type = \"drums\"\n"
         "version = " << version() << "\n\n"
         "# The [comments] section can document this file.  Lines starting\n"
-        "# with '#' and '[' are ignored.  Blank lines are ignored.  Show a\n"
-        "# blank line by adding a space character to the line.\n\n"
-        "[comments]\n\n" << mapper().comments_block().text() << "\n"
-        <<
-        "# This file holds a drum-note mapping configuration for Seq66. It is\n"
-        "# always stored in the configuration directory.  To use this file,\n"
-        "# add this file-name to the '[note-mapper]' section of the 'rc' file.\n"
-        "# There is currently no user interface for managing this file.\n"
-        "# The main values are:\n"
+        "# with '#', '[', that are blank end the comment.\n"
+        "[comments]\n\n"
+        << mapper().comments_block().text() << "\n"
+        "# This file holds a drum/note mapping configuration for Seq66. It is\n"
+        "# stored in the configuration directory.  To use this file, add this\n"
+        "# file-name to the '[note-mapper]' section of the 'rc' file. There is\n"
+        "# no user interface for managing this file. The main values are:\n"
         "#\n"
         "#   map-type: drum, patch, or multi; indicates the mapping to do.\n"
         "#   gm-channel: Indicates the channel (1-16) applied to convert notes.\n"

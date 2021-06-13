@@ -46,16 +46,17 @@ namespace seq66
 {
     class rcsettings;
 
-/**
+/*
  *  Currently these strings are just for reference, and not yet used in the
  *  code for each type of configuration file.
  *
  *  std::string filetag = "config-type";
  *  std::string ctrltag = "ctrl";
  *  std::string mutetag = "mutes";
+ *  std::string paltag  = "palette";
+ *  std::string playtag = "playlist";
  *  std::string rctag   = "rc";
  *  std::string usrtag  = "usr";
- *  std::string playtag = "playlist";
  */
 
 /**

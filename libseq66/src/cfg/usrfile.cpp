@@ -572,11 +572,11 @@ usrfile::write ()
 
     write_date(file, "user ('usr')");
     file <<
-        "# This is a seq66.usr file. Edit it and place it in the\n"
-        "# $HOME/.config/seq66 directory. It allows one to provide an\n"
-        "# alias (alternate name) to each MIDI bus, MIDI channel, and MIDI\n"
-        "# control codes per channel. It has additional options not present\n"
-        "# in Seq24, and also supports DOS INI variable setting.\n"
+        "# This is a Seq66 'usr' file. Edit it and place it in the\n"
+        "# $HOME/.config/seq66 directory. It allows one to apply an alias\n"
+        "# (alternate name) to each MIDI bus, MIDI channel, and MIDI control\n"
+        "# control code, per channel. It has additional options not present in\n"
+        "# in Seq24, and supports DOS INI-style variable setting.\n"
         ;
 
     file <<
@@ -586,17 +586,12 @@ usrfile::write ()
         ;
 
     file <<
-    "\n"
-    "# The [comments] section lets one document this file.  Lines starting\n"
-    "# with '#' and '[' are ignored.  Blank lines are ignored.  To show a\n"
-    "# blank line, add a space character to the line.\n"
+        "\n"
+        "# The [comments] section lets one document this file.  Lines starting\n"
+        "# with '#' and '[', or that are empty end the comment.\n"
+        "\n[comments]\n\n"
+        << usr().comments_block().text() << "\n"
         ;
-
-    /*
-     * [comments]
-     */
-
-    file << "\n[comments]\n\n" << usr().comments_block().text() << "\n";
 
     file <<
         "# [user-midi-bus-definitions]\n"
@@ -607,11 +602,10 @@ usrfile::write ()
         "#    channel.\n"
         "#\n"
         "# In the following MIDI buss definitions, channels are counted from\n"
-        "# 0 to 15, not 1 to 16.  Instruments not set here are set to -1\n"
-        "# (SEQ66_GM_INSTRUMENT_FLAG) and are GM (General MIDI). These\n"
-        "# replacement MIDI buss labels are shown in MIDI Clocks, MIDI Inputs\n"
-        "# and in the Pattern Editor buss and channel drop-downs.\n"
-        "# To temporarily disable the entries, set the count values to 0.\n"
+        "# 0 to 15, not 1 to 16.  Instruments not set here are set to -1 and\n"
+        "# are GM (General MIDI). These replacement MIDI buss labels are shown\n"
+        "# in MIDI Clocks, MIDI Inputs, and in the Pattern Editor buss and\n"
+        "# channel drop-downs. To disable the entries, set the counts to 0.\n"
         ;
 
     /*

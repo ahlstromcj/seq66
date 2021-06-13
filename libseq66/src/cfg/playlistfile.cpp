@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2021-06-11
+ * \updates       2021-06-13
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -212,23 +212,9 @@ playlistfile::parse ()
         play_list().clear();
         (void) parse_version(file);
 
-        /*
-         * [comments]
-         *
-         * Header commentary is skipped during parsing.  However, we now try
-         * to read an optional comment block, for restoration when rewriting
-         * the file.
-         */
-
-        if (line_after(file, "[comments]"))             /* gets first line  */
-        {
-            do
-            {
-                std::string c = line() + "\n";
-                play_list().comments_block().append(c);
-
-            } while (next_data_line(file));
-        }
+        std::string temp = parse_comments(file);
+        if (! temp.empty())
+            play_list().comments_block().set(temp);
 
         /*
          * [playlist-options]
@@ -480,23 +466,18 @@ playlistfile::write ()
         file_error("Write open fail", name());
         return result;
     }
-
-    /*
-     * Initial comments and MIDI control section.
-     */
-
     write_date(file, "playlist");
     file <<
         "# This file holds multiple playlists for Seq66. It consists of 1 or\n"
         "# more [playlist] sections.  Each has a user-specified number for\n"
         "# sorting and MIDI control, ranging from 0 to 127. Next comes a\n"
         "# quoted display name for this list, followed by the quoted name of\n"
-        "# the song directory, always using the UNIX-style separator\n"
-        "# (the '/').  It should be accessible from wherever Seq66 was run.\n"
+        "# the song directory, always using the UNIX-style separator ('/').\n"
+        "# It should be accessible from wherever Seq66 is run.\n"
         "#\n"
-        "# Then comes a list of tunes, eachstarting with a MIDI control number\n"
-        "# followed by the quoted name of the MIDI file.  They are sorted by\n"
-        "# the control number, starting from 0.  They can be simple 'base.midi'\n"
+        "# Then comes a list of tunes, each starting with a MIDI control number\n"
+        "# and the quoted name of the MIDI file.  They are sorted by the\n"
+        "# control number, starting from 0.  They can be simple 'base.midi'\n"
         "# file-names; the playlist directory is prepended before the song is\n"
         "# accessed. If the MIDI file-name already has a path, that will be\n"
         "# used.\n"

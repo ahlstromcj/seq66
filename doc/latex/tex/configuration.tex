@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-05-17
+% \update      2021-06-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -51,6 +51,9 @@
 
    The palette file is not automatically generated.  It can be saved from the
    \textbf{Edit / Preferences / Display} tab.
+
+   There are also some 'keymap' files.  They are not yet used, but may become a
+   feature of \textsl{Seq66} in the future.
 
    For \textsl{Microsoft Windows}, the default base name of the files is
    \texttt{qpseq66}, and the default configuration directory is
@@ -137,6 +140,10 @@
       3    # grid_style
    \end{verbatim}
 
+   We have been trying to replace these kinds of settings with the
+   \texttt{name = value} style described below, but there are a few places
+   where the old style persists.
+
 \subsubsection{Boolean Settings}
 \label{subsec:configuration_common_boolean_settings}
 
@@ -147,24 +154,30 @@
       0        # flag to record incoming data by channel
    \end{verbatim}
 
+   We have been trying to replace these kinds of settings with the
+   \texttt{name = value} style described below, but there are a few places
+   where the old style persists.
+
 \subsubsection{Variables}
 \label{subsec:configuration_common_variables}
 
    Variable are a new style of value setting, and can encompass not only
    booleans and numeric values, but string values, which may correspond to
    enumerated values in the source code.  These values are specified by a
-   section-name plus variable-name pair.
+   section-name plus variable name/value pair.  Here are some sample
+   \texttt{name = value} pairs:
 
    \begin{verbatim}
-      [mute-group-flags]
       load-mute-groups = true
       save-mutes-to = both
-      . . .
+      window-scale = 1.0
+      default-ppqn = 1920
+      directory = "/home/user/Seq66 files/midi"
    \end{verbatim}
 
-   If the variable value is a string value, especially the name of a file or
-   directory, it must be surrounded with quotes, in case the path has spaces
-   in it.
+   If the variable value is a string value that is the name of a file or
+   directory or path, it must be surrounded with quotes, in case the path has
+   spaces in it.
 
    Also note that there are still a lot of old-style variable specifications in
    place.  As time allows, they will be fixed, one-by-one, in a manner that
@@ -460,7 +473,8 @@
 
    \begin{verbatim}
       [midi-control-file]
-      "qseq66.ctrl"          # contains a whole [midi-control] section
+      active = true
+      name = "qseq66.ctrl"    # contains a [midi-control] section, and more
    \end{verbatim}
 
    As with the 'rc' file, the 'ctrl' file is rewritten upon exit.
@@ -476,7 +490,8 @@
 
    \begin{verbatim}
       [midi-group-file]
-      "qseq66.mutes"         # contains a whole [mute-groups] section
+      active = false
+      name = "qseq66.mutes"   # contains a [mute-groups] section
    \end{verbatim}
 
    The mutes-groups themselves are loaded from the 'mutes' file dependent on
@@ -491,22 +506,24 @@
 
    \begin{verbatim}
       [palette-file]
-      1       # palette_active
-      "qseq66.palette"
+      active = false
+      name = "qseq66.palette"
    \end{verbatim}
 
    The only need for a palette file is when the user is not satisfied with the
-   default palette for the patterns, inverse colors, or hatching for some pattern
-   piano roll items.  There is a button to save the current/default palette for
-   later modification in the \textbf{Edit / Preferences / Display} tab.
+   default palette for the patterns, inverse colors, hatching,
+   or grid-lines for some
+   pattern piano roll items.  There is a button to save the current/default
+   palette for later modification in the \textbf{Edit / Preferences / Display}
+   tab.
 
 \subsubsection{'rc' File / Note Mapper}
 \label{subsubsec:configuration_rc_note_mapper}
 
    \begin{verbatim}
       [note-mapper]
-      1
-      "GM_DD-11.drums"
+      active = false
+      name = "GM_DD-11.drums"
    \end{verbatim}
 
    This file can be used transform the existing drum (non-transposable) tracks
@@ -568,11 +585,12 @@
 
    \begin{verbatim}
       [midi-clock-mod-ticks]
-      64
-      0   # flag to record incoming data by channel
+      ticks = 64
+      record-by-channel = false
    \end{verbatim}
 
-   The record-flag is kind of an outcast.  Not sure why it is here,
+   The record-flag is kind of an outcast.  Not sure why it is here, as
+   opposed to the 'usr' file;
    something to rectify later.
 
 \subsubsection{'rc' File / MIDI-Meta-Events Section}
@@ -590,7 +608,7 @@
 
    \begin{verbatim}
       [midi-meta-events]
-      10      # tempo_track_number
+      tempo-track = 0
    \end{verbatim}
 
    As per the MIDI specification, the first track (track 1 in track
@@ -614,7 +632,9 @@
    user-interface to edit them might not be worth the effort.
    We suspect most users will be happy enough with the default settings,
    and users of internationaly keyboards will find the 'ctrl' file easy enough
-   to edit with a programmer's editor.
+   to edit with a programmer's editor.  As an example,
+   see \texttt{qseq66-azerty.ctrl} in the \texttt{data/linux}
+   directory.
         
 \subsubsection{'rc' File / JACK Transport}
 \label{subsubsec:configuration_rc_jack_transport}
@@ -626,8 +646,8 @@
    The JACK Transport options are also command-line options.
    See \sectionref{subsec:configuration_command_line}.
 
-   For \textsl{Seq66} \textsl{before} 0.94.0, simple boolean digit settings were
-   used.
+   For \textsl{Seq66} \textsl{before} 0.94.0, simple boolean digit settings
+   were used.
 
    \begin{verbatim}
       [jack-transport]
@@ -642,9 +662,9 @@
 
    \begin{verbatim}
       [jack-transport]
-      transport-type = slave        # "none", "slave", "master", or "conditional"
-      song-start-mode = true        # "true" or "false" ("song" and "live" work, too)
-      jack-midi = true              # "true" or "false"
+      transport-type = slave    # 'none', 'slave', 'master', or 'conditional'
+      song-start-mode = song    # song = 'true', live = 'false'
+      jack-midi = true          # 'true' or 'false'
    \end{verbatim}
 
    These options are described well in the 'rc' file.
@@ -696,9 +716,9 @@
    \index{[manual-ports]}
    \begin{verbatim}
       [manual-ports]
-      0   # flag for manual (virtual) ALSA or JACK ports
-      8   # number of manual/virtual output ports
-      4   # number of manual/virtual input ports
+      virtual-ports = false   # 'true' = manual (virtual) ALSA or JACK ports
+      output-port-count = 8   # number of manual/virtual output ports
+      input-port-count = 4    # number of manual/virtual input ports
    \end{verbatim}
 
    \index{--auto-ports}
@@ -730,7 +750,7 @@
    \index{[reveal-ports]}
    \begin{verbatim}
       [reveal-ports]
-      1   # flag for reveal ALSA ports
+      show-system-ports = true   # flag for reveal ALSA ports
    \end{verbatim}
 
    \index{jack!reveal-ports}
@@ -745,15 +765,15 @@
 \label{subsubsec:configuration_rc_interaction}
 
    \begin{verbatim}
-      1   # allow_mod4_mode
-      1   # allow_snap_split
-      1   # allow_click_edit
+      [interaction-method]
+      snap-split = false
+      click-edit = true
    \end{verbatim}
 
-   The \texttt{Mod4} ("Windows" key) option is still available, but no longer
-   necessary.  Also removed is the option for the "fruity" option
-   of \textsl{Seq24}.
-   It will be added if there is a clamor for it.
+   The \texttt{Mod4} ("Windows" key) option is no longer available, and not
+   necessary.
+   Also removed is the option for the "fruity" option of \textsl{Seq24}.
+   It will be added back if there is a clamor for it.
 
    \index{[allow-snap-split]}
    \index{new!snap-split}
@@ -780,8 +800,17 @@
 
    \begin{verbatim}
       [auto-option-save]
-      0     # auto-save-options-on-exit support flag
+      auto-save-rc = true
+      save-old-triggers = false
+      save-old-mutes = false
    \end{verbatim}
+
+   The 'save' options can be set to true to save triggers in the old formats.
+   \textsl{Seq66} now saves triggers with a "transpose" value, so that
+   clips can be transposed in the song editor for more extensive re-use
+   (see the "Kraftwerk" MIDI file for an example).
+   The 'mutes' are now save as a single byte, rather than a 4-byte value, to
+   save some space.
 
 \subsubsection{'rc' File / Last Used Directory}
 \label{subsubsec:configuration_rc_last_used_dir}
@@ -792,7 +821,7 @@
    \index{[last-used-dir]}
    \begin{verbatim}
       [last-used-dir]
-      /home/ahlstrom/Home/ca/mls/git/seq66/contrib/midi/
+      "/home/user/seq66/contrib/midi/"
    \end{verbatim}
 
 \subsubsection{'rc' File / Recent Files}
@@ -801,15 +830,16 @@
    The following item preserves a list of the last few MIDI files loaded.
    It is not filled when a MIDI file is loaded via a play-list.
    The first number is the count of recent-files.
-   The second number is a boolean, set to "1" if the most-recent file
+   The second number is a boolean to determine if the most-recent file
    should be loaded when \textsl{Seq66} starts.
    This option is useful as part of restoring a session.
 
    \index{[recent-files]}
    \begin{verbatim}
       [recent-files]
-      2 1
-      "/home/user/Home/ca/mls/git/seq66-alternate/contrib/midi/2Bars.midi"
+      count = 2
+      load-most-recent = true
+      "/home/user/seq66-alternate/contrib/midi/2Bars.midi"
       "contrib/midi/b4uacuse-seq24.midi"
    \end{verbatim}
 
@@ -824,8 +854,8 @@
    \index{[playlist]}
    \begin{verbatim}
       [playlist]
-      0     # playlist_active, 1 = active, 0 = do not use it
-      "/home/ahlstrom/.config/seq66/sample.playlist"
+      active = false
+      "/home/user/.config/seq66/sample.playlist"
    \end{verbatim}
 
    See \sectionref{sec:playlist}.
@@ -965,13 +995,16 @@
    to take its place.
    After one runs \textsl{Seq66} for the first time (or after deleting
    the configuration files), it will generate a
-   \texttt{seq66.usr} file in one's HOME directory:
+   \texttt{qseq66.usr} file in one's "HOME" directory:
 
    \begin{verbatim}
-      /home/user/.config/seq66/seq66.usr
+      /home/user/.config/seq66/qseq66.usr             (Linux)
+      C:/Users/user/AppData/Local/seq66/qpseq66.usr   (Windows)
    \end{verbatim}
 
-   It allows you to give an alias to 
+   (In a session manager, the files will be created in the session directory).
+
+   The 'usr' file allows one to give an alias to 
    each MIDI bus, MIDI channel, and MIDI control 
    codes, per channel.
    The process for setting up the 'usr' file is to:
@@ -1194,12 +1227,11 @@
    \index{usr!velocity-override}
    \begin{verbatim}
       [user-midi-settings]
-      192    # midi_ppqn
-      4      # midi_beats_per_measure/bar
-      120    # midi_beats_per_minute
-      4      # midi_beat_width
-      -1     # midi_buss_override
-      80     # velocity_override (-1 = 'Free')
+      beats-per-bar = 4
+      beats-per-minute = 120
+      beat-width = 4
+      buss-override = -1
+      velocity-override = 80     # velocity_override (-1 = 'Free')
    \end{verbatim}
 
    The \texttt{velocity-override} option fixes a long standing (from
@@ -1210,9 +1242,9 @@
    \index{usr!bpm-step-increment}
    \index{usr!bpm-page-increment}
    \begin{verbatim}
-      1      # bpm_precision
-      0.1    # bpm_step_increment
-      5.0    # bpm_page_increment
+      bpm-precision = 1
+      bpm-step-increment = 0.1
+      bpm-page-increment = 5.0
    \end{verbatim}
 
    The \texttt{bpm-precision}, \texttt{bpm-step-increment}, and
@@ -1227,8 +1259,8 @@
    \index{usr!midi-bpm-minimum}
    \index{usr!midi-bpm-maximum}
    \begin{verbatim}
-      0       # midi_bpm_minimum
-      360     # midi_bpm_maximum
+      bpm-minimum = 0       # midi_bpm_minimum
+      bpm-maximum = 360     # midi_bpm_maximum
    \end{verbatim}
 
    The \texttt{midi-bpm-minimum} and \texttt{midi-bpm-maximum} settings
@@ -1259,7 +1291,8 @@
 
    \index{usr!option-daemonize}
    \begin{verbatim}
-		0       # option_daemonize
+      [user-options]
+		daemoniz = false
    \end{verbatim}
 
    If this option is not used when running \texttt{seq66cli}, then the
@@ -1270,7 +1303,7 @@
 
    \index{usr!option-logfile}
    \begin{verbatim}
-      "seq66.log"
+      log = "seq66.log"
    \end{verbatim}
 
    This log-file is written to the same directory as the 'usr' file,
@@ -1293,11 +1326,13 @@
    user-interface.
 
    \begin{verbatim}
-   [user-ui-tweaks]
-   10    # key_height
-   1     # use_new_seqedit
-   note-resume = false
-   style-sheet = "qseq66.qss"
+      [user-ui-tweaks]
+      key-height = 10
+      note-resume = false
+      style-sheet = "qseq66.qss"    # optional, can include a path
+      fingerprint-size = 128
+      progress-box-width = 0.0
+      progress-box-height = 0.0
    \end{verbatim}
 
    \index{key height}
@@ -1310,15 +1345,11 @@
 
    \index{new seqedit}
    \textsl{Seq66} now uses the new pattern editor in the 'Edit' tab.
-   The \texttt{use-new-seqedit} value is set to \texttt{true} by default.
    When used in the \textbf{Edit} tab instead of an external window,
    it is shrunk slight vertically, but the bottom row of buttons is invisible
    unless the user makes the window taller.
-
-   Setting \texttt{use-new-seqedit} value is set to \texttt{false} uses the 
-   smaller window.
-   It is less functional and a bit more buggy.
-   It will eventually go away completely.
+   The old smaller pattern editor is less functional and a bit more buggy.
+   It has gone away completely.
 
    The following options adopt the new convention for setting variables, in
    which the format is \texttt{item-name = value}.
@@ -1349,6 +1380,23 @@
    Note the blue text fields. Also note the larger tabs, which could be useful on
    a touch-screen.
 
+   \index{fingerprint}
+   The \texttt{fingerprint} option provides a way to reduce the amount of
+   drawing in the pattern grid.  The pattern box in each button is small, and,
+   for patterns longer than the fingerprint size, it makes no sense to draw
+   hundreds of notes.  Instead, patterns shorter than the fingerprint size are
+   drawn normally, while longer patterns are drawn with a "fingerprint", a
+   compressed representation of the pattern.
+
+   \index{progress box!width}
+   \index{progress box!height}
+   The \texttt{progress-box-width} and
+   The \texttt{progress-box-height} options provide a way to expand or reduce
+   the size of the progess box in each grid button.
+   It is purely a user preference.
+   The values range from 0.0 to 1.0 (full size).  If either is 0,
+   then the box isn't drawn, and the pattern appears directly on the button.
+
 \paragraph{'usr' File / Additional Options / [user-session]}
 \label{paragraph:user_file_added_options_session}
 
@@ -1356,9 +1404,9 @@
    \textsl{Non Session Manager}.
 
    \begin{verbatim}
-   [user-session]
-   session = none
-   url = ""
+      [user-session]
+      session = none
+      url = ""
    \end{verbatim}
 
    See \sectionref{subsec:sessions_nsm_before_using_nsm}; it goes into great
@@ -1375,12 +1423,12 @@
  	\texttt{overwrite}, and \texttt{expand}.
 
    \begin{verbatim}
-   [new-pattern-editor]
-	armed = false
-	thru = false
-	record = false
-	qrecord = false
-	record-style = merge
+      [new-pattern-editor]
+      armed = false
+      thru = false
+      record = false
+      qrecord = false
+      record-style = merge
    \end{verbatim}
 
 \subsection{'ctrl' File}
@@ -1402,16 +1450,17 @@
    \texttt{control\_keys.ods} and
    \texttt{launchpad-mini.ods}.
 
-   The 'ctrl' file provides settings for keyboard control, MIDI control, and for
-   specifying MIDI output to reflect \textsl{automation} commands in a device
-   such as the \textsl{LaunchPad Mini}.
-   The name of this file is specfied in the 'rc' file as noted earlier.
+   The 'ctrl' file provides settings for keyboard control, MIDI control, and
+   for specifying MIDI output to reflect \textsl{automation} commands in a
+   device such as the \textsl{LaunchPad Mini}.  The name of this file is
+   specfied in the 'rc' file as noted earlier.
 
 \subsubsection{'ctrl' File / MIDI Control Settings}
 \label{subsubsec:configuration_ctrl_midi_control_settings}
 
    \begin{verbatim}
-      /home/user/.config/seq66/qseq66.usr
+      /home/user/.config/seq66/qseq66.usr             (Linux)
+      C:/Users/user/AppData/Local/seq66/qpseq66.usr   (Windows)
    \end{verbatim}
 
    This file offloads the control settings from the 'rc' file, for a more
@@ -1419,6 +1468,18 @@
    configuration files.  The first unique section defines some useful settings
    using the new variables feature of the configuration.  Look at the sample or
    generated file to see the layout of these items.
+
+	\begin{verbatim}
+      [midi-control-settings]
+      load-key-controls = true
+      load-midi-controls = true
+      control-buss = 3              # or 0xff
+      midi-enabled = true
+      button-offset = 0
+      button-rows = 4
+      button-columns = 8
+      keyboard-layout = qwerty
+	\end{verbatim}
 
    \begin{itemize}
       \item \texttt{load-key-controls}.
@@ -1445,6 +1506,12 @@
       \item \texttt{button-columns}.
          Indicates the columns of the input control grid.
          Still in progress.
+      \item \texttt{keyboard-layout}.
+         Provides a way to adapt to non-US keyboards.
+         Currently, the only supported values are "qwerty" and "azerty".
+         The handling of keyboards can be quite complex, and differ between
+         Linux distros and Windows.
+         Especially problematic are the "dead keys" supported by some locales.
    \end{itemize}
 
 \subsubsection{'ctrl' File / Loop Control}
@@ -1473,8 +1540,10 @@
    \begin{verbatim}
       [loop-control]
       # Control:  Toggle          On               Off
-      0 "1" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 0
-      . . .
+       0 "1"     [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] # Loop 0
+       1 "q"     [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] # Loop 1
+       . . .
+      31 ","     [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] # Loop 31
    \end{verbatim}
 
    The first number is an index number, starting at 0.  It indicates what
@@ -1536,9 +1605,16 @@
    For each pattern, we can set up MIDI events to turn a 
    pattern on, off, or to toggle it.
 
-   The MIDI control setup resembles a matrix.  This matrix is divided into a
-   number of sections depending on the overall functionality of the MIDI
-   controls in the section:
+   The loop MIDI control setup resembles a matrix.  The default matrix
+   uses the central keys on the keyboard, laid out in a 4 x 8 grid matching the
+   pattern buttons:
+
+   \begin{verbatim}
+      1 2 3 4 5 6 7 8
+      q w e r t y u i
+      a s d f g h j k
+      z x c v b n m <
+   \end{verbatim}
 
 \subsubsection{'ctrl' File / Mute-Group Control}
 \label{subsubsec:configuration_ctrl_mute_group_control}
@@ -1553,12 +1629,27 @@
 
    \begin{verbatim}
       [mute-group-control]
-       0 "!" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Mute 0
+        0 "!"  [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] # Mute 0
+        1 "Q"  [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] # Mute 1
        . . .
+       31 "<" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Mute 31
    \end{verbatim}
 
    All this section does is set up the controls to be used; the actual
-   mute-group patters are defined in a 'mutes' configuration file.
+   mute-group patterns are defined in the 'mutes' configuration file (or in the
+   \textsl{Seq66} MIDI file itself.
+
+   The mutes MIDI control setup resembles a matrix match the shifted versions
+   of the loop control keys.  The default matrix
+   uses the central keys on the keyboard, laid out in a 4 x 8 grid matching the
+   pattern buttons:
+
+   \begin{verbatim}
+      ! @ # $ % ^ & *
+      Q W E R T Y U I
+      A S D F G H J K
+      Z X C V B N M <
+   \end{verbatim}
 
 \subsubsection{'ctrl' File / Automation Control}
 \label{subsubsec:configuration_midi_ctrl_automation}
@@ -1577,9 +1668,15 @@
 
    \begin{verbatim}
       [automation-control]
-       0 "'" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # BPM Up
+       0 "'"    [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # BPM Up
+       1 ";"    [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # BPM Dn
        . . .
+      35 "Quit" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 0
+       . . .
+      48 "0xfe" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] # Reserved 48
    \end{verbatim}
+
+   Note that "Quit" is not a 
 
    The stanzas meaning can change depending on the type of control.  Here are
    the important styles:
@@ -1717,7 +1814,7 @@ This MIDI control sets the playing screen-set.
       [midi-control-out-settings]
       set-size = 32
       output-buss = 1
-      enabled = false
+      midi-enabled = true
       button-offset = 0
       button-rows = 8
       button-columns = 8
@@ -1749,8 +1846,10 @@ This MIDI control sets the playing screen-set.
 
    \begin{verbatim}
       [midi-control-out]
-      0 [1  0 0x90   0 60] [1  0 0x90   0 15] [1  0 0x90   0 62] [1  0 0x90   0 12]
+       0 [ 0x90  0 60 ] [ 0x90  0 15 ] [ 0x90  0 62 ] [ 0 0x90  0 12 ]
+       1 [ 0x90  1 60 ] [ 0x90  1 15 ] [ 0x90  1 62 ] [ 0 0x90  1 12 ]
       . . .
+      31 [ 0x90 31 60 ] [ 0x90 31 15 ] [ 0x90 31 62 ] [ 0 0x90 31 12 ]
    \end{verbatim}
 
    The first number is the pattern number of the pattern whose armed/muted
@@ -1758,30 +1857,33 @@ This MIDI control sets the playing screen-set.
    There are samples in the \texttt{data/linux} directory for some devices that
    one can adapt to other equipment.
 
+   The mute-group buttons and their status can also be shown:
+
+   \begin{verbatim}
+      [mute-control-out]
+       0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
+       1 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
+        . . .
+      31 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
+   \end{verbatim}
+
+   \begin{verbatim}
+   \end{verbatim}
+
    There are additional automation controls whose status can be displayed:
 
    \begin{verbatim}
-      # MIDI Control Out: play on/off
-      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
-      # MIDI Control Out: stop on/off
-      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
-      # MIDI Control Out: pause on/off
-      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
-      # MIDI Control Out: queue on/off
-      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
-      # MIDI Control Out: oneshot on/off
-      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
-      # MIDI Control Out: replace on/off
-      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
-      # MIDI Control Out: snap store/restore
-      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
-      # MIDI Control Out: reserved
-      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
-      # MIDI Control Out: learn on/off
-      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
+      [automation-control-out]
+      0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Panic
+      0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Stop
+       . . .
+      0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Tap_BPM
+      0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Free_2
    \end{verbatim}
 
    See the sample files for more detailed descriptions.
+   Also see \sectionref{sec:launchpad_mini}; it showns a fairly comprehensive
+   setup based on the file \texttt{data/linux/qseq66-lp-mini.ctrl}.
 
 \subsubsection{'ctrl' File / AZERTY and QWERTZ Keyboards}
 \label{subsubsec:configuration_ctrl_azerty}
@@ -1797,7 +1899,8 @@ This MIDI control sets the playing screen-set.
 
    \begin{verbatim}
       [midi-control-file]
-      qseq66-azerty.ctrl
+      active = true
+      name = "qseq66-azerty.ctrl"
    \end{verbatim}
 
    Note that the \texttt{qseq66-azerty.ctrl} file specifies the following:
@@ -1814,8 +1917,8 @@ This MIDI control sets the playing screen-set.
    the numeric row of the keyboard.
 
    \textbf{QWERTZ}.
-   We don't currently supply this layout, since it is quite similar to the default
-   \textbf{QWERTY} layout.
+   We don't currently supply this layout, since it is quite similar to the
+   default \textbf{QWERTY} layout; the user can easily edit it.
    Exit from \texttt{qseq66}, then copy the \texttt{qseq66.ctrl}
    file to \texttt{qseq66-qwertz.ctrl} (or a better name).  Edit the latter to
    change "z" to "y", "y" to "z", "Z" to "Y", and "Y" to "Z".
@@ -1823,13 +1926,21 @@ This MIDI control sets the playing screen-set.
 
    \begin{verbatim}
       [midi-control-file]
-      qseq66-qwertz.ctrl
+      "qseq66-qwertz.ctrl"
    \end{verbatim}
 
    After exiting \texttt{qseq66}, the 'ctrl' file one has specified
    should still have the new settings.
    As usual, keep all your configurations in a safe place, such as a tar-file or
    ZIP-file.
+
+   One issue with some keyboard layouts are "dead keys".  These keys do
+   nothing but modify the next key that follows, and will not emit
+   a useable key code.
+
+   Lastly, one will see some sample files with the extension 'keymap'.
+   These files are not yet useful, but we anticipate calling them into play
+   when more people are asking for support for their non-US keyboards.
 
 \subsection{'mutes' File}
 \label{subsubsec:configuration_mute_group_control}
