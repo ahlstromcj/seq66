@@ -38,6 +38,8 @@
       \item Access the correct inputs, especially a keyboard or pad controller
          that can be used for controlling the sequencer via MIDI, as well as
          inputing notes.
+      \item The desired input buss must be \textsl{enabled} by setting
+         the active bit to "1" for that device.
       \item The MIDI input must be configured with some
          \texttt{[automation-control]}
          values, so that the headless sequencer can stop and
@@ -49,9 +51,15 @@
          sometimes be tricky, because \textsl{Seq66} can route all
          patterns to the same output, or can let the patterns decide the
          outputs for themselves.
+      \item The desired outpuit buss must be \textsl{enabled} by setting
+         the active bit to "1" for that device.
       \item Use the desired play-list.  The headless sequencer can only select
          songs to play via a pre-configured play-list.
    \end{enumerate}
+
+   Once the above steps are proven for the \texttt{qseq66} configuration files,
+   then the same settings can be made for the \texttt{seq66cli} configuration
+   files.
 
    Sometimes odd problems, such as the output synthesizer not working, not
    appearing in the list of outputs, can prove a real puzzle.
@@ -75,8 +83,12 @@
    the controller and the synthesizer:
 
    \begin{verbatim}
-      $ aplaymidi -l
+      $ aplaymidi -l       # list ALSA output ports
+      $ arecordmidi -l     # list ALSA input ports (except the 'announce' port)
    \end{verbatim}
+
+   Another way is to start the program, exit it, and see the results in the
+   'rc' file.
 
    \textbf{Third}, edit the \texttt{seq66cli.rc}
    file as described below so that the correct settings of

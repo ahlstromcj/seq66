@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-06-11
+ * \updates       2021-06-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -46,7 +46,12 @@
 namespace seq66
 {
 
-static const int s_ctrl_file_version = 4;
+/*
+ * Version 4: Baseline for this configuration file.
+ * Version 5: Adds 8 more potential midi-control-out entries.
+ */
+
+static const int s_ctrl_file_version = 5;
 
 /*
  * -------------------------------------------------------------------------
@@ -164,7 +169,6 @@ midicontrolfile::midicontrolfile
     m_temp_midi_ctrl_in     ("ctrl"),                       /* reading only */
     m_stanzas               ()
 {
-    // version("3");                            /* adds more automation out */
     version(s_ctrl_file_version);
 }
 
@@ -648,18 +652,10 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::pause);
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::play);
-                read_ctrl_triple
-                (
-                    file, mco, midicontrolout::uiaction::toggle_mutes
-                );
-                read_ctrl_triple
-                (
-                    file, mco, midicontrolout::uiaction::song_record
-                );
-                read_ctrl_triple
-                (
-                    file, mco, midicontrolout::uiaction::slot_shift
-                );
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::toggle_mutes);
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::song_record);
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::slot_shift);
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::free);
             }
         }
         if (ok)
@@ -687,8 +683,19 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::set_up);
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::set_dn);
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::tap_bpm);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::free_2);
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::quit);
             }
+        }
+        if (file_version_number() >= 5)
+        {
+            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_1);
+            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_2);
+            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_3);
+            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_4);
+            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_5);
+            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_6);
+            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_7);
+            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_8);
         }
         if (! ok)
         {
@@ -1229,7 +1236,8 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             "# This format is similar to the [mute-control-out] format, but\n"
             "# the first number is an active-flag, not an index number.\n"
             "# The stanzas are on/off/inactive, except for 'snap', which is\n"
-            "# store/restore/inactive.\n\n"
+            "# store/restore/inactive. The 'Alt n' values can be used to show\n"
+            "# status beyond the basic list.\n\n"
             ;
         write_ctrl_triple(file, mco, midicontrolout::uiaction::panic);
         write_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
@@ -1254,7 +1262,15 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         write_ctrl_triple(file, mco, midicontrolout::uiaction::set_up);
         write_ctrl_triple(file, mco, midicontrolout::uiaction::set_dn);
         write_ctrl_triple(file, mco, midicontrolout::uiaction::tap_bpm);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::free_2);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::quit);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_1);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_2);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_3);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_4);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_5);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_6);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_7);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_8);
     }
     return result;
 }

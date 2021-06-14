@@ -990,7 +990,7 @@ usrfile::write ()
         "#\n"
         "# This section contains the setup values for recording when a new\n"
         "# pattern is opened. For flexibility, a new pattern means only that\n"
-        "# the loop has the default name, 'Unititled'. These values save time\n"
+        "# the loop has the default name, 'Untitled'. These values save time\n"
         "# during a live recording session. Note that the valid values for\n"
         "# record-style are 'merge', 'overwrite', and 'expand'.\n"
         "\n[new-pattern-editor]\n\n"

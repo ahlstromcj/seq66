@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-03-14 (Pi Day!)
+ * \updates       2021-06-14
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -135,21 +135,24 @@ public:
         set_up,                             /* extra 4  */
         set_dn,                             /* extra 5  */
         tap_bpm,                            /* extra 6  */
-        free_2,                             /* extra 7  */
+        quit,                               /* extra 7  */
+        alt_1, max_old = alt_1,
+        alt_2,
+        alt_3,
+        alt_4,
+        alt_5,
+        alt_6,
+        alt_7,
+        alt_8,
         max
     };
-
-    /*
-     * Also consider 8 more buttons: playlist up/dn, set up/dn, song up/dn,
-     * BPM tap, and free_2.
-     */
 
 private:
 
     /**
-     *  Manifest constants for midicontrolfile to use as array indices.
-     *  These correspond to the MIDI Controls for UI (user-interface) actions;
-     *  see the uiactions enumeration. This enumeration cannot be a class
+     *  Manifest constants for midicontrolfile to use as array indices.  These
+     *  correspond to the MIDI Controls for UI (user-interface) actions; see
+     *  the uiactions enumeration. This enumeration cannot be a class
      *  enumeration, because enum classes cannot be used as array indices.
      *
      *  ca 2021-02-10.
@@ -233,8 +236,8 @@ private:
 
     /**
      *  Provides a type for a vector of uiaction pairs, which can be
-     *  essentially unlimited in size.  However, currently, the number needed
-     *  is uiaction::max, or 9.
+     *  essentially unlimited in size.  However, the number needed is
+     *  constrained to uiaction::max.
      */
 
     using uiactionlist = std::vector<uiactions>;
@@ -259,7 +262,7 @@ private:
 
     /**
      *  Provides the events to be sent out for non-sequence actions.  This
-     *  item is a vector of uiaction::max = 9 actiontriplets.
+     *  item is a vector of uiaction::max actiontriplets.
      */
 
     uiactions m_ui_events;
@@ -323,6 +326,7 @@ public:
     void send_mutes_event (int group, actionindex which);
     void send_event (uiaction what, actionindex which);
     void send_learning (bool learning);
+    void send_automation (bool activate);
 
 };          // class midicontrolout
 

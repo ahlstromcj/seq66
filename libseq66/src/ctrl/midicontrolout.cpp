@@ -23,9 +23,9 @@
  *  <i>output</i> of the application.
  *
  * \library       seq66 application
- * \author        Igor Angst (with modifications by C. Ahlstrom)
+ * \author        Igor Angst (with refactoring by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-03-17 (St. Patrick's Day)
+ * \updates       2021-06-14
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -198,7 +198,15 @@ action_to_string (midicontrolout::uiaction a)
     case midicontrolout::uiaction::set_up:          return "Set_Up";
     case midicontrolout::uiaction::set_dn:          return "Set_Dn";
     case midicontrolout::uiaction::tap_bpm:         return "Tap_BPM";
-    case midicontrolout::uiaction::free_2:          return "Free_2";
+    case midicontrolout::uiaction::quit:            return "Quit";
+    case midicontrolout::uiaction::alt_1:           return "Alt_1";
+    case midicontrolout::uiaction::alt_2:           return "Alt_2";
+    case midicontrolout::uiaction::alt_3:           return "Alt_3";
+    case midicontrolout::uiaction::alt_4:           return "Alt_4";
+    case midicontrolout::uiaction::alt_5:           return "Alt_5";
+    case midicontrolout::uiaction::alt_6:           return "Alt_6";
+    case midicontrolout::uiaction::alt_7:           return "Alt_7";
+    case midicontrolout::uiaction::alt_8:           return "Alt_8";
     default:                                        return "Unknown";
     }
 }
@@ -417,6 +425,14 @@ midicontrolout::send_learning (bool learning)
 {
     actionindex which = learning ? action_on : action_off ;
     send_event(uiaction::learn, which);
+}
+
+void
+midicontrolout::send_automation (bool activate)
+{
+    actionindex ai = activate ? action_off : action_del ;
+    for (uiaction uia = uiaction::panic; uia < uiaction::max; ++uia)
+        send_event(uia, ai);
 }
 
 std::string

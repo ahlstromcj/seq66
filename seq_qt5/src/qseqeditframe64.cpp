@@ -961,7 +961,7 @@ qseqeditframe64::qseqeditframe64
 
     /*
      *  This check looks only for "Untitled". Causes opening this window to
-     *  unmute patters in generic *.mid files.  We added a check for events
+     *  unmute patterns in generic *.mid files.  We added a check for events
      *  existing.
      */
 

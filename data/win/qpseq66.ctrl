@@ -346,7 +346,7 @@ button-columns = 8
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # set_up
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # set_dn
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # tap_bpm
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # free_2
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # quit
 
 # End of /home/ahlstrom/.config/seq66/qpseq66.ctrl
 #

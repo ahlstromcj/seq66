@@ -1,6 +1,6 @@
-TO DO for Seq66 0.94.0 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.94.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-05-23
+2019-04-13 to 2021-06-14
 
 From: zigmhount <notifications@github.com>
 Subject: [Question/Feature request] Live midi pattern recording (#188)
@@ -12,28 +12,21 @@ Subject: [Question/Feature request] Live midi pattern recording (#188)
 
     My ideal feature would be e.g.
 
-    1. when an empty pattern is selected (on the control surface)
-    2. to automatically open the pattern editor
-    3. automatically activate Dump Data to MIDI Bus
-    4. automatically activate Midi pass-through
-    5. automatically activate Record Midi data
-    6. automatically set Merge to Expand the sequence to fit recording
-    7. and manually select the midi output to the synth.
+   Done 1. When an empty pattern is selected
+   Done    a. On the GUI (double-click)
+           b. On the control surface (the Mini)
+   Done 2. to automatically open the pattern editor
+   Done 3. automatically activate Dump Data to MIDI Bus
+   Done 4. automatically activate Midi pass-through
+   Done 5. automatically activate Record Midi data
+   Done 6. automatically set Merge to Expand the sequence to fit recording
+        7. and manually select the midi output to the synth.
 
     How easy/difficult would it be to implement keyboard or midi shortcuts
     to these buttons (steps 2 to 6), or preset them for every new pattern
     editor?
 
     TODO:  See what have done with this one so far....
-
-Loops:
-
-    No issues pending.
-
-Helgrind:
-
-    terminate called without an active exception
-    Aborted (core dumped)
 
 NSM:
 

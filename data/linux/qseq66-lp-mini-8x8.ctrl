@@ -475,7 +475,7 @@ button-columns = 8
 1 [ 0xb0 110  60 ] [ 0xb0 110  15 ] [ 0xb0 110  12 ]  # Set_Up
 1 [ 0xb0 111  60 ] [ 0xb0 111  15 ] [ 0xb0 111  12 ]  # Set_Dn
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Tap_BPM
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Free_2
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Quit
 
 # End of /home/ahlstrom/.config/seq66/qseq66-lp-mini-8x8.ctrl
 #

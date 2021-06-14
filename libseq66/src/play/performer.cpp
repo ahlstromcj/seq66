@@ -2244,17 +2244,7 @@ performer::announce_exit (bool playstatesoff)
 void
 performer::announce_automation (bool activate)
 {
-    midicontrolout::actionindex ai = activate ?
-        midicontrolout::action_off : midicontrolout::action_del ;
-
-    for
-    (
-        midicontrolout::uiaction uia = midicontrolout::uiaction::panic;
-        uia < midicontrolout::uiaction::max; ++uia
-    )
-    {
-        midi_control_out().send_event(uia, ai);
-    }
+    midi_control_out().send_automation(activate);
 }
 
 /**
@@ -4695,27 +4685,22 @@ performer::send_mutes_inactive (int group)
 
 /**
  *  Sets the state of the Start, Stop, and Play button(s) as configured in the
- *  "ctrl" file.  It first turns off all of the states (which might be mapped
- *  to one button or to three buttons), then turns on the desired state.
+ *  "ctrl" file.  It first turns off all of the states (which might be mapped to
+ *  one button or to three buttons), then turns on the desired state.
  *
  * \param a
- *      Provides the desired state to set, which is one of the following
- *      values of uiaction: play, stop, and pause.  The corresponding event is
- *      sent.  If another value (max is the best one to use), then all are
- *      off.
+ *      Provides the desired state to set, which is one of the following values
+ *      of uiaction: play, stop, and pause.  The corresponding event is sent.
+ *      If another value (max is the best one to use), then all are off.
  */
 
 void
 performer::send_onoff_play_states (midicontrolout::uiaction a)
 {
     if (a < midicontrolout::uiaction::max)
-    {
         send_onoff_event(a, true);
-    }
     else
-    {
         announce_automation();
-    }
 }
 
 /**
@@ -4723,9 +4708,9 @@ performer::send_onoff_play_states (midicontrolout::uiaction a)
  *  the queue mode; we shall see if this disrupts any user's workflow.
  *
  * \param clearbits
- *      If true (the default), then clear the queue and replace status bits.
- *      If the user is simply replacing the current replace pattern with
- *      another pattern, we pass false for this parameter.
+ *      If true (the default), then clear the queue and replace status bits.  If
+ *      the user is simply replacing the current replace pattern with another
+ *      pattern, we pass false for this parameter.
  */
 
 void

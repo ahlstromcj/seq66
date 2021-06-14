@@ -1081,7 +1081,11 @@ qslivegrid::sequence_key_check ()
     {
         if (ok)
         {
+            seq::pointer s = perf().get_sequence(seqno);
             m_current_seq = seqno;
+            if (is_nullptr(s))
+                new_sequence();
+
             edit_sequence_ex();
             perf().clear_seq_edits();
         }
