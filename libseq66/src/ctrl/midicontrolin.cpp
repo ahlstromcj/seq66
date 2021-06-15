@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-03-13
+ * \updates       2021-06-15
  * \license       GNU GPLv2 or above
  *
  * MIDI control container:
@@ -244,19 +244,27 @@ midicontrolin::merge_key
 }
 
 /**
- *  Looks up the MIDI-control object matching the given key value. Remeber that
- *  the key is match on the MIDI event status and the d0 value, and
- *  range-checked on the d1 value.
+ *  Looks up the MIDI-control object matching the given key value. Remember
+ *  that the key is match on the MIDI event status and the d0 value, and
+ *  range-checked on the d1 value.  And now, the source bus of the event is
+ *  now part of the key, not for operator <, but for checking the source of
+ *  the event.  The source should match this container's true buss, if it
+ *  isn't the "null" buss (0xFF).
  */
 
 const midicontrol &
 midicontrolin::control (const midicontrol::key & k) const
 {
     static midicontrol sm_midicontrol_dummy;
-    if (have_controls())
+    bool ok = have_controls();
+    if (ok)
     {
         const auto & cki = m_container.find(k);
-        return (cki != m_container.end()) ? cki->second : sm_midicontrol_dummy;
+        ok = cki != m_container.end();
+        if (ok)
+            ok = is_null_buss(nominal_buss()) || k.buss() == true_buss();
+
+        return ok ? cki->second : sm_midicontrol_dummy;
     }
     else
         return sm_midicontrol_dummy;

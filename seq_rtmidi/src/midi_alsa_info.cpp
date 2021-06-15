@@ -749,6 +749,9 @@ midi_alsa_info::api_get_midi_event (event * inev)
             );
             bool sysex = inev->is_sysex();
             inev->set_input_bus(b);
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+            printf("Input on buss %d\n", int(b));
+#endif
             while (sysex)           /* sysex might be more than one message */
             {
                 int remcount = snd_seq_event_input(m_alsa_seq, &ev);

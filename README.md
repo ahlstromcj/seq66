@@ -1,4 +1,4 @@
-# README for Seq66 0.94.1
+# README for Seq66 0.95.0
 
 Chris Ahlstrom
 2015-09-10 to 2021-06-14
@@ -80,7 +80,7 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
-    *   Version 0.94.1:
+    *   Version 0.95.0:
         *   Major cleanup and neatening of header files.
         *   Updated almost all settings to use "name = variable" convention
             to improve readability.

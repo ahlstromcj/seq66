@@ -3,16 +3,15 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2021-04-17
-; Version:      0.94.0
+; Updated:      2021-06-19
+; Version:      0.95.0
 ;
-;       Installation is silent.
+; Usage of this Windows build script:
 ;
-; Usage of this script:
-;
+;    -  See the build_release_package.bat file for full details.
 ;    -  Obtain and install the NSIS 2.46 (or above) installer from
-;       http://nsis.sourceforge.net/Download, or preferably install it from your
-;       Linux repository via apt.
+;       http://nsis.sourceforge.net/Download, or preferably install it from
+;       your Linux repository via apt.
 ;    -  In Windows, Check out the latest branch project from Git.  Or
 ;       make a source package using the handy "pack" script on Linux,
 ;       and copy the source package to your Windows system, and unpack it
@@ -21,7 +20,7 @@
 ;       command to build the Release version of Seq66 using qmake and make,
 ;       and to create a 7-Zip "release" package that can be unpacked in
 ;       the root "seq66" directory.
-;           C:\Projects\seq66 build_release_package.bat
+;           C:\Projects\seq66\build_release_package.bat
 ;    -  The resulting package is something like the file
 ;       "qpseq66-release-package-0.95.1.7z", found in
 ;       ../seq66/seq66-release/Seq66qt5.

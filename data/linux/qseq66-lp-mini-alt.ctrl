@@ -1,7 +1,7 @@
 # Seq66 0.94.1 (and above) MIDI control configuration file
 #
-# /home/user/.config/seq66/qseq66-lp-mini-alt.ctrl
-# Written 2021-06-13 13:53:26
+# /home/ahlstrom/.config/seq66/qseq66-lp-mini-alt.ctrl
+# Written 2021-06-15 13:58:42
 #
 # This file holds MIDI I/O control setups for Seq66. It follows the format
 # of the 'rc' configuration file, but is stored separately for flexibility
@@ -15,7 +15,7 @@
 [Seq66]
 
 config-type = "ctrl"
-version = 4
+version = 5
 
 # The [comments] section holds the user documentation for this file.
 # The first completely empty, comment, or tag line ends the comment.
@@ -325,7 +325,8 @@ button-columns = 8
 # This format is similar to the [mute-control-out] format, but
 # the first number is an active-flag, not an index number.
 # The stanzas are on/off/inactive, except for 'snap', which is
-# store/restore/inactive.
+# store/restore/inactive. The 'Alt n' values can be used to show
+# status beyond the basic list.
 
 1 [ 0xb0 104  60 ] [ 0xb0 104  15 ] [ 0xb0 104  12 ]  # Panic
 1 [ 0xb0 105  60 ] [ 0xb0 105  15 ] [ 0xb0 105  12 ]  # Stop
@@ -351,7 +352,15 @@ button-columns = 8
 1 [ 0x90  87  60 ] [ 0x90  87  15 ] [ 0x90  87  12 ]  # Set_Dn
 1 [ 0x90 103  60 ] [ 0x90 103  15 ] [ 0x90 103  12 ]  # Tap_BPM
 1 [ 0x90 119  60 ] [ 0x90 119  15 ] [ 0x90 119  12 ]  # Quit
+1 [ 0xb0 110  60 ] [ 0xb0 110  15 ] [ 0xb0 110  12 ]  # Alt_1
+1 [ 0xb0 111  60 ] [ 0xb0 111  15 ] [ 0xb0 111  12 ]  # Alt_2
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_3
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_4
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_5
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_6
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_7
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_8
 
-# End of /home/user/.config/seq66/qseq66-lp-mini-alt.ctrl
+# End of /home/ahlstrom/.config/seq66/qseq66-lp-mini-alt.ctrl
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

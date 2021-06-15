@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-06-11
+ * \updates       2021-06-15
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -5177,8 +5177,12 @@ performer::midi_control_event (const event & ev, bool recording)
         if (result)
             result = m_midi_control_in.is_enabled();
 
-        if (result)
-            result = ev.input_bus() == m_midi_control_in.true_buss();
+        /*
+         * Now done more thoroughly in midicontrolin::control() above.
+         *
+         * if (result)
+         *     result = ev.input_bus() == m_midi_control_in.true_buss();
+         */
 
         if (result)
         {
@@ -5189,9 +5193,19 @@ performer::midi_control_event (const event & ev, bool recording)
                 bool process_the_action = incoming.in_range(ev.d1());
                 if (recording)
                 {
-                    process_the_action = s == automation::slot::start ||
-                        s == automation::slot::stop ||
-                        s == automation::slot::record ;
+                    /*
+                     * Pattern-edit can turn recording on, potentially
+                     * disabling the next pattern-edit, so we check for it
+                     * here.  Anything else to check???  We actually need
+                     * to see if there is any control that CANNOT occur
+                     * while recording, otherwise loop-control etc. is
+                     * disabled as well!
+                     *
+                     * process_the_action = s == automation::slot::start ||
+                     *     s == automation::slot::stop ||
+                     *     s == automation::slot::record ||
+                     *     s == automation::slot::pattern_edit ;
+                     */
                 }
                 if (process_the_action)
                 {

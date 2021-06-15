@@ -56,8 +56,7 @@ namespace seq66
  *  Principal constructor.
  */
 
-qsabout::qsabout (QWidget * parent)
- :
+qsabout::qsabout (QWidget * parent) :
     QDialog (parent),
     ui      (new Ui::qsabout)
 {

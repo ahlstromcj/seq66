@@ -279,8 +279,8 @@ midicontrolout::send_seq_event (int index, seqaction what, bool flush)
             if (not_nullptr(m_master_bus))
             {
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-                std::string act = seqaction_to_string(w);
-                std::string evstring = to_string(ev);
+                std::string act = seqaction_to_string(what);
+                std::string evstring = ev.to_string();
                 printf
                 (
                     "send_seq_event(%s): %s\n", act.c_str(), evstring.c_str()

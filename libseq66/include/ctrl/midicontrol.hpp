@@ -28,12 +28,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-02-11
+ * \updates       2021-06-15
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
- *  unmuting, group control, and a number of additional controls to make
- *  Seq66 controllable without a graphical user interface.
+ *  unmuting, group control, and a number of additional controls to make Seq66
+ *  controllable without a graphical user interface.
  *
  *  It requires C++11 and above.
  *
@@ -61,7 +61,7 @@ namespace seq66
  *
  *  Note that, although we've converted this to a full-fledged class, the
  *  ordering of variables and the data arrays used to fill them is very
- *  significant.  See the midifile and optionsfile modules.
+ *  significant.
  */
 
 class midicontrol : public keycontrol
@@ -73,9 +73,9 @@ public:
      *  Provides a key for looking up a MIDI control in the midicontainer.
      *  When doing a lookup, the status and first data byte must match. Once
      *  found, if the minimum and maximum byte values are not 0, then the
-     *  range is also checked.  This object is easily filled via
-     *  event::get_status() and event::get_data().  We might provide an
-     *  event-parameter constructor.
+     *  range is also checked. Also, the buss is now used, so that the
+     *  user can guarantee that only one device will control Seq66. It is
+     *  not part of the lookup, however.
      */
 
     class key
@@ -84,24 +84,32 @@ public:
 
     private:
 
+        bussbyte m_buss;    /**< Indicates the port of the event.       */
         midibyte m_status;  /**< Provides the (incoming) event type.    */
         midibyte m_d0;      /**< Provides the first byte, for searches. */
         midibyte m_d1;      /**< Provides the second byte, for ranging. */
 
     public:
 
+        key () = default;
+        key (const key &) = default;
+        key & operator = (const key &) = default;
+        ~key () = default;
+
         key (midibyte status, midibyte d0, midibyte d1 = 0) :
-            m_status (status),
-            m_d0     (d0),
-            m_d1     (d1)
+            m_buss      (null_buss()),
+            m_status    (status),
+            m_d0        (d0),
+            m_d1        (d1)
         {
             // no code
         }
 
         key (const event & ev) :
-            m_status (ev.get_status()),
-            m_d0     (0),
-            m_d1     (0)
+            m_buss      (ev.input_bus()),
+            m_status    (ev.get_status()),
+            m_d0        (0),
+            m_d1        (0)
         {
             ev.get_data(m_d0, m_d1);
         }
@@ -110,6 +118,11 @@ public:
         {
             return (m_status == rhs.m_status) ?
                 (m_d0 < rhs.m_d0) : (m_status < rhs.m_status) ;
+        }
+
+        bussbyte buss () const
+        {
+            return m_buss;
         }
 
         midibyte status () const
