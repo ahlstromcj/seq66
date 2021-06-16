@@ -303,6 +303,11 @@ public:
         return m_seq;
     }
 
+    pointer loop ()
+    {
+        return m_seq;
+    }
+
     /**
      *  Checks if the sequence has been properly installed via the performer.
      *  Since we can have holes in the sequence "array", where there are
@@ -381,11 +386,6 @@ private:
     void queued (bool flag)
     {
         m_queued = flag;
-    }
-
-    pointer loop ()
-    {
-        return m_seq;
     }
 
 };              // class seq

@@ -173,6 +173,19 @@ setmapper::seq_set (seq::number seqno, int & offset) const
     return result;
 }
 
+/**
+ *  This function assumes that performer::install_sequence() has already done
+ *  its work.
+ */
+
+bool
+setmapper::add_to_play_set (playset & p, seq & s)
+{
+    seq::number seqno = s.seq_number();
+    screenset & sset = screen(seqno);
+    return p.add(sset, s);
+}
+
 #if defined SEQ66_SETMAPPER_SEQ_SET_IS_USED
 
 /**

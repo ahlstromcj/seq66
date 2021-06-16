@@ -617,6 +617,7 @@ public:
 
     bool set_found (screenset::number setno) const;
     bool fill (const screenset & sset, bool clearit = true);
+    bool add (const screenset & sset, seq & s);
 
 };              // class playset
 

@@ -911,10 +911,12 @@ public:
 
 private:
 
-    void fill_play_set (playset & p, bool clearit = true)
+    bool fill_play_set (playset & p, bool clearit = true)
     {
-        play_screen()->fill_play_set(p, clearit);
+        return play_screen()->fill_play_set(p, clearit);
     }
+
+    bool add_to_play_set (playset & p, seq & s);
 
     setmaster::container::iterator add_set (screenset::number setno)
     {
