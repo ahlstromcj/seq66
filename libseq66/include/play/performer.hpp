@@ -2486,6 +2486,7 @@ public:
     }
 
     midipulse get_max_extent () const;
+    std::string duration () const;
 
     /**
      *  Indicates that the desired sequence is active, unmuted, and has

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-05-21
+ * \updates       2021-06-16
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -226,9 +226,6 @@ tokenize_string
  *  Converts MIDI pulses (also known as ticks, clocks, or divisions) into a
  *  string.
  *
- * \todo
- *      Still needs to be unit tested.
- *
  * \param p
  *      The MIDI pulse/tick value to be converted.
  *
@@ -353,9 +350,6 @@ pulses_to_midi_measures
  *  "hours:minutes:seconds.fraction".  See the other pulses_to_timestring()
  *  overload.
  *
- * \todo
- *      Still needs to be unit tested.
- *
  * \param p
  *      Provides the number of ticks, pulses, or divisions in the MIDI
  *      event time.
@@ -400,12 +394,19 @@ pulses_to_timestring (midipulse p, const midi_timing & timinginfo)
  * \param showus
  *      If true (the default), shows the microseconds as well.
  *
+ * \param showhrs
+ *      If true (the default), shows the hours even if 0.
+ *
  * \return
  *      Returns the time-string representation of the pulse (ticks) value.
  */
 
 std::string
-pulses_to_timestring (midipulse p, midibpm bpm, int ppqn, bool showus)
+pulses_to_timestring
+(
+    midipulse p, midibpm bpm, int ppqn,
+    bool showus, bool showhrs
+)
 {
     unsigned long microseconds = ticks_to_delta_time_us(p, bpm, ppqn);
     int seconds = int(microseconds / 1000000UL);
@@ -423,15 +424,29 @@ pulses_to_timestring (midipulse p, midibpm bpm, int ppqn, bool showus)
          * timestring_to_pulses() function first.
          */
 
-        snprintf(tmp, sizeof tmp, "%03d:%d:%02d   ", hours, minutes, seconds);
+        if (hours > 0 || showhrs)
+            snprintf(tmp, sizeof tmp, "%03d:%d:%02d   ", hours, minutes, seconds);
+        else
+            snprintf(tmp, sizeof tmp, "%d:%02d   ", minutes, seconds);
     }
     else
     {
-        snprintf
-        (
-            tmp, sizeof tmp, "%03d:%d:%02d.%02lu",
-            hours, minutes, seconds, microseconds
-        );
+        if (hours > 0 || showhrs)
+        {
+            snprintf
+            (
+                tmp, sizeof tmp, "%03d:%d:%02d.%02lu",
+                hours, minutes, seconds, microseconds
+            );
+        }
+        else
+        {
+            snprintf
+            (
+                tmp, sizeof tmp, "%d:%02d.%02lu",
+                minutes, seconds, microseconds
+            );
+        }
     }
     return std::string(tmp);
 }

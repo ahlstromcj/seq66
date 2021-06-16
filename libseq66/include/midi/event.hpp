@@ -715,6 +715,16 @@ public:
     }
 
     /**
+     *  We don't want a progress bar for patterns that just contain textual
+     *  information.
+     */
+
+    static bool is_playable_msg (midibyte m)
+    {
+        return m != EVENT_MIDI_META && m != EVENT_MIDI_SYSEX;
+    }
+
+    /**
      *  Static test for channel messages that are either not control-change
      *  messages, or are and match the given controller value.
      *
@@ -1233,6 +1243,11 @@ public:
     bool is_strict_note () const
     {
         return is_strict_note_msg(m_status);
+    }
+
+    bool is_playable () const
+    {
+        return is_playable_msg(m_status);
     }
 
     /**

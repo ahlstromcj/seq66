@@ -556,6 +556,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
     }
     m_last_tick = tick;
     set_dirty();                                    /* force a redraw       */
+    frame64()->set_dirty();                         /* EXPERIMENTAL         */
 }
 
 void

@@ -913,6 +913,8 @@ public:
     void modify (bool notifychange = true);
     int event_count () const;
     int note_count () const;
+    int playable_count () const;
+    bool is_playable () const;
     bool minmax_notes (int & lowest, int & highest);
 
     void set_have_undo ()

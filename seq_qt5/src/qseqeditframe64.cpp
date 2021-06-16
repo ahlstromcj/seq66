@@ -2419,7 +2419,8 @@ qseqeditframe64::on_resolution_change (int ppqn, midibpm bpm)
     bool result = change_ppqn(ppqn);
     if (result)
     {
-        msgprintf(msg_level::info, "PPQN = %d; BPM = %d", ppqn, int(bpm));
+        if (rc().verbose())
+            msgprintf(msg_level::info, "PPQN = %d; BPM = %d", ppqn, int(bpm));
     }
     return result;
 }

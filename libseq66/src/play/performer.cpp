@@ -250,9 +250,9 @@
  *
  * Settings lifecycle:
  *
- *      First, note that performer will use only the "global" rcsettings object,
- *      as retrieved by the seq66::rc() function.  The same is true for
- *      seq66::usr().
+ *      First, note that performer will use only the "global" rcsettings
+ *      object, as retrieved by the seq66::rc() function.  The same is true
+ *      for seq66::usr().
  *
  *      -#  The static rcsettings value creates its own copy of the key and
  *          MIDI control containers.
@@ -277,14 +277,14 @@
  *      A modify action is any change that would require the current MIDI tune
  *      to be saved before closing the application or loading a new MIDI tune.
  *      These actions include: a change in a song/pattern parameter setting;
- *      modification of the triggers in the Song editor; a change in output buss
- *      (though selection of the input buss is saved in the "rc" file); and
- *      anything else? When they occur, performer :: modify() is called.
+ *      modification of the triggers in the Song editor; a change in output
+ *      buss (though selection of the input buss is saved in the "rc" file);
+ *      and anything else? When they occur, performer :: modify() is called.
  *
- *      One issue with modification is that we don't have comprehensive tracking
- *      of all "undo" operations, so that, once the modify flag is set, only
- *      saving the MIDI tune will unset it.  See the calls to performer ::
- *      unmodify().
+ *      One issue with modification is that we don't have comprehensive
+ *      tracking of all "undo" operations, so that, once the modify flag is
+ *      set, only saving the MIDI tune will unset it.  See the calls to
+ *      performer :: unmodify().
  *
  *      Also note that some of the GUI windows have their own, unrelated,
  *      modify() function.
@@ -1823,7 +1823,8 @@ performer::log_current_tempo ()
 
 /**
  *  Also calls mapper().set_playscreen(), and notifies any performer::callbacks
- *  subscribers.
+ *  subscribers. Note that the setsmode values of normal and autoarm indicate
+ *  to clear the play-set before adding the next set to it.
  */
 
 screenset::number
@@ -4078,6 +4079,13 @@ performer::get_max_extent () const
         result = timelen;
 
     return result;
+}
+
+std::string
+performer::duration () const
+{
+    midipulse tick = get_max_extent();
+    return pulses_to_timestring(tick, bpm(), ppqn(), false, false);
 }
 
 /**

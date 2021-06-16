@@ -1,7 +1,7 @@
 # README for Seq66 0.95.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-06-14
+2015-09-10 to 2021-06-16
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -89,7 +89,11 @@ Windows, and using a conventional source tarball.
         *   Added 8 "Alt" MIDI Control Out values to support special cases
             not covered by the concrete set of control-out values.
         *   Minor bugs and regressions fixed along the way.
-        *   Now loop-edit key will create a new sequence if slot is empty.
+        *   Loop-edit key will create a new sequence if slot is empty.
+        *   Patterns empty of playable events no longer show unnecessary
+            progress bars.
+        *   The overall duration of a tune is now shown, depending on pattern
+            lengths and song triggers.
     *   Version 0.94.0:
         *   Major improvements to the stability of MIDI control of playlists.
         *   Added Phrygian scale thanks to user WinkoErades.

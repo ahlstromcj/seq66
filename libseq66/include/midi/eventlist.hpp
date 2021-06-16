@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-05-21
+ * \updates       2021-06-16
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -227,17 +227,17 @@ public:
         return int(m_events.size());
     }
 
+    int playable_count () const;
+    bool is_playable () const;
     int count_to_link (const event & source);
-
     midipulse get_max_timestamp () const;
+    bool add (const event & e);
+    bool append (const event & e);
 
     bool empty () const
     {
         return m_events.empty();
     }
-
-    bool add (const event & e);
-    bool append (const event & e);
 
     midipulse get_length () const
     {

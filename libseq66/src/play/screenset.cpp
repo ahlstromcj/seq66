@@ -1313,6 +1313,9 @@ playset::fill (const screenset & sset, bool clearit)
             }
         }
     }
+#if defined SEQ66_PLATFORM_DEBUG // _TMI
+    printf("Playset size = %d\n", int(m_sequence_array.size()));
+#endif
     return result;
 }
 

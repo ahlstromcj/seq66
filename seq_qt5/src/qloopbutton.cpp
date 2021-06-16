@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-05-15
+ * \updates       2021-06-16
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -572,7 +572,8 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 draw_progress_box(painter);
 
             draw_pattern(painter);
-            draw_progress(painter, tick);
+            if (loop()->is_playable())
+                draw_progress(painter, tick);
         }
         else
         {

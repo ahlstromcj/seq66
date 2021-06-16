@@ -1,0 +1,121 @@
+%-------------------------------------------------------------------------------
+% alsa
+%-------------------------------------------------------------------------------
+%
+% \file        alsa.tex
+% \library     Documents
+% \author      Chris Ahlstrom
+% \date        2021-06-16
+% \update      2021-06-16
+% \version     $Revision$
+% \license     $XPC_GPL_LICENSE$
+%
+%     Provides the ALSA page section of seq66-user-manual.tex.
+%
+%-------------------------------------------------------------------------------
+
+\section{Seq66 ALSA Support}
+\label{sec:alsa}
+
+   This section describes some details concerning the ALSA support of
+   \textsl{Seq66}.
+   Currently, it just includes some tricks that might be useful.
+
+\subsection{Seq66 ALSA Through Ports}
+\label{subsec:alsa_through_ports}
+
+   When running the commands \texttt{aplaymidi -l} or \texttt{arecordmidi -l},
+   one sees something like:
+
+   \begin{verbatim}
+    Port    Client name                      Port name
+    14:0    Midi Through                     Midi Through Port-0
+    28:0    nanoKEY2                         nanoKEY2 MIDI 1
+     . . .
+   \end{verbatim}
+
+   The MIDI Through port is useful for...? \cite{alsathru}.
+
+   \begin{quote}
+   "ALSA always creates 1 MIDI through port. Since I work with Windows music
+   applications via Wine, and because MIDI through ports are everything-proof,
+   how can I increase the amount of MIDI through ports created by ALSA?"
+   \end{quote}
+
+   Notice that there is only one Thru port.
+   To add more Thru ports, first use \texttt{modinfo} to see information about
+   the kernel module \texttt{snd-seq-dummy}.  Part of the output is shown here:
+
+   \begin{verbatim}
+      $ /sbin/modinfo snd-seq-dummy
+      filename:    /lib/modules/5.7.0-1-amd64/kernel/sound/core/seq/snd-seq-dummy.ko
+      alias:       snd-seq-client-14
+      description: ALSA sequencer MIDI-through client
+      author:      Takashi Iwai <tiwai@suse.de>
+      name:        snd_seq_dummy
+      parm:        ports:number of ports to be created (int)
+      parm:        duplex:create DUPLEX ports (bool)
+   \end{verbatim}
+
+   Edit this file (create it if necessary) to add a line to change the number
+   of Thru ports.  We use the '\#' prompt to indicate root access or usage of
+   \texttt{sudo}.
+
+   \begin{verbatim}
+      # vi /etc/modprobe.d/alsa-base.conf
+      options snd-seq-dummy ports=2
+   \end{verbatim}
+
+   Save it.  No need to reboot, just remove and reinsert the module:
+
+   \begin{verbatim}
+      # rmmod snd_seq_dummy
+      # modprobe snd_seq_dummy
+   \end{verbatim}
+
+   Then listing the ports will show:
+
+   \begin{verbatim}
+    Port    Client name                      Port name
+    14:0    Midi Through                     Midi Through Port-0
+    14:1    Midi Through                     Midi Through Port-1
+    28:0    nanoKEY2                         nanoKEY2 MIDI 1
+     . . .
+   \end{verbatim}
+
+   This will, of course, throw off the \textsl{Seq66} port numbering, unless
+   one has implemented port-mapping.
+
+\subsection{Seq66 ALSA Virtual MIDI Devices}
+\label{subsec:alsa_virtual_midi_devices}
+
+   \url{https://tldp.org/HOWTO/MIDI-HOWTO-10.html}
+
+   \begin{quote}
+   MIDI sequencers like to output their notes to MIDI devices that normally
+   route their events to the outside world, i.e., to hardware synths and
+   samplers. With virtual MIDI devices one can keep the MIDI data inside the
+   computer and let it control other software running on the same machine. This
+   HOWTO describes all that is necessary to achieve this goal.
+   \end{quote}
+
+   To use ALSA's virtual MIDI card the
+   \texttt{snd-card-virmidi} module must be present. 
+
+   \begin{verbatim}
+   # Configure support for OSS /dev/sequencer and /dev/music (/dev/sequencer2)
+   # (Takashi Iwai: unnecessary to alias beyond the first card, i.e., card 0)
+   alias sound-service-0-1 snd-seq-oss
+   alias sound-service-0-8 snd-seq-oss
+   # Configure card 1 (second card) as a virtual MIDI card
+   sound-slot-1 snd-card-1
+   alias snd-card-1 snd-virmidi
+   \end{verbatim}
+
+   More to come, such as an explanation of \texttt{aconnectgui}....
+
+   \url{https://freeshell.de/~murks/posts/ALSA_and_JACK_MIDI_explained_(by_a_dummy_for_dummies)/}
+
+%-------------------------------------------------------------------------------
+% vim: ts=3 sw=3 et ft=tex
+%-------------------------------------------------------------------------------

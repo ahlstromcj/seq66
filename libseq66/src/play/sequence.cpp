@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-05-21
+ * \updates       2021-06-16
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -392,6 +392,27 @@ sequence::event_count () const
 {
     automutex locker(m_mutex);
     return m_events.count();
+}
+
+int
+sequence::note_count () const
+{
+    automutex locker(m_mutex);
+    return m_events.note_count();
+}
+
+int
+sequence::playable_count () const
+{
+    automutex locker(m_mutex);
+    return m_events.playable_count();
+}
+
+bool
+sequence::is_playable () const
+{
+    automutex locker(m_mutex);
+    return m_events.is_playable();
 }
 
 /**
@@ -3794,13 +3815,6 @@ sequence::minmax_notes (int & lowest, int & highest) // const
     lowest = low;
     highest = high;
     return result;
-}
-
-int
-sequence::note_count () const
-{
-    automutex locker(m_mutex);
-    return m_events.note_count();
 }
 
 /**

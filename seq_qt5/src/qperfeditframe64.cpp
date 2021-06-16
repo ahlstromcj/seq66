@@ -371,8 +371,11 @@ qperfeditframe64::qperfeditframe64
      */
 
     set_snap(4);
-    set_beats_per_measure(4);
-    set_beat_width(4);
+    set_beats_per_measure(perf().get_beats_per_bar());
+    set_beat_width(perf().get_beat_width());
+
+    std::string dur = perf().duration();
+    ui->label_Duration->setText(QString::fromStdString(dur));
 }
 
 qperfeditframe64::~qperfeditframe64 ()
@@ -616,7 +619,7 @@ qperfeditframe64::update_entry_mode (bool on)
 
 /**
  *  Calls updateGeometry() on child elements to react to changes in MIDI file
- *  sizes.
+ *  sizes when a MIDI file is opened.
  *
  *  For the resize() calls, see qperfbase::force_resize().
  */
@@ -624,10 +627,11 @@ qperfeditframe64::update_entry_mode (bool on)
 void
 qperfeditframe64::update_sizes ()
 {
+    std::string dur = perf().duration();
+    ui->label_Duration->setText(QString::fromStdString(dur));
     m_perfnames->resize();
-    m_perfroll->resize();
-
     m_perfnames->updateGeometry();
+    m_perfroll->resize();
     m_perfroll->updateGeometry();
     m_perftime->updateGeometry();
 }
@@ -640,6 +644,8 @@ qperfeditframe64::update_sizes ()
 void
 qperfeditframe64::set_dirty ()
 {
+    std::string dur = perf().duration();
+    ui->label_Duration->setText(QString::fromStdString(dur));
     m_perfnames->reupdate();
     m_perfroll->set_dirty();
     m_perftime->set_dirty();

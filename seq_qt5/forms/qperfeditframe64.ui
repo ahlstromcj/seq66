@@ -688,6 +688,17 @@ and apply it to a trigger.</string>
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="QLabel" name="label_Duration">
+       <property name="toolTip">
+        <string>Shows the estimated duration of the tune based on pattern
+lengths and any triggers that are present.</string>
+       </property>
+       <property name="text">
+        <string>0:0:0</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>

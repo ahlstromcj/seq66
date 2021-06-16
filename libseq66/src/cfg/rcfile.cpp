@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-11
+ * \updates       2021-06-16
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -988,10 +988,10 @@ rcfile::write ()
         "# 'version' is set by Seq66; it is used to detect older configuration\n"
         "# files, which are upgraded to the new version when saved.\n"
         "#\n"
-        "# 'sets-mode' affect if sets are muted when going to the next\n"
-        "# play-screen ('normal'), while 'autoarm' automatically unmutes the\n"
-        "# next set.  The 'additive' option keeps the previous set unmuted\n"
-        "# when moving to the next set.\n"
+        "# 'sets-mode' affects if sets are muted when moving to the next set or\n"
+        "# play-screen ('normal'). 'autoarm' unmutes the next set. 'additive'\n"
+        "# keeps the previous set armed when moving to the next set.  'allsets'\n"
+        "# arms all sets at once.\n"
         "#\n"
         "# 'port-naming' values are 'short' or 'long'.  The short style just\n"
         "# shows the port number and short port name; the long style shows\n"
