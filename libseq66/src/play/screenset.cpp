@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-05-27
+ * \updates       2021-06-17
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -780,6 +780,12 @@ screenset::fill_play_set (playset & p, bool clearit)
     return p.fill(*this, clearit);
 }
 
+bool
+screenset::add_to_play_set (playset & p, seq::number seqno)
+{
+    return p.add(*this, seqno);
+}
+
 /**
  * \param seqno
  *      Either a track number or seq::all() (the default value).
@@ -1295,10 +1301,10 @@ playset::set_found (screenset::number setno) const
 bool
 playset::fill (const screenset & sset, bool clearit)
 {
+    bool result = false;
     if (clearit)
         clear();
 
-    bool result = false;
     auto p = std::make_pair(sset.set_number(), &sset);
     auto r = m_screen_sets.insert(p);
     if (r.second)
@@ -1312,27 +1318,29 @@ playset::fill (const screenset & sset, bool clearit)
             }
         }
     }
-#if defined SEQ66_PLATFORM_DEBUG // _TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     printf("Playset size = %d\n", int(m_sequence_array.size()));
 #endif
     return result;
 }
 
 /**
- *  This function does not clear the containers each time.
- *  It assumes the sequence has been installed via the setmapper, so that the
- *  necessary set already exists, and is provided here.  If the set already
- *  exists, it won't be inserted, which is not an error.
+ *  This function does not clear the containers each time.  It assumes the
+ *  sequence has been installed via the setmapper, so that the necessary set
+ *  already exists, and is provided here.  If the set already exists, it won't
+ *  be inserted, which is not an error.
  */
 
 bool
-playset::add (const screenset & sset, seq & s)
+playset::add (const screenset & sset, seq::number seqno)
 {
+    const seq & s = sset.seqinfo(seqno);
     bool result = s.active();
     if (result)
     {
-        auto p = std::make_pair(sset.set_number(), &sset);
-        (void) m_screen_sets.insert(p);
+        // auto p = std::make_pair(sset.set_number(), &sset);
+        // (void) m_screen_sets.insert(p);
+
         m_sequence_array.push_back(s.loop());
 
 #if defined SEQ66_PLATFORM_DEBUG // _TMI

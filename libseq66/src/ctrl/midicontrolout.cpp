@@ -270,7 +270,11 @@ action_to_type_string (midicontrolout::uiaction a)
 void
 midicontrolout::send_seq_event (int index, seqaction what, bool flush)
 {
-    if (is_enabled())
+    bool ok = is_enabled() && index < int(m_seq_events.size());
+    if (ok)
+        ok = what < seqaction::max;
+
+    if (ok)
     {
         int w = static_cast<int>(what);
         if (m_seq_events[index][w].apt_action_status)
@@ -306,6 +310,19 @@ midicontrolout::clear_sequences (bool flush)
     {
         for (int seq = 0; seq < screenset_size(); ++seq)
             send_seq_event(seq, midicontrolout::seqaction::remove, false);
+
+        if (flush && not_nullptr(m_master_bus))
+            m_master_bus->flush();
+    }
+}
+
+void
+midicontrolout::clear_mutes (bool flush)
+{
+    if (is_enabled())
+    {
+        for (int g = 0; g < mutegroups::Size(); ++g)
+            send_mutes_event(g, action_del);
 
         if (flush && not_nullptr(m_master_bus))
             m_master_bus->flush();
@@ -358,7 +375,8 @@ midicontrolout::get_seq_event (int seq, seqaction what) const
 void
 midicontrolout::set_seq_event (int seq, seqaction what, int * eva)
 {
-    if (what < seqaction::max)
+    bool ok = what < seqaction::max && seq < int(m_seq_events.size());
+    if (ok)
     {
         int w = static_cast<int>(what);
         bool enabled = eva[index::status] > 0x00;

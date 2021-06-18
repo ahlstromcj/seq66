@@ -645,6 +645,8 @@
 \label{subsec:midi_information}
 
    This section provides some useful, basic information about MIDI data.
+   It can be helpful in troubleshooting.  We tend to use the
+   \texttt{hexer} tool for examine and troublesome MIDI file byte-by-byte.
 
 \subsubsection{MIDI Variable-Length Value}
 \label{subsubsec:midi_variable_length_value}
@@ -978,8 +980,8 @@
    Any other statuses are deemed unsupportable in \textsl{Seq66}, and
    abort parsing with an error.
 
-   If the \texttt{-{}-bus} option is in force, it overrides the buss number (if any)
-   stored with the sequence.  This option is useful for testing a setup.
+   If the \texttt{-{}-bus} option is in force, it overrides the buss number (if
+   any) stored with the sequence.  This option is useful for testing a setup.
    Note that it also applies to new sequences.
 
    At the end, \textsl{Seq66} adds the sequence to the encoded tune.

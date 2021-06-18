@@ -993,6 +993,16 @@ public:
         return bool(m_note_mapper);
     }
 
+    const playset & play_set () const
+    {
+        return m_play_set;
+    }
+
+    playset & play_set ()
+    {
+        return m_play_set;
+    }
+
     /*
      * Start of playlist accessors.  Playlist functionality.  Note that we
      * ensure that a playlist object exists, even if empty.  Saves a lot of
@@ -2567,6 +2577,11 @@ public:
     void set_needs_update (bool flag = true)
     {
         m_needs_update = flag;
+    }
+
+    void send_seq_event (int seqno, midicontrolout::seqaction what)
+    {
+        midi_control_out().send_seq_event(seqno, what);
     }
 
     bool slot_function (screenset::slothandler p, bool use_set_offset = true)

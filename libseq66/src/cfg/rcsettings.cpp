@@ -1082,7 +1082,7 @@ rcsettings::sets_mode_string (setsmode v) const
         case setsmode::normal:   result = "normal";     break;
         case setsmode::autoarm:  result = "autoarm";    break;
         case setsmode::additive: result = "additive";   break;
-        case setsmode::allsets:  result = "allset";     break;
+        case setsmode::allsets:  result = "allsets";    break;
         default:                 result = "unknown";    break;
     }
     return result;

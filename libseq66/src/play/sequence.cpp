@@ -123,8 +123,7 @@ sequence::note_info::show () const
  *      this sequence.
  */
 
-sequence::sequence (int ppqn)
- :
+sequence::sequence (int ppqn) :
     m_parent                    (nullptr),      /* set when seq installed   */
     m_events                    (),
     m_triggers                  (*this),
@@ -940,8 +939,11 @@ sequence::play
         midipulse end_tick_offset = end_tick + offset;
         midipulse times_played = m_last_tick / length;
         midipulse offset_base = times_played * length;
-        if (loop_count_max() > 0 && times_played >= loop_count_max())
-            return;
+        if (loop_count_max() > 0)
+        {
+            if (times_played >= loop_count_max())
+                return;
+        }
 
         int transpose = trigtranspose;
         if (transpose == 0)
@@ -4170,10 +4172,10 @@ sequence::get_tick () const
 midipulse
 sequence::get_last_tick () const
 {
-    if (get_length() > 0)
-        return (m_last_tick + get_length() - m_trigger_offset) % get_length();
-    else
-        return m_last_tick - m_trigger_offset;
+    return get_length() > 0 ?
+        (m_last_tick + get_length() - m_trigger_offset) % get_length() :
+        m_last_tick - m_trigger_offset
+        ;
 }
 
 /**
@@ -4217,6 +4219,15 @@ sequence::set_midi_bus (bussbyte nominalbus, bool user_change)
 
         notify_change(user_change);         /* more reliable than set dirty */
         set_dirty();                        /* this is for display updating */
+    }
+    else
+    {
+        if (is_null_buss(m_true_bus) && not_nullptr(perf()))
+        {
+            m_true_bus = perf()->true_output_bus(nominalbus);
+            if (is_null_buss(m_true_bus))
+                m_true_bus = nominalbus;    /* named buss no longer exists  */
+        }
     }
     return result;
 }
@@ -5226,11 +5237,13 @@ sequence::copy_events (const eventlist & newevents)
 }
 
 /**
- * \setter m_parent
- *      Sets the "parent" of this sequence, so that it can get some extra
- *      information about the performance.  Remember that m_parent is not at
- *      all owned by the sequence.  We just don't want to do all the work
- *      necessary to make it a reference, at this time.
+ *  Sets the "parent" of this sequence, so that it can get some extra
+ *  information about the performance.  Remember that m_parent is not at all
+ *  owned by the sequence.  We just don't want to do all the work necessary to
+ *  make it a reference, at this time.
+ *
+ *  Add the buss override, if specified.  We can't set it until after
+ *  assigning the master MIDI buss, otherwise we get a segfault.
  *
  * \param p
  *      A pointer to the parent, assigned only if not already assigned.
@@ -5239,15 +5252,22 @@ sequence::copy_events (const eventlist & newevents)
 void
 sequence::set_parent (performer * p)
 {
-    if (is_nullptr(m_parent) && not_nullptr(p))
+    if (not_nullptr(p))
     {
+        midipulse barlength = get_ppqn() * get_beats_per_bar();
+        bussbyte buss_override = usr().midi_buss_override();
         m_parent = p;
-        if (is_null_buss(m_true_bus))
-        {
-            m_true_bus = p->true_output_bus(m_nominal_bus);
-            if (is_null_buss(m_true_bus))
-                m_true_bus = m_nominal_bus; /* a named buss does not exist  */
-        }
+        set_master_midi_bus(p->master_bus());
+        sort_events();                      /* sort the events now          */
+        set_length();                       /* final verify_and_link()      */
+        empty_coloring();                   /* yellow color if no events    */
+        if (get_length() < barlength)       /* pad sequence to a measure    */
+            set_length(barlength, false);
+
+        if (is_null_buss(buss_override))
+            (void) set_midi_bus(m_nominal_bus);
+        else
+            (void) set_midi_bus(buss_override);
     }
 }
 

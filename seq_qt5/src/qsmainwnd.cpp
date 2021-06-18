@@ -3489,12 +3489,7 @@ qsmainwnd::resizeEvent (QResizeEvent * /*r*/ )
             rescale = true;
         }
         if (rescale)
-        {
             usr().window_scale(wscale, hscale);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            printf("qsmainwnd rescale to %f x %f\n", wscale, hscale);
-#endif
-        }
     }
 }
 

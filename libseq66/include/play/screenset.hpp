@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-06-09
+ * \updates       2021-06-17
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -86,14 +86,13 @@ public:
     using slothandler = std::function<bool (seq::pointer, seq::number)>;
 
     /**
-     *  Provides a type alias for a function that can be called on all slots in
-     *  a set.  A caller will create this function and pass it to the
+     *  Provides a type alias for a function that can be called on all slots
+     *  in a set.  A caller will create this function and pass it to the
      *  set_function() function. See qseqeditframe64 :: popup_sequence_menu()
      *  for an example of the std::bind() call for this kind of function.
      */
 
     using sethandler = std::function<bool (screenset &, screenset::number)>;
-
 
     /**
      *  Default number of rows in the main-window's grid.  This value applies
@@ -315,7 +314,6 @@ public:
 
     /**
      *  Gets the desired sequence / loop / pattern / track pointer.
-     *
      *  A set may be newly created, and have no sequences.
      *
      * \param seqno
@@ -425,6 +423,7 @@ private:
     seq::number clamp (seq::number seqno) const;
     seq::pointer find_by_number (seq::number seqno);
     bool fill_play_set (playset & p, bool clearit = true);
+    bool add_to_play_set (playset & p, seq::number seqno);
 
     seq::number play_seq (int delta)
     {
@@ -617,7 +616,7 @@ public:
 
     bool set_found (screenset::number setno) const;
     bool fill (const screenset & sset, bool clearit = true);
-    bool add (const screenset & sset, seq & s);
+    bool add (const screenset & sset, seq::number seqno);
 
 };              // class playset
 

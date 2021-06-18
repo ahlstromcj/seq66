@@ -231,9 +231,6 @@ qloopbutton::initialize_text ()
 
         int fontsize = usr().scale_font_size(6);
         m_text_font.setPointSize(fontsize);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("font rescale of %d to %d\n", 6, fontsize);
-#endif
 
         /*
          * Code from performer::sequence_label().
@@ -566,8 +563,9 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                     );
                     painter.drawText(box, m_top_left.m_flags, title);
                 }
+                initialize_fingerprint();
             }
-            initialize_fingerprint();
+            // initialize_fingerprint();
             if (sm_draw_progress_box)
                 draw_progress_box(painter);
 

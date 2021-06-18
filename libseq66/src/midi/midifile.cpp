@@ -1319,7 +1319,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                             if (seqspec == c_midibus)
                             {
-                                s.set_midi_bus(read_byte());
+                                (void) s.set_midi_bus(read_byte());
                                 --len;
                             }
                             else if (seqspec == c_midich)
@@ -1554,7 +1554,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
             if (seqnum < c_prop_seq_number)
             {
                 if (! is_null_buss(buss_override))
-                    s.set_midi_bus(buss_override);
+                    (void) s.set_midi_bus(buss_override);
 
                 if (is_smf0)
                     (void) m_smf0_splitter.log_main_sequence(s, seqnum);
@@ -3288,14 +3288,14 @@ read_midi_file
         if (usr().use_file_ppqn())
             ppqn = SEQ66_USE_FILE_PPQN;
 
-        ppqn = choose_ppqn(ppqn);           /* but no usr().file_ppqn() yet */
+        ppqn = choose_ppqn(ppqn);               /* no usr().file_ppqn() yet */
 
         midifile * fp = is_wrk ?
             new (std::nothrow) wrkfile(fn, ppqn) :
             new (std::nothrow) midifile(fn, ppqn) ;
 
         std::unique_ptr<midifile> f(fp);
-        p.clear_all();                      /* see banner notes             */
+        p.clear_all();                          /* see banner notes         */
         result = bool(f);
         if (result)
             result = f->parse(p, 0);

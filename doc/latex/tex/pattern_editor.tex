@@ -853,6 +853,7 @@
 
    \begin{enumber}
       \item \textbf{Transpose}
+      \item \textbf{Note Map}
       \item \textbf{Drum Note Mode}
       \item \textbf{Chord Generation Reset}
    \end{enumber}
@@ -864,6 +865,14 @@
    If transpose is enabled for that pattern, the button will be highlighted as
    per the current desktop theme.  Patterns for drums should, in general, not
    be transposable.
+
+   \itempar{Note Map}{pattern editor!note map}
+   If the pattern is transposable, then this button is enabled.
+   If clicked, it applies the note-mapper to all of the notes in the pattern.
+   See \sectionref{subsec:configuration_drums}.
+   It is most useful for converting percussion from older drum sets to
+   General MIDI drums.  Enable transposition, apply the mapping, and then
+   disable transposition to avoid transposing again (e.g. by accident).
 
    \itempar{Drum Note Mode}{pattern editor!drum mode}
    This button changes from normal note mode to drum note mode. In the drum
@@ -925,6 +934,7 @@
       \item \textbf{Selector for Existing Data}
       \item \textbf{Selected Event Name}
       \item \textbf{LFO Panel}
+      \item \textbf{Loop Count}
       \item \textbf{Armed/Muted Toggle} (Data To MIDI Buss)
       \item \textbf{MIDI Thru Toggle}
       \item \textbf{MIDI Record Toggle}
@@ -1025,12 +1035,13 @@
       \item \textbf{Close}.  Closes the LFO panel.
    \end{enumber}
 
-   \itempar{Live Loop Counter}{pattern editor!live loop counter}
+   \itempar{Live Loop Count}{pattern editor!live loop count}
    Normally, in Live mode, a pattern plays endlessly if left alone.
    If this counter is set to a value greater than 0, then the pattern will loop
    only that number of times in Live mode.  For example, if set to 1, then the
-   pattern acts like a "one-shot" loop.  This can save having quickly use
-   queuing to handle an intro phrase.
+   pattern acts like a "one-shot" loop.  This can save having to use
+   queuing quickly to handle an intro phrase.
+   To loop \textsl{endlessly}, set this value to 0.
 
    \itempar{Armed/Mute Toggle}{pattern editor!data to midi buss}
    This button causes the pattern to be output to the

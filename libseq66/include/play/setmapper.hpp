@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-05-26
+ * \updates       2021-06-17
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -878,8 +878,8 @@ public:
         return m_set_size;
     }
 
-    bool install_sequence (sequence * s, int seqno);
-    bool add_sequence (sequence * s, int seqno);
+    bool install_sequence (sequence * s, seq::number seqno);
+    bool add_sequence (sequence * s, seq::number seqno);
     bool remove_sequence (seq::number seqno);
 
     bool swap_sets (seq::number set0, seq::number set1)
@@ -911,12 +911,8 @@ public:
 
 private:
 
-    bool fill_play_set (playset & p, bool clearit = true)
-    {
-        return play_screen()->fill_play_set(p, clearit);
-    }
-
-    bool add_to_play_set (playset & p, seq & s);
+    bool fill_play_set (playset & p, bool clearit = true);
+    bool add_to_play_set (playset & p, sequence * s);
 
     setmaster::container::iterator add_set (screenset::number setno)
     {

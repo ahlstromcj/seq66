@@ -306,6 +306,7 @@ public:
 
     void send_seq_event (int seq, seqaction what, bool flush = true);
     void clear_sequences (bool flush = true);
+    void clear_mutes (bool flush = true);
     event get_seq_event (int seq, seqaction what) const;
     void set_seq_event (int seq, seqaction what, int * ev);
     bool seq_event_is_active (int seq, seqaction what) const;

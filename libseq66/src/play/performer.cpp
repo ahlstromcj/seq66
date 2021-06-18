@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-06-15
+ * \updates       2021-06-17
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -533,11 +533,6 @@ performer::notify_ui_change (seq::number seqno, change /*mod*/)
         (void) notify->on_ui_change(seqno);
 }
 
-/**
- *  This call is currently done only when adding, deleting, or modifying a
- *  trigger.  NOT TRUE
- */
-
 void
 performer::notify_trigger_change (seq::number seqno, change mod)
 {
@@ -550,9 +545,12 @@ performer::notify_trigger_change (seq::number seqno, change mod)
     }
     else if (mod == change::no)
     {
-        const seq::pointer s = get_sequence(seqno);
-        seqno %= screenset_size();
-        announce_sequence(s, seqno);
+        if (seq_in_playing_screen(seqno))
+        {
+            const seq::pointer s = get_sequence(seqno);
+            seqno %= screenset_size();
+            announce_sequence(s, seqno);
+        }
     }
 }
 
@@ -1111,28 +1109,24 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
     bool result = mapper().install_sequence(s, seqno);
     if (result)
     {
-        /*
-         * Add the buss override, if specified.  We can't set it until after
-         * assigning the master MIDI buss, otherwise we get a segfault.
-         */
-
-        midipulse barlength = s->get_ppqn() * s->get_beats_per_bar();
-        bussbyte buss_override = usr().midi_buss_override();
-        s->set_parent(this);                /* also sets true buss value    */
-        s->set_master_midi_bus(m_master_bus.get());
-        s->sort_events();                   /* sort the events now          */
-        s->set_length();                    /* final verify_and_link()      */
-        s->empty_coloring();                /* yellow color if no events    */
-        if (s->get_length() < barlength)    /* pad sequence to a measure    */
-            s->set_length(barlength, false);
-
-        if (! is_null_buss(buss_override))
-            s->set_midi_bus(buss_override);
+        s->set_parent(this);                    /* also sets a lot of stuff */
 
         if (! fileload)
             modify();
 
-        mapper().fill_play_set(m_play_set);     /* clear it and refill it   */
+        if (rc().is_setsmode_normal())
+        {
+            /*
+             * This code is wasteful.  It clears the playset and refills it
+             * with the latest set of patterns in the screenset.
+             */
+
+            result = mapper().fill_play_set(m_play_set);
+        }
+        else
+        {
+            result = mapper().add_to_play_set(m_play_set, s);
+        }
     }
     return result;
 }
@@ -1195,9 +1189,11 @@ performer::remove_sequence (seq::number seqno)
 {
     bool result = mapper().remove_sequence(seqno);
     if (result)
+    {
         modify();
-
-    midi_control_out().send_seq_event(seqno, midicontrolout::seqaction::remove);
+        seqno -= playscreen_offset();
+        send_seq_event(seqno, midicontrolout::seqaction::remove);
+    }
     return result;
 }
 
@@ -1839,13 +1835,13 @@ performer::set_playing_screenset (screenset::number setno)
     {
         bool clearitfirst = rc().is_setsmode_to_clear();
         announce_exit(false);                       /* blank the device     */
-        announce_playscreen();                      /* inform control-out   */
         unset_queued_replace();
         mapper().fill_play_set(m_play_set, clearitfirst);
         if (rc().is_setsmode_autoarm())
         {
-            set_song_mute(mutegroups::action::off);
+            set_song_mute(mutegroups::action::off); /* unmute them all      */
         }
+        announce_playscreen();                      /* inform control-out   */
         notify_set_change(setno, change::signal);   /* change::no           */
     }
     return mapper().playscreen_number();
@@ -2176,7 +2172,8 @@ performer::launch (int ppqn)
 /**
  *  Announces the current mute states of the now-current play-screen.  This
  *  function is handled by creating a slothandler that calls the
- *  announce_sequence() function.
+ *  announce_sequence() function.  DOESN'T WORK RIGHT. It ultimately calls
+ *  screenset::slot_function() for the play_screen().
  *
  *  This version works only for the first screen-set!  The slot-handler
  *  increments the seq-number beyond the size of a set automatically.
@@ -2185,6 +2182,7 @@ performer::launch (int ppqn)
 void
 performer::announce_playscreen ()
 {
+#if defined USE_SLOT_FUNCTION               // doesn't quite work here!?
     if (midi_control_out().is_enabled())
     {
         screenset::slothandler sh = std::bind
@@ -2195,6 +2193,16 @@ performer::announce_playscreen ()
         slot_function(sh, false);           /* do not use the set-offset    */
         m_master_bus->flush();
     }
+#else
+    seq::number offset = playscreen_offset();
+    int setsize = midi_control_out().screenset_size();
+    for (int i = 0; i < setsize; ++i)
+    {
+        seq::pointer s = get_sequence(i + offset);
+        (void) announce_sequence(s, i);
+    }
+    m_master_bus->flush();
+#endif
 }
 
 /**
@@ -2215,19 +2223,11 @@ performer::announce_exit (bool playstatesoff)
 {
     if (midi_control_out().is_enabled())
     {
-        int setsize = midi_control_out().screenset_size();
-        for (int i = 0; i < setsize; ++i)
-        {
-            midi_control_out().send_seq_event
-            (
-                i, midicontrolout::seqaction::remove
-            );
-        }
+        midi_control_out().clear_sequences();
         if (playstatesoff)
         {
             announce_automation(false);
-            for (int g = 0; g < mutegroups::Size(); ++g)
-                send_mutes_inactive(g);
+            midi_control_out().clear_mutes();
         }
     }
 }
@@ -2291,30 +2291,16 @@ bool
 performer::announce_sequence (seq::pointer s, seq::number sn)
 {
     bool result = not_nullptr(s);
+    midicontrolout::seqaction what;
     if (result)
     {
-        if (s->playing())
-        {
-            midi_control_out().send_seq_event
-            (
-                sn, midicontrolout::seqaction::arm
-            );
-        }
-        else
-        {
-            midi_control_out().send_seq_event
-            (
-                sn, midicontrolout::seqaction::mute
-            );
-        }
+        what = s->playing() ?
+            midicontrolout::seqaction::arm : midicontrolout::seqaction::mute ;
     }
     else
-    {
-        midi_control_out().send_seq_event
-        (
-            sn, midicontrolout::seqaction::remove
-        );
-    }
+        what = midicontrolout::seqaction::remove;
+
+    send_seq_event(sn, what);
     return result;
 }
 

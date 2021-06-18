@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-05-26
+ * \updates       2021-06-17
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -173,17 +173,23 @@ setmapper::seq_set (seq::number seqno, int & offset) const
     return result;
 }
 
-/**
- *  This function assumes that performer::install_sequence() has already done
- *  its work.
- */
+bool
+setmapper::fill_play_set (playset & p, bool clearit)
+{
+    return play_screen()->fill_play_set(p, clearit);
+}
 
 bool
-setmapper::add_to_play_set (playset & p, seq & s)
+setmapper::add_to_play_set (playset & p, sequence * s)
 {
-    seq::number seqno = s.seq_number();
-    screenset & sset = screen(seqno);
-    return p.add(sset, s);
+    seq::number seqno = s->seq_number();
+    screenset & sset = screen(seqno);                   /* tricky !!!   */
+    bool result = sset.usable();
+    if (result)
+    {
+        result = sset.add_to_play_set(p, seqno);
+    }
+    return result;
 }
 
 #if defined SEQ66_SETMAPPER_SEQ_SET_IS_USED
@@ -193,8 +199,8 @@ setmapper::add_to_play_set (playset & p, seq & s)
  *  row and column of the sequence in the set.
  *
  * \param seqno
- *      The raw sequence number.  Normally, this value can range from 0 to 1023,
- *      or whatever the maximum is based on set size and number of sets.
+ *      The raw sequence number.  Normally, this value can range from 0 to
+ *      1023, or whatever the maximum is based on set size and number of sets.
  *
  * \param [out] row
  *      Holds the calculated row.  Clamped via the mod operator.
@@ -279,7 +285,7 @@ setmapper::screen (seq::number seqno)
  */
 
 bool
-setmapper::add_sequence (sequence * s, int seqno)
+setmapper::add_sequence (sequence * s, seq::number seqno)
 {
     bool result = false;
     if (not_nullptr(s))
@@ -289,21 +295,8 @@ setmapper::add_sequence (sequence * s, int seqno)
         {
             result = sset.usable();
             if (result)
-            {
                 result = sset.add(s, seqno);
-            }
-            else
-            {
-                /*
-                 * This should never happen here; taken care of in
-                 * install_sequence()!
-                 *
-                 *      auto setp = add_set(setno);
-                 *      result = setp != sets().end();
-                 *      if (result)
-                 *          result = setp->second.add(s, seqno);
-                 */
-            }
+
             if (! result)
             {
                 ++seqno;
@@ -490,7 +483,7 @@ setmapper::install_sequence (sequence * s, seq::number seqno)
  */
 
 bool
-setmapper::remove_sequence (int seqno)
+setmapper::remove_sequence (seq::number seqno)
 {
     screenset & sset = screen(seqno);       /* tricky                       */
     bool result = ! sset.usable();          /* doesn't exist, we're golden  */
@@ -1075,19 +1068,10 @@ setmapper::armed () const
  *  If group_mode() is true, then this function operates.  It loops through
  *  every screen-set.  In each screen-set, it acts on each active sequence.
  *  If the active sequence is in the current "in-view" screen-set (m_screenset
- *  as opposed to m_playscreen, and its m_track_mute_state[] is true,
- *  then the sequence is turned on, otherwise it is turned off.  The result is
- *  that the in-view screen-set is activated as per the mute states, while all
- *  other screen-sets are muted.
- *
- * \change tdeagan 2015-12-22 via git pull.
- *      Replaced m_playscreen with m_screenset.
- *
- *  We are disabling Tim's fix for a bit in order to make sure we're doing
- *  what Seq24 does with the playing set key. (Home).
- *
- *  It seems to us that the for (g) clause should have g range from 0 to
- *  m_max_sets, not m_seqs_in_set.  Done.
+ *  as opposed to m_playscreen, and its m_track_mute_state[] is true, then the
+ *  sequence is turned on, otherwise it is turned off.  The result is that the
+ *  in-view screen-set is activated as per the mute states, while all other
+ *  screen-sets are muted.
  */
 
 void
@@ -1117,14 +1101,14 @@ setmapper::mute_group_tracks ()
  *  perform and in mainwnd.
  *
  *  When in group-learn mode, for active sequences, the mute-group settings
- *  are set based on the playing status of each sequence.  Then the
- *  mute-group is stored in m_tracks_mute_state[], which holds states for
- *  only the number of sequences in a set.
+ *  are set based on the playing status of each sequence.  Then the mute-group
+ *  is stored in m_tracks_mute_state[], which holds states for only the number
+ *  of sequences in a set.
  *
  *  Compare to select_group_mute(); its main difference is that it will at
  *  least copy the states even if not in group-learn mode.  And, if in
- *  group-learn mode, it will grab the playing states of the sequences
- *  before copying them.
+ *  group-learn mode, it will grab the playing states of the sequences before
+ *  copying them.
  *
  *  This function is used only once, in select_and_mute_group().  It used to
  *  be called just select_mute_group(), but that's too easy to confuse with
