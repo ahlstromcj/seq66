@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2021-06-08
+ * \updates       2021-06-19
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -505,6 +505,11 @@ bool
 session_save ()
 {
     return false;
+}
+
+void signal_for_exit ()
+{
+    // no code at this time
 }
 
 #endif  // defined SEQ66_PLATFORM_LINUX

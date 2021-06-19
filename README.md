@@ -1,21 +1,21 @@
 # README for Seq66 0.95.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-06-16
+2015-09-10 to 2021-06-19
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
 playlists for song management, scale/chord-aware piano-roll interface, song
 editor for creative composition, and control via mouse, keystrokes, and MIDI.
-Includes mute-groups so that a set of patterns can be enabled/disabled with one
-keystroke or MIDI control Supports NSM (New Session Manager) on Linux, can also be
-run headless.  It does not support audio samples, just MIDI.
+Mute-groups can enable/disable multiple patterns with one keystroke or MIDI
+control. Supports NSM (Non Session Manager) on Linux; can also be run headless.
+It does not support audio samples, just MIDI.
 
-__Seq66__ is a refactoring of the Qt version of Sequencer64/Kepler34, reboots
+__Seq66__ is a major refactoring of Sequencer64/Kepler34, both being reboots
 of __Seq24__ with modern C++ and new features.  Linux users can build this
 application from the source code.  See the INSTALL file.  Windows users can
-get an installer package on GitHub or build it with Qt Creator.  A large PDF
-user-manual is provided.
+get an installer package on GitHub or build it with Qt Creator.  A comprehensive
+PDF user-manual is provided.
 
 ![Alt text](doc/latex/images/main-window/main-window-fluxbox.png?raw=true "Seq66
 Dark-Cold Fluxbox")
@@ -25,13 +25,12 @@ Dark-Cold Fluxbox")
 ##  User interface
 
     *   Qt 5 (good cross-platform support).  A grid of loop buttons and a song
-        layout tab.  Unlimited external windows.  The live frame uses buttons
-        matching Qt theming.
-    *   Qt style-sheet support, to further tinkering with the app's appearance.
+        layout tab.  Unlimited external windows.  Buttons match Qt theming.
+    *   Qt style-sheet support, to further tinker with the app's appearance.
     *   Tabs for management of sets, mute-groups, song mode, pattern
         editing, event-editing, play-lists, and session information.
-    *   A color for each pattern can be chosen to make them stand out.
-        The color palette can be saved and modified.
+    *   Each pattern can be colored to stand out.  The color palette can be
+        saved and modified.
 
 ##  Configuration files
 
@@ -39,10 +38,10 @@ Dark-Cold Fluxbox")
         with support for hex notation.
     *   Supports configuration files: ".rc", ".usr", ".ctrl", ".mutes",
         ".playlist", ".drums" (note-mapping), and ".palette".
-    *   Unified keystroke control and MIDI control in the ".ctrl" file. It
-        defines MIDI In controls for controlling Seq66, and MIDI Out controls
-        for displaying Seq66 status in grid controllers (e.g.  LaunchPad).
-        Basic 4x8 and 8x8 ".ctrl" files for the Launchpad Mini provided.
+    *   Unified keystroke and MIDI control in the ".ctrl" file. It defines MIDI
+        In controls for controlling Seq66, and MIDI Out controls for displaying
+        Seq66 status in grid controllers (e.g.  LaunchPad).  Basic 4x8 and 8x8
+        ".ctrl" files are provided for the Launchpad Mini.
 
 ##  Non Session Manager
 
@@ -54,16 +53,16 @@ Dark-Cold Fluxbox")
 ##  Multiple Builds
 
     *   ALSA/JACK: `qseq66`
-    *   Command-line/daemon: `seq66cli`
+    *   Command-line/headless: `seq66cli`
     *   PortMidi: `qpseq66`
     *   Windows: `qpseq66.exe`
 
-##  New Features
+##  More Features
 
     *   Transposable triggers for re-using patterns more comprehensively.
         Works with Song Export. Can be disabled in the 'rc' file.
     *   Improved non-U.S. keyboard support.
-    *   See **Recent Changes** below.
+    *   See **Recent Changes** below, and the **NEWS** file.
 
 ##  Internal
 
@@ -81,19 +80,20 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.95.0:
-        *   Major cleanup and neatening of header files.
         *   Updated almost all settings to use "name = variable" convention
-            to improve readability.
+            to improve readability.  This will change the format of config-files
+            slightly upon exit.
         *   Fixes made to the sample Launchpad Mini 'ctrl' files.  Also added a
             "Quit" command, especially useful in a headless run.
         *   Added 8 "Alt" MIDI Control Out values to support special cases
             not covered by the concrete set of control-out values.
+        *   Major cleanup and neatening of header files.
         *   Minor bugs and regressions fixed along the way.
         *   Loop-edit key will create a new sequence if slot is empty.
         *   Patterns empty of playable events no longer show unnecessary
             progress bars.
-        *   The overall duration of a tune is now shown, depending on pattern
-            lengths and song triggers.
+        *   The estimated duration of a tune is shown in the Song tab, based
+            on pattern lengths and song triggers.
     *   Version 0.94.0:
         *   Major improvements to the stability of MIDI control of playlists.
         *   Added Phrygian scale thanks to user WinkoErades.
@@ -111,71 +111,6 @@ Windows, and using a conventional source tarball.
         *   Improving the handling of headless seq66cli; added a "quit"
             automation function for MIDI-only use.
         *   Fixed some issues with reading Cakewalk WRK files.
-    *   Version 0.93.2:
-        *   Changed the mute-group format inside the MIDI file to use a much
-            less disk space (about 3K less).  Can be set in the 'rc' file to
-            write the old format.
-        *   Minor tweaks to the transposed-trigger functionality.  Can be set in
-            the 'rc' file to write the old format.
-        *   Removed the code for the essentially unused Seqtool application.
-        *   Removed the now unnecessary old-style qseqeditframe.
-        *   Add 'usr' tweaks options to change the size of the live-grid
-            progress boxes, or eliminate them completely.
-        *   Refactored keymaps for better progress on issue #47, using native
-            key-codes. Added a spreadsheet listing the supported names of the
-            keys.  Laid the groundwork for a 'keys' mapping file.
-        *   Removed excess spurious events when Seq66 shuts down under JACK.
-        *   Implemented the control-toggling of "follow JACK transport".
-        *   Fixed a bug in the pattern editor that created unnecessary empty
-            screen-sets.
-        *   Further fixes and flexibility for handling mute-groups.
-        *   Fixed the installation of libseq66 and libsession library header
-            files in "make install" to preserve their base subdirectories.
-            (The other libraries currently don't use base subdirectories.)
-    *   Version 0.93.1:
-        *   Work in progress on issue #47; added a keyboard-layout option to the
-            'ctrl' file to disable auto-shift and tweak the internal key-map for
-            some keyboards.  Added an "AZERTY" 'ctrl' file to the installation.
-        *   Improved group-learn key control.
-        *   Fixed issue #49, mute-group issues, plus a bug in saving mutes to
-            the MIDI file.  Added a couple more flags to the 'mutes' file.
-        *   Fixed issue #50, made the slot text color the same as the label
-            color, and provided a "secret" default color that will cause the
-            text to match the theme.  This can be overridden by a palette file.
-        *   Fixed issue #51 (show-stopper!), where playback with JACK transport
-            enable was extremely erratic on some platforms.
-        *   Add clearing of the performer's "play-set" for "File / New" to
-            prevent the previous song from being playable. :-D
-        *   Activate usage of (larger) seqedit frame in the "Edit" tab via
-            a 'usr' option.  Adapted the size to better fit, but the user still
-            needs to increase vertical dimension slightly to see the bottom
-            buttons.  Will eventually eliminate the old version of the tabbed
-            Edit frame.
-        *   Fixed a bug in drawing notes as a new one is recorded; needed to
-            "verify-and-link".
-        *   Added a loop-count for live playback of a pattern.  0 means normal
-            infinite looping; 1 means "one-shot"; and higher numbers will work.
-            Stored with the pattern in the MIDI file.
-    *   Version 0.93.0:
-        *   Added a transpose value to song editor triggers to support shifting
-            patterns automatically during Song play.  Added an 'rc' option to
-            save MIDI files using the original triggers.
-        *   Improved the song editor's vertical scrollbar, it adjusts to the
-            number of actual sets.
-        *   Added the L/R marker feature to the external pattern editor, and
-            Song mode is no longer required to use it.  This makes it easier
-            to explore a long pattern for extracting to a short pattern loop.
-        *   Added more perfroll snap options, including one to force Seq24
-            behavior.
-        *   Make the perf-names now also show the pattern color. They highlight
-            as the mouse moves over the pattern rows, useful for long songs.
-        *   Fixed playback of ultra-long patterns due to not sleeping in the
-            output loop (forgot to convert milliseconds to microseconds).
-        *   Fixed vertical zoom in the pattern editor.
-        *   Fixed a bad bug in writing Meta and SeqSpec data-lengths greater
-            than 127.
-        *   Enhanced the event editor to work with channel-less tracks.
-        *   Added channel and bus menus to the grid-button popup menu.
 
     See the "NEWS" file for changes in earlier versions.
 

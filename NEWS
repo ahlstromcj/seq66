@@ -1,10 +1,75 @@
-NEWS for Seq66 0.94.1
+NEWS for Seq66 0.95.0
 Chris Ahlstrom
-2015-07-10 to 2021-06-09
+2015-07-10 to 2021-06-19
 
 This file collects major changes that are older and clutter up
 the README file.  This file should be called "OLD NEWS".
 
+    -   Version 0.93.2:
+        -   Changed the mute-group format inside the MIDI file to use a much
+            less disk space (about 3K less).  Can be set in the 'rc' file to
+            write the old format.
+        -   Minor tweaks to the transposed-trigger functionality.  Can be set in
+            the 'rc' file to write the old format.
+        -   Removed the code for the essentially unused Seqtool application.
+        -   Removed the now unnecessary old-style qseqeditframe.
+        -   Add 'usr' tweaks options to change the size of the live-grid
+            progress boxes, or eliminate them completely.
+        -   Refactored keymaps for better progress on issue #47, using native
+            key-codes. Added a spreadsheet listing the supported names of the
+            keys.  Laid the groundwork for a 'keys' mapping file.
+        -   Removed excess spurious events when Seq66 shuts down under JACK.
+        -   Implemented the control-toggling of "follow JACK transport".
+        -   Fixed a bug in the pattern editor that created unnecessary empty
+            screen-sets.
+        -   Further fixes and flexibility for handling mute-groups.
+        -   Fixed the installation of libseq66 and libsession library header
+            files in "make install" to preserve their base subdirectories.
+            (The other libraries currently don't use base subdirectories.)
+    -   Version 0.93.1:
+        -   Work in progress on issue #47; added a keyboard-layout option to the
+            'ctrl' file to disable auto-shift and tweak the internal key-map for
+            some keyboards.  Added an "AZERTY" 'ctrl' file to the installation.
+        -   Improved group-learn key control.
+        -   Fixed issue #49, mute-group issues, plus a bug in saving mutes to
+            the MIDI file.  Added a couple more flags to the 'mutes' file.
+        -   Fixed issue #50, made the slot text color the same as the label
+            color, and provided a "secret" default color that will cause the
+            text to match the theme.  This can be overridden by a palette file.
+        -   Fixed issue #51 (show-stopper!), where playback with JACK transport
+            enable was extremely erratic on some platforms.
+        -   Add clearing of the performer's "play-set" for "File / New" to
+            prevent the previous song from being playable. :-D
+        -   Activate usage of (larger) seqedit frame in the "Edit" tab via
+            a 'usr' option.  Adapted the size to better fit, but the user still
+            needs to increase vertical dimension slightly to see the bottom
+            buttons.  Will eventually eliminate the old version of the tabbed
+            Edit frame.
+        -   Fixed a bug in drawing notes as a new one is recorded; needed to
+            "verify-and-link".
+        -   Added a loop-count for live playback of a pattern.  0 means normal
+            infinite looping; 1 means "one-shot"; and higher numbers will work.
+            Stored with the pattern in the MIDI file.
+    -   Version 0.93.0:
+        -   Added a transpose value to song editor triggers to support shifting
+            patterns automatically during Song play.  Added an 'rc' option to
+            save MIDI files using the original triggers.
+        -   Improved the song editor's vertical scrollbar, it adjusts to the
+            number of actual sets.
+        -   Added the L/R marker feature to the external pattern editor, and
+            Song mode is no longer required to use it.  This makes it easier
+            to explore a long pattern for extracting to a short pattern loop.
+        -   Added more perfroll snap options, including one to force Seq24
+            behavior.
+        -   Make the perf-names now also show the pattern color. They highlight
+            as the mouse moves over the pattern rows, useful for long songs.
+        -   Fixed playback of ultra-long patterns due to not sleeping in the
+            output loop (forgot to convert milliseconds to microseconds).
+        -   Fixed vertical zoom in the pattern editor.
+        -   Fixed a bad bug in writing Meta and SeqSpec data-lengths greater
+            than 127.
+        -   Enhanced the event editor to work with channel-less tracks.
+        -   Added channel and bus menus to the grid-button popup menu.
     -   Version 0.92.2:
         -   Added a Qt "style-sheet" configuration it to the 'usr' file. It
             can be used to alter the appearance of the application beyond what

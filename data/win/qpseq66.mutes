@@ -1,56 +1,62 @@
-# Seq66 0.91.1 (and above) mute-groups configuration file
-
-# /home/ahlstrom/.config/seq66/qseq66.mutes
-# Written on 2021-01-27 11:22:19
-
-# This file replaces the [mute-group] section, making it a little
-# easier to manage multiple sets of mute groups.
+# Seq66 0.94.1 (and above) mute-groups configuration file
+#
+# C:\Users\chris\AppData\Local\seq66\qpseq66.mutes
+# Written 2021-06-19 07:58:39
+#
+# This file replaces the [mute-group] section of the 'rc' file,
+# making it easier to manage multiple sets of mute groups.
 
 [Seq66]
 
 config-type = "mutes"
 version = 0
 
-# The [comments] section can document this file.  Lines starting
-# with '#' and '[' are ignored.  Blank lines are ignored.  Show a
-# blank line by adding a space character to the line.
-
+# The [comments] section documents this file.  Lines starting with
+# '#', '[', or that have no characters end the comment.
 [comments]
 
 Comments added to this section are preserved.  Lines starting with
 a '#' or '[', or that are blank, are ignored.  Start lines that must
 look empty with a space.
 
-# The 'mutes' file holds the global mute-groups configuration.
-# It follows the format of the 'rc' configuration file, but is
-# stored separately for convenience.  It is always stored in the
-# configuration directory.  To use this 'mutes' file, replace the
-# [mute-group] section in the 'rc' file, and its contents, with a
-# [mute-group-file] tag, and add the basename (e.g. 'nanomute.mutes')
-# on a separate line.
+# The 'mutes' file holds the global mute-groups configuration. It is
+# is stored separately for flexibility, always in the configuration
+# directory.  To use this file, specify it in the [mute-group-file]
+# tag in the 'rc' file and set 'active' to true.
 #
-# save-mutes-to: 'both' writes the mutes value to both the mutes
-# and the MIDI file; 'midi' writes only to the MIDI file; and
-# and 'mutes' only to the mutes file.
+# load-mute-groups: set to 'none', or 'mutes' to load only from the
+# 'mutes' file, 'midi' to load from the song, or 'both' to try to
+# to read from the 'mutes' first, then the 'midi' if empty.
+#
+# save-mutes-to: 'both' writes the mutes values to both the mutes and
+# the MIDI file; 'midi' writes only to the MIDI file; and the 'mutes'
+# only to the mutes file.
 #
 # mute-group-rows and mute-group-columns: Specifies the size of the
 # grid.  For now, keep these values at 4 and 8.
 #
-# groups-format: 'bin' means to write the mutes as 0 or 1; 'hex' means
-# to write them as hexadecimal numbers (e.g. 0xff), which will be
-# useful with larger set sizes.
+# groups-format: 'binary' means write mutes as 0 or 1; 'hex' means to
+# write them as hexadecimal numbers (e.g. 0xff), which is useful for
+# larger set sizes.
 #
-# group-selected: if 0 to 31, and mutes are available either from
+# mute-group-selected: if 0 to 31, and mutes are available either from
 # this file or from the MIDI file, then the mute-group is applied at
-# startup.  This is useful in restoring a session.
+# startup; useful in restoring a session. Set to -1 to disable.
+#
+# toggle-active-only: when a mute-group is toggled off, all patterns,
+# even those outside the mute-group, are muted.  If this flag is set
+# to true, only patterns in the mute-group are muted. Any patterns
+# unmuted directly by the user remain unmuted.
 
 [mute-group-flags]
 
+load-mute-groups = none
 save-mutes-to = mutes
 mute-group-rows = 4
 mute-group-columns = 8
-mute-group-selected = 0
+mute-group-selected = -1
 groups-format = binary
+toggle-active-only = false
 
 [mute-groups]
 
@@ -60,14 +66,14 @@ groups-format = binary
 # is found, each number represents a bit mask, rather than a single
 # bit.
 
- 0 [ 1 1 1 1 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
- 1 [ 0 0 0 0 1 1 1 1 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
- 2 [ 0 0 0 0 0 0 0 0 ] [ 1 1 1 1 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
- 3 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 1 1 1 1 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 0 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 1 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 2 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 3 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
  4 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
  5 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
  6 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
- 7 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 1 1 1 1 1 1 1 1 ] [ 1 1 1 1 1 1 1 1 ]
+ 7 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
  8 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
  9 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
 10 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
@@ -93,6 +99,6 @@ groups-format = binary
 30 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
 31 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
 
-# End of /home/ahlstrom/.config/seq66/qseq66.mutes
+# End of C:\Users\chris\AppData\Local\seq66\qpseq66.mutes
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

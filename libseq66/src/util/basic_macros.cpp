@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-06-07
+ * \updates       2021-06-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -39,6 +39,10 @@
 
 #if defined SEQ66_PLATFORM_UNIX
 #include <unistd.h>                     /* C::write(2)                      */
+#endif
+
+#if defined SEQ66_PLATFORM_WINDOWS
+#include <io.h>                         /* C::_write()                      */
 #endif
 
 /*
@@ -169,8 +173,8 @@ error_message (const std::string & msg)
 }
 
 /**
- *  Common-code for error messages involving file issues, a very common use case
- *  in error-reporting.  Adds markers, and returns false.
+ *  Common-code for error messages involving file issues, a very common use
+ *  case in error-reporting.  Adds markers, and returns false.
  *
  * \param tag
  *      The message to print, sans the newline.
@@ -295,8 +299,9 @@ async_safe_strprint (const char * msg, size_t count)
         // ignore -Wunused-result warning
     }
 #else
-    /* TODO: find a Windows way for this    */
-    (void) write(STDOUT_FILENO, msg, count);
+#if defined SEQ66_PLATFORM_WINDOWS
+    (void) _write(STDOUT_FILENO, msg, count);
+#endif
 #endif
 }
 
