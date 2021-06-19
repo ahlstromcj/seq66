@@ -1,20 +1,20 @@
-readme.windows for Seq66 0.94.1
+readme.windows for Seq66 0.95.0
 Chris Ahlstrom
-2018-05-13 to 2021-06-09
+2018-05-13 to 2021-06-19
 
 This README file tells you how to run the native Windows implmentation of
 seq66, an executable named qpseq66.exe.  It provides some notes on Seq66 and
 Windows.  We mostly use Windows 10; some features might differ in Windows 7 or
 Windows 2012+ Server.
 
-There will be a portable ZIP package for qpseq66 and an NSIS-based installer.
-See https://github.com/ahlstromcj/seq66-packages.  For documentation,
-see https://github.com/ahlstromcj/seq66-doc.  Some minor features are
-still missing from the Windows version, such as keyboard configuration.
-Sample files are provided for such cases.
+There will eventually be a portable ZIP package for qpseq66; an NSIS-based
+installer is available:
 
-At first, we will provide only a portable ZIP package for qpseq66.  Later,
-we will provide an NSIS-based installer.
+    https://github.com/ahlstromcj/sequencer64-packages/seq66/0.95.
+
+For documentation, see https://github.com/ahlstromcj/seq66/doc.
+Some minor features are still missing from the Windows version, such as
+virtual ports Sample configuration files are provided for such cases.
 
 Why the name qpseq66.exe instead of seq66.exe?  The "q" stands for the Qt user
 interface, and the "p" stands for the PortMidi-based engine used for Windows.
@@ -36,12 +36,13 @@ Run the 'qpseq66.exe' shortcut and load a tune from the directory
     C:\Program Files (x86)\Seq66\data\midi
 
 If there application seems frozen, exit it (which saves the initial set of
-configuration files), and run it again.
+configuration files), and run it again.  We are not yet sure why this can
+happen.
 
 If an error appears, click out and run it again, and there should be a "MIDI
 Mapper" present on buss 0.  Load a song, and select the "0" device from the
 buss dropdown ("None") at the top of the main page.  The file should play.
-You can save the file to preserve the new buss number; some songs are set to
+You can save the file to preserve the new buss number; songs can be set to
 play on multiple busses.
 
 Inaccessible Devices:
@@ -138,7 +139,9 @@ Building the Application:
         qpseq66.rc
         qpseq66.usr
         qpseq66.ctrl
+        qpseq66.drums
         qpseq66.mutes
+        qpseq66.playlist
         seq66.log
 
     Now plug in a MIDI device, and do the same exercise.  Open
