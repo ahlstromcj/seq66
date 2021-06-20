@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-06-17
+ * \updates       2021-06-20
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -2172,17 +2172,13 @@ performer::launch (int ppqn)
 /**
  *  Announces the current mute states of the now-current play-screen.  This
  *  function is handled by creating a slothandler that calls the
- *  announce_sequence() function.  DOESN'T WORK RIGHT. It ultimately calls
- *  screenset::slot_function() for the play_screen().
- *
- *  This version works only for the first screen-set!  The slot-handler
- *  increments the seq-number beyond the size of a set automatically.
+ *  announce_sequence() function.  The proper working of this function depends
+ *  on announce_sequence() returning true for all slots, even empty ones.
  */
 
 void
 performer::announce_playscreen ()
 {
-#if defined USE_SLOT_FUNCTION               // doesn't quite work here!?
     if (midi_control_out().is_enabled())
     {
         screenset::slothandler sh = std::bind
@@ -2193,16 +2189,6 @@ performer::announce_playscreen ()
         slot_function(sh, false);           /* do not use the set-offset    */
         m_master_bus->flush();
     }
-#else
-    seq::number offset = playscreen_offset();
-    int setsize = midi_control_out().screenset_size();
-    for (int i = 0; i < setsize; ++i)
-    {
-        seq::pointer s = get_sequence(i + offset);
-        (void) announce_sequence(s, i);
-    }
-    m_master_bus->flush();
-#endif
 }
 
 /**
@@ -2284,15 +2270,17 @@ performer::announce_mutes ()
  *      0 to the set-size.
  *
  * \return
- *      Returns true if the sequence pointer exists.
+ *      Returns true all the time, because we want to be able to handle empty
+ *      slots as well, and screenset::slot_function() is meant to use a false
+ *      result only under abnormal conditions.
  */
 
 bool
 performer::announce_sequence (seq::pointer s, seq::number sn)
 {
-    bool result = not_nullptr(s);
+    bool ok = not_nullptr(s);
     midicontrolout::seqaction what;
-    if (result)
+    if (ok)
     {
         what = s->playing() ?
             midicontrolout::seqaction::arm : midicontrolout::seqaction::mute ;
@@ -2300,8 +2288,17 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
     else
         what = midicontrolout::seqaction::remove;
 
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    std::string act = seqaction_to_string(what);
+    int loopnumber = (-1);
+    if (not_nullptr(s))
+        loopnumber = int(s->seq_number());
+
+    printf("loop %d seqno %d action '%s'\n", loopnumber, int(sn), act.c_str());
+#endif
+
     send_seq_event(sn, what);
-    return result;
+    return true;
 }
 
 /**

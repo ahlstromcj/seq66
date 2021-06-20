@@ -486,7 +486,7 @@ screenset::slot_function (slothandler p, bool use_set_offset)
     for (auto & s : m_container)
     {
         result = p(s.loop(), sn++);         /* note post-increment of sn    */
-        if (! result)
+        if (! result)                       /* false only if serious        */
             break;
     }
     return result;
