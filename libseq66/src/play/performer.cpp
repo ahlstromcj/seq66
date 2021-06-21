@@ -1426,16 +1426,21 @@ void
 performer::next_song_mode ()
 {
     int triggercount = mapper().trigger_count();
-    if (triggercount > 0)
+    bool has_triggers = triggercount > 0;
+    if (has_triggers)
     {
-        song_mode(true);
+        bool songmode = rc().song_start_mode() || rc().song_start_auto();
         set_song_mute(mutegroups::action::off);
+        song_mode(songmode);
+        song_recording(false);
     }
     else
     {
-        song_mode(false);
+        bool songmode = rc().song_start_mode();
+        bool mutem = rc().is_setsmode_normal();
+        mute_all_tracks(mutem);
+        song_mode(songmode);
         song_recording(false);
-        mute_all_tracks(false);
     }
 }
 
@@ -1952,8 +1957,8 @@ performer::clear_song ()
         set_have_redo(false);
         m_redo_vect.clear();
         mapper().reset();               /* clears and recreates empty set   */
-        unmodify();                     /* new, we start afresh             */
         m_is_busy = false;
+        unmodify();                     /* new, we start afresh             */
         set_needs_update();             /* tell all GUIs to refresh. BUG!   */
     }
     return result;
@@ -6382,8 +6387,9 @@ performer::read_midi_file
     errmsg.clear();
     bool result = seq66::read_midi_file(*this, fn, ppqn(), errmsg, addtorecent);
     if (result)
+    {
         next_song_mode();
-
+    }
     return result;
 }
 

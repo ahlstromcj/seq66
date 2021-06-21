@@ -193,13 +193,6 @@ Seq66 will try to be the JACK master.  This is a sticky option.
 JACK master will fail if there is already a JACK master.
 
 .TP 8
-.B \-M, \-\-jack-start-mode \fI<x>\fP
-When Seq66 is synced to JACK, the following play modes are available:
-0 = live mode and 1 = song mode (the default).  Live mode means that
-the musician controls the unmuting of patterns on the main window.  Song mode
-means that the song layout in the "Song" window controls the playback.
-
-.TP 8
 .B \-t, \-\-jack-midi
 Use native JACK MIDI.  This is a separate option from JACK Transport, and is
 the default.  If JACK is not running, the application falls back to ALSA.
@@ -207,6 +200,14 @@ the default.  If JACK is not running, the application falls back to ALSA.
 .TP 8
 .B \-N, \-\-no-jack-midi
 Use ALSA MIDI, even with JACK Transport.  See the -A option.
+
+.TP 8
+.B \-M, \-\-jack-start-mode \fImode\fP
+In ALSA or JACK, the following play modes are available:
+"live", "song", or "auto". Auto is now the default.  Live mode means that
+the musician controls the unmuting of patterns on the main window.  Song mode
+means that the song layout in the "Song" window controls the playback.
+Auto means to use Song mode if the song contains performance triggers.
 
 .TP 8
 .B \-u, \-\-user-save
@@ -238,11 +239,12 @@ or for "alsa".
 Provides additional options, including the no-GUI version of
 Seq66.  Here are the opvalues supported:
 
-daemonize     Fork the command-line application to background.  The base
-              configuration files are "seq66cli.rc", etc.  This feature
-              currently does not work properly, needs to fork with the
-              proper settings still. For now, create a keyboard or desktop
-              shortcut for a seq66cli command.
+daemonize     Fork the command-line application to background.
+              The base configuration files are "seq66cli.rc",
+              etc.  This feature currently does not work,
+              needs to fork with the proper settings still.
+              For now, create a keyboard or desktop shortcut
+              for a seq66cli command.
 
 no-daemonize  Makes the command-line application not fork.
 
@@ -260,8 +262,8 @@ scale=x       Scales the main window size, from 0.5 to 3.0.
               labelling is mildly distorted.
 
 mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.
-              'mutes' saves to a separate file, 'midi' saves the mutes
-              in the MIDI file.
+              'mutes' saves to a separate file, 'midi' saves
+              the mutes in the MIDI file.
 
 virtual=o,i   Set up the --manual-ports option, using 'o' output ports
               and 'i' input ports.

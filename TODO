@@ -60,8 +60,6 @@ UI:
     See the mouse wheel scroll event requests for both the song and
     pattern editors.
 
-    Clean out all of the unused options in the 'usr' file.
-
     The "L" and "R" markers do not work correctly in the seqedit; also seems
     to cause start/stop to becomes disabled, as JACK master.
 

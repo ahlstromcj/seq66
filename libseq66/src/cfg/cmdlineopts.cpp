@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-05-18
+ * \updates       2021-06-21
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -178,8 +178,7 @@ cmdlineopts::s_arg_list =
  *  Provides help text.
  */
 
-const std::string
-cmdlineopts::s_help_1a =
+const std::string cmdlineopts::s_help_1a =
 "Options:\n"
 "   -h, --help               Show this help and exit.\n"
 "   -V, --version            Show program version/build information and exit.\n"
@@ -191,32 +190,31 @@ cmdlineopts::s_help_1a =
 "   -n, --nsm                Activate Non Session Manager support.\n"
 "   -T, --no-nsm             Ignore NSM in 'usr' file. T for 'typical'.\n"
 #endif
-"   -X, --playlist filename  Load the playlist from configuration directory.\n"
+"   -X, --playlist filename  Load playlists from the configuration directory.\n"
 "   -m, --manual-ports       Don't auto-connect MIDI ports; use virtual ports.\n"
-"                            Not supported in the PortMIDI version.\n"
+"                            Not supported in PortMidi builds.\n"
 "   -a, --auto-ports         Connect MIDI ports (overrides the 'rc' file).\n"
-    ;
+;
 
 /**
  *  More help text.
  */
 
-const std::string
-cmdlineopts::s_help_1b =
+const std::string cmdlineopts::s_help_1b =
 "   -r, --reveal-ports       Do not use the 'usr' definitions for port names.\n"
 "   -R, --hide-ports         Use the 'usr' definitions for port names.\n"
 "   -A, --alsa               Do not use JACK, use ALSA. A sticky option.\n"
 "   -b, --bus b              Global override of bus number (for testing).\n"
 "   -B, --buss b             Covers the 'bus' versus 'buss' confusion.\n"
-"   -l, --client-name label  Replaces the client name 'seq66' with a new label.\n"
-"                            Will be overridden by a session manager.\n"
+"   -l, --client-name label  Use this name instead of 'seq66'. Overridden by a\n"
+"                            session manager.\n"
 "   -q, --ppqn qn            Specify default PPQN to replace 192.  The MIDI\n"
 "                            file might specify its own PPQN.\n"
 "   -p, --priority           Run high priority, FIFO scheduler (needs root).\n"
 "   -P, --pass-sysex         Passes incoming SysEx messages to all outputs.\n"
 "                            Not yet fully implemented.\n"
 "   -s, --show-midi          Dump incoming MIDI events to the screen.\n"
-    ;
+;
 
 /*
  * This option was never used, just settable, in Seq24.  We need that letter!
@@ -228,8 +226,7 @@ cmdlineopts::s_help_1b =
  *  Still more help text.
  */
 
-const std::string
-cmdlineopts::s_help_2 =
+const std::string cmdlineopts::s_help_2 =
 "   -k, --show-keys          Prints pressed key value.\n"
 "   -K, --inverse            Inverse/night color scheme for seq/perf editors.\n"
 #if defined SEQ66_JACK_SUPPORT
@@ -237,8 +234,8 @@ cmdlineopts::s_help_2 =
 "   -g, --no-jack-transport  Turn off JACK transport.\n"
 "   -J, --jack-master        Try to be JACK Master. Also sets -j.\n"
 "   -C, --jack-master-cond   Fail if there's already a Jack Master; sets -j.\n"
-"   -M, --jack-start-mode m  When synced to JACK, the following play modes are\n"
-"                            available: 0 = live mode; 1 = song mode (default).\n"
+"   -M, --jack-start-mode m  For ALSA or JACK, these play modes are available:\n"
+"                            'live'; 'song'; and 'auto' (default).\n"
 "   -N, --no-jack-midi       Use ALSA MIDI, even with JACK Transport. See -A.\n"
 "   -t, --jack-midi          Use JACK MIDI; separate option from JACK Transport.\n"
 #if defined SEQ66_JACK_SESSION
@@ -246,25 +243,22 @@ cmdlineopts::s_help_2 =
 #endif
 #endif
 "   -d, --record-by-channel  Divert MIDI input by channel into the sequences\n"
-"                            that are configured for each channel.\n"
-"   -D, --legacy-record      Record all MIDI into the active sequence.  The\n"
-"                            default at present.\n"
-    ;
+"                            configured for each channel.\n"
+"   -D, --legacy-record      Record all MIDI into the active sequence. Default.\n"
+;
 
 /**
  *  Still still more help text.
  */
 
-const std::string
-cmdlineopts::s_help_3 =
-"   -u, --user-save          Save the 'usr' configuration settings.  Normally\n"
-"                            they are saved only if the file does not exist, so\n"
-"                            that 'usr' command-line options are not permanent.\n"
-"   -H, --home dir           Set the directory to hold the configuration files,\n"
-"                            relative to $HOME.  The default is .config/seq66.\n"
-"   -f, --rc filename        Use a different 'rc' configuration file.  It must\n"
-"                            be in the user's $HOME/.config/seq66 or --home\n"
-"                            directory.  The '.rc' extension is added if needed.\n"
+const std::string cmdlineopts::s_help_3 =
+"   -u, --user-save          Save 'usr' settings, usually saved only if this file\n"
+"                            does not exist; 'usr' command-line options are not\n"
+"                            permanent otherwise.\n"
+"   -H, --home dir           Set the directory for configuration files, relative\n"
+"                            to $HOME.  Default: .config/seq66.\n"
+"   -f, --rc filename        An alternate 'rc' file, in $HOME/.config/seq66 or\n"
+"                            the --home directory. '.rc' extension is enforced.\n"
 "   -F, --usr filename       Use a different 'usr' configuration file.  Same\n"
 "                            rules as for the --rc option.\n"
 "   -c, --config basename    Change 'rc', 'usr', ... base file names. Any\n"
@@ -278,48 +272,41 @@ cmdlineopts::s_help_3 =
  *  Still still more more help text.
  */
 
-const std::string
-cmdlineopts::s_help_4a =
-"              log=filename  Redirect console output to a log file in the home\n"
-"                            directory [$HOME/.config/seq66]. if '=filename' is\n"
-"                            If '=filename' is not provided, the filename in\n"
-"                            '[user-options]' in the 'usr' file is used.\n"
-"              wid=RxC,F     UNSUPPORTED in Seq66. Use external live windows.\n"
-"              sets=RxC      Changes the rows and columns in a set from 4x8.\n"
-"                            Supported values of R are 4 to 8, and for C are 8 to\n"
-"                            to 12. If not 4x8, seq66 is in 'variset' mode.\n"
-"                            Affects mute groups, too.\n"
-    ;
+const std::string cmdlineopts::s_help_4a =
+"      log=filename  Redirect console output to a log file in home. If no\n"
+"                    '=filename' is provided, the filename in '[user-options]'\n"
+"                    in the 'usr' file is used.\n"
+"      sets=RxC      Change rows and columns in a set from 4x8. R can be 4 to 12;\n"
+"                    C can be 4 to to 12. If not 4x8, seq66 is in 'variset' mode.\n"
+"                    Affects mute groups, too.\n"
+;
 
-const std::string
-cmdlineopts::s_help_4b =
-"              scale=x.y     Scales size of main window. Range: 0.5 to 3.0.\n"
-"              mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.\n"
-"              virtual=o,i   Same as --manual-ports, except that the number of\n"
-"                            output and input ports can be specified. Default\n"
-"                            values are 8 and 4, respectively.\n"
+const std::string cmdlineopts::s_help_4b =
+"      scale=x.y     Scales size of main window. Range: 0.5 to 3.0.\n"
+"      mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.\n"
+"      virtual=o,i   Same as --manual-ports, except that the number of output and\n"
+"                    input ports are specified. Defaults are 8 & 4, respectively.\n"
 "\n"
 " seq66cli:\n"
-"              daemonize     Makes this application fork to the background.\n"
-"              no-daemonize  Or not.  These options do not apply to Windows.\n"
+"      daemonize     Makes this application fork to the background.\n"
+"      no-daemonize  Or not.  These options do not apply to Windows.\n"
 "\n"
 "The 'daemonize' option works only in the CLI build. The 'sets' option works in\n"
 "the CLI build.  Specify the '--user-save' option to make these options\n"
 "permanent in the seq66.usr configuration file.\n"
 "\n"
-    ;
+;
 
 /**
  *  Still still still more more more help text.
  */
 
-const std::string
-cmdlineopts::s_help_5 =
-"--ppqn works well. Saving a MIDI file saves the new PPQN value. If no JACK\n"
-"options are shown above, they were disabled in the build configuration.\n"
-"Command-line options can be sticky; many of them are saved to the configuration\n"
-"files when Seq66 exits.  See the Seq66 User Manual in the 'doc' directory.\n"
-    ;
+const std::string cmdlineopts::s_help_5 =
+"Saving a MIDI file saves the current PPQN value. If no JACK options are shown\n"
+"above, they were disabled in the build configuration. Command-line options can\n"
+"be sticky; many of them are saved to the configuration\files when Seq66 exits.\n"
+"See the Seq66 User Manual.\n"
+;
 
 /**
  *  Outputs the help text.
@@ -997,7 +984,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'M':
 
-            rc().song_start_mode(string_to_int(soptarg) > 0);
+            rc().song_start_mode(std::string(soptarg));
             break;
 
         case 'm':

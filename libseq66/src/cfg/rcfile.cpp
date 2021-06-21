@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-16
+ * \updates       2021-06-21
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -1356,22 +1356,18 @@ rcfile::write ()
         jacktransporttype = "conditional";
 
     file << "\n"
-        "# 'transport-type' enables synchronization with JACK Transport. Values\n"
-        "# can be:\n"
+        "# transport-type enables synchronizing with JACK Transport. Values:\n"
+        "# none:        No JACK Transport in use.\n"
+        "# slave:       Use JACK Transport as Slave.\n"
+        "# master:      Attempt to serve as JACK Transport Master.\n"
+        "# conditional: Serve as JACK master if no JACK master exists.\n"
         "#\n"
-        "# 'none':        No JACK Transport in use.\n"
-        "# 'slave':       Use JACK Transport as Slave.\n"
-        "# 'master':      Attempt to serve as JACK Transport Master.\n"
-        "# 'conditional': Serve as JACK master if no JACK master exists.\n"
+        "# song-start-mode playback is either Live, Song, or Auto:\n"
+        "# live: Muting & unmuting of loops in the main window.\n"
+        "# song: Playback uses Song (performance) editor data.\n"
+        "# auto: If the loaded tune has song triggers, use Song mode.\n"
         "#\n"
-        "# 'song-start-mode' is one of the following values:\n"
-        "#\n"
-        "# live: Playback in Live mode. Allows muting and unmuting of loops\n"
-        "#       from the main (patterns) window. Same as false.\n"
-        "# song: Playback uses the Song (performance) editor's data and mute\n"
-        "#       controls. Same as true.\n"
-        "#\n"
-        "# 'jack-midi' sets/unsets JACK MIDI, separate from JACK transport.\n"
+        "# jack-midi sets/unsets JACK MIDI, separate from JACK transport.\n"
         "\n[jack-transport]\n\n"
         << "transport-type = " << jacktransporttype << "\n"
         << "song-start-mode = " << rc_ref().song_mode() << "\n"
@@ -1379,11 +1375,10 @@ rcfile::write ()
     write_boolean(file, "jack-midi", rc_ref().with_jack_midi());
 
     file << "\n"
-        "# 'auto-save-rc' enables/disables the automatic saving of the running\n"
-        "# configuration to 'rc' and other files.  True is the old Seq24\n"
-        "# behavior.  If auto-save is set, many of the command-line settings,\n"
-        "# (e.g. JACK/ALSA), are saved to some of the configuration files.\n"
-        "# There is no user-interface control for this setting at present.\n"
+        "# auto-save-rc sets automatic saving of the running configuration\n"
+        "# 'rc' and other files.  True is Seq24 behavior. If set, many\n"
+        "# command-line settings are saved to configuration files. There is\n"
+        "# no user-interface control for this setting.\n"
         "#\n"
         "# The old-triggers value indicates to save triggers in a format\n"
         "# compatible with Seq24.  Otherwise, triggers are saved with an\n"

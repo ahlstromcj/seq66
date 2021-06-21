@@ -1,0 +1,54 @@
+# Seq66 0.94.1 (and above) playlist configuration file
+#
+# C:\Users\chris\AppData\Local\seq66\qpseq66.playlist
+# Written 2021-06-19 07:58:39
+#
+# This file holds multiple playlists for Seq66. It consists of 1 or
+# more [playlist] sections.  Each has a user-specified number for
+# sorting and MIDI control, ranging from 0 to 127. Next comes a
+# quoted display name for this list, followed by the quoted name of
+# the song directory, always using the UNIX-style separator ('/').
+# It should be accessible from wherever Seq66 is run.
+#
+# Then comes a list of tunes, each starting with a MIDI control number
+# and the quoted name of the MIDI file.  They are sorted by the
+# control number, starting from 0.  They can be simple 'base.midi'
+# file-names; the playlist directory is prepended before the song is
+# accessed. If the MIDI file-name already has a path, that will be
+# used.
+
+[Seq66]
+
+config-type = "playlist"
+version = 1
+
+# The [comments] section holds user documentation for this file.
+# The first completely empty, comment, or tag line ends the comment.
+
+[comments]
+
+(Put your comment line(s) here as per the explanation above.)
+
+[playlist-options]
+
+unmute-new-song = false
+deep-verify = false
+
+# First provide the playlist settings, then its default storage folder
+# and then list each tune with its control number. The playlist
+# number is arbitrary but unique. 0 to 127 recommended for use with
+# the MIDI playlist control. Similar for the tune numbers. Each 
+# tune can include a path; it overrides the base directory.
+
+[playlist]
+
+number = 0
+name = "My Midi Files"
+directory = "C:/Users/chris/AppData/Local/My Songs/"
+
+0 "b4uacufm.midi"
+1 "brecluse.midi"
+
+# End of C:\Users\chris\AppData\Local\seq66\qpseq66.playlist
+#
+# vim: sw=4 ts=4 wm=4 et ft=dosini

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-06-06
+ * \updates       2021-06-21
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -94,7 +94,7 @@ rcsettings::rcsettings () :
 #else
     m_with_jack_midi            (false),
 #endif
-    m_song_start_mode           (false),
+    m_song_start_mode           (sequence::playback::automatic),
     m_manual_ports              (false),
     m_manual_port_count         (c_output_buss_default),
     m_manual_in_port_count      (c_input_buss_default),
@@ -197,7 +197,7 @@ rcsettings::set_defaults ()
 #else
     m_with_jack_midi            = false;
 #endif
-    m_song_start_mode           = false;
+    m_song_start_mode           = sequence::playback::automatic;
     m_manual_ports              = false;
     m_manual_port_count         = c_output_buss_default;
     m_manual_in_port_count      = c_input_buss_default;
@@ -273,6 +273,37 @@ rcsettings::set_jack_transport (const std::string & value)
         with_jack_master(false);
         with_jack_master_cond(false);
     }
+}
+
+/**
+ *  Song-start mode.  Was boolean, but now can be set to a value that
+ *  determines the mode based on the file being loaded having triggers, or
+ *  not.
+ */
+
+std::string
+rcsettings::song_mode () const
+{
+    std::string result;
+    switch (m_song_start_mode)
+    {
+        case sequence::playback::live:      result = "live";    break;
+        case sequence::playback::song:      result = "song";    break;
+        case sequence::playback::automatic: result = "auto";    break;
+        default:                            result = "unknown"; break;
+    }
+    return result;
+}
+
+void
+rcsettings::song_start_mode (const std::string & s)
+{
+    if (s == "song" || s == "true" || s == "1")
+        m_song_start_mode = sequence::playback::song;
+    else if (s == "live" || s == "false")
+        m_song_start_mode = sequence::playback::live;
+    else
+        m_song_start_mode = sequence::playback::automatic;
 }
 
 /**

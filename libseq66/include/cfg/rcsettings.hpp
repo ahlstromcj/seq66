@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-06-16
+ * \updates       2021-06-21
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -291,7 +291,7 @@ private:
     bool m_with_jack_master;        /**< Serve as a JACK transport Master.  */
     bool m_with_jack_master_cond;   /**< Serve as JACK Master if possible.  */
     bool m_with_jack_midi;          /**< Use JACK MIDI.                     */
-    bool m_song_start_mode;         /**< Use song mode versus live mode.    */
+    sequence::playback m_song_start_mode; /**< Song mode versus Live mode.  */
     bool m_filter_by_channel;       /**< Record only sequence channel data. */
     bool m_manual_ports;            /**< [manual-ports] setting.            */
     int m_manual_port_count;        /**< [manual-ports] outputjport count.  */
@@ -708,14 +708,20 @@ public:
 
     bool song_start_mode () const
     {
+        return m_song_start_mode == sequence::playback::song;
+    }
+
+    bool song_start_auto () const
+    {
+        return m_song_start_mode == sequence::playback::automatic;
+    }
+
+    sequence::playback song_start_setting () const
+    {
         return m_song_start_mode;
     }
 
-    std::string song_mode () const
-    {
-        return m_song_start_mode ? "song" : "live" ;
-    }
-
+    std::string song_mode () const;
     void set_jack_transport (const std::string & value);
 
     void with_jack_transport (bool flag)
@@ -1135,13 +1141,11 @@ public:
 
     void song_start_mode (bool flag)
     {
-        m_song_start_mode = flag;
+        m_song_start_mode = flag ?
+            sequence::playback::song : sequence::playback::live ;
     }
 
-    void song_start_mode (const std::string & s)
-    {
-        m_song_start_mode = s == "true" || s == "song";
-    }
+    void song_start_mode (const std::string & s);
 
     void filter_by_channel (bool flag)
     {

@@ -131,14 +131,14 @@ public:
      *  default 4 x 8 settings.
      */
 
-    static const int c_minimum_columns =  8;
+    static const int c_minimum_columns =  4;
 
     /**
      *  Maximum number of columns in the main-window's grid.  Currently the
      *  same as the default number.
      */
 
-    static const int c_maximum_columns =  8;
+    static const int c_maximum_columns =  12;
 
 private:
 

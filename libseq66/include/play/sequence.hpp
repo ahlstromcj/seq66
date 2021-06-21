@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-05-21
+ * \updates       2021-06-21
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -91,7 +91,9 @@ public:
     enum class playback
     {
         live,
-        song
+        song,
+        automatic,
+        max
     };
 
     /**

@@ -216,20 +216,22 @@ qperfeditframe64::qperfeditframe64
     qt_set_icon(redo_xpm, ui->btnRedo);
 
     /*
-     * Follow Progress Button.
+     * Follow Progress Button.  Qt::NoFocus is the default focus policy.
      */
 
     qt_set_icon(follow_xpm, ui->m_toggle_follow);
     ui->m_toggle_follow->setEnabled(true);
     ui->m_toggle_follow->setCheckable(true);
-
-    /*
-     * Qt::NoFocus is the default focus policy.
-     */
-
     ui->m_toggle_follow->setAutoDefault(false);
+    if (perf().song_mode())
+        m_perfroll->progress_follow(true);
+
     ui->m_toggle_follow->setChecked(m_perfroll->progress_follow());
-    connect(ui->m_toggle_follow, SIGNAL(toggled(bool)), this, SLOT(follow(bool)));
+    connect
+    (
+        ui->m_toggle_follow, SIGNAL(toggled(bool)),
+        this, SLOT(follow(bool))
+    );
 
     /*
      * Zoom-In and Zoom-Out buttons.
