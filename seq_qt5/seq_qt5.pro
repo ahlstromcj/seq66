@@ -97,7 +97,6 @@ HEADERS += include/gui_palette_qt5.hpp \
  include/qperfroll.hpp \
  include/qperftime.hpp \
  include/qplaylistframe.hpp \
- include/qrollframe.hpp \
  include/qsabout.hpp \
  include/qsbuildinfo.hpp \
  include/qscrollmaster.h \
@@ -143,7 +142,6 @@ SOURCES += src/gui_palette_qt5.cpp \
  src/qperfroll.cpp \
  src/qperftime.cpp \
  src/qplaylistframe.cpp \
- src/qrollframe.cpp \
  src/qsabout.cpp \
  src/qsbuildinfo.cpp \
  src/qscrollmaster.cpp \

@@ -246,7 +246,6 @@ moc_qt_headers = \
  ../include/qperfroll.hpp \
  ../include/qperftime.hpp \
  ../include/qplaylistframe.hpp \
- ../include/qrollframe.hpp \
  ../include/qsabout.hpp \
  ../include/qsbuildinfo.hpp \
  ../include/qseditoptions.hpp \
@@ -313,7 +312,6 @@ libseq_qt5_la_SOURCES = \
  qperfroll.cpp \
  qperftime.cpp \
  qplaylistframe.cpp \
- qrollframe.cpp \
  qsabout.cpp \
  qsbuildinfo.cpp \
  qscrollmaster.cpp \

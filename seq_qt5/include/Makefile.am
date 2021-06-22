@@ -88,7 +88,6 @@ pkginclude_HEADERS = \
  qperfroll.hpp \
  qperftime.hpp \
  qplaylistframe.hpp \
- qrollframe.hpp \
  qsabout.hpp \
  qsbuildinfo.hpp \
  qscrollmaster.h \

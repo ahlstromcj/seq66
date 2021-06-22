@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-05-09
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -42,7 +42,6 @@
 #include "cfg/scales.hpp"               /* seq66::scales enum class         */
 #include "play/sequence.hpp"            /* sequence::editmode mode          */
 #include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
-#include "qrollframe.hpp"               /* seq66::qrollframe helper class   */
 
 /*
  * Forward references
@@ -215,14 +214,6 @@ private:
      */
 
     int m_progbar_width;
-
-    /**
-     *  Manages the "erasing" of the previous progress-bar (playhead) by
-     *  restoring the background grid and notes.  Even if the full functionality
-     *  is disabled, we still use it for frame management.
-     */
-
-    qrollframe m_roll_frame;
 
     /**
      *  Indicates the musical scale in force for this sequence.

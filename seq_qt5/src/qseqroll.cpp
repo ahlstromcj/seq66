@@ -83,7 +83,6 @@ qseqroll::qseqroll
     m_seqkeys_wid           (seqkeys_wid),
     m_timer                 (nullptr),
     m_progbar_width         (usr().progress_bar_thick() ? 2 : 1),
-    m_roll_frame            (m_progbar_width),
     m_scale                 (scales::off),
     m_pos                   (0),
     m_chord                 (0),

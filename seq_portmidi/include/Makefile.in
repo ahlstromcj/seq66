@@ -21,7 +21,7 @@
 # \library    	libseq_portmidi library
 # \author     	Chris Ahlstrom
 # \date       	2015-09-11
-# \update      2018-04-21
+# \update      2021-06-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -120,7 +120,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/alsa.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-DIST_COMMON = $(srcdir)/Makefile.am $(am__pkginclude_HEADERS_DIST) \
+DIST_COMMON = $(srcdir)/Makefile.am $(pkginclude_HEADERS) \
 	$(am__DIST_COMMON)
 mkinstalldirs = $(SHELL) $(top_srcdir)/aux-files/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
@@ -145,9 +145,6 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-am__pkginclude_HEADERS_DIST = mastermidibus_pm.hpp midibus_pm.hpp \
-	pminternal.h pmlinuxalsa.h pmlinux.h pmutil.h portmidi.h \
-	porttime.h pmerrmm.h pmwinmm.h
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -406,33 +403,19 @@ MOSTLYCLEANFILES = *~
 #------------------------------------------------------------------------------
 EXTRA_DIST = *.h
 GIT_VERSION = @GIT_VERSION@
-@BUILD_WINDOWS_FALSE@pkginclude_HEADERS = \
-@BUILD_WINDOWS_FALSE@	mastermidibus_pm.hpp \
-@BUILD_WINDOWS_FALSE@	midibus_pm.hpp \
-@BUILD_WINDOWS_FALSE@	pminternal.h \
-@BUILD_WINDOWS_FALSE@	pmlinuxalsa.h \
-@BUILD_WINDOWS_FALSE@	pmlinux.h \
-@BUILD_WINDOWS_FALSE@	pmutil.h \
-@BUILD_WINDOWS_FALSE@	portmidi.h \
-@BUILD_WINDOWS_FALSE@	porttime.h
-
 
 #******************************************************************************
-# Source files
+# Source files (Linux only)
 #----------------------------------------------------------------------------
-#
-# pmwinmm.h
-#
-#----------------------------------------------------------------------------
-@BUILD_WINDOWS_TRUE@pkginclude_HEADERS = \
-@BUILD_WINDOWS_TRUE@	mastermidibus_pm.hpp \
-@BUILD_WINDOWS_TRUE@	midibus_pm.hpp \
-@BUILD_WINDOWS_TRUE@	pminternal.h \
-@BUILD_WINDOWS_TRUE@	pmutil.h \
-@BUILD_WINDOWS_TRUE@	pmerrmm.h \
-@BUILD_WINDOWS_TRUE@	pmwinmm.h \
-@BUILD_WINDOWS_TRUE@	portmidi.h \
-@BUILD_WINDOWS_TRUE@	porttime.h
+pkginclude_HEADERS = \
+	mastermidibus_pm.hpp \
+	midibus_pm.hpp \
+	pminternal.h \
+	pmlinuxalsa.h \
+	pmlinux.h \
+	pmutil.h \
+	portmidi.h \
+	porttime.h
 
 all: all-am
 

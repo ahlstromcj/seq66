@@ -21,7 +21,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2017-09-05
-# \update      2020-11-11
+# \update      2021-06-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -284,11 +284,6 @@ OTOOL64 = @OTOOL64@
 #******************************************************************************
 #  EXTRA_DIST
 #------------------------------------------------------------------------------
-#
-#  getopt_test.c is not ready and is not included at this time.
-#	$(TESTS) is not included because it is derived files.
-#
-#------------------------------------------------------------------------------
 
 # EXTRA_DIST = dl_leaks.supp make-tests README
 
@@ -373,7 +368,7 @@ htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
-libdir = @xpclibdir@
+libdir = @libdir@
 libexecdir = @libexecdir@
 
 #******************************************************************************
@@ -864,22 +859,6 @@ uninstall-am: uninstall-binPROGRAMS
 
 .PRECIOUS: Makefile
 
-
-#******************************************************************************
-# Testing
-#------------------------------------------------------------------------------
-#
-# 	   http://www.gnu.org/software/hello/manual/automake/Simple-Tests.html
-#
-#     Not supported for this application.  We supply a bogus test script.
-#
-#------------------------------------------------------------------------------
-
-# .PHONY: test_script
-#
-# TESTS = test_script
-#
-# test: check
 
 #******************************************************************************
 #  distclean

@@ -2,32 +2,6 @@ TO DO for Seq66 0.95.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
 2019-04-13 to 2021-06-22
 
-From: zigmhount <notifications@github.com>
-Subject: [Question/Feature request] Live midi pattern recording (#188)
-
-    I have followed closely the development of the midi control output to
-    use with my Akai APC Mini - awesome. The only think I miss now is to
-    easily record a midi pattern in an empty slot without too much
-    fiddling with the mouse or keyboard, as in a live setup.
-
-    My ideal feature would be e.g.
-
-   Done 1. When an empty pattern is selected
-   Done    a. On the GUI (double-click)
-           b. On the control surface (the Mini)
-   Done 2. to automatically open the pattern editor
-   Done 3. automatically activate Dump Data to MIDI Bus
-   Done 4. automatically activate Midi pass-through
-   Done 5. automatically activate Record Midi data
-   Done 6. automatically set Merge to Expand the sequence to fit recording
-        7. and manually select the midi output to the synth.
-
-    How easy/difficult would it be to implement keyboard or midi shortcuts
-    to these buttons (steps 2 to 6), or preset them for every new pattern
-    editor?
-
-    TODO:  See what have done with this one so far....
-
 NSM:
 
     I add a new pattern, add a couple notes, then click File / Save to
@@ -45,10 +19,6 @@ Port-Mapping:
     Running qpseq66 on Linux:  "QSynth" is named "PortMidi"! See
     seq_portmidi/src/midibus.cpp.  The workaround is to specify long port
     names in the 'rc' file.
-
-Main Window:
-
-    No issues noted at present.
 
 UI:
 
@@ -213,30 +183,6 @@ EXTANT ISSUES:
     timeline already supports arbitrary start/end points for pattern "chunks",
     so it seems like this should already be possible. Thoughts?
 
-#47 Change the key map
-
-    Also, mutes are not being saved to the MIDI file!  Nor are they cleared
-    with File / New (which might be a feature, not a bug).
-
-    More data from Tripayou:
-
-    I tested some AZERTY special keys with showkey and I found
-    particularities. Maybe it is hard to find this without hardware keyboard.
-    Some keys return 2 codes, on press and on release :
-
-        Symbol  PCode   RCode
-        ²       0xc2    0xb2
-        é       0xc3    0xa9
-        è       0xc3    0xa8
-        ç       0xc3    0xa7
-        à       0xc3    0xa0
-        °       0xc2    0xb0
-        ù       0x3c    0xb9
-        §       0xc2    0xa7
-
-    Key `^` code `0x5e` needs to be pressed twice, do not know if yours 6/^ on
-    QWERTZ/QWERTY do the same.  Maybe it will be impossible to assign...
-
 #48 JACK-midi self connections
     With NSM and [manual ports] enabled, inputs ports are not created when I
     load the session.  Steps to reproduce :
@@ -260,7 +206,6 @@ EXTANT ISSUES:
 
 PATTERNS:
 
-    -   Support a non-channel pattern (e.g. to contain patch info).
     -   Set pattern editor focus to grid at start unless it is a new one.
     -   Make it center on notes if not visible.
     -   Still some weird note events in 2rock, above measure 20, when scrolling

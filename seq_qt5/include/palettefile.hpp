@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2020-12-21
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  *  Provides support for a mute-groups configuration file.
@@ -77,15 +77,7 @@ public:
     palettefile () = delete;
     palettefile (const palettefile &) = delete;
     palettefile & operator = (const palettefile &) = delete;
-
-    /*
-     * WTF?
-     *
-    palettefile (palettefile &&) = default;
-    palettefile & operator = (palettefile &&) = default;
-     */
-
-    virtual ~palettefile ();
+    ~palettefile () = default;
 
     virtual bool parse () override;
     virtual bool write () override;

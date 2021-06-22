@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2021-06-04
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -71,15 +71,6 @@ palettefile::palettefile
     m_palettes      (mapper)
 {
     // Empty body
-}
-
-/**
- *  A rote destructor.
- */
-
-palettefile::~palettefile ()
-{
-    // ~configfile() called automatically
 }
 
 /**

@@ -329,8 +329,7 @@ static Color m_dk_grey;
  *  /usr/share/X11/rgb.txt.
  */
 
-gui_palette_qt5::gui_palette_qt5 (const std::string & filename)
- :
+gui_palette_qt5::gui_palette_qt5 (const std::string & filename) :
     basesettings            (filename),
     m_palette               (),
     m_pen_palette           (),

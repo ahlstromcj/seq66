@@ -21,7 +21,7 @@
 # \library    	libseq_portmidi library
 # \author     	Chris Ahlstrom
 # \date       	2015-09-11
-# \update      2018-05-24
+# \update      2021-06-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -155,21 +155,11 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
-@BUILD_WINDOWS_FALSE@libseq_portmidi_la_DEPENDENCIES =  \
-@BUILD_WINDOWS_FALSE@	$(am__DEPENDENCIES_1) \
-@BUILD_WINDOWS_FALSE@	$(am__DEPENDENCIES_1) \
-@BUILD_WINDOWS_FALSE@	$(am__DEPENDENCIES_1)
-am__libseq_portmidi_la_SOURCES_DIST = mastermidibus.cpp midibus.cpp \
-	pmlinuxalsa.c pmlinux.c pmutil.c portmidi.c porttime.c \
-	ptlinux.c pmerrmm.c pmwin.c pmwinmm.c ptwinmm.c
-@BUILD_WINDOWS_FALSE@am_libseq_portmidi_la_OBJECTS = mastermidibus.lo \
-@BUILD_WINDOWS_FALSE@	midibus.lo pmlinuxalsa.lo pmlinux.lo \
-@BUILD_WINDOWS_FALSE@	pmutil.lo portmidi.lo porttime.lo \
-@BUILD_WINDOWS_FALSE@	ptlinux.lo
-@BUILD_WINDOWS_TRUE@am_libseq_portmidi_la_OBJECTS = mastermidibus.lo \
-@BUILD_WINDOWS_TRUE@	midibus.lo pmerrmm.lo pmwin.lo pmwinmm.lo \
-@BUILD_WINDOWS_TRUE@	pmutil.lo portmidi.lo porttime.lo \
-@BUILD_WINDOWS_TRUE@	ptwinmm.lo
+libseq_portmidi_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am_libseq_portmidi_la_OBJECTS = mastermidibus.lo midibus.lo \
+	pmlinuxalsa.lo pmlinux.lo pmutil.lo portmidi.lo porttime.lo \
+	ptlinux.lo
 libseq_portmidi_la_OBJECTS = $(am_libseq_portmidi_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -232,7 +222,7 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(libseq_portmidi_la_SOURCES)
-DIST_SOURCES = $(am__libseq_portmidi_la_SOURCES_DIST)
+DIST_SOURCES = $(libseq_portmidi_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -505,16 +495,6 @@ AM_CXXFLAGS = \
 # The library to build, a libtool-based library
 #------------------------------------------------------------------------------
 lib_LTLIBRARIES = libseq_portmidi.la
-@BUILD_WINDOWS_FALSE@libseq_portmidi_la_SOURCES = \
-@BUILD_WINDOWS_FALSE@	mastermidibus.cpp \
-@BUILD_WINDOWS_FALSE@	midibus.cpp \
-@BUILD_WINDOWS_FALSE@	pmlinuxalsa.c \
-@BUILD_WINDOWS_FALSE@	pmlinux.c \
-@BUILD_WINDOWS_FALSE@	pmutil.c \
-@BUILD_WINDOWS_FALSE@	portmidi.c \
-@BUILD_WINDOWS_FALSE@	porttime.c \
-@BUILD_WINDOWS_FALSE@	ptlinux.c
-
 
 #******************************************************************************
 # Source files
@@ -527,23 +507,18 @@ lib_LTLIBRARIES = libseq_portmidi.la
 #	   finddefault.c
 #
 #----------------------------------------------------------------------------
-@BUILD_WINDOWS_TRUE@libseq_portmidi_la_SOURCES = \
-@BUILD_WINDOWS_TRUE@	mastermidibus.cpp \
-@BUILD_WINDOWS_TRUE@	midibus.cpp \
-@BUILD_WINDOWS_TRUE@	pmerrmm.c \
-@BUILD_WINDOWS_TRUE@	pmwin.c \
-@BUILD_WINDOWS_TRUE@	pmwinmm.c \
-@BUILD_WINDOWS_TRUE@	pmutil.c \
-@BUILD_WINDOWS_TRUE@	portmidi.c \
-@BUILD_WINDOWS_TRUE@	porttime.c \
-@BUILD_WINDOWS_TRUE@   ptwinmm.c
+libseq_portmidi_la_SOURCES = \
+	mastermidibus.cpp \
+	midibus.cpp \
+	pmlinuxalsa.c \
+	pmlinux.c \
+	pmutil.c \
+	portmidi.c \
+	porttime.c \
+	ptlinux.c
 
-
-# libseq_portmidi_la_LDFLAGS = -version-info $(version)
-@BUILD_WINDOWS_FALSE@libseq_portmidi_la_LDFLAGS = -no-undefined -version-info $(version)
-@BUILD_WINDOWS_TRUE@libseq_portmidi_la_LDFLAGS = -version-info $(version)
-@BUILD_WINDOWS_FALSE@libseq_portmidi_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS)
-@BUILD_WINDOWS_TRUE@libseq_portmidi_la_LIBADD = 
+libseq_portmidi_la_LDFLAGS = -no-undefined -version-info $(version)
+libseq_portmidi_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS)
 all: all-am
 
 .SUFFIXES:
@@ -624,16 +599,12 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mastermidibus.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/midibus.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pmerrmm.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pmlinux.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pmlinuxalsa.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pmutil.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pmwin.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pmwinmm.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/portmidi.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/porttime.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ptlinux.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ptwinmm.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

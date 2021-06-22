@@ -69,8 +69,7 @@ namespace seq66
  *      the qsmainwnd user-interface.
  */
 
-qperfeditex::qperfeditex (performer & p, qsmainwnd * parent)
- :
+qperfeditex::qperfeditex (performer & p, qsmainwnd * parent) :
     QWidget             (nullptr),
     ui                  (new Ui::qperfeditex),
     m_performer         (p),

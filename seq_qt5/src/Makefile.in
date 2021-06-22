@@ -21,7 +21,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2021-05-15
+# \update      2021-06-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -113,7 +113,6 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @BUILD_QTMIDI_TRUE@am__append_1 = -DQ_OS_MAC
-@BUILD_WINDOWS_TRUE@am__append_2 = -D_WIN32
 subdir = seq_qt5/src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/alsa.m4 \
@@ -171,10 +170,9 @@ am__objects_1 = ../include/qclocklayout.moc.lo \
 	../include/qperfeditframe64.moc.lo \
 	../include/qperfnames.moc.lo ../include/qperfroll.moc.lo \
 	../include/qperftime.moc.lo ../include/qplaylistframe.moc.lo \
-	../include/qrollframe.moc.lo ../include/qsabout.moc.lo \
-	../include/qsbuildinfo.moc.lo ../include/qseditoptions.moc.lo \
-	../include/qseqdata.moc.lo ../include/qseqeditex.moc.lo \
-	../include/qseqeditframe64.moc.lo \
+	../include/qsabout.moc.lo ../include/qsbuildinfo.moc.lo \
+	../include/qseditoptions.moc.lo ../include/qseqdata.moc.lo \
+	../include/qseqeditex.moc.lo ../include/qseqeditframe64.moc.lo \
 	../include/qseqeventframe.moc.lo ../include/qseqframe.moc.lo \
 	../include/qseqkeys.moc.lo ../include/qseqroll.moc.lo \
 	../include/qseqtime.moc.lo ../include/qsessionframe.moc.lo \
@@ -187,9 +185,9 @@ am_libseq_qt5_la_OBJECTS = gui_palette_qt5.lo palettefile.lo qbase.lo \
 	qclocklayout.lo qeditbase.lo qinputcheckbox.lo qlfoframe.lo \
 	qliveframeex.lo qloopbutton.lo qmutemaster.lo qperfbase.lo \
 	qperfeditex.lo qperfeditframe64.lo qperfnames.lo qperfroll.lo \
-	qperftime.lo qplaylistframe.lo qrollframe.lo qsabout.lo \
-	qsbuildinfo.lo qscrollmaster.lo qseditoptions.lo qseqbase.lo \
-	qseqdata.lo qseqeditex.lo qseqeditframe64.lo qseqeventframe.lo \
+	qperftime.lo qplaylistframe.lo qsabout.lo qsbuildinfo.lo \
+	qscrollmaster.lo qseditoptions.lo qseqbase.lo qseqdata.lo \
+	qseqeditex.lo qseqeditframe64.lo qseqeventframe.lo \
 	qseqframe.lo qseqkeys.lo qseqroll.lo qseqstyle.lo \
 	qsessionframe.lo qseqtime.lo qsetmaster.lo qseventslots.lo \
 	qskeymaps.lo qslivebase.lo qslivegrid.lo qslotbutton.lo \
@@ -558,7 +556,7 @@ AM_CXXFLAGS = \
 #******************************************************************************
 # Moc flags
 #------------------------------------------------------------------------------
-MOC_CPPFLAGS = -I$(top_srcdir)/include $(am__append_1) $(am__append_2)
+MOC_CPPFLAGS = -I$(top_srcdir)/include $(am__append_1)
 
 #******************************************************************************
 # Qt 5 rules
@@ -609,7 +607,6 @@ moc_qt_headers = \
  ../include/qperfroll.hpp \
  ../include/qperftime.hpp \
  ../include/qplaylistframe.hpp \
- ../include/qrollframe.hpp \
  ../include/qsabout.hpp \
  ../include/qsbuildinfo.hpp \
  ../include/qseditoptions.hpp \
@@ -673,7 +670,6 @@ libseq_qt5_la_SOURCES = \
  qperfroll.cpp \
  qperftime.cpp \
  qplaylistframe.cpp \
- qrollframe.cpp \
  qsabout.cpp \
  qsbuildinfo.cpp \
  qscrollmaster.cpp \
@@ -803,8 +799,6 @@ clean-libLTLIBRARIES:
 	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qplaylistframe.moc.lo: ../include/$(am__dirstamp) \
 	../include/$(DEPDIR)/$(am__dirstamp)
-../include/qrollframe.moc.lo: ../include/$(am__dirstamp) \
-	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qsabout.moc.lo: ../include/$(am__dirstamp) \
 	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qsbuildinfo.moc.lo: ../include/$(am__dirstamp) \
@@ -867,7 +861,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qperfroll.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qperftime.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qplaylistframe.moc.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qrollframe.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qsabout.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qsbuildinfo.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qseditoptions.moc.Plo@am__quote@
@@ -904,7 +897,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qperfroll.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qperftime.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qplaylistframe.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qrollframe.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qsabout.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qsbuildinfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qscrollmaster.Plo@am__quote@
