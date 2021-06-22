@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-06-20
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1407,7 +1407,7 @@ performer::ui_change_set_bus (int buss)
     if (result)
     {
         for (auto seqi : m_play_set.seq_container())
-            seqi->set_midi_bus(b, true);    /* calls notification funcion   */
+            seqi->set_midi_bus(b, true);    /* calls notification function  */
 
         screenset::number setno = mapper().playscreen_number();
         notify_set_change(setno, change::yes);
@@ -6632,9 +6632,8 @@ performer::save_mutegroups (const std::string & mgf)
     }
     else
     {
-        rc().mute_groups() = m_mute_groups;         /* copy to rcsettings       */
-
-        bool result = seq66::save_mutegroups(mgf);  /* saves rcsettings groups  */
+        rc().mute_groups() = m_mute_groups;     /* copy to rcsettings       */
+        result = seq66::save_mutegroups(mgf);   /* saves rcsettings groups  */
         if (result)
         {
             // nothing to do

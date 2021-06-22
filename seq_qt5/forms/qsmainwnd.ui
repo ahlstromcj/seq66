@@ -398,6 +398,9 @@ It does not change Seq66's default PPQN.</string>
         <height>1</height>
        </size>
       </property>
+      <property name="focusPolicy">
+       <enum>Qt::TabFocus</enum>
+      </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
@@ -405,7 +408,7 @@ It does not change Seq66's default PPQN.</string>
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="LiveTab">
        <property name="sizePolicy">
@@ -652,7 +655,7 @@ It does not change Seq66's default PPQN.</string>
          </size>
         </property>
         <property name="text">
-         <string>Name</string>
+         <string>Set Name</string>
         </property>
        </widget>
       </item>

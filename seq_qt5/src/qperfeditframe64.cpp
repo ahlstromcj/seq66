@@ -25,13 +25,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-05-20
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  *  Note that, as of version 0.9.11, the z and Z keys, when focus is on the
  *  perfroll (piano roll), will zoom the view horizontally.  Not working!
  */
 
+#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
 #include <QScrollBar>
 
 #include "play/performer.hpp"           /* seq66::performer class           */
@@ -707,6 +708,25 @@ void
 qperfeditframe64::set_loop_button (bool looping)
 {
     ui->btnLoop->setChecked(looping);
+}
+
+/*
+ *  We must accept() the key-event, otherwise even key-events in the QLineEdit
+ *  items are propagated to the parent, where they then get passed to the
+ *  performer as if they were keyboards controls (such as a pattern-toggle
+ *  hot-key).
+ */
+
+void
+qperfeditframe64::keyPressEvent (QKeyEvent * event)
+{
+    event->accept();
+}
+
+void
+qperfeditframe64::keyReleaseEvent (QKeyEvent * event)
+{
+    event->accept();
 }
 
 }           // namespace seq66

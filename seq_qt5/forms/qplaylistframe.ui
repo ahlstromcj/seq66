@@ -307,6 +307,9 @@ but not in Non Session Manager mode.</string>
    <property name="readOnly">
     <bool>false</bool>
    </property>
+   <property name="clearButtonEnabled">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLineEdit" name="editPlaylistNumber">
    <property name="geometry">
@@ -366,6 +369,9 @@ Can be edited to enable Add List and Modify List.</string>
    <property name="text">
     <string>None</string>
    </property>
+   <property name="clearButtonEnabled">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLineEdit" name="editSongPath">
    <property name="enabled">
@@ -400,6 +406,9 @@ to select an existing song.</string>
     <string>None</string>
    </property>
    <property name="readOnly">
+    <bool>true</bool>
+   </property>
+   <property name="clearButtonEnabled">
     <bool>true</bool>
    </property>
   </widget>
@@ -466,6 +475,9 @@ Read-only.  Use the Load Song button to modify this entry.</string>
     <string>None</string>
    </property>
    <property name="readOnly">
+    <bool>true</bool>
+   </property>
+   <property name="clearButtonEnabled">
     <bool>true</bool>
    </property>
   </widget>

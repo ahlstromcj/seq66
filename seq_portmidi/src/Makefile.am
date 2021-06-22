@@ -6,7 +6,7 @@
 # \library    	libseq_portmidi library
 # \author     	Chris Ahlstrom
 # \date       	2015-09-11
-# \update      2018-05-24
+# \update      2021-06-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -126,24 +126,6 @@ lib_LTLIBRARIES = libseq_portmidi.la
 #
 #----------------------------------------------------------------------------
 
-if BUILD_WINDOWS
-
-libseq_portmidi_la_SOURCES = \
-	mastermidibus.cpp \
-	midibus.cpp \
-	pmerrmm.c \
-	pmwin.c \
-	pmwinmm.c \
-	pmutil.c \
-	portmidi.c \
-	porttime.c \
-   ptwinmm.c
-
-libseq_portmidi_la_LDFLAGS = -version-info $(version)
-libseq_portmidi_la_LIBADD =
-
-else
-
 libseq_portmidi_la_SOURCES = \
 	mastermidibus.cpp \
 	midibus.cpp \
@@ -154,12 +136,8 @@ libseq_portmidi_la_SOURCES = \
 	porttime.c \
 	ptlinux.c
 
-# libseq_portmidi_la_LDFLAGS = -version-info $(version)
-
 libseq_portmidi_la_LDFLAGS = -no-undefined -version-info $(version)
 libseq_portmidi_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS)
-
-endif
 
 #******************************************************************************
 # uninstall-hook

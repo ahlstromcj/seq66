@@ -24,10 +24,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2020-12-20
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  */
+
+#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
 
 #include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
 #include "play/performer.hpp"           /* seq66::performer                 */
@@ -127,6 +129,25 @@ void
 qsessionframe::song_path (const std::string & text)
 {
     ui->songPathText->setText(text.c_str());
+}
+
+/*
+ *  We must accept() the key-event, otherwise even key-events in the QLineEdit
+ *  items are propagated to the parent, where they then get passed to the
+ *  performer as if they were keyboards controls (such as a pattern-toggle
+ *  hot-key).
+ */
+
+void
+qsessionframe::keyPressEvent (QKeyEvent * event)
+{
+    event->accept();
+}
+
+void
+qsessionframe::keyReleaseEvent (QKeyEvent * event)
+{
+    event->accept();
 }
 
 }               // namespace seq66

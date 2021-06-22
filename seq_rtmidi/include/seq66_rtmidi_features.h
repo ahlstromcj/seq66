@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-19
- * \updates       2017-07-23
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  *  For now, this header file enables only the JACK interface.  That is our
@@ -36,12 +36,7 @@
  */
 
 #include "seq66_platform_macros.h"
-
-#if defined SEQ66_PLATFORM_WINDOWS
-#include "configwin32.h"
-#else
 #include "seq66-config.h"
-#endif
 
 /**
  *  Macros to enable the implementations that are supported under Linux.
@@ -61,11 +56,6 @@
 
 #define SEQ66_BUILD_RTMIDI_DUMMY        /* an alternative for Linux, etc.   */
 #undef  SEQ66_AVOID_TIMESTAMPING        /* a feaure of the ALSA rtmidi API  */
-#endif
-
-#if defined SEQ66_PLATFORM_WINDOWS
-#define SEQ66_BUILD_WINDOWS_MM
-#define SEQ66_BUILD_RTMIDI_DUMMY        /* an alternative for Windows, etc. */
 #endif
 
 #if defined SEQ66_PLATFORM_MACOSX

@@ -136,6 +136,11 @@ private:
     void populate_midich_combo ();
     void populate_status_combo ();
 
+protected:                          // overrides of event handlers
+
+    virtual void keyPressEvent (QKeyEvent *) override;
+    virtual void keyReleaseEvent (QKeyEvent *) override;
+
 private slots:
 
     void handle_table_click_ex (int row, int column, int prevrow, int prevcol);

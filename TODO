@@ -1,6 +1,6 @@
-TO DO for Seq66 0.94.1 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.95.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-06-14
+2019-04-13 to 2021-06-22
 
 From: zigmhount <notifications@github.com>
 Subject: [Question/Feature request] Live midi pattern recording (#188)
@@ -61,7 +61,9 @@ UI:
     pattern editors.
 
     The "L" and "R" markers do not work correctly in the seqedit; also seems
-    to cause start/stop to becomes disabled, as JACK master.
+    to cause start/stop to become disabled, as JACK master.
+
+    Can we reset the main port dropdown to 0 when loading a new song?
 
 Automation:
 
@@ -71,12 +73,9 @@ Automation:
     Can we leverage continuous controllers (CC) to support modifying synth
     parameters through input automation?
 
-JACK:
-
-    In the 'rc' file, change transport, etc., to use "variable = value"
-    format.
-
 From Testing:
+
+    Investigation Windows installer versus portable package for 0.95.0.
 
     Make sure MIDI import does not import the SeqSpec sections of a Seq66
     MIDI file.
@@ -101,17 +100,7 @@ From Testing:
 
     Tempo display needs to be worked on for the perfroll and qloopbuttons.
 
-    In File / Save As, put the current name in for starters.
-
-    Song Mode:  make Follow-progress the default.
-
-    Merge Pattern?  Similar to Paste Pattern with no need to copy and no
-    change in time.
-
     Consider a configurable metronome functionality.  In seqtime?
-
-    Should we make mastermidibase::dump_midi_input() accept a reference
-    instead of event copy?
 
 Others to Consider:
 

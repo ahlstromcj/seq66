@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-06-08
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -303,6 +303,7 @@ qsmainwnd::qsmainwnd
                 ui->cmb_global_bus->addItem(QString::fromStdString(busname));
                 if (disabled)
                 {
+#if defined DO_IT_THE_HARD_WAY
                     int index = bus + 1;
                     QStandardItemModel * model =
                         qobject_cast<QStandardItemModel *>
@@ -311,6 +312,9 @@ qsmainwnd::qsmainwnd
                         );
                     QStandardItem * item = model->item(index);
                     item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+#else
+                    enable_bus_item(bus, false);
+#endif
                 }
             }
         }
@@ -809,11 +813,10 @@ void
 qsmainwnd::enable_bus_item (int bus, bool enabled)
 {
     int index = bus + 1;
-    QStandardItemModel * model =
-        qobject_cast<QStandardItemModel *>
-        (
-            ui->cmb_global_bus->model()
-        );
+    QStandardItemModel * model = qobject_cast<QStandardItemModel *>
+    (
+        ui->cmb_global_bus->model()
+    );
     QStandardItem * item = model->item(index);
     if (enabled)
         item->setFlags(item->flags() | Qt::ItemIsEnabled);
@@ -1105,6 +1108,7 @@ qsmainwnd::select_and_load_file ()
     {
         if (open_file(selectedfile))
         {
+            ui->cmb_global_bus->setCurrentIndex(0);
             if (not_nullptr(m_mute_master))
                 m_mute_master->group_needs_update();
         }
@@ -1258,6 +1262,11 @@ qsmainwnd::save_mutes_dialog (const std::string & basename)
 }
 
 /**
+ *  Update all of the children.  Doesn't seem to work for the edit frames, may
+ *  have to recreate them, or somehow hook in the new sequence objects (as
+ *  pointers, not references).  Probably an issue to be ignored; the user will
+ *  have to close and reopen the pattern editor(s).
+ *
  *  Also sets the current file-name and the last-used directory to the ones
  *  just loaded.
  */
@@ -1270,15 +1279,6 @@ qsmainwnd::open_file (const std::string & fn)
     if (result)
     {
         redo_live_frame();
-
-        /*
-         * Update all of the children.  Doesn't seem to work for the edit
-         * frames, may have to recreate them, or somehow hook in the new
-         * sequence objects (as pointers, not references).  Probably an issue
-         * to be ignored; the user will have to close and reopen the pattern
-         * editor(s).
-         */
-
         if (not_nullptr(m_song_frame64))
             m_song_frame64->update_sizes();
 
@@ -1597,9 +1597,13 @@ qsmainwnd::check ()
  */
 
 std::string
-qsmainwnd::filename_prompt (const std::string & prompt)
+qsmainwnd::filename_prompt
+(
+    const std::string & prompt,
+    const std::string & file
+)
 {
-    std::string result = rc().last_used_dir();
+    std::string result = file.empty() ? rc().last_used_dir() : file ;
     bool ok = show_file_dialog
     (
         this, result, prompt,
@@ -1610,6 +1614,9 @@ qsmainwnd::filename_prompt (const std::string & prompt)
     {
         // nothing yet
     }
+    else
+        result.clear();
+
     return result;
 }
 
@@ -1624,6 +1631,7 @@ qsmainwnd::new_file ()
 {
     if (check() && perf().clear_all())              /* don't clear playlist */
     {
+        ui->cmb_global_bus->setCurrentIndex(0);
         m_is_title_dirty = true;
         redo_live_frame();
         remove_all_editors();
@@ -1797,10 +1805,11 @@ qsmainwnd::save_file_as ()
     std::string prompt = use_nsm() ?
         "Export MIDI file from NSM session as..." : "Save MIDI file as..." ;
 
-    std::string filename = filename_prompt(prompt);
+    std::string currentfile = rc().midi_filename();
+    std::string filename = filename_prompt(prompt, currentfile);
     if (filename.empty())
     {
-        // no code
+        // no code, the user merely cancelled
     }
     else
     {

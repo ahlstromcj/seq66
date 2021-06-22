@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2017-09-05
-# \update      2020-11-11
+# \update      2021-06-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -31,11 +31,6 @@ CLEANFILES = *.gc*
 #******************************************************************************
 #  EXTRA_DIST
 #------------------------------------------------------------------------------
-#
-#  getopt_test.c is not ready and is not included at this time.
-#	$(TESTS) is not included because it is derived files.
-#
-#------------------------------------------------------------------------------
 
 # EXTRA_DIST = dl_leaks.supp make-tests README
 
@@ -55,7 +50,6 @@ VERSION = @VERSION@
 #------------------------------------------------------------------------------
 
 prefix = @prefix@
-libdir = @xpclibdir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 seq66includedir = @seq66includedir@
@@ -194,22 +188,6 @@ qseq66_SOURCES = seq66qt5.cpp
 qseq66_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
 qseq66_LDFLAGS = -Wl,--copy-dt-needed-entries
 qseq66_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
-
-#******************************************************************************
-# Testing
-#------------------------------------------------------------------------------
-#
-# 	   http://www.gnu.org/software/hello/manual/automake/Simple-Tests.html
-#
-#     Not supported for this application.  We supply a bogus test script.
-#
-#------------------------------------------------------------------------------
-
-# .PHONY: test_script
-#
-# TESTS = test_script
-#
-# test: check
 
 #******************************************************************************
 #  distclean

@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2021-06-19
+dnl \update        2021-06-22
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -57,11 +57,8 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MKDIR_P
 
-dnl 5.c. Mingw support.  Provisional, qmake support is more reliable at
+dnl 5.c. Mingw support.  Missing, qmake support is more reliable at
 dnl present.
-
-AC_MSG_CHECKING([whether to build with mingw32 for a Windows host])
-AS_CASE([$host_os], [*mingw*], [windows_host=yes], [windows_host=no])
 
 dnl Note that the BUILD_XXXX macros "merely" select which subdirectories we
 dnl descend into during the build.
@@ -75,18 +72,7 @@ build_sessions="yes"
 build_testing="no"
 need_qt="yes"
 
-dnl Untested.  Currently, qmake and mingw is used for Windows code.
-
-if test "x$windows_host" = "xyes" ; then
-    if test "x$CC" = "xgcc" ; then
-        AC_MSG_ERROR([MingW build enabled, but MingW packages not installed.])
-    else
-        build_windows="yes"
-        need_qt="yes"
-        AC_DEFINE(WINDOWS_SUPPORT, 1, [Indicates limited Windows support])
-        AC_MSG_RESULT([MingW Windows (Qt) build enabled.])
-    fi
-fi
+dnl Windows build not supported.  qmake and mingw are used for Windows code.
 
 dnl New for autoconf 2.60, prevents spurious datarootdir warnings.
 
@@ -243,13 +229,6 @@ if test "x$build_docs" = "xyes" ; then
         build_docs=no
     fi
 fi
-
-dnl Windows support in Linux.  Might be unnecessary though, though.
-
-AC_ARG_ENABLE(mingw,
-    [AS_HELP_STRING(--enable-mingw, [Enable MingW Windows support])],
-    [mingw=$enableval],
-    [mingw=no])
 
 dnl Clear out the X11 flags for the case where we are cross-compiling
 dnl for i586-mingw32 targets, under UNIX.
@@ -458,7 +437,6 @@ AM_CONDITIONAL([BUILD_QTMIDI], [test "$build_qtmidi" = "yes"])
 AM_CONDITIONAL([BUILD_RTCLI], [test "$build_rtcli" = "yes"])
 AM_CONDITIONAL([BUILD_RTMIDI], [test "$build_rtmidi" = "yes"])
 AM_CONDITIONAL([BUILD_SESSIONS], [test "$build_sessions" = "yes"])
-AM_CONDITIONAL([BUILD_WINDOWS], [test "$build_windows" = "yes"])
 
 dnl 6.0  Top portion of the config.h/seq66-config.h header files.  The
 dnl      seq66-config.h header file has "SEQ66_" prepended to these
@@ -466,7 +444,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2021-06-19"
+#define VERSION_DATE_SHORT "2021-06-22"
 #define VERSION "0.95.1"
 
 )

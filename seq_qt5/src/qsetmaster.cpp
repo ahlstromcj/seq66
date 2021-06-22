@@ -19,21 +19,17 @@
 /**
  * \file          qsetmaster.cpp
  *
- *  This module declares/defines the base class for the main window.
+ *  This module declares/defines the base class for the set-master tab.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-15
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
- *  The main window is known as the "Patterns window" or "Patterns
- *  panel".  It holds the "Pattern Editor" or "Sequence Editor".  The main
- *  window consists of two object:  mainwnd, which provides the user-interface
- *  elements that surround the patterns, and mainwid, which implements the
- *  behavior of the pattern slots.
  */
 
+#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
 #include <QPushButton>
 #include <QTableWidgetItem>
 #include <QTimer>
@@ -553,41 +549,47 @@ qsetmaster::on_set_change (screenset::number setno, performer::change modtype)
     return result;
 }
 
+/*
+ *  We must accept() the key-event, otherwise even key-events in the QLineEdit
+ *  items are propagated to the parent, where they then get passed to the
+ *  performer as if they were keyboards controls (such as a pattern-toggle
+ *  hot-key).
+ *
+ *  Plus, here, we have no real purpose for the code, so we macro it out.
+ *  What's up with that, Spunky?
+ */
+
 void
 qsetmaster::keyPressEvent (QKeyEvent * event)
 {
+#if defined PASS_KEYSTROKES_TO_PARENT
     keystroke kkey = qt_keystroke(event, keystroke::action::press);
     bool done = handle_key_press(kkey);
     if (done)
         set_needs_update();
     else
         QWidget::keyPressEvent(event);              /* event->ignore()      */
+#else
+    event->accept();
+#endif
 }
 
 void
 qsetmaster::keyReleaseEvent (QKeyEvent * event)
 {
+#if defined PASS_KEYSTROKES_TO_PARENT
     keystroke kkey = qt_keystroke(event, keystroke::action::release);
     bool done = handle_key_release(kkey);
     if (done)
         update();
     else
         QWidget::keyReleaseEvent(event);            /* event->ignore()      */
+#else
+    event->accept();
+#endif
 }
 
-/**
- *  This is not called when focus changes.
- */
-
-void
-qsetmaster::changeEvent (QEvent * event)
-{
-    QWidget::changeEvent(event);
-    if (event->type() == QEvent::ActivationChange)
-    {
-        // no useful code yet
-    }
-}
+#if defined PASS_KEYSTROKES_TO_PARENT
 
 bool
 qsetmaster::handle_key_press (const keystroke & k)
@@ -625,6 +627,22 @@ qsetmaster::handle_key_release (const keystroke & k)
         // no useful code yet
     }
     return done;
+}
+
+#endif  // defined PASS_KEYSTROKES_TO_PARENT
+
+/**
+ *  This is not called when focus changes.
+ */
+
+void
+qsetmaster::changeEvent (QEvent * event)
+{
+    QWidget::changeEvent(event);
+    if (event->type() == QEvent::ActivationChange)
+    {
+        // no useful code yet
+    }
 }
 
 bool

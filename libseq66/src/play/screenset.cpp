@@ -1338,12 +1338,9 @@ playset::add (const screenset & sset, seq::number seqno)
     bool result = s.active();
     if (result)
     {
-        // auto p = std::make_pair(sset.set_number(), &sset);
-        // (void) m_screen_sets.insert(p);
-
         m_sequence_array.push_back(s.loop());
 
-#if defined SEQ66_PLATFORM_DEBUG // _TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("Playset size = %d\n", int(m_sequence_array.size()));
 #endif
     }

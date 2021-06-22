@@ -26,10 +26,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-04-12
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  */
+
+#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
 
 #include "cfg/settings.hpp"             /* SEQ66_QMAKE_RULES indirectly     */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
@@ -80,8 +82,7 @@ static const int sc_event_row_height = 18;
  *
  */
 
-qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
-  :
+qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     QFrame                  (parent),
     performer::callbacks    (p),
     ui                      (new Ui::qseqeventframe),
@@ -969,7 +970,6 @@ qseqeventframe::handle_dump ()
     }
 }
 
-
 /**
  *  Cancels the edits and closes the dialog box.  In order for removing the
  *  current-highlighting in the mainwd or perfedit windows, some of the work
@@ -980,6 +980,28 @@ void
 qseqeventframe::handle_cancel ()
 {
     // TO BE DETERMINED
+}
+
+/*
+ *  We must accept() the key-event, otherwise even key-events in the QLineEdit
+ *  items are propagated to the parent, where they then get passed to the
+ *  performer as if they were keyboards controls (such as a pattern-toggle
+ *  hot-key).
+ *
+ *  Plus, here, we have no real purpose for the code, so we macro it out.
+ *  What's up with that, Spunky?
+ */
+
+void
+qseqeventframe::keyPressEvent (QKeyEvent * event)
+{
+    event->accept();
+}
+
+void
+qseqeventframe::keyReleaseEvent (QKeyEvent * event)
+{
+    event->accept();
 }
 
 }           // namespace seq66

@@ -6,7 +6,7 @@
 # \library    	seq66cli application
 # \author     	Chris Ahlstrom
 # \date       	2017-04-07
-# \update      2020-11-11
+# \update      2021-06-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -31,11 +31,6 @@ CLEANFILES = *.gc*
 #******************************************************************************
 #  EXTRA_DIST
 #------------------------------------------------------------------------------
-#
-#  getopt_test.c is not ready and is not included at this time.
-#	$(TESTS) is not included because it is derived files.
-#
-#------------------------------------------------------------------------------
 
 # EXTRA_DIST = dl_leaks.supp make-tests README
 
@@ -55,7 +50,6 @@ VERSION = @VERSION@
 #------------------------------------------------------------------------------
 
 prefix = @prefix@
-libdir = @xpclibdir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 sequencer66includedir = @sequencer66includedir@
@@ -96,16 +90,6 @@ libseq_portmididir = $(builddir)/seq_portmidi/src/.libs
 #
 #------------------------------------------------------------------------------
 
-if BUILD_WINDOWS
-AM_CXXFLAGS = \
- -I$(top_srcdir)/libseq66/include \
- -I$(top_srcdir)/libsessions/include \
- -I$(top_srcdir)/seq_portmidi/include \
- $(JACK_CFLAGS) \
- $(LIBLO_CFLAGS) \
- $(NSM_CFLAGS) \
- $(LASH_CFLAGS)
-else
 AM_CXXFLAGS = \
  -I$(top_srcdir)/libseq66/include \
  -I$(top_srcdir)/libsessions/include \
@@ -114,7 +98,6 @@ AM_CXXFLAGS = \
  $(LIBLO_CFLAGS) \
  $(NSM_CFLAGS) \
  $(LASH_CFLAGS)
-endif
 
 #******************************************************************************
 # libmath
@@ -144,20 +127,11 @@ libmath = -lm
 #
 #----------------------------------------------------------------------------
 
-if BUILD_WINDOWS
-libraries = \
- -L$(libsessionsdir) -lsessions \
- -L$(libseq66dir) -lseq66 \
- -L$(libseq_portmididir) -lseq_portmidi \
- -L$(libsessionsdir) -lsessions \
- -lwinmm
-else
 libraries = \
  -L$(libsessionsdir) -lsessions \
  -L$(libseq66dir) -lseq66 \
  -L$(libsessionsdir) -lsessions \
  -L$(libseq_rtmididir) -lseq_rtmidi
-endif
 
 #****************************************************************************
 # Project-specific dependency files
@@ -169,17 +143,10 @@ endif
 #  $(libseq_gtkmm2dir)/libseq_gtkmm2.la \
 #----------------------------------------------------------------------------
 
-if BUILD_WINDOWS
-dependencies = \
- $(libseq_portmididir)/libseq_portmidi.la \
- $(libsessionsdir)/libsessions.la \
- $(libseq66dir)/libseq66.la
-else
 dependencies = \
  $(libseq_rtmididir)/libseq_rtmidi.la \
  $(libsessionsdir)/libsessions.la \
  $(libseq66dir)/libseq66.la
-endif
 
 #******************************************************************************
 # The programs to build
@@ -193,29 +160,8 @@ bin_PROGRAMS = seq66cli
 
 seq66cli_SOURCES = seq66rtcli.cpp
 seq66cli_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
-
-if BUILD_WINDOWS
-seq66cli_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(AM_LDFLAGS) $(PTHREAD_LIBS)
-else
-seq66cli_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
 seq66cli_LDFLAGS = -Wl,--copy-dt-needed-entries
-endif
-
-#******************************************************************************
-# Testing
-#------------------------------------------------------------------------------
-#
-# 	   http://www.gnu.org/software/hello/manual/automake/Simple-Tests.html
-#
-#     Not supported for this application.  We supply a bogus test script.
-#
-#------------------------------------------------------------------------------
-
-# .PHONY: test_script
-# 
-# TESTS = test_script
-# 
-# test: check
+seq66cli_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
 
 #******************************************************************************
 #  distclean

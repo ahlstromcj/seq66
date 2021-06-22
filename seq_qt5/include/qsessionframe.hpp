@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2020-09-01
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -83,6 +83,11 @@ public:
     void session_log (const std::string & text);
     void session_log_append (const std::string & text);
     void song_path (const std::string & text);
+
+protected:                          // overrides of event handlers
+
+    virtual void keyPressEvent (QKeyEvent *) override;
+    virtual void keyReleaseEvent (QKeyEvent *) override;
 
 signals:
 

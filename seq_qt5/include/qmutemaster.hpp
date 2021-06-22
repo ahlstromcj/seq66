@@ -182,8 +182,12 @@ private:
         const std::string & keyname,
         const std::string & groupname
     );
+
+#if defined PASS_KEYSTROKES_TO_PARENT
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);
+#endif
+
     QTableWidgetItem * cell (screenset::number row, column_id col);
     void clear_pattern_mutes ();
     bool load_mutegroups (const std::string & fullfilespec);

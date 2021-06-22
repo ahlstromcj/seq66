@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2021-05-15
+# \update      2021-06-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -175,10 +175,6 @@ MOC_CPPFLAGS = -I$(top_srcdir)/include
 
 if BUILD_QTMIDI
    MOC_CPPFLAGS += -DQ_OS_MAC
-endif
-
-if BUILD_WINDOWS
-   MOC_CPPFLAGS += -D_WIN32
 endif
 
 #******************************************************************************

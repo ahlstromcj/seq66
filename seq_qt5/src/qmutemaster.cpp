@@ -24,11 +24,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-04-27
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  */
 
+#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
 #include <QPushButton>
 #include <QTableWidgetItem>
 #include <QTimer>
@@ -693,7 +694,7 @@ qmutemaster::slot_save ()
                 if (ok)
                     fname = basename;
             }
-            rc().mute_group_filename(fname);
+            rc().mute_group_filename(fname);        // WHY????????
         }
 
         /*
@@ -822,40 +823,47 @@ qmutemaster::on_mutes_change (mutegroup::number group)
     return result;
 }
 
+/*
+ *  We must accept() the key-event, otherwise even key-events in the QLineEdit
+ *  items are propagated to the parent, where they then get passed to the
+ *  performer as if they were keyboards controls (such as a pattern-toggle
+ *  hot-key).
+ *
+ *  Plus, here, we have no real purpose for the code, so we macro it out.
+ *  What's up with that, Spunky?
+ */
+
 void
 qmutemaster::keyPressEvent (QKeyEvent * event)
 {
+#if defined PASS_KEYSTROKES_TO_PARENT
     keystroke kkey = qt_keystroke(event, keystroke::action::press);
     bool done = handle_key_press(kkey);
     if (done)
         group_needs_update();
     else
-        QWidget::keyPressEvent(event);              /* event->ignore()      */
+        QWidget::keyPressEvent(event);
+#else
+    event->accept();
+#endif
 }
 
 void
 qmutemaster::keyReleaseEvent (QKeyEvent * event)
 {
+#if defined PASS_KEYSTROKES_TO_PARENT
     keystroke kkey = qt_keystroke(event, keystroke::action::release);
     bool done = handle_key_release(kkey);
     if (done)
         update();
     else
-        QWidget::keyReleaseEvent(event);            /* event->ignore()      */
+        QWidget::keyReleaseEvent(event);
+#else
+    event->accept();
+#endif
 }
 
-/**
- *  This is not called when focus changes.
- */
-
-void
-qmutemaster::changeEvent (QEvent * event)
-{
-    QWidget::changeEvent(event);
-    if (event->type() == QEvent::ActivationChange)
-    {
-    }
-}
+#if defined PASS_KEYSTROKES_TO_PARENT
 
 bool
 qmutemaster::handle_key_press (const keystroke & k)
@@ -879,6 +887,21 @@ qmutemaster::handle_key_release (const keystroke & k)
         // no code
     }
     return done;
+}
+
+#endif  // defined PASS_KEYSTROKES_TO_PARENT
+
+/**
+ *  This is not called when focus changes.
+ */
+
+void
+qmutemaster::changeEvent (QEvent * event)
+{
+    QWidget::changeEvent(event);
+    if (event->type() == QEvent::ActivationChange)
+    {
+    }
 }
 
 bool

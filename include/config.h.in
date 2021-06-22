@@ -1,6 +1,6 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2021-06-19"
+#define VERSION_DATE_SHORT "2021-06-22"
 #define VERSION "0.95.1"
 
 
@@ -165,9 +165,6 @@
 
 /* Version number of package */
 #undef VERSION
-
-/* Indicates limited Windows support */
-#undef WINDOWS_SUPPORT
 
 /* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING

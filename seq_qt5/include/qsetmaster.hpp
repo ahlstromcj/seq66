@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-11
- * \updates       2021-06-09
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing screen-sets and sequences, and
@@ -164,8 +164,12 @@ private:
         screenset & sset,
         screenset::number row
     );
+
+#if defined PASS_KEYSTROKES_TO_PARENT
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);
+#endif
+
     QTableWidgetItem * cell (screenset::number row, column_id col);
     void move_helper (int oldrow, int newrow);
 

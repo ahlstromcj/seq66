@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-05-20
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -137,6 +137,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
         {
             pen.setColor(fore_color());                     /* measure */
             pen.setWidth(2);
+            pen.setStyle(Qt::SolidLine);
             painter.setPen(pen);
             painter.drawLine(x_pos, 0, x_pos, yheight);
 
@@ -158,6 +159,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
         {
             pen.setColor(beat_color());
             pen.setWidth(1);
+            pen.setStyle(Qt::DotLine);
             painter.setPen(pen);
             painter.drawLine(x_pos, 0, x_pos, yheight);
         }

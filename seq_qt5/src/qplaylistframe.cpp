@@ -26,11 +26,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2021-02-08
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  */
 
+#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
 #include <QTimer>
 
 #include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
@@ -885,16 +886,23 @@ qplaylistframe::song_unmodify ()
     ui->buttonSongModify->setEnabled(false);
 }
 
+/*
+ *  We must accept() the key-event, otherwise even key-events in the QLineEdit
+ *  items are propagated to the parent, where they then get passed to the
+ *  performer as if they were keyboards controls (such as a pattern-toggle
+ *  hot-key).
+ */
+
 void
 qplaylistframe::keyPressEvent (QKeyEvent * event)
 {
-    QWidget::keyPressEvent(event);      // event->ignore();
+    event->accept();
 }
 
 void
 qplaylistframe::keyReleaseEvent (QKeyEvent * event)
 {
-    QWidget::keyReleaseEvent(event);    // event->ignore();
+    event->accept();
 }
 
 }           // namespace seq66
