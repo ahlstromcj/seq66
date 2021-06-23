@@ -24,18 +24,11 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2018-05-13
- * \updates     2020-07-12
+ * \updates     2021-06-23
  * \license     GNU GPLv2 or above
 
- *  This file needs to implement:
- *
- *      -   pm_init(), which calls various routines to register the available
- *          MIDI devices.
- *      -   Pm_GetDefaultInputDeviceID().
- *      -   Pm_GetDefaultOutputDeviceID().
- *
- *  The latter two exist only if SEQ66_PORTMIDI_DEFAULT_DEVICE_ID is defined;
- *  we have our own way of setting device configuration.
+ *  This file needs to implement pm_init(), which calls various routines to
+ *  register the available MIDI devices.
  *
  *  This file must be separate from the main portmidi.c file because it is
  *  system dependent, and it is separate from, say, pmmacosxcm.c, because it
@@ -45,7 +38,7 @@
 #include <stdlib.h>
 
 #include "util/basic_macros.h"          /* not_nullptr() macro, etc.        */
-#include "portmidi.h"
+#include "portmidi.h"                   /* Pm_set_initialized(), etc.       */
 #include "pmutil.h"
 #include "pminternal.h"
 #include "pmmacosxcm.h"
@@ -78,19 +71,6 @@ pm_init (void)
     else
     {
         Pm_set_initialized(TRUE);
-
-#if defined SEQ66_PORTMIDI_USE_JAVA_PREFS
-        pm_default_input_device_id = find_default_device
-        (
-            "/PortMidi/PM_RECOMMENDED_INPUT_DEVICE", TRUE,
-            pm_default_input_device_id
-        );
-        pm_default_output_device_id = find_default_device
-        (
-            "/PortMidi/PM_RECOMMENDED_OUTPUT_DEVICE", FALSE,
-            pm_default_output_device_id
-        );
-#endif
     }
 }
 
@@ -103,24 +83,6 @@ pm_term (void)
 {
     pm_macosxcm_term();
 }
-
-#if defined SEQ66_PORTMIDI_DEFAULT_DEVICE_ID
-
-PmDeviceID
-Pm_GetDefaultInputDeviceID ()
-{
-    Pm_Initialize();
-    return pm_default_input_device_id;
-}
-
-PmDeviceID
-Pm_GetDefaultOutputDeviceID ()
-{
-    Pm_Initialize();
-    return pm_default_output_device_id;
-}
-
-#endif  // SEQ66_PORTMIDI_DEFAULT_DEVICE_ID
 
 /**
  *  A simple wrapper for malloc().

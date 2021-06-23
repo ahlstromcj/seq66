@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2021-06-22
+ * \updates       2021-06-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -48,21 +48,21 @@
 #include "forms/qplaylistframe.ui.h"
 #endif
 
+namespace seq66
+{
+
 /**
  *  For correcting the width of the play-list tables.  It tries to account for
  *  the width of the vertical scroll-bar, plus a bit more.
  */
 
-#define SEQ66_PLAYLIST_TABLE_FIX        24  // 48
+static const int c_playlist_table_fix   = 24; // 48
 
 /**
  *  Specifies the current hardwired value for set_row_heights().
  */
 
-#define SEQ66_PLAYLIST_ROW_HEIGHT       18
-
-namespace seq66
-{
+static const int c_playlist_row_height  = 18;
 
 /**
  *  Principal constructor.
@@ -104,7 +104,7 @@ qplaylistframe::qplaylistframe
     (
         QAbstractItemView::SingleSelection
     );
-    set_row_heights(SEQ66_PLAYLIST_ROW_HEIGHT);
+    set_row_heights(c_playlist_row_height);
     set_column_widths();
     connect
     (
@@ -290,11 +290,11 @@ qplaylistframe::set_row_heights (int height)
 void
 qplaylistframe::set_column_widths ()
 {
-    int w = ui->tablePlaylistSections->width() - SEQ66_PLAYLIST_TABLE_FIX;
+    int w = ui->tablePlaylistSections->width() - c_playlist_table_fix;
     ui->tablePlaylistSections->setColumnWidth(0, int(0.20f * w));
     ui->tablePlaylistSections->setColumnWidth(1, int(0.80f * w));
 
-    w = ui->tablePlaylistSongs->width() - SEQ66_PLAYLIST_TABLE_FIX;
+    w = ui->tablePlaylistSongs->width() - c_playlist_table_fix;
     ui->tablePlaylistSongs->setColumnWidth(0, int(0.20f * w));
     ui->tablePlaylistSongs->setColumnWidth(1, int(0.80f * w));
 }
@@ -447,7 +447,7 @@ qplaylistframe::fill_playlists ()
         {
             std::string temp;
             QTableWidgetItem * qtip = cell(true, r, CID_MIDI_NUMBER);
-            ui->tablePlaylistSections->setRowHeight(r, SEQ66_PLAYLIST_ROW_HEIGHT);
+            ui->tablePlaylistSections->setRowHeight(r, c_playlist_row_height);
             if (not_nullptr(qtip))
             {
                 int midinumber = perf().playlist_midi_number();
@@ -494,7 +494,7 @@ qplaylistframe::fill_songs ()
                 QTableWidgetItem * qtip = cell(false, r, CID_MIDI_NUMBER);
                 ui->tablePlaylistSongs->setRowHeight
                 (
-                    r, SEQ66_PLAYLIST_ROW_HEIGHT
+                    r, c_playlist_row_height
                 );
                 if (not_nullptr(qtip))
                 {
@@ -596,6 +596,10 @@ qplaylistframe::handle_song_click_ex
 void
 qplaylistframe::handle_list_load_click ()
 {
+    if (rc().investigate())
+    {
+        // TO DO
+    }
     if (not_nullptr(m_parent))
     {
         m_parent->open_playlist();

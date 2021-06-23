@@ -73,8 +73,6 @@ windows {
 }
 
 # Common:
-#
-# Removed because not needed: src/finddefault.c
 
 SOURCES += \
  src/mastermidibus.cpp \
@@ -91,10 +89,7 @@ unix:!macx {
 
 # Mac OSX
 #
-#  We provide the readbinaryplist.c file in case someone needs it, but
-#  currently do not include that module in the seq_portmidi library.
-#  The ptmacosx_cf.c module is also provide, but it is not used, as far
-#  as we can tell.
+#  We have removed the readbinaryplist.c file; we use INI-style files.
 
 macx: {
    SOURCES += src/pmmac.c pmmacosxcm.c src/ptmacosx_mach.c

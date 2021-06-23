@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-05-19
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -960,9 +960,8 @@ qseqeditframe64::qseqeditframe64
     ui->m_toggle_play->setCheckable(true);
 
     /*
-     *  This check looks only for "Untitled". Causes opening this window to
-     *  unmute patterns in generic *.mid files.  We added a check for events
-     *  existing.
+     *  This check looks only for "Untitled" and no events. Causes opening
+     *  this window to unmute patterns in generic *.mid files.
      */
 
     if (seq_pointer()->is_new_pattern())
@@ -980,13 +979,14 @@ qseqeditframe64::qseqeditframe64
 
     qt_set_icon(thru_xpm, ui->m_toggle_thru);
     ui->m_toggle_thru->setCheckable(true);
+    if (seq_pointer()->is_new_pattern())
+        thru_change(usr().new_pattern_thru());
+
     connect
     (
         ui->m_toggle_thru, SIGNAL(toggled(bool)),
         this, SLOT(thru_change(bool))
     );
-    if (seq_pointer()->is_new_pattern())
-        thru_change(usr().new_pattern_thru());
 
     /*
      * MIDI Record Button.
@@ -994,13 +994,14 @@ qseqeditframe64::qseqeditframe64
 
     qt_set_icon(rec_xpm, ui->m_toggle_record);
     ui->m_toggle_record->setCheckable(true);
+    if (seq_pointer()->is_new_pattern())
+        record_change(usr().new_pattern_record());
+
     connect
     (
         ui->m_toggle_record, SIGNAL(toggled(bool)),
         this, SLOT(record_change(bool))
     );
-    if (seq_pointer()->is_new_pattern())
-        record_change(usr().new_pattern_record());
 
     /*
      * MIDI Quantized Record Button.
@@ -1008,13 +1009,14 @@ qseqeditframe64::qseqeditframe64
 
     qt_set_icon(q_rec_xpm, ui->m_toggle_qrecord);
     ui->m_toggle_qrecord->setCheckable(true);
+    if (seq_pointer()->is_new_pattern())
+        q_record_change(usr().new_pattern_qrecord());
+
     connect
     (
         ui->m_toggle_qrecord, SIGNAL(toggled(bool)),
         this, SLOT(q_record_change(bool))
     );
-    if (seq_pointer()->is_new_pattern())
-        q_record_change(usr().new_pattern_qrecord());
 
     /*
      * Recording Merge, Replace, Extend Button.  Provides a button to set the
@@ -1031,13 +1033,14 @@ qseqeditframe64::qseqeditframe64
     ui->m_combo_rec_type->insertItem(lrreplace, "Overwrite");
     ui->m_combo_rec_type->insertItem(lrexpand, "Expand");
     ui->m_combo_rec_type->insertItem(lroneshot, "Oneshot");
+    if (seq_pointer()->is_new_pattern())
+        lrmerge = usr().new_pattern_recordcode();
+
     connect
     (
         ui->m_combo_rec_type, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_record_type(int))
     );
-    if (seq_pointer()->is_new_pattern())
-        lrmerge = usr().new_pattern_recordcode();
 
     ui->m_combo_rec_type->setCurrentIndex(lrmerge);
 
@@ -1176,6 +1179,8 @@ qseqeditframe64::keyPressEvent (QKeyEvent * event)
     if (perf().is_pattern_playing())
     {
         if (event->key() == Qt::Key_Space)
+            stop_playing();
+        else if (event->key() == Qt::Key_Escape)
             stop_playing();
         else if (event->key() == Qt::Key_Period)
             pause_playing();

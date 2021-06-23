@@ -166,8 +166,8 @@ cmdlineopts::s_long_options [] =
  *
  * Investigate:
  *
- *      The undocument -i/--investigate option is used (only on the command
- *      line, to turn on the test-of-the-day.
+ *      The undocumented -i/--investigate option is used (only on the command
+ *      line), to turn on the test-of-the-day. Shhhh, it's a secret!
  */
 
 const std::string

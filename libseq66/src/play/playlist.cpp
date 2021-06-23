@@ -431,24 +431,24 @@ playlist::copy_songs (const std::string & destination)
     bool result = ! m_play_lists.empty();
     if (result)
     {
-        std::string destfile = os_normalize_path(destination);
-        result = make_directory_path(destfile);
+        std::string dst = os_normalize_path(destination);
+        result = make_directory_path(dst);
         if (result)
         {
+            file_message("Created directory", dst);
             for (const auto & plpair : m_play_lists)
             {
                 const song_list & sl = plpair.second.ls_song_list;
+                file_message("Processing list", plpair.second.ls_list_name);
                 for (const auto & sci : sl)
                 {
                     const song_spec_t & s = sci.second;
                     std::string fname = song_filepath(s);
+                    file_message("Processing song", fname);
                     result = file_exists(fname);
                     if (result)
                     {
-                        std::string d = append_path
-                        (
-                            destfile, s.ss_song_directory
-                        );
+                        std::string d = append_path(dst, s.ss_song_directory);
                         result = make_directory_path(d);
                         if (result)
                         {
@@ -482,7 +482,7 @@ playlist::copy_songs (const std::string & destination)
         }
         else
         {
-            set_file_error_message("Failed to create", destfile);
+            set_file_error_message("Failed to create", dst);
         }
     }
     else

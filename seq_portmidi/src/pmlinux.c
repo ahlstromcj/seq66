@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2019-04-11
+ * \updates     2021-06-23
  * \license     GNU GPLv2 or above
  *
  *  This file only needs to implement pm_init(), which calls various routines
@@ -41,7 +41,7 @@
 
 #include "seq66-config.h"
 #include "util/basic_macros.h"          /* not_nullptr() macro, etc.        */
-#include "finddefault.h"
+#include "portmidi.h"                   /* Pm_set_initialized(), etc.       */
 #include "pmutil.h"
 #include "pminternal.h"
 
@@ -78,23 +78,6 @@ pm_init ()
      */
 
     Pm_set_initialized(TRUE);
-
-#if defined SEQ66_PORTMIDI_FIND_DEFAULT_DEVICE
-#error find_default_device() no longer supported in Linux
-
-    pm_default_input_device_id = find_default_device
-    (
-        "/PortMidi/PM_RECOMMENDED_INPUT_DEVICE", TRUE,
-        pm_default_input_device_id
-    );
-    pm_default_output_device_id = find_default_device
-    (
-        "/PortMidi/PM_RECOMMENDED_OUTPUT_DEVICE", FALSE,
-        pm_default_output_device_id
-    );
-
-#endif  // SEQ66_PORTMIDI_FIND_DEFAULT_DEVICE
-
 }
 
 /**
@@ -108,37 +91,6 @@ pm_term (void)
     pm_linuxalsa_term();
 #endif
 }
-
-#if defined SEQ66_PORTMIDI_DEFAULT_DEVICE_ID
-
-/*
- * This code is not used.  Pm_Initialize() is called in the PortMidi version
- * of the mastermidibus constructor.
- */
-
-/**
- *
- */
-
-PmDeviceID
-Pm_GetDefaultInputDeviceID ()
-{
-    Pm_Initialize();
-    return pm_default_input_device_id;
-}
-
-/**
- *
- */
-
-PmDeviceID
-Pm_GetDefaultOutputDeviceID ()
-{
-    Pm_Initialize();
-    return pm_default_output_device_id;
-}
-
-#endif  // if defined SEQ66_PORTMIDI_DEFAULT_DEVICE_ID
 
 /**
  *  A wrapper for malloc().

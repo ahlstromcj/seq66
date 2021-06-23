@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-05-23
+ * \updates       2021-06-23
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -89,10 +89,6 @@
 #include "forms/ui_qslivegrid.h"
 #else
 #include "forms/qslivegrid.ui.h"
-#endif
-
-#if defined SEQ66_PLATFORM_DEBUG_KEY_TESTING
-#define SEQ66_KEY_TESTING
 #endif
 
 /*
@@ -664,12 +660,6 @@ qslivegrid::refresh (seq::number seqno)
                 bool armed = s->playing();
                 pb->set_checked(armed);
                 pb->reupdate(true);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                printf
-                (
-                    "button(%d, %d) %s\n", row, column, armed ? "on" : "off"
-                );
-#endif
             }
         }
     }
@@ -702,13 +692,6 @@ qslivegrid::refresh_all_slots ()
                     qslotbutton * pb = button(row, column);
                     pb->set_checked(armed);
                     pb->reupdate(true);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                    printf
-                    (
-                        "button(%d, %d) = %s\n", row, column,
-                        armed ? "on" : "off"
-                    );
-#endif
                 }
                 ++offset;
             }
@@ -828,6 +811,10 @@ qslivegrid::seq_id_from_xy (int click_x, int click_y)
  *  -   Shift key.  Create a new live frame with a screen-set offset by the
  *      button number times the size of a screenset.  A bit tricky.
  *
+ *  One issue is that a double-click yields a mouse-press and an
+ *  mouse-double-click event, in that order.  We log the current state of
+ *  the pattern so that we can restore it in the double-click handler.
+ *
  * \param event
  *      Provides the mouse event.
  */
@@ -848,31 +835,21 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
     bool assigned = m_current_seq != seq::unassigned();
     if (! assigned)
     {
-        return;                 /* printf("mouse press unassigned\n");  */
+        return;                         /* ignore a click on an empty slot  */
     }
     if (event->button() == Qt::LeftButton)
     {
         if (event->modifiers() & Qt::ControlModifier)
+        {
             new_sequence();
+        }
         else if (event->modifiers() & Qt::ShiftModifier)
+        {
             new_live_frame();
+        }
         else if (assigned)
         {
-            /*
-             * This actually gets a qloopbutton.  Don't be fooled like I was.
-             * The toggle call does its own button update.
-             */
-
-            qslotbutton * pb = find_button(m_current_seq);
-            if (not_nullptr(pb))
-            {
-                seq::pointer s = pb->loop();
-                if (s)
-                {
-                    m_button_down = true;
-                    (void) pb->toggle_checked();
-                }
-            }
+            button_toggle(m_current_seq);
         }
     }
     if (event->button() == Qt::RightButton)
@@ -998,12 +975,37 @@ qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
         new_sequence();
 
     m_current_seq = seq_id_from_xy(event->x(), event->y());
-    if (! perf().is_seq_active(m_current_seq))
+    if (perf().is_seq_active(m_current_seq))
+    {
+        button_toggle(m_current_seq);           /* undo the press-toggle    */
+    }
+    else
     {
         if (perf().new_sequence(m_current_seq))
             perf().get_sequence(m_current_seq)->set_dirty();
     }
     signal_call_editor_ex(m_current_seq);
+}
+
+/**
+ *  This actually gets a qloopbutton.  Don't be fooled like I was.  The toggle
+ *  call does its own button update.
+ */
+
+void
+qslivegrid::button_toggle (seq::number seqno)
+{
+    bool assigned = seqno != seq::unassigned();
+    if (assigned)
+    {
+        qslotbutton * pb = find_button(seqno);
+        if (not_nullptr(pb))
+        {
+            seq::pointer s = pb->loop();
+            if (s)
+                (void) pb->toggle_checked();
+        }
+    }
 }
 
 void

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-05-19
+ * \updates       2021-06-22
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -567,6 +567,11 @@ qperfroll::keyPressEvent (QKeyEvent * event)
     if (perf().is_pattern_playing())
     {
         if (event->key() == Qt::Key_Space)
+        {
+            handled = true;
+            stop_playing();
+        }
+        else if (event->key() == Qt::Key_Escape)
         {
             handled = true;
             stop_playing();

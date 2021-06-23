@@ -122,8 +122,6 @@ lib_LTLIBRARIES = libseq_portmidi.la
 #	more tractable way to store configuration than in Java "prefs".  We've added
 #	some functions to porttime.c, so that is now included.
 #
-#	   finddefault.c
-#
 #----------------------------------------------------------------------------
 
 libseq_portmidi_la_SOURCES = \

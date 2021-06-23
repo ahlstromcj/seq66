@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-06-16
+ * \updates       2021-06-23
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -416,15 +416,13 @@ qloopbutton::set_checked (bool flag)
 bool
 qloopbutton::toggle_checked ()
 {
-#if defined USE_OLD_TOGGLE_CHECKED
-    bool result = loop()->toggle_playing();
-    set_checked(result);
-#else
     bool result = loop()->sequence_playing_toggle();
     if (result)
-        set_checked(loop()->playing());
-#endif
-    reupdate();
+    {
+        bool checked = loop()->playing();
+        set_checked(checked);
+        reupdate();
+    }
     return result;
 }
 
