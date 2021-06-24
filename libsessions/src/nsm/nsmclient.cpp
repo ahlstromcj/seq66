@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2020-11-19
+ * \updates       2021-06-24
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -626,8 +626,17 @@ nsmclient::announce
     bool result = send_announcement(appname, exename, capabilities);
     if (result)
     {
+        int count = 12;
         while (! is_active())           /* this is an atomic boolean check  */
+        {
             (void) msg_check(1000);
+            if (--count == 0)
+            {
+                errprint("Timed out waiting for NSM");
+                result = false;
+                break;
+            }
+        }
     }
     return result;
 }

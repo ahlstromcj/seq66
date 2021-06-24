@@ -1107,9 +1107,9 @@ rcfile::write ()
         "# use '\"\"' and set 'active' to false. Use the extension '.playlist'.\n"
 		"# Even if not active, the play-list file is read, which adds to the\n"
         "# startup time.  The 'base-directory' is optional. If non-empty, it\n"
-        "# sets the directory holding all MIDI files in all play-lists, helpful\n"
-        "# when play-lists and tunes from one directory to another, preserving\n"
-		"# the sub-directories.\n"
+        "# sets the directory holding all MIDI files in all play-lists, useful\n"
+        "# when copying play-lists and tunes from one directory to another,\n"
+        "# preserving the sub-directories (e.g. in creating an NSM session).\n"
         ;
 
     std::string plname = rc_ref().playlist_filename();

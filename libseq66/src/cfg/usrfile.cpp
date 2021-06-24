@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-08
+ * \updates       2021-06-24
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -525,12 +525,18 @@ usrfile::parse ()
     flag = get_boolean(file, "[new-pattern-editor]", "qrecord");
     usr().new_pattern_qrecord(flag);
 
+    /*
+     * TODO: move this to a setter
+     */
+
     recordstyle rs = recordstyle::merge;
     s = get_variable(file, "[new-pattern-editor]", "record-style");
     if (s == "overwrite")
         rs = recordstyle::overwrite;
     else if (s == "expand")
         rs = recordstyle::expand;
+    else if (s == "one-shot")
+        rs = recordstyle::oneshot;
 
     usr().new_pattern_recordstyle(rs);
 
@@ -964,13 +970,11 @@ usrfile::write ()
     file << "\n"
         "# [user-session]\n"
         "#\n"
-        "# This section specifies the session manager to use, if any. The\n"
-        "# 'session' variable can be set to 'none' (the default), 'nsm'\n"
-        "# (Non or New Session Manager), or 'lash' (LASH, not yet supported).\n"
-        "# 'url' can be set to the value of the NSM_URL environment variable\n"
-        "# set by nsmd when run outside of the Non Session Manager user-\n"
-        "# interface. Set the URL only if running nsmd standalone with a\n"
-        "# matching --osc-port number.\n"
+        "# Specifies the session manager to use, if any. The 'session' value\n"
+        "# is set to 'none' (default), 'nsm' (Non Session Manager), or 'lash'\n"
+        "# (LASH, not yet supported).  'url' can be set to the value set by\n"
+        "# nsmd when run outside of the NSM user-interface. Set 'url' only if\n"
+        "# running nsmd standalone; use a matching --osc-port number.\n"
         "\n[user-session]\n\n"
         ;
 
@@ -988,11 +992,11 @@ usrfile::write ()
     file << "\n"
         "# [new-pattern-editor]\n"
         "#\n"
-        "# This section contains the setup values for recording when a new\n"
-        "# pattern is opened. For flexibility, a new pattern means only that\n"
-        "# the loop has the default name, 'Untitled'. These values save time\n"
-        "# during a live recording session. Note that the valid values for\n"
-        "# record-style are 'merge', 'overwrite', and 'expand'.\n"
+        "# Contains setup values for play/recording when a new pattern is\n"
+        "# opened. A new pattern means that the loop has the default name\n"
+        "# 'Untitled' and no events. These values save time during a live\n"
+        "# recording session. Note that the valid values for record-style are\n"
+        "# 'merge' (default), 'overwrite', 'expand', and 'one-shot'.\n"
         "\n[new-pattern-editor]\n\n"
         ;
 
@@ -1001,11 +1005,17 @@ usrfile::write ()
     write_boolean(file, "record", usr().new_pattern_record());
     write_boolean(file, "qrecord", usr().new_pattern_qrecord());
 
+    /*
+     * TODO: move this to a getter.
+     */
+
     std::string rs = "merge";
     if (usr().new_pattern_recordstyle() == recordstyle::overwrite)
         rs = "overwrite";
     else if (usr().new_pattern_recordstyle() == recordstyle::expand)
         rs = "expand";
+    else if (usr().new_pattern_recordstyle() == recordstyle::oneshot)
+        rs = "one-shot";
 
     file << "record-style = " << rs << "\n";
 

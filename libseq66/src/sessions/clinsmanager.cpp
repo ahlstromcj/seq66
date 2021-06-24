@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-11-24
+ * \updates       2021-06-24
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -42,6 +42,7 @@
 #include "play/playlist.hpp"            /* seq66::playlist class            */
 #include "sessions/clinsmanager.hpp"    /* seq66::clinsmanager class        */
 #include "util/filefunctions.hpp"       /* seq66::make_directory_path()     */
+#include "util/strfunctions.hpp"        /* seq66::contains()                */
 
 #if defined SEQ66_NSM_SUPPORT
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm access functions      */
@@ -89,45 +90,43 @@ clinsmanager::~clinsmanager ()
 bool
 clinsmanager::detect_session (std::string & url)
 {
+#if defined SEQ66_NSM_SUPPORT
     bool result = usr().wants_nsm_session();        /* user wants NSM usage */
     std::string tenturl;                            /* a tentative URL      */
+    url.clear();
     if (result)
     {
-        tenturl = usr().session_url();              /* try 'usr' file's URL */
         infoprint("Checking 'usr' file for NSM URL");
-        if (tenturl.empty())                        /* no tentative URL     */
-            result = false;
-        else
-            url = tenturl;
-    }
-
-#if defined SEQ66_NSM_SUPPORT
-    warnprint("Checking environment for NSM_URL");
-    tenturl = nsm::get_url();
-    if (! tenturl.empty())                          /* environment NSM URL  */
-    {
-        result = true;
-        url = tenturl;
-    }
-#if defined SEQ66_PLATFORM_DEBUG_PID
-    /*
-     * This test is overly strict because there are remote instances of nsmd
-     * and NSM-compliant daemons from raysession and Carla.
-     */
-    if (result)
-    {
-        bool testing = url == "testing";
-        if (! testing)                              /* for troubleshooting  */
+        tenturl = usr().session_url();              /* try 'usr' file's URL */
+        if (! tenturl.empty())                      /* configured NSM URL   */
         {
-            result = pid_exists("nsmd");            /* one final check      */
-            if (! result)
-                warnprint("nsmd not running, proceeding with normal run");
+            /*
+             * Sanity check the URL: "osc.udp://hostname.domain:PORT#"
+             */
+
+            result = contains(tenturl, "osc.udp://");
+            if (result)
+                url = tenturl;
+            else
+                tenturl.clear();
         }
     }
-#endif  // SEQ66_PLATFORM_DEBUG_TESTING
-#endif  // SEQ66_NSM_SUPPORT
+    if (tenturl.empty())                            /* configured NSM URL   */
+    {
+        warnprint("Checking environment for NSM_URL");
+        tenturl = nsm::get_url();
+        result = ! tenturl.empty();
+        if (result)
+            url = tenturl;
+    }
+    if (result)
+        file_message("NSM URL", tenturl);           /* comforting message   */
 
     return result;
+#else
+    url.clear();
+    return false;
+#endif
 }
 
 /**
@@ -330,9 +329,15 @@ clinsmanager::run ()
  *  client ID (seq66.nYMVC).  We append the client ID and create this
  *  directory, followng the lead of Non-Mixer and Qtractor.
  *
- *  Note:
+ *  Note: At this point, the performer [perf()] does not yet exist!
  *
- *      At this point, the performer [perf()] does not yet exist!
+ *  The first thing to do is grab the current (and default) configuration
+ *  directory (in the user's HOME area).  We may need it, in order to find the
+ *  original files to recreate.  Next we see if the configuration has already
+ *  been created, using the "rc" file as the test case.  The normal base-name
+ *  (e.g. "qseq66") is always used in an NSM session.  We will read/write the
+ *  configuration from the NSM path.  We assume (for now) that the "midi"
+ *  directory was also created.
  *
  * \param argc
  *      The command-line argument count.
@@ -358,16 +363,9 @@ clinsmanager::create_project
     bool result = ! path.empty();
     if (result)
     {
-        /*
-         * See if the configuration has already been created, using the "rc"
-         * file as the test case.  The normal base-name (e.g. "qseq66") is
-         * always used in an NSM session.  We will read/write the configuration
-         * from the NSM path.  We assume (for now) that the "midi" directory was
-         * also created.
-         */
-
         std::string cfgfilepath = path;
         std::string midifilepath = path;
+        std::string homepath = rc().home_config_directory();
         if (nsm_active())
         {
             cfgfilepath = pathname_concatenate(cfgfilepath, "config");
@@ -454,6 +452,7 @@ clinsmanager::create_project
                         result = bool(plp);
                         if (result)
                         {
+                            srcplayfile = file_path_set(srcplayfile, homepath);
                             (void) save_playlist
                             (
                                 *plp, srcplayfile, dstplayfile
@@ -497,6 +496,7 @@ clinsmanager::create_project
                         nmp.reset(new (std::nothrow) notemapper());
                         result = bool(nmp);
                         file_message("Note-mapper save", destination);
+                        srcnotefile = file_path_set(srcnotefile, homepath);
                         (void) copy_notemapper(*nmp, srcnotefile, destination);
                     }
                 }

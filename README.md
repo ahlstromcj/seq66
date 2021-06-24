@@ -1,7 +1,7 @@
 # README for Seq66 0.95.1
 
 Chris Ahlstrom
-2015-09-10 to 2021-06-23
+2015-09-10 to 2021-06-24
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -85,6 +85,8 @@ Windows, and using a conventional source tarball.
         *   Fixed issues with editing keystrokes being passed from the tabbed
             editors to the main window (and the live frame)
         *   Removed PortMidi Java configuration parsing code.
+        *   Important fixes to NSM sessions.
+        *   Added 'one-shot' option the the 'usr' file's record-style setting.
     *   Version 0.95.0:
         *   Updated almost all settings to use "name = variable" convention
             to improve readability.  This will change the format of config-files
