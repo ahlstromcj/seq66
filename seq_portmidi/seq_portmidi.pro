@@ -33,7 +33,7 @@ CONFIG(debug, debug|release) {
    DEFINES += NDEBUG
 }
 
-DEFINES += "SEQ66_MIDILIB=\\\"portmidi\\\""
+DEFINES += "SEQ66_MIDILIB=portmidi"
 DEFINES += "SEQ66_PORTMIDI_SUPPORT=1"
 
 TARGET = seq_portmidi

@@ -108,7 +108,7 @@ public:
      *  of sequences per set, at least at this time.
      */
 
-    static const int c_minimum_rows    =  4;
+    static const int c_min_rows    =  4;
 
     /**
      *  Maximum number of rows in the main-window's grid.  With the default
@@ -116,7 +116,7 @@ public:
      *  from 32 to 64, hence the name "seq66".
      */
 
-    static const int c_maximum_rows    = 12;    /* that is, 4 * 3 */
+    static const int c_max_rows    = 12;    /* that is, 4 * 3 */
 
     /**
      *  Default number of columns in the main-window's grid.
@@ -131,14 +131,14 @@ public:
      *  default 4 x 8 settings.
      */
 
-    static const int c_minimum_columns =  4;
+    static const int c_min_columns =  4;
 
     /**
      *  Maximum number of columns in the main-window's grid.  Currently the
      *  same as the default number.
      */
 
-    static const int c_maximum_columns =  12;
+    static const int c_max_columns =  12;
 
 private:
 

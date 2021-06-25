@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-06-08
+ * \updates       2021-06-25
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -115,12 +115,22 @@ namespace seq66
 /**
  *  Provide limits for the option "--option scale=x.y".  Based on the minimum
  *  size of the main window specified in qsmainwnd.ui, 0.8 is the smallest one
- *  can go for both width and height.
+ *  that can go well for both width and height.
  */
 
 const double c_window_scale_min         = 0.8f;
 const double c_window_scale_default     = 1.0f;
 const double c_window_scale_max         = 3.0f;
+
+/**
+ *  These currently just exposed some values from the *.ui files.  The size of
+ *  the main window.
+ */
+
+const int c_default_window_width        = 884;  // shrunken = 720, 0.82 664
+const int c_default_window_height       = 602;  // shrunken = 480, 0.80 450
+const int c_minimum_window_width        = 720;  // shrunken = 540, 0.75 540
+const int c_minimum_window_height       = 480;  // shrunken = 360, 0.66 450
 
 /**
  *  Minimum and maximum possible values for the global redraw rate.
@@ -248,8 +258,8 @@ usrsettings::usrsettings () :
     m_seqs_in_set               (0),                /* set in normalize()   */
     m_gmute_tracks              (0),                /* same as max-tracks   */
     m_max_sequence              (seq::maximum()),
-    m_mainwnd_x                 (780),              /* constant             */
-    m_mainwnd_y                 (412),              /* constant             */
+    m_mainwnd_x                 (c_default_window_width),   /* 780 */
+    m_mainwnd_y                 (c_default_window_height),  /* 412 */
 
     /*
      * Constant values.
@@ -340,8 +350,6 @@ usrsettings::set_defaults ()
      *  m_seqs_in_set
      *  m_gmute_tracks
      *  m_max_sequence
-     *  m_mainwnd_x
-     *  m_mainwnd_y
      *
      * Constants:
      *
@@ -349,6 +357,9 @@ usrsettings::set_defaults ()
      *  mc_max_zoom
      *  mc_baseline_ppqn
      */
+
+    m_mainwnd_x = c_default_window_width;
+    m_mainwnd_y = c_default_window_height;
 
     m_save_user_config = false;
     m_app_is_headless = false;
@@ -391,6 +402,10 @@ usrsettings::normalize ()
     m_seqs_in_set = m_mainwnd_rows * m_mainwnd_cols;
     m_gmute_tracks = m_seqs_in_set * m_seqs_in_set;
     m_total_seqs = m_seqs_in_set * c_max_sets;
+    if (shrunken())
+    {
+        m_window_scale = m_window_scale_y = 0.75;
+    }
 }
 
 std::string
@@ -426,20 +441,49 @@ usrsettings::session_manager (const std::string & sm)
 }
 
 int
-usrsettings::mainwnd_x () const
+usrsettings::scale_size (int value, bool shrinkmore) const
 {
-    return scale_size(m_mainwnd_x);
+    float s = m_window_scale;
+    if (shrinkmore)
+        s *= 0.8;
+
+    return int(s * value + 0.5);
 }
 
-/**
- *  Scaled only if window scaling is less than 1.0.
- */
+int
+usrsettings::scale_size_y (int value, bool shrinkmore) const
+{
+    float s = m_window_scale_y;
+    if (shrinkmore)
+        s *= 0.75;
+
+    return int(s * value + 0.5);
+}
+
+int
+usrsettings::mainwnd_x () const
+{
+    return m_window_scale != 1.0f ?
+        int(scale_size(m_mainwnd_x)) : m_mainwnd_x ;
+}
 
 int
 usrsettings::mainwnd_y () const
 {
-    return m_window_scale > 1.0f ?
-        m_mainwnd_y : int(scale_size_y(m_mainwnd_y)) ;
+    return m_window_scale_y != 1.0f ?
+        int(scale_size_y(m_mainwnd_y)) : m_mainwnd_y ;
+}
+
+int
+usrsettings::mainwnd_x_min () const
+{
+    return int(scale_size(m_mainwnd_x, true));
+}
+
+int
+usrsettings::mainwnd_y_min () const
+{
+    return int(scale_size_y(m_mainwnd_y, true));
 }
 
 /**
@@ -660,15 +704,11 @@ usrsettings::scale_font_size (int value) const
  */
 
 void
-usrsettings::mainwnd_rows (int value)
+usrsettings::mainwnd_rows (int r)
 {
-    if
-    (
-        (value >= screenset::c_minimum_rows) &&
-        (value <= screenset::c_maximum_rows)
-    )
+    if ((r >= screenset::c_min_rows) && (r <= screenset::c_max_rows))
     {
-        m_mainwnd_rows = value;
+        m_mainwnd_rows = r;
         normalize();
     }
 }
@@ -676,20 +716,16 @@ usrsettings::mainwnd_rows (int value)
 /**
  * \setter m_mainwnd_cols
  *      This value is not modified unless the value parameter is
- *      between 8 and 8, inclusive.  The default value is 8.
+ *      between 4 and 12, inclusive.  The default value is 8.
  *      Dependent values are recalculated after the assignment.
  */
 
 void
-usrsettings::mainwnd_cols (int value)
+usrsettings::mainwnd_cols (int c)
 {
-    if
-    (
-        (value >= screenset::c_minimum_columns) &&
-        (value <= screenset::c_maximum_columns)
-    )
+    if ((c >= screenset::c_min_columns) && (c <= screenset::c_max_columns))
     {
-        m_mainwnd_cols = value;
+        m_mainwnd_cols = c;
         normalize();
     }
 }
@@ -706,7 +742,10 @@ usrsettings::seqchars_x (int value)
     if (value == 15)
     {
         m_seqchars_x = value;
-        normalize();
+
+        /*
+         * Unnecessary: normalize();
+         */
     }
 }
 
@@ -722,24 +761,30 @@ usrsettings::seqchars_y (int value)
     if (value == 5)
     {
         m_seqchars_y = value;
-        normalize();
+
+        /*
+         * Unnecessary: normalize();
+         */
     }
 }
 
 /**
  * \setter m_mainwid_spacing
  *      This value is not modified unless the value parameter is
- *      between 2 and 16, inclusive.  The default value is 2.
+ *      between 0 and 16, inclusive.  The default value is 2.
  *      Dependent values are recalculated after the assignment.
  */
 
 void
 usrsettings::mainwid_spacing (int value)
 {
-    if (value >= 2 && value <= 16)
+    if (value >= 0 && value <= 16)
     {
         m_mainwid_spacing = value;
-        normalize();
+
+        /*
+         * Unnecessary: normalize();
+         */
     }
 }
 
@@ -984,13 +1029,23 @@ usrsettings::is_default_mainwid_size () const
 bool
 usrsettings::vertically_compressed () const
 {
-    return m_mainwnd_rows > screenset::c_default_rows;
+    return m_mainwnd_rows < screenset::c_default_rows;
 }
 
 bool
 usrsettings::horizontally_compressed () const
 {
-    return m_mainwnd_cols > screenset::c_default_columns;
+    return m_mainwnd_cols < screenset::c_default_columns;
+}
+
+bool
+usrsettings::shrunken () const
+{
+    return
+    (
+        mainwnd_rows() <= screenset::c_default_rows &&
+        mainwnd_cols() < screenset::c_default_columns
+    );
 }
 
 /**

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-06-09
+ * \updates       2021-06-25
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -783,16 +783,10 @@ public:
     /*
      * Not using default at present.  Both could be modified by the normalize()
      * call.  However copying and assignment aren't even used at present.
-     * Comment it out for now.
      */
 
-#if defined USE_USRSETTINGS_COPYING
-    usrsettings (const usrsettings & rhs);
-    usrsettings & operator = (const usrsettings & rhs);
-#else
     usrsettings (const usrsettings & rhs) = delete;
     usrsettings & operator = (const usrsettings & rhs) = delete;
-#endif
 
     virtual void set_defaults () override;
     virtual void normalize () override;
@@ -917,7 +911,7 @@ public:
 
     float window_scale_x () const
     {
-        return m_window_scale;
+        return window_scale();
     }
 
     float window_scale_y () const
@@ -960,16 +954,8 @@ public:
     }
 
     int scale_font_size (int value) const;
-
-    int scale_size (int value) const
-    {
-        return int(m_window_scale * value + 0.5);
-    }
-
-    int scale_size_y (int value) const
-    {
-        return int(m_window_scale_y * value + 0.5);
-    }
+    int scale_size (int value, bool shrinkmore = false) const;
+    int scale_size_y (int value, bool shrinkmore = false) const;
 
     int mainwnd_rows () const
     {
@@ -990,6 +976,7 @@ public:
     bool is_default_mainwid_size () const;
     bool vertically_compressed () const;
     bool horizontally_compressed () const;
+    bool shrunken () const;
 
     int seqs_in_set () const
     {
@@ -1036,6 +1023,8 @@ public:
 
     int mainwnd_x () const;
     int mainwnd_y () const;
+    int mainwnd_x_min () const;
+    int mainwnd_y_min () const;
 
     int zoom () const
     {

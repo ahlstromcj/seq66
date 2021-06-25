@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-06-24
+ * \updates       2021-06-25
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -104,6 +104,9 @@ namespace seq66
 
 static const int sc_button_padding = 0;
 
+static const int c_minimum_width   = 300;
+static const int c_minimum_height  = 180;
+
 /**
  *  The Qt 5 version of mainwid.
  *
@@ -153,6 +156,10 @@ qslivegrid::qslivegrid
     );
     m_msg_box->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     m_msg_box->setDefaultButton(QMessageBox::No);
+
+    int w = usr().scale_size(c_minimum_width);
+    int h = usr().scale_size_y(c_minimum_height);
+    ui->frame->setMinimumSize(QSize(w, h));         /* versus 660 x 180 */
 
     ui->setNameLabel->hide();
     ui->setNumberLabel->hide();
@@ -346,7 +353,6 @@ qslivegrid::clear_loop_buttons ()
 void
 qslivegrid::measure_loop_buttons ()
 {
-    /// EXPERIMENTAL COMMENT OUT m_slot_w = m_slot_h = m_x_max = m_y_max = 0;
     m_x_max = m_y_max = 0;
     m_x_min = m_y_min = 99999;
     for (int column = 0; column < columns(); ++column)

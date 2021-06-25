@@ -469,7 +469,7 @@ smanager::close_session (std::string & msg, bool ok)
  *  Detaches the session, with an option to handle errors in the session.
  *  It does not stop the performer.
  *
- *  Compare to close_session().
+ *  Compare to close_session().  Note sure where to go with this one.
  *
  * \param [out] msg
  *      Provides a place to store any error message for the caller to use.
@@ -490,10 +490,13 @@ smanager::detach_session (std::string & /*msg*/, bool ok)
     if (result)
     {
         result = ok;
-#if 0
-        if (result && perf()->modified())
-            (void) save_session(msg, result);
-#endif
+
+        /*
+         * Possible code:
+         *
+         *  if (result && perf()->modified())
+         *      (void) save_session(msg, result);
+         */
     }
     usr().in_session(false);                            /* global flag      */
     return result;

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2021-05-22
+ * \updates       2021-06-25
  * \license       GNU GPLv2 or above
  *
  *  This object is just a QPushButton with number label.  See seq66::qslivegrid

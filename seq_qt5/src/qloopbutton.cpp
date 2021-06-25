@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-06-23
+ * \updates       2021-06-25
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -189,12 +189,6 @@ qloopbutton::qloopbutton
     m_text_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     make_checkable();
     set_checked(m_is_checked);
-
-    bool shrunken = usr().mainwnd_rows() == 4 && usr().mainwnd_cols() == 4;
-    if (shrunken)
-        setMinimumSize(QSize(20, 20));
-    else
-        setMinimumSize(QSize(30, 30));
 
     /*
      * We're trying to mitigate issue #50, where the white text of the

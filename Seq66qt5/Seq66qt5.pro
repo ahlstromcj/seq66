@@ -35,12 +35,12 @@ CONFIG(debug, debug|release) {
 contains (CONFIG, rtmidi) {
    TARGET = qrseq66
    MIDILIB = rtmidi
-   DEFINES += "SEQ66_MIDILIB=\\\"rtmidi\\\""
+   DEFINES += "SEQ66_MIDILIB=rtmidi"
    DEFINES += "SEQ66_RTMIDI_SUPPORT=1"
 } else {
    TARGET = qpseq66
    MIDILIB = portmidi
-   DEFINES += "SEQ66_MIDILIB=\\\"portmidi\\\""
+   DEFINES += "SEQ66_MIDILIB=portmidi"
    DEFINES += "SEQ66_PORTMIDI_SUPPORT=1"
 }
 message($${DEFINES})

@@ -570,13 +570,6 @@ private:
     bool m_seq_in_edit;
 
     /**
-     *  Used in seqmenu and seqedit.  It allows a sequence editor window to
-     *  pop up if not already raised, in seqedit::timeout().
-
-    bool m_raise;
-     */
-
-    /**
      *  Set by seqedit for the handle_action() function to use.
      */
 
@@ -1075,18 +1068,6 @@ public:
     {
         return m_seq_in_edit;
     }
-
-#if 0
-    void set_raise (bool edit)
-    {
-        m_raise = edit;
-    }
-
-    bool get_raise (void) const
-    {
-        return m_raise;
-    }
-#endif
 
     /*
      * Documented at the definition point in the cpp module.

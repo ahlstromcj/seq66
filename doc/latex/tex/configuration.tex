@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-06-13
+% \update      2021-06-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -17,22 +17,32 @@
 \section{Seq66 Configuration}
 \label{sec:configuration}
 
-   \textsl{Seq66} configuration has become a lot more elaborate.
-   Fortunately, most of the configuration is well documented with-in the
-   \textsl{Seq66} "man" page and in the configuration files themselves.
-   Therefore, this new discussion will be less prolix than it was for
-   \textsl{Sequencer64}.  Here are the topics to discuss:
+   \textsl{Seq66} configuration has become more elaborate with time, with more
+   configuration files (\textsl{feature-itis?}).
+   Fortunately, configuration items are well documented in the
+   \textsl{Seq66} "man" page and in the configuration files.
+   Therefore, this new discussion will merely summarize the options.
+   Here are the topics to discuss:
 
    \begin{itemize}
-      \item \textbf{Command-line Options}
-      \item \textbf{'rc' File}
-      \item \textbf{'usr' File}
-      \item \textbf{'ctrl' File}
-      \item \textbf{'mutes' File}
-      \item \textbf{'drums' File}
-      \item \textbf{'palette' File}
-      \item \textbf{'playlist' File}
-      \item \textbf{'qss' File}
+      \item \textbf{Command-line Options}. Useful with desktop shortcuts.
+      \item \textbf{'rc' File}. Mostly I/O port options, JACK options, recent
+         files.  Also now specifies other files to be used.
+      \item \textbf{'usr' File}. Local names for busses and instruments,
+         user-interface settings, sessions... Some options that fit either the
+         GUI or the command-line application could be moved to the 'rc' file.
+      \item \textbf{'ctrl' File}. The keystroke and MIDI control settings have
+         been moved to a separate file for flexibility.
+      \item \textbf{'mutes' File} The mute-groups settings have
+         been moved to a separate file for flexibility.
+      \item \textbf{'drums' File}.  This file supports remapping percussion notes
+         from older drum machines to General MIDI.
+      \item \textbf{'palette' File}. This new file allows replacing the default
+         piano-roll, time, data, and events drawing to be tailored.
+      \item \textbf{'playlist' File}. This new file specifies a file that
+         contains one or more playlists and MIDI controls for them.
+      \item \textbf{'qss' File}.  Qt style-sheets can now tailor the appearance
+      of theme-drawn elements (e.g. the pattern-grid buttons and text controls).
    \end{itemize}
 
    After the first run of \textsl{Seq66},
@@ -51,6 +61,9 @@
 
    The palette file is not automatically generated.  It can be saved from the
    \textbf{Edit / Preferences / Display} tab.
+
+   The style-sheet file can be specified in the 'usr' file's "user UI tweaks"
+   section.
 
    There are also some 'keymap' files.  They are not yet used, but may become a
    feature of \textsl{Seq66} in the future.
@@ -137,10 +150,10 @@
    comment.
 
    \begin{verbatim}
-      3    # grid_style
+      3    # grid_style       # obsolete, by the way
    \end{verbatim}
 
-   We have been trying to replace these kinds of settings with the
+   We have been replacing these kinds of settings with the
    \texttt{name = value} style described below, but there are a few places
    where the old style persists.
 
@@ -409,7 +422,8 @@
             the set size and layout from the default 4x8 = 32 sets layout.
             Consider this option to be experimental. Expect problems.
             To save these options to the 'usr' file, add the
-            \texttt{-{}-user-save} option to the command line.
+            \texttt{-{}-user-save} option to the command line, or edit the
+            'usr' file before running \textsl{Seq66}.
             In that file, the options modified are \texttt{mainwnd\_rows} and
             \texttt{mainwnd\_cols}.
          \item \texttt{scale=WxH}.
@@ -1182,33 +1196,58 @@
 
    \index{usr!user-interface-settings}
    \index{[user-interface-settings]}
+   \index{usr!interface settings}
    This section, new to \textsl{Seq66}, begins with an
    "INI" group marker \texttt{[user-interface-settings]}.
 
    It provides for a feature we will hopefully be able to complete some day:
    the complete specificition of the appearance of the user-interface.
    There is plenty of room to change the appearance of
-   \textsl{Seq66} already!  Please try the settings and see what looks good.
+   \textsl{Seq66} already.
+   Please try the settings and see what looks good.
    Refer to either the sample file or the file generated when \textsl{Seq66}
    first runs.
 
-   \index{usr!grid-style}
-   \index{usr!grid-brackets}
-   \index{usr!mainwnd-rows}
-   \index{usr!mainwnd-cols}
    \index{variset}
-   \index{usr!max-sets}
    \begin{verbatim}
       [user-interface-settings]
-      1       # grid_style
-      2       # grid_brackets
-      4       # mainwnd_rows
-      8       # mainwnd_cols
-      32      # max_sets
+      mainwnd-rows = 4
+      mainwnd-columns = 8
+      mainwnd-spacing = 2
+      default-zoom = 2
+      global-seq-feature = true
+      progress-bar-thick = true
+      inverse-colors = false
+      window-redraw-rate = 40
+      window-scale = 1
+      window-scale-y = 1
    \end{verbatim}
 
    There are a number of additional user-interface options.  See the generated
    or sample 'usr' file for descriptions.  Also see the chapter on palettes.
+
+\subsubsection{'usr' File / User MIDI PPQN}
+\label{subsubsec:usr_file_user_midi_ppqn}
+
+   The long-standing PPQN for \textsl{Seq24} was a value of 192, and
+   \textsl{Seq66} sticks with that default.
+   This value is good for most tunes. But other sequencers allow for higher
+   values. And \textsl{Seq66} allows for some crazy values, ranging from
+   32 to 19200.  If a MIDI file has a different PPQN, it will be rescaled to
+   the default PPQN.  However, one might want to stick with the PPQN
+   specified in the MIDI file, so \textsl{Seq66} allows that as well.
+
+   \index{usr!midi-ppqn}
+   \index{default PPQN}
+   \index{file PPQN}
+   \begin{verbatim}
+      [user-midi-ppqn]
+      default-ppqn = 192
+      use-file-ppqn = false
+   \end{verbatim}
+
+   It is probably best to set \texttt{use-file-ppqn = true}, but that is
+   up to the user.
 
 \subsubsection{'usr' File / User MIDI Settings}
 \label{subsubsec:usr_file_user_midi_settings}
@@ -1216,15 +1255,19 @@
    \index{[user-midi-settings]}
    This section begins with an
    "INI" group marker \texttt{[user-midi-settings]}.
-   It supports files with different PPQN, and and allows one to specify the
+   It allows one to specify the
    global defaults for tempo, beats per measure, and so on.
 
-   \index{usr!midi-ppqn}
    \index{usr!midi-beats-per-measure}
    \index{usr!midi-beats-per-minute}
    \index{usr!midi-beat-width}
    \index{usr!midi-buss-override}
    \index{usr!velocity-override}
+   \index{usr!bpm-precision}
+   \index{usr!bpm-step-increment}
+   \index{usr!bpm-page-increment}
+   \index{usr!midi-bpm-minimum}
+   \index{usr!midi-bpm-maximum}
    \begin{verbatim}
       [user-midi-settings]
       beats-per-bar = 4
@@ -1232,20 +1275,16 @@
       beat-width = 4
       buss-override = -1
       velocity-override = 80     # velocity_override (-1 = 'Free')
+      bpm-precision = 1          # 0, 1, or 2
+      bpm-step-increment = 0.1
+      bpm-page-increment = 5.0
+      bpm-minimum = 0
+      bpm-maximum = 127
    \end{verbatim}
 
    The \texttt{velocity-override} option fixes a long standing (from
    \textsl{Seq24}) bug where the actual incoming note velocity was always
    replaced by a hard-wired value.
-
-   \index{usr!bpm-precision}
-   \index{usr!bpm-step-increment}
-   \index{usr!bpm-page-increment}
-   \begin{verbatim}
-      bpm-precision = 1
-      bpm-step-increment = 0.1
-      bpm-page-increment = 5.0
-   \end{verbatim}
 
    The \texttt{bpm-precision}, \texttt{bpm-step-increment}, and
    \texttt{bpm-page-increment} values allow more precise control over tempo,
@@ -1255,13 +1294,6 @@
    if the BPM field has focus and the Page-Up/Page-Down keys are pressed,
    and new MIDI control values have been added to support coarse MIDI
    control of tempo.
-
-   \index{usr!midi-bpm-minimum}
-   \index{usr!midi-bpm-maximum}
-   \begin{verbatim}
-      bpm-minimum = 0       # midi_bpm_minimum
-      bpm-maximum = 360     # midi_bpm_maximum
-   \end{verbatim}
 
    The \texttt{midi-bpm-minimum} and \texttt{midi-bpm-maximum} settings
    are used in scaling the display of Tempo events.
@@ -1290,9 +1322,11 @@
    This group of options are shown below.
 
    \index{usr!option-daemonize}
+   \index{usr!option-logfile}
    \begin{verbatim}
       [user-options]
-		daemoniz = false
+		daemonize = false
+      log = "seq66.log"
    \end{verbatim}
 
    If this option is not used when running \texttt{seq66cli}, then the
@@ -1300,17 +1334,14 @@
    it.  If this option is in force, then the only way to affect
    \texttt{seq66cli} is to send a signal (e.g. SIGKILL) to it, or use
    MIDI control.
+   However, currently we have issue with this option, so one should run
+   \texttt{seq66cli} in the background from a console or from a desktop shortcut.
 
-   \index{usr!option-logfile}
-   \begin{verbatim}
-      log = "seq66.log"
-   \end{verbatim}
-
-   This log-file is written to the same directory as the 'usr' file,
-   the \textsl{Seq66} configuration directory.
-   If empty, then a valid file-name must be specified
+   The log-file, if specified, is written to the same directory as the 'usr'
+   file, the \textsl{Seq66} configuration directory.
+   If empty, then a valid file-name can be specified
    in the \texttt{-{}-option log=filename.log} option.
-   There's more to the 'usr' configuration file than we've exposed here.
+%  There's more to the 'usr' configuration file than we've exposed here.
 
 \subsubsection{'usr' File / Additional Options}
 \label{subsubsec:usr_file_added_options}

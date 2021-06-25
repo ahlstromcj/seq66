@@ -94,16 +94,7 @@ public:
     virtual void session_display_name (const std::string & dispname) override;
     virtual void session_client_id (const std::string & clid) override;
 
-signals:        /* signals sent by session client callbacks */
-
-#if 0
-	void sig_active (bool isactive);
-	void sig_open ();
-	void sig_save ();
-	void sig_loaded ();
-	void sig_show ();
-	void sig_hide ();
-#endif
+signals:                                /* from session client callbacks    */
 
 private slots:
 

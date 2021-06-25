@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-06-14
+ * \updates       2021-06-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -388,10 +388,10 @@ midicontrolfile::parse_control_sizes
 
     bool result =
     (
-        (rows >= screenset::c_minimum_rows) &&
-        (rows <= screenset::c_maximum_rows) &&
-        (columns >= screenset::c_minimum_columns) &&
-        (columns <= screenset::c_maximum_columns)
+        (rows >= screenset::c_min_rows) &&
+        (rows <= screenset::c_max_rows) &&
+        (columns >= screenset::c_min_columns) &&
+        (columns <= screenset::c_max_columns)
     );
     return result;
 }

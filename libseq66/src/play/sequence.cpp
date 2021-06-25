@@ -168,9 +168,6 @@ sequence::sequence (int ppqn) :
     m_dirty_perf                (true),
     m_dirty_names               (true),
     m_seq_in_edit               (false),
-#if 0
-    m_raise                     (false),
-#endif
     m_status                    (0),
     m_cc                        (0),
     m_scale                     (0),

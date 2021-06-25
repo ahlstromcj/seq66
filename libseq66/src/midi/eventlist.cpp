@@ -1409,31 +1409,23 @@ eventlist::select_note_events
                     stick = er.timestamp();     /* time of the Note On  */
                 }
 
-#define USE_THIS_CONVOLUTED_CHECK
-#if defined USE_THIS_CONVOLUTED_CHECK
-
                 /*
-                 * "tand" indicates that the event start is less than the finish
-                 * parameter, and the event finish is greater than the start
-                 * parameter.
+                 * "tand" indicates that the event start is less than the
+                 * finish parameter, and the event finish is greater than the
+                 * start parameter.
                  *
                  * "tor" is the OR of these two tests, and is needed when the
                  * event start is greater than the finish, which occurs in a
                  * note-off.
                  *
-                 * Not sure why so complex; all we need to know is that both the
-                 * start and end times are within the desired range. However,
-                 * then we cannot click on a note to select it.  Odd!
+                 * Not sure why so complex; all we need to know is that both
+                 * the start and end times are within the desired range.
+                 * However, then we cannot click on a note to select it.  Odd!
                  */
 
                 bool tand = (stick <= tick_f) && (ftick >= tick_s);
                 bool tor = (stick <= tick_f) || (ftick >= tick_s);
                 bool ok = tand || ((stick > ftick) && tor);
-#else
-                bool ok_start = (stick >= tick_s) && (stick <= tick_f);
-                bool ok_finish = (ftick >= tick_s) && (ftick <= tick_f);
-                bool ok = ok_start && ok_finish;
-#endif
                 if (ok)
                 {
                     if (action == select::selecting)

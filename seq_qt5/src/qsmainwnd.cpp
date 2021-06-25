@@ -259,12 +259,13 @@ qsmainwnd::qsmainwnd
 {
     ui->setupUi(this);
 
-    bool shrunken = usr().mainwnd_rows() == 4 && usr().mainwnd_cols() == 4;
-    if (shrunken)
-    {
-        resize(720, 480);                       /* versus 884 x 602 */
-        setMinimumSize(QSize(560, 480));        /* versus 720 x 480 */
-    }
+    bool shrunken = usr().shrunken();           /* more down-scaling?       */
+    int w = usr().mainwnd_x();                  /* normal, maybe scaled     */
+    int h = usr().mainwnd_y();
+    resize(QSize(w, h));                        /* scaled values            */
+    w = usr().mainwnd_x_min();                  /* scaled even smaller      */
+    h = usr().mainwnd_y_min();
+    setMinimumSize(QSize(w, h));                /* minimum values           */
 
     QPoint pt;                                  /* default at (0, 0)        */
     QRect screen = desktop_rectangle(pt);       /* avoids deprecated func   */
@@ -760,24 +761,6 @@ qsmainwnd::qsmainwnd
 
     if (! midifilename.empty())
         m_is_title_dirty = true;
-
-    if (usr().window_is_scaled())
-    {
-        /*
-         * This scales the full GUI, cool!  However, it can be overridden by
-         * the size of the new, larger, qseqeditframe64 frame.  We see the
-         * normal-size window come up, and then it jumps to the larger size.
-         */
-
-        QSize s = size();
-        int h = s.height();
-        int w = s.width();
-        int width = usr().scale_size(w);
-        int height = usr().scale_size_y(h);
-        resize(width, height);
-        if (not_nullptr(m_live_frame))
-            m_live_frame->repaint();
-    }
 
     load_set_master();
     load_mute_master();

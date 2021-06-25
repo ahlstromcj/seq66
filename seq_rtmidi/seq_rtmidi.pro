@@ -34,7 +34,7 @@ CONFIG(debug, debug|release) {
    DEFINES += NDEBUG
 }
 
-DEFINES += "SEQ66_MIDILIB=\\\"rtmidi\\\""
+DEFINES += "SEQ66_MIDILIB=rtmidi"
 DEFINES += "SEQ66_RTMIDI_SUPPORT=1"
 
 HEADERS += \

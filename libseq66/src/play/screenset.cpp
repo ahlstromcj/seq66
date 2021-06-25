@@ -258,24 +258,10 @@ screenset::first_seq () const
 seq::number
 screenset::grid_to_seq (int row, int column) const
 {
-#ifdef USE_RANGE_CORRECTED_VERSION
-    if (row < 0)
-        row = 0;
-    else if (row >= m_rows)
-        row = m_rows - 1;
-
-    if (column < 0)
-        column = 0;
-    else if (column >= m_columns)
-        row = m_columns - 1;
-
-    return offset() + row + m_rows * column;
-#else
     if (row < 0 || row >= m_rows || column < 0 || column >= m_columns)
         return seq::unassigned();
     else
         return offset() + row + m_rows * column;
-#endif
 }
 
 /**

@@ -439,15 +439,7 @@ qseqeventframe::initialize_table ()
 std::string
 qseqeventframe::make_seq_title ()
 {
-#if defined USE_THIS_CODE // I don't like it!
-    std::string title = m_seq->seq_number_string();
-    title += ". \"";
-    title += m_seq->name();
-    title += "\"";
-    return title;
-#else
     return m_seq->name();
-#endif
 }
 
 /**
