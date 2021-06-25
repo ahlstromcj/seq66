@@ -189,7 +189,12 @@ qloopbutton::qloopbutton
     m_text_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     make_checkable();
     set_checked(m_is_checked);
-    setMinimumSize(30, 30);
+
+    bool shrunken = usr().mainwnd_rows() == 4 && usr().mainwnd_cols() == 4;
+    if (shrunken)
+        setMinimumSize(QSize(20, 20));
+    else
+        setMinimumSize(QSize(30, 30));
 
     /*
      * We're trying to mitigate issue #50, where the white text of the
@@ -563,7 +568,6 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 }
                 initialize_fingerprint();
             }
-            // initialize_fingerprint();
             if (sm_draw_progress_box)
                 draw_progress_box(painter);
 
@@ -795,6 +799,15 @@ qloopbutton::resizeEvent (QResizeEvent * qrep)
     vert_compressed(s.height() < 90);        // hardwired experimentally
     QWidget::resizeEvent(qrep);
 }
+
+#if defined USE_QLOOPBUTTON_SIZEHINT
+
+QSize
+qloopbutton::sizeHint () const
+{
+    return QSize(20, 20);
+}
+#endif
 
 }           // namespace seq66
 

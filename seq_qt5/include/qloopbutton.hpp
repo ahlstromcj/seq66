@@ -243,6 +243,9 @@ private:
     virtual void focusInEvent (QFocusEvent *) override;
     virtual void focusOutEvent (QFocusEvent *) override;
     virtual void resizeEvent (QResizeEvent *) override;
+#if defined USE_QLOOPBUTTON_SIZEHINT
+    virtual QSize sizeHint () const override;
+#endif
 
     bool initialize_text ();
 

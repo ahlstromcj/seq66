@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-06-23
+ * \updates       2021-06-24
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -136,8 +136,7 @@ qslivegrid::qslivegrid
     m_x_min             (0),
     m_x_max             (0),
     m_y_min             (0),
-    m_y_max             (0),
-    m_base_width        (0)
+    m_y_max             (0)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setFocusPolicy(Qt::StrongFocus);
@@ -347,7 +346,8 @@ qslivegrid::clear_loop_buttons ()
 void
 qslivegrid::measure_loop_buttons ()
 {
-    m_slot_w = m_slot_h = m_x_max = m_y_max = 0;
+    /// EXPERIMENTAL COMMENT OUT m_slot_w = m_slot_h = m_x_max = m_y_max = 0;
+    m_x_max = m_y_max = 0;
     m_x_min = m_y_min = 99999;
     for (int column = 0; column < columns(); ++column)
     {
@@ -384,8 +384,6 @@ qslivegrid::measure_loop_buttons ()
             }
         }
     }
-    if (m_base_width == 0)
-        m_base_width = m_slot_w;
 }
 
 /**
@@ -449,7 +447,7 @@ qslivegrid::create_one_button (int seqno)
             result = new qslotbutton(this, seqno, snstring, hotkey);
 
         ui->loopGridLayout->addWidget(result, row, column);
-        result->setFixedSize(btnsize);
+        result->setFixedSize(btnsize);  // tiny height: result->resize(btnsize);
         result->show();
         result->setEnabled(enabled);
         setup_button(result);

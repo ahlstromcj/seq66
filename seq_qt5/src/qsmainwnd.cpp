@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-06-22
+ * \updates       2021-06-24
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -259,6 +259,13 @@ qsmainwnd::qsmainwnd
 {
     ui->setupUi(this);
 
+    bool shrunken = usr().mainwnd_rows() == 4 && usr().mainwnd_cols() == 4;
+    if (shrunken)
+    {
+        resize(720, 480);                       /* versus 884 x 602 */
+        setMinimumSize(QSize(560, 480));        /* versus 720 x 480 */
+    }
+
     QPoint pt;                                  /* default at (0, 0)        */
     QRect screen = desktop_rectangle(pt);       /* avoids deprecated func   */
     int x = (screen.width() - width()) / 2;     /* center on the screen     */
@@ -274,12 +281,20 @@ qsmainwnd::qsmainwnd
     int ppqn = perf().ppqn();
     std::string pstring = std::to_string(ppqn);
     set_ppqn_text(pstring);
-    ui->lineEditPpqn->setReadOnly(true);
-    connect
-    (
-        ui->cmb_ppqn, SIGNAL(currentTextChanged(const QString &)),
-        this, SLOT(update_ppqn_by_text(const QString &))
-    );
+    if (shrunken)
+    {
+        ui->lineEditPpqn->hide();
+        ui->label_2->hide();        /* Hide the "PPQN" label too */
+    }
+    else
+    {
+        ui->lineEditPpqn->setReadOnly(true);
+        connect
+        (
+            ui->cmb_ppqn, SIGNAL(currentTextChanged(const QString &)),
+            this, SLOT(update_ppqn_by_text(const QString &))
+        );
+    }
 
     /*
      * Global output buss items.  Connected later on in this constructor.
@@ -507,9 +522,16 @@ qsmainwnd::qsmainwnd
      * L/R Loop button.
      */
 
-    ui->btnLoop->setChecked(perf().looping());
-    connect(ui->btnLoop, SIGNAL(clicked(bool)), this, SLOT(set_loop(bool)));
-    qt_set_icon(loop_xpm, ui->btnLoop);
+    if (shrunken)
+    {
+        ui->btnLoop->hide();
+    }
+    else
+    {
+        ui->btnLoop->setChecked(perf().looping());
+        connect(ui->btnLoop, SIGNAL(clicked(bool)), this, SLOT(set_loop(bool)));
+        qt_set_icon(loop_xpm, ui->btnLoop);
+    }
 
     /*
      * Song Play (Live vs Song) button.
@@ -537,12 +559,19 @@ qsmainwnd::qsmainwnd
      * Performance Editor button.
      */
 
-    connect
-    (
-        ui->btnPerfEdit, SIGNAL(clicked(bool)),
-        this, SLOT(load_qperfedit(bool))
-    );
-    qt_set_icon(perfedit_xpm, ui->btnPerfEdit);
+    if (shrunken)
+    {
+        ui->btnPerfEdit->hide();
+    }
+    else
+    {
+        connect
+        (
+            ui->btnPerfEdit, SIGNAL(clicked(bool)),
+            this, SLOT(load_qperfedit(bool))
+        );
+        qt_set_icon(perfedit_xpm, ui->btnPerfEdit);
+    }
 
     /*
      * B:B:T vs H:M:S button.
@@ -1508,30 +1537,11 @@ qsmainwnd::refresh ()
     }
     else
     {
-        /*
-         * We now use the on_group_learn() callback to change this.
-         *
-         *  qt_set_icon
-         *  (
-         *      perf().is_group_learn() ? learn2_xpm : learn_xpm,
-         *      ui->button_learn
-         *  );
-         */
-
         if (m_is_title_dirty)
         {
-            if (not_nullptr(m_live_frame))
-            {
-                if (perf().playlist_active())
-                {
-                    m_live_frame->set_playlist_name(perf().playlist_song());
-                    update_window_title(perf().playlist_song_basename());
-                }
-                else
-                    m_live_frame->set_playlist_name(rc().midi_filename());
-            }
+            (void) refresh_captions();
             m_is_title_dirty = false;
-            update_window_title();
+            update_window_title();      /* puts current MIDI file in title  */
         }
     }
     if (m_is_playing_now != perf().is_running())
@@ -3442,6 +3452,7 @@ qsmainwnd::update_song_action (int playaction)
     {
         perf().next_song_mode();
         m_is_title_dirty = true;
+        update_window_title(perf().playlist_song_basename());
     }
 }
 
@@ -3505,16 +3516,27 @@ qsmainwnd::resizeEvent (QResizeEvent * /*r*/ )
 bool
 qsmainwnd::recreate_all_slots ()
 {
+    bool result = refresh_captions();
+    if (result)
+        result = m_live_frame->recreate_all_slots();
+
+    return result;
+}
+
+bool
+qsmainwnd::refresh_captions ()
+{
     bool result = not_nullptr(m_live_frame);
     if (result)
     {
         if (perf().playlist_active())
-        {
             m_live_frame->set_playlist_name(perf().playlist_song());
-            update_window_title(perf().playlist_song_basename());
-        }
-        result = m_live_frame->recreate_all_slots();
+        else
+            m_live_frame->set_playlist_name(rc().midi_filename());
     }
+    if (perf().playlist_active())
+        update_window_title(perf().playlist_song_basename());
+
     return result;
 }
 

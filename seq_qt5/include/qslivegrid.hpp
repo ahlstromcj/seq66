@@ -144,10 +144,6 @@ private:                                // overrides of event handlers
     virtual void keyReleaseEvent (QKeyEvent *) override;
     virtual void changeEvent (QEvent *) override;
 
-    /*
-     * virtual QSize sizeHint () const override;
-     */
-
 private:
 
     seq::number seq_id_from_xy (int click_x, int click_y);
@@ -226,12 +222,6 @@ private:
     int m_x_max;
     int m_y_min;
     int m_y_max;
-
-    /**
-     *  Holds the initial width of the button, useful in scaling font size.
-     */
-
-    int m_base_width;
 
 };              // class qslivegrid
 

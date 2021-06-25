@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2020-11-21
+% \update      2021-06-24
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -113,15 +113,17 @@
    use the \textsl{JACK} audio/MIDI subsystem (on \textsl{Linux}).
    In the 'rc' file, look for the following line:
 
-\begin{verbatim}
-   0   # with_jack_midi
-\end{verbatim}
+   \begin{verbatim}
+      [jack-transport]
+      jack-midi = false
+   \end{verbatim}
 
    And change it to:
 
-\begin{verbatim}
-   1   # with_jack_midi
-\end{verbatim}
+   \begin{verbatim}
+      [jack-transport]
+      jack-midi = true
+   \end{verbatim}
 
    Another first-time modification to consider is using virtual ports (option
    \texttt{--manual-ports}) versus the automatic port connections
@@ -132,16 +134,16 @@
 
 \begin{verbatim}
    [manual-ports]
-   0   # flag for manual (virtual) ALSA or JACK ports
-   16  # number of manual/virtual ports
+   virtual-ports = false   # 'true' = manual (virtual) ALSA or JACK ports
+   output-port-count = 8   # number of manual/virtual output ports
+   input-port-count = 4    # number of manual/virtual input ports
 \end{verbatim}
 
-   And change them to:
+   And change the virtual-ports line to:
 
 \begin{verbatim}
    [manual-ports]
-   1   # flag for manual (virtual) ALSA or JACK ports
-   4   # number of manual/virtual ports
+   virtual-ports = true    # 'true' = manual (virtual) ALSA or JACK ports
 \end{verbatim}
 
    It is then important to start \texttt{qseq66} in the normal manner again,
@@ -365,8 +367,9 @@
 
    \index{sessions!ui}
    This section describes the \textsl{Session} tab in the main
-   \textsl{Seq66} window.  At present, this tab is just informative.  It
-   displays the following bits of information that \textsl{Seq66} has received
+   \textsl{Seq66} window.  This tab is merely informative and
+   \textsl{read-only}.
+   It displays the following bits of information that \textsl{Seq66} has received
    from \textsl{NSM} via the \texttt{nmsd} daemon:
 
    \begin{itemize}
@@ -380,10 +383,11 @@
          possible to configure \textsl{NSM} to use a specific port number.
       \item Display-name for the session.
       \item The generated client ID for the session.
-      \item The log of action of the session manager. Not yet supported.
+      \item The log of action of the session manager. Not yet supported,
+         though one can see what is happening by running in a console window.
    \end{itemize}
 
-\subsubsection{Seq66 Session Management / File Menu}
+\subsubsection{Seq66 Session Management / NSM / File Menu}
 \label{subsubsec:sessions_file_menu}
 
    The author of \textsl{NSM} has provided documentation for session-management
@@ -398,8 +402,7 @@
    \caption*{File Menu When Running Under NSM}
 \end{figure}
 
-   The following items describe the menu entries.  Some of these may be in
-   progress or still need to be enforced.
+   The following items describe the menu entries.
 
    \begin{itemize}
       \item \textbf{New MIDI File}.
@@ -451,6 +454,41 @@
 
    At some point we would like to present a small tutorial showing a session
    under \textsl{JACK}.
+
+   Also note that NSM can invoke or kill applications via
+   \textsl{signals}, as explained in 
+   \sectionref{subsec:sessions_signals}.
+
+\subsubsection{Seq66 Session Management / NSM / Debugging}
+\label{subsubsec:sessions_debugging}
+
+   This section is oriented towards advanced users who found a problem running
+   \textsl{Seq66} and want to track it down themselves.  The issue is that we
+   need to start the application under the debugger, or start it under NSM and
+   somehow attach to \textsl{Seq66} before it starts running.  Another issue is
+   that we have found that, at least on the same host, an NSM session
+   \textsl{must} be open before \textsl{Seq66} can attach to it, even if the
+   correct \texttt{NSM\_URL} is provided.
+   So we have to open a session, get the proper URL, configure it in the 'usr'
+   file, and then start \textsl{Seq66} under the debugger.
+   Here are the steps:
+
+   \begin{enumerate}
+      \item Start \textsl{non-session-manager} from a command-line console.
+         Write down the URL that it advertises.
+      \item Prepare a session for the executable as per earlier instructions.
+         Once \texttt{qseq66} starts, immediately exit it, and leave the session
+         open.
+      \item Open the proper 'usr' file (usually \texttt{qseq66.usr}) in a 
+         text editor.  Set variable "session = nsm", and set the variable "url"
+         to the value that was advertised.
+      \item Now start \texttt{qseq66} in a debugger.
+      \item Set a breakpoint in \texttt{clinsmanager::detect\_session()}.
+   \end{enumerate}
+   
+   Now you can step through and see where NSM and Seq66 are getting mixed up.
+   Also check the session directory afterward to make the configuration
+   (and any MIDI files) are in good shape.
 
 \subsection{Seq66 Session Management / Signals}
 \label{subsec:sessions_signals}
