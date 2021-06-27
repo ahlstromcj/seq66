@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-06-25
+ * \updates       2021-06-26
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -118,7 +118,7 @@ namespace seq66
  *  that can go well for both width and height.
  */
 
-const double c_window_scale_min         = 0.8f;
+const double c_window_scale_min         = 0.5;  // 0.8f
 const double c_window_scale_default     = 1.0f;
 const double c_window_scale_max         = 3.0f;
 
@@ -167,7 +167,7 @@ const int c_text_x =  6;            /* does not include the inner padding   */
 const int c_text_y = 12;            /* does include the inner padding       */
 
 /**
- *  Constants for the mainwid class.  The c_seqchars_x and c_seqchars_y
+ *  Constants for the main window, etc. The c_seqchars_x and c_seqchars_y
  *  constants help define the "seqarea" size.  These look like the number
  *  of characters per line and the number of lines of characters, in a
  *  pattern/sequence box.
@@ -180,9 +180,6 @@ const int c_seqchars_y =  5;
  *  The c_seqarea_x and c_seqarea_y constants are derived from the width
  *  and heights of the default character set, and the number of characters
  *  in width, and the number of lines, in a pattern/sequence box.
- *
- *  Compare these two constants to c_seqarea_seq_x(y), which was in
- *  mainwid.h, but is now in this file.
  */
 
 const int c_seqarea_x = c_text_x * c_seqchars_x;
@@ -195,7 +192,7 @@ const int c_seqarea_y = c_text_y * c_seqchars_y;
  *  useful to make these values user-configurable.
  */
 
-const int c_mainwid_spacing = 2;            // try 4 or 6 instead of 2
+const int c_mainwnd_spacing = 2;            // try 4 or 6 instead of 2
 
 /**
  *  Default constructor.
@@ -210,11 +207,12 @@ usrsettings::usrsettings () :
      * [user-interface-settings]
      */
 
+    m_option_bits               (option_none),
     m_mainwnd_rows              (screenset::c_default_rows),
     m_mainwnd_cols              (screenset::c_default_columns),
     m_window_scale              (c_window_scale_default),
     m_window_scale_y            (c_window_scale_default),
-    m_mainwid_spacing           (0),
+    m_mainwnd_spacing           (0),
     m_current_zoom              (0),            // 0 is unsafe, but a feature
     m_global_seq_feature_save   (true),
     m_seqedit_scale             (c_scales_off),
@@ -313,11 +311,12 @@ usrsettings::set_defaults ()
 {
     m_midi_buses.clear();
     m_instruments.clear();
+    m_option_bits = option_none;
     m_mainwnd_rows = screenset::c_default_rows;    // range: 4-8
     m_mainwnd_cols = screenset::c_default_columns; // range: 8-8
     m_window_scale = c_window_scale_default;    // range: 0.5 to 1.0 to 3.0
     m_window_scale_y = c_window_scale_default;
-    m_mainwid_spacing = c_mainwid_spacing;      // range: 2-6, try 4 or 6
+    m_mainwnd_spacing = c_mainwnd_spacing;      // range: 2-6, try 4 or 6
     m_current_zoom = SEQ66_DEFAULT_ZOOM;        // range: 1-128
     m_global_seq_feature_save = true;
     m_seqedit_scale = c_scales_off;             // scales::off to < scales::max
@@ -402,10 +401,13 @@ usrsettings::normalize ()
     m_seqs_in_set = m_mainwnd_rows * m_mainwnd_cols;
     m_gmute_tracks = m_seqs_in_set * m_seqs_in_set;
     m_total_seqs = m_seqs_in_set * c_max_sets;
-    if (shrunken())
-    {
-        m_window_scale = m_window_scale_y = 0.75;
-    }
+
+    /*
+     * Let's keep rows/columns separate from scaling, and keep shrunken()
+     * merely to detect the need to hide some buttons.
+     *
+     * if (shrunken()) { (void) window_scale(0.80, 0.75); }
+     */
 }
 
 std::string
@@ -431,13 +433,17 @@ usrsettings::session_manager_name () const
 void
 usrsettings::session_manager (const std::string & sm)
 {
-    session value = session::none;
-    if (sm == "nsm")
-        value = session::nsm;
-    else if (sm == "lash")
-        value = session::lash;
+    if (! test_option_bit(option_session_mgr))
+    {
+        session value = session::none;
+        if (sm == "nsm")
+            value = session::nsm;
+        else if (sm == "lash")
+            value = session::lash;
 
-    m_session_manager = value;
+        m_session_manager = value;
+        set_option_bit(option_session_mgr);
+    }
 }
 
 int
@@ -654,14 +660,16 @@ usrsettings::window_scale (float winscale, float winscaley)
         winscale >= c_window_scale_min &&
         winscale <= c_window_scale_max
     );
-    if (result)
+    if (result && ! test_option_bit(option_scale))
+    {
         m_window_scale = winscale;
+        set_option_bit(option_scale);
 
-    if (winscaley >= c_window_scale_min && winscaley <= c_window_scale_max)
-        m_window_scale_y = winscaley;
-    else
-        m_window_scale_y = winscale;
-
+        if (winscaley >= c_window_scale_min && winscaley <= c_window_scale_max)
+            m_window_scale_y = winscaley;
+        else
+            m_window_scale_y = winscale;
+    }
     return result;
 }
 
@@ -680,6 +688,14 @@ usrsettings::parse_window_scale (const std::string & source)
         }
         else
             result = window_scale(value1);
+    }
+    else
+    {
+        if (! source.empty())
+        {
+            double value = std::stod(source);
+            result = window_scale(value);
+        }
     }
     return result;
 }
@@ -708,8 +724,12 @@ usrsettings::mainwnd_rows (int r)
 {
     if ((r >= screenset::c_min_rows) && (r <= screenset::c_max_rows))
     {
-        m_mainwnd_rows = r;
-        normalize();
+        if (! test_option_bit(option_rows))
+        {
+            m_mainwnd_rows = r;
+            normalize();
+            set_option_bit(option_rows);
+        }
     }
 }
 
@@ -725,8 +745,12 @@ usrsettings::mainwnd_cols (int c)
 {
     if ((c >= screenset::c_min_columns) && (c <= screenset::c_max_columns))
     {
-        m_mainwnd_cols = c;
-        normalize();
+        if (! test_option_bit(option_columns))
+        {
+            m_mainwnd_cols = c;
+            normalize();
+            set_option_bit(option_columns);
+        }
     }
 }
 
@@ -769,18 +793,18 @@ usrsettings::seqchars_y (int value)
 }
 
 /**
- * \setter m_mainwid_spacing
+ * \setter m_mainwnd_spacing
  *      This value is not modified unless the value parameter is
  *      between 0 and 16, inclusive.  The default value is 2.
  *      Dependent values are recalculated after the assignment.
  */
 
 void
-usrsettings::mainwid_spacing (int value)
+usrsettings::mainwnd_spacing (int value)
 {
     if (value >= 0 && value <= 16)
     {
-        m_mainwid_spacing = value;
+        m_mainwnd_spacing = value;
 
         /*
          * Unnecessary: normalize();
@@ -822,19 +846,23 @@ usrsettings::default_ppqn (int value)
 void
 usrsettings::midi_ppqn (int value)
 {
-    if (value >= SEQ66_MINIMUM_PPQN && value <= SEQ66_MAXIMUM_PPQN)
+    if (! test_option_bit(option_ppqn))
     {
-        m_midi_ppqn = value;
-    }
-    else
-    {
-        if (value == 0)
-            m_use_file_ppqn = true;
-
-        if (m_use_file_ppqn)
+        if (value >= SEQ66_MINIMUM_PPQN && value <= SEQ66_MAXIMUM_PPQN)
+        {
             m_midi_ppqn = value;
+        }
         else
-            m_midi_ppqn = default_ppqn();
+        {
+            if (value == 0)
+                m_use_file_ppqn = true;
+
+            if (m_use_file_ppqn)
+                m_midi_ppqn = value;
+            else
+                m_midi_ppqn = default_ppqn();
+        }
+        set_option_bit(option_ppqn);
     }
 }
 
@@ -919,7 +947,13 @@ void
 usrsettings::midi_buss_override (bussbyte buss)
 {
     if (is_valid_buss(buss))                /* good value or a null value   */
-        m_midi_buss_override = buss;
+    {
+        if (! test_option_bit(option_buss))
+        {
+            m_midi_buss_override = buss;
+            set_option_bit(option_buss);
+        }
+    }
 }
 
 void
@@ -1017,7 +1051,7 @@ usrsettings::is_variset () const
 }
 
 bool
-usrsettings::is_default_mainwid_size () const
+usrsettings::is_default_mainwnd_size () const
 {
     return
     (
@@ -1038,14 +1072,22 @@ usrsettings::horizontally_compressed () const
     return m_mainwnd_cols < screenset::c_default_columns;
 }
 
+/**
+ *  The primary use of this function is to see if some buttons should be hidden in
+ *  the main window, to allow a smaller size.
+ */
+
 bool
 usrsettings::shrunken () const
 {
-    return
-    (
-        mainwnd_rows() <= screenset::c_default_rows &&
-        mainwnd_cols() < screenset::c_default_columns
-    );
+    bool result =
+        (mainwnd_rows() <= screenset::c_default_rows) &&
+        (mainwnd_cols() < screenset::c_default_columns);
+
+    if (! result)
+        result = (m_window_scale < 0.80) || (m_window_scale_y < 0.75);
+
+    return result;
 }
 
 /**
@@ -1090,10 +1132,10 @@ usrsettings::dump_summary ()
     printf
     (
         "   seqchars_x(), _y() = %d, %d\n"
-        "   mainwid_spacing() = %d\n"
+        "   mainwnd_spacing() = %d\n"
         ,
         seqchars_x(), seqchars_y(),
-        mainwid_spacing()
+        mainwnd_spacing()
     );
     printf("\n");
     printf

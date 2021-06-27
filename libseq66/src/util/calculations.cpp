@@ -944,7 +944,7 @@ tempo_us_to_bytes (midibyte t[3], int tempo_us)
 
 /**
  *  Converts a tempo value to a MIDI note value for the purpose of displaying
- *  a tempo value in the mainwid, seqdata section (hopefully!), and the
+ *  a tempo value in the mainwnd, seqdata section (hopefully!), and the
  *  perfroll.  It implements the following linear equation, with clamping just
  *  in case.
  *
@@ -1067,7 +1067,7 @@ combine_bytes (midibyte b0, midibyte b1)
  *
  * \param note
  *      The note value used for displaying the tempo in the seqdata pane, the
- *      perfroll, and in a mainwid slot.
+ *      perfroll, and in a mainwnd slot.
  *
  * \return
  *      Returns the tempo in beats/minute.

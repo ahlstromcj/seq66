@@ -2606,8 +2606,8 @@ public:
         return master().is_screenset_valid(sset);
     }
 
-    bool toggle_other_seqs (seq::number seqno, bool isshiftkey);   /* mainwid   */
-    bool toggle_other_names (seq::number seqno, bool isshiftkey);  /* perfnames */
+    bool toggle_other_seqs (seq::number seqno, bool isshiftkey);
+    bool toggle_other_names (seq::number seqno, bool isshiftkey);
 
     /**
      *  Toggles sequences.  Useful in perfnames, taken from perfnames ::

@@ -271,9 +271,9 @@ usrfile::parse ()
             usr().mainwnd_cols(scratch);
             (void) next_data_line(file);
             (void) next_data_line(file); // usr().max_sets(scratch);
-            (void) next_data_line(file); // usr().mainwid_border(scratch);
+            (void) next_data_line(file); // usr().mainwnd_border(scratch);
             sscanf(scanline(), "%d", &scratch);
-            usr().mainwid_spacing(scratch);
+            usr().mainwnd_spacing(scratch);
             (void) next_data_line(file);
             (void) next_data_line(file); // usr().control_height(scratch);
             sscanf(scanline(), "%d", &scratch);
@@ -320,7 +320,7 @@ usrfile::parse ()
         scratch = get_integer(file, tag, "mainwnd-columns");
         usr().mainwnd_cols(scratch);
         scratch = get_integer(file, tag, "mainwnd-spacing");
-        usr().mainwid_spacing(scratch);
+        usr().mainwnd_spacing(scratch);
         scratch = get_integer(file, tag, "default-zoom");
         usr().zoom(scratch);
 
@@ -803,7 +803,7 @@ usrfile::write ()
 
     write_integer(file, "mainwnd-rows", usr().mainwnd_rows());
     write_integer(file, "mainwnd-columns", usr().mainwnd_cols());
-    write_integer(file, "mainwnd-spacing", usr().mainwid_spacing());
+    write_integer(file, "mainwnd-spacing", usr().mainwnd_spacing());
     write_integer(file, "default-zoom", usr().zoom());
     write_boolean(file, "global-seq-feature", usr().global_seq_feature());
     write_boolean(file, "progress-bar-thick", usr().progress_bar_thick());

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-06-25
+ * \updates       2021-06-26
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -104,6 +104,25 @@ class usrsettings final : public basesettings
 private:
 
     /**
+     *  Provides bits to be set so that key command-line options are not later
+     *  modified by entries in the 'usr' file.
+     */
+
+    enum option_bits
+    {
+        option_none         = 0x0000,
+        option_rows         = 0x0001,
+        option_columns      = 0x0002,
+        option_scale        = 0x0004,
+        option_daemon       = 0x0008,
+        option_log          = 0x0010,
+        option_buss         = 0x0020,
+        option_inverse      = 0x0040,
+        option_session_mgr  = 0x0080,
+        option_ppqn         = 0x0100
+    };
+
+    /**
      *  Indicates what, if any, session manager will be used.
      */
 
@@ -117,7 +136,7 @@ private:
 
     /**
      *  Provides a setting to control the overall style of grid-drawing for
-     *  the pattern slots in mainwid.  These values can be specified in the
+     *  the pattern slots in mainwnd.  These values can be specified in the
      *  [user-interface-settings] section of the "user" configuration file.
      *
      * \var normal
@@ -197,6 +216,13 @@ private:
      */
 
     /**
+     *  Indicates if some settings were already made.  See the setter and
+     *  getter for the enum option_bits list.
+     */
+
+    int m_option_bits;
+
+    /**
      *  Number of rows in the Patterns Panel.  The current value is 4, and if
      *  changed, many other values depend on it.  Together with
      *  m_mainwnd_cols, this value fixes the patterns grid into a 4 x 8 set of
@@ -249,7 +275,7 @@ private:
      *  like it would be useful to make these values user-configurable.
      */
 
-    int m_mainwid_spacing;  /* c_mainwid_spacing = 2; try 4 or 6 instead    */
+    int m_mainwnd_spacing;  /* c_mainwnd_spacing = 2; try 4 or 6 instead    */
 
     /**
      *  Provides the initial zoom value, in units of ticks per pixel.  The
@@ -349,7 +375,7 @@ private:
     int m_window_redraw_rate_ms;
 
     /**
-     *  Constants for the mainwid class.  The m_seqchars_x and
+     *  Constants for the mainwnd class.  The m_seqchars_x and
      *  m_seqchars_y constants help define the "seqarea" size.  These look
      *  like the number of characters per line and the number of lines of
      *  characters, in a pattern/sequence box.
@@ -554,20 +580,6 @@ private:
      */
 
     int m_max_sequence;
-
-    /**
-     *  The width of the main pattern/sequence grid, in pixels.  Affected by
-     *  the m_mainwid_spacing value and m_window_scale.  Replaces c_mainwid_x.
-     */
-
-    int m_mainwid_x;
-
-    /**
-     *  The height of the main pattern/sequence grid, in pixels.
-     *  Replaces c_mainwid_y.
-     */
-
-    int m_mainwid_y;
 
     /**
      *  The hardwired base width of the whole main window.  If m_window_scale
@@ -973,7 +985,7 @@ public:
     }
 
     bool is_variset () const;
-    bool is_default_mainwid_size () const;
+    bool is_default_mainwnd_size () const;
     bool vertically_compressed () const;
     bool horizontally_compressed () const;
     bool shrunken () const;
@@ -1016,9 +1028,9 @@ public:
         return m_seqchars_y;
     }
 
-    int mainwid_spacing () const
+    int mainwnd_spacing () const
     {
-        return scale_size(m_mainwid_spacing);
+        return scale_size(m_mainwnd_spacing);
     }
 
     int mainwnd_x () const;
@@ -1114,6 +1126,16 @@ public:
 
 protected:
 
+    bool test_option_bit (int b)
+    {
+        return bool((m_option_bits & b) == b);
+    }
+
+    void set_option_bit (int b)
+    {
+        m_option_bits |= b;
+    }
+
     void mainwnd_rows (int value);
     void mainwnd_cols (int value);
 
@@ -1124,7 +1146,7 @@ protected:
 
     void seqchars_x (int value);
     void seqchars_y (int value);
-    void mainwid_spacing (int value);
+    void mainwnd_spacing (int value);
 
     /*
      *  These values are calculated from other values in the normalize()
@@ -1133,8 +1155,6 @@ protected:
      *  void seqs_in_set (int value);
      *  void gmute_tracks (int value);
      *  void max_sequence (int value);
-     *  void mainwid_x (int value);
-     *  void mainwid_y (int value);
      */
 
     void dump_summary();
@@ -1369,7 +1389,11 @@ public:         // used in main application module and the usrfile class
 
     void inverse_colors (bool flag)
     {
-        m_inverse_colors = flag;
+        if (! test_option_bit(option_inverse))
+        {
+            m_inverse_colors = flag;
+            set_option_bit(option_inverse);
+        }
     }
 
     void window_redraw_rate (int ms);
@@ -1381,12 +1405,20 @@ public:         // used in main application module and the usrfile class
 
     void option_daemonize (bool flag)
     {
-        m_user_option_daemonize = flag;
+        if (! test_option_bit(option_daemon))
+        {
+            m_user_option_daemonize = flag;
+            set_option_bit(option_daemon);
+        }
     }
 
     void option_use_logfile (bool flag)
     {
-        m_user_use_logfile = flag;
+        if (! test_option_bit(option_log))
+        {
+            m_user_use_logfile = flag;
+            set_option_bit(option_log);
+        }
     }
 
     void option_logfile (const std::string & logfile)

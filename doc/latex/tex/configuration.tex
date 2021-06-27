@@ -429,7 +429,13 @@
          \item \texttt{scale=WxH}.
             \index{scaling}
             This option scales the main window by the given factors,
-            ranging from 0.75 to 3.0.
+            ranging from 0.5 to 3.0. A 1920x1080 screen can be completely
+            filled via \texttt{-{}-option scale=2.175x1.75}. Even when scaled 
+            down, the user can use the mouse of window-manager keystrokes to
+            shrink the window even further.
+            Note that the other tabs in the main window do not adjust
+            appropriately... this feature is meant for live usage of
+            a touch-screen.
          \item \texttt{mutes=value}. Specifies the saving of mute-groups
             to the 'mutes' file, 'midi' file, or 'both' files.
          \item \texttt{virtual=o,i}. Set up the manual-ports option with 'o'

@@ -510,6 +510,7 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                                 if (! arg.empty())
                                     usr().option_use_logfile(true);
                             }
+#if defined USE_OPTION_WID
                             else if (optionname == "wid")
                             {
                                 /*
@@ -517,6 +518,7 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                                  * external frames.
                                  */
                             }
+#endif
                             else if (optionname == "sets")
                             {
                                 result = parse_o_sets(arg);

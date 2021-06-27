@@ -22,7 +22,7 @@
 /**
  * \file          qlfoframe.hpp
  *
- *  This module declares/defines the base class for the main window.
+ *  This module declares/defines the base class for the LFO window.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
@@ -30,11 +30,7 @@
  * \updates       2021-01-11
  * \license       GNU GPLv2 or above
  *
- *  The main window is known as the "Patterns window" or "Patterns panel".  It
- *  holds the "Pattern Editor" or "Sequence Editor".  The main window consists
- *  of two object:  mainwnd, which provides the user-interface elements that
- *  surround the patterns, and mainwid, which implements the behavior of the
- *  pattern slots.
+ *  Provides a way to modulate MIDI controller events.
  */
 
 #include <QFrame>

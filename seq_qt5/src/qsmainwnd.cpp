@@ -24,15 +24,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-06-24
+ * \updates       2021-06-26
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
  *  panel".  It holds the "Pattern Editor" or "Sequence Editor".  The main
  *  window consists of two object:  mainwnd, which provides the user-interface
- *  elements that surround the patterns, and mainwid, which implements the
- *  behavior of the pattern slots.
- *
+ *  elements that surround the patterns, and the live-grid, which implements
+ *  the behavior of the pattern slots.
  *
  * Menu Entries for NSM:
  *
@@ -143,7 +142,7 @@ namespace seq66
 {
 
 /**
- *  The default name of the current (if empty) tune.  Also refere to the
+ *  The default name of the current (if empty) tune.  Also refer to the
  *  function rc().session_midi_filename().
  */
 
@@ -779,6 +778,8 @@ qsmainwnd::qsmainwnd
     if (use_nsm())
         rc().session_midi_filename(s_default_tune);
 
+    (void) refresh_captions();                          /* EXPERIMENTAL     */
+
 #if defined SEQ66_PORTMIDI_SUPPORT
     ui->alsaJackButton->setText("PortMidi");
     ui->jackTransportButton->hide();
@@ -844,10 +845,7 @@ qsmainwnd::set_ppqn_text (const std::string & text)
 }
 
 /*
- *  Note that the "use NSM" flag is set at construction time.  We don't need
- *  to do it here.
- *
- *      use_nsm(true);
+ *  Note that the "use NSM" flag is set at construction time.
  */
 
 void
@@ -1085,7 +1083,7 @@ qsmainwnd::load_into_session (const std::string & selectedfile)
              */
 
             std::string basename = filename_base(filename);
-            rc().session_midi_filename(basename);   /* make NSM name  */
+            rc().session_midi_filename(basename);       /* make NSM name    */
 
             std::string mfilename = rc().midi_filename();
             song_path(mfilename);

@@ -862,7 +862,7 @@ performer::ui_set_clock (bussbyte bus, e_clock clocktype)
 
 /**
  *  Provides a way to format the sequence parameters string for display in the
- *  mainwid or perfnames modules.  This string goes on the bottom-left of
+ *  mainwnd or perfnames modules.  This string goes on the bottom-left of
  *  those user-interface elements.
  *
  *  The format of this string is something like the following example,
@@ -1084,7 +1084,7 @@ performer::client_id_string () const
  *  common code and using it prevents inconsistences.  It assumes values have
  *  already been checked.  It does not set the "is modified" flag, since
  *  adding a sequence by loading a MIDI file should not set it.  Compare
- *  new_sequence(), used by mainwid and seqmenu, with add_sequence(), used by
+ *  new_sequence(), used by mainwnd and seqmenu, with add_sequence(), used by
  *  midifile.  This function deletes the sequence already present with the given
  *  sequence number, and adds the current sequence.
  *
@@ -1137,7 +1137,7 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
  *  done in the install_sequence() function].  It doesn't deal with thrown
  *  exceptions.
  *
- *  This function is called by the seqmenu and mainwid objects to create a new
+ *  This function is called by the seqmenu and mainwnd objects to create a new
  *  sequence.  We now pass this sequence to install_sequence() to better
  *  handle potential memory leakage, and to make sure the sequence gets
  *  counted.  Also, adding a new sequence from the user-interface is a
@@ -3293,7 +3293,7 @@ performer::output_func ()
 
         /*
          * Disabling this setting allows all of the progress bars (seqroll,
-         * perfroll, and the slots in the mainwid) to stay visible where
+         * perfroll, and the slots in the mainwnd) to stay visible where
          * they paused.  However, the progress still restarts when playback
          * begins again, without some other changes.  m_tick is the progress
          * play tick that determines the progress bar location.

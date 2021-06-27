@@ -281,7 +281,7 @@ enum class slot
  *              Shift-click to toggle all other patterns but the one
  *              clicked.
  *          -   Called in seqmenu::toggle_current_sequence(), called in
- *              mainwid to implement clicking on a pattern.
+ *              mainwnd to implement clicking on a pattern.
  *          -   Also used in MIDI control to toggle patterns 0 to 31,
  *              offset by the screen-set.
  *          -   perform::sequence_playing_off(), similarly used in MIDI control.

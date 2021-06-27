@@ -104,7 +104,7 @@ public:
 
     int spacing () const
     {
-        return m_mainwid_spacing;
+        return m_mainwnd_spacing;
     }
 
     seq::number current_seq () const
@@ -253,7 +253,7 @@ protected:
      *  already have counterparts in the usrsettings class.
      */
 
-    int m_mainwid_spacing;      /* from usr().mainwid_spacing(): 2 to 16    */
+    int m_mainwnd_spacing;      /* from usr().mainwnd_spacing(): 2 to 16    */
     int m_space_rows;           /* total space between all rows (e.g. 2*4)  */
     int m_space_cols;           /* ditto for columns (e.g. 2 * 8)           */
 
@@ -265,14 +265,14 @@ protected:
     const int m_screenset_slots;
 
     /**
-     *  Width of a pattern slot in pixels.  Corresponds to the mainwid's
+     *  Width of a pattern slot in pixels.  Corresponds to the live frame's
      *  m_seqarea_x value.
      */
 
     int m_slot_w;
 
     /**
-     *  Height of a pattern slot in pixels.  Corresponds to the mainwid's
+     *  Height of a pattern slot in pixels.  Corresponds to the live frame's
      *  m_seqarea_y value.
      */
 

@@ -278,14 +278,14 @@ qslivegrid::conditional_update ()
  *  Grab frame dimensions for scaled drawing.  Note that the frame size can be
  *  modified by the user dragging a corner, in some window managers.
  *
- *  The slot-sizes are provisional sizes, will be adjusted according to the size
- *  of the layout grid.
+ *  The slot-sizes are provisional sizes, will be adjusted according to the
+ *  size of the layout grid.
  *
  *  Note that this function is called only in paintEvent(), and only when
  *  m_redraw_buttons is true.
  *
  *  Note that m_space_rows and m_space_cols are defined in qslivebase, and are
- *  based ultimately on the usr().mainwid_spacing() value times the number of
+ *  based ultimately on the usr().mainwnd_spacing() value times the number of
  *  rows or columns in the grid.
  */
 
@@ -312,6 +312,7 @@ qslivegrid::create_loop_buttons ()
     for (int column = 0; column < columns(); ++column)
     {
         gridrow buttonrow;                      /* vector for push-buttons  */
+        ui->loopGridLayout->setColumnMinimumWidth(column, m_slot_w + spacing());
         for (int row = 0; row < rows(); ++row, ++seqno)
         {
             qslotbutton * pb = create_one_button(seqno);
@@ -324,8 +325,9 @@ qslivegrid::create_loop_buttons ()
 
 /**
  *  This function just deletes all the pointers in our "2-D" array and then
- *  clears the array completely, so that it has a size of 0 x 0.  This function
- *  is meant to be used when completely recreating the button-layout grid.
+ *  clears the array completely, so that it has a size of 0 x 0.  This
+ *  function is meant to be used when completely recreating the button-layout
+ *  grid.
  */
 
 void
@@ -441,7 +443,6 @@ qslivegrid::create_one_button (int seqno)
         bool enabled = perf().is_screenset_active(seqno);
         const QSize btnsize = QSize(m_slot_w, m_slot_h);
         std::string snstring;
-        ui->loopGridLayout->setColumnMinimumWidth(column, m_slot_w + spacing());
         if (valid)
             snstring = std::to_string(seqno);
 

@@ -27,10 +27,10 @@
  * \updates       2021-05-21
  * \license       GNU GPLv2 or above
  *
- *  This class is the Qt counterpart to the mainwid class.
+ *  This class is the Qt counterpart to the old mainwid class.
  */
 
-#include "cfg/settings.hpp"             /* seq66::usr().mainwid_spacing()   */
+#include "cfg/settings.hpp"             /* seq66::usr().mainwnd_spacing()   */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "qslivebase.hpp"
 
@@ -62,9 +62,9 @@ qslivebase::qslivebase (performer & p, qsmainwnd * window, QWidget * parent) :
     m_parent            (window),
     m_font              (),
     m_bank_id           (p.playscreen_number()),
-    m_mainwid_spacing   (usr().mainwid_spacing()),
-    m_space_rows        (m_mainwid_spacing * p.rows()),
-    m_space_cols        (m_mainwid_spacing * p.columns()),
+    m_mainwnd_spacing   (usr().mainwnd_spacing()),          /* spacing()    */
+    m_space_rows        (m_mainwnd_spacing * p.rows()),
+    m_space_cols        (m_mainwnd_spacing * p.columns()),
     m_screenset_slots   (p.rows() * p.columns()),
     m_slot_w            (0),
     m_slot_h            (0),
@@ -108,10 +108,9 @@ qslivebase::set_bank ()
 }
 
 /**
- *  Roughly similar to mainwid::log_screenset().
- *
- *  Note that, for import, we will have already set the bank to be filled in,
- *  and so must do the work even if the bank ID has not changed.
+ *  Roughly similar to log_screenset().  Note that, for import, we will have
+ *  already set the bank to be filled in, and so must do the work even if the
+ *  bank ID has not changed.
  *
  * \return
  *      Returns true if the bank was successfully changed.

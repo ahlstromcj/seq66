@@ -32,9 +32,10 @@
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
  *  holds the "Pattern Editor" or "Sequence Editor".  The main window consists
- *  of two object:  mainwnd, which provides the user-interface elements that
- *  surround the patterns, and mainwid, which implements the behavior of the
- *  pattern slots.
+ *  of two object:  qsmainwnd, which provides the user-interface elements that
+ *  surround the patterns, and qslivegrid, which implements the behavior of
+ *  the pattern slots.  Also included are tabs for managing mute-groups, MIDI
+ *  events, playlists, and information about the current session.
  */
 
 #include <QMainWindow>

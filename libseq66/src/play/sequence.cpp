@@ -4597,11 +4597,11 @@ sequence::loop_reset (bool reset)
 
 /**
  *  Sets the sequence name member, m_name.  This is the name shown in the top
- *  of a mainwid pattern slot.
+ *  of a mainwnd pattern slot.
  *
  *  We now try to include the length of the sequences in measures at the end
  *  of the name, and limit the length of the entire string.  As noted in the
- *  printing of sequence::get_name() in mainwid, this length is 13 characters.
+ *  printing of sequence::get_name() in mainwnd, this length is 13 characters.
  */
 
 void
@@ -4620,7 +4620,7 @@ sequence::set_name (const std::string & name)
  *  differs from name, which just returns the value of m_name.  Here, we also
  *  include the length of the sequences in measures at the end of the name,
  *  and limit the length of the entire string.  As noted in the printing of
- *  sequence::get_name() in mainwid, this length is 13 characters.
+ *  sequence::get_name() in mainwnd, this length is 13 characters.
  *
  * \return
  *      Returns the name of the sequence, with the length in measures of the

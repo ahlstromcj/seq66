@@ -19,7 +19,7 @@
 /**
  * \file          qlfoframe.cpp
  *
- *  This module declares/defines the base class for the main window.
+ *  This module declares/defines the base class for the LFO window.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
@@ -27,11 +27,11 @@
  * \updates       2021-01-11
  * \license       GNU GPLv2 or above
  *
- *  The main window is known as the "Patterns window" or "Patterns panel".  It
- *  holds the "Pattern Editor" or "Sequence Editor".  The main window consists
- *  of two object:  mainwnd, which provides the user-interface elements that
- *  surround the patterns, and mainwid, which implements the behavior of the
- *  pattern slots.
+ *  The LFO (low-frequency oscillator) provides a way to modulate the
+ *  selected type of event in the data.  One can inserts a whole series of
+ *  pitch-wheel control events, for example, and then apply vibrato to them.
+ *  Various waveforms (sine, triangle, etc.) can be applied, at varying depths
+ *  and frequency of modulating, including a DC offset.
  */
 
 #include <QButtonGroup>

@@ -98,7 +98,7 @@ public:
 
     /**
      *  Provides a set of methods for drawing certain items.  These values are
-     *  used in the sequence, seqroll, perfroll, and mainwid classes.
+     *  used in the sequence, seqroll, perfroll, and main window classes.
      */
 
     enum class draw
@@ -524,7 +524,7 @@ private:
      *      -   Set in perform::is_dirty_main() to set the same status for a
      *          given sequence.  (It also set "was active main" for the
      *          sequence.)
-     *      -   Cause mainwid to update a given sequence in the live frame.
+     *      -   Cause mainwnd to update a given sequence in the live frame.
      */
 
     mutable std::atomic<bool> m_dirty_main;
