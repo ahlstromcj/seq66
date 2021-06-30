@@ -4,7 +4,7 @@
 #
 #     Quick fixes to some stock changes in going from seq64 to seq66.
 # 
-#  \library       sequencer66 application
+#  \library       seq66 application
 #  \author        Chris Ahlstrom
 #  \date          2018-11-09
 #  \updates       2019-03-09

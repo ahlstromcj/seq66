@@ -43,11 +43,7 @@ cover_db/
 debian/debhelper-build-stamp
 debian/files
 debian/*.log
-debian/sequencer66/
-debian/sequencer66.postinst.debhelper
-debian/sequencer66.postrm.debhelper
-debian/sequencer66.substvars
-debian/tmp
+debian/
 .deps/
 Desktop.ini
 develop-eggs

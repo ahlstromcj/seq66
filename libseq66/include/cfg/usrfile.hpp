@@ -56,7 +56,7 @@ namespace seq66
 const int SEQ66_LINE_MAX = 1024;        /* 132 is *not* enough for paths    */
 
 /**
- *    Supports the user's <code> ~/.config/sequencer66/seq66.usr </code>
+ *    Supports the user's <code> ~/.config/seq66/seq66.usr </code>
  *    configuration file.
  */
 

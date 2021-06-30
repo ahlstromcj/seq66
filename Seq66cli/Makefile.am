@@ -52,8 +52,8 @@ VERSION = @VERSION@
 prefix = @prefix@
 datadir = @datadir@
 datarootdir = @datarootdir@
-sequencer66includedir = @sequencer66includedir@
-sequencer66libdir = @sequencer66libdir@
+seq66includedir = @seq66includedir@
+seq66libdir = @seq66libdir@
 
 #******************************************************************************
 # localedir
@@ -77,7 +77,6 @@ builddir = @abs_top_builddir@
 libseq66dir = $(builddir)/libseq66/src/.libs
 libsessionsdir = $(builddir)/libsessions/src/.libs
 libseq_rtmididir = $(builddir)/seq_rtmidi/src/.libs
-libseq_portmididir = $(builddir)/seq_portmidi/src/.libs
 
 #******************************************************************************
 # AM_CPPFLAGS [formerly "INCLUDES"]

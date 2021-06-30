@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-24
+ * \updates       2021-06-28
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -795,9 +795,8 @@ usrfile::write ()
         "# windows. The default is 40 ms (25 ms for Windows).\n"
         "#\n"
         "# Window-scale (option '-o scale=m.n[xp.q]') specifies scaling the\n"
-        "# main window at startup. Defaults to 1.0 x 1.0. If between 0.8 and\n"
-        "# 3.0, it changes the size of the main window proportionately. If the\n"
-        "# y-value is 0, the first value applies to both dimensions.\n"
+        "# main window at startup. Defaults to 1.0 x 1.0. If between 0.5 and\n"
+        "# 3.0, it changes the size of the main window proportionately.\n"
         "\n[user-interface-settings]\n\n"
         ;
 
@@ -820,13 +819,9 @@ usrfile::write ()
         "# [user-midi-ppqn]\n"
         "#\n"
         "# Seq66 separates the file PPQN from the Seq66 PPQN the user wants\n"
-        "# to use.\n"
-        "#\n"
-        "# 'default-ppqn' specifies the PPQN to use by default. The classic\n"
-        "# default is 192, but can range from 32 to 19200.\n"
-        "#\n"
-        "# 'use-file-ppqn' indicates to use the file PPQN. This is the best\n"
-        "# setting, to avoid changing the file's PPQN.\n"
+        "# to use. 'default-ppqn' specifies the PPQN to use by default. The\n"
+        "# default is 192, but can range from 32 to 19200. 'use-file-ppqn'\n"
+        "# (recommended) indicates to use the file PPQN.\n"
         "\n[user-midi-ppqn]\n\n"
         ;
 
@@ -840,23 +835,22 @@ usrfile::write ()
     file << "\n"
         "# [user-midi-settings]\n"
         "#\n"
-        "# These settings specify MIDI-specific values better off as variables,\n"
-        "# rather than constants. Values of -1 mean the value won't be used.\n"
+        "# Specifies MIDI-specific variables. -1 means the value won't be used.\n"
         "#\n"
         "# 'beats-per-bar':      default = 4      range = 1 to 32.\n"
         "# 'beats-per-minute':   default = 120.0  range = 2.0 to 600.0.\n"
         "# 'beat-width':         default = 4      range = 1 to 32.\n"
-        "# 'buss-override':      default = -1     range = 0 to 48.\n"
-        "# 'velocity-override':  default = -1     range = 0 to 127.\n"
+        "# 'buss-override':      default = -1     range = -1 to 48.\n"
+        "# 'velocity-override':  default = -1     range = -1 to 127.\n"
         "# 'bpm-precision':      default = 0      range = 0 to 2.\n"
         "# 'bpm-step-increment': default = 1.0    range = 0.01 to 25.0.\n"
         "# 'bpm-page-increment': default = 1.0    range = 0.01 to 25.0.\n"
         "# 'bpm-minimum':        default = 0.0    range = 127.0\n"
         "# 'bpm-maximum':        default = 0.0    range = 127.0\n"
         "#\n"
-        "# A buss-override from 0 to 48 overrides the busses for all patterns,\n"
-        "# for testing or convenience.  Do not save the MIDI file afterwards\n"
-        "# unless you want to overwrite all the buss values!\n"
+        "# A buss-override overrides the output port for all patterns, for\n"
+        "# testing or convenience.  Do not save the MIDI file afterwards\n"
+        "# unless wanting to overwrite all the buss values!\n"
         "#\n"
         "# The velocity override when adding notes in the pattern editor is set\n"
         "# via the 'Vol' button.  -1 ('Free'), preserves incoming velocity.\n"
@@ -865,12 +859,10 @@ usrfile::write ()
         "# The step increment affects the beats/minute spinner and MIDI control\n"
         "# of BPM.  For 1 decimal point, 0.1 is good.  For 2 decimal points,\n"
         "# 0.01 is good, but one might want something faster, like 0.05.\n"
-        "# Set the page increment to a larger value than the step increment;\n"
-        "# it is used when the Page-Up/Page-Down keys are pressed when the BPM\n"
-        "# spinner has keyboard focus.\n"
-        "# The BPM-minimum and maximum set the range BPM in tempo graphing.\n"
-        "# By default, the tempo graph ranges from 0.0 to 127.0. This range\n"
-        "# decreased to give a magnified view of tempo.\n"
+        "# Set the page increment larger than the step increment; it is used\n"
+        "# with the Page-Up/Page-Down keys in the BPM spinner. The BPM\n"
+        "# minimum and maximum set the range in tempo graphing; defaults to 0.0\n"
+        "# to 127.0. Decrease this range for a magnified view of tempo.\n"
         "\n[user-midi-settings]\n\n"
         ;
 

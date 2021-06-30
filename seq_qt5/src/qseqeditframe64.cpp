@@ -372,10 +372,10 @@ qseqeditframe64::qseqeditframe64
     m_beat_width            (seq_pointer()->get_beat_width()),
     m_snap                  (sm_initial_snap),
     m_note_length           (sm_initial_note_length),
-    m_scale                 (usr().seqedit_scale()),
+    m_scale                 (int(seq_pointer()->musical_scale())),
     m_chord                 (0),
-    m_key                   (usr().seqedit_key()),
-    m_bgsequence            (usr().seqedit_bgsequence()),
+    m_key                   (int(seq_pointer()->musical_key())),
+    m_bgsequence            (seq_pointer()->background_sequence()),
     m_measures              (0),
 #if defined USE_STAZED_ODD_EVEN_SELECTION
     m_pp_whole              (0),
@@ -815,16 +815,17 @@ qseqeditframe64::qseqeditframe64
         QString combo_text = musical_key_name(key).c_str();
         ui->m_combo_key->insertItem(key, combo_text);
     }
+    if (seq_pointer()->musical_key() != c_key_of_C)
+        set_key(seq_pointer()->musical_key());
+    else
+        set_key(usr().seqedit_key());
+
     ui->m_combo_key->setCurrentIndex(m_key);
     connect
     (
         ui->m_combo_key, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_key(int))
     );
-    if (seq_pointer()->musical_key() != c_key_of_C)
-        set_key(seq_pointer()->musical_key());
-    else
-        set_key(m_key);
 
     /*
      * Musical Scales Button and Combo-Box. See c_scales_text[] in the
@@ -839,19 +840,20 @@ qseqeditframe64::qseqeditframe64
     );
     for (int scale = c_scales_off; scale < c_scales_max; ++scale)
     {
-        QString combo_text = musical_scale_name(scale).c_str();
+        QString combo_text = QString::fromStdString(musical_scale_name(scale));
         ui->m_combo_scale->insertItem(scale, combo_text);
     }
+    if (seq_pointer()->musical_scale() != c_scales_off)
+        set_scale(seq_pointer()->musical_scale());
+    else
+        set_scale(usr().seqedit_scale());
+
     ui->m_combo_scale->setCurrentIndex(m_scale);
     connect
     (
         ui->m_combo_scale, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_scale(int))
     );
-    if (seq_pointer()->musical_scale() != c_scales_off)
-        set_scale(seq_pointer()->musical_scale());
-    else
-        set_scale(m_scale);
 
     /*
      * Background Sequence/Pattern Selectors.
@@ -866,6 +868,9 @@ qseqeditframe64::qseqeditframe64
     popup_sequence_menu();              /* create the initial popup menu    */
     if (seq::valid(seq_pointer()->background_sequence()))
         m_bgsequence = seq_pointer()->background_sequence();
+    else
+        if (seq::valid(usr().seqedit_bgsequence()))
+            m_bgsequence = usr().seqedit_bgsequence();
 
     set_background_sequence(m_bgsequence);
 
@@ -2041,7 +2046,6 @@ qseqeditframe64::sequences ()
 #define SET_BG_SEQ(seq) \
     std::bind(&qseqeditframe64::set_background_sequence, this, seq)
 
-
 /**
  *  Builds the menu for the Background Sequences button on the fly.  Analogous
  *  to seqedit :: popup_sequence_menu().
@@ -2145,7 +2149,12 @@ qseqeditframe64::set_background_sequence (int seqnum)
             m_seqroll->set_background_sequence(true, seqnum);
 
         if (seqnum < usr().max_sequence())      /* even more restrictive */
-            seq_pointer()->background_sequence(seqnum);
+        {
+            if (usr().global_seq_feature())
+                usr().seqedit_bgsequence(seqnum);
+            else
+                seq_pointer()->background_sequence(seqnum);
+        }
     }
 }
 
@@ -2540,26 +2549,29 @@ qseqeditframe64::update_key (int index)
 void
 qseqeditframe64::set_key (int key)
 {
-    if (legal_key(key))
+    if (key != m_key && legal_key(key))
     {
+        m_key = key;
         ui->m_combo_key->setCurrentIndex(key);
         if (not_nullptr(m_seqroll))
             m_seqroll->set_key(key);
 
         if (not_nullptr(m_seqkeys))
             m_seqkeys->set_key(key);
+
+        if (usr().global_seq_feature())
+            usr().seqedit_key(key);
+        else
+            seq_pointer()->musical_key(midibyte(key));
+
+        set_dirty();
     }
 }
 
 void
 qseqeditframe64::reset_key ()
 {
-    ui->m_combo_key->setCurrentIndex(0);
-    if (not_nullptr(m_seqroll))
-        m_seqroll->set_key(0);
-
-    if (not_nullptr(m_seqkeys))
-        m_seqkeys->set_key(0);
+    set_key(c_key_of_C);
 }
 
 /**
@@ -2586,6 +2598,11 @@ qseqeditframe64::set_scale (int scale)
         if (not_nullptr(m_seqroll))
             m_seqroll->set_scale(scale);
 
+        if (usr().global_seq_feature())
+            usr().seqedit_scale(scale);
+        else
+            seq_pointer()->musical_scale(midibyte(scale));
+
         set_dirty();
     }
 }
@@ -2593,7 +2610,7 @@ qseqeditframe64::set_scale (int scale)
 void
 qseqeditframe64::reset_scale ()
 {
-    set_scale(0);
+    set_scale(c_scales_off);
 }
 
 void
@@ -3285,6 +3302,7 @@ qseqeditframe64::analyze_seq_notes ()
     scales outscale;
     if (analyze_notes(seq_pointer()->events(), outkey, outscale))
     {
+#if defined SEQ66_PLATFORM_DEBUG
         int k = static_cast<int>(outkey);
         int s = static_cast<int>(outscale);
         printf
@@ -3293,6 +3311,7 @@ qseqeditframe64::analyze_seq_notes ()
             musical_key_name(k).c_str(),
             k, musical_scale_name(s).c_str(), s
         );
+#endif
     }
     /* MORE TO DO? */
 }

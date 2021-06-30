@@ -170,7 +170,6 @@ sequence::sequence (int ppqn) :
     m_seq_in_edit               (false),
     m_status                    (0),
     m_cc                        (0),
-    m_scale                     (0),
     m_name                      (),
     m_last_tick                 (0),
     m_queued_tick               (0),
@@ -190,9 +189,9 @@ sequence::sequence (int ppqn) :
     m_rec_vol                   (SEQ66_PRESERVE_VELOCITY),
     m_note_on_velocity          (SEQ66_DEFAULT_NOTE_ON_VELOCITY),
     m_note_off_velocity         (SEQ66_DEFAULT_NOTE_OFF_VELOCITY),
-    m_musical_key               (c_key_of_C),
-    m_musical_scale             (c_scales_off),
-    m_background_sequence       (sequence::limit()),
+    m_musical_key               (usr().seqedit_key()),
+    m_musical_scale             (usr().seqedit_scale()),
+    m_background_sequence       (usr().seqedit_bgsequence()),
     m_mutex                     ()
 {
     sm_fingerprint_size = usr().fingerprint_size();
@@ -294,7 +293,6 @@ sequence::partial_assign (const sequence & rhs)
         m_song_recording            = false;
         m_song_recording_snap       = true;         /* effectively constant */
         m_song_record_tick          = 0;
-        m_scale                     = rhs.m_scale;
         m_name                      = rhs.m_name;
         m_ppqn                      = rhs.m_ppqn;
         m_seq_color                 = rhs.m_seq_color;
@@ -5656,7 +5654,7 @@ sequence::handle_edit_action (eventlist::edit action, int var)
 
     case eventlist::edit::transpose_harmonic:   /* harmonic transpose   */
 
-        transpose_notes(var, m_scale);
+        transpose_notes(var, musical_scale());
         set_dirty();                            /* updates perfedit     */
         break;
 

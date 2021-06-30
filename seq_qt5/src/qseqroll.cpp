@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-05-07
+ * \updates       2021-06-29
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1115,32 +1115,50 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
     set_dirty();
 }
 
-void
-qseqroll::zoom_key_press (QKeyEvent * event)
+bool
+qseqroll::zoom_key_press (bool shifted, int key)
 {
-    if (event->modifiers() & Qt::ShiftModifier)     /* Shift + ...  */
+    bool result = false;
+    if (shifted)
     {
-        if (event->key() == Qt::Key_Z)
+        if (key == Qt::Key_Z)
+        {
             (void) zoom_in();
-        else if (event->key() == Qt::Key_V)
+            result = true;
+        }
+        else if (key == Qt::Key_V)
+        {
             (void) v_zoom_in();
+            result = true;
+        }
     }
     else
     {
-        if (event->key() == Qt::Key_Z)
+        if (key == Qt::Key_Z)
         {
             (void) zoom_out();
+            result = true;
         }
-        else if (event->key() == Qt::Key_0)
+        else if (key == Qt::Key_0)
         {
             if (m_v_zooming)
+            {
                 (void) reset_v_zoom();
+                result = true;
+            }
             else
+            {
                 (void) reset_zoom();
+                result = true;
+            }
         }
-        else if (event->key() == Qt::Key_V)
+        else if (key == Qt::Key_V)
+        {
             (void) v_zoom_out();
+            result = true;
+        }
     }
+    return result;
 }
 
 /**
@@ -1154,14 +1172,16 @@ qseqroll::zoom_key_press (QKeyEvent * event)
 void
 qseqroll::keyPressEvent (QKeyEvent * event)
 {
+    int key = event->key();
     bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
     bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
     bool ismeta = bool(event->modifiers() & Qt::MetaModifier);
     seq::pointer s = seq_pointer();
-    if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
+    bool done = false;
+    if (key == Qt::Key_Delete || key == Qt::Key_Backspace)
     {
         if (s->remove_selected())
-            set_dirty();
+            done = true;
     }
     else
     {
@@ -1170,143 +1190,132 @@ qseqroll::keyPressEvent (QKeyEvent * event)
             /*
              * The space and period keystrokes are handled at the top of
              * qseqeditframe64::keyPressEvent(). The zoom keys are repeated
-             * here and below as well.
+             * here and below as well.  2021-06-29 let's try allowing note
+             * movement during playback.
              */
 
             if (! isctrl)
-                zoom_key_press(event);
+            {
+                done = movement_key_press(key);
+                if (! done)
+                    done = zoom_key_press(isshift, key);
+            }
         }
         else
         {
-            if (event->key() == Qt::Key_Left)
+            done = movement_key_press(key);
+            if (! done)
             {
-                move_selected_notes(-1, 0);
-                set_dirty();
-            }
-            else if (event->key() == Qt::Key_Right)
-            {
-                move_selected_notes(1, 0);
-                set_dirty();
-            }
-            else if (event->key() == Qt::Key_Down)
-            {
-                move_selected_notes(0, 1);
-                set_dirty();
-            }
-            else if (event->key() == Qt::Key_Up)
-            {
-                move_selected_notes(0, -1);
-                set_dirty();
-            }
-            else if (isctrl)
-            {
-                /*
-                 * We want to ignore Ctrl sequences here, so that Ctrl-Z's can
-                 * be used for "undo".
-                 */
-
-                switch (event->key())
+                if (isctrl)
                 {
-                case Qt::Key_Left:
+                    /*
+                     * We want to ignore Ctrl sequences here, so that Ctrl-Z's
+                     * can be used for "undo".
+                     */
 
-                    s->set_last_tick(s->get_last_tick() - snap());
-                    set_dirty();
-                    break;
-
-                case Qt::Key_Right:
-
-                    s->set_last_tick(s->get_last_tick() + snap());
-                    set_dirty();
-                    break;
-
-                case Qt::Key_Home:
-
-                    if (not_nullptr(frame64()))
+                    switch (key)
                     {
-                        frame64()->scroll_to_tick(0);
+                    case Qt::Key_Left:
+
+                        s->set_last_tick(s->get_last_tick() - snap());
+                        done = true;
+                        break;
+
+                    case Qt::Key_Right:
+
+                        s->set_last_tick(s->get_last_tick() + snap());
+                        done = true;
+                        break;
+
+                    case Qt::Key_Home:
+
+                        if (not_nullptr(frame64()))
+                        {
+                            frame64()->scroll_to_tick(0);
+                        }
+                        s->set_last_tick(0);        /* sets it to the beginning */
+                        done = true;
+                        break;
+
+                    case Qt::Key_End:
+
+                        if (not_nullptr(frame64()))
+                        {
+                            frame64()->scroll_to_tick(s->get_length());
+                        }
+                        s->set_last_tick();         /* sets it to the length    */
+                        done = true;
+                        break;
+
+                    case Qt::Key_X:
+
+                        if (s->cut_selected())
+                            done = true;
+                        break;
+
+                    case Qt::Key_C:
+
+                        s->copy_selected();
+                        break;
+
+                    case Qt::Key_V:
+
+                        start_paste();
+                        done = true;
+                        setCursor(Qt::CrossCursor);
+                        break;
+
+                    case Qt::Key_Z:
+
+                        if (event->modifiers() & Qt::ShiftModifier)
+                        {
+                            /*
+                             * Doesn't seem to do anything!
+                             */
+
+                            s->pop_redo();
+                        }
+                        else
+                            s->pop_undo();
+
+                        if (not_nullptr(frame64()))
+                        {
+                            frame64()->set_dirty();     /* set_dirty()      */
+                        }
+                        break;
+
+                    case Qt::Key_D:
+
+                        sequence::clear_clipboard();    /* drop clipboard   */
+                        break;
+
+                    case Qt::Key_A:
+
+                        s->select_all();
+                        done = true;
+                        break;
                     }
-                    s->set_last_tick(0);        /* sets it to the beginning */
-                    set_dirty();
-                    break;
-
-                case Qt::Key_End:
-
-                    if (not_nullptr(frame64()))
-                    {
-                        frame64()->scroll_to_tick(s->get_length());
-                    }
-                    s->set_last_tick();         /* sets it to the length    */
-                    set_dirty();
-                    break;
-
-                case Qt::Key_X:
-
-                    if (s->cut_selected())
-                        set_dirty();
-                    break;
-
-                case Qt::Key_C:
-
-                    s->copy_selected();
-                    break;
-
-                case Qt::Key_V:
-
-                    start_paste();
-                    set_dirty();
-                    setCursor(Qt::CrossCursor);
-                    break;
-
-                case Qt::Key_Z:
-
-                    if (event->modifiers() & Qt::ShiftModifier)
-                    {
-                        /*
-                         * Doesn't seem to do anything!
-                         */
-
-                        s->pop_redo();
-                    }
-                    else
-                        s->pop_undo();
-
-                    if (not_nullptr(frame64()))
-                    {
-                        frame64()->set_dirty();     /* set_dirty()      */
-                    }
-                    break;
-
-                case Qt::Key_D:
-
-                    sequence::clear_clipboard();    /* drop clipboard   */
-                    break;
-
-                case Qt::Key_A:
-
-                    s->select_all();
-                    set_dirty();
-                    break;
                 }
+                else
+                    done = zoom_key_press(isshift, key);
             }
-            else
-                zoom_key_press(event);
         }
         if (! is_dirty())
         {
             if (! isctrl && ! isshift && ! ismeta)
             {
-                switch (event->key())
+                switch (key)
                 {
                 case Qt::Key_C:
 
                     if (frame64()->repitch_selected())
-                        set_dirty();
+                        done = true;
                     break;
 
                 case Qt::Key_F:
 
                     if (s->edge_fix())
-                        set_dirty();
+                        done = true;
                     break;
 
                 case Qt::Key_P:
@@ -1317,18 +1326,18 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                 case Qt::Key_Q:                 /* quantize selected notes  */
 
                     if (s->push_quantize(EVENT_NOTE_ON, 0, 1, true))
-                        set_dirty();
+                        done = true;
                     break;
 
                 case Qt::Key_R:                 /* default jitter == 8      */
 
                     if (s->randomize_selected_notes())
-                        set_dirty();
+                        done = true;
                     break;
 
                 case Qt::Key_T:                 /* tighten selected notes   */
                     if (s->push_quantize(EVENT_NOTE_ON, 0, 2, true))
-                        set_dirty();
+                        done = true;
                     break;
 
                 case Qt::Key_X:
@@ -1339,21 +1348,46 @@ qseqroll::keyPressEvent (QKeyEvent * event)
             }
         }
     }
-
-    /*
-     * Erroneous conclusion, dude!
-     *
-     * If we reach this point, the key isn't relevant to us; ignore it so the
-     * event is passed to the parent.
-     */
-
-    QWidget::keyPressEvent(event);      // event->ignore();
+    if (done)
+        set_dirty();
+    else
+        QWidget::keyPressEvent(event);      // event->ignore();
 }
 
 void
 qseqroll::keyReleaseEvent (QKeyEvent * event)
 {
     QWidget::keyReleaseEvent(event);    // event->ignore();
+}
+
+bool
+qseqroll::movement_key_press (int key)
+{
+    bool result = false;
+    if (seq_pointer()->any_selected_notes())
+    {
+        if (key == Qt::Key_Left)
+        {
+            move_selected_notes(-1, 0);
+            result = true;
+        }
+        else if (key == Qt::Key_Right)
+        {
+            move_selected_notes(1, 0);
+            result = true;
+        }
+        else if (key == Qt::Key_Down)
+        {
+            move_selected_notes(0, 1);
+            result = true;
+        }
+        else if (key == Qt::Key_Up)
+        {
+            move_selected_notes(0, -1);
+            result = true;
+        }
+    }
+    return result;
 }
 
 /**

@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+#   This script fixes up the names of MP3 files to shorten them, change spaces
+#   to underscores, etc.  If an argument is provided, it is removed.  For
+#   example:
+#
+#   $ naming Frank_Zappa
+#
+#   will removed "Frank_Zappa-" or "Frank_Zappa_" from the beginning of the
+#   filename, which is useful when the tune is already in a directory named
+#   "Frank_Zappa".
+
+rename "s/ /_/g" *
+rename "s/_-_/-/" *
+rename "s/_\(/-/" *
+rename "s/\(//" *
+rename "s/\)//" *
+rename "s/_\[/-/" *
+rename "s/]//" *
+rename "s/'//" *
+rename "s/,//" *
+rename "s/#//" *
+rename "s/://" *
+rename "s/_&_/_and_/g" *
+rename "s/Mr\._/Mr_/g" *
+rename "s/_\.mp3/.mp3/" *
+rename "s/-\.mp3/.mp3/" *
+
+if [ "$1" != "" ] ; then
+    rename "s/$1-//" *
+    rename "s/$1_//" *
+fi
+
+chmod -x *.mp3 &> /dev/null
+ls --color=always

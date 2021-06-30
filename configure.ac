@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2021-06-22
+dnl \update        2021-06-28
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -151,14 +151,12 @@ dnl
 dnl Initialize libtool in the default manner, which turns on shared
 dnl libraries if available, and enable static libraries if they do not conflict
 dnl with shared libraries.  Also sets the shell variable LIBTOOL_DEPS.
-dnl The latest GNU documentation specifies version 2 of libtool, but Debian
-dnl testing provides only 1.5 (Debian unstable now provides 2.4).  So we don't
-dnl use these new macros, just the older, deprecated macros.
-
-AC_PROG_LIBTOOL
+dnl The latest GNU documentation specifies version 2 of libtool.
 
 LT_PREREQ([2.4.2])
-LT_INIT([win32-dll])
+LT_INIT
+AC_SUBST([LIBTOOL_DEPS])
+
 LT_RELEASE="$SEQ66_API_MAJOR.$SEQ66_API_MINOR"
 AC_SUBST([LT_RELEASE])
 
@@ -444,7 +442,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2021-06-22"
+#define VERSION_DATE_SHORT "2021-06-28"
 #define VERSION "0.95.1"
 
 )

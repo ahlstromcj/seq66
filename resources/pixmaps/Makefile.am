@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------
 ##
 # \file        Makefile.am
-# \library     sequencer66 application
+# \library     seq66 application
 # \author      Chris Ahlstrom
 # \date        2015-09-11
 # \update      2020-11-27

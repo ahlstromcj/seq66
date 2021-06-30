@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# cd MusicToMove/
+#
+# find . -print0 | sort -zr | xargs -0 cp --parents
+#       --target-directory=/media/disk/MUSIC/FoldersMoved
+#
+# -print0, sort -z, and xargs -0 must all be specified togethern.
+#
+# Usage of this script:
+#
+#   $ cd /opt/mp3/music/dongle (i.e folder_containing_all_music_folders)
+#   $ ordercp /media/usb/b/1
+
+find . -print0 | sort -z | xargs -0 cp --parents --target-directory=$1 &> /dev/null
+

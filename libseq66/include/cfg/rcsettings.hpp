@@ -335,7 +335,7 @@ private:
 
     /**
      *  Holds the current "rc" and "user" configuration base directory.  This
-     *  value is ".config/sequencer66" by default.  For usage, it is normally
+     *  value is ".config/seq66" by default.  For usage, it is normally
      *  expanded.
      */
 

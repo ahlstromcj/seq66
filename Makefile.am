@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2018-11-11
-# \updates     2020-10-02
+# \updates     2021-06-28
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -113,12 +113,13 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 # libtool
 #-----------------------------------------------------------------------------
 #	${SHELL} $(top_srcdir)/config.status --recheck
+#	$(top_srcdir)/config.status --recheck
 #-----------------------------------------------------------------------------
 
 LIBTOOL_DEPS = @LIBTOOL_DEPS@
 
 libtool: $(LIBTOOL_DEPS)
-	$(top_srcdir)/config.status --recheck
+	$(SHELL) ./config.status libtool
 
 #*****************************************************************************
 # SUBDIRS

@@ -1,6 +1,6 @@
 TO DO for Seq66 0.95.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-06-23
+2019-04-13 to 2021-06-28
 
 Port-Mapping:
 
@@ -10,18 +10,15 @@ Port-Mapping:
 
 UI:
 
-    The Event Pane also does not perform as documented.  Need to be able
-    to edit in it similarly to the piano roll. It is not really practical to
-    edit Note-Ons and Note-Offs in the event editor.  However, one can now
-    delete linked notes with one command.
-
     See the mouse wheel scroll event requests for both the song and
     pattern editors.
 
-    The "L" and "R" markers do not work correctly in the seqedit; also seems
-    to cause start/stop to become disabled, as JACK master.
-
     Can we reset the main port dropdown to 0 when loading a new song?
+    Even if it does not change, the buss-override still applies; inconsistent.
+
+CLI:
+
+    Get daemonize to load the configuration after forking.
 
 Automation:
 

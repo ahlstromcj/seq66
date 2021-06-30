@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-06-22
+ * \updates       2021-06-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -3214,6 +3214,7 @@ performer::output_func ()
 
                     static bool jack_position_once = false;
                     midipulse rtick = get_right_tick();     /* can change? */
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                     printf
                     (
                         "C = %ld, L = %ld, R = %ld\n",
@@ -3221,6 +3222,7 @@ performer::output_func ()
                         long(get_left_tick()),
                         long(rtick)
                     );
+#endif
                     if (pad().js_current_tick >= rtick)
                     {
                         if (is_jack_master() && ! jack_position_once)

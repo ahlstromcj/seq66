@@ -2,7 +2,7 @@
 #define SEQ66_QSMACROS_HPP
 
 /*
- *  This file is part of sequencer66.
+ *  This file is part of seq66.
  *
  *  seq24 is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  *  This module declares/defines macros of certain Qt functions, for use with
  *  Qt user interfaces.
  *
- * \library       sequencer66 application
+ * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-03-23
  * \updates       2018-11-18

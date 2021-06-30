@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-05-24
+ * \updates       2021-06-30
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the globals module.  Includes the
@@ -127,14 +127,15 @@ enum class scales
 {
     off,
     major,
-    minor,
+    minor,                          /* Natural Minor scale                  */
     harmonic_minor,
-    melodic_minor,
+    melodic_minor,                  /* Just the ascending version           */
     c_whole_tone,
     blues,
     major_pentatonic,
     minor_pentatonic,
     phrygian,
+    enigmatic,
     max                             /* a "maximum" or "size of set" value   */
 };
 
@@ -142,13 +143,13 @@ enum class scales
  *  Avoids a cast in order to use scales::max as an initializer.
  */
 
-const int c_scales_off = int(scales::off);
+const int c_scales_off = static_cast<int>(scales::off);
 
 /**
  *  Avoids a cast in order to use scales::max as an array size.
  */
 
-const int c_scales_max = int(scales::max);
+const int c_scales_max = static_cast<int>(scales::max);
 
 /**
  *  An inline function to test that an integer in a legal scale value.
@@ -183,6 +184,8 @@ legal_scale (int s)
     Blues               C  .  .  Eb .  F  Gb G  .  .  Bb .
     Major Pentatonic    C  .  D  .  E  .  .  G  .  A  .  .
     Minor Pentatonic    C  .  .  Eb .  F  .  G  .  .  Bb .
+    Phrygian            C  Db .  Eb .  F  .  G  G# .  Bb .
+    Enigmatic           C  Db .  .  E  .  F# .  G# .  A# B
     Octatonic 1         C  .  D  Eb .  F  Gb .  Ab A  .  B   Unimplemented
     Octatonic 2         C  Db .  Eb E  F  F# G  .  A  Bb .   Unimplemented
 \endverbatim
@@ -230,6 +233,10 @@ c_scales_policy[c_scales_max][c_octave_size] =
     {                                                   /* phrygian         */
         true, true, false, true, false, true,
         false, true, true, false, true, false
+    },
+    {                                                   /* enigmatic       */
+        true, true, false, false, true, false,
+        true, false, true, false, true, true
     }
 };
 
@@ -291,6 +298,12 @@ c_scales_policy[c_scales_max][c_octave_size] =
  \verbatim
     Phrygian            C  Db .  Eb .  F  .  G  Ab .  Bb .
     Transpose up        2  2  .  2  .  2  .  1  2  .  2  .
+    Result up           D  Eb .  F  .  G  .  A  Bb .  C  .
+\endverbatim
+ *
+ \verbatim
+    Enigmatic           C  Db .  .  E  .  F# .  G# .  A# B
+    Transpose up        .  .  .  .  .  .  .  .  .  .  .  .
     Result up           D  Eb .  F  .  G  .  A  Bb .  C  .
 \endverbatim
  */
@@ -373,8 +386,8 @@ const int
 c_scales_transpose_dn[c_scales_max][c_octave_size] =
 {
     { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},  /* off = chromatic */
-    { -1,  0, -2,  0, -2, -1,  0, -2,  0, -2,  0, -2},  /* major           */
-    { -2,  0, -2, -1,  0, -2,  0, -2, -1,  0, -2,  0},  /* minor           */
+    { -1,  0, -2,  0, -2, -1,  0, -2,  0, -2,  0, -2},  /* major (ionian)  */
+    { -2,  0, -2, -1,  0, -2,  0, -2, -1,  0, -2,  0},  /* minor (aeolian) */
     { -1,  0, -2, -1,  0, -2,  0, -2, -1,  0,  0, -3},  /* harmonic minor  */
     { -1,  0, -2, -1,  0, -2,  0, -2,  0, -2,  0, -2},  /* melodic minor   */
     { -2,  0, -2,  0, -2,  0, -2,  0, -2,  0, -2,  0},  /* C whole tone    */

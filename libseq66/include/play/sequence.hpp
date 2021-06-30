@@ -577,13 +577,6 @@ private:
     midibyte m_cc;
 
     /**
-     *  Provides the index pointing to the optional scale to be shown on the
-     *  background of the pattern.
-     */
-
-    int m_scale;
-
-    /**
      *  Provides the name/title for the sequence.
      */
 
@@ -737,9 +730,11 @@ private:
     midibyte m_musical_key;
 
     /**
-     *  Holds a copy of the musical scale for this sequence, which we now
-     *  support writing to this sequence.  If the value is the enumeration
+     *  Holds a copy of the musical scale for this sequence, which can be
+     *  written to this sequence.  If the value is the enumeration
      *  value scales::off, then there is no musical scale to be set.
+     *  Provides the index pointing to the optional scale to be shown on the
+     *  background of the pattern.
      */
 
     midibyte m_musical_scale;
@@ -786,7 +781,6 @@ public:
     {
         m_status = status;
         m_cc = cc;
-        m_scale = scale;
     }
 
 #endif

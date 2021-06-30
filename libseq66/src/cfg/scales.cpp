@@ -24,30 +24,40 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2021-05-24
+ * \updates       2021-06-30
  * \license       GNU GPLv2 or above
  *
- *  Here is a list of all the scale interval patterns if you are working with
+ *  Here is a list of many scale interval patterns if working with
  *  more than just diatonic scales:
  *
 \verbatim
-    Major Scale:                    R, W, W, H, W, W, W, H
-    Natural Minor Scale:            R, W, H, W, W, H, W, W
-    Harmonic Minor Scale:           R, W, H, W, W, H, X, H
-    Melodic Minor Scale going up:   R, W, H, W, W, W, W, H
-    Melodic Minor Scale going down: R, W, W, H, W, W, H, W
-    Dorian Mode is:                 R, W, H, W, W, W, H, W
-    Mixolydian Mode is:             R, W, W, H, W, W, H, W
-    Ahava Raba Mode is:             R, H, X, H, W, H, W, W
-    Minor Pentatonic Blues (no #5): R, X, W, W, X, W
-    Phrygian:                       R, W, W, W, H, W, W
+    Major Scale (Ionian):           R    W    W    h    W    W    W    h
+    Natural Minor Scale (Aeolian):  R    W    h    W    W    h    W    W
+    Harmonic Minor Scale:           R    W    h    W    W    h    W+h  h
+    Melodic Minor Scale going up:   R    W    h    W    W    W    W    h
+    Melodic Minor Scale going down: R    W    W    h    W    W    h    W
+    Whole Tone:                     R    W    W    W    W    W    W
+    Blues Scale:                    R    W+h  W    h    h    W+h  W
+    Major Pentatonic:               R    W    W    W+h  W    W+h
+    Minor Pentatonic Blues (no #5): R    W+h  W    W    W+h  W
+    Phrygian:                       R    h    W    W    W    h    W    W
+    Enigmatic:                      R    h    W+h  W    W    W    h    h
+\endverbatim
+ *
+ *  Unimplemented:
+\verbatim
+    Dorian Mode:                    R    W    h    W    W    W    h    W
+    Mixolydian Mode:                R    W    W    h    W    W    h    W
+    Phygian Dominant (Ahava Raba):  R    h    W+h  h    W    h    W    W
+    Octatonic 1:                    R    W    h    W    h    W    h    W   h
+    Octatonic 2:                    R    h    W    h    W    h    W    h
 \endverbatim
  *
 \verbatim
-    R: root
-    W: whole step
-    H: half step
-    X: 1 1/2 - a step and a half
+    R:      root note
+    h:      half step (semitone)
+    W:      whole step (2 semitones)
+    W+h:    1 1/2 - a step and a half (3 semitones)
 \endverbatim
  */
 
@@ -118,7 +128,8 @@ musical_scale_name (int s)
         "Blues",
         "Pentatonic Major",
         "Pentatonic Minor",
-        "Phrygian"
+        "Phrygian",
+        "Enigmatic"
     };
     std::string result = "Unsupported";
     if (legal_scale(s))
