@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-06-29
+ * \updates       2021-07-01
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1294,6 +1294,11 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         s->select_all();
                         done = true;
                         break;
+
+                    case Qt::Key_K:
+
+                        analyze_seq_notes();
+                        break;
                     }
                 }
                 else
@@ -1595,6 +1600,24 @@ qseqroll::set_scale (int scale)
         m_scale = static_cast<scales>(scale);
         if (is_initialized())
             set_dirty();
+    }
+}
+
+void
+qseqroll::analyze_seq_notes ()
+{
+    keys outkey;
+    scales outscale;
+    if (analyze_notes(seq_pointer()->events(), outkey, outscale))
+    {
+        int k = static_cast<int>(outkey);
+        int s = static_cast<int>(outscale);
+        printf
+        (
+            "Analysis: Key %s (%d), Scale '%s' (%d)\n",
+            musical_key_name(k).c_str(),
+            k, musical_scale_name(s).c_str(), s
+        );
     }
 }
 

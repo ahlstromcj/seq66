@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2021-06-30
+ * \updates       2021-07-01
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of many scale interval patterns if working with
@@ -200,13 +200,91 @@ analyze_note (midibyte note, keys & outkey, int & outoctave)
 }
 
 /**
- *  Analyzes a set of notes to see what key and scale best fits the notes.
+ *  This function rotates a scale policy array to the "right" by one semitone.
+ *  For example, see this shift from C major to C# major, where each dot
+ *  represents a "false" boolean value:
  *
- *  To get the kind of scale, we first need to go through each of the
- *  c_scales_max values in the the c_scales_policy[] array and see if the
- *  booleans in the scratchpad match.  If so, we have a match for a C scale.
- *  Otherwise, go to the next scales value, shift/rotate the scratchpad
- *  leftward, and look for a match.
+\verbatim
+    C Major               C  .  D  .  E  F  .  G  .  A  .  B
+    booleans              t  f  t  f  t  t  f  t  f  t  f  t
+    histogram sample      1  0  2  0  2  0  1  1  0  1  0  2    = 9 - 1
+                          +  .  +  .  +  +  -  +  .  +  .  +
+                          C  C# D  D# E  F  F# G  G# A  A# B
+
+    C# Major              C  C# .  D# .  F  F# .  G# .  A# .
+    booleans              t  t  f  t  f  t  t  f  t  f  t  f
+    histogram sample      1  0  2  0  2  0  1  1  0  1  0  2    = 2 - 8
+\endverbatim
+ */
+
+static void
+increment_scale (bool p [c_octave_size])
+{
+    bool last = p[c_octave_size - 1];               // p[11]
+    for (int n = c_octave_size - 2; n = 0; --n)     // p[10] down to p[0]
+        p[n] = p[n - 1];
+
+    p[0] = last;
+}
+
+static void
+show_all_counts
+(
+    int histo [c_octave_size],
+    int cmatrix [c_scales_max - 1] [c_key_of_max] [2]
+)
+{
+    printf("         Overall:   C   C#  D   D#  E   F   F#  G   G#  A   A#  B\n");
+    printf("                  ");
+    for (int k = 0; k < c_octave_size; ++k)
+        printf(" %2d ", histo[k]);
+
+    printf("\n");
+    for (int s = 0; s < c_scales_max - 1; ++s)
+    {
+        bool policy[c_octave_size];
+        int scale = s + 1;
+        printf("%16s: ", musical_scale_name(scale).c_str());
+        for (int k = 0; k < c_octave_size; ++k)
+            policy[k] = c_scales_policy[scale][k];      /* base (C) scale   */
+
+        for (int K = 0; K < c_key_of_max; ++K)
+        {
+            char c = policy[K] ? '+' : '-' ;
+            printf(" %c%2d", c, cmatrix[s][K][0]);
+            increment_scale(policy);
+        }
+
+        printf("\n");
+    }
+#if 0
+    for (int s = 0; s < c_scales_max - 1; ++s)
+    {
+        int scale = s + 1;
+        printf("%16s: ", musical_scale_name(scale).c_str());
+        for (int k = 0; k < c_key_of_max; ++k)
+        {
+            printf(" %2d:%2d", cmatrix[s][k][0], cmatrix[s][k][1]);
+        }
+
+        printf("\n");
+    }
+#endif
+}
+
+/**
+ *  The algorithm is simple.  Get a histogram of the 12 semitones found in the
+ *  event list.  Then see which key/scale combination contains the most of
+ *  those semitones.  The key/scale combinations are in an array of dimension
+ *  c_key_of_max x (c_scales_max -1).
+ *
+ *  We start with the major scale and C, and total up all the notes found for
+ *  the valid notes in that scale, and record the count in
+ *  count_matrix[major-1][C].  Then we move the scale up to C# and record the
+ *  count in count_matrix[major-1][C#].
+ *
+ *  Another algorithm to consider is the Krumhansl-Schmuckler key-finding
+ *  algorithm.
  *
  * \return
  *      Returns true if the analysis was workable.
@@ -218,8 +296,14 @@ analyze_notes (const eventlist & evlist, keys & outkey, scales & outscale)
     bool result = evlist.count() > 0;
     if (result)
     {
-        midi_booleans scratchpad(c_octave_size);
+        int highscale = static_cast<int>(scales::max);
+        int highkey = static_cast<int>(keys::max);
+        int histogram[c_octave_size];
+        int highcount = 0;                  /* max count found on scale     */
         int notecount = 0;
+        for (int k = 0; k < c_octave_size; ++k)
+            histogram[k] = 0;
+
         for (auto e = evlist.cbegin(); e != evlist.cend(); ++e)
         {
             const event & er = eventlist::cdref(e);
@@ -227,60 +311,79 @@ analyze_notes (const eventlist & evlist, keys & outkey, scales & outscale)
             int theoctave;
             if (er.is_note_on())
             {
-                ++notecount;
                 midibyte note = er.get_note();
+                ++notecount;
                 result = analyze_note(note, thekey, theoctave);
                 if (result)
                 {
-                    int n = static_cast<int>(thekey);
-                    scratchpad[n] = midibool(true);
+                    int k = static_cast<int>(thekey);
+                    ++histogram[k];
                 }
-                else
-                    break;
             }
         }
-        if (notecount == 0)
+        if (notecount < 8)
+        {
+            infoprint("Not enough notes to analyze.");
             result = false;
-
+        }
         if (result)
         {
-            const /*constexpr*/ std::initializer_list<keys> keyslist =
+            /*
+             *  The first value is for "hits" and the second is for "misses".
+             */
+
+            int count_matrix [c_scales_max - 1] [c_key_of_max] [2];
+            const std::initializer_list<keys> keyslist =
             {
                 keys::C, keys::Csharp, keys::D, keys::Dsharp,
                 keys::E, keys::F, keys::Fsharp, keys::G, keys::Gsharp,
                 keys::A, keys::Asharp, keys::B
             };
-            result = false;
-            for (auto ken : keyslist)
-            {
-                for (int s = c_scales_off; s < c_scales_max; ++s)
-                {
-                    midi_booleans policy(&c_scales_policy[s][0], c_octave_size);
-                    if (scratchpad.match(policy, scratchpad.true_count()))
-                    {
-                        outkey = ken;
-                        outscale = static_cast<scales>(s);
-                        result = true;
-                        break;
-                    }
+            for (int s = 0; s < c_scales_max - 1; ++s)
+                for (int k = 0; k < c_key_of_max; ++k)
+                    count_matrix[s][k][0] = count_matrix[s][k][1] = 0;
 
-                    std::string scratchprint = scratchpad.fingerprint();
-                    std::string policyprint = policy.fingerprint();
-                    int k = static_cast<int>(ken);
-                    printf
-                    (
-                        "key %s (%d), scale %s (%d): "
-                        "fingerprint: %s; policy: %s\n",
-                        musical_key_name(k).c_str(), k,
-                        musical_scale_name(s).c_str(), s,
-                        scratchprint.c_str(), policyprint.c_str()
-                    );
+            for (int s = 0; s < c_scales_max - 1; ++s)
+            {
+                bool policy[c_octave_size];
+                for (int k = 0; k < c_octave_size; ++k)
+                {
+                    policy[k] = c_scales_policy[s+1][k];  /* base (C) scale */
                 }
-                if (result)
-                    break;
-                else
-                    scratchpad.rotate(1);
+
+                for (auto ken : keyslist)
+                {
+                    int count_in = 0;
+                    int count_out = 0;
+                    int k = static_cast<int>(ken);
+
+                    /*
+                     * Here, we have the scale and it's (next) key.  For each
+                     * policy value, add the count for each semitone in the
+                     * histogram.
+                     */
+
+                    for (int bin = 0; bin < c_octave_size; ++bin)
+                    {
+                        if (policy[bin])
+                            count_in += histogram[bin];
+                        else
+                            count_out += histogram[bin];
+                    }
+                    count_matrix[s][k][0] = count_in;
+                    count_matrix[s][k][1] = count_out;
+                    if (count_in > highcount)
+                    {
+                        highscale = s;
+                        highkey = k;
+                        highcount = count_in;
+                    }
+                    increment_scale(policy);
+                }
             }
+            outkey = static_cast<keys>(highkey);
+            outscale = static_cast<scales>(highscale + 1);
+            show_all_counts(histogram, count_matrix);
         }
     }
     return result;

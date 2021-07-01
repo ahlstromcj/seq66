@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-30
+ * \updates       2021-07-01
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the globals module.  Includes the
@@ -192,7 +192,7 @@ legal_scale (int s)
  */
 
 const bool
-c_scales_policy[c_scales_max][c_octave_size] =
+c_scales_policy [c_scales_max] [c_octave_size] =
 {
     {                                                   /* off = chromatic */
         true, true, true, true, true, true,
@@ -241,21 +241,21 @@ c_scales_policy[c_scales_max][c_octave_size] =
 };
 
 /**
- *  Increment values needed to transpose each scale up so that it remains
- *  in the same key.  For example, if we simply add 1 semitone to each
- *  note, it remains a minor key, but it is in a different minor key.
- *  Using the transpositions in these arrays, the minor key remains the
- *  same minor key.
+ *  Increment values needed to transpose each scale up so that it remains in the
+ *  exact same key, for harmonic transposition.  For example, if we simply add 1
+ *  semitone to each note, it remains a minor key, but it is in a different minor
+ *  key.  Using the transpositions in these arrays, the minor key remains the same
+ *  minor key.
  *
 \verbatim
     Major               C  .  D  .  E  F  .  G  .  A  .  B
-    Transpose up        2  0  2  0  1  2  0  2  0  2  0  1
+    Transpose up        2  .  2  .  1  2  .  2  .  2  .  1
     Result up           D  .  E  .  F  G  .  A  .  B  .  C
 \endverbatim
  *
 \verbatim
     Minor               C  .  D  D# .  F  .  G  G# .  A# .
-    Transpose up        2  0  1  2  0  2  0  1  2  0  2  0
+    Transpose up        2  .  1  2  .  2  .  1  2  .  2  .
     Result up           D  .  D# F  .  G  .  G# A# .  C  .
 \endverbatim
  *
@@ -297,19 +297,19 @@ c_scales_policy[c_scales_max][c_octave_size] =
  *
  \verbatim
     Phrygian            C  Db .  Eb .  F  .  G  Ab .  Bb .
-    Transpose up        2  2  .  2  .  2  .  1  2  .  2  .
+    Transpose up        1  2  .  2  .  2  .  1  2  .  2  .
     Result up           D  Eb .  F  .  G  .  A  Bb .  C  .
 \endverbatim
  *
  \verbatim
     Enigmatic           C  Db .  .  E  .  F# .  G# .  A# B
-    Transpose up        .  .  .  .  .  .  .  .  .  .  .  .
-    Result up           D  Eb .  F  .  G  .  A  Bb .  C  .
+    Transpose up        1  3  .  .  2  .  2  .  2  .  1  1
+    Result up           Db E  .  .  F# .  G# .  A# .  B  C
 \endverbatim
  */
 
 const int
-c_scales_transpose_up[c_scales_max][c_octave_size] =
+c_scales_transpose_up [c_scales_max] [c_octave_size] =
 {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},              /* off = chromatic */
     { 2, 0, 2, 0, 1, 2, 0, 2, 0, 2, 0, 1},              /* major           */
@@ -320,7 +320,8 @@ c_scales_transpose_up[c_scales_max][c_octave_size] =
     { 3, 0, 0, 2, 0, 1, 1, 3, 0, 0, 2, 0},              /* blues           */
     { 2, 0, 2, 0, 3, 0, 0, 2, 0, 3, 0, 0},              /* maj pentatonic  */
     { 3, 0, 0, 2, 0, 2, 0, 3, 0, 0, 2, 0},              /* min pentatonic  */
-    { 2, 2, 0, 2, 0, 2, 0, 1, 2, 0, 2, 0}               /* phrygian        */
+    { 1, 2, 0, 2, 0, 2, 0, 1, 2, 0, 2, 0},              /* phrygian        */
+    { 1, 3, 0, 0, 2, 0, 2, 0, 2, 0, 1, 1}               /* enigmatic       */
 };
 
 /**
@@ -380,10 +381,16 @@ c_scales_transpose_up[c_scales_max][c_octave_size] =
     Transpose down      1  1  .  1  .  1  .  1  1  .  1  .
     Result down         B  C  .  D  .  E  .  Fb G  .  A  .
 \endverbatim
+ *
+  \verbatim
+    Enigmatic           C  Db .  .  E  .  F# .  G# .  A# B
+    Transpose down      1  1  .  .  3  .  2  .  2  .  2  1
+    Result down         B  C  .  .  Db .  E  .  F# .  G# A#
+\endverbatim
  */
 
 const int
-c_scales_transpose_dn[c_scales_max][c_octave_size] =
+c_scales_transpose_dn [c_scales_max] [c_octave_size] =
 {
     { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},  /* off = chromatic */
     { -1,  0, -2,  0, -2, -1,  0, -2,  0, -2,  0, -2},  /* major (ionian)  */
@@ -394,30 +401,9 @@ c_scales_transpose_dn[c_scales_max][c_octave_size] =
     { -2,  0,  0, -3,  0, -2, -1, -1,  0,  0, -3,  0},  /* blues           */
     { -3,  0, -2, -0,  2,  0,  0, -3,  0, -2,  0,  0},  /* maj pentatonic  */
     { -2,  0,  0, -3,  0, -2,  0, -2,  0,  0, -3,  0},  /* min pentatonic  */
-    { -1, -1,  0, -1,  0, -1,  0, -1, -1,  0, -1,  0}   /* phrygian        */
+    { -1, -1,  0, -1,  0, -1,  0, -1, -1,  0, -1,  0},  /* phrygian        */
+    { -1, -1,  0,  0, -3,  0, -2,  0, -2,  0, -2, -1}   /* enigmatic       */
 };
-
-#if defined USE_C_SCALES_TRANSPOSE_DN_NEG
-
-/**
- *  This array is easier to read, but not yet used in actual code.
- */
-
-const int
-c_scales_transpose_dn_neg[c_scales_max][c_octave_size] =
-{
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},              /* off = chromatic */
-    { 1, 0, 2, 0, 2, 1, 0, 2, 0, 2, 0, 2},              /* major           */
-    { 2, 0, 2, 1, 0, 2, 0, 2, 1, 0, 2, 0},              /* minor           */
-    { 1, 0, 2, 1, 0, 2, 0, 2, 1, 0, 0, 3},              /* harmonic minor  */
-    { 1, 0, 2, 1, 0, 2, 0, 2, 0, 2, 0, 2},              /* melodic minor   */
-    { 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0},              /* C whole tone    */
-    { 2, 0, 0, 3, 0, 2, 1, 1, 0, 0, 3, 0},              /* blues           */
-    { 3, 0, 2, 0, 2, 0, 0, 3, 0, 2, 0, 0},              /* maj pentatonic  */
-    { 2, 0, 0, 3, 0, 2, 0, 2, 0, 0, 3, 0},              /* min pentatonic  */
-};
-
-#endif      // USE_C_SCALES_TRANSPOSE_DN_NEG
 
 /**
  *  Provides the entries for the Interval dropdown menu in the Pattern Editor
@@ -425,7 +411,7 @@ c_scales_transpose_dn_neg[c_scales_max][c_octave_size] =
  */
 
 const std::string
-c_interval_text[16] =
+c_interval_text [16] =
 {
     "P1", "m2", "M2", "m3", "M3", "P4", "TT", "P5",
     "m6", "M6", "m7", "M7", "P8", "m9", "M9", ""
@@ -438,7 +424,7 @@ c_interval_text[16] =
  */
 
 const std::string
-c_chord_text[8] =
+c_chord_text [8] =
 {
     "I", "II", "III", "IV", "V", "VI", "VII", "VIII"
 };
@@ -459,7 +445,7 @@ const int c_chord_number = 40;
  */
 
 const std::string
-c_chord_table_text[c_chord_number] =
+c_chord_table_text [c_chord_number] =
 {
     "Chords off",   "Major",       "Majb5",      "minor",   "minb5",
     "sus2",         "sus4",        "aug",        "augsus4", "tri",
@@ -486,7 +472,7 @@ const int c_chord_size = 6;
  */
 
 const int
-c_chord_table[c_chord_number][c_chord_size] =
+c_chord_table [c_chord_number] [c_chord_size] =
 {
     { 0, -1, 0, 0, 0, 0 },      /* Off          */
     { 0, 4, 7, -1, 0, 0 },      /* Major        */

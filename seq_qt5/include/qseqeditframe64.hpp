@@ -147,7 +147,6 @@ protected:      /* QWidget overrides                */
 private:
 
     void remove_lfo_frame ();
-    void analyze_seq_notes ();
     QIcon * create_menu_image (bool state);
 
 signals:

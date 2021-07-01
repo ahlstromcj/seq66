@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-06-22
+ * \updates       2021-07-01
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1195,11 +1195,6 @@ qseqeditframe64::keyPressEvent (QKeyEvent * event)
         if (event->key() == Qt::Key_Space || event->key() == Qt::Key_Period)
         {
             start_playing();
-        }
-        else if (event->key() == Qt::Key_A)
-        {
-            if ((event->modifiers() & Qt::ControlModifier) == 0)
-                analyze_seq_notes();
         }
     }
 }
@@ -3293,27 +3288,6 @@ QWidget *
 qseqeditframe64::rollwidget () const
 {
     return ui->rollScrollArea->widget();
-}
-
-void
-qseqeditframe64::analyze_seq_notes ()
-{
-    keys outkey;
-    scales outscale;
-    if (analyze_notes(seq_pointer()->events(), outkey, outscale))
-    {
-#if defined SEQ66_PLATFORM_DEBUG
-        int k = static_cast<int>(outkey);
-        int s = static_cast<int>(outscale);
-        printf
-        (
-            "key %s (%d), scale %s (%d)\n",
-            musical_key_name(k).c_str(),
-            k, musical_scale_name(s).c_str(), s
-        );
-#endif
-    }
-    /* MORE TO DO? */
 }
 
 }           // namespace seq66
