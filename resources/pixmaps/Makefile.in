@@ -18,7 +18,7 @@
 # Makefile.am (seq66)
 #------------------------------------------------------------------------------
 # \file        Makefile.am
-# \library     sequencer66 application
+# \library     seq66 application
 # \author      Chris Ahlstrom
 # \date        2015-09-11
 # \update      2020-11-27
@@ -201,6 +201,7 @@ LIBLO_LIBS = @LIBLO_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
+LIBTOOL_DEPS = @LIBTOOL_DEPS@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
