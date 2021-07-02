@@ -260,6 +260,7 @@ LIBLO_LIBS = @LIBLO_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
+LIBTOOL_DEPS = @LIBTOOL_DEPS@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
@@ -421,12 +422,9 @@ MAINTAINERCLEANFILES = Makefile.in Makefile $(AUX_DIST)
 # CLEANFILES
 #------------------------------------------------------------------------------
 CLEANFILES = *.gc*
-sequencer66includedir = @sequencer66includedir@
-sequencer66libdir = @sequencer66libdir@
 libseq66dir = $(builddir)/libseq66/src/.libs
 libsessionsdir = $(builddir)/libsessions/src/.libs
 libseq_rtmididir = $(builddir)/seq_rtmidi/src/.libs
-libseq_portmididir = $(builddir)/seq_portmidi/src/.libs
 
 #******************************************************************************
 # AM_CPPFLAGS [formerly "INCLUDES"]

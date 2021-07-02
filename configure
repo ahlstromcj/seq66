@@ -707,6 +707,7 @@ LT_AGE
 LT_REVISION
 LT_CURRENT
 LT_RELEASE
+LIBTOOL_DEPS
 CPP
 LT_SYS_LIBRARY_PATH
 OTOOL64
@@ -4663,6 +4664,7 @@ $as_echo "$SEQ66_API_PATCH" >&6; }
 
 
 SEQ66_PROJECT_NAME="SEQ66"
+
 
 
 
@@ -15997,7 +15999,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 # Only expand once:
-
 
 
 
