@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-01
+ * \updates       2021-07-02
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the globals module.  Includes the
@@ -38,6 +38,7 @@
  */
 
 #include <string>
+#include <vector>                       /* holds the scale analyses results */
 
 #include "midi/midibytes.hpp"           /* seq66::midibytes                 */
 
@@ -524,17 +525,11 @@ extern std::string musical_key_name (int k);
 extern std::string musical_note_name (int n);
 extern std::string musical_scale_name (int s);
 extern double midi_note_frequency (midibyte note);
-extern bool analyze_note
-(
-    midibyte note,
-    keys & outkey,
-    int & outoctave
-);
-extern bool analyze_notes
+extern int analyze_notes
 (
     const eventlist & evlist,
-    keys & outkey,
-    scales & outscale
+    std::vector<keys> & outkey,
+    std::vector<scales> & outscale
 );
 
 }           // namespace seq66

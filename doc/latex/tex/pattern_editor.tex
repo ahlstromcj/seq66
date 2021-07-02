@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-04-20
+% \update      2021-07-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -335,6 +335,8 @@
    will apply the same settings to that sequence.  This is an optional feature,
    supported as noted below.
 
+   Also see \textbf{Musical Scale} below for the scale-identification feature.
+
    \index{global-sequence}
    If the global-sequence feature is enabled, and the user selects
    a different key, scale, or background sequence in the pattern editor, 
@@ -365,7 +367,7 @@
    \end{itemize}
 
    \index{musical scales}
-   The following musical scales are supported:
+   The following musical scales are supported so far:
 
    \begin{itemize}
       \item \textbf{Off (Chromatic)}
@@ -377,9 +379,11 @@
       \item \textbf{Blues}
       \item \textbf{Major Pentatonic}
       \item \textbf{Minor Pentatonic}
+      \item \textbf{Phrygian}
+      \item \textbf{Enigmatic}
    \end{itemize}
 
-   Please let us know of any mistakes in the new scales.
+   Please let us know of any mistakes in these scales.
    Note that the \textbf{Melodic Minor} scale is supposed to
    descend in the same way as the natural \textbf{Minor} scale, but
    there is no way to support that trick in \textsl{Seq66}.
@@ -403,6 +407,27 @@
    either globally (all patterns) or locally (per-pattern), with each pattern
    holding its key, scale, and background-sequence settings in
    SeqSpec meta events.
+
+   \index{scale identifier}
+   \index{keys!ctrl-k}
+   The pattern editor's piano roll has a little secret:
+   the \textbf{Scale Identifier}.
+   When the piano roll has focus and \texttt{Ctrl-K} is pressed,
+   all of the notes in the pattern are analyzed to try to determine
+   the both the key and the scale of the existing notes.
+   The method is not sophisticated... the notes are counted and are matched
+   against all of the keys (C to B) and scales supported by \textsl{Seq66}.
+   The combinations with the highest number of notes are then shown in a
+   message box.
+   This simple analysis depends on having at least 8 notes in the pattern, and
+   it is possible to get weird results if
+   there are only a few \textsl{different}
+   notes, as in a simple bass line.
+   Don't expect miracles from this feature.
+   A more sophisticated analysis, the
+   \textsl{Krumhansl-Schmuckler} key-finding
+   algorithm, could be used, but it is a bit too complex
+   for our needs, which are basic.
 
    \itempar{Background Sequence}{pattern editor!background sequence}
    One can select another pattern to draw on the background to help with
@@ -452,12 +477,13 @@
    While the pattern
    editor is very similar to note editors in other sequencers, it is a bit
    different in feel.  A good mouse with at least 3 buttons is very helpful
-   for editing.  Buttons and keystrokes support enhanced editing.
+   for editing.  Buttons and keystrokes enhance the ease of editing.
 
    When the piano roll has keyboard focus, the \texttt{Space} key
    starts and stops playback, rewinding to the beginning when stopped.
    The \texttt{.} (period) key starts and pauses playback, without
    rewinding.
+   The \texttt{Esc} key stops playback.
    This functionality is similar to that of the main window, but
    these keys are not reconfigurable in the piano roll.
 

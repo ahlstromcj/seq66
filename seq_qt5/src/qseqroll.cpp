@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-01
+ * \updates       2021-07-02
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -34,6 +34,7 @@
 
 #include <QApplication>                 /* QApplication keyboardModifiers() */
 #include <QFrame>                       /* base class for seqedit frame(s)  */
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPen>
@@ -78,6 +79,7 @@ qseqroll::qseqroll
         usr().key_height(),                         /* was m_key_y      */
         usr().key_height() * c_num_keys + 1         /* was m_keyarea_y  */
     ),
+    m_analysis_msg          (nullptr),
     m_backseq_color         (backseq_paint()),
     m_parent_frame          (frame),
     m_seqkeys_wid           (seqkeys_wid),
@@ -1606,18 +1608,33 @@ qseqroll::set_scale (int scale)
 void
 qseqroll::analyze_seq_notes ()
 {
-    keys outkey;
-    scales outscale;
-    if (analyze_notes(seq_pointer()->events(), outkey, outscale))
+    std::vector<keys> outkeys;
+    std::vector<scales> outscales;
+    int results = analyze_notes(seq_pointer()->events(), outkeys, outscales);
+    if (results > 0)
     {
-        int k = static_cast<int>(outkey);
-        int s = static_cast<int>(outscale);
-        printf
-        (
-            "Analysis: Key %s (%d), Scale '%s' (%d)\n",
-            musical_key_name(k).c_str(),
-            k, musical_scale_name(s).c_str(), s
-        );
+        std::string message;
+        for (int r = 0; r < results; ++r)
+        {
+            int k = static_cast<int>(outkeys[r]);
+            int s = static_cast<int>(outscales[r]);
+            char temp[80];
+            snprintf
+            (
+                temp, sizeof temp, "Analysis %d: Key %s, Scale '%s'\n",
+                r + 1, musical_key_name(k).c_str(),
+                musical_scale_name(s).c_str()
+            );
+            message += temp;
+        }
+        if (not_nullptr(m_analysis_msg))
+            delete m_analysis_msg;
+
+        m_analysis_msg = new QMessageBox(this);
+        m_analysis_msg->setWindowTitle("Estimated Scale(s)");
+        m_analysis_msg->setText(QString::fromStdString(message));
+        m_analysis_msg->setModal(false);
+        m_analysis_msg->show();
     }
 }
 

@@ -183,10 +183,10 @@
  *      -#  The output thread then waits on the condition variable for
  *          inner_start() to set is_running() to true. It then proceeds to run
  *          forever.
- *      -#  In the destructor, the flags m_inputing and m_outputing are set to
- *          false, and the condition variable is signalled.  This causes the
- *          output thread to exit.  The input thread detects that m_inputing is
- *          false and exits.
+ *      -#  In the destructor, the flags m_inputing and m_outputing are
+ *          replaced with m_io_active,  set to false, and the condition
+ *          variable is signalled.  This causes the output thread to exit.
+ *          The input thread detects that m_io_active is false and exits.
  *      -#  The two threads are then joined.
  *
  * Threads:

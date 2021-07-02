@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-01
+ * \updates       2021-07-02
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -47,6 +47,7 @@
  * Forward references
  */
 
+class QMessageBox;
 class QPixmap;
 class QTimer;
 
@@ -184,6 +185,12 @@ private:
     }
 
 private:
+
+    /**
+     *  Used for showing the estimated scale/key upon a Ctrl-K in the qseqroll.
+     */
+
+    QMessageBox * m_analysis_msg;
 
     /**
      *  The color (from the palette) for the background sequence.

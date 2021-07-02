@@ -1,7 +1,7 @@
 # README for Seq66 0.95.1
 
 Chris Ahlstrom
-2015-09-10 to 2021-06-30
+2015-09-10 to 2021-07-02
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -83,7 +83,7 @@ Windows, and using a conventional source tarball.
         *   Added 'auto' option to song-start-mode setting.
         *   Fixed issues with some of the file-dialogs.
         *   Fixed issues with editing keystrokes being passed from the tabbed
-            editors to the main window (and the live frame)
+            editors to the main window (and the live frame).
         *   Improved arrow-key handling in seqroll.
         *   Removed PortMidi Java configuration parsing code.
         *   Important fixes to NSM sessions.
@@ -91,6 +91,8 @@ Windows, and using a conventional source tarball.
         *   Improved support for making the user-interface smaller; 4x4 sets.
         *   Added the "enigmatic" scale.
         *   Fixes to handling of musical key, scale, and background pattern.
+        *   Finalized the scale-finder code (Ctrl-K in the pattern editor's
+            piano roll.)
         *   Updated libtool support, now seq66cli is under 200K in size.
     *   Version 0.95.0:
         *   Updated almost all settings to use "name = variable" convention
