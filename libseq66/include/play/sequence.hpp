@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-06-21
+ * \updates       2021-07-05
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1610,7 +1610,7 @@ public:
         midibyte status, midibyte cc,
         int divide, bool linked = false
     );
-    bool transpose_notes (int steps, int scale);
+    bool transpose_notes (int steps, int scale, int key = 0);
 
 #if defined USE_STAZED_SHIFT_SUPPORT
     void shift_notes (midipulse ticks);

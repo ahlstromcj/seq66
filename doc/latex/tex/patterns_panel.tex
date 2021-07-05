@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-03-12
+% \update      2021-07-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -222,6 +222,7 @@
       \item \textbf{Copy pattern}
       \item \textbf{Cut pattern}
       \item \textbf{Delete pattern}
+      \item \textbf{Merge into pattern} (new, not yet shown)
    \end{enumber}
 
    The first two menu entries are the same as above.  However, since there is
@@ -309,8 +310,16 @@
 
    \itempar{Paste Pattern}{pattern!paste}
    Pastes a loop or pattern that was previously copied.
+   This option is shown only when right-clicking over an empty pattern.
+   It causes a cut or copied pattern to be replicated into the emptly slot.
    Note that there is no \texttt{Ctrl-V} key for this operation in the
    main window.
+
+   \itempar{Merge Into Pattern}{pattern!merge}
+   This item is a new feature.  Like \textbf{Paste to pattern}, it pastes a
+   patten that was cut or copied into the pattern slot where the mouse was
+   right-clicked.  However, the original notes remain.  Thus, the merge
+   option provides a way to build up a pattern by copying other patterns.
    
 \subsubsection{Pattern}
 \label{subsubsec:patterns_pattern_filled}

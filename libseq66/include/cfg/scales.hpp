@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-02
+ * \updates       2021-07-05
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the globals module.  Includes the
@@ -137,6 +137,7 @@ enum class scales
     minor_pentatonic,
     phrygian,
     enigmatic,
+    diminished,
     max                             /* a "maximum" or "size of set" value   */
 };
 
@@ -161,250 +162,6 @@ legal_scale (int s)
 {
     return s >= c_scales_off && s < c_scales_max;
 }
-
-/**
- *  Each value in the kind of scale is denoted by a true value in these
- *  arrays.  See the following sites for more information:
- *
- *      -   http://method-behind-the-music.com/theory/scalesandkeys/
- *      -   https://en.wikipedia.org/wiki/Heptatonic_scale
- *      -   https://en.wikibooks.org/wiki/Music_Theory/Scales_and_Intervals
- *
- *  Note that melodic minor descends in the same way as the natural minor
- *  scale, so it descends differently than it ascends.  We don't deal with
- *  that trick, at all.  In the following table, the scales all start with C,
- *  but seq66 allow other starting notes (e.g. "keys").
- *
-\verbatim
-    Chromatic           C  C# D  D# E  F  F# G  G# A  A# B   Notes, chord
-    Major               C  .  D  .  E  F  .  G  .  A  .  B
-    Minor               C  .  D  Eb .  F  .  G  Ab .  Bb .
-    Harmonic Minor      C  .  D  Eb .  F  .  G  Ab .  .  B
-    Melodic Minor       C  .  D  Eb .  F  .  G  .  A  .  B   Descending diff.
-    C Whole Tone        C  .  D  .  E  .  F# .  G# .  A# .   C+7 chord
-    Blues               C  .  .  Eb .  F  Gb G  .  .  Bb .
-    Major Pentatonic    C  .  D  .  E  .  .  G  .  A  .  .
-    Minor Pentatonic    C  .  .  Eb .  F  .  G  .  .  Bb .
-    Phrygian            C  Db .  Eb .  F  .  G  G# .  Bb .
-    Enigmatic           C  Db .  .  E  .  F# .  G# .  A# B
-    Octatonic 1         C  .  D  Eb .  F  Gb .  Ab A  .  B   Unimplemented
-    Octatonic 2         C  Db .  Eb E  F  F# G  .  A  Bb .   Unimplemented
-\endverbatim
- */
-
-const bool
-c_scales_policy [c_scales_max] [c_octave_size] =
-{
-    {                                                   /* off = chromatic */
-        true, true, true, true, true, true,
-        true, true, true, true, true, true
-    },
-    {                                                   /* major           */
-        true, false, true, false, true, true,
-        false, true, false, true, false, true
-    },
-    {                                                   /* minor           */
-        true, false, true, true, false, true,
-        false, true, true, false, true, false
-    },
-    {                                                   /* harmonic minor  */
-        true, false, true, true, false, true,
-        false, true, true, false, false, true
-    },
-    {                                                   /* melodic minor   */
-        true, false, true, true, false, true,
-        false, true, false, true, false, true
-    },
-    {                                                   /* whole tone      */
-        true, false, true, false, true, false,
-        true, false, true, false, true, false
-    },
-    {                                                   /* blues           */
-        true, false, false, true, false, true,
-        true, true, false, false, true, false
-    },
-    {                                                   /* maj pentatonic   */
-        true, false, true, false, true, false,
-        false, true, false, true, false, false
-    },
-    {                                                   /* min pentatonic   */
-        true, false, false, true, false, true,
-        false, true, false, false, true, false
-    },
-    {                                                   /* phrygian         */
-        true, true, false, true, false, true,
-        false, true, true, false, true, false
-    },
-    {                                                   /* enigmatic       */
-        true, true, false, false, true, false,
-        true, false, true, false, true, true
-    }
-};
-
-/**
- *  Increment values needed to transpose each scale up so that it remains in the
- *  exact same key, for harmonic transposition.  For example, if we simply add 1
- *  semitone to each note, it remains a minor key, but it is in a different minor
- *  key.  Using the transpositions in these arrays, the minor key remains the same
- *  minor key.
- *
-\verbatim
-    Major               C  .  D  .  E  F  .  G  .  A  .  B
-    Transpose up        2  .  2  .  1  2  .  2  .  2  .  1
-    Result up           D  .  E  .  F  G  .  A  .  B  .  C
-\endverbatim
- *
-\verbatim
-    Minor               C  .  D  D# .  F  .  G  G# .  A# .
-    Transpose up        2  .  1  2  .  2  .  1  2  .  2  .
-    Result up           D  .  D# F  .  G  .  G# A# .  C  .
-\endverbatim
- *
-\verbatim
-    Harmonic minor      C  .  D  Eb .  F  .  G  Ab .  .  B
-    Transpose up        2  .  1  2  .  2  .  1  3  .  .  1
-    Result up           D  .  Eb F  .  G  .  Ab B  .  .  C
-\endverbatim
- *
-\verbatim
-    Melodic minor       C  .  D  Eb .  F  .  G  .  A  .  B
-    Transpose up        2  .  1  2  .  2  .  2  .  2  .  1
-    Result up           D  .  Eb F  .  G  .  A  .  B  .  C
-\endverbatim
- *
-\verbatim
-    C Whole Tone        C  .  D  .  E  .  F# .  G# .  A# .
-    Transpose up        2  .  2  .  2  .  2  .  2  .  2  .
-    Result up           D  .  E  .  F# .  G# .  A# .  C  .
-\endverbatim
- *
-\verbatim
-    Blues               C  .  .  Eb .  F  Gb G  .  .  Bb .
-    Transpose up        3  .  .  2  .  1  1  3  .  .  2  .
-    Result up           Eb .  .  F  .  Gb G  Bb .  .  C  .
-\endverbatim
- *
-\verbatim
-    Major Pentatonic    C  .  D  .  E  .  .  G  .  A  .  .
-    Transpose up        2  .  2  .  3  .  .  2  .  3  .  .
-    Result up           D  .  E  .  G  .  .  A  .  C  .  .
-\endverbatim
- *
-\verbatim
-    Minor Pentatonic    C  .  .  Eb .  F  .  G  .  .  Bb .
-    Transpose up        3  .  .  2  .  2  .  3  .  .  2  .
-    Result up           Eb .  .  F  .  G  .  Bb .  .  C  .
-\endverbatim
- *
- \verbatim
-    Phrygian            C  Db .  Eb .  F  .  G  Ab .  Bb .
-    Transpose up        1  2  .  2  .  2  .  1  2  .  2  .
-    Result up           D  Eb .  F  .  G  .  A  Bb .  C  .
-\endverbatim
- *
- \verbatim
-    Enigmatic           C  Db .  .  E  .  F# .  G# .  A# B
-    Transpose up        1  3  .  .  2  .  2  .  2  .  1  1
-    Result up           Db E  .  .  F# .  G# .  A# .  B  C
-\endverbatim
- */
-
-const int
-c_scales_transpose_up [c_scales_max] [c_octave_size] =
-{
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},              /* off = chromatic */
-    { 2, 0, 2, 0, 1, 2, 0, 2, 0, 2, 0, 1},              /* major           */
-    { 2, 0, 1, 2, 0, 2, 0, 1, 2, 0, 2, 0},              /* minor           */
-    { 2, 0, 1, 2, 0, 2, 0, 1, 3, 0, 0, 1},              /* harmonic minor  */
-    { 2, 0, 1, 2, 0, 2, 0, 2, 0, 2, 0, 1},              /* melodic minor   */
-    { 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0},              /* C whole tone    */
-    { 3, 0, 0, 2, 0, 1, 1, 3, 0, 0, 2, 0},              /* blues           */
-    { 2, 0, 2, 0, 3, 0, 0, 2, 0, 3, 0, 0},              /* maj pentatonic  */
-    { 3, 0, 0, 2, 0, 2, 0, 3, 0, 0, 2, 0},              /* min pentatonic  */
-    { 1, 2, 0, 2, 0, 2, 0, 1, 2, 0, 2, 0},              /* phrygian        */
-    { 1, 3, 0, 0, 2, 0, 2, 0, 2, 0, 1, 1}               /* enigmatic       */
-};
-
-/**
- *  Making these positive makes it easier to read, but the actual array
- *  contains negative values.
- *
-\verbatim
-    Major               C  .  D  .  E  F  .  G  .  A  .  B
-    Transpose down      1  .  2  .  2  1  .  2  .  2  .  2
-    Result down         B  .  C  .  D  E  .  F  .  G  .  A
-\endverbatim
- *
-\verbatim
-    Minor               C  .  D  D# .  F  .  G  G# .  A# .
-    Transpose down      2  .  2  1  .  2  .  2  1  .  2  .
-    Result down         A# .  C  D  .  D# .  F  G  .  G# .
-\endverbatim
- *
-\verbatim
-    Harmonic minor      C  .  D  Eb .  F  .  G  Ab .  .  B
-    Transpose down      1  .  2  1  .  2  .  2  1  .  .  3
-    Result down         B  .  C  D  .  Eb .  F  G  .  .  Ab
-\endverbatim
- *
-\verbatim
-    Melodic minor       C  .  D  Eb .  F  .  G  .  A  .  B
-    Transpose down      1  .  2  1  .  2  .  2  .  2  .  2
-    Result down         B  .  C  D  .  Eb .  F  .  G  .  A
-\endverbatim
- *
-\verbatim
-    C whole tone        C  .  D  .  E  .  F# .  G# .  A# .
-    Transpose down      2  .  2  .  2  .  2  .  2  .  2  .
-    Result down         A# .  C  .  D  .  E  .  F# .  G# .
-\endverbatim
- *
-\verbatim
-    Blues               C  .  .  Eb .  F  Gb G  .  .  Bb .
-    Transpose down      2  .  .  3  .  2  1  1  .  .  3  .
-    Result down         Bb .  .  C  .  Eb F  Gb .  .  G  .
-\endverbatim
- *
-\verbatim
-    Major Pentatonic    C  .  D  .  E  .  .  G  .  A  .  .
-    Transpose down      3  .  2  .  2  .  .  3  .  2  .  .
-    Result down         A  .  C  .  D  .  .  E  .  G  .  .
-\endverbatim
- *
-\verbatim
-    Minor Pentatonic    C  .  .  Eb .  F  .  G  .  .  Bb .
-    Transpose down      2  .  .  3  .  2  .  2  .  .  3  .
-    Result down         Bb .  .  C  .  Eb .  F  .  .  G  .
-\endverbatim
- *
-  \verbatim
-    Phrygian            C  Db .  Eb .  F  .  G  Ab .  Bb .
-    Transpose down      1  1  .  1  .  1  .  1  1  .  1  .
-    Result down         B  C  .  D  .  E  .  Fb G  .  A  .
-\endverbatim
- *
-  \verbatim
-    Enigmatic           C  Db .  .  E  .  F# .  G# .  A# B
-    Transpose down      1  1  .  .  3  .  2  .  2  .  2  1
-    Result down         B  C  .  .  Db .  E  .  F# .  G# A#
-\endverbatim
- */
-
-const int
-c_scales_transpose_dn [c_scales_max] [c_octave_size] =
-{
-    { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},  /* off = chromatic */
-    { -1,  0, -2,  0, -2, -1,  0, -2,  0, -2,  0, -2},  /* major (ionian)  */
-    { -2,  0, -2, -1,  0, -2,  0, -2, -1,  0, -2,  0},  /* minor (aeolian) */
-    { -1,  0, -2, -1,  0, -2,  0, -2, -1,  0,  0, -3},  /* harmonic minor  */
-    { -1,  0, -2, -1,  0, -2,  0, -2,  0, -2,  0, -2},  /* melodic minor   */
-    { -2,  0, -2,  0, -2,  0, -2,  0, -2,  0, -2,  0},  /* C whole tone    */
-    { -2,  0,  0, -3,  0, -2, -1, -1,  0,  0, -3,  0},  /* blues           */
-    { -3,  0, -2, -0,  2,  0,  0, -3,  0, -2,  0,  0},  /* maj pentatonic  */
-    { -2,  0,  0, -3,  0, -2,  0, -2,  0,  0, -3,  0},  /* min pentatonic  */
-    { -1, -1,  0, -1,  0, -1,  0, -1, -1,  0, -1,  0},  /* phrygian        */
-    { -1, -1,  0,  0, -3,  0, -2,  0, -2,  0, -2, -1}   /* enigmatic       */
-};
 
 /**
  *  Provides the entries for the Interval dropdown menu in the Pattern Editor
@@ -524,6 +281,9 @@ c_chord_table [c_chord_number] [c_chord_size] =
 extern std::string musical_key_name (int k);
 extern std::string musical_note_name (int n);
 extern std::string musical_scale_name (int s);
+extern bool scales_policy (scales s, int k);
+extern const int * scales_up (int scale, int key = 0);
+extern const int * scales_down (int scale, int key = 0);
 extern double midi_note_frequency (midibyte note);
 extern int analyze_notes
 (

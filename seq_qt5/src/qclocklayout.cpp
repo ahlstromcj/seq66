@@ -26,17 +26,17 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2021-03-05
+ * \updates       2021-07-05
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
  */
 
-#include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QRadioButton>
-#include <QtWidgets/QSpacerItem>
+#include <QButtonGroup>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QRadioButton>
+#include <QSpacerItem>
 
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qclocklayout.hpp"
@@ -64,12 +64,7 @@ namespace seq66
  *            -    clock_callback_mod().
  */
 
-qclocklayout::qclocklayout
-(
-    QWidget * parent,
-    performer & p,
-    int bus
-) :
+qclocklayout::qclocklayout (QWidget * parent, performer & p, int bus) :
     QWidget                     (parent),
     m_performance               (p),
     m_bus                       (bus),
@@ -91,13 +86,13 @@ qclocklayout::qclocklayout
         this, SLOT(clock_callback_clicked(int))
     );
     if (! ok)
-        (void) error_message("qclocklayout: clock-group slot failed to connect");
+        (void) error_message("qclocklayout: slot failed to connect");
 }
 
 /**
  *  The tool-tips.
  *
- *  "This setting disables the usage of this output port, completely.  "
+ *  "This setting disables the usage of this output port, completely."
  *  "It is needed in some cases for devices that are detected, but "
  *  "cannot be used (e.g. devices locked by another application)."
  *

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-02
+ * \updates       2021-07-05
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -475,7 +475,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         painter.drawLine(r.x(), y, r.x() + r.width(), y);
         if (m_scale != scales::off)
         {
-            if (! c_scales_policy[int(m_scale)][(modkey - 1) % c_octave_size])
+            if (! scales_policy(m_scale, modkey))       /* scales.cpp/hpp   */
             {
                 pen.setColor(fore_color());         /* Qt::lightGray        */
                 painter.setBrush(scale_brush());

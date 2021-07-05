@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-07-01
+ * \updates       2021-07-05
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -372,9 +372,9 @@ qseqeditframe64::qseqeditframe64
     m_beat_width            (seq_pointer()->get_beat_width()),
     m_snap                  (sm_initial_snap),
     m_note_length           (sm_initial_note_length),
-    m_scale                 (int(seq_pointer()->musical_scale())),
+    m_scale                 (0),    // (int(seq_pointer()->musical_scale())),
     m_chord                 (0),
-    m_key                   (int(seq_pointer()->musical_key())),
+    m_key                   (0),    // (int(seq_pointer()->musical_key())),
     m_bgsequence            (seq_pointer()->background_sequence()),
     m_measures              (0),
 #if defined USE_STAZED_ODD_EVEN_SELECTION
@@ -665,11 +665,11 @@ qseqeditframe64::qseqeditframe64
     connect(ui->m_button_redo, SIGNAL(clicked(bool)), this, SLOT(redo()));
 
     /*
-     * Quantize Button.  This is the "Q" button, and indicates to
-     * quantize (just?) notes.  Compare it to the Quantize menu entry,
-     * which quantizes events.  Note the usage of std::bind()... this feature
-     * requires C++11. Also see q_record_change(), which handles on-the-fly
-     * quantization while recording.
+     * Quantize Button.  This is the "Q" button, and indicates to quantize
+     * (just?) notes.  Compare it to the Quantize menu entry, which quantizes
+     * events.  Note the usage of std::bind()... this feature requires C++11.
+     * Also see q_record_change(), which handles on-the-fly quantization while
+     * recording.
      */
 
     qt_set_icon(quantize_xpm, ui->m_button_quantize);
@@ -711,13 +711,12 @@ qseqeditframe64::qseqeditframe64
     );
 
     /**
-     *  Fill "Snap" and "Note" Combo Boxes:
-     *
-     *      To reduce the amount of written code, we now use a static array to
-     *      initialize some of these menu entries.  0 denotes the separator.
-     *      This same setup is used to set up both the snap and note menu, since
-     *      they are exactly the same.  Saves a *lot* of code.  This code was
-     *      copped from the Gtkmm 2.4 seqedit class and adapted to Qt 5.
+     *  Fill "Snap" and "Note" Combo Boxes: To reduce the amount of written
+     *  code, we use a static array to initialize some of these menu entries.
+     *  0 denotes the separator.  This same setup is used to set up both the
+     *  snap and note menu, since they are exactly the same.  Saves a *lot* of
+     *  code.  This code was copped from the Gtkmm 2.4 seqedit class and
+     *  adapted to Qt 5.
      */
 
     for (int si = 0; si < s_snap_count; ++si)
@@ -1894,7 +1893,8 @@ qseqeditframe64::popup_tool_menu ()
     m_tools_popup = new QMenu(this);
     QMenu * menuselect = new QMenu(tr("&Select..."), m_tools_popup);
     QMenu * menutiming = new QMenu(tr("&Timing..."), m_tools_popup);
-    QMenu * menupitch  = new QMenu(tr("&Pitch..."), m_tools_popup);
+    QMenu * menupitch  = new QMenu(tr("&Pitch transpose..."), m_tools_popup);
+    QMenu * menuharmonic  = new QMenu(tr("&Harmonic transpose..."), m_tools_popup);
     QAction * selectall = new QAction(tr("Select all"), m_tools_popup);
     selectall->setShortcut(tr("Ctrl+A"));
     connect
@@ -1924,7 +1924,8 @@ qseqeditframe64::popup_tool_menu ()
     menutiming->addAction(tighten);
 
     char num[16];
-    QAction * transpose[24];     /* fill out note transpositions */
+    QAction * transpose[24];        /* fill out plain pitch transpositions */
+    QAction * harmonic[24];         /* fill out harmonic transpositions    */
     for (int t = -c_octave_size; t <= c_octave_size; ++t)
     {
         if (t != 0)
@@ -1933,6 +1934,11 @@ qseqeditframe64::popup_tool_menu ()
             (
                 num, sizeof num, "%+d [%s]", t, c_interval_text[abs(t)].c_str()
             );
+
+            /*
+             * Pitch transpose menu entries.
+             */
+
             transpose[t + c_octave_size] = new QAction(num, m_tools_popup);
             transpose[t + c_octave_size]->setData(t);
             menupitch->addAction(transpose[t + c_octave_size]);
@@ -1941,13 +1947,30 @@ qseqeditframe64::popup_tool_menu ()
                 transpose[t + c_octave_size], SIGNAL(triggered(bool)),
                 this, SLOT(transpose_notes())
             );
+
+            /*
+             * Harmonic transpose menu entries.
+             */
+
+            harmonic[t + c_octave_size] = new QAction(num, m_tools_popup);
+            harmonic[t + c_octave_size]->setData(t);
+            menuharmonic->addAction(harmonic[t + c_octave_size]);
+            connect
+            (
+                harmonic[t + c_octave_size], SIGNAL(triggered(bool)),
+                this, SLOT(transpose_harmonic())
+            );
         }
         else
+        {
             menupitch->addSeparator();
+            menuharmonic->addSeparator();
+        }
     }
     m_tools_popup->addMenu(menuselect);
     m_tools_popup->addMenu(menutiming);
     m_tools_popup->addMenu(menupitch);
+    m_tools_popup->addMenu(menuharmonic);
 }
 
 /**
@@ -1993,7 +2016,7 @@ qseqeditframe64::tighten_notes ()
 }
 
 /**
- *  Consider adding Aftertouch events.
+ *  Consider adding Aftertouch events.  Done in sequence::transpose_notes().
  */
 
 void
@@ -2002,6 +2025,14 @@ qseqeditframe64::transpose_notes ()
     QAction * senderAction = (QAction *) sender();
     int transposeval = senderAction->data().toInt();
     seq_pointer()->transpose_notes(transposeval, 0);
+}
+
+void
+qseqeditframe64::transpose_harmonic ()
+{
+    QAction * senderAction = (QAction *) sender();
+    int transposeval = senderAction->data().toInt();
+    seq_pointer()->transpose_notes(transposeval, m_scale, m_key);
 }
 
 /**
@@ -3118,11 +3149,7 @@ qseqeditframe64::play_change (bool ischecked)
 }
 
 /**
- *  Passes the recording status to the performer object.  Both
- *  record_change_callback() and thru_change_callback() will call
- *  set_sequence_input() for the same sequence. We only need to call it if it is
- *  not already set, if setting. And, we should not unset it if the
- *  m_toggle_thru->get_active() is true.
+ *  Passes the recording status to performer.
  */
 
 void
@@ -3152,11 +3179,7 @@ qseqeditframe64::q_record_change (bool ischecked)
 }
 
 /**
- *  Passes the MIDI Thru status to the performer object.  Both
- *  record_change_callback() and thru_change_callback() will call
- *  set_sequence_input() for the same sequence. We only need to call it if it is
- *  not already set, if setting. And, we should not unset it if the
- *  m_toggle_thru->get_active() is true.
+ *  Passes the MIDI Thru status to performer.
  */
 
 void

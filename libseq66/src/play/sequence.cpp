@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-06-16
+ * \updates       2021-07-05
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4880,27 +4880,30 @@ sequence::select_events (midibyte status, midibyte cc, bool inverse)
  *      The number of steps to transpose the notes.
  *
  * \param scale
- *      The scale to make the notes adhere to while transposing.
+ *      The scale to make the notes adhere to while transposing.  If the scale
+ *      is 0, it is straight transposition.  If greater than 0, then the
+ *      transposition is harmonic, and based on the "up" or "down" settings in
+ *      the scales module for that scale.
  */
 
 bool
-sequence::transpose_notes (int steps, int scale)
+sequence::transpose_notes (int steps, int scale, int key)
 {
     automutex locker(m_mutex);
     const int * transposetable;
     bool result = false;
-    m_events_undo.push(m_events);               /* push_undo(), no lock  */
+    m_events_undo.push(m_events);                   /* push_undo(), no lock */
     if (steps < 0)
     {
-        transposetable = &c_scales_transpose_dn[scale][0];     /* down */
+        transposetable = scales_down(scale, key);   /* 0 = chromatic scale  */
         steps *= -1;
     }
     else
-        transposetable = &c_scales_transpose_up[scale][0];     /* up   */
+        transposetable = scales_up(scale, key);     /* 0 = chromatic scale  */
 
     for (auto & er : m_events)
     {
-        if (er.is_selected() && er.is_note())   /* transposable event?  */
+        if (er.is_selected() && er.is_note())       /* transposable event?  */
         {
             int note = er.get_note();
             bool off_scale = false;

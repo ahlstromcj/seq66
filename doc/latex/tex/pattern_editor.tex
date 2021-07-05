@@ -229,40 +229,33 @@
    events and notes:
 
    \begin{enumber}
-      \item \textbf{Select}.  This menu
-      provides two sets of selections for notes:
-      \begin{itemize}
-         \item \textbf{All Notes}, which selects all notes in the pattern;
-            The \index{keys!ctrl-a} \texttt{Ctrl-A} will also select
-            all of the events in the pattern editor.
-         \item \textbf{Inverse Notes}, which inverts the selection of notes.
-      \end{itemize}
-      \item \textbf{Modify Time}. This menu
-      offers two ways to tweak the timing of the selected note:
-      \begin{itemize}
-         \item \textbf{Quantize Selected Notes}
-            \index{quantize}
-            quantizes the selected notes, the same way as the
-            \textbf{Quantize} ("\textbf{Q}") button.
-         \item \textbf{Tighten Selected Notes},
-            \index{tighten}
-            which is merely a less strict form of quantization.
-         \item \textbf{Modify Pitch} has only one entry by default,
-            \index{modify pitch}
-            \textbf{Transpose Selected}.
-            Selecting the \textbf{Transpose Selected} entry brings up a sub-menu.
-            If the user has selected a
-            \textbf{Musical Scale} setting other than \textbf{Off},
-            then \textbf{Modify Pitch} has two entries:
-            \begin{itemize}
-               \item \textbf{Transpose Selected}, discussed above, plus
-                  another sub-menu,
-               \item \textbf{Harmonic Transpose Selected}, which makes sure
-                  that all transpositions stay on the selected scale.
-                  Again, the harmonic-transpose option will not be
-                  available unless a scale has been selected.
-            \end{itemize}
-      \end{itemize}
+      \item \textbf{Select}.  This menu provides two note-selection options:
+         \begin{itemize}
+            \item \textbf{Select all}, selects all notes in the pattern;
+               The \index{keys!ctrl-a} \texttt{Ctrl-A} will also select
+               all of the events in the pattern editor.
+            \item \textbf{Inverse selection}, which inverts the selection of
+               notes.
+         \end{itemize}
+      \item \textbf{Timing}. This menu
+            offers two ways to tweak the timing of the selected note:
+         \begin{itemize}
+            \item \textbf{Quantize}
+               \index{quantize}
+               quantizes the selected notes, the same way as the
+               \textbf{Quantize} ("\textbf{Q}") button.
+            \item \textbf{Tighten},
+               \index{tighten}
+               which is merely a less strict form of quantization.
+         \end{itemize}
+      \item \textbf{Pitch transpose} allows uniform transpostion
+         regardless of the key and scale in force for the pattern.
+         \index{modify pitch}
+         Selecting this item entry brings up a sub-menu.
+      \item \textbf{Harmonic Transpose Selected}, which makes sure
+         that all transpositions stay on the selected scale.
+         If the scale selection is off, this is the same as plain pitch
+         transpose.
    \end{enumber}
 
    \itempar{Follow Progress}{pattern editor!tools}
@@ -1080,6 +1073,20 @@
    \itempar{MIDI Thru Toggle}{pattern editor!midi data pass-through}
    This button routes incoming MIDI data through
    \textsl{Seq66}, which then writes it to the MIDI output buss.
+   When a new pattern editor is opened,
+   and the new-editor-editor settings
+   (\sectionref{paragraph:user_file_added_options_pattern_editor})
+   are false, one can click the
+   \index{thru}
+   \textbf{Thru} button first to redirect MIDI controller input
+   to the synthesizer port, and have it be heard, without
+   arming the pattern or turning on MIDI Record.
+
+   Note, though, that if MIDI Record is toggled on and off, the
+   Thru function is effectively disabled.  To restore it,
+   toggle the Thru off, then on, again.
+
+   Also note that Thru will remain enabled when the pattern editor is closed.
 
    \itempar{MIDI Record Toggle}{pattern editor!record midi data}
    This button routes incoming MIDI data into
