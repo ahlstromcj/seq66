@@ -1,5 +1,186 @@
+2021-07-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, README.md, configure.ac, include/config.h.in,
+	m4/ax_have_qt_min.m4: Made the check for qmake for robust for issue
+	#54.
+
+2021-07-05  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, doc/latex/tex/pattern_editor.tex,
+	doc/latex/tex/patterns_panel.tex, libseq66/include/cfg/scales.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/cfg/scales.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/src/qclocklayout.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp: Fixed
+	issue #54, added harmonic-transposition, diminished scale.
+
+2021-07-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/scripts/make-checkout, doc/latex/tex/launchpad_mini.tex: 
+	Added back the user manual, accidentally deleted.
+
+2021-07-02  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* : commit 8a810f21f75d515496255799c8b5b37521ae46c4 Author: Chris
+	Ahlstrom <ahlstromcj@gmail.com> Date:   Fri Jul 2 17:01:36 2021
+	-0400
+
+2021-07-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.in, Seq66cli/Makefile.in, Seq66qt5/Makefile.in,
+	configure, data/Makefile.in, doc/Makefile.in,
+	doc/latex/Makefile.in, doc/latex/tex/Makefile.in,
+	libseq66/Makefile.in, libseq66/include/Makefile.in,
+	libseq66/src/Makefile.in, libsessions/Makefile.in,
+	libsessions/include/Makefile.in, libsessions/src/Makefile.in,
+	m4/Makefile.in, man/Makefile.in, resources/pixmaps/Makefile.in,
+	seq_portmidi/Makefile.in, seq_portmidi/include/Makefile.in,
+	seq_portmidi/src/Makefile.in, seq_qt5/Makefile.in,
+	seq_qt5/forms/Makefile.in, seq_qt5/include/Makefile.in,
+	seq_qt5/src/Makefile.in, seq_rtmidi/Makefile.in,
+	seq_rtmidi/include/Makefile.in, seq_rtmidi/src/Makefile.in: Updated
+	the make-files and configure script.
+	* libseq66/include/cfg/scales.hpp, libseq66/src/cfg/scales.cpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qseqroll.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp: Beefing
+	up the scale-detection function in progress.
+
+2021-06-30  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* .gitignore, Makefile.am, README.md, Seq66cli/Makefile.am, TODO,
+	configure.ac, contrib/scripts/naming, contrib/scripts/ordercp,
+	contrib/scripts/seq66.sed, data/seq66cli/seq66cli.drums,
+	data/seq66cli/seq66cli.mutes, data/seq66cli/seq66cli.rc,
+	data/seq66cli/seq66cli.usr, doc/latex/tex/pattern_editor.tex,
+	include/config.h.in, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/cfg/scales.hpp, libseq66/include/cfg/usrfile.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/qt/qsmacros.hpp, libseq66/src/cfg/scales.cpp,
+	libseq66/src/cfg/usrfile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, resources/pixmaps/Makefile.am,
+	seq_portmidi/include/mastermidibus_pm.hpp,
+	seq_portmidi/include/midibus_pm.hpp,
+	seq_portmidi/src/mastermidibus.cpp, seq_qt5/include/qseqroll.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp: Fixed cli
+	linkage, added enigmatic scale, fixed bg/key/scale SeqSpecs.
+
+2021-06-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/configuration.tex, doc/latex/tex/meta_events.tex,
+	doc/latex/tex/patterns_panel.tex,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/ctrl/automation.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/ctrl/automation.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/util/calculations.cpp, seq_qt5/include/qlfoframe.hpp,
+	seq_qt5/include/qslivebase.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qlfoframe.cpp, seq_qt5/src/qslivebase.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: More tweaking
+	of smaller-screen handling.
+
+2021-06-25  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, Seq66qt5/Seq66qt5.pro, contrib/scripts/qbuild,
+	doc/latex/tex/configuration.tex,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/libseq66.pro,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/midi/eventlist.cpp,
+	libseq66/src/play/screenset.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/sessions/smanager.cpp, libsessions/libsessions.pro,
+	seq_portmidi/seq_portmidi.pro, seq_qt5/include/qt5nsmanager.hpp,
+	seq_qt5/seq_qt5.pro, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qslotbutton.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_rtmidi/seq_rtmidi.pro: Improving
+	support for a smaller GUI, enhancing the 'pro' files for Qt.
+	* doc/latex/tex/sessions.tex, seq_portmidi/src/Makefile.in,
+	seq_qt5/include/qloopbutton.hpp, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Adapting to
+	smaller set sizes in progress.
+
+2021-06-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libsessions/src/nsm/nsmclient.cpp: Fixes to initial NSM session with
+	playlists.
+
+2021-06-23  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/dox/seq_portmidi/seq_portmidi.cfg,
+	doc/latex/tex/sessions.tex, libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/play/playlist.cpp, seq_portmidi/include/finddefault.h,
+	seq_portmidi/include/pmmacosxcm.h, seq_portmidi/include/portmidi.h,
+	seq_portmidi/seq_portmidi.pro, seq_portmidi/src/Makefile.am,
+	seq_portmidi/src/finddefault-macosx.c,
+	seq_portmidi/src/finddefault.c, seq_portmidi/src/pmlinux.c,
+	seq_portmidi/src/pmmac.c, seq_portmidi/src/pmwin.c,
+	seq_qt5/include/qslivegrid.hpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qplaylistframe.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qslivegrid.cpp: 
+	Removing unused portmidi code, fixing double-click slot handling.
+
+2021-06-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Seq66cli/Makefile.in, Seq66qt5/Makefile.in, TODO, configure,
+	{seq_qt5/src => contrib/code}/qrollframe.cpp, {seq_qt5/include =>
+	contrib/code}/qrollframe.hpp, seq_portmidi/include/Makefile.in,
+	seq_portmidi/src/Makefile.in, seq_qt5/include/Makefile.am,
+	seq_qt5/include/Makefile.in, seq_qt5/include/palettefile.hpp,
+	seq_qt5/include/qseqroll.hpp, seq_qt5/seq_qt5.pro,
+	seq_qt5/src/Makefile.am, seq_qt5/src/Makefile.in,
+	seq_qt5/src/gui_palette_qt5.cpp, seq_qt5/src/palettefile.cpp,
+	seq_qt5/src/qperfeditex.cpp, seq_qt5/src/qseqroll.cpp: Moved
+	grollframe to contrib/code.
+	* README.md, Seq66cli/Makefile.am, Seq66qt5/Makefile.am, TODO,
+	configure.ac, data/readme.windows, doc/latex/tex/references.tex,
+	doc/latex/tex/windows.tex, include/config.h.in,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	seq_portmidi/include/Makefile.am, seq_portmidi/src/Makefile.am,
+	seq_qt5/forms/qplaylistframe.ui, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/include/qmutemaster.hpp,
+	seq_qt5/include/qperfeditframe64.hpp,
+	seq_qt5/include/qseqeventframe.hpp,
+	seq_qt5/include/qsessionframe.hpp, seq_qt5/include/qsetmaster.hpp,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/Makefile.am,
+	seq_qt5/src/qmutemaster.cpp, seq_qt5/src/qperfeditframe64.cpp,
+	seq_qt5/src/qperftime.cpp, seq_qt5/src/qplaylistframe.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qsessionframe.cpp,
+	seq_qt5/src/qsetmaster.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_rtmidi/include/seq66_rtmidi_features.h: Added auto option to
+	song-start-mode, fixed issues with keystrokes and file dialogs.
+
+2021-06-21  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, data/win/qpseq66.drums,
+	data/win/qpseq66.playlist, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/play/performer.cpp,
+	man/sequencer66.1, seq_qt5/src/qperfeditframe64.cpp: Added auto
+	option for song-start-mode.
+
+2021-06-20  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* VERSION, configure.ac, doc/latex/tex/seq66-user-manual.tex,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/src/play/performer.cpp,
+	libseq66/src/play/screenset.cpp: Fixed announce_sequence,
+	incremented version.
+
 2021-06-19  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* ChangeLog, data/license.txt, data/readme.txt, data/readme.windows: 
+	Version 0.95.0 pending.
 	* NEWS, README.md, data/win/qpseq66.ctrl, data/win/qpseq66.mutes,
 	data/win/qpseq66.rc, data/win/qpseq66.usr,
 	doc/latex/tex/song_editor.tex, libseq66/src/os/daemonize.cpp,

@@ -18086,6 +18086,7 @@ $as_echo "$have_qt:
     QT_LUPDATE=
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_qt" >&5
 $as_echo "$have_qt" >&6; }
+    as_fn_error $? "qmake/Qt not found... is it qmake-qt5 on your system?" "$LINENO" 5
   fi
 
 
@@ -22928,10 +22929,8 @@ cat << E_O_F
 
 Run 'make' to build the application.  Run 'make install' as root/sudo to install
 the application. Do 'make dist', etc. to create gzip and other archives.  To
-build the PDF documentation, make sure Doxygen, Graphviz, and TexLive are
-installed, change to the doc/dox directory, and run './make_dox reference'.  To
-clean the documentation, run './make_dox clean'.  'install' and 'uninstall' are
-other options for make_dox.
+build the PDF user manual, make sure TexLive and latexmk are installed.
+Change to the doc/latex directory, and run make.
 
 E_O_F
 
