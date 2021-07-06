@@ -6,15 +6,16 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2021-06-28
+dnl \update        2021-07-06
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
-dnl   This script is for the Seq66 project, a repackaging and fixing
+dnl   This script is for the Seq66 project, a repackaging and updating
 dnl   of sequencer64.
 dnl
 dnl   Process this file with bootstrap (autoconf) to produce a configure
-dnl   script.  Run "./bootstrap --help" for more information.
+dnl   script.  Run "./bootstrap --help" for more information, or read the
+dnl   INSTALL file.
 dnl
 dnl ---------------------------------------------------------------------------
 
@@ -442,7 +443,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2021-06-28"
+#define VERSION_DATE_SHORT "2021-07-06"
 #define VERSION "0.95.1"
 
 )
@@ -577,10 +578,8 @@ cat << E_O_F
 
 Run 'make' to build the application.  Run 'make install' as root/sudo to install
 the application. Do 'make dist', etc. to create gzip and other archives.  To
-build the PDF documentation, make sure Doxygen, Graphviz, and TexLive are
-installed, change to the doc/dox directory, and run './make_dox reference'.  To
-clean the documentation, run './make_dox clean'.  'install' and 'uninstall' are
-other options for make_dox.
+build the PDF user manual, make sure TexLive and latexmk are installed.
+Change to the doc/latex directory, and run make.
 
 E_O_F
 

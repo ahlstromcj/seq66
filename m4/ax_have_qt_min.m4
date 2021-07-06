@@ -1,5 +1,5 @@
 # ===========================================================================
-# https://www.gnu.org/software/autoconf-archive/ax_have_qt.html extended
+# https://www.gnu.org/software/autoconf-archive/ax_have_qt_min.html
 # ===========================================================================
 #
 # SYNOPSIS
@@ -9,10 +9,15 @@
 # DESCRIPTION
 #
 #   Extended by C. Ahlstrom 2018-03-08 to support rcc.
+#
 #   Modified by C. Ahlstrom 2019-11-29 to change the macro name to avoid
-#   conflicts and to remove (experimentally) the problematic uitools library.
-#   Modified by C. Ahlstrom 2020-04-01 to pare down to the minimum needed for
-#   Seq66.
+#   conflicts and to remove the problematic uitools library test.
+#
+#   Modified by C. Ahlstrom 2020-04-01 to pare down to the minimum modules
+#   needed for Seq66: core, gui, and widgets.
+#
+#   Modified by C. Ahlstrom 2021-07-06 to emit an error message when qmake
+#   cannot be found.
 #
 #   Searches $PATH and queries qmake for Qt include files, libraries and Qt
 #   binary utilities. The macro only supports Qt5 or later.
@@ -123,6 +128,7 @@ EOF
     QT_LRELEASE=
     QT_LUPDATE=
     AC_MSG_RESULT($have_qt)
+    AC_MSG_ERROR(qmake/Qt not found... is it qmake-qt5 on your system?)
   fi
   AC_SUBST(QT_CXXFLAGS)
   AC_SUBST(QT_DIR)

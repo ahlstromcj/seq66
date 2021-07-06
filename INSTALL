@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.94.0
+INSTALL for Seq66 v. 0.95.1
 Chris Ahlstrom
-2015-09-10 to 2021-05-25
+2015-09-10 to 2021-07-06
 
 Getting Seq66 requires building the code or going to the
 "sequencer64-packages/seq66" project directory on GitHub.
@@ -47,13 +47,13 @@ Linux Distro Package (seq66):
 
 Normal (automake) Install:
 
-    The normal install is meant for for those who do not want to install a lot of
-    extra developer packages, and want to use the standard "configure" steps.
-    These steps build the most common version of Seq66, "qseq66" with the
-    internal "rtmidi" engine.  The "configure" script for the build process
-    means one needs to install the various "dev" dependencies.  The conventional
-    way to install applications from source code is to use the source tarball
-    and run the normal mantra:
+    The normal install is meant for for those who do not want to install a lot
+    of extra developer packages, and want to use the standard "configure"
+    steps.  These steps build the most common version of Seq66, "qseq66" with
+    the internal "rtmidi" engine.  The "configure" script for the build
+    process means one needs to install the various "dev" dependencies.  The
+    conventional way to install applications from source code is to use the
+    source tarball and run the normal mantra:
 
         $ ./configure
         $ make
@@ -63,24 +63,28 @@ Normal (automake) Install:
     then run the script "reconf", stored in "contrib/scripts/reconf".  Then try
     the above commands again.
 
+    Also note that the qmake executable must exist.  If it is not found,
+    check for the existence of an alternate name (e.g. qmake-qt5) and
+    make a soft link to it.
+
 Bootstrap Install:
 
-    The quick install is meant for for those who do not want to install a lot of
-    extra developer packages, and want to use the standard "./configure ; make ;
-    make install" mantra.  These steps build the default version of Seq66,
-    "qseq66" with the internal "rtmidi" engine.  The "configure" script for the
-    build process means one needs to install the various "dev" dependencies.
-    See the DEPENDENCIES section.  The build commands require automake and
-    libtool to be installed.  Grab a Seq66 tarball and untar it.  Go to the
-    "seq66" directory and run these commands:
+    The quick install is meant for for those who do not want to install a lot
+    of extra developer packages, and want to use the standard "./configure ;
+    make ; make install" mantra.  These steps build the default version of
+    Seq66, "qseq66" with the internal "rtmidi" engine.  The "configure" script
+    for the build process means one needs to install the various "dev"
+    dependencies.  See the DEPENDENCIES section.  The build commands
+    require automake and libtool to be installed.  Grab a Seq66 tarball
+    and untar it.  Go to the "seq66" directory and run these commands:
 
         $ ./bootstrap -er
         $ make &> make.log
         $ sudo make install
 
-    Study the "bootstrap" script to understand how it uses autoheader, automake,
-    libtool, and other standard Linux build tools.  This build results in the
-    "qseq66" executable.
+    Study the "bootstrap" script to understand how it uses autoheader,
+    automake, libtool, and other standard Linux build tools.  This build
+    results in the "qseq66" executable.
 
 Advanced Steps:
 
