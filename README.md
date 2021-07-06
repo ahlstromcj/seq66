@@ -1,4 +1,4 @@
-# README for Seq66 0.95.1
+# README for Seq66 0.96.0
 
 Chris Ahlstrom
 2015-09-10 to 2021-07-06
@@ -79,6 +79,8 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.96.0:
+        *   To do.
     *   Version 0.95.1:
         *   Added 'auto' option to song-start-mode setting.
         *   Added missing harmonic-transposition option to the pattern editor.

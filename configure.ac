@@ -21,7 +21,7 @@ dnl ---------------------------------------------------------------------------
 
 AC_PREREQ(2.60)
 AC_REVISION($Revision: 0.96$)
-AC_INIT(Seq66, [0.95.1], [ahlstromcj@gmail.com])
+AC_INIT(Seq66, [0.96.0], [ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
@@ -94,7 +94,7 @@ build_os="'$(uname -srm)'"
 AC_DEFINE_UNQUOTED(APP_BUILD_OS, ["$build_os"], "Distro where build was done")
 AC_DEFINE(CLIENT_NAME, ["seq66"], "The name to display as client/port")
 
-VERSION="0.95.1"
+VERSION="0.96.0"
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
 AC_SUBST(VERSION)
 
@@ -106,7 +106,7 @@ dnl Set up version information for this project.
 SEQ66_API_MAJOR="0"
 AC_SUBST([SEQ66_API_MAJOR])
 
-SEQ66_API_MINOR="95"
+SEQ66_API_MINOR="96"
 AC_SUBST([SEQ66_API_MINOR])
 
 SEQ66_API_PATCH="0"
@@ -444,7 +444,7 @@ dnl      automatically for us.
 AH_TOP(
 
 #define VERSION_DATE_SHORT "2021-07-06"
-#define VERSION "0.95.1"
+#define VERSION "0.96.0"
 
 )
 

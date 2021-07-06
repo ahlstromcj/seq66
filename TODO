@@ -1,6 +1,6 @@
-TO DO for Seq66 0.95.1 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.96.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-06-28
+2019-04-13 to 2021-07-06
 
 Port-Mapping:
 
@@ -15,6 +15,8 @@ UI:
 
     Can we reset the main port dropdown to 0 when loading a new song?
     Even if it does not change, the buss-override still applies; inconsistent.
+
+    Auto-detect of Song mode does not seem to work.
 
 CLI:
 
