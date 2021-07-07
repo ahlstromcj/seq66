@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-06-22
+ * \updates       2021-07-07
  * \license       GNU GPLv2 or above
  *
  *  Note that, as of version 0.9.11, the z and Z keys, when focus is on the
@@ -260,7 +260,7 @@ qperfeditframe64::qperfeditframe64
         int index = t + c_octave_size;
         if (t != 0)
         {
-            const char * cit = c_interval_text[abs(t)].c_str();
+            const char * cit = interval_name_ptr(t);    /* see scales.hpp   */
             snprintf(num, sizeof num, "%+d [%s]", t, cit);
         }
         else

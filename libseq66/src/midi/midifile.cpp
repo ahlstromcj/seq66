@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-06-10
+ * \updates       2021-07-07
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -3281,7 +3281,7 @@ read_midi_file
     bool addtorecent
 )
 {
-    bool result = file_accessible(fn);
+    bool result = file_readable(fn);            /* how to disable Save?     */
     if (result)
     {
         bool is_wrk = file_extension_match(fn, "wrk");

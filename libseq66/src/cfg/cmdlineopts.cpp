@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-06-21
+ * \updates       2021-07-07
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -53,7 +53,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc() and usr() access     */
 #include "cfg/usrfile.hpp"              /* seq66::usrfile class             */
 #include "util/basic_macros.hpp"        /* not_nullptr() and other macros   */
-#include "util/filefunctions.hpp"       /* file_accessible(), etc.          */
+#include "util/filefunctions.hpp"       /* file_read_writable(), etc.       */
 #include "util/strfunctions.hpp"        /* string-to-numbers functions      */
 
 /*
@@ -649,7 +649,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
 {
     std::string rcn = rc().config_filespec();
     bool result = true;
-    if (file_accessible(rcn))
+    if (file_read_writable(rcn))
     {
         rcfile options(rcn, rc());
         file_message("Reading 'rc'", rcn);
@@ -711,7 +711,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
     if (result)
     {
         rcn = rc().user_filespec();
-        if (file_accessible(rcn))
+        if (file_read_writable(rcn))
         {
             usrfile ufile(rcn, rc());
             file_message("Reading 'usr'", rcn);
@@ -822,7 +822,7 @@ cmdlineopts::parse_mute_groups
 {
     bool result = true;
     std::string rcn = rc().config_filespec();
-    if (file_accessible(rcn))
+    if (file_read_writable(rcn))
     {
         rcfile options(rcn, rcs);
         file_message("Reading 'mutes'", rcn);

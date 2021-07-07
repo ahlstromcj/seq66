@@ -56,7 +56,7 @@
 #include "sessions/smanager.hpp"        /* seq66::smanager()                */
 #include "os/daemonize.hpp"             /* seq66::reroute_stdio()           */
 #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
-#include "util/filefunctions.hpp"       /* seq66::file_accessible() etc.    */
+#include "util/filefunctions.hpp"       /* seq66::file_readable() etc.      */
 
 #if defined SEQ66_LASH_SUPPORT_NEED_TO_MOVE_THIS
 #include "lash/lash.hpp"                /* seq66::lash_driver functions     */
@@ -202,7 +202,7 @@ smanager::main_settings (int argc, char * argv [])
             {
                 std::string fname = argv[optionindex];
                 std::string errmsg;
-                if (file_accessible(fname))
+                if (file_readable(fname))
                 {
                     m_midi_filename = fname;
                 }
@@ -212,7 +212,7 @@ smanager::main_settings (int argc, char * argv [])
                     (void) snprintf
                     (
                         temp, sizeof temp,
-                        "MIDI file error: '%s'", fname.c_str()
+                        "MIDI file not readable: '%s'", fname.c_str()
                     );
                     append_error_message(temp);     /* raises the message   */
                     m_midi_filename.clear();
@@ -562,11 +562,10 @@ smanager::save_session (std::string & msg, bool ok)
                 file_message("Save session", "Note-mapper");
                 result = perf()->save_note_mapper();        // add msg return?
             }
-            if (save)
-            {
-                file_message("Save session", "Note-mapper");
-                result = perf()->save_note_mapper();        // add msg return?
-            }
+
+            /*
+             * Anything else to save?
+             */
         }
         else
         {

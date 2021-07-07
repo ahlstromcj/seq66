@@ -24,40 +24,39 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2021-07-05
+ * \updates       2021-07-07
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of many scale interval patterns if working with
  *  more than just diatonic scales:
  *
 \verbatim
-    Major Scale (Ionian):           R   W   W   h   W   W   W   h
-    Natural Minor Scale (Aeolian):  R   W   h   W   W   h   W   W
-    Harmonic Minor Scale:           R   W   h   W   W   h   W+h h
-    Melodic Minor Scale going up:   R   W   h   W   W   W   W   h
-    Melodic Minor Scale going down: R   W   W   h   W   W   h   W
-    Whole Tone:                     R   W   W   W   W   W   W
-    Blues Scale:                    R   W+h W   h   h   W+h W
-    Major Pentatonic:               R   W   W   W+h W   W+h
-    Minor Pentatonic Blues (no #5): R   W+h W   W   W+h W
-    Phrygian:                       R   h   W   W   W   h   W   W
-    Enigmatic:                      R   h   W+h W   W   W   h   h
-    Diminished                      R   W   h   W   h   W   h   W  h
+    Major Scale (Ionian):           R-W-W-h-W-W-W-h
+    Natural Minor Scale (Aeolian):  R-W-h-W-W-h-W-W
+    Harmonic Minor Scale:           R-W-h-W-W-h-3-h
+    Melodic Minor Scale going up:   R-W-h-W-W-W-W-h
+    Melodic Minor Scale going down: R-W-W-h-W-W-h-W (implemented as Mixolydian mode)
+    Whole Tone:                     R-W-W-W-W-W-W-
+    Blues Scale:                    R-3-W-h-h-3-W-
+    Major Pentatonic:               R-W-W-3-W-3
+    Minor Pentatonic Blues (no #5): R-3-W-W-3-W
+    Phrygian:                       R-h-W-W-W-h-W-W
+    Enigmatic:                      R-h-3-W-W-W-h-h
+    Diminished                      R-W-h-W-h-W-h-W-h
+    Dorian Mode:                    R-W-h-W-W-W-h-W
+    Mixolydian Mode:                R-W-W-h-W-W-h-W (descending melodic minor)
 \endverbatim
  *
  *  Unimplemented:
 \verbatim
-    Dorian Mode:                    R   W   h   W   W   W   h   W
-    Mixolydian Mode:                R   W   W   h   W   W   h   W
-    Phygian Dominant (Ahava Raba):  R   h   W+h h   W   h   W   W
-    Octatonic 2:                    R   h   W   h   W   h   W   h
+    Phygian Dominant (Ahava Raba):  R-h-3-h-W-h-W-W
 \endverbatim
  *
 \verbatim
-    R:      root note
-    h:      half step (semitone)
-    W:      whole step (2 semitones)
-    W+h:    1 1/2 - a step and a half (3 semitones)
+    R: root note
+    h: half step (semitone)
+    W: whole step (2 semitones)
+    3: 1 1/2 - a step and a half (3 semitones)
 \endverbatim
  */
 
@@ -73,12 +72,6 @@
 
 namespace seq66
 {
-
-static const std::string
-c_key_text[c_octave_size] =
-{
-    "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
-};
 
 /**
  *  Each value in the kind of scale is denoted by a true value in these
@@ -106,7 +99,8 @@ c_key_text[c_octave_size] =
     Phrygian            C  Db .  Eb .  F  .  G  G# .  Bb .
     Enigmatic           C  Db .  .  E  .  F# .  G# .  A# B
     Diminished          C  .  D  Eb .  F  Gb .  Ab A  .  B
-    Octatonic           C  Db .  Eb E  F  F# G  .  A  Bb .   Unimplemented
+    Dorian Mode         C  .  D  Eb .  F  .  G  .  A  Bb .
+    Mixolydian Mode     C  .  D  .  E  .  F# G  .  A  .  B
 \endverbatim
  */
 
@@ -160,6 +154,14 @@ c_scales_policy [c_scales_max] [c_octave_size] =
     {                                                   /* diminished       */
         true, false, true, true, false, true,
         true, false, true, true, false, true
+    },
+    {                                                   /* dorian           */
+        true, false, true, true, false, true,
+        false, true, false, true, true, false
+    },
+    {                                                   /* mixolydian       */
+        true, false, true, false, true, false,
+        true, true, false, true, false, true
     }
 };
 
@@ -178,9 +180,6 @@ scales_policy (scales s, int k)
     C Major               C  .  D  .  E  F  .  G  .  A  .  B
     booleans              T  F  T  F  T  T  F  T  F  T  F  T
     histogram sample      1  0  2  0  2  0  1  1  0  1  0  2    = 9 - 1
-                          +  .  +  .  +  +  -  +  .  +  .  +
-                          C  C# D  D# E  F  F# G  G# A  A# B
-
     C# Major              C  C# .  D# .  F  F# .  G# .  A# .
     booleans              T  T  F  T  F  T  T  F  T  F  T  F
     histogram sample      1  0  2  0  2  0  1  1  0  1  0  2    = 2 - 8
@@ -281,6 +280,22 @@ rotate_transpose_right (int p [c_octave_size])
     Transpose up        2  .  1  2  .  1  2  .  1  2  .  1
     Result up           D  .  Eb F  .  Gb Ab .  A  B  .  C
 \endverbatim
+ *
+ \verbatim
+    Dorian Mode         C  .  D  Eb .  F  .  G  .  A  Bb .
+    Transpose up        2  .  1  2  .  2  .  2  .  1  2  .
+    Result up           D  .  Eb F  .  G  .  A  .  Bb C  .
+\endverbatim
+ *
+ \verbatim
+    Mixolydian Mode     C  .  D  .  E  .  F# G  .  A  .  B
+    Transpose up        2  .  2  .  2  .  1  2  .  2  .  1
+    Result up           D  .  E  .  F# .  G  A  .  B  .  C
+\endverbatim
+ *
+ *  Note that the D Dorian scale is all white keys: D E F G A B C D.
+ *  The "result up" shown above is for a transposition that preserves the
+ *  C Dorian scale.
  */
 
 const int *
@@ -299,7 +314,9 @@ scales_up (int scale, int key)
         { 3, 0, 0, 2, 0, 2, 0, 3, 0, 0, 2, 0},          /* min pentatonic   */
         { 1, 2, 0, 2, 0, 2, 0, 1, 2, 0, 2, 0},          /* phrygian         */
         { 1, 3, 0, 0, 2, 0, 2, 0, 2, 0, 1, 1},          /* enigmatic        */
-        { 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1}           /* diminished       */
+        { 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1},          /* diminished       */
+        { 2, 0, 1, 2, 0, 2, 0, 2, 0, 1, 2, 0},          /* dorian           */
+        { 2, 0, 2, 0, 2, 0, 1, 2, 0, 2, 0, 1}           /* mixolydian       */
     };
     if (key > 0)
     {
@@ -385,6 +402,18 @@ scales_up (int scale, int key)
     Transpose down      1  .  2  1  .  2  1  .  2  1  .  2
     Result down         B  .  C  D  .  Eb F  .  Gb Ab .  A
 \endverbatim
+ *
+ \verbatim
+    Dorian Mode         C  .  D  Eb .  F  .  G  .  A  Bb .
+    Transpose down      2  .  2  1  .  2  .  2  .  2  1  .
+    Result down         Bb .  C  D  .  Eb .  F  .  G  A  .
+\endverbatim
+ *
+ \verbatim
+    Mixolydian Mode     C  .  D  .  E  .  F# G  .  A  .  B
+    Transpose down      1  .  2  .  2  .  2  1  .  2  .  2
+    Result down         B  .  C  .  D  .  E  F# .  G  .  A
+\endverbatim
  */
 
 const int *
@@ -403,7 +432,9 @@ scales_down (int scale, int key)
         { -2,  0,  0, -3,  0, -2,  0, -2,  0,  0, -3,  0}, /* min pentatonic  */
         { -1, -1,  0, -1,  0, -1,  0, -1, -1,  0, -1,  0}, /* phrygian        */
         { -1, -1,  0,  0, -3,  0, -2,  0, -2,  0, -2, -1}, /* enigmatic       */
-        { -1,  0, -2, -1,  0, -2, -1,  0, -2, -1,  0, -2}  /* diminished      */
+        { -1,  0, -2, -1,  0, -2, -1,  0, -2, -1,  0, -2}, /* diminished      */
+        { -2,  0, -2, -1,  0, -2,  0, -2,  0, -2, -1,  0}, /* dorian          */
+        { -1,  0, -2,  0, -2,  0, -2, -1,  0, -2,  0, -1}  /* mixolydian      */
     };
     if (key > 0)
     {
@@ -419,6 +450,12 @@ scales_down (int scale, int key)
     else
         return &c_scales_transpose_dn[scale][0];
 }
+
+static const std::string
+c_key_text[c_octave_size] =
+{
+    "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
+};
 
 std::string
 musical_note_name (int n)
@@ -454,6 +491,10 @@ musical_key_name (int k)
     return result;
 }
 
+/**
+ *  Each diatonic scale in Western music consists of 7 notes.
+ */
+
 std::string
 musical_scale_name (int s)
 {
@@ -464,20 +505,178 @@ musical_scale_name (int s)
         "Major (Ionian)",
         "Minor (Aeolan)",
         "Harmonic Minor",
-        "Melodic Minor",
+        "Melodic Minor",            /* ascending only; see Mixolydian mode  */
         "Whole Tone",
         "Blues",
         "Pentatonic Major",
         "Pentatonic Minor",
         "Phrygian",
         "Enigmatic",
-        "Diminished"
+        "Diminished",
+        "Dorian",
+        "Mixolydian"
     };
     std::string result = "Unsupported";
     if (legal_scale(s))
         result = c_scales_text[s];
 
     return result;
+}
+
+/**
+ *  Provides the entries for the normal pitch interval dropdown menu in the
+ *  Pattern Editor window.  We use pointers for convenience.  See
+ *  qseqeditframe64.cpp for usage.
+ *
+ *  "P" means "perfect"; "M" means "major"; "m" means "minor".
+ *  This represents "chromatic transposition".
+ */
+
+const char *
+interval_name_ptr (int interval)
+{
+    static const std::string c_interval_text [c_interval_size + 1] =
+    {
+        "P1", "m2", "M2", "m3", "M3", "P4", "TT", "P5",
+        "m6", "M6", "m7", "M7", "P8", "m9", "M9", "0"   /* "0" if error */
+    };
+    int index = abs(interval);
+    if (index > c_interval_size)
+        index = c_interval_size;
+
+    return c_interval_text[index].c_str();
+}
+
+/**
+ *  Provides the entries for the harmonic pitch interval dropdown menu in the
+ *  Pattern Editor window.  We use pointers for convenience.  See
+ *  qseqeditframe64.cpp for usage.
+ *
+ *  Provides the entries for the Chord dropdown menu in the Pattern Editor
+ *  window.  However, we have not seen this menu in the GUI!  Ah, it only
+ *  appears if the user has selected a musical scale like Major or Minor.
+ *  It replaces the -12 to +12 transposition menu.
+ *
+ *  This represents "diatonic transposition".  We believe the numbering is
+ *  called the "Nashville numbering system."
+ */
+
+bool
+harmonic_number_valid (int number)
+{
+    return abs(number) < c_harmonic_size;
+}
+
+const char *
+harmonic_interval_name_ptr (int interval)
+{
+    static const std::string c_interval_text [c_harmonic_size + 1] =
+    {
+        // "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "0"
+        "I", "ii", "iii", "IV", "V", "vi", "vii", "I", "0"
+    };
+    int index = abs(interval);
+    if (index > c_harmonic_size)
+        index = c_harmonic_size;
+
+    return c_interval_text[index].c_str();
+}
+
+/**
+ *  Additional support data for the chord-generation feature from Stazed's
+ *  seq32 project.  The chord-number is a count of the number of entries in
+ *  c_chord_table_text.  Will never change, luckily.
+ *
+ *  Additional support data for the chord-generation feature from Stazed's
+ *  seq32 project.  These chords appear in the sequence-editor chord-button
+ *  dropdown menu.  The longest string is 11 characters, and we add one
+ *  for the null terminator.  A good case for using std::string here. :-)
+ */
+
+bool
+chord_number_valid (int number)
+{
+    return (number >= 0) && (number < c_chord_number);
+}
+
+const char *
+chord_name_ptr (int number)
+{
+    static const std::string c_chord_table_text [c_chord_number + 1] =
+    {
+        "Chords off",   "Major",       "Majb5",      "minor",   "minb5",
+        "sus2",         "sus4",        "aug",        "augsus4", "tri",
+        "6",            "6sus4",       "6add9",      "m6",      "m6add9",
+        "7",            "7sus4",       "7#5",        "7b5",     "7#9",
+        "7b9",          "7#5#9",       "7#5b9",      "7b5b9",   "7add11",
+        "7add13",       "7#11",        "Maj7",       "Maj7b5",  "Maj7#5",
+        "Maj7#11",      "Maj7add13",   "m7",         "m7b5",    "m7b9",
+        "m7add11",      "m7add13",     "m-Maj7",     "m-Maj7add11", "m-Maj7add13",
+        ""
+    };
+    if (! chord_number_valid(number))
+        number = c_chord_number;
+
+    return c_chord_table_text[number].c_str();
+}
+
+/**
+ *  Additional support data for the chord-generation feature from Stazed's
+ *  seq32 project.  These values indicate the note offsets needed for a
+ *  particular kind of chord.  0 means no offset, and a -1 ends the list of
+ *  note offsets for the chord.
+ */
+
+const chord_notes &
+chord_entry (int number)
+{
+    static const std::vector<chord_notes> s_chord_table =
+    {
+        { 0, -1, 0,  0,   0,  0 },      /* Off          */
+        { 0,  4, 7, -1,   0,  0 },      /* Major        */
+        { 0,  4, 6, -1,   0,  0 },      /* Majb5        */
+        { 0,  3, 7, -1,   0,  0 },      /* minor        */
+        { 0,  3, 6, -1,   0,  0 },      /* minb5        */
+        { 0,  2, 7, -1,   0,  0 },      /* sus2         */
+        { 0,  5, 7, -1,   0,  0 },      /* sus4         */
+        { 0,  4, 8, -1,   0,  0 },      /* aug          */
+        { 0,  5, 8, -1,   0,  0 },      /* augsus4      */
+        { 0,  3, 6,  9,  -1,  0 },      /* tri          */
+        { 0,  4, 7,  9,  -1,  0 },      /* 6            */
+        { 0,  5, 7,  9,  -1,  0 },      /* 6sus4        */
+        { 0,  4, 7,  9,  14, -1 },      /* 6add9        */
+        { 0,  3, 7,  9,  -1,  0 },      /* m6           */
+        { 0,  3, 7,  9,  14, -1 },      /* m6add9       */
+        { 0,  4, 7,  10, -1,  0 },      /* 7            */
+        { 0,  5, 7,  10, -1,  0 },      /* 7sus4        */
+        { 0,  4, 8,  10, -1,  0 },      /* 7#5          */
+        { 0,  4, 6,  10, -1,  0 },      /* 7b5          */
+        { 0,  4, 7,  10, 15, -1 },      /* 7#9          */
+        { 0,  4, 7,  10, 13, -1 },      /* 7b9          */
+        { 0,  4, 8,  10, 15, -1 },      /* 7#5#9        */
+        { 0,  4, 8,  10, 13, -1 },      /* 7#5b9        */
+        { 0,  4, 6,  10, 13, -1 },      /* 7b5b9        */
+        { 0,  4, 7,  10, 17, -1 },      /* 7add11       */
+        { 0,  4, 7,  10, 21, -1 },      /* 7add13       */
+        { 0,  4, 7,  10, 18, -1 },      /* 7#11         */
+        { 0,  4, 7,  11, -1,  0 },      /* Maj7         */
+        { 0,  4, 6,  11, -1,  0 },      /* Maj7b5       */
+        { 0,  4, 8,  11, -1,  0 },      /* Maj7#5       */
+        { 0,  4, 7,  11, 18, -1 },      /* Maj7#11      */
+        { 0,  4, 7,  11, 21, -1 },      /* Maj7add13    */
+        { 0,  3, 7,  10, -1,  0 },      /* m7           */
+        { 0,  3, 6,  10, -1,  0 },      /* m7b5         */
+        { 0,  3, 7,  10, 13, -1 },      /* m7b9         */
+        { 0,  3, 7,  10, 17, -1 },      /* m7add11      */
+        { 0,  3, 7,  10, 21, -1 },      /* m7add13      */
+        { 0,  3, 7,  11, -1,  0 },      /* m-Maj7       */
+        { 0,  3, 7,  11, 17, -1 },      /* m-Maj7add11  */
+        { 0,  3, 7,  11, 21, -1 }       /* m-Maj7add13  */
+    };
+    if (! chord_number_valid(number))
+        number = 0;
+
+    return s_chord_table[number];
 }
 
 /**

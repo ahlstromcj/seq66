@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-07-05
+ * \updates       2021-07-06
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2501,9 +2501,9 @@ sequence::push_add_chord
  * \threadsafe
  *
  * \param chord
- *      If greater than 0 (and less than c_chord_number), a chord (multiple
- *      notes) will be generated using this chord in the c_chord_table[]
- *      array.  Otherwise, only a single note will be added.
+ *      If greater than 0 (and valid), a chord (multiple notes) will be
+ *      generated using this chord in the c_chord_table[] array.  Otherwise,
+ *      only a single note will be added.
  *
  * \param tick
  *      The time destination of the new note, in pulses.
@@ -2526,9 +2526,10 @@ sequence::add_chord
 )
 {
     bool result = false;
-    if (chord > 0 && chord < c_chord_number)
+    if (chord > 0 && chord_number_valid(chord))
     {
-        for (auto cnote : c_chord_table[chord])
+        const chord_notes & cn = chord_entry(chord);
+        for (auto cnote : cn)
         {
             if (cnote == -1)
                 break;

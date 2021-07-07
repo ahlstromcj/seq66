@@ -1,6 +1,8 @@
 TO DO for Seq66 0.96.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-07-06
+2019-04-13 to 2021-07-07
+
+Hottest to Trivial:
 
 Port-Mapping:
 
@@ -15,8 +17,6 @@ UI:
 
     Can we reset the main port dropdown to 0 when loading a new song?
     Even if it does not change, the buss-override still applies; inconsistent.
-
-    Auto-detect of Song mode does not seem to work.
 
 CLI:
 
@@ -75,9 +75,6 @@ EXTANT ISSUES:
     metadata on the midi-in port for a connecting sequencer to use.
     STATUS: Not yet started.
 
-#2  Failed to find matching components of a complete QT installation
-    STATUS: Closed.
-
 #3  Open loop Pattern Editor window.
     On mouse wheel scroll event we expect the piano-roll and notes sheet to
     scroll vertically.
@@ -87,46 +84,6 @@ EXTANT ISSUES:
     that we note wheelEvent() is not called for some reason.  One way around
     this issue might be to some pass child scrolling up to the qscrollmaster
     class.
-
-#4  segfault on closing pattern editor
-    STATUS: Closed.
-
-#5  "Resume playback of notes on sequence toggle" option doesn't work/save
-    STATUS: Closed.
-
-#6  Build fails without lash.h
-    STATUS: Closed.
-
-#7  make install doesn't install files
-    STATUS: Closed.
-
-#8  NSM support?
-    STATUS: Closed.
-
-#9  Change pattern in the Edit tab while on the Edit tab?
-    STATUS: Closed.
-
-#10 Right click-hold on pattern editor doesn't show draw pencil
-    STATUS: Closed.
-
-#11 Pattern editor: disabling the 'piano roll scrolls with playback'
-	     button does not stop the scrolling
-    STATUS: Closed.
-
-#12 Note rendering problem.
-    Having a long note, scrolling it out of vision and back again leads to a
-    problem.  (Only the first snap division and last snap division of the note
-    appears.
-    STATUS:  Weird, will do.  Might be fixed by the verify-and-link fix.
-
-#13 Pattern editor: control event bar doesn't update/scroll
-    STATUS: Closed.
-
-#14 Build issue in Linux
-    STATUS: Closed.
-
-#15 Crash when closing Set Window
-    STATUS: Closed.
 
 #16 Ableton Live transport support?
     Go to this issue in Github to see the thread.
@@ -147,21 +104,9 @@ EXTANT ISSUES:
     STATUS: I want to double-check this one.  This may now be fixed via
     fixes for issue #49.
 
-#19 Crash when recording note
-    STATUS: Closed.
-
-#20 JackClient::Execute error name = seq66_transport
-    STATUS: Closed.
-
 #21 Wrong links in about dialog
     STATUS: Closed.  It would be good to work up a way to open the link
     in the default browser.
-
-#22 Arch Linux PKGBUILD file for seq66
-    STATUS: Closed.
-
-#23 Problems with Qt during compilation
-    STATUS: Closed.
 
 #24 Release notes in release tag message?
     I would like to add seq66 to https://libreav.org/updates
@@ -179,25 +124,8 @@ EXTANT ISSUES:
     libreav.org.  STATUS: Not sure this is worth doing. Do not know about
     "atom".
 
-#25 Configure fails
-    STATUS: Closed.
-
-#26 Freeze/crash after selecting 'Import into session'
-    STATUS: Closed.
-
-#27 NSM: pattern state isn't recalled with session
-    STATUS: Closed.
-
-#28 (Deleted?)
-
 #29 Play patterns from different sets at the same time
     STATUS: Provisional support in 0.91.3.  One more feature to add soon.
-
-#30 Managing pattern colors with a pallette
-    STATUS: Closed.
-
-#31 Pattern text readability on bright backgrounds
-    STATUS: Closed.
 
 #32 NSM: save session
     STATUS: Needs retests.
@@ -223,14 +151,8 @@ EXTANT ISSUES:
     API.
     STATUS: Fixed, needs a retest.
 
-#36 README doesn't describe seq66
-    STATUS: Closed.
-
 #37 Song editor scrolling?
     STATUS: To be investigated.
-
-#38 seq66/sequencer64 choice
-    STATUS: Closed.
 
 #39 Arm Build - Pattern editor does not open
     STATUS:  Should be closed.  Will try it myself on a Pi soon.
@@ -241,9 +163,6 @@ EXTANT ISSUES:
 #41 NSM: hide seq66 on closing window, do not exit?
     If closing the window, rather than quitting the app, could change the its
     visibility state to hidden.
-
-#42 MIDI Input window doesn't handle large port counts
-    STATUS: Closed.
 
 #43 Extended MIDI Format / Type?
     STATUS: Should close, it was a nomenclature/documentation issue.
@@ -261,10 +180,8 @@ EXTANT ISSUES:
     timeline already supports arbitrary start/end points for pattern "chunks",
     so it seems like this should already be possible. Thoughts?
 
-#45 data/Makefile.am does not respect DESTDIR
-    STATUS: Closed.
-
 #46 JACK port groups / order?
+    STATUS: to examine.
 
 #47 change key map
     STATUS: Done.  May need to add a new "keymap" file to handle further
@@ -293,17 +210,6 @@ EXTANT ISSUES:
 
 #49 Unable to unmute loops after group learn.
     STATUS: Done.  Needs more testing.
-
-#50 White text on Yellow is unreadable
-    STATUS: Done.  See issues #30 and #31.  This should be user-correctable
-    using the "palette" file and perhaps a Qt style-sheet.
-
-#51 Unreliable MIDI playback
-    STATUS: Done.  Always needs testing when something is changed that affects
-    the JACK Transport feature.
-
-#52 Community / discussion place?
-    STATUS: See the thread on GitHub.
 
 #53 MIDI CC sequencing
     STATUS: See the thread on GitHub.

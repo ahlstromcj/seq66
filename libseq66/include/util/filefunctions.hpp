@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-06-10
+ * \updates       2021-07-07
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -49,7 +49,7 @@ extern bool file_access (const std::string & targetfile, int mode);
 extern bool file_exists (const std::string & targetfile);
 extern bool file_readable (const std::string & targetfile);
 extern bool file_writable (const std::string & targetfile);
-extern bool file_accessible (const std::string & targetfile);
+extern bool file_read_writable (const std::string & targetfile);
 extern bool file_executable (const std::string & targetfile);
 extern bool file_is_directory (const std::string & targetfile);
 extern bool file_name_good (const std::string & filename);

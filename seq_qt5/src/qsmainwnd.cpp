@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-06-26
+ * \updates       2021-07-07
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -774,7 +774,6 @@ qsmainwnd::qsmainwnd
 
     ui->testButton->setToolTip("Developer test button, disabled.");
     ui->testButton->setEnabled(false);
-
     if (use_nsm())
         rc().session_midi_filename(s_default_tune);
 
@@ -1314,8 +1313,10 @@ qsmainwnd::open_file (const std::string & fn)
 #endif
 
         if (! use_nsm())                        /* does this menu exist?    */
+        {
+            ui->actionSave->setEnabled(file_writable(fn));
             update_recent_files_menu();
-
+        }
         m_is_title_dirty = true;
     }
     else
@@ -1622,6 +1623,7 @@ qsmainwnd::new_file ()
 {
     if (check() && perf().clear_all())              /* don't clear playlist */
     {
+        ui->actionSave->setEnabled(true);
         ui->cmb_global_bus->setCurrentIndex(0);
         m_is_title_dirty = true;
         redo_live_frame();
@@ -1809,6 +1811,7 @@ qsmainwnd::save_file_as ()
         {
             rc().midi_filename(filename);
             m_is_title_dirty = true;
+            ui->actionSave->setEnabled(true);
         }
     }
     return result;
@@ -3036,6 +3039,9 @@ qsmainwnd::connect_normal_slots ()
 
     ui->actionSave->setText("&Save");
     ui->actionSave->setToolTip("Save as a Seq66 MIDI file.");
+    if (! file_writable(rc().midi_filename()))
+        ui->actionSave->setEnabled(false);
+
     connect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(save_file()));
 
     /*

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-05
+ * \updates       2021-07-07
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the globals module.  Includes the
@@ -138,6 +138,8 @@ enum class scales
     phrygian,
     enigmatic,
     diminished,
+    dorian,
+    mixolydian,                     /* Same as descending melodic minor     */
     max                             /* a "maximum" or "size of set" value   */
 };
 
@@ -164,115 +166,21 @@ legal_scale (int s)
 }
 
 /**
- *  Provides the entries for the Interval dropdown menu in the Pattern Editor
- *  window.
- */
-
-const std::string
-c_interval_text [16] =
-{
-    "P1", "m2", "M2", "m3", "M3", "P4", "TT", "P5",
-    "m6", "M6", "m7", "M7", "P8", "m9", "M9", ""
-};
-
-/**
- *  Provides the entries for the Chord dropdown menu in the Pattern Editor
- *  window.  However, we have not seen this menu in the GUI!  Ah, it only
- *  appears if the user has selected a musical scale like Major or Minor.
- */
-
-const std::string
-c_chord_text [8] =
-{
-    "I", "II", "III", "IV", "V", "VI", "VII", "VIII"
-};
-
-/**
- *  Additional support data for the chord-generation feature from Stazed's
- *  seq32 project.  The chord-number is a count of the number of entries in
- *  c_chord_table_text.  Will never change, luckily.
- */
-
-const int c_chord_number = 40;
-
-/**
- *  Additional support data for the chord-generation feature from Stazed's
- *  seq32 project.  These chords appear in the sequence-editor chord-button
- *  dropdown menu.  The longest string is 11 characters, and we add one
- *  for the null terminator.  A good case for using std::string here. :-)
- */
-
-const std::string
-c_chord_table_text [c_chord_number] =
-{
-    "Chords off",   "Major",       "Majb5",      "minor",   "minb5",
-    "sus2",         "sus4",        "aug",        "augsus4", "tri",
-    "6",            "6sus4",       "6add9",      "m6",      "m6add9",
-    "7",            "7sus4",       "7#5",        "7b5",     "7#9",       "7b9",
-    "7#5#9",        "7#5b9",       "7b5b9",      "7add11",  "7add13",    "7#11",
-    "Maj7",         "Maj7b5",      "Maj7#5",     "Maj7#11", "Maj7add13",
-    "m7",           "m7b5",        "m7b9",       "m7add11", "m7add13",
-    "m-Maj7",       "m-Maj7add11", "m-Maj7add13"
-};
-
-/**
  *  Provides the number of chord values in each chord's specification
  *  array.
  */
 
-const int c_chord_size = 6;
+const int c_chord_number    = 40;
+const int c_chord_size      = 6;
+const int c_interval_size   = 15;
+const int c_harmonic_size   = 8;
 
 /**
- *  Additional support data for the chord-generation feature from Stazed's
- *  seq32 project.  These values indicate the note offsets needed for a
- *  particular kind of chord.  0 means no offset, and a -1 ends the list of
- *  note offsets for the chord.
+ *  Provides a short vector containing the chord values in each chord's
+ *  specification array.  The valid values stop at -1.
  */
 
-const int
-c_chord_table [c_chord_number] [c_chord_size] =
-{
-    { 0, -1, 0, 0, 0, 0 },      /* Off          */
-    { 0, 4, 7, -1, 0, 0 },      /* Major        */
-    { 0, 4, 6, -1, 0, 0 },      /* Majb5        */
-    { 0, 3, 7, -1, 0, 0 },      /* minor        */
-    { 0, 3, 6, -1, 0, 0 },      /* minb5        */
-    { 0, 2, 7, -1, 0, 0 },      /* sus2         */
-    { 0, 5, 7, -1, 0, 0 },      /* sus4         */
-    { 0, 4, 8, -1, 0, 0 },      /* aug          */
-    { 0, 5, 8, -1, 0, 0 },      /* augsus4      */
-    { 0, 3, 6, 9, -1, 0 },      /* tri          */
-    { 0, 4, 7, 9, -1, 0 },      /* 6            */
-    { 0, 5, 7, 9, -1, 0 },      /* 6sus4        */
-    { 0, 4, 7, 9, 14, -1 },     /* 6add9        */
-    { 0, 3, 7, 9, -1, 0 },      /* m6           */
-    { 0, 3, 7, 9, 14, -1 },     /* m6add9       */
-    { 0, 4, 7, 10, -1, 0 },     /* 7            */
-    { 0, 5, 7, 10, -1, 0 },     /* 7sus4        */
-    { 0, 4, 8, 10, -1, 0 },     /* 7#5          */
-    { 0, 4, 6, 10, -1, 0 },     /* 7b5          */
-    { 0, 4, 7, 10, 15, -1 },    /* 7#9          */
-    { 0, 4, 7, 10, 13, -1 },    /* 7b9          */
-    { 0, 4, 8, 10, 15, -1 },    /* 7#5#9        */
-    { 0, 4, 8, 10, 13, -1 },    /* 7#5b9        */
-    { 0, 4, 6, 10, 13, -1 },    /* 7b5b9        */
-    { 0, 4, 7, 10, 17, -1 },    /* 7add11       */
-    { 0, 4, 7, 10, 21, -1 },    /* 7add13       */
-    { 0, 4, 7, 10, 18, -1 },    /* 7#11         */
-    { 0, 4, 7, 11, -1, 0 },     /* Maj7         */
-    { 0, 4, 6, 11, -1, 0 },     /* Maj7b5       */
-    { 0, 4, 8, 11, -1, 0 },     /* Maj7#5       */
-    { 0, 4, 7, 11, 18, -1 },    /* Maj7#11      */
-    { 0, 4, 7, 11, 21, -1 },    /* Maj7add13    */
-    { 0, 3, 7, 10, -1, 0 },     /* m7           */
-    { 0, 3, 6, 10, -1, 0 },     /* m7b5         */
-    { 0, 3, 7, 10, 13, -1 },    /* m7b9         */
-    { 0, 3, 7, 10, 17, -1 },    /* m7add11      */
-    { 0, 3, 7, 10, 21, -1 },    /* m7add13      */
-    { 0, 3, 7, 11, -1, 0 },     /* m-Maj7       */
-    { 0, 3, 7, 11, 17, -1 },    /* m-Maj7add11  */
-    { 0, 3, 7, 11, 21, -1 }     /* m-Maj7add13  */
-};
+using chord_notes = std::vector<int>;               /* all init'd to size 6 */
 
 /*
  *  Free functions for scales.
@@ -281,6 +189,12 @@ c_chord_table [c_chord_number] [c_chord_size] =
 extern std::string musical_key_name (int k);
 extern std::string musical_note_name (int n);
 extern std::string musical_scale_name (int s);
+extern const char * interval_name_ptr (int interval);
+extern bool harmonic_number_valid (int number);
+extern const char * harmonic_interval_name_ptr (int interval);
+extern bool chord_number_valid (int number);
+extern const char * chord_name_ptr (int number);
+extern const chord_notes & chord_entry (int number);
 extern bool scales_policy (scales s, int k);
 extern const int * scales_up (int scale, int key = 0);
 extern const int * scales_down (int scale, int key = 0);

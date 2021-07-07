@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-02-21
+ * \updates       2021-07-07
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -480,10 +480,13 @@ file_writable (const std::string & filename)
 }
 
 /**
- *    Checks a file for readability and writability.
- *    An even stronger test than file_exists.  At present, we see no need to
- *    distinguish read and write permissions.  We assume the file is
- *    accessible only if the file has both permissions.
+ *    Checks a file for readability and writability.  An even stronger test
+ *    than file_exists.  At present, we see no need to distinguish read and
+ *    write permissions.  We assume the file is fully accessible only if the
+ *    file has both permissions.
+ *
+ *    This can be surprising if one wants only to read a file, and the file is
+ *    read-only.
  *
  * \param filename
  *    Provides the name of the file to be checked.
@@ -493,7 +496,7 @@ file_writable (const std::string & filename)
  */
 
 bool
-file_accessible (const std::string & filename)
+file_read_writable (const std::string & filename)
 {
     return file_access(filename, R_OK|W_OK);
 }

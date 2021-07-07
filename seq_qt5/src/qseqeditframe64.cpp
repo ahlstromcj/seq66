@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-07-05
+ * \updates       2021-07-07
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -311,13 +311,19 @@ static int
 s_lookup_chord (const std::string & chordname)
 {
     int result = 0;
-    for (int chord = 0; chord < c_chord_number; ++chord)
+    for (int chord = 0; /* condition in body */ ; ++chord)
     {
-        if (c_chord_table_text[chord] == chordname)
+        const char * cn = chord_name_ptr(chord);
+        if (strlen(cn) > 0)
         {
-            result = chord;
-            break;
+            if (std::string(cn) == chordname)
+            {
+                result = chord;
+                break;
+            }
         }
+        else
+            break;
     }
     return result;
 }
@@ -372,9 +378,9 @@ qseqeditframe64::qseqeditframe64
     m_beat_width            (seq_pointer()->get_beat_width()),
     m_snap                  (sm_initial_snap),
     m_note_length           (sm_initial_note_length),
-    m_scale                 (0),    // (int(seq_pointer()->musical_scale())),
+    m_scale                 (0),
     m_chord                 (0),
-    m_key                   (0),    // (int(seq_pointer()->musical_key())),
+    m_key                   (0),
     m_bgsequence            (seq_pointer()->background_sequence()),
     m_measures              (0),
 #if defined USE_STAZED_ODD_EVEN_SELECTION
@@ -569,8 +575,8 @@ qseqeditframe64::qseqeditframe64
     set_transpose_image(can_transpose);
 
     /*
-     * Chord button and combox-box.  See c_chord_table_text[c_chord_number][]
-     * in the scales.hpp header file.
+     * Chord button and combox-box.  See chord_name_ptr() in the scales.hpp
+     * header file.
      */
 
     qt_set_icon(chord3_inv_xpm, ui->m_button_chord);
@@ -579,10 +585,16 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_chord, SIGNAL(clicked(bool)),
         this, SLOT(reset_chord())
     );
-    for (int chord = 0; chord < c_chord_number; ++chord)
+    for (int chord = 0; /* condition in loop */ ; ++chord)
     {
-        QString combo_text = c_chord_table_text[chord].c_str();
-        ui->m_combo_chord->insertItem(chord, combo_text);
+        const char * cn = chord_name_ptr(chord);
+        if (strlen(cn) > 0)
+        {
+            QString combo_text = cn;
+            ui->m_combo_chord->insertItem(chord, combo_text);
+        }
+        else
+            break;
     }
     ui->m_combo_chord->setCurrentIndex(m_chord);
     connect
@@ -682,14 +694,6 @@ qseqeditframe64::qseqeditframe64
             eventlist::edit::quantize_notes, 0
         )
     );
-
-    /*
-     * Tools Pop-up Menu Button.
-     */
-
-    qt_set_icon(tools_xpm, ui->m_button_tools);
-    connect(ui->m_button_tools, SIGNAL(clicked(bool)), this, SLOT(tools()));
-    popup_tool_menu();
 
     /*
      * Follow Progress Button.
@@ -853,6 +857,15 @@ qseqeditframe64::qseqeditframe64
         ui->m_combo_scale, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_scale(int))
     );
+
+    /*
+     * Tools Pop-up Menu Button.  Must come after the scale has been
+     * determined.
+     */
+
+    qt_set_icon(tools_xpm, ui->m_button_tools);
+    connect(ui->m_button_tools, SIGNAL(clicked(bool)), this, SLOT(tools()));
+    popup_tool_menu();
 
     /*
      * Background Sequence/Pattern Selectors.
@@ -1636,7 +1649,7 @@ qseqeditframe64::set_transpose_image (bool istransposable)
 void
 qseqeditframe64::update_chord (int index)
 {
-    if (index != m_chord && index >= 0 && index < c_chord_number)
+    if (index != m_chord && chord_number_valid(index))
     {
         set_chord(index);
         set_dirty();
@@ -1660,7 +1673,7 @@ qseqeditframe64::reset_chord ()
 void
 qseqeditframe64::set_chord (int chord)
 {
-    if (chord >= 0 && chord < c_chord_number)
+    if (chord_number_valid(chord))
     {
         ui->m_combo_chord->setCurrentIndex(chord);
         m_chord = sm_initial_chord = chord;
@@ -1894,7 +1907,10 @@ qseqeditframe64::popup_tool_menu ()
     QMenu * menuselect = new QMenu(tr("&Select..."), m_tools_popup);
     QMenu * menutiming = new QMenu(tr("&Timing..."), m_tools_popup);
     QMenu * menupitch  = new QMenu(tr("&Pitch transpose..."), m_tools_popup);
-    QMenu * menuharmonic  = new QMenu(tr("&Harmonic transpose..."), m_tools_popup);
+    QMenu * menuharmonic = nullptr;
+    if (m_scale > 0)
+        menuharmonic  = new QMenu(tr("&Harmonic transpose..."), m_tools_popup);
+
     QAction * selectall = new QAction(tr("Select all"), m_tools_popup);
     selectall->setShortcut(tr("Ctrl+A"));
     connect
@@ -1923,54 +1939,67 @@ qseqeditframe64::popup_tool_menu ()
     connect(tighten, SIGNAL(triggered(bool)), this, SLOT(tighten_notes()));
     menutiming->addAction(tighten);
 
-    char num[16];
-    QAction * transpose[24];        /* fill out plain pitch transpositions */
-    QAction * harmonic[24];         /* fill out harmonic transpositions    */
+    QAction * transpose[2 * c_octave_size];     /* plain pitch transposings */
+    QAction * harmonic[2 * c_harmonic_size];    /* harmonic transpositions  */
     for (int t = -c_octave_size; t <= c_octave_size; ++t)
     {
         if (t != 0)
         {
+            /*
+             * Pitch transpose menu entries. Note the interval_name_ptr() and
+             * harmonic_interval_name_ptr() functions from the scales module.
+             */
+
+            char num[16];
+            int index = t + c_octave_size;
             snprintf
             (
-                num, sizeof num, "%+d [%s]", t, c_interval_text[abs(t)].c_str()
+                num, sizeof num, "%+d [%s]",
+                t, interval_name_ptr(t)
             );
-
-            /*
-             * Pitch transpose menu entries.
-             */
-
-            transpose[t + c_octave_size] = new QAction(num, m_tools_popup);
-            transpose[t + c_octave_size]->setData(t);
-            menupitch->addAction(transpose[t + c_octave_size]);
+            transpose[index] = new QAction(num, m_tools_popup);
+            transpose[index]->setData(t);
+            menupitch->addAction(transpose[index]);
             connect
             (
-                transpose[t + c_octave_size], SIGNAL(triggered(bool)),
+                transpose[index], SIGNAL(triggered(bool)),
                 this, SLOT(transpose_notes())
             );
+            if (m_scale > 0 && harmonic_number_valid(t))
+            {
+                /*
+                 * Harmonic transpose menu entries.
+                 */
 
-            /*
-             * Harmonic transpose menu entries.
-             */
-
-            harmonic[t + c_octave_size] = new QAction(num, m_tools_popup);
-            harmonic[t + c_octave_size]->setData(t);
-            menuharmonic->addAction(harmonic[t + c_octave_size]);
-            connect
-            (
-                harmonic[t + c_octave_size], SIGNAL(triggered(bool)),
-                this, SLOT(transpose_harmonic())
-            );
+                int tn = t < 0 ? (t - 1) : (t + 1);
+                index = t + c_harmonic_size;
+                snprintf
+                (
+                    num, sizeof num, "%+d [%s]",
+                    tn, harmonic_interval_name_ptr(t)
+                );
+                harmonic[index] = new QAction(num, m_tools_popup);
+                harmonic[index]->setData(t);
+                menuharmonic->addAction(harmonic[index]);
+                connect
+                (
+                    harmonic[index], SIGNAL(triggered(bool)),
+                    this, SLOT(transpose_harmonic())
+                );
+            }
         }
         else
         {
             menupitch->addSeparator();
-            menuharmonic->addSeparator();
+            if (m_scale > 0)
+                menuharmonic->addSeparator();
         }
     }
     m_tools_popup->addMenu(menuselect);
     m_tools_popup->addMenu(menutiming);
     m_tools_popup->addMenu(menupitch);
-    m_tools_popup->addMenu(menuharmonic);
+    if (m_scale > 0)
+        m_tools_popup->addMenu(menuharmonic);
 }
 
 /**
