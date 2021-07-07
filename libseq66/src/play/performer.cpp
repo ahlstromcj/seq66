@@ -3478,8 +3478,8 @@ performer::input_func ()
 bool
 performer::poll_cycle ()
 {
-    bool result = true;
-    if (m_master_bus->poll_for_midi() > 0)
+    bool result = m_io_active;
+    if (result && m_master_bus->poll_for_midi() > 0)
     {
         do
         {
