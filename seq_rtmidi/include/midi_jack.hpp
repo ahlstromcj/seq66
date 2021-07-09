@@ -183,7 +183,7 @@ protected:
         return false;
     }
 
-    virtual int api_poll_for_midi ()
+    virtual int api_poll_for_midi () override
     {
         return 0;
     }

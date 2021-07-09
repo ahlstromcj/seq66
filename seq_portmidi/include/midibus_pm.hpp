@@ -84,14 +84,14 @@ public:
 
 protected:
 
-    virtual int api_poll_for_midi ();
-    virtual bool api_init_in ();
-    virtual bool api_init_out ();
+    virtual int api_poll_for_midi () override;
+    virtual bool api_init_in () override;
+    virtual bool api_init_out () override;
     virtual void api_continue_from (midipulse tick, midipulse beats);
-    virtual void api_start ();
-    virtual void api_stop ();
-    virtual void api_clock (midipulse tick);
-    virtual void api_play (event * e24, midibyte channel);
+    virtual void api_start () override;
+    virtual void api_stop () override;
+    virtual void api_clock (midipulse tick) override;
+    virtual void api_play (event * e24, midibyte channel) override;
 
     /*
      * Functions not implemented in PortMIDI.  For example, the "sub"

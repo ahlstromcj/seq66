@@ -151,7 +151,7 @@ protected:
      * The actual polling is handled by midi_alsa_info.  What a mess!
      */
 
-    virtual int api_poll_for_midi ()
+    virtual int api_poll_for_midi () override
     {
         return 0;
     }
