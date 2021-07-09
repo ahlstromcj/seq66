@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-03
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -124,14 +124,15 @@ qseqkeys::paintEvent (QPaintEvent *)
     {
         int keyvalue = c_num_keys - i - 1;
         int key = keyvalue % c_octave_size;
-        int y = note_height() * i;
+        int keyy = note_height() * i;
+        int numy = keyy + 8;
         pen.setColor(Qt::black);                            /* white keys   */
         pen.setStyle(Qt::SolidLine);
         brush.setColor(Qt::white);
         brush.setStyle(Qt::SolidPattern);
         painter.setPen(pen);
         painter.setBrush(brush);
-        painter.drawRect(keyx, y + 1, sc_key_x, note_height() - 1);
+        painter.drawRect(keyx, keyy, sc_key_x, note_height() - 1);
         if (is_black_key(key))                              /* black keys   */
         {
             pen.setStyle(Qt::SolidLine);
@@ -139,7 +140,7 @@ qseqkeys::paintEvent (QPaintEvent *)
             brush.setColor(Qt::black);
             painter.setPen(pen);
             painter.setBrush(brush);
-            painter.drawRect(keyx, y + 3, sc_key_x - 2, note_height() - 5);
+            painter.drawRect(keyx, keyy + 2, sc_key_x - 2, note_height() - 5);
         }
         if (keyvalue == m_preview_key)              /* preview note         */
         {
@@ -147,7 +148,7 @@ qseqkeys::paintEvent (QPaintEvent *)
             pen.setStyle(Qt::NoPen);
             painter.setPen(pen);
             painter.setBrush(brush);
-            painter.drawRect(keyx + 2, y + 3, sc_key_x - 3, note_height() - 4);
+            painter.drawRect(keyx + 2, keyy + 2, sc_key_x - 3, note_height() - 4);
         }
 
         std::string note;
@@ -164,7 +165,7 @@ qseqkeys::paintEvent (QPaintEvent *)
                 pen.setStyle(Qt::SolidLine);
                 painter.setPen(pen);
                 note = musical_note_name(keyvalue);
-                painter.drawText(2, y + 9, note.c_str());   // 11
+                painter.drawText(2, numy, note.c_str());   // 11
             }
             break;
 
@@ -173,14 +174,14 @@ qseqkeys::paintEvent (QPaintEvent *)
             if ((keyvalue % 2) == 0)
             {
                 note = musical_note_name(keyvalue);
-                painter.drawText(2, y + 9, note.c_str());   // 11
+                painter.drawText(2, numy, note.c_str());   // 11
             }
             break;
 
         case show::all_letters:
 
             note = musical_note_name(keyvalue);
-            painter.drawText(2, y + 9, note.c_str());       // 11
+            painter.drawText(2, numy, note.c_str());       // 11
             break;
 
         case show::even_numbers:
@@ -188,14 +189,14 @@ qseqkeys::paintEvent (QPaintEvent *)
             if ((keyvalue % 2) == 0)
             {
                 snprintf(notebuf, sizeof notebuf, "%3d", keyvalue);
-                painter.drawText(1, y + 9, notebuf);
+                painter.drawText(1, numy, notebuf);
             }
             break;
 
         case show::all_numbers:
 
             snprintf(notebuf, sizeof notebuf, "%3d", keyvalue);
-            painter.drawText(1, y + 9, notebuf);
+            painter.drawText(1, numy, notebuf);
             break;
         }
     }

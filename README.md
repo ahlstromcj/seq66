@@ -1,7 +1,7 @@
 # README for Seq66 0.96.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-07-07
+2015-09-10 to 2021-07-09
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -83,6 +83,11 @@ Windows, and using a conventional source tarball.
         *   Fixed harmonic transposition settings.
         *   Can now read MIDI files that are readable, but not writable, and
             disable File / Save as needed.
+        *   Added hjkl arrow keys to seqroll and perfroll. Why? We have a
+            Microsoft Arc keyboard with all the arrows on one small button.
+        *   Fixed the Mixolydian mode scale. Oops.
+        *   The pattern editor time, roll, data, and event frames line up.
+        *   More work on pattern-editor in tab. More to come.
     *   Version 0.95.1:
         *   Added 'auto' option to song-start-mode setting.
         *   Added missing harmonic-transposition option to the pattern editor.

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-06-22
+ * \updates       2021-07-08
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll),
@@ -37,6 +37,7 @@
 
 #include <QFrame>
 
+#include "qscrollmaster.h"              /* qscrollmaster::dir enum class    */
 #include "midi/midibytes.hpp"           /* seq66::midipulse alias           */
 
 /*
@@ -118,6 +119,7 @@ private:
     void reset_zoom ();
     void set_transpose (int transpose);
     void update_entry_mode (bool on);
+    void scroll_by_step (qscrollmaster::dir d);
 
 protected:                          // overrides of event handlers
 

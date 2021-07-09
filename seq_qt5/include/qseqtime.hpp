@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2018-07-25
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -61,9 +61,11 @@ public:
 
     qseqtime
     (
-        performer & p, seq::pointer seqp, int zoom,
-        QWidget * parent,        /* QScrollArea */
-        qseqeditframe64 * frame
+        performer & p,
+        seq::pointer seqp,
+        qseqeditframe64 * frame,
+        int zoom,
+        QWidget * parent                                /* QScrollArea */
     );
 
     virtual ~qseqtime ();
@@ -84,16 +86,6 @@ private:
         // TODO
     }
 
-    qseqeditframe64 * frame64 ()
-    {
-        return m_parent_frame;
-    }
-
-    const qseqeditframe64 * frame64 () const
-    {
-        return m_parent_frame;
-    }
-
 signals:
 
 private slots:
@@ -102,7 +94,6 @@ private slots:
 
 private:
 
-    qseqeditframe64 * m_parent_frame;
     QTimer * m_timer;
     QFont m_font;
 

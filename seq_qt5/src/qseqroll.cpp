@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-05
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -67,21 +67,20 @@ qseqroll::qseqroll
 (
     performer & p,
     seq::pointer seqp,
+    qseqeditframe64 * frame,
     qseqkeys * seqkeys_wid,
     int zoom, int snap,
-    sequence::editmode mode,
-    qseqeditframe64 * frame                         /* qseqframe        */
+    sequence::editmode mode
 ) :
     QWidget                 (frame),
     qseqbase
     (
-        p, seqp, zoom, snap,
+        p, seqp, frame, zoom, snap,
         usr().key_height(),                         /* was m_key_y      */
         usr().key_height() * c_num_keys + 1         /* was m_keyarea_y  */
     ),
     m_analysis_msg          (nullptr),
     m_backseq_color         (backseq_paint()),
-    m_parent_frame          (frame),
     m_seqkeys_wid           (seqkeys_wid),
     m_timer                 (nullptr),
     m_progbar_width         (usr().progress_bar_thick() ? 2 : 1),
@@ -269,7 +268,7 @@ qseqroll::scroll_offset (int x)
     m_t0 = ticks - (ticks % ticks_per_step);
     m_frame_ticks = pix_to_tix(frame64()->width());
     m_t1 = ticks + m_frame_ticks;
-    qseqbase::scroll_offset(x);                         // WHY COMMENTED OUT?
+    qseqbase::scroll_offset(x);
 }
 
 /**
@@ -465,7 +464,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
          * Set line colour dependent on the note row we're on.
          */
 
-        int y = key * unit_height();
+        int y = key * unit_height() + 2;
         if ((modkey % c_octave_size) == 0)
             pen.setColor(fore_color());
         else
@@ -1031,7 +1030,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
         if (moving())
         {
             /*
-             * Adjust delta x for sna;, convert deltas into screen coordinates.
+             * Adjust delta x for snap, convert deltas into screen coordinates.
              * Since delta_note and delta_y are of opposite sign, we flip
              * the final result.  delta_y[0] = note[127].
              */
@@ -1049,7 +1048,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
                 delta_note = delta_note - (c_num_keys - 1);
             }
             m_last_base_note = (-1);
-            if (delta_x != 0 || delta_note != 0)
+            if (delta_tick != 0 || delta_note != 0)
             {
                 seq_pointer()->move_selected_notes(delta_tick, delta_note);
                 set_dirty();
@@ -1486,13 +1485,13 @@ qseqroll::grow_selected_notes (int dx)
 QSize
 qseqroll::sizeHint () const
 {
-    int h = total_height();                         /* + 1;             */
+    int h = total_height();
     int w = frame64()->width();
     int len = tix_to_pix(seq_pointer()->get_length());
     if (len < w)
         len = w;
 
-    len += m_keypadding_x;
+    len += m_keypadding_x;                          /* c_keyboard_padding   */
     return QSize(len, h);
 }
 

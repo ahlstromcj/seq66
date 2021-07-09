@@ -596,10 +596,6 @@ qplaylistframe::handle_song_click_ex
 void
 qplaylistframe::handle_list_load_click ()
 {
-    if (rc().investigate())
-    {
-        // TO DO
-    }
     if (not_nullptr(m_parent))
     {
         m_parent->open_playlist();

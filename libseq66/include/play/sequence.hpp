@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-07-05
+ * \updates       2021-07-08
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1510,7 +1510,6 @@ public:
     (
         midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
     );
-    midipulse trim_timestamp (midipulse t);
     midipulse clip_timestamp (midipulse ontime, midipulse offtime);
     bool move_selected_notes (midipulse deltatick, int deltanote);
     bool move_selected_events (midipulse deltatick);

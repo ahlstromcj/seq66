@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-29
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -59,6 +59,7 @@ qseqbase::qseqbase
 (
     performer & p,
     seq::pointer seqp,
+    qseqeditframe64 * frame,
     int zoom,
     int snap,
     int unitheight,
@@ -68,6 +69,7 @@ qseqbase::qseqbase
     (
         p, zoom, snap, 1, c_keyboard_padding_x, unitheight, totalheight
     ),
+    m_parent_frame          (frame),
     m_seq                   (seqp),
     m_move_delta_x          (0),
     m_move_delta_y          (0),

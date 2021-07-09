@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-18
- * \updates       2021-04-16
+ * \updates       2021-07-08
  * \license       GNU GPLv2 or above
  *
  *  When inheriting QAbstractScrollArea, you need to do the following:
@@ -156,6 +156,22 @@ qscrollmaster::scroll_x_by_factor (float f)
 }
 
 void
+qscrollmaster::scroll_x_by_step (dir d)
+{
+    if (! m_h_scrollbars.empty())
+    {
+        int dx = m_self_h_scrollbar->singleStep();
+        if (d == dir::Left)                         /* else Right assumed   */
+            dx = -dx;
+
+        int hvalue = m_self_h_scrollbar->value();
+        int newh = hvalue + dx;
+        scroll_to_x(newh);
+        QScrollArea::scrollContentsBy(dx, 0);
+    }
+}
+
+void
 qscrollmaster::scroll_to_y (int y)
 {
     if (! m_v_scrollbars.empty())
@@ -177,6 +193,22 @@ qscrollmaster::scroll_y_by_factor (float f)
         int dy = vvalue - newv;
         scroll_to_y(newv);
         QScrollArea::scrollContentsBy(0, dy);
+    }
+}
+
+void
+qscrollmaster::scroll_y_by_step (dir d)
+{
+    if (! m_v_scrollbars.empty())
+    {
+        int dy = m_self_v_scrollbar->singleStep();
+        if (d == dir::Up)                           /* else Down assumed    */
+            dy = -dy;
+
+        int vvalue = m_self_v_scrollbar->value();
+        int newv = vvalue + dy;
+        scroll_to_y(newv);
+        QScrollArea::scrollContentsBy(dy, 0);
     }
 }
 

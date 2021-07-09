@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-07
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -254,11 +254,11 @@ qsmainwnd::qsmainwnd
     m_open_live_frames      (),
     m_perf_frame_visible    (false),
     m_current_main_set      (0),
+    m_shrunken              (usr().shrunken()),
     m_session_mgr_ptr       (nullptr)
 {
     ui->setupUi(this);
 
-    bool shrunken = usr().shrunken();           /* more down-scaling?       */
     int w = usr().mainwnd_x();                  /* normal, maybe scaled     */
     int h = usr().mainwnd_y();
     resize(QSize(w, h));                        /* scaled values            */
@@ -281,7 +281,7 @@ qsmainwnd::qsmainwnd
     int ppqn = perf().ppqn();
     std::string pstring = std::to_string(ppqn);
     set_ppqn_text(pstring);
-    if (shrunken)
+    if (m_shrunken)
     {
         ui->lineEditPpqn->hide();
         ui->label_2->hide();        /* Hide the "PPQN" label too */
@@ -522,7 +522,7 @@ qsmainwnd::qsmainwnd
      * L/R Loop button.
      */
 
-    if (shrunken)
+    if (m_shrunken)
     {
         ui->btnLoop->hide();
     }
@@ -559,7 +559,7 @@ qsmainwnd::qsmainwnd
      * Performance Editor button.
      */
 
-    if (shrunken)
+    if (m_shrunken)
     {
         ui->btnPerfEdit->hide();
     }
@@ -2016,9 +2016,9 @@ qsmainwnd::load_editor (int seqid)
         if (not_nullptr(m_edit_frame))
             delete m_edit_frame;
 
-        m_edit_frame = new qseqeditframe64
+        m_edit_frame = new (std::nothrow) qseqeditframe64
         (
-            perf(), seqid, ui->EditTab, true            /* short data pane  */
+            perf(), seqid, ui->EditTab, m_shrunken
         );
         ui->EditTabLayout->addWidget(m_edit_frame);
         m_edit_frame->show();

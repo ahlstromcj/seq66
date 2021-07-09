@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-06-24
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -382,6 +382,13 @@ private:
      */
 
     screenset::number m_current_main_set;
+
+    /**
+     *  Indicates to shrink or hide some elements of the user interface,
+     *  primarily the seqedit frame.
+     */
+
+    bool m_shrunken;
 
     /**
      *  Thinking about this one. How can we attach and detach from a session

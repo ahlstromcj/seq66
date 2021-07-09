@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2021-05-16
+ * \updates       2021-07-09
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -121,6 +121,7 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
 #endif
 
 extern bool info_message (const std::string & msg);
+extern bool status_message (const std::string & msg);
 extern bool warn_message (const std::string & msg);
 extern bool error_message (const std::string & msg);
 extern bool file_error (const std::string & tag, const std::string & filename);

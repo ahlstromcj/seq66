@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-18
- * \updates       2021-04-16
+ * \updates       2021-07-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -59,6 +59,16 @@ class QScrollBar;
 
 class qscrollmaster : public QScrollArea
 {
+
+public:
+
+    enum class dir
+    {
+        Left,
+        Right,
+        Up,
+        Down
+    };
 
 private:
 
@@ -122,8 +132,10 @@ public:
 
     void scroll_to_x (int x);
     void scroll_x_by_factor (float f);
+    void scroll_x_by_step (dir d);
     void scroll_to_y (int y);
     void scroll_y_by_factor (float f);
+    void scroll_y_by_step (dir d);
 
 protected:      // QWidget overrides
 

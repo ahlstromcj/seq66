@@ -35,24 +35,23 @@
     Natural Minor Scale (Aeolian):  R-W-h-W-W-h-W-W
     Harmonic Minor Scale:           R-W-h-W-W-h-3-h
     Melodic Minor Scale going up:   R-W-h-W-W-W-W-h
-    Melodic Minor Scale going down: R-W-W-h-W-W-h-W (implemented as Mixolydian mode)
-    Whole Tone:                     R-W-W-W-W-W-W-
-    Blues Scale:                    R-3-W-h-h-3-W-
+ *  Melodic Minor Scale going down: R-W-W-h-W-W-h-W     (Mixolydian mode?)
+    Whole Tone:                     R-W-W-W-W-W-W       (Augmented, Bebop)
+    Minor Blues Scale:              R-3-W-h-h-3-W
+ *  Major Blues Scale:              R-W-W-h-h-3-W-W     (Pentatonic Blues)
     Major Pentatonic:               R-W-W-3-W-3
     Minor Pentatonic Blues (no #5): R-3-W-W-3-W
     Phrygian:                       R-h-W-W-W-h-W-W
+    Phygian Dominant (Ahava Raba):  R-h-3-h-W-h-W-W
     Enigmatic:                      R-h-3-W-W-W-h-h
     Diminished                      R-W-h-W-h-W-h-W-h
     Dorian Mode:                    R-W-h-W-W-W-h-W
-    Mixolydian Mode:                R-W-W-h-W-W-h-W (descending melodic minor)
-\endverbatim
- *
- *  Unimplemented:
-\verbatim
-    Phygian Dominant (Ahava Raba):  R-h-3-h-W-h-W-W
+    Mixolydian Mode:                R-W-W-h-W-W-h-W     (Dominant 7th)
+    Dominant Diminished Scale:      R-h-W-h-W-h-W-h-W   (Diminished Blues)
 \endverbatim
  *
 \verbatim
+    *: unimplemented in Seq66
     R: root note
     h: half step (semitone)
     W: whole step (2 semitones)
@@ -89,18 +88,19 @@ namespace seq66
 \verbatim
     Chromatic           C  C# D  D# E  F  F# G  G# A  A# B   Notes, chord
     Major               C  .  D  .  E  F  .  G  .  A  .  B
-    Minor               C  .  D  Eb .  F  .  G  Ab .  Bb .
+    Minor               C  .  D  Eb .  F  .  G  Ab .  Bb .   Natural Minor
     Harmonic Minor      C  .  D  Eb .  F  .  G  Ab .  .  B
     Melodic Minor       C  .  D  Eb .  F  .  G  .  A  .  B   Descending diff.
     C Whole Tone        C  .  D  .  E  .  F# .  G# .  A# .   C+7 chord
-    Blues               C  .  .  Eb .  F  Gb G  .  .  Bb .
+    Minor Blues         C  .  .  Eb .  F  Gb G  .  .  Bb .   Gb = "blue note"
     Major Pentatonic    C  .  D  .  E  .  .  G  .  A  .  .
-    Minor Pentatonic    C  .  .  Eb .  F  .  G  .  .  Bb .
+    Minor Pentatonic    C  .  .  Eb .  F  .  G  .  .  Bb .  See Minor Blues
     Phrygian            C  Db .  Eb .  F  .  G  G# .  Bb .
     Enigmatic           C  Db .  .  E  .  F# .  G# .  A# B
     Diminished          C  .  D  Eb .  F  Gb .  Ab A  .  B
     Dorian Mode         C  .  D  Eb .  F  .  G  .  A  Bb .
-    Mixolydian Mode     C  .  D  .  E  .  F# G  .  A  .  B
+    Mixolydian Mode     C  .  D  .  E  F  .  G  .  A  Bb .
+    Dominant Dimin'ed   C  Db .  Eb E  .  F# G  .  A  Bb    Diminished Blues
 \endverbatim
  */
 
@@ -131,7 +131,7 @@ c_scales_policy [c_scales_max] [c_octave_size] =
         true, false, true, false, true, false,
         true, false, true, false, true, false
     },
-    {                                                   /* blues            */
+    {                                                   /* minor blues      */
         true, false, false, true, false, true,
         true, true, false, false, true, false
     },
@@ -160,8 +160,8 @@ c_scales_policy [c_scales_max] [c_octave_size] =
         false, true, false, true, true, false
     },
     {                                                   /* mixolydian       */
-        true, false, true, false, true, false,
-        true, true, false, true, false, true
+        true, false, true, false, true, true,
+        false, true, false, true, true, false
     }
 };
 
@@ -246,7 +246,7 @@ rotate_transpose_right (int p [c_octave_size])
 \endverbatim
  *
 \verbatim
-    Blues               C  .  .  Eb .  F  Gb G  .  .  Bb .
+    Minor Blues         C  .  .  Eb .  F  Gb G  .  .  Bb .
     Transpose up        3  .  .  2  .  1  1  3  .  .  2  .
     Result up           Eb .  .  F  .  Gb G  Bb .  .  C  .
 \endverbatim
@@ -288,14 +288,20 @@ rotate_transpose_right (int p [c_octave_size])
 \endverbatim
  *
  \verbatim
-    Mixolydian Mode     C  .  D  .  E  .  F# G  .  A  .  B
-    Transpose up        2  .  2  .  2  .  1  2  .  2  .  1
-    Result up           D  .  E  .  F# .  G  A  .  B  .  C
+    Mixolydian Mode     C  .  D  .  E  F  .  G  .  A  Bb .
+    Transpose up        2  .  2  .  1  2  .  2  .  1  2  .
+    Result up           D  .  E  .  F  G  .  A  .  Bb .  C
 \endverbatim
  *
  *  Note that the D Dorian scale is all white keys: D E F G A B C D.
  *  The "result up" shown above is for a transposition that preserves the
  *  C Dorian scale.
+ *
+ *  The Mixolydian scale starts on the 5th note of the Major scale and ends on
+ *  the fifth note. For instance, the C Major scale is C, D, E, F, G, A, B,
+ *  and C. The fifth note of C Major is G. Therefore the 5th mode of C Major
+ *  is G Mixolydian: G, A, B, C, D, E, F, and G.  It is sometimes referred to
+ *  as the Dominant 7th scale.
  */
 
 const int *
@@ -309,14 +315,14 @@ scales_up (int scale, int key)
         { 2, 0, 1, 2, 0, 2, 0, 1, 3, 0, 0, 1},          /* harmonic minor   */
         { 2, 0, 1, 2, 0, 2, 0, 2, 0, 2, 0, 1},          /* melodic minor    */
         { 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0},          /* C whole tone     */
-        { 3, 0, 0, 2, 0, 1, 1, 3, 0, 0, 2, 0},          /* blues            */
+        { 3, 0, 0, 2, 0, 1, 1, 3, 0, 0, 2, 0},          /* minor blues      */
         { 2, 0, 2, 0, 3, 0, 0, 2, 0, 3, 0, 0},          /* maj pentatonic   */
         { 3, 0, 0, 2, 0, 2, 0, 3, 0, 0, 2, 0},          /* min pentatonic   */
         { 1, 2, 0, 2, 0, 2, 0, 1, 2, 0, 2, 0},          /* phrygian         */
         { 1, 3, 0, 0, 2, 0, 2, 0, 2, 0, 1, 1},          /* enigmatic        */
         { 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1},          /* diminished       */
         { 2, 0, 1, 2, 0, 2, 0, 2, 0, 1, 2, 0},          /* dorian           */
-        { 2, 0, 2, 0, 2, 0, 1, 2, 0, 2, 0, 1}           /* mixolydian       */
+        { 2, 0, 2, 0, 1, 2, 0, 2, 0, 1, 2, 0}           /* mixolydian       */
     };
     if (key > 0)
     {
@@ -336,6 +342,11 @@ scales_up (int scale, int key)
 /**
  *  Making these positive makes it easier to read, but the actual array
  *  contains negative values.
+ *
+\verbatim
+    Semitone Number     1  2  3  4  5  6  7  8  9 10 11 12
+    Chromatic (Off)     C  .  D  .  E  F  .  G  .  A  .  B
+\endverbatim
  *
 \verbatim
     Major               C  .  D  .  E  F  .  G  .  A  .  B
@@ -368,7 +379,7 @@ scales_up (int scale, int key)
 \endverbatim
  *
 \verbatim
-    Blues               C  .  .  Eb .  F  Gb G  .  .  Bb .
+    Minor Blues         C  .  .  Eb .  F  Gb G  .  .  Bb .
     Transpose down      2  .  .  3  .  2  1  1  .  .  3  .
     Result down         Bb .  .  C  .  Eb F  Gb .  .  G  .
 \endverbatim
@@ -410,9 +421,9 @@ scales_up (int scale, int key)
 \endverbatim
  *
  \verbatim
-    Mixolydian Mode     C  .  D  .  E  .  F# G  .  A  .  B
-    Transpose down      1  .  2  .  2  .  2  1  .  2  .  2
-    Result down         B  .  C  .  D  .  E  F# .  G  .  A
+    Mixolydian Mode     C  .  D  .  E  F  .  G  .  A  Bb .
+    Transpose down      2  .  2  .  2  1  .  2  .  2  1  .
+    Result down         Bb .  C  .  D  E  .  F  .  G  A  .
 \endverbatim
  */
 
@@ -427,14 +438,14 @@ scales_down (int scale, int key)
         { -1,  0, -2, -1,  0, -2,  0, -2, -1,  0,  0, -3}, /* harmonic minor  */
         { -1,  0, -2, -1,  0, -2,  0, -2,  0, -2,  0, -2}, /* melodic minor   */
         { -2,  0, -2,  0, -2,  0, -2,  0, -2,  0, -2,  0}, /* C whole tone    */
-        { -2,  0,  0, -3,  0, -2, -1, -1,  0,  0, -3,  0}, /* blues           */
+        { -2,  0,  0, -3,  0, -2, -1, -1,  0,  0, -3,  0}, /* minor blues     */
         { -3,  0, -2, -0,  2,  0,  0, -3,  0, -2,  0,  0}, /* maj pentatonic  */
         { -2,  0,  0, -3,  0, -2,  0, -2,  0,  0, -3,  0}, /* min pentatonic  */
         { -1, -1,  0, -1,  0, -1,  0, -1, -1,  0, -1,  0}, /* phrygian        */
         { -1, -1,  0,  0, -3,  0, -2,  0, -2,  0, -2, -1}, /* enigmatic       */
         { -1,  0, -2, -1,  0, -2, -1,  0, -2, -1,  0, -2}, /* diminished      */
         { -2,  0, -2, -1,  0, -2,  0, -2,  0, -2, -1,  0}, /* dorian          */
-        { -1,  0, -2,  0, -2,  0, -2, -1,  0, -2,  0, -1}  /* mixolydian      */
+        { -2,  0, -2,  0, -2,  1,  0, -2,  0, -2, -1,  0}  /* mixolydian      */
     };
     if (key > 0)
     {
@@ -507,7 +518,7 @@ musical_scale_name (int s)
         "Harmonic Minor",
         "Melodic Minor",            /* ascending only; see Mixolydian mode  */
         "Whole Tone",
-        "Blues",
+        "Minor Blues",
         "Pentatonic Major",
         "Pentatonic Minor",
         "Phrygian",
@@ -567,12 +578,15 @@ harmonic_number_valid (int number)
     return abs(number) < c_harmonic_size;
 }
 
+/**
+ *  Was: "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "0"
+ */
+
 const char *
 harmonic_interval_name_ptr (int interval)
 {
     static const std::string c_interval_text [c_harmonic_size + 1] =
     {
-        // "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "0"
         "I", "ii", "iii", "IV", "V", "vi", "vii", "I", "0"
     };
     int index = abs(interval);
@@ -611,8 +625,8 @@ chord_name_ptr (int number)
         "7b9",          "7#5#9",       "7#5b9",      "7b5b9",   "7add11",
         "7add13",       "7#11",        "Maj7",       "Maj7b5",  "Maj7#5",
         "Maj7#11",      "Maj7add13",   "m7",         "m7b5",    "m7b9",
-        "m7add11",      "m7add13",     "m-Maj7",     "m-Maj7add11", "m-Maj7add13",
-        ""
+        "m7add11",      "m7add13",     "m-Maj7", "m-Maj7add11", "m-Maj7add13",
+        ""              /* terminator */
     };
     if (! chord_number_valid(number))
         number = c_chord_number;

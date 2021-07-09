@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-20
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -72,7 +72,9 @@ public:
 
     qseqdata
     (
-        performer & p, seq::pointer seqp,
+        performer & p,
+        seq::pointer seqp,
+        qseqeditframe64 * frame,
         int zoom, int snap,
         QWidget * parent,
         int height = 0

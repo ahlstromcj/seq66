@@ -77,7 +77,7 @@ public:
     (
         performer & perf,
         seq::pointer seqp,
-        QWidget * parent,
+        QWidget * parent,                                   /* QScrollArea  */
         int keyheight       = 12,
         int keyareaheight   = 12 * c_num_keys + 1
     );

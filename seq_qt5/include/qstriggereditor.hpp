@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-07-27
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -53,6 +53,7 @@ namespace seq66
 {
     class performer;
     class qseqdata;
+    class qseqeditframe64;
 
 /**
  *  Displays the triggers for MIDI events (e.g. Mod Wheel, Pitch Bend) in the
@@ -72,6 +73,7 @@ public:
     (
         performer & perf,
         seq::pointer seqp,
+        qseqeditframe64 * frame,
         int zoom                = SEQ66_DEFAULT_ZOOM,
         int snap                = SEQ66_DEFAULT_SNAP,
         int keyheight           = SEQ66_SEQKEY_HEIGHT_DEFAULT,

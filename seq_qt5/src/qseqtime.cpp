@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-05-20
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -60,14 +60,14 @@ static const int s_end_fix     = 10;        /* adjust position of "END" box */
 
 qseqtime::qseqtime
 (
-    performer & p, seq::pointer seqp,
+    performer & p,
+    seq::pointer seqp,
+    qseqeditframe64 * frame,
     int zoom,
-    QWidget * parent,       /* QScrollArea */
-    qseqeditframe64 * frame
+    QWidget * parent                        /* QScrollArea */
 ) :
     QWidget                 (parent),
-    qseqbase                (p, seqp, zoom, SEQ66_DEFAULT_SNAP),
-    m_parent_frame          (frame),
+    qseqbase                (p, seqp, frame, zoom, SEQ66_DEFAULT_SNAP),
     m_timer                 (nullptr),
     m_font                  ()
 {
@@ -312,7 +312,16 @@ qseqtime::mouseMoveEvent(QMouseEvent * event)
 QSize
 qseqtime::sizeHint() const
 {
+#if defined USE_OLD_CODE
     int len = tix_to_pix(seq_pointer()->get_length()) + 100;
+#else
+    int w = frame64()->width();
+    int len = tix_to_pix(seq_pointer()->get_length());
+    if (len < w)
+        len = w;
+
+    len += c_keyboard_padding_x;
+#endif
     return QSize(len, 22);
 }
 

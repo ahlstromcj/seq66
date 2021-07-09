@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-06-28
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -3053,6 +3053,9 @@ performer::output_func ()
         return;
 
     show_cpu();
+    if (is_debug())
+        infoprint("Output function started");
+
     while (m_io_active)                     /* this variable is now atomic  */
     {
         SEQ66_SCOPE_LOCK                    /* only a marker macro          */
@@ -3319,6 +3322,8 @@ performer::output_func ()
         m_master_bus->stop();
     }
     set_timer_services(false);
+    if (is_debug())
+        infoprint("Output function ended");
 }
 
 /**
@@ -3459,6 +3464,9 @@ performer::output_func ()
 void
 performer::input_func ()
 {
+    if (is_debug())
+        infoprint("Input function started");
+
     if (set_timer_services(true))       /* wrapper for a Windows-only func. */
     {
         while (m_io_active)             /* should we lock/atomic this one?  */
@@ -3468,6 +3476,8 @@ performer::input_func ()
         }
         set_timer_services(false);
     }
+    if (is_debug())
+        infoprint("Input function ended");
 }
 
 
@@ -3479,7 +3489,7 @@ bool
 performer::poll_cycle ()
 {
     bool result = true;
-    if (m_master_bus->poll_for_midi() > 0)
+    if (m_io_active && m_master_bus->poll_for_midi() > 0)
     {
         do
         {
@@ -4467,7 +4477,7 @@ performer::show_cpu ()
 {
 #if defined SEQ66_PLATFORM_LINUX
     if (rc().verbose())
-        infoprintf("output_func() running on CPU #%d", sched_getcpu());
+        infoprintf("Output function on CPU #%d", sched_getcpu());
 #endif
 }
 

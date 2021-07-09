@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-20
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -36,7 +36,8 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
-#include "qseqdata.hpp"                 /* seq66::qseqdata                  */
+#include "qseqdata.hpp"                 /* seq66::qseqdata class            */
+#include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -67,13 +68,15 @@ static const int s_x_data_fix =  8;
 
 qseqdata::qseqdata
 (
-    performer & p, seq::pointer seqp,
+    performer & p,
+    seq::pointer seqp,
+    qseqeditframe64 * frame,
     int zoom, int snap,
     QWidget * parent,
     int height
 ) :
     QWidget                 (parent),
-    qseqbase                (p, seqp, zoom, snap),
+    qseqbase                (p, seqp, frame, zoom, snap),
     performer::callbacks    (p),
     m_timer                 (nullptr),
     m_font                  (),
@@ -130,7 +133,17 @@ qseqdata::on_ui_change (seq::number seqno)
 QSize
 qseqdata::sizeHint () const
 {
+#if defined USE_OLD_CODE
     return QSize(xoffset(seq_pointer()->get_length()) + 100, m_dataarea_y);
+#else
+    int w = frame64()->width();
+    int len = tix_to_pix(seq_pointer()->get_length());
+    if (len < w)
+        len = w;
+
+    len += c_keyboard_padding_x;
+    return QSize(len, m_dataarea_y);
+#endif
 }
 
 /**

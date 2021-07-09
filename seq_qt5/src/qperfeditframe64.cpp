@@ -25,11 +25,9 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-07-07
+ * \updates       2021-07-08
  * \license       GNU GPLv2 or above
  *
- *  Note that, as of version 0.9.11, the z and Z keys, when focus is on the
- *  perfroll (piano roll), will zoom the view horizontally.  Not working!
  */
 
 #include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
@@ -388,6 +386,25 @@ qperfeditframe64::~qperfeditframe64 ()
         delete m_palette;
 }
 
+void
+qperfeditframe64::scroll_by_step (qscrollmaster::dir d)
+{
+    switch (d)
+    {
+    case qscrollmaster::dir::Left:
+    case qscrollmaster::dir::Right:
+
+        ui->rollScrollArea->scroll_x_by_step(d);
+        break;
+
+    case qscrollmaster::dir::Up:
+    case qscrollmaster::dir::Down:
+
+        ui->rollScrollArea->scroll_y_by_step(d);
+        break;
+    }
+}
+
 /**
  *  Passes the Follow status to the qperfroll object.
  */
@@ -698,7 +715,17 @@ qperfeditframe64::set_loop_button (bool looping)
 void
 qperfeditframe64::keyPressEvent (QKeyEvent * event)
 {
-    event->accept();
+    int key = event->key();
+    if (key == Qt::Key_J)
+        scroll_by_step(qscrollmaster::dir::Down);
+    else if (key == Qt::Key_K)
+        scroll_by_step(qscrollmaster::dir::Up);
+    else if (key == Qt::Key_H)
+        scroll_by_step(qscrollmaster::dir::Left);
+    else if (key == Qt::Key_L)
+        scroll_by_step(qscrollmaster::dir::Right);
+    else
+        event->accept();
 }
 
 void

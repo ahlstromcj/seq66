@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-07-07
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1123,6 +1123,25 @@ qseqeditframe64::~qseqeditframe64 ()
     delete ui;
 }
 
+void
+qseqeditframe64::scroll_by_step (qscrollmaster::dir d)
+{
+    switch (d)
+    {
+    case qscrollmaster::dir::Left:
+    case qscrollmaster::dir::Right:
+
+        ui->rollScrollArea->scroll_x_by_step(d);
+        break;
+
+    case qscrollmaster::dir::Up:
+    case qscrollmaster::dir::Down:
+
+        ui->rollScrollArea->scroll_y_by_step(d);
+        break;
+    }
+}
+
 /**
  *  Odd, when this window has focus, this function is called roughly every 1/2
  *  second!  The type of event is always qpep->type() == 12.
@@ -1193,20 +1212,30 @@ qseqeditframe64::wheelEvent (QWheelEvent * qwep)
 void
 qseqeditframe64::keyPressEvent (QKeyEvent * event)
 {
+    int key = event->key();
     if (perf().is_pattern_playing())
     {
-        if (event->key() == Qt::Key_Space)
+        if (key == Qt::Key_Space)
             stop_playing();
-        else if (event->key() == Qt::Key_Escape)
+        else if (key == Qt::Key_Escape)
             stop_playing();
-        else if (event->key() == Qt::Key_Period)
+        else if (key == Qt::Key_Period)
             pause_playing();
     }
     else
     {
-        if (event->key() == Qt::Key_Space || event->key() == Qt::Key_Period)
-        {
+        if (key == Qt::Key_Space || key == Qt::Key_Period)
             start_playing();
+        else
+        {
+            if (key == Qt::Key_J)
+                scroll_by_step(qscrollmaster::dir::Down);
+            else if (key == Qt::Key_K)
+                scroll_by_step(qscrollmaster::dir::Up);
+            else if (key == Qt::Key_H)
+                scroll_by_step(qscrollmaster::dir::Left);
+            else if (key == Qt::Key_L)
+                scroll_by_step(qscrollmaster::dir::Right);
         }
     }
 }
@@ -1258,52 +1287,54 @@ qseqeditframe64::initialize_panels ()
 {
     int noteheight = usr().key_height();
     int height = noteheight * c_num_keys + 1;   /* useful qseqkeys height   */
-    m_seqkeys = new qseqkeys
+    m_seqkeys = new (std::nothrow) qseqkeys
     (
-        perf(), seq_pointer(), ui->keysScrollArea,
+        perf(), seq_pointer(), ui->keysScrollArea,  /* not "this" */
         noteheight, height
     );
     ui->keysScrollArea->setWidget(m_seqkeys);
     ui->keysScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->keysScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->keysScrollArea->verticalScrollBar()->setRange(0, height);
-    m_seqtime = new qseqtime
+    m_seqtime = new (std::nothrow) qseqtime
     (
-        perf(), seq_pointer(), zoom(), ui->timeScrollArea, this
+        perf(), seq_pointer(), this,
+        zoom(), ui->timeScrollArea
     );
     ui->timeScrollArea->setWidget(m_seqtime);
     ui->timeScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->timeScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     /*
-     * qseqroll.  Note the last parameter, "this" is not really a Qt parent
+     * qseqroll.  Note the "this" parameter is not really a Qt parent
      * parameter.  It simply gives qseqroll access to the qseqeditframe64 ::
      * follow_progress() function.
      */
 
-    m_seqroll = new qseqroll
+    m_seqroll = new (std::nothrow) qseqroll
     (
-        perf(), seq_pointer(), m_seqkeys, zoom(), m_snap,
-        sequence::editmode::note, this          /* see note above re "this" */
+        perf(), seq_pointer(), this,
+        m_seqkeys, zoom(), m_snap, sequence::editmode::note
     );
 
     ui->rollScrollArea->setWidget(m_seqroll);
     ui->rollScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     ui->rollScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     m_seqroll->update_edit_mode(m_edit_mode);
-    m_seqdata = new qseqdata
+    m_seqdata = new (std::nothrow) qseqdata
     (
-        perf(), seq_pointer(), zoom(),
-        m_snap, ui->dataScrollArea,
-        m_short_version ? 64 : 0                /* 0 means "normal height"  */
+        perf(), seq_pointer(), this,
+        zoom(), m_snap, ui->dataScrollArea,
+        m_short_version ? 96 : 0                /* 0 means "normal height"  */
+//      m_short_version ? 64 : 0                /* 0 means "normal height"  */
     );
     ui->dataScrollArea->setWidget(m_seqdata);
     ui->dataScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->dataScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_seqevent = new qstriggereditor
+    m_seqevent = new (std::nothrow) qstriggereditor
     (
-        perf(), seq_pointer(), zoom(), m_snap,
-        noteheight, ui->eventScrollArea
+        perf(), seq_pointer(), this,
+        zoom(), m_snap, noteheight, ui->eventScrollArea
     );
     ui->eventScrollArea->setWidget(m_seqevent);
     ui->eventScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

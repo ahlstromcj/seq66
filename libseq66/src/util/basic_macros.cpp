@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-06-19
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -58,7 +58,7 @@ is_debug ()
 #if defined SEQ66_PLATFORM_DEBUG
     return true;
 #else
-    return rc().verbose();
+    return rc().verbose() || rc().investigate();
 #endif
 }
 
@@ -127,8 +127,15 @@ bool
 info_message (const std::string & msg)
 {
     if (is_debug())
-        std::cout << "[" << msg << "]" << std::endl;  /* end and flush    */
+        std::cout << "[" << msg << "]" << std::endl;    /* end and flush    */
 
+    return true;
+}
+
+bool
+status_message (const std::string & msg)
+{
+    std::cout << "[" << msg << "]" << std::endl;        /* end and flush    */
     return true;
 }
 

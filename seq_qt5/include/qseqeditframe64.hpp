@@ -27,11 +27,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-07-05
+ * \updates       2021-07-08
  * \license       GNU GPLv2 or above
  *
  */
 
+#include "qscrollmaster.h"              /* qscrollmaster::dir enum class    */
 #include "qseqframe.hpp"                /* QFrame and seq66::qseqframe      */
 #include "play/performer.hpp"           /* seq66::performer::callbacks      */
 #include "play/setmapper.hpp"           /* seq66::setmapper and others      */
@@ -146,6 +147,7 @@ protected:      /* QWidget overrides                */
 
 private:
 
+    void scroll_by_step (qscrollmaster::dir d);
     void remove_lfo_frame ();
     QIcon * create_menu_image (bool state);
 

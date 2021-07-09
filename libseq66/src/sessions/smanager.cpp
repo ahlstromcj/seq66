@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2021-05-16
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -102,14 +102,13 @@ smanager::smanager (const std::string & caps) :
 /**
  *  We found that on a Debian developer laptop, this destructor took a couple
  *  of seconds to call get_deleter().  Works fine on our Ubuntu developer
- *  laptop.  Weird.
+ *  laptop.  Weird.  The infoprint() may also mitigate a race condition that
+ *  hangs the app at exit on some machines.
  */
 
 smanager::~smanager ()
 {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("~smanager\n");
-#endif
+    (void) status_message("Exiting session manager");
 }
 
 /**

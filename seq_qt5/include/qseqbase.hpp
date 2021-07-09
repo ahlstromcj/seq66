@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-20
- * \updates       2020-07-29
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  *  This class is a base class for qseqroll, qseqdata, qtriggereditor, and
@@ -46,6 +46,7 @@
 
 namespace seq66
 {
+    class qseqeditframe64;
 
 /**
  * The MIDI note grid in the sequence editor
@@ -55,6 +56,13 @@ class qseqbase : public qeditbase
 {
 
 private:
+
+    /**
+     *  Holds a pointer to the edit-frame window.  We now have only one, more
+     *  adaptable, seqedit frame to worry about.
+     */
+
+    qseqeditframe64 * m_parent_frame;
 
     /**
      *  Provides a reference to the sequence represented by piano roll.
@@ -84,8 +92,9 @@ public:
 
     qseqbase
     (
-        performer & perf,
+        performer & p,
         seq::pointer seqp,
+        qseqeditframe64 * frame,
         int zoom,
         int snap            = SEQ66_DEFAULT_SNAP,
         int unit_height     =  1,
@@ -93,6 +102,9 @@ public:
     );
 
     virtual bool check_dirty () const override;
+
+    void set_measures (int len);
+    int get_measures ();
 
 protected:
 
@@ -111,12 +123,15 @@ protected:
         return m_move_snap_offset_x;
     }
 
-public:
+    qseqeditframe64 * frame64 ()
+    {
+        return m_parent_frame;
+    }
 
-    void set_measures (int len);
-    int get_measures ();
-
-protected:
+    const qseqeditframe64 * frame64 () const
+    {
+        return m_parent_frame;
+    }
 
     void move_delta_x (int v)
     {
@@ -132,8 +147,6 @@ protected:
     {
         m_move_snap_offset_x = v;
     }
-
-protected:
 
     /*
      * We are not the owner of this shared pointer.

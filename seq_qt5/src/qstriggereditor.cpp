@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-19
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -38,8 +38,9 @@
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "play/sequence.hpp"            /* seq66::sequence class            */
-#include "qseqdata.hpp"
-#include "qstriggereditor.hpp"
+#include "qseqdata.hpp"                 /* seq66::qseqdata class            */
+#include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
+#include "qstriggereditor.hpp"          /* seq66::qstriggereditor class     */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -67,6 +68,7 @@ qstriggereditor::qstriggereditor
 (
     performer & p,
     seq::pointer seq,
+    qseqeditframe64 * frame,
     int zoom,
     int snap,
     int keyheight,
@@ -76,7 +78,7 @@ qstriggereditor::qstriggereditor
     QWidget             (parent),
     qseqbase
     (
-        p, seq, zoom, snap, usr().key_height(),
+        p, seq, frame, zoom, snap, usr().key_height(),
         usr().key_height() * c_num_keys + 1
     ),
     m_timer             (nullptr),
@@ -147,7 +149,17 @@ qstriggereditor::conditional_update ()
 QSize
 qstriggereditor::sizeHint () const
 {
+#if defined USE_OLD_CODE
     return QSize(xoffset(seq_pointer()->get_length()) + 100, qc_eventarea_y + 1);
+#else
+    int w = frame64()->width();
+    int len = tix_to_pix(seq_pointer()->get_length());
+    if (len < w)
+        len = w;
+
+    len += c_keyboard_padding_x;
+    return QSize(len, qc_eventarea_y + 1);
+#endif
 }
 
 void

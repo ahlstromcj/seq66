@@ -25,13 +25,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-06-16
+ * \updates       2021-07-08
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
  *  tempo) have been added to the container.
  */
-
 
 #include "midi/eventlist.hpp"
 #include "util/basic_macros.hpp"
@@ -665,26 +664,40 @@ eventlist::quantize_events
  */
 
 midipulse
-eventlist::adjust_timestamp (midipulse t, bool isnoteoff)
+eventlist::adjust_timestamp (event & er, midipulse delta_tick)
 {
+    static const bool s_allow_wrap = true;  /* wrap: note on after note-off */
+    midipulse result = er.timestamp() + delta_tick;
     midipulse seqlength = get_length();
-    if (t > seqlength)
-        t -= seqlength;
+    if (result > seqlength)
+        result -= seqlength;
 
-    if (t < 0)                          /* only if midipulse is signed  */
-        t += seqlength;
-
-    if (isnoteoff)
+    if (result < 0)                         /* only if midipulse is signed  */
     {
-        if (t == 0)
-            t = seqlength - note_off_margin();
+        if (s_allow_wrap)
+            result += seqlength;
+        else
+            result = 0;
+    }
+    if (er.is_note_off())
+    {
+        if (result == 0)
+        {
+            if (s_allow_wrap)
+                result = seqlength - note_off_margin();
+            else
+                result = note_off_margin();
+        }
     }
     else                                /* if (wrap)                    */
     {
-        if (t == seqlength)
-            t = 0;
+        if (result == seqlength)
+        {
+            if (s_allow_wrap)
+                result = 0;
+        }
     }
-    return t;
+    return result;
 }
 
 /**
@@ -721,8 +734,7 @@ eventlist::move_selected_notes (midipulse delta_tick, int delta_note)
             int newnote = er.get_note() + delta_note;
             if (newnote >= 0 && newnote < c_num_keys)
             {
-                midipulse newts = er.timestamp() + delta_tick;
-                newts = adjust_timestamp(newts, er.is_note_off());
+                midipulse newts = adjust_timestamp(er, delta_tick);
                 if (er.is_note())                   /* Note On or Note Off  */
                     er.set_note(midibyte(newnote));
 
@@ -745,8 +757,7 @@ eventlist::move_selected_events (midipulse delta_tick)
     {
         if (er.is_selected() && ! er.is_note())
         {
-            midipulse newts = er.timestamp() + delta_tick;
-            newts = adjust_timestamp(newts, false);
+            midipulse newts = adjust_timestamp(er, delta_tick);
             er.set_timestamp(newts);
             result = true;
         }
@@ -1825,7 +1836,7 @@ eventlist::paste_selected (eventlist & clipbd, midipulse tick, int note)
 /**
  *  A new function to consolidate the adjustment of timestamps in a pattern.
  *  Similar to adjust_timestamp, but it doesn't have an \a isnoteoff
- *  parameter.
+ *  parameter.  Used only in this class.
  *
  * \param t
  *      Provides the timestamp to be adjusted based on m_length.

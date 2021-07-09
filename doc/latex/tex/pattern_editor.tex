@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-07-02
+% \update      2021-07-08
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -265,7 +265,8 @@
    subsequent measures that occurs with the "follow progess" feature.
 
    \itempar{Grid Snap}{pattern editor!grid snap}
-   Grid snap selects where the notes will snap when drawn.
+   Grid snap selects where the notes will snap when
+   \textsl{drawn} and when \textsl{moved} (but not when lengthened/shortenend).
    That is, it selects the snap-spacing for the notes
    The following values are supported:
    \textbf{1}, \textbf{1/2}, \textbf{1/4}, \textbf{1/8},
@@ -492,6 +493,15 @@
    and to the rightmost position using the
    \index{keys!ctrl-end} \texttt{Ctrl-End} key,
 
+   \index{keys!arrows}
+   If no notes are selected, the arrow keys will move the piano row up, down,
+   left, and right.
+   \index{keys!k}
+   In addition, the "vi" keys \texttt{h}, \texttt{j}, \texttt{k}, and
+   \texttt{l} will act like the arrow keys. This can be convenient, especially
+   if the arrow-keys are unwieldly.  For example, the
+   \textsl{Microsoft Arc} keyboard puts all four arrows on one button!
+
    \index{step}
    \index{note step}
    With the note-step feature, if one paints notes with the mouse,
@@ -499,7 +509,7 @@
    If one paints notes via an external MIDI keyboard, the notes are painted and
    advanced.
    To preview notes entered via a MIDI device, click the
-   \textbf{pass MIDI in to output} button to activate so that they will be
+   \textbf{MIDI Thru} button to activate so that they will be
    passed to the sound generator or software synthesizer.
 
 \subsubsection{Pattern Editor / Piano Roll Items}

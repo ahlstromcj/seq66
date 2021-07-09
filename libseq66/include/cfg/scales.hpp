@@ -22,16 +22,16 @@
 /**
  * \file          scales.hpp
  *
- *  This module declares/defines the scales-related global variables and
- *  functions.
+ *  This module declares/defines the scales-related global variables, types,
+ *  and functions.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-07
+ * \updates       2021-07-08
  * \license       GNU GPLv2 or above
  *
- *  These values were moved from the globals module.  Includes the
+ *  These values were moved from the Seq64 globals module.  Includes the
  *  chord-generation data.
  *
  *  Phrygian scales added by user WinkoErades.  Thank you!
@@ -132,7 +132,7 @@ enum class scales
     harmonic_minor,
     melodic_minor,                  /* Just the ascending version           */
     c_whole_tone,
-    blues,
+    minor_blues,
     major_pentatonic,
     minor_pentatonic,
     phrygian,

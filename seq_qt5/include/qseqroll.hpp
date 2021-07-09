@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-02
+ * \updates       2021-07-09
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -59,7 +59,6 @@ namespace seq66
 {
     class performer;
     class qseqeditframe64;
-    class qseqframe;
     class qseqkeys;
 
 /**
@@ -68,7 +67,6 @@ namespace seq66
 
 class qseqroll final : public QWidget, public qseqbase
 {
-    friend class qseqframe;
     friend class qseqeditframe64;
 
     Q_OBJECT
@@ -79,11 +77,11 @@ public:
     (
         performer & perf,
         seq::pointer seqp,
+        qseqeditframe64 * parent,
         qseqkeys * seqkeys_wid      = nullptr,
         int zoom                    = SEQ66_DEFAULT_ZOOM,
         int snap                    = SEQ66_DEFAULT_SNAP,
-        sequence::editmode mode     = sequence::editmode::note,
-        qseqeditframe64 * parent    = nullptr
+        sequence::editmode mode     = sequence::editmode::note
     );
 
     virtual ~qseqroll ();
@@ -174,16 +172,6 @@ private:
     void draw_drum_note (QPainter & painter);
     void call_draw_notes (QPainter & painter, const QRect & view);
 
-    qseqeditframe64 * frame64 ()
-    {
-        return m_parent_frame;
-    }
-
-    const qseqeditframe64 * frame64 () const
-    {
-        return m_parent_frame;
-    }
-
 private:
 
     /**
@@ -197,12 +185,6 @@ private:
      */
 
     const Color m_backseq_color;
-
-    /**
-     *  Holds a pointer to the scroll-master object in the edit-frame window.
-     */
-
-    qseqeditframe64 * m_parent_frame;    /* no more qseqframe/qseqeditframe */
 
     /**
      *  Holds a pointer to the qseqkeys pane that is associated with the
