@@ -166,11 +166,12 @@ void
 qstriggereditor::paintEvent (QPaintEvent *)
 {
     QPainter painter(this);
-    QPen pen(Qt::black);
     QBrush brush(Qt::darkGray, Qt::SolidPattern);
+    QPen pen(Qt::black);
     painter.setPen(pen);
     painter.setBrush(brush);
-    painter.drawRect(0, 0, width(), height()); /* background */
+/// painter.drawRect(0, 0, width(), height()); /* draw the background       */
+    painter.drawRect(1, 0, width(), height() - 1); /* draw the background       */
 
     int bpbar = seq_pointer()->get_beats_per_bar();
     int bwidth = seq_pointer()->get_beat_width();

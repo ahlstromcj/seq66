@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-09
+ * \updates       2021-07-10
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -70,14 +70,13 @@ qseqroll::qseqroll
     qseqeditframe64 * frame,
     qseqkeys * seqkeys_wid,
     int zoom, int snap,
-    sequence::editmode mode
+    sequence::editmode mode,
+    int unitheight, int totalheight
 ) :
     QWidget                 (frame),
     qseqbase
     (
-        p, seqp, frame, zoom, snap,
-        usr().key_height(),                         /* was m_key_y      */
-        usr().key_height() * c_num_keys + 1         /* was m_keyarea_y  */
+        p, seqp, frame, zoom, snap, unitheight, totalheight
     ),
     m_analysis_msg          (nullptr),
     m_backseq_color         (backseq_paint()),
@@ -1485,8 +1484,8 @@ qseqroll::grow_selected_notes (int dx)
 QSize
 qseqroll::sizeHint () const
 {
-    int h = total_height();
     int w = frame64()->width();
+    int h = total_height();
     int len = tix_to_pix(seq_pointer()->get_length());
     if (len < w)
         len = w;

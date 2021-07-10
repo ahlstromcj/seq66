@@ -60,10 +60,8 @@ qseqbase::qseqbase
     performer & p,
     seq::pointer seqp,
     qseqeditframe64 * frame,
-    int zoom,
-    int snap,
-    int unitheight,
-    int totalheight
+    int zoom, int snap,
+    int unitheight, int totalheight
 ) :
     qeditbase
     (

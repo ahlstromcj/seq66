@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-03
+ * \updates       2021-07-10
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -40,6 +40,7 @@
 
 #include "play/seq.hpp"                 /* seq66::seq::pointer              */
 #include "gui_palette_qt5.hpp"          /* gui_pallete_qt5::Color etc.      */
+#include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -48,13 +49,13 @@
 namespace seq66
 {
 
-    class performer;
+class performer;
 
 /**
  *  Draws the piano keys in the sequence editor.
  */
 
-class qseqkeys final : public QWidget
+class qseqkeys final : public QWidget, public qseqbase
 {
     Q_OBJECT
 
@@ -77,9 +78,10 @@ public:
     (
         performer & perf,
         seq::pointer seqp,
+        qseqeditframe64 * frame,
         QWidget * parent,                                   /* QScrollArea  */
-        int keyheight       = 12,
-        int keyareaheight   = 12 * c_num_keys + 1
+        int keyheight,      // = 12,
+        int keyareaheight   // = 12 * c_num_keys + 1
     );
 
     virtual ~qseqkeys ()
@@ -127,6 +129,11 @@ private:
 
     void convert_y (int y, int & note);
 
+    void update_midi_buttons () override
+    {
+        // not needed for the keys panel.
+    }
+
     /**
      *  Detects a black key.
      *
@@ -166,7 +173,6 @@ private:
 
 private:
 
-    performer & m_performer;
     seq::pointer m_seq;
     QFont m_font;
 

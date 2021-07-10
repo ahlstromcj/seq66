@@ -2018,7 +2018,7 @@ qsmainwnd::load_editor (int seqid)
 
         m_edit_frame = new (std::nothrow) qseqeditframe64
         (
-            perf(), seqid, ui->EditTab, m_shrunken
+            perf(), seqid, ui->EditTab, true                /* short one    */
         );
         ui->EditTabLayout->addWidget(m_edit_frame);
         m_edit_frame->show();

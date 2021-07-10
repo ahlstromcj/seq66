@@ -1,7 +1,7 @@
 # README for Seq66 0.96.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-07-09
+2015-09-10 to 2021-07-10
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -81,6 +81,8 @@ Windows, and using a conventional source tarball.
 
     *   Version 0.96.0:
         *   Fixed harmonic transposition settings.
+        *   Fixed bug that drew fingerprint at top of button; and another bug
+            that disabled showing the pattern if fingerprinting was disabled.
         *   Can now read MIDI files that are readable, but not writable, and
             disable File / Save as needed.
         *   Added hjkl arrow keys to seqroll and perfroll. Why? We have a

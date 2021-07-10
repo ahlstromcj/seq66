@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-07-09
+ * \updates       2021-07-10
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -536,6 +536,8 @@ qseqeditframe64::qseqeditframe64
     {
         ui->m_toggle_drum->hide();      /* ui->m_toggle_transpose->hide()   */
         ui->m_map_notes->hide();
+        ui->spacer_button_4->hide();
+        ui->spacer_button_5->hide();
     }
     else
     {
@@ -1273,23 +1275,20 @@ qseqeditframe64::on_automation_change (automation::slot s)
 /**
  *  Instantiates the various editable areas (panels) of the seqedit
  *  user-interface.  seqkeys: Not quite working as we'd hope.  The scrollbars
- *  still eat up space.  They needed to be hidden.
- *
- *  Although tricky, the creator of this object must call this function after
- *  the creation, just to avoid transgressing the rule about calling virtual
- *  functions in the constructor.
- *
- *  Note that m_seqkeys is a protected member of the qseqframe base class.
+ *  still eat up space.  They needed to be hidden.  Note that m_seqkeys and
+ *  the other panel pointers are protected members of the qseqframe base
+ *  class.  We could move qseqframe's members into this class, now that we no
+ *  longer provide the old qseqeditframe.
  */
 
 void
 qseqeditframe64::initialize_panels ()
 {
     int noteheight = usr().key_height();
-    int height = noteheight * c_num_keys + 1;   /* useful qseqkeys height   */
+    int height = noteheight * c_num_keys + 1;
     m_seqkeys = new (std::nothrow) qseqkeys
     (
-        perf(), seq_pointer(), ui->keysScrollArea,  /* not "this" */
+        perf(), seq_pointer(), this, ui->keysScrollArea,
         noteheight, height
     );
     ui->keysScrollArea->setWidget(m_seqkeys);
@@ -1314,7 +1313,8 @@ qseqeditframe64::initialize_panels ()
     m_seqroll = new (std::nothrow) qseqroll
     (
         perf(), seq_pointer(), this,
-        m_seqkeys, zoom(), m_snap, sequence::editmode::note
+        m_seqkeys, zoom(), m_snap, sequence::editmode::note,
+        noteheight, height
     );
 
     ui->rollScrollArea->setWidget(m_seqroll);
@@ -1325,8 +1325,7 @@ qseqeditframe64::initialize_panels ()
     (
         perf(), seq_pointer(), this,
         zoom(), m_snap, ui->dataScrollArea,
-        m_short_version ? 96 : 0                /* 0 means "normal height"  */
-//      m_short_version ? 64 : 0                /* 0 means "normal height"  */
+        short_version() ? 64 : 0                /* 0 means "normal height"  */
     );
     ui->dataScrollArea->setWidget(m_seqdata);
     ui->dataScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

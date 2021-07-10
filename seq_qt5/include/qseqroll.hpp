@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-09
+ * \updates       2021-07-10
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -78,10 +78,12 @@ public:
         performer & perf,
         seq::pointer seqp,
         qseqeditframe64 * parent,
-        qseqkeys * seqkeys_wid      = nullptr,
+        qseqkeys * seqkeys_wid,
         int zoom                    = SEQ66_DEFAULT_ZOOM,
         int snap                    = SEQ66_DEFAULT_SNAP,
-        sequence::editmode mode     = sequence::editmode::note
+        sequence::editmode mode     = sequence::editmode::note,
+        int unit_height             =  1,
+        int total_height            =  1
     );
 
     virtual ~qseqroll ();

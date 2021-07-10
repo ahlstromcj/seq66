@@ -113,7 +113,6 @@ qseqtime::conditional_update ()
 void
 qseqtime::paintEvent (QPaintEvent *)
 {
-    int xwidth = width();       // int yheight = height();
     QPainter painter(this);
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
     QPen pen(Qt::black);
@@ -123,7 +122,8 @@ qseqtime::paintEvent (QPaintEvent *)
     painter.setFont(m_font);
     painter.drawRect                    /* draw the border  */
     (
-        c_keyboard_padding_x + 1, 0, size().width(), size().height() - 1
+////    c_keyboard_padding_x + 1, 0, size().width(), size().height() - 1
+        c_keyboard_padding_x + 1, 0, width(), height() - 1
     );
 
     /*
@@ -183,7 +183,7 @@ qseqtime::paintEvent (QPaintEvent *)
     }
 
     int xoff_left = scroll_offset_x();
-    int xoff_right = scroll_offset_x() + xwidth;
+    int xoff_right = scroll_offset_x() + width();
     midipulse length = seq_pointer()->get_length();
     int end = position_pixel(length) - s_end_fix;
     midipulse left = position_pixel(perf().get_left_tick()) + s_time_fix;

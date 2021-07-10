@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-06-25
+ * \updates       2021-07-10
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -55,7 +55,7 @@
 #include <cmath>                        /* std::sin(radians)                */
 
 #include "cfg/settings.hpp"             /* seq66::usr().scale_size(), etc.  */
-#include "qloopbutton.hpp"
+#include "qloopbutton.hpp"              /* seq66::qloopbutton slot          */
 
 /**
  *  An attempt to use the inverse of the background color for drawing text.
@@ -683,14 +683,14 @@ qloopbutton::draw_pattern (QPainter & painter)
         int ly0 = m_event_box.y();
         int lxw = m_event_box.w();
         int lyh = m_event_box.h();
-        if (m_fingerprint_inited)       // loop()->event_threshold()
+        if (m_fingerprint_size > 1)
         {
             if (loop()->transposable())
                 pen.setColor(text_color());
             else
                 pen.setColor(drum_color());
 
-            if (m_fingerprint_size > 1)
+            if (m_fingerprint_inited)
             {
                 float x = float(m_event_box.x());
                 float dx = float(m_event_box.w()) / (m_fingerprint_size - 1);
@@ -698,11 +698,9 @@ qloopbutton::draw_pattern (QPainter & painter)
                 painter.setPen(pen);
                 for (int i = 0; i < int(m_fingerprint_size); ++i, x += dx)
                 {
-                    if (m_fingerprint[i] != c_midibyte_max)
-                    {
-                        int y = m_fingerprint[i];
-                        painter.drawPoint(int(x), y);
-                    }
+                    midishort fp = m_fingerprint[i];
+                    if (fp > 0 && fp != c_midibyte_max)
+                        painter.drawPoint(int(x), int(fp));
                 }
             }
         }

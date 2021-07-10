@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-07-08
+ * \updates       2021-07-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -100,6 +100,7 @@ class qseqeditframe64 final : public qseqframe, protected performer::callbacks
 {
     friend class qlfoframe;
     friend class qseqeditex;
+    friend class qseqkeys;
     friend class qseqroll;
     friend class qseqtime;
 
@@ -146,6 +147,11 @@ protected:      /* QWidget overrides                */
     virtual void keyReleaseEvent (QKeyEvent *) override;
 
 private:
+
+    bool short_version () const
+    {
+        return m_short_version;
+    }
 
     void scroll_by_step (qscrollmaster::dir d);
     void remove_lfo_frame ();

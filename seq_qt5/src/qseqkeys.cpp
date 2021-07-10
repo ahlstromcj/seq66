@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-09
+ * \updates       2021-07-10
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -39,6 +39,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
+#include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qseqkeys.hpp"
 
 /*
@@ -73,13 +74,18 @@ qseqkeys::qseqkeys
 (
     performer & p,
     seq::pointer seqp,
+    qseqeditframe64 * frame,
     QWidget * parent,
     int keyheight,
     int keyareaheight
 ) :
     QWidget                 (parent),
-    m_performer             (p),
-    m_seq                   (seqp),
+    qseqbase
+    (
+        p, seqp, frame, SEQ66_DEFAULT_ZOOM, SEQ66_DEFAULT_SNAP,
+        keyheight, keyareaheight
+    ),
+    m_seq                   (seqp),                 /* seq_pointer()        */
     m_font                  (),
     m_show_key_names        (show::octave_letters), /* the legacy display   */
     m_key                   (0),
@@ -119,7 +125,7 @@ qseqkeys::paintEvent (QPaintEvent *)
      * Draw keyboard border.
      */
 
-    painter.drawRect(0, 0, sc_keyarea_x, total_height());   /* sizeHint()   */
+    painter.drawRect(0, 0, sc_keyarea_x, total_height());
     for (int i = 0; i < c_num_keys; ++i)
     {
         int keyvalue = c_num_keys - i - 1;
@@ -266,7 +272,9 @@ qseqkeys::mouseMoveEvent (QMouseEvent * /* event */)
 QSize
 qseqkeys::sizeHint () const
 {
-    return QSize(sc_keyarea_x, total_height());
+    int w = sc_keyarea_x;
+    int h = total_height();
+    return QSize(w, h);
 }
 
 void
