@@ -563,7 +563,8 @@ smanager::save_session (std::string & msg, bool ok)
             }
 
             /*
-             * Anything else to save?
+             * Anything else to save?  Currently, the 'ctrl' file is saved by the
+             * rcfile class.
              */
         }
         else

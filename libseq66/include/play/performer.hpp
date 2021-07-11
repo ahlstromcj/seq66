@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-28
+ * \updates       2021-07-11
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -82,6 +82,7 @@ class performer
     friend class playlist;
     friend class qperfeditframe64;
     friend class qplaylistframe;
+    friend class qt5nsmanager;
     friend class qsmainwnd;
     friend class sequence;
     friend class wrkfile;
@@ -891,6 +892,16 @@ private:                            /* key, midi, and op container section  */
      */
 
     mutable int m_slot_shift;
+
+    /**
+     *  Indicates if the graphical user-interface is visible.  Currently
+     *  applies only to the main window.  This item can be toggled by the
+     *  automation::visibility automation control or by the (Non) session
+     *  manager.
+     */
+
+    std::atomic<bool> m_hidden;
+    std::atomic<bool> m_show_hide_pending;
 
 private:
 
@@ -1908,6 +1919,7 @@ public:
     }
 
     bool panic ();                                      /* from kepler43    */
+    bool visibility (automation::action a);             /* for NSM/Live use */
     void set_tick (midipulse tick, bool dontreset = false);
     void set_left_tick (midipulse tick);
     void set_left_tick_seq (midipulse tick, midipulse snap);
@@ -2982,6 +2994,12 @@ public:         /* GUI-support functions */
 
 private:
 
+    void hidden (bool flag)
+    {
+        m_hidden = flag;                            /* qt5nsmanager         */
+        m_show_hide_pending = false;                /* tricky code          */
+    }
+
     void show_cpu ();
     void playlist_activate (bool on);
     bool set_recording (seq::number seqno, bool active, bool toggle);
@@ -3224,6 +3242,16 @@ public:
         m_slot_shift = 0;               /* mutable */
     }
 
+    bool hidden () const
+    {
+        return m_hidden;
+    }
+
+    bool show_hide_pending () const
+    {
+        return m_show_hide_pending;
+    }
+
     /*
      * This is just a very fast check meant for use in some GUI timers.
      */
@@ -3424,6 +3452,10 @@ public:
         automation::action a, int d0, int d1, bool inverse
     );
     bool automation_panic
+    (
+        automation::action a, int d0, int d1, bool inverse
+    );
+    bool automation_visibility
     (
         automation::action a, int d0, int d1, bool inverse
     );

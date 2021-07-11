@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-09-03
+ * \updates       2021-07-10
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -38,6 +38,8 @@ class nsmclient : public nsmbase
 public:
 
     /**
+     *  Enumeration to represent the "capabilities" supported by the Non
+     *  Session Manager (NSM).
      *
      * \var none
      *      Indicates no capabilities; provided for completeness or
@@ -65,11 +67,11 @@ public:
     enum class caps
     {
         none,
-        cswitch,
+        cswitch,            /* ":switch:"       */
         dirty,
         progress,
         message,
-        optional_gui
+        optional_gui        /* ":optional-gui:" */
     };
 
 protected:
@@ -81,6 +83,10 @@ protected:
 
     smanager & m_session_manager;
 
+private:
+
+    std::atomic<bool> m_hidden;
+
 public:
 
     nsmclient
@@ -91,6 +97,11 @@ public:
         const std::string & nsm_ext     = ""
     );
     virtual ~nsmclient ();
+
+    bool hidden () const
+    {
+        return m_hidden;
+    }
 
 public:     // session client method overrides
 
@@ -134,6 +145,11 @@ public:         // Other virtual functions
     virtual void session_client_id (const std::string & clid);
 
 protected:
+
+    void hidden (bool flag)
+    {
+        m_hidden = flag;
+    }
 
 /*
  *

@@ -1105,7 +1105,7 @@ rcfile::write ()
     file << "\n"
         "# Provides a play-list file and a flag to activate it. If no list,\n"
         "# use '\"\"' and set 'active' to false. Use the extension '.playlist'.\n"
-		"# Even if not active, the play-list file is read, which adds to the\n"
+        "# Even if not active, the play-list file is read, which adds to the\n"
         "# startup time.  The 'base-directory' is optional. If non-empty, it\n"
         "# sets the directory holding all MIDI files in all play-lists, useful\n"
         "# when copying play-lists and tunes from one directory to another,\n"
@@ -1113,7 +1113,7 @@ rcfile::write ()
         ;
 
     std::string plname = rc_ref().playlist_filename();
-	std::string mbasedir = rc_ref().midi_base_directory();
+    std::string mbasedir = rc_ref().midi_base_directory();
     plname = rc_ref().trim_home_directory(plname);
     write_file_status(file, "[playlist]", plname, rc_ref().playlist_active());
     mbasedir = add_quotes(mbasedir);

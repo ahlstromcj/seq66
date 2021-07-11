@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-06-10
+ * \updates       2021-07-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -378,7 +378,8 @@ keycontainer::add_defaults ()
 
     /*
      *  Indicates the default keystroke and action status of a particular
-     *  automation keystroke operation.  Matches the slot enum class.
+     *  automation keystroke operation.  Matches the automation::slot enum
+     *  class.
      */
 
     static std::vector<keydefault> s_keys_automation =
@@ -426,7 +427,7 @@ keycontainer::add_defaults ()
         { "F12",       automation::action::on      },  // 40 menu_mode
         { "F4",        automation::action::on      },  // 41 follow_transport
         { "~",         automation::action::on      },  // 42 panic
-        { "0xf9",      automation::action::off     },  // 43 reserved_43
+        { "0xf9",      automation::action::toggle  },  // 43 visibility
         { "0xfa",      automation::action::off     },  // 44 reserved_44
         { "0xfb",      automation::action::off     },  // 45 reserved_45
         { "0xfc",      automation::action::off     },  // 46 reserved_46

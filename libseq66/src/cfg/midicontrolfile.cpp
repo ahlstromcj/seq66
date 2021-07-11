@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-06-25
+ * \updates       2021-07-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -434,7 +434,7 @@ midicontrolfile::parse ()
  *  double-quotes are stripped off after reading the key's name.
  *
  *  These format string are used in parse_control_stanza(),
- *  parse_midi_control_out(), and read_ctrl_triple().
+ *  parse_midi_control_out(), and read_triples().
  */
 
 static const char * const sg_scanf_fmt_ctrl_in =
@@ -486,7 +486,7 @@ static const char * const sg_scanf_fmt_ctrl_pair_2 =
  *  [automation-control-out].
  */
 
-static const char * const sg_scanf_fmt_ctrl_triple =
+static const char * const sg_scanf_fmt_triples =
     "%d [ %i %i %i ] [ %i %i %i ] [ %i %i %i ]";
 
 /*
@@ -646,56 +646,50 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         ok = true;
         if (newtriples)
         {
-            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::panic);
+            ok = read_triples(file, mco, midicontrolout::uiaction::panic);
             if (ok)
             {
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::pause);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::play);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::toggle_mutes);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::song_record);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::slot_shift);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::free);
+                read_triples(file, mco, midicontrolout::uiaction::stop);
+                read_triples(file, mco, midicontrolout::uiaction::pause);
+                read_triples(file, mco, midicontrolout::uiaction::play);
+                read_triples(file, mco, midicontrolout::uiaction::toggle_mutes);
+                read_triples(file, mco, midicontrolout::uiaction::song_record);
+                read_triples(file, mco, midicontrolout::uiaction::slot_shift);
+                read_triples(file, mco, midicontrolout::uiaction::free);
             }
-        }
-        if (ok)
-        {
-            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::queue);
             if (ok)
             {
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::oneshot);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::replace);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::snap);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::song);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::learn);
+                ok = read_triples(file, mco, midicontrolout::uiaction::queue);
+                if (ok)
+                {
+                    read_triples(file, mco, midicontrolout::uiaction::oneshot);
+                    read_triples(file, mco, midicontrolout::uiaction::replace);
+                    read_triples(file, mco, midicontrolout::uiaction::snap);
+                    read_triples(file, mco, midicontrolout::uiaction::song);
+                    read_triples(file, mco, midicontrolout::uiaction::learn);
+                    read_triples(file, mco, midicontrolout::uiaction::bpm_up);
+                    read_triples(file, mco, midicontrolout::uiaction::bpm_dn);
+                    read_triples(file, mco, midicontrolout::uiaction::list_up);
+                    read_triples(file, mco, midicontrolout::uiaction::list_dn);
+                    read_triples(file, mco, midicontrolout::uiaction::song_up);
+                    read_triples(file, mco, midicontrolout::uiaction::song_dn);
+                    read_triples(file, mco, midicontrolout::uiaction::set_up);
+                    read_triples(file, mco, midicontrolout::uiaction::set_dn);
+                    read_triples(file, mco, midicontrolout::uiaction::tap_bpm);
+                    read_triples(file, mco, midicontrolout::uiaction::quit);
+                }
             }
         }
-        if (ok && newtriples)
+        if (file_version_number() >= s_ctrl_file_version)
         {
-            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_up);
-            if (ok)
-            {
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_dn);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::list_up);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::list_dn);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::song_up);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::song_dn);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::set_up);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::set_dn);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::tap_bpm);
-                read_ctrl_triple(file, mco, midicontrolout::uiaction::quit);
-            }
-        }
-        if (file_version_number() >= 5)
-        {
-            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_1);
-            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_2);
-            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_3);
-            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_4);
-            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_5);
-            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_6);
-            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_7);
-            read_ctrl_triple(file, mco, midicontrolout::uiaction::alt_8);
+            read_triples(file, mco, midicontrolout::uiaction::alt_1);
+            read_triples(file, mco, midicontrolout::uiaction::alt_2);
+            read_triples(file, mco, midicontrolout::uiaction::alt_3);
+            read_triples(file, mco, midicontrolout::uiaction::alt_4);
+            read_triples(file, mco, midicontrolout::uiaction::alt_5);
+            read_triples(file, mco, midicontrolout::uiaction::alt_6);
+            read_triples(file, mco, midicontrolout::uiaction::alt_7);
+            read_triples(file, mco, midicontrolout::uiaction::alt_8);
         }
         if (! ok)
         {
@@ -725,7 +719,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
  */
 
 bool
-midicontrolfile::read_ctrl_triple
+midicontrolfile::read_triples
 (
     std::ifstream & file,
     midicontrolout & mco,
@@ -751,7 +745,7 @@ midicontrolfile::read_ctrl_triple
     {
         int count = std::sscanf
         (
-            scanline(), sg_scanf_fmt_ctrl_triple, &enabled,
+            scanline(), sg_scanf_fmt_triples, &enabled,
             &ev_on[0], &ev_on[1], &ev_on[2],
             &ev_off[0], &ev_off[1], &ev_off[2],
             &ev_del[0], &ev_del[1], &ev_del[2]
@@ -1054,7 +1048,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
  */
 
 bool
-midicontrolfile::write_ctrl_triple
+midicontrolfile::write_triples
 (
     std::ofstream & file,
     const midicontrolout & mco,
@@ -1233,44 +1227,44 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         }
 
         file << "\n[automation-control-out]\n\n"
-            "# This format is similar to the [mute-control-out] format, but\n"
-            "# the first number is an active-flag, not an index number.\n"
-            "# The stanzas are on/off/inactive, except for 'snap', which is\n"
-            "# store/restore/inactive. The 'Alt n' values can be used to show\n"
+            "# This format is similar to the [mute-control-out] format, but the\n"
+            "# first number is an active-flag, not an index number. The stanzas\n"
+            "# are on / off / inactive, except for 'snap', which is store /\n"
+            "# restore / inactive. The 'Alt n' values can be used to show\n"
             "# status beyond the basic list.\n\n"
             ;
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::panic);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::pause);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::play);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::toggle_mutes);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::song_record);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::slot_shift);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::free);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::queue);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::oneshot);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::replace);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::snap);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::song);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::learn);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_up);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_dn);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::list_up);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::list_dn);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::song_up);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::song_dn);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::set_up);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::set_dn);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::tap_bpm);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::quit);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_1);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_2);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_3);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_4);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_5);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_6);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_7);
-        write_ctrl_triple(file, mco, midicontrolout::uiaction::alt_8);
+        write_triples(file, mco, midicontrolout::uiaction::panic);
+        write_triples(file, mco, midicontrolout::uiaction::stop);
+        write_triples(file, mco, midicontrolout::uiaction::pause);
+        write_triples(file, mco, midicontrolout::uiaction::play);
+        write_triples(file, mco, midicontrolout::uiaction::toggle_mutes);
+        write_triples(file, mco, midicontrolout::uiaction::song_record);
+        write_triples(file, mco, midicontrolout::uiaction::slot_shift);
+        write_triples(file, mco, midicontrolout::uiaction::free);
+        write_triples(file, mco, midicontrolout::uiaction::queue);
+        write_triples(file, mco, midicontrolout::uiaction::oneshot);
+        write_triples(file, mco, midicontrolout::uiaction::replace);
+        write_triples(file, mco, midicontrolout::uiaction::snap);
+        write_triples(file, mco, midicontrolout::uiaction::song);
+        write_triples(file, mco, midicontrolout::uiaction::learn);
+        write_triples(file, mco, midicontrolout::uiaction::bpm_up);
+        write_triples(file, mco, midicontrolout::uiaction::bpm_dn);
+        write_triples(file, mco, midicontrolout::uiaction::list_up);
+        write_triples(file, mco, midicontrolout::uiaction::list_dn);
+        write_triples(file, mco, midicontrolout::uiaction::song_up);
+        write_triples(file, mco, midicontrolout::uiaction::song_dn);
+        write_triples(file, mco, midicontrolout::uiaction::set_up);
+        write_triples(file, mco, midicontrolout::uiaction::set_dn);
+        write_triples(file, mco, midicontrolout::uiaction::tap_bpm);
+        write_triples(file, mco, midicontrolout::uiaction::quit);
+        write_triples(file, mco, midicontrolout::uiaction::alt_1);
+        write_triples(file, mco, midicontrolout::uiaction::alt_2);
+        write_triples(file, mco, midicontrolout::uiaction::alt_3);
+        write_triples(file, mco, midicontrolout::uiaction::alt_4);
+        write_triples(file, mco, midicontrolout::uiaction::alt_5);
+        write_triples(file, mco, midicontrolout::uiaction::alt_6);
+        write_triples(file, mco, midicontrolout::uiaction::alt_7);
+        write_triples(file, mco, midicontrolout::uiaction::alt_8);
     }
     return result;
 }

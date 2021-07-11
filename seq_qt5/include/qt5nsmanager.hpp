@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-10-31
+ * \updates       2021-07-10
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -41,8 +41,12 @@
 #include "sessions/clinsmanager.hpp"    /* seq66::clinsmanager              */
 #include "qsmainwnd.hpp"                /* Qt 5 qsmainwnd main window       */
 
+/*
+ * ":dirty:message:optional-gui:switch:"
+ */
+
 #if defined SEQ66_NSM_SUPPORT
-#define SEQ66_NSM_QT5_CAPABILITIES      ":dirty:message:" // "switch:"
+#define SEQ66_NSM_QT5_CAPABILITIES      ":dirty:message:optional-gui" // "switch:"
 #else
 #define SEQ66_NSM_QT5_CAPABILITIES      ""
 #endif
@@ -94,6 +98,11 @@ public:
     virtual void session_display_name (const std::string & dispname) override;
     virtual void session_client_id (const std::string & clid) override;
 
+private:
+
+    void show_gui ();
+    void hide_gui ();
+
 signals:                                /* from session client callbacks    */
 
 private slots:
@@ -103,10 +112,9 @@ private slots:
 private:
 
     QApplication & m_application;
-
     QTimer * m_timer;
-
     std::unique_ptr<qsmainwnd> m_window;
+    bool m_is_hidden;
 
 };          // class qt5nsmanager
 

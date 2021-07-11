@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-07-09
+ * \updates       2021-07-11
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -85,7 +85,7 @@
  *  menu_mode:          GUI. Switch menu between enabled/disabled.
  *  follow_transport:   GUI. Toggle between following JACK or not.
  *  panic:              Provides a panic button to stop all notes.
- *  reserved_43:        Reserved for expansion.
+ *  visibility:         Toggles the appearance of the main window (only).
  *  reserved_44:        Reserved for expansion.
  *  reserved_45:        Reserved for expansion.
  *  reserved_46:        Reserved for expansion.
@@ -429,7 +429,9 @@ performer::performer (int ppqn, int rows, int columns) :
     m_seq_edit_pending      (false),
     m_event_edit_pending    (false),
     m_pending_loop          (seq::unassigned()),
-    m_slot_shift            (0)
+    m_slot_shift            (0),
+    m_hidden                (false),
+    m_show_hide_pending     (false)
 {
     /*
      * Generally will be parsing the 'rc' files after creating the performer.
@@ -3908,6 +3910,26 @@ performer::panic ()
     return result;
 }
 
+/**
+ *  Toggles the m_hidden flag and sets m_show_hide_pending.  The latter will
+ *  be toggled off by the qt5nsmanager, which is the only class that cares
+ *  about the pending flag.
+ */
+
+bool
+performer::visibility (automation::action a)
+{
+    if (a == automation::action::toggle)
+        m_hidden = ! m_hidden;
+    else if (a == automation::action::on)
+        m_hidden = true;
+    else if (a == automation::action::off)
+        m_hidden = false;
+
+    m_show_hide_pending = true;
+    return true;
+}
+
 /*
  * -------------------------------------------------------------------------
  *  Box Selection
@@ -7149,6 +7171,22 @@ performer::automation_panic
     return result;
 }
 
+bool
+performer::automation_visibility
+(
+    automation::action a, int d0, int d1, bool inverse
+)
+{
+    std::string name = "Visibility";
+    bool result = true;
+    print_parameters(name, a, d0, d1, inverse);
+    if (! inverse)
+    {
+        result = visibility(a);
+    }
+    return result;
+}
+
 /**
  *  Provides a list of all the functions that can be configured to be called
  *  upon configured keystrokes or incoming MIDI messages.
@@ -7221,7 +7259,7 @@ performer::sm_auto_func_list [] =
         &performer::automation_follow_transport
     },
     { automation::slot::panic,       &performer::automation_panic        },
-    { automation::slot::reserved_43, &performer::automation_no_op        },
+    { automation::slot::visibility,  &performer::automation_visibility   },
     { automation::slot::reserved_44, &performer::automation_no_op        },
     { automation::slot::reserved_45, &performer::automation_no_op        },
     { automation::slot::reserved_46, &performer::automation_no_op        },

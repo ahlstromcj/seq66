@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-04-24
+ * \updates       2021-07-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -207,13 +207,13 @@ private:
 
     bool write_midi_control (std::ofstream & file);
     bool write_midi_control_out (std::ofstream & file);
-    bool read_ctrl_triple
+    bool read_triples
     (
         std::ifstream & file,
         midicontrolout & mctrl,
         midicontrolout::uiaction a
     );
-    bool write_ctrl_triple
+    bool write_triples
     (
         std::ofstream & file,
         const midicontrolout & mctrl,

@@ -1,7 +1,7 @@
 # README for Seq66 0.96.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-07-10
+2015-09-10 to 2021-07-11
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -80,6 +80,9 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.96.0:
+        *   Adding code to control the visibility of the main window; added
+            a "Visibility" MIDI control option, and support for the
+            "optional-gui" flag of the Non Session Manager.
         *   Fixed harmonic transposition settings.
         *   Fixed bug that drew fingerprint at top of button; and another bug
             that disabled showing the pattern if fingerprinting was disabled.
@@ -89,6 +92,7 @@ Windows, and using a conventional source tarball.
             Microsoft Arc keyboard with all the arrows on one small button.
         *   Fixed the Mixolydian mode scale. Oops.
         *   The pattern editor time, roll, data, and event frames line up.
+        *   Small fixes to configuration files.
         *   More work on pattern-editor in tab. More to come.
     *   Version 0.95.1:
         *   Added 'auto' option to song-start-mode setting.

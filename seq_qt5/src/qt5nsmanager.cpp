@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-04-21
+ * \updates       2021-07-11
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -41,7 +41,7 @@
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */
 #include "palettefile.hpp"              /* seq66::palette_file config file  */
 #include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager              */
-#include "qsmainwnd.hpp"                /* seq66::qsmainwnd                 */
+#include "qsmainwnd.hpp"                /* seq66::qsmainwnd (main window)   */
 
 #if defined SEQ66_NSM_SUPPORT
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm access functions      */
@@ -72,7 +72,8 @@ qt5nsmanager::qt5nsmanager
     clinsmanager    (caps),
     m_application   (app),
     m_timer         (nullptr),
-    m_window        ()
+    m_window        (),
+    m_is_hidden     (true)
 {
     /*
      * Should we use this timer or a performer callback?
@@ -87,14 +88,18 @@ qt5nsmanager::qt5nsmanager
 qt5nsmanager::~qt5nsmanager ()
 {
     m_timer->stop();
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("~qt5nsmanager\n");
-#endif
+    if (rc().investigate())
+        status_message("Exiting qt5nsmanager");
 }
 
 /**
  *  Here we will poll to see if the "dirty" status has changed, and tell the
  *  nsmclient to report it.
+ *
+ *  For visibility, we have the situation where either NSM or a MIDI control
+ *  can toggle the desired visibility of the main window.  How can we tell
+ *  which one requested the change?  The performer will set a "show-hide
+ *  pending" variable if it made the request.
  */
 
 void
@@ -110,6 +115,23 @@ qt5nsmanager::refresh ()
                 nsm_client()->dirty(last_dirty_status());
 #endif
         }
+
+        bool hide = m_is_hidden;
+        if (perf()->show_hide_pending())
+        {
+            hide = perf()->hidden();
+        }
+        else
+        {
+#if defined SEQ66_NSM_SUPPORT
+            if (not_nullptr(nsm_client()))
+                hide = nsm_client()->hidden();
+#endif
+        }
+        if (hide)
+            hide_gui();
+        else
+            show_gui();
     }
 }
 
@@ -149,8 +171,8 @@ qt5nsmanager::create_window ()
         if (result)
         {
             m_window.reset(qm);
-            m_window->show();
             m_window->attach_session(this);         /* ATTACH/DETACH        */
+            show_gui();                             /* m_window->show()     */
             (void) smanager::create_window();       /* just house-keeping   */
             if (error_active())
             {
@@ -169,7 +191,6 @@ qt5nsmanager::create_window ()
                 std::string path;               /* config or session path   */
                 std::string name;               /* config or session name   */
                 std::string clid;               /* config/session client ID */
-
                 if (usensm)
                 {
                     path = manager_path();
@@ -344,6 +365,28 @@ qt5nsmanager::session_client_id (const std::string & clid)
     clinsmanager::session_client_id(clid);
     if (m_window)
         m_window->session_client_id(clid.empty() ? "None" : clid);
+}
+
+void
+qt5nsmanager::show_gui ()
+{
+    if (m_window && m_is_hidden)
+    {
+        m_window->show();
+        m_is_hidden = false;
+        perf()->hidden(false);          /* turns off show-hide pending flag */
+    }
+}
+
+void
+qt5nsmanager::hide_gui ()
+{
+    if (m_window && ! m_is_hidden)
+    {
+        m_window->hide();
+        m_is_hidden = true;
+        perf()->hidden(true);          /* turns off show-hide pending flag */
+    }
 }
 
 }           // namespace seq66

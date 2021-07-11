@@ -154,9 +154,6 @@ EXTANT ISSUES:
 #37 Song editor scrolling?
     STATUS: To be investigated.
 
-#39 Arm Build - Pattern editor does not open
-    STATUS:  Should be closed.  Will try it myself on a Pi soon.
-
 #40 NSM: seq66 in a new session should provide a blank project
     Currently it imports the previously used MIDI file.
 

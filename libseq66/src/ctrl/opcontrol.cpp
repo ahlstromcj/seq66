@@ -19,13 +19,13 @@
 /**
  * \file          opcontrol.cpp
  *
- *  This module declares/defines just some of the global (gasp!) variables
- *  and functions for the extended MIDI control feature.
+ *  This module declares/defines the opcontrol base class for the keycontrol
+ *  class and the extended MIDI control feature.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2021-05-25
+ * \updates       2021-07-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -207,7 +207,7 @@ opcontrol::slot_name (slot s)
         "Menu Mode",            // 40 menu_mode
         "Follow JACK",          // 41 follow_transport
         "Panic",                // 42 panic
-        "Reserved 43",          // 43 reserved_43
+        "Visibility",           // 43 visibility
         "Reserved 44",          // 44 reserved_44
         "Reserved 45",          // 45 reserved_45
         "Reserved 47",          // 46 reserved_46

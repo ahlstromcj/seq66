@@ -128,7 +128,7 @@ private:
 
     /**
      *  This item is mutable because it can be falsified if the server and
-     *  address are found to be null.  It is turn on when we receive the
+     *  address are found to be null.  It is turned on when we receive the
      *  information about the session (including path to the session).
      */
 

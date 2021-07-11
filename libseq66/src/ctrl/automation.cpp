@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-02-24
+ * \updates       2021-07-11
  * \license       GNU GPLv2 or above
  *
  *  Currently, there is no code in this file.
@@ -271,7 +271,7 @@ s_slotnamelist [] =
     { slot::menu_mode,        "menu_mode"       },
     { slot::follow_transport, "follow_transport"},
     { slot::panic,            "panic"           },
-    { slot::reserved_43,      "reserved_43"     },
+    { slot::visibility,       "visibility"      },
     { slot::reserved_44,      "reserved_44"     },
     { slot::reserved_45,      "reserved_45"     },
     { slot::reserved_46,      "reserved_46"     },

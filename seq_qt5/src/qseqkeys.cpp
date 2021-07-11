@@ -96,7 +96,8 @@ qseqkeys::qseqkeys
     m_preview_key           (-1)
 {
     /*
-     * This policy is necessary in order to allow the vertical scrollbar to work.
+     * This policy is necessary in order to allow the vertical scrollbar to
+     * work.
      */
 
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);

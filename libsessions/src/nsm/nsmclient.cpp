@@ -123,10 +123,10 @@
  *
  *      In a Qt-based application, we can provide an extended NSM client that
  *      will respond to signals propagated by the "emit" operator. In a
- *      command-line application, we can set flags that are detected in a polling
- *      loop and cause actions to occur.  In Gtkmm applications, we can set
- *      callbacks to be executed.  It would be nice to use the same (callback?)
- *      system for all of them.
+ *      command-line application, we can set flags that are detected in a
+ *      polling loop and cause actions to occur.  In Gtkmm applications, we
+ *      can set callbacks to be executed.  It would be nice to use the same
+ *      (callback?) system for all of them.
  *
  * Shutdown:
  *
@@ -428,11 +428,6 @@ nsmclient::announce_reply
     capabilities(caps);
     session_manager_name(mgr);
     nsm::incoming_msg("Announce Reply Values", mgr, caps + " " + mesg);
-
-    /*
-     * emit active(true);
-     * is_active(true);
-     */
 }
 
 /**
@@ -466,7 +461,6 @@ nsmclient::open
     set_client_name(clientid);          /* set "seq66.nUKIE" as client ID   */
     nsm::incoming_msg("Open Values", pathname, clientid + "" + displayname);
     is_active(true);
-    // emit open();
 }
 
 /*
@@ -489,7 +483,6 @@ nsmclient::save ()
         nsm::error r = saved ? nsm::error::ok : nsm::error::general ;
         (void) save_reply(r, msg);
     }
-    // emit save();
 }
 
 /**
@@ -502,7 +495,6 @@ void
 nsmclient::loaded ()
 {
     nsm_debug("Session loaded message from server");
-    // emit loaded();
 }
 
 /**
@@ -518,7 +510,6 @@ nsmclient::label (const std::string & label)
     tag += label;
     tag += "'";
     nsm_debug(tag); // no code
-    // emit label();
 }
 
 /**
@@ -532,8 +523,8 @@ void
 nsmclient::show (const std::string & path)
 {
     nsm_debug("show");
+    hidden(false);
     send_from_client(nsm::tag::reply, path, "OK");
-    // emit show();
 }
 
 /*
@@ -546,9 +537,9 @@ void
 nsmclient::hide (const std::string & path)
 {
     nsm_debug("hide");
+    hidden(true);
     send_from_client(nsm::tag::hidden, path, "OK");
     send_from_client(nsm::tag::reply, path, "OK");  // ss
-    // emit hide();
 }
 
 /**
@@ -577,7 +568,6 @@ nsmclient::broadcast
             printf("   [%d] '%s'\n", i, argv[i].c_str());
         }
     }
-    // emit broadcast();
 }
 
 /**

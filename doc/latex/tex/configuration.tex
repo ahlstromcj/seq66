@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-06-25
+% \update      2021-07-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -493,11 +493,13 @@
 
    \begin{verbatim}
       [midi-control-file]
-      active = true
+      active = true           # true means to use and to rewrite at exit
       name = "qseq66.ctrl"    # contains a [midi-control] section, and more
    \end{verbatim}
 
-   As with the 'rc' file, the 'ctrl' file is rewritten upon exit.
+   As with the 'rc' file, the 'ctrl' file is rewritten upon exit,
+   \textsl{except} that it is not written unless it is \textsl{active},
+   or \textsl{does not exist} (as during the first run of \textsl{Seq66}).
    For the details of the 'ctrl' file, see
    \sectionref{subsec:configuration_ctrl}.
 

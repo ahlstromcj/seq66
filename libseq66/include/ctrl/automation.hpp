@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-03-06
+ * \updates       2021-07-11
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -166,6 +166,8 @@ enum class action
  *  one control.  We need to be able to convert between old and new
  *  "control" numbers.
  *
+ *  See opcontrol::slot_name() to get the display name of each slot.
+ *
  * Notes:
  *
  *      -#  Replace, queue, and one-shot can be combined in an operation.
@@ -175,7 +177,7 @@ enum class action
  *          slot numbers are in one-to-one correspondence with slot
  *          functions (also known as "operations"),
  *      -#  WARNING:  If one updates this list, one MUST also update the
- *          opcontrol::sm_slot_names[] array to match!
+ *          static opcontrol::s_slot_names vector to match!
  */
 
 enum class slot
@@ -229,7 +231,7 @@ enum class slot
     menu_mode,          /**< 40: GUI. Switch menu between enabled/disabled. */
     follow_transport,   /**< 41: GUI. Toggle between following JACK or not. */
     panic,              /**< 42: The Panic Button.                          */
-    reserved_43,        /**< 43: Reserved for expansion.                    */
+    visibility,         /**< 43: Toggle the visibility of the main window.  */
     reserved_44,        /**< 44: Reserved for expansion.                    */
     reserved_45,        /**< 45: Reserved for expansion.                    */
     reserved_46,        /**< 46: Reserved for expansion.                    */
