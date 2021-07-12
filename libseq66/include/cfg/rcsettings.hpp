@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-06-21
+ * \updates       2021-07-12
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -1266,6 +1266,10 @@ public:
     {
         m_palette_filename = fn;
     }
+
+private:
+
+    std::string filespec_helper (const std::string & baseext) const;
 
 };          // class rcsettings
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-21
+ * \updates       2021-07-12
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -275,6 +275,7 @@ rcfile::parse ()
         info += "'";
         return make_error_message(tag, info);
     }
+
     tag = "[mute-group-file]";
     if (file_version_number() < s_rc_file_version)
     {
@@ -284,43 +285,30 @@ rcfile::parse ()
             if (ok)
             {
                 std::string mgfname = strip_quotes(line());
-                rc_ref().mute_group_filename(mgfname);      /* base name        */
-
-                std::string fullpath = rc_ref().mute_group_filespec();
-                file_message("Reading 'mutes'", fullpath);
-                ok = parse_mute_group_section(fullpath, true);
-                if (! ok)
-                {
-                    std::string info = "cannot parse file '";
-                    info += fullpath;
-                    info += "'";
-                    return make_error_message(tag, info);
-                }
+                rc_ref().mute_group_filename(mgfname);  /* basename.ext     */
+                rc_ref().mute_group_active(true);
             }
         }
-#if defined USE_OBSOLETE_CODE
-        else
-        {
-            /*
-             * After parsing the mute-groups, see if there is another value for
-             * the mute_group_handling enumeration.  One little issue...  the
-             * parse_mute_group_section() function actually re-opens the file
-             * itself, and once it exits, it's as if the section never existed.
-             * So we also have to parse the new mute-group handling feature there
-             * as well.
-             */
-
-            ok = parse_mute_group_section(name());
-        }
-#endif
     }
     else
     {
         std::string pfname;
         bool active = get_file_status(file, tag, pfname);
         rc_ref().mute_group_active(active);
-        rc_ref().mute_group_filename(pfname);               /* base name    */
+        rc_ref().mute_group_filename(pfname);   /* [[/]path/] basename.ext  */
     }
+
+    fullpath = rc_ref().mute_group_filespec();
+    file_message("Reading 'mutes'", fullpath);
+    ok = parse_mute_group_section(fullpath, true);
+    if (! ok)
+    {
+        std::string info = "cannot parse file '";
+        info += fullpath;
+        info += "'";
+        return make_error_message(tag, info);
+    }
+
     tag = "[usr-file]";
     if (file_version_number() < s_rc_file_version)
     {
@@ -983,7 +971,7 @@ rcfile::write ()
     write_date(file, "main ('rc')");
     file <<
         "# This file holds the main configuration for Seq66. It no longer\n"
-        "# follows the format of the seq24rc configuration file very much.\n"
+        "# follows the format of the seq24rc configuration file much.\n"
         "#\n"
         "# 'version' is set by Seq66; it is used to detect older configuration\n"
         "# files, which are upgraded to the new version when saved.\n"
@@ -1105,11 +1093,11 @@ rcfile::write ()
     file << "\n"
         "# Provides a play-list file and a flag to activate it. If no list,\n"
         "# use '\"\"' and set 'active' to false. Use the extension '.playlist'.\n"
-        "# Even if not active, the play-list file is read, which adds to the\n"
-        "# startup time.  The 'base-directory' is optional. If non-empty, it\n"
-        "# sets the directory holding all MIDI files in all play-lists, useful\n"
-        "# when copying play-lists and tunes from one directory to another,\n"
-        "# preserving the sub-directories (e.g. in creating an NSM session).\n"
+        "# Even if not active, the play-list file is read. 'base-directory' is\n"
+        "# optional. It sets the directory holding all MIDI files in all\n"
+        "# play-lists, useful when copying play-lists/tunes from one place to\n"
+        "# another; it preserves sub-directories (e.g. in creating an NSM\n"
+        "# session).\n"
         ;
 
     std::string plname = rc_ref().playlist_filename();
@@ -1120,11 +1108,11 @@ rcfile::write ()
     file << "base-directory = " << mbasedir << "\n";
 
     file << "\n"
-       "# Provides a flag and file-name for note-mapping settings. Use '\"\"'\n"
-       "# to indicate no 'drums' file. Use the extension '.drums'. This file is\n"
-       "# used when the user invokes the note-conversion operation in the\n"
-       "# pattern editor on a transposable pattern. For percussion, make the\n"
-       "# pattern temporarily transposable to allow this operation.\n"
+       "# Provides a flag and file-name for note-mapping. '\"\"' indicates\n"
+       "# 'drums' file. Use the extension '.drums'. This file is used when the\n"
+       "# user invokes the note-conversion operation in the pattern editor of a\n"
+       "# transposable pattern. Make the pattern temporarily transposable to\n"
+       "# allow this operation.\n"
        ;
 
     std::string drumfile = rc_ref().notemap_filename();
@@ -1313,15 +1301,14 @@ rcfile::write ()
      */
 
     file << "\n"
-       "# Sets the mouse usage for drawing and editing a pattern. The\n"
-       "# 'fruity' mode is currently NOT supported in Seq66. Also obsolete\n"
-       "# is the Mod4 feature. Other interaction settings are available.\n"
-       "# 'snap-split' enables splitting performance editor triggers at the\n"
-       "# closest snap position, instead of exactly in its middle. The split\n"
-       "# is activated by a middle click or Ctrl-left click.\n"
+       "# Sets mouse usage for drawing/editing a pattern. The 'fruity' mode\n"
+       "# is NOT supported in Seq66. Also obsolete is the Mod4 feature. Other\n"
+       "# interaction settings are available: 'snap-split' enables splitting\n"
+       "# performance editor triggers at the snap position instead of in its\n"
+       "# middle. Split is done by a middle-click or Ctrl-left click.\n"
        "# 'click-edit' allows a double-click on a slot to bring it up in\n"
-       "# the pattern editor.  This is the default.  Set it to false if\n"
-       "# it interferes with muting/unmuting a pattern.\n"
+       "# the pattern editor (the default).  Set it to false if it interferes\n"
+       "# with muting/unmuting a pattern.\n"
        "\n[interaction-method]\n\n"
         ;
     write_boolean(file, "snap-split", rc_ref().allow_snap_split());

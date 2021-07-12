@@ -1,6 +1,6 @@
 # Seq66 0.94.1 (and above) MIDI control configuration file
 #
-# /home/ahlstrom/.config/seq66/qseq66.ctrl
+# /home/user/.config/seq66/qseq66.ctrl
 # Written 2021-07-11 10:05:04
 #
 # This file holds MIDI I/O control setups for Seq66. It follows the format
@@ -348,7 +348,7 @@ button-columns = 8
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Set_Dn
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Tap_BPM
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Quit
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_1
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Visibility
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_2
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_3
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_4
@@ -357,6 +357,6 @@ button-columns = 8
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_7
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_8
 
-# End of /home/ahlstrom/.config/seq66/qseq66.ctrl
+# End of /home/user/.config/seq66/qseq66.ctrl
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

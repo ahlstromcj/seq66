@@ -176,10 +176,8 @@ midicontrolin::add_blank_controls (const keycontainer & kc)
         );
         (void) add(blank);
     }
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    if (rc().verbose())
+    if (is_debug())
         show();
-#endif
 }
 
 /**

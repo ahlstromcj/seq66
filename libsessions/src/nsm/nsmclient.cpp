@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2021-06-24
+ * \updates       2021-07-12
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -538,8 +538,14 @@ nsmclient::hide (const std::string & path)
 {
     nsm_debug("hide");
     hidden(true);
-    send_from_client(nsm::tag::hidden, path, "OK");
     send_from_client(nsm::tag::reply, path, "OK");  // ss
+}
+
+void
+nsmclient::send_visibility (bool isshown)
+{
+    nsm::tag status = isshown ? nsm::tag::shown : nsm::tag::hidden ;
+    send_from_client(status);
 }
 
 /**

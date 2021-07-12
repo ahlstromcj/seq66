@@ -148,7 +148,7 @@ the '0' key in the piano roll.</string>
        <property name="widgetResizable">
         <bool>true</bool>
        </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents">
+       <widget class="QWidget" name="timeScrollAreaContents">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -541,7 +541,7 @@ Oneshot recording of a pattern.</string>
          <property name="widgetResizable">
           <bool>true</bool>
          </property>
-         <widget class="QWidget" name="scrollAreaWidgetContents_2">
+         <widget class="QWidget" name="keysScrollAreaContents">
           <property name="geometry">
            <rect>
             <x>0</x>
@@ -606,7 +606,7 @@ Oneshot recording of a pattern.</string>
        <property name="widgetResizable">
         <bool>true</bool>
        </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents_3">
+       <widget class="QWidget" name="rollScrollAreaContents">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -1091,7 +1091,7 @@ zooms 'in'.</string>
        <property name="widgetResizable">
         <bool>true</bool>
        </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents_4">
+       <widget class="QWidget" name="eventScrollAreaContents">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -1267,7 +1267,7 @@ the note-map, if any, to the note events in this pattern.</string>
        <property name="widgetResizable">
         <bool>true</bool>
        </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents_5">
+       <widget class="QWidget" name="dataScrollAreaContents">
         <property name="geometry">
          <rect>
           <x>0</x>

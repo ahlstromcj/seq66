@@ -122,7 +122,6 @@ qseqtime::paintEvent (QPaintEvent *)
     painter.setFont(m_font);
     painter.drawRect                    /* draw the border  */
     (
-////    c_keyboard_padding_x + 1, 0, size().width(), size().height() - 1
         c_keyboard_padding_x + 1, 0, width(), height() - 1
     );
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with refactoring by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-06-14
+ * \updates       2021-07-12
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -199,7 +199,7 @@ action_to_string (midicontrolout::uiaction a)
     case midicontrolout::uiaction::set_dn:          return "Set_Dn";
     case midicontrolout::uiaction::tap_bpm:         return "Tap_BPM";
     case midicontrolout::uiaction::quit:            return "Quit";
-    case midicontrolout::uiaction::alt_1:           return "Alt_1";
+    case midicontrolout::uiaction::visibility:      return "Visibility";
     case midicontrolout::uiaction::alt_2:           return "Alt_2";
     case midicontrolout::uiaction::alt_3:           return "Alt_3";
     case midicontrolout::uiaction::alt_4:           return "Alt_4";

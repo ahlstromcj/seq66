@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-06-21
+ * \updates       2021-07-12
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -486,13 +486,7 @@ rcsettings::make_config_filespec
 std::string
 rcsettings::config_filespec () const
 {
-    std::string result = home_config_directory();
-    if (! result.empty())
-    {
-        result += config_filename();
-        result = os_normalize_path(result);     /* change to OS's slash     */
-    }
-    return result;
+    return filespec_helper(config_filename());
 }
 
 /**
@@ -519,11 +513,45 @@ rcsettings::trim_home_directory (const std::string & filepath)
 }
 
 /**
+ *  We need a way to handle the following configuration-file paths:
+ *
+ *      -   "base.ext": Prepend the HOME directory.
+ *      -   "subdirectory/base.ext": Prepend the HOME directory
+ *      -   "/path/.../base.ext": Use the path as is.
+ *      -   "C:/path/.../base.ext": Use the path as is.
+ *
+ *  Compare to make_config_filespec(), used only by rcfile and this class.
+ *  That one treats the base and extension separately.
+ */
+
+std::string
+rcsettings::filespec_helper (const std::string & baseext) const
+{
+    std::string result = baseext;
+    if (! result.empty())
+    {
+        bool use_as_is = false;
+        if (name_has_path(baseext))
+        {
+            if (name_has_root_path(baseext))
+                use_as_is = true;
+        }
+        if (! use_as_is)
+        {
+            result = home_config_directory();
+            result += baseext;
+        }
+        result = os_normalize_path(result);         /* change to OS's slash */
+    }
+    return result;
+}
+
+/**
  *  Constructs an alternate full path and file specification for the "rc"
  *  file.  This function is useful in writing to an alternate "rc" file when a
  *  fatal error occurs.  Also note that the configuration file specification
  *  can never be empty or blank (equal to this string: "").  See the
- *  strfunction module's is_empty_string() function.
+ *  strfunctions module's is_empty_string() function.
  *
  * \param altname
  *      Provides the base-name of the alternate file, including the extension.
@@ -538,14 +566,7 @@ rcsettings::trim_home_directory (const std::string & filepath)
 std::string
 rcsettings::config_filespec (const std::string & altname) const
 {
-    std::string result;
-    if (! altname.empty())
-    {
-        result = home_config_directory();
-        if (! result.empty())
-            result += altname;
-    }
-    return result;
+    return filespec_helper(altname);
 }
 
 /**
@@ -560,13 +581,7 @@ rcsettings::config_filespec (const std::string & altname) const
 std::string
 rcsettings::user_filespec () const
 {
-    std::string result = home_config_directory();
-    if (! result.empty())
-    {
-        result += user_filename();
-        result = os_normalize_path(result);     /* change to OS's slash     */
-    }
-    return result;
+    return filespec_helper(user_filename());
 }
 
 /**
@@ -587,14 +602,7 @@ rcsettings::user_filespec () const
 std::string
 rcsettings::user_filespec (const std::string & altname) const
 {
-    std::string result;
-    if (! altname.empty())
-    {
-        result = home_config_directory();
-        if (! result.empty())
-            result += altname;
-    }
-    return result;
+    return filespec_helper(altname);
 }
 
 /**
@@ -612,18 +620,7 @@ rcsettings::user_filespec (const std::string & altname) const
 std::string
 rcsettings::playlist_filespec () const
 {
-    std::string result;
-    std::string listname = playlist_filename();
-    if (! listname.empty())
-    {
-        if (name_has_directory(listname))
-            result = listname;
-        else
-            result = home_config_directory() + listname;
-
-        result = os_normalize_path(result);
-    }
-    return result;
+    return filespec_helper(playlist_filename());
 }
 
 /**
@@ -633,18 +630,7 @@ rcsettings::playlist_filespec () const
 std::string
 rcsettings::notemap_filespec () const
 {
-    std::string result;
-    std::string notemap_name = notemap_filename();
-    if (! notemap_name.empty())
-    {
-        if (name_has_directory(notemap_name))
-            result = notemap_name;
-        else
-            result = home_config_directory() + notemap_name;
-
-        result = os_normalize_path(result);
-    }
-    return result;
+    return filespec_helper(notemap_filename());
 }
 
 /**
@@ -654,18 +640,7 @@ rcsettings::notemap_filespec () const
 std::string
 rcsettings::palette_filespec () const
 {
-    std::string result;
-    std::string palettename = palette_filename();
-    if (! palettename.empty())
-    {
-        if (name_has_directory(palettename))
-            result = palettename;
-        else
-            result = home_config_directory() + palettename;
-
-        result = os_normalize_path(result);
-    }
-    return result;
+    return filespec_helper(palette_filename());
 }
 
 /**
@@ -677,18 +652,7 @@ rcsettings::palette_filespec () const
 std::string
 rcsettings::style_sheet_filespec () const
 {
-    std::string result;
-    std::string ssheet = usr().style_sheet();
-    if (! ssheet.empty())
-    {
-        if (name_has_directory(ssheet))
-            result = ssheet;
-        else
-            result = home_config_directory() + ssheet;
-
-        result = os_normalize_path(result);
-    }
-    return result;
+    return filespec_helper(usr().style_sheet());
 }
 
 /**
@@ -704,18 +668,7 @@ rcsettings::style_sheet_filespec () const
 std::string
 rcsettings::midi_control_filespec () const
 {
-    std::string result;
-    std::string ctlfilename = midi_control_filename();
-    if (! ctlfilename.empty())
-    {
-        if (name_has_directory(ctlfilename))
-            result = ctlfilename;
-        else
-            result = home_config_directory() + ctlfilename;
-
-        result = os_normalize_path(result);
-    }
-    return result;
+    return filespec_helper(midi_control_filename());
 }
 
 /**
@@ -731,18 +684,7 @@ rcsettings::midi_control_filespec () const
 std::string
 rcsettings::mute_group_filespec () const
 {
-    std::string result;
-    std::string mutefilename = mute_group_filename();
-    if (! mutefilename.empty())
-    {
-        if (name_has_directory(mutefilename))
-            result = mutefilename;
-        else
-            result = home_config_directory() + mutefilename;
-
-        result = os_normalize_path(result);
-    }
-    return result;
+    return filespec_helper(mute_group_filename());
 }
 
 void
@@ -922,7 +864,7 @@ void
 rcsettings::full_config_directory (const::std::string & value, bool addhome)
 {
     std::string tv = value;
-    if (is_root_path(tv))
+    if (name_has_root_path(tv))
         addhome = false;
 
     if (addhome)

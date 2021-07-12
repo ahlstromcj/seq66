@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-07-07
+ * \updates       2021-07-12
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -940,7 +940,7 @@ file_append_log
  */
 
 bool
-name_has_directory (const std::string & filename)
+name_has_path (const std::string & filename)
 {
     auto pos = filename.find_first_of("/");
     bool result = pos != std::string::npos;
@@ -960,37 +960,49 @@ name_has_directory (const std::string & filename)
 }
 
 /**
- *  Determines if the given directory path is a root path.  This means that
- *  the path starts with "/" or "X:/".  This function assumes that
- *  normalization has been done.
+ *  Detects if the filename is likely to contain a root path:
  *
- * \param path
- *      Provides the already-normalized path to be analyzed.
+\verbatim
+        /dir/dir2 ...
+        \dir\dir2 ...
+        x:
+\endverbatim
  *
- * \return
- *      Returns true if the first character in the actual directory is a
- *      slash.
  */
 
 bool
-is_root_path (const std::string & path)
+name_has_root_path (const std::string & filename)
 {
-    auto pos = path.find_first_of(":");   /* Windows */
+    auto pos = filename.find_first_of("/");
     bool result = pos != std::string::npos;
+#if defined SEQ66_PLATFORM_WINDOWS
+    if (! result)
+    {
+        pos = filename.find_first_of("\\");
+        result = pos != std::string::npos;
+    }
+#endif
     if (result)
-        result = std::isalpha(path[0]) && pos == 1 && path[2] == '/';
-    else
-        result = path[0] == '/';
+        result = pos == 0;              /* path starts with "/" or "\"  */
 
+#if defined SEQ66_PLATFORM_WINDOWS
+    if (! result)
+    {
+        pos = filename.find_first_of(":");
+        result = pos != std::string::npos;
+        if (result)
+            result = std::isalpha(filename[0]) && pos == 1;
+    }
+#endif
     return result;
 }
 
 /**
- *  A function to ensure that the ~/.config/seq66 directory exists.
- *  This function is actually a little more general than that, but it is not
+ *  A function to ensure that the ~/.config/seq66 directory exists.  This
+ *  function is actually a little more general than that, but it is not
  *  sufficiently general, in general, General.  Consider using
- *  make_directory_path(), defined elsewhere in this module.
- *  This one is now static.
+ *  make_directory_path(), defined elsewhere in this module.  This one is now
+ *  static.
  *
  * \param pathname
  *      Provides the name of the path to create.  The parent directory of the

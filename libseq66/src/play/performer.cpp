@@ -3579,6 +3579,17 @@ performer::poll_cycle ()
                 }
                 else if (ev.is_midi_clock())
                 {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+                    if (rc().verbose())
+                    {
+                        infoprint("MIDI Clock");
+                        if (m_midiclockrunning)
+                            m_midiclocktick += m_midiclockincrement;
+                        else
+                            infoprint("Clock not running");
+                    }
+                    else
+#endif
                     if (m_midiclockrunning)
                         m_midiclocktick += m_midiclockincrement;
                 }

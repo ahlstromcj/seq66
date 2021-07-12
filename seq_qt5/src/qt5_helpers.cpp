@@ -233,7 +233,7 @@ show_file_dialog
     }
     else
     {
-        if (name_has_directory(selectedfile) && forceconfig)
+        if (name_has_path(selectedfile) && forceconfig)
         {
             if (file_is_directory(selectedfile))
             {

@@ -1,6 +1,6 @@
 # Seq66 0.90.5 (and above) MIDI control configuration file
 #
-# /home/ahlstrom/.config/seq66/qseq66-lp-mini-8x8.ctrl
+# /home/user/.config/seq66/qseq66-lp-mini-8x8.ctrl
 # Written on 2020-08-07 09:58:39
 #
 # This file holds the MIDI control configuration for Seq66. It follows
@@ -13,7 +13,7 @@
 [Seq66]
 
 config-type = "ctrl"
-version = 4
+version = 5
 
 # [comments] holds the user's documentation for this control file.
 # Lines starting with '#' and '[' are ignored.  Blank lines are ignored;
@@ -90,8 +90,9 @@ keyboard-layout = qwerty
 # bracketed numbers, each providing three different type of control:
 #
 #    Normal:           [toggle]    [on]      [off]
+#    Increment/Decr:   [increment] [increment] [decrement]
 #    Playback:         [pause]     [start]   [stop]
-#    Playlist:         [by-value]  [next]    [previous] (if active)
+#    Playlist/Song:    [by-value]  [next]      [previous]
 #
 # In each group, there are six numbers:
 #
@@ -283,13 +284,13 @@ keyboard-layout = qwerty
 39 "F11"         [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Toggle JACK
 40 "F12"         [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Menu Mode
 41 "F4"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Follow JACK
-42 "~"           [ 0 0x00   0   0   0 ] [ 0 0xb0 104   1 127 ] [ 0 0x00   0   0   0 ] # Reserved 42
-43 "Null_f9"     [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 43
-44 "Null_fa"     [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 44
-45 "Null_fb"     [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 45
-46 "Null_fc"     [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 47
-47 "Null_fd"     [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 47
-48 "Null_fe"     [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 48
+42 "~"           [ 0 0x00   0   0   0 ] [ 0 0xb0 104   1 127 ] [ 0 0x00   0   0   0 ] # Panic
+43 "0xf9"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Visibility
+44 "0xfa"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 44
+45 "0xfb"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 45
+46 "0xfc"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 47
+47 "0xfd"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 47
+48 "0xfe"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 48
 
 [midi-control-out-settings]
 
@@ -476,7 +477,15 @@ button-columns = 8
 1 [ 0xb0 111  60 ] [ 0xb0 111  15 ] [ 0xb0 111  12 ]  # Set_Dn
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Tap_BPM
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Quit
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Visibility
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_2
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_3
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_4
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_5
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_6
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_7
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_8
 
-# End of /home/ahlstrom/.config/seq66/qseq66-lp-mini-8x8.ctrl
+# End of /home/user/.config/seq66/qseq66-lp-mini-8x8.ctrl
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

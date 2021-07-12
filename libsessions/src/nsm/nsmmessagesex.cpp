@@ -49,9 +49,9 @@
  *      -#  is_clean.  A client sends "/nsm/client/is_clean" and the server
  *          sends out "/nsm/gui/client/dirty" + Client-ID + 0.
  *      -#  gui_is_hidden.  The client sends "/nsm/client/gui_is_hidden" and
- *          the server sends "/ndm/gui/client/gui_visible" + Client-ID + 0.
+ *          the server sends "/nsm/gui/client/gui_visible" + Client-ID + 0.
  *      -#  gui_is_shown.  The client sends "/nsm/client/gui_is_shown" and
- *          the server sends "/ndm/gui/client/gui_visible" + Client-ID + 1.
+ *          the server sends "/nsm/gui/client/gui_visible" + Client-ID + 1.
  *      -#  message.  The client sends "/nsm/client/message" + Client_ID +
  *          integer + string, and the server forwards this information to all
  *          clients via an "/nsm/gui/client/message".

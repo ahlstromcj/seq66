@@ -308,7 +308,7 @@ playlistfile::parse ()
                             playlist::song_spec_t sinfo;
                             sinfo.ss_index = songcount;
                             sinfo.ss_midi_number = songnumber;
-                            if (name_has_directory(fname))
+                            if (name_has_path(fname))
                             {
                                 std::string path;
                                 std::string filebase;
@@ -470,17 +470,16 @@ playlistfile::write ()
     file <<
         "# This file holds multiple playlists for Seq66. It consists of 1 or\n"
         "# more [playlist] sections.  Each has a user-specified number for\n"
-        "# sorting and MIDI control, ranging from 0 to 127. Next comes a\n"
-        "# quoted display name for this list, followed by the quoted name of\n"
-        "# the song directory, always using the UNIX-style separator ('/').\n"
-        "# It should be accessible from wherever Seq66 is run.\n"
+        "# sorting and MIDI control, ranging from 0 to 127. Next comes a quoted\n"
+        "# display name for this list, followed by the quoted name of the song\n"
+        "# directory; always uses the UNIX-style separator ('/'). It should be\n"
+        "# accessible from wherever Seq66 is run.\n"
         "#\n"
-        "# Then comes a list of tunes, each starting with a MIDI control number\n"
-        "# and the quoted name of the MIDI file.  They are sorted by the\n"
-        "# control number, starting from 0.  They can be simple 'base.midi'\n"
-        "# file-names; the playlist directory is prepended before the song is\n"
-        "# accessed. If the MIDI file-name already has a path, that will be\n"
-        "# used.\n"
+        "# Next is a list of tunes, each starting with a MIDI control number\n"
+        "# and the quoted name of the MIDI file, sorted by the control number.\n"
+        "# They can be simple 'base.midi' file-names; the playlist directory\n"
+        "# is prepended to access the song. If the file-name has a path, that\n"
+        "# will be used.\n"
         "\n"
         "[Seq66]\n"
         "\n"

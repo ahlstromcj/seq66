@@ -41,7 +41,7 @@
 #include "qmutemaster.hpp"              /* seq66::qmutemaster, this class   */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd main window     */
 #include "qt5_helpers.hpp"              /* seq66::qt_keystroke() etc.       */
-#include "util/filefunctions.hpp"       /* seq66::name_has_directory()      */
+#include "util/filefunctions.hpp"       /* seq66::name_has_path()           */
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -686,7 +686,7 @@ qmutemaster::slot_save ()
         }
         else
         {
-            if (name_has_directory(fname))
+            if (name_has_path(fname))
             {
                 std::string directory;
                 std::string basename;

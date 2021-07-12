@@ -170,7 +170,6 @@ qstriggereditor::paintEvent (QPaintEvent *)
     QPen pen(Qt::black);
     painter.setPen(pen);
     painter.setBrush(brush);
-/// painter.drawRect(0, 0, width(), height()); /* draw the background       */
     painter.drawRect(1, 0, width(), height() - 1); /* draw the background       */
 
     int bpbar = seq_pointer()->get_beats_per_bar();
@@ -545,7 +544,7 @@ qstriggereditor::keyReleaseEvent (QKeyEvent *)
 void
 qstriggereditor::x_to_w (int x1, int x2, int & x, int & w)
 {
-    if ( x1 <  x2)
+    if (x1 < x2)
     {
         x = x1;
         w = x2 - x1;

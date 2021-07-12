@@ -281,9 +281,9 @@ mutegroupsfile::write_stream (std::ofstream & file)
         "[comments]\n\n" << rc_ref().comments_block().text() << "\n"
         <<
         "# The 'mutes' file holds the global mute-groups configuration. It is\n"
-        "# is stored separately for flexibility, always in the configuration\n"
+        "# is stored separately for flexibility, in the HOME configuration\n"
         "# directory.  To use this file, specify it in the [mute-group-file]\n"
-        "# tag in the 'rc' file and set 'active' to true.\n"
+        "# tag in the 'rc' file and set 'active = true'.\n"
         "#\n"
         "# load-mute-groups: set to 'none', or 'mutes' to load only from the\n"
         "# 'mutes' file, 'midi' to load from the song, or 'both' to try to\n"
@@ -395,11 +395,10 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
             ;
 
         file << "\n[mute-groups]\n\n" <<
-        "# All mute-group values are saved in this 'mutes' file, even if they\n"
-        "# all are zero; but if all are zero, they can be stripped out of the\n"
-        "# MIDI file by the strip-empty-mutes functionality. If a hex number\n"
-        "# is found, each number represents a bit mask, rather than a single\n"
-        "# bit.\n"
+        "# All mute-group values are saved in this 'mutes' file, even if all\n"
+        "# zero; if all are zero, they can be stripped out of the MIDI file by\n"
+        "# by 'strip-empty-mutes'. If a hex number is found, each number is\n"
+        "# a bit mask, rather than a single bit.\n"
         "\n"
             ;
 

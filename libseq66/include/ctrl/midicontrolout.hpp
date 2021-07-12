@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-06-14
+ * \updates       2021-07-12
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -136,7 +136,7 @@ public:
         set_dn,                             /* extra 5  */
         tap_bpm,                            /* extra 6  */
         quit,                               /* extra 7  */
-        alt_1, max_old = alt_1,
+        visibility,
         alt_2,
         alt_3,
         alt_4,

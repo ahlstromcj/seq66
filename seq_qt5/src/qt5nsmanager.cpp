@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-07-11
+ * \updates       2021-07-12
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -374,6 +374,15 @@ qt5nsmanager::show_gui ()
     {
         m_window->show();
         m_is_hidden = false;
+
+#if defined SEQ66_NSM_SUPPORT
+        if (perf()->show_hide_pending())
+        {
+            if (not_nullptr(nsm_client()))
+                nsm_client()->send_visibility(true);
+        }
+#endif
+
         perf()->hidden(false);          /* turns off show-hide pending flag */
     }
 }
@@ -385,6 +394,15 @@ qt5nsmanager::hide_gui ()
     {
         m_window->hide();
         m_is_hidden = true;
+
+#if defined SEQ66_NSM_SUPPORT
+        if (perf()->show_hide_pending())
+        {
+            if (not_nullptr(nsm_client()))
+                nsm_client()->send_visibility(false);
+        }
+#endif
+
         perf()->hidden(true);          /* turns off show-hide pending flag */
     }
 }

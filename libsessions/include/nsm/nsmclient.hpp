@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2021-07-10
+ * \updates       2021-07-12
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -97,6 +97,8 @@ public:
         const std::string & nsm_ext     = ""
     );
     virtual ~nsmclient ();
+
+    void send_visibility (bool isshown);
 
     bool hidden () const
     {

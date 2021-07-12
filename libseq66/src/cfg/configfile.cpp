@@ -767,7 +767,7 @@ void
 configfile::write_date (std::ofstream & file, const std::string & tag)
 {
     file
-        << "# Seq66 0.94.1 (and above) " << tag << " configuration file\n"
+        << "# Seq66 0.96.0 (and above) " << tag << " configuration file\n"
         << "#\n# " << name() << "\n"
         << "# Written " << current_date_time() << "\n"
         << "#\n"

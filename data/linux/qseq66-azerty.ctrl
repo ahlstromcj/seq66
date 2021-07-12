@@ -1,6 +1,6 @@
 # Seq66 0.94.1 (and above) MIDI control configuration file
 #
-# /home/ahlstrom/.config/seq66/qseq66-azerty.ctrl
+# /home/user/.config/seq66/qseq66-azerty.ctrl
 # Written 2021-06-13 08:48:55
 #
 # This file holds MIDI I/O control setups for Seq66. It follows the format
@@ -15,7 +15,7 @@
 [Seq66]
 
 config-type = "ctrl"
-version = 4
+version = 5
 
 # The [comments] section holds the user documentation for this file.
 # The first completely empty, comment, or tag line ends the comment.
@@ -240,7 +240,7 @@ keyboard-layout = azerty
 40 "F12"         [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Menu Mode
 41 "L_pound"     [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Follow JACK
 42 "+"           [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Panic
-43 "0xf9"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 43
+43 "0xf9"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Visibility
 44 "0xfa"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 44
 45 "0xfb"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 45
 46 "0xfc"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 47
@@ -385,7 +385,15 @@ button-columns = 8
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Set_Dn
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Tap_BPM
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Quit
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Visibility
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_2
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_3
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_4
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_5
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_6
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_7
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_8
 
-# End of /home/ahlstrom/.config/seq66/qseq66-azerty.ctrl
+# End of /home/user/.config/seq66/qseq66-azerty.ctrl
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini
