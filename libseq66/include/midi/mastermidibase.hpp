@@ -258,7 +258,7 @@ public:
     void continue_from (midipulse tick);
     void init_clock (midipulse tick);
     void emit_clock (midipulse tick);
-    void sysex (event * event);
+    void sysex (const event * event);
     void print () const;
     void flush ();
     void panic ();                                          /* kepler34 func  */
@@ -410,8 +410,8 @@ protected:
 /*
  *  So far, there is no need for these API-specific functions.
  *
- *  virtual void api_sysex (event * ev) = 0;
- *  virtual void api_play (bussbyte bus, event * e24, midibyte channel) = 0;
+ *  virtual void api_sysex (const event * ev) = 0;
+ *  virtual void api_play (bussbyte bus, const event * e24, midibyte channel) = 0;
  *  virtual void api_set_clock (bussbyte bus, e_clock clocktype) = 0;
  *  virtual void api_get_clock (bussbyte bus) = 0;
  *  virtual void api_set_input (bussbyte bus, bool inputting) = 0;

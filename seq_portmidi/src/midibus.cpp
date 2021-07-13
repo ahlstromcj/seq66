@@ -191,7 +191,7 @@ midibus::api_init_in ()
  */
 
 void
-midibus::api_play (event * e24, midibyte channel)
+midibus::api_play (const event * e24, midibyte channel)
 {
     midibyte buffer[4];                /* temp for midi data */
     buffer[0] = e24->get_status();

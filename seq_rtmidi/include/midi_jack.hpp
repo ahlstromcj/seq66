@@ -188,8 +188,8 @@ protected:
         return 0;
     }
 
-    virtual void api_play (event * e24, midibyte channel) override;
-    virtual void api_sysex (event * e24) override;
+    virtual void api_play (const event * e24, midibyte channel) override;
+    virtual void api_sysex (const event * e24) override;
     virtual void api_flush () override;
     virtual void api_continue_from (midipulse tick, midipulse beats) override;
     virtual void api_start () override;
@@ -202,6 +202,7 @@ protected:
 private:
 
     void send_byte (midibyte evbyte);
+    void send_realtime_message (midibyte evbyte);
     bool send_message (const midi_message & message);
     bool set_virtual_name (int portid, const std::string & portname);
 

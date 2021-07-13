@@ -91,7 +91,7 @@ public:
         return get_api()->api_connect();
     }
 
-    virtual void api_play (event * e24, midibyte channel) override
+    virtual void api_play (const event * e24, midibyte channel) override
     {
         get_api()->api_play(e24, channel);
     }
@@ -166,7 +166,7 @@ public:
         return get_api()->api_poll_for_midi();
     }
 
-    virtual void api_sysex (event * e24) override
+    virtual void api_sysex (const event * e24) override
     {
         get_api()->api_sysex(e24);
     }

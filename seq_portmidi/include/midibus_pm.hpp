@@ -91,7 +91,7 @@ protected:
     virtual void api_start () override;
     virtual void api_stop () override;
     virtual void api_clock (midipulse tick) override;
-    virtual void api_play (event * e24, midibyte channel) override;
+    virtual void api_play (const event * e24, midibyte channel) override;
 
     /*
      * Functions not implemented in PortMIDI.  For example, the "sub"
@@ -105,7 +105,7 @@ protected:
      *
      * We should be able to implement this in a "sysex_fix" branch:
      *
-     * virtual void api_sysex (event * e24);
+     * virtual void api_sysex (const event * e24);
      *
      * This function should be able to be implemented in Windows and ALSA:
      *

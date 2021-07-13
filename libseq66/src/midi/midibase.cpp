@@ -586,7 +586,7 @@ midibase::print ()
  */
 
 void
-midibase::play (event * e24, midibyte channel)
+midibase::play (const event * e24, midibyte channel)
 {
     automutex locker(m_mutex);
     api_play(e24, channel);
@@ -601,7 +601,7 @@ midibase::play (event * e24, midibyte channel)
  */
 
 void
-midibase::sysex (event * e24)
+midibase::sysex (const event * e24)
 {
     automutex locker(m_mutex);
     api_sysex(e24);

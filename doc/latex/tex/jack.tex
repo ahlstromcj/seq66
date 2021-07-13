@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-28
-% \update      2021-05-17
+% \update      2021-07-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -14,7 +14,7 @@
 %
 %-------------------------------------------------------------------------------
 
-\section{Seq66 JACK Support}
+\section{Seq66 JACK}
 \label{sec:jack}
 
    This section describes some details concerning the JACK support of
@@ -43,7 +43,7 @@
    The following sections discuss the JACK transport support and the native
    JACK MIDI support.
 
-\subsection{Seq66 JACK Transport}
+\subsection{Seq66 JACK / Transport}
 \label{subsec:jack_transport}
 
    JACK transport support is \textsl{separate} from native JACK MIDI support.
@@ -123,7 +123,7 @@
    Note that, in \textsl{Seq66}, a changed BPM resets to the file-value after
    restart.  Bug or feature?
 
-\subsection{Seq66 Native JACK MIDI}
+\subsection{Seq66 JACK / Native MIDI}
 \label{subsec:jack_native_midi}
 
    Currently, \textsl{Seq66} will connect to a JACK
@@ -149,7 +149,7 @@
    That is, they are saved to the 'rc' configuration file at exit,
    so one does not have to specify them in subsequent \textsl{seq66} sessions.
 
-\subsubsection{Seq66 JACK MIDI Output}
+\subsubsection{Seq66 JACK / MIDI Output}
 \label{subsubsec:jack_midi_output}
 
    By default (or depending on the 'rc' configuration file),
@@ -191,7 +191,7 @@
  5 0 "[5] 1:5 seq66:yoshimi-01 midi in"
    \end{verbatim}
 
-\subsubsection{Seq66 JACK MIDI Input}
+\subsubsection{Seq66 JACK / MIDI Input}
 \label{subsubsec:jack_midi_input}
 
    The input ports also end up with long names:
@@ -208,7 +208,7 @@
    When the check-box for a buss is selected, that input can be captured by
    \texttt{seq66}.
 
-\subsubsection{Seq66 JACK MIDI Virtual Ports}
+\subsubsection{Seq66 JACK / MIDI Virtual Ports}
 \label{subsubsec:jack_midi_virtual_ports}
 
    \index{ports!manual}
@@ -236,7 +236,7 @@
    The \textbf{MIDI Clock} and \textbf{MIDI Input} tabs reflect
    what is seen in \textsl{QJackCtl}.
 
-\subsubsection{Seq66 JACK MIDI and a2jmidid}
+\subsubsection{Seq66 JACK / MIDI and a2jmidid}
 \label{subsubsec:jack_midi_a2jmidid}
 
    One thing we saw is that \texttt{seq66} can deal with the odd naming
@@ -276,6 +276,69 @@
    One can also edit the script to use another software synthesizer.
    Once ready, 
    Run \texttt{startjack} and wait patiently for it to set up.
+
+\subsection{Seq66 JACK / Trouble-Shooting}
+\label{subsec:alsa_testing}
+
+   This section describes some trouble-shooting that can be done with JACK.
+
+\subsubsection{Seq66 JACK / Trouble-Shooting / MIDI Clock}
+\label{subsubsec:alsa_testing_midi_clock}
+
+\paragraph{JACK MIDI Clock Send}
+\label{paragraph:alsa_testing_midi_clock_send}
+
+   To verify that \textsl{Seq66} is sending MIDI clock, the easiest way (using
+   JACK) is to start the following command and set \textsl{Seq66} to send
+   MIDI Clock to the \texttt{jack\_mclk\_dump} port
+   that appears after restarting
+   \textsl{Seq66}:
+
+   \begin{verbatim}
+      $ jack_mclk_dump
+   \end{verbatim}
+
+   Once set up, start playback on \textsl{Seq66}.
+   The result should be a 0xfa (MIDI Start) message,
+   a never-ending stream of rapid MIDI clock messages,
+   and then, upon stopping playback, a 0xfc (MIDI Stop) message.
+
+   Do not try to use \textsl{gmidimonitor}... while it displays Start and Stop,
+   it does not display MIDI Clock.
+
+\paragraph{JACK MIDI Clock Receive}
+\label{paragraph:alsa_testing_midi_clock_receive}
+
+   To verify that \textsl{Seq66} receives MIDI clock in JACK, use a program
+   that can emit MIDI Clock in JACK.
+   We've tried \texttt{jack\_midi\_clock} to generate time code, but
+   it didn't seem to work, even when connected to the
+   application \texttt{jack\_mclk\_dump} used in the previous section.
+   However, since we verified that \textsl{Seq66} can send MIDI Clock, we can
+   use it to test itself.
+
+   First, run the following command using \textsl{debug version of Seq66}, so
+   that we can see if it is receiving:
+
+   \begin{verbatim}
+      $ qseq66 --jack-midi --manual --verbose --client-name seq66debug
+   \end{verbatim}
+
+   This creates virtual JACK ports that show up in a JACK patchbay as part of
+   an application called "seq66debug".  This lets us distinguish it from
+   the regular version.  Run the following \textsl{Seq66} command:
+
+   \begin{verbatim}
+      $ qseq66 --jack-midi --manual --verbose
+   \end{verbatim}
+
+   Set MIDI Clock for "midi out 0" to "On" so that it will emit clocking.
+   Restart \texttt{qseq66}.
+   Then connect the "midi out" of "seq66" to the "midi in" of "seq66debug"
+   in the JACK patchbay.
+   Then start playback.
+   \textsl{seq66debug} should display a rapid stream of MIDI Clock messages.
+   If not, check the setup and, if correct, report a bug!
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

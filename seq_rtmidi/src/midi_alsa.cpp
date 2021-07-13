@@ -586,7 +586,7 @@ midi_in_alsa::api_poll_for_midi ()
  */
 
 void
-midi_alsa::api_play (event * e24, midibyte channel)
+midi_alsa::api_play (const event * e24, midibyte channel)
 {
     static const size_t s_event_size_max = SEQ66_MIDI_EVENT_SIZE_MAX;
     snd_midi_event_t * midi_ev;                         /* ALSA MIDI parser */
@@ -648,7 +648,7 @@ min (long a, long b)
  */
 
 void
-midi_alsa::api_sysex (event * e24)
+midi_alsa::api_sysex (const event * e24)
 {
     snd_seq_event_t ev;
     snd_seq_ev_clear(&ev);                              /* clear event      */
@@ -671,7 +671,7 @@ midi_alsa::api_sysex (event * e24)
      */
 
     const int chunk = 256;
-    event::sysex & data = e24->get_sysex();
+    event::sysex & data = const_cast<event::sysex &>(e24->get_sysex());
     int data_size = e24->get_sysex_size();
     for (int offset = 0; offset < data_size; offset += chunk)
     {
@@ -796,7 +796,6 @@ midi_alsa::api_stop ()
  * \param tick
  *      Provides the starting tick, unused in the ALSA implementation.
  */
-
 
 void
 midi_alsa::api_clock (midipulse tick)

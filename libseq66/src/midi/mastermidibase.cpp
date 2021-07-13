@@ -308,7 +308,7 @@ mastermidibase::panic ()
  */
 
 void
-mastermidibase::sysex (event * ev)
+mastermidibase::sysex (const event * ev)
 {
     automutex locker(m_mutex);
     m_outbus_array.sysex(ev);

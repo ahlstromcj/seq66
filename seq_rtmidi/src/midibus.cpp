@@ -385,7 +385,7 @@ midibus::api_deinit_in ()
  */
 
 void
-midibus::api_play (event * e24, midibyte channel)
+midibus::api_play (const event * e24, midibyte channel)
 {
     if (not_nullptr(m_rt_midi))
         m_rt_midi->api_play(e24, channel);
@@ -442,8 +442,7 @@ midibus::api_stop ()
  *  timestamp handling.
  *
  * \param tick
- *      The clock tick value, not used in the API implementation of this
- *      function for RtMidi.
+ *      The clock tick value.
  */
 
 void

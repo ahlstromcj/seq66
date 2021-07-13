@@ -156,8 +156,8 @@ protected:
         return 0;
     }
 
-    virtual void api_play (event * e24, midibyte channel) override;
-    virtual void api_sysex (event * e24) override;
+    virtual void api_play (const event * e24, midibyte channel) override;
+    virtual void api_sysex (const event * e24) override;
     virtual void api_flush () override;
     virtual void api_continue_from (midipulse tick, midipulse beats) override;
     virtual void api_start () override;

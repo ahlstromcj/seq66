@@ -164,8 +164,8 @@ public:
     virtual bool api_deinit_out () = 0;
     virtual bool api_deinit_in () = 0;
     virtual bool api_get_midi_event (event *) = 0;
-    virtual void api_play (event * e24, midibyte channel) = 0;
-    virtual void api_sysex (event * e24) = 0;
+    virtual void api_play (const event * e24, midibyte channel) = 0;
+    virtual void api_sysex (const event * e24) = 0;
     virtual void api_continue_from (midipulse tick, midipulse beats) = 0;
     virtual void api_start () = 0;
     virtual void api_stop () = 0;

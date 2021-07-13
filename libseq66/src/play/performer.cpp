@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-07-11
+ * \updates       2021-07-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -3330,112 +3330,9 @@ performer::output_func ()
 
 /**
  *  This function is called by input_thread_func().  It handles certain MIDI
- *  input events.
+ *  input events.  Many of them are now handled by functions for easier reading
+ *  and trouble-shooting (of MIDI clock).
  *
- * Stazed:
- *
- *      http://www.blitter.com/~russtopia/MIDI/~jglatt/tech/midispec/ssp.htm
- *
- *      Example: If a Song Position value of 8 is received, then a sequencer
- *      (or drum box) should cue playback to the third quarter note of the
- *      song.  (8 MIDI beats * 6 MIDI clocks per MIDI beat = 48 MIDI Clocks.
- *      Since there are 24 MIDI Clocks in a quarter note, the first quarter
- *      occurs on a time of 0 MIDI Clocks, the second quarter note occurs upon
- *      the 24th MIDI Clock, and the third quarter note occurs on the 48th
- *      MIDI Clock).
- *
- *      8 MIDI beats * 6 MIDI clocks per MIDI beat = 48 MIDI Clocks.
- *
- *      The MIDI-control check will limit the controls to start, stop and record
- *      only. The function returns a a bool flag indicating whether the event was
- *      used or not. The flag is used to exclude from recording the events that
- *      are used for control purposes and should not be recorded (dumping).  If
- *      the used event is a note on, then the linked note off will also be
- *      excluded.
- *
- * http://midi.teragonaudio.com/tech/midispec/seq.htm
- *
- *      Provides a description of how the following events and Song Position
- *      work.
- *
- * EVENT_MIDI_START:
- *
- *      Starts the MIDI Time Clock.  The Master sends this message, which
- *      alerts the slave that, upon receipt of the very next MIDI Clock
- *      message, the slave should start playback.  MIDI Start puts the slave
- *      in "play mode", and the receipt of that first MIDI Clock marks the
- *      initial downbeat of the song.  MIDI B
- *
- *      Kepler34 does "stop(); set_playback_mode(false); start();" in its
- *      version of this event.  This sets the playback mode to Live mode. This
- *      behavior seems reasonable, though the function names Seq66 uses are
- *      different.  Used when starting from the beginning of the song.  Obey
- *      the MIDI time clock.  Comments in the banner.
- *
- * EVENT_MIDI_CONTINUE:
- *
- *      MIDI continue: start from current position.  This is sent immediately
- *      after EVENT_MIDI_SONG_POS, and is used for starting from other than
- *      beginning of the song, or for starting from previous location at
- *      EVENT_MIDI_STOP. Again, converted to Kepler34 mode of setting the
- *      playback mode to Live mode.
- *
- * EVENT_MIDI_STOP:
- *
- *      A master stops the slave simultaneously by sending a MIDI Stop
- *      message. The master may then continue to send MIDI Clocks at the rate
- *      of its tempo, but the slave should ignore these, and not advance its
- *      song position.
- *
- *      Do nothing, just let the system pause.  Since we're not getting ticks
- *      after the stop, the song won't advance when start is received, we'll
- *      reset the position. Or, when continue is received, we won't reset the
- *      position.  We do an inner_stop(); the m_midiclockpos member holds the
- *      stop position in case the next event is "continue".  This feature is
- *      not in Kepler34.
- *
- * EVENT_MIDI_CLOCK:
- *
- *      MIDI beat clock (MIDI timing clock or simply MIDI clock) is a clock
- *      signal broadcast via MIDI to ensure that MIDI-enabled devices stay in
- *      synchronization. It is not MIDI timecode.  Unlike MIDI timecode, MIDI
- *      beat clock is tempo-dependent. Clock events are sent at a rate of 24
- *      ppqn (pulses per quarter note). Those pulses maintain a synchronized
- *      tempo for synthesizers that have BPM-dependent voices and for
- *      arpeggiator synchronization.  Location information can be specified
- *      using MIDI Song Position Pointer.  Many simple MIDI devices ignore
- *      this message.
- *
- * EVENT_MIDI_SONG_POS:
- *
- *      MIDI song position pointer message tells a MIDI device to cue to a
- *      point in the MIDI sequence to be ready to play.  This message consists
- *      of three bytes of data. The first byte, the status byte, is 0xF2 to
- *      flag a song position pointer message. Two bytes follow the status
- *      byte.  These two bytes are combined in a 14-bit value to show the
- *      position in the song to cue to. The top bit of each of the two bytes
- *      is not used.  Thus, the value of the position to cue to is between
- *      0x0000 and 0x3FFF. The position represents the MIDI beat, where a
- *      sequence always starts on beat zero and each beat is a 16th note.
- *      Thus, the device will cue to a specific 16th note.  Also see the
- *      combine_bytes() function.
- *
- * EVENT_MIDI_SYSEX:
- *
- *      These messages are system-wide messages.  We filter system-wide
- *      messages.  If the master MIDI buss is dumping, set the timestamp of
- *      the event and stream it on the sequence.  Otherwise, use the event
- *      data to control the sequencer, if it is valid for that action.
- *
- *      "Dumping" is set when a seqedit window is open and the user has
- *      clicked the "record MIDI" or "thru MIDI" button.  In this case, if
- *      seq32 support is in force, dump to it, else stream the event, with
- *      possibly multiple sequences set.  Otherwise, handle an incoming MIDI
- *      control event.
- *
- *      Also available (but macroed out) is Stazed's parse_sysex() function.
- *      It seems specific to certain Yamaha devices, but might prove useful
- *      later.
  *
  *  For events less than or equal to SysEx, we call midi_control_event() to
  *  handle the MIDI controls that Sequencer64 supports.  (These are
@@ -3543,69 +3440,27 @@ performer::poll_cycle ()
                 }
                 else if (ev.is_midi_start())
                 {
-                    song_start_mode(sequence::playback::live);
-                    m_midiclockrunning = m_usemidiclock = true;
-                    m_midiclocktick = m_midiclockpos = 0;
-                    auto_stop();
-                    auto_play();
-                    if (rc().verbose())
-                        infoprint("MIDI Start");
+                    midi_start();
                 }
                 else if (ev.is_midi_continue())
                 {
-                    song_start_mode(sequence::playback::live);
-                    m_midiclockpos = get_tick();
-                    m_dont_reset_ticks = true;
-                    m_midiclockrunning = m_usemidiclock = true;
-
-                    /*
-                     * Not sure why, but doing this twice works.
-                     */
-
-                    auto_pause(); auto_play();
-                    auto_pause(); auto_play();
-                    if (rc().verbose())
-                        infoprint("MIDI Continue");
+                    midi_continue();
                 }
                 else if (ev.is_midi_stop())
                 {
-                    all_notes_off();
-                    m_usemidiclock = true;
-                    m_midiclockrunning = false;
-                    m_midiclockpos = get_tick();
-                    auto_stop();
-                    if (rc().verbose())
-                        infoprint("MIDI Stop");
+                    midi_stop();
                 }
                 else if (ev.is_midi_clock())
                 {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                    if (rc().verbose())
-                    {
-                        infoprint("MIDI Clock");
-                        if (m_midiclockrunning)
-                            m_midiclocktick += m_midiclockincrement;
-                        else
-                            infoprint("Clock not running");
-                    }
-                    else
-#endif
-                    if (m_midiclockrunning)
-                        m_midiclocktick += m_midiclockincrement;
+                    midi_clock();
                 }
                 else if (ev.is_midi_song_pos())
                 {
-                    midibyte d0, d1;                /* see note in banner   */
-                    ev.get_data(d0, d1);
-                    m_midiclockpos = combine_bytes(d0, d1);
+                    midi_song_pos(ev);
                 }
                 else if (ev.is_sysex())             /* what about channel?  */
                 {
-                    if (rc().show_midi())
-                        ev.print();
-
-                    if (rc().pass_sysex())
-                        m_master_bus->sysex(&ev);
+                    midi_sysex(ev);
                 }
 #if defined USE_ACTIVE_SENSE_AND_RESET
                 else if (ev.is_sense_reset())
@@ -3621,6 +3476,199 @@ performer::poll_cycle ()
         } while (m_master_bus->is_more_input());
     }
     return result;
+}
+
+/**
+ * http://www.blitter.com/~russtopia/MIDI/~jglatt/tech/midispec/ssp.htm
+ *
+ *      Example: If a Song Position value of 8 is received, then a sequencer
+ *      (or drum box) should cue playback to the third quarter note of the
+ *      song.  (8 MIDI beats * 6 MIDI clocks per MIDI beat = 48 MIDI Clocks.
+ *      Since there are 24 MIDI Clocks in a quarter note, the first quarter
+ *      occurs on a time of 0 MIDI Clocks, the second quarter note occurs upon
+ *      the 24th MIDI Clock, and the third quarter note occurs on the 48th
+ *      MIDI Clock).
+ *
+ *      8 MIDI beats * 6 MIDI clocks per MIDI beat = 48 MIDI Clocks.
+ *
+ *      The MIDI-control check will limit the controls to start, stop and record
+ *      only. The function returns a a bool flag indicating whether the event was
+ *      used or not. The flag is used to exclude from recording the events that
+ *      are used for control purposes and should not be recorded (dumping).  If
+ *      the used event is a note on, then the linked note off will also be
+ *      excluded.
+ *
+ * http://midi.teragonaudio.com/tech/midispec/seq.htm
+ *
+ *      Provides a description of how the following events and Song Position
+ *      work.
+ *
+ * EVENT_MIDI_START:
+ *
+ *      Starts the MIDI Time Clock.  The Master sends this message, which
+ *      alerts the slave that, upon receipt of the very next MIDI Clock
+ *      message, the slave should start playback.  MIDI Start puts the slave
+ *      in "play mode", and the receipt of that first MIDI Clock marks the
+ *      initial downbeat of the song.  MIDI B
+ *
+ *      Kepler34 does "stop(); set_playback_mode(false); start();" in its
+ *      version of this event.  This sets the playback mode to Live mode. This
+ *      behavior seems reasonable, though the function names Seq66 uses are
+ *      different.  Used when starting from the beginning of the song.  Obey
+ *      the MIDI time clock.
+ */
+
+void
+performer::midi_start ()
+{
+    song_start_mode(sequence::playback::live);
+    auto_play();
+    m_midiclockrunning = m_usemidiclock = true;
+    m_midiclocktick = m_midiclockpos = 0;
+    auto_stop();
+    if (rc().verbose())
+        infoprint("MIDI Start");
+}
+
+/**
+ * EVENT_MIDI_CONTINUE:
+ *
+ *      MIDI continue: start from current position.  Sent immediately
+ *      after EVENT_MIDI_SONG_POS, and is used for starting from other than
+ *      beginning of the song, or for starting from previous location at
+ *      EVENT_MIDI_STOP. Again, converted to Kepler34 mode of setting the
+ *      playback mode to Live mode.
+ */
+
+void
+performer::midi_continue ()
+{
+    song_start_mode(sequence::playback::live);
+    m_midiclockpos = get_tick();
+    m_dont_reset_ticks = true;
+    m_midiclockrunning = m_usemidiclock = true;
+
+    /*
+     * Not sure why, but doing this twice works.
+     */
+
+    auto_pause(); auto_play();
+    auto_pause(); auto_play();
+    if (rc().verbose())
+        infoprint("MIDI Continue");
+}
+
+/**
+ * EVENT_MIDI_STOP:
+ *
+ *      A master stops the slave simultaneously by sending a MIDI Stop
+ *      message. The master may then continue to send MIDI Clocks at the rate
+ *      of its tempo, but the slave should ignore these, and not advance its
+ *      song position.
+ *
+ *      Do nothing, just let the system pause.  Since we're not getting ticks
+ *      after the stop, the song won't advance when start is received, we'll
+ *      reset the position. Or, when continue is received, we won't reset the
+ *      position.  We do an inner_stop(); the m_midiclockpos member holds the
+ *      stop position in case the next event is "continue".  This feature is
+ *      not in Kepler34.
+ */
+
+void
+performer::midi_stop ()
+{
+    all_notes_off();
+    m_usemidiclock = true;
+    m_midiclockrunning = false;
+    m_midiclockpos = get_tick();
+    auto_stop();
+    if (rc().verbose())
+        infoprint("MIDI Stop");
+}
+
+/**
+ * EVENT_MIDI_CLOCK:
+ *
+ *      MIDI beat clock (MIDI timing clock or simply MIDI clock) is a clock
+ *      signal broadcast via MIDI to ensure that MIDI-enabled devices stay in
+ *      synchronization. It is not MIDI timecode.  Unlike MIDI timecode, MIDI
+ *      beat clock is tempo-dependent. Clock events are sent at a rate of 24
+ *      ppqn (pulses per quarter note). Those pulses maintain a synchronized
+ *      tempo for synthesizers that have BPM-dependent voices and for
+ *      arpeggiator synchronization.  Location information can be specified
+ *      using MIDI Song Position Pointer.  Many simple MIDI devices ignore
+ *      this message.
+ */
+
+void
+performer::midi_clock ()
+{
+#if defined SEQ66_PLATFORM_DEBUG
+    if (rc().verbose())
+    {
+        infoprint("MIDI Clock");
+        if (m_midiclockrunning)
+            m_midiclocktick += m_midiclockincrement;
+        else
+            infoprint("Clock not running");
+    }
+    else
+#endif
+    if (m_midiclockrunning)
+        m_midiclocktick += m_midiclockincrement;
+}
+
+/**
+ * EVENT_MIDI_SONG_POS:
+ *
+ *      MIDI song position pointer message tells a MIDI device to cue to a
+ *      point in the MIDI sequence to be ready to play.  This message consists
+ *      of three bytes of data. The first byte, the status byte, is 0xF2 to
+ *      flag a song position pointer message. Two bytes follow the status
+ *      byte.  These two bytes are combined in a 14-bit value to show the
+ *      position in the song to cue to. The top bit of each of the two bytes
+ *      is not used.  Thus, the value of the position to cue to is between
+ *      0x0000 and 0x3FFF. The position represents the MIDI beat, where a
+ *      sequence always starts on beat zero and each beat is a 16th note.
+ *      Thus, the device will cue to a specific 16th note.  Also see the
+ *      combine_bytes() function.
+ */
+
+void
+performer::midi_song_pos (const event & ev)
+{
+    midibyte d0, d1;
+    ev.get_data(d0, d1);
+    m_midiclockpos = combine_bytes(d0, d1);
+}
+
+/**
+ * EVENT_MIDI_SYSEX:
+ *
+ *      These messages are system-wide messages.  We filter system-wide
+ *      messages.  If the master MIDI buss is dumping, set the timestamp of
+ *      the event and stream it on the sequence.  Otherwise, use the event
+ *      data to control the sequencer, if it is valid for that action.
+ *
+ *      "Dumping" is set when a seqedit window is open and the user has
+ *      clicked the "record MIDI" or "thru MIDI" button.  In this case, if
+ *      seq32 support is in force, dump to it, else stream the event, with
+ *      possibly multiple sequences set.  Otherwise, handle an incoming MIDI
+ *      control event.
+ *
+ *      Also available (but macroed out) is Stazed's parse_sysex() function.
+ *      It seems specific to certain Yamaha devices, but might prove useful
+ *      later.
+ */
+
+void
+performer::midi_sysex (const event & ev)
+{
+    if (rc().show_midi())
+        ev.print();
+
+    if (rc().pass_sysex())
+        m_master_bus->sysex(&ev);
 }
 
 /**

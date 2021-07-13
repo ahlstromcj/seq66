@@ -210,7 +210,7 @@ private:
         bus()->clock(tick);
     }
 
-    void sysex (event * ev)
+    void sysex (const event * ev)
     {
         bus()->sysex(ev);
     }
@@ -332,7 +332,7 @@ public:
      *      Provides the SysEx event to handle.
      */
 
-    void sysex (event * ev)
+    void sysex (const event * ev)
     {
         for (auto & bi : m_container)       /* vector of businfo copies     */
             bi.sysex(ev);

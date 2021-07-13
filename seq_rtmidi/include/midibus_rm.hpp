@@ -113,7 +113,7 @@ protected:
     virtual void api_start () override;
     virtual void api_stop () override;
     virtual void api_clock (midipulse tick) override;
-    virtual void api_play (event * e24, midibyte channel) override;
+    virtual void api_play (const event * e24, midibyte channel) override;
 
 };          // class midibus (rtmidi version)
 

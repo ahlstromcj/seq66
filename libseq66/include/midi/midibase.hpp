@@ -455,8 +455,8 @@ public:
     bool deinit_in ();
     bool init_out_sub ();
     bool init_in_sub ();
-    void play (event * e24, midibyte channel);
-    void sysex (event * e24);
+    void play (const event * e24, midibyte channel);
+    void sysex (const event * e24);
     void flush ();
     void start ();
     void stop ();
@@ -546,7 +546,7 @@ public:             // protected: public for seq_rtmidi midi_api
         return false;
     }
 
-    virtual void api_play (event * e24, midibyte channel) = 0;
+    virtual void api_play (const event * e24, midibyte channel) = 0;
 
     /**
      *  Handles implementation details for SysEx messages.
@@ -554,7 +554,7 @@ public:             // protected: public for seq_rtmidi midi_api
      *  The \a e24 parameter, the SysEx event pointer, is unused here.
      */
 
-    virtual void api_sysex (event * /* e24 */)
+    virtual void api_sysex (const event * /* e24 */)
     {
         // no code for portmidi
     }

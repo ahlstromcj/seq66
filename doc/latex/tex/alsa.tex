@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-06-16
-% \update      2021-06-16
+% \update      2021-07-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -14,14 +14,14 @@
 %
 %-------------------------------------------------------------------------------
 
-\section{Seq66 ALSA Support}
+\section{Seq66 ALSA}
 \label{sec:alsa}
 
    This section describes some details concerning the ALSA support of
    \textsl{Seq66}.
    Currently, it just includes some tricks that might be useful.
 
-\subsection{Seq66 ALSA Through Ports}
+\subsection{Seq66 ALSA / Through Ports}
 \label{subsec:alsa_through_ports}
 
    When running the commands \texttt{aplaymidi -l} or \texttt{arecordmidi -l},
@@ -86,7 +86,7 @@
    This will, of course, throw off the \textsl{Seq66} port numbering, unless
    one has implemented port-mapping.
 
-\subsection{Seq66 ALSA Virtual MIDI Devices}
+\subsection{Seq66 ALSA / Virtual MIDI Devices}
 \label{subsec:alsa_virtual_midi_devices}
 
    \url{https://tldp.org/HOWTO/MIDI-HOWTO-10.html}
@@ -115,6 +115,61 @@
    More to come, such as an explanation of \texttt{aconnectgui}....
 
    \url{https://freeshell.de/~murks/posts/ALSA_and_JACK_MIDI_explained_(by_a_dummy_for_dummies)/}
+
+\subsection{Seq66 ALSA / Trouble-Shooting}
+\label{subsec:alsa_testing}
+
+   This section describes some trouble-shooting that can be done with ALSA.
+
+\subsubsection{Seq66 ALSA / Trouble-Shooting / MIDI Clock}
+\label{subsubsec:alsa_testing_midi_clock}
+
+\paragraph{ALSA MIDI Clock Send}
+\label{paragraph:alsa_testing_midi_clock_send}
+
+   To verify that \textsl{Seq66} is sending MIDI clock, the easiest way (using
+   ALSA) is to start the following command and set \textsl{Seq66} to send
+   MIDI Clock to the \texttt{aseqdump} port that appears after restarting
+   \textsl{Seq66}:
+
+   \begin{verbatim}
+      $ aseqdump
+   \end{verbatim}
+
+   Once set up, start playback on \textsl{Seq66}.
+   The result should be a never-ending stream of rapid MIDI clock messages.
+
+\paragraph{ALSA MIDI Clock Receive}
+\label{paragraph:alsa_testing_midi_clock_receive}
+
+   To verify that \textsl{Seq66} receives MIDI clock in ALSA, use a sequencer
+   that can emit MIDI Clock in ALSA.  The precursor to \textsl{Seq66},
+   \textsl{Seq24}, can be used.
+
+   First, run the following command:
+
+   \begin{verbatim}
+      $ seq24 -m
+   \end{verbatim}
+
+   This creates a bunch of virtual ALSA MIDI ports.
+   In \textbf{File / Options / MIDI Clock},
+   select the \textbf{On} option for the first port.
+
+   Then run \textsl{a debug version of Seq66} in a terminal window
+   with the following options:
+
+   \begin{verbatim}
+      $ qseq66 --alsa --auto-ports --verbose
+   \end{verbatim}
+
+   This sets up to auto-connect ALSA MIDI ports.  In
+   \textbf{Edit / Preferences / MIDI Input}, check-mark the first
+   "seq24" port.  There should be no need to restart.
+
+   Now start playback in \textsl{Seq24}.
+   \textsl{Seq66} should display a rapid stream of MIDI Clock messages.
+   If not, check the setup and, if correct, report a bug!
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

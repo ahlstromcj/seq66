@@ -462,8 +462,8 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
  *  m_jack_running flag.
  *
  * \param arg
- *      Points to the jack_assistant in charge of JACK support for the performer
- *      object.
+ *      Points to the jack_assistant in charge of JACK support for the
+ *      performer object.
  */
 
 void
@@ -472,12 +472,11 @@ jack_shutdown_callback (void * arg)
     midi_jack_info * jack = (midi_jack_info *)(arg);
     if (not_nullptr(jack))
     {
-        // jack->set_jack_running(false);
         async_safe_strprint("[JACK shutdown]", 15);
     }
     else
     {
-        async_safe_strprint("JACK shutdown callback null pointer", 35);
+        async_safe_strprint("JACK shutdown null pointer", 26);
     }
 }
 
@@ -853,7 +852,7 @@ midi_jack::api_deinit_in ()
  */
 
 void
-midi_jack::api_play (event * e24, midibyte channel)
+midi_jack::api_play (const event * e24, midibyte channel)
 {
     midibyte status = e24->get_status() + (channel & 0x0F);
     midibyte d0, d1;
@@ -915,7 +914,7 @@ midi_jack::send_message (const midi_message & message)
  */
 
 void
-midi_jack::api_sysex (event * /* e24 */)
+midi_jack::api_sysex (const event * /* e24 */)
 {
     // Will put this one off until later....
 }
@@ -1005,15 +1004,16 @@ midi_jack::api_clock (midipulse tick)
 {
     if (tick >= 0)
     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG // _TMI
         midibase::show_clock("JACK", tick);
 #endif
+        send_byte(EVENT_MIDI_CLOCK);
     }
-    send_byte(EVENT_MIDI_CLOCK);
 }
 
 /**
- *  An internal helper function for sending MIDI clock bytes.
+ *  An internal helper function for sending MIDI clock bytes.  This function
+ *  ought to be called "send_realtime_message()".
  *
  *  Based on the GitHub project "jack_midi_clock", we could try to bypass the
  *  ringbuffer used here and convert the ticks to jack_nframes_t, and use the
@@ -1043,13 +1043,13 @@ midi_jack::send_byte (midibyte evbyte)
     message.push(evbyte);
     if (m_jack_data.valid_buffer())
     {
-        bool ok = send_message(message);
-        if (! ok)
+        if (! send_message(message))
         {
             errprint("JACK send_byte() failed");
         }
     }
 }
+
 
 /**
  *  Empty body for setting PPQN.

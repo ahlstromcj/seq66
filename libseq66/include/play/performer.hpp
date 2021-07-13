@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-07-11
+ * \updates       2021-07-13
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3163,6 +3163,12 @@ private:
     bool poll_cycle ();
     void launch_input_thread ();
     void launch_output_thread ();
+    void midi_start ();
+    void midi_continue ();
+    void midi_stop ();
+    void midi_clock ();
+    void midi_song_pos (const event & ev);
+    void midi_sysex (const event & ev);
 
     condition & cv ()
     {
