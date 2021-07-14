@@ -183,11 +183,11 @@ smanager::main_settings (int argc, char * argv [])
         optionindex = cmdlineopts::parse_command_line_options(argc, argv);
         if (cmdlineopts::parse_o_options(argc, argv))
         {
-            /**
+            /*
              * The user may have specified -o options that are also set up in
-             * the "usr" file.  The command line needs to take precedence.  The
-             * "log" option is processed early in the startup sequence.  These
-             * same settings are made in the cmdlineopts module.
+             * the 'usr' file.  The command line needs to take precedence.
+             * The "log" option is processed early in the startup sequence.
+             * These same settings are made in the cmdlineopts module.
              */
 
             std::string logfile = usr().option_logfile();
@@ -285,16 +285,6 @@ smanager::create_performer ()
     {
         (void) p->get_settings(rc(), usr());
         m_perf_pointer = std::move(p);              /* change the ownership */
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        if (rc().verbose())                         /* for trouble-shooting */
-        {
-            rc().key_controls().show();
-            rc().midi_control_in().show();
-            rc().mute_groups().show();
-        }
-#endif
-
         result = perf()->launch(ppqn);              /* usr().midi_ppqn())   */
         if (! result)
         {
@@ -406,6 +396,11 @@ smanager::open_midi_file (const std::string & fname)
     }
     return midifname;
 }
+
+/**
+ *  The clinsmanager::create_session() function supercedes this one, but calls
+ *  it.
+ */
 
 bool
 smanager::create_session (int /*argc*/, char * /*argv*/ [])
@@ -563,8 +558,8 @@ smanager::save_session (std::string & msg, bool ok)
             }
 
             /*
-             * Anything else to save?  Currently, the 'ctrl' file is saved by the
-             * rcfile class.
+             * Anything else to save?  Currently, the 'ctrl' file is saved by
+             * the rcfile class.
              */
         }
         else
@@ -585,8 +580,8 @@ smanager::save_session (std::string & msg, bool ok)
 }
 
 /**
- *  There is, of course, no window in this base class.  Therefore, we just show
- *  patterns if in verbose mode.
+ *  There is, of course, no window in this base class.  Therefore, we just
+ *  show patterns if in verbose mode.
  *
  * \return
  *      Always returns true.  No window in the command-line application, no
@@ -596,8 +591,10 @@ smanager::save_session (std::string & msg, bool ok)
 bool
 smanager::create_window ()
 {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     if (rc().verbose())
         perf()->show_patterns();
+#endif
 
     return true;
 }
@@ -786,17 +783,12 @@ smanager::create (int argc, char * argv [])
     {
         if (create_session(argc, argv))     /* get path, client ID, etc.    */
         {
-#if defined SEQ66_PLATFORM_DEBUG_TEST_NSM   /* enable to trouble-shoot      */
-            warnprint("DEBUGGING, WRITING CONFIGS to ~/sessiontest");
-            (void) create_project(argc, argv, "~/sessiontest");
-#else
             std::string homedir = manager_path();
             if (homedir == "None")
                 homedir = rc().home_config_directory();
 
             file_message("Session manager path", homedir);
             (void) create_project(argc, argv, homedir);
-#endif
         }
         result = create_performer();        /* fails if performer not made  */
         if (result)
@@ -808,13 +800,7 @@ smanager::create (int argc, char * argv [])
         if (result)
         {
             std::string fname = midi_filename();
-            if (fname.empty())
-            {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                warnprint("MIDI filename empty, nothing to open");
-#endif
-            }
-            else
+            if (! fname.empty())
             {
                 std::string errormessage;
                 std::string tmp = open_midi_file(fname);

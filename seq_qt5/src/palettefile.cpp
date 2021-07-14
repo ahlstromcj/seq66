@@ -180,7 +180,7 @@ palettefile::parse ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        file_message("Reading 'palette'", name());
+        file_message("Reading palette", name());
         result = parse_stream(file);
     }
     else
@@ -227,16 +227,14 @@ palettefile::write_stream (std::ofstream & file)
         "[Seq66]\n\n"
         "config-type = \"palette\"\n"
         "version = " << version() << "\n\n"
-        "# The [comments] section can document this file.  Lines starting\n"
-        "# with '#' and '[' are ignored.  Blank lines are ignored.  Show a\n"
-        "# blank line by adding a space character to the line.\n\n"
+        "# The [comments] section can document this file. Lines starting with\n"
+        "# '#', '[', or that have no character end the comment.\n"
         "[comments]\n\n" << mapper().comments_block().text() << "\n"
         <<
-        "# The first integer is the color number, ranging from 0 to 31. The\n"
-        "# first string is the name of the background color.  The first\n"
-        "# stanza (in square brackets) are the ARGB values for the background.\n"
-        "# The second set provides the foreground color name and color.\n"
-        "# The alpha values are not important here, but should be set to FF.\n"
+        "# First is the color number from 0 to 31. Next is the name of the\n"
+        "# background color. The first stanza [square brackets] are the ARGB\n"
+        "# values for the background. The second provides the foreground\n"
+        "# color name and ARGB values. The alpha values should be set to FF.\n"
         "\n"
         "[palette]\n"
         "\n"
@@ -253,7 +251,7 @@ palettefile::write_stream (std::ofstream & file)
     file <<
         "\n"
         "# Similar to the [palette] section, but applies to UI elements and to\n"
-        "# the --inverse color option.  The first integer is the color number,\n"
+        "# the --inverse color option. The first integer is the color number,\n"
         "# ranging from 0 to 12. The names are feature names, not color names.\n"
         "\n"
         "[ui-palette]\n"
@@ -275,8 +273,8 @@ palettefile::write_stream (std::ofstream & file)
     std::string sbackseq;
     file <<
         "\n"
-        "# This section defines brush styles to use.  The names are based on the\n"
-        "# names in the Qt::BrushStyle enumeration. The supported names are:\n"
+        "# This section defines brush styles to use. The names are based on the\n"
+        "# names in the Qt::BrushStyle enumeration. The names are:\n"
         "#\n"
         "#    nobrush, solid, dense1, dense2, dense3, dense4, dense5, dense6,\n"
         "#    dense7, horizontal, vertical, cross, bdiag, fdiag, diagcross,\n"
@@ -316,7 +314,7 @@ palettefile::write ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        file_message("Writing 'palette'", name());
+        file_message("Writing palette", name());
         result = write_stream(file);
         file.close();
     }

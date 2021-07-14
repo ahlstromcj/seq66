@@ -79,9 +79,7 @@ void
 midioperation::show () const
 {
     std::cout
-        << "Op  " << name()
-        << " Cat  " << cat_name()
-        << " Slot " << slot_name()
+        << "Op  " << name() << " Cat  " << cat_name() << " Slot " << slot_name()
         << std::endl
         ;
 }

@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2021-06-24
+ * \updates       2021-07-14
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -78,6 +78,8 @@ clinsmanager::~clinsmanager ()
  *  there is an NSM URL in the environment, it overrides the one specified in
  *  the 'usr' file.
  *
+ *  Also sanity-checks the URL: "osc.udp://hostname.domain:PORT#"
+ *
  * \param [out] url
  *      Holds the URL that was found.  Use it only if this function returns
  *      true.
@@ -90,43 +92,44 @@ clinsmanager::~clinsmanager ()
 bool
 clinsmanager::detect_session (std::string & url)
 {
-#if defined SEQ66_NSM_SUPPORT
-    bool result = usr().wants_nsm_session();        /* user wants NSM usage */
-    std::string tenturl;                            /* a tentative URL      */
+    bool result = false;
     url.clear();
-    if (result)
-    {
-        infoprint("Checking 'usr' file for NSM URL");
-        tenturl = usr().session_url();              /* try 'usr' file's URL */
-        if (! tenturl.empty())                      /* configured NSM URL   */
-        {
-            /*
-             * Sanity check the URL: "osc.udp://hostname.domain:PORT#"
-             */
 
-            result = contains(tenturl, "osc.udp://");
-            if (result)
-                url = tenturl;
-            else
-                tenturl.clear();
-        }
-    }
-    if (tenturl.empty())                            /* configured NSM URL   */
+#if defined SEQ66_NSM_SUPPORT
+
+    std::string tenturl = nsm::get_url();           /* a tentative URL      */
+    infoprint("Checking for NSM_URL");
+    if (! tenturl.empty())
     {
-        warnprint("Checking environment for NSM_URL");
-        tenturl = nsm::get_url();
-        result = ! tenturl.empty();
+        result = true;
+        url = tenturl;
+    }
+    if (! result)                                   /* not in NSM's env.    */
+    {
+        result = usr().wants_nsm_session();         /* user wants NSM usage */
         if (result)
-            url = tenturl;
+        {
+            infoprint("Checking 'usr' for NSM URL");
+            tenturl = usr().session_url();          /* try 'usr' file's URL */
+            if (tenturl.empty())                    /* configured NSM URL?  */
+            {
+                result = false;
+            }
+            else
+            {
+                result = contains(tenturl, "osc.udp://");   /* sanity check */
+                if (result)
+                    url = tenturl;                  /* configured NSM URL   */
+                else
+                    tenturl.clear();
+            }
+        }
     }
     if (result)
         file_message("NSM URL", tenturl);           /* comforting message   */
+#endif
 
     return result;
-#else
-    url.clear();
-    return false;
-#endif
 }
 
 /**
@@ -393,13 +396,20 @@ clinsmanager::create_project
             result = make_directory_path(fullpath);
             if (result)
             {
+                file_message("Created", fullpath);
                 result = make_directory_path(cfgfilepath);
                 if (result)
+                {
+                    file_message("Created", cfgfilepath);
                     rc().full_config_directory(cfgfilepath);
+                }
             }
             if (result && ! midifilepath.empty())
+            {
                 result = make_directory_path(midifilepath);
-
+                if (result)
+                    file_message("Created", midifilepath);
+            }
             if (result)
             {
                 /*
@@ -421,11 +431,7 @@ clinsmanager::create_project
 
                 std::string dstplayfile = file_path_set(srcplayfile, cfgfilepath);
                 std::string dstnotefile = file_path_set(srcnotefile, cfgfilepath);
-                file_message
-                (
-                    "Saving initial configuration to session directory",
-                    cfgfilepath
-                );
+                file_message("Saving configuration to session", cfgfilepath);
                 usr().save_user_config(true);
                 rc().playlist_filename(dstplayfile);
                 rc().notemap_filename(dstnotefile);
@@ -453,10 +459,7 @@ clinsmanager::create_project
                         if (result)
                         {
                             srcplayfile = file_path_set(srcplayfile, homepath);
-                            (void) save_playlist
-                            (
-                                *plp, srcplayfile, dstplayfile
-                            );
+                            (void) save_playlist(*plp, srcplayfile, dstplayfile);
                             if (! midifilepath.empty())
                             {
                                 (void) copy_playlist_songs
@@ -523,8 +526,8 @@ clinsmanager::read_configuration
     rc().midi_filepath(midifilepath);           /* set MIDI dir     */
     if (! midifilepath.empty())
     {
-        file_message("NSM MIDI file path", rc().midi_filepath());
-        file_message("NSM MIDI file name", rc().midi_filename());
+        file_message("NSM MIDI path", rc().midi_filepath());
+        file_message("NSM MIDI file", rc().midi_filename());
     }
 
     std::string errmessage;

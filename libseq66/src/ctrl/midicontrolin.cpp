@@ -176,8 +176,6 @@ midicontrolin::add_blank_controls (const keycontainer & kc)
         );
         (void) add(blank);
     }
-    if (is_debug())
-        show();
 }
 
 /**

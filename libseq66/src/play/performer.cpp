@@ -2145,6 +2145,7 @@ performer::launch (int ppqn)
     if (result)
     {
         (void) init_jack_transport();
+
         m_master_bus->init(ppqn, m_bpm);    /* calls api_init() per API     */
 
         bool ok = activate();
@@ -2538,7 +2539,9 @@ performer::activate ()
 {
     bool result = m_master_bus && m_master_bus->activate();
 
-#if defined SEQ66_JACK_SUPPORT
+// ca 2021-07-14
+// Move this.  And why doing this even if no JACK transport specified?
+#if defined SEQ66_JACK_SUPPORT_ACTIVATE_HERE // init_jack_transport() instead
     if (result)
         result = m_jack_asst.activate();
 #endif
@@ -5404,11 +5407,6 @@ performer::populate_default_ops ()
         else
             break;
     }
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    if (rc().verbose())
-        m_operations.show();
-#endif
-
     return result;
 }
 

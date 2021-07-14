@@ -697,9 +697,9 @@ nsmbase::send_announcement
         );
         result = rc != (-1);
 
-        std::string text = "sent package '" + appname +
-            "'; app '" + exename +
-            "'; capabilities '" + capabilities + "'";
+        std::string text = "sent package " + appname +
+            "; app " + exename +
+            "; capabilities " + capabilities;
 
         if (! result)
             text += ", but it FAILED";
@@ -1099,7 +1099,7 @@ get_session_url (const std::string & env_value)
 #if defined _GNU_SOURCE
     char * url = secure_getenv(env_value.c_str());
 #else
-    char * url = getenv(env_value.c_str());
+    char * url = std::getenv(env_value.c_str());
 #endif
     if (not_nullptr(url) && strlen(url) > 0)
         result = std::string(url);

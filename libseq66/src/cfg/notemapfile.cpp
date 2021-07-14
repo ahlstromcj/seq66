@@ -179,12 +179,8 @@ notemapfile::parse ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        file_message("Reading 'drums'", name());
+        file_message("Reading drums", name());
         result = parse_stream(file);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        if (result && rc().verbose())
-            mapper().show();
-#endif
     }
     else
     {
@@ -300,7 +296,7 @@ notemapfile::write ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        file_message("Writing 'drums'", name());
+        file_message("Writing drums", name());
         result = write_stream(file);
         file.close();
     }

@@ -563,7 +563,7 @@ usrfile::write ()
     std::ofstream file(name().c_str(), std::ios::out | std::ios::trunc);
     if (file.is_open())
     {
-        file_message("Writing 'usr'", name());
+        file_message("Writing usr", name());
     }
     else
     {
@@ -579,10 +579,9 @@ usrfile::write ()
     write_date(file, "user ('usr')");
     file <<
         "# This is a Seq66 'usr' file. Edit it and place it in the\n"
-        "# $HOME/.config/seq66 directory. It allows one to apply an alias\n"
-        "# (alternate name) to each MIDI bus, MIDI channel, and MIDI control\n"
-        "# control code, per channel. It has additional options not present in\n"
-        "# in Seq24, and supports DOS INI-style variable setting.\n"
+        "# $HOME/.config/seq66 directory. It allows one to apply aliases\n"
+        "# (alternate names) to each MIDI bus, channel, and control code, per\n"
+        "# per channel. It has additional options not present in Seq24.\n"
         ;
 
     file <<

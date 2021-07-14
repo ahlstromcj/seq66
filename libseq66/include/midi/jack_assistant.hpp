@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2021-05-23
+ * \updates       2021-07-13
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -527,18 +527,10 @@ public:
         set_follow_transport(! m_follow_transport);
     }
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-
-    jack_client_t * client () const;
-
-#else
-
     jack_client_t * client () const
     {
         return m_jack_client;
     }
-
-#endif
 
     const std::string & client_name () const
     {

@@ -46,7 +46,7 @@
  */
 
 #if defined SEQ66_NSM_SUPPORT
-#define SEQ66_NSM_QT5_CAPABILITIES      ":dirty:message:optional-gui" // "switch:"
+#define SEQ66_NSM_QT5_CAPABILITIES      ":dirty:message:optional-gui"
 #else
 #define SEQ66_NSM_QT5_CAPABILITIES      ""
 #endif

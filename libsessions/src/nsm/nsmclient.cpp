@@ -459,7 +459,7 @@ nsmclient::open
     session_display_name(displayname);
     session_client_id(clientid);
     set_client_name(clientid);          /* set "seq66.nUKIE" as client ID   */
-    nsm::incoming_msg("Open Values", pathname, clientid + "" + displayname);
+    nsm::incoming_msg("Open Values", pathname, clientid + " " + displayname);
     is_active(true);
 }
 
@@ -506,9 +506,8 @@ nsmclient::loaded ()
 void
 nsmclient::label (const std::string & label)
 {
-    std::string tag("Label from server: '");
+    std::string tag("Label from server: ");
     tag += label;
-    tag += "'";
     nsm_debug(tag); // no code
 }
 
@@ -571,7 +570,7 @@ nsmclient::broadcast
         int argc = int(argv.size());
         for (int i = 0; i < argc; ++i)
         {
-            printf("   [%d] '%s'\n", i, argv[i].c_str());
+            printf("   [%d] %s\n", i, argv[i].c_str());
         }
     }
 }
@@ -697,14 +696,9 @@ nsmclient::session_client_id (const std::string & clid)
  *  virtual initialization function (so that we don't have to call it in the
  *  constructor).
  *
- *  This call is now done in the clinsmanager, who can also get the value from
- *  the "usr" file.
- *
- *      std::string url = nsm::get_url();
- *
- *  Note that this bare pointer should be assigned immediately to a smart
- *  pointer, such as std::unique_ptr<>.  See seq_qt5/src/qt5nsmanager.cpp for
- *  an example.
+ *  Note that this bare pointer returned should be assigned immediately to a
+ *  smart pointer, such as std::unique_ptr<>.  See
+ *  seq_qt5/src/qt5nsmanager.cpp for an example.
  *
  * \param sm
  *      Provides a reference to the existing session manager.

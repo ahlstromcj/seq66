@@ -653,7 +653,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
     if (file_read_writable(rcn))
     {
         rcfile options(rcn, rc());
-        file_message("Reading 'rc'", rcn);
+        file_message("Reading rc", rcn);
         if (options.parse())
         {
             /*
@@ -707,7 +707,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
         rc().playlist_filename(pl);
         rc().notemap_filename(nm);
         rc().mute_groups().reset_defaults();
-        file_message("No 'rc' file, will create", af);
+        file_message("No rc file, will create", af);
     }
     if (result)
     {
@@ -715,7 +715,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
         if (file_read_writable(rcn))
         {
             usrfile ufile(rcn, rc());
-            file_message("Reading 'usr'", rcn);
+            file_message("Reading usr", rcn);
             if (ufile.parse())
             {
                 /*
@@ -734,7 +734,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
         }
         else
         {
-            file_message("No 'usr' file, will create", rcn);
+            file_message("No usr file, will create", rcn);
         }
     }
     return result;
@@ -826,7 +826,7 @@ cmdlineopts::parse_mute_groups
     if (file_read_writable(rcn))
     {
         rcfile options(rcn, rcs);
-        file_message("Reading 'mutes'", rcn);
+        file_message("Reading mutes", rcn);
         if (options.parse_mute_group_section(rcn, true))
         {
             // Nothing to do?

@@ -207,7 +207,7 @@ playlistfile::parse ()
     bool result = file.is_open();
     if (result)
     {
-        file_message("Reading 'playlist'", name());
+        file_message("Reading playlist", name());
         file.seekg(0, std::ios::beg);                   /* seek to start    */
         play_list().clear();
         (void) parse_version(file);
@@ -459,7 +459,7 @@ playlistfile::write ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        file_message("Writing 'playlist'", name());
+        file_message("Writing playlist", name());
     }
     else
     {
@@ -468,12 +468,12 @@ playlistfile::write ()
     }
     write_date(file, "playlist");
     file <<
-        "# This file holds multiple playlists for Seq66. It consists of 1 or\n"
-        "# more [playlist] sections.  Each has a user-specified number for\n"
-        "# sorting and MIDI control, ranging from 0 to 127. Next comes a quoted\n"
-        "# display name for this list, followed by the quoted name of the song\n"
-        "# directory; always uses the UNIX-style separator ('/'). It should be\n"
-        "# accessible from wherever Seq66 is run.\n"
+        "# This file holds multiple playlists. It consists of 1 or more\n"
+        "# [playlist] sections.  Each has a user-specified number for sorting\n"
+        "# and MIDI control, ranging from 0 to 127. Next comes a quoted display\n"
+        "# name for this list, followed by the quoted name of the song folder\n"
+        "# using the UNIX-style separator ('/'). It should be accessible from\n"
+        "# wherever Seq66 is run.\n"
         "#\n"
         "# Next is a list of tunes, each starting with a MIDI control number\n"
         "# and the quoted name of the MIDI file, sorted by the control number.\n"

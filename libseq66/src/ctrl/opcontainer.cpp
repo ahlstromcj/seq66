@@ -100,13 +100,13 @@ opcontainer::add (const midioperation & op)
         (void) m_container.insert(p);
         result = m_container.size() == (sz + 1);
     }
+#if defined SEQ66_PLATFORM_DEBUG
     if (! result)
     {
-#if defined SEQ66_PLATFORM_DEBUG
         int snumber = static_cast<int>(opnumber);
         printf("opcontainer::add() failed for slot #%d\n", snumber);
-#endif
     }
+#endif
     return result;
 }
 

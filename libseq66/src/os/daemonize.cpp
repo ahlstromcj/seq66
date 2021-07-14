@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2021-06-19
+ * \updates       2021-07-14
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -94,6 +94,7 @@
 #include <fcntl.h>                      /* _O_RDWR                          */
 #include <io.h>                         /* _open(), _close()                */
 #include <synchapi.h>                   /* recent Windows "wait" functions  */
+#include <process.h>                    /* Windows _getpid() function       */
 
 #define STD_CLOSE       _close
 #define STD_OPEN        _open
@@ -450,6 +451,8 @@ void signal_for_exit ()
     sg_needs_close = true;
 }
 
+#if defined SEQ66_USE_PID_EXISTS
+
 /**
  *  Looks up an executable in the process list using the pidof program.  This
  *  function copies the pidof command line, then opens a pipe to that process
@@ -487,6 +490,15 @@ pid_exists (const std::string & exename)
     return get_pid_by_name(exename) > 0;
 }
 
+#endif  // SEQ66_USE_PID_EXISTS
+
+std::string
+get_pid ()
+{
+    long p = long(getpid());
+    return std::to_string(p);
+}
+
 #else
 
 void
@@ -510,6 +522,23 @@ session_save ()
 void signal_for_exit ()
 {
     // no code at this time
+}
+
+#if defined SEQ66_USE_PID_EXISTS
+
+bool
+pid_exists (const std::string & exename)
+{
+    return false;       /* to do, if possible */
+}
+
+#endif  // SEQ66_USE_PID_EXISTS
+
+std::string
+get_pid ()
+{
+    long p = long(_getpid());
+    return std::to_string(p);
 }
 
 #endif  // defined SEQ66_PLATFORM_LINUX

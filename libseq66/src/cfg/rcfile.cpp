@@ -266,7 +266,7 @@ rcfile::parse ()
     }
 
     std::string fullpath = rc_ref().midi_control_filespec();
-    file_message("Reading 'ctrl'", fullpath);
+    file_message("Reading ctrl", fullpath);
     ok = parse_midi_control_section(fullpath, true);
     if (! ok)
     {
@@ -299,7 +299,7 @@ rcfile::parse ()
     }
 
     fullpath = rc_ref().mute_group_filespec();
-    file_message("Reading 'mutes'", fullpath);
+    file_message("Reading mutes", fullpath);
     ok = parse_mute_group_section(fullpath, true);
     if (! ok)
     {
@@ -956,7 +956,7 @@ rcfile::write ()
     bool ok = file.is_open();
     if (ok)
     {
-        file_message("Writing 'rc'", name());
+        file_message("Writing rc", name());
     }
     else
     {

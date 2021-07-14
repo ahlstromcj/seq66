@@ -330,7 +330,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
         {
             infoprintf("%d automation-control lines", count);
         }
-        if (rc_ref().verbose())
+        if (rc_ref().investigate())             /* too much for verbose()   */
         {
             infoprint("Loaded key mappings");
             m_temp_key_controls.show();
@@ -340,7 +340,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
     {
         rc_ref().midi_control_in().clear();
         rc_ref().midi_control_in() = m_temp_midi_ctrl_in;
-        rc_ref().midi_control_in().inactive_allowed(true);  /* always   */
+        rc_ref().midi_control_in().inactive_allowed(true);  /* always true  */
     }
     if (rc_ref().load_key_controls() && m_temp_key_controls.count() > 0)
     {
@@ -871,7 +871,7 @@ midicontrolfile::write ()
         result = container_to_stanzas(rc_ref().midi_control_in());
         if (result)
         {
-            file_message("Writing 'ctrl'", name());
+            file_message("Writing ctrl", name());
             result = write_stream(file);
             if (! result)
                 file_error("Write fail", name());
@@ -1383,10 +1383,8 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
         if (rc_ref().load_key_controls())
         {
             /*
-             *  Make reverse-lookup map<pattern, keystroke> for
-             *  use with show_ui functions.  It would be an addition to the
-             *  keycontainer class.
-             *
+             *  Make reverse-lookup map<pattern, keystroke> for the show_ui
+             *  functions.  It would be an addition to the keycontainer class.
              *  keyname = key_controls().key_name(slotnumber);
              */
 
@@ -1404,14 +1402,7 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
                 else if (opcat == automation::category::mute_group)
                     ok = m_temp_key_controls.add_mute(kc);
             }
-            if (ok)
-            {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                if (rc_ref().verbose())
-                    kc.show();
-#endif
-            }
-            else
+            if (! ok)
                 (void) keycontrol_error_message(kc, ordinal, line_number());
         }
     }
