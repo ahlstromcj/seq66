@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-13
+ * \updates       2021-07-14
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -68,6 +68,8 @@ namespace seq66
 
 std::string configfile::sm_error_message;
 bool configfile::sm_is_error = false;
+int configfile::sm_int_default = -9999;
+int configfile::sm_float_default = -9999.0f;
 
 /**
  *  Provides the string plus rcsettings constructor for a configuration file.
@@ -479,7 +481,8 @@ configfile::get_integer
 )
 {
     std::string value = get_variable(file, tag, variablename, position);
-    return string_to_int(value);
+    int result = value == "default" ?  sm_int_default : string_to_int(value) ;
+    return result;
 }
 
 void
@@ -503,7 +506,10 @@ configfile::get_float
 )
 {
     std::string value = get_variable(file, tag, variablename, position);
-    return float(string_to_double(value));
+    float result = value == "default" ?
+        sm_float_default : float(string_to_double(value)) ;
+
+    return result;
 }
 
 void

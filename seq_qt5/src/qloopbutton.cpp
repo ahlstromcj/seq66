@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-07-10
+ * \updates       2021-07-14
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -165,25 +165,26 @@ qloopbutton::qloopbutton
     seq::pointer seqp,
     QWidget * parent
 ) :
-    qslotbutton         (slotparent, slotnumber, label, hotkey, parent),
-    m_show_average      (false),                    /* last versus average  */
-    m_fingerprint_inited(false),
-    m_fingerprint_size  (usr().fingerprint_size()),
-    m_fingerprint       (m_fingerprint_size),       /* reserve vector space */
-    m_fingerprint_count (m_fingerprint_size),       /* reserve vector space */
-    m_seq               (seqp),                     /* loop()               */
-    m_is_checked        (loop()->playing()),
-    m_prog_back_color   (Qt::black),
-    m_prog_fore_color   (Qt::green),
-    m_text_font         (),
-    m_text_initialized  (false),
-    m_draw_background   (true),
-    m_top_left          (),
-    m_top_right         (),
-    m_bottom_left       (),
-    m_bottom_right      (),
-    m_progress_box      (),
-    m_event_box         ()
+    qslotbutton             (slotparent, slotnumber, label, hotkey, parent),
+    m_show_average          (false),                /* last versus average  */
+    m_fingerprint_inited    (false),
+    m_fingerprinted         (false),
+    m_fingerprint_size      (usr().fingerprint_size()),
+    m_fingerprint           (m_fingerprint_size),   /* reserve vector space */
+    m_fingerprint_count     (m_fingerprint_size),
+    m_seq                   (seqp),                 /* loop()               */
+    m_is_checked            (loop()->playing()),
+    m_prog_back_color       (Qt::black),
+    m_prog_fore_color       (Qt::green),
+    m_text_font             (),
+    m_text_initialized      (false),
+    m_draw_background       (true),
+    m_top_left              (),
+    m_top_right             (),
+    m_bottom_left           (),
+    m_bottom_right          (),
+    m_progress_box          (),
+    m_event_box             ()
 {
     m_text_font.setBold(true);
     m_text_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
@@ -295,16 +296,16 @@ void
 qloopbutton::initialize_fingerprint ()
 {
     const int i1 = int(m_fingerprint_size);
-    if (i1 > 0)
+    if (! m_fingerprint_inited && i1 > 0)
     {
         int n0, n1;
-        bool have_notes = loop()->minmax_notes(n0, n1);     /* fill n0 and n1   */
+        bool have_notes = loop()->minmax_notes(n0, n1); /* fill n0 and n1   */
         if (have_notes)
             have_notes = loop()->event_threshold();
 
-        if (! m_fingerprint_inited && have_notes)
+        if (have_notes)
         {
-            midipulse t1 = loop()->get_length();            /* t0 = 0           */
+            midipulse t1 = loop()->get_length();        /* t0 = 0           */
             if (t1 == 0)
                 return;
 
@@ -363,11 +364,10 @@ qloopbutton::initialize_fingerprint ()
                 if (m_fingerprint_count[i] > 1)
                     m_fingerprint[i] /= m_fingerprint_count[i];
             }
-            m_fingerprint_inited = true;
+            m_fingerprinted = true;
         }
     }
-    else
-        m_fingerprint_inited = true;
+    m_fingerprint_inited = true;
 }
 
 /**
@@ -475,8 +475,8 @@ qloopbutton::reupdate (bool all)
 void
 qloopbutton::paintEvent (QPaintEvent * pev)
 {
-    if (is_dirty())
-    {
+//  if (is_dirty())
+//  {
         QPushButton::paintEvent(pev);
         QPainter painter(this);
         if (loop())
@@ -494,7 +494,6 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 painter.setFont(m_text_font);
 
 #if defined SEQ66_USE_BACKGROUND_ROLE_COLOR_DISABLED
-
                 QPen pen(text_color());             /* label_color()    */
                 QBrush brush(Qt::black);
                 painter.setBrush(brush);
@@ -540,7 +539,6 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                     m_bottom_right.m_w, m_bottom_right.m_h
                 );
                 painter.drawText(box, m_bottom_right.m_flags, title);
-
                 if (! vert_compressed())
                 {
                     if (loop()->playing())
@@ -576,7 +574,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             setEnabled(false);
             setText(snstring.c_str());
         }
-    }
+//  }
 }
 
 /**
@@ -683,15 +681,15 @@ qloopbutton::draw_pattern (QPainter & painter)
         int ly0 = m_event_box.y();
         int lxw = m_event_box.w();
         int lyh = m_event_box.h();
-        if (m_fingerprint_size > 1)
+        if (m_fingerprinted)
         {
             if (loop()->transposable())
-                pen.setColor(text_color());
+                pen.setColor(pen_color());              /* not text_color() */
             else
                 pen.setColor(drum_color());
 
-            if (m_fingerprint_inited)
-            {
+//          if (m_fingerprint_inited)
+//          {
                 float x = float(m_event_box.x());
                 float dx = float(m_event_box.w()) / (m_fingerprint_size - 1);
                 pen.setWidth(2);
@@ -702,7 +700,7 @@ qloopbutton::draw_pattern (QPainter & painter)
                     if (fp > 0 && fp != c_midibyte_max)
                         painter.drawPoint(int(x), int(fp));
                 }
-            }
+//          }
         }
         else
         {

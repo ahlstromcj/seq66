@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-11
+ * \updates       2021-07-14
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -116,6 +116,21 @@ private:
      */
 
     std::string m_file_version;
+
+protected:
+
+    /**
+     *  Provides a numerical flag to use a default value for an integer.
+     */
+
+    static int sm_int_default;
+
+    /**
+     *  Provides a numerical flag to use a default value for a double or float
+     *  value.
+     */
+
+    static int sm_float_default;
 
 protected:
 

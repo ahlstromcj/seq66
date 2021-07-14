@@ -195,6 +195,13 @@ const int c_seqarea_y = c_text_y * c_seqchars_y;
 const int c_mainwnd_spacing = 2;            // try 4 or 6 instead of 2
 
 /**
+ *  Provides the defaults for the progress box in the qloopbuttons.
+ */
+
+const double c_progress_box_width  = 0.80;
+const double c_progress_box_height = 0.40;
+
+/**
  *  Default constructor.
  */
 
@@ -286,8 +293,8 @@ usrsettings::usrsettings () :
     m_user_ui_style_sheet       (""),
     m_resume_note_ons           (false),
     m_fingerprint_size          (32),
-    m_progress_box_width        (-1.0),
-    m_progress_box_height       (-1.0),
+    m_progress_box_width        (c_progress_box_width),
+    m_progress_box_height       (c_progress_box_height),
     m_session_manager           (session::none),
     m_session_url               (),
     m_in_session                (false),
@@ -370,8 +377,8 @@ usrsettings::set_defaults ()
     m_user_ui_style_sheet = "";
     m_resume_note_ons = false;
     m_fingerprint_size = 32;
-    m_progress_box_width = (-1.0);
-    m_progress_box_height = (-1.0);
+    m_progress_box_width = c_progress_box_width;
+    m_progress_box_height = c_progress_box_height;
     m_session_manager = session::none;
     m_session_url.clear();
     m_in_session = false;
@@ -500,11 +507,8 @@ usrsettings::mainwnd_y_min () const
 void
 usrsettings::progress_box_size (double w, double h)
 {
-    if (w >= 0.0)
-        m_progress_box_width = w;
-
-    if (h >= 0.0)
-        m_progress_box_height = h;
+    m_progress_box_width = (w >= 0.0) ? w : c_progress_box_width ;
+    m_progress_box_height = (h >= 0.0) ? h : c_progress_box_height ;
 }
 
 /**

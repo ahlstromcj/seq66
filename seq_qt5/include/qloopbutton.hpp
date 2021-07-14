@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-05-11
+ * \updates       2021-07-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -132,6 +132,7 @@ private:
 
     bool m_show_average;
     bool m_fingerprint_inited;
+    bool m_fingerprinted;
     size_t m_fingerprint_size;
     std::vector<midishort> m_fingerprint;
     std::vector<midishort> m_fingerprint_count;
