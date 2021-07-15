@@ -190,17 +190,9 @@ playlist::open_song (const std::string & fname, bool verifymode)
     {
         std::string errmsg_dummy;
         result = m_performer->read_midi_file(fname, errmsg_dummy, false);
-    }
-    if (result)
-    {
-        if (verifymode)
+        if (result && verifymode)
         {
             /* nothing to do yet */
-        }
-        else
-        {
-//          if (unmute_set_now())
-//              m_performer->toggle_playing_tracks();
         }
     }
     return result;

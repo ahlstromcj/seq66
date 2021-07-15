@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-07-14
+ * \updates       2021-07-15
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -475,106 +475,103 @@ qloopbutton::reupdate (bool all)
 void
 qloopbutton::paintEvent (QPaintEvent * pev)
 {
-//  if (is_dirty())
-//  {
-        QPushButton::paintEvent(pev);
-        QPainter painter(this);
-        if (loop())
+    QPushButton::paintEvent(pev);
+    QPainter painter(this);
+    if (loop())
+    {
+        midipulse tick = loop()->get_last_tick();
+        if (initialize_text() || tick == 0)
         {
-            midipulse tick = loop()->get_last_tick();
-            if (initialize_text() || tick == 0)
-            {
-                QRectF box
-                (
-                    m_top_left.m_x, m_top_left.m_y,
-                    m_top_left.m_w, m_top_left.m_h
-                );
-                QString title(m_top_left.m_label.c_str());
-                painter.setPen(label_color());      /* text issue #50   */
-                painter.setFont(m_text_font);
+            QRectF box
+            (
+                m_top_left.m_x, m_top_left.m_y,
+                m_top_left.m_w, m_top_left.m_h
+            );
+            QString title(m_top_left.m_label.c_str());
+            painter.setPen(label_color());      /* text issue #50   */
+            painter.setFont(m_text_font);
 
 #if defined SEQ66_USE_BACKGROUND_ROLE_COLOR_DISABLED
-                QPen pen(text_color());             /* label_color()    */
-                QBrush brush(Qt::black);
-                painter.setBrush(brush);
+            QPen pen(text_color());             /* label_color()    */
+            QBrush brush(Qt::black);
+            painter.setBrush(brush);
 
-                /*
-                 * This call gets the background we painted, not the background
-                 * actually shown by the current Qt 5 theme.
-                 *
-                 *      QColor trueback = this->palette().button().color();
-                 */
+            /*
+             * This call gets the background we painted, not the background
+             * actually shown by the current Qt 5 theme.
+             *
+             *      QColor trueback = this->palette().button().color();
+             */
 
-                QWidget * rent = this->parentWidget();
-                if (not_nullptr(rent))
-                {
-                    QColor trueback = rent->palette().color(QPalette::Background);
-                    trueback = gui_palette_qt5::calculate_inverse(trueback);
-                    pen.setColor(trueback);
-                }
-                painter.setPen(pen);
+            QWidget * rent = this->parentWidget();
+            if (not_nullptr(rent))
+            {
+                QColor trueback = rent->palette().color(QPalette::Background);
+                trueback = gui_palette_qt5::calculate_inverse(trueback);
+                pen.setColor(trueback);
+            }
+            painter.setPen(pen);
 #endif
 
+            painter.drawText(box, m_top_left.m_flags, title);
+            title = m_top_right.m_label.c_str();
+            box.setRect
+            (
+                m_top_right.m_x, m_top_right.m_y,
+                m_top_right.m_w, m_top_right.m_h
+            );
+            painter.drawText(box, m_top_right.m_flags, title);
+
+            title = m_bottom_left.m_label.c_str();
+            box.setRect
+            (
+                m_bottom_left.m_x, m_bottom_left.m_y,
+                m_bottom_left.m_w, m_bottom_left.m_h
+            );
+            painter.drawText(box, m_bottom_left.m_flags, title);
+
+            title = m_bottom_right.m_label.c_str();
+            box.setRect
+            (
+                m_bottom_right.m_x, m_bottom_right.m_y,
+                m_bottom_right.m_w, m_bottom_right.m_h
+            );
+            painter.drawText(box, m_bottom_right.m_flags, title);
+            if (! vert_compressed())
+            {
+                if (loop()->playing())
+                    title = "Armed";
+                else if (loop()->get_queued())
+                    title = "Queued";
+                else if (loop()->one_shot())
+                    title = "One-shot";
+                else
+                    title = "Muted";
+
+                int line2y = 2 * usr().scale_font_size(6);
+                box.setRect
+                (
+                    m_top_left.m_x, m_top_left.m_y + line2y,
+                    m_top_left.m_w, m_top_left.m_h
+                );
                 painter.drawText(box, m_top_left.m_flags, title);
-                title = m_top_right.m_label.c_str();
-                box.setRect
-                (
-                    m_top_right.m_x, m_top_right.m_y,
-                    m_top_right.m_w, m_top_right.m_h
-                );
-                painter.drawText(box, m_top_right.m_flags, title);
-
-                title = m_bottom_left.m_label.c_str();
-                box.setRect
-                (
-                    m_bottom_left.m_x, m_bottom_left.m_y,
-                    m_bottom_left.m_w, m_bottom_left.m_h
-                );
-                painter.drawText(box, m_bottom_left.m_flags, title);
-
-                title = m_bottom_right.m_label.c_str();
-                box.setRect
-                (
-                    m_bottom_right.m_x, m_bottom_right.m_y,
-                    m_bottom_right.m_w, m_bottom_right.m_h
-                );
-                painter.drawText(box, m_bottom_right.m_flags, title);
-                if (! vert_compressed())
-                {
-                    if (loop()->playing())
-                        title = "Armed";
-                    else if (loop()->get_queued())
-                        title = "Queued";
-                    else if (loop()->one_shot())
-                        title = "One-shot";
-                    else
-                        title = "Muted";
-
-                    int line2y = 2 * usr().scale_font_size(6);
-                    box.setRect
-                    (
-                        m_top_left.m_x, m_top_left.m_y + line2y,
-                        m_top_left.m_w, m_top_left.m_h
-                    );
-                    painter.drawText(box, m_top_left.m_flags, title);
-                }
-                initialize_fingerprint();
             }
-            if (sm_draw_progress_box)
-                draw_progress_box(painter);
+            initialize_fingerprint();
+        }
+        if (sm_draw_progress_box)
+            draw_progress_box(painter);
 
-            draw_pattern(painter);
-            if (loop()->is_playable())
-                draw_progress(painter, tick);
-        }
-        else
-        {
-            std::string snstring = std::to_string(m_slot_number);
-            snstring += ": NO LOOP!";
-            setEnabled(false);
-            setText(snstring.c_str());
-        }
-//  }
+        draw_pattern(painter);
+        if (loop()->is_playable())
+            draw_progress(painter, tick);
+    }
+    else
+    {
+        std::string snstring = std::to_string(m_slot_number);
+        snstring += ": NO LOOP!";
+        setEnabled(false);
+        setText(snstring.c_str());
+    }
 }
 
 /**
@@ -688,19 +685,16 @@ qloopbutton::draw_pattern (QPainter & painter)
             else
                 pen.setColor(drum_color());
 
-//          if (m_fingerprint_inited)
-//          {
-                float x = float(m_event_box.x());
-                float dx = float(m_event_box.w()) / (m_fingerprint_size - 1);
-                pen.setWidth(2);
-                painter.setPen(pen);
-                for (int i = 0; i < int(m_fingerprint_size); ++i, x += dx)
-                {
-                    midishort fp = m_fingerprint[i];
-                    if (fp > 0 && fp != c_midibyte_max)
-                        painter.drawPoint(int(x), int(fp));
-                }
-//          }
+            float x = float(m_event_box.x());
+            float dx = float(m_event_box.w()) / (m_fingerprint_size - 1);
+            pen.setWidth(2);
+            painter.setPen(pen);
+            for (int i = 0; i < int(m_fingerprint_size); ++i, x += dx)
+            {
+                midishort fp = m_fingerprint[i];
+                if (fp > 0 && fp != c_midibyte_max)
+                    painter.drawPoint(int(x), int(fp));
+            }
         }
         else
         {

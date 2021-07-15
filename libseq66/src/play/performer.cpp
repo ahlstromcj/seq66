@@ -377,7 +377,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_in_thread             (),
     m_out_thread_launched   (false),
     m_in_thread_launched    (false),
-    m_io_active             (false),            /* set true in launch()     */
+    m_io_active             (false),            /* !done(), set in launch() */
     m_is_running            (false),
     m_is_pattern_playing    (false),
     m_needs_update          (true),
@@ -451,8 +451,7 @@ performer::performer (int ppqn, int rows, int columns) :
 
 performer::~performer ()
 {
-    if (m_io_active)
-        (void) finish();                /* sets m_io_active to false, etc.  */
+    (void) finish();                    /* sets m_io_active to false, etc.  */
 }
 
 /**
@@ -708,12 +707,6 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     m_master_bus->get_port_statuses(m_clocks, m_inputs);
     rcs.clocks() = m_clocks;
     rcs.inputs() = m_inputs;
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    m_clocks.show("Clocks");
-    m_inputs.show("Inputs");
-#endif
-
     rcs.key_controls() = m_key_controls;
     rcs.midi_control_in() = m_midi_control_in;
     rcs.midi_control_out() = m_midi_control_out;
@@ -961,7 +954,7 @@ performer::sequence_title (const sequence & seq) const
     if (is_seq_active(sn))
     {
         char temp[16];
-        const char * fmt =  usr().window_scaled_down() ? "%.11s" : "%.14s" ;
+        const char * fmt = usr().window_scaled_down() ? "%.11s" : "%.14s" ;
         snprintf(temp, sizeof temp, fmt, seq.title().c_str());
         result = std::string(temp);
     }
@@ -1475,7 +1468,7 @@ performer::next_song_mode ()
 void
 performer::inner_start ()
 {
-    if (m_io_active)                            /* won't start when exiting */
+    if (! done())                               /* won't start when exiting */
     {
         if (! is_running())
         {
@@ -2489,49 +2482,41 @@ performer::launch_input_thread ()
 bool
 performer::finish ()
 {
-    stop_playing();                         /* see notes in banner          */
-    reset_sequences();                      /* stop all output upon exit    */
-
-#if defined USE_PANIC_AT_EXIT
-
-    /*
-     * We are wondering if this is what is causing the recent "message
-     * overflow" and possibilities of a hang at exit. Let's disable this.
-     * However, as soon as we tested it, it hung at exit, though just once.
-     * Fap!
-     */
-
-    panic();                                /* go even further 2021-03-18   */
-
-#endif
-
-    announce_exit(true);                    /* blank device completely      */
-    m_io_active = m_is_running = false;
-    cv().signal();                          /* signal the end of play       */
-    if (m_out_thread_launched && m_out_thread.joinable())
+    bool result = true;
+    if (! done())                           /* m_io_active is true          */
     {
-        m_out_thread.join();
-        m_out_thread_launched = false;
+        stop_playing();                     /* see notes in banner          */
+        reset_sequences();                  /* stop all output upon exit    */
+        announce_exit(true);                /* blank device completely      */
+        m_io_active = m_is_running = false;
+        cv().signal();                      /* signal the end of play       */
+        if (m_out_thread_launched && m_out_thread.joinable())
+        {
+            m_out_thread.join();
+            m_out_thread_launched = false;
+        }
+        if (m_in_thread_launched && m_in_thread.joinable())
+        {
+            m_in_thread.join();
+            m_in_thread_launched = false;
+        }
+
+        bool ok = deinit_jack_transport();
+        bool result = bool(m_master_bus);
+        if (result)
+            m_master_bus->get_port_statuses(m_clocks, m_inputs);
+
+        result = ok && result;
     }
-
-    if (m_in_thread_launched && m_in_thread.joinable())
-    {
-        m_in_thread.join();
-        m_in_thread_launched = false;
-    }
-
-    bool ok = deinit_jack_transport();
-    bool result = bool(m_master_bus);
-    if (result)
-        m_master_bus->get_port_statuses(m_clocks, m_inputs);
-
-    return ok && result;
+    return result;
 }
 
 /**
  *  Performs a controlled activation of the jack_assistant and other JACK
  *  modules. Currently does work only for JACK; the activate() calls for other
- *  APIs just return true without doing anything.
+ *  APIs just return true without doing anything.  However...
+ *
+ * ca 2021-07-14 Move this. Why doing it even if no JACK transport specified?
  */
 
 bool
@@ -2539,8 +2524,6 @@ performer::activate ()
 {
     bool result = m_master_bus && m_master_bus->activate();
 
-// ca 2021-07-14
-// Move this.  And why doing this even if no JACK transport specified?
 #if defined SEQ66_JACK_SUPPORT_ACTIVATE_HERE // init_jack_transport() instead
     if (result)
         result = m_jack_asst.activate();
@@ -3073,8 +3056,7 @@ performer::output_func ()
                     break;
             }
         }
-
-        if (! m_io_active)                  /* we're done, quit working     */
+        if (done())                         /* we're done, quit working     */
             break;
 
         pad().initialize(0, looping(), song_mode());
@@ -3371,7 +3353,7 @@ performer::input_func ()
 
     if (set_timer_services(true))       /* wrapper for a Windows-only func. */
     {
-        while (m_io_active)             /* should we lock/atomic this one?  */
+        while (! done())
         {
             if (! poll_cycle())
                 break;
@@ -3390,12 +3372,12 @@ performer::input_func ()
 bool
 performer::poll_cycle ()
 {
-    bool result = m_io_active;
+    bool result = ! done();
     if (result && m_master_bus->poll_for_midi() > 0)
     {
         do
         {
-            if (! m_io_active)
+            if (done())
             {
                 result = false;
                 break;                              /* spurious exit events */
