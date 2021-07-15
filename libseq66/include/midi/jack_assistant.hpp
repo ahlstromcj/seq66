@@ -146,6 +146,7 @@ using jack_status_pair_t = struct
 class jack_assistant
 {
     friend int jack_transport_callback (jack_nframes_t nframes, void * arg);
+    friend int jack_transport_callback_legacy (jack_nframes_t nframes, void * arg);
     friend void jack_transport_shutdown (void * arg);
 
 #if defined USE_JACK_SYNC_CALLBACK
@@ -620,6 +621,7 @@ extern void jack_timebase_callback
  */
 
 extern int jack_transport_callback (jack_nframes_t nframes, void * arg);
+extern int jack_transport_callback_legacy (jack_nframes_t nframes, void * arg);
 extern jack_client_t * create_jack_client
 (
     std::string clientname,

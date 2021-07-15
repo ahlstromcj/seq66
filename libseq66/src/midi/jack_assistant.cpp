@@ -64,10 +64,6 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "cfg/settings.hpp"             /* "rc" and "user" settings         */
 
-#if defined SEQ66_JACK_SUPPORT
-#include "os/daemonize.hpp"             /* seq66::get_pid()                 */
-#endif
-
 #if defined SEQ66_JACK_SESSION          /* deprecated, use Non Session Mgr. */
 #include "midi/midifile.hpp"            /* seq66::midifile class            */
 #endif
@@ -249,11 +245,12 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
         else
         {
             /*
-             * For start or for FF/RW/key-p when not running.  If stopped,
-             * start or reposition the transport marker.
+             * At start or FF/RW when not running, start or reposition the
+             * transport marker.  Using "! j->is_master()" may lead to a hang
+             * at exit [in ~QApplication()].  Not sure, very tricky, sporadic.
              */
 
-            if (! j->is_master())                       /* j->is_slave()    */
+            if (j->is_slave())
             {
                 if (pos.beats_per_minute > 1.0)         /* a sanity check   */
                 {
@@ -275,6 +272,48 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
                 long tick = j->current_jack_position();
                 p.jack_reposition(tick, j->jack_stop_tick());
             }
+        }
+    }
+    return 0;
+}
+
+int
+jack_transport_callback_legacy (jack_nframes_t /*nframes*/, void * arg)
+{
+    jack_assistant * j = (jack_assistant *)(arg);
+    if (not_nullptr(j))
+    {
+        jack_position_t pos;
+        performer & p = j->m_jack_parent;   /* if (! p.is_running()) */
+        jack_transport_state_t s = jack_transport_query(j->client(), &pos);
+        if (j->is_slave())
+        {
+            if (j->parent().jack_set_beats_per_minute(pos.beats_per_minute))
+            {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+                printf("BPM = %f\n", pos.beats_per_minute);
+#endif
+            }
+        }
+        if (s == JackTransportStopped)
+        {
+            /*
+             * Don't start, just reposition transport marker.
+             */
+
+            long tick = j->current_jack_position();
+            long diff = tick - p.jack_stop_tick();
+            if (diff != 0)                  // was (diff > 0) 2021-03-30
+            {
+                p.set_reposition(false);    // don't reposition to L marker
+                p.set_start_tick(tick);
+                p.jack_stop_tick(tick);     // j->jack_stop_tick(tick);
+            }
+        }
+        else if (s==JackTransportStarting || s==JackTransportRolling)
+        {
+            j->m_transport_state_last = JackTransportStarting;
+            p.inner_start();
         }
     }
     return 0;
@@ -701,7 +740,8 @@ jack_assistant::get_jack_client_info ()
  *      client application, such as Qtractor, is running as JACK Master (and
  *      then seq66 will apparently follow it).
  *
- *  STAZED:
+ * Stazed:
+ *
  *      The call to jack_timebase_callback() to supply jack with BBT, etc.
  *      would occasionally fail when the *pos information had zero or some
  *      garbage in the pos.frame_rate variable. This would occur when there
@@ -720,6 +760,9 @@ jack_assistant::get_jack_client_info ()
  *      calculations that display in qjackctl. So we need to set it here and
  *      just use m_frame_rate for calculations instead of pos.frame_rate.
  *
+ *      Stazed JACK support uses only the jack_transport_callback().  Makes
+ *      sense, since seq66/32/64 are not "slow-sync" clients.
+ *
  * \return
  *      Returns true if JACK is now considered to be running (or if it was
  *      already running.)
@@ -732,36 +775,30 @@ jack_assistant::init ()
     if (result)
     {
         std::string package = rc().app_client_name() + "_transport";
-        m_timebase = timebase::master;
+        m_timebase = timebase::none;
         m_jack_client = client_open(package);
         if (m_jack_client == NULL)
         {
             result = false;
-            m_timebase = timebase::none;
             return error_message("JACK server not running, transport disabled");
         }
         else
         {
             m_frame_rate = jack_get_sample_rate(m_jack_client);
             get_jack_client_info();
-            jack_on_shutdown
+            jack_on_shutdown            /* no return value, surprisingly    */
             (
                 m_jack_client, jack_transport_shutdown, (void *) this
             );
 
-            /*
-             * Stazed JACK support uses only the jack_transport_callback().
-             * Makes sense, since seq66/32/64 are not "slow-sync" clients.
-             */
-
             int jackcode = jack_set_process_callback    /* notes in banner  */
             (
                 m_jack_client, jack_transport_callback, (void *) this
+//              m_jack_client, jack_transport_callback_legacy, (void *) this
             );
             if (jackcode != 0)
             {
                 result = false;
-                m_timebase = timebase::none;
                 return error_message("jack_set_process_callback() failed]");
             }
         }
@@ -776,7 +813,6 @@ jack_assistant::init ()
             if (jackcode != 0)
             {
                 result = false;
-                m_timebase = timebase::none;
                 (void) error_message("jack_set_session_callback() failed]");
             }
         }
@@ -785,7 +821,6 @@ jack_assistant::init ()
         if (result)
         {
             bool master_is_set = false;         /* flag to handle trickery  */
-            bool cond = rc().with_jack_master_cond();
             if (rc().with_jack_master())        /* OR with 'cond' removed   */
             {
                 /*
@@ -793,6 +828,7 @@ jack_assistant::init ()
                  * master, i.e. it is a conditional attempt to be JACK master.
                  */
 
+                bool cond = rc().with_jack_master_cond();
                 int jackcode = jack_set_timebase_callback
                 (
                     m_jack_client, cond, jack_timebase_callback, (void *) this
@@ -806,17 +842,13 @@ jack_assistant::init ()
                 else
                 {
                     result = false;
-                    m_timebase = timebase::slave;
                     (void) error_message("jack_set_timebase_callback() failed");
                 }
             }
-            if (result)
+            if (! master_is_set)
             {
-                if (! master_is_set)
-                {
-                    m_timebase = timebase::slave;
-                    (void) info_message("JACK transport slave");
-                }
+                m_timebase = timebase::slave;
+                (void) info_message("JACK transport slave");
             }
         }
         if (result)
@@ -908,7 +940,7 @@ jack_assistant::activate ()
         result = rc == 0;
         if (result)
         {
-            (void) info_message("JACK transport enabled");
+            (void) info_message("JACK activated");
         }
         else
         {
@@ -916,18 +948,6 @@ jack_assistant::activate ()
             m_timebase = timebase::none;
             (void) error_message("Can't activate JACK transport client");
         }
-#if 0       // 2021-07-14
-        else
-        {
-            if (m_jack_running)
-                (void) info_message("JACK transport enabled");
-            else
-            {
-                m_timebase = timebase::none;
-                (void) error_message("error, JACK transport not enabled");
-            }
-        }
-#endif
     }
     return result;
 }
