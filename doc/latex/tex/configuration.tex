@@ -354,6 +354,12 @@
 
       \configref{rc}{jack-transport}{with\_jack\_transport}
 
+   \optionline{-g}{-{}-no-jack-transport}
+      \textsl{Seq66} will not sync to JACK transport.
+      This disables JACK transport if it had been enabled previously.
+
+      \configref{rc}{jack-transport}{with\_jack\_transport}
+
    \optionline{-J}{-{}-jack-master}
       \textsl{Seq66} will try to be JACK master.
 
@@ -670,16 +676,6 @@
 
    For \textsl{Seq66} \textsl{before} 0.94.0, simple boolean digit settings
    were used.
-
-   \begin{verbatim}
-      [jack-transport]
-      0   # with_jack_transport
-      0   # with_jack_master
-      0   # with_jack_master_cond
-      0   # song_start_mode
-      0   # with_jack_midi
-   \end{verbatim}
-
    For \textsl{Seq66} \textsl{after} 0.94.0, the settings are a bit simpler:
 
    \begin{verbatim}

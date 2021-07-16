@@ -482,8 +482,8 @@ qperfeditframe64::set_snap (midipulse s)
 }
 
 /**
- *  These values are ticks, but passed as integers.
- *  The guides are set to 4 measures by default.
+ *  These values are ticks, but passed as integers.  The guides are set to 4
+ *  measures by default.
  */
 
 void

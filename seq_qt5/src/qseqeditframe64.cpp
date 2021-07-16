@@ -368,7 +368,7 @@ qseqeditframe64::qseqeditframe64
     qseqframe               (p, seqid, parent),
     performer::callbacks    (p),
     ui                      (new Ui::qseqeditframe64),
-    m_short_version         (shorter),
+    m_short_version         (shorter),              /* short_version()  */
     m_lfo_wnd               (nullptr),
     m_tools_popup           (nullptr),
     m_sequences_popup       (nullptr),
@@ -1153,7 +1153,7 @@ void
 qseqeditframe64::paintEvent (QPaintEvent * qpep)
 {
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG // _TMI
     static int s_count = 0;
     QRect r = qpep->rect();
     printf
@@ -1174,12 +1174,6 @@ qseqeditframe64::paintEvent (QPaintEvent * qpep)
 void
 qseqeditframe64::resizeEvent (QResizeEvent * qrep)
 {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf("qseqeditframe64::resizeEvent(%d)\n", s_count++);
-#endif
-
     update_draw_geometry();
     qrep->ignore();                         /* qseqframe::resizeEvent(qrep) */
 }
@@ -1194,7 +1188,7 @@ void
 qseqeditframe64::wheelEvent (QWheelEvent * qwep)
 {
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG // _TMI
     static int s_count = 0;
     printf("qseqeditframe64::wheelEvent(%d)\n", s_count++);
 #endif

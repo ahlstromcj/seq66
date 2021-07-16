@@ -216,34 +216,13 @@ void
 qscrollmaster::wheelEvent (QWheelEvent * qwep)
 {
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG // _TMI
     static int s_count = 0;
     printf("qscrollmaster::wheelEvent(%d)\n", s_count++);
 #endif
 
     qwep->ignore();                         /* QScrollArea::wheelEvent(qwep)  */
 }
-
-#if defined USE_ADJUST_FOR_SIZE
-
-/*
- *  Typical: viewport = 208x796 and widget = 1538x38790. Code saved "just in
- *  case".
- */
-
-
-void
-qscrollmaster::adjust_for_resize ()
-{
-   QSize view = viewport()->size();
-   QSize widg = widget()->size();
-   verticalScrollBar()->setPageStep(view.height());
-   horizontalScrollBar()->setPageStep(view.width());
-   verticalScrollBar()->setRange(0, widg.height() - view.height());
-   horizontalScrollBar()->setRange(0, widg.width() - view.width());
-}
-
-#endif  //defined USE_ADJUST_FOR_SIZE
 
 /*
  * qscrollmaster.cpp

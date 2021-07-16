@@ -216,12 +216,7 @@ qsetmaster::set_column_widths (int total_width)
 void
 qsetmaster::current_row (int row)
 {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    int checkrow = ui->m_set_table->currentRow();
-    printf("row %d; checkrow %d\n", row, checkrow);
-#endif
     m_current_row = row;
-
 }
 
 /**
@@ -406,10 +401,6 @@ qsetmaster::handle_set (int setno)
         ui->m_set_table->selectRow(cb_perf().screenset_index(setno));
         set_needs_update();
     }
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("Clicked (%d, %d) = Set %d\n", row, column, sn);
-#endif
 }
 
 void
@@ -532,13 +523,6 @@ qsetmaster::on_set_change (screenset::number setno, performer::change modtype)
     bool result = m_current_set != setno || rows != m_current_row_count;
     if (result)
     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf
-    (
-        "qsetmaster::on_set_change(%d), current set %d, rows %d -> %d\n",
-        int(setno), int(m_current_set), m_current_row_count, rows
-    );
-#endif
         m_current_row_count = rows;
         if (modtype != performer::change::removed)
             m_current_set = setno;

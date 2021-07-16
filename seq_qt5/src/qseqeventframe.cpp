@@ -357,9 +357,6 @@ qseqeventframe::on_sequence_change (seq::number seqno, bool recreate)
             if (recreate)
                 initialize_table();
         }
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("qseqeventframe::on_sequence_change(%d)\n", seqno);
-#endif
     }
     return result;
 }
@@ -694,12 +691,6 @@ qseqeventframe::current_row () const
 void
 qseqeventframe::current_row (int row)
 {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    int checkrow = ui->eventTableWidget->currentRow();
-    printf("row %d; checkrow %d\n", row, checkrow);
-#endif
-
     m_eventslots->current_row(row);
 }
 
@@ -912,13 +903,6 @@ qseqeventframe::handle_save ()
             cb_perf().notify_sequence_change(seqno);
             ui->button_save->setEnabled(false);
             m_is_dirty = false;
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            if (rc().verbose())
-            {
-                std::string dump = m_eventslots->events_to_string();
-                printf("%s", dump.c_str());
-            }
-#endif
         }
     }
 }

@@ -144,23 +144,23 @@
 
    To verify that \textsl{Seq66} receives MIDI clock in ALSA, use a sequencer
    that can emit MIDI Clock in ALSA.  The precursor to \textsl{Seq66},
-   \textsl{Seq24}, can be used.
+   \textsl{Seq24}, can be used, as well as \textsl{Seq66}.
 
-   First, run the following command:
+   First, run one of the following commands:
 
    \begin{verbatim}
       $ seq24 -m
+      $ qseq66 --alsa --manual --verbose
    \end{verbatim}
 
    This creates a bunch of virtual ALSA MIDI ports.
-   In \textbf{File / Options / MIDI Clock},
+   In the \textbf{MIDI Clock} for either application,
    select the \textbf{On} option for the first port.
-
    Then run \textsl{a debug version of Seq66} in a terminal window
    with the following options:
 
    \begin{verbatim}
-      $ qseq66 --alsa --auto-ports --verbose
+      $ qseq66 --alsa --auto-ports --verbose --client-name seq66debug
    \end{verbatim}
 
    This sets up to auto-connect ALSA MIDI ports.  In

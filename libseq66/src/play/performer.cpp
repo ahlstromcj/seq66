@@ -1476,6 +1476,7 @@ performer::inner_start ()
                 off_sequences();                /* mute for song playback   */
 
             is_running(true);
+            pad().js_jack_stopped = false;      /* EXPERIMENTAL, new line   */
 
 #if ! defined SEQ66_PLATFORM_WINDOWS
             automutex lk(cv().locker());        /* use condition's recmutex */

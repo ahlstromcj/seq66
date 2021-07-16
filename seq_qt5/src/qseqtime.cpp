@@ -236,12 +236,6 @@ qseqtime::paintEvent (QPaintEvent *)
 void
 qseqtime::resizeEvent (QResizeEvent * qrep)
 {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf("qseqtime::resizeEvent(%d)\n", s_count++);
-#endif
-
     QWidget::resizeEvent(qrep);         /* qrep->ignore() */
 }
 

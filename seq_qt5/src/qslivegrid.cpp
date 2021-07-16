@@ -829,14 +829,6 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
 {
     m_current_seq = seq_id_from_xy(event->x(), event->y());
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf
-    (
-        "mousePressEvent(%d) at (%d, %d)\n",
-        m_current_seq, event->x(), event->y()
-    );
-#endif
-
     bool assigned = m_current_seq != seq::unassigned();
     if (! assigned)
     {
@@ -889,14 +881,6 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
 {
     m_current_seq = seq_id_from_xy(event->x(), event->y());
     m_button_down = false;
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf
-    (
-        "mouseReleaseEvent(%d) at (%d, %d)\n",
-        m_current_seq, event->x(), event->y()
-    );
-#endif
 
     bool assigned = m_current_seq != seq::unassigned();
     if (! assigned)
