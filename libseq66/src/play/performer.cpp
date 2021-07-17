@@ -3402,9 +3402,6 @@ performer::poll_cycle ()
                         {
                             ev.set_timestamp(get_tick());
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-                            if (rc().verbose())
-                                ev.print_note();
-
                             if (rc().show_midi())
                                 ev.print();
 #endif
@@ -3881,7 +3878,9 @@ performer::delay_stop ()
  *  This function is called twice in a row with the same tick value, causing
  *  notes to be played twice. This happens because JACK "ticks" are 10 times
  *  as fast as MIDI ticks, and the conversion can result in the same MIDI tick
- *  value consecutively, especially at lower PPQN.
+ *  value consecutively, especially at lower PPQN.  However, it also can play
+ *  notes twice when the tick changes by a small amount.  Not yet sure what to
+ *  do about this.
  *
  * \param tick
  *      Provides the tick at which to start playing.  This value is also
@@ -3901,13 +3900,6 @@ performer::play (midipulse tick)
         if (not_nullptr(m_master_bus))
             m_master_bus->flush();                      /* flush MIDI buss  */
     }
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    else
-    {
-        if (rc().verbose())
-            printf("tick %ld replay\n", long(tick));
-    }
-#endif
 }
 
 void

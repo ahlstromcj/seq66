@@ -160,7 +160,7 @@ const midilong c_reserved_2     = 0x24240019; /**< Reserved for expansion.    */
 const midilong c_tempo_track    = 0x2424001A; /**< Alternate tempo track no.  */
 const midilong c_seq_color      = 0x2424001B; /**< Feature from Kepler34.     */
 const midilong c_seq_edit_mode  = 0x2424001C; /**< Feature from Kepler34.     */
-const midilong c_seq_loopcount  = 0x2424001D; /**< Future: N-play pattern.    */
+const midilong c_seq_loopcount  = 0x2424001D; /**< N-play loop, 0 = infinite. */
 const midilong c_reserved_3     = 0x2424001E; /**< Reserved for expansion.    */
 const midilong c_reserved_4     = 0x2424001F; /**< Reserved for expansion.    */
 const midilong c_trig_transpose = 0x24240020; /**< Triggers with transpose.   */

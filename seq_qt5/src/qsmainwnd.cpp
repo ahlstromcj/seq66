@@ -777,7 +777,7 @@ qsmainwnd::qsmainwnd
     if (use_nsm())
         rc().session_midi_filename(s_default_tune);
 
-    (void) refresh_captions();                          /* EXPERIMENTAL     */
+    (void) refresh_captions();
 
 #if defined SEQ66_PORTMIDI_SUPPORT
     ui->alsaJackButton->setText("PortMidi");

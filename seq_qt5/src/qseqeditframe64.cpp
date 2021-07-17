@@ -1153,7 +1153,7 @@ void
 qseqeditframe64::paintEvent (QPaintEvent * qpep)
 {
 
-#if defined SEQ66_PLATFORM_DEBUG // _TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     static int s_count = 0;
     QRect r = qpep->rect();
     printf
@@ -1188,7 +1188,7 @@ void
 qseqeditframe64::wheelEvent (QWheelEvent * qwep)
 {
 
-#if defined SEQ66_PLATFORM_DEBUG // _TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     static int s_count = 0;
     printf("qseqeditframe64::wheelEvent(%d)\n", s_count++);
 #endif

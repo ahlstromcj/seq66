@@ -125,10 +125,14 @@
 
    \index{pattern!slot}
    An empty box is a slot for a pattern.
-   If a pattern is present in the slot, the top line will show
-   the title of the pattern, and the number of measures in the pattern.
+   If a pattern is present in the slot, text information and notes are drawn on
+   the button.
+   For example, the top line will show
+   the title of the pattern, the number of measures in the pattern, and
+   indicate if the pattern has a loop-count.
    A right-click over a pattern button brings up a fairly extensive
    popup menu.
+   Also see \sectionref{subsubsec:patterns_pattern_filled}.
 
 %  The slot at the bottom left of this figure shows the features:
 %
@@ -175,7 +179,7 @@
    \end{itemize}
 
    The user can also apply coloring to each sequence.
-   This feature was adopted from \textsl{Kepler34} (\cite{kepler34}).
+   This feature was adopted from \textsl{Kepler34} \cite{kepler34}.
    The color is more saturated when the pattern is unmuted.
    \index{pattern!color menu}
    The pattern menu for sequence color is shown in the previous figure.
@@ -326,47 +330,61 @@
 
    A filled pattern slot is referred to as a \textsl{pattern}
    (or \textsl{track}, \textsl{loop}, or \textsl{sequence}).
-   A pattern is shown in the pattern grid as a filled box with the
-   following items of information in it.
+   A pattern is shown in the pattern grid as a filled box with a number of
+   items of information surrounding it.  Here are the items shown:
 
    \begin{itemize}
-      \item \textbf{Name}.
+      \item \textbf{Pattern Name}. Top left.
          \index{pattern!name}
          This line, in the upper left of the pattern slot, contains the name or
          title of the pattern, for reference when juggling a number of
          patterns.
-      \item \textbf{Status}.
+      \item \textbf{Pattern Status}. Second line.
          \index{pattern!status}
-         Underneath the name is the status of the pattern, such as "Armed",
-         "Muted", or "Queued".
+         Underneath the pattern-name is the status of the pattern, such as
+         "Armed", "Muted", or "Queued".
          This status is useful when the Qt theme coloring makes the exact
          status difficult to determine.
-      \item \textbf{Pattern Length}.
+      \item \textbf{Pattern Length}. Top right.
          \index{pattern!length}
          The length of the pattern, in measures, is shown in the upper
          right corner of the pattern slot.
-      \item \textbf{Contents}.
+         Also, if the loop-count for the pattern is greater than 0, 
+         then an \textbf{asterisk} is shown.
+         Remember that a pattern loop-count of 0 means the pattern can repeat
+         "forever".
+      \item \textbf{Notes or Fingerprint}. Center.
          \index{pattern!contents}
          The contents of the pattern, in the central box,
          provide a distinguishable representation of the notes or events in the
-         pattern.  When the song is playing, a vertical bar cursor
-         tracks the position of the playback of the pattern or loop; it
-         returns to the beginning of the box every time the pattern starts
-         over.
+         pattern.
+         The notes are shown in the center, inside a "progress box" that
+         can also be colored, or not shown at all.
+         Long patterns can be replaced by a much shorter "fingerprint", for
+         faster drawing.
          \index{empty pattern}
          An pattern with no playable events will not needlessly scroll.
          However, if a pattern has even a single event (say, a program change),
          it will scroll.
+      \item \textbf{Progress Cursor}. Center.
+         At the left of each center box is a vertical line, waiting for
+         playback to start so that it can move through the pattern, again and
+         again.
+         When the song is playing, this vertical bar
+         tracks the position of the playback of the pattern or loop; it
+         returns to the beginning of the box every time the pattern starts
+         over.
 %        \index{todo:one-shot pattern}
 %        It might be good to have some patterns marked as one-shot patterns.
 %        They play once at the start of playback, and that is it.
 %        They could be marked with a cyan background.
 %        Currently, it is easy enough to use the Song Editor for this purpose,
 %        but then one cannot play the patterns in live mode.
-      \item \textbf{Sequence Number}.
+      \item \textbf{Sequence Number}. Bottom left.
          This number is shown at the bottom left of the pattern slot.
+         Pattern numbers, by default, range from 0 to 31.
          Note how it varies fastest by row (top to bottom).
-      \item \textbf{Bus-Channel}.
+      \item \textbf{Bus-Channel}. Bottom, second from left.
          \index{pattern!bus-channel}
          This pair of numbers shows the the MIDI buss number, a dash, and
          the MIDI output channel number.
@@ -376,30 +394,28 @@
          output channel, and can play on all channels.
          This "free" channel concept is useful for applying Program Changes and
          Volume controls to many channels at once.
-      \item \textbf{Beat/Beat Width}.
+      \item \textbf{Beat/Beat Width}. Bottom, third from left.
          \index{pattern!beat}
          This pair of numbers is the standard time-signature of the pattern,
          such as "4/4" or "3/4".  The first number is the beats-per-measure,
          and the second is the size of the beat, here, a quarter note.
-      \item \textbf{Shortcut Key}.
+      \item \textbf{Shortcut Key}.  Bottom right.
          The key noted in the lower-right corner of the pattern is a "hot-key"
          that can be pressed to toggle the mute/unmute status of that pattern.
          This action is an alternative to left-click on the pattern.
-      \item \textbf{Progress Cursor}.
-         At the left of each center box is a vertical line, waiting for
-         playback to start so that it can move through the pattern, again and
-         again.
-      \item \textbf{Armed}.
+         This hot-key can also be used to open the pattern in a pattern editor
+         or in the event editor.
+      \item \textbf{Armed}. Highlight color of button.
          Button highlighting indicates that the pattern is armed
          (unmuted), and will play if playback is initiated in the pattern
          \index{live mode}
          window in live mode.
-         An item is armed/disarmed by a left-click on it.
+         An item is armed/disarmed by a left-click on it, or by using the
+         button's hot-key.
+      \item \textbf{External Frame}. Shift-left-click.
          \index{shift left click}
          If the \texttt{Shift} key is held during a left-click on a pattern,
          the corresponding set's \textbf{Live} frame is brought up.
-%        then the armed/unarmed state of every other active pattern is toggled.
-%        This feature is useful for isolating a single track or pattern.
    \end{itemize}
 
    \index{pattern!left click}

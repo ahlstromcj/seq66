@@ -23,7 +23,7 @@
    JACK supposedly works with \textsl{Windows}, but we do not provide a JACK
    MIDI engine for that system.
    The JACK support is very loosely based on the RtMIDI project
-   (see \cite{rtmidi}).
+   \cite{rtmidi}.
    This mode also supports fallback-to-ALSA if the JACK
    server is not running.
 
@@ -278,15 +278,15 @@
    Run \texttt{startjack} and wait patiently for it to set up.
 
 \subsection{Seq66 JACK / Trouble-Shooting}
-\label{subsec:alsa_testing}
+\label{subsec:jack_testing}
 
    This section describes some trouble-shooting that can be done with JACK.
 
 \subsubsection{Seq66 JACK / Trouble-Shooting / MIDI Clock}
-\label{subsubsec:alsa_testing_midi_clock}
+\label{subsubsec:jack_testing_midi_clock}
 
 \paragraph{JACK MIDI Clock Send}
-\label{paragraph:alsa_testing_midi_clock_send}
+\label{paragraph:jack_testing_midi_clock_send}
 
    To verify that \textsl{Seq66} is sending MIDI clock, the easiest way (using
    JACK) is to start the following command and set \textsl{Seq66} to send
@@ -307,7 +307,7 @@
    it does not display MIDI Clock.
 
 \paragraph{JACK MIDI Clock Receive}
-\label{paragraph:alsa_testing_midi_clock_receive}
+\label{paragraph:jack_testing_midi_clock_receive}
 
    To verify that \textsl{Seq66} receives MIDI clock in JACK, use a program
    that can emit MIDI Clock in JACK.
