@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-07-14
+ * \updates       2021-07-17
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -277,6 +277,8 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
     return 0;
 }
 
+#if defined USE_LEGACY_TRANSPORT_CALLBACK
+
 int
 jack_transport_callback_legacy (jack_nframes_t /*nframes*/, void * arg)
 {
@@ -318,6 +320,8 @@ jack_transport_callback_legacy (jack_nframes_t /*nframes*/, void * arg)
     }
     return 0;
 }
+
+#endif  // defined USE_LEGACY_TRANSPORT_CALLBACK
 
 /**
  *  A more full-featured initialization for a JACK client, which is meant to
@@ -791,11 +795,17 @@ jack_assistant::init ()
                 m_jack_client, jack_transport_shutdown, (void *) this
             );
 
+#if defined USE_LEGACY_TRANSPORT_CALLBACK               /* it is broken     */
+            int jackcode = jack_set_process_callback    /* notes in banner  */
+            (
+                m_jack_client, jack_transport_callback_legacy, (void *) this
+            );
+#else
             int jackcode = jack_set_process_callback    /* notes in banner  */
             (
                 m_jack_client, jack_transport_callback, (void *) this
-//              m_jack_client, jack_transport_callback_legacy, (void *) this
             );
+#endif
             if (jackcode != 0)
             {
                 result = false;

@@ -1,6 +1,6 @@
 TO DO for Seq66 0.96.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-07-07
+2019-04-13 to 2021-07-17
 
 Hottest to Trivial:
 
@@ -57,7 +57,21 @@ From Testing:
 
     Tempo display needs to be worked on for the perfroll and qloopbuttons.
 
-    Consider a configurable metronome functionality.  In seqtime?
+    Consider a configurable metronome functionality.  In seqtime? It is easy
+    enough to make a metronome track manually, though.
+
+    Make sure Song/Live mode is selected at MIDI file load time if "auto" is
+    set.
+
+    Also make sure "follow progress" is the default in pattern and song editors.
+
+    Weird silence in "Europe Endless" Melody 2 around measure 150 and 244.
+    (Loop measure 23 and 37).  Did not happen after hitting Panic in Qsynth!
+    A patch frequency limitation?  Test under Timidity.
+
+    Can we have "hjkl" and arrow keys in editors scroll during playback?
+
+    L/R looping in pattern editor not working.
 
 Others to Consider:
 
@@ -66,6 +80,10 @@ Others to Consider:
 
     In main frame, try to highlight the start/stop/pause buttons
     appropriately.
+
+    On a Debian Sid box, ALSA puts out *two* events into Qsynth for every note
+    event. On an Ubuntu box, just one event is emitted.  Why?  Try it under JACK
+    at some point on Debian Sid.
 
 EXTANT ISSUES:
 

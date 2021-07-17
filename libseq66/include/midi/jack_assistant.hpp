@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2021-07-13
+ * \updates       2021-07-17
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -145,8 +145,10 @@ using jack_status_pair_t = struct
 
 class jack_assistant
 {
-    friend int jack_transport_callback (jack_nframes_t nframes, void * arg);
+#if defined USE_LEGACY_TRANSPORT_CALLBACK
     friend int jack_transport_callback_legacy (jack_nframes_t nframes, void * arg);
+#endif
+    friend int jack_transport_callback (jack_nframes_t nframes, void * arg);
     friend void jack_transport_shutdown (void * arg);
 
 #if defined USE_JACK_SYNC_CALLBACK
@@ -617,11 +619,13 @@ extern void jack_timebase_callback
 
 /*
  *  Implemented second patch for JACK Transport from freddix/seq66 GitHub
- *  project.  Added the following function.
+ *  project.  Added the following functions.
  */
 
-extern int jack_transport_callback (jack_nframes_t nframes, void * arg);
+#if defined USE_LEGACY_TRANSPORT_CALLBACK
 extern int jack_transport_callback_legacy (jack_nframes_t nframes, void * arg);
+#endif
+extern int jack_transport_callback (jack_nframes_t nframes, void * arg);
 extern jack_client_t * create_jack_client
 (
     std::string clientname,

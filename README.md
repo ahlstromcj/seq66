@@ -128,23 +128,6 @@ Windows, and using a conventional source tarball.
             progress bars.
         *   The estimated duration of a tune is shown in the Song tab, based
             on pattern lengths and song triggers.
-    *   Version 0.94.0:
-        *   Major improvements to the stability of MIDI control of playlists.
-        *   Added Phrygian scale thanks to user WinkoErades.
-        *   Update the 'rc' file for a simpler specification of JACK MIDI and
-            JACK transport.
-        *   Removed the old-style live frame; use themes and style-sheets to
-            create the old look if you like it.
-        *   Removed a lot of debugging material of no use now.
-        *   Fixed (mostly) a weird bug causing the application to hang
-            on exit when set as JACK Master.  Pretty damn weird.
-        *   Improving support for non-default PPQNs.
-        *   Patterns can now be copied and merged into a new pattern to combine
-            (for example) separate percussion tracks.
-        *   Fixed error in playlist::verify() adding an empty list.
-        *   Improving the handling of headless seq66cli; added a "quit"
-            automation function for MIDI-only use.
-        *   Fixed some issues with reading Cakewalk WRK files.
 
     See the "NEWS" file for changes in earlier versions.
 
