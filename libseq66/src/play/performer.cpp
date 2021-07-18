@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-07-13
+ * \updates       2021-07-18
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -305,8 +305,7 @@
 #include "play/performer.hpp"           /* seq66::performer, this class     */
 #include "os/daemonize.hpp"             /* seq66::signal_for_exit()         */
 #include "os/timing.hpp"                /* seq66::microsleep(), microtime() */
-#include "util/filefunctions.hpp"       /* seq66::filename_base()           */
-#include "util/strfunctions.hpp"        /* seq66::shorten_file_spec()       */
+#include "util/filefunctions.hpp"       /* seq66::filename_base(), etc.     */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -690,8 +689,6 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
  *
  *  Please note that we will upgrade mastermidibus to use the clockslist and
  *  inputslist classes, rather than accessing the vectors directly.
- *
- *  WHAT ABOUT THE PLAYLIST?
  *
  * \param rcs
  *      Provides the destination for the settings.
@@ -1420,14 +1417,15 @@ performer::ui_change_set_bus (int buss)
 void
 performer::next_song_mode ()
 {
-    int triggercount = mapper().trigger_count();
-    bool has_triggers = triggercount > 0;
-    if (has_triggers)
+    bool has_triggers = mapper().trigger_count() > 0;
+    if (rc().song_start_auto())
     {
-        bool songmode = rc().song_start_mode() || rc().song_start_auto();
-        set_song_mute(mutegroups::action::off);
-        song_mode(songmode);
-        song_recording(false);
+        song_mode(has_triggers);
+        song_recording(has_triggers);
+        if (has_triggers)
+        {
+            set_song_mute(mutegroups::action::off);
+        }
     }
     else
     {
@@ -1435,7 +1433,7 @@ performer::next_song_mode ()
         bool mutem = rc().is_setsmode_normal();
         mute_all_tracks(mutem);
         song_mode(songmode);
-        song_recording(false);
+        song_recording(songmode && has_triggers);
     }
 }
 

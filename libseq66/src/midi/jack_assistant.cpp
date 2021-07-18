@@ -412,7 +412,7 @@ create_jack_client (std::string clientname, std::string uuid)
             show_jack_statuses(status);
     }
     else
-        (void) error_message("JACK server not running?");
+        (void) error_message("JACK server not running");
 
     return result;                      /* bad result handled by caller     */
 }
@@ -444,55 +444,55 @@ s_status_pairs [] =
 {
     {
         JackFailure,
-        "JackFailure, overall operation failed"
+        "JackFailure: overall operation failed"
     },
     {
         JackInvalidOption,
-        "JackInvalidOption, operation contained an invalid or unsupported option"
+        "JackInvalidOption: operation used an invalid/unsupported option"
     },
     {
         JackNameNotUnique,
-        "JackNameNotUnique, the client name was not unique"
+        "JackNameNotUnique: client name was not unique"
     },
     {
         JackServerStarted,
-        "JackServerStarted, JACK started by this operation, not running already"
+        "JackServerStarted: JACK started by this operation"
     },
     {
         JackServerFailed,
-        "JackServerFailed, unable to connect to the JACK server"
+        "JackServerFailed: unable to connect to JACK server"
     },
     {
         JackServerError,
-        "JackServerError, communication error with the JACK server"
+        "JackServerError: communication error with JACK server"
     },
     {
         JackNoSuchClient,
-        "JackNoSuchClient, requested client does not exist"
+        "JackNoSuchClient: requested client does not exist"
     },
     {
         JackLoadFailure,
-        "JackLoadFailure, unable to load internal client"
+        "JackLoadFailure: cannot load internal client"
     },
     {
         JackInitFailure,
-        "JackInitFailure, unable to initialize client"
+        "JackInitFailure: cannot initialize client"
     },
     {
         JackShmFailure,
-        "JackShmFailure, unable to access shared memory"
+        "JackShmFailure: cannot access shared memory"
     },
     {
         JackVersionError,
-        "JackVersionError, client's protocol version does not match"
+        "JackVersionError: client protocol version mismatch"
     },
     {
         JackBackendError,
-        "JackBackendError, a JACK back-end error occurred"
+        "JackBackendError: JACK back-end error"
     },
     {
         JackClientZombie,
-        "JackClientZombie, a JACK zombie process exists"
+        "JackClientZombie: JACK zombie process!"
     },
     {                                   /* terminator */
         0, ""
@@ -784,7 +784,7 @@ jack_assistant::init ()
         if (m_jack_client == NULL)
         {
             result = false;
-            return error_message("JACK server not running, transport disabled");
+            return error_message("No JACK server, transport disabled");
         }
         else
         {

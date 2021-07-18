@@ -674,22 +674,31 @@
    The JACK Transport options are also command-line options.
    See \sectionref{subsec:configuration_command_line}.
 
-   For \textsl{Seq66} \textsl{before} 0.94.0, simple boolean digit settings
+   For \textsl{Seq66} \textsl{before} 0.94.0, a number of boolean digit settings
    were used.
-   For \textsl{Seq66} \textsl{after} 0.94.0, the settings are a bit simpler:
+   For \textsl{Seq66} \textsl{after} 0.94.0, the settings are more elegant.
 
    \begin{verbatim}
       [jack-transport]
       transport-type = slave    # 'none', 'slave', 'master', or 'conditional'
-      song-start-mode = song    # song = 'true', live = 'false'
+      song-start-mode = song    # 'song' = 'true' or 'live' = 'false'
       jack-midi = true          # 'true' or 'false'
    \end{verbatim}
 
-   These options are described well in the 'rc' file.
-   Please note that the JACK transport options are set to make sense, no
-   matter what the user specifies.
-   Also note that JACK transport is separately configurable from
+   \texttt{transport-type} is independent of the MIDI playback/record engine
+   (ALSA versus JACK). The 'conditional' value tells \textsl{Seq66} to try to
+   become JACK Master.  If a master already exists, then \textsl{Seq66} falls
+   back to JACK Slave.
+   Note that JACK transport is separately configurable from
    JACK MIDI, and each uses a different JACK client internally.
+
+   \texttt{song-start-mode} is set to 'true' or 'song' to force the usage of the
+   track layout in the song editor (see \sectionref{sec:song_editor}).
+   If 'false' or 'live' then the live mode is in force, where the musician
+   controls the arming of sequences.
+   If 'auto', then the mode is set to 'song' if the loaded file has
+   a track layout (triggers), and 'live' otherwise.
+   It is probably best to leave it at 'auto'.
 
 \subsubsection{'rc' File / MIDI Input}
 \label{subsubsec:configuration_rc_midi_input}

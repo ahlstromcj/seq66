@@ -34,12 +34,6 @@ From Testing:
 
     Investigation Windows installer versus portable package for 0.95.0.
 
-    Make sure MIDI import does not import the SeqSpec sections of a Seq66
-    MIDI file.
-
-    When loading the recent files list: (1) eliminate files that no longer
-    exist; (2) figure out how to display files that differ only in path.
-
     When zooming, try to keep the same viewport in view.  Got this working
     for horizontal seqroll and perfroll, but not for vertical (refactoring
     needed).
@@ -49,27 +43,14 @@ From Testing:
     When muting/unmuting a pattern in the song editor, when focus changes
     the tracks are shown in the bright color.
 
-    Time-zoom and seqroll zoom can get out of sync.  Workaround: move the
-    scrollbar to beginning.
-
     Can we distinguish note-insertion from movement snap, to avoid the
     "L"-then-snap-then-move mamba?
 
     Tempo display needs to be worked on for the perfroll and qloopbuttons.
 
-    Consider a configurable metronome functionality.  In seqtime? It is easy
-    enough to make a metronome track manually, though.
-
-    Make sure Song/Live mode is selected at MIDI file load time if "auto" is
-    set.
-
-    Also make sure "follow progress" is the default in pattern and song editors.
-
     Weird silence in "Europe Endless" Melody 2 around measure 150 and 244.
     (Loop measure 23 and 37).  Did not happen after hitting Panic in Qsynth!
     A patch frequency limitation?  Test under Timidity.
-
-    Can we have "hjkl" and arrow keys in editors scroll during playback?
 
     L/R looping in pattern editor not working.
 

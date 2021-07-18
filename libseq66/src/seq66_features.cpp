@@ -236,9 +236,7 @@ seq_build_details ()
 #if defined SEQ66_PORTMIDI_SUPPORT
         << "  PortMIDI\n"
 #endif
-        << "  Event editor\n"
-        << "  Follow progress bar\n"
-        << "  Highlight empty patterns\n"
+        << "  Event editor, follow-progress\n"
 #if defined SEQ66_JACK_SESSION
         << "  JACK session\n"
 #endif
@@ -251,25 +249,19 @@ seq_build_details ()
 #if defined SEQ66_NSM_SUPPORT
         << "  NSM (Non Session Manager) support\n"
 #endif
-        << "  Seq32 chord generator, LFO window, menu buttons, transpose, BPM\n"
-        << "  Tap button, solid piano-roll grid, song performance recording\n"
-#if defined SEQ66_JE_PATTERN_PANEL_SCROLLBARS
-        << "  Main window scroll-bars\n"
-#endif
-        << "  Pattern coloring\n"
+        << "  Chord generator, LFO, trigger transpose, Tap BPM, Song recording\n"
+           "  Pattern coloring, pause, save time-sig/tempo\n"
 #if defined SEQ66_PLATFORM_WINDOWS
-        << "  Windows support\n"
+        << "  Windows build\n"
 #endif
-        << "  Pause support\n"
-        << "  Save time-sig/tempo\n"
 #if defined SEQ66_PLATFORM_DEBUG
         << "  Debug code\n"
+#else
+        << "  Release code\n"
 #endif
         << "  " << s_bitness << "\n\n"
-    << "Options are enabled/disabled via the configure script,\n"
-    << "libseq66/include/seq66_features.h(pp), or the build-specific\n"
-    << "seq66-config.h file in include/ or in include/qt/portmidi/" << std::endl
-    ;
+<< "Options enabled/disabled via the configure script, seq66_features.h(pp),\n"
+   "or the build-specific seq66-config.h files in include/qt/" << std::endl;
     return result.str();
 }
 

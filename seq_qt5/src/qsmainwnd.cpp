@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-09
+ * \updates       2021-07-18
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2527,6 +2527,10 @@ qsmainwnd::make_event_frame (int seqid)
     return result;
 }
 
+/**
+ * Let's see if we can distinguish files with the same base name.
+ */
+
 void
 qsmainwnd::update_recent_files_menu ()
 {
@@ -2536,7 +2540,12 @@ qsmainwnd::update_recent_files_menu ()
         bool ok = true;
         for (int f = 0; f < count; ++f)
         {
+#if defined SHOW_ONLY_BASE_NAME
             std::string shortname = rc().recent_file(f);
+#else
+            std::string shortname = rc().recent_file(f, false); /* full path */
+            shortname = shorten_file_spec(shortname, 64);
+#endif
             if (! shortname.empty())
             {
                 std::string longname = rc().recent_file(f, false);

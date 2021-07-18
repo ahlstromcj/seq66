@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-07-12
+ * \updates       2021-07-17
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -292,6 +292,7 @@ private:
     bool m_with_jack_master_cond;   /**< Serve as JACK Master if possible.  */
     bool m_with_jack_midi;          /**< Use JACK MIDI.                     */
     sequence::playback m_song_start_mode; /**< Song mode versus Live mode.  */
+    bool m_song_start_is_auto;      /**< True if "auto" read from 'rc'.     */
     bool m_filter_by_channel;       /**< Record only sequence channel data. */
     bool m_manual_ports;            /**< [manual-ports] setting.            */
     int m_manual_port_count;        /**< [manual-ports] outputjport count.  */
@@ -711,17 +712,17 @@ public:
         return m_song_start_mode == sequence::playback::song;
     }
 
+    /**
+     *  Was returning m_song_start_mode == sequence::playback::automatic, but
+     *  this conflates run-time mode with desired initial mode.
+     */
+
     bool song_start_auto () const
     {
-        return m_song_start_mode == sequence::playback::automatic;
+        return m_song_start_is_auto;
     }
 
-    sequence::playback song_start_setting () const
-    {
-        return m_song_start_mode;
-    }
-
-    std::string song_mode () const;
+    std::string song_mode_string () const;
     void set_jack_transport (const std::string & value);
 
     void with_jack_transport (bool flag)

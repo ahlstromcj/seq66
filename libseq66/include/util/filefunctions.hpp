@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-07-12
+ * \updates       2021-07-18
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -96,6 +96,7 @@ extern std::string normalize_path
     bool tounix = true,
     bool terminate = false
 );
+extern std::string shorten_file_spec (const std::string & fpath, int leng);
 extern std::string clean_file (const std::string & path, bool tounix = true);
 extern std::string clean_path (const std::string & path, bool tounix = true);
 extern std::string append_file

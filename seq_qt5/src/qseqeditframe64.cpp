@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-07-10
+ * \updates       2021-07-18
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1222,18 +1222,15 @@ qseqeditframe64::keyPressEvent (QKeyEvent * event)
     {
         if (key == Qt::Key_Space || key == Qt::Key_Period)
             start_playing();
-        else
-        {
-            if (key == Qt::Key_J)
-                scroll_by_step(qscrollmaster::dir::Down);
-            else if (key == Qt::Key_K)
-                scroll_by_step(qscrollmaster::dir::Up);
-            else if (key == Qt::Key_H)
-                scroll_by_step(qscrollmaster::dir::Left);
-            else if (key == Qt::Key_L)
-                scroll_by_step(qscrollmaster::dir::Right);
-        }
     }
+    if (key == Qt::Key_J)
+        scroll_by_step(qscrollmaster::dir::Down);
+    else if (key == Qt::Key_K)
+        scroll_by_step(qscrollmaster::dir::Up);
+    else if (key == Qt::Key_H)
+        scroll_by_step(qscrollmaster::dir::Left);
+    else if (key == Qt::Key_L)
+        scroll_by_step(qscrollmaster::dir::Right);
 }
 
 void

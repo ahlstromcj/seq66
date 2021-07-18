@@ -656,49 +656,6 @@ string_to_midibyte (const std::string & s, midibyte defalt)
 }
 
 /**
- *  Shortens a file-specification to make sure it is no longer than the
- *  provided length value.  This is done by removing character in the middle,
- *  if necessary, and replacing them with an ellipse.
- *
- *  This function operates by first trying to find the <code> /home </code>
- *  directory.  If found, it strips off <code> /home/username </code> and
- *  replace it with the Linux <code> ~ </code> replacement for the <code>
- *  $HOME </code> environment variable.  This function assumes that the
- *  "username" portion <i> must </i> exist, and that there's no goofy stuff
- *  like double-slashes in the path.
- *
- * \param fpath
- *      The file specification, including the full path to the file, and the
- *      name of the file.
- *
- * \param leng
- *      Provides the length to which to limit the string.
- *
- * \return
- *      Returns the fpath parameter, possibly shortened to fit within the
- *      desired length.
- */
-
-std::string
-shorten_file_spec (const std::string & fpath, int leng)
-{
-    std::size_t fpathsize = fpath.size();
-    if (fpathsize <= std::size_t(leng))
-    {
-        return fpath;
-    }
-    else
-    {
-        std::string ellipse("...");
-        std::size_t halflength = (std::size_t(leng) - ellipse.size()) / 2 - 1;
-        std::string result = fpath.substr(0, halflength);
-        std::string lastpart = fpath.substr(fpathsize-halflength-1);
-        result = result + ellipse + lastpart;
-        return result;
-    }
-}
-
-/**
  *  Tests that a string is not empty and has non-space characters.  Provides
  *  essentially the opposite test that string_is_void() provides.  The
  *  definition of white-space is provided by the std::isspace()

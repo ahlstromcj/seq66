@@ -116,7 +116,6 @@ extern unsigned string_to_unsigned
 );
 extern int string_to_int (const std::string & s, int defalt = 0);
 extern midibyte string_to_midibyte (const std::string & s, midibyte defalt = 0);
-extern std::string shorten_file_spec (const std::string & fpath, int leng);
 extern bool string_not_void (const std::string & s);
 extern bool string_is_void (const std::string & s);
 extern bool strings_match (const std::string & target, const std::string & x);

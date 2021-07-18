@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-07-12
+ * \updates       2021-07-18
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1228,38 +1228,24 @@ get_current_directory ()
 std::string
 get_full_path (const std::string & path)
 {
-    std::string result;
+    std::string result;                         /* default empty result     */
     if (file_name_good(path))
     {
-        char * resolved_path = NULL;            /* what a relic!            */
-
 #if defined SEQ66_PLATFORM_WINDOWS              /* _MSVC not defined in Qt  */
-        bool pathneeded = path[1] != ':';       /* not a robust check!      */
-        if (pathneeded)
-        {
-            char temp[256];
-            resolved_path = _fullpath(temp, path.c_str(), 256);
-        }
+        char * resolved_path = NULL;            /* what a relic!            */
+        char temp[256];
+        resolved_path = _fullpath(temp, path.c_str(), 256);
+        if (not_NULL(resolved_path))
+            result = resolved_path;
 #else
-        bool pathneeded = path[0] != '/';       /* not a robust check!      */
-        if (pathneeded)
-            resolved_path = realpath(path.c_str(), NULL);
-#endif
+        char * resolved_path = NULL;            /* what a relic!            */
+        resolved_path = realpath(path.c_str(), NULL);
         if (not_NULL(resolved_path))
         {
             result = resolved_path;
             free(resolved_path);
         }
-        else
-        {
-            /*
-             * The most common reason to reach here is that the file specified
-             * by the path does not (yet) exist.  In this case, punt and do
-             * the best we can.
-             */
-
-            result = path;
-        }
+#endif
     }
     return result;
 }
@@ -1330,6 +1316,56 @@ normalize_path (const std::string & path, bool to_unix, bool terminate)
         }
     }
     return result;
+}
+
+/**
+ *  Shortens a file-specification to make sure it is no longer than the
+ *  provided length value.  This is done by removing character in the middle,
+ *  if necessary, and replacing them with an ellipse.
+ *
+ *  This function operates by first trying to find the <code> /home </code>
+ *  directory.  If found, it strips off <code> /home/username </code> and
+ *  replace it with the Linux <code> ~ </code> replacement for the <code>
+ *  $HOME </code> environment variable.  This function assumes that the
+ *  "username" portion <i> must </i> exist, and that there's no goofy stuff
+ *  like double-slashes in the path.
+ *
+ * \param fpath
+ *      The file specification, including the full path to the file, and the
+ *      name of the file.
+ *
+ * \param leng
+ *      Provides the length to which to limit the string.
+ *
+ * \return
+ *      Returns the fpath parameter, possibly shortened to fit within the
+ *      desired length.
+ */
+
+std::string
+shorten_file_spec (const std::string & fpath, int leng)
+{
+    std::string home = user_home();
+    std::string newhome = "~";
+    std::string newpath = fpath;
+    if (contains(fpath, home))
+        newpath = newpath.replace(0, home.length(), newhome);
+
+    std::size_t pathsize = newpath.size();
+    if (pathsize <= std::size_t(leng))
+    {
+        return newpath;
+    }
+    else
+    {
+
+        std::string ellipse("...");
+        std::size_t halflength = (std::size_t(leng) - ellipse.size()) / 2 - 1;
+        std::string result = newpath.substr(0, halflength);
+        std::string lastpart = newpath.substr(pathsize-halflength-1);
+        result = result + ellipse + lastpart;
+        return result;
+    }
 }
 
 /**

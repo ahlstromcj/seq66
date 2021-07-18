@@ -221,7 +221,7 @@ midi_jack_info::connect ()
         }
         else
         {
-            m_error_string = "JACK server not running?";
+            m_error_string = "JACK server not running";
             error(rterror::WARNING, m_error_string);
         }
     }

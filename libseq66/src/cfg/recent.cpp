@@ -190,7 +190,7 @@ bool
 recent::remove (const std::string & item)
 {
     std::string path = get_full_path(normalize_path(item));
-    bool result = ! path.empty();                   // item.empty();
+    bool result = ! path.empty();
     if (result)
     {
         const auto & it = std::find

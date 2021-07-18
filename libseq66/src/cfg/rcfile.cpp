@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-12
+ * \updates       2021-07-17
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -392,6 +392,11 @@ rcfile::parse ()
     else
     {
         rc_ref().set_jack_transport(s);
+
+        /*
+         * If "live" or "song" are provided, then the "auto" boolean is false.
+         */
+
         s = get_variable(file, tag, "song-start-mode");
         rc_ref().song_start_mode(s);
 
@@ -1357,7 +1362,7 @@ rcfile::write ()
         "# jack-midi sets/unsets JACK MIDI, separate from JACK transport.\n"
         "\n[jack-transport]\n\n"
         << "transport-type = " << jacktransporttype << "\n"
-        << "song-start-mode = " << rc_ref().song_mode() << "\n"
+        << "song-start-mode = " << rc_ref().song_mode_string() << "\n"
         ;
     write_boolean(file, "jack-midi", rc_ref().with_jack_midi());
 

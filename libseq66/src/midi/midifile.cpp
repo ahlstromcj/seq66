@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-07-07
+ * \updates       2021-07-18
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -661,18 +661,17 @@ midifile::grab_input_stream (const std::string & tag)
     m_error_is_fatal = false;
     if (result)
     {
-        std::string path = get_full_path(m_name);
-        m_file_size = file.tellg();                 /* get the end offset   */
-
         /*
          * Kind of annoying with playlists.  Also, be verbose only if asked to
          * be, via the -v/--verbose option.  Actually, this is annoying for
          * long path-names.
          *
+         * std::string path = get_full_path(m_name);
          * if (rc().verbose() && ! verify_mode())
          *     printf("[Opened %s file, '%s']\n", tag.c_str(), path.c_str());
          */
 
+        m_file_size = file.tellg();                 /* get the end offset   */
         if (m_file_size <= sizeof(long))
         {
             result = set_error("Invalid file size... reading a directory?");
@@ -766,11 +765,12 @@ midifile::grab_input_stream (const std::string & tag)
  *      screen-set available in Seq24).  This offset is added to the sequence
  *      number read in for the sequence, to place it elsewhere in the imported
  *      tune, and locate it in a specific screen-set.  If this parameter is
- *      non-zero, then we will assume that the performer data is dirty.
+ *      non-zero, then we will assume that the performer data is dirty. The
+ *      default is 0.
  *
  * \param importing
  *      Indicates that we are importing a file, and do not want to parse/erase
- *      any "proprietrary" information from the performance.
+ *      any "proprietrary" information from the performance.  Defaults to false.
  *
  * \return
  *      Returns true if the parsing succeeded.  Note that the error status is

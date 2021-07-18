@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-06-25
+ * \updates       2021-07-18
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -73,6 +73,7 @@
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
+#include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
 #include "gui_palette_qt5.hpp"
 #include "qloopbutton.hpp"              /* seq66::qloopbutton (qslotbutton) */
 #include "qslivegrid.hpp"               /* seq66::qslivegrid                */
@@ -123,12 +124,7 @@ static const int c_minimum_height  = 180;
  *      in an external window.
  */
 
-qslivegrid::qslivegrid
-(
-    performer & p,
-    qsmainwnd * window,
-    QWidget * parent
-) :
+qslivegrid::qslivegrid (performer & p, qsmainwnd * window, QWidget * parent) :
     qslivebase          (p, window, parent),
     ui                  (new Ui::qslivegrid),
     m_popup             (nullptr),
@@ -227,8 +223,11 @@ qslivegrid::set_mode_text (const std::string & mode)
 void
 qslivegrid::set_playlist_name (const std::string & plname)
 {
-    QString pln = " ";
-    pln += QString::fromStdString(plname);
+//  QString pln = " ";
+//  pln += QString::fromStdString(plname);
+
+    std::string fullname = get_full_path(plname);
+    QString pln = QString::fromStdString(fullname);
     ui->labelPlaylistSong->setText(pln);
     (void) recreate_all_slots();
 }

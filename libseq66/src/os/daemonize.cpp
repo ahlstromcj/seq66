@@ -348,7 +348,7 @@ reroute_stdio (const std::string & logfile, bool closem)
             std::string normedpath = normalize_path(logpath);
             printf
             (
-                "\n%s \n%s \n%s \n",
+                "\n'%s' \n'%s' \n'%s' \n",
                 seq_app_name().c_str(), normedpath.c_str(),
                 current_date_time().c_str()
             );

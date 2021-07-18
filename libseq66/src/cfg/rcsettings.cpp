@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-07-12
+ * \updates       2021-07-17
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -95,6 +95,7 @@ rcsettings::rcsettings () :
     m_with_jack_midi            (false),
 #endif
     m_song_start_mode           (sequence::playback::automatic),
+    m_song_start_is_auto        (true),
     m_manual_ports              (false),
     m_manual_port_count         (c_output_buss_default),
     m_manual_in_port_count      (c_input_buss_default),
@@ -198,6 +199,7 @@ rcsettings::set_defaults ()
     m_with_jack_midi            = false;
 #endif
     m_song_start_mode           = sequence::playback::automatic;
+    m_song_start_is_auto        = true;
     m_manual_ports              = false;
     m_manual_port_count         = c_output_buss_default;
     m_manual_in_port_count      = c_input_buss_default;
@@ -278,11 +280,11 @@ rcsettings::set_jack_transport (const std::string & value)
 /**
  *  Song-start mode.  Was boolean, but now can be set to a value that
  *  determines the mode based on the file being loaded having triggers, or
- *  not.
+ *  not. This should be used only by the rcfile class.
  */
 
 std::string
-rcsettings::song_mode () const
+rcsettings::song_mode_string () const
 {
     std::string result;
     switch (m_song_start_mode)
@@ -292,6 +294,9 @@ rcsettings::song_mode () const
         case sequence::playback::automatic: result = "auto";    break;
         default:                            result = "unknown"; break;
     }
+    if (m_song_start_is_auto)                   /* "auto" read from 'rc'?   */
+        result = "auto";
+
     return result;
 }
 
@@ -299,11 +304,20 @@ void
 rcsettings::song_start_mode (const std::string & s)
 {
     if (s == "song" || s == "true" || s == "1")
+    {
         m_song_start_mode = sequence::playback::song;
+        m_song_start_is_auto = false;
+    }
     else if (s == "live" || s == "false")
+    {
         m_song_start_mode = sequence::playback::live;
+        m_song_start_is_auto = false;
+    }
     else
+    {
         m_song_start_mode = sequence::playback::automatic;
+        m_song_start_is_auto = true;
+    }
 }
 
 /**
@@ -826,7 +840,7 @@ rcsettings::last_used_dir (const std::string & value)
     if (value.empty())
         m_last_used_dir = empty_string();       /* "" from strfunctions */
     else
-        m_last_used_dir = get_full_path(value);
+        m_last_used_dir = get_full_path(value); /* might end up empty   */
 }
 
 /**
