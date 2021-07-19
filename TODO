@@ -1,6 +1,6 @@
 TO DO for Seq66 0.96.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-07-17
+2019-04-13 to 2021-07-19
 
 Hottest to Trivial:
 
@@ -50,14 +50,12 @@ From Testing:
 
     Weird silence in "Europe Endless" Melody 2 around measure 150 and 244.
     (Loop measure 23 and 37).  Did not happen after hitting Panic in Qsynth!
-    A patch frequency limitation?  Test under Timidity.
+    A patch frequency limitation?  Yes.  Changing channel 5 from program 65
+    (Alto Sax) to 66 (Tenor Sax) fixed the issue.
 
-    L/R looping in pattern editor not working.
+    L/R looping in pattern editor not working completely.
 
 Others to Consider:
-
-    When filling the file line in the live grid with the MIDI filename (not
-    from playlist), use the realpath() result.
 
     In main frame, try to highlight the start/stop/pause buttons
     appropriately.

@@ -107,7 +107,10 @@ midi_api_name (int i)
 int
 midi_probe ()
 {
-    static rtmidi_info s_rtmidi_info_dummy(RTMIDI_API_UNSPECIFIED, "probe");
+    static rtmidi_info s_rtmidi_info_dummy
+    (
+        RTMIDI_API_UNSPECIFIED, "probe", 192, 120
+    );
     static midibus s_midibus_dummy(s_rtmidi_info_dummy, 0);
     std::vector<rtmidi_api> apis;
     rtmidi_info::get_compiled_api(apis);
@@ -119,7 +122,10 @@ midi_probe ()
 
     try                         /* rtmidi constructors; exceptions possible */
     {
-        rtmidi_info dummyinfo;
+        rtmidi_info dummyinfo
+        (
+            RTMIDI_API_UNSPECIFIED, "probe", 192, 120
+        );
         rtmidi_in midiin(s_midibus_dummy, dummyinfo);
         std::cout
             << "MIDI Input/Output API: "

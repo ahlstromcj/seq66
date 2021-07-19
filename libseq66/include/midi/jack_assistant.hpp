@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2021-07-17
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -340,10 +340,8 @@ public:
     jack_assistant
     (
         performer & parent,
-        midibpm bpminute = SEQ66_DEFAULT_BPM,
-        int ppqn         = SEQ66_USE_DEFAULT_PPQN,
-        int bpm          = SEQ66_DEFAULT_BEATS_PER_MEASURE,
-        int beatwidth    = SEQ66_DEFAULT_BEAT_WIDTH
+        midibpm bpminute, int ppqn,
+        int bpm, int beatwidth
     );
     ~jack_assistant ();
 

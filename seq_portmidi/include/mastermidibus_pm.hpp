@@ -61,11 +61,8 @@ private:
 
 public:
 
-    mastermidibus
-    (
-        int ppqn    = SEQ66_USE_DEFAULT_PPQN,
-        midibpm bpm = SEQ66_DEFAULT_BPM        /* c_beats_per_minute */
-    );
+    mastermidibus () = delete;
+    mastermidibus (int ppqn, midibpm bpm);
     virtual ~mastermidibus ();
     virtual bool activate ();
 

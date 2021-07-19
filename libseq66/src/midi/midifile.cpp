@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-07-18
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1708,13 +1708,12 @@ midifile::parse_prop_header (int file_size)
  * Extra precision BPM:
  *
  *  Based on a request for two decimals of precision in beats-per-minute, we
- *  now save a scaled version of BPM.  Our supported range of BPM is
- *  SEQ66_MINIMUM_BPM = 1 to SEQ66_MAXIMUM_BPM = 600.  If this range is
- *  encountered, the value is read as is.  If greater than this range
- *  (actually, we use 999 as the limit), then we divide the number by 1000 to
- *  get the actual BPM, which can thus have more precision than the old
- *  integer value allowed.  Obviously, when saving, we will multiply by 1000
- *  to encode the BPM.
+ *  now save a scaled version of BPM.  Our supported range of BPM is 2.0 to
+ *  600.0.  If this range is encountered, the value is read as is.  If greater
+ *  than this range (actually, we use 999 as the limit), then we divide the
+ *  number by 1000 to get the actual BPM, which can thus have more precision
+ *  than the old integer value allowed.  Obviously, when saving, we will
+ *  multiply by 1000 to encode the BPM.
  *
  * \param p
  *      The performance object that is being set via the incoming MIDI file.
@@ -1927,10 +1926,8 @@ midifile::parse_proprietary_track (performer & p, int file_size)
              * BPM.  See the function banner for a discussion.
              */
 
-            midibpm bpm = midibpm(read_long());
-            if (bpm > (SEQ66_BPM_SCALE_FACTOR - 1.0))
-                bpm /= SEQ66_BPM_SCALE_FACTOR;
-
+            midilong longbpm = read_long();
+            midibpm bpm = usr().unscaled_bpm(longbpm);
             p.set_beats_per_minute(bpm);                    /* 2nd setter   */
         }
 
@@ -2989,7 +2986,7 @@ midifile::write_proprietary_track (performer & p)
      *  We should probably sanity-check the BPM at some point.
      */
 
-    long scaled_bpm = long(p.get_beats_per_minute() * SEQ66_BPM_SCALE_FACTOR);
+    midilong scaled_bpm = usr().scaled_bpm(p.get_beats_per_minute());
     write_long(scaled_bpm);                     /* 4 bytes                  */
     if (gmutesz > 0)
     {

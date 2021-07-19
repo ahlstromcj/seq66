@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2021-06-10
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -74,22 +74,6 @@
  */
 
 #define SEQ66_SET_KEYS_MAX                32
-
-/**
- *  Default values of the height of the piano keys in the Qt 5 qseqkeys
- *  user-interface.  Also configurable in the "usr" file.
- */
-
-#define SEQ66_SEQKEY_HEIGHT_MIN            6
-#define SEQ66_SEQKEY_HEIGHT_DEFAULT       10
-#define SEQ66_SEQKEY_HEIGHT_MAX           32    /* useful on touch-screens  */
-
-/**
- *  Guessing that this has to do with the width of the performerance piano roll.
- *  See perfroll::init_before_show().
- */
-
-#define SEQ66_PERFROLL_PAGE_FACTOR      4096
 
 /**
  *  This constant indicates that a configuration file numeric value is
@@ -193,162 +177,6 @@
 #define SEQ66_FF_RW_TIMEOUT              120
 
 /**
- *  Defines a scale value for BPM so that we can store a higher-precision
- *  version of it in the proprietary "bpm" section.  See the midifile class
- *  for more information.
- */
-
-#define SEQ66_BPM_SCALE_FACTOR          1000.0
-
-/**
- *  The amount of time to wait for inaction before clearing the tap-button
- *  values, in milliseconds.
- */
-
-#define SEQ66_TAP_BUTTON_TIMEOUT        5000L
-
-/**
- *  Default value for c_beats_per_minute (global beats-per-minute, also known
- *  as "BPM").  Do not confuse this "bpm" with the other one, "beats per
- *  measure".
- */
-
-#define SEQ66_DEFAULT_BPM               120.0
-
-/**
- *  Minimum value for c_beats_per_minute (global beats-per-minute, also known
- *  as "BPM").  Mostly for sanity-checking, with extra low values allowed for
- *  debugging and troubleshooting.  When we have both Hydrogen and Seq66
- *  running in Slave mode, BPM alternates between 1.0 and 120.0!
- */
-
-#define SEQ66_MINIMUM_BPM                 2.0       /* 1.0, 20.0   */
-
-/**
- *  Maximum value for c_beats_per_minute (global beats-per-minute, also known
- *  as "BPM").  Mostly for sanity-checking.
- */
-
-#define SEQ66_MAXIMUM_BPM               600.0       /* 500  */
-
-/**
- *  Provides a fallback value for the BPM precision.  This is the "legacy"
- *  value.
- */
-
-#define SEQ66_DEFAULT_BPM_PRECISION       0
-
-/**
- *  Provides a minimum value for the BPM precision.  That is, no decimal
- *  point.
- */
-
-#define SEQ66_MINIMUM_BPM_PRECISION       0
-
-/**
- *  Provides a maximum value for the BPM precision, two decimal points.
- */
-
-#define SEQ66_MAXIMUM_BPM_PRECISION       2
-
-/**
- *  Provides a fallback value for the BPM increment.  This is the "legacy"
- *  value.
- */
-
-#define SEQ66_DEFAULT_BPM_INCREMENT       1.0
-
-/**
- *  Provides a minimum value for the BPM increment.
- */
-
-#define SEQ66_MINIMUM_BPM_INCREMENT       0.01
-
-/**
- *  Provides a maximum value for the BPM increment.
- */
-
-#define SEQ66_MAXIMUM_BPM_INCREMENT      25.0
-
-/**
- *  Provides a fallback value for the BPM step increment.  This is the "legacy"
- *  value.
- */
-
-#define SEQ66_DEFAULT_BPM_STEP_INCREMENT   1.0
-
-/**
- *  Provides a fallback value for the BPM page increment.
- */
-
-#define SEQ66_DEFAULT_BPM_PAGE_INCREMENT  10.0
-
-/**
- *  Minimum value for "beats-per-measure".  A new addition for the Qt 5
- *  user-interface.
- */
-
-#define SEQ66_MINIMUM_BEATS_PER_MEASURE    1
-
-/**
- *  Default value for "beats-per-measure".  This is the "numerator" in a 4/4
- *  time signature.  It also seems to be the value used for JACK's
- *  jack_position_t.beats_per_bar field.  For abbreviation, we will call this
- *  value "BPB", or "beats per bar", to distinguish it from "BPM", or "beats
- *  per minute".
- */
-
-#define SEQ66_DEFAULT_BEATS_PER_MEASURE    4
-
-/**
- *  Maximum value for "beats-per-measure".  A new addition for the Qt 5
- *  user-interface.
- */
-
-#define SEQ66_MAXIMUM_BEATS_PER_MEASURE   32
-
-/**
- *  Minimum number of measures in the official length of a pattern.
- */
-
-#define SEQ66_MINIMUM_MEASURES             1
-
-/**
- *  Default number of measures in the official length of a pattern.
- */
-
-#define SEQ66_DEFAULT_MEASURES             1
-
-/**
- *  Maximum number of measures in the official length of a pattern.
- */
-
-#define SEQ66_MAXIMUM_MEASURES          1024
-
-/**
- *  The minimum value of the beat width.  A new addition for the Qt 5
- *  user-interface.
- */
-
-#define SEQ66_MINIMUM_BEAT_WIDTH           1
-
-/**
- *  Default value for "beat-width".  This is the "denominator" in a 4/4 time
- *  signature.  It also seems to be the value used for JACK's
- *  jack_position_t.beat_type field. For abbreviation, we will call this value
- *  "BW", or "beat width", not to be confused with "bandwidth".
- */
-
-#define SEQ66_DEFAULT_BEAT_WIDTH            4
-
-/**
- *  The maximum value of the beat width.  A new addition for the Qt 5
- *  user-interface.
- */
-
-#define SEQ66_MAXIMUM_BEAT_WIDTH           32
-
-/**
  *  Default value for major divisions per bar.  A graphics version of
  *  SEQ66_DEFAULT_BEATS_PER_MEASURE.
  */
@@ -360,39 +188,6 @@
  */
 
 #define SEQ66_DEFAULT_PERFEDIT_SNAP         8
-
-/**
- *  Defines the default Note On velocity, a new "stazed" feature.
- */
-
-#define SEQ66_DEFAULT_NOTE_ON_VELOCITY    100
-
-/**
- *  Defines the maximum Note On velocity.
- */
-
-#define SEQ66_MAX_NOTE_ON_VELOCITY        127
-
-/**
- *  Indicates to preserve the velocity of incoming MIDI Note events, for both
- *  on or off events.  This value represents the "Free" popup-menu entry for
- *  the "Vol" button in the seqedit window.
- */
-
-#define SEQ66_PRESERVE_VELOCITY         (-1)
-
-/**
- *  An older value, previously used for both Note On and Note Off velocity.
- *  See the "Stazed" note in the sequence::add_note() function.
- */
-
-#define SEQ66_DEFAULT_NOTE_VELOCITY      100
-
-/**
- *  Defines the default Note Off velocity, a new "stazed" feature.
- */
-
-#define SEQ66_DEFAULT_NOTE_OFF_VELOCITY   64
 
 /**
  *  Provides a sanity check for transposition values.

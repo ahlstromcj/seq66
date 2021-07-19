@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-06-26
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -429,15 +429,14 @@ private:
      *  Provides the universal and unambiguous MIDI value for beats per
      *  measure, also called "beats per bar" (BPB).  This variable will
      *  replace the global beats per measure.  The default value of this
-     *  variable is SEQ66_DEFAULT_BEATS_PER_MEASURE (4).  For external access,
-     *  we will call this value "beats per bar", abbreviate it "BPB", and use
-     *  "bpb" in any accessor function names.  Now, although it applies to the
-     *  whole session, we should be able to continue seq66's tradition of
-     *  allowing each sequence to have its own time signature.  Also, there
-     *  are a number of places where the number 4 appears and looks like it
-     *  might be a hardwired BPB value, either for MIDI purposes or for
-     *  drawing the piano-roll grids.  So we might need a couple different
-     *  versions of this variable.
+     *  variable is 4.  For external access, we will call this value "beats
+     *  per bar", abbreviate it "BPB", and use "bpb" in any accessor function
+     *  names.  Now, although it applies to the whole session, we should be
+     *  able to continue seq66's tradition of allowing each sequence to have
+     *  its own time signature.  Also, there are a number of places where the
+     *  number 4 appears and looks like it might be a hardwired BPB value,
+     *  either for MIDI purposes or for drawing the piano-roll grids.  So we
+     *  might need a couple different versions of this variable.
      */
 
     int m_midi_beats_per_measure;        /* BPB, or beats per bar       */
@@ -471,15 +470,14 @@ private:
     /**
      *  Provides the universal MIDI value for beats width (BW).  This variable
      *  will replace the global beat_width.  The default value of this
-     *  variable is DEFAULT_BEAT_WIDTH (4).  Now, although it applies to the
-     *  whole session, we should be able to continue seq66's tradition of
-     *  allowing each sequence to have its own time signature.  Also, there
-     *  are a number of places where the number 4 appears and looks like it
-     *  might be a hardwired BW value, either for MIDI purposes or for drawing
-     *  the user-interface.  So we might need a couple different versions of
-     *  this variable.  For external access, we will call this value "beat
-     *  width", abbreviate it "BW", and use "bw" in any accessor function
-     *  names.
+     *  variable is 4.  Now, although it applies to the whole session, we
+     *  should be able to continue seq24's tradition of allowing each sequence
+     *  to have its own time signature.  Also, there are a number of places
+     *  where the number 4 appears and looks like it might be a hardwired BW
+     *  value, either for MIDI purposes or for drawing the user-interface.  So
+     *  we might need a couple different versions of this variable.  For
+     *  external access, we will call this value "beat width", abbreviate it
+     *  "BW", and use "bw" in any accessor function names.
      */
 
     int m_midi_beat_width;              /* BW, or beat width            */
@@ -494,16 +492,16 @@ private:
     bussbyte m_midi_buss_override;      /* --bus n option               */
 
     /**
-     *  Sets the default velocity for note adding.  The value
-     *  SEQ66_PRESERVE_VELOCITY (-1) preserves the velocity of incoming notes,
-     *  so that nuances in live playing can be preserved.  The popup-menu for
-     *  the "Vol" button in the seqedit window shows this value as the "Free"
-     *  menu entry.  The rest of the values in the menu show a few select
-     *  velocities, but any velocity from 0 to 127 can be entered here. Of
-     *  course, 0 is not recommended.
+     *  Sets the default velocity for note adding.  The preserve-velocity
+     *  value (-1) preserves the velocity of incoming notes, so that nuances
+     *  in live playing can be preserved.  The popup-menu for the "Vol" button
+     *  in the seqedit window shows this value as the "Free" menu entry.  The
+     *  rest of the values in the menu show a few select velocities, but any
+     *  velocity from 0 to 127 can be entered here. Of course, 0 is not
+     *  recommended.
      */
 
-    int m_velocity_override;
+    short m_velocity_override;
 
     /**
      *  Sets the precision of the BPM (beats-per-minute) setting.  The
@@ -511,8 +509,8 @@ private:
      *  the following values:
      *
      *      -   0.  The legacy default.
-     *      -   1.  One decimal place in the BPM spinner.
-     *      -   2.  Two decimal places in the BPM spinner.
+     *      -   1.  One decimal place in the BPM spinner (and MIDI control).
+     *      -   2.  Two decimal places in the BPM spinner (and MIDI control).
      */
 
     int m_bpm_precision;
@@ -803,6 +801,14 @@ public:
     virtual void set_defaults () override;
     virtual void normalize () override;
 
+    bool bpb_is_valid (int v) const;            /* beats per bar (measure)  */
+    int bpb_default () const;
+    bool bw_is_valid (int v) const;             /* beat width (denominator) */
+    int bw_default () const;
+    bool bpm_is_valid (midibpm v) const;        /* beats per minute (BPM)   */
+    midibpm bpm_default () const;
+    midilong scaled_bpm (midibpm bpm);          /* precision 2 BPM in long  */
+    midibpm unscaled_bpm (midilong bpm);        /* precision 2 double value */
     bool add_bus (const std::string & alias);
     bool add_instrument (const std::string & instname);
     void clear_buses_and_instruments ()
@@ -1211,10 +1217,7 @@ public:
         return m_midi_bpm_maximum;
     }
 
-    long tap_bpm_timeout () const
-    {
-        return SEQ66_TAP_BUTTON_TIMEOUT;
-    }
+    long tap_button_timeout () const;
 
     int midi_beat_width () const
     {
@@ -1226,10 +1229,15 @@ public:
         return m_midi_buss_override;
     }
 
-    int velocity_override () const
+    short velocity_override () const
     {
         return m_velocity_override;
     }
+
+    short preserve_velocity () const;
+    short note_off_velocity () const;
+    short note_on_velocity () const;
+    short max_note_on_velocity () const;
 
     int bpm_precision () const
     {
@@ -1278,6 +1286,9 @@ public:
 
     std::string option_logfile () const;
 
+    int min_key_height () const;
+    int max_key_height () const;
+
     int key_height () const
     {
         return m_user_ui_key_height;
@@ -1285,7 +1296,7 @@ public:
 
     bool valid_key_height (int h) const
     {
-        return h >= SEQ66_SEQKEY_HEIGHT_MIN && h <= SEQ66_SEQKEY_HEIGHT_MAX;
+        return h >= min_key_height() && h <= max_key_height();
     }
 
     /*

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2021-05-26
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -383,12 +383,6 @@ songsummary::write_notepads
     }
 }
 
-/*
- *  We now encode the Seq66-specific BPM value by multiplying it
- *  by 1000.0 first, to get more implicit precision in the number.
- *  We should probably sanity-check the BPM at some point.
- */
-
 void
 songsummary::write_bpm
 (
@@ -396,12 +390,9 @@ songsummary::write_bpm
     const performer & p
 )
 {
-    long scaled_bpm = long(p.get_beats_per_minute() * SEQ66_BPM_SCALE_FACTOR);
-    write_prop_header(file, c_bpmtag, scaled_bpm);
-    file
-        << "Encoded BPM: " << scaled_bpm
-        << " (" << p.get_beats_per_minute() << ")\n"
-        ;
+    midibpm bpm = p.get_beats_per_minute();
+    write_prop_header(file, c_bpmtag, bpm);
+    file << "        BPM: " << bpm << "\n";
 }
 
 void

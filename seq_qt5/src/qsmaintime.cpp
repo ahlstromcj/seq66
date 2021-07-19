@@ -171,7 +171,7 @@ qsmaintime::paintEvent (QPaintEvent *)
      * differently than 300, because Seq66 allows BPM higher than 300.
      */
 
-    m_alpha *= 0.7 - perf().bpm() / SEQ66_MAXIMUM_BPM;     /* 600 */
+    m_alpha *= 0.7 - perf().bpm() / usr().midi_bpm_maximum();
     if (m_alpha < 0)
         m_alpha = 0;
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-09
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -74,11 +74,8 @@ public:
         performer & perf,
         seq::pointer seqp,
         qseqeditframe64 * frame,
-        int zoom                = SEQ66_DEFAULT_ZOOM,
-        int snap                = SEQ66_DEFAULT_SNAP,
-        int keyheight           = SEQ66_SEQKEY_HEIGHT_DEFAULT,
-        QWidget * parent        = nullptr,
-        int xoffset             = 0
+        int zoom, int snap, int keyheight,
+        QWidget * parent, int xoffset
     );
 
     virtual ~qstriggereditor ();

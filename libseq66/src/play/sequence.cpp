@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-07-06
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -87,6 +87,12 @@ static const int c_maxbeats         = 0xFFFF;
  */
 
 int sequence::sm_fingerprint_size   = 0;
+
+/*
+ * Member for convenience.
+ */
+
+short sequence::sm_preserve_velocity;
 
 /**
  *  Provides the default name/title for the sequence.
@@ -185,15 +191,16 @@ sequence::sequence (int ppqn) :
     m_time_beat_width           (4),
     m_clocks_per_metronome      (24),
     m_32nds_per_quarter         (8),
-    m_us_per_quarter_note       (tempo_us_from_bpm(SEQ66_DEFAULT_BPM)),
-    m_rec_vol                   (SEQ66_PRESERVE_VELOCITY),
-    m_note_on_velocity          (SEQ66_DEFAULT_NOTE_ON_VELOCITY),
-    m_note_off_velocity         (SEQ66_DEFAULT_NOTE_OFF_VELOCITY),
+    m_us_per_quarter_note       (tempo_us_from_bpm(usr().bpm_default())),
+    m_rec_vol                   (usr().preserve_velocity()),
+    m_note_on_velocity          (usr().note_on_velocity()),
+    m_note_off_velocity         (usr().note_off_velocity()),
     m_musical_key               (usr().seqedit_key()),
     m_musical_scale             (usr().seqedit_scale()),
     m_background_sequence       (usr().seqedit_bgsequence()),
     m_mutex                     ()
 {
+    sm_preserve_velocity = usr().preserve_velocity();
     sm_fingerprint_size = usr().fingerprint_size();
     m_events.set_length(m_length);
     m_triggers.set_ppqn(int(m_ppqn));
@@ -726,8 +733,8 @@ sequence::select_linked (midipulse tick_s, midipulse tick_f, midibyte status)
  *
  * \param recvol
  *      The new setting of the recording volume setting.  It is used only if
- *      it ranges from 1 to SEQ66_MAX_NOTE_ON_VELOCITY, or is set to
- *      SEQ66_PRESERVE_VELOCITY.
+ *      it ranges from 1 to usr().max_note_on_velocity(), or is set to
+ *      the preserve-velocity (-1).
  */
 
 void
@@ -736,10 +743,10 @@ sequence::set_rec_vol (int recvol)
     automutex locker(m_mutex);
     bool valid = recvol > 0;
     if (valid)
-        valid = recvol <= SEQ66_MAX_NOTE_ON_VELOCITY;
+        valid = recvol <= usr().max_note_on_velocity();
 
     if (! valid)
-        valid = recvol == SEQ66_PRESERVE_VELOCITY;
+        valid = recvol == usr().preserve_velocity();
 
     if (valid)
     {
@@ -2325,12 +2332,9 @@ sequence::change_event_data_lfo
  *  without playback occurring, so we set the generic default note length and
  *  volume to the snap.  There are two ways to enter notes:
  *
- *      -   Mouse movement in the seqroll.  Here, velocity defaults to
- *          SEQ66_PRESERVE_VELOCITY
+ *      -   Mouse movement in the seqroll.  Here, velocity defaults to the
+ *          preserve_velocity>
  *      -   Input from a MIDI keyboard.  Velocity ranges from 0 to 127.
- *
- *  If the recording-volume is SEQ66_DEFAULT_NOTE_ON_VELOCITY, then we have to
- *  set a default value, 100.
  *
  *  Will be consistent with how Note On velocity is handled; enable 0 velocity
  *  (a standard?) for Note Off when not playing. Note that the event
@@ -2386,7 +2390,7 @@ sequence::change_event_data_lfo
  *      false.
  *
  * \param velocity
- *      If not set to SEQ66_PRESERVE_VELOCITY, the velocity of the note is
+ *      If not set to the preserve-velocity, the velocity of the note is
  *      set to this value.  Otherwise, it is hard-wired to the stored note-on
  *      velocity.  The name of this macro is counter-intuitive here.
  *      Currently, the note-off velocity is HARD-WIRED!
@@ -2432,7 +2436,7 @@ sequence::add_note
          *  See banner notes.
          */
 
-        bool hardwire = velocity == SEQ66_PRESERVE_VELOCITY;
+        bool hardwire = velocity == usr().preserve_velocity();
         midibyte v = hardwire ? midibyte(m_note_on_velocity) : velocity ;
         event e(tick, EVENT_NOTE_ON, note, v);
         if (repaint)
@@ -2750,13 +2754,11 @@ sequence::check_loop_reset ()
  *      how?
  *
  *  The m_rec_vol member includes the "Free" menu entry in seqedit, which sets
- *  the velocity to SEQ66_PRESERVE_VELOCITY (-1).
+ *  the velocity to the preserve-velocity (-1).
  *
  *  If the pattern is not playing, this function supports the step-edit
  *  (auto-step) feature, where we are entering notes without playback occurring,
- *  so we set the generic default note length and volume to the snap.  If the
- *  recording-volume is SEQ66_DEFAULT_NOTE_ON_VELOCITY, then we have to set a
- *  default value, 100.
+ *  so we set the generic default note length and volume to the snap.
  *
  * \todo
  *      When we feel like debugging, we will replace the global is-playing
@@ -2802,7 +2804,7 @@ sequence::stream_event (event & ev)
         {
             if (perf()->is_pattern_playing())   /* m_parent->is_running()   */
             {
-                if (ev.is_note_on() && m_rec_vol > SEQ66_PRESERVE_VELOCITY)
+                if (ev.is_note_on() && m_rec_vol > usr().preserve_velocity())
                     ev.note_velocity(m_rec_vol);        /* modify incoming  */
 
                 add_event(ev);                          /* locks and sorts  */
@@ -2836,7 +2838,7 @@ sequence::stream_event (event & ev)
                 else if (ev.is_note_on())
                 {
                     int velocity = int(ev.note_velocity());
-                    bool keepvelocity = m_rec_vol == SEQ66_PRESERVE_VELOCITY;
+                    bool keepvelocity = m_rec_vol == usr().preserve_velocity();
                     if (keepvelocity)
                     {
                         if (velocity == 0)

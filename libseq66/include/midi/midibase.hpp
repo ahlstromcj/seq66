@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2021-06-10
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations
@@ -231,18 +231,18 @@ public:
 
     midibase
     (
-        const std::string & appname,                /* usually the app name */
-        const std::string & busname     = "",       /* subsystem name       */
-        const std::string & portname    = "",       /* rarely needed now    */
-        int index                       = 0,        /* a display ordinal    */
-        int bus_id                      = null_buss(),
-        int port_id                     = bad_id(),
-        int queue                       = bad_id(),
-        int ppqn                        = SEQ66_USE_DEFAULT_PPQN,
-        midibpm bpm                     = SEQ66_DEFAULT_BPM,
-        bool makevirtual                = false,
-        bool isinput                    = false,
-        bool makesystem                 = false
+        const std::string & appname,        /* usually the app name         */
+        const std::string & busname,        /* subsystem name               */
+        const std::string & portname,
+        int index,                          /* 0, a display ordinal         */
+        int bus_id,                         /* null_buss()                  */
+        int port_id,                        /* bad_id()                     */
+        int queue,                          /* bad_id()                     */
+        int ppqn,                           /* use_default_ppqn             */
+        midibpm bpm,                        /* default_bpm                  */
+        bool makevirtual,                   /* false                        */
+        bool isinput,                       /* false                        */
+        bool makesystem                     /* false                        */
     );
 
     virtual ~midibase ();

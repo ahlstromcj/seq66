@@ -78,10 +78,8 @@ public:
 
     rtmidi_info
     (
-        rtmidi_api api                  = RTMIDI_API_UNSPECIFIED,
-        const std::string & appname     = "rtmidiapp",
-        int ppqn                        = SEQ66_DEFAULT_PPQN,
-        midibpm bpm                     = SEQ66_DEFAULT_BPM
+        rtmidi_api api, const std::string & appname,
+        int ppqn, midibpm bpm
     );
 
     virtual ~rtmidi_info ();

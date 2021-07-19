@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-07-08
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -204,7 +204,13 @@ private:
      *  number of notes playing at one time that the application will support.
      */
 
-    static const int c_playing_notes_max   = 256;
+    static const int c_playing_notes_max = 256;
+
+    /**
+     *  Used as the default velocity parameter in adding notes.
+     */
+
+    static short sm_preserve_velocity;
 
     /*
      * Documented at the definition point in the cpp module.
@@ -699,24 +705,22 @@ private:
 
     /**
      *  The volume to be used when recording.  It can range from 0 to 127,
-     *  or be set to SEQ66_PRESERVE_VELOCITY (-1).
+     *  or be set to the preserve-velocity (-1).
      */
 
     short m_rec_vol;
 
     /**
-     *  The Note On velocity used.  Currently set to
-     *  SEQ66_DEFAULT_NOTE_ON_VELOCITY.  If the recording velocity
-     *  (m_rec_vol) is non-zero, this value will be set to the desired
-     *  recording velocity.  A "stazed" feature.
+     *  The Note On velocity used, set to usr().note_on_velocity().  If the
+     *  recording velocity (m_rec_vol) is non-zero, this value will be set to
+     *  the desired recording velocity.  A "stazed" feature.
      */
 
     short m_note_on_velocity;
 
     /**
-     *  The Note Off velocity used.  Currently set to
-     *  SEQ66_DEFAULT_NOTE_OFF_VELOCITY, and currently unmodifiable.  A
-     *  "stazed" feature.
+     *  The Note Off velocity used, set to usr().note_on_velocity(), and
+     *  currently unmodifiable.  A "stazed" feature.
      */
 
     short m_note_off_velocity;
@@ -1337,23 +1341,23 @@ public:
     (
         midipulse tick, midipulse len, int note,
         bool paint = false,
-        int velocity = SEQ66_PRESERVE_VELOCITY
+        int velocity = sm_preserve_velocity
     );
     bool push_add_chord
     (
         int chord, midipulse tick, midipulse len,
-        int note, int velocity = SEQ66_PRESERVE_VELOCITY
+        int note, int velocity = sm_preserve_velocity
     );
     bool add_note
     (
         midipulse tick, midipulse len, int note,
         bool paint = false,
-        int velocity = SEQ66_PRESERVE_VELOCITY
+        int velocity = sm_preserve_velocity
     );
     bool add_chord
     (
         int chord, midipulse tick, midipulse len, int note,
-        int velocity = SEQ66_PRESERVE_VELOCITY
+        int velocity = sm_preserve_velocity
     );
     bool add_event (const event & er);      /* another one declared below */
     bool add_event

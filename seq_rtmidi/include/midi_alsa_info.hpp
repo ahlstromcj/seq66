@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-04
- * \updates       2020-08-04
+ * \updates       2021-07-19
  * \license       See above.
  *
  *    We need to have a way to get all of the ALSA information of
@@ -92,12 +92,8 @@ private:
 
 public:
 
-    midi_alsa_info
-    (
-        const std::string & appname,
-        int ppqn    = SEQ66_DEFAULT_PPQN,       /* 192    */
-        midibpm bpm = SEQ66_DEFAULT_BPM         /* 120.0  */
-    );
+    midi_alsa_info () = delete;
+    midi_alsa_info (const std::string & appname, int ppqn, midibpm bpm);
     virtual ~midi_alsa_info ();
 
     /**

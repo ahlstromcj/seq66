@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-07-13
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -617,14 +617,14 @@ private:                            /* key, midi, and op container section  */
 
     /**
      *  Holds the beats/bar value as obtained from the MIDI file.
-     *  The default value is SEQ66_DEFAULT_BEATS_PER_MEASURE (4).
+     *  The default value is 4. See usrsettings.
      */
 
     int m_beats_per_bar;
 
     /**
      *  Holds the beat width value as obtained from the MIDI file.
-     *  The default value is SEQ66_DEFAULT_BEAT_WIDTH (4).
+     *  The default value is 4.  See usrsettings.
      */
 
     int m_beat_width;
@@ -929,12 +929,8 @@ private:
 
 public:
 
-    performer
-    (
-        int ppqn        = SEQ66_USE_DEFAULT_PPQN,
-        int rows        = screenset::c_default_rows,
-        int columns     = screenset::c_default_columns
-    );
+    performer () = delete;
+    performer (int ppqn, int rows, int columns);
     ~performer ();
     performer (const performer &) = delete;
     performer & operator = (const performer &) = delete;

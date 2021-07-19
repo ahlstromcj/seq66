@@ -195,8 +195,8 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * Display tab.
      */
 
-    ui->spinKeyHeight->setMinimum(SEQ66_SEQKEY_HEIGHT_MIN);
-    ui->spinKeyHeight->setMaximum(SEQ66_SEQKEY_HEIGHT_MAX);
+    ui->spinKeyHeight->setMinimum(usr().min_key_height());
+    ui->spinKeyHeight->setMaximum(usr().max_key_height());
     ui->spinKeyHeight->setValue(usr().key_height());
     connect
     (

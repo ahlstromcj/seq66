@@ -120,10 +120,10 @@ int midibase::m_clock_mod = 16 * 4;
  *          -   RtMidi.  Not sure yet if it will have meaning here.
  *
  * \param ppqn
- *      Provides the PPQN value.  Defaults to SEQ66_USE_DEFAULT_PPQN.
+ *      Provides the PPQN value.
  *
  * \param bpm
- *      Provides the BPM value.  Defaults to SEQ66_DEFAULT_BPM.
+ *      Provides the BPM value.
  *
  * \param makevirtual
  *      Indicates that the port represented by this object is to be virtual.

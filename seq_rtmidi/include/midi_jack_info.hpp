@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2019-10-18
+ * \updates       2021-07-19
  * \license       See above.
  *
  *    We need to have a way to get all of the JACK information of
@@ -98,12 +98,8 @@ private:
 
 public:
 
-    midi_jack_info
-    (
-        const std::string & appname,
-        int ppqn    = SEQ66_DEFAULT_PPQN,       /* 192    */
-        midibpm bpm = SEQ66_DEFAULT_BPM         /* 120.0  */
-    );
+    midi_jack_info () = delete;
+    midi_jack_info (const std::string & appname, int ppqn, midibpm bpm);
     virtual ~midi_jack_info ();
 
     /**

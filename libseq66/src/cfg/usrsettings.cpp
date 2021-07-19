@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-06-26
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -113,31 +113,99 @@ namespace seq66
 {
 
 /**
+ *  Limits offloaded from app_limits.h header.
+ *
+ *  Minimum, default, and maximum values for "beats-per-measure".  A new
+ *  addition for the Qt 5 user-interface.  This is the "numerator" in a 4/4
+ *  time signature.  It is also the value used for JACK's
+ *  jack_position_t.beats_per_bar field.  For abbreviation, we will call this
+ *  value "BPB", or "beats per bar", to distinguish it from "BPM", or "beats
+ *  per minute".
+ */
+
+static const int c_min_beats_per_measure =  1;
+static const int c_def_beats_per_measure =  4;
+static const int c_max_beats_per_measure = 32;
+
+/**
+ *  The minimum, default, and maximum values of the beat width.  A new
+ *  addition for the Qt 5 user-interface.  This is the "denominator" in a 4/4
+ *  time signature.  It is also the value used for JACK's
+ *  jack_position_t.beat_type field. For abbreviation, we will call this value
+ *  "BW", or "beat width", not to be confused with "bandwidth".
+ */
+
+static const int c_min_beat_width =  1;
+static const int c_def_beat_width =  4;
+static const int c_max_beat_width = 32;
+
+/**
+ *  Minimum, default, and maximum values for global beats-per-minute, also known
+ *  as "BPM".  Do not confuse this "bpm" with the other one, "beats per measure";
+ *  we use "BPB" (beats-per-bar) for clarity.  Also, we multiply the BPM by a
+ *  scale factor so that we can get extra precision in the value when stored as a
+ *  long integer in the MIDI file in the proprietary "bpm" section.  See the
+ *  midifile class.  Lastly, we provide a tap-button timeout value (which could
+ *  some day be mode configurable.
+ */
+
+static const midibpm c_min_beats_per_minute   =    2.0;
+static const midibpm c_def_beats_per_minute   =  120.0;
+static const midibpm c_max_beats_per_minute   =  600.0;
+static const float c_beats_per_minute_scale   = 1000.0;
+static const long c_bpm_tap_button_timeout    = 5000L;        /* milliseconds */
+static const int c_min_bpm_precision          =    0;
+static const int c_def_bpm_precision          =    0;
+static const int c_max_bpm_precision          =    2;
+static const midibpm c_min_bpm_increment      =    0.01;
+static const midibpm c_def_bpm_increment      =    1.0;
+static const midibpm c_max_bpm_increment      =    50.0;
+static const midibpm c_def_bpm_page_increment =    10.0;
+
+/**
+ *  Velocity values.
+ */
+
+static const short c_def_note_off_velocity =  64;
+static const short c_def_note_on_velocity  = 100;
+static const short c_max_note_on_velocity  = 127;
+static const short c_preserve_velocity     = (-1);
+
+/**
  *  Provide limits for the option "--option scale=x.y".  Based on the minimum
  *  size of the main window specified in qsmainwnd.ui, 0.8 is the smallest one
  *  that can go well for both width and height.
  */
 
-const double c_window_scale_min         = 0.5;  // 0.8f
-const double c_window_scale_default     = 1.0f;
-const double c_window_scale_max         = 3.0f;
+static const double c_window_scale_min     = 0.5;
+static const double c_window_scale_default = 1.0f;
+static const double c_window_scale_max     = 3.0f;
 
 /**
  *  These currently just exposed some values from the *.ui files.  The size of
  *  the main window.
  */
 
-const int c_default_window_width        = 884;  // shrunken = 720, 0.82 664
-const int c_default_window_height       = 602;  // shrunken = 480, 0.80 450
-const int c_minimum_window_width        = 720;  // shrunken = 540, 0.75 540
-const int c_minimum_window_height       = 480;  // shrunken = 360, 0.66 450
+static const int c_default_window_width  = 884;  // shrunken = 720, 0.82 664
+static const int c_default_window_height = 602;  // shrunken = 480, 0.80 450
+static const int c_minimum_window_width  = 720;  // shrunken = 540, 0.75 540
+static const int c_minimum_window_height = 480;  // shrunken = 360, 0.66 450
+
+/**
+ *  Key-height settings.  Default values of the height of the piano keys in
+ *  the Qt 5 qseqkeys user-interface.
+ */
+
+static const int c_min_key_height =  6;
+static const int c_def_key_height = 10;
+static const int c_max_key_height = 32;         /* touch-screen friendly    */
 
 /**
  *  Minimum and maximum possible values for the global redraw rate.
  */
 
-const int c_minimum_redraw              =  10;
-const int c_maximum_redraw              = 100;
+static const int c_minimum_redraw =  10;
+static const int c_maximum_redraw = 100;
 
 /**
  *  Provides the redraw time when recording, in ms.  Can Windows actually
@@ -145,9 +213,9 @@ const int c_maximum_redraw              = 100;
  */
 
 #if defined SEQ66_PLATFORM_WINDOWS
-const int c_default_redraw_ms           = 25;
+static const int c_default_redraw_ms = 25;
 #else
-const int c_default_redraw_ms           = 40;
+static const int c_default_redraw_ms = 40;
 #endif
 
 /**
@@ -163,8 +231,8 @@ const int c_default_redraw_ms           = 40;
  *  hard-wired.
  */
 
-const int c_text_x =  6;            /* does not include the inner padding   */
-const int c_text_y = 12;            /* does include the inner padding       */
+static const int c_text_x =  6;            /* does not include the inner padding   */
+static const int c_text_y = 12;            /* does include the inner padding       */
 
 /**
  *  Constants for the main window, etc. The c_seqchars_x and c_seqchars_y
@@ -173,8 +241,8 @@ const int c_text_y = 12;            /* does include the inner padding       */
  *  pattern/sequence box.
  */
 
-const int c_seqchars_x = 15;
-const int c_seqchars_y =  5;
+static const int c_seqchars_x = 15;
+static const int c_seqchars_y =  5;
 
 /**
  *  The c_seqarea_x and c_seqarea_y constants are derived from the width
@@ -182,8 +250,8 @@ const int c_seqchars_y =  5;
  *  in width, and the number of lines, in a pattern/sequence box.
  */
 
-const int c_seqarea_x = c_text_x * c_seqchars_x;
-const int c_seqarea_y = c_text_y * c_seqchars_y;
+static const int c_seqarea_x = c_text_x * c_seqchars_x;
+static const int c_seqarea_y = c_text_y * c_seqchars_y;
 
 /**
  *  These control sizes.  We'll try changing them and see what happens.
@@ -192,14 +260,14 @@ const int c_seqarea_y = c_text_y * c_seqchars_y;
  *  useful to make these values user-configurable.
  */
 
-const int c_mainwnd_spacing = 2;            // try 4 or 6 instead of 2
+static const int c_mainwnd_spacing = 2;            // try 4 or 6 instead of 2
 
 /**
  *  Provides the defaults for the progress box in the qloopbuttons.
  */
 
-const double c_progress_box_width  = 0.80;
-const double c_progress_box_height = 0.40;
+static const double c_progress_box_width  = 0.80;
+static const double c_progress_box_height = 0.40;
 
 /**
  *  Default constructor.
@@ -242,18 +310,18 @@ usrsettings::usrsettings () :
 
     m_default_ppqn              (SEQ66_DEFAULT_PPQN),
     m_midi_ppqn                 (SEQ66_DEFAULT_PPQN),
-    m_use_file_ppqn             (false),
+    m_use_file_ppqn             (true),
     m_file_ppqn                 (0),
-    m_midi_beats_per_measure    (SEQ66_DEFAULT_BEATS_PER_MEASURE),
+    m_midi_beats_per_measure    (c_def_beats_per_measure),
     m_midi_bpm_minimum          (0),
-    m_midi_beats_per_minute     (SEQ66_DEFAULT_BPM),
+    m_midi_beats_per_minute     (c_def_beats_per_minute),
     m_midi_bpm_maximum          (c_midibyte_value_max),
-    m_midi_beat_width           (SEQ66_DEFAULT_BEAT_WIDTH),
+    m_midi_beat_width           (c_def_beat_width),
     m_midi_buss_override        (null_buss()),
-    m_velocity_override         (SEQ66_PRESERVE_VELOCITY),
-    m_bpm_precision             (SEQ66_DEFAULT_BPM_PRECISION),
-    m_bpm_step_increment        (SEQ66_DEFAULT_BPM_STEP_INCREMENT),
-    m_bpm_page_increment        (SEQ66_DEFAULT_BPM_PAGE_INCREMENT),
+    m_velocity_override         (c_preserve_velocity),
+    m_bpm_precision             (c_def_bpm_precision),
+    m_bpm_step_increment        (c_def_bpm_increment),
+    m_bpm_page_increment        (c_def_bpm_page_increment),
 
     /*
      * Calculated from other member values in the normalize() function.
@@ -288,7 +356,7 @@ usrsettings::usrsettings () :
      * [user-ui-tweaks]
      */
 
-    m_user_ui_key_height        (SEQ66_SEQKEY_HEIGHT_DEFAULT),
+    m_user_ui_key_height        (c_def_key_height),
     m_user_ui_seqedit_in_tab    (true),
     m_user_ui_style_sheet       (""),
     m_resume_note_ons           (false),
@@ -336,18 +404,18 @@ usrsettings::set_defaults ()
     m_seqchars_y =  5;                      // range: 5-5
     m_default_ppqn = SEQ66_DEFAULT_PPQN;    // range: 32 to 19200, default 192
     m_midi_ppqn = SEQ66_DEFAULT_PPQN;       // range: 32 to 19200, default 192
-    m_use_file_ppqn = false;
+    m_use_file_ppqn = true;
     m_file_ppqn = 0;                        // range: 32 to 19200, default 0
-    m_midi_beats_per_measure = SEQ66_DEFAULT_BEATS_PER_MEASURE; // range: 1-16
+    m_midi_beats_per_measure = c_def_beats_per_measure; // range: 1-32
     m_midi_bpm_minimum = 0;                 // range: 0 to ???
-    m_midi_beats_per_minute = SEQ66_DEFAULT_BPM;
+    m_midi_beats_per_minute = c_def_beats_per_minute;
     m_midi_bpm_maximum = c_midibyte_value_max;
-    m_midi_beat_width = SEQ66_DEFAULT_BEAT_WIDTH;
+    m_midi_beat_width = c_def_beat_width;
     m_midi_buss_override = null_buss();             // 0xFF
-    m_velocity_override = SEQ66_PRESERVE_VELOCITY;  // -1, 0 to 127
-    m_bpm_precision = SEQ66_DEFAULT_BPM_PRECISION;
-    m_bpm_step_increment = SEQ66_DEFAULT_BPM_STEP_INCREMENT;
-    m_bpm_page_increment = SEQ66_DEFAULT_BPM_PAGE_INCREMENT;
+    m_velocity_override = c_preserve_velocity;  // -1, 0 to 127
+    m_bpm_precision = c_def_bpm_precision;
+    m_bpm_step_increment = c_def_bpm_increment;
+    m_bpm_page_increment = c_def_bpm_page_increment;
 
     /*
      * Calculated from other member values in the normalize() function.
@@ -372,7 +440,7 @@ usrsettings::set_defaults ()
     m_user_option_daemonize = false;
     m_user_use_logfile = false;
     m_user_option_logfile.clear();
-    m_user_ui_key_height = SEQ66_SEQKEY_HEIGHT_DEFAULT;
+    m_user_ui_key_height = c_def_key_height;
     m_user_ui_seqedit_in_tab = true;
     m_user_ui_style_sheet = "";
     m_resume_note_ons = false;
@@ -841,7 +909,7 @@ usrsettings::default_ppqn (int value)
 
 /**
  * \setter m_midi_ppqn
- *      This value can be set from 32 to 1920 (this upper limit will be
+ *      This value can be set from 32 to 19200 (this upper limit will be
  *      determined by what Seq66 can actually handle).  The default value is
  *      192. However, if we're using file-ppqn as per the 'usr' file, then the
  *      given value will be used even if out-of-range.
@@ -870,6 +938,76 @@ usrsettings::midi_ppqn (int value)
     }
 }
 
+bool
+usrsettings::bpb_is_valid (int v) const
+{
+    return v >= c_min_beats_per_measure && v <= c_max_beats_per_measure;
+}
+
+int
+usrsettings::bpb_default () const
+{
+    return c_def_beats_per_measure;
+}
+
+bool
+usrsettings::bw_is_valid (int v) const
+{
+    return v >= c_min_beat_width && v <= c_max_beat_width;
+}
+
+int
+usrsettings::bw_default () const
+{
+    return c_def_beat_width;
+}
+
+bool
+usrsettings::bpm_is_valid (midibpm v) const
+{
+    return v >= c_min_beats_per_minute && v <= c_def_beats_per_minute;
+}
+
+midibpm
+usrsettings::bpm_default () const
+{
+    return c_def_beats_per_minute;
+}
+
+midilong
+usrsettings::scaled_bpm (midibpm bpm)
+{
+    return bpm * c_beats_per_minute_scale;
+}
+
+midibpm
+usrsettings::unscaled_bpm (midilong bpm)
+{
+    midibpm result = midibpm(bpm);
+    if (result > (c_beats_per_minute_scale - 1.0f))
+        result /= c_beats_per_minute_scale;
+
+    return result;
+}
+
+long
+usrsettings::tap_button_timeout () const
+{
+    return c_bpm_tap_button_timeout;
+}
+
+int
+usrsettings::min_key_height () const
+{
+    return c_min_key_height;
+}
+
+int
+usrsettings::max_key_height () const
+{
+    return c_max_key_height;
+}
+
 /**
  * \setter m_midi_beats_per_measure
  *      This value can be set from 1 to 20.  The default value is 4.
@@ -878,14 +1016,8 @@ usrsettings::midi_ppqn (int value)
 void
 usrsettings::midi_beats_per_bar (int value)
 {
-    if
-    (
-        value >= SEQ66_MINIMUM_BEATS_PER_MEASURE &&
-        value <= SEQ66_MAXIMUM_BEATS_PER_MEASURE
-    )
-    {
+    if (bpb_is_valid(value))
         m_midi_beats_per_measure = value;
-    }
 }
 
 /**
@@ -896,7 +1028,7 @@ usrsettings::midi_beats_per_bar (int value)
 void
 usrsettings::midi_bpm_minimum (midibpm value)
 {
-    if (value >= SEQ66_MINIMUM_BPM && value <= SEQ66_MAXIMUM_BPM)
+    if (bpm_is_valid(value))
         m_midi_bpm_minimum = value;
 }
 
@@ -908,7 +1040,7 @@ usrsettings::midi_bpm_minimum (midibpm value)
 void
 usrsettings::midi_beats_per_minute (midibpm value)
 {
-    if (value >= SEQ66_MINIMUM_BPM && value <= SEQ66_MAXIMUM_BPM)
+    if (bpm_is_valid(value))
         m_midi_beats_per_minute = value;
 }
 
@@ -920,20 +1052,14 @@ usrsettings::midi_beats_per_minute (midibpm value)
 void
 usrsettings::midi_bpm_maximum (midibpm value)
 {
-    if (value >= SEQ66_MINIMUM_BPM && value <= SEQ66_MAXIMUM_BPM)
+    if (bpm_is_valid(value))
         m_midi_bpm_maximum = value;
 }
-
-/**
- * \setter m_midi_beatwidth
- *      This value can be set to any power of 2 in the range from 1 to 16.
- *      The default value is 4.
- */
 
 void
 usrsettings::midi_beat_width (int bw)
 {
-    if (bw == 1 || bw == 2 || bw == 4 || bw == 8 ||bw == 16)
+    if (bw_is_valid(bw))
         m_midi_beat_width = bw;
 }
 
@@ -963,12 +1089,36 @@ usrsettings::midi_buss_override (bussbyte buss)
 void
 usrsettings::velocity_override (int vel)
 {
-    if (vel > SEQ66_MAX_NOTE_ON_VELOCITY)
-        vel = SEQ66_MAX_NOTE_ON_VELOCITY;
+    if (vel > c_max_note_on_velocity)
+        vel = c_max_note_on_velocity;
     else if (vel <= 0)
-        vel = SEQ66_PRESERVE_VELOCITY;
+        vel = c_preserve_velocity;
 
     m_velocity_override = vel;
+}
+
+short
+usrsettings::preserve_velocity () const
+{
+    return c_preserve_velocity;
+}
+
+short
+usrsettings::note_off_velocity () const
+{
+    return c_def_note_off_velocity;
+}
+
+short
+usrsettings::note_on_velocity () const
+{
+    return c_def_note_on_velocity;
+}
+
+short
+usrsettings::max_note_on_velocity () const
+{
+    return c_max_note_on_velocity;
 }
 
 /**
@@ -978,10 +1128,10 @@ usrsettings::velocity_override (int vel)
 void
 usrsettings::bpm_precision (int precision)
 {
-    if (precision > SEQ66_MAXIMUM_BPM_PRECISION)
-        precision = SEQ66_MAXIMUM_BPM_PRECISION;
-    else if (precision < SEQ66_MINIMUM_BPM_PRECISION)
-        precision = SEQ66_MINIMUM_BPM_PRECISION;
+    if (precision > c_max_bpm_precision)
+        precision = c_max_bpm_precision;
+    else if (precision < c_min_bpm_precision)
+        precision = c_min_bpm_precision;
 
     m_bpm_precision = precision;
 }
@@ -989,10 +1139,10 @@ usrsettings::bpm_precision (int precision)
 void
 usrsettings::bpm_step_increment (midibpm increment)
 {
-    if (increment > SEQ66_MAXIMUM_BPM_INCREMENT)
-        increment = SEQ66_MAXIMUM_BPM_INCREMENT;
-    else if (increment < SEQ66_MINIMUM_BPM_INCREMENT)
-        increment = SEQ66_MINIMUM_BPM_INCREMENT;
+    if (increment > c_max_bpm_increment)
+        increment = c_max_bpm_increment;
+    else if (increment < c_min_bpm_increment)
+        increment = c_min_bpm_increment;
 
     m_bpm_step_increment = increment;
 }
@@ -1000,10 +1150,10 @@ usrsettings::bpm_step_increment (midibpm increment)
 void
 usrsettings::bpm_page_increment (midibpm increment)
 {
-    if (increment > SEQ66_MAXIMUM_BPM_INCREMENT)
-        increment = SEQ66_MAXIMUM_BPM_INCREMENT;
-    else if (increment < SEQ66_MINIMUM_BPM_INCREMENT)
-        increment = SEQ66_MINIMUM_BPM_INCREMENT;
+    if (increment > c_max_bpm_increment)
+        increment = c_max_bpm_increment;
+    else if (increment < c_min_bpm_increment)
+        increment = c_min_bpm_increment;
 
     m_bpm_page_increment = increment;
 }

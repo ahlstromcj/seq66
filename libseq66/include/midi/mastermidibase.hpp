@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2020-12-28
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -173,11 +173,8 @@ protected:
 
 public:
 
-    mastermidibase
-    (
-        int ppqn    = SEQ66_USE_DEFAULT_PPQN,
-        midibpm bpm = SEQ66_DEFAULT_BPM             /* c_beats_per_minute */
-    );
+    mastermidibase () = delete;
+    mastermidibase (int ppqn, midibpm bpm);
     virtual ~mastermidibase ();
 
     /**

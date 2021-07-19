@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-02-09
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  This mastermidibus module is the Linux (and, soon, JACK) version of the
@@ -76,11 +76,8 @@ private:
 
 public:
 
-    mastermidibus
-    (
-        int ppqn    = SEQ66_USE_DEFAULT_PPQN,
-        midibpm bpm = SEQ66_DEFAULT_BPM         /* c_beats_per_minute   */
-    );
+    mastermidibus () = delete;
+    mastermidibus (int ppqn, midibpm bpm);
     virtual ~mastermidibus ();
 
     virtual bool activate () override;

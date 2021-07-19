@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-07-18
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -417,7 +417,14 @@ performer::performer (int ppqn, int rows, int columns) :
     m_selected_seqs         (),
     m_condition_var         (),                 /* private access via cv()  */
 #if defined SEQ66_JACK_SUPPORT
-    m_jack_asst             (*this, SEQ66_DEFAULT_BPM, m_ppqn),
+    m_jack_asst
+    (
+        *this,
+        usr().bpm_default(),                    /* beats per minute         */
+        m_ppqn,
+        usr().bpb_default(),                    /* beats per bar (measure)  */
+        usr().bw_default()                      /* beat width (denominator) */
+    ),
 #endif
     m_have_undo             (false),
     m_undo_vect             (),
@@ -1606,23 +1613,20 @@ performer::needs_update (seq::number seqno) const
  *  events).
  *
  * \param bpm
- *      Provides the beats/minute value to be set.  It is clamped, if
- *      necessary, between the values SEQ66_MINIMUM_BPM to SEQ66_MAXIMUM_BPM.
- *      They provide a wide range of speeds, well beyond what normal music
- *      needs.
+ *      Provides the beats/minute value to be set.  Checked for validity.  It
+ *      is a wide range of speeds, well beyond what normal music needs.
  */
 
 bool
 performer::set_beats_per_minute (midibpm bpm)
 {
-    if (bpm < SEQ66_MINIMUM_BPM)
-        bpm = SEQ66_MINIMUM_BPM;
-    else if (bpm > SEQ66_MAXIMUM_BPM)
-        bpm = SEQ66_MAXIMUM_BPM;
-    else
+    if (usr().bpm_is_valid(int(bpm)))
+    {
         bpm = fix_tempo(bpm);
-
-    return jack_set_beats_per_minute(bpm);
+        return jack_set_beats_per_minute(bpm);
+    }
+    else
+        return false;
 }
 
 /**
@@ -1640,7 +1644,7 @@ performer::set_beats_per_minute (midibpm bpm)
 bool
 performer::jack_set_beats_per_minute (midibpm bpm)
 {
-    bool result = bpm != m_bpm && bpm > SEQ66_MINIMUM_BPM;
+    bool result = bpm != m_bpm && usr().bpm_is_valid(bpm);
     if (result)
     {
 
@@ -1770,7 +1774,7 @@ performer::tap_bpm_timeout ()
         long ms = long(spec.tv_sec) * 1000;         /* seconds to ms        */
         ms += round(spec.tv_nsec * 1.0e-6);         /* nanoseconds to ms    */
         long difference = ms - m_last_time_ms;
-        if (difference > usr().tap_bpm_timeout())
+        if (difference > usr().tap_button_timeout())
         {
             clear_current_beats();
             result = true;

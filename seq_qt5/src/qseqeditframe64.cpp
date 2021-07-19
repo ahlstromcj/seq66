@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-07-18
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -331,12 +331,14 @@ s_lookup_chord (const std::string & chordname)
 #endif  // USE_S_LOOKUP_CHORD
 
 /**
- *  Hold the entries in the "Vel" drop-down.
+ *  Hold the entries in the "Vel" drop-down.  The first value matches
+ *  usr().preserve_velocity().  It corresponds to the "Free" recording-volume
+ *  entry.
  */
 
 static const int s_rec_vol_items [] =
 {
-    SEQ66_PRESERVE_VELOCITY, 127, 112, 96, 80, 64, 48, 32, 16
+    -1, 127, 112, 96, 80, 64, 48, 32, 16
 };
 static const int s_rec_vol_count = sizeof(s_rec_vol_items) / sizeof(int);
 
@@ -1324,7 +1326,7 @@ qseqeditframe64::initialize_panels ()
     m_seqevent = new (std::nothrow) qstriggereditor
     (
         perf(), seq_pointer(), this,
-        zoom(), m_snap, noteheight, ui->eventScrollArea
+        zoom(), m_snap, noteheight, ui->eventScrollArea, 0
     );
     ui->eventScrollArea->setWidget(m_seqevent);
     ui->eventScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1416,18 +1418,10 @@ qseqeditframe64::text_beats_per_measure (const QString & text)
     if (! temp.empty())
     {
         int beats = std::stoi(temp);
-        if
-        (
-            beats >= SEQ66_MINIMUM_BEATS_PER_MEASURE &&
-            beats <= SEQ66_MAXIMUM_BEATS_PER_MEASURE
-        )
-        {
+        if (usr().bpb_is_valid(beats))
             set_beats_per_measure(beats);
-        }
         else
-        {
             reset_beats_per_measure();
-        }
     }
 }
 
@@ -1435,7 +1429,7 @@ void
 qseqeditframe64::reset_beats_per_measure ()
 {
     seq::number seqno = seq_pointer()->seq_number();
-    ui->m_combo_bpm->setCurrentIndex(SEQ66_DEFAULT_BEATS_PER_MEASURE - 1);
+    ui->m_combo_bpm->setCurrentIndex(usr().bpb_default() - 1);
 
     /*
      * TODO:  work this out better.
@@ -1534,18 +1528,10 @@ qseqeditframe64::text_beat_width (const QString & text)
     if (! temp.empty())
     {
         int width = std::stoi(temp);
-        if
-        (
-            width >= SEQ66_MINIMUM_BEAT_WIDTH &&
-            width <= SEQ66_MAXIMUM_BEAT_WIDTH
-        )
-        {
+        if (usr().bw_is_valid(width))
             set_beat_width(width);
-        }
         else
-        {
             reset_beat_width();
-        }
     }
 }
 
@@ -1556,7 +1542,7 @@ qseqeditframe64::text_beat_width (const QString & text)
 void
 qseqeditframe64::reset_beat_width ()
 {
-    int index = s_lookup_bw(SEQ66_DEFAULT_BEAT_WIDTH);
+    int index = s_lookup_bw(usr().bw_default());
     ui->m_combo_bw->setCurrentIndex(index);
     update_draw_geometry();
 }
@@ -1601,14 +1587,8 @@ qseqeditframe64::text_measures (const QString & text)
     if (! temp.empty())
     {
         int measures = std::stoi(temp);
-        if
-        (
-            measures >= SEQ66_MINIMUM_MEASURES &&
-            measures <= SEQ66_MAXIMUM_MEASURES
-        )
-        {
+        if (measures >= 1 && measures <= 99999)        /* sanity check only */
             set_measures(measures);
-        }
     }
 }
 

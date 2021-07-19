@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-12-05
- * \updates       2021-06-10
+ * \updates       2021-07-19
  * \license       See above.
  *
  *  We need to have a way to get all of the API information from each
@@ -318,11 +318,10 @@ protected:
 
 public:
 
+    midi_info () = delete;
     midi_info                                   /* similar to mastermidibus */
     (
-        const std::string & appname,
-        int ppqn    = SEQ66_DEFAULT_PPQN,       /* 192  */
-        midibpm bpm = SEQ66_DEFAULT_BPM         /* 120  */
+        const std::string & appname, int ppqn, midibpm bpm
     );
 
     virtual ~midi_info ()
