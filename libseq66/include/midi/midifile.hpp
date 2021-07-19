@@ -47,7 +47,6 @@
 #include <list>
 #include <vector>
 
-#include "app_limits.h"                 /* SEQ66_USE_DEFAULT_PPQN           */
 #include "midi/midibytes.hpp"           /* midishort, midibyte, etc.        */
 #include "midi/midi_splitter.hpp"       /* seq66::midi_splitter             */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
@@ -186,8 +185,7 @@ private:
     bool m_use_scaled_ppqn;
 
     /**
-     *  Provides the current value of the PPQN, which used to be constant
-     *  and is now only the macro SEQ66_DEFAULT_PPQN.
+     *  Provides the current value of the PPQN, which used to be constant.
      */
 
     int m_ppqn;

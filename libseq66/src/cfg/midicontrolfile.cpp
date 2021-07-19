@@ -258,7 +258,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
     bool loadkeys = rc_ref().load_key_controls();
     s = get_variable(file, mctag, "control-buss");
 
-    int buss = string_to_int(s, SEQ66_MIDI_CONTROL_IN_BUSS);
+    int buss = string_to_int(s, default_control_in_buss());
     bool enabled = get_boolean(file, mctag, "midi-enabled");
     int offset = 0, rows = 0, columns = 0;
     result = parse_control_sizes(file, mctag, offset, rows, columns);
@@ -519,7 +519,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
     if (s.empty())
         s = get_variable(file, mctag, "buss");          /* the old tag name */
 
-    int buss = string_to_int(s, SEQ66_MIDI_CONTROL_OUT_BUSS);
+    int buss = string_to_int(s, default_control_out_buss());
     bool enabled = false;
     s = get_variable(file, mctag, "midi-enabled");
     if (s.empty())

@@ -37,7 +37,6 @@
 #include <functional>                   /* std::function, function objects  */
 #include <vector>
 
-#include "app_limits.h"                 /* default rows and columns macros  */
 #include "midi/midibytes.hpp"           /* seq66::midibooleans, etc.        */
 #include "play/screenset.hpp"           /* seq66::screenset constants       */
 

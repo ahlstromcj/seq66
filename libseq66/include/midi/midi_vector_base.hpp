@@ -37,7 +37,6 @@
 
 #include <string>                       /* std::string class                */
 
-#include "app_limits.h"                 /* SEQ66_NULL_SEQUENCE              */
 #include "midi/midibytes.hpp"           /* seq66::midibyte                  */
 
 /*

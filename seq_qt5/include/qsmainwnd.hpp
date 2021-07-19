@@ -41,7 +41,6 @@
 #include <QMainWindow>
 #include <QList>
 
-#include "app_limits.h"                 /* SEQ66_USE_DEFAULT_PPQN           */
 #include "cfg/settings.hpp"             /* seq66::combo helper class        */
 #include "midi/midibytes.hpp"           /* alias midibpm                    */
 #include "play/performer.hpp"           /* seq66::performer class           */

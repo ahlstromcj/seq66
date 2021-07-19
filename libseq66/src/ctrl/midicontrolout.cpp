@@ -76,7 +76,7 @@ midicontrolout::midicontrolout (const std::string & name) :
  *
  * \param buss
  *      The buss number, which can range from 0 to 31, and defaults to
- *      SEQ66_MIDI_CONTROL_OUT_BUSS (15).
+ *      default_control_out_buss (15).
  *
  * \param rows
  *      The number of rows in the set, normally 4.

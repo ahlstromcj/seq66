@@ -74,7 +74,7 @@ private:
      *  instead.
      */
 
-    bussbyte m_buss;                    /* SEQ66_MIDI_CONTROL_IN/OUT_BUSS   */
+    bussbyte m_buss;
 
     /**
      * The true buss, which exists on the system.
@@ -210,6 +210,36 @@ protected:
     }
 
 };          // class midicontrolbase
+
+/*
+ *  Free functions.
+ */
+
+/**
+ *  Default MIDI control input buss.  This value preserves the old behavior,
+ *  where the incoming MIDI events of a device on any buss would be acted on
+ *  (if specified in the MIDI control stanzas).  This value is the same as
+ *  c_bussbyte_max in the midibytes.hpp module.  It can be changed in the
+ *  'ctrl' file.
+ */
+
+inline bussbyte
+default_control_in_buss ()
+{
+    return bussbyte(0xFF);
+}
+
+/**
+ *  Default MIDI control output buss.  It is used with igorangst's
+ *  MIDI-control-out feature at present.  It can be changed in the 'ctrl'
+ *  file.
+ */
+
+inline bussbyte
+default_control_out_buss ()
+{
+    return bussbyte(0x0F);
+}
 
 }           // namespace seq66
 

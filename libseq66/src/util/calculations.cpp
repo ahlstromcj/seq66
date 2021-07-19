@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-06-16
+ * \updates       2021-07-19
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -75,7 +75,7 @@
 #include <cstring>                      /* std::memset()                    */
 #include <ctime>                        /* std::strftime()                  */
 
-#include "app_limits.h"
+#include "app_limits.h"                 /* SEQ66_DEFAULT_PPQN               */
 #include "cfg/settings.hpp"
 #include "util/calculations.hpp"
 #include "util/strfunctions.hpp"        /* seq66::contains(), etc.          */
@@ -86,6 +86,18 @@
 
 namespace seq66
 {
+
+/**
+ *  This value represent the smallest horizontal unit in a Sequencer66 grid.
+ *  It is the number of pixels in the smallest increment between vertical
+ *  lines in the grid.
+ */
+
+static const int c_pixels_per_substep = 6;
+
+/**
+ *  Convenience function.
+ */
 
 static int
 satoi (const std::string & v)
@@ -754,7 +766,7 @@ zoom_power_of_2 (int ppqn)
  *      PPSS = (PPQN * Zoom * Base Pixels) / Base PPQN
  *
  *  Currently the Base values are hardwired (see app_limits.h).  The base
- *  pixels value is SEQ66_PIXELS_PER_SUBSTEP = 6, and the base PPQN is
+ *  pixels value is c_pixels_per_substep = 6, and the base PPQN is
  *  SEQ66_DEFAULT_PPQN = 192.  The numerator of this equation is well within
  *  the limit of a 32-bit integer.
  *
@@ -772,7 +784,7 @@ zoom_power_of_2 (int ppqn)
 midipulse
 pulses_per_substep (midipulse ppqn, int zoom)
 {
-    return (ppqn * zoom * SEQ66_PIXELS_PER_SUBSTEP) / SEQ66_DEFAULT_PPQN;
+    return (ppqn * zoom * c_pixels_per_substep) / SEQ66_DEFAULT_PPQN;
 }
 
 /**

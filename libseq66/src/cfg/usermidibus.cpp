@@ -44,6 +44,14 @@ namespace seq66
 {
 
 /**
+ *  This constant indicates that a configuration file numeric value is
+ *  the default value for specifying that an instrument is a GM
+ *  instrument.  Used in the "user" configuration-file processing.
+ */
+
+static const int c_gm_instrument_flag = (-1);
+
+/**
  *  Default constructor.
  *
  * \param name
@@ -98,7 +106,7 @@ usermidibus::operator = (const usermidibus & rhs)
 
 /**
  *  Sets the default values.  Also invalidates the object.  All 16 of the
- *  channels are set to SEQ66_GM_INSTRUMENT_FLAG (-1).
+ *  channels are set to (-1).
  */
 
 void
@@ -108,7 +116,7 @@ usermidibus::clear ()
     m_channel_count = 0;
     m_midi_bus_def.alias.clear();
     for (int channel = 0; channel < c_midichannel_max; ++channel)
-        m_midi_bus_def.instrument[channel] = SEQ66_GM_INSTRUMENT_FLAG;
+        m_midi_bus_def.instrument[channel] = c_gm_instrument_flag;
 }
 
 /**
@@ -120,7 +128,7 @@ usermidibus::clear ()
  * \return
  *      The instrument number of the desired buss channel is returned.  If
  *      the channel number is out of range, or the object is not valid,
- *      then SEQ66_GM_INSTRUMENT_FLAG (-1) is returned.
+ *      then c_gm_instrument_flag (-1) is returned.
  */
 
 int
@@ -129,7 +137,7 @@ usermidibus::instrument (int channel) const
     if (m_is_valid && channel >= 0 && channel < c_midichannel_max)
         return m_midi_bus_def.instrument[channel];
     else
-        return SEQ66_GM_INSTRUMENT_FLAG;
+        return c_gm_instrument_flag;
 }
 
 std::string
@@ -167,7 +175,7 @@ usermidibus::set_instrument (int channel, int instrum)
     if (result)
     {
         m_midi_bus_def.instrument[channel] = instrum;
-        if (instrum != SEQ66_GM_INSTRUMENT_FLAG)
+        if (instrum != c_gm_instrument_flag)
             ++m_channel_count;
     }
     return result;

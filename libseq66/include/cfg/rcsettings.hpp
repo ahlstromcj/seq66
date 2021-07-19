@@ -100,12 +100,15 @@ const int c_max_groups = 32;
 const int c_max_sets   = 32;
 
 /**
- *  Maximum number of set keys that can be supported.  32 keys can be assigned
- *  in the Options / Keyboard tab and "rc" file.  This value applies to the
- *  "[keyboard-group]" and "[keyboard-control]" sections.
+ *  Default value of number of slot toggle keys (shortcut keys) that can be
+ *  defined.  Even if we end up adding more slots to a set, this would be about
+ *  the maximum number of keys we could really support.  Maximum number of set
+ *  keys that can be supported.  32 keys can be assigned in the Options /
+ *  Keyboard tab and "rc" file.  This value applies to the "[keyboard-group]"
+ *  and "[keyboard-control]" sections.
  */
 
-const int c_max_set_keys = SEQ66_SET_KEYS_MAX;
+const int c_max_set_keys = 32;
 
 /**
  *  Indicates whether Seq66 or another program is the JACK timebase master.

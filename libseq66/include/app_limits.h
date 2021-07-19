@@ -45,43 +45,9 @@
  *  Why do we use macros instead of const values?  First, it really doesn't
  *  matter for simple values.  Second, we want to follow the convention that
  *  important values are all upper-case, as is convention with most
- *  macros.  They just stand out more in code. Call us old school or old
- *  fools, you decide.  Hell, we still like snprintf() for some uses!
+ *  macros.  They just stand out more in code.  However, to reduce build times
+ *  we have moved many items into more targeted module.
  */
-
-/**
- *  Default MIDI control input buss.  This value preserves the old behavior,
- *  where the incoming MIDI events of a device on any buss would be acted on
- *  (if specified in the MIDI control stanzas).  This value is the same as
- *  c_bussbyte_max in the midibytes.hpp module.  It can be changed in the
- *  'ctrl' file.
- */
-
-#define SEQ66_MIDI_CONTROL_IN_BUSS        0xFF
-
-/**
- *  Default MIDI control output buss.  It is used with igorangst's
- *  MIDI-control-out feature at present.  It can be changed in the 'ctrl'
- *  file.
- */
-
-#define SEQ66_MIDI_CONTROL_OUT_BUSS       15
-
-/**
- *  Default value of number of slot toggle keys (shortcut keys) that
- *  can be defined.  Even if we end up adding more slots to a set, this
- *  would be about the maximum number of keys we could really support.
- */
-
-#define SEQ66_SET_KEYS_MAX                32
-
-/**
- *  This constant indicates that a configuration file numeric value is
- *  the default value for specifying that an instrument is a GM
- *  instrument.  Used in the "user" configuration-file processing.
- */
-
-#define SEQ66_GM_INSTRUMENT_FLAG          (-1)
 
 /**
  *  This value indicates to use the default value of PPQN and ignore (to some
@@ -116,9 +82,9 @@
 /**
  *  Minimum value for PPQN.  Mostly for sanity checking.  This was set to 96,
  *  but there have been tunes set to 32 PPQN, I think.  The minimum value is
- *  32, because the minimum number of pulses in a pixel is
- *  SEQ66_PIXELS_PER_SUBSTEP = 6, and at 24, the number of pulses in a pixel
- *  truncates to 0; bad for dividing!
+ *  32, because the minimum number of pulses in a pixel is pixels-per-substep =
+ *  6, and at 24, the number of pulses in a pixel truncates to 0; bad for
+ *  dividing!  It is said that PPQN should be divisible evenly by 24, though.
  */
 
 #define SEQ66_MINIMUM_PPQN                32
@@ -131,14 +97,6 @@
  */
 
 #define SEQ66_MAXIMUM_PPQN              19200
-
-/**
- *  This value represent the smallest horizontal unit in a Sequencer66 grid.
- *  It is the number of pixels in the smallest increment between vertical
- *  lines in the grid.
- */
-
-#define SEQ66_PIXELS_PER_SUBSTEP           6
 
 /**
  *  Minimum possible value for zoom, indicating that one pixel represents one

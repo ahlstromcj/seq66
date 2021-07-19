@@ -35,7 +35,6 @@
  *  still-large performer module.
  */
 
-#include "app_limits.h"                 /* SEQ66 defined macros             */
 #include "cfg/rcsettings.hpp"           /* seq66::enum class timebase       */
 #include "midi/midibytes.hpp"           /* seq66::midipulse alias           */
 

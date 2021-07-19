@@ -54,7 +54,6 @@
  *  An alternate name for this class could be "midi_master".  :-)
  */
 
-#include "app_limits.h"                 /* SEQ66_DEFAULT_PPQN etc.  */
 #include "rterror.hpp"
 #include "rtmidi_types.hpp"
 #include "util/basic_macros.hpp"

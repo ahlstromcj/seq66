@@ -36,7 +36,6 @@
 #include <sstream>                      /* std::ostringstream               */
 
 #include "seq66_features.hpp"           /* feature macros, seq66 namespace  */
-#include "app_limits.h"                 /* macros for seq_build_details()   */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

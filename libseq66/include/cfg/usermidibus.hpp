@@ -37,7 +37,6 @@
 
 #include <string>
 
-#include "app_limits.h"                 /* SEQ66_GM_INSTRUMENT_FLAG         */
 #include "midi/midibytes.hpp"           /* seq66::c_midichannel_max         */
 
 /*
