@@ -5332,7 +5332,7 @@ midipulse
 sequence::handle_size (midipulse start, midipulse finish)
 {
     static const midipulse s_handlesize = 16;
-    midipulse result = s_handlesize * m_ppqn / SEQ66_DEFAULT_PPQN;
+    midipulse result = s_handlesize * m_ppqn / c_baseline_ppqn;
     midipulse notelength = finish - start;
     if (notelength < result / 3)
         result = notelength / 3;

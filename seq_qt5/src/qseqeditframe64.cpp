@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-07-19
+ * \updates       2021-07-20
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -166,7 +166,8 @@ namespace seq66
  */
 
 /**
- *  Static data members.  These items apply to all of the instances of seqedit.
+ *  Static data members.  These items apply to all of the instances of
+ *  seqedit.
  *
  *  The snap and note-length defaults would be good to write to the "user"
  *  configuration file.  The scale and key would be nice to write to the
@@ -184,8 +185,8 @@ namespace seq66
  *  correct the snap ticks to the actual PPQN ratio.
  */
 
-int qseqeditframe64::sm_initial_snap         = SEQ66_DEFAULT_PPQN / 4;
-int qseqeditframe64::sm_initial_note_length  = SEQ66_DEFAULT_PPQN / 4;
+int qseqeditframe64::sm_initial_snap         = c_baseline_ppqn / 4;
+int qseqeditframe64::sm_initial_note_length  = c_baseline_ppqn / 4;
 int qseqeditframe64::sm_initial_chord        = 0;
 
 /**
@@ -259,8 +260,8 @@ static const int s_snap_count = sizeof(s_snap_items) / sizeof(int);
  *  the grids.  Note that they are not members, though they could be.
  *  Also note the features of these zoom numbers:
  *
- *      -#  The lowest zoom value is SEQ66_MINIMUM_ZOOM in app_limits.h.
- *      -#  The highest zoom value is SEQ66_MAXIMUM_ZOOM in app_limits.h.
+ *      -#  The lowest zoom value is defined in qeditbase and usrsettings.
+ *      -#  The highest zoom value is defined in qeditbase and usrsettings.
  *      -#  The zoom values are all powers of 2.
  *      -#  The zoom values are further constrained by the configured values
  *          of usr().min_zoom() and usr().max_zoom().
@@ -274,7 +275,7 @@ static const int s_snap_count = sizeof(s_snap_items) / sizeof(int);
 
 static const int s_zoom_items [] =
 {
-    1, 2, 4, 8, 16, 32, 64, 128
+    1, 2, 4, 8, 16, 32, 64, 128, 256, 512
 };
 static const int s_zoom_count = sizeof(s_zoom_items) / sizeof(int);
 static const int s_zoom_default = 1;                    /* the array index  */
@@ -766,8 +767,11 @@ qseqeditframe64::qseqeditframe64
         this, SLOT(reset_grid_snap())
     );
 
-    set_snap(rescale_tick(sm_initial_snap, perf().ppqn()));
-    set_note_length(rescale_tick(sm_initial_note_length, perf().ppqn()));
+    set_snap(rescale_tick(sm_initial_snap, perf().ppqn(), c_baseline_ppqn));
+    set_note_length
+    (
+        rescale_tick(sm_initial_note_length, perf().ppqn(), c_baseline_ppqn)
+    );
     qt_set_icon(note_length_xpm, ui->m_button_note);
     connect
     (
@@ -2499,8 +2503,8 @@ bool
 qseqeditframe64::change_ppqn (int ppqn)
 {
     int zoom = usr().zoom();
-    set_snap(rescale_tick(sm_initial_snap, ppqn));
-    set_note_length(rescale_tick(sm_initial_note_length, ppqn));
+    set_snap(rescale_tick(sm_initial_snap, ppqn, c_baseline_ppqn));
+    set_note_length(rescale_tick(sm_initial_note_length, ppqn, c_baseline_ppqn));
     if (usr().adapt_zoom())
         zoom = zoom_power_of_2(ppqn);
 

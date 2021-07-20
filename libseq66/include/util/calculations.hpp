@@ -40,7 +40,6 @@
 #include <string>
 #include <vector>
 
-#include "app_limits.h"                 /* SEQ66_DEFAULT_PPQN               */
 #include "midi/midibytes.hpp"           /* midipulse alias and much more    */
 
 /*
@@ -125,7 +124,6 @@ extern midipulse string_to_pulses
     const midi_timing & mt
 );
 extern int log2_time_sig_value (int tsd);
-extern int zoom_power_of_2 (int ppqn);
 extern int beat_power_of_2 (int logbase2);
 extern int power (int base, int exponent);
 extern midibyte beat_log2 (int value);
@@ -136,17 +134,19 @@ extern midibpm fix_tempo (midibpm bpm);
 extern unsigned short combine_bytes (midibyte b0, midibyte b1);
 extern midibpm note_value_to_tempo (midibyte note);
 
+#if defined USE_PPQN_IS_VALID
+
 /**
- *  Common code for handling PPQN settings.  Validates a PPQN value.
- *  The value SEQ66_USE_FILE_PPQN (0) is considered invalid by this function.
- *  Very few classes need that macro.
+ *  Common code for handling PPQN settings.  Validates a PPQN value.  The
+ *  value  0 is considered invalid by this function.  Very few classes need
+ *  that macro. These values are defined in usrsettings.
  *
  * \param ppqn
  *      Provides the PPQN value to be used.
  *
  * \return
- *      Returns true if the ppqn parameter is between MINIMUM_PPQN and
- *      MAXIMUM_PPQN, or is set to SEQ66_USE_DEFAULT_PPQN (-1).
+ *      Returns true if the ppqn parameter is between the minimum and the
+ *      maximum PPQN, or is set to c_use_default_ppqn or c_use_file_ppqn.
  */
 
 inline bool
@@ -154,19 +154,20 @@ ppqn_is_valid (int ppqn)
 {
     return
     (
-        ppqn == SEQ66_USE_DEFAULT_PPQN ||
-        ppqn == SEQ66_USE_FILE_PPQN ||
-        (ppqn >= SEQ66_MINIMUM_PPQN && ppqn <= SEQ66_MAXIMUM_PPQN)
+        ppqn == c_use_default_ppqn ||
+        ppqn == c_use_file_ppqn ||
+        (ppqn >= c_minimum_ppqn && ppqn <= c_maximum_ppqn)
     );
 }
+
+#endif
 
 /**
  *  Formalizes the rescaling of ticks base on changing the PPQN.  For speed
  *  the parameters are all assumed to be valid.  The PPQN values supported
- *  explicity range from SEQ66_MINIMUM_PPQN (24) to SEQ66_MAXIMUM_PPQN
- *  (19200).  The maximum tick value for 32-bit code is 2147483647.  At the
- *  highest PPQN that's almost 28000 measures.  64-bit code maxes at over
- *  9E18.
+ *  explicity range from 32 to 19200.  The maximum tick value for 32-bit code
+ *  is 2147483647.  At the highest PPQN that's almost 28000 measures.  64-bit
+ *  code maxes at over 9E18.
  *
  *  This function is similar to pulses_scaled(), but that function always
  *  scales against SEQ66_DEFAULT_PPQN and allows for a zoom factor.
@@ -178,14 +179,14 @@ ppqn_is_valid (int ppqn)
  *      The new PPQN.
  *
  * \param oldppqn
- *      The original PPQN.  Defaults to SEQ66_DEFAULT_PPQN = 192.
+ *      The original PPQN.  Defaults to 192.
  *
  * \return
  *      Returns the new tick value.
  */
 
 inline midipulse
-rescale_tick (midipulse tick, int newppqn, int oldppqn = SEQ66_DEFAULT_PPQN)
+rescale_tick (midipulse tick, int newppqn, int oldppqn)
 {
     return midipulse(double(tick) * newppqn / oldppqn + 0.5);
 }
@@ -381,7 +382,7 @@ midi_clock_beats_per_qn ()
  *      for Seq24 is 192.
  *
  * \return
- *      The integer value of ppqn / 24 [MIDI_CLOCK_IN_PPQN] is returned.
+ *      The integer value of ppqn / 24 [MIDI clock PPQN] is returned.
  */
 
 inline int
@@ -416,7 +417,7 @@ double_ticks_from_ppqn (int ppqn)
  */
 
 inline midipulse
-pulses_per_measure (int ppqn = SEQ66_DEFAULT_PPQN)
+pulses_per_measure (int ppqn)
 {
     return 4 * ppqn;
 }

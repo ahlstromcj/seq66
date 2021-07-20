@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-07-19
+ * \updates       2021-07-20
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -71,6 +71,52 @@
 
 namespace seq66
 {
+
+/**
+ *  Constant values. Taken from the eliminated app limits header file, and
+ *  redundantly defined in the qeditbase header file.  Provides the minimum
+ *  zoom value, currently a constant.
+ */
+
+const int c_min_zoom = 1;
+
+/**
+ *  Provides the maximum zoom value, currently a constant.  It's value was
+ *  32, but is now 512, to allow for better presentation of high PPQN
+ *  valued sequences.
+ */
+
+const int c_max_zoom = 512;
+
+/**
+ *  Permanent storage for the baseline, default PPQN used by Seq24.
+ *  This value is necessary in order to keep user-interface elements
+ *  stable when different PPQNs are used.
+ */
+
+const int c_minimum_ppqn  =    32;
+const int c_baseline_ppqn =   192;
+const int c_maximum_ppqn  = 19200;
+
+/**
+ *  This value indicates to use the default value of PPQN and ignore (to some
+ *  extent) what value is specified in the MIDI file.  Note that the default
+ *  default PPQN is given by the global ppqn (192) or, if the "--ppqn qn"
+ *  option is specified on the command-line or the "midi_ppqn" setting in the
+ *  "usr" file.
+ *
+ *  However, if the "midi_ppqn" setting is 0, then the default PPQN is
+ *  whatever the MIDI file specifies.
+ */
+
+const int c_use_default_ppqn = (-1);
+
+/**
+ *  Use the PPQN from the loaded file, rather than converting to the active
+ *  default PPQN of the application.
+ */
+
+const int c_use_file_ppqn = 0;
 
 /**
  *  Provides the supported looping recording modes.  These values are used
@@ -393,8 +439,8 @@ private:
     /**
      *  Provides the default PPQN for the application.  This PPQN is used when
      *  creating a new MIDI file or when reading an existing file with the
-     *  m_use_file_ppqn value set.  This value defaults to SEQ66_DEFAULT_PPQN
-     *  = 192 (the legacy Seq24 value).
+     *  m_use_file_ppqn value set.  This value defaults to 192 (the legacy
+     *  Seq24 value).
      */
 
     int m_default_ppqn;
@@ -598,29 +644,6 @@ private:
     /*
      *  All constant (unchanging) values go here.  They are not saved or read.
      */
-
-    /**
-     *  Provides the minimum zoom value, currently a constant.  It's value is
-     *  1.
-     */
-
-    const int mc_min_zoom;
-
-    /**
-     *  Provides the maximum zoom value, currently a constant.  It's value was
-     *  32, but is now 512, to allow for better presentation of high PPQN
-     *  valued sequences.
-     */
-
-    const int mc_max_zoom;
-
-    /**
-     *  Permanent storage for the baseline, default PPQN used by Seq24.
-     *  This value is necessary in order to keep user-interface elements
-     *  stable when different PPQNs are used.  It is set to DEFAULT_PPQN.
-     */
-
-    const int mc_baseline_ppqn;
 
     /*
      *  [user-options]
@@ -1051,9 +1074,14 @@ public:
 
     void zoom (int value);      /* seqedit can change this one */
 
+    /**
+     *  This special value of zoom sets the zoom according to a power of two
+     *  related to the PPQN value of the song.
+     */
+
     bool adapt_zoom () const
     {
-        return m_current_zoom == SEQ66_USE_ZOOM_POWER_OF_2;
+        return m_current_zoom == 0;
     }
 
     bool global_seq_feature () const
@@ -1256,17 +1284,17 @@ public:
 
     int min_zoom () const
     {
-        return mc_min_zoom;
+        return c_min_zoom;
     }
 
     int max_zoom () const
     {
-        return mc_max_zoom;
+        return c_max_zoom;
     }
 
     int baseline_ppqn () const
     {
-        return mc_baseline_ppqn;
+        return c_baseline_ppqn;
     }
 
     bool app_is_headless () const

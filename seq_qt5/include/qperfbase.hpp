@@ -65,8 +65,8 @@ public:
     qperfbase
     (
         performer & perf,
-        int zoom            = SEQ66_DEFAULT_ZOOM,
-        int snap            = SEQ66_DEFAULT_SNAP,
+        int zoom            = c_default_zoom,
+        int snap            = c_default_snap,
         int unit_height     = 1,
         int total_height    = 1
     );

@@ -106,17 +106,6 @@
  */
 
 /**
- *  This special value of zoom sets the zoom according to a power of two
- *  related to the PPQN value of the song.
- */
-
-#define SEQ66_USE_ZOOM_POWER_OF_2       0
-
-/*
- * Others
- */
-
-/**
  *  A color option.  We prefer orange for selection boxes.
  */
 

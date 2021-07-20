@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-20
- * \updates       2021-07-09
+ * \updates       2021-07-20
  * \license       GNU GPLv2 or above
  *
  *  This class is a base class for qseqroll, qseqdata, qtriggereditor, and
@@ -36,7 +36,6 @@
  *  mix-in class.
  */
 
-#include "app_limits.h"                 /* SEQ66_DEFAULT_ZOOM, _SNAP        */
 #include "play/seq.hpp"                 /* seq66::seq::pointer              */
 #include "qeditbase.hpp"                /* seq66::qbase basic UI date       */
 
@@ -96,7 +95,7 @@ public:
         seq::pointer seqp,
         qseqeditframe64 * frame,
         int zoom,
-        int snap            = SEQ66_DEFAULT_SNAP,
+        int snap            = c_default_snap,
         int unit_height     =  1,
         int total_height    =  1
     );

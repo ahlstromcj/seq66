@@ -238,8 +238,8 @@ public:
     wrkfile
     (
         const std::string & name,
-        int ppqn            = SEQ66_USE_DEFAULT_PPQN,
-        bool playlistmode   = false
+        int ppqn,
+        bool playlistmode = false
     );
     virtual ~wrkfile () override;
 

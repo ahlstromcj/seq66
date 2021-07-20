@@ -51,9 +51,9 @@ namespace seq66
  *
  * \param ppqn
  *      Provides the PPQN value for this object.  However, in most cases, the
- *      default, SEQ66_USE_DEFAULT_PPQN should be specified.  Then the caller
- *      of this constructor should call mastermidibase::set_ppqn() to set up
- *      the proper PPQN value.
+ *      default baseline PPQN should be specified.  Then the caller of this
+ *      constructor should call mastermidibase::set_ppqn() to set up the
+ *      proper PPQN value.
  *
  * \param bpm
  *      Provides the beats per minute value, which defaults to

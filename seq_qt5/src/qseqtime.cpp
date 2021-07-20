@@ -67,7 +67,7 @@ qseqtime::qseqtime
     QWidget * parent                        /* QScrollArea */
 ) :
     QWidget                 (parent),
-    qseqbase                (p, seqp, frame, zoom, SEQ66_DEFAULT_SNAP),
+    qseqbase                (p, seqp, frame, zoom, c_default_snap),
     m_timer                 (nullptr),
     m_font                  ()
 {

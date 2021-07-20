@@ -82,7 +82,7 @@ qseqkeys::qseqkeys
     QWidget                 (parent),
     qseqbase
     (
-        p, seqp, frame, SEQ66_DEFAULT_ZOOM, SEQ66_DEFAULT_SNAP,
+        p, seqp, frame, c_default_zoom, c_default_snap,
         keyheight, keyareaheight
     ),
     m_seq                   (seqp),                 /* seq_pointer()        */

@@ -81,7 +81,7 @@ qseqframe::qseqframe
     QWidget * parent
 ) :
     QFrame                  (parent),
-    qbase                   (p, SEQ66_DEFAULT_ZOOM),
+    qbase                   (p, c_default_zoom),
     m_seq                   (perf().sequence_pointer(seqid)),
     m_seqkeys               (nullptr),
     m_seqtime               (nullptr),

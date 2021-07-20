@@ -2584,7 +2584,7 @@ bool
 midifile::write (performer & p, bool doseqspec)
 {
     automutex locker(m_mutex);
-    bool result = m_ppqn >= SEQ66_MINIMUM_PPQN && m_ppqn <= SEQ66_MAXIMUM_PPQN;
+    bool result = m_ppqn >= c_minimum_ppqn && m_ppqn <= c_maximum_ppqn;
     m_error_message.clear();
     if (! result)
         m_error_message = "Error, invalid PPQN for MIDI file to write";
@@ -3255,7 +3255,7 @@ midifile::set_error_dump (const std::string & msg, unsigned long value)
  *      The full path specification for the file to be opened.
  *
  * \param out ppqn
- *      Provides the PPQN to start with.  It can be SEQ66_USE_FILE_PPQN,
+ *      Provides the PPQN to start with.  It can be c_use_file_ppqn,
  *      or a legitimate PPQN value.  The performer's PPQN value is updated,
  *      and will affect the rest of the application.
  *
@@ -3283,7 +3283,7 @@ read_midi_file
     {
         bool is_wrk = file_extension_match(fn, "wrk");
         if (usr().use_file_ppqn())
-            ppqn = SEQ66_USE_FILE_PPQN;
+            ppqn = c_use_file_ppqn;
 
         ppqn = choose_ppqn(ppqn);               /* no usr().file_ppqn() yet */
 

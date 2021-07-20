@@ -43,8 +43,7 @@ contains (CONFIG, rtmidi) {
    DEFINES += "SEQ66_PORTMIDI_SUPPORT=1"
 }
 
-HEADERS += include/app_limits.h \
- include/seq66_features.h \
+HEADERS += include/seq66_features.h \
  include/seq66_features.hpp \
  include/seq66_platform_macros.h \
  include/cfg/basesettings.hpp \

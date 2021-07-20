@@ -65,10 +65,11 @@ const int s_alpha_playing    = 255;
 const int s_alpha_muted      = 100;
 
 /**
- *  Initial sizing for the perf-roll.
+ *  Initial sizing for the perf-roll.  The baseline PPQN is defined in
+ *  usrsettings.
  */
 
-const int c_background_x     = (SEQ66_DEFAULT_PPQN * 4 * 16) / c_perf_scale_x;
+const int c_background_x     = (c_baseline_ppqn * 4 * 16) / c_perf_scale_x;
 const int c_size_box_w       = 6;                /* 3 is too small */
 const int c_size_box_click_w = c_size_box_w + 1 ;
 

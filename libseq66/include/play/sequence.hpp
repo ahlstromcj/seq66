@@ -770,7 +770,7 @@ private:
 
 public:
 
-    sequence (int ppqn = SEQ66_USE_DEFAULT_PPQN);
+    sequence (int ppqn = c_use_default_ppqn);
     ~sequence ();
 
     void partial_assign (const sequence & rhs);

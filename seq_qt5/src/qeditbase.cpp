@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2021-05-19
+ * \updates       2021-07-20
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -34,6 +34,7 @@
  *  progress bar during playback.  See the seqroll::m_progress_follow member.
  */
 
+#include "cfg/usrsettings.hpp"          /* seq66::usrsettings constants     */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qeditbase.hpp"
 
@@ -77,7 +78,7 @@ qeditbase::qeditbase
     m_scale_zoom            (m_scale * zoom()),     /* see change_ppqn()    */
     m_padding_x             (padding),
     m_snap                  (snap),
-    m_grid_snap             (rescale_tick(snap, p.ppqn())),
+    m_grid_snap             (rescale_tick(snap, p.ppqn(), c_baseline_ppqn)),
     m_beat_length           (p.ppqn()),             /* see change_ppqn()    */
     m_measure_length        (m_beat_length * 4),    /* see change_ppqn()    */
     m_selecting             (false),
@@ -250,6 +251,38 @@ qeditbase::convert_ts_box_to_rect
     convert_ts(tick_f, seq_l, x2, y2);
     rect::xy_to_rect(x1, y1, x2, y2, r);
     r.height_incr(m_unit_height);
+}
+
+/**
+ *  Calculates a suitable starting zoom value for the given PPQN value.  The
+ *  default starting zoom is 2, but this value is suitable only for PPQN of
+ *  192 and below.  Also, zoom currently works consistently only if it is a
+ *  power of 2.  For starters, we scale the zoom to the selected ppqn, and
+ *  then shift it each way to get a suitable power of two.
+ *
+ * \param ppqn
+ *      The ppqn of interest.
+ *
+ * \return
+ *      Returns the power of 2 appropriate for the given PPQN value.
+ */
+
+int
+zoom_power_of_2 (int ppqn)
+{
+    int result = c_default_zoom;
+    if (ppqn > c_baseline_ppqn)
+    {
+        int zoom = result * ppqn / c_baseline_ppqn;
+        zoom >>= 1;                                     /* "divide" by 2    */
+        zoom <<= 1;                                     /* "multiply" by 2  */
+        result = zoom;
+        if (result > c_maximum_zoom)
+            result = c_maximum_zoom;
+        else if (result == 0)
+            result = c_minimum_zoom;
+    }
+    return result;
 }
 
 }           // namespace seq66

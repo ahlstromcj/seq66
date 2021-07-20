@@ -151,7 +151,7 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
     m_palette               (new QPalette()),
     m_popup                 (nullptr),
     m_timer                 (nullptr),
-    m_snap                  (SEQ66_DEFAULT_PPQN / 4),
+    m_snap                  (seq66_default_ppqn / 4),
     m_edit_mode             (perf().edit_mode(seqid))
 {
     ui->setupUi(this);

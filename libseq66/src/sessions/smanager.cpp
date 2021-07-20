@@ -276,7 +276,7 @@ bool
 smanager::create_performer ()
 {
     bool result = false;
-    int ppqn = choose_ppqn();                       /* usr().midi_ppqn()    */
+    int ppqn = choose_ppqn(c_use_default_ppqn);     /* usr().midi_ppqn()    */
     int rows = usr().mainwnd_rows();
     int cols = usr().mainwnd_cols();
     pointer p(new (std::nothrow) performer(ppqn, rows, cols));

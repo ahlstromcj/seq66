@@ -146,7 +146,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
              * currently by trial and error.
              */
 
-            if (zoom() >= SEQ66_MINIMUM_ZOOM && zoom() <= SEQ66_MAXIMUM_ZOOM)
+            if (zoom() >= c_minimum_zoom && zoom() <= c_maximum_zoom)
             {
                 QString bar(QString::number(measure + 1));
                 pen.setColor(Qt::black);

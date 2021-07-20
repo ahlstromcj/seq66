@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-07-19
+ * \updates       2021-07-20
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -40,6 +40,7 @@
 #include <vector>                       /* std::vector<>                    */
 #include <thread>                       /* std::thread                      */
 
+#include "cfg/usrsettings.hpp"          /* PPQN constants                   */
 #include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */
 #include "ctrl/midicontrolin.hpp"       /* class seq66::midicontrolin       */
 #include "ctrl/midicontrolout.hpp"      /* seq66::midicontrolout            */
@@ -60,6 +61,15 @@
 
 namespace seq66
 {
+
+/*
+ * Offloads from the app limits header that provide a sanity check for
+ * transposition values.  Also see the tranposition functions in the trigger
+ * class.
+ */
+
+const int c_transpose_down_limit = c_num_keys / 2;
+const int c_transpose_up_limit = -c_transpose_down_limit;
 
 /*
  * Forward references.
@@ -568,8 +578,8 @@ private:                            /* key, midi, and op container section  */
     bool m_resume_note_ons;
 
     /**
-     *  Holds the current PPQN for usage in various actions.  If
-     *  SEQ66_USE_FILE_PPQN (0) is the value, then m_file_ppqn will be used.
+     *  Holds the current PPQN for usage in various actions.  If 0 is the
+     *  value, then m_file_ppqn will be used.
      */
 
     int m_ppqn;
@@ -1268,7 +1278,7 @@ public:
 
     int ppqn () const
     {
-        return m_ppqn == SEQ66_USE_FILE_PPQN ? m_file_ppqn : m_ppqn ;
+        return m_ppqn == c_use_file_ppqn ? m_file_ppqn : m_ppqn ;
     }
 
     void file_ppqn (int p)
@@ -2015,7 +2025,7 @@ public:
 
     void set_transpose (int t)
     {
-        if (t >= SEQ66_TRANSPOSE_DOWN_LIMIT && t <= SEQ66_TRANSPOSE_UP_LIMIT)
+        if (t >= c_transpose_down_limit && t <= c_transpose_up_limit)
             m_transpose = t;
     }
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-07-19
+ * \updates       2021-07-20
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -99,7 +99,6 @@
  *  pixel-width of reach measure.
  */
 
-#include "seq66_features.hpp"           /* SEQ66_USE_ZOOM_POWER_OF_2        */
 #include "cfg/settings.hpp"             /* seq66::rc(), seq66::usr()        */
 #include "play/screenset.hpp"           /* seq66::screenset constants       */
 #include "play/seq.hpp"                 /* seq66::seq::limit()              */
@@ -113,8 +112,7 @@ namespace seq66
 {
 
 /**
- *  Limits offloaded from app_limits.h header.
- *
+ *  Limits offloaded from the obsolete app limits header.
  *  Minimum, default, and maximum values for "beats-per-measure".  A new
  *  addition for the Qt 5 user-interface.  This is the "numerator" in a 4/4
  *  time signature.  It is also the value used for JACK's
@@ -308,8 +306,8 @@ usrsettings::usrsettings () :
      * [user-midi-settings]
      */
 
-    m_default_ppqn              (SEQ66_DEFAULT_PPQN),
-    m_midi_ppqn                 (SEQ66_DEFAULT_PPQN),
+    m_default_ppqn              (c_baseline_ppqn),
+    m_midi_ppqn                 (c_baseline_ppqn),
     m_use_file_ppqn             (true),
     m_file_ppqn                 (0),
     m_midi_beats_per_measure    (c_def_beats_per_measure),
@@ -333,14 +331,6 @@ usrsettings::usrsettings () :
     m_max_sequence              (seq::maximum()),
     m_mainwnd_x                 (c_default_window_width),   /* 780 */
     m_mainwnd_y                 (c_default_window_height),  /* 412 */
-
-    /*
-     * Constant values.
-     */
-
-    mc_min_zoom                 (SEQ66_MINIMUM_ZOOM),
-    mc_max_zoom                 (SEQ66_MAXIMUM_ZOOM),
-    mc_baseline_ppqn            (SEQ66_DEFAULT_PPQN),
 
     /*
      * Back to non-constant values.
@@ -387,32 +377,32 @@ usrsettings::set_defaults ()
     m_midi_buses.clear();
     m_instruments.clear();
     m_option_bits = option_none;
-    m_mainwnd_rows = screenset::c_default_rows;    // range: 4-8
-    m_mainwnd_cols = screenset::c_default_columns; // range: 8-8
-    m_window_scale = c_window_scale_default;    // range: 0.5 to 1.0 to 3.0
+    m_mainwnd_rows = screenset::c_default_rows;
+    m_mainwnd_cols = screenset::c_default_columns;
+    m_window_scale = c_window_scale_default;
     m_window_scale_y = c_window_scale_default;
-    m_mainwnd_spacing = c_mainwnd_spacing;      // range: 2-6, try 4 or 6
-    m_current_zoom = SEQ66_DEFAULT_ZOOM;        // range: 1-128
+    m_mainwnd_spacing = c_mainwnd_spacing;
+    m_current_zoom = 0;
     m_global_seq_feature_save = true;
-    m_seqedit_scale = c_scales_off;             // scales::off to < scales::max
-    m_seqedit_key = c_key_of_C;                 // range: 0-11
-    m_seqedit_bgsequence = seq::limit();        // range -1, 0, 1, 2, ...
+    m_seqedit_scale = c_scales_off;
+    m_seqedit_key = c_key_of_C;
+    m_seqedit_bgsequence = seq::limit();
     m_progress_bar_thick = true;
     m_inverse_colors = false;
     m_window_redraw_rate_ms = c_default_redraw_ms;
-    m_seqchars_x = 15;                      // range: 15-15
-    m_seqchars_y =  5;                      // range: 5-5
-    m_default_ppqn = SEQ66_DEFAULT_PPQN;    // range: 32 to 19200, default 192
-    m_midi_ppqn = SEQ66_DEFAULT_PPQN;       // range: 32 to 19200, default 192
+    m_seqchars_x = 15;
+    m_seqchars_y =  5;
+    m_default_ppqn = c_baseline_ppqn;
+    m_midi_ppqn = c_baseline_ppqn;
     m_use_file_ppqn = true;
-    m_file_ppqn = 0;                        // range: 32 to 19200, default 0
-    m_midi_beats_per_measure = c_def_beats_per_measure; // range: 1-32
-    m_midi_bpm_minimum = 0;                 // range: 0 to ???
+    m_file_ppqn = 0;
+    m_midi_beats_per_measure = c_def_beats_per_measure;
+    m_midi_bpm_minimum = 0;
     m_midi_beats_per_minute = c_def_beats_per_minute;
     m_midi_bpm_maximum = c_midibyte_value_max;
     m_midi_beat_width = c_def_beat_width;
-    m_midi_buss_override = null_buss();             // 0xFF
-    m_velocity_override = c_preserve_velocity;  // -1, 0 to 127
+    m_midi_buss_override = null_buss();
+    m_velocity_override = c_preserve_velocity;
     m_bpm_precision = c_def_bpm_precision;
     m_bpm_step_increment = c_def_bpm_increment;
     m_bpm_page_increment = c_def_bpm_page_increment;
@@ -424,12 +414,6 @@ usrsettings::set_defaults ()
      *  m_seqs_in_set
      *  m_gmute_tracks
      *  m_max_sequence
-     *
-     * Constants:
-     *
-     *  mc_min_zoom
-     *  mc_max_zoom
-     *  mc_baseline_ppqn
      */
 
     m_mainwnd_x = c_default_window_width;
@@ -895,15 +879,15 @@ usrsettings::mainwnd_spacing (int value)
 void
 usrsettings::zoom (int value)
 {
-    bool ok = value >= mc_min_zoom && value <= mc_max_zoom;
-    if (ok || value == SEQ66_USE_ZOOM_POWER_OF_2)
+    bool ok = value >= c_min_zoom && value <= c_max_zoom;
+    if (ok || value == 0)                       /* 0 == use zoom power of 2 */
         m_current_zoom = value;
 }
 
 void
 usrsettings::default_ppqn (int value)
 {
-    if (value >= SEQ66_MINIMUM_PPQN && value <= SEQ66_MAXIMUM_PPQN)
+    if (value >= c_minimum_ppqn && value <= c_maximum_ppqn)
         m_default_ppqn = value;
 }
 
@@ -920,7 +904,7 @@ usrsettings::midi_ppqn (int value)
 {
     if (! test_option_bit(option_ppqn))
     {
-        if (value >= SEQ66_MINIMUM_PPQN && value <= SEQ66_MAXIMUM_PPQN)
+        if (value >= c_minimum_ppqn && value <= c_maximum_ppqn)
         {
             m_midi_ppqn = value;
         }

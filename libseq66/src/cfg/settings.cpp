@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2021-05-19
+ * \updates       2021-07-20
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -189,7 +189,7 @@ ppqn_list_value (int index)
  *
  * \param ppqn
  *      Provides the PPQN value to be used. The default value is
- *      SEQ66_USE_DEFAULT_PPQN.
+ *      c_use_default_ppqn.
  *
  * \return
  *      Returns the ppqn parameter, unless that parameter is one of the
@@ -200,9 +200,9 @@ int
 choose_ppqn (int ppqn)
 {
     int result = ppqn;
-    if (result == SEQ66_USE_DEFAULT_PPQN)
+    if (result == c_use_default_ppqn)
         result = usr().midi_ppqn();                 /* usr().default_ppqn() */
-    else if (result == SEQ66_USE_FILE_PPQN)
+    else if (result == c_use_file_ppqn)
         result = usr().file_ppqn();
     else if (! ppqn_in_range(result))               /* file, in-range PPQN  */
         result = usr().midi_ppqn();                 /* usr().default_ppqn() */

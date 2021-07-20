@@ -47,13 +47,13 @@ namespace seq66
  *  Sets initial values for common Qt window/frames.
  *
  * \param p
- *      Provides the performer object to use for interacting with this sequence.
- *      Among other things, this object provides the active PPQN.
+ *      Provides the performer object to use for interacting with this
+ *      sequence.  Among other things, this object provides the active PPQN.
  */
 
 qbase::qbase (performer & p, int zoom) :
     m_performer             (p),
-    m_initial_zoom          (zoom > 0 ? zoom : SEQ66_DEFAULT_ZOOM),
+    m_initial_zoom          (zoom > 0 ? zoom : 1),
     m_zoom                  (zoom),         /* adjusted below               */
     m_is_dirty              (false),
     m_is_initialized        (false)

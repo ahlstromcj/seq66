@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2021-05-19
+ * \updates       2021-07-20
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -38,6 +38,15 @@
 #include "util/rect.hpp"                /* seq66::rect rectangle class      */
 #include "gui_palette_qt5.hpp"          /* gui_pallete_qt5::Color etc.      */
 #include "qbase.hpp"                    /* seq66:qbase super base class     */
+
+/*
+ *  Do not document a namespace; it breaks Doxygen.
+ */
+
+namespace seq66
+{
+    class performer;
+    class sequence;
 
 /**
  *  The dimensions and offset of the virtual keyboard at the left of the
@@ -55,16 +64,29 @@ const int c_keyboard_padding_x = 6;     /* Qt version of keys padding       */
 const int c_names_x         = 6 * 24;   /* used in qperfroll, qperfnames    */
 const int c_names_y         = 22;       /* used in qperfroll, qperfnames    */
 const int c_perf_scale_x    = 32;       /* units are ticks per pixel        */
-const int c_perf_max_zoom   = 8;        /* limit the amount of perf zoom    */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
+/**
+ *  The default value of the snap in the sequence/performance editors.
  */
 
-namespace seq66
-{
-    class performer;
-    class sequence;
+const int c_default_snap    = 16;       /* default snap from app limits     */
+
+/**
+ *  The default value of the zoom indicates that one pixel represents two
+ *  ticks.  However, it turns out we're going to have to support adapting the
+ *  default zoom to the PPQN, in addition to allowing some extra zoom values.
+ *  A redundant definition is used on the calculations module at present.
+ *
+ *  The maximum value of the zoom indicates that one pixel represents 512
+ *  ticks.  The old maximum was 32, but now that we support PPQN up to 19200,
+ *  we need extra entries.
+ *
+ *  Redundantly defined in usrsettings.
+ */
+
+const int c_minimum_zoom    =   1;      /* limit the amount of zoom         */
+const int c_default_zoom    =   2;      /* default snap from app limits     */
+const int c_maximum_zoom    = 512;      /* limit the amount of zoom         */
 
 /**
  *  Provides basic functionality to be inherited by qseqbase and qperfbase.
@@ -312,7 +334,7 @@ public:
         int zoom,
         int scalex          = 1,
         int padding         = 0,
-        int snap            = SEQ66_DEFAULT_SNAP,
+        int snap            = c_default_snap,
         int unit_height     = 1,
         int total_height    = 1
     );
@@ -842,6 +864,13 @@ protected:
     void start_paste();
 
 };          // class qeditbase
+
+/*
+ *  Free functions.
+ */
+
+extern int zoom_power_of_2 (int ppqn);
+
 
 }           // namespace seq66
 

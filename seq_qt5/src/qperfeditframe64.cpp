@@ -175,7 +175,7 @@ qperfeditframe64::qperfeditframe64
 
     m_perftime = new qperftime
     (
-        m_mainperf, SEQ66_DEFAULT_ZOOM, SEQ66_DEFAULT_SNAP,
+        m_mainperf, c_default_zoom, c_default_snap,
         this, ui->timeScrollArea
     );
     ui->timeScrollArea->setWidget(m_perftime);
@@ -184,7 +184,7 @@ qperfeditframe64::qperfeditframe64
 
     m_perfroll = new qperfroll
     (
-        m_mainperf, SEQ66_DEFAULT_ZOOM, SEQ66_DEFAULT_SNAP,
+        m_mainperf, c_default_zoom, c_default_snap,
         m_perfnames, this, ui->rollScrollArea
     );
     ui->rollScrollArea->setWidget(m_perfroll);

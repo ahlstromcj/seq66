@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-07-19
+ * \updates       2021-07-20
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -75,7 +75,6 @@
 #include <cstring>                      /* std::memset()                    */
 #include <ctime>                        /* std::strftime()                  */
 
-#include "app_limits.h"                 /* SEQ66_DEFAULT_PPQN               */
 #include "cfg/settings.hpp"
 #include "util/calculations.hpp"
 #include "util/strfunctions.hpp"        /* seq66::contains(), etc.          */
@@ -708,36 +707,6 @@ log2_time_sig_value (int tsd)
 }
 
 /**
- *  Calculates a suitable starting zoom value for the given PPQN value.  The
- *  default starting zoom is 2, but this value is suitable only for PPQN of
- *  192 and below.  Also, zoom currently works consistently only if it is a
- *  power of 2.  For starters, we scale the zoom to the selected ppqn, and
- *  then shift it each way to get a suitable power of two.
- *
- * \param ppqn
- *      The ppqn of interest.
- *
- * \return
- *      Returns the power of 2 appropriate for the given PPQN value.
- */
-
-int
-zoom_power_of_2 (int ppqn)
-{
-    int result = SEQ66_DEFAULT_ZOOM;
-    if (ppqn > SEQ66_DEFAULT_PPQN)
-    {
-        int zoom = result * ppqn / SEQ66_DEFAULT_PPQN;
-        zoom >>= 1;                                     /* "divide" by 2    */
-        zoom <<= 1;                                     /* "multiply" by 2  */
-        result = zoom;
-        if (result > SEQ66_MAXIMUM_ZOOM)
-            result = SEQ66_MAXIMUM_ZOOM;
-    }
-    return result;
-}
-
-/**
  *  This function provides the size of the smallest horizontal grid unit in
  *  units of pulses (ticks).  We need this to be able to increment grid
  *  drawing by more than one (time-wasting!) without skipping any lines.
@@ -765,9 +734,9 @@ zoom_power_of_2 (int ppqn)
  *
  *      PPSS = (PPQN * Zoom * Base Pixels) / Base PPQN
  *
- *  Currently the Base values are hardwired (see app_limits.h).  The base
+ *  Currently the Base values are hardwired (see usrsettings).  The base
  *  pixels value is c_pixels_per_substep = 6, and the base PPQN is
- *  SEQ66_DEFAULT_PPQN = 192.  The numerator of this equation is well within
+ *  c_baseline_ppqn = 192.  The numerator of this equation is well within
  *  the limit of a 32-bit integer.
  *
  * \param ppqn
@@ -784,12 +753,12 @@ zoom_power_of_2 (int ppqn)
 midipulse
 pulses_per_substep (midipulse ppqn, int zoom)
 {
-    return (ppqn * zoom * c_pixels_per_substep) / SEQ66_DEFAULT_PPQN;
+    return (ppqn * zoom * c_pixels_per_substep) / c_baseline_ppqn;
 }
 
 /**
  *  Similar to pulses_per_substep(), but for a single pixel.  Actually, what
- *  this function does is scale the PPQN against SEQ66_DEFAULT_PPQN (192).
+ *  this function does is scale the PPQN against c_baseline_ppqn (192).
  *
  * \param ppqn
  *      Provides the actual PPQN used by the currently-loaded tune.
@@ -797,7 +766,7 @@ pulses_per_substep (midipulse ppqn, int zoom)
  * \param zoom
  *      Provides the current zoom value.  Defaults to 1, which can be used
  *      to simply get the ratio between the actual PPQN, but only when PPQN >=
- *      SEQ66_DEFAULT_PPQN.  Use pulses_scaled() instead.
+ *      c_baseline_ppqn.  Use pulses_scaled() instead.
  *
  * \return
  *      The result of the above equation is returned.
@@ -806,7 +775,7 @@ pulses_per_substep (midipulse ppqn, int zoom)
 midipulse
 pulses_per_pixel (midipulse ppqn, int zoom)
 {
-    midipulse result = (ppqn * zoom) / SEQ66_DEFAULT_PPQN;
+    midipulse result = (ppqn * zoom) / c_baseline_ppqn;
     if (result == 0)
         result = 1;
 
@@ -816,7 +785,7 @@ pulses_per_pixel (midipulse ppqn, int zoom)
 midipulse
 pulses_scaled (midipulse tick, midipulse ppqn, int zoom)
 {
-    double factor = (double(ppqn) * zoom) / SEQ66_DEFAULT_PPQN;
+    double factor = (double(ppqn) * zoom) / c_baseline_ppqn;
     return midipulse(tick * factor + 0.5);
 }
 

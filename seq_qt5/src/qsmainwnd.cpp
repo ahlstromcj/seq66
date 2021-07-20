@@ -1367,21 +1367,10 @@ qsmainwnd::update_window_title (const std::string & fn)
 {
     std::string itemname = "unnamed";
     if (fn.empty())
-    {
         itemname = perf().main_window_title(fn);
-    }
     else
-    {
-#if defined SHOW_PPQN_IN_WINDOW_TITLE
-        int pp = perf().ppqn();                     /* choose_ppqn()    */
-        char temp[16];
-        snprintf(temp, sizeof temp, " %d PPQN ", pp);
         itemname = fn;
-        itemname += temp;
-#else
-        itemname = fn;
-#endif
-    }
+
     itemname += " [*]";                             /* required by Qt 5 */
 
     QString fname = QString::fromLocal8Bit(itemname.c_str());
@@ -1854,7 +1843,7 @@ qsmainwnd::export_file_as_midi (const std::string & fname)
     }
     else
     {
-        midifile f(filename, choose_ppqn());
+        midifile f(filename, choose_ppqn(c_use_default_ppqn));
         bool result = f.write(perf(), false);           /* no SeqSpec       */
         if (result)
         {
@@ -1904,7 +1893,7 @@ qsmainwnd::export_song (const std::string & fname)
     }
     else
     {
-        midifile f(filename, choose_ppqn());
+        midifile f(filename, choose_ppqn(c_use_default_ppqn));
         bool result = f.write_song(perf());
         if (result)
         {
@@ -1936,7 +1925,9 @@ qsmainwnd::import_into_set ()
                     std::string fn = path.toStdString();
                     bool is_wrk = file_extension_match(fn, "wrk");
                     midifile * f = is_wrk ?
-                        new wrkfile(fn) : new midifile(fn, choose_ppqn()) ;
+                        new wrkfile(fn, choose_ppqn(c_use_default_ppqn)) :
+                        new midifile(fn, choose_ppqn(c_use_default_ppqn))
+                        ;
 
                     if (f->parse(perf(), setno))
                     {

@@ -128,7 +128,7 @@ public:
 
 extern rcsettings & rc ();
 extern usrsettings & usr ();
-extern int choose_ppqn (int ppqn = SEQ66_USE_DEFAULT_PPQN);
+extern int choose_ppqn (int ppqn);
 extern int ppqn_list_value (int index = (-1));
 extern const combo::container & default_ppqns();
 extern void set_configuration_defaults ();
@@ -141,7 +141,7 @@ inline bool
 ppqn_in_range (int ppqn)
 {
     return usr().use_file_ppqn() ||
-        (ppqn >= SEQ66_MINIMUM_PPQN && ppqn <= SEQ66_MAXIMUM_PPQN);
+        (ppqn >= c_minimum_ppqn && ppqn <= c_maximum_ppqn);
 }
 
 }           // namespace seq66

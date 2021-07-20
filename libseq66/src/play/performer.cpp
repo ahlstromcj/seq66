@@ -146,9 +146,6 @@
  *    MIDI and synthesizers, devices driven by MIDI beat clock are often subject
  *    to clock drift.
  *
- *    Note that 24 is represented by SEQ66_MIDI_CLOCK_IN_PPQN in the
- *    calculations.cpp module.
- *
  *    On output:
  *
  *    -   perform::m_usemidiclock starts at false;

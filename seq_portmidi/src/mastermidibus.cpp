@@ -51,7 +51,7 @@ namespace seq66
  *
  * \param ppqn
  *      Provides the PPQN value for this object.  However, in most cases, the
- *      default value, SEQ66_USE_DEFAULT_PPQN should be specified.
+ *      default base value should be specified.
  *
  * \param bpm
  *      Provides the beats per minute value, which defaults to

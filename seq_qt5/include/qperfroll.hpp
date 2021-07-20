@@ -73,7 +73,7 @@ public:
     (
         performer & p,
         int zoom,
-        int snap                 = SEQ66_DEFAULT_SNAP,
+        int snap                 = c_default_snap,
         qperfnames * seqnames    = nullptr,
         qperfeditframe64 * frame = nullptr,
         QWidget * parent         = nullptr

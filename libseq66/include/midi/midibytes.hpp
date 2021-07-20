@@ -228,8 +228,7 @@ const midilong c_midilong_max       = midilong(0xFFFFFFFF);
 
 /**
  *  Default value for c_max_busses.  Some people use a lot of ports, so we
- *  have increased this value from 32 to 48, to match SEQ66_OUTPUT_BUSS_MAX
- *  and SEQ66_INPUT_BUSS_MAX in app_limits.h.
+ *  have increased this value from 32 to 48.
  */
 
 const int c_busscount_max           = 48;
