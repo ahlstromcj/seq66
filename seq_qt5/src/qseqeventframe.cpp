@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-06-22
+ * \updates       2021-07-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -34,6 +34,7 @@
 #include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
 
 #include "cfg/settings.hpp"             /* SEQ66_QMAKE_RULES indirectly     */
+#include "midi/controllers.hpp"         /* seq66::controller_name(), etc.   */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "util/filefunctions.hpp"       /* seq66::filename_split()          */
 #include "qseqeventframe.hpp"           /* seq66::qseqeventframe            */
@@ -198,6 +199,8 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
      * Hidden for now.
      */
 
+    int scbh = ui->selection_combo_box->height();
+    ui->selection_combo_box->resize(116, scbh);
     ui->selection_combo_box->hide();
 
     /*
@@ -327,15 +330,81 @@ qseqeventframe::populate_status_combo ()
 }
 
 void
+qseqeventframe::populate_control_combo ()
+{
+    int scbh = ui->selection_combo_box->height();
+    ui->selection_combo_box->resize(116, scbh);
+    ui->selection_combo_box->clear();
+    for (int counter = 0; /* counter value */; ++counter)
+    {
+        std::string name = controller_name(counter);
+        if (name.empty())
+        {
+            break;
+        }
+        else
+        {
+            QString combotext(QString::fromStdString(name));
+            ui->selection_combo_box->insertItem(counter, combotext);
+        }
+    }
+    ui->selection_combo_box->show();
+    ui->selection_combo_box->setCurrentIndex(0);
+}
+
+void
+qseqeventframe::populate_program_combo ()
+{
+    int scbh = ui->selection_combo_box->height();
+    ui->selection_combo_box->resize(116, scbh);
+    ui->selection_combo_box->clear();
+    for (int counter = 0; /* counter value */; ++counter)
+    {
+        std::string name = gm_program_name(counter);
+        if (name.empty())
+        {
+            break;
+        }
+        else
+        {
+            QString combotext(QString::fromStdString(name));
+            ui->selection_combo_box->insertItem(counter, combotext);
+        }
+    }
+    ui->selection_combo_box->show();
+    ui->selection_combo_box->setCurrentIndex(0);
+}
+
+void
 qseqeventframe::slot_midi_channel (int /*index*/)
 {
     // Anything to do? We just need the text.
 }
 
 void
-qseqeventframe::slot_event_name (int /*index*/)
+qseqeventframe::slot_event_name (int index)
 {
-    // Anything to do? We just need the text.
+    if (index == static_cast<int>(editable::control))
+    {
+        ui->d0_label->hide();
+        ui->d1_label->hide();
+        ui->entry_ev_data_1->hide();
+        populate_control_combo();
+    }
+    else if (index == static_cast<int>(editable::program))
+    {
+        ui->d0_label->hide();
+        ui->d1_label->hide();
+        ui->entry_ev_data_1->hide();
+        populate_program_combo();
+    }
+    else
+    {
+        ui->d0_label->show();
+        ui->d1_label->show();
+        ui->entry_ev_data_1->show();
+        ui->selection_combo_box->hide();
+    }
 }
 
 void

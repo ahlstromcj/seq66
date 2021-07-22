@@ -82,11 +82,11 @@
      <property name="columnCount">
       <number>6</number>
      </property>
-     <attribute name="verticalHeaderMinimumSectionSize">
-      <number>16</number>
-     </attribute>
      <attribute name="verticalHeaderDefaultSectionSize">
       <number>18</number>
+     </attribute>
+     <attribute name="verticalHeaderMinimumSectionSize">
+      <number>16</number>
      </attribute>
      <row/>
      <row/>
@@ -578,13 +578,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       <widget class="QLabel" name="d0_label">
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>28</width>
          <height>24</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>36</width>
+         <width>28</width>
          <height>24</height>
         </size>
        </property>
@@ -600,13 +600,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       <widget class="QLineEdit" name="entry_ev_data_0">
        <property name="minimumSize">
         <size>
-         <width>100</width>
+         <width>60</width>
          <height>24</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>80</width>
+         <width>6</width>
          <height>24</height>
         </size>
        </property>
@@ -622,13 +622,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       <widget class="QLabel" name="d1_label">
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>28</width>
          <height>24</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>36</width>
+         <width>28</width>
          <height>24</height>
         </size>
        </property>
@@ -644,13 +644,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       <widget class="QLineEdit" name="entry_ev_data_1">
        <property name="minimumSize">
         <size>
-         <width>84</width>
+         <width>60</width>
          <height>24</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>80</width>
+         <width>60</width>
          <height>24</height>
         </size>
        </property>
