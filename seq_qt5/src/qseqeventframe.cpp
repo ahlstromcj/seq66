@@ -191,6 +191,16 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     );
 
     /*
+     * Combo-box for program change, controller, etc. to replace the bare
+     * text-edit fields ui->entry_ev_data_0 and ui->entry_ev_data_1, and
+     * the label ui->d0_label and ui->d1_label.
+     *
+     * Hidden for now.
+     */
+
+    ui->selection_combo_box->hide();
+
+    /*
      * Delete button.  Will set to enabled/disabled once fully initialized.
      */
 

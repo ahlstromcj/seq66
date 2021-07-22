@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-17
+ * \updates       2021-07-22
  * \license       GNU GPLv2 or above
  *
  *  This file used to define the array itself, but now it just declares it,
@@ -44,16 +44,6 @@
 
 namespace seq66
 {
-
-/*
- *  Provides the default names of MIDI controllers, which a specified in the
- *  controllers.cpp module.  This array is used
- *  only by the seqedit/qseqedit classes.
- *
- *  We could make this list a configuration option.  Overkill?
- */
-
-extern const std::string c_controller_names[c_midibyte_data_max];
 
 /**
  *  This enumeration summarizes the MIDI Continuous Controllers (CC) that are
@@ -173,6 +163,19 @@ enum class cc
     poly_on           = 127, /**< device mode to Polyphonic.                 */
 
 };          // enum class cc
+
+/**
+ *  Provides the default names of MIDI controllers, which a specified in the
+ *  controllers.cpp module.  This array is used
+ *  only by the qseqedit classes.
+ *
+ *  We could make this list a configuration option.  Overkill? No, it is
+ *  already configuration in the 'usr' file.  So at some point we offload this
+ *  stuff to an as-shipped 'usr' file.
+ */
+
+extern std::string controller_name (int index);
+extern std::string gm_program_name (int index);
 
 }           // namespace seq66
 

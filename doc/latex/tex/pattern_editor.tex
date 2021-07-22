@@ -1047,22 +1047,29 @@
       \item \textbf{Use Measures}.
          If checked, a measure is used to calculate the periodicity of a
          change, rather than using the whole length of the sequence.
+         Useful to modify long patterns.
       \item \textbf{Wave Type}.
          Selects the kind of wave to use for the LFO:
          \begin{enumber}
             \item \textbf{None}.
                This setting is useful if one wants to change only the DC
                offset.
-            \item \textbf{Sine}.
-            \item \textbf{Sawtooth}.
-            \item \textbf{Reverse Sawtooth}.
-            \item \textbf{Triangle}.
+            \item \textbf{Sine}.  Modulates via a sine wave.
+            \item \textbf{Sawtooth}. Provides a ramp modulation.
+            \item \textbf{Reverse Sawtooth}. Provides a ramp modulation in the
+               opposite direction.
+            \item \textbf{Triangle}. Modulates via a triangle wave; somewhat
+               similar to a sine wave.
          \end{enumber}
       \item \textbf{Reset Data}.
-         This button restores the initial event data.  Useful when one applies
-         modulation that one ultimately does not like.
+         This button restores the initial pattern event data.  Useful when one
+         applies modulation that one ultimately does not like.
       \item \textbf{Close}.  Closes the LFO panel.
    \end{enumber}
+
+   In addition to the \textbf{Reset Data} button, Ctrl-Z can be applied
+   multiple times to undo changes one at a time.  Every motion of a control
+   causes a complete change.
 
    \itempar{Live Loop Count}{pattern editor!live loop count}
    Normally, in Live mode, a pattern plays endlessly if left alone.

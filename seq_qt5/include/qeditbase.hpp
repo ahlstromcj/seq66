@@ -779,8 +779,9 @@ protected:
 
 protected:
 
-    void set_scroll_x (int x);
-    void set_scroll_y (int y);
+    // void set_scroll_x (int x);
+    // void set_scroll_y (int y);
+
     void snap_x (int & x);
 
     void snap_current_x ()

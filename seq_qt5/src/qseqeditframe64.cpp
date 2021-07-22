@@ -95,8 +95,8 @@ QWidget container?
 #include <QScrollBar>
 #include <QStandardItemModel>           /* for disabling combobox entries   */
 
-#include "cfg/settings.hpp"             /* seq66::usr()                     */
-#include "midi/controllers.hpp"         /* seq66::c_controller_names[]      */
+#include "cfg/settings.hpp"             /* seq66::usr().controller_name()   */
+#include "midi/controllers.hpp"         /* seq66::controller_name()         */
 #include "play/performer.hpp"           /* seq66::performer reference       */
 #include "qlfoframe.hpp"
 #include "qseqdata.hpp"
@@ -2220,13 +2220,13 @@ qseqeditframe64::set_background_sequence (int seqnum)
 
 /**
  *  Sets the data type based on the given parameters.  This function uses the
- *  hardwired array c_controller_names defined in the controllers.cpp module.
+ *  controller_name() function defined in the controllers.cpp module.
  *
  * \param status
  *      The current editing status.
  *
  * \param control
- *      The control value.  However, we really need to validate it!
+ *      The control value.  Validated in the controller_name() function.
  */
 
 void
@@ -2249,9 +2249,9 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
     {
         int bus = int(seq_pointer()->seq_midi_bus());
         int channel = int(seq_pointer()->seq_midi_channel());
-        std::string ccname(c_controller_names[control]);
-        if (usr().controller_active(bus, channel, control))
-            ccname = usr().controller_name(bus, channel, control);
+        std::string ccname = usr().controller_active(bus, channel, control) ?
+            usr().controller_name(bus, channel, control) :
+            controller_name(control) ;
 
         snprintf(type, sizeof type, "CC - %s", ccname.c_str());
     }
@@ -2896,14 +2896,12 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
         {
             /*
              * Do we really want the default controller name to start?
-             * That's what the merge Seq24 code does!  We need to document
-             * it in the seq66-doc and seq66-doc projects.  Also, there
-             * was a bug in Seq24 where the instrument number was use re 1
-             * to get the proper instrument... it needs to be decremented to
+             * There was a bug in Seq24 where the instrument number was use re
+             * 1 to get the proper instrument... it needs to be decremented to
              * be re 0.
              */
 
-            std::string cname(c_controller_names[offset + item]);
+            std::string cname(controller_name(offset + item));
             const usermidibus & umb = usr().bus(buss);
             int inst = umb.instrument(channel);
             const userinstrument & uin = usr().instrument(inst);
@@ -3097,7 +3095,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     const int itemcount = c_midibyte_data_max;              /* 128          */
     for (int item = 0; item < itemcount; ++item)
     {
-        std::string cname(c_controller_names[item]);
+        std::string cname(controller_name(item));
         const usermidibus & umb = usr().bus(buss);
         int inst = umb.instrument(channel);
         const userinstrument & uin = usr().instrument(inst);
@@ -3111,8 +3109,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
             any_events = true;
             set_event_entry
             (
-                m_minidata_popup, cname, true,
-                EVENT_CONTROL_CHANGE, item
+                m_minidata_popup, cname, true, EVENT_CONTROL_CHANGE, item
             );
         }
     }

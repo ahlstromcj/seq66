@@ -619,8 +619,8 @@ setmapper::max_trigger () const
  *      Provides the low track to be selected.
  *
  * \param seqhigh
- *      Provides the high track to be selected.  If not in the same set, nothing
- *      is done.  We need a way to report that.
+ *      Provides the high track to be selected.  If not in the same set,
+ *      nothing is done.  We need a way to report that.
  *
  * \param tick_start
  *      Provides the low end of the box.
@@ -643,7 +643,7 @@ setmapper::select_triggers_in_range
         auto setiterator = sets().find(setlow);
         if (setiterator != sets().end())
         {
-            setiterator->second.select_triggers_in_range
+            setiterator->second.select_triggers_in_range    /* in screenset */
             (
                 seqlow, seqhigh, tick_start, tick_finish
             );

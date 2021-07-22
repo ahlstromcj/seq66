@@ -212,13 +212,7 @@ PATTERNS:
 
     -   Set pattern editor focus to grid at start unless it is a new one.
     -   Make it center on notes if not visible.
-    -   Still some weird note events in 2rock, above measure 20, when scrolling
-        via the scrollbar; okay when clicking the scrollbar. Fine when scrolling
-        during playback.
-    -   Make sure Esc/Space work in pattern editor.  Consider adding the
-        start/stop buttons to external windows (song and pattern).
-    -   When loading 2rock pattern 10(1) into the editor, adjust the length
-        dropdown to match!
+    -   Consider adding start/stop buttons to external windows (song & pattern).
 
 Tons of TO DOs in performer!
 
@@ -256,25 +250,12 @@ seq_rtmidi/src/midi_alsa_info.cpp *:
         SND_SEQ_EVENT_PORT_EXIT.
         SND_SEQ_EVENT_PORT_CHANGE (could be difficult).
 
-Seq66qt5/seq66qt5.cpp *:
-
-    Implement gui_palette_qt5::load_inverse_palette().
-
-seq_qt5/src/qlfoframe.cpp:
-
-    on_focus_out_event():  Implement undo of calculations.
-
-seq_qt5/src/qseqbase.cpp:
-
-    set_scroll_y(): Use m_unit_height.
-
 seq_qt5/src/qseqbase.cpp:
 
     mouseReleaseEvent():  Implement undirtying when undoing.
 
 seq_qt5/src/qperfroll.cpp:
 
-    Investigate the note at the top about passing values to constructors.
     paintEvent(): handle DRAW_TEMPO
 
 libseq66/src/play/setmapper.cpp:
@@ -282,14 +263,11 @@ libseq66/src/play/screenset.cpp:
 
     Reconcile the two classes select_triggers_in_range() functions.
     Apply bits iterates through all sequences in the set.
+    Called by qperfroll.
 
 libseq66/src/play/performer.cpp:
 
     Implement solo, FF, rewind, and many more.  Investigate!!!
-
-    Implement error handling in various places.
-
-    put_settings(): Implement the to-do.
 
 libseq66/src/midi/editable_event.cpp:
 

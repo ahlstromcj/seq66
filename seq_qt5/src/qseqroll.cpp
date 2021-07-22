@@ -835,10 +835,6 @@ qseqroll::add_note (midipulse tick, int note)
 void
 qseqroll::resizeEvent (QResizeEvent * qrep)
 {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf("qseqroll::resizeEvent(%d)\n", s_count++);
-#endif
     QWidget::resizeEvent(qrep);         /* qrep->ignore() */
 }
 

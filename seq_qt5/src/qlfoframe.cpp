@@ -319,7 +319,7 @@ qlfoframe::phase_text_change ()
 
 /**
  *  Changes the scaling provided by this window.  Changes take place right
- *  away in this callback.
+ *  away in this callback, and would require multiple undoes to fully undo.
  */
 
 void

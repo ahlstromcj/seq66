@@ -38,7 +38,7 @@
 #include "util/strfunctions.hpp"        /* seq66::strings_match(), etc.     */
 
 /**
- *  Provides an integer value that is larger than any midibyte value, to be
+ *  Provides an integer value that is larger than any MIDI value, to be
  *  used to terminate a array of items keyed by a midibyte value.
  */
 
@@ -102,7 +102,7 @@ s_channel_event_names [] =
     { (unsigned short)(EVENT_PROGRAM_CHANGE),   "Program"           },  // 0xC0
     { (unsigned short)(EVENT_CHANNEL_PRESSURE), "Ch Pressure"       },  // 0xD0
     { (unsigned short)(EVENT_PITCH_WHEEL),      "Pitch Wheel"       },  // 0xE0
-    { s_end_of_table,                           ""                  }    // end
+    { s_end_of_table,                           ""                  }   // end
 };
 
 /**

@@ -48,6 +48,22 @@ namespace seq66
 class editable_events;                  /* forward reference to container   */
 
 /**
+ *  An enumeration of the supported (in the Event Editor) Program Change
+ *  values.
+ */
+
+enum class editable
+{
+    note_off,
+    note_on,
+    aftertouch,
+    control,
+    program,
+    ch_pressure,
+    pitch_wheel
+};
+
+/**
  *  Provides for the management of MIDI editable events.  It makes the
  *  following members of an event modifiable using human-readable strings:
  *

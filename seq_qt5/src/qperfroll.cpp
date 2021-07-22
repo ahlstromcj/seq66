@@ -88,7 +88,7 @@ qperfroll::qperfroll
     qperfbase
     (
         p, zoom, snap, c_names_y,
-        c_names_y * p.sequences_in_sets()       // p.sequence_max()
+        c_names_y * p.sequences_in_sets()       /* p.sequence_max()     */
     ),
     m_parent_frame      (frame),                /* frame64() accessor   */
     m_perf_names_wid    (seqnames),
@@ -906,7 +906,17 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                             if (dt == sequence::draw::finish)
                                 break;
                             else if (dt == sequence::draw::tempo)
+                            {
+                                /*
+                                 * We want to draw a tempo line from the
+                                 * beginning or the previous tempo change to
+                                 * here.  TODO.  We might consider doing it in
+                                 * a separate function if we detect tempo
+                                 * here.
+                                 */
+
                                 continue;       // DRAW_TEMPO_LINE_DISABLED
+                            }
 
                             midipulse tick_s = ni.start();
                             midipulse tick_f = ni.finish();

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-07-19
+ * \updates       2021-07-21
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2280,6 +2280,7 @@ sequence::change_event_data_lfo
 )
 {
     automutex locker(m_mutex);
+    m_events_undo.push(m_events);           /* experimental, seems to work  */
     double dlength = double(get_length());
     bool no_selection = ! m_events.any_selected_events(status, cc);
     if (get_length() == 0)                  /* should never happen, though  */

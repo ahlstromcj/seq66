@@ -49,6 +49,19 @@ namespace seq66
 
 class sequence;
 
+/*
+ * ui->combo_ev_name entries from editable_event::channel_event_name():
+ *
+ *      -   Note Off
+ *      -   Note On
+ *      -   Aftertouch
+ *      -   Control
+ *      -   Program
+ *      -   Ch Pressure
+ *      -   Pitch Wheel
+ */
+
+
 /**
  *  Provides for the management of an ordered collection MIDI editable events.
  */
