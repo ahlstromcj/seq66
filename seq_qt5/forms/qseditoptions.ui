@@ -501,7 +501,7 @@ Use 0.60 at a minimum.</string>
         <item row="3" column="2">
          <widget class="QLabel" name="label_x3">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="text">
            <string>X</string>
@@ -509,9 +509,9 @@ Use 0.60 at a minimum.</string>
          </widget>
         </item>
         <item row="3" column="3">
-         <widget class="QLineEdit" name="lineEdit_2">
+         <widget class="QLineEdit" name="lineEditProgressBoxHeight">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="text">
            <string>0.4</string>
@@ -558,7 +558,7 @@ Use 0.85 at a minimum.</string>
         <item row="3" column="0">
          <widget class="QLabel" name="labelProgressBoxSize">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="text">
            <string>Progress Boxs (fraction of 1)</string>
@@ -568,7 +568,7 @@ Use 0.85 at a minimum.</string>
         <item row="3" column="1">
          <widget class="QLineEdit" name="lineEditProgressBox">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="text">
            <string>0.8</string>
@@ -605,7 +605,7 @@ A primitive way to zoom.</string>
         <item row="4" column="0">
          <widget class="QLabel" name="labelFingerprintSize">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="text">
            <string>Fingerprint Size</string>
@@ -615,7 +615,7 @@ A primitive way to zoom.</string>
         <item row="4" column="1">
          <widget class="QLineEdit" name="lineEditFingerprintSize">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="text">
            <string>32</string>

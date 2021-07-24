@@ -556,11 +556,19 @@ usrsettings::mainwnd_y_min () const
  *  less than 0.0.
  */
 
-void
+bool
 usrsettings::progress_box_size (double w, double h)
 {
-    m_progress_box_width = (w >= 0.0) ? w : c_progress_box_width ;
-    m_progress_box_height = (h >= 0.0) ? h : c_progress_box_height ;
+    bool result = (w >= 0.0) && (w < 1.0) && (h >= 0.0) && (h < 1.0);
+    if (result)
+        result = (w != m_progress_box_width) || (h != m_progress_box_height);
+
+    if (result)
+    {
+        m_progress_box_width = w;
+        m_progress_box_height = h;
+    }
+    return result;
 }
 
 /**

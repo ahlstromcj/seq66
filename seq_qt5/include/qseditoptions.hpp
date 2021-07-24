@@ -122,6 +122,9 @@ private slots:
     void slot_ui_scaling ();
     void slot_set_size_rows ();
     void slot_set_size_columns ();
+    void slot_progress_box_width ();
+    void slot_progress_box_height ();
+    void slot_fingerprint_size ();
 #if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR
     void slot_pattern_editor ();
 #endif

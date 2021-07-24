@@ -205,9 +205,9 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     );
 
     char tmp[32];
-    snprintf(tmp, sizeof tmp, "%g", usr().window_scale());
+    snprintf(tmp, sizeof tmp, "%.1f", usr().window_scale());
     ui->lineEditUiScaling->setText(tmp);
-    snprintf(tmp, sizeof tmp, "%g", usr().window_scale_y());
+    snprintf(tmp, sizeof tmp, "%.1f", usr().window_scale_y());
     ui->lineEditUiScalingHeight->setText(tmp);
     connect
     (
@@ -233,6 +233,28 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     (
         ui->lineEditSetSizeColumns, SIGNAL(editingFinished()),
         this, SLOT(slot_set_size_columns())
+    );
+
+    snprintf(tmp, sizeof tmp, "%.1f", usr().progress_box_width());
+    ui->lineEditProgressBox->setText(tmp);
+    snprintf(tmp, sizeof tmp, "%.1f", usr().progress_box_height());
+    ui->lineEditProgressBoxHeight->setText(tmp);
+    connect
+    (
+        ui->lineEditProgressBox, SIGNAL(editingFinished()),
+        this, SLOT(slot_progress_box_width())
+    );
+    connect
+    (
+        ui->lineEditProgressBoxHeight, SIGNAL(editingFinished()),
+        this, SLOT(slot_progress_box_height())
+    );
+    snprintf(tmp, sizeof tmp, "%i", usr().fingerprint_size());
+    ui->lineEditFingerprintSize->setText(tmp);
+    connect
+    (
+        ui->lineEditFingerprintSize, SIGNAL(editingFinished()),
+        this, SLOT(slot_fingerprint_size())
     );
 
 #if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR
@@ -666,6 +688,7 @@ qseditoptions::ui_scaling_helper
     if (! wtext.empty() && ! htext.empty())
     {
         std::string tuple = wtext + "x" + htext;
+        usr().clear_option_bit(usrsettings::option_bits::option_scale);
         if (usr().parse_window_scale(tuple))
             usr().save_user_config(true);
     }
@@ -700,7 +723,48 @@ qseditoptions::slot_set_size_columns ()
     if (! valuetext.empty())
     {
         int columns = std::stoi(valuetext);
-        if (usr().mainwnd_columns(columns))
+        if (usr().mainwnd_cols(columns))
+            usr().save_user_config(true);
+    }
+}
+
+void
+qseditoptions::slot_progress_box_width ()
+{
+    const QString qs = ui->lineEditProgressBox->text();
+    const std::string wtext = qs.toStdString();
+    if (! wtext.empty())
+    {
+        double w = std::stod(wtext);
+        double h = usr().progress_box_height();
+        if (usr().progress_box_size(w, h))
+            usr().save_user_config(true);
+    }
+}
+
+void
+qseditoptions::slot_progress_box_height ()
+{
+    const QString qs = ui->lineEditProgressBoxHeight->text();
+    const std::string htext = qs.toStdString();
+    if (! htext.empty())
+    {
+        double w = usr().progress_box_width();
+        double h = std::stod(htext);
+        if (usr().progress_box_size(w, h))
+            usr().save_user_config(true);
+    }
+}
+
+void
+qseditoptions::slot_fingerprint_size ()
+{
+    const QString qs = ui->lineEditFingerprintSize->text();
+    const std::string text = qs.toStdString();
+    if (! text.empty())
+    {
+        double sz = std::stoi(text);
+        if (usr().fingerprint_size(sz))
             usr().save_user_config(true);
     }
 }
