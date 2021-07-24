@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>822</width>
+    <width>834</width>
     <height>848</height>
    </rect>
   </property>
@@ -82,11 +82,11 @@
      <property name="columnCount">
       <number>6</number>
      </property>
-     <attribute name="verticalHeaderDefaultSectionSize">
-      <number>18</number>
-     </attribute>
      <attribute name="verticalHeaderMinimumSectionSize">
       <number>16</number>
+     </attribute>
+     <attribute name="verticalHeaderDefaultSectionSize">
+      <number>18</number>
      </attribute>
      <row/>
      <row/>
@@ -550,7 +550,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
    <item row="3" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>0</number>
+      <number>4</number>
      </property>
      <property name="sizeConstraint">
       <enum>QLayout::SetDefaultConstraint</enum>
@@ -566,13 +566,32 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>48</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
-         <width>20</width>
+         <width>80</width>
          <height>16777215</height>
         </size>
        </property>
       </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item>
       <widget class="QLabel" name="d0_label">
@@ -600,13 +619,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       <widget class="QLineEdit" name="entry_ev_data_0">
        <property name="minimumSize">
         <size>
-         <width>60</width>
+         <width>48</width>
          <height>24</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>6</width>
+         <width>48</width>
          <height>24</height>
         </size>
        </property>
@@ -644,13 +663,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       <widget class="QLineEdit" name="entry_ev_data_1">
        <property name="minimumSize">
         <size>
-         <width>60</width>
+         <width>48</width>
          <height>24</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>60</width>
+         <width>48</width>
          <height>24</height>
         </size>
        </property>

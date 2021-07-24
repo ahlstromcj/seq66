@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-02
-% \update      2021-06-13
+% \update      2021-07-23
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -150,22 +150,7 @@
    \itempar{Event Name}{event editor!event name}
    Displays the name of the event.
    The event name indicates what kind of MIDI event it is. 
-   The following event names are supported:
-
-   \begin{enumber}
-      \item \textbf{Note Off}
-      \item \textbf{Note On}
-      \item \textbf{Aftertouch}
-      \item \textbf{Control Change}
-      \item \textbf{Program Change}
-      \item \textbf{Channel Pressure}
-      \item \textbf{Pitch Wheel}
-      \item \textbf{Tempo}
-   \end{enumber}
-
-%  \textbf{Note that these are all MIDI \textsl{channel events}.
-%  Support for MIDI \textsl{system events} is in place, but is not
-%  ready for exposure to the user.}
+   See \sectionref{subsec:event_editor_fields}.
 
    \itempar{Channel Number}{event editor!channel number}
    Shows the channel number (for channel-events only) re 0, not 1.
@@ -298,12 +283,21 @@
       \item \textbf{Tempo}
    \end{enumber}
 
-   Typing in one of these names changes the kind of event if the event is
-   modified.  Abbreviations and case-insensitivity can be used to reduce the
-   effort of typing.
-   This handling of the editing of the event name is still a bit clumsy.
-   It would be better to provide a drop-down list for more painless
-   selection of events.  Some day.
+%  \textbf{Note that these are all MIDI \textsl{channel events}.
+%  Support for MIDI \textsl{system events} is in place, but is not
+%  ready for exposure to the user.}
+
+   Selecting one of these names from the dropdown changes the kind of event if
+   the event is modified.  Abbreviations and case-insensitivity can be used to
+   reduce the effort of typing.
+
+   Also, as of \textsl{Seq66} 0.96.1, if \textbf{Control Change} or
+   \textbf{Program Change} are selected, then a data drop-down box is available
+   to select either the controller or
+   the instrument patch (program), and it can fill in the data values.
+   In the future, we may make these configurable, with the control-change
+   following the settings in the 'usr' file, and the program-change being made
+   from a (new) 'patch' file. Currently the programs are General MIDI.
 
    \itempar{D0}{event editor!data byte 1}
    Allows modification of the first data byte of the event.
@@ -334,7 +328,8 @@
    \textsl{Seq66} does not support using the
    \texttt{Delete} and \texttt{Insert} keys to
    supplement the buttons; the \texttt{Delete}
-%  key is needed for editing the event data fields.
+   key is needed for editing the event data fields.
+
 %  The current structure of the dialog prevents using it for both
 %  the frame and the edit fields.
 %  Therefore, \textsl{Seq66} allows the

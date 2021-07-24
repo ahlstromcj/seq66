@@ -1,6 +1,6 @@
 TO DO for Seq66 0.96.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-07-19
+2019-04-13 to 2021-07-24
 
 Hottest to Trivial:
 
@@ -12,11 +12,49 @@ Port-Mapping:
 
 UI:
 
+    'rc': click-edit = false does not disable double-click in the live frame.
+
     See the mouse wheel scroll event requests for both the song and
     pattern editors.
 
     Can we reset the main port dropdown to 0 when loading a new song?
     Even if it does not change, the buss-override still applies; inconsistent.
+
+    Additional, oft-used configuration items to consider adding to the
+    Preferences dialog:
+
+        -   MIDI Clock:
+            -   Port naming
+            -   Virtual port flag and port-count
+            -   Port map
+        -   MIDI Input:
+            -   Port naming
+            -   Virtual port flag and port-count
+            -   Port map
+        -   Display:
+            -   Set size and grid spacing
+            -   Progress box width height
+            -   Fingerprint size
+            -   Style-sheet
+            -   Global seq feature
+            -   Tempo / BPM min and max
+        -   JACK:
+        -   Play Options:
+            -   New patter editor options (check-boxes)
+            -   Record-style dropdown
+        -   Config Options: (new)
+            -   Autosave for rc, usr, playlist, palette, mutes, drums,
+                patches, keymap
+            -   List of base names and active status for the above.
+            -   Log-file
+            -   Verbose
+        -   Control Options: (new)
+            -   Load key and midi controls (does this work?)
+            -   Control buss (in and out)
+            -   Enabled (in and out)
+        -   Main window:
+            -   Save global time signature
+            -   Save global BPM
 
 CLI:
 
@@ -48,12 +86,8 @@ From Testing:
 
     Tempo display needs to be worked on for the perfroll and qloopbuttons.
 
-    Weird silence in "Europe Endless" Melody 2 around measure 150 and 244.
-    (Loop measure 23 and 37).  Did not happen after hitting Panic in Qsynth!
-    A patch frequency limitation?  Yes.  Changing channel 5 from program 65
-    (Alto Sax) to 66 (Tenor Sax) fixed the issue.
-
-    L/R looping in pattern editor not working completely.
+    L/R looping in pattern editor not working completely; works fairly well in
+    ALSA.
 
 Others to Consider:
 
@@ -257,13 +291,6 @@ seq_qt5/src/qseqbase.cpp:
 seq_qt5/src/qperfroll.cpp:
 
     paintEvent(): handle DRAW_TEMPO
-
-libseq66/src/play/setmapper.cpp:
-libseq66/src/play/screenset.cpp:
-
-    Reconcile the two classes select_triggers_in_range() functions.
-    Apply bits iterates through all sequences in the set.
-    Called by qperfroll.
 
 libseq66/src/play/performer.cpp:
 

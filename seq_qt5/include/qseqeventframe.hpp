@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-07-22
+ * \updates       2021-07-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -38,6 +38,7 @@
 #include "play/performer.hpp"           /* seq66::performer::callbacks base */
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */
 #include "util/basic_macros.hpp"        /* nullptr and related macros       */
+#include "qseventslots.hpp"             /* seq66::qseventslots              */
 
 /**
  *  Forward reference.
@@ -137,6 +138,7 @@ private:
     void populate_status_combo ();
     void populate_control_combo ();
     void populate_program_combo ();
+    void setup_selection_combo (editable item);
 
 protected:                          // overrides of event handlers
 
@@ -156,6 +158,7 @@ private slots:
     void update_seq_name ();
     void slot_midi_channel (int index);
     void slot_event_name (int index);
+    void slot_selection_combo (int index);
     void slot_hex_data_state (int state);
 
 private:

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-07-20
+ * \updates       2021-07-24
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -775,18 +775,27 @@ usrsettings::scale_font_size (int value) const
  *      Dependent values are recalculated after the assignment.
  */
 
-void
+bool
 usrsettings::mainwnd_rows (int r)
 {
-    if ((r >= screenset::c_min_rows) && (r <= screenset::c_max_rows))
+    bool result =
+    (
+        (r >= screenset::c_min_rows) && (r <= screenset::c_max_rows)
+    );
+    if (result)
+        result = r != m_mainwnd_rows;
+
+    if (result)
     {
-        if (! test_option_bit(option_rows))
+        result = ! test_option_bit(option_rows);
+        if (result)
         {
             m_mainwnd_rows = r;
             normalize();
             set_option_bit(option_rows);
         }
     }
+    return result;
 }
 
 /**
@@ -796,18 +805,27 @@ usrsettings::mainwnd_rows (int r)
  *      Dependent values are recalculated after the assignment.
  */
 
-void
+bool
 usrsettings::mainwnd_cols (int c)
 {
-    if ((c >= screenset::c_min_columns) && (c <= screenset::c_max_columns))
+    bool result =
+    (
+        (c >= screenset::c_min_columns) && (c <= screenset::c_max_columns)
+    );
+    if (result)
+        result = c != m_mainwnd_cols;
+
+    if (result)
     {
-        if (! test_option_bit(option_columns))
+        result = ! test_option_bit(option_columns);
+        if (result)
         {
             m_mainwnd_cols = c;
             normalize();
             set_option_bit(option_columns);
         }
     }
+    return result;
 }
 
 /**

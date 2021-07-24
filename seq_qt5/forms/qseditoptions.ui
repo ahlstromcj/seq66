@@ -394,13 +394,16 @@ number using the channel number (0 to 15).</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>128</y>
-         <width>361</width>
-         <height>80</height>
+         <y>272</y>
+         <width>369</width>
+         <height>113</height>
         </rect>
        </property>
        <property name="title">
         <string>UI Boolean Options</string>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
        </property>
        <widget class="QCheckBox" name="checkBoxPaletteActive">
         <property name="enabled">
@@ -408,9 +411,9 @@ number using the channel number (0 to 15).</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>10</x>
+          <x>8</x>
           <y>40</y>
-          <width>261</width>
+          <width>161</width>
           <height>21</height>
          </rect>
         </property>
@@ -422,17 +425,106 @@ This option is saved in the 'rc' file.</string>
          <string>Use Palette File</string>
         </property>
        </widget>
+       <widget class="QCheckBox" name="checkBoxVerbose">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>8</x>
+          <y>64</y>
+          <width>169</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Verbose Console Output</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="layoutWidgetGuiOptions">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>10</y>
-         <width>313</width>
-         <height>64</height>
+         <width>369</width>
+         <height>161</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayoutUiValues">
+        <item row="1" column="3">
+         <widget class="QLineEdit" name="lineEditUiScalingHeight">
+          <property name="toolTip">
+           <string>Scales the main window at startup.  This is the height
+scale factor, ranging from 0.5 to 3.0.
+
+Use 0.60 at a minimum.</string>
+          </property>
+          <property name="text">
+           <string>1.0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QLineEdit" name="lineEditSetSizeColumns">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>8</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="spinKeyHeight">
+          <property name="minimum">
+           <number>4</number>
+          </property>
+          <property name="maximum">
+           <number>24</number>
+          </property>
+          <property name="value">
+           <number>10</number>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="lineEditSetSize">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>4</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QLabel" name="label_x3">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>X</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="3">
+         <widget class="QLineEdit" name="lineEdit_2">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>0.4</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLabel" name="label_x">
+          <property name="text">
+           <string>X</string>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="0">
          <widget class="QLabel" name="labelUiScaling">
           <property name="text">
@@ -440,10 +532,46 @@ This option is saved in the 'rc' file.</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
-         <widget class="QLabel" name="label_2">
+        <item row="2" column="0">
+         <widget class="QLabel" name="labelSetSizeRows">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="text">
-           <string>X</string>
+           <string>Set Size (rows x columns) *</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEditUiScaling">
+          <property name="toolTip">
+           <string>Scales the main window at startup.  This is the width
+scale factor, ranging from 0.5 to 3.0.
+
+Use 0.85 at a minimum.</string>
+          </property>
+          <property name="text">
+           <string>1.0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="labelProgressBoxSize">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Progress Boxs (fraction of 1)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="lineEditProgressBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>0.8</string>
           </property>
          </widget>
         </item>
@@ -464,42 +592,33 @@ A primitive way to zoom.</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QSpinBox" name="spinKeyHeight">
-          <property name="minimum">
-           <number>4</number>
+        <item row="2" column="2">
+         <widget class="QLabel" name="label_x2">
+          <property name="enabled">
+           <bool>true</bool>
           </property>
-          <property name="maximum">
-           <number>24</number>
-          </property>
-          <property name="value">
-           <number>10</number>
+          <property name="text">
+           <string>X</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="lineEditUiScaling">
-          <property name="toolTip">
-           <string>Scales the main window at startup.  This is the width
-scale factor, ranging from 0.5 to 3.0.
-
-Use 0.85 at a minimum.</string>
+        <item row="4" column="0">
+         <widget class="QLabel" name="labelFingerprintSize">
+          <property name="enabled">
+           <bool>false</bool>
           </property>
           <property name="text">
-           <string>1.0</string>
+           <string>Fingerprint Size</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="3">
-         <widget class="QLineEdit" name="lineEditUiScalingHeight">
-          <property name="toolTip">
-           <string>Scales the main window at startup.  This is the height
-scale factor, ranging from 0.5 to 3.0.
-
-Use 0.60 at a minimum.</string>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="lineEditFingerprintSize">
+          <property name="enabled">
+           <bool>false</bool>
           </property>
           <property name="text">
-           <string>1.0</string>
+           <string>32</string>
           </property>
          </widget>
         </item>
@@ -508,21 +627,21 @@ Use 0.60 at a minimum.</string>
       <widget class="QLabel" name="labelRestartNeeded">
        <property name="geometry">
         <rect>
-         <x>416</x>
-         <y>0</y>
+         <x>400</x>
+         <y>72</y>
          <width>193</width>
          <height>16</height>
         </rect>
        </property>
        <property name="text">
-        <string>* Applied at Seq66 start-up</string>
+        <string>Restart required</string>
        </property>
       </widget>
       <widget class="QWidget" name="layoutWidgetOp">
        <property name="geometry">
         <rect>
          <x>8</x>
-         <y>88</y>
+         <y>216</y>
          <width>505</width>
          <height>29</height>
         </rect>
@@ -561,7 +680,7 @@ path added to this name is stripped.</string>
        <property name="geometry">
         <rect>
          <x>24</x>
-         <y>232</y>
+         <y>552</y>
          <width>73</width>
          <height>17</height>
         </rect>
@@ -574,7 +693,7 @@ path added to this name is stripped.</string>
        <property name="geometry">
         <rect>
          <x>112</x>
-         <y>232</y>
+         <y>552</y>
          <width>41</width>
          <height>25</height>
         </rect>

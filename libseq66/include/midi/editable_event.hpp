@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2021-04-11
+ * \updates       2021-07-23
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -48,8 +48,9 @@ namespace seq66
 class editable_events;                  /* forward reference to container   */
 
 /**
- *  An enumeration of the supported (in the Event Editor) Program Change
- *  values.
+ *  An enumeration of the supported (in the Event Editor) MIDI channel-event
+ *  status values values in qseqeventframe, as list in s_channel_event_names[] in
+ *  the editable_event module.
  */
 
 enum class editable
@@ -60,7 +61,8 @@ enum class editable
     control,
     program,
     ch_pressure,
-    pitch_wheel
+    pitch_wheel,
+    max
 };
 
 /**

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-04-11
+ * \updates       2021-07-23
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -716,7 +716,7 @@ editable_event::set_status_from_string
         set_channel_status(newstatus, c);       /* pass in code, channel */
         if (is_one_byte_msg(newstatus))
         {
-            set_data(d0);
+            set_data(d0, 0);
         }
         else if (is_two_byte_msg(newstatus))
         {

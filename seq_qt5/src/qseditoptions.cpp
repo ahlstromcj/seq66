@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-05
+ * \updates       2021-07-24
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -105,12 +105,12 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     connect
     (
         ui->btnJackConnect, SIGNAL(clicked(bool)),
-        this, SLOT(update_jack_connect())
+        this, SLOT(slot_jack_connect())
     );
     connect
     (
         ui->btnJackDisconnect, SIGNAL(clicked(bool)),
-        this, SLOT(update_jack_disconnect())
+        this, SLOT(slot_jack_disconnect())
     );
 
     /*
@@ -120,36 +120,36 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     connect
     (
         ui->chkJackTransport, SIGNAL(stateChanged(int)),
-        this, SLOT(update_transport_support())
+        this, SLOT(slot_transport_support())
     );
     connect
     (
         ui->chkJackConditional, SIGNAL(stateChanged(int)),
-        this, SLOT(update_master_cond())
+        this, SLOT(slot_master_cond())
     );
     connect
     (
         ui->chkJackMaster, SIGNAL(stateChanged(int)),
-        this, SLOT(update_time_master())
+        this, SLOT(slot_time_master())
     );
     connect
     (
         ui->chkJackNative, SIGNAL(stateChanged(int)),
-        this, SLOT(update_jack_midi())
+        this, SLOT(slot_jack_midi())
     );
 
     ui->chkNoteResume->setChecked(usr().resume_note_ons());
     connect
     (
         ui->chkNoteResume, SIGNAL(stateChanged(int)),
-        this, SLOT(update_note_resume())
+        this, SLOT(slot_note_resume())
     );
 
     ui->chkUseFilesPPQN->setChecked(usr().use_file_ppqn());
     connect
     (
         ui->chkUseFilesPPQN, SIGNAL(stateChanged(int)),
-        this, SLOT(update_use_file_ppqn())
+        this, SLOT(slot_use_file_ppqn())
     );
 
     /*
@@ -160,7 +160,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     connect
     (
         ui->combo_box_ppqn, SIGNAL(currentTextChanged(const QString &)),
-        this, SLOT(update_ppqn_by_text(const QString &))
+        this, SLOT(slot_ppqn_by_text(const QString &))
     );
 
     /*
@@ -201,26 +201,51 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     connect
     (
         ui->spinKeyHeight, SIGNAL(valueChanged(int)),
-        this, SLOT(update_key_height())
+        this, SLOT(slot_key_height())
     );
+
+    char tmp[32];
+    snprintf(tmp, sizeof tmp, "%g", usr().window_scale());
+    ui->lineEditUiScaling->setText(tmp);
+    snprintf(tmp, sizeof tmp, "%g", usr().window_scale_y());
+    ui->lineEditUiScalingHeight->setText(tmp);
     connect
     (
         ui->lineEditUiScaling, SIGNAL(editingFinished()),
-        this, SLOT(update_ui_scaling_width())
+        this, SLOT(slot_ui_scaling())
     );
     connect
     (
         ui->lineEditUiScalingHeight, SIGNAL(editingFinished()),
-        this, SLOT(update_ui_scaling_height())
+        this, SLOT(slot_ui_scaling())
+    );
+
+    snprintf(tmp, sizeof tmp, "%i", usr().mainwnd_rows());
+    ui->lineEditSetSize->setText(tmp);
+    snprintf(tmp, sizeof tmp, "%i", usr().mainwnd_cols());
+    ui->lineEditSetSizeColumns->setText(tmp);
+    connect
+    (
+        ui->lineEditSetSize, SIGNAL(editingFinished()),
+        this, SLOT(slot_set_size_rows())
+    );
+    connect
+    (
+        ui->lineEditSetSizeColumns, SIGNAL(editingFinished()),
+        this, SLOT(slot_set_size_columns())
     );
 
 #if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR
     connect
     (
         ui->checkBoxKeplerSeqedit, SIGNAL(stateChanged(int)),
-        this, SLOT(update_pattern_editor())
+        this, SLOT(slot_pattern_editor())
     );
 #endif
+
+    /*
+     * Palette.
+     */
 
     std::string palname = rc().palette_filename();
     if (palname.empty())
@@ -231,24 +256,43 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     connect
     (
         ui->lineEditPaletteFile, SIGNAL(textEdited(const QString &)),
-        this, SLOT(update_palette_file(const QString &))
+        this, SLOT(slot_palette_file(const QString &))
     );
     connect
     (
         ui->pushButtonSavePalette, SIGNAL(clicked(bool)),
-        this, SLOT(handle_palette_save_click())
+        this, SLOT(slot_palette_save_click())
     );
+
+    /*
+     * UI Boolean options.
+     */
+
+    ui->checkBoxPaletteActive->setChecked(rc().palette_active());
     connect
     (
         ui->checkBoxPaletteActive, SIGNAL(clicked(bool)),
-        this, SLOT(handle_palette_active_click())
+        this, SLOT(slot_palette_active_click())
     );
 
+    ui->checkBoxVerbose->setChecked(rc().verbose());
+    connect
+    (
+        ui->checkBoxVerbose, SIGNAL(clicked(bool)),
+        this, SLOT(slot_verbose_active_click())
+    );
+
+    /*
+     * For testing only
+     *
     connect
     (
         ui->text_edit_key, SIGNAL(textChanged(const QString &)),
-        this, SLOT(handle_key_test(const QString &))
+        this, SLOT(slot_key_test(const QString &))
     );
+     *
+     */
+
     ui->text_edit_key->hide();
     ui->label_key->hide();
 
@@ -300,7 +344,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     connect
     (
         ui->pushButtonStoreMap, SIGNAL(clicked(bool)),
-        this, SLOT(update_io_maps())
+        this, SLOT(slot_io_maps())
     );
 
     /*
@@ -390,47 +434,47 @@ qseditoptions::slot_jack_mode (int buttonno)
 }
 
 void
-qseditoptions::update_jack_connect ()
+qseditoptions::slot_jack_connect ()
 {
     perf().set_jack_mode(true);
 }
 
 void
-qseditoptions::update_jack_disconnect ()
+qseditoptions::slot_jack_disconnect ()
 {
     perf().set_jack_mode(false);
 }
 
 void
-qseditoptions::update_master_cond ()
+qseditoptions::slot_master_cond ()
 {
     rc().with_jack_master_cond(ui->chkJackConditional->isChecked());
     syncWithInternals();
 }
 
 void
-qseditoptions::update_time_master ()
+qseditoptions::slot_time_master ()
 {
     rc().with_jack_master(ui->chkJackMaster->isChecked());
     syncWithInternals();
 }
 
 void
-qseditoptions::update_transport_support ()
+qseditoptions::slot_transport_support ()
 {
     rc().with_jack_transport(ui->chkJackTransport->isChecked());
     syncWithInternals();
 }
 
 void
-qseditoptions::update_jack_midi ()
+qseditoptions::slot_jack_midi ()
 {
     rc().with_jack_midi(ui->chkJackNative->isChecked());
     syncWithInternals();
 }
 
 void
-qseditoptions::update_io_maps ()
+qseditoptions::slot_io_maps ()
 {
     perf().store_output_map();
     perf().store_input_map();
@@ -539,7 +583,7 @@ qseditoptions::enable_bus_item (int bus, bool enabled)
  */
 
 void
-qseditoptions::update_note_resume ()
+qseditoptions::slot_note_resume ()
 {
     if (m_is_initialized)
     {
@@ -555,7 +599,7 @@ qseditoptions::update_note_resume ()
 }
 
 void
-qseditoptions::update_ppqn_by_text (const QString & text)
+qseditoptions::slot_ppqn_by_text (const QString & text)
 {
     std::string temp = text.toStdString();
     if (! temp.empty())
@@ -573,7 +617,7 @@ qseditoptions::update_ppqn_by_text (const QString & text)
 }
 
 void
-qseditoptions::update_use_file_ppqn ()
+qseditoptions::slot_use_file_ppqn ()
 {
     if (m_is_initialized)
     {
@@ -597,7 +641,7 @@ qseditoptions::update_use_file_ppqn ()
  */
 
 void
-qseditoptions::update_key_height ()
+qseditoptions::slot_key_height ()
 {
     usr().key_height(ui->spinKeyHeight->value());
     syncWithInternals();
@@ -605,44 +649,64 @@ qseditoptions::update_key_height ()
         usr().save_user_config(true);
 }
 
+/*
+ * The next function is weird.  That's because it uses the same parsing
+ * method as the command-line option.
+ */
+
 void
-qseditoptions::update_ui_scaling_width ()
+qseditoptions::ui_scaling_helper
+(
+    const QString & widthtext,
+    const QString & heighttext
+)
 {
-    const QString qs = ui->lineEditUiScaling->text();               /* w */
-    const std::string valuetext = qs.toStdString();
-    if (! valuetext.empty())
+    std::string wtext = widthtext.toStdString();
+    std::string htext = heighttext.toStdString();
+    if (! wtext.empty() && ! htext.empty())
     {
-        QString qheight = ui->lineEditUiScalingHeight->text();      /* h */
-        std::string hheight = qheight.toStdString();
-        if (! hheight.empty())
-        {
-            std::string tuple = valuetext + "x" + hheight;
-            if (usr().parse_window_scale(tuple))
-                usr().save_user_config(true);
-        }
+        std::string tuple = wtext + "x" + htext;
+        if (usr().parse_window_scale(tuple))
+            usr().save_user_config(true);
     }
 }
 
 void
-qseditoptions::update_ui_scaling_height ()
+qseditoptions::slot_ui_scaling ()
 {
-    const QString qs = ui->lineEditUiScalingHeight->text();         /* h */
+    QString qs = ui->lineEditUiScaling->text();                 /* w */
+    QString qheight = ui->lineEditUiScalingHeight->text();      /* h */
+    ui_scaling_helper(qs, qheight);
+}
+
+void
+qseditoptions::slot_set_size_rows ()
+{
+    const QString qs = ui->lineEditSetSize->text();
     const std::string valuetext = qs.toStdString();
     if (! valuetext.empty())
     {
-        QString qwidth = ui->lineEditUiScaling->text();             /* w */
-        std::string hwidth = qwidth.toStdString();
-        if (! hwidth.empty())
-        {
-            std::string tuple = hwidth + "x" + valuetext;
-            if (usr().parse_window_scale(tuple))
-                usr().save_user_config(true);
-        }
+        int rows = std::stoi(valuetext);
+        if (usr().mainwnd_rows(rows))
+            usr().save_user_config(true);
     }
 }
 
 void
-qseditoptions::update_palette_file (const QString & qs)
+qseditoptions::slot_set_size_columns ()
+{
+    const QString qs = ui->lineEditSetSizeColumns->text();
+    const std::string valuetext = qs.toStdString();
+    if (! valuetext.empty())
+    {
+        int columns = std::stoi(valuetext);
+        if (usr().mainwnd_columns(columns))
+            usr().save_user_config(true);
+    }
+}
+
+void
+qseditoptions::slot_palette_file (const QString & qs)
 {
     std::string valuetext = qs.toStdString();
     valuetext = filename_base(valuetext);
@@ -650,7 +714,7 @@ qseditoptions::update_palette_file (const QString & qs)
 }
 
 void
-qseditoptions::handle_palette_save_click ()
+qseditoptions::slot_palette_save_click ()
 {
     std::string palfile = rc().palette_filespec();
     if (palfile.empty())
@@ -678,10 +742,17 @@ qseditoptions::handle_palette_save_click ()
 }
 
 void
-qseditoptions::handle_palette_active_click ()
+qseditoptions::slot_palette_active_click ()
 {
     bool on = ui->checkBoxPaletteActive->isChecked();
     rc().palette_active(on);
+}
+
+void
+qseditoptions::slot_verbose_active_click ()
+{
+    bool on = ui->checkBoxVerbose->isChecked();
+    rc().verbose(on);
 }
 
 #if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR
@@ -695,7 +766,7 @@ qseditoptions::handle_palette_active_click ()
  */
 
 void
-qseditoptions::update_pattern_editor ()
+qseditoptions::slot_pattern_editor ()
 {
     bool use_kepler_seqedit = ui->checkBoxKeplerSeqedit->isChecked();
     usr().use_new_seqedit(! use_kepler_seqedit);
@@ -705,7 +776,7 @@ qseditoptions::update_pattern_editor ()
 #endif
 
 void
-qseditoptions::handle_key_test (const QString &)
+qseditoptions::slot_key_test (const QString &)
 {
     QString s = ui->text_edit_key->text();
     if (s.length() > 0)

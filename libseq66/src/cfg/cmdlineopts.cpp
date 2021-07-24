@@ -277,15 +277,15 @@ const std::string cmdlineopts::s_help_4a =
 "      log=filename  Redirect console output to a log file in home. If no\n"
 "                    '=filename' is provided, the filename in '[user-options]'\n"
 "                    in the 'usr' file is used.\n"
-"      sets=RxC      Change rows and columns in a set from 4x8. R can be 4 to 12;\n"
-"                    C can be 4 to to 12. If not 4x8, seq66 is in 'variset' mode.\n"
+"      sets=RxC      Change set rows and columns from 4x8. R can be 4 to 12;\n"
+"                    C can be 4 to to 12. If not 4x8, call it 'variset' mode.\n"
 "                    Affects mute groups, too.\n"
 ;
 
 const std::string cmdlineopts::s_help_4b =
 "      scale=x.y     Scales size of main window. Range: 0.5 to 3.0.\n"
 "      mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.\n"
-"      virtual=o,i   Same as --manual-ports, except that the number of output and\n"
+"      virtual=o,i   Like --manual-ports, except that the count of output and\n"
 "                    input ports are specified. Defaults are 8 & 4, respectively.\n"
 "\n"
 " seq66cli:\n"

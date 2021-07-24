@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-07-20
+ * \updates       2021-07-24
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -145,6 +145,7 @@ class usrsettings final : public basesettings
 
     friend class cmdlineopts;   /* access for parse_o_options()             */
     friend class midifile;      /* allow access to midi_bpm_maximum()       */
+    friend class qseditoptions; /* access for certain setter functions      */
     friend class usrfile;       /* allow protected access to file parser    */
 
 private:
@@ -1170,8 +1171,8 @@ protected:
         m_option_bits |= b;
     }
 
-    void mainwnd_rows (int value);
-    void mainwnd_cols (int value);
+    bool mainwnd_rows (int value);
+    bool mainwnd_cols (int value);
 
     /*
      * This is a derived value, not settable by the user.  We will need to fix

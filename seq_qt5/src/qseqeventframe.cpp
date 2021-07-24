@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-07-22
+ * \updates       2021-07-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -38,7 +38,6 @@
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "util/filefunctions.hpp"       /* seq66::filename_split()          */
 #include "qseqeventframe.hpp"           /* seq66::qseqeventframe            */
-#include "qseventslots.hpp"             /* seq66::qseventslots              */
 
 #if defined SEQ66_QMAKE_RULES
 #include "forms/ui_qseqeventframe.h"
@@ -199,8 +198,6 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
      * Hidden for now.
      */
 
-    int scbh = ui->selection_combo_box->height();
-    ui->selection_combo_box->resize(116, scbh);
     ui->selection_combo_box->hide();
 
     /*
@@ -330,10 +327,46 @@ qseqeventframe::populate_status_combo ()
 }
 
 void
+qseqeventframe::setup_selection_combo (editable item)
+{
+    bool showit = false;
+    if (item == editable::control)
+    {
+        showit = true;
+        ui->d0_label->hide();
+//      ui->d1_label->hide();
+//      ui->entry_ev_data_1->text().clear();
+//      ui->entry_ev_data_1->hide();
+    }
+    else if (item == editable::program)
+    {
+        showit = true;
+        ui->d0_label->hide();
+        ui->d1_label->hide();
+        ui->entry_ev_data_1->text().clear();
+        ui->entry_ev_data_1->hide();
+    }
+    else
+    {
+        ui->d0_label->show();
+        ui->d1_label->show();
+        ui->entry_ev_data_1->show();
+        ui->selection_combo_box->setEnabled(false);
+        ui->selection_combo_box->hide();
+    }
+    if (showit)
+    {
+        int scbh = ui->selection_combo_box->height();
+        ui->selection_combo_box->setMaximumWidth(200);
+        ui->selection_combo_box->resize(200, scbh);
+        ui->selection_combo_box->setEnabled(true);
+        ui->selection_combo_box->show();
+    }
+}
+
+void
 qseqeventframe::populate_control_combo ()
 {
-    int scbh = ui->selection_combo_box->height();
-    ui->selection_combo_box->resize(116, scbh);
     ui->selection_combo_box->clear();
     for (int counter = 0; /* counter value */; ++counter)
     {
@@ -348,15 +381,12 @@ qseqeventframe::populate_control_combo ()
             ui->selection_combo_box->insertItem(counter, combotext);
         }
     }
-    ui->selection_combo_box->show();
     ui->selection_combo_box->setCurrentIndex(0);
 }
 
 void
 qseqeventframe::populate_program_combo ()
 {
-    int scbh = ui->selection_combo_box->height();
-    ui->selection_combo_box->resize(116, scbh);
     ui->selection_combo_box->clear();
     for (int counter = 0; /* counter value */; ++counter)
     {
@@ -371,7 +401,6 @@ qseqeventframe::populate_program_combo ()
             ui->selection_combo_box->insertItem(counter, combotext);
         }
     }
-    ui->selection_combo_box->show();
     ui->selection_combo_box->setCurrentIndex(0);
 }
 
@@ -384,27 +413,45 @@ qseqeventframe::slot_midi_channel (int /*index*/)
 void
 qseqeventframe::slot_event_name (int index)
 {
+    bool connect_it = false;
     if (index == static_cast<int>(editable::control))
     {
-        ui->d0_label->hide();
-        ui->d1_label->hide();
-        ui->entry_ev_data_1->hide();
+        setup_selection_combo(editable::control);
         populate_control_combo();
+        connect_it = true;
     }
     else if (index == static_cast<int>(editable::program))
     {
-        ui->d0_label->hide();
-        ui->d1_label->hide();
-        ui->entry_ev_data_1->hide();
+        setup_selection_combo(editable::program);
         populate_program_combo();
+        connect_it = true;
+    }
+    else
+        setup_selection_combo(editable::max);
+
+    if (connect_it)
+    {
+        connect
+        (
+            ui->selection_combo_box, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(slot_selection_combo(int))
+        );
     }
     else
     {
-        ui->d0_label->show();
-        ui->d1_label->show();
-        ui->entry_ev_data_1->show();
-        ui->selection_combo_box->hide();
+        disconnect
+        (
+            ui->selection_combo_box, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(slot_selection_combo(int))
+        );
     }
+}
+
+void
+qseqeventframe::slot_selection_combo (int index)
+{
+    QString d0text = QString::fromStdString(std::to_string(index));
+    ui->entry_ev_data_0->setText(d0text);
 }
 
 void

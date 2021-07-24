@@ -265,10 +265,10 @@ usrfile::parse ()
             (void) next_data_line(file); // usr().set_grid_style(scratch)
             (void) next_data_line(file); // usr().grid_brackets(scratch);
             sscanf(scanline(), "%d", &scratch);
-            usr().mainwnd_rows(scratch);
+            (void) usr().mainwnd_rows(scratch);
             (void) next_data_line(file);
             sscanf(scanline(), "%d", &scratch);
-            usr().mainwnd_cols(scratch);
+            (void) usr().mainwnd_cols(scratch);
             (void) next_data_line(file);
             (void) next_data_line(file); // usr().max_sets(scratch);
             (void) next_data_line(file); // usr().mainwnd_border(scratch);
@@ -316,9 +316,9 @@ usrfile::parse ()
     else
     {
         int scratch = get_integer(file, tag, "mainwnd-rows");
-        usr().mainwnd_rows(scratch);
+        (void) usr().mainwnd_rows(scratch);
         scratch = get_integer(file, tag, "mainwnd-columns");
-        usr().mainwnd_cols(scratch);
+        (void) usr().mainwnd_cols(scratch);
         scratch = get_integer(file, tag, "mainwnd-spacing");
         usr().mainwnd_spacing(scratch);
         scratch = get_integer(file, tag, "default-zoom");

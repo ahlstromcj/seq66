@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-20
+ * \updates       2021-07-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -79,6 +79,11 @@ private:
     void syncWithInternals ();  /* makes dialog reflect internal settings   */
     void backup ();             /* backup preferences for cancel-changes    */
     bool set_ppqn_combo ();
+    void ui_scaling_helper
+    (
+        const QString & widthtext,
+        const QString & heighttext
+    );
 
     const performer & perf () const
     {
@@ -101,28 +106,30 @@ private:
 private slots:
 
     void slot_jack_mode (int buttonno);
-    void update_jack_connect ();
-    void update_jack_disconnect ();
-    void update_master_cond ();
-    void update_time_master ();
-    void update_transport_support ();
-    void update_jack_midi ();
-    void update_io_maps ();
+    void slot_jack_connect ();
+    void slot_jack_disconnect ();
+    void slot_master_cond ();
+    void slot_time_master ();
+    void slot_transport_support ();
+    void slot_jack_midi ();
+    void slot_io_maps ();
     void okay ();
     void cancel ();
-    void update_note_resume ();
-    void update_ppqn_by_text (const QString & text);
-    void update_use_file_ppqn ();
-    void update_key_height ();
-    void update_ui_scaling_width ();
-    void update_ui_scaling_height ();
+    void slot_note_resume ();
+    void slot_ppqn_by_text (const QString & text);
+    void slot_use_file_ppqn ();
+    void slot_key_height ();
+    void slot_ui_scaling ();
+    void slot_set_size_rows ();
+    void slot_set_size_columns ();
 #if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR
-    void update_pattern_editor ();
+    void slot_pattern_editor ();
 #endif
-    void update_palette_file (const QString &);
-    void handle_palette_save_click ();
-    void handle_palette_active_click ();
-    void handle_key_test (const QString &);
+    void slot_palette_file (const QString &);
+    void slot_palette_save_click ();
+    void slot_palette_active_click ();
+    void slot_verbose_active_click ();
+    void slot_key_test (const QString &);
 
 private:
 
