@@ -1,19 +1,18 @@
 # Seq66 0.94.1 (and above) main ('rc') configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written 2021-06-13 09:08:16
+# Written 2021-07-25 12:06:53
 #
-# This file holds the main configuration for Seq66. It loosely
-# follows the format of the seq24rc configuration file, but adds
-# many new options, and is no longer compatible.
+# This file holds the main configuration for Seq66. It no longer
+# follows the format of the seq24rc configuration file much.
 #
 # 'version' is set by Seq66; it is used to detect older configuration
 # files, which are upgraded to the new version when saved.
 #
-# 'sets-mode' affect if sets are muted when going to the next
-# play-screen ('normal'), while 'autoarm' automatically unmutes the
-# next set.  The 'additive' option keeps the previous set unmuted
-# when moving to the next set.
+# 'sets-mode' affects if sets are muted when moving to the next set or
+# play-screen ('normal'). 'autoarm' unmutes the next set. 'additive'
+# keeps the previous set armed when moving to the next set.  'allsets'
+# arms all sets at once.
 #
 # 'port-naming' values are 'short' or 'long'.  The short style just
 # shows the port number and short port name; the long style shows
@@ -65,11 +64,11 @@ name = "qseq66.usr"
 
 # Provides a play-list file and a flag to activate it. If no list,
 # use '""' and set 'active' to false. Use the extension '.playlist'.
-# Even if not active, the play-list file is read, which adds to the
-# startup time.  The 'base-directory' is optional. If non-empty, it
-# sets the directory holding all MIDI files in all play-lists, helpful
-# when play-lists and tunes from one directory to another, preserving
-# the sub-directories.
+# Even if not active, the play-list file is read. 'base-directory' is
+# optional. It sets the directory holding all MIDI files in all
+# play-lists, useful when copying play-lists/tunes from one place to
+# another; it preserves sub-directories (e.g. in creating an NSM
+# session).
 
 [playlist]
 
@@ -77,11 +76,11 @@ active = false
 name = ""
 base-directory = ""
 
-# Provides a flag and file-name for note-mapping settings. Use '""'
-# to indicate no 'drums' file. Use the extension '.drums'. This file is
-# used when the user invokes the note-conversion operation in the
-# pattern editor on a transposable pattern. For percussion, make the
-# pattern temporarily transposable to allow this operation.
+# Provides a flag and file-name for note-mapping. '""' indicates
+# 'drums' file. Use the extension '.drums'. This file is used when the
+# user invokes the note-conversion operation in the pattern editor of a
+# transposable pattern. Make the pattern temporarily transposable to
+# allow this operation.
 
 [note-mapper]
 
@@ -217,37 +216,32 @@ record-by-channel = false
 
 show-system-ports = false
 
-# Sets the mouse usage for drawing and editing a pattern. The
-# 'fruity' mode is currently NOT supported in Seq66. Also obsolete
-# is the Mod4 feature. Other interaction settings are available.
-# 'snap-split' enables splitting performance editor triggers at the
-# closest snap position, instead of exactly in its middle. The split
-# is activated by a middle click or Ctrl-left click.
+# Sets mouse usage for drawing/editing a pattern. The 'fruity' mode
+# is NOT supported in Seq66. Also obsolete is the Mod4 feature. Other
+# interaction settings are available: 'snap-split' enables splitting
+# performance editor triggers at the snap position instead of in its
+# middle. Split is done by a middle-click or Ctrl-left click.
 # 'click-edit' allows a double-click on a slot to bring it up in
-# the pattern editor.  This is the default.  Set it to false if
-# it interferes with muting/unmuting a pattern.
+# the pattern editor (the default).  Set it to false if it interferes
+# with muting/unmuting a pattern.
 
 [interaction-method]
 
 snap-split = false
 click-edit = true
 
-# 'transport-type' enables synchronization with JACK Transport. Values
-# can be:
+# transport-type enables synchronizing with JACK Transport. Values:
+# none:        No JACK Transport in use.
+# slave:       Use JACK Transport as Slave.
+# master:      Attempt to serve as JACK Transport Master.
+# conditional: Serve as JACK master if no JACK master exists.
 #
-# 'none':        No JACK Transport in use.
-# 'slave':       Use JACK Transport as Slave.
-# 'master':      Attempt to serve as JACK Transport Master.
-# 'conditional': Serve as JACK master if no JACK master exists.
+# song-start-mode playback is either Live, Song, or Auto:
+# live: Muting & unmuting of loops in the main window.
+# song: Playback uses Song (performance) editor data.
+# auto: If the loaded tune has song triggers, use Song mode.
 #
-# 'song-start-mode' is one of the following values:
-#
-# live: Playback in Live mode. Allows muting and unmuting of loops
-#       from the main (patterns) window. Same as false.
-# song: Playback uses the Song (performance) editor's data and mute
-#       controls. Same as true.
-#
-# 'jack-midi' sets/unsets JACK MIDI, separate from JACK transport.
+# jack-midi sets/unsets JACK MIDI, separate from JACK transport.
 
 [jack-transport]
 
@@ -255,11 +249,10 @@ transport-type = none
 song-start-mode = song
 jack-midi = false
 
-# 'auto-save-rc' enables/disables the automatic saving of the running
-# configuration to 'rc' and other files.  True is the old Seq24
-# behavior.  If auto-save is set, many of the command-line settings,
-# (e.g. JACK/ALSA), are saved to some of the configuration files.
-# There is no user-interface control for this setting at present.
+# auto-save-rc sets automatic saving of the running configuration
+# 'rc' and other files.  True is Seq24 behavior. If set, many
+# command-line settings are saved to configuration files. There is
+# no user-interface control for this setting.
 #
 # The old-triggers value indicates to save triggers in a format
 # compatible with Seq24.  Otherwise, triggers are saved with an
@@ -278,15 +271,16 @@ save-old-mutes = false
 
 "/home/user/data/midi/"
 
-# Holds a list of the last few recently-loaded MIDI files. The first
-# number is the number of items in the list.  The second value
-# indicates if to load the most recent file (the top of the list)
-# at startup.
+# A list of the most recently-loaded MIDI files. 'full-paths' = true
+# indicates to show the full file-path in the menu.  The most recent
+# file (top of list) can be loaded via 'load-most-recent' at startup.
 
 [recent-files]
 
+full-paths = false
+load-most-recent = false
 count = 2
-load-most-recent = true
+
 "/home/user/data/midi/Chameleon-HHancock-Ov.midi"
 "/home/user/data/midi/carptsun-2.midi"
 

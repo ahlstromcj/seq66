@@ -763,7 +763,7 @@ usrfile::write ()
         "# For a flat style, use Qt themes or style-sheets.\n"
         "#\n"
         "# 'mainwnd-rows' and 'mainwnd-columns' (option '-o sets=RxC') specify\n"
-        "# rows/columns in the main grid. R ranges from 4 to 8, C from 8 to 12.\n"
+        "# rows/columns in the main grid. R ranges from 4 to 8, C from 4 to 12.\n"
         "# Values other than 4x8 have not been tested thoroughly.\n"
         "#\n"
         "# 'mainwnd-spacing' is for grid buttons; from 0 to 16, default = 2.\n"

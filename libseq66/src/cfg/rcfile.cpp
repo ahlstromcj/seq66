@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-17
+ * \updates       2021-07-25
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -716,41 +716,62 @@ rcfile::parse ()
          (void) make_error_message(tag, "section missing");
 
     tag = "[recent-files]";
-    if (line_after(file, tag))              /* now at the line for "count"  */
+
+    bool gotrf = line_after(file, tag);
+    int recentcount;
+    if (gotrf)
     {
-        int count;
         if (file_version_number() < s_rc_file_version)
         {
             int loadrecent;
-            int number = std::sscanf(scanline(), "%d %d", &count, &loadrecent);
+            int number = std::sscanf(scanline(), "%d %d", &recentcount, &loadrecent);
             if (number > 1)
                 rc_ref().load_most_recent(loadrecent != 0);
         }
         else
         {
+            bool fullpaths = get_boolean(file, tag, "full-paths");
             bool loadem = get_boolean(file, tag, "load-most-recent");
-            count = get_integer(file, tag, "count");
+            recentcount = get_integer(file, tag, "count");
             rc_ref().load_most_recent(loadem);
+            rc_ref().full_recent_paths(fullpaths);
             (void) next_data_line(file);    /* skip "load-most-recent" line */
-        }
-        rc_ref().clear_recent_files();
-        for (int i = 0; i < count; ++i)
-        {
-            if (next_data_line(file))
-            {
-                if (! is_missing_string(line()))
-                {
-                    std::string rfilename = strip_quotes(line());
-                    if (! rc_ref().append_recent_file(rfilename))
-                        file_message("Cannot read recent file", rfilename);
-                }
-            }
-            else
-                break;
         }
     }
     else
         (void) make_error_message(tag, "section missing");
+
+    if (gotrf)
+        gotrf = line_after(file, tag);                  /* start over       */
+
+    if (gotrf)
+    {
+        while (line()[0] != '"')                        /* find quote       */
+        {
+            gotrf = next_data_line(file);
+            if (! gotrf)
+                break;
+        }
+        if (gotrf && line()[0] == '"')
+        {
+            rc_ref().clear_recent_files();
+            for (int i = 0; i < recentcount; ++i)
+            {
+                std::string rfilename = strip_quotes(line());
+                if (rfilename.empty())
+                {
+                    break;
+                }
+                else
+                {
+                    if (! rc_ref().append_recent_file(rfilename))
+                        file_message("Cannot read recent file", rfilename);
+                }
+                if (! next_data_line(file))
+                    break;
+            }
+        }
+    }
 
     bool playlistpresent = true;
     rc_ref().playlist_active(false);
@@ -1397,14 +1418,15 @@ rcfile::write ()
 
     int count = rc_ref().recent_file_count();
     file << "\n"
-        "# Holds a list of the last few recently-loaded MIDI files. The first\n"
-        "# number is the number of items in the list.  The second value\n"
-        "# indicates if to load the most recent file (the top of the list)\n"
-        "# at startup.\n"
+        "# A list of the most recently-loaded MIDI files. 'full-paths' = true\n"
+        "# indicates to show the full file-path in the menu.  The most recent\n"
+        "# file (top of list) can be loaded via 'load-most-recent' at startup.\n"
         "\n[recent-files]\n\n"
         ;
-    write_integer(file, "count", count);
+    write_boolean(file, "full-paths", rc_ref().full_recent_paths());
     write_boolean(file, "load-most-recent", rc_ref().load_most_recent());
+    write_integer(file, "count", count);
+    file << "\n";
     if (count > 0)
     {
         for (int i = 0; i < count; ++i)

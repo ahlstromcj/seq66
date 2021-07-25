@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-07-17
+ * \updates       2021-07-25
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -514,6 +514,14 @@ private:
 
     bool m_load_most_recent;
 
+    /**
+     *  If true, show the full directory path in the most-recent-file list, in
+     *  order to distinguish identical tunes in different sub-directories.
+     *  Defaults to false.
+     */
+
+    bool m_full_recent_paths;
+
 public:
 
     rcsettings ();
@@ -931,6 +939,11 @@ public:
         return m_load_most_recent;
     }
 
+    bool full_recent_paths () const
+    {
+        return m_full_recent_paths;
+    }
+
     const std::string & config_directory () const
     {
         return m_config_directory;
@@ -1230,6 +1243,11 @@ public:
     void load_most_recent (bool f)
     {
         m_load_most_recent = f;
+    }
+
+    void full_recent_paths (bool f)
+    {
+        m_full_recent_paths = f;
     }
 
     bool interaction_method (int v)

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-07-24
+ * \updates       2021-07-25
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -262,10 +262,25 @@ static const int c_mainwnd_spacing = 2;            // try 4 or 6 instead of 2
 
 /**
  *  Provides the defaults for the progress box in the qloopbuttons.
+ *  Zero is also an acceptable value.
  */
 
-static const double c_progress_box_width  = 0.80;
-static const double c_progress_box_height = 0.40;
+static const float c_progress_box_none       = 0.00;
+static const float c_progress_box_width_min  = 0.50;
+static const float c_progress_box_width      = 0.80;
+static const float c_progress_box_width_max  = 1.00;
+static const float c_progress_box_height_min = 0.10;
+static const float c_progress_box_height     = 0.40;
+static const float c_progress_box_height_max = 0.50;
+
+/**
+ *  Provides the default for the fingerprinting of the qloopbuttons.
+ */
+
+static const int c_fingerprint_none     =   0;
+static const int c_fingerprint_size_min =  32;
+static const int c_fingerprint_size     =  32;
+static const int c_fingerprint_size_max = 128;
 
 /**
  *  Default constructor.
@@ -350,7 +365,7 @@ usrsettings::usrsettings () :
     m_user_ui_seqedit_in_tab    (true),
     m_user_ui_style_sheet       (""),
     m_resume_note_ons           (false),
-    m_fingerprint_size          (32),
+    m_fingerprint_size          (c_fingerprint_size),
     m_progress_box_width        (c_progress_box_width),
     m_progress_box_height       (c_progress_box_height),
     m_session_manager           (session::none),
@@ -428,7 +443,7 @@ usrsettings::set_defaults ()
     m_user_ui_seqedit_in_tab = true;
     m_user_ui_style_sheet = "";
     m_resume_note_ons = false;
-    m_fingerprint_size = 32;
+    m_fingerprint_size = c_fingerprint_size;
     m_progress_box_width = c_progress_box_width;
     m_progress_box_height = c_progress_box_height;
     m_session_manager = session::none;
@@ -505,6 +520,19 @@ usrsettings::session_manager (const std::string & sm)
     }
 }
 
+bool
+usrsettings::fingerprint_size (int sz)
+{
+    bool result = (sz == c_fingerprint_none) ||
+    (
+        sz >= c_fingerprint_size_min && sz <= c_fingerprint_size_max
+    );
+    if (result)
+        m_fingerprint_size = sz;
+
+    return result;
+}
+
 int
 usrsettings::scale_size (int value, bool shrinkmore) const
 {
@@ -559,14 +587,26 @@ usrsettings::mainwnd_y_min () const
 bool
 usrsettings::progress_box_size (double w, double h)
 {
-    bool result = (w >= 0.0) && (w < 1.0) && (h >= 0.0) && (h < 1.0);
-    if (result)
-        result = (w != m_progress_box_width) || (h != m_progress_box_height);
-
+    bool result = (w == c_progress_box_none) || (h == c_progress_box_none);
     if (result)
     {
-        m_progress_box_width = w;
-        m_progress_box_height = h;
+        m_progress_box_width = m_progress_box_height = 0;
+    }
+    else
+    {
+        result =
+        (
+            (w >= c_progress_box_width_min) && (w <= c_progress_box_width_max) &&
+            (h >= c_progress_box_height_min) && (h <= c_progress_box_height_max)
+        );
+        if (result)
+            result = (w != m_progress_box_width) || (h != m_progress_box_height);
+
+        if (result)
+        {
+            m_progress_box_width = w;
+            m_progress_box_height = h;
+        }
     }
     return result;
 }

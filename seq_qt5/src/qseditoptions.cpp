@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-24
+ * \updates       2021-07-25
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -204,11 +204,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         this, SLOT(slot_key_height())
     );
 
-    char tmp[32];
-    snprintf(tmp, sizeof tmp, "%.1f", usr().window_scale());
-    ui->lineEditUiScaling->setText(tmp);
-    snprintf(tmp, sizeof tmp, "%.1f", usr().window_scale_y());
-    ui->lineEditUiScalingHeight->setText(tmp);
+    set_scaling_fields();
     connect
     (
         ui->lineEditUiScaling, SIGNAL(editingFinished()),
@@ -220,10 +216,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         this, SLOT(slot_ui_scaling())
     );
 
-    snprintf(tmp, sizeof tmp, "%i", usr().mainwnd_rows());
-    ui->lineEditSetSize->setText(tmp);
-    snprintf(tmp, sizeof tmp, "%i", usr().mainwnd_cols());
-    ui->lineEditSetSizeColumns->setText(tmp);
+    set_set_size_fields();
     connect
     (
         ui->lineEditSetSize, SIGNAL(editingFinished()),
@@ -235,10 +228,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         this, SLOT(slot_set_size_columns())
     );
 
-    snprintf(tmp, sizeof tmp, "%.1f", usr().progress_box_width());
-    ui->lineEditProgressBox->setText(tmp);
-    snprintf(tmp, sizeof tmp, "%.1f", usr().progress_box_height());
-    ui->lineEditProgressBoxHeight->setText(tmp);
+    set_progress_box_fields();
     connect
     (
         ui->lineEditProgressBox, SIGNAL(editingFinished()),
@@ -249,6 +239,8 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         ui->lineEditProgressBoxHeight, SIGNAL(editingFinished()),
         this, SLOT(slot_progress_box_height())
     );
+
+    char tmp[32];
     snprintf(tmp, sizeof tmp, "%i", usr().fingerprint_size());
     ui->lineEditFingerprintSize->setText(tmp);
     connect
@@ -302,6 +294,20 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     (
         ui->checkBoxVerbose, SIGNAL(clicked(bool)),
         this, SLOT(slot_verbose_active_click())
+    );
+
+    ui->checkBoxLoadMostRecent->setChecked(rc().load_most_recent());
+    connect
+    (
+        ui->checkBoxLoadMostRecent, SIGNAL(clicked(bool)),
+        this, SLOT(slot_load_most_recent_click())
+    );
+
+    ui->checkBoxShowFullRecentPaths->setChecked(rc().full_recent_paths());
+    connect
+    (
+        ui->checkBoxShowFullRecentPaths, SIGNAL(clicked(bool)),
+        this, SLOT(slot_show_full_paths_click())
     );
 
     /*
@@ -671,6 +677,16 @@ qseditoptions::slot_key_height ()
         usr().save_user_config(true);
 }
 
+void
+qseditoptions::set_scaling_fields ()
+{
+    char tmp[32];
+    snprintf(tmp, sizeof tmp, "%.1f", usr().window_scale());
+    ui->lineEditUiScaling->setText(tmp);
+    snprintf(tmp, sizeof tmp, "%.1f", usr().window_scale_y());
+    ui->lineEditUiScalingHeight->setText(tmp);
+}
+
 /*
  * The next function is weird.  That's because it uses the same parsing
  * method as the command-line option.
@@ -703,6 +719,16 @@ qseditoptions::slot_ui_scaling ()
 }
 
 void
+qseditoptions::set_set_size_fields ()
+{
+    char tmp[32];
+    snprintf(tmp, sizeof tmp, "%i", usr().mainwnd_rows());
+    ui->lineEditSetSize->setText(tmp);
+    snprintf(tmp, sizeof tmp, "%i", usr().mainwnd_cols());
+    ui->lineEditSetSizeColumns->setText(tmp);
+}
+
+void
 qseditoptions::slot_set_size_rows ()
 {
     const QString qs = ui->lineEditSetSize->text();
@@ -712,6 +738,8 @@ qseditoptions::slot_set_size_rows ()
         int rows = std::stoi(valuetext);
         if (usr().mainwnd_rows(rows))
             usr().save_user_config(true);
+        else
+            set_set_size_fields();
     }
 }
 
@@ -725,7 +753,19 @@ qseditoptions::slot_set_size_columns ()
         int columns = std::stoi(valuetext);
         if (usr().mainwnd_cols(columns))
             usr().save_user_config(true);
+        else
+            set_set_size_fields();
     }
+}
+
+void
+qseditoptions::set_progress_box_fields ()
+{
+    char tmp[32];
+    snprintf(tmp, sizeof tmp, "%.1f", usr().progress_box_width());
+    ui->lineEditProgressBox->setText(tmp);
+    snprintf(tmp, sizeof tmp, "%.1f", usr().progress_box_height());
+    ui->lineEditProgressBoxHeight->setText(tmp);
 }
 
 void
@@ -739,6 +779,8 @@ qseditoptions::slot_progress_box_width ()
         double h = usr().progress_box_height();
         if (usr().progress_box_size(w, h))
             usr().save_user_config(true);
+        else
+            set_progress_box_fields();
     }
 }
 
@@ -753,6 +795,8 @@ qseditoptions::slot_progress_box_height ()
         double h = std::stod(htext);
         if (usr().progress_box_size(w, h))
             usr().save_user_config(true);
+        else
+            set_progress_box_fields();
     }
 }
 
@@ -765,7 +809,15 @@ qseditoptions::slot_fingerprint_size ()
     {
         double sz = std::stoi(text);
         if (usr().fingerprint_size(sz))
+        {
             usr().save_user_config(true);
+        }
+        else
+        {
+            char tmp[32];
+            snprintf(tmp, sizeof tmp, "%i", usr().fingerprint_size());
+            ui->lineEditFingerprintSize->setText(tmp);
+        }
     }
 }
 
@@ -817,6 +869,20 @@ qseditoptions::slot_verbose_active_click ()
 {
     bool on = ui->checkBoxVerbose->isChecked();
     rc().verbose(on);
+}
+
+void
+qseditoptions::slot_load_most_recent_click ()
+{
+    bool on = ui->checkBoxLoadMostRecent->isChecked();
+    rc().load_most_recent(on);
+}
+
+void
+qseditoptions::slot_show_full_paths_click ()
+{
+    bool on = ui->checkBoxShowFullRecentPaths->isChecked();
+    rc().full_recent_paths(on);
 }
 
 #if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR

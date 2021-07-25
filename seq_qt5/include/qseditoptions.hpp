@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-24
+ * \updates       2021-07-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -79,6 +79,9 @@ private:
     void syncWithInternals ();  /* makes dialog reflect internal settings   */
     void backup ();             /* backup preferences for cancel-changes    */
     bool set_ppqn_combo ();
+    void set_scaling_fields ();
+    void set_set_size_fields ();
+    void set_progress_box_fields ();
     void ui_scaling_helper
     (
         const QString & widthtext,
@@ -132,6 +135,8 @@ private slots:
     void slot_palette_save_click ();
     void slot_palette_active_click ();
     void slot_verbose_active_click ();
+    void slot_load_most_recent_click ();
+    void slot_show_full_paths_click ();
     void slot_key_test (const QString &);
 
 private:

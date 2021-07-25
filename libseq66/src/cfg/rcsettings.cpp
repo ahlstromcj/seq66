@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-07-17
+ * \updates       2021-07-25
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -131,7 +131,8 @@ rcsettings::rcsettings () :
     m_application_name          (seq_app_name()),
     m_tempo_track_number        (0),
     m_recent_files              (),
-    m_load_most_recent          (true)
+    m_load_most_recent          (true),
+    m_full_recent_paths         (false)
 {
     m_midi_control_in.inactive_allowed(true);
     m_config_filename += ".rc";
@@ -249,6 +250,7 @@ rcsettings::set_defaults ()
     m_tempo_track_number = 0;
     m_recent_files.clear();
     m_load_most_recent = true;
+    m_full_recent_paths = false;
     set_config_files(SEQ66_CONFIG_NAME);
 }
 
@@ -722,8 +724,8 @@ rcsettings::tempo_track_number (int track)
  *
  * \param shorten
  *      If true, remove the path-name from the file-name.  True by default.
- *      It needs to be short for the menu entry, but the full path-name for
- *      the "rc" file.
+ *      It needs to be short for the menu entry (though now using the full
+ *      path is an option), but the full path-name for the "rc" file.
  *
  * \return
  *      Returns m_recent_files[index], perhaps shortened.  An empty string is

@@ -388,7 +388,7 @@ number using the channel number (0 to 15).</string>
        <string>Provides some minor tweaks of the user-interface.  Edit the 'usr' file for far more control over settings.</string>
       </property>
       <attribute name="title">
-       <string>D&amp;isplay</string>
+       <string>&amp;Display</string>
       </attribute>
       <widget class="QGroupBox" name="groupBoxBooleanOptions">
        <property name="geometry">
@@ -396,7 +396,7 @@ number using the channel number (0 to 15).</string>
          <x>10</x>
          <y>272</y>
          <width>369</width>
-         <height>113</height>
+         <height>153</height>
         </rect>
        </property>
        <property name="title">
@@ -413,7 +413,7 @@ number using the channel number (0 to 15).</string>
          <rect>
           <x>8</x>
           <y>40</y>
-          <width>161</width>
+          <width>249</width>
           <height>21</height>
          </rect>
         </property>
@@ -433,12 +433,48 @@ This option is saved in the 'rc' file.</string>
          <rect>
           <x>8</x>
           <y>64</y>
-          <width>169</width>
+          <width>249</width>
           <height>23</height>
          </rect>
         </property>
+        <property name="toolTip">
+         <string>Turns on verbose information written to the console or
+redirected to a log file.</string>
+        </property>
         <property name="text">
          <string>Verbose Console Output</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxLoadMostRecent">
+        <property name="geometry">
+         <rect>
+          <x>8</x>
+          <y>88</y>
+          <width>249</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Load the most recent file at startup, if checked.</string>
+        </property>
+        <property name="text">
+         <string>Load Most Recent File at Startup</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxShowFullRecentPaths">
+        <property name="geometry">
+         <rect>
+          <x>8</x>
+          <y>112</y>
+          <width>249</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Show the full path to each recent file, if checked.</string>
+        </property>
+        <property name="text">
+         <string>Show Full Path of Recent Files in Menu</string>
         </property>
        </widget>
       </widget>
@@ -456,9 +492,7 @@ This option is saved in the 'rc' file.</string>
          <widget class="QLineEdit" name="lineEditUiScalingHeight">
           <property name="toolTip">
            <string>Scales the main window at startup.  This is the height
-scale factor, ranging from 0.5 to 3.0.
-
-Use 0.60 at a minimum.</string>
+scale factor, ranging from 0.5 to 3.0.</string>
           </property>
           <property name="text">
            <string>1.0</string>
@@ -470,6 +504,10 @@ Use 0.60 at a minimum.</string>
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="toolTip">
+           <string>Set the set-size columns.  Ranges from 4 to 12,
+defaults to 8.</string>
+          </property>
           <property name="text">
            <string>8</string>
           </property>
@@ -477,6 +515,11 @@ Use 0.60 at a minimum.</string>
         </item>
         <item row="0" column="1">
          <widget class="QSpinBox" name="spinKeyHeight">
+          <property name="toolTip">
+           <string>Sets the default height of the piano keys in the pattern editor.
+Ranges from 6 to 32.  Use the &quot;-0+&quot; buttons or the &quot;v0V&quot; keys
+to temporarily zoom vertically.</string>
+          </property>
           <property name="minimum">
            <number>4</number>
           </property>
@@ -492,6 +535,10 @@ Use 0.60 at a minimum.</string>
          <widget class="QLineEdit" name="lineEditSetSize">
           <property name="enabled">
            <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Set the set-size rows.  Ranges from 4 to 8,
+defaults to 4.</string>
           </property>
           <property name="text">
            <string>4</string>
@@ -513,6 +560,11 @@ Use 0.60 at a minimum.</string>
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="toolTip">
+           <string>Sets the heights of the progress box as a fraction of
+the button height. Ranges from 0.1 to 0.5, or set to
+0 to not show the progress box. Defaults to 0.4.</string>
+          </property>
           <property name="text">
            <string>0.4</string>
           </property>
@@ -525,20 +577,13 @@ Use 0.60 at a minimum.</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="labelUiScaling">
-          <property name="text">
-           <string>Scaling of User Interface *</string>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="0">
          <widget class="QLabel" name="labelSetSizeRows">
           <property name="enabled">
            <bool>true</bool>
           </property>
           <property name="text">
-           <string>Set Size (rows x columns) *</string>
+           <string>Set Size (rows x columns)</string>
           </property>
          </widget>
         </item>
@@ -546,9 +591,7 @@ Use 0.60 at a minimum.</string>
          <widget class="QLineEdit" name="lineEditUiScaling">
           <property name="toolTip">
            <string>Scales the main window at startup.  This is the width
-scale factor, ranging from 0.5 to 3.0.
-
-Use 0.85 at a minimum.</string>
+scale factor, ranging from 0.5 to 3.0.</string>
           </property>
           <property name="text">
            <string>1.0</string>
@@ -561,7 +604,7 @@ Use 0.85 at a minimum.</string>
            <bool>true</bool>
           </property>
           <property name="text">
-           <string>Progress Boxs (fraction of 1)</string>
+           <string>Progress Boxs (fraction)</string>
           </property>
          </widget>
         </item>
@@ -569,6 +612,11 @@ Use 0.85 at a minimum.</string>
          <widget class="QLineEdit" name="lineEditProgressBox">
           <property name="enabled">
            <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Sets the width of the progress box as a fraction of
+the button width. Ranges from 0.5 to 1.0, or set to
+0 to not show the progress box. Defaults to 0.8.</string>
           </property>
           <property name="text">
            <string>0.8</string>
@@ -617,6 +665,13 @@ A primitive way to zoom.</string>
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="toolTip">
+           <string>The fingerprint is an abbreviated version of a long
+pattern displayed to save CPU time.  If not 0, and
+there are more Note On events than the fingerprint
+size, then the fingerprint is shown.  Ranges from 32
+to 128, and defaults to 32.</string>
+          </property>
           <property name="text">
            <string>32</string>
           </property>
@@ -627,14 +682,14 @@ A primitive way to zoom.</string>
       <widget class="QLabel" name="labelRestartNeeded">
        <property name="geometry">
         <rect>
-         <x>400</x>
-         <y>72</y>
-         <width>193</width>
+         <x>392</x>
+         <y>16</y>
+         <width>201</width>
          <height>16</height>
         </rect>
        </property>
        <property name="text">
-        <string>Restart required</string>
+        <string>Restart required for most settings</string>
        </property>
       </widget>
       <widget class="QWidget" name="layoutWidgetOp">
@@ -669,6 +724,9 @@ path added to this name is stripped.</string>
         </item>
         <item>
          <widget class="QPushButton" name="pushButtonSavePalette">
+          <property name="toolTip">
+           <string>Just what the button says :-)</string>
+          </property>
           <property name="text">
            <string>&amp;Save Current Palette</string>
           </property>
@@ -697,6 +755,9 @@ path added to this name is stripped.</string>
          <width>41</width>
          <height>25</height>
         </rect>
+       </property>
+       <property name="toolTip">
+        <string>For testing only.  Normally hidden.</string>
        </property>
       </widget>
      </widget>
@@ -1017,6 +1078,45 @@ Seq66 exits.</string>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>spinKeyHeight</tabstop>
+  <tabstop>lineEditUiScaling</tabstop>
+  <tabstop>lineEditUiScalingHeight</tabstop>
+  <tabstop>lineEditSetSize</tabstop>
+  <tabstop>lineEditSetSizeColumns</tabstop>
+  <tabstop>lineEditProgressBox</tabstop>
+  <tabstop>lineEditProgressBoxHeight</tabstop>
+  <tabstop>lineEditFingerprintSize</tabstop>
+  <tabstop>lineEditPaletteFile</tabstop>
+  <tabstop>pushButtonSavePalette</tabstop>
+  <tabstop>checkBoxPaletteActive</tabstop>
+  <tabstop>checkBoxVerbose</tabstop>
+  <tabstop>checkBoxLoadMostRecent</tabstop>
+  <tabstop>checkBoxShowFullRecentPaths</tabstop>
+  <tabstop>text_edit_key</tabstop>
+  <tabstop>pushButtonStoreMap</tabstop>
+  <tabstop>pushButtonTempoTrack</tabstop>
+  <tabstop>outPortsMappedCheck</tabstop>
+  <tabstop>plainTextEditTempoTrack</tabstop>
+  <tabstop>plainTextEditClientId</tabstop>
+  <tabstop>clocksScrollArea</tabstop>
+  <tabstop>checkBoxRecordByChannel</tabstop>
+  <tabstop>inPortsMappedCheck</tabstop>
+  <tabstop>inputsScrollArea</tabstop>
+  <tabstop>btnJackConnect</tabstop>
+  <tabstop>btnJackDisconnect</tabstop>
+  <tabstop>chkJackConditional</tabstop>
+  <tabstop>chkJackMaster</tabstop>
+  <tabstop>chkJackTransport</tabstop>
+  <tabstop>chkJackNative</tabstop>
+  <tabstop>radio_live_mode</tabstop>
+  <tabstop>radio_song_mode</tabstop>
+  <tabstop>chkNoteResume</tabstop>
+  <tabstop>chkUseFilesPPQN</tabstop>
+  <tabstop>combo_box_ppqn</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>spinBoxClockStartModulo</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

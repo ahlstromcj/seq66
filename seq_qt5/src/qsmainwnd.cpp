@@ -2529,14 +2529,10 @@ qsmainwnd::update_recent_files_menu ()
     if (count > 0)
     {
         bool ok = true;
+        bool shorten = ! rc().full_recent_paths();
         for (int f = 0; f < count; ++f)
         {
-#if defined SHOW_ONLY_BASE_NAME
-            std::string shortname = rc().recent_file(f);
-#else
-            std::string shortname = rc().recent_file(f, false); /* full path */
-            shortname = shorten_file_spec(shortname, 64);
-#endif
+            std::string shortname = rc().recent_file(f, shorten);
             if (! shortname.empty())
             {
                 std::string longname = rc().recent_file(f, false);

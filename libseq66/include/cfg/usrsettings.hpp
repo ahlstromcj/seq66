@@ -1487,15 +1487,7 @@ public:         // used in main application module and the usrfile class
         m_resume_note_ons = f;
     }
 
-    bool fingerprint_size (int sz)
-    {
-        bool result = (sz >= 32 && sz <= 128) || sz == 0;
-        if (result)
-            m_fingerprint_size = sz;
-
-        return result;
-    }
-
+    bool fingerprint_size (int sz);
     bool  progress_box_size (double w, double h);
     void session_manager (const std::string & sm);
 

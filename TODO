@@ -1,6 +1,6 @@
 TO DO for Seq66 0.96.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-07-24
+2019-04-13 to 2021-07-25
 
 Hottest to Trivial:
 
@@ -24,37 +24,32 @@ UI:
     Preferences dialog:
 
         -   MIDI Clock:
-            -   Port naming
             -   Virtual port flag and port-count
             -   Port map
         -   MIDI Input:
-            -   Port naming
             -   Virtual port flag and port-count
             -   Port map
         -   Display:
-            -   Set size and grid spacing
-            -   Progress box width height
-            -   Fingerprint size
+            x   Set size and grid spacing
+            x   Progress box width height
+            x   Fingerprint size
             -   Style-sheet
             -   Global seq feature
             -   Tempo / BPM min and max
         -   JACK:
         -   Play Options:
-            -   New patter editor options (check-boxes)
+            -   New-pattern editor options (check-boxes)
             -   Record-style dropdown
         -   Config Options: (new)
             -   Autosave for rc, usr, playlist, palette, mutes, drums,
                 patches, keymap
             -   List of base names and active status for the above.
             -   Log-file
-            -   Verbose
+            x   Verbose
         -   Control Options: (new)
             -   Load key and midi controls (does this work?)
             -   Control buss (in and out)
             -   Enabled (in and out)
-        -   Main window:
-            -   Save global time signature
-            -   Save global BPM
 
 CLI:
 

@@ -1,7 +1,7 @@
 # README for Seq66 0.96.1
 
 Chris Ahlstrom
-2015-09-10 to 2021-07-23
+2015-09-10 to 2021-07-25
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -81,10 +81,10 @@ Windows, and using a conventional source tarball.
 
     *   Version 0.96.1:
         *   Fixed song-start-mode handling when "auto" is specified.
-        *   Add "Control" and "Program" (GM) drop-downs in the event editor.
+        *   Added "Control" and "Program" (GM) drop-downs in the event editor.
         *   Now display (possibly shortened) full path names in the recent file
-            list in order to distinguish files better.  Let us know if you hate
-            that!  A compile-time option.
+            list in order to distinguish files better.  An 'rc' config item.
+        *   Added a few configuration options to Edit / Preferences.
     *   Version 0.96.0:
         *   Adding code to control the visibility of the main window; added
             a "Visibility" MIDI control option, and support for the
