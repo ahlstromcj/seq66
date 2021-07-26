@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2021-05-21
+ * \updates       2021-07-26
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child class, qslivegride, are Sequencer66's
@@ -297,6 +297,12 @@ protected:
      */
 
     seq::number m_current_seq;
+
+    /**
+     *  Holds the initial sequence number when attempting to move the sequence.
+     */
+
+    seq::number m_source_seq;
 
     /**
      *  Indicates previously-selected sequence number when copying it.

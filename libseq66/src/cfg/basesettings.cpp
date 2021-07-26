@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-01-17
- * \updates       2019-09-21
+ * \updates       2021-07-26
  * \license       GNU GPLv2 or above
  *
  */
@@ -52,6 +52,7 @@ namespace seq66
  */
 
 basesettings::basesettings (const std::string & filename) :
+    m_is_modified       (false),
     m_ordinal_version   (SEQ66_ORDINAL_VERSION),
     m_comments_block    (),                         /* [comments]   */
     m_file_name         (filename),
@@ -70,6 +71,7 @@ basesettings::basesettings (const std::string & filename) :
 void
 basesettings::set_defaults ()
 {
+    m_is_modified = false;
     m_ordinal_version = SEQ66_ORDINAL_VERSION;
     m_file_name.clear();
     m_error_message.clear();

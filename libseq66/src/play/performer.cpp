@@ -1106,7 +1106,6 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
     if (result)
     {
         s->set_parent(this);                    /* also sets a lot of stuff */
-
         if (! fileload)
             modify();
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-01-17
- * \updates       2019-09-21
+ * \updates       2021-07-26
  * \license       GNU GPLv2 or above
  *
  *  This module defines some items common to all configuration files that get
@@ -57,6 +57,13 @@ class basesettings
 {
 
 private:
+
+    /**
+     *  Indicates if the settings have been modified (in the user interface).
+     *  Starts out false.
+     */
+
+    bool m_is_modified;
 
     /**
      *  A [Seq66] marker section indicates the ordinal version of the file.
@@ -107,6 +114,16 @@ public:
     virtual void normalize ();
 
 public:
+
+    bool is_modified () const
+    {
+        return m_is_modified;
+    }
+
+    void modify ()
+    {
+        m_is_modified = true;
+    }
 
     int ordinal_version () const
     {

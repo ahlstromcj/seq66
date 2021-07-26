@@ -269,7 +269,7 @@ public:
      *  -1.  Replaces the null() function.
      */
 
-    static bool none (number seqno)
+    static bool unassigned (number seqno)
     {
         return seqno == unassigned();
     }

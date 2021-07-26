@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-28
+ * \updates       2021-07-27
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -49,7 +49,7 @@
 namespace seq66
 {
 
-static const int s_usr_file_version = 5;
+static const int s_usr_file_version = 6;
 
 /**
  *  Principal constructor.
@@ -59,6 +59,7 @@ static const int s_usr_file_version = 5;
  *      0:  The initial version, close to the Seq64 format.
  *      4:  2021-05-15. Disabled using grid-style and grid-brackets settings.
  *      5:  2021-06-08. Transition to get-variable for booleans/integers.
+ *      6:  2021-07-26. Added progress-note-min and progress-note-max.
  *
  * \param name
  *      Provides the full file path specification to the configuration file.
@@ -510,6 +511,10 @@ usrfile::parse ()
         double w = double(get_float(file, tag, "progress-box-width"));
         double h = double(get_float(file, tag, "progress-box-height"));
         usr().progress_box_size(w, h);
+        v = get_integer(file, tag, "progress-note-min");
+        usr().progress_note_min(v);
+        v = get_integer(file, tag, "progress-note-max");
+        usr().progress_note_max(v);
     }
     std::string s = get_variable(file, "[user-session]", "session");
     usr().session_manager(s);
@@ -925,6 +930,10 @@ usrfile::write ()
         "# progress box in the live-loop grid buttons.  Width ranges from 0.50\n"
         "# to 1.0; the height from 0.10 to 0.50.  If either is 0, then the box\n"
         "# isn't drawn.  If either is 'default', defaults are used.\n"
+        "#\n"
+        "# progress-note-min and progress-note-max, if non-zero, change the\n"
+        "# note range in the progress box so that notes are'nt centered in the\n"
+        "# box, but shown at their position by pitch.\n"
         "\n[user-ui-tweaks]\n\n"
         ;
 
@@ -933,9 +942,7 @@ usrfile::write ()
 
     std::string v = add_quotes(usr().style_sheet());
     file << "style-sheet = " << v << "\n";
-
     write_integer(file, "fingerprint-size", usr().fingerprint_size());
-
     if (usr().progress_box_width() < 0.0)
         file << "progress-box-width = default\n";
     else
@@ -945,6 +952,9 @@ usrfile::write ()
         file << "progress-box-height = default\n";
     else
         write_float(file, "progress-box-height", usr().progress_box_height());
+
+    write_integer(file, "progress-note-min", usr().progress_note_min());
+    write_integer(file, "progress-note-max", usr().progress_note_max());
 
     /*
      * [user-session]

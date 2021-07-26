@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-07-15
+ * \updates       2021-07-26
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -172,6 +172,8 @@ qloopbutton::qloopbutton
     m_fingerprint_size      (usr().fingerprint_size()),
     m_fingerprint           (m_fingerprint_size),   /* reserve vector space */
     m_fingerprint_count     (m_fingerprint_size),
+    m_note_min              (usr().progress_note_min()),
+    m_note_max              (usr().progress_note_max()),
     m_seq                   (seqp),                 /* loop()               */
     m_is_checked            (loop()->playing()),
     m_prog_back_color       (Qt::black),
@@ -315,6 +317,11 @@ qloopbutton::initialize_fingerprint ()
             int y0 = m_event_box.y();
             int y1 = y0 + m_event_box.h();
             int yh = y1 - y0;
+            if (m_note_max > 0)
+            {
+                n0 = m_note_min;
+                n1 = m_note_max;
+            }
 
             /*
              * Added an octave of padding above and below for looks. Also use
@@ -410,6 +417,14 @@ qloopbutton::set_checked (bool flag)
 {
     m_is_checked = flag;
     setChecked(flag);
+}
+
+bool
+qloopbutton::toggle_enabled ()
+{
+    bool enabled = ! isEnabled();
+    setEnabled(enabled);
+    return true;
 }
 
 bool
@@ -698,23 +713,35 @@ qloopbutton::draw_pattern (QPainter & painter)
         }
         else
         {
-            int lowest, highest;
-            bool have_notes = loop()->minmax_notes(lowest, highest);
             int height = c_midibyte_value_max;
-            if (have_notes)
+            int n0, n1;
+            if (m_note_max > 0)
             {
-                /*
-                 * Added an octave of padding above and below for looks.
-                 */
-
-                highest += 12;
-                highest = clamp_midibyte_value(midibyte(highest));
-                lowest -= 12;
-                if (lowest < 0)
-                    lowest = 0;
-
-                height = highest - lowest;
+                n0 = m_note_min;
+                n1 = m_note_max;
             }
+            else
+            {
+                bool have_notes = loop()->minmax_notes(n0, n1);
+                if (have_notes)
+                {
+                    /*
+                     * Added an octave of padding above and below for looks.
+                     */
+
+                    n1 += 12;
+                    n1 = clamp_midibyte_value(midibyte(n1));
+                    n0 -= 12;
+                    if (n0 < 0)
+                        n0 = 0;
+                }
+                else
+                {
+                    n0 = 0;
+                    n1 = 127;
+                }
+            }
+            height = n1 - n0;
             pen.setWidth(1);
             if (loop()->transposable())
                 pen.setColor(pen_color());      /* issue #50 text_color()   */
@@ -736,7 +763,7 @@ qloopbutton::draw_pattern (QPainter & painter)
                 if (! sequence::is_draw_note(dt) || tick_f_x <= tick_s_x)
                     tick_f_x = tick_s_x + 1;
 
-                int y = lyh * (highest - ni.note()) / height;
+                int y = lyh * (n1 - ni.note()) / height;
 
 #if defined DRAW_TEMPO_LINE_DISABLED
                 if (dt == sequence::draw::tempo)

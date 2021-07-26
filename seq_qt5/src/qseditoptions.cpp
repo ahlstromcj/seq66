@@ -310,6 +310,30 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         this, SLOT(slot_show_full_paths_click())
     );
 
+    bool longportnames = rc().is_port_naming_long();
+    ui->checkBoxLongBussNames->setChecked(longportnames);
+    connect
+    (
+        ui->checkBoxLongBussNames, SIGNAL(clicked(bool)),
+        this, SLOT(slot_long_buss_names_click())
+    );
+
+    bool autosaverc = rc().auto_option_save();
+    ui->checkBoxSaveRc->setChecked(autosaverc);
+    connect
+    (
+        ui->checkBoxSaveRc, SIGNAL(clicked(bool)),
+        this, SLOT(slot_rc_save_click())
+    );
+
+    bool autosaveusr = usr().save_user_config();
+    ui->checkBoxSaveUsr->setChecked(autosaveusr);
+    connect
+    (
+        ui->checkBoxSaveUsr, SIGNAL(clicked(bool)),
+        this, SLOT(slot_usr_save_click())
+    );
+
     /*
      * For testing only
      *
@@ -404,7 +428,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding
     );
     vboxinputs->addItem(spacer2);
-    syncWithInternals();
+    sync();
 
     std::string clid = perf().client_id_string();
     ui->plainTextEditClientId->setPlainText(QString::fromStdString(clid));
@@ -477,28 +501,28 @@ void
 qseditoptions::slot_master_cond ()
 {
     rc().with_jack_master_cond(ui->chkJackConditional->isChecked());
-    syncWithInternals();
+    sync();
 }
 
 void
 qseditoptions::slot_time_master ()
 {
     rc().with_jack_master(ui->chkJackMaster->isChecked());
-    syncWithInternals();
+    sync();
 }
 
 void
 qseditoptions::slot_transport_support ()
 {
     rc().with_jack_transport(ui->chkJackTransport->isChecked());
-    syncWithInternals();
+    sync();
 }
 
 void
 qseditoptions::slot_jack_midi ()
 {
     rc().with_jack_midi(ui->chkJackNative->isChecked());
-    syncWithInternals();
+    sync();
 }
 
 void
@@ -522,7 +546,7 @@ qseditoptions::okay ()
 
 /**
  *  Restores the settings from the "backup" variables, then calls
- *  syncWithInternals()
+ *  sync()
  */
 
 void
@@ -535,7 +559,7 @@ qseditoptions::cancel ()
     usr().key_height(m_backup_KeyHeight);
     usr().resume_note_ons(m_backup_NoteResume);
     perf().resume_note_ons(m_backup_NoteResume);
-    syncWithInternals();
+    sync();
     close();
 }
 
@@ -563,7 +587,7 @@ qseditoptions::backup ()
  */
 
 void
-qseditoptions::syncWithInternals ()
+qseditoptions::sync ()
 {
     ui->chkJackTransport->setChecked(rc().with_jack_transport());
     ui->chkJackNative->setChecked(rc().with_jack_midi());
@@ -605,7 +629,7 @@ qseditoptions::enable_bus_item (int bus, bool enabled)
 
 /**
  *  Updates the performer::result_note_ons() setting in accord with the
- *  user-interface, and then calls syncWithInternals(), perhaps needlessly, to
+ *  user-interface, and then calls sync(), perhaps needlessly, to
  *  make sure the user-interface items correctly represent the settings.
  *  Resolves issue #5.
  */
@@ -618,10 +642,10 @@ qseditoptions::slot_note_resume ()
         bool resumenotes = ui->chkNoteResume->isChecked();
         if (perf().resume_note_ons() != resumenotes)
         {
-            usr().save_user_config(true);
+            modify_usr();
             usr().resume_note_ons(resumenotes);
             perf().resume_note_ons(resumenotes);
-            syncWithInternals();
+            sync();
         }
     }
 }
@@ -639,7 +663,7 @@ qseditoptions::slot_ppqn_by_text (const QString & text)
             m_ppqn_list.current(temp);
             ui->combo_box_ppqn->setItemText(0, text);
             usr().default_ppqn(p);
-            usr().save_user_config(true);
+            modify_usr();
         }
     }
 }
@@ -654,15 +678,15 @@ qseditoptions::slot_use_file_ppqn ()
         if (ufppqn != status)
         {
             usr().use_file_ppqn(ufppqn);
-            syncWithInternals();
-            usr().save_user_config(true);
+            sync();
+            modify_usr();
         }
     }
 }
 
 /**
  *  Updates the usrsettings::key_height() setting in accord with the
- *  user-interface, and then calls syncWithInternals(), perhaps needlessly, to
+ *  user-interface, and then calls sync(), perhaps needlessly, to
  *  make sure the user-interface items correctly represent the settings.
  *  Also turns on the user-save setting, so that the settings will be written to
  *  the "usr" file upon exit.
@@ -672,9 +696,9 @@ void
 qseditoptions::slot_key_height ()
 {
     usr().key_height(ui->spinKeyHeight->value());
-    syncWithInternals();
+    sync();
     if (m_is_initialized)
-        usr().save_user_config(true);
+        modify_usr();
 }
 
 void
@@ -706,7 +730,7 @@ qseditoptions::ui_scaling_helper
         std::string tuple = wtext + "x" + htext;
         usr().clear_option_bit(usrsettings::option_bits::option_scale);
         if (usr().parse_window_scale(tuple))
-            usr().save_user_config(true);
+            modify_usr();
     }
 }
 
@@ -737,7 +761,7 @@ qseditoptions::slot_set_size_rows ()
     {
         int rows = std::stoi(valuetext);
         if (usr().mainwnd_rows(rows))
-            usr().save_user_config(true);
+            modify_usr();
         else
             set_set_size_fields();
     }
@@ -752,7 +776,7 @@ qseditoptions::slot_set_size_columns ()
     {
         int columns = std::stoi(valuetext);
         if (usr().mainwnd_cols(columns))
-            usr().save_user_config(true);
+            modify_usr();
         else
             set_set_size_fields();
     }
@@ -778,7 +802,7 @@ qseditoptions::slot_progress_box_width ()
         double w = std::stod(wtext);
         double h = usr().progress_box_height();
         if (usr().progress_box_size(w, h))
-            usr().save_user_config(true);
+            modify_usr();
         else
             set_progress_box_fields();
     }
@@ -794,7 +818,7 @@ qseditoptions::slot_progress_box_height ()
         double w = usr().progress_box_width();
         double h = std::stod(htext);
         if (usr().progress_box_size(w, h))
-            usr().save_user_config(true);
+            modify_usr();
         else
             set_progress_box_fields();
     }
@@ -810,7 +834,7 @@ qseditoptions::slot_fingerprint_size ()
         double sz = std::stoi(text);
         if (usr().fingerprint_size(sz))
         {
-            usr().save_user_config(true);
+            modify_usr();
         }
         else
         {
@@ -883,6 +907,37 @@ qseditoptions::slot_show_full_paths_click ()
 {
     bool on = ui->checkBoxShowFullRecentPaths->isChecked();
     rc().full_recent_paths(on);
+}
+
+void
+qseditoptions::slot_long_buss_names_click ()
+{
+    bool on = ui->checkBoxLongBussNames->isChecked();
+    rc().port_naming(on ? "long" : "short");
+}
+
+void
+qseditoptions::slot_rc_save_click ()
+{
+    bool on = ui->checkBoxSaveRc->isChecked();
+    rc().auto_option_save(on);
+    rc().modify();
+}
+
+void
+qseditoptions::modify_usr ()
+{
+    usr().save_user_config(true);
+    usr().modify();
+    ui->checkBoxSaveUsr->setChecked(true);
+}
+
+void
+qseditoptions::slot_usr_save_click ()
+{
+    bool on = ui->checkBoxSaveUsr->isChecked();
+    usr().save_user_config(on);
+    usr().modify();
 }
 
 #if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR

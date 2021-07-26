@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-07-25
+ * \updates       2021-07-26
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -368,6 +368,8 @@ usrsettings::usrsettings () :
     m_fingerprint_size          (c_fingerprint_size),
     m_progress_box_width        (c_progress_box_width),
     m_progress_box_height       (c_progress_box_height),
+    m_progress_note_min         (20),
+    m_progress_note_max         (100),
     m_session_manager           (session::none),
     m_session_url               (),
     m_in_session                (false),
@@ -446,6 +448,8 @@ usrsettings::set_defaults ()
     m_fingerprint_size = c_fingerprint_size;
     m_progress_box_width = c_progress_box_width;
     m_progress_box_height = c_progress_box_height;
+    m_progress_note_min = 20;
+    m_progress_note_max = 100;
     m_session_manager = session::none;
     m_session_url.clear();
     m_in_session = false;
@@ -482,6 +486,14 @@ usrsettings::normalize ()
      *
      * if (shrunken()) { (void) window_scale(0.80, 0.75); }
      */
+}
+
+void
+usrsettings::save_user_config (bool flag)
+{
+    m_save_user_config = flag;
+    if (flag)
+        infoprint("Will save 'usr' file at exit");
 }
 
 std::string

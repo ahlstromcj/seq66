@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-07-18
+ * \updates       2021-07-26
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -146,8 +146,8 @@ qslivegrid::qslivegrid (performer & p, qsmainwnd * window, QWidget * parent) :
     (
         tr
         (
-            "There is already a pattern in this slot. "
-            "Overwrite it with a new blank pattern?"
+            "There is a pattern in this slot. "
+            "Overwrite it with a blank pattern?"
         )
     );
     m_msg_box->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -169,8 +169,7 @@ qslivegrid::qslivegrid (performer & p, qsmainwnd * window, QWidget * parent) :
     set_mode_text();
     qloopbutton::progress_box_size
     (
-        usr().progress_box_width(),
-        usr().progress_box_height()
+        usr().progress_box_width(), usr().progress_box_height()
     );
 
     /*
@@ -223,9 +222,6 @@ qslivegrid::set_mode_text (const std::string & mode)
 void
 qslivegrid::set_playlist_name (const std::string & plname)
 {
-//  QString pln = " ";
-//  pln += QString::fromStdString(plname);
-
     std::string fullname = get_full_path(plname);
     QString pln = QString::fromStdString(fullname);
     ui->labelPlaylistSong->setText(pln);
@@ -640,6 +636,10 @@ bool
 qslivegrid::recreate_all_slots ()
 {
     bool result = delete_all_slots();
+    qloopbutton::progress_box_size              /* in case user changed it  */
+    (
+        usr().progress_box_width(), usr().progress_box_height()
+    );
     if (result)
     {
         clear_loop_buttons();
@@ -845,7 +845,8 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
         }
         else if (assigned)
         {
-            button_toggle(m_current_seq);
+            button_toggle_checked(m_current_seq);
+            m_button_down = true;
         }
     }
     if (event->button() == Qt::RightButton)
@@ -856,16 +857,6 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
             new_live_frame();
         else
             popup_menu();
-    }
-}
-
-void
-qslivegrid::slot_press (int seqno)
-{
-    if (seqno != seq::unassigned())
-    {
-        m_current_seq = seqno;
-        m_button_down = true;
     }
 }
 
@@ -898,6 +889,8 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
              */
 
             m_moving = false;
+            button_toggle_enabled(m_source_seq);
+            m_source_seq = seq::unassigned();
             if (perf().finish_move(m_current_seq))
                 (void) recreate_all_slots();
         }
@@ -944,13 +937,26 @@ qslivegrid::mouseMoveEvent (QMouseEvent * event)
     seq::number seqno = seq_id_from_xy(event->x(), event->y());
     if (m_button_down)
     {
-        bool not_editing = ! perf().is_seq_in_edit(m_current_seq);
-        if (seqno != m_current_seq && ! m_moving && not_editing)
+        if (! perf().is_seq_in_edit(m_current_seq))
         {
-            if (perf().move_sequence(m_current_seq))
+            if (seqno == m_current_seq)
             {
-                m_moving = true;
-                update();
+                if (seq::unassigned(m_source_seq))
+                {
+                    m_source_seq = m_current_seq;
+                    button_toggle_enabled(m_source_seq);
+                }
+            }
+            else
+            {
+                if (! m_moving)
+                {
+                    if (perf().move_sequence(m_current_seq))
+                    {
+                        m_moving = true;
+                        update();
+                    }
+                }
             }
         }
     }
@@ -965,7 +971,7 @@ qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
     m_current_seq = seq_id_from_xy(event->x(), event->y());
     if (perf().is_seq_active(m_current_seq))
     {
-        button_toggle(m_current_seq);           /* undo the press-toggle    */
+        button_toggle_checked(m_current_seq);   /* undo the press-toggle    */
     }
     else
     {
@@ -975,13 +981,29 @@ qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
     signal_call_editor_ex(m_current_seq);
 }
 
+void
+qslivegrid::button_toggle_enabled (seq::number seqno)
+{
+    bool assigned = seqno != seq::unassigned();
+    if (assigned)
+    {
+        qslotbutton * pb = find_button(seqno);
+        if (not_nullptr(pb))
+        {
+            seq::pointer s = pb->loop();
+            if (s)
+                (void) pb->toggle_enabled();
+        }
+    }
+}
+
 /**
  *  This actually gets a qloopbutton.  Don't be fooled like I was.  The toggle
  *  call does its own button update.
  */
 
 void
-qslivegrid::button_toggle (seq::number seqno)
+qslivegrid::button_toggle_checked (seq::number seqno)
 {
     bool assigned = seqno != seq::unassigned();
     if (assigned)

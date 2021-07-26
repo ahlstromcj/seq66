@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2021-07-09
+ * \updates       2021-07-26
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -525,7 +525,7 @@ smanager::save_session (std::string & msg, bool ok)
     {
         if (ok)
         {
-            bool save = rc().auto_option_save(); // && ! usr().in_session();
+            bool save = rc().auto_option_save() || rc().is_modified();
             if (save)
             {
                 /*

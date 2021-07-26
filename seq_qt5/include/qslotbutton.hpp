@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2021-04-29
+ * \updates       2021-07-26
  * \license       GNU GPLv2 or above
  *
  *  All this button can do is enable a new pattern to be created.  It is
@@ -164,6 +164,11 @@ public:
     virtual void set_checked (bool /*flag*/)
     {
         // no code for this base class
+    }
+
+    virtual bool toggle_enabled ()
+    {
+        return false;                   /* no functionality in base class   */
     }
 
     virtual bool toggle_checked ()

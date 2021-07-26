@@ -395,8 +395,8 @@ number using the channel number (0 to 15).</string>
         <rect>
          <x>10</x>
          <y>272</y>
-         <width>369</width>
-         <height>153</height>
+         <width>273</width>
+         <height>185</height>
         </rect>
        </property>
        <property name="title">
@@ -411,7 +411,7 @@ number using the channel number (0 to 15).</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>8</x>
+          <x>10</x>
           <y>40</y>
           <width>249</width>
           <height>21</height>
@@ -431,7 +431,7 @@ This option is saved in the 'rc' file.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>8</x>
+          <x>10</x>
           <y>64</y>
           <width>249</width>
           <height>23</height>
@@ -448,7 +448,7 @@ redirected to a log file.</string>
        <widget class="QCheckBox" name="checkBoxLoadMostRecent">
         <property name="geometry">
          <rect>
-          <x>8</x>
+          <x>10</x>
           <y>88</y>
           <width>249</width>
           <height>23</height>
@@ -464,7 +464,7 @@ redirected to a log file.</string>
        <widget class="QCheckBox" name="checkBoxShowFullRecentPaths">
         <property name="geometry">
          <rect>
-          <x>8</x>
+          <x>10</x>
           <y>112</y>
           <width>249</width>
           <height>23</height>
@@ -477,6 +477,19 @@ redirected to a log file.</string>
          <string>Show Full Path of Recent Files in Menu</string>
         </property>
        </widget>
+       <widget class="QCheckBox" name="checkBoxLongBussNames">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>136</y>
+          <width>249</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Long Port/Buss Names</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="layoutWidgetGuiOptions">
        <property name="geometry">
@@ -484,7 +497,7 @@ redirected to a log file.</string>
          <x>10</x>
          <y>10</y>
          <width>369</width>
-         <height>161</height>
+         <height>175</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayoutUiValues">
@@ -677,6 +690,13 @@ to 128, and defaults to 32.</string>
           </property>
          </widget>
         </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelUiScaling">
+          <property name="text">
+           <string>Scaling of User Interface</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QLabel" name="labelRestartNeeded">
@@ -759,6 +779,48 @@ path added to this name is stripped.</string>
        <property name="toolTip">
         <string>For testing only.  Normally hidden.</string>
        </property>
+      </widget>
+      <widget class="QGroupBox" name="groupBoxSaveAtExit">
+       <property name="geometry">
+        <rect>
+         <x>296</x>
+         <y>272</y>
+         <width>257</width>
+         <height>185</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Save At Exit</string>
+       </property>
+       <widget class="QCheckBox" name="checkBoxSaveRc">
+        <property name="geometry">
+         <rect>
+          <x>8</x>
+          <y>40</y>
+          <width>81</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>'rc' File</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxSaveUsr">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>8</x>
+          <y>64</y>
+          <width>81</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>'usr' File</string>
+        </property>
+       </widget>
       </widget>
      </widget>
      <widget class="QWidget" name="tabJackSync">

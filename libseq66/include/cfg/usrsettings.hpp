@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-07-24
+ * \updates       2021-07-26
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -178,39 +178,6 @@ private:
         none,
         nsm,
         lash,
-        max
-    };
-
-    /**
-     *  Provides a setting to control the overall style of grid-drawing for
-     *  the pattern slots in mainwnd.  These values can be specified in the
-     *  [user-interface-settings] section of the "user" configuration file.
-     *
-     * \var normal
-     *      The grid background color is the normal background color for the
-     *      current GTK theme.  The box is drawn with brackets on either side.
-     *
-     * \var white
-     *      The grid background color is white.  This style better fits
-     *      displaying the white-on-black sequence numbers.  The box is drawn
-     *      with brackets on either side.
-     *
-     * \var black
-     *      The grid background color is black.
-     *
-     * \var button
-     *      Indicates to use the live-grid rather than the live frame.
-     *
-     * \var max
-     *      Marks the end of the list, and is an illegal value.
-     */
-
-    enum class grid
-    {
-        normal,
-        white,
-        black,
-        button,
         max
     };
 
@@ -767,6 +734,16 @@ private:
     double m_progress_box_height;
 
     /**
+     *  Lets the range (in pitch) of the progress box be tailored. If the
+     *  maximum is 0, neither value is used; instead the min/max are
+     *  determined separately for each sequence and the patterns are centered
+     *  vertically in the progress box.
+     */
+
+    int m_progress_note_min;
+    int m_progress_note_max;
+
+    /**
      *  [user-session]
      *
      *  This value indicates to create and use a Non Session Manager (or New
@@ -1154,10 +1131,7 @@ public:
         return m_save_user_config;
     }
 
-    void save_user_config (bool flag)
-    {
-        m_save_user_config = flag;
-    }
+    void save_user_config (bool flag);
 
 protected:
 
@@ -1368,6 +1342,16 @@ public:
         return m_progress_box_height;
     }
 
+    int progress_note_min () const
+    {
+        return m_progress_note_min;
+    }
+
+    int progress_note_max () const
+    {
+        return m_progress_note_max;
+    }
+
     session session_manager () const
     {
         return m_session_manager;
@@ -1426,6 +1410,18 @@ public:
     }
 
 public:         // used in main application module and the usrfile class
+
+    void progress_note_min (int v)
+    {
+        if (v > 0 && v < 64)
+            m_progress_note_min = v;
+    }
+
+    void progress_note_max (int v)
+    {
+        if (v > 64 && v < 128)
+            m_progress_note_max = v;
+    }
 
     void progress_bar_thick (bool flag)
     {

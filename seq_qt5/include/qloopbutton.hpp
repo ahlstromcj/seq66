@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-07-14
+ * \updates       2021-07-26
  * \license       GNU GPLv2 or above
  *
  */
@@ -138,6 +138,14 @@ private:
     std::vector<midishort> m_fingerprint_count;
 
     /**
+     *  Optional scaling for the notes in the progress box, to give a more
+     *  realistic depiction of the pitches.
+     */
+
+    int m_note_min;
+    int m_note_max;
+
+    /**
      *  Provides a pointer to the sequence displayed by this button.  Note that
      *  we do not want to use a shared pointer.  First, semantically this button
      *  does not own the sequence, and second, there seems to be a race
@@ -214,6 +222,7 @@ public:
     virtual void setup () override;
     virtual void reupdate (bool all = true) override;
     virtual void set_checked (bool flag) override;
+    virtual bool toggle_enabled () override;
     virtual bool toggle_checked () override;
 
 protected:

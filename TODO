@@ -1,6 +1,6 @@
 TO DO for Seq66 0.96.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-07-25
+2019-04-13 to 2021-07-26
 
 Hottest to Trivial:
 
@@ -19,6 +19,8 @@ UI:
 
     Can we reset the main port dropdown to 0 when loading a new song?
     Even if it does not change, the buss-override still applies; inconsistent.
+
+    Can we get pattern drag-n-drop back?
 
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
@@ -83,6 +85,8 @@ From Testing:
 
     L/R looping in pattern editor not working completely; works fairly well in
     ALSA.
+
+    Ctrl-U (unmute all) unmutes the next set as well.
 
 Others to Consider:
 
