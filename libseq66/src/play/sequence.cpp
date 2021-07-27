@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-07-21
+ * \updates       2021-07-27
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -255,11 +255,7 @@ sequence::modify (bool notifychange)
 }
 
 /**
- *  A cut-down version of principal assignment operator.  We're replacing that
- *  incomplete seq66 function (many members are not assigned) with the more
- *  accurately-named partial_assign() function.  It did not assign them all,
- *  so we created this partial_assign() function to do this work, and replaced
- *  operator =() with this function in client code.
+ *  A cut-down version of principal assignment operator or copy constructor.
  *
  * \threadsafe
  *
@@ -274,34 +270,83 @@ sequence::partial_assign (const sequence & rhs)
     {
         automutex locker(m_mutex);
         m_parent                    = rhs.m_parent;         /* a pointer    */
-        m_events                    = rhs.m_events;
+        m_events                    = rhs.m_events;         /* container!   */
+        m_triggers                  = rhs.m_triggers;       /* 2021-07-27   */
 
         /*
-         * The triggers class has a parent that cannot be reassigned.
-         * Is this an issue?
+         *  The triggers class has a parent that cannot be reassigned.
+         *  Is this an issue?  We don't care about copying undo/redo containers.
          *
-         * m_triggers                  = rhs.m_triggers;
+         *  m_events_undo_hold
+         *  m_have_undo
+         *  m_have_redo
+         *  m_events_undo
+         *  m_events_redo
          */
 
         m_channel_match             = rhs.m_channel_match;
         m_midi_channel              = rhs.m_midi_channel;
+        m_no_channel                = rhs.m_no_channel;     /* 2021-07-27   */
         m_nominal_bus               = rhs.m_nominal_bus;
         m_true_bus                  = rhs.m_true_bus;
+        m_song_mute                 = rhs.m_song_mute;      /* 2021-07-27   */
         m_transposable              = rhs.m_transposable;
+        m_notes_on                  = 0;
         m_master_bus                = rhs.m_master_bus;     /* a pointer    */
-        m_was_playing               = false;
-        m_playing                   = false;
-        m_recording                 = false;
-        m_auto_step_reset           = false;
-        m_expanded_recording        = false;
-        m_overwrite_recording       = false;
-        m_oneshot_recording         = false;
-        m_quantized_recording       = false;
-        m_song_recording            = false;
-        m_song_recording_snap       = true;         /* effectively constant */
-        m_song_record_tick          = 0;
+
+        /*
+         *  These values are set fine for this purpose by the constructor
+         *
+         *  m_playing_notes
+         *  m_was_playing
+         *  m_playing
+         *  m_recording
+         *  m_auto_step_reset
+         *  m_expanded_recording
+         *  m_overwrite_recording
+         *  m_oneshot_recording
+         *  m_quantized_recording
+         *  m_thru
+         *  m_queued
+         *  m_one_shot
+         *  m_one_shot_tick
+         *  m_step_count
+         *  m_loop_count_max
+         *  m_off_from_snap
+         *  m_song_playback_block
+         *  m_song_recording
+         *  m_song_recording_snap
+         *  m_song_record_tick
+         *  m_loop_reset
+         */
+
+        m_unit_measure              = rhs.m_unit_measure;   /* 2021-07-27   */
+
+        /*
+         *  m_dirty_main
+         *  m_dirty_edit
+         *  m_dirty_perf
+         *  m_dirty_names
+         *  m_seq_in_edit
+         *  m_status
+         *  m_cc
+         */
+
         m_name                      = rhs.m_name;
+
+        /*
+         *  m_last_tick
+         *  m_queued_tick
+         *  m_trigger_offset
+         *  m_maxbeats
+         */
+
         m_ppqn                      = rhs.m_ppqn;
+
+        /*
+         *  m_seq_number
+         */
+
         m_seq_color                 = rhs.m_seq_color;
         m_seq_edit_mode             = rhs.m_seq_edit_mode;
         m_length                    = rhs.m_length;
@@ -317,6 +362,11 @@ sequence::partial_assign (const sequence & rhs)
         m_musical_key               = rhs.m_musical_key;
         m_musical_scale             = rhs.m_musical_scale;
         m_background_sequence       = rhs.m_background_sequence;
+
+        /*
+         *  m_mutex
+         */
+
         for (auto & p : m_playing_notes)            /* no notes playing now */
             p = 0;
 

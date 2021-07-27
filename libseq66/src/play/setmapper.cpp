@@ -192,6 +192,24 @@ setmapper::add_to_play_set (playset & p, sequence * s)
     return result;
 }
 
+bool
+setmapper::add_to_play_set (playset & p, screenset & s)
+{
+    return s.fill_play_set(p, false);
+}
+
+bool
+setmapper::add_all_sets_to_play_set (playset & p)
+{
+    bool result = true;
+    for (auto & sset : sets())              /* screenset reference  */
+    {
+        if (! sset.second.fill_play_set(p, false))
+            result = false;
+    }
+    return result;
+}
+
 #if defined SEQ66_SETMAPPER_SEQ_SET_IS_USED
 
 /**
@@ -233,6 +251,32 @@ setmapper::seq_set (seq::number seqno, int & row, int & column) const
 
 #endif
 
+bool
+setmapper::copy_screenset (screenset::number srcset, screenset::number destset)
+{
+    const screenset & src = master().screen(srcset);
+    screenset & dest = master().screen(destset);
+    bool result = src.usable() && dest.usable();
+    if (result)
+    {
+        dest = src;
+        result = dest.copy_sequences(src);
+    }
+    return result;
+}
+
+/**
+ *  Get an existing screenset, or return the dummy (unusable) screenset.
+ */
+
+const screenset &
+setmapper::screen (seq::number seqno) const
+{
+    screenset::number s = seq_set(seqno);
+    return sets().find(s) != sets().end() ?
+        sets().at(s) : dummy_screenset() ;
+}
+
 /**
  *  Look up the screen to be used, given the sequence number.  If the screen
  *  doesn't exist, and is a legal screenset number, then create it.
@@ -261,12 +305,12 @@ setmapper::screen (seq::number seqno)
 }
 
 /**
- *  Adds the sequence pointer to the matching screenset.  The caller should have
- *  already made its initial setup of the sequence, and then should relinquish
- *  ownership of the pointer.
+ *  Adds the sequence pointer to the matching screenset.  The caller should
+ *  have already made its initial setup of the sequence, and then should
+ *  relinquish ownership of the pointer.
  *
- *  If the screenset does not already exist, it is created and added to the list
- *  of screensets the setmapper manages.  Then the sequence is added.
+ *  If the screenset does not already exist, it is created and added to the
+ *  list of screensets the setmapper manages.  Then the sequence is added.
  *
  * \param s
  *      Provides the sequencer pointer, which is rejected if null.
@@ -279,9 +323,8 @@ setmapper::screen (seq::number seqno)
  *
  * \return
  *      Returns true if the sequence pointer was able to be added to the
- *      screenset.  Null pointers to sequence are not added.
- *      False can be returned if the sequence number already exists
- *      in the screenset.
+ *      screenset.  Null pointers to sequence are not added.  False can be
+ *      returned if the sequence number already exists in the screenset.
  */
 
 bool
@@ -1148,6 +1191,30 @@ setmapper::clear_mutes ()
     if (m_mute_groups.clear())
         result = true;
 
+    return result;
+}
+
+std::string
+setmapper::name (screenset::number setno) const
+{
+    std::string result = dummy_screenset().name();
+    if (sets().find(setno) != sets().end())
+    {
+        const auto & s = sets().at(setno);
+        result = s.name();
+    }
+    return result;
+}
+
+bool
+setmapper::name (screenset::number setno, const std::string & nm)
+{
+    bool result = sets().find(setno) != sets().end();
+    if (result)
+    {
+        auto & s = sets().at(setno);
+        s.name(nm);
+    }
     return result;
 }
 

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-07-11
+% \update      2021-07-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -474,14 +474,38 @@
       port-namng = short
    \end{verbatim}
 
+   \index{verbose}
    \texttt{verbose} is the same as the \texttt{-{}-verbose} command-line option,
    except that, if set to "true", it affects every invocation of \textsl{Seq66}.
 
-   The \texttt{sets-mode} option determines if sets are muted when going to the
+   \index{sets-mode}
+   The \texttt{sets-mode} option determines how patterns are muted when the
+   play-screen (current set) changes.  Its values are:
+
+   \begin{itemize}
+      \item \textbf{normal}.
+      \index{sets-mode ! normal}
+         When moving to another set, the patterns in the
+         current play-screen are muted, as are the patterns in the destination
+         set.
+      \item \textbf{autoarm}.
+      \index{sets-mode ! autoarm}
+         Similar to normal, but the patterns in the
+         destination set are automatically unmuted.
+      \item \textbf{additive}.
+      \index{sets-mode ! additive}
+         When moving to another set, the destination set
+         is added to the play-set, so that both sets are playing.
+         This option was requested by users.
+      \item \textbf{allsets}.
+      \index{sets-mode ! allsets}
+         When a song is loaded, all patterns in all sets are unmuted and will
+         play.
+   \end{itemize}
+
    next play-screen ('normal'), while 'autoarm' will automatically
    unmute the next set.  The 'additive' options keeps the previous
-   set unmuted when moving to the next set.  These are options requested by
-   users.
+   set unmuted when moving to the next set.
 
   The port-naming values are 'short' or 'long'.  The short style
   just shows the port number and short port name; the long style

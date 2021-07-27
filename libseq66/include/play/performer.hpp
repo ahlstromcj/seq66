@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-07-20
+ * \updates       2021-07-27
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -315,6 +315,28 @@ public:
 private:
 
     /**
+     *  Defines a pointer to a member automation function.
+     */
+
+    using automation_function = bool (performer::*)
+    (
+        automation::action a, int d0, int d1, bool inverse
+    );
+
+    /**
+     *  Provides a type alias useful in creating a function table to make the
+     *  loading of member op/slot functions much easier.
+     */
+
+    using automation_pair = struct
+    {
+        automation::slot ap_slot;
+        automation_function ap_function;
+    };
+
+    static automation_pair sm_auto_func_list [];
+
+    /**
      *  Indicates that an internal setup error occurred (e.g. a device could
      *  not be set up in PortMidi).  In this case, we will eventually want to
      *  emit an error prompt, though we keep going in order to populate the
@@ -394,6 +416,14 @@ private:
     seq::number m_current_seqno;
     sequence m_moving_seq;
     sequence m_seq_clipboard;
+
+private:
+
+    /**
+     *  Set to screenset::none().
+     */
+
+    screenset::number m_screenset_to_copy;
 
 private:                            /* key, midi, and op container section  */
 
@@ -912,30 +942,6 @@ private:                            /* key, midi, and op container section  */
 
     std::atomic<bool> m_hidden;
     std::atomic<bool> m_show_hide_pending;
-
-private:
-
-    /**
-     *  Defines a pointer to a member automation function.
-     */
-
-    using automation_function = bool (performer::*)
-    (
-        automation::action a, int d0, int d1, bool inverse
-    );
-
-    /**
-     *  Provides a type alias useful in creating a function table to make the
-     *  loading of member op/slot functions much easier.
-     */
-
-    using automation_pair = struct
-    {
-        automation::slot ap_slot;
-        automation_function ap_function;
-    };
-
-    static automation_pair sm_auto_func_list [];
 
 public:
 
@@ -2280,6 +2286,8 @@ public:
     midibpm page_increment_beats_per_minute ();
     screenset::number decrement_screenset (int amount = 1);
     screenset::number increment_screenset (int amount = 1);
+    bool copy_playscreen ();
+    bool paste_playscreen (screenset::number destination);
 
     screenset::number playscreen_number () const
     {
@@ -2618,6 +2626,7 @@ public:
     }
 
     screenset::number set_playing_screenset (screenset::number setno);
+    void reset_playset ();
 
     bool is_screenset_valid (screenset::number sset) const
     {
@@ -2689,12 +2698,12 @@ public:
      *  However, we will still refer to them as "sets".
      */
 
-    const std::string & bank_name (int bank) const
+    std::string bank_name (int bank) const
     {
         return get_screenset_notepad(bank);
     }
 
-    const std::string & screenset_notepad (screenset::number sset) const
+    std::string screenset_notepad (screenset::number sset) const
     {
         return mapper().name(sset);
     }
@@ -2854,12 +2863,12 @@ public:         /* GUI-support functions */
      *  Returns the notepad text for the current screen-set.
      */
 
-    const std::string & current_screenset_notepad () const
+    std::string current_screenset_notepad () const
     {
         return mapper().name();
     }
 
-    const std::string & get_screenset_notepad (screenset::number sn) const
+    std::string get_screenset_notepad (screenset::number sn) const
     {
         return mapper().name(sn);
     }

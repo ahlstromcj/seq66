@@ -188,6 +188,7 @@ qsetmaster::setup_table ()
     columns << "Set #" << "Seqs" << "Set Name";
     ui->m_set_table->setHorizontalHeaderLabels(columns);
     ui->m_set_table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->m_set_table->setSelectionMode(QAbstractItemView::SingleSelection);
     set_column_widths(ui->m_set_table->width() + SEQ66_TABLE_FIX);
     const int rows = ui->m_set_table->rowCount();
     for (int r = 0; r < rows; ++r)

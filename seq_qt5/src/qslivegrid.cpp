@@ -141,14 +141,10 @@ qslivegrid::qslivegrid (performer & p, qsmainwnd * window, QWidget * parent) :
     setFocusPolicy(Qt::StrongFocus);
     ui->setupUi(this);
     m_msg_box = new QMessageBox(this);
-    m_msg_box->setText(tr("Sequence already present."));
+    m_msg_box->setText(tr("A pattern is present."));
     m_msg_box->setInformativeText
     (
-        tr
-        (
-            "There is a pattern in this slot. "
-            "Overwrite it with a blank pattern?"
-        )
+        tr("Overwrite it with a blank pattern?")
     );
     m_msg_box->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     m_msg_box->setDefaultButton(QMessageBox::No);

@@ -408,7 +408,7 @@ It does not change Seq66's default PPQN.</string>
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>6</number>
       </property>
       <widget class="QWidget" name="LiveTab">
        <property name="sizePolicy">
@@ -689,21 +689,25 @@ It does not change Seq66's default PPQN.</string>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="setMasterButton">
+       <widget class="QPushButton" name="setResetButton">
         <property name="minimumSize">
          <size>
-          <width>84</width>
+          <width>28</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>84</width>
+          <width>28</width>
           <height>28</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Resets the internal play-set to the current set, no
+matter what sets-mode is in force. </string>
+        </property>
         <property name="text">
-         <string>Set Master</string>
+         <string>!</string>
         </property>
        </widget>
       </item>

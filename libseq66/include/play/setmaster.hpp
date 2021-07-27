@@ -60,7 +60,7 @@ namespace seq66
 class setmaster
 {
     friend class performer;             /* a very good friend to have   */
-    friend class setmapper;
+    friend class setmapper;             /* also a good friend/buddy     */
 
 private:
 
@@ -258,6 +258,7 @@ public:
 private:
 
     bool reset ();
+//  bool copy_screenset (screenset::number srcset, screenset::number destset);
     container::iterator add_set (screenset::number setno);
     container::iterator find_by_value (screenset::number setno);
 
@@ -281,6 +282,9 @@ private:
 
         return offset;
     }
+
+    screenset & screen (screenset::number setno);
+    const screenset & screen (screenset::number setno) const;
 
     screenset & dummy_screenset ()
     {

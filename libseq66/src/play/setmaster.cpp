@@ -167,6 +167,20 @@ setmaster::add_set (screenset::number setno)
     return resultpair.first;
 }
 
+screenset &
+setmaster::screen (screenset::number setno)
+{
+    auto sp = m_container.find(setno);          /* look it up in the map    */
+    return sp != m_container.end() ? sp->second : dummy_screenset();
+}
+
+const screenset &
+setmaster::screen (screenset::number setno) const
+{
+    auto sp = m_container.find(setno);          /* look it up in the map    */
+    return sp != m_container.end() ? sp->second : dummy_screenset();
+}
+
 /**
  *  Given a set number, counts through the container until it finds the matching
  *  set number.  We have to brute-force the lookup because there may be
@@ -252,9 +266,12 @@ setmaster::set_function (screenset::slothandler p)
 }
 
 /**
- *  Does a brute-force lookup of the given set number, obtained by
- *  screenset::set_number().  We must use the long form of the for loop here.
- *  as far as we can tell.
+ *  Does a brute-force lookup of the given set number, obtained by screenset
+ *  :: set_number().  We must use the long form of the for loop here.  as far
+ *  as we can tell.
+ *
+ *  We could also do a find() on the map and return a dummy screenset, but
+ *  the setmaster::swap_sets() function requires this brute-force lookup.
  */
 
 setmaster::container::iterator

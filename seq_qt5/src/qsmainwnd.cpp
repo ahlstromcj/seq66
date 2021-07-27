@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-18
+ * \updates       2021-07-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -584,22 +584,15 @@ qsmainwnd::qsmainwnd
         this, SLOT(toggle_time_format(bool))
     );
 
-#if defined USE_EXTERNAL_SETMASTER
-
     /*
-     * Set-Master window button.
+     * Set-Reset button.
      */
 
     connect
     (
-        ui->setMasterButton, SIGNAL(clicked(bool)),
-        this, SLOT(show_set_master())
+        ui->setResetButton, SIGNAL(clicked(bool)),
+        this, SLOT(reset_sets())
     );
-
-#else
-    ui->setMasterButton->hide();
-#endif
-
 
     /*
      * Group-learn ("L") button.
@@ -721,7 +714,7 @@ qsmainwnd::qsmainwnd
     connect(ui->btnPanic, SIGNAL(clicked(bool)), this, SLOT(panic()));
     qt_set_icon(panic_xpm, ui->btnPanic);
 
-    QString bname = perf().bank_name(0).c_str();
+    QString bname = QString::fromStdString(perf().bank_name(0));
     ui->txtBankName->setText(bname);
     ui->spinBank->setRange(0, perf().screenset_max() - 1);
 
@@ -736,8 +729,8 @@ qsmainwnd::qsmainwnd
     );
     connect
     (
-        ui->txtBankName, SIGNAL(textEdited(QString)),
-        this, SLOT(update_bank_text(QString))
+        ui->txtBankName, SIGNAL(editingFinished()),
+        this, SLOT(update_bank_text())
     );
     connect
     (
@@ -1405,32 +1398,15 @@ qsmainwnd::load_session_frame ()
     }
 }
 
-#if defined USE_EXTERNAL_SETMASTER
-
 /**
- *  Handles the external Set Master, the one instantiated with the Sets button
- *  on the main window.  Show the set master in a separate window.  The
- *  "embedded" parameter is set to false, and there is no parent widget, just
- *  this main window as a parent.
- *
- *  However, this window is gratuitous, and removing the external window zaps
- *  the tab (permanently) as well.
+ *  Handles resetting the performer's play-set to the current set.
  */
 
 void
-qsmainwnd::show_set_master ()
+qsmainwnd::reset_sets ()
 {
-    if (is_nullptr(m_set_master))
-    {
-        m_set_master = new qsetmaster(perf(), false, this);
-        if (not_nullptr(m_set_master))
-            m_set_master->show();
-    }
-    else
-        remove_set_master();
+    // TODO
 }
-
-#endif  // defined USE_EXTERNAL_SETMASTER
 
 void
 qsmainwnd::remove_set_master ()
@@ -2821,10 +2797,11 @@ qsmainwnd::update_bank (int bankid)
  */
 
 void
-qsmainwnd::update_bank_text (const QString & newname)
+qsmainwnd::update_bank_text ()
 {
     if (not_nullptr(m_live_frame))
     {
+        QString newname = ui->txtBankName->text();
         std::string name = newname.toStdString();
         m_live_frame->update_bank_name(name);
     }
@@ -3365,8 +3342,10 @@ qsmainwnd::update_set_change (int setno)
     {
         if (setno != m_live_frame->bank())
         {
+            QString bname = QString::fromStdString(perf().bank_name(setno));
             m_live_frame->update_bank(setno);       /* updates current bank */
             ui->spinBank->setValue(setno);          /* shows it in spinbox  */
+            ui->txtBankName->setText(bname);        /* show set/bank name   */
         }
         else
             m_live_frame->update_bank();            /* updates current bank */

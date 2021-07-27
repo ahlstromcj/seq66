@@ -797,6 +797,8 @@ public:
 
     bool set_playscreen (screenset::number setno);
     bool set_playing_screenset (screenset::number setno);
+    bool copy_screenset (screenset::number srcset, screenset::number destset);
+    const screenset & screen (seq::number seqno) const;
     screenset & screen (seq::number seqno);
 
     /*
@@ -813,33 +815,17 @@ public:
         return change_playscreen(-amount);
     }
 
-    const screenset & screen (seq::number seqno) const
-    {
-        screenset::number s = seq_set(seqno);
-        return sets().find(s) != sets().end() ?
-            sets().at(s) : dummy_screenset() ;
-    }
-
     const std::string & name () const
     {
         return play_screen()->name();
     }
 
-    const std::string & name (screenset::number setno) const
-    {
-        return sets().find(setno) != sets().end() ?
-            sets().at(setno).name() : dummy_screenset().name() ;
-    }
+    std::string name (screenset::number setno) const;
+    bool name (screenset::number setno, const std::string & nm);
 
     bool name (const std::string & nm)
     {
         return play_screen()->name(nm);
-    }
-
-    bool name (screenset::number setno, const std::string & nm)
-    {
-        return sets().find(setno) != sets().end() ?
-            sets().at(setno).name(nm) : false ;
     }
 
     bool is_screenset_active (screenset::number setno) const
@@ -913,6 +899,8 @@ private:
 
     bool fill_play_set (playset & p, bool clearit = true);
     bool add_to_play_set (playset & p, sequence * s);
+    bool add_to_play_set (playset & p, screenset & s);
+    bool add_all_sets_to_play_set (playset & p);
 
     setmaster::container::iterator add_set (screenset::number setno)
     {

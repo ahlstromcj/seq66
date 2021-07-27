@@ -271,6 +271,11 @@ public:
         return m_set_number != sm_number_none && ! dummy();
     }
 
+    int set_size () const
+    {
+        return m_set_size;
+    }
+
     seq::number offset () const
     {
         return m_set_offset;
@@ -438,6 +443,7 @@ private:
     void save_snapshot ();
     void restore_snapshot ();
     void set_last_ticks (midipulse tick);
+    bool copy_sequences (const screenset & source);
 
     int trigger_count () const;
     midipulse max_trigger () const;

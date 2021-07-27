@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-07-19
+ * \updates       2021-07-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -354,6 +354,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_current_seqno         (seq::unassigned()),
     m_moving_seq            (),
     m_seq_clipboard         (),
+    m_screenset_to_copy     (screenset::none()),
     m_clocks                (),                 /* vector wrapper class     */
     m_inputs                (),                 /* vector wrapper class     */
     m_key_controls          ("Key controls"),
@@ -1095,8 +1096,7 @@ performer::client_id_string () const
  *      If true (the default is false), the modify flag will not be set.
  *
  * \return
- *      Returns true if the sequence was
- *      successfully added.
+ *      Returns true if the sequence was successfully added.
  */
 
 bool
@@ -1109,7 +1109,7 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
         if (! fileload)
             modify();
 
-        if (rc().is_setsmode_normal())
+        if (rc().is_setsmode_clear())
         {
             /*
              * This code is wasteful.  It clears the playset and refills it
@@ -1118,8 +1118,13 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
 
             result = mapper().fill_play_set(m_play_set);
         }
-        else
+        else if (rc().is_setsmode_allsets())
         {
+            /*
+             * This code covers only allsets; the additive mode is in play when
+             * changing the current set.
+             */
+
             result = mapper().add_to_play_set(m_play_set, s);
         }
     }
@@ -1384,10 +1389,8 @@ performer::change_ppqn (int p)
 }
 
 /**
- *  Goes through all the sequences in the current set, updating the buss to
- *  the same (global) buss number.
- *
- *  Currently operates only on the current screenset.
+ *  Goes through all the sequences in the current play-set, updating the buss
+ *  to the same (global) buss number.
  *
  * \param buss
  *      Provides the number of the buss to be set.  Note that this buss number
@@ -1832,18 +1835,59 @@ performer::set_playing_screenset (screenset::number setno)
 
     if (ok)
     {
-        bool clearitfirst = rc().is_setsmode_to_clear();
+        bool clearit = rc().is_setsmode_clear();    /* remove all patterns? */
         announce_exit(false);                       /* blank the device     */
-        unset_queued_replace();
-        mapper().fill_play_set(m_play_set, clearitfirst);
+        unset_queued_replace();                     /* clear queueing       */
+        mapper().fill_play_set(m_play_set, clearit);
         if (rc().is_setsmode_autoarm())
-        {
             set_song_mute(mutegroups::action::off); /* unmute them all      */
-        }
+
         announce_playscreen();                      /* inform control-out   */
         notify_set_change(setno, change::signal);   /* change::no           */
     }
     return mapper().playscreen_number();
+}
+
+/**
+ *  Clears the whole play-set and refills it with the current playscreen.
+ *  If auto-arm is in force, will unmte them.  Does not signal a set-change,
+ *  because the playing set hasn't changed.
+ */
+
+void
+performer::reset_playset ()
+{
+    announce_exit(false);                           /* blank the device     */
+    unset_queued_replace();                         /* clear queueing       */
+    mapper().fill_play_set(m_play_set, true);       /* true: clear it first */
+    if (rc().is_setsmode_autoarm())
+        set_song_mute(mutegroups::action::off);     /* unmute them all      */
+
+    announce_playscreen();                          /* inform control-out   */
+}
+
+bool
+performer::copy_playscreen ()
+{
+    screenset::number pscreen = playscreen_number();
+    bool result = pscreen != screenset::none();
+    if (result)
+        m_screenset_to_copy = pscreen;
+
+    return result;
+}
+
+bool
+performer::paste_playscreen (screenset::number destination)
+{
+    bool result = m_screenset_to_copy != screenset::none();
+    if (result)
+        result = destination != screenset::none();
+
+    if (result)
+        result = mapper().copy_screenset(m_screenset_to_copy, destination);
+
+    return result;
 }
 
 /**

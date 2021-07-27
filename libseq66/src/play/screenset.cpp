@@ -419,6 +419,38 @@ screenset::restore_snapshot ()
         s.restore_snapshot();
 }
 
+/**
+ *  This function assume the source was already assigned to this one, so the only
+ *  thing needed is creating new sequences with proper sequence numbers for the
+ *  offset of this screenset.
+ */
+
+bool
+screenset::copy_sequences (const screenset & source)
+{
+    bool result = source.active_count() > 0;
+    if (result)
+    {
+        m_container.clear();            /* get rid of our own sequences     */
+        int srci = int(source.offset());
+        int destend = int(offset()) + set_size();
+        for (int desti = int(offset()); desti < destend; ++desti, ++srci)
+        {
+            seq::pointer s = source.loop(srci);
+            if (s)
+            {
+                sequence * d = new (std::nothrow) sequence();
+                if (not_nullptr(d))
+                {
+                    d->partial_assign(*s);
+                    add(d, desti);
+                }
+            }
+        }
+    }
+    return result;
+}
+
 void
 screenset::set_last_ticks (midipulse tick)
 {

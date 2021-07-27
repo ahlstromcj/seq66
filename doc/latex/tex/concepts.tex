@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-05-18
+% \update      2021-07-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -78,7 +78,7 @@
          toggle the armed status of a pattern.
    \end{itemize}
 
-\subsubsection{Concepts / Terms / bank, screenset}
+\subsubsection{Concepts / Terms / bank, screenset, play-screen}
 \label{subsubsec:concepts_terms_bank}
 
    \index{screen set}
@@ -172,6 +172,18 @@
    Each mute-group is associated with a keystroke or a MIDI control.
    When applied, the mute-group enables one or more patterns in the current
    screenset.
+
+\subsubsection{Concepts / Terms / play-set}
+\label{subsubsec:concepts_terms_playset}
+
+   \index{play-set}
+   A \textsl{play-set} is the current set of patterns that are available for
+   playing.  Normally, this is the patterns in the current bank (play-screen),
+   but \textsl{Seq66} can be configured
+   (see \sectionref{subsec:configuration_rc})
+   to include patterns from other sets.
+   For example, one can have each newly selected set get added to the play-set
+   without removing the previous set's patterns from the play-set.
 
 \subsubsection{Concepts / Terms / PPQN, pulses, ticks, clocks, divisions}
 \label{subsubsec:concepts_terms_pulses}

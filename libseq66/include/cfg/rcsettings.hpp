@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-07-25
+ * \updates       2021-07-27
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -826,11 +826,7 @@ public:
 
     bool is_setsmode_autoarm () const
     {
-        return
-        (
-            m_sets_mode == setsmode::autoarm ||
-            m_sets_mode == setsmode::additive
-        );
+        return m_sets_mode == setsmode::autoarm;
     }
 
     bool is_setsmode_additive () const
@@ -843,7 +839,7 @@ public:
         return m_sets_mode == setsmode::allsets;
     }
 
-    bool is_setsmode_to_clear () const
+    bool is_setsmode_clear () const
     {
         return m_sets_mode == setsmode::normal ||
             m_sets_mode == setsmode::autoarm;

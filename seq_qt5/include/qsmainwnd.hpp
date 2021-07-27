@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-09
+ * \updates       2021-07-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -407,7 +407,7 @@ private slots:
 
     void slot_summary_save ();
     void update_bank (int newBank);
-    void update_bank_text (const QString &);
+    void update_bank_text ();
     void start_playing ();
     void set_loop (bool loop);
     void pause_playing ();
@@ -454,9 +454,7 @@ private slots:
     void load_set_master ();
     void load_mute_master ();
     void toggle_time_format (bool on);
-#if defined USE_EXTERNAL_SETMASTER
-    void show_set_master ();
-#endif
+    void reset_sets ();
     void open_performance_edit ();
     void apply_song_transpose ();
     void reload_mute_groups ();
