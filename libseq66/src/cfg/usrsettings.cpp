@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-07-26
+ * \updates       2021-07-28
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -362,6 +362,7 @@ usrsettings::usrsettings () :
      */
 
     m_user_ui_key_height        (c_def_key_height),
+    m_user_ui_key_view          (showkeys::octave_letters),
     m_user_ui_seqedit_in_tab    (true),
     m_user_ui_style_sheet       (""),
     m_resume_note_ons           (false),
@@ -442,6 +443,7 @@ usrsettings::set_defaults ()
     m_user_use_logfile = false;
     m_user_option_logfile.clear();
     m_user_ui_key_height = c_def_key_height;
+    m_user_ui_key_view = showkeys::octave_letters;
     m_user_ui_seqedit_in_tab = true;
     m_user_ui_style_sheet = "";
     m_resume_note_ons = false;
@@ -1068,6 +1070,36 @@ int
 usrsettings::max_key_height () const
 {
     return c_max_key_height;
+}
+
+std::string
+usrsettings::key_view_string () const
+{
+    std::string result;
+    switch (m_user_ui_key_view)
+    {
+    case showkeys::octave_letters:    result = "octave-letters";      break;
+    case showkeys::even_letters:      result = "even-letters";        break;
+    case showkeys::all_letters:       result = "all-letters";         break;
+    case showkeys::even_numbers:      result = "even-numbers";        break;
+    case showkeys::all_numbers:       result = "all-numbers";         break;
+    }
+    return result;
+}
+
+void
+usrsettings::key_view (const std::string & view)
+{
+    if (view == "even-letters")
+        m_user_ui_key_view = showkeys::even_letters;
+    else if (view == "all-letters")
+        m_user_ui_key_view = showkeys::all_letters;
+    else if (view == "even-numbers")
+        m_user_ui_key_view = showkeys::even_numbers;
+    else if (view == "all-numbers")
+        m_user_ui_key_view = showkeys::all_numbers;
+    else
+        m_user_ui_key_view = showkeys::octave_letters;      /* the default */
 }
 
 /**

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-10
+ * \updates       2021-07-28
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -87,7 +87,7 @@ qseqkeys::qseqkeys
     ),
     m_seq                   (seqp),                 /* seq_pointer()        */
     m_font                  (),
-    m_show_key_names        (show::octave_letters), /* the legacy display   */
+    m_show_key_names        (usr().key_view()),     /* initial default      */
     m_key                   (0),
     m_key_y                 (keyheight),            /* note_height()        */
     m_key_area_y            (keyareaheight),        /* total_height()       */
@@ -164,7 +164,7 @@ qseqkeys::paintEvent (QPaintEvent *)
         painter.setFont(m_font);
         switch (m_show_key_names)
         {
-        case show::octave_letters:
+        case showkeys::octave_letters:
 
             if (key == m_key)
             {
@@ -176,7 +176,7 @@ qseqkeys::paintEvent (QPaintEvent *)
             }
             break;
 
-        case show::even_letters:
+        case showkeys::even_letters:
 
             if ((keyvalue % 2) == 0)
             {
@@ -185,13 +185,13 @@ qseqkeys::paintEvent (QPaintEvent *)
             }
             break;
 
-        case show::all_letters:
+        case showkeys::all_letters:
 
             note = musical_note_name(keyvalue);
             painter.drawText(2, numy, note.c_str());       // 11
             break;
 
-        case show::even_numbers:
+        case showkeys::even_numbers:
 
             if ((keyvalue % 2) == 0)
             {
@@ -200,7 +200,7 @@ qseqkeys::paintEvent (QPaintEvent *)
             }
             break;
 
-        case show::all_numbers:
+        case showkeys::all_numbers:
 
             snprintf(notebuf, sizeof notebuf, "%3d", keyvalue);
             painter.drawText(1, numy, notebuf);
@@ -224,24 +224,24 @@ qseqkeys::mousePressEvent (QMouseEvent * event)
     {
         switch (m_show_key_names)
         {
-        case show::octave_letters:
-            m_show_key_names = show::even_letters;
+        case showkeys::octave_letters:
+            m_show_key_names = showkeys::even_letters;
             break;
 
-        case show::even_letters:
-            m_show_key_names = show::all_letters;
+        case showkeys::even_letters:
+            m_show_key_names = showkeys::all_letters;
             break;
 
-        case show::all_letters:
-            m_show_key_names = show::even_numbers;
+        case showkeys::all_letters:
+            m_show_key_names = showkeys::even_numbers;
             break;
 
-        case show::even_numbers:
-            m_show_key_names = show::all_numbers;
+        case showkeys::even_numbers:
+            m_show_key_names = showkeys::all_numbers;
             break;
 
-        case show::all_numbers:
-            m_show_key_names = show::octave_letters;
+        case showkeys::all_numbers:
+            m_show_key_names = showkeys::octave_letters;
             break;
         }
     }

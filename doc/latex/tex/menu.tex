@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-07-13
+% \update      2021-07-28
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -250,6 +250,8 @@
       \item \textbf{Mute All Tracks}
       \item \textbf{Unute All Tracks}
       \item \textbf{Toggle All Tracks}
+      \item \textbf{Copy Current Set} (new with 0.96.1)
+      \item \textbf{Paste To Current Set} (new with 0.96.1)
    \end{enumber}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
@@ -321,6 +323,21 @@
    It is useful mostly \textbf{Live} mode, which overrides \textbf{Song}
    mode even if the Song Editor is focussed.
    The hard-wired keyboard short-cut for this action is \texttt{Ctrl-T}.
+
+   \itempar{Copy Current Set}{edit!copy set}
+   \index{copy set}
+   This item marks the current set for the copying of all its patterns to
+   another set.
+   After clicking this menu entry, one can move to another set to paste it,
+   using the following menu entry.
+
+   \itempar{Paste To Current Set}{edit!paste set}
+   \index{paste set}
+   If a set has been marked for the copying of all its patterns to
+   another set, then this menu item is enabled.
+   Move to the desired set (whether empty or note), and then
+   click this menu item.
+   All of the patterns in the original set are pasted into the current set.
 
 %  \textsl{Do not confuse it with the main \textbf{Mute} button, which toggles the
 %  status only of the tracks that are armed and remembers them.}

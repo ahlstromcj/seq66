@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-07-27
+ * \updates       2021-07-28
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2297,6 +2297,11 @@ public:
     seq::number playscreen_offset () const
     {
         return mapper().playscreen_offset();
+    }
+
+    int playscreen_active_count () const
+    {
+        return mapper().playscreen_active_count();
     }
 
     /**

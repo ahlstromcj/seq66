@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-10
+ * \updates       2021-07-28
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -38,6 +38,7 @@
 
 #include <QWidget>
 
+#include "cfg/usrsettings.hpp"          /* seq66::show enum class           */
 #include "play/seq.hpp"                 /* seq66::seq::pointer              */
 #include "gui_palette_qt5.hpp"          /* gui_pallete_qt5::Color etc.      */
 #include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
@@ -60,17 +61,6 @@ class qseqkeys final : public QWidget, public qseqbase
     Q_OBJECT
 
     friend class qseqroll;
-
-private:
-
-    enum class show
-    {
-        octave_letters,     /**< Show only the octave letters for note C.   */
-        even_letters,       /**< Show every other note name.                */
-        all_letters,        /**< Show every note name (can get cramped!)    */
-        even_numbers,       /**< Show every other MIDI note number.         */
-        all_numbers         /**< Show every other MIDI note number.         */
-    };
 
 public:
 
@@ -181,7 +171,7 @@ private:
      *  virtual keyboard. There are 4 other modes of note name/number display.
      */
 
-    show m_show_key_names;
+    showkeys m_show_key_names;
 
     /**
      *  This value indicates the key value as selected in the seqedit.  It

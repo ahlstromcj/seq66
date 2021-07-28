@@ -1885,8 +1885,14 @@ performer::paste_playscreen (screenset::number destination)
         result = destination != screenset::none();
 
     if (result)
-        result = mapper().copy_screenset(m_screenset_to_copy, destination);
+        result = destination != m_screenset_to_copy;
 
+    if (result)
+    {
+        result = mapper().copy_screenset(m_screenset_to_copy, destination);
+        if (result)
+            notify_set_change(destination, change::yes);
+    }
     return result;
 }
 

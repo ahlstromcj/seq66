@@ -1,6 +1,6 @@
 TO DO for Seq66 0.96.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-07-26
+2019-04-13 to 2021-07-28
 
 Hottest to Trivial:
 
@@ -19,8 +19,6 @@ UI:
 
     Can we reset the main port dropdown to 0 when loading a new song?
     Even if it does not change, the buss-override still applies; inconsistent.
-
-    Can we get pattern drag-n-drop back?
 
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
@@ -253,9 +251,9 @@ Tons of TO DOs in performer!
     that the perfroll clears, but not the perfnames!  We need to derive all
     qperf GUIs from qperfbase.  Actually, they both clear, only if clicked on.
 
-    When copying a large track and pasting into a smaller one, consider altering
-    the length of the smaller track to match.  We have implented a Merge
-    Pattern facility.
+    When copying a large track and pasting into a smaller one, consider
+    altering the length of the smaller track to match.  We have implented a
+    Merge Pattern facility.
 
 List of To-Do Items for the Refactoring.  An asterisk means it should also be
 fixed in Seq64.

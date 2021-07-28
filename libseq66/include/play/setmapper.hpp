@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-06-17
+ * \updates       2021-07-28
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -795,6 +795,11 @@ public:
         return play_screen()->offset();
     }
 
+    int playscreen_active_count () const
+    {
+        return play_screen()->active_count();
+    }
+
     bool set_playscreen (screenset::number setno);
     bool set_playing_screenset (screenset::number setno);
     bool copy_screenset (screenset::number srcset, screenset::number destset);
@@ -901,6 +906,7 @@ private:
     bool add_to_play_set (playset & p, sequence * s);
     bool add_to_play_set (playset & p, screenset & s);
     bool add_all_sets_to_play_set (playset & p);
+    void recount_sequences ();
 
     setmaster::container::iterator add_set (screenset::number setno)
     {

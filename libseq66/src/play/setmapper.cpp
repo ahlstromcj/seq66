@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-06-17
+ * \updates       2021-07-28
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -258,11 +258,32 @@ setmapper::copy_screenset (screenset::number srcset, screenset::number destset)
     screenset & dest = master().screen(destset);
     bool result = src.usable() && dest.usable();
     if (result)
-    {
-        dest = src;
-        result = dest.copy_sequences(src);
-    }
+        result = dest.copy_patterns(src);
+
+    if (result)
+        recount_sequences();
+
     return result;
+}
+
+/**
+ *  Re-evaluates the number of sequences and the maximum sequence number.
+ *  This is needed when we bypass the normal add-sequence function when
+ *  pasting a screenset.
+ */
+
+void
+setmapper::recount_sequences ()
+{
+    m_sequence_count = m_sequence_high = 0;
+    for (auto & sset : sets())                      /* screenset reference  */
+    {
+        int count = sset.second.active_count();     /* side-effect high seq */
+        int high = sset.second.sequence_high();
+        m_sequence_count += count;
+        if (high > m_sequence_high)
+            m_sequence_high = high;
+    }
 }
 
 /**
@@ -349,9 +370,10 @@ setmapper::add_sequence (sequence * s, seq::number seqno)
         }
         if (result)
         {
+            seq::number n = seqno + 1;
             ++m_sequence_count;
-            if (seqno >= m_sequence_high)
-                m_sequence_high = seqno + 1;    /* no way to back out, tho */
+            if (n > m_sequence_high)
+                m_sequence_high = n;            /* no way to back out, tho  */
         }
     }
     return result;

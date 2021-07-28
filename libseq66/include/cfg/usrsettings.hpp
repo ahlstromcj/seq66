@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-07-26
+ * \updates       2021-07-28
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -126,11 +126,25 @@ const int c_use_file_ppqn = 0;
 
 enum class recordstyle
 {
-    merge,          /**< Incoming events are merged into the loop.  */
-    overwrite,      /**< Incoming events overwrite the loop.        */
-    expand,         /**< Incoming events increase size of loop.     */
-    oneshot,        /**< Stop when length of loop is reached.       */
-    max             /**< Provides an illegal/length value.          */
+    merge,              /**< Incoming events are merged into the loop.  */
+    overwrite,          /**< Incoming events overwrite the loop.        */
+    expand,             /**< Incoming events increase size of loop.     */
+    oneshot,            /**< Stop when length of loop is reached.       */
+    max                 /**< Provides an illegal/length value.          */
+};
+
+/**
+ *  Provides an indication of how to show the piano-key labels in the pattern
+ *  editor.
+ */
+
+enum class showkeys
+{
+    octave_letters,     /**< Show only the octave letters for key note. */
+    even_letters,       /**< Show every other note name.                */
+    all_letters,        /**< Show every note name (can get cramped!)    */
+    even_numbers,       /**< Show every other MIDI note number.         */
+    all_numbers         /**< Show every other MIDI note number.         */
 };
 
 /**
@@ -691,6 +705,12 @@ private:
      */
 
     int m_user_ui_key_height;
+
+    /**
+     *  Indicates the default mode for showing the piano-key labels.
+     */
+
+    showkeys m_user_ui_key_view;
 
     /**
      *  Turns on the replacement of the Qt 5 qseqeditframe (now moved to
@@ -1307,6 +1327,13 @@ public:
         return h >= min_key_height() && h <= max_key_height();
     }
 
+    showkeys key_view () const
+    {
+        return m_user_ui_key_view;
+    }
+
+    std::string key_view_string () const;
+
     /*
      * Deprecated and hardwired to true.  We now use the new qseqeditframe64
      * all the time, and pare it down slightly when embedded in the Edit tab.
@@ -1472,6 +1499,8 @@ public:         // used in main application module and the usrfile class
         if (valid_key_height(h))
             m_user_ui_key_height = h;
     }
+
+    void key_view (const std::string & view);
 
     void style_sheet (const std::string & s)
     {

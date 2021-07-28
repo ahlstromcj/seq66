@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-06-17
+ * \updates       2021-07-28
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -230,6 +230,12 @@ private:
 
     bool m_is_playscreen;
 
+    /**
+     *  Indicates the highest sequence number, plus 1, for this screenset.
+     */
+
+    mutable seq::number m_sequence_high;
+
 public:
 
     screenset () = delete;
@@ -279,6 +285,11 @@ public:
     seq::number offset () const
     {
         return m_set_offset;
+    }
+
+    int sequence_high () const
+    {
+        return m_sequence_high;
     }
 
     int rows () const
@@ -443,7 +454,7 @@ private:
     void save_snapshot ();
     void restore_snapshot ();
     void set_last_ticks (midipulse tick);
-    bool copy_sequences (const screenset & source);
+    bool copy_patterns (const screenset & source);
 
     int trigger_count () const;
     midipulse max_trigger () const;

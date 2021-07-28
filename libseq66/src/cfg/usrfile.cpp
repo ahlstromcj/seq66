@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-27
+ * \updates       2021-07-28
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -499,10 +499,13 @@ usrfile::parse ()
             usr().key_height(h);
         }
 
+        std::string s = get_variable(file, tag, "key-view");
+        usr().key_view(s);
+
         bool flag = get_boolean(file, tag, "note-resume");
         usr().resume_note_ons(flag);
 
-        std::string s = get_variable(file, tag, "style-sheet");
+        s = get_variable(file, tag, "style-sheet");
         usr().style_sheet(strip_quotes(s));
 
         int v = get_integer(file, tag, "fingerprint-size");
@@ -911,20 +914,24 @@ usrfile::write ()
     file << "\n"
         "# [user-ui-tweaks]\n"
         "#\n"
-        "# The key-height value specifies the initial height (before vertical\n"
-        "# zoom) of the keys in the pattern editor.  Defaults to 10 pixels,\n"
-        "# ranges from 6 to 32.\n"
+        "# key-height specifies the initial height (before vertical zoom) of\n"
+        "# the pattern editor keys.  Defaults to 10 pixels, ranges from 6 to\n"
+        "# 32.\n"
         "#\n"
-        "# The note-resume option, if active, causes any notes in progress\n"
-        "# to be resumed when the pattern is toggled back on.\n"
+        "# key-view specifies how to show the labels for each key:\n"
+        "# 'octave-letters' (default), 'even_letters', 'all-letters',\n"
+        "# 'even-numbers', and 'all-numbers'.\n"
+        "#\n"
+        "# note-resume, if active, causes notes in progress to be resumed when\n"
+        "# the pattern is toggled back on.\n"
         "#\n"
         "# If specified, a style-sheet (e.g. 'qseq66.qss') is applied at\n"
         "# startup.  Normally just a base-name, it can contain a file-path\n"
         "# to provide a style usable in many other applications.\n"
         "#\n"
-        "# A fingerprint is a condensation of the note events in a long track,\n"
-        "# to reduce the amount of drawing in the grid buttons. Ranges from 32\n"
-        "# (default) to 128. Set to 0 to not use a fingerprint.\n"
+        "# A fingerprint is a condensation of note events in a long track, to\n"
+        "# reduce the time drawing the pattern in the buttons. Ranges from 32\n"
+        "# (default) to 128. 0 = don't use a fingerprint.\n"
         "#\n"
         "# progress-box width and height settings change the scaled size of the\n"
         "# progress box in the live-loop grid buttons.  Width ranges from 0.50\n"
@@ -938,6 +945,7 @@ usrfile::write ()
         ;
 
     write_integer(file, "key-height", usr().key_height());
+    file << "key-view = " << usr().key_view_string() << "\n";
     write_boolean(file, "note-resume", usr().resume_note_ons());
 
     std::string v = add_quotes(usr().style_sheet());

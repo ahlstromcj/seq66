@@ -963,9 +963,9 @@ midifile::add_old_trigger (sequence & seq)
  *  type is parsed first (because it is listed first) then it gets overwritten
  *  by the proprietary, above.
  *
- *  Note that NumTracks doesn't count the Seq24 "proprietary" footer section,
- *  even if it uses the new format, so that section will still be read
- *  properly after all normal tracks have been processed.
+ *  Note that track_count doesn't count the Seq24 "proprietary" footer
+ *  section, even if it uses the new format, so that section will still be
+ *  read properly after all normal tracks have been processed.
  *
  * PPQN:
  *
@@ -1044,7 +1044,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 {
     bool result = true;
     midibyte buss_override = usr().midi_buss_override();
-    midishort NumTracks = read_short();
+    midishort track_count = read_short();
     midishort fileppqn = read_short();
     file_ppqn(int(fileppqn));                       /* original file PPQN   */
     if (usr().use_file_ppqn())
@@ -1059,11 +1059,15 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
         if (scaled())
             ppqn_ratio(double(ppqn()) / double(file_ppqn()));
     }
-    if (! is_null_buss(buss_override) && rc().verbose())
+    if (rc().verbose())
     {
-        infoprintf("Buss override %d", int(buss_override));
+        if (! is_null_buss(buss_override))
+        {
+            infoprintf("Buss override %d", int(buss_override));
+        }
+        infoprintf("Track count %d", int(track_count));
     }
-    for (midishort track = 0; track < NumTracks; ++track)
+    for (midishort track = 0; track < track_count; ++track)
     {
         midilong ID = read_long();                  /* get track marker     */
         midilong TrackLength = read_long();         /* get track length     */
@@ -2592,7 +2596,12 @@ midifile::write (performer & p, bool doseqspec)
     if (result)
     {
         int numtracks = 0;
-        for (int i = 0; i < p.sequence_high(); ++i)
+        int sequencehigh = p.sequence_high();
+        if (rc().verbose())
+        {
+            infoprintf("Highest track is %d", sequencehigh - 1);
+        }
+        for (int i = 0; i < sequencehigh; ++i)
         {
             if (p.is_seq_active(i))
                 ++numtracks;             /* count number of active tracks   */

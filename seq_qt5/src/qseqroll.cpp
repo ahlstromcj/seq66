@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-10
+ * \updates       2021-07-28
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -565,7 +565,7 @@ qseqroll::draw_notes
         perf().get_sequence(m_background_sequence) : seq_pointer() ;
 
     int unitheight = unit_height();
-    int unitdecr = unit_height() - 1;
+    int unitdecr = unit_height() - 2;
     int noteheight = unitheight - 3;
     auto cev = s->cbegin();
     while (! s->cend(cev))
@@ -620,9 +620,8 @@ qseqroll::draw_notes
             {
                 painter.setBrush(note_brush());
             }
-
             painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
-            if (ni.finish() < ni.start())   // shadow notes before zero
+            if (ni.finish() < ni.start())           /* shadow these notes   */
             {
                 painter.drawRect
                 (
@@ -677,22 +676,38 @@ qseqroll::draw_notes
 /*
  * Why floating point; just divide by 2.  Also, the polygon seems to be offset
  * downard by half the note height.
+ *
+\verbatim
+             x0    x     x1
+        y          1
+                   .
+                  / \
+                 /   \
+                /     \
+        y0   0 .       . 2
+                \     /
+                 \   /
+                  \ /
+        y1         .
+                   3
+\endverbatim
  */
 
 void
-qseqroll::draw_drum_note (QPainter & painter)
+qseqroll::draw_drum_note (QPainter & painter, int x, int y)
 {
     int noteheight = unit_height();
     int h2 = noteheight / 2;
-    int x0 = m_note_x - h2;
-    int x1 = m_note_x + h2;
-    int y1 = m_note_y + h2 - 2;
+    int x0 = x - h2;
+    int x1 = x + h2;
+    int y0 = y + h2;
+    int y1 = y + noteheight;
     QPointF points[4] =
     {
-        QPointF(x0, y1),
-        QPointF(m_note_x, m_note_y - 2),
-        QPointF(x1, y1),
-        QPointF(m_note_x, m_note_y + noteheight - 2)
+        QPointF(x0, y0),    // 0
+        QPointF(x,  y),     // 1
+        QPointF(x1, y0),    // 2
+        QPointF(x,  y1)     // 3
     };
     painter.drawPolygon(points, 4);
 
@@ -723,14 +738,12 @@ qseqroll::draw_drum_notes
     painter.setBrush(brush);
     m_edit_mode = perf().edit_mode(seq_pointer()->seq_number());
 
-    midipulse seqlength = seq_pointer()->get_length();
     midipulse start_tick = pix_to_tix(r.x());
     midipulse end_tick = start_tick + pix_to_tix(r.width());
     seq::pointer s = background ?
         perf().get_sequence(m_background_sequence) : seq_pointer() ;
 
     int noteheight = unit_height();
-    int noteheight2 = unit_height() + 1;
     auto cev = s->cbegin();
     while (! s->cend(cev))
     {
@@ -748,37 +761,21 @@ qseqroll::draw_drum_notes
         if (start_in || linkedin)
         {
             m_note_x = xoffset(ni.start());
-            m_note_y = total_height() - (ni.note() * noteheight) - noteheight2;
-            if (dt == sequence::draw::linked)
-            {
-                if (ni.finish() >= ni.start())
-                {
-                    m_note_width = tix_to_pix(ni.finish() - ni.start());
-                    if (m_note_width < 1)
-                        m_note_width = 1;
-                }
-                else
-                    m_note_width = tix_to_pix(seqlength - ni.start());
-            }
-            else
-                m_note_width = tix_to_pix(16);
+            m_note_y = total_height() - ((ni.note() + 1) * noteheight);
 
             /*
-             * Draw note highlight in drum mode.  Orange note if selected, red
-             * if drum mode, otherwise plain white.
+             * Orange note if selected, red for drum mode.
              */
 
             if (ni.selected())
                 brush.setColor(sel_color());
-            else if (is_drum_mode())
-                brush.setColor(drum_paint());
             else
-                brush.setColor(Qt::white);
+                brush.setColor(drum_paint());
 
             pen.setColor(fore_color());
             painter.setPen(pen);
             painter.setBrush(brush);
-            draw_drum_note(painter);
+            draw_drum_note(painter, m_note_x, m_note_y);
         }
     }
 }
@@ -812,20 +809,12 @@ bool
 qseqroll::add_note (midipulse tick, int note)
 {
     bool result;
+    int n = note_off_length();
     if (m_chord > 0)
-    {
-        result = seq_pointer()->push_add_chord
-        (
-            m_chord, tick, note_off_length(), note
-        );
-    }
+        result = seq_pointer()->push_add_chord(m_chord, tick, n, note);
     else
-    {
-        result = seq_pointer()->push_add_note
-        (
-            tick, note_off_length(), note, true         /* paint */
-        );
-    }
+        result = seq_pointer()->push_add_note(tick, n, note, true /* paint */);
+
     if (result)
         set_dirty();
 

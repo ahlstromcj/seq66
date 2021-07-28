@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-10
+ * \updates       2021-07-28
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -171,7 +171,7 @@ private:
     void draw_grid (QPainter & painter, const QRect & r);
     void draw_notes (QPainter & painter, const QRect & r, bool background);
     void draw_drum_notes (QPainter & painter, const QRect & r, bool background);
-    void draw_drum_note (QPainter & painter);
+    void draw_drum_note (QPainter & painter, int x, int y);
     void call_draw_notes (QPainter & painter, const QRect & view);
 
 private:

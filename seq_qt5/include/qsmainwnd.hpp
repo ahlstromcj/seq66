@@ -462,6 +462,8 @@ private slots:
     void set_song_mute_on ();
     void set_song_mute_off ();
     void set_song_mute_toggle ();
+    void set_playscreen_copy ();
+    void set_playscreen_paste ();
     void learn_toggle ();
     void tap ();
     void queue_it ();

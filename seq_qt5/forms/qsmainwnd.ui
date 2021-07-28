@@ -1389,6 +1389,8 @@ matter what sets-mode is in force. </string>
     <addaction name="actionMuteAllTracks"/>
     <addaction name="actionUnmuteAllTracks"/>
     <addaction name="actionToggleAllTracks"/>
+    <addaction name="actionCopyCurrentSet"/>
+    <addaction name="actionPasteToCurrentSet"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -1604,6 +1606,16 @@ matter what sets-mode is in force. </string>
     <string>Writes a text summary of the current song to a file
 in the same directory as the original, with the extension
 &quot;.text&quot;.</string>
+   </property>
+  </action>
+  <action name="actionCopyCurrentSet">
+   <property name="text">
+    <string>Copy Current Set</string>
+   </property>
+  </action>
+  <action name="actionPasteToCurrentSet">
+   <property name="text">
+    <string>Paste To Current Set</string>
    </property>
   </action>
  </widget>

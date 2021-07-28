@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-06-17
+ * \updates       2021-07-28
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -81,7 +81,8 @@ screenset::screenset (screenset::number setnum, int rows, int columns) :
     m_set_offset        (m_set_number * m_set_size),
     m_set_maximum       (m_set_offset + m_set_size),
     m_set_name          (usable() ? "New" : ""),
-    m_is_playscreen     (false)
+    m_is_playscreen     (false),
+    m_sequence_high     (0)
 {
     clear();
 }
@@ -213,18 +214,27 @@ screenset::active () const
 }
 
 /**
- *  Counts the number of active patterns in this screenset.
+ *  Counts the number of active patterns in this screenset.  Also updates
+ *  m_sequence_high, in the same way that setmapper::add_sequence() does.
  */
 
 int
 screenset::active_count () const
 {
     int result = 0;
+    seq::number seqno = m_set_offset;
+    m_sequence_high = 0;                        /* a mutable member         */
     for (auto & s : m_container)
     {
         if (s.active())
+        {
             ++result;
+            if (seqno > m_sequence_high)
+                m_sequence_high = seqno;
+        }
+        ++seqno;
     }
+    ++m_sequence_high;                          /* increment for for-loops  */
     return result;
 }
 
@@ -420,18 +430,22 @@ screenset::restore_snapshot ()
 }
 
 /**
- *  This function assume the source was already assigned to this one, so the only
- *  thing needed is creating new sequences with proper sequence numbers for the
- *  offset of this screenset.
+ *  This function assumes that this set is already created with the proper set
+ *  number and pattern offsets.  This is true when we first move to the next
+ *  set, which creates a screenset if it doesn't already exist.
+ *  For copy/paste of screensets, we cannot use operator =(), because that
+ *  makes the two sets have the same set number, etc.
  */
 
 bool
-screenset::copy_sequences (const screenset & source)
+screenset::copy_patterns (const screenset & source)
 {
     bool result = source.active_count() > 0;
     if (result)
     {
-        m_container.clear();            /* get rid of our own sequences     */
+        m_set_name = source.m_set_name;
+        m_set_name += " copy";
+        clear();                /* clear our sequences, init the container  */
         int srci = int(source.offset());
         int destend = int(offset()) + set_size();
         for (int desti = int(offset()); desti < destend; ++desti, ++srci)

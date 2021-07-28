@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-27
+ * \updates       2021-07-28
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -496,6 +496,18 @@ qsmainwnd::qsmainwnd
         ui->actionToggleAllTracks, SIGNAL(triggered(bool)),
         this, SLOT(set_song_mute_toggle())
     );
+    connect
+    (
+        ui->actionCopyCurrentSet, SIGNAL(triggered(bool)),
+        this, SLOT(set_playscreen_copy())
+    );
+    ui->actionCopyCurrentSet->setEnabled(true);
+    connect
+    (
+        ui->actionPasteToCurrentSet, SIGNAL(triggered(bool)),
+        this, SLOT(set_playscreen_paste())
+    );
+    ui->actionPasteToCurrentSet->setEnabled(false);
 
     /*
      * Stop button.
@@ -3191,6 +3203,27 @@ qsmainwnd::set_song_mute_toggle ()
         m_live_frame->refresh();
 }
 
+void
+qsmainwnd::set_playscreen_copy ()
+{
+    if (perf().copy_playscreen())
+        ui->actionPasteToCurrentSet->setEnabled(true);
+}
+
+void
+qsmainwnd::set_playscreen_paste ()
+{
+    (void) perf().paste_playscreen(perf().playscreen_number());
+
+    /*
+     * We want to allow multiple pastes of the same screenset.
+     *
+    if (perf().paste_playscreen(perf().playscreen_number()))
+        ui->actionPasteToCurrentSet->setEnabled(false);
+     *
+     */
+}
+
 /**
  *  Toggle the group-learn status.  Simply forwards the call to
  *  performer::learn_toggle().
@@ -3349,6 +3382,9 @@ qsmainwnd::update_set_change (int setno)
         }
         else
             m_live_frame->update_bank();            /* updates current bank */
+
+        bool cancopy = perf().playscreen_active_count() > 0;
+        ui->actionCopyCurrentSet->setEnabled(cancopy);
 
         if (not_nullptr(m_song_frame64))
             m_song_frame64->update_sizes();
