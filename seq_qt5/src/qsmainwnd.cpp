@@ -1417,7 +1417,7 @@ qsmainwnd::load_session_frame ()
 void
 qsmainwnd::reset_sets ()
 {
-    // TODO
+    perf().reset_playset();
 }
 
 void

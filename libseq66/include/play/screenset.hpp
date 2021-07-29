@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-07-28
+ * \updates       2021-07-29
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -611,14 +611,9 @@ public:
         m_sequence_array.clear();
     }
 
-    const sets & set_container () const
+    int set_count () const
     {
-        return m_screen_sets;
-    }
-
-    sets & set_container ()
-    {
-        return m_screen_sets;
+        return int(m_screen_sets.size());
     }
 
     const array & seq_container () const
@@ -629,6 +624,11 @@ public:
     array & seq_container ()
     {
         return m_sequence_array;
+    }
+
+    int seq_count () const
+    {
+        return int(m_sequence_array.size());
     }
 
     bool set_found (screenset::number setno) const;

@@ -277,7 +277,7 @@ mutegroupsfile::write_stream (std::ofstream & file)
         "config-type = \"mutes\"\n"
         "version = " << version() << "\n\n"
         "# The [comments] section documents this file.  Lines starting with\n"
-        "# '#', '[', or that have no characters end the comment.\n"
+        "# '#', '[', or that have no characters end the comment.\n\n"
         "[comments]\n\n" << rc_ref().comments_block().text() << "\n"
         <<
         "# The 'mutes' file holds the global mute-groups configuration. It is\n"

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-07-27
+ * \updates       2021-07-29
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1404,6 +1404,16 @@ performer::ui_change_set_bus (int buss)
     bool result = is_good_buss(b);
     if (result)
     {
+#if defined SEQ66_PLATFORM_DEBUG
+        if (rc().investigate())
+        {
+            printf
+            (
+                "Playset: %d sets, %d patterns\n",
+                m_play_set.set_count(), m_play_set.seq_count()
+            );
+        }
+#endif
         for (auto seqi : m_play_set.seq_container())
             seqi->set_midi_bus(b, true);    /* calls notification function  */
 

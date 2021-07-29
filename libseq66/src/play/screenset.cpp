@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-07-28
+ * \updates       2021-07-29
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -745,6 +745,10 @@ screenset::arm (seq::number seqno)
     }
 }
 
+/**
+ *  EXPERIMENTAL: Do not set song mute here.
+ */
+
 void
 screenset::mute (seq::number seqno)
 {
@@ -752,7 +756,9 @@ screenset::mute (seq::number seqno)
     if (track)
     {
         track->set_playing(false);
+#if defined USE_SET_SONG_MUTE
         track->set_song_mute(true);
+#endif
     }
 }
 

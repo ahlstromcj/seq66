@@ -175,7 +175,7 @@ qperfnames::paintEvent (QPaintEvent *)
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.drawRect(rect_x, rect_y, rect_w, m_nametext_y);
-                    pen.setColor(back_color());             // Qt::white
+                    pen.setColor(fore_color());
                 }
                 else
                 {
