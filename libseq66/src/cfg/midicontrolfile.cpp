@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-07-12
+ * \updates       2021-07-31
  * \license       GNU GPLv2 or above
  *
  */
@@ -819,22 +819,15 @@ midicontrolfile::write_stream (std::ofstream & file)
     "\n"
     "# Version 1 adds [mute-control-out] and [automation-control-out]. Versions\n"
     "# 2 and 3 simplify the data items; 4 and 5 add more settings.\n"
-    "\n"
-    "[Seq66]\n\n"
-    "config-type = \"ctrl\"\n"
-    "version = " << version() << "\n"
-        ;
+    ;
+    write_seq66_header(file, "ctrl", version());
 
     /*
      * [comments]
      */
 
     std::string s = rc_ref().midi_control_in().comments_block().text();
-    file << "\n"
-        "# [comments] holds the user documentation for this file. The first\n"
-        "# completely empty, comment, or tag line ends the comment.\n"
-        << "\n[comments]\n\n" << s
-        ;
+    write_comment(file, s);
 
     bool result = write_midi_control(file);
     if (result)

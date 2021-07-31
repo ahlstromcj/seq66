@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-14
+ * \updates       2021-07-31
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -324,6 +324,12 @@ protected:
         const std::string & line,
         const std::string & variablename
     );
+    void write_seq66_header
+    (
+        std::ofstream & file,
+        const std::string & configtype,
+        const std::string & version
+    );
     bool get_boolean
     (
         std::ifstream & file,
@@ -367,7 +373,7 @@ protected:
     (
         std::ifstream & file,
         const std::string & tag,
-        std::string & filename,     /* side-effect */
+        std::string & filename,         /* a side-effect for returning name */
         int position = 0
     );
     void write_file_status
@@ -376,6 +382,11 @@ protected:
         const std::string & tag,
         const std::string & filename,
         bool status
+    );
+    void write_comment                  /* the opposite of parse_comments() */
+    (
+        std::ofstream & file,
+        const std::string & commenttext
     );
 
 };          // class configfile

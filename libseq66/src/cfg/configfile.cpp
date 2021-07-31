@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-14
+ * \updates       2021-07-31
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -461,6 +461,20 @@ configfile::get_boolean
 }
 
 void
+configfile::write_seq66_header
+(
+    std::ofstream & file,
+    const std::string & configtype,
+    const std::string & ver
+)
+{
+    file <<
+        "\n[Seq66]\n\nconfig-type = \"" << configtype << "\"\n"
+        "version = " << ver << "\n"
+        ;
+}
+
+void
 configfile::write_boolean
 (
     std::ofstream & file,
@@ -556,6 +570,20 @@ configfile::write_file_status
         << "\n" << tag << "\n\n"
         << "active = " << bool_to_string(status) << "\n"
         << "name = " << quoted << "\n"
+        ;
+}
+
+void
+configfile::write_comment
+(
+    std::ofstream & file,
+    const std::string & commenttext
+)
+{
+    file << "\n"
+        "# [comments] holds user documentation for this file. The first empty,\n"
+        "# hash-commented, or tag line ends the comment.\n"
+        "\n[comments]\n\n" << commenttext
         ;
 }
 

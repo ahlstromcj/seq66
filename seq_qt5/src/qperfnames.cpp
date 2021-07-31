@@ -128,7 +128,7 @@ qperfnames::paintEvent (QPaintEvent *)
         if (seq_id < int(perf().sequence_max()))        // sequences_in_sets()?
         {
             int rect_x = 6 * 2 + 2;
-            int rect_y = m_nametext_y * seq_id;
+            int rect_y = m_nametext_y * seq_id;         // + 2 is NEW
             int rect_w = c_names_x - 15;
             int text_y = rect_y + m_set_text_y;
             if (seq_id % perf().seqs_in_set() == 0)     // if 1st seq in bank

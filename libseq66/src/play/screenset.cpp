@@ -741,7 +741,9 @@ screenset::arm (seq::number seqno)
     if (track)
     {
         track->set_playing(true);
+#if defined USE_SET_SONG_MUTE
         track->set_song_mute(false);
+#endif
     }
 }
 
@@ -960,7 +962,9 @@ screenset::arm ()
         {
             seq::pointer sp = s.loop();
             sp->set_playing(true);          /* NEED ONLY ONE FUNCTION???  */
+#if defined USE_SET_SONG_MUTE
             sp->set_song_mute(false);
+#endif
         }
     }
 }
@@ -974,7 +978,9 @@ screenset::mute ()
         {
             seq::pointer sp = s.loop();
             sp->set_playing(false);
+#if defined USE_SET_SONG_MUTE
             sp->set_song_mute(true);
+#endif
         }
     }
 }
@@ -991,7 +997,9 @@ screenset::toggle (seq::number seqno)
                 seq::pointer sp = s.loop();
                 bool playing = sp->playing();
                 sp->set_playing(! playing);     /* or toggle_playing()      */
+#if defined USE_SET_SONG_MUTE
                 sp->set_song_mute(playing);
+#endif
             }
         }
     }
@@ -1002,7 +1010,9 @@ screenset::toggle (seq::number seqno)
         {
             bool playing = track->playing();
             track->set_playing(! playing);
+#if defined USE_SET_SONG_MUTE
             track->set_song_mute(playing);
+#endif
         }
     }
 }

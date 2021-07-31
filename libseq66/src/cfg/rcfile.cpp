@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-25
+ * \updates       2021-07-31
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -1002,19 +1002,17 @@ rcfile::write ()
         "# 'version' is set by Seq66; it is used to detect older configuration\n"
         "# files, which are upgraded to the new version when saved.\n"
         "#\n"
-        "# 'sets-mode' affects if sets are muted when moving to the next set or\n"
-        "# play-screen ('normal'). 'autoarm' unmutes the next set. 'additive'\n"
-        "# keeps the previous set armed when moving to the next set.  'allsets'\n"
-        "# arms all sets at once.\n"
+        "# 'sets-mode' affects set muting when moving to the next set. 'normal'\n"
+        "# leaves the next set muted. 'auto-arm' unmutes it. 'additive' keeps\n"
+        "# the previous set armed when moving to the next set. 'all-sets' arms\n"
+        "# all sets at once.\n"
         "#\n"
-        "# 'port-naming' values are 'short' or 'long'.  The short style just\n"
-        "# shows the port number and short port name; the long style shows\n"
-        "# all the numbers and long port name.\n"
-        "\n"
-        "[Seq66]\n"
-        "\n"
-        "config-type = \"rc\"\n"
-        "version = " << version() << "\n"
+        "# 'port-naming' values are 'short' or 'long'.  'short' shows the port\n"
+        "# number and short name; 'long' shows all number and the long name.\n"
+        ;
+
+    write_seq66_header(file, "rc", version());
+    file <<
         "verbose = " << bool_to_string(rc().verbose()) << "\n"
         "sets-mode = " << rc().sets_mode_string() << "\n"
         "port-naming = " << rc().port_naming_string() << "\n"
@@ -1024,11 +1022,7 @@ rcfile::write ()
      * [comments]
      */
 
-    file << "\n"
-        "# The [comments] section holds user documentation for this file.\n"
-        "# The first completely empty, comment, or tag line ends the comment.\n"
-        "\n[comments]\n\n" << rc_ref().comments_block().text()
-        ;
+    write_comment(file, rc_ref().comments_block().text());
 
     /*
      * Note that, if there are no controls (e.g. there were none to read, as

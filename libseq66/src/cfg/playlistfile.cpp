@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2021-06-13
+ * \updates       2021-07-31
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -480,24 +480,15 @@ playlistfile::write ()
         "# They can be simple 'base.midi' file-names; the playlist directory\n"
         "# is prepended to access the song. If the file-name has a path, that\n"
         "# will be used.\n"
-        "\n"
-        "[Seq66]\n"
-        "\n"
-        "config-type = \"playlist\"\n"
-        "version = " << version() << "\n"
         ;
+    write_seq66_header(file, "playlist", version());
 
     /*
      * [comments]
      */
 
     std::string c = play_list().comments_block().text();
-    file << "\n"
-        "# The [comments] section holds user documentation for this file.\n"
-        "# The first completely empty, comment, or tag line ends the comment.\n"
-        "\n[comments]\n\n"
-        << play_list().comments_block().text()
-        ;
+    write_comment(file, c);
 
     /*
      * [playlist-options]

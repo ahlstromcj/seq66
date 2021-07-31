@@ -269,17 +269,12 @@ mutegroupsfile::write_stream (std::ofstream & file)
     file <<
            "# This file replaces the [mute-group] section of the 'rc' file,\n"
            "# making it easier to manage multiple sets of mute groups.\n"
-           "\n"
         ;
+    write_seq66_header(file, "mutes", version());
 
+    std::string c = rc_ref().mute_groups().comments_block().text();
+    write_comment(file, c);
     file <<
-        "[Seq66]\n\n"
-        "config-type = \"mutes\"\n"
-        "version = " << version() << "\n\n"
-        "# The [comments] section documents this file.  Lines starting with\n"
-        "# '#', '[', or that have no characters end the comment.\n\n"
-        "[comments]\n\n" << rc_ref().comments_block().text() << "\n"
-        <<
         "# The 'mutes' file holds the global mute-groups configuration. It is\n"
         "# is stored separately for flexibility, in the HOME configuration\n"
         "# directory.  To use this file, specify it in the [mute-group-file]\n"

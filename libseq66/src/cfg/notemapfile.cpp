@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2021-06-04
+ * \updates       2021-07-31
  * \license       GNU GPLv2 or above
  *
  */
@@ -217,21 +217,15 @@ notemapfile::write_stream (std::ofstream & file)
            "# This file can be used to convert the percussion of non-GM devices\n"
            "# to GM, as best as permitted by GM percussion. Although it is a\n"
            "# 'drums' file, it can be used for other note-mappings as well.\n"
-           "\n"
         ;
 
     /*
      * [comments]
      */
 
+    write_seq66_header(file, "drums", version());
+    write_comment(file, mapper().comments_block().text());
     file <<
-        "[Seq66]\n\n"
-        "config-type = \"drums\"\n"
-        "version = " << version() << "\n\n"
-        "# The [comments] section can document this file.  Lines starting\n"
-        "# with '#', '[', that are blank end the comment.\n"
-        "[comments]\n\n"
-        << mapper().comments_block().text() << "\n"
         "# Drum/note mapping configuration for Seq66, stored in the HOME\n"
         "# configuration directory.  To use this file, add this file-name to\n"
         "# '[note-mapper]' section of the 'rc' file. There's no user-interface\n"

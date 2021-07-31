@@ -1850,8 +1850,15 @@ performer::set_playing_screenset (screenset::number setno)
         unset_queued_replace();                     /* clear queueing       */
         mapper().fill_play_set(m_play_set, clearit);
         if (rc().is_setsmode_autoarm())
+        {
             set_song_mute(mutegroups::action::off); /* unmute them all      */
-
+        }
+        else if (rc().is_setsmode_allsets())
+        {
+            /*
+             * Nothing to do?
+             */
+        }
         announce_playscreen();                      /* inform control-out   */
         notify_set_change(setno, change::signal);   /* change::no           */
     }

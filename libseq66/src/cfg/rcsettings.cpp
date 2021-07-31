@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-07-25
+ * \updates       2021-07-31
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -1046,11 +1046,11 @@ rcsettings::sets_mode (const std::string & v)
 {
     if (v == "normal")
         m_sets_mode = setsmode::normal;
-    else if (v == "autoarm")
+    else if (v == "auto-arm" || (v == "autoarm"))
         m_sets_mode = setsmode::autoarm;
     else if (v == "additive")
         m_sets_mode = setsmode::additive;
-    else if (v == "allsets")
+    else if ((v == "all-sets") || (v == "allsets"))
         m_sets_mode = setsmode::allsets;
     else
         m_sets_mode = setsmode::normal;
@@ -1069,9 +1069,9 @@ rcsettings::sets_mode_string (setsmode v) const
     switch (v)
     {
         case setsmode::normal:   result = "normal";     break;
-        case setsmode::autoarm:  result = "autoarm";    break;
+        case setsmode::autoarm:  result = "auto-arm";    break;
         case setsmode::additive: result = "additive";   break;
-        case setsmode::allsets:  result = "allsets";    break;
+        case setsmode::allsets:  result = "all-sets";    break;
         default:                 result = "unknown";    break;
     }
     return result;

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-28
+ * \updates       2021-07-31
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -592,20 +592,8 @@ usrfile::write ()
         "# per channel. It has additional options not present in Seq24.\n"
         ;
 
-    file <<
-        "\n[Seq66]\n\n"
-        "config-type = \"usr\"\n"
-        "version = " << version() << "\n"
-        ;
-
-    file <<
-        "\n"
-        "# The [comments] section lets one document this file.  Lines starting\n"
-        "# with '#' and '[', or that are empty end the comment.\n"
-        "\n[comments]\n\n"
-        << usr().comments_block().text() << "\n"
-        ;
-
+    write_seq66_header(file, "usr", version());
+    write_comment(file, usr().comments_block().text());
     file <<
         "# [user-midi-bus-definitions]\n"
         "#\n"
@@ -836,14 +824,14 @@ usrfile::write ()
     file << "\n"
         "# [user-midi-settings]\n"
         "#\n"
-        "# Specifies MIDI-specific variables. -1 means the value won't be used.\n"
+        "# Specifies MIDI-specific variables. -1 means the value isn't used.\n"
         "#\n"
         "#  Item                 Default   Range\n"
         "# 'beats-per-bar':      4         1 to 32.\n"
         "# 'beats-per-minute':   120.0     2.0 to 600.0.\n"
         "# 'beat-width':         4         1 to 32.\n"
-        "# 'buss-override':      -1        -1 to 48.\n"
-        "# 'velocity-override':  -1        -1 to 127.\n"
+        "# 'buss-override':     -1        -1 to 48.\n"
+        "# 'velocity-override': -1        -1 to 127.\n"
         "# 'bpm-precision':      0         0 to 2.\n"
         "# 'bpm-step-increment': 1.0       0.01 to 25.0.\n"
         "# 'bpm-page-increment': 1.0       0.01 to 25.0.\n"
