@@ -567,17 +567,7 @@ public:
 
     static bool is_channel_msg (midibyte m)
     {
-#if defined USE_BRUTE_FORCE
-        return
-        (
-            m == EVENT_NOTE_ON        || m == EVENT_NOTE_OFF ||
-            m == EVENT_AFTERTOUCH     || m == EVENT_CONTROL_CHANGE ||
-            m == EVENT_PROGRAM_CHANGE || m == EVENT_CHANNEL_PRESSURE ||
-            m == EVENT_PITCH_WHEEL
-        );
-#else
         return m >= EVENT_NOTE_OFF && m < EVENT_MIDI_REALTIME;
-#endif
     }
 
     /**
@@ -636,20 +626,11 @@ public:
 
     static bool is_two_byte_msg (midibyte m)
     {
-#if defined USE_BRUTE_FORCE
-        return
-        (
-            m == EVENT_NOTE_ON        || m == EVENT_NOTE_OFF   ||
-            m == EVENT_CONTROL_CHANGE || m == EVENT_AFTERTOUCH ||
-            m == EVENT_PITCH_WHEEL
-        );
-#else
         return
         (
             (m >= EVENT_NOTE_OFF && m < EVENT_PROGRAM_CHANGE) ||
             m == EVENT_PITCH_WHEEL
         );
-#endif
     }
 
     /**

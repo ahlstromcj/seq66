@@ -277,17 +277,16 @@ event::set_data
         Save N+1:   0070: 6E 00 C4 26 00 C4 19 00  C4 57 00 C4 0C 00 C4 48
 \endverbatim
  *
- *      The 0070 is the offset within the versions of the
- *      b4uacuse-seq64.midi file.
+ *      The 0070 is the offset within the versions of the b4uacuse-seq64.midi
+ *      file.
  *
  *      Because of this issue, and the very slow speed of loading a MIDI file
- *      when built for debugging, we explored using an std::multimap instead of
- *      an std::list.  [The SEQ66_USE_EVENT_MAP macro is now OBSOLETE].
- *      This worked better than a list, for loading MIDI events, but may cause
- *      the upper limit of the number of playing sequences to drop a little, due
- *      to the overhead of incrementing multimap iterators versus list
- *      iterators).  Now we use only the std::vector implementation, slightly
- *      faster than using std::list.
+ *      when built for debugging, we explored using an std::multimap instead
+ *      of an std::list.  This worked better than a list, for loading MIDI
+ *      events, but may cause the upper limit of the number of playing
+ *      sequences to drop a little, due to the overhead of incrementing
+ *      multimap iterators versus list iterators).  Now we use only the
+ *      std::vector implementation, slightly faster than using std::list.
  *
  * \param rhs
  *      The object to be compared against.

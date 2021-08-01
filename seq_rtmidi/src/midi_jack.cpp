@@ -232,29 +232,6 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
 {
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
 
-#if defined SEQ66_USE_DEBUG_OUTPUT                  /* non-asynchronous!!!  */
-    rtmidi_in_data * rtindata = jackdata->m_jack_rtmidiin;
-    static bool s_null_detected = false;
-    if (is_nullptr(jackdata->m_jack_port))          /* is port created?     */
-    {
-        if (! s_null_detected)
-        {
-            s_null_detected = true;
-            printf("rtmidi input: null jack port");
-        }
-        return 0;
-    }
-    if (is_nullptr(rtindata))
-    {
-        if (! s_null_detected)
-        {
-            s_null_detected = true;
-            printf("rtmidi input null rtmidi_in_data");
-        }
-        return 0;
-    }
-#endif  // SEQ66_USE_DEBUG_OUTPUT
-
     /*
      * Since this is an input port, buff is the area that contains data from
      * the "remote" (i.e. outside our application) port.  We do not check
@@ -394,29 +371,6 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
 {
     static size_t s_offset = 0;
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
-
-#if defined SEQ66_USE_DEBUG_OUTPUT                  /* non-asynchronous!!!  */
-    static bool s_null_detected = false;
-    if (is_nullptr(jackdata->m_jack_port))          /* is port created?     */
-    {
-        if (! s_null_detected)
-        {
-            s_null_detected = true;
-            printf("rtmidi output null jack port");
-        }
-        return 0;
-    }
-    if (is_nullptr(jackdata->m_jack_buffsize))      /* port set up?         */
-    {
-        if (! s_null_detected)
-        {
-            s_null_detected = true;
-            printf("rtmidi output null jack buffer");
-        }
-        return 0;
-    }
-#endif  // SEQ66_USE_DEBUG_OUTPUT
-
     void * buf = jack_port_get_buffer(jackdata->m_jack_port, nframes);
     jack_midi_clear_buffer(buf);                    /* no nullptr test      */
 

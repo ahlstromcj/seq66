@@ -296,7 +296,7 @@ midi_vector_base::fill_meta_track_end (midipulse deltatime)
     put_meta(EVENT_META_END_OF_TRACK, 0, deltatime);    /* no data to add   */
 }
 
-#if defined USE_FILL_TIME_SIG_AND_TEMPO
+#if defined SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
 
 /**
  *  Combines the two functions fill_tempo() and fill_time_signature().  This
@@ -391,7 +391,7 @@ midi_vector_base::fill_tempo (const performer & p)
     put(t[2]);
 }
 
-#endif  // USE_FILL_TIME_SIG_AND_TEMPO
+#endif  // SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
 
 /**
  *  Fills in the Seq66-specific information for the current sequence:
@@ -702,7 +702,7 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
 
     fill_seq_name(m_sequence.name());
 
-#if defined USE_FILL_TIME_SIG_AND_TEMPO
+#if defined SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
 
     /**
      * To allow other sequencers to read Seq24/Seq66 files, we should

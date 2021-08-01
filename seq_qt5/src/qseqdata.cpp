@@ -133,9 +133,6 @@ qseqdata::on_ui_change (seq::number seqno)
 QSize
 qseqdata::sizeHint () const
 {
-#if defined USE_OLD_CODE
-    return QSize(xoffset(seq_pointer()->get_length()) + 100, m_dataarea_y);
-#else
     int w = frame64()->width();
     int len = tix_to_pix(seq_pointer()->get_length());
     if (len < w)
@@ -143,7 +140,6 @@ qseqdata::sizeHint () const
 
     len += c_keyboard_padding_x;
     return QSize(len, m_dataarea_y);
-#endif
 }
 
 /**

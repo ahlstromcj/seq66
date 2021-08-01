@@ -184,12 +184,8 @@ qperfnames::paintEvent (QPaintEvent *)
                     int alpha = seq_id == m_preview_row ?
                         s_alpha_bright : s_alpha_normal ;
 
-#if defined USE_PREVIEW_COLOR_VS_ALPHA_HIGHTLIGHT
-                    if (seq_id == m_preview_row)
-                        backcolor = preview_color();
-#endif
                     backcolor.setAlpha(alpha);
-                    brush.setColor(backcolor);          // Qt::white
+                    brush.setColor(backcolor);              // Qt::white
 
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);

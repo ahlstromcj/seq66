@@ -300,38 +300,6 @@ s_lookup_zoom (int zoom)
 }
 
 /**
- *  Looks up a chord name and returns its index.  Note that the chord names
- *  are defined in the scales.hpp file.
- *
- *  CURRENTLY NOT NEEDED.  Macroed out to avoid a warning.
- */
-
-#if defined USE_S_LOOKUP_CHORD
-
-static int
-s_lookup_chord (const std::string & chordname)
-{
-    int result = 0;
-    for (int chord = 0; /* condition in body */ ; ++chord)
-    {
-        const char * cn = chord_name_ptr(chord);
-        if (strlen(cn) > 0)
-        {
-            if (std::string(cn) == chordname)
-            {
-                result = chord;
-                break;
-            }
-        }
-        else
-            break;
-    }
-    return result;
-}
-
-#endif  // USE_S_LOOKUP_CHORD
-
-/**
  *  Hold the entries in the "Vel" drop-down.  The first value matches
  *  usr().preserve_velocity().  It corresponds to the "Free" recording-volume
  *  entry.

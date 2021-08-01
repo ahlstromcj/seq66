@@ -866,7 +866,7 @@ eventlist::randomize_selected_notes (int jitter, int range)
     return result;
 }
 
-#if defined USE_FILL_TIME_SIG_AND_TEMPO
+#if defined SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
 
 /**
  *  Scans the event-list for any tempo or time_signature events.
@@ -890,7 +890,7 @@ eventlist::scan_meta_events ()
     }
 }
 
-#endif  // USE_FILL_TIME_SIG_AND_TEMPO
+#endif  // SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
 
 /**
  *  This function tries to link tempo events.  Native support for temp tracks

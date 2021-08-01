@@ -76,7 +76,7 @@ qseqbase::qseqbase
     set_snap(m_seq->snap());
 }
 
-#if defined USE_SCROLLING_CODE    // not ready for this class
+#if defined SEQ66_USE_SCROLLING_CODE    // not ready for this class
 
 /**
  *  Sets the horizontal scroll value according to the current value of the

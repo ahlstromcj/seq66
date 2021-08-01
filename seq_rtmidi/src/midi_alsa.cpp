@@ -532,7 +532,7 @@ midi_alsa::api_deinit_in ()
  *  problematic.
  */
 
-#if defined USE_MIDI_ALSA_POLL          // LEAVE UNDEFINED
+#if defined SEQ66_USE_MIDI_ALSA_POLL          // LEAVE UNDEFINED
 
 int
 midi_in_alsa::api_poll_for_midi ()
@@ -554,7 +554,7 @@ midi_in_alsa::api_poll_for_midi ()
     return 0;                       /* master_info().api_poll_for_midi();   */
 }
 
-#endif  // defined USE_MIDI_ALSA_POLL
+#endif  // defined SEQ66_USE_MIDI_ALSA_POLL
 
 /**
  *  Defines the size of the MIDI event buffer, which should be large enough to

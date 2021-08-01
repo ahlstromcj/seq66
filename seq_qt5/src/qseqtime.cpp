@@ -305,16 +305,12 @@ qseqtime::mouseMoveEvent(QMouseEvent * event)
 QSize
 qseqtime::sizeHint() const
 {
-#if defined USE_OLD_CODE
-    int len = tix_to_pix(seq_pointer()->get_length()) + 100;
-#else
     int w = frame64()->width();
     int len = tix_to_pix(seq_pointer()->get_length());
     if (len < w)
         len = w;
 
     len += c_keyboard_padding_x;
-#endif
     return QSize(len, 22);
 }
 

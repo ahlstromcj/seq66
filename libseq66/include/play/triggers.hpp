@@ -489,10 +489,6 @@ public:
         return m_number_selected;
     }
 
-#if defined USE_TRIGGERS_FIND
-    container::iterator find (midipulse tick);
-#endif
-
     void push_undo ();
     void pop_undo ();
     void pop_redo ();

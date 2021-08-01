@@ -68,8 +68,6 @@
 #include "midi/midifile.hpp"            /* seq66::midifile class            */
 #endif
 
-#define USE_JACK_BBT_OFFSET             /* another experiment               */
-
 /*
  *  All library code in the Seq66 project is in the seq66 namespace.
  */
@@ -179,29 +177,30 @@ jack_dummy_callback (jack_nframes_t nframes, void * arg)
 
 /**
  *  On 2021-05-02 we reverted some of the code in this function to the code
- *  present in the Seq64 version.  This seems to solve issue #51 where
- *  running JACK transport under Arch/KXStudio environments causes very iffy
- *  playback, with either multiple repetitions of Note Ons or notes being dropped
- *  from complex tunes.
+ *  present in the Seq64 version.  This seems to solve issue #51 where running
+ *  JACK transport under Arch/KXStudio environments causes very iffy playback,
+ *  with either multiple repetitions of Note Ons or notes being dropped from
+ *  complex tunes.
  *
  *  Implemented second patch for JACK Transport from freddix/seq66 GitHub
- *  project, to allow seq66 to follow JACK transport.
- *  For more advanced ideas, see the MetronomeJack::process_callback()
- *  function in the "klick" project.  It plays a metronome tick after
- *  calculating if it needs to or not.  (Maybe we could use it to provide our
- *  own tick for recording patterns.)
+ *  project, to allow seq66 to follow JACK transport.  For more advanced
+ *  ideas, see the MetronomeJack::process_callback() function in the "klick"
+ *  project.  It plays a metronome tick after calculating if it needs to or
+ *  not.  (Maybe we could use it to provide our own tick for recording
+ *  patterns.)
  *
- *  The code enabled via USE_JACK_BBT_OFFSET sets the JACK
- *  position field bbt_offset to 0.  It doesn't seem to have any effect,
- *  though it can be seen when calling show_position() in the
+ *  The code sets the JACK position field bbt_offset to 0.  It doesn't seem to
+ *  have any effect, though it can be seen when calling show_position() in the
  *  jack_transport_callback() function.
  *
  *  This callback is called by JACK whether stopped or rolling. JACK calls it
  *  continually with state JackTransportStopped when the (external) Master is
  *  not running, but only once with state JackTransportStarting.
  *
- *  Issue #34 "seq66 doesn't follow jack_transport tempo changes": we no longer
- *  make this conditional upon performer not running.
+ *  Issue #34 "seq66 doesn't follow jack_transport tempo changes": we no
+ *  longer make this conditional upon performer not running.
+ *
+ *  Be vewwy vewwy carweful!  This code is really prickly and touchy!
  *
  * \param nframes
  *      Unused.
@@ -276,52 +275,6 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
     }
     return 0;
 }
-
-#if defined USE_LEGACY_TRANSPORT_CALLBACK
-
-int
-jack_transport_callback_legacy (jack_nframes_t /*nframes*/, void * arg)
-{
-    jack_assistant * j = (jack_assistant *)(arg);
-    if (not_nullptr(j))
-    {
-        jack_position_t pos;
-        performer & p = j->m_jack_parent;   /* if (! p.is_running()) */
-        jack_transport_state_t s = jack_transport_query(j->client(), &pos);
-        if (j->is_slave())
-        {
-            if (j->parent().jack_set_beats_per_minute(pos.beats_per_minute))
-            {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                printf("BPM = %f\n", pos.beats_per_minute);
-#endif
-            }
-        }
-        if (s == JackTransportStopped)
-        {
-            /*
-             * Don't start, just reposition transport marker.
-             */
-
-            long tick = j->current_jack_position();
-            long diff = tick - p.jack_stop_tick();
-            if (diff != 0)                  // was (diff > 0) 2021-03-30
-            {
-                p.set_reposition(false);    // don't reposition to L marker
-                p.set_start_tick(tick);
-                p.jack_stop_tick(tick);     // j->jack_stop_tick(tick);
-            }
-        }
-        else if (s==JackTransportStarting || s==JackTransportRolling)
-        {
-            j->m_transport_state_last = JackTransportStarting;
-            p.inner_start();
-        }
-    }
-    return 0;
-}
-
-#endif  // defined USE_LEGACY_TRANSPORT_CALLBACK
 
 /**
  *  A more full-featured initialization for a JACK client, which is meant to
@@ -795,17 +748,10 @@ jack_assistant::init ()
                 m_jack_client, jack_transport_shutdown, (void *) this
             );
 
-#if defined USE_LEGACY_TRANSPORT_CALLBACK               /* it is broken     */
-            int jackcode = jack_set_process_callback    /* notes in banner  */
-            (
-                m_jack_client, jack_transport_callback_legacy, (void *) this
-            );
-#else
             int jackcode = jack_set_process_callback    /* notes in banner  */
             (
                 m_jack_client, jack_transport_callback, (void *) this
             );
-#endif
             if (jackcode != 0)
             {
                 result = false;
@@ -1169,10 +1115,8 @@ jack_assistant::set_position (midipulse tick)
      *  );
      */
 
-#if defined USE_JACK_BBT_OFFSET
     pos.valid = (jack_position_bits_t)(pos.valid | JackBBTFrameOffset);
     pos.bbt_offset = 0;
-#endif
 
     int jackcode = jack_transport_reposition(m_jack_client, &pos);
     if (jackcode != 0)
@@ -1183,7 +1127,7 @@ jack_assistant::set_position (midipulse tick)
 
 #endif  // USE_JACK_ASSISTANT_SET_POSITION
 
-#if defined USE_JACK_SYNC_CALLBACK
+#if defined SEQ66_USE_JACK_SYNC_CALLBACK
 
 /**
  *  A helper function for syncing up with JACK parameters.  Seq66 is not a
@@ -1257,9 +1201,9 @@ jack_assistant::sync (jack_transport_state_t state)
     return result;
 }
 
-#endif  // defined USE_JACK_SYNC_CALLBACK
+#endif  // defined SEQ66_USE_JACK_SYNC_CALLBACK
 
-#if defined USE_JACK_SYNC_CALLBACK
+#if defined SEQ66_USE_JACK_SYNC_CALLBACK
 
 /**
  *  This JACK synchronization callback informs the specified performer
@@ -1310,7 +1254,7 @@ jack_sync_callback
     return result;
 }
 
-#endif  // USE_JACK_SYNC_CALLBACK
+#endif  // SEQ66_USE_JACK_SYNC_CALLBACK
 
 #if defined SEQ66_JACK_SESSION              /* deprecated, use NSM          */
 
@@ -1895,15 +1839,11 @@ jack_timebase_callback
         if (jack->is_master())
             pos->beats_per_minute = jack->parent().get_beats_per_minute();
     }
-#if defined USE_JACK_BBT_OFFSET
     pos->bbt_offset = 0;
     pos->valid = (jack_position_bits_t)
     (
         pos->valid | JackBBTFrameOffset | JackPositionBBT
     );
-#else
-    pos->valid = JackPositionBBT;
-#endif
 }
 
 /**

@@ -59,10 +59,11 @@
 
 /**
  *  An attempt to use the inverse of the background color for drawing text.
- *  It doesn't work with some GTK themes.
+ *  It doesn't work with some GTK themes.  Use Qt style sheets or a 'palette'
+ *  file instead.
  */
 
-#define SEQ66_USE_BACKGROUND_ROLE_COLOR
+#undef SEQ66_USE_BACKGROUND_ROLE_COLOR
 
 /**
  *  Alpha values for various states, not yet members, not yet configurable.
@@ -506,7 +507,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             painter.setPen(label_color());      /* text issue #50   */
             painter.setFont(m_text_font);
 
-#if defined SEQ66_USE_BACKGROUND_ROLE_COLOR_DISABLED
+#if defined SEQ66_USE_BACKGROUND_ROLE_COLOR
             QPen pen(text_color());             /* label_color()    */
             QBrush brush(Qt::black);
             painter.setBrush(brush);

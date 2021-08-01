@@ -1436,9 +1436,7 @@ qseqroll::move_selected_notes (int dx, int dy)
 
 /**
  *  Proposed new function to encapsulate the movement of selections even
- *  more fully.
- *
- *  Currently no one calls this function!
+ *  more fully.  Currently no one calls this function!
  *
  * \param dx
  *      The amount to grow the selection horizontally.  Values are -1 (left one

@@ -225,7 +225,14 @@
 
    Remember that \texttt{[midi-control-settings]} refers to controls
    \textsl{sent} to \textsl{Seq66} to control that application.
-   There are three sets of controls:  loops, mute-groups, and automation.
+   Therefore, the control-buss is an input buss.
+   Also remember that, in \textsl{ALSA}, \textsl{Seq66} detects and adds an
+   "announce" buss as buss 0.  This extra buss is not seen via
+   \texttt{arecordmidi -l}, but must be accounted for... it adds 1 to the
+   number of each input buss.
+
+   There are three sets of controls:  loops, mute-groups, and automation, as
+   described in the following sections.
 
 \paragraph{[loop-control]}
 \label{paragraph:patterns_loop_control}

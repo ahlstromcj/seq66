@@ -511,15 +511,6 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                                 if (! arg.empty())
                                     usr().option_use_logfile(true);
                             }
-#if defined USE_OPTION_WID
-                            else if (optionname == "wid")
-                            {
-                                /*
-                                 * Not supported in Seq66; replaced by
-                                 * external frames.
-                                 */
-                            }
-#endif
                             else if (optionname == "sets")
                             {
                                 result = parse_o_sets(arg);
@@ -754,13 +745,12 @@ cmdlineopts::parse_o_sets (const std::string & arg)
             usr().mainwnd_rows(rows);
             usr().mainwnd_cols(cols);
 #if defined SEQ66_USE_AUTO_SCALING
+            /*
+             * This works for FHD screens (1920 x 1080).
+             */
+
             if (rows > 4)
             {
-                /*
-                 * This works for FHD screens (1920
-                 * x 1080).
-                 */
-
                 float scale = float(rows) / 4.0f;
                 float scaley = 1.0f;
                 if (scale > 1.5)

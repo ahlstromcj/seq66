@@ -81,9 +81,6 @@ recmutex::init_global_mutex ()
  */
 
 recmutex::recmutex () :
-#if defined SEQ66_USE_MUTEX_UNLOCKED_FLAG
-    m_is_locked  (false)
-#endif
     m_mutex_lock ()                     /* uninitialized pthread_mutex_t    */
 {
     init_global_mutex();                /* might not need global mutex, tho */
@@ -98,9 +95,6 @@ void
 recmutex::lock () const
 {
     pthread_mutex_lock(&m_mutex_lock);
-#if defined SEQ66_USE_MUTEX_UNLOCKED_FLAG
-    m_is_locked = true;
-#endif
 }
 
 /**
@@ -110,15 +104,7 @@ recmutex::lock () const
 void
 recmutex::unlock () const
 {
-#if defined SEQ66_USE_MUTEX_UNLOCKED_FLAG
-    if (m_is_locked)
-    {
-        m_is_locked = false;
-        pthread_mutex_unlock(&m_mutex_lock);
-    }
-#else
     pthread_mutex_unlock(&m_mutex_lock);
-#endif
 }
 
 }           // namespace seq66

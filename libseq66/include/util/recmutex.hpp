@@ -83,19 +83,6 @@ private:
 
     static native sm_global_mutex;
 
-#if defined SEQ66_USE_MUTEX_UNLOCKED_FLAG
-
-    /**
-     *  Indicates if the mutex is locked or not.  We are trying this concept
-     *  because of issues with the condition variable's mutex seeming to stay
-     *  locked (or exhibiting undefined behavior) in Windows, causing a
-     *  deadlock between waiting to play and starting play.
-     */
-
-    mutable bool m_is_locked;
-
-#endif
-
     /**
      *  Provides a mutex lock usable by a single module or class.
      *  However, this mutex ends up being a copy of the static

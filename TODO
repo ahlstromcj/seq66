@@ -1,6 +1,6 @@
-TO DO for Seq66 0.96.0 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.96.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-07-28
+2019-04-13 to 2021-08-01
 
 Hottest to Trivial:
 
@@ -10,7 +10,15 @@ Port-Mapping:
     seq_portmidi/src/midibus.cpp.  The workaround is to specify long port
     names in the 'rc' file.
 
+Launchpad (4x8 Alt Setup):
+
+    -   BPM Tap does not do anything.
+    -   BPM Up does not go above 120!
+    -   Panic twice or once after Stop turns off all the buttons.
+
 UI:
+
+    qsmainwnd USE_THIS_CODE_IT_IS_READY
 
     'rc': click-edit = false does not disable double-click in the live frame.
 

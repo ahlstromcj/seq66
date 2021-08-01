@@ -149,9 +149,6 @@ qstriggereditor::conditional_update ()
 QSize
 qstriggereditor::sizeHint () const
 {
-#if defined USE_OLD_CODE
-    return QSize(xoffset(seq_pointer()->get_length()) + 100, qc_eventarea_y + 1);
-#else
     int w = frame64()->width();
     int len = tix_to_pix(seq_pointer()->get_length());
     if (len < w)
@@ -159,7 +156,6 @@ qstriggereditor::sizeHint () const
 
     len += c_keyboard_padding_x;
     return QSize(len, qc_eventarea_y + 1);
-#endif
 }
 
 void

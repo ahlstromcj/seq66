@@ -1,7 +1,7 @@
 # README for Seq66 0.96.1
 
 Chris Ahlstrom
-2015-09-10 to 2021-07-28
+2015-09-10 to 2021-08-01
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -91,6 +91,10 @@ Windows, and using a conventional source tarball.
             progress-box of each pattern button, and to provide default labeling
             of the piano keys.
         *   Tweaked the drawing of notes and drum notes.
+        *   More work on set-handling.
+        *   Fixed panic-button disabling Launchpad display output. However,
+            if pressed before exit, the lights remain on and there is a slit
+            delay in exiting the session.
     *   Version 0.96.0:
         *   Adding code to control the visibility of the main window; added
             a "Visibility" MIDI control option, and support for the

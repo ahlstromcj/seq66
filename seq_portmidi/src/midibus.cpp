@@ -142,12 +142,6 @@ midibus::api_init_out ()
     (
         &m_pms, queue_number(), NULL, 100, NULL, NULL, 0
     );
-
-#if defined USE_ERROR_TEST_CODE
-    warnprint("Testing failure in midibus::api_init_out()\n");
-    err = pmInvalidDeviceId;
-#endif
-
     bool result = err == pmNoError;
     if (! result)
     {

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2020-12-28
+ * \updates       2021-08-01
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -276,7 +276,7 @@ mastermidibase::flush ()
  */
 
 void
-mastermidibase::panic ()
+mastermidibase::panic (int displaybuss)
 {
     automutex locker(m_mutex);
     event e;
@@ -284,6 +284,9 @@ mastermidibase::panic ()
     flush();
     for (int bus = 0; bus < c_busscount_max; ++bus)
     {
+        if (bus == displaybuss)             /* do not clear the Launchpad   */
+            continue;
+
         for (int channel = 0; channel < c_midichannel_max; ++channel)
         {
             for (int note = 0; note < c_midibyte_data_max; ++note)

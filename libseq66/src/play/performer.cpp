@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-07-29
+ * \updates       2021-08-01
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -336,6 +336,13 @@ static const int c_thread_priority = 1;
  */
 
 static const int c_delay_stop_ms = 100;
+
+/**
+ *  Indicates how much of a long file-path we will show using the
+ *  shorten_file_spec() function.
+ */
+
+static const int c_long_path_max = 56;
 
 /**
  *  Principal constructor.
@@ -1024,12 +1031,11 @@ performer::main_window_title (const std::string & file_name) const
     {
         if (! rc().midi_filename().empty())
         {
-            std::string name = shorten_file_spec(rc().midi_filename(), 56);
-#if defined USE_UTF8_CONVERSION
-            itemname = Glib::filename_to_utf8(name);
-#else
+            std::string name = shorten_file_spec
+            (
+                rc().midi_filename(), c_long_path_max
+            );
             itemname = name;
-#endif
         }
     }
     else
@@ -1838,8 +1844,7 @@ performer::log_current_tempo ()
 screenset::number
 performer::set_playing_screenset (screenset::number setno)
 {
-    screenset::number current = mapper().playscreen_number();
-    bool ok = setno != current;
+    bool ok = m_io_active;                          /* setno != current     */
     if (ok)
         ok = mapper().set_playing_screenset(setno);
 
@@ -3231,24 +3236,6 @@ performer::output_func ()
                 pad().add_delta_tick(delta_tick);   /* add to current ticks */
             }
 
-#if defined USE_ODD_CHANGE_POSITION_CODE            // ca 2021-04-05 EXPERIMENT
-            /*
-             * If we reposition key-p from perfroll, reset to adjusted
-             * start. See around line #3065!
-             */
-
-            bool change_position = jackless_song_mode() && ! m_usemidiclock;
-            if (change_position)
-                change_position = m_reposition;
-
-            if (change_position)
-            {
-                set_last_ticks(m_start_tick);
-                m_start_tick = get_left_tick();     /* restart at L marker  */
-                m_reposition = false;
-            }
-#endif
-
             /*
              * pad().js_init_clock will be true when we run for the first time,
              * or as soon as JACK gets a good lock on playback.
@@ -4003,11 +3990,17 @@ performer::panic ()
 {
     bool result = bool(m_master_bus);
     stop_playing();
-    inner_stop();                               /* force inner stop     */
+    inner_stop();                                   /* force inner stop     */
     mapper().panic();
     if (result)
-        m_master_bus->panic();                      /* flush the MIDI buss  */
+    {
+        /*
+         * Works, but can cause lights to remain on at exit. Weird.
+         */
 
+        int displaybuss = int(midi_control_out().true_buss());
+        m_master_bus->panic(displaybuss);           /* flush the MIDI buss  */
+    }
     set_tick(0);
     return result;
 }
@@ -5656,19 +5649,14 @@ performer::loop_control
     {
         if (slot_shift() > 0)
         {
-#if defined USE_OLD_STYLE_SLOT_SHIFT
-            sn += slot_shift() * screenset_size();
-#else
             if (columns() == setmaster::Columns())
             {
                 if (rows() > setmaster::Rows())
                     sn += slot_shift() * rows();        /* move down x rows */
             }
             else
-            {
                 sn += slot_shift() * screenset_size();
-            }
-#endif
+
             clear_slot_shift();
         }
         m_pending_loop = sn;

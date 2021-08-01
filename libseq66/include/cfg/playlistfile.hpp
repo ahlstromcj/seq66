@@ -97,10 +97,6 @@ public:
     void clear ();
     bool open (bool verify_it = true);
 
-#if defined USE_FILE_VERSION_OF_COPY
-    bool copy (const std::string & destination);
-#endif
-
 private:
 
     playlist & play_list()

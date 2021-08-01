@@ -303,7 +303,7 @@ private:
     void fill_meta_track_end (midipulse deltatime);
     void fill_proprietary ();
 
-#if defined USE_FILL_TIME_SIG_AND_TEMPO
+#if defined SEQ_USE_FILL_TIME_SIG_AND_TEMPO
     void fill_time_sig_and_tempo
     (
         const performer & p,

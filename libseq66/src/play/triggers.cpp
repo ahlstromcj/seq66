@@ -648,25 +648,6 @@ triggers::remove (midipulse tick)
     }
 }
 
-#if defined USE_TRIGGERS_FIND
-
-triggers::container::iterator
-triggers::find (midipulse tick)
-{
-    triggers::container::iterator result = m_triggers.end();
-    for (auto i = m_triggers.begin(); i != m_triggers.end(); ++i)
-    {
-        if (i->tick_start() <= tick && tick <= i->tick_end())
-        {
-            result = i;
-            break;
-        }
-    }
-    return result;
-}
-
-#endif  // USE_TRIGGERS_FIND
-
 void
 triggers::sort ()
 {

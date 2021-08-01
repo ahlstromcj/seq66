@@ -75,11 +75,10 @@ enum rtmidi_api
     RTMIDI_API_LINUX_ALSA,      /**< Advanced Linux Sound Architecture API. */
     RTMIDI_API_UNIX_JACK,       /**< JACK Low-Latency MIDI Server API.      */
 
-#if defined USE_RTMIDI_API_ALL
+#if defined SEQ66_USE_RTMIDI_API_ALL
 
     /*
-     * We're not supporting these until we get a simplified
-     * seq66-friendly API worked out.
+     * Not supported until we get a simplified seq66-friendly API worked out.
      */
 
     RTMIDI_API_MACOSX_CORE,     /**< Macintosh OS-X Core Midi API.          */
@@ -89,7 +88,6 @@ enum rtmidi_api
 #endif
 
     RTMIDI_API_MAXIMUM          /**< A count of APIs; an erroneous value.   */
-
 };
 
 /**
@@ -138,20 +136,6 @@ public:
     {
         return (i >= 0 && i < int(m_bytes.size())) ? m_bytes[i] : 0 ;
     }
-
-#if defined USE_MIDI_MESSAGE_AT_ACCESS
-
-    midibyte & at (int i)
-    {
-        return m_bytes.at(i);       /* can throw an exception */
-    }
-
-    const midibyte & at (int i) const
-    {
-        return m_bytes.at(i);       /* can throw an exception */
-    }
-
-#endif
 
     const char * array () const
     {

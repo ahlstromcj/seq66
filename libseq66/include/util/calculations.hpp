@@ -134,34 +134,6 @@ extern midibpm fix_tempo (midibpm bpm);
 extern unsigned short combine_bytes (midibyte b0, midibyte b1);
 extern midibpm note_value_to_tempo (midibyte note);
 
-#if defined USE_PPQN_IS_VALID
-
-/**
- *  Common code for handling PPQN settings.  Validates a PPQN value.  The
- *  value  0 is considered invalid by this function.  Very few classes need
- *  that macro. These values are defined in usrsettings.
- *
- * \param ppqn
- *      Provides the PPQN value to be used.
- *
- * \return
- *      Returns true if the ppqn parameter is between the minimum and the
- *      maximum PPQN, or is set to c_use_default_ppqn or c_use_file_ppqn.
- */
-
-inline bool
-ppqn_is_valid (int ppqn)
-{
-    return
-    (
-        ppqn == c_use_default_ppqn ||
-        ppqn == c_use_file_ppqn ||
-        (ppqn >= c_minimum_ppqn && ppqn <= c_maximum_ppqn)
-    );
-}
-
-#endif
-
 /**
  *  Formalizes the rescaling of ticks base on changing the PPQN.  For speed
  *  the parameters are all assumed to be valid.  The PPQN values supported

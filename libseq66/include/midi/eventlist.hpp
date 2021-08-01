@@ -355,7 +355,7 @@ private:                                /* functions for friend sequence    */
     void link_new ();
     void clear_links ();
     int note_count () const;
-#if defined USE_FILL_TIME_SIG_AND_TEMPO
+#if defined SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
     void scan_meta_events ();
 #endif
     void verify_and_link (midipulse slength = 0);

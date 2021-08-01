@@ -396,10 +396,6 @@ alsa_write_byte
     return pmNoError;
 }
 
-/**
- *
- */
-
 static PmError
 alsa_out_close (PmInternal * midi)
 {
@@ -444,10 +440,6 @@ alsa_out_close (PmInternal * midi)
     }
     return pmNoError;
 }
-
-/**
- *
- */
 
 static PmError
 alsa_in_open (PmInternal * midi, void * UNUSED(driverinfo))
@@ -546,10 +538,6 @@ alsa_in_open (PmInternal * midi, void * UNUSED(driverinfo))
     return pmHostError;
 }
 
-/**
- *
- */
-
 static PmError
 alsa_in_close (PmInternal * midi)
 {
@@ -588,17 +576,19 @@ alsa_in_close (PmInternal * midi)
 /**
  *  ALSA documentation is vague. This is supposed to remove any pending output
  *  messages. If you can test and confirm this code is correct, please update
- *  this comment.  Unfortunately, I can't even compile it -- my ALSA version does
- *  not implement snd_seq_remove_events_t, so this does not compile. I'll try
- *  again, but it looks like I'll need to upgrade my entire Linux OS. -- RBD
+ *  this comment.  Unfortunately, I can't even compile it -- my ALSA version
+ *  does not implement snd_seq_remove_events_t, so this does not compile. I'll
+ *  try again, but it looks like I'll need to upgrade my entire Linux OS. --
+ *  RBD
  *
  *  This is still true for Debian Sid in 2020!  The snd_seq_remove_events_t
  *  "structure" yields the following error:
  *
- *      error: storage size of ‘info’ isn’t known: snd_seq_remove_events_t info;
+ *      error: storage size of ‘info’ isn’t known: snd_seq_remove_events_t
+ *      info;
  */
 
-#if defined SND_SEQ_REMOVE_EVENTS_SUPPORTED
+#if defined SEQ66_SND_SEQ_REMOVE_EVENTS_SUPPORTED
 
 static PmError
 alsa_abort (PmInternal * midi)
@@ -894,31 +884,6 @@ handle_event (snd_seq_event_t * ev)
     }
 }
 
-#if defined USE_PORTMIDI_SIMPLE_ALSA_POLL
-
-/**
- *  This version just check for data.  DOES NOT WORK.
- *
- * \return
- *      Returns pmGotData if any data is pending.  Otherwise, pmNoData is
- *      returned.
- */
-
-static PmError
-alsa_poll (PmInternal * UNUSED(midi))
-{
-    int bytes = snd_seq_event_input_pending(s_seq, FALSE);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    if (bytes > 0)
-    {
-        infoprint("alsa_poll(): incoming MIDI events detected");
-    }
-#endif
-    return bytes > 0 ?  pmGotData : pmNoData ;
-}
-
-#else   // USE_PORTMIDI_SIMPLE_ALSA_POLL
-
 /**
  *  Poll!  Checks for and ignore errors, e.g. input overflow.
  *
@@ -951,9 +916,6 @@ alsa_poll (PmInternal * UNUSED(midi))
 
         while (snd_seq_event_input_pending(s_seq, FALSE) > 0)
         {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            infoprint("alsa_poll(): incoming MIDI events detected");
-#endif
             int rslt = snd_seq_event_input(s_seq, &ev);
             if (rslt >= 0)
             {
@@ -980,8 +942,6 @@ alsa_poll (PmInternal * UNUSED(midi))
     }
     return pmNoError;
 }
-
-#endif   // USE_PORTMIDI_SIMPLE_ALSA_POLL
 
 /**
  *

@@ -72,11 +72,12 @@ midi_api_name (int i)
         s_api_map[RTMIDI_API_LINUX_ALSA]  = "Linux ALSA";
         s_api_map[RTMIDI_API_UNIX_JACK]   = "Jack Client";
 
-#if defined USE_RTMIDI_API_ALL
-
+#if defined SEQ66_USE_RTMIDI_API_ALL
         /*
-         * We're not supporting these until we get a simplified
-         * seq66-friendly API worked out.
+         * We're not supporting these until we get a simplified seq66-friendly
+         * API worked out.  May take years to get to this.  Currently, Windows
+         * is supported by our portmidi implementation.  So is OSX, but we
+         * have no way to test it right now.
          */
 
         s_api_map[RTMIDI_API_MACOSX_CORE] = "OS-X CoreMidi";

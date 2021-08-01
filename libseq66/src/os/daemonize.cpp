@@ -431,7 +431,8 @@ session_close ()
 }
 
 /**
- *  Returns the boolean to indicate a request to save the current sequence file.
+ *  Returns the boolean to indicate a request to save the current sequence
+ *  file.
  */
 
 bool
@@ -461,6 +462,9 @@ void signal_for_exit ()
  *
  *  Example: "pidof nsmd", which will emit a PID if nsmd is running and return
  *  1 if the nsmd is not running.
+ *
+ *  This is actually way too strict, disabling the detection of NSM workalikes
+ *  such as RaySession.
  */
 
 static pid_t

@@ -144,13 +144,10 @@ using jack_status_pair_t = struct
 
 class jack_assistant
 {
-#if defined USE_LEGACY_TRANSPORT_CALLBACK
-    friend int jack_transport_callback_legacy (jack_nframes_t nframes, void * arg);
-#endif
     friend int jack_transport_callback (jack_nframes_t nframes, void * arg);
     friend void jack_transport_shutdown (void * arg);
 
-#if defined USE_JACK_SYNC_CALLBACK
+#if defined SEQ66_USE_JACK_SYNC_CALLBACK
     friend int jack_sync_callback
     (
         jack_transport_state_t state,
@@ -576,7 +573,7 @@ private:
     long current_jack_position () const;
 
 
-#if defined USE_JACK_SYNC_CALLBACK
+#if defined SEQ66_USE_JACK_SYNC_CALLBACK
     int sync (jack_transport_state_t state = (jack_transport_state_t)(-1));
 #endif
 #if defined ENABLE_PROPOSED_FUNCTIONS
@@ -595,7 +592,7 @@ private:
  *  Global functions for JACK support and JACK sessions.
  */
 
-#if defined USE_JACK_SYNC_CALLBACK
+#if defined SEQ66_USE_JACK_SYNC_CALLBACK
 extern int jack_sync_callback
 (
     jack_transport_state_t state,
@@ -619,9 +616,6 @@ extern void jack_timebase_callback
  *  project.  Added the following functions.
  */
 
-#if defined USE_LEGACY_TRANSPORT_CALLBACK
-extern int jack_transport_callback_legacy (jack_nframes_t nframes, void * arg);
-#endif
 extern int jack_transport_callback (jack_nframes_t nframes, void * arg);
 extern jack_client_t * create_jack_client
 (

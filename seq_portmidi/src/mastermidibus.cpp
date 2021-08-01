@@ -163,7 +163,7 @@ mastermidibus::api_init (int ppqn, midibpm /*bpm*/)
     set_ppqn(ppqn);
     set_sequence_input(false, nullptr);
 
-#if defined USE_ANNOUNCE_BUS_WITH_PORTMIDI           /* what does this bus DO?   */
+#if defined SEQ66_USE_ANNOUNCE_BUS_WITH_PORTMIDI
     m_bus_announce = new midibus
     (
         snd_seq_client_id(m_alsa_seq),

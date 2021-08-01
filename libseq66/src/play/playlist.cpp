@@ -43,8 +43,6 @@
 #include "util/filefunctions.hpp"       /* functions for file-names         */
 #include "util/strfunctions.hpp"        /* strip_quotes()                   */
 
-#define USE_PERFORMER_READ_MIDI_FILE   // EXPERIMENTAL, not yet working
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -173,8 +171,6 @@ playlist::check_song_list (const play_list_t & plist)
  *      song file to verify it.
  */
 
-#if defined USE_PERFORMER_READ_MIDI_FILE
-
 bool
 playlist::open_song (const std::string & fname, bool verifymode)
 {
@@ -197,68 +193,6 @@ playlist::open_song (const std::string & fname, bool verifymode)
     }
     return result;
 }
-
-#else   // defined USE_PERFORMER_READ_MIDI_FILE
-
-bool
-playlist::open_song (const std::string & fname, bool verifymode)
-{
-    bool result = not_nullptr(m_performer);
-    if (result)
-    {
-        if (m_performer->is_running())
-            m_performer->stop_playing();
-
-        result = m_performer->clear_song();
-    }
-    if (result)
-        result = ! fname.empty();
-
-    if (result)
-    {
-        bool is_wrk = file_extension_match(fname, "wrk");
-        int ppqn = 0;
-        if (is_wrk)
-        {
-            wrkfile m(fname, choose_ppqn(), verifymode);
-            result = m.parse(*m_performer);
-            ppqn = m.ppqn();
-        }
-        else
-        {
-            midifile m(fname, choose_ppqn(), true, verifymode);
-            result = m.parse(*m_performer);
-            ppqn = m.ppqn();
-        }
-        if (result)
-        {
-            if (verifymode)
-            {
-                /*
-                 * Do only after all songs have been verified:
-                 * (void) m_performer.clear_all(false);    // reset playlist
-                 */
-            }
-            else
-            {
-                /*
-                 * We save the PPQN value from the file, set this chosen PPQN,
-                 * save the current MIDI filename.
-                 */
-
-                usr().file_ppqn(ppqn);
-                m_performer->set_ppqn(choose_ppqn());
-                rc().midi_filename(fname);
-                if (unmute_set_now())
-                    m_performer->toggle_playing_tracks();
-            }
-            m_performer->announce_playscreen(); // hmm, done in read_midi_file()
-        }
-    }
-    return result;
-}
-
-#endif  //defined USE_PERFORMER_READ_MIDI_FILE
 
 /**
  *  Selects the song based on the index (row) value, and optionally opens it.

@@ -166,12 +166,7 @@ static const int Tab_Session            =  7;
  */
 
 static const int s_beat_measure_count   = 16;
-
-#if defined USE_LIMITED_BEAT_COUNT
-static const int s_beat_length_count    =  5;
-#else
 static const int s_beat_length_count    = 16;
-#endif
 
 /**
  *  Given a display coordinate, looks up the screen and returns its geometry.
@@ -358,11 +353,7 @@ qsmainwnd::qsmainwnd
 
     for (int i = 0; i < s_beat_length_count; ++i)
     {
-#if defined USE_LIMITED_BEAT_COUNT
-        QString combo_text = QString::number(pow(2, i));
-#else
         QString combo_text = QString::number(i + 1);
-#endif
         ui->cmb_beat_length->insertItem(i, combo_text);
     }
     ui->cmb_beat_length->insertItem(s_beat_length_count, thirtytwo);
@@ -1299,7 +1290,7 @@ qsmainwnd::open_file (const std::string & fn)
         if (not_nullptr(m_perfedit))
             m_perfedit->update_sizes();
 
-#if defined USE_SEQEDIT_REDRAWING
+#if defined SEQ66_USE_SEQEDIT_REDRAWING
         if (not_nullptr(m_edit_frame))
             m_edit_frame->update_draw_geometry();
 
