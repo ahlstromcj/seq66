@@ -94,7 +94,7 @@ Windows, and using a conventional source tarball.
         *   More work on set-handling.
         *   Fixed panic-button disabling Launchpad display output. However,
             if pressed before exit, the lights remain on and there is a slit
-            delay in exiting the session.
+            delay in exiting the session (in ALSA; works fine in JACK).
     *   Version 0.96.0:
         *   Adding code to control the visibility of the main window; added
             a "Visibility" MIDI control option, and support for the

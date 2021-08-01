@@ -118,7 +118,6 @@ HEADERS += include/gui_palette_qt5.hpp \
  include/qslivebase.hpp \
  include/qslivegrid.hpp \
  include/qslotbutton.hpp \
- include/qsmacros.hpp \
  include/qsmaintime.hpp \
  include/qsmainwnd.hpp \
  include/qstriggereditor.hpp \

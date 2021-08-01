@@ -147,7 +147,6 @@ nobase_include_HEADERS = \
  play/setmapper.hpp \
  play/setmaster.hpp \
  play/triggers.hpp \
- qt/qsmacros.hpp \
  sessions/clinsmanager.hpp \
  sessions/smanager.hpp \
  os/daemonize.hpp \

@@ -109,7 +109,6 @@ pkginclude_HEADERS = \
  qslivebase.hpp \
  qslivegrid.hpp \
  qslotbutton.hpp \
- qsmacros.hpp \
  qsmaintime.hpp \
  qsmainwnd.hpp \
  qstriggereditor.hpp \

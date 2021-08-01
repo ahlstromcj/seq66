@@ -105,7 +105,6 @@ HEADERS += include/seq66_features.h \
  include/play/setmapper.hpp \
  include/play/setmaster.hpp \
  include/play/triggers.hpp \
- include/qt/qsmacros.hpp \
  include/sessions/clinsmanager.hpp \
  include/sessions/smanager.hpp \
  include/os/daemonize.hpp \

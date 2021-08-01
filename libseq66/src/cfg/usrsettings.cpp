@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-07-28
+ * \updates       2021-08-01
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -1029,7 +1029,7 @@ usrsettings::bw_default () const
 bool
 usrsettings::bpm_is_valid (midibpm v) const
 {
-    return v >= c_min_beats_per_minute && v <= c_def_beats_per_minute;
+    return v >= c_min_beats_per_minute && v <= c_max_beats_per_minute;
 }
 
 midibpm

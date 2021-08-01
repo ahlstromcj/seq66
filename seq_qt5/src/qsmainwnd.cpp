@@ -88,7 +88,6 @@
 #include "qperfeditex.hpp"
 #include "qperfeditframe64.hpp"
 #include "qplaylistframe.hpp"
-#include "qsmacros.hpp"                 /* QS_TEXT_CHAR() macro             */
 #include "qsabout.hpp"
 #include "qsbuildinfo.hpp"
 #include "qseditoptions.hpp"

@@ -40,7 +40,6 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "gui_palette_qt5.hpp"
 #include "qsliveframe.hpp"
-#include "qsmacros.hpp"                 /* QS_TEXT_CHAR() macro             */
 #include "qsmainwnd.hpp"                /* the true parent of this class    */
 #include "qt5_helpers.hpp"              /* seq66::qt_keystroke() etc.       */
 
@@ -1255,8 +1254,7 @@ qsliveframe::handle_key_release (const keystroke & k)
  *
  *  Note that the QKeyEWvent::key() function does not distinguish between
  *  capital and non-capital letters, so we use the text() function (returning
- *  the Unicode text the key generated) for this purpose and provide a the
- *  QS_TEXT_CHAR() macro to make it obvious.
+ *  the Unicode text the key generated) for this purpose.
  *
  *  Weird.  After the first keystroke, for, say 'o' (ascii 111) == k, we
  *  get k == 0, presumably a terminator character that we have to ignore.
