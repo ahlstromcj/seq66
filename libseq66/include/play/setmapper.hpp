@@ -341,11 +341,13 @@ private:
     bool is_seq_in_edit (seq::number seqno) const;
     bool reset ();
 
+#if defined USE_SCREENSET_RESET_SEQUENCES               /* currently unused */
     void reset_sequences (bool pause, sequence::playback mode)
     {
         for (auto & sset : sets())
             sset.second.reset_sequences(pause, mode);
     }
+#endif
 
     void play_all_sets
     (

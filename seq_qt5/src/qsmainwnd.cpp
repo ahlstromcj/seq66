@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-28
+ * \updates       2021-08-02
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -311,20 +311,7 @@ qsmainwnd::qsmainwnd
                 bool disabled = ec == e_clock::disabled;
                 ui->cmb_global_bus->addItem(QString::fromStdString(busname));
                 if (disabled)
-                {
-#if defined DO_IT_THE_HARD_WAY
-                    int index = bus + 1;
-                    QStandardItemModel * model =
-                        qobject_cast<QStandardItemModel *>
-                        (
-                            ui->cmb_global_bus->model()
-                        );
-                    QStandardItem * item = model->item(index);
-                    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
-#else
                     enable_bus_item(bus, false);
-#endif
-                }
             }
         }
     }
@@ -808,8 +795,12 @@ qsmainwnd::qsmainwnd
 
 qsmainwnd::~qsmainwnd ()
 {
-    if (not_nullptr(m_msg_error))
-        delete m_msg_error;
+    /*
+     * This should be done by Qt since the "this" parameter was used.
+     *
+     *  if (not_nullptr(m_msg_error))
+     *      delete m_msg_error;
+     */
 
     m_timer->stop();
     cb_perf().unregister(this);
@@ -2814,6 +2805,9 @@ qsmainwnd::show_message_box (const std::string & msg_text)
 {
     if (! msg_text.empty())
     {
+        if (not_nullptr(m_msg_error))
+            delete m_msg_error;
+
         m_msg_error = new (std::nothrow) QErrorMessage(this);
         if (not_nullptr(m_msg_error))
         {
@@ -2827,8 +2821,11 @@ qsmainwnd::show_message_box (const std::string & msg_text)
             lay->addItem(hspace, lay->rowCount(), 0, 1, lay->columnCount());
             m_msg_error->showMessage(msg);
             m_msg_error->exec();
-            delete m_msg_error;
-            m_msg_error = nullptr;
+
+            /*
+             * delete m_msg_error;
+             * m_msg_error = nullptr;
+             */
         }
     }
 }
@@ -3106,9 +3103,6 @@ qsmainwnd::apply_song_transpose ()
     if (perf().get_transpose() != 0)
     {
         perf().apply_song_transpose();
-#if defined USE_THIS_CODE_IT_IS_READY
-        m_perfedit->set_transpose(0);
-#endif
     }
 }
 
@@ -3122,18 +3116,7 @@ qsmainwnd::reload_mute_groups ()
     std::string errmessage;
     bool result = perf().reload_mute_groups(errmessage);
     if (! result)
-    {
-#if defined USE_THIS_CODE_IT_IS_READY
-        Gtk::MessageDialog dialog           /* display the error-message    */
-        (
-            *this, "reload of mute groups", false,
-            Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true
-        );
-        dialog.set_title("Mute Groups");
-        dialog.set_secondary_text("Failed", false);
-        dialog.run();
-#endif
-    }
+        show_message_box("Reload of mute-groups failed");
 }
 
 /**

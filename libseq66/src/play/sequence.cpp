@@ -3747,8 +3747,8 @@ sequence::paste_trigger (midipulse paste_tick)
 /**
  *  Provides a helper function simplify and speed up performer ::
  *  reset_sequences().  In Live mode, the user controls playback, while in
- *  Song mode, JACK or the performance/song editor controls playback.  This
- *  function used to be called "reset()".
+ *  Song mode, the performance/song editor controls playback.  This function
+ *  used to be called "reset()".
  *
  * \param song_mode
  *      Set to true if song mode is in force.  This setting corresponds to
@@ -4501,8 +4501,8 @@ sequence::set_playing (bool p)
  * \setter m_recording and m_notes_on
  *
  *  This function sets m_notes_on to 0, only if the recording status has
- *  changed.  It is called by set_recording().  We probably need to
- *  explicitly turn off all playing notes; not sure yet.
+ *  changed.  It is called by set_recording().  We probably need to explicitly
+ *  turn off all playing notes; not sure yet.
  *
  *  Like performer::set_sequence_input(), but it uses the internal recording
  *  status directly, rather than getting it from seqedit.
@@ -4848,8 +4848,7 @@ sequence::off_playing_notes ()
         {
             e.set_data(x, midibyte(0));               /* or is 127 better?  */
             master_bus()->play(m_true_bus, &e, midi_channel(e));
-            if (m_playing_notes[x] > 0)
-                --m_playing_notes[x];
+            --m_playing_notes[x];
         }
     }
     master_bus()->flush();

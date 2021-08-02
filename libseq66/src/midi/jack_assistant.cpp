@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-07-17
+ * \updates       2021-08-02
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -919,10 +919,8 @@ jack_assistant::start ()
     if (m_jack_running)
     {
         jack_transport_start(m_jack_client);
-#if defined USE_JACK_ASSISTANT_SET_POSITION
         if (is_master())
             set_position(parent().get_tick());
-#endif
     }
     else if (rc().with_jack())
         (void) error_message("Sync start: JACK not running");
@@ -1049,13 +1047,10 @@ jack_assistant::position (bool songmode, midipulse tick)
         if (jack_transport_locate(m_jack_client, jack_frame) != 0)
             (void) info_message("jack_transport_locate() failed");
     }
-
     if (parent().is_running())
         parent().set_reposition(false);
 #endif
 }
-
-#if defined USE_JACK_ASSISTANT_SET_POSITION
 
 /**
  *  This function is currently unused, and has been macroed out.
@@ -1124,8 +1119,6 @@ jack_assistant::set_position (midipulse tick)
         errprint("jack_assistant::set_position(): bad position structure");
     }
 }
-
-#endif  // USE_JACK_ASSISTANT_SET_POSITION
 
 #if defined SEQ66_USE_JACK_SYNC_CALLBACK
 
@@ -1413,14 +1406,8 @@ jack_assistant::output (jack_scratchpad & pad)
                      */
 
                     double r_minus_l = parent().left_right_size();
-#define USE_BRUTE_FORCE
-#if defined USE_BRUTE_FORCE
                     while (pad.js_current_tick >= parent().get_right_tick())
                         pad.js_current_tick -= r_minus_l;
-#else
-                    int count = int(pad.js_current_tick / r_minus_l);
-                    pad.js_current_tick -= count * r_minus_l;
-#endif
 
                     parent().off_sequences();
                     parent().set_last_ticks(midipulse(pad.js_current_tick));

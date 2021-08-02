@@ -1,6 +1,6 @@
-TO DO for Seq66 0.96.1 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.96.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-08-01
+2019-04-13 to 2021-08-02
 
 Hottest to Trivial:
 
@@ -11,8 +11,6 @@ Port-Mapping:
     names in the 'rc' file.
 
 UI:
-
-    qsmainwnd USE_THIS_CODE_IT_IS_READY
 
     Pause functionality under JACK seems to need fixing.
 

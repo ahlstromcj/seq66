@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2021-07-19
+ * \updates       2021-08-02
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -47,8 +47,6 @@
 #else
 #undef SEQ66_JACK_SESSION
 #endif
-
-#undef USE_JACK_ASSISTANT_SET_POSITION  /* currently not needed             */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -579,9 +577,7 @@ private:
 #if defined ENABLE_PROPOSED_FUNCTIONS
     void update_timebase_master (jack_transport_state_t s);
 #endif
-#if defined USE_JACK_ASSISTANT_SET_POSITION
     void set_position (midipulse currenttick);
-#endif
 
     static bool info_message (const std::string & msg);
     static bool error_message (const std::string & msg);

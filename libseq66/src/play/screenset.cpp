@@ -927,6 +927,8 @@ screenset::unselect_triggers (seq::number seqno)
     }
 }
 
+#if defined USE_SETMAPPER_RESET_SEQUENCES               /* currently unused */
+
 /**
  *  For all active patterns/sequences, get its playing state, turn off the
  *  playing notes, set playing to false, zero the markers, and, if not in
@@ -952,6 +954,8 @@ screenset::reset_sequences (bool pause, sequence::playback mode)
         }
     }
 }
+
+#endif
 
 void
 screenset::arm ()

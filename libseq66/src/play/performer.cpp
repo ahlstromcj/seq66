@@ -1473,12 +1473,10 @@ performer::next_song_mode ()
  *  This function should be considered the "second thread", that is the thread
  *  that starts after the worker thread is already working.
  *
- * Minor issue:
- *
- *      In ALSA mode, restarting the sequence moves the progress bar to the
- *      beginning of the sequence, even if just pausing.  This is fixed by
- *      compiling with pause support, which disables calling off_sequences()
- *      when starting playback from the song editor / performance window.
+ *  In ALSA mode, restarting the sequence moves the progress bar to the
+ *  beginning of the sequence, even if just pausing.  This is fixed by
+ *  disabling calling off_sequences() when starting playback from the song
+ *  editor / performance window.
  *
  * \param songmode
  *      Sets the playback mode, and, if true, turns off all of the sequences
@@ -2059,8 +2057,12 @@ performer::reset_sequences (bool p)
     for (auto & seqi : m_play_set.seq_container())
         (seqi.get()->*f)(songmode);
 
-    if (m_master_bus)
-        m_master_bus->flush();                          /* flush MIDI buss  */
+    /*
+     * Alread flushed in the loop above.
+     *
+     * if (m_master_bus)
+     *     m_master_bus->flush();
+     */
 }
 
 bool
@@ -2703,7 +2705,7 @@ performer::set_left_tick_seq (midipulse tick, midipulse snap)
     m_left_tick = tick;
     set_start_tick(tick);
     m_reposition = false;
-    if (is_jack_master())                   /* don't use in slave mode  */
+    if (is_jack_master())                       /* don't use in slave mode  */
         position_jack(true, tick);
     else if (! is_jack_running())
         set_tick(tick);
@@ -3139,13 +3141,16 @@ performer::output_func ()
          * complexities.
          */
 
-        if (song_mode())
+        if (! m_dont_reset_ticks)           /* no repositioning in pause    */
         {
-            if (is_jack_master() && m_reposition)
-                position_jack(true, get_left_tick());
+            if (song_mode())
+            {
+                if (is_jack_master() && m_reposition)
+                    position_jack(true, get_left_tick());
+            }
+            else
+                position_jack(false, 0);
         }
-        else
-            position_jack(false, 0);
 
         /*
          *  See note 1 in the function banner.
@@ -3826,10 +3831,9 @@ performer::pause_playing ()
     is_running(! is_running());
     stop_jack();
     if (! is_jack_running())
-    {
-        reset_sequences(true);              /* don't reset "last-tick"      */
         m_usemidiclock = false;
-    }
+
+    reset_sequences(true);                      /* don't reset "last-tick"  */
     send_onoff_play_states(midicontrolout::uiaction::pause);
 }
 

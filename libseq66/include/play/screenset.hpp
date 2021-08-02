@@ -497,7 +497,9 @@ private:
 
     bool add (sequence *, seq::number seqno);
     bool remove (seq::number seqno);
+#if defined USE_SCREENSET_RESET_SEQUENCES               /* currently unused */
     void reset_sequences (bool pause, sequence::playback mode);
+#endif
     void set_dirty (seq::number seqno = seq::all());
     void toggle (seq::number seqno = seq::all());
     void toggle_song_mute (seq::number seqno = seq::all());
