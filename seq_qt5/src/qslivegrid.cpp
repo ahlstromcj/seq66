@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-07-26
+ * \updates       2021-08-03
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -822,36 +822,33 @@ void
 qslivegrid::mousePressEvent (QMouseEvent * event)
 {
     m_current_seq = seq_id_from_xy(event->x(), event->y());
-
-    bool assigned = m_current_seq != seq::unassigned();
-    if (! assigned)
+    if (m_current_seq != seq::unassigned())
     {
-        return;                         /* ignore a click on an empty slot  */
-    }
-    if (event->button() == Qt::LeftButton)
-    {
-        if (event->modifiers() & Qt::ControlModifier)
+        if (event->button() == Qt::LeftButton)
         {
-            new_sequence();
+            if (event->modifiers() & Qt::ControlModifier)
+            {
+                new_sequence();
+            }
+            else if (event->modifiers() & Qt::ShiftModifier)
+            {
+                new_live_frame();
+            }
+            else
+            {
+                button_toggle_checked(m_current_seq);
+                m_button_down = true;
+            }
         }
-        else if (event->modifiers() & Qt::ShiftModifier)
+        if (event->button() == Qt::RightButton)
         {
-            new_live_frame();
+            if (event->modifiers() & Qt::ControlModifier)
+                new_sequence();
+            else if (event->modifiers() & Qt::ShiftModifier)
+                new_live_frame();
+            else
+                popup_menu();
         }
-        else if (assigned)
-        {
-            button_toggle_checked(m_current_seq);
-            m_button_down = true;
-        }
-    }
-    if (event->button() == Qt::RightButton)
-    {
-        if (event->modifiers() & Qt::ControlModifier)
-            new_sequence();
-        else if (event->modifiers() & Qt::ShiftModifier)
-            new_live_frame();
-        else
-            popup_menu();
     }
 }
 
@@ -859,6 +856,19 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
  *  Get the sequence number we clicked on.  If we're on a valid sequence, hit
  *  the left mouse button, and are not dragging a sequence, then toggle
  *  playing.
+ *
+ * Moving:
+ *
+ *      If it's the left mouse button and we're moving a pattern between slots,
+ *      then, if the sequence number is valid, inactive, and not in editing,
+ *      create a new pattern and copy the data to it.  Otherwise, copy the data
+ *      to the old sequence.
+ *
+ * Right Click:
+ *
+*       Check for right mouse click; this action launches the popup menu for the
+*       pattern slot underneath the mouse.  Can we do this just once and save the
+*       menus for reuse?  This is now done in the mouse-press handler.
  */
 
 void
@@ -866,56 +876,34 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
 {
     m_current_seq = seq_id_from_xy(event->x(), event->y());
     m_button_down = false;
-
-    bool assigned = m_current_seq != seq::unassigned();
-    if (! assigned)
+    if (m_current_seq != seq::unassigned())
     {
-        return;                 /* printf("mouse release unassigned\n"); */
-    }
-    if (event->button() == Qt::LeftButton)
-    {
-        if (m_moving)
+        if (event->button() == Qt::LeftButton)
         {
-            /*
-             * If it's the left mouse button and we're moving a pattern between
-             * slots, then, if the sequence number is valid, inactive, and not
-             * in editing, create a new pattern and copy the data to it.
-             * Otherwise, copy the data to the old sequence.
-             */
-
-            m_moving = false;
-            button_toggle_enabled(m_source_seq);
-            m_source_seq = seq::unassigned();
-            if (perf().finish_move(m_current_seq))
-                (void) recreate_all_slots();
-        }
-        else
-        {
-            if (perf().is_seq_active(m_current_seq))
-                m_adding_new = false;
+            if (m_moving)                           /* see "Moving" above   */
+            {
+                m_moving = false;
+                button_toggle_enabled(m_source_seq);
+                m_source_seq = seq::unassigned();
+                if (perf().finish_move(m_current_seq))
+                    (void) recreate_all_slots();
+            }
             else
-                m_adding_new = true;
+            {
+                if (perf().is_seq_active(m_current_seq))
+                    m_adding_new = false;
+                else
+                    m_adding_new = true;
+            }
         }
-    }
-
-    /*
-     * Check for right mouse click; this action launches the popup menu for
-     * the pattern slot underneath the mouse.
-     *
-     * Can we do this just once and save the menus for reuse?
-     */
-
-    if (event->button() == Qt::RightButton)
-    {
-        /* moved to the press event handler */
-    }
-    else if                             /* middle button launches seq editor */
-    (
-        event->button() == Qt::MiddleButton &&
-        perf().is_seq_active(m_current_seq)
-    )
-    {
-        signal_call_editor(m_current_seq);
+        else if                                     /* launch seq editor    */
+        (
+            event->button() == Qt::MiddleButton &&
+            perf().is_seq_active(m_current_seq)
+        )
+        {
+            signal_call_editor(m_current_seq);
+        }
     }
 }
 
@@ -957,23 +945,31 @@ qslivegrid::mouseMoveEvent (QMouseEvent * event)
     }
 }
 
+/**
+ *  One issue is that a double-click yields a mouse-press and an
+ *  mouse-double-click event, in that order.
+ */
+
 void
 qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
 {
-    if (m_adding_new)
-        new_sequence();
+    if (rc().allow_click_edit())
+    {
+        if (m_adding_new)
+            new_sequence();
 
-    m_current_seq = seq_id_from_xy(event->x(), event->y());
-    if (perf().is_seq_active(m_current_seq))
-    {
-        button_toggle_checked(m_current_seq);   /* undo the press-toggle    */
+        m_current_seq = seq_id_from_xy(event->x(), event->y());
+        if (perf().is_seq_active(m_current_seq))
+        {
+            button_toggle_checked(m_current_seq);   /* undo press-toggle    */
+        }
+        else
+        {
+            if (perf().new_sequence(m_current_seq))
+                perf().get_sequence(m_current_seq)->set_dirty();
+        }
+        signal_call_editor_ex(m_current_seq);
     }
-    else
-    {
-        if (perf().new_sequence(m_current_seq))
-            perf().get_sequence(m_current_seq)->set_dirty();
-    }
-    signal_call_editor_ex(m_current_seq);
 }
 
 void

@@ -191,7 +191,7 @@ show-system-ports = false
 [interaction-method]
 
 snap-split = false
-click-edit = false
+double-click-edit = true
 
 # transport-type enables synchronizing with JACK Transport. Values:
 # none:        No JACK Transport in use.

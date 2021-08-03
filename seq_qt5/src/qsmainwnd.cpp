@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-08-02
+ * \updates       2021-08-03
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -641,9 +641,8 @@ qsmainwnd::qsmainwnd
 
     midibyte buss_override = usr().midi_buss_override();
     if (is_good_buss(buss_override))
-    {
         ui->cmb_global_bus->setCurrentIndex(int(buss_override) + 1);
-    }
+
     connect
     (
         ui->cmb_global_bus, SIGNAL(currentIndexChanged(int)),
@@ -1103,7 +1102,9 @@ qsmainwnd::select_and_load_file ()
     {
         if (open_file(selectedfile))
         {
-            ui->cmb_global_bus->setCurrentIndex(0);
+            if (! usr().is_buss_override())
+                ui->cmb_global_bus->setCurrentIndex(0);
+
             if (not_nullptr(m_mute_master))
                 m_mute_master->group_needs_update();
         }
@@ -1582,11 +1583,13 @@ qsmainwnd::new_file ()
     if (check() && perf().clear_all())              /* don't clear playlist */
     {
         ui->actionSave->setEnabled(true);
-        ui->cmb_global_bus->setCurrentIndex(0);
         m_is_title_dirty = true;
         redo_live_frame();
         remove_all_editors();
         (void) perf().reset_mute_groups();          /* no modify() call     */
+        if (! usr().is_buss_override())
+            ui->cmb_global_bus->setCurrentIndex(0);
+
         if (not_nullptr(m_mute_master))
             m_mute_master->group_needs_update();
     }
@@ -2321,14 +2324,9 @@ qsmainwnd::update_midi_bus (int index)
     if (not_nullptr(mmb))
     {
         if (index == 0)
-        {
             usr().midi_buss_override(null_buss());  /* for the "None" entry */
-        }
         else
-        {
-            --index;
-            (void) perf().ui_change_set_bus(index);
-        }
+            (void) perf().ui_change_set_bus(index - 1);
     }
 }
 
@@ -2576,6 +2574,9 @@ qsmainwnd::open_recent_file ()
         {
             if (open_file(actionfile))
             {
+                if (! usr().is_buss_override())
+                    ui->cmb_global_bus->setCurrentIndex(0);
+
                 if (not_nullptr(m_mute_master))
                     m_mute_master->group_needs_update();
             }

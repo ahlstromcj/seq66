@@ -316,6 +316,11 @@
 
    This dropdown allows for overriding the buss (port) number used by all of
    the patterns in the current play-set.
+   Unlike the \texttt{buss-override} setting in the 'usr' file
+   (see \sectionref{subsubsec:usr_file_user_midi_settings}),
+   this action causes a modification of the file (and a prompt to save at
+   exit).
+
    \index{play-set}
    The \textsl{play-set} is the current set of patterns to be played.
    Normally, this set holds only the active patterns in the current
@@ -323,7 +328,6 @@
    However, it can also be configured to include patterns from other sets.
    (See \sectionref{subsec:configuration_rc}.)
 
-   This setting modifies the song and will lead to a prompt to save it.
    The list of
    output busses is either the existing MIDI ports on the system, or,
    if port-mapping (see \sectionref{sec:port_mapping}) is active, the list

@@ -1,26 +1,13 @@
 TO DO for Seq66 0.96.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-08-02
+2019-04-13 to 2021-08-03
 
 Hottest to Trivial:
 
-Port-Mapping:
-
-    Running qpseq66 on Linux:  "QSynth" is named "PortMidi"! See
-    seq_portmidi/src/midibus.cpp.  The workaround is to specify long port
-    names in the 'rc' file.
-
 UI:
-
-    Pause functionality under JACK seems to need fixing.
-
-    'rc': click-edit = false does not disable double-click in the live frame.
 
     See the mouse wheel scroll event requests for both the song and
     pattern editors.
-
-    Can we reset the main port dropdown to 0 when loading a new song?
-    Even if it does not change, the buss-override still applies; inconsistent.
 
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
@@ -57,6 +44,12 @@ CLI:
 
     Get daemonize to load the configuration after forking.
 
+Port-Mapping:
+
+    Running qpseq66 on Linux:  "QSynth" is named "PortMidi"! See
+    seq_portmidi/src/midibus.cpp.  The workaround is to specify long port
+    names in the 'rc' file.
+
 Automation:
 
     Can we leverage continuous controllers (CC) to support modifying synth
@@ -64,13 +57,15 @@ Automation:
 
 From Testing:
 
+    Ctrl-U (unmute all) unmutes the next set as well.
+
+    Test port-mapping some more.
+
     Investigation Windows installer versus portable package for 0.95.0.
 
     When zooming, try to keep the same viewport in view.  Got this working
     for horizontal seqroll and perfroll, but not for vertical (refactoring
-    needed).
-
-    Try to center vertically on notes in the viewport.
+    needed).  Try to center vertically on notes in the viewport.
 
     When muting/unmuting a pattern in the song editor, when focus changes
     the tracks are shown in the bright color.
@@ -80,19 +75,16 @@ From Testing:
 
     Tempo display needs to be worked on for the perfroll and qloopbuttons.
 
-    L/R looping in pattern editor not working completely; works fairly well in
-    ALSA.
-
-    Ctrl-U (unmute all) unmutes the next set as well.
-
 Others to Consider:
 
     In main frame, try to highlight the start/stop/pause buttons
     appropriately.
 
     On a Debian Sid box, ALSA puts out *two* events into Qsynth for every note
-    event. On an Ubuntu box, just one event is emitted.  Why?  Try it under JACK
-    at some point on Debian Sid.
+    event. On an Ubuntu box, just one event is emitted. Why?  Try it under JACK
+    at some point on Debian Sid (it also puts out two events).  Two events are
+    emitted even when just clicking on the virtual piano keyboard in the
+    pattern editor!
 
 EXTANT ISSUES:
 

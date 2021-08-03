@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-07-28
+ * \updates       2021-08-03
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -1255,6 +1255,11 @@ public:
     bussbyte midi_buss_override () const
     {
         return m_midi_buss_override;
+    }
+
+    bool is_buss_override () const
+    {
+        return is_good_buss(m_midi_buss_override);
     }
 
     short velocity_override () const

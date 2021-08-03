@@ -1,7 +1,7 @@
-# Seq66 0.94.1 (and above) main ('rc') configuration file
+# Seq66 0.96.0 (and above) main ('rc') configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written 2021-07-25 12:06:53
+# Written 2021-08-03 15:15:05
 #
 # This file holds the main configuration for Seq66. It no longer
 # follows the format of the seq24rc configuration file much.
@@ -9,14 +9,13 @@
 # 'version' is set by Seq66; it is used to detect older configuration
 # files, which are upgraded to the new version when saved.
 #
-# 'sets-mode' affects if sets are muted when moving to the next set or
-# play-screen ('normal'). 'autoarm' unmutes the next set. 'additive'
-# keeps the previous set armed when moving to the next set.  'allsets'
-# arms all sets at once.
+# 'sets-mode' affects set muting when moving to the next set. 'normal'
+# leaves the next set muted. 'auto-arm' unmutes it. 'additive' keeps
+# the previous set armed when moving to the next set. 'all-sets' arms
+# all sets at once.
 #
-# 'port-naming' values are 'short' or 'long'.  The short style just
-# shows the port number and short port name; the long style shows
-# all the numbers and long port name.
+# 'port-naming' values are 'short' or 'long'.  'short' shows the port
+# number and short name; 'long' shows all number and the long name.
 
 [Seq66]
 
@@ -216,19 +215,18 @@ record-by-channel = false
 
 show-system-ports = false
 
-# Sets mouse usage for drawing/editing a pattern. The 'fruity' mode
-# is NOT supported in Seq66. Also obsolete is the Mod4 feature. Other
-# interaction settings are available: 'snap-split' enables splitting
-# performance editor triggers at the snap position instead of in its
-# middle. Split is done by a middle-click or Ctrl-left click.
-# 'click-edit' allows a double-click on a slot to bring it up in
-# the pattern editor (the default).  Set it to false if it interferes
-# with muting/unmuting a pattern.
+# Sets mouse usage for drawing/editing patterns. 'Fruity' mode is NOT
+# supported in Seq66. Also obsolete is the Mod4 feature. Other settings
+# are available: 'snap-split' enables splitting song-editor triggers
+# at a snap position instead of in its middle. Split is done by a
+# middle-click or Ctrl-left click. 'double-click-edit' allows double-
+# click on a slot to open it in a pattern editor. Set it to false if
+# you don't like how it works.
 
 [interaction-method]
 
 snap-split = false
-click-edit = true
+double-click-edit = true
 
 # transport-type enables synchronizing with JACK Transport. Values:
 # none:        No JACK Transport in use.
@@ -246,7 +244,7 @@ click-edit = true
 [jack-transport]
 
 transport-type = none
-song-start-mode = song
+song-start-mode = auto
 jack-midi = false
 
 # auto-save-rc sets automatic saving of the running configuration

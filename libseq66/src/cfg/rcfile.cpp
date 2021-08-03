@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-31
+ * \updates       2021-08-03
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -697,9 +697,9 @@ rcfile::parse ()
     }
     else
     {
-        bool flag = get_boolean(file, tag, "allow-snap-split");
+        bool flag = get_boolean(file, tag, "snap-split");
         rc_ref().allow_snap_split(flag);
-        flag = get_boolean(file, tag, "allow-click-edit");
+        flag = get_boolean(file, tag, "double-click-edit");
         rc_ref().allow_click_edit(flag);
     }
 
@@ -1321,18 +1321,17 @@ rcfile::write ()
      */
 
     file << "\n"
-       "# Sets mouse usage for drawing/editing a pattern. The 'fruity' mode\n"
-       "# is NOT supported in Seq66. Also obsolete is the Mod4 feature. Other\n"
-       "# interaction settings are available: 'snap-split' enables splitting\n"
-       "# performance editor triggers at the snap position instead of in its\n"
-       "# middle. Split is done by a middle-click or Ctrl-left click.\n"
-       "# 'click-edit' allows a double-click on a slot to bring it up in\n"
-       "# the pattern editor (the default).  Set it to false if it interferes\n"
-       "# with muting/unmuting a pattern.\n"
+       "# Sets mouse usage for drawing/editing patterns. 'Fruity' mode is NOT\n"
+       "# supported in Seq66. Also obsolete is the Mod4 feature. Other settings\n"
+       "# are available: 'snap-split' enables splitting song-editor triggers\n"
+       "# at a snap position instead of in its middle. Split is done by a\n"
+       "# middle-click or Ctrl-left click. 'double-click-edit' allows double-\n"
+       "# click on a slot to open it in a pattern editor. Set it to false if\n"
+       "# you don't like how it works.\n"
        "\n[interaction-method]\n\n"
         ;
     write_boolean(file, "snap-split", rc_ref().allow_snap_split());
-    write_boolean(file, "click-edit", rc_ref().allow_click_edit());
+    write_boolean(file, "double-click-edit", rc_ref().allow_click_edit());
 
 #if defined SEQ66_USE_FRUITY_CODE         /* will not be supported in seq66   */
     int x = 0;

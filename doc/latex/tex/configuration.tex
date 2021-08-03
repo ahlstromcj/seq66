@@ -826,14 +826,14 @@
    Also removed is the option for the "fruity" option of \textsl{Seq24}.
    It will be added back if there is a clamor for it.
 
-   \index{[allow-snap-split]}
+   \index{[snap-split]}
    \index{new!snap-split}
    This option comes from the \textsl{seq32} project.  It allows for
    pattern-splitting in the Song editor at snap points, rather than just
    at the middle of the pattern.
 
    \index{[allow-click-edit]}
-   \index{new!click-edit}
+   \index{new!allow-click-edit}
    This option allows one to enable/disable the ability to double-click
    in a pattern slot in the main window to bring it up for editing.
    This can interfere with a live performance where muting/unmuting come fast
@@ -1319,9 +1319,20 @@
       bpm-maximum = 127
    \end{verbatim}
 
+   \index{port!override}
+   \index{buss!override}
+   The \texttt{buss-override} option causes the buss-value (port number) to be
+   applied to each pattern in a MIDI song that is loaded.  This allows the tune
+   to be directed to one's favorite synthesizer/application.
+   Unlike the global port override in the main window
+   (see \sectionref{paragraph:introduction_sets_buss_override}),
+   this application does not modify the file, though one can still opt to save
+   it, which locks in the new buss number.
+
    The \texttt{velocity-override} option fixes a long standing (from
    \textsl{Seq24}) bug where the actual incoming note velocity was always
-   replaced by a hard-wired value.
+   replaced by a hard-wired value.  A value of "-1" corresponds to the "Free"
+   setting, which preserves the incoming velocity.
 
    The \texttt{bpm-precision}, \texttt{bpm-step-increment}, and
    \texttt{bpm-page-increment} values allow more precise control over tempo,
