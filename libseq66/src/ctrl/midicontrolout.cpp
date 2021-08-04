@@ -290,9 +290,10 @@ midicontrolout::send_seq_event (int index, seqaction what, bool flush)
                     "send_seq_event(%s): %s\n", act.c_str(), evstring.c_str()
                 );
 #endif
-                m_master_bus->play(true_buss(), &ev, ev.channel());
                 if (flush)
-                    m_master_bus->flush();
+                    m_master_bus->play_and_flush(true_buss(), &ev, ev.channel());
+                else
+                    m_master_bus->play(true_buss(), &ev, ev.channel());
             }
         }
     }
@@ -433,8 +434,7 @@ midicontrolout::send_event (uiaction what, actionindex which)
         else
             ev = m_ui_events[w].att_action_event_del;
 
-        m_master_bus->play(true_buss(), &ev, ev.channel());
-        m_master_bus->flush();
+        m_master_bus->play_and_flush(true_buss(), &ev, ev.channel());
     }
 }
 
@@ -623,8 +623,7 @@ midicontrolout::send_mutes_event (int group, actionindex which)
         else if (which == action_del)
             ev = m_mutes_events[group].att_action_event_del;
 
-        m_master_bus->play(true_buss(), &ev, ev.channel());
-        m_master_bus->flush();
+        m_master_bus->play_and_flush(true_buss(), &ev, ev.channel());
     }
 }
 

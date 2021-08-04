@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-08-01
+ * \updates       2021-08-04
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -482,8 +482,8 @@ performer::enregister (callbacks * pfcb)
 }
 
 /**
- *  Removes a class from the notification list.  Used in transitory windows and
- *  frames that need notification.
+ *  Removes a class from the notification list.  Used in transitory windows
+ *  and frames that need notification.
  */
 
 void
@@ -773,7 +773,7 @@ performer::ui_get_input (bussbyte bus, bool & active, std::string & n) const
         active = ipm.get(bus);
         disabled = ipm.is_disabled(bus);
     }
-    else if (not_nullptr(master_bus()))
+    else if (master_bus())
     {
         n = master_bus()->get_midi_in_bus_name(bus);
         active = master_bus()->get_input(bus);
@@ -821,7 +821,7 @@ performer::ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const
         n = opm.get_name(bus);
         e = opm.get(bus);
     }
-    else if (not_nullptr(master_bus()))
+    else if (master_bus())
     {
         n = master_bus()->get_midi_out_bus_name(bus);
         e = master_bus()->get_clock(bus);
@@ -3953,8 +3953,7 @@ performer::play (midipulse tick)
         for (auto seqi : m_play_set.seq_container())
             seqi->play_queue(tick, songmode, resume_note_ons());
 
-        if (not_nullptr(m_master_bus))
-            m_master_bus->flush();                      /* flush MIDI buss  */
+        m_master_bus->flush();                          /* flush MIDI buss  */
     }
 }
 
@@ -3966,8 +3965,7 @@ performer::play_all_sets (midipulse tick)
         set_tick(tick);
         sequence::playback songmode = song_start_mode();
         mapper().play_all_sets(tick, songmode, resume_note_ons());
-        if (not_nullptr(m_master_bus))
-            m_master_bus->flush();                      /* flush MIDI buss  */
+        m_master_bus->flush();                          /* flush MIDI buss  */
     }
 }
 

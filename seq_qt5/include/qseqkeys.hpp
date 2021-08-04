@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-28
+ * \updates       2021-08-04
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -70,8 +70,7 @@ public:
         seq::pointer seqp,
         qseqeditframe64 * frame,
         QWidget * parent,                                   /* QScrollArea  */
-        int keyheight,      // = 12,
-        int keyareaheight   // = 12 * c_num_keys + 1
+        int keyheight, int keyareaheight
     );
 
     virtual ~qseqkeys ()
@@ -79,7 +78,32 @@ public:
         // no code needed
     }
 
-    void set_preview_key (int key);
+    int preview_key () const
+    {
+        return m_preview_key;
+    }
+
+    void preview_key (int key);
+
+    bool is_preview_key (int key) const
+    {
+        return key == m_preview_key;
+    }
+
+    bool previewing () const
+    {
+        return m_is_previewing;
+    }
+
+    bool preview_on () const
+    {
+        return m_preview_on;
+    }
+
+    void preview_on (bool on)
+    {
+        m_preview_on = on;
+    }
 
     int note_height () const
     {
@@ -184,6 +208,7 @@ private:
     int m_key_area_y;
     const Color m_preview_color;
     bool m_is_previewing;
+    bool m_preview_on;
     int m_preview_key;
 
 };          // class qseqkeys

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2021-08-01
+ * \updates       2021-08-04
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -252,6 +252,7 @@ public:
     void port_start (int client, int port);
     void port_exit (int client, int port);
     void play (bussbyte bus, event * e24, midibyte channel);
+    void play_and_flush (bussbyte bus, event * e24, midibyte channel);
     void continue_from (midipulse tick);
     void init_clock (midipulse tick);
     void emit_clock (midipulse tick);

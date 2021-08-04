@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-07-27
+ * \updates       2021-08-04
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1122,8 +1122,7 @@ sequence::remove (event::buffer::iterator evi)
         event & er = eventlist::dref(evi);
         if (er.is_note_off() && m_playing_notes[er.get_note()] > 0)
         {
-            master_bus()->play(m_true_bus, &er, midi_channel(er));
-            master_bus()->flush();
+            master_bus()->play_and_flush(m_true_bus, &er, midi_channel(er));
             --m_playing_notes[er.get_note()];                   // ugh
         }
         if (m_events.remove(evi))
@@ -3072,8 +3071,7 @@ sequence::play_note_on (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_ON, midibyte(note), midibyte(m_note_on_velocity));
-    master_bus()->play(m_true_bus, &e, midi_channel(e));
-    master_bus()->flush();
+    master_bus()->play_and_flush(m_true_bus, &e, midi_channel(e));
 }
 
 /**
@@ -3092,8 +3090,7 @@ sequence::play_note_off (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_OFF, midibyte(note), midibyte(m_note_on_velocity));
-    master_bus()->play(m_true_bus, &e, midi_channel(e));
-    master_bus()->flush();
+    master_bus()->play_and_flush(m_true_bus, &e, midi_channel(e));
 }
 
 /**
@@ -4823,10 +4820,7 @@ sequence::put_event_on_bus (event & ev)
             --m_playing_notes[note];
     }
     if (! skip)
-    {
-        master_bus()->play(m_true_bus, &ev, midi_channel(ev));
-        master_bus()->flush();
-    }
+        master_bus()->play_and_flush(m_true_bus, &ev, midi_channel(ev));
 }
 
 /**

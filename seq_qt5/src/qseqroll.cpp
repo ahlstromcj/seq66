@@ -1085,7 +1085,7 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
     int note;
     midipulse tick;
     convert_xy(0, current_y(), tick, note);
-    m_seqkeys_wid->set_preview_key(note);
+    m_seqkeys_wid->preview_key(note);
     if (select_action())
     {
         if (drop_action())

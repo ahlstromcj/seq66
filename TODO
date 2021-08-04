@@ -1,6 +1,6 @@
 TO DO for Seq66 0.96.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-08-03
+2019-04-13 to 2021-08-04
 
 Hottest to Trivial:
 
@@ -84,7 +84,8 @@ Others to Consider:
     event. On an Ubuntu box, just one event is emitted. Why?  Try it under JACK
     at some point on Debian Sid (it also puts out two events).  Two events are
     emitted even when just clicking on the virtual piano keyboard in the
-    pattern editor!
+    pattern editor!  This occurs during the buss flush after the event is
+    sent.  Does not seem to be due to the MIDI thru ALSA port.
 
 EXTANT ISSUES:
 

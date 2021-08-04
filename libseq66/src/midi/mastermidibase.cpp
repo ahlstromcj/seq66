@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2021-08-01
+ * \updates       2021-08-04
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -199,6 +199,9 @@ mastermidibase::stop ()
  *  api_clock() function, which does nothing for the <i> original </i> ALSA
  *  implementation and the PortMidi implementation.
  *
+ *  api_clock() doesn't do anything, so it is not called here. The clock()
+ *  call here does flush as well.
+ *
  * \threadsafe
  *
  * \param tick
@@ -209,12 +212,6 @@ void
 mastermidibase::emit_clock (midipulse tick)
 {
     automutex locker(m_mutex);
-
-    /*
-     * Doesn't do anything: api_clock().  But where do we call flush()?
-     * Do we even need to flush clock?
-     */
-
     m_outbus_array.clock(tick);
 }
 
@@ -281,7 +278,7 @@ mastermidibase::panic (int displaybuss)
     automutex locker(m_mutex);
     event e;
     e.set_status(EVENT_NOTE_OFF);
-    flush();
+    api_flush();
     for (int bus = 0; bus < c_busscount_max; ++bus)
     {
         if (bus == displaybuss)             /* do not clear the Launchpad   */
@@ -315,7 +312,7 @@ mastermidibase::sysex (const event * ev)
 {
     automutex locker(m_mutex);
     m_outbus_array.sysex(ev);
-    flush();                /* recursive locking! */
+    api_flush();
 }
 
 /**
@@ -327,8 +324,8 @@ mastermidibase::sysex (const event * ev)
  * \threadsafe
  *
  * \param bus
- *      The actual system buss to start play on.  The caller is expected to make
- *      sure this buss is the correct buss.
+ *      The actual system buss to start play on.  The caller is expected to
+ *      make sure this buss is the correct buss.
  *
  * \param e24
  *      The seq66 event to play on the buss.  For speed, we don't bother to
@@ -343,6 +340,14 @@ mastermidibase::play (bussbyte bus, event * e24, midibyte channel)
 {
     automutex locker(m_mutex);
     m_outbus_array.play(bus, e24, channel);
+}
+
+void
+mastermidibase::play_and_flush (bussbyte bus, event * e24, midibyte channel)
+{
+    automutex locker(m_mutex);
+    m_outbus_array.play(bus, e24, channel);
+    api_flush();
 }
 
 /**

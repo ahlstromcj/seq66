@@ -1,0 +1,76 @@
+Rough HOWTO On Using Bluetooth Earbuds
+Chris Ahlstrom
+2021-08-04 to 2021-08-04
+
+This is how I got Bluez-ALSA working with aplay and MPD on my Debian Sid system.
+
+0.  First, I run MPD in user land, with this part relevant from ~/.mpdconf:
+
+        audio_output {
+            type		"alsa"
+            name		"USB Audio Codec"
+           device	"hw:CODEC"	# optional
+        }
+
+    The rest of the file is pretty stock, except the logs etc. are written to
+    ~/.mpd.  Renamed /etc/mpd.conf /etc/mpd.conf.disabled to keep it out of the
+    way.
+
+    The command "systemctl --user start mpd" is (eventually) called via the
+    .xsession startup I use.
+
+    Second, the stock install of ALSA is used, and Debian puts all of the
+    configuration of ALSA in /etc/alsa/conf.d.  Thus, /etc/asound.conf
+    is unused and I renamed it to /etc/asound.conf.
+
+1.  Installed the Debian bluez-alsa-utils package.  This install sets up the
+    bluez-alsa service in systemd and adds "20-bluealsa.conf" to
+    /etc/alsa/conf.d, among other things.  A far more comprehensive setup than
+    one finds via Google.
+
+2.  Created the file ~/.asoundrc with the following content, necessary to be
+    able to use "aplay -D bluealsa my_sound_file.wav". 
+
+        defaults.bluealsa {
+            service "org.bluealsa"
+            interface "hci0"
+            device "20:05:13:08:06:9B"
+            profile "a2dp"
+            delay 1000
+        }
+
+    However, the bluealsa device doesn't show up in /proc/asound or in the
+    "aplay -l" command.
+
+3.  Not sure these steps are necessary:
+
+    a. Create /etc/bluetooth/audio.conf and add:
+
+       [General]
+       Class = 0x20041C Enable = Source,Sink,Media,Socket
+
+    b. Update /etc/bluetooth/main.conf with:
+
+       [General]
+       Class = 0x20041C
+
+4.  Paired the bluetooth earbuds, fairly easy with blueman-manager or
+    bluetoothctl.  Had to make them "Trusted".
+
+5.  In alsamixer, F6 does not show any bluealsa device.  Instead, arrowed down
+    to the "enter device name..." entry, selected it, and typed in "bluealsa".
+    Then the "BlueALSA" card is shown, with its A2DP mixer control.
+
+6.  Added this as the second output device in ~/.mpd.conf:
+
+        audio_output {
+            type		"alsa"
+           name		"bluealsa"
+           device	"bluealsa"
+           mixer_type "software"
+        }
+
+7.  Restart the system, log in, reconnect the bluetooth earbuds, start my MPD
+    front end and enjoy, muting the other output(s).
+
+# vim: sw=4 ts=4 wm=8 et ft=rc

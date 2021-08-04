@@ -566,8 +566,8 @@ midi_in_alsa::api_poll_for_midi ()
  *  event-play by snd_midi_event_new() and snd_midi_event_free().
  */
 
-#define SEQ66_MIDI_EVENT_SIZE_MAX    10
-#define SEQ66_MIDI_SYSEX_SIZE_MAX   512     /* Hydrogen uses 32 for input!  */
+static const size_t s_event_size_max =  10;
+static const size_t s_sysex_size_max = 512; /* Hydrogen uses 32 for input!  */
 
 /**
  *  This play() function takes a native event, encodes it to an ALSA MIDI
@@ -588,22 +588,20 @@ midi_in_alsa::api_poll_for_midi ()
 void
 midi_alsa::api_play (const event * e24, midibyte channel)
 {
-    static const size_t s_event_size_max = SEQ66_MIDI_EVENT_SIZE_MAX;
     snd_midi_event_t * midi_ev;                         /* ALSA MIDI parser */
     int rc = snd_midi_event_new(s_event_size_max, &midi_ev);
     if (rc == 0)
     {
+        snd_seq_event_t ev;                             /* event memory     */
         midibyte buffer[4];                             /* temp MIDI data   */
         buffer[0] = e24->get_status();                  /* fill buffer      */
-        buffer[0] += (channel & 0x0F);
+        buffer[0] += (channel & 0x0F);                  /* set channel      */
         e24->get_data(buffer[1], buffer[2]);            /* set MIDI data    */
-
-        snd_seq_event_t ev;
         snd_seq_ev_clear(&ev);                          /* clear event      */
         snd_midi_event_encode(midi_ev, buffer, 3, &ev); /* 3 raw bytes      */
         snd_midi_event_free(midi_ev);                   /* free the parser  */
         snd_seq_ev_set_source(&ev, m_local_addr_port);  /* set source       */
-        snd_seq_ev_set_subs(&ev);
+        snd_seq_ev_set_subs(&ev);                       /* subscriber bcast */
         snd_seq_ev_set_direct(&ev);                     /* it is immediate  */
         snd_seq_event_output(m_seq, &ev);               /* pump into queue  */
     }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-28
+ * \updates       2021-08-04
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -67,6 +67,12 @@ static const int sc_keyoffset_x = 20;
 static const int sc_keyarea_x   = sc_key_x + sc_keyoffset_x + 2;
 
 /**
+ *  Manifest constant.
+ */
+
+static const int sc_null_key = (-1);
+
+/**
  *  Principal constructor.
  */
 
@@ -92,8 +98,9 @@ qseqkeys::qseqkeys
     m_key_y                 (keyheight),            /* note_height()        */
     m_key_area_y            (keyareaheight),        /* total_height()       */
     m_preview_color         (progress_paint()),     /* extra_paint())       */
-    m_is_previewing         (false),
-    m_preview_key           (-1)
+    m_is_previewing         (false),                /* previewing()         */
+    m_preview_on            (false),                /* preview_on()         */
+    m_preview_key           (sc_null_key)           /* preview_key()        */
 {
     /*
      * This policy is necessary in order to allow the vertical scrollbar to
@@ -113,7 +120,6 @@ qseqkeys::qseqkeys
 void
 qseqkeys::paintEvent (QPaintEvent *)
 {
-    int keyx = sc_keyoffset_x + 1;
     QPainter painter(this);
     QPen pen(Qt::black);
     QBrush brush (Qt::SolidPattern);
@@ -121,58 +127,59 @@ qseqkeys::paintEvent (QPaintEvent *)
     brush.setColor(Qt::darkGray);
     painter.setPen(pen);
     painter.setBrush(brush);
+    painter.drawRect(0, 0, sc_keyarea_x, total_height());   /* border       */
 
-    /*
-     * Draw keyboard border.
-     */
-
-    painter.drawRect(0, 0, sc_keyarea_x, total_height());
-    for (int i = 0; i < c_num_keys; ++i)
+    int keyx = sc_keyoffset_x + 1;
+    int keyy = 0;
+    int numy = 8;
+    int nh = note_height();
+    int nh_1 = nh - 1;
+    int nh_4 = nh - 4;
+    int nh_5 = nh - 5;
+    for (int i = 0; i < c_num_keys; ++i, keyy += nh, numy += nh)
     {
         int keyvalue = c_num_keys - i - 1;
         int key = keyvalue % c_octave_size;
-        int keyy = note_height() * i;
-        int numy = keyy + 8;
-        pen.setColor(Qt::black);                            /* white keys   */
+        pen.setColor(Qt::black);                    /* white keys           */
         pen.setStyle(Qt::SolidLine);
         brush.setColor(Qt::white);
         brush.setStyle(Qt::SolidPattern);
         painter.setPen(pen);
         painter.setBrush(brush);
-        painter.drawRect(keyx, keyy, sc_key_x, note_height() - 1);
-        if (is_black_key(key))                              /* black keys   */
+        painter.drawRect(keyx, keyy, sc_key_x, nh_1);
+        if (is_black_key(key))                      /* black keys           */
         {
             pen.setStyle(Qt::SolidLine);
             pen.setColor(Qt::black);
             brush.setColor(Qt::black);
             painter.setPen(pen);
             painter.setBrush(brush);
-            painter.drawRect(keyx, keyy + 2, sc_key_x - 2, note_height() - 5);
+            painter.drawRect(keyx, keyy + 2, sc_key_x - 2, nh_5);
         }
-        if (keyvalue == m_preview_key)              /* preview note         */
+        if (is_preview_key(keyvalue))               /* preview note         */
         {
             brush.setColor(preview_color());        /* Qt::red              */
             pen.setStyle(Qt::NoPen);
             painter.setPen(pen);
             painter.setBrush(brush);
-            painter.drawRect(keyx + 2, keyy + 2, sc_key_x - 3, note_height() - 4);
+            painter.drawRect(keyx + 2, keyy + 2, sc_key_x - 3, nh_4);
         }
 
         std::string note;
         char notebuf[8];
-        m_font.setBold(key == m_key);
+        m_font.setBold(key == m_key);            /* "Cx" octave labels   */
         painter.setFont(m_font);
+        pen.setColor(Qt::black);
+        pen.setStyle(Qt::SolidLine);
+        painter.setPen(pen);
         switch (m_show_key_names)
         {
         case showkeys::octave_letters:
 
             if (key == m_key)
             {
-                pen.setColor(Qt::black);            /* "Cx" octave labels   */
-                pen.setStyle(Qt::SolidLine);
-                painter.setPen(pen);
                 note = musical_note_name(keyvalue);
-                painter.drawText(2, numy, note.c_str());   // 11
+                painter.drawText(2, numy, note.c_str());
             }
             break;
 
@@ -181,14 +188,14 @@ qseqkeys::paintEvent (QPaintEvent *)
             if ((keyvalue % 2) == 0)
             {
                 note = musical_note_name(keyvalue);
-                painter.drawText(2, numy, note.c_str());   // 11
+                painter.drawText(2, numy, note.c_str());
             }
             break;
 
         case showkeys::all_letters:
 
             note = musical_note_name(keyvalue);
-            painter.drawText(2, numy, note.c_str());       // 11
+            painter.drawText(2, numy, note.c_str());
             break;
 
         case showkeys::even_numbers:
@@ -217,11 +224,13 @@ qseqkeys::mousePressEvent (QMouseEvent * event)
         int note;
         int y = event->y();
         convert_y(y, note);
-        set_preview_key(note);
+        preview_key(note);
+        preview_on(true);
         seq_pointer()->play_note_on(note);
     }
     else if (event->button() == Qt::RightButton)
     {
+        preview_key(sc_null_key);
         switch (m_show_key_names)
         {
         case showkeys::octave_letters:
@@ -251,10 +260,17 @@ qseqkeys::mousePressEvent (QMouseEvent * event)
 void
 qseqkeys::mouseReleaseEvent (QMouseEvent * event)
 {
-    if (event->button() == Qt::LeftButton && m_is_previewing)
+    if (event->button() == Qt::LeftButton)
     {
-        seq_pointer()->play_note_off(m_preview_key);
-        set_preview_key(-1);
+        if (previewing())
+        {
+            if (preview_on())
+            {
+                seq_pointer()->play_note_off(preview_key());
+                preview_on(false);
+            }
+            preview_key(sc_null_key);
+        }
     }
     update();
 }
@@ -262,10 +278,14 @@ qseqkeys::mouseReleaseEvent (QMouseEvent * event)
 void
 qseqkeys::mouseMoveEvent (QMouseEvent * /* event */)
 {
-    if (m_is_previewing)
+    if (previewing())
     {
-        seq_pointer()->play_note_off(m_preview_key);
-        set_preview_key(-1);
+        if (preview_on())
+        {
+            seq_pointer()->play_note_off(preview_key());
+            preview_on(false);
+        }
+        preview_key(sc_null_key);
     }
     update();
 }
@@ -305,7 +325,7 @@ qseqkeys::wheelEvent (QWheelEvent * ev)
 }
 
 void
-qseqkeys::set_preview_key (int key)
+qseqkeys::preview_key (int key)
 {
     m_is_previewing = key >= 0;
     m_preview_key = key;
