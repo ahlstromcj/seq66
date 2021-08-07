@@ -231,31 +231,12 @@ mastermidibus::api_get_midi_event (event * in)
                  * in->set_timestamp(ts);
                  */
 
-#undef USE_SET_STATUS_KEEP_CHANNEL
-#if defined USE_SET_STATUS_KEEP_CHANNEL
-                in->set_status_keep_channel(Pm_MessageStatus(pme.message));
-                in->set_data
-                (
-                    Pm_MessageData1(pme.message), Pm_MessageData2(pme.message)
-                );
-                if (in->is_note_off_recorded())
-                {
-                    midibyte ch = event::get_channel
-                    (
-                        Pm_MessageStatus(pme.message)
-                    );
-                    midibyte status = EVENT_NOTE_OFF | ch;
-                    in->set_status_keep_channel(status);
-                }
-                result = true;
-#else
                 midipulse ts = midipulse(Pt_Time_To_Pulses(pme.timestamp));
                 midibyte buffer[4];
                 buffer[0] = Pm_MessageStatus(pme.message);
                 buffer[1] = Pm_MessageData1(pme.message);
                 buffer[2] = Pm_MessageData2(pme.message);
                 result = in->set_midi_event(ts, buffer, 0);     /* 0 count  */
-#endif
                 in->set_input_bus(bussbyte(b));
             }
         }
