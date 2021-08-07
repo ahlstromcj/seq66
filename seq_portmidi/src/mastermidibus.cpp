@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-08-12
+ * \updates       2021-08-07
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -190,6 +190,10 @@ mastermidibus::api_init (int ppqn, midibpm /*bpm*/)
  *
  * \return
  *      Returns true if there was no error and an event was obtained.
+ *      Note that we cannot set the result to false except at the beginning,
+ *      because then only the last device in the list can input data.
+ *      We have to break after getting data; this risks starving the later
+ *      devices!  A FIX TO LOOK INTO!!!  TODO!!!
  */
 
 bool
@@ -207,11 +211,15 @@ mastermidibus::api_get_midi_event (event * in)
             PmError err = Pm_Dequeue(midi->queue, &pme);
             if (err == pmBufferOverflow)        /* ignore data retrieved    */
             {
-                result = false; /* pm_errmsg(pmBufferOverflow, deviceid);   */
+                /*
+                 * result = false; // pm_errmsg(pmBufferOverflow, deviceid);
+                 */
             }
-            else if (err == 0)                  /* empty queue              */
+            else if (err == 0)                  /* empty queue for port     */
             {
-                result = false;
+                /*
+                 * result = false;
+                 */
             }
             else
             {
@@ -223,7 +231,8 @@ mastermidibus::api_get_midi_event (event * in)
                  * in->set_timestamp(ts);
                  */
 
-                in->set_input_bus(bussbyte(b));
+#undef USE_SET_STATUS_KEEP_CHANNEL
+#if defined USE_SET_STATUS_KEEP_CHANNEL
                 in->set_status_keep_channel(Pm_MessageStatus(pme.message));
                 in->set_data
                 (
@@ -239,21 +248,31 @@ mastermidibus::api_get_midi_event (event * in)
                     in->set_status_keep_channel(status);
                 }
                 result = true;
+#else
+                midipulse ts = midipulse(Pt_Time_To_Pulses(pme.timestamp));
+                midibyte buffer[4];
+                buffer[0] = Pm_MessageStatus(pme.message);
+                buffer[1] = Pm_MessageData1(pme.message);
+                buffer[2] = Pm_MessageData2(pme.message);
+                result = in->set_midi_event(ts, buffer, 0);     /* 0 count  */
+#endif
+                in->set_input_bus(bussbyte(b));
             }
         }
+        if (result)
+            break;                          /* process incoming event NOW   */
     }
-    if (! result)
-        return false;
 
     /*
      * Some keyboards send Note On with velocity 0 for Note Off.  The event
-     * class already has this check available.
+     * class already has this check available.  This is now done by
+     * event::set_midi_event().
+     *
+     * if (in->is_note_off_recorded())
+     *      in->set_status(EVENT_NOTE_OFF);
      */
 
-    if (in->is_note_off_recorded())
-        in->set_status(EVENT_NOTE_OFF);
-
-    return true;                        /* Why no "sysex = false"?  */
+    return result;                      /* Why no "sysex = false"?  */
 }
 
 /**

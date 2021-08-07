@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-06-10
+ * \updates       2021-08-06
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -1388,8 +1388,14 @@ midi_in_jack::api_get_midi_event (event * inev)
             }
             if (event::is_sense_or_reset(st))
                 result = false;
-            else
-                inev->set_status(st);
+
+            /*
+             * Issue #55 (ignoring the channel).  The status is already set,
+             * with channel nybble, above.  This strips the channel.
+             *
+             * else
+             *     inev->set_status(st);
+             */
         }
     }
     return result;

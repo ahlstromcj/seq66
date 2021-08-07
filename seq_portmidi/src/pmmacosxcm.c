@@ -459,7 +459,7 @@ readProc (const MIDIPacketList * newPackets, void * refCon, void * connRefCon)
 static PmError
 midi_in_open (PmInternal * midi, void * driverInfo)
 {
-    MIDIEndpointRef endpoint;
+    MIDIEndpointRef endpoint = NULL_REF;
     midi_macosxcm_type m;
     OSStatus macHostError;
 

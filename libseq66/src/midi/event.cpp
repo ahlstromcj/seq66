@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-05-19
+ * \updates       2021-08-06
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -324,7 +324,7 @@ event::transpose_note (int tn)
 /**
  *  Sets the m_status member to the value of status.  If \a status is a
  *  channel event, then the channel portion of the status is cleared using
- *  a bitwise AND against EVENT_CLEAR_CHAN_MASK.  This version is basically
+ *  a bitwise AND against EVENT_GET_STATUS_MASK.  This version is basically
  *  the Seq24 version with the additional setting of the Seq66-specific
  *  m_channel member.
  *
@@ -376,7 +376,7 @@ event::set_status (midibyte status)
  * \param eventcode
  *      The status byte, perhaps read from a MIDI file.  This byte is
  *      assumed to have already had its low nybble cleared by masking against
- *      EVENT_CLEAR_CHAN_MASK.
+ *      EVENT_GET_STATUS_MASK.
  *
  * \param channel
  *      The channel byte.  Combined with the event-code, this makes a valid
@@ -454,6 +454,15 @@ event::set_midi_event
         timestamp, buffer[0], buffer[1], buffer[2], count
     );
 #endif
+    if (count == 0)             /* portmidi: analyze the event to get count */
+    {
+        if (is_two_byte_msg(buffer[0]))
+            count = 3;
+        else if (is_one_byte_msg(buffer[0]))
+            count = 2;
+        else
+            count = 1;
+    }
     if (count == 3)
     {
         set_status_keep_channel(buffer[0]);

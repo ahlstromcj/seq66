@@ -55,9 +55,6 @@ unix:!macx {
 }
 
 # Mac OSX
-#
-#  We provide the readbinaryplist.h file in case someone needs it, but
-#  currently do not include that module in the seq_portmidi library.
 
 macx: {
    HEADERS += include/pmmac.h include/pmmacosxcm.h 

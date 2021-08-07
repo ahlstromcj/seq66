@@ -8,7 +8,7 @@
 # \library     Home/Audio
 # \author      Chris Ahlstrom
 # \date        2020-12-08
-# \update      2020-12-14
+# \update      2021-08-06
 # \version     $Revision$
 #
 #   This script provides a way to make a fast JACK setup on Linux.  See:
@@ -31,48 +31,166 @@
 #
 #------------------------------------------------------------------------------
 
-HWPORT=PCH
-JDRIVER=alsa
-SAMPLERATE=48000
-NPERIODS=4              # was 2
-PFRAMES=256             # was 64
-SLEEPTIME=10
-START_YOSHIMI="no"
-YOSHIMI_DIR="$HOME/.config/yoshimi"
-YOSHIMI_GM="yoshimi-b4uacuse-gm.state"
-YOSHIMI_STATE="$YOSHIMI_DIR/$YOSHIMI_GM"
+#******************************************************************************
+#  Provide a sane environment, just in case it is needed.
+#------------------------------------------------------------------------------
 
-# Not yet used:
+LANG=C
+export LANG
+export STARTJACK_DATE="2021-08-06"
 
-REALTIME=yes
+#******************************************************************************
+#  Default simple parameter values
+#------------------------------------------------------------------------------
+
+BLUEDEV="hci0"
+BLUEMAC="20:05:13:08:06:9B"
+BLUEPORT="bluealsa"
+BLUEPROFILE="a2dp"
+BLUETOOTH="no"
+DO_BASIC="no"
+DO_FULL="yes"
+DO_KILL="no"
+HWPORT="PCH"
+JDRIVER="alsa"
 MDRIVER=seq             # raw can cause real issues with a2jmidid
+NPERIODS=4              # was 2, 3 recommended for USB devices
+PFRAMES=256             # was 64
+SAMPLERATE=48000
+SLEEPTIME15=15
+SLEEPTIME2=2
+SLEEPTIME=10
 
-if [ "$1" == "kill" ] ; then
+#******************************************************************************
+#  Default option + simple parameter values
+#------------------------------------------------------------------------------
 
+#******************************************************************************
+#  ALSA backend options
+#
+#  The long forms give issues.
+#
+#------------------------------------------------------------------------------
+
+# BACKDEV=""                          # defaults to "--device hw:0" (modules.conf)
+# BACKEND="--driver=$JDRIVER"         # pretty much always alsa
+# REALTIME="--realtime"               # versus --no-realtime
+# MSYSTEM="--midi=$MDRIVER"           # -X seq or -X raw, raw is bad
+# RATE="--rate=$SAMPLERATE"           # sampling rate
+# PERIOD="--period=$PFRAMES"          # frames between calls (latency = period / rate)
+# PERIODS="--nperiods=$NPERIODS"      # latency = np * period / rate; np > 2
+# PORTMAX="--port-max=64"             # JACK default is 256
+# DUPLEX="--duplex"                   # -D, both capture and playback ports
+# CAPTURE="--capture=hw:$HWPORT"      # e.g. hw:PCH (or --duplex for both)
+# PLAYBACK="--playback=hw:$HWPORT"    # e.g. hw:PCH
+
+BACKDEV=""                          # defaults to "--device hw:0" (modules.conf)
+BACKEND="-d $JDRIVER"               # pretty much always alsa
+REALTIME="-Rv"                      # versus --no-realtime; v = "verbose"
+MSYSTEM="-X $MDRIVER"               # -X seq or -X raw, raw is bad
+RATE="-r $SAMPLERATE"               # sampling rate
+PERIOD="-p $PFRAMES"                # frames between calls (latency = period / rate)
+PERIODS="-n $NPERIODS"              # latency = np * period / rate; np > 2
+PORTMAX="-port-max 64"              # JACK default is 256
+DUPLEX="-D"                         # -D, both capture and playback ports
+CAPTURE="-C hw:$HWPORT"             # e.g. hw:PCH (or --duplex for both)
+PLAYBACK="-P hw:$HWPORT"            # e.g. hw:PCH
+
+DAEMON="/usr/bin/jackd"
+OPTIONS="$BACKEND $RATE $PERIOD $PERIODS $MSYSTEM $DUPLEX $CAPTURE $PLAYBACK"
+
+if [ "$1" == "--help" ] ; then
+
+   cat << E_O_F
+Usage: ./startjack [ options ]                               ($STARTJACK_DATE)
+
+Starts JACK, a2jmidid, and qjackctrl. Also provides for stopping (killing) them.
+
+The options are:
+
+    --basic   Just start jack, a2jmidid, and qjackctl.
+    --full    Use jack_control and a2j_control to start things.  The default.
+    --kill    Stop JACK instead of starting it."
+
+E_O_F
+   exit 1
+fi
+
+if [ $# -ge 1 ] ; then
+
+   while [ "$1" != "" ] ; do
+
+      case "$1" in
+
+         --blue | blue)
+            BLUETOOTH="yes"
+            ;;
+
+         --basic | basic)
+            DO_BASIC="yes"
+            DO_FULL="no"
+            ;;
+
+         --full | full)
+            DO_BASIC="no"
+            DO_FULL="yes"
+            ;;
+
+         --kill | kill)
+            DO_KILL="yes"
+            ;;
+
+         *)
+            echo "? Unsupported option; --help for more information"
+            exit $EXIT_ERROR_NO_SUCH_OPTION
+            ;;
+
+      esac
+      shift
+   done
+fi
+
+if [ "$DO_KILL" == "yes" ] ; then
+
+    if [ "$DO_BASIC" == "yes" ] ; then
+        killall a2jmidid
+        killall jackd
+    else
+        a2j_control --stop
+        a2j_control --exit
+        jack_control exit
+    fi
     killall qjackctl
-    a2j_control --stop
-    a2j_control --exit
-    jack_control exit
 
-elif [ "$1" == "basic" ] ; then
+elif [ "$DO_BASIC" == "yes" ] ; then
 
-    echo "Starting processes with 5-second wait for each..."
-    echo "Starting QJackCtl/JACK: 'qjackctl --start'..."
-    qjackctl --start &
-    sleep 5
+    echo "Starting jackd..."
+#   /usr/bin/jackd -dalsa -r 48000 -p 256 -n 4 -X seq -D -C hw:PCH -P hw:PCH &
+    echo "$DAEMON $OPTIONS"
+    $DAEMON $OPTIONS &
+    echo "Waiting $SLEEPTIME seconds for jackd to settle..."
+    sleep $SLEEPTIME
     echo "Starting ALSA-to-JACK bridge: 'a2jmidid --export-hw'..."
     a2jmidid --export-hw &
+    echo "Waiting $SLEEPTIME15 seconds for a2jmidid to settle..."
+    sleep $SLEEPTIME15
+    echo "Starting QJackCtl/JACK: 'qjackctl --start'..."
+    qjackctl &
+    sleep $SLEEPTIME2
 
-    if [ "$2" == "yoshimi" ] ; then
-        START_YOSHIMI="yes"
-        sleep 5
-    fi
-
-else
+elif [ "$DO_BASIC" == "no" ] ; then
 
     jack_control start
     jack_control ds $JDRIVER
-    jack_control dps device hw:$HWPORT
+
+    if [ "$BLUETOOTH" == "yes" ] ; then
+        echo "Audio using $BLUEPORT..."
+        echo "jack_control dps device $BLUEPORT WILL NOT WORK"
+    else
+        echo "Audio using hw:$HWPORT..."
+        jack_control dps device hw:$HWPORT
+    fi
+
     jack_control dps rate $SAMPLERATE
     jack_control dps nperiods $NPERIODS
     jack_control dps period $PFRAMES
@@ -82,19 +200,14 @@ else
     a2j_control --start
     echo "Waiting $SLEEPTIME seconds for a2j_control to settle..."
     sleep $SLEEPTIME
-    echo "Starting qjackctl..."
-    qjackctl &
-
-    if [ "$1" == "yoshimi" ] ; then
-        START_YOSHIMI="yes"
-        sleep 5
+    if [ "$BLUETOOTH" == "yes" ] ; then
+        echo "Starting alsa_out..."
+        alsa_out -d bluealsa:HCI=$BLUEDEV,DEV=$BLUEMAC,PROFILE=$BLUEPROFILE
+    else
+        echo "Starting qjackctl..."
+        qjackctl &
     fi
 
-fi
-
-if [ "$START_YOSHIMI" == "yes" ] ; then
-    echo "Starting Yoshimi with JACK support and a GM state..."
-    exec yoshimi -j -J --state=$YOSHIMI_STATE
 fi
 
 #------------------------------------------------------------------------------

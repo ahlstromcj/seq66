@@ -1,0 +1,90 @@
+#!/bin/bash
+#
+#******************************************************************************
+# bluejack
+#------------------------------------------------------------------------------
+##
+# \file        bluejack
+# \library     Home/Audio
+# \author      Chris Ahlstrom
+# \date        2021-08-05
+# \update      2021-08-05
+# \version     $Revision$
+#
+#   EXPERIMENTAL
+#
+# /usr/bin/jackd -r -p128 -dalsa -dbluealsa -r44100 -p256 -n4 -s -S -P -o2
+#
+# https://github.com/Arkq/bluez-alsa/wiki/Using-BlueALSA-with-the-JACK-Audio-Connection-Kit
+#
+# Possibly the simplest example is to create a jack sink using the bluealsa default PCM:
+#
+# zita-j2a -j bluealsa -d bluealsa -p 1024 -n 3 -c 2 -L
+#
+# -j bluealsa: Use the name "bluealsa" for the sink. This is the name JACK
+#    clients use to send audio to the sink.
+# -d bluealsa: Use the alsa device "bluealsa". This name is predefined by
+#    the bluez-alsa installation, and used in this way selects the most
+#    recently connected A2DP playback device.
+# -p 1024: Use an ALSA period size of 1024 frames.
+# -n 3: Use an ALSA buffer of 3 periods. A smaller buffer will certainly
+#    result in constant underruns.
+# -c 2: Use 2 channels. `zita-j2a` will create 2 jack ports,
+#    `bluealsa:playback_1` and `bluealsa:playback_2`.
+# -L: Use S16_LE samples. Without this option `zita-j2a` may convert to
+#    32-bit samples only for the ALSA `plug` plugin to convert them back
+#    to 16-bit.
+#
+# The command line arguments for alsa_out are the same as for zita-j2a except that -L
+# is not supported.
+#
+# alsa_out -j bt_headphones -d bluealsa:XX:XX:XX:XX:XX:XX -c 2 -p 4096 -n 3
+#
+# alsa_out -p 10000 -d bluealsa:HCI=hci0,DEV="20:05:13:08:06:9B",profile=a2dp
+#
+# There is a bug in alsa_out that causes a buffer overflow if the device name is too
+# long. The longest device name allowed is 29 characters. Fortunately the form used
+# here is only 26 characters.
+#
+# jackd -r -d alsa -P bluealsa -n 3 -S -o 2
+#
+#   -R: Realtime. Bluetooth audio is high-latency, so no need for realtime.
+#   -r: Do not request real-time scheduling (optional - will also work without
+#   this)
+#
+# -d alsa: Use the ALSA backend
+# -P bluealsa: Use the most-recently connected BlueALSA playback device. Or
+#    choose a specific device with `-P bluealsa:XX:XX:XX:XX:XX:XX`
+# -n 3: Use an ALSA buffer of 3 periods. A smaller buffer will produce underruns.
+# -o 2: Create 2 output channels
+# -S: Use S16_LE sample format
+#
+# Clients can then send to the BlueALSA device with
+# 
+#   JACK_PLAY_CONNECT_TO=system:playback_%d jack-play test_sounds.wav
+#
+# .asoundrc:
+#
+# It is possible to remove the ALSA plug plugin from the audio processing chain,
+# and instead rely on JACK's own audio processing features. To do this define
+# PCMs in our ~/.asoundrc file.
+#
+# pcm.bt-headphones {
+#   type bluealsa
+#   device XX:XX:XX:XX:XX:XX
+#   profile a2dp
+#   }
+#
+# ctl.bt-headphones {
+#   type bluealsa
+# }
+#
+#------------------------------------------------------------------------------
+
+/usr/bin/jackd -r -d alsa -P bluealsa -r44100 -n 3 -S -o 2
+alsa_out -j bluealsa -p 4096 -d bluealsa:20:05:13:08:06:9B
+
+#------------------------------------------------------------------------------
+# vim: ft=sh
+#------------------------------------------------------------------------------
+

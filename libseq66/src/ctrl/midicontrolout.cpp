@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with refactoring by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-07-12
+ * \updates       2021-08-07
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -280,7 +280,7 @@ midicontrolout::send_seq_event (int index, seqaction what, bool flush)
         if (m_seq_events[index][w].apt_action_status)
         {
             event ev = m_seq_events[index][w].apt_action_event;
-            if (not_nullptr(m_master_bus))
+            if (not_nullptr(m_master_bus) && ev.get_status() > 0x00)
             {
 #if defined SEQ66_PLATFORM_DEBUG_TMI
                 std::string act = seqaction_to_string(what);
@@ -413,6 +413,9 @@ midicontrolout::seq_event_is_active (int seq, seqaction what) const
 
 /**
  *  Note the att_action_event_del is now used with uiaction events.
+ *
+ *  Issue #55:  While researching this issue, we found the portmidi
+ *  implementation of Seq66 was trying to send events of status 0x00.
  */
 
 void
@@ -434,7 +437,8 @@ midicontrolout::send_event (uiaction what, actionindex which)
         else
             ev = m_ui_events[w].att_action_event_del;
 
-        m_master_bus->play_and_flush(true_buss(), &ev, ev.channel());
+        if (ev.get_status() > 0x00)
+            m_master_bus->play_and_flush(true_buss(), &ev, ev.channel());
     }
 }
 
@@ -623,7 +627,8 @@ midicontrolout::send_mutes_event (int group, actionindex which)
         else if (which == action_del)
             ev = m_mutes_events[group].att_action_event_del;
 
-        m_master_bus->play_and_flush(true_buss(), &ev, ev.channel());
+        if (ev.get_status() > 0x00)
+            m_master_bus->play_and_flush(true_buss(), &ev, ev.channel());
     }
 }
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-02-18
+ * \updates       2021-08-07
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -218,15 +218,16 @@ const midibyte EVENT_META_SEQSPEC        = 0x7Fu;
  *  an illegal meta type.
  */
 
-const midibyte EVENT_META_ILLEGAL        = c_midibyte_max;  /* problem code */
+const midibyte EVENT_META_ILLEGAL = c_midibyte_max;  /* problem code */
 
 /**
- *  These file masks are used to obtain or to mask off the channel data from a
- *  status byte.
+ *  These file masks are used to obtain (or mask off) the channel data and
+ *  status portion from an (incoming) status byte.
  */
 
-const midibyte EVENT_GET_CHAN_MASK       = 0x0Fu;
-const midibyte EVENT_CLEAR_CHAN_MASK     = 0xF0u;
+const midibyte EVENT_GET_CHAN_MASK      = 0x0Fu;
+const midibyte EVENT_GET_STATUS_MASK    = 0xF0u;
+const midibyte EVENT_DATA_MASK          = 0x7Fu;
 
 /**
  *  Variable from the "stazed" extras.  We reversed the parts of each token
@@ -251,7 +252,7 @@ const int EVENTS_UNSELECTED              =  0;
 inline bool
 is_note_off_velocity (midibyte status, midibyte data)
 {
-    return ((status & EVENT_CLEAR_CHAN_MASK) == EVENT_NOTE_ON) && (data == 0);
+    return ((status & EVENT_GET_STATUS_MASK) == EVENT_NOTE_ON) && (data == 0);
 }
 
 /**
@@ -353,8 +354,7 @@ private:
     /**
      *  In order to be able to handle MIDI channel-splitting of an SMF 0 file,
      *  we need to store the channel, even if we override it when playing the
-     *  MIDI data.  This member adds another 4 bytes to the event object, most
-     *  likely.
+     *  MIDI data.
      *
      *  Overload:  For Meta events, where is_meta() is true, this value holds
      *  the type of Meta event. See the editable_event::sm_meta_event_names[]
@@ -460,22 +460,20 @@ public:
     }
 
     /**
-     *  Checks the channel number to see if the event's channel matches it, or if
-     *  the event has no channel.  Used in the SMF 0 track-splitting code.  The
-     *  value of 0xFF is Seq66's channel value that indicates that the event's
-     *  m_channel value is bogus.  However, it also means that the channel, if
-     *  applicable to the event, is encoded in the m_status byte itself.  This is
-     *  our work around to be able to hold a multi-channel SMF 0 track in a
-     *  sequence.  In a Seq66 SMF 0 track, every event has a channel.  In a Seq66
-     *  SMF 1 track, the events do not have a channel.  Instead, the channel is a
-     *  global value of the sequence, and is stuffed into each event when the
-     *  event is played or is written to a MIDI file.
+     *  Checks the channel number to see if the event's channel matches it, or
+     *  if the event has no channel.  Used in the SMF 0 track-splitting code.
+     *  The value of 0xFF is Seq66's channel value that indicates that the
+     *  event's m_channel value is bogus.  However, it also means that the
+     *  channel, if applicable to the event, is encoded in the m_status byte
+     *  itself.  This is our work around to be able to hold a multi-channel
+     *  SMF 0 track in a sequence.  In a Seq66 SMF 0 track, every event has a
+     *  channel.  In a Seq66 SMF 1 track, the events do not have a channel.
+     *  Instead, the channel is a global value of the sequence, and is stuffed
+     *  into each event when the event is played or is written to a MIDI file.
      *
-     * \param channel
-     *      The channel to check.
+     * \param channel The channel to check.
      *
-     * \return
-     *      Returns true if the given channel matches the event's channel.
+     * \return Returns true if the given channel matches the event's channel.
      */
 
     bool check_channel (int channel) const
@@ -490,12 +488,12 @@ public:
 
     static midibyte mask_status (midibyte m)
     {
-        return m & EVENT_CLEAR_CHAN_MASK;
+        return m & EVENT_GET_STATUS_MASK;
     }
 
     static void strip_channel (midibyte & m)
     {
-        m &= EVENT_CLEAR_CHAN_MASK;
+        m &= EVENT_GET_STATUS_MASK;
     }
 
     /**
@@ -629,7 +627,7 @@ public:
         return
         (
             (m >= EVENT_NOTE_OFF && m < EVENT_PROGRAM_CHANGE) ||
-            m == EVENT_PITCH_WHEEL
+            (m & EVENT_GET_STATUS_MASK) == EVENT_PITCH_WHEEL
         );
     }
 
@@ -788,8 +786,7 @@ public:
     }
 
     /**
-     * \getter m_status
-     *      Note that we have ensured that status ranges from 0x80 to 0xFF.
+     *  Note that we have ensured that status ranges from 0x80 to 0xFF.
      */
 
     midibyte get_status () const
@@ -844,7 +841,7 @@ public:
 
     void set_data (midibyte d0)
     {
-        m_data[0] = d0 & 0x7F;
+        m_data[0] = d0 & EVENT_DATA_MASK;
         m_data[1] = 0;                  /* not strictly necessary   */
     }
 
@@ -861,8 +858,8 @@ public:
 
     void set_data (midibyte d0, midibyte d1)
     {
-        m_data[0] = d0 & 0x7F;
-        m_data[1] = d1 & 0x7F;
+        m_data[0] = d0 & EVENT_DATA_MASK;
+        m_data[1] = d1 & EVENT_DATA_MASK;
     }
 
     /**
@@ -931,7 +928,7 @@ public:
 
     void increment_data1 ()
     {
-        m_data[0] = (m_data[0] + 1) & 0x7F;
+        m_data[0] = (m_data[0] + 1) & EVENT_DATA_MASK;
     }
 
     /**
@@ -941,7 +938,7 @@ public:
 
     void decrement_data1 ()
     {
-        m_data[0] = (m_data[0] - 1) & 0x7F;
+        m_data[0] = (m_data[0] - 1) & EVENT_DATA_MASK;
     }
 
     /**
@@ -951,7 +948,7 @@ public:
 
     void increment_data2 ()
     {
-        m_data[1] = (m_data[1] + 1) & 0x7F;
+        m_data[1] = (m_data[1] + 1) & EVENT_DATA_MASK;
     }
 
     /**
@@ -961,7 +958,7 @@ public:
 
     void decrement_data2 ()
     {
-        m_data[1] = (m_data[1] - 1) & 0x7F;
+        m_data[1] = (m_data[1] - 1) & EVENT_DATA_MASK;
     }
 
     bool append_sysex (const midibyte * data, int len);
@@ -1158,7 +1155,7 @@ public:
 
     void set_note (midibyte note)
     {
-        m_data[0] = note & 0x7F;
+        m_data[0] = note & EVENT_DATA_MASK;
     }
 
     void transpose_note (int tn);
@@ -1173,7 +1170,7 @@ public:
 
     void note_velocity (int vel)
     {
-        m_data[1] = midibyte(vel) & 0x7F;
+        m_data[1] = midibyte(vel) & EVENT_DATA_MASK;
     }
 
     midibyte note_velocity () const

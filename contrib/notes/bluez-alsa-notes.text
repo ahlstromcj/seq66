@@ -3,8 +3,19 @@ Chris Ahlstrom
 2021-08-04 to 2021-08-04
 
 This is how I got Bluez-ALSA working with aplay and MPD on my Debian Sid system.
+Apparently it will be in the upcoming Debian 12.  It is not in Ubuntu yet,
+as far as I know, so will build it from source (later).
 
-0.  First, I run MPD in user land, with this part relevant from ~/.mpdconf:
+Sites:
+
+https://github.com/Arkq/bluez-alsa
+https://wiki.debian.org/Bluetooth/Alsa
+https://wiki.archlinux.org/title/bluetooth_headset
+https://community.volumio.org/t/volumio-bluez-alsa-a2dp-bluetooth-support/5611
+
+0.  Background:
+
+    First, I run MPD in user land, with this part relevant from ~/.mpdconf:
 
         audio_output {
             type		"alsa"

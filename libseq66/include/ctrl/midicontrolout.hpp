@@ -155,23 +155,20 @@ private:
      *  the uiactions enumeration. This enumeration cannot be a class
      *  enumeration, because enum classes cannot be used as array indices.
      *
-     *  ca 2021-02-10.
      *  We dropped the enabled and channel values.  We can test for an output
      *  control to be enabled by checking for status > 0x00.  And we can make
      *  the channel part of the status.  We will read the old style in the
      *  midicontrolfile class and convert it to the new style.  We change the
      *  name of the enumeration for brevity and to uncover all usages via
      *  compiler errors. :-D
-     *
-     *  Obsolete: enabled, channel
      */
 
     enum index
     {
-        status,
-        data_1,
-        data_2,
-        max
+        status,         /**< A status byte, such as 0xb0 or 0x90        */
+        data_1,         /**< The data byte, such as the note number.    */
+        data_2,         /**< More specific data, such a note velocity.  */
+        max             /**< A neverto-be used terminator/check value   */
     };
 
     /**

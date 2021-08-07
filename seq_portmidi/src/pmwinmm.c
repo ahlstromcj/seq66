@@ -1919,31 +1919,32 @@ winmm_write_byte
     if (hdr->dwBytesRecorded >= hdr->dwBufferLength - 1)
         rslt = winmm_end_sysex(midi, timestamp);
 
-    return rslt;
-}
-
-#if defined EXPANDING_SYSEX_BUFFERS
-
-/*
- *  This code is here as an aid in case you want sysex buffers to expand to
- *  hold large messages completely. If so, you will want to change
- *  SYSEX_BYTES_PER_BUFFER above to some variable that remembers the buffer
- *  size. A good place to put this value would be in the hdr->dwUser field.
- *
- *  rslt = resize_sysex_buffer(midi, m->sysex_byte_count,
- *      m->sysex_byte_count * 2); *
- *
- *  if (rslt == pmBufferMaxSize) // if the buffer can't be resized
- *
- *  The dwBytesRecorded field gets wiped out, so we'll save it.
- */
+#if 0
+    /*
+     *  This code is here as an aid in case you want sysex buffers to expand to
+     *  hold large messages completely. If so, you will want to change
+     *  SYSEX_BYTES_PER_BUFFER above to some variable that remembers the buffer
+     *  size. A good place to put this value would be in the hdr->dwUser field.
+     *
+     *  rslt = resize_sysex_buffer(midi, m->sysex_byte_count,
+     *      m->sysex_byte_count * 2); *
+     *
+     *  if (rslt == pmBufferMaxSize) // if the buffer can't be resized
+     *
+     *  The dwBytesRecorded field gets wiped out, so we'll save it.
+     */
 
     int bytesRecorded = hdr->dwBytesRecorded;
     rslt = resize_sysex_buffer(midi, bytesRecorded, 2 * bytesRecorded);
     hdr->dwBytesRecorded = bytesRecorded;
     if (rslt == pmBufferMaxSize)            /* if buffer can't be resized */
-        ;
+    {
+        // no code
+    }
 #endif
+
+    return rslt;
+}
 
 static PmTimestamp
 winmm_synchronize (PmInternal * midi)

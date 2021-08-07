@@ -1220,7 +1220,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             "# This format is similar to [mute-control-out], but the first\n"
             "# number is an active-flag, not an index number. The stanzas\n"
             "# are on / off / inactive, except for 'snap', which is store /\n"
-            "# restore / inactive.\n"
+            "# restore / inactive.\n\n"
             ;
         write_triples(file, mco, midicontrolout::uiaction::panic);
         write_triples(file, mco, midicontrolout::uiaction::stop);

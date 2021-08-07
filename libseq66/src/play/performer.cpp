@@ -5279,6 +5279,13 @@ performer::midi_control_keystroke (const keystroke & k)
 /**
  *  Looks up the MIDI event and calls the corresponding function, if any.
  *
+ * Note:
+ *
+ *      Pattern-edit can turn recording on, potentially disabling the next
+ *      pattern-edit, so we check for it here.  Anything else to check???  We
+ *      actually need to see if there is any control that CANNOT occur while
+ *      recording, otherwise loop-control etc. is disabled as well!
+ *
  * \param ev
  *      The MIDI event to process.
  *
@@ -5301,8 +5308,6 @@ performer::midi_control_event (const event & ev, bool recording)
         midicontrol::key k(ev);
         const midicontrol & incoming = m_midi_control_in.control(k);
         result = incoming.is_usable();
-        if (result)
-            result = m_midi_control_in.is_enabled();
 
         /*
          * Now done more thoroughly in midicontrolin::control() above.
@@ -5321,12 +5326,7 @@ performer::midi_control_event (const event & ev, bool recording)
                 if (recording)
                 {
                     /*
-                     * Pattern-edit can turn recording on, potentially
-                     * disabling the next pattern-edit, so we check for it
-                     * here.  Anything else to check???  We actually need
-                     * to see if there is any control that CANNOT occur
-                     * while recording, otherwise loop-control etc. is
-                     * disabled as well!
+                     * See Note above.
                      *
                      * process_the_action = s == automation::slot::start ||
                      *     s == automation::slot::stop ||

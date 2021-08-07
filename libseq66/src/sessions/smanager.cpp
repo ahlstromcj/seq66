@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2021-07-26
+ * \updates       2021-08-05
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -689,34 +689,19 @@ smanager::internal_error_check (std::string & errmsg) const
         if (not_nullptr(perr) && std::strlen(perr) > 0)
             pmerrmsg = std::string(perr);
     }
-    if (result)
-    {
-        bool interror = internal_error_pending();
-        if (interror)
-        {
-            pmerrmsg +=
-                "Go to Edit / Preferences / MIDI Clock and "
-                "MIDI Input to see which devices are disabled."
-                ;
-        }
-    }
 
 #else
 
     bool result = internal_error_pending();
-    if (result)
-    {
-        pmerrmsg =
-            "Internal error: Check Edit / Preferences / MIDI Clock and "
-            "MIDI Input to see which devices are disabled.  Also check "
-            "seq66.log in the configuration directory."
-            ;
-    }
 
 #endif
 
     if (result)
     {
+        pmerrmsg +=
+            " Check Edit / Preferences / MIDI Clock and MIDI Input to "
+            "see which devices are disabled. Check seq66.log."
+            ;
         append_error_message(pmerrmsg);
         errmsg = pmerrmsg;
     }
@@ -730,19 +715,15 @@ smanager::error_handling ()
     if (internal_error_check(errmsg))
         show_error("Session error", errmsg);
 
+    std::string path = seq66::rc().config_filespec("seq66.log");
+
 #if defined SEQ66_PORTMIDI_SUPPORT
-    const char * pmerrmsg = pm_log_buffer();
-#else
-    const char * pmerrmsg = errmsg.c_str();
+    const char * pmerrmsg = pm_log_buffer();    /* guaranteed to be valid   */
+    errmsg += "\n";
+    errmsg += std::string(pmerrmsg);
 #endif
 
-    if (not_nullptr(pmerrmsg) && std::strlen(pmerrmsg) > 0)
-    {
-        std::string path = seq66::rc().config_filespec("seq66.log");
-        errmsg += "\n";
-        errmsg += std::string(pmerrmsg);
-        (void) seq66::file_append_log(path, errmsg);
-    }
+    (void) seq66::file_append_log(path, errmsg);
 }
 
 /**

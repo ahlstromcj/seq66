@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-11-01
+ * \updates       2021-08-05
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -1201,7 +1201,8 @@ convert_lo_args (const std::string & pattern, int argc, lo_arg ** argv)
 
                 default:
 
-                    temp = "unhandled format type: " + patc;
+                    temp = "unhandled format type: ";
+                    temp += patc;
                     break;
             }
             result.push_back(temp);

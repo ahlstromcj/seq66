@@ -120,27 +120,36 @@ static void* Pt_Thread(void *p)
     return NULL;
 }
 
-PtError Pt_Start(int resolution, PtCallback *callback, void *userData)
+PtError
+Pt_Start (int resolution, PtCallback *callback, void *userData)
 {
-    PtThreadParams *params = (PtThreadParams*)malloc(sizeof(PtThreadParams));
-    pthread_t pthread_id;
-
     printf("Pt_Start() called\n");
-
-    /* make sure we're not already playing */
-
-    if (time_started_flag) return ptAlreadyStarted;
-    startTime = CFAbsoluteTimeGetCurrent();
-
-    if (callback)
+    if (time_started_flag)      /* make sure we're not already playing */
     {
-        params->resolution = resolution;
-        params->callback = callback;
-        params->userData = userData;
-        pthread_create(&pthread_id, NULL, Pt_Thread, params);
+        return ptAlreadyStarted;
     }
-    time_started_flag = TRUE;
-    return ptNoError;
+    else
+    {
+        PtThreadParams * params = (PtThreadParams*) malloc
+        (
+            sizeof(PtThreadParams)
+        );
+        if (params != NULL)
+        {
+            pthread_t pthread_id;
+            startTime = CFAbsoluteTimeGetCurrent();
+            if (callback)
+            {
+                params->resolution = resolution;
+                params->callback = callback;
+                params->userData = userData;
+                pthread_create(&pthread_id, NULL, Pt_Thread, params);
+            }
+            time_started_flag = TRUE;
+            free(params);
+        }
+        return ptNoError;
+    }
 }
 
 PtError Pt_Stop()

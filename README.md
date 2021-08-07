@@ -1,21 +1,21 @@
 # README for Seq66 0.96.2
 
 Chris Ahlstrom
-2015-09-10 to 2021-08-04
+2015-09-10 to 2021-08-07
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
-grid-pattern interface, MIDI automation for live performance, sets and
-playlists for song management, scale/chord-aware piano-roll interface, song
-editor for creative composition, and control via mouse, keystrokes, and MIDI.
+grid-pattern interface, MIDI automation for live performance, sets and playlists
+for song management, scale/chord-aware piano-roll interface, song editor for
+creative composition, and control via mouse, keystrokes, and MIDI.
 Mute-groups can enable/disable multiple patterns with one keystroke or MIDI
-control. Supports NSM (Non Session Manager) on Linux; can also be run headless.
-It does not support audio samples, just MIDI.
+control. Supports NSM (Non Session Manager) on Linux; can also be run
+headless.  It does not support audio samples, just MIDI.
 
-__Seq66__ is a major refactoring of Sequencer64/Kepler34, both being reboots
-of __Seq24__ with modern C++ and new features.  Linux users can build this
-application from the source code.  See the INSTALL file.  Windows users can
-get an installer package on GitHub or build it with Qt Creator.  A comprehensive
-PDF user-manual is provided.
+__Seq66__ is a major refactoring of Sequencer64/Kepler34, both being reboots of
+__Seq24__ with modern C++ and new features.  Linux users can build this
+application from the source code.  See the INSTALL file.  Windows users can get
+an installer package on GitHub or build it with Qt Creator.  A comprehensive PDF
+user-manual is provided.
 
 ![Alt text](doc/latex/images/main-window/main-window-fluxbox.png?raw=true "Seq66
 Dark-Cold Fluxbox")
@@ -80,6 +80,11 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.96.2:
+        *   Fixed issue #55, where the MIDI control channel was being stripped
+            when using JACK.
+        *   Fixed a related issue: null (status = 0) control events were sent.
+        *   Fixed a bug in "portmidi" MIDI input handling where only the last
+            device's events would be processed.
         *   Improved pause/continue support with JACK transport.
         *   Fixed 'rc' allow-click-edit feature.
         *   Made the buss-override settings act more consistently.

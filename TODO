@@ -1,6 +1,6 @@
 TO DO for Seq66 0.96.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-08-04
+2019-04-13 to 2021-08-06
 
 Hottest to Trivial:
 
@@ -8,6 +8,9 @@ UI:
 
     See the mouse wheel scroll event requests for both the song and
     pattern editors.
+
+    Leave the progress bar (in grid button) static if the pattern is not
+    armed.
 
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
@@ -29,6 +32,7 @@ UI:
         -   Play Options:
             -   New-pattern editor options (check-boxes)
             -   Record-style dropdown
+            -   Sets-mode options
         -   Config Options: (new)
             -   Autosave for rc, usr, playlist, palette, mutes, drums,
                 patches, keymap
@@ -39,10 +43,6 @@ UI:
             -   Load key and midi controls (does this work?)
             -   Control buss (in and out)
             -   Enabled (in and out)
-
-CLI:
-
-    Get daemonize to load the configuration after forking.
 
 Port-Mapping:
 
@@ -74,6 +74,10 @@ From Testing:
     "L"-then-snap-then-move mamba?
 
     Tempo display needs to be worked on for the perfroll and qloopbuttons.
+
+CLI:
+
+    Get daemonize to load the configuration after forking.
 
 Others to Consider:
 

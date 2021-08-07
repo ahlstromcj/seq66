@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2020-08-26
+ * \updates     2021-08-05
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -2350,7 +2350,13 @@ pm_log_buffer_append (const char * msg)
 const char *
 pm_log_buffer (void)
 {
-    return (const char *) s_pmlogmm_buffer;
+    if (is_nullptr(s_pmlogmm_buffer) || strlen(s_pmlogmm_buffer) == 0)
+    {
+        static const char * s_dummy = "Empty/null log buffer";
+        return s_dummy;
+    }
+    else
+        return (const char *) s_pmlogmm_buffer;
 }
 
 /*
