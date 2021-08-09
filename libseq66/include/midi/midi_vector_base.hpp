@@ -61,7 +61,7 @@ namespace seq66
  *
 \verbatim
             c_midibus
-            c_midich
+            c_midichannel
             c_timesig
             c_triggers (deprecated)
             c_triggers_ex (deprecated)
@@ -132,7 +132,7 @@ namespace seq66
  */
 
 const midilong c_midibus        = 0x24240001; /**< Track buss number.         */
-const midilong c_midich         = 0x24240002; /**< Track channel number.      */
+const midilong c_midichannel    = 0x24240002; /**< Track channel number.      */
 const midilong c_midiclocks     = 0x24240003; /**< Track clocking.            */
 const midilong c_triggers       = 0x24240004; /**< See c_triggers_ex.         */
 const midilong c_notes          = 0x24240005; /**< Song data.                 */

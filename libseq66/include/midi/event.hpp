@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-07
+ * \updates       2021-08-09
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -146,10 +146,11 @@ const midibyte EVENT_CTRL_EXPRESSION    = 0x0Bu;
  *
  *  Only the following constants are followed by some data bytes:
  *
- *      -   EVENT_MIDI_SYSEX            = 0xF0
- *      -   EVENT_MIDI_QUARTER_FRAME    = 0xF1      // undefined?
- *      -   EVENT_MIDI_SONG_POS         = 0xF2
- *      -   EVENT_MIDI_SONG_SELECT      = 0xF3
+ *      -   EVENT_MIDI_SYSEX            = 0xF0  // ends with 0xF7
+ *      -   EVENT_MIDI_QUARTER_FRAME    = 0xF1  // and 0x0n to 0x7n
+ *      -   EVENT_MIDI_SONG_POS         = 0xF2  // and 0x0 to 0x3FFF 16th note
+ *      -   EVENT_MIDI_SONG_SELECT      = 0xF3  // and 0x0 to 0x7F song number
+ *      -   EVENT_MIDI_TUNE_SELECT      = 0xF6  // no data, tune yourself
  *
  *  A MIDI System Exclusive (SYSEX) message starts with F0, followed
  *  by the manufacturer ID (how many? bytes), a number of data bytes, and
@@ -236,24 +237,6 @@ const midibyte EVENT_DATA_MASK          = 0x7Fu;
 
 const int EVENTS_ALL                     = -1;
 const int EVENTS_UNSELECTED              =  0;
-
-/**
- *  This free function is used in the midifile module and in the
- *  event::is_note_off_recorded() member function.
- *
- * \param status
- *      The type of event, which might be EVENT_NOTE_ON.
- *
- * \param data
- *      The data byte to check.  It should be zero for a note-on is note-off
- *      event.
- */
-
-inline bool
-is_note_off_velocity (midibyte status, midibyte data)
-{
-    return ((status & EVENT_GET_STATUS_MASK) == EVENT_NOTE_ON) && (data == 0);
-}
 
 /**
  *  Provides events for management of MIDI events.
@@ -478,10 +461,10 @@ public:
 
     bool check_channel (int channel) const
     {
-        return m_channel == c_midibyte_max || midibyte(channel) == m_channel;
+        return is_null_channel(m_channel) || midibyte(channel) == m_channel;
     }
 
-    static midibyte get_channel (midibyte m)
+    static midibyte mask_channel (midibyte m)
     {
         return m & EVENT_GET_CHAN_MASK;
     }
@@ -497,7 +480,7 @@ public:
     }
 
     /**
-     *  Static test for the status bit.
+     *  Static test for the status bit.  The opposite test is is_data().
      *
      * \return
      *      Returns true if the status bit is set.  Covers 0x80 to 0xFF.
@@ -505,34 +488,12 @@ public:
 
     static bool is_status (midibyte m)
     {
-        return (m & 0x80) != 0x00;
+        return (m & EVENT_STATUS_BIT) != 0;
     }
 
     /**
-     *  Checks for a System Category status, which is supposed to clear any
-     *  running status.  We do not also allow 0xff to clear running status to
-     *  prevent errors in reading a file.  An ISSUE!
-     */
-
-    static bool is_system_common (midibyte m)
-    {
-        return m >= EVENT_MIDI_SYSEX && m <= EVENT_MIDI_SYSEX_END;
-    }
-
-    /**
-     *  Checks for a Realtime Category status, which ignores running status.
-     *  Ranges from 0xF8 to 0xFF,  and m <= EVENT_MIDI_RESET is always true.
-     */
-
-    static bool is_realtime (midibyte m)
-    {
-        return m >= EVENT_MIDI_CLOCK;
-    }
-
-    /**
-     *  Static test for the status bit.
-     *
-     *  CURRENTLY NOT USED ANYWHERE.
+     *  Static test for the status bit.  The opposite test is is_status().
+     *  Currently not used anywhere.
      *
      * \return
      *      Returns true if the status bit is not set.
@@ -543,21 +504,46 @@ public:
         return (m & EVENT_STATUS_BIT) == 0x00;
     }
 
+    static bool is_system_msg (midibyte m)
+    {
+        return m >= EVENT_MIDI_SYSEX;
+    }
+
+    /**
+     *  Checks for a System Common status, which is supposed to clear any
+     *  running status.
+     */
+
+    static bool is_system_common_msg (midibyte m)
+    {
+        return m >= EVENT_MIDI_SYSEX && m < EVENT_MIDI_CLOCK;
+    }
+
+    /**
+     *  Checks for a Realtime Category status, which ignores running status.
+     *  Ranges from 0xF8 to 0xFF,  and m <= EVENT_MIDI_RESET is always true.
+     */
+
+    static bool is_realtime_msg (midibyte m)
+    {
+        return m >= EVENT_MIDI_CLOCK;
+    }
+
+    static bool is_meta_msg (midibyte m)
+    {
+        return m == EVENT_MIDI_META;
+    }
+
     /**
      *  Static test for the channel message/statuse values: Note On, Note Off,
      *  Aftertouch, Control Change, Program Change, Channel Pressure, and
-     *  Pitch Wheel.  This function no longer requires that the channel data
-     *  be masked off; it is also a test for a Voice Category status.  The
-     *  allowed range is 0x80 to 0xEF.
-     *
-     *  CURRENTLY NOT USED ANYWHERE.
+     *  Pitch Wheel.  This function is also a test for a Voice Category
+     *  status.  The allowed range is 0x80 to 0xEF.  Currently not used
+     *  anywhere.
      *
      * \param m
      *      The channel status or message byte to be tested, with the channel
      *      bits masked off.
-     *
-     *  We could add an optional boolean to cause the channel nybble to be
-     *  explicitly cleared.
      *
      * \return
      *      Returns true if the byte represents a MIDI channel message.
@@ -569,83 +555,52 @@ public:
     }
 
     /**
-     *  CURRENTLY NOT USED ANYWHERE.
-     *
-     * \return
-     *      Returns true if the value is in the range noted above.
-     */
-
-    static bool is_voice (midibyte m)
-    {
-        return m >= EVENT_NOTE_OFF && m < EVENT_MIDI_REALTIME;
-    }
-
-    /**
      *  Static test for channel messages that have only one data byte: Program
      *  Change and Channel Pressure.  The rest of the channel messages have
-     *  two data bytes.  This function requires that the channel data have
-     *  already been masked off.
+     *  two data bytes.
      *
      * \param m
-     *      The channel status or message byte to be tested, with the channel
-     *      bits masked off.
-     *
-     *  We could add an optional boolean to cause the channel nybble to be
-     *  explicitly cleared.
+     *      The channel status or message byte to be tested. The channel
+     *      bits are masked off before the test.
      *
      * \return
      *      Returns true if the byte represents a MIDI channel message that
-     *      has only one data byte.  However, if this function returns false,
-     *      it might not be a channel message at all, so be careful.
+     *      has only one data byte.
      */
 
     static bool is_one_byte_msg (midibyte m)
     {
+        m = mask_status(m);
         return m == EVENT_PROGRAM_CHANGE || m == EVENT_CHANNEL_PRESSURE;
     }
 
     /**
      *  Static test for channel messages that have two data bytes: Note On,
-     *  Note Off, Control Change, Aftertouch, and Pitch Wheel.  This function
-     *  requires that the channel data have already been masked off.
+     *  Note Off, Control Change, Aftertouch, and Pitch Wheel.
      *
      * \param m
-     *      The channel status or message byte to be tested, with the channel
-     *      bits masked off.
-     *
-     *  We could add an optional boolean to cause the channel nybble to be
-     *  explicitly cleared.
+     *      The channel status or message byte to be tested. The channel
+     *      bits are masked off before the test.
      *
      * \return
      *      Returns true if the byte represents a MIDI channel message that
-     *      has two data bytes.  However, if this function returns false,
-     *      it might not be a channel message at all, so be careful.
+     *      has two data bytes.
      */
 
     static bool is_two_byte_msg (midibyte m)
     {
+        m = mask_status(m);
         return
         (
             (m >= EVENT_NOTE_OFF && m < EVENT_PROGRAM_CHANGE) ||
-            (m & EVENT_GET_STATUS_MASK) == EVENT_PITCH_WHEEL
+            m == EVENT_PITCH_WHEEL
         );
     }
-
-    /**
-     *  Static test for a SysEx message.
-     *
-     * \param m
-     *      The status/message byte to test, with the channel bits masked off.
-     */
 
     static bool is_sysex_msg (midibyte m)
     {
         return m == EVENT_MIDI_SYSEX;
     }
-
-    /**
-     *  Static test for sense/reset messages.
-     */
 
     static bool is_sense_or_reset (midibyte m)
     {
@@ -654,15 +609,13 @@ public:
 
     /**
      *  Static test for messages that involve notes and velocity: Note On,
-     *  Note Off, and Aftertouch.  This function requires that the channel
-     *  nybble has already been masked off.
+     *  Note Off, and Aftertouch.
      *
      * \param m
-     *      The channel status or message byte to be tested, with the channel
-     *      bits masked off.
-     *
-     *  We could add an optional boolean to cause the channel nybble to be
-     *  explicitly cleared.
+     *      The channel status or message byte to be tested, and the channel
+     *      bits are masked off before testing.  Actually, no longer
+     *      necessary, we have a faster test, since these three events have
+     *      values in an easy range to check.
      *
      * \return
      *      Returns true if the byte represents a MIDI note message.
@@ -670,19 +623,15 @@ public:
 
     static bool is_note_msg (midibyte m)
     {
-        return
-        (
-            m == EVENT_NOTE_ON || m == EVENT_NOTE_OFF || m == EVENT_AFTERTOUCH
-        );
+        return m >= EVENT_NOTE_OFF && m < EVENT_CONTROL_CHANGE;
     }
 
     /**
      *  Static test for messages that involve notes only: Note On and
-     *  Note Off.
+     *  Note Off, useful in note-event linking.
      *
      * \param m
-     *      The channel status or message byte to be tested, with the channel
-     *      bits masked off.
+     *      The channel status or message byte to be tested.
      *
      * \return
      *      Returns true if the byte represents a MIDI note on/off message.
@@ -690,7 +639,7 @@ public:
 
     static bool is_strict_note_msg (midibyte m)
     {
-        return m == EVENT_NOTE_ON || m == EVENT_NOTE_OFF;
+        return m >= EVENT_NOTE_OFF || m < EVENT_AFTERTOUCH;
     }
 
     /**
@@ -706,17 +655,6 @@ public:
     /**
      *  Static test for channel messages that are either not control-change
      *  messages, or are and match the given controller value.
-     *
-     * \note
-     *      The old logic was the first line, but can be simplified to the
-     *      second line; the third line shows the abstract representation.
-     *      Also made sure of this using a couple truth tables.
-     *
-\verbatim
-        (m != EVENT_CONTROL_CHANGE) || (m == EVENT_CONTROL_CHANGE && d == cc)
-        (m != EVENT_CONTROL_CHANGE) || (d == cc)
-        a || (! a && b)  =>  a || b
-\endverbatim
      *
      * \param m
      *      The channel status or message byte to be tested, with the channel
@@ -740,6 +678,7 @@ public:
         midibyte m, midibyte cc, midibyte datum
     )
     {
+        m = mask_status(m);
         return (m != EVENT_CONTROL_CHANGE) || (datum == cc);
     }
 
@@ -773,16 +712,19 @@ public:
      *  It actually just sets the m_channel member.  Note that the sequence
      *  channel generally overrides this value in the usage of the event.
      *
+     *  Do not confuse this function with sequence::set_midi_channel(), which
+     *  sets the pattern's global channel.
+     *
      * \param channel
      *      The channel byte to be set.  It is masked to ensure the value
-     *      ranges from 0x0 to 0xF.  This update should be safe, but we could
-     *      allow c_midibyte_max if issues are uncovered.
+     *      ranges from 0x0 to 0xF, but the null-channel value (0x80) is also
+     *      accepted.
      */
 
     virtual void set_channel (midibyte channel)
     {
-        m_channel = (channel == c_midibyte_max) ?
-            c_midibyte_max : (channel & EVENT_GET_CHAN_MASK) ;
+        m_channel = is_null_channel(channel) ?
+            null_channel() : mask_channel(channel) ;
     }
 
     /**
@@ -1035,8 +977,7 @@ public:
     {
         return
         (
-            eoff->is_note_off() &&
-            (eoff->get_note() == get_note()) &&
+            eoff->is_note_off() && eoff->get_note() == get_note() &&
             ! eoff->is_linked()
         );
     }
@@ -1178,17 +1119,9 @@ public:
         return is_note() ? m_data[1] : 0 ;
     }
 
-    /**
-     *  Check for the Note On value in m_status.  Currently assumes that the
-     *  channel nybble has already been stripped.
-     *
-     * \return
-     *      Returns true if m_status is EVENT_NOTE_ON.
-     */
-
     bool is_note_on () const
     {
-        return m_status == EVENT_NOTE_ON;
+        return mask_status(m_status) == EVENT_NOTE_ON;
     }
 
     /**
@@ -1201,7 +1134,7 @@ public:
 
     bool is_note_off () const
     {
-        return m_status == EVENT_NOTE_OFF;
+        return mask_status(m_status) == EVENT_NOTE_OFF;
     }
 
     /**
@@ -1226,6 +1159,23 @@ public:
     bool is_playable () const
     {
         return is_playable_msg(m_status);
+    }
+
+    /**
+     *  This static member function is used in the midifile module and in the
+     *  is_note_off_recorded() member function.
+     *
+     * \param status
+     *      The type of event, which might be EVENT_NOTE_ON.
+     *
+     * \param vel
+     *      The velocity byte to check.  It should be zero for a note-on is
+     *      note-off event.
+     */
+
+    static bool is_note_off_velocity (midibyte status, midibyte vel)
+    {
+        return (status & EVENT_GET_STATUS_MASK) == EVENT_NOTE_ON && vel == 0;
     }
 
     /**
@@ -1322,7 +1272,7 @@ public:
 
     bool is_meta () const
     {
-        return m_status == EVENT_MIDI_META;
+        return is_meta_msg(m_status);
     }
 
     /**

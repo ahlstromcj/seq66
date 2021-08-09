@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-06
+ * \updates       2021-08-09
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -364,7 +364,7 @@ event::set_status (midibyte status)
     else
     {
         m_status = mask_status(status);
-        m_channel = get_channel(status);
+        m_channel = mask_channel(status);
     }
 }
 
@@ -410,7 +410,7 @@ void
 event::set_status_keep_channel (midibyte eventcode)
 {
     m_status = eventcode;
-    m_channel = get_channel(eventcode);
+    m_channel = mask_channel(eventcode);
 }
 
 /**
@@ -469,7 +469,7 @@ event::set_midi_event
         set_data(buffer[1], buffer[2]);
         if (is_note_off_recorded())
         {
-            midibyte channel = get_channel(buffer[0]);
+            midibyte channel = mask_channel(buffer[0]);
             midibyte status = EVENT_NOTE_OFF | channel;
             set_status_keep_channel(status);
         }

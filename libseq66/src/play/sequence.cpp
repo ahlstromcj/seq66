@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-04
+ * \updates       2021-08-09
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -139,8 +139,8 @@ sequence::sequence (int ppqn) :
     m_events_undo               (),
     m_events_redo               (),
     m_channel_match             (false),
-    m_midi_channel              (0),
-    m_no_channel                (false),
+    m_midi_channel              (0),            /* null_channel() better?   */
+    m_free_channel              (false),
     m_nominal_bus               (0),
     m_true_bus                  (null_buss()),
     m_song_mute                 (false),
@@ -286,10 +286,10 @@ sequence::partial_assign (const sequence & rhs)
 
         m_channel_match             = rhs.m_channel_match;
         m_midi_channel              = rhs.m_midi_channel;
-        m_no_channel                = rhs.m_no_channel;     /* 2021-07-27   */
+        m_free_channel              = rhs.m_free_channel;
         m_nominal_bus               = rhs.m_nominal_bus;
         m_true_bus                  = rhs.m_true_bus;
-        m_song_mute                 = rhs.m_song_mute;      /* 2021-07-27   */
+        m_song_mute                 = rhs.m_song_mute;
         m_transposable              = rhs.m_transposable;
         m_notes_on                  = 0;
         m_master_bus                = rhs.m_master_bus;     /* a pointer    */
@@ -4704,9 +4704,13 @@ sequence::title () const
 
 /**
  *  Sets the m_midi_channel number, which is the output channel for this
- *  sequence.  If the channel number provides equates to the null channel,
+ *  sequence.
+ *
+ * No longer true:
+ *
+ *  If the channel number provides equates to the null channel,
  *  this function does not change the channel number, but merely sets the
- *  m_no_channel flag.
+ *  m_free_channel flag.
  *
  * \threadsafe
  *
@@ -4727,14 +4731,15 @@ bool
 sequence::set_midi_channel (midibyte ch, bool user_change)
 {
     automutex locker(m_mutex);
-    bool result = is_null_channel(ch) ? !no_channel() : ch != m_midi_channel ;
+    bool result = ch != m_midi_channel;
+    if (result)
+        result = is_valid_channel(ch);      /* 0 to 15 or null_channel()    */
+
     if (result)
     {
         off_playing_notes();
-        m_no_channel = is_null_channel(ch);
-        if (! m_no_channel)
-            m_midi_channel = ch;
-
+        m_free_channel = is_null_channel(ch);
+        m_midi_channel = ch;                /* if (! m_free_channel)        */
         if (user_change)
             modify();                   /* no easy way to undo this, though */
 
@@ -4743,10 +4748,16 @@ sequence::set_midi_channel (midibyte ch, bool user_change)
     return result;
 }
 
+/**
+ *  Translates the 0 to 15 channel to "1" to "16".  The "F" indicates "no
+ *  channel" in the pattern slot grid.
+ */
+
 std::string
 sequence::channel_string () const
 {
-    return m_no_channel ? std::string("F") : std::to_string(m_midi_channel + 1);
+    return m_free_channel ?
+        std::string("F") : std::to_string(m_midi_channel + 1) ;
 }
 
 /**
@@ -4797,6 +4808,9 @@ sequence::print_triggers () const
  *  Takes an event that this sequence is holding, and places it on the MIDI
  *  buss.  This function does not bother checking if m_master_bus is a null
  *  pointer.
+ *
+ *  Note that the call to midi_channel() yields the event channel if
+ *  free_channel() is true.  Otherwise the global pattern channel is true.
  *
  * \param ev
  *      The event to put on the buss.

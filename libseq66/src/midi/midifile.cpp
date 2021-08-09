@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-07-19
+ * \updates       2021-08-09
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -713,7 +713,7 @@ midifile::grab_input_stream (const std::string & tag)
  *
 \verbatim
     c_midibus:          SeqSpec FF 7F 05 24 24 00 01 00
-    c_midich:           SeqSpec FF 7F 05 24 24 00 02 06
+    c_midichannel:      SeqSpec FF 7F 05 24 24 00 02 06
     c_timesig:          SeqSpec FF 7F 06 24 24 00 06 04 04
     c_triggers_ex:      SeqSpec FF 7F 1C 24 24 00 08 00 00 ...
     c_trig_transpose:   SeqSpec FF 7F 1C 24 24 00 20 00 00 ...
@@ -984,6 +984,13 @@ midifile::add_old_trigger (sequence & seq)
  *      range value to about twice this value, to give some headroom... it
  *      will not be saved unless the --user-save option is in force.
  *
+ * Channel:
+ *
+ *      We are transitioning to preserving the channel in the status byte,
+ *      which will require masking in a number of event functions.
+ *
+ *      The global channel of a sequence is
+ *
  * Time Signature:
  *
  *      Like Tempo, Time signature is now handled more robustly.
@@ -1069,6 +1076,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
     }
     for (midishort track = 0; track < track_count; ++track)
     {
+        midibyte tentative_channel = null_channel();
         midilong ID = read_long();                  /* get track marker     */
         midilong TrackLength = read_long();         /* get track length     */
         if (ID == c_mtrk_tag)                       /* magic number 'MTrk'  */
@@ -1099,9 +1107,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                 if (event::is_status(status))               /* 0x80 bit?    */
                 {
                     skip(1);                                /* get to d0    */
-                    if (event::is_system_common(status))    /* 0xF0 to 0xF7 */
+                    if (event::is_system_common_msg(status))
                         runningstatus = 0;                  /* clear it     */
-                    else if (! event::is_realtime(status))  /* 0xF8 to 0xFF */
+                    else if (! event::is_realtime_msg(status))
                         runningstatus = status;             /* log status   */
                 }
                 else
@@ -1115,7 +1123,11 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     if (runningstatus > 0)      /* running status in force? */
                         status = runningstatus; /* yes, use running status  */
                 }
-                e.set_status(status);           /* set the members in event */
+#if defined SEQ66_KEEP_CHANNEL
+                e.set_status_keep_channel(status);  /* set members in event */
+#else
+                e.set_status(status);               /* set members in event */
+#endif
 
                 /*
                  *  See "PPQN" section in banner.
@@ -1129,7 +1141,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                 e.set_timestamp(currenttime);
 
                 midibyte eventcode = event::mask_status(status);    /* F0 */
-                midibyte channel = event::get_channel(status);      /* 0F */
+                midibyte channel = event::mask_channel(status);     /* 0F */
                 switch (eventcode)
                 {
                 case EVENT_NOTE_OFF:                    /* 3-byte events    */
@@ -1140,7 +1152,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                     d0 = read_byte();
                     d1 = read_byte();
-                    if (is_note_off_velocity(eventcode, d1))
+                    if (event::is_note_off_velocity(eventcode, d1))
                         e.set_channel_status(EVENT_NOTE_OFF, channel);
 
                     e.set_data(d0, d1);               /* set data and add   */
@@ -1151,13 +1163,16 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                      * channel for the whole sequence here.
                      */
 
-                    s.append_event(e);                    /* does not sort    */
-                    s.set_midi_channel(channel);          /* set MIDI channel */
+                    s.append_event(e);                  /* does not sort    */
+                    tentative_channel = channel;        /* log MIDI channel */
+#if defined USE_THIS_SUSPECT_CODE
+                    s.set_midi_channel(channel);
+#endif
                     if (is_smf0)
-                        m_smf0_splitter.increment(channel);
+                        m_smf0_splitter.increment(channel); /* count chan.  */
                     break;
 
-                case EVENT_PROGRAM_CHANGE:    /* cases for 1-data-byte events */
+                case EVENT_PROGRAM_CHANGE:              /* 1-data-byte event*/
                 case EVENT_CHANNEL_PRESSURE:
 
                     d0 = read_byte();                   /* was data[0]      */
@@ -1169,9 +1184,12 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                      */
 
                     s.append_event(e);                  /* does not sort    */
+                    tentative_channel = channel;
+#if defined USE_THIS_SUSPECT_CODE
                     s.set_midi_channel(channel);        /* set midi channel */
+#endif
                     if (is_smf0)
-                        m_smf0_splitter.increment(channel);
+                        m_smf0_splitter.increment(channel); /* count chan.  */
                     break;
 
                 case EVENT_MIDI_REALTIME:               /* 0xFn MIDI events */
@@ -1326,10 +1344,13 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 (void) s.set_midi_bus(read_byte());
                                 --len;
                             }
-                            else if (seqspec == c_midich)
+                            else if (seqspec == c_midichannel)
                             {
                                 midibyte channel = read_byte();
+                                tentative_channel = channel;
+#if defined USE_THIS_SUSPECT_CODE
                                 s.set_midi_channel(channel);
+#endif
                                 if (is_smf0)
                                     m_smf0_splitter.increment(channel);
 
@@ -1557,6 +1578,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
             if (seqnum < c_prop_seq_number)
             {
+                s.set_midi_channel(tentative_channel);
                 if (! is_null_buss(buss_override))
                     (void) s.set_midi_bus(buss_override);
 
@@ -1653,9 +1675,9 @@ midifile::finalize_sequence
  *
  * \return
  *      Returns the control-tag value found.  These are the values, such as
- *      c_midich, found in the midi_vector_base module, that indicate the type
- *      of sequencer-specific data that comes next.  If there is not enough
- *      data to process, then 0 is returned.
+ *      c_midichannel, found in the midi_vector_base module, that indicate the
+ *      type of sequencer-specific data that comes next.  If there is not
+ *      enough data to process, then 0 is returned.
  */
 
 midilong
@@ -1804,7 +1826,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
          *
          * Track-specific SeqSpecs handled in parse_smf_1():
          *
-         *  c_midibus          c_timesig         c_midich         c_musickey *
+         *  c_midibus          c_timesig         c_midichannel    c_musickey *
          *  c_musicscale *     c_backsequence *  c_transpose *    c_seq_color
          *  c_seq_edit_mode !  c_seq_loopcount   c_triggers       c_triggers_ex
          *  c_trig_transpose
@@ -2479,8 +2501,8 @@ midifile::write_time_sig (int beatsperbar, int beatwidth)
 /**
  *  Writes a "proprietary" (SeqSpec) Seq24 footer header in the new
  *  MIDI-compliant format.  This function does not write the data.  It
- *  replaces calls such as "write_long(c_midich)" in the proprietary secton of
- *  write().
+ *  replaces calls such as "write_long(c_midichannel)" in the proprietary
+ *  secton of write().
  *
  *  The new format writes 0x00 0xFF 0x7F len 0x242400xx; the first 0x00 is the
  *  delta time.
@@ -2527,7 +2549,7 @@ void
 midifile::write_track (const midi_vector & lst)
 {
     midilong tracksize = midilong(lst.size());
-    write_long(c_mtrk_tag);             /* magic number 'MTrk'          */
+    write_long(c_mtrk_tag);                 /* magic number 'MTrk'          */
     write_long(tracksize);
     while (! lst.done())                    /* write the track data         */
         write_byte(lst.get());

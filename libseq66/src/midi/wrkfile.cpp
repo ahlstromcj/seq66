@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-04
- * \updates       2021-05-27
+ * \updates       2021-08-09
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the WRK format, see, for example:
@@ -847,7 +847,7 @@ wrkfile::NoteArray (int track, int events)
         {
             event e;
             eventcode = event::mask_status(status);             // 0xF0
-            channel = event::get_channel(status);               // 0x0F
+            channel = event::mask_channel(status);              // 0x0F
             m_track_channel = channel;
             d0 = read_byte();
             if (event::is_two_byte_msg(eventcode))   // note on/off, ctrl, pitch
@@ -878,7 +878,7 @@ wrkfile::NoteArray (int track, int events)
 
                 // CUT-AND-PASTE CODE:
 
-                isnoteoff = is_note_off_velocity(eventcode, d1);
+                isnoteoff = event::is_note_off_velocity(eventcode, d1);
                 if (isnoteoff)
                     e.set_channel_status(EVENT_NOTE_OFF, channel);
 
@@ -1146,7 +1146,7 @@ wrkfile::StreamChunk ()
         midipulse timemax = time;
         midibyte status = read_byte();
         midibyte eventcode = event::mask_status(status);        // 0xF0
-        midibyte channel = event::get_channel(status);          // 0x0F
+        midibyte channel = event::mask_channel(status);         // 0x0F
         m_track_channel = channel;
 
         midibyte d0 = read_byte();
@@ -1178,7 +1178,7 @@ wrkfile::StreamChunk ()
 
             // CUT-AND-PASTE CODE:
 
-            isnoteoff = is_note_off_velocity(eventcode, d1);
+            isnoteoff = event::is_note_off_velocity(eventcode, d1);
             if (isnoteoff)
                 e.set_channel_status(EVENT_NOTE_OFF, channel);
 

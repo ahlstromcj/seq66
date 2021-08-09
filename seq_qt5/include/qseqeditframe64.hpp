@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-07-10
+ * \updates       2021-08-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -380,25 +380,25 @@ private:
      *  Indicates what MIDI channel the data window is currently editing.
      */
 
-    bussbyte m_editing_bus;
+    bussbyte m_edit_bus;
 
     /**
      *  Indicates what MIDI channel the data window is currently editing.
      */
 
-    int m_editing_channel;
+    int m_edit_channel;
 
     /**
      *  Indicates what MIDI event/status the data window is currently editing.
      */
 
-    midibyte m_editing_status;
+    midibyte m_edit_status;
 
     /**
      *  Indicates what MIDI CC value the data window is currently editing.
      */
 
-    midibyte m_editing_cc;
+    midibyte m_edit_cc;
 
     /**
      *  Indicates the first event found in the sequence while setting up the

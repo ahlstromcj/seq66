@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-07-20
+ * \updates       2021-08-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -359,10 +359,10 @@ qseqeditframe64::qseqeditframe64
     m_pp_eighth             (0),
     m_pp_sixteenth          (0),
 #endif
-    m_editing_bus           (seq_pointer()->seq_midi_bus()),
-    m_editing_channel       (seq_pointer()->midi_channel()),
-    m_editing_status        (0),
-    m_editing_cc            (0),
+    m_edit_bus           (seq_pointer()->seq_midi_bus()),
+    m_edit_channel       (seq_pointer()->midi_channel()),  /* 0-15, null */
+    m_edit_status        (0),
+    m_edit_cc            (0),
     m_first_event           (0),
     m_first_event_name      ("(no events)"),
     m_have_focus            (false),
@@ -1059,9 +1059,9 @@ qseqeditframe64::qseqeditframe64
         this, SLOT(update_recording_volume(int))
     );
     set_recording_volume(usr().velocity_override());
-    repopulate_usr_combos(m_editing_bus, m_editing_channel);
-    set_midi_bus(m_editing_bus);
-    set_midi_channel(m_editing_channel);
+    repopulate_usr_combos(m_edit_bus, m_edit_channel);
+    set_midi_bus(m_edit_bus);
+    set_midi_channel(m_edit_channel);        /* 0 to 15 or Free (0x80)   */
 
     int seqwidth = m_seqroll->width();
     int scrollwidth = ui->rollScrollArea->width();
@@ -1709,10 +1709,10 @@ qseqeditframe64::set_midi_bus (int bus, bool user_change)
     if (b != initialbus)
     {
         seq_pointer()->set_midi_bus(b, user_change);
-        m_editing_bus = bus;
+        m_edit_bus = bus;
         if (user_change)
         {
-            repopulate_usr_combos(m_editing_bus, m_editing_channel);
+            repopulate_usr_combos(m_edit_bus, m_edit_channel);
             set_dirty();
         }
         else
@@ -1739,7 +1739,6 @@ qseqeditframe64::set_midi_bus (int bus, bool user_change)
 void
 qseqeditframe64::repopulate_midich_combo (int buss)
 {
-    int channel = seq_pointer()->seq_midi_channel();
     ui->m_combo_channel->clear();
     for (int channel = 0; channel <= c_midichannel_max; ++channel)
     {
@@ -1753,10 +1752,10 @@ qseqeditframe64::repopulate_midich_combo (int buss)
             name += s;
             name += "]";
         }
-        if (channel == c_midichannel_max)
+        if (channel == c_midichannel_max)               /* i.e. 16          */
         {
             QString combo_text("Free");
-            ui->m_combo_channel->insertItem(c_midichannel_max, combo_text);
+            ui->m_combo_channel->insertItem(channel, combo_text);
         }
         else
         {
@@ -1764,12 +1763,17 @@ qseqeditframe64::repopulate_midich_combo (int buss)
             ui->m_combo_channel->insertItem(channel, combo_text);
         }
     }
-    ui->m_combo_channel->setCurrentIndex(channel);
+
+    int ch = seq_pointer()->midi_channel();
+    if (is_null_channel(ch))
+        ch = c_midichannel_max;
+
+    ui->m_combo_channel->setCurrentIndex(ch);
 }
 
 /**
- *  Note that c_midichannel_max is a legal value, too.  It is remapped in
- *  sequence::set_midi_channel().
+ *  Note that c_midichannel_max (16) is a legal value.  It is remapped in
+ *  sequence::set_midi_channel() to null_channel().
  */
 
 void
@@ -1790,40 +1794,41 @@ qseqeditframe64::reset_midi_channel ()
  *  is that the pattern is set to "no-channel" mode for MIDI output.
  *
  * \param ch
- *      The MIDI channel  value to set.
+ *      The MIDI channel value to set.
  *
  * \param user_change
  *      True if the user made this change, and thus has potentially modified
- *      the song.
+ *      the song.  The default is false.
  */
 
 void
 qseqeditframe64::set_midi_channel (int ch, bool user_change)
 {
-    int initialchan = seq_pointer()->midi_channel();  /* seq_midi_channel() */
+    int initialchan = seq_pointer()->seq_midi_channel();  /* midi_channel() */
     if (ch != initialchan || ! user_change)
     {
-        int chindex = ch > c_midichannel_max ? c_midichannel_max : ch ;
-        if (ch == c_midichannel_max)
-            ch = c_midichannel_null;
-
-        seq_pointer()->set_midi_channel(ch, user_change);
-        if (is_null_channel(ch))
+        midibyte channel = midibyte(ch);
+        int chindex = is_good_channel(channel) ? channel : c_midichannel_max ;
+        if (seq_pointer()->set_midi_channel(channel, user_change))
         {
-            ui->m_combo_channel->setCurrentIndex(chindex);
-        }
-        else
-        {
-            m_editing_channel = ch;
-            repopulate_usr_combos(m_editing_bus, m_editing_channel);
-            if (user_change)
+            m_edit_channel = channel;
+            if (is_null_channel(channel))
             {
-                repopulate_event_menu(m_editing_bus, m_editing_channel);
-                repopulate_mini_event_menu(m_editing_bus, m_editing_channel);
-                set_dirty();
+                ui->m_combo_channel->setCurrentIndex(chindex);
             }
             else
-                ui->m_combo_channel->setCurrentIndex(chindex);
+            {
+                // m_edit_channel = ch;
+                repopulate_usr_combos(m_edit_bus, m_edit_channel);
+                if (user_change)
+                {
+                    repopulate_event_menu(m_edit_bus, m_edit_channel);
+                    repopulate_mini_event_menu(m_edit_bus, m_edit_channel);
+                    set_dirty();
+                }
+                else
+                    ui->m_combo_channel->setCurrentIndex(chindex);
+            }
         }
     }
 }
@@ -2203,8 +2208,8 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
     char hexa[8];
     char type[32];
     snprintf(hexa, sizeof hexa, "[0x%02X]", status);
-    m_editing_status = status;                      /* not yet used, though */
-    m_editing_cc = control;                         /* not yet used, though */
+    m_edit_status = status;                         /* not yet used, though */
+    m_edit_cc = control;                            /* not yet used, though */
     m_seqevent->set_data_type(status, control);     /* qstriggereditor      */
     m_seqdata->set_data_type(status, control);
     if (status == EVENT_NOTE_OFF)

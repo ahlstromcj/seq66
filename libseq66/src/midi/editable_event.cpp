@@ -925,7 +925,7 @@ editable_event::analyze ()
 {
     midibyte status = get_status();
     (void) format_timestamp();
-    if (status >= EVENT_NOTE_OFF && status <= EVENT_PITCH_WHEEL)
+    if (is_channel_msg(status))
     {
         char tmp[32];
         int ch = int(channel()) + 1;
@@ -961,9 +961,9 @@ editable_event::analyze ()
         }
         m_name_data = std::string(tmp);
     }
-    else if (status >= EVENT_MIDI_SYSEX)
+    else if (is_system_msg(status))
     {
-        if (status == EVENT_MIDI_META)          /* not EVENT_MIDI_RESET */
+        if (is_meta_msg(status))
         {
             midibyte metatype = channel();      /* \tricky              */
             category(subgroup::meta_event);

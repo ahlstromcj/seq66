@@ -293,17 +293,18 @@ qseqeventframe::~qseqeventframe()
 void
 qseqeventframe::populate_midich_combo ()
 {
-    std::string defalt = std::to_string(int(m_seq->seq_midi_channel()) + 1);
-    defalt += " (default)";
+    int defchannel = int(m_seq->seq_midi_channel());
+    if (is_null_channel(defchannel))
+        defchannel = 0;
+
     ui->channel_combo_box->clear();
-    ui->channel_combo_box->insertItem(0, QString::fromStdString(defalt));
     for (int channel = 1; channel <= c_midichannel_max; ++channel)
     {
         std::string name = std::to_string(channel);
         QString combotext(QString::fromStdString(name));
         ui->channel_combo_box->insertItem(channel, combotext);
     }
-    ui->channel_combo_box->setCurrentIndex(0);
+    ui->channel_combo_box->setCurrentIndex(defchannel);
 }
 
 void
@@ -673,7 +674,7 @@ qseqeventframe::set_event_name (const std::string & n)
 void
 qseqeventframe::set_event_channel (int channel)
 {
-    if (! m_seq->no_channel())
+    if (! m_seq->free_channel())
         channel = m_seq->seq_midi_channel() + 1;
 
     ui->channel_combo_box->setCurrentIndex(channel + 1);

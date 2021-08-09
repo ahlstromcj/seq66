@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-07-19
+ * \updates       2021-08-09
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -294,20 +294,22 @@ private:
     bool m_channel_match;
 
     /**
-     *  Contains the proper MIDI channel for this sequence.  However, if this
-     *  value is c_midichannel_null, then this sequence is an SMF 0 track, and
-     *  has no single channel.  Please note that this is the output channel.
+     *  Contains the global MIDI channel for this sequence.  However, if this
+     *  value is c_midichannel_null (0x80), then this sequence is an SMF 0
+     *  track, and has no single channel, or represents a track who's recorded
+     *  channels we do not want to replace.  Please note that this is the
+     *  output channel.
      */
 
-    midibyte m_midi_channel;
+    midibyte m_midi_channel;            /* pattern's global MIDI channel    */
 
     /**
      *  This value indicates that the global MIDI channel associated with this
      *  pattern is not used.  Instead, the actual channel of each event is
-     *  used.
+     *  used.  This is true when m_midi_channel == null_channel().
      */
 
-    bool m_no_channel;
+    bool m_free_channel;
 
     /**
      *  Contains the nominal output MIDI bus number for this sequence/pattern.
@@ -1307,22 +1309,22 @@ public:
 
     midibyte seq_midi_channel () const
     {
-        return m_midi_channel;      /* a valid channel even if m_no_channel */
+        return m_midi_channel;                      /* midi_channel() below */
     }
 
     midibyte midi_channel (const event & ev) const
     {
-        return m_no_channel ? ev.channel() : m_midi_channel ;
+        return m_free_channel ? ev.channel() : m_midi_channel ;
     }
 
     midibyte midi_channel () const
     {
-        return m_no_channel ? c_midichannel_null : m_midi_channel ;
+        return m_free_channel ? null_channel() : m_midi_channel ;
     }
 
-    bool no_channel () const
+    bool free_channel () const
     {
-        return m_no_channel;
+        return m_free_channel;
     }
 
     /**
@@ -1445,11 +1447,7 @@ public:
 
     bool set_master_midi_bus (const mastermidibus * mmb);
     bool set_midi_bus (bussbyte mb, bool user_change = false);
-    bool set_midi_channel
-    (
-        midibyte ch = c_midichannel_null,
-        bool user_change = false
-    );
+    bool set_midi_channel (midibyte ch, bool user_change = false);
     int select_note_events
     (
         midipulse tick_s, int note_h,

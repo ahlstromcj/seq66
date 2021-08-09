@@ -52,7 +52,7 @@ std::map<midilong, std::string>
 s_tag_names_container
 {
     { c_midibus      ,  "Track buss number" },
-    { c_midich       ,  "Track channel number" },
+    { c_midichannel  ,  "Track channel number" },
     { c_midiclocks   ,  "Track clocking" },
     { c_triggers     ,  "Old triggers" },
     { c_notes        ,  "Set notes" },

@@ -155,7 +155,7 @@
       \begin{tabular}{l l l l}
          \textbf{SeqSpec tag}        & \textbf{Type} & \textbf{Length}   & \textbf{Data} \\
          \texttt{c\_midibus}         & Track         & 5                 & \texttt{0x24240001 buss} \\
-         \texttt{c\_midich}          & Track         & 5                 & \texttt{0x24240002 channel} \\
+         \texttt{c\_midichannel}     & Track         & 5                 & \texttt{0x24240002 channel} \\
          \texttt{c\_midiclocks}      & Unused        & 4+count           & \texttt{0x24240003 count:L bussclocks} \\
          \texttt{c\_triggers}        & TBD           & 0                 & \texttt{0x24240004 (see c\_triggers\_ex)} \\
          \texttt{c\_notes}           & TBD           & 2+variable        & \texttt{0x24240005 setcount strings...} \\
@@ -218,11 +218,11 @@
    actual port numbers.
    See \sectionref{sec:port_mapping}.
 
-\subsubsection{SeqSpec c\_midich}
-\label{subsubsec:midi_format_track_seqspec_midich}
+\subsubsection{SeqSpec c\_midichannel}
+\label{subsubsec:midi_format_track_seqspec_midichannel}
 
    \begin{description}
-      \item \texttt{c\_midich}:
+      \item \texttt{c\_midichannel}:
          specifies the desired output channel number for a track.
       \item \textsl{Length}: 5
       \item \textsl{Format}: \texttt{0x24240002 channel}

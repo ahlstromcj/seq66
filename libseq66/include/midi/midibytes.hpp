@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-06-10
+ * \updates       2021-08-09
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -595,6 +595,24 @@ inline bool
 is_null_channel (midibyte c)
 {
     return c >= c_midichannel_null;     /* c_midibyte_max */
+}
+
+inline midibyte
+null_channel ()
+{
+    return c_midichannel_null;
+}
+
+inline bool
+is_good_channel (midibyte c)
+{
+    return c < c_midichannel_max;
+}
+
+inline bool
+is_valid_channel (midibyte c)
+{
+    return is_good_channel(c) || is_null_channel(c);
 }
 
 inline int

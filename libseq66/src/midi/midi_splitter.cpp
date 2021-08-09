@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-24
- * \updates       2021-06-10
+ * \updates       2021-08-09
  * \license       GNU GPLv2 or above
  *
  *  We have recently updated this module to put Set Tempo events into the
@@ -183,7 +183,7 @@ midi_splitter::split (performer & p, int screenset, int ppqn)
                         delete s;   /* empty sequence, not even meta events */
                 }
             }
-            m_smf0_main_sequence->set_midi_channel();   /* null channel set */
+            m_smf0_main_sequence->set_midi_channel(null_channel());
             p.install_sequence(m_smf0_main_sequence, seqnum);
         }
     }

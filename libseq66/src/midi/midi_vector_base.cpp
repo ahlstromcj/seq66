@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2021-06-10
+ * \updates       2021-08-09
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -183,7 +183,7 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
         midibyte channel = m_sequence.seq_midi_channel();
         midibyte st = e.get_status();
         add_varinum(deltatime);                    /* encode delta_time    */
-        if (m_sequence.no_channel() || is_null_channel(channel))
+        if (m_sequence.free_channel() || is_null_channel(channel))
             put(st | e.channel());                  /* channel from event   */
         else
             put(st | channel);                      /* the sequence channel */
@@ -412,7 +412,7 @@ midi_vector_base::fill_proprietary ()
     put(m_sequence.get_beats_per_bar());
     put(m_sequence.get_beat_width());
 
-    put_seqspec(c_midich, 1);
+    put_seqspec(c_midichannel, 1);
     put(m_sequence.midi_channel());
     if (! usr().global_seq_feature())
     {
@@ -738,10 +738,10 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
         /*
          * Here, we add SeqSpec entries (specific to seq66) for triggers
          * (c_triggers_ex), the MIDI buss (c_midibus), time signature
-         * (c_timesig), and MIDI channel (c_midich).   Should we restrict this
-         * to only track 0?  No, Seq66 saves these events with each sequence.
-         * Also, the datasize needs to be calculated differently for
-         * c_trig_transpose versus c_triggers_ex.
+         * (c_timesig), and MIDI channel (c_midichannel).   Should we restrict
+         * this to only track 0?  No, Seq66 saves these events with each
+         * sequence.  Also, the datasize needs to be calculated differently
+         * for c_trig_transpose versus c_triggers_ex.
          */
 
         const triggers::container & triggerlist = m_sequence.triggerlist();

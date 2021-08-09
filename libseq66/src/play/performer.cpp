@@ -2743,6 +2743,19 @@ performer::set_midi_bus (seq::number seqno, int buss)
     return result;
 }
 
+/**
+ *  The only legal values for channel are 0 through 15, and null_channel(),
+ *  which is 0x80, and indicates a "Free" channel (i.e. the pattern is
+ *  channel-free.
+ *
+ * \param seqno
+ *      Provides the sequence number for the channel setting.
+ *
+ * \paramm channel
+ *      Provides the channel setting, 0 to 15.  If greater than that, it is
+ *      coerced to the null-channel (0x80).
+ */
+
 bool
 performer::set_midi_channel (seq::number seqno, int channel)
 {
@@ -2750,8 +2763,8 @@ performer::set_midi_channel (seq::number seqno, int channel)
     bool result = bool(s);
     if (result)
     {
-        if (channel >= c_midichannel_max)
-            channel = c_midichannel_null;
+        if (channel >= c_midichannel_max)               /* 0 to 15, Free    */
+            channel = null_channel();                   /* Free             */
 
         result = s->set_midi_channel(channel, true);    /* a user change    */
     }
