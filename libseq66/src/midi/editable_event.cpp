@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-07-23
+ * \updates       2021-08-10
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -313,7 +313,7 @@ editable_event::value_to_name
     std::string result;
     const name_value_t * const table = s_category_arrays[int(cat)];
     if (cat == subgroup::channel_message)
-        event::strip_channel(value);
+        value = event::mask_status(value);
 
     midibyte counter = 0;
     while (table[counter].event_value != s_end_of_table)
@@ -826,20 +826,6 @@ editable_event::set_status_from_string
 }
 
 /**
- *  Sets the channel and creates the channel string for this editable event.
- *
- * \param channel
- *      The channel byte to be set.
- */
-
-void
-editable_event::set_channel (midibyte channel)
-{
-    event::set_channel(channel);
-    analyze();                          /* (too much extra work, optimize!! */
-}
-
-/**
  *  Converts the event into a string desribing the full event.  We get the
  *  time-stamp as a string, make sure the event is fully analyzed so that all
  *  items and strings are set correctly.
@@ -935,14 +921,14 @@ editable_event::analyze ()
         di0 = int(d0);
         di1 = int(d1);
         category(subgroup::channel_message);
-        event::strip_channel(status);
+        status = event::mask_status(status);
 
         /*
          * Get channel message name (e.g. "Program change");
          */
 
         m_name_status = value_to_name(status, subgroup::channel_message);
-        snprintf(tmp, sizeof tmp, "%d", ch);        /* no "Ch" */
+        snprintf(tmp, sizeof tmp, "%d", ch);        /* no "Ch", too much    */
         m_name_channel = std::string(tmp);
         if (is_one_byte_msg(status))
         {
@@ -951,13 +937,9 @@ editable_event::analyze ()
         else
         {
             if (is_note_msg(status))
-            {
                 snprintf(tmp, sizeof tmp, "Key %d Vel %d", di0, di1);
-            }
             else
-            {
                 snprintf(tmp, sizeof tmp, "Data %d, %d", di0, di1);
-            }
         }
         m_name_data = std::string(tmp);
     }
@@ -965,20 +947,19 @@ editable_event::analyze ()
     {
         if (is_meta_msg(status))
         {
-            midibyte metatype = channel();      /* \tricky              */
+            midibyte metatype = channel();          /* \tricky              */
             category(subgroup::meta_event);
             m_name_status = value_to_name(metatype, subgroup::meta_event);
-            m_name_channel.clear();             /* will not be output   */
+            m_name_channel.clear();                 /* will not be output   */
             m_name_data = ex_data_string();
         }
         else
         {
-            category(subgroup::system_message);
-
             /*
              * Get system message name (e.g. "SysEx start");
              */
 
+            category(subgroup::system_message);
             m_name_status = value_to_name(status, subgroup::system_message);
             m_name_channel.clear();
             m_name_data.clear();

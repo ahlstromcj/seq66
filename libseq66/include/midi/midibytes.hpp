@@ -594,7 +594,7 @@ clamp_midibyte_value (midibyte b)
 inline bool
 is_null_channel (midibyte c)
 {
-    return c >= c_midichannel_null;     /* c_midibyte_max */
+    return c >= c_midichannel_null;
 }
 
 inline midibyte
@@ -606,13 +606,13 @@ null_channel ()
 inline bool
 is_good_channel (midibyte c)
 {
-    return c < c_midichannel_max;
+    return c < c_midichannel_max;                       /* 0 to 15 are good */
 }
 
 inline bool
 is_valid_channel (midibyte c)
 {
-    return is_good_channel(c) || is_null_channel(c);
+    return is_good_channel(c) || is_null_channel(c);    /* null is valid    */
 }
 
 inline int

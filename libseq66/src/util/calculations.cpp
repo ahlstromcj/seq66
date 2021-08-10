@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-07-20
+ * \updates       2021-08-10
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -679,6 +679,23 @@ string_to_pulses
         result = atol(s.c_str());
 
     return result;
+}
+
+/**
+ *  The first call is seeded with the current time, then a pseudo-random
+ *  number is returned.
+ */
+
+int
+randomize (int range)
+{
+    static bool s_uninitialized = true;
+    if (s_uninitialized)
+    {
+        s_uninitialized = false;
+        srand(unsigned(time(NULL)));
+    }
+    return rand() / (RAND_MAX / (2 * range + 1) + 1) - range;
 }
 
 /**

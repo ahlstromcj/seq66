@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-09
+ * \updates       2021-08-10
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -784,15 +784,14 @@ midifile::parse (performer & p, int screenset, bool importing)
     bool result = grab_input_stream(std::string("MIDI"));
     if (result)
     {
-        clear_errors();
-        m_smf0_splitter.initialize();                   /* SMF 0 support    */
-
         midilong ID = read_long();                      /* hdr chunk info   */
         midilong hdrlength = read_long();               /* MThd length      */
+        clear_errors();
         if (ID != c_mthd_tag && hdrlength != 6)     /* magic 'MThd'     */
             return set_error_dump("Invalid MIDI header chunk detected", ID);
 
         midishort Format = read_short();                /* 0, 1, or 2       */
+        m_smf0_splitter.initialize();                   /* SMF 0 support    */
         if (Format == 0)
         {
             result = parse_smf_0(p, screenset);
@@ -1123,10 +1122,10 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     if (runningstatus > 0)      /* running status in force? */
                         status = runningstatus; /* yes, use running status  */
                 }
-#if defined SEQ66_KEEP_CHANNEL
-                e.set_status_keep_channel(status);  /* set members in event */
-#else
+#if defined SEQ66_DO_NOT_KEEP_CHANNEL
                 e.set_status(status);               /* set members in event */
+#else
+                e.set_status_keep_channel(status);  /* set members in event */
 #endif
 
                 /*
@@ -1165,9 +1164,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                     s.append_event(e);                  /* does not sort    */
                     tentative_channel = channel;        /* log MIDI channel */
-#if defined USE_THIS_SUSPECT_CODE
-                    s.set_midi_channel(channel);
-#endif
                     if (is_smf0)
                         m_smf0_splitter.increment(channel); /* count chan.  */
                     break;
@@ -1185,9 +1181,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                     s.append_event(e);                  /* does not sort    */
                     tentative_channel = channel;
-#if defined USE_THIS_SUSPECT_CODE
-                    s.set_midi_channel(channel);        /* set midi channel */
-#endif
                     if (is_smf0)
                         m_smf0_splitter.increment(channel); /* count chan.  */
                     break;
@@ -1348,13 +1341,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             {
                                 midibyte channel = read_byte();
                                 tentative_channel = channel;
-#if defined USE_THIS_SUSPECT_CODE
-                                s.set_midi_channel(channel);
-#endif
+                                --len;
                                 if (is_smf0)
                                     m_smf0_splitter.increment(channel);
-
-                                --len;
                             }
                             else if (seqspec == c_timesig)
                             {

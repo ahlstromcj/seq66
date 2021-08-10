@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2021-08-09
+ * \updates       2021-08-10
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -153,11 +153,11 @@ midi_vector_base::add_short (midishort x)
  *  Adds an event to the container.  It handles regular MIDI events separately
  *  from "extended" (our term) MIDI events (SysEx and Meta events).
  *
- *  For normal MIDI events, if the sequence's MIDI channel is c_midibyte_max ==
- *  EVENT_NULL_CHANNEL == 0xFF, then it is the copy of an SMF 0 sequence that
- *  the midi_splitter created.  We want to be able to save it along with the
- *  other tracks, but won't be able to read it back if all the channels are
- *  bad.  So we just use the channel from the event.
+ *  For normal MIDI events, if the sequence's MIDI channel is max_midibyte()
+ *  == 0xFF, then it is the copy of an SMF 0 sequence that the midi_splitter
+ *  created.  We want to be able to save it along with the other tracks, but
+ *  won't be able to read it back if all the channels are bad.  So we just use
+ *  the channel from the event.
  *
  *  SysEx and Meta events are detected and passed to the new add_ex_event()
  *  function for proper dumping.
@@ -180,13 +180,18 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
     {
         midibyte d0 = e.data(0);
         midibyte d1 = e.data(1);
-        midibyte channel = m_sequence.seq_midi_channel();
         midibyte st = e.get_status();
         add_varinum(deltatime);                    /* encode delta_time    */
+
+#if defined SEQ66_DO_NOT_KEEP_CHANNEL
+        midibyte channel = m_sequence.seq_midi_channel();
         if (m_sequence.free_channel() || is_null_channel(channel))
             put(st | e.channel());                  /* channel from event   */
         else
             put(st | channel);                      /* the sequence channel */
+#else
+        put(st);
+#endif
 
         switch (event::mask_status(st))                         /* 0xF0 */
         {
@@ -413,7 +418,7 @@ midi_vector_base::fill_proprietary ()
     put(m_sequence.get_beat_width());
 
     put_seqspec(c_midichannel, 1);
-    put(m_sequence.midi_channel());
+    put(m_sequence.seq_midi_channel());             /* 0 to 15 or 0x80      */
     if (! usr().global_seq_feature())
     {
         /**

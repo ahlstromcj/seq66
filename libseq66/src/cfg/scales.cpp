@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2021-07-07
+ * \updates       2021-08-10
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of many scale interval patterns if working with
@@ -71,6 +71,12 @@
 
 namespace seq66
 {
+
+/**
+ *  The minimum number of notes needed for a scale analysis.
+ */
+
+static const int c_analysis_minimum = 8;
 
 /**
  *  Each value in the kind of scale is denoted by a true value in these
@@ -854,7 +860,7 @@ analyze_notes
                 }
             }
         }
-        if (notecount < 8)
+        if (notecount < c_analysis_minimum)
         {
             infoprint("Not enough notes to analyze.");
             ok = false;

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-09
+ * \updates       2021-08-10
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -452,7 +452,8 @@ public:
      *  SMF 0 track in a sequence.  In a Seq66 SMF 0 track, every event has a
      *  channel.  In a Seq66 SMF 1 track, the events do not have a channel.
      *  Instead, the channel is a global value of the sequence, and is stuffed
-     *  into each event when the event is played or is written to a MIDI file.
+     *  into each event when the event is played, but not when written to a
+     *  MIDI file. (New behavior 20201-08-10).
      *
      * \param channel The channel to check.
      *
@@ -469,14 +470,14 @@ public:
         return m & EVENT_GET_CHAN_MASK;
     }
 
+    /*
+     *  Use mask_status() instead.
+     *  static void strip_channel (midibyte & m) { m &= EVENT_GET_STATUS_MASK; }
+     */
+
     static midibyte mask_status (midibyte m)
     {
         return m & EVENT_GET_STATUS_MASK;
-    }
-
-    static void strip_channel (midibyte & m)
-    {
-        m &= EVENT_GET_STATUS_MASK;
     }
 
     /**
@@ -708,27 +709,8 @@ public:
     );
 
     /**
-     *  Sets the channel "nybble", without modifying the status "nybble".
-     *  It actually just sets the m_channel member.  Note that the sequence
-     *  channel generally overrides this value in the usage of the event.
-     *
-     *  Do not confuse this function with sequence::set_midi_channel(), which
-     *  sets the pattern's global channel.
-     *
-     * \param channel
-     *      The channel byte to be set.  It is masked to ensure the value
-     *      ranges from 0x0 to 0xF, but the null-channel value (0x80) is also
-     *      accepted.
-     */
-
-    virtual void set_channel (midibyte channel)
-    {
-        m_channel = is_null_channel(channel) ?
-            null_channel() : mask_channel(channel) ;
-    }
-
-    /**
      *  Note that we have ensured that status ranges from 0x80 to 0xFF.
+     *  And recently, the status now holds the channel, perhaps redundantly.
      */
 
     midibyte get_status () const
@@ -1156,9 +1138,24 @@ public:
         return is_strict_note_msg(m_status);
     }
 
+    bool is_selected_note () const
+    {
+        return is_selected() && is_note();
+    }
+
+    bool is_selected_note_on () const
+    {
+        return is_selected() && is_note_on();
+    }
+
     bool is_playable () const
     {
         return is_playable_msg(m_status);
+    }
+
+    bool is_selected_status (midibyte status) const
+    {
+        return is_selected() && mask_status(m_status) == mask_status(status);
     }
 
     /**
@@ -1214,6 +1211,11 @@ public:
     bool is_midi_song_pos () const
     {
         return m_status == EVENT_MIDI_SONG_POS;
+    }
+
+    bool is_channel () const
+    {
+        return is_channel_msg(m_status);
     }
 
     /**

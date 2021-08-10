@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-09
+ * \updates       2021-08-10
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1343,7 +1343,7 @@ sequence::onsets_selected_box
     note_l = c_midibyte_data_max;
     for (auto & e : m_events)
     {
-        if (e.is_selected() && e.is_note_on())
+        if (e.is_selected_note_on())
         {
             /*
              * We cannot check On/Off here.  It screws up seqevent selection,
@@ -1769,41 +1769,32 @@ sequence::randomize_selected_notes (int jitter, int range)
     return result;
 }
 
+#if defined USE_ADJUST_DATA_HANDLE
+
 void
 sequence::adjust_data_handle (midibyte status, int adata)
 {
     midibyte data[2];
     midibyte datitem;
-    int datidx = 0;
+    int dataindex = event::is_two_byte_msg(status) ? 1 : 0 ;
     automutex locker(m_mutex);
     for (auto & e : m_events)
     {
-        if (e.is_selected() && e.get_status() == status)
+        if (e.is_selected_status(status))
         {
-            event::strip_channel(status);
+            status = event::mask_status(status);
             e.get_data(data[0], data[1]);           /* \tricky code */
-            if (event::is_two_byte_msg(status))
-                datidx = 1;
-
-            if (event::is_one_byte_msg(status))
-                datidx = 0;
-
             datitem = adata;
             if (datitem > (c_midibyte_data_max - 1))
                 datitem = (c_midibyte_data_max - 1);
-
-            /*
-             * Not possible with an unsigned value
-             *
-             * else if (datitem < 0)
-             *     datitem = 0;
-             */
 
             data[datidx] = datitem;
             e.set_data(data[0], data[1]);
         }
     }
 }
+
+#endif  // defined USE_ADJUST_DATA_HANDLE
 
 /**
  *  Increments events the match the given status and control values.
@@ -1830,14 +1821,14 @@ void
 sequence::increment_selected (midibyte astat, midibyte /*acontrol*/)
 {
     automutex locker(m_mutex);
-    for (auto & er : m_events)
+    for (auto & e : m_events)
     {
-        if (er.is_selected() && er.get_status() == astat)
+        if (e.is_selected_status(astat))   /* && er.get_control == acontrol */
         {
             if (event::is_two_byte_msg(astat))
-                er.increment_data2();
+                e.increment_data2();
             else if (event::is_one_byte_msg(astat))
-                er.increment_data1();
+                e.increment_data1();
         }
     }
 }
@@ -1869,17 +1860,14 @@ void
 sequence::decrement_selected (midibyte astat, midibyte /*acontrol*/)
 {
     automutex locker(m_mutex);
-    for (auto & er : m_events)
+    for (auto & e : m_events)
     {
-        if (er.is_selected())
+        if (e.is_selected_status(astat))   /* && er.get_control == acontrol */
         {
-            if (er.get_status() == astat)   // && er.get_control == acontrol
-            {
-                if (event::is_two_byte_msg(astat))
-                    er.decrement_data2();
-                else if (event::is_one_byte_msg(astat))
-                    er.decrement_data1();
-            }
+            if (event::is_two_byte_msg(astat))
+                e.decrement_data2();
+            else if (event::is_one_byte_msg(astat))
+                e.decrement_data1();
         }
     }
 }
@@ -2113,23 +2101,23 @@ sequence::change_event_data_range
     automutex locker(m_mutex);
     bool result = false;
     bool have_selection = m_events.any_selected_events(status, cc);
-    for (auto & er : m_events)
+    for (auto & e : m_events)
     {
         midibyte d0, d1;
-        er.get_data(d0, d1);
+        e.get_data(d0, d1);
 
         /*
          * We should also match tempo events here.  But we have to treat them
          * differently from the matched status events.
          */
 
-        bool match = er.get_status() == status;
+        bool match = e.get_status() == status;
         bool good;                          /* is_desired_cc_or_not_cc      */
         if (status == EVENT_CONTROL_CHANGE)
             good = match && d0 == cc;       /* correct status & correct cc  */
         else
         {
-            if (er.is_tempo())
+            if (e.is_tempo())
                 good = true;                /* Set tempo always editable    */
             else
                 good = match;               /* correct status and not a cc  */
@@ -2140,14 +2128,14 @@ sequence::change_event_data_range
          * range.
          */
 
-        midipulse tick = er.timestamp();
+        midipulse tick = e.timestamp();
         if (tick > tick_f)                              /* in range?        */
             break;
 
         if (tick < tick_s)                              /* in range?         */
             good = false;
 
-        if (have_selection && ! er.is_selected())       /* in selection?     */
+        if (have_selection && ! e.is_selected())        /* in selection?     */
             good = false;
 
         if (good)
@@ -2168,10 +2156,10 @@ sequence::change_event_data_range
              * events differently.
              */
 
-            if (er.is_tempo())
+            if (e.is_tempo())
             {
                 midibpm tempo = note_value_to_tempo(midibyte(newdata));
-                result = er.set_tempo(tempo);
+                result = e.set_tempo(tempo);
             }
             else
             {
@@ -2180,7 +2168,7 @@ sequence::change_event_data_range
                 else
                     d1 = newdata;
 
-                er.set_data(d0, d1);
+                e.set_data(d0, d1);
                 result = true;
             }
             if (result)
@@ -2227,23 +2215,23 @@ sequence::change_event_data_relative
     automutex locker(m_mutex);
     bool result = false;
     bool have_selection = m_events.any_selected_events(status, cc);
-    for (auto & er : m_events)
+    for (auto & e : m_events)
     {
         midibyte d0, d1;
-        er.get_data(d0, d1);
+        e.get_data(d0, d1);
 
         /*
          * We should also match tempo events here.  But we have to treat them
          * differently from the matched status events.
          */
 
-        bool match = er.get_status() == status;
+        bool match = e.get_status() == status;
         bool good;                          /* event::is_desired_cc_or_not_cc */
         if (status == EVENT_CONTROL_CHANGE)
             good = match && d0 == cc;       /* correct status & correct cc  */
         else
         {
-            if (er.is_tempo())
+            if (e.is_tempo())
                 good = true;                /* Set tempo always editable    */
             else
                 good = match;               /* correct status and not a cc  */
@@ -2254,14 +2242,14 @@ sequence::change_event_data_relative
          * range.
          */
 
-        midipulse tick = er.timestamp();
+        midipulse tick = e.timestamp();
         if (tick > tick_f)                              /* in range?        */
             break;
 
         if (tick < tick_s)                              /* in range?         */
             good = false;
 
-        if (have_selection && ! er.is_selected())       /* in selection?    */
+        if (have_selection && ! e.is_selected())        /* in selection?    */
             good = false;
 
         if (good)
@@ -2277,7 +2265,7 @@ sequence::change_event_data_relative
             else
                 d1 = newdata;
 
-            er.set_data(d0, d1);
+            e.set_data(d0, d1);
             result = true;
             modify();
         }
@@ -3832,7 +3820,7 @@ sequence::minmax_notes (int & lowest, int & highest) // const
     int high = -1;
     for (auto & er : m_events)
     {
-        if (er.is_note_on() || er.is_note_off())
+        if (er.is_strict_note())
         {
             if (er.get_note() < low)
             {
@@ -4741,9 +4729,9 @@ sequence::set_midi_channel (midibyte ch, bool user_change)
         m_free_channel = is_null_channel(ch);
         m_midi_channel = ch;                /* if (! m_free_channel)        */
         if (user_change)
-            modify();                   /* no easy way to undo this, though */
+            modify();                       /* no easy way to undo this     */
 
-        set_dirty();                    /* this is for display updating     */
+        set_dirty();                        /* this is for display updating */
     }
     return result;
 }
@@ -4824,9 +4812,10 @@ sequence::put_event_on_bus (event & ev)
     midibyte note = ev.get_note();
     bool skip = false;
     if (ev.is_note_on())
+    {
         ++m_playing_notes[note];
-
-    if (ev.is_note_off())
+    }
+    else if (ev.is_note_off())
     {
         if (m_playing_notes[note] == 0)
             skip = true;
@@ -4929,9 +4918,8 @@ sequence::select_events (midibyte status, midibyte cc, bool inverse)
  * \note
  *      We noticed (ca 2016-06-10) that MIDI aftertouch events need to be
  *      transposed, but are not being transposed here.  Assuming they are
- *      selectable (another question!), the test for note-on and note-off is
- *      not sufficient, and so has been replaced by a call to
- *      event::is_note().
+ *      selectable (another question!), the test for note-on and note-off is not
+ *      sufficient, and so has been replaced by a call to event::is_note().
  *
  * \param steps
  *      The number of steps to transpose the notes.
@@ -4960,7 +4948,7 @@ sequence::transpose_notes (int steps, int scale, int key)
 
     for (auto & er : m_events)
     {
-        if (er.is_selected() && er.is_note())       /* transposable event?  */
+        if (er.is_selected_note())                  /* transposable event?  */
         {
             int note = er.get_note();
             bool off_scale = false;
@@ -5000,7 +4988,7 @@ sequence::shift_notes (midipulse ticks)
         m_events_undo.push(m_events);               /* push_undo(), no lock */
         for (auto & er : m_events)
         {
-            if (er.is_selected() && er.is_note())   /* shiftable event?     */
+            if (er.is_selected_note())              /* shiftable event?     */
             {
                 midipulse timestamp = er.timestamp() + ticks;
                 if (timestamp < 0L)                 /* wraparound           */

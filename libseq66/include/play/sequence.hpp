@@ -1539,13 +1539,15 @@ public:
     bool stretch_selected (midipulse deltatick);
     bool randomize_selected (midibyte status, int plus_minus);
     bool randomize_selected_notes (int jitter = 8, int range = 8);
-    void adjust_data_handle (midibyte status, int data);
     bool mark_selected ();
     void unpaint_all ();
     void unselect ();
     void verify_and_link ();
     void link_new ();
     bool edge_fix ();
+#if defined USE_ADJUST_DATA_HANDLE
+    void adjust_data_handle (midibyte status, int data);
+#endif
 
     /**
      *  A new function to re-link the tempo events added by the user.

@@ -355,12 +355,6 @@ midicontrolout::get_seq_event (int seq, seqaction what) const
 /**
  *  Register a MIDI event for a given sequence action.
  *
- * \tricky
- *      We have to call the overloaded two-parameter version of set_status()
- *      in lieu of calling set_status() and set_channel(), because the
- *      single-parameter set_status() assumes the channel nybble is present.
- *      This is too tricky.
- *
  * \param seq
  *      The index of the sequence.
  *

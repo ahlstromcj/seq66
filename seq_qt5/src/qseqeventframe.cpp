@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-07-23
+ * \updates       2021-08-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -302,7 +302,7 @@ qseqeventframe::populate_midich_combo ()
     {
         std::string name = std::to_string(channel);
         QString combotext(QString::fromStdString(name));
-        ui->channel_combo_box->insertItem(channel, combotext);
+        ui->channel_combo_box->insertItem(channel - 1, combotext);
     }
     ui->channel_combo_box->setCurrentIndex(defchannel);
 }
@@ -674,10 +674,10 @@ qseqeventframe::set_event_name (const std::string & n)
 void
 qseqeventframe::set_event_channel (int channel)
 {
-    if (! m_seq->free_channel())
-        channel = m_seq->seq_midi_channel() + 1;
+    /////// if (! m_seq->free_channel())
+    ///////     channel = m_seq->seq_midi_channel();
 
-    ui->channel_combo_box->setCurrentIndex(channel + 1);
+    ui->channel_combo_box->setCurrentIndex(channel);
 }
 
 /**
@@ -931,17 +931,11 @@ qseqeventframe::handle_insert ()
     {
         std::string ts = ui->entry_ev_timestamp->text().toStdString();
         std::string name = ui->combo_ev_name->currentText().toStdString();
-        std::string data0 = ui->entry_ev_data_0->text().toStdString();
-        std::string data1 = ui->entry_ev_data_1->text().toStdString();
-        std::string channel;
-        if (ui->channel_combo_box->currentIndex() > 0)
-            channel = ui->channel_combo_box->currentText().toStdString();
-
+        std::string d0 = ui->entry_ev_data_0->text().toStdString();
+        std::string d1 = ui->entry_ev_data_1->text().toStdString();
+        std::string ch = ui->channel_combo_box->currentText().toStdString();
         std::string linktime;                   /* empty, no link time yet  */
-        bool has_events = m_eventslots->insert_event
-        (
-            ts, name, data0, data1, channel
-        );
+        bool has_events = m_eventslots->insert_event(ts, name, d0, d1, ch);
         set_seq_lengths(get_lengths());
         if (has_events)
         {
@@ -949,7 +943,7 @@ qseqeventframe::handle_insert ()
             int cr = m_eventslots->current_row();
             ui->eventTableWidget->insertRow(cr);
             set_row_height(cr, sc_event_row_height);
-            set_event_line(cr, ts, name, chan, data0, data1, linktime);
+            set_event_line(cr, ts, name, chan, d0, d1, linktime);
             ui->button_del->setEnabled(true);
             ui->button_modify->setEnabled(true);
             set_dirty();
@@ -974,29 +968,18 @@ qseqeventframe::handle_modify ()
         const editable_event & ev = m_eventslots->current_event();
         std::string ts = ui->entry_ev_timestamp->text().toStdString();
         std::string name = ui->combo_ev_name->currentText().toStdString();
-
-        /*
-         * Which one is better?  The one use would allow for events on more
-         * than one channel in this pattern/loop.
-         *
-         * std::string chan = std::to_string(int(m_seq->seq_midi_channel()));
-         */
-
         std::string chan = ev.channel_string();
-        std::string data0 = ui->entry_ev_data_0->text().toStdString();
-        std::string data1 = ui->entry_ev_data_1->text().toStdString();
-        std::string channel = ui->channel_combo_box->currentText().toStdString();
+        std::string d0 = ui->entry_ev_data_0->text().toStdString();
+        std::string d1 = ui->entry_ev_data_1->text().toStdString();
+        std::string ch = ui->channel_combo_box->currentText().toStdString();
         midipulse lt = c_null_midipulse;
         if (ev.is_linked())
             lt = ev.link_time();
 
         std::string linktime = m_eventslots->time_string(lt);
-        (void) m_eventslots->modify_current_event
-        (
-            cr, ts, name, data0, data1, channel
-        );
+        (void) m_eventslots->modify_current_event(cr, ts, name, d0, d1, ch);
         set_seq_lengths(get_lengths());
-        set_event_line(cr, ts, name, chan, data0, data1, linktime);
+        set_event_line(cr, ts, name, chan, d0, d1, linktime);
         set_dirty();
     }
 }

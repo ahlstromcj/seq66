@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-07-08
+ * \updates       2021-08-10
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -34,7 +34,7 @@
 
 #include "midi/eventlist.hpp"
 #include "util/basic_macros.hpp"
-#include "util/calculations.hpp"
+#include "util/calculations.hpp"        /* seq66::randomize(), etc.         */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -503,7 +503,7 @@ eventlist::edge_fix (midipulse snap, midipulse seqlength)
     bool result = false;
     for (auto & e : m_events)
     {
-        if (e.is_selected() && e.is_note_on() && e.is_linked())
+        if (e.is_selected_note_on() && e.is_linked())
         {
             midipulse onstamp = e.timestamp();
             midipulse maximum = seqlength - snap / 2;
@@ -729,7 +729,7 @@ eventlist::move_selected_notes (midipulse delta_tick, int delta_note)
     bool result = false;
     for (auto & er : m_events)
     {
-        if (er.is_selected() && er.is_note())
+        if (er.is_selected_note())                  /* moveable event?      */
         {
             int newnote = er.get_note() + delta_note;
             if (newnote >= 0 && newnote < c_num_keys)
@@ -776,26 +776,36 @@ eventlist::move_selected_events (midipulse delta_tick)
  *
  *  Note that we do not need to call verify_and_link() here, since we are not
  *  altering the timestamps or the note values.
+ *
+ * \param status
+ *      The kind of event to be randomized.
+ *
+ * \param range
+ *      The amount of randomization.  A positive non-zero value is enforced.
+ *
+ * \return
+ *      Returns true if some randomization occurred.
  */
 
 bool
 eventlist::randomize_selected (midibyte status, int range)
 {
     bool result = false;
-    for (auto & e : m_events)
+    if (range > 0)
     {
-        if (e.is_selected() && e.get_status() == status)
+        int dataindex = event::is_two_byte_msg(status) ? 1 : 0 ;
+        for (auto & e : m_events)
         {
-            midibyte data[2];
-            e.get_data(data[0], data[1]);
+            if (e.is_selected_status(status))
+            {
+                midibyte data[2];
+                e.get_data(data[0], data[1]);
 
-            int datidx = event::is_two_byte_msg(status) ? 1 : 0 ;
-            midibyte datitem = data[datidx];
-            int random = rand() / (RAND_MAX / (2 * range + 1) + 1) - range;
-            datitem += random;
-            data[datidx] = clamp_midibyte_value(datitem);
-            e.set_data(data[0], data[1]);
-            result = true;
+                midibyte datitem = data[dataindex] + randomize(range);
+                data[dataindex] = clamp_midibyte_value(datitem);
+                e.set_data(data[0], data[1]);
+                result = true;
+            }
         }
     }
     return result;
@@ -807,7 +817,8 @@ eventlist::randomize_selected (midibyte status, int range)
  *  note event in time, and jitter the velocity (data byte d[1]) of the note.
  *  The note pitch (d[0]) is not altered.
  *
- *  Since we jitter the timestamps, we have to call verify_and_link() afterward.
+ *  Since we jitter the timestamps, we have to call verify_and_link()
+ *  afterward.
  *
  * \param length
  *      The length of the sequence containing the notes.
@@ -823,16 +834,17 @@ bool
 eventlist::randomize_selected_notes (int jitter, int range)
 {
     bool result = false;
-    midipulse length = get_length();
-    for (auto & e : m_events)
+    if (range > 0 || jitter > 0)
     {
-        if (e.is_selected() && e.is_note())
+        bool got_jittered = false;
+        midipulse length = get_length();
+        for (auto & e : m_events)
         {
-            if (range > 0)
+            if (e.is_selected_note())               /* randomizable event?  */
             {
-                int random = rand() / (RAND_MAX / (2*range + 1) + 1) - range;
-                if (random != 0)
+                if (range > 0)
                 {
+                    int random = randomize(range);
                     midibyte data[2];
                     e.get_data(data[0], data[1]);
 
@@ -841,12 +853,9 @@ eventlist::randomize_selected_notes (int jitter, int range)
                     e.note_velocity(velocity);
                     result = true;
                 }
-            }
-            if (jitter > 0)
-            {
-                int random = rand() / (RAND_MAX / (2*jitter + 1) + 1) - jitter;
-                if (random != 0)
+                if (jitter > 0)
                 {
+                    int random = randomize(jitter);
                     int tstamp = int(e.timestamp());
                     tstamp += random;
                     if (tstamp < 0)
@@ -855,14 +864,14 @@ eventlist::randomize_selected_notes (int jitter, int range)
                         tstamp = int(length);
 
                     e.set_timestamp(midipulse(tstamp));
-                    result = true;
+                    if (random != 0)
+                        got_jittered = true;
                 }
             }
         }
+        if (got_jittered)
+            verify_and_link();                      /* sort and relink      */
     }
-    if (result)
-        verify_and_link();                          /* sort and relink      */
-
     return result;
 }
 

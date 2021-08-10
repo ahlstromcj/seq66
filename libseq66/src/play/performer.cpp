@@ -2748,6 +2748,10 @@ performer::set_midi_bus (seq::number seqno, int buss)
  *  which is 0x80, and indicates a "Free" channel (i.e. the pattern is
  *  channel-free.
  *
+ *  The live-grid popup-menu calls this function, while the pattern-editor
+ *  dropdown calls sequence::set_midi_channel() directly.  Both calls set the
+ *  user-change flag.
+ *
  * \param seqno
  *      Provides the sequence number for the channel setting.
  *
@@ -2766,7 +2770,7 @@ performer::set_midi_channel (seq::number seqno, int channel)
         if (channel >= c_midichannel_max)               /* 0 to 15, Free    */
             channel = null_channel();                   /* Free             */
 
-        result = s->set_midi_channel(channel, true);    /* a user change    */
+        result = s->set_midi_channel(midibyte(channel), true);  /* user ch. */
     }
     return result;
 }

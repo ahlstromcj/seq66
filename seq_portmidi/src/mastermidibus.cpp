@@ -243,17 +243,7 @@ mastermidibus::api_get_midi_event (event * in)
         if (result)
             break;                          /* process incoming event NOW   */
     }
-
-    /*
-     * Some keyboards send Note On with velocity 0 for Note Off.  The event
-     * class already has this check available.  This is now done by
-     * event::set_midi_event().
-     *
-     * if (in->is_note_off_recorded())
-     *      in->set_status(EVENT_NOTE_OFF);
-     */
-
-    return result;                      /* Why no "sysex = false"?  */
+    return result;                          /* Why no "sysex = false"?      */
 }
 
 /**

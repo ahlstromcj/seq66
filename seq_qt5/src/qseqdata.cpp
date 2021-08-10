@@ -360,7 +360,7 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
 void
 qseqdata::set_data_type (midibyte status, midibyte control)
 {
-    if (m_status == c_midibyte_max && m_cc == c_midibyte_max)
+    if (m_status == max_midibyte() && m_cc == max_midibyte())
     {
         m_status = EVENT_NOTE_ON;
         m_cc = 0;

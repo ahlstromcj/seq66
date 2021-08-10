@@ -101,7 +101,7 @@ event::event () :
     m_input_buss    (null_buss()),          /* 0xFF                 */
     m_timestamp     (0),
     m_status        (EVENT_NOTE_OFF),
-    m_channel       (max_midibyte()),       /* 0xFF                 */
+    m_channel       (null_channel()),       /* 0x80                 */
     m_data          (),                     /* a two-element array  */
     m_sysex         (),                     /* an std::vector       */
     m_linked        (nullptr),
@@ -134,10 +134,10 @@ event::event () :
 event::event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1) :
     m_input_buss    (null_buss()),          /* 0xFF                 */
     m_timestamp     (tstamp),
-    m_status        (mask_status(status)),  /* remove the channel   */
-    m_channel       (max_midibyte()),       /* 0xFF                 */
-    m_data          (),                     /* a two-element array  */
-    m_sysex         (),                     /* an std::vector       */
+    m_status        (status),               /* keep the channel 2021-08-09  */
+    m_channel       (mask_channel(status)),
+    m_data          (),                     /* two-element array, midibytes */
+    m_sysex         (),                     /* an std::vector of midibytes  */
     m_linked        (nullptr),
     m_has_link      (false),
     m_selected      (false),
@@ -359,7 +359,7 @@ event::set_status (midibyte status)
     if (status >= EVENT_MIDI_SYSEX)             /* 0xF0 and above           */
     {
         m_status = status;
-        m_channel = c_midibyte_max;             /* channel "not applicable" */
+        m_channel = null_channel();             /* channel "not applicable" */
     }
     else
     {
@@ -371,25 +371,32 @@ event::set_status (midibyte status)
 /**
  *  This overload is useful when synthesizing events, such as converting a
  *  Note On event with a velocity of zero to a Note Off event.  See its usage
- *  around line 681 of midifile.cpp.
+ *  around line 1156 of midifile.cpp.
  *
- * \param eventcode
- *      The status byte, perhaps read from a MIDI file.  This byte is
- *      assumed to have already had its low nybble cleared by masking against
- *      EVENT_GET_STATUS_MASK.
+ * \param status
+ *      The status byte, perhaps read from a MIDI file. If the event is a
+ *      channel event, it will have its channel updated via the \a channel
+ *      parameter.
  *
  * \param channel
  *      The channel byte.  Combined with the event-code, this makes a valid
- *      MIDI "status" byte.  This byte is assumed to have already had its high
- *      nybble cleared by masking against EVENT_GET_CHAN_MASK.
+ *      MIDI "status" byte.  This byte is masked to guarantee the high nybble
+ *      is clear.
  */
 
 void
-event::set_channel_status (midibyte eventcode, midibyte channel)
+event::set_channel_status (midibyte status, midibyte channel)
 {
-    m_status = eventcode;               /* already masked against 0xF0      */
     if (! is_null_channel(channel))
-        m_channel = channel;            /* already masked against 0x0F :-D  */
+    {
+        m_channel = mask_channel(channel);      /* clears the status nybble */
+        if (is_channel_msg(status))
+        {
+            status = mask_status(status);       /* clear out the channel    */
+            status |= m_channel;                /* add the correct channel  */
+        }
+    }
+    m_status = status;
 }
 
 /**
@@ -701,7 +708,7 @@ event::print_note (bool showlink) const
         {
             std::string type = is_note_on() ? "On " : "Off" ;
             char channel[8];
-            if (m_channel == c_midibyte_max)
+            if (m_channel == null_channel())
             {
                 channel[0] = '-';
                 channel[1] = 0;

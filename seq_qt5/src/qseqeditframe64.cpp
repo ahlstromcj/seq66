@@ -1804,11 +1804,16 @@ qseqeditframe64::reset_midi_channel ()
 void
 qseqeditframe64::set_midi_channel (int ch, bool user_change)
 {
-    int initialchan = seq_pointer()->seq_midi_channel();  /* midi_channel() */
+    int initialchan = seq_pointer()->seq_midi_channel();
     if (ch != initialchan || ! user_change)
     {
+        int chindex = ch;
         midibyte channel = midibyte(ch);
-        int chindex = is_good_channel(channel) ? channel : c_midichannel_max ;
+        if (! is_good_channel(channel))
+        {
+            chindex = c_midichannel_max;                    /* "Free" */
+            channel = null_channel();
+        }
         if (seq_pointer()->set_midi_channel(channel, user_change))
         {
             m_edit_channel = channel;
@@ -1818,7 +1823,6 @@ qseqeditframe64::set_midi_channel (int ch, bool user_change)
             }
             else
             {
-                // m_edit_channel = ch;
                 repopulate_usr_combos(m_edit_bus, m_edit_channel);
                 if (user_change)
                 {

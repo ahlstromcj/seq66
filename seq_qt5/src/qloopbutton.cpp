@@ -708,7 +708,7 @@ qloopbutton::draw_pattern (QPainter & painter)
             for (int i = 0; i < int(m_fingerprint_size); ++i, x += dx)
             {
                 midishort fp = m_fingerprint[i];
-                if (fp > 0 && fp != c_midibyte_max)
+                if (fp > 0 && fp != max_midibyte())
                     painter.drawPoint(int(x), int(fp));
             }
         }

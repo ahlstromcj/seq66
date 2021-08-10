@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-04-11
+ * \updates       2021-08-10
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -525,14 +525,6 @@ qseventslots::insert_event
     seq66::event e;                                 /* new default event    */
     editable_event edev(m_event_container, e);
     edev.set_status_from_string(evtimestamp, evname, evdata0, evdata1, channel);
-
-    /*
-     * Don't set the channel for "Tempo", "Time Sig", and other Meta events.
-
-    if (! edev.is_ex_data())
-        edev.set_channel(string_to_channel(channel));   // REDUNDANT!
-     */
-
     m_current_event = edev;
     return insert_event(edev);
 }
@@ -747,10 +739,12 @@ qseventslots::modify_current_event
         if (isnoteevent)
         {
             editable_event & ev = editable_events::dref(m_current_iterator);
-            if (! ev.is_ex_data())
-                ev.set_channel(channelbyte);            /* set just in case */
-
             ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
+            if (! ev.is_ex_data())
+            {
+                midibyte status = ev.get_status();
+                ev.set_channel_status(status, channelbyte); /* fix it up    */
+            }
             if (row >= 0)
                 set_table_event(ev, row);
         }
@@ -762,10 +756,12 @@ qseventslots::modify_current_event
              */
 
             editable_event ev = editable_events::dref(m_current_iterator);
-            if (! ev.is_ex_data())
-                ev.set_channel(channelbyte);            /* set just in case */
-
             ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
+            if (! ev.is_ex_data())
+            {
+                midibyte status = ev.get_status();
+                ev.set_channel_status(status, channelbyte); /* fix it up    */
+            }
             result = delete_current_event();
             if (result)
                 result = insert_event(ev);              /* full karaoke add */
