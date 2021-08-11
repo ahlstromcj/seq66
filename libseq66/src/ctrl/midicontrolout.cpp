@@ -280,7 +280,7 @@ midicontrolout::send_seq_event (int index, seqaction what, bool flush)
         if (m_seq_events[index][w].apt_action_status)
         {
             event ev = m_seq_events[index][w].apt_action_event;
-            if (not_nullptr(m_master_bus) && ev.get_status() > 0x00)
+            if (not_nullptr(m_master_bus) && ev.valid_status())
             {
 #if defined SEQ66_PLATFORM_DEBUG_TMI
                 std::string act = seqaction_to_string(what);
@@ -431,7 +431,7 @@ midicontrolout::send_event (uiaction what, actionindex which)
         else
             ev = m_ui_events[w].att_action_event_del;
 
-        if (ev.get_status() > 0x00)
+        if (ev.valid_status())
             m_master_bus->play_and_flush(true_buss(), &ev, ev.channel());
     }
 }
@@ -459,10 +459,10 @@ midicontrolout::get_event_str (const event & ev) const
     ev.get_data(d0, d1);
     std::ostringstream str;
     str
-    << "[ 0x" << std::hex << std::setw(2) << std::setfill('0') << s << " "
-    << std::dec << std::setw(3) << std::setfill(' ') << int(d0) << " "
-    << std::dec << std::setw(3) << std::setfill(' ') << int(d1) << " ]"
-    ;
+        << "[ 0x" << std::hex << std::setw(2) << std::setfill('0') << s << " "
+        << std::dec << std::setw(3) << std::setfill(' ') << int(d0) << " "
+        << std::dec << std::setw(3) << std::setfill(' ') << int(d1) << " ]"
+        ;
     return str.str();
 }
 
@@ -606,11 +606,7 @@ midicontrolout::mutes_event_is_active (int group) const
 void
 midicontrolout::send_mutes_event (int group, actionindex which)
 {
-    bool ok =
-    (
-        is_enabled() && mutes_event_is_active(group) &&
-        not_nullptr(m_master_bus)
-    );
+    bool ok = is_enabled() && mutes_event_is_active(group);
     if (ok)
     {
         event ev;
@@ -621,7 +617,7 @@ midicontrolout::send_mutes_event (int group, actionindex which)
         else if (which == action_del)
             ev = m_mutes_events[group].att_action_event_del;
 
-        if (ev.get_status() > 0x00)
+        if (ev.valid_status() && not_nullptr(m_master_bus))
             m_master_bus->play_and_flush(true_buss(), &ev, ev.channel());
     }
 }

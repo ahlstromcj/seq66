@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-24
- * \updates       2021-08-09
+ * \updates       2021-08-11
  * \license       GNU GPLv2 or above
  *
  *  We have recently updated this module to put Set Tempo events into the
@@ -279,7 +279,7 @@ midi_splitter::split_channel
                     result = true;          /* the event got added          */
             }
         }
-        else if (er.check_channel(channel))
+        else if (er.match_channel(channel))
         {
             length_in_ticks = er.timestamp();
             if (s->append_event(er))        /* adds event, no sorting       */

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-20
+ * \updates       2021-08-11
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the midibus class.
@@ -196,8 +196,7 @@ void
 midibus::api_play (const event * e24, midibyte channel)
 {
     midibyte buffer[4];                /* temp for midi data */
-    buffer[0] = e24->get_status();
-    buffer[0] += (channel & 0x0F);
+    buffer[0] = e24->get_status(channel);
     e24->get_data(buffer[1], buffer[2]);
 
     PmEvent event;

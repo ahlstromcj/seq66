@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-04-12
+ * \updates       2021-08-11
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -216,7 +216,7 @@ public:
         return m_event_container.get_length();
     }
 
-    int count_to_link (const editable_event & source)
+    int count_to_link (const editable_event & source) const
     {
         return m_event_container.count_to_link(source);
     }

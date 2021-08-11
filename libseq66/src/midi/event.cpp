@@ -350,7 +350,8 @@ event::transpose_note (int tn)
  *      The status byte, perhaps read from a MIDI file or edited in the
  *      sequencer's event editor.  Sometimes, this byte will have the channel
  *      nybble masked off.  If that is the case, the eventcode/channel
- *      overload of this function is more appropriate.
+ *      overload of this function is more appropriate.  Only values with the
+ *      highest bit set are allowed, as per the MIDI specification.
  */
 
 void
@@ -361,7 +362,7 @@ event::set_status (midibyte status)
         m_status = status;
         m_channel = null_channel();             /* channel "not applicable" */
     }
-    else
+    else if (status >= EVENT_NOTE_OFF)          /* 0x80 to 0xEF             */
     {
         m_status = mask_status(status);
         m_channel = mask_channel(status);

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-08-06
+ * \updates       2021-08-11
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -808,7 +808,7 @@ midi_jack::api_deinit_in ()
 void
 midi_jack::api_play (const event * e24, midibyte channel)
 {
-    midibyte status = e24->get_status() + (channel & 0x0F);
+    midibyte status = e24->get_status(channel);
     midibyte d0, d1;
     e24->get_data(d0, d1);
 

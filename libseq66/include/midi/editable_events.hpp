@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-04
- * \updates       2021-02-02
+ * \updates       2021-08-11
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -290,7 +290,7 @@ public:
         return cit != m_events.end();
     }
 
-    int count_to_link (const editable_event & source);
+    int count_to_link (const editable_event & source) const;
     void print () const;
 
 private:

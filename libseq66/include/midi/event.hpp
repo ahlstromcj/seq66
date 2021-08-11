@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-10
+ * \updates       2021-08-11
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -455,12 +455,13 @@ public:
      *  into each event when the event is played, but not when written to a
      *  MIDI file. (New behavior 20201-08-10).
      *
-     * \param channel The channel to check.
+     * \param channel
+     *      The channel to check for a match.
      *
      * \return Returns true if the given channel matches the event's channel.
      */
 
-    bool check_channel (int channel) const
+    bool match_channel (int channel) const
     {
         return is_null_channel(m_channel) || midibyte(channel) == m_channel;
     }
@@ -469,11 +470,6 @@ public:
     {
         return m & EVENT_GET_CHAN_MASK;
     }
-
-    /*
-     *  Use mask_status() instead.
-     *  static void strip_channel (midibyte & m) { m &= EVENT_GET_STATUS_MASK; }
-     */
 
     static midibyte mask_status (midibyte m)
     {
@@ -490,6 +486,16 @@ public:
     static bool is_status (midibyte m)
     {
         return (m & EVENT_STATUS_BIT) != 0;
+    }
+
+    /**
+     *  Makes sure the status byte matches the "EVENT" message bytes exactly
+     *  by stripping the channel nybble if necessary.
+     */
+
+    static midibyte normalize_status (midibyte status)
+    {
+        return is_channel_msg(status) ? mask_status(status) : status ;
     }
 
     /**
@@ -658,12 +664,11 @@ public:
      *  messages, or are and match the given controller value.
      *
      * \param m
-     *      The channel status or message byte to be tested, with the channel
-     *      bits masked off.
+     *      The channel status or message byte to be tested.
      *
      * \param cc
-     *      The desired cc value, which the datum must match, if the message is
-     *      a control-change message.
+     *      The desired cc value, which the datum must match, if the message
+     *      is a control-change message.
      *
      * \param datum
      *      The current datum, to be compared to cc, if the message is a
@@ -718,6 +723,38 @@ public:
         return m_status;
     }
 
+    midibyte get_status (midibyte channel) const
+    {
+        return mask_status(m_status) | channel;
+    }
+
+    bool valid_status () const
+    {
+        return is_status(m_status);
+    }
+
+    midibyte normalize_status () const
+    {
+        return normalize_status(m_status);
+    }
+
+    /**
+     *  Checks that statuses match, clearing the channel nybble if needed.
+     *
+     * \param status
+     *      Provides the desired status, without any channel nybble (that is,
+     *      the channel is 0).
+     *
+     * \return
+     *      Returns true if the event's status (after removing the channel)
+     *      matches the status parameter.
+     */
+
+    bool match_status (midibyte status) const
+    {
+        return (is_channel() ? mask_status(m_status) : m_status) == status;
+    }
+
     /**
      *  Returns true if the event's status is *not* a control-change, but
      *  does match the given status.
@@ -728,7 +765,8 @@ public:
 
     bool non_cc_match (midibyte status)
     {
-        return status != EVENT_CONTROL_CHANGE && m_status == status;
+        midibyte s = mask_status(status);
+        return s != EVENT_CONTROL_CHANGE && mask_status(m_status) == s;
     }
 
     /**

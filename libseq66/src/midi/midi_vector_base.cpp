@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2021-08-10
+ * \updates       2021-08-11
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -181,7 +181,7 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
         midibyte d0 = e.data(0);
         midibyte d1 = e.data(1);
         midibyte st = e.get_status();
-        add_varinum(deltatime);                    /* encode delta_time    */
+        add_varinum(deltatime);                     /* encode delta_time    */
 
 #if defined SEQ66_DO_NOT_KEEP_CHANNEL
         midibyte channel = m_sequence.seq_midi_channel();
@@ -193,24 +193,27 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
         put(st);
 #endif
 
-        switch (event::mask_status(st))                         /* 0xF0 */
+        if (e.is_channel())
         {
-        case EVENT_NOTE_OFF:                                    /* 0x80 */
-        case EVENT_NOTE_ON:                                     /* 0x90 */
-        case EVENT_AFTERTOUCH:                                  /* 0xA0 */
-        case EVENT_CONTROL_CHANGE:                              /* 0xB0 */
-        case EVENT_PITCH_WHEEL:                                 /* 0xE0 */
-            put(d0);
-            put(d1);
-            break;
+            switch (event::mask_status(st))                     /* 0xF0 */
+            {
+            case EVENT_NOTE_OFF:                                /* 0x80 */
+            case EVENT_NOTE_ON:                                 /* 0x90 */
+            case EVENT_AFTERTOUCH:                              /* 0xA0 */
+            case EVENT_CONTROL_CHANGE:                          /* 0xB0 */
+            case EVENT_PITCH_WHEEL:                             /* 0xE0 */
+                put(d0);
+                put(d1);
+                break;
 
-        case EVENT_PROGRAM_CHANGE:                              /* 0xC0 */
-        case EVENT_CHANNEL_PRESSURE:                            /* 0xD0 */
-            put(d0);
-            break;
+            case EVENT_PROGRAM_CHANGE:                          /* 0xC0 */
+            case EVENT_CHANNEL_PRESSURE:                        /* 0xD0 */
+                put(d0);
+                break;
 
-        default:
-            break;
+            default:
+                break;
+            }
         }
     }
 }
@@ -229,7 +232,7 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
 void
 midi_vector_base::add_ex_event (const event & e, midipulse deltatime)
 {
-    add_varinum(deltatime);                    /* encode delta_time        */
+    add_varinum(deltatime);                     /* encode delta_time        */
     put(e.get_status());                        /* indicates SysEx/Meta     */
     if (e.is_meta())
         put(e.channel());                       /* indicates meta type      */

@@ -909,7 +909,6 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_event, SIGNAL(clicked(bool)),
         this, SLOT(events())
     );
-
     set_data_type(EVENT_NOTE_ON);
 
     /*
@@ -2212,6 +2211,7 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
     char hexa[8];
     char type[32];
     snprintf(hexa, sizeof hexa, "[0x%02X]", status);
+    status = event::normalize_status(status);
     m_edit_status = status;                         /* not yet used, though */
     m_edit_cc = control;                            /* not yet used, though */
     m_seqevent->set_data_type(status, control);     /* qstriggereditor      */

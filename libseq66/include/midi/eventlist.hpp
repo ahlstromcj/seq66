@@ -229,7 +229,7 @@ public:
 
     int playable_count () const;
     bool is_playable () const;
-    int count_to_link (const event & source);
+    int count_to_link (const event & source) const;
     midipulse get_max_timestamp () const;
     bool add (const event & e);
     bool append (const event & e);

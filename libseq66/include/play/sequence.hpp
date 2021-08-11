@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-08-09
+ * \updates       2021-08-11
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1789,7 +1789,7 @@ private:
     bool channels_match (const event & e) const
     {
         return m_channel_match ?
-            (e.get_status() & 0x0F) == m_midi_channel : true ;
+            event::mask_channel(e.get_status()) == m_midi_channel : true ;
     }
 
     void one_shot (bool f)

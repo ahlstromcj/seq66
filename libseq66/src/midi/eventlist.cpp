@@ -49,7 +49,7 @@ namespace seq66
 
 eventlist::eventlist () :
     m_events                (),
-    m_sort_in_progress      (false),        /* an atomic boolean */
+    m_sort_in_progress      (false),                    /* atomic boolean   */
     m_length                (0),
     m_note_off_margin       (3),
     m_is_modified           (false),
@@ -98,13 +98,14 @@ eventlist::operator = (const eventlist & rhs)
  */
 
 int
-eventlist::count_to_link (const event & e)
+eventlist::count_to_link (const event & e) const
 {
-    int result = 0;
-    bool found = false;
+    int result = (-1);
     if (e.is_linked())
     {
         const event::iterator & linked = e.link();
+        bool found = false;
+        int index = 0;
         for (auto i = m_events.begin(); i != m_events.end(); ++i)
         {
             if (i == linked)
@@ -113,12 +114,11 @@ eventlist::count_to_link (const event & e)
                 break;
             }
             else
-                ++result;
+                ++index;
         }
+        if (found)
+            result = index;
     }
-    if (! found)
-        result = (-1);
-
     return result;
 }
 
@@ -180,7 +180,7 @@ eventlist::get_max_timestamp () const
 bool
 eventlist::append (const event & e)
 {
-    m_events.push_back(e);              /* std::vector operation        */
+    m_events.push_back(e);                      /* std::vector operation    */
     m_is_modified = true;
     if (e.is_tempo())
         m_has_tempo = true;
@@ -199,7 +199,7 @@ eventlist::append (const event & e)
 bool
 eventlist::add (event::buffer & evlist, const event & e)
 {
-    evlist.push_back(e);                /* std::vector operation        */
+    evlist.push_back(e);                        /* std::vector operation    */
     std::sort(evlist.begin(), evlist.end());
     return true;
 }
@@ -583,7 +583,7 @@ eventlist::quantize_events
         {
             midibyte d0, d1;
             er.get_data(d0, d1);
-            bool match = er.get_status() == status;
+            bool match = er.match_status(status);
             bool canselect;
             if (status == EVENT_CONTROL_CHANGE)
                 canselect = match && d0 == cc;  /* correct status and cc    */
@@ -1202,10 +1202,10 @@ eventlist::count_selected_events (midibyte status, midibyte cc) const
             if (e.is_selected())
                 ++result;
         }
-        else if (e.get_status() == status)
+        else if (e.match_status(status))        /* e.get_status() == status */
         {
             midibyte d0, d1;
-            e.get_data(d0, d1);                 /* get the two data bytes */
+            e.get_data(d0, d1);                 /* get the two data bytes   */
             if (event::is_desired_cc_or_not_cc(status, cc, d0))
             {
                 if (e.is_selected())
@@ -1239,7 +1239,7 @@ eventlist::any_selected_events (midibyte status, midibyte cc) const
                 break;
             }
         }
-        else if (e.get_status() == status)
+        else if (e.match_status(status))
         {
             midibyte d0, d1;
             e.get_data(d0, d1);                 /* get the two data bytes */
@@ -1598,7 +1598,7 @@ eventlist::event_in_range
     midipulse tick_s, midipulse tick_f
 ) const
 {
-    bool result = e.is_tempo() || e.get_status() == status;
+    bool result = e.match_status(status) || e.is_tempo();
     if (result)
         result = e.timestamp() >= tick_s && e.timestamp() <= tick_f;
 
@@ -1923,7 +1923,7 @@ eventlist::select_linked (midipulse tick_s, midipulse tick_f, midibyte status)
     int result = 0;
     for (auto & e : m_events)
     {
-        bool ok = e.get_status() == status &&
+        bool ok = e.match_status(status) &&
             e.timestamp() >= tick_s && e.timestamp() <= tick_f;
 
         if (ok)

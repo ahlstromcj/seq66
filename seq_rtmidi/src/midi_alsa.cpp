@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2020-12-19
+ * \updates       2021-08-11
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -582,7 +582,9 @@ static const size_t s_sysex_size_max = 512; /* Hydrogen uses 32 for input!  */
  *      check the pointer.
  *
  * \param channel
- *      The channel of the playback.
+ *      The channel of the playback.  This channel is either the global MIDI
+ *      channel of the sequence, or the channel of the event.  Either way, we
+ *      mask it into the event status.
  */
 
 void
@@ -594,8 +596,7 @@ midi_alsa::api_play (const event * e24, midibyte channel)
     {
         snd_seq_event_t ev;                             /* event memory     */
         midibyte buffer[4];                             /* temp MIDI data   */
-        buffer[0] = e24->get_status();                  /* fill buffer      */
-        buffer[0] += (channel & 0x0F);                  /* set channel      */
+        buffer[0] = e24->get_status(channel);           /* status + channel */
         e24->get_data(buffer[1], buffer[2]);            /* set MIDI data    */
         snd_seq_ev_clear(&ev);                          /* clear event      */
         snd_midi_event_encode(midi_ev, buffer, 3, &ev); /* 3 raw bytes      */

@@ -840,7 +840,8 @@ wrkfile::NoteArray (int track, int events)
         /*
          * This check leaves out Note Off events.  This seems wrong, but it
          * looks like Cakewalk encodes note events as a Note On and a
-         * duration.
+         * duration.  Do we need to check for channel messages here?
+         * See the near-duplicate code in StreamChunk().
          */
 
         if (status >= EVENT_NOTE_ON)                            // 0x90
@@ -859,7 +860,7 @@ wrkfile::NoteArray (int track, int events)
             }
             else if (eventcode == EVENT_NOTE_OFF)
             {
-                warnprint("! Note Off event encountered in WRK file");
+                warnprint("Note Off event encountered in WRK file");
             }
 
             bool isnoteoff = false;
@@ -945,7 +946,6 @@ wrkfile::NoteArray (int track, int events)
 
                 break;
             }
-
             if (rc().show_midi())
             {
                 printf
@@ -1162,7 +1162,7 @@ wrkfile::StreamChunk ()
         e.set_status(status);                       /* includes the channel     */
         if (eventcode == EVENT_NOTE_OFF)
         {
-            warnprint("! Note Off event encountered in WRK file");
+            warnprint("Note Off event encountered in WRK file");
         }
 
         switch (eventcode)

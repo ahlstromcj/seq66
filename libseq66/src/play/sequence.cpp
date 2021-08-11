@@ -1771,6 +1771,10 @@ sequence::randomize_selected_notes (int jitter, int range)
 
 #if defined USE_ADJUST_DATA_HANDLE
 
+/*
+ * Unused.  Has issue(s) to correct before enabling.
+ */
+
 void
 sequence::adjust_data_handle (midibyte status, int adata)
 {
@@ -2111,10 +2115,12 @@ sequence::change_event_data_range
          * differently from the matched status events.
          */
 
-        bool match = e.get_status() == status;
+        bool match = e.match_status(status);
         bool good;                          /* is_desired_cc_or_not_cc      */
         if (status == EVENT_CONTROL_CHANGE)
+        {
             good = match && d0 == cc;       /* correct status & correct cc  */
+        }
         else
         {
             if (e.is_tempo())
@@ -2225,10 +2231,12 @@ sequence::change_event_data_relative
          * differently from the matched status events.
          */
 
-        bool match = e.get_status() == status;
+        bool match = e.match_status(status);
         bool good;                          /* event::is_desired_cc_or_not_cc */
         if (status == EVENT_CONTROL_CHANGE)
+        {
             good = match && d0 == cc;       /* correct status & correct cc  */
+        }
         else
         {
             if (e.is_tempo())
@@ -2767,8 +2775,8 @@ sequence::check_loop_reset ()
 }
 
 /**
- *  Streams the given event.  The event's timestamp is adjusted, if needed.
- *  If recording:
+ *  Streams (records) the given event.  The event's timestamp is adjusted, if
+ *  needed.  If recording:
  *
  *      -   If the pattern is playing, the event is added.
  *      -   If the pattern is playing and quantized record is in force, the
@@ -2836,7 +2844,12 @@ sequence::stream_event (event & ev)
                 set_dirty();
             }
         }
-        ev.set_status(ev.get_status());         /* clear the channel nybble */
+
+        /*
+         * No longer a need to do this:
+         *    ev.set_status(ev.get_status());   // clear channel nybble
+         */
+
         ev.mod_timestamp(get_length());         /* adjust tick re length    */
         if (recording())
         {
@@ -3251,11 +3264,10 @@ sequence::intersect_notes
 }
 
 /**
- *  This function examines each non-note event in the event list.
- *
- *  If the given position is between the current notes's timestamp-start and
- *  timestamp-end values, the these values are copied to the posstart and posend
- *  parameters, respectively, and then we exit.
+ *  This function examines each event in the event list.  If the given
+ *  position is between the current notes's timestamp-start and timestamp-end
+ *  values, the these values are copied to the posstart and posend parameters,
+ *  respectively, and then we exit.
  *
  * \threadsafe
  *
@@ -3272,9 +3284,9 @@ sequence::intersect_notes
  *      The destination for the starting timestamp  of the matching trigger.
  *
  * \return
- *      Returns true if a event was found whose start/end timestamps
- *      contained the position.  Otherwise, false is returned, and the
- *      start and end return parameters should not be used.
+ *      Returns true if a event was found whose start/end timestamps contained
+ *      the position.  Otherwise, false is returned, and the start and end
+ *      return parameters should not be used.
  */
 
 bool
@@ -3288,7 +3300,7 @@ sequence::intersect_events
     midipulse poslength = posend - posstart;
     for (auto & eon : m_events)
     {
-        if (status == eon.get_status())
+        if (eon.match_status(status))
         {
             midipulse ts = eon.timestamp();
             if (ts <= posstart && posstart <= (ts + poslength))
@@ -4010,7 +4022,7 @@ sequence::reset_interval
 /**
  *  Get the next event in the event list.  Then set the status and control
  *  character parameters using that event.  This function requires that
- *  sequence::begin() be called to reset to the beginning of the events list.
+ *  sequence::cbegin() be called to reset to the beginning of the events list.
  *
  * \param status
  *      Provides a pointer to the MIDI status byte to be set, as a way to
@@ -4107,7 +4119,7 @@ sequence::get_next_event_match
 
         const event & drawevent = eventlist::cdref(evi);
         bool istempo = drawevent.is_tempo();
-        bool ok = drawevent.get_status() == status || istempo;
+        bool ok = drawevent.match_status(status) || istempo;
         if (! ok)
             ok = status == EVENT_ANY;
 
@@ -4883,7 +4895,7 @@ sequence::select_events (midibyte status, midibyte cc, bool inverse)
     for (auto & er : m_events)
     {
         er.get_data(d0, d1);
-        bool match = er.get_status() == status;
+        bool match = er.match_status(status);
         bool canselect;
         if (status == EVENT_CONTROL_CHANGE)
             canselect = match && d0 == cc;  /* correct status and correct cc */

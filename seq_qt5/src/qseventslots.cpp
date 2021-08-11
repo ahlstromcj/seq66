@@ -742,6 +742,10 @@ qseventslots::modify_current_event
             ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
             if (! ev.is_ex_data())
             {
+                /*
+                 * Option? ev.set_status(ev.get_status(channelbyte));
+                 */
+
                 midibyte status = ev.get_status();
                 ev.set_channel_status(status, channelbyte); /* fix it up    */
             }

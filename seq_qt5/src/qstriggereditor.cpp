@@ -67,32 +67,26 @@ static const int s_x_tick_fix       =  2;
 qstriggereditor::qstriggereditor
 (
     performer & p,
-    seq::pointer seq,
+    seq::pointer seqp,
     qseqeditframe64 * frame,
-    int zoom,
-    int snap,
-    int keyheight,
+    int zoom, int snap, int keyheight,
     QWidget * parent,
     int xoffset
 ) :
-    QWidget             (parent),
-    qseqbase
-    (
-        p, seq, frame, zoom, snap, usr().key_height(),
-        usr().key_height() * c_num_keys + 1
-    ),
-    m_timer             (nullptr),
-    m_x_offset          (xoffset + s_x_tick_fix),
-    m_key_y             (keyheight),
-    m_status            (EVENT_NOTE_ON),
-    m_cc                (0)                         /* bank select  */
+    QWidget    (parent),
+    qseqbase   (p, seqp, frame, zoom, snap),
+    m_timer    (nullptr),
+    m_x_offset (xoffset + s_x_tick_fix),
+    m_key_y    (keyheight),
+    m_status   (EVENT_NOTE_ON),
+    m_cc       (0)                                  /* bank select          */
 {
-    setAttribute(Qt::WA_StaticContents);            // promising!
-    setAttribute(Qt::WA_OpaquePaintEvent);          // no erase on repaint
+    setAttribute(Qt::WA_StaticContents);
+    setAttribute(Qt::WA_OpaquePaintEvent);          /* no erase on repaint  */
     setFocusPolicy(Qt::StrongFocus);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    m_timer = new QTimer(this);                     // redraw timer !!!
-    m_timer->setInterval(2 * usr().window_redraw_rate());
+    m_timer = new QTimer(this);
+    m_timer->setInterval(4 * usr().window_redraw_rate());
     QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
     m_timer->start();
 }

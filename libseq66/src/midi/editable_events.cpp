@@ -270,7 +270,7 @@ editable_events::save_events ()
  */
 
 int
-editable_events::count_to_link (const editable_event & source)
+editable_events::count_to_link (const editable_event & source) const
 {
     const event & e {source};
     return m_sequence.events().count_to_link(e);
