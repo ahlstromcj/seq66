@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-31
+ * \updates       2021-08-12
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -331,6 +331,8 @@ usrfile::parse ()
         usr().progress_bar_thick(flag);
         flag = get_boolean(file, tag, "inverse-colors");
         usr().inverse_colors(flag);
+        flag = get_boolean(file, tag, "dark-theme");
+        usr().dark_theme(flag);
         scratch = get_integer(file, tag, "window-redraw-rate");
         usr().window_redraw_rate(scratch);
 
@@ -760,6 +762,8 @@ usrfile::write ()
         "# color palette. Palettes are for Seq66 drawing areas, not for the\n"
         "# Qt theme. Normal/inverse palettes are changed via a 'palette' file.\n"
         "#\n"
+        "# 'dark-theme' specifies that are dark theme is active.\n"
+        "#\n"
         "# 'window-redraw-rate' specifies the base window redraw rate for all\n"
         "# windows. From 10 to 100; default = 40 ms (25 ms for Windows).\n"
         "#\n"
@@ -776,6 +780,7 @@ usrfile::write ()
     write_boolean(file, "global-seq-feature", usr().global_seq_feature());
     write_boolean(file, "progress-bar-thick", usr().progress_bar_thick());
     write_boolean(file, "inverse-colors", usr().inverse_colors());
+    write_boolean(file, "dark-theme", usr().dark_theme());
     write_integer(file, "window-redraw-rate", usr().window_redraw_rate());
     write_float(file, "window-scale", usr().window_scale());
     write_float(file, "window-scale-y", usr().window_scale_y());

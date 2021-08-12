@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-08-03
+ * \updates       2021-08-12
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -392,6 +392,12 @@ private:
      */
 
     bool m_inverse_colors;
+
+    /**
+     *  If set, adjust some items (like icons) to a dark-theme.
+     */
+
+    bool m_dark_theme;
 
     /**
      *  Provides the global setting for redraw rate of windows.  Not all
@@ -1141,6 +1147,11 @@ public:
         return m_inverse_colors;
     }
 
+    bool dark_theme () const
+    {
+        return m_dark_theme;
+    }
+
     int window_redraw_rate () const
     {
         return m_window_redraw_rate_ms;
@@ -1467,6 +1478,11 @@ public:         // used in main application module and the usrfile class
             m_inverse_colors = flag;
             set_option_bit(option_inverse);
         }
+    }
+
+    void dark_theme (bool flag)
+    {
+        m_dark_theme = flag;
     }
 
     void window_redraw_rate (int ms);

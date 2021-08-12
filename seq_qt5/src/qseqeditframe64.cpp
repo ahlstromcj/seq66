@@ -131,7 +131,9 @@ QWidget container?
 #include "pixmaps/key.xpm"
 #include "pixmaps/length_short.xpm"     /* not length.xpm, it is too long   */
 #include "pixmaps/menu_empty.xpm"
+#include "pixmaps/menu_empty_inv.xpm"
 #include "pixmaps/menu_full.xpm"
+#include "pixmaps/menu_full_inv.xpm"
 #include "pixmaps/midi.xpm"
 #include "pixmaps/note_length.xpm"
 #include "pixmaps/play.xpm"
@@ -2729,8 +2731,16 @@ qseqeditframe64::events ()
 QIcon *
 qseqeditframe64::create_menu_image (bool state)
 {
-    QPixmap p(state? menu_full_xpm : menu_empty_xpm);
-    return new QIcon(p);
+    if (usr().dark_theme())
+    {
+        QPixmap p(state? menu_full_inv_xpm : menu_empty_inv_xpm);
+        return new QIcon(p);
+    }
+    else
+    {
+        QPixmap p(state? menu_full_xpm : menu_empty_xpm);
+        return new QIcon(p);
+    }
 }
 
 /**

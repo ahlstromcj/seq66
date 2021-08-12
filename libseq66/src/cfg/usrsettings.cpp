@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-08-01
+ * \updates       2021-08-12
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -308,6 +308,7 @@ usrsettings::usrsettings () :
     m_seqedit_bgsequence        (seq::limit()),
     m_progress_bar_thick        (true),
     m_inverse_colors            (false),
+    m_dark_theme                (false),
     m_window_redraw_rate_ms     (c_default_redraw_ms),
 
     /*
@@ -407,6 +408,7 @@ usrsettings::set_defaults ()
     m_seqedit_bgsequence = seq::limit();
     m_progress_bar_thick = true;
     m_inverse_colors = false;
+    m_dark_theme = false;
     m_window_redraw_rate_ms = c_default_redraw_ms;
     m_seqchars_x = 15;
     m_seqchars_y =  5;
