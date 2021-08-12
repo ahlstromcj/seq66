@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-07-08
+ * \updates       2021-08-12
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -420,11 +420,6 @@ private:                                /* functions for friend sequence    */
     (
         midipulse ontime, midipulse offtime, int snap
     ) const;
-
-#if defined USE_STAZED_SELECTION_EXTENSIONS
-    int select_linked (midipulse tick_s, midipulse tick_f, midibyte status);
-#endif
-
     void print () const;
     std::string to_string () const;
     void print_notes (const std::string & tag = "in list") const;

@@ -652,17 +652,6 @@ usrfile::write ()
                     << std::setw(2) << channel << " " << umb.instrument(channel)
                     << " " << instname << "\n"
                     ;
-
-#if defined SEQ66_PLATFORM_DEBUG && defined SHOW_IGNORED_ITEMS
-                else
-                {
-                    fprintf
-                    (
-                        stderr, "bus %d, channel %d (%d) ignored\n",
-                        buss, channel, umb.instrument(channel)
-                    );
-                }
-#endif
             }
         }
         else
@@ -724,16 +713,6 @@ usrfile::write ()
                     {
                         file << ctlr << " " << fixedname << "\n";
                     }
-#if defined SEQ66_PLATFORM_DEBUG && defined SHOW_IGNORED_ITEMS
-                    else
-                    {
-                        fprintf
-                        (
-                            stderr, "instrument %d, controller %d (%s) ignored\n",
-                            inst, ctlr, uin.controller_name(ctlr).c_str()
-                        );
-                    }
-#endif
                 }
             }
         }

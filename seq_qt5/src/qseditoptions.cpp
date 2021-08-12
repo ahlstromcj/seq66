@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-25
+ * \updates       2021-08-12
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -70,10 +70,22 @@ static const int Tab_MIDI_Play_Options  =  4;
  *  Button numbering for JACK Start Mode radio-buttons.
  */
 
-enum radio_button_t
+enum playmode_button_t
 {
-    radio_button_live,
-    radio_button_song
+    playmode_button_live,
+    playmode_button_song
+};
+
+/**
+ *  Button number for the Set Mode radio-buttons.
+ */
+
+enum setsmode_button_t
+{
+    setsmode_button_normal,
+    setsmode_button_autoarm,
+    setsmode_button_additive,
+    setsmode_button_allsets,
 };
 
 /**
@@ -138,6 +150,10 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         this, SLOT(slot_jack_midi())
     );
 
+    /*
+     * Play Options tab
+     */
+
     ui->chkNoteResume->setChecked(usr().resume_note_ons());
     connect
     (
@@ -153,6 +169,22 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     );
 
     /*
+     *  Combo-box for changing the "sets mode".
+     */
+
+    QButtonGroup * rgroup = new QButtonGroup(this);
+    rgroup->addButton(ui->radio_setsmode_normal, setsmode_button_normal);
+    rgroup->addButton(ui->radio_setsmode_autoarm, setsmode_button_autoarm);
+    rgroup->addButton(ui->radio_setsmode_additive, setsmode_button_additive);
+    rgroup->addButton(ui->radio_setsmode_allsets, setsmode_button_allsets);
+    show_sets_mode(rc().sets_mode());
+    connect
+    (
+        rgroup, SIGNAL(buttonClicked(int)),
+        this, SLOT(slot_sets_mode(int))
+    );
+
+    /*
      *  Combo-box for changing the default PPQN.
      */
 
@@ -164,26 +196,31 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     );
 
     /*
+     * JACK tab
+     */
+
+    /*
      * Create a button group to manage the mutual status of the JACK Live and
      * Song Mode buttons.
      */
 
     QButtonGroup * bgroup = new QButtonGroup(this);
-    bgroup->addButton(ui->radio_live_mode, radio_button_live);
-    bgroup->addButton(ui->radio_song_mode, radio_button_song);
+    bgroup->addButton(ui->radio_live_mode, playmode_button_live);
+    bgroup->addButton(ui->radio_song_mode, playmode_button_song);
 
     /*
      * Note that "foreach" is a Qt-specific keyword, not a C++ keyword.
      */
 
-    int rbid = perf().song_mode() ? radio_button_song : radio_button_live ;
+    int rbid = perf().song_mode() ? playmode_button_song : playmode_button_live ;
     foreach (QAbstractButton * button, bgroup->buttons())
     {
         int bid = bgroup->id(button);
         if (bid == rbid)
+        {
             button->setChecked(true);
-        else
-            button->setChecked(false);
+            break;
+        }
     }
     connect
     (
@@ -473,16 +510,51 @@ qseditoptions::set_ppqn_combo ()
 }
 
 void
+qseditoptions::show_sets_mode (rcsettings::setsmode sm)
+{
+    switch (sm)
+    {
+        case rcsettings::setsmode::normal:
+            ui->radio_setsmode_normal->setChecked(true);
+            break;
+
+        case rcsettings::setsmode::autoarm:
+            ui->radio_setsmode_autoarm->setChecked(true);
+            break;
+
+        case rcsettings::setsmode::additive:
+            ui->radio_setsmode_additive->setChecked(true);
+            break;
+
+        case rcsettings::setsmode::allsets:
+            ui->radio_setsmode_allsets->setChecked(true);
+            break;
+
+        default:
+            break;
+    }
+}
+
+void
+qseditoptions::slot_sets_mode (int buttonno)
+{
+    if (buttonno == setsmode_button_autoarm)
+        rc().sets_mode("auto-arm");
+    else if (buttonno == setsmode_button_additive)
+        rc().sets_mode("additive");
+    else if (buttonno == setsmode_button_allsets)
+        rc().sets_mode("auto-arm");
+    else
+        rc().sets_mode("normal");
+}
+
+void
 qseditoptions::slot_jack_mode (int buttonno)
 {
-    if (buttonno == radio_button_live)
-    {
+    if (buttonno == playmode_button_live)
         perf().song_mode(false);
-    }
-    else if (buttonno == radio_button_song)
-    {
+    else if (buttonno == playmode_button_song)
         perf().song_mode(true);
-    }
 }
 
 void

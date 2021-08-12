@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-09
+ * \updates       2021-08-12
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -116,9 +116,7 @@ void
 qseqdata::conditional_update ()
 {
     if (check_dirty())
-    {
         update();
-    }
 }
 
 bool
@@ -249,7 +247,8 @@ qseqdata::mousePressEvent (QMouseEvent * event)
 
     bool would_select = s->select_events
     (
-        tick_start, tick_finish, m_status, m_cc, eventlist::select::would_select
+        tick_start, tick_finish, m_status, m_cc,
+        eventlist::select::would_select
     );
     if (would_select)
         m_relative_adjust = true;
@@ -360,19 +359,12 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
 void
 qseqdata::set_data_type (midibyte status, midibyte control)
 {
-    if (m_status == max_midibyte() && m_cc == max_midibyte())
+    status = event::normalize_status(status);
+    if (status != m_status || control != m_cc)
     {
-        m_status = EVENT_NOTE_ON;
-        m_cc = 0;
-    }
-    else
-    {
-        if (status != m_status || control != m_cc)
-        {
-            m_status = status;
-            m_cc = control;
-            set_dirty();
-        }
+        m_status = status;
+        m_cc = control;
+        update();                   // set_dirty();
     }
 }
 

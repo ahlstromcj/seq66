@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-08-09
+ * \updates       2021-08-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -105,6 +105,18 @@ class qseqeditframe64 final : public qseqframe, protected performer::callbacks
     friend class qseqtime;
 
     Q_OBJECT
+
+private:
+
+    enum class event_index
+    {
+        note_on,
+        note_off,
+        aftertouch,
+        prog_change,
+        chan_pressure,
+        pitch_wheel
+    };
 
 public:
 
@@ -264,6 +276,7 @@ private:        /* setters and getters          */
         midibyte status,
         midibyte control = 0
     );
+    void set_event_entry (QMenu * menu, bool present, event_index ei);
     void set_data_type (midibyte status, midibyte control = 0);
     void set_recording_volume (int recvol);
     QWidget * rollview ();
@@ -387,18 +400,6 @@ private:
      */
 
     int m_edit_channel;
-
-    /**
-     *  Indicates what MIDI event/status the data window is currently editing.
-     */
-
-    midibyte m_edit_status;
-
-    /**
-     *  Indicates what MIDI CC value the data window is currently editing.
-     */
-
-    midibyte m_edit_cc;
 
     /**
      *  Indicates the first event found in the sequence while setting up the

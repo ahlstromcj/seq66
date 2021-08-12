@@ -1,7 +1,7 @@
 # README for Seq66 0.96.2
 
 Chris Ahlstrom
-2015-09-10 to 2021-08-07
+2015-09-10 to 2021-08-12
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -81,7 +81,7 @@ Windows, and using a conventional source tarball.
 
     *   Version 0.96.2:
         *   Fixed issue #55, where the MIDI control channel was being stripped
-            when using JACK.
+            when using JACK.  Other channel-handling improvements as well.
         *   Fixed a related issue: null (status = 0) control events were sent.
         *   Fixed a bug in "portmidi" MIDI input handling where only the last
             device's events would be processed.
@@ -89,6 +89,7 @@ Windows, and using a conventional source tarball.
         *   Fixed 'rc' allow-click-edit feature.
         *   Made the buss-override settings act more consistently.
         *   Fixed the drawing of preview keys in virtual keyboard.
+        *   Added settings interface for the "set mode" of playback.
     *   Version 0.96.1:
         *   Restored drag and drop of patterns in the Live frame.
         *   Added the ability to copy all patterns in one set to another set.

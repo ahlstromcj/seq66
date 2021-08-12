@@ -24,7 +24,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -998,6 +998,12 @@ patterns is controlled by the layout drawn in the Song Editor.</string>
            <height>100</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="title">
           <string>Flags</string>
          </property>
@@ -1009,6 +1015,12 @@ patterns is controlled by the layout drawn in the Song Editor.</string>
             <width>355</width>
             <height>23</height>
            </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
           </property>
           <property name="toolTip">
            <string>When checked, unfinished notes are turned back on when
@@ -1026,6 +1038,12 @@ playback resumes.</string>
             <width>353</width>
             <height>23</height>
            </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
           </property>
           <property name="toolTip">
            <string>When checked, the PPQN of the MIDI file being loaded
@@ -1048,7 +1066,7 @@ file's PPQN is scaled to the default PPQN.</string>
          </property>
          <property name="font">
           <font>
-           <family>DejaVu Sans</family>
+           <family>WenQuanYi Zen Hei</family>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -1110,6 +1128,101 @@ Seq66 exits.</string>
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="group_setsmode">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>132</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="title">
+          <string>Sets Mode</string>
+         </property>
+         <widget class="QRadioButton" name="radio_setsmode_normal">
+          <property name="geometry">
+           <rect>
+            <x>24</x>
+            <y>24</y>
+            <width>409</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Normal. Only the active set (&quot;play-screen&quot;) can be armed.</string>
+          </property>
+         </widget>
+         <widget class="QRadioButton" name="radio_setsmode_autoarm">
+          <property name="geometry">
+           <rect>
+            <x>24</x>
+            <y>48</y>
+            <width>409</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Auto-Arm. When moving to the next set, it automatically arms.</string>
+          </property>
+         </widget>
+         <widget class="QRadioButton" name="radio_setsmode_additive">
+          <property name="geometry">
+           <rect>
+            <x>24</x>
+            <y>72</y>
+            <width>409</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Additive. As each sets is activated, the others keep playing.</string>
+          </property>
+         </widget>
+         <widget class="QRadioButton" name="radio_setsmode_allsets">
+          <property name="geometry">
+           <rect>
+            <x>24</x>
+            <y>96</y>
+            <width>409</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>All Sets.  All sets can play at the same time.</string>
+          </property>
+         </widget>
+        </widget>
        </item>
        <item>
         <spacer name="verticalSpacer">

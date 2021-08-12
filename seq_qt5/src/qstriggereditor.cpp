@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-09
+ * \updates       2021-08-12
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -594,22 +594,18 @@ qstriggereditor::convert_t (midipulse ticks, int & x)
 void
 qstriggereditor::drop_event (midipulse a_tick)
 {
-    midibyte status = m_status;
     midibyte d0 = m_cc;
     midibyte d1 = 0x40;
     if (m_status == EVENT_AFTERTOUCH)
         d0 = 0;
-
-    if (m_status == EVENT_PROGRAM_CHANGE)
-        d0 = 0;                         /* d0 == new patch */
-
-    if (m_status == EVENT_CHANNEL_PRESSURE)
-        d0 = 0x40;                      /* d0 == pressure */
-
-    if (m_status == EVENT_PITCH_WHEEL)
+    else if (m_status == EVENT_PROGRAM_CHANGE)
+        d0 = 0;                                         /* d0 == new patch  */
+    else if (m_status == EVENT_CHANNEL_PRESSURE)
+        d0 = 0x40;                                      /* d0 == pressure   */
+    else if (m_status == EVENT_PITCH_WHEEL)
         d0 = 0;
 
-    seq_pointer()->add_event(a_tick, status, d0, d1, true);    /* sorts too */
+    seq_pointer()->add_event(a_tick, m_status, d0, d1, true);   /* sorts it */
 }
 
 /**
@@ -633,19 +629,12 @@ qstriggereditor::set_adding (bool a)
 void
 qstriggereditor::set_data_type (midibyte status, midibyte control)
 {
-    if (m_status == max_midibyte() && m_cc == max_midibyte())
+    status = event::normalize_status(status);
+    if (status != m_status || control != m_cc)
     {
-        m_status = EVENT_NOTE_ON;
-        m_cc = 0;
-    }
-    else
-    {
-        if (status != m_status || control != m_cc)
-        {
-            m_status = status;
-            m_cc = control;
-            set_dirty();
-        }
+        m_status = status;
+        m_cc = control;
+        update();                   // set_dirty();
     }
 }
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-10
+ * \updates       2021-08-12
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -744,35 +744,6 @@ sequence::get_measures () const
 
     return measures;
 }
-
-#if defined USE_STAZED_SELECTION_EXTENSIONS
-
-/**
- *  Used with seqevent when selecting Note On or Note Off, this function will
- *  select the opposite linked event.  This is a Stazed selection fix we have
- *  activated unilaterally.
- *
- * \param tick_s
- *      Provides the starting tick.
- *
- * \param tick_f
- *      Provides the ending (finishing) tick.
- *
- * \param status
- *      Provides the desired MIDI event to be selected.
- *
- * \return
- *      Returns the number of notes selected.
- */
-
-int
-sequence::select_linked (midipulse tick_s, midipulse tick_f, midibyte status)
-{
-    automutex locker(m_mutex);
-    return m_events.select_linked(tick_s, tick_f, status);
-}
-
-#endif  // defined USE_STAZED_SELECTION_EXTENSIONS
 
 /**
  * \setter m_rec_vol
@@ -4090,12 +4061,12 @@ sequence::get_next_event
  * \param [out] evi
  *      An iterator return value for the next event found.  The caller might
  *      want to check if it is a Tempo event.  Do not use this iterator if
- *      false is returned!
+ *      false is returned!  The caller must increment it for the next call, just
+ *      as for get_next_event().
  *
  * \param evtype
  *      A stazed parameter for picking either all event or unselected events.
- *      Defaults to EVENTS_ALL.  Not used unless the macro
- *      USE_STAZED_SELECTION_EXTENSIONS is defined.
+ *      Defaults to EVENTS_ALL.
  *
  * \return
  *      Returns true if the current event was one of the desired ones, or was
@@ -4107,8 +4078,7 @@ bool
 sequence::get_next_event_match
 (
     midibyte status, midibyte cc,
-    event::buffer::const_iterator & evi,
-    int /* evtype [see macro below] */
+    event::buffer::const_iterator & evi
 )
 {
     automutex locker(m_mutex);
@@ -4123,37 +4093,15 @@ sequence::get_next_event_match
         if (! ok)
             ok = status == EVENT_ANY;
 
-#if defined USE_STAZED_SELECTION_EXTENSIONS
-        if (ok)
-        {
-            if (evtype == EVENTS_UNSELECTED && drawevent.is_selected())
-            {
-                ++evi;
-                continue;                       /* keep trying to find one  */
-            }
-            if (evtype > EVENTS_UNSELECTED && ! drawevent.is_selected())
-            {
-                ++evi;
-                continue;                       /* keep trying to find one  */
-            }
-        }
-#endif
-
         if (ok)
         {
             midibyte d0;
             drawevent.get_data(d0);
             ok = istempo || event::is_desired_cc_or_not_cc(status, cc, d0);
             if (ok)
-            {
-                /*
-                 * The caller must increment it afterwards: ++evi
-                 */
-
-                return true;
-            }
+                return true;                    /* must ++evi after call    */
         }
-        ++evi;                                  /* keep going               */
+        ++evi;                                  /* keep going here          */
     }
     return false;
 }

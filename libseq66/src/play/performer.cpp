@@ -1766,10 +1766,6 @@ performer::update_tap_bpm ()
         else
             bpm = m_bpm;                        /* where do we set this?    */
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("BPM(%d) = %g\n", m_current_beats, bpm);
-#endif
-
         m_last_time_ms = ms;
     }
     ++m_current_beats;
@@ -3131,9 +3127,6 @@ performer::output_func ()
         return;
 
     show_cpu();
-    if (is_debug())
-        infoprint("Output function started");
-
     while (m_io_active)                     /* this variable is now atomic  */
     {
         SEQ66_SCOPE_LOCK                    /* only a marker macro          */
@@ -3384,8 +3377,6 @@ performer::output_func ()
         m_master_bus->stop();
     }
     set_timer_services(false);
-    if (is_debug())
-        infoprint("Output function ended");
 }
 
 /**
@@ -3423,9 +3414,6 @@ performer::output_func ()
 void
 performer::input_func ()
 {
-    if (is_debug())
-        infoprint("Input function started");
-
     if (set_timer_services(true))       /* wrapper for a Windows-only func. */
     {
         while (! done())
@@ -3435,10 +3423,7 @@ performer::input_func ()
         }
         set_timer_services(false);
     }
-    if (is_debug())
-        infoprint("Input function ended");
 }
-
 
 /**
  *  A helper function for input_func().
@@ -3475,11 +3460,6 @@ performer::poll_cycle ()
                         else
                         {
                             ev.set_timestamp(get_tick());
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                            if (rc().show_midi())
-                                ev.print();
-#endif
-
                             if (m_filter_by_channel)
                                 m_master_bus->dump_midi_input(ev);
                             else
@@ -3487,13 +3467,7 @@ performer::poll_cycle ()
                         }
                     }
                     else
-                    {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                        if (rc().show_midi())
-                            ev.print();
-#endif
                         (void) midi_control_event(ev);
-                    }
                 }
                 else if (ev.is_midi_start())
                 {

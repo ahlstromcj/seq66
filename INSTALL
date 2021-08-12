@@ -365,8 +365,6 @@ MANUALLY-DEFINED MACROS IN CODE:
         functionality, just adding it, macroed out by the following macros:
 
         USE_STAZED_RANDOMIZE_SUPPORT
-        USE_STAZED_SEQDATA_EXTENSIONS
-        USE_STAZED_SELECTION_EXTENSIONS
         USE_STAZED_EVEN_ODD_SUPPORT
 
         Also, the GitHub project "Kepler34" has some features we want to adopt

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-08-11
+ * \updates       2021-08-12
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1463,18 +1463,6 @@ public:
         midibyte status, midibyte cc, bool inverse = false
     );
 
-#if defined USE_STAZED_SELECTION_EXTENSIONS
-
-    int select_events (midipulse tick_s, midipulse tick_f, midibyte status);
-    int select_event_handle
-    (
-        midipulse tick_s, midipulse tick_f, midibyte status,
-        midibyte cc, int data_s
-    );
-    int select_linked (long tick_s, long tick_f, midibyte status);
-
-#endif
-
     /**
      *  New convenience function.  What about Aftertouch events?  I think we
      *  need to select them as well in seqedit, so let's add that selection
@@ -1600,7 +1588,7 @@ public:
     bool get_next_event_match
     (
         midibyte status, midibyte cc,
-        event::buffer::const_iterator & ev, int evtype = EVENTS_ALL
+        event::buffer::const_iterator & ev
     );
     bool get_next_event
     (

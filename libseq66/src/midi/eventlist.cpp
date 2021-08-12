@@ -1897,52 +1897,6 @@ eventlist::clip_timestamp (midipulse ontime, midipulse offtime, int snap) const
     return offtime;
 }
 
-#if defined USE_STAZED_SELECTION_EXTENSIONS
-
-/**
- *  Used with seqevent when selecting Note On or Note Off, this function will
- *  select the opposite linked event.  This is a Stazed selection fix we have
- *  activated unilaterally.
- *
- * \param tick_s
- *      Provides the starting tick.
- *
- * \param tick_f
- *      Provides the ending (finishing) tick.
- *
- * \param status
- *      Provides the desired MIDI event to be selected.
- *
- * \return
- *      Returns the number of linked note notes selected.
- */
-
-int
-eventlist::select_linked (midipulse tick_s, midipulse tick_f, midibyte status)
-{
-    int result = 0;
-    for (auto & e : m_events)
-    {
-        bool ok = e.match_status(status) &&
-            e.timestamp() >= tick_s && e.timestamp() <= tick_f;
-
-        if (ok)
-        {
-            if (e.is_linked())
-            {
-                ++result;
-                if (e.is_selected())
-                    e.link()->select();
-                else
-                    e.link()->unselect();
-            }
-        }
-    }
-    return result;
-}
-
-#endif  // defined USE_STAZED_SELECTION_EXTENSIONS
-
 /**
  *  Prints a list of the currently-held events.  Useful for debugging.
  */

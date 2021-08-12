@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-08-09
+ * \updates       2021-08-12
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -311,6 +311,27 @@ static const int s_rec_vol_items [] =
 };
 static const int s_rec_vol_count = sizeof(s_rec_vol_items) / sizeof(int);
 
+/*
+ * For set_event_entry calls.  EXPERIMENTAL
+ */
+
+using event_popup_pair = struct
+{
+    std::string epp_name;
+    midibyte epp_status;
+};
+
+event_popup_pair
+s_event_items [] =
+{
+    { "Note On Velocity",   EVENT_NOTE_ON           },
+    { "Note Off Velocity",  EVENT_NOTE_OFF          },
+    { "Aftertouch",         EVENT_AFTERTOUCH        },
+    { "Program Change",     EVENT_PROGRAM_CHANGE    },
+    { "Channel Pressure",   EVENT_CHANNEL_PRESSURE  },
+    { "Pitch Wheel",        EVENT_PITCH_WHEEL       }
+};
+
 /**
  *
  * \param p
@@ -359,10 +380,8 @@ qseqeditframe64::qseqeditframe64
     m_pp_eighth             (0),
     m_pp_sixteenth          (0),
 #endif
-    m_edit_bus           (seq_pointer()->seq_midi_bus()),
-    m_edit_channel       (seq_pointer()->midi_channel()),  /* 0-15, null */
-    m_edit_status        (0),
-    m_edit_cc            (0),
+    m_edit_bus              (seq_pointer()->seq_midi_bus()),
+    m_edit_channel          (seq_pointer()->midi_channel()),  /* 0-15, null */
     m_first_event           (0),
     m_first_event_name      ("(no events)"),
     m_have_focus            (false),
@@ -2212,8 +2231,6 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
     char type[32];
     snprintf(hexa, sizeof hexa, "[0x%02X]", status);
     status = event::normalize_status(status);
-    m_edit_status = status;                         /* not yet used, though */
-    m_edit_cc = control;                            /* not yet used, though */
     m_seqevent->set_data_type(status, control);     /* qstriggereditor      */
     m_seqdata->set_data_type(status, control);
     if (status == EVENT_NOTE_OFF)
@@ -2717,14 +2734,7 @@ qseqeditframe64::create_menu_image (bool state)
 }
 
 /**
- *  A case where a macro makes the code easier to read.
- */
-
-#define SET_DATA_TYPE(status, cc) \
-    std::bind(&qseqeditframe64::set_data_type, this, status, cc)
-
-/**
- *  Function to create event menu entries.  Too damn big!
+ *  Function to create event menu entries.
  */
 
 void
@@ -2745,12 +2755,43 @@ qseqeditframe64::set_event_entry
     QAction * item = new QAction(*create_menu_image(present), text.c_str());
 #endif
     menu->addAction(item);
-    connect(item, &QAction::triggered, SET_DATA_TYPE(status, control));
-    if (present && m_first_event == 0x00)
+    connect
+    (
+        item, &QAction::triggered,
+        std::bind(&qseqeditframe64::set_data_type, this, status, control)
+    );
+    if (present && m_first_event == 0)
     {
         m_first_event = status;
         m_first_event_name = text;
         set_data_type(status, 0);       // need m_first_control value!
+    }
+}
+
+void
+qseqeditframe64::set_event_entry (QMenu * menu, bool present, event_index ei)
+{
+    int index = static_cast<int>(ei);
+    std::string text = s_event_items[index].epp_name;
+    midibyte status = s_event_items[index].epp_status;
+#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
+    QString mlabel(text.c_str());
+    QIcon micon(*create_menu_image(present));
+    QAction * item = new QAction(micon, mlabel, nullptr);
+#else
+    QAction * item = new QAction(*create_menu_image(present), text.c_str());
+#endif
+    menu->addAction(item);
+    connect
+    (
+        item, &QAction::triggered,
+        std::bind(&qseqeditframe64::set_data_type, this, status, 0)
+    );
+    if (present && m_first_event == 0)
+    {
+        m_first_event = status;
+        m_first_event_name = text;
+        set_data_type(status, 0);
     }
 }
 
@@ -2799,61 +2840,29 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
         if (! s->get_next_event(status, cc, cev))
             break;
 
+        status = event::normalize_status(status);   /* mask off channel     */
         switch (status)
         {
-        case EVENT_NOTE_OFF:
-            note_off = true;
-            break;
-
-        case EVENT_NOTE_ON:
-            note_on = true;
-            break;
-
-        case EVENT_AFTERTOUCH:
-            aftertouch = true;
-            break;
-
-        case EVENT_CONTROL_CHANGE:
-            ccs[cc] = true;
-            break;
-
-        case EVENT_PITCH_WHEEL:
-            pitch_wheel = true;
-            break;
-
-        case EVENT_PROGRAM_CHANGE:
-            program_change = true;
-            break;
-
-        case EVENT_CHANNEL_PRESSURE:
-            channel_pressure = true;
-            break;
+        case EVENT_NOTE_OFF:            note_off = true;            break;
+        case EVENT_NOTE_ON:             note_on = true;             break;
+        case EVENT_AFTERTOUCH:          aftertouch = true;          break;
+        case EVENT_CONTROL_CHANGE:      ccs[cc] = true;             break;
+        case EVENT_PITCH_WHEEL:         pitch_wheel = true;         break;
+        case EVENT_PROGRAM_CHANGE:      program_change = true;      break;
+        case EVENT_CHANNEL_PRESSURE:    channel_pressure = true;    break;
         }
     }
     if (not_nullptr(m_events_popup))
         delete m_events_popup;
 
     m_events_popup = new QMenu(this);
-    set_event_entry(m_events_popup, "Note On Velocity", note_on, EVENT_NOTE_ON);
+    set_event_entry(m_events_popup, note_on, event_index::note_on);
     m_events_popup->addSeparator();
-    set_event_entry
-    (
-        m_events_popup, "Note Off Velocity", note_off, EVENT_NOTE_OFF
-    );
-    set_event_entry(m_events_popup, "Aftertouch", aftertouch, EVENT_AFTERTOUCH);
-    set_event_entry
-    (
-        m_events_popup, "Program Change", program_change, EVENT_PROGRAM_CHANGE
-    );
-    set_event_entry
-    (
-        m_events_popup, "Channel Pressure", channel_pressure,
-        EVENT_CHANNEL_PRESSURE
-    );
-    set_event_entry
-    (
-        m_events_popup, "Pitch Wheel", pitch_wheel, EVENT_PITCH_WHEEL
-    );
+    set_event_entry(m_events_popup, note_off, event_index::note_off);
+    set_event_entry(m_events_popup, aftertouch, event_index::aftertouch);
+    set_event_entry(m_events_popup, program_change, event_index::prog_change);
+    set_event_entry(m_events_popup, channel_pressure, event_index::chan_pressure);
+    set_event_entry(m_events_popup, pitch_wheel, event_index::pitch_wheel);
     m_events_popup->addSeparator();
 
     /**
@@ -2960,7 +2969,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     bool program_change = false;
     bool channel_pressure = false;
     bool pitch_wheel = false;
-    bool meta_event = false;
+    bool any_events = false;
     midibyte status = 0, cc = 0;
     seq::pointer s = seq_pointer();
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
@@ -2969,98 +2978,68 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
         if (! s->get_next_event(status, cc, cev))
             break;
 
+        status = event::normalize_status(status);   /* mask off channel     */
         switch (status)
         {
         case EVENT_NOTE_OFF:
             note_off = true;
+            any_events = true;
             break;
 
         case EVENT_NOTE_ON:
             note_on = true;
+            any_events = true;
             break;
 
         case EVENT_AFTERTOUCH:
             aftertouch = true;
+            any_events = true;
             break;
 
         case EVENT_CONTROL_CHANGE:
             ccs[cc] = true;
+            any_events = true;
             break;
 
         case EVENT_PITCH_WHEEL:
+            any_events = true;
             pitch_wheel = true;
             break;
 
         case EVENT_PROGRAM_CHANGE:
+            any_events = true;
             program_change = true;
             break;
 
         case EVENT_CHANNEL_PRESSURE:
+            any_events = true;
             channel_pressure = true;
-            break;
-
-        case EVENT_MIDI_META:
-            meta_event = true;
             break;
         }
     }
-
     if (not_nullptr(m_minidata_popup))
         delete m_minidata_popup;
 
     m_minidata_popup = new QMenu(this);
 
-    bool any_events = false;
     if (note_on)
-    {
-        any_events = true;
-        set_event_entry
-        (
-            m_minidata_popup, "Note On Velocity", true, EVENT_NOTE_ON
-        );
-    }
+        set_event_entry(m_minidata_popup, true, event_index::note_on);
+
     if (note_off)
-    {
-        any_events = true;
-        set_event_entry
-        (
-            m_minidata_popup, "Note Off Velocity", true, EVENT_NOTE_OFF
-        );
-    }
+        set_event_entry(m_minidata_popup, true, event_index::note_off);
+
     if (aftertouch)
-    {
-        any_events = true;
-        set_event_entry(m_minidata_popup, "Aftertouch", true, EVENT_AFTERTOUCH);
-    }
+        set_event_entry(m_minidata_popup, true, event_index::aftertouch);
+
     if (program_change)
-    {
-        any_events = true;
-        set_event_entry
-        (
-            m_minidata_popup, "Program Change", true, EVENT_PROGRAM_CHANGE
-        );
-    }
+        set_event_entry(m_minidata_popup, true, event_index::prog_change);
+
     if (channel_pressure)
-    {
-        any_events = true;
-        set_event_entry
-        (
-            m_minidata_popup, "Channel Pressure", true, EVENT_CHANNEL_PRESSURE
-        );
-    }
+        set_event_entry(m_minidata_popup, true, event_index::chan_pressure);
+
     if (pitch_wheel)
-    {
-        any_events = true;
-        set_event_entry
-        (
-            m_minidata_popup, "Pitch Wheel", true, EVENT_PITCH_WHEEL
-        );
-    }
-    if (meta_event)
-    {
-        any_events = true;
-        set_event_entry(m_minidata_popup, "Meta Events", true, EVENT_MIDI_META);
-    }
+        set_event_entry(m_minidata_popup, true, event_index::pitch_wheel);
+
     if (any_events)
         m_minidata_popup->addSeparator();
 
@@ -3083,7 +3062,6 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
         }
         if (ccs[item])
         {
-            any_events = true;
             set_event_entry
             (
                 m_minidata_popup, cname, true, EVENT_CONTROL_CHANGE, item
