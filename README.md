@@ -1,7 +1,7 @@
 # README for Seq66 0.96.2
 
 Chris Ahlstrom
-2015-09-10 to 2021-08-12
+2015-09-10 to 2021-08-13
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -90,6 +90,7 @@ Windows, and using a conventional source tarball.
         *   Made the buss-override settings act more consistently.
         *   Fixed the drawing of preview keys in virtual keyboard.
         *   Added settings interface for the "set mode" of playback.
+        *   Fixed setting the modify flag when opening existing pattern.
     *   Version 0.96.1:
         *   Restored drag and drop of patterns in the Live frame.
         *   Added the ability to copy all patterns in one set to another set.

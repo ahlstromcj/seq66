@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-08-03
+ * \updates       2021-08-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -836,14 +836,7 @@ void
 qsmainwnd::attach_session (smanager * sp)   // UNNECESSARY?
 {
     if (not_nullptr(sp))
-    {
         m_session_mgr_ptr = sp;
-
-#if defined SEQ66_PLATFORM_DEBUG_CREATE_PROJECT_TEST
-        std::string path("/home/ahlstrom/NSM Sessions/verbose/seq66.nSYPL");
-        session()->create_project(path);
-#endif
-    }
     else
         use_nsm(false);
 }
@@ -2985,18 +2978,6 @@ qsmainwnd::connect_normal_slots ()
      * File / Open.
      */
 
-#if defined SEQ66_PLATFORM_DEBUG_TEST_SESSION_IMPORT
-    ui->actionOpen->setText("&Import into Session...");
-    ui->actionOpen->setToolTip
-    (
-        "Import a MIDI or Seq66 MIDI file into the current session."
-    );
-    connect
-    (
-        ui->actionOpen, SIGNAL(triggered(bool)),
-        this, SLOT(import_into_session())
-    );
-#else
     ui->actionOpen->setText("&Open...");
     ui->actionOpen->setToolTip("Open a standard or Seq66 MIDI file.");
     connect
@@ -3004,7 +2985,6 @@ qsmainwnd::connect_normal_slots ()
         ui->actionOpen, SIGNAL(triggered(bool)),
         this, SLOT(select_and_load_file())
     );
-#endif
 
     /*
      * File / Save

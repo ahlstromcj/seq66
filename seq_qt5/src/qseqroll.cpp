@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-28
+ * \updates       2021-08-13
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1277,6 +1277,12 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     case Qt::Key_A:
 
                         s->select_all();
+                        done = true;
+                        break;
+
+                    case Qt::Key_N:
+
+                        s->select_notes_by_channel(frame64()->edit_channel());
                         done = true;
                         break;
 

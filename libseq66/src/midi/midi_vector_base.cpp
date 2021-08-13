@@ -514,16 +514,6 @@ midi_vector_base::song_fill_seq_event
     if (trig_offset > start_offset)                 /* offset len too far   */
         time_offset -= len;
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    std::string tstr = trig.to_string();
-    printf
-    (
-        "%s: toffset=%ld; soffset=%ld; tadjust=%ld; tplay=%d\n",
-        tstr.c_str(), trig_offset, start_offset,
-        time_offset, times_played
-    );
-#endif
-
     int note_is_used[c_num_keys];
     for (int i = 0; i < c_num_keys; ++i)
         note_is_used[i] = 0;                        /* initialize to off    */

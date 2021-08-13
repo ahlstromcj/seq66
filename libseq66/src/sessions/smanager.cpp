@@ -581,7 +581,7 @@ smanager::save_session (std::string & msg, bool ok)
 
 /**
  *  There is, of course, no window in this base class.  Therefore, we just
- *  show patterns if in verbose mode.
+ *  show patterns if in investigate mode.
  *
  * \return
  *      Always returns true.  No window in the command-line application, no
@@ -591,10 +591,8 @@ smanager::save_session (std::string & msg, bool ok)
 bool
 smanager::create_window ()
 {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    if (rc().verbose())
+    if (rc().investigate())
         perf()->show_patterns();
-#endif
 
     return true;
 }

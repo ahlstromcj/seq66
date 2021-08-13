@@ -55,11 +55,7 @@ namespace seq66
 bool
 is_debug ()
 {
-#if defined SEQ66_PLATFORM_DEBUG
-    return true;
-#else
     return rc().verbose() || rc().investigate();
-#endif
 }
 
 /**

@@ -1268,6 +1268,22 @@ eventlist::select_all ()
 }
 
 /**
+ *  Selects all note events with the given channel. Although we can extract
+ *  the channel nybble from the status, we access the event channel member.
+ */
+
+void
+eventlist::select_notes_by_channel (int channel)
+{
+    midibyte target = midibyte(channel);
+    for (auto & e : m_events)
+    {
+        if (e.is_note() && e.channel() == target)
+            e.select();
+    }
+}
+
+/**
  *  Deselects all events, unconditionally.
  */
 
@@ -1512,9 +1528,6 @@ eventlist::select_note_events
                  * verify_and_link() call!
                  */
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                errprint("sequence::select_note_events(): unlinked note");
-#endif
                 stick = ftick = er.timestamp();
                 if (stick >= (tick_s - 16) && ftick <= tick_f)  /* why -16? */
                 {

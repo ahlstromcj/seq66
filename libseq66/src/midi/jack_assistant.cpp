@@ -1182,12 +1182,6 @@ jack_assistant::sync (jack_transport_state_t state)
 
     m_frame_last = m_frame_current;
     m_transport_state_last = m_transport_state = state;
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    std::string sname = jack_state_name(state);
-    printf("sync(%s)\n", sname.c_str());
-#endif
-
     if (state == JackTransportStarting)
         parent().inner_start();
 

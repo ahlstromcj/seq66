@@ -104,18 +104,7 @@ keycontainer::add (ctrlkey ordinal, const keycontrol & op)
     result = m_container.size() == (sz + 1);
     if (result)
     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        std::string keyname = op.key_name();
-        std::cout
-            << "Inserted pattern key ordinal 0x"
-            << std::hex << unsigned(ordinal)
-            << " : '" << keyname << "' as control code "
-            << std::dec << op.control_code()
-            << " (" << op.category_name() << ": "
-            << op.action_name() << ")"
-            << std::endl
-            ;
-#endif
+        /* no code needed */
     }
     else
     {
@@ -159,12 +148,7 @@ keycontainer::add_slot (const keycontrol & op)
     result = m_pattern_keys.size() == (sz + 1);
     if (result)
     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        std::cout
-            << "Inserted pattern slot #" << std::setw(3) << keyslot
-            << " : '" << keyname << "'" << std::endl
-            ;
-#endif
+        /* no code needed */
     }
     else
     {
@@ -202,12 +186,7 @@ keycontainer::add_mute (const keycontrol & op)
     result = m_mute_keys.size() == (sz + 1);
     if (result)
     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        std::cout
-            << "Inserted mute slot #" << std::setw(3) << keyslot
-            << " : '" << keyname << "'" << std::endl
-            ;
-#endif
+        /* no code needed */
     }
     else
     {

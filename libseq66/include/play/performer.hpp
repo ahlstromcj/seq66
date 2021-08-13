@@ -988,7 +988,7 @@ public:
     void modify ()
     {
         m_is_modified = true;
-        m_needs_update = true;              // kind of iffy
+        m_needs_update = true;              /* kind of iffy */
     }
 
     bool get_settings (const rcsettings & rcs, const usrsettings & usrs);

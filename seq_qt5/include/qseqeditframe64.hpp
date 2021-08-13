@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-08-12
+ * \updates       2021-08-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -132,6 +132,11 @@ public:
     void follow_progress (bool expand = false);
     void scroll_to_tick (midipulse tick);
     void scroll_to_note (int note);
+
+    int edit_channel () const
+    {
+        return m_edit_channel;
+    }
 
 private:        /* performer::callback overrides    */
 

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-08-10
+ * \updates       2021-08-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -114,8 +114,16 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     set_seq_time_sig_and_ppqn(ts_ppqn);
 
     std::string channelstr = "Channel ";
-    channelstr += std::to_string(int(m_seq->seq_midi_channel()) + 1);
-    channelstr += " [re 1]";
+    midibyte seqchan = m_seq->seq_midi_channel();
+    if (is_null_channel(seqchan))
+    {
+        channelstr += "Free";
+    }
+    else
+    {
+        channelstr += std::to_string(int(seqchan) + 1);
+        channelstr += " [re 1]";
+    }
     set_seq_channel(channelstr);
 
     /*

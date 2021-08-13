@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-07-08
+ * \updates       2021-08-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -497,14 +497,6 @@ qperfeditframe64::set_guides ()
         midipulse snapticks = m_snap == 0 ? 0 : measticks / m_snap ;
         m_perfroll->set_guides(snapticks, measticks, beatticks);
         m_perftime->set_guides(snapticks, measticks);
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf
-        (
-            "set_guides(snap = %d, measure = %d, beat = %d ticks\n",
-            snap, measure, beat
-        );
-#endif
     }
 }
 
@@ -716,14 +708,20 @@ void
 qperfeditframe64::keyPressEvent (QKeyEvent * event)
 {
     int key = event->key();
-    if (key == Qt::Key_J)
-        scroll_by_step(qscrollmaster::dir::Down);
-    else if (key == Qt::Key_K)
-        scroll_by_step(qscrollmaster::dir::Up);
-    else if (key == Qt::Key_H)
-        scroll_by_step(qscrollmaster::dir::Left);
-    else if (key == Qt::Key_L)
-        scroll_by_step(qscrollmaster::dir::Right);
+    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
+    if (! isctrl)
+    {
+        if (key == Qt::Key_J)
+            scroll_by_step(qscrollmaster::dir::Down);
+        else if (key == Qt::Key_K)
+            scroll_by_step(qscrollmaster::dir::Up);
+        else if (key == Qt::Key_H)
+            scroll_by_step(qscrollmaster::dir::Left);
+        else if (key == Qt::Key_L)
+            scroll_by_step(qscrollmaster::dir::Right);
+        else
+            event->accept();
+    }
     else
         event->accept();
 }

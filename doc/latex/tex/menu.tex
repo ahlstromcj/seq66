@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-08-02
+% \update      2021-08-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -689,6 +689,8 @@
    \label{fig:midi_display_tab}
 \end{figure}
 
+   Note that this dialog has some new items not shown above.
+
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Editor Key Height}{key height}
@@ -704,6 +706,27 @@
    The lowest scale factor is 0.5, and the largest scale factor is 3.0.
    For the smallest window, the smallest practical values are 0.85 x 0.60.
 
+   \itempar{Set Size}{set-size}
+   Provides a way to change the set size.  The default is
+   \textbf{4 x 8}
+   (rows by columns), but we intend to support
+   \textbf{4 x 4},
+   \textbf{8 x 8}, and
+   \textbf{12 x 8}
+   as well.
+
+   \itempar{Progress Boxes}{progress-box size}
+   Provides a way to change the size of the progress box in each button.
+   Values are width and height fractions (up to 1.0) re the button size.
+   If set to 0, the progress box (and its internal pattern color) are not
+   drawn.
+
+   \itempar{Fingerprint Size}{fingerprint size}
+   This value, if set from 32 to 128, indicates the number of events above
+   which a "fingerprint", rather than every note, will be drawn.  It can
+   save some CPU time in drawing the grid.  If set to 0, the whole
+   pattern is drawn, no matter how long the pattern is.
+
    \itempar{Palette File Base Name}{palette}
    This text edit holds the base name of a 'palette' file, which is always
    stored in the \textsl{Seq66} configuration directory.
@@ -712,6 +735,9 @@
    Normally, there is no palette file.  Pushing this button creates one, which
    can then be modified and configured as the palette-file to use in the 'rc'
    file.
+
+   The rest of the options are simple check-box items that are
+   self-explanatory.
  
 \paragraph{Menu / Edit / Preferences / JACK}
 \label{paragraph:menu_edit_preferences_jack}
@@ -882,6 +908,37 @@
    to preserve the setting when \textsl{Seq66} exits.
    If there is a MIDI file loaded, it is modified to use the new PPQN, and the
    user is prompted to save it at exit.
+
+   \itempar{Sets Mode}{edit!sets-mode}
+   This item determines how sets are handled.
+   Recall that a set is a number of patterns (up to 4x8) in the pattern grid,
+   and that the current set is the one visible in the pattern grid.
+   The way sets work in \textsl{Seq66} is that, when a set is selected,
+   all the patterns in it are loaded into what is called
+   the "play-set".
+   When play starts only, patterns in the play-set are handled.
+   The \textbf{Sets Mode} option allows special handling of the play-set.
+
+   \begin{enumerate}
+      \item \textbf{Normal}.
+         In this mode, only the current set's patterns can be unmuted.
+         When switching to another set, the current set's patterns become
+         muted, and the new set's patterns are shown, unmuted.
+      \item \textbf{Auto-Arm}.
+         Here, when the new set is loaded, it is immediately unmuted.
+      \item \textbf{Additive}.
+         With this option, when a new set is loaded, the previous set keeps
+         playing. This allows a build-up of patterns in playback.
+      \item \textbf{All Sets}.
+         Here, all sets in the tune are loaded and unmuted at once.
+         Try this mode with the \texttt{b4uacuse-stress.midi} file
+         in the \textsl{Sequencer64} project.  It's a good test of
+         \textsl{Seq66} and your hardware/software synthesizer!
+   \end{enumerate}
+
+   One can clear the out play-set, and set only the current set active, by
+   clicking the exclamation point button to the left of the "Active" label at
+   the bottom of the main windows.
 
 \subsection{Menu / Help / About...}
 \label{subsec:menu_about}

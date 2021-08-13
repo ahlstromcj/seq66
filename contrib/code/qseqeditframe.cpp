@@ -276,13 +276,6 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
     m_layout_grid->addWidget(m_seqdata, 3, 1, 1, 1);
     m_layout_grid->setAlignment(m_seqroll, Qt::AlignTop);
     m_scroll_area->setWidget(m_container);
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    int w = m_container->width();
-    int h = m_container->height();
-    printf("qseqeditframe::m_container size = (%d, %d)\n", w, h);
-#endif
-
     ui->cmbRecVol->addItem("Free",       0);
     ui->cmbRecVol->addItem("127",  127);
     ui->cmbRecVol->addItem("112",  112);
@@ -294,10 +287,10 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
     ui->cmbRecVol->addItem("16",   16);
 
     m_popup = new QMenu(this);
+
     QMenu * menuSelect = new QMenu(tr("Select..."), m_popup);
     QMenu * menuTiming = new QMenu(tr("Timing..."), m_popup);
     QMenu * menuPitch  = new QMenu(tr("Pitch..."), m_popup);
-
     QAction * actionSelectAll = new QAction(tr("Select all"), m_popup);
     actionSelectAll->setShortcut(tr("Ctrl+A"));
     connect
@@ -823,12 +816,6 @@ qseqeditframe::keyReleaseEvent (QKeyEvent *)
 void
 qseqeditframe::resizeEvent (QResizeEvent * qrep)
 {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf("qseqeditframe::resizeEvent(%d)\n", s_count++);
-#endif
-
     update_draw_geometry();
     qrep->ignore();             // qseqframe::resizeEvent(qrep)
 }

@@ -455,7 +455,7 @@ event::set_midi_event
     bool result = true;
     set_timestamp(timestamp);
     set_sysex_size(count);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG    // _TMI
     printf
     (
         "set_midi_event([%ld], status %02x, d0 %02X, d1 %02X, %d bytes)\n",

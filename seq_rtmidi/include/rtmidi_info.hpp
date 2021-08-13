@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Refactoring by Chris Ahlstrom
  * \date          2016-12-08
- * \updates       2017-03-21
+ * \updates       2021-08-13
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  * \license       GNU GPLv2 or above
  *
@@ -287,15 +287,6 @@ public:
     int api_poll_for_midi ()
     {
         return get_api_info()->api_poll_for_midi();
-    }
-
-    /**
-     *  Returns a list of all the ports as an ASCII string.
-     */
-
-    std::string port_list () const
-    {
-        return get_api_info()->port_list();
     }
 
     static rtmidi_api & selected_api ()

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-08-12
+ * \updates       2021-08-13
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1356,6 +1356,7 @@ public:
         bool paint = false,
         int velocity = sm_preserve_velocity
     );
+    bool add_note (midipulse len, const event & e);
     bool add_chord
     (
         int chord, midipulse tick, midipulse len, int note,
@@ -1483,6 +1484,8 @@ public:
     int get_num_selected_notes () const;
     int get_num_selected_events (midibyte status, midibyte cc) const;
     void select_all ();
+    void select_notes_by_channel (int channel);
+    void unselect ();
     bool repitch (const notemapper & nmap, bool all = false);
     bool copy_selected ();
     bool cut_selected (bool copyevents = true);
@@ -1529,7 +1532,6 @@ public:
     bool randomize_selected_notes (int jitter = 8, int range = 8);
     bool mark_selected ();
     void unpaint_all ();
-    void unselect ();
     void verify_and_link ();
     void link_new ();
     bool edge_fix ();

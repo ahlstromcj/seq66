@@ -287,15 +287,6 @@ qslivegrid::create_loop_buttons ()
     int fh = ui->frame->height();
     m_slot_w = (fw - m_space_cols - 1) / columns() - sc_button_padding;
     m_slot_h = (fh - m_space_rows - 1) / rows() - sc_button_padding;
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf
-    (
-        "frame = %d x %d, slot = %d x %d, spacing = %d\n",
-        fw, fh, m_slot_w, m_slot_h, spacing()
-    );
-#endif
-
     for (int row = 0; row < rows(); ++row)
         ui->loopGridLayout->setRowMinimumHeight(row, m_slot_h + spacing());
 
@@ -472,15 +463,6 @@ qslivegrid::paintEvent (QPaintEvent * /*qpep*/)
         create_loop_buttons();                  /* refresh_all_slots()  */
         m_redraw_buttons = false;
     }
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static bool s_shown = false;
-    if (! s_shown)
-    {
-        show_loop_buttons();
-        s_shown = true;
-    }
-#endif
 }
 
 /**
@@ -1599,36 +1581,6 @@ qslivegrid::popup_menu ()
 
     millisleep(10);
 }
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-
-/**
- *  By default, the rectangle for each slot is (0, 0, 91, 94).  The rectangle
- *  for the grid is (0, 0, 816, 405).
- */
-
-void
-qslivegrid::show_loop_buttons ()
-{
-    for (int column = 0; column < columns(); ++column)
-    {
-        for (int row = 0; row < rows(); ++row)
-        {
-            qslotbutton * pb = button(row, column);
-            if (not_nullptr(pb))
-            {
-                QRect r = pb->geometry();
-                printf
-                (
-                    "slot %d: (%d, %d, %d, %d)\n",
-                    int (pb->slot_number()), r.x(), r.y(), r.width(), r.height()
-                );
-            }
-        }
-    }
-}
-
-#endif      // defined SEQ66_PLATFORM_DEBUG_TMI
 
 }           // namespace seq66
 

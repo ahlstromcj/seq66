@@ -725,9 +725,6 @@ busarray::get_midi_event (event * inev)
         {
             bussbyte b = bussbyte(bi.bus()->bus_index());
             inev->set_input_bus(b);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            printf("Event in on buss %d\n", int(b));
-#endif
             return true;
         }
     }

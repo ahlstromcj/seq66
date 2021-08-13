@@ -168,10 +168,6 @@ private:
     void popup_menu ();
     void sequence_key_check ();
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    void show_loop_buttons ();
-#endif
-
 signals:
 
     void signal_call_editor (int seqid);        /* editor tab for pattern      */

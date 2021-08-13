@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-06-10
+ * \updates       2021-08-13
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -171,7 +171,6 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
                 m_midi_master.add_input(m);             /* must come 2nd    */
             }
         }
-        port_list("virtual");
     }
     else
     {
@@ -182,7 +181,6 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
         bool isoutput = swap_io ?
             midibase::c_input_port : midibase::c_output_port;
 
-        port_list("rtmidi");
         if (nports > 0)
         {
             m_midi_master.midi_mode(midibase::c_input_port);     /* ugh! */
@@ -241,36 +239,6 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
      * m_inbus_array.set_all_inputs();
      */
 }
-
-/**
- *  Shows a list of discovered ports in debug mode.
- *
- * \param tag
- *      Provides a string label indicate the context of this list.
- */
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-
-void
-mastermidibus::port_list (const std::string & tag)
-{
-    std::string plist = m_midi_master.port_list();
-    printf
-    (
-        "%d %s ports created:\n%s\n",
-        m_midi_master.full_port_count(), tag.c_str(), plist.c_str()
-    );
-}
-
-#else
-
-void
-mastermidibus::port_list (const std::string & )
-{
-    // No code if not debugging
-}
-
-#endif  // SEQ66_PLATFORM_DEBUG_TMI
 
 /**
  *  Activates the mastermidibase code and the rtmidi_info object via its

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-12-15
+ * \updates       2021-08-13
  * \license       See above.
  *
  *  In this refactoring, we had to adapt the existing Seq66
@@ -146,27 +146,16 @@ midi_api::error (rterror::Type type, const std::string & errorstring)
         m_first_error_occurred = false;
         return;
     }
-
-    if (type == rterror::WARNING)
-    {
-        errprint(errorstring);
-    }
-    else if (type == rterror::DEBUG_WARNING)
-    {
-#if defined SEQ66_PLATFORM_DEBUG
-        errprint(errorstring);
-#endif
-    }
     else
     {
-        errprint(errorstring);
-
         /*
          * Not a big fan of throwing errors, especially since we currently log
          * errors in rtmidi to the console.  Might make this a build option.
          *
          * throw rterror(errorstring, type);
          */
+
+        errprint(errorstring);
     }
 }
 

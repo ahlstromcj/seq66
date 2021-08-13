@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2019-02-09
+ * \updates       2021-08-13
  * \license       See above.
  *
  *    In this refactoring...
@@ -75,7 +75,8 @@ public:
         INVALID_USE,       /**< The function was called incorrectly.        */
         DRIVER_ERROR,      /**< A system driver error occured.              */
         SYSTEM_ERROR,      /**< A system error occured.                     */
-        THREAD_ERROR       /**< A thread error occured.                     */
+        THREAD_ERROR,      /**< A thread error occured.                     */
+        MAX                /**< An "illegal" value for range-checking       */
     };
 
 private:

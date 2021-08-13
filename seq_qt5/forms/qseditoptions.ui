@@ -617,7 +617,7 @@ scale factor, ranging from 0.5 to 3.0.</string>
            <bool>true</bool>
           </property>
           <property name="text">
-           <string>Progress Boxs (fraction)</string>
+           <string>Progress Boxes (fraction)</string>
           </property>
          </widget>
         </item>

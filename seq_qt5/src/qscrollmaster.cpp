@@ -216,7 +216,7 @@ void
 qscrollmaster::wheelEvent (QWheelEvent * qwep)
 {
 
-#if defined SEQ66_PLATFORM_DEBUG // _TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     static int s_count = 0;
     printf("qscrollmaster::wheelEvent(%d)\n", s_count++);
 #endif

@@ -409,17 +409,11 @@
 #if ! defined SEQ66_PLATFORM_DEBUG
 #if defined DEBUG || _DEBUG || _DEBUG_ || __DEBUG || __DEBUG__
 #define SEQ66_PLATFORM_DEBUG
-#if ! defined DEBUG
-#define DEBUG
-#endif
 #endif
 #endif
 
 #if ! defined SEQ66_PLATFORM_DEBUG && ! defined SEQ66_PLATFORM_RELEASE
 #define SEQ66_PLATFORM_RELEASE
-#if ! defined NDEBUG
-#define NDEBUG
-#endif
 #endif
 
 /**

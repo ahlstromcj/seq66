@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-06
- * \updates       2021-06-10
+ * \updates       2021-08-13
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of system MIDI information
@@ -227,28 +227,15 @@ midi_info::midi_info
 void
 midi_info::error (rterror::Type type, const std::string & errorstring)
 {
-    std::string errstring = errorstring;
-    if (type == rterror::WARNING)
-    {
-        errprint(errstring);
-    }
-    else if (type == rterror::DEBUG_WARNING)
-    {
-#if defined SEQ66_PLATFORM_DEBUG
-        errprint(errstring);
-#endif
-    }
-    else
-    {
-        errprint(errstring);
+    /*
+     * Not a big fan of throwing errors, especially since we currently log
+     * errors in rtmidi to the console.  Might make this a build option.
+     *
+     * throw rterror(errorstring, type);
+     */
 
-        /*
-         * Not a big fan of throwing errors, especially since we currently log
-         * errors in rtmidi to the console.  Might make this a build option.
-         *
-         * throw rterror(errorstring, type);
-         */
-    }
+    if (type != rterror::MAX)
+        errprint(errorstring);
 }
 
 /**

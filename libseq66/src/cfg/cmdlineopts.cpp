@@ -325,20 +325,6 @@ cmdlineopts::show_help ()
         ;
 }
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-
-static void
-show_args (const std::string & tag, int argc, char * argv [])
-{
-    std::cout << "Arguments " << tag << ":" << std::endl;
-    for (int i = 0; i < argc; ++i)
-    {
-        std::cout << i << ": '" << argv[i] << "'" << std::endl;
-    }
-}
-
-#endif
-
 /**
  *  Gets a compound option argument.  An option argument is a value flagged on
  *  the command line by the -o/--option options.  Each option has a value
@@ -581,12 +567,7 @@ cmdlineopts::parse_log_option (int argc, char * argv [])
     {
         std::string logfile = usr().option_logfile();
         if (! logfile.empty())
-        {
-#if defined SEQ66_PLATFORM_LINUX_MOVED      /* in smanager::main_settings() */
-            (void) reroute_stdio(logfile);  /* also in daemonize()          */
-#endif
             result = true;
-        }
     }
     return result;
 }
@@ -855,11 +836,6 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
     std::string optionval;                  /* used only with -o options    */
     std::string optionname;                 /* ditto                        */
     optind = 1;                             /* make sure this global is set */
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    show_args("Before", argc, argv);
-#endif
-
     for (;;)                                /* parse all command parameters */
     {
         int option_index = 0;               /* getopt_long index storage    */

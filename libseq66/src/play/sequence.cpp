@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-12
+ * \updates       2021-08-13
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1541,6 +1541,16 @@ sequence::select_all ()
     m_events.select_all();
 }
 
+void
+sequence::select_notes_by_channel (int channel)
+{
+    if (is_good_channel(midibyte(channel)))
+    {
+        automutex locker(m_mutex);
+        m_events.select_notes_by_channel(channel);
+    }
+}
+
 /**
  *  Deselects all events, unconditionally.
  *
@@ -2450,7 +2460,7 @@ sequence::add_note
     if (! ignore)
     {
         /*
-         *  See banner notes.
+         *  See banner notes.  Isn't this velocity code redundant?
          */
 
         bool hardwire = velocity == usr().preserve_velocity();
@@ -2466,6 +2476,39 @@ sequence::add_note
             event e(tick + len, EVENT_NOTE_OFF, note, v);
             result = add_event(e);
         }
+    }
+    if (result)
+        verify_and_link();
+
+    return result;
+}
+
+/**
+ *  Overload for use with keyboard input.  The version above always sets channel
+ *  to 0, and can repaint, and is used by the seqroll.
+ *
+ *  Note:  Like the version above, this code simulates a Note Off.  We will fix
+ *  that AT SOME POINT.
+ *
+ * \param len
+ *      The length between the Note On and Note Off events to be added here.
+ *
+ * \param e
+ *      The Note On to use for the Note On and Note Off event additions.  This
+ *      event already has its timestamp and velocity tailored.
+ */
+
+bool
+sequence::add_note (midipulse len, const event & e)
+{
+    bool result = add_event(e);
+    if (result)
+    {
+        midipulse tick = e.timestamp() + len;
+        midibyte v = midibyte(m_note_off_velocity);
+        event eoff(tick, EVENT_NOTE_OFF, e.get_note(), v);
+        eoff.set_channel_status(EVENT_NOTE_OFF, e.channel());
+        result = add_event(eoff);
     }
     if (result)
         verify_and_link();
@@ -2859,6 +2902,7 @@ sequence::stream_event (event & ev)
                 }
                 else if (ev.is_note_on())
                 {
+#if defined USE_OLD_CODE
                     int velocity = int(ev.note_velocity());
                     bool keepvelocity = m_rec_vol == usr().preserve_velocity();
                     if (keepvelocity)
@@ -2878,6 +2922,18 @@ sequence::stream_event (event & ev)
                         mod_last_tick(), snap() - m_events.note_off_margin(),
                         ev.get_note(), false, velocity
                     );
+#else
+                    bool keepvelocity = m_rec_vol == usr().preserve_velocity();
+                    if (! keepvelocity)
+                        ev.note_velocity(m_rec_vol);
+
+                    ev.set_timestamp(mod_last_tick());
+                    m_events_undo.push(m_events);       /* push_undo()      */
+                    if (auto_step_reset() && m_step_count == 0)
+                        m_last_tick = 0;                /* set_last_tick()  */
+
+                    bool ok = add_note(snap() - m_events.note_off_margin(), ev);
+#endif
                     if (ok)
                         ++m_notes_on;
                 }

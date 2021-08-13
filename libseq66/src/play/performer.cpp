@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-08-04
+ * \updates       2021-08-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1410,7 +1410,7 @@ performer::ui_change_set_bus (int buss)
     bool result = is_good_buss(b);
     if (result)
     {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         if (rc().investigate())
         {
             printf
@@ -5008,7 +5008,13 @@ performer::sequence_playing_toggle (seq::number seqno)
                 if (song_record_snap())         /* see Seq64 issue #171 !   */
                     tick -= tick % seq_length;
 
-                push_trigger_undo();
+                /*
+                 * Why is this needed? It leads to a modify() when just
+                 * double-clicking on an existing pattern.
+                 *
+                 * push_trigger_undo();
+                 */
+
                 s->song_recording_start(tick, song_record_snap());
             }
         }

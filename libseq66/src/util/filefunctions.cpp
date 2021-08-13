@@ -1577,13 +1577,6 @@ filename_split
         path.clear();
         filebase = fullpath;
     }
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf
-    (
-        "'%s' in, '%s' and '%s' out\n",
-        fullpath.c_str(), path.c_str(), filebase.c_str()
-    );
-#endif
     return result;
 }
 
