@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-13
+ * \updates       2021-08-15
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1542,6 +1542,16 @@ sequence::select_all ()
 }
 
 void
+sequence::select_by_channel (int channel)
+{
+    if (is_good_channel(midibyte(channel)))
+    {
+        automutex locker(m_mutex);
+        m_events.select_by_channel(channel);
+    }
+}
+
+void
 sequence::select_notes_by_channel (int channel)
 {
     if (is_good_channel(midibyte(channel)))
@@ -2427,7 +2437,7 @@ sequence::change_event_data_lfo
  */
 
 bool
-sequence::add_note
+sequence::add_painted_note
 (
     midipulse tick, midipulse len, int note,
     bool repaint, int velocity
@@ -2435,21 +2445,21 @@ sequence::add_note
 {
     bool result = false;
     bool ignore = false;
-    if (repaint)                                  /* see the banner above */
+    if (repaint)                                    /* see banner above     */
     {
         automutex locker(m_mutex);
         for (auto & er : m_events)
         {
             if (er.is_painted() && er.is_note_on() && er.timestamp() == tick)
             {
-                if (er.get_note() == note)
+                if (er.get_note() == note)          /* no duplicate notes   */
                 {
                     ignore = true;
                     break;
                 }
-                er.mark();                      /* mark for removal     */
+                er.mark();                          /* mark for removal     */
                 if (er.is_linked())
-                    er.link()->mark();          /* mark for removal     */
+                    er.link()->mark();              /* mark for removal     */
 
                 set_dirty();
             }
@@ -2466,6 +2476,9 @@ sequence::add_note
         bool hardwire = velocity == usr().preserve_velocity();
         midibyte v = hardwire ? midibyte(m_note_on_velocity) : velocity ;
         event e(tick, EVENT_NOTE_ON, note, v);
+        if (! free_channel())
+            e.set_channel_status(EVENT_NOTE_ON, seq_midi_channel());
+
         if (repaint)
             e.paint();
 
@@ -2474,6 +2487,9 @@ sequence::add_note
         {
             midibyte v = hardwire ? midibyte(m_note_off_velocity) : 0 ;
             event e(tick + len, EVENT_NOTE_OFF, note, v);
+            if (! free_channel())
+                e.set_channel_status(EVENT_NOTE_OFF, seq_midi_channel());
+
             result = add_event(e);
         }
     }
@@ -2537,7 +2553,7 @@ sequence::push_add_note
 )
 {
     m_events_undo.push(m_events);                   /* push_undo(), no lock */
-    return add_note(tick, len, note, repaint, velocity);
+    return add_painted_note(tick, len, note, repaint, velocity);
 }
 
 bool
@@ -2594,13 +2610,13 @@ sequence::add_chord
             if (cnote == -1)
                 break;
 
-            result = add_note(tick, len, note + cnote, false, velocity);
+            result = add_painted_note(tick, len, note + cnote, false, velocity);
             if (! result)
                 break;
         }
     }
     else
-        result = add_note(tick, len, note, true, velocity);
+        result = add_painted_note(tick, len, note, true, velocity);
 
     return result;
 }
@@ -2818,7 +2834,9 @@ sequence::check_loop_reset ()
  *
  *  If the pattern is not playing, this function supports the step-edit
  *  (auto-step) feature, where we are entering notes without playback occurring,
- *  so we set the generic default note length and volume to the snap.
+ *  so we set the generic default note length and volume to the snap.  For
+ *  Note Ons, this isgnores the actual Note Off and synthesizes a matching
+ *  Note Off.
  *
  * \todo
  *      When we feel like debugging, we will replace the global is-playing
@@ -2902,27 +2920,6 @@ sequence::stream_event (event & ev)
                 }
                 else if (ev.is_note_on())
                 {
-#if defined USE_OLD_CODE
-                    int velocity = int(ev.note_velocity());
-                    bool keepvelocity = m_rec_vol == usr().preserve_velocity();
-                    if (keepvelocity)
-                    {
-                        if (velocity == 0)
-                            velocity = m_note_on_velocity;
-                    }
-                    else
-                        velocity = m_rec_vol;
-
-                    m_events_undo.push(m_events);       /* push_undo()      */
-                    if (auto_step_reset() && m_step_count == 0)
-                        m_last_tick = 0;                /* set_last_tick()  */
-
-                    bool ok = add_note                  /* more locking     */
-                    (
-                        mod_last_tick(), snap() - m_events.note_off_margin(),
-                        ev.get_note(), false, velocity
-                    );
-#else
                     bool keepvelocity = m_rec_vol == usr().preserve_velocity();
                     if (! keepvelocity)
                         ev.note_velocity(m_rec_vol);
@@ -2933,7 +2930,6 @@ sequence::stream_event (event & ev)
                         m_last_tick = 0;                /* set_last_tick()  */
 
                     bool ok = add_note(snap() - m_events.note_off_margin(), ev);
-#endif
                     if (ok)
                         ++m_notes_on;
                 }

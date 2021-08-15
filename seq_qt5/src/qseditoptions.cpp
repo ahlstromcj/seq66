@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-08-12
+ * \updates       2021-08-15
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -285,14 +285,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         ui->lineEditFingerprintSize, SIGNAL(editingFinished()),
         this, SLOT(slot_fingerprint_size())
     );
-
-#if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR
-    connect
-    (
-        ui->checkBoxKeplerSeqedit, SIGNAL(stateChanged(int)),
-        this, SLOT(slot_pattern_editor())
-    );
-#endif
 
     /*
      * Palette.
@@ -1011,26 +1003,6 @@ qseditoptions::slot_usr_save_click ()
     usr().save_user_config(on);
     usr().modify();
 }
-
-#if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR
-
-/**
- *  Seq66 has a new pattern editor GUI for Qt that is larger and more
- *  functional than the Kepler34 pattern editor.  However, it has the
- *  side-effect, currently, of making the main window larger.
- *  This slot sets the new feature to off if the check-box is checked.
- *  Disabled.
- */
-
-void
-qseditoptions::slot_pattern_editor ()
-{
-    bool use_kepler_seqedit = ui->checkBoxKeplerSeqedit->isChecked();
-    usr().use_new_seqedit(! use_kepler_seqedit);
-    usr().save_user_config(true);
-}
-
-#endif
 
 void
 qseditoptions::slot_key_test (const QString &)

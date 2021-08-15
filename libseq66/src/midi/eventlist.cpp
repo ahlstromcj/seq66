@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-08-10
+ * \updates       2021-08-15
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -1265,6 +1265,17 @@ eventlist::select_all ()
 {
     for (auto & e : m_events)
         e.select();
+}
+
+void
+eventlist::select_by_channel (int channel)
+{
+    midibyte target = midibyte(channel);
+    for (auto & e : m_events)
+    {
+        if (e.channel() == target)
+            e.select();
+    }
 }
 
 /**

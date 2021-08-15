@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-08-13
+ * \updates       2021-08-15
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -295,10 +295,11 @@ private:
 
     /**
      *  Contains the global MIDI channel for this sequence.  However, if this
-     *  value is c_midichannel_null (0x80), then this sequence is an SMF 0
+     *  value is null_channel() (0x80), then this sequence is a multi-chanel
      *  track, and has no single channel, or represents a track who's recorded
      *  channels we do not want to replace.  Please note that this is the
-     *  output channel.
+     *  output channel.  However, if set to a valid channel, then that channel
+     *  will be forced on notes created via painting in the seqroll.
      */
 
     midibyte m_midi_channel;            /* pattern's global MIDI channel    */
@@ -1350,7 +1351,7 @@ public:
         int chord, midipulse tick, midipulse len,
         int note, int velocity = sm_preserve_velocity
     );
-    bool add_note
+    bool add_painted_note
     (
         midipulse tick, midipulse len, int note,
         bool paint = false,
@@ -1484,6 +1485,7 @@ public:
     int get_num_selected_notes () const;
     int get_num_selected_events (midibyte status, midibyte cc) const;
     void select_all ();
+    void select_by_channel (int channel);
     void select_notes_by_channel (int channel);
     void unselect ();
     bool repitch (const notemapper & nmap, bool all = false);

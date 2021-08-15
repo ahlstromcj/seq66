@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-08-12
+ * \updates       2021-08-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -131,9 +131,6 @@ private slots:
     void slot_progress_box_width ();
     void slot_progress_box_height ();
     void slot_fingerprint_size ();
-#if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR
-    void slot_pattern_editor ();
-#endif
     void slot_palette_file (const QString &);
     void slot_palette_save_click ();
     void slot_palette_active_click ();

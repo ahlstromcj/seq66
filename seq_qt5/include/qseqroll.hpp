@@ -136,7 +136,7 @@ private:
     void set_background_sequence (bool state, int seq);
     void analyze_seq_notes ();
     int note_off_length () const;
-    bool add_note (midipulse tick, int note);
+    bool add_painted_note (midipulse tick, int note);
     bool zoom_key_press (bool shifted, int key);
     bool movement_key_press (int key);
 

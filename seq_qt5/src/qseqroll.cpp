@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-08-13
+ * \updates       2021-08-15
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -787,9 +787,9 @@ qseqroll::note_off_length () const
 }
 
 /**
- * Convenience wrapper for sequence::add_note().  The length parameters is
- * obtained from the note_off_length() function.  This sets the note
- * length at a little less than the snap value.
+ * Convenience wrapper for sequence::add_note() and sequence::add_chord().
+ * The length parameters is obtained from the note_off_length() function.
+ * This sets the note length at a little less than the snap value.
  *
  * \param tick
  *      The time destination of the new note, in pulses.
@@ -806,7 +806,7 @@ qseqroll::note_off_length () const
  */
 
 bool
-qseqroll::add_note (midipulse tick, int note)
+qseqroll::add_painted_note (midipulse tick, int note)
 {
     bool result;
     int n = note_off_length();
@@ -888,7 +888,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     tick_s, note, tick_s, note, selmode
                 );
                 if (would_select)
-                    (void) add_note(tick_s, note);
+                    (void) add_painted_note(tick_s, note);
             }
             else                                    /* we're selecting anew */
             {
@@ -1095,7 +1095,7 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
     {
         snap_current_x();
         convert_xy(current_x(), current_y(), tick, note);
-        (void) add_note(tick, note);
+        (void) add_painted_note(tick, note);
     }
     set_dirty();
 }
@@ -1277,6 +1277,12 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     case Qt::Key_A:
 
                         s->select_all();
+                        done = true;
+                        break;
+
+                    case Qt::Key_E:
+
+                        s->select_by_channel(frame64()->edit_channel());
                         done = true;
                         break;
 

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-07-08
+% \update      2021-08-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -185,6 +185,10 @@
    The editing channel is always channel 1.
    If instruments are assigned in the 'usr' configuration file
    to that device and channel, their names will be shown in the dropdown.
+
+   In addition, this setting determines the channel applied when painting notes
+   in the piano roll.  If set to "1" or "Free" (no channel), then channel 1 is
+   applied.  Otherwise, if set to "2" through "16", that channel is applied.
 
 \subsection{Pattern Editor / Second Row}
 \label{subsec:pattern_editor_second_row}
