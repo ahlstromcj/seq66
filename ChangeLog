@@ -1,5 +1,177 @@
+2021-08-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, VERSION, configure.ac,
+	doc/latex/tex/pattern_editor.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/include/qseqroll.hpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qseqroll.cpp: Added
+	Ctrl_N/E for selecting events by channel.
+
+2021-08-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, contrib/code/qseqeditframe.cpp,
+	doc/dox/doxy-common.cfg, doc/latex/tex/menu.tex,
+	doc/latex/tex/pattern_editor.tex,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/seq66_platform_macros.h,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/ctrl/keycontainer.cpp,
+	libseq66/src/ctrl/opcontainer.cpp, libseq66/src/midi/businfo.cpp,
+	libseq66/src/midi/event.cpp, libseq66/src/midi/eventlist.cpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/basic_macros.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qslivegrid.hpp, seq_qt5/src/qperfeditframe64.cpp,
+	seq_qt5/src/qscrollmaster.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_rtmidi/include/rterror.hpp, seq_rtmidi/include/rtmidi_info.hpp,
+	seq_rtmidi/src/mastermidibus.cpp, seq_rtmidi/src/midi_api.cpp,
+	seq_rtmidi/src/midi_info.cpp, seq_rtmidi/src/midi_jack.cpp: Interim
+	check-in of clean-up and recording handling.
+
+2021-08-12  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/cfg/usrsettings.hpp,
+	libseq66/src/cfg/usrfile.cpp, libseq66/src/cfg/usrsettings.cpp,
+	resources/pixmaps/menu_empty_inv.xpm,
+	resources/pixmaps/menu_full_inv.xpm,
+	seq_qt5/src/qseqeditframe64.cpp: Added 'usr' option for adapting to
+	dark themes.
+	* INSTALL, README.md, doc/dox/doxy-common.cfg,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qstriggereditor.cpp: Still more channel fixes, added
+	sets-mode config UI.
+
+2021-08-11  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/midi/editable_events.hpp,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/ctrl/midicontrolout.cpp,
+	libseq66/src/midi/editable_events.cpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/eventlist.cpp,
+	libseq66/src/midi/midi_splitter.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/wrkfile.cpp, libseq66/src/play/sequence.cpp,
+	seq_portmidi/src/midibus.cpp, seq_qt5/include/qseventslots.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseventslots.cpp,
+	seq_qt5/src/qstriggereditor.cpp, seq_rtmidi/src/midi_alsa.cpp,
+	seq_rtmidi/src/midi_jack.cpp: Almost done with the new channel
+	handling.
+
+2021-08-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/midi/editable_event.hpp,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/util/calculations.hpp,
+	libseq66/src/cfg/scales.cpp, libseq66/src/ctrl/midicontrolout.cpp,
+	libseq66/src/midi/editable_event.cpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/eventlist.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/util/calculations.cpp,
+	seq_portmidi/src/mastermidibus.cpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qseventslots.cpp,
+	seq_qt5/src/qstriggereditor.cpp: More channel-handling improvements.
+
+2021-08-09  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/midi_formats.tex, libseq66/include/midi/event.hpp,
+	libseq66/include/midi/midi_vector_base.hpp,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/editable_event.cpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/midi_splitter.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/midi/songsummary.cpp,
+	libseq66/src/midi/wrkfile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqeventframe.cpp: 
+	Tightening event/pattern channel handling, in progress.
+
+2021-08-07  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure, seq_portmidi/src/mastermidibus.cpp: Updated configure
+	script, removed disabled portmidi code.
+	* README.md, TODO, contrib/code/pthread_performer.cpp,
+	contrib/code/qrollframe.cpp, contrib/code/qrollframe.hpp,
+	{seq_portmidi/src => contrib/code}/readbinaryplist.c,
+	{seq_portmidi/include => contrib/code}/readbinaryplist.h,
+	contrib/notes/bluez-alsa-notes.text, contrib/scripts/bluejack,
+	data/linux/startjack, libseq66/include/ctrl/midicontrolout.hpp,
+	libseq66/include/midi/event.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/midicontrolout.cpp, libseq66/src/midi/event.cpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libsessions/src/nsm/nsmbase.cpp, seq_portmidi/seq_portmidi.pro,
+	seq_portmidi/src/mastermidibus.cpp, seq_portmidi/src/pmmacosxcm.c,
+	seq_portmidi/src/pmwinmm.c, seq_portmidi/src/portmidi.c,
+	seq_portmidi/src/ptmacosx_cf.c, seq_rtmidi/src/midi_jack.cpp: Fixes
+	to incoming note handling while fixing issue #55.
+
+2021-08-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, contrib/notes/bluez-alsa-notes.text,
+	libseq66/include/midi/mastermidibase.hpp,
+	libseq66/src/ctrl/midicontrolout.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qseqkeys.hpp, seq_qt5/src/qseqkeys.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_rtmidi/src/midi_alsa.cpp: Updated
+	handling of preview keys in virtual keyboard.
+
+2021-08-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, data/linux/qseq66.rc, data/seq66cli/seq66cli.rc,
+	data/win/qpseq66.rc, doc/latex/tex/configuration.tex,
+	doc/latex/tex/menu.tex, doc/latex/tex/midi_formats.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/cfg/usrsettings.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/usrfile.cpp, seq_qt5/forms/qsabout.ui,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: rc fix,
+	buss-override improvements.
+
+2021-08-02  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, VERSION, configure.ac, doc/latex/tex/menu.tex,
+	doc/latex/tex/song_editor.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/midi/jack_assistant.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/src/qsmainwnd.cpp: New
+	version info, JACK pause improvements.
+
 2021-08-01  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* ChangeLog: Version 0.96.1 pending.
 	* libseq66/include/Makefile.in, seq_qt5/include/Makefile.in: 
 	Official makefile updates for 0.96.1.
 	* README.md, TODO, VERSION, configure.ac,

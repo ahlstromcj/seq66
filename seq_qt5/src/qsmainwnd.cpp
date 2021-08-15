@@ -1114,8 +1114,11 @@ qsmainwnd::show_open_file_dialog (std::string & selectedfile)
 {
     bool result = false;
     if (check())
+    {
         result = show_open_midi_file_dialog(this, selectedfile);
-
+        if (result)
+            stop_playing();
+    }
     return result;
 }
 
