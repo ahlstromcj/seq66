@@ -531,8 +531,7 @@ qseventslots::insert_event
 
 /**
  *  Deletes the current event, and makes adjustments due to that deletion.
- *  Currently upgrading this one to also delete the linked note for note offs
- *  and ons.
+ *  Also deletes the linked note for Note Offs and Ons.
  *
  *  To delete the current event, this function moves the current iterator to
  *  the next event, deletes the previously-current iterator, adjusts the event

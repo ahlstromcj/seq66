@@ -1,7 +1,7 @@
-# README for Seq66 0.96.2
+# README for Seq66 0.96.3
 
 Chris Ahlstrom
-2015-09-10 to 2021-08-15
+2015-09-10 to 2021-08-16
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -80,6 +80,8 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.96.2:
+        * To do.
+    *   Version 0.96.2:
         *   Fixed issue #55, where the MIDI control channel was being stripped
             when using JACK.  Many other channel-handling improvements.
         *   Fixed a related issue: null (status = 0) control events were sent.
@@ -124,39 +126,6 @@ Windows, and using a conventional source tarball.
         *   Fixed error reading mute-groups; small fixes to configuration files.
         *   Work on fitting pattern-editor in tab.
         *   Work on mitigating weird hang in QApplication destructor.
-    *   Version 0.95.1:
-        *   Added 'auto' option to song-start-mode setting.
-        *   Added missing harmonic-transposition option to the pattern editor.
-        *   Fixed issues with some of the file-dialogs.
-        *   Fixed issues with editing keystrokes being passed from the tabbed
-            editors to the main window (and the live frame).
-        *   Improved arrow-key handling in seqroll.
-        *   Removed PortMidi Java configuration parsing code.
-        *   Important fixes to NSM sessions.
-        *   Added 'one-shot' option the the 'usr' file's record-style setting.
-        *   Improved support for making the user-interface smaller; 4x4 sets.
-        *   Added the "enigmatic" scale.
-        *   Fixes to handling of musical key, scale, and background pattern.
-        *   Finalized the scale-finder code (Ctrl-K in the pattern editor's
-            piano roll.)
-        *   Updated libtool support, now seq66cli is under 200K in size.
-        *   Removed QtWidget directory from qclocklayout #includes for issue
-            #54.  Also added error-message and about to the Qt m4 file.
-    *   Version 0.95.0:
-        *   Updated almost all settings to use "name = variable" convention
-            to improve readability.  This will change the format of config-files
-            slightly upon exit.
-        *   Fixes made to the sample Launchpad Mini 'ctrl' files.  Also added a
-            "Quit" command, especially useful in a headless run.
-        *   Added 8 "Alt" MIDI Control Out values to support special cases
-            not covered by the concrete set of control-out values.
-        *   Major cleanup and neatening of header files.
-        *   Minor bugs and regressions fixed along the way.
-        *   Loop-edit key will create a new sequence if slot is empty.
-        *   Patterns empty of playable events no longer show unnecessary
-            progress bars.
-        *   The estimated duration of a tune is shown in the Song tab, based
-            on pattern lengths and song triggers.
 
     See the "NEWS" file for changes in earlier versions.
 

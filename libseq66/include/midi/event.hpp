@@ -752,7 +752,7 @@ public:
 
     bool match_status (midibyte status) const
     {
-        return (is_channel() ? mask_status(m_status) : m_status) == status;
+        return (has_channel() ? mask_status(m_status) : m_status) == status;
     }
 
     /**
@@ -1251,7 +1251,7 @@ public:
         return m_status == EVENT_MIDI_SONG_POS;
     }
 
-    bool is_channel () const
+    bool has_channel () const
     {
         return is_channel_msg(m_status);
     }

@@ -1,6 +1,6 @@
-TO DO for Seq66 0.96.2 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.96.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-08-06
+2019-04-13 to 2021-08-16
 
 Hottest to Trivial:
 
@@ -22,9 +22,6 @@ UI:
             -   Virtual port flag and port-count
             -   Port map
         -   Display:
-            x   Set size and grid spacing
-            x   Progress box width height
-            x   Fingerprint size
             -   Style-sheet
             -   Global seq feature
             -   Tempo / BPM min and max
@@ -43,6 +40,12 @@ UI:
             -   Load key and midi controls (does this work?)
             -   Control buss (in and out)
             -   Enabled (in and out)
+
+Event editor:
+
+    -   Handle adding a Note Off (of snap lenght) when adding a Note On.
+    -   When modifying the channel or note-value of a Note On/Off, also
+        update the linked note.
 
 Port-Mapping:
 

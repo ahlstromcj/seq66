@@ -193,7 +193,7 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
         put(st);
 #endif
 
-        if (e.is_channel())
+        if (e.has_channel())
         {
             switch (event::mask_status(st))                     /* 0xF0 */
             {

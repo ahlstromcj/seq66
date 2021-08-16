@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2021-07-23
+ * \updates       2021-08-16
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -339,6 +339,11 @@ public:
     midipulse link_time () const
     {
         return m_link_time;
+    }
+
+    void link_time (midipulse lt)
+    {
+        m_link_time = lt;
     }
 
 public:
