@@ -277,6 +277,32 @@ editable_events::count_to_link (const editable_event & source) const
 }
 
 /**
+ *  One can use the event::valid_status() to make sure the item was found.
+ */
+
+editable_event &
+editable_events::lookup_link (const editable_event & ee)
+{
+    static editable_event s_dummy_event;
+#if 0
+    for (iterator i = events().begin(); i != events().end(); ++i)
+    {
+        if (i->second.link() == ee.link())
+        {
+            result = i;
+            break;
+        }
+    }
+#endif
+    for (auto & i : events())
+    {
+        if (i.second.link() == ee.link())
+            return i.second;
+    }
+    return s_dummy_event;
+}
+
+/**
  *  Prints a list of the currently-held events.  Useful for debugging.
  */
 

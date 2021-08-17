@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-08-10
+ * \updates       2021-08-17
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -162,7 +162,7 @@ qseventslots::events_to_string () const
     if (m_event_count > 0)
     {
         int row = 0;
-        for (auto & ei : m_event_container)
+        for (const auto & ei : m_event_container)
         {
             result += event_to_string(ei.second, row);
             ++row;
@@ -302,7 +302,7 @@ std::string
 qseventslots::time_string (midipulse lt)
 {
     std::string result = "None";
-    if (lt < c_null_midipulse)
+    if (lt >= 0)
         result = pulses_to_measurestring(lt, m_event_container.timing());
 
     return result;
@@ -817,6 +817,8 @@ qseventslots::save_events ()
     return result;
 }
 
+#if defined QSEVENTSLOTS_FUNCTION_USED
+
 /**
  *  Adjusts the vertical position of the frame according to the given new
  *  scrollbar/vadjust value.  The adjustment is done via movement from the
@@ -884,6 +886,8 @@ qseventslots::page_movement (int new_value)
         }
     }
 }
+
+#endif  // defined QSEVENTSLOTS_FUNCTION_USED
 
 /**
  *  Adjusts the vertical position of the frame according to the given new

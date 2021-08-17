@@ -972,22 +972,35 @@ qseqeventframe::handle_modify ()
 {
     if (m_eventslots)
     {
-        int cr = current_row();
-        const editable_event & ev = m_eventslots->current_event();
+        int row0 = current_row();
+        const editable_event & ev0 = m_eventslots->current_event();
         std::string ts = ui->entry_ev_timestamp->text().toStdString();
         std::string name = ui->combo_ev_name->currentText().toStdString();
-        std::string chan = ev.channel_string();
+        std::string chan = ev0.channel_string();
         std::string d0 = ui->entry_ev_data_0->text().toStdString();
         std::string d1 = ui->entry_ev_data_1->text().toStdString();
         std::string ch = ui->channel_combo_box->currentText().toStdString();
         midipulse lt = c_null_midipulse;
-        if (ev.is_linked())
-            lt = ev.link_time();
+        if (ev0.is_linked())
+        {
+            editable_event & ev1 = m_eventslots->lookup_link(ev0);
+            if (ev1.valid_status())
+            {
+                // int row1 = m_eventslots->count_to_link(ev1);
+                midibyte channel = midibyte(std::stoi(ch) - 1);
+                midibyte notenumber = midibyte(std::stoi(d0));
+                midibyte velocity = ev1.note_velocity();
+                lt = ev0.link_time();
+                ev1.modify_channel_event(channel, notenumber, velocity);
+                // m_eventslots->select_event(row1, false);
+                // m_eventslots->modify_current_event(row0, ts, name, d0, d1, ch);
+            }
+        }
 
         std::string linktime = m_eventslots->time_string(lt);
-        (void) m_eventslots->modify_current_event(cr, ts, name, d0, d1, ch);
+        (void) m_eventslots->modify_current_event(row0, ts, name, d0, d1, ch);
         set_seq_lengths(get_lengths());
-        set_event_line(cr, ts, name, chan, d0, d1, linktime);
+        set_event_line(row0, ts, name, chan, d0, d1, linktime);
         set_dirty();
     }
 }

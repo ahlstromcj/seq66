@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-08-11
+ * \updates       2021-08-17
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -221,6 +221,11 @@ public:
         return m_event_container.count_to_link(source);
     }
 
+    editable_event & lookup_link (const editable_event & ee)
+    {
+        return m_event_container.lookup_link(ee);
+    }
+
     const editable_event & current_event () const
     {
         return m_current_event;
@@ -364,7 +369,9 @@ private:
         int channel
     );
 
+#if defined QSEVENTSLOTS_FUNCTION_USED
     void page_movement (int new_value);
+#endif
     void page_topper (editable_events::iterator newcurrent);
     int decrement_top ();
     int increment_top ();

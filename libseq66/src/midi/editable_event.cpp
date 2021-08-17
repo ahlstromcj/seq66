@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-10
+ * \updates       2021-08-17
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -413,10 +413,9 @@ editable_event::meta_event_length (midibyte value)
  *      of editable-event.
  */
 
-editable_event::editable_event (const editable_events & parent)
- :
+editable_event::editable_event (const editable_events & parent) :
     event               (),
-    m_parent            (parent),
+    m_parent            (&parent),
     m_link_time         (c_null_midipulse),           // (0),
     m_category          (subgroup::name),
     m_name_category     (),
@@ -443,7 +442,7 @@ editable_event::editable_event
     const event & ev
 ) :
     event               (ev),
-    m_parent            (parent),
+    m_parent            (&parent),
     m_link_time         (c_null_midipulse),           // (0),
     m_category          (subgroup::name),
     m_name_category     (),
@@ -458,6 +457,8 @@ editable_event::editable_event
     if (is_linked())
         m_link_time = ev.link()->timestamp();
 }
+
+#if 0
 
 /**
  *  This copy constructor initializes most of the class members.  This
@@ -528,6 +529,8 @@ editable_event::operator = (const editable_event & rhs)
     }
     return *this;
 }
+
+#endif
 
 /**
  * \setter m_category by value
@@ -610,9 +613,12 @@ editable_event::timestamp (midipulse ts)
 void
 editable_event::timestamp (const std::string & ts_string)
 {
-    midipulse ts = m_parent.string_to_pulses(ts_string);
-    event::set_timestamp(ts);
-    (void) format_timestamp();
+    if (not_nullptr(parent()))
+    {
+        midipulse ts = parent()->string_to_pulses(ts_string);
+        event::set_timestamp(ts);
+        (void) format_timestamp();
+    }
 }
 
 /**
@@ -645,7 +651,15 @@ editable_event::format_timestamp ()
 std::string
 editable_event::time_as_measures ()
 {
-    return pulses_to_measurestring(timestamp(), parent().timing());
+    if (not_nullptr(parent()))
+    {
+        return pulses_to_measurestring(timestamp(), parent()->timing());
+    }
+    else
+    {
+        static std::string s_dummy;
+        return s_dummy;
+    }
 }
 
 /**
@@ -658,7 +672,15 @@ editable_event::time_as_measures ()
 std::string
 editable_event::time_as_minutes ()
 {
-    return pulses_to_timestring(timestamp(), parent().timing());
+    if (not_nullptr(parent()))
+    {
+        return pulses_to_timestring(timestamp(), parent()->timing());
+    }
+    else
+    {
+        static std::string s_dummy;
+        return s_dummy;
+    }
 }
 
 /**
@@ -823,6 +845,23 @@ editable_event::set_status_from_string
         }
     }
     analyze();                          /* create the strings   */
+}
+
+/**
+ *  This function can modify the data bytes and the channel of a channel-event.
+ *  For example, it can change the note number, note velocity, and note channel.
+ *
+ *  Not modified are the name and type of the event, and its timestamp.
+ *  This function is useful in modifying the linked note event
+ *  of a Note On/Off event.
+ */
+
+void
+editable_event::modify_channel_event (midibyte channel, midibyte d0, midibyte d1)
+{
+    midibyte status = mask_status(get_status());
+    set_channel_status(status, channel);
+    set_data(d0, d1);
 }
 
 /**

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2021-08-16
+ * \updates       2021-08-17
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -185,10 +185,9 @@ public:
     using name_value_t = struct
     {
         /**
-         *  Holds a midibyte value (0x00 to 0xFF) or
-         *  SEQ66_END_OF_MIDIBYTES_TABLE to indicate the end of an array of
-         *  name_value_t items.  This field can be considered a "key" value,
-         *  as it is often looked up to find the event name.
+         *  Holds a midibyte value (0x00 to 0xFF).  This field can be
+         *  considered a "key" value, as it is often looked up to find the
+         *  event name.
          */
 
         unsigned short event_value;
@@ -209,10 +208,8 @@ public:
     using meta_length_t = struct
     {
         /**
-         *  Holds a midibyte value (0x00 to 0xFF) or
-         *  SEQ66_END_OF_MIDIBYTES_TABLE to indicate the end of an array of
-         *  name_value_t items.  This field has the same meaning as the
-         *  event_value of the name_value_t type.
+         *  Holds a midibyte value (0x00 to 0xFF).  This field has the same
+         *  meaning as the event_value of the name_value_t type.
          */
 
         unsigned short event_value;
@@ -227,23 +224,14 @@ public:
 
 private:
 
-    /*
-     *  Static lookup functions, described in the cpp module.
-     */
-
-    static std::string value_to_name (midibyte value, subgroup cat);
-    static unsigned short name_to_value (const std::string & name, subgroup cat);
-    static unsigned short meta_event_length (midibyte value);
-
-private:
-
     /**
-     *  Provides a reference to the container that holds this event.  The
-     *  container's "children" need to go to their "parent" to get certain
-     *  items of information.
+     *  Provides a reference (pointer) to the container that holds this event.
+     *  The container's "children" need to go to their "parent" to get certain
+     *  (very limited) items of information.  The event doesn't own this
+     *  pointer.
      */
 
-    const editable_events & m_parent;
+    const editable_events * m_parent;
 
     /**
      *  Holds the linked event's timestamp (if applicable), for display in the
@@ -318,18 +306,15 @@ private:
 
 public:
 
-    /*
-     * The default constructor is now enabled; the compiler generates it.
-     */
-
+    editable_event () = default;
     editable_event (const editable_events & parent);
     editable_event
     (
         const editable_events & parent,
         const event & ev
     );
-    editable_event (const editable_event & rhs);
-    editable_event & operator = (const editable_event & rhs);
+    editable_event (const editable_event & rhs) = default;
+    editable_event & operator = (const editable_event & rhs) = default;
 
     virtual ~editable_event () override
     {
@@ -347,11 +332,6 @@ public:
     }
 
 public:
-
-    const editable_events & parent () const
-    {
-        return m_parent;
-    }
 
     subgroup category () const
     {
@@ -406,6 +386,7 @@ public:
         const std::string & sd1,
         const std::string & ch = ""
     );
+    void modify_channel_event (midibyte channel, midibyte d0, midibyte d1);
     std::string format_timestamp ();
     std::string stock_event_string ();
     std::string ex_data_string () const;
@@ -438,6 +419,17 @@ public:
     void analyze ();
 
     static std::string channel_event_name (int index);
+
+private:
+
+    const editable_events * parent () const
+    {
+        return m_parent;
+    }
+
+    static std::string value_to_name (midibyte value, subgroup cat);
+    static unsigned short name_to_value (const std::string & name, subgroup cat);
+    static unsigned short meta_event_length (midibyte value);
 
 };          // class editable_event
 

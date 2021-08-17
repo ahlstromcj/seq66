@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-04
- * \updates       2021-08-11
+ * \updates       2021-08-17
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -139,14 +139,12 @@ public:
 
 public:
 
-    /**
-     * \getter m_midi_parameters
-     */
-
     const midi_timing & timing () const
     {
         return m_midi_parameters;
     }
+
+    editable_event & lookup_link (const editable_event & ee);
 
     /**
      *  Calculates the MIDI pulses (divisions) from a string using one of the
@@ -178,7 +176,7 @@ public:
 
     const_iterator begin () const
     {
-        return m_events.begin();
+        return m_events.cbegin();
     }
 
     iterator end ()
@@ -188,7 +186,7 @@ public:
 
     const_iterator end () const
     {
-        return m_events.end();
+        return m_events.cend();
     }
 
     /**
@@ -238,7 +236,7 @@ public:
 
     bool replace (iterator ie, const editable_event & e)
     {
-        if (ie != m_events.end())           /* \change ca 2017-04-30    */
+        if (ie != m_events.end())
             m_events.erase(ie);
 
         return add(e);
@@ -251,7 +249,7 @@ public:
 
     void remove (iterator ie)
     {
-        if (ie != m_events.end())           /* \change ca 2017-04-30    */
+        if (ie != m_events.end())
             m_events.erase(ie);
     }
 
@@ -273,7 +271,8 @@ public:
 
     /**
      * \getter m_current_event
-     *      The caller must make sure the iterator is not Events::end().
+     *      The caller must make sure the iterator is not Events::end(), using
+     *      is_valid_iterator().
      */
 
     iterator current_event () const
