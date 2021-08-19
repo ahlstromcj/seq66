@@ -734,7 +734,7 @@ qseventslots::modify_current_event
              * modified during the deletion-and-insertion process.
              */
 
-            editable_event ev = editable_events::dref(m_current_iterator);
+            editable_event & ev = editable_events::dref(m_current_iterator);
             ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
             if (! ev.is_ex_data())
             {

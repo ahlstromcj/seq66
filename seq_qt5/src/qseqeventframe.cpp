@@ -1001,9 +1001,10 @@ qseqeventframe::handle_modify ()
         std::string d1 = ui->entry_ev_data_1->text().toStdString();
         std::string ch = ui->channel_combo_box->currentText().toStdString();
         midipulse lt = c_null_midipulse;
+        bool reload = false;                /* works, but why is it needed? */
         if (ev0.is_linked())
         {
-            editable_event ev1 = m_eventslots->lookup_link(ev0);
+            editable_event & ev1 = m_eventslots->lookup_link(ev0);
             if (ev1.valid_status())
             {
                 int row1 = m_eventslots->count_to_link(ev0);
@@ -1013,9 +1014,8 @@ qseqeventframe::handle_modify ()
                     m_eventslots->select_event(row1, false);
                     m_eventslots->modify_current_channel_event(row1, d0, d1, ch);
                     set_event_line(row1);
-                    set_seq_lengths(get_lengths());
-                    set_dirty();
                 }
+                reload = true;              /* this is very krufty, mufti   */
             }
         }
 
@@ -1024,6 +1024,9 @@ qseqeventframe::handle_modify ()
         (void) m_eventslots->modify_current_event(row0, ts, name, d0, d1, ch);
         set_seq_lengths(get_lengths());
         set_event_line(row0, ts, name, ch, d0, d1, ltstr);
+        if (reload)
+            initialize_table();             /* this is very stilted, Milton */
+
         set_dirty();
     }
 }

@@ -221,7 +221,7 @@ public:
         return m_event_container.count_to_link(source);
     }
 
-    editable_event lookup_link (const editable_event & ee) const
+    editable_event & lookup_link (const editable_event & ee)
     {
         return m_event_container.lookup_link(ee);
     }

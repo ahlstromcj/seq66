@@ -144,7 +144,7 @@ public:
         return m_midi_parameters;
     }
 
-    editable_event lookup_link (const editable_event & ee) const;
+    editable_event & lookup_link (const editable_event & ee);
 
     /**
      *  Calculates the MIDI pulses (divisions) from a string using one of the

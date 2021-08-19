@@ -296,16 +296,16 @@ editable_events::count_to_link (const editable_event & ee) const
  *  Using the event::key is not fool-proof.
  */
 
-editable_event
-editable_events::lookup_link (const editable_event & ee) const
+editable_event &
+editable_events::lookup_link (const editable_event & ee)
 {
     static editable_event s_dummy_event;
     if (ee.is_linked())
     {
         event::key k(ee);
-        for (const auto & i : events())
+        for (auto & i : events())
         {
-            const editable_event & e = i.second;
+            editable_event & e = i.second;
             if (e.is_linked())
             {
                 event::key k2(*e.link());
