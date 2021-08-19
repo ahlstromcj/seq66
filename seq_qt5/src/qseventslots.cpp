@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-08-17
+ * \updates       2021-08-18
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -190,7 +190,7 @@ qseventslots::events_to_string () const
  *
  * \param index
  *      The index (re 0) of the event, starting at the top line of the frame.
- *      It is a frame index, not a container index.
+ *      It is a frame index, not a container index. (NOT TRUE using Qt!)
  *
  * \param full_redraw
  *      If true (the default) does a full redraw of the frame.  Otherwise,
@@ -217,23 +217,10 @@ qseventslots::set_current_event
     }
     else
     {
-        char tmp[32];
         midibyte d0, d1;
         ev.get_data(d0, d1);
-        if (m_show_data_as_hex)
-        {
-            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_HEX, int(d0));
-            data_0 = tmp;
-            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_HEX, int(d1));
-            data_1 = tmp;
-        }
-        else
-        {
-            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_DEC, int(d0));
-            data_0 = tmp;
-            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_DEC, int(d1));
-            data_1 = tmp;
-        }
+        data_0 = data_string(d0);
+        data_1 = data_string(d1);
     }
     set_event_text
     (
@@ -245,17 +232,25 @@ qseventslots::set_current_event
     m_current_event = ev;
 }
 
+std::string
+qseventslots::data_string (midibyte d)
+{
+    char tmp[32];
+    const char * format = SEQ66_EVENT_DATA_FMT_DEC;
+    if (m_show_data_as_hex)
+        format = SEQ66_EVENT_DATA_FMT_HEX;
+
+    (void) snprintf(tmp, sizeof tmp, format, int(d));
+    return std::string(tmp);
+}
+
 /**
  *  Similar to set_current_event(), but fills in the table row with data,
  *  rather than filling the side fields for the current event.
  */
 
 void
-qseventslots::set_table_event
-(
-    editable_event & ev,
-    int row
-)
+qseventslots::set_table_event (editable_event & ev, int row)
 {
     std::string data_0;
     std::string data_1;
@@ -266,23 +261,10 @@ qseventslots::set_table_event
     }
     else
     {
-        char tmp[32];
         midibyte d0, d1;
         ev.get_data(d0, d1);
-        if (m_show_data_as_hex)
-        {
-            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_HEX, int(d0));
-            data_0 = tmp;
-            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_HEX, int(d1));
-            data_1 = tmp;
-        }
-        else
-        {
-            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_DEC, int(d0));
-            data_0 = tmp;
-            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_DEC, int(d1));
-            data_1 = tmp;
-        }
+        data_0 = data_string(d0);
+        data_1 = data_string(d1);
         if (ev.is_linked())
         {
             midipulse lt = ev.link_time();
@@ -302,7 +284,7 @@ std::string
 qseventslots::time_string (midipulse lt)
 {
     std::string result = "None";
-    if (lt >= 0)
+    if (! is_null_midipulse(lt))
         result = pulses_to_measurestring(lt, m_event_container.timing());
 
     return result;
@@ -738,16 +720,10 @@ qseventslots::modify_current_event
         if (isnoteevent)
         {
             editable_event & ev = editable_events::dref(m_current_iterator);
-            ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
-            if (! ev.is_ex_data())
-            {
-                /*
-                 * Option? ev.set_status(ev.get_status(channelbyte));
-                 */
-
-                midibyte status = ev.get_status();
-                ev.set_channel_status(status, channelbyte); /* fix it up    */
-            }
+            ev.set_status_from_string
+            (
+                evtimestamp, evname, evdata0, evdata1, channel
+            );
             if (row >= 0)
                 set_table_event(ev, row);
         }
@@ -769,6 +745,33 @@ qseventslots::modify_current_event
             if (result)
                 result = insert_event(ev);              /* full karaoke add */
         }
+    }
+    return result;
+}
+
+/**
+ *  This function assumes it is called only for channel events.
+ */
+
+bool
+qseventslots::modify_current_channel_event
+(
+    int row,
+    const std::string & evdata0,
+    const std::string & evdata1,
+    const std::string & channel
+)
+{
+    bool result = m_event_count > 0;
+    if (result)
+       result =  m_current_iterator != m_event_container.end();
+
+    if (result)
+    {
+        editable_event & ev = editable_events::dref(m_current_iterator);
+        ev.modify_channel_status_from_string(evdata0, evdata1, channel);
+        if (row >= 0)
+            set_table_event(ev, row);
     }
     return result;
 }
@@ -975,7 +978,6 @@ qseventslots::page_topper (editable_events::iterator newcurrent)
 /**
  *  Selects and highlights the event that is located in the frame at the given
  *  event index.  The event index is provided by the QtTable Widget.
- *
  *  Note that, if the event index is negative, then we just queue up a draw
  *  operation, which should paint an empty frame -- the event container is
  *  empty.
@@ -999,7 +1001,7 @@ qseventslots::select_event (int event_index, bool full_redraw)
 
     if (ok)
     {
-        auto ei = m_top_iterator;
+        auto ei = m_event_container.begin();    /* not m_top_iterator   */
         ok = ei != m_event_container.end();
         if (ok && (event_index > 0))
         {

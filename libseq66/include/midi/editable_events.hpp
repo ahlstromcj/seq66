@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-04
- * \updates       2021-08-17
+ * \updates       2021-08-19
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -144,7 +144,7 @@ public:
         return m_midi_parameters;
     }
 
-    editable_event & lookup_link (const editable_event & ee);
+    editable_event lookup_link (const editable_event & ee) const;
 
     /**
      *  Calculates the MIDI pulses (divisions) from a string using one of the

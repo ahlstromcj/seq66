@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-08-15
+ * \updates       2021-08-19
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -196,22 +196,22 @@ public:
      * and sequence classes.
      */
 
-    event::buffer::iterator begin ()
+    event::iterator begin ()
     {
         return m_events.begin();
     }
 
-    event::buffer::const_iterator cbegin () const
+    event::const_iterator cbegin () const
     {
         return m_events.cbegin();
     }
 
-    event::buffer::iterator end ()
+    event::iterator end ()
     {
         return m_events.end();
     }
 
-    event::buffer::const_iterator cend () const
+    event::const_iterator cend () const
     {
         return m_events.cend();
     }
@@ -229,7 +229,6 @@ public:
 
     int playable_count () const;
     bool is_playable () const;
-    int count_to_link (const event & source) const;
     midipulse get_max_timestamp () const;
     bool add (const event & e);
     bool append (const event & e);
@@ -288,9 +287,9 @@ public:
      *      is now empty.
      */
 
-    event::buffer::iterator remove (event::buffer::iterator ie)
+    event::iterator remove (event::iterator ie)
     {
-        event::buffer::iterator result = m_events.erase(ie);
+        event::iterator result = m_events.erase(ie);
         m_is_modified = true;
         return result;
     }
@@ -323,7 +322,7 @@ public:
      *      Provides the iterator to the event to which to get a reference.
      */
 
-    static event & dref (event::buffer::iterator ie)
+    static event & dref (event::iterator ie)
     {
         return *ie;
     }
@@ -335,7 +334,7 @@ public:
      *      Provides the iterator to the event to which to get a reference.
      */
 
-    static const event & cdref (event::buffer::const_iterator ie)
+    static const event & cdref (event::const_iterator ie)
     {
         return *ie;
     }
@@ -372,8 +371,8 @@ private:                                /* functions for friend sequence    */
     bool randomize_selected_notes (int jitter, int range);
     bool link_notes
     (
-        event::buffer::iterator eon,
-        event::buffer::iterator eoff
+        event::iterator eon,
+        event::iterator eoff
     );
     void link_tempos ();
     void clear_tempo_links ();

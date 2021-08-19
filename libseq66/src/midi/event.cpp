@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-09
+ * \updates       2021-08-19
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -455,13 +455,6 @@ event::set_midi_event
     bool result = true;
     set_timestamp(timestamp);
     set_sysex_size(count);
-#if defined SEQ66_PLATFORM_DEBUG    // _TMI
-    printf
-    (
-        "set_midi_event([%ld], status %02x, d0 %02X, d1 %02X, %d bytes)\n",
-        timestamp, buffer[0], buffer[1], buffer[2], count
-    );
-#endif
     if (count == 0)             /* portmidi: analyze the event to get count */
     {
         if (is_two_byte_msg(buffer[0]))
@@ -693,10 +686,13 @@ event::append_sysex (midibyte data)
  */
 
 void
-event::print () const
+event::print (const std::string tag) const
 {
     std::string buffer = to_string();
-    printf("%s", buffer.c_str());
+    if (tag.empty())
+        printf("%s", buffer.c_str());
+    else
+        printf("%s: %s", tag.c_str(), buffer.c_str());
 }
 
 void
@@ -760,7 +756,7 @@ event::to_string () const
     result += ") ";
     (void) snprintf
     (
-        tmp, sizeof tmp, "status %02X chan/type %02X d0=%d d1=%d\n",
+        tmp, sizeof tmp, "status 0x%02X chan/type 0x%02X d0=%d d1=%d\n",
         unsigned(m_status), unsigned(m_channel),
         int(m_data[0]), int(m_data[1])
     );
@@ -932,6 +928,16 @@ event::key::operator < (const key & rhs) const
         return (m_rank < rhs.m_rank);
     else
         return (m_timestamp < rhs.m_timestamp);
+}
+
+/**
+ *  Necessary for comparing keys directly (rather than in sorting).
+ */
+
+bool
+event::key::operator == (const key & rhs) const
+{
+    return (m_timestamp == rhs.m_timestamp) && m_rank == rhs.m_rank;
 }
 
 /*

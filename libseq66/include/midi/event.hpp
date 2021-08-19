@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-11
+ * \updates       2021-08-19
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -295,9 +295,11 @@ public:
 
     public:
 
+        key () = default;
         key (midipulse tstamp, int rank);
         key (const event & e);
         bool operator < (const key & rhs) const;
+        bool operator == (const key & rhs) const;
         key (const key & ek) = default;
         key & operator = (const key & ek) = default;
     };
@@ -604,6 +606,11 @@ public:
         );
     }
 
+    static bool is_pitchbend_msg (midibyte m)
+    {
+        return mask_status(m) == EVENT_PITCH_WHEEL;
+    }
+
     static bool is_sysex_msg (midibyte m)
     {
         return m == EVENT_MIDI_SYSEX;
@@ -631,6 +638,11 @@ public:
     static bool is_note_msg (midibyte m)
     {
         return m >= EVENT_NOTE_OFF && m < EVENT_CONTROL_CHANGE;
+    }
+
+    static bool is_controller_msg (midibyte m)
+    {
+        return mask_status(m) == EVENT_CONTROL_CHANGE;
     }
 
     /**
@@ -788,26 +800,6 @@ public:
     }
 
     /**
-     *  Clears the most-significant-bit of the d0 parameter, and sets it into
-     *  the first byte of m_data.  The data bytes are in a two-byte array
-     *  member, m_data.  This setter is useful for Program Change and Channel
-     *  Pressure events.
-     *
-     * \warning
-     *      The second byte of m_data[] is zeroed.  If it needs to be preserved,
-     *      use the two-byte get_data() and set_data() functions.
-     *
-     * \param d0
-     *      The byte value to set as the first data byte.
-     */
-
-    void set_data (midibyte d0)
-    {
-        m_data[0] = d0 & EVENT_DATA_MASK;
-        m_data[1] = 0;                  /* not strictly necessary   */
-    }
-
-    /**
      *  Clears the most-significant-bit of both parameters, and sets them into
      *  the first and second bytes of m_data.
      *
@@ -818,7 +810,7 @@ public:
      *      The second byte value to set.
      */
 
-    void set_data (midibyte d0, midibyte d1)
+    void set_data (midibyte d0, midibyte d1 = 0)
     {
         m_data[0] = d0 & EVENT_DATA_MASK;
         m_data[1] = d1 & EVENT_DATA_MASK;
@@ -1358,7 +1350,7 @@ public:
         return is_meta() && m_channel == EVENT_META_KEY_SIGNATURE;  /* 0x59 */
     }
 
-    void print () const;
+    void print (const std::string tag = "") const;
     void print_note (bool showlink = true) const;
     std::string to_string () const;
     int get_rank () const;

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-08-17
+ * \updates       2021-08-19
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -221,7 +221,7 @@ public:
         return m_event_container.count_to_link(source);
     }
 
-    editable_event & lookup_link (const editable_event & ee)
+    editable_event lookup_link (const editable_event & ee) const
     {
         return m_event_container.lookup_link(ee);
     }
@@ -328,6 +328,7 @@ private:
         bool full_redraw = true
     );
     void set_table_event (editable_event & ev, int row);
+    std::string data_string (midibyte d);
     std::string event_to_string
     (
         const editable_event & ev,
@@ -352,6 +353,13 @@ private:
         const std::string & evdata0,
         const std::string & evdata1,
         const std::string & ch = ""
+    );
+    bool modify_current_channel_event
+    (
+        int row,
+        const std::string & evdata0,
+        const std::string & evdata1,
+        const std::string & channel
     );
     bool save_events ();
     void select_event

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2021-08-17
+ * \updates       2021-08-18
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -386,7 +386,12 @@ public:
         const std::string & sd1,
         const std::string & ch = ""
     );
-    void modify_channel_event (midibyte channel, midibyte d0, midibyte d1);
+    void modify_channel_status_from_string
+    (
+        const std::string & sd0,
+        const std::string & sd1,
+        const std::string & chan
+    );
     std::string format_timestamp ();
     std::string stock_event_string ();
     std::string ex_data_string () const;

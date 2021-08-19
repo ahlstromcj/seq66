@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-04
- * \updates       2021-02-02
+ * \updates       2021-08-19
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_events
@@ -270,34 +270,49 @@ editable_events::save_events ()
  */
 
 int
-editable_events::count_to_link (const editable_event & source) const
+editable_events::count_to_link (const editable_event & ee) const
 {
-    const event & e {source};
-    return m_sequence.events().count_to_link(e);
+    if (ee.is_linked())
+    {
+        event::key k(ee);
+        int index = 0;
+        for (const auto & i : events())
+        {
+            const editable_event & e = i.second;
+            if (e.is_linked())
+            {
+                event::key k2(*e.link());
+                if (k2 == k)
+                    return index;
+            }
+            ++index;
+        }
+    }
+    return (-1);
 }
 
 /**
  *  One can use the event::valid_status() to make sure the item was found.
+ *  Using the event::key is not fool-proof.
  */
 
-editable_event &
-editable_events::lookup_link (const editable_event & ee)
+editable_event
+editable_events::lookup_link (const editable_event & ee) const
 {
     static editable_event s_dummy_event;
-#if 0
-    for (iterator i = events().begin(); i != events().end(); ++i)
+    if (ee.is_linked())
     {
-        if (i->second.link() == ee.link())
+        event::key k(ee);
+        for (const auto & i : events())
         {
-            result = i;
-            break;
+            const editable_event & e = i.second;
+            if (e.is_linked())
+            {
+                event::key k2(*e.link());
+                if (k2 == k)
+                    return e;
+            }
         }
-    }
-#endif
-    for (auto & i : events())
-    {
-        if (i.second.link() == ee.link())
-            return i.second;
     }
     return s_dummy_event;
 }

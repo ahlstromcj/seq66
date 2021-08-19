@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-08-15
+ * \updates       2021-08-19
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -91,35 +91,6 @@ eventlist::operator = (const eventlist & rhs)
         m_has_time_signature    = rhs.m_has_time_signature;
     }
     return *this;
-}
-
-/**
- *  Gets the index (integer position in the map) of the linked event, if any.
- */
-
-int
-eventlist::count_to_link (const event & e) const
-{
-    int result = (-1);
-    if (e.is_linked())
-    {
-        const event::iterator & linked = e.link();
-        bool found = false;
-        int index = 0;
-        for (auto i = m_events.begin(); i != m_events.end(); ++i)
-        {
-            if (i == linked)
-            {
-                found = true;
-                break;
-            }
-            else
-                ++index;
-        }
-        if (found)
-            result = index;
-    }
-    return result;
 }
 
 /**
@@ -379,8 +350,8 @@ eventlist::link_new ()
 bool
 eventlist::link_notes
 (
-    event::buffer::iterator eon,
-    event::buffer::iterator eoff
+    event::iterator eon,
+    event::iterator eoff
 )
 {
     bool result = eon->off_linkable(eoff);
@@ -613,7 +584,7 @@ eventlist::quantize_events
                      * banner.
                      */
 
-                    event::buffer::iterator f = er.link();
+                    event::iterator f = er.link();
                     midipulse ft = f->timestamp() + tdelta; /* seq32 */
                     if (ft < 0)                     /* unwrap Note Off      */
                         ft += seqlength;
@@ -1444,7 +1415,7 @@ eventlist::select_note_events
             midipulse stick = 0, ftick = 0;
             if (er.is_linked())
             {
-                event::buffer::iterator ev = er.link();
+                event::iterator ev = er.link();
                 if (er.is_note_off())
                 {
                     stick = ev->timestamp();    /* time of the Note On  */
@@ -1775,7 +1746,7 @@ eventlist::grow_selected (midipulse delta, int snap)
             {
                 if (er.is_note_on() && er.is_linked())
                 {
-                    event::buffer::iterator off = er.link();
+                    event::iterator off = er.link();
                     midipulse offtime = off->timestamp();
                     midipulse newtime = trim_timestamp(offtime + delta);
                     off->set_timestamp(newtime);    /* new off-time         */

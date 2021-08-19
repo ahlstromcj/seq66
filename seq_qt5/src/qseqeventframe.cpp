@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-08-13
+ * \updates       2021-08-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -343,9 +343,6 @@ qseqeventframe::setup_selection_combo (editable item)
     {
         showit = true;
         ui->d0_label->hide();
-//      ui->d1_label->hide();
-//      ui->entry_ev_data_1->text().clear();
-//      ui->entry_ev_data_1->hide();
     }
     else if (item == editable::program)
     {
@@ -682,9 +679,6 @@ qseqeventframe::set_event_name (const std::string & n)
 void
 qseqeventframe::set_event_channel (int channel)
 {
-    /////// if (! m_seq->free_channel())
-    ///////     channel = m_seq->seq_midi_channel();
-
     ui->channel_combo_box->setCurrentIndex(channel);
 }
 
@@ -759,27 +753,53 @@ qseqeventframe::set_event_line
 {
     QTableWidgetItem * qtip = cell(row, column_id::timestamp);
     if (not_nullptr(qtip))
+    {
         qtip->setText(QString::fromStdString(evtimestamp));
 
-    qtip = cell(row, column_id::eventname);
-    if (not_nullptr(qtip))
+        qtip = cell(row, column_id::eventname);
         qtip->setText(QString::fromStdString(evname));
 
-    qtip = cell(row, column_id::channel);
-    if (not_nullptr(qtip))
+        qtip = cell(row, column_id::channel);
         qtip->setText(QString::fromStdString(evchannel));
 
-    qtip = cell(row, column_id::data_0);
-    if (not_nullptr(qtip))
+        qtip = cell(row, column_id::data_0);
         qtip->setText(QString::fromStdString(evdata0));
 
-    qtip = cell(row, column_id::data_1);
-    if (not_nullptr(qtip))
+        qtip = cell(row, column_id::data_1);
         qtip->setText(QString::fromStdString(evdata1));
 
-    qtip = cell(row, column_id::link);
-    if (not_nullptr(qtip))
+        qtip = cell(row, column_id::link);
         qtip->setText(QString::fromStdString(linktime));
+    }
+}
+
+void
+qseqeventframe::set_event_line (int row, const editable_event & ev)
+{
+    const editable_event & ev2 = m_eventslots->lookup_link(ev);
+    std::string linktime = ev2.timestamp_string();
+    std::string evtimestamp = m_eventslots->time_string(ev.timestamp());
+    std::string evname = ev.status_string();
+    std::string evchannel = ev.channel_string();
+    midibyte d0, d1;
+    ev.get_data(d0, d1);
+
+    std::string evdata0 = m_eventslots->data_string(d0);
+    std::string evdata1 = m_eventslots->data_string(d1);
+    set_event_line
+    (
+        row,  evtimestamp, evname, evchannel, evdata0, evdata1, linktime
+    );
+}
+
+void
+qseqeventframe::set_event_line (int row)
+{
+    if (not_nullptr(m_eventslots))
+    {
+        const editable_event & ev = m_eventslots->current_event();
+        set_event_line(row, ev);
+    }
 }
 
 /**
@@ -983,24 +1003,27 @@ qseqeventframe::handle_modify ()
         midipulse lt = c_null_midipulse;
         if (ev0.is_linked())
         {
-            editable_event & ev1 = m_eventslots->lookup_link(ev0);
+            editable_event ev1 = m_eventslots->lookup_link(ev0);
             if (ev1.valid_status())
             {
-                // int row1 = m_eventslots->count_to_link(ev1);
-                midibyte channel = midibyte(std::stoi(ch) - 1);
-                midibyte notenumber = midibyte(std::stoi(d0));
-                midibyte velocity = ev1.note_velocity();
-                lt = ev0.link_time();
-                ev1.modify_channel_event(channel, notenumber, velocity);
-                // m_eventslots->select_event(row1, false);
-                // m_eventslots->modify_current_event(row0, ts, name, d0, d1, ch);
+                int row1 = m_eventslots->count_to_link(ev0);
+                if (row1 >= 0)
+                {
+                    lt = ev0.link_time();
+                    m_eventslots->select_event(row1, false);
+                    m_eventslots->modify_current_channel_event(row1, d0, d1, ch);
+                    set_event_line(row1);
+                    set_seq_lengths(get_lengths());
+                    set_dirty();
+                }
             }
         }
 
-        std::string linktime = m_eventslots->time_string(lt);
+        std::string ltstr = m_eventslots->time_string(lt);
+        m_eventslots->select_event(row0, false);
         (void) m_eventslots->modify_current_event(row0, ts, name, d0, d1, ch);
         set_seq_lengths(get_lengths());
-        set_event_line(row0, ts, name, chan, d0, d1, linktime);
+        set_event_line(row0, ts, name, ch, d0, d1, ltstr);
         set_dirty();
     }
 }

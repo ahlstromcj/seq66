@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-07-23
+ * \updates       2021-08-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -124,6 +124,8 @@ private:
         const std::string & evdata1,
         const std::string & linktime
     );
+    void set_event_line (int row, const editable_event & ev);   /* overload */
+    void set_event_line (int row);                              /* overload */
     void set_dirty (bool flag = true);
     bool initialize_table ();
     std::string make_seq_title ();

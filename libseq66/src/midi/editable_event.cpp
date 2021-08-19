@@ -416,7 +416,7 @@ editable_event::meta_event_length (midibyte value)
 editable_event::editable_event (const editable_events & parent) :
     event               (),
     m_parent            (&parent),
-    m_link_time         (c_null_midipulse),           // (0),
+    m_link_time         (c_null_midipulse),
     m_category          (subgroup::name),
     m_name_category     (),
     m_format_timestamp  (timestamp_measures),
@@ -443,7 +443,7 @@ editable_event::editable_event
 ) :
     event               (ev),
     m_parent            (&parent),
-    m_link_time         (c_null_midipulse),           // (0),
+    m_link_time         (c_null_midipulse),
     m_category          (subgroup::name),
     m_name_category     (),
     m_format_timestamp  (timestamp_measures),
@@ -457,80 +457,6 @@ editable_event::editable_event
     if (is_linked())
         m_link_time = ev.link()->timestamp();
 }
-
-#if 0
-
-/**
- *  This copy constructor initializes most of the class members.  This
- *  function is currently geared only toward support of the SMF 0
- *  channel-splitting feature.  Many of the members are not set to useful
- *  values when the MIDI file is read, so we don't handle them for now.
- *
- * \warning
- *      This function does not yet copy the SysEx data.  The inclusion
- *      of SysEx editable_events was not complete in Seq24, and it is still
- *      not complete in Seq66.  Nor does it currently bother with the
- *      links.
- *
- * \param rhs
- *      Provides the editable_event object to be copied.
- */
-
-editable_event::editable_event (const editable_event & rhs)
- :
-    event               (rhs),
-    m_parent            (rhs.m_parent),
-    m_link_time         (rhs.m_link_time),
-    m_category          (rhs.m_category),
-    m_name_category     (rhs.m_name_category),
-    m_format_timestamp  (rhs.m_format_timestamp),
-    m_name_timestamp    (rhs.m_name_timestamp),
-    m_name_status       (rhs.m_name_status),
-    m_name_meta         (rhs.m_name_meta),
-    m_name_seqspec      (rhs.m_name_seqspec),
-    m_name_channel      (rhs.m_name_channel),
-    m_name_data         (rhs.m_name_data)
-{
-    // No other code
-}
-
-/*
- *  This principal assignment operator sets the class members.
- *
- * \param rhs
- *      Provides the editable_event object to be assigned.
- *
- * \return
- *      Returns a reference to "this" object, to support the serial assignment
- *      of editable_events.
- */
-
-editable_event &
-editable_event::operator = (const editable_event & rhs)
-{
-    if (this != &rhs)
-    {
-        event::operator =(rhs);
-
-        /*
-         * m_parent         = rhs.m_parent;         // cannot copy a reference
-         */
-
-        m_link_time         = rhs.m_link_time;
-        m_category          = rhs.m_category;
-        m_name_category     = rhs.m_name_category;
-        m_format_timestamp  = rhs.m_format_timestamp;
-        m_name_timestamp    = rhs.m_name_timestamp;
-        m_name_status       = rhs.m_name_status;
-        m_name_meta         = rhs.m_name_meta;
-        m_name_seqspec      = rhs.m_name_seqspec;
-        m_name_channel      = rhs.m_name_channel;
-        m_name_data         = rhs.m_name_data;
-    }
-    return *this;
-}
-
-#endif
 
 /**
  * \setter m_category by value
@@ -687,8 +613,22 @@ editable_event::time_as_minutes ()
  *  Converts a string into an event status, along with timestamp and data
  *  bytes.  Currently, this function handles only the following two messages:
  *
- *      -   subgroup::channel_message
- *      -   subgroup::system_message
+ *      -   subgroup::channel_message.
+ *          Handle Meta or SysEx events, setting that status to 0xFF and the
+ *          meta-type (in the m_channel member) to the meta event type-value,
+ *          then filling in m_sysex based on the field values in the sd0
+ *          parameter.
+ *      -   subgroup::system_message.
+ *      -   subgroup::meta_event.
+ *
+ *  The Tempo data 0 field consists of one double BPM value.  We convert it to
+ *  a tempo-in-microseconds value, then populate a 3-byte array with it.  Then
+ *  we need to create an event from it.
+ *
+ *  The Time Signature data 0 field consists of a string like "4/4".  The data
+ *  1 field has two values for metronome support.  First, parse the "nn/dd"
+ *  string; the slash (solidus) is required.  Then get the cc and bb metronome
+ *  values, if present.  Otherwise, hardwired them to values of 0x18 and 0x08.
  *
  *  After all of the numbering member items have been set, they are converted
  *  and assigned to the string versions via a call to the analyze() function.
@@ -729,45 +669,24 @@ editable_event::set_status_from_string
     timestamp(ts);
     if (value != s_end_of_table)
     {
-        midibyte newstatus = midibyte(value);
+        midibyte status = midibyte(value);
+        midibyte c = string_to_midibyte(chan, 1) - 1;       /* default == 0 */
         midibyte d0 = string_to_midibyte(sd0);
-        midibyte c = channel();
-        if (! chan.empty())
-            c = midibyte(std::stoi(chan) - 1);
-
-        set_channel_status(newstatus, c);       /* pass in code, channel */
-        if (is_one_byte_msg(newstatus))
-        {
-            set_data(d0, 0);
-        }
-        else if (is_two_byte_msg(newstatus))
-        {
-            midibyte d1 = string_to_midibyte(sd1);
+        midibyte d1 = string_to_midibyte(sd1);
+        set_channel_status(status, c);
+        if (is_one_byte_msg(status))
+            set_data(d0);
+        else if (is_two_byte_msg(status))
             set_data(d0, d1);
-        }
     }
     else
     {
         value = name_to_value(s, subgroup::meta_event);
         if (value != s_end_of_table)
         {
-            /*
-             * Handle Meta or SysEx events, setting that status to 0xFF and
-             * the meta-type (in the m_channel member) to the meta event
-             * type-value, then filling in m_sysex based on the field values
-             * in the sd0 parameter.
-             */
-
             set_meta_status(value);
             if (value == EVENT_META_SET_TEMPO)                      /* 0x51 */
             {
-                /*
-                 * The Tempo data 0 field consists of one double BPM value.
-                 * We convert it to a tempo-in-microseconds value, then
-                 * populate a 3-byte array with it.  Then we need to create an
-                 * event from it.
-                 */
-
                 double bpm = std::atof(sd0.c_str());
                 if (bpm > 0.0f)
                 {
@@ -779,15 +698,6 @@ editable_event::set_status_from_string
             }
             else if (value == EVENT_META_TIME_SIGNATURE)            /* 0x51 */
             {
-                /*
-                 * The Time Signature data 0 field consists of a string like
-                 * "4/4".  The data 1 field has two values for metronome
-                 * support.  First, parse the "nn/dd" string; the slash
-                 * (solidus) is required.  Then get the cc and bb metronome
-                 * values, if present.  Otherwise, hardwired them to values of
-                 * 0x18 and 0x08.
-                 */
-
                 auto pos = sd0.find_first_of("/");
                 if (pos != std::string::npos)
                 {
@@ -833,13 +743,12 @@ editable_event::set_status_from_string
                  * still need to determine the length value and allocate the
                  * midibyte array ahead of time, or add a function to set
                  * SysEx. TODO.
-
+                 *
                 auto pos = sd0.find_first_of("0123456789x");
                 while (pos != std::string::npos)
                 {
                     // TODO
                 }
-
                  */
             }
         }
@@ -848,20 +757,46 @@ editable_event::set_status_from_string
 }
 
 /**
- *  This function can modify the data bytes and the channel of a channel-event.
- *  For example, it can change the note number, note velocity, and note channel.
- *
- *  Not modified are the name and type of the event, and its timestamp.
- *  This function is useful in modifying the linked note event
- *  of a Note On/Off event.
+ *  This function can modify the data bytes and the channel of a channel
+ *  event.  For example, it can change the note number, note velocity, and
+ *  note channel.  Not modified are the name and type of the event, and its
+ *  timestamp.  This function is useful in modifying the linked note event of
+ *  a Note On/Off event.
  */
 
 void
-editable_event::modify_channel_event (midibyte channel, midibyte d0, midibyte d1)
+editable_event::modify_channel_status_from_string
+(
+    const std::string & sd0,
+    const std::string & sd1,
+    const std::string & chan
+)
 {
     midibyte status = mask_status(get_status());
-    set_channel_status(status, channel);
-    set_data(d0, d1);
+    midibyte c = midibyte(std::stoi(chan) - 1);
+    set_channel_status(status, c);          /* pass in status and channel   */
+    if (is_one_byte_msg(status) || is_pitchbend_msg(status))
+    {
+        /*
+         * Do not change the Program Change or Channel Pressure data.
+         * Do not change the Coarse or Fine Pitchbend.
+         */
+    }
+    else if (is_two_byte_msg(status))
+    {
+        midibyte d0 = string_to_midibyte(sd0);
+        midibyte d1 = string_to_midibyte(sd1);
+        if (is_note_msg(status))            /* Note On/Off and Aftertouch   */
+        {
+            d1 = note_velocity();           /* keep velocity or pressure    */
+        }
+        else if (is_controller_msg(status)) /* keep CC# and CC value        */
+        {
+            get_data(d0, d1);
+        }
+        set_data(d0, d1);
+    }
+    analyze();                              /* (re)create the strings       */
 }
 
 /**
