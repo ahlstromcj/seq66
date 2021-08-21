@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-07-18
+ * \updates       2021-08-20
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -761,15 +761,26 @@ file_create_for_write (const std::string & filename)
     return file_open(filename, "wb");
 }
 
+/**
+ *  Appends a string to file. If it does not exist, it is appended to.
+ */
+
 bool
 file_write_string (const std::string & filename, const std::string & text)
 {
-    FILE * fptr = file_open(filename, "w");
+    FILE * fptr = file_open(filename, "a");     /* "w": now we append   */
     bool result = not_nullptr(fptr);
     if (result)
     {
-        size_t len = text.length();
-        size_t rc = fwrite(text.c_str(), sizeof(char), len, fptr);
+        std::string fulltext = filename;
+        fulltext += " ";
+        fulltext += current_date_time();
+        fulltext += "\n";
+        fulltext += text;
+        fulltext += "\n";
+
+        size_t len = fulltext.length();
+        size_t rc = fwrite(fulltext.c_str(), sizeof(char), len, fptr);
         if (rc < len)
         {
             errprintf("could not write to '%s'", filename.c_str());

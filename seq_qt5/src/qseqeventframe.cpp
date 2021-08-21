@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-08-19
+ * \updates       2021-08-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -152,12 +152,9 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     ui->eventTableWidget->setHorizontalHeaderLabels(columns);
     ui->eventTableWidget->setSelectionBehavior
     (
-        QAbstractItemView::SelectRows           /* SelectItems          */
+        QAbstractItemView::SelectRows               /* SelectItems          */
     );
-    ui->eventTableWidget->setSelectionMode
-    (
-        QAbstractItemView::SingleSelection      /* MultiSelection       */
-    );
+    set_selection_multi(false);                     /* SingleSelection      */
     set_row_heights(sc_event_row_height);
     set_column_widths(ui->eventTableWidget->width() - sc_event_table_fix);
 
@@ -171,7 +168,12 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     connect
     (
         ui->eventTableWidget, SIGNAL(currentCellChanged(int, int, int, int)),
-        this, SLOT(handle_table_click_ex(int, int, int, int))
+        this, SLOT(slot_table_click_ex(int, int, int, int))
+    );
+    connect
+    (
+        ui->eventTableWidget, SIGNAL(clicked(const QModelIndex &)),
+        this, SLOT(slot_row_selected())
     );
 
     /*
@@ -215,7 +217,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     connect
     (
         ui->button_del, SIGNAL(clicked(bool)),
-        this, SLOT(handle_delete())
+        this, SLOT(slot_delete())
     );
     ui->button_del->setEnabled(false);
 
@@ -226,7 +228,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     connect
     (
         ui->button_ins, SIGNAL(clicked(bool)),
-        this, SLOT(handle_insert())
+        this, SLOT(slot_insert())
     );
     ui->button_ins->setEnabled(true);
 
@@ -237,7 +239,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     connect
     (
         ui->button_modify, SIGNAL(clicked(bool)),
-        this, SLOT(handle_modify())
+        this, SLOT(slot_modify())
     );
     ui->button_modify->setEnabled(false);
 
@@ -248,7 +250,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     connect
     (
         ui->button_save, SIGNAL(clicked(bool)),
-        this, SLOT(handle_save())
+        this, SLOT(slot_save())
     );
     ui->button_save->setEnabled(false);
 
@@ -259,7 +261,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     connect
     (
         ui->button_clear, SIGNAL(clicked(bool)),
-        this, SLOT(handle_clear())
+        this, SLOT(slot_clear())
     );
     ui->button_clear->setEnabled(true);
 
@@ -270,7 +272,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     connect
     (
         ui->button_dump, SIGNAL(clicked(bool)),
-        this, SLOT(handle_dump())
+        this, SLOT(slot_dump())
     );
     ui->button_dump->setEnabled(true);
 
@@ -408,6 +410,18 @@ qseqeventframe::populate_program_combo ()
         }
     }
     ui->selection_combo_box->setCurrentIndex(0);
+}
+
+void
+qseqeventframe::set_selection_multi (bool multi)
+{
+    QAbstractItemView::SelectionMode sm = multi ?
+        QAbstractItemView::MultiSelection : QAbstractItemView::SingleSelection ;
+
+    ui->eventTableWidget->setSelectionMode(sm);
+
+//  if (! multi)
+//      ui->eventTableWidget->clearSelection();
 }
 
 void
@@ -850,7 +864,7 @@ qseqeventframe::current_row (int row)
 }
 
 void
-qseqeventframe::handle_table_click_ex
+qseqeventframe::slot_table_click_ex
 (
     int row, int /*column*/, int /*prevrow*/, int /*prevcolumn*/
 )
@@ -861,6 +875,36 @@ qseqeventframe::handle_table_click_ex
         current_row(row);
         ui->button_del->setEnabled(true);
         ui->button_modify->setEnabled(true);
+
+        if (ui->eventTableWidget->selectionModel()->selectedRows().count() > 1)
+            ui->eventTableWidget->clearSelection();
+    }
+}
+
+void
+qseqeventframe::slot_row_selected ()
+{
+    QModelIndex index = ui->eventTableWidget->currentIndex();
+    int row = index.row();
+    m_eventslots->select_event(row);        /* also done by click */
+
+    const editable_event & ev0 = m_eventslots->current_event();
+    if (ev0.is_linked())
+    {
+        editable_event & ev1 = m_eventslots->lookup_link(ev0);
+        if (ev1.valid_status())
+        {
+            int row1 = m_eventslots->count_to_link(ev0);
+            if (row1 >= 0)
+            {
+                set_selection_multi(true);
+                ui->eventTableWidget->selectRow(row1);
+            }
+        }
+    }
+    else
+    {
+        set_selection_multi(false);
     }
 }
 
@@ -889,7 +933,7 @@ qseqeventframe::get_lengths ()
  */
 
 void
-qseqeventframe::handle_delete ()
+qseqeventframe::slot_delete ()
 {
     if (m_eventslots)
     {
@@ -938,6 +982,7 @@ qseqeventframe::handle_delete ()
 
         set_seq_lengths(get_lengths());
     }
+    set_selection_multi(false);
 }
 
 /**
@@ -953,7 +998,7 @@ qseqeventframe::handle_delete ()
  */
 
 void
-qseqeventframe::handle_insert ()
+qseqeventframe::slot_insert ()
 {
     if (m_eventslots)
     {
@@ -977,6 +1022,7 @@ qseqeventframe::handle_insert ()
             set_dirty();
         }
     }
+    set_selection_multi(false);
 }
 
 /**
@@ -988,7 +1034,7 @@ qseqeventframe::handle_insert ()
  */
 
 void
-qseqeventframe::handle_modify ()
+qseqeventframe::slot_modify ()
 {
     if (m_eventslots)
     {
@@ -1029,6 +1075,7 @@ qseqeventframe::handle_modify ()
 
         set_dirty();
     }
+    set_selection_multi(false);
 }
 
 /**
@@ -1049,7 +1096,7 @@ qseqeventframe::handle_modify ()
  */
 
 void
-qseqeventframe::handle_save ()
+qseqeventframe::slot_save ()
 {
     if (m_eventslots)
     {
@@ -1062,10 +1109,11 @@ qseqeventframe::handle_save ()
             m_is_dirty = false;
         }
     }
+    set_selection_multi(false);
 }
 
 void
-qseqeventframe::handle_clear ()
+qseqeventframe::slot_clear ()
 {
     if (m_eventslots)
     {
@@ -1073,10 +1121,11 @@ qseqeventframe::handle_clear ()
         initialize_table();
         set_dirty();
     }
+    set_selection_multi(false);
 }
 
 void
-qseqeventframe::handle_dump ()
+qseqeventframe::slot_dump ()
 {
     if (m_eventslots)
     {
@@ -1101,18 +1150,19 @@ qseqeventframe::handle_dump ()
                 printf("%s", dump.c_str());
         }
     }
+    set_selection_multi(false);
 }
 
 /**
  *  Cancels the edits and closes the dialog box.  In order for removing the
  *  current-highlighting in the mainwd or perfedit windows, some of the work
- *  of handle_close() needs to be done here as well.
+ *  of slot_close() needs to be done here as well.
  */
 
 void
-qseqeventframe::handle_cancel ()
+qseqeventframe::slot_cancel ()
 {
-    // TO BE DETERMINED
+    set_selection_multi(false);
 }
 
 /*

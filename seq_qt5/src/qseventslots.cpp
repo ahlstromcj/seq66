@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-08-18
+ * \updates       2021-08-20
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -327,10 +327,10 @@ qseventslots::event_to_string
     char line[132];
     snprintf
     (
-        line, sizeof line, "%4d %s %12s %5s %5s %5s %12s\n",
+        line, sizeof line, "%4d %s %12s Ch %2s %5s %5s %12s 0x%04x\n",
         index, ev.timestamp_string().c_str(), ev.status_string().c_str(),
         ev.channel_string().c_str(), data_0.c_str(), data_1.c_str(),
-        linktime.c_str()
+        linktime.c_str(), ev.get_rank()
     );
     return std::string(line);
 }

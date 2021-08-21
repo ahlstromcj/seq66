@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-19
+ * \updates       2021-08-20
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -792,7 +792,11 @@ event::rescale (int newppqn, int oldppqn)
  *
  *  The ranking, from high to low, is note off, note on, aftertouch, channel
  *  pressure, and pitch wheel, control change, and program changes.  The lower
- *  the ranking the more upfront an item comes in the sort order.
+ *  the ranking, the more upfront an item comes in the sort order, given the
+ *  same time-stamp.
+ *
+ * Note:
+ *      We could add the channel number as part of the ranking. Sound?
  *
  * \return
  *      Returns the rank of the current m_status byte.
@@ -801,28 +805,40 @@ event::rescale (int newppqn, int oldppqn)
 int
 event::get_rank () const
 {
-    switch (m_status)
+    int result;
+    int eventcode = mask_status(m_status);  /* strip off channel nybble     */
+    switch (eventcode)
     {
     case EVENT_NOTE_OFF:
-        return 0x200 + get_note();
+        result = 0x2000 + get_note();
+        break;
 
     case EVENT_NOTE_ON:
-        return 0x100 + get_note();
+        result = 0x1000 + get_note();
+        break;
 
     case EVENT_AFTERTOUCH:
     case EVENT_CHANNEL_PRESSURE:
     case EVENT_PITCH_WHEEL:
-        return 0x050;
+        result = 0x0050;
+        break;
 
     case EVENT_CONTROL_CHANGE:
-        return 0x010;
+        result = 0x0020;
+        break;
 
     case EVENT_PROGRAM_CHANGE:
-        return 0x000;
+        result = 0x0010;
+        break;
 
     default:
-        return 0;
+        result = 0;
+        break;
     }
+    if (result != 0)
+        result += mask_channel(m_status) << 8;
+
+    return result;
 }
 
 /**
@@ -885,8 +901,7 @@ event::set_tempo (midibpm tempo)
  *      information.
  */
 
-event::key::key (midipulse tstamp, int rank)
- :
+event::key::key (midipulse tstamp, int rank) :
     m_timestamp (tstamp),
     m_rank      (rank)
 {
@@ -902,8 +917,7 @@ event::key::key (midipulse tstamp, int rank)
  *      Provides the event key to be copied.
  */
 
-event::key::key (const event & rhs)
- :
+event::key::key (const event & rhs) :
     m_timestamp (rhs.timestamp()),
     m_rank      (rhs.get_rank())
 {

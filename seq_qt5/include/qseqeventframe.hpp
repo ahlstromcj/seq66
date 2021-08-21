@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-08-18
+ * \updates       2021-08-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -101,6 +101,7 @@ protected:
 
 private:
 
+    void set_selection_multi (bool multi);
     void set_row_heights (int height);
     void set_row_height (int row, int height);
     void set_column_widths (int total_width);
@@ -149,14 +150,15 @@ protected:                          // overrides of event handlers
 
 private slots:
 
-    void handle_table_click_ex (int row, int column, int prevrow, int prevcol);
-    void handle_delete ();
-    void handle_insert ();
-    void handle_modify ();
-    void handle_save ();
-    void handle_clear ();
-    void handle_dump ();
-    void handle_cancel ();
+    void slot_table_click_ex (int row, int column, int prevrow, int prevcol);
+    void slot_row_selected ();
+    void slot_delete ();
+    void slot_insert ();
+    void slot_modify ();
+    void slot_save ();
+    void slot_clear ();
+    void slot_dump ();
+    void slot_cancel ();
     void update_seq_name ();
     void slot_midi_channel (int index);
     void slot_event_name (int index);
