@@ -1,7 +1,7 @@
 # Seq66 0.96.0 (and above) main ('rc') configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written 2021-08-03 15:15:05
+# Written 2021-08-22 08:52:00
 #
 # This file holds the main configuration for Seq66. It no longer
 # follows the format of the seq24rc configuration file much.
@@ -25,8 +25,9 @@ verbose = false
 sets-mode = normal
 port-naming = short
 
-# The [comments] section holds user documentation for this file.
 # The first completely empty, comment, or tag line ends the comment.
+# [comments] holds user documentation for this file. The first empty,
+# hash-commented, or tag line ends the comment.
 
 [comments]
 
@@ -115,10 +116,21 @@ virtual-ports = false
 output-port-count = 8
 input-port-count = 4
 
-# These system ports are available for input. From JACK's view, these
-# are 'playback' devices. The first number is a buss number, and the
-# second number is the input status, disabled (0) or
-# enabled (1). The item in quotes is the input-buss name.
+# These system ports are available for output, for playback/control.
+# From JACK's view, these are 'capture' devices. The first line shows
+# the count of MIDI 'capture' ports. Each line shows the buss number
+# and clock status of that buss:
+#
+#  -1 = The output port is disabled.
+#   0 = MIDI Clock is off. The output port is enabled.
+#   1 = MIDI Clock on; Song Position and MIDI Continue are sent.
+#   2 = MIDI Clock Modulo.
+#
+# With Clock Modulo, MIDI clocking doesn't begin until song position
+# reaches the start modulo value [midi-clock-mod-ticks]. One can
+# disable a port manually for devices that are present, but not
+# available (because another application, e.g. Windows MIDI Mapper,
+# has exclusive access to the device.
 
 [midi-input]
 
@@ -160,8 +172,8 @@ input-port-count = 4
 # With Clock Modulo, MIDI clocking doesn't begin until song position
 # reaches the start modulo value [midi-clock-mod-ticks]. One can
 # disable a port manually for devices that are present, but not
-# available (because another application has exclusive access to the
-# device (e.g. the MIDI Mapper on Windows).
+# available (because another application, e.g. Windows MIDI Mapper,
+# has exclusive access to the device.
 
 [midi-clock]
 

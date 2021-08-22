@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-20
- * \updates       2020-12-28
+ * \updates       2021-08-22
  * \license       GNU GPLv2 or above
  *
  *  This class is used in the qseditoptions settings-dialog class.
@@ -67,12 +67,7 @@ namespace seq66
  *      the true/actual system bus number before usage.
  */
 
-qinputcheckbox::qinputcheckbox
-(
-    QWidget * parent,
-    performer & p,
-    int bus
-) :
+qinputcheckbox::qinputcheckbox (QWidget * parent, performer & p, int bus) :
     QWidget                     (parent),
     m_performance               (p),
     m_bus                       (bus),
@@ -80,16 +75,11 @@ qinputcheckbox::qinputcheckbox
     m_chkbox_inputactive        (nullptr)
 {
     setup_ui();
-
-    bool ok = connect
+    connect
     (
         m_chkbox_inputactive, SIGNAL(stateChanged(int)),
         this, SLOT(input_callback_clicked(int))
     );
-    if (! ok)
-    {
-        errprint("qinputcheckbox: input-active slot failed to connect");
-    }
 }
 
 /**

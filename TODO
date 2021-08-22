@@ -1,6 +1,6 @@
 TO DO for Seq66 0.96.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-08-16
+2019-04-13 to 2021-08-21
 
 Hottest to Trivial:
 
@@ -40,12 +40,6 @@ UI:
             -   Load key and midi controls (does this work?)
             -   Control buss (in and out)
             -   Enabled (in and out)
-
-Event editor:
-
-    -   Handle adding a Note Off (of snap lenght) when adding a Note On.
-    -   When modifying the channel or note-value of a Note On/Off, also
-        update the linked note.
 
 Port-Mapping:
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-08-03
+ * \updates       2021-08-22
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -498,17 +498,23 @@ rcfile::parse ()
     {
         inputslist & inputref = input_port_map();
         int activeflag;
+        int count = 0;
         inputref.clear();
         (void) std::sscanf(scanline(), "%d", &activeflag);
         inputref.active(activeflag != 0);
         for ( ; next_data_line(file); )
         {
-            if (! inputref.add_list_line(line()))
+            if (inputref.add_list_line(line()))
+            {
+                ++count;
+            }
+            else
             {
                 inputref.clear();
                 inputref.active(false);
                 break;
             }
+            infoprintf("%d midi-input-map entries added", count);
         }
     }
     tag = "[midi-clock]";
@@ -575,18 +581,24 @@ rcfile::parse ()
     {
         clockslist & clocsref = output_port_map();
         int activeflag;
+        int count = 0;
         clocsref.clear();
         (void) std::sscanf(scanline(), "%d", &activeflag);
         clocsref.active(activeflag != 0);
         for ( ; next_data_line(file); )
         {
-            if (! clocsref.add_list_line(line()))
+            if (clocsref.add_list_line(line()))
+            {
+                ++count;
+            }
+            else
             {
                 clocsref.clear();
                 clocsref.active(false);
                 break;
             }
         }
+        infoprintf("%d midi-clock-map entries added", count);
     }
 
     int ticks = 64;

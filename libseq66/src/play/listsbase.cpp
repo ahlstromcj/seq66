@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-05-02
+ * \updates       2021-08-22
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -263,7 +263,8 @@ count_colons (const std::string & name)
  *  QSynth has a name like the following, which breaks the algorithm and makes
  *  the space position far outside the bounds of the string.  In that case, we
  *  punt and get the whole string.  Also see extract_port_names() in the
- *  calculations module.
+ *  calculations module.  Another issue is that each incarnation of QSynth
+ *  produces a name with a different port number.
  *
 \verbatim
         [6] 130:0 FLUID Synth (125507):Synth input port (125507:0)
@@ -332,7 +333,19 @@ listsbase::extract_nickname (const std::string & name) const
             result = clientname + ":" + portname;
 
         if (result == name)
-            result = simplify(result);  /* can we just call this one??? */
+            result = simplify(result);          /* can we call only this?? */
+    }
+    else
+    {
+        auto ppos = result.find_first_of("(");  /* happens with fluidsynth  */
+        if (ppos != std::string::npos && ppos > 1)
+        {
+            --ppos;
+            if (result[ppos] == ' ')
+                --ppos;
+
+            result = result.substr(0, ppos + 1);
+        }
     }
     if (result.empty())
         result = name;
@@ -427,6 +440,16 @@ listsbase::match_up (const listsbase & source)
     }
 }
 
+/*
+ * Issue:
+ *
+ *  The [midi-clock] name and the [midi-clock-map] nick-name might be like:
+ *
+ *      -   "FLUID Synth (3088150):Synth input port (3088150:0)"
+ *      -   "FLUID Synth (1070760)"
+ *
+ */
+
 const listsbase::io &
 listsbase::get_io_block (const std::string & nickname) const
 {
@@ -438,10 +461,12 @@ listsbase::get_io_block (const std::string & nickname) const
         s_dummy_io.io_enabled = false;
         s_dummy_io.out_clock = e_clock::disabled;
     }
-
     for (const auto & iopair : m_master_io)
     {
-        if (iopair.second.io_nick_name == nickname)
+        // bool matches = iopair.second.io_nick_name == nickname;
+
+        bool matches = contains(iopair.second.io_nick_name, nickname);
+        if (matches)
             return iopair.second;
     }
     return s_dummy_io;

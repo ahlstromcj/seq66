@@ -1,7 +1,7 @@
 # README for Seq66 0.96.3
 
 Chris Ahlstrom
-2015-09-10 to 2021-08-21
+2015-09-10 to 2021-08-22
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -82,6 +82,9 @@ Windows, and using a conventional source tarball.
     *   Version 0.96.3:
         *   Added ability to modify Note On and Note Off at the same time in the
             event editor. Fixed and updated event::get_rank().
+        *   Fixed output port-map issue with lookup of "FLUID Synth". Removed
+            the random ID number; search the port name via containment, not
+            equality.
     *   Version 0.96.2:
         *   Fixed issue #55, where the MIDI control channel was being stripped
             when using JACK.  Many other channel-handling improvements.

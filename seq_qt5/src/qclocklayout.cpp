@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2021-07-05
+ * \updates       2021-08-22
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
@@ -79,14 +79,11 @@ qclocklayout::qclocklayout (QWidget * parent, performer & p, int bus) :
     m_rbutton_group             (nullptr)
 {
     setup_ui();
-
-    bool ok = connect
+    connect
     (
         m_rbutton_group, SIGNAL(buttonClicked(int)),
         this, SLOT(clock_callback_clicked(int))
     );
-    if (! ok)
-        (void) error_message("qclocklayout: slot failed to connect");
 }
 
 /**
