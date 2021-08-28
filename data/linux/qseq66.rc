@@ -23,7 +23,7 @@ config-type = "rc"
 version = 2
 verbose = false
 sets-mode = normal
-port-naming = short
+port-naming = long
 
 # The first completely empty, comment, or tag line ends the comment.
 # [comments] holds user documentation for this file. The first empty,
@@ -205,7 +205,8 @@ input-port-count = 4
 3   "Q25 MIDI 1"
 4   "E-MU XMidi1X1 Tab MIDI 1"
 5   "Launchpad Mini MIDI 1"
-6   "FLUID Synth (1070760)"
+6   "FLUID Synth"
+7   "qsynth midi_00"
 
 # 'ticks' provides the Song Position (in 16th notes) at which
 # clocking begins if the buss is set to MIDI Clock Mod setting.

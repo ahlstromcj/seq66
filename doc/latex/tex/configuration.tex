@@ -503,13 +503,10 @@
          play.
    \end{itemize}
 
-   next play-screen ('normal'), while 'autoarm' will automatically
-   unmute the next set.  The 'additive' options keeps the previous
-   set unmuted when moving to the next set.
-
   The port-naming values are 'short' or 'long'.  The short style
   just shows the port number and short port name; the long style
   shows all the numbers and the long port name.
+  For \textsl{Windows} (portmidi), the 'long' option works better.
 
 \subsubsection{'rc' File / MIDI Control}
 \label{subsubsec:configuration_rc_midi_control}
@@ -597,7 +594,8 @@
    system buss number is the one to be used.  When the system setup changes,
    the pattern does not need to changed; only the port mapping may need to be
    changed.  If the port map covers all I/O ports ever possible on a system, it
-   will not need to be changed.  See \sectionref{sec:port_mapping}.
+   will not need to be changed.  See \sectionref{sec:port_mapping}; it contains
+   more details.
 
 \subsubsection{'rc' File / MIDI-Clock Section}
 \label{subsec:configuration_rc_midi_clock}
@@ -627,6 +625,8 @@
       2 0    "[2] 128:1 TiMidity port 1"
       . . .
    \end{verbatim}
+
+   Note that the 'rc' file has a port-naming option, as described earlier.
 
 \subsubsection{'rc' File / MIDI Clock Mod Ticks}
 \label{subsubsec:configuration_rc_midi_cmt}

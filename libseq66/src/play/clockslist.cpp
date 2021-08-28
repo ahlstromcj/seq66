@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-03-15
+ * \updates       2021-08-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -224,7 +224,7 @@ build_output_port_map (const clockslist & cl)
  *      Provides the clockslist that holds the actual existing MIDI output
  *      ports.
  *
- * \param nominalbuss
+ * \param seqbuss
  *      Provides the buss number to be mapped to the true buss number. The
  *      nominal buss number is the number stored with each pattern in the
  *      tune, and should never change just because the set of MIDI equipment
@@ -239,29 +239,35 @@ build_output_port_map (const clockslist & cl)
  */
 
 bussbyte
-true_output_bus (const clockslist & cl, bussbyte nominalbuss)
+true_output_bus (const clockslist & cl, bussbyte seqbuss)
 {
-    bussbyte result = nominalbuss;
+    bussbyte result = seqbuss;
     if (! is_null_buss(result))
     {
         const clockslist & cloutref = output_port_map();
         if (cloutref.active())
         {
-            std::string shortname = cloutref.port_name_from_bus(nominalbuss);
+            std::string shortname = cloutref.port_name_from_bus(seqbuss);
             if (shortname.empty())
-                result = null_buss();
-            else
-                result = cl.bus_from_nick_name(shortname);
-
-            if (is_null_buss(result))
             {
-                std::string msg = string_format
-                (
-                    "true_output_bus(%d) failed for port '%s'",
-                    nominalbuss, shortname.c_str()
-                );
+                std::string msg = string_format("No output buss %d", seqbuss);
                 errprint(msg);
+                result = null_buss();
             }
+            else
+            {
+                result = cl.bus_from_nick_name(shortname);
+                if (is_null_buss(result))
+                {
+                    const char * sn = shortname.c_str();
+                    std::string msg = string_format
+                    (
+                        "No output buss %d (%s)", seqbuss, sn
+                    );
+                    errprint(msg);
+                }
+            }
+
         }
     }
     return result;

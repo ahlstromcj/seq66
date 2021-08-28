@@ -374,7 +374,7 @@ listsbase::bus_from_nick_name (const std::string & nick) const
     {
         if (nick == iopair.second.io_nick_name)
         {
-            result = iopair.first;              // bussbyte(b);
+            result = iopair.first;
             break;
         }
     }
