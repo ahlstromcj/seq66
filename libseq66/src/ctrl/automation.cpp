@@ -272,7 +272,7 @@ s_slotnamelist [] =
     { slot::follow_transport, "follow_transport"},
     { slot::panic,            "panic"           },
     { slot::visibility,       "visibility"      },
-    { slot::reserved_44,      "reserved_44"     },
+    { slot::save_session,     "save_session"    },
     { slot::reserved_45,      "reserved_45"     },
     { slot::reserved_46,      "reserved_46"     },
     { slot::reserved_47,      "reserved_47"     },
@@ -283,6 +283,13 @@ s_slotnamelist [] =
     { slot::automation,       "automation"      },
     { slot::illegal,          "illegal"         }
 };
+
+#if defined SEQ66_USE_SLOT_STRING_CONVERSIONS
+
+/*
+ * This function is not used.  And the slotname field is basically the same as
+ * the std::string returned by opcontrol::slot_name(slot s).
+ */
 
 std::string
 slot_to_string (slot s)
@@ -311,6 +318,8 @@ string_to_slot (const std::string & s)
     }
     return result;
 }
+
+#endif  // defined SEQ66_USE_SLOT_STRING_CONVERSIONS
 
 }           // namespace automation
 

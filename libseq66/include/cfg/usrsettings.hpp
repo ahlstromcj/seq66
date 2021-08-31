@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-08-12
+ * \updates       2021-08-28
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -189,10 +189,12 @@ private:
 
     enum class session
     {
-        none,
-        nsm,
-        lash,
-        max
+        none,               /**< Normal user-controlled session.    */
+        nsm,                /**< Non Session Manager.               */
+        jack,               /**< JACK Session API.                  */
+        ladish,             /**< LADISH, not yet implemented.       */
+        lash,               /**< LASH, might never implement it.    */
+        max                 /**< The usual illegal list terminator. */
     };
 
     /**
@@ -1405,6 +1407,11 @@ public:
     bool wants_nsm_session () const
     {
         return m_session_manager == session::nsm;
+    }
+
+    bool wants_jack_session () const
+    {
+        return m_session_manager == session::jack;
     }
 
     bool wants_lash_session () const

@@ -618,7 +618,7 @@ It does not change Seq66's default PPQN.</string>
         </sizepolicy>
        </property>
        <attribute name="title">
-        <string>&amp;Session</string>
+        <string>S&amp;ession</string>
        </attribute>
        <widget class="QWidget" name="verticalLayoutWidget_5">
         <property name="geometry">

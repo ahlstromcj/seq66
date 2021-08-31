@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2021-07-14
+ * \updates       2021-08-31
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -445,6 +445,11 @@ session_save ()
 #endif
     sg_needs_save = false;
     return result;
+}
+
+void signal_for_save ()
+{
+    sg_needs_save = true;
 }
 
 void signal_for_exit ()

@@ -1,4 +1,4 @@
-`configure' configures Seq66 0.93.2 to adapt to many kinds of systems.
+`configure' configures Seq66 0.96.3 to adapt to many kinds of systems.
 
 Usage: ./configure [OPTION]... [VAR=VALUE]...
 
@@ -82,7 +82,6 @@ Optional Features:
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --enable-docs           Enable developer document support
-  --enable-mingw          Enable MingW Windows support
   --disable-jack          Disable JACK support
   --disable-jack-session  Disable JACK session support
   --enable-lash           Enable LASH support (deprecated)

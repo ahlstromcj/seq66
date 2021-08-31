@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-08-13
+ * \updates       2021-08-31
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1425,7 +1425,7 @@ qsmainwnd::refresh ()
     }
     if (session_save())
     {
-        save_file();
+        (void) save_session();      /* ca 2021-08-31 instead of save_file() */
     }
 
     int active_screenset = int(perf().playscreen_number());

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2020-12-13
+ * \updates       2021-08-30
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -264,6 +264,19 @@ protected:
     }
 
     void append_error_message (const std::string & message = "") const;
+    bool create_configuration
+    (
+        int argc, char * argv [],
+        const std::string & mainpath,
+        const std::string & cfgfilepath,
+        const std::string & midifilepath
+    );
+    bool read_configuration
+    (
+        int argc, char * argv [],
+        const std::string & cfgfilepath,
+        const std::string & midifilepath
+    );
 
 };          // class smanager
 

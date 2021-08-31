@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-08-13
+ * \updates       2021-08-31
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -86,7 +86,7 @@
  *  follow_transport:   GUI. Toggle between following JACK or not.
  *  panic:              Provides a panic button to stop all notes.
  *  visibility:         Toggles the appearance of the main window (only).
- *  reserved_44:        Reserved for expansion.
+ *  save_session:       Save the MIDI and configuration files.
  *  reserved_45:        Reserved for expansion.
  *  reserved_46:        Reserved for expansion.
  *  reserved_47:        Reserved for expansion.
@@ -5347,6 +5347,22 @@ performer::midi_control_event (const event & ev, bool recording)
     return result;
 }
 
+void
+performer::signal_save ()
+{
+    printf("[ S A V E ! ]\n"); // TO DO
+    stop_playing();
+    signal_for_save();              /* provided by the daemonize module */
+}
+
+void
+performer::signal_quit ()
+{
+    printf("[ Q U I T ! ]\n"); // TO DO
+    stop_playing();
+    signal_for_exit();              /* provided by the daemonize module */
+}
+
 /**
  *  Adds a member function to an automation slot.
  */
@@ -7141,12 +7157,9 @@ performer::automation_quit
 {
     std::string name = "Exit";
     print_parameters(name, a, d0, d1, inverse);
-    if (a == automation::action::on)
-    {
-        printf("[ Q U I T ! ]\n"); // TO DO
-        stop_playing();
-        signal_for_exit();              /* provided by the daemonize module */
-    }
+    if (a == automation::action::on && ! inverse)
+        signal_quit();
+
     return true;
 }
 
@@ -7271,6 +7284,22 @@ performer::automation_visibility
     return result;
 }
 
+bool
+performer::automation_save_session
+(
+    automation::action a, int d0, int d1, bool inverse
+)
+{
+    std::string name = "Save Session";
+    bool result = true;
+    print_parameters(name, a, d0, d1, inverse);
+    if (a == automation::action::on && ! inverse)
+    {
+        signal_save();                     /* actually just raises a flag  */
+    }
+    return result;
+}
+
 /**
  *  Provides a list of all the functions that can be configured to be called
  *  upon configured keystrokes or incoming MIDI messages.
@@ -7344,7 +7373,10 @@ performer::sm_auto_func_list [] =
     },
     { automation::slot::panic,       &performer::automation_panic        },
     { automation::slot::visibility,  &performer::automation_visibility   },
-    { automation::slot::reserved_44, &performer::automation_no_op        },
+    {
+        automation::slot::save_session,
+        &performer::automation_save_session
+    },
     { automation::slot::reserved_45, &performer::automation_no_op        },
     { automation::slot::reserved_46, &performer::automation_no_op        },
     { automation::slot::reserved_47, &performer::automation_no_op        },

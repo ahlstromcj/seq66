@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-07-12
+ * \updates       2021-08-31
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -199,9 +199,16 @@ qt5nsmanager::create_window ()
                 }
                 else
                 {
-                    path = rc().home_config_directory();
-                    name = rc().config_filename();
-                    clid = rc().app_client_name();  /* seq_client_name()    */
+                    if (! rc().jack_session_uuid().empty())
+                    {
+                        session_manager_name("JACK");
+                    }
+                    else
+                    {
+                        path = rc().home_config_directory();
+                        name = rc().config_filename();
+                        clid = rc().app_client_name();  /* seq_client_name() */
+                    }
                 }
                 m_window->session_manager(manager_name());
                 m_window->session_path(path);

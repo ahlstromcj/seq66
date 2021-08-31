@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-07-11
+ * \updates       2021-08-31
  * \license       GNU GPLv2 or above
  *
  */
@@ -407,7 +407,7 @@ keycontainer::add_defaults ()
         { "F4",        automation::action::on      },  // 41 follow_transport
         { "~",         automation::action::on      },  // 42 panic
         { "0xf9",      automation::action::toggle  },  // 43 visibility
-        { "0xfa",      automation::action::off     },  // 44 reserved_44
+        { "0xfa",      automation::action::off     },  // 44 save_session
         { "0xfb",      automation::action::off     },  // 45 reserved_45
         { "0xfc",      automation::action::off     },  // 46 reserved_46
         { "0xfd",      automation::action::off     },  // 47 reserved_47

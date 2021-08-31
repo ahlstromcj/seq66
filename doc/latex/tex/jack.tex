@@ -340,6 +340,62 @@
    \textsl{seq66debug} should display a rapid stream of MIDI Clock messages.
    If not, check the setup and, if correct, report a bug!
 
+\subsection{Seq66 JACK / PulseAudio}
+\label{subsec:jack_pulseaudio}
+
+   After years of avoiding \textsl{PulseAudio} assiduously, we found a
+   circumstance where we needed it.
+   In using \textsl{OBS Studio} to make demonstration videos of \textsl{Seq66},
+   we struggled trying to get it to work with either
+   \textsl{ALSA} or \textsl{JACK} directly.
+   Setting up \textsl{PulseAudio} ended up being fairly easy, not too
+   cumbersome or intrusive (and also made it easier to use
+   \textsl{Bluetooth} earbuds via \textsl{pulseaudio-module-bluetooth}).
+
+   \index{pulseaudio}
+   This section discusses using \textsl{JACK} with \textsl{PulseAudio}.
+   After installing \textsl{PulseAudio} and getting it to work with one's
+   system (e.g. working with \textsl{Seq66}, \textsl{mpd},
+   \textsl{smplayer} etc. using \textsl{ALSA},
+   the next step is to install \textsl{JACK} support.
+   In \textsl{Debian}, install \textsl{pulseaudio-module-jack},
+   \textsl{pulseaudio-utils}, and, optionally
+   \textsl{pavucontrol}.
+
+   Then, assuming \textsl{qjackctl} is installed (which is useful for using
+   \textsl{JACK} session management), then go to its menu:
+   \textbf{Setup... / Options / Execute script after Startup} and copy the
+   following there:
+
+   \begin{verbatim}
+      pacmd set-default-sink jack_out
+   \end{verbatim}
+
+   This configures \textsl{qjackctl} to run that command after startup.
+   \textsl{PulseAudio} will recognize (via D-Bus) that \textsl{JACK} started,
+   and will route audio to it. When \textsl{JACK} is stopped,
+   \textsl{PulseAudio} reverts to normal routing.
+
+   Other \textsl{qjackctl} options:
+
+   \begin{verbatim}
+      Start JACK audio server on application startup
+      Enable JACK D-Bus interface
+      Stop JACK audio server on application exit
+   \end{verbatim}
+
+   \textbf{Tip}:
+   One might need to execute the following commands first:
+
+   \begin{verbatim}
+      pactl load-module module-jack-sink channels=2
+      pactl load-module module-jack-source
+   \end{verbatim}
+
+   These settings can also be placed (without the \texttt{pactl}) in
+   \texttt{/etc/pulse/default.pa}.
+   They might be loaded automatically via \textsl{udev} on some systems.
+
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex
 %-------------------------------------------------------------------------------

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2021-08-02
+ * \updates       2021-08-28
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -39,11 +39,14 @@
 #include "midi/midibytes.hpp"           /* seq66::midipulse alias           */
 
 #if defined SEQ66_JACK_SUPPORT
+
 #include <jack/jack.h>
 #include <jack/transport.h>
+
 #if defined SEQ66_JACK_SESSION
 #include <jack/session.h>
 #endif
+
 #else
 #undef SEQ66_JACK_SESSION
 #endif
@@ -247,17 +250,6 @@ private:
 
     double m_jack_tick;
 
-#if defined SEQ66_JACK_SESSION
-
-    /**
-     *  Provides a kind of handle to the JACK session manager.  Used in the
-     *  session_event() function.
-     */
-
-    jack_session_event_t * m_jsession_ev;
-
-#endif
-
     /**
      *  Indicates if JACK Sync has been enabled successfully.
      */
@@ -439,7 +431,7 @@ public:
     bool deinit ();
 
 #if defined SEQ66_JACK_SESSION
-    bool session_event ();
+    void session_event (jack_session_event_t * ev);
 #endif
 
     bool activate ();

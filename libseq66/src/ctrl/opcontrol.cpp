@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2021-07-11
+ * \updates       2021-08-31
  * \license       GNU GPLv2 or above
  *
  */
@@ -208,7 +208,7 @@ opcontrol::slot_name (slot s)
         "Follow JACK",          // 41 follow_transport
         "Panic",                // 42 panic
         "Visibility",           // 43 visibility
-        "Reserved 44",          // 44 reserved_44
+        "Save Session",         // 44 save_session
         "Reserved 45",          // 45 reserved_45
         "Reserved 47",          // 46 reserved_46
         "Reserved 47",          // 47 reserved_47

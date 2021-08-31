@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2021-08-15
+dnl \update        2021-08-31
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -19,15 +19,15 @@ dnl   INSTALL file.
 dnl
 dnl ---------------------------------------------------------------------------
 
-AC_PREREQ(2.60)
+AC_PREREQ([2.71])
 AC_REVISION($Revision: 0.96$)
-AC_INIT(Seq66, [0.96.3], [ahlstromcj@gmail.com])
+AC_INIT([Seq66],[0.96.3],[ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
 AM_INIT_AUTOMAKE([dist-bzip2])
 AC_DEFINE(_GNU_SOURCE, 1, [gnu source])
-AC_CONFIG_HEADER([include/config.h])
+AC_CONFIG_HEADERS([include/config.h])
 export PKG_CONFIG=$(which pkg-config)
 
 dnl Prepends "SEQ66_" to the macro definitions, for a better guarantee of
@@ -194,7 +194,15 @@ ac_cflags="${CFLAGS}"
 
 dnl Check for header files.  Added more to support daemonization.
 
-AC_HEADER_STDC
+m4_warn([obsolete],
+[The preprocessor macro `STDC_HEADERS' is obsolete.
+  Except in unusual embedded environments, you can safely include all
+  ISO C90 headers unconditionally.])dnl
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
 AC_CHECK_HEADERS([getopt.h string.h limits.h])
 AC_CHECK_HEADERS([stdarg.h stdio.h stddef.h stdlib.h string.h])
 AC_CHECK_HEADERS([limits.h ctype.h sys/time.h time.h errno.h])
@@ -250,7 +258,7 @@ dnl default for this option is 'no'.  JACK recommends using NSM instead!
 AC_ARG_ENABLE(jack-session,
     [AS_HELP_STRING(--disable-jack-session, [Disable JACK session support])],
     [jack_session=$enableval],
-    [jack_session=no])
+    [jack_session=yes])
 
 if test "$jack" != "no"; then
     PKG_CHECK_MODULES(JACK, jack >= 0.90.0, jack_found="yes", jack_found="no")
@@ -276,9 +284,10 @@ else
 fi
 
 dnl LASH support has been added back!  However, it is disabled by default.
+dnl Not yet ready, may use LADISH.
 
 AC_ARG_ENABLE(lash,
-    [AS_HELP_STRING(--enable-lash, [Enable LASH support (deprecated)])],
+    [AS_HELP_STRING(--enable-lash, [Enable LASH support (not ready)])],
     [lash=$enableval],
     [lash=no])
 
@@ -301,7 +310,7 @@ fi
 dnl Enable NSM support.  Nearly ready for prime time!
 
 AC_ARG_ENABLE(nsm,
-  AS_HELP_STRING([--enable-nsm], [Enable NSM support (default=yes)]),
+  AS_HELP_STRING([--disable-nsm], [Enable NSM support]),
   [ac_nsm=$enableval],
   [ac_nsm=yes])
 
@@ -340,7 +349,7 @@ fi
 dnl "RtMidi" support.  This is now the default build for Seq66.
 
 AC_ARG_ENABLE(rtmidi,
-    [AS_HELP_STRING(--enable-rtmidi, [Enable rtmidi build, default MIDI engine])],
+    [AS_HELP_STRING(--disable-rtmidi, [Disable rtmidi MIDI engine])],
     [rtmidi=$enableval],
     [rtmidi=yes])
 
@@ -358,10 +367,10 @@ if test "$rtmidi" != "no"; then
 fi
 
 dnl "Qt" support.  Enabled by default, and actually mandatory for this
-dnl application.
+dnl application if not built for the headless mode.
 
 AC_ARG_ENABLE(qt,
-    [AS_HELP_STRING(--enable-qt, [Enable Qt5 user-interface build])],
+    [AS_HELP_STRING(--disable-qt, [Disable Qt5 user-interface])],
     [ac_qtmidi=$enableval],
     [ac_qtmidi=yes])
 
@@ -370,10 +379,10 @@ dnl and portmidi builds.
 
 if test "$ac_qtmidi" != "no"; then
     build_qtmidi="yes"
-    AC_DEFINE(APP_NAME, ["qseq66"], [Names the Qt/rtmidi version of application])
-    AC_DEFINE(APP_ENGINE, ["rtmidi"], [Names the MIDI engine of the application])
-    AC_DEFINE(APP_TYPE, ["qt5"], [Names the UI of the application])
-    AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration file name for Qt/rtmidi])
+    AC_DEFINE(APP_NAME, ["qseq66"], [Name of the Qt/rtmidi application])
+    AC_DEFINE(APP_ENGINE, ["rtmidi"], [Name of the MIDI engine])
+    AC_DEFINE(APP_TYPE, ["qt5"], [Name of the UI of the application])
+    AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration base file name])
     AM_PATH_ALSA(0.9.0)
     AX_HAVE_QT_MIN
     AC_MSG_RESULT([qt user-interface build enabled.]);
@@ -388,10 +397,10 @@ AC_ARG_ENABLE(cli,
 
 if test "$cli" != "no"; then
     AC_MSG_RESULT([rtmidi command-line build enabled.]);
-    AC_DEFINE(APP_NAME, ["seq66cli"], [Names the CLI version of application])
-    AC_DEFINE(APP_CLI, [1], [Indicate the CLI version of application])
-    AC_DEFINE(APP_TYPE, ["cli"], [Names the UI of the application])
-    AC_DEFINE(APP_ENGINE, ["rtmidi"], [Names the MIDI engine of the application])
+    AC_DEFINE(APP_NAME, ["seq66cli"], [Name of the CLI version of application])
+    AC_DEFINE(APP_CLI, [1], [Indicate the CLI version])
+    AC_DEFINE(APP_TYPE, ["cli"], [Name of the UI])
+    AC_DEFINE(APP_ENGINE, ["rtmidi"], [Name of the MIDI engine])
     AC_DEFINE(CONFIG_NAME, ["seq66cli"], [Configuration file name])
     if test "x$mingw" != "xyes" ; then
         build_rtcli="yes"
@@ -407,15 +416,15 @@ dnl PortMidi support.  Deprecated for Linux, but we still build it, for
 dnl testing purposes. It needs the ALSA libraries to work.
 
 AC_ARG_ENABLE(portmidi,
-    [AS_HELP_STRING(--enable-portmidi, [Enable PortMidi build (for testing)])],
+    [AS_HELP_STRING(--enable-portmidi, [Enable PortMidi build)])],
     [portmidi=$enableval],
     [portmidi=no])
 
 if test "$portmidi" != "no"; then
     build_portmidi="yes"
     build_rtmidi="no"
-    AC_DEFINE(PORTMIDI_SUPPORT, 1, [Indicates if PortMidi support is enabled])
-    AC_DEFINE(APP_NAME, ["seq66portmidi"], [Names this version of application])
+    AC_DEFINE(PORTMIDI_SUPPORT, 1, [Indicates if PortMidi is enabled])
+    AC_DEFINE(APP_NAME, ["seq66portmidi"], [Name of this application])
     AC_DEFINE(CONFIG_NAME, ["seq66portmidi"], [Configuration file name])
     AM_PATH_ALSA(0.9.0)
     AC_MSG_RESULT([PortMidi build enabled.]);
@@ -443,7 +452,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2021-08-15"
+#define VERSION_DATE_SHORT "2021-08-31"
 #define VERSION "0.96.3"
 
 )

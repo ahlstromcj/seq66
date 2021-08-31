@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-07-28
+ * \updates       2021-08-31
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3080,6 +3080,8 @@ public:                                 /* access functions for the containers *
 
     bool midi_control_keystroke (const keystroke & k);
     bool midi_control_event (const event & ev, bool recording = false);
+    void signal_save ();
+    void signal_quit ();
 
     /*
      * Looks up the slot-key (hot-key) for the given pattern number.
@@ -3482,6 +3484,10 @@ public:
         automation::action a, int d0, int d1, bool inverse
     );
     bool automation_visibility
+    (
+        automation::action a, int d0, int d1, bool inverse
+    );
+    bool automation_save_session
     (
         automation::action a, int d0, int d1, bool inverse
     );

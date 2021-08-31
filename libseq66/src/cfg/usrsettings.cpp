@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-08-12
+ * \updates       2021-08-28
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -528,6 +528,10 @@ usrsettings::session_manager (const std::string & sm)
         session value = session::none;
         if (sm == "nsm")
             value = session::nsm;
+        else if (sm == "jack")
+            value = session::jack;
+        else if (sm == "ladish")
+            value = session::ladish;
         else if (sm == "lash")
             value = session::lash;
 

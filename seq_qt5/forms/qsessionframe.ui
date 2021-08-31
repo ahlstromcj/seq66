@@ -239,14 +239,14 @@
   <widget class="QLabel" name="clientIdLabel">
    <property name="geometry">
     <rect>
-     <x>424</x>
+     <x>408</x>
      <y>112</y>
-     <width>73</width>
+     <width>89</width>
      <height>18</height>
     </rect>
    </property>
    <property name="text">
-    <string>Client ID</string>
+    <string>Client ID/UUID</string>
    </property>
   </widget>
   <widget class="QTextEdit" name="displayNameText">

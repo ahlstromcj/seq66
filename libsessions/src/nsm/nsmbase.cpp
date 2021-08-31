@@ -788,8 +788,8 @@ nsmbase::close_session ()
 }
 
 /**
- *  The caller should call this function, then check the result before saving the
- *  "session".
+ *  The caller should call this function, then check the result before saving
+ *  the "session".
  *
  *  We probably need to return a reply-code instead of a boolean.
  */

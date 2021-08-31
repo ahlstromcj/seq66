@@ -28,7 +28,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-11-04
+ * \updates       2021-08-31
  * \license       GNU GPLv2 or above
  *
  *  Provides a base class that can be used to manage the command-line version
@@ -98,6 +98,12 @@ private:
      */
 
     bool m_nsm_active;
+
+    /**
+     *  Holds a copy of the user-interface redraw rate.
+     */
+
+    int m_poll_period_ms;
 
 public:
 

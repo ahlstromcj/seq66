@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2021-08-05
+ * \updates       2021-08-30
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -51,8 +51,12 @@
 
 #include "seq66_features.hpp"           /* set_app_name()                   */
 #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
+#include "cfg/notemapfile.hpp"          /* seq66::notemapfile functions     */
+#include "cfg/playlistfile.hpp"         /* seq66::playlistfile functions    */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
+#include "midi/midifile.hpp"            /* seq66::write_midi_file()         */
 #include "play/performer.hpp"           /* seq66::performer                 */
+#include "play/playlist.hpp"            /* seq66::playlist class            */
 #include "sessions/smanager.hpp"        /* seq66::smanager()                */
 #include "os/daemonize.hpp"             /* seq66::reroute_stdio()           */
 #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
@@ -523,7 +527,30 @@ smanager::save_session (std::string & msg, bool ok)
     bool result = not_nullptr(perf());
     if (result)
     {
-        if (ok)
+        if (ok)                     /* code moved from clinsmanager to here */
+        {
+            if (perf()->modified())
+            {
+                std::string filename = rc().midi_filename();
+                if (filename.empty())
+                {
+                    msg = "MIDI file-name empty";
+                }
+                else
+                {
+                    bool is_wrk = file_extension_match(filename, "wrk");
+                    if (is_wrk)
+                        filename = file_extension_set(filename, ".midi");
+
+                    result = write_midi_file(*perf(), filename, msg);
+                    if (result)
+                        msg = result ? "Saved: " : "Not able to save: " ;
+
+                    msg += filename;
+                }
+            }
+        }
+        if (result && ok)
         {
             bool save = rc().auto_option_save() || rc().is_modified();
             if (save)
@@ -534,9 +561,7 @@ smanager::save_session (std::string & msg, bool ok)
 
                 file_message("Save session", "Options");
                 if (! cmdlineopts::write_options_files())
-                {
-                    errprint("Config writes failed");
-                }
+                    msg = "Config writes failed";
             }
             else
                 msg = "config auto-save option off";
@@ -575,6 +600,10 @@ smanager::save_session (std::string & msg, bool ok)
                 }
             }
         }
+    }
+    else
+    {
+        msg = "no performer present to save session";
     }
     return result;
 }
@@ -843,6 +872,191 @@ smanager::create (int argc, char * argv [])
             (void) run();
             (void) close_session(msg, false);
         }
+    }
+    return result;
+}
+
+bool
+smanager::create_configuration
+(
+    int argc, char * argv [],
+    const std::string & mainpath,
+    const std::string & cfgfilepath,
+    const std::string & midifilepath
+)
+{
+    bool result = ! cfgfilepath.empty();
+    if (result)
+    {
+        std::string homepath = rc().home_config_directory();
+        std::string rcfile = cfgfilepath + rc().config_filename();
+        bool already_created = file_exists(rcfile);
+        rc().midi_filepath(midifilepath);               /* do this first    */
+        if (already_created)
+        {
+            file_message("File exists", rcfile);        /* comforting       */
+            result = read_configuration(argc, argv, cfgfilepath, midifilepath);
+            if (result)
+            {
+                if (usr().in_session())
+                    rc().auto_option_save(true);
+            }
+        }
+        else
+        {
+            result = make_directory_path(mainpath);
+            if (result)
+            {
+                file_message("Created", mainpath);
+                result = make_directory_path(cfgfilepath);
+                if (result)
+                {
+                    file_message("Created", cfgfilepath);
+                    rc().full_config_directory(cfgfilepath);
+                }
+            }
+            if (result && ! midifilepath.empty())
+            {
+                result = make_directory_path(midifilepath);
+                if (result)
+                    file_message("Created", midifilepath);
+            }
+            if (result)
+            {
+                /*
+                 * Make sure the configuration is created in the session right
+                 * now, in case the session manager tells the app to quit
+                 * (without saving).  We need to replace the path part, if
+                 * any, in the playlist and notemapper file-names, and prepend
+                 * the new home directory.  Note that, at this point, the
+                 * performer has not yet been created.
+                 */
+
+                std::string srcplayfile = rc().playlist_filename();
+                std::string srcnotefile = rc().notemap_filename();
+                if (srcplayfile.empty())
+                    srcplayfile = "empty.playlist";
+
+                if (srcnotefile.empty())
+                    srcnotefile = "empty.drums";
+
+                std::string dstplayfile = file_path_set(srcplayfile, cfgfilepath);
+                std::string dstnotefile = file_path_set(srcnotefile, cfgfilepath);
+                file_message("Saving configuration to session", cfgfilepath);
+                usr().save_user_config(true);
+                rc().playlist_filename(dstplayfile);
+                rc().notemap_filename(dstnotefile);
+                if (usr().in_session())
+                    rc().auto_option_save(true);
+
+                result = cmdlineopts::write_options_files();
+                if (result)
+                {
+                    if (! rc().playlist_active())
+                    {
+                        warnprint("Play-list inactive, saving anyway");
+                    }
+                    if (dstplayfile.empty())
+                    {
+                        file_error("Play-list file", "none");
+                    }
+                    else
+                    {
+                        std::string s("Temp");
+                        performer * p(nullptr);
+                        std::shared_ptr<playlist> plp;
+                        plp.reset(new (std::nothrow) playlist(p, s, false));
+                        result = bool(plp);
+                        if (result)
+                        {
+                            srcplayfile = file_path_set(srcplayfile, homepath);
+                            (void) save_playlist(*plp, srcplayfile, dstplayfile);
+                            if (! midifilepath.empty())
+                            {
+                                (void) copy_playlist_songs
+                                (
+                                    *plp, srcplayfile, midifilepath
+                                );
+                            }
+
+                            /*
+                             * The first is where MIDI files are stored in the
+                             * session, and the second is where they are
+                             * stored for the play-list.  Currently, the same
+                             * directory.  Not considered to be an issue at
+                             * this time.
+                             */
+
+                            rc().midi_filepath(midifilepath);
+                            rc().midi_base_directory(midifilepath);
+                        }
+                    }
+                }
+                if (result)
+                {
+                    if (! rc().notemap_active())
+                    {
+                        warnprint("Note-map not active, saving anyway");
+                    }
+
+                    std::string destination = rc().notemap_filename();
+                    if (destination.empty())
+                    {
+                        warnprint("Note-map file name empty");
+                    }
+                    else
+                    {
+                        std::shared_ptr<notemapper> nmp;
+                        nmp.reset(new (std::nothrow) notemapper());
+                        result = bool(nmp);
+                        file_message("Note-mapper save", destination);
+                        srcnotefile = file_path_set(srcnotefile, homepath);
+                        (void) copy_notemapper(*nmp, srcnotefile, destination);
+                    }
+                }
+            }
+        }
+    }
+    return result;
+}
+
+bool
+smanager::read_configuration
+(
+    int argc, char * argv [],
+    const std::string & cfgfilepath,
+    const std::string & midifilepath
+)
+{
+    rc().full_config_directory(cfgfilepath);    /* set NSM dir      */
+    rc().midi_filepath(midifilepath);           /* set MIDI dir     */
+    if (! midifilepath.empty())
+    {
+        file_message("NSM MIDI path", rc().midi_filepath());
+        file_message("NSM MIDI file", rc().midi_filename());
+    }
+
+    std::string errmessage;
+    bool result = cmdlineopts::parse_options_files(errmessage);
+    if (result)
+    {
+        /*
+         * Perhaps at some point, the "rc"/"usr" options might affect NSM
+         * usage.  In the meantime, we still need command-line options, if
+         * present, to override the file-specified options.  One big example
+         * is the --buss override. The smanager::main_settings() function is
+         * called way before create_project();
+         */
+
+        if (argc > 1)
+        {
+            (void) cmdlineopts::parse_command_line_options(argc, argv);
+            (void) cmdlineopts::parse_o_options(argc, argv);
+        }
+    }
+    else
+    {
+        file_error(errmessage, rc().config_filespec());
     }
     return result;
 }

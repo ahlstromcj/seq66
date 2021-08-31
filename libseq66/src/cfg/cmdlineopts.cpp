@@ -1027,6 +1027,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 #if defined SEQ66_JACK_SESSION
         case 'U':
             rc().jack_session_uuid(soptarg);
+            usr().session_manager("jack");
             break;
 #endif
 

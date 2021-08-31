@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-08-02
+ * \updates       2021-08-31
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -55,6 +55,50 @@
  *  Note the confusing (but necessary) orientation of the JACK driver backend
  *  ports: playback ports are "input" to the backend, and capture ports are
  *  "output" from it.
+ *
+ * NSM Support:
+ *
+ *      Seq66 supports NSM; see the code in libseq66/ * /sessions and in
+ *      libsessions.  Also see the Session Management chapter in the PDF user
+ *      manual.
+ *
+ * JACK Session (JS) Support:
+ *
+ *  A JS-aware application must:
+ *
+ *      -   Register with a JS manager.
+ *      -   Respond to messages from the JS manager.
+ *      -   Be startable with session information.
+ *
+ *  Response to a JS message will generally:
+ *
+ *      -   Save the application's state into a file, where the directory is
+ *          given by the session manager.
+ *      -   Reply to the session manager with a command that can be used to
+ *          restart the application, with enough information that it can
+ *          restore its state (e.g. the name of the state file).
+ *
+ *  JS aware clients identify themselves to the session manager by a UUID
+ *  The client makes it up as an integer represented as a string; it is passed
+ *  to the session manager when registering, and passed back to the client
+ *  when it is restarted by the session manager. This is done by a command
+ *  line argument to the application, and the format of the command line is
+ *  also up to the client. For Seq66, these are the arguments:
+ *
+ *      -   --jack-session-uuid <uuid>      (-U for short)
+ *      -   --home <directory>              (-H for short)
+ *      -   --config <basename>             (-c for short) (Maybe???)
+ *
+ *      -   Saving a session will save the state of all supported applications.
+ *          The application can be told where to save the state.
+ *          -   The 'rc', 'usr', and other files that need to be saved.
+ *          -   The current MIDI file, if modified.
+ *          -   The JACK connections that are active.
+ *      -   Opening a session will launch the included and supported
+ *          applications.  The application can be told where to load the
+ *          state.
+ *      -   The 'rc' file should hold the connections to be restored.  It can
+ *          also specify that the most recent MIDI file be loaded.
  */
 
 #include <stdio.h>
@@ -168,7 +212,7 @@ jack_debug_print
 int
 jack_dummy_callback (jack_nframes_t nframes, void * arg)
 {
-    jack_assistant * j = (jack_assistant *)(arg);
+    jack_assistant * j = static_cast<jack_assistant *>(arg);
     if (is_nullptr(j))
         nframes = 0;
 
@@ -217,7 +261,7 @@ jack_dummy_callback (jack_nframes_t nframes, void * arg)
 int
 jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
 {
-    jack_assistant * j = (jack_assistant *)(arg);
+    jack_assistant * j = static_cast<jack_assistant *>(arg);
     if (not_nullptr(j))
     {
         jack_position_t pos;
@@ -345,7 +389,7 @@ create_jack_client (std::string clientname, std::string uuid)
     else
     {
         const char * uid = uuid.c_str();
-        options = (jack_options_t) (JackNoStartServer | JackSessionID);
+        options = static_cast<jack_options_t>(JackNoStartServer|JackSessionID);
         result = jack_client_open(name, options, ps, uid);
     }
     if (not_nullptr(result))
@@ -566,9 +610,6 @@ jack_assistant::jack_assistant
     m_transport_state           (JackTransportStopped),
     m_transport_state_last      (JackTransportStopped),
     m_jack_tick                 (0.0),
-#if defined SEQ66_JACK_SESSION
-    m_jsession_ev               (nullptr),
-#endif
     m_jack_running              (false),
     m_timebase                  (timebase::none),   /* or slave, master...  */
 #if defined ENABLE_PROPOSED_FUNCTIONS
@@ -651,7 +692,7 @@ jack_assistant::get_jack_client_info ()
     if (not_nullptr(actualname))
     {
         m_jack_client_uuid = get_jack_client_uuid(m_jack_client);
-        if (! m_jack_client_uuid.empty())
+        if (! m_jack_client_uuid.empty())               /* this test okay?? */
         {
             if (rc().jack_session_uuid().empty())
                 rc().jack_session_uuid(m_jack_client_uuid);
@@ -1229,7 +1270,7 @@ jack_sync_callback
 )
 {
     int result = 0;
-    jack_assistant * jack = (jack_assistant *)(arg);
+    jack_assistant * jack = static_cast<jack_assistant *>(arg);
     if (not_nullptr(jack))
     {
         result = jack->sync(state);         /* use the new member function  */
@@ -1243,48 +1284,114 @@ jack_sync_callback
 
 #endif  // SEQ66_USE_JACK_SYNC_CALLBACK
 
-#if defined SEQ66_JACK_SESSION              /* deprecated, use NSM          */
+#if defined SEQ66_JACK_SESSION          /* "deprecated" alternative to NSM  */
 
-/**
- *  Writes the MIDI file named "<jack session dir>-file.mid" using a
- *  midifile object, quits if told to by JACK, and can free the JACK
- *  session event.
- *
- * \return
- *      Always returns false.
- */
-
-bool
-jack_assistant::session_event ()
+static std::string
+session_event_name (jack_session_event_t * ev)
 {
-    if (not_nullptr(m_jsession_ev))
-    {
-        std::string fname(m_jsession_ev->session_dir);
-        fname += "file.mid";
-        std::string cmd("seq66 --jack_session_uuid ");
-        cmd += m_jsession_ev->client_uuid;
-        cmd += " \"${SESSION_DIR}file.mid\"";
+    std::string result = "JACK Session Event: '";
+    if (ev->type == JackSessionSave)
+        result += "Save";
+    else if (ev->type == JackSessionSaveAndQuit)
+        result += "Save and quit";
+    else if (ev->type == JackSessionSaveTemplate)
+        result += "Save template";
 
-        midifile f(fname, m_ppqn, usr().global_seq_feature());
-        f.write(parent());
-        m_jsession_ev->command_line = strdup(cmd.c_str());
-        jack_session_reply(m_jack_client, m_jsession_ev);
-
-        /****
-         *
-        if (m_jsession_ev->type == JackSessionSaveAndQuit)
-            parent().gui().quit();
-         *
-         */
-
-        jack_session_event_free(m_jsession_ev);
-    }
-    return false;
+    result += "'";
+    return result;
 }
 
 /**
- *  Set the m_jsession_ev (event) value of the performer object.
+ *  Writes the state information quits if told to by JACK, and can free the JACK
+ *  session event.
  *
+ *  The job of the callback is to save state information, pass information back
+ *  to the session manager and perhaps exit.
+ *
+ * Command line:
+ *
+ *      qseq66 --jack-session-uuid UUID --home SESSION_DIR
+ *
+ * Event types:
+ *
+ *      -   JackSessionSave. Save the session completely.  The client may save
+ *          references to data outside the provided directory, but only so by
+ *          creating a link inside the provided directory.  The client must
+ *          not refer to data files outside the provided directory directly in
+ *          save files; this makes it impossible for the session manager to
+ *          create a session archive for distribution or archival.
+ *      -   JackSessionSaveAndQuit. Save the session completely, then quit.
+ *          The rules for saving are exactly the same as for JackSessionSave.
+ *      -   JackSessionSaveTemplate. Save a session template.  A session
+ *          template is a "skeleton" of the session without any data. Clients
+ *          must save a session that, when restored, will create the same
+ *          ports as a full save would have. However, the actual data
+ *          contained in the session may not be saved (e.g. a DAW would create
+ *          the necessary tracks, but not save the actual recorded data).
+ *
+ * Flags:
+ *
+ *      -   JackSessionSaveError.  An error occurred while saving.
+ *      -   JackSessionNeedTerminal.  Client needs to run in a terminal.
+ *
+ * TODO:
+ *
+ *      Move this code into libsessions/ * / jack, create a base class
+ *      [sessionbase] to use with a new jack_session class and the existing
+ *      nsmbase class. The functions needed in the session base class might be
+ *
+ *      -   is_active() and m_active
+ *      -   is_a_client() and not_a_client()
+ *      -   qsessionmanager
+ *          -   session_manager
+ *          -   session_path
+ *          -   session_display_name
+ *          -   session_client_id
+ */
+
+void
+jack_assistant::session_event (jack_session_event_t * ev)
+{
+    bool quit = false;
+    std::string uuid = std::string(ev->client_uuid);
+    std::string filepath = std::string(ev->session_dir);
+    std::string cmd = seq_app_name();               /* e.g. "qseq66"    */
+    cmd += ("--jack-session-uuid ");
+    cmd += uuid;
+    cmd += " --home ${SESSION_DIR}";
+    ev->command_line = strdup(cmd.c_str());
+    rc().home_config_directory(filepath);
+    if (jack_session_reply(m_jack_client, ev) != 0)
+    {
+        errprint("JACK session reply failed");
+    }
+    if (ev->type == JackSessionSave)
+    {
+        parent().signal_save();                     /* session_save()   */
+    }
+    else if (ev->type == JackSessionSaveAndQuit)
+    {
+        quit = true;
+    }
+    else if (ev->type == JackSessionSaveTemplate)
+    {
+        /*
+         * Not yet directly supported. Seq66 creates bare-bones files only if
+         * no configuration files yet exist in the "home" location.
+         */
+    }
+    if (rc().verbose())
+    {
+        info_message(session_event_name(ev));
+        file_message("Session command", cmd);
+        file_message("Session path", filepath);
+    }
+    jack_session_event_free(ev);
+    if (quit)
+        parent().signal_quit();                    /* session_close()  */
+}
+
+/**
  *  Glib is then used to connect in performer::jack_session_event().  However,
  *  the performer object's GUI-support interface is used instead of the
  *  following, so that the libseq66 library can be independent of a specific
@@ -1304,8 +1411,9 @@ jack_assistant::session_event ()
 void
 jack_session_callback (jack_session_event_t * ev, void * arg)
 {
-    jack_assistant * jack = (jack_assistant *)(arg);
-    jack->m_jsession_ev = ev;
+    jack_assistant * jack = static_cast<jack_assistant *>(arg);
+    if (not_nullptr(jack))
+        jack->session_event(ev);
 
     /*
      * jack->parent().gui().jack_idle_connect(*jack);   // see note above
@@ -1604,7 +1712,7 @@ jack_assistant::show_position (const jack_position_t & pos)
 /**
  *  A member wrapper function for the new free function create_jack_client().
  *
- * \param clientname
+ * \param name
  *      Provides the name of the client, used in the call to
  *      create_jack_client().  By default, this name is the macro SEQ66_PACKAGE
  *      (i.e.  "seq66").
@@ -1612,16 +1720,13 @@ jack_assistant::show_position (const jack_position_t & pos)
  * \return
  *      Returns a pointer to the JACK client if JACK has opened the client
  *      connection successfully.  Otherwise, a null pointer is returned.
+ *      The caller must handle a bad result.
  */
 
 jack_client_t *
-jack_assistant::client_open (const std::string & clientname)
+jack_assistant::client_open (const std::string & name)
 {
-    jack_client_t * result = create_jack_client
-    (
-        clientname, rc().jack_session_uuid()
-    );
-    return result;                      /* bad result handled by caller     */
+    return create_jack_client(name, rc().jack_session_uuid());
 }
 
 /**
@@ -1773,7 +1878,7 @@ jack_timebase_callback
     void * arg
 )
 {
-    jack_assistant * jack = (jack_assistant *)(arg);
+    jack_assistant * jack = static_cast<jack_assistant *>(arg);
     pos->beats_per_minute = jack->get_beats_per_minute();   /* sooperlooper */
     pos->beats_per_bar = jack->beats_per_measure();
     pos->beat_type = jack->beat_width();
@@ -1839,7 +1944,7 @@ jack_timebase_callback
 void
 jack_transport_shutdown (void * arg)
 {
-    jack_assistant * jack = (jack_assistant *)(arg);
+    jack_assistant * jack = static_cast<jack_assistant *>(arg);
     if (not_nullptr(jack))
     {
         jack->set_jack_running(false);

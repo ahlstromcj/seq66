@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-07-11
+ * \updates       2021-08-31
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -232,7 +232,7 @@ enum class slot
     follow_transport,   /**< 41: GUI. Toggle between following JACK or not. */
     panic,              /**< 42: The Panic Button.                          */
     visibility,         /**< 43: Toggle the visibility of the main window.  */
-    reserved_44,        /**< 44: Reserved for expansion.                    */
+    save_session,       /**< 44: Save the MIDI and configuration files now. */
     reserved_45,        /**< 45: Reserved for expansion.                    */
     reserved_46,        /**< 46: Reserved for expansion.                    */
     reserved_47,        /**< 47: Reserved for expansion.                    */
@@ -455,8 +455,11 @@ extern std::string category_to_string (category c);
 extern category string_to_category (const std::string & s);
 extern std::string action_to_string (action c);
 extern action string_to_action (const std::string & s);
+
+#if defined SEQ66_USE_SLOT_STRING_CONVERSIONS
 extern std::string slot_to_string (slot s);
 extern slot string_to_slot (const std::string & s);
+#endif
 
 }               // namespace automation
 
