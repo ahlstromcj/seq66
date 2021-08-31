@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-07-27
+ * \updates       2021-08-31
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -1267,6 +1267,11 @@ public:
     void config_filename (const std::string & value);
     void playlist_filename (const std::string & value);
     bool playlist_filename_checked (const std::string & value);
+
+    void home_config_directory (const std::string & hcd)
+    {
+        m_full_config_directory = hcd;
+    }
 
     void user_file_active (bool flag)
     {

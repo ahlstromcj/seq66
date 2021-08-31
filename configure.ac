@@ -19,9 +19,9 @@ dnl   INSTALL file.
 dnl
 dnl ---------------------------------------------------------------------------
 
-AC_PREREQ([2.71])
+AC_PREREQ([2.69])
 AC_REVISION($Revision: 0.96$)
-AC_INIT([Seq66],[0.96.3],[ahlstromcj@gmail.com])
+AC_INIT([Seq66], [0.96.3], [ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
@@ -197,11 +197,15 @@ dnl Check for header files.  Added more to support daemonization.
 m4_warn([obsolete],
 [The preprocessor macro `STDC_HEADERS' is obsolete.
   Except in unusual embedded environments, you can safely include all
-  ISO C90 headers unconditionally.])dnl
-# Autoupdate added the next two lines to ensure that your configure
-# script's behavior did not change.  They are probably safe to remove.
-AC_CHECK_INCLUDES_DEFAULT
-AC_PROG_EGREP
+  ISO C90 headers unconditionally.])
+dnl
+
+dnl Autoupdate added the next two lines to ensure that your configure
+dnl script's behavior did not change.  They are probably safe to remove.
+dnl In fact, they cause issues on Ubuntu (as opposed to Debian Sid).
+dnl
+dnl AC_CHECK_INCLUDES_DEFAULT
+dnl AC_PROG_EGREP
 
 AC_CHECK_HEADERS([getopt.h string.h limits.h])
 AC_CHECK_HEADERS([stdarg.h stdio.h stddef.h stdlib.h string.h])
