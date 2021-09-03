@@ -21,7 +21,7 @@
 # \library    	libseq_portmidi library
 # \author     	Chris Ahlstrom
 # \date       	2015-09-11
-# \update      2021-06-22
+# \update      2021-09-03
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -157,7 +157,7 @@ am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libseq_portmidi_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1)
 am_libseq_portmidi_la_OBJECTS = mastermidibus.lo midibus.lo \
 	pmlinuxalsa.lo pmlinux.lo pmutil.lo portmidi.lo porttime.lo \
 	ptlinux.lo
@@ -300,8 +300,6 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 JACK_CFLAGS = @JACK_CFLAGS@
 JACK_LIBS = @JACK_LIBS@
-LASH_CFLAGS = @LASH_CFLAGS@
-LASH_LIBS = @LASH_LIBS@
 LATEX = @LATEX@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -523,7 +521,7 @@ libseq_portmidi_la_SOURCES = \
 	ptlinux.c
 
 libseq_portmidi_la_LDFLAGS = -no-undefined -version-info $(version)
-libseq_portmidi_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS)
+libseq_portmidi_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS)
 all: all-am
 
 .SUFFIXES:
