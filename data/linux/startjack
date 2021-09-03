@@ -8,7 +8,7 @@
 # \library     Home/Audio
 # \author      Chris Ahlstrom
 # \date        2020-12-08
-# \update      2021-08-06
+# \update      2021-09-02
 # \version     $Revision$
 #
 #   This script provides a way to make a fast JACK setup on Linux.  See:
@@ -37,7 +37,7 @@
 
 LANG=C
 export LANG
-export STARTJACK_DATE="2021-08-06"
+export STARTJACK_DATE="2021-09-02"
 
 #******************************************************************************
 #  Default simple parameter values
@@ -51,6 +51,8 @@ BLUETOOTH="no"
 DO_BASIC="no"
 DO_FULL="yes"
 DO_KILL="no"
+DO_QJACK_CONTROL="no"
+DO_A2J_MIDID="yes"
 HWPORT="PCH"
 JDRIVER="alsa"
 MDRIVER=seq             # raw can cause real issues with a2jmidid
@@ -102,15 +104,26 @@ OPTIONS="$BACKEND $RATE $PERIOD $PERIODS $MSYSTEM $DUPLEX $CAPTURE $PLAYBACK"
 if [ "$1" == "--help" ] ; then
 
    cat << E_O_F
-Usage: ./startjack [ options ]                               ($STARTJACK_DATE)
+Usage: startjack [ options ]                        ($STARTJACK_DATE)
 
 Starts JACK, a2jmidid, and qjackctrl. Also provides for stopping (killing) them.
 
 The options are:
 
     --basic   Just start jack, a2jmidid, and qjackctl.
+    --qjack   Use qjackctl to start/stop jack, and use a2jmidid.  Assumes that
+              qjackctl is set up properly.
     --full    Use jack_control and a2j_control to start things.  The default.
-    --kill    Stop JACK instead of starting it."
+    --kill    Stop JACK instead of starting it.
+
+If using the --qjack option, add the following calls of this script to start and
+stop JACK in your QJackCtl setup:
+
+    startjack --qjack
+    startjack --qjack --kill
+
+However, in this case it is preferable to use the "startqjack" script,
+as it is much simpler.  Read that script for more information on setup.
 
 E_O_F
    exit 1
@@ -127,6 +140,12 @@ if [ $# -ge 1 ] ; then
             ;;
 
          --basic | basic)
+            DO_BASIC="yes"
+            DO_FULL="no"
+            ;;
+
+         --qjack | qjack)
+            DO_QJACK_CONTROL="yes"
             DO_BASIC="yes"
             DO_FULL="no"
             ;;
@@ -150,14 +169,37 @@ if [ $# -ge 1 ] ; then
    done
 fi
 
+if [ "$DO_QJACK_CTL" == "yes" ] ; then
+
+    if [ "$DO_KILL" == "yes" ] ; then
+        if [ "$DO_A2J_MIDID" == "yes"] ; then
+            killall a2jmidid
+        fi
+    else
+        echo "Waiting $SLEEPTIME seconds for qjackctl to settle..."
+        sleep $SLEEPTIME
+        if [ "$DO_A2J_MIDID" == "yes"] ; then
+            a2jmidid --export-hw &
+            echo "Waiting $SLEEPTIME15 seconds for a2jmidid to settle..."
+            sleep $SLEEPTIME15
+        fi
+        echo "Ready to use QJackCtl."
+    fi
+    exit 0
+fi
+
 if [ "$DO_KILL" == "yes" ] ; then
 
     if [ "$DO_BASIC" == "yes" ] ; then
-        killall a2jmidid
+        if [ "$DO_A2J_MIDID" == "yes"] ; then
+            killall a2jmidid
+        fi
         killall jackd
     else
-        a2j_control --stop
-        a2j_control --exit
+        if [ "$DO_A2J_MIDID" == "yes"] ; then
+            a2j_control --stop
+            a2j_control --exit
+        fi
         jack_control exit
     fi
     killall qjackctl
@@ -170,10 +212,12 @@ elif [ "$DO_BASIC" == "yes" ] ; then
     $DAEMON $OPTIONS &
     echo "Waiting $SLEEPTIME seconds for jackd to settle..."
     sleep $SLEEPTIME
-    echo "Starting ALSA-to-JACK bridge: 'a2jmidid --export-hw'..."
-    a2jmidid --export-hw &
-    echo "Waiting $SLEEPTIME15 seconds for a2jmidid to settle..."
-    sleep $SLEEPTIME15
+    if [ "$DO_A2J_MIDID" == "yes"] ; then
+        echo "Starting ALSA-to-JACK bridge: 'a2jmidid --export-hw'..."
+        a2jmidid --export-hw &
+        echo "Waiting $SLEEPTIME15 seconds for a2jmidid to settle..."
+        sleep $SLEEPTIME15
+    fi
     echo "Starting QJackCtl/JACK: 'qjackctl --start'..."
     qjackctl &
     sleep $SLEEPTIME2
@@ -196,10 +240,12 @@ elif [ "$DO_BASIC" == "no" ] ; then
     jack_control dps period $PFRAMES
     echo "Waiting $SLEEPTIME seconds for jack_control to settle..."
     sleep $SLEEPTIME
-    a2j_control --ehw
-    a2j_control --start
-    echo "Waiting $SLEEPTIME seconds for a2j_control to settle..."
-    sleep $SLEEPTIME
+    if [ "$DO_A2J_MIDID" == "yes"] ; then
+        a2j_control --ehw
+        a2j_control --start
+        echo "Waiting $SLEEPTIME seconds for a2j_control to settle..."
+        sleep $SLEEPTIME
+    fi
     if [ "$BLUETOOTH" == "yes" ] ; then
         echo "Starting alsa_out..."
         alsa_out -d bluealsa:HCI=$BLUEDEV,DEV=$BLUEMAC,PROFILE=$BLUEPROFILE

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-28
-% \update      2021-07-13
+% \update      2021-09-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -29,7 +29,9 @@
 
    To enable the JACK transport support at run-time on
    \textsl{Linux}, the options
-   \texttt{-j}/\texttt{-{}-jack-transport},
+   \texttt{-j}/\texttt{-{}-jack-transport} (deprecated, a legacy option),
+   \texttt{-S}/\texttt{-{}-jack-slave} (the new version of the transport
+   option),
    \texttt{-J}/\texttt{-{}-jack-master},
    \texttt{-C}/\texttt{-{}-jack-master-cond},
    and \texttt{-t}/\texttt{-{}-jack-midi} are available.
@@ -48,7 +50,7 @@
 
    JACK transport support is \textsl{separate} from native JACK MIDI support.
    The JACK transport client is an invisible client with the
-   name "seq66-transport", while the JACK MIDI client is visible in
+   name "seq66master" or "seq66slave", while the JACK MIDI client is visible in
    \textsl{QJackCtl}, and the ports created are part of the
    "seq66" client.
 
@@ -339,6 +341,19 @@
    Then start playback.
    \textsl{seq66debug} should display a rapid stream of MIDI Clock messages.
    If not, check the setup and, if correct, report a bug!
+
+\subsection{Seq66 JACK / QJackCtl}
+\label{subsec:jack_qjackctl}
+
+   This section is a placeholder for discussion of \textsl{QJackCtl},
+   its usage of the (deprecated) \textsl{JACK Session API}, and
+   its "patchbay" (see \cite{patchbay}).
+
+   True?
+
+   Its a good idea to put "jackd -S" instead of just "jackd" for the server
+   path. Running JACK in synchronous mode creates less Xruns in JACK2, which
+   is now the default.
 
 \subsection{Seq66 JACK / PulseAudio}
 \label{subsec:jack_pulseaudio}

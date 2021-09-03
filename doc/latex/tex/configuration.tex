@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-07-27
+% \update      2021-09-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -338,53 +338,64 @@
 
       \configref{palette}{palette}{inverse}
 
-   \optionline{-t}{-{}-jack-midi}
-      \textsl{Seq66} will run with JACK, which is the default is JACK is
-      running.
-
-   The following options can be configured in the 'rc' file. (But note that, since
-   version \textsl{Seq66} 0.94.0, the format of that section of the file has been
-   simplified.
+   The following options can be configured in the 'rc' file. (But note that,
+   since version \textsl{Seq66} 0.94.0, the format of that section of the file
+   has been simplified.
    See \sectionref{subsubsec:configuration_rc_jack_transport}.
 
-      \configref{rc}{jack-transport}{with\_jack\_midi}
+   \optionline{-t}{-{}-jack-midi}
+      \textsl{Seq66} will run with JACK if JACK is running.
+
+      \configref{rc}{jack-transport}{jack-midi = true}
+
+   \optionline{-S}{-{}-jack-slave}
+      \textsl{Seq66} will sync to JACK transport as a "slave", if \textsl{JACK}
+      is running.
 
    \optionline{-j}{-{}-jack-transport}
-      \textsl{Seq66} will sync to JACK transport.
+      \index{deprecated}
+      This option is the old, \textbf{deprecated} version of
+      \texttt{-{}-jack-slave}.
 
-      \configref{rc}{jack-transport}{with\_jack\_transport}
+      \configref{rc}{jack-transport}{transport-type = slave}
 
    \optionline{-g}{-{}-no-jack-transport}
       \textsl{Seq66} will not sync to JACK transport.
       This disables JACK transport if it had been enabled previously.
 
-      \configref{rc}{jack-transport}{with\_jack\_transport}
+      \configref{rc}{jack-transport}{transport-type = none}
 
    \optionline{-J}{-{}-jack-master}
       \textsl{Seq66} will try to be JACK master.
 
-      \configref{rc}{jack-transport}{with\_jack\_master}
+      \configref{rc}{jack-transport}{transport-type = master}
 
    \optionline{-C}{-{}-jack-master-cond}
       JACK master will fail if there is already a master.
 
-      \configref{rc}{jack-transport}{with\_jack\_cond}
+      \configref{rc}{jack-transport}{transport-type = conditional}
 
    \optionline{-M}{-{}-jack-start-mode [x]}
       When \textsl{Seq66} is synced to JACK, the following play modes
-      are available: 0 = live mode; and 1 = song mode, the default.
+      are available: "live" = live mode; "song" = song mode, and "auto" means
+      use song mode if triggers are present in the loaded MIDI file. "auto" is
+      the default.
 
-      \configref{rc}{jack-transport}{song\_start\_mode}
+      \configref{rc}{jack-transport}{song-start-mode = auto}
 
    \optionline{-U}{-{}-jack-session-uuid [uuid]}
-      Set the UUID for the JACK session.
+      Set the UUID for the JACK session.  This value is useful when
+      running \textsl{Seq66} from within a \textsl{JACK} session.
+      The session controller (e.g. \textsl{QjackCtl}) uses this value in the
+      command-line when starting \textsl{Seq66}.
+      See \sectionref{subsec:sessions_jack}.
 
    \optionline{-u}{-{}-user-save}
       Save the 'usr' configuration file when exiting.
       Normally, it is saved only if not present in the configuration directory,
       so as not to get stuck with temporary settings such as the -{}-bus option.
 
-      \configref{rc}{auto-option-save}{auto-save-options-on-exit}
+      \configref{rc}{auto-option-save}{auto-save-rc}
 
    \optionline{-f}{-{}-rc filename}
       Use a different 'rc' configuration file.

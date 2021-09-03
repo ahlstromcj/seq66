@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2021-08-27
+% \update      2021-09-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -30,12 +30,14 @@
 
    \begin{enumber}
       \item \textbf{Non Session Manager} (NSM)
+      \item \textbf{JACK Session} (not ready, deprecated but will be
+         implemented)
       \item \textbf{Signals}
-      \item \textbf{LASH} (not ready)
+      \item \textbf{LASH} (not ready, may go away completely)
    \end{enumber}
 
    \textbf{Non Session Manager} provides a replacement for the
-   \textsl{JACK Session API} (now disabled by default in a \textsl{Seq66}
+   \textsl{JACK Session API} (still enabled in a \textsl{Seq66}
    build).  It allows control over the startup of multiple applications, the
    process of saving a session, and
    provides a way to save their patching (connections) in \textsl{JACK}.
@@ -58,6 +60,10 @@
    management for Linux audio/MIDI. NSM clients use a well-defined
    \index{sessions!OSC}
    \textsl{OSC} protocol to communicate with the session management daemon.
+
+   Note that \textsl{Non Session Manager} is in a state of suspended
+   development, and has been reimplemented as a \textsl{GitHub} project,
+   the \textsl{New Session Manager}.
 
    General, the applications it manages should be installed normally (that is,
    for system-wide usage, in
@@ -487,6 +493,77 @@
    Now you can step through and see where NSM and Seq66 are getting mixed up.
    Also check the session directory afterward to make the configuration
    (and any MIDI files) are in good shape.
+
+\subsection{Seq66 Session Management / JACK Session}
+\label{subsec:sessions_jack}
+
+   Although deprecated by the \textsl{JACK} authors in favor of \textsl{NSM},
+   we are implementing \textsl{JACK} session management for the benefit of
+   people who either do not know of \textsl{NSM} or do not want to implement or
+   use it.
+
+   For this discussion, we will use the \textsl{JACK} session implementation in
+   the \textsl{QjackCtl} application.
+   Also, read the script stored in
+   \texttt{seq66/data/linux/startqjack} to set up
+   \textsl{QjackCtl} to run \textsl{JACK} and kick off
+   \textsl{a2jmidid}.
+
+   Once that setup is made (installing the script and configuring
+   \texttt{qjackctl}, then start \texttt{qjackctl}.
+   Verify that there are a number of system audio and MIDI playback and capture
+   port, \textsl{PulseAudio JACK} sinks and sources if the system uses
+   \textsl{PulseAudio}, and that there are "a2j" MIDI ports for all of your USB
+   hardware devices.
+
+   Then start \textsl{Qsynth} so it uses \textsl{jack} for MIDI and
+   \textsl{jack} (or \textsl{pulseaudio}) for audio.
+
+   Then run \textsl{Seq66} with \textsl{JACK} for slave transport and for MIDI:
+
+   \begin{verbatim}
+      $ qseq66 -j -t
+   \end{verbatim}
+
+   Load a file, make sure its MIDI output goes to "fluidsynth" or "qsynth", and
+   plays.
+
+   In your desired location (e.g. \texttt{~/.config/seq66/sessions},
+   create a new session directory (e.g. \texttt{qtest}).
+
+   In \textsl{qjackctl}, open the \textbf{Sessions} dialog.
+   Click \textbf{Save}, and choose the directory just created.
+   In the dialog should appear entries for MIDI capture and playback for
+   "fluidsynth" and "seq66", all the "a2j" USB devices,
+   plus an entry for \textsl{JACK} client
+   \textsl{seq66master} or \textsl{seq66slave} that shows
+   something like:
+
+   \begin{verbatim}
+qseq66 --jack-midi --jack-master --jack-session-uuid 84670 --home ${SESSION_DIR}
+qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
+   \end{verbatim}
+
+   In the \textbf{Connections} dialog of \textsl{QjackCtl}, all of these ports
+   will be shown in the MIDI tab, auto-connected appropriately.
+   In the sessions directory that was created, will be seen an
+   empty \texttt{seq66master}
+   or \texttt{seq66slave} directory, and a
+   \texttt{sessions.xml} configuration file containing the information shown in
+   the sessions dialog.
+
+   Exit \textsl{Seq66}, \textsl{QSynth} and \textsl{QjackCtl}
+   (in that order).
+
+   Currently buggy. It thinks the UUID is a file, and sets "home" to
+   the \texttt{qtest/seq66master}
+   or \texttt{qtest/seq66slave} directory.
+   Also, it does not spawn \textsl{QSynth}. (It sounds like that application
+   does not support \textsl{JACK Session}.
+   We'll try with \textsl{Yoshimi}, which does support it.
+
+% /usr/local/bin/qseq66 --jack-session-uuid 8589934670 --home
+% /home/ahlstrom/Home/ca/mls/git/seq66/sessions/qsynth-test-2/seq66_transport/
 
 \subsection{Seq66 Session Management / Signals}
 \label{subsec:sessions_signals}

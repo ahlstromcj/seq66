@@ -1,4 +1,4 @@
-.TH Sequencer66 "July 2021" "Version 0.96.0" "Seq66 Manual Page"
+.TH Sequencer66 "September 2021" "Version 0.96.3" "Seq66 Manual Page"
 
 .SH NAME
 Seq66 (qseq66) - Real-time live MIDI loop sequencer refactored from
@@ -182,9 +182,13 @@ The following options will not be shown by --help if the application is
 not compiled for JACK support.
 
 .TP 8
+.B \-j, \-\-jack-slave
+Seq66 will sync to JACK transport, as "slave".
+Note that JACK transport is separate from native JACK MIDI support.
+
+.TP 8
 .B \-j, \-\-jack-transport
-Seq66 will sync to JACK transport.  Note that JACK transport is separate
-from native JACK MIDI support.
+The older version of setting up as transport "slave". Deprecated.
 
 .TP 8
 .B \-g, \-\-no-jack-transport

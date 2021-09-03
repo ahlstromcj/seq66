@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-07-07
+ * \updates       2021-09-03
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -103,13 +103,14 @@ cmdlineopts::s_long_options [] =
     {"priority",            0, 0, 'p'},
     {"interaction-method",  required_argument, 0, 'x'},
     {"playlist",            required_argument, 0, 'X'},
+    {"jack-start-mode",     required_argument, 0, 'M'},
 #if defined SEQ66_JACK_SUPPORT
     {"jack-transport",      0, 0, 'j'},
+    {"jack-slave",          0, 0, 'S'},
     {"no-jack-transport",   0, 0, 'g'},
     {"jack-master",         0, 0, 'J'},
     {"jack-master-cond",    0, 0, 'C'},
-    {"jack-start-mode",     required_argument, 0, 'M'},
-#if defined SEQ66-JACK_SESSION
+#if defined SEQ66_JACK_SESSION
     {"jack-session-uuid",   required_argument, 0, 'U'},
 #endif
     {"no-jack-midi",        0, 0, 'N'},
@@ -150,7 +151,7 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         @AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz#
-         xxxxxx x  xx xxx xxxxxxlxxxx *xx xxx xxxxxxx  xx  aax
+         xxxxxx x  xx xxx xxxxxxlxxxx *xx xxxxxxxxxxx  xx  aax
 \endverbatim
  *
  *  * Note that 'o' options arguments cannot be included here due to issues
@@ -173,7 +174,7 @@ cmdlineopts::s_long_options [] =
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:dF:f:gH:h:iJjKkLl:M:mNnoPpq:RrTtsU:uVvX:x:Zz#";
+    "AaB:b:Cc:dF:f:gH:h:iJjKkLl:M:mNnoPpq:RrSsTtU:uVvX:x:Zz#";
 
 /**
  *  Provides help text.
@@ -230,15 +231,16 @@ const std::string cmdlineopts::s_help_1b =
 const std::string cmdlineopts::s_help_2 =
 "   -k, --show-keys          Prints pressed key value.\n"
 "   -K, --inverse            Inverse/night color scheme for seq/perf editors.\n"
+"   -M, --jack-start-mode m  For ALSA or JACK, these play modes are available:\n"
+"                            'live'; 'song'; and 'auto' (default).\n"
 #if defined SEQ66_JACK_SUPPORT
-"   -j, --jack-transport     Synchronize to JACK transport (as Slave).\n"
+"   -S, --jack-slave         Synchronize to JACK transport (as Slave).\n"
+"   -j, --jack-transport     The legacy (and deprecated) form of --jack-slave.\n"
 "   -g, --no-jack-transport  Turn off JACK transport.\n"
 "   -J, --jack-master        Try to be JACK Master. Also sets -j.\n"
 "   -C, --jack-master-cond   Fail if there's already a Jack Master; sets -j.\n"
-"   -M, --jack-start-mode m  For ALSA or JACK, these play modes are available:\n"
-"                            'live'; 'song'; and 'auto' (default).\n"
 "   -N, --no-jack-midi       Use ALSA MIDI, even with JACK Transport. See -A.\n"
-"   -t, --jack-midi          Use JACK MIDI; separate option from JACK Transport.\n"
+"   -t, --jack-midi          Use JACK MIDI, separately from JACK Transport.\n"
 #if defined SEQ66_JACK_SESSION
 "   -U, --jack-session-uuid u  Set UUID for JACK session.\n"
 #endif
@@ -871,11 +873,13 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             usr().midi_buss_override(string_to_midibyte(soptarg));
             break;
 
+#if defined SEQ66_JACK_SUPPORT
         case 'C':
             rc().with_jack_transport(true);
             rc().with_jack_master(false);
             rc().with_jack_master_cond(true);
             break;
+#endif
 
         case 'c':                           /* --config option              */
             rc().set_config_files(soptarg);
@@ -919,17 +923,19 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().investigate(true);
             break;
 
+#if defined SEQ66_JACK_SUPPORT
         case 'J':
             rc().with_jack_transport(true);
             rc().with_jack_master(true);
             rc().with_jack_master_cond(false);
             break;
 
-        case 'j':
+        case 'j':                               /* -j and -S are the same   */
             rc().with_jack_transport(true);
             rc().with_jack_master(false);
             rc().with_jack_master_cond(false);
             break;
+#endif
 
         case 'k':
             rc().print_keys(true);
@@ -1006,6 +1012,14 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().reveal_ports(true);
             printf("[Showing native system port names]\n");
             break;
+
+#if defined SEQ66_JACK_SUPPORT
+        case 'S':                               /* -j and -S are the same   */
+            rc().with_jack_transport(true);
+            rc().with_jack_master(false);
+            rc().with_jack_master_cond(false);
+            break;
+#endif
 
         case 's':
             rc().show_midi(true);

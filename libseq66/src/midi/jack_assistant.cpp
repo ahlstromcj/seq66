@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-08-31
+ * \updates       2021-09-02
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -772,7 +772,8 @@ jack_assistant::init ()
     bool result = rc().with_jack_transport() && ! m_jack_running;
     if (result)
     {
-        std::string package = rc().app_client_name() + "_transport";
+        std::string kind = rc().with_jack_master() ? "master" : "slave" ;
+        std::string package = rc().app_client_name() + kind;
         m_timebase = timebase::none;
         m_jack_client = client_open(package);
         if (m_jack_client == NULL)
@@ -801,7 +802,7 @@ jack_assistant::init ()
         }
 
 #if defined SEQ66_JACK_SESSION
-        if (result)
+        if (result) //  && usr().wants_jack_session())
         {
             int jackcode = jack_set_session_callback
             (
@@ -811,6 +812,11 @@ jack_assistant::init ()
             {
                 result = false;
                 (void) error_message("jack_set_session_callback() failed]");
+            }
+            else
+            {
+                if (rc().verbose())
+                    info_message("JACK session callback set");
             }
         }
 #endif
@@ -1356,11 +1362,15 @@ jack_assistant::session_event (jack_session_event_t * ev)
     std::string uuid = std::string(ev->client_uuid);
     std::string filepath = std::string(ev->session_dir);
     std::string cmd = seq_app_name();               /* e.g. "qseq66"    */
-    cmd += ("--jack-session-uuid ");
+    cmd += (" --jack-midi");
+    cmd += (" --jack-");
+    cmd += rc().with_jack_master() ? "master" : "slave" ;
+    cmd += (" --jack-session-uuid ");
     cmd += uuid;
     cmd += " --home ${SESSION_DIR}";
     ev->command_line = strdup(cmd.c_str());
     rc().home_config_directory(filepath);
+    rc().midi_filepath(filepath);                   /* FOR NOW !        */
     if (jack_session_reply(m_jack_client, ev) != 0)
     {
         errprint("JACK session reply failed");

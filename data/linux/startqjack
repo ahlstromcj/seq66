@@ -1,0 +1,120 @@
+#!/bin/bash
+#
+#******************************************************************************
+# startqjack
+#------------------------------------------------------------------------------
+##
+# \file        startqjack and stopqjack
+# \library     Home/Audio
+# \author      Chris Ahlstrom
+# \date        2020-12-08
+# \update      2021-09-01
+# \version     $Revision$
+#
+#   This script provides a way to make a fast JACK setup on Linux. It is a much
+#   simpler alternative to our startjack script.
+#
+#         https://wiki.archlinux.org/index.php/JACK_Audio_Connection_Kit
+#
+# Installation Steps:
+#
+#   0. Make sure the following are installed:
+#
+#      a. jack2
+#      b. Jack D-Bus
+#      c. a2j_control and a2jmidid
+#
+#   1. Pick where to install this file and copy it there:
+#
+#      a. ~/bin
+#      b. /usr/bin
+#      c. /usr/local/bin
+#
+#   2. In that directory, do:
+#
+#      # ln -s startqjack stopqjack
+#
+#      Or copy and rename if desired.
+#
+#   3. Run qjackctl and make the following settings in the Setup / Settings tab.
+#      Consider removing ~/.config/rncbc.org/QjackCtl.conf first, or if
+#      difficulties occur.
+#
+#      a. Driver:                           alsa
+#      b. Realtime:                         checked
+#      c. Sample Rate:                      48000
+#      d. Frames/Period:                    256
+#      e. Periods/Buffer:                   4
+#      f. MIDI Driver:                      seq
+#      g. Use server synchronous mode:      checked
+#
+#   4. Setup / Options:
+#
+#      a. Execute script after Startup:     startqjack
+#      b. Execute script on Shutdown:       startqjack
+#
+#   5. Setup / Misc:
+#
+#      a. Start JACK audio server on ...:   checked (startup)
+#      b. Enable ALSA Sequencer support:    checked
+#      c. Enable D-Bus interface:           checked
+#      d. Enable JACK D-Bus interface:      checked
+#      e. Stop JACK audio server on ...:    checked (exit)
+#      f. Single application instance:      checked
+#
+#------------------------------------------------------------------------------
+
+#******************************************************************************
+#  Provide a sane environment, just in case it is needed.
+#------------------------------------------------------------------------------
+
+LANG=C
+export LANG
+
+STARTJACK_DATE="2021-09-01"
+SLEEPTIME=10
+DO_KILL="no"
+
+if [ "$1" == "--help" ] ; then
+
+   cat << E_O_F
+Usage: startqjack | stopqjack                        ($STARTJACK_DATE)
+
+Starts JACK, a2jmidid, and qjackctrl.  provides for stopping (killing) them.
+Uses qjackctl to start/stop jack, and uses a2j_control and a2jmidid.  Assumes that
+qjackctl is set up properly as noted in the comments for this script.
+
+    stopqjack   Stop JACK instead of starting it. (A soft-link to startqjack)
+
+Add the following calls of this script to after the start and at 
+stop JACK in your QJackCtl setup:
+
+    startqjack
+    stopqjack
+
+E_O_F
+   exit 1
+fi
+
+SCRIPTNAME="$(basename $0)"
+echo $SCRIPTNAME
+
+if [ "$SCRIPTNAME" == "stopqjack" ] ; then
+    DO_KILL="yes"
+fi
+
+if [ "$DO_KILL" == "yes" ] ; then
+    killall a2jmidid
+    killall qjackctl
+else
+    echo "Starting qjackctl..."
+    qjackctl &
+    a2j_control --ehw
+    a2j_control --start
+    echo "Waiting $SLEEPTIME seconds for a2j_control to settle..."
+    sleep $SLEEPTIME
+fi
+
+#------------------------------------------------------------------------------
+# vim: ft=sh
+#------------------------------------------------------------------------------
