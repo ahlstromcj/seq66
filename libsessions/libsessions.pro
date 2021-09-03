@@ -6,7 +6,7 @@
 # \library     qseq66 and qrseq66 application
 # \author      Chris Ahlstrom
 # \date        2020-03-24
-# \update      2020-09-01
+# \update      2020-09-03
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -44,13 +44,11 @@ contains (CONFIG, rtmidi) {
 }
 
 contains (CONFIG, rtmidi) {
-HEADERS += include/lash/lash.hpp \
- include/nsm/nsmbase.hpp \
+HEADERS += include/nsm/nsmbase.hpp \
  include/nsm/nsmclient.hpp \
  include/nsm/nsmmessagesex.hpp
 
-SOURCES += src/lash/lash.cpp \
- src/nsm/nsmbase.cpp \
+SOURCES += src/nsm/nsmbase.cpp \
  src/nsm/nsmclient.cpp \
  src/nsm/nsmmessagesex.cpp \
 }

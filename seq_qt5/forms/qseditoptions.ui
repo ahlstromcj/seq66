@@ -24,7 +24,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -987,7 +987,7 @@ patterns is controlled by the layout drawn in the Song Editor.</string>
        <string>Provides play options.  Minimal at present.</string>
       </property>
       <attribute name="title">
-       <string>&amp;Play Options</string>
+       <string>&amp;Play</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
@@ -1241,6 +1241,63 @@ Seq66 exits.</string>
         </spacer>
        </item>
       </layout>
+     </widget>
+     <widget class="QWidget" name="tabSession">
+      <attribute name="title">
+       <string>&amp;Session</string>
+      </attribute>
+      <widget class="QGroupBox" name="group_session">
+       <property name="geometry">
+        <rect>
+         <x>8</x>
+         <y>8</y>
+         <width>289</width>
+         <height>137</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Session</string>
+       </property>
+       <widget class="QRadioButton" name="radio_session_none">
+        <property name="geometry">
+         <rect>
+          <x>16</x>
+          <y>32</y>
+          <width>257</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>None. Normal user-configured operation.</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="radio_session_nsm">
+        <property name="geometry">
+         <rect>
+          <x>16</x>
+          <y>64</y>
+          <width>257</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>NSM. New/Non Session Manager.</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="radio_session_jack">
+        <property name="geometry">
+         <rect>
+          <x>16</x>
+          <y>96</y>
+          <width>257</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>JACK. JACK Session Management.</string>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </widget>
    </item>

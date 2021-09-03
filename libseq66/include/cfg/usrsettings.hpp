@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-08-28
+ * \updates       2021-09-03
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -192,8 +192,6 @@ private:
         none,               /**< Normal user-controlled session.    */
         nsm,                /**< Non Session Manager.               */
         jack,               /**< JACK Session API.                  */
-        ladish,             /**< LADISH, not yet implemented.       */
-        lash,               /**< LASH, might never implement it.    */
         max                 /**< The usual illegal list terminator. */
     };
 
@@ -1404,19 +1402,19 @@ public:
 
     std::string session_manager_name () const;
 
-    bool wants_nsm_session () const
+    bool want_no_session () const
+    {
+        return m_session_manager == session::none;
+    }
+
+    bool want_nsm_session () const
     {
         return m_session_manager == session::nsm;
     }
 
-    bool wants_jack_session () const
+    bool want_jack_session () const
     {
         return m_session_manager == session::jack;
-    }
-
-    bool wants_lash_session () const
-    {
-        return m_session_manager == session::lash;
     }
 
     bool in_session () const

@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2017-09-05
-# \update      2021-06-22
+# \update      2021-09-03
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -104,8 +104,7 @@ AM_CXXFLAGS = \
  $(QT_CXXFLAGS) \
  $(JACK_CFLAGS) \
  $(LIBLO_CFLAGS) \
- $(NSM_CFLAGS) \
- $(LASH_CFLAGS)
+ $(NSM_CFLAGS)
 
 #******************************************************************************
 # libmath
@@ -187,7 +186,7 @@ bin_PROGRAMS = qseq66
 qseq66_SOURCES = seq66qt5.cpp
 qseq66_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
 qseq66_LDFLAGS = -Wl,--copy-dt-needed-entries
-qseq66_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
+qseq66_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(AM_LDFLAGS)
 
 #******************************************************************************
 #  distclean

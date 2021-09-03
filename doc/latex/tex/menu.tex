@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-08-13
+% \update      2021-09-03
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -744,10 +744,6 @@
 
    This tab sets up JACK transport, if \textsl{Seq66}
    was built with JACK support (\textsl{Linux} only).
-%  It now also supports native JACK MIDI.
-%  This tab also sets up options for using LASH session management, \textsl{if}
-%  \textsl{Seq66} was built with LASH support, which is no longer the
-%  default, even though it is shown in the figure below.
 
 \begin{figure}[H]
    \centering 
@@ -762,7 +758,6 @@
       \item \textbf{JACK Transport/MIDI}
       \item \textbf{JACK Start Mode}
       \item \textbf{JACK Transport Connect and Disconnect}
-%     \item \textbf{LASH Options}
    \end{enumber}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
@@ -862,16 +857,8 @@
    Disconnect from JACK Sync.
    This button is useful to stop JACK sync when making changes to it.
 
-%  \itempar{LASH Options}{lash!option}
-%  Currently contains only one item, which enables the usage of LASH session
-%  management.  Currently, \textsl{Seq66} needs to be restarted to
-%  complete the enabling or disabling of LASH support.  Like the rest of the
-%  options, this one is written to the 'rc' configuration file.
-
    JACK connection and disconnection are disabled during playback, but the
    buttons don't yet reflect that status.
-   Note that LASH is no longer supported in the default build.
-   Use \textsl{Non Session Manager} instead.
 
 \paragraph{Menu / Edit / Preferences / Play Options}
 \label{paragraph:menu_edit_preferences_play_options}

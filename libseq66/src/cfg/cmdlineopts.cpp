@@ -86,9 +86,6 @@ cmdlineopts::s_long_options [] =
     {"verbose",             0, 0, 'v'},
     {"investigate",         0, 0, 'i'},
     {"home",                required_argument, 0, 'H'},
-#if defined SEQ66_LASH_SUPPORT
-    {"lash",                0, 0, 'L'},
-#endif
 #if defined SEQ66_NSM_SUPPORT
     {"no-nsm",              0, 0, 'T'},
     {"nsm",                 0, 0, 'n'},
@@ -110,8 +107,8 @@ cmdlineopts::s_long_options [] =
     {"no-jack-transport",   0, 0, 'g'},
     {"jack-master",         0, 0, 'J'},
     {"jack-master-cond",    0, 0, 'C'},
-#if defined SEQ66_JACK_SESSION
-    {"jack-session-uuid",   required_argument, 0, 'U'},
+#if defined SEQ66_JesCK_SESSION
+    {"jack-session",        required_argument, 0, 'U'},
 #endif
     {"no-jack-midi",        0, 0, 'N'},
     {"jack-midi",           0, 0, 't'},
@@ -151,7 +148,7 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         @AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz#
-         xxxxxx x  xx xxx xxxxxxlxxxx *xx xxxxxxxxxxx  xx  aax
+         xxxxxx x  xx xxx xxxxx lxxxx *xx xxxxxxxxxxx  xx  aax
 \endverbatim
  *
  *  * Note that 'o' options arguments cannot be included here due to issues
@@ -174,7 +171,7 @@ cmdlineopts::s_long_options [] =
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:dF:f:gH:h:iJjKkLl:M:mNnoPpq:RrSsTtU:uVvX:x:Zz#";
+    "AaB:b:Cc:dF:f:gH:h:iJjKkl:M:mNnoPpq:RrSsTtU:uVvX:x:Zz#";
 
 /**
  *  Provides help text.
@@ -185,9 +182,6 @@ const std::string cmdlineopts::s_help_1a =
 "   -h, --help               Show this help and exit.\n"
 "   -V, --version            Show program version/build information and exit.\n"
 "   -v, --verbose            Verbose mode, show more data to the console.\n"
-#if defined SEQ66_LASH_SUPPORT
-"   -L, --lash               Activate built-in LASH support.\n"
-#endif
 #if defined SEQ66_NSM_SUPPORT
 "   -n, --nsm                Activate Non Session Manager support.\n"
 "   -T, --no-nsm             Ignore NSM in 'usr' file. T for 'typical'.\n"
@@ -242,7 +236,9 @@ const std::string cmdlineopts::s_help_2 =
 "   -N, --no-jack-midi       Use ALSA MIDI, even with JACK Transport. See -A.\n"
 "   -t, --jack-midi          Use JACK MIDI, separately from JACK Transport.\n"
 #if defined SEQ66_JACK_SESSION
-"   -U, --jack-session-uuid u  Set UUID for JACK session.\n"
+"   -U, --jack-session uuid  Set UUID for JACK session. This turns on JACK\n"
+"                            session management, and disables NSM. Set it to\n"
+"                            'on' to enable; JACK sets the UUID later.\n"
 #endif
 #endif
 "   -d, --record-by-channel  Divert MIDI input by channel into the sequences\n"
@@ -255,11 +251,11 @@ const std::string cmdlineopts::s_help_2 =
  */
 
 const std::string cmdlineopts::s_help_3 =
-"   -u, --user-save          Save 'usr' settings, usually saved only if this file\n"
-"                            does not exist; 'usr' command-line options are not\n"
+"   -u, --user-save          Save 'usr' settings, usually saved only if they\n"
+"                            do not exist; 'usr' command-line options are not\n"
 "                            permanent otherwise.\n"
-"   -H, --home dir           Set the directory for configuration files, relative\n"
-"                            to $HOME.  Default: .config/seq66.\n"
+"   -H, --home dir           Set directory for configuration files. It is\n"
+"                            $HOME/.config/seq66 by default.\n"
 "   -f, --rc filename        An alternate 'rc' file, in $HOME/.config/seq66 or\n"
 "                            the --home directory. '.rc' extension is enforced.\n"
 "   -F, --usr filename       Use a different 'usr' configuration file.  Same\n"
@@ -945,14 +941,6 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             usr().inverse_colors(true);
             break;
 
-#if defined SEQ66_LASH_SUPPORT
-        case 'L':
-            rc().lash_support(true);
-            usr().session_manager("lash");
-            printf("[Activating LASH support]\n");
-            break;
-#endif
-
         case 'l':
             set_client_name(soptarg);
             break;
@@ -973,7 +961,6 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
 #if defined SEQ66_NSM_SUPPORT
         case 'n':
-            rc().lash_support(false);
             usr().session_manager("nsm");
             printf("[Activating NSM support]\n");
             break;
@@ -1027,9 +1014,8 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
 #if defined SEQ66_NSM_SUPPORT
         case 'T':
-            rc().lash_support(false);
             usr().session_manager("none");
-            printf("[Deactivating NSM support]\n");
+            printf("[Deactivating session support]\n");
             break;
 #endif
 
@@ -1040,8 +1026,8 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
 #if defined SEQ66_JACK_SESSION
         case 'U':
-            rc().jack_session_uuid(soptarg);
-            usr().session_manager("jack");
+            rc().jack_session(soptarg);
+            printf("[JACK session %s]\n", soptarg.c_str());
             break;
 #endif
 

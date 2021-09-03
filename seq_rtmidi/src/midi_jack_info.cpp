@@ -206,7 +206,7 @@ midi_jack_info::connect ()
 
                 std::string uuid = get_jack_client_uuid(result);
                 if (! uuid.empty())
-                    rc().jack_session_uuid(uuid);
+                    rc().jack_session(uuid);
 
                 jack_on_shutdown
                 (

@@ -6,7 +6,7 @@
 # \library    	seq66cli application
 # \author     	Chris Ahlstrom
 # \date       	2017-04-07
-# \update      2021-06-22
+# \update      2021-09-03
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -95,8 +95,7 @@ AM_CXXFLAGS = \
  -I$(top_srcdir)/seq_rtmidi/include \
  $(JACK_CFLAGS) \
  $(LIBLO_CFLAGS) \
- $(NSM_CFLAGS) \
- $(LASH_CFLAGS)
+ $(NSM_CFLAGS)
 
 #******************************************************************************
 # libmath
@@ -160,7 +159,7 @@ bin_PROGRAMS = seq66cli
 seq66cli_SOURCES = seq66rtcli.cpp
 seq66cli_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
 seq66cli_LDFLAGS = -Wl,--copy-dt-needed-entries
-seq66cli_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
+seq66cli_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(AM_LDFLAGS)
 
 #******************************************************************************
 #  distclean

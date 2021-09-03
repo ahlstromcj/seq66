@@ -681,7 +681,7 @@ jack_assistant::error_message (const std::string & msg)
  *  assigned to this client.  Sets m_jack_client_name and m_jack_client_info
  *  as side-effects.
  *
- * Only store the transport UUID in the rc().jack_session_uuid() if not already
+ * Only store the transport UUID in the rc().jack_session() if not already
  * filled by opening the with-jack MIDI client.
  */
 
@@ -694,8 +694,8 @@ jack_assistant::get_jack_client_info ()
         m_jack_client_uuid = get_jack_client_uuid(m_jack_client);
         if (! m_jack_client_uuid.empty())               /* this test okay?? */
         {
-            if (rc().jack_session_uuid().empty())
-                rc().jack_session_uuid(m_jack_client_uuid);
+            if (rc().jack_session().empty())
+                rc().jack_session(m_jack_client_uuid);
         }
         m_jack_client_name = actualname;
     }
@@ -724,7 +724,7 @@ jack_assistant::get_jack_client_info ()
  *
  *      There are three settings:  On, Master, and Master Conditional.
  *      Currently, they can all be selected in the user-interface's File /
- *      Options / JACK/LASH page.  We really want only the proper combinations
+ *      Options / JACK page.  We really want only the proper combinations
  *      to be set, for clarity (the user-interface now takes care of this.  We
  *      need to initialize if any of them are set, and the
  *      rcsettings::with_jack_transport() function tells us that.
@@ -802,7 +802,7 @@ jack_assistant::init ()
         }
 
 #if defined SEQ66_JACK_SESSION
-        if (result) //  && usr().wants_jack_session())
+        if (result && usr().want_jack_session())
         {
             int jackcode = jack_set_session_callback
             (
@@ -1365,7 +1365,7 @@ jack_assistant::session_event (jack_session_event_t * ev)
     cmd += (" --jack-midi");
     cmd += (" --jack-");
     cmd += rc().with_jack_master() ? "master" : "slave" ;
-    cmd += (" --jack-session-uuid ");
+    cmd += (" --jack-session ");
     cmd += uuid;
     cmd += " --home ${SESSION_DIR}";
     ev->command_line = strdup(cmd.c_str());
@@ -1390,7 +1390,7 @@ jack_assistant::session_event (jack_session_event_t * ev)
          * no configuration files yet exist in the "home" location.
          */
     }
-    if (rc().verbose())
+    if (rc().investigate())
     {
         info_message(session_event_name(ev));
         file_message("Session command", cmd);
@@ -1736,7 +1736,7 @@ jack_assistant::show_position (const jack_position_t & pos)
 jack_client_t *
 jack_assistant::client_open (const std::string & name)
 {
-    return create_jack_client(name, rc().jack_session_uuid());
+    return create_jack_client(name, rc().jack_session());
 }
 
 /**

@@ -199,7 +199,7 @@ qt5nsmanager::create_window ()
                 }
                 else
                 {
-                    if (! rc().jack_session_uuid().empty())
+                    if (! rc().jack_session().empty())
                     {
                         session_manager_name("JACK");
                     }

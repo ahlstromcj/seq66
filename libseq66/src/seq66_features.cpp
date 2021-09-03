@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2020-11-19
+ * \updates       2021-09-03
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -241,9 +241,6 @@ seq_build_details ()
 #endif
 #if defined SEQ66_JACK_SUPPORT
         << "  JACK support\n"
-#endif
-#if defined SEQ66_LASH_SUPPORT
-        << "  LASH support\n"
 #endif
 #if defined SEQ66_NSM_SUPPORT
         << "  NSM (Non Session Manager) support\n"

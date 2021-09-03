@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2021-06-22
+# \update      2021-09-03
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -147,7 +147,7 @@ version = $(SEQ66_API_MAJOR):$(SEQ66_API_MINOR):$(SEQ66_API_PATCH)
 #
 # Notes:
 #
-#     -  None of ALSA, JACK, or LASH CFLAGS seem to be defined.
+#     -  None of ALSA or JACK CFLAGS seem to be defined.
 #     -  We include "-I.." and require that the Qt5-generated modules be
 #        included as:   "#include "qt/generated_module.h".
 #
@@ -164,7 +164,6 @@ AM_CXXFLAGS = \
  $(ALSA_CFLAGS) \
  $(QT_CXXFLAGS) \
  $(JACK_CFLAGS) \
- $(LASH_CFLAGS) \
  -DSEQ66_GIT_VERSION=\"$(git_info)\"
 
 #******************************************************************************
@@ -341,7 +340,7 @@ libseq_qt5_la_SOURCES = \
  $(moc_sources)
 
 libseq_qt5_la_LDFLAGS = -version-info $(version)
-libseq_qt5_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS)
+libseq_qt5_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS)
 
 #******************************************************************************
 # uninstall-hook

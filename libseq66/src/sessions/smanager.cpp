@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2021-08-30
+ * \updates       2021-09-03
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -61,10 +61,6 @@
 #include "os/daemonize.hpp"             /* seq66::reroute_stdio()           */
 #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
 #include "util/filefunctions.hpp"       /* seq66::file_readable() etc.      */
-
-#if defined SEQ66_LASH_SUPPORT_NEED_TO_MOVE_THIS
-#include "lash/lash.hpp"                /* seq66::lash_driver functions     */
-#endif
 
 #if defined SEQ66_PORTMIDI_SUPPORT
 #include "portmidi.h"        /*  Pm_error_present(), Pm_hosterror_message() */
@@ -231,10 +227,9 @@ smanager::main_settings (int argc, char * argv [])
  *  smanager.  This call must occur before creating the application main
  *  window.
  *
- *  Otherwise, seq66 will not register with LASH (if enabled) in a timely
+ *  Otherwise, seq66 will not register with NSM (if enabled) in a timely
  *  fashion.  Also, we always have to launch, even if an error occurred, to
- *  avoid a segfault and show at least a minimal message.  LASH support is now
- *  back in Seq66, sort of.  Working on NSM support at present.
+ *  avoid a segfault and show at least a minimal message.
  *
  * NSM:
  *
@@ -409,15 +404,6 @@ smanager::open_midi_file (const std::string & fname)
 bool
 smanager::create_session (int /*argc*/, char * /*argv*/ [])
 {
-#if defined SEQ66_LASH_SUPPORT_NEED_TO_MOVE_THIS
-    if (usr().is_lash_session())    /* rc().lash_support() */
-    {
-        if (m_perf_pointer)
-            create_lash_driver(*m_perf_pointer, argc, argv);
-    }
-    else
-#endif
-
     session_setup();             /* daemonize: set basic signal handlers */
     return true;
 }
@@ -452,12 +438,6 @@ smanager::close_session (std::string & msg, bool ok)
         if (result)
             (void) save_session(msg, result);
     }
-
-#if defined SEQ66_LASH_SUPPORT_NEED_TO_MOVE_THIS
-        if (rc().lash_support())
-            delete_lash_driver();
-#endif
-
     result = ok;
     session_close();                            /* daemonize signals exit   */
     return result;

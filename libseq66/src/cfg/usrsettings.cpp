@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-08-28
+ * \updates       2021-09-03
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -503,10 +503,10 @@ usrsettings::save_user_config (bool flag)
 std::string
 usrsettings::session_manager_name () const
 {
-    if (wants_nsm_session())
+    if (want_nsm_session())
         return std::string("nsm");
-    else if (wants_lash_session())
-        return std::string("lash");
+    else if (want_jack_session())
+        return std::string("jack");
     else
         return std::string("none");
 }
@@ -516,8 +516,8 @@ usrsettings::session_manager_name () const
  *
  * \param sm
  *      Provides a string value of "nsm" for the Non/New Session Managers, or
- *      "lash" for LASH.  All other values set the m_session_manager code to
- *      session::none.
+ *      "jack" for JACK Session Management.  All other values set the
+ *      m_session_manager code to session::none.
  */
 
 void
@@ -530,10 +530,6 @@ usrsettings::session_manager (const std::string & sm)
             value = session::nsm;
         else if (sm == "jack")
             value = session::jack;
-        else if (sm == "ladish")
-            value = session::ladish;
-        else if (sm == "lash")
-            value = session::lash;
 
         m_session_manager = value;
         set_option_bit(option_session_mgr);

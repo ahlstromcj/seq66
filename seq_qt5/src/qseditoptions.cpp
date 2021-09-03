@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-08-15
+ * \updates       2021-09-03
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -60,11 +60,12 @@
 namespace seq66
 {
 
-static const int Tab_MIDI_Clock         =  0;
-static const int Tab_MIDI_Input         =  1;
-static const int Tab_MIDI_Display       =  2;
-static const int Tab_MIDI_JACK          =  3;
-static const int Tab_MIDI_Play_Options  =  4;
+static const int Tab_MIDI_Clock     =  0;
+static const int Tab_MIDI_Input     =  1;
+static const int Tab_Display        =  2;
+static const int Tab_JACK           =  3;
+static const int Tab_Play_Options   =  4;
+static const int Tab_Session        =  5;
 
 /**
  *  Button numbering for JACK Start Mode radio-buttons.
@@ -169,7 +170,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     );
 
     /*
-     *  Combo-box for changing the "sets mode".
+     *  Group-box for changing the "sets mode".
      */
 
     QButtonGroup * rgroup = new QButtonGroup(this);
@@ -182,6 +183,30 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     (
         rgroup, SIGNAL(buttonClicked(int)),
         this, SLOT(slot_sets_mode(int))
+    );
+
+    /*
+     *  Group-box for changing the session.
+     */
+
+    QButtonGroup * sgroup = new QButtonGroup(this);
+    sgroup->addButton
+    (
+        ui->radio_session_none, static_cast<int>(usrsettings::session::none)
+    );
+    sgroup->addButton
+    (
+        ui->radio_session_nsm, static_cast<int>(usrsettings::session::nsm)
+    );
+    sgroup->addButton
+    (
+        ui->radio_session_jack, static_cast<int>(usrsettings::session::jack)
+    );
+    show_session(usr().session_manager());
+    connect
+    (
+        sgroup, SIGNAL(buttonClicked(int)),
+        this, SLOT(slot_session(int))
     );
 
     /*
@@ -464,7 +489,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     m_is_initialized = true;
 
 #if defined SEQ66_PLATFORM_WINDOWS
-    ui->tabWidget->setTabEnabled(Tab_MIDI_JACK, false);
+    ui->tabWidget->setTabEnabled(Tab_JACK, false);
 #endif
 }
 
@@ -594,6 +619,42 @@ qseditoptions::slot_io_maps ()
 {
     perf().store_output_map();
     perf().store_input_map();
+}
+
+void
+qseditoptions::show_session (usrsettings::session sm)
+{
+    switch (sm)
+    {
+        case usrsettings::session::none:
+            ui->radio_session_none->setChecked(true);
+            break;
+
+        case usrsettings::session::nsm:
+            ui->radio_session_nsm->setChecked(true);
+            break;
+
+        case usrsettings::session::jack:
+            ui->radio_session_jack->setChecked(true);
+            break;
+
+        default:
+            break;
+    }
+}
+
+void
+qseditoptions::slot_session (int buttonno)
+{
+    usrsettings::session current = usr().session_manager();
+    if (buttonno == static_cast<int>(usrsettings::session::nsm))
+        usr().session_manager("nsm");
+    else if (buttonno == static_cast<int>(usrsettings::session::jack))
+        usr().session_manager("jack");
+    else
+        usr().session_manager("none");
+
+    usr().save_user_config(usr().session_manager() != current);
 }
 
 /**

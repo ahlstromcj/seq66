@@ -1,6 +1,6 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2021-08-31"
+#define VERSION_DATE_SHORT "2021-09-03"
 #define VERSION "0.96.3"
 
 
@@ -110,9 +110,6 @@
 
 /* Define to enable JACK driver */
 #undef JACK_SUPPORT
-
-/* Define to enable LASH (default=no) */
-#undef LASH_SUPPORT
 
 /* Define if LIBLO library is available. */
 #undef LIBLO_SUPPORT

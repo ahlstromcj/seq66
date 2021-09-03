@@ -84,7 +84,6 @@ Optional Features:
   --enable-docs           Enable developer document support
   --disable-jack          Disable JACK support
   --disable-jack-session  Disable JACK session support
-  --enable-lash           Enable LASH support (deprecated)
   --enable-nsm            Enable NSM support (default=yes)
   --enable-rtmidi         Enable rtmidi build, default MIDI engine
   --disable-alsatest      Do not try to compile and run a test Alsa program
@@ -132,8 +131,6 @@ Some influential environment variables:
               path overriding pkg-config's built-in search path
   JACK_CFLAGS C compiler flags for JACK, overriding pkg-config
   JACK_LIBS   linker flags for JACK, overriding pkg-config
-  LASH_CFLAGS C compiler flags for LASH, overriding pkg-config
-  LASH_LIBS   linker flags for LASH, overriding pkg-config
   LIBLO_CFLAGS
               C compiler flags for LIBLO, overriding pkg-config
   LIBLO_LIBS  linker flags for LIBLO, overriding pkg-config

@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2021-08-31
+dnl \update        2021-09-03
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -195,10 +195,9 @@ ac_cflags="${CFLAGS}"
 dnl Check for header files.  Added more to support daemonization.
 
 m4_warn([obsolete],
-[The preprocessor macro `STDC_HEADERS' is obsolete.
-  Except in unusual embedded environments, you can safely include all
-  ISO C90 headers unconditionally.])
-dnl
+[The preprocessor macro STDC_HEADERS is obsolete. 
+ Except in unusual embedded environments, you can safely include all 
+ ISO C90 headers unconditionally.])
 
 dnl Autoupdate added the next two lines to ensure that your configure
 dnl script's behavior did not change.  They are probably safe to remove.
@@ -287,31 +286,8 @@ else
     AC_MSG_NOTICE([JACK disabled in the configuration.]);
 fi
 
-dnl LASH support has been added back!  However, it is disabled by default.
-dnl Not yet ready, may use LADISH.
-
-AC_ARG_ENABLE(lash,
-    [AS_HELP_STRING(--enable-lash, [Enable LASH support (not ready)])],
-    [lash=$enableval],
-    [lash=no])
-
-if test "$lash" != "no"; then
-    PKG_CHECK_MODULES([LASH], [lash-1.0 >= 0.5.0], [lash_found="yes"],
-        [lash_found="no"])
-    if test "$lash_found" = "yes"; then
-        AC_DEFINE(LASH_SUPPORT, 1, [Define to enable LASH (default=no)])
-        AC_SUBST(LASH_CFLAGS)
-        AC_SUBST(LASH_LIBS)
-        AC_MSG_RESULT([LASH support enabled.]);
-        ac_nsm=yes
-    else
-        AC_MSG_WARN([LASH not found, session support will not be built.])
-    fi
-else
-    AC_MSG_NOTICE([LASH support disabled.]);
-fi
-
-dnl Enable NSM support.  Nearly ready for prime time!
+dnl LASH support has been deleted, this time for good.  We will support only
+dnl JACK Session and NSM.  Enable NSM support.  Now ready for prime time!
 
 AC_ARG_ENABLE(nsm,
   AS_HELP_STRING([--disable-nsm], [Enable NSM support]),
@@ -456,7 +432,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2021-08-31"
+#define VERSION_DATE_SHORT "2021-09-03"
 #define VERSION "0.96.3"
 
 )

@@ -101,14 +101,20 @@ support for qseq66 as a client of the Non Session Manager.  This support
 is basically finished, but please report any issues.
 Note that
 .BR LASH
-is
-currently not supported.
+is not supported,
+but JACK session is supported.
 
 .TP 8
 .B \-T, \-\-no-nsm
 Disable NSM support (if included in the build options). This option overrides
 the user-session option 'session', useful to temporarily run in "typical"
 usage.
+
+.TP 8
+.B \-U, \-\-jack-session UUID | "on"
+Enable usage of JACK session management.  The user should use "on", which
+enables JACK session management; the process will provide its own UUID
+when session management starts.
 
 .TP 8
 .B \-\-file \fI<filename>\fP

@@ -6,7 +6,7 @@
 # \library    	libseq_portmidi library
 # \author     	Chris Ahlstrom
 # \date       	2015-09-11
-# \update      2021-06-22
+# \update      2021-09-03
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -135,7 +135,7 @@ libseq_portmidi_la_SOURCES = \
 	ptlinux.c
 
 libseq_portmidi_la_LDFLAGS = -no-undefined -version-info $(version)
-libseq_portmidi_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS)
+libseq_portmidi_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS)
 
 #******************************************************************************
 # uninstall-hook

@@ -1068,8 +1068,8 @@ performer::client_id_string () const
 {
     std::string result = seq_client_name();
     result += ':';
-    if (rc().with_jack_midi() && ! rc().jack_session_uuid().empty())
-        result += rc().jack_session_uuid();
+    if (rc().with_jack_midi() && ! rc().jack_session().empty())
+        result += rc().jack_session();
     else
         result += std::to_string(m_master_bus->client_id());
 

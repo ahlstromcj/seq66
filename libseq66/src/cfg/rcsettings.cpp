@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-07-31
+ * \updates       2021-09-03
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -79,7 +79,6 @@ rcsettings::rcsettings () :
     m_auto_option_save          (true),     /* legacy seq24 behavior    */
     m_save_old_triggers         (false),
     m_save_old_mutes            (false),
-    m_lash_support              (false),
     m_allow_mod4_mode           (false),
     m_allow_snap_split          (false),
     m_allow_click_edit          (true),
@@ -184,7 +183,6 @@ rcsettings::set_defaults ()
     m_auto_option_save          = true;     /* legacy seq24 setting */
     m_save_old_triggers         = false;
     m_save_old_mutes            = false;
-    m_lash_support              = false;
     m_allow_mod4_mode           = false;
     m_allow_snap_split          = false;
     m_allow_click_edit          = true;
@@ -811,19 +809,47 @@ rcsettings::session_midi_filename (const std::string & value)
 /**
  * \setter m_jack_session_uuid
  *
- *  This is an FYI-only data item that is controlled by JACK, and cannot be
- *  modified by the user. See https://jackaudio.org/metadata/ for more
+ *  This is an FYI-only data item that is controlled by JACK, and should not
+ *  be modified by the user. See https://jackaudio.org/metadata/ for more
  *  information.
  *
- * \param value
- *      The value to use to make the setting.
+ * \param uuid
+ *      The value to use to make the setting. If set to "on", it can enable
+ *      JACK session usage.  "off" disables it.  The session manager will
+ *      supply a long integer value (as a string).
  */
 
 void
-rcsettings::jack_session_uuid (const std::string & value)
+rcsettings::jack_session (const std::string & uuid)
 {
-    if (! value.empty())
-        m_jack_session_uuid = value;
+    bool save_config = true;
+    bool clear_uuid = true;
+    if (uuid.empty())
+    {
+        save_config = false;
+    }
+    else
+    {
+        if (uuid == "on")
+        {
+            usr().session_manager("jack");
+        }
+        else if (uuid == "off")
+        {
+            usr().session_manager("none");
+        }
+        else
+        {
+            usr().session_manager("jack");
+            m_jack_session_uuid = uuid;
+            save_config = clear_uuid = false;
+        }
+    }
+    if (save_config)
+        usr().save_user_config(true);
+
+    if (clear_uuid)
+        m_jack_session_uuid.clear();
 }
 
 /**

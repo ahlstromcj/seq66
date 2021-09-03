@@ -6,7 +6,7 @@
 # \library    	libsessions library
 # \author     	Chris Ahlstrom
 # \date       	2020-03-08
-# \update      2020-09-01
+# \update      2020-09-03
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -121,7 +121,6 @@ AM_CXXFLAGS = \
  -I$(top_srcdir)/seq_portmidi/include \
  $(ALSA_CFLAGS) \
  $(JACK_CFLAGS) \
- $(LASH_CFLAGS) \
  -DSEQ66_GIT_VERSION=\"$(git_info)\"
 
 #******************************************************************************
@@ -135,14 +134,13 @@ lib_LTLIBRARIES = libsessions.la
 #----------------------------------------------------------------------------
 
 libsessions_la_SOURCES = \
- lash/lash.cpp \
  nsm/nsmbase.cpp \
  nsm/nsmclient.cpp \
  nsm/nsmmessagesex.cpp \
  nsm/nsmserver.cpp
 
 libsessions_la_LDFLAGS = -version-info $(version)
-libsessions_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS)
+libsessions_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS)
 
 #******************************************************************************
 # uninstall-hook

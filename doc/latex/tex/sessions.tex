@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2021-09-02
+% \update      2021-09-03
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -33,7 +33,6 @@
       \item \textbf{JACK Session} (not ready, deprecated but will be
          implemented)
       \item \textbf{Signals}
-      \item \textbf{LASH} (not ready, may go away completely)
    \end{enumber}
 
    \textbf{Non Session Manager} provides a replacement for the
@@ -47,10 +46,6 @@
    termination of an application.  This mode is useful with
    \textsl{nsm-proxy}, a way to script applications that don't have \textsl{NSM}
    support.
-
-   \textbf{LASH} is an earlier session protocol, supported in \textsl{Seq64}.
-   However, it is not ready in \textsl{Seq66} and is a low priority at this
-   time.
 
 \subsection{Seq66 Session Management / NSM}
 \label{subsec:sessions_nsm}
@@ -607,8 +602,8 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 \label{subsec:sessions_lash}
 
    \index{sessions!lash}
-   LASH support has not yet been fully reimplemented and retested.
-   It is a low priority.
+   LASH support has been removed.  Use the \textsl{NSM Session Manager} or
+   the \textsl{JACK Session Manager}.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

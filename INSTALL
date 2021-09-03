@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.95.1
+INSTALL for Seq66 v. 0.96.3
 Chris Ahlstrom
-2015-09-10 to 2021-07-06
+2015-09-10 to 2021-09-03
 
 Getting Seq66 requires building the code or going to the
 "sequencer64-packages/seq66" project directory on GitHub.
@@ -293,14 +293,7 @@ CONFIGURE OPTIONS FOR APPLICATION FEATURES:
     --disable-nsm
 
         Controls the SEQ66_NSM_SUPPORT macro, which is defined by default.
-        This will allow the Non Session Manager to control Seq66.  However
-        this support is still in progress and not yet complete.
-
-    --enable-lash
-
-        Defines the SEQ66_LASH_SUPPORT macro, which is undefined by default.
-        Use this if you still use LASH session management.  However this
-        support is still in progress for Seq66.
+        This will allow the Non Session Manager to control Seq66.
 
     --disable-jack
     
@@ -401,7 +394,6 @@ DEPENDENCIES:
 
       -  libasound2-dev
       -  libjack-jackd2-dev
-      -  liblash-compat-dev (optional, needed for LASH support)
       -  liblo-dev (needed for NSM/OSC support, but not optional)
       -  libpng-dev (replaces libpng12-dev with libpng16, latest Debian Sid,
          and brings in libpng-tools)

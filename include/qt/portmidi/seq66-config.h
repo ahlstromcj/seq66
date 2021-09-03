@@ -33,18 +33,17 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-08-31
+ * \updates       2021-09-03
  * \license       GNU GPLv2 or above
  *
  *  Qt Portmidi Linux and Windows versions, hardwired for use with
  *  qtcreator/qmake.  That build uses PortMidi in order to support both Linux
- *  and Windows. Hence no support for JACK or LASH, for example.
+ *  and Windows. Hence no support for JACK or NSM, for example.
  *  However, it still defines some things that are available on GNU/Linux/MingW
  *  systems.
  *
  *  Note that there is a native (i.e. automake) Linux Qt build that uses
- *  RtMidi, so that JACK is supported.  However, LASH support is not being
- *  ported to seq66.
+ *  RtMidi, so that JACK is supported.
  *
  *  Note:  This header file is NOT auto-generated for the portmidi build.
  *  Therefore, the date and version information below must be edited by hand
@@ -63,7 +62,7 @@
 #endif
 
 #if ! defined SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2021-08-31"
+#define SEQ66_VERSION_DATE_SHORT "2021-09-03"
 #endif
 
 #if ! defined SEQ66_VERSION
@@ -288,7 +287,6 @@
 
 #undef SEQ66_JACK_SESSION
 #undef SEQ66_JACK_SUPPORT
-#undef SEQ66_LASH_SUPPORT
 #undef SEQ66_NSM_SUPPORT
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */

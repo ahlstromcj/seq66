@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2020-03-08
-# \update      2021-05-14
+# \update      2021-09-03
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -69,7 +69,6 @@ AM_CXXFLAGS = \
  -I../include \
  -I$(top_srcdir)/include \
  $(JACK_CFLAGS) \
- $(LASH_CFLAGS) \
  -DSEQ66_GIT_VERSION=\"$(git_info)\" \
  -Wall $(MM_WFLAGS)
 
@@ -82,7 +81,6 @@ AM_CXXFLAGS = \
 #----------------------------------------------------------------------------
 
 nobase_include_HEADERS = \
- lash/lash.hpp \
  nsm/nsmbase.hpp \
  nsm/nsmclient.hpp \
  nsm/nsmmessagesex.hpp \

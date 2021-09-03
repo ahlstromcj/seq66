@@ -43,9 +43,6 @@
  *  As long as each section's sub-values are read and written in the same
  *  order, there will be no problem.
  *
- *  This file now (again) supports LASH setup.  Eventually, we will add more
- *  modern session management.
- *
  *  Finally, note that seq66 no longer supports the Seq24 file format;
  *  too much has changed.
  */

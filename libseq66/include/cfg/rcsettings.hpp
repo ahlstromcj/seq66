@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-08-31
+ * \updates       2021-09-03
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -283,7 +283,6 @@ private:
     bool m_auto_option_save;        /**< [auto-option-save] setting.        */
     bool m_save_old_triggers;       /**< Save c_triggers_ex, no transpose.  */
     bool m_save_old_mutes;          /**< Save mutes as bytes, not longs.    */
-    bool m_lash_support;            /**< Enable LASH, if compiled in.       */
     bool m_allow_mod4_mode;         /**< Allow Mod4 to hold drawing mode.   */
     bool m_allow_snap_split;        /**< Allow snap-split of a trigger.     */
     bool m_allow_click_edit;        /**< Allow double-click edit pattern.   */
@@ -663,11 +662,6 @@ public:
         return m_save_old_mutes;
     }
 
-    bool lash_support () const
-    {
-        return m_lash_support;
-    }
-
     bool allow_mod4_mode () const
     {
         return m_allow_mod4_mode;
@@ -883,7 +877,7 @@ public:
         m_midi_filepath = value;
     }
 
-    const std::string & jack_session_uuid () const
+    const std::string & jack_session () const
     {
         return m_jack_session_uuid;
     }
@@ -1117,11 +1111,6 @@ public:
         m_save_old_mutes = flag;
     }
 
-    void lash_support (bool flag)
-    {
-        m_lash_support = flag;
-    }
-
     void allow_mod4_mode (bool /*flag*/)
     {
         m_allow_mod4_mode = false;
@@ -1261,7 +1250,7 @@ public:
 
     void tempo_track_number (int track);
     bool interaction_method (interaction value);
-    void jack_session_uuid (const std::string & value);
+    void jack_session (const std::string & uuid);
     void full_config_directory (const std::string & value, bool addhome = false);
     void config_directory (const std::string & value);
     void config_filename (const std::string & value);

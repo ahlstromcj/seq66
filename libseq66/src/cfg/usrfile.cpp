@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-08-12
+ * \updates       2021-09-03
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -944,11 +944,11 @@ usrfile::write ()
         "# [user-session]\n"
         "#\n"
         "# The session manager to use, if any. The 'session' value is 'none'\n"
-        "# (default), 'nsm' (Non Session Manager), or 'lash' (LASH, not yet\n"
-        "# supported).  'url' can be set to the value set by nsmd when run\n"
-        "# outside of the NSM user-interface. Set 'url' only if running nsmd\n"
-        "# standalone; use a matching --osc-port number. Seq66 will detect if\n"
-        "# it's running in an NSM environment and override these settings.\n"
+        "# (default), 'nsm' (Non Session Manager), or 'jack' (JACK Session).\n"
+        "# 'url' can be set to the value set by nsmd when run outside of the\n"
+        "# the NSM user-interface. Set 'url' only if running nsmd stand-alone;\n"
+        "# use a matching --osc-port number. Seq66 will detect if running in an\n"
+        "# NSM environment, and override these settings.\n"
         "\n[user-session]\n\n"
         ;
 

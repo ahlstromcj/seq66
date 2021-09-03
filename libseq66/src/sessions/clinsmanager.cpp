@@ -103,7 +103,7 @@ clinsmanager::detect_session (std::string & url)
     }
     if (! result)                                   /* not in NSM's env.    */
     {
-        result = usr().wants_nsm_session();         /* user wants NSM usage */
+        result = usr().want_nsm_session();          /* user wants NSM usage */
         if (result)
         {
             infoprint("Checking 'usr' for NSM URL");
