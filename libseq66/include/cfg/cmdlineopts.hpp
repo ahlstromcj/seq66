@@ -27,7 +27,7 @@
  *
  * \author  Chris Ahlstrom
  * \date    2015-11-20
- * \updates 2021-01-21
+ * \updates 2021-09-07
  * \version $Revision$
  *
  *    Also see the filefunctions.cpp and strfunctions modules.
@@ -54,13 +54,6 @@ namespace seq66
 class rcsettings;
 
 /**
- *  Provides a return value for parse_command_line_options() that indicates a
- *  help-related option was specified.
- */
-
-const int c_null_option_index = 99999;
-
-/**
  *  A wrapper class so that the whole class can be a friend.
  */
 
@@ -72,13 +65,6 @@ private:
     static const std::string versiontext;
     static struct option s_long_options [];
     static const std::string s_arg_list;
-    static const std::string s_help_1a;
-    static const std::string s_help_1b;
-    static const std::string s_help_2;
-    static const std::string s_help_3;
-    static const std::string s_help_4a;
-    static const std::string s_help_4b;
-    static const std::string s_help_5;
 
 public:
 

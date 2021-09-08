@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-09-02
+ * \updates       2021-09-07
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -815,7 +815,7 @@ jack_assistant::init ()
             }
             else
             {
-                if (rc().verbose())
+                if (rc().investigate())
                     info_message("JACK session callback set");
             }
         }
@@ -1361,7 +1361,7 @@ jack_assistant::session_event (jack_session_event_t * ev)
     bool quit = false;
     std::string uuid = std::string(ev->client_uuid);
     std::string filepath = std::string(ev->session_dir);
-    std::string cmd = seq_app_name();               /* e.g. "qseq66"    */
+    std::string cmd = seq_app_name();                   /* e.g. "qseq66"    */
     cmd += (" --jack-midi");
     cmd += (" --jack-");
     cmd += rc().with_jack_master() ? "master" : "slave" ;
@@ -1369,8 +1369,20 @@ jack_assistant::session_event (jack_session_event_t * ev)
     cmd += uuid;
     cmd += " --home ${SESSION_DIR}";
     ev->command_line = strdup(cmd.c_str());
+
+    std::string clientname = rc().app_client_name();    /* seq_client_id()  */
+    clientname += ":";
+    clientname += uuid;
+    rc().app_client_name(clientname);                   /* set_client_id()  */
     rc().home_config_directory(filepath);
-    rc().midi_filepath(filepath);                   /* FOR NOW !        */
+
+    /*
+     * Not sure it is the business of this particular session manager (as
+     * opposed to NSM) to determine where the user's data resides.
+     *
+     *      rc().midi_filepath(filepath);
+     */
+
     if (jack_session_reply(m_jack_client, ev) != 0)
     {
         errprint("JACK session reply failed");
@@ -1398,7 +1410,9 @@ jack_assistant::session_event (jack_session_event_t * ev)
     }
     jack_session_event_free(ev);
     if (quit)
-        parent().signal_quit();                    /* session_close()  */
+        parent().signal_quit();                     /* session_close()      */
+    else
+        rc().jack_session_activate();               /* really have session! */
 }
 
 /**

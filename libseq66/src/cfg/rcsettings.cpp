@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-09-03
+ * \updates       2021-09-07
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -106,6 +106,7 @@ rcsettings::rcsettings () :
     m_midi_filename             (),
     m_midi_filepath             (),
     m_jack_session_uuid         (),
+    m_jack_session_active       (false),
 #if defined SEQ66_PLATFORM_WINDOWS      /* but see home_config_directory()  */
     m_last_used_dir             (),
 #else
@@ -210,6 +211,7 @@ rcsettings::set_defaults ()
     m_midi_filename.clear();
     m_midi_filepath.clear();
     m_jack_session_uuid.clear();
+    m_jack_session_active       = false;
     m_config_directory          = SEQ66_CLIENT_NAME;
 #if defined SEQ66_PLATFORM_WINDOWS    /* but see home_config_directory()  */
     m_last_used_dir.clear();
@@ -328,10 +330,16 @@ rcsettings::song_start_mode (const std::string & s)
  *  with the NSM "client_id" value.
  */
 
-std::string
+const std::string &
 rcsettings::app_client_name () const
 {
     return seq_client_name();
+}
+
+void
+rcsettings::app_client_name (const std::string & n) const
+{
+    set_client_name(n);
 }
 
 /**

@@ -51,14 +51,14 @@
 #   4. Setup / Options:
 #
 #      a. Execute script after Startup:     startqjack
-#      b. Execute script on Shutdown:       startqjack
+#      b. Execute script on Shutdown:       stopqjack
 #
 #   5. Setup / Misc:
 #
 #      a. Start JACK audio server on ...:   checked (startup)
 #      b. Enable ALSA Sequencer support:    checked
 #      c. Enable D-Bus interface:           checked
-#      d. Enable JACK D-Bus interface:      checked
+#      d. Enable JACK D-Bus interface:      unchecked
 #      e. Stop JACK audio server on ...:    checked (exit)
 #      f. Single application instance:      checked
 #
@@ -107,8 +107,7 @@ if [ "$DO_KILL" == "yes" ] ; then
     killall a2jmidid
     killall qjackctl
 else
-    echo "Starting qjackctl..."
-    qjackctl &
+    echo "Starting a2j bridge..."
     a2j_control --ehw
     a2j_control --start
     echo "Waiting $SLEEPTIME seconds for a2j_control to settle..."

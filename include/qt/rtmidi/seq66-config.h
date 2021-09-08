@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-31
- * \updates       2021-09-03
+ * \updates       2021-09-07
  * \license       GNU GPLv2 or above
  *
  *  Qt Rtmidi Linux and Windows versions, hardwired for use with
@@ -70,7 +70,7 @@
 #endif
 
 #if ! defined SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2021-09-03"
+#define SEQ66_VERSION_DATE_SHORT "2021-09-07"
 #endif
 
 #if ! defined SEQ66_VERSION
@@ -293,14 +293,13 @@
 
 /*
  * Define to enable JACK session.  It is deprecated by the JACK developers,
- * who now recommend using the Non Session Manager (NSM).
- *
- * #if ! defined SEQ66_JACK_SESSION
- * #define SEQ66_JACK_SESSION 1
- * #endif
+ * who now recommend using the Non Session Manager (NSM).  However, we
+ * still want to enable it in Linux (rtmidi) debug builds.
  */
 
-#undef SEQ66_JACK_SESSION
+#if ! defined SEQ66_JACK_SESSION
+#define SEQ66_JACK_SESSION 1
+#endif
 
 /*
  * Define to enable JACK driver.

@@ -233,7 +233,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Session Name</string>
+    <string>Session/Config Name</string>
    </property>
   </widget>
   <widget class="QLabel" name="clientIdLabel">

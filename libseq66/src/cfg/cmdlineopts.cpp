@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-09-03
+ * \updates       2021-09-07
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -62,6 +62,13 @@
 
 namespace seq66
 {
+
+/**
+ *  Provides a return value for parse_command_line_options() that indicates a
+ *  help-related option was specified.
+ */
+
+static const int c_null_option = 99999;
 
 /**
  *  Sets up the "hardwired" version text for Seq66.  This value
@@ -107,7 +114,7 @@ cmdlineopts::s_long_options [] =
     {"no-jack-transport",   0, 0, 'g'},
     {"jack-master",         0, 0, 'J'},
     {"jack-master-cond",    0, 0, 'C'},
-#if defined SEQ66_JesCK_SESSION
+#if defined SEQ66_JACK_SESSION
     {"jack-session",        required_argument, 0, 'U'},
 #endif
     {"no-jack-midi",        0, 0, 'N'},
@@ -171,13 +178,13 @@ cmdlineopts::s_long_options [] =
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:dF:f:gH:h:iJjKkl:M:mNnoPpq:RrSsTtU:uVvX:x:Zz#";
+    "AaB:b:Cc:dF:f:gH:hiJjKkl:M:mNnoPpq:RrSsTtU:uVvX:x:Zz#";
 
 /**
  *  Provides help text.
  */
 
-const std::string cmdlineopts::s_help_1a =
+static const std::string s_help_1a =
 "Options:\n"
 "   -h, --help               Show this help and exit.\n"
 "   -V, --version            Show program version/build information and exit.\n"
@@ -196,7 +203,7 @@ const std::string cmdlineopts::s_help_1a =
  *  More help text.
  */
 
-const std::string cmdlineopts::s_help_1b =
+static const std::string s_help_1b =
 "   -r, --reveal-ports       Do not use the 'usr' definitions for port names.\n"
 "   -R, --hide-ports         Use the 'usr' definitions for port names.\n"
 "   -A, --alsa               Do not use JACK, use ALSA. A sticky option.\n"
@@ -222,7 +229,7 @@ const std::string cmdlineopts::s_help_1b =
  *  Still more help text.
  */
 
-const std::string cmdlineopts::s_help_2 =
+static const std::string s_help_2 =
 "   -k, --show-keys          Prints pressed key value.\n"
 "   -K, --inverse            Inverse/night color scheme for seq/perf editors.\n"
 "   -M, --jack-start-mode m  For ALSA or JACK, these play modes are available:\n"
@@ -250,7 +257,7 @@ const std::string cmdlineopts::s_help_2 =
  *  Still still more help text.
  */
 
-const std::string cmdlineopts::s_help_3 =
+static const std::string s_help_3 =
 "   -u, --user-save          Save 'usr' settings, usually saved only if they\n"
 "                            do not exist; 'usr' command-line options are not\n"
 "                            permanent otherwise.\n"
@@ -271,7 +278,7 @@ const std::string cmdlineopts::s_help_3 =
  *  Still still more more help text.
  */
 
-const std::string cmdlineopts::s_help_4a =
+static const std::string s_help_4a =
 "      log=filename  Redirect console output to a log file in home. If no\n"
 "                    '=filename' is provided, the filename in '[user-options]'\n"
 "                    in the 'usr' file is used.\n"
@@ -280,7 +287,7 @@ const std::string cmdlineopts::s_help_4a =
 "                    Affects mute groups, too.\n"
 ;
 
-const std::string cmdlineopts::s_help_4b =
+static const std::string s_help_4b =
 "      scale=x.y     Scales size of main window. Range: 0.5 to 3.0.\n"
 "      mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.\n"
 "      virtual=o,i   Like --manual-ports, except that the count of output and\n"
@@ -300,7 +307,7 @@ const std::string cmdlineopts::s_help_4b =
  *  Still still still more more more help text.
  */
 
-const std::string cmdlineopts::s_help_5 =
+static const std::string s_help_5 =
 "Saving a MIDI file saves the current PPQN value. If no JACK options are shown\n"
 "above, they were disabled in the build configuration. Command-line options can\n"
 "be sticky; many of them are saved to the configuration\files when Seq66 exits.\n"
@@ -817,6 +824,14 @@ cmdlineopts::parse_mute_groups
  *  reset value for optind is 1, but 0 is used in GNU code to trigger the
  *  internal initialization routine of get_opt().
  *
+ * Hidden values per getopt(3):
+ *
+ *      extern char *optarg;
+ *      extern int optind, opterr, optopt;
+ *
+ *  At the end, optind is the index in argv of the first argv element that is
+ *  not an option.
+ *
  * \param argc
  *      The number of command-line arguments.
  *
@@ -831,19 +846,19 @@ int
 cmdlineopts::parse_command_line_options (int argc, char * argv [])
 {
     int result = 0;
+    int option_index = 0;                   /* getopt_long index storage    */
     std::string optionval;                  /* used only with -o options    */
     std::string optionname;                 /* ditto                        */
-    optind = 1;                             /* make sure this global is set */
-    for (;;)                                /* parse all command parameters */
+    optind = 1;                             /* reset global for (re)scan    */
+    for (;;)                                /* scan all arguments           */
     {
-        int option_index = 0;               /* getopt_long index storage    */
         int c = getopt_long
         (
             argc, argv,
-            s_arg_list.c_str(),             /* e.g. "Crb:q:Li:jM:pU:Vx:..." */
+            s_arg_list.c_str(),         /* e.g. "Crb:q:Li:jM:pU:Vx:..." */
             s_long_options, &option_index
         );
-        if (c == -1)                        /* detect the end of options    */
+        if (c == (-1))
             break;
 
         std::string soptarg;
@@ -877,23 +892,23 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 #endif
 
-        case 'c':                           /* --config option              */
+        case 'c':                           /* --config                     */
             rc().set_config_files(soptarg);
             break;
 
-        case 'D':                           /* --legacy-record option       */
+        case 'D':                           /* --legacy-record              */
             rc().filter_by_channel(false);
             break;
 
-        case 'd':                           /* --record-by-channel option   */
+        case 'd':                           /* --record-by-channel          */
             rc().filter_by_channel(true);
             break;
 
-        case 'F':                           /* --usr option                 */
+        case 'F':                           /* --usr                        */
             rc().user_filename(soptarg);
             break;
 
-        case 'f':                           /* --rc option                  */
+        case 'f':                           /* --rc                         */
             rc().config_filename(soptarg);
             break;
 
@@ -912,7 +927,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'h':
             show_help();
-            result = c_null_option_index;
+            result = c_null_option;
             break;
 
         case 'i':
@@ -1041,7 +1056,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'V':
             std::cout << versiontext << seq_build_details();
-            result = c_null_option_index;
+            result = c_null_option;
             break;
 
         case 'X':
@@ -1071,21 +1086,34 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case '#':
-            printf("%s\n", SEQ66_VERSION);
             std::cout << SEQ66_VERSION << std::endl;
-            result = c_null_option_index;
+            result = c_null_option;
             break;
 
         default:
             break;
         }
     }
-    if (result != c_null_option_index)
+    if (result != c_null_option)
     {
         std::size_t applen = strlen("seq66");
         std::string appname(argv[0]);           /* "seq66", "./seq66", etc. */
         appname = appname.substr(appname.size()-applen, applen);
         result = optind;
+#if defined SEQ66_PLATFORM_DEBUG // _TMI
+        if (optind < argc)
+        {
+            printf
+            (
+                "NON-OPTION argv ELEMENTS for %d of %d arguments: ",
+                optind, argc
+            );
+            while (optind < argc)
+                printf("%s ", argv[optind++]);
+
+            printf("\n");
+        }
+#endif
     }
     return result;
 }

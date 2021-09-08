@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-08-31
+ * \updates       2021-09-07
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -199,15 +199,16 @@ qt5nsmanager::create_window ()
                 }
                 else
                 {
-                    if (! rc().jack_session().empty())
+                    path = rc().home_config_directory();    /* normal/JACK  */
+                    name = rc().config_filename();
+                    if (rc().jack_session_active())
                     {
                         session_manager_name("JACK");
+                        clid = rc().app_client_name();
                     }
                     else
                     {
-                        path = rc().home_config_directory();
-                        name = rc().config_filename();
-                        clid = rc().app_client_name();  /* seq_client_name() */
+                        clid = rc().jack_session();         /* UUID alone   */
                     }
                 }
                 m_window->session_manager(manager_name());
@@ -216,6 +217,14 @@ qt5nsmanager::create_window ()
                 m_window->session_client_id(clid);
                 m_window->session_log("No log entries.");
                 m_window->song_path(rc().midi_filename());
+                if (rc().investigate())
+                {
+                    file_message("Session manager", manager_name());
+                    file_message("Session path", path);
+                    file_message("Session name", name);
+                    file_message("Session ID", clid);
+                    file_message("Session song path", rc().midi_filename());
+                }
 
 #if defined SEQ66_NSM_SUPPORT
                 if (not_nullptr(nsm_client()))

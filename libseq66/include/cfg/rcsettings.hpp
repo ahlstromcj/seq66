@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-09-03
+ * \updates       2021-09-07
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -328,6 +328,12 @@ private:
      */
 
     std::string m_jack_session_uuid;
+
+    /**
+     *  Indicates if the JACK session callback was invoked.
+     */
+
+    bool m_jack_session_active;
 
     /**
      *  Holds the directory from which the last MIDI file was opened (or
@@ -882,6 +888,11 @@ public:
         return m_jack_session_uuid;
     }
 
+    bool jack_session_active () const
+    {
+        return m_jack_session_active;
+    }
+
     const std::string & last_used_dir () const
     {
         return m_last_used_dir;
@@ -1026,7 +1037,8 @@ public:
         return m_application_name;
     }
 
-    std::string app_client_name () const;
+    const std::string & app_client_name () const;
+    void app_client_name (const std::string & n) const;
 
     int tempo_track_number () const
     {
@@ -1251,6 +1263,12 @@ public:
     void tempo_track_number (int track);
     bool interaction_method (interaction value);
     void jack_session (const std::string & uuid);
+
+    void jack_session_activate ()
+    {
+        m_jack_session_active = true;
+    }
+
     void full_config_directory (const std::string & value, bool addhome = false);
     void config_directory (const std::string & value);
     void config_filename (const std::string & value);

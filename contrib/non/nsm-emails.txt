@@ -1,3 +1,7 @@
+NSM Tendrils of Information
+Chris Ahlstrom
+2021-03-10 to 2021-09-03
+
 -------------
 
 Anyway, it's nonsensical to start a client withiut a session open. How can
@@ -41,3 +45,13 @@ that it was better. Alas, even now I think I'm the only one who understands
 
 -------------
 
+To investigate:
+
+    aj-snapshot versus the NSM jackpatch applet.  The former works with ALSA as
+    well.
+
+    See this link for a big-ass use case:
+
+        https://ponderworthy.github.io/the-box-of-no-return/
+
+# vim: sw=4 ts=4 wm=2 et ft=sh
