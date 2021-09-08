@@ -21,7 +21,7 @@
 # \library    	libsessions library
 # \author     	Chris Ahlstrom
 # \date       	2020-03-08
-# \update      2020-09-01
+# \update      2020-09-03
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -157,10 +157,10 @@ am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libsessions_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1)
 am__dirstamp = $(am__leading_dot)dirstamp
-am_libsessions_la_OBJECTS = lash/lash.lo nsm/nsmbase.lo \
-	nsm/nsmclient.lo nsm/nsmmessagesex.lo nsm/nsmserver.lo
+am_libsessions_la_OBJECTS = nsm/nsmbase.lo nsm/nsmclient.lo \
+	nsm/nsmmessagesex.lo nsm/nsmserver.lo
 libsessions_la_OBJECTS = $(am_libsessions_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -282,8 +282,6 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 JACK_CFLAGS = @JACK_CFLAGS@
 JACK_LIBS = @JACK_LIBS@
-LASH_CFLAGS = @LASH_CFLAGS@
-LASH_LIBS = @LASH_LIBS@
 LATEX = @LATEX@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -492,7 +490,6 @@ AM_CXXFLAGS = \
  -I$(top_srcdir)/seq_portmidi/include \
  $(ALSA_CFLAGS) \
  $(JACK_CFLAGS) \
- $(LASH_CFLAGS) \
  -DSEQ66_GIT_VERSION=\"$(git_info)\"
 
 
@@ -505,14 +502,13 @@ lib_LTLIBRARIES = libsessions.la
 # Source files
 #----------------------------------------------------------------------------
 libsessions_la_SOURCES = \
- lash/lash.cpp \
  nsm/nsmbase.cpp \
  nsm/nsmclient.cpp \
  nsm/nsmmessagesex.cpp \
  nsm/nsmserver.cpp
 
 libsessions_la_LDFLAGS = -version-info $(version)
-libsessions_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS)
+libsessions_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS)
 all: all-am
 
 .SUFFIXES:
@@ -581,13 +577,6 @@ clean-libLTLIBRARIES:
 	  echo rm -f $${locs}; \
 	  rm -f $${locs}; \
 	}
-lash/$(am__dirstamp):
-	@$(MKDIR_P) lash
-	@: > lash/$(am__dirstamp)
-lash/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) lash/$(DEPDIR)
-	@: > lash/$(DEPDIR)/$(am__dirstamp)
-lash/lash.lo: lash/$(am__dirstamp) lash/$(DEPDIR)/$(am__dirstamp)
 nsm/$(am__dirstamp):
 	@$(MKDIR_P) nsm
 	@: > nsm/$(am__dirstamp)
@@ -605,15 +594,12 @@ libsessions.la: $(libsessions_la_OBJECTS) $(libsessions_la_DEPENDENCIES) $(EXTRA
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
-	-rm -f lash/*.$(OBJEXT)
-	-rm -f lash/*.lo
 	-rm -f nsm/*.$(OBJEXT)
 	-rm -f nsm/*.lo
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@lash/$(DEPDIR)/lash.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@nsm/$(DEPDIR)/nsmbase.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@nsm/$(DEPDIR)/nsmclient.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@nsm/$(DEPDIR)/nsmmessagesex.Plo@am__quote@
@@ -648,7 +634,6 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-	-rm -rf lash/.libs lash/_libs
 	-rm -rf nsm/.libs nsm/_libs
 
 ID: $(am__tagged_files)
@@ -768,8 +753,6 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-rm -f lash/$(DEPDIR)/$(am__dirstamp)
-	-rm -f lash/$(am__dirstamp)
 	-rm -f nsm/$(DEPDIR)/$(am__dirstamp)
 	-rm -f nsm/$(am__dirstamp)
 
@@ -783,7 +766,7 @@ clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf lash/$(DEPDIR) nsm/$(DEPDIR)
+	-rm -rf nsm/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -829,7 +812,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf lash/$(DEPDIR) nsm/$(DEPDIR)
+	-rm -rf nsm/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
