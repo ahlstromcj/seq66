@@ -81,7 +81,7 @@ QPushButton:checked
 {
 	color: yellow;
     font: bold 12px;
-	background-color: black;
+	background-color: white;
     border-style: ridge;
     border-width: 2px;
     border-radius: 4px;

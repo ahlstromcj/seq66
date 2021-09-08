@@ -18,7 +18,7 @@ QPushButton
     background-color: gray;
     border-style: solid;
     border-width: 2px;
-    border-radius: 8;
+    border-radius: 12;
     border-color: black;
     min-width: 20px;
     padding: 1px;
@@ -28,10 +28,10 @@ QPushButton:checked
 {
 	color: yellow;
     font: 12px;
-	background-color: black;
+	background-color: white;
     border-style: solid;
     border-width: 2px;
-    border-radius: 24px;
+    border-radius: 12;
     border-color: black;
     min-width: 20px;
     padding: 1px;

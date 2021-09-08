@@ -16,8 +16,8 @@
   <widget class="QLabel" name="sessionNameLabel">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>48</y>
+     <x>28</x>
+     <y>44</y>
      <width>132</width>
      <height>18</height>
     </rect>
@@ -33,6 +33,9 @@
    </property>
   </widget>
   <widget class="QTextEdit" name="sessionNameText">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>180</x>
@@ -59,12 +62,19 @@
    <property name="readOnly">
     <bool>true</bool>
    </property>
+   <property name="html">
+    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;None&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
   </widget>
   <widget class="QLabel" name="sessionServerUrl">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>80</y>
+     <x>28</x>
+     <y>76</y>
      <width>132</width>
      <height>18</height>
     </rect>
@@ -80,6 +90,9 @@
    </property>
   </widget>
   <widget class="QTextEdit" name="sessionUrlText">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>180</x>
@@ -106,12 +119,19 @@
    <property name="readOnly">
     <bool>true</bool>
    </property>
+   <property name="html">
+    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;None&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
   </widget>
   <widget class="QLabel" name="sessionLogLabel">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>136</y>
+     <x>28</x>
+     <y>144</y>
      <width>132</width>
      <height>32</height>
     </rect>
@@ -127,6 +147,9 @@
    </property>
   </widget>
   <widget class="QTextEdit" name="sessionLogText">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>180</x>
@@ -183,6 +206,9 @@
    </property>
   </widget>
   <widget class="QTextEdit" name="sessionManagerNameText">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>180</x>
@@ -209,12 +235,19 @@
    <property name="readOnly">
     <bool>true</bool>
    </property>
+   <property name="html">
+    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Normal&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
   </widget>
   <widget class="QLabel" name="sessionManagerNameLabel">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>16</y>
+     <x>28</x>
+     <y>12</y>
      <width>132</width>
      <height>18</height>
     </rect>
@@ -226,8 +259,8 @@
   <widget class="QLabel" name="displayNameLabel">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>112</y>
+     <x>28</x>
+     <y>108</y>
      <width>132</width>
      <height>18</height>
     </rect>
@@ -239,8 +272,8 @@
   <widget class="QLabel" name="clientIdLabel">
    <property name="geometry">
     <rect>
-     <x>408</x>
-     <y>112</y>
+     <x>412</x>
+     <y>108</y>
      <width>89</width>
      <height>18</height>
     </rect>
@@ -250,6 +283,9 @@
    </property>
   </widget>
   <widget class="QTextEdit" name="displayNameText">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>180</x>
@@ -276,8 +312,18 @@
    <property name="readOnly">
     <bool>true</bool>
    </property>
+   <property name="html">
+    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;None&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
   </widget>
   <widget class="QTextEdit" name="clientIdText">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>504</x>
@@ -304,8 +350,18 @@
    <property name="readOnly">
     <bool>true</bool>
    </property>
+   <property name="html">
+    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;None&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
   </widget>
   <widget class="QLineEdit" name="songPathText">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>30</x>

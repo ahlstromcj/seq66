@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2021-06-10
+# \update      2021-09-08
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -199,6 +199,11 @@ INCLUDEPATH = \
  ../libsessions/include \
  ../seq_$${MIDILIB}/include \
  include
+
+# We want to continue to use JACK session without getting a warning about
+# it being deprecated.
+
+QMAKE_CXXFLAGS += -std=c++14 -Wno-deprecated -Wno-deprecated-declarations
 
 #******************************************************************************
 # libseq66.pro (qpseq66)

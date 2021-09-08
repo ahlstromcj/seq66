@@ -6,7 +6,7 @@
 # \library      qpseq66 application
 # \author       Chris Ahlstrom
 # \date         2018-11-15
-# \update       2020-09-07
+# \update       2020-09-08
 # \version      $Revision$
 # \license      $XPC_SUITE_GPL_LICENSE$
 #
@@ -45,12 +45,9 @@ message("SUBDIRS is set to: $${SUBDIRS}")
 
 # These do not work on 32-bit Linux using Qt 5.3:
 #
-# CONFIG += c++14 -or-  QMAKE_CXXFLAGS += -std=gnu++14
-#
-# Also, we want to continue to use JACK session without getting a warning about
-# it being deprecated.
+#       CONFIG += c++14 -or-  QMAKE_CXXFLAGS += -std=gnu++14
 
-QMAKE_CXXFLAGS += -std=c++14 -Wno-deprecated -Wno-deprecated-declarations
+QMAKE_CXXFLAGS += -std=c++14
 
 #******************************************************************************
 # seq66.pro (qpseq66)

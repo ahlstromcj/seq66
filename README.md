@@ -1,7 +1,7 @@
 # README for Seq66 0.96.3
 
 Chris Ahlstrom
-2015-09-10 to 2021-09-03
+2015-09-10 to 2021-09-08
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -85,7 +85,7 @@ Windows, and using a conventional source tarball.
         *   Fixed output port-map issue with lookup of "FLUID Synth". Removed
             the random ID number; search the port name via containment, not
             equality.
-        *   Work on functional usage of the JACK Session API in progress.
+        *   Usage of the JACK Session API restored, though "deprecated".
             Removed all traces of LASH support. Added a configuration tab
             for enabling session management via JACK or NSM.
         *   Added automation control for "save session".
