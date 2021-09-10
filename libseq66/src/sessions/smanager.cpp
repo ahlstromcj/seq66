@@ -600,8 +600,10 @@ smanager::save_session (std::string & msg, bool ok)
 bool
 smanager::create_window ()
 {
+#if defined SEQ66_PLATFORM_DEBUG
     if (rc().investigate())
         perf()->show_patterns();
+#endif
 
     return true;
 }

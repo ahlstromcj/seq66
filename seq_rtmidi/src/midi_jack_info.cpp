@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2021-06-10
+ * \updates       2021-09-10
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information
@@ -204,7 +204,10 @@ midi_jack_info::connect ()
                  * jack_activate(result);
                  */
 
-                std::string uuid = get_jack_client_uuid(result);
+                std::string uuid = rc().jack_session();
+                if (uuid.empty())
+                    uuid = get_jack_client_uuid(result);
+
                 if (! uuid.empty())
                     rc().jack_session(uuid);
 

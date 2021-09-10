@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-07-09
+ * \updates       2021-09-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -51,12 +51,6 @@
 
 namespace seq66
 {
-
-bool
-is_debug ()
-{
-    return rc().verbose() || rc().investigate();
-}
 
 /**
  *  Provides a way to still get the benefits of assert() output in release
@@ -122,7 +116,7 @@ not_nullptr_assert (void * ptr, const std::string & context)
 bool
 info_message (const std::string & msg)
 {
-    if (is_debug())
+    if (rc().verbose())
         std::cout << "[" << msg << "]" << std::endl;    /* end and flush    */
 
     return true;
@@ -339,7 +333,7 @@ async_safe_strprint (const char * msg, size_t count)
 void
 msgprintf (msg_level lev, std::string fmt, ...)
 {
-    if (is_debug() && ! fmt.empty())
+    if (rc().verbose() && ! fmt.empty())
     {
         /*
          * cppcheck: Using reference 'fmt' as parameter for va_start() results

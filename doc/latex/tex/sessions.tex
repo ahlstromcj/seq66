@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2021-09-08
+% \update      2021-09-10
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -41,10 +41,9 @@
          This allows for the configuration files to be stored in
          a separate directory, for \textsl{Seq66} to be started, and files to be
          saved.  No restrictions on where the MIDI files can be stored.
-         It is provided for those individuals that still prefer to use it.
       \item \textbf{Non Session Manager}
          Known as NSM, it provides a replacement for \textsl{JACK Session}.
-         This preferred session manager requires all files to be
+         It requires all files to be
          stored in a session directory, and provides commands for saving,
          quitting, hiding/showing the user-interface, and more.
          Like \textsl{JACK Session}, it allows control over the startup of
@@ -54,9 +53,21 @@
          strict requirements the application must follow.
    \end{enumber}
 
+   If one desires session management, \textsl{NSM} is the way to go.
+   \textsl{JACK} session management is provided for those who still use it.
    There are other session solutions, such as \textsl{aj-snapshot},
    \textsl{Claudia}, and \textsl{Chino}.
    For now, we do not discuss them.
+
+   The desired session can be set in the \textbf{Edit / Preferences /
+   Session} tab.  But note that, if started by \textsl{NSM}, \textsl{Seq66}
+   will still set up for NSM usage.  The \textsl{NSM} setting is
+   useful for attaching to a pre-existing known session.
+   Also, \textsl{JACK} session management event are only processed
+   if \textsl{JACK} is selected.
+   \textsl{JACK} session management will still start \textsl{Seq66} in
+   an existing session, if \textsl{JACK} is
+   not selected, but that's it.
 
 \subsection{Seq66 Session Management / Signals}
 \label{subsec:sessions_signals}
@@ -100,16 +111,45 @@
 \label{subsec:sessions_jack}
 
    Although deprecated by the \textsl{JACK} authors in favor of \textsl{NSM},
-   we are implementing \textsl{JACK} session management for the benefit of
+   we are implementing \textsl{JACK} session (JS) management for the benefit of
    people who either do not know of \textsl{NSM} or do not want to implement or
    use it.
+
+   \textsl{Seq66}, as a JS-aware applications, is set up to
+
+   \begin{enumerate}
+      \item Register with a JS manager.
+      \item Respond to messages from the JS manager.
+      \item Be startable with session information.
+   \end{enumerate}
+
+   A response to a JS message will do one of the following:
+
+   \begin{itemize}
+      \item Save the application's state into a file, where the directory is
+         supplied by the session manager.
+      \item Reply to the session manager with a command-line that starts the
+         application, with information to restore its state, such as
+         the name of the file holding its state information.
+   \end{itemize}
+
+	JS-aware clients identify themselves to the session manager by a UUID
+	(unique universal identifier). The session manager provides it to
+	the client application as an integer represented as a string.
+   This can be passed to the session manager when registering, but
+   \textsl{Seq66} just uses the value given to it (for now).
+
+%  but should also be passed back to the client when it is restarted
+%by the session manager. This is done by a command line argument to the
+%application, and the format of the command line is also up to the client.
 
    For this discussion, we will use the \textsl{JACK} session implementation in
    the \textsl{QjackCtl} application.
    Also, read the script stored in
    \texttt{seq66/data/linux/startqjack} to set up
    \textsl{QjackCtl} to run \textsl{JACK} and kick off
-   \textsl{a2jmidid}.
+   \textsl{a2jmidid}; it should be added to the \textsl{QjackCtl}
+   configuration.
 
    Once that setup is made (installing the script and configuring
    \texttt{qjackctl}, then start \texttt{qjackctl}.
@@ -345,17 +385,17 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    \textsl{Seq66} appear, plus some messages from \textsl{NSM}.
 
 \begin{verbatim}
-	[non-session-manager] Sending add for: qseq66
-	[nsmd] Process has pid: 2797436
-	[nsmd] Launching qseq66
-	[nsmd] Got announce from seq66
-	[nsmd] Client was expected.
-	[nsmd] Process has pid: 2797436
-	[nsmd] The client "seq66" at "osc.udp://127.0.0.1:13318/" informs us it's
+   [non-session-manager] Sending add for: qseq66
+   [nsmd] Process has pid: 2797436
+   [nsmd] Launching qseq66
+   [nsmd] Got announce from seq66
+   [nsmd] Client was expected.
+   [nsmd] Process has pid: 2797436
+   [nsmd] The client "seq66" at "osc.udp://127.0.0.1:13318/" informs us it's
     ready to receive commands.
 \end{verbatim}
 
-	Once \textsl{Seq66} is running under \textsl{NSM},
+   Once \textsl{Seq66} is running under \textsl{NSM},
    then click the \textbf{Save}
    button at the top of the \textsl{NSM} interface in order
    to save the session information.  This is an important step.
@@ -367,18 +407,18 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    $ pwd
    /home/user/NSM Sessions
    $ lstree Seq66
-	Seq66/
-	  +-- seq66.nGJDW/
-	  |   +-- config/
-	  |   |   +-- qseq66.ctrl
-	  |   |   +-- qseq66.mutes
-	  |   |   +-- qseq66.rc
-	  |   |   +-- qseq66.usr
-	  |   +-- midi/
-	  +-- session.nsm
+   Seq66/
+     +-- seq66.nGJDW/
+     |   +-- config/
+     |   |   +-- qseq66.ctrl
+     |   |   +-- qseq66.mutes
+     |   |   +-- qseq66.rc
+     |   |   +-- qseq66.usr
+     |   +-- midi/
+     +-- session.nsm
 \end{verbatim}
 
-	So \textsl{NSM} has created a directory with the session name we gave it:
+   So \textsl{NSM} has created a directory with the session name we gave it:
    \texttt{Seq66}.  Under that directory is a file, \texttt{session.nsm}, which
    contains information like the following:
 

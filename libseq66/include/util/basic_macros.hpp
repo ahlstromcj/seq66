@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2021-07-09
+ * \updates       2021-09-10
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -131,7 +131,6 @@ extern void toggleprint (const std::string & tag, bool flag);
 extern void async_safe_strprint (const char * msg, size_t count);
 extern void msgprintf (seq66::msg_level lev, std::string fmt, ...);
 extern std::string msgsnprintf (std::string fmt, ...);
-extern bool is_debug ();
 
 /**
  *  Prepends "Debug" to the string and then printf()'s it.  No need

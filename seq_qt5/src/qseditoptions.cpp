@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-03
+ * \updates       2021-09-10
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -40,6 +40,10 @@
 #include "qinputcheckbox.hpp"
 #include "qseditoptions.hpp"
 #include "qsmainwnd.hpp"
+
+#if defined SEQ66_NSM_SUPPORT
+#include "nsm/nsmbase.hpp"              /* seq66::nsmbase's get_url()       */
+#endif
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -207,6 +211,16 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     (
         sgroup, SIGNAL(buttonClicked(int)),
         this, SLOT(slot_session(int))
+    );
+
+    /*
+     * The URL text-edit.
+     */
+
+    connect
+    (
+        ui->lineEditNsmUrl, SIGNAL(editingFinished()),
+        this, SLOT(slot_nsm_url())
     );
 
     /*
@@ -624,23 +638,53 @@ qseditoptions::slot_io_maps ()
 void
 qseditoptions::show_session (usrsettings::session sm)
 {
+    bool url_modifiable = false;
+    std::string tenturl;
+
+#if defined SEQ66_NSM_SUPPORT
+    tenturl = nsm::get_url();
+#else
+    ui->radio_session_nsm->setChecked(false);
+    ui->radio_session_nsm->setEnabled(false);
+#endif
+
+    if (tenturl.empty())
+    {
+        if (usr().want_nsm_session())
+        {
+            url_modifiable = true;
+            tenturl = usr().session_url();
+        }
+        else if (usr().want_jack_session())
+        {
+            tenturl = rc().jack_session();          /* JACK session UUID    */
+        }
+    }
     switch (sm)
     {
         case usrsettings::session::none:
             ui->radio_session_none->setChecked(true);
+            ui->label_nsm_url->setText("N/A");
             break;
 
         case usrsettings::session::nsm:
+#if defined SEQ66_NSM_SUPPORT
             ui->radio_session_nsm->setChecked(true);
+            ui->label_nsm_url->setText("NSM URL");
+            ui->lineEditNsmUrl->setText(QString::fromStdString(tenturl));
+#endif
             break;
 
         case usrsettings::session::jack:
             ui->radio_session_jack->setChecked(true);
+            ui->label_nsm_url->setText("JACK UUID");
+            ui->lineEditNsmUrl->setText(QString::fromStdString(tenturl));
             break;
 
         default:
             break;
     }
+    ui->lineEditNsmUrl->setEnabled(url_modifiable);
 }
 
 void
@@ -655,6 +699,14 @@ qseditoptions::slot_session (int buttonno)
         usr().session_manager("none");
 
     usr().save_user_config(usr().session_manager() != current);
+}
+
+void
+qseditoptions::slot_ui_scaling ()
+{
+    QString qs = ui->lineEditUiScaling->text();                 /* w */
+    QString qheight = ui->lineEditUiScalingHeight->text();      /* h */
+    ui_scaling_helper(qs, qheight);
 }
 
 /**
@@ -860,11 +912,10 @@ qseditoptions::ui_scaling_helper
 }
 
 void
-qseditoptions::slot_ui_scaling ()
+qseditoptions::slot_nsm_url ()
 {
-    QString qs = ui->lineEditUiScaling->text();                 /* w */
-    QString qheight = ui->lineEditUiScalingHeight->text();      /* h */
-    ui_scaling_helper(qs, qheight);
+    QString url = ui->lineEditNsmUrl->text();
+    usr().session_url(url.toStdString());
 }
 
 void

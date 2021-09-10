@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2021-09-03
+ * \updates       2021-09-09
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -49,7 +49,18 @@ namespace seq66
  *  via the "set" functions
  */
 
+#if defined SEQ66_PLATFORM_WINDOWS
+static std::string s_app_build_os = "Windows";
+#endif
+
+#if defined SEQ66_PLATFORM_MACOSX
+static std::string s_app_build_os = "MacOSX";
+#endif
+
+#if defined SEQ66_PLATFORM_UNIX
 static std::string s_app_build_os = SEQ66_APP_BUILD_OS;
+#endif
+
 static std::string s_app_engine = SEQ66_APP_ENGINE;
 static std::string s_app_name = SEQ66_APP_NAME;
 static std::string s_app_type = SEQ66_APP_TYPE;
@@ -224,40 +235,40 @@ seq_build_details ()
     std::ostringstream result;
     result
         << "Built " << __DATE__ << " " << __TIME__ "\n"
-        << "  C++ version " << std::to_string(__cplusplus) << "\n"
-        << "  App name: " << seq_app_name()
+        << "C++ version " << std::to_string(__cplusplus) << "\n"
+        << "App name: " << seq_app_name()
         << "; type " << seq_app_type()
         << "; engine " << seq_app_engine() << "\n"
-        << "  Build OS: " << seq_app_build_os() << "\n"
+        << "Build OS: " << seq_app_build_os() << " " << s_bitness
+#if defined SEQ66_PLATFORM_DEBUG
+        << "Debug\n"
+#else
+        << "\n"
+#endif
 #if defined SEQ66_RTMIDI_SUPPORT
-        << "  Native JACK/ALSA (rtmidi)\n"
+        << "Native JACK/ALSA (rtmidi)\n"
 #endif
 #if defined SEQ66_PORTMIDI_SUPPORT
-        << "  PortMIDI\n"
-#endif
-        << "  Event editor, follow-progress\n"
-#if defined SEQ66_JACK_SESSION
-        << "  JACK session\n"
+        << "PortMIDI\n"
 #endif
 #if defined SEQ66_JACK_SUPPORT
-        << "  JACK support\n"
+        << "JACK transport and MIDI ports\n"
+#if defined SEQ66_JACK_SESSION
+        << "JACK session support\n"
+#endif
 #endif
 #if defined SEQ66_NSM_SUPPORT
-        << "  NSM (Non Session Manager) support\n"
+        << "NSM (Non Session Manager) support\n"
 #endif
-        << "  Chord generator, LFO, trigger transpose, Tap BPM, Song recording\n"
-           "  Pattern coloring, pause, save time-sig/tempo\n"
-#if defined SEQ66_PLATFORM_WINDOWS
-        << "  Windows build\n"
-#endif
-#if defined SEQ66_PLATFORM_DEBUG
-        << "  Debug code\n"
-#else
-        << "  Release code\n"
-#endif
-        << "  " << s_bitness << "\n\n"
-<< "Options enabled/disabled via the configure script, seq66_features.h(pp),\n"
-   "or the build-specific seq66-config.h files in include/qt/" << std::endl;
+        <<
+            "Chord generator, LFO, trigger transpose, Tap BPM, Song recording "
+            "Pattern coloring, pause, save time-sig/tempo, "
+            "event editor, follow-progress\n"
+        <<
+           "Options enabled/disabled via the configure script, seq66_features.h,"
+           "or build-specific seq66-config.h files in include/qt/*."
+        << std::endl
+        ;
     return result.str();
 }
 

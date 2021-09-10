@@ -391,6 +391,12 @@ create_jack_client (std::string clientname, std::string uuid)
         const char * uid = uuid.c_str();
         options = static_cast<jack_options_t>(JackNoStartServer|JackSessionID);
         result = jack_client_open(name, options, ps, uid);
+        if (not_nullptr(result) && rc().investigate())
+        {
+            char t[80];
+            snprintf(t, sizeof t, "client opened with UUID %s", uid);
+            (void) info_message(t);
+        }
     }
     if (not_nullptr(result))
     {

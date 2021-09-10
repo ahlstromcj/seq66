@@ -42,6 +42,12 @@ once or twice. </string>
          <height>73</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
        <property name="title">
         <string>Meta Events</string>
        </property>
@@ -229,7 +235,7 @@ the system's MIDI setup has changed.</string>
         <rect>
          <x>10</x>
          <y>10</y>
-         <width>131</width>
+         <width>161</width>
          <height>17</height>
         </rect>
        </property>
@@ -241,7 +247,7 @@ the system's MIDI setup has changed.</string>
         </font>
        </property>
        <property name="text">
-        <string>Ports and Clocks</string>
+        <string>Ports and Clocking</string>
        </property>
       </widget>
       <widget class="QScrollArea" name="clocksScrollArea">
@@ -290,18 +296,24 @@ the system's MIDI setup has changed.</string>
          <x>10</x>
          <y>420</y>
          <width>591</width>
-         <height>81</height>
+         <height>117</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
        <property name="title">
-        <string>Input Options</string>
+        <string>Input/Output Options</string>
        </property>
        <widget class="QCheckBox" name="checkBoxRecordByChannel">
         <property name="geometry">
          <rect>
           <x>20</x>
           <y>40</y>
-          <width>561</width>
+          <width>325</width>
           <height>21</height>
          </rect>
         </property>
@@ -311,6 +323,19 @@ number using the channel number (0 to 15).</string>
         </property>
         <property name="text">
          <string>Record input into sequences according to channel</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBox">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>68</y>
+          <width>325</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Use virtual (manual) I/O Ports</string>
         </property>
        </widget>
       </widget>
@@ -1051,7 +1076,7 @@ overrides the default Seq66 PPQN.  Otherwise, the
 file's PPQN is scaled to the default PPQN.</string>
           </property>
           <property name="text">
-           <string>Use File's PPQN for Pre-Existing Files</string>
+           <string>Use File's PPQN for pre-existing files</string>
           </property>
          </widget>
         </widget>
@@ -1252,7 +1277,7 @@ Seq66 exits.</string>
          <x>8</x>
          <y>8</y>
          <width>289</width>
-         <height>137</height>
+         <height>145</height>
         </rect>
        </property>
        <property name="title">
@@ -1297,6 +1322,54 @@ Seq66 exits.</string>
          <string>JACK. JACK Session Management.</string>
         </property>
        </widget>
+      </widget>
+      <widget class="QLabel" name="label_session">
+       <property name="geometry">
+        <rect>
+         <x>308</x>
+         <y>20</y>
+         <width>285</width>
+         <height>189</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>NSM will be used automatically if Seq66 finds
+itself running in an NSM session.  The check-
+mark indicates that Seq66 wants to attach to 
+an NSM session at the given URL.
+
+JACK session management will occur only if
+checked, even if Seq66 is spawned by it.
+
+As usual for a major change, a restart is
+required.</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_nsm_url">
+       <property name="geometry">
+        <rect>
+         <x>4</x>
+         <y>176</y>
+         <width>73</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>JACK UUID</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEditNsmUrl">
+       <property name="geometry">
+        <rect>
+         <x>84</x>
+         <y>172</y>
+         <width>209</width>
+         <height>25</height>
+        </rect>
+       </property>
       </widget>
      </widget>
     </widget>

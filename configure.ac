@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2021-09-03
+dnl \update        2021-09-11
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -35,21 +35,7 @@ dnl avoiding naming conflicts in macros.
 
 AX_PREFIX_CONFIG_H([include/seq66-config.h], [seq66])
 
-dnl On a Debian Sid laptop, we have found that gcc/g++ version 9 breaks
-dnl configuration with the error 'C++ preprocessor "/lib/cpp" fails sanity
-dnl check' (it cannot find limits.h!!!), so we try version 8 first.  And that
-dnl cannot be installed on Debian Sid (2020-03-31), so we fall back to
-dnl version 7.
-dnl
-dnl AC_GCC_VERSION
-dnl AC_LANG([C])
-dnl AC_LANG([C++])
-dnl
-dnl Now debug-build issues have migrated to our other dev laptop!
-dnl
-dnl AC_PROG_CC([gcc-8 gcc-7 gcc])
-dnl AC_PROG_CXX([g++-8 g++-7 g++])
-dnl AC_PROG_CXXCPP([cpp-8 cpp-7 cpp])
+dnl gcc/g++ configuration.
 
 AC_PROG_CC([gcc])
 AC_PROG_CXX([g++])
@@ -432,7 +418,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2021-09-03"
+#define VERSION_DATE_SHORT "2021-09-11"
 #define VERSION "0.96.3"
 
 )

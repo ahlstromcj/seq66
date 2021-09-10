@@ -330,7 +330,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
         {
             infoprintf("%d automation-control lines", count);
         }
-        if (rc_ref().investigate())             /* too much for verbose()   */
+        if (rc_ref().verbose())
         {
             infoprint("Loaded key mappings");
             m_temp_key_controls.show();
