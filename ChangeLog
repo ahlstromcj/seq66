@@ -1,5 +1,182 @@
+2021-09-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure.ac, doc/latex/tex/sessions.tex, include/config.h.in,
+	libseq66/include/util/basic_macros.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/seq66_features.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/basic_macros.cpp, seq_qt5/forms/qsbuildinfo.ui,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/src/qseditoptions.cpp, seq_rtmidi/src/midi_jack_info.cpp: 
+	Pretty much done with JACK session management.
+
+2021-09-08  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, contrib/key-map.rc, contrib/scripts/QjackCtl.conf,
+	contrib/scripts/q-make, data/samples/dark-gradient.qss,
+	data/samples/flat-rounded.qss, data/samples/grey-ghost.qss,
+	doc/latex/tex/seq66-user-manual.tex, doc/latex/tex/sessions.tex,
+	include/config.h.in, libseq66/libseq66.pro, seq66.pro,
+	seq_qt5/forms/qsessionframe.ui, seq_qt5/src/qt5nsmanager.cpp: 
+	Documentation and minor tweaks.
+	* : commit 0d63bf24182c229d2b95415071c8b4bdef48a0a6 Author: Chris
+	Ahlstrom <ahlstromcj@gmail.com> Date:   Wed Sep 8 06:02:03 2021
+	-0400
+
+2021-09-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.in, Seq66cli/Makefile.in, Seq66qt5/Makefile.in,
+	configure, data/Makefile.in, doc/Makefile.in,
+	doc/latex/Makefile.in, doc/latex/tex/Makefile.in,
+	include/config.h.in, libseq66/Makefile.in,
+	libseq66/include/Makefile.in, libseq66/src/Makefile.in,
+	libsessions/Makefile.in, libsessions/include/Makefile.in,
+	libsessions/src/Makefile.in, m4/Makefile.in, man/Makefile.in,
+	resources/pixmaps/Makefile.in, seq_portmidi/Makefile.in,
+	seq_portmidi/include/Makefile.in, seq_portmidi/src/Makefile.in,
+	seq_qt5/Makefile.in, seq_qt5/forms/Makefile.in,
+	seq_qt5/include/Makefile.in, seq_qt5/src/Makefile.in,
+	seq_rtmidi/Makefile.in, seq_rtmidi/include/Makefile.in,
+	seq_rtmidi/src/Makefile.in: Updated Makefile.in files for removal of
+	lash.
+	* INSTALL, README.md, Seq66cli/Makefile.am, Seq66qt5/Makefile.am,
+	bootstrap, configure.ac, configure.help,
+	doc/latex/tex/configuration.tex, doc/latex/tex/menu.tex,
+	doc/latex/tex/sessions.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/seq66_features.h, libseq66/src/Makefile.am,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/cfg/usrsettings.cpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/seq66_features.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libsessions/include/Makefile.am, libsessions/include/lash/lash.hpp,
+	libsessions/libsessions.pro, libsessions/src/Makefile.am,
+	libsessions/src/lash/lash.cpp, man/sequencer66.1,
+	seq_portmidi/src/Makefile.am, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/Makefile.am,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qt5nsmanager.cpp,
+	seq_rtmidi/include/Makefile.am, seq_rtmidi/src/midi_alsa_info.cpp,
+	seq_rtmidi/src/midi_jack_info.cpp: Making session usage
+	configurable.
+	* data/linux/startjack, data/linux/startqjack,
+	doc/latex/tex/configuration.tex, doc/latex/tex/jack.tex,
+	doc/latex/tex/references.tex, doc/latex/tex/sessions.tex,
+	include/config.h.in, libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/midi/jack_assistant.cpp, man/sequencer66.1: Interim
+	check-in of JACK session updates.
+
+2021-08-31  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.in, Seq66cli/Makefile.in, Seq66qt5/Makefile.in,
+	configure, configure.ac, data/Makefile.in, doc/Makefile.in,
+	doc/latex/Makefile.in, doc/latex/tex/Makefile.in,
+	include/config.h.in, libseq66/Makefile.in,
+	libseq66/include/Makefile.in, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/Makefile.in, libsessions/Makefile.in,
+	libsessions/include/Makefile.in, libsessions/src/Makefile.in,
+	m4/Makefile.in, man/Makefile.in, resources/pixmaps/Makefile.in,
+	seq_portmidi/Makefile.in, seq_portmidi/include/Makefile.in,
+	seq_portmidi/src/Makefile.in, seq_qt5/Makefile.in,
+	seq_qt5/forms/Makefile.in, seq_qt5/include/Makefile.in,
+	seq_qt5/src/Makefile.in, seq_rtmidi/Makefile.in,
+	seq_rtmidi/include/Makefile.in, seq_rtmidi/src/Makefile.in: More
+	configure fixes, compiler error on Ubuntu.
+	* README.md, VERSION, configure.ac, configure.help,
+	doc/latex/tex/jack.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/ctrl/automation.hpp,
+	libseq66/include/midi/jack_assistant.hpp,
+	libseq66/include/os/daemonize.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/sessions/clinsmanager.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/usrsettings.cpp,
+	libseq66/src/ctrl/automation.cpp,
+	libseq66/src/ctrl/keycontainer.cpp,
+	libseq66/src/ctrl/opcontrol.cpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/os/daemonize.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libsessions/src/nsm/nsmbase.cpp, m4/ax_pthread.m4,
+	seq_qt5/forms/qsessionframe.ui, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5nsmanager.cpp: Configure
+	upgrades and refactoring for JACK session in progress.
+
+2021-08-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/linux/qseq66.rc, doc/latex/tex/configuration.tex,
+	doc/latex/tex/port_mapping.tex, doc/latex/tex/sessions.tex,
+	libseq66/src/play/clockslist.cpp, libseq66/src/play/inputslist.cpp,
+	libseq66/src/play/listsbase.cpp: Beefed up event editing and
+	port-mapping.
+
+2021-08-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, data/linux/qseq66.rc,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/play/listsbase.cpp,
+	seq_qt5/src/qclocklayout.cpp, seq_qt5/src/qinputcheckbox.cpp: Fixed
+	lookup for the Qsynth/FluidSynth port in ALSA.
+
+2021-08-21  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/src/midi/event.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	seq_qt5/include/qseqeventframe.hpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseventslots.cpp: Can now modify Note Off/On at same
+	time in event editor.
+
+2021-08-19  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure, libseq66/include/midi/editable_events.hpp,
+	libseq66/src/midi/editable_events.cpp,
+	seq_qt5/include/qseventslots.hpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseventslots.cpp: Added event table reload to show Note
+	pair changes, very krufty.
+	* libseq66/include/midi/editable_event.hpp,
+	libseq66/include/midi/editable_events.hpp,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/src/midi/editable_event.cpp,
+	libseq66/src/midi/editable_events.cpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/eventlist.cpp,
+	seq_qt5/include/qseqeventframe.hpp,
+	seq_qt5/include/qseventslots.hpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseventslots.cpp: Interim check-in, getting note on/off
+	editing to work smoothly.
+
+2021-08-17  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/midi/editable_event.hpp,
+	libseq66/include/midi/editable_events.hpp,
+	libseq66/src/midi/editable_event.cpp,
+	libseq66/src/midi/editable_events.cpp,
+	seq_qt5/include/qseventslots.hpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseventslots.cpp: Interim check-in, work on note-event
+	editing.
+
+2021-08-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, TODO, VERSION, configure.ac,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/midi/editable_event.hpp,
+	libseq66/include/midi/event.hpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	seq_qt5/src/qseventslots.cpp: Version bump.
+
 2021-08-15  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* ChangeLog, seq_qt5/src/qsmainwnd.cpp: Version 0.96.2 pending.
 	* README.md, VERSION, configure.ac,
 	doc/latex/tex/pattern_editor.tex, include/config.h.in,
 	include/qt/portmidi/seq66-config.h,
