@@ -1,13 +1,10 @@
-TO DO for Seq66 0.96.3 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.97.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-08-21
+2019-04-13 to 2021-09-11
 
 Hottest to Trivial:
 
 UI:
-
-    See the mouse wheel scroll event requests for both the song and
-    pattern editors.
 
     Leave the progress bar (in grid button) static if the pattern is not
     armed.
@@ -15,12 +12,8 @@ UI:
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
 
-        -   MIDI Clock:
-            -   Virtual port flag and port-count
-            -   Port map
-        -   MIDI Input:
-            -   Virtual port flag and port-count
-            -   Port map
+        -   MIDI Clocks and Inputs:
+DO!!        -   Virtual port flag and port-count
         -   Display:
             -   Style-sheet
             -   Global seq feature
@@ -35,7 +28,6 @@ UI:
                 patches, keymap
             -   List of base names and active status for the above.
             -   Log-file
-            x   Verbose
         -   Control Options: (new)
             -   Load key and midi controls (does this work?)
             -   Control buss (in and out)
@@ -94,7 +86,7 @@ EXTANT ISSUES:
     while. There has been discussion on #lad, and, now JACK 2 has metadata
     implemented, Carla has started offering that MIDNAM information as
     metadata on the midi-in port for a connecting sequencer to use.
-    STATUS: Not yet started.
+    STATUS: Not yet started.  Much study needed. A low priority.
 
 #3  Open loop Pattern Editor window.
     On mouse wheel scroll event we expect the piano-roll and notes sheet to
@@ -116,6 +108,9 @@ EXTANT ISSUES:
     This could even be backwards-compatible: when the configuration file has a
     bus number, use that, if it is a string, connect by name.
     STATUS:  A "port-mapping" configuation in the 'rc' file is now supported.
+    It uses a lookup to map names to numbers.  We do not want to store port
+    names in the MIDI file.  They are too long and change between the systems
+    of each user.  Let the user determine the mapping of port numbers.
     Mostly tested; works for patterns and for MIDI I/O control.
 
 #18 Mute Group does not toggle
@@ -142,11 +137,12 @@ EXTANT ISSUES:
     releases.atom feeds] (https://github.com/isaacs/github/issues/1892) that
     only have an updated  date not a published date, so any change to the
     release details will change the date in the feed that is used by
-    libreav.org.  STATUS: Not sure this is worth doing. Do not know about
-    "atom".
+    libreav.org.
+    STATUS: Not sure this is worth doing. Do not know about "atom".
 
 #29 Play patterns from different sets at the same time
-    STATUS: Provisional support in 0.91.3.  One more feature to add soon.
+    STATUS: Provisional support in 0.91.3.  See Edit / Preferences / Play /
+    Sets Mode.
 
 #32 NSM: save session
     STATUS: Needs retests.
@@ -164,14 +160,6 @@ EXTANT ISSUES:
     session.  It does do it the next time, loading the file.  The actual
     operation should be in import, I think.
 
-#34 seq66 doesn't follow jack_transport tempo changes (and so also doesn't
-    work with jack_link)
-    STATUS: Fixed, needs a retest.
-
-#35 NSM: Being able to edit session parameters manually, not according to NSM
-    API.
-    STATUS: Fixed, needs a retest.
-
 #37 Song editor scrolling?
     STATUS: To be investigated.
 
@@ -181,9 +169,7 @@ EXTANT ISSUES:
 #41 NSM: hide seq66 on closing window, do not exit?
     If closing the window, rather than quitting the app, could change the its
     visibility state to hidden.
-
-#43 Extended MIDI Format / Type?
-    STATUS: Should close, it was a nomenclature/documentation issue.
+    STATUS:  I think we fixed this one, will retest.
 
 #44 "Record live sequence changes" functionality
     Currently the "record live sequence changes" only adds patterns into the
@@ -197,13 +183,10 @@ EXTANT ISSUES:
     the same track while focussing entirely on knob tweaking etc.) The song
     timeline already supports arbitrary start/end points for pattern "chunks",
     so it seems like this should already be possible. Thoughts?
+    STATUS: to examine.
 
 #46 JACK port groups / order?
     STATUS: to examine.
-
-#47 change key map
-    STATUS: Done.  May need to add a new "keymap" file to handle further
-    requests for non-US keyboards.
 
 #48 JACK-midi self connections
     With NSM and [manual ports] enabled, inputs ports are not created when I
@@ -224,7 +207,7 @@ EXTANT ISSUES:
 
     (I have used Ray-Session , but I guess it acts as others NSM managers)
 
-    Note:  Probably need an option to not auto-connect ehile NSM is running.
+    Note:  Probably need an option to not auto-connect while NSM is running.
 
 #49 Unable to unmute loops after group learn.
     STATUS: Done.  Needs more testing.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-14
- * \updates       2021-05-19
+ * \updates       2021-09-12
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -58,10 +58,10 @@ qperfbase::qperfbase
     int unitheight,
     int totalheight
 ) :
-    qeditbase
-    (
-        p, zoom, snap, c_perf_scale_x, 0, unitheight, totalheight
-    )
+    qeditbase       (p, zoom, snap, c_perf_scale_x, 0, unitheight, totalheight),
+    m_track_height  (c_names_y),
+    m_track_thin    (false),
+    m_track_thick   (false)
 {
     // no code needed
 }
@@ -118,7 +118,7 @@ void
 qperfbase::convert_xy (int x, int y, midipulse & tick, int & seq)
 {
     tick = pix_to_tix(x);
-    seq = y / c_names_y;
+    seq = y / track_height();
     if (seq >= perf().sequence_max())
         seq = perf().sequence_max() - 1;
     else if (seq < 0)

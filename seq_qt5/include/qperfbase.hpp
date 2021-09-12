@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-14
- * \updates       2020-07-26
+ * \updates       2021-09-12
  * \license       GNU GPLv2 or above
  *
  *  This class WILL BE the base class for qseqroll, qseqdata, qtriggereditor,
@@ -50,6 +50,16 @@ namespace seq66
     class sequence;
 
 /**
+ *  Provides constants for the perfroll object (performance editor).
+ *  Note the current dependence on the width of a font pixmap's character!
+ *  So we will use the font's numeric accessors soon.
+ */
+
+const int c_names_x         = 6 * 24;   /* used in qperfroll, qperfnames    */
+const int c_names_y         = 22;       /* used in qperfroll, qperfnames    */
+const int c_perf_scale_x    = 32;       /* units are ticks per pixel        */
+
+/**
  * The MIDI note grid in the sequence editor
  */
 
@@ -58,23 +68,78 @@ class qperfbase : public qeditbase
 
 private:
 
-    // No additional members
+    /**
+     *  Provides the height of the track and names displays.  Starts at
+     *  c_name_y, and can be halved or doubled from that.  We could allow it
+     *  to be more than doubled, but that doesn't seem necessary.  A height
+     *  less than half is unworkable.
+     */
+
+    int m_track_height;
+
+    /**
+     *  Indicates if the track height is halved.
+     */
+
+    bool m_track_thin;
+
+    /**
+     *  Indicates if the track height is doubled.
+     */
+
+    bool m_track_thick;
 
 public:
 
     qperfbase
     (
         performer & perf,
-        int zoom            = c_default_zoom,
-        int snap            = c_default_snap,
-        int unit_height     = 1,
-        int total_height    = 1
+        int zoom        = c_default_zoom,
+        int snap        = c_default_snap,
+        int unitheight  = 1,
+        int totalheight = 1
     );
+
+    bool track_thin () const
+    {
+        return m_track_thin;
+    }
+
+    bool track_thick () const
+    {
+        return m_track_thick;
+    }
+
+    int track_height () const
+    {
+        return m_track_height;
+    }
 
 protected:
 
     virtual int horizSizeHint () const override;
     void force_resize (QWidget *);
+
+    void set_thin ()
+    {
+        m_track_height = c_names_y / 2;
+        m_track_thick = false;
+        m_track_thin = true;
+    }
+
+    void set_thick ()
+    {
+        m_track_height = c_names_y * 2;
+        m_track_thick = true;
+        m_track_thin = false;
+    }
+
+    void set_normal ()
+    {
+        m_track_height = c_names_y;
+        m_track_thick = false;
+        m_track_thin = false;
+    }
 
 protected:
 

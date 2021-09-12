@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-01
+ * \updates       2021-09-12
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -156,7 +156,7 @@ private:
      *  qperfroll piano roll.
      */
 
-    qperfnames * m_perf_names_wid;
+    qperfnames * m_perf_names;
 
     QTimer * m_timer;
     QFont m_font;

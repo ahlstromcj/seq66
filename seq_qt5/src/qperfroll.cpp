@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-06-22
+ * \updates       2021-09-12
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -87,11 +87,11 @@ qperfroll::qperfroll
     QWidget             (parent),
     qperfbase
     (
-        p, zoom, snap, c_names_y,
-        c_names_y * p.sequences_in_sets()       /* p.sequence_max()     */
+        p, zoom, snap, c_names_y,               /* unit height of tracks    */
+        c_names_y * p.sequences_in_sets()       /* p.sequence_max()         */
     ),
-    m_parent_frame      (frame),                /* frame64() accessor   */
-    m_perf_names_wid    (seqnames),
+    m_parent_frame      (frame),                /* frame64() accessor       */
+    m_perf_names        (seqnames),
     m_timer             (nullptr),
     m_font              ("Monospace"),
     m_measure_length    (0),
@@ -115,7 +115,7 @@ qperfroll::qperfroll
     m_font.setBold(true);
     m_font.setPointSize(8);
     setMouseTracking(true);         /* track mouse movement without a click */
-    m_timer = new QTimer(this);                         /* the redraw timer */
+    m_timer = new QTimer(this);
     m_timer->setInterval(2 * usr().window_redraw_rate());
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
     m_timer->start();
@@ -166,9 +166,9 @@ void
 qperfroll::paintEvent (QPaintEvent * /*qpep*/)
 {
     QPainter painter(this);
-    QRect r(0, 0, width(), height());           //  QRect r = qpep->rect();
+    QRect r(0, 0, width(), height());
     QBrush brush(Qt::white, Qt::NoBrush);
-    QPen pen(Qt::lightGray);                    // QPen pen(Qt::black);
+    QPen pen(fore_color());
     pen.setStyle(Qt::SolidLine);
 
 #if defined THIS_CODE_ADDS_VALUE
@@ -196,7 +196,7 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
         (
             drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
         );
-        old_rect().set(x, y, w, h + c_names_y);
+        old_rect().set(x, y, w, h + track_height());
         brush.setStyle(Qt::SolidPattern);           // doesn't work
         brush.setColor(grey_color());               // doesn't work
         pen.setStyle(Qt::SolidLine);
@@ -204,7 +204,7 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
         pen.setWidth(2);
         painter.setBrush(brush);
         painter.setPen(pen);
-        painter.drawRect(x, y, w, h + c_names_y);
+        painter.drawRect(x, y, w, h + track_height());
     }
     else
     {
@@ -215,15 +215,15 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
 #if defined THIS_CODE_ADDS_VALUE
     int xwidth = r.width();
     int yheight = r.height() - 1;
-    pen.setStyle(Qt::SolidLine);                // draw border
+    pen.setStyle(Qt::SolidLine);                    // draw border
     pen.setColor(Qt::black);
     painter.setPen(pen);
     painter.drawRect(0, 0, xwidth, yheight);
 #endif
 
-    midipulse tick = perf().get_tick();         /* draw progresss playhead  */
+    midipulse tick = perf().get_tick();         /* draw progress playhead   */
     int progress_x = tix_to_pix(tick);          /* tick / scale_zoom()      */
-    pen.setColor(progress_color());             // Qt::red
+    pen.setColor(progress_color());
     pen.setStyle(Qt::SolidLine);
     if (usr().progress_bar_thick())
         pen.setWidth(2);
@@ -242,7 +242,7 @@ QSize
 qperfroll::sizeHint () const
 {
     int count = perf().sequences_in_sets();         // perf().sequence_max()
-    int height = c_names_y * count;
+    int height = track_height() * count;
     int width = horizSizeHint();
     int w = frame64()->width();
     if (width < w)
@@ -353,8 +353,8 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                 {
                     /*
                      * ISSUE:  Just clicking in the perf roll gets us here,
-                     * and this ends up setting the perf modify flag.  And at best
-                     * we are only selecting.
+                     * and this ends up setting the perf modify flag.  And at
+                     * best we are only selecting.
                      *
                      *      perf().push_trigger_undo();
                      *
@@ -380,7 +380,7 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                     if
                     (
                         tick >= start_tick && tick <= start_tick + clickbox &&
-                        (drop_y() % c_names_y) <= clickminus
+                        (drop_y() % track_height()) <= clickminus
                     )
                     {
                         growing(true);
@@ -391,7 +391,7 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                     else if     // check for corner drag to grow sequence end
                     (
                         tick >= end_tick - clickbox && tick <= end_tick &&
-                        (drop_y() % c_names_y) >= c_names_y - clickminus
+                        (drop_y() % track_height()) >= track_height() - clickminus
                     )
                     {
                         growing(true);
@@ -401,7 +401,7 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                     }
                     else if (tick <= end_tick && tick >= start_tick)
                     {
-                        moving(true);                   // we're moving the seq
+                        moving(true);               /* we're moving the seq */
                         selected = true;
                         m_drop_tick_offset = m_drop_tick - start_tick;
                     }
@@ -446,9 +446,9 @@ qperfroll::mouseReleaseEvent (QMouseEvent * event)
 
             m_adding_pressed = false;
         }
-        if (m_box_select)                 /* calculate selected seqs in box   */
+        if (m_box_select)                 /* calculate selected seqs in box */
         {
-            int x, y, w, h;             /* window dimensions                */
+            int x, y, w, h;
             current_x(event->x());
             current_y(event->y());
             snap_current_y();
@@ -477,7 +477,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
     midipulse t, tick = 0;
     convert_xy(x, y, t, row);
     if (row >= 0)
-        m_perf_names_wid->set_preview_row(row);
+        m_perf_names->set_preview_row(row);
 
     if (is_nullptr(dropseq))
         return;
@@ -490,7 +490,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
         if (perf().song_record_snap())
             tick -= tick % s;
 
-        dropseq->grow_trigger(m_drop_tick, tick, seqlength);    // or "s"??
+        dropseq->grow_trigger(m_drop_tick, tick, seqlength);
     }
     else if (moving() || growing())
     {
@@ -605,7 +605,7 @@ qperfroll::keyPressEvent (QKeyEvent * event)
         if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
         {
             handled = true;
-            perf().push_trigger_undo();                 // delete selected notes
+            perf().push_trigger_undo();         /* delete selected notes    */
             for (int seqid = m_seq_l; seqid <= m_seq_h; seqid++)
             {
                 if (perf().is_seq_active(seqid))
@@ -666,15 +666,29 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                 handled = true;
                 frame64()->zoom_in();
             }
+            else if (event->key() == Qt::Key_V)
+            {
+                handled = true;
+                set_thick();
+                m_perf_names->set_thick();
+            }
         }
         else if (event->key() == Qt::Key_Z)
         {
             handled = true;
             frame64()->zoom_out();
         }
+        else if (event->key() == Qt::Key_V)
+        {
+            handled = true;
+            set_thin();
+            m_perf_names->set_thin();
+        }
         else if (event->key() == Qt::Key_0)
         {
             handled = true;
+            set_normal();
+            m_perf_names->set_normal();
             frame64()->reset_zoom();
         }
     }
@@ -753,11 +767,12 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
     QBrush brush(back_color());                         /* Qt::NoBrush      */
     QPen pen(fore_color());                             /* Qt::black        */
     pen.setStyle(Qt::SolidLine);
+    pen.setWidth(2);
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.drawRect(0, 0, width(), height());          /* full width       */
-    for (int i = 0; i < height(); i += c_names_y)       /* horizontal lines */
-        painter.drawLine(0, i, xwidth, i);
+    for (int i = 0; i < height(); i += track_height())  /* horizontal lines */
+        painter.drawLine(0, i - 2, xwidth, i);
 
     /*
      *  Draw the vertical lines for the measures and the beats. Incrementing by
@@ -792,14 +807,17 @@ void
 qperfroll::draw_triggers (QPainter & painter, const QRect & r)
 {
     int y_s = 0;
-    int y_f = r.height() / c_names_y;
+    int y_f = r.height() / track_height();
     int cbw = c_size_box_w;                     /* copied for readability   */
     QBrush brush(Qt::NoBrush);
-    QPen pen(Qt::black);
+    QPen pen(fore_color());
     pen.setStyle(Qt::SolidLine);
     painter.setPen(pen);
     painter.setBrush(brush);
     pen.setWidth(1);
+    if (track_thick())
+        cbw *= 2;
+
     for (int y = y_s; y <= y_f; ++y)
     {
         int seqid = y;
@@ -833,8 +851,8 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     int w = x_off - x_on + 1;
                     int x = x_on;
                     int xmax = x_off + 1;               /* same as x + w    */
-                    int y = c_names_y * seqid + 1;
-                    int h = c_names_y - 2;
+                    int y = track_height() * seqid - 1; // + 1;
+                    int h = track_height() - 1;         // - 2;
                     if (trig.selected())
                     {
                         pen.setColor(sel_color());      /* orange, Qt::red  */
@@ -842,23 +860,26 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     }
                     else
                     {
-                        pen.setColor(Qt::black);
+                        pen.setColor(fore_color());
                         brush.setColor(backcolor);
                     }
                     pen.setStyle(Qt::SolidLine);    /* main seq icon box    */
+                    pen.setWidth(2);
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.setPen(pen);
-                    painter.drawRect(x, y, w, h);
+                    painter.drawRect(x, y - 1, w, h + 1);
 
+#if defined THIS_CODE_ADDS_VALUE
                     pen.setColor(Qt::lightGray);    /* lines between panels */
                     painter.setPen(pen);
-                    painter.drawLine(x + 1, y -1,      x + w - 2, y - 1);
+                    painter.drawLine(x + 1, y - 1,      x + w - 2, y - 1);
                     painter.drawLine(x + 1, y + h + 1, x + w - 2, y + h + 1);
+#endif
 
                     brush.setStyle(Qt::NoBrush);    /* seq grab handle left */
                     painter.setBrush(brush);
-                    pen.setColor(Qt::black);
+                    pen.setColor(fore_color());
                     painter.setPen(pen);
                     painter.drawRect(x, y, cbw, cbw);
                     painter.drawRect                /* grab handle right    */
@@ -866,6 +887,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         xmax - cbw, y + h - cbw, cbw, cbw
                     );
                     pen.setColor(Qt::black);
+                    pen.setWidth(1);
                     painter.setPen(pen);
                     if (trig.transposed())
                     {
@@ -877,7 +899,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                             snprintf(temp, sizeof temp, "-%d", -t);
 
                         painter.setFont(m_font);
-                        painter.drawText(x + 2, y + cbw + h / 2, temp);
+                        painter.drawText(x + 4, y + cbw + h / 2 - 2, temp);
                     }
 
                     midipulse t = trig.trigger_marker(lens);
@@ -890,13 +912,13 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         int height = note1 - note0;
                         height += 2;
                         if (seq->transposable())
-                            pen.setColor(fore_color());     // Qt::black
+                            pen.setColor(fore_color());
                         else
-                            pen.setColor(drum_color());     // Qt::red
+                            pen.setColor(drum_color());
 
                         painter.setPen(pen);
 
-                        int cny = c_names_y - 6;
+                        int cny = track_height() - 6;
                         int marker_x = tix_to_pix(t);
                         auto cev = seq->cbegin();
                         while (! seq->cend(cev))

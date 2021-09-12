@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-12-29
-% \update      2021-08-25
+% \update      2021-09-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -38,9 +38,13 @@
    The problem is that the list of MIDI devices can change, with devices being
    reordered, removed, or added to the set of MIDI devices available on the
    system.  Or if the song is opened on someone else's computer.
+   We do not want to store port names in the MIDI file.
+   They are too long and change between the systems of each user.
+   Better to let the user determine the mapping of port numbers.
    Port mapping provides a solution to this issue.  It allows
    the buss number stored with a pattern to be remapped to another buss number,
    based on the "nick name" of the port.
+   It uses a simple lookup to map names to numbers.
 
    The "nick name" is a shortened version of the port name provided by the MIDI
    device. For example, the long name of a MIDI port might be
@@ -50,7 +54,7 @@
    \textsl{contains} the nick-name, and, if so, the corresponding port number is
    returned.  The user can edit the 'rc' file to shorten the nick-name, if
    desired.
-   Thus, a nick-name \texttt{E-MU XMidi1X1} would work..
+   Thus, a nick-name \texttt{E-MU XMidi1X1} would work.
 
    As with the normal port listings, the port-mappings are managed in the
    \textsl{Seq66} 'rc' file.

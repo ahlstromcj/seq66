@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2021-07-20
+ * \updates       2021-09-12
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -54,16 +54,6 @@ namespace seq66
  */
 
 const int c_keyboard_padding_x = 6;     /* Qt version of keys padding       */
-
-/**
- *  Provides constants for the perfroll object (performance editor).
- *  Note the current dependence on the width of a font pixmap's character!
- *  So we will use the font's numeric accessors soon.
- */
-
-const int c_names_x         = 6 * 24;   /* used in qperfroll, qperfnames    */
-const int c_names_y         = 22;       /* used in qperfroll, qperfnames    */
-const int c_perf_scale_x    = 32;       /* units are ticks per pixel        */
 
 /**
  *  The default value of the snap in the sequence/performance editors.

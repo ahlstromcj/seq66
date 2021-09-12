@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-10
+ * \updates       2021-09-11
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -303,7 +303,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         ui->lineEditSetSizeColumns, SIGNAL(editingFinished()),
         this, SLOT(slot_set_size_columns())
     );
-
     set_progress_box_fields();
     connect
     (
@@ -468,6 +467,21 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     );
 
     /*
+     * The virtual port counts for input and output.
+     */
+
+    connect
+    (
+        ui->lineEditOutputCount, SIGNAL(editingFinished()),
+        this, SLOT(slot_virtual_out_count())
+    );
+    connect
+    (
+        ui->lineEditInputCount, SIGNAL(editingFinished()),
+        this, SLOT(slot_virtual_in_count())
+    );
+
+    /*
      * Set up the MIDI Input tab.  It is simpler, just a list of check-boxes
      * in the groupBoxInputs widget.  No need for a separate class.  However,
      * note that our qinputcheckbox class controls the activation, in the GUI,
@@ -490,6 +504,35 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         }
     }
     ui->inPortsMappedCheck->setChecked(inportmap);
+
+    /*
+     * I/O Port Boolean options.
+     */
+
+    ui->checkBoxRecordByChannel->setChecked(rc().palette_active());
+    connect
+    (
+        ui->checkBoxRecordByChannel, SIGNAL(clicked(bool)),
+        this, SLOT(slot_record_by_channel())
+    );
+
+    ui->checkBoxVirtualPorts->setChecked(rc().palette_active());
+    connect
+    (
+        ui->checkBoxVirtualPorts, SIGNAL(clicked(bool)),
+        this, SLOT(slot_virtual_ports())
+    );
+
+    /*
+     * Display tab.
+     */
+
+    ui->checkBoxPaletteActive->setChecked(rc().palette_active());
+    connect
+    (
+        ui->checkBoxPaletteActive, SIGNAL(clicked(bool)),
+        this, SLOT(slot_palette_active_click())
+    );
 
     QSpacerItem * spacer2 = new QSpacerItem
     (
@@ -1128,54 +1171,52 @@ qseditoptions::slot_key_test (const QString &)
     }
 }
 
-/**
- *  Added for Seq66.  Not yet filled with functionality.
- */
-
 void
-qseditoptions::on_spinBoxClockStartModulo_valueChanged(int /*arg1*/)
+qseditoptions::slot_clock_start_modulo (int /*arg1*/)
 {
-
+    // TODO
 }
 
-/**
- *  Added for Seq66.  Not yet filled with functionality.
- */
-
 void
-qseditoptions::on_plainTextEditTempoTrack_textChanged()
+qseditoptions::slot_tempo_track()
 {
-
+    // TODO
 }
 
-/**
- *  Added for Seq66.  Not yet filled with functionality.
- */
-
 void
-qseditoptions::on_pushButtonTempoTrack_clicked()
+qseditoptions::slot_tempo_track_set()
 {
-
+    // TODO
 }
 
-/**
- *  Added for Seq66.  Not yet filled with functionality.
- */
-
 void
-qseditoptions::on_checkBoxRecordByChannel_clicked(bool /*checked*/)
+qseditoptions::slot_record_by_channel ()
 {
-
+    bool on = ui->checkBoxRecordByChannel->isChecked();
+    rc().filter_by_channel(on);
 }
 
-/**
- *  Added for Seq66.  Not yet filled with functionality.
- */
+void
+qseditoptions::slot_virtual_ports ()
+{
+    bool on = ui->checkBoxVirtualPorts->isChecked();
+    rc().manual_ports(on);
+}
 
 void
-qseditoptions::on_chkJackConditional_stateChanged(int /*arg1*/)
+qseditoptions::slot_virtual_out_count ()
 {
+    QString text = ui->lineEditOutputCount->text();
+    int count = std::stoi(text.toStdString());
+    rc().manual_port_count(count);
+}
 
+void
+qseditoptions::slot_virtual_in_count ()
+{
+    QString text = ui->lineEditInputCount->text();
+    int count = std::stoi(text.toStdString());
+    rc().manual_in_port_count(count);
 }
 
 }           // namespace seq66

@@ -66,7 +66,7 @@
 #endif
 
 #if ! defined SEQ66_VERSION
-#define SEQ66_VERSION "0.96.3"
+#define SEQ66_VERSION "0.97.0"
 #endif
 
 #if ! defined SEQ66_GIT_VERSION
@@ -317,7 +317,7 @@
 
 /* Define to the full name and version of this package. */
 #if ! defined SEQ66_PACKAGE_STRING
-#define SEQ66_PACKAGE_STRING "Seq66 0.96.3"
+#define SEQ66_PACKAGE_STRING "Seq66 0.97.0"
 #endif
 
 /* Define to the one symbol short name of this package. */

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-10
+ * \updates       2021-09-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -101,14 +101,6 @@ private:
         return m_perf;
     }
 
-private:
-
-    void on_spinBoxClockStartModulo_valueChanged (int arg1);
-    void on_plainTextEditTempoTrack_textChanged ();
-    void on_pushButtonTempoTrack_clicked ();
-    void on_checkBoxRecordByChannel_clicked (bool checked);
-    void on_chkJackConditional_stateChanged (int arg1);
-
 private slots:
 
     void slot_sets_mode (int buttonno);
@@ -144,6 +136,13 @@ private slots:
     void slot_rc_save_click ();
     void slot_usr_save_click ();
     void slot_key_test (const QString &);
+    void slot_clock_start_modulo (int arg);
+    void slot_tempo_track ();
+    void slot_tempo_track_set ();
+    void slot_record_by_channel ();
+    void slot_virtual_ports ();
+    void slot_virtual_out_count ();
+    void slot_virtual_in_count ();
 
 private:
 

@@ -24,7 +24,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -294,7 +294,7 @@ the system's MIDI setup has changed.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>420</y>
+         <y>368</y>
          <width>591</width>
          <height>117</height>
         </rect>
@@ -325,7 +325,7 @@ number using the channel number (0 to 15).</string>
          <string>Record input into sequences according to channel</string>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox">
+       <widget class="QCheckBox" name="checkBoxVirtualPorts">
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -336,6 +336,52 @@ number using the channel number (0 to 15).</string>
         </property>
         <property name="text">
          <string>Use virtual (manual) I/O Ports</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_inputs">
+        <property name="geometry">
+         <rect>
+          <x>372</x>
+          <y>72</y>
+          <width>54</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Inputs</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_outputs">
+        <property name="geometry">
+         <rect>
+          <x>264</x>
+          <y>72</y>
+          <width>54</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Outputs</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditOutputCount">
+        <property name="geometry">
+         <rect>
+          <x>316</x>
+          <y>68</y>
+          <width>41</width>
+          <height>25</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditInputCount">
+        <property name="geometry">
+         <rect>
+          <x>440</x>
+          <y>68</y>
+          <width>41</width>
+          <height>25</height>
+         </rect>
         </property>
        </widget>
       </widget>

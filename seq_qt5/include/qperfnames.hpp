@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-10
+ * \updates       2021-09-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -53,6 +53,7 @@ namespace seq66
 class qperfnames final : public QWidget, public qperfbase
 {
     friend class qperfeditframe64;
+    friend class qperfroll;
 
     Q_OBJECT
 
@@ -65,8 +66,6 @@ public:
         // no code
     }
 
-    void set_preview_row (int row);
-
     void resize ()
     {
         force_resize(this);
@@ -75,6 +74,7 @@ public:
 protected:
 
     void reupdate ();
+    void set_preview_row (int row);
 
     int name_x (int i)
     {
@@ -83,7 +83,7 @@ protected:
 
     int name_y (int i)
     {
-        return m_nametext_y * i;
+        return track_height() * i;
     }
 
 protected:          // Qt overrides
@@ -112,8 +112,6 @@ private:
 
     QFont m_font;
     int m_nametext_x;
-    int m_nametext_y;
-    int m_set_text_y;                       /* saves a frequent calculation */
     Color m_preview_color;                  /* will reduce its alpha value  */
     bool m_is_previewing;
     int m_preview_row;
