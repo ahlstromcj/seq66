@@ -133,7 +133,7 @@ usrfile::parse ()
 
     std::string temp = parse_version(file);
     if (temp.empty() || file_version_number() < s_usr_file_version)
-        usr().save_user_config(true);
+        rc().auto_usr_save(true);
 
     temp = parse_comments(file);
     if (! temp.empty())

@@ -223,7 +223,7 @@ rcfile::parse ()
     bool verby = get_boolean(file, "[Seq66]", "verbose");
     std::string s = parse_version(file);
     if (s.empty() || file_version_old(file))
-        rc_ref().auto_option_save(true);
+        rc_ref().auto_rc_save(true);
 
     rc().verbose(verby);
     s = get_variable(file, "[Seq66]", "sets-mode");
@@ -905,13 +905,13 @@ rcfile::parse ()
         {
             int count = std::sscanf(scanline(), "%d", &method);
             if (count == 1)
-                rc_ref().auto_option_save(bool(method));
+                rc_ref().auto_rc_save(bool(method));
         }
     }
     else
     {
         bool flag = get_boolean(file, tag, "auto-save-rc");
-        rc_ref().auto_option_save(flag);
+        rc_ref().auto_rc_save(flag);
     }
 
     bool f = get_boolean(file, tag, "save-old-triggers");
@@ -1402,7 +1402,7 @@ rcfile::write ()
         "\n[auto-option-save]\n\n"
         ;
 
-    write_boolean(file, "auto-save-rc", rc_ref().auto_option_save());
+    write_boolean(file, "auto-save-rc", rc_ref().auto_rc_save());
     write_boolean(file, "save-old-triggers", rc_ref().save_old_triggers());
     write_boolean(file, "save-old-mutes", rc_ref().save_old_mutes());
 

@@ -654,9 +654,9 @@ private:
      *  Anyway, this flag can be set by the --user-save option.  This setting
      *  is never saved.  But note that, if no "user" configuration file is
      *  found, it is then saved anyway.
-     */
 
     bool m_save_user_config;
+     */
 
     /**
      *  Indicates if the application is running headless.  That is, from the
@@ -1157,12 +1157,14 @@ public:
         return m_window_redraw_rate_ms;
     }
 
+/*
     bool save_user_config () const
     {
         return m_save_user_config;
     }
 
     void save_user_config (bool flag);
+    */
 
 protected:
 

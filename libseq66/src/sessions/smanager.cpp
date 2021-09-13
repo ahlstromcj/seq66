@@ -532,31 +532,33 @@ smanager::save_session (std::string & msg, bool ok)
         }
         if (result && ok)
         {
-            bool save = rc().auto_option_save() || rc().is_modified();
+            bool save = rc().auto_options_save();
             if (save)
             {
                 /*
-                 * Saves the 'rc' file and, conditionally, the 'usr' file.
+                 * Saves the 'rc' file and, the 'usr' file, conditionally.
                  */
 
                 file_message("Save session", "Options");
                 if (! cmdlineopts::write_options_files())
                     msg = "Config writes failed";
             }
-            else
-                msg = "config auto-save option off";
 
-            if (save)
+            /*
+             * Too much: else msg = "config auto-save option off";
+             */
+
+            if (rc().auto_mutes_save())
             {
                 file_message("Save session", "Mutes");
                 result = perf()->save_mutegroups();         // add msg return?
             }
-            if (save)
+            if (rc().auto_playlist_save())
             {
                 file_message("Save session", "Play-list");
                 result = perf()->save_playlist();           // add msg return?
             }
-            if (save)
+            if (rc().auto_drums_save())
             {
                 file_message("Save session", "Note-mapper");
                 result = perf()->save_note_mapper();        // add msg return?
@@ -881,11 +883,14 @@ smanager::create_configuration
             if (result)
             {
                 if (usr().in_session())
-                    rc().auto_option_save(true);
+                    rc().auto_rc_save(true);
+                else
+                    rc().set_saved_list(false);         /* save them all    */
             }
         }
         else
         {
+            rc().set_saved_list(true);                  /* save them all    */
             result = make_directory_path(mainpath);
             if (result)
             {
@@ -925,11 +930,11 @@ smanager::create_configuration
                 std::string dstplayfile = file_path_set(srcplayfile, cfgfilepath);
                 std::string dstnotefile = file_path_set(srcnotefile, cfgfilepath);
                 file_message("Saving configuration to session", cfgfilepath);
-                usr().save_user_config(true);
+                rc().auto_usr_save(true);
                 rc().playlist_filename(dstplayfile);
                 rc().notemap_filename(dstnotefile);
                 if (usr().in_session())
-                    rc().auto_option_save(true);
+                    rc().auto_rc_save(true);
 
                 result = cmdlineopts::write_options_files();
                 if (result)

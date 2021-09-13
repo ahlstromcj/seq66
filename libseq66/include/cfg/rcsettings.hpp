@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-09-07
+ * \updates       2021-09-13
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -46,6 +46,7 @@
 #include "play/clockslist.hpp"          /* list of seq66::e_clock settings  */
 #include "play/inputslist.hpp"          /* list of boolean input settings   */
 #include "play/mutegroups.hpp"          /* map of seqq66::mutes stanzas     */
+#include "util/named_bools.hpp"         /* map of booleans keyed by strings */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -280,7 +281,14 @@ private:
 
     bool m_verbose;                 /**< Message-showing setting.           */
     bool m_investigate;             /**< An option for the test of the day. */
-    bool m_auto_option_save;        /**< [auto-option-save] setting.        */
+
+    /**
+     *  A replacement for m_auto_option_save and all "save" options except for
+     *  MIDI files.
+     */
+
+    named_bools m_save_list;
+
     bool m_save_old_triggers;       /**< Save c_triggers_ex, no transpose.  */
     bool m_save_old_mutes;          /**< Save mutes as bytes, not longs.    */
     bool m_allow_mod4_mode;         /**< Allow Mod4 to hold drawing mode.   */
@@ -653,9 +661,41 @@ public:
         return m_investigate;
     }
 
-    bool auto_option_save () const
+    bool auto_options_save () const;
+
+    bool auto_rc_save () const
     {
-        return m_auto_option_save;
+        return m_save_list.get("rc");
+    }
+
+    bool auto_usr_save () const
+    {
+        return m_save_list.get("usr");
+    }
+
+    bool auto_mutes_save () const
+    {
+        return m_save_list.get("mutes");
+    }
+
+    bool auto_playlist_save () const
+    {
+        return m_save_list.get("playlist");
+    }
+
+    bool auto_ctrl_save () const
+    {
+        return m_save_list.get("ctrl");
+    }
+
+    bool auto_drums_save () const
+    {
+        return m_save_list.get("drums");
+    }
+
+    bool auto_palette_save () const
+    {
+        return m_save_list.get("palette");
     }
 
     bool save_old_triggers () const
@@ -1108,9 +1148,39 @@ public:
         m_investigate = flag;
     }
 
-    void auto_option_save (bool flag)
+    void auto_rc_save (bool flag)
     {
-        m_auto_option_save = flag;
+        m_save_list.set("rc", flag);
+    }
+
+    void auto_usr_save (bool flag)
+    {
+        m_save_list.set("usr", flag);
+    }
+
+    void auto_mutes_save (bool flag)
+    {
+        m_save_list.set("mutes", flag);
+    }
+
+    void auto_playlist_save (bool flag)
+    {
+        m_save_list.set("playlist", flag);
+    }
+
+    void auto_ctrl_save (bool flag)
+    {
+        m_save_list.set("ctrl", flag);
+    }
+
+    void auto_drums_save (bool flag)
+    {
+        m_save_list.set("drums", flag);
+    }
+
+    void auto_palette_save (bool flag)
+    {
+        m_save_list.set("palette", flag);
     }
 
     void save_old_triggers (bool flag)
@@ -1296,6 +1366,9 @@ public:
     {
         m_palette_filename = fn;
     }
+
+    void set_saved_list (bool state);
+    void set_save (const std::string & name, bool value);
 
 private:
 

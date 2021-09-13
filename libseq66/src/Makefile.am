@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2021-01-22
+# \update      2021-09-13
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -199,6 +199,7 @@ libseq66_la_SOURCES = \
  util/calculations.cpp \
  util/condition.cpp \
  util/filefunctions.cpp \
+ util/named_bools.cpp \
  util/palette.cpp \
  util/recmutex.cpp \
  util/rect.cpp \

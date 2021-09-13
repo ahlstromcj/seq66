@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-11
+ * \updates       2021-09-13
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -385,21 +385,86 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         this, SLOT(slot_long_buss_names_click())
     );
 
-    bool autosaverc = rc().auto_option_save();
+    /*
+     * 'rc' file
+     */
+
+    bool autosaverc = rc().auto_rc_save();
+    QString filename = QString::fromStdString(rc().config_filename());
     ui->checkBoxSaveRc->setChecked(autosaverc);
     connect
     (
         ui->checkBoxSaveRc, SIGNAL(clicked(bool)),
         this, SLOT(slot_rc_save_click())
     );
+    ui->checkBoxActiveRc->setChecked(true);
+    ui->lineEditRc->setText(filename);
 
-    bool autosaveusr = usr().save_user_config();
+    /*
+     * 'usr' file
+     */
+
+    bool autosaveusr = rc().auto_usr_save();
+    filename = QString::fromStdString(rc().user_filename());
     ui->checkBoxSaveUsr->setChecked(autosaveusr);
     connect
     (
         ui->checkBoxSaveUsr, SIGNAL(clicked(bool)),
         this, SLOT(slot_usr_save_click())
     );
+    ui->checkBoxActiveUsr->setChecked(rc().user_file_active());
+    ui->lineEditUsr->setText(filename);
+
+    /*
+     * 'mutes' file
+     */
+
+    bool autosavemutes = rc().auto_mutes_save();
+    filename = QString::fromStdString(rc().mute_group_filename());
+    ui->checkBoxSaveMutes->setChecked(autosavemutes);
+    connect
+    (
+        ui->checkBoxSaveMutes, SIGNAL(clicked(bool)),
+        this, SLOT(slot_mutes_save_click())
+    );
+    ui->checkBoxActiveMutes->setChecked(rc().mute_group_active());
+    ui->lineEditMutes->setText(filename);
+
+    /*
+     * 'playlist' file
+     */
+
+    bool autosaveplaylist = rc().auto_playlist_save();
+    filename = QString::fromStdString(rc().playlist_filename());
+    ui->checkBoxSavePlaylist->setChecked(autosaveplaylist);
+    connect
+    (
+        ui->checkBoxSavePlaylist, SIGNAL(clicked(bool)),
+        this, SLOT(slot_playlist_save_click())
+    );
+    ui->checkBoxActivePlaylist->setChecked(rc().playlist_active());
+    ui->lineEditPlaylist->setText(filename);
+
+    /*
+     * 'ctrl' file
+     */
+
+    bool autosavectrl = rc().auto_ctrl_save();
+    filename = QString::fromStdString(rc().midi_control_filename());
+    ui->lineEditRc->setText(QString::fromStdString(rc().midi_control_filename()));
+    ui->checkBoxSaveCtrl->setChecked(autosavectrl);
+    ui->checkBoxActiveRc->setChecked(rc().midi_control_active());
+    ui->lineEditRc->setText(filename);
+
+    /*
+     * 'drums' file
+     */
+
+    bool autosavedrums = rc().auto_drums_save();
+    filename = QString::fromStdString(rc().notemap_filename());
+    ui->checkBoxSaveDrums->setChecked(autosavedrums);
+    ui->checkBoxActiveDrums->setChecked(rc().notemap_active());
+    ui->lineEditDrums->setText(filename);
 
     /*
      * For testing only
@@ -741,7 +806,7 @@ qseditoptions::slot_session (int buttonno)
     else
         usr().session_manager("none");
 
-    usr().save_user_config(usr().session_manager() != current);
+    rc().auto_usr_save(usr().session_manager() != current);
 }
 
 void
@@ -1135,18 +1200,23 @@ qseditoptions::slot_long_buss_names_click ()
     rc().port_naming(on ? "long" : "short");
 }
 
+/**
+ *  In the following functions, turning of the "auto" flag and the "modify"
+ *  flag is somewhat redundant.
+ */
+
 void
 qseditoptions::slot_rc_save_click ()
 {
     bool on = ui->checkBoxSaveRc->isChecked();
-    rc().auto_option_save(on);
+    rc().auto_rc_save(on);
     rc().modify();
 }
 
 void
 qseditoptions::modify_usr ()
 {
-    usr().save_user_config(true);
+    rc().auto_usr_save(true);
     usr().modify();
     ui->checkBoxSaveUsr->setChecked(true);
 }
@@ -1155,8 +1225,22 @@ void
 qseditoptions::slot_usr_save_click ()
 {
     bool on = ui->checkBoxSaveUsr->isChecked();
-    usr().save_user_config(on);
+    rc().auto_usr_save(on);
     usr().modify();
+}
+
+void
+qseditoptions::slot_mutes_save_click ()
+{
+    bool on = ui->checkBoxSaveMutes->isChecked();
+    rc().auto_mutes_save(on);
+}
+
+void
+qseditoptions::slot_playlist_save_click ()
+{
+    bool on = ui->checkBoxSavePlaylist->isChecked();
+    rc().auto_playlist_save(on);
 }
 
 void

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-06-22
+ * \updates       2021-09-12
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -106,7 +106,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
     int yheight = height();
     QPainter painter(this);
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
-    QPen pen(Qt::black);
+    QPen pen(fore_color());             // Qt::black);
     pen.setStyle(Qt::SolidLine);
     painter.setPen(pen);
     painter.setBrush(brush);
@@ -149,7 +149,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
             if (zoom() >= c_minimum_zoom && zoom() <= c_maximum_zoom)
             {
                 QString bar(QString::number(measure + 1));
-                pen.setColor(Qt::black);
+                pen.setColor(Qt::black);                /* always black     */
                 painter.setPen(pen);
                 painter.drawText(x_pos + 2, 9, bar);
             }

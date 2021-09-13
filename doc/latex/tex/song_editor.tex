@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-04-16
+% \update      2021-09-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -419,7 +419,7 @@
 \subsection{Song Editor / Song Roll}
 \label{subsec:song_editor_song_roll}
 
-   Also known as the "arrangement panel".
+   Also known as the "arrangement panel" or "performance editor".
    The "Piano Roll" section of the arrangement panel is where patterns or
    subsections are inserted, deleted, shrunk, lengthened, or moved.
    Actions can be done via the mouse or keyboard.
@@ -583,13 +583,28 @@
             after the current item or the previous insertion.  The same can be
             done for whole patterns.
          \end{itemize}
-      \item Horizontal (Time) Zoom.
+      \item Horizontal (Time) Zoom.  These keystrokes work similarly to the
+      pattern editor's piano roll.  However, there are only three levels of
+      vertical zoom:  half-size, normal, and double-size.
          Provided by buttons and by these keystrokes:
-         \texttt{Z}. Zoom in.
-         \texttt{z}. Zoom out.
-         \texttt{0}. Reset zoom.
-      \item Paging.  Paging by keystroke is not yet complete.
-      Here is what can be done.
+         \index{keys!shift-z}
+         \texttt{Z}. Zoom in horizontally (i.e. in time).
+         \index{keys!z}
+         \texttt{z}. Zoom out horizontally.
+         \index{keys!0}
+         \texttt{0}. Reset zoom both horizontally and vertically.
+         \index{keys!shift-V}
+         \texttt{V}. Zoom in vertically to get a better view of the patterns
+            and a large grab handle.
+         \index{keys!v}
+         \texttt{v}. Zoom out vertically to see more tracks.
+      \item Scrolling.
+         \index{keys!arrows}
+         The arrow keys will move the piano row up, down, left, and right.
+         \index{keys!hjkl}
+         In addition, the "vi" keys \texttt{h}, \texttt{j}, \texttt{k}, and
+         \texttt{l} will act like the arrow keys.
+      \item Paging.
       One can page up and down vertically in the arrangement
       panel using the
       \index{keys!page-up}

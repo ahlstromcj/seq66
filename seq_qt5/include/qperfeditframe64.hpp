@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-07-08
+ * \updates       2021-09-12
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll),
@@ -142,6 +142,9 @@ private slots:
     void entry_mode (bool ischecked);
     void reset_trigger_transpose (bool ischecked);
     void set_trigger_transpose (int tpose);
+    void v_zoom_in ();
+    void v_zoom_out ();
+    void reset_v_zoom ();
 
 private:
 

@@ -347,12 +347,7 @@ usrsettings::usrsettings () :
     m_max_sequence              (seq::maximum()),
     m_mainwnd_x                 (c_default_window_width),   /* 780 */
     m_mainwnd_y                 (c_default_window_height),  /* 412 */
-
-    /*
-     * Back to non-constant values.
-     */
-
-    m_save_user_config          (false),
+//  m_save_user_config          (false),
     m_app_is_headless           (false),
     m_user_option_daemonize     (false),
     m_user_use_logfile          (false),
@@ -439,7 +434,7 @@ usrsettings::set_defaults ()
     m_mainwnd_x = c_default_window_width;
     m_mainwnd_y = c_default_window_height;
 
-    m_save_user_config = false;
+//  m_save_user_config = false;
     m_app_is_headless = false;
     m_user_option_daemonize = false;
     m_user_use_logfile = false;
@@ -492,6 +487,7 @@ usrsettings::normalize ()
      */
 }
 
+/*
 void
 usrsettings::save_user_config (bool flag)
 {
@@ -499,6 +495,7 @@ usrsettings::save_user_config (bool flag)
     if (flag)
         infoprint("Will save 'usr' file at exit");
 }
+*/
 
 std::string
 usrsettings::session_manager_name () const

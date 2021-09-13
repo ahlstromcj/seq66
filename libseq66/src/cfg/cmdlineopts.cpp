@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-09-07
+ * \updates       2021-09-13
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -1047,7 +1047,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 #endif
 
         case 'u':
-            usr().save_user_config(true);    /* usr(), not rc()!     */
+            rc().auto_usr_save(true);    /* usr(), not rc()!     */
             break;
 
         case 'v':
@@ -1074,14 +1074,14 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         case 'Z':
             rc().manual_ports(true);
             rc().reveal_ports(false);
-            usr().save_user_config(true);
+            rc().auto_usr_save(true);
             printf("[User mode: Manual ports and user-configured port names]\n");
             break;
 
         case 'z':
             rc().manual_ports(false);
             rc().reveal_ports(true);
-            usr().save_user_config(true);
+            rc().auto_usr_save(true);
             printf("[Native mode: Native ports and port names]\n");
             break;
 
@@ -1141,46 +1141,63 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
  */
 
 bool
-cmdlineopts::write_options_files (const std::string & filename)
+cmdlineopts::write_options_files (const std::string & filebase)
+{
+    bool result = write_rc_file(filebase);
+    if (result)
+        result = write_usr_file(filebase);
+
+    return result;
+}
+
+bool
+cmdlineopts::write_rc_file (const std::string & filebase)
 {
     bool result = true;
-    std::string rcn;
-    if (filename.empty())
+    if (rc().auto_rc_save())
     {
-        rcn = rc().config_filespec();
-    }
-    else
-    {
-        std::string name = filename;
-        name += ".rc";
-        rcn = rc().config_filespec(name);
-    }
+        std::string rcn;
+        if (filebase.empty())
+        {
+            rcn = rc().config_filespec();
+        }
+        else
+        {
+            std::string name = filebase;
+            name += ".rc";
+            rcn = rc().config_filespec(name);
+        }
 
-    rcfile options(rcn, seq66::rc());
-    if (options.write())
-    {
-        // Anything to do?
+        rcfile options(rcn, seq66::rc());
+        if (options.write())
+        {
+            // Anything to do?
+        }
+        else
+            result = false;
     }
-    else
-        result = false;
+    return result;
+}
 
-    bool cansave = usr().save_user_config();
-    if (filename.empty())
+bool
+cmdlineopts::write_usr_file (const std::string & filebase)
+{
+    bool result = true;
+    if (rc().auto_usr_save())
     {
-        rcn = rc().user_filespec();
-        if (! cansave)
-            cansave = ! file_exists(rcn);
-    }
-    else
-    {
-        std::string name = filename;
-        name += ".usr";
-        rcn = rc().user_filespec(name);
-        cansave = true;
-    }
-    if (cansave)
-    {
-        usrfile userstuff(rcn, rc());
+        std::string usrn;
+        if (filebase.empty())
+        {
+            usrn = rc().user_filespec();
+        }
+        else
+        {
+            std::string name = filebase;
+            name += ".usr";
+            usrn = rc().user_filespec(name);
+        }
+
+        usrfile userstuff(usrn, rc());
         if (userstuff.write())
         {
             // Anything to do?

@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2021-09-08
+# \update      2021-09-13
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -115,6 +115,7 @@ HEADERS += include/seq66_features.h \
  include/util/calculations.hpp \
  include/util/condition.hpp \
  include/util/filefunctions.hpp \
+ include/util/named_bools.hpp \
  include/util/palette.hpp \
  include/util/recmutex.hpp \
  include/util/rect.hpp \
@@ -189,6 +190,7 @@ SOURCES += src/seq66_features.cpp \
  src/util/calculations.cpp \
  src/util/condition.cpp \
  src/util/filefunctions.cpp \
+ src/util/named_bools.cpp \
  src/util/palette.cpp \
  src/util/recmutex.cpp \
  src/util/rect.cpp \

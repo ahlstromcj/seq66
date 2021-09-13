@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-12
+ * \updates       2021-09-13
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -232,6 +232,49 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
     painter.drawLine(progress_x, 1, progress_x, height() - 2);
     if (usr().progress_bar_thick())
         pen.setWidth(1);
+}
+
+bool
+qperfroll::v_zoom_in ()
+{
+    bool result = not_nullptr(perf_names());
+    if (result)
+    {
+        set_thick();
+        perf_names()->set_thick();
+        set_dirty();
+        frame64()->set_dirty();
+    }
+    return result;
+}
+
+bool
+qperfroll::v_zoom_out ()
+{
+    bool result = not_nullptr(perf_names());
+    if (result)
+    {
+        set_thin();
+        perf_names()->set_thin();
+        set_dirty();
+        frame64()->set_dirty();
+    }
+    return result;
+}
+
+bool
+qperfroll::reset_v_zoom ()
+{
+    bool result = not_nullptr(perf_names());
+    if (result)
+    {
+        set_normal();
+        perf_names()->set_normal();
+        frame64()->reset_zoom();
+        set_dirty();
+        frame64()->set_dirty();
+    }
+    return result;
 }
 
 /**
@@ -477,7 +520,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
     midipulse t, tick = 0;
     convert_xy(x, y, t, row);
     if (row >= 0)
-        m_perf_names->set_preview_row(row);
+        perf_names()->set_preview_row(row);
 
     if (is_nullptr(dropseq))
         return;
@@ -586,7 +629,6 @@ qperfroll::keyPressEvent (QKeyEvent * event)
     else
     {
         bool isctrl = event->modifiers() & Qt::ControlModifier;
-        bool isshift = event->modifiers() & Qt::ShiftModifier;
         if (event->key() == Qt::Key_Space || event->key() == Qt::Key_Period)
         {
             handled = true;
@@ -659,38 +701,41 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                 break;
             }
         }
-        else if (isshift)
-        {
-            if (event->key() == Qt::Key_Z)
-            {
-                handled = true;
-                frame64()->zoom_in();
-            }
-            else if (event->key() == Qt::Key_V)
-            {
-                handled = true;
-                set_thick();
-                m_perf_names->set_thick();
-            }
-        }
-        else if (event->key() == Qt::Key_Z)
+    }
+
+    /*
+     * These can be done in playback or not. The grid is "continually"
+     * redrawn.
+     */
+
+    bool isshift = event->modifiers() & Qt::ShiftModifier;
+    if (isshift)
+    {
+        if (event->key() == Qt::Key_Z)
         {
             handled = true;
-            frame64()->zoom_out();
+            frame64()->zoom_in();
         }
         else if (event->key() == Qt::Key_V)
         {
             handled = true;
-            set_thin();
-            m_perf_names->set_thin();
+            v_zoom_in();
         }
-        else if (event->key() == Qt::Key_0)
-        {
-            handled = true;
-            set_normal();
-            m_perf_names->set_normal();
-            frame64()->reset_zoom();
-        }
+    }
+    else if (event->key() == Qt::Key_Z)
+    {
+        handled = true;
+        frame64()->zoom_out();
+    }
+    else if (event->key() == Qt::Key_V)
+    {
+        handled = true;
+        v_zoom_out();
+    }
+    else if (event->key() == Qt::Key_0)
+    {
+        handled = true;
+        reset_v_zoom();
     }
     if (handled)
     {
@@ -840,9 +885,12 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                 backcolor.setAlpha(s_alpha_muted);
 
             int lenw = tix_to_pix(lens);
+            int h = track_height() - 1;
+            int cbwoffset = cbw + h / 2 - 2;
             trigger trig;
+            painter.setFont(m_font);
             seq->reset_draw_trigger_marker();
-            while (seq->next_trigger(trig))
+            while (seq->next_trigger(trig))             /* side-effect      */
             {
                 if (trig.tick_end() > 0)
                 {
@@ -851,8 +899,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     int w = x_off - x_on + 1;
                     int x = x_on;
                     int xmax = x_off + 1;               /* same as x + w    */
-                    int y = track_height() * seqid - 1; // + 1;
-                    int h = track_height() - 1;         // - 2;
+                    int y = track_height() * seqid - 1;
                     if (trig.selected())
                     {
                         pen.setColor(sel_color());      /* orange, Qt::red  */
@@ -863,30 +910,22 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         pen.setColor(fore_color());
                         brush.setColor(backcolor);
                     }
-                    pen.setStyle(Qt::SolidLine);    /* main seq icon box    */
+                    pen.setStyle(Qt::SolidLine);        /* seq trigger box  */
                     pen.setWidth(2);
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.setPen(pen);
                     painter.drawRect(x, y - 1, w, h + 1);
-
-#if defined THIS_CODE_ADDS_VALUE
-                    pen.setColor(Qt::lightGray);    /* lines between panels */
-                    painter.setPen(pen);
-                    painter.drawLine(x + 1, y - 1,      x + w - 2, y - 1);
-                    painter.drawLine(x + 1, y + h + 1, x + w - 2, y + h + 1);
-#endif
-
-                    brush.setStyle(Qt::NoBrush);    /* seq grab handle left */
+                    brush.setStyle(Qt::NoBrush);        /* grab handle L    */
                     painter.setBrush(brush);
                     pen.setColor(fore_color());
                     painter.setPen(pen);
                     painter.drawRect(x, y, cbw, cbw);
-                    painter.drawRect                /* grab handle right    */
+                    painter.drawRect                    /* grab handle R    */
                     (
                         xmax - cbw, y + h - cbw, cbw, cbw
                     );
-                    pen.setColor(Qt::black);
+                    pen.setColor(fore_color());
                     pen.setWidth(1);
                     painter.setPen(pen);
                     if (trig.transposed())
@@ -898,8 +937,11 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         else
                             snprintf(temp, sizeof temp, "-%d", -t);
 
-                        painter.setFont(m_font);
-                        painter.drawText(x + 4, y + cbw + h / 2 - 2, temp);
+                        int tx = x + 4;
+                        if (track_thin())
+                            tx += 8;
+
+                        painter.drawText(tx, y + cbwoffset, temp);
                     }
 
                     midipulse t = trig.trigger_marker(lens);

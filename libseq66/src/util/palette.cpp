@@ -44,7 +44,7 @@ namespace seq66
     /*
      * All code is in the template header file.
      */
-}           // namespace seq66
+}
 
 /*
  * palette.cpp

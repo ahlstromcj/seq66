@@ -27,7 +27,7 @@
  *
  * \author  Chris Ahlstrom
  * \date    2015-11-20
- * \updates 2021-09-07
+ * \updates 2021-09-13
  * \version $Revision$
  *
  *    Also see the filefunctions.cpp and strfunctions modules.
@@ -93,6 +93,8 @@ public:
     static bool parse_log_option (int argc, char * argv []);
     static int parse_command_line_options (int argc, char * argv []);
     static bool write_options_files (const std::string & filename = "");
+    static bool write_rc_file (const std::string & filename = "");
+    static bool write_usr_file (const std::string & filename = "");
 
 private:
 

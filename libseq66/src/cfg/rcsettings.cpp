@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-09-07
+ * \updates       2021-09-13
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -76,7 +76,7 @@ rcsettings::rcsettings () :
     m_clock_mod                 (64),
     m_verbose                   (false),
     m_investigate               (false),
-    m_auto_option_save          (true),     /* legacy seq24 behavior    */
+    m_save_list                 (),         /* std::map<string, bool>   */
     m_save_old_triggers         (false),
     m_save_old_mutes            (false),
     m_allow_mod4_mode           (false),
@@ -181,7 +181,6 @@ rcsettings::set_defaults ()
     m_clock_mod                 = 64;
     m_verbose                   = false;
     m_investigate               = false;
-    m_auto_option_save          = true;     /* legacy seq24 setting */
     m_save_old_triggers         = false;
     m_save_old_mutes            = false;
     m_allow_mod4_mode           = false;
@@ -252,6 +251,46 @@ rcsettings::set_defaults ()
     m_load_most_recent = true;
     m_full_recent_paths = false;
     set_config_files(SEQ66_CONFIG_NAME);
+    set_saved_list(false);
+}
+
+void
+rcsettings::set_saved_list (bool state)
+{
+    m_save_list.clear();
+    m_save_list.add("rc", state);               /* can be edited in UI  */
+    m_save_list.add("usr", state);              /* can be edited in UI  */
+    m_save_list.add("mutes", state);            /* can be edited in UI  */
+    m_save_list.add("playlist", state);         /* can be edited in UI  */
+    m_save_list.add("palette", state);          /* can be saved via UI  */
+
+    /*
+     * The following are saved only after the first run.  Thereafter, they
+     * are managed by the user.
+     */
+
+    m_save_list.add("drums", state);
+    m_save_list.add("ctrl", state);
+}
+
+void
+rcsettings::set_save (const std::string & name, bool value)
+{
+    bool status = m_save_list.get(name);
+    if (status != value)
+        m_save_list.set("rc", true);        /* 'rc' holds all the status    */
+
+    m_save_list.set(name, value);
+}
+
+bool
+rcsettings::auto_options_save () const
+{
+    return
+    (
+        auto_rc_save() || auto_usr_save() ||
+        rc().is_modified() || usr().is_modified()
+    );
 }
 
 void
@@ -854,7 +893,7 @@ rcsettings::jack_session (const std::string & uuid)
         }
     }
     if (save_config)
-        usr().save_user_config(true);
+        rc().auto_usr_save(true);
 
     if (clear_uuid)
         m_jack_session_uuid.clear();

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-11
+ * \updates       2021-09-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -135,6 +135,8 @@ private slots:
     void slot_long_buss_names_click ();
     void slot_rc_save_click ();
     void slot_usr_save_click ();
+    void slot_mutes_save_click ();
+    void slot_playlist_save_click ();
     void slot_key_test (const QString &);
     void slot_clock_start_modulo (int arg);
     void slot_tempo_track ();

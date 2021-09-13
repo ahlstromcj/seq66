@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-08-13
+ * \updates       2021-09-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -240,6 +240,26 @@ qperfeditframe64::qperfeditframe64
     qt_set_icon(zoom_in_xpm, ui->btnZoomIn);
     connect(ui->btnZoomOut, SIGNAL(clicked(bool)), this, SLOT(zoom_out()));
     qt_set_icon(zoom_out_xpm, ui->btnZoomOut);
+
+    /*
+     * Tiny vertical zoom keys
+     */
+
+    connect
+    (
+        ui->btnKeyVZoomIn, SIGNAL(clicked(bool)),
+        this, SLOT(v_zoom_in())
+    );
+    connect
+    (
+        ui->btnKeyVZoomReset, SIGNAL(clicked(bool)),
+        this, SLOT(reset_v_zoom())
+    );
+    connect
+    (
+        ui->btnKeyVZoomOut, SIGNAL(clicked(bool)),
+        this, SLOT(v_zoom_out())
+    );
 
     /*
      * Transpose button and combo-box.
@@ -542,6 +562,24 @@ qperfeditframe64::reset_zoom ()
 {
     m_perftime->reset_zoom();
     m_perfroll->reset_zoom();
+}
+
+void
+qperfeditframe64::v_zoom_in ()
+{
+    m_perfroll->v_zoom_in();
+}
+
+void
+qperfeditframe64::v_zoom_out ()
+{
+    m_perfroll->v_zoom_out();
+}
+
+void
+qperfeditframe64::reset_v_zoom ()
+{
+    m_perfroll->reset_v_zoom();
 }
 
 /**

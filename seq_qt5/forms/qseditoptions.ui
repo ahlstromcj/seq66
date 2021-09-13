@@ -24,7 +24,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -465,9 +465,9 @@ number using the channel number (0 to 15).</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>272</y>
+         <y>240</y>
          <width>273</width>
-         <height>185</height>
+         <height>209</height>
         </rect>
        </property>
        <property name="title">
@@ -787,8 +787,8 @@ to 128, and defaults to 32.</string>
        <property name="geometry">
         <rect>
          <x>8</x>
-         <y>216</y>
-         <width>505</width>
+         <y>200</y>
+         <width>421</width>
          <height>29</height>
         </rect>
        </property>
@@ -855,25 +855,25 @@ path added to this name is stripped.</string>
        <property name="geometry">
         <rect>
          <x>296</x>
-         <y>272</y>
-         <width>257</width>
-         <height>185</height>
+         <y>240</y>
+         <width>297</width>
+         <height>209</height>
         </rect>
        </property>
        <property name="title">
-        <string>Save At Exit</string>
+        <string>Configuration Files</string>
        </property>
        <widget class="QCheckBox" name="checkBoxSaveRc">
         <property name="geometry">
          <rect>
-          <x>8</x>
-          <y>40</y>
+          <x>64</x>
+          <y>44</y>
           <width>81</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>'rc' File</string>
+         <string>'rc'</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBoxSaveUsr">
@@ -882,14 +882,300 @@ path added to this name is stripped.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>8</x>
-          <y>64</y>
+          <x>64</x>
+          <y>68</y>
           <width>81</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>'usr' File</string>
+         <string>'usr'</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxSaveMutes">
+        <property name="geometry">
+         <rect>
+          <x>64</x>
+          <y>92</y>
+          <width>81</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>'mutes'</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxSavePlaylist">
+        <property name="geometry">
+         <rect>
+          <x>64</x>
+          <y>116</y>
+          <width>81</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>'playlist'</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxSaveCtrl">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>64</x>
+          <y>140</y>
+          <width>81</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>'ctrl'</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxSaveDrums">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>64</x>
+          <y>164</y>
+          <width>81</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>'drums'</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxActiveRc">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>44</y>
+          <width>25</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxActiveUsr">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>68</y>
+          <width>25</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxActiveMutes">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>92</y>
+          <width>25</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxActivePlaylist">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>116</y>
+          <width>25</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxActiveCtrl">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>140</y>
+          <width>25</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxActiveDrums">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>164</y>
+          <width>25</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_cfg_active">
+        <property name="geometry">
+         <rect>
+          <x>8</x>
+          <y>24</y>
+          <width>45</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Active</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_cfg_save">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>24</y>
+          <width>81</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Save At Exit</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditRc">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>136</x>
+          <y>44</y>
+          <width>149</width>
+          <height>21</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditUsr">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>136</x>
+          <y>68</y>
+          <width>149</width>
+          <height>21</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditMutes">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>136</x>
+          <y>92</y>
+          <width>149</width>
+          <height>21</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditPlaylist">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>136</x>
+          <y>116</y>
+          <width>149</width>
+          <height>21</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditCtrl">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>136</x>
+          <y>140</y>
+          <width>149</width>
+          <height>21</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditDrums">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>136</x>
+          <y>164</y>
+          <width>149</width>
+          <height>21</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_cfg_basename">
+        <property name="geometry">
+         <rect>
+          <x>144</x>
+          <y>24</y>
+          <width>113</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Base Filename</string>
         </property>
        </widget>
       </widget>

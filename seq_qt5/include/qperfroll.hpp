@@ -88,6 +88,10 @@ public:
         m_trigger_transpose = tpose;
     }
 
+    bool v_zoom_in ();
+    bool v_zoom_out ();
+    bool reset_v_zoom ();
+
 private:
 
     bool in_selection_area (midipulse tick);
@@ -126,14 +130,24 @@ private:
 
     virtual void set_adding (bool adding);
 
-    qperfeditframe64 * frame64()
+    qperfeditframe64 * frame64 ()
     {
         return m_parent_frame;
     }
 
-    const qperfeditframe64 * frame64() const
+    const qperfeditframe64 * frame64 () const
     {
         return m_parent_frame;
+    }
+
+    qperfnames * perf_names ()
+    {
+        return m_perf_names;
+    }
+
+    const qperfnames * perf_names () const
+    {
+        return m_perf_names;
     }
 
     // We could add these functions to performer and here:

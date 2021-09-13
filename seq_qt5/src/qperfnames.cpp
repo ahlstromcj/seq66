@@ -116,38 +116,38 @@ qperfnames::paintEvent (QPaintEvent *)
     int set_count = perf().seqs_in_set();
     int set_y = track_height() * set_count / 2;
     QPainter painter(this);
-    QPen pen(fore_color());                     ///// Qt::black);
+    QPen pen(fore_color());
     QBrush brush(Qt::lightGray);
     pen.setStyle(Qt::SolidLine);
-    pen.setWidth(2);                            //////////
+    pen.setWidth(2);
     brush.setStyle((Qt::SolidPattern));
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.setFont(m_font);
-    painter.drawRect(0, 0, width(), height() - 1);          // rectangle border
+    painter.drawRect(0, 0, width(), height() - 1);      // rectangle border
     for (int y = y_s; y <= y_f; ++y)
     {
         int seq_id = y;
-        if (seq_id < int(perf().sequence_max()))            // set_count?
+        if (seq_id < int(perf().sequence_max()))        // or use set_count?
         {
             int rect_x = 6 * 2 + 2;
             int rect_y = track_height() * seq_id;
             int rect_w = c_names_x - 15;
             int text_y = rect_y + set_y;
-            if ((seq_id % set_count) == 0)                  // 1st seq in bank?
+            if ((seq_id % set_count) == 0)              // 1st seq in bank?
             {
                 char ss[16];
                 int bank_id = seq_id / set_count;
                 snprintf(ss, sizeof ss, "%2d", bank_id);
-                pen.setColor(fore_color()); ///// Qt::black);                // black boxes, each bank
-                brush.setColor(Qt::black);
+                pen.setColor(fore_color());             // black bank boxes
+                brush.setColor(back_color());           // Qt::black
                 brush.setStyle(Qt::SolidPattern);
                 painter.setPen(pen);
                 painter.setBrush(brush);
                 painter.drawRect(1, name_y(seq_id) + 1, 13, track_height() - 1);
 
                 QString bankss(ss);
-                pen.setColor(Qt::white);                // for bank number
+                pen.setColor(fore_color());             // for bank number
                 painter.setPen(pen);
                 painter.drawText(1, rect_y + 10, bankss);
                 pen.setColor(Qt::black);                // bank name sideways
@@ -159,7 +159,6 @@ qperfnames::paintEvent (QPaintEvent *)
                 painter.drawText(0, 0, bank);
                 painter.restore();                      // }
             }
-//          pen.setWidth(2);                            //////////
             if (perf().is_seq_active(seq_id))
             {
                 std::string sname = perf().sequence_label(seq_id); // seq name
@@ -175,7 +174,7 @@ qperfnames::paintEvent (QPaintEvent *)
                 QString chinfo(name);
                 if (muted)
                 {
-                    brush.setColor(grey_color());           // Qt::black
+                    brush.setColor(grey_color());
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.drawRect(rect_x, rect_y, rect_w, track_height());
@@ -189,12 +188,11 @@ qperfnames::paintEvent (QPaintEvent *)
                         s_alpha_bright : s_alpha_normal ;
 
                     backcolor.setAlpha(alpha);
-                    brush.setColor(backcolor);              // Qt::white
-
+                    brush.setColor(backcolor);
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.drawRect(rect_x, rect_y, rect_w, track_height());
-                    pen.setColor(fore_color());             // Qt::black
+                    pen.setColor(fore_color());
                 }
                 painter.setPen(pen);
                 painter.drawText(18, rect_y + 9, chinfo);
@@ -207,7 +205,7 @@ qperfnames::paintEvent (QPaintEvent *)
             else
             {
                 pen.setStyle(Qt::SolidLine);
-                pen.setColor(fore_color());     ///////////// Qt::black);
+                pen.setColor(fore_color());
                 brush.setColor(Qt::lightGray);
                 painter.setPen(pen);        /* fill seq label background    */
                 painter.setBrush(brush);
