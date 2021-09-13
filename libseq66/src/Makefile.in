@@ -21,7 +21,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2021-01-22
+# \update      2021-09-13
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -108,7 +108,6 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-target_triplet = @target@
 subdir = libseq66/src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/alsa.m4 \
@@ -182,8 +181,8 @@ am_libseq66_la_OBJECTS = seq66_features.lo cfg/basesettings.lo \
 	play/triggers.lo sessions/clinsmanager.lo sessions/smanager.lo \
 	os/daemonize.lo os/timing.lo util/automutex.lo \
 	util/basic_macros.lo util/calculations.lo util/condition.lo \
-	util/filefunctions.lo util/palette.lo util/recmutex.lo \
-	util/rect.lo util/strfunctions.lo
+	util/filefunctions.lo util/named_bools.lo util/palette.lo \
+	util/recmutex.lo util/rect.lo util/strfunctions.lo
 libseq66_la_OBJECTS = $(am_libseq66_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -450,11 +449,7 @@ seq66libdir = @seq66libdir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
-target = @target@
 target_alias = @target_alias@
-target_cpu = @target_cpu@
-target_os = @target_os@
-target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 
@@ -589,6 +584,7 @@ libseq66_la_SOURCES = \
  util/calculations.cpp \
  util/condition.cpp \
  util/filefunctions.cpp \
+ util/named_bools.cpp \
  util/palette.cpp \
  util/recmutex.cpp \
  util/rect.cpp \
@@ -804,6 +800,8 @@ util/calculations.lo: util/$(am__dirstamp) \
 util/condition.lo: util/$(am__dirstamp) util/$(DEPDIR)/$(am__dirstamp)
 util/filefunctions.lo: util/$(am__dirstamp) \
 	util/$(DEPDIR)/$(am__dirstamp)
+util/named_bools.lo: util/$(am__dirstamp) \
+	util/$(DEPDIR)/$(am__dirstamp)
 util/palette.lo: util/$(am__dirstamp) util/$(DEPDIR)/$(am__dirstamp)
 util/recmutex.lo: util/$(am__dirstamp) util/$(DEPDIR)/$(am__dirstamp)
 util/rect.lo: util/$(am__dirstamp) util/$(DEPDIR)/$(am__dirstamp)
@@ -902,6 +900,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/calculations.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/condition.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/filefunctions.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/named_bools.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/palette.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/recmutex.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/rect.Plo@am__quote@
