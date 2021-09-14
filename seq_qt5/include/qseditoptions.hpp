@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-13
+ * \updates       2021-09-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -126,17 +126,29 @@ private slots:
     void slot_progress_box_width ();
     void slot_progress_box_height ();
     void slot_fingerprint_size ();
-    void slot_palette_file (const QString &);
-    void slot_palette_save_click ();
-    void slot_palette_active_click ();
     void slot_verbose_active_click ();
     void slot_load_most_recent_click ();
     void slot_show_full_paths_click ();
     void slot_long_buss_names_click ();
     void slot_rc_save_click ();
+    void slot_rc_filename ();
     void slot_usr_save_click ();
+    void slot_usr_active_click ();
+    void slot_usr_filename ();
     void slot_mutes_save_click ();
+    void slot_mutes_active_click ();
+    void slot_mutes_filename ();
     void slot_playlist_save_click ();
+    void slot_playlist_active_click ();
+    void slot_playlist_filename ();
+    void slot_ctrl_active_click ();
+    void slot_ctrl_filename ();
+    void slot_drums_active_click ();
+    void slot_drums_filename ();
+    void slot_palette_save_now_click ();
+    void slot_palette_save_click ();
+    void slot_palette_active_click ();
+    void slot_palette_filename ();
     void slot_key_test (const QString &);
     void slot_clock_start_modulo (int arg);
     void slot_tempo_track ();

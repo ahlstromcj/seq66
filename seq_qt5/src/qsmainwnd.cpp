@@ -1176,7 +1176,7 @@ qsmainwnd::save_list_dialog ()
         result = perf().save_playlist(fname);
         if (result)
         {
-            // performer will handle this: rc().playlist_filename(fname);
+            /* performer will handle rc().playlist_filename(fname) */
         }
         else
             show_message_box(perf().playlist_error_message());

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-13
+ * \updates       2021-09-14
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -324,38 +324,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         this, SLOT(slot_fingerprint_size())
     );
 
-    /*
-     * Palette.
-     */
-
-    std::string palname = rc().palette_filename();
-    if (palname.empty())
-        palname = rc().application_name() + ".palette";
-
-    QString qcn = QString::fromStdString(palname);
-    ui->lineEditPaletteFile->setText(qcn);
-    connect
-    (
-        ui->lineEditPaletteFile, SIGNAL(textEdited(const QString &)),
-        this, SLOT(slot_palette_file(const QString &))
-    );
-    connect
-    (
-        ui->pushButtonSavePalette, SIGNAL(clicked(bool)),
-        this, SLOT(slot_palette_save_click())
-    );
-
-    /*
-     * UI Boolean options.
-     */
-
-    ui->checkBoxPaletteActive->setChecked(rc().palette_active());
-    connect
-    (
-        ui->checkBoxPaletteActive, SIGNAL(clicked(bool)),
-        this, SLOT(slot_palette_active_click())
-    );
-
     ui->checkBoxVerbose->setChecked(rc().verbose());
     connect
     (
@@ -386,85 +354,173 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     );
 
     /*
-     * 'rc' file
+     * 'rc' file.  This file is always active, so that check-box is read-only.
      */
 
-    bool autosaverc = rc().auto_rc_save();
     QString filename = QString::fromStdString(rc().config_filename());
-    ui->checkBoxSaveRc->setChecked(autosaverc);
+    ui->checkBoxSaveRc->setChecked(rc().auto_rc_save());
     connect
     (
         ui->checkBoxSaveRc, SIGNAL(clicked(bool)),
         this, SLOT(slot_rc_save_click())
     );
-    ui->checkBoxActiveRc->setChecked(true);
+    ui->checkBoxActiveRc->setChecked(true);     /* ALWAYS active */
     ui->lineEditRc->setText(filename);
+    connect
+    (
+        ui->lineEditRc, SIGNAL(editingFinished()),
+        this, SLOT(slot_rc_filename())
+    );
 
     /*
-     * 'usr' file
+     * 'usr' file. Making 'usr' inactive is EXPERIMENTAL.
      */
 
-    bool autosaveusr = rc().auto_usr_save();
     filename = QString::fromStdString(rc().user_filename());
-    ui->checkBoxSaveUsr->setChecked(autosaveusr);
+    ui->checkBoxSaveUsr->setChecked(rc().auto_usr_save());
     connect
     (
         ui->checkBoxSaveUsr, SIGNAL(clicked(bool)),
         this, SLOT(slot_usr_save_click())
     );
     ui->checkBoxActiveUsr->setChecked(rc().user_file_active());
+    connect
+    (
+        ui->checkBoxActiveUsr, SIGNAL(clicked(bool)),
+        this, SLOT(slot_usr_active_click())
+    );
     ui->lineEditUsr->setText(filename);
+    connect
+    (
+        ui->lineEditUsr, SIGNAL(editingFinished()),
+        this, SLOT(slot_usr_filename())
+    );
 
     /*
      * 'mutes' file
      */
 
-    bool autosavemutes = rc().auto_mutes_save();
     filename = QString::fromStdString(rc().mute_group_filename());
-    ui->checkBoxSaveMutes->setChecked(autosavemutes);
+    ui->checkBoxSaveMutes->setChecked(rc().auto_mutes_save());
     connect
     (
         ui->checkBoxSaveMutes, SIGNAL(clicked(bool)),
         this, SLOT(slot_mutes_save_click())
     );
     ui->checkBoxActiveMutes->setChecked(rc().mute_group_active());
+    connect
+    (
+        ui->checkBoxActiveMutes, SIGNAL(clicked(bool)),
+        this, SLOT(slot_mutes_active_click())
+    );
     ui->lineEditMutes->setText(filename);
+    connect
+    (
+        ui->lineEditMutes, SIGNAL(editingFinished()),
+        this, SLOT(slot_mutes_filename())
+    );
 
     /*
      * 'playlist' file
      */
 
-    bool autosaveplaylist = rc().auto_playlist_save();
     filename = QString::fromStdString(rc().playlist_filename());
-    ui->checkBoxSavePlaylist->setChecked(autosaveplaylist);
+    ui->checkBoxSavePlaylist->setChecked(rc().auto_playlist_save());
     connect
     (
         ui->checkBoxSavePlaylist, SIGNAL(clicked(bool)),
         this, SLOT(slot_playlist_save_click())
     );
     ui->checkBoxActivePlaylist->setChecked(rc().playlist_active());
+    connect
+    (
+        ui->checkBoxActivePlaylist, SIGNAL(clicked(bool)),
+        this, SLOT(slot_playlist_active_click())
+    );
     ui->lineEditPlaylist->setText(filename);
+    connect
+    (
+        ui->lineEditPlaylist, SIGNAL(editingFinished()),
+        this, SLOT(slot_playlist_filename())
+    );
 
     /*
-     * 'ctrl' file
+     * 'ctrl' file.  Since this configuration is not editable while the
+     * application is running, the "auto-save" check-box is read-only.
      */
 
-    bool autosavectrl = rc().auto_ctrl_save();
     filename = QString::fromStdString(rc().midi_control_filename());
-    ui->lineEditRc->setText(QString::fromStdString(rc().midi_control_filename()));
-    ui->checkBoxSaveCtrl->setChecked(autosavectrl);
-    ui->checkBoxActiveRc->setChecked(rc().midi_control_active());
-    ui->lineEditRc->setText(filename);
+    ui->checkBoxSaveCtrl->setChecked(rc().auto_ctrl_save());    /* read-only */
+    ui->checkBoxActiveCtrl->setChecked(rc().midi_control_active());
+    connect
+    (
+        ui->checkBoxActiveCtrl, SIGNAL(clicked(bool)),
+        this, SLOT(slot_ctrl_active_click())
+    );
+    ui->lineEditCtrl->setText(filename);
+    connect
+    (
+        ui->lineEditCtrl, SIGNAL(editingFinished()),
+        this, SLOT(slot_ctrl_filename())
+    );
 
     /*
-     * 'drums' file
+     * 'drums' file.  Since this configuration is not editable while the
+     * application is running, the "auto-save" check-box is read-only.
      */
 
-    bool autosavedrums = rc().auto_drums_save();
     filename = QString::fromStdString(rc().notemap_filename());
-    ui->checkBoxSaveDrums->setChecked(autosavedrums);
+    ui->checkBoxSaveDrums->setChecked(rc().auto_drums_save());  /* read-only */
     ui->checkBoxActiveDrums->setChecked(rc().notemap_active());
+    connect
+    (
+        ui->checkBoxActiveDrums, SIGNAL(clicked(bool)),
+        this, SLOT(slot_drums_active_click())
+    );
     ui->lineEditDrums->setText(filename);
+    connect
+    (
+        ui->lineEditDrums, SIGNAL(editingFinished()),
+        this, SLOT(slot_drums_filename())
+    );
+
+    /*
+     * 'palette' file.
+     */
+
+    std::string palname = rc().palette_filename();
+    if (palname.empty())
+        palname = rc().application_name() + ".palette";
+
+    filename = QString::fromStdString(palname);
+    ui->checkBoxSavePalette->setChecked(rc().auto_palette_save());
+    connect
+    (
+        ui->checkBoxSavePalette, SIGNAL(clicked(bool)),
+        this, SLOT(slot_palette_save_click())
+    );
+    ui->checkBoxActivePalette->setChecked(rc().palette_active());
+    connect
+    (
+        ui->checkBoxActivePalette, SIGNAL(clicked(bool)),
+        this, SLOT(slot_palette_active_click())
+    );
+    ui->lineEditPalette->setText(filename);
+    connect
+    (
+        ui->lineEditPalette, SIGNAL(editingFinished()),
+        this, SLOT(slot_palette_filename())
+    );
+
+    /*
+     * A 'palette' extra.  Immediate saving of the palette.
+     */
+
+    connect
+    (
+        ui->pushButtonSavePalette, SIGNAL(clicked(bool)),
+        this, SLOT(slot_palette_save_now_click())
+    );
 
     /*
      * For testing only
@@ -574,29 +630,18 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * I/O Port Boolean options.
      */
 
-    ui->checkBoxRecordByChannel->setChecked(rc().palette_active());
+    ui->checkBoxRecordByChannel->setChecked(rc().filter_by_channel());
     connect
     (
         ui->checkBoxRecordByChannel, SIGNAL(clicked(bool)),
         this, SLOT(slot_record_by_channel())
     );
 
-    ui->checkBoxVirtualPorts->setChecked(rc().palette_active());
+    ui->checkBoxVirtualPorts->setChecked(rc().manual_ports());
     connect
     (
         ui->checkBoxVirtualPorts, SIGNAL(clicked(bool)),
         this, SLOT(slot_virtual_ports())
-    );
-
-    /*
-     * Display tab.
-     */
-
-    ui->checkBoxPaletteActive->setChecked(rc().palette_active());
-    connect
-    (
-        ui->checkBoxPaletteActive, SIGNAL(clicked(bool)),
-        this, SLOT(slot_palette_active_click())
     );
 
     QSpacerItem * spacer2 = new QSpacerItem
@@ -1112,7 +1157,7 @@ void
 qseditoptions::slot_fingerprint_size ()
 {
     const QString qs = ui->lineEditFingerprintSize->text();
-    const std::string text = qs.toStdString();
+    std::string text = qs.toStdString();
     if (! text.empty())
     {
         double sz = std::stoi(text);
@@ -1130,20 +1175,34 @@ qseditoptions::slot_fingerprint_size ()
 }
 
 void
-qseditoptions::slot_palette_file (const QString & qs)
+qseditoptions::slot_palette_filename ()
 {
-    std::string valuetext = qs.toStdString();
-    valuetext = filename_base(valuetext);
-    rc().palette_filename(valuetext);
+    const QString qs = ui->lineEditPalette->text();
+    std::string text = qs.toStdString();
+    text = filename_base(text);
+    if (text != rc().palette_filename())
+    {
+        rc().palette_filename(text);
+        rc().auto_palette_save(true);
+        rc().auto_rc_save(true);
+        ui->checkBoxSavePalette->setChecked(true);
+    }
 }
 
 void
 qseditoptions::slot_palette_save_click ()
 {
+    bool on = ui->checkBoxSavePalette->isChecked();
+    rc().auto_palette_save(on);
+}
+
+void
+qseditoptions::slot_palette_save_now_click ()
+{
     std::string palfile = rc().palette_filespec();
     if (palfile.empty())
     {
-        QString qs = ui->lineEditPaletteFile->text();
+        QString qs = ui->lineEditPalette->text();
         palfile = qs.toStdString();
         rc().palette_filename(palfile);
         palfile = rc().palette_filespec();
@@ -1168,8 +1227,9 @@ qseditoptions::slot_palette_save_click ()
 void
 qseditoptions::slot_palette_active_click ()
 {
-    bool on = ui->checkBoxPaletteActive->isChecked();
+    bool on = ui->checkBoxActivePalette->isChecked();
     rc().palette_active(on);
+    rc().auto_rc_save(true);
 }
 
 void
@@ -1177,6 +1237,7 @@ qseditoptions::slot_verbose_active_click ()
 {
     bool on = ui->checkBoxVerbose->isChecked();
     rc().verbose(on);
+    rc().auto_rc_save(true);
 }
 
 void
@@ -1203,6 +1264,9 @@ qseditoptions::slot_long_buss_names_click ()
 /**
  *  In the following functions, turning of the "auto" flag and the "modify"
  *  flag is somewhat redundant.
+ *
+ *  Also, we don't need to process the "active" check-box.  It is always checked
+ *  and is read-only.  The name of the file can be changed, of course.
  */
 
 void
@@ -1210,7 +1274,19 @@ qseditoptions::slot_rc_save_click ()
 {
     bool on = ui->checkBoxSaveRc->isChecked();
     rc().auto_rc_save(on);
-    rc().modify();
+}
+
+void
+qseditoptions::slot_rc_filename ()
+{
+    const QString qs = ui->lineEditRc->text();
+    std::string text = qs.toStdString();
+    if (text != rc().config_filename())
+    {
+        rc().config_filename(text);
+        rc().auto_rc_save(true);
+        ui->checkBoxSaveRc->setChecked(true);
+    }
 }
 
 void
@@ -1230,6 +1306,29 @@ qseditoptions::slot_usr_save_click ()
 }
 
 void
+qseditoptions::slot_usr_active_click ()
+{
+    bool on = ui->checkBoxActiveUsr->isChecked();
+    usr().modify();
+    rc().user_file_active(on);
+    rc().auto_rc_save(true);
+}
+
+void
+qseditoptions::slot_usr_filename ()
+{
+    const QString qs = ui->lineEditUsr->text();
+    std::string text = qs.toStdString();
+    if (text != rc().user_filename())
+    {
+        rc().user_filename(text);
+        rc().auto_usr_save(true);
+        rc().auto_rc_save(true);
+        ui->checkBoxSaveUsr->setChecked(true);
+    }
+}
+
+void
 qseditoptions::slot_mutes_save_click ()
 {
     bool on = ui->checkBoxSaveMutes->isChecked();
@@ -1237,10 +1336,102 @@ qseditoptions::slot_mutes_save_click ()
 }
 
 void
+qseditoptions::slot_mutes_active_click ()
+{
+    bool on = ui->checkBoxActiveMutes->isChecked();
+    rc().mute_group_active(on);
+    rc().auto_rc_save(true);
+}
+
+void
+qseditoptions::slot_mutes_filename ()
+{
+    const QString qs = ui->lineEditMutes->text();
+    std::string text = qs.toStdString();
+    if (text != rc().mute_group_filename())
+    {
+        rc().mute_group_filename(text);
+        rc().auto_mutes_save(true);
+        rc().auto_rc_save(true);
+        ui->checkBoxSaveMutes->setChecked(true);
+    }
+}
+
+void
 qseditoptions::slot_playlist_save_click ()
 {
     bool on = ui->checkBoxSavePlaylist->isChecked();
     rc().auto_playlist_save(on);
+}
+
+void
+qseditoptions::slot_playlist_active_click ()
+{
+    bool on = ui->checkBoxActivePlaylist->isChecked();
+    rc().playlist_active(on);
+    rc().auto_rc_save(true);
+}
+
+void
+qseditoptions::slot_playlist_filename ()
+{
+    const QString qs = ui->lineEditPlaylist->text();
+    std::string text = qs.toStdString();
+    if (text != rc().playlist_filename())
+    {
+        perf().playlist_filename(text); /* rc().playlist_filename(text) */
+        rc().auto_playlist_save(true);
+        rc().auto_rc_save(true);
+        ui->checkBoxSavePlaylist->setChecked(true);
+    }
+}
+
+/*
+ *  No ctrl-save slot needed here, saving is done only at first-exit time.
+ */
+
+void
+qseditoptions::slot_ctrl_active_click ()
+{
+    bool on = ui->checkBoxActiveCtrl->isChecked();
+    rc().midi_control_active(on);
+    rc().auto_rc_save(true);
+}
+
+void
+qseditoptions::slot_ctrl_filename ()
+{
+    const QString qs = ui->lineEditCtrl->text();
+    std::string text = qs.toStdString();
+    if (text != rc().midi_control_filename())
+    {
+        rc().midi_control_filename(text);
+        rc().auto_ctrl_save(true);
+        rc().auto_rc_save(true);
+        ui->checkBoxSaveCtrl->setChecked(true);
+    }
+}
+
+void
+qseditoptions::slot_drums_active_click ()
+{
+    bool on = ui->checkBoxActiveUsr->isChecked();
+    rc().notemap_active(on);
+    rc().auto_rc_save(true);
+}
+
+void
+qseditoptions::slot_drums_filename ()
+{
+    const QString qs = ui->lineEditDrums->text();
+    std::string text = qs.toStdString();
+    if (text != rc().notemap_filename())
+    {
+        rc().notemap_filename(text);
+        rc().auto_drums_save(true);
+        rc().auto_rc_save(true);
+        ui->checkBoxSaveDrums->setChecked(true);
+    }
 }
 
 void

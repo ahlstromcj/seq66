@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-09-08
+ * \updates       2021-09-14
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -272,7 +272,7 @@ bool
 qt5nsmanager::close_session (std::string & msg, bool ok)
 {
     bool saved = true;
-    bool savepalette = rc().palette_active();
+    bool savepalette = rc().palette_active() || rc().auto_palette_save();
     if (savepalette)
     {
         std::string palfile = rc().palette_filespec();

@@ -807,8 +807,11 @@ rcfile::parse ()
                      */
 
                     bool active = flag != 0;
-                    fname = rc_ref().make_config_filespec(fname, ".playlist");
-                    exists = file_exists(fname);
+                    std::string fspec = rc_ref().make_config_filespec
+                    (
+                        fname, ".playlist"
+                    );
+                    exists = file_exists(fspec);
                     if (exists)
                     {
                         rc_ref().playlist_filename(fname);
@@ -1120,13 +1123,12 @@ rcfile::write ()
     );
 
     file << "\n"
-        "# Provides a play-list file and a flag to activate it. If no list,\n"
-        "# use '\"\"' and set 'active' to false. Use the extension '.playlist'.\n"
-        "# Even if not active, the play-list file is read. 'base-directory' is\n"
-        "# optional. It sets the directory holding all MIDI files in all\n"
-        "# play-lists, useful when copying play-lists/tunes from one place to\n"
-        "# another; it preserves sub-directories (e.g. in creating an NSM\n"
-        "# session).\n"
+        "# Provides a play-list file and flag to activate it. If no list, use\n"
+        "# '\"\"' and set active = false. Use the extension '.playlist'. Even\n"
+        "# if not active, the play-list file is read. 'base-directory' sets the\n"
+        "# sets the directory holding all MIDI files in all play-lists, useful\n"
+        "# when copying play-lists/tunes from one place to another; it\n"
+        "# preserves sub-directories (e.g. in creating an NSM session).\n"
         ;
 
     std::string plname = rc_ref().playlist_filename();

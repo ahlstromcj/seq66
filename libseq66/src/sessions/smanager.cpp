@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2021-09-03
+ * \updates       2021-09-14
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -885,12 +885,12 @@ smanager::create_configuration
                 if (usr().in_session())
                     rc().auto_rc_save(true);
                 else
-                    rc().set_saved_list(false);         /* save them all    */
+                    rc().set_save_list(false);          /* save them all    */
             }
         }
         else
         {
-            rc().set_saved_list(true);                  /* save them all    */
+            rc().set_save_list(true);                   /* save them all    */
             result = make_directory_path(mainpath);
             if (result)
             {
@@ -931,8 +931,15 @@ smanager::create_configuration
                 std::string dstnotefile = file_path_set(srcnotefile, cfgfilepath);
                 file_message("Saving configuration to session", cfgfilepath);
                 rc().auto_usr_save(true);
-                rc().playlist_filename(dstplayfile);
-                rc().notemap_filename(dstnotefile);
+
+                /*
+                 * Unnecessary. We already have the base name, and don't need
+                 * to prepend the configuration/session directory.
+                 *
+                 *      rc().playlist_filename(dstplayfile);
+                 *      rc().notemap_filename(dstnotefile);
+                 */
+
                 if (usr().in_session())
                     rc().auto_rc_save(true);
 

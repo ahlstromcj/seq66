@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-08-31
+ * \updates       2021-09-14
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -733,6 +733,20 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     rcs.playlist_filename(playlist_filename());
     rcs.playlist_active(playlist_active());
     return true;
+}
+
+void
+performer::playlist_filename (const std::string & basename)
+{
+    if (name_has_path(basename))
+    {
+        m_play_list->file_name(basename);
+    }
+    else
+    {
+        rc().playlist_filename(basename);
+        m_play_list->file_name(rc().playlist_filespec());
+    }
 }
 
 /**

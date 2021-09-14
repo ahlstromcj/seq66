@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-08-31
+ * \updates       2021-09-14
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1073,6 +1073,8 @@ public:
     {
         return m_play_list->file_name();
     }
+
+    void playlist_filename (const std::string & name);
 
     std::string playlist_midi_base () const
     {

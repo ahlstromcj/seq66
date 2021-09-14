@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-09-13
+ * \updates       2021-09-14
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -1148,10 +1148,7 @@ public:
         m_investigate = flag;
     }
 
-    void auto_rc_save (bool flag)
-    {
-        m_save_list.set("rc", flag);
-    }
+    void auto_rc_save (bool flag);
 
     void auto_usr_save (bool flag)
     {
@@ -1367,7 +1364,7 @@ public:
         m_palette_filename = fn;
     }
 
-    void set_saved_list (bool state);
+    void set_save_list (bool state);
     void set_save (const std::string & name, bool value);
 
 private:

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-09-13
+ * \updates       2021-09-14
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -251,11 +251,11 @@ rcsettings::set_defaults ()
     m_load_most_recent = true;
     m_full_recent_paths = false;
     set_config_files(SEQ66_CONFIG_NAME);
-    set_saved_list(false);
+    set_save_list(false);
 }
 
 void
-rcsettings::set_saved_list (bool state)
+rcsettings::set_save_list (bool state)
 {
     m_save_list.clear();
     m_save_list.add("rc", state);               /* can be edited in UI  */
@@ -291,6 +291,14 @@ rcsettings::auto_options_save () const
         auto_rc_save() || auto_usr_save() ||
         rc().is_modified() || usr().is_modified()
     );
+}
+
+void
+rcsettings::auto_rc_save (bool flag)
+{
+    m_save_list.set("rc", flag);
+    if (flag)
+        modify();
 }
 
 void
@@ -1064,7 +1072,7 @@ rcsettings::playlist_filename_checked (const std::string & value)
     }
     else
     {
-        std::string fname = make_config_filespec(fname, ".playlist");
+        std::string fname = make_config_filespec(value, ".playlist");
         result = file_exists(fname);
         playlist_filename(value);       /* set playlist name no matter what */
     }

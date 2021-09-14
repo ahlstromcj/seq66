@@ -94,7 +94,7 @@ name = "qseq66.drums"
 [palette-file]
 
 active = false
-name = "qseq66-gray.palette"
+name = "qseq66.palette"
 
 # Defines features of MIDI meta-event handling. Tempo events occur in
 # the first track (pattern 0), but one can move tempo elsewhere. It
