@@ -84,6 +84,7 @@ Windows, and using a conventional source tarball.
             Still has some vertical scrolling issues.
         *   Added more Preferences settings, enabled some that were not yet
             implemented.  Upgraded the handling of the configuration files.
+            By default, the 'rc' file is always saved, in case ports change.
     *   Version 0.96.3:
         *   Added ability to modify Note On and Note Off at the same time in the
             event editor. Fixed and updated event::get_rank().

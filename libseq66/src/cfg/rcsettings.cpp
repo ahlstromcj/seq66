@@ -258,7 +258,7 @@ void
 rcsettings::set_save_list (bool state)
 {
     m_save_list.clear();
-    m_save_list.add("rc", state);               /* can be edited in UI  */
+    m_save_list.add("rc", true);                /* can be edited in UI  */
     m_save_list.add("usr", state);              /* can be edited in UI  */
     m_save_list.add("mutes", state);            /* can be edited in UI  */
     m_save_list.add("playlist", state);         /* can be edited in UI  */

@@ -27,7 +27,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -1343,7 +1343,7 @@ required.</string>
         <rect>
          <x>8</x>
          <y>220</y>
-         <width>297</width>
+         <width>331</width>
          <height>221</height>
         </rect>
        </property>
@@ -1355,7 +1355,7 @@ required.</string>
          <rect>
           <x>64</x>
           <y>44</y>
-          <width>69</width>
+          <width>101</width>
           <height>23</height>
          </rect>
         </property>
@@ -1371,7 +1371,7 @@ required.</string>
          <rect>
           <x>64</x>
           <y>68</y>
-          <width>69</width>
+          <width>101</width>
           <height>23</height>
          </rect>
         </property>
@@ -1384,7 +1384,7 @@ required.</string>
          <rect>
           <x>64</x>
           <y>92</y>
-          <width>69</width>
+          <width>101</width>
           <height>23</height>
          </rect>
         </property>
@@ -1397,7 +1397,7 @@ required.</string>
          <rect>
           <x>64</x>
           <y>116</y>
-          <width>69</width>
+          <width>101</width>
           <height>23</height>
          </rect>
         </property>
@@ -1413,7 +1413,7 @@ required.</string>
          <rect>
           <x>64</x>
           <y>140</y>
-          <width>69</width>
+          <width>101</width>
           <height>23</height>
          </rect>
         </property>
@@ -1429,7 +1429,7 @@ required.</string>
          <rect>
           <x>64</x>
           <y>164</y>
-          <width>69</width>
+          <width>101</width>
           <height>23</height>
          </rect>
         </property>
@@ -1578,7 +1578,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>136</x>
+          <x>170</x>
           <y>44</y>
           <width>149</width>
           <height>21</height>
@@ -1591,7 +1591,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>136</x>
+          <x>170</x>
           <y>68</y>
           <width>149</width>
           <height>21</height>
@@ -1604,7 +1604,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>136</x>
+          <x>170</x>
           <y>92</y>
           <width>149</width>
           <height>21</height>
@@ -1617,7 +1617,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>136</x>
+          <x>170</x>
           <y>116</y>
           <width>149</width>
           <height>21</height>
@@ -1630,7 +1630,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>136</x>
+          <x>170</x>
           <y>140</y>
           <width>149</width>
           <height>21</height>
@@ -1643,7 +1643,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>136</x>
+          <x>170</x>
           <y>164</y>
           <width>149</width>
           <height>21</height>
@@ -1671,7 +1671,7 @@ required.</string>
        <widget class="QLineEdit" name="lineEditPalette">
         <property name="geometry">
          <rect>
-          <x>136</x>
+          <x>170</x>
           <y>188</y>
           <width>149</width>
           <height>21</height>
@@ -1705,7 +1705,7 @@ path added to this name is stripped.</string>
          <rect>
           <x>64</x>
           <y>188</y>
-          <width>69</width>
+          <width>101</width>
           <height>23</height>
          </rect>
         </property>
