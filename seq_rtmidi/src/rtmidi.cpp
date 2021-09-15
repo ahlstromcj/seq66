@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-04-08
+ * \updates       2029-09-15
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.
@@ -80,7 +80,13 @@ rtmidi::rtmidi (midibus & parentbus, rtmidi_info & info) :
     m_midi_info     (info),
     m_midi_api      (nullptr)
 {
-   // No added code
+    const char * jv = jack_get_version_string();
+    if (not_nullptr(jv) && strlen(jv) > 0)
+        set_jack_version(std::string(jv));
+
+#if defined SND_LIB_VERSION_STR
+    set_alsa_version(std::string(SND_LIB_VERSION_STR));
+#endif
 }
 
 /**

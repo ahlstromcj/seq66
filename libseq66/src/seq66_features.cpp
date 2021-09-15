@@ -319,10 +319,12 @@ seq_build_details ()
         << "NSM (Non Session Manager) support\n"
 #endif
         <<
+            "\n"
             "Chord generator, LFO, trigger transpose, Tap BPM, Song recording "
             "Pattern coloring, pause, save time-sig/tempo, "
             "event editor, follow-progress.\n"
         <<
+            "\n"
             "Options are enabled/disabled via the configure script,"
             " seq66_features.h, or build-specific seq66-config.h files in"
             " include/qt/* for qmake builds."

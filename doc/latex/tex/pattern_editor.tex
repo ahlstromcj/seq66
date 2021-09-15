@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-08-15
+% \update      2021-09-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -653,8 +653,8 @@
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Event Selection}{event!select}
-   There are various ways to select events using
-   the mouse or the keyboard in the piano roll:
+   There are various ways to select events and copy, delete, or modify them
+   using the mouse or the keyboard in the piano roll:
 
    \begin{itemize}
       \item
@@ -664,11 +664,6 @@
          Pressing the \texttt{Ctrl-A} key will select all of the events in the
          pattern editor.
       \item
-         \index{keys!ctrl-d}
-         \index{selection!clear}
-         \textbf{\texttt{Ctrl-D}}.
-         Pressing the \texttt{Ctrl-D} key will clear the pattern clipboard.
-      \item
          \index{keys!ctrl-e}
          \index{selection!events by channel}
          \textbf{\texttt{Ctrl-E}}.
@@ -677,12 +672,6 @@
          channel dropdown.
          This selection is useful if one wants to move events from one channel
          into another pattern.
-      \item
-         \index{keys!ctrl-k}
-         \index{selection!analyze}
-         \textbf{\texttt{Ctrl-K}}.
-         Pressing the \texttt{Ctrl-K} key will analyze all the notes in the
-         pattern to try to guess its scale, as discussed earlier.
       \item
          \index{keys!ctrl-n}
          \index{selection!notes by channel}
@@ -833,6 +822,78 @@
    Selected notes that are cut or copied can also be
    pasted into \textsl{other} pattern editor dialogs; that is, they can be
    pasted into other sequences.
+
+\subsubsection{Pattern Editor / Other Keys}
+\label{subsubsec:pattern_editor_other_keys}
+
+   Here are some other keys useful in the pattern editor piano roll:
+
+   \begin{itemize}
+      \item
+         \index{keys!c}
+         \index{selection!repitch}
+         \textbf{\texttt{c}}.
+         Pressing the \texttt{c} key will attempt to use the note-mapper data
+         (provided by a \texttt{*.drums} file) to change the notes in the
+         pattern.  This will work only if the pattern is marked as transposable,
+         to add some safety against multiple pitch changes; these are useful once
+         when converting from one drum machine to General MIDI.
+      \item
+         \index{keys!ctrl-d}
+         \index{selection!clear}
+         \textbf{\texttt{Ctrl-D}}.
+         Pressing the \texttt{Ctrl-D} key will clear the pattern clipboard.
+      \item
+         \index{keys!f}
+         \index{selection!edge fix}
+         \textbf{\texttt{f}}.
+         Pressing the \texttt{f} key will attemtp to fix wrap-around notes by
+         moving the note.
+      \item
+         \index{keys!ctrl-k}
+         \index{selection!analyze}
+         \textbf{\texttt{Ctrl-k}}.
+         Pressing the \texttt{Ctrl-k} key will analyze all the notes in the
+         pattern to try to guess its scale, as discussed earlier.
+      \item
+         \index{keys!q}
+         \index{selection!quantize}
+         \textbf{\texttt{q}}.
+         Pressing the \texttt{q} key will quantize the selected notes.
+      \item
+         \index{keys!r}
+         \index{selection!randomize}
+         \textbf{\texttt{r}}.
+         Pressing the \texttt{r} key will quantize the selected notes.
+      \item
+         \index{keys!t}
+         \index{selection!tighten}
+         \textbf{\texttt{t}}.
+         Pressing the \texttt{t} key will partially quantize (tighten)
+         the selected notes.
+      \item
+         \index{keys!u}
+         \index{selection!remove unlinked notes}
+         \textbf{\texttt{u}}.
+         Pressing the \texttt{u} key will remove any unlinked notes found
+         in the pattern.  These notes are indicated by a magenta color instead of
+         the noraml color.
+         This items is a stop-gap until we can figure out the best way to
+         prevent unlinked notes while handling recording of notes near the end of
+         the pattern length.
+      \item
+         \index{keys!space (play)}
+         The default keystroke for starting playback is the \texttt{Space}
+         character.
+      \item
+         \index{keys!esc (stop)}
+         The default keystroke for stopping playback is the \texttt{Escape}
+         character.
+      \item
+         \index{keys!period (pause)}
+         The default keystroke for pausing playback is the \texttt{Period}
+         character.
+   \end{itemize}
 
 \subsubsection{Pattern Editor / Zoom Keys}
 \label{subsubsec:pattern_editor_zoom_keys}
