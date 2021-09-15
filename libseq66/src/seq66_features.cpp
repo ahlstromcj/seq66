@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2021-09-09
+ * \updates       2021-09-15
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -36,6 +36,15 @@
 #include <sstream>                      /* std::ostringstream               */
 
 #include "seq66_features.hpp"           /* feature macros, seq66 namespace  */
+
+#if defined SEQ66_JACK_SUPPORT
+#include <jack/jack.h>                  /* jack_get_version()               */
+#include <alsa/version.h>               /* SND_LIB_VERSION_STR, tricky      */
+#endif
+
+/*
+ * To do: get QT_VERSION_STR from qconfig.h
+ */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -61,6 +70,9 @@ static std::string s_app_build_os = "MacOSX";
 static std::string s_app_build_os = SEQ66_APP_BUILD_OS;
 #endif
 
+static std::string s_alsa_version;
+static std::string s_jack_version;
+static std::string s_qt_version;
 static std::string s_app_engine = SEQ66_APP_ENGINE;
 static std::string s_app_name = SEQ66_APP_NAME;
 static std::string s_app_type = SEQ66_APP_TYPE;
@@ -71,6 +83,29 @@ static std::string s_package_name = SEQ66_PACKAGE_NAME;
 static std::string s_version = SEQ66_VERSION;
 static std::string s_versiontext = SEQ66_APP_NAME " " SEQ66_VERSION " "
     SEQ66_GIT_VERSION " " SEQ66_VERSION_DATE_SHORT "\n";
+
+/**
+ *  Sets version strings.  Meant to be called where the engine or API is used.
+ *  Otherwise, empty.
+ */
+
+void
+set_alsa_version (const std::string & v)
+{
+    s_alsa_version = v;
+}
+
+void
+set_jack_version (const std::string & v)
+{
+    s_jack_version = v;
+}
+
+void
+set_qt_version (const std::string & v)
+{
+    s_qt_version = v;
+}
 
 /**
  *  Sets the current name of the application.
@@ -233,40 +268,64 @@ std::string
 seq_build_details ()
 {
     std::ostringstream result;
+#if defined SEQ66_PLATFORM_DEBUG
+    std::string buildmode = "Debug";
+#else
+    std::string buildmode = "Release";
+#endif
+
     result
         << "Built " << __DATE__ << " " << __TIME__ "\n"
         << "C++ version " << std::to_string(__cplusplus) << "\n"
+#if defined SEQ66_PLATFORM_GNU
+        << "GNU C++ " << __GNUC__ << "." << __GNUC_MINOR__
+        << "." << __GNUC_PATCHLEVEL__ << "\n"
+#endif
         << "App name: " << seq_app_name()
         << "; type " << seq_app_type()
         << "; engine " << seq_app_engine() << "\n"
+        ;
+
+    if (! s_qt_version.empty())
+        result << "Qt v. " << s_qt_version << "\n";
+
+    result
         << "Build OS: " << seq_app_build_os() << " " << s_bitness
-#if defined SEQ66_PLATFORM_DEBUG
-        << "Debug\n"
-#else
-        << "\n"
-#endif
+        << " " << buildmode << "\n"
+        ;
+
 #if defined SEQ66_RTMIDI_SUPPORT
-        << "Native JACK/ALSA (rtmidi)\n"
+    result << "Native JACK/ALSA (rtmidi)\n";
 #endif
+
 #if defined SEQ66_PORTMIDI_SUPPORT
-        << "PortMIDI\n"
+    result << "PortMIDI support\n";
 #endif
+
 #if defined SEQ66_JACK_SUPPORT
-        << "JACK transport and MIDI ports\n"
+    result
+        << "JACK  v. " << s_jack_version << " Transport and MIDI\n"
 #if defined SEQ66_JACK_SESSION
-        << "JACK session support\n"
+        << "JACK Session support\n"
 #endif
+        ;
 #endif
+
+    if (! s_alsa_version.empty())
+        result << "ALSA v. " << s_alsa_version << "\n";
+
 #if defined SEQ66_NSM_SUPPORT
+    result
         << "NSM (Non Session Manager) support\n"
 #endif
         <<
             "Chord generator, LFO, trigger transpose, Tap BPM, Song recording "
             "Pattern coloring, pause, save time-sig/tempo, "
-            "event editor, follow-progress\n"
+            "event editor, follow-progress.\n"
         <<
-           "Options enabled/disabled via the configure script, seq66_features.h,"
-           "or build-specific seq66-config.h files in include/qt/*."
+            "Options are enabled/disabled via the configure script,"
+            " seq66_features.h, or build-specific seq66-config.h files in"
+            " include/qt/* for qmake builds."
         << std::endl
         ;
     return result.str();

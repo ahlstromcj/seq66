@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-08-19
+ * \updates       2021-09-15
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -399,6 +399,20 @@ eventlist::verify_and_link (midipulse slength)
 }
 
 /**
+ *  Provides a wrapper for clear().  Sets the modified-flag.
+ */
+
+void
+eventlist::clear ()
+{
+    if (! m_events.empty())
+    {
+        m_events.clear();
+        m_is_modified = true;
+    }
+}
+
+/**
  *  Clears all event links and unmarks them all.
  */
 
@@ -496,6 +510,33 @@ eventlist::edge_fix (midipulse snap, midipulse seqlength)
 
     return result;
 }
+
+/**
+ *  Removes unlinked notes.  We must verify_and_link() to get the pattern roll
+ *  to show the new note-list.
+ */
+
+bool
+eventlist::remove_unlinked_notes ()
+{
+    bool result = false;
+    for (auto i = m_events.begin(); i != m_events.end(); /*++i*/)
+    {
+        if (i->is_strict_note() && ! i->is_linked())
+        {
+            auto t = remove(i);
+            i = t;
+            result = true;
+        }
+        else
+            ++i;
+    }
+    if (result)
+        verify_and_link();                      /* sorts as well        */
+
+    return result;
+}
+
 
 /**
  *  Quantizes the currently-selected set of events that match the type of

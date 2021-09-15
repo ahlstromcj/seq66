@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-08-15
+ * \updates       2021-09-15
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1537,6 +1537,7 @@ public:
     void verify_and_link ();
     void link_new ();
     bool edge_fix ();
+    bool remove_unlinked_notes ();
 #if defined USE_ADJUST_DATA_HANDLE
     void adjust_data_handle (midibyte status, int data);
 #endif

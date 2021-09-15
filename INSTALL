@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.97.0
 Chris Ahlstrom
-2015-09-10 to 2021-09-03
+2015-09-10 to 2021-09-15
 
 Getting Seq66 requires building the code or going to the
 "sequencer64-packages/seq66" project directory on GitHub.
@@ -85,6 +85,30 @@ Bootstrap Install:
     Study the "bootstrap" script to understand how it uses autoheader,
     automake, libtool, and other standard Linux build tools.  This build
     results in the "qseq66" executable.
+
+OpenSUSE Tumbleweed:
+
+    Directions from the Seq66 GitHub sivecj/seq66 fork. First, install these
+    packages:
+
+    $ zypper in libjack-devel liblo-devel alsa-devel libqt5-qtbase-devel \
+        libqt5-linguist-devel
+
+    Next, link the binary files from Qt5 without the "-qt5" at the end. Link them
+    to your ~/.local/ directory and add the directory to the PATH only if
+    required:
+
+    $ mkdir -p ~/.local/bin/qt
+    $ ln -s /bin/qmake-qt5 ~/.local/bin/qmake
+    $ ln -s /bin/rcc-qt5 ~/.local/bin/rcc
+    $ ln -s /bin/uic-qt5 ~/.local/bin/uic
+    $ ln -s /bin/lrelease-qt5 ~/.local/bin/lrelease
+    $ ln -s /bin/lupdate-qt5 ~/.local/bin/lupdate
+    $ ln -s /bin/moc-qt5 ~/.local/bin/moc
+    $ export PATH=$PATH:~/.local/bin/qt
+
+    One might need to run the "reconf" script located in contrib/scripts/reconf.
+    Otherwise ./configure drops an error.  Lastly, run ./configure and make.
 
 Advanced Steps:
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-09-07
+ * \updates       2021-09-15
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -630,7 +630,13 @@ jack_assistant::jack_assistant
     m_beat_width                (beatwidth),
     m_beats_per_minute          (bpminute)
 {
-    // No other code needed
+    /*
+     * Do this in the rtmidi constructor.
+     *
+     * const char * jv = jack_get_version_string();
+     * if (not_nullptr(jv) && strlen(jv) > 0)
+     *     set_jack_version(std::string(jv));
+     */
 }
 
 /**

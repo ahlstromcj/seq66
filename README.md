@@ -1,7 +1,7 @@
 # README for Seq66 0.97.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-09-14
+2015-09-10 to 2021-09-15
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -13,9 +13,10 @@ headless.  It does not support audio samples, just MIDI.
 
 __Seq66__ is a major refactoring of Sequencer64/Kepler34, both being reboots of
 __Seq24__ with modern C++ and new features.  Linux users can build this
-application from the source code.  See the INSTALL file.  Windows users can get
-an installer package on GitHub or build it with Qt Creator.  A comprehensive PDF
-user-manual is provided.
+application from the source code.  See the INSTALL file; it has notes on many
+types on installation, including notes for OpenSUSE Tumbleweed.  Windows users can
+get an installer package on GitHub or build it with Qt Creator.  A comprehensive
+PDF user-manual is provided.
 
 ![Alt text](doc/latex/images/main-window/main-window-fluxbox.png?raw=true "Seq66
 Dark-Cold Fluxbox")
@@ -85,6 +86,10 @@ Windows, and using a conventional source tarball.
         *   Added more Preferences settings, enabled some that were not yet
             implemented.  Upgraded the handling of the configuration files.
             By default, the 'rc' file is always saved, in case ports change.
+        *   Added OpenSUSE INSTALL notes from the sivecj/Seq66 fork.
+        *   Added code to show unlinked note events on the seqroll, and the "u"
+            key to remove them.  Version 0.96.3:
+        *   Added more build information to --version and Help / Build Info.
     *   Version 0.96.3:
         *   Added ability to modify Note On and Note Off at the same time in the
             event editor. Fixed and updated event::get_rank().

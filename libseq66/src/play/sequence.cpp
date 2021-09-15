@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-15
+ * \updates       2021-09-15
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1058,7 +1058,24 @@ sequence::edge_fix ()
 }
 
 /**
- *  Links a new event.  Locked elsewhere, no need for automutex locker(m_mutex);
+ *  Removes unlinked notes.
+ */
+
+bool
+sequence::remove_unlinked_notes ()
+{
+    automutex locker(m_mutex);
+    m_events_undo.push(m_events);                   /* push_undo(), no lock */
+    bool result = m_events.remove_unlinked_notes();
+    if (result)
+        modify();
+
+    return result;
+}
+
+/**
+ *  Links a new event.  Locked elsewhere, no need for automutex
+ *  locker(m_mutex).
  */
 
 void
@@ -1129,8 +1146,7 @@ sequence::remove (event & e)
 #endif  // defined USE_SEQUENCE_REMOVE_EVENTS
 
 /**
- *  Clears all events from the event container.  Unsets the modified flag.
- *  (Why?) Also see the new copy_events() function.
+ *  Clears all events from the event container.  Also see copy_events().
  */
 
 void
@@ -1138,15 +1154,11 @@ sequence::remove_all ()
 {
     automutex locker(m_mutex);
     m_events.clear();
-
-    /*
-     * This is a mistake: m_events.unmodify();
-     */
 }
 
 /**
- *  Removes marked events.  Before removing the events, any Note Ons are turned
- *  off, just in case.  This function forwards the call to
+ *  Removes marked events.  Before removing the events, any Note Ons are
+ *  turned off, just in case.  This function forwards the call to
  *  m_event.remove_marked().
  *
  * \threadsafe
@@ -1677,18 +1689,18 @@ sequence::stretch_selected (midipulse delta_tick)
  *  of growth or shrinkage, but use the arrow keys limits the changes to the
  *  current snap value.
  *
- *  This function grows/shrinks only Note On events that are marked and linked.
- *  If an event is not linked, this function now ignores the event's timestamp,
- *  rather than risk a segfault on a null pointer.  Compare this function to
- *  the stretch_selected() and move_selected_notes() functions.
+ *  This function grows/shrinks only Note On events that are marked and
+ *  linked.  If an event is not linked, this function now ignores the event's
+ *  timestamp, rather than risk a segfault on a null pointer.  Compare this
+ *  function to the stretch_selected() and move_selected_notes() functions.
  *
  *  This function would strip out non-Notes, but now it at least preserves
  *  them and moves them, to try to preserve their relative position re the
  *  notes.
  *
- *  In any case, we want to mark the original off-event for deletion, otherwise
- *  we get duplicate off events, for example in the "Begin/End" pattern in the
- *  test.midi file.
+ *  In any case, we want to mark the original off-event for deletion,
+ *  otherwise we get duplicate off events, for example in the "Begin/End"
+ *  pattern in the test.midi file.
  *
  *  This function now tries to prevent pathological growth, such as trying to
  *  shrink the notes to zero length or less, or stretch them beyond the length

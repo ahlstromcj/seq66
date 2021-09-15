@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>834</width>
+    <width>854</width>
     <height>848</height>
    </rect>
   </property>
@@ -408,7 +408,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>This button write the text of the events to a file for trouble-shooting.
+        <string>This button appends the text of events to a file for trouble-shooting.
 The file is in the same directory as the MIDI file, and has a name
 of the form &quot;filename-pattern-#.text&quot;, where '#' is the number of
 the pattern.</string>

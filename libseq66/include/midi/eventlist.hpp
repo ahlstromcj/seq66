@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-08-19
+ * \updates       2021-09-15
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -294,19 +294,7 @@ public:
         return result;
     }
 
-    /**
-     *  Provides a wrapper for clear().  Sets the modified-flag.
-     */
-
-    void clear ()
-    {
-        if (! m_events.empty())
-        {
-            m_events.clear();
-            m_is_modified = true;
-        }
-    }
-
+    void clear ();
     void sort ();
     bool merge (const eventlist & el, bool presort = true);
 
@@ -359,6 +347,7 @@ private:                                /* functions for friend sequence    */
 #endif
     void verify_and_link (midipulse slength = 0);
     bool edge_fix (midipulse snap, midipulse seqlength);
+    bool remove_unlinked_notes ();
     bool quantize_events
     (
         midibyte status, midibyte cc, int snap,

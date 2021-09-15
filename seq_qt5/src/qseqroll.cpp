@@ -551,7 +551,8 @@ qseqroll::draw_notes
     bool background
 )
 {
-    QBrush brush(Qt::white);            /* Qt::NoBrush)  breaks selection   */
+    QBrush brush(Qt::white);            /* Qt::NoBrush  breaks selection    */
+    QBrush error_brush(Qt::magenta);    /* for unlinked notes               */
     QPen pen(fore_color());
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(1);
@@ -581,6 +582,7 @@ qseqroll::draw_notes
         bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
         bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
         bool linkedin = dt == sequence::draw::linked && end_in;
+        bool bad = false;
         if (start_in || linkedin)
         {
             int in_shift = 0;
@@ -601,15 +603,19 @@ qseqroll::draw_notes
             else
                 m_note_width = tix_to_pix(16);
 
-            if (dt == sequence::draw::note_on)
+            if (dt == sequence::draw::note_on)      /* means it's unlinked  */
             {
                 in_shift = 0;
                 length_add = 2;
+                bad = true;
+                painter.setBrush(error_brush);
             }
-            if (dt == sequence::draw::note_off)
+            else if (dt == sequence::draw::note_off)
             {
                 in_shift = -1;
                 length_add = 1;
+                bad = true;
+                painter.setBrush(error_brush);
             }
             if (background)                         /* draw background note */
             {
@@ -621,6 +627,8 @@ qseqroll::draw_notes
                 painter.setBrush(note_brush());
             }
             painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
+
+#if defined THIS_CODE_ADDS_VALUE
             if (ni.finish() < ni.start())           /* shadow these notes   */
             {
                 painter.drawRect
@@ -629,6 +637,7 @@ qseqroll::draw_notes
                     tix_to_pix(ni.finish()), noteheight
                 );
             }
+#endif
 
             /*
              * Draw note highlight if there's room.  Orange note if selected,
@@ -642,12 +651,16 @@ qseqroll::draw_notes
                 else
                     brush.setColor(note_in_color());    /* was Qt::white   */
 
-                painter.setBrush(brush);
+                if (bad)
+                    painter.setBrush(error_brush);
+                else
+                    painter.setBrush(brush);
+
                 if (! background)
                 {
                     int x_shift = m_note_x + in_shift;
                     int h_minus = noteheight - 1;
-                    if (ni.finish() >= ni.start())  // note highlight
+                    if (ni.finish() >= ni.start())      /* note highlight   */
                     {
                         painter.drawRect
                         (
@@ -1215,9 +1228,8 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     case Qt::Key_Home:
 
                         if (not_nullptr(frame64()))
-                        {
                             frame64()->scroll_to_tick(0);
-                        }
+
                         s->set_last_tick(0);        /* sets it to the beginning */
                         done = true;
                         break;
@@ -1225,9 +1237,8 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     case Qt::Key_End:
 
                         if (not_nullptr(frame64()))
-                        {
                             frame64()->scroll_to_tick(s->get_length());
-                        }
+
                         s->set_last_tick();         /* sets it to the length    */
                         done = true;
                         break;
@@ -1269,15 +1280,15 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         }
                         break;
 
-                    case Qt::Key_D:
-
-                        sequence::clear_clipboard();    /* drop clipboard   */
-                        break;
-
                     case Qt::Key_A:
 
                         s->select_all();
                         done = true;
+                        break;
+
+                    case Qt::Key_D:
+
+                        sequence::clear_clipboard();    /* drop clipboard   */
                         break;
 
                     case Qt::Key_E:
@@ -1286,15 +1297,15 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         done = true;
                         break;
 
+                    case Qt::Key_K:
+
+                        analyze_seq_notes();
+                        break;
+
                     case Qt::Key_N:
 
                         s->select_notes_by_channel(frame64()->edit_channel());
                         done = true;
-                        break;
-
-                    case Qt::Key_K:
-
-                        analyze_seq_notes();
                         break;
                     }
                 }
@@ -1342,9 +1353,16 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         done = true;
                     break;
 
+                case Qt::Key_U:
+
+                    if (s->remove_unlinked_notes())
+                        done = true;
+                    break;
+
                 case Qt::Key_X:
 
                     set_adding(false);
+                    done = true;
                     break;
                 }
             }

@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-09-14
+ * \updates       2021-09-15
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -78,6 +78,10 @@ qt5nsmanager::qt5nsmanager
     /*
      * Should we use this timer or a performer callback?
      */
+
+#if defined QT_VERSION_STR
+    set_qt_version(std::string(QT_VERSION_STR));
+#endif
 
     m_timer = new QTimer(this);
     m_timer->setInterval(4 * usr().window_redraw_rate());       /* no hurry */
