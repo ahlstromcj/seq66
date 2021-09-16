@@ -150,6 +150,8 @@ public:
     gui_palette_qt5 & operator = (const gui_palette_qt5 &) = default;
     virtual ~gui_palette_qt5 ();
 
+    static Color calculate_inverse (const Color & c);
+
     static int palette_size ()
     {
         return palette_to_int(maximum);
@@ -236,7 +238,6 @@ public:
     Color get_color_inverse (PaletteColor index) const;
 
     void load_static_colors (bool inverse = true);
-    Color calculate_inverse (const Color & c);
     bool is_theme_color (const Color & c) const;
 
     /**

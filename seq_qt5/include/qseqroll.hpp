@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-28
+ * \updates       2021-09-16
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -317,6 +317,13 @@ private:
      */
 
     int m_last_base_note;
+
+    /**
+     *  Stores the setting of usr().new_pattern_wraparound().  It is used in
+     *  drawing wrapped notes.
+     */
+
+    bool m_link_wraparound;
 
 signals:
 

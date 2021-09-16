@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-09-15
+ * \updates       2021-09-16
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -134,10 +134,11 @@ private:
 
     /**
      *  Provides an atomic flag to raise while sorting(), which can invalidate
-     *  iterators while a user-interface is accessing the event list.
+     *  iterators while a user-interface is accessing the event list, or while
+     *  clearing the event list.
      */
 
-    std::atomic<bool> m_sort_in_progress;
+    std::atomic<bool> m_action_in_progress;
 
     /**
      *  Holds the length of the sequence holding this event-list,
@@ -180,6 +181,13 @@ private:
      */
 
     bool m_has_time_signature;
+
+    /**
+     *  Stores the setting of usr().new_pattern_wraparound().  It is used in
+     *  the link_new() function.
+     */
+
+    bool m_link_wraparound;
 
 public:
 
@@ -298,9 +306,9 @@ public:
     void sort ();
     bool merge (const eventlist & el, bool presort = true);
 
-    bool sort_in_progress () const
+    bool action_in_progress () const
     {
-        return m_sort_in_progress;
+        return m_action_in_progress;
     }
 
     /**
@@ -339,13 +347,13 @@ private:                                /* functions for friend sequence    */
      * involved data from the caller.
      */
 
-    void link_new ();
+    void link_new (bool wrap = false);
     void clear_links ();
     int note_count () const;
 #if defined SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
     void scan_meta_events ();
 #endif
-    void verify_and_link (midipulse slength = 0);
+    void verify_and_link (midipulse slength = 0, bool wrap = false);
     bool edge_fix (midipulse snap, midipulse seqlength);
     bool remove_unlinked_notes ();
     bool quantize_events

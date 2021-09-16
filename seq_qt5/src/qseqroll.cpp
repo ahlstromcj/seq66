@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-08-15
+ * \updates       2021-09-16
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -103,7 +103,8 @@ qseqroll::qseqroll
     m_note_y                (0),
     m_keypadding_x          (c_keyboard_padding_x),
     m_v_zooming             (false),
-    m_last_base_note        (-1)
+    m_last_base_note        (-1),
+    m_link_wraparound       (usr().new_pattern_wraparound())
 {
     setAttribute(Qt::WA_StaticContents);
     setAttribute(Qt::WA_OpaquePaintEvent);          /* no erase on repaint  */
@@ -554,6 +555,7 @@ qseqroll::draw_notes
     QBrush brush(Qt::white);            /* Qt::NoBrush  breaks selection    */
     QBrush error_brush(Qt::magenta);    /* for unlinked notes               */
     QPen pen(fore_color());
+    QPen error_pen(Qt::magenta);
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(1);
     painter.setPen(pen);
@@ -627,17 +629,16 @@ qseqroll::draw_notes
                 painter.setBrush(note_brush());
             }
             painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
-
-#if defined THIS_CODE_ADDS_VALUE
-            if (ni.finish() < ni.start())           /* shadow these notes   */
+            if (m_link_wraparound)
             {
-                painter.drawRect
-                (
-                    m_keypadding_x, m_note_y,
-                    tix_to_pix(ni.finish()), noteheight
-                );
+                if (ni.finish() < ni.start())       /* shadow these notes   */
+                {
+                    int len = tix_to_pix(ni.finish()) - m_note_off_margin;
+                    painter.setPen(error_pen);
+                    painter.drawRect(m_keypadding_x, m_note_y, len, noteheight);
+                    painter.setPen(pen);
+                }
             }
-#endif
 
             /*
              * Draw note highlight if there's room.  Orange note if selected,
@@ -1362,6 +1363,12 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                 case Qt::Key_X:
 
                     set_adding(false);
+                    done = true;
+                    break;
+
+                case Qt::Key_Equal:
+
+                    s->verify_and_link(true);   /* verify & link with wrap  */
                     done = true;
                     break;
                 }

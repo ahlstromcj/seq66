@@ -817,7 +817,10 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
     painter.setBrush(brush);
     painter.drawRect(0, 0, width(), height());          /* full width       */
     for (int i = 0; i < height(); i += track_height())  /* horizontal lines */
-        painter.drawLine(0, i - 2, xwidth, i);
+    {
+        int y = i - 2;
+        painter.drawLine(0, y, xwidth, y);
+    }
 
     /*
      *  Draw the vertical lines for the measures and the beats. Incrementing by

@@ -32,6 +32,7 @@
  *  tempo) have been added to the container.
  */
 
+#include "cfg/settings.hpp"             /* usr() EXPERIMENTAL               */
 #include "midi/eventlist.hpp"
 #include "util/basic_macros.hpp"
 #include "util/calculations.hpp"        /* seq66::randomize(), etc.         */
@@ -49,12 +50,13 @@ namespace seq66
 
 eventlist::eventlist () :
     m_events                (),
-    m_sort_in_progress      (false),                    /* atomic boolean   */
+    m_action_in_progress    (false),                    /* atomic boolean   */
     m_length                (0),
     m_note_off_margin       (3),
     m_is_modified           (false),
     m_has_tempo             (false),
-    m_has_time_signature    (false)
+    m_has_time_signature    (false),
+    m_link_wraparound       (usr().new_pattern_wraparound())
 {
     // No code needed
 }
@@ -67,12 +69,13 @@ eventlist::eventlist () :
 
 eventlist::eventlist (const eventlist & rhs) :
     m_events                (rhs.m_events),
-    m_sort_in_progress      (false),                    /* atomic boolean   */
+    m_action_in_progress    (false),                    /* atomic boolean   */
     m_length                (rhs.m_length),
     m_note_off_margin       (rhs.m_note_off_margin),
     m_is_modified           (rhs.m_is_modified),
     m_has_tempo             (rhs.m_has_tempo),
-    m_has_time_signature    (rhs.m_has_time_signature)
+    m_has_time_signature    (rhs.m_has_time_signature),
+    m_link_wraparound       (rhs.m_link_wraparound)
 {
     // no code
 }
@@ -83,12 +86,13 @@ eventlist::operator = (const eventlist & rhs)
     if (this != &rhs)
     {
         m_events                = rhs.m_events;
-        m_sort_in_progress      = false;                /* atomic boolean   */
+        m_action_in_progress    = false;                /* atomic boolean   */
         m_length                = rhs.m_length;
         m_note_off_margin       = rhs.m_note_off_margin;
         m_is_modified           = rhs.m_is_modified;
         m_has_tempo             = rhs.m_has_tempo;
         m_has_time_signature    = rhs.m_has_time_signature;
+        m_link_wraparound       = rhs.m_link_wraparound;
     }
     return *this;
 }
@@ -204,14 +208,16 @@ eventlist::add (const event & e)
  *  Sorts the event list.  For the vector, equivalent elements are not
  *  guaranteed to keep their original relative order [see
  *  std::stable_sort(), which we could try at some point].
+ *
+ *  This method is probably flawed.
  */
 
 void
 eventlist::sort ()
 {
-    m_sort_in_progress = true;
+    m_action_in_progress = true;
     std::sort(m_events.begin(), m_events.end());
-    m_sort_in_progress = false;
+    m_action_in_progress = false;
 }
 
 /**
@@ -264,7 +270,10 @@ eventlist::merge (const eventlist & el, bool presort)
     std::size_t totalsize = m_events.size() + el.m_events.size();
     m_events.reserve(totalsize);
     m_events.insert(m_events.end(), el.m_events.begin(), el.m_events.end());
-    sort();
+
+    /*
+     * Done via verify_and_link(): sort();
+     */
 
     bool result = m_events.size() == totalsize;
     if (result)
@@ -279,16 +288,30 @@ eventlist::merge (const eventlist & el, bool presort)
  *  does not depend on any external data.  Also note that any desired
  *  thread-safety must be provided by the caller.
  *
- * SEQ66_USE_STAZED_LINK_NEW_EXTENSION: This is a Stazed addition; not in
- * seq24.  Not sure that we need it, commmented out for testing.  It looks
- * like it can handle cases where the Note Off comes before the Note On (i.e.
- * the note wraps around to the beginning of the pattern).  However, it has
- * some oddities, like unlinked notes.  We will enable this option if we can
- * figure out what is going wrong.
+ * Link wraparound:
+ *
+ *      This is a Stazed addition; not in seq24.  Not sure that we need it, it
+ *      is now optional.  It can handle cases where the Note Off comes before
+ *      the Note On (i.e.  the note wraps around to the beginning of the
+ *      pattern).
+ *
+ *      Without it, we can get unlinked notes when the key press lasts too
+ *      long (which can be removed by the 'u' keystroke in the piano roll).
+ *      With it, the note extends to the end of the pattern and then wraps
+ *      around to the beginning.
+ *
+ *      For recording, to avoid issues, make the pattern length one measure
+ *      longer than desired while recording.
+ *
+ *      We could add a feature to truncate the note.  Think!
+ *
+ * \param wrap
+ *      Optionally (the default is false) wrap when relinking.  Can be used to
+ *      override usr().new_pattern_wraparound().  Defaults to false.
  */
 
 void
-eventlist::link_new ()
+eventlist::link_new (bool wrap)
 {
     sort();                                         /* IMPORTANT!           */
     for (auto on = m_events.begin(); on != m_events.end(); ++on)
@@ -306,20 +329,20 @@ eventlist::link_new ()
 
                 ++off;
             }
-
-#if defined SEQ66_USE_STAZED_LINK_NEW_EXTENSION
-            if (! endfound)
+            if (m_link_wraparound || wrap)          /* a Stazed extension   */
             {
-                off = m_events.begin();
-                while (off != on)
+                if (! endfound)
                 {
-                    if (link_notes(on, off))
-                        break;
+                    off = m_events.begin();
+                    while (off != on)
+                    {
+                        if (link_notes(on, off))
+                            break;
 
-                    ++off;
+                        ++off;
+                    }
                 }
             }
-#endif
         }
     }
 }
@@ -383,13 +406,17 @@ eventlist::link_notes
  * \param slength
  *      Provides the length beyond which events will be pruned. Normally the
  *      called supplies sequence::get_length().
+ *
+ * \param wrap
+ *      Optionally (the default is false) wrap when relinking.  Can be used to
+ *      override usr().new_pattern_wraparound().  Defaults to false.
  */
 
 void
-eventlist::verify_and_link (midipulse slength)
+eventlist::verify_and_link (midipulse slength, bool wrap)
 {
     clear_links();                          /* unlink and unmark all events */
-    link_new();
+    link_new(wrap);
     if (slength > 0)
     {
         mark_out_of_range(slength);
@@ -407,7 +434,9 @@ eventlist::clear ()
 {
     if (! m_events.empty())
     {
+        m_action_in_progress = true;          // EXPERIMENTAL
         m_events.clear();
+        m_action_in_progress = false;         // EXPERIMENTAL
         m_is_modified = true;
     }
 }

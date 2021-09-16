@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-09-02
+% \update      2021-09-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1514,7 +1514,20 @@
       record = false
       qrecord = false
       record-style = merge
+      wrap-around = false
    \end{verbatim}
+
+   Also included is a flag to allow notes to wrap around, where the Note On
+   comes near the end of the pattern, but the Note Off appears after the
+   pattern loops back to the beginning.
+
+   If false, then two unlinked note events appear in the piano roll, colored
+   magenta.  The "u" command in the piano roll will remove them.
+
+   If one does not want to deal with wrap-around at all, then set the pattern
+   length to the desired measure count \textsl{plus one} while recording, until
+   satisfied with the recording.  Shrink or delete any notes that bleed into
+   the extra measure. Then set the pattern back to the desired length.
 
 \subsection{'ctrl' File}
 \label{subsec:configuration_ctrl}

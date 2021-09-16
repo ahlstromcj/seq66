@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-07-26
+ * \updates       2021-09-16
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -60,10 +60,11 @@
 /**
  *  An attempt to use the inverse of the background color for drawing text.
  *  It doesn't work with some GTK themes.  Use Qt style sheets or a 'palette'
- *  file instead.
+ *  file instead.  The background border can look garish, too.
  */
 
 #undef SEQ66_USE_BACKGROUND_ROLE_COLOR
+#undef SEQ66_COLOR_BUTTON_BORDERS
 
 /**
  *  Alpha values for various states, not yet members, not yet configurable.
@@ -380,34 +381,41 @@ qloopbutton::initialize_fingerprint ()
 
 /**
  *  Sets up the foreground and background colors of the button and the
- *  appropriate setAutoFillBackground() setting.
+ *  appropriate setAutoFillBackground() setting. We've macroed out the garish
+ *  painting of the pattern color on the button borders.
  */
 
 void
 qloopbutton::setup ()
 {
+#if defined SEQ66_COLOR_BUTTON_BORDERS
     QPalette pal = palette();
+#endif
     int c = loop() ? loop()->color() : palette_to_int(none) ;
     if (c == palette_to_int(black))
     {
+#if defined SEQ66_COLOR_BUTTON_BORDERS
         pal.setColor(QPalette::Button, QColor(Qt::black));
-        pal.setColor(QPalette::ButtonText, QColor(Qt::yellow));
+        pal.setColor(QPalette::ButtonText, QColor(Qt::yellow)); /* useless  */
+#endif
     }
     else
     {
-        Color backcolor = get_color_fix(PaletteColor(c));
-
         /*
-         * Rather than having a black progress area, we could make it match
-         * the specified sequence color.  However, it comes out unfixed,
-         * actually a good effect.
+         *  This sets the color to the background, which results in an ugly
+         *  colored border around the button in many themes.
          */
 
+        Color backcolor = get_color_fix(PaletteColor(c));
+#if defined SEQ66_COLOR_BUTTON_BORDERS
         pal.setColor(QPalette::Button, backcolor);
+#endif
         m_prog_back_color = backcolor;
     }
+#if defined SEQ66_COLOR_BUTTON_BORDERS
     setAutoFillBackground(true);
     setPalette(pal);
+#endif
     setEnabled(true);
     setCheckable(is_checkable());
     setAttribute(Qt::WA_Hover, false);              /* avoid nasty repaints */
@@ -445,8 +453,8 @@ qloopbutton::toggle_checked ()
  *  Call the update() function of this button.
  *
  * \param all
- *      If true, the whole button is updated.  Otherwise, only the progress box
- *      is updated.  The default is true.
+ *      If true, the whole button is updated.  Otherwise, only the progress
+ *      box is updated.  The default is true.
  */
 
 void
@@ -454,7 +462,7 @@ qloopbutton::reupdate (bool all)
 {
     if (all)
     {
-        m_text_initialized = false;     /* ca 2021-03-30 */
+        m_text_initialized = false;
         if (initialize_text())
             update();
     }

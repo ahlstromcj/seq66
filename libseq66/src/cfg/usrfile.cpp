@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-09-03
+ * \updates       2021-09-16
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -534,21 +534,10 @@ usrfile::parse ()
     usr().new_pattern_record(flag);
     flag = get_boolean(file, "[new-pattern-editor]", "qrecord");
     usr().new_pattern_qrecord(flag);
-
-    /*
-     * TODO: move this to a setter
-     */
-
-    recordstyle rs = recordstyle::merge;
     s = get_variable(file, "[new-pattern-editor]", "record-style");
-    if (s == "overwrite")
-        rs = recordstyle::overwrite;
-    else if (s == "expand")
-        rs = recordstyle::expand;
-    else if (s == "one-shot")
-        rs = recordstyle::oneshot;
-
-    usr().new_pattern_recordstyle(rs);
+    usr().new_pattern_recordstyle(s);
+    flag = get_boolean(file, "[new-pattern-editor]", "wrap-around");
+    usr().new_pattern_wraparound(flag);
 
     /*
      * We have all of the data.  Close the file.
@@ -970,7 +959,8 @@ usrfile::write ()
         "# A new pattern means that the loop has the default name 'Untitled'\n"
         "# and no events. These values save time during a live recording\n"
         "# session. The valid values for record-style are 'merge' (default),\n"
-        "# 'overwrite', 'expand', and 'one-shot'.\n"
+        "# 'overwrite', 'expand', and 'one-shot'. The 'wrap-around' value, if\n"
+        "# true, allows recorded notes to wrap around to the pattern start.\n"
         "\n[new-pattern-editor]\n\n"
         ;
 
@@ -978,20 +968,8 @@ usrfile::write ()
     write_boolean(file, "thru", usr().new_pattern_thru());
     write_boolean(file, "record", usr().new_pattern_record());
     write_boolean(file, "qrecord", usr().new_pattern_qrecord());
-
-    /*
-     * TODO: move this to a getter.
-     */
-
-    std::string rs = "merge";
-    if (usr().new_pattern_recordstyle() == recordstyle::overwrite)
-        rs = "overwrite";
-    else if (usr().new_pattern_recordstyle() == recordstyle::expand)
-        rs = "expand";
-    else if (usr().new_pattern_recordstyle() == recordstyle::oneshot)
-        rs = "one-shot";
-
-    file << "record-style = " << rs << "\n";
+    file << "record-style = " << usr().new_pattern_record_string() << "\n";
+    write_boolean(file, "wrap-around", usr().new_pattern_wraparound());
 
     /*
      * EOF

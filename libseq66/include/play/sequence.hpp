@@ -1534,7 +1534,7 @@ public:
     bool randomize_selected_notes (int jitter = 8, int range = 8);
     bool mark_selected ();
     void unpaint_all ();
-    void verify_and_link ();
+    void verify_and_link (bool wrap = false);
     void link_new ();
     bool edge_fix ();
     bool remove_unlinked_notes ();

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-09-03
+ * \updates       2021-09-16
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -813,6 +813,14 @@ private:
     bool m_new_pattern_qrecord;
     recordstyle m_new_pattern_recordstyle;
 
+    /**
+     *  If true, allow notes that wrap-around in a pattern.  That is, the Note
+     *  On is at a later timestamp than the corresponding Note Off.  This
+     *  feature is support by Stazed code, but can introduce issues.
+     */
+
+    bool m_new_pattern_wraparound;
+
 public:
 
     usrsettings ();
@@ -1449,6 +1457,8 @@ public:
         return m_new_pattern_qrecord;
     }
 
+    std::string new_pattern_record_string () const;
+
     recordstyle new_pattern_recordstyle () const
     {
         return m_new_pattern_recordstyle;
@@ -1457,6 +1467,11 @@ public:
     int new_pattern_recordcode () const
     {
         return static_cast<int>(m_new_pattern_recordstyle);
+    }
+
+    bool new_pattern_wraparound () const
+    {
+        return m_new_pattern_wraparound;
     }
 
 public:         // used in main application module and the usrfile class
@@ -1574,10 +1589,17 @@ public:         // used in main application module and the usrfile class
         m_new_pattern_qrecord = flag;
     }
 
+    void new_pattern_recordstyle (const std::string & style);
+
     void new_pattern_recordstyle (recordstyle style)
     {
         if (style < recordstyle::max)
             m_new_pattern_recordstyle = style;
+    }
+
+    void new_pattern_wraparound (bool flag)
+    {
+        m_new_pattern_wraparound = flag;
     }
 
     void default_ppqn (int ppqn);

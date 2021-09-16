@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-09-03
+ * \updates       2021-09-16
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -374,7 +374,8 @@ usrsettings::usrsettings () :
     m_new_pattern_thru          (false),
     m_new_pattern_record        (false),
     m_new_pattern_qrecord       (false),
-    m_new_pattern_recordstyle   (recordstyle::merge)
+    m_new_pattern_recordstyle   (recordstyle::merge),
+    m_new_pattern_wraparound    (false)                 /* EXPERIMENTAL */
 {
     // Empty body; it's no use to call normalize() here, see set_defaults().
 }
@@ -457,6 +458,7 @@ usrsettings::set_defaults ()
     m_new_pattern_record = false;
     m_new_pattern_qrecord = false;
     m_new_pattern_recordstyle = recordstyle::merge;
+    m_new_pattern_wraparound = false;
     normalize();                            // recalculate derived values
 }
 
@@ -487,15 +489,34 @@ usrsettings::normalize ()
      */
 }
 
-/*
 void
-usrsettings::save_user_config (bool flag)
+usrsettings::new_pattern_recordstyle (const std::string & style)
 {
-    m_save_user_config = flag;
-    if (flag)
-        infoprint("Will save 'usr' file at exit");
+    recordstyle rs = recordstyle::merge;
+    if (style == "overwrite")
+        rs = recordstyle::overwrite;
+    else if (style == "expand")
+        rs = recordstyle::expand;
+    else if (style == "one-shot")
+        rs = recordstyle::oneshot;
+
+    m_new_pattern_recordstyle = rs;
 }
-*/
+
+std::string
+usrsettings::new_pattern_record_string () const
+{
+    std::string result;
+    switch (m_new_pattern_recordstyle)
+    {
+    case recordstyle::merge:        result = "merge";       break;
+    case recordstyle::overwrite:    result = "overwrite";   break;
+    case recordstyle::expand:       result = "expand";      break;
+    case recordstyle::oneshot:      result = "one-shot";    break;
+    case recordstyle::max:          result = "merge";       break;
+    }
+    return result;
+}
 
 std::string
 usrsettings::session_manager_name () const

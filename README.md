@@ -1,7 +1,7 @@
 # README for Seq66 0.97.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-09-15
+2015-09-10 to 2021-09-16
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -87,9 +87,12 @@ Windows, and using a conventional source tarball.
             implemented.  Upgraded the handling of the configuration files.
             By default, the 'rc' file is always saved, in case ports change.
         *   Added OpenSUSE INSTALL notes from the sivecj/Seq66 fork.
-        *   Added code to show unlinked note events on the seqroll, and the "u"
-            key to remove them.  Version 0.96.3:
+        *   Added code to show unlinked note events on the seqroll, the "u"
+            key to remove them, and the "=" key to relink them.
         *   Added more build information to --version and Help / Build Info.
+        *   Fixed drawing the slot-button borders, drawn without the pattern
+            color now.
+        *   Added the option "wrap-around" (for notes) to the 'usr' file.
     *   Version 0.96.3:
         *   Added ability to modify Note On and Note Off at the same time in the
             event editor. Fixed and updated event::get_rank().

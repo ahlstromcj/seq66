@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-15
+ * \updates       2021-09-16
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1030,13 +1030,17 @@ sequence::play
  *  note-offs with their note-ons.
  *
  * \threadsafe
+ *
+ * \param wrap
+ *      Optionally (the default is false) wrap when relinking.  Can be used to
+ *      override usr().new_pattern_wraparound().  Defaults to false.
  */
 
 void
-sequence::verify_and_link ()
+sequence::verify_and_link (bool wrap)
 {
     automutex locker(m_mutex);
-    m_events.verify_and_link(get_length());
+    m_events.verify_and_link(get_length(), wrap);
 }
 
 /**
@@ -3930,7 +3934,7 @@ sequence::get_next_note
     automutex locker(m_mutex);
     while (evi != m_events.cend())
     {
-        if (m_events.sort_in_progress())        /* atomic boolean check     */
+        if (m_events.action_in_progress())      /* atomic boolean check     */
             return draw::finish;                /* bug out immediately      */
 
         draw status = get_note_info(niout, evi);
@@ -4088,7 +4092,7 @@ sequence::get_next_event
     bool result = evi != m_events.end();
     if (result)
     {
-        if (m_events.sort_in_progress())        /* atomic boolean check     */
+        if (m_events.action_in_progress())      /* atomic boolean check     */
             return false;
 
         midibyte d1;                            /* will be ignored          */
@@ -4148,7 +4152,7 @@ sequence::get_next_event_match
     automutex locker(m_mutex);
     while (evi != m_events.end())
     {
-        if (m_events.sort_in_progress())        /* atomic boolean check     */
+        if (m_events.action_in_progress())      /* atomic boolean check     */
             return false;                       /* bug out immediately      */
 
         const event & drawevent = eventlist::cdref(evi);
