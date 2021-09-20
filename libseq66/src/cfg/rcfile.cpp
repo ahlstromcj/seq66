@@ -1114,7 +1114,7 @@ rcfile::write ()
     file << "\n"
         "# Provides a flag and a file-name for 'user' settings. Use '\"\"' \n"
         "# to indicate no 'usr' file. If none, there are no special user\n"
-        "# settings.  Using no 'usr' file should be considered EXPERIMENTAL.\n"
+        "# settings.  Using no 'usr' file should be considered experimental.\n"
        ;
     write_file_status
     (

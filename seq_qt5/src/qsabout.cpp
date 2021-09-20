@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-05-05
+ * \updates       2021-09-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -53,7 +53,8 @@ namespace seq66
 {
 
 /**
- *  Principal constructor.
+ *  Principal constructor. Now sets the links to be opened by clicking on
+ *  them.
  */
 
 qsabout::qsabout (QWidget * parent) :
@@ -65,6 +66,11 @@ qsabout::qsabout (QWidget * parent) :
     std::string vertag = seq_version_text();
     ui->topLabel->setText(apptag.c_str());
     ui->versionLabel->setText(vertag.c_str());
+
+    ui->label_filter24_seq24->setOpenExternalLinks(true);
+    ui->label_github_seq66->setOpenExternalLinks(true);
+    ui->label_github_kepler34->setOpenExternalLinks(true);
+    ui->label_gmail_ahlstromcj->setOpenExternalLinks(true);
 }
 
 qsabout::~qsabout()

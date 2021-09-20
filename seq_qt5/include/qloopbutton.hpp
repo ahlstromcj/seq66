@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-07-26
+ * \updates       2021-09-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -212,6 +212,7 @@ public:
         // no code needed
     }
 
+    static bool boxes_initialized (bool reset = false);
     static void progress_box_size (double w, double h);
 
     virtual seq::pointer loop () override
@@ -231,16 +232,6 @@ protected:
     void draw_progress_box (QPainter & painter);
     void draw_pattern (QPainter & painter);
     void initialize_fingerprint ();
-
-    bool vert_compressed () const
-    {
-        return m_vert_compressed;
-    }
-
-    void vert_compressed (bool f)
-    {
-        m_vert_compressed = f;
-    }
 
 private:
 

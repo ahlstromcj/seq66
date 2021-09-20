@@ -1,10 +1,55 @@
 NEWS for Seq66 0.97.0
 Chris Ahlstrom
-2015-07-10 to 2021-08-16
+2015-07-10 to 2021-09-20
 
 This file collects major changes that are older and clutter up
 the README file.  This file should be called "OLD NEWS".
 
+    -   Version 0.96.2:
+        -   Fixed issue #55, where the MIDI control channel was being stripped
+            when using JACK.  Many other channel-handling improvements.
+        -   Fixed a related issue: null (status = 0) control events were sent.
+        -   Fixed a bug in "portmidi" MIDI input handling where only the last
+            device's events would be processed.
+        -   Improved pause/continue support with JACK transport.
+        -   Fixed 'rc' allow-click-edit feature.
+        -   Made the buss-override settings act more consistently.
+        -   Fixed the drawing of preview keys in virtual keyboard.
+        -   Fixed setting the modify flag when opening existing pattern.
+        -   Added settings interface for the "set mode" of playback.
+        -   Added selection of notes and event by channel.
+    -   Version 0.96.1:
+        -   Restored drag and drop of patterns in the Live frame.
+        -   Added the ability to copy all patterns in one set to another set.
+        -   Fixed song-start-mode handling when "auto" is specified.
+        -   Added "Control" and "Program" (GM) drop-downs in the event editor.
+        -   Now display full path names in the recent file list to distinguish
+            files better.  An 'rc' config item.
+        -   Added a few configuration options to Edit / Preferences.
+        -   Added 'usr' options to change the vertical offset of notes in the
+            progress-box of each pattern button, and to provide default labeling
+            of the piano keys.
+        -   Tweaked the drawing of notes and drum notes.
+        -   More work on set-handling.
+        -   Fixed panic-button disabling Launchpad display output. However,
+            if pressed before exit, the lights remain on and there is a slit
+            delay in exiting the session (in ALSA; works fine in JACK).
+    -   Version 0.96.0:
+        -   Adding code to control the visibility of the main window; added
+            a "Visibility" MIDI control option, and support for the
+            "optional-gui" flag of the Non Session Manager.
+        -   Fixed harmonic transposition settings.
+        -   Fixed bug that drew fingerprint at top of button; and another bug
+            that disabled showing the pattern if fingerprinting was disabled.
+        -   Can now read MIDI files that are readable, but not writable, and
+            disable File / Save as needed.
+        -   Added hjkl arrow keys to seqroll and perfroll. Why? We have a
+            Microsoft Arc keyboard with all the arrows on one small button.
+        -   Fixed the Mixolydian mode scale. Oops.
+        -   The pattern editor time, roll, data, and event frames line up.
+        -   Fixed error reading mute-groups; small fixes to configuration files.
+        -   Work on fitting pattern-editor in tab.
+        -   Work on mitigating weird hang in QApplication destructor.
     -   Version 0.95.1:
         -   Added 'auto' option to song-start-mode setting.
         -   Added missing harmonic-transposition option to the pattern editor.

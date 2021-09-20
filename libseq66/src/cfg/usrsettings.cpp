@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-09-16
+ * \updates       2021-09-20
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -182,12 +182,15 @@ static const double c_window_scale_max     = 3.0f;
 /**
  *  These currently just exposed some values from the *.ui files.  The size of
  *  the main window.
+ *
+ *  Not used:
+ *
+ * static const int c_minimum_window_width  = 720;  // shrunken = 540, 0.75 540
+ * static const int c_minimum_window_height = 480;  // shrunken = 360, 0.66 450
  */
 
 static const int c_default_window_width  = 884;  // shrunken = 720, 0.82 664
 static const int c_default_window_height = 602;  // shrunken = 480, 0.80 450
-static const int c_minimum_window_width  = 720;  // shrunken = 540, 0.75 540
-static const int c_minimum_window_height = 480;  // shrunken = 360, 0.66 450
 
 /**
  *  Key-height settings.  Default values of the height of the piano keys in
@@ -347,7 +350,6 @@ usrsettings::usrsettings () :
     m_max_sequence              (seq::maximum()),
     m_mainwnd_x                 (c_default_window_width),   /* 780 */
     m_mainwnd_y                 (c_default_window_height),  /* 412 */
-//  m_save_user_config          (false),
     m_app_is_headless           (false),
     m_user_option_daemonize     (false),
     m_user_use_logfile          (false),
@@ -360,6 +362,7 @@ usrsettings::usrsettings () :
     m_user_ui_key_height        (c_def_key_height),
     m_user_ui_key_view          (showkeys::octave_letters),
     m_user_ui_seqedit_in_tab    (true),
+    m_user_ui_style_active      (false),
     m_user_ui_style_sheet       (""),
     m_resume_note_ons           (false),
     m_fingerprint_size          (c_fingerprint_size),
@@ -375,7 +378,7 @@ usrsettings::usrsettings () :
     m_new_pattern_record        (false),
     m_new_pattern_qrecord       (false),
     m_new_pattern_recordstyle   (recordstyle::merge),
-    m_new_pattern_wraparound    (false)                 /* EXPERIMENTAL */
+    m_new_pattern_wraparound    (false)
 {
     // Empty body; it's no use to call normalize() here, see set_defaults().
 }
@@ -435,7 +438,6 @@ usrsettings::set_defaults ()
     m_mainwnd_x = c_default_window_width;
     m_mainwnd_y = c_default_window_height;
 
-//  m_save_user_config = false;
     m_app_is_headless = false;
     m_user_option_daemonize = false;
     m_user_use_logfile = false;
@@ -443,6 +445,7 @@ usrsettings::set_defaults ()
     m_user_ui_key_height = c_def_key_height;
     m_user_ui_key_view = showkeys::octave_letters;
     m_user_ui_seqedit_in_tab = true;
+    m_user_ui_style_active = false;
     m_user_ui_style_sheet = "";
     m_resume_note_ons = false;
     m_fingerprint_size = c_fingerprint_size;
@@ -788,27 +791,46 @@ usrsettings::set_instrument_controllers
  *
  *  For small device screens (800x480), use winscale = 0.85 and winscaley =
  *  0.55 approximately.
+ *
+ *  Note that testing the option_scale bit prevent the scale from being
+ *  modified when the window is resized.  We need another parameter for that.
  */
 
 bool
-usrsettings::window_scale (float winscale, float winscaley)
+usrsettings::window_scale (float winscale, float winscaley, bool useoptionbit)
 {
     bool result =
     (
         winscale >= c_window_scale_min &&
-        winscale <= c_window_scale_max
+        winscale <= c_window_scale_max &&
+        (! useoptionbit || ! test_option_bit(option_scale))
     );
-    if (result && ! test_option_bit(option_scale))
+    if (result)
     {
         m_window_scale = winscale;
         set_option_bit(option_scale);
-
         if (winscaley >= c_window_scale_min && winscaley <= c_window_scale_max)
             m_window_scale_y = winscaley;
         else
             m_window_scale_y = winscale;
     }
     return result;
+}
+
+/**
+ *  Provides a way to rescale the window settings when the user manually
+ *  changes the size of the main window.
+ */
+
+bool
+usrsettings::window_rescale (int new_width, int new_height)
+{
+    float wscale = float(new_width) / float(c_default_window_width);
+    float wscaley = float(new_height) / float(c_default_window_height);
+    if (new_height == 0)
+        wscaley = 0.0;
+
+    return window_scale(wscale, wscaley);
 }
 
 bool
@@ -822,10 +844,10 @@ usrsettings::parse_window_scale (const std::string & source)
         if (tokens.size() > 1)
         {
             double value2 = std::stod(tokens[1]);
-            result = window_scale(value1, value2);
+            result = window_scale(value1, value2, true);
         }
         else
-            result = window_scale(value1);
+            result = window_scale(value1, 0.0, true);
     }
     else
     {
@@ -1341,8 +1363,8 @@ usrsettings::horizontally_compressed () const
 }
 
 /**
- *  The primary use of this function is to see if some buttons should be hidden in
- *  the main window, to allow a smaller size.
+ *  The primary use of this function is to see if some buttons should be
+ *  hidden in the main window, to allow a smaller size.
  */
 
 bool

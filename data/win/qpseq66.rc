@@ -55,7 +55,7 @@ name = "qpseq66.mutes"
 
 # Provides a flag and a file-name for 'user' settings. Use '""' 
 # to indicate no 'usr' file. If none, there are no special user
-# settings.  Using no 'usr' file should be considered EXPERIMENTAL.
+# settings.  Using no 'usr' file should be considered experimental.
 
 [usr-file]
 

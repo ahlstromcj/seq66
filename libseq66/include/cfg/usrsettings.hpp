@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-09-16
+ * \updates       2021-09-20
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -654,8 +654,8 @@ private:
      *  Anyway, this flag can be set by the --user-save option.  This setting
      *  is never saved.  But note that, if no "user" configuration file is
      *  found, it is then saved anyway.
-
-    bool m_save_user_config;
+     *
+     *  Now see the named_bools list rcsettings::m_save_list instead.
      */
 
     /**
@@ -725,6 +725,12 @@ private:
      */
 
     bool m_user_ui_seqedit_in_tab;
+
+    /**
+     *  Indicates if the style-sheet will be used.
+     */
+
+    bool m_user_ui_style_active;
 
     /**
      *  Provides the name of an optional Qt style-sheet, located in the active
@@ -972,7 +978,11 @@ public:
         return m_window_scale_y;
     }
 
-    bool window_scale (float winscale, float winscaley = 0.0);
+    bool window_scale
+    (
+        float winscale, float winscaley = 0.0, bool useoptionbit = false
+    );
+    bool window_rescale (int new_width, int new_height = 0);
     bool parse_window_scale(const std::string & source);
 
     /**
@@ -1164,15 +1174,6 @@ public:
     {
         return m_window_redraw_rate_ms;
     }
-
-/*
-    bool save_user_config () const
-    {
-        return m_save_user_config;
-    }
-
-    void save_user_config (bool flag);
-    */
 
 protected:
 
@@ -1370,6 +1371,11 @@ public:
         return true;
     }
 
+    bool style_sheet_active () const
+    {
+        return m_user_ui_style_active;
+    }
+
     const std::string & style_sheet () const
     {
         return m_user_ui_style_sheet;
@@ -1544,6 +1550,11 @@ public:         // used in main application module and the usrfile class
     }
 
     void key_view (const std::string & view);
+
+    void style_sheet_active (bool flag)
+    {
+        m_user_ui_style_active = flag;
+    }
 
     void style_sheet (const std::string & s)
     {

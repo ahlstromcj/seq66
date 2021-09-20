@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-14
+ * \updates       2021-09-20
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -34,6 +34,7 @@
 
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "util/filefunctions.hpp"       /* seq66::filename_base()           */
+#include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 #include "gui_palette_qt5.hpp"          /* seq66::global_palette()          */
 #include "palettefile.hpp"              /* seq66::palettefile class         */
 #include "qclocklayout.hpp"
@@ -373,7 +374,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     );
 
     /*
-     * 'usr' file. Making 'usr' inactive is EXPERIMENTAL.
+     * 'usr' file. Making 'usr' inactive is experimental.
      */
 
     filename = QString::fromStdString(rc().user_filename());
@@ -523,6 +524,27 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     );
 
     /*
+     * 'qss' file.  Since this configuration is not editable while the
+     * application is running, the "auto-save" check-box is read-only.
+     * Also note that this refers to a Qt Style Sheet.
+     */
+
+    filename = QString::fromStdString(usr().style_sheet());
+    ui->checkBoxSaveStyleSheet->setChecked(rc().auto_qss_save());  /* read-only */
+    ui->checkBoxActiveStyleSheet->setChecked(usr().style_sheet_active());
+    connect
+    (
+        ui->checkBoxActiveStyleSheet, SIGNAL(clicked(bool)),
+        this, SLOT(slot_stylesheet_active_click())
+    );
+    ui->lineEditStyleSheet->setText(filename);
+    connect
+    (
+        ui->lineEditStyleSheet, SIGNAL(editingFinished()),
+        this, SLOT(slot_stylesheet_filename())
+    );
+
+    /*
      * For testing only
      *
     connect
@@ -591,6 +613,10 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * The virtual port counts for input and output.
      */
 
+    std::string value = std::to_string(rc().manual_port_count());
+    ui->lineEditOutputCount->setText(QString::fromStdString(value));
+    value = std::to_string(rc().manual_in_port_count());
+    ui->lineEditInputCount->setText(QString::fromStdString(value));
     connect
     (
         ui->lineEditOutputCount, SIGNAL(editingFinished()),
@@ -685,7 +711,7 @@ qseditoptions::set_ppqn_combo ()
             p = m_ppqn_list.at(i);
             combo_text = QString::fromStdString(p);
             ui->combo_box_ppqn->insertItem(i, combo_text);
-            if (std::stoi(p) == perf().ppqn())
+            if (string_to_int(p) == perf().ppqn())
                 result = true;
         }
         ui->combo_box_ppqn->setCurrentIndex(0);
@@ -986,7 +1012,7 @@ qseditoptions::slot_ppqn_by_text (const QString & text)
     std::string temp = text.toStdString();
     if (! temp.empty())
     {
-        int p = std::stoi(temp);
+        int p = string_to_int(temp);
         if (perf().change_ppqn(p))
         {
             m_parent_widget->set_ppqn_text(temp);
@@ -1088,7 +1114,7 @@ qseditoptions::slot_set_size_rows ()
     const std::string valuetext = qs.toStdString();
     if (! valuetext.empty())
     {
-        int rows = std::stoi(valuetext);
+        int rows = string_to_int(valuetext);
         if (usr().mainwnd_rows(rows))
             modify_usr();
         else
@@ -1103,7 +1129,7 @@ qseditoptions::slot_set_size_columns ()
     const std::string valuetext = qs.toStdString();
     if (! valuetext.empty())
     {
-        int columns = std::stoi(valuetext);
+        int columns = string_to_int(valuetext);
         if (usr().mainwnd_cols(columns))
             modify_usr();
         else
@@ -1160,7 +1186,7 @@ qseditoptions::slot_fingerprint_size ()
     std::string text = qs.toStdString();
     if (! text.empty())
     {
-        double sz = std::stoi(text);
+        double sz = string_to_int(text);
         if (usr().fingerprint_size(sz))
         {
             modify_usr();
@@ -1415,7 +1441,7 @@ qseditoptions::slot_ctrl_filename ()
 void
 qseditoptions::slot_drums_active_click ()
 {
-    bool on = ui->checkBoxActiveUsr->isChecked();
+    bool on = ui->checkBoxActiveDrums->isChecked();
     rc().notemap_active(on);
     rc().auto_rc_save(true);
 }
@@ -1428,8 +1454,29 @@ qseditoptions::slot_drums_filename ()
     if (text != rc().notemap_filename())
     {
         rc().notemap_filename(text);
-        rc().auto_drums_save(true);
+        // rc().auto_drums_save(true);  // not necessary
         rc().auto_rc_save(true);
+        ui->checkBoxSaveDrums->setChecked(true);
+    }
+}
+
+void
+qseditoptions::slot_stylesheet_active_click ()
+{
+    bool on = ui->checkBoxActiveStyleSheet->isChecked();
+    usr().style_sheet_active(on);
+    rc().auto_usr_save(true);
+}
+
+void
+qseditoptions::slot_stylesheet_filename ()
+{
+    const QString qs = ui->lineEditStyleSheet->text();
+    std::string text = qs.toStdString();
+    if (text != usr().style_sheet())
+    {
+        usr().style_sheet(text);
+        rc().auto_usr_save(true);
         ui->checkBoxSaveDrums->setChecked(true);
     }
 }
@@ -1482,16 +1529,22 @@ void
 qseditoptions::slot_virtual_out_count ()
 {
     QString text = ui->lineEditOutputCount->text();
-    int count = std::stoi(text.toStdString());
+    int count = string_to_int(text.toStdString());
     rc().manual_port_count(count);
+
+    std::string value = std::to_string(rc().manual_port_count());
+    ui->lineEditOutputCount->setText(QString::fromStdString(value));
 }
 
 void
 qseditoptions::slot_virtual_in_count ()
 {
     QString text = ui->lineEditInputCount->text();
-    int count = std::stoi(text.toStdString());
+    int count = string_to_int(text.toStdString());
     rc().manual_in_port_count(count);
+
+    std::string value = std::to_string(rc().manual_in_port_count());
+    ui->lineEditInputCount->setText(QString::fromStdString(value));
 }
 
 }           // namespace seq66

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-08-31
+ * \updates       2021-09-20
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -3441,31 +3441,8 @@ qsmainwnd::changeEvent (QEvent * event)
 void
 qsmainwnd::resizeEvent (QResizeEvent * /*r*/ )
 {
-    if (m_initial_width == 0)
-    {
-        m_initial_width = width();
-        m_initial_height = height();
-    }
-    else
-    {
-        bool rescale = false;
-        int w = width();
-        int h = height();
-        float wscale = usr().window_scale_x();
-        float hscale = usr().window_scale_y();
-        if (w != m_initial_width)
-        {
-            wscale = float(w) / float(m_initial_width);
-            rescale = true;
-        }
-        if (h != m_initial_height)
-        {
-            hscale = float(h) / float(m_initial_height);
-            rescale = true;
-        }
-        if (rescale)
-            usr().window_scale(wscale, hscale);
-    }
+    (void) usr().window_rescale(width(), height());
+    recreate_all_slots();
 }
 
 bool

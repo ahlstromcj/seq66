@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-12
+ * \updates       2021-09-20
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -165,11 +165,22 @@ qperfnames::paintEvent (QPaintEvent *)
                 seq::pointer s = perf().get_sequence(seq_id);
                 bool muted = s->get_song_mute();
                 char name[64];
-                snprintf
-                (
-                    name, sizeof name, "%-14.14s %3d",
-                    s->name().c_str(), int(s->seq_midi_channel()) + 1
-                );
+                int channel = int(s->seq_midi_channel());
+                if (is_null_channel(channel))
+                {
+                    snprintf
+                    (
+                        name, sizeof name, "%-14.14s   F", s->name().c_str()
+                    );
+                }
+                else
+                {
+                    snprintf
+                    (
+                        name, sizeof name, "%-14.14s %3d",
+                        s->name().c_str(), channel + 1
+                    );
+                }
 
                 QString chinfo(name);
                 if (muted)

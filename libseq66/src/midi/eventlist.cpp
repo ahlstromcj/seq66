@@ -32,7 +32,7 @@
  *  tempo) have been added to the container.
  */
 
-#include "cfg/settings.hpp"             /* usr() EXPERIMENTAL               */
+#include "cfg/settings.hpp"             /* usr()                            */
 #include "midi/eventlist.hpp"
 #include "util/basic_macros.hpp"
 #include "util/calculations.hpp"        /* seq66::randomize(), etc.         */
@@ -434,9 +434,9 @@ eventlist::clear ()
 {
     if (! m_events.empty())
     {
-        m_action_in_progress = true;          // EXPERIMENTAL
+        m_action_in_progress = true;          /* might not help */
         m_events.clear();
-        m_action_in_progress = false;         // EXPERIMENTAL
+        m_action_in_progress = false;
         m_is_modified = true;
     }
 }

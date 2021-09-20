@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>310</height>
+    <width>475</width>
+    <height>362</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,6 +40,18 @@
    </item>
    <item>
     <widget class="QLabel" name="versionLabel">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>32</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>42</height>
+      </size>
+     </property>
      <property name="font">
       <font>
        <pointsize>10</pointsize>
@@ -58,7 +70,7 @@
    <item>
     <widget class="QLabel" name="descriptionLabel">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;A loop-based MIDI sequencer for Linux/Windows&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Licensed under GNU General Public License V2&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://github.com/ahlstromcj/seq66 &quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub/ahlstromcj/seq66 &lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;mailto::ahlstromcj@gmail.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;ahlstromcj@gmail.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;A loop-based MIDI sequencer for Linux/Windows&lt;br&gt;Licensed under the GNU General Public License v2/v3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -69,14 +81,30 @@
     </widget>
    </item>
    <item>
-    <widget class="Line" name="separatorBottom">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+    <widget class="QLabel" name="label_github_seq66">
+     <property name="text">
+      <string>&lt;a href=&quot;https://github.com/ahlstromcj/seq66&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub/ahlstromcj/seq66&lt;/span&gt;&lt;/a&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_gmail_ahlstromcj">
+     <property name="text">
+      <string>&lt;a href=&quot;mailto:ahlstromcj@gmail.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;ahlstromcj@gmail.com&lt;/span&gt;&lt;/a&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="extraButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -96,14 +124,40 @@
    </item>
    <item>
     <widget class="QLabel" name="originsLabel">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Based on Seq24 and Kepler34 &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;http://filter24.org/seq24&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Filter24.org/seq24&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://github.com/oli-kester/kepler34&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/oli-kester/kepler34&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Based on Seq24 and Kepler34 &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_filter24_seq24">
+     <property name="text">
+      <string>&lt;a href=&quot;http://filter24.org/seq24&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Filter24.org/seq24&lt;/span&gt;&lt;/a&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_github_kepler34">
+     <property name="text">
+      <string>&lt;a href=&quot;https://github.com/oli-kester/kepler34&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub/oli-kester/kepler34&lt;/span&gt;&lt;/a&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>

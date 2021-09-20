@@ -693,6 +693,11 @@ public:
         return m_save_list.get("drums");
     }
 
+    bool auto_qss_save () const
+    {
+        return m_save_list.get("drums");
+    }
+
     bool auto_palette_save () const
     {
         return m_save_list.get("palette");

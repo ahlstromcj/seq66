@@ -12,8 +12,6 @@ UI:
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
 
-        -   MIDI Clocks and Inputs:
-DO!!        -   Virtual port flag and port-count
         -   Display:
             -   Style-sheet
             -   Global seq feature

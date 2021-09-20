@@ -253,16 +253,18 @@ qt5nsmanager::create_window ()
             }
         }
     }
-    if (result)
+    if (result && usr().style_sheet_active())
     {
         std::string ssname = rc().style_sheet_filespec();
         if (! ssname.empty())
         {
             QFile file(QString::fromStdString(ssname));
-            file.open(QFile::ReadOnly);
-
-            QString ss = QLatin1String(file.readAll());
-            qApp->setStyleSheet(ss);
+            bool ok = file.open(QFile::ReadOnly);
+            if (ok)
+            {
+                QString ss = QLatin1String(file.readAll());
+                qApp->setStyleSheet(ss);
+            }
         }
     }
     return result;

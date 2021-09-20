@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-09-16
+ * \updates       2021-09-20
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -49,7 +49,7 @@
 namespace seq66
 {
 
-static const int s_usr_file_version = 6;
+static const int s_usr_file_version = 7;
 
 /**
  *  Principal constructor.
@@ -307,9 +307,9 @@ usrfile::parse ()
                     float scaley = 1.0f;
                     int count = sscanf(scanline(), "%f %f", &scale, &scaley);
                     if (count == 1)
-                        usr().window_scale(scale);          /* x & y the same   */
+                        usr().window_scale(scale, 0.0, true);
                     else if (count == 2)
-                        usr().window_scale(scale, scaley);  /* x != y scale     */
+                        usr().window_scale(scale, scaley, true);
                 }
             }
         }
@@ -338,7 +338,7 @@ usrfile::parse ()
 
         double scale = get_float(file, tag, "window-scale");
         double scaley = get_float(file, tag, "window-scale-y");
-        usr().window_scale(scale, scaley);              /* x & y the same   */
+        usr().window_scale(scale, scaley, true);        /* x & y the same   */
     }
     usr().normalize();                                  /* recalculate      */
 
@@ -507,8 +507,13 @@ usrfile::parse ()
         bool flag = get_boolean(file, tag, "note-resume");
         usr().resume_note_ons(flag);
 
+        flag = get_boolean(file, tag, "style-sheet-active");
+        usr().style_sheet_active(flag);
+
         s = get_variable(file, tag, "style-sheet");
         usr().style_sheet(strip_quotes(s));
+        if (s.empty())
+            usr().style_sheet_active(false);
 
         int v = get_integer(file, tag, "fingerprint-size");
         usr().fingerprint_size(v);
@@ -908,6 +913,7 @@ usrfile::write ()
     write_integer(file, "key-height", usr().key_height());
     file << "key-view = " << usr().key_view_string() << "\n";
     write_boolean(file, "note-resume", usr().resume_note_ons());
+    write_boolean(file, "style-sheet-active", usr().style_sheet_active());
 
     std::string v = add_quotes(usr().style_sheet());
     file << "style-sheet = " << v << "\n";

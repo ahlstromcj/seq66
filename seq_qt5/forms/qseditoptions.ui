@@ -131,6 +131,12 @@ Button not yet functional.</string>
        <layout class="QHBoxLayout" name="horizLayoutClockStartModulo">
         <item>
          <widget class="QLabel" name="labelClockStartModulo">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Sets the position after which MIDI clocking begins.</string>
           </property>
@@ -182,6 +188,12 @@ the system's MIDI setup has changed.</string>
          <height>17</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="text">
         <string>Client Name:ID/UUID</string>
        </property>
@@ -225,6 +237,12 @@ the system's MIDI setup has changed.</string>
          <width>177</width>
          <height>23</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="toolTip">
         <string>If checked, an output port map was loaded.</string>
@@ -285,6 +303,44 @@ the system's MIDI setup has changed.</string>
         </property>
        </widget>
       </widget>
+      <widget class="QLabel" name="label_2">
+       <property name="geometry">
+        <rect>
+         <x>384</x>
+         <y>12</y>
+         <width>81</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>MIDI Clock</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_3">
+       <property name="geometry">
+        <rect>
+         <x>316</x>
+         <y>12</y>
+         <width>54</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Port</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QWidget" name="tabMidiInput">
       <property name="toolTip">
@@ -333,7 +389,7 @@ number using the channel number (0 to 15).</string>
          <rect>
           <x>20</x>
           <y>68</y>
-          <width>325</width>
+          <width>221</width>
           <height>23</height>
          </rect>
         </property>
@@ -344,7 +400,7 @@ number using the channel number (0 to 15).</string>
        <widget class="QLabel" name="label_inputs">
         <property name="geometry">
          <rect>
-          <x>372</x>
+          <x>388</x>
           <y>72</y>
           <width>54</width>
           <height>17</height>
@@ -370,21 +426,39 @@ number using the channel number (0 to 15).</string>
        <widget class="QLineEdit" name="lineEditOutputCount">
         <property name="geometry">
          <rect>
-          <x>316</x>
+          <x>320</x>
           <y>68</y>
-          <width>41</width>
-          <height>25</height>
+          <width>42</width>
+          <height>28</height>
          </rect>
+        </property>
+        <property name="text">
+         <string>8</string>
+        </property>
+        <property name="maxLength">
+         <number>2</number>
+        </property>
+        <property name="frame">
+         <bool>true</bool>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEditInputCount">
         <property name="geometry">
          <rect>
-          <x>440</x>
+          <x>444</x>
           <y>68</y>
-          <width>41</width>
-          <height>25</height>
+          <width>42</width>
+          <height>28</height>
          </rect>
+        </property>
+        <property name="text">
+         <string>4</string>
+        </property>
+        <property name="maxLength">
+         <number>2</number>
         </property>
        </widget>
       </widget>
@@ -399,6 +473,12 @@ number using the channel number (0 to 15).</string>
          <width>169</width>
          <height>23</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="text">
         <string>Input Ports Mapped</string>
@@ -761,6 +841,11 @@ to 128, and defaults to 32.</string>
          <width>201</width>
          <height>16</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <italic>true</italic>
+        </font>
        </property>
        <property name="text">
         <string>Restart required for most settings</string>
@@ -1247,6 +1332,12 @@ Seq66 exits.</string>
          <height>145</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
        <property name="title">
         <string>Session</string>
        </property>
@@ -1299,6 +1390,11 @@ Seq66 exits.</string>
          <height>189</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <italic>true</italic>
+        </font>
+       </property>
        <property name="text">
         <string>NSM will be used automatically if Seq66 finds
 itself running in an NSM session.  The check-
@@ -1320,6 +1416,12 @@ required.</string>
          <width>73</width>
          <height>17</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="text">
         <string>JACK UUID</string>
@@ -1343,8 +1445,8 @@ required.</string>
         <rect>
          <x>8</x>
          <y>220</y>
-         <width>331</width>
-         <height>221</height>
+         <width>597</width>
+         <height>173</height>
         </rect>
        </property>
        <property name="title">
@@ -1353,7 +1455,7 @@ required.</string>
        <widget class="QCheckBox" name="checkBoxSaveRc">
         <property name="geometry">
          <rect>
-          <x>64</x>
+          <x>56</x>
           <y>44</y>
           <width>101</width>
           <height>23</height>
@@ -1369,7 +1471,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>64</x>
+          <x>56</x>
           <y>68</y>
           <width>101</width>
           <height>23</height>
@@ -1382,7 +1484,7 @@ required.</string>
        <widget class="QCheckBox" name="checkBoxSaveMutes">
         <property name="geometry">
          <rect>
-          <x>64</x>
+          <x>56</x>
           <y>92</y>
           <width>101</width>
           <height>23</height>
@@ -1395,7 +1497,7 @@ required.</string>
        <widget class="QCheckBox" name="checkBoxSavePlaylist">
         <property name="geometry">
          <rect>
-          <x>64</x>
+          <x>56</x>
           <y>116</y>
           <width>101</width>
           <height>23</height>
@@ -1411,8 +1513,8 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>64</x>
-          <y>140</y>
+          <x>344</x>
+          <y>44</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1427,8 +1529,8 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>64</x>
-          <y>164</y>
+          <x>344</x>
+          <y>68</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1510,8 +1612,8 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>140</y>
+          <x>308</x>
+          <y>44</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1526,8 +1628,8 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>164</y>
+          <x>308</x>
+          <y>68</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1557,7 +1659,7 @@ required.</string>
        <widget class="QLabel" name="label_cfg_save">
         <property name="geometry">
          <rect>
-          <x>60</x>
+          <x>52</x>
           <y>24</y>
           <width>81</width>
           <height>17</height>
@@ -1578,9 +1680,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>170</x>
+          <x>160</x>
           <y>44</y>
-          <width>149</width>
+          <width>125</width>
           <height>21</height>
          </rect>
         </property>
@@ -1591,9 +1693,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>170</x>
+          <x>160</x>
           <y>68</y>
-          <width>149</width>
+          <width>125</width>
           <height>21</height>
          </rect>
         </property>
@@ -1604,9 +1706,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>170</x>
+          <x>160</x>
           <y>92</y>
-          <width>149</width>
+          <width>125</width>
           <height>21</height>
          </rect>
         </property>
@@ -1617,9 +1719,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>170</x>
+          <x>160</x>
           <y>116</y>
-          <width>149</width>
+          <width>125</width>
           <height>21</height>
          </rect>
         </property>
@@ -1630,9 +1732,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>170</x>
-          <y>140</y>
-          <width>149</width>
+          <x>448</x>
+          <y>44</y>
+          <width>125</width>
           <height>21</height>
          </rect>
         </property>
@@ -1643,9 +1745,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>170</x>
-          <y>164</y>
-          <width>149</width>
+          <x>448</x>
+          <y>68</y>
+          <width>125</width>
           <height>21</height>
          </rect>
         </property>
@@ -1653,7 +1755,7 @@ required.</string>
        <widget class="QLabel" name="label_cfg_basename">
         <property name="geometry">
          <rect>
-          <x>144</x>
+          <x>160</x>
           <y>24</y>
           <width>113</width>
           <height>17</height>
@@ -1671,9 +1773,9 @@ required.</string>
        <widget class="QLineEdit" name="lineEditPalette">
         <property name="geometry">
          <rect>
-          <x>170</x>
-          <y>188</y>
-          <width>149</width>
+          <x>160</x>
+          <y>140</y>
+          <width>125</width>
           <height>21</height>
          </rect>
         </property>
@@ -1691,7 +1793,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>188</y>
+          <y>140</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1703,14 +1805,113 @@ path added to this name is stripped.</string>
        <widget class="QCheckBox" name="checkBoxSavePalette">
         <property name="geometry">
          <rect>
-          <x>64</x>
-          <y>188</y>
+          <x>56</x>
+          <y>140</y>
           <width>101</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
          <string>'palette'</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_cfg_active_2">
+        <property name="geometry">
+         <rect>
+          <x>292</x>
+          <y>24</y>
+          <width>45</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Active</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_cfg_save_2">
+        <property name="geometry">
+         <rect>
+          <x>340</x>
+          <y>24</y>
+          <width>81</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Save At Exit</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_cfg_basename_2">
+        <property name="geometry">
+         <rect>
+          <x>448</x>
+          <y>24</y>
+          <width>113</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Base Filename</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxActiveStyleSheet">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>308</x>
+          <y>92</y>
+          <width>25</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxSaveStyleSheet">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>344</x>
+          <y>92</y>
+          <width>101</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>'qss'</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditStyleSheet">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>448</x>
+          <y>92</y>
+          <width>125</width>
+          <height>21</height>
+         </rect>
         </property>
        </widget>
       </widget>

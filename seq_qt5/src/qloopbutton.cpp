@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-09-16
+ * \updates       2021-09-20
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -195,12 +195,12 @@ qloopbutton::qloopbutton
     make_checkable();
     set_checked(m_is_checked);
 
+#if defined SEQ66_FOLLOW_THEME_TEXT_COLOR
     /*
-     * We're trying to mitigate issue #50, where the white text of the
-     * breeze-dark theme cannot be seen against a yellow background.
+     * To mitigate issue #50, where the white text of a dark theme cannot be seen
+     * against a yellow background.  Instead, we beefed up the palette mechanism.
      */
 
-#if defined SEQ66_FOLLOW_THEME_TEXT_COLOR
     QWidget tmp;
     text_color(tmp.palette().color(QPalette::ButtonText));
 #else
@@ -213,6 +213,36 @@ qloopbutton::qloopbutton
         back_color(get_color_fix(PaletteColor(c)));
 }
 
+/**
+ *  Static function to control when the qloopbutton text boxes get
+ *  initialized. we want the statics to be initialized at "start up" and
+ *  when the main window is resized.
+ */
+
+bool
+qloopbutton::boxes_initialized (bool reset)
+{
+    static bool s_boxes_initialized = false;
+    if (reset)
+    {
+        s_boxes_initialized = false;
+        return false;
+    }
+    else
+    {
+        bool result = s_boxes_initialized;
+        s_boxes_initialized = true;
+        return result;
+    }
+}
+
+/**
+ *  We can set up the relative locations and the box sizes just once every
+ *  time the UI size is re-established.
+ *
+ *  Variables: l = left, r = right, t = top, and b = bottom
+ */
+
 bool
 qloopbutton::initialize_text ()
 {
@@ -221,19 +251,32 @@ qloopbutton::initialize_text ()
     {
         int w = width();
         int h = height();
-        int dx = usr().scale_size(4);
+        int dx = usr().scale_size(6);
         int dy = usr().scale_size_y(2);
         int lw = int(0.70 * w);
         int rw = int(0.50 * w);
-        int lx = dx + 1;                        /* left x       */
-        int ty = dy;                            /* top y        */
-        int bh = usr().scale_size_y(12);        /* box height   */
-        int rx = int(0.50 * w) + lx - dx - 4;   /* right x      */
-        int by = int(0.85 * h) + dy;            /* bottom y     */
+        int lx = dx + 1;
+        int ty = dy + 2;                                // ty = dy;
+        int bh = usr().scale_size_y(12);
+        int rx = int(0.50 * w) + lx - 2 * dx - 2;       // - 2 added
+        int by = int(0.85 * h) + dy;
+        int fontsize = usr().scale_font_size(7);
         if (vert_compressed())
-            by = int(0.75 * h);                 /* bottom y     */
-
-        int fontsize = usr().scale_font_size(6);
+        {
+            ty += 2;
+            by -= 2;
+        }
+        if (horiz_compressed())
+        {
+            lx += 2;
+            rx -= 2;
+        }
+        m_progress_box.set(w, h);
+        m_event_box = m_progress_box;
+        m_event_box.m_x += 3;
+        m_event_box.m_y += 1;
+        m_event_box.m_w -= 6;
+        m_event_box.m_h -= 2;
         m_text_font.setPointSize(fontsize);
 
         /*
@@ -277,13 +320,11 @@ qloopbutton::initialize_text ()
         m_top_right.set(rx, ty, rw, bh, rflags, lengthstr);
         m_bottom_left.set(lx, by, lw, bh, lflags, lowerleft);
         m_bottom_right.set(rx, by, rw, bh, rflags, hotkey);
-        m_progress_box.set(w, h);
-        m_event_box = m_progress_box;
-        m_event_box.m_x += 3;
-        m_event_box.m_y += 1;
-        m_event_box.m_w -= 6;
-        m_event_box.m_h -= 2;
         m_text_initialized = true;
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf("Coord: L %3d; R %3d; T %2d; B %2d\n", lx, rx, ty, by);
+        printf("width: L %3d; R %3d; height T, B %2d\n", lw, rw, bh);
+#endif
     }
     else
         result = m_text_initialized;
@@ -561,25 +602,22 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 m_bottom_right.m_w, m_bottom_right.m_h
             );
             painter.drawText(box, m_bottom_right.m_flags, title);
-            if (! vert_compressed())
-            {
-                if (loop()->playing())
-                    title = "Armed";
-                else if (loop()->get_queued())
-                    title = "Queued";
-                else if (loop()->one_shot())
-                    title = "One-shot";
-                else
-                    title = "Muted";
+            if (loop()->playing())
+                title = "Armed";
+            else if (loop()->get_queued())
+                title = "Queued";
+            else if (loop()->one_shot())
+                title = "One-shot";
+            else
+                title = "Muted";
 
-                int line2y = 2 * usr().scale_font_size(6);
-                box.setRect
-                (
-                    m_top_left.m_x, m_top_left.m_y + line2y,
-                    m_top_left.m_w, m_top_left.m_h
-                );
-                painter.drawText(box, m_top_left.m_flags, title);
-            }
+            int line2y = 2 * usr().scale_font_size(6);
+            box.setRect
+            (
+                m_top_left.m_x, m_top_left.m_y + line2y,
+                m_top_left.m_w, m_top_left.m_h
+            );
+            painter.drawText(box, m_top_left.m_flags, title);
             initialize_fingerprint();
         }
         if (sm_draw_progress_box)
@@ -816,18 +854,17 @@ void
 qloopbutton::resizeEvent (QResizeEvent * qrep)
 {
     QSize s = qrep->size();
-    vert_compressed(s.height() < 90);        // hardwired experimentally
+    vert_compressed(s.height() < 90);       // hardwired for now
+    horiz_compressed(s.width() < 90);
+
+    /*
+     * Weird, makes use re-init every damn time.
+     *
+     * boxes_initialized(true);        // reset to false //
+     */
+
     QWidget::resizeEvent(qrep);
 }
-
-#if defined USE_QLOOPBUTTON_SIZEHINT
-
-QSize
-qloopbutton::sizeHint () const
-{
-    return QSize(20, 20);
-}
-#endif
 
 }           // namespace seq66
 

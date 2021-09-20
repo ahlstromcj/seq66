@@ -748,7 +748,7 @@ screenset::arm (seq::number seqno)
 }
 
 /**
- *  EXPERIMENTAL: Do not set song mute here.
+ *  Do not set song mute here.
  */
 
 void

@@ -613,6 +613,7 @@ bool
 qslivegrid::recreate_all_slots ()
 {
     bool result = delete_all_slots();
+    qloopbutton::boxes_initialized(true);       /* actually sets it false i */
     qloopbutton::progress_box_size              /* in case user changed it  */
     (
         usr().progress_box_width(), usr().progress_box_height()

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-09-13
+ * \updates       2021-09-20
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -742,7 +742,7 @@ cmdlineopts::parse_o_sets (const std::string & arg)
                 if (scale > 1.5)
                     scale = 1.0;
 
-                usr().window_scale(scale, scaley);
+                usr().window_scale(scale, scaley, true);
             }
 #endif
         }

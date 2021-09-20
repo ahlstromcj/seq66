@@ -27,7 +27,7 @@
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
- * \date          2019-06-26
+ * \date          2021-09-19
  * \updates       2021-07-26
  * \license       GNU GPLv2 or above
  *
@@ -116,10 +116,17 @@ protected:
     Color m_back_color;
 
     /**
-     *  Indicates we are running with more than the usual number of rows, 4.
+     *  Indicates we are running with less than the usual number of rows, 4.
      */
 
     bool m_vert_compressed;
+
+    /**
+     *  Indicates we are running with more than the usual number of columns,
+     *  8.
+     */
+
+    bool m_horiz_compressed;
 
     /**
      *  Indicates if the button is checkable, or just clickable.  Empty slots
@@ -216,6 +223,26 @@ protected:
     void set_dirty (bool f)
     {
         m_is_dirty = f;
+    }
+
+    bool horiz_compressed () const
+    {
+        return m_horiz_compressed;
+    }
+
+    void horiz_compressed (bool f)
+    {
+        m_horiz_compressed = f;
+    }
+
+    bool vert_compressed () const
+    {
+        return m_vert_compressed;
+    }
+
+    void vert_compressed (bool f)
+    {
+        m_vert_compressed = f;
     }
 
     const Color & text_color () const

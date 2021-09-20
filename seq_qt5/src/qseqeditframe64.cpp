@@ -314,7 +314,7 @@ static const int s_rec_vol_items [] =
 static const int s_rec_vol_count = sizeof(s_rec_vol_items) / sizeof(int);
 
 /*
- * For set_event_entry calls.  EXPERIMENTAL
+ * For set_event_entry calls.
  */
 
 using event_popup_pair = struct

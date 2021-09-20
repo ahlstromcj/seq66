@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-09-14
+ * \updates       2021-09-20
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -271,6 +271,7 @@ rcsettings::set_save_list (bool state)
 
     m_save_list.add("drums", state);
     m_save_list.add("ctrl", state);
+    m_save_list.add("qss", state);
 }
 
 void
