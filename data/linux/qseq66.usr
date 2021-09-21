@@ -1,7 +1,7 @@
-# Seq66 0.94.1 (and above) user ('usr') configuration file
+# Seq66 0.97.0 (and above) user ('usr') configuration file
 #
 # /home/usr/.config/seq66/qseq66.usr
-# Written 2021-07-28 12:55:38
+# Written 2021-09-20 14:48:40
 #
 # This is a Seq66 'usr' file. Edit it and place it in the
 # $HOME/.config/seq66 directory. It allows one to apply aliases
@@ -11,10 +11,10 @@
 [Seq66]
 
 config-type = "usr"
-version = 6
+version = 7
 
-# The [comments] section lets one document this file.  Lines starting
-# with '#' and '[', or that are empty end the comment.
+# [comments] holds user documentation for this file. The first empty,
+# hash-commented, or tag line ends the comment.
 
 [comments]
 
@@ -54,8 +54,8 @@ look empty with a space.
 # For a flat style, use Qt themes or style-sheets.
 #
 # 'mainwnd-rows' and 'mainwnd-columns' (option '-o sets=RxC') specify
-# rows/columns in the main grid. R ranges from 4 to 8, C from 8 to 12.
-# Values other than 4x8 have not been tested, use at your own risk.
+# rows/columns in the main grid. R ranges from 4 to 8, C from 4 to 12.
+# Values other than 4x8 have not been tested thoroughly.
 #
 # 'mainwnd-spacing' is for grid buttons; from 0 to 16, default = 2.
 #
@@ -76,6 +76,8 @@ look empty with a space.
 # color palette. Palettes are for Seq66 drawing areas, not for the
 # Qt theme. Normal/inverse palettes are changed via a 'palette' file.
 #
+# 'dark-theme' specifies that are dark theme is active.
+#
 # 'window-redraw-rate' specifies the base window redraw rate for all
 # windows. From 10 to 100; default = 40 ms (25 ms for Windows).
 #
@@ -92,6 +94,7 @@ default-zoom = 2
 global-seq-feature = true
 progress-bar-thick = true
 inverse-colors = false
+dark-theme = false
 window-redraw-rate = 40
 window-scale = 1
 window-scale-y = 1
@@ -109,14 +112,14 @@ use-file-ppqn = true
 
 # [user-midi-settings]
 #
-# Specifies MIDI-specific variables. -1 means the value won't be used.
+# Specifies MIDI-specific variables. -1 means the value isn't used.
 #
 #  Item                 Default   Range
 # 'beats-per-bar':      4         1 to 32.
 # 'beats-per-minute':   120.0     2.0 to 600.0.
 # 'beat-width':         4         1 to 32.
-# 'buss-override':      -1        -1 to 48.
-# 'velocity-override':  -1        -1 to 127.
+# 'buss-override':     -1 (none) -1 to 48.
+# 'velocity-override': -1 (Free) -1 to 127.
 # 'bpm-precision':      0         0 to 2.
 # 'bpm-step-increment': 1.0       0.01 to 25.0.
 # 'bpm-page-increment': 1.0       0.01 to 25.0.
@@ -200,7 +203,8 @@ log = "/home/user/.config/seq66/log"
 key-height = 10
 key-view = octave-letters
 note-resume = false
-style-sheet = ""
+style-sheet-active = false
+style-sheet = "flat-rounded.qss"
 fingerprint-size = 128
 progress-box-width = 0.8
 progress-box-height = 0.4
@@ -210,11 +214,11 @@ progress-note-max = 100
 # [user-session]
 #
 # The session manager to use, if any. The 'session' value is 'none'
-# (default), 'nsm' (Non Session Manager), or 'lash' (LASH, not yet
-# supported).  'url' can be set to the value set by nsmd when run
-# outside of the NSM user-interface. Set 'url' only if running nsmd
-# standalone; use a matching --osc-port number. Seq66 will detect if
-# it's running in an NSM environment and override these settings.
+# (default), 'nsm' (Non Session Manager), or 'jack' (JACK Session).
+# 'url' can be set to the value set by nsmd when run outside of the
+# the NSM user-interface. Set 'url' only if running nsmd stand-alone;
+# use a matching --osc-port number. Seq66 will detect if running in an
+# NSM environment, and override these settings.
 
 [user-session]
 
@@ -227,7 +231,8 @@ url = ""
 # A new pattern means that the loop has the default name 'Untitled'
 # and no events. These values save time during a live recording
 # session. The valid values for record-style are 'merge' (default),
-# 'overwrite', 'expand', and 'one-shot'.
+# 'overwrite', 'expand', and 'one-shot'. The 'wrap-around' value, if
+# true, allows recorded notes to wrap around to the pattern start.
 
 [new-pattern-editor]
 
@@ -236,6 +241,7 @@ thru = false
 record = false
 qrecord = false
 record-style = merge
+wrap-around = false
 
 # End of /home/usr/.config/seq66/qseq66.usr
 #

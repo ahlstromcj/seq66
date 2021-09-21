@@ -885,7 +885,11 @@ smanager::create_configuration
                 if (usr().in_session())
                     rc().auto_rc_save(true);
                 else
+                {
+                    bool u = rc().auto_usr_save();      /* --user-save?     */
                     rc().set_save_list(false);          /* save them all    */
+                    rc().auto_usr_save(u);              /* restore it       */
+                }
             }
         }
         else

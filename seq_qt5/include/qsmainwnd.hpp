@@ -136,6 +136,7 @@ public:
     void remove_live_frame (int ssnum);
     void enable_bus_item (int bus, bool enabled);
     void set_ppqn_text (const std::string & text);
+    void lock_main_window (bool lockit);
 
     int ppqn () const
     {

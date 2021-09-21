@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-31
+ * \updates       2021-09-21
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -801,7 +801,7 @@ void
 configfile::write_date (std::ofstream & file, const std::string & tag)
 {
     file
-        << "# Seq66 0.96.0 (and above) " << tag << " configuration file\n"
+        << "# Seq66 " << seq_version() << " " << tag << " configuration file\n"
         << "#\n# " << name() << "\n"
         << "# Written " << current_date_time() << "\n"
         << "#\n"

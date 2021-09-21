@@ -1,7 +1,7 @@
 # README for Seq66 0.97.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-09-20
+2015-09-10 to 2021-09-21
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -88,7 +88,9 @@ Windows, and using a conventional source tarball.
         *   Added more Preferences settings, enabled some that were not yet
             implemented.  Upgraded the handling of the configuration files.
             By default, the 'rc' file is always saved, in case ports change.
-        *   Added the option "wrap-around" (for notes) to the 'usr' file.
+        *   Added option "wrap-around" (for notes) to the 'usr' file.
+        *   Added option "lock-main-window" to the 'usr' file to prevent
+            resizing the window.
         *   Added code to show unlinked note events on the seqroll, the "u"
             key to remove them, and the "=" key to relink them.
         *   Added more build information to --version and Help / Build Info.

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-20
+ * \updates       2021-09-21
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -352,6 +352,14 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     (
         ui->checkBoxLongBussNames, SIGNAL(clicked(bool)),
         this, SLOT(slot_long_buss_names_click())
+    );
+
+    bool lockwindow = usr().lock_main_window();
+    ui->checkBoxLockMainWindow->setChecked(lockwindow);
+    connect
+    (
+        ui->checkBoxLockMainWindow, SIGNAL(clicked(bool)),
+        this, SLOT(slot_lock_main_window_click())
     );
 
     /*
@@ -877,7 +885,8 @@ qseditoptions::slot_session (int buttonno)
     else
         usr().session_manager("none");
 
-    rc().auto_usr_save(usr().session_manager() != current);
+    if (usr().session_manager() != current)
+        modify_usr();
 }
 
 void
@@ -1287,12 +1296,21 @@ qseditoptions::slot_long_buss_names_click ()
     rc().port_naming(on ? "long" : "short");
 }
 
+void
+qseditoptions::slot_lock_main_window_click ()
+{
+    bool on = ui->checkBoxLockMainWindow->isChecked();
+    usr().lock_main_window(on);
+    modify_usr();
+    m_parent_widget->lock_main_window(on);
+}
+
 /**
  *  In the following functions, turning of the "auto" flag and the "modify"
  *  flag is somewhat redundant.
  *
- *  Also, we don't need to process the "active" check-box.  It is always checked
- *  and is read-only.  The name of the file can be changed, of course.
+ *  Also, we don't need to process the "active" check-box.  It is always
+ *  checked and is read-only.  The name of the file can be changed, of course.
  */
 
 void
@@ -1328,7 +1346,6 @@ qseditoptions::slot_usr_save_click ()
 {
     bool on = ui->checkBoxSaveUsr->isChecked();
     rc().auto_usr_save(on);
-    usr().modify();
 }
 
 void
@@ -1348,9 +1365,8 @@ qseditoptions::slot_usr_filename ()
     if (text != rc().user_filename())
     {
         rc().user_filename(text);
-        rc().auto_usr_save(true);
         rc().auto_rc_save(true);
-        ui->checkBoxSaveUsr->setChecked(true);
+        modify_usr();
     }
 }
 
@@ -1454,7 +1470,6 @@ qseditoptions::slot_drums_filename ()
     if (text != rc().notemap_filename())
     {
         rc().notemap_filename(text);
-        // rc().auto_drums_save(true);  // not necessary
         rc().auto_rc_save(true);
         ui->checkBoxSaveDrums->setChecked(true);
     }
@@ -1465,7 +1480,7 @@ qseditoptions::slot_stylesheet_active_click ()
 {
     bool on = ui->checkBoxActiveStyleSheet->isChecked();
     usr().style_sheet_active(on);
-    rc().auto_usr_save(true);
+    modify_usr();
 }
 
 void
@@ -1476,8 +1491,8 @@ qseditoptions::slot_stylesheet_filename ()
     if (text != usr().style_sheet())
     {
         usr().style_sheet(text);
-        rc().auto_usr_save(true);
-        ui->checkBoxSaveDrums->setChecked(true);
+        modify_usr();
+        ui->checkBoxSaveStyleSheet->setChecked(true);
     }
 }
 

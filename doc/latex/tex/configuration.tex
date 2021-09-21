@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-09-16
+% \update      2021-09-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1416,8 +1416,11 @@
       note-resume = false
       style-sheet = "qseq66.qss"    # optional, can include a path
       fingerprint-size = 128
-      progress-box-width = 0.0
-      progress-box-height = 0.0
+      progress-box-width = 0.8
+      progress-box-height = 0.4
+      progress-note-min = 20
+      progress-note-max = 100
+      lock-main-window = true
    \end{verbatim}
 
    \index{key height}
@@ -1481,6 +1484,19 @@
    It is purely a user preference.
    The values range from 0.0 to 1.0 (full size).  If either is 0,
    then the box isn't drawn, and the pattern appears directly on the button.
+
+   \index{progress-note-min}
+   \index{progress!note-min}
+   \index{progress-note-max}
+   \index{progress!note-max}
+   The \texttt{progress-note-min} and
+   The \texttt{progress-note-max} options change the note range in the progress
+   box to control where in "pitch" the notes are shown.
+
+   \index{lock-main-window}
+   The \texttt{lock-main-window} option, if true, prevents the main window from
+   being resized.  It can still be moved, and the external pattern and song
+   editors can still be resized.
 
 \paragraph{'usr' File / Additional Options / [user-session]}
 \label{paragraph:user_file_added_options_session}

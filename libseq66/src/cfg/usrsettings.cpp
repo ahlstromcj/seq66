@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-09-20
+ * \updates       2021-09-21
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -232,8 +232,8 @@ static const int c_default_redraw_ms = 40;
  *  hard-wired.
  */
 
-static const int c_text_x =  6;            /* does not include the inner padding   */
-static const int c_text_y = 12;            /* does include the inner padding       */
+static const int c_text_x =  6;            /* doesn't include inner padding */
+static const int c_text_y = 12;            /* does include inner padding    */
 
 /**
  *  Constants for the main window, etc. The c_seqchars_x and c_seqchars_y
@@ -370,6 +370,7 @@ usrsettings::usrsettings () :
     m_progress_box_height       (c_progress_box_height),
     m_progress_note_min         (20),
     m_progress_note_max         (100),
+    m_lock_main_window          (false),
     m_session_manager           (session::none),
     m_session_url               (),
     m_in_session                (false),
@@ -453,6 +454,7 @@ usrsettings::set_defaults ()
     m_progress_box_height = c_progress_box_height;
     m_progress_note_min = 20;
     m_progress_note_max = 100;
+    m_lock_main_window = false;
     m_session_manager = session::none;
     m_session_url.clear();
     m_in_session = false;

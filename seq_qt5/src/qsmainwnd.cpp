@@ -266,6 +266,9 @@ qsmainwnd::qsmainwnd
     int y = (screen.height() - height()) / 2;
     move(x, y);
 
+    if (usr().lock_main_window())
+        setFixedSize(width(), height());
+
     /*
      *  Combo-box for tweaking the PPQN.
      */
@@ -804,6 +807,15 @@ qsmainwnd::~qsmainwnd ()
     m_timer->stop();
     cb_perf().unregister(this);
     delete ui;
+}
+
+void
+qsmainwnd::lock_main_window (bool lockit)
+{
+    if (lockit)
+        setFixedSize(width(), height());
+    else
+        setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 }
 
 void

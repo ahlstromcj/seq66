@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-09-20
+ * \updates       2021-09-21
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -776,6 +776,13 @@ private:
     int m_progress_note_max;
 
     /**
+     *  If true, locks the size of the window so that it cannot be changed by
+     *  the user.  Works with the "scale" options as well.
+     */
+
+    bool m_lock_main_window;
+
+    /**
      *  [user-session]
      *
      *  This value indicates to create and use a Non Session Manager (or New
@@ -1411,6 +1418,11 @@ public:
         return m_progress_note_max;
     }
 
+    bool lock_main_window () const
+    {
+        return m_lock_main_window;
+    }
+
     session session_manager () const
     {
         return m_session_manager;
@@ -1497,6 +1509,11 @@ public:         // used in main application module and the usrfile class
     void progress_bar_thick (bool flag)
     {
         m_progress_bar_thick = flag;
+    }
+
+    void lock_main_window (bool flag)
+    {
+        m_lock_main_window = flag;
     }
 
     void inverse_colors (bool flag)

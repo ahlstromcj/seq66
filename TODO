@@ -1,8 +1,6 @@
 TO DO for Seq66 0.97.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-09-11
-
-Hottest to Trivial:
+2019-04-13 to 2021-09-21
 
 UI:
 
@@ -13,18 +11,14 @@ UI:
     Preferences dialog:
 
         -   Display:
-            -   Style-sheet
-            -   Global seq feature
+            -   Global seq feature (global vs pattern background pattern, key,
+                and scale)
             -   Tempo / BPM min and max
-        -   JACK:
         -   Play Options:
             -   New-pattern editor options (check-boxes)
             -   Record-style dropdown
             -   Sets-mode options
         -   Config Options: (new)
-            -   Autosave for rc, usr, playlist, palette, mutes, drums,
-                patches, keymap
-            -   List of base names and active status for the above.
             -   Log-file
         -   Control Options: (new)
             -   Load key and midi controls (does this work?)

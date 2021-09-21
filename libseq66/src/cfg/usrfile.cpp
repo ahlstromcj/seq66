@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-09-20
+ * \updates       2021-09-21
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -60,6 +60,8 @@ static const int s_usr_file_version = 7;
  *      4:  2021-05-15. Disabled using grid-style and grid-brackets settings.
  *      5:  2021-06-08. Transition to get-variable for booleans/integers.
  *      6:  2021-07-26. Added progress-note-min and progress-note-max.
+ *      7:  2021-09-20. Added "style-sheet-active" and "lock-main-window"
+ *          flags.
  *
  * \param name
  *      Provides the full file path specification to the configuration file.
@@ -525,6 +527,8 @@ usrfile::parse ()
         usr().progress_note_min(v);
         v = get_integer(file, tag, "progress-note-max");
         usr().progress_note_max(v);
+        flag = get_boolean(file, tag, "lock-main-window");
+        usr().lock_main_window(flag);
     }
     std::string s = get_variable(file, "[user-session]", "session");
     usr().session_manager(s);
@@ -582,10 +586,10 @@ usrfile::write ()
 
     write_date(file, "user ('usr')");
     file <<
-        "# This is a Seq66 'usr' file. Edit it and place it in the\n"
-        "# $HOME/.config/seq66 directory. It allows one to apply aliases\n"
-        "# (alternate names) to each MIDI bus, channel, and control code, per\n"
-        "# per channel. It has additional options not present in Seq24.\n"
+        "# This is a Seq66 'usr' file. Edit it and place it in the directory\n"
+        "# $HOME/.config/seq66. It allows applying aliases (alternate names)\n"
+        "# to each MIDI bus/port, channel, and control code, per channel. It\n"
+        "# has additional options not present in Seq24.\n"
         ;
 
     write_seq66_header(file, "usr", version());
@@ -598,11 +602,11 @@ usrfile::write ()
         "# 2. Define a MIDI bus, its name, and what instruments are on which\n"
         "#    channel.\n"
         "#\n"
-        "# In the following MIDI buss definitions, channels are counted from\n"
-        "# 0 to 15, not 1 to 16.  Instruments not set here are set to -1 and\n"
-        "# are GM (General MIDI). These replacement MIDI buss labels are shown\n"
-        "# in MIDI Clocks, MIDI Inputs, and in the Pattern Editor buss and\n"
-        "# channel drop-downs. To disable the entries, set the counts to 0.\n"
+        "# In these MIDI buss definitions, channels are counted from 0-15, not\n"
+        "# 1-16.  Instruments not set here are set to -1 and are GM (General\n"
+        "# MIDI). These replacement labels are shown in MIDI Clocks, Inputs,\n"
+        "# the pattern editor buss, channel, and event drop-downs.  To disable\n"
+        "# the entries, set the counts to 0.\n"
         ;
 
     /*
@@ -905,8 +909,11 @@ usrfile::write ()
         "# isn't drawn.  If either is 'default', defaults are used.\n"
         "#\n"
         "# progress-note-min and progress-note-max, if non-zero, change the\n"
-        "# note range in the progress box so that notes are'nt centered in the\n"
+        "# note range in the progress box so that notes aren't centered in the\n"
         "# box, but shown at their position by pitch.\n"
+        "#\n"
+        "# lock-main-window prevents the accidental change of size of the main\n"
+        "# window.\n"
         "\n[user-ui-tweaks]\n\n"
         ;
 
@@ -930,6 +937,7 @@ usrfile::write ()
 
     write_integer(file, "progress-note-min", usr().progress_note_min());
     write_integer(file, "progress-note-max", usr().progress_note_max());
+    write_boolean(file, "lock-main-window", usr().lock_main_window());
 
     /*
      * [user-session]
