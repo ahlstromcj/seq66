@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-16
+ * \updates       2021-09-22
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3987,10 +3987,12 @@ sequence::get_note_info
         midibpm bpm = drawevent.tempo();
         midibyte notebyte = tempo_to_note_value(bpm);
         niout.ni_note = int(notebyte);
+        niout.ni_velocity = int(bpm);
 
         /*
          * Hmmmm, must check if tempo events ever have a link. No, they
          * don't but they might need one to properly draw tempo changes!!!
+         * We might just draw tempo as a circle for simplicity.
          */
 
         if (islinked)
@@ -4131,10 +4133,6 @@ sequence::get_next_event
  *      want to check if it is a Tempo event.  Do not use this iterator if
  *      false is returned!  The caller must increment it for the next call, just
  *      as for get_next_event().
- *
- * \param evtype
- *      A stazed parameter for picking either all event or unselected events.
- *      Defaults to EVENTS_ALL.
  *
  * \return
  *      Returns true if the current event was one of the desired ones, or was

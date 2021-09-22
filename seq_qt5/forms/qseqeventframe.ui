@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>854</width>
+    <width>729</width>
     <height>848</height>
    </rect>
   </property>
@@ -19,26 +19,8 @@
   <property name="windowTitle">
    <string>Events</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
-   <property name="leftMargin">
-    <number>4</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>4</number>
-   </property>
-   <property name="bottomMargin">
-    <number>2</number>
-   </property>
-   <property name="horizontalSpacing">
-    <number>12</number>
-   </property>
-   <property name="verticalSpacing">
-    <number>6</number>
-   </property>
-   <item row="0" column="0" rowspan="5" alignment="Qt::AlignTop">
+  <layout class="QGridLayout" name="gridLayout_4">
+   <item row="0" column="0" rowspan="5">
     <widget class="QTableWidget" name="eventTableWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -48,14 +30,14 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>548</width>
-       <height>400</height>
+       <width>440</width>
+       <height>380</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>548</width>
-       <height>800</height>
+       <width>440</width>
+       <height>380</height>
       </size>
      </property>
      <property name="toolTip">
@@ -149,11 +131,14 @@
      <property name="spacing">
       <number>2</number>
      </property>
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMinimumSize</enum>
+     </property>
      <item>
       <widget class="QLineEdit" name="m_entry_name">
        <property name="maximumSize">
         <size>
-         <width>276</width>
+         <width>200</width>
          <height>16777215</height>
         </size>
        </property>
@@ -180,7 +165,7 @@
         <string>Time Signature and PPQN</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignCenter</set>
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
@@ -202,7 +187,7 @@
         <string>Channel Number re 1</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignCenter</set>
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
@@ -224,7 +209,7 @@
         <string>Measures and Events Count</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignCenter</set>
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
@@ -232,6 +217,9 @@
    </item>
    <item row="1" column="1">
     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMinimumSize</enum>
+     </property>
      <item>
       <widget class="QLabel" name="label_category">
        <property name="minimumSize">
@@ -261,7 +249,10 @@
       </widget>
      </item>
      <item>
-      <layout class="QGridLayout" name="gridLayout">
+      <layout class="QGridLayout" name="gridLayout" columnstretch="1,2">
+       <property name="horizontalSpacing">
+        <number>2</number>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="time_label">
          <property name="minimumSize">
@@ -365,195 +356,13 @@
      </item>
     </layout>
    </item>
-   <item row="5" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="2" column="1">
-    <widget class="QCheckBox" name="hex_data_check_box">
-     <property name="text">
-      <string>Show data in hex format</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <layout class="QGridLayout" name="gridLayout_2">
-     <property name="verticalSpacing">
-      <number>6</number>
-     </property>
-     <item row="1" column="2">
-      <widget class="QPushButton" name="button_dump">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>80</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>80</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>This button appends the text of events to a file for trouble-shooting.
-The file is in the same directory as the MIDI file, and has a name
-of the form &quot;filename-pattern-#.text&quot;, where '#' is the number of
-the pattern.</string>
-       </property>
-       <property name="text">
-        <string>D&amp;ump</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QPushButton" name="button_modify">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>80</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>80</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Deletes the current event, and then inserts a new event at the time shown above, with the data items shown above.</string>
-       </property>
-       <property name="text">
-        <string>Modif&amp;y</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QPushButton" name="button_clear">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>80</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>80</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Deletes all of the events in this pattern.</string>
-       </property>
-       <property name="text">
-        <string>Clear</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QPushButton" name="button_save">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>80</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>80</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Saves the current changes back to the pattern.  This step
-must be done to preserve the changes.  Then the file must
-be saved to make the changes permanent.  Tricky, but safer.</string>
-       </property>
-       <property name="text">
-        <string>Sa&amp;ve</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="button_ins">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>80</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>80</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Inserts a new event at the time shown above, with the data items shown above.</string>
-       </property>
-       <property name="text">
-        <string>&amp;Insert</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QPushButton" name="button_del">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>80</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>80</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Deletes the currently-selected MIDI event.</string>
-       </property>
-       <property name="text">
-        <string>&amp;Delete</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="3" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>4</number>
+      <number>2</number>
      </property>
      <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
+      <enum>QLayout::SetMinimumSize</enum>
      </property>
      <item>
       <widget class="QComboBox" name="selection_combo_box">
@@ -568,32 +377,23 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        </property>
        <property name="minimumSize">
         <size>
-         <width>48</width>
+         <width>164</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>80</width>
+         <width>200</width>
          <height>16777215</height>
         </size>
        </property>
       </widget>
      </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
+    </layout>
+   </item>
+   <item row="3" column="1">
+    <layout class="QGridLayout" name="gridLayout_3">
+     <item row="0" column="0">
       <widget class="QLabel" name="d0_label">
        <property name="minimumSize">
         <size>
@@ -615,11 +415,11 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="1">
       <widget class="QLineEdit" name="entry_ev_data_0">
        <property name="minimumSize">
         <size>
-         <width>48</width>
+         <width>36</width>
          <height>24</height>
         </size>
        </property>
@@ -637,7 +437,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="2">
       <widget class="QLabel" name="d1_label">
        <property name="minimumSize">
         <size>
@@ -659,11 +459,11 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="3">
       <widget class="QLineEdit" name="entry_ev_data_1">
        <property name="minimumSize">
         <size>
-         <width>48</width>
+         <width>36</width>
          <height>24</height>
         </size>
        </property>
@@ -681,7 +481,205 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        </property>
       </widget>
      </item>
+     <item row="1" column="0" colspan="4">
+      <widget class="QCheckBox" name="hex_data_check_box">
+       <property name="text">
+        <string>Show data in hex format</string>
+       </property>
+      </widget>
+     </item>
     </layout>
+   </item>
+   <item row="4" column="1">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMinimumSize</enum>
+     </property>
+     <property name="verticalSpacing">
+      <number>2</number>
+     </property>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="button_dump">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>64</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>64</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>This button appends the text of events to a file for trouble-shooting.
+The file is in the same directory as the MIDI file, and has a name
+of the form &quot;filename-pattern-#.text&quot;, where '#' is the number of
+the pattern.</string>
+       </property>
+       <property name="text">
+        <string>D&amp;ump</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QPushButton" name="button_modify">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>64</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>64</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Deletes the current event, and then inserts a new event at the time shown above, with the data items shown above.</string>
+       </property>
+       <property name="text">
+        <string>Modif&amp;y</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="button_clear">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>64</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>64</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Deletes all of the events in this pattern.</string>
+       </property>
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="button_save">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>64</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>64</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Saves the current changes back to the pattern.  This step
+must be done to preserve the changes.  Then the file must
+be saved to make the changes permanent.  Tricky, but safer.</string>
+       </property>
+       <property name="text">
+        <string>Sa&amp;ve</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="button_ins">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>64</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>64</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Inserts a new event at the time shown above, with the data items shown above.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Insert</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="button_del">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>64</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>64</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Deletes the currently-selected MIDI event.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Delete</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="5" column="0">
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>441</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="5" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

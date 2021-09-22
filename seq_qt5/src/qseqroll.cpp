@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-16
+ * \updates       2021-09-22
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -79,6 +79,7 @@ qseqroll::qseqroll
         p, seqp, frame, zoom, snap, unitheight, totalheight
     ),
     m_analysis_msg          (nullptr),
+    m_font                  ("Monospace"),
     m_backseq_color         (backseq_paint()),
     m_seqkeys_wid           (seqkeys_wid),
     m_timer                 (nullptr),
@@ -108,10 +109,14 @@ qseqroll::qseqroll
 {
     setAttribute(Qt::WA_StaticContents);
     setAttribute(Qt::WA_OpaquePaintEvent);          /* no erase on repaint  */
-    setFocusPolicy(Qt::StrongFocus);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
-    set_snap(seqp->snap());
+    setFocusPolicy(Qt::StrongFocus);
     setMouseTracking(true);         /* track mouse movement without a click */
+    m_font.setStyleHint(QFont::Monospace);
+    m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
+    m_font.setBold(true);
+    m_font.setPointSize(8);
+    set_snap(seqp->snap());
     show();
     m_timer = new QTimer(this);
     m_timer->setInterval(1 * usr().window_redraw_rate());
@@ -579,7 +584,16 @@ qseqroll::draw_notes
             break;
 
         if (dt == sequence::draw::tempo)
-            continue;                               // DRAW_TEMPO_LINE_DISABLED
+        {
+            int x = xoffset(ni.start());
+            int y = total_height() - ((127 - 48) * noteheight); // at C3
+            pen.setColor(fore_color());
+            brush.setColor(tempo_color());
+            painter.setPen(pen);
+            painter.setBrush(brush);
+            draw_tempo(painter, x, y, ni.velocity());
+            continue;
+        }
 
         bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
         bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
@@ -736,6 +750,15 @@ qseqroll::draw_drum_note (QPainter & painter, int x, int y)
 }
 
 void
+qseqroll::draw_tempo (QPainter & painter, int x, int y, int velocity)
+{
+    QString v = QString::fromStdString(std::to_string(velocity));
+    int h = unit_height();
+    painter.drawEllipse(x, y, h, h);
+    painter.drawText(x, y - 2, v);
+}
+
+void
 qseqroll::draw_drum_notes
 (
     QPainter & painter,
@@ -767,7 +790,16 @@ qseqroll::draw_drum_notes
             break;
 
         if (dt == sequence::draw::tempo)
+        {
+            int x = xoffset(ni.start());
+            int y = total_height() - ((127 - 48) * noteheight); // at C3
+            pen.setColor(fore_color());
+            brush.setColor(tempo_color());
+            painter.setPen(pen);
+            painter.setBrush(brush);
+            draw_tempo(painter, x, y, ni.velocity());
             continue;
+        }
 
         bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
         bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;

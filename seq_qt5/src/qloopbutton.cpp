@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-09-20
+ * \updates       2021-09-22
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -747,8 +747,8 @@ qloopbutton::draw_pattern (QPainter & painter)
             else
                 pen.setColor(drum_color());
 
-            float x = float(m_event_box.x());
-            float dx = float(m_event_box.w()) / (m_fingerprint_size - 1);
+            float x = float(lx0);
+            float dx = float(lxw) / (m_fingerprint_size - 1);
             pen.setWidth(2);
             painter.setPen(pen);
             for (int i = 0; i < int(m_fingerprint_size); ++i, x += dx)
@@ -806,21 +806,26 @@ qloopbutton::draw_pattern (QPainter & painter)
                     break;
 
                 int tick_s_x = (ni.start() * lxw) / t1;
-                int tick_f_x = (ni.finish() * lxw) / t1;
-                if (! sequence::is_draw_note(dt) || tick_f_x <= tick_s_x)
-                    tick_f_x = tick_s_x + 1;
-
-                int y = lyh * (n1 - ni.note()) / height;
-
-#if defined DRAW_TEMPO_LINE_DISABLED
+                int sx = lx0 + tick_s_x;                /* start x          */
                 if (dt == sequence::draw::tempo)
-                    pen.setColor(tempo_paint());    /* NEED A MEMBER    */
-#endif
+                {
+                    midibpm max = usr().midi_bpm_maximum();
+                    midibpm min = usr().midi_bpm_minimum();
+                    double tempo = double(ni.velocity());
+                    int y = int((max - tempo) / (max - min) * lyh) + ly0;
+                    // brush.setColor(tempo_paint());
+                    painter.drawEllipse(sx, y, 3, 3);
+                }
+                else
+                {
+                    int y = lyh * (n1 - ni.note()) / height + ly0;
+                    int tick_f_x = (ni.finish() * lxw) / t1;
+                    if (! sequence::is_draw_note(dt) || tick_f_x <= tick_s_x)
+                        tick_f_x = tick_s_x + 1;
 
-                int sx = lx0 + tick_s_x;            /* start x          */
-                int fx = lx0 + tick_f_x;            /* finish x         */
-                y += ly0;                           /* start & finish y */
-                painter.drawLine(sx, y, fx, y);
+                    int fx = lx0 + tick_f_x;            /* finish x         */
+                    painter.drawLine(sx, y, fx, y);
+                }
             }
         }
     }

@@ -110,11 +110,11 @@ qperfroll::qperfroll
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     setFocusPolicy(Qt::StrongFocus);
+    setMouseTracking(true);         /* track mouse movement without a click */
     m_font.setStyleHint(QFont::Monospace);
     m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     m_font.setBold(true);
     m_font.setPointSize(8);
-    setMouseTracking(true);         /* track mouse movement without a click */
     m_timer = new QTimer(this);
     m_timer->setInterval(2 * usr().window_redraw_rate());
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
@@ -971,18 +971,19 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                             sequence::note_info ni;
                             sequence::draw dt = seq->get_next_note(ni, cev);
                             if (dt == sequence::draw::finish)
-                                break;
-                            else if (dt == sequence::draw::tempo)
                             {
-                                /*
-                                 * We want to draw a tempo line from the
-                                 * beginning or the previous tempo change to
-                                 * here.  TODO.  We might consider doing it in
-                                 * a separate function if we detect tempo
-                                 * here.
-                                 */
-
-                                continue;       // DRAW_TEMPO_LINE_DISABLED
+                                break;
+                            }
+                            if (dt == sequence::draw::tempo)
+                            {
+                                midipulse tick_s = ni.start();
+                                int sx = tick_s * lenw / lens + marker_x;
+                                midibpm max = usr().midi_bpm_maximum();
+                                midibpm min = usr().midi_bpm_minimum();
+                                double tempo = double(ni.velocity());
+                                int yt = int((max - tempo) / (max - min) * cny) + y;
+                                painter.drawEllipse(sx, yt, 3, 3);
+                                continue;
                             }
 
                             midipulse tick_s = ni.start();

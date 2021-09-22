@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-16
+ * \updates       2021-09-22
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -172,6 +172,7 @@ private:
     void draw_notes (QPainter & painter, const QRect & r, bool background);
     void draw_drum_notes (QPainter & painter, const QRect & r, bool background);
     void draw_drum_note (QPainter & painter, int x, int y);
+    void draw_tempo (QPainter & painter, int x, int y, int velocity);
     void call_draw_notes (QPainter & painter, const QRect & view);
 
 private:
@@ -181,6 +182,7 @@ private:
      */
 
     QMessageBox * m_analysis_msg;
+    QFont m_font;
 
     /**
      *  The color (from the palette) for the background sequence.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-09-21
+ * \updates       2021-09-22
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -330,9 +330,9 @@ usrsettings::usrsettings () :
     m_use_file_ppqn             (true),
     m_file_ppqn                 (0),
     m_midi_beats_per_measure    (c_def_beats_per_measure),
-    m_midi_bpm_minimum          (0),
+    m_midi_bpm_minimum          (c_min_beats_per_minute),
     m_midi_beats_per_minute     (c_def_beats_per_minute),
-    m_midi_bpm_maximum          (c_midibyte_value_max),
+    m_midi_bpm_maximum          (c_max_beats_per_minute),
     m_midi_beat_width           (c_def_beat_width),
     m_midi_buss_override        (null_buss()),
     m_velocity_override         (c_preserve_velocity),
@@ -417,9 +417,9 @@ usrsettings::set_defaults ()
     m_use_file_ppqn = true;
     m_file_ppqn = 0;
     m_midi_beats_per_measure = c_def_beats_per_measure;
-    m_midi_bpm_minimum = 0;
+    m_midi_bpm_minimum = c_min_beats_per_minute;
     m_midi_beats_per_minute = c_def_beats_per_minute;
-    m_midi_bpm_maximum = c_midibyte_value_max;
+    m_midi_bpm_maximum = c_max_beats_per_minute;
     m_midi_beat_width = c_def_beat_width;
     m_midi_buss_override = null_buss();
     m_velocity_override = c_preserve_velocity;
@@ -438,7 +438,6 @@ usrsettings::set_defaults ()
 
     m_mainwnd_x = c_default_window_width;
     m_mainwnd_y = c_default_window_height;
-
     m_app_is_headless = false;
     m_user_option_daemonize = false;
     m_user_use_logfile = false;
@@ -1160,7 +1159,7 @@ usrsettings::midi_beats_per_bar (int value)
 
 /**
  * \setter m_midi_bpm_minimum
- *      This value can be set from 20 to 500.  The default value is 120.
+ *      This value can be set from 2 to 600.  The default value is 2.
  */
 
 void
@@ -1172,7 +1171,7 @@ usrsettings::midi_bpm_minimum (midibpm value)
 
 /**
  * \setter m_midi_beats_minute
- *      This value can be set from 20 to 500.  The default value is 120.
+ *      This value can be set from 2 to 600.  The default value is 120.
  */
 
 void
@@ -1184,7 +1183,7 @@ usrsettings::midi_beats_per_minute (midibpm value)
 
 /**
  * \setter m_midi_bpm_maximum
- *      This value can be set from 20 to 500.  The default value is 120.
+ *      This value can be set from 2 to 600.  The default value is 600.
  */
 
 void

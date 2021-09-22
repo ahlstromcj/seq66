@@ -255,6 +255,9 @@ qsmainwnd::qsmainwnd
 
     int w = usr().mainwnd_x();                  /* normal, maybe scaled     */
     int h = usr().mainwnd_y();
+    if (rc().investigate())
+        printf("Size %d x %d\n", w, h);
+
     resize(QSize(w, h));                        /* scaled values            */
     w = usr().mainwnd_x_min();                  /* scaled even smaller      */
     h = usr().mainwnd_y_min();

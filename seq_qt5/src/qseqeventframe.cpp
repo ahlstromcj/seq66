@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-08-20
+ * \updates       2021-09-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -148,7 +148,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
      */
 
     QStringList columns;
-    columns << "Time" << "Event" << "Ch" << "Data 0" << "Data 1" << "Link";
+    columns << "Time" << "Event" << "Ch" << "D 0" << "D 1" << "Link";
     ui->eventTableWidget->setHorizontalHeaderLabels(columns);
     ui->eventTableWidget->setSelectionBehavior
     (

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-09-15
+ * \updates       2021-09-22
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -135,8 +135,8 @@ public:
 
         midipulse ni_tick_start;
         midipulse ni_tick_finish;
-        int ni_note;
-        int ni_velocity;
+        int ni_note;                /* for tempo, the location to paint it  */
+        int ni_velocity;            /* for tempo, the truncated tempo value */
         bool ni_selected;
 
     public:

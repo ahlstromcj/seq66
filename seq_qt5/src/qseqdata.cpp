@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-08-12
+ * \updates       2021-09-22
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -83,13 +83,14 @@ qseqdata::qseqdata
     m_keyboard_padding_x    (s_x_data_fix),
     m_dataarea_y            (height > 0 ? height : sc_dataarea_y),
     m_status                (EVENT_NOTE_ON),
-    m_cc                    (1),                /* modulation */
+    m_cc                    (1),                /* modulation   */
     m_line_adjust           (false),
     m_relative_adjust       (false),
     m_dragging              (false)
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    m_font.setPointSize(6);
+    m_font.setPointSize(8);                     /* was 6        */
+    m_font.setBold(true);
     cb_perf().enregister(this);
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
@@ -180,23 +181,33 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             int event_height = event::is_one_byte_msg(m_status) ? d0 : d1 ;
             event_height = height() - byte_height(m_dataarea_y, event_height);
             pen.setWidth(2);                    /* draw vertical grid lines */
-            if (selected)
-                pen.setColor(sel_paint());      /* pen.setColor("orange")   */
-            else
-                pen.setColor(fore_color());     /* pen.setColor(Qt::black)  */
-
-            painter.setPen(pen);
-            painter.drawLine(event_x, event_height, event_x, height());
 
             int x_offset = event_x + s_x_data_fix;
             int y_offset = m_dataarea_y - 25;
-            snprintf(digits, sizeof digits, "%3d", d1);
+            if (cev->is_tempo())
+            {
+                d1 = height() - tempo_to_note_value(cev->tempo());
+                snprintf(digits, sizeof digits, "%3d", int(cev->tempo()));
+                pen.setColor(tempo_color());
+                painter.setPen(pen);
+                painter.drawEllipse(event_x, d1 - 3, 6, 6);
+                pen.setColor(fore_color());
+                painter.setPen(pen);
+                painter.drawText(x_offset, d1 + 4, digits);
+            }
+            else
+            {
+                pen.setColor(selected ? sel_paint() : fore_color());
+                painter.setPen(pen);
+                painter.drawLine(event_x, event_height, event_x, height());
+                snprintf(digits, sizeof digits, "%3d", d1);
 
-            QString val = digits;
-            pen.setColor(fore_color());         /* pen.setColor(Qt::black)  */
-            painter.drawText(x_offset, y_offset,      val.at(0));
-            painter.drawText(x_offset, y_offset +  8, val.at(1));
-            painter.drawText(x_offset, y_offset + 16, val.at(2));
+                QString val = digits;
+                pen.setColor(fore_color());
+                painter.drawText(x_offset, y_offset,      val.at(0));
+                painter.drawText(x_offset, y_offset +  9, val.at(1));
+                painter.drawText(x_offset, y_offset + 18, val.at(2));
+            }
         }
     }
     if (m_line_adjust)                          /* draw edit line           */
