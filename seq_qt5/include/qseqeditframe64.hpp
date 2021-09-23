@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-09-12
+ * \updates       2021-09-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -108,6 +108,11 @@ class qseqeditframe64 final : public qseqframe, protected performer::callbacks
 
 private:
 
+    /**
+     *  Enumerates the events we support for editing.  Note that tempo is a meta
+     *  event and must be handled different.
+     */
+
     enum class event_index
     {
         note_on,
@@ -115,7 +120,8 @@ private:
         aftertouch,
         prog_change,
         chan_pressure,
-        pitch_wheel
+        pitch_wheel,
+        tempo
     };
 
 public:

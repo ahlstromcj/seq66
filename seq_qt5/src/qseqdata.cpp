@@ -370,13 +370,19 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
 void
 qseqdata::set_data_type (midibyte status, midibyte control)
 {
-    status = event::normalize_status(status);
-    if (status != m_status || control != m_cc)
+    if (event::is_meta_status(status))
     {
-        m_status = status;
-        m_cc = control;
-        update();                   // set_dirty();
     }
+    else
+    {
+        status = event::normalize_status(status);
+        if (status != m_status || control != m_cc)
+        {
+            m_status = status;
+            m_cc = control;
+        }
+    }
+    update();
 }
 
 }           // namespace seq66

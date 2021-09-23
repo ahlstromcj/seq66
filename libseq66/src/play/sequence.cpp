@@ -4172,6 +4172,30 @@ sequence::get_next_event_match
     return false;
 }
 
+bool
+sequence::get_next_meta_match
+(
+    midibyte metamsg,
+    event::buffer::const_iterator & evi
+)
+{
+    automutex locker(m_mutex);
+    bool result = false;
+    while (evi != m_events.end())
+    {
+        if (m_events.action_in_progress())      /* atomic boolean check     */
+            return false;                       /* bug out immediately      */
+
+        const event & drawevent = eventlist::cdref(evi);
+        result = drawevent.is_meta() && drawevent.channel() == metamsg;
+        if (result)
+            break;
+
+        ++evi;                                  /* keep going here          */
+    }
+    return result;
+}
+
 /**
  *  Get the next trigger in the trigger list, and set the parameters based
  *  on that trigger.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-08-13
+ * \updates       2021-09-22
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -331,7 +331,8 @@ s_event_items [] =
     { "Aftertouch",         EVENT_AFTERTOUCH        },
     { "Program Change",     EVENT_PROGRAM_CHANGE    },
     { "Channel Pressure",   EVENT_CHANNEL_PRESSURE  },
-    { "Pitch Wheel",        EVENT_PITCH_WHEEL       }
+    { "Pitch Wheel",        EVENT_PITCH_WHEEL       },
+    { "Tempo",              EVENT_META_SET_TEMPO    }       /* special */
 };
 
 /**
@@ -2234,42 +2235,52 @@ qseqeditframe64::set_background_sequence (int seqnum)
 void
 qseqeditframe64::set_data_type (midibyte status, midibyte control)
 {
-    char hexa[8];
-    char type[32];
-    snprintf(hexa, sizeof hexa, "[0x%02X]", status);
-    status = event::normalize_status(status);
-    m_seqevent->set_data_type(status, control);     /* qstriggereditor      */
-    m_seqdata->set_data_type(status, control);
-    if (status == EVENT_NOTE_OFF)
-        snprintf(type, sizeof type, "Note Off");
-    else if (status == EVENT_NOTE_ON)
-        snprintf(type, sizeof type, "Note On");
-    else if (status == EVENT_AFTERTOUCH)
-        snprintf(type, sizeof type, "Aftertouch");
-    else if (status == EVENT_CONTROL_CHANGE)
+    if (event::is_meta_status(status))
     {
-        int bus = int(seq_pointer()->seq_midi_bus());
-        int channel = int(seq_pointer()->seq_midi_channel());
-        std::string ccname = usr().controller_active(bus, channel, control) ?
-            usr().controller_name(bus, channel, control) :
-            controller_name(control) ;
-
-        snprintf(type, sizeof type, "CC - %s", ccname.c_str());
+        if (event::is_tempo_status(status))
+        {
+            ui->m_entry_data->setText("Tempo");
+        }
     }
-    else if (status == EVENT_PROGRAM_CHANGE)
-        snprintf(type, sizeof type, "Program Change");
-    else if (status == EVENT_CHANNEL_PRESSURE)
-        snprintf(type, sizeof type, "Channel Pressure");
-    else if (status == EVENT_PITCH_WHEEL)
-        snprintf(type, sizeof type, "Pitch Wheel");
-    else if (status == EVENT_MIDI_META)
-        snprintf(type, sizeof type, "Meta Events");
     else
-        snprintf(type, sizeof type, "Unknown MIDI Event");
+    {
+        char hexa[8];
+        char type[32];
+        snprintf(hexa, sizeof hexa, "[0x%02X]", status);
+        status = event::normalize_status(status);
+        m_seqevent->set_data_type(status, control);     /* qstriggereditor      */
+        m_seqdata->set_data_type(status, control);
+        if (status == EVENT_NOTE_OFF)
+            snprintf(type, sizeof type, "Note Off");
+        else if (status == EVENT_NOTE_ON)
+            snprintf(type, sizeof type, "Note On");
+        else if (status == EVENT_AFTERTOUCH)
+            snprintf(type, sizeof type, "Aftertouch");
+        else if (status == EVENT_CONTROL_CHANGE)
+        {
+            int bus = int(seq_pointer()->seq_midi_bus());
+            int channel = int(seq_pointer()->seq_midi_channel());
+            std::string ccname = usr().controller_active(bus, channel, control) ?
+                usr().controller_name(bus, channel, control) :
+                controller_name(control) ;
 
-    char text[80];
-    snprintf(text, sizeof text, "%s %s", hexa, type);
-    ui->m_entry_data->setText(text);
+            snprintf(type, sizeof type, "CC - %s", ccname.c_str());
+        }
+        else if (status == EVENT_PROGRAM_CHANGE)
+            snprintf(type, sizeof type, "Program Change");
+        else if (status == EVENT_CHANNEL_PRESSURE)
+            snprintf(type, sizeof type, "Channel Pressure");
+        else if (status == EVENT_PITCH_WHEEL)
+            snprintf(type, sizeof type, "Pitch Wheel");
+        else if (event::is_meta_status(status))
+            snprintf(type, sizeof type, "Meta Events");
+        else
+            snprintf(type, sizeof type, "Unknown MIDI Event");
+
+        char text[80];
+        snprintf(text, sizeof text, "%s %s", hexa, type);
+        ui->m_entry_data->setText(text);
+    }
 }
 
 /**
@@ -2784,7 +2795,12 @@ qseqeditframe64::set_event_entry
 }
 
 void
-qseqeditframe64::set_event_entry (QMenu * menu, bool present, event_index ei)
+qseqeditframe64::set_event_entry
+(
+    QMenu * menu,
+    bool present,
+    event_index ei
+)
 {
     int index = static_cast<int>(ei);
     std::string text = s_event_items[index].epp_name;
@@ -2847,6 +2863,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     bool program_change = false;
     bool channel_pressure = false;
     bool pitch_wheel = false;
+    bool tempo = false;
     midibyte status = 0, cc = 0;
     seq::pointer s = seq_pointer();
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
@@ -2867,6 +2884,22 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
         case EVENT_CHANNEL_PRESSURE:    channel_pressure = true;    break;
         }
     }
+
+    /*
+     * Currently the only meta event that can be edited is tempo.
+     */
+
+#if defined THIS_CODE_IS_READY
+    for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
+    {
+        if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
+        {
+            tempo = true;
+            break;
+        }
+    }
+#endif
+
     if (not_nullptr(m_events_popup))
         delete m_events_popup;
 
@@ -2878,6 +2911,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     set_event_entry(m_events_popup, program_change, event_index::prog_change);
     set_event_entry(m_events_popup, channel_pressure, event_index::chan_pressure);
     set_event_entry(m_events_popup, pitch_wheel, event_index::pitch_wheel);
+    set_event_entry(m_events_popup, tempo, event_index::tempo);
     m_events_popup->addSeparator();
 
     /**
@@ -2984,6 +3018,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     bool program_change = false;
     bool channel_pressure = false;
     bool pitch_wheel = false;
+    bool tempo = false;
     bool any_events = false;
     midibyte status = 0, cc = 0;
     seq::pointer s = seq_pointer();
@@ -3032,11 +3067,21 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
             break;
         }
     }
+#if defined THIS_CODE_IS_READY
+    for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
+    {
+        if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
+        {
+            any_events = true;
+            tempo = true;
+            break;
+        }
+    }
+#endif
     if (not_nullptr(m_minidata_popup))
         delete m_minidata_popup;
 
     m_minidata_popup = new QMenu(this);
-
     if (note_on)
         set_event_entry(m_minidata_popup, true, event_index::note_on);
 
@@ -3054,6 +3099,9 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
 
     if (pitch_wheel)
         set_event_entry(m_minidata_popup, true, event_index::pitch_wheel);
+
+    if (tempo)
+        set_event_entry(m_minidata_popup, true, event_index::tempo);
 
     if (any_events)
         m_minidata_popup->addSeparator();

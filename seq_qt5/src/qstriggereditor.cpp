@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-08-12
+ * \updates       2021-09-22
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -629,13 +629,19 @@ qstriggereditor::set_adding (bool a)
 void
 qstriggereditor::set_data_type (midibyte status, midibyte control)
 {
-    status = event::normalize_status(status);
-    if (status != m_status || control != m_cc)
+    if (event::is_meta_status(status))
     {
-        m_status = status;
-        m_cc = control;
-        update();                   // set_dirty();
     }
+    else
+    {
+        status = event::normalize_status(status);
+        if (status != m_status || control != m_cc)
+        {
+            m_status = status;
+            m_cc = control;
+        }
+    }
+    update();
 }
 
 }           // namespace seq66

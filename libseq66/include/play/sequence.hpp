@@ -1593,7 +1593,12 @@ public:
     bool get_next_event_match
     (
         midibyte status, midibyte cc,
-        event::buffer::const_iterator & ev
+        event::buffer::const_iterator & evi
+    );
+    bool get_next_meta_match
+    (
+        midibyte metamsg,
+        event::buffer::const_iterator & evi
     );
     bool get_next_event
     (

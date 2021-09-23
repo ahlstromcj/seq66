@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-19
+ * \updates       2021-09-22
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -541,6 +541,16 @@ public:
     static bool is_meta_msg (midibyte m)
     {
         return m == EVENT_MIDI_META;
+    }
+
+    static bool is_meta_status (midibyte m)
+    {
+        return m <= EVENT_META_SEQSPEC;
+    }
+
+    static bool is_tempo_status (midibyte m)
+    {
+        return m <= EVENT_META_SET_TEMPO;
     }
 
     /**
