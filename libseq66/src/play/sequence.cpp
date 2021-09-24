@@ -102,7 +102,9 @@ const std::string sequence::sm_default_name = "Untitled";
 
 /**
  *  A static clipboard for holding pattern/sequence events.  Being static
- *  allows for copy/paste between patterns.
+ *  allows for copy/paste between patterns.  Please note that this is used
+ *  only for selected event.  For whole patterns, see the sequence object
+ *  performer::m_seq_clipboard.
  */
 
 eventlist sequence::sm_clipboard;
@@ -264,7 +266,7 @@ sequence::modify (bool notifychange)
  */
 
 void
-sequence::partial_assign (const sequence & rhs)
+sequence::partial_assign (const sequence & rhs, bool toclipboard)
 {
     if (this != &rhs)
     {
@@ -372,7 +374,8 @@ sequence::partial_assign (const sequence & rhs)
 
         m_last_tick = 0;                            /* reset to tick 0      */
         verify_and_link();                          /* NoteOn <---> NoteOff */
-        modify();                                   /* ca 2020-07-30        */
+        if (! toclipboard)
+            modify();
     }
 }
 
@@ -1542,6 +1545,61 @@ sequence::select_events
 {
     automutex locker(m_mutex);
     return m_events.select_events(tick_s, tick_f, status, cc, action);
+}
+
+/**
+ *  Select all events with the given status, and returns the number
+ *  selected.  Note that there is also an overloaded version of this
+ *  function.
+ *
+ * \threadsafe
+ *
+ * \warning
+ *      This used to be a void function, so it just returns 0 for now.
+ *
+ * \param status
+ *      Provides the status value to be selected.
+ *
+ * \param cc
+ *      If the status is EVENT_CONTROL_CHANGE, then data byte 0 must
+ *      match this value.
+ *
+ * \param inverse
+ *      If true, invert the selection.
+ *
+ * \return
+ *      Always returns 0.
+ */
+
+int
+sequence::select_events (midibyte status, midibyte cc, bool inverse)
+{
+    automutex locker(m_mutex);
+    midibyte d0, d1;
+    for (auto & er : m_events)
+    {
+        er.get_data(d0, d1);
+        bool match = er.match_status(status);
+        bool canselect;
+        if (status == EVENT_CONTROL_CHANGE)
+            canselect = match && d0 == cc;  /* correct status and correct cc */
+        else
+            canselect = match;              /* correct status, cc irrelevant */
+
+        if (canselect)
+        {
+            if (inverse)
+            {
+                if (! er.is_selected())
+                    er.select();
+                else
+                    er.unselect();
+            }
+            else
+                er.select();
+        }
+    }
+    return 0;
 }
 
 /**
@@ -3938,9 +3996,10 @@ sequence::get_next_note
             return draw::finish;                /* bug out immediately      */
 
         draw status = get_note_info(niout, evi);
-        ++evi;
         if (status != draw::none)
-            return status;
+            return status;                      /* must ++evi after call    */
+
+        ++evi;
     }
     return draw::finish;
 }
@@ -4180,20 +4239,18 @@ sequence::get_next_meta_match
 )
 {
     automutex locker(m_mutex);
-    bool result = false;
     while (evi != m_events.end())
     {
         if (m_events.action_in_progress())      /* atomic boolean check     */
             return false;                       /* bug out immediately      */
 
         const event & drawevent = eventlist::cdref(evi);
-        result = drawevent.is_meta() && drawevent.channel() == metamsg;
-        if (result)
-            break;
+        if (drawevent.is_meta() && drawevent.channel() == metamsg)
+            return true;
 
         ++evi;                                  /* keep going here          */
     }
-    return result;
+    return false;
 }
 
 /**
@@ -4899,61 +4956,6 @@ sequence::off_playing_notes ()
         }
     }
     master_bus()->flush();
-}
-
-/**
- *  Select all events with the given status, and returns the number
- *  selected.  Note that there is also an overloaded version of this
- *  function.
- *
- * \threadsafe
- *
- * \warning
- *      This used to be a void function, so it just returns 0 for now.
- *
- * \param status
- *      Provides the status value to be selected.
- *
- * \param cc
- *      If the status is EVENT_CONTROL_CHANGE, then data byte 0 must
- *      match this value.
- *
- * \param inverse
- *      If true, invert the selection.
- *
- * \return
- *      Always returns 0.
- */
-
-int
-sequence::select_events (midibyte status, midibyte cc, bool inverse)
-{
-    automutex locker(m_mutex);
-    midibyte d0, d1;
-    for (auto & er : m_events)
-    {
-        er.get_data(d0, d1);
-        bool match = er.match_status(status);
-        bool canselect;
-        if (status == EVENT_CONTROL_CHANGE)
-            canselect = match && d0 == cc;  /* correct status and correct cc */
-        else
-            canselect = match;              /* correct status, cc irrelevant */
-
-        if (canselect)
-        {
-            if (inverse)
-            {
-                if (! er.is_selected())
-                    er.select();
-                else
-                    er.unselect();
-            }
-            else
-                er.select();
-        }
-    }
-    return 0;
 }
 
 /**

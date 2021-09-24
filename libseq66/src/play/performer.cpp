@@ -399,7 +399,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_last_time_ms          (0),
     m_beats_per_bar         (usr().midi_beats_per_bar()),
     m_beat_width            (usr().midi_beat_width()),
-    m_tempo_track_number    (0),
+//  m_tempo_track_number    (0),
     m_clocks_per_metronome  (24),
     m_32nds_per_quarter     (0),
     m_us_per_quarter_note   (0),
@@ -687,7 +687,7 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
     m_mute_groups = rcs.mute_groups();              /* could be 0-sized     */
     song_mode(rcs.song_start_mode());               /* boolean setter       */
     filter_by_channel(rcs.filter_by_channel());
-    tempo_track_number(rcs.tempo_track_number());   /* [midi-meta-events]   */
+//  tempo_track_number(rcs.tempo_track_number());   /* [midi-meta-events]   */
     m_resume_note_ons = usrs.resume_note_ons();
     return result;
 }
@@ -722,7 +722,7 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     rcs.mute_groups() = m_mute_groups;
     rcs.song_start_mode(pb);
     rcs.filter_by_channel(m_filter_by_channel);
-    rcs.tempo_track_number(m_tempo_track_number);
+//  rcs.tempo_track_number(m_tempo_track_number);
     usrs.resume_note_ons(m_resume_note_ons);
 
     /*
@@ -1226,7 +1226,7 @@ performer::copy_sequence (seq::number seqno)
         const seq::pointer s = get_sequence(seqno);
         result = bool(s);
         if (result)
-            m_seq_clipboard.partial_assign(*s);
+            m_seq_clipboard.partial_assign(*s, true);
     }
     return result;
 }
@@ -1823,7 +1823,7 @@ performer::tap_bpm_timeout ()
 bool
 performer::log_current_tempo ()
 {
-    seq::pointer s = get_sequence(tempo_track_number());
+    seq::pointer s = get_sequence(rc().tempo_track_number());
     bool result = bool(s);
     if (result)
     {

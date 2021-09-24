@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2021-07-19
+ * \updates       2021-09-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -435,7 +435,7 @@ songsummary::write_beat_info
     file << "Global beats, beat width, and tempo track:" << "\n";
     write_prop_header(file, c_perf_bp_mes, p.get_beats_per_bar());
     write_prop_header(file, c_perf_bw, p.get_beat_width());
-    write_prop_header(file, c_tempo_track, p.tempo_track_number());
+    write_prop_header(file, c_tempo_track, rc().tempo_track_number());
 }
 
 /**

@@ -237,7 +237,7 @@ midi_vector_base::add_ex_event (const event & e, midipulse deltatime)
     if (e.is_meta())
         put(e.channel());                       /* indicates meta type      */
 
-    int count = e.get_sysex_size();             /* applies for meta, too    */
+    int count = e.sysex_size();                 /* applies for meta, too    */
     put(count);
     for (int i = 0; i < count; ++i)
         put(e.get_sysex()[i]);

@@ -2037,8 +2037,8 @@ midifile::parse_proprietary_track (performer & p, int file_size)
         if (seqspec == c_tempo_track)
         {
             int tempotrack = int(read_long());
-            if (tempotrack > 0)
-                p.tempo_track_number(tempotrack);
+            if (tempotrack >= 0)
+                rc().tempo_track_number(tempotrack);
         }
 
 #if defined SEQ66_SEQUENCE_EDIT_MODE_GLOBAL
@@ -3037,7 +3037,7 @@ midifile::write_proprietary_track (performer & p)
     write_prop_header(c_perf_bw, 4);                    /* control tag+4 */
     write_long(long(p.get_beat_width()));               /* perfedit BW   */
     write_prop_header(c_tempo_track, 4);                /* control tag+4 */
-    write_long(long(p.tempo_track_number()));           /* perfedit BW   */
+    write_long(long(rc().tempo_track_number()));        /* perfedit BW   */
     write_track_end();
     return true;
 }

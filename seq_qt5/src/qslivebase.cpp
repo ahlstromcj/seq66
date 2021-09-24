@@ -209,13 +209,13 @@ qslivebase::delete_seq ()
 bool
 qslivebase::paste_seq ()
 {
-    return m_can_paste ? perf().paste_sequence(m_current_seq) : false ;
+    return perf().can_paste() ? perf().paste_sequence(m_current_seq) : false ;
 }
 
 bool
 qslivebase::merge_seq ()
 {
-    return m_can_paste ? perf().merge_sequence(m_current_seq) : false ;
+    return perf().can_paste() ? perf().merge_sequence(m_current_seq) : false ;
 }
 
 }           // namespace seq66

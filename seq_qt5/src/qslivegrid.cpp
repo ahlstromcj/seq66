@@ -1471,7 +1471,7 @@ qslivegrid::popup_menu ()
             this, SLOT(merge_sequence())
         );
     }
-    else if (m_can_paste)
+    else if (perf().can_paste())
     {
         QAction * actionPaste = new QAction(tr("&Paste to pattern"), m_popup);
         m_popup->addAction(actionPaste);

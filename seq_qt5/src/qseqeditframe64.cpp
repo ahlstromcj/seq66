@@ -2887,9 +2887,15 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
 
     /*
      * Currently the only meta event that can be edited is tempo.
+     * The meta-match function keeps going until it finds the meta event or
+     * it ends.  All we care here is if one exists.
      */
 
-#if defined THIS_CODE_IS_READY
+    auto cev = s->cbegin();
+    if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
+        tempo = true;
+
+#if 0
     for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
         if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
@@ -2897,6 +2903,8 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
             tempo = true;
             break;
         }
+        else
+            break;
     }
 #endif
 
@@ -3067,17 +3075,13 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
             break;
         }
     }
-#if defined THIS_CODE_IS_READY
-    for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
+
+    auto cev = s->cbegin();
+    if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
     {
-        if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
-        {
-            any_events = true;
-            tempo = true;
-            break;
-        }
+        any_events = true;
+        tempo = true;
     }
-#endif
     if (not_nullptr(m_minidata_popup))
         delete m_minidata_popup;
 

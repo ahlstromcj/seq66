@@ -383,31 +383,28 @@ qloopbutton::initialize_fingerprint ()
                 m_fingerprint[i] = m_fingerprint_count[i] = 0;
 
             int nh = n1 - n0;
-            auto cev = loop()->cbegin();
-            while (! loop()->cend(cev))
+            for (auto cev = loop()->cbegin(); ! loop()->cend(cev); ++cev)
             {
                 sequence::note_info ni;
-                sequence::draw dt = loop()->get_next_note(ni, cev);  /* ++cev */
-                if (dt != sequence::draw::finish)
-                {
-                    int x = x0 + (ni.start() * xw) / t1;
-                    int y = y0 + yh * (ni.note() - n0) / nh;
-                    int i = i1 * (x - x0) / xw;
-                    if (i < 0)
-                        i = 0;
-                    else if (i >= i1)
-                        i = i1 - 1;
+                sequence::draw dt = loop()->get_next_note(ni, cev);
+                if (dt == sequence::draw::finish)
+                    break;
 
-                    if (m_show_average)     /* not sure how useful this is  */
-                    {
-                        ++m_fingerprint_count[i];
-                        m_fingerprint[i] += midishort(y);
-                    }
-                    else
-                        m_fingerprint[i] = midishort(y);
+                int x = x0 + (ni.start() * xw) / t1;
+                int y = y0 + yh * (ni.note() - n0) / nh;
+                int i = i1 * (x - x0) / xw;
+                if (i < 0)
+                    i = 0;
+                else if (i >= i1)
+                    i = i1 - 1;
+
+                if (m_show_average)     /* not sure how useful this is  */
+                {
+                    ++m_fingerprint_count[i];
+                    m_fingerprint[i] += midishort(y);
                 }
                 else
-                    break;
+                    m_fingerprint[i] = midishort(y);
             }
             for (int i = 0; i < i1; ++i)
             {
@@ -796,12 +793,10 @@ qloopbutton::draw_pattern (QPainter & painter)
                 pen.setColor(drum_color());
 
             painter.setPen(pen);
-
-            auto cev = loop()->cbegin();
-            while (! loop()->cend(cev))
+            for (auto cev = loop()->cbegin(); ! loop()->cend(cev); ++cev)
             {
                 sequence::note_info ni;
-                sequence::draw dt = loop()->get_next_note(ni, cev); /* ++cev */
+                sequence::draw dt = loop()->get_next_note(ni, cev);
                 if (dt == sequence::draw::finish)
                     break;
 
@@ -813,7 +808,7 @@ qloopbutton::draw_pattern (QPainter & painter)
                     midibpm min = usr().midi_bpm_minimum();
                     double tempo = double(ni.velocity());
                     int y = int((max - tempo) / (max - min) * lyh) + ly0;
-                    // brush.setColor(tempo_paint());
+                    /**/ brush.setColor(tempo_paint());
                     painter.drawEllipse(sx, y, 3, 3);
                 }
                 else

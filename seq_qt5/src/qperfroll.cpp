@@ -871,8 +871,8 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
         int seqid = y;
         if (perf().is_seq_active(seqid))
         {
-            seq::pointer seq = perf().get_sequence(seqid);
-            midipulse lens = seq->get_length();
+            seq::pointer s = perf().get_sequence(seqid);
+            midipulse lens = s->get_length();
 
             /*
              * Get the seq's assigned colour and beautify it.  Reduce the
@@ -882,7 +882,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
 
             int c = perf().color(seqid);
             Color backcolor = get_color_fix(PaletteColor(c));
-            if (seq->playing())
+            if (s->playing())
                 backcolor.setAlpha(s_alpha_playing);
             else
                 backcolor.setAlpha(s_alpha_muted);
@@ -892,8 +892,8 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
             int cbwoffset = cbw + h / 2 - 2;
             trigger trig;
             painter.setFont(m_font);
-            seq->reset_draw_trigger_marker();
-            while (seq->next_trigger(trig))             /* side-effect      */
+            s->reset_draw_trigger_marker();
+            while (s->next_trigger(trig))               /* side-effect      */
             {
                 if (trig.tick_end() > 0)
                 {
@@ -952,11 +952,11 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     {
                         int note0;
                         int note1;
-                        (void) seq->minmax_notes(note0, note1);
+                        (void) s->minmax_notes(note0, note1);
 
                         int height = note1 - note0;
                         height += 2;
-                        if (seq->transposable())
+                        if (s->transposable())
                             pen.setColor(fore_color());
                         else
                             pen.setColor(drum_color());
@@ -965,15 +965,13 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
 
                         int cny = track_height() - 6;
                         int marker_x = tix_to_pix(t);
-                        auto cev = seq->cbegin();
-                        while (! seq->cend(cev))
+                        for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
                         {
                             sequence::note_info ni;
-                            sequence::draw dt = seq->get_next_note(ni, cev);
+                            sequence::draw dt = s->get_next_note(ni, cev);
                             if (dt == sequence::draw::finish)
-                            {
                                 break;
-                            }
+
                             if (dt == sequence::draw::tempo)
                             {
                                 midipulse tick_s = ni.start();
@@ -981,7 +979,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                                 midibpm max = usr().midi_bpm_maximum();
                                 midibpm min = usr().midi_bpm_minimum();
                                 double tempo = double(ni.velocity());
-                                int yt = int((max - tempo) / (max - min) * cny) + y;
+                                int yt = int(cny * (max-tempo) / (max-min)) + y;
                                 painter.drawEllipse(sx, yt, 3, 3);
                                 continue;
                             }

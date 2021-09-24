@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-09-22
+ * \updates       2021-09-23
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -776,7 +776,7 @@ public:
     sequence (int ppqn = c_use_default_ppqn);
     ~sequence ();
 
-    void partial_assign (const sequence & rhs);
+    void partial_assign (const sequence & rhs, bool toclipboard = false);
 
 #if defined USE_SET_EDITING_FULL_SIGNATURE
 
@@ -1688,11 +1688,11 @@ public:
 
     static void clear_clipboard ()
     {
-        sm_clipboard.clear();      /* shared between sequences */
+        sm_clipboard.clear();                   /* shared between sequences */
     }
 
     bool remove_selected ();
-    bool remove_marked ();                      /* a forwarding function */
+    bool remove_marked ();                      /* a forwarding function    */
 
     static int loop_record (recordstyle r)
     {

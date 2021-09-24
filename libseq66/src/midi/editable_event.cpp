@@ -667,10 +667,10 @@ editable_event::set_status_from_string
 {
     unsigned short value = name_to_value(s, subgroup::channel_message);
     timestamp(ts);
-    if (value != s_end_of_table)
+    if (value != s_end_of_table)                        /* channel message  */
     {
         midibyte status = midibyte(value);
-        midibyte c = string_to_midibyte(chan, 1) - 1;       /* default == 0 */
+        midibyte c = string_to_midibyte(chan, 1) - 1;   /* default == 0     */
         midibyte d0 = string_to_midibyte(sd0);
         midibyte d1 = string_to_midibyte(sd1);
         set_channel_status(status, c);
@@ -682,33 +682,30 @@ editable_event::set_status_from_string
     else
     {
         value = name_to_value(s, subgroup::meta_event);
-        if (value != s_end_of_table)
+        if (value != s_end_of_table)                    /* meta message     */
         {
             set_meta_status(value);
             if (value == EVENT_META_SET_TEMPO)                      /* 0x51 */
             {
-                double bpm = std::atof(sd0.c_str());
+                double bpm = std::stof(sd0);
                 if (bpm > 0.0f)
-                {
-                    midibyte t[4];
-                    double tempo_us = tempo_us_from_bpm(bpm);
-                    tempo_us_to_bytes(t, tempo_us);
-                    (void) set_sysex(t, 3);         /* add ex-data bytes    */
-                }
+                    (void) set_tempo(bpm);
             }
             else if (value == EVENT_META_TIME_SIGNATURE)            /* 0x51 */
             {
                 auto pos = sd0.find_first_of("/");
                 if (pos != std::string::npos)
                 {
-                    int nn = std::atoi(sd0.c_str());
+                    int nn = std::stoi(sd0);
                     int dd = nn;
                     int cc = 0x18;
                     int bb = 0x08;
                     ++pos;
 
                     std::string sd0_partial = sd0.substr(pos);  // drop "nn/"
-                    dd = std::atoi(sd0_partial.c_str());        // get dd
+                    if (! sd0_partial.empty())
+                        dd = std::stoi(sd0_partial);
+
                     if (dd > 0)
                     {
                         pos = sd0.find_first_of(" ", pos);      // bypass dd
@@ -921,7 +918,7 @@ editable_event::analyze ()
     {
         if (is_meta_msg(status))
         {
-            midibyte metatype = channel();          /* \tricky              */
+            midibyte metatype = get_meta_status();  /* stored in channel!   */
             category(subgroup::meta_event);
             m_name_status = value_to_name(metatype, subgroup::meta_event);
             m_name_channel.clear();                 /* will not be output   */
@@ -972,7 +969,7 @@ editable_event::ex_data_string () const
     }
     else if (is_time_signature())
     {
-        if (get_sysex_size() > 0)
+        if (sysex_size() > 0)
         {
             int nn = get_sysex()[0];
             int dd = get_sysex()[1];            /* hopefully a power of 2   */
@@ -985,7 +982,7 @@ editable_event::ex_data_string () const
     else
     {
         std::string data;
-        int limit = get_sysex_size();
+        int limit = sysex_size();
         if (limit > 4)
             limit = 4;                          /* we have space limits     */
 
@@ -994,7 +991,7 @@ editable_event::ex_data_string () const
             snprintf(tmp, sizeof tmp, "%2X ", get_sysex()[i]);
             result += tmp;
         }
-        if (get_sysex_size() > 4)
+        if (sysex_size() > 4)
             result += "...";
     }
     return result;

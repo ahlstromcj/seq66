@@ -230,13 +230,13 @@ event::operator = (const event & rhs)
 
 /**
  *  This destructor explicitly deletes m_sysex and sets it to null.
- *  The restart_sysex() function does what we need.  But now that m_sysex is a
+ *  The reset_sysex() function does what we need.  But now that m_sysex is a
  *  vector, no action is needed.
  */
 
 event::~event ()
 {
-    // restart_sysex() no longer necessary
+    // Automatic destruction of members is enough
 }
 
 /**
@@ -489,7 +489,7 @@ event::set_midi_event
     {
         if (buffer[0] == EVENT_MIDI_SYSEX)
         {
-            restart_sysex();            /* set up for sysex if needed   */
+            reset_sysex();            /* set up for sysex if needed   */
             if (! append_sysex(buffer, count))
             {
                 errprint("event::append_sysex() failed");
@@ -519,17 +519,6 @@ event::set_meta_status (midibyte metatype)
 {
     m_status = EVENT_MIDI_META;
     m_channel = metatype;
-}
-
-/**
- *  Deletes and clears out the SYSEX buffer.  (The m_sysex member used to be a
- *  pointer.)  This function also causes get_sysex_size() to return 0.
- */
-
-void
-event::restart_sysex ()
-{
-    m_sysex.clear();
 }
 
 /**
@@ -763,10 +752,10 @@ event::to_string () const
     result += tmp;
     if (is_sysex() || is_meta())
     {
-        bool use_linefeeds = get_sysex_size() > 8;
-        (void) snprintf(tmp, sizeof tmp, "SysEx/Meta[%d]:   ", get_sysex_size());
+        bool use_linefeeds = sysex_size() > 8;
+        (void) snprintf(tmp, sizeof tmp, "SysEx/Meta[%d]:   ", sysex_size());
         result += tmp;
-        for (int i = 0; i < get_sysex_size(); ++i)
+        for (int i = 0; i < sysex_size(); ++i)
         {
             if (use_linefeeds && (i % 16) == 0)
                 result += "\n         ";
@@ -856,7 +845,7 @@ midibpm
 event::tempo () const
 {
     midibpm result = 0.0;
-    if (is_tempo() && get_sysex_size() == 3)
+    if (is_tempo() && sysex_size() == 3)
     {
         midibyte b[3];
         b[0] = m_sysex[0];                  /* convert vector to array type */
@@ -869,7 +858,7 @@ event::tempo () const
 
 /**
  *  The inverse of tempo().  First, we convert beats/minute to a tempo
- *  microseconds value.  Then we convert the microseconds to threee tempo
+ *  microseconds value.  Then we convert the microseconds to three tempo
  *  bytes.
  */
 
@@ -878,8 +867,19 @@ event::set_tempo (midibpm tempo)
 {
     double us = tempo_us_from_bpm(tempo);
     midibyte t[3];
-    tempo_us_to_bytes(t, us);
+    tempo_us_to_bytes(t, midibpm(us));
     return set_sysex(t, 3);
+}
+
+bool
+event::set_tempo (midibyte t[3])
+{
+    double tt = tempo_us_from_bytes(t);
+    bool result = tt > 0.0;
+    if (result)
+        set_sysex(t, 3);
+
+    return result;
 }
 
 /*

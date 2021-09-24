@@ -932,12 +932,22 @@ tempo_us_from_bytes (const midibyte tt[3])
  *      always an integer, not a double, so do not get confused here.
  */
 
-void
-tempo_us_to_bytes (midibyte t[3], int tempo_us)
+bool
+tempo_us_to_bytes (midibyte t[3], midibpm tempo_us)
 {
-    t[2] = midibyte(tempo_us & 0x0000FF);
-    t[1] = midibyte((tempo_us & 0x00FF00) >> 8);
-    t[0] = midibyte((tempo_us & 0xFF0000) >> 16);
+    bool result = tempo_us > 0.0;
+    if (result)
+    {
+        int temp = int(tempo_us + 0.5);
+        t[2] = midibyte(temp & 0x0000FF);
+        t[1] = midibyte((temp & 0x00FF00) >> 8);
+        t[0] = midibyte((temp & 0xFF0000) >> 16);
+    }
+    else
+    {
+        t[2] = t[1] = t[0] = 0;
+    }
+    return result;
 }
 
 /**

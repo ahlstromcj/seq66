@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-22
+ * \updates       2021-09-24
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -48,10 +48,10 @@ namespace seq66
 
 /**
  *  The height of the data-entry area for velocity, aftertouch, and other
- *  controllers, as well as note on and off velocity.  This value looks to
- *  be in pixels; one pixel per MIDI value, which ranges from 0 to 127.
- *  We're trying to avoid header clutter, and are using a hardwired constant
- *  for this variable, which will eventually transition to a modifiable member.
+ *  controllers, as well as note on and off velocity.  This value is pixels;
+ *  one pixel per MIDI value, which ranges from 0 to 127.  We start with a
+ *  hardwired constant for this variable, but it can be halved to help fit the
+ *  pattern editor into a tab.
  */
 
 static const int sc_dataarea_y = 128;
@@ -60,7 +60,8 @@ static const int sc_dataarea_y = 128;
  * Tweaks
  */
 
-static const int s_x_data_fix =  8;
+static const int s_x_data_fix  = 2;  // 8;
+static const int s_key_padding = 8;
 
 /**
  *  Principal constructor.
@@ -80,7 +81,7 @@ qseqdata::qseqdata
     performer::callbacks    (p),
     m_timer                 (nullptr),
     m_font                  (),
-    m_keyboard_padding_x    (s_x_data_fix),
+    m_keyboard_padding_x    (s_key_padding),
     m_dataarea_y            (height > 0 ? height : sc_dataarea_y),
     m_status                (EVENT_NOTE_ON),
     m_cc                    (1),                /* modulation   */
@@ -188,12 +189,16 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             {
                 d1 = height() - tempo_to_note_value(cev->tempo());
                 snprintf(digits, sizeof digits, "%3d", int(cev->tempo()));
+                brush.setColor(tempo_color());
                 pen.setColor(tempo_color());
+                painter.setBrush(brush);
                 painter.setPen(pen);
                 painter.drawEllipse(event_x, d1 - 3, 6, 6);
                 pen.setColor(fore_color());
                 painter.setPen(pen);
-                painter.drawText(x_offset, d1 + 4, digits);
+                painter.drawText(x_offset + 6, d1 + 4, digits);
+                brush.setColor(grey_color());
+                painter.setBrush(brush);
             }
             else
             {

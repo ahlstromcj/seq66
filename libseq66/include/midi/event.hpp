@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-22
+ * \updates       2021-09-24
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -255,6 +255,8 @@ const int EVENTS_UNSELECTED              =  0;
 
 class event
 {
+
+    friend class eventlist;
 
 public:
 
@@ -513,29 +515,15 @@ public:
         return (m & EVENT_STATUS_BIT) == 0x00;
     }
 
+    /*
+     *  Static functions used in event and editable event.
+     */
+
+protected:
+
     static bool is_system_msg (midibyte m)
     {
         return m >= EVENT_MIDI_SYSEX;
-    }
-
-    /**
-     *  Checks for a System Common status, which is supposed to clear any
-     *  running status.
-     */
-
-    static bool is_system_common_msg (midibyte m)
-    {
-        return m >= EVENT_MIDI_SYSEX && m < EVENT_MIDI_CLOCK;
-    }
-
-    /**
-     *  Checks for a Realtime Category status, which ignores running status.
-     *  Ranges from 0xF8 to 0xFF,  and m <= EVENT_MIDI_RESET is always true.
-     */
-
-    static bool is_realtime_msg (midibyte m)
-    {
-        return m >= EVENT_MIDI_CLOCK;
     }
 
     static bool is_meta_msg (midibyte m)
@@ -543,15 +531,48 @@ public:
         return m == EVENT_MIDI_META;
     }
 
-    static bool is_meta_status (midibyte m)
+    static bool is_pitchbend_msg (midibyte m)
     {
-        return m <= EVENT_META_SEQSPEC;
+        return mask_status(m) == EVENT_PITCH_WHEEL;
     }
 
-    static bool is_tempo_status (midibyte m)
+    static bool is_controller_msg (midibyte m)
     {
-        return m <= EVENT_META_SET_TEMPO;
+        return mask_status(m) == EVENT_CONTROL_CHANGE;
     }
+
+    /**
+     *  Static test for messages that involve notes only: Note On and
+     *  Note Off, useful in note-event linking.
+     *
+     * \param m
+     *      The channel status or message byte to be tested.
+     *
+     * \return
+     *      Returns true if the byte represents a MIDI note on/off message.
+     */
+
+    static bool is_strict_note_msg (midibyte m)
+    {
+        return m >= EVENT_NOTE_OFF || m < EVENT_AFTERTOUCH;
+    }
+
+    /**
+     *  We don't want a progress bar for patterns that just contain textual
+     *  information.
+     */
+
+    static bool is_playable_msg (midibyte m)
+    {
+        return m != EVENT_MIDI_META && m != EVENT_MIDI_SYSEX;
+    }
+
+    /*
+     *  Static functions used in analysizing MIDI events by external callers such
+     *  as midifile, rtmidi, and midi_jack.
+     */
+
+public:
 
     /**
      *  Static test for the channel message/statuse values: Note On, Note Off,
@@ -616,21 +637,6 @@ public:
         );
     }
 
-    static bool is_pitchbend_msg (midibyte m)
-    {
-        return mask_status(m) == EVENT_PITCH_WHEEL;
-    }
-
-    static bool is_sysex_msg (midibyte m)
-    {
-        return m == EVENT_MIDI_SYSEX;
-    }
-
-    static bool is_sense_or_reset (midibyte m)
-    {
-        return m == EVENT_MIDI_ACTIVE_SENSE || m == EVENT_MIDI_RESET;
-    }
-
     /**
      *  Static test for messages that involve notes and velocity: Note On,
      *  Note Off, and Aftertouch.
@@ -650,35 +656,19 @@ public:
         return m >= EVENT_NOTE_OFF && m < EVENT_CONTROL_CHANGE;
     }
 
-    static bool is_controller_msg (midibyte m)
+    static bool is_meta_status (midibyte m)
     {
-        return mask_status(m) == EVENT_CONTROL_CHANGE;
+        return m <= EVENT_META_SEQSPEC;
     }
 
-    /**
-     *  Static test for messages that involve notes only: Note On and
-     *  Note Off, useful in note-event linking.
-     *
-     * \param m
-     *      The channel status or message byte to be tested.
-     *
-     * \return
-     *      Returns true if the byte represents a MIDI note on/off message.
-     */
-
-    static bool is_strict_note_msg (midibyte m)
+    static bool is_tempo_status (midibyte m)
     {
-        return m >= EVENT_NOTE_OFF || m < EVENT_AFTERTOUCH;
+        return m <= EVENT_META_SET_TEMPO;
     }
 
-    /**
-     *  We don't want a progress bar for patterns that just contain textual
-     *  information.
-     */
-
-    static bool is_playable_msg (midibyte m)
+    static bool is_sysex_msg (midibyte m)
     {
-        return m != EVENT_MIDI_META && m != EVENT_MIDI_SYSEX;
+        return m == EVENT_MIDI_SYSEX;
     }
 
     /**
@@ -711,6 +701,33 @@ public:
     }
 
     /**
+     *  Checks for a System Common status, which is supposed to clear any
+     *  running status.
+     */
+
+    static bool is_system_common_msg (midibyte m)
+    {
+        return m >= EVENT_MIDI_SYSEX && m < EVENT_MIDI_CLOCK;
+    }
+
+    /**
+     *  Checks for a Realtime Category status, which ignores running status.
+     *  Ranges from 0xF8 to 0xFF,  and m <= EVENT_MIDI_RESET is always true.
+     */
+
+    static bool is_realtime_msg (midibyte m)
+    {
+        return m >= EVENT_MIDI_CLOCK;
+    }
+
+    static bool is_sense_or_reset (midibyte m)
+    {
+        return m == EVENT_MIDI_ACTIVE_SENSE || m == EVENT_MIDI_RESET;
+    }
+
+public:
+
+    /**
      *  Calculates the value of the current timestamp modulo the given
      *  parameter.
      *
@@ -737,7 +754,9 @@ public:
 
     /**
      *  Note that we have ensured that status ranges from 0x80 to 0xFF.
-     *  And recently, the status now holds the channel, perhaps redundantly.
+     *  And recently, the status now holds the channel, redundantly.
+     *  Unless the event is a meta event, in which case the channel is the
+     *  number of the event.
      */
 
     midibyte get_status () const
@@ -748,6 +767,11 @@ public:
     midibyte get_status (midibyte channel) const
     {
         return mask_status(m_status) | channel;
+    }
+
+    midibyte get_meta_status () const
+    {
+        return is_meta_msg(m_status) ? m_channel : 0 ;
     }
 
     bool valid_status () const
@@ -929,7 +953,17 @@ public:
     bool append_sysex (midibyte data);
     bool append_meta_data (midibyte metatype, const midibyte * data, int len);
     bool append_meta_data (midibyte metatype, const std::vector<midibyte> & data);
-    void restart_sysex ();
+
+    /**
+     *  Deletes and clears out the SYSEX buffer.  (The m_sysex member used to
+     *  be a pointer.)  This function also causes sysex_size() to return
+     *  0.
+     */
+
+    void reset_sysex ()
+    {
+        m_sysex.clear();
+    }
 
     /**
      *  Resets and adds ex data.
@@ -947,7 +981,7 @@ public:
 
     bool set_sysex (midibyte * data, int len)
     {
-        m_sysex.clear();
+        reset_sysex();
         return append_sysex(data, len);
     }
 
@@ -969,7 +1003,7 @@ public:
             m_sysex.resize(len);
     }
 
-    int get_sysex_size () const
+    int sysex_size () const
     {
         return int(m_sysex.size());
     }
@@ -1339,6 +1373,7 @@ public:
 
     midibpm tempo () const;
     bool set_tempo (midibpm tempo);
+    bool set_tempo (midibyte t[3]);
 
     /**
      *  Indicates if the event is a Time Signature event.  See

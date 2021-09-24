@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-08-20
+ * \updates       2021-09-24
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -773,7 +773,7 @@ file_write_string (const std::string & filename, const std::string & text)
     if (result)
     {
         std::string fulltext = filename;
-        fulltext += " ";
+        fulltext += "\n";
         fulltext += current_date_time();
         fulltext += "\n";
         fulltext += text;

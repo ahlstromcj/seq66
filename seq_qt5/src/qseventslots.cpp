@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-08-20
+ * \updates       2021-09-24
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -729,19 +729,14 @@ qseventslots::modify_current_event
         }
         else
         {
-            /*
-             * We need to make a copy here, because the iterator will get
-             * modified during the deletion-and-insertion process.
-             */
-
-            editable_event & ev = editable_events::dref(m_current_iterator);
+            editable_event ev = editable_events::dref(m_current_iterator);
             ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
             if (! ev.is_ex_data())
             {
                 midibyte status = ev.get_status();
-                ev.set_channel_status(status, channelbyte); /* fix it up    */
+                ev.set_channel_status(status, channelbyte);
             }
-            result = delete_current_event();
+            result = delete_current_event();            /* full karaoke del */
             if (result)
                 result = insert_event(ev);              /* full karaoke add */
         }

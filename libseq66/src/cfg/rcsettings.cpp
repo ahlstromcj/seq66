@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-09-20
+ * \updates       2021-09-24
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -760,10 +760,8 @@ rcsettings::mute_group_filespec () const
 void
 rcsettings::tempo_track_number (int track)
 {
-    if (track < 0)
+    if (track < 0 || track >= seq::maximum())
         track = 0;
-    else if (track >= seq::maximum())
-        track = seq::maximum() - 1;
 
     m_tempo_track_number = track;
 }

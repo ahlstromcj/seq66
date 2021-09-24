@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-08-10
+ * \updates       2021-09-24
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -129,7 +129,7 @@ extern int beat_power_of_2 (int logbase2);
 extern int power (int base, int exponent);
 extern midibyte beat_log2 (int value);
 extern midibpm tempo_us_from_bytes (const midibyte tt[3]);
-extern void tempo_us_to_bytes (midibyte t[3], int tempo_us);
+extern bool tempo_us_to_bytes (midibyte t[3], midibpm tempo_us);
 extern midibyte tempo_to_note_value (midibpm tempo);
 extern midibpm fix_tempo (midibpm bpm);
 extern unsigned short combine_bytes (midibyte b0, midibyte b1);
@@ -180,7 +180,7 @@ rescale_tick (midipulse tick, int newppqn, int oldppqn)
 inline double
 tempo_us_from_bpm (midibpm bpm)
 {
-    return bpm > 0.0 ? (60000000.0 / bpm) : 0.0 ;
+    return bpm > 0.009999999 ? (60000000.0 / bpm) : 0.0 ;
 }
 
 /**
@@ -200,7 +200,7 @@ tempo_us_from_bpm (midibpm bpm)
 inline midibpm
 bpm_from_tempo_us (double tempous)
 {
-    return tempous > 0.0 ? (60000000.0 / tempous) : 0.0 ;
+    return tempous >= 1.0 ? (60000000.0 / tempous) : 0.0 ;
 }
 
 /**

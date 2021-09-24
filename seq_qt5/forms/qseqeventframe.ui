@@ -393,6 +393,9 @@
    </item>
    <item row="3" column="1">
     <layout class="QGridLayout" name="gridLayout_3">
+     <property name="horizontalSpacing">
+      <number>2</number>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="d0_label">
        <property name="minimumSize">
@@ -419,13 +422,13 @@
       <widget class="QLineEdit" name="entry_ev_data_0">
        <property name="minimumSize">
         <size>
-         <width>36</width>
+         <width>48</width>
          <height>24</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>48</width>
+         <width>56</width>
          <height>24</height>
         </size>
        </property>
@@ -463,13 +466,13 @@
       <widget class="QLineEdit" name="entry_ev_data_1">
        <property name="minimumSize">
         <size>
-         <width>36</width>
+         <width>48</width>
          <height>24</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>48</width>
+         <width>56</width>
          <height>24</height>
         </size>
        </property>

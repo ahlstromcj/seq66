@@ -73,13 +73,14 @@ qstriggereditor::qstriggereditor
     QWidget * parent,
     int xoffset
 ) :
-    QWidget    (parent),
-    qseqbase   (p, seqp, frame, zoom, snap),
-    m_timer    (nullptr),
-    m_x_offset (xoffset + s_x_tick_fix),
-    m_key_y    (keyheight),
-    m_status   (EVENT_NOTE_ON),
-    m_cc       (0)                                  /* bank select          */
+    QWidget     (parent),
+    qseqbase    (p, seqp, frame, zoom, snap),
+    m_timer     (nullptr),
+    m_x_offset  (xoffset + s_x_tick_fix),
+    m_key_y     (keyheight),
+    m_is_meta   (false),
+    m_status    (EVENT_NOTE_ON),
+    m_cc        (0)                                 /* bank select          */
 {
     setAttribute(Qt::WA_StaticContents);
     setAttribute(Qt::WA_OpaquePaintEvent);          /* no erase on repaint  */
@@ -162,8 +163,9 @@ qstriggereditor::paintEvent (QPaintEvent *)
     painter.setBrush(brush);
     painter.drawRect(1, 0, width(), height() - 1); /* draw the background       */
 
-    int bpbar = seq_pointer()->get_beats_per_bar();
-    int bwidth = seq_pointer()->get_beat_width();
+    seq::pointer s = seq_pointer();
+    int bpbar = s->get_beats_per_bar();
+    int bwidth = s->get_beat_width();
     midipulse ticks_per_beat = 4 * perf().ppqn() / bwidth;
     midipulse ticks_per_bar = bpbar * ticks_per_beat;
     midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
@@ -210,9 +212,9 @@ qstriggereditor::paintEvent (QPaintEvent *)
 
     pen.setColor(fore_color());                     /* Qt::black            */
     pen.setStyle(Qt::SolidLine);
-    for (auto cev = seq_pointer()->cbegin(); ! seq_pointer()->cend(cev); ++cev)
+    for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
-        if (! seq_pointer()->get_next_event_match(m_status, m_cc, cev))
+        if (! s->get_next_event_match(m_status, m_cc, cev))
             break;
 
         midipulse tick = cev->timestamp();
@@ -629,19 +631,23 @@ qstriggereditor::set_adding (bool a)
 void
 qstriggereditor::set_data_type (midibyte status, midibyte control)
 {
-    if (event::is_meta_status(status))
+    if (status != m_status || control != m_cc)
     {
-    }
-    else
-    {
-        status = event::normalize_status(status);
-        if (status != m_status || control != m_cc)
+        if (event::is_meta_status(status))
         {
+            is_meta(true);
+            m_status = status;
+            m_cc = 0;
+        }
+        else
+        {
+            is_meta(false);
+            status = event::normalize_status(status);
             m_status = status;
             m_cc = control;
         }
+        update();
     }
-    update();
 }
 
 }           // namespace seq66

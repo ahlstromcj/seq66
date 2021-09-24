@@ -346,7 +346,7 @@ microsleep (int us)
 long
 microtime ()
 {
-#if defined THIS_CODE_IS_READY  // NOT!
+#if defined SEQ66_PLATFORM_WINDOWS__THIS_CODE_IS_READY  // NOT!
     FILETIME ft;
     GetSystemTimeAsFileTime(&ft);
     unsigned long long tt = ft.dwHighDateTime;
@@ -403,7 +403,7 @@ millitime ()
 bool
 set_thread_priority (std::thread & t, int p)
 {
-#if defined THIS_CODE_IS_READY
+#if defined SEQ66_PLATFORM_WINDOWS__THIS_CODE_IS_READY
     bool result = false;
     if (p >= THREAD_PRIORITY_NORMAL && p <= THREAD_PRIORITY_HIGHEST)
     {

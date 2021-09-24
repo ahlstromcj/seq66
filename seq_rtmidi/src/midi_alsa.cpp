@@ -671,7 +671,7 @@ midi_alsa::api_sysex (const event * e24)
 
     const int chunk = 256;
     event::sysex & data = const_cast<event::sysex &>(e24->get_sysex());
-    int data_size = e24->get_sysex_size();
+    int data_size = e24->sysex_size();
     for (int offset = 0; offset < data_size; offset += chunk)
     {
         int data_left = data_size - offset;

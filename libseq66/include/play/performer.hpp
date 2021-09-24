@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-09-14
+ * \updates       2021-09-23
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -674,9 +674,9 @@ private:                            /* key, midi, and op container section  */
      *  Normally 0, it can be changed to any value from 1 to 1023 via the
      *  tempo-track-number setting in the "rc" file, and that can be overriden
      *  by the c_tempo_track SeqSpec possibly present in the song's MIDI file.
-     */
 
     seq::number m_tempo_track_number;
+     */
 
     /**
      *  Augments the beats/bar and beat-width with the additional values
@@ -1409,24 +1409,25 @@ public:
 
     bool set_beat_width (int bw);
 
+    /**
+     *
     seq::number tempo_track_number () const
     {
         return m_tempo_track_number;
     }
 
-    /**
      * \setter m_tempo_track_number
      *
      * \param tempotrack
      *      Provides the value for beat-width.  Also used to set the
      *      beat-width in the JACK assistant object.
-     */
 
     void tempo_track_number (seq::number tempotrack)
     {
         if (tempotrack >= 0 && tempotrack < sequence_max())
             m_tempo_track_number = tempotrack;
     }
+     */
 
     void clocks_per_metronome (int cpm)
     {
@@ -1903,6 +1904,11 @@ public:
     bool finish_move (seq::number seq);
     bool remove_set (screenset::number setno);
     bool swap_sets (seq::number set0, seq::number set1);
+
+    bool can_paste () const
+    {
+        return m_seq_clipboard.event_count() > 0;
+    }
 
     bool is_seq_in_edit (int seq) const
     {

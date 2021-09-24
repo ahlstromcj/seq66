@@ -575,11 +575,10 @@ qseqroll::draw_notes
     int unitheight = unit_height();
     int unitdecr = unit_height() - 2;
     int noteheight = unitheight - 3;
-    auto cev = s->cbegin();
-    while (! s->cend(cev))
+    for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
         sequence::note_info ni;
-        sequence::draw dt = s->get_next_note(ni, cev); /* ++cev */
+        sequence::draw dt = s->get_next_note(ni, cev);
         if (dt == sequence::draw::finish)
             break;
 
@@ -781,11 +780,10 @@ qseqroll::draw_drum_notes
         perf().get_sequence(m_background_sequence) : seq_pointer() ;
 
     int noteheight = unit_height();
-    auto cev = s->cbegin();
-    while (! s->cend(cev))
+    for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
         sequence::note_info ni;
-        sequence::draw dt = s->get_next_note(ni, cev); /* ++cev */
+        sequence::draw dt = s->get_next_note(ni, cev);
         if (dt == sequence::draw::finish)
             break;
 
