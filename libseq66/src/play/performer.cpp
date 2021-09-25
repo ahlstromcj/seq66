@@ -399,7 +399,6 @@ performer::performer (int ppqn, int rows, int columns) :
     m_last_time_ms          (0),
     m_beats_per_bar         (usr().midi_beats_per_bar()),
     m_beat_width            (usr().midi_beat_width()),
-//  m_tempo_track_number    (0),
     m_clocks_per_metronome  (24),
     m_32nds_per_quarter     (0),
     m_us_per_quarter_note   (0),
@@ -722,7 +721,6 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     rcs.mute_groups() = m_mute_groups;
     rcs.song_start_mode(pb);
     rcs.filter_by_channel(m_filter_by_channel);
-//  rcs.tempo_track_number(m_tempo_track_number);
     usrs.resume_note_ons(m_resume_note_ons);
 
     /*

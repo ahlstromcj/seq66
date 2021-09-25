@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-23
+ * \updates       2021-09-25
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -81,9 +81,9 @@ public:
 
     void set_data_type (midibyte status, midibyte control);
 
-    bool is_meta () const
+    bool is_tempo () const
     {
-        return m_is_meta;
+        return m_is_tempo;
     }
 
 private:
@@ -95,9 +95,9 @@ private:
         midipulse finish
     );
 
-    void is_meta (bool flag)
+    void is_tempo (bool flag)
     {
-        m_is_meta = flag;
+        m_is_tempo = flag;
     }
 
 protected:
@@ -138,9 +138,9 @@ private:
     QTimer * m_timer;
     int m_x_offset;
     int m_key_y;
-    bool m_is_meta;         /* currently synonomous with tempo      */
-    midibyte m_status;      /* event seqdata is currently editing   */
-    midibyte m_cc;          /* the controller being edited          */
+    bool m_is_tempo;            /* the only reasonably editable meta event  */
+    midibyte m_status;          /* the event seqdata is currently editing   */
+    midibyte m_cc;              /* the controller being edited              */
 
 };          // class qstriggereditor
 

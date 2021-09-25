@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-24
+ * \updates       2021-09-25
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -409,6 +409,7 @@ public:
 
     event ();
     event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1);
+    event (midipulse tstamp, midibpm tempo);
     event (const event & rhs);
     event & operator = (const event & rhs);
     virtual ~event ();
@@ -541,6 +542,11 @@ protected:
         return mask_status(m) == EVENT_CONTROL_CHANGE;
     }
 
+    static bool is_program_change_msg (midibyte m)
+    {
+        return mask_status(m) == EVENT_PROGRAM_CHANGE;
+    }
+
     /**
      *  Static test for messages that involve notes only: Note On and
      *  Note Off, useful in note-event linking.
@@ -663,7 +669,7 @@ public:
 
     static bool is_tempo_status (midibyte m)
     {
-        return m <= EVENT_META_SET_TEMPO;
+        return m == EVENT_META_SET_TEMPO;
     }
 
     static bool is_sysex_msg (midibyte m)
@@ -1312,6 +1318,11 @@ public:
     bool is_two_bytes () const
     {
         return is_two_byte_msg(m_status);
+    }
+
+    bool is_program_change () const
+    {
+        return is_program_change_msg(m_status);
     }
 
     /**

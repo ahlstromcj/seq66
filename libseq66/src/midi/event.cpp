@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-20
+ * \updates       2021-09-25
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -145,6 +145,26 @@ event::event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1) :
     m_painted       (false)
 {
     set_data(d0, d1);
+}
+
+/**
+ *  Creates a tempo event.
+ */
+
+event::event (midipulse tstamp, midibpm tempo) :
+    m_input_buss    (null_buss()),
+    m_timestamp     (tstamp),
+    m_status        (EVENT_MIDI_META),
+    m_channel       (EVENT_META_SET_TEMPO),
+    m_data          (),                     /* two-element array, midibytes */
+    m_sysex         (),                     /* an std::vector of midibytes  */
+    m_linked        (nullptr),
+    m_has_link      (false),
+    m_selected      (false),
+    m_marked        (false),
+    m_painted       (false)
+{
+    set_tempo(tempo);
 }
 
 /**

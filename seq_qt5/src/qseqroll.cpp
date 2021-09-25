@@ -585,7 +585,14 @@ qseqroll::draw_notes
         if (dt == sequence::draw::tempo)
         {
             int x = xoffset(ni.start());
+#if defined USE_SIMPLISTIC_CODE
             int y = total_height() - ((127 - 48) * noteheight); // at C3
+#else
+            midibpm max = usr().midi_bpm_maximum();
+            midibpm min = usr().midi_bpm_minimum();
+            double tempo = double(ni.velocity());
+            int y = int((max - tempo) / (max - min) * 128) + 0;
+#endif
             pen.setColor(fore_color());
             brush.setColor(tempo_color());
             painter.setPen(pen);
@@ -752,7 +759,7 @@ void
 qseqroll::draw_tempo (QPainter & painter, int x, int y, int velocity)
 {
     QString v = QString::fromStdString(std::to_string(velocity));
-    int h = unit_height();
+    int h = unit_height() / 2;
     painter.drawEllipse(x, y, h, h);
     painter.drawText(x, y - 2, v);
 }
@@ -790,7 +797,14 @@ qseqroll::draw_drum_notes
         if (dt == sequence::draw::tempo)
         {
             int x = xoffset(ni.start());
+#if defined USE_SIMPLISTIC_CODE
             int y = total_height() - ((127 - 48) * noteheight); // at C3
+#else
+            midibpm max = usr().midi_bpm_maximum();
+            midibpm min = usr().midi_bpm_minimum();
+            double tempo = double(ni.velocity());
+            int y = int((max - tempo) / (max - min) * 128) + 0;
+#endif
             pen.setColor(fore_color());
             brush.setColor(tempo_color());
             painter.setPen(pen);

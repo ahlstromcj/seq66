@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-09
+ * \updates       2021-09-25
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -84,6 +84,16 @@ public:
 
     void set_data_type (midibyte a_status, midibyte a_control);
 
+    bool is_tempo () const
+    {
+        return m_is_tempo;
+    }
+
+    void is_tempo (bool flag)
+    {
+        m_is_tempo = flag;
+    }
+
     midibyte status () const
     {
         return m_status;
@@ -137,6 +147,12 @@ private:
      */
 
     int m_dataarea_y;
+
+    /**
+     *  Indicates we are editing tempo events.
+     */
+
+    bool m_is_tempo;
 
     /**
      * What events is the data window currently editing?

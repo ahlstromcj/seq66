@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-09-22
+ * \updates       2021-09-25
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -808,8 +808,9 @@ qloopbutton::draw_pattern (QPainter & painter)
                     midibpm min = usr().midi_bpm_minimum();
                     double tempo = double(ni.velocity());
                     int y = int((max - tempo) / (max - min) * lyh) + ly0;
-                    /**/ brush.setColor(tempo_paint());
-                    painter.drawEllipse(sx, y, 3, 3);
+                    brush.setColor(tempo_paint());
+                    painter.setBrush(brush);
+                    painter.drawEllipse(sx, y, 4, 4);
                 }
                 else
                 {

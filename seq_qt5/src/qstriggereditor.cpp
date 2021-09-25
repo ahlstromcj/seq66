@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-22
+ * \updates       2021-09-25
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -78,7 +78,7 @@ qstriggereditor::qstriggereditor
     m_timer     (nullptr),
     m_x_offset  (xoffset + s_x_tick_fix),
     m_key_y     (keyheight),
-    m_is_meta   (false),
+    m_is_tempo  (false),                            /* is_tempo()           */
     m_status    (EVENT_NOTE_ON),
     m_cc        (0)                                 /* bank select          */
 {
@@ -448,10 +448,10 @@ qstriggereditor::mouseMoveEvent (QMouseEvent * event)
         moving_init(false);
         moving(true);
     }
-    if (select_action())                // (m_selecting || m_moving || m_paste)
+    if (select_action())                // m_selecting || m_moving || m_paste
     {
         current_x(int(event->x()) - c_keyboard_padding_x);
-        if (drop_action())              // (m_moving || m_paste)
+        if (drop_action())              // m_moving || m_paste
             snap_current_x();
     }
     if (painting())
@@ -594,20 +594,28 @@ qstriggereditor::convert_t (midipulse ticks, int & x)
 }
 
 void
-qstriggereditor::drop_event (midipulse a_tick)
+qstriggereditor::drop_event (midipulse tick)
 {
-    midibyte d0 = m_cc;
-    midibyte d1 = 0x40;
-    if (m_status == EVENT_AFTERTOUCH)
-        d0 = 0;
-    else if (m_status == EVENT_PROGRAM_CHANGE)
-        d0 = 0;                                         /* d0 == new patch  */
-    else if (m_status == EVENT_CHANNEL_PRESSURE)
-        d0 = 0x40;                                      /* d0 == pressure   */
-    else if (m_status == EVENT_PITCH_WHEEL)
-        d0 = 0;
+    if (is_tempo())
+    {
+        midibpm bpm = perf().bpm();
+        (void) seq_pointer()->add_tempo(tick, bpm, true);   /* repaint true */
+    }
+    else
+    {
+        midibyte d0 = m_cc;
+        midibyte d1 = 0x40;
+        if (m_status == EVENT_AFTERTOUCH)
+            d0 = 0;
+        else if (m_status == EVENT_PROGRAM_CHANGE)
+            d0 = 0x40;                                  /* d0 == new patch  */
+        else if (m_status == EVENT_CHANNEL_PRESSURE)
+            d0 = 0x40;                                  /* d0 == pressure   */
+        else if (m_status == EVENT_PITCH_WHEEL)
+            d0 = 0;
 
-    seq_pointer()->add_event(a_tick, m_status, d0, d1, true);   /* sorts it */
+        seq_pointer()->add_event(tick, m_status, d0, d1, true); /* sorts it */
+    }
 }
 
 /**
@@ -631,23 +639,20 @@ qstriggereditor::set_adding (bool a)
 void
 qstriggereditor::set_data_type (midibyte status, midibyte control)
 {
-    if (status != m_status || control != m_cc)
+    if (event::is_tempo_status(status))
     {
-        if (event::is_meta_status(status))
-        {
-            is_meta(true);
-            m_status = status;
-            m_cc = 0;
-        }
-        else
-        {
-            is_meta(false);
-            status = event::normalize_status(status);
-            m_status = status;
-            m_cc = control;
-        }
-        update();
+        is_tempo(true);
+        m_status = status;
+        m_cc = 0;
     }
+    else
+    {
+        is_tempo(false);
+        status = event::normalize_status(status);
+        m_status = status;
+        m_cc = control;
+    }
+    update();
 }
 
 }           // namespace seq66

@@ -2239,6 +2239,8 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
     {
         if (event::is_tempo_status(status))
         {
+            m_seqevent->set_data_type(status, control);
+            m_seqdata->set_data_type(status, control);
             ui->m_entry_data->setText("Tempo");
         }
     }
@@ -2248,7 +2250,7 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
         char type[32];
         snprintf(hexa, sizeof hexa, "[0x%02X]", status);
         status = event::normalize_status(status);
-        m_seqevent->set_data_type(status, control);     /* qstriggereditor      */
+        m_seqevent->set_data_type(status, control);     /* qstriggereditor  */
         m_seqdata->set_data_type(status, control);
         if (status == EVENT_NOTE_OFF)
             snprintf(type, sizeof type, "Note Off");
@@ -2894,19 +2896,6 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     auto cev = s->cbegin();
     if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
         tempo = true;
-
-#if 0
-    for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
-    {
-        if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
-        {
-            tempo = true;
-            break;
-        }
-        else
-            break;
-    }
-#endif
 
     if (not_nullptr(m_events_popup))
         delete m_events_popup;

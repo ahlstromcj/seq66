@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-09-23
+ * \updates       2021-09-25
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1343,7 +1343,7 @@ public:
     bool push_add_note
     (
         midipulse tick, midipulse len, int note,
-        bool paint = false,
+        bool repaint = false,
         int velocity = sm_preserve_velocity
     );
     bool push_add_chord
@@ -1354,7 +1354,7 @@ public:
     bool add_painted_note
     (
         midipulse tick, midipulse len, int note,
-        bool paint = false,
+        bool repaint = false,
         int velocity = sm_preserve_velocity
     );
     bool add_note (midipulse len, const event & e);
@@ -1363,11 +1363,12 @@ public:
         int chord, midipulse tick, midipulse len, int note,
         int velocity = sm_preserve_velocity
     );
+    bool add_tempo (midipulse tick, midibpm tempo, bool repaint = false);
     bool add_event (const event & er);      /* another one declared below */
     bool add_event
     (
         midipulse tick, midibyte status,
-        midibyte d0, midibyte d1, bool paint = false
+        midibyte d0, midibyte d1, bool repaint = false
     );
     bool append_event (const event & er);
     void sort_events ();
@@ -1544,6 +1545,8 @@ public:
 
     /**
      *  A new function to re-link the tempo events added by the user.
+     *  Not sure that we will need this; it is useful for drawing lines, and
+     *  currently we're drawing the event as a circle.
      */
 
     void link_tempos ()

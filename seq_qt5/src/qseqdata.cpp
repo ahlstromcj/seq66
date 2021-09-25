@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-24
+ * \updates       2021-09-25
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -83,6 +83,7 @@ qseqdata::qseqdata
     m_font                  (),
     m_keyboard_padding_x    (s_key_padding),
     m_dataarea_y            (height > 0 ? height : sc_dataarea_y),
+    m_is_tempo              (false),
     m_status                (EVENT_NOTE_ON),
     m_cc                    (1),                /* modulation   */
     m_line_adjust           (false),
@@ -193,12 +194,24 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 pen.setColor(tempo_color());
                 painter.setBrush(brush);
                 painter.setPen(pen);
-                painter.drawEllipse(event_x, d1 - 3, 6, 6);
+                painter.drawEllipse(event_x, d1 - 3, 4, 4);
                 pen.setColor(fore_color());
                 painter.setPen(pen);
-                painter.drawText(x_offset + 6, d1 + 4, digits);
+
+                /*
+                 * No need for a number here, we think:
+                 *
+                 * painter.drawText(x_offset + 6, d1 + 4, digits);
+                 */
+
                 brush.setColor(grey_color());
                 painter.setBrush(brush);
+            }
+            else if (cev->is_program_change())
+            {
+                snprintf(digits, sizeof digits, "%3d", int(cev->tempo()));
+                painter.drawEllipse(event_x, event_height, 4, 4);
+                painter.drawText(x_offset + 6, d1 + 4, digits);
             }
             else
             {
@@ -377,15 +390,16 @@ qseqdata::set_data_type (midibyte status, midibyte control)
 {
     if (event::is_meta_status(status))
     {
+        is_tempo(true);
+        m_status = status;
+        m_cc = 0;
     }
     else
     {
+        is_tempo(false);
         status = event::normalize_status(status);
-        if (status != m_status || control != m_cc)
-        {
-            m_status = status;
-            m_cc = control;
-        }
+        m_status = status;
+        m_cc = control;
     }
     update();
 }

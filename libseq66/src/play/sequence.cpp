@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-22
+ * \updates       2021-09-25
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2695,6 +2695,34 @@ sequence::add_chord
     return result;
 }
 
+bool
+sequence::add_tempo (midipulse tick, midibpm tempo, bool repaint)
+{
+    automutex locker(m_mutex);
+    bool result = false;
+    bool valid = tempo >= usr().midi_bpm_minimum() &&
+        tempo <= usr().midi_bpm_maximum();
+
+    if (valid && tick >= 0)
+    {
+        event e(tick, tempo);
+        if (repaint)
+            e.paint();
+
+        result = add_event(e);
+    }
+
+    /*
+     *  Currently we draw tempo as a circle, not a bar, so we don't need to know
+     *  about the "next" tempo event.  However, let's future-proof this.
+     */
+
+     if (result)
+        verify_and_link();
+
+    return result;
+}
+
 /**
  *  Adds an event to the internal event list in a sorted manner.  Then it
  *  resets the draw-marker and sets the dirty flag.
@@ -4046,7 +4074,7 @@ sequence::get_note_info
         midibpm bpm = drawevent.tempo();
         midibyte notebyte = tempo_to_note_value(bpm);
         niout.ni_note = int(notebyte);
-        niout.ni_velocity = int(bpm);
+        niout.ni_velocity = int(bpm + 0.5);
 
         /*
          * Hmmmm, must check if tempo events ever have a link. No, they
