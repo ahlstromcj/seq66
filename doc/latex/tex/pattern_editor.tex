@@ -477,6 +477,13 @@
    different in feel.  A good mouse with at least 3 buttons is very helpful
    for editing.  Buttons and keystrokes enhance the ease of editing.
 
+   The piano roll can show notes, a background pattern, a scale, and tempo
+   events.  Notes are shown as narrow rectanges; the pattern and scale are
+   shown as bars running the whole length of the piano roll;
+   and tempo events are shown as small circles accompanied by a number.
+   (We're still considering whether showing tempos in the piano roll is a good
+   thing).
+
    When the piano roll has keyboard focus, the \texttt{Space} key
    starts and stops playback, rewinding to the beginning when stopped.
    The \texttt{.} (period) key starts and pauses playback, without
@@ -1022,9 +1029,14 @@
    \textbf{Modify Event Data} offers a way to
    alter the event data values in 
    the lower pane of the pattern editor, the "data pane".
+   Many different events can be altered in the data pane:
+   Note On and Note Off velocities, program changes, aftertouch, channel
+   pressure, pitch wheel, and tempo.
 
    The events values for the currently selected category of events are shown
    in this window as vertical lines of a height proportional to the value.
+   (The exceptions are program changes and tempo, which are shown by small
+   circles, yellow in the case of tempo.)
    These values can be easily modified by
    \index{mouse!left-click-drag}
    left-click-dragging the

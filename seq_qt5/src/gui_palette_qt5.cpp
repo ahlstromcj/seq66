@@ -558,7 +558,7 @@ gui_palette_qt5::reset_invertibles ()
     m_nrm_palette.add(InvertibleColor::label,       m_theme,    "Label");
     m_nrm_palette.add(InvertibleColor::selection,   m_orange,   "Selection");
     m_nrm_palette.add(InvertibleColor::drum,        m_red,      "Drum");
-    m_nrm_palette.add(InvertibleColor::tempo,       m_green,    "Tempo");
+    m_nrm_palette.add(InvertibleColor::tempo,       m_yellow,   "Tempo");
     m_nrm_palette.add(InvertibleColor::note_in,     m_white,    "Note Fill");
     m_nrm_palette.add(InvertibleColor::note_out,    m_black,    "Note Border");
     m_nrm_palette.add(InvertibleColor::black_key,   m_black,    "Black Keys");

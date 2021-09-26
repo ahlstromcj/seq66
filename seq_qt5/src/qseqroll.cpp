@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-22
+ * \updates       2021-09-26
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -111,11 +111,11 @@ qseqroll::qseqroll
     setAttribute(Qt::WA_OpaquePaintEvent);          /* no erase on repaint  */
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
     setFocusPolicy(Qt::StrongFocus);
-    setMouseTracking(true);         /* track mouse movement without a click */
+    setMouseTracking(true);                         /* track w/out a click  */
     m_font.setStyleHint(QFont::Monospace);
     m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
-    m_font.setBold(true);
-    m_font.setPointSize(8);
+    m_font.setBold(false);
+    m_font.setPointSize(6);                         /* 8 is too obtrusive   */
     set_snap(seqp->snap());
     show();
     m_timer = new QTimer(this);
@@ -338,6 +338,9 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     QBrush brush(Qt::white, Qt::NoBrush);
     QPen pen(Qt::lightGray);
     pen.setStyle(Qt::SolidLine);
+    pen.setColor(Qt::lightGray);
+    painter.setPen(pen);
+    painter.setFont(m_font);
     m_frame_ticks = pix_to_tix(r.width());
     m_edit_mode = perf().edit_mode(seq_pointer()->seq_number());
 
@@ -346,9 +349,6 @@ qseqroll::paintEvent (QPaintEvent * qpep)
      * Doesn't seem to be needed: painter.drawRect(0, 0, ww, wh);
      */
 
-    pen.setColor(Qt::lightGray);
-    pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
-    painter.setPen(pen);
     draw_grid(painter, view);
     set_initialized();
 
@@ -588,10 +588,15 @@ qseqroll::draw_notes
 #if defined USE_SIMPLISTIC_CODE
             int y = total_height() - ((127 - 48) * noteheight); // at C3
 #else
+            /*
             midibpm max = usr().midi_bpm_maximum();
             midibpm min = usr().midi_bpm_minimum();
             double tempo = double(ni.velocity());
             int y = int((max - tempo) / (max - min) * 128) + 0;
+            */
+            double tempo = double(ni.velocity());
+            int tnote = tempo_to_note_value(tempo);
+            int y = total_height() - (tnote * unitheight) - unitdecr;
 #endif
             pen.setColor(fore_color());
             brush.setColor(tempo_color());
@@ -759,7 +764,7 @@ void
 qseqroll::draw_tempo (QPainter & painter, int x, int y, int velocity)
 {
     QString v = QString::fromStdString(std::to_string(velocity));
-    int h = unit_height() / 2;
+    int h = int(0.75 * unit_height());
     painter.drawEllipse(x, y, h, h);
     painter.drawText(x, y - 2, v);
 }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-25
+ * \updates       2021-09-26
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -542,11 +542,6 @@ protected:
         return mask_status(m) == EVENT_CONTROL_CHANGE;
     }
 
-    static bool is_program_change_msg (midibyte m)
-    {
-        return mask_status(m) == EVENT_PROGRAM_CHANGE;
-    }
-
     /**
      *  Static test for messages that involve notes only: Note On and
      *  Note Off, useful in note-event linking.
@@ -660,6 +655,11 @@ public:
     static bool is_note_msg (midibyte m)
     {
         return m >= EVENT_NOTE_OFF && m < EVENT_CONTROL_CHANGE;
+    }
+
+    static bool is_program_change_msg (midibyte m)
+    {
+        return mask_status(m) == EVENT_PROGRAM_CHANGE;
     }
 
     static bool is_meta_status (midibyte m)

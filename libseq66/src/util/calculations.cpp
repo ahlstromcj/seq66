@@ -988,7 +988,7 @@ tempo_to_note_value (midibpm tempovalue)
     double slope = double(c_midibyte_value_max);
     slope /= usr().midi_bpm_maximum() - usr().midi_bpm_minimum();
 
-    int note = (tempovalue - usr().midi_bpm_minimum()) * slope;
+    int note = int(slope * (tempovalue - usr().midi_bpm_minimum()) + 0.5);
     return clamp_midibyte_value(midibyte(note));
 }
 

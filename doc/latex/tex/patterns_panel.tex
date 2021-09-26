@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-07-04
+% \update      2021-09-26
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -158,24 +158,38 @@
    \textsl{Sequencer64} is not supported in \textsl{Seq66}.
 
    \begin{itemize}
-      \item \textbf{Empty background}.  When the default button coloring for
+      \item \textbf{Empty background}.
+         When the default button coloring for
          the current \textsl{Qt} theme is shown, without a pattern box,
          this state indicates that the slot is unused.
-      \item \textbf{Yellow pattern box}. This color is used when a pattern is
+      \item \textbf{Yellow pattern box}.
+         This color is used when a pattern is
          first created by double-clicking on the slot.
          However, this color sticks even when notes are added.
          But feel free to change it to another color, or no color.
-      \item \textbf{Normal background}.  Unarmed (muted) patterns show the
+      \item \textbf{Normal background}.
+         Unarmed (muted) patterns show the
          unactivated/unchecked state of the button as per the \textsl{Qt}
          theme.  If a color is applied, it has a slight bit of alpha in the
          color so that the color appears muted.
-      \item \textbf{Active background}.  An armed (unmuted) pattern shows the
+      \item \textbf{Active background}.
+         An armed (unmuted) pattern shows the
          activated/checked state of the button as per the \textsl{Qt}
          theme.  If a color is applied, it has no transparency, and the 
          color appears bright.
+      \item \textbf{Line events}.
+         \index{event!note}
+         Lines indicate the presence of notes.  Depending on settings, the
+         lines indicate the notes themselves, or a "fingerprint", a condensed
+         indication of note useful in reducing the overhead of long patterns.
       \item \textbf{Red events}.
+         \index{event!drum note}
          Indicates a pattern for which the new transpose feature is
          disabled.  Most useful with drum patterns.
+      \item \textbf{Circular events}.
+         \index{event!tempo}
+         Small circles indicate tempo events.  Generally, these events should
+         appear only in the tempo track (which is normally track 0).
    \end{itemize}
 
    The user can also apply coloring to each sequence.
@@ -360,6 +374,7 @@
          can also be colored, or not shown at all.
          Long patterns can be replaced by a much shorter "fingerprint", for
          faster drawing.
+         Tempo events are indicated by a small circle.
          \index{empty pattern}
          An pattern with no playable events will not needlessly scroll.
          However, if a pattern has even a single event (say, a program change),

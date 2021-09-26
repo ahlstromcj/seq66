@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-25
+ * \updates       2021-09-26
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -80,10 +80,11 @@ qseqdata::qseqdata
     qseqbase                (p, seqp, frame, zoom, snap),
     performer::callbacks    (p),
     m_timer                 (nullptr),
-    m_font                  (),
+    m_font                  ("Monospace"),
     m_keyboard_padding_x    (s_key_padding),
     m_dataarea_y            (height > 0 ? height : sc_dataarea_y),
     m_is_tempo              (false),
+    m_is_program_change     (false),
     m_status                (EVENT_NOTE_ON),
     m_cc                    (1),                /* modulation   */
     m_line_adjust           (false),
@@ -171,24 +172,24 @@ qseqdata::paintEvent (QPaintEvent * qpep)
         midipulse tick = cev->timestamp();
         if (tick >= start_tick && tick <= end_tick)
         {
-            /*
-             *  Convert to screen coordinates.
-             */
-
-            int event_x = tix_to_pix(tick) + m_keyboard_padding_x;
+            bool normal_event = ! cev->is_tempo() && ! cev->is_program_change();
             bool selected = cev->is_selected();
+            int event_x = tix_to_pix(tick) + m_keyboard_padding_x;
+            int x_offset = event_x + s_x_data_fix;
+            int y_offset = m_dataarea_y - 25;
             midibyte d0, d1;
             cev->get_data(d0, d1);
 
             int event_height = event::is_one_byte_msg(m_status) ? d0 : d1 ;
             event_height = height() - byte_height(m_dataarea_y, event_height);
-            pen.setWidth(2);                    /* draw vertical grid lines */
-
-            int x_offset = event_x + s_x_data_fix;
-            int y_offset = m_dataarea_y - 25;
-            if (cev->is_tempo())
+            pen.setWidth(2);
+            if (is_tempo())
+            if (cev->is_tempo() && is_tempo())
             {
                 d1 = height() - tempo_to_note_value(cev->tempo());
+                if (d1 < 4)
+                    d1 = 4;                     /* avoid overlap with top   */
+
                 snprintf(digits, sizeof digits, "%3d", int(cev->tempo()));
                 brush.setColor(tempo_color());
                 pen.setColor(tempo_color());
@@ -197,34 +198,50 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 painter.drawEllipse(event_x, d1 - 3, 4, 4);
                 pen.setColor(fore_color());
                 painter.setPen(pen);
-
-                /*
-                 * No need for a number here, we think:
-                 *
-                 * painter.drawText(x_offset + 6, d1 + 4, digits);
-                 */
-
+                painter.drawText(x_offset + 6, d1 + 4, digits);
                 brush.setColor(grey_color());
                 painter.setBrush(brush);
             }
-            else if (cev->is_program_change())
+            if (cev->is_program_change() && is_program_change())
             {
-                snprintf(digits, sizeof digits, "%3d", int(cev->tempo()));
-                painter.drawEllipse(event_x, event_height, 4, 4);
-                painter.drawText(x_offset + 6, d1 + 4, digits);
-            }
-            else
-            {
-                pen.setColor(selected ? sel_paint() : fore_color());
-                painter.setPen(pen);
-                painter.drawLine(event_x, event_height, event_x, height());
-                snprintf(digits, sizeof digits, "%3d", d1);
+                d1 = event_height;
+                if (d1 > height() - 6)
+                    d1 = height() - 6;          /* avoid overlap w/bottom   */
 
-                QString val = digits;
-                pen.setColor(fore_color());
-                painter.drawText(x_offset, y_offset,      val.at(0));
-                painter.drawText(x_offset, y_offset +  9, val.at(1));
-                painter.drawText(x_offset, y_offset + 18, val.at(2));
+                snprintf(digits, sizeof digits, "%3d", d0);
+                painter.drawEllipse(event_x, d1, 4, 4);
+                painter.drawText(x_offset + 2, d1 + 6, digits);
+            }
+            if (normal_event)
+            {
+                bool ok;
+                if (cev->has_channel())
+                {
+                    midibyte schan = s->seq_midi_channel();
+                    if (is_null_channel(schan))
+                        ok = true;
+                    else
+                    {
+                        midibyte chan = cev->channel();
+                        ok = chan == schan;
+                    }
+                }
+                else
+                    ok = true;
+
+                if (ok)
+                {
+                    pen.setColor(selected ? sel_paint() : fore_color());
+                    painter.setPen(pen);
+                    painter.drawLine(event_x, event_height, event_x, height());
+                    snprintf(digits, sizeof digits, "%3d", d1);
+
+                    QString val = digits;
+                    pen.setColor(fore_color());
+                    painter.drawText(x_offset, y_offset,      val.at(0));
+                    painter.drawText(x_offset, y_offset +  9, val.at(1));
+                    painter.drawText(x_offset, y_offset + 18, val.at(2));
+                }
             }
         }
     }
@@ -391,12 +408,21 @@ qseqdata::set_data_type (midibyte status, midibyte control)
     if (event::is_meta_status(status))
     {
         is_tempo(true);
+        is_program_change(false);
+        m_status = status;
+        m_cc = 0;
+    }
+    else if (event::is_program_change_msg(status))
+    {
+        is_tempo(false);
+        is_program_change(true);
         m_status = status;
         m_cc = 0;
     }
     else
     {
         is_tempo(false);
+        is_program_change(false);
         status = event::normalize_status(status);
         m_status = status;
         m_cc = control;
