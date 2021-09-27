@@ -88,6 +88,7 @@ public:
 
 private:
 
+    void flag_dirty ();
     int select_events
     (
         eventlist::select selmode,

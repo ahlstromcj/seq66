@@ -477,12 +477,13 @@
    different in feel.  A good mouse with at least 3 buttons is very helpful
    for editing.  Buttons and keystrokes enhance the ease of editing.
 
-   The piano roll can show notes, a background pattern, a scale, and tempo
-   events.  Notes are shown as narrow rectanges; the pattern and scale are
-   shown as bars running the whole length of the piano roll;
-   and tempo events are shown as small circles accompanied by a number.
-   (We're still considering whether showing tempos in the piano roll is a good
-   thing).
+   The piano roll can show notes, a background pattern, and a scale.
+%  and tempo events.
+   Notes are shown as narrow rectanges; the pattern and scale are
+   shown as bars running the whole length of the piano roll.
+%  Tempo events are shown as small circles accompanied by a number.
+%  (We're still considering whether showing tempos in the piano roll is a good
+%  thing).
 
    When the piano roll has keyboard focus, the \texttt{Space} key
    starts and stops playback, rewinding to the beginning when stopped.
@@ -956,7 +957,7 @@
    \textbf{Note On}, \textbf{Note Off}, and \textbf{Aftertouch}.
 
    \index{events!insert}
-   Other event types can be inserted via the event strip.
+   Other event types (including tempo) can be inserted via the event strip.
    To do that, first select the kind of event to insert using the
    \textbf{Event} button in the bottom panel.
    Then place the mouse cursor in the event strip.
@@ -980,7 +981,10 @@
    it is currently not possible to move them to positions smaller than the
    beat size; temporarily reduce the beat size if desired.
 
-\subsection{Data View}
+   The event values can be edited via the data panel, described in the next
+   section.
+
+\subsection{Data Panel}
 \label{subsec:pattern_editor_data_view}
 
    Once the events are in place, the next step is to modify the
@@ -1035,8 +1039,18 @@
 
    The events values for the currently selected category of events are shown
    in this window as vertical lines of a height proportional to the value.
-   (The exceptions are program changes and tempo, which are shown by small
-   circles, yellow in the case of tempo.)
+   The exceptions are program changes and tempo, which are shown by small
+   circles, yellow in the case of tempo.
+   Also, the range of tempos in the data panel is set to match the
+   \index{usr!bpm-minimum}
+   \texttt{usr!bpm-minimum}
+   and
+   \index{usr!bpm-maximum}
+   \texttt{usr!bpm-maximum}
+   settings in the 'usr' file.
+   This range is for display purposes.
+   See \sectionref{subsubsec:usr_file_user_midi_settings}.
+
    These values can be easily modified by
    \index{mouse!left-click-drag}
    left-click-dragging the

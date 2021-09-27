@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-25
+ * \updates       2021-09-27
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -212,25 +212,25 @@ qstriggereditor::paintEvent (QPaintEvent *)
 
     pen.setColor(fore_color());                     /* Qt::black            */
     pen.setStyle(Qt::SolidLine);
+    brush.setStyle(Qt::SolidPattern);
     for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
         if (! s->get_next_event_match(m_status, m_cc, cev))
             break;
 
         midipulse tick = cev->timestamp();
+        bool selected = cev->is_selected();
         if ((tick >= starttick && tick <= endtick))
         {
-            bool selected = cev->is_selected();
             int x = xoffset(tick) + m_x_offset;
             int y = (qc_eventarea_y - qc_eventevent_y) / 2;
             pen.setColor(fore_color());             /* Qt::black ev border  */
-            brush.setStyle(Qt::SolidPattern);
-            brush.setColor(fore_color());           /* Qt::black            */
-            painter.setBrush(brush);
             painter.setPen(pen);
             painter.drawRect(x, y, qc_eventevent_x, qc_eventevent_y);
             if (selected)
                 brush.setColor(sel_color());        /* "orange"             */
+            else if (cev->is_tempo())
+                brush.setColor(tempo_color());
             else
                 brush.setColor(back_color());       /* Qt::white            */
 
@@ -271,6 +271,18 @@ qstriggereditor::resizeEvent (QResizeEvent * qrep)
     qrep->ignore();                         /* QWidget::resizeEvent(qrep)   */
 }
 
+/**
+ *  We cannot call frame64()::set_dirty() without creating an infinite
+ *  loop and seqfault.  So we make a private function to do that.
+ */
+
+void
+qstriggereditor::flag_dirty ()
+{
+    seq_pointer()->set_dirty();
+    frame64()->set_dirty();
+}
+
 void
 qstriggereditor::mousePressEvent (QMouseEvent * event)
 {
@@ -291,7 +303,7 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
         seq_pointer()->paste_selected(tick_s, 0);
         paste(false);
         setCursor(Qt::ArrowCursor);
-        set_dirty();        // NEW ca 2021-01-09
+        flag_dirty();
     }
     else
     {
@@ -315,7 +327,6 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                 bool dropit = select_events(selmode, tick_s, tick_f) == 0;
                 if (dropit)
                 {
-                    seq_pointer()->push_undo();
                     drop_event(tick_s);
                 }
             }
@@ -361,7 +372,7 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                     if (! isctrl)
                     {
                         seq_pointer()->unselect();
-                        set_dirty();    // m_parent_frame->set_dirty(); needed
+                        flag_dirty();
                     }
                     selmode = eventlist::select::select_one;
                     int numsel = select_events(selmode, tick_s, tick_f);
@@ -377,7 +388,7 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                             selecting(true);
                     }
                     else
-                        set_dirty();
+                        flag_dirty();
                 }
             }
         }
@@ -409,7 +420,7 @@ qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
 
             int numsel = select_events(selmode, tick_s, tick_f);
             if (numsel > 0)
-                set_dirty();        // m_parent_frame->set_dirty(); needed
+                flag_dirty();
         }
         if (moving())
         {
@@ -430,13 +441,13 @@ qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
         if (! QApplication::queryKeyboardModifiers().testFlag(Qt::MetaModifier))
         {
             set_adding(false);
-            set_dirty();
+            flag_dirty();
         }
     }
     clear_action_flags();               /* turn off */
     seq_pointer()->unpaint_all();
     if (is_dirty())                     /* if clicked, something changed    */
-        seq_pointer()->set_dirty();
+        flag_dirty();
 }
 
 void
@@ -461,7 +472,7 @@ qstriggereditor::mouseMoveEvent (QMouseEvent * event)
         convert_x(current_x(), tick);
         drop_event(tick);
     }
-    set_dirty();
+    flag_dirty();
 }
 
 void
@@ -517,7 +528,7 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
         }
     }
     if (ret)
-        seq_pointer()->set_dirty();
+        flag_dirty();
     else
         QWidget::keyPressEvent(event);
 }
@@ -596,6 +607,7 @@ qstriggereditor::convert_t (midipulse ticks, int & x)
 void
 qstriggereditor::drop_event (midipulse tick)
 {
+    seq_pointer()->push_undo();
     if (is_tempo())
     {
         midibpm bpm = perf().bpm();

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-26
+ * \updates       2021-09-27
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -60,8 +60,9 @@ static const int sc_dataarea_y = 128;
  * Tweaks
  */
 
-static const int s_x_data_fix  = 2;  // 8;
-static const int s_key_padding = 8;
+static const int s_x_data_fix   = 2;    /* adjusts x-value for the events   */
+static const int s_key_padding  = 8;    /* adjusts x for keyboard padding   */
+static const int s_circle_d     = 6;    /* diameter of tempo/prog. dots     */
 
 /**
  *  Principal constructor.
@@ -120,7 +121,9 @@ void
 qseqdata::conditional_update ()
 {
     if (check_dirty())
+    {
         update();
+    }
 }
 
 bool
@@ -191,13 +194,9 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                     d1 = 4;                     /* avoid overlap with top   */
 
                 snprintf(digits, sizeof digits, "%3d", int(cev->tempo()));
-                brush.setColor(tempo_color());
-                pen.setColor(tempo_color());
+                brush.setColor(selected ? sel_color() : tempo_color());
                 painter.setBrush(brush);
-                painter.setPen(pen);
-                painter.drawEllipse(event_x, d1 - 3, 4, 4);
-                pen.setColor(fore_color());
-                painter.setPen(pen);
+                painter.drawEllipse(event_x, d1 - 3, s_circle_d, s_circle_d);
                 painter.drawText(x_offset + 6, d1 + 4, digits);
                 brush.setColor(grey_color());
                 painter.setBrush(brush);
@@ -209,7 +208,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                     d1 = height() - 6;          /* avoid overlap w/bottom   */
 
                 snprintf(digits, sizeof digits, "%3d", d0);
-                painter.drawEllipse(event_x, d1, 4, 4);
+                painter.drawEllipse(event_x, d1, s_circle_d, s_circle_d);
                 painter.drawText(x_offset + 2, d1 + 6, digits);
             }
             if (normal_event)
@@ -238,6 +237,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 
                     QString val = digits;
                     pen.setColor(fore_color());
+                    painter.setPen(pen);
                     painter.drawText(x_offset, y_offset,      val.at(0));
                     painter.drawText(x_offset, y_offset +  9, val.at(1));
                     painter.drawText(x_offset, y_offset + 18, val.at(2));
@@ -250,6 +250,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
         int x, y, w, h;
         pen.setColor(sel_color());              /* Qt::black                */
         pen.setStyle(Qt::DashLine);
+        pen.setWidth(1);
         painter.setPen(pen);
         rect::xy_to_rect_get
         (
@@ -261,6 +262,8 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             current_x() + c_keyboard_padding_x,
             current_y(), drop_x() + c_keyboard_padding_x, drop_y()
         );
+        pen.setWidth(2);
+        painter.setPen(pen);
     }
 }
 
@@ -299,7 +302,7 @@ qseqdata::mousePressEvent (QMouseEvent * event)
     if (would_select)
         m_relative_adjust = true;
     else
-        m_line_adjust = true;   /* set new values for events under a line   */
+        m_line_adjust = true;                   /* set ev values under line */
 
     drop_x(mouse_x);                            /* set values for line      */
     drop_y(mouse_y);

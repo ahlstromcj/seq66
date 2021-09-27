@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-09-25
+ * \updates       2021-09-27
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1372,6 +1372,7 @@ public:
     );
     bool append_event (const event & er);
     void sort_events ();
+    bool remove_duplicate_events (midipulse tick, int note = (-1));
     void notify_change (bool userchange = true);
     void notify_trigger ();
     void print_triggers () const;

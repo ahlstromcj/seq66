@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-22
+ * \updates       2021-09-27
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -172,8 +172,10 @@ private:
     void draw_notes (QPainter & painter, const QRect & r, bool background);
     void draw_drum_notes (QPainter & painter, const QRect & r, bool background);
     void draw_drum_note (QPainter & painter, int x, int y);
-    void draw_tempo (QPainter & painter, int x, int y, int velocity);
     void call_draw_notes (QPainter & painter, const QRect & view);
+#if defined SEQ66_SHOW_TEMPO_IN_PIANO_ROLL
+    void draw_tempo (QPainter & painter, int x, int y, int velocity);
+#endif
 
 private:
 

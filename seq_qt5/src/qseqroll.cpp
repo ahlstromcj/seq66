@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-26
+ * \updates       2021-09-27
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -584,6 +584,7 @@ qseqroll::draw_notes
 
         if (dt == sequence::draw::tempo)
         {
+#if defined SEQ66_SHOW_TEMPO_IN_PIANO_ROLL
             int x = xoffset(ni.start());
 #if defined USE_SIMPLISTIC_CODE
             int y = total_height() - ((127 - 48) * noteheight); // at C3
@@ -603,6 +604,7 @@ qseqroll::draw_notes
             painter.setPen(pen);
             painter.setBrush(brush);
             draw_tempo(painter, x, y, ni.velocity());
+#endif  //SEQ66_SHOW_TEMPO_IN_PIANO_ROLL
             continue;
         }
 
@@ -760,6 +762,8 @@ qseqroll::draw_drum_note (QPainter & painter, int x, int y)
      */
 }
 
+#if defined SEQ66_SHOW_TEMPO_IN_PIANO_ROLL
+
 void
 qseqroll::draw_tempo (QPainter & painter, int x, int y, int velocity)
 {
@@ -768,6 +772,8 @@ qseqroll::draw_tempo (QPainter & painter, int x, int y, int velocity)
     painter.drawEllipse(x, y, h, h);
     painter.drawText(x, y - 2, v);
 }
+
+#endif
 
 void
 qseqroll::draw_drum_notes
@@ -801,6 +807,7 @@ qseqroll::draw_drum_notes
 
         if (dt == sequence::draw::tempo)
         {
+#if defined SEQ66_SHOW_TEMPO_IN_PIANO_ROLL
             int x = xoffset(ni.start());
 #if defined USE_SIMPLISTIC_CODE
             int y = total_height() - ((127 - 48) * noteheight); // at C3
@@ -815,6 +822,7 @@ qseqroll::draw_drum_notes
             painter.setPen(pen);
             painter.setBrush(brush);
             draw_tempo(painter, x, y, ni.velocity());
+#endif
             continue;
         }
 

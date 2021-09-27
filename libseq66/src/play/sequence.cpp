@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-25
+ * \updates       2021-09-27
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2101,11 +2101,7 @@ sequence::merge_events (const sequence & source)
     push_undo();                                /* push undo, no lock   */
     bool result = m_events.merge(clipbd);
     if (result)
-    {
-        // DO WE NEED TO UPDATE ALL CHANNEL INFO???????????
-
         modify();
-    }
 
     return result;
 }
@@ -2114,6 +2110,9 @@ sequence::merge_events (const sequence & source)
  *  Changes the event data range.  Changes only selected events, if there are
  *  any selected events.  Otherwise, all events intersected are changed.  This
  *  function is used in qseqdata to implement the line/height functionality.
+ *  We also match tempo events here.  But we have to treat them differently from
+ *  the matched status events.  We also match tempo events here.  But we have to
+ *  treat them differently from the matched status events.
  *
  * \threadsafe
  *
@@ -2169,82 +2168,56 @@ sequence::change_event_data_range
 {
     automutex locker(m_mutex);
     bool result = false;
-    bool have_selection = m_events.any_selected_events(status, cc);
-    for (auto & e : m_events)
+    bool noselection = ! m_events.any_selected_events(status, cc);
+    for (auto & er : m_events)
     {
-        midibyte d0, d1;
-        e.get_data(d0, d1);
-
-        /*
-         * We should also match tempo events here.  But we have to treat them
-         * differently from the matched status events.
-         */
-
-        bool match = e.match_status(status);
-        bool good;                          /* is_desired_cc_or_not_cc      */
-        if (status == EVENT_CONTROL_CHANGE)
+        bool match = false;
+        if (noselection || er.is_selected())
         {
-            good = match && d0 == cc;       /* correct status & correct cc  */
+            if (event::is_tempo_status(status))
+                match = er.is_tempo();
+            else
+                match = er.non_cc_match(status) || er.cc_match(status, cc);
+        }
+
+        midipulse tick = er.timestamp();
+        if (match)
+        {
+            if (tick > tick_f)                          /* in range?        */
+                break;
+            else if (tick < tick_s)                     /* in range?        */
+                continue;
+        }
+        else
+            continue;
+
+        if (tick_f == tick_s)
+            tick_f = tick_s + 1;                        /* no divide-by-0   */
+
+        int newdata =
+        (
+            (tick - tick_s) * data_f + (tick_f - tick) * data_s
+        ) / (tick_f - tick_s);
+        newdata = int(clamp_midibyte_value(newdata));   /* 0 to 127         */
+        if (er.is_tempo())
+        {
+            midibpm tempo = note_value_to_tempo(midibyte(newdata));
+            result = er.set_tempo(tempo);
         }
         else
         {
-            if (e.is_tempo())
-                good = true;                /* Set tempo always editable    */
-            else
-                good = match;               /* correct status and not a cc  */
+            midibyte d0, d1;
+            er.get_data(d0, d1);
+            if (event::is_one_byte_msg(status))         /* patch | pressure */
+                d0 = newdata;
+            else if (event::is_two_byte_msg(status))
+                d1 = newdata;
+
+            er.set_data(d0, d1);
+            result = true;
         }
-
-        /*
-         * Optimize:  stop at the first event past the high end of the
-         * range.
-         */
-
-        midipulse tick = e.timestamp();
-        if (tick > tick_f)                              /* in range?        */
-            break;
-
-        if (tick < tick_s)                              /* in range?         */
-            good = false;
-
-        if (have_selection && ! e.is_selected())        /* in selection?     */
-            good = false;
-
-        if (good)
-        {
-            if (tick_f == tick_s)
-                tick_f = tick_s + 1;                    /* no divide-by-0   */
-
-            int newdata =
-            (
-                (tick - tick_s) * data_f + (tick_f - tick) * data_s
-            ) / (tick_f - tick_s);
-
-            newdata = int(clamp_midibyte_value(newdata));   /* 0 to 127     */
-
-            /*
-             * I think we can assume, at this point, that this is a good
-             * channel-message status byte.  However, we must treat tempo
-             * events differently.
-             */
-
-            if (e.is_tempo())
-            {
-                midibpm tempo = note_value_to_tempo(midibyte(newdata));
-                result = e.set_tempo(tempo);
-            }
-            else
-            {
-                if (event::is_one_byte_msg(status))     /* patch or pressure */
-                    d0 = newdata;
-                else
-                    d1 = newdata;
-
-                e.set_data(d0, d1);
-                result = true;
-            }
-            if (result)
-                modify();
-        }
+        if (result)
+            modify();
     }
     return result;
 }
@@ -2348,6 +2321,9 @@ sequence::change_event_data_relative
 
 /**
  *  Modifies data events according to the parameters active in the LFO window.
+ *  If the event is in the selection, or there is no selection at all, and if
+ *  it has the desired status and not CC, or the desired status and the correct
+ *  control-change value, then we will modify (set) the event.
  *
  * \param value
  *      Provides the base value for the event data value.  Ranges from 0 to
@@ -2392,45 +2368,45 @@ sequence::change_event_data_lfo
     automutex locker(m_mutex);
     m_events_undo.push(m_events);           /* experimental, seems to work  */
     double dlength = double(get_length());
-    bool no_selection = ! m_events.any_selected_events(status, cc);
+    bool noselection = ! m_events.any_selected_events(status, cc);
     if (get_length() == 0)                  /* should never happen, though  */
         dlength = double(m_ppqn);
 
     if (usemeasure)
         dlength = double(get_beats_per_bar() * (m_ppqn * 4) / get_beat_width());
 
-    for (auto & e : m_events)
+    for (auto & er : m_events)
     {
-        bool is_set = false;
-        midibyte d0, d1;
-        e.get_data(d0, d1);
-
-        /*
-         * If the event is in the selection, or there is no selection at all,
-         * and if it has the desired status and not CC, or the desired status
-         * and the correct control-change value, the we will modify (set) the
-         * event.
-         */
-
-        if (e.is_selected() || no_selection)
-            is_set = e.non_cc_match(status) || e.cc_match(status, cc);
-
-        if (is_set)
+        bool match = false;
+        if (noselection || er.is_selected())
         {
-            double dtick = double(e.timestamp());
+            if (event::is_tempo_status(status))
+                match = er.is_tempo();
+            else
+                match = er.non_cc_match(status) || er.cc_match(status, cc);
+        }
+        if (match)
+        {
+            double dtick = double(er.timestamp());
             double angle = speed * dtick / dlength + phase;
             int newdata = value + wave_func(angle, w) * range;
-            if (newdata < 0)
-                newdata = 0;
-            else if (newdata > (c_midibyte_data_max - 1))
-                newdata = c_midibyte_data_max - 1;
+            newdata = int(clamp_midibyte_value(newdata));   /* 0 to 127     */
+            if (er.is_tempo())
+            {
+                midibpm tempo = note_value_to_tempo(midibyte(newdata));
+                (void) er.set_tempo(tempo);
+            }
+            else
+            {
+                midibyte d0, d1;
+                er.get_data(d0, d1);
+                if (event::is_one_byte_msg(status))
+                    d0 = newdata;
+                else if (event::is_two_byte_msg(status))
+                    d1 = newdata;
 
-            if (event::is_two_byte_msg(status))
-                d1 = newdata;
-            else if (event::is_one_byte_msg(status))
-                d0 = newdata;
-
-            e.set_data(d0, d1);
+                er.set_data(d0, d1);
+            }
         }
     }
 }
@@ -2522,26 +2498,13 @@ sequence::add_painted_note
     if (repaint)                                    /* see banner above     */
     {
         automutex locker(m_mutex);
-        for (auto & er : m_events)
-        {
-            if (er.is_painted() && er.is_note_on() && er.timestamp() == tick)
-            {
-                if (er.get_note() == note)          /* no duplicate notes   */
-                {
-                    ignore = true;
-                    break;
-                }
-                er.mark();                          /* mark for removal     */
-                if (er.is_linked())
-                    er.link()->mark();              /* mark for removal     */
-
-                set_dirty();
-            }
-        }
-        (void) remove_marked();
+        ignore = remove_duplicate_events(tick, note);
+    }
+    if (ignore)
+    {
         result = true;
     }
-    if (! ignore)
+    else
     {
         /*
          *  See banner notes.  Isn't this velocity code redundant?
@@ -2699,27 +2662,30 @@ bool
 sequence::add_tempo (midipulse tick, midibpm tempo, bool repaint)
 {
     automutex locker(m_mutex);
-    bool result = false;
     bool valid = tempo >= usr().midi_bpm_minimum() &&
         tempo <= usr().midi_bpm_maximum();
 
-    if (valid && tick >= 0)
+    bool result = valid && tick >= 0;
+    if (result)
     {
+        if (repaint)
+            (void) remove_duplicate_events(tick);
+
         event e(tick, tempo);
         if (repaint)
             e.paint();
 
         result = add_event(e);
+
+        /*
+         *  Currently we draw tempo as a circle, not a bar, so we don't need
+         *  to know *  about the "next" tempo event.  However, let's
+         *  future-proof this.
+         */
+
+         if (result)
+            verify_and_link();
     }
-
-    /*
-     *  Currently we draw tempo as a circle, not a bar, so we don't need to know
-     *  about the "next" tempo event.  However, let's future-proof this.
-     */
-
-     if (result)
-        verify_and_link();
-
     return result;
 }
 
@@ -2805,12 +2771,32 @@ sequence::append_event (const event & er)
 void
 sequence::sort_events ()
 {
-    /*
-     * Might make things worse?
-     */
-
     automutex locker(m_mutex);
     m_events.sort();
+}
+
+bool
+sequence::remove_duplicate_events (midipulse tick, int note)
+{
+    bool ignore = false;
+    for (auto & er : m_events)
+    {
+        if (er.is_painted() && er.timestamp() == tick)
+        {
+            if (note >= 0 && er.is_note_on())
+            {
+                ignore = true;
+                break;
+            }
+            er.mark();
+            if (er.is_linked())
+                er.link()->mark();
+
+            set_dirty();
+        }
+    }
+    (void) remove_marked();
+    return ignore;
 }
 
 /**
@@ -2837,7 +2823,8 @@ sequence::sort_events ()
  *
  * \param repaint
  *      If true, the inserted event is marked for painting.  The default value
- *      is false.
+ *      is false. Also, if true, then events that are marked as painted and match
+ *      the tick parameter are marked.
  */
 
 bool
@@ -2848,34 +2835,23 @@ sequence::add_event
 )
 {
     automutex locker(m_mutex);
-    bool result = false;
-    if (tick >= 0)
+    bool result = tick >= 0;
+    if (result)
     {
         if (repaint)
-        {
-            for (auto & er : m_events)
-            {
-                if (er.is_painted() && er.timestamp() == tick)
-                {
-                    er.mark();
-                    if (er.is_linked())
-                        er.link()->mark();
-
-                    set_dirty();
-                }
-            }
-            (void) remove_marked();
-        }
+            (void) remove_duplicate_events(tick);
 
         event e(tick, status, d0, d1);
         if (repaint)
             e.paint();
 
-        result = add_event(e);
+        result = m_events.append(e);    /* (add_event(e) locks & verifies)  */
+        if (result)
+        {
+            verify_and_link();
+            modify(true);               /* call notify_change()             */
+        }
     }
-    if (result)
-        verify_and_link();
-
     return result;
 }
 

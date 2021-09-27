@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-09-22
+ * \updates       2021-09-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -103,6 +103,7 @@ class qseqeditframe64 final : public qseqframe, protected performer::callbacks
     friend class qseqkeys;
     friend class qseqroll;
     friend class qseqtime;
+    friend class qstriggereditor;
 
     Q_OBJECT
 
