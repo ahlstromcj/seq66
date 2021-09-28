@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-25
+ * \updates       2021-09-28
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -144,7 +144,7 @@ event::event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1) :
     m_marked        (false),
     m_painted       (false)
 {
-    set_data(d0, d1);
+    set_data(d0, d1);                       /* fills the m_data array       */
 }
 
 /**
@@ -164,7 +164,7 @@ event::event (midipulse tstamp, midibpm tempo) :
     m_marked        (false),
     m_painted       (false)
 {
-    set_tempo(tempo);
+    set_tempo(tempo);                       /* fills the m_sysex vector     */
 }
 
 /**
@@ -260,24 +260,6 @@ event::~event ()
 }
 
 /**
- *  Sometimes we need to alter the event completely.
- */
-
-void
-event::set_data
-(
-    midipulse tstamp,
-    midibyte status,
-    midibyte d0,
-    midibyte d1
-)
-{
-    set_timestamp(tstamp);
-    set_status(status);
-    set_data(d0, d1);
-}
-
-/**
  *  If the current timestamp equal the event's timestamp, then this
  *  function returns true if the current rank is less than the event's
  *  rank.
@@ -323,6 +305,55 @@ event::operator < (const event & rhs) const
         return get_rank() < rhs.get_rank();
     else
         return m_timestamp < rhs.m_timestamp;
+}
+
+/**
+ *  Returns true if the event's status is *not* a control-change, but does
+ *  match the given status OR if the event's status is a control-change that
+ *  matches the given status, and has a control value matching the given
+ *  control-change value.
+ *
+ * \param status
+ *      The status to be checked.
+ *
+ * \param cc
+ *      The controller value to be matched, for control-change events.
+ */
+
+bool
+event::is_desired (midibyte status, midibyte cc) const
+{
+    bool result;
+    if (event::is_tempo_status(status))
+    {
+        result = is_tempo();
+    }
+    else
+    {
+        midibyte s = mask_status(status);
+        result = s == m_status;
+        if (result && (s == EVENT_CONTROL_CHANGE))
+            result = m_data[0] == cc;
+    }
+    return result;
+}
+
+/**
+ *  Sometimes we need to alter the event completely.
+ */
+
+void
+event::set_data
+(
+    midipulse tstamp,
+    midibyte status,
+    midibyte d0,
+    midibyte d1
+)
+{
+    set_timestamp(tstamp);
+    set_status(status);
+    set_data(d0, d1);
 }
 
 /**
@@ -408,16 +439,11 @@ event::set_status (midibyte status)
 void
 event::set_channel_status (midibyte status, midibyte channel)
 {
-    if (! is_null_channel(channel))
-    {
-        m_channel = mask_channel(channel);      /* clears the status nybble */
-        if (is_channel_msg(status))
-        {
-            status = mask_status(status);       /* clear out the channel    */
-            status |= m_channel;                /* add the correct channel  */
-        }
-    }
     m_status = status;
+    if (is_null_channel(channel))
+        m_channel = channel;
+    else
+        m_channel = mask_channel(channel);      /* clears the status nybble */
 }
 
 /**
@@ -439,6 +465,14 @@ event::set_status_keep_channel (midibyte eventcode)
 {
     m_status = eventcode;
     m_channel = mask_channel(eventcode);
+}
+
+void
+event::set_note_off (int note, midibyte channel)
+{
+    midibyte chan = mask_channel(channel);
+    m_status = EVENT_NOTE_OFF | chan;
+    set_data(midibyte(note), 0);
 }
 
 /**

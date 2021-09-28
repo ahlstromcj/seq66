@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-26
+ * \updates       2021-09-28
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -657,6 +657,23 @@ public:
         return m >= EVENT_NOTE_OFF && m < EVENT_CONTROL_CHANGE;
     }
 
+    /**
+     *  This static member function is used in the midifile module and in the
+     *  is_note_off_recorded() member function.
+     *
+     * \param status
+     *      The type of event, which might be EVENT_NOTE_ON.
+     *
+     * \param vel
+     *      The velocity byte to check.  It should be zero for a note-on is
+     *      note-off event.
+     */
+
+    static bool is_note_off_velocity (midibyte status, midibyte vel)
+    {
+        return mask_status(status) == EVENT_NOTE_ON && vel == 0;
+    }
+
     static bool is_program_change_msg (midibyte m)
     {
         return mask_status(m) == EVENT_PROGRAM_CHANGE;
@@ -695,7 +712,6 @@ public:
      * \return
      *      Returns true if the message is not a control-change, or if it is
      *      and the cc and datum parameters match.
-     */
 
     static inline bool is_desired_cc_or_not_cc
     (
@@ -705,6 +721,7 @@ public:
         m = mask_status(m);
         return (m != EVENT_CONTROL_CHANGE) || (datum == cc);
     }
+     */
 
     /**
      *  Checks for a System Common status, which is supposed to clear any
@@ -751,6 +768,7 @@ public:
     void set_channel_status (midibyte eventcode, midibyte channel);
     void set_meta_status (midibyte metatype);
     void set_status_keep_channel (midibyte eventcode);
+    void set_note_off (int note, midibyte channel);
     bool set_midi_event
     (
         midipulse timestamp,
@@ -808,38 +826,6 @@ public:
     }
 
     /**
-     *  Returns true if the event's status is *not* a control-change, but
-     *  does match the given status.
-     *
-     * \param status
-     *      The status to be checked.
-     */
-
-    bool non_cc_match (midibyte status)
-    {
-        midibyte s = mask_status(status);
-        return s != EVENT_CONTROL_CHANGE && mask_status(m_status) == s;
-    }
-
-    /**
-     *  Returns true if the event's status is a control-change that matches
-     *  the given status, and has a control value matching the given
-     *  control-change value.
-     *
-     * \param st
-     *      The status to be checked.
-     *
-     * \param cc
-     *      The control-change value to be checked against the events current
-     *      "d0" value.
-     */
-
-    bool cc_match (midibyte st, midibyte cc)
-    {
-        return st == EVENT_CONTROL_CHANGE && m_status == st && m_data[0] == cc;
-    }
-
-    /**
      *  Clears the most-significant-bit of both parameters, and sets them into
      *  the first and second bytes of m_data.
      *
@@ -869,6 +855,12 @@ public:
     void clear_data ()
     {
         m_data[0] = m_data[1] = 0;
+    }
+
+    void clear_links ()
+    {
+        unmark();
+        unlink();
     }
 
     /**
@@ -1069,9 +1061,14 @@ public:
         return m_has_link;
     }
 
-    bool is_on_linked () const
+    bool is_note_on_linked () const
     {
         return is_note_on() && is_linked();
+    }
+
+    bool is_note_unlinked () const
+    {
+        return is_strict_note() && ! is_linked();
     }
 
     void unlink ()
@@ -1238,22 +1235,7 @@ public:
         return is_selected() && mask_status(m_status) == mask_status(status);
     }
 
-    /**
-     *  This static member function is used in the midifile module and in the
-     *  is_note_off_recorded() member function.
-     *
-     * \param status
-     *      The type of event, which might be EVENT_NOTE_ON.
-     *
-     * \param vel
-     *      The velocity byte to check.  It should be zero for a note-on is
-     *      note-off event.
-     */
-
-    static bool is_note_off_velocity (midibyte status, midibyte vel)
-    {
-        return (status & EVENT_GET_STATUS_MASK) == EVENT_NOTE_ON && vel == 0;
-    }
+    bool is_desired (midibyte status, midibyte cc) const;
 
     /**
      *  Some keyboards send Note On with velocity 0 for Note Off, so we

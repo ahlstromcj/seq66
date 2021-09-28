@@ -276,9 +276,6 @@ void
 mastermidibase::panic (int displaybuss)
 {
     automutex locker(m_mutex);
-    event e;
-    e.set_status(EVENT_NOTE_OFF);
-    api_flush();
     for (int bus = 0; bus < c_busscount_max; ++bus)
     {
         if (bus == displaybuss)             /* do not clear the Launchpad   */
@@ -288,11 +285,13 @@ mastermidibase::panic (int displaybuss)
         {
             for (int note = 0; note < c_midibyte_data_max; ++note)
             {
-                e.set_data(note, 0);            /* values > 0 do expression */
+                event e;
+                e.set_note_off(note, channel);
                 m_outbus_array.play(bus, &e, channel);
             }
         }
     }
+    api_flush();
 }
 
 /**

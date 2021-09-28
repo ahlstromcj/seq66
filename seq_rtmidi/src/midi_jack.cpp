@@ -1391,10 +1391,7 @@ midi_in_jack::api_get_midi_event (event * inev)
 
             /*
              * Issue #55 (ignoring the channel).  The status is already set,
-             * with channel nybble, above.  This strips the channel.
-             *
-             * else
-             *     inev->set_status(st);
+             * with channel nybble, above, no need to set it here.
              */
         }
     }

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-10
+ * \updates       2021-09-28
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -985,10 +985,8 @@ midifile::add_old_trigger (sequence & seq)
  *
  * Channel:
  *
- *      We are transitioning to preserving the channel in the status byte,
- *      which will require masking in a number of event functions.
- *
- *      The global channel of a sequence is
+ *      We are transitioning away from preserving the channel in the status
+ *      byte, which will require using the event::m_channel value.
  *
  * Time Signature:
  *
@@ -1122,11 +1120,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     if (runningstatus > 0)      /* running status in force? */
                         status = runningstatus; /* yes, use running status  */
                 }
-#if defined SEQ66_DO_NOT_KEEP_CHANNEL
-                e.set_status(status);               /* set members in event */
-#else
                 e.set_status_keep_channel(status);  /* set members in event */
-#endif
 
                 /*
                  *  See "PPQN" section in banner.

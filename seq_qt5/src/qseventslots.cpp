@@ -162,6 +162,10 @@ qseventslots::events_to_string () const
     if (m_event_count > 0)
     {
         int row = 0;
+        result +=
+            " No. Timestamp      Event Status Ch.      D0     D1 "
+            "Link-time   Rank\n"
+            ;
         for (const auto & ei : m_event_container)
         {
             result += event_to_string(ei.second, row);
@@ -325,12 +329,16 @@ qseventslots::event_to_string
             linktime = "None";
     }
     char line[132];
+    midibyte rawstatus = ev.get_status();
+    if (ev.is_meta())
+        rawstatus = ev.get_meta_status();
+
     snprintf
     (
-        line, sizeof line, "%4d %s %12s Ch %2s %5s %5s %12s 0x%04x\n",
+        line, sizeof line, "%4d %s %12s 0x%02x Ch %2s %5s %5s %12s 0x%04x\n",
         index, ev.timestamp_string().c_str(), ev.status_string().c_str(),
-        ev.channel_string().c_str(), data_0.c_str(), data_1.c_str(),
-        linktime.c_str(), ev.get_rank()
+        rawstatus, ev.channel_string().c_str(), data_0.c_str(),
+        data_1.c_str(), linktime.c_str(), ev.get_rank()
     );
     return std::string(line);
 }

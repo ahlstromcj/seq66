@@ -348,13 +348,13 @@ eventlist::link_new (bool wrap)
 }
 
 /**
- *  THINK ABOUT IT:  If we're in legacy merge mode for a loop, the Note Off is
- *  actually earlier than the Note On.  And in replace mode, the Note On is
- *  cleared, leaving us with a dangling Note Off event.
+ *  If we're in legacy merge mode for a loop, the Note Off is actually earlier
+ *  than the Note On.  And in replace mode, the Note On is cleared, leaving us
+ *  with a dangling Note Off event.
  *
- *  We should consider, in both modes, automatically adding the Note Off at the
- *  end of the loop and ignoring the next note off on the same note from the
- *  keyboard.
+ *  We should consider, in both modes, automatically adding the Note Off at
+ *  the end of the loop and ignoring the next note off on the same note from
+ *  the keyboard.
  *
  *  Careful!
  *
@@ -449,10 +449,7 @@ void
 eventlist::clear_links ()
 {
     for (auto & e : m_events)
-    {
-        e.unmark();
-        e.unlink();
-    }
+        e.clear_links();                    /* does unmark() and unlink()   */
 }
 
 int
@@ -551,7 +548,7 @@ eventlist::remove_unlinked_notes ()
     bool result = false;
     for (auto i = m_events.begin(); i != m_events.end(); /*++i*/)
     {
-        if (i->is_strict_note() && ! i->is_linked())
+        if (i->is_note_unlinked())
         {
             auto t = remove(i);
             i = t;
@@ -790,6 +787,10 @@ eventlist::move_selected_notes (midipulse delta_tick, int delta_note)
     return result;
 }
 
+/**
+ *  Used only in qstriggereditor.
+ */
+
 bool
 eventlist::move_selected_events (midipulse delta_tick)
 {
@@ -920,7 +921,7 @@ eventlist::randomize_selected_notes (int jitter, int range)
 
 /**
  *  Scans the event-list for any tempo or time_signature events.
- *  The use may have deleted them and is depending on a setting made in the
+ *  The user may have deleted them and is depending on a setting made in the
  *  user-interface.  So we must set/unset the flags before saving.  This check
  *  was added to fix issue #141.
  */
@@ -930,13 +931,15 @@ eventlist::scan_meta_events ()
 {
     m_has_tempo = false;
     m_has_time_signature = false;
+    m_has_key_signature = false;
     for (auto & e : m_events)
     {
         if (e.is_tempo())
             m_has_tempo = true;
-
-        if (e.is_time_signature())
+        else if (e.is_time_signature())
             m_has_time_signature = true;
+        else if (e.is_key_signature())
+            m_has_key_signature = true;
     }
 }
 
@@ -1129,6 +1132,9 @@ eventlist::remove_marked ()
         else
             ++i;
     }
+    if (result)
+        verify_and_link();
+
     return result;
 }
 
@@ -1171,42 +1177,42 @@ eventlist::remove_selected ()
 void
 eventlist::unpaint_all ()
 {
-    for (auto & e : m_events)
-        e.unpaint();
+    for (auto & er : m_events)
+        er.unpaint();
 }
 
 /**
- *  Counts the selected note-on events in the event list.
+ *  Counts the selected Note On events in the event list.
  */
 
 int
 eventlist::count_selected_notes () const
 {
     int result = 0;
-    for (auto & e : m_events)
+    for (auto & er : m_events)
     {
-        if (e.is_note_on() && e.is_selected())
+        if (er.is_selected_note_on())
             ++result;
     }
     return result;
 }
 
 /**
- *  Indicates that at least one note is selected.  Acts like
+ *  Indicates that at least one Note On is selected.  Acts like
  *  eventlist::count_selected_notes(), but stops after finding a selected
  *  note.
  *
  * \return
- *      Returns true if at least one note is selected.
+ *      Returns true if at least one Note On is selected.
  */
 
 bool
 eventlist::any_selected_notes () const
 {
     bool result = false;
-    for (auto & e : m_events)
+    for (auto & er : m_events)
     {
-        if (e.is_note_on() && e.is_selected())
+        if (er.is_selected_note_on())
         {
             result = true;
             break;
@@ -1218,11 +1224,11 @@ eventlist::any_selected_notes () const
 /**
  *  Counts the selected events, with the given status, in the event list.
  *  If the event is a control change (CC), then it must also match the
- *  given CC value.  The one exception is tempo events, which are always
- *  selectable.
+ *  given CC value.  One exception is tempo events, which are selected
+ *  based on the event::is_tempo() test.
  *
  * \param status
- *      The desired status value to count.
+ *      The desired status value to count.  Note that tempo is 0x51.
  *
  * \param cc
  *      The desired control-change to count.  Used only if the status
@@ -1236,23 +1242,10 @@ int
 eventlist::count_selected_events (midibyte status, midibyte cc) const
 {
     int result = 0;
-    for (auto & e : m_events)
+    for (auto & er : m_events)
     {
-        if (e.is_tempo())
-        {
-            if (e.is_selected())
-                ++result;
-        }
-        else if (e.match_status(status))        /* e.get_status() == status */
-        {
-            midibyte d0, d1;
-            e.get_data(d0, d1);                 /* get the two data bytes   */
-            if (event::is_desired_cc_or_not_cc(status, cc, d0))
-            {
-                if (e.is_selected())
-                    ++result;
-            }
-        }
+        if (er.is_selected() && er.is_desired(status, cc))
+            ++result;
     }
     return result;
 }
@@ -1270,28 +1263,12 @@ bool
 eventlist::any_selected_events (midibyte status, midibyte cc) const
 {
     bool result = false;
-    for (auto & e : m_events)
+    for (auto & er : m_events)
     {
-        if (e.is_tempo())
+        if (er.is_selected() && er.is_desired(status, cc))
         {
-            if (e.is_selected())
-            {
-                result = true;
-                break;
-            }
-        }
-        else if (e.match_status(status))
-        {
-            midibyte d0, d1;
-            e.get_data(d0, d1);                 /* get the two data bytes */
-            if (event::is_desired_cc_or_not_cc(status, cc, d0))
-            {
-                if (e.is_selected())
-                {
-                    result = true;
-                    break;
-                }
-            }
+            result = true;
+            break;
         }
     }
     return result;
@@ -1304,18 +1281,18 @@ eventlist::any_selected_events (midibyte status, midibyte cc) const
 void
 eventlist::select_all ()
 {
-    for (auto & e : m_events)
-        e.select();
+    for (auto & er : m_events)
+        er.select();
 }
 
 void
 eventlist::select_by_channel (int channel)
 {
     midibyte target = midibyte(channel);
-    for (auto & e : m_events)
+    for (auto & er : m_events)
     {
-        if (e.channel() == target)
-            e.select();
+        if (er.channel() == target)
+            er.select();
     }
 }
 
@@ -1328,10 +1305,10 @@ void
 eventlist::select_notes_by_channel (int channel)
 {
     midibyte target = midibyte(channel);
-    for (auto & e : m_events)
+    for (auto & er : m_events)
     {
-        if (e.is_note() && e.channel() == target)
-            e.select();
+        if (er.is_note() && er.channel() == target)
+            er.select();
     }
 }
 
@@ -1342,8 +1319,8 @@ eventlist::select_notes_by_channel (int channel)
 void
 eventlist::unselect_all ()
 {
-    for (auto & e : m_events)
-        e.unselect();
+    for (auto & er : m_events)
+        er.unselect();
 }
 
 /**
@@ -1387,9 +1364,9 @@ eventlist::select_events
     {
         if (event_in_range(er, status, tick_s, tick_f))
         {
-            midibyte d0, d1;
-            er.get_data(d0, d1);
-            if (er.is_tempo() || event::is_desired_cc_or_not_cc(status, cc, d0))
+            // midibyte d0, d1;
+            // er.get_data(d0, d1);
+            if (er.is_desired(status, cc))
             {
                 if (action == select::selecting)
                 {

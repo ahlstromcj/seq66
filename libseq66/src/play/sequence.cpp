@@ -2173,12 +2173,7 @@ sequence::change_event_data_range
     {
         bool match = false;
         if (noselection || er.is_selected())
-        {
-            if (event::is_tempo_status(status))
-                match = er.is_tempo();
-            else
-                match = er.non_cc_match(status) || er.cc_match(status, cc);
-        }
+            match = er.is_desired(status, cc);
 
         midipulse tick = er.timestamp();
         if (match)
@@ -2258,52 +2253,38 @@ sequence::change_event_data_relative
 {
     automutex locker(m_mutex);
     bool result = false;
-    bool have_selection = m_events.any_selected_events(status, cc);
-    for (auto & e : m_events)
+    bool noselection = ! m_events.any_selected_events(status, cc);
+    for (auto & er : m_events)
     {
-        midibyte d0, d1;
-        e.get_data(d0, d1);
+        bool match = false;
+        if (noselection || er.is_selected())
+            match = er.is_desired(status, cc);
 
-        /*
-         * We should also match tempo events here.  But we have to treat them
-         * differently from the matched status events.
-         */
-
-        bool match = e.match_status(status);
-        bool good;                          /* event::is_desired_cc_or_not_cc */
-        if (status == EVENT_CONTROL_CHANGE)
+        midipulse tick = er.timestamp();
+        if (match)
         {
-            good = match && d0 == cc;       /* correct status & correct cc  */
+            if (tick > tick_f)                          /* in range?        */
+                break;
+            else if (tick < tick_s)                     /* in range?        */
+                continue;
+        }
+        else
+            continue;
+
+        if (er.is_tempo())
+        {
+            midibpm tempo = note_value_to_tempo(midibyte(newval));
+            result = er.set_tempo(tempo);
         }
         else
         {
-            if (e.is_tempo())
-                good = true;                /* Set tempo always editable    */
-            else
-                good = match;               /* correct status and not a cc  */
-        }
-
-        /*
-         * Optimize:  stop at the first event past the high end of the
-         * range.
-         */
-
-        midipulse tick = e.timestamp();
-        if (tick > tick_f)                              /* in range?        */
-            break;
-
-        if (tick < tick_s)                              /* in range?         */
-            good = false;
-
-        if (have_selection && ! e.is_selected())        /* in selection?    */
-            good = false;
-
-        if (good)
-        {
             /*
              * Two-byte messages: Note On/Off, Aftertouch, Control, Pitch.
-             * One-byte messages: Proram or Channel Pressure.
+             * One-byte messages: Program or Channel Pressure.
              */
+
+            midibyte d0, d1;
+            er.get_data(d0, d1);
 
             int newdata = int(clamp_midibyte_value(d1 + newval));
             if (event::is_one_byte_msg(status))
@@ -2311,10 +2292,11 @@ sequence::change_event_data_relative
             else
                 d1 = newdata;
 
-            e.set_data(d0, d1);
+            er.set_data(d0, d1);
             result = true;
-            modify();
         }
+        if (result)
+            modify();
     }
     return result;
 }
@@ -2379,12 +2361,8 @@ sequence::change_event_data_lfo
     {
         bool match = false;
         if (noselection || er.is_selected())
-        {
-            if (event::is_tempo_status(status))
-                match = er.is_tempo();
-            else
-                match = er.non_cc_match(status) || er.cc_match(status, cc);
-        }
+            match = er.is_desired(status, cc);
+
         if (match)
         {
             double dtick = double(er.timestamp());
@@ -4180,9 +4158,8 @@ sequence::get_next_event
  *  event.  If the status is the new value EVENT_ANY, then any event will be
  *  obtained.
  *
- *  Note the usage of event::is_desired_cc_or_not_cc(status, cc, *d0); Either
- *  we have a control change with the right CC or it's a different type of
- *  event.
+ *  Note the usage of event::is_desired(status, cc); either we have a control
+ *  change with the right CC or it's a different type of event.
  *
  * \param status
  *      The type of event to be obtained.  The special value EVENT_ANY can be
@@ -4226,7 +4203,7 @@ sequence::get_next_event_match
         {
             midibyte d0;
             drawevent.get_data(d0);
-            ok = istempo || event::is_desired_cc_or_not_cc(status, cc, d0);
+            ok = drawevent.is_desired(status, cc);
             if (ok)
                 return true;                    /* must ++evi after call    */
         }
@@ -5586,7 +5563,7 @@ sequence::resume_note_ons (midipulse tick)
     {
         for (auto & ei : m_events)
         {
-            if (ei.is_on_linked())                      /* note on linked   */
+            if (ei.is_note_on_linked())                 /* note on linked   */
             {
                 midipulse on = ei.timestamp();          /* see banner notes */
                 midipulse off = ei.link()->timestamp();

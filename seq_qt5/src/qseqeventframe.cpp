@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-09-22
+ * \updates       2021-09-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -104,6 +104,9 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
         this, SLOT(update_seq_name())
     );
     set_seq_title(make_seq_title());
+
+    QString seqnolabel = QString::fromStdString(std::to_string(seqid));
+    ui->label_seq_number->setText(seqnolabel);
 
     std::string ts_ppqn = std::to_string(m_seq->get_beats_per_bar());
     ts_ppqn += "/";

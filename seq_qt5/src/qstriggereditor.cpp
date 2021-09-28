@@ -426,7 +426,8 @@ qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
         {
             /*
              * Adjust for snap, then convert deltas into screen coordinates.
-             * Then move notes; not really notes, but still moves events.
+             * Move the events, except for notes.  Those must be edited in the
+             * piano roll.
              */
 
             midipulse delta_tick;
