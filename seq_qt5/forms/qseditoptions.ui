@@ -565,13 +565,13 @@ number using the channel number (0 to 15).</string>
        <property name="flat">
         <bool>false</bool>
        </property>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>8</x>
           <y>44</y>
           <width>312</width>
-          <height>125</height>
+          <height>141</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -861,18 +861,7 @@ to 128, and defaults to 32.</string>
          <height>29</height>
         </rect>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QPushButton" name="pushButtonSavePalette">
-          <property name="toolTip">
-           <string>Just what the button says :-)</string>
-          </property>
-          <property name="text">
-           <string>&amp;Save Palette Now</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <layout class="QHBoxLayout" name="horizontalLayout"/>
       </widget>
       <widget class="QLabel" name="label_key">
        <property name="geometry">
@@ -1913,6 +1902,22 @@ path added to this name is stripped.</string>
           <width>125</width>
           <height>21</height>
          </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonSavePalette">
+        <property name="geometry">
+         <rect>
+          <x>296</x>
+          <y>136</y>
+          <width>139</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Just what the button says :-)</string>
+        </property>
+        <property name="text">
+         <string>&amp;Save Palette Now</string>
         </property>
        </widget>
       </widget>

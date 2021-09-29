@@ -864,7 +864,7 @@ wrkfile::NoteArray (int track, int events)
             }
 
             bool isnoteoff = false;
-            Set_timestamp(e, time);             /* e.set_timestamp(time)    */
+            Set_timestamp(e, time);
             e.set_status(status);                           /* w/channel    */
             switch (eventcode)
             {
@@ -889,7 +889,7 @@ wrkfile::NoteArray (int track, int events)
                 {
                     event e;
                     timemax = time + midilong(dur);
-                    Set_timestamp(e, timemax);  /* e.set_timestamp(timemax) */
+                    Set_timestamp(e, timemax);
                     e.set_channel_status(EVENT_NOTE_OFF, channel);
                     e.set_data(d0, 0);
                     m_current_seq->append_event(e);
@@ -1158,7 +1158,7 @@ wrkfile::StreamChunk ()
             status = laststatus;                    /* no, it's running status  */
 
         bool isnoteoff = false;
-        Set_timestamp(e, time);                     /* e.set_timestamp(time)    */
+        Set_timestamp(e, time);
         e.set_status(status);                       /* includes the channel     */
         if (eventcode == EVENT_NOTE_OFF)
         {
@@ -1188,7 +1188,7 @@ wrkfile::StreamChunk ()
             {
                 event e;
                 timemax = time + midilong(dur);
-                Set_timestamp(e, timemax);      /* e.set_timestamp(timemax) */
+                Set_timestamp(e, timemax);
                 e.set_channel_status(EVENT_NOTE_OFF, channel);
                 e.set_data(d0, 0);
                 m_current_seq->append_event(e);
@@ -1496,7 +1496,7 @@ wrkfile::TempoChunk (int factor)
         bool ok = e.append_meta_data(EVENT_META_SET_TEMPO, bt, 3);
         if (ok)
         {
-            Set_timestamp(e, time);             /* e.set_timestamp(time)    */
+            Set_timestamp(e, time);
             m_current_seq->append_event(e);
         }
     }

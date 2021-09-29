@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-17
+ * \updates       2021-09-29
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -691,7 +691,7 @@ editable_event::set_status_from_string
                 if (bpm > 0.0f)
                     (void) set_tempo(bpm);
             }
-            else if (value == EVENT_META_TIME_SIGNATURE)            /* 0x51 */
+            else if (value == EVENT_META_TIME_SIGNATURE)            /* 0x58 */
             {
                 auto pos = sd0.find_first_of("/");
                 if (pos != std::string::npos)
@@ -732,6 +732,10 @@ editable_event::set_status_from_string
                         (void) set_sysex(t, 4);     /* add ex-data bytes    */
                     }
                 }
+            }
+            else if (value == EVENT_META_KEY_SIGNATURE)             /* 0x59 */
+            {
+                // TO DO
             }
             else
             {

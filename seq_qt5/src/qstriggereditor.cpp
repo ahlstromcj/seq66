@@ -661,8 +661,7 @@ qstriggereditor::set_data_type (midibyte status, midibyte control)
     else
     {
         is_tempo(false);
-        status = event::normalize_status(status);
-        m_status = status;
+        m_status = event::normalized_status(status);
         m_cc = control;
     }
     update();

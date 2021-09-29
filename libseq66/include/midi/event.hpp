@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-28
+ * \updates       2021-09-29
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -372,6 +372,10 @@ private:
      *  This event is used to link NoteOns and NoteOffs together.  The NoteOn
      *  points to the NoteOff, and the NoteOff points to the NoteOn.  See, for
      *  example, eventlist::link_notes().
+     *
+     *  We currently do not link tempo events; this would be necessary to
+     *  display a line from one tempo event to the next.  Currently we display
+     *  a small circle for each tempo event.
      */
 
     iterator m_linked;
@@ -410,6 +414,11 @@ public:
     event ();
     event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1);
     event (midipulse tstamp, midibpm tempo);
+    event
+    (
+        midipulse tstamp, midibyte notekind, midibyte channel,
+        int note, int velocity
+    );
     event (const event & rhs);
     event & operator = (const event & rhs);
     virtual ~event ();
@@ -482,7 +491,8 @@ public:
     }
 
     /**
-     *  Static test for the status bit.  The opposite test is is_data().
+     *  Static test for the status bit.  The "opposite" test is is_data().
+     *  Currently used only in midifile.
      *
      * \return
      *      Returns true if the status bit is set.  Covers 0x80 to 0xFF.
@@ -498,12 +508,14 @@ public:
      *  by stripping the channel nybble if necessary.
      */
 
-    static midibyte normalize_status (midibyte status)
+    static midibyte normalized_status (midibyte status)
     {
         return is_channel_msg(status) ? mask_status(status) : status ;
     }
 
-    /**
+#if defined SEQ66_THIS_FUNCTION_IS_USED
+
+    /*
      *  Static test for the status bit.  The opposite test is is_status().
      *  Currently not used anywhere.
      *
@@ -515,6 +527,8 @@ public:
     {
         return (m & EVENT_STATUS_BIT) == 0x00;
     }
+
+#endif
 
     /*
      *  Static functions used in event and editable event.
@@ -530,6 +544,11 @@ protected:
     static bool is_meta_msg (midibyte m)
     {
         return m == EVENT_MIDI_META;
+    }
+
+    static bool is_ex_data_msg (midibyte m)
+    {
+        return m == EVENT_MIDI_META || m == EVENT_MIDI_SYSEX;
     }
 
     static bool is_pitchbend_msg (midibyte m)
@@ -569,8 +588,8 @@ protected:
     }
 
     /*
-     *  Static functions used in analysizing MIDI events by external callers such
-     *  as midifile, rtmidi, and midi_jack.
+     *  Static functions used in analysizing MIDI events by external callers
+     *  such as midifile, rtmidi, and midi_jack.
      */
 
 public:
@@ -630,11 +649,10 @@ public:
 
     static bool is_two_byte_msg (midibyte m)
     {
-        m = mask_status(m);
         return
         (
             (m >= EVENT_NOTE_OFF && m < EVENT_PROGRAM_CHANGE) ||
-            m == EVENT_PITCH_WHEEL
+            mask_status(m) == EVENT_PITCH_WHEEL
         );
     }
 
@@ -679,6 +697,11 @@ public:
         return mask_status(m) == EVENT_PROGRAM_CHANGE;
     }
 
+    /*
+     * This function seems iffy.  Replaced by is_tempo_status() in the GUI
+     * classes.
+     */
+
     static bool is_meta_status (midibyte m)
     {
         return m <= EVENT_META_SEQSPEC;
@@ -694,9 +717,12 @@ public:
         return m == EVENT_MIDI_SYSEX;
     }
 
+#if defined SEQ66_THIS_FUNCTION_IS_USED
+
     /**
      *  Static test for channel messages that are either not control-change
      *  messages, or are and match the given controller value.
+     *  Replaced with a better function set.
      *
      * \param m
      *      The channel status or message byte to be tested.
@@ -712,6 +738,7 @@ public:
      * \return
      *      Returns true if the message is not a control-change, or if it is
      *      and the cc and datum parameters match.
+     */
 
     static inline bool is_desired_cc_or_not_cc
     (
@@ -721,11 +748,12 @@ public:
         m = mask_status(m);
         return (m != EVENT_CONTROL_CHANGE) || (datum == cc);
     }
-     */
+
+#endif
 
     /**
      *  Checks for a System Common status, which is supposed to clear any
-     *  running status.
+     *  running status.  Use in midifile.
      */
 
     static bool is_system_common_msg (midibyte m)
@@ -736,12 +764,17 @@ public:
     /**
      *  Checks for a Realtime Category status, which ignores running status.
      *  Ranges from 0xF8 to 0xFF,  and m <= EVENT_MIDI_RESET is always true.
+     *  Use in midifile.
      */
 
     static bool is_realtime_msg (midibyte m)
     {
         return m >= EVENT_MIDI_CLOCK;
     }
+
+    /**
+     *  Used in midi_jack.
+     */
 
     static bool is_sense_or_reset (midibyte m)
     {
@@ -761,14 +794,18 @@ public:
 
     void mod_timestamp (midipulse modtick)
     {
-        m_timestamp %= modtick;
+        if (modtick > 1)
+            m_timestamp %= modtick;
     }
 
     void set_status (midibyte status);
+    void set_channel (midibyte channel);
     void set_channel_status (midibyte eventcode, midibyte channel);
     void set_meta_status (midibyte metatype);
     void set_status_keep_channel (midibyte eventcode);
+#if defined SEQ66_THIS_FUNCTION_IS_USED
     void set_note_off (int note, midibyte channel);
+#endif
     bool set_midi_event
     (
         midipulse timestamp,
@@ -780,12 +817,18 @@ public:
      *  Note that we have ensured that status ranges from 0x80 to 0xFF.
      *  And recently, the status now holds the channel, redundantly.
      *  Unless the event is a meta event, in which case the channel is the
-     *  number of the event.
+     *  number of the event.  We can return the bare status, or status with
+     *  the channel stripped, for channel messages.
      */
 
     midibyte get_status () const
     {
         return m_status;
+    }
+
+    midibyte normalized_status () const
+    {
+        return normalized_status(m_status);     /* may strip channel nybble */
     }
 
     midibyte get_status (midibyte channel) const
@@ -801,11 +844,6 @@ public:
     bool valid_status () const
     {
         return is_status(m_status);
-    }
-
-    midibyte normalize_status () const
-    {
-        return normalize_status(m_status);
     }
 
     /**
@@ -1345,14 +1383,13 @@ public:
     }
 
     /**
-     *  Indicates if we need to use extended data (SysEx or Meta).
-     *  If true, then the m_channel byte is used to encode the type of meta
-     *  event.
+     *  Indicates if we need to use extended data (SysEx or Meta).  If true,
+     *  then m_channel encodes the type of meta event.
      */
 
     bool is_ex_data () const
     {
-        return m_status == EVENT_MIDI_META || m_status == EVENT_MIDI_SYSEX;
+        return is_ex_data_msg(m_status);
     }
 
     /**

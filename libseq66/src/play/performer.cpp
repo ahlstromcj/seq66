@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-09-14
+ * \updates       2021-09-29
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1830,7 +1830,6 @@ performer::log_current_tempo ()
         seq66::event e = create_tempo_event(tick, bpm);     /* event.cpp    */
         if (s->add_event(e))                                /* sorts too    */
         {
-            s->link_tempos();
             s->set_dirty();
             if (tick > s->get_length())
                 s->set_length(tick);

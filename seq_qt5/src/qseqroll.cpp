@@ -459,9 +459,9 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     painter.setBrush(brush);
     painter.setPen(pen);
     painter.drawRect(r);
-    for (int key = 1; key <= c_num_keys; ++key)     /* for each note row    */
+    for (int key = 1; key <= c_notes_count; ++key)     /* for each note row    */
     {
-        int remkeys = c_num_keys - key;             /* remaining keys       */
+        int remkeys = c_notes_count - key;             /* remaining keys       */
         int modkey = remkeys - scroll_offset_v() + octkey;
 
         /*
@@ -703,10 +703,7 @@ qseqroll::draw_notes
                         (
                             x_shift, m_note_y, m_note_width, h_minus
                         );
-                        painter.drawRect
-                        (
-                            m_keypadding_x, m_note_y, w, h_minus
-                        );
+                        painter.drawRect(m_keypadding_x, m_note_y, w, h_minus);
                     }
                 }
             }
@@ -1100,7 +1097,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             else
             {
                 convert_xy(delta_x, delta_y, delta_tick, delta_note);
-                delta_note = delta_note - (c_num_keys - 1);
+                delta_note = delta_note - (c_notes_count - 1);
             }
             m_last_base_note = (-1);
             if (delta_tick != 0 || delta_note != 0)

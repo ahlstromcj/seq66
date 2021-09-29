@@ -1276,7 +1276,7 @@ void
 qseqeditframe64::initialize_panels ()
 {
     int noteheight = usr().key_height();
-    int height = noteheight * c_num_keys + 1;
+    int height = noteheight * c_notes_count + 1;
     m_seqkeys = new (std::nothrow) qseqkeys
     (
         perf(), seq_pointer(), this, ui->keysScrollArea,
@@ -2235,21 +2235,18 @@ qseqeditframe64::set_background_sequence (int seqnum)
 void
 qseqeditframe64::set_data_type (midibyte status, midibyte control)
 {
-    if (event::is_meta_status(status))
+    if (event::is_tempo_status(status))
     {
-        if (event::is_tempo_status(status))
-        {
-            m_seqevent->set_data_type(status, control);
-            m_seqdata->set_data_type(status, control);
-            ui->m_entry_data->setText("Tempo");
-        }
+        m_seqevent->set_data_type(status, control);
+        m_seqdata->set_data_type(status, control);
+        ui->m_entry_data->setText("Tempo");
     }
     else
     {
         char hexa[8];
         char type[32];
         snprintf(hexa, sizeof hexa, "[0x%02X]", status);
-        status = event::normalize_status(status);
+        status = event::normalized_status(status);
         m_seqevent->set_data_type(status, control);     /* qstriggereditor  */
         m_seqdata->set_data_type(status, control);
         if (status == EVENT_NOTE_OFF)
@@ -2720,17 +2717,9 @@ qseqeditframe64::events ()
 {
     if (not_nullptr(m_events_popup))
     {
-        m_events_popup->exec
-        (
-            ui->m_button_event->mapToGlobal
-            (
-                QPoint
-                (
-                    ui->m_button_event->width()-2,
-                    ui->m_button_event->height()-2
-                )
-            )
-        );
+        int w = ui->m_button_event->width() - 2;
+        int h = ui->m_button_event->height() - 2;
+        m_events_popup->exec(ui->m_button_event->mapToGlobal(QPoint(w, h)));
     }
 }
 
@@ -2874,7 +2863,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
         if (! s->get_next_event(status, cc, cev))
             break;
 
-        status = event::normalize_status(status);   /* mask off channel     */
+        status = event::normalized_status(status);      /* mask off channel */
         switch (status)
         {
         case EVENT_NOTE_OFF:            note_off = true;            break;
@@ -3025,42 +3014,35 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
         if (! s->get_next_event(status, cc, cev))
             break;
 
-        status = event::normalize_status(status);   /* mask off channel     */
+        status = event::normalized_status(status);      /* mask off channel */
         switch (status)
         {
         case EVENT_NOTE_OFF:
-            note_off = true;
-            any_events = true;
+            note_off = any_events = true;
             break;
 
         case EVENT_NOTE_ON:
-            note_on = true;
-            any_events = true;
+            note_on = any_events = true;
             break;
 
         case EVENT_AFTERTOUCH:
-            aftertouch = true;
-            any_events = true;
+            aftertouch = any_events = true;
             break;
 
         case EVENT_CONTROL_CHANGE:
-            ccs[cc] = true;
-            any_events = true;
+            ccs[cc] = any_events = true;
             break;
 
         case EVENT_PITCH_WHEEL:
-            any_events = true;
-            pitch_wheel = true;
+            any_events = pitch_wheel = true;
             break;
 
         case EVENT_PROGRAM_CHANGE:
-            any_events = true;
-            program_change = true;
+            any_events = program_change = true;
             break;
 
         case EVENT_CHANNEL_PRESSURE:
-            any_events = true;
-            channel_pressure = true;
+            any_events = channel_pressure = true;
             break;
         }
     }

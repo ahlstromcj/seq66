@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-27
+ * \updates       2021-09-29
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2458,7 +2458,6 @@ sequence::change_event_data_lfo
  *      If not set to the preserve-velocity, the velocity of the note is
  *      set to this value.  Otherwise, it is hard-wired to the stored note-on
  *      velocity.  The name of this macro is counter-intuitive here.
- *      Currently, the note-off velocity is HARD-WIRED!
  *
  * \return
  *      Returns true if the event was added.
@@ -2484,16 +2483,9 @@ sequence::add_painted_note
     }
     else
     {
-        /*
-         *  See banner notes.  Isn't this velocity code redundant?
-         */
-
         bool hardwire = velocity == usr().preserve_velocity();
         midibyte v = hardwire ? midibyte(m_note_on_velocity) : velocity ;
-        event e(tick, EVENT_NOTE_ON, note, v);
-        if (! free_channel())
-            e.set_channel_status(EVENT_NOTE_ON, seq_midi_channel());
-
+        event e(tick, EVENT_NOTE_ON, midi_channel(), note, v);
         if (repaint)
             e.paint();
 
@@ -2501,10 +2493,7 @@ sequence::add_painted_note
         if (result)
         {
             midibyte v = hardwire ? midibyte(m_note_off_velocity) : 0 ;
-            event e(tick + len, EVENT_NOTE_OFF, note, v);
-            if (! free_channel())
-                e.set_channel_status(EVENT_NOTE_OFF, seq_midi_channel());
-
+            event e(tick + len, EVENT_NOTE_OFF, midi_channel(), note, v);
             result = add_event(e);
         }
     }
@@ -2515,11 +2504,11 @@ sequence::add_painted_note
 }
 
 /**
- *  Overload for use with keyboard input.  The version above always sets channel
- *  to 0, and can repaint, and is used by the seqroll.
+ *  Overload for use with keyboard input.  The version above always sets
+ *  channel to 0, and can repaint, and is used by the seqroll.
  *
- *  Note:  Like the version above, this code simulates a Note Off.  We will fix
- *  that AT SOME POINT.
+ *  Note:  Like the version above, this code simulates a Note Off.  We will
+ *  fix that AT SOME POINT.
  *
  * \param len
  *      The length between the Note On and Note Off events to be added here.
@@ -2537,8 +2526,7 @@ sequence::add_note (midipulse len, const event & e)
     {
         midipulse tick = e.timestamp() + len;
         midibyte v = midibyte(m_note_off_velocity);
-        event eoff(tick, EVENT_NOTE_OFF, e.get_note(), v);
-        eoff.set_channel_status(EVENT_NOTE_OFF, e.channel());
+        event eoff(tick, EVENT_NOTE_OFF, e.channel(), e.get_note(), v);
         result = add_event(eoff);
     }
     if (result)
@@ -2932,12 +2920,6 @@ sequence::stream_event (event & ev)
                 set_dirty();
             }
         }
-
-        /*
-         * No longer a need to do this:
-         *    ev.set_status(ev.get_status());   // clear channel nybble
-         */
-
         ev.mod_timestamp(get_length());         /* adjust tick re length    */
         if (recording())
         {
@@ -4070,7 +4052,7 @@ sequence::reset_interval
 {
     bool result = false;
     bool got_beginning = false;
-    it0 = m_events.cbegin();                 // iter;
+    it0 = m_events.cbegin();
     it1 = m_events.cend();
     for (auto iter = cbegin(); ! cend(iter); ++iter)
     {
@@ -4925,14 +4907,14 @@ void
 sequence::off_playing_notes ()
 {
     automutex locker(m_mutex);
-    event e;
-    e.set_status(EVENT_NOTE_OFF);
-    for (int x = 0; x < c_playing_notes_max; ++x)
+    int channel = free_channel() ? 0 : seq_midi_channel() ;
+    event e(0, EVENT_NOTE_OFF, channel, 0, 0);
+    for (int x = 0; x < c_notes_count; ++x)
     {
         while (m_playing_notes[x] > 0)
         {
-            e.set_data(x, midibyte(0));               /* or is 127 better?  */
-            master_bus()->play(m_true_bus, &e, midi_channel(e));
+            e.set_data(x);
+            master_bus()->play(m_true_bus, &e, channel);
             --m_playing_notes[x];
         }
     }

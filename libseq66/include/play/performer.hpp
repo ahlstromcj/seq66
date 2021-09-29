@@ -68,7 +68,7 @@ namespace seq66
  * class.
  */
 
-const int c_transpose_down_limit = c_num_keys / 2;
+const int c_transpose_down_limit = c_notes_count / 2;
 const int c_transpose_up_limit = -c_transpose_down_limit;
 
 /*

@@ -311,7 +311,7 @@ protected:
     int m_unit_height;
 
     /**
-     *  See qseqroll::keyY * c_num_keys + 1.
+     *  See qseqroll::keyY * c_notes_count + 1.
      */
 
     int m_total_height;

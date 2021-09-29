@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-09-24
+ * \updates       2021-09-29
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -163,7 +163,7 @@ qseventslots::events_to_string () const
     {
         int row = 0;
         result +=
-            " No. Timestamp      Event Status Ch.      D0     D1 "
+            " No. Timestamp      Event Status Ch.      D0    D1    "
             "Link-time   Rank\n"
             ;
         for (const auto & ei : m_event_container)
@@ -740,10 +740,8 @@ qseventslots::modify_current_event
             editable_event ev = editable_events::dref(m_current_iterator);
             ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
             if (! ev.is_ex_data())
-            {
-                midibyte status = ev.get_status();
-                ev.set_channel_status(status, channelbyte);
-            }
+                ev.set_channel(channelbyte);
+
             result = delete_current_event();            /* full karaoke del */
             if (result)
                 result = insert_event(ev);              /* full karaoke add */

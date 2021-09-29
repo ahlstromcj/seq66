@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-09-15
+ * \updates       2021-09-29
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -422,7 +422,13 @@ eventlist::verify_and_link (midipulse slength, bool wrap)
         mark_out_of_range(slength);
         (void) remove_marked();             /* prune out-of-range events    */
     }
-    link_tempos();
+
+    /*
+     * Not sure we want to draw lines for tempos yet.  Also, linking tempos
+     * makes them double-selectable in the event editor.
+     *
+     * link_tempos();
+     */
 }
 
 /**
@@ -770,7 +776,7 @@ eventlist::move_selected_notes (midipulse delta_tick, int delta_note)
         if (er.is_selected_note())                  /* moveable event?      */
         {
             int newnote = er.get_note() + delta_note;
-            if (newnote >= 0 && newnote < c_num_keys)
+            if (newnote >= 0 && newnote < c_notes_count)
             {
                 midipulse newts = adjust_timestamp(er, delta_tick);
                 if (er.is_note())                   /* Note On or Note Off  */

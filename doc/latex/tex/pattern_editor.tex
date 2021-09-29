@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-09-15
+% \update      2021-09-29
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -883,9 +883,11 @@
          \index{keys!u}
          \index{selection!remove unlinked notes}
          \textbf{\texttt{u}}.
+         Unlinked notes do not occur unless note-wrap-around occurs.
+         When they do occur, they are painted in magenta.
          Pressing the \texttt{u} key will remove any unlinked notes found in
-         the pattern.  These notes are indicated by a magenta color instead of
-         the normal color.  This items is a stop-gap until we can figure out
+         the pattern.
+         This fix is a stop-gap until we can figure out
          the best way to prevent unlinked notes while handling recording of
          notes near the end of the pattern length.
       \item

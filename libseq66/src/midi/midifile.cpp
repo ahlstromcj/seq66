@@ -1096,12 +1096,12 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
             sequence & s = *sp;                     /* references better    */
             while (! done)                          /* get events in track  */
             {
-                event e;
+                event e;                            /* note-off, no channel */
                 midilong len;                       /* important counter!   */
-                midibyte d0, d1;                    /* was data[2];         */
-                midipulse delta = read_varinum();           /* time delta   */
-                status = m_data[m_pos];                     /* current byte */
-                if (event::is_status(status))               /* 0x80 bit?    */
+                midibyte d0, d1;                    /* the two data bytes   */
+                midipulse delta = read_varinum();   /* time delta from prev */
+                status = m_data[m_pos];             /* current event byte   */
+                if (event::is_status(status))       /* is there a 0x80 bit? */
                 {
                     skip(1);                                /* get to d0    */
                     if (event::is_system_common_msg(status))
@@ -1113,14 +1113,14 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                 {
                     /*
                      * Handle data values. If in running status, set that as
-                     * status; the next value to be read is the d0 value.
-                     * If not running status, is this an ERROR?
+                     * status; the next value to be read is the d0 value.  If
+                     * not running status, is this an error?
                      */
 
                     if (runningstatus > 0)      /* running status in force? */
                         status = runningstatus; /* yes, use running status  */
                 }
-                e.set_status_keep_channel(status);  /* set members in event */
+                e.set_status_keep_channel(status);  /* set status, channel  */
 
                 /*
                  *  See "PPQN" section in banner.
@@ -1235,7 +1235,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 bt[0] = read_byte();                /* tt   */
                                 bt[1] = read_byte();                /* tt   */
                                 bt[2] = read_byte();                /* tt   */
-                                bt[3] = 0;
 
                                 double tt = tempo_us_from_bytes(bt);
                                 if (tt > 0)

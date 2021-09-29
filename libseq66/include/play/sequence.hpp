@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-09-27
+ * \updates       2021-09-29
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -202,9 +202,11 @@ private:
      *  seq24/seq66 can have playing at one time.  In other words, "only" 256
      *  simultaneously-playing notes can be managed.  Defines the maximum
      *  number of notes playing at one time that the application will support.
+     *  BOGUS.  It was meant for counting legal notes, and only 128 are
+     *  available (see the constant c_notes_count).
+     *
+     *      static const int c_playing_notes_max = 256;
      */
-
-    static const int c_playing_notes_max = 256;
 
     /**
      *  Used as the default velocity parameter in adding notes.
@@ -356,11 +358,10 @@ private:
 
     /**
      *  Provides a "map" for Note On events.  It is used when muting, to shut
-     *  off the notes that are playing. The number of notes playing will never
-     *  come close to the unsigned short limit of 65535.
+     *  off the notes that are playing.
      */
 
-    unsigned short m_playing_notes[c_playing_notes_max];
+    unsigned short m_playing_notes[c_notes_count];
 
     /**
      *  Indicates if the sequence was playing.  This value is set at the end
@@ -1543,17 +1544,6 @@ public:
 #if defined USE_ADJUST_DATA_HANDLE
     void adjust_data_handle (midibyte status, int data);
 #endif
-
-    /**
-     *  A new function to re-link the tempo events added by the user.
-     *  Not sure that we will need this; it is useful for drawing lines, and
-     *  currently we're drawing the event as a circle.
-     */
-
-    void link_tempos ()
-    {
-        m_events.link_tempos();
-    }
 
     /**
      *  Resets everything to zero.  This function is used when the sequencer

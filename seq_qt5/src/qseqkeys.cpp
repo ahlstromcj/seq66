@@ -136,9 +136,9 @@ qseqkeys::paintEvent (QPaintEvent *)
     int nh_1 = nh - 1;
     int nh_4 = nh - 4;
     int nh_5 = nh - 5;
-    for (int i = 0; i < c_num_keys; ++i, keyy += nh, numy += nh)
+    for (int i = 0; i < c_notes_count; ++i, keyy += nh, numy += nh)
     {
-        int keyvalue = c_num_keys - i - 1;
+        int keyvalue = c_notes_count - i - 1;
         int key = keyvalue % c_octave_size;
         pen.setColor(Qt::black);                    /* white keys           */
         pen.setStyle(Qt::SolidLine);
@@ -339,7 +339,7 @@ qseqkeys::set_note_height (int h)
     if (result)
     {
         note_height(h);
-        total_height(h * c_num_keys);
+        total_height(h * c_notes_count);
         resize(sc_keyarea_x, total_height());
         update();
     }

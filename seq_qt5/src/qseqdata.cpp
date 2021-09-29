@@ -408,7 +408,7 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
 void
 qseqdata::set_data_type (midibyte status, midibyte control)
 {
-    if (event::is_meta_status(status))
+    if (event::is_tempo_status(status))
     {
         is_tempo(true);
         is_program_change(false);
@@ -426,8 +426,7 @@ qseqdata::set_data_type (midibyte status, midibyte control)
     {
         is_tempo(false);
         is_program_change(false);
-        status = event::normalize_status(status);
-        m_status = status;
+        m_status = event::normalized_status(status);
         m_cc = control;
     }
     update();

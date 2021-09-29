@@ -509,7 +509,7 @@ qseqeditframe::initialize_panels ()
     m_seqkeys = new qseqkeys
     (
         perf(), seq_pointer(), m_container, usr().key_height(),
-        usr().key_height() * c_num_keys + 1
+        usr().key_height() * c_notes_count + 1
     );
     m_seqtime = new qseqtime
     (

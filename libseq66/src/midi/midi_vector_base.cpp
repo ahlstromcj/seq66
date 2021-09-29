@@ -514,8 +514,8 @@ midi_vector_base::song_fill_seq_event
     if (trig_offset > start_offset)                 /* offset len too far   */
         time_offset -= len;
 
-    int note_is_used[c_num_keys];
-    for (int i = 0; i < c_num_keys; ++i)
+    int note_is_used[c_notes_count];
+    for (int i = 0; i < c_notes_count; ++i)
         note_is_used[i] = 0;                        /* initialize to off    */
 
     for (int p = 0; p <= times_played; ++p, time_offset += len)

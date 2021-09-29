@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-28
+ * \updates       2021-09-29
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -100,7 +100,7 @@ namespace seq66
 event::event () :
     m_input_buss    (null_buss()),          /* 0xFF                 */
     m_timestamp     (0),
-    m_status        (EVENT_NOTE_OFF),
+    m_status        (EVENT_NOTE_OFF),       /* note-off, channel 0  */
     m_channel       (null_channel()),       /* 0x80                 */
     m_data          (),                     /* a two-element array  */
     m_sysex         (),                     /* an std::vector       */
@@ -165,6 +165,44 @@ event::event (midipulse tstamp, midibpm tempo) :
     m_painted       (false)
 {
     set_tempo(tempo);                       /* fills the m_sysex vector     */
+}
+
+/**
+ *  Creates a note event.
+ */
+
+event::event
+(
+    midipulse tstamp,
+    midibyte notekind,
+    midibyte channel,
+    int note,
+    int velocity
+) :
+    m_input_buss    (null_buss()),
+    m_timestamp     (tstamp),
+    m_status        (notekind),
+    m_channel       (channel),
+    m_data          (),                     /* two-element array, midibytes */
+    m_sysex         (),                     /* an std::vector of midibytes  */
+    m_linked        (nullptr),
+    m_has_link      (false),
+    m_selected      (false),
+    m_marked        (false),
+    m_painted       (false)
+{
+    m_data[0] = midibyte(note);
+    m_data[1] = midibyte(velocity);
+    if (is_null_channel(channel))
+    {
+        m_channel = 0;
+    }
+    else
+    {
+        midibyte chan = mask_channel(channel);
+        m_status = mask_status(notekind) | chan;
+        m_channel = chan;
+    }
 }
 
 /**
@@ -372,6 +410,22 @@ event::transpose_note (int tn)
         m_data[0] = midibyte(note);
 }
 
+void
+event::set_channel (midibyte channel)
+{
+    if (is_null_channel(channel))
+    {
+        m_channel = channel;
+    }
+    else
+    {
+        int chan = mask_channel(channel);           /* clears status nybble */
+        m_channel = chan;
+        if (has_channel())                          /* a channel message    */
+            m_status = mask_status(m_status) | chan;
+    }
+}
+
 /**
  *  Sets the m_status member to the value of status.  If \a status is a
  *  channel event, then the channel portion of the status is cleared using
@@ -423,12 +477,12 @@ event::set_status (midibyte status)
 /**
  *  This overload is useful when synthesizing events, such as converting a
  *  Note On event with a velocity of zero to a Note Off event.  See its usage
- *  around line 1156 of midifile.cpp.
+ *  in midifile and qseventslots, for example.
  *
  * \param status
  *      The status byte, perhaps read from a MIDI file. If the event is a
  *      channel event, it will have its channel updated via the \a channel
- *      parameter.
+ *      parameter as well.
  *
  * \param channel
  *      The channel byte.  Combined with the event-code, this makes a valid
@@ -440,10 +494,7 @@ void
 event::set_channel_status (midibyte status, midibyte channel)
 {
     m_status = status;
-    if (is_null_channel(channel))
-        m_channel = channel;
-    else
-        m_channel = mask_channel(channel);      /* clears the status nybble */
+    set_channel(channel);
 }
 
 /**
@@ -453,19 +504,20 @@ event::set_channel_status (midibyte status, midibyte channel)
  *  parameter.  This call allows channel to be detected and used in MIDI
  *  control events.  It "keeps" the channel in the status byte.
  *
- * \todo
- *      THIS function WILL set a BOGUS CHANNEL on events >= SYSEX !!!!!
- *
  * \param eventcode
- *      The status byte, generally read from the MIDI buss.
+ *      The status byte, generally read from the MIDI buss.  If it is not a
+ *      channel message, the channel is not modified.
  */
 
 void
 event::set_status_keep_channel (midibyte eventcode)
 {
     m_status = eventcode;
-    m_channel = mask_channel(eventcode);
+    if (is_channel_msg(eventcode))
+        m_channel = mask_channel(eventcode);
 }
+
+#if defined SEQ66_THIS_FUNCTION_IS_USED
 
 void
 event::set_note_off (int note, midibyte channel)
@@ -474,6 +526,8 @@ event::set_note_off (int note, midibyte channel)
     m_status = EVENT_NOTE_OFF | chan;
     set_data(midibyte(note), 0);
 }
+
+#endif
 
 /**
  *  In relation to issue #206.

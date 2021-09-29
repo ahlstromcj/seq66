@@ -285,8 +285,7 @@ mastermidibase::panic (int displaybuss)
         {
             for (int note = 0; note < c_midibyte_data_max; ++note)
             {
-                event e;
-                e.set_note_off(note, channel);
+                event e(0, EVENT_NOTE_OFF, channel, note, 0);
                 m_outbus_array.play(bus, &e, channel);
             }
         }

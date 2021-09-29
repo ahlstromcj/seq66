@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-08-09
+ * \updates       2021-09-29
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -212,7 +212,7 @@ const midibyte c_midibyte_value_max = 127;
  *  The number of MIDI notes supported.  The notes range from 0 to 127.
  */
 
-const int c_num_keys = 128;
+const int c_notes_count   = 128;
 const midibyte c_note_max = 127;
 
 /**
@@ -594,7 +594,7 @@ clamp_midibyte_value (midibyte b)
 inline bool
 is_null_channel (midibyte c)
 {
-    return c >= c_midichannel_null;
+    return c == c_midichannel_null;
 }
 
 inline midibyte
