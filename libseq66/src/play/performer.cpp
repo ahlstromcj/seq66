@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-09-29
+ * \updates       2021-10-01
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -349,6 +349,7 @@ static const int c_long_path_max = 56;
  */
 
 performer::performer (int ppqn, int rows, int columns) :
+    m_smf_format            (1),
     m_error_pending         (false),
     m_play_set              (),
     m_play_list             (),
@@ -1096,7 +1097,7 @@ performer::client_id_string () const
 
 /**
  *  A private helper function for add_sequence() and new_sequence().  It is
- *  common code and using it prevents inconsistences.  It assumes values have
+ *  common code and using it prevents inconsistencies.  It assumes values have
  *  already been checked.  It does not set the "is modified" flag, since
  *  adding a sequence by loading a MIDI file should not set it.  Compare
  *  new_sequence(), used by mainwnd and seqmenu, with add_sequence(), used by
@@ -3971,6 +3972,43 @@ performer::play_all_sets (midipulse tick)
     }
 }
 
+int
+performer::count_exportable () const
+{
+    int result = 0;
+    for (int i = 0; i < sequence_high(); ++i)   /* count exportable tracks  */
+    {
+        if (is_exportable(i))                   /* unmuted, has triggers    */
+            ++result;
+    }
+    return result;
+}
+
+bool
+performer::convert_to_smf_0 ()
+{
+    int numtracks = count_exportable();
+    bool result = numtracks > 0;
+    if (result)
+    {
+        // result true if we can create the destination sequence.
+    }
+    if (result)
+    {
+        for (int track = 0; track < sequence_high(); ++track)
+        {
+            if (is_exportable(track))
+            {
+                seq::pointer s = get_sequence(track);   /* guaranteed good  */
+                // TODO
+            }
+        }
+        if (result)
+            m_smf_format = 0;
+    }
+    return result;
+}
+
 /**
  *  For all active patterns/sequences, turn off its playing notes.
  *  Then flush the master MIDI buss.
@@ -5129,7 +5167,6 @@ performer::clear_seq_edits ()
 /*
  * End of Seq/Event-edit pending flag support.
  */
-
 
 /**
  *  Handle a control key.  The caller (e.g. a Qt key-press event handler)

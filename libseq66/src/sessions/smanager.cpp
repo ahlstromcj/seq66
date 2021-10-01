@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2021-09-14
+ * \updates       2021-09-30
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -792,42 +792,47 @@ smanager::create (int argc, char * argv [])
         if (result)
         {
             std::string fname = midi_filename();
-            if (! fname.empty())
+            if (fname.empty())
             {
-                std::string errormessage;
-                std::string tmp = open_midi_file(fname);
+                if (result && rc().load_most_recent())
+                {
+                    /*
+                     * Get full path to the most recently-opened or imported
+                     * file.  What if smanager::open_midi_file() has already
+                     * been called via the command-line? Then skip this step.
+                     */
 
+                    std::string midifname = rc().recent_file(0, false);
+                    if (! midifname.empty())
+                    {
+                        std::string errmsg;
+                        std::string tmp = open_midi_file(midifname);
+                        if (! tmp.empty())
+                        {
+                            file_message("Opened", tmp);
+                            midi_filename(midifname);
+                        }
+                    }
+                }
+            }
+            else
+            {
                 /*
                  * No window at this time; should save the message for later.
                  * For now, write to the console.
                  */
 
+                std::string errormessage;
+                std::string tmp = open_midi_file(fname);
                 if (! tmp.empty())
                 {
                     file_message("Opened", tmp);
                     midi_filename(fname);
                 }
             }
-            if (result && rc().load_most_recent() && midi_filename().empty())
-            {
-                /*
-                 * Get full path to the most recently-opened or imported file.
-                 * What if smanager::open_midi_file() has already been
-                 * called via the command-line? Then skip this step.
-                 */
-
-                std::string midifname = rc().recent_file(0, false);
-                if (! midifname.empty())
-                {
-                    std::string errmsg;
-                    std::string tmp = open_midi_file(midifname);
-                    if (! tmp.empty())
-                    {
-                        file_message("Opened", tmp);
-                        midi_filename(midifname);
-                    }
-                }
-            }
+        }
+        if (result)
+        {
             result = create_window();
             if (result)
             {

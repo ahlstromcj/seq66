@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-09-23
+ * \updates       2021-10-01
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -337,6 +337,15 @@ private:
     static automation_pair sm_auto_func_list [];
 
     /**
+     *  Indicates the format of this file, either SMF 0 or SMF 1.
+     *  Note that Seq66 always converts files from SMF 0 to SMF 1,
+     *  and saves them to default to SMF 1.  This setting, if set to 0,
+     *  indicates that the song has been converted to SMF 0, for export only.
+     */
+
+    int m_smf_format;
+
+    /**
      *  Indicates that an internal setup error occurred (e.g. a device could
      *  not be set up in PortMidi).  In this case, we will eventually want to
      *  emit an error prompt, though we keep going in order to populate the
@@ -405,8 +414,6 @@ private:
 
     ff_rw m_FF_RW_button_type;
 
-private:
-
     /**
      *  From the liveframe/grid classes, these values make performer the boss
      *  of pattern cut-and-paste.
@@ -416,8 +423,6 @@ private:
     seq::number m_current_seqno;
     sequence m_moving_seq;
     sequence m_seq_clipboard;
-
-private:
 
     /**
      *  Set to screenset::none().
@@ -668,15 +673,6 @@ private:                            /* key, midi, and op container section  */
      */
 
     int m_beat_width;
-
-    /**
-     *  Holds the number of the official tempo track for this performance.
-     *  Normally 0, it can be changed to any value from 1 to 1023 via the
-     *  tempo-track-number setting in the "rc" file, and that can be overriden
-     *  by the c_tempo_track SeqSpec possibly present in the song's MIDI file.
-
-    seq::number m_tempo_track_number;
-     */
 
     /**
      *  Augments the beats/bar and beat-width with the additional values
@@ -967,6 +963,11 @@ public:
         bool signalit = true,
         playlist::action act = playlist::action::none
     );
+
+    int smf_format () const
+    {
+        return m_smf_format;
+    }
 
     bool error_pending () const
     {
@@ -1408,26 +1409,6 @@ public:
     }
 
     bool set_beat_width (int bw);
-
-    /**
-     *
-    seq::number tempo_track_number () const
-    {
-        return m_tempo_track_number;
-    }
-
-     * \setter m_tempo_track_number
-     *
-     * \param tempotrack
-     *      Provides the value for beat-width.  Also used to set the
-     *      beat-width in the JACK assistant object.
-
-    void tempo_track_number (seq::number tempotrack)
-    {
-        if (tempotrack >= 0 && tempotrack < sequence_max())
-            m_tempo_track_number = tempotrack;
-    }
-     */
 
     void clocks_per_metronome (int cpm)
     {
@@ -2536,6 +2517,8 @@ public:
 
     midipulse get_max_extent () const;
     std::string duration () const;
+    int count_exportable () const;
+    bool convert_to_smf_0 ();
 
     /**
      *  Indicates that the desired sequence is active, unmuted, and has

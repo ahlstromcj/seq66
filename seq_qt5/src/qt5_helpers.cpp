@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2021-05-04
+ * \updates       2021-09-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -145,6 +145,16 @@ qt_set_icon (const char * pixmap_array [], QPushButton * button)
     button->setIcon(icon);
 }
 
+static const char *
+midi_wrk_wildcards ()
+{
+    static const char * const s_wildcards =
+        "MIDI/WRK (*.midi *.mid *.MID *.wrk *.WRK);;"
+        "MIDI (*.midi *.mid *.MID);;WRK (*.wrk *.WRK);;All (*)"
+        ;
+    return s_wildcards;
+}
+
 /**
  *  Shows the "Open" file dialog.
  *
@@ -162,9 +172,22 @@ show_open_midi_file_dialog (QWidget * parent, std::string & selectedfile)
 {
     return show_file_dialog
     (
-        parent, selectedfile, "Open MIDI/WRK file",
-        "MIDI/WRK (*.midi *.mid *.MID *.wrk *.WRK);;"
-        "MIDI (*.midi *.mid *.MID);;WRK (*.wrk *.WRK);;All (*)",
+        parent, selectedfile, "Open MIDI/WRK file", midi_wrk_wildcards(),
+//      "MIDI/WRK (*.midi *.mid *.MID *.wrk *.WRK);;"
+//      "MIDI (*.midi *.mid *.MID);;WRK (*.wrk *.WRK);;All (*)",
+        OpeningFile, NormalFile
+    );
+}
+
+bool
+show_import_midi_file_dialog (QWidget * parent, std::string & selectedfile)
+{
+    return show_file_dialog
+    (
+        parent, selectedfile, "Import MIDI File into Current Set",
+        midi_wrk_wildcards(),
+//      "MIDI/WRK (*.midi *.mid *.MID *.wrk *.WRK);;"
+//      "MIDI (*.midi *.mid *.MID);;WRK (*.wrk *.WRK);;All (*)",
         OpeningFile, NormalFile
     );
 }

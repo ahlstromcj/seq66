@@ -153,8 +153,8 @@ midi_vector_base::add_short (midishort x)
  *  Adds an event to the container.  It handles regular MIDI events separately
  *  from "extended" (our term) MIDI events (SysEx and Meta events).
  *
- *  For normal MIDI events, if the sequence's MIDI channel is max_midibyte()
- *  == 0xFF, then it is the copy of an SMF 0 sequence that the midi_splitter
+ *  For normal MIDI events, if the sequence's MIDI channel is null_channel()
+ *  == 0x80, then it is the copy of an SMF 0 sequence that the midi_splitter
  *  created.  We want to be able to save it along with the other tracks, but
  *  won't be able to read it back if all the channels are bad.  So we just use
  *  the channel from the event.

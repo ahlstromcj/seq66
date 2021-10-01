@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2021-04-29
+ * \updates       2021-09-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -68,6 +68,7 @@ extern keystroke qt_keystroke
     bool testing = false
 );
 extern bool show_open_midi_file_dialog (QWidget * parent, std::string & file);
+extern bool show_import_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_playlist_dialog
 (
     QWidget * parent,

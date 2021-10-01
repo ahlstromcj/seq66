@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-20
+ * \updates       2021-09-30
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -226,7 +226,6 @@ qsmainwnd::qsmainwnd
     m_timer                 (nullptr),
     m_menu_recent           (nullptr),          /* QMenu *                  */
     m_recent_action_list    (),                 /* QList<QAction *>         */
-    m_import_dialog         (nullptr),
     m_main_perf             (p),
     m_beat_ind              (nullptr),
     m_dialog_prefs          (nullptr),
@@ -395,13 +394,6 @@ qsmainwnd::qsmainwnd
         ui->actionImport_MIDI, SIGNAL(triggered(bool)),
         this, SLOT(import_into_set())
     );
-    m_import_dialog = new QFileDialog
-    (
-        this, tr("Import MIDI file to Current Set..."),
-        rc().last_used_dir().c_str(),
-        "MIDI files (*.midi *.mid);;WRK files (*.wrk);;All files (*)"
-    );
-
     if (use_nsm())
         connect_nsm_slots();
     else
@@ -1892,40 +1884,36 @@ qsmainwnd::export_song (const std::string & fname)
 void
 qsmainwnd::import_into_set ()
 {
-    m_import_dialog->exec();
-
-    QStringList filePaths = m_import_dialog->selectedFiles();
-    if (filePaths.length() > 0)
+    std::string selectedfile;
+    bool selected = show_import_midi_file_dialog(this, selectedfile);
+    if (selected)
     {
-        for (int i = 0; i < filePaths.length(); ++i)
+        QString path = QString::fromStdString(selectedfile);
+        if (! path.isEmpty())
         {
-            QString path = m_import_dialog->selectedFiles()[i];
-            if (! path.isEmpty())
+            try
             {
-                try
-                {
-                    int setno = int(perf().playscreen_number());
-                    std::string fn = path.toStdString();
-                    bool is_wrk = file_extension_match(fn, "wrk");
-                    midifile * f = is_wrk ?
-                        new wrkfile(fn, choose_ppqn(c_use_default_ppqn)) :
-                        new midifile(fn, choose_ppqn(c_use_default_ppqn))
-                        ;
+                int setno = int(perf().playscreen_number());
+                std::string fn = path.toStdString();
+                bool is_wrk = file_extension_match(fn, "wrk");
+                midifile * f = is_wrk ?
+                    new wrkfile(fn, choose_ppqn(c_use_default_ppqn)) :
+                    new midifile(fn, choose_ppqn(c_use_default_ppqn))
+                    ;
 
-                    if (f->parse(perf(), setno))
-                    {
-                        ui->spinBpm->setValue(perf().bpm());
-                        ui->spinBpm->setDecimals(usr().bpm_precision());
-                        ui->spinBpm->setSingleStep(usr().bpm_step_increment());
-                        update_bank(setno);
-                    }
-                }
-                catch (...)
+                if (f->parse(perf(), setno))
                 {
-                    std::string p = path.toStdString();
-                    std::string msg = "Error reading MIDI data from file: " + p;
-                    show_message_box(msg);
+                    ui->spinBpm->setValue(perf().bpm());
+                    ui->spinBpm->setDecimals(usr().bpm_precision());
+                    ui->spinBpm->setSingleStep(usr().bpm_step_increment());
+                    update_bank(setno);
                 }
+            }
+            catch (...)
+            {
+                std::string p = path.toStdString();
+                std::string msg = "Error reading MIDI data from file: " + p;
+                show_message_box(msg);
             }
         }
     }

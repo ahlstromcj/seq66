@@ -504,6 +504,10 @@ private:
     /**
      *  New value to allow the user to violate the MIDI specification and use a
      *  track other than the first track (#0) as the MIDI tempo track.
+     *  Holds the number of the official tempo track for this performance.
+     *  Normally 0, it can be changed to any value from 1 to 1023 via the
+     *  tempo-track-number setting in the "rc" file, and that can be overriden
+     *  by the c_tempo_track SeqSpec possibly present in the song's MIDI file.
      */
 
     int m_tempo_track_number;

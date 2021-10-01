@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-28
+ * \updates       2021-10-01
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -2415,14 +2415,20 @@ midifile::varinum_size (long len) const
  *                -# Otherwise, 2 bytes + varinum_size(length) + 4 bytes.
  *                -# Length of the prop data.
  *          -# Track End. 3 bytes.
+ *
+ * \param numtracks
+ *      The number of tracks to be written.  For SMF 0 this should be 1.
+ *
+ * \param smfformat
+ *      The SMF value to write.  Defaults to 1.
  */
 
 bool
-midifile::write_header (int numtracks)
+midifile::write_header (int numtracks, int smfformat)
 {
     write_long(0x4D546864);                 /* MIDI Format 1 header MThd    */
     write_long(6);                          /* Length of the header         */
-    write_short(1);                         /* MIDI Format 1                */
+    write_short(smfformat);                 /* MIDI Format 1 (or 0)         */
     write_short(numtracks);                 /* number of tracks             */
     write_short(m_ppqn);                    /* parts per quarter note       */
     return numtracks > 0;
@@ -2583,13 +2589,16 @@ midifile::prop_item_size (long data_length) const
  *      basic MIDI sequence (which is not the same as exporting a Song, with
  *      triggers, as a MIDI sequence).
  *
+ * \param smfformat
+ *      Defaults to 1.  Can be set to 0 for writing an SMF 0 file.
+ *
  * \return
  *      Returns true if the write operations succeeded.  If false is returned,
  *      then m_error_message will contain a description of the error.
  */
 
 bool
-midifile::write (performer & p, bool doseqspec)
+midifile::write (performer & p, bool doseqspec, int smfformat)
 {
     automutex locker(m_mutex);
     bool result = m_ppqn >= c_minimum_ppqn && m_ppqn <= c_maximum_ppqn;
@@ -2613,7 +2622,7 @@ midifile::write (performer & p, bool doseqspec)
         result = numtracks > 0;
         if (result)
         {
-            bool result = write_header(numtracks);
+            bool result = write_header(numtracks, smfformat);
             if (result)
             {
                 std::string temp = "Writing ";
@@ -2761,28 +2770,42 @@ bool
 midifile::write_song (performer & p)
 {
     automutex locker(m_mutex);
-    int numtracks = 0;
-    m_error_message.clear();
-    for (int i = 0; i < p.sequence_high(); ++i) /* count exportable tracks  */
-    {
-        if (p.is_exportable(i))                 /* do muted tracks count?   */
-            ++numtracks;
-    }
-
+    int numtracks = p.count_exportable();
     bool result = numtracks > 0;
+    m_error_message.clear();
     if (result)
     {
-        printf("[Exporting song, %d ppqn]\n", m_ppqn);
-        result = write_header(numtracks);
+        int midiformat = p.smf_format();
+        if (midiformat == 0)
+        {
+            if (numtracks == 1)
+            {
+                printf("[Exporting song to SMF 0, %d ppqn]\n", m_ppqn);
+                result = write_header(numtracks, midiformat);
+            }
+            else
+            {
+                result = false;
+                m_error_message =
+                    "The current song has more than one track, "
+                    "and is not suitable for saving to SMF 0."
+                    ;
+            }
+        }
+        else
+        {
+            printf("[Exporting song, %d ppqn]\n", m_ppqn);
+            result = write_header(numtracks, midiformat);
+        }
     }
     else
     {
+        result = false;
         m_error_message =
             "The current song has no exportable tracks; "
             "each track to export must have triggers in the Song Editor "
             "and be unmuted."
             ;
-        result = false;
     }
     if (result)
     {
@@ -2799,61 +2822,58 @@ midifile::write_song (performer & p)
         {
             if (p.is_exportable(track))
             {
-                seq::pointer s = p.get_sequence(track);
-                if (s)
-                {
-                    sequence & seq = *s;
-                    midi_vector lst(seq);
-                    lst.fill_seq_number(track);
-                    lst.fill_seq_name(seq.name());
+                seq::pointer s = p.get_sequence(track); /* guaranteed good  */
+                sequence & seq = *s;
+                midi_vector lst(seq);
+                lst.fill_seq_number(track);
+                lst.fill_seq_name(seq.name());
 
 #if defined USE_FILL_TIME_SIG_AND_TEMPO
-                    if (track == 0)
-                    {
-                        /*
-                         * As per issue #141, do not force the
-                         * creation/writing of time-sig and tempo events.
-                         */
-
-                        seq.events().scan_meta_events();
-                        lst.fill_time_sig_and_tempo
-                        (
-                            p, seq.events().has_time_signature(),
-                            seq.events().has_tempo()
-                        );
-                    }
-#endif
-
+                if (track == 0)
+                {
                     /*
-                     * Add all triggered events (see the function banner).
-                     * If any, then make one long trigger.
+                     * As per issue #141, do not force the
+                     * creation/writing of time-sig and tempo events.
                      */
 
-                    midipulse last_ts = 0;
-                    const auto & trigs = seq.get_triggers();
-                    for (auto & t : trigs)
-                        last_ts = lst.song_fill_seq_event(t, last_ts);
-
-                    if (! trigs.empty())        /* adjust sequence length   */
-                    {
-                        /*
-                         * tick_end() isn't quite a trigger length, off by 1.
-                         * Subtracting tick_start() can really screw it up.
-                         */
-
-                        const trigger & ender = trigs.back();
-                        midipulse seqend = ender.tick_end();
-                        midipulse measticks = seq.measures_to_ticks();
-                        if (measticks > 0)
-                        {
-                            midipulse remainder = seqend % measticks;
-                            if (remainder != (measticks - 1))
-                                seqend += measticks - remainder - 1;
-                        }
-                        lst.song_fill_seq_trigger(ender, seqend, last_ts);
-                    }
-                    write_track(lst);
+                    seq.events().scan_meta_events();
+                    lst.fill_time_sig_and_tempo
+                    (
+                        p, seq.events().has_time_signature(),
+                        seq.events().has_tempo()
+                    );
                 }
+#endif
+
+                /*
+                 * Add all triggered events (see the function banner).
+                 * If any, then make one long trigger.
+                 */
+
+                midipulse last_ts = 0;
+                const auto & trigs = seq.get_triggers();
+                for (auto & t : trigs)
+                    last_ts = lst.song_fill_seq_event(t, last_ts);
+
+                if (! trigs.empty())        /* adjust sequence length   */
+                {
+                    /*
+                     * tick_end() isn't quite a trigger length, off by 1.
+                     * Subtracting tick_start() can really screw it up.
+                     */
+
+                    const trigger & ender = trigs.back();
+                    midipulse seqend = ender.tick_end();
+                    midipulse measticks = seq.measures_to_ticks();
+                    if (measticks > 0)
+                    {
+                        midipulse remainder = seqend % measticks;
+                        if (remainder != (measticks - 1))
+                            seqend += measticks - remainder - 1;
+                    }
+                    lst.song_fill_seq_trigger(ender, seqend, last_ts);
+                }
+                write_track(lst);
             }
         }
     }

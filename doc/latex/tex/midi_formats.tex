@@ -47,8 +47,8 @@
 
    \index{smf 0}
    \index{channel split}
-   \textsl{Seq66} can read and import SMF 0 MIDI files, and splits tracks by
-   channel.
+   \textsl{Seq66} can read and import SMF 0 MIDI files, and will split
+   the MIDI data into separate tracks by channel number.
    When SMF 0 format is detected, \textsl{Seq66} puts all of
    the events into the same sequence/pattern, pattern 16.
    As the file is processed, a list of the channels present in the
@@ -82,6 +82,11 @@
    This allows other sequencers to read a \textsl{Seq66} MIDI file.
 %  This addition of Tempo can fix imported tracks that don't have a
 %  measure value.
+
+   An example of an SMF 0 file, \texttt{CountryStrum.mid}, is included with
+   the source code in the \texttt{contrib/midi} directory.
+   \texttt{CountryStrum.midi} is the SMF 1 version of this file converted by
+   \textsl{Seq66}.
 
 \subsection{Sequencer-Specific Meta-Events Format}
 \label{subsec:midi_format_meta_format}

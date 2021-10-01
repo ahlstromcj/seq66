@@ -219,8 +219,18 @@ public:
         bool playlistmode   = false
     );
     virtual ~midifile ();
-    virtual bool parse (performer & p, int screenset = 0, bool importing = false);
-    virtual bool write (performer & p, bool doseqspec = true);
+    virtual bool parse
+    (
+        performer & p,
+        int screenset = 0,
+        bool importing = false
+    );
+    virtual bool write
+    (
+        performer & p,
+        bool doseqspec = true,
+        int smfformat = 1
+    );
 
     bool write_song (performer & p);
 
@@ -376,7 +386,7 @@ protected:
     long track_name_size (const std::string & trackname) const;
     void write_seq_number (midishort seqnum);
     int read_seq_number ();
-    bool write_header (int numtracks);
+    bool write_header (int numtracks, int smfformat = 1);
 #if defined USE_WRITE_START_TEMPO
     void write_start_tempo (midibpm start_tempo);
 #endif

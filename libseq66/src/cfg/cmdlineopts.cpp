@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-09-20
+ * \updates       2021-09-30
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -132,6 +132,8 @@ cmdlineopts::s_long_options [] =
     {"config",              required_argument, 0, 'c'},
     {"rc",                  required_argument, 0, 'f'},
     {"usr",                 required_argument, 0, 'F'},
+    {"load-recent",         0, 0, 'L'},
+    {"no-load-recent",      0, 0, 'L'},
     {"User",                0, 0, 'Z'},
     {"Native",              0, 0, 'z'},
 
@@ -148,14 +150,16 @@ cmdlineopts::s_long_options [] =
 /**
  *  Provides a complete list of the short options, and is passed to
  *  getopt_long().  The following string keeps track of the characters used so
- *  far.  An 'x' means the character is used.  An 'a' indicates we could
+ *  far.  An 'x' means the character is used.  A ':' means it is used and
+ *  requires an argument. An 'a' indicates we could
  *  repurpose the key with minimal impact. An asterisk indicates the option is
  *  reserved for application-specific options.  Currently we will use it for
- *  options like "daemonize" in the seq66cli application.
+ *  options like "daemonize" in the seq66cli application. Common shell
+ *  characters, except for '#', are not include
  *
 \verbatim
-        @AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz#
-         xxxxxx x  xx xxx xxxxx lxxxx *xx xxxxxxxxxxx  xx  aax
+        0123456789#@AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz
+                  x xx::x:xx  :: x:x xxxxx :xxxx *xx :xxxxxxx:xx  ::  aa
 \endverbatim
  *
  *  * Note that 'o' options arguments cannot be included here due to issues
@@ -178,7 +182,7 @@ cmdlineopts::s_long_options [] =
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:dF:f:gH:hiJjKkl:M:mNnoPpq:RrSsTtU:uVvX:x:Zz#";
+    "AaB:b:Cc:DdF:f:gH:hiJjKkl:M:mNnoPpq:RrSsTtU:uVvX:x:Zz#";
 
 /**
  *  Provides help text.
@@ -186,11 +190,11 @@ cmdlineopts::s_arg_list =
 
 static const std::string s_help_1a =
 "Options:\n"
-"   -h, --help               Show this help and exit.\n"
-"   -V, --version            Show program version/build information and exit.\n"
+"   -h, --help, ?            Show this help and exit.\n"
+"   -V, --version, #         Show program version/build and exit.\n"
 "   -v, --verbose            Verbose mode, show more data to the console.\n"
 #if defined SEQ66_NSM_SUPPORT
-"   -n, --nsm                Activate Non Session Manager support.\n"
+"   -n, --nsm                Activate Non/New Session Manager support.\n"
 "   -T, --no-nsm             Ignore NSM in 'usr' file. T for 'typical'.\n"
 #endif
 "   -X, --playlist filename  Load playlists from the configuration directory.\n"
@@ -204,9 +208,11 @@ static const std::string s_help_1a =
  */
 
 static const std::string s_help_1b =
-"   -r, --reveal-ports       Do not use the 'usr' definitions for port names.\n"
-"   -R, --hide-ports         Use the 'usr' definitions for port names.\n"
-"   -A, --alsa               Do not use JACK, use ALSA. A sticky option.\n"
+"   -r, --reveal-ports       Do not use 'usr' definitions for port names.\n"
+"   -R, --hide-ports         Use 'usr' definitions for port names.\n"
+#if ! defined SEQ66_PLATFORM_WINDOWS
+"   -A, --alsa               Use ALSA, not JACK. A sticky option.\n"
+#endif
 "   -b, --bus b              Global override of bus number (for testing).\n"
 "   -B, --buss b             Covers the 'bus' versus 'buss' confusion.\n"
 "   -l, --client-name label  Use this name instead of 'seq66'. Overridden by a\n"
@@ -248,9 +254,9 @@ static const std::string s_help_2 =
 "                            'on' to enable; JACK sets the UUID later.\n"
 #endif
 #endif
-"   -d, --record-by-channel  Divert MIDI input by channel into the sequences\n"
+"   -d, --record-by-channel  Divert MIDI input by channel into the patterns\n"
 "                            configured for each channel.\n"
-"   -D, --legacy-record      Record all MIDI into the active sequence. Default.\n"
+"   -D, --legacy-record      Record all MIDI into the active pattern. Default.\n"
 ;
 
 /**
