@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-07-29
+ * \updates       2021-10-02
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -495,7 +495,7 @@ private:
 
 private:
 
-    bool add (sequence *, seq::number seqno);
+    bool add (sequence *, seq::number & seqno);
     bool remove (seq::number seqno);
 #if defined USE_SCREENSET_RESET_SEQUENCES               /* currently unused */
     void reset_sequences (bool pause, sequence::playback mode);

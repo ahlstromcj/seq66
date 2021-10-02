@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-07-28
+ * \updates       2021-10-02
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -340,7 +340,8 @@ setmapper::screen (seq::number seqno)
  *      The desired sequence number, which is a linear value ranging from 0 to
  *      a number determined by the active set size multiplied by the number of
  *      sets.  It is merely a starting point, and will be incremented until an
- *      unused sequence number is found.
+ *      unused sequence number is found.  The actual value is returned if the
+ *      function result is true.
  *
  * \return
  *      Returns true if the sequence pointer was able to be added to the
@@ -349,7 +350,7 @@ setmapper::screen (seq::number seqno)
  */
 
 bool
-setmapper::add_sequence (sequence * s, seq::number seqno)
+setmapper::add_sequence (sequence * s, seq::number & seqno)
 {
     bool result = false;
     if (not_nullptr(s))
@@ -509,14 +510,15 @@ setmapper::play_all_sets
  *
  * \param seqno
  *      Provides the number of the sequence, which also determines what set it
- *      it is in.
+ *      it is in.  The actual value is returned if the function result is
+ *      true.
  *
  * \return
  *      Returns true if the sequence was added successfully.
  */
 
 bool
-setmapper::install_sequence (sequence * s, seq::number seqno)
+setmapper::install_sequence (sequence * s, seq::number & seqno)
 {
     bool result = true;
     screenset::number setno = seq_set(seqno);

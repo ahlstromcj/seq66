@@ -752,7 +752,12 @@ qsmainwnd::qsmainwnd
      */
 
     ui->testButton->setToolTip("Developer test button, disabled.");
-    ui->testButton->setEnabled(false);
+
+    // ENABLED to TEST SMF 0 CONVERSION
+
+    ui->testButton->setEnabled(true);   // (false);
+    connect(ui->testButton, SIGNAL(clicked(bool)), this, SLOT(test_slot()));
+
     if (use_nsm())
         rc().session_midi_filename(s_default_tune);
 
@@ -2397,8 +2402,8 @@ qsmainwnd::tabWidgetClicked (int newindex)
             {
                 /*
                  * This is too mysterious, and not sure we want to bother to
-                 * update the live tab to show a new sequence.  Will think about
-                 * it.
+                 * update the live tab to show a new sequence.  Will think
+                 * about it.
                  *
                  * seqid = perf().playscreen_offset();
                  * (void) perf().new_sequence(seqid);
@@ -2434,8 +2439,8 @@ qsmainwnd::tabWidgetClicked (int newindex)
             {
                 /*
                  * This is too mysterious, and not sure we want to bother to
-                 * update the live tab to show a new sequence.  Will think about
-                 * it.
+                 * update the live tab to show a new sequence.  Will think
+                 * about it.
                  *
                  * seqid = perf().playscreen_offset();
                  * (void) perf().new_sequence(seqid);
@@ -3242,6 +3247,12 @@ qsmainwnd::queue_it ()
 {
     bool is_active = ui->button_keep_queue->isChecked();
     perf().set_keep_queue(is_active);
+}
+
+void
+qsmainwnd::slot_test ()
+{
+    (void) perf().convert_to_smf_0();
 }
 
 void

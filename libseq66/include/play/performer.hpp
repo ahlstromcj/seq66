@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-10-01
+ * \updates       2021-10-02
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1875,7 +1875,18 @@ public:
     bool launch (int ppqn);
     bool finish ();
     bool activate ();
-    bool new_sequence (seq::number seq = seq::unassigned());
+    bool new_sequence
+    (
+        seq::number & finalseq,
+        seq::number seq = seq::unassigned()
+    );
+
+    bool request_sequence (seq::number seq = seq::unassigned())
+    {
+        static seq::number s_dummy;
+        return new_sequence(s_dummy, seq);
+    }
+
     bool remove_sequence (seq::number seq);
     bool copy_sequence (seq::number seq);
     bool cut_sequence (seq::number seq);
@@ -2168,7 +2179,7 @@ public:
 
     bool install_sequence
     (
-        sequence * seq, seq::number seqno, bool fileload = false
+        sequence * seq, seq::number & seqno, bool fileload = false
     );
     void inner_start ();
     void inner_stop (bool midiclock = false);

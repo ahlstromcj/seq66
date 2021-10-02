@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-10-01
+ * \updates       2021-10-02
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1101,15 +1101,18 @@ performer::client_id_string () const
  *  already been checked.  It does not set the "is modified" flag, since
  *  adding a sequence by loading a MIDI file should not set it.  Compare
  *  new_sequence(), used by mainwnd and seqmenu, with add_sequence(), used by
- *  midifile.  This function deletes the sequence already present with the given
- *  sequence number, and adds the current sequence.
+ *  midifile.  This function *does not* delete the sequence already present
+ *  with the given sequence number; instead, it keeps incrementing the
+ *  sequence number until an open slot is found.
  *
  * \param seq
  *      The pointer to the pattern/sequence to add.
  *
  * \param seqno
  *      The sequence number of the pattern to be added.  Not validated, to
- *      save some time.
+ *      save some time.  This is only the starting value; if already filled,
+ *      then next open slot is used, and this value will be updated to the
+ *      actual number.
  *
  * \param fileload
  *      If true (the default is false), the modify flag will not be set.
@@ -1119,7 +1122,7 @@ performer::client_id_string () const
  */
 
 bool
-performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
+performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
 {
     bool result = mapper().install_sequence(s, seqno);
     if (result)
@@ -1166,7 +1169,8 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
  *
  * \param seq
  *      The prospective sequence number of the new sequence.  If not set to
- *      seq::unassigned() (-1), then the sequence is also installed.
+ *      seq::unassigned() (-1), then the sequence is also installed, and this
+ *      value will be updated to the actual number.
  *
  * \return
  *      Returns true if the sequence is valid.  Do not use the
@@ -1174,13 +1178,20 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
  */
 
 bool
-performer::new_sequence (seq::number seq)
+performer::new_sequence (seq::number & finalseq, seq::number seq)
 {
     sequence * seqptr = new (std::nothrow) sequence(ppqn());
     bool result = not_nullptr(seqptr);
     if (result && seq != seq::unassigned())
+    {
         result = install_sequence(seqptr, seq);
-
+        if (result)                                 /* new 2021-10-01   */
+        {
+            const seq::pointer s = get_sequence(seq);
+            s->set_dirty();
+            finalseq = s->seq_number();
+        }
+    }
     return result;
 }
 
@@ -1253,11 +1264,17 @@ performer::paste_sequence (seq::number seqno)
     bool result = ! is_seq_active(seqno);
     if (result)
     {
-        if (new_sequence(seqno))
+        static seq::number s_dummy;
+        if (new_sequence(s_dummy, seqno))
         {
             seq::pointer s = get_sequence(seqno);
             s->partial_assign(m_seq_clipboard);
-            s->set_dirty();
+
+            /*
+             * Already done in new_sequence().
+             *
+             * s->set_dirty();
+             */
         }
     }
     return result;
@@ -1303,10 +1320,11 @@ performer::move_sequence (seq::number seqno)
 bool
 performer::finish_move (seq::number seqno)
 {
+    static seq::number s_dummy;
     bool result = false;
     if (! is_seq_active(seqno))
     {
-        if (new_sequence(seqno))
+        if (new_sequence(s_dummy, seqno))
         {
             get_sequence(seqno)->partial_assign(m_moving_seq);
             result = true;
@@ -1314,7 +1332,7 @@ performer::finish_move (seq::number seqno)
     }
     else
     {
-        if (new_sequence(m_old_seqno))
+        if (new_sequence(s_dummy, m_old_seqno))
         {
             get_sequence(m_old_seqno)->partial_assign(m_moving_seq);
             result = true;
@@ -3984,27 +4002,75 @@ performer::count_exportable () const
     return result;
 }
 
+/**
+ *  Seq66 can split an SMF 0 file into multiple tracks, effectively converting
+ *  it to SMF 1, via midi_splitter.  This fucntion performers the opposite
+ *  process, creating an SMF 0 track from all the other tracks, for saving as
+ *  an SMF 0 file.
+ *
+ * Prerequisites:
+ *
+ *  1.  The same prequisites for exporting a song: a. Events in each track to
+ *  be part of the export.  b. Each track unmuted.  c. Trigger(s) in the
+ *  tracks to combine.  2.  At least valid pattern slot available.  This will
+ *  normally not be an issue.
+ *
+ * Process:
+ *
+ *  x.  If slot 0 has a pattern, move it to the first open slot.  x.  Set up
+ *  the destination pattern in slot 0 to be channel-free.  x.  For all other
+ *  patterns, no matter the set (or in the playset): x.  Check the export of
+ *  that pattern for validity.  x.  Make sure all channel events have the
+ *  desired channel.  x.  Copy that pattern to the performers's pattern
+ *  clipboard using performer::copy_sequence(), which replaces the clipboard's
+ *  contents.  Alternative:  use cut_sequence().  x.  Merge the clipboard
+ *  pattern into the destination pattern.  x.  Finalize the file: x.  Make
+ *  sure the midifile class gets the SMF value (0) and provides it to
+ *  write_midi_file(), for one track.  The performer can store this format.
+ *  x.  midifile::write_song(perf()) is called by the Song Export menu item in
+ *  qsmainwnd.  x.  write_header()
+ *
+ *  We start with slot 0, and search for the first open slot (as a side-effect
+ *  of new_sequence() and install_sequence() to put the SMF 0 data.
+ */
+
 bool
 performer::convert_to_smf_0 ()
 {
     int numtracks = count_exportable();
     bool result = numtracks > 0;
+    seq::number newslot = seq::unassigned();
     if (result)
     {
-        // result true if we can create the destination sequence.
+        result = new_sequence(newslot, 0);
+        if (result)
+        {
+            seq::pointer s = get_sequence(newslot);
+            result = s->set_midi_channel(null_channel(), true);
+        }
     }
     if (result)
     {
-        for (int track = 0; track < sequence_high(); ++track)
+        for (seq::number track = 0; track < sequence_high(); ++track)
         {
+            if (track == newslot)
+                continue;
+
             if (is_exportable(track))
             {
-                seq::pointer s = get_sequence(track);   /* guaranteed good  */
-                // TODO
+                bool ok = copy_sequence(track);         /* to the clipboard */
+                if (ok)
+                    (void) merge_sequence(newslot);
             }
         }
         if (result)
+        {
             m_smf_format = 0;
+
+            /*
+             * Remove the exported sequences now.  TODO
+             */
+        }
     }
     return result;
 }

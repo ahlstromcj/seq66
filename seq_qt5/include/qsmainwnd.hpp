@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-30
+ * \updates       2021-10-02
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -467,6 +467,7 @@ private slots:
     void learn_toggle ();
     void tap ();
     void queue_it ();
+    void slot_test ();
 
 private:
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-07-28
+ * \updates       2021-10-02
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -871,8 +871,8 @@ public:
         return m_set_size;
     }
 
-    bool install_sequence (sequence * s, seq::number seqno);
-    bool add_sequence (sequence * s, seq::number seqno);
+    bool install_sequence (sequence * s, seq::number & seqno);
+    bool add_sequence (sequence * s, seq::number & seqno);
     bool remove_sequence (seq::number seqno);
 
     bool swap_sets (seq::number set0, seq::number set1)
