@@ -4066,12 +4066,10 @@ performer::convert_to_smf_0 (bool remove_old)
         }
         if (result)
         {
-            m_smf_format = 0;
-
             /*
              * Remove the exported sequences, then move the SMF 0 track to
              * slot 0.  We use remove_sequence() though it modifies too many
-             * times.  We don't check for failure because removing any
+             * times. We don't check for failure because removing any
              * intervening empty slots will fail.
              */
 
@@ -4090,7 +4088,10 @@ performer::convert_to_smf_0 (bool remove_old)
                 result = finish_move(0);
 
             if (result)
+            {
+                m_smf_format = 0;
                 notify_sequence_change(newslot, change::recreate);
+            }
         }
     }
     return result;

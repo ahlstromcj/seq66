@@ -225,12 +225,7 @@ public:
         int screenset = 0,
         bool importing = false
     );
-    virtual bool write
-    (
-        performer & p,
-        bool doseqspec = true,
-        int smfformat = 1
-    );
+    virtual bool write (performer & p, bool doseqspec = true);
 
     bool write_song (performer & p);
 

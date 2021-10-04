@@ -2598,7 +2598,7 @@ midifile::prop_item_size (long data_length) const
  */
 
 bool
-midifile::write (performer & p, bool doseqspec, int smfformat)
+midifile::write (performer & p, bool doseqspec)
 {
     automutex locker(m_mutex);
     bool result = m_ppqn >= c_minimum_ppqn && m_ppqn <= c_maximum_ppqn;
@@ -2622,6 +2622,7 @@ midifile::write (performer & p, bool doseqspec, int smfformat)
         result = numtracks > 0;
         if (result)
         {
+            int smfformat = p.smf_format();
             bool result = write_header(numtracks, smfformat);
             if (result)
             {

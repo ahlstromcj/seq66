@@ -1508,10 +1508,13 @@ matter what sets-mode is in force. </string>
   </action>
   <action name="actionExportSong">
    <property name="text">
-    <string>&amp;Export Song As MIDI...</string>
+    <string>&amp;Export Song...</string>
    </property>
    <property name="toolTip">
-    <string>Export song performance as a standard MIDI file.</string>
+    <string>Export the song performance  layout as a Seq66
+MIDI file with triggers consolidated into a single
+trigger for each unmuted pattern. Playable by truly
+MIDI-compliant sequencers.</string>
    </property>
   </action>
   <action name="actionExportMIDI">
@@ -1519,7 +1522,8 @@ matter what sets-mode is in force. </string>
     <string>Export &amp;MIDI Only...</string>
    </property>
    <property name="toolTip">
-    <string>Export without Seq66 SeqSpecs.</string>
+    <string>Export without Seq66 SeqSpecs, just with MIDI events
+and messages.</string>
    </property>
   </action>
   <action name="actionSongEditor">
