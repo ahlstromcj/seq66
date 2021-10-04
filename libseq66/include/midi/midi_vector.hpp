@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-11
- * \updates       2019-01-23
+ * \updates       2021-10-04
  * \license       GNU GPLv2 or above
  *
  *  This implementation attempts to avoid the reversals that can occur using
@@ -82,6 +82,8 @@ public:
     {
         // empty body
     }
+
+    bool song_fill_track (int track, bool standalone = true);
 
     /**
      * \return

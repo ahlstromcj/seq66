@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-09-19
+ * \updates       2021-10-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -123,6 +123,7 @@ private:
     static bool sm_draw_progress_box;
     static double sm_progress_w_fraction;
     static double sm_progress_h_fraction;
+    static const int scm_progress_event_margin;
 
     /**
      *  Provides a buffer that represents a condensed version of long
@@ -163,6 +164,12 @@ private:
      */
 
     bool m_is_checked;
+
+    /**
+     *  The thickness of the vertical progress bar, either 1 or 2.
+     */
+
+    int m_prog_thickness;
 
     /**
      *  Provides the background color of the progress bar.

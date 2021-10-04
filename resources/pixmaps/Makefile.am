@@ -6,7 +6,7 @@
 # \library     seq66 application
 # \author      Chris Ahlstrom
 # \date        2015-09-11
-# \update      2020-11-27
+# \update      2021-10-04
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -55,8 +55,9 @@ EXTRA_DIST = \
  quantize.xpm \
  rec.xpm \
  redo.xpm \
+ route66.xpm \
  route66rwb-32x32.xpm \
- route66rwb-66x66.xpm \
+ route66rwb-64x64.xpm \
  scale.xpm \
  SEQ66_24x24.xpm \
  seq66_32.xpm \
@@ -83,8 +84,16 @@ EXTRA_DIST = \
  zoom_out.xpm \
  zoom.xpm
 
+#------------------------------------------------------------------------------
+# Quick-n-dirty install
+#------------------------------------------------------------------------------
+
+pixmapdir = $(datadir)/pixmaps
+
+pixmap_DATA = route66rwb-32x32.xpm route66rwb-64x64.xpm route66.xpm seq66.xpm
+
 #*****************************************************************************
-# Makefile.am (sequencer64)
+# Makefile.am (seq66)
 #-----------------------------------------------------------------------------
 # vim: ts=3 sw=3 noet ft=automake
 #-----------------------------------------------------------------------------

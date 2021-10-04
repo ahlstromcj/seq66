@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-10-02
+ * \updates       2021-10-04
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -989,7 +989,7 @@ public:
     void modify ()
     {
         m_is_modified = true;
-        m_needs_update = true;              /* kind of iffy */
+        m_needs_update = true;
     }
 
     bool get_settings (const rcsettings & rcs, const usrsettings & usrs);
@@ -2529,7 +2529,7 @@ public:
     midipulse get_max_extent () const;
     std::string duration () const;
     int count_exportable () const;
-    bool convert_to_smf_0 ();
+    bool convert_to_smf_0 (bool remove_old = true);
 
     /**
      *  Indicates that the desired sequence is active, unmuted, and has

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-09-22
+ * \updates       2021-10-04
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -368,8 +368,8 @@ usrsettings::usrsettings () :
     m_fingerprint_size          (c_fingerprint_size),
     m_progress_box_width        (c_progress_box_width),
     m_progress_box_height       (c_progress_box_height),
-    m_progress_note_min         (20),
-    m_progress_note_max         (100),
+    m_progress_note_min         (0),
+    m_progress_note_max         (127),
     m_lock_main_window          (false),
     m_session_manager           (session::none),
     m_session_url               (),
@@ -451,8 +451,8 @@ usrsettings::set_defaults ()
     m_fingerprint_size = c_fingerprint_size;
     m_progress_box_width = c_progress_box_width;
     m_progress_box_height = c_progress_box_height;
-    m_progress_note_min = 20;
-    m_progress_note_max = 100;
+    m_progress_note_min = 0;
+    m_progress_note_max = 127;
     m_lock_main_window = false;
     m_session_manager = session::none;
     m_session_url.clear();
@@ -491,6 +491,16 @@ usrsettings::normalize ()
      *
      * if (shrunken()) { (void) window_scale(0.80, 0.75); }
      */
+}
+
+void
+usrsettings::progress_note_min_max (int vmin, int vmax)
+{
+    if (vmin >= 0 && vmin < 64)
+        m_progress_note_min = vmin;
+
+    if (vmax > 64 && vmax < 128)
+        m_progress_note_max = vmax;
 }
 
 void

@@ -178,7 +178,7 @@ protected:
     bool refresh_captions ();
     bool load_into_session (const std::string & selectedfile);
 
-protected:
+protected:                              // performer callbacks
 
     virtual bool on_group_learn (bool learning) override;
     virtual bool on_group_learn_complete
@@ -194,6 +194,9 @@ protected:
     ) override;
     virtual bool on_resolution_change (int ppqn, midibpm bpm) override;
     virtual bool on_song_action (bool signal, playlist::action) override;
+
+private:                                // overrides of event handlers
+
     virtual void keyPressEvent (QKeyEvent * event) override;
     virtual void keyReleaseEvent (QKeyEvent *) override;
 

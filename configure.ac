@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2021-09-11
+dnl \update        2021-10-04
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -172,6 +172,9 @@ AC_SUBST(seq66datadir)
 
 seq66doxygendir="${datadir}/doc/seq66-${SEQ66_API_VERSION}"
 AC_SUBST(seq66doxygendir)
+
+seq66pixdir="${datadir}/pixmaps/seq66-${SEQ66_API_VERSION}"
+AC_SUBST(seq66pixdir)
 
 dnl 4. Get external flags, if any.
 
@@ -418,7 +421,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2021-09-11"
+#define VERSION_DATE_SHORT "2021-10-04"
 #define VERSION "0.97.0"
 
 )

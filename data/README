@@ -1,14 +1,14 @@
-Data Directory for Seq66 0.93.0
+Data Directory for Seq66 0.97.0
 Chris Ahlstrom
-2018-01-02 to 2021-04-17
+2018-01-02 to 2021-10-04
 
-This directory contains files to be installed in the ${prefix}/share/seq66-0.93
+This directory contains files to be installed in the ${prefix}/share/seq66-0.97
 directory ("prefix" is /usr/share or /usr/local/share) on Linux, or in the
 installation ${install}/data directory (e.g. C:/Program Files (x86)/Seq66/data)
 on Windows.
 
-While Seq66 will create the configuration directory and configuration file
-the first time, we also supply some samples.  The files include alternate
+Seq66 will create the configuration directory and configuration file
+the first time, but we also supply some samples.  The files include alternate
 configuration files that the user can copy to
 
     $HOME/.config/seq66                   (Linux)
@@ -18,7 +18,7 @@ and modify to satisfaction, plus some sample Seq66 MIDI files, and MIDI
 in/out control for the Novation Launchpad Mini.
 
 Please note that the files in the "data/linux" directory can also be used
-in Windows.  They are simply name for the Linux executable, "qseq66",
+in Windows.  They are simply named for the Linux executable, "qseq66",
 rather than the Windows executable "qpseq66.exe".
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

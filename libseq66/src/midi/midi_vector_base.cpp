@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2021-08-11
+ * \updates       2021-10-04
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -55,7 +55,7 @@ namespace seq66
  */
 
 midi_vector_base::midi_vector_base (sequence & seq) :
-    m_sequence          (seq),
+    m_sequence          (seq),                          /* seq() accessor   */
     m_position_for_get  (0)
 {
     // Empty body
@@ -184,8 +184,8 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
         add_varinum(deltatime);                     /* encode delta_time    */
 
 #if defined SEQ66_DO_NOT_KEEP_CHANNEL
-        midibyte channel = m_sequence.seq_midi_channel();
-        if (m_sequence.free_channel() || is_null_channel(channel))
+        midibyte channel = seq().seq_midi_channel();
+        if (seq().free_channel() || is_null_channel(channel))
             put(st | e.channel());                  /* channel from event   */
         else
             put(st | channel);                      /* the sequence channel */
@@ -278,7 +278,7 @@ midi_vector_base::fill_seq_number (int seq)
  *
  * \param name
  *      The sequence/track name to set.  We could get this item from
- *      m_sequence, but the parameter allows the flexibility to change the
+ *      seq(), but the parameter allows the flexibility to change the
  *      name.
  */
 
@@ -414,14 +414,14 @@ void
 midi_vector_base::fill_proprietary ()
 {
     put_seqspec(c_midibus, 1);
-    put(m_sequence.seq_midi_bus());                 /* MIDI buss number     */
+    put(seq().seq_midi_bus());                 /* MIDI buss number     */
 
     put_seqspec(c_timesig, 2);
-    put(m_sequence.get_beats_per_bar());
-    put(m_sequence.get_beat_width());
+    put(seq().get_beats_per_bar());
+    put(seq().get_beat_width());
 
     put_seqspec(c_midichannel, 1);
-    put(m_sequence.seq_midi_channel());             /* 0 to 15 or 0x80      */
+    put(seq().seq_midi_channel());             /* 0 to 15 or 0x80      */
     if (! usr().global_seq_feature())
     {
         /**
@@ -433,20 +433,20 @@ midi_vector_base::fill_proprietary ()
          * global-background-sequence feature is not in force.
          */
 
-        if (m_sequence.musical_key() != c_key_of_C)
+        if (seq().musical_key() != c_key_of_C)
         {
             put_seqspec(c_musickey, 1);
-            put(m_sequence.musical_key());
+            put(seq().musical_key());
         }
-        if (m_sequence.musical_scale() != c_scales_off)
+        if (seq().musical_scale() != c_scales_off)
         {
             put_seqspec(c_musicscale, 1);
-            put(m_sequence.musical_scale());
+            put(seq().musical_scale());
         }
-        if (seq::valid(m_sequence.background_sequence()))
+        if (seq::valid(seq().background_sequence()))
         {
             put_seqspec(c_backsequence, 4);
-            add_long(m_sequence.background_sequence());
+            add_long(seq().background_sequence());
         }
     }
 
@@ -454,25 +454,25 @@ midi_vector_base::fill_proprietary ()
      *  Generally only drum patterns will not be transposable.
      */
 
-    bool transpose = m_sequence.transposable();
+    bool transpose = seq().transposable();
     put_seqspec(c_transpose, 1);                                /* byte     */
     put(midibyte(transpose));
-    if (m_sequence.color() != c_seq_color_none)
+    if (seq().color() != c_seq_color_none)
     {
         put_seqspec(c_seq_color, 1);                            /* byte     */
-        put(midibyte(m_sequence.color()));
+        put(midibyte(seq().color()));
     }
 #if defined SEQ66_SEQUENCE_EDIT_MODE                            /* useful?  */
-    if (m_sequence.edit_mode() != sequence::editmode::note)
+    if (seq().edit_mode() != sequence::editmode::note)
     {
         put_seqspec(c_seq_edit_mode, 1);                        /* byte     */
-        put(m_sequence.edit_mode_byte());
+        put(seq().edit_mode_byte());
     }
 #endif
-    if (m_sequence.loop_count_max() != 0)
+    if (seq().loop_count_max() != 0)
     {
         put_seqspec(c_seq_loopcount, 2);                        /* short    */
-        add_short(midishort(m_sequence.loop_count_max()));
+        add_short(midishort(seq().loop_count_max()));
     }
 }
 
@@ -506,7 +506,7 @@ midi_vector_base::song_fill_seq_event
    midipulse prev_timestamp
 )
 {
-    midipulse len = m_sequence.get_length();
+    midipulse len = seq().get_length();
     midipulse trig_offset = trig.offset() % len;
     midipulse start_offset = trig.tick_start() % len;
     midipulse time_offset = trig.tick_start() + trig_offset - start_offset;
@@ -521,7 +521,7 @@ midi_vector_base::song_fill_seq_event
     for (int p = 0; p <= times_played; ++p, time_offset += len)
     {
         midipulse delta_time = 0;
-        for (auto e : m_sequence.events())          /* use a copy of event  */
+        for (auto e : seq().events())               /* use a copy of event  */
         {
             midipulse timestamp = e.timestamp() + time_offset;
             if (timestamp >= trig.tick_start())     /* at/after trigger     */
@@ -693,12 +693,12 @@ midi_vector_base::song_fill_seq_trigger
 void
 midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
 {
-    eventlist evl = m_sequence.events();           /* used below */
+    eventlist evl = seq().events();           /* used below */
     evl.sort();
     if (doseqspec)
         fill_seq_number(track);
 
-    fill_seq_name(m_sequence.name());
+    fill_seq_name(seq().name());
 
 #if defined SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
 
@@ -735,26 +735,26 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
     {
         /*
          * Here, we add SeqSpec entries (specific to seq66) for triggers
-         * (c_triggers_ex), the MIDI buss (c_midibus), time signature
-         * (c_timesig), and MIDI channel (c_midichannel).   Should we restrict
-         * this to only track 0?  No, Seq66 saves these events with each
-         * sequence.  Also, the datasize needs to be calculated differently
-         * for c_trig_transpose versus c_triggers_ex.
+         * (c_triggers_ex or c_trig_transpose), the MIDI buss (c_midibus),
+         * time signature (c_timesig), and MIDI channel (c_midichannel).
+         * Should we restrict this to only track 0?  No, Seq66 saves these
+         * events with each sequence.  Also, the datasize needs to be
+         * calculated differently for c_trig_transpose versus c_triggers_ex.
          */
 
-        const triggers::container & triggerlist = m_sequence.triggerlist();
+        const triggers::container & triggerlist = seq().triggerlist();
         bool transtriggers = ! rc().save_old_triggers();
         if (transtriggers)
-            transtriggers = m_sequence.any_trigger_transposed();
+            transtriggers = seq().any_trigger_transposed();
 
         if (transtriggers)
         {
-            int datasize = m_sequence.triggers_datasize(c_trig_transpose);
+            int datasize = seq().triggers_datasize(c_trig_transpose);
             put_seqspec(c_trig_transpose, datasize);
         }
         else
         {
-            int datasize = m_sequence.triggers_datasize(c_triggers_ex);
+            int datasize = seq().triggers_datasize(c_triggers_ex);
             put_seqspec(c_triggers_ex, datasize);
         }
         for (auto & t : triggerlist)
@@ -772,7 +772,7 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
      * Last, but certainly not least, write the end-of-track meta-event.
      */
 
-    deltatime = m_sequence.get_length() - prevtimestamp; /* meta track end */
+    deltatime = seq().get_length() - prevtimestamp;     /* meta track end   */
     fill_meta_track_end(deltatime);
 }
 

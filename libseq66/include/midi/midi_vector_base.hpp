@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10
- * \updates       2021-04-14
+ * \updates       2021-10-04
  * \license       GNU GPLv2 or above
  *
  *  This class is meant to hold the bytes that represent MIDI events and other
@@ -171,7 +171,7 @@ const midilong c_trig_transpose = 0x24240020; /**< Triggers with transpose.   */
 
 class midi_vector_base
 {
-    friend class midifile;
+    //  friend class midifile;
 
 private:
 
@@ -254,6 +254,11 @@ public:
 
 protected:
 
+    sequence & seq ()
+    {
+        return m_sequence;
+    }
+
     /**
      *  Sets the position to 0 and then returns that value. So far, it is not
      *  used, because we create a new midi_vector for each write_track()
@@ -298,10 +303,13 @@ private:
     void add_short (midishort x);
     void add_event (const event & e, midipulse deltatime);
     void add_ex_event (const event & e, midipulse deltatime);
-    void fill_seq_number (int seq);
-    void fill_seq_name (const std::string & name);
     void fill_meta_track_end (midipulse deltatime);
     void fill_proprietary ();
+
+protected:
+
+    void fill_seq_number (int seq);
+    void fill_seq_name (const std::string & name);
 
 #if defined SEQ_USE_FILL_TIME_SIG_AND_TEMPO
     void fill_time_sig_and_tempo

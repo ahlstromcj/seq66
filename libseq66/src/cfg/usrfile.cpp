@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-09-21
+ * \updates       2021-10-04
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -524,9 +524,9 @@ usrfile::parse ()
         double h = double(get_float(file, tag, "progress-box-height"));
         usr().progress_box_size(w, h);
         v = get_integer(file, tag, "progress-note-min");
-        usr().progress_note_min(v);
-        v = get_integer(file, tag, "progress-note-max");
-        usr().progress_note_max(v);
+
+        int x = get_integer(file, tag, "progress-note-max");
+        usr().progress_note_min_max(v, x);
         flag = get_boolean(file, tag, "lock-main-window");
         usr().lock_main_window(flag);
     }
@@ -908,8 +908,8 @@ usrfile::write ()
         "# to 1.0; the height from 0.10 to 0.50.  If either is 0, then the box\n"
         "# isn't drawn.  If either is 'default', defaults are used.\n"
         "#\n"
-        "# progress-note-min and progress-note-max, if non-zero, change the\n"
-        "# note range in the progress box so that notes aren't centered in the\n"
+        "# progress-note-min and progress-note-max set the progress-box note\n"
+        "# range so that notes aren't centered in the\n"
         "# box, but shown at their position by pitch.\n"
         "#\n"
         "# lock-main-window prevents the accidental change of size of the main\n"

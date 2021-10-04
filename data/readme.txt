@@ -1,6 +1,6 @@
-readme.txt for Seq66 0.96.0
+readme.txt for Seq66 0.97.0
 Chris Ahlstrom
-2015-09-10 to 2021-07-17
+2015-09-10 to 2021-10-04
 
 Seq66 is a refactoring of a reboot (sequencer64) of seq24, extending it with new
 features and bug fixes, and incorporation of "Modern C++" (C++11 or C++14).  It

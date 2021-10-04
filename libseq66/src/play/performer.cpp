@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-10-02
+ * \updates       2021-10-04
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -4035,7 +4035,7 @@ performer::count_exportable () const
  */
 
 bool
-performer::convert_to_smf_0 ()
+performer::convert_to_smf_0 (bool remove_old)
 {
     int numtracks = count_exportable();
     bool result = numtracks > 0;
@@ -4046,6 +4046,7 @@ performer::convert_to_smf_0 ()
         if (result)
         {
             seq::pointer s = get_sequence(newslot);
+            (void) s->set_name("SMF 0");
             result = s->set_midi_channel(null_channel(), true);
         }
     }
@@ -4068,8 +4069,28 @@ performer::convert_to_smf_0 ()
             m_smf_format = 0;
 
             /*
-             * Remove the exported sequences now.  TODO
+             * Remove the exported sequences, then move the SMF 0 track to
+             * slot 0.  We use remove_sequence() though it modifies too many
+             * times.  We don't check for failure because removing any
+             * intervening empty slots will fail.
              */
+
+            if (remove_old)
+            {
+                for (seq::number track = 0; track < sequence_high(); ++track)
+                {
+                    if (track == newslot)
+                        continue;
+
+                    (void) remove_sequence(track);
+                }
+            }
+            result = move_sequence(newslot);
+            if (result)
+                result = finish_move(0);
+
+            if (result)
+                notify_sequence_change(newslot, change::recreate);
         }
     }
     return result;

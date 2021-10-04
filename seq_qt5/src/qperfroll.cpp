@@ -94,6 +94,7 @@ qperfroll::qperfroll
     m_perf_names        (seqnames),
     m_timer             (nullptr),
     m_font              ("Monospace"),
+    m_prog_thickness    (usr().progress_bar_thick() ? 2 : 1),
     m_measure_length    (0),
     m_trigger_transpose (0),
     m_drop_sequence     (-1),
@@ -230,8 +231,12 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
 
     painter.setPen(pen);
     painter.drawLine(progress_x, 1, progress_x, height() - 2);
-    if (usr().progress_bar_thick())
-        pen.setWidth(1);
+
+    /*
+     * Not needed.
+     * if (usr().progress_bar_thick())
+     *      pen.setWidth(1);
+     */
 }
 
 bool

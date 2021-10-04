@@ -495,7 +495,7 @@ configfile::get_integer
 )
 {
     std::string value = get_variable(file, tag, variablename, position);
-    int result = value == "default" ?  sm_int_default : string_to_int(value) ;
+    int result = value == "default" ? sm_int_default : string_to_int(value) ;
     return result;
 }
 

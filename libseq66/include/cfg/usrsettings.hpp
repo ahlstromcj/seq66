@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-09-21
+ * \updates       2021-10-04
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -1494,17 +1494,7 @@ public:
 
 public:         // used in main application module and the usrfile class
 
-    void progress_note_min (int v)
-    {
-        if (v > 0 && v < 64)
-            m_progress_note_min = v;
-    }
-
-    void progress_note_max (int v)
-    {
-        if (v > 64 && v < 128)
-            m_progress_note_max = v;
-    }
+    void progress_note_min_max (int vmin, int vmax);
 
     void progress_bar_thick (bool flag)
     {

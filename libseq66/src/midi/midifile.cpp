@@ -2825,55 +2825,9 @@ midifile::write_song (performer & p)
                 seq::pointer s = p.get_sequence(track); /* guaranteed good  */
                 sequence & seq = *s;
                 midi_vector lst(seq);
-                lst.fill_seq_number(track);
-                lst.fill_seq_name(seq.name());
-
-#if defined USE_FILL_TIME_SIG_AND_TEMPO
-                if (track == 0)
-                {
-                    /*
-                     * As per issue #141, do not force the
-                     * creation/writing of time-sig and tempo events.
-                     */
-
-                    seq.events().scan_meta_events();
-                    lst.fill_time_sig_and_tempo
-                    (
-                        p, seq.events().has_time_signature(),
-                        seq.events().has_tempo()
-                    );
-                }
-#endif
-
-                /*
-                 * Add all triggered events (see the function banner).
-                 * If any, then make one long trigger.
-                 */
-
-                midipulse last_ts = 0;
-                const auto & trigs = seq.get_triggers();
-                for (auto & t : trigs)
-                    last_ts = lst.song_fill_seq_event(t, last_ts);
-
-                if (! trigs.empty())        /* adjust sequence length   */
-                {
-                    /*
-                     * tick_end() isn't quite a trigger length, off by 1.
-                     * Subtracting tick_start() can really screw it up.
-                     */
-
-                    const trigger & ender = trigs.back();
-                    midipulse seqend = ender.tick_end();
-                    midipulse measticks = seq.measures_to_ticks();
-                    if (measticks > 0)
-                    {
-                        midipulse remainder = seqend % measticks;
-                        if (remainder != (measticks - 1))
-                            seqend += measticks - remainder - 1;
-                    }
-                    lst.song_fill_seq_trigger(ender, seqend, last_ts);
-                }
-                write_track(lst);
+                result = lst.song_fill_track(track);    /* standalone fill  */
+                if (result)
+                    write_track(lst);
             }
         }
     }

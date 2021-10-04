@@ -208,8 +208,8 @@ style-sheet = "flat-rounded.qss"
 fingerprint-size = 128
 progress-box-width = 0.8
 progress-box-height = 0.4
-progress-note-min = 20
-progress-note-max = 100
+progress-note-min = 0
+progress-note-max = 127
 
 # [user-session]
 #

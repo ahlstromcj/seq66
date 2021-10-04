@@ -808,6 +808,11 @@ public:
         return m_events.any_selected_notes();
     }
 
+    bool is_exportable () const
+    {
+        return ! get_song_mute() && trigger_count() > 0;
+    }
+
     const triggers::container & triggerlist () const
     {
         return m_triggers.triggerlist();

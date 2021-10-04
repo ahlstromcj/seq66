@@ -174,6 +174,7 @@ private:
 
     QTimer * m_timer;
     QFont m_font;
+    int m_prog_thickness;
     int m_measure_length;
     int m_trigger_transpose;
     int m_drop_sequence;                    // sequence selection

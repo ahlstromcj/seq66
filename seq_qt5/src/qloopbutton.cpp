@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-09-25
+ * \updates       2021-10-04
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -83,27 +83,6 @@ const int s_alpha_oneshot       = 148;
 namespace seq66
 {
 
-bool qloopbutton::sm_draw_progress_box = true;
-double qloopbutton::sm_progress_w_fraction = 0.80;  /* 0.50 to 0.80         */
-double qloopbutton::sm_progress_h_fraction = 0.25;  /* 0.10 to 0.40 and 0.0 */
-
-void
-qloopbutton::progress_box_size (double w, double h)
-{
-    if (w == 0.0 || h == 0.0)
-    {
-        sm_draw_progress_box = false;
-    }
-    else
-    {
-        if (w >= 0.50 && w <=1.0)
-            sm_progress_w_fraction = w;
-
-        if (h >= 0.10 && h <=1.0)
-            sm_progress_h_fraction = h;
-    }
-}
-
 /**
  *  Textbox functions.
  */
@@ -140,9 +119,7 @@ qloopbutton::progbox::progbox () :
 }
 
 /**
- * Let's do it like seq24/seq64, but not so tall, just enough to show
- * progress.  We don't really need to keep redrawing all the events over
- * and over in miniature.
+ * Let's do it like seq24/seq64, but not so tall, just enough to show progress.
  */
 
 void
@@ -153,6 +130,15 @@ qloopbutton::progbox::set (int w, int h)
     m_w = w - 2 * m_x;
     m_h = h - 2 * m_y;
 }
+
+/**
+ *  Progress-box values.
+ */
+
+bool qloopbutton::sm_draw_progress_box = true;
+double qloopbutton::sm_progress_w_fraction = 0.80;      /* 0.0, 0.50 - 0.80 */
+double qloopbutton::sm_progress_h_fraction = 0.25;      /* 0.0, 0.10 - 0.40 */
+const int qloopbutton::scm_progress_event_margin = 3;   /* better viewing   */
 
 /**
  *  Principal constructor.
@@ -178,6 +164,7 @@ qloopbutton::qloopbutton
     m_note_max              (usr().progress_note_max()),
     m_seq                   (seqp),                 /* loop()               */
     m_is_checked            (loop()->playing()),
+    m_prog_thickness        (usr().progress_bar_thick() ? 2 : 1),
     m_prog_back_color       (Qt::black),
     m_prog_fore_color       (Qt::green),
     m_text_font             (),
@@ -236,6 +223,23 @@ qloopbutton::boxes_initialized (bool reset)
     }
 }
 
+void
+qloopbutton::progress_box_size (double w, double h)
+{
+    if (w == 0.0 || h == 0.0)
+    {
+        sm_draw_progress_box = false;
+    }
+    else
+    {
+        if (w >= 0.50 && w <=1.0)
+            sm_progress_w_fraction = w;
+
+        if (h >= 0.10 && h <=1.0)
+            sm_progress_h_fraction = h;
+    }
+}
+
 /**
  *  We can set up the relative locations and the box sizes just once every
  *  time the UI size is re-established.
@@ -273,10 +277,10 @@ qloopbutton::initialize_text ()
         }
         m_progress_box.set(w, h);
         m_event_box = m_progress_box;
-        m_event_box.m_x += 3;
-        m_event_box.m_y += 1;
-        m_event_box.m_w -= 6;
-        m_event_box.m_h -= 2;
+        m_event_box.m_x += scm_progress_event_margin;
+        m_event_box.m_y += scm_progress_event_margin;
+        m_event_box.m_w -= scm_progress_event_margin * 2;
+        m_event_box.m_h -= scm_progress_event_margin * 2;
         m_text_font.setPointSize(fontsize);
 
         /*
@@ -650,17 +654,17 @@ qloopbutton::draw_progress (QPainter & painter, midipulse tick)
     {
         QBrush brush(m_prog_back_color, Qt::SolidPattern);
         QPen pen(progress_color());                         /* Qt::black */
-        int lx = m_event_box.x();
-        int xw = m_event_box.w();
-        int ly0 = m_event_box.y() + 1;
-        int lyh = m_event_box.h() - 2;
-        int ly1 = ly0 + lyh;
-        lx += int(xw * tick / t1);
-        pen.setWidth(2);
+        int x = m_event_box.x();
+        int w = m_event_box.w();
+        int y0 = m_event_box.y() + 1;
+        int yh = m_event_box.h() - 2;
+        int y1 = y0 + yh;
+        x += int(w * tick / t1);
+        pen.setWidth(m_prog_thickness);
         pen.setStyle(Qt::SolidLine);
         painter.setBrush(brush);
         painter.setPen(pen);
-        painter.drawLine(lx, ly1, lx, ly0);
+        painter.drawLine(x, y1, x, y0);
     }
 }
 
@@ -733,10 +737,20 @@ qloopbutton::draw_pattern (QPainter & painter)
     {
         QBrush brush(m_prog_back_color, Qt::SolidPattern);
         QPen pen(text_color());
-        int lx0 = m_event_box.x();
-        int ly0 = m_event_box.y();
-        int lxw = m_event_box.w();
-        int lyh = m_event_box.h();
+        int x0 = m_event_box.x();
+        int y0 = m_event_box.y();
+        int xw = m_event_box.w();
+        int yh = m_event_box.h();
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        int x1 = x0 + xw;
+        int y1 = y0 + yh;
+        printf
+        (
+            "x0, y0, w, h, x1, y1 = %d, %d, %d, %d, %d, %d\n",
+            x0, y0, xw, yh, x1, y1
+        );
+        printf("Note min, max = %d, %d\n", m_note_min, m_note_max);
+#endif
         if (m_fingerprinted)
         {
             if (loop()->transposable())
@@ -744,8 +758,8 @@ qloopbutton::draw_pattern (QPainter & painter)
             else
                 pen.setColor(drum_color());
 
-            float x = float(lx0);
-            float dx = float(lxw) / (m_fingerprint_size - 1);
+            float x = float(x0);
+            float dx = float(xw) / (m_fingerprint_size - 1);
             pen.setWidth(2);
             painter.setPen(pen);
             for (int i = 0; i < int(m_fingerprint_size); ++i, x += dx)
@@ -800,26 +814,26 @@ qloopbutton::draw_pattern (QPainter & painter)
                 if (dt == sequence::draw::finish)
                     break;
 
-                int tick_s_x = (ni.start() * lxw) / t1;
-                int sx = lx0 + tick_s_x;                /* start x          */
+                int tick_s_x = (ni.start() * xw) / t1;
+                int sx = x0 + tick_s_x;                /* start x          */
                 if (dt == sequence::draw::tempo)
                 {
                     midibpm max = usr().midi_bpm_maximum();
                     midibpm min = usr().midi_bpm_minimum();
                     double tempo = double(ni.velocity());
-                    int y = int((max - tempo) / (max - min) * lyh) + ly0;
+                    int y = int((max - tempo) / (max - min) * yh) + y0;
                     brush.setColor(tempo_paint());
                     painter.setBrush(brush);
                     painter.drawEllipse(sx, y, 4, 4);
                 }
                 else
                 {
-                    int y = lyh * (n1 - ni.note()) / height + ly0;
-                    int tick_f_x = (ni.finish() * lxw) / t1;
+                    int y = y0 + yh * (n1 - ni.note()) / height;
+                    int tick_f_x = (ni.finish() * xw) / t1;
                     if (! sequence::is_draw_note(dt) || tick_f_x <= tick_s_x)
                         tick_f_x = tick_s_x + 1;
 
-                    int fx = lx0 + tick_f_x;            /* finish x         */
+                    int fx = x0 + tick_f_x;            /* finish x         */
                     painter.drawLine(sx, y, fx, y);
                 }
             }

@@ -132,6 +132,8 @@ private:                            // overrides of qslivebase functions
     virtual void update_geometry () override;
     virtual void change_event (QEvent *) override;
 
+protected:                              // performer callbacks; none
+
 private:                                // overrides of event handlers
 
     virtual void paintEvent (QPaintEvent *) override;

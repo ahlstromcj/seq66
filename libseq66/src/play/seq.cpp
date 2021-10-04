@@ -190,7 +190,7 @@ seq::is_exportable () const
 {
     bool result = active();
     if (result)
-        result = ! m_seq->get_song_mute() && m_seq->trigger_count() > 0;
+        result = m_seq->is_exportable();
 
     return result;
 }

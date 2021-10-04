@@ -756,7 +756,8 @@ qsmainwnd::qsmainwnd
     // ENABLED to TEST SMF 0 CONVERSION
 
     ui->testButton->setEnabled(true);   // (false);
-    connect(ui->testButton, SIGNAL(clicked(bool)), this, SLOT(test_slot()));
+    ui->testButton->setToolTip("Converts patterns into one SMF 0 track.");
+    connect(ui->testButton, SIGNAL(clicked(bool)), this, SLOT(slot_test()));
 
     if (use_nsm())
         rc().session_midi_filename(s_default_tune);
