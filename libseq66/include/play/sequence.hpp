@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-09-29
+ * \updates       2021-10-05
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1096,7 +1096,7 @@ public:
     }
 
     bool apply_length (int bpb, int ppqn, int bw, int measures = 1);
-    int extend (midipulse len);
+    bool extend_length ();
 
     /**
      *  An overload that gets its values from this sequence object.

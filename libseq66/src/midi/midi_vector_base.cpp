@@ -770,9 +770,17 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
 
     /*
      * Last, but certainly not least, write the end-of-track meta-event.
+     * If the nominal length of the sequence is less than the last timestamp,
+     * we set the delta-time to 0.  Better would be to make sure this can
+     * never happen.
      */
 
-    deltatime = seq().get_length() - prevtimestamp;     /* meta track end   */
+    midipulse len = seq().get_length();
+    if (len < prevtimestamp)
+        deltatime = 0;
+    else
+        deltatime = len - prevtimestamp;     /* meta track end   */
+
     fill_meta_track_end(deltatime);
 }
 

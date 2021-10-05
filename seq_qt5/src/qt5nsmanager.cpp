@@ -230,7 +230,7 @@ qt5nsmanager::create_window ()
                 m_window->session_client_id(clid);
                 m_window->session_log("No log entries.");
                 m_window->song_path(rc().midi_filename());
-                if (rc().investigate())
+                if (rc().investigate_disabled())
                 {
                     file_message("Session manager", manager_name());
                     file_message("Session path", path);

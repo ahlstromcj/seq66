@@ -2628,6 +2628,8 @@ midifile::write (performer & p, bool doseqspec)
             {
                 std::string temp = "Writing ";
                 temp += doseqspec ? "Seq66" : "normal" ;
+                temp += "SMF ";
+                temp += std::to_string(smfformat);
                 temp += " MIDI file ";
                 temp += std::to_string(m_ppqn);
                 temp += " PPQN";

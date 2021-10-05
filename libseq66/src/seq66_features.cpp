@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2021-09-15
+ * \updates       2021-10-05
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -314,8 +314,8 @@ seq_build_details ()
     if (! s_alsa_version.empty())
         result << "ALSA v. " << s_alsa_version << "\n";
 
-#if defined SEQ66_NSM_SUPPORT
     result
+#if defined SEQ66_NSM_SUPPORT
         << "NSM (Non Session Manager) support\n"
 #endif
         <<

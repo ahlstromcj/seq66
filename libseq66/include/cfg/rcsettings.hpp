@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-09-14
+ * \updates       2021-10-05
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -663,6 +663,11 @@ public:
     bool investigate () const
     {
         return m_investigate;
+    }
+
+    bool investigate_disabled () const
+    {
+        return false;
     }
 
     bool auto_options_save () const;

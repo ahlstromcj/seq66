@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-29
+ * \updates       2021-10-05
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4464,7 +4464,8 @@ sequence::apply_length (int bpb, int ppqn, int bw, int measures)
 
 /**
  *  Extends the length of the sequence.  Calls set_length() with the new
- *  length and its default parameters.  Not sure how useful this function is.
+ *  length and its default parameters.  Currently used only when consolidating
+ *  patterns into an SMF 0 track.
  *
  * \param len
  *      The new length of the sequence.
@@ -4473,11 +4474,21 @@ sequence::apply_length (int bpb, int ppqn, int bw, int measures)
  *      Returns the new number of measures.
  */
 
-int
-sequence::extend (midipulse len)
+bool
+sequence::extend_length ()
 {
-    (void) set_length(len);
-    return calculate_measures();
+    automutex locker(m_mutex);
+    midipulse len = get_max_timestamp();
+    bool result = len > get_length();
+    if (len > get_length())
+    {
+        calculate_unit_measure();               /* redo m_unit_measure      */
+
+        int measures = int(double(len) / m_unit_measure + 0.5);
+        len = m_unit_measure * measures;
+        result = set_length(len, false, false); /* no trig adjust or verify */
+    }
+    return result;
 }
 
 /**

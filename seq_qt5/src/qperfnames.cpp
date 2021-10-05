@@ -302,8 +302,8 @@ qperfnames::mousePressEvent (QMouseEvent * ev)
     {
         bool isshiftkey = (ev->modifiers() & Qt::ShiftModifier) != 0;
         (void) perf().toggle_sequences(seqnum, isshiftkey);
-        update();
     }
+    update();
 }
 
 void

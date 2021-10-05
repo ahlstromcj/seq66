@@ -142,7 +142,9 @@ private:
 
     /**
      *  Holds the length of the sequence holding this event-list,
-     *  in pulses (ticks).  See sequence::m_length.
+     *  in pulses (ticks).  See sequence::m_length.  This value is merely the
+     *  user-specified length of the track, not the actual time-stamp of the
+     *  last event.
      */
 
     midipulse m_length;

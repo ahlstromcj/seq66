@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-10-04
+ * \updates       2021-10-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1442,7 +1442,7 @@ performer::ui_change_set_bus (int buss)
     if (result)
     {
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-        if (rc().investigate())
+        if (rc().investigate_disabled())
         {
             printf
             (
@@ -4083,14 +4083,27 @@ performer::convert_to_smf_0 (bool remove_old)
                     (void) remove_sequence(track);
                 }
             }
-            result = move_sequence(newslot);
-            if (result)
-                result = finish_move(0);
-
+            if (newslot > 0)
+            {
+                result = move_sequence(newslot);
+                if (result)
+                    result = finish_move(0);
+            }
             if (result)
             {
-                m_smf_format = 0;
-                notify_sequence_change(newslot, change::recreate);
+                /*
+                 * Find the actual last timestamp and use that as the new
+                 * length of the sequence, since the user will forget to
+                 * modify that.
+                 */
+
+                seq::pointer s = get_sequence(newslot);
+                if (s)
+                {
+                    (void) s->extend_length();
+                    m_smf_format = 0;
+                    notify_sequence_change(newslot, change::recreate);
+                }
             }
         }
     }

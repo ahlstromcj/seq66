@@ -827,7 +827,7 @@ jack_assistant::init ()
             }
             else
             {
-                if (rc().investigate())
+                if (rc().investigate_disabled())
                     info_message("JACK session callback set");
             }
         }
@@ -1414,7 +1414,7 @@ jack_assistant::session_event (jack_session_event_t * ev)
          * no configuration files yet exist in the "home" location.
          */
     }
-    if (rc().investigate())
+    if (rc().investigate_disabled())
     {
         info_message(session_event_name(ev));
         file_message("Session command", cmd);

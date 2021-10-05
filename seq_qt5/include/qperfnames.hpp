@@ -106,7 +106,11 @@ private:
 
 signals:
 
-public slots:
+private slots:
+
+    /*
+     * void conditional_update ();
+     */
 
 private:
 

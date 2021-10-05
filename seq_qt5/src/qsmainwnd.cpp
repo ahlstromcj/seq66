@@ -254,7 +254,7 @@ qsmainwnd::qsmainwnd
 
     int w = usr().mainwnd_x();                  /* normal, maybe scaled     */
     int h = usr().mainwnd_y();
-    if (rc().investigate())
+    if (rc().investigate_disabled())
         printf("Size %d x %d\n", w, h);
 
     resize(QSize(w, h));                        /* scaled values            */
@@ -751,13 +751,21 @@ qsmainwnd::qsmainwnd
      * any particular time.
      */
 
-    ui->testButton->setToolTip("Developer test button, disabled.");
+    if (rc().investigate())
+    {
+        /*
+         * Enable to test SMF 0 conversion.
+         */
 
-    // ENABLED to TEST SMF 0 CONVERSION
-
-    ui->testButton->setEnabled(true);   // (false);
-    ui->testButton->setToolTip("Converts patterns into one SMF 0 track.");
-    connect(ui->testButton, SIGNAL(clicked(bool)), this, SLOT(slot_test()));
+        ui->testButton->setEnabled(true);
+        ui->testButton->setToolTip("Converts patterns into one SMF 0 track.");
+        connect(ui->testButton, SIGNAL(clicked(bool)), this, SLOT(slot_test()));
+    }
+    else
+    {
+        ui->testButton->setEnabled(false);
+        ui->testButton->setToolTip("Developer test button, disabled.");
+    }
 
     if (use_nsm())
         rc().session_midi_filename(s_default_tune);
@@ -3143,6 +3151,9 @@ qsmainwnd::set_song_mute_on ()
     perf().set_song_mute(mutegroups::action::on);
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
+
+    if (not_nullptr(m_song_frame64))    /////////////////
+        m_song_frame64->set_dirty();
 }
 
 /**
@@ -3155,6 +3166,9 @@ qsmainwnd::set_song_mute_off ()
     perf().set_song_mute(mutegroups::action::off);
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
+
+    if (not_nullptr(m_song_frame64))    /////////////////
+        m_song_frame64->set_dirty();
 }
 
 /**
@@ -3167,6 +3181,9 @@ qsmainwnd::set_song_mute_toggle ()
     perf().set_song_mute(mutegroups::action::toggle);
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
+
+    if (not_nullptr(m_song_frame64))    /////////////////
+        m_song_frame64->set_dirty();
 }
 
 void
@@ -3184,9 +3201,8 @@ qsmainwnd::set_playscreen_paste ()
     /*
      * We want to allow multiple pastes of the same screenset.
      *
-    if (perf().paste_playscreen(perf().playscreen_number()))
-        ui->actionPasteToCurrentSet->setEnabled(false);
-     *
+     *  if (perf().paste_playscreen(perf().playscreen_number()))
+     *      ui->actionPasteToCurrentSet->setEnabled(false);
      */
 }
 
