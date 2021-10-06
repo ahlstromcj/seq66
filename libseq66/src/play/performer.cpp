@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-10-05
+ * \updates       2021-10-06
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1190,6 +1190,7 @@ performer::new_sequence (seq::number & finalseq, seq::number seq)
             const seq::pointer s = get_sequence(seq);
             s->set_dirty();
             finalseq = s->seq_number();
+            notify_sequence_change(finalseq, change::recreate);
         }
     }
     return result;
@@ -1223,6 +1224,7 @@ performer::remove_sequence (seq::number seqno)
         modify();
         seqno -= playscreen_offset();
         send_seq_event(seqno, midicontrolout::seqaction::remove);
+        notify_sequence_change(seqno, change::recreate);            /* NEW */
     }
     return result;
 }
@@ -1293,7 +1295,10 @@ performer::merge_sequence (seq::number seqno)
         seq::pointer s = get_sequence(seqno);
         result = s->merge_events(m_seq_clipboard);
         if (result)
+        {
             s->set_dirty();
+            notify_sequence_change(seqno, change::recreate);        /* NEW */
+        }
     }
     return result;
 }
@@ -4101,7 +4106,7 @@ performer::convert_to_smf_0 (bool remove_old)
                 if (s)
                 {
                     (void) s->extend_length();
-                    m_smf_format = 0;
+                    smf_format(0);
                     notify_sequence_change(newslot, change::recreate);
                 }
             }

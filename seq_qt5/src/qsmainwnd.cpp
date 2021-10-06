@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-30
+ * \updates       2021-10-06
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -384,6 +384,15 @@ qsmainwnd::qsmainwnd
         ui->actionExportMIDI, SIGNAL(triggered(bool)),
         this, SLOT(export_file_as_midi())
     );
+    connect
+    (
+        ui->actionExportSMF0, SIGNAL(triggered(bool)),
+        this, SLOT(export_file_as_smf_0())
+    );
+    if (perf().smf_format() != 0)
+        ui->smf0Button->hide();
+    else
+        ui->smf0Button->show();
 
     /*
      * File / Import MIDI to Current Set...
@@ -751,7 +760,7 @@ qsmainwnd::qsmainwnd
      * any particular time.
      */
 
-    if (rc().investigate())
+    if (rc().investigate_disabled())
     {
         /*
          * Enable to test SMF 0 conversion.
@@ -1493,14 +1502,11 @@ qsmainwnd::refresh ()
             m_beat_ind->update();
         }
     }
-    else
+    if (m_is_title_dirty)
     {
-        if (m_is_title_dirty)
-        {
-            (void) refresh_captions();
-            m_is_title_dirty = false;
-            update_window_title();      /* puts current MIDI file in title  */
-        }
+        (void) refresh_captions();
+        m_is_title_dirty = false;
+        update_window_title();          /* puts current MIDI file in title  */
     }
     if (m_is_playing_now != perf().is_running())
     {
@@ -1833,13 +1839,8 @@ qsmainwnd::export_file_as_midi (const std::string & fname)
     else
     {
         midifile f(filename, choose_ppqn(c_use_default_ppqn));
-        bool result = f.write(perf(), false);           /* no SeqSpec       */
-        if (result)
-        {
-            rc().add_recent_file(rc().midi_filename()); /* not in write()   */
-            update_recent_files_menu();
-        }
-        else
+        result = f.write(perf(), false);           /* no SeqSpec       */
+        if (! result)
             show_message_box(f.error_message());
     }
     return result;
@@ -2835,11 +2836,6 @@ qsmainwnd::show_message_box (const std::string & msg_text)
             lay->addItem(hspace, lay->rowCount(), 0, 1, lay->columnCount());
             m_msg_error->showMessage(msg);
             m_msg_error->exec();
-
-            /*
-             * delete m_msg_error;
-             * m_msg_error = nullptr;
-             */
         }
     }
 }
@@ -3269,7 +3265,58 @@ qsmainwnd::queue_it ()
 void
 qsmainwnd::slot_test ()
 {
-    (void) perf().convert_to_smf_0();
+    /*
+     * No code at present
+     */
+}
+
+bool
+qsmainwnd::export_file_as_smf_0 (const std::string & fname)
+{
+    bool result = false;
+    std::string filename;
+    if (fname.empty())
+    {
+        std::string prompt = "Convert and export file as SMF 0...";
+        filename = filename_prompt(prompt);
+    }
+    else
+        filename = fname;
+
+    if (filename.empty())
+    {
+        /*
+         * Maybe later, add some kind of warning dialog.
+         */
+    }
+    else
+    {
+        if (perf().convert_to_smf_0())
+        {
+            midifile f(filename, choose_ppqn(c_use_default_ppqn));
+            result = f.write(perf(), false);           /* no SeqSpec       */
+            if (result)
+            {
+                rc().session_midi_filename(filename);
+                m_is_title_dirty = true;
+            }
+            else
+                show_message_box(f.error_message());
+        }
+        else
+        {
+            std::string msg =
+                "Could not convert to SMF 0.  Make sure desired tracks are "
+                "unmuted and have song triggers present."
+                ;
+            show_message_box(msg);
+        }
+        if (perf().smf_format() != 0)
+            ui->smf0Button->hide();
+        else
+            ui->smf0Button->show();
+    }
+    return result;
 }
 
 void
@@ -3333,8 +3380,10 @@ qsmainwnd::on_sequence_change (seq::number seqno, bool redo)
 {
     bool result = not_nullptr(m_live_frame);
     if (result)
+    {
         m_live_frame->update_sequence(seqno, redo);
-
+        m_is_title_dirty = true;                        /* EXPERIMENTAL */
+    }
     return result;
 }
 
@@ -3492,14 +3541,22 @@ qsmainwnd::refresh_captions ()
     bool result = not_nullptr(m_live_frame);
     if (result)
     {
+        std::string newname;
         if (perf().playlist_active())
-            m_live_frame->set_playlist_name(perf().playlist_song());
+            newname = perf().playlist_song();
         else
-            m_live_frame->set_playlist_name(rc().midi_filename());
+            newname = rc().midi_filename();
+
+        m_live_frame->set_playlist_name(newname, perf().modified());
     }
     if (perf().playlist_active())
-        update_window_title(perf().playlist_song_basename());
+    {
+        std::string newname = perf().playlist_song_basename();
+        if (perf().modified())
+            newname += " *";
 
+        update_window_title(newname);
+    }
     return result;
 }
 

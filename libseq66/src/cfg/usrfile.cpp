@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-10-04
+ * \updates       2021-10-06
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -49,7 +49,7 @@
 namespace seq66
 {
 
-static const int s_usr_file_version = 7;
+static const int s_usr_file_version = 8;
 
 /**
  *  Principal constructor.
@@ -62,6 +62,7 @@ static const int s_usr_file_version = 7;
  *      6:  2021-07-26. Added progress-note-min and progress-note-max.
  *      7:  2021-09-20. Added "style-sheet-active" and "lock-main-window"
  *          flags.
+ *      8:  2021-10-06: Added "convert-to-smf-l".
  *
  * \param name
  *      Provides the full file path specification to the configuration file.
@@ -418,6 +419,11 @@ usrfile::parse ()
     }
     else
     {
+        bool flag = get_boolean(file, tag, "convert-to-smf-1");
+        std::string c = get_variable(file, tag, "convert-to-smf-1");
+        bool convert = c.empty() ?  true : flag ;
+        usr().convert_to_smf_1(convert);
+
         int scratch = get_integer(file, tag, "beats-per-bar");
         usr().midi_beats_per_bar(scratch);
 
@@ -809,6 +815,7 @@ usrfile::write ()
         "# Specifies MIDI-specific variables. -1 means the value isn't used.\n"
         "#\n"
         "#  Item                 Default   Range\n"
+        "# 'convert-to-smf-1':   true      true/false.\n"
         "# 'beats-per-bar':      4         1 to 32.\n"
         "# 'beats-per-minute':   120.0     2.0 to 600.0.\n"
         "# 'beat-width':         4         1 to 32.\n"
@@ -819,6 +826,9 @@ usrfile::write ()
         "# 'bpm-page-increment': 1.0       0.01 to 25.0.\n"
         "# 'bpm-minimum':        0.0       127.0\n"
         "# 'bpm-maximum':        0.0       127.0\n"
+        "#\n"
+        "# 'convert-to-smf-1' controls if SMF 0 files are split into SMF 1\n"
+        "# track when read.\n"
         "#\n"
         "# 'buss-override' sets the output port for all patterns, for testing\n"
         "# or convenience.  Don't save the MIDI file unless you want to save\n"
@@ -837,6 +847,7 @@ usrfile::write ()
         "\n[user-midi-settings]\n\n"
         ;
 
+        write_boolean(file, "convert-to-smf-1", usr().convert_to_smf_1());
         write_integer(file, "beats-per-bar", usr().midi_beats_per_bar());
         write_integer(file, "beats-per-minute", usr().midi_beats_per_minute());
         write_integer(file, "beat-width", usr().midi_beat_width());

@@ -114,7 +114,7 @@ midi_splitter::log_main_sequence (sequence & seq, int seqnum)
     bool result;
     if (is_nullptr(m_smf0_main_sequence))
     {
-        seq.sort_events();
+        seq.sort_events();                          /* really necessary?    */
         seq.color(palette_to_int(cyan));
         m_smf0_main_sequence = &seq;
         m_smf0_seq_number = seqnum;

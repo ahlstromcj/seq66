@@ -1,4 +1,4 @@
-.TH Sequencer66 "September 2021" "Version 0.97.0" "Seq66 Manual Page"
+.TH Sequencer66 "October 2021" "Version 0.97.0" "Seq66 Manual Page"
 
 .SH NAME
 Seq66 (qseq66) - Real-time live MIDI loop sequencer refactored from
@@ -225,6 +225,12 @@ In ALSA or JACK, the following play modes are available:
 the musician controls the unmuting of patterns on the main window.  Song mode
 means that the song layout in the "Song" window controls the playback.
 Auto means to use Song mode if the song contains performance triggers.
+
+.TP 8
+.B \-0, \-\-smf-0
+Normally, SMF 0 (single-track MIDI) files are split into separate tracks
+when read into Seq66.  This 'usr' option preserve the file as an SMF 0
+file.
 
 .TP 8
 .B \-u, \-\-user-save

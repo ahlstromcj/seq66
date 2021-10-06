@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-02
+ * \updates       2021-10-06
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -434,6 +434,7 @@ private slots:
     bool detach_session ();
     bool save_file_as ();
     bool export_file_as_midi (const std::string & fname = "");
+    bool export_file_as_smf_0 (const std::string & fname = "");
     bool export_song (const std::string & fname = "");
     void quit ();
     void quit_session ();

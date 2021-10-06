@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-09-21
+% \update      2021-10-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -21,7 +21,8 @@
    configuration files (\textsl{feature-itis?}).
    Fortunately, configuration items are well documented in the
    \textsl{Seq66} "man" page and in the configuration files.
-   Therefore, this new discussion will merely summarize the options.
+   Therefore, this new discussion will merely summarize the options and
+   go into a few details about the configuration files..
    Here are the topics to discuss:
 
    \begin{itemize}
@@ -35,8 +36,8 @@
          been moved to a separate file for flexibility.
       \item \textbf{'mutes' File} The mute-groups settings have
          been moved to a separate file for flexibility.
-      \item \textbf{'drums' File}.  This file supports remapping percussion notes
-         from older drum machines to General MIDI.
+      \item \textbf{'drums' File}.  This file supports remapping percussion
+         notes from older drum machines to General MIDI.
       \item \textbf{'palette' File}. This new file allows replacing the default
          piano-roll, time, data, and events drawing to be tailored.
       \item \textbf{'playlist' File}. This new file specifies a file that
@@ -125,7 +126,9 @@
       \item \texttt{config-type}.  This value indicates the type of the file,
       such as "ctrl" or 'rc'.
       \item \texttt{version}.  This value indicates the version of the file.
-      Currently, it is not used, but once \textsl{Seq66} solidifies,
+      It is used in some cases when we have added a feature to the
+      configuration file that cannot be automatically handled.
+      When the internal version number of the file is incremented,
       it can be used to make adjustments for changes in configuration when
       reading older versions of files.
    \end{itemize}
@@ -384,6 +387,11 @@
       The session controller (e.g. \textsl{QjackCtl}) uses this value in the
       command-line when starting \textsl{Seq66}.
       See \sectionref{subsec:sessions_jack}.
+
+   \optionline{-0}{-{}-smf-0}
+      Normally, SMF 0 (single-track MIDI) files are split into separate tracks
+      when read into Seq66.  This 'usr' option preserve the file as an SMF 0
+      file.
 
    \optionline{-u}{-{}-user-save}
       Save the 'usr' configuration file when exiting.
@@ -941,8 +949,10 @@
    \index{usr!--user-save}
    Unlike the 'rc' file, the 'usr' file is \textsl{not} written every time
    \textsl{Seq66} exits.  If the 'usr' files does not exist, one is
-   created, but it is normally not overwritten thereafter.  To
-   cause it to be overwritten at exit, run \textsl{Seq66} with the
+   created, but it is normally not overwritten thereafter.
+   The important exception is if we have updated the 'usr' file with new option
+   and have incremented the version number of this file.
+   To cause it to be overwritten at exit, run \textsl{Seq66} with the
    \texttt{-u} or \texttt{-{}-user-save} option:
 
    \begin{verbatim}
@@ -1301,10 +1311,11 @@
    It allows one to specify the
    global defaults for tempo, beats per measure, and so on.
 
-   \index{usr!midi-beats-per-measure}
-   \index{usr!midi-beats-per-minute}
-   \index{usr!midi-beat-width}
-   \index{usr!midi-buss-override}
+   \index{usr!convert-to-smf-1}
+   \index{usr!beats-per-bar}
+   \index{usr!beats-per-minute}
+   \index{usr!beat-width}
+   \index{usr!buss-override}
    \index{usr!velocity-override}
    \index{usr!bpm-precision}
    \index{usr!bpm-step-increment}
@@ -1313,6 +1324,7 @@
    \index{usr!bpm-maximum}
    \begin{verbatim}
       [user-midi-settings]
+      convert-to-smf-1 = true
       beats-per-bar = 4
       beats-per-minute = 120
       beat-width = 4
@@ -1324,6 +1336,10 @@
       bpm-minimum = 0
       bpm-maximum = 127
    \end{verbatim}
+
+   The \texttt{convert-to-smf-1} option is normally true. This causes
+   \textsl{Seq66} to convert single track MIDI files (in SMF 0 format) to
+   multi-track SMF 1 files.
 
    \index{port!override}
    \index{buss!override}

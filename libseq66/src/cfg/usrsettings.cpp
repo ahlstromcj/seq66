@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-10-04
+ * \updates       2021-10-06
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -325,6 +325,7 @@ usrsettings::usrsettings () :
      * [user-midi-settings]
      */
 
+    m_convert_to_smf_1          (true),
     m_default_ppqn              (c_baseline_ppqn),
     m_midi_ppqn                 (c_baseline_ppqn),
     m_use_file_ppqn             (true),
@@ -412,6 +413,7 @@ usrsettings::set_defaults ()
     m_window_redraw_rate_ms = c_default_redraw_ms;
     m_seqchars_x = 15;
     m_seqchars_y =  5;
+    m_convert_to_smf_1 = true;
     m_default_ppqn = c_baseline_ppqn;
     m_midi_ppqn = c_baseline_ppqn;
     m_use_file_ppqn = true;

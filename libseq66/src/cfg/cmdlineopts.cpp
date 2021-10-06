@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-09-30
+ * \updates       2021-10-06
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -159,7 +159,7 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         0123456789#@AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz
-                  x xx::x:xx  :: x:x xxxxx :xxxx *xx :xxxxxxx:xx  ::  aa
+        x         x xx::x:xx  :: x:x xxxxx :xxxx *xx :xxxxxxx:xx  ::  aa
 \endverbatim
  *
  *  * Note that 'o' options arguments cannot be included here due to issues
@@ -264,6 +264,7 @@ static const std::string s_help_2 =
  */
 
 static const std::string s_help_3 =
+"   -0, --smf-0              Don't convert SMF 0 files to SMF 1 upon reading.\n"
 "   -u, --user-save          Save 'usr' settings, usually saved only if they\n"
 "                            do not exist; 'usr' command-line options are not\n"
 "                            permanent otherwise.\n"
@@ -873,6 +874,10 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         switch (c)
         {
+        case '0':
+            usr().convert_to_smf_1(false);
+            break;
+
         case 'A':
             rc().with_jack_transport(false);
             rc().with_jack_master(false);

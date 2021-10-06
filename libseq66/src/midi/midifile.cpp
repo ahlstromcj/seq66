@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-10-01
+ * \updates       2021-10-06
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -794,11 +794,12 @@ midifile::parse (performer & p, int screenset, bool importing)
         m_smf0_splitter.initialize();                   /* SMF 0 support    */
         if (Format == 0)
         {
-            result = parse_smf_0(p, screenset);
+            result = parse_smf_0(p, screenset);         /* convert SMF 0?   */
         }
         else if (Format == 1)
         {
-            result = parse_smf_1(p, screenset);
+            result = parse_smf_1(p, screenset);         /* definitely SMF 1 */
+            p.smf_format(1);
         }
         else
         {
@@ -849,14 +850,31 @@ midifile::parse (performer & p, int screenset, bool importing)
 bool
 midifile::parse_smf_0 (performer & p, int screenset)
 {
-    bool result = parse_smf_1(p, screenset, true);  /* format 0 is flagged  */
-    if (result)
+    bool c = usr().convert_to_smf_1();              /* true by default      */
+    bool result = parse_smf_1(p, screenset, c);     /* format 0 conversion? */
+    if (c)
     {
-        result = m_smf0_splitter.split(p, screenset, m_ppqn);
         if (result)
-            p.modify();                             /* to prompt for save   */
-        else
-            result = set_error("No SMF 0 main sequence found, bad MIDI file");
+        {
+            result = m_smf0_splitter.split(p, screenset, m_ppqn);
+            if (result)
+            {
+                p.modify();                         /* to prompt for save   */
+                p.smf_format(1);                    /* converted to SMF 1   */
+            }
+            else
+                result = set_error("No SMF 0 track found, bad MIDI file");
+        }
+    }
+    else if (result)
+    {
+        seq::pointer s = p.get_sequence(0);
+        if (s)
+        {
+            s->set_midi_channel(null_channel());
+            s->color(palette_to_int(cyan));
+            p.smf_format(0);
+        }
     }
     return result;
 }
@@ -2628,7 +2646,7 @@ midifile::write (performer & p, bool doseqspec)
             {
                 std::string temp = "Writing ";
                 temp += doseqspec ? "Seq66" : "normal" ;
-                temp += "SMF ";
+                temp += " SMF ";
                 temp += std::to_string(smfformat);
                 temp += " MIDI file ";
                 temp += std::to_string(m_ppqn);

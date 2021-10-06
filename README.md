@@ -1,7 +1,7 @@
 # README for Seq66 0.97.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-10-04
+2015-09-10 to 2021-10-06
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -102,7 +102,8 @@ Windows, and using a conventional source tarball.
             pattern editor. Also tightened handling of status values.
         *   Can now copy/paste a pattern from one MIDI file to another.
         *   Fixed minor bug in Import dialog handling.
-        *   Some trigger refactoring for potential SMF 0 export.
+        *   Refactoring for SMF 0 reading and export.
+        *   Minor fix to flag changed tune (an asterisk).
     *   Version 0.96.3:
         *   Added ability to modify Note On and Note Off at the same time in the
             event editor. Fixed and updated event::get_rank().

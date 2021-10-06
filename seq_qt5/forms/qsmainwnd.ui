@@ -107,6 +107,31 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="smf0Button">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>48</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>SMF 0</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="alsaJackButton">
         <property name="enabled">
          <bool>false</bool>
@@ -1361,6 +1386,7 @@ matter what sets-mode is in force. </string>
     <addaction name="actionSave_As"/>
     <addaction name="actionExportSong"/>
     <addaction name="actionExportMIDI"/>
+    <addaction name="actionExportSMF0"/>
     <addaction name="separator"/>
     <addaction name="actionImport_MIDI"/>
     <addaction name="separator"/>
@@ -1511,10 +1537,9 @@ matter what sets-mode is in force. </string>
     <string>&amp;Export Song...</string>
    </property>
    <property name="toolTip">
-    <string>Export the song performance  layout as a Seq66
+    <string>Export the song performance layout as a Seq66
 MIDI file with triggers consolidated into a single
-trigger for each unmuted pattern. Playable by truly
-MIDI-compliant sequencers.</string>
+trigger for each unmuted pattern.</string>
    </property>
   </action>
   <action name="actionExportMIDI">
@@ -1524,6 +1549,14 @@ MIDI-compliant sequencers.</string>
    <property name="toolTip">
     <string>Export without Seq66 SeqSpecs, just with MIDI events
 and messages.</string>
+   </property>
+  </action>
+  <action name="actionExportSMF0">
+   <property name="text">
+    <string>Export SMF 0...</string>
+   </property>
+   <property name="toolTip">
+    <string>Convert to SMF 0 and export without Seq66 SeqSpecs.</string>
    </property>
   </action>
   <action name="actionSongEditor">

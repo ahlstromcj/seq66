@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-10-02
+ * \updates       2021-10-06
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -215,9 +215,12 @@ qslivegrid::set_mode_text (const std::string & mode)
  */
 
 void
-qslivegrid::set_playlist_name (const std::string & plname)
+qslivegrid::set_playlist_name (const std::string & plname, bool modified)
 {
     std::string fullname = get_full_path(plname);
+    if (modified)
+        fullname += " *";
+
     QString pln = QString::fromStdString(fullname);
     ui->labelPlaylistSong->setText(pln);
     (void) recreate_all_slots();

@@ -56,8 +56,11 @@
    Also note that, since the file information has been modified by the import,
    the user will be prompted to save the file when exiting \textsl{Seq66}.
 
+   Finally, conversion to SMF 1 for SMF 0 files can be disabled using the
+   'usr' 
+
 \subsection{Export Song as MIDI}
-\label{subsec:midi_export_file_export}
+\label{subsec:midi_export_song_export}
 
    Thanks to \textsl{Seq32}, exporting song performances (see the
    \textbf{Song Editor}) to standard MIDI format has been added.
@@ -166,6 +169,18 @@
    the SeqSpec data for each track, and does not include all the SeqSpec data
    (such as mute groups) that is normally written to the end of the
    \textsl{Seq66} MIDI file.
+
+\subsection{Export SMF 0}
+\label{subsec:midi_export_file_export_smf_0}
+
+   In some cases it might be useful to convert a \textsl{Seq66} MIDI file to a
+   single-track SMF 0 file.
+   As with exporting to a song
+   (see \sectionref{subsec:midi_export_song_export}),
+   the tracks to be exported (combined into a single track) must be unmuted
+   and have layouts in the song editor.
+
+   This action removes all the existing tracks and merges them into track 0.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

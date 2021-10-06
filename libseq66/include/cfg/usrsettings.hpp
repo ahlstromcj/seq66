@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-10-04
+ * \updates       2021-10-06
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -423,6 +423,13 @@ private:
     /*
      *  [user-midi-settings]
      */
+
+    /**
+     *  If true (the default), the file is converted to SMF 1 (with a
+     *  free-channel track) when read.
+     */
+
+    bool m_convert_to_smf_1;
 
     /**
      *  Provides the default PPQN for the application.  This PPQN is used when
@@ -1223,6 +1230,16 @@ protected:
     void dump_summary();
 
 public:
+
+    bool convert_to_smf_1 () const
+    {
+        return m_convert_to_smf_1;
+    }
+
+    void convert_to_smf_1 (bool flag)
+    {
+        m_convert_to_smf_1 = flag;
+    }
 
     int default_ppqn () const
     {

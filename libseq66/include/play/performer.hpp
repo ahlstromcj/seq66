@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-10-04
+ * \updates       2021-10-06
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -967,6 +967,11 @@ public:
     int smf_format () const
     {
         return m_smf_format;
+    }
+
+    void smf_format (int value)
+    {
+        m_smf_format = value == 0 ? 0 : 1 ;
     }
 
     bool error_pending () const

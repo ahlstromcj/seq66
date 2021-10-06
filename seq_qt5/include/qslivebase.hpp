@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2021-07-26
+ * \updates       2021-10-06
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child class, qslivegride, are Sequencer66's
@@ -182,7 +182,11 @@ private:            // pure virtual functions
     }
 
     virtual void set_mode_text (const std::string & mode = "") = 0;
-    virtual void set_playlist_name (const std::string & plname = "") = 0;
+    virtual void set_playlist_name
+    (
+        const std::string & plname = "",
+        bool modified = false
+    ) = 0;
     virtual void set_bank_values
     (
         const std::string & bankname = "",
