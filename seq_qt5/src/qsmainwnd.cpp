@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-06
+ * \updates       2021-10-07
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1387,6 +1387,7 @@ qsmainwnd::update_window_title (const std::string & fn)
     itemname += " [*]";                             /* required by Qt 5 */
 
     QString fname = QString::fromLocal8Bit(itemname.c_str());
+    setWindowModified(perf().modified());           /* shows the '*'    */
     setWindowTitle(fname);
 }
 
@@ -1772,6 +1773,9 @@ qsmainwnd::save_file (const std::string & fname, bool updatemenu)
         else
             show_message_box(errmsg);
     }
+    if (result)
+        m_is_title_dirty = true;
+
     return result;
 }
 
@@ -1790,13 +1794,9 @@ qsmainwnd::save_file_as ()
     }
     else
     {
-        result = save_file(filename);
+        result = save_file(filename);           /* m_is_title_dirty = true  */
         if (result)
-        {
             rc().midi_filename(filename);
-            m_is_title_dirty = true;
-            ui->actionSave->setEnabled(true);
-        }
     }
     return result;
 }
@@ -3552,11 +3552,9 @@ qsmainwnd::refresh_captions ()
     if (perf().playlist_active())
     {
         std::string newname = perf().playlist_song_basename();
-        if (perf().modified())
-            newname += " *";
-
         update_window_title(newname);
     }
+    ui->actionSave->setEnabled(perf().modified());
     return result;
 }
 

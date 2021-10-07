@@ -1035,31 +1035,31 @@ performer::main_window_title (const std::string & file_name) const
 {
     std::string result = seq_package_name() + std::string(" ");
     std::string itemname = "unnamed";
+
 #if defined SHOW_PPQN_IN_WINDOW_TITLE
     int p = ppqn();                                 /* choose_ppqn(m_ppqn)  */
     char temp[32];
     snprintf(temp, sizeof temp, " %d PPQN", p);
 #endif
+
     if (file_name.empty())
     {
-        if (! rc().midi_filename().empty())
+        std::string fn = rc().midi_filename();
+        if (! fn.empty())
         {
-            std::string name = shorten_file_spec
-            (
-                rc().midi_filename(), c_long_path_max
-            );
+            std::string name = shorten_file_spec(fn, c_long_path_max);
             itemname = name;
         }
     }
     else
-    {
         itemname = file_name;
-    }
+
 #if defined SHOW_PPQN_IN_WINDOW_TITLE
     result += itemname + std::string(temp);
 #else
     result += filename_base(itemname);
 #endif
+
     return result;
 }
 

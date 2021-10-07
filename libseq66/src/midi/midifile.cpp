@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-10-06
+ * \updates       2021-10-07
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -3367,6 +3367,7 @@ write_midi_file
             rc().midi_filename(fname);
             rc().add_recent_file(fname);            /* rc().midi_filename() */
             file_message("Wrote MIDI file", fname);
+            p.unmodify();
         }
         else
         {

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-10-06
+ * \updates       2021-10-07
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -995,6 +995,11 @@ public:
     {
         m_is_modified = true;
         m_needs_update = true;
+    }
+
+    void unmodify ()                            /* for write_midi_file()    */
+    {
+        m_is_modified = false;                  /* m_needs_update = false;  */
     }
 
     bool get_settings (const rcsettings & rcs, const usrsettings & usrs);
@@ -3178,11 +3183,6 @@ private:
     void is_running (bool flag)
     {
         m_is_running = flag;
-    }
-
-    void unmodify ()
-    {
-        m_is_modified = false;                  /* m_needs_update = false;  */
     }
 
 private:
