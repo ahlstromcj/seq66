@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-10-05
+ * \updates       2021-10-08
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -545,6 +545,11 @@ public:
     rcsettings (const rcsettings & rhs) = default;
     rcsettings & operator = (const rcsettings & rhs) = default;
     virtual ~rcsettings () = default;
+
+    std::string no_name () const
+    {
+        return std::string("No name");
+    }
 
     std::string make_config_filespec
     (

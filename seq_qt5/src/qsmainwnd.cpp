@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-07
+ * \updates       2021-10-08
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1378,15 +1378,10 @@ qsmainwnd::redo_live_frame ()
 void
 qsmainwnd::update_window_title (const std::string & fn)
 {
-    std::string itemname = "unnamed";
-    if (fn.empty())
-        itemname = perf().main_window_title(fn);
-    else
-        itemname = fn;
-
+    std::string itemname = fn.empty() ? perf().main_window_title(fn) : fn ;
     itemname += " [*]";                             /* required by Qt 5 */
 
-    QString fname = QString::fromLocal8Bit(itemname.c_str());
+    QString fname = QString::fromStdString(itemname);
     setWindowModified(perf().modified());           /* shows the '*'    */
     setWindowTitle(fname);
 }
@@ -1916,12 +1911,13 @@ qsmainwnd::import_into_set ()
                     new midifile(fn, choose_ppqn(c_use_default_ppqn))
                     ;
 
-                if (f->parse(perf(), setno))
+                if (f->parse(perf(), setno, true))  /* true --> importing   */
                 {
                     ui->spinBpm->setValue(perf().bpm());
                     ui->spinBpm->setDecimals(usr().bpm_precision());
                     ui->spinBpm->setSingleStep(usr().bpm_step_increment());
                     update_bank(setno);
+                    (void) refresh_captions();
                 }
             }
             catch (...)

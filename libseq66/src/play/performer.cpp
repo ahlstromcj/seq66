@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-10-06
+ * \updates       2021-10-08
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1031,10 +1031,10 @@ performer::sequence_window_title (const sequence & seq) const
  */
 
 std::string
-performer::main_window_title (const std::string & file_name) const
+performer::main_window_title (const std::string & filename) const
 {
     std::string result = seq_package_name() + std::string(" ");
-    std::string itemname = "unnamed";
+    std::string itemname = rc().no_name();
 
 #if defined SHOW_PPQN_IN_WINDOW_TITLE
     int p = ppqn();                                 /* choose_ppqn(m_ppqn)  */
@@ -1042,7 +1042,7 @@ performer::main_window_title (const std::string & file_name) const
     snprintf(temp, sizeof temp, " %d PPQN", p);
 #endif
 
-    if (file_name.empty())
+    if (filename.empty())
     {
         std::string fn = rc().midi_filename();
         if (! fn.empty())
@@ -1052,7 +1052,7 @@ performer::main_window_title (const std::string & file_name) const
         }
     }
     else
-        itemname = file_name;
+        itemname = filename;
 
 #if defined SHOW_PPQN_IN_WINDOW_TITLE
     result += itemname + std::string(temp);

@@ -218,6 +218,9 @@ void
 qslivegrid::set_playlist_name (const std::string & plname, bool modified)
 {
     std::string fullname = get_full_path(plname);
+    if (fullname.empty())
+        fullname = rc().no_name();
+
     if (modified)
         fullname += " *";
 

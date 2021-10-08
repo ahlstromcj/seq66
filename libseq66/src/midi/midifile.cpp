@@ -771,6 +771,7 @@ midifile::grab_input_stream (const std::string & tag)
  * \param importing
  *      Indicates that we are importing a file, and do not want to parse/erase
  *      any "proprietrary" information from the performance.  Defaults to false.
+ *      Also will flag a modification.
  *
  * \return
  *      Returns true if the parsing succeeded.  Note that the error status is
@@ -816,7 +817,7 @@ midifile::parse (performer & p, int screenset, bool importing)
                 if (! importing)
                     result = parse_proprietary_track(p, m_file_size);
             }
-            if (result && screenset != 0)
+            if (result && importing)
                  p.modify();                            /* modify flag      */
         }
     }
@@ -2622,7 +2623,7 @@ midifile::write (performer & p, bool doseqspec)
     bool result = m_ppqn >= c_minimum_ppqn && m_ppqn <= c_maximum_ppqn;
     m_error_message.clear();
     if (! result)
-        m_error_message = "Error, invalid PPQN for MIDI file to write";
+        m_error_message = "Invalid PPQN for MIDI file to write.";
 
     if (result)
     {
@@ -2654,10 +2655,10 @@ midifile::write (performer & p, bool doseqspec)
                 file_message(temp, m_name);
             }
             else
-                m_error_message = "Failed to write header to MIDI file";
+                m_error_message = "Failed to write header to MIDI file.";
         }
         else
-            m_error_message = "No patterns/tracks available to write";
+            m_error_message = "No patterns/tracks to write.";
     }
 
     /*
@@ -2695,7 +2696,7 @@ midifile::write (performer & p, bool doseqspec)
     {
         result = write_proprietary_track(p);
         if (! result)
-            m_error_message = "Error, could not write SeqSpec track";
+            m_error_message = "Could not write SeqSpec track.";
     }
     if (result)
     {
@@ -2713,7 +2714,7 @@ midifile::write (performer & p, bool doseqspec)
                 file.write(&kc, 1);
                 if (file.fail())
                 {
-                    m_error_message = "Error writing MIDI byte";
+                    m_error_message = "Error writing byte.";
                     result = false;
                 }
             }
@@ -2721,7 +2722,7 @@ midifile::write (performer & p, bool doseqspec)
         }
         else
         {
-            m_error_message = "Error opening MIDI file for writing";
+            m_error_message = "Failed to open MIDI file for writing.";
             result = false;
         }
     }
@@ -2808,8 +2809,8 @@ midifile::write_song (performer & p)
             {
                 result = false;
                 m_error_message =
-                    "The current song has more than one track, "
-                    "and is not suitable for saving to SMF 0."
+                    "The song has more than one track; "
+                    "it is unsuitable for saving as SMF 0."
                     ;
             }
         }
@@ -2823,8 +2824,8 @@ midifile::write_song (performer & p)
     {
         result = false;
         m_error_message =
-            "The current song has no exportable tracks; "
-            "each track to export must have triggers in the Song Editor "
+            "The song has no exportable tracks; "
+            "each track to export must have triggers in the song editor "
             "and be unmuted."
             ;
     }
@@ -2871,7 +2872,7 @@ midifile::write_song (performer & p)
         }
         else
         {
-            m_error_message = "Error opening MIDI file for exporting";
+            m_error_message = "Failed to open MIDI file for export.";
             result = false;
         }
     }
