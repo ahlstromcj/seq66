@@ -4,7 +4,7 @@
 # \file        timid
 # \library     bin
 # \author      Chris Ahlstrom
-# \date        2021-04-19 to 2021-05-04
+# \date        2021-04-19 to 2021-10-11
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
@@ -14,7 +14,7 @@
 #     -Oj            Output to JACK.
 #     -Os            Output to ALSA.
 #     -Od            Output to audio device.
-#     -iA            Launch as an ALSA sequencer client
+#     -iA            Launch as an ALSA sequencer client.  No JACK, apparently.
 #     --background   Start as a daemon.
 #
 #  See https://wiki.debian.org/AlsaMidi

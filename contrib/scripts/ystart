@@ -13,20 +13,20 @@ YOSHIMI="yoshimi"
 OPTIONS=""
 REPOPATH="Home/ca/mls/git"
 CFGPATH="$HOME/$REPOPATH/yoshimi-cookbook/sequencer64/b4uacuse"
+STATEFILE="yoshimi-b4uacuse-gm.state"
 
 if [ "$1" == "latest" ] ; then
     YOSHPATH="/usr/local/bin"
-#   YOSHIMI="yoshimi-1.7.2rc1"
     YOSHIMI="yoshimi"
     shift
 fi
 
 if [ "$1" == "jack" ] ; then
-    OPTIONS="-jJ"
+    OPTIONS="--jack-midi --jack-audio"
 elif [ "$1" == "alsa" ] ; then
-    OPTIONS="-aA"
+    OPTIONS="--alsa-midi --alsa-audio"
 fi
 
-echo "Running $YOSHPATH/$YOSHIMI $OPTIONS --state=$CFGPATH/yoshimi-b4uacuse-gm.state"
-$YOSHPATH/$YOSHIMI $OPTIONS --state=$CFGPATH/yoshimi-b4uacuse-gm.state
+echo "Running $YOSHPATH/$YOSHIMI $OPTIONS --state=$CFGPATH/$STATEFILE"
+$YOSHPATH/$YOSHIMI $OPTIONS --state=$CFGPATH/$STATEFILE
 
