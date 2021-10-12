@@ -228,13 +228,13 @@ It does not change Seq66's default PPQN.</string>
         </property>
         <property name="minimumSize">
          <size>
-          <width>100</width>
+          <width>148</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>100</width>
+          <width>148</width>
           <height>28</height>
          </size>
         </property>
