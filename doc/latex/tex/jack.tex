@@ -363,9 +363,13 @@
    In using \textsl{OBS Studio} to make demonstration videos of \textsl{Seq66},
    we struggled trying to get it to work with either
    \textsl{ALSA} or \textsl{JACK} directly.
-   Setting up \textsl{PulseAudio} ended up being fairly easy, not too
+   Setting up \textsl{PulseAudio} ended up being fairly easy on our
+   \textsl{Debian Sid} system, not too
    cumbersome or intrusive (and also made it easier to use
    \textsl{Bluetooth} earbuds via \textsl{pulseaudio-module-bluetooth}).
+   However, when we decided to a system reinstall on our main development
+   laptop, we ended up installing \textsl{Ubuntu 20}, and it became a real
+   pain.
 
    \index{pulseaudio}
    This section discusses using \textsl{JACK} with \textsl{PulseAudio}.
@@ -373,43 +377,69 @@
    system (e.g. working with \textsl{Seq66}, \textsl{mpd},
    \textsl{smplayer} etc. using \textsl{ALSA},
    the next step is to install \textsl{JACK} support.
-   In \textsl{Debian}, install \textsl{pulseaudio-module-jack},
-   \textsl{pulseaudio-utils}, and, optionally
-   \textsl{pavucontrol}.
+   In \textsl{Debian}-based systems, install \textsl{pulseaudio-module-jack},
+   \textsl{pulseaudio-utils}, and \textsl{pavucontrol}.
 
    Then, assuming \textsl{qjackctl} is installed (which is useful for using
-   \textsl{JACK} session management), then go to its menu:
-   \textbf{Setup... / Options / Execute script after Startup} and copy the
-   following there:
+   \textsl{JACK} session management), then go to its menu
+   \textbf{Setup... / Options / Execute script ...} and set up each of the
+   "jack" scripts found in \texttt{data/linux/jack/pulseaudio}:
 
-   \begin{verbatim}
-      pacmd set-default-sink jack_out
-   \end{verbatim}
+   \begin{itemize}
+      \item \textbf{Execute script on Startup}:
+         \texttt{/usr/local/bin/jack-pre-start.sh}
+      \item \textbf{Execute script after Startup}:
+         \texttt{/usr/local/bin/jack-post-start.sh}
+      \item \textbf{Execute script on Shutdown}:
+         \texttt{/usr/local/bin/jack-pre-stop.sh}
+      \item \textbf{Execute script after Shutdown}:
+         \texttt{/usr/local/bin/jack-post-stop.sh}
+   \end{itemize}
 
-   This configures \textsl{qjackctl} to run that command after startup.
+   Other executable locations can be used if desired.
+
+   These steps configure \textsl{qjackctl} to run those commands at
+   the appropriate time.
    \textsl{PulseAudio} will recognize (via D-Bus) that \textsl{JACK} started,
    and will route audio to it. When \textsl{JACK} is stopped,
    \textsl{PulseAudio} reverts to normal routing.
 
-   Other \textsl{qjackctl} options:
+   Other \textsl{qjackctl} options from the \textbf{Misc} tab:
 
-   \begin{verbatim}
-      Start JACK audio server on application startup
-      Enable JACK D-Bus interface
-      Stop JACK audio server on application exit
-   \end{verbatim}
+   \begin{itemize}
+      \item \textbf{Start JACK audio server on application startup}:
+         Check-mark it, unless one prefers to use the \textbf{Stop} button.
+      \item \textbf{Stop JACK audio server on application exit}:
+         Check if available, as desired.
+      \item \textbf{Single application instance}:
+         Check-mark it.
+      \item \textbf{Enable ALSA Sequencer support}:
+         Recommended.
+      \item \textbf{Enable D-Bus interface}:
+         Can leave unchecked.
+      \item \textbf{Enable JACK D-Bus interface}:
+         Can leave unchecked.
+      \item \textbf{Save JACK audio server configuration to}:
+         Leave unchecked.  If the \texttt{.jackdrc} file is found, then
+         \textsl{QSynth} might try to start JACK itself.
+   \end{itemize}
 
-   \textbf{Tip}:
-   One might need to execute the following commands first:
+   The following scenario describes what we are seeing on
+   \textsl{Ubuntu 20.04.3}; the main anomaly is that playback of
+   an application through \textsl{PulseAudio} doesn't resume on its own.
 
-   \begin{verbatim}
-      pactl load-module module-jack-sink channels=2
-      pactl load-module module-jack-source
-   \end{verbatim}
+   Let's assume we are running \textsl{mpd} and it is playing tunes via
+   \textsl{PulseAudio}.
+   Then we start \textsl{QJackctl} configured as above.
+   This action will silence \textsl{mpd}, but starting playback again will
+   work.
+   One can then run \textsl{Seq66} using JACK MIDI and JACK transport.
+   Once finish, use \textsl{QJackctl} to stop JACK.
+   This will silence \textsl{mpd} again.
+   Then we have to restart \textsl{PulseAudio} (e.g. via the
+   \texttt{repulse} script supplied in \texttt{data/linux/jack/pulseaudio}).
 
-   These settings can also be placed (without the \texttt{pactl}) in
-   \texttt{/etc/pulse/default.pa}.
-   They might be loaded automatically via \textsl{udev} on some systems.
+   What happens on your system?
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

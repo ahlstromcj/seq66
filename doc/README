@@ -1,9 +1,9 @@
-Documentation Directory for Seq66 0.93.0
+Documentation Directory for Seq66 0.xx.0
 Chris Ahlstrom
-2021-04-17 to 2021-04-17
+2021-04-17 to 2021-10-12
 
-This directory contains document to be installed in the
-${prefix}/share/doc/seq66-0.93 directory (e.g. /usr/share/doc or
+This directory contains documents to be installed in the
+${prefix}/share/doc/seq66-0.xx directory (e.g. /usr/share/doc or
 /usr/local/share/doc) on Linux, or in the installation ${install}/data
 directory (e.g. C:/Program Files (x86)/Seq66/data)
 on Windows.

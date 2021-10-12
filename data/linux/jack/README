@@ -1,0 +1,23 @@
+Installed Scripts Directory for Seq66
+Chris Ahlstrom
+2021-10-12 to 2021-10-12
+
+This directory contains scripts that can be used with JACK and PulseAudio.
+
+startjack:      The latest attempt to script a JACK startup.
+startqjack:     Another attempt to add scripting to QJackCtl.
+
+pulseaudio:
+
+    These files can be added to the Scripting setup for QJackCtrl so that
+    PulseAudio output will be redirected to JACK.  Study them to see if you
+    want them.  Will also be documented at some point in the user manual.
+
+        jack-post-start.sh
+        jack-post-stop.sh
+        jack-pre-start.sh
+        jack-pre-stop.sh
+
+    repulse:    Restarts the user-land run of PulseAudio.
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

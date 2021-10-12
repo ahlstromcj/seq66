@@ -4,7 +4,7 @@
 # \file        htmldoc
 # \library     scripts
 # \author      Chris Ahlstrom
-# \date        2021-03-10 to 2021-03-10
+# \date        2021-03-10 to 2021-10-12
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
@@ -13,7 +13,7 @@
 #
 #------------------------------------------------------------------------------
 
-pandoc -f latex -t html --extract-media=images -o x.html seq66-user-manual.tex
+pandoc -f latex -t html --extract-media=images -o seq66.html seq66-user-manual.tex
 
 #******************************************************************************
 # htmldoc

@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.97.0
 Chris Ahlstrom
-2015-09-10 to 2021-09-15
+2015-09-10 to 2021-10-10
 
 Getting Seq66 requires building the code or going to the
 "sequencer64-packages/seq66" project directory on GitHub.
@@ -427,12 +427,13 @@ DEPENDENCIES:
 
       This lists comes from the m4 file, and has been abbreviated.  Some of
       these are surely not needed and we can eliminate them from the test at
-      some point. Left off are the initial "libQt" and final "5-dev" items in
-      the library names. The obviously necessary ones (*) come first; they are
-      specified in m4/ax_have_qt_min.m4, which provides the AX_HAVE_QT_MIN
-      test used in the configure.ac script. The rest of them seem to be
-      brought in as sub-dependencies, so make sure they are all installed if
-      your attempt to build qseq66 fails.
+      some point. Left off are the initial "libQt" or "libqt" and final
+      "5-dev" items in the library names. The obviously necessary ones (*)
+      come first; they are specified in m4/ax_have_qt_min.m4, which provides
+      the AX_HAVE_QT_MIN test used in the configure.ac script. The rest of
+      them seem to be brought in as sub-dependencies, so make sure they are
+      all installed if your attempt to build qseq66 fails.  See "Build tools"
+      below.
 
       - Core *
       - Gui *
@@ -459,14 +460,16 @@ DEPENDENCIES:
          worth of files.  One can just install the bare minimum:
 
          -  qt5-default (Important!)
-         -  qtbase5-dev
-         -  qtbase5-dev-tools
+         -  qtbase5-dev (might be installed after installedin qt5-default)
+         -  qtbase5-dev-tools (ditto)
          -  qtdeclarative-dev-tools or qtdeclarative5-dev-tools
             (qtdeclarative5-dev?)
          -  qtchooser
          -  qt5-qmake
          -  qtdesigner; optional if you want to tweak the GUIs, not huge,
             provided by the qtttools5-dev-tools package in Debian.
+         -  qtcreator; also optional, but handy.  Unmark/uninstall the
+            "clang" packages that are recommended unless you want clang.
 
          To setup Qt, first run the command "qtchooser -l".  If more than one
          version of Qt is installed, their numbers are all listed.  Make sure
@@ -475,6 +478,10 @@ DEPENDENCIES:
             export QT_SELECT=5
 
         This allows builds in bash to use the correct version of Qt.
+        Also, for appearances on non-KDE systems, consider:
+
+        -   Installing the qt5ct package (Debian/Ubuntu)
+        -   Adding "export QT_QPA_PLATFORMTHEME=qt5ct" to .bashrc.
 
    Runtime:
 
