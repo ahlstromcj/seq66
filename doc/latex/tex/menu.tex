@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-09-03
+% \update      2021-10-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -50,8 +50,9 @@
       \item \textbf{Recent MIDI files}
       \item \textbf{Save}
       \item \textbf{Save As}
-      \item \textbf{Export Song as MIDI}
-      \item \textbf{Export MIDI Only}
+      \item \textbf{Export Song...}
+      \item \textbf{Export MIDI Only...}
+      \item \textbf{Export SMF 0...}
       \item \textbf{Import MIDI to Current Set}
       \item \textbf{Quit} (\textbf{Exit} in \textsl{Windows})
    \end{enumber}
@@ -134,22 +135,22 @@
    the full path to the file-name is stored.
    This path is in "UNIX" format, using the forward slash, or solidus,
    as the path separator, even in \textsl{Windows}.
+   The \texttt{full-paths} option can be set to show the full path in the
+   recent-files drop-down menu.
    Only unique entries are included in the recent-files list.
    The limit is 10 recent-file entries.
    This is a feature from \textsl{Kepler34} \cite{kepler34}.
    One can also set \textsl{Seq66} to load the most-recent file at startup.
-   Here is an example from an 'rc' file.  Note the startup option.
+   Here is an example from an 'rc' file:
 
 \begin{verbatim}
    [recent-files]
-   # Holds a list of the last few recently-loaded MIDI files.
-   # The first number is the number of items in the list.  The second value
-   # indicates if to load the most recent file (the top of the list)
-   # at startup (1 == load it).
-   3 1
-   /home/chris/git/seq66/data/b4uacuse-gm-patchless.midi
-   /home/chris/git/seq66/data/midi/colours.midi
-   /home/chris/git/Julian-data/TestBeeps.midi
+   full-paths = false
+   load-most-recent = true
+   count = 3
+   /home/user/git/seq66/data/b4uacuse-gm-patchless.midi
+   /home/user/git/seq66/data/midi/colours.midi
+   /home/user/git/Julian-data/TestBeeps.midi
 \end{verbatim}
 
 \subsubsection{Menu / File / Save and Save As}
@@ -225,7 +226,7 @@
    format has been added.  In this export, a complete song performance is
    recoded so that other MIDI sequencers can play the performance properly.
    This functionality is explained in detail in
-   \sectionref{subsec:midi_export_file_export}.
+   \sectionref{subsec:midi_export_song_export}.
 
 \subsubsection{Menu / File / Export MIDI Only}
 \label{subsubsec:menu_file_export_midi_only}
@@ -235,6 +236,14 @@
    size of the file or to accomodate non-compliant sequencers.
    This functionality is explained in detail in
    \sectionref{subsec:midi_export_file_export_midi_only}.
+
+\subsubsection{Menu / File / Export SMF 0}
+\label{subsubsec:menu_file_export_smf_0}
+
+   This feature is new since version 0.97.  It allows all tracks in the song to
+   be consolidated and exported in MIDI's SMF 0 format.  It follows the same
+   rules as song export.
+   See \sectionref{subsec:midi_export_file_export_smf_0}.
 
 \subsection{Menu / Edit}
 \label{subsec:menu_edit}
@@ -250,8 +259,8 @@
       \item \textbf{Mute All Tracks}
       \item \textbf{Unute All Tracks}
       \item \textbf{Toggle All Tracks}
-      \item \textbf{Copy Current Set} (new with 0.96.1)
-      \item \textbf{Paste To Current Set} (new with 0.96.1)
+      \item \textbf{Copy Current Set}
+      \item \textbf{Paste To Current Set}
    \end{enumber}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
@@ -632,13 +641,19 @@
    ports.  This item can only be modified by closing the application, editing
    the 'rc' file, and restarting the application.
 
-   \itempar{Input Option}{input options}
+   \itempar{Input/Output Option}{I/O options}
    \index{input by channel}
    \textbf{Record input into sequence according to channel}
    causes MIDI input with multiple channels to be distributed to
    each sequence according to MIDI channel number.
    When disabled, the normal recording behavior dumps all data into the current
    sequence, regardless of channel.
+
+   \index{input by channel}
+   \textbf{Use virtual (manual) I/O Ports}
+   This new option (not shown yet in the diagram)
+   allows for configuration of the manual-ports option from within the
+   user-interace.  A restart is necessary for this option to take effect.
 
 \paragraph{Menu / Edit / Preferences / Keyboard}
 \label{paragraph:menu_edit_preferences_keyboard}

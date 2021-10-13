@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2021-10-05
+ * \updates       2021-10-13
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -59,15 +59,18 @@ namespace seq66
  */
 
 #if defined SEQ66_PLATFORM_WINDOWS
-static std::string s_app_build_os = "Windows";
+static std::string s_app_build_os    = "Windows 10";    /* FIXME */
+static std::string s_app_build_issue = "Microsoft Windows";
 #endif
 
 #if defined SEQ66_PLATFORM_MACOSX
-static std::string s_app_build_os = "MacOSX";
+static std::string s_app_build_os    = "MacOSX";        /* FIXME */
+static std::string s_app_build_issue = "Apple MacOSX";
 #endif
 
 #if defined SEQ66_PLATFORM_UNIX
-static std::string s_app_build_os = SEQ66_APP_BUILD_OS;
+static std::string s_app_build_os    = SEQ66_APP_BUILD_OS;
+static std::string s_app_build_issue = SEQ66_APP_BUILD_ISSUE;
 #endif
 
 static std::string s_alsa_version;
@@ -140,6 +143,12 @@ set_app_build_os (const std::string & abuild_os)
 }
 
 void
+set_app_build_issue (const std::string & abuild_issue)
+{
+    s_app_build_issue = abuild_issue;
+}
+
+void
 set_arg_0 (const std::string & arg)
 {
     s_arg_0 = arg;
@@ -185,6 +194,12 @@ const std::string &
 seq_app_build_os ()
 {
     return s_app_build_os;
+}
+
+const std::string &
+seq_app_build_issue ()
+{
+    return s_app_build_issue;
 }
 
 const std::string &
@@ -283,16 +298,22 @@ seq_build_details ()
 #endif
         << "App name: " << seq_app_name()
         << "; type " << seq_app_type()
-        << "; engine " << seq_app_engine() << "\n"
+        << "; engine " << seq_app_engine()
         ;
 
-    if (! s_qt_version.empty())
-        result << "Qt v. " << s_qt_version << "\n";
+    if (s_qt_version.empty())
+        result << "\n";
+    else
+        result << "; Qt v. " << s_qt_version << "\n";
 
     result
         << "Build OS: " << seq_app_build_os() << " " << s_bitness
         << " " << buildmode << "\n"
         ;
+
+#if defined SEQ66_PLATFORM_UNIX
+    result << "Distro:   " << seq_app_build_issue() << "\n";
+#endif
 
 #if defined SEQ66_RTMIDI_SUPPORT
     result << "Native JACK/ALSA (rtmidi)\n";

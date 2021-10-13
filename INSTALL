@@ -2,10 +2,10 @@ INSTALL for Seq66 v. 0.97.0
 Chris Ahlstrom
 2015-09-10 to 2021-10-10
 
-Getting Seq66 requires building the code or going to the
-"sequencer64-packages/seq66" project directory on GitHub.
-The bootstrap setup is primarily aimed at developers, but is easy to use with
-the instructions below.  Different versions of the program can be built:
+Getting Seq66 requires building the code or going to
+"sequencer64-packages/seq66" on GitHub to get an install pack.  The bootstrap
+setup is primarily aimed at developers, but is easy to use with the
+instructions below.  Different versions of the program can be built:
 
     -   qseq66.  The "rtmidi" engine version, with a Qt5 user-interface a la
         Kepler34.  Native ALSA, JACK MIDI and JACK transport; fall-back to ALSA;
@@ -45,7 +45,7 @@ Linux Distro Package (seq66):
         Installed it from from KXStudio repo using Muon:
         https://kde.org/applications/en/system/org.kde.muon
 
-Normal (automake) Install:
+Autotools Build and Install:
 
     The normal install is meant for for those who do not want to install a lot
     of extra developer packages, and want to use the standard "configure"

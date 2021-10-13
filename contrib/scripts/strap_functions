@@ -8,7 +8,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2021-05-15
+# \update         2021-10-13
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -292,7 +292,7 @@ function clean_m4()
    rm -f m4/wchar_t.m4
    rm -f m4/wint_t.m4
    rm -f m4/xsize.m4
-   rm -f m4/Makefile.in m4/Makefile m4/*.m4~
+   rm -f m4/Makefile m4/*.m4~
 }
 
 #******************************************************************************
@@ -543,14 +543,10 @@ function clean_project()
          clean_m4
          rm -rf debian/lib$1
          rm -f install-sh mkinstalldirs missing
-         rm -f Makefile.in
          rm -rf config
-         rm -f include/Makefile.in
          rm -f include/stamp-h.in
-         rm -f include/Makefile.in
          rm -f include/stamp-h1
          rm -f include/config.h include/config.h.in include/seq66-config.h
-         rm -f man/Makefile.in
 
       popd
 

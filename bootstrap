@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2021-09-03
+# \update         2021-10-13
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,9 +33,9 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2021-09-03"
-export SEQ66_LIBRARY_API_VERSION="0.95"
-export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.96.0"
+export SEQ66_SCRIPT_EDIT_DATE="2021-10-13"
+export SEQ66_LIBRARY_API_VERSION="0.97"
+export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.1"
 
 #******************************************************************************
 #  Version info
@@ -247,7 +247,7 @@ echo "EXTRAFLAGS = $EXTRAFLAGS"
 
 if [ $DOCLEAN == "yes" ] ; then
    make clean 
-   clean_cfgfiles
+#  clean_cfgfiles
    clean_gnufiles
    clean_tempfiles
    clean_m4

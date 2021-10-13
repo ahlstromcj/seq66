@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-10-06
+ * \updates       2021-10-13
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -304,7 +304,7 @@ usrsettings::usrsettings () :
     m_window_scale              (c_window_scale_default),
     m_window_scale_y            (c_window_scale_default),
     m_mainwnd_spacing           (0),
-    m_current_zoom              (0),            // 0 is unsafe, but a feature
+    m_current_zoom              (2),            // 0 is a feature
     m_global_seq_feature_save   (true),
     m_seqedit_scale             (c_scales_off),
     m_seqedit_key               (c_key_of_C),
@@ -402,7 +402,7 @@ usrsettings::set_defaults ()
     m_window_scale = c_window_scale_default;
     m_window_scale_y = c_window_scale_default;
     m_mainwnd_spacing = c_mainwnd_spacing;
-    m_current_zoom = 0;
+    m_current_zoom = 2;
     m_global_seq_feature_save = true;
     m_seqedit_scale = c_scales_off;
     m_seqedit_key = c_key_of_C;

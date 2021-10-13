@@ -1,7 +1,7 @@
-# README for Seq66 0.97.0
+# README for Seq66 0.97.1
 
 Chris Ahlstrom
-2015-09-10 to 2021-10-06
+2015-09-10 to 2021-10-13
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -32,6 +32,7 @@ Dark-Cold Fluxbox")
         editing, event-editing, play-lists, and session information.
     *   Each pattern slot can be colored; the color palette can be saved and
         modified.
+    *   Horizontal and vertical zoom in the pattern and song editors.
     *   A headless version can be built.
 
 ##  Configuration files
@@ -65,6 +66,7 @@ Dark-Cold Fluxbox")
         Works with Song Export.
     *   Improved non-U.S. keyboard support.
     *   Many demonstration and test MIDI files.
+    *   SMF 0 import and export.
     *   See **Recent Changes** below, and the **NEWS** file.
 
 ##  Internal
@@ -82,6 +84,9 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.97.1:
+        *   Updated documentation.
+        *   Stopped bootstrap --full-clean from removing Makefile.in files.
     *   Version 0.97.0:
         *   Added limited vertical zoom to the song editor (performance roll).
             Still has vertical scroll issues.

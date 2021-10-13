@@ -1,7 +1,7 @@
 # Seq66 0.91.5 (and above) palette configuration file
 #
 # /home/user/.config/seq66/qseq66.palette
-# Written on 2021-04-29 12:50:18
+# Written on 2021-10-13 10:08:14
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface.
@@ -11,21 +11,17 @@
 config-type = "palette"
 version = 0
 
-# The [comments] section can document this file.  Lines starting
-# with '#' and '[' are ignored.  Blank lines are ignored.  Show a
-# blank line by adding a space character to the line.
+# The [comments] section can document this file. Lines starting with
+# '#', '[', or that have no character end the comment.
 
 [comments]
 
-Comments added to this section are preserved.  Lines starting with
-a '#' or '[', or that are blank, are ignored.  Start lines that must
-look empty with a space.
+Add your comment block here
 
-# The first integer is the color number, ranging from 0 to 31. The
-# first string is the name of the background color.  The first
-# stanza (in square brackets) are the ARGB values for the background.
-# The second set provides the foreground color name and color.
-# The alpha values are not important here, but should be set to FF.
+# First is the color number from 0 to 31. Next is the name of the
+# background color. The first stanza [square brackets] are the ARGB
+# values for the background. The second provides the foreground
+# color name and ARGB values. The alpha values should be set to FF.
 
 [palette]
 
@@ -70,10 +66,10 @@ look empty with a space.
 
  0       "Foreground" [ 0xFF000000 ]       "Foreground" [ 0xFFFFFFFF ]
  1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF484848 ]
- 2            "Label" [ 0xFF808080 ]            "Label" [ 0xFFFFFFFF ]
+ 2            "Label" [ 0xDEADBEEF ]            "Label" [ 0xFFFFFFFF ]
  3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00FF ]
  4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF000080 ]
- 5            "Tempo" [ 0xFFFF00FF ]            "Tempo" [ 0xFFFFFF00 ]
+ 5            "Tempo" [ 0xFFFFFF00 ]            "Tempo" [ 0xFFFFFF00 ]
  6        "Note Fill" [ 0xFFFFFFFF ]        "Note Fill" [ 0xFF000000 ]
  7      "Note Border" [ 0xFF000000 ]      "Note Border" [ 0xFFFFFFFF ]
  8       "Black Keys" [ 0xFF000000 ]       "Black Keys" [ 0xFFFFFFFF ]
@@ -86,7 +82,7 @@ look empty with a space.
 15            "Extra" [ 0xFF8B0000 ]            "Extra" [ 0xFF000064 ]
 
 # This section defines brush styles to use.  The names are based on the
-# names in the Qt::BrushStyle enumeration. The supported names are:
+# names in the Qt::BrushStyle enumeration. The names are:
 #
 #    nobrush, solid, dense1, dense2, dense3, dense4, dense5, dense6,
 #    dense7, horizontal, vertical, cross, bdiag, fdiag, diagcross,

@@ -851,7 +851,7 @@ qseditoptions::show_session (usrsettings::session sm)
     {
         case usrsettings::session::none:
             ui->radio_session_none->setChecked(true);
-            ui->label_nsm_url->setText("N/A");
+            ui->label_nsm_url->setText("UUID N/A");
             break;
 
         case usrsettings::session::nsm:

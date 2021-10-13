@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2021-10-12
+dnl \update        2021-10-13
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -77,7 +77,9 @@ dnl AC_DEFINE(APP_NAME, ["seq66"], "The default name of the Seq66 executable")
 AC_DEFINE(APP_TYPE, ["qt5"], "The type of the Seq66 executable, qt/cli")
 AC_DEFINE(APP_ENGINE, ["rtmidi"], "Seq66 MIDI engine, rtmidi/portmidi")
 build_os="'$(uname -srm)'"
-AC_DEFINE_UNQUOTED(APP_BUILD_OS, ["$build_os"], "Distro where build was done")
+AC_DEFINE_UNQUOTED(APP_BUILD_OS, ["$build_os"], "OS/kernel where build was done")
+build_issue="'$(cat /etc/issue.net)'"
+AC_DEFINE_UNQUOTED(APP_BUILD_ISSUE, ["$build_issue"], "Distro of build")
 AC_DEFINE(CLIENT_NAME, ["seq66"], "The name to display as client/port")
 
 VERSION="0.97.1"
@@ -421,7 +423,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2021-10-12"
+#define VERSION_DATE_SHORT "2021-10-13"
 #define VERSION "0.97.1"
 
 )

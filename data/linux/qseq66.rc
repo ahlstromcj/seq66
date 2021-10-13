@@ -1,7 +1,7 @@
-# Seq66 0.96.0 (and above) main ('rc') configuration file
+# Seq66 0.97.1 main ('rc') configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written 2021-08-22 08:52:00
+# Written 2021-10-13 10:08:14
 #
 # This file holds the main configuration for Seq66. It no longer
 # follows the format of the seq24rc configuration file much.
@@ -23,9 +23,8 @@ config-type = "rc"
 version = 2
 verbose = false
 sets-mode = normal
-port-naming = long
+port-naming = short
 
-# The first completely empty, comment, or tag line ends the comment.
 # [comments] holds user documentation for this file. The first empty,
 # hash-commented, or tag line ends the comment.
 
@@ -62,18 +61,17 @@ name = "qseq66.mutes"
 active = true
 name = "qseq66.usr"
 
-# Provides a play-list file and a flag to activate it. If no list,
-# use '""' and set 'active' to false. Use the extension '.playlist'.
-# Even if not active, the play-list file is read. 'base-directory' is
-# optional. It sets the directory holding all MIDI files in all
-# play-lists, useful when copying play-lists/tunes from one place to
-# another; it preserves sub-directories (e.g. in creating an NSM
-# session).
+# Provides a play-list file and flag to activate it. If no list, use
+# '""' and set active = false. Use the extension '.playlist'. Even
+# if not active, the play-list file is read. 'base-directory' sets the
+# sets the directory holding all MIDI files in all play-lists, useful
+# when copying play-lists/tunes from one place to another; it
+# preserves sub-directories (e.g. in creating an NSM session).
 
 [playlist]
 
 active = false
-name = ""
+name = "qseq66.playlist"
 base-directory = ""
 
 # Provides a flag and file-name for note-mapping. '""' indicates
@@ -116,10 +114,10 @@ virtual-ports = false
 output-port-count = 8
 input-port-count = 4
 
-# These system ports are available for output, for playback/control.
-# From JACK's view, these are 'capture' devices. The first line shows
-# the count of MIDI 'capture' ports. Each line shows the buss number
-# and clock status of that buss:
+# These system ports are available for input. From JACK's view, these
+# are 'playback' devices. The first number is a buss number, and the
+# second number is the input status, disabled (0) or
+# enabled (1). The item in quotes is the input-buss name.
 #
 #  -1 = The output port is disabled.
 #   0 = MIDI Clock is off. The output port is enabled.
@@ -164,10 +162,10 @@ input-port-count = 4
 # the count of MIDI 'capture' ports. Each line shows the buss number
 # and clock status of that buss:
 #
-#   0 = MIDI Clock is off.
-#   1 = MIDI Clock on; Song Position and MIDI Continue will be sent.
-#   2 = MIDI Clock Modulo.
 #  -1 = The output port is disabled.
+#   0 = MIDI Clock is off. The output port is enabled.
+#   1 = MIDI Clock on; Song Position and MIDI Continue are sent.
+#   2 = MIDI Clock Modulo.
 #
 # With Clock Modulo, MIDI clocking doesn't begin until song position
 # reaches the start modulo value [midi-clock-mod-ticks]. One can

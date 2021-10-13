@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2020-09-15
+ * \updates       2020-10-13
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -72,6 +72,7 @@ extern void set_alsa_version (const std::string & v);
 extern void set_jack_version (const std::string & v);
 extern void set_qt_version (const std::string & v);
 extern void set_app_build_os (const std::string & abuild_os);
+extern void set_app_build_issue (const std::string & abuild_issue);
 extern void set_app_engine (const std::string & aengine);
 extern void set_app_name (const std::string & aname);
 extern void set_app_type (const std::string & atype);

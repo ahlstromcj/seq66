@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-10-12
+ * \updates       2021-10-13
  * \license       GNU GPLv2 or above
  *
  *  Qt Portmidi Linux and Windows versions, hardwired for use with
@@ -62,7 +62,7 @@
 #endif
 
 #if ! defined SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2021-10-12"
+#define SEQ66_VERSION_DATE_SHORT "2021-10-13"
 #endif
 
 #if ! defined SEQ66_VERSION
@@ -92,7 +92,11 @@
 /* "Distro where build was done" */
 
 #if ! defined SEQ66_APP_BUILD_OS
-#define SEQ66_APP_BUILD_OS "'Windows/Mac/qmake'"
+#define SEQ66_APP_BUILD_OS "'qmake'"
+#endif
+
+#if ! defined SEQ66_APP_BUILD_ISSUE
+#define SEQ66_APP_BUILD_ISSUE "'Linux/Windows/Mac'"
 #endif
 
 /**
@@ -317,7 +321,7 @@
 
 /* Define to the full name and version of this package. */
 #if ! defined SEQ66_PACKAGE_STRING
-#define SEQ66_PACKAGE_STRING "Seq66 0.97.0"
+#define SEQ66_PACKAGE_STRING "Seq66 0.97.1"
 #endif
 
 /* Define to the one symbol short name of this package. */

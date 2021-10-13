@@ -3,8 +3,8 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2021-10-04
-; Version:      0.97.0
+; Updated:      2021-10-13
+; Version:      0.97.1
 ;
 ; Usage of this Windows build script:
 ;
@@ -67,9 +67,9 @@ Unicode True
 !include Sections.nsh
 !include Seq66Constants.nsh
 
-!define MUI_ICON "..\resources\icons\route66rwb-66x66.ico"
+!define MUI_ICON "..\resources\icons\route66.ico"
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP "..\resources\icons\route66rwb-66x66.bmp"
+!define MUI_HEADERIMAGE_BITMAP "..\resources\icons\route66.bmp"
 !define MUI_HEADERIMAGE_RIGHT
 
 ;---------------------------------------------------------------------------

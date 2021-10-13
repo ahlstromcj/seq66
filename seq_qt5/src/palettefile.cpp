@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2021-06-22
+ * \updates       2021-10-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -209,7 +209,7 @@ bool
 palettefile::write_stream (std::ofstream & file)
 {
     file
-        << "# Seq66 0.91.5 (and above) palette configuration file\n"
+        << "# Seq66 0.97.1 (and above) palette configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
@@ -228,7 +228,7 @@ palettefile::write_stream (std::ofstream & file)
         "config-type = \"palette\"\n"
         "version = " << version() << "\n\n"
         "# The [comments] section can document this file. Lines starting with\n"
-        "# '#', '[', or that have no character end the comment.\n"
+        "# '#', '[', or that have no characters end the comment.\n\n"
         "[comments]\n\n" << mapper().comments_block().text() << "\n"
         <<
         "# First is the color number from 0 to 31. Next is the name of the\n"

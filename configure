@@ -4600,6 +4600,12 @@ cat >>confdefs.h <<_ACEOF
 #define APP_BUILD_OS "$build_os"
 _ACEOF
 
+build_issue="'$(cat /etc/issue.net)'"
+
+cat >>confdefs.h <<_ACEOF
+#define APP_BUILD_ISSUE "$build_issue"
+_ACEOF
+
 
 $as_echo "#define CLIENT_NAME \"seq66\"" >>confdefs.h
 

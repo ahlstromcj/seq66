@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-09-08
+% \update      2021-10-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -52,7 +52,7 @@
 
 \begin{document}
 
-\title{Seq66 User Manual 0.97.0}
+\title{Seq66 User Manual 0.97.1}
 \author{Chris Ahlstrom \\
    (\texttt{ahlstromcj@gmail.com})}
 \date{\today}
@@ -83,7 +83,7 @@
 \label{sec:introduction}
 
    This document describes "Seq66", a reboot of \textsl{Seq24} and a rewrite of
-   \textsl{Sequencer64}, through version 0.97.0.
+   \textsl{Sequencer64}, through version 0.97.1.
    The following project supports \textsl{Seq66} and documentation:
 
    \begin{itemize}
@@ -175,6 +175,25 @@
    To help the reader jump around this document, it provides
    multiple links, references, and index entries.
 
+\subsection{Building Seq66}
+\label{subsec:introduction_building_seq66}
+
+   There are a number of ways of building Seq66.
+
+   \begin{itemize}
+      \item Autotools Build and Install. Configure, make, and install.
+      \item Bootstrap Install. Generate autotools files and build.
+      \item OpenSUSE Tumbleweed. Specifics for that Linux distro.
+      \item Qmake-based Install. Optional on Linux, mandatory for Windows.
+      \item Windows Installer.  Currently in the sequencer64-packages site on
+         GitHub.
+   \end{itemize}
+
+   The \texttt{INSTALL} file included with the source code and
+   documentation goes into great detail about these methods.
+   Also see \texttt{data/readme.windows} and \texttt{contrib/notes/git.txt}
+   for supplemental information.
+
 \subsection{Let's Go!}
 \label{subsec:introduction_lets_go}
 
@@ -195,29 +214,34 @@
       C:\> qpseq66 --buss 1  data/midi/b4uacuse-gm-patchless.midi
    \end{verbatim}
 
-   This can also be done from a dropdown in the main window.
+   If the \texttt{-{}-alsa} option is used instead of
+   \texttt{-{}-jack-midi}, then the \textsl{ALSA} subsystem is used
+   (Linux only).
+   The buss setting can also be made via the port drop-down control
+   in the main window.
 
-   The "data" directory is an installation directory:
+   The "data" directory is a directory created upon installation of the
+   application:
 
    \begin{verbatim}
       /usr/share/seq66-0.90/                       (Linux)
-      C:/Program Files (x86)/Seq66                 (Windows)
+      C:/Program Files (x86)/Seq66/data            (Windows)
    \end{verbatim}
 
-   Some of the files in these directories apply to both operating systems.
-   The configration files are:
+   Some of the files in those directories apply to both operating systems, so
+   be sure to poke around and look.
+   The configration files are stored in the user's "home" area:
 
    \begin{verbatim}
       /home/user/.config/seq66/qseq66.*            (Linux)
       C:/Users/user/AppData/Local/seq66/qpseq66.*  (Windows)
    \end{verbatim}
 
-   These are created after the first run of \textsl{Seq66}.
+   The configuration files in the "home" directory
+   are created after the first run of \textsl{Seq66}.
 
-   If the \texttt{-{}-alsa} option is used instead of
-   \texttt{-{}-jack-midi}, then the \textsl{ALSA} subsystem is used
-   (Linux only).  The following figure shows the main window
-   using a light desktop theme and green labels.
+   For our walk-through of the main window, the following figure
+   shows it using green labels and borders for reference.
 
 \begin{figure}[H]
    \centering 
@@ -286,11 +310,25 @@
 
    \begin{itemize}
       \item \textbf{PPQN Selection}
-      \item \textbf{Play-set Buss Override}
+      \item \textbf{Buss Override for Play-set}
       \item \textbf{Global Beats Per Measure}
       \item \textbf{Global Beat Width}
       \item \textbf{BBT or HMS Time Display}
       \item \textbf{Beat Indicator}
+   \end{itemize}
+
+   Not shown are some status indicators that can appear to the right of the
+   "Seq66" logo:
+
+   \begin{itemize}
+      \item \textbf{ALSA} appears if running using ALSA for MIDI.
+      \item \textbf{JACK} appears if running using JACK for MIDI.
+      \item \textbf{Master} appears if running using JACK transport, as
+         transport master.
+         JACK transport can be used even if using ALSA for MIDI.
+      \item \textbf{Master} appears if using JACK transport as transport slave.
+      \item \textbf{Portmidi} appears if using the internal portmidi-derived
+         MIDI engine.  This is currently always the case on \textsl{Windows}.
    \end{itemize}
 
 % Use this?
@@ -300,7 +338,7 @@
 \paragraph{PPQN Selection}
 \label{paragraph:introduction_ppqn_selection}
 
-   This dropdown allows one to change the pulses-per-quarter-note (PPQN) of the
+   This drop-down allows one to change the pulses-per-quarter-note (PPQN) of the
    loaded tune, and this change can then be saved, if desired, with the file.
    As with \textsl{Seq24}, the default PPQN is 192.  This can be changed to
    to other values:
@@ -311,10 +349,10 @@
    pattern events and pattern triggers.
    Also see \sectionref{paragraph:menu_edit_preferences_play_options}.
 
-\paragraph{Play-set Buss Override}
+\paragraph{Buss Override for Play-set}
 \label{paragraph:introduction_sets_buss_override}
 
-   This dropdown allows for overriding the buss (port) number used by all of
+   This drop-down allows for overriding the buss (port) number used by all of
    the patterns in the current play-set.
    Unlike the \texttt{buss-override} setting in the 'usr' file
    (see \sectionref{subsubsec:usr_file_user_midi_settings}),
@@ -350,7 +388,7 @@
 \paragraph{Global Beats Per Measure}
 \label{paragraph:introduction_global_beats_per_measure}
 
-   This dropdown changes the global beats/measure for the song.
+   This drop-down changes the global beats/measure for the song.
    Along with the beat-width setting, this set of values allows
    for a large number of different time signatures, even crazy ones.
 
@@ -359,7 +397,7 @@
 \paragraph{Global Beat Width}
 \label{paragraph:introduction_global_beat_width}
 
-   This dropdown changes the global beat width (time-signature denominator)
+   This drop-down changes the global beat width (time-signature denominator)
    for the song.
    Along with the beats-per-measure setting, this set of values allows
    for a large number of different time signatures.
@@ -370,13 +408,14 @@
 \label{paragraph:introduction_time_display}
 
    This text simply shows the current time during playback. 
-   It can be shown in BBT (bars:beats:ticks) or HMS (hours:minutes:seconds).
+   It can be shown in BBT (bars:beats:ticks) or HMS (hours:minutes:seconds)
+   by clicking the \textbf{BBT/HMS} at the bottom of the window.
 
 \paragraph{Beat Indicator}
 \label{paragraph:introduction_beat_indicator}
 
-   The beat indicator is inspired by the \textsl{Kepler34} implementation.  It
-   shows the first beat in color, and the rest of the beats in white.
+   The beat indicator is inspired by the \textsl{Kepler34} implementation.
+   It shows the first beat in color, and the rest of the beats in white.
    It does not adapt to changes in the time-signature until
    playback is stopped.
 
@@ -387,6 +426,7 @@
 
    \begin{itemize}
       \item \textbf{Set Name}
+      \item \textbf{Set Reset ("!")}
       \item \textbf{Active Set Indicator}
       \item \textbf{Set Changer}
    \end{itemize}
@@ -397,7 +437,19 @@
    This text field shows the name of the current set, and also allows editing
    the set name.
 
+\paragraph{Set Reset ("!")}
+\label{paragraph:introduction_set_reset}
+
+   This small button with an exclamation point
+   (not shown in the figure) to the right of the set name is meant to clear
+   out all playing sets, and make only the current set the playing set.
+   This button is useful when in "all-sets" mode or when sets get added
+   automatically via the "additive" mode.
+   See \sectionref{subsec:configuration_rc}.
+
 \begin{comment}
+
+% The Set Master button has been removed.
 
 \paragraph{Set Master Button}
 \label{paragraph:introduction_set_master_button}
@@ -582,7 +634,7 @@
    pattern.  In the Song mode, the triggers layed out in the
    \textbf{Song Editor} control the playback.
    By default, the \texttt{F10} key operates this function,
-   There is currently no automation control for this button.
+   There is also a MIDI automation control for this button.
 
 \begin{comment}
    \itempar{Toggle Tracks}{pattern!toggle tracks}

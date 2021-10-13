@@ -27,7 +27,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -52,7 +52,7 @@ once or twice. </string>
         </font>
        </property>
        <property name="title">
-        <string>Meta Events</string>
+        <string/>
        </property>
        <widget class="QPlainTextEdit" name="plainTextEditTempoTrack">
         <property name="enabled">
@@ -116,6 +116,25 @@ Button not yet functional.</string>
         </property>
         <property name="text">
          <string>Set as Tempo Track</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_4">
+        <property name="geometry">
+         <rect>
+          <x>8</x>
+          <y>8</y>
+          <width>141</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Meta Events</string>
         </property>
        </widget>
       </widget>
@@ -204,7 +223,7 @@ the system's MIDI setup has changed.</string>
        </property>
        <property name="geometry">
         <rect>
-         <x>168</x>
+         <x>176</x>
          <y>480</y>
          <width>217</width>
          <height>28</height>
@@ -232,16 +251,16 @@ the system's MIDI setup has changed.</string>
        </property>
        <property name="geometry">
         <rect>
-         <x>432</x>
+         <x>424</x>
          <y>488</y>
-         <width>177</width>
+         <width>181</width>
          <height>23</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
-         <bold>true</bold>
+         <weight>50</weight>
+         <bold>false</bold>
         </font>
        </property>
        <property name="toolTip">
@@ -365,7 +384,7 @@ the system's MIDI setup has changed.</string>
         </font>
        </property>
        <property name="title">
-        <string>Input/Output Options</string>
+        <string/>
        </property>
        <widget class="QCheckBox" name="checkBoxRecordByChannel">
         <property name="geometry">
@@ -461,6 +480,25 @@ number using the channel number (0 to 15).</string>
          <number>2</number>
         </property>
        </widget>
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>8</x>
+          <y>8</y>
+          <width>181</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Input/Output Options</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QCheckBox" name="inPortsMappedCheck">
        <property name="enabled">
@@ -548,7 +586,7 @@ number using the channel number (0 to 15).</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>240</y>
+         <y>268</y>
          <width>337</width>
          <height>197</height>
         </rect>
@@ -560,7 +598,7 @@ number using the channel number (0 to 15).</string>
         </font>
        </property>
        <property name="title">
-        <string>UI Boolean Options</string>
+        <string/>
        </property>
        <property name="flat">
         <bool>false</bool>
@@ -570,7 +608,7 @@ number using the channel number (0 to 15).</string>
          <rect>
           <x>8</x>
           <y>44</y>
-          <width>312</width>
+          <width>313</width>
           <height>141</height>
          </rect>
         </property>
@@ -625,12 +663,31 @@ redirected to a log file.</string>
          </item>
         </layout>
        </widget>
+       <widget class="QLabel" name="label_7">
+        <property name="geometry">
+         <rect>
+          <x>8</x>
+          <y>8</y>
+          <width>157</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>UI Boolean Options</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="layoutWidgetGuiOptions">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>10</y>
+         <y>38</y>
          <width>369</width>
          <height>175</height>
         </rect>
@@ -837,9 +894,9 @@ to 128, and defaults to 32.</string>
       <widget class="QLabel" name="labelRestartNeeded">
        <property name="geometry">
         <rect>
-         <x>392</x>
+         <x>336</x>
          <y>16</y>
-         <width>201</width>
+         <width>257</width>
          <height>16</height>
         </rect>
        </property>
@@ -856,7 +913,7 @@ to 128, and defaults to 32.</string>
        <property name="geometry">
         <rect>
          <x>8</x>
-         <y>200</y>
+         <y>228</y>
          <width>141</width>
          <height>29</height>
         </rect>
@@ -889,6 +946,25 @@ to 128, and defaults to 32.</string>
         <string>For testing only.  Normally hidden.</string>
        </property>
       </widget>
+      <widget class="QLabel" name="label_6">
+       <property name="geometry">
+        <rect>
+         <x>8</x>
+         <y>12</y>
+         <width>145</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>User UI Tweaks</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QWidget" name="tabJackSync">
       <property name="toolTip">
@@ -907,11 +983,30 @@ to 128, and defaults to 32.</string>
         </rect>
        </property>
        <property name="title">
-        <string>JACK Transport/MIDI</string>
+        <string/>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
+       <widget class="QLabel" name="label_8">
+        <property name="geometry">
+         <rect>
+          <x>8</x>
+          <y>8</y>
+          <width>181</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>JACK Transport/MIDI</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QPushButton" name="btnJackConnect">
        <property name="geometry">
@@ -1008,11 +1103,30 @@ Otherwise, ALSA is used.  Not available on Windows/Mac.</string>
         </rect>
        </property>
        <property name="title">
-        <string>JACK Start</string>
+        <string/>
        </property>
        <property name="checkable">
         <bool>false</bool>
        </property>
+       <widget class="QLabel" name="label_9">
+        <property name="geometry">
+         <rect>
+          <x>8</x>
+          <y>4</y>
+          <width>129</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>JACK Start</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="layoutWidgetJack">
        <property name="geometry">
@@ -1329,7 +1443,7 @@ Seq66 exits.</string>
         </font>
        </property>
        <property name="title">
-        <string>Session</string>
+        <string/>
        </property>
        <widget class="QRadioButton" name="radio_session_none">
         <property name="geometry">
@@ -1370,13 +1484,32 @@ Seq66 exits.</string>
          <string>JACK. JACK Session Management.</string>
         </property>
        </widget>
+       <widget class="QLabel" name="label_10">
+        <property name="geometry">
+         <rect>
+          <x>8</x>
+          <y>4</y>
+          <width>105</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Session</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QLabel" name="label_session">
        <property name="geometry">
         <rect>
-         <x>308</x>
+         <x>304</x>
          <y>20</y>
-         <width>285</width>
+         <width>305</width>
          <height>189</height>
         </rect>
        </property>
@@ -1401,9 +1534,9 @@ required.</string>
       <widget class="QLabel" name="label_nsm_url">
        <property name="geometry">
         <rect>
-         <x>4</x>
+         <x>16</x>
          <y>176</y>
-         <width>73</width>
+         <width>77</width>
          <height>17</height>
         </rect>
        </property>
@@ -1423,9 +1556,9 @@ required.</string>
       <widget class="QLineEdit" name="lineEditNsmUrl">
        <property name="geometry">
         <rect>
-         <x>84</x>
+         <x>96</x>
          <y>172</y>
-         <width>209</width>
+         <width>197</width>
          <height>25</height>
         </rect>
        </property>
@@ -1436,17 +1569,17 @@ required.</string>
          <x>8</x>
          <y>220</y>
          <width>597</width>
-         <height>173</height>
+         <height>197</height>
         </rect>
        </property>
        <property name="title">
-        <string>Configuration Files</string>
+        <string/>
        </property>
        <widget class="QCheckBox" name="checkBoxSaveRc">
         <property name="geometry">
          <rect>
           <x>56</x>
-          <y>44</y>
+          <y>64</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1462,7 +1595,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>56</x>
-          <y>68</y>
+          <y>88</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1475,7 +1608,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>56</x>
-          <y>92</y>
+          <y>112</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1488,7 +1621,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>56</x>
-          <y>116</y>
+          <y>136</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1504,7 +1637,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>344</x>
-          <y>44</y>
+          <y>64</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1520,7 +1653,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>344</x>
-          <y>68</y>
+          <y>88</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1536,7 +1669,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>44</y>
+          <y>64</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1555,7 +1688,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>68</y>
+          <y>84</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1571,7 +1704,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>92</y>
+          <y>108</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1587,7 +1720,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>116</y>
+          <y>136</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1603,7 +1736,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>308</x>
-          <y>44</y>
+          <y>64</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1619,7 +1752,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>308</x>
-          <y>68</y>
+          <y>88</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1632,7 +1765,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>8</x>
-          <y>24</y>
+          <y>36</y>
           <width>45</width>
           <height>17</height>
          </rect>
@@ -1650,7 +1783,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>52</x>
-          <y>24</y>
+          <y>36</y>
           <width>81</width>
           <height>17</height>
          </rect>
@@ -1671,7 +1804,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>44</y>
+          <y>64</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1684,7 +1817,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>68</y>
+          <y>88</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1697,7 +1830,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>92</y>
+          <y>112</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1710,7 +1843,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>116</y>
+          <y>136</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1723,7 +1856,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>448</x>
-          <y>44</y>
+          <y>64</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1736,7 +1869,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>448</x>
-          <y>68</y>
+          <y>88</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1746,7 +1879,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>24</y>
+          <y>36</y>
           <width>113</width>
           <height>17</height>
          </rect>
@@ -1764,7 +1897,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>140</y>
+          <y>160</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1783,7 +1916,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>140</y>
+          <y>156</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1796,7 +1929,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>56</x>
-          <y>140</y>
+          <y>160</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1809,7 +1942,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>292</x>
-          <y>24</y>
+          <y>36</y>
           <width>45</width>
           <height>17</height>
          </rect>
@@ -1827,7 +1960,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>340</x>
-          <y>24</y>
+          <y>36</y>
           <width>81</width>
           <height>17</height>
          </rect>
@@ -1845,7 +1978,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>448</x>
-          <y>24</y>
+          <y>36</y>
           <width>113</width>
           <height>17</height>
          </rect>
@@ -1866,7 +1999,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>308</x>
-          <y>92</y>
+          <y>112</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1882,7 +2015,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>344</x>
-          <y>92</y>
+          <y>112</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1898,7 +2031,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>448</x>
-          <y>92</y>
+          <y>112</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1908,7 +2041,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>296</x>
-          <y>136</y>
+          <y>156</y>
           <width>139</width>
           <height>25</height>
          </rect>
@@ -1918,6 +2051,25 @@ path added to this name is stripped.</string>
         </property>
         <property name="text">
          <string>&amp;Save Palette Now</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_11">
+        <property name="geometry">
+         <rect>
+          <x>4</x>
+          <y>4</y>
+          <width>161</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Configuration Files</string>
         </property>
        </widget>
       </widget>

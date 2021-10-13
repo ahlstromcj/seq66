@@ -1,17 +1,17 @@
-# Seq66 0.97.0 (and above) user ('usr') configuration file
+# Seq66 0.97.1 user ('usr') configuration file
 #
 # /home/usr/.config/seq66/qseq66.usr
-# Written 2021-09-20 14:48:40
+# Written 2021-10-13 10:08:14
 #
-# This is a Seq66 'usr' file. Edit it and place it in the
-# $HOME/.config/seq66 directory. It allows one to apply aliases
-# (alternate names) to each MIDI bus, channel, and control code, per
-# per channel. It has additional options not present in Seq24.
+# This is a Seq66 'usr' file. Edit it and place it in the directory
+# $HOME/.config/seq66. It allows applying aliases (alternate names)
+# to each MIDI bus/port, channel, and control code, per channel. It
+# has additional options not present in Seq24.
 
 [Seq66]
 
 config-type = "usr"
-version = 7
+version = 8
 
 # [comments] holds user documentation for this file. The first empty,
 # hash-commented, or tag line ends the comment.
@@ -29,11 +29,11 @@ look empty with a space.
 # 2. Define a MIDI bus, its name, and what instruments are on which
 #    channel.
 #
-# In the following MIDI buss definitions, channels are counted from
-# 0 to 15, not 1 to 16.  Instruments not set here are set to -1 and
-# are GM (General MIDI). These replacement MIDI buss labels are shown
-# in MIDI Clocks, MIDI Inputs, and in the Pattern Editor buss and
-# channel drop-downs. To disable the entries, set the counts to 0.
+# In these MIDI buss definitions, channels are counted from 0-15, not
+# 1-16.  Instruments not set here are set to -1 and are GM (General
+# MIDI). These replacement labels are shown in MIDI Clocks, Inputs,
+# the pattern editor buss, channel, and event drop-downs.  To disable
+# the entries, set the counts to 0.
 
 [user-midi-bus-definitions]
 
@@ -91,7 +91,7 @@ mainwnd-rows = 4
 mainwnd-columns = 8
 mainwnd-spacing = 2
 default-zoom = 2
-global-seq-feature = true
+global-seq-feature = false
 progress-bar-thick = true
 inverse-colors = false
 dark-theme = false
@@ -115,6 +115,7 @@ use-file-ppqn = true
 # Specifies MIDI-specific variables. -1 means the value isn't used.
 #
 #  Item                 Default   Range
+# 'convert-to-smf-1':   true      true/false.
 # 'beats-per-bar':      4         1 to 32.
 # 'beats-per-minute':   120.0     2.0 to 600.0.
 # 'beat-width':         4         1 to 32.
@@ -125,6 +126,9 @@ use-file-ppqn = true
 # 'bpm-page-increment': 1.0       0.01 to 25.0.
 # 'bpm-minimum':        0.0       127.0
 # 'bpm-maximum':        0.0       127.0
+#
+# 'convert-to-smf-1' controls if SMF 0 files are split into SMF 1
+# track when read.
 #
 # 'buss-override' sets the output port for all patterns, for testing
 # or convenience.  Don't save the MIDI file unless you want to save
@@ -143,6 +147,7 @@ use-file-ppqn = true
 
 [user-midi-settings]
 
+convert-to-smf-1 = true
 beats-per-bar = 4
 beats-per-minute = 120
 beat-width = 4
@@ -151,8 +156,8 @@ velocity-override = -1
 bpm-precision = 0
 bpm-step-increment = 1
 bpm-page-increment = 10
-bpm-minimum = 0
-bpm-maximum = 320
+bpm-minimum = 2
+bpm-maximum = 600
 
 # [user-options]
 #
@@ -194,9 +199,12 @@ log = "/home/user/.config/seq66/log"
 # to 1.0; the height from 0.10 to 0.50.  If either is 0, then the box
 # isn't drawn.  If either is 'default', defaults are used.
 #
-# progress-note-min and progress-note-max, if non-zero, change the
-# note range in the progress box so that notes are'nt centered in the
+# progress-note-min and progress-note-max set the progress-box note
+# range so that notes aren't centered in the
 # box, but shown at their position by pitch.
+#
+# lock-main-window prevents the accidental change of size of the main
+# window.
 
 [user-ui-tweaks]
 
@@ -210,6 +218,7 @@ progress-box-width = 0.8
 progress-box-height = 0.4
 progress-note-min = 0
 progress-note-max = 127
+lock-main-window = false
 
 # [user-session]
 #

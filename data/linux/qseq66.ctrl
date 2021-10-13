@@ -1,24 +1,23 @@
-# Seq66 0.94.1 (and above) MIDI control configuration file
+# Seq66 0.97.1 MIDI control configuration file
 #
 # /home/user/.config/seq66/qseq66.ctrl
-# Written 2021-07-11 10:05:04
+# Written 2021-10-13 10:08:12
 #
-# This file holds MIDI I/O control setups for Seq66. It follows the format
-# of the 'rc' configuration file, but is stored separately for flexibility
-# It is always stored in the main configuration directory. To use this
-# file, specify it in the [midi-control-file] section in the 'rc' file.
-# Use the base-name (e.g. nanomap.ctrl).
+# This file sets up MIDI I/O control for Seq66. It's format is like the
+# 'rc' file, but stored separately for flexibility. It is stored in the
+# the HOME configuration directory. To use this, list it as active, in the
+# 'rc' file's [midi-control-file] section (e.g. "nanomap.ctrl").
 
-# Version 1 adds the [mute-control-out] and [automation-control-out]
-# sections. Versions 2 and 3 simplify the data items.
+# Version 1 adds [mute-control-out] and [automation-control-out]. Versions
+# 2 and 3 simplify the data items; 4 and 5 add more settings.
 
 [Seq66]
 
 config-type = "ctrl"
 version = 5
 
-# The [comments] section holds the user documentation for this file.
-# The first completely empty, comment, or tag line ends the comment.
+# [comments] holds user documentation for this file. The first empty,
+# hash-commented, or tag line ends the comment.
 
 [comments]
 
@@ -26,13 +25,12 @@ Add your comment block here
 
 [midi-control-settings]
 
-# Setting 'load-midi-control' to 'false' will cause an empty MIDI
-# control setup to be written!  Keep backups! The control-buss value
-# ranges from 0 to the maximum system input buss. If set, then that
-# buss will be allowed to send MIDI control. 255 (0xFF) means any
-# buss can send MIDI control. The buss(es) must be enabled in the
-# 'rc' file.  With ALSA, there is an extra 'announce' buss, which
-# will alter the numbering compared to JACK.
+# Setting 'load-midi-control = false' causes an empty MIDI control
+# to be written! Keep backups! The control-buss value ranges from 0
+# to the maximum system input buss. If set, that buss will send MIDI
+# control. 255 (0xFF) means any buss can send control. The buss(es)
+# must be enabled in the 'rc' file.  With ALSA, there is an extra
+# 'announce' buss, which alters the port numbering.
 #
 # The 'midi-enabled' flag applies to the MIDI controls; keystrokes
 # are always enabled. Supported keyboard layouts are 'qwerty' (the
@@ -48,12 +46,12 @@ button-rows = 4
 button-columns = 8
 keyboard-layout = qwerty
 
-# The control stanza incorporates key control as well as MIDI, but
-# keys support only 'toggle', and key-release is an 'invert'. The
-# leftmost number on each line here is the pattern number (e.g.
-# 0 to 31); the group number, same range; or an automation control
-# number. This internal control number is followed by three groups of
-# bracketed numbers, each providing three different types of control:
+# A control stanza incorporates key control and MIDI, but keys
+# support only 'toggle'; key-release is an 'invert'. The leftmost
+# number on each line is the pattern number (e.g. 0 to 31); the group
+# number, same range; or an automation control number.  This number is
+# is followed by three groups of bracketed numbers, each providing 3
+# types of control:
 #
 #    Normal:           [toggle]    [on]        [off]
 #    Increment/Decr:   [increment] [increment] [decrement]
@@ -64,24 +62,23 @@ keyboard-layout = qwerty
 #
 #    [on/off invert status d0 d1min d1max]
 #
-# 'on/off' enables/disables (1/0) the control for the pattern;
-# 'invert' (1/0) causes the opposite, but not all support this, and
-# all keystroke-releases set invert to true; 'status' is the MIDI
-# event to match (channel is NOT ignored), and if set to 0x00, the
-# control is disabled; 'd0' is the first data value, e.g. if status
-# is 0x90 (Note On), d0 represents the note number; d1min to d1max
-# is the range of data values detected, e.g. for a Note On, 1 to 127
-# indicate that any non-zero velocity will invoke the control.
+# 'on/off' enables/disables (1/0) the control; 'invert' (1/0) causes
+# the opposite, but not all support this; all keystroke-releases set
+# invert to true; 'status' is the MIDI event to match (channel is NOT
+# ignored); if set to 0x00, the control is disabled; 'd0' is the
+# first data value (e.g. if status is 0x90 (Note On), d0 is the note
+# number; d1min to d1max is the range of data values detectable (e.g.
+# 1 to 127 indicates that any non-zero velocity invokes the control.
 # Hex values can be used; precede with '0x'.
 #
-#  ------------------------- Loop, group, or automation-slot number
-# |    ---------------------- Name of the key (see the key map)
+#  ---------------------- Loop, group, or automation-slot number
+# |    ------------------ Name of the key (see the key map)
 # |   |
-# |   |      ---------------- Inverse
-# |   |     |  -------------- MIDI status/event byte (e.g. Note On)
-# |   |     | |  ------------ d0: Data 1 (e.g. Note number)
-# |   |     | | |  ---------- d1max: Data 2 min (e.g. Note velocity)
-# |   |     | | | |  -------- d1min: Data 2 max
+# |   |      ------------ Inverse
+# |   |     |  ---------- MIDI status/event byte (e.g. Note On)
+# |   |     | |  -------- d0: Data 1 (e.g. Note number)
+# |   |     | | |  ------ d1max: Data 2 min (e.g. Note velocity)
+# |   |     | | | |  ---- d1min: Data 2 max
 # |   |     | | | | |
 # v   v     v v v v v
 # 0 "F1" [0 0 0 0 0 0]   [0 0 0 0 0 0]   [0 0 0 0 0 0]
@@ -203,7 +200,7 @@ keyboard-layout = qwerty
 41 "F4"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Follow JACK
 42 "~"           [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Panic
 43 "0xf9"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Visibility
-44 "0xfa"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 44
+44 "0xfa"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Save Session
 45 "0xfb"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 45
 46 "0xfc"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 47
 47 "0xfd"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 47
@@ -220,19 +217,19 @@ button-columns = 8
 
 [midi-control-out]
 
-#   --------------------- Pattern number (as applicable)
-#  |     ---------------- MIDI status+channel (e.g. Note On)
-#  |    |    ------------ data 1 (e.g. note number)
-#  |    |   |  ---------- data 2 (e.g. velocity)
+#   ---------------- Pattern number (as applicable)
+#  |     ----------- MIDI status+channel (e.g. Note On)
+#  |    |    ------- data 1 (e.g. note number)
+#  |    |   |  ----- data 2 (e.g. velocity)
 #  |    |   | |
 #  v    v   v v
 # 31 [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0]
 #       Arm      Mute      Queue    Delete
 #
-# This is a change (2021-02-10) from version 1 of this file.
-# A test of the status/event byte determines the enabled status,
-# and channel is incorporated into the status.  Much cleaner!
-# The order of the lines that follow must must be preserved.
+# In a change from version 1 of this file, a test of the
+# status/event byte determines the enabled status, and channel
+# is incorporated into the status.  Much cleaner! The order of
+# the lines must must be preserved.
 
  0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
  1 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
@@ -271,10 +268,10 @@ button-columns = 8
 
 # The format of the mute and automation output events is simpler:
 #
-#  ---------------------- mute-group number
-# |    ------------------ MIDI status+channel (e.g. Note On)
-# |   |    -------------- data 1 (e.g. note number)
-# |   |   |  ------------ data 2 (e.g. velocity)
+#  ----------------- mute-group number
+# |    ------------- MIDI status+channel (e.g. Note On)
+# |   |    --------- data 1 (e.g. note number)
+# |   |   |  ------- data 2 (e.g. velocity)
 # |   |   | |
 # v   v   v v
 # 1 [0x00 0 0 ] [0x00 0 0] [0x00 0 0]
@@ -318,11 +315,10 @@ button-columns = 8
 
 [automation-control-out]
 
-# This format is similar to the [mute-control-out] format, but the
-# first number is an active-flag, not an index number. The stanzas
+# This format is similar to [mute-control-out], but the first
+# number is an active-flag, not an index number. The stanzas
 # are on / off / inactive, except for 'snap', which is store /
-# restore / inactive. The 'Alt n' values can be used to show
-# status beyond the basic list.
+# restore / inactive.
 
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Panic
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Stop
