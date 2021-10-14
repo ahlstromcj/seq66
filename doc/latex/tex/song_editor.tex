@@ -59,7 +59,7 @@
    state it has in the song editor.  The only way to manually change the muting
    then is to click the pattern's label in the song editor.
    Both the song editor and the patterns panel both reflect the change in
-   muting in the user-interface (though with \textsl{opposite colors}).
+   muting in the user-interface.
 
 \begin{figure}[H]
    \centering 
@@ -163,6 +163,8 @@
    These buttons change the horizontal zoom.
    Zoom can also be changed via the keystrokes \texttt{z}, \texttt{0},
    and \texttt{Z}.
+   Vertical zoom is also supported, by buttons to the left of the time-line and
+   by keystrokes, as discussed below.
 
    \itempar{Follow Progress}{song editor!follow}
    \textbf{Follow Progress} toggles the mode of following progress
@@ -300,20 +302,27 @@
    The measures ruler ("bar indicator")
    consists of a \textsl{timeline} at the top and the 
    \textbf{L marker} and \textbf{R marker} mentioned above.
-   There are some hidden details in the measures panel.
 
    The \textsl{measures ruler} is the ruled and numbered section at the top
    of the arrangement panel.  It provides a place to put the left and right
    markers.  In the \textsl{Seq24} documentation, it is called the "bar
    indicator".
+   There are some hidden details in the measures panel.
+   One can move the mouse to the top-half of the ruler, and the cursor changes
+   to a vertical pointer.
+   In this case, a click will set the starting point, shown by a red dot in the
+   time-line and a vertical red line in the piano roll.
+
+   One can move the mouse to the top-half of the ruler, and the cursor changes
+   to a "finger" pointer. Here, the "L" and "R" markers can be moved.
 
    \index{measures ruler!left-click}
-   Left-click in the measures ruler to move and drop an
+   Left-click in the bottom-half of the measures ruler to move and drop an
    \index{L anchor}
    \index{L marker}
    \textbf{L marker} (\textbf{L anchor}) on the measures ruler.
    \index{measures ruler!right-click}
-   Right-click in the measures ruler to drop an
+   Right-click in the bottom-half of the measures ruler to drop an
    \index{R anchor}
    \index{R marker}
    \textbf{L marker} (\textbf{R anchor}) on the measures ruler.

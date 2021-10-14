@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-10-06
+ * \updates       2021-10-14
  * \license       GNU GPLv2 or above
  *
  *
@@ -224,6 +224,13 @@ private:
     int m_x_max;
     int m_y_min;
     int m_y_max;
+
+    /**
+     *  Indicates if this window is an external window.  That is, there is not
+     *  tab parent.
+     */
+
+    bool m_is_external;
 
 };              // class qslivegrid
 

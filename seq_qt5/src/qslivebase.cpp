@@ -80,12 +80,7 @@ qslivebase::qslivebase (performer & p, qsmainwnd * window, QWidget * parent) :
     m_is_external       (is_nullptr(parent)),
     m_needs_update      (false)
 {
-    /*
-     *  int fontsize = usr().scale_size(6);
-     *  m_font.setPointSize(fontsize);
-     *  m_font.setBold(true);
-     *  m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
-     */
+    // No code needed
 }
 
 /**
@@ -94,7 +89,7 @@ qslivebase::qslivebase (performer & p, qsmainwnd * window, QWidget * parent) :
 
 qslivebase::~qslivebase()
 {
-    // more?
+    // No code needed
 }
 
 /**
@@ -120,10 +115,6 @@ qslivebase::set_bank ()
 bool
 qslivebase::set_bank (int bankid, bool hasfocus)
 {
-    /*
-     * bool result = bankid != m_bank_id && perf().is_screenset_valid(bankid);
-     */
-
     bool result = perf().is_screenset_valid(bankid);
     if (result)
     {

@@ -3144,8 +3144,8 @@ qsmainwnd::set_song_mute_on ()
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
 
-    if (not_nullptr(m_song_frame64))    /////////////////
-        m_song_frame64->set_dirty();
+//  if (not_nullptr(m_song_frame64))    /////////////////
+//      m_song_frame64->set_dirty();
 }
 
 /**
@@ -3159,8 +3159,8 @@ qsmainwnd::set_song_mute_off ()
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
 
-    if (not_nullptr(m_song_frame64))    /////////////////
-        m_song_frame64->set_dirty();
+//  if (not_nullptr(m_song_frame64))    /////////////////
+//      m_song_frame64->set_dirty();
 }
 
 /**
@@ -3174,8 +3174,8 @@ qsmainwnd::set_song_mute_toggle ()
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
 
-    if (not_nullptr(m_song_frame64))    /////////////////
-        m_song_frame64->set_dirty();
+//  if (not_nullptr(m_song_frame64))    /////////////////
+//      m_song_frame64->set_dirty();
 }
 
 void

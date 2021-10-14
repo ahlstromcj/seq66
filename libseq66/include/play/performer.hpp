@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-10-07
+ * \updates       2021-10-14
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2095,6 +2095,7 @@ public:
     void unset_queued_replace (bool clearbits = true);
     bool sequence_playing_toggle (seq::number seqno);
     bool sequence_playing_change (seq::number seqno, bool on);
+    bool replace_for_solo (seq::number seqno);
     void set_keep_queue (bool activate);
 
     bool is_keep_queue () const

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-10-08
+ * \updates       2021-10-14
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -5173,6 +5173,25 @@ performer::sequence_playing_toggle (seq::number seqno)
                 s->song_recording_start(tick, song_record_snap());
             }
         }
+    }
+    return result;
+}
+
+bool
+performer::replace_for_solo (seq::number seqno)
+{
+    seq::pointer s = get_sequence(seqno);
+    bool result = bool(s);
+    if (result)
+    {
+        (void) set_ctrl_status
+        (
+            automation::action::off,
+            automation::ctrlstatus::replace
+        );
+        off_sequences();
+        s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
+        announce_sequence(s, mapper().seq_to_offset(s));
     }
     return result;
 }

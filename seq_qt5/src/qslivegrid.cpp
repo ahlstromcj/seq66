@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-10-06
+ * \updates       2021-10-14
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -134,7 +134,8 @@ qslivegrid::qslivegrid (performer & p, qsmainwnd * window, QWidget * parent) :
     m_x_min             (0),
     m_x_max             (0),
     m_y_min             (0),
-    m_y_max             (0)
+    m_y_max             (0),
+    m_is_external       (is_nullptr(parent))
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setFocusPolicy(Qt::StrongFocus);
@@ -152,13 +153,13 @@ qslivegrid::qslivegrid (performer & p, qsmainwnd * window, QWidget * parent) :
     int h = usr().scale_size_y(c_minimum_height);
     ui->frame->setMinimumSize(QSize(w, h));         /* versus 660 x 180 */
 
-    ui->setNameLabel->hide();
-    ui->setNumberLabel->hide();
-
-#if ! defined USE_TEXTBANKNAME_AND_SPINBANK
-    ui->txtBankName->hide();
-    ui->spinBank->hide();
-#endif
+    if (! m_is_external)
+    {
+        ui->setNameLabel->hide();
+        ui->setNumberLabel->hide();
+        ui->txtBankName->hide();
+        ui->spinBank->hide();
+    }
 
     ui->labelPlaylistSong->setText("");
     set_mode_text();
@@ -185,21 +186,12 @@ qslivegrid::qslivegrid (performer & p, qsmainwnd * window, QWidget * parent) :
 /**
  *  Virtual destructor, deletes the user-interface objects and the message
  *  box.
- *
- *  Not needed: delete m_timer;  Why not?
  */
 
 qslivegrid::~qslivegrid()
 {
     m_timer->stop();
     clear_loop_buttons();               /* currently we use raw pointers    */
-    /*
-     * This should not be necessary; the "this" destructor should remove it.
-     *
-     * if (not_nullptr(m_msg_box))
-     *     delete m_msg_box;
-     */
-
     delete ui;
 }
 
@@ -515,13 +507,14 @@ qslivegrid::color_by_number (int i)
  */
 
 void
-qslivegrid::set_bank_values (const std::string & /*bankname*/, int /*bankid*/)
+qslivegrid::set_bank_values (const std::string & bankname, int bankid)
 {
-#if defined USE_TEXTBANKNAME_AND_SPINBANK
-    QString bname = bankname.c_str();
-    ui->txtBankName->setPlainText(bname);       // now hidden
-    ui->spinBank->setValue(bankid);             // now hidden
-#endif
+    if (m_is_external)
+    {
+        QString bname = bankname.c_str();
+        ui->txtBankName->setText(bname);
+        ui->spinBank->setValue(bankid);
+    }
 }
 
 /**
@@ -723,9 +716,9 @@ qslivegrid::update_bank ()
 void
 qslivegrid::update_bank_name (const std::string & name)
 {
-#if defined USE_TEXTBANKNAME_AND_SPINBANK
-    ui->txtBankName->setPlainText(name.c_str());
-#endif
+    if (m_is_external)
+        ui->txtBankName->setText(QString::fromStdString(name));
+
     perf().set_screenset_notepad(m_bank_id, name, m_is_external);
 }
 
@@ -822,6 +815,10 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
             else if (event->modifiers() & Qt::ShiftModifier)
             {
                 new_live_frame();
+            }
+            else if (event->modifiers() & Qt::AltModifier)
+            {
+                (void) perf().replace_for_solo(m_current_seq);
             }
             else
             {

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-21
+ * \updates       2021-10-14
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -613,6 +613,21 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
 
     connect
     (
+        ui->spinBoxClockStartModulo, SIGNAL(valueChanged(int)),
+        this, SLOT(slot_clock_start_modulo(int))
+    );
+    connect
+    (
+        ui->lineEditTempoTrack, SIGNAL(editingFinished()),
+        this, SLOT(slot_tempo_track())
+    );
+    connect
+    (
+        ui->pushButtonTempoTrack, SIGNAL(clicked(bool)),
+        this, SLOT(slot_tempo_track_set())
+    );
+    connect
+    (
         ui->pushButtonStoreMap, SIGNAL(clicked(bool)),
         this, SLOT(slot_io_maps())
     );
@@ -686,7 +701,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     sync();
 
     std::string clid = perf().client_id_string();
-    ui->plainTextEditClientId->setPlainText(QString::fromStdString(clid));
+    ui->lineEditClientId->setText(QString::fromStdString(clid));
     m_is_initialized = true;
 
 #if defined SEQ66_PLATFORM_WINDOWS
@@ -1509,21 +1524,35 @@ qseditoptions::slot_key_test (const QString &)
 }
 
 void
-qseditoptions::slot_clock_start_modulo (int /*arg1*/)
+qseditoptions::slot_clock_start_modulo (int ticks)
 {
-    // TODO
+    rc().set_clock_mod(ticks);
 }
 
 void
-qseditoptions::slot_tempo_track()
+qseditoptions::slot_tempo_track ()
 {
-    // TODO
+    QString text = ui->lineEditTempoTrack->text();
+    std::string t = text.toStdString();
+    if (t.empty())
+    {
+        ui->pushButtonTempoTrack->setEnabled(false);
+    }
+    else
+    {
+        int track = string_to_int(t);
+        bool ok = track >= 0 && track < seq::maximum();
+        ui->pushButtonTempoTrack->setEnabled(ok);
+    }
 }
 
 void
-qseditoptions::slot_tempo_track_set()
+qseditoptions::slot_tempo_track_set ()
 {
-    // TODO
+    QString text = ui->lineEditTempoTrack->text();
+    std::string t = text.toStdString();
+    int track = string_to_int(t);
+    rc().tempo_track_number(track);
 }
 
 void

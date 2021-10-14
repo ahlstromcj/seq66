@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-10-13
+% \update      2021-10-14
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -33,7 +33,7 @@
    The next few sub-sections discuss
    the sub-items in the \textbf{File} menu.
    Please note that these entries are different
-   if \textsl{Seq66} is start under the control of the
+   if \textsl{Seq66} is started under the control of the
    \textsl{Non Session Manager}.  
 
 \begin{figure}[H]
@@ -389,7 +389,8 @@
          It is enabled by the
          \texttt{-{}-manual-ports} command-line option or the
          \texttt{[manual-ports]} section of the
-         \texttt{qseq66.rc} configuration file.
+         \texttt{qseq66.rc} configuration file,
+         or in the \textbf{MIDI Input} tab described below.
       \item The setting of the \textsl{Seq66}-specific
          "reveal ALSA ports" option,
          \texttt{-{}-reveal-ports} command-line option or the
@@ -422,6 +423,7 @@
       \item \textbf{Save Clock/Input Maps}
       \item \textbf{Meta Events}
       \item \textbf{Client Name:ID/UUID}
+      \item \textbf{Output Ports Mapped}
    \end{enumber}
 
    The \textbf{Ports and Clocks} table contains the following elements,
@@ -567,24 +569,23 @@
          This is the name of the client under ALSA or JACK.  It defaults to
          \texttt{seq66}, but it can be altered by the command-line option
          \texttt{-{}-client-name} or by a session manager.
+         Each instance of Seq66 run under ALSA will have a different client ID.
       \item \textbf{ID/UUID}.
          Under ALSA, the client number (client ID) is shown.
          Under JACK, the UUID that JACK assigned to \textsl{Seq66} is shown.
    \end{enumerate}
 
-   the client ID number assigned to
-   \textsl{Seq66} by the ALSA MIDI subsystem.
-   Each instance of Seq66 run under ALSA will have a different client ID.
 
    \itempar{Output Ports Mapped}{mapping}
    This read-only check-box shows if the port-mapper is active for the output
    ports.  This item can only be edited by closing the application, editing the
    'rc' file, and restarting the application.
+   (It is difficult to see in the figure with the selected theme. Doh!)
 
-   \index{todo!manual alsa gui option}
-   There is currently no user-interface item corresponding to the "manual-ports"
-   command-line and 'rc' configuration file option.
-   We should rename this option to "virtual" eventually.
+%  \index{todo!manual alsa gui option}
+%  There is currently no user-interface item corresponding to the "manual-ports"
+%  command-line and 'rc' configuration file option.
+%  We should rename this option to "virtual" eventually.
 
 \paragraph{Menu / Edit / Preferences / MIDI Input}
 \label{paragraph:menu_edit_preferences_midi_input}
@@ -651,7 +652,7 @@
 
    \index{input by channel}
    \textbf{Use virtual (manual) I/O Ports}
-   This new option (not shown yet in the diagram)
+   This new option
    allows for configuration of the manual-ports option from within the
    user-interace.  A restart is necessary for this option to take effect.
 
@@ -704,8 +705,6 @@
    \label{fig:midi_display_tab}
 \end{figure}
 
-   Note that this dialog has some new items not shown above.
-
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Editor Key Height}{key height}
@@ -742,17 +741,26 @@
    save some CPU time in drawing the grid.  If set to 0, the whole
    pattern is drawn, no matter how long the pattern is.
 
-   \itempar{Palette File Base Name}{palette}
-   This text edit holds the base name of a 'palette' file, which is always
-   stored in the \textsl{Seq66} configuration directory.
+   \itempar{Verbose Console Output}{verbose}
+   This boolean makes more output appear if \textsl{Seq66} is run from a
+   console/terminal. It will also increase the amount of data logged to the log
+   file, if activated.
 
-   \itempar{Save Current Palette}{palette}
-   Normally, there is no palette file.  Pushing this button creates one, which
-   can then be modified and configured as the palette-file to use in the 'rc'
-   file.
+   \itempar{Load Most Recent File at Startup}{load most-recent}
+   The file at the top of the \texttt{[recent-files]}
+   list in the 'rc' file is loaded at startup.
 
-   The rest of the options are simple check-box items that are
-   self-explanatory.
+   \itempar{Show Full Path of Recent Files in Menu}{full paths}
+   The full path of each file in the \texttt{[recent-files]} list
+   is shown in the menu.  Although they can be uncomfortably long, they can
+   show files that have the same name, but in different directores.
+
+   \itempar{Long Port/Buss Name}{long buss names}
+   Controls how much port information is shown in the clocks and input
+   listings.  For the "portmidi" implementation, keep this option checked.
+
+   \itempar{Lock Main Window}{lock main window}
+   This item makes the window non-resizable after startup.
  
 \paragraph{Menu / Edit / Preferences / JACK}
 \label{paragraph:menu_edit_preferences_jack}
@@ -941,6 +949,76 @@
    One can clear the out play-set, and set only the current set active, by
    clicking the exclamation point button to the left of the "Active" label at
    the bottom of the main windows.
+
+\paragraph{Menu / Edit / Preferences / Session}
+\label{paragraph:menu_edit_preferences_session}
+
+   This tab contains options related to session management and the
+   configuration files.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_session_tab.png}
+   \caption{Session Options}
+   \label{fig:midi_session_options_tab}
+\end{figure}
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
+
+   \itempar{Session}{edit!session}
+   \textbf{Session}
+   This section provides for three modes of session management:  None, the
+   Non/New Session Manager (NSM), and JACK Session management.
+   None is the normal mode of operation, where the user has full control of
+   where to put files, what other applications are to be run alongside
+   \textsl{Seq66}, and what connections are to be made.
+
+   NSM provides a rigorously-controlled session management, and directs
+   \textsl{Seq66} what menu items to display, whether to hide the
+   user-interface or not, where configuration files and MIDI files go, and what
+   applications are run in a session. It can also (via \texttt{jackpatch}) keep
+   a record of connections to reconstruct.
+
+   JACK Session provides a location for file and a record of applications and
+   connections, but otherwise lets the user mess things up.  It is
+   provided because some people still use it.
+
+   For more information about session management, see
+   \sectionref{sec:sessions}.
+
+   \itempar{UUID}{edit!UUID}
+   \textbf{UUID} is a read-only field that shows any UUID that's relevant to a
+   session.  Also see the \textbf{Session} tab in the main window.
+
+   \itempar{Configuration Files}{edit!configuration}
+   \textbf{Configuration Files}
+   shows the status of the configuration files.
+   (See \sectionref{subsec:configuration_rc}).
+   The 'rc' file is always active, and normally is saved at exit (even if no
+   configuration changes occurred).
+
+   The 'usr' file should also be active, but one can disable it, which is
+   currently an \textsl{experimental} and \textsl{untested} option.
+   Normally, it is not saved at application exit (except after the first run on
+   one's system).
+   (See \sectionref{subsec:configuration_usr}).
+
+   The rest of the configuration files are optional.
+   See
+   \sectionref{subsec:configuration_ctrl},
+   \sectionref{subsubsec:configuration_mute_group_control},
+   \sectionref{subsec:configuration_drums}, and
+   \sectionref{sec:playlist}.
+
+   \itempar{Palette File Base Name}{palette}
+   This text edit holds the base name of a 'palette' file, which is always
+   stored in the \textsl{Seq66} configuration directory.
+   (See \sectionref{sec:palettes}.)
+
+   \itempar{Save Current Palette}{palette}
+   Normally, there is no palette file.  Pushing this button creates one, which
+   can then be modified and configured as the palette-file to use in the 'rc'
+   file.
 
 \subsection{Menu / Help / About...}
 \label{subsec:menu_about}

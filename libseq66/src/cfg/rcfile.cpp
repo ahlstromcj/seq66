@@ -122,20 +122,12 @@ rcfile::rcfile (const std::string & name, rcsettings & rcs) :
  *  called, the performer::get_settings() function can be used to populate the
  *  performer with the settings it needs.
  *
- *  [midi-control]
- *
- *      See midicontrolfile::parse_stream().  Replaced by [loop-control],
- *      [mute-group-control], and [automation-control].
- *
  *  [midi-control-file]
  *
- *      If this section is present, the [midi-control] section is ignored, even
- *      if present, in favor of reading the MIDI control information from a
- *      separate file.  This allows the user to switch between different setups
- *      without having to mess with editing the "rc" file much.  The next data
- *      line after section should be a filename.  If there is none, or
- *      if it is set to "", then the [midi-control] section is used, if present.
- *      If neither are present, this is a fatal error.
+ *      The [midi-control] section is no longer supported.  The MIDI control
+ *      information is in a separate file.  This allows the user to switch
+ *      between different setups without having to mess with editing the "rc"
+ *      file so much.
  *
  *  [mute-group]
  *

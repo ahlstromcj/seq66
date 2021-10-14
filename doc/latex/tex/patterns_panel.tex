@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-09-26
+% \update      2021-10-14
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -181,7 +181,8 @@
          \index{event!note}
          Lines indicate the presence of notes.  Depending on settings, the
          lines indicate the notes themselves, or a "fingerprint", a condensed
-         indication of note useful in reducing the overhead of long patterns.
+         indication of notes useful in reducing the overhead of
+         drawing long patterns.
       \item \textbf{Red events}.
          \index{event!drum note}
          Indicates a pattern for which the new transpose feature is
@@ -196,8 +197,8 @@
    This feature was adopted from \textsl{Kepler34} \cite{kepler34}.
    The color is more saturated when the pattern is unmuted.
    \index{pattern!color menu}
-   The pattern menu for sequence color is shown in the previous figure.
-   We've used colors in most of the examples in this manual.
+%  The pattern menu for sequence color is shown in the previous figure.
+%  We've used colors in most of the examples in this manual.
 
    \index{pattern!right click}
    \index{slot!empty slot right-click}
@@ -240,7 +241,9 @@
       \item \textbf{Copy pattern}
       \item \textbf{Cut pattern}
       \item \textbf{Delete pattern}
-      \item \textbf{Merge into pattern} (new, not yet shown)
+      \item \textbf{Merge into pattern}
+      \item \textbf{Output Bus}
+      \item \textbf{Output Channel}
    \end{enumber}
 
    The first two menu entries are the same as above.  However, since there is
@@ -257,6 +260,7 @@
    \itempar{External Live Frame for Set}{pattern!external live frame}
    This selection uses the pattern number to open the corresponding screenset
    number in an external \textbf{Live} frame.
+   This allows viewing and interacting with a number of sets.
 
    \itempar{Edit Pattern In Tab}{pattern!edit in tab}
    Selecting this item activates the \textbf{Edit} tab and fills it with data
@@ -266,7 +270,8 @@
 
    \itempar{Edit Pattern In Window}{pattern!edit in window}
    Selecting this item brings up the pattern in an external pattern editor that
-   is more sophisticated than the \textbf{Edit} tab.
+   has a few addition controls over the \textbf{Edit} tab (where space is more
+   constrained).
 
    In addition to right-click and select \textbf{New}, the user can
    \index{empty slot double-click}
@@ -288,8 +293,8 @@
 
    \itempar{Edit Events In Tab}{pattern!events in tab}
    Edits an existing loop or pattern, but using a detailed \textbf{Event Editor}
-   tab that shows events as text and numbers, and allows editing them as text and
-   numbers.
+   tab that shows events as text and numbers, and allows editing them as text
+   and numbers.
    This editor is basic, meant for viewing
    MIDI events and making some minor edits or deletes.
    The \textbf{Event Editor} is most useful when trying to find events
@@ -336,6 +341,14 @@
    patten that was cut or copied into the pattern slot where the mouse was
    right-clicked.  However, the original notes remain.  Thus, the merge
    option provides a way to build up a pattern by copying other patterns.
+
+   \itempar{Output Bus}{pattern!buss}
+   This item allows one to select the output buss for a pattern without having
+   to open the editor.
+
+   \itempar{Output Channel}{pattern!channel}
+   This item allows one to select the output channel for a pattern without
+   having to open the editor.
    
 \subsubsection{Pattern}
 \label{subsubsec:patterns_pattern_filled}
@@ -565,11 +578,12 @@
    We do \textbf{not}
    recommend using \texttt{Ctrl} or \texttt{Alt}
    keys for pattern control.  They conflict with application or desktop
-   settings.  However, if one insists on such hot-key combinations,
-   use the \textbf{Menu} button in the main
-   window to disable the menu.
-   One can also use normal keys to enable queuing.
-   For example, the minus key or the keypad's slash key can be used.
+   settings.
+%  However, if one insists on such hot-key combinations,
+%  use the \textbf{Menu} button in the main
+%  window to disable the menu.
+%  One can also use normal keys to enable queuing.
+%  For example, the minus key or the keypad's slash key can be used.
 
    \index{keys!keep queue}
    \index{queue!keep}
@@ -688,19 +702,7 @@
    For a couple of short, but good, video tutorials about using arming,
    queuing, and snapshots, see reference \cite{wootangent1}.
 
-   \index{solo!true}
-   \index{pattern!shift-left-click}
-   \index{patterns panel!inverse muting}
-   \index{patterns panel!solo}
-   \index{shift-left-click solo}
-   There is a truer "Solo" functionality in the Patterns
-   Panel and the Song Editor.  To "solo" a pattern, move the mouse cursor
-   over the pattern, hold the \texttt{Shift} key, and left-click the pattern.
-   This will turn off all the other patterns, so that the selected pattern ins
-   the only one playing.  Holding the \texttt{Shift} key and clicking the same
-   pattern again will unmute all of the other patterns.
-
-\paragraph{Pattern Clicks}
+\paragraph{Other Pattern Clicks}
 \label{paragraph:patterns_pattern_Clicks}
 
    \index{pattern!left click}
@@ -724,10 +726,65 @@
    filled.
 
    \index{pattern!middle click}
-   Middle-click does nothing when the mouse rests inside a pattern box.
+   Middle-click on a pattern will bring up the pattern in the \textbf{Editor}
+   tab in the main window.
+
+   \index{pattern!shift-left-click}
+   \index{shift-left-click live-frame}
+   A Shift-Left click on a pattern will open up an external live-frame for the
+   set having the same number as the pattern.
+
+   \index{pattern!ctrl-left-click}
+   \index{ctrl-left-click new pattern}
+   A Ctrl-Left click on a pattern will create a new pattern, just like
+   double-click will (if enabled).
+
+   \index{solo!true}
+   \index{pattern!alt-left-click}
+   \index{patterns panel!inverse muting}
+   \index{patterns panel!solo}
+   \index{alt-left-click solo}
+   There is a truer "Solo" functionality in the Patterns
+   Panel and the Song Editor.  To "solo" a pattern, move the mouse cursor
+   over the pattern, hold the \texttt{Alt} key, and left-click the pattern.
+   This will turn off all the other patterns, so that the selected pattern ins
+   the only one playing.
+   We still need to work on reversing it exactly, but
+   mute-groups can be used for that purpose.
+%  Holding the \texttt{Alt} key and clicking the same
+%  pattern again will unmute all of the other patterns.
 
 \subsection{Patterns / Bottom Panel}
 \label{subsec:patterns_panel_bottom}
+
+   The first line of the bottom panel contains the \textbf{Set Name}
+   of the current set, which is editable.
+   It contains a button with an exclamation point (\textbf{!}), which
+   can be used to reset the play-set (the total of all patterns that are loaded
+   for playback) to the patterns in the current set.
+   The \textbf{Set} spin-box can be used to change the current set.
+
+   \begin{enumber}
+      \item \textbf{Set Name}
+      \item \textbf{Set Reset}
+      \item \textbf{Set}
+   \end{enumber}
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
+
+   \itempar{Set Name}{pattern!set name}
+   Each of the 32 available screen-sets can be given a name by entering it
+   into this field.  This name is saved with the MIDI file.
+
+   \itempar{Set}{pattern!set number}
+   This spin widget selects the current screen-set.  The values in this
+   field range from 0 to 31 (less if the set-size is a larger value),
+   and default to 0.
+
+   \itempar{Set Reset}{pattern!set reset}
+   \textsl{Seq66} has a new feature whereby multiple sets can play at once.
+   This button, an exclamation point, will reset the playback to the patterns
+   in the current set.
 
    The bottom panel of the Patterns window provides way to control the
    overall playback of the song.  It has changed quite a bit over the last few
@@ -740,16 +797,15 @@
       \item \textbf{Panic!}
       \item \textbf{Stop}
       \item \textbf{Play and Pause}
+      \item \textbf{Loop}
       \item \textbf{Song Record}
-      \item \textbf{Song Record Snap}
-      \item \textbf{BPM}
-      \item \textbf{Tap Tempo}
-      \item \textbf{Log Tempo}
-      \item \textbf{Record Tempo}
+%     \item \textbf{Song Record Snap}
+%     \item \textbf{Log Tempo}
+%     \item \textbf{Record Tempo}
       \item \textbf{Keep-Queue Status}
-      \item \textbf{Name}
-      \item \textbf{Set}
-      \item \textbf{Toggle Song Editor}
+      \item \textbf{Toggle Song/Live Mode}
+      \item \textbf{Tap Tempo}
+      \item \textbf{BPM}
    \end{enumber}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
@@ -776,6 +832,11 @@
    The Pause button toggles playback without rewinding the song.
    A Pause key (by default, the period) is also defined.
 
+   \itempar{Loop}{pattern!loop}
+   If this button is active, then the playback will loop
+   between the "L" and "R" markers in the pattern editor or the song editor
+   time-lines.
+
    \itempar{Song Record}{pattern!song record}
    Song-recording in \textsl{Seq66} is adopted from the
    \textsl{Kepler34} project.
@@ -786,10 +847,10 @@
    rather than waiting until the end of the pattern when the queuing takes
    effect, the trigger recording starts immediately.
 
-   \itempar{Song Record Snap}{pattern!song record snap}
-   This button toggles snapping the beginning and end of a recorded trigger to
-   the nearest beat.  There is no hot-key for this button at this time.
-   And, in fact, at present, song-record snap is alway in force.
+%  \itempar{Song Record Snap}{pattern!song record snap}
+%  This button toggles snapping the beginning and end of a recorded trigger to
+%  the nearest beat.  There is no hot-key for this button at this time.
+%  And, in fact, at present, song-record snap is alway in force.
 
    \itempar{BPM}{pattern!BPM}
    The spin widget adjusts the "beats per minute" (BPM) value.  The
@@ -828,18 +889,10 @@
    activated either by clicking on it or by pressing the assigned keep-queue
    key.
 
-   \itempar{Name}{pattern!set name}
-   Each of the 32 available screen-sets can be given a name by entering it
-   into this field.  This name is saved with the MIDI file.
-
-   \itempar{Set}{pattern!set number}
-   This spin widget selects the current screen-set.  The values in this
-   field range from 0 to 31 (less if the set-size is a larger value),
-   and default to 0.
-
-   \itempar{Toggle Song Editor}{pattern!toggle song editor}
-   Pressing this button toggles the presence on-screen of the
-   \textbf{Song Editor}.  The \texttt{Ctrl-E} keystroke can also be used.
+   \itempar{Toggle Song/Live Mode}{pattern!song/live}
+   Pressing this button toggles between the song mode and live mode.
+   Note that the default mode is configurable, and \textsl{Seq66} can go into
+   song mode when a loaded MIDI file has triggers, if configured to do so.
 
 \subsection{Patterns / Multiple Panels}
 \label{subsec:patterns_panel_multiple}

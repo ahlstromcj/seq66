@@ -54,7 +54,7 @@ once or twice. </string>
        <property name="title">
         <string/>
        </property>
-       <widget class="QPlainTextEdit" name="plainTextEditTempoTrack">
+       <widget class="QLineEdit" name="lineEditTempoTrack">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -67,18 +67,9 @@ once or twice. </string>
          </rect>
         </property>
         <property name="toolTip">
-         <string>Sets the number of the tempo track. Button not yet functional.</string>
-        </property>
-        <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
-        </property>
-        <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
+         <string>Specifies the number of the tempo track.</string>
         </property>
         <property name="readOnly">
-         <bool>false</bool>
-        </property>
-        <property name="overwriteMode">
          <bool>false</bool>
         </property>
         <property name="placeholderText">
@@ -217,7 +208,7 @@ the system's MIDI setup has changed.</string>
         <string>Client Name:ID/UUID</string>
        </property>
       </widget>
-      <widget class="QPlainTextEdit" name="plainTextEditClientId">
+      <widget class="QLineEdit" name="lineEditClientId">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -231,12 +222,6 @@ the system's MIDI setup has changed.</string>
        </property>
        <property name="toolTip">
         <string>Holds the ALSA MIDI client number, if applicable.</string>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
        </property>
        <property name="readOnly">
         <bool>true</bool>
@@ -1455,7 +1440,7 @@ Seq66 exits.</string>
          </rect>
         </property>
         <property name="text">
-         <string>None. Normal user-configured operation.</string>
+         <string>None. Normal application operation.</string>
         </property>
        </widget>
        <widget class="QRadioButton" name="radio_session_nsm">
@@ -1519,15 +1504,15 @@ Seq66 exits.</string>
         </font>
        </property>
        <property name="text">
-        <string>NSM will be used automatically if Seq66 finds
-itself running in an NSM session.  The check-
-mark indicates that Seq66 wants to attach to 
-an NSM session at the given URL.
+        <string>NSM is used automatically if Seq66 is
+ running in an NSM session.  The check-
+mark indicates that Seq66 wants to attach
+to an NSM session at the given URL.
 
-JACK session management will occur only if
-checked, even if Seq66 is spawned by it.
+JACK session management will occur only
+if checked, even if Seq66 is spawned by it.
 
-As usual for a major change, a restart is
+As usual for many changes, a restart is
 required.</string>
        </property>
       </widget>
@@ -1569,7 +1554,7 @@ required.</string>
          <x>8</x>
          <y>220</y>
          <width>597</width>
-         <height>197</height>
+         <height>231</height>
         </rect>
        </property>
        <property name="title">
@@ -1579,7 +1564,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>56</x>
-          <y>64</y>
+          <y>70</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1595,7 +1580,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>56</x>
-          <y>88</y>
+          <y>100</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1608,7 +1593,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>56</x>
-          <y>112</y>
+          <y>130</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1621,7 +1606,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>56</x>
-          <y>136</y>
+          <y>160</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1637,7 +1622,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>344</x>
-          <y>64</y>
+          <y>70</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1653,7 +1638,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>344</x>
-          <y>88</y>
+          <y>100</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1669,7 +1654,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>64</y>
+          <y>70</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1688,7 +1673,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>84</y>
+          <y>100</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1704,7 +1689,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>108</y>
+          <y>128</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1720,7 +1705,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>136</y>
+          <y>160</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1736,7 +1721,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>308</x>
-          <y>64</y>
+          <y>70</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1752,7 +1737,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>308</x>
-          <y>88</y>
+          <y>100</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1782,7 +1767,7 @@ required.</string>
        <widget class="QLabel" name="label_cfg_save">
         <property name="geometry">
          <rect>
-          <x>52</x>
+          <x>70</x>
           <y>36</y>
           <width>81</width>
           <height>17</height>
@@ -1804,7 +1789,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>64</y>
+          <y>70</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1817,7 +1802,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>88</y>
+          <y>100</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1830,7 +1815,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>112</y>
+          <y>130</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1843,7 +1828,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>136</y>
+          <y>160</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1856,7 +1841,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>448</x>
-          <y>64</y>
+          <y>70</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1869,7 +1854,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>448</x>
-          <y>88</y>
+          <y>100</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1878,7 +1863,7 @@ required.</string>
        <widget class="QLabel" name="label_cfg_basename">
         <property name="geometry">
          <rect>
-          <x>160</x>
+          <x>170</x>
           <y>36</y>
           <width>113</width>
           <height>17</height>
@@ -1897,7 +1882,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>160</y>
+          <y>190</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -1916,7 +1901,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>156</y>
+          <y>190</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -1929,7 +1914,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>56</x>
-          <y>160</y>
+          <y>190</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -1959,7 +1944,7 @@ path added to this name is stripped.</string>
        <widget class="QLabel" name="label_cfg_save_2">
         <property name="geometry">
          <rect>
-          <x>340</x>
+          <x>360</x>
           <y>36</y>
           <width>81</width>
           <height>17</height>
@@ -1977,7 +1962,7 @@ path added to this name is stripped.</string>
        <widget class="QLabel" name="label_cfg_basename_2">
         <property name="geometry">
          <rect>
-          <x>448</x>
+          <x>460</x>
           <y>36</y>
           <width>113</width>
           <height>17</height>
@@ -1999,7 +1984,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>308</x>
-          <y>112</y>
+          <y>130</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -2015,7 +2000,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>344</x>
-          <y>112</y>
+          <y>130</y>
           <width>101</width>
           <height>23</height>
          </rect>
@@ -2031,7 +2016,7 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>448</x>
-          <y>112</y>
+          <y>130</y>
           <width>125</width>
           <height>21</height>
          </rect>
@@ -2040,8 +2025,8 @@ path added to this name is stripped.</string>
        <widget class="QPushButton" name="pushButtonSavePalette">
         <property name="geometry">
          <rect>
-          <x>296</x>
-          <y>156</y>
+          <x>300</x>
+          <y>190</y>
           <width>139</width>
           <height>25</height>
          </rect>
@@ -2101,8 +2086,8 @@ path added to this name is stripped.</string>
   <tabstop>pushButtonStoreMap</tabstop>
   <tabstop>pushButtonTempoTrack</tabstop>
   <tabstop>outPortsMappedCheck</tabstop>
-  <tabstop>plainTextEditTempoTrack</tabstop>
-  <tabstop>plainTextEditClientId</tabstop>
+  <tabstop>lineEditTempoTrack</tabstop>
+  <tabstop>lineEditClientId</tabstop>
   <tabstop>clocksScrollArea</tabstop>
   <tabstop>checkBoxRecordByChannel</tabstop>
   <tabstop>inPortsMappedCheck</tabstop>

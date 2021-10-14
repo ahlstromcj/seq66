@@ -40,7 +40,7 @@
       \item \textbf{Time}
       \item \textbf{Piano Roll}
       \item \textbf{Events}
-      \item \textbf{Data View}
+      \item \textbf{Data Panel}
       \item \textbf{Bottom Row}
       \item \textbf{Common Actions}
    \end{enumber}
@@ -61,7 +61,7 @@
    \index{keys!x}
    Press or release the right mouse button, or press
    \texttt{x} to "eXit" or "eXscape" from paint mode.
-   Another option is to press the "hand" button to toggle between note-entry
+   Another option is to press the "finger" button to toggle between note-entry
    and note-selection.
    Third, notes are drawn only with the length selected by the "notes" button
    near the top of the pattern window.  There are tricks to
@@ -164,7 +164,7 @@
    When active, a note is treated like the base note of the selected chord
    type, and extra notes are generated to create that chord.
    The \textbf{Chord Generation Reset} button is at the left of the
-   \textbf{Data View}.
+   \textbf{Data Panel}.
 
    \itempar{Chord Generation}{pattern editor!chord generation}
    \index{chord generation}
@@ -458,12 +458,35 @@
 \subsection{Pattern Editor / Time}
 \label{subsec:pattern_editor_time}
 
-   The \textbf{Time} (or \textbf{Measures}) bar provides an explicit count of
-   beats and bars.  It also includes vertical-zoom buttons at its left side.
-   As of version 0.93.0, \textsl{Seq66} allows the
-   \textbf{L/R} markers to be placed on the pattern editor's time-line, to
-   allow for close work with sections deep into a long pattern.
-   This looping now works with both Live and Song modes.
+   The following are the elements of the \textbf{Time} line:
+
+   \begin{itemize}
+      \item \textbf{Vertical Zoom Buttons}.
+         These buttons allow the user to compress, reset, or expand the
+         piano roll vertically to a certain degree.  A more permanent change
+         can be made by setting the \textbf{Editor Key Height} value in
+         the \textbf{Edit / Preferences / Display} tab, or in the 'usr' file.
+      \item \textbf{Time Line}.
+         The \textbf{Time} (or \textbf{Measures}) bar provides an explicit
+         count of beats and bars.
+         It follows the horizontal zoom of the piano roll.
+         It also has a couple tricks:
+         \begin{itemize}
+            \item \textbf{In the upper half} of the time-line,
+               the mouse pointer changes to a vertical pointer.
+               Clicking there then shows a vertical bar and a dot; these mark
+               the starting position of playback.
+               This is useful for reviewing some notes.
+            \item \textbf{In the lower half} of the time-line,
+               the mouse pointer changes to a "finger" icon.
+               Left-clicking there then moves the "L" marker to that point.
+               Right-clicking there moves the "R" marker to that point.
+               ("R" will never precede "L", though).
+               If the \textbf{Loop} button in the main window is active, then
+               playback will loop between the "L" and "R" buttons.
+               This looping now works with both Live and Song modes.
+         \end{itemize}
+   \end{itemize}
 
 \subsection{Pattern Editor / Piano Roll}
 \label{subsec:pattern_editor_piano_roll}
@@ -944,7 +967,7 @@
    \index{event strip}
    These and other events appear
    as small squares in the event strip, along with a black vertical bar
-   in the \textbf{Data View} with a
+   in the \textbf{Data Panel} with a
    height proportional to the data-value of the event and a numeric
    representation of that value.
 	The event value (data) editor (directly under the event strip) is used 
@@ -1027,7 +1050,7 @@
    This button resets the chord-generation feature to \textbf{Off}.
    It's located by the data pane in order to save space in the first row.
 
-   Now on to the \textbf{Data View} itself.
+   Now on to the \textbf{Data Panel} itself.
    Also known as the "data pane"
    \index{data pane}
    or "data panel".
@@ -1067,6 +1090,14 @@
    The data-values of \textsl{unselected} events are left unchanged.
    A cool feature from \textsl{Seq24}.
 
+   Note that some events are shown as small circles instead of a line; each
+   circle has the numeric value next to it.
+   Tempo events are shown as a small yellow circle, even if there are a lot of
+   tempo events.
+   Program-change events are shown as a small open circle with a numeric value.
+   Both of these events' values can be modified by dragging a line as discussed
+   above.
+
 %  \textbf{Bug:}
 %  \index{bugs!event editing can fail}
 %  Sometimes the editing of event values in the event data section will not work.
@@ -1091,7 +1122,7 @@
       \item \textbf{Selector for Existing Data}
       \item \textbf{Selected Event Name}
       \item \textbf{LFO Panel}
-      \item \textbf{Loop Count}
+      \item \textbf{Live Loop Count}
       \item \textbf{Armed/Muted Toggle} (Data To MIDI Buss)
       \item \textbf{MIDI Thru Toggle}
       \item \textbf{MIDI Record Toggle}
@@ -1279,12 +1310,14 @@
          \index{recording type!oneshot}
          When this option is set, with the record button on, and no pattern
          playing, recording won't start until a note comes in, and when the
-         first note comes in, the progress bar starts at the left (time 0).  At
-         the end of the pattern, recording stops automatically.  See the figure
+         first note comes in, the progress bar starts at the left (time 0).
+         As each new set of notes at the same timestamp come in, the
+         notes are recorded and the current time advances by one snap value.
+         At the end of the pattern, recording stops automatically.
+         See the figure
          below for a recording from a \textsl{Yamaha DD-11}.
          The length of each note is determined by the snap size for the spacing
          of drawn events.
-         This feature is still experimental, and bugs are being worked out.
    \end{enumber}
 
 \begin{figure}[H]
@@ -1353,8 +1386,8 @@
 \subsubsection{Pattern Editor / Common Actions / Scrolling}
 \label{subsec:pattern_editor_scrolling}
 
-   \textbf{We are still trying to work whether or not to enable this feature
-   in \textsl{Seq66}.}
+   \textsl{We still need to work out whether or not to use the scroll wheel.
+   in Seq66, as we need to keep multiple event panes in sync while scrolling.}
 
    Let us describe the actions that can be performed with a
    scroll wheel, or with the scrolling features of multi-touch touchpads.

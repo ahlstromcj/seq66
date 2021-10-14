@@ -595,8 +595,8 @@ playback time, on the fly.  It is not permanent.</string>
          </property>
          <property name="iconSize">
           <size>
-           <width>27</width>
-           <height>27</height>
+           <width>33</width>
+           <height>12</height>
           </size>
          </property>
         </widget>
@@ -627,7 +627,7 @@ playback time, on the fly.  It is not permanent.</string>
          <property name="iconSize">
           <size>
            <width>33</width>
-           <height>11</height>
+           <height>12</height>
           </size>
          </property>
         </widget>
@@ -658,7 +658,7 @@ playback time, on the fly.  It is not permanent.</string>
          <property name="iconSize">
           <size>
            <width>33</width>
-           <height>11</height>
+           <height>12</height>
           </size>
          </property>
         </widget>
