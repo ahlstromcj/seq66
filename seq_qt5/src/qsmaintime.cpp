@@ -25,8 +25,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-20
+ * \updates       2021-10-15
  * \license       GNU GPLv2 or above
+ *
+ *  This class implements the strip of boxes at the top of the main window
+ *  that highlight each beat in a measure as playback occurs.
  *
  */
 
@@ -40,6 +43,17 @@
 
 namespace seq66
 {
+
+/**
+ *  Manifest constants for this module.  The maximum box width is kept small
+ *  because otherwise the beat-strip is way too long when the application is
+ *  maximized horizontally.
+ */
+
+static const int s_max_box_width            = 120;
+static const int s_width_hint               = 150;
+static const double s_height_hint_factor    = 2.4;
+static const double s_height_factor         = 0.3;
 
 /**
  *  Principal constructor.
@@ -107,6 +121,9 @@ qsmaintime::paintEvent (QPaintEvent *)
 
     midipulse tick = perf().get_tick();
     int boxwidth = (width() - 1) / beats_per_measure();
+    if (boxwidth > s_max_box_width)
+        boxwidth = s_max_box_width;
+
     int metro = ticks_to_beats
     (
         tick, perf().ppqn(), beats_per_measure(), beat_width()
@@ -156,7 +173,7 @@ qsmaintime::paintEvent (QPaintEvent *)
     if (beats_per_measure() < 10)       // draw beat number (if there's space)
     {
         int x = (metro + 1) * boxwidth - (m_font.pointSize() + 2);
-        int y = height() * 0.3 + m_font.pointSize();
+        int y = height() * s_height_factor + m_font.pointSize();
         pen.setColor(Qt::black);
         pen.setStyle(Qt::SolidLine);
         painter.setPen(pen);
@@ -187,7 +204,7 @@ qsmaintime::paintEvent (QPaintEvent *)
 QSize
 qsmaintime::sizeHint () const
 {
-    return QSize(150, m_font.pointSize() * 2.4);
+    return QSize(s_width_hint, m_font.pointSize() * s_height_hint_factor);
 }
 
 }           // namespace seq66

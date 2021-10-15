@@ -61,17 +61,25 @@ namespace seq66
  *  Alpha values for various states, not yet members, not yet configurable.
  */
 
-const int s_alpha_playing    = 255;
-const int s_alpha_muted      = 100;
+static const int s_alpha_playing    = 255;
+static const int s_alpha_muted      = 100;
 
 /**
  *  Initial sizing for the perf-roll.  The baseline PPQN is defined in
  *  usrsettings.
  */
 
-const int c_background_x     = (c_baseline_ppqn * 4 * 16) / c_perf_scale_x;
-const int c_size_box_w       = 6;                /* 3 is too small */
-const int c_size_box_click_w = c_size_box_w + 1 ;
+static const int c_background_x     = (c_baseline_ppqn*4*16) / c_perf_scale_x;
+static const int c_size_box_w       = 6;
+static const int c_size_box_click_w = c_size_box_w + 1 ;
+
+/**
+ *  Font sizes for small, normal, and expanded vertical zoom
+ */
+
+static const int s_vfont_size_small     =  8;
+static const int s_vfont_size_normal    = 12;
+static const int s_vfont_size_large     = 16;
 
 /**
  *  Principal constructor.
@@ -115,7 +123,7 @@ qperfroll::qperfroll
     m_font.setStyleHint(QFont::Monospace);
     m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     m_font.setBold(true);
-    m_font.setPointSize(8);
+    m_font.setPointSize(s_vfont_size_normal);
     m_timer = new QTimer(this);
     m_timer->setInterval(2 * usr().window_redraw_rate());
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
@@ -245,6 +253,7 @@ qperfroll::v_zoom_in ()
     bool result = not_nullptr(perf_names());
     if (result)
     {
+        m_font.setPointSize(s_vfont_size_large);
         set_thick();
         perf_names()->set_thick();
         set_dirty();
@@ -259,6 +268,7 @@ qperfroll::v_zoom_out ()
     bool result = not_nullptr(perf_names());
     if (result)
     {
+        m_font.setPointSize(s_vfont_size_small);
         set_thin();
         perf_names()->set_thin();
         set_dirty();
@@ -273,6 +283,7 @@ qperfroll::reset_v_zoom ()
     bool result = not_nullptr(perf_names());
     if (result)
     {
+        m_font.setPointSize(s_vfont_size_normal);
         set_normal();
         perf_names()->set_normal();
         frame64()->reset_zoom();

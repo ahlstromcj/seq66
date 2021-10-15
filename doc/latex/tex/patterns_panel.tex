@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-10-14
+% \update      2021-10-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -103,7 +103,7 @@
 \begin{figure}[H]
    \centering 
 %  \includegraphics[scale=0.75]{pattern-window-main-panel-items.png}
-   \includegraphics[scale=0.85]{tabs/live/pattern-popup-menu.png}
+   \includegraphics[scale=0.75]{tabs/live/pattern-popup-menu.png}
    \caption{Patterns Panel Pop-up Menu}
    \label{fig:patterns_panel_popup_menu}
 \end{figure}
@@ -223,7 +223,20 @@
    This option brings up an external \textbf{Live} frame window, which
    is the same as the patterns panel, but can be used to show a different set
    in a multi-set project.  Up to 32 external live frames can be shown.
-   More on the external live frames later.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.65]{main-window/multiple-live-grids.png}
+   \caption{Multiple Live Grids}
+   \label{fig:multiple_live_grids}
+\end{figure}
+
+   Note that the main window always shows the set of the currently
+   focussed external Live window.
+   We are not sure if this is a bug or a feature.
+   Also note that the right-click menu has some items removed, as indicated by
+   the asterisks in the list below.
+   We hope to rectify that in a future release.
 
    Once a new loop is created, there are more options for that slot.
    \index{pattern!right click}
@@ -233,10 +246,10 @@
 
    \begin{enumber}
       \item \textbf{New pattern}
-      \item \textbf{External live frame for set ...}
-      \item \textbf{Edit pattern in tab}
-      \item \textbf{Edit pattern in window}
-      \item \textbf{Edit events in tab}
+      \item \textbf{External live frame for set ...} *
+      \item \textbf{Edit pattern in tab} *
+      \item \textbf{Edit pattern in window} *
+      \item \textbf{Edit events in tab} *
       \item \textbf{Set pattern color}
       \item \textbf{Copy pattern}
       \item \textbf{Cut pattern}

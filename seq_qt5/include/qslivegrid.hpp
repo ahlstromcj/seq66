@@ -194,6 +194,7 @@ private slots:
     void merge_sequence ();
     void delete_sequence ();
     void new_live_frame ();
+    void slot_set_bank_name ();
 
 private:
 

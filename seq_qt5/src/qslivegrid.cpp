@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-10-14
+ * \updates       2021-10-15
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -103,7 +103,6 @@ namespace seq66
  */
 
 static const int sc_button_padding = 0;
-
 static const int c_minimum_width   = 300;
 static const int c_minimum_height  = 180;
 
@@ -142,18 +141,25 @@ qslivegrid::qslivegrid (performer & p, qsmainwnd * window, QWidget * parent) :
     ui->setupUi(this);
     m_msg_box = new QMessageBox(this);
     m_msg_box->setText(tr("A pattern is present."));
-    m_msg_box->setInformativeText
-    (
-        tr("Overwrite it with a blank pattern?")
-    );
+    m_msg_box->setInformativeText(tr("Overwrite it with a blank pattern?"));
     m_msg_box->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     m_msg_box->setDefaultButton(QMessageBox::No);
 
     int w = usr().scale_size(c_minimum_width);
     int h = usr().scale_size_y(c_minimum_height);
-    ui->frame->setMinimumSize(QSize(w, h));         /* versus 660 x 180 */
-
-    if (! m_is_external)
+    ui->frame->setMinimumSize(QSize(w, h));
+    if (m_is_external)
+    {
+        QString bname = QString::fromStdString(perf().bank_name(m_bank_id));
+        ui->txtBankName->setText(bname);
+        ui->spinBank->setRange(0, perf().screenset_max() - 1);
+        connect
+        (
+            ui->txtBankName, SIGNAL(editingFinished()),
+            this, SLOT(slot_set_bank_name())
+        );
+    }
+    else
     {
         ui->setNameLabel->hide();
         ui->setNumberLabel->hide();
@@ -509,12 +515,9 @@ qslivegrid::color_by_number (int i)
 void
 qslivegrid::set_bank_values (const std::string & bankname, int bankid)
 {
-    if (m_is_external)
-    {
-        QString bname = bankname.c_str();
-        ui->txtBankName->setText(bname);
-        ui->spinBank->setValue(bankid);
-    }
+    QString bname = bankname.c_str();
+    ui->txtBankName->setText(bname);
+    ui->spinBank->setValue(bankid);
 }
 
 /**
@@ -704,6 +707,11 @@ void
 qslivegrid::update_bank ()
 {
     (void) recreate_all_slots();        /* sets m_redraw_buttons to true    */
+
+    // TODO
+    // Need to update the bank-name field with the new bank.
+    // if (m_is_external)
+    //     ui->txtBankName->setText(QString::fromStdString(name));
 }
 
 /**
@@ -1276,6 +1284,14 @@ qslivegrid::merge_sequence ()
         alter_sequence(m_current_seq);
 }
 
+void
+qslivegrid::slot_set_bank_name ()
+{
+    QString newname = ui->txtBankName->text();
+    std::string name = newname.toStdString();
+    update_bank_name(name);
+}
+
 /**
  *  This is not called when focus changes.  Instead, we have to call this from
  *  qsliveframeex::changeEvent().
@@ -1310,7 +1326,10 @@ qslivegrid::popup_menu ()
     /*
      *  Add an action to bring up an external qslivegrid window based
      *  on the sequence number over which the mouse is resting.  This is
-     *  pretty tricky, but might be reasonable.
+     *  pretty tricky, but might be reasonable. Note that we want to allow
+     *  opening an external live frame only from the Live grid in the main
+     *  window, and only if the 0th set is shown... we allow only 32 sets for
+     *  this purpose.
      */
 
     if (! m_is_external)
@@ -1348,19 +1367,19 @@ qslivegrid::popup_menu ()
     }
     if (perf().is_seq_active(m_current_seq))
     {
-        QAction * editseqex = new QAction
-        (
-            tr("Edit pattern in &window"), m_popup
-        );
-        m_popup->addAction(editseqex);
-        connect
-        (
-            editseqex, SIGNAL(triggered(bool)),
-            this, SLOT(edit_sequence_ex())
-        );
-
         if (! m_is_external)
         {
+            QAction * editseqex = new QAction
+            (
+                tr("Edit pattern in &window"), m_popup
+            );
+            m_popup->addAction(editseqex);
+            connect
+            (
+                editseqex, SIGNAL(triggered(bool)),
+                this, SLOT(edit_sequence_ex())
+            );
+
             QAction * editevents = new QAction
             (
                 tr("Edit e&vents in tab"), m_popup

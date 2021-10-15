@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-08
+ * \updates       2021-10-15
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -709,14 +709,13 @@ qsmainwnd::qsmainwnd
     connect(ui->btnPanic, SIGNAL(clicked(bool)), this, SLOT(panic()));
     qt_set_icon(panic_xpm, ui->btnPanic);
 
-    QString bname = QString::fromStdString(perf().bank_name(0));
-    ui->txtBankName->setText(bname);
-    ui->spinBank->setRange(0, perf().screenset_max() - 1);
-
     /*
      * Set Number and Name.
      */
 
+    QString bname = QString::fromStdString(perf().bank_name(0));
+    ui->txtBankName->setText(bname);
+    ui->spinBank->setRange(0, perf().screenset_max() - 1);
     connect
     (
         ui->spinBank, SIGNAL(valueChanged(int)),
@@ -1945,7 +1944,7 @@ qsmainwnd::showqsbuildinfo ()
 }
 
 /**
- *  Loads the older Kepler34 pattern editor (qseqeditframe) for the selected
+ *  Loads a slightly less functional qseqeditframe64 for the selected
  *  sequence into the "Edit" tab.
  *
  *  We wanted to load the newer version, which has more functions, but it
@@ -2251,9 +2250,10 @@ qsmainwnd::load_live_frame (int ssnum)
         auto ei = m_open_live_frames.find(ssnum);
         if (ei == m_open_live_frames.end())
         {
-            qliveframeex * ex = new (std::nothrow)
-                qliveframeex(perf(), ssnum, this);
-
+            qliveframeex * ex = new (std::nothrow) qliveframeex
+            (
+                perf(), ssnum, this
+            );
             if (not_nullptr(ex))
             {
                 auto p = std::make_pair(ssnum, ex);
@@ -2790,6 +2790,10 @@ qsmainwnd::update_bank (int bankid)
          * Done in the call above:
          * (void) perf().set_playing_screenset(m_live_frame->bank());
          */
+
+        std::string name = perf().bank_name(bankid);
+        QString newname = QString::fromStdString(name);
+        ui->txtBankName->setText(newname);
     }
 }
 
@@ -2803,12 +2807,12 @@ qsmainwnd::update_bank (int bankid)
 void
 qsmainwnd::update_bank_text ()
 {
+    QString newname = ui->txtBankName->text();
+    std::string name = newname.toStdString();
     if (not_nullptr(m_live_frame))
-    {
-        QString newname = ui->txtBankName->text();
-        std::string name = newname.toStdString();
         m_live_frame->update_bank_name(name);
-    }
+
+    ui->txtBankName->setText(newname);
 }
 
 void
