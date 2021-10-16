@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-10-05
+ * \updates       2021-10-16
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -62,7 +62,6 @@
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "util/automutex.hpp"           /* seq66::mutex, automutex          */
-#include "util/calculations.hpp"        /* measures_to_ticks()              */
 #include "util/strfunctions.hpp"        /* bool_to_string()                 */
 
 /*
@@ -2355,7 +2354,7 @@ sequence::change_event_data_lfo
         dlength = double(m_ppqn);
 
     if (usemeasure)
-        dlength = double(get_beats_per_bar() * (m_ppqn * 4) / get_beat_width());
+        dlength = double(measures_to_ticks());
 
     for (auto & er : m_events)
     {

@@ -980,8 +980,8 @@ public:
     }
 
     /**
-     *  A convenience function for calculating the number of ticks in the given
-     *  number of measures.
+     *  A convenience function for calculating the number of ticks in the
+     *  given number of measures.
      */
 
     midipulse measures_to_ticks (int measures = 1) const

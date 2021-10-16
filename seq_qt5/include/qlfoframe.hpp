@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-11
+ * \updates       2021-10-16
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -189,37 +189,31 @@ private:
 
     /**
      *  Value.  Ranges from 0.0 to 127.0. It is initialized to its starting
-     *  value, 64.0.  Also defined are the minimum and maximum.
+     *  value, 64.0.  Also defined are the minimum and maximum, but as statics
+     *  in the cpp module.
      */
 
     double m_value;
-    static double m_value_min;      /**< The minimum value allowed. */
-    static double m_value_max;      /**< The maximum value allowed. */
 
     /**
      *  Range.  Ranges from 0.0 to 127.0. It is initialized to its starting
-     *  value, 64.0.  Also defined are the minimum and maximum.
+     *  value, 64.0.  Also defined are the minimum and maximum, but as statics
+     *  in the cpp module.
      */
 
     double m_range;
-    static double m_range_min;      /**< The minimum range allowed. */
-    static double m_range_max;      /**< The maximum range allowed. */
 
     /**
      *  Speed.
      */
 
     double m_speed;
-    static double m_speed_min;      /**< The minimum speed allowed. */
-    static double m_speed_max;      /**< The maximum speed allowed. */
 
     /**
      *  Phase.
      */
 
     double m_phase;
-    static double m_phase_min;      /**< The minimum phase allowed. */
-    static double m_phase_max;      /**< The maximum phase allowed. */
 
     /**
      *  Wave type.

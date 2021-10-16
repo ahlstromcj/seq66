@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-10-13
+% \update      2021-10-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -267,23 +267,24 @@
    groups shown in the figure above:
 
    \begin{itemize}
-      \item \textbf{Center Tabs}
-      \item \textbf{Application Menu}
+      \item \textbf{Tabs}
+      \item \textbf{Menu}
       \item \textbf{Main Screen Controls}
    \end{itemize}
 
    The \textbf{Live} tab is foremost in the application.
    It provides a grid of \textsl{patterns}
    (also called \textsl{loops}, \textsl{tracks}, or
-   \textsl{sequences} that display recorded MIDI data, status information, and
+   \textsl{sequences}) that display recorded MIDI data, status information, and
    provide popup-menus for each pattern.
    The buttons can
    be colored via a palette, and the status of being armed is easy to see
-   from the theme's coloring of activated buttons.
+   from the theme's coloring of activated buttons, and a label that says "Armed"
+   versus "Muted".
    In addition, the buttons can be toggled by a keystroke, shown in the lower
    right corner of the button.
    Another name for the \textbf{Live} tab is the \textbf{Patterns Panel};
-   it can be replicated in an external window.
+   it can be replicated in multiple external windows.
    This tab and all the other tabs
    will be discussed in more detail, each in its own section.
    The \textbf{Menu} is also described later (see \sectionref{sec:menu}).
@@ -326,7 +327,7 @@
       \item \textbf{Master} appears if running using JACK transport, as
          transport master.
          JACK transport can be used even if using ALSA for MIDI.
-      \item \textbf{Master} appears if using JACK transport as transport slave.
+      \item \textbf{Slave} appears if using JACK transport as transport slave.
       \item \textbf{Portmidi} appears if using the internal portmidi-derived
          MIDI engine.  This is currently always the case on \textsl{Windows}.
    \end{itemize}

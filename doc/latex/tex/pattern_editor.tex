@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-09-29
+% \update      2021-10-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1107,8 +1107,7 @@
    \index{event data editor!mouse wheel}
    Any events that are selected in the piano roll or event strip can have
    their values modified with the mouse wheel.
-
-   Data values can also be modified using the \textbf{LFO} pane.
+   Data values can also be modified using the \textbf{LFO} pane (see below).
 
 \subsection{Pattern Editor / Bottom Row}
 \label{subsec:pattern_editor_bottom}
@@ -1170,15 +1169,15 @@
    Shows the selection event, with its event number shown in hexadecimal
    notation, and the name of the event shown.
 
-   \itempar{LFO}{pattern editor!LFO}
-   A low-frequency oscillator allows data events
-   can be modulated by some rudimentary wave functions.
+   \itempar{LFO Panel}{pattern editor!LFO}
+   An LFO (low-frequency oscillator) allows data events
+   to be modulated by some rudimentary wave functions.
    By clicking on the \textbf{LFO} button or using the \texttt{Ctrl-L} key,
    the following window appears, with a set of 4 vertical sliders:
 
 \begin{figure}[H]
    \centering 
-  \includegraphics[scale=0.75]{pattern-editor/lfo.png}
+  \includegraphics[scale=0.65]{pattern-editor/lfo.png}
    \caption{Pattern Editor LFO}
    \label{fig:pattern_editor_bottom_lfo}
 \end{figure}
@@ -1186,27 +1185,34 @@
 %  Note the controls in this window:
 
    \begin{enumber}
-      \item \textbf{DC Offset}.
+      \item \textbf{Use Measures (vs Length)}.
+         The length of a waveform period can be determined by the length of the
+         pattern (2 measures as shown next to the label "LFO Data Editor") or
+         by the length of a measure. This check-box determines that.
+         In the diagram, it is checked, so the 2 measures covers four periods
+         of the sine wave.
+         Especially useful in modifying long patterns.
+      \item \textbf{DC Offset} (\textbf{D}).
          Provides a kind of DC offset for the data value. Starts at 64, and
-         ranges from 1 to 127.
-      \item \textbf{Mod Range}.
+         ranges from 0 to 127.
+         In the diagram above, one can see that the 0-value line for the sine
+         wave is at 64.
+      \item \textbf{Mod Range} (\textbf{R}).
          Controls the depth of modulation. Starts at 64, and ranges from 1 to
          127.
+         The data values range from \( y = DC - R \) to \( y = DC + R\).
+         For the sine-wave shown above, the range is 0 to 128 (actually 127).
       \item \textbf{Periods}.
          Indicates the number of periods per pattern length.
          For long patterns, this parameter should be set high,
          to even show an effect.  It is also subject to an 'anti-aliasing'
          effect, especially for short patterns.
-         Try it!  For short patterns, try a value of 1 at first.  For a pattern
-         of one measure in length, this will create one period of the wave.
-      \item \textbf{Phase Shift}.
+         Try it!
+      \item \textbf{Phase Shift} (\textbf{P}).
          Provides the phase shift within a period of the LFO wave.
-         A value of 1 is a phase shift of 360 degrees (or maybe it is one
-         radian?).
-      \item \textbf{Use Measures}.
-         If checked, a measure is used to calculate the periodicity of a
-         change, rather than using the whole length of the sequence.
-         Useful to modify long patterns.
+         A value of 1 is a phase shift of 360 degrees (one whole period).
+         Thus, the data at \( P = 0 \) would look exactly the same at phase
+         \( P = 1\).
       \item \textbf{Wave Type}.
          Selects the kind of wave to use for the LFO:
          \begin{enumber}
@@ -1220,6 +1226,8 @@
             \item \textbf{Triangle}. Modulates via a triangle wave; somewhat
                similar to a sine wave.
          \end{enumber}
+         Note that one might have to change a parameter slightly to see the
+         effect of the new waveform.
       \item \textbf{Reset Data}.
          This button restores the initial pattern event data.  Useful when one
          applies modulation that one ultimately does not like.

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-11
+ * \updates       2021-10-16
  * \license       GNU GPLv2 or above
  *
  *  The LFO (low-frequency oscillator) provides a way to modulate the
@@ -66,14 +66,16 @@ namespace seq66
  *  Static members.
  */
 
-double qlfoframe::m_value_min   =   0.0;
-double qlfoframe::m_value_max   = 127.0;
-double qlfoframe::m_range_min   =   0.0;
-double qlfoframe::m_range_max   = 127.0;
-double qlfoframe::m_speed_min   =   0.0;
-double qlfoframe::m_speed_max   =  16.0;
-double qlfoframe::m_phase_min   =   0.0;
-double qlfoframe::m_phase_max   =   1.0;
+static double s_value_min   =   0.0;
+static double s_value_def   =  64.0;
+static double s_value_max   = 127.0;
+static double s_range_min   =   0.0;
+static double s_range_def   =  64.0;
+static double s_range_max   = 127.0;
+static double s_speed_min   =   0.0;
+static double s_speed_max   =  16.0;
+static double s_phase_min   =   0.0;
+static double s_phase_max   =   1.0;
 
 /*
  *  Signal buttonClicked(int) is overloaded in this class. To connect to this
@@ -98,17 +100,16 @@ qlfoframe::qlfoframe
     m_seqdata       (sdata),
     m_backup_events (seqp->events()),   /* copy original events for reset() */
     m_edit_frame    (editparent),
-    m_value         (64.0),
-    m_range         (64.0),
-    m_speed         (0.0),
-    m_phase         (0.0),
+    m_value         (s_value_def),
+    m_range         (s_range_def),
+    m_speed         (s_speed_min),
+    m_phase         (s_phase_min),
     m_wave          (wave::sine),
     m_use_measure   (true)
 {
     ui->setupUi(this);
     connect(ui->m_button_reset, SIGNAL(clicked()), this, SLOT(reset()));
     connect(ui->m_button_close, SIGNAL(clicked()), this, SLOT(close()));
-
     m_wave_group = new QButtonGroup(this);
     m_wave_group->addButton(ui->m_radio_wave_none, int(wave::none));
     m_wave_group->addButton(ui->m_radio_wave_sine, int(wave::sine));
@@ -147,8 +148,8 @@ qlfoframe::qlfoframe
     (
         "Value: a kind of DC offset for the data value. Range: 0 to 127."
     );
-    ui->m_value_slider->setMinimum(to_slider(m_value_min));
-    ui->m_value_slider->setMaximum(to_slider(m_value_max));
+    ui->m_value_slider->setMinimum(to_slider(s_value_min));
+    ui->m_value_slider->setMaximum(to_slider(s_value_max));
     ui->m_value_slider->setValue(to_slider(m_value));
     set_value_text(m_value, ui->m_value_text);
     connect
@@ -170,8 +171,8 @@ qlfoframe::qlfoframe
     (
         "Range: controls the depth of modulation. Range: 0 to 127."
     );
-    ui->m_range_slider->setMinimum(to_slider(m_range_min));
-    ui->m_range_slider->setMaximum(to_slider(m_range_max));
+    ui->m_range_slider->setMinimum(to_slider(s_range_min));
+    ui->m_range_slider->setMaximum(to_slider(s_range_max));
     ui->m_range_slider->setValue(to_slider(m_range));
     set_value_text(m_range, ui->m_range_text);
     connect
@@ -197,8 +198,8 @@ qlfoframe::qlfoframe
         "some parts of the range, especially for short patterns. "
         "For short patterns, try a value of 1."
     );
-    ui->m_speed_slider->setMinimum(to_slider(m_speed_min));
-    ui->m_speed_slider->setMaximum(to_slider(m_speed_max));
+    ui->m_speed_slider->setMinimum(to_slider(s_speed_min));
+    ui->m_speed_slider->setMaximum(to_slider(s_speed_max));
     ui->m_speed_slider->setValue(to_slider(m_speed));
     set_value_text(m_speed, ui->m_speed_text);
     connect
@@ -221,8 +222,8 @@ qlfoframe::qlfoframe
         "Phase: phase shift in a beat width (quarter note). "
         "A value of 1 is a phase shift of 360 degrees."
     );
-    ui->m_phase_slider->setMinimum(to_slider(m_phase_min));
-    ui->m_phase_slider->setMaximum(to_slider(m_phase_max));
+    ui->m_phase_slider->setMinimum(to_slider(s_phase_min));
+    ui->m_phase_slider->setMaximum(to_slider(s_phase_max));
     ui->m_phase_slider->setValue(to_slider(m_phase));
     set_value_text(m_phase, ui->m_phase_text);
     connect
@@ -283,7 +284,7 @@ qlfoframe::value_text_change ()
     QString t = ui->m_value_text->text();
     bool ok;
     double v = t.toDouble(&ok);
-    if (ok && (v >= m_value_min && v <= m_value_max))
+    if (ok && (v >= s_value_min && v <= s_value_max))
         ui->m_value_slider->setValue(to_slider(v));
 }
 
@@ -293,7 +294,7 @@ qlfoframe::range_text_change ()
     QString t = ui->m_range_text->text();
     bool ok;
     double v = t.toDouble(&ok);
-    if (ok && (v >= m_range_min && v <= m_range_max))
+    if (ok && (v >= s_range_min && v <= s_range_max))
         ui->m_range_slider->setValue(to_slider(v));
 }
 
@@ -303,7 +304,7 @@ qlfoframe::speed_text_change ()
     QString t = ui->m_speed_text->text();
     bool ok;
     double v = t.toDouble(&ok);
-    if (ok && (v >= m_speed_min && v <= m_speed_max))
+    if (ok && (v >= s_speed_min && v <= s_speed_max))
         ui->m_speed_slider->setValue(to_slider(v));
 }
 
@@ -313,7 +314,7 @@ qlfoframe::phase_text_change ()
     QString t = ui->m_phase_text->text();
     bool ok;
     double v = t.toDouble(&ok);
-    if (ok && (v >= m_phase_min && v <= m_phase_max))
+    if (ok && (v >= s_phase_min && v <= s_phase_max))
         ui->m_phase_slider->setValue(to_slider(v));
 }
 

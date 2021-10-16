@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-20
+ * \updates       2021-10-15
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -324,6 +324,16 @@ qperfnames::set_preview_row (int row)
     m_is_previewing = row >= 0;
     m_preview_row = row;
     update();
+}
+
+/**
+ *  Prevent qperfnames from scrolling on its own via the scroll-wheel event.
+ */
+
+void
+qperfnames::wheelEvent (QWheelEvent * ev)
+{
+    ev->accept();
 }
 
 }           // namespace seq66

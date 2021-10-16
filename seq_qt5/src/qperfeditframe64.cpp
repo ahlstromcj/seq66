@@ -170,7 +170,15 @@ qperfeditframe64::qperfeditframe64
 
     m_perfnames = new qperfnames(m_mainperf, ui->namesScrollArea);
     ui->namesScrollArea->setWidget(m_perfnames);
-    ui->namesScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    /*
+     * EXPERIMENTAL. Leave the useless horizontal scrollbar in place
+     * in order to match the qperfroll's vertical dimensions.
+     *
+     * ui->namesScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+     */
+
+    ui->namesScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     ui->namesScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     m_perftime = new qperftime
