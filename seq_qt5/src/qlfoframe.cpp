@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-16
+ * \updates       2021-10-17
  * \license       GNU GPLv2 or above
  *
  *  The LFO (low-frequency oscillator) provides a way to modulate the
@@ -73,6 +73,7 @@ static double s_range_min   =   0.0;
 static double s_range_def   =  64.0;
 static double s_range_max   = 127.0;
 static double s_speed_min   =   0.0;
+static double s_speed_def   =   1.0;        /* actually number of periods   */
 static double s_speed_max   =  16.0;
 static double s_phase_min   =   0.0;
 static double s_phase_max   =   1.0;
@@ -102,9 +103,9 @@ qlfoframe::qlfoframe
     m_edit_frame    (editparent),
     m_value         (s_value_def),
     m_range         (s_range_def),
-    m_speed         (s_speed_min),
+    m_speed         (s_speed_def),
     m_phase         (s_phase_min),
-    m_wave          (wave::sine),
+    m_wave          (wave::none),
     m_use_measure   (true)
 {
     ui->setupUi(this);
@@ -116,7 +117,12 @@ qlfoframe::qlfoframe
     m_wave_group->addButton(ui->m_radio_wave_saw, int(wave::sawtooth));
     m_wave_group->addButton(ui->m_radio_wave_revsaw, int(wave::reverse_sawtooth));
     m_wave_group->addButton(ui->m_radio_wave_triangle, int(wave::triangle));
-    ui->m_radio_wave_sine->setChecked(true);    /* match m_wave member init */
+    m_wave_group->addButton(ui->m_radio_wave_exp, int(wave::exponential));
+    m_wave_group->addButton
+    (
+        ui->m_radio_wave_revexp, int(wave::reverse_exponential)
+    );
+    ui->m_radio_wave_none->setChecked(true);    /* match m_wave member init */
     connect
     (
         m_wave_group,
@@ -131,14 +137,17 @@ qlfoframe::qlfoframe
         {
             m_wave = static_cast<wave>(id);
             reset();
+            scale_lfo_change(id);
         }
     );
 
-    ui->m_wave_type_group->setToolTip
-    (
-        "Wave type: 1 = sine; 2 = ramp sawtooth; 3 = decay sawtooth; "
-        "4 = triangle."
-    );
+    /*
+     * ui->m_wave_type_group->setToolTip
+     * (
+     *     "Wave type: 1 = sine; 2 = ramp sawtooth; 3 = decay sawtooth; "
+     *     "4 = triangle."
+     * );
+     */
 
     /*
      * Order of calls is important here.
@@ -146,7 +155,7 @@ qlfoframe::qlfoframe
 
     ui->m_value_slider->setToolTip
     (
-        "Value: a kind of DC offset for the data value. Range: 0 to 127."
+        "A DC offset for the calculation. Range: 0 to 127."
     );
     ui->m_value_slider->setMinimum(to_slider(s_value_min));
     ui->m_value_slider->setMaximum(to_slider(s_value_max));
@@ -169,7 +178,7 @@ qlfoframe::qlfoframe
 
     ui->m_range_slider->setToolTip
     (
-        "Range: controls the depth of modulation. Range: 0 to 127."
+        "Controls the depth of modulation. Range: 0 to 127."
     );
     ui->m_range_slider->setMinimum(to_slider(s_range_min));
     ui->m_range_slider->setMaximum(to_slider(s_range_max));
@@ -192,11 +201,8 @@ qlfoframe::qlfoframe
 
     ui->m_speed_slider->setToolTip
     (
-        "Speed: the number of periods per pattern (divided by beat width, "
-        "normally 4).  For long patterns, this parameter needs to be set "
-        "high.  Also subject to an 'anti-aliasing' effect in "
-        "some parts of the range, especially for short patterns. "
-        "For short patterns, try a value of 1."
+        "Speed (periods): number of periods per pattern or measure.\n"
+        "For long patterns, set this parameter high.  Beware of anti-aliasing.\n"
     );
     ui->m_speed_slider->setMinimum(to_slider(s_speed_min));
     ui->m_speed_slider->setMaximum(to_slider(s_speed_max));
@@ -244,8 +250,13 @@ qlfoframe::qlfoframe
     );
 
     std::string plabel = "Pattern #";
-    plabel += std::to_string(int(seqp->seq_number()));
+    std::string number = std::to_string(int(seqp->seq_number()));
+    plabel += number;
     ui->m_pattern_label->setText(QString::fromStdString(plabel));
+
+    plabel = "LFO #";
+    plabel += number;
+    setWindowTitle(QString::fromStdString(plabel));
 }
 
 /**

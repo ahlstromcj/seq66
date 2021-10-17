@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>591</width>
-    <height>325</height>
+    <height>351</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Frame</string>
+   <string>LFO</string>
   </property>
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
@@ -57,7 +57,7 @@
    <property name="geometry">
     <rect>
      <x>480</x>
-     <y>280</y>
+     <y>310</y>
      <width>80</width>
      <height>24</height>
     </rect>
@@ -72,7 +72,7 @@
      <x>368</x>
      <y>50</y>
      <width>201</width>
-     <height>221</height>
+     <height>251</height>
     </rect>
    </property>
    <property name="title">
@@ -84,7 +84,7 @@
       <x>16</x>
       <y>30</y>
       <width>173</width>
-      <height>181</height>
+      <height>211</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="m_wave_layout">
@@ -123,6 +123,26 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QRadioButton" name="m_radio_wave_exp">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Exponential Rise</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="m_radio_wave_revexp">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Exponential Fall</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -130,7 +150,7 @@
    <property name="geometry">
     <rect>
      <x>376</x>
-     <y>280</y>
+     <y>310</y>
      <width>89</width>
      <height>24</height>
     </rect>
@@ -139,13 +159,13 @@
     <string>&amp;Reset Data</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>51</y>
      <width>345</width>
-     <height>257</height>
+     <height>281</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="sliderGridLayout">

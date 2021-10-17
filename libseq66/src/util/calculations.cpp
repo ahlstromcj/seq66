@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-08-10
+ * \updates       2021-10-17
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1135,57 +1135,75 @@ pulse_divide (midipulse numerator, midipulse denominator, midipulse & remainder)
  *  parameter is provided by the lfownd object.  It is calculated by
  *
 \verbatim
-                 speed * tick * BW
-        angle = ------------------- + phase
-                      seqlength
+                 speed * tick
+        angle = -------------- + phase
+                    length
 \endverbatim
  *
  *  The speed ranges from 0 to 16; the ratio of tick/seqlength ranges from 0
  *  to 1; BW (beat width) is generally 4; the phase ranges from 0 to 1.
  *
  * \param angle
- *      Provides the radial angle to be applied.  Units of radians,
- *      apparently.
+ *      Provides the radial "angle" to be applied. Assuming that the "speed"
+ *      (number of periods) is 1, then, for a one-measure pattern or
+ *      a longer pattern with "Use Measures" unchecked in qlfoframe, this value
+ *      ranges from 0.0 to 1.0.  Increasing the "speed" or the number of
+ *      measures increases the angle range proportionately.
  *
  * \param wavetype
  *      Provides the wave value to select the type of wave data-point
  *      to be generated.
+ *
+ * \return
+ *      Returns the result of the calculation, which will range from -1.0 to
+ *      0.0 to 1.0, depending on the wave employed.
  */
 
 double
 wave_func (double angle, wave wavetype)
 {
+    static double s_e = exp(2.0);                       /* 2.7182818 ^ 2.0  */
     double result = 0.0;
+    double tmp = 0.0;
+    double anglefixed = angle - int(angle);
     switch (wavetype)
     {
     case wave::sine:
-
-        result = sin(angle * M_PI * 2.0);
+        result = sin(2.0 * M_PI * angle);               /* angle in radians */
         break;
 
     case wave::sawtooth:
-
-        result = (angle - int(angle)) * 2.0 - 1.0;
+        tmp = 2.0 * anglefixed;
+        result = tmp - 1.0;
         break;
 
     case wave::reverse_sawtooth:
-
-        result = (angle - int(angle)) * -2.0 + 1.0;
+        tmp = -2.0 * anglefixed;
+        result = tmp + 1.0;
         break;
 
     case wave::triangle:
-    {
-        double tmp = angle * 2.0;
+        tmp = 2.0 * angle;
         result = (tmp - int(tmp));
         if ((int(tmp)) % 2 == 1)
             result = 1.0 - result;
 
-        result = result * 2.0 - 1.0;
+        result = 2.0 * result - 1.0;
         break;
-    }
+
+    case wave::exponential:
+        tmp = 2.0 * anglefixed;
+        result = exp(tmp) / s_e;
+        break;
+
+    case wave::reverse_exponential:
+        angle = 1.0 - angle;
+        anglefixed = angle - int(angle);
+        tmp = 2.0 * anglefixed;
+        result = exp(tmp) / s_e;
+        break;
 
     default:
-
         break;
     }
     return result;

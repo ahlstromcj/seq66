@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-12-14
+ * \updates       2021-10-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -87,6 +87,10 @@ qseqeditex::qseqeditex (performer & p, int seqid, qsmainwnd * parent) :
     QGridLayout * layout = new QGridLayout(this);
     m_edit_frame = new qseqeditframe64(p, seqid, this);     // no PPQN ???
     layout->addWidget(m_edit_frame);
+
+    std::string title = "Pattern #";
+    title += std::to_string(seqid);
+    setWindowTitle(QString::fromStdString(title));
     show();
     m_edit_frame->show();
 }

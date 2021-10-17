@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-09-24
+ * \updates       2021-10-17
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -56,11 +56,13 @@ namespace seq66
 
 enum class wave
 {
-    none               = 0,    /**< No waveform, never used.           */
-    sine               = 1,    /**< Sine wave modulation.              */
-    sawtooth           = 2,    /**< Saw-tooth (ramp) modulation.       */
-    reverse_sawtooth   = 3,    /**< Reverse saw-tooth (decay).         */
-    triangle           = 4     /**< No waveform, never used.           */
+    none               = 0,     /**< No waveform, never used.           */
+    sine,                       /**< Sine wave modulation.              */
+    sawtooth,                   /**< Saw-tooth (ramp) modulation.       */
+    reverse_sawtooth,           /**< Reverse saw-tooth (decay).         */
+    triangle,                   /**< No waveform, never used.           */
+    exponential,                /**< A partial exponential rise.        */
+    reverse_exponential         /**< A partial exponential fall.        */
 };
 
 /*

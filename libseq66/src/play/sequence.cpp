@@ -2316,16 +2316,16 @@ sequence::change_event_data_relative
  *      127 in increments of 0.1.
  *
  * \param speed
- *      Provides the inverse periodicity (?) for the modifications.  Ranges
- *      from 0 to 16 in increments of 0.01.  Not sure what units this value is
- *      in.
+ *      Provides the number of periods in the measure or the full length for the
+ *      modifications.  Ranges from 0 to 16 in increments of 0.01.
  *
  * \param phase
- *      The phase of the event modification.  Ranges from 0 to 1 (what units?)
- *      in increments of 0.01.
+ *      The phase of the event modification.  Ranges from 0 to 1 in increments
+ *      of 0.01.  This represents a phase shift of 0 to 360 degrees.
  *
  * \param w
- *      The wave type to apply.  Ranges from 1 to 5.
+ *      The wave type to apply.  See enum class wave in the calculations
+ *      module.
  *
  * \param status
  *      The status value for the events to modify.
