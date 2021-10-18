@@ -596,7 +596,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
                     pen.setWidth(2);
                     drawcolor = tempo_paint();
                     note_y = m_slot_h -
-                         m_slot_h * (ni.note() + 1) / c_midibyte_value_max;
+                         m_slot_h * (ni.note() + 1) / max_midi_value();
                 }
                 else
                 {

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-10-16
+% \update      2021-10-18
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -39,7 +39,7 @@
       \item \textbf{Second Row}
       \item \textbf{Time}
       \item \textbf{Piano Roll}
-      \item \textbf{Events}
+      \item \textbf{Events Panel}
       \item \textbf{Data Panel}
       \item \textbf{Bottom Row}
       \item \textbf{Common Actions}
@@ -958,10 +958,10 @@
    and the \textbf{0} key resets the zoom to the value of the "key height"
    setting in the 'usr' configuration file.
    
-\subsection{Events Editor}
-\label{subsec:pattern_editor_events}
+\subsection{Events Panel}
+\label{subsec:pattern_editor_panel}
 
-   Also known as the "events pane" or "events panel".
+   Also known as the "events pane" or "events editor".
    The narrow (a few pixels high) events strip shows discrete events,
    such as \texttt{Note On} and \texttt{Note Off}.
    \index{event strip}
@@ -988,7 +988,8 @@
    Then place the mouse cursor in the event strip.
    Right-click to make the drawing cursor appear at the exact spot where the
    event must go.  While holding the right button, click the left button.
-   A small square for the event will appear.
+   A small square for the event will appear. Or click-drag to insert a number
+   of events, each at a snap value.
 
    One can also left-click in that section,
    \index{keys!p}
@@ -996,15 +997,28 @@
    \index{keys!x}
    and hit the \texttt{x} key to escape that mode.
 
+   Note that the "finger" button \textsl{does not} apply to the event panel (it
+   applies only to the piano-roll).
+
    Should one want more of the same event, continue to hold both buttons and
    drag the mouse.  One event should appear at each beat (16th note) position
    that is crossed.
 
-   To move the event(s) to a different spot, select it/them via the left
-   button.  Then drag the selection as desired.
+   \textsl{Be careful}
+   when using smaller snap values (1/32, 1/64, etc.) to insert events.
+   Move the mouse cursor very slowly, otherwise some snap values might be
+   skipped, leaving missing events.  In that case, either remove the events and
+   try again, or use the event editor to add events at the missing tick
+   positions.
+
+   To move the event(s) to a different time, select it/them via the left
+   button.  Then drag the selection left or right as desired.
+   The left and right arrow keys can also be used.
    \index{todo!high precision events}
    it is currently not possible to move them to positions smaller than the
    beat size; temporarily reduce the beat size if desired.
+   Also, for regularly-spaced events, selected events can be hidden when moved
+   into the next non-selected event.
 
    The event values can be edited via the data panel, described in the next
    section.
@@ -1219,12 +1233,26 @@
             \item \textbf{None}.
                This setting is useful if one wants to change only the DC
                offset.
-            \item \textbf{Sine}.  Modulates via a sine wave.
-            \item \textbf{Sawtooth}. Provides a ramp modulation.
-            \item \textbf{Reverse Sawtooth}. Provides a ramp modulation in the
+            \item \textbf{Sine}.
+               Modulates via a sine wave.
+               Change the \textb{Phase Shift} to get a cosine function.
+               If the \textbf{DC Offset} is below 64, then negative values are
+               converted to positive. As an example, setting the DC offset to 0
+               will produce the absolute value of the \texttt{sin()} function.
+            \item \textbf{Sawtooth}.
+               Provides a ramp modulation.
+            \item \textbf{Reverse Sawtooth}.
+               Provides a ramp modulation in the opposite direction.
+            \item \textbf{Triangle}.
+               Modulates via a triangle wave; somewhat similar to a sine wave.
+            \item \textbf{Exponential Rise}.
+               Provides an exponential ramp modulation.
+               This ramping is easiest to see if the DC offset is 0,
+               and the Mod range is 127.
+               Varying the \textbf{Phase Shift} with the slider
+               will move the peak of the curve left to right.
+            \item \textbf{Exponential Fall}. Provides a ramp modulation in the
                opposite direction.
-            \item \textbf{Triangle}. Modulates via a triangle wave; somewhat
-               similar to a sine wave.
          \end{enumber}
          Note that one might have to change a parameter slightly to see the
          effect of the new waveform.

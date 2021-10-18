@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-25
+ * \updates       2021-10-18
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -133,6 +133,8 @@ private:
     void convert_t (midipulse ticks, int & x);
     void drop_event (midipulse tick);
     void set_adding (bool adding);
+    bool movement_key_press (int key);
+    void move_selected_events (midipulse dt);
 
 private:
 

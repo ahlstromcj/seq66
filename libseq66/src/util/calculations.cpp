@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-10-17
+ * \updates       2021-10-18
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -985,11 +985,11 @@ tempo_us_to_bytes (midibyte t[3], midibpm tempo_us)
 midibyte
 tempo_to_note_value (midibpm tempovalue)
 {
-    double slope = double(c_midibyte_value_max);
+    double slope = double(max_midi_value());
     slope /= usr().midi_bpm_maximum() - usr().midi_bpm_minimum();
 
     int note = int(slope * (tempovalue - usr().midi_bpm_minimum()) + 0.5);
-    return clamp_midibyte_value(midibyte(note));
+    return clamp_midibyte_value(note);
 }
 
 /**
@@ -1086,7 +1086,7 @@ note_value_to_tempo (midibyte note)
 {
     double slope = usr().midi_bpm_maximum() - usr().midi_bpm_minimum();
     slope *= double(note);
-    slope /= double(c_midibyte_value_max);
+    slope /= double(max_midi_value());
     slope += usr().midi_bpm_minimum();
     return slope;
 }
@@ -1140,8 +1140,9 @@ pulse_divide (midipulse numerator, midipulse denominator, midipulse & remainder)
                     length
 \endverbatim
  *
- *  The speed ranges from 0 to 16; the ratio of tick/seqlength ranges from 0
- *  to 1; BW (beat width) is generally 4; the phase ranges from 0 to 1.
+ *  The speed (number of periods in the transformation) ranges from 0 to 16 in
+ *  the user interface; the ratio of tick/seqlength ranges from 0 to 1; the
+ *  phase ranges from 0 to 1, equivalent to 0 to 360 degrees.
  *
  * \param angle
  *      Provides the radial "angle" to be applied. Assuming that the "speed"
@@ -1160,29 +1161,31 @@ pulse_divide (midipulse numerator, midipulse denominator, midipulse & remainder)
  */
 
 double
-wave_func (double angle, wave wavetype)
+wave_func (double angle, waveform wavetype)
 {
-    static double s_e = exp(2.0);                       /* 2.7182818 ^ 2.0  */
     double result = 0.0;
-    double tmp = 0.0;
-    double anglefixed = angle - int(angle);
+    double tmp;
+    double anglefixed;
     switch (wavetype)
     {
-    case wave::sine:
-        result = sin(2.0 * M_PI * angle);               /* angle in radians */
+    case waveform::sine:
+        tmp = 2.0 * M_PI * angle;                       /* angle in radians */
+        result = sin(tmp);
         break;
 
-    case wave::sawtooth:
+    case waveform::sawtooth:
+        anglefixed = angle - int(angle);
         tmp = 2.0 * anglefixed;
         result = tmp - 1.0;
         break;
 
-    case wave::reverse_sawtooth:
+    case waveform::reverse_sawtooth:
+        anglefixed = angle - int(angle);
         tmp = -2.0 * anglefixed;
         result = tmp + 1.0;
         break;
 
-    case wave::triangle:
+    case waveform::triangle:
         tmp = 2.0 * angle;
         result = (tmp - int(tmp));
         if ((int(tmp)) % 2 == 1)
@@ -1191,21 +1194,71 @@ wave_func (double angle, wave wavetype)
         result = 2.0 * result - 1.0;
         break;
 
-    case wave::exponential:
-        tmp = 2.0 * anglefixed;
-        result = exp(tmp) / s_e;
+    case waveform::exponential:
+        result = exp_normalize(angle);
         break;
 
-    case wave::reverse_exponential:
-        angle = 1.0 - angle;
-        anglefixed = angle - int(angle);
-        tmp = 2.0 * anglefixed;
-        result = exp(tmp) / s_e;
+    case waveform::reverse_exponential:
+        result = exp_normalize(angle, true);
         break;
 
     default:
         break;
     }
+    return result;
+}
+
+/**
+ *  Converts a double value to range from 0.0 to 1.0. That is, it returns the
+ *  fractional portion.  For example, 4.145 would become 0.145.
+ */
+
+double
+unit_truncation (double angle)
+{
+    double result = angle;
+    if (result > 1.0)
+    {
+        double truncated = trunc(result);
+        result -= truncated;
+    }
+    // printf("angle = %f, mod value = %f\n", angle, result);
+    return result;
+}
+
+/**
+ *  This function maps midibyte values from 0 to 127 to the range of
+ *  approximately e^(-2.436) to e^(+2.436), which is 0.884 to 11.314.
+ *  These values convert nicely to a range of 11.314 / 0.0884 = 128.
+ *
+ *  So we take the angle A:
+ *
+ *  -#  Convert A via truncation so it ranges from 0.0 to 1.0.  Call it T.
+ *  -#  Re-map A to range from Emin = -2.436 to Emax = 2.436. Call it A'.
+ *  -#  Take e to the power A'.
+ *  -#  Rescale the result to the range of 0.0 to 1.0, for use in the LFO
+ *      generator.
+ *
+ *  The re-mapping equations is y = mx + b, where the y-intercept is easily
+ *  seen to be b = Emin, and the slope is m = Emax - Emin = range.
+ *
+ *  For a reverse exponential, we simply negate the exponent
+ */
+
+double
+exp_normalize (double angle, bool negate)
+{
+    static const double s_range = log(double(max_midi_value())); /* 4.852 */
+    static const double s_exp_max = s_range / 2.0;               /* +2.42 */
+    static const double s_exp_min = -s_exp_max;                  /* -2.42 */
+    static const double s_scaler = exp(s_exp_min);
+    double T = unit_truncation(angle);
+    double Aprime = s_range * T + s_exp_min;
+    if (negate)
+        Aprime = -Aprime;
+
+    double result = exp(Aprime);
+    result *= s_scaler;
     return result;
 }
 
@@ -1221,29 +1274,39 @@ wave_func (double angle, wave wavetype)
  */
 
 std::string
-wave_type_name (wave wavetype)
+wave_type_name (waveform wavetype)
 {
     std::string result = "None";
     switch (wavetype)
     {
-    case wave::sine:
+    case waveform::sine:
 
         result = "Sine";
         break;
 
-    case wave::sawtooth:
+    case waveform::sawtooth:
 
         result = "Ramp Up Saw";
         break;
 
-    case wave::reverse_sawtooth:
+    case waveform::reverse_sawtooth:
 
         result = "Decay Saw";
         break;
 
-    case wave::triangle:
+    case waveform::triangle:
 
         result = "Triangle";
+        break;
+
+    case waveform::exponential:
+
+        result = "Exponential Rise";
+        break;
+
+    case waveform::reverse_exponential:
+
+        result = "Exponential Rise";
         break;
 
     default:

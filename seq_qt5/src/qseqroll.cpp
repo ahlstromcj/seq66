@@ -1510,10 +1510,10 @@ qseqroll::move_selected_notes (int dx, int dy)
     else
     {
         int snap_x = dx * snap();                   /* time-stamp snap  */
-        int snap_y = -dy;                           /* note pitch snap  */
         seq::pointer s = seq_pointer();
         if (s->any_selected_notes())                /* redundant!       */
         {
+            int snap_y = -dy;                       /* note pitch snap  */
             s->move_selected_notes(snap_x, snap_y);
         }
         else if (snap_x != 0)

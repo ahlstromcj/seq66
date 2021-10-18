@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-10-17
+ * \updates       2021-10-18
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -54,9 +54,9 @@ namespace seq66
  *  We still have to clarify these type values, though.
  */
 
-enum class wave
+enum class waveform
 {
-    none               = 0,     /**< No waveform, never used.           */
+    none = 0,                   /**< No waveform, never used.           */
     sine,                       /**< Sine wave modulation.              */
     sawtooth,                   /**< Saw-tooth (ramp) modulation.       */
     reverse_sawtooth,           /**< Reverse saw-tooth (decay).         */
@@ -69,7 +69,7 @@ enum class wave
  * Free functions in the seq66 namespace.
  */
 
-extern std::string wave_type_name (wave wv);
+extern std::string wave_type_name (waveform wv);
 extern int extract_timing_numbers
 (
     const std::string & s,
@@ -496,7 +496,9 @@ extern midipulse pulse_divide
     midipulse denominator,
     midipulse & remainder
 );
-extern double wave_func (double angle, wave wavetype);
+extern double wave_func (double angle, waveform wavetype);
+extern double unit_truncation (double angle);
+extern double exp_normalize (double angle, bool negate = false);
 extern bool extract_port_names
 (
     const std::string & fullname,

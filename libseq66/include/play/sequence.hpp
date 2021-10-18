@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-10-05
+ * \updates       2021-10-18
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -808,6 +808,11 @@ public:
         return m_events.any_selected_notes();
     }
 
+    bool any_selected_events (midibyte status, midibyte cc) const
+    {
+        return m_events.any_selected_events(status, cc);
+    }
+
     bool is_exportable () const
     {
         return ! get_song_mute() && trigger_count() > 0;
@@ -1531,8 +1536,8 @@ public:
     );
     void change_event_data_lfo
     (
-        double value, double range, double speed, double phase,
-        wave w, midibyte status, midibyte cc, bool usemeasure = false
+        double dcoffset, double range, double speed, double phase,
+        waveform w, midibyte status, midibyte cc, bool usemeasure = false
     );
     void increment_selected (midibyte status, midibyte /*control*/);
     void decrement_selected (midibyte status, midibyte /*control*/);

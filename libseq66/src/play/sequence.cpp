@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-10-16
+ * \updates       2021-10-18
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2167,7 +2167,7 @@ sequence::change_event_data_range
 {
     automutex locker(m_mutex);
     bool result = false;
-    bool noselection = ! m_events.any_selected_events(status, cc);
+    bool noselection = ! any_selected_events(status, cc);
     for (auto & er : m_events)
     {
         bool match = false;
@@ -2252,7 +2252,7 @@ sequence::change_event_data_relative
 {
     automutex locker(m_mutex);
     bool result = false;
-    bool noselection = ! m_events.any_selected_events(status, cc);
+    bool noselection = ! any_selected_events(status, cc);
     for (auto & er : m_events)
     {
         bool match = false;
@@ -2304,12 +2304,12 @@ sequence::change_event_data_relative
  *  Modifies data events according to the parameters active in the LFO window.
  *  If the event is in the selection, or there is no selection at all, and if
  *  it has the desired status and not CC, or the desired status and the correct
- *  control-change value, then we will modify (set) the event.
+ *  control-change number, then we will modify (set) the event.
  *
- * \param value
- *      Provides the base value for the event data value.  Ranges from 0 to
- *      127 in increments of 0.1.  This amount is added to the result of the
- *      wave_func() calculation.
+ * \param dcoffset
+ *      Provides the base amplitude for the event data value.  Ranges from 0
+ *      to 127 in increments of 0.1.  This amount is added to the result of
+ *      the wave_func() calculation.
  *
  * \param range
  *      Provides the range for the event data value.  Ranges from 0 to
@@ -2328,7 +2328,7 @@ sequence::change_event_data_relative
  *      module.
  *
  * \param status
- *      The status value for the events to modify.
+ *      The status (event number) for the events to modify.
  *
  * \param cc
  *      Provides the control-change value for Control Change events that are
@@ -2342,14 +2342,14 @@ sequence::change_event_data_relative
 void
 sequence::change_event_data_lfo
 (
-    double value, double range, double speed, double phase,
-    wave w, midibyte status, midibyte cc, bool usemeasure
+    double dcoffset, double range, double speed, double phase,
+    waveform w, midibyte status, midibyte cc, bool usemeasure
 )
 {
     automutex locker(m_mutex);
     m_events_undo.push(m_events);           /* experimental, seems to work  */
     double dlength = double(get_length());
-    bool noselection = ! m_events.any_selected_events(status, cc);
+    bool noselection = ! any_selected_events(status, cc);
     if (get_length() == 0)                  /* should never happen, though  */
         dlength = double(m_ppqn);
 
@@ -2366,8 +2366,9 @@ sequence::change_event_data_lfo
         {
             double dtick = double(er.timestamp());
             double angle = speed * dtick / dlength + phase;
-            int newdata = value + wave_func(angle, w) * range;
-            newdata = int(clamp_midibyte_value(newdata));   /* 0 to 127     */
+            double value = wave_func(angle, w);
+            int newdata = int(range * value + dcoffset);
+            newdata = int(abs_midibyte_value(newdata)); /* keep at 0 to 127 */
             if (er.is_tempo())
             {
                 midibpm tempo = note_value_to_tempo(midibyte(newdata));
@@ -2378,9 +2379,9 @@ sequence::change_event_data_lfo
                 midibyte d0, d1;
                 er.get_data(d0, d1);
                 if (event::is_one_byte_msg(status))
-                    d0 = newdata;
+                    d0 = midibyte(newdata);
                 else if (event::is_two_byte_msg(status))
-                    d1 = newdata;
+                    d1 = midibyte(newdata);
 
                 er.set_data(d0, d1);
             }
@@ -3870,7 +3871,7 @@ sequence::reset_draw_trigger_marker ()
  *
  * \param lowest
  *      A reference parameter to return the note with the lowest value.
- *      if there are no notes, then it is set to c_midibyte_value_max, and
+ *      if there are no notes, then it is set to max_midi_value(), and
  *      false is returned.
  *
  * \param highest
@@ -3888,7 +3889,7 @@ sequence::minmax_notes (int & lowest, int & highest) // const
 {
     automutex locker(m_mutex);
     bool result = false;
-    int low = int(c_midibyte_value_max);
+    int low = int(max_midi_value());
     int high = -1;
     for (auto & er : m_events)
     {

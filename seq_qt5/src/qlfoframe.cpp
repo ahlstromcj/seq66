@@ -39,9 +39,9 @@
 
 #include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
 #include "play/performer.hpp"           /* seq66::performer class           */
-#include "qlfoframe.hpp"
-#include "qseqdata.hpp"
-#include "qseqeditframe64.hpp"
+#include "qlfoframe.hpp"                /* seq66::qlfoframe class           */
+#include "qseqdata.hpp"                 /* seq66::qseqdata for status, CC   */
+#include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64, parent   */
 #include "util/calculations.hpp"        /* seq66::wave enum class values    */
 
 /*
@@ -105,22 +105,22 @@ qlfoframe::qlfoframe
     m_range         (s_range_def),
     m_speed         (s_speed_def),
     m_phase         (s_phase_min),
-    m_wave          (wave::none),
+    m_wave          (waveform::none),
     m_use_measure   (true)
 {
     ui->setupUi(this);
     connect(ui->m_button_reset, SIGNAL(clicked()), this, SLOT(reset()));
     connect(ui->m_button_close, SIGNAL(clicked()), this, SLOT(close()));
     m_wave_group = new QButtonGroup(this);
-    m_wave_group->addButton(ui->m_radio_wave_none, int(wave::none));
-    m_wave_group->addButton(ui->m_radio_wave_sine, int(wave::sine));
-    m_wave_group->addButton(ui->m_radio_wave_saw, int(wave::sawtooth));
-    m_wave_group->addButton(ui->m_radio_wave_revsaw, int(wave::reverse_sawtooth));
-    m_wave_group->addButton(ui->m_radio_wave_triangle, int(wave::triangle));
-    m_wave_group->addButton(ui->m_radio_wave_exp, int(wave::exponential));
+    m_wave_group->addButton(ui->m_radio_wave_none, int(waveform::none));
+    m_wave_group->addButton(ui->m_radio_wave_sine, int(waveform::sine));
+    m_wave_group->addButton(ui->m_radio_wave_saw, int(waveform::sawtooth));
+    m_wave_group->addButton(ui->m_radio_wave_revsaw, int(waveform::reverse_sawtooth));
+    m_wave_group->addButton(ui->m_radio_wave_triangle, int(waveform::triangle));
+    m_wave_group->addButton(ui->m_radio_wave_exp, int(waveform::exponential));
     m_wave_group->addButton
     (
-        ui->m_radio_wave_revexp, int(wave::reverse_exponential)
+        ui->m_radio_wave_revexp, int(waveform::reverse_exponential)
     );
     ui->m_radio_wave_none->setChecked(true);    /* match m_wave member init */
     connect
@@ -133,12 +133,7 @@ qlfoframe::qlfoframe
 #else
         QOverload<int>::of(&QButtonGroup::idClicked),
 #endif
-        [=](int id)
-        {
-            m_wave = static_cast<wave>(id);
-            reset();
-            scale_lfo_change(id);
-        }
+        [=](int id) { wave_type_change(id); }
     );
 
     /*
@@ -153,10 +148,7 @@ qlfoframe::qlfoframe
      * Order of calls is important here.
      */
 
-    ui->m_value_slider->setToolTip
-    (
-        "A DC offset for the calculation. Range: 0 to 127."
-    );
+    ui->m_value_slider->setToolTip("The DC offset for modulation, 0 to 127.");
     ui->m_value_slider->setMinimum(to_slider(s_value_min));
     ui->m_value_slider->setMaximum(to_slider(s_value_max));
     ui->m_value_slider->setValue(to_slider(m_value));
@@ -164,7 +156,7 @@ qlfoframe::qlfoframe
     connect
     (
         ui->m_value_slider, SIGNAL(valueChanged(int)),
-        this, SLOT(scale_lfo_change(int))
+        this, SLOT(scale_lfo_change())
     );
     connect
     (
@@ -176,10 +168,7 @@ qlfoframe::qlfoframe
      * Order of calls is important here.
      */
 
-    ui->m_range_slider->setToolTip
-    (
-        "Controls the depth of modulation. Range: 0 to 127."
-    );
+    ui->m_range_slider->setToolTip("Controls depth of modulation, 0 to 127.");
     ui->m_range_slider->setMinimum(to_slider(s_range_min));
     ui->m_range_slider->setMaximum(to_slider(s_range_max));
     ui->m_range_slider->setValue(to_slider(m_range));
@@ -187,7 +176,7 @@ qlfoframe::qlfoframe
     connect
     (
         ui->m_range_slider, SIGNAL(valueChanged(int)),
-        this, SLOT(scale_lfo_change(int))
+        this, SLOT(scale_lfo_change())
     );
     connect
     (
@@ -211,7 +200,7 @@ qlfoframe::qlfoframe
     connect
     (
         ui->m_speed_slider, SIGNAL(valueChanged(int)),
-        this, SLOT(scale_lfo_change(int))
+        this, SLOT(scale_lfo_change())
     );
     connect
     (
@@ -235,7 +224,7 @@ qlfoframe::qlfoframe
     connect
     (
         ui->m_phase_slider, SIGNAL(valueChanged(int)),
-        this, SLOT(scale_lfo_change(int))
+        this, SLOT(scale_lfo_change())
     );
     connect
     (
@@ -329,13 +318,21 @@ qlfoframe::phase_text_change ()
         ui->m_phase_slider->setValue(to_slider(v));
 }
 
+void
+qlfoframe::wave_type_change (int waveid)
+{
+    m_wave = static_cast<waveform>(waveid);
+    reset();
+    scale_lfo_change();
+}
+
 /**
  *  Changes the scaling provided by this window.  Changes take place right
  *  away in this callback, and would require multiple undoes to fully undo.
  */
 
 void
-qlfoframe::scale_lfo_change (int /*v*/)
+qlfoframe::scale_lfo_change ()
 {
     m_value = to_double(ui->m_value_slider->value());
     m_range = to_double(ui->m_range_slider->value());
@@ -366,7 +363,8 @@ qlfoframe::use_measure_clicked (int state)
     if (usem != m_use_measure)
     {
         m_use_measure = usem;
-        scale_lfo_change(0);        /* not reset() */
+        // m_wave = waveform::none;
+        scale_lfo_change();
     }
 }
 

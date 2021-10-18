@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-16
+ * \updates       2021-10-18
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -36,7 +36,7 @@
 #include <QFrame>
 
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */
-#include "util/calculations.hpp"        /* seq66::wave enum class type      */
+#include "util/calculations.hpp"        /* seq66::waveform enum class type  */
 
 /*
  *  Forward declarations for Qt.
@@ -66,7 +66,7 @@ namespace seq66
     class qseqeditframe64;
 
 /**
- *  This class is the Qt 5 version of the lfownd class.  It has one important
+ *  This class is the Qt 5 version of the lfownd class. It has one important
  *  difference, in that the wave type is chosen via radio-buttons, rather than
  *  a slider.  And the numbers can be edited directly.
  */
@@ -115,6 +115,7 @@ private:
     }
 
     void set_value_text (double value, QLineEdit * textline);
+    void wave_type_change (int waveid);
 
 signals:
 
@@ -125,7 +126,7 @@ private slots:
      *  buttonClicked() signal that sets the wave-form to use.
      */
 
-    void scale_lfo_change (int);
+    void scale_lfo_change ();
     void value_text_change ();
     void range_text_change ();
     void speed_text_change ();
@@ -219,7 +220,7 @@ private:
      *  Wave type.
      */
 
-    wave m_wave;
+    waveform m_wave;
 
     /**
      *  If true, use the measure as the range for periodicity, as opposed to

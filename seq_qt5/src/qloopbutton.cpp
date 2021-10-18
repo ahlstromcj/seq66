@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-10-04
+ * \updates       2021-10-18
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -375,14 +375,10 @@ qloopbutton::initialize_fingerprint ()
              * n0 and n1 as the min/max notes of the whole sequence.
              */
 
-            n1 += 12 / 6;
-            n1 = clamp_midibyte_value(midibyte(n1));
             n0 -= 12 / 6;
-            if (n0 < 0)
-                n0 = 0;
-            else
-                n0 = clamp_midibyte_value(midibyte(n0));
-
+            n0 = clamp_midibyte_value(n0);
+            n1 += 12 / 6;
+            n1 = clamp_midibyte_value(n1);
             for (int i = 0; i < i1; ++i)
                 m_fingerprint[i] = m_fingerprint_count[i] = 0;
 
@@ -771,7 +767,7 @@ qloopbutton::draw_pattern (QPainter & painter)
         }
         else
         {
-            int height = c_midibyte_value_max;
+            int height = max_midi_value();
             int n0, n1;
             if (m_note_max > 0)
             {
@@ -787,16 +783,15 @@ qloopbutton::draw_pattern (QPainter & painter)
                      * Added an octave of padding above and below for looks.
                      */
 
-                    n1 += 12;
-                    n1 = clamp_midibyte_value(midibyte(n1));
                     n0 -= 12;
-                    if (n0 < 0)
-                        n0 = 0;
+                    n0 = clamp_midibyte_value(n0);
+                    n1 += 12;
+                    n1 = clamp_midibyte_value(n1);
                 }
                 else
                 {
                     n0 = 0;
-                    n1 = 127;
+                    n1 = max_midi_value();
                 }
             }
             height = n1 - n0;

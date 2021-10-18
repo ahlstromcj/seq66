@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-09-29
+ * \updates       2021-10-18
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -578,13 +578,36 @@ is_good_midibyte (midibyte b)
 inline midibyte
 max_midibyte ()
 {
-    return c_midibyte_max;
+    return c_midibyte_max;          /* 255 */
 }
 
 inline midibyte
-clamp_midibyte_value (midibyte b)
+max_midi_value ()
 {
-    return b > c_midibyte_value_max ? c_midibyte_value_max : b ;
+    return c_midibyte_value_max;    /* 127 */
+}
+
+inline midibyte
+clamp_midibyte_value (int b)
+{
+    if (b < 0)
+        return 0;
+    else if (b > c_midibyte_value_max)
+        return c_midibyte_value_max;
+    else
+        return midibyte(b);
+}
+
+inline midibyte
+abs_midibyte_value (int b)
+{
+    if (b < 0)
+        b *= (-1);
+
+    if (b > c_midibyte_value_max)
+        return c_midibyte_value_max;
+    else
+        return midibyte(b);
 }
 
 /**

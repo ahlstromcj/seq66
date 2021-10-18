@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-27
+ * \updates       2021-10-18
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -88,7 +88,11 @@ qstriggereditor::qstriggereditor
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_timer = new QTimer(this);
     m_timer->setInterval(4 * usr().window_redraw_rate());
-    QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
+    QObject::connect
+    (
+        m_timer, SIGNAL(timeout()),
+        this, SLOT(conditional_update())
+    );
     m_timer->start();
 }
 
@@ -480,14 +484,15 @@ void
 qstriggereditor::keyPressEvent (QKeyEvent * event)
 {
     bool ret = false;
-    if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
+    int key = event->key();
+    if (key == Qt::Key_Delete || key == Qt::Key_Backspace)
     {
         seq_pointer()->remove_selected();
         ret = true;
     }
     if (event->modifiers() & Qt::ControlModifier)
     {
-        switch (event->key())
+        switch (key)
         {
         case Qt::Key_X: /* cut */
 
@@ -517,16 +522,18 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
     }
     if (! ret)
     {
-        if (event->key() == Qt::Key_P)
+        if (key == Qt::Key_P)
         {
             set_adding(true);
             ret = true;
         }
-        else if (event->key() == Qt::Key_X)
+        else if (key == Qt::Key_X)
         {
             set_adding(false);
             ret = true;
         }
+        else if (movement_key_press(key))
+            ret = true;
     }
     if (ret)
         flag_dirty();
@@ -538,6 +545,37 @@ void
 qstriggereditor::keyReleaseEvent (QKeyEvent *)
 {
     // no code
+}
+
+bool
+qstriggereditor::movement_key_press (int key)
+{
+    bool result = false;
+    if (seq_pointer()->any_selected_events(m_status, m_cc))
+    {
+        if (key == Qt::Key_Left)
+        {
+            move_selected_events(-1);
+            result = true;
+        }
+        else if (key == Qt::Key_Right)
+        {
+            move_selected_events(1);
+            result = true;
+        }
+    }
+    return result;
+}
+
+void
+qstriggereditor::move_selected_events (midipulse dt)
+{
+    seq::pointer s = seq_pointer();
+    if (s->any_selected_events(m_status, m_cc))
+    {
+        midipulse snap_t = dt * snap();                 /* time-stamp snap  */
+        s->move_selected_events(snap_t);
+    }
 }
 
 /**

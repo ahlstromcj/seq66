@@ -1,7 +1,7 @@
 # README for Seq66 0.97.1
 
 Chris Ahlstrom
-2015-09-10 to 2021-10-15
+2015-09-10 to 2021-10-18
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -85,7 +85,11 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.97.1:
-        *   Added tempo-track code to Edit / Preferences / MIDI Clock.
+        *   Added working tempo-track code to Edit / Preferences / MIDI Clock.
+        *   Added exponential ramping of Event Panel events to the pattern LFO
+            dialog.
+        *   Added the ability to move selected Event Panel events using the
+            Left/Right arrow keys.
         *   Improved the handling of sets and external live grids.
         *   Updated documentation extensively. Optimized some images.
         *   Stopped bootstrap --full-clean from removing Makefile.in files.
