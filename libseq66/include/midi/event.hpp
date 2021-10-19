@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-29
+ * \updates       2021-10-19
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -717,8 +717,6 @@ public:
         return m == EVENT_MIDI_SYSEX;
     }
 
-#if defined SEQ66_THIS_FUNCTION_IS_USED
-
     /**
      *  Static test for channel messages that are either not control-change
      *  messages, or are and match the given controller value.
@@ -748,8 +746,6 @@ public:
         m = mask_status(m);
         return (m != EVENT_CONTROL_CHANGE) || (datum == cc);
     }
-
-#endif
 
     /**
      *  Checks for a System Common status, which is supposed to clear any
@@ -1274,6 +1270,7 @@ public:
     }
 
     bool is_desired (midibyte status, midibyte cc) const;
+    bool is_desired_ex (midibyte status, midibyte cc) const; /* EXPERIMENT */
 
     /**
      *  Some keyboards send Note On with velocity 0 for Note Off, so we

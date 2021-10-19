@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-29
+ * \updates       2021-10-19
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -362,7 +362,7 @@ bool
 event::is_desired (midibyte status, midibyte cc) const
 {
     bool result;
-    if (event::is_tempo_status(status))
+    if (is_tempo_status(status))
     {
         result = is_tempo();
     }
@@ -372,6 +372,30 @@ event::is_desired (midibyte status, midibyte cc) const
         result = s == m_status;
         if (result && (s == EVENT_CONTROL_CHANGE))
             result = m_data[0] == cc;
+    }
+    return result;
+}
+
+/**
+ *  We should also match tempo events here.  But we have to treat them
+ *  differently from the matched status events.
+ */
+
+bool
+event::is_desired_ex (midibyte status, midibyte cc) const
+{
+    bool result;                            /* is_desired_cc_or_not_cc      */
+    bool match = match_status(status);
+    if (status == EVENT_CONTROL_CHANGE)
+    {
+        result = match && m_data[0] == cc;  /* correct status & correct CC  */
+    }
+    else
+    {
+        if (is_tempo())
+            result = true;                  /* Set tempo always editable    */
+        else
+            result = match;                 /* correct status and not CC    */
     }
     return result;
 }

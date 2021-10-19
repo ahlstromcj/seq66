@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-10-17
+ * \updates       2021-10-19
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -62,8 +62,7 @@
     QHBoxLayout | seqname : gridsnap : notelength : seqlength : ...         |
                  -----------------------------------------------------------
     QHBoxLayout | undo : redo : tools : zoomin : zoomout : scale : ...      |
-QVBoxLayout:     -----------------------------------------------------------
-QWidget container?
+    QVBoxLayout  -----------------------------------------------------------
     QScrollArea |   | qseqtime      (0, 1, 1, 1) Scroll horiz only      |   |
                 |-- |---------------------------------------------------|---|
                 | q |                                                   | v |
@@ -385,7 +384,7 @@ qseqeditframe64::qseqeditframe64
 #endif
     m_edit_bus              (seq_pointer()->seq_midi_bus()),
     m_edit_channel          (seq_pointer()->midi_channel()),  /* 0-15, null */
-    m_first_event           (0),
+    m_first_event           (max_midibyte()),
     m_first_event_name      ("(no events)"),
     m_have_focus            (false),
     m_edit_mode             (perf().edit_mode(seqid)),
@@ -2751,7 +2750,8 @@ qseqeditframe64::create_menu_image (bool state)
 }
 
 /**
- *  Function to create event menu entries.
+ *  Functions to create event menu entries.  The first overload handles
+ *  CC events, and the section handles the other kinds of events.
  */
 
 void
@@ -2777,11 +2777,11 @@ qseqeditframe64::set_event_entry
         item, &QAction::triggered,
         std::bind(&qseqeditframe64::set_data_type, this, status, control)
     );
-    if (present && m_first_event == 0)
+    if (present && m_first_event == max_midibyte())
     {
         m_first_event = status;
         m_first_event_name = text;
-        set_data_type(status, 0);       // need m_first_control value!
+        set_data_type(status, control);       // need m_first_control value?
     }
 }
 
@@ -2809,11 +2809,11 @@ qseqeditframe64::set_event_entry
         item, &QAction::triggered,
         std::bind(&qseqeditframe64::set_data_type, this, status, 0)
     );
-    if (present && m_first_event == 0)
+    if (present && m_first_event == max_midibyte())
     {
         m_first_event = status;
         m_first_event_name = text;
-        set_data_type(status, 0);
+        set_data_type(status);
     }
 }
 
@@ -2950,16 +2950,8 @@ qseqeditframe64::data ()
 {
     if (not_nullptr(m_minidata_popup))
     {
-        m_minidata_popup->exec
-        (
-            ui->m_button_data->mapToGlobal
-            (
-                QPoint
-                (
-                    ui->m_button_data->width()-2, ui->m_button_data->height()-2
-                )
-            )
-        );
+        QPoint bwh(ui->m_button_data->width()-2, ui->m_button_data->height()-2);
+        m_minidata_popup->exec(ui->m_button_data->mapToGlobal(bwh));
     }
 }
 
@@ -3049,10 +3041,8 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
 
     auto cev = s->cbegin();
     if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
-    {
-        any_events = true;
-        tempo = true;
-    }
+        tempo = any_events = true;
+
     if (not_nullptr(m_minidata_popup))
         delete m_minidata_popup;
 
@@ -3082,7 +3072,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
         m_minidata_popup->addSeparator();
 
     /**
-     *  Create the one menu for the controller changes that actually exist in
+     *  Create the menu for the controller changes that actually exist in
      *  the track, if any.
      */
 

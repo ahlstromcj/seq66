@@ -3383,6 +3383,7 @@ qsmainwnd::on_sequence_change (seq::number seqno, bool redo)
     {
         m_live_frame->update_sequence(seqno, redo);
         m_is_title_dirty = true;                        /* EXPERIMENTAL */
+        ui->actionSave->setEnabled(perf().modified());  /* EXPERIMENTAL */
     }
     return result;
 }
@@ -3392,8 +3393,10 @@ qsmainwnd::on_trigger_change (seq::number seqno)
 {
     bool result = not_nullptr(m_live_frame);
     if (result)
+    {
         m_live_frame->refresh(seqno);
-
+        ui->actionSave->setEnabled(perf().modified());  /* EXPERIMENTAL */
+    }
     return result;
 }
 

@@ -2172,7 +2172,7 @@ sequence::change_event_data_range
     {
         bool match = false;
         if (noselection || er.is_selected())
-            match = er.is_desired(status, cc);
+            match = er.is_desired_ex(status, cc);
 
         midipulse tick = er.timestamp();
         if (match)
@@ -2257,7 +2257,7 @@ sequence::change_event_data_relative
     {
         bool match = false;
         if (noselection || er.is_selected())
-            match = er.is_desired(status, cc);
+            match = er.is_desired_ex(status, cc);
 
         midipulse tick = er.timestamp();
         if (match)
@@ -2347,7 +2347,7 @@ sequence::change_event_data_lfo
 )
 {
     automutex locker(m_mutex);
-    m_events_undo.push(m_events);           /* experimental, seems to work  */
+    bool modified = false;
     double dlength = double(get_length());
     bool noselection = ! any_selected_events(status, cc);
     if (get_length() == 0)                  /* should never happen, though  */
@@ -2356,11 +2356,12 @@ sequence::change_event_data_lfo
     if (usemeasure)
         dlength = double(measures_to_ticks());
 
+    m_events_undo.push(m_events);           /* experimental, seems to work  */
     for (auto & er : m_events)
     {
         bool match = false;
         if (noselection || er.is_selected())
-            match = er.is_desired(status, cc);
+            match = er.is_desired_ex(status, cc);
 
         if (match)
         {
@@ -2385,8 +2386,11 @@ sequence::change_event_data_lfo
 
                 er.set_data(d0, d1);
             }
+            modified = true;
         }
     }
+    if (modified)
+        modify();
 }
 
 /**
@@ -4185,7 +4189,12 @@ sequence::get_next_event_match
         {
             midibyte d0;
             drawevent.get_data(d0);
-            ok = drawevent.is_desired(status, cc);
+
+            /*
+             * Broken for this purpose: ok = drawevent.is_desired(status, cc);
+             */
+
+            ok = istempo || event::is_desired_cc_or_not_cc(status, cc, d0);
             if (ok)
                 return true;                    /* must ++evi after call    */
         }

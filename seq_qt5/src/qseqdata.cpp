@@ -186,7 +186,6 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             int event_height = event::is_one_byte_msg(m_status) ? d0 : d1 ;
             event_height = height() - byte_height(m_dataarea_y, event_height);
             pen.setWidth(2);
-            if (is_tempo())
             if (cev->is_tempo() && is_tempo())
             {
                 d1 = height() - tempo_to_note_value(cev->tempo());

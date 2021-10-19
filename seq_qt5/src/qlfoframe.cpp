@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-17
+ * \updates       2021-10-18
  * \license       GNU GPLv2 or above
  *
  *  The LFO (low-frequency oscillator) provides a way to modulate the
@@ -106,21 +106,25 @@ qlfoframe::qlfoframe
     m_speed         (s_speed_def),
     m_phase         (s_phase_min),
     m_wave          (waveform::none),
-    m_use_measure   (true)
+    m_use_measure   (true),
+    m_is_modified   (false)
 {
     ui->setupUi(this);
     connect(ui->m_button_reset, SIGNAL(clicked()), this, SLOT(reset()));
     connect(ui->m_button_close, SIGNAL(clicked()), this, SLOT(close()));
     m_wave_group = new QButtonGroup(this);
-    m_wave_group->addButton(ui->m_radio_wave_none, int(waveform::none));
-    m_wave_group->addButton(ui->m_radio_wave_sine, int(waveform::sine));
-    m_wave_group->addButton(ui->m_radio_wave_saw, int(waveform::sawtooth));
-    m_wave_group->addButton(ui->m_radio_wave_revsaw, int(waveform::reverse_sawtooth));
-    m_wave_group->addButton(ui->m_radio_wave_triangle, int(waveform::triangle));
-    m_wave_group->addButton(ui->m_radio_wave_exp, int(waveform::exponential));
+    m_wave_group->addButton(ui->m_radio_wave_none, cast(waveform::none));
+    m_wave_group->addButton(ui->m_radio_wave_sine, cast(waveform::sine));
+    m_wave_group->addButton(ui->m_radio_wave_saw, cast(waveform::sawtooth));
     m_wave_group->addButton
     (
-        ui->m_radio_wave_revexp, int(waveform::reverse_exponential)
+        ui->m_radio_wave_revsaw, cast(waveform::reverse_sawtooth)
+    );
+    m_wave_group->addButton(ui->m_radio_wave_triangle, cast(waveform::triangle));
+    m_wave_group->addButton(ui->m_radio_wave_exp, cast(waveform::exponential));
+    m_wave_group->addButton
+    (
+        ui->m_radio_wave_revexp, cast(waveform::reverse_exponential)
     );
     ui->m_radio_wave_none->setChecked(true);    /* match m_wave member init */
     connect
@@ -255,6 +259,8 @@ qlfoframe::qlfoframe
 qlfoframe::~qlfoframe()
 {
     delete ui;
+    if (m_is_modified)
+        perf().modify();
 }
 
 /**
@@ -354,6 +360,7 @@ qlfoframe::scale_lfo_change ()
     ui->m_speed_text->setText(tmp);
     snprintf(tmp, sizeof tmp, "%g", m_phase);
     ui->m_phase_text->setText(tmp);
+    m_is_modified = true;
 }
 
 void
@@ -363,7 +370,6 @@ qlfoframe::use_measure_clicked (int state)
     if (usem != m_use_measure)
     {
         m_use_measure = usem;
-        // m_wave = waveform::none;
         scale_lfo_change();
     }
 }
@@ -374,6 +380,7 @@ qlfoframe::reset ()
     m_seq->events() = m_backup_events;
     m_seq->set_dirty();
     m_seqdata.set_dirty();
+    m_is_modified = false;
 }
 
 void
@@ -381,6 +388,9 @@ qlfoframe::closeEvent (QCloseEvent * event)
 {
     if (not_nullptr(m_edit_frame))
         m_edit_frame->remove_lfo_frame();
+
+    if (m_is_modified)
+        perf().modify();
 
     event->accept();
 }

@@ -592,8 +592,8 @@ clamp_midibyte_value (int b)
 {
     if (b < 0)
         return 0;
-    else if (b > c_midibyte_value_max)
-        return c_midibyte_value_max;
+    else if (b > max_midi_value())
+        return max_midi_value();
     else
         return midibyte(b);
 }
@@ -602,10 +602,10 @@ inline midibyte
 abs_midibyte_value (int b)
 {
     if (b < 0)
-        b *= (-1);
+        b = -b;
 
-    if (b > c_midibyte_value_max)
-        return c_midibyte_value_max;
+    if (b > max_midi_value())
+        return max_midi_value();
     else
         return midibyte(b);
 }

@@ -69,6 +69,12 @@ enum class waveform
  * Free functions in the seq66 namespace.
  */
 
+inline int
+cast (waveform wv)
+{
+    return static_cast<int>(wv);
+}
+
 extern std::string wave_type_name (waveform wv);
 extern int extract_timing_numbers
 (

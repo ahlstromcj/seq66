@@ -416,7 +416,7 @@ private:
     /**
      *  Indicates the first event found in the sequence while setting up the
      *  data menu via set_event_entry().  If no events exist, the value is
-     *  0x00.
+     *  max_midibyte() [0xFF].
      */
 
     midibyte m_first_event;

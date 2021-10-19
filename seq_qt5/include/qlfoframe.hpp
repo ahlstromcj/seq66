@@ -95,6 +95,11 @@ protected:
 
 private:
 
+    performer & perf ()
+    {
+        return m_performer;
+    }
+
     /**
      *  Converts a slider value to a double value.  Slider values are a 100
      *  times (m_scale_factor) what they need to be.
@@ -228,6 +233,12 @@ private:
      */
 
     bool m_use_measure;
+
+    /**
+     *  Indicates the LFO modified status.
+     */
+
+    bool m_is_modified;
 
 };          // class qlfoframe
 
