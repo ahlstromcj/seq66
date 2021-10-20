@@ -1,5 +1,127 @@
+2021-10-20  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, VERSION, configure.ac, contrib/code/qseqeditframe.cpp,
+	contrib/code/qsliveframe.cpp, data/samples/textfix.qss,
+	doc/latex/tex/configuration.tex,
+	doc/latex/tex/seq66-user-manual.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/seq66_features.hpp,
+	libseq66/include/sessions/clinsmanager.hpp,
+	libseq66/include/util/basic_macros.hpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/seq66_features.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/basic_macros.cpp,
+	libsessions/src/nsm/nsmbase.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/forms/qslivegrid.ui, seq_qt5/include/qt5_helpers.hpp,
+	seq_qt5/src/qclocklayout.cpp, seq_qt5/src/qinputcheckbox.cpp,
+	seq_qt5/src/qlfoframe.cpp, seq_qt5/src/qmutemaster.cpp,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qperfnames.cpp,
+	seq_qt5/src/qplaylistframe.cpp, seq_qt5/src/qsbuildinfo.cpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qseqeditex.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: Work on issue #57, issue #58, issue
+	#59, and issue #61.
+
+2021-10-19  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/include/util/calculations.hpp,
+	libseq66/src/midi/event.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qlfoframe.hpp, seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qlfoframe.cpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsmainwnd.cpp: Fixed
+	regression in note display in data/event panels, some minor doc and
+	code updates.
+
+2021-10-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, contrib/code/qsliveframe.cpp,
+	doc/latex/tex/pattern_editor.tex,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/util/calculations.hpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/util/calculations.cpp, seq_qt5/include/qlfoframe.hpp,
+	seq_qt5/include/qstriggereditor.hpp, seq_qt5/src/qlfoframe.cpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qstriggereditor.cpp: Exponential LFO basically done.
+
+2021-10-17  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/util/calculations.hpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/util/calculations.cpp,
+	seq_qt5/forms/qlfoframe.ui, seq_qt5/forms/qseqeditex.ui,
+	seq_qt5/forms/qseqeditframe64.ui, seq_qt5/src/qlfoframe.cpp,
+	seq_qt5/src/qseqeditex.cpp, seq_qt5/src/qseqeditframe64.cpp: Added
+	exponential LFO, still needs work.
+
+2021-10-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/pattern_editor.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/play/sequence.hpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qlfoframe.hpp, seq_qt5/include/qperfnames.hpp,
+	seq_qt5/src/qlfoframe.cpp, seq_qt5/src/qperfeditframe64.cpp,
+	seq_qt5/src/qperfnames.cpp: Interim check-in, very minor doc and
+	code updates.
+
+2021-10-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, doc/latex/tex/patterns_panel.tex,
+	seq_qt5/forms/qliveframeex.ui, seq_qt5/forms/qslivegrid.ui,
+	seq_qt5/include/qslivegrid.hpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmaintime.cpp,
+	seq_qt5/src/qsmainwnd.cpp: PNG optimization, set fixes, more tweaks.
+
+2021-10-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, contrib/scripts/make-checkout, debian/README,
+	doc/latex/tex/configuration.tex, doc/latex/tex/event_editor.tex,
+	doc/latex/tex/menu.tex, doc/latex/tex/pattern_editor.tex,
+	doc/latex/tex/patterns_panel.tex, doc/latex/tex/references.tex,
+	doc/latex/tex/song_editor.tex, libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/forms/qperfeditframe64.ui, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/forms/qseqeventframe.ui, seq_qt5/forms/qsessionframe.ui,
+	seq_qt5/forms/qslivegrid.ui, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qslivebase.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Interim
+	check-in, notable doc upgrade, many little fixes.
+
+2021-10-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, Makefile.in, README.md, VERSION, aux-files/ltmain.sh,
+	bootstrap, configure, configure.ac,
+	contrib/scripts/strap_functions, data/README,
+	data/linux/qseq66.ctrl, data/linux/qseq66.drums,
+	data/linux/qseq66.mutes, data/linux/qseq66.palette,
+	data/linux/qseq66.playlist, data/linux/qseq66.rc,
+	data/linux/qseq66.usr, data/readme.txt, data/readme.windows,
+	doc/latex/tex/menu.tex, doc/latex/tex/midi_export.tex,
+	doc/latex/tex/midi_formats.tex,
+	doc/latex/tex/seq66-user-manual.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/seq66_features.hpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/seq66_features.cpp,
+	nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
+	nsis/build_release_package.bat, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/src/palettefile.cpp, seq_qt5/src/qseditoptions.cpp: Minor
+	tweaks to version, icons, UI, preferences dialog, and documentation.
+
 2021-10-12  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* Makefile.in, VERSION, configure, configure.ac,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h: Setup for 0.97.1.
+	* ChangeLog, seq_qt5/forms/qsmainwnd.ui: Version 0.97.0 pending.
 	* INSTALL, Makefile.in, Seq66cli/Makefile.in, Seq66qt5/Makefile.in,
 	VERSION, configure, configure.ac, contrib/scripts/QjackCtl.conf,
 	contrib/scripts/README, contrib/scripts/htmldoc, data/Makefile.in,
