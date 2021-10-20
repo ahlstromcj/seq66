@@ -819,7 +819,7 @@ private:
      *  stored in the "usr" file.  It is treated like a pseudo-global flag.
      */
 
-    bool m_in_session;
+    bool m_in_nsm_session;
 
     /**
      *  [new-pattern-editor]
@@ -1462,9 +1462,9 @@ public:
         return m_session_manager == session::jack;
     }
 
-    bool in_session () const
+    bool in_nsm_session () const
     {
-        return m_in_session;
+        return m_in_nsm_session;
     }
 
     const std::string & session_url () const
@@ -1594,9 +1594,9 @@ public:         // used in main application module and the usrfile class
     bool  progress_box_size (double w, double h);
     void session_manager (const std::string & sm);
 
-    void in_session (bool f)
+    void in_nsm_session (bool f)
     {
-        m_in_session = f;
+        m_in_nsm_session = f;
     }
 
     void session_url (const std::string & value)

@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-09-15
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -42,6 +42,7 @@
 #include "palettefile.hpp"              /* seq66::palette_file config file  */
 #include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager              */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd (main window)   */
+#include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 #if defined SEQ66_NSM_SUPPORT
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm access functions      */
@@ -162,7 +163,7 @@ qt5nsmanager::create_window ()
     {
         performer * p = perf();
         std::string mfname = midi_filename();
-        bool usensm = usr().in_session();           /* not nsm_active()!    */
+        bool usensm = usr().in_nsm_session();       /* not nsm_active()!    */
         if (rc().palette_active())
         {
             std::string palfile = rc().palette_filespec();
@@ -258,7 +259,7 @@ qt5nsmanager::create_window ()
         std::string ssname = rc().style_sheet_filespec();
         if (! ssname.empty())
         {
-            QFile file(QString::fromStdString(ssname));
+            QFile file(qt(ssname));
             bool ok = file.open(QFile::ReadOnly);
             if (ok)
             {

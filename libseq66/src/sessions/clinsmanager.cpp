@@ -164,8 +164,8 @@ clinsmanager::create_session (int argc, char * argv [])
              * Use the same name as provided when opening the JACK client.
              */
 
-            std::string appname = seq_client_name();    /* "seq66"  */
-            std::string exename = seq_arg_0();          /* "qseq66" */
+            std::string appname = seq_client_name();    /* "seq66"          */
+            std::string exename = seq_arg_0();          /* "qseq66"         */
             result = m_nsm_client->announce(appname, exename, capabilities());
             if (! result)
                 file_error("Create session", "failed to announce");
@@ -177,7 +177,7 @@ clinsmanager::create_session (int argc, char * argv [])
             result = true;
 
         nsm_active(result);                             /* class flag       */
-        usr().in_session(result);                       /* global flag      */
+        usr().in_nsm_session(result);                   /* global flag      */
         (void) smanager::create_session(argc, argv);
         return result;
     }
@@ -198,11 +198,11 @@ bool
 clinsmanager::close_session (std::string & msg, bool ok)
 {
 #if defined SEQ66_NSM_SUPPORT
-    if (usr().in_session())
+    if (usr().in_nsm_session())
     {
         warnprint("Closing NSM session");
         nsm_active(false);                              /* class flag       */
-        usr().in_session(false);                        /* global flag      */
+        usr().in_nsm_session(false);                    /* global flag      */
         m_nsm_client->close_session();
 
         /*
@@ -221,7 +221,7 @@ bool
 clinsmanager::detach_session (std::string & msg, bool ok)
 {
 #if defined SEQ66_NSM_SUPPORT
-    if (usr().in_session())
+    if (usr().in_nsm_session())
     {
         warnprint("Detaching (closing) NSM session");
         nsm_active(false);                              /* class flag       */

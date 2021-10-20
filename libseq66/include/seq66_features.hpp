@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2020-10-13
+ * \updates       2020-10-20
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -64,6 +64,18 @@
 namespace seq66
 {
 
+/**
+ *  An indicator of the message level.
+ */
+
+enum class msglevel
+{
+    none,
+    info,
+    warn,
+    error
+};
+
 /*
  * Global (free) functions.
  */
@@ -84,6 +96,8 @@ extern const std::string & seq_app_tag ();
 extern const std::string & seq_app_type ();
 extern const std::string & seq_arg_0 ();
 extern const std::string & seq_client_name ();
+extern const std::string & seq_client_short ();
+extern std::string seq_client_tag (msglevel el = msglevel::none);
 extern const std::string & seq_package_name ();
 extern const std::string & seq_version ();
 extern const std::string & seq_version_text ();

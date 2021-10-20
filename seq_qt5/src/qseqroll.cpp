@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-27
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -45,6 +45,7 @@
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qseqkeys.hpp"                 /* seq66::qseqkeys class            */
 #include "qseqroll.hpp"                 /* seq66::qseqroll class            */
+#include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -764,7 +765,7 @@ qseqroll::draw_drum_note (QPainter & painter, int x, int y)
 void
 qseqroll::draw_tempo (QPainter & painter, int x, int y, int velocity)
 {
-    QString v = QString::fromStdString(std::to_string(velocity));
+    QString v = qt(std::to_string(velocity));
     int h = int(0.75 * unit_height());
     painter.drawEllipse(x, y, h, h);
     painter.drawText(x, y - 2, v);
@@ -1704,7 +1705,7 @@ qseqroll::analyze_seq_notes ()
 
         m_analysis_msg = new QMessageBox(this);
         m_analysis_msg->setWindowTitle("Estimated Scale(s)");
-        m_analysis_msg->setText(QString::fromStdString(message));
+        m_analysis_msg->setText(qt(message));
         m_analysis_msg->setModal(false);
         m_analysis_msg->show();
     }

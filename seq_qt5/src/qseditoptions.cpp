@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-14
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -37,10 +37,11 @@
 #include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 #include "gui_palette_qt5.hpp"          /* seq66::global_palette()          */
 #include "palettefile.hpp"              /* seq66::palettefile class         */
-#include "qclocklayout.hpp"
-#include "qinputcheckbox.hpp"
-#include "qseditoptions.hpp"
-#include "qsmainwnd.hpp"
+#include "qclocklayout.hpp"             /* seq66::qclocklayout class        */
+#include "qinputcheckbox.hpp"           /* seq66::qinputcheckbox class      */
+#include "qseditoptions.hpp"            /* seq66::qseditoptions dialog      */
+#include "qsmainwnd.hpp"                /* seq66::qsmainwnd master class    */
+#include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 #if defined SEQ66_NSM_SUPPORT
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase's get_url()       */
@@ -366,7 +367,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * 'rc' file.  This file is always active, so that check-box is read-only.
      */
 
-    QString filename = QString::fromStdString(rc().config_filename());
+    QString filename = qt(rc().config_filename());
     ui->checkBoxSaveRc->setChecked(rc().auto_rc_save());
     connect
     (
@@ -385,7 +386,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * 'usr' file. Making 'usr' inactive is experimental.
      */
 
-    filename = QString::fromStdString(rc().user_filename());
+    filename = qt(rc().user_filename());
     ui->checkBoxSaveUsr->setChecked(rc().auto_usr_save());
     connect
     (
@@ -409,7 +410,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * 'mutes' file
      */
 
-    filename = QString::fromStdString(rc().mute_group_filename());
+    filename = qt(rc().mute_group_filename());
     ui->checkBoxSaveMutes->setChecked(rc().auto_mutes_save());
     connect
     (
@@ -433,7 +434,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * 'playlist' file
      */
 
-    filename = QString::fromStdString(rc().playlist_filename());
+    filename = qt(rc().playlist_filename());
     ui->checkBoxSavePlaylist->setChecked(rc().auto_playlist_save());
     connect
     (
@@ -458,7 +459,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * application is running, the "auto-save" check-box is read-only.
      */
 
-    filename = QString::fromStdString(rc().midi_control_filename());
+    filename = qt(rc().midi_control_filename());
     ui->checkBoxSaveCtrl->setChecked(rc().auto_ctrl_save());    /* read-only */
     ui->checkBoxActiveCtrl->setChecked(rc().midi_control_active());
     connect
@@ -478,7 +479,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * application is running, the "auto-save" check-box is read-only.
      */
 
-    filename = QString::fromStdString(rc().notemap_filename());
+    filename = qt(rc().notemap_filename());
     ui->checkBoxSaveDrums->setChecked(rc().auto_drums_save());  /* read-only */
     ui->checkBoxActiveDrums->setChecked(rc().notemap_active());
     connect
@@ -501,7 +502,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     if (palname.empty())
         palname = rc().application_name() + ".palette";
 
-    filename = QString::fromStdString(palname);
+    filename = qt(palname);
     ui->checkBoxSavePalette->setChecked(rc().auto_palette_save());
     connect
     (
@@ -537,7 +538,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * Also note that this refers to a Qt Style Sheet.
      */
 
-    filename = QString::fromStdString(usr().style_sheet());
+    filename = qt(usr().style_sheet());
     ui->checkBoxSaveStyleSheet->setChecked(rc().auto_qss_save());  /* read-only */
     ui->checkBoxActiveStyleSheet->setChecked(usr().style_sheet_active());
     connect
@@ -637,9 +638,9 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      */
 
     std::string value = std::to_string(rc().manual_port_count());
-    ui->lineEditOutputCount->setText(QString::fromStdString(value));
+    ui->lineEditOutputCount->setText(qt(value));
     value = std::to_string(rc().manual_in_port_count());
-    ui->lineEditInputCount->setText(QString::fromStdString(value));
+    ui->lineEditInputCount->setText(qt(value));
     connect
     (
         ui->lineEditOutputCount, SIGNAL(editingFinished()),
@@ -701,7 +702,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     sync();
 
     std::string clid = perf().client_id_string();
-    ui->lineEditClientId->setText(QString::fromStdString(clid));
+    ui->lineEditClientId->setText(qt(clid));
     m_is_initialized = true;
 
 #if defined SEQ66_PLATFORM_WINDOWS
@@ -726,13 +727,13 @@ qseditoptions::set_ppqn_combo ()
     if (count > 0)
     {
         std::string p = std::to_string(usr().default_ppqn());
-        QString combo_text = QString::fromStdString(p);
+        QString combo_text = qt(p);
         ui->combo_box_ppqn->clear();
         ui->combo_box_ppqn->insertItem(0, combo_text);
         for (int i = 1; i < count; ++i)
         {
             p = m_ppqn_list.at(i);
-            combo_text = QString::fromStdString(p);
+            combo_text = qt(p);
             ui->combo_box_ppqn->insertItem(i, combo_text);
             if (string_to_int(p) == perf().ppqn())
                 result = true;
@@ -862,29 +863,47 @@ qseditoptions::show_session (usrsettings::session sm)
             tenturl = rc().jack_session();          /* JACK session UUID    */
         }
     }
-    switch (sm)
+    if (usr().in_nsm_session())
     {
-        case usrsettings::session::none:
-            ui->radio_session_none->setChecked(true);
-            ui->label_nsm_url->setText("UUID N/A");
-            break;
-
-        case usrsettings::session::nsm:
+        ui->radio_session_none->setChecked(false);
+        ui->radio_session_none->setEnabled(false);
+        ui->radio_session_jack->setChecked(false);
+        ui->radio_session_jack->setEnabled(false);
 #if defined SEQ66_NSM_SUPPORT
-            ui->radio_session_nsm->setChecked(true);
-            ui->label_nsm_url->setText("NSM URL");
-            ui->lineEditNsmUrl->setText(QString::fromStdString(tenturl));
+        ui->radio_session_nsm->setChecked(true);
+        ui->radio_session_nsm->setEnabled(false);
+        ui->label_nsm_url->setText("NSM URL");
+        ui->lineEditNsmUrl->setText(qt(tenturl));
 #endif
-            break;
+    }
+    else
+    {
+        switch (sm)
+        {
+            case usrsettings::session::none:
+                ui->radio_session_none->setChecked(true);
+                ui->label_nsm_url->setText("UUID N/A");
+                break;
 
-        case usrsettings::session::jack:
-            ui->radio_session_jack->setChecked(true);
-            ui->label_nsm_url->setText("JACK UUID");
-            ui->lineEditNsmUrl->setText(QString::fromStdString(tenturl));
-            break;
+            case usrsettings::session::nsm:
+#if defined SEQ66_NSM_SUPPORT
+                ui->radio_session_nsm->setChecked(true);
+                ui->label_nsm_url->setText("NSM URL");
+                ui->lineEditNsmUrl->setText(qt(tenturl));
+#endif
+                break;
 
-        default:
-            break;
+            case usrsettings::session::jack:
+#if defined SEQ66_JACK_SESSION
+                ui->radio_session_jack->setChecked(true);
+                ui->label_nsm_url->setText("JACK UUID");
+                ui->lineEditNsmUrl->setText(qt(tenturl));
+#endif
+                break;
+
+            default:
+                break;
+        }
     }
     ui->lineEditNsmUrl->setEnabled(url_modifiable);
 }
@@ -1577,7 +1596,7 @@ qseditoptions::slot_virtual_out_count ()
     rc().manual_port_count(count);
 
     std::string value = std::to_string(rc().manual_port_count());
-    ui->lineEditOutputCount->setText(QString::fromStdString(value));
+    ui->lineEditOutputCount->setText(qt(value));
 }
 
 void
@@ -1588,7 +1607,7 @@ qseditoptions::slot_virtual_in_count ()
     rc().manual_in_port_count(count);
 
     std::string value = std::to_string(rc().manual_in_port_count());
-    ui->lineEditInputCount->setText(QString::fromStdString(value));
+    ui->lineEditInputCount->setText(qt(value));
 }
 
 }           // namespace seq66

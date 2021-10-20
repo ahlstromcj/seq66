@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-15
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -41,9 +41,10 @@
 #include <QPainter>
 #include <QPen>
 
-#include "play/performer.hpp"
-#include "gui_palette_qt5.hpp"
-#include "qperfnames.hpp"
+#include "play/performer.hpp"           /* seq66::performer class           */
+#include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5 class     */
+#include "qperfnames.hpp"               /* seq66::qperfnames panel class    */
+#include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -153,7 +154,7 @@ qperfnames::paintEvent (QPaintEvent *)
                 pen.setColor(Qt::black);                // bank name sideways
                 painter.setPen(pen);
                 painter.save();                         // {
-                QString bank(QString::fromStdString(perf().bank_name(bank_id)));
+                QString bank(qt(perf().bank_name(bank_id)));
                 painter.translate(12, text_y + bank.length() * 4);
                 painter.rotate(270);
                 painter.drawText(0, 0, bank);

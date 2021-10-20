@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-09-28
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -38,6 +38,7 @@
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "util/filefunctions.hpp"       /* seq66::filename_split()          */
 #include "qseqeventframe.hpp"           /* seq66::qseqeventframe            */
+#include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 #if defined SEQ66_QMAKE_RULES
 #include "forms/ui_qseqeventframe.h"
@@ -105,7 +106,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     );
     set_seq_title(make_seq_title());
 
-    QString seqnolabel = QString::fromStdString(std::to_string(seqid));
+    QString seqnolabel = qt(std::to_string(seqid));
     ui->label_seq_number->setText(seqnolabel);
 
     std::string ts_ppqn = std::to_string(m_seq->get_beats_per_bar());
@@ -314,7 +315,7 @@ qseqeventframe::populate_midich_combo ()
     for (int channel = 1; channel <= c_midichannel_max; ++channel)
     {
         std::string name = std::to_string(channel);
-        QString combotext(QString::fromStdString(name));
+        QString combotext(qt(name));
         ui->channel_combo_box->insertItem(channel - 1, combotext);
     }
     ui->channel_combo_box->setCurrentIndex(defchannel);
@@ -333,7 +334,7 @@ qseqeventframe::populate_status_combo ()
         }
         else
         {
-            QString combotext(QString::fromStdString(name));
+            QString combotext(qt(name));
             ui->combo_ev_name->insertItem(counter, combotext);
         }
     }
@@ -388,7 +389,7 @@ qseqeventframe::populate_control_combo ()
         }
         else
         {
-            QString combotext(QString::fromStdString(name));
+            QString combotext(qt(name));
             ui->selection_combo_box->insertItem(counter, combotext);
         }
     }
@@ -408,7 +409,7 @@ qseqeventframe::populate_program_combo ()
         }
         else
         {
-            QString combotext(QString::fromStdString(name));
+            QString combotext(qt(name));
             ui->selection_combo_box->insertItem(counter, combotext);
         }
     }
@@ -473,7 +474,7 @@ qseqeventframe::slot_event_name (int index)
 void
 qseqeventframe::slot_selection_combo (int index)
 {
-    QString d0text = QString::fromStdString(std::to_string(index));
+    QString d0text = qt(std::to_string(index));
     ui->entry_ev_data_0->setText(d0text);
 }
 
@@ -598,7 +599,7 @@ qseqeventframe::make_seq_title ()
 void
 qseqeventframe::set_seq_title (const std::string & title)
 {
-    ui->m_entry_name->setText(QString::fromStdString(title));
+    ui->m_entry_name->setText(qt(title));
 }
 
 /**
@@ -627,13 +628,13 @@ qseqeventframe::update_seq_name ()
 void
 qseqeventframe::set_seq_time_sig_and_ppqn (const std::string & sig)
 {
-    ui->label_time_sig->setText(QString::fromStdString(sig));
+    ui->label_time_sig->setText(qt(sig));
 }
 
 void
 qseqeventframe::set_seq_channel (const std::string & ch)
 {
-    ui->label_channel->setText(QString::fromStdString(ch));
+    ui->label_channel->setText(qt(ch));
     ui->channel_combo_box->setCurrentIndex(0);
 }
 
@@ -648,7 +649,7 @@ qseqeventframe::set_seq_channel (const std::string & ch)
 void
 qseqeventframe::set_seq_lengths (const std::string & mevents)
 {
-    ui->label_measures_ev_count->setText(QString::fromStdString(mevents));
+    ui->label_measures_ev_count->setText(qt(mevents));
 }
 
 /**
@@ -661,7 +662,7 @@ qseqeventframe::set_seq_lengths (const std::string & mevents)
 void
 qseqeventframe::set_event_category (const std::string & c)
 {
-    ui->label_category->setText(QString::fromStdString(c));
+    ui->label_category->setText(qt(c));
 }
 
 /**
@@ -674,7 +675,7 @@ qseqeventframe::set_event_category (const std::string & c)
 void
 qseqeventframe::set_event_timestamp (const std::string & ts)
 {
-    ui->entry_ev_timestamp->setText(QString::fromStdString(ts));
+    ui->entry_ev_timestamp->setText(qt(ts));
 }
 
 /**
@@ -689,7 +690,7 @@ qseqeventframe::set_event_timestamp (const std::string & ts)
 void
 qseqeventframe::set_event_name (const std::string & n)
 {
-    QString name = QString::fromStdString(n);
+    QString name = qt(n);
     ui->combo_ev_name->setCurrentText(name);
 }
 
@@ -709,7 +710,7 @@ qseqeventframe::set_event_channel (int channel)
 void
 qseqeventframe::set_event_data_0 (const std::string & d)
 {
-    ui->entry_ev_data_0->setText(QString::fromStdString(d));
+    ui->entry_ev_data_0->setText(qt(d));
 }
 
 /**
@@ -722,7 +723,7 @@ qseqeventframe::set_event_data_0 (const std::string & d)
 void
 qseqeventframe::set_event_data_1 (const std::string & d)
 {
-    ui->entry_ev_data_1->setText(QString::fromStdString(d));
+    ui->entry_ev_data_1->setText(qt(d));
 }
 
 /**
@@ -771,22 +772,22 @@ qseqeventframe::set_event_line
     QTableWidgetItem * qtip = cell(row, column_id::timestamp);
     if (not_nullptr(qtip))
     {
-        qtip->setText(QString::fromStdString(evtimestamp));
+        qtip->setText(qt(evtimestamp));
 
         qtip = cell(row, column_id::eventname);
-        qtip->setText(QString::fromStdString(evname));
+        qtip->setText(qt(evname));
 
         qtip = cell(row, column_id::channel);
-        qtip->setText(QString::fromStdString(evchannel));
+        qtip->setText(qt(evchannel));
 
         qtip = cell(row, column_id::data_0);
-        qtip->setText(QString::fromStdString(evdata0));
+        qtip->setText(qt(evdata0));
 
         qtip = cell(row, column_id::data_1);
-        qtip->setText(QString::fromStdString(evdata1));
+        qtip->setText(qt(evdata1));
 
         qtip = cell(row, column_id::link);
-        qtip->setText(QString::fromStdString(linktime));
+        qtip->setText(qt(linktime));
     }
 }
 

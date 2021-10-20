@@ -1124,7 +1124,7 @@ get_url ()
         get_session_url(url) : s_debug_url ;
 
     bool active = ! result.empty();
-    usr().in_session(active);
+    usr().in_nsm_session(active);
     if (rc().verbose())
     {
         if (active)

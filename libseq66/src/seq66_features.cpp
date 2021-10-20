@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2021-10-13
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -82,6 +82,8 @@ static std::string s_app_type = SEQ66_APP_TYPE;
 static std::string s_apptag = SEQ66_APP_NAME " " SEQ66_VERSION;
 static std::string s_arg_0 = "";
 static std::string s_client_name = SEQ66_CLIENT_NAME;
+static std::string s_client_name_short = SEQ66_CLIENT_NAME;
+static std::string s_client_name_tag = "[" SEQ66_CLIENT_NAME "]";
 static std::string s_package_name = SEQ66_PACKAGE_NAME;
 static std::string s_version = SEQ66_VERSION;
 static std::string s_versiontext = SEQ66_APP_NAME " " SEQ66_VERSION " "
@@ -157,7 +159,16 @@ set_arg_0 (const std::string & arg)
 void
 set_client_name (const std::string & cname)
 {
-    s_client_name = cname;  /* the current base name of the client port */
+    s_client_name = cname;          /* current base name of the client port */
+    s_client_name_short = cname;    /* without any "random" session portion */
+
+    auto pos = cname.find_first_of("./:");  /* common session delimiters    */
+    if (pos != std::string::npos)
+        s_client_name_short = cname.substr(0, pos);
+
+    s_client_name_tag = "[";
+    s_client_name_tag += s_client_name_short;
+    s_client_name_tag += "]";
 }
 
 void
@@ -219,6 +230,57 @@ const std::string &
 seq_client_name ()
 {
     return s_client_name;
+}
+
+const std::string &
+seq_client_short ()
+{
+    return s_client_name_short;
+}
+
+/**
+ * Text color codes:
+ *
+ *  -   30 = black
+ *  -   31 = red
+ *  -   32 = green
+ *  -   33 = yellow
+ *  -   34 = blue
+ *  -   35 = magenta
+ *  -   36 = cyan
+ *  -   37 = white
+ */
+
+std::string
+seq_client_tag (msglevel el)
+{
+    if (el == msglevel::none)
+    {
+        return s_client_name_tag;
+    }
+    else
+    {
+        static const char * s_level_colors [] =
+        {
+            "\033[0m",          /* goes back to normal color            */
+            "\033[1;34m",       /* info message blue (not green/black)  */
+            "\033[1;33m",       /* warning message is yellow            */
+            "\033[1;31m"        /* error message is red                 */
+        };
+        std::string result = "[";
+        switch (el)
+        {
+            case msglevel::info:    result += s_level_colors[1];   break;
+            case msglevel::warn:    result += s_level_colors[2];   break;
+            case msglevel::error:   result += s_level_colors[2];   break;
+            default:
+                break;
+        }
+        result += s_client_name_short;
+        result += s_level_colors[0];
+        result += "]";
+        return result;
+    }
 }
 
 /**
@@ -296,26 +358,29 @@ seq_build_details ()
         << "GNU C++ " << __GNUC__ << "." << __GNUC_MINOR__
         << "." << __GNUC_PATCHLEVEL__ << "\n"
 #endif
-        << "App name: " << seq_app_name()
-        << "; type " << seq_app_type()
-        << "; engine " << seq_app_engine()
+        << "Executable: " << seq_app_name()
+        << "; " << seq_app_type() << " interface"
+        << "; " << seq_app_engine() << " engine" << "\n"
         ;
 
-    if (s_qt_version.empty())
-        result << "\n";
-    else
-        result << "; Qt v. " << s_qt_version << "\n";
+    result
+        << "Package: " << seq_package_name() << "\n"
+        << "Client: " << seq_client_name() << "\n"
+        ;
 
     result
-        << "Build OS: " << seq_app_build_os() << " " << s_bitness
-        << " " << buildmode << "\n"
+        << "Build OS: " << seq_app_build_os() << "\n"
+        << "Build Type: " << s_bitness << " " << buildmode << "\n"
         ;
 
 #if defined SEQ66_PLATFORM_UNIX
-    result << "Distro:   " << seq_app_build_issue() << "\n";
+    result << "Distro: " << seq_app_build_issue() << "\n";
 #endif
 
-#if defined SEQ66_RTMIDI_SUPPORT
+    if (! s_qt_version.empty())
+        result << "Qt v. " << s_qt_version << "\n";
+
+#if defined SEQ66_RTMIDI_SUPPORT_REDUNDANT_INFO
     result << "Native JACK/ALSA (rtmidi)\n";
 #endif
 
@@ -327,7 +392,7 @@ seq_build_details ()
     result
         << "JACK  v. " << s_jack_version << " Transport and MIDI\n"
 #if defined SEQ66_JACK_SESSION
-        << "JACK Session support\n"
+        << "JACK Session\n"
 #endif
         ;
 #endif
@@ -346,9 +411,9 @@ seq_build_details ()
             "event editor, follow-progress.\n"
         <<
             "\n"
-            "Options are enabled/disabled via the configure script,"
+            "Options can be enabled/disabled via the configure script,"
             " seq66_features.h, or build-specific seq66-config.h files in"
-            " include/qt/* for qmake builds."
+            " include/qt/* for qmake portmidi and rtmidi builds."
         << std::endl
         ;
     return result.str();

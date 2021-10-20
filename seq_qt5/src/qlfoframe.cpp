@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-18
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  *  The LFO (low-frequency oscillator) provides a way to modulate the
@@ -42,6 +42,7 @@
 #include "qlfoframe.hpp"                /* seq66::qlfoframe class           */
 #include "qseqdata.hpp"                 /* seq66::qseqdata for status, CC   */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64, parent   */
+#include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 #include "util/calculations.hpp"        /* seq66::wave enum class values    */
 
 /*
@@ -245,11 +246,11 @@ qlfoframe::qlfoframe
     std::string plabel = "Pattern #";
     std::string number = std::to_string(int(seqp->seq_number()));
     plabel += number;
-    ui->m_pattern_label->setText(QString::fromStdString(plabel));
+    ui->m_pattern_label->setText(qt(plabel));
 
     plabel = "LFO #";
     plabel += number;
-    setWindowTitle(QString::fromStdString(plabel));
+    setWindowTitle(qt(plabel));
 }
 
 /**

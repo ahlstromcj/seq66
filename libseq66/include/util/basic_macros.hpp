@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2021-09-10
+ * \updates       2021-10-20
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -46,6 +46,7 @@
 #include <cstdio>                       /* std::printf()                    */
 #include <string>
 
+#include "seq66_features.hpp"           /* the C++-compatible definitions   */
 #include "util/basic_macros.h"          /* C-style definitions/features     */
 
 /*
@@ -54,17 +55,6 @@
 
 namespace seq66
 {
-
-/**
- *  An indicator of the message level.
- */
-
-enum class msg_level
-{
-    info,
-    warn,
-    error
-};
 
 /*
  * Global functions.  The not_nullptr_assert() function is a macro in
@@ -101,9 +91,9 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
  *    specifier as well.
  */
 
-#define errprintf(fmt, x)   msgprintf(seq66::msg_level::error, fmt, x)
-#define warnprintf(fmt, x)  msgprintf(seq66::msg_level::warn, fmt, x)
-#define infoprintf(fmt, x)  msgprintf(seq66::msg_level::info, fmt, x)
+#define errprintf(fmt, x)   msgprintf(seq66::msglevel::error, fmt, x)
+#define warnprintf(fmt, x)  msgprintf(seq66::msglevel::warn, fmt, x)
+#define infoprintf(fmt, x)  msgprintf(seq66::msglevel::info, fmt, x)
 
 #endif  // C++
 
@@ -114,7 +104,7 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
  */
 
 #if defined __cplusplus
-#define errprintfunc(x) seq66::msgprintf(seq66::msg_level::error, \
+#define errprintfunc(x) seq66::msgprintf(seq66::msglevel::error, \
  "%s: %s", __func__, x)
 #else
 #define errprintfunc(x) fprintf(stderr, "%s: %s", __func__, x)
@@ -129,7 +119,7 @@ extern void file_message (const std::string & tag, const std::string & path);
 extern void boolprint (const std::string & tag, bool flag);
 extern void toggleprint (const std::string & tag, bool flag);
 extern void async_safe_strprint (const char * msg, size_t count);
-extern void msgprintf (seq66::msg_level lev, std::string fmt, ...);
+extern void msgprintf (seq66::msglevel lev, std::string fmt, ...);
 extern std::string msgsnprintf (std::string fmt, ...);
 
 /**

@@ -476,7 +476,7 @@ smanager::detach_session (std::string & /*msg*/, bool ok)
          *      (void) save_session(msg, result);
          */
     }
-    usr().in_session(false);                            /* global flag      */
+    usr().in_nsm_session(false);                        /* global flag      */
     return result;
 }
 
@@ -887,8 +887,10 @@ smanager::create_configuration
             result = read_configuration(argc, argv, cfgfilepath, midifilepath);
             if (result)
             {
-                if (usr().in_session())
+                if (usr().in_nsm_session())
+                {
                     rc().auto_rc_save(true);
+                }
                 else
                 {
                     bool u = rc().auto_usr_save();      /* --user-save?     */
@@ -949,7 +951,7 @@ smanager::create_configuration
                  *      rc().notemap_filename(dstnotefile);
                  */
 
-                if (usr().in_session())
+                if (usr().in_nsm_session())
                     rc().auto_rc_save(true);
 
                 result = cmdlineopts::write_options_files();

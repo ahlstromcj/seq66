@@ -374,7 +374,7 @@ usrsettings::usrsettings () :
     m_lock_main_window          (false),
     m_session_manager           (session::none),
     m_session_url               (),
-    m_in_session                (false),
+    m_in_nsm_session            (false),
     m_new_pattern_armed         (false),
     m_new_pattern_thru          (false),
     m_new_pattern_record        (false),
@@ -458,7 +458,7 @@ usrsettings::set_defaults ()
     m_lock_main_window = false;
     m_session_manager = session::none;
     m_session_url.clear();
-    m_in_session = false;
+    m_in_nsm_session = false;
     m_new_pattern_armed = false;
     m_new_pattern_thru = false;
     m_new_pattern_record = false;

@@ -1,7 +1,7 @@
 # README for Seq66 0.97.1
 
 Chris Ahlstrom
-2015-09-10 to 2021-10-19
+2015-09-10 to 2021-10-20
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -87,6 +87,14 @@ Windows, and using a conventional source tarball.
     *   Version 0.97.1:
         *   Fixed a bad bug in displaying Notes in the data & event panels in
             the pattern editor, caused by premature ... optimization.
+        *   Issue #57: Increased width of option fields for wider fonts.
+        *   Issue #58: Indicate if NSM is running in Preferences / Sessions and
+            disable any selection at that point.
+        *   Issue #59: Spelling error(s) fixed.
+        *   Issue #61: Rearranged console output to show the app name, in color.
+            per issue #61.
+        *   Added textfix.qss as an example of making disabled text easier to
+            read.
         *   Added working tempo-track code to Edit / Preferences / MIDI Clock.
         *   Added exponential ramping of Event Panel events to the pattern LFO
             dialog.

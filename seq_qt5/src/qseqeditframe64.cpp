@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-10-19
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -401,7 +401,7 @@ qseqeditframe64::qseqeditframe64
 
     std::string seqtext("#");
     seqtext += std::to_string(seqid);
-    QString labeltext = QString::fromStdString(seqtext);
+    QString labeltext = qt(seqtext);
     ui->m_label_seqnumber->setText(labeltext);
 
     /*
@@ -438,7 +438,7 @@ qseqeditframe64::qseqeditframe64
     int beatspm = seq_pointer()->get_beats_per_bar();
     std::string beatstring = std::to_string(beatspm);
     ui->m_combo_bpm->setCurrentIndex(m_beats_per_bar - 1);
-    ui->m_combo_bpm->setEditText(QString::fromStdString(beatstring));
+    ui->m_combo_bpm->setEditText(qt(beatstring));
     connect
     (
         ui->m_combo_bpm, SIGNAL(currentIndexChanged(int)),
@@ -474,7 +474,7 @@ qseqeditframe64::qseqeditframe64
     int bw = seq_pointer()->get_beat_width();
     std::string bstring = std::to_string(bw);
     ui->m_combo_bw->setCurrentIndex(bwindex);
-    ui->m_combo_bw->setEditText(QString::fromStdString(bstring));
+    ui->m_combo_bw->setEditText(qt(bstring));
     connect
     (
         ui->m_combo_bw, SIGNAL(currentIndexChanged(int)),
@@ -501,7 +501,7 @@ qseqeditframe64::qseqeditframe64
     for (int m = 0; m < s_measures_count; ++m)
     {
         std::string itext = std::to_string(s_measures_items[m]);
-        QString combo_text = QString::fromStdString(itext);
+        QString combo_text = qt(itext);
         ui->m_combo_length->insertItem(m, combo_text);
     }
 
@@ -509,7 +509,7 @@ qseqeditframe64::qseqeditframe64
     int measures = seq_pointer()->calculate_measures();
     std::string mstring = std::to_string(measures);
     ui->m_combo_length->setCurrentIndex(len_index);
-    ui->m_combo_length->setEditText(QString::fromStdString(mstring));
+    ui->m_combo_length->setEditText(qt(mstring));
     connect
     (
         ui->m_combo_length, SIGNAL(currentIndexChanged(int)),
@@ -627,7 +627,7 @@ qseqeditframe64::qseqeditframe64
             if (perf().ui_get_clock(bussbyte(bus), ec, busname))
             {
                 bool disabled = ec == e_clock::disabled;
-                ui->m_combo_bus->addItem(QString::fromStdString(busname));
+                ui->m_combo_bus->addItem(qt(busname));
                 if (disabled)
                 {
                     QStandardItemModel * model =
@@ -723,7 +723,7 @@ qseqeditframe64::qseqeditframe64
         std::string itext = item > 1 ?
             "1/" + std::to_string(item) : std::to_string(item);
 
-        QString combo_text = QString::fromStdString(itext);
+        QString combo_text = qt(itext);
         if (item == 0)
         {
             ui->m_combo_snap->insertSeparator(8);   // why 8?
@@ -783,7 +783,7 @@ qseqeditframe64::qseqeditframe64
     {
         int zoom = s_zoom_items[zi];
         std::string itext = "1:" + std::to_string(zoom);
-        QString combo_text = QString::fromStdString(itext);
+        QString combo_text = qt(itext);
         ui->m_combo_zoom->insertItem(zi, combo_text);
     }
     ui->m_combo_zoom->setCurrentIndex(1);
@@ -840,7 +840,7 @@ qseqeditframe64::qseqeditframe64
     );
     for (int scale = c_scales_off; scale < c_scales_max; ++scale)
     {
-        QString combo_text = QString::fromStdString(musical_scale_name(scale));
+        QString combo_text = qt(musical_scale_name(scale));
         ui->m_combo_scale->insertItem(scale, combo_text);
     }
     if (seq_pointer()->musical_scale() != c_scales_off)
@@ -1070,7 +1070,7 @@ qseqeditframe64::qseqeditframe64
     {
         int item = s_rec_vol_items[v];
         std::string text = v == 0 ? "Free" : std::to_string(item) ;
-        QString combo_text = QString::fromStdString(text);
+        QString combo_text = qt(text);
         ui->m_combo_rec_vol->insertItem(v, combo_text);
     }
     connect
@@ -1784,7 +1784,7 @@ qseqeditframe64::repopulate_midich_combo (int buss)
         }
         else
         {
-            QString combo_text(QString::fromStdString(name));
+            QString combo_text(qt(name));
             ui->m_combo_channel->insertItem(channel, combo_text);
         }
     }
@@ -2504,7 +2504,7 @@ qseqeditframe64::on_resolution_change (int ppqn, midibpm bpm)
     if (result)
     {
         if (rc().verbose())
-            msgprintf(msg_level::info, "PPQN = %d; BPM = %d", ppqn, int(bpm));
+            msgprintf(msglevel::info, "PPQN = %d; BPM = %d", ppqn, int(bpm));
     }
     return result;
 }

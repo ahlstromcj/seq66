@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2021-06-23
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -334,29 +334,29 @@ qplaylistframe::set_current_playlist ()
     if (temp.empty())
         temp = "None";
 
-    ui->entry_playlist_file->setText(QString::fromStdString(temp));
+    ui->entry_playlist_file->setText(qt(temp));
     temp = perf().file_directory();
     if (temp.empty())
         temp = "None";
 
-    ui->editPlaylistPath->setText(QString::fromStdString(temp));
+    ui->editPlaylistPath->setText(qt(temp));
 
     int midinumber = perf().playlist_midi_number();
     temp = std::to_string(midinumber);
     if (temp.empty())
         temp = "0";
 
-    ui->editPlaylistNumber->setText(QString::fromStdString(temp));
+    ui->editPlaylistNumber->setText(qt(temp));
     temp = perf().playlist_midi_base();
     if (temp.empty())
         temp = "None";
 
-    ui->midiBaseDirText->setText(QString::fromStdString(temp));
+    ui->midiBaseDirText->setText(qt(temp));
     temp = perf().playlist_name();
     if (temp.empty())
         temp = "None";
 
-    ui->editPlaylistName->setText(QString::fromStdString(temp));
+    ui->editPlaylistName->setText(qt(temp));
     set_current_song();
 }
 
@@ -367,26 +367,26 @@ qplaylistframe::set_current_song ()
     if (rows > 0)
     {
         std::string temp = std::to_string(perf().song_midi_number());
-        ui->editSongNumber->setText(QString::fromStdString(temp));
+        ui->editSongNumber->setText(qt(temp));
         temp = perf().song_directory();
         if (temp.empty())
             temp = "None";
 
-        ui->editSongPath->setText(QString::fromStdString(temp));
+        ui->editSongPath->setText(qt(temp));
 
         bool embedded = perf().is_own_song_directory();
         temp = embedded ? "*" : " " ;
-        ui->labelDirEmbedded->setText(QString::fromStdString(temp));
+        ui->labelDirEmbedded->setText(qt(temp));
         temp = perf().song_filename();
         if (temp.empty())
             temp = "None";
 
-        ui->editSongFilename->setText(QString::fromStdString(temp));
+        ui->editSongFilename->setText(qt(temp));
         temp = perf().song_filepath();
         if (temp.empty())
             temp = "None";
 
-        ui->currentSongPath->setText(QString::fromStdString(temp));
+        ui->currentSongPath->setText(qt(temp));
     }
 }
 
@@ -452,13 +452,13 @@ qplaylistframe::fill_playlists ()
             {
                 int midinumber = perf().playlist_midi_number();
                 temp = std::to_string(midinumber);
-                qtip->setText(QString::fromStdString(temp));
+                qtip->setText(qt(temp));
             }
             qtip = cell(true, r, CID_ITEM_NAME);
             if (not_nullptr(qtip))
             {
                 temp = perf().playlist_name();
-                qtip->setText(QString::fromStdString(temp));
+                qtip->setText(qt(temp));
             }
 
             /*
@@ -500,13 +500,13 @@ qplaylistframe::fill_songs ()
                 {
                     int midinumber = perf().song_midi_number();
                     temp = std::to_string(midinumber);
-                    qtip->setText(QString::fromStdString(temp));
+                    qtip->setText(qt(temp));
                 }
                 qtip = cell(false, r, CID_ITEM_NAME);
                 if (not_nullptr(qtip))
                 {
                     temp = perf().song_filename();
-                    qtip->setText(QString::fromStdString(temp));
+                    qtip->setText(qt(temp));
                 }
             }
             else

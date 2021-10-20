@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2021-09-30
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -145,6 +145,21 @@ qt_set_icon (const char * pixmap_array [], QPushButton * button)
     button->setIcon(icon);
 }
 
+/**
+ *  Encapsulates a common conversion.  We will slowly add this one in every
+ *  Qt-based class.
+ */
+
+QString
+qt (const std::string & text)
+{
+    return QString::fromStdString(text);
+}
+
+/**
+ *  For internal usage.
+ */
+
 static const char *
 midi_wrk_wildcards ()
 {
@@ -173,8 +188,6 @@ show_open_midi_file_dialog (QWidget * parent, std::string & selectedfile)
     return show_file_dialog
     (
         parent, selectedfile, "Open MIDI/WRK file", midi_wrk_wildcards(),
-//      "MIDI/WRK (*.midi *.mid *.MID *.wrk *.WRK);;"
-//      "MIDI (*.midi *.mid *.MID);;WRK (*.wrk *.WRK);;All (*)",
         OpeningFile, NormalFile
     );
 }
@@ -186,8 +199,6 @@ show_import_midi_file_dialog (QWidget * parent, std::string & selectedfile)
     (
         parent, selectedfile, "Import MIDI File into Current Set",
         midi_wrk_wildcards(),
-//      "MIDI/WRK (*.midi *.mid *.MID *.wrk *.WRK);;"
-//      "MIDI (*.midi *.mid *.MID);;WRK (*.wrk *.WRK);;All (*)",
         OpeningFile, NormalFile
     );
 }

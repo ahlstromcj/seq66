@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-20
- * \updates       2021-08-22
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  *  This class is used in the qseditoptions settings-dialog class.
@@ -35,7 +35,8 @@
 #include <QtWidgets/QWidget>
 
 #include "play/performer.hpp"           /* seq66::performer class           */
-#include "qinputcheckbox.hpp"
+#include "qinputcheckbox.hpp"           /* seq66::qinputcheckbox class      */
+#include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 /*
  *  Do not document the namespace, it breaks Doxygen.
@@ -97,7 +98,7 @@ qinputcheckbox::setup_ui ()
     if (! gotbussinfo)
         disabled = true;
 
-    QString qbname = QString::fromStdString(busname);
+    QString qbname = qt(busname);
     m_chkbox_inputactive = new QCheckBox(qbname);
     m_chkbox_inputactive->setChecked(inputing);
     m_chkbox_inputactive->setEnabled(! disabled);

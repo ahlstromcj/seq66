@@ -25,13 +25,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-30
- * \updates       2019-09-01
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "cfg/cmdlineopts.hpp"          /* for build info function          */
-#include "qsbuildinfo.hpp"
+#include "qsbuildinfo.hpp"              /* seq66::qsbuildinfo dialog class  */
+#include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -60,9 +61,7 @@ qsbuildinfo::qsbuildinfo (QWidget * parent)
 
     QString name(SEQ66_PACKAGE_NAME);
     QString version(SEQ66_VERSION);
-    QString comment("\n");
-    comment += seq_build_details().c_str();
-
+    QString comment = qt(seq_build_details());
     ui->buildProgramLabel->setText(name);
     ui->buildVersionLabel->setText(version);
     ui->buildInfoTextEdit->setPlainText(comment);

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2021-08-22
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
@@ -39,8 +39,9 @@
 #include <QSpacerItem>
 
 #include "play/performer.hpp"           /* seq66::performer class           */
-#include "qclocklayout.hpp"
-#include "qseditoptions.hpp"
+#include "qclocklayout.hpp"             /* seq66::qclocklayout class        */
+#include "qseditoptions.hpp"            /* seq66::qseditoptions class       */
+#include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 /*
  *  Do not document the namespace, it breaks Doxygen.
@@ -124,7 +125,7 @@ qclocklayout::setup_ui ()
             20, 20, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum
         );
 
-        QString qbname = QString::fromStdString(busname);
+        QString qbname = qt(busname);
         m_label_outputbusname = new QLabel();
         m_label_outputbusname->setText(qbname);
         m_label_outputbusname->setEnabled(clocking != e_clock::disabled);

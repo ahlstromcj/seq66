@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-10-15
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -150,7 +150,7 @@ qslivegrid::qslivegrid (performer & p, qsmainwnd * window, QWidget * parent) :
     ui->frame->setMinimumSize(QSize(w, h));
     if (m_is_external)
     {
-        QString bname = QString::fromStdString(perf().bank_name(m_bank_id));
+        QString bname = qt(perf().bank_name(m_bank_id));
         ui->txtBankName->setText(bname);
         ui->spinBank->setRange(0, perf().screenset_max() - 1);
         connect
@@ -204,7 +204,7 @@ qslivegrid::~qslivegrid()
 void
 qslivegrid::set_mode_text (const std::string & mode)
 {
-    QString mtext = QString::fromStdString(mode);
+    QString mtext = qt(mode);
     ui->labelMode->setText(mtext);
 }
 
@@ -222,7 +222,7 @@ qslivegrid::set_playlist_name (const std::string & plname, bool modified)
     if (modified)
         fullname += " *";
 
-    QString pln = QString::fromStdString(fullname);
+    QString pln = qt(fullname);
     ui->labelPlaylistSong->setText(pln);
     (void) recreate_all_slots();
 }
@@ -711,7 +711,7 @@ qslivegrid::update_bank ()
     // TODO
     // Need to update the bank-name field with the new bank.
     // if (m_is_external)
-    //     ui->txtBankName->setText(QString::fromStdString(name));
+    //     ui->txtBankName->setText(qt(name));
 }
 
 /**
@@ -725,7 +725,7 @@ void
 qslivegrid::update_bank_name (const std::string & name)
 {
     if (m_is_external)
-        ui->txtBankName->setText(QString::fromStdString(name));
+        ui->txtBankName->setText(qt(name));
 
     perf().set_screenset_notepad(m_bank_id, name, m_is_external);
 }
@@ -1402,7 +1402,7 @@ qslivegrid::popup_menu ()
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
-            QString cname = QString::fromStdString
+            QString cname = qt
             (
                 c == firstcolor ? get_color_name(pc) : get_color_name_ex(pc)
             );
@@ -1543,7 +1543,7 @@ qslivegrid::popup_menu ()
                 if (perf().ui_get_clock(bussbyte(bus), ec, busname))
                 {
                     bool disabled = ec == e_clock::disabled;
-                    QString bname = QString::fromStdString(busname);
+                    QString bname = qt(busname);
                     QAction * a = new QAction(bname, menubuss);
                     connect
                     (
@@ -1589,7 +1589,7 @@ qslivegrid::popup_menu ()
                 }
                 else
                 {
-                    QString cname(QString::fromStdString(name));
+                    QString cname(qt(name));
                     QAction * a = new QAction(cname, menuchan);
                     connect
                     (

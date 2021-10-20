@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-06-22
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -220,7 +220,7 @@ qmutemaster::qmutemaster
         this, SLOT(slot_toggle_active())
     );
 
-    QString mgfname = QString::fromStdString(rc().mute_group_filename());
+    QString mgfname = qt(rc().mute_group_filename());
     ui->m_mute_basename->setPlainText(mgfname);
     ui->m_mute_basename->setEnabled(true);
     setup_table();                      /* row and column sizing            */

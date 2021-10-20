@@ -25,18 +25,18 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-10-17
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <QGridLayout>
 
-#include "seq66-config.h"
-#include "play/performer.hpp"
-#include "qseqeditex.hpp"
-#include "qseqeditframe64.hpp"
-#include "qsmainwnd.hpp"
+#include "play/performer.hpp"           /* seq66::performer class           */
+#include "qseqeditex.hpp"               /* seq66::qseqeditex container      */
+#include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 editor    */
+#include "qsmainwnd.hpp"                /* seq66::qsmainwnd master class    */
+#include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -90,7 +90,7 @@ qseqeditex::qseqeditex (performer & p, int seqid, qsmainwnd * parent) :
 
     std::string title = "Pattern #";
     title += std::to_string(seqid);
-    setWindowTitle(QString::fromStdString(title));
+    setWindowTitle(qt(title));
     show();
     m_edit_frame->show();
 }

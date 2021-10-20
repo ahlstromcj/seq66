@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-09-10
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -83,8 +83,8 @@ not_nullptr_assert (void * ptr, const std::string & context)
     if (! flag)
     {
         std::cerr
-            << "[?? null pointer in context " << context << " ??]"
-            << std::endl
+            << seq_client_tag(msglevel::error) << " null pointer in context "
+            << context << std::endl
             ;
         result = false;
     }
@@ -117,7 +117,7 @@ bool
 info_message (const std::string & msg)
 {
     if (rc().verbose())
-        std::cout << "[" << msg << "]" << std::endl;    /* end and flush    */
+        std::cout << seq_client_tag(msglevel::info) << " " << msg << std::endl;
 
     return true;
 }
@@ -125,7 +125,7 @@ info_message (const std::string & msg)
 bool
 status_message (const std::string & msg)
 {
-    std::cout << "[" << msg << "]" << std::endl;        /* end and flush    */
+    std::cout << seq_client_tag(msglevel::info) << " " << msg << std::endl;
     return true;
 }
 
@@ -143,7 +143,7 @@ status_message (const std::string & msg)
 bool
 warn_message (const std::string & msg)
 {
-    std::cout << "[" << msg << "]" << std::endl;       /* end and flush    */
+    std::cout << seq_client_tag(msglevel::warn) << " " << msg << std::endl;
     return true;
 }
 
@@ -165,7 +165,7 @@ error_message (const std::string & msg)
     if (errmsg.empty())
         errmsg = "Empty error message; ask the programmer to investigate";
 
-    std::cerr << "[" << errmsg << "]" << std::endl;
+    std::cerr << seq_client_tag(msglevel::error) << " " << msg << std::endl;
     return false;
 }
 
@@ -187,7 +187,9 @@ error_message (const std::string & msg)
 bool
 file_error (const std::string & tag, const std::string & path)
 {
-    std::cerr << "[" << tag << ": " << "'" << path << "']" << std::endl;
+    std::cerr << seq_client_tag(msglevel::error) << " "
+        << tag << ": '" << path << "'" << std::endl
+        ;
     return false;
 }
 
@@ -206,7 +208,9 @@ file_error (const std::string & tag, const std::string & path)
 void
 file_message (const std::string & tag, const std::string & path)
 {
-    std::cout << "[" << tag << ": " << "'" << path << "']" << std::endl;
+    std::cout << seq_client_tag(msglevel::info) << " "
+        << tag << ": '" << path << "'" << std::endl
+        ;
 }
 
 /**
@@ -263,7 +267,7 @@ void
 boolprint (const std::string & tag, bool flag)
 {
     std::string fmt = tag + " %s";
-    msgprintf(msg_level::info, fmt, flag ? "true" : "false");
+    msgprintf(msglevel::info, fmt, flag ? "true" : "false");
 }
 
 /**
@@ -280,7 +284,7 @@ void
 toggleprint (const std::string & tag, bool flag)
 {
     std::string fmt = tag + " %s";
-    msgprintf(msg_level::info, fmt, flag ? "on" : "off");
+    msgprintf(msglevel::info, fmt, flag ? "on" : "off");
 }
 
 /**
@@ -331,7 +335,7 @@ async_safe_strprint (const char * msg, size_t count)
  */
 
 void
-msgprintf (msg_level lev, std::string fmt, ...)
+msgprintf (msglevel lev, std::string fmt, ...)
 {
     if (rc().verbose() && ! fmt.empty())
     {
@@ -347,19 +351,27 @@ msgprintf (msg_level lev, std::string fmt, ...)
         std::string output = formatted(fmt, args);          /* Steps 2 & 3  */
         switch (lev)
         {
-        case msg_level::info:
+        case msglevel::none:
 
-            std::cout << "[" << output << "]" << std::endl;
+            std::cout << seq_client_tag() << " " << output << std::endl;
             break;
 
-        case msg_level::warn:
+        case msglevel::info:
 
-            std::cout << "[" << output << "]" << std::endl;
+            std::cout << seq_client_tag(msglevel::info) << " "
+                << output << std::endl;
             break;
 
-        case msg_level::error:
+        case msglevel::warn:
 
-            std::cerr << "[" << output << "]" << std::endl;
+            std::cout << seq_client_tag(msglevel::warn) << " "
+                << output << std::endl;
+            break;
+
+        case msglevel::error:
+
+            std::cerr << seq_client_tag(msglevel::error) << " "
+                << output << std::endl;
             break;
         }
         va_end(args);                                       /* 2019-04-21   */

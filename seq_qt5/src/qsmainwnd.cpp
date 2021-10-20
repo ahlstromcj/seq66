@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-15
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -314,7 +314,7 @@ qsmainwnd::qsmainwnd
             if (perf().ui_get_clock(bussbyte(bus), ec, busname))
             {
                 bool disabled = ec == e_clock::disabled;
-                ui->cmb_global_bus->addItem(QString::fromStdString(busname));
+                ui->cmb_global_bus->addItem(qt(busname));
                 if (disabled)
                     enable_bus_item(bus, false);
             }
@@ -713,7 +713,7 @@ qsmainwnd::qsmainwnd
      * Set Number and Name.
      */
 
-    QString bname = QString::fromStdString(perf().bank_name(0));
+    QString bname = qt(perf().bank_name(0));
     ui->txtBankName->setText(bname);
     ui->spinBank->setRange(0, perf().screenset_max() - 1);
     connect
@@ -853,7 +853,7 @@ qsmainwnd::enable_bus_item (int bus, bool enabled)
 void
 qsmainwnd::set_ppqn_text (const std::string & text)
 {
-    QString ppqnstring = QString::fromStdString(text);
+    QString ppqnstring = qt(text);
     ui->lineEditPpqn->setText(ppqnstring);
 }
 
@@ -1007,13 +1007,13 @@ qsmainwnd::set_ppqn_combo ()
     if (count > 0)
     {
         std::string p = std::to_string(perf().ppqn());
-        QString combo_text = QString::fromStdString(p);
+        QString combo_text = qt(p);
         ui->cmb_ppqn->clear();
         ui->cmb_ppqn->insertItem(0, combo_text);
         for (int i = 1; i < count; ++i)
         {
             p = m_ppqn_list.at(i);
-            combo_text = QString::fromStdString(p);
+            combo_text = qt(p);
             ui->cmb_ppqn->insertItem(i, combo_text);
             if (std::stoi(p) == perf().ppqn())
                 result = true;
@@ -1380,7 +1380,7 @@ qsmainwnd::update_window_title (const std::string & fn)
     std::string itemname = fn.empty() ? perf().main_window_title(fn) : fn ;
     itemname += " [*]";                             /* required by Qt 5 */
 
-    QString fname = QString::fromStdString(itemname);
+    QString fname = qt(itemname);
     setWindowModified(perf().modified());           /* shows the '*'    */
     setWindowTitle(fname);
 }
@@ -1897,7 +1897,7 @@ qsmainwnd::import_into_set ()
     bool selected = show_import_midi_file_dialog(this, selectedfile);
     if (selected)
     {
-        QString path = QString::fromStdString(selectedfile);
+        QString path = qt(selectedfile);
         if (! path.isEmpty())
         {
             try
@@ -2792,7 +2792,7 @@ qsmainwnd::update_bank (int bankid)
          */
 
         std::string name = perf().bank_name(bankid);
-        QString newname = QString::fromStdString(name);
+        QString newname = qt(name);
         ui->txtBankName->setText(newname);
     }
 }
@@ -3415,7 +3415,7 @@ qsmainwnd::update_set_change (int setno)
     {
         if (setno != m_live_frame->bank())
         {
-            QString bname = QString::fromStdString(perf().bank_name(setno));
+            QString bname = qt(perf().bank_name(setno));
             m_live_frame->update_bank(setno);       /* updates current bank */
             ui->spinBank->setValue(setno);          /* shows it in spinbox  */
             ui->txtBankName->setText(bname);        /* show set/bank name   */

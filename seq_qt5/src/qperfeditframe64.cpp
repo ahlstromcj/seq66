@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-09-12
+ * \updates       2021-10-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -404,7 +404,7 @@ qperfeditframe64::qperfeditframe64
     set_beat_width(perf().get_beat_width());
 
     std::string dur = perf().duration();
-    ui->label_Duration->setText(QString::fromStdString(dur));
+    ui->label_Duration->setText(qt(dur));
 }
 
 qperfeditframe64::~qperfeditframe64 ()
@@ -664,7 +664,7 @@ void
 qperfeditframe64::update_sizes ()
 {
     std::string dur = perf().duration();
-    ui->label_Duration->setText(QString::fromStdString(dur));
+    ui->label_Duration->setText(qt(dur));
     m_perfnames->resize();
     m_perfnames->updateGeometry();
     m_perfroll->resize();
@@ -681,7 +681,7 @@ void
 qperfeditframe64::set_dirty ()
 {
     std::string dur = perf().duration();
-    ui->label_Duration->setText(QString::fromStdString(dur));
+    ui->label_Duration->setText(qt(dur));
     m_perfnames->reupdate();
     m_perfroll->set_dirty();
     m_perftime->set_dirty();

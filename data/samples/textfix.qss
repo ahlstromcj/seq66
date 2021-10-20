@@ -1,0 +1,50 @@
+/*
+ * \file          textfix.qss
+ * \library       seq66 application
+ * \author        Chris Ahlstrom
+ * \date          2021-10-20
+ * \updates       2021-10-20
+ * \license       Public domain
+ *
+ *  Provides a sample Qt style sheet for Seq66.  Makes the text of disabled
+ *  elements easier to see in some light themes.
+ */
+
+QLineEdit:disabled
+{
+    color: red;
+}
+
+QTextEdit:disabled
+{
+    color: red;
+}
+
+QCheckBox:disabled
+{
+    color: red;
+}
+
+QRadioButton:disabled
+{
+    color: red;
+}
+
+QDoubleSpinBox:disabled
+{
+    color: red;
+}
+
+QSpinBox:disabled
+{
+    color: red;
+}
+
+QComboBox:disabled
+{
+    color: red;
+}
+
+/*
+ * vim: sw=4 ts=4 wm=4 et ft=css
+ */

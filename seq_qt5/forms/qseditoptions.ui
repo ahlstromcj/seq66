@@ -27,7 +27,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -1061,7 +1061,7 @@ to 128, and defaults to 32.</string>
            <string>Turns on Seq66 JACK transport as a client.</string>
           </property>
           <property name="text">
-           <string>Enable Jack Transport</string>
+           <string>Enable JACK Transport</string>
           </property>
          </widget>
         </item>
@@ -1178,7 +1178,7 @@ patterns is controlled by the layout drawn in the Song Editor.</string>
            <rect>
             <x>24</x>
             <y>32</y>
-            <width>355</width>
+            <width>569</width>
             <height>23</height>
            </rect>
           </property>
@@ -1201,7 +1201,7 @@ playback resumes.</string>
            <rect>
             <x>24</x>
             <y>56</y>
-            <width>353</width>
+            <width>569</width>
             <height>23</height>
            </rect>
           </property>
@@ -1317,7 +1317,7 @@ Seq66 exits.</string>
            <rect>
             <x>24</x>
             <y>24</y>
-            <width>409</width>
+            <width>565</width>
             <height>23</height>
            </rect>
           </property>
@@ -1336,7 +1336,7 @@ Seq66 exits.</string>
            <rect>
             <x>24</x>
             <y>48</y>
-            <width>409</width>
+            <width>565</width>
             <height>23</height>
            </rect>
           </property>
@@ -1355,7 +1355,7 @@ Seq66 exits.</string>
            <rect>
             <x>24</x>
             <y>72</y>
-            <width>409</width>
+            <width>565</width>
             <height>23</height>
            </rect>
           </property>
@@ -1374,7 +1374,7 @@ Seq66 exits.</string>
            <rect>
             <x>24</x>
             <y>96</y>
-            <width>409</width>
+            <width>565</width>
             <height>23</height>
            </rect>
           </property>
