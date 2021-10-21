@@ -27,7 +27,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -244,8 +244,8 @@ the system's MIDI setup has changed.</string>
        </property>
        <property name="font">
         <font>
-         <weight>50</weight>
-         <bold>false</bold>
+         <weight>75</weight>
+         <bold>true</bold>
         </font>
        </property>
        <property name="toolTip">
@@ -964,7 +964,7 @@ to 128, and defaults to 32.</string>
          <x>10</x>
          <y>10</y>
          <width>591</width>
-         <height>151</height>
+         <height>197</height>
         </rect>
        </property>
        <property name="title">
@@ -997,7 +997,7 @@ to 128, and defaults to 32.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>290</y>
+         <y>328</y>
          <width>281</width>
          <height>23</height>
         </rect>
@@ -1013,7 +1013,7 @@ to 128, and defaults to 32.</string>
        <property name="geometry">
         <rect>
          <x>310</x>
-         <y>290</y>
+         <y>328</y>
          <width>291</width>
          <height>23</height>
         </rect>
@@ -1031,7 +1031,7 @@ to 128, and defaults to 32.</string>
          <x>30</x>
          <y>40</y>
          <width>319</width>
-         <height>120</height>
+         <height>161</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="vertLayoutJackTransportMidi">
@@ -1076,13 +1076,20 @@ Otherwise, ALSA is used.  Not available on Windows/Mac.</string>
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QCheckBox" name="chkJackAutoConnect">
+          <property name="text">
+           <string>JACK Auto-Connect</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QGroupBox" name="r_group_jack_start">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>180</y>
+         <y>220</y>
          <width>591</width>
          <height>91</height>
         </rect>
@@ -1117,7 +1124,7 @@ Otherwise, ALSA is used.  Not available on Windows/Mac.</string>
        <property name="geometry">
         <rect>
          <x>31</x>
-         <y>210</y>
+         <y>248</y>
          <width>104</width>
          <height>54</height>
         </rect>

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-06-22
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -36,8 +36,8 @@
 
 #include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
-#include "qsetmaster.hpp"
-#include "qsmainwnd.hpp"
+#include "qsetmaster.hpp"               /* seq66::qsetmaster tab class      */
+#include "qsmainwnd.hpp"                /* seq66::qsmainwnd main window     */
 #include "qt5_helpers.hpp"              /* seq66::qt_keystroke() etc.       */
 
 /*
@@ -281,18 +281,18 @@ qsetmaster::set_line (screenset & sset, screenset::number row)
     {
         int setno = int(sset.set_number());
         std::string setnostr = std::to_string(setno);
-        qtip->setText(setnostr.c_str());
+        qtip->setText(qt(setnostr));
         qtip = cell(row, column_id::set_name);
         if (not_nullptr(qtip))
         {
             const std::string & setname = sset.name();
-            qtip->setText(setname.c_str());
+            qtip->setText(qt(setname));
             qtip = cell(row, column_id::set_seq_count);
             if (not_nullptr(qtip))
             {
                 int seqcount = int(sset.active_count());
                 std::string seqcountstr = std::to_string(seqcount);
-                qtip->setText(seqcountstr.c_str());
+                qtip->setText(qt(seqcountstr));
                 result = true;
             }
         }
@@ -362,7 +362,7 @@ qsetmaster::create_set_buttons ()
             if (valid)
                 snstring = std::to_string(setno);
 
-            QPushButton * temp = new QPushButton(snstring.c_str());
+            QPushButton * temp = new QPushButton(qt(snstring));
             ui->setGridLayout->addWidget(temp, row, column);
             temp->setFixedSize(btnsize);
             temp->show();
@@ -390,8 +390,8 @@ qsetmaster::handle_set (int setno)
     if (setno != m_current_set)
     {
         cb_perf().set_playing_screenset(setno);
-        ui->m_set_number_text->setText(std::to_string(setno).c_str());
-        ui->m_set_name_text->setText(cb_perf().bank_name(setno).c_str());
+        ui->m_set_number_text->setText(qt(std::to_string(setno)));
+        ui->m_set_name_text->setText(qt(cb_perf().bank_name(setno)));
         m_current_set = setno;
 
         /*
@@ -418,7 +418,7 @@ qsetmaster::slot_set_name ()
 void
 qsetmaster::slot_show_sets ()
 {
-    ui->m_set_contents_text->setPlainText(cb_perf().sets_to_string().c_str());
+    ui->m_set_contents_text->setPlainText(qt(cb_perf().sets_to_string()));
 }
 
 /**

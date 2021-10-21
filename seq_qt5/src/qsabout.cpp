@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-20
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -33,6 +33,7 @@
 #include "seq66-config.h"               /* needed to check Qt environment   */
 #include "seq66_features.hpp"           /* version information functions    */
 #include "qsabout.hpp"                  /* your basic developer spoor       */
+#include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -57,18 +58,17 @@ namespace seq66
  *  them.
  */
 
-qsabout::qsabout (QWidget * parent) :
-    QDialog (parent),
-    ui      (new Ui::qsabout)
+qsabout::qsabout (QWidget * parent) : QDialog (parent), ui (new Ui::qsabout)
 {
     ui->setupUi(this);
     std::string apptag = seq_app_name() + " " + seq_version();
     std::string vertag = seq_version_text();
-    ui->topLabel->setText(apptag.c_str());
-    ui->versionLabel->setText(vertag.c_str());
+    ui->topLabel->setText(qt(apptag));
+    ui->versionLabel->setText(qt(vertag));
 
     ui->label_filter24_seq24->setOpenExternalLinks(true);
     ui->label_github_seq66->setOpenExternalLinks(true);
+    ui->label_github_seq32->setOpenExternalLinks(true);
     ui->label_github_kepler34->setOpenExternalLinks(true);
     ui->label_gmail_ahlstromcj->setOpenExternalLinks(true);
 }

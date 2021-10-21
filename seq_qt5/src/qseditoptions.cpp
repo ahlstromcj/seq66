@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-20
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -155,6 +155,11 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     (
         ui->chkJackNative, SIGNAL(stateChanged(int)),
         this, SLOT(slot_jack_midi())
+    );
+    connect
+    (
+        ui->chkJackAutoConnect, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_jack_auto_connect())
     );
 
     /*
@@ -832,6 +837,13 @@ qseditoptions::slot_jack_midi ()
 }
 
 void
+qseditoptions::slot_jack_auto_connect ()
+{
+    rc().jack_auto_connect(ui->chkJackAutoConnect->isChecked());
+    sync();
+}
+
+void
 qseditoptions::slot_io_maps ()
 {
     perf().store_output_map();
@@ -871,7 +883,7 @@ qseditoptions::show_session (usrsettings::session sm)
         ui->radio_session_jack->setEnabled(false);
 #if defined SEQ66_NSM_SUPPORT
         ui->radio_session_nsm->setChecked(true);
-        ui->radio_session_nsm->setEnabled(false);
+        ui->radio_session_nsm->setEnabled(true);
         ui->label_nsm_url->setText("NSM URL");
         ui->lineEditNsmUrl->setText(qt(tenturl));
 #endif
@@ -989,9 +1001,10 @@ void
 qseditoptions::sync ()
 {
     ui->chkJackTransport->setChecked(rc().with_jack_transport());
-    ui->chkJackNative->setChecked(rc().with_jack_midi());
     ui->chkJackMaster->setChecked(rc().with_jack_master());
     ui->chkJackConditional->setChecked(rc().with_jack_master_cond());
+    ui->chkJackNative->setChecked(rc().with_jack_midi());
+    ui->chkJackAutoConnect->setChecked(rc().jack_auto_connect());
 
     /*
      * These JACK options are meaningless if JACK Transport is disabled.

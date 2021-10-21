@@ -461,7 +461,7 @@ midi_jack_info::api_connect ()
         int rc = jack_activate(client_handle());
         result = rc == 0;
     }
-    if (result)
+    if (result && rc().jack_auto_connect())         /* issue #60        */
     {
         for (auto m : bus_container())              /* midibus pointers */
         {

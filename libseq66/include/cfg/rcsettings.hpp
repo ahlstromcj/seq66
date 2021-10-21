@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-10-08
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -301,6 +301,7 @@ private:
     bool m_with_jack_master;        /**< Serve as a JACK transport Master.  */
     bool m_with_jack_master_cond;   /**< Serve as JACK Master if possible.  */
     bool m_with_jack_midi;          /**< Use JACK MIDI.                     */
+    bool m_jack_auto_connect;       /**< Connect JACK ports in normal mode. */
     sequence::playback m_song_start_mode; /**< Song mode versus Live mode.  */
     bool m_song_start_is_auto;      /**< True if "auto" read from 'rc'.     */
     bool m_filter_by_channel;       /**< Record only sequence channel data. */
@@ -777,6 +778,11 @@ public:
         return m_with_jack_midi;
     }
 
+    bool jack_auto_connect () const
+    {
+        return m_jack_auto_connect;
+    }
+
     bool song_start_mode () const
     {
         return m_song_start_mode == sequence::playback::song;
@@ -817,6 +823,11 @@ public:
     void with_jack_midi (bool flag)
     {
         m_with_jack_midi = flag;
+    }
+
+    void jack_auto_connect (bool flag)
+    {
+        m_jack_auto_connect = flag;
     }
 
     /**

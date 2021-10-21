@@ -131,7 +131,7 @@
       </size>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Based on Seq24 and Kepler34 &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Based on Seq24, Seq32, Sequencer64, and Kepler34 &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -145,6 +145,16 @@
     <widget class="QLabel" name="label_filter24_seq24">
      <property name="text">
       <string>&lt;a href=&quot;http://filter24.org/seq24&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Filter24.org/seq24&lt;/span&gt;&lt;/a&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_github_seq32">
+     <property name="text">
+      <string>&lt;a href=&quot;https://github.com/Stazed/seq32&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub/Stazed/Seq32&lt;/span&gt;&lt;/a&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

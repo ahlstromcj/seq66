@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-21
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -111,6 +111,7 @@ private slots:
     void slot_time_master ();
     void slot_transport_support ();
     void slot_jack_midi ();
+    void slot_jack_auto_connect ();
     void slot_io_maps ();
     void slot_session (int buttonno);
     void slot_nsm_url ();

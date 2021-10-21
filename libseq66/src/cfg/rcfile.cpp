@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-08-22
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -152,13 +152,15 @@ rcfile::rcfile (const std::string & name, rcsettings & rcs) :
  *
  *  [jack-transport]
  *
- *      This section covers various JACK settings, one setting per line.  In
- *      order, the following numbers are specfied:
+ *      This section covers various JACK settings, one setting per line.
+ *      The following numbers are specfied:
  *
  *      -   jack_transport - Enable sync with JACK Transport.
  *      -   jack_master - Seq24 will attempt to serve as JACK Master.
  *      -   jack_master_cond - Seq24 will fail to be Master if there is
  *          already a Master set.
+ *      -   jack_auto_connect - Automatically connect to discovered JACK
+ *          ports.
  *      -   song_start_mode:
  *          -   0 = Playback will be in Live mode.  Use this to allow
  *              muting and unmuting of loops.
@@ -391,6 +393,8 @@ rcfile::parse ()
 
         bool flag = get_boolean(file, tag, "jack-midi");
         rc_ref().with_jack_midi(flag);
+        flag = get_boolean(file, tag, "jack-auto-connect");
+        rc_ref().jack_auto_connect(flag);
     }
 
     bool use_manual_ports = false;
@@ -1377,12 +1381,14 @@ rcfile::write ()
         "# auto: If the loaded tune has song triggers, use Song mode.\n"
         "#\n"
         "# jack-midi sets/unsets JACK MIDI, separate from JACK transport.\n"
+        "# jack-auto-connect sets connecting to JACK ports found. Default =\n"
+        "# true; use false to have a session manager make the connections.\n"
         "\n[jack-transport]\n\n"
         << "transport-type = " << jacktransporttype << "\n"
         << "song-start-mode = " << rc_ref().song_mode_string() << "\n"
         ;
     write_boolean(file, "jack-midi", rc_ref().with_jack_midi());
-
+    write_boolean(file, "jack-auto-connect", rc_ref().jack_auto_connect());
     file << "\n"
         "# auto-save-rc sets automatic saving of the running configuration\n"
         "# 'rc' and other files.  True is Seq24 behavior. If set, many\n"
@@ -1395,7 +1401,6 @@ rcfile::write ()
         "# if true, saves mute-groups as long values (!) instead of bytes.\n"
         "\n[auto-option-save]\n\n"
         ;
-
     write_boolean(file, "auto-save-rc", rc_ref().auto_rc_save());
     write_boolean(file, "save-old-triggers", rc_ref().save_old_triggers());
     write_boolean(file, "save-old-mutes", rc_ref().save_old_mutes());

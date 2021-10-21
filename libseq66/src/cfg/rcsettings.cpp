@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-09-24
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -93,6 +93,7 @@ rcsettings::rcsettings () :
 #else
     m_with_jack_midi            (false),
 #endif
+    m_jack_auto_connect         (true),
     m_song_start_mode           (sequence::playback::automatic),
     m_song_start_is_auto        (true),
     m_manual_ports              (false),
@@ -197,6 +198,7 @@ rcsettings::set_defaults ()
 #else
     m_with_jack_midi            = false;
 #endif
+    m_jack_auto_connect         = true;
     m_song_start_mode           = sequence::playback::automatic;
     m_song_start_is_auto        = true;
     m_manual_ports              = false;

@@ -38,9 +38,10 @@
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "play/sequence.hpp"            /* seq66::sequence class            */
-#include "qliveframeex.hpp"
-#include "qslivegrid.hpp"
-#include "qsmainwnd.hpp"
+#include "qliveframeex.hpp"             /* seq66::qliveframeex container    */
+#include "qslivegrid.hpp"               /* seq66::qslivegrid panel          */
+#include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
+#include "qsmainwnd.hpp"                /* seq66::qsmainwnd parent class    */
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -103,7 +104,7 @@ qliveframeex::qliveframeex (performer & p, int ssnum, qsmainwnd * parent) :
 
     std::string t = "Live Window Set #";
     t += std::to_string(ssnum);
-    setWindowTitle(t.c_str());
+    setWindowTitle(qt(t));
     show();
     m_live_frame->update_bank(ssnum);
     m_live_frame->show();
@@ -154,7 +155,7 @@ qliveframeex::changeEvent (QEvent * event)
     {
         std::string t = "Live Window Set #";
         t += std::to_string(m_live_frame->bank());
-        setWindowTitle(t.c_str());
+        setWindowTitle(qt(t));
         m_live_frame->change_event(event);  // changeEvent(event)
     }
 }

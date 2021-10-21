@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2021-09-19
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  *  This object is just a QPushButton with number label.  See seq66::qslivegrid
@@ -44,7 +44,8 @@
 #include <QPainter>
 
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
-#include "qslotbutton.hpp"
+#include "qslotbutton.hpp"              /* seq66::qslotbutton base class    */
+#include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -112,7 +113,7 @@ qslotbutton::setup ()
      */
 
     std::string snstring = std::to_string(m_slot_number);
-    setText(snstring.c_str());
+    setText(qt(snstring));
 }
 
 /**

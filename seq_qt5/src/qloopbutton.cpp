@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-10-18
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -56,6 +56,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr().scale_size(), etc.  */
 #include "qloopbutton.hpp"              /* seq66::qloopbutton slot          */
+#include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
 
 /**
  *  An attempt to use the inverse of the background color for drawing text.
@@ -549,7 +550,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 m_top_left.m_x, m_top_left.m_y,
                 m_top_left.m_w, m_top_left.m_h
             );
-            QString title(m_top_left.m_label.c_str());
+            QString title(qt(m_top_left.m_label));
             painter.setPen(label_color());      /* text issue #50   */
             painter.setFont(m_text_font);
 
@@ -576,7 +577,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
 #endif
 
             painter.drawText(box, m_top_left.m_flags, title);
-            title = m_top_right.m_label.c_str();
+            title = qt(m_top_right.m_label);
             box.setRect
             (
                 m_top_right.m_x, m_top_right.m_y,
@@ -584,7 +585,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             );
             painter.drawText(box, m_top_right.m_flags, title);
 
-            title = m_bottom_left.m_label.c_str();
+            title = qt(m_bottom_left.m_label);
             box.setRect
             (
                 m_bottom_left.m_x, m_bottom_left.m_y,
@@ -592,7 +593,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             );
             painter.drawText(box, m_bottom_left.m_flags, title);
 
-            title = m_bottom_right.m_label.c_str();
+            title = qt(m_bottom_right.m_label);
             box.setRect
             (
                 m_bottom_right.m_x, m_bottom_right.m_y,
@@ -629,7 +630,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
         std::string snstring = std::to_string(m_slot_number);
         snstring += ": NO LOOP!";
         setEnabled(false);
-        setText(snstring.c_str());
+        setText(qt(snstring));
     }
 }
 

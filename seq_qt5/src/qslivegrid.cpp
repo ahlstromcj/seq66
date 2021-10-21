@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-10-20
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -74,7 +74,7 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
-#include "gui_palette_qt5.hpp"
+#include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5 class     */
 #include "qloopbutton.hpp"              /* seq66::qloopbutton (qslotbutton) */
 #include "qslivegrid.hpp"               /* seq66::qslivegrid                */
 #include "qsmainwnd.hpp"                /* the true parent of this class    */
@@ -515,8 +515,7 @@ qslivegrid::color_by_number (int i)
 void
 qslivegrid::set_bank_values (const std::string & bankname, int bankid)
 {
-    QString bname = bankname.c_str();
-    ui->txtBankName->setText(bname);
+    ui->txtBankName->setText(qt(bankname));
     ui->spinBank->setValue(bankid);
 }
 
@@ -1421,7 +1420,7 @@ qslivegrid::popup_menu ()
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
-            QString cname = get_color_name_ex(pc).c_str();
+            QString cname = qt(get_color_name_ex(pc));
             QAction * a = new QAction(cname, menu2Colour);
             connect
             (
@@ -1437,7 +1436,7 @@ qslivegrid::popup_menu ()
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
-            QString cname = get_color_name_ex(pc).c_str();
+            QString cname = qt(get_color_name_ex(pc));
             QAction * a = new QAction(cname, menu3Colour);
             connect
             (
@@ -1453,7 +1452,7 @@ qslivegrid::popup_menu ()
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
-            QString cname = get_color_name_ex(pc).c_str();
+            QString cname = qt(get_color_name_ex(pc));
             QAction * a = new QAction(cname, menu4Colour);
             connect
             (

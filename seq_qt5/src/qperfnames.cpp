@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-20
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -171,7 +171,8 @@ qperfnames::paintEvent (QPaintEvent *)
                 {
                     snprintf
                     (
-                        name, sizeof name, "%-14.14s   F", s->name().c_str()
+                        name, sizeof name, "%-14.14s   F",
+                        s->name().c_str()
                     );
                 }
                 else
@@ -209,7 +210,7 @@ qperfnames::paintEvent (QPaintEvent *)
                 painter.setPen(pen);
                 painter.drawText(18, rect_y + 9, chinfo);
                 if (! track_thin())
-                    painter.drawText(18, rect_y + 19, sname.c_str());
+                    painter.drawText(18, rect_y + 19, qt(sname));
 
                 painter.drawRect(name_x(2), name_y(seq_id), 9, track_height());
                 painter.drawText(name_x(4), name_y(seq_id) + 9, QString("M"));

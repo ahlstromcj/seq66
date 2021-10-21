@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2021-06-22
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -35,6 +35,7 @@
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "qsessionframe.hpp"            /* seq66::qsessionframe, this class */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd                 */
+#include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -85,50 +86,50 @@ qsessionframe::~qsessionframe()
 void
 qsessionframe::session_manager (const std::string & text)
 {
-    ui->sessionManagerNameText->setText(text.c_str());
+    ui->sessionManagerNameText->setText(qt(text));
 }
 
 void
 qsessionframe::session_path (const std::string & text)
 {
-    ui->sessionNameText->setText(text.c_str());
+    ui->sessionNameText->setText(qt(text));
 }
 
 void
 qsessionframe::session_display_name (const std::string & text)
 {
-    ui->displayNameText->setText(text.c_str());
+    ui->displayNameText->setText(qt(text));
 }
 
 void
 qsessionframe::session_client_id (const std::string & text)
 {
-    ui->clientIdText->setText(text.c_str());
+    ui->clientIdText->setText(qt(text));
 }
 
 void
 qsessionframe::session_URL (const std::string & text)
 {
-    ui->sessionUrlText->setText(text.c_str());
+    ui->sessionUrlText->setText(qt(text));
 }
 
 void
 qsessionframe::session_log (const std::string & text)
 {
-    ui->sessionLogText->setText(text.c_str());
+    ui->sessionLogText->setText(qt(text));
 }
 
 void
 qsessionframe::session_log_append (const std::string & text)
 {
     ui->sessionLogText->append("<br>");            // need a newline?
-    ui->sessionLogText->append(text.c_str());
+    ui->sessionLogText->append(qt(text));
 }
 
 void
 qsessionframe::song_path (const std::string & text)
 {
-    ui->songPathText->setText(text.c_str());
+    ui->songPathText->setText(qt(text));
 }
 
 /*

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-10-20
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -416,20 +416,20 @@ qmutemaster::group_line
     if (not_nullptr(qtip))
     {
         std::string groupnostr = std::to_string(int(row));
-        qtip->setText(groupnostr.c_str());
+        qtip->setText(qt(groupnostr));
         qtip = cell(row, column_id::group_count);
         if (not_nullptr(qtip))
         {
             std::string gcountstr = std::to_string(mutecount);
-            qtip->setText(gcountstr.c_str());
+            qtip->setText(qt(gcountstr));
             qtip = cell(row, column_id::group_keyname);
             if (not_nullptr(qtip))
             {
-                qtip->setText(keyname.c_str());
+                qtip->setText(qt(keyname));
                 qtip = cell(row, column_id::group_name);
                 if (not_nullptr(qtip))
                 {
-                    qtip->setText(groupname.c_str());
+                    qtip->setText(qt(groupname));
                     result = true;
                 }
             }
@@ -498,7 +498,7 @@ qmutemaster::create_group_buttons ()
         {
             mutegroup::number m = mutegroups::grid_to_group(row, column);
             std::string gstring = std::to_string(m);
-            QPushButton * temp = new QPushButton(gstring.c_str());
+            QPushButton * temp = new QPushButton(qt(gstring));
             ui->setGridLayout->addWidget(temp, row, column);
             temp->setFixedSize(btnsize);
             connect                             /* connect lambda function */
@@ -694,7 +694,7 @@ qmutemaster::slot_save ()
                 if (ok)
                     fname = basename;
             }
-            rc().mute_group_filename(fname);        // WHY????????
+            rc().mute_group_filename(fname);
         }
 
         /*
@@ -940,7 +940,7 @@ qmutemaster::create_pattern_buttons ()
         {
             mutegroup::number m = mutegroups::grid_to_group(row, column);
             std::string gstring = std::to_string(m);
-            QPushButton * temp = new QPushButton(gstring.c_str());
+            QPushButton * temp = new QPushButton(qt(gstring));
             ui->patternGridLayout->addWidget(temp, row, column);
             temp->setFixedSize(btnsize);
             connect                             /* connect lambda function */

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-10-20
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -97,14 +97,14 @@
 #include "cfg/settings.hpp"             /* seq66::usr().controller_name()   */
 #include "midi/controllers.hpp"         /* seq66::controller_name()         */
 #include "play/performer.hpp"           /* seq66::performer reference       */
-#include "qlfoframe.hpp"
-#include "qseqdata.hpp"
-#include "qseqeditframe64.hpp"
-#include "qseqkeys.hpp"
-#include "qseqroll.hpp"
-#include "qseqtime.hpp"
-#include "qstriggereditor.hpp"
-#include "qt5_helpers.hpp"              /* seq66::qt_set_icon()             */
+#include "qlfoframe.hpp"                /* seq66::qlfoframe dialog class    */
+#include "qseqdata.hpp"                 /* seq66::qseqdata panel            */
+#include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
+#include "qseqkeys.hpp"                 /* seq66::qseqkeys panel            */
+#include "qseqroll.hpp"                 /* seq66::qseqroll panel            */
+#include "qseqtime.hpp"                 /* seq66::qseqtime panel            */
+#include "qstriggereditor.hpp"          /* seq66::qstriggereditor events    */
+#include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon()       */
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -408,7 +408,7 @@ qseqeditframe64::qseqeditframe64
      * Sequence Title
      */
 
-    ui->m_entry_name->setText(seq_pointer()->name().c_str());
+    ui->m_entry_name->setText(qt(seq_pointer()->name()));
     connect
     (
         ui->m_entry_name, SIGNAL(textChanged(const QString &)),
@@ -812,7 +812,7 @@ qseqeditframe64::qseqeditframe64
 
     for (int key = 0; key < c_octave_size; ++key)
     {
-        QString combo_text = musical_key_name(key).c_str();
+        QString combo_text = qt(musical_key_name(key));
         ui->m_combo_key->insertItem(key, combo_text);
     }
     if (seq_pointer()->musical_key() != c_key_of_C)
@@ -2765,11 +2765,11 @@ qseqeditframe64::set_event_entry
 )
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
-    QString mlabel(text.c_str());
+    QString mlabel(qt(text));
     QIcon micon(*create_menu_image(present));
     QAction * item = new QAction(micon, mlabel, nullptr);
 #else
-    QAction * item = new QAction(*create_menu_image(present), text.c_str());
+    QAction * item = new QAction(*create_menu_image(present), qt(text));
 #endif
     menu->addAction(item);
     connect
@@ -2797,11 +2797,11 @@ qseqeditframe64::set_event_entry
     std::string text = s_event_items[index].epp_name;
     midibyte status = s_event_items[index].epp_status;
 #if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
-    QString mlabel(text.c_str());
+    QString mlabel(qt(text));
     QIcon micon(*create_menu_image(present));
     QAction * item = new QAction(micon, mlabel, nullptr);
 #else
-    QAction * item = new QAction(*create_menu_image(present), text.c_str());
+    QAction * item = new QAction(*create_menu_image(present), qt(text));
 #endif
     menu->addAction(item);
     connect

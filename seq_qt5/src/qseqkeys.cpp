@@ -40,7 +40,8 @@
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
-#include "qseqkeys.hpp"
+#include "qseqkeys.hpp"                 /* seq66::qseqkeys panel            */
+#include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -179,7 +180,7 @@ qseqkeys::paintEvent (QPaintEvent *)
             if (key == m_key)
             {
                 note = musical_note_name(keyvalue);
-                painter.drawText(2, numy, note.c_str());
+                painter.drawText(2, numy, qt(note));
             }
             break;
 
@@ -188,14 +189,14 @@ qseqkeys::paintEvent (QPaintEvent *)
             if ((keyvalue % 2) == 0)
             {
                 note = musical_note_name(keyvalue);
-                painter.drawText(2, numy, note.c_str());
+                painter.drawText(2, numy, qt(note));
             }
             break;
 
         case showkeys::all_letters:
 
             note = musical_note_name(keyvalue);
-            painter.drawText(2, numy, note.c_str());
+            painter.drawText(2, numy, qt(note));
             break;
 
         case showkeys::even_numbers:

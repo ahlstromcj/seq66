@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-20
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -67,12 +67,12 @@
  *      #include "qseqeditframe.hpp"    // Kepler34 version
  */
 
-#include <QErrorMessage>
+#include <QErrorMessage>                /* QErrorMessage                    */
 #include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QInputDialog>                 /* prompt for NSM MIDI file-name    */
 #include <QGuiApplication>              /* used for QScreen geometry() call */
-#include <QMessageBox>
-#include <QResizeEvent>
+#include <QMessageBox>                  /* QMessageBox                      */
+#include <QResizeEvent>                 /* QResizeEvent                     */
 #include <QScreen>                      /* Qscreen                          */
 #include <QStandardItemModel>           /* for disabling combobox entries   */
 #include <QTimer>                       /* QTimer                           */
@@ -83,32 +83,32 @@
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "midi/songsummary.hpp"         /* seq66::write_song_summary()      */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
-#include "qliveframeex.hpp"
+#include "qliveframeex.hpp"             /* seq66::qliveframeex container    */
 #include "qmutemaster.hpp"              /* shows a map of mute-groups       */
-#include "qperfeditex.hpp"
-#include "qperfeditframe64.hpp"
-#include "qplaylistframe.hpp"
-#include "qsabout.hpp"
-#include "qsbuildinfo.hpp"
-#include "qseditoptions.hpp"
-#include "qseqeditex.hpp"
-#include "qseqeditframe64.hpp"          /* Seq66 version                    */
+#include "qperfeditex.hpp"              /* seq66::qperfeditex container     */
+#include "qperfeditframe64.hpp"         /* seq66::qperfeditframe64 class    */
+#include "qplaylistframe.hpp"           /* seq66::qplaylistframe class      */
+#include "qsabout.hpp"                  /* seq66::qsabout dialog class      */
+#include "qsbuildinfo.hpp"              /* seq66::qsbuildinfo dialog class  */
+#include "qseditoptions.hpp"            /* seq66::qseditoptions dialog      */
+#include "qseqeditex.hpp"               /* seq66::qseqeditex container      */
+#include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qseqeventframe.hpp"           /* a new event editor for Qt        */
 #include "qsessionframe.hpp"            /* shows session information        */
 #include "qsetmaster.hpp"               /* shows a map of all sets          */
-#include "qsmaintime.hpp"
-#include "qsmainwnd.hpp"
-#include "qslivegrid.hpp"
-#include "qt5_helpers.hpp"              /* seq66::qt_set_icon() etc.        */
-#include "sessions/smanager.hpp"        /* attach_session()                 */
+#include "qsmaintime.hpp"               /* seq66::qsmaintime panel class    */
+#include "qsmainwnd.hpp"                /* seq66::qsmainwnd main window     */
+#include "qslivegrid.hpp"               /* seq66::qslivegrid panel          */
+#include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
 #include "util/filefunctions.hpp"       /* seq66::file_extension_match()    */
+#include "sessions/smanager.hpp"        /* seq66::save_, attach_session()   */
 
 /*
  *  A signal handler is defined in daemonize.cpp, used for quick & dirty
  *  signal handling.  Thanks due to user falkTX!
  */
 
-#include "os/daemonize.hpp"             /* session_close(), etc.            */
+#include "os/daemonize.hpp"             /* seq66::session_close(), etc.     */
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -1458,7 +1458,7 @@ qsmainwnd::refresh ()
     b += std::to_string(active_screenset);
     b += " of ";
     b += std::to_string(perf().screenset_count());
-    ui->entry_active_set->setText(b.c_str());
+    ui->entry_active_set->setText(qt(b));
     if (ui->button_keep_queue->isChecked() != perf().is_keep_queue())
         ui->button_keep_queue->setChecked(perf().is_keep_queue());
 
@@ -1493,7 +1493,7 @@ qsmainwnd::refresh ()
                 perf().pulses_to_measure_string(tick) :
                 perf().pulses_to_time_string(tick) ;
 
-            ui->label_HMS->setText(t.c_str());
+            ui->label_HMS->setText(qt(t));
             m_beat_ind->update();
         }
     }
@@ -1642,7 +1642,7 @@ qsmainwnd::new_session ()
         (
             this, tr("New Session MIDI File"),      /* parent and title     */
             tr("MIDI FIle Base Name"),              /* input field label    */
-            QLineEdit::Normal, defname.c_str(), &ok
+            QLineEdit::Normal, qt(defname), &ok
         );
         if (ok)
         {
@@ -2513,8 +2513,8 @@ qsmainwnd::update_recent_files_menu ()
             if (! shortname.empty())
             {
                 std::string longname = rc().recent_file(f, false);
-                m_recent_action_list.at(f)->setText(shortname.c_str());
-                m_recent_action_list.at(f)->setData(longname.c_str());
+                m_recent_action_list.at(f)->setText(qt(shortname));
+                m_recent_action_list.at(f)->setData(qt(longname));
                 m_recent_action_list.at(f)->setVisible(true);
             }
             else
@@ -2826,7 +2826,7 @@ qsmainwnd::show_message_box (const std::string & msg_text)
         m_msg_error = new (std::nothrow) QErrorMessage(this);
         if (not_nullptr(m_msg_error))
         {
-            QString msg = msg_text.c_str();             /* Qt needs c_str() */
+            QString msg = qt(msg_text);
             QSpacerItem * hspace = new QSpacerItem
             (
                 SEQ66_ERROR_BOX_WIDTH, 0,
@@ -3327,7 +3327,7 @@ qsmainwnd::report_message (const std::string & msg, bool good)
         if (good)                           /* info message     */
         {
             QMessageBox * mbox = new QMessageBox(this);
-            mbox->setText(tr(msg.c_str()));
+            mbox->setText(qt(msg));
             mbox->setInformativeText(tr("Click OK to continue."));
             mbox->setStandardButtons(QMessageBox::Ok);
             mbox->exec();
@@ -3335,7 +3335,7 @@ qsmainwnd::report_message (const std::string & msg, bool good)
         else                                /* error message    */
         {
             QErrorMessage * errbox = new QErrorMessage(this);
-            errbox->showMessage(tr(msg.c_str()));
+            errbox->showMessage(qt(msg));
             errbox->exec();
         }
     }
