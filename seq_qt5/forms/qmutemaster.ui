@@ -14,7 +14,7 @@
    <string>Mute Master</string>
   </property>
   <property name="toolTip">
-   <string>The Mute Master allows for easier viewing of mute groups.</string>
+   <string>Mute Master allows for viewing/editing of mute groups.</string>
   </property>
   <property name="whatsThis">
    <string>This is the Mute Master</string>
@@ -123,8 +123,7 @@
         </property>
         <property name="toolTip">
          <string>When the set-size is 64 and 96 instead of 32,
-this control allows paging the Group Patterns
-grid.  A future feature.</string>
+allows paging the Group Patterns grid.  A future feature.</string>
         </property>
         <property name="wrapping">
          <bool>true</bool>
@@ -146,7 +145,7 @@ grid.  A future feature.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Saves the current mute groups to a file in the session
+         <string>Saves mute groups to a file in the session
 configuration directory.</string>
         </property>
         <property name="text">
@@ -353,7 +352,7 @@ configuration directory.</string>
         </property>
         <property name="toolTip">
          <string>Provides the base name for the mute-group file.
-If a path is present, it is stripped.  The file is always
+Any path present is stripped.  The file is always
 saved to the session configuration directory.</string>
         </property>
         <property name="verticalScrollBarPolicy">
@@ -390,8 +389,8 @@ saved to the session configuration directory.</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>This setting causes the mute statuses to be saved
-as stanzas of 1's and 0's.  This is the default setting.</string>
+           <string>Causes mute statuses to be saved as stanzas of 1's
+and 0's.  The default setting.</string>
           </property>
           <property name="text">
            <string>Binar&amp;y</string>
@@ -401,9 +400,8 @@ as stanzas of 1's and 0's.  This is the default setting.</string>
         <item row="1" column="1">
          <widget class="QCheckBox" name="m_check_to_mutes">
           <property name="toolTip">
-           <string>If checked, the mute-groups are saved to the
-&quot;Mutes File&quot; (*.mutes) when the application
-exits.</string>
+           <string>If set, the mute-groups are saved to the
+&quot;Mutes File&quot; (*.mutes) at exit.</string>
           </property>
           <property name="text">
            <string>To Mutes</string>
@@ -419,9 +417,9 @@ exits.</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>If set, the mute statuses are saved in hexadecimal
+           <string>If set, mute statuses are saved in hexadecimal
 format (e.g. 0xFF).  Useful if the set-size is larger
-than the default of 8 x 4.</string>
+than of 8 x 4.</string>
           </property>
           <property name="text">
            <string>He&amp;x</string>
@@ -431,7 +429,7 @@ than the default of 8 x 4.</string>
         <item row="0" column="1">
          <widget class="QCheckBox" name="m_check_to_midi">
           <property name="toolTip">
-           <string>If checked, the mute-groups are saved in the MIDI
+           <string>If et, the mute-groups are saved in the MIDI
 file when it is saved.</string>
           </property>
           <property name="text">
@@ -456,7 +454,7 @@ file when it is saved.</string>
         <property name="toolTip">
          <string>If checked, toggling off a mute-group toggles only
 the patterns active in that group; patterns unmuted
-by the user will stay on.  The legacy behavior is to
+by the user will stay on.  Legacy behavior is to
 adhere strictly to the mute-group.</string>
         </property>
         <property name="text">
@@ -473,7 +471,7 @@ adhere strictly to the mute-group.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>If checked, load the mute-group section from the
+         <string>If set, load the mute-group section from the
 'mutes' file.  Disables loading it from the MIDI file.</string>
         </property>
         <property name="text">
@@ -515,7 +513,7 @@ tab can be used to toggle the mute-groups.</string>
          <bool>false</bool>
         </property>
         <property name="toolTip">
-         <string>Saves the current mute-group modifications to
+         <string>Saves mute-group modifications to
 the mute-group settings.  One still needs to save
 the MIDI file or 'mutes' file, as applicable, to
 preserve this mute-group.</string>

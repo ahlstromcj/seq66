@@ -42,8 +42,6 @@ From Testing:
 
     Test port-mapping some more.
 
-    Investigation Windows installer versus portable package for 0.95.0.
-
     When zooming, try to keep the same viewport in view.  Got this working
     for horizontal seqroll and perfroll, but not for vertical (refactoring
     needed).  Try to center vertically on notes in the viewport.

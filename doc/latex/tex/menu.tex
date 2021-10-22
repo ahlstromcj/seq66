@@ -823,6 +823,12 @@
          rather than ALSA.  However, if JACK is not running on the
          system, then \texttt{seq66} will fall back to ALSA mode.
          The command-line option is \texttt{-{}-jack-midi}.
+      \item \textbf{JACK Auto-Connect}.
+         \index{JACK!auto-connect}
+         This option has been true for a long time in \textsl{Seq66}, and
+         non-configurable.  Now it can be turned off, in order to let the user
+         or a session manager make the connections, even when not using
+         manual/virtual ports.
    \end{itemize}
 
 %  Note that there are long-standing issues with the JACK support of

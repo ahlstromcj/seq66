@@ -203,6 +203,9 @@
 \subsubsection{Concepts / Terms / queue, keep queue, snapshot, one-shot}
 \label{subsubsec:concepts_terms_queue_mode}
 
+   The concepts here refer to playback, not recording.  The term "one-shot" in
+   playback is differnt from the same term in "recording".
+
    To "queue" a pattern means to ready it for playback on the next repeat of
    a pattern.  A pattern can be armed immediately, or it can be queued to
    play back the next time the pattern restarts.
@@ -226,6 +229,24 @@
    the patterns for live playback, and then release the snapshot key to
    revert to the state when it was first pressed.  (One might call it a
    "revert" key.)
+
+   \index{oneshot}
+   \index{oneshot!playback}
+   \index{one-shot}
+   \index{one-shot!playback}
+   \index{playback!one-shot}
+   \textsl{Seq66} \textsl{one-shot playback} is a way to enable a pattern to be
+   queued and then played only once.
+
+   For recording, 
+   \index{oneshot}
+   \index{oneshot!recording}
+   \index{one-shot}
+   \index{one-shot!recording}
+   \index{recording!one-shot}
+   \textsl{Seq66} \textsl{one-shot recording} is a way to record notes from a
+   MIDI device with automatic stepping and snapping, which terminates at the
+   end of the specified length of the pattern.
 
 \subsection{Concepts / Sound Subsystems}
 \label{subsec:concepts_sound_subsystems}

@@ -20,11 +20,11 @@
       <bool>true</bool>
      </property>
      <property name="toolTip">
-      <string>Provides a table of MIDI output ports/busses and clock 
+      <string>A table of MIDI output ports/busses and clock 
 settings, input busses, and more.  There is a bug in the
 MIDI Clock tab where it won't respond to a click except
-in a very specific place; the alternative is to do Alt-C
-once or twice. </string>
+in a very specific place; do Alt-C once or twice.
+      </string>
      </property>
      <property name="currentIndex">
       <number>3</number>

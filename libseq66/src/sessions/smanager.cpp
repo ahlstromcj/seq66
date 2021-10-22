@@ -108,7 +108,8 @@ smanager::smanager (const std::string & caps) :
 
 smanager::~smanager ()
 {
-    (void) status_message("Exiting session manager");
+    if (rc().verbose())
+        (void) status_message("Exiting session manager");
 }
 
 /**
@@ -439,7 +440,7 @@ smanager::close_session (std::string & msg, bool ok)
             (void) save_session(msg, result);
     }
     result = ok;
-    session_close();                            /* daemonize signals exit   */
+    (void) session_close();                    /* daemonize signals exit   */
     return result;
 }
 

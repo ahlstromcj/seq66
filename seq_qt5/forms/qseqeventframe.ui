@@ -258,7 +258,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Shows the current time in bars:beats:pulses.  Can be edited to insert or modify events.</string>
+          <string>Shows current time in bars:beats:pulses.  Edit to insert or modify events.</string>
          </property>
          <property name="text">
           <string>000:00:00000</string>
@@ -449,8 +449,8 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>This button appends the text of events to a file for trouble-shooting.
-The file is in the same directory as the MIDI file, and has a name
+        <string>Appends the text of events to a file for trouble-shooting.
+It is in the same directory as the MIDI file, and has a name
 of the form &quot;filename-pattern-#.text&quot;, where '#' is the number of
 the pattern.</string>
        </property>
@@ -477,7 +477,7 @@ the pattern.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Deletes the current event, and then inserts a new event at the time shown above, with the data items shown above.</string>
+        <string>Deletes the current event, then inserts a new event at the time shown above, with the data items shown above.</string>
        </property>
        <property name="text">
         <string>Modif&amp;y</string>
@@ -527,7 +527,7 @@ the pattern.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Saves the current changes back to the pattern.  This step
+        <string>Saves current changes to the pattern.  This step
 must be done to preserve the changes.  Then the file must
 be saved to make the changes permanent.  Tricky, but safer.</string>
        </property>

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-10-06
+% \update      2021-10-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -22,7 +22,7 @@
    Fortunately, configuration items are well documented in the
    \textsl{Seq66} "man" page and in the configuration files.
    Therefore, this new discussion will merely summarize the options and
-   go into a few details about the configuration files..
+   go into a few details about the configuration files.
    Here are the topics to discuss:
 
    \begin{itemize}
@@ -342,9 +342,30 @@
    See \sectionref{subsubsec:configuration_rc_jack_transport}.
 
    \optionline{-t}{-{}-jack-midi}
-      \textsl{Seq66} will run with JACK if JACK is running.
+      \textsl{Seq66} will run with JACK, for MIDI if JACK is running.
 
       \configref{rc}{jack-transport}{jack-midi = true}
+
+   \optionline{-N}{-{}-no-jack-midi}
+      \textsl{Seq66} will not run with JACK for MIDI, even if JACK is running.
+
+      \configref{rc}{jack-transport}{jack-midi = false}
+
+   \optionline{-W}{-{}-jack-connect}
+      \textsl{Seq66} will connect automatically to JACK ports discovered on the
+      system. This is the long-standing default with Seq66.
+
+      \configref{rc}{jack-transport}{jack-connect = true}
+
+   \optionline{-w}{-{}-no-jack-connect}
+      \textsl{Seq66} will not automatically connect to other JACK ports.
+      This option is useful if a session manager is in charge of the
+      connections.
+      This option is not available with the other MIDI engines.
+
+      \configref{rc}{jack-transport}{jack-connect = false}
+
+   \optionline{-S}{-{}-jack-slave}
 
    \optionline{-S}{-{}-jack-slave}
       \textsl{Seq66} will sync to JACK transport as a "slave", if \textsl{JACK}
@@ -721,6 +742,7 @@
       transport-type = slave    # 'none', 'slave', 'master', or 'conditional'
       song-start-mode = song    # 'song' = 'true' or 'live' = 'false'
       jack-midi = true          # 'true' or 'false'
+      jack-auto-connect = true  # 'true' or 'false', default is true
    \end{verbatim}
 
    \texttt{transport-type} is independent of the MIDI playback/record engine
@@ -737,6 +759,17 @@
    If 'auto', then the mode is set to 'song' if the loaded file has
    a track layout (triggers), and 'live' otherwise.
    It is probably best to leave it at 'auto'.
+
+   \texttt{jack-midi} set to 'true' turns on the usage of JACK for MIDI
+   playback.  If running in normal mode (not in "manual/virtual" port mode),
+   then \textsl{Seq66} will connect automatically to all JACK MIDI ports it
+   finds on the system.
+
+   \texttt{jack-auto-connect} is normally set to 'true'.  If set to false, then
+   the automatic connect discussed in the previous paragraph will not be
+   performed.
+   This option is useful if one want to rely on a session manager to make the
+   connections.
 
 \subsubsection{'rc' File / MIDI Input}
 \label{subsubsec:configuration_rc_midi_input}

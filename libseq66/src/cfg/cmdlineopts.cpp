@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-10-06
+ * \updates       2021-10-21
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -119,6 +119,8 @@ cmdlineopts::s_long_options [] =
 #endif
     {"no-jack-midi",        0, 0, 'N'},
     {"jack-midi",           0, 0, 't'},
+    {"no-jack-connect",     0, 0, 'w'},
+    {"jack-connect",        0, 0, 'W'},
 #endif
     {"manual-ports",        0, 0, 'm'},
     {"auto-ports",          0, 0, 'a'},
@@ -159,7 +161,7 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         0123456789#@AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz
-        x         x xx::x:xx  :: x:x xxxxx :xxxx *xx :xxxxxxx:xx  ::  aa
+        x         x xx::x:xx  :: x:x xxxxx :xxxx *xx :xxxxxxx:xxxx::  aa
 \endverbatim
  *
  *  * Note that 'o' options arguments cannot be included here due to issues
@@ -182,7 +184,7 @@ cmdlineopts::s_long_options [] =
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:DdF:f:gH:hiJjKkl:M:mNnoPpq:RrSsTtU:uVvX:x:Zz#";
+    "AaB:b:Cc:DdF:f:gH:hiJjKkl:M:mNnoPpq:RrSsTtU:uVvWwX:x:Zz#";
 
 /**
  *  Provides help text.
@@ -248,10 +250,12 @@ static const std::string s_help_2 =
 "   -C, --jack-master-cond   Fail if there's already a Jack Master; sets -j.\n"
 "   -N, --no-jack-midi       Use ALSA MIDI, even with JACK Transport. See -A.\n"
 "   -t, --jack-midi          Use JACK MIDI, separately from JACK Transport.\n"
+"   -W, --jack-connect       Auto-connect to JACK ports. The default.\n"
+"   -w, --no-jack-connect    Don't connect to JACK ports. Good with sessions.\n"
 #if defined SEQ66_JACK_SESSION
 "   -U, --jack-session uuid  Set UUID for JACK session. This turns on JACK\n"
-"                            session management, and disables NSM. Set it to\n"
-"                            'on' to enable; JACK sets the UUID later.\n"
+"                            session management. Set it to 'on' to enable;\n"
+"                            JACK sets the UUID later.\n"
 #endif
 #endif
 "   -d, --record-by-channel  Divert MIDI input by channel into the patterns\n"
@@ -290,23 +294,22 @@ static const std::string s_help_4a =
 "                    '=filename' is provided, the filename in '[user-options]'\n"
 "                    in the 'usr' file is used.\n"
 "      sets=RxC      Change set rows and columns from 4x8. R can be 4 to 12;\n"
-"                    C can be 4 to to 12. If not 4x8, call it 'variset' mode.\n"
-"                    Affects mute groups, too.\n"
+"                    C can be 4 to to 12. Call it the 'variset' mode. Affects\n"
+"                    mute groups, too.\n"
 ;
 
 static const std::string s_help_4b =
 "      scale=x.y     Scales size of main window. Range: 0.5 to 3.0.\n"
 "      mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.\n"
 "      virtual=o,i   Like --manual-ports, except that the count of output and\n"
-"                    input ports are specified. Defaults are 8 & 4, respectively.\n"
+"                    input ports are specified. Defaults are 8 & 4.\n"
 "\n"
 " seq66cli:\n"
 "      daemonize     Makes this application fork to the background.\n"
 "      no-daemonize  Or not.  These options do not apply to Windows.\n"
 "\n"
-"The 'daemonize' option works only in the CLI build. The 'sets' option works in\n"
-"the CLI build.  Specify the '--user-save' option to make these options\n"
-"permanent in the seq66.usr configuration file.\n"
+"'daemonize' works only in the CLI build. 'sets' works in all builds. Add\n"
+"'--user-save' to make these options permanent in the qseq66.usr file.\n"
 "\n"
 ;
 
@@ -315,10 +318,9 @@ static const std::string s_help_4b =
  */
 
 static const std::string s_help_5 =
-"Saving a MIDI file saves the current PPQN value. If no JACK options are shown\n"
-"above, they were disabled in the build configuration. Command-line options can\n"
-"be sticky; many of them are saved to the configuration\files when Seq66 exits.\n"
-"See the Seq66 User Manual.\n"
+"Saving a MIDI file saves the current PPQN value. No JACK options are shown if\n"
+"disabled in the build configuration. Command-line options can be sticky; many\n"
+"are saved to the 'rc' files when Seq66 exits. See the Seq66 User Manual.\n"
 ;
 
 /**
@@ -982,13 +984,13 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'N':
             rc().with_jack_midi(false);
-            printf("[Deactivating JACK MIDI]\n");
+            // printf("[Deactivating JACK MIDI]\n");
             break;
 
 #if defined SEQ66_NSM_SUPPORT
         case 'n':
             usr().session_manager("nsm");
-            printf("[Activating NSM support]\n");
+            // printf("[Activating NSM support]\n");
             break;
 #endif
 
@@ -1018,12 +1020,12 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'R':
             rc().reveal_ports(false);
-            printf("[Showing user-configured port names]\n");
+            // printf("[Showing user-configured port names]\n");
             break;
 
         case 'r':
             rc().reveal_ports(true);
-            printf("[Showing native system port names]\n");
+            // printf("[Showing native system port names]\n");
             break;
 
 #if defined SEQ66_JACK_SUPPORT
@@ -1041,13 +1043,13 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 #if defined SEQ66_NSM_SUPPORT
         case 'T':
             usr().session_manager("none");
-            printf("[Deactivating session support]\n");
+            // printf("[Deactivating session support]\n");
             break;
 #endif
 
         case 't':
             rc().with_jack_midi(true);
-            printf("[Activating native JACK MIDI]\n");
+            // printf("[Activating native JACK MIDI]\n");
             break;
 
 #if defined SEQ66_JACK_SESSION
@@ -1061,13 +1063,21 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().auto_usr_save(true);    /* usr(), not rc()!     */
             break;
 
+        case 'V':
+            std::cout << versiontext << seq_build_details();
+            result = c_null_option;
+            break;
+
         case 'v':
             rc().verbose(true);
             break;
 
-        case 'V':
-            std::cout << versiontext << seq_build_details();
-            result = c_null_option;
+        case 'W':
+            rc().jack_auto_connect(true);
+            break;
+
+        case 'w':
+            rc().jack_auto_connect(false);
             break;
 
         case 'X':

@@ -1,7 +1,7 @@
 # README for Seq66 0.97.1
 
 Chris Ahlstrom
-2015-09-10 to 2021-10-20
+2015-09-10 to 2021-10-21
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -84,17 +84,20 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.97.2:
+        *   Issue #57: Increased width of option fields for wider fonts.
+        *   Issue #58: Indicate if NSM is running in Preferences / Sessions and
+            disable other session selections at that point.
+        *   Issue #59: Spelling error(s) fixed.
+        *   Issue #60: Added 'rc' option to disable JACK port auto connect in
+            normal mode.  Also present in Preferences / JACK.
+        *   Issue #61: Rearranged console output to show the app name, in color.
+        *   Added textfix.qss as an example of making disabled text easier to
+            read.
     *   Version 0.97.1:
         *   Fixed a bad bug in displaying Notes in the data & event panels in
             the pattern editor, caused by premature ... optimization.
-        *   Issue #57: Increased width of option fields for wider fonts.
-        *   Issue #58: Indicate if NSM is running in Preferences / Sessions and
-            disable any selection at that point.
-        *   Issue #59: Spelling error(s) fixed.
-        *   Issue #61: Rearranged console output to show the app name, in color.
             per issue #61.
-        *   Added textfix.qss as an example of making disabled text easier to
-            read.
         *   Added working tempo-track code to Edit / Preferences / MIDI Clock.
         *   Added exponential ramping of Event Panel events to the pattern LFO
             dialog.

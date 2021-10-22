@@ -1319,11 +1319,13 @@
    \begin{enumber}
       \item \textbf{Merge}.
          \index{merge}
+         \index{recording!merge}
          \index{recording type!merge}
          This is the normal style of recording loops, where notes can
          accumulate as the loop repeats.
       \item \textbf{Replace.}
       \index{replace}
+      \index{recording!replace}
       \index{recording type!replace}
          When the loop starts over, and a note is pressed,
          then the existing notes in that loop are erased,
@@ -1335,6 +1337,7 @@
          partially-drawn note behind.  The workaround is to try again.
       \item \textbf{Expand}.
          \index{expand}
+         \index{recording!expand}
          \index{recording type!expand}
          Once the end of the loop is near, whether or
          not any notes are being input, another measure is added to the length
@@ -1343,18 +1346,23 @@
          being played/recorded.
       \item \textbf{Oneshot}.
          \index{oneshot}
+         \index{recording!oneshot}
          \index{recording type!oneshot}
          When this option is set, with the record button on, and no pattern
          playing, recording won't start until a note comes in, and when the
          first note comes in, the progress bar starts at the left (time 0).
          As each new set of notes at the same timestamp come in, the
          notes are recorded and the current time advances by one snap value.
+         The length of each note is determined by the snap size for the spacing
+         of drawn events.
          At the end of the pattern, recording stops automatically.
          See the figure
          below for a recording from a \textsl{Yamaha DD-11}.
-         The length of each note is determined by the snap size for the spacing
-         of drawn events.
    \end{enumber}
+
+   Remember that \textsl{Oneshot playback} is a kind of auto-step/step-edit
+   recording, and that auto-step/step-edit can also be done by click-dragging
+   the mouse.  Do not confuse it with \textsl{Oneshot playback}.
 
 \begin{figure}[H]
    \centering 
@@ -1365,9 +1373,20 @@
 
    In the figure above, we set up to record input from the port attached to a
    \textsl{Yamaha DD-11} drum machine.  After some trial and error,
-   we set the \textbf{Length} to 2 measures (see the red text); the
-   \textbf{Snap} to 1/8th; the \textbf{Recording Type} to "Oneshot"; and
-   \textbf{Recording} on; also, the \textbf{BPM} was set to 124 in the main
+   we set:
+
+   \begin{itemize}
+      \item \textbf{Length} to 2 measures (see the red text in the figure).
+      \item \textbf{Snap} to 1/8th, which sets the spacing of drawn notes as
+         well.  This determines the position of each new note.
+      \item \textbf{Note Length} to 1/16th, which sets the length of drawn
+         notes as well.
+      \item \textbf{Recording Type} to \textbf{Oneshot}.
+      \item \textbf{Recording} on. This is the button with the MIDI DIN
+         connector pins going into the blue vertical rectangle.
+   \end{itemize}
+
+   Also, the \textbf{BPM} was set to 124 in the main
    window, to match the "39" tempo in the DD-11, which maps to 124 bpm.
    Finally, we picked the \textsl{Pop Rock 1} style.  
    Once this setup was in place, clicking the DD-11 Start/Stop button started
@@ -1377,10 +1396,23 @@
    Why is the snap used instead of the note-length?  Because we're using the
    \index{auto-step}
    \index{step-edit}
-   auto-step (step-edit) feature... the snap determines where the next note
+   \index{recording!auto-step}
+   \index{recording!step-edit}
+   \index{auto-step!recording}
+   \index{step-edit!recording}
+   auto-step (step-edit) recording feature...
+   the snap determines where the next note
    begins, and the length determines the length of the note to create.
    However, the note-length is a property of the piano roll, not the pattern
-   itself.  The pattern uses the snap-length during auto-step.
+   itself.  The pattern uses the snap-length during auto-step/setp-edit.
+
+   This kind of note recording can be done in two ways:
+
+   \begin{enumerate}
+      \item Left-click-drag the mouse.
+      \item Turn on recording without the pattern playing, then
+         enter notes; recording stops when the end of the length is reached.
+   \end{enumerate}
 
    Now, the DD-11 is an old instrument from the pre-General-MIDI days.
    So, in order to play back this pattern on something like

@@ -43,7 +43,7 @@
     </rect>
    </property>
    <property name="toolTip">
-    <string>Shows the existing play-lists read from the play-list file.</string>
+    <string>Shows existing play-lists read from the play-list file.</string>
    </property>
    <property name="statusTip">
     <string/>
@@ -184,7 +184,7 @@
     </rect>
    </property>
    <property name="toolTip">
-    <string>Shows the MIDI tunes in the currently-selected play-list.</string>
+    <string>Shows MIDI tunes in the currently-selected play-list.</string>
    </property>
    <property name="alternatingRowColors">
     <bool>true</bool>
@@ -262,8 +262,8 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Shows the full path to the play-list file. 
-Read-only.</string>
+       <string>Shows the full path to the play-list file.  Read-only.
+       </string>
       </property>
       <property name="text">
        <string>None</string>
@@ -298,7 +298,7 @@ Read-only.</string>
    </property>
    <property name="toolTip">
     <string>The default song directory for the currently-selected play-list
-section. Can be edited to enable Add List and Modify List,
+section. Edit to enable Add List and Modify List,
 but not in Non Session Manager mode.</string>
    </property>
    <property name="text">
@@ -333,9 +333,9 @@ but not in Non Session Manager mode.</string>
     </size>
    </property>
    <property name="toolTip">
-    <string>Shows the MIDI control number for the currently-selected 
-play-list section. Can be edited to enable Add List and Modify
-List.</string>
+    <string>Shows the MIDI control number for the selected 
+play-list section. Edit to enable Add List and Modify List.
+    </string>
    </property>
    <property name="text">
     <string>000</string>
@@ -364,7 +364,7 @@ List.</string>
    </property>
    <property name="toolTip">
     <string>Shows the name of the currently-selected play-list section.
-Can be edited to enable Add List and Modify List.</string>
+Edit to enable Add List and Modify List.</string>
    </property>
    <property name="text">
     <string>None</string>
@@ -398,7 +398,7 @@ Can be edited to enable Add List and Modify List.</string>
     </size>
    </property>
    <property name="toolTip">
-    <string>Shows the directory in which the currently selected
+    <string>Shows the directory where the selected
 song is stored. Read-only.  Use the Load Song button
 to select an existing song.</string>
    </property>
@@ -434,8 +434,8 @@ to select an existing song.</string>
     </size>
    </property>
    <property name="toolTip">
-    <string>Shows the MIDI control number for the currently 
-selected song. Can be edited to enable the Add Song
+    <string>Shows the MIDI control number for the
+selected song. Edit to enable the Add Song
 and Modify Song buttons.  This is the only item that
 can be edited for a song.</string>
    </property>

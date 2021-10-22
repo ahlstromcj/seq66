@@ -200,7 +200,7 @@
     <item row="1" column="0">
      <widget class="QSlider" name="m_value_slider">
       <property name="toolTip">
-       <string>Sets the DC offset of the modulating waveform.</string>
+       <string>DC offset added to the modulating waveform.</string>
       </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -210,7 +210,7 @@
     <item row="1" column="1">
      <widget class="QSlider" name="m_range_slider">
       <property name="toolTip">
-       <string>Sets the depth of the LFO modulation.</string>
+       <string>Depth of modulation.</string>
       </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -220,7 +220,7 @@
     <item row="1" column="2">
      <widget class="QSlider" name="m_speed_slider">
       <property name="toolTip">
-       <string>The number of periods per pattern divided by beat width.  For long patterns, set it higher.  Subject to an anti-aliasing effect, especially for short patterns.</string>
+       <string>Number of periods per pattern. Subject to anti-aliasing.</string>
       </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -230,7 +230,7 @@
     <item row="1" column="3">
      <widget class="QSlider" name="m_phase_slider">
       <property name="toolTip">
-       <string>Sets the phase of the LFO.</string>
+       <string>Phase of the LFO, 0 to 1 is 0 to 360 degrees.</string>
       </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>

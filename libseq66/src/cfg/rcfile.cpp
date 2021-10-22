@@ -393,8 +393,16 @@ rcfile::parse ()
 
         bool flag = get_boolean(file, tag, "jack-midi");
         rc_ref().with_jack_midi(flag);
-        flag = get_boolean(file, tag, "jack-auto-connect");
-        rc_ref().jack_auto_connect(flag);
+        s = get_variable(file, tag, "jack-auto-connect");
+        if (s.empty())
+        {
+            rc_ref().jack_auto_connect(true);           /* legacy default   */
+        }
+        else
+        {
+            flag = get_boolean(file, tag, "jack-auto-connect");
+            rc_ref().jack_auto_connect(flag);
+        }
     }
 
     bool use_manual_ports = false;
