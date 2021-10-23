@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-06
- * \updates       2021-08-13
+ * \updates       2021-10-23
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of system MIDI information
@@ -124,11 +124,13 @@ midi_port_info::add
         const char * vport = makevirtual ? "virtual" : "non-virtual" ;
         const char * iport = makeinput ? "input" : "output" ;
         const char * sport = makesystem ? "system" : "device" ;
-        printf
+        char tmp[128];
+        snprintf
         (
-            "Found port %s:%s of type %s %s %s\n",
+            tmp, sizeof tmp, "Found port %s:%s of type %s %s %s",
             clientname.c_str(), portname.c_str(), vport, iport, sport
         );
+        info_message(tmp);
     }
 }
 

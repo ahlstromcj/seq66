@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-09-15
+ * \updates       2021-10-23
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -401,14 +401,14 @@ create_jack_client (std::string clientname, std::string uuid)
     if (not_nullptr(result))
     {
         if (status & JackServerStarted)
-            (void) info_message("JACK server started now");
+            (void) info_message("JACK server started");
         else
             (void) info_message("JACK server already started");
 
         if (status & JackNameNotUnique)
         {
             char t[80];
-            snprintf(t, sizeof t, "JACK client-name '%s' not unique", name);
+            snprintf(t, sizeof t, "JACK client name '%s' not unique", name);
             (void) info_message(t);
         }
         else
@@ -660,7 +660,6 @@ jack_assistant::~jack_assistant ()
  *
  * \return
  *      Returns true.
- */
 
 bool
 jack_assistant::info_message (const std::string & msg)
@@ -668,6 +667,7 @@ jack_assistant::info_message (const std::string & msg)
     printf("[%s]\n", msg.c_str());
     return true;
 }
+ */
 
 /**
  *  Common-code for error messages.  Adds markers, and sets m_jack_running to
@@ -679,7 +679,6 @@ jack_assistant::info_message (const std::string & msg)
  * \return
  *      Returns false for convenience/brevity in setting function return
  *      values.
- */
 
 bool
 jack_assistant::error_message (const std::string & msg)
@@ -687,6 +686,7 @@ jack_assistant::error_message (const std::string & msg)
     (void) info_message(msg);
     return false;
 }
+ */
 
 /**
  *  Tries to obtain the best information on the JACK client and the UUID
@@ -791,7 +791,7 @@ jack_assistant::init ()
         if (m_jack_client == NULL)
         {
             result = false;
-            return error_message("No JACK server, transport disabled");
+            return error_message("No JACK server");
         }
         else
         {
@@ -809,7 +809,7 @@ jack_assistant::init ()
             if (jackcode != 0)
             {
                 result = false;
-                return error_message("jack_set_process_callback() failed]");
+                return error_message("JACK set callback failed");
             }
         }
 
@@ -914,17 +914,17 @@ jack_assistant::deinit ()
 
         if (jack_deactivate(m_jack_client) != 0)
         {
-            (void) error_message("Can't deactivate JACK transport client");
+            (void) error_message("Can't deactivate JACK transport");
             result = false;
         }
 
         if (jack_client_close(m_jack_client) != 0)
         {
-            (void) error_message("Can't close JACK transport client");
+            (void) error_message("Can't close JACK transport");
         }
     }
     if (m_jack_running)
-        (void) info_message("JACK transport not disabled");
+        (void) info_message("JACK transport enabled");
     else
         (void) info_message("JACK transport disabled");
 
@@ -959,7 +959,6 @@ jack_assistant::activate ()
         }
         else
         {
-            // 2021-07-14: m_jack_running = false;
             m_timebase = timebase::none;
             (void) error_message("Can't activate JACK transport client");
         }
@@ -1984,11 +1983,11 @@ jack_transport_shutdown (void * arg)
     if (not_nullptr(jack))
     {
         jack->set_jack_running(false);
-        infoprint("[JACK shutdown. JACK transport disabled.]");
+        info_message("JACK transport shutdown");
     }
     else
     {
-        errprint("jack_transport_shutdown(): null JACK pointer");
+        (void) error_message("null JACK transport pointer");
     }
 }
 

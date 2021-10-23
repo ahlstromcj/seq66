@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-07-31
+ * \updates       2021-10-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -332,8 +332,12 @@ midicontrolfile::parse_stream (std::ifstream & file)
         }
         if (rc_ref().verbose())
         {
-            infoprint("Loaded key mappings");
-            m_temp_key_controls.show();
+            static bool s_not_shown = true;
+            if (s_not_shown)
+            {
+                s_not_shown = false;            /* show only once per run   */
+                m_temp_key_controls.show();
+            }
         }
     }
     if (loadmidi && m_temp_midi_ctrl_in.count() > 0)

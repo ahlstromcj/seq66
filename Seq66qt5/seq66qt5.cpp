@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2021-04-28
+ * \updates       2021-10-23
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -35,6 +35,7 @@
 #include <QApplication>                 /* QApplication etc.                */
 
 #include "qt5nsmanager.hpp"             /* an seq66::smanager for Qt 5      */
+#include "os/daemonize.hpp"             /* seq66::session_close(), etc.     */
 
 #define SEQ66_LOCALE_SUPPORT            /* needs more testing               */
 #undef  SEQ66_TRANSLATOR_SUPPORT
@@ -97,19 +98,32 @@ main (int argc, char * argv [])
          app.installTranslator(&app_translator);
 #endif
 
-    int exit_status = EXIT_SUCCESS;         /* EXIT_FAILURE                 */
-    seq66::qt5nsmanager sm(app);
-    bool result = sm.create(argc, argv);
-    if (result)
+    int exit_status = EXIT_SUCCESS;                 /* versus EXIT_FAILURE  */
+    for (;;)
     {
-        std::string msg;
-        bool result = sm.run();
-        exit_status = result ? EXIT_SUCCESS : EXIT_FAILURE ;
-        (void) sm.close_session(msg, result);
-    }
-    else
-        exit_status = EXIT_FAILURE;
+        seq66::qt5nsmanager sm(app);
+        bool result = sm.create(argc, argv);
+        if (result)
+        {
+            std::string msg;
+            bool result = sm.run();
+            exit_status = result ? EXIT_SUCCESS : EXIT_FAILURE ;
+            (void) sm.close_session(msg, result);
+            if (! result)
+                break;
 
+            if (seq66::session_close())
+                break;
+
+            if (! seq66::session_restart())
+                break;
+        }
+        else
+        {
+            exit_status = EXIT_FAILURE;
+            break;
+        }
+    }
     return exit_status;
 }
 

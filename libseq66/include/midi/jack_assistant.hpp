@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2021-08-28
+ * \updates       2021-10-23
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -562,7 +562,6 @@ private:
     void get_jack_client_info ();
     long current_jack_position () const;
 
-
 #if defined SEQ66_USE_JACK_SYNC_CALLBACK
     int sync (jack_transport_state_t state = (jack_transport_state_t)(-1));
 #endif
@@ -571,8 +570,12 @@ private:
 #endif
     void set_position (midipulse currenttick);
 
-    static bool info_message (const std::string & msg);
-    static bool error_message (const std::string & msg);
+    /*
+     * Use the functions from basic_macros.cpp
+     *
+     * static bool info_message (const std::string & msg);
+     * static bool error_message (const std::string & msg);
+     */
 
 };          // class jack_assistant
 

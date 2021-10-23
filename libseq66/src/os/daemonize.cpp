@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2021-10-05
+ * \updates       2021-10-23
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -361,12 +361,11 @@ reroute_stdio (const std::string & logfile, bool closem)
 
 /*
  *  Session-handling is Linux-only.
- *
- *  Make these values atomic?
  */
 
 static std::atomic<bool> sg_needs_close {};
 static std::atomic<bool> sg_needs_save {};
+static std::atomic<bool> sg_restart {};
 
 /**
  *  Provides a basic session handler, called upon receipt of a POSIX signal.
@@ -422,11 +421,39 @@ bool
 session_close ()
 {
     bool result = sg_needs_close;
-#if defined SEQ66_PLATFORM_DEBUG
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    if (sg_restart)
+    {
+        result = true;
+        sg_restart = false;
+    }
     if (result)
         printf("App marked for close....\n");
 #endif
+
+    sg_restart = false;
     sg_needs_close = false;
+    return result;
+}
+
+/**
+ *  Sets the flag for restarting the main() functions, instead of exiting.
+ */
+
+void
+session_flag_restart ()
+{
+    sg_restart = true;
+}
+
+bool
+session_restart ()
+{
+    bool result = sg_restart;
+    if (sg_needs_close)
+        result = false;
+
     return result;
 }
 

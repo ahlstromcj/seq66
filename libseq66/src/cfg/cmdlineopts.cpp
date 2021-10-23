@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-10-21
+ * \updates       2021-10-23
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -91,6 +91,7 @@ cmdlineopts::s_long_options [] =
     {"help",                0, 0, 'h'},
     {"version",             0, 0, 'V'},
     {"verbose",             0, 0, 'v'},
+    {"quiet",               0, 0, 'Q'},
     {"investigate",         0, 0, 'i'},
     {"home",                required_argument, 0, 'H'},
 #if defined SEQ66_NSM_SUPPORT
@@ -184,7 +185,7 @@ cmdlineopts::s_long_options [] =
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:DdF:f:gH:hiJjKkl:M:mNnoPpq:RrSsTtU:uVvWwX:x:Zz#";
+    "AaB:b:Cc:DdF:f:gH:hiJjKkl:M:mNnoPpQq:RrSsTtU:uVvWwX:x:Zz#";
 
 /**
  *  Provides help text.
@@ -195,6 +196,7 @@ static const std::string s_help_1a =
 "   -h, --help, ?            Show this help and exit.\n"
 "   -V, --version, #         Show program version/build and exit.\n"
 "   -v, --verbose            Verbose mode, show more data to the console.\n"
+"   -Q, --quiet              Turn off verbose mode.\n"
 #if defined SEQ66_NSM_SUPPORT
 "   -n, --nsm                Activate Non/New Session Manager support.\n"
 "   -T, --no-nsm             Ignore NSM in 'usr' file. T for 'typical'.\n"
@@ -984,13 +986,11 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'N':
             rc().with_jack_midi(false);
-            // printf("[Deactivating JACK MIDI]\n");
             break;
 
 #if defined SEQ66_NSM_SUPPORT
         case 'n':
             usr().session_manager("nsm");
-            // printf("[Activating NSM support]\n");
             break;
 #endif
 
@@ -1014,18 +1014,20 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().priority(true);
             break;
 
+        case 'Q':
+            rc().verbose(false);
+            break;
+
         case 'q':
             usr().midi_ppqn(string_to_int(soptarg));
             break;
 
         case 'R':
             rc().reveal_ports(false);
-            // printf("[Showing user-configured port names]\n");
             break;
 
         case 'r':
             rc().reveal_ports(true);
-            // printf("[Showing native system port names]\n");
             break;
 
 #if defined SEQ66_JACK_SUPPORT
@@ -1043,19 +1045,16 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 #if defined SEQ66_NSM_SUPPORT
         case 'T':
             usr().session_manager("none");
-            // printf("[Deactivating session support]\n");
             break;
 #endif
 
         case 't':
             rc().with_jack_midi(true);
-            // printf("[Activating native JACK MIDI]\n");
             break;
 
 #if defined SEQ66_JACK_SESSION
         case 'U':
             rc().jack_session(soptarg);
-            printf("[JACK session %s]\n", soptarg.c_str());
             break;
 #endif
 
@@ -1092,18 +1091,16 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().interaction_method(string_to_int(soptarg));
             break;
 
-        case 'Z':
+        case 'Z':                                   /* User mode    */
             rc().manual_ports(true);
             rc().reveal_ports(false);
             rc().auto_usr_save(true);
-            printf("[User mode: Manual ports and user-configured port names]\n");
             break;
 
-        case 'z':
+        case 'z':                                   /* Native mode  */
             rc().manual_ports(false);
             rc().reveal_ports(true);
             rc().auto_usr_save(true);
-            printf("[Native mode: Native ports and port names]\n");
             break;
 
         case '#':
@@ -1121,7 +1118,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         std::string appname(argv[0]);           /* "seq66", "./seq66", etc. */
         appname = appname.substr(appname.size()-applen, applen);
         result = optind;
-#if defined SEQ66_PLATFORM_DEBUG // _TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         if (optind < argc)
         {
             printf

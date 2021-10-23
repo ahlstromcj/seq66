@@ -65,12 +65,15 @@ qt_keystroke_test (QKeyEvent * event, keystroke::action act)
     if (ktext.empty())
         ktext = kname;
 
-    printf
+    char tmp[128];
+    snprintf
     (
-        "Event key #0x%02x mod %s '%s' %s: scan 0x%x key 0x%x ord 0x%x\n",
+        tmp, sizeof tmp,
+        "Event key #0x%02x mod %s '%s' %s: scan 0x%x key 0x%x ord 0x%x",
         k, modifiers.c_str(), ktext.c_str(), press ? "press" : "release",
         scode, kcode, ordinal
     );
+    (void) warn_message(tmp);
     return keystroke(0, press);                 /* disable the key action   */
 }
 

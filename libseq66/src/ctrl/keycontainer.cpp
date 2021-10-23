@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-08-31
+ * \updates       2021-10-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -274,17 +274,21 @@ keycontainer::show () const
 {
     using namespace std;
     int index = 0;
-    cout << "Key container size: " << m_container.size() << endl;
-    cout << "Index  Key  Name    Category Action Slot/Code" << endl;
+    std::string tag = seq_client_tag(msglevel::warn);
+    tag += " ";
+    std::cout
+        << tag << "Key container size: " << m_container.size() << std::endl
+        << tag << "Index  Key  Name    Category Action Slot/Code" << std::endl
+        ;
     for (const auto & kp : m_container)
     {
         unsigned key = kp.first;
         if (key > 0xff)
             key = 0xff;
 
-        cout
-            << "[" << setw(3) << right << index << "] "
-            << "(0x" << hex << setw(2) << right << key << ") "
+        std::cout
+            << tag << "[" << std::setw(3) << std::right << index << "] "
+            << "(0x" << std::hex << std::setw(2) << std::right << key << ") "
             ;
         kp.second.show();
         ++index;

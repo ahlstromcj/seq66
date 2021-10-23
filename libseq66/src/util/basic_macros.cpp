@@ -163,9 +163,9 @@ error_message (const std::string & msg)
 {
     std::string errmsg = msg;
     if (errmsg.empty())
-        errmsg = "Empty error message; ask the programmer to investigate";
+        errmsg = "No error message; contact the programmer";
 
-    std::cerr << seq_client_tag(msglevel::error) << " " << msg << std::endl;
+    std::cerr << seq_client_tag(msglevel::error) << " " << errmsg << std::endl;
     return false;
 }
 

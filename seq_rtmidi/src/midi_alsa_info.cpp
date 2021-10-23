@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-06-10
+ * \updates       2021-10-23
  * \license       See above.
  *
  *  API information found at:
@@ -342,7 +342,7 @@ midi_alsa_info::get_all_port_info ()
                      * client-name of 'VMPK Output'.
                      */
 
-                    infoprintf("Non-I/O port '%s'", clientname.c_str());
+                    warnprintf("Non-I/O port '%s'", clientname.c_str());
                 }
             }
         }
@@ -493,7 +493,7 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
     snd_seq_get_any_port_info(m_alsa_seq, bus, port, pinfo);
 
 #if defined SEQ66_SHOW_API_CALLS
-    printf("midi_alsa_info::port_start(%d:%d)\n", bus, port);
+    warnprintf("midi_alsa_info::port_start(%d:%d)\n", bus, port);
 #endif
 
     int cap = snd_seq_port_info_get_capability(pinfo);  /* get its capability */
@@ -553,21 +553,23 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
  *  "--verbose" command-line option.
  */
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-#define SHOW_EVENT 1
-#endif
-
-void
+bool
 midi_alsa_info::show_event (snd_seq_event_t * ev, const char * tag)
 {
-    int c = int(ev->source.client);
-    int p = int(ev->source.port);
-    int b = int(input_ports().get_port_index(c, p));
-    fprintf
-    (
-        stderr, "[%s event[%d] = 0x%x: client %d port %d]\n",
-        tag, b, unsigned(ev->type), c, p
-    );
+    if (rc().verbose())
+    {
+        int c = int(ev->source.client);
+        int p = int(ev->source.port);
+        int b = int(input_ports().get_port_index(c, p));
+        char tmp[80];
+        snprintf
+        (
+            tmp, sizeof tmp, "[%s event[%d] = 0x%x: client %d port %d]",
+            tag, b, unsigned(ev->type), c, p
+        );
+        info_message(tmp);
+    }
+    return true;
 }
 
 
@@ -641,23 +643,17 @@ midi_alsa_info::api_get_midi_event (event * inev)
         {
         case SND_SEQ_EVENT_CLIENT_START:
 
-            result = true;
-            if (rc().verbose())
-                show_event(ev, "Client Start");
+            result = show_event(ev, "Client start");
             break;
 
         case SND_SEQ_EVENT_CLIENT_EXIT:
 
-            result = true;
-            if (rc().verbose())
-                show_event(ev, "Client Exit");
+            result = show_event(ev, "Client exit");
             break;
 
         case SND_SEQ_EVENT_CLIENT_CHANGE:
 
-            result = true;
-            if (rc().verbose())
-                show_event(ev, "Client Change");
+            result = show_event(ev, "Client change");
             break;
 
         case SND_SEQ_EVENT_PORT_START:
@@ -671,9 +667,7 @@ midi_alsa_info::api_get_midi_event (event * inev)
              * api_port_start (mastermidibus & masterbus, int bus, int port)
              */
 
-            result = true;
-            if (rc().verbose())
-                show_event(ev, "Port Start");
+            result = show_event(ev, "Port start");
             break;
         }
         case SND_SEQ_EVENT_PORT_EXIT:
@@ -685,35 +679,27 @@ midi_alsa_info::api_get_midi_event (event * inev)
              * port_exit(masterbus, ev->data.addr.client, ev->data.addr.port);
              */
 
-            result = true;
-            if (rc().verbose())
-                show_event(ev, "Port Exit");
+            result = show_event(ev, "Port exit");
             break;
         }
         case SND_SEQ_EVENT_PORT_CHANGE:
         {
-            result = true;
-            if (rc().verbose())
-                show_event(ev, "Port Change");
+            result = show_event(ev, "Port change");
             break;
         }
         case SND_SEQ_EVENT_PORT_SUBSCRIBED:
 
-            result = true;
-            if (rc().verbose())
-                show_event(ev, "Port Subscribed");
+            result = show_event(ev, "Port subscribed");
             break;
 
         case SND_SEQ_EVENT_PORT_UNSUBSCRIBED:
 
-            result = true;
-            if (rc().verbose())
-                show_event(ev, "Port Unsubscribed");
+            result = show_event(ev, "Port unsubscribed");
             break;
 
         default:
-#if defined SHOW_EVENT
-            show_event(ev, "Other");
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+            result = show_event(ev, "Port other");
 #endif
             break;
         }
@@ -750,7 +736,7 @@ midi_alsa_info::api_get_midi_event (event * inev)
             bool sysex = inev->is_sysex();
             inev->set_input_bus(b);
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-            printf("Input on buss %d\n", int(b));
+            warnprintf("Input on buss %d\n", int(b));
 #endif
             while (sysex)           /* sysex might be more than one message */
             {
@@ -779,9 +765,11 @@ midi_alsa_info::api_get_midi_event (event * inev)
          */
 
         snd_midi_event_free(midi_ev);
-#if defined SHOW_EVENT
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         errprintf("snd_midi_event_decode() returned %ld", bytes);
 #endif
+
         return false;
     }
 }
