@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-10-02
+ * \updates       2021-10-24
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -39,6 +39,7 @@
 #include <iostream>                     /* std::cout                        */
 #include <sstream>                      /* std::ostringstream               */
 
+#include "cfg/settings.hpp"             /* seq66::usr() and rc()            */
 #include "play/screenset.hpp"           /* seq66::screenset class           */
 
 /*
@@ -75,6 +76,7 @@ namespace seq66
 screenset::screenset (screenset::number setnum, int rows, int columns) :
     m_rows              (rows),
     m_columns           (columns),
+    m_swap_coordinates  (usr().swap_coordinates()),
     m_set_size          (rows * columns),
     m_container         (),
     m_set_number        (setnum),
@@ -97,7 +99,7 @@ screenset::screenset (screenset::number setnum, int rows, int columns) :
 void
 screenset::change_set_number (screenset::number setno)
 {
-    int seqno = m_set_number * m_set_size;  /* WHY NOT USE setno HERE???    */
+    int seqno = setno * m_set_size;
     m_set_number = setno;
     m_set_offset = seqno;
     m_set_maximum = m_set_offset + m_set_size;
@@ -119,6 +121,7 @@ screenset::initialize (int rows, int columns)
 {
     m_rows              = rows;
     m_columns           = columns;
+    m_swap_coordinates  = usr().swap_coordinates();
     m_set_size          = rows * columns;
     m_set_maximum       = m_set_size;
     m_is_playscreen     = false;
@@ -270,6 +273,8 @@ screenset::grid_to_seq (int row, int column) const
 {
     if (row < 0 || row >= m_rows || column < 0 || column >= m_columns)
         return seq::unassigned();
+    else if (m_swap_coordinates)
+        return offset() + column + m_columns * row;
     else
         return offset() + row + m_rows * column;
 }
@@ -307,9 +312,17 @@ screenset::seq_to_grid (seq::number seqno, int & row, int & column) const
     bool result = seq_in_set(seqno);
     if (result)
     {
-        seqno -= offset();          /* convert to 0-to-31 range */
-        row = seqno % m_rows;
-        column = (seqno / m_rows);
+        seqno -= offset();              /* convert to 0-to-31 range */
+        if (m_swap_coordinates)
+        {
+            column = seqno % m_columns;
+            row = (seqno / m_columns);
+        }
+        else
+        {
+            row = seqno % m_rows;
+            column = (seqno / m_rows);
+        }
     }
     return result;
 }

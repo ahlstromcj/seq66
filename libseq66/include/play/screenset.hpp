@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-10-02
+ * \updates       2021-10-24
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -112,11 +112,11 @@ public:
 
     /**
      *  Maximum number of rows in the main-window's grid.  With the default
-     *  number of columns, this will double the number of sequences per set
-     *  from 32 to 64, hence the name "seq66".
+     *  number of columns, this will triple the number of sequences per set
+     *  from 32 to 64.
      */
 
-    static const int c_max_rows    = 12;    /* that is, 4 * 3 */
+    static const int c_max_rows = 12;       /* that is, 4 * 3 */
 
     /**
      *  Default number of columns in the main-window's grid.
@@ -181,6 +181,15 @@ private:
      */
 
     int m_columns;
+
+    /**
+     *  Experimental option to swap rows and columns.  See the function
+     *  swap_coordinates().  This swap doesn't apply to the number of rows and
+     *  columns, but to whether incrementing the sequence number moves to the
+     *  next or othe next column.
+     */
+
+    bool m_swap_coordinates;
 
     /**
      *  Indicates the size of a screenset, equivalent to the rows x columns

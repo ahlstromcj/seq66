@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-10-13
+ * \updates       2021-10-24
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -103,6 +103,12 @@
 #include "play/screenset.hpp"           /* seq66::screenset constants       */
 #include "play/seq.hpp"                 /* seq66::seq::limit()              */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
+
+#if defined SEQ66_SWAP_COORDINATES      /* for EXPERIMENT only              */
+const bool s_swap_coordinates_def = true;
+#else
+const bool s_swap_coordinates_def = false;
+#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -301,6 +307,7 @@ usrsettings::usrsettings () :
     m_option_bits               (option_none),
     m_mainwnd_rows              (screenset::c_default_rows),
     m_mainwnd_cols              (screenset::c_default_columns),
+    m_swap_coordinates          (s_swap_coordinates_def),
     m_window_scale              (c_window_scale_default),
     m_window_scale_y            (c_window_scale_default),
     m_mainwnd_spacing           (0),
@@ -399,6 +406,7 @@ usrsettings::set_defaults ()
     m_option_bits = option_none;
     m_mainwnd_rows = screenset::c_default_rows;
     m_mainwnd_cols = screenset::c_default_columns;
+    m_swap_coordinates = s_swap_coordinates_def;
     m_window_scale = c_window_scale_default;
     m_window_scale_y = c_window_scale_default;
     m_mainwnd_spacing = c_mainwnd_spacing;

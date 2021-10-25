@@ -627,7 +627,6 @@ private:
      *
      *      Use the static function seq_set() to calculate the desired set and
      *      offset into the set using the application-wide row and column size.
-     *
      *      We make this work faster by calculating the set based on the
      *      sequence number.
      *

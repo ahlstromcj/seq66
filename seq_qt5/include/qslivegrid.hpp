@@ -78,6 +78,12 @@ class qslivegrid final : public qslivebase
 
 private:
 
+#if defined SEQ66_SWAP_COORDINATES
+
+    using buttons = std::vector<qslotbutton *>;
+
+#else
+
     /**
      *  This vector represents a row of buttons.  Its size will be the number
      *  of columns in the grid.
@@ -91,6 +97,8 @@ private:
      */
 
     using buttons = std::vector<gridrow>;
+
+#endif  // defined SEQ66_SWAP_COORDINATES
 
 private:
 
@@ -155,11 +163,14 @@ private:
     seq::number seq_id_from_xy (int click_x, int click_y);
     qslotbutton * create_one_button (int seqno);
     qslotbutton * button (int row, int column);
-    qslotbutton * find_button (int seqno);
+    qslotbutton * button (int seqno);
     bool get_slot_coordinate (int x, int y, int & row, int & column);
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);
     bool delete_slot (int row, int column);
+#if defined SEQ66_SWAP_COORDINATES
+    bool delete_slot (seq::number seqno);
+#endif
     bool delete_all_slots ();
     bool recreate_all_slots ();
     bool refresh_all_slots ();

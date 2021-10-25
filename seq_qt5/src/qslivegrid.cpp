@@ -521,6 +521,8 @@ qslivegrid::set_bank_values (const std::string & bankname, int bankid)
 
 /**
  *  A brute-force function to get the desired slot-button pointer.
+ *  Currently similar to the grid_to_seq() functions when using
+ *  SEQ66_SWAP_COORDINATES.
  */
 
 qslotbutton *
@@ -528,8 +530,14 @@ qslivegrid::button (int row, int column)
 {
     qslotbutton * result = nullptr;
     if (! m_loop_buttons.empty() && ! m_loop_buttons[column].empty())
+    {
+#if defined SEQ66_SWAP_COORDINATES
+        int index = int(perf().grid_to_seq(row, column);
+        result = m_loop_buttons[index];
+#else
         result = m_loop_buttons[column][row];
-
+#endif
+    }
     return result;
 }
 
@@ -547,7 +555,7 @@ qslivegrid::button (int row, int column)
  */
 
 qslotbutton *
-qslivegrid::find_button (int seqno)
+qslivegrid::button (int seqno)
 {
     qslotbutton * result = nullptr;
     int row, column;
@@ -577,6 +585,21 @@ qslivegrid::delete_slot (int row, int column)
     return result;
 }
 
+#if defined SEQ66_SWAP_COORDINATES
+
+bool
+qslivegrid::delete_slot (seq::number seqno)
+{
+    int row, column;
+    bool result = seq_to_grid(seqno, row, column);
+    if (seq_to_grid(seqno, row, column))
+        result = delete_slot(row, column);
+
+    return result;
+}
+
+#endif  // defined SEQ66_SWAP_COORDINATES
+
 /**
  *  Generally, after calling this function, clear_loop_buttons() needs to be
  *  called to delete the slot-button pointers.
@@ -589,6 +612,17 @@ qslivegrid::delete_all_slots ()
     if (result)
     {
         bool failed = false;
+#if defined SEQ66_SWAP_COORDINATES
+        seq::number seqno = 0;
+        for (auto buttonptr : m_loop_buttons)
+        {
+            result = delete_slot(seqno);
+            if (! result)
+                failed = true;
+
+            ++seqno;
+        }
+#else
         for (int column = 0; column < columns(); ++column)
         {
             for (int row = 0; row < rows(); ++row)
@@ -598,6 +632,7 @@ qslivegrid::delete_all_slots ()
                     failed = true;
             }
         }
+#endif
         if (failed)
             result = false;
     }
@@ -617,7 +652,8 @@ qslivegrid::recreate_all_slots ()
     qloopbutton::boxes_initialized(true);       /* actually sets it false i */
     qloopbutton::progress_box_size              /* in case user changed it  */
     (
-        usr().progress_box_width(), usr().progress_box_height()
+        usr().progress_box_width(),
+        usr().progress_box_height()
     );
     if (result)
     {
@@ -664,6 +700,22 @@ qslivegrid::refresh_all_slots ()
     if (result)
     {
         seq::number offset = perf().playscreen_offset();
+#if defined SEQ66_SWAP_COORDINATES
+        seq::number seqno = 0;
+        for (auto buttonptr : m_loop_buttons)
+        {
+            seq::pointer s = perf().get_sequence(offset);
+            if (not_nullptr(s))
+            {
+                bool armed = s->playing();
+                qslotbutton * pb = button(offset);
+                pb->set_checked(armed);
+                pb->reupdate(true);
+            }
+            ++offset;
+            ++seqno;
+        }
+#else
         for (int column = 0; column < columns(); ++column)
         {
             for (int row = 0; row < rows(); ++row)
@@ -679,6 +731,7 @@ qslivegrid::refresh_all_slots ()
                 ++offset;
             }
         }
+#endif
     }
     return result;
 }
@@ -976,7 +1029,7 @@ qslivegrid::button_toggle_enabled (seq::number seqno)
     bool assigned = seqno != seq::unassigned();
     if (assigned)
     {
-        qslotbutton * pb = find_button(seqno);
+        qslotbutton * pb = button(seqno);
         if (not_nullptr(pb))
         {
             seq::pointer s = pb->loop();
@@ -997,7 +1050,7 @@ qslivegrid::button_toggle_checked (seq::number seqno)
     bool assigned = seqno != seq::unassigned();
     if (assigned)
     {
-        qslotbutton * pb = find_button(seqno);
+        qslotbutton * pb = button(seqno);
         if (not_nullptr(pb))
         {
             seq::pointer s = pb->loop();

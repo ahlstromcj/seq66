@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-10-06
+ * \updates       2021-10-24
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -64,6 +64,8 @@
 #include "cfg/scales.hpp"               /* seq66::legal_key() and scale()   */
 #include "cfg/userinstrument.hpp"
 #include "cfg/usermidibus.hpp"
+
+#undef  SEQ66_SWAP_COORDINATES          /* for EXPERIMENT only              */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -271,6 +273,15 @@ private:
      */
 
     int m_mainwnd_cols;
+
+    /**
+     *  Experimental option to swap rows and columns.  See the function
+     *  swap_coordinates().  This swap doesn't apply to the number of rows and
+     *  columns, but to whether incrementing the sequence number moves to the
+     *  next or othe next column.
+     */
+
+    bool m_swap_coordinates;
 
     /**
      *  Provide a scale factor to increase the size of the main window
@@ -1047,6 +1058,11 @@ public:
     int set_size () const
     {
         return m_mainwnd_rows * m_mainwnd_cols;
+    }
+
+    bool swap_coordinates () const
+    {
+        return m_swap_coordinates;
     }
 
     bool is_variset () const;
