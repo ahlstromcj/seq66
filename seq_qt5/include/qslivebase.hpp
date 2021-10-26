@@ -97,9 +97,9 @@ public:
         return perf().columns();
     }
 
-    int seqs_in_set () const
+    seq::number seq_offset () const
     {
-        return rows() * columns();
+        return perf().playscreen_offset();
     }
 
     int spacing () const

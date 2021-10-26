@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-10-24
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -64,8 +64,6 @@
 #include "cfg/scales.hpp"               /* seq66::legal_key() and scale()   */
 #include "cfg/userinstrument.hpp"
 #include "cfg/usermidibus.hpp"
-
-#undef  SEQ66_SWAP_COORDINATES          /* for EXPERIMENT only              */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -1224,6 +1222,11 @@ protected:
 
     bool mainwnd_rows (int value);
     bool mainwnd_cols (int value);
+
+    void swap_coordinates (bool flag)
+    {
+        m_swap_coordinates = flag;
+    }
 
     /*
      * This is a derived value, not settable by the user.  We will need to fix

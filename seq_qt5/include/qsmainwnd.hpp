@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-06
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -128,6 +128,7 @@ public:
     );
     virtual ~qsmainwnd ();
 
+    void enable_reload_button (bool flag);
     bool open_file (const std::string & path);
     void show_message_box (const std::string & msg_text);
     void remove_editor (int seq);

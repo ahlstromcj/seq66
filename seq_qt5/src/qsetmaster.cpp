@@ -240,7 +240,7 @@ qsetmaster::initialize_table ()
                 std::placeholders::_1, std::placeholders::_2
             )
         );
-        (void) cb_perf().set_function(setfunc);
+        (void) cb_perf().exec_set_function(setfunc);
     }
     return result;
 }

@@ -1408,7 +1408,7 @@ performer::change_ppqn (int p)
     bool result = set_ppqn(p);                  /* performer & master bus   */
     if (result)
     {
-        mapper().set_function
+        mapper().exec_set_function
         (
             [p] (seq::pointer sp, seq::number /*sn*/)
             {
@@ -2291,7 +2291,7 @@ performer::announce_playscreen ()
             &performer::announce_sequence, this,
             std::placeholders::_1, std::placeholders::_2
         );
-        slot_function(sh, false);           /* do not use the set-offset    */
+        exec_slot_function(sh, false);          /* do not use set-offset    */
         m_master_bus->flush();
     }
 }
@@ -2363,7 +2363,7 @@ performer::announce_mutes ()
  *  This function has to have both the sequence and its number as parameters,
  *  and must return a boolean value.
  *
- *  Also note that slot_function() must be called with the use_set_offset
+ *  Also note that exec_slot_function() must be called with the use_set_offset
  *  parameter set to false, in order to keep the slot number below the
  *  set-size, otherwise a crash occurs.
  *
@@ -2419,7 +2419,7 @@ performer::set_beats_per_measure (int bpm)
     if (result)
     {
         set_beats_per_bar(bpm);         /* also sets in jack_assistant  */
-        mapper().set_function
+        mapper().exec_set_function
         (
             [bpm] (seq::pointer sp, seq::number /*sn*/)
             {
@@ -2451,7 +2451,7 @@ performer::set_beat_width (int bw)
     if (result)
     {
         set_beat_length(bw);            /* also sets in jack_assistant  */
-        mapper().set_function
+        mapper().exec_set_function
         (
             [bw] (seq::pointer sp, seq::number /*sn*/)
             {

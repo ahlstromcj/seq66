@@ -200,15 +200,16 @@ private:
     }
 
     /*
-     * set_function(s) executes a set-handler for each set.
-     * set_function(s,p) runs a set-handler and a slot-handler for each set.
-     * set_function(p) runs the slot-handler for all patterns in all sets.
-     * slot_function() uses the play-screen, and so is in setmapper, not here.
+     * exec_set_function(s) executes a set-handler for each set.
+     * exec_set_function(s,p) runs a set-handler and a slot-handler for each
+     * set.  exec_set_function(p) runs the slot-handler for all patterns in
+     * all sets.  exec_slot_function() uses the play-screen, and so is in
+     * setmapper, not here.
      */
 
-    bool set_function (screenset::sethandler s);
-    bool set_function (screenset::sethandler s, screenset::slothandler p);
-    bool set_function (screenset::slothandler p);
+    bool exec_set_function (screenset::sethandler s);
+    bool exec_set_function (screenset::sethandler s, screenset::slothandler p);
+    bool exec_set_function (screenset::slothandler p);
 
 public:
 

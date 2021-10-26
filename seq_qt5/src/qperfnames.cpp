@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-21
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -114,7 +114,7 @@ qperfnames::paintEvent (QPaintEvent *)
 {
     int y_s = 0;
     int y_f = height() / track_height();
-    int set_count = perf().seqs_in_set();
+    int set_count = perf().screenset_count();           // not seqs_in_set()!
     int set_y = track_height() * set_count / 2;
     QPainter painter(this);
     QPen pen(fore_color());

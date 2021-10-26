@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2021-09-24
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  */
@@ -404,7 +404,7 @@ songsummary::write_mutes
 {
     const mutegroups & mutes = p.mutes();
     unsigned groupcount = c_max_groups;         /* 32, the maximum          */
-    unsigned setsize = p.seqs_in_set();
+    unsigned setsize = p.screenset_size();
     if (mutes.any())
     {
         groupcount = unsigned(mutes.count());   /* no. of existing groups  */

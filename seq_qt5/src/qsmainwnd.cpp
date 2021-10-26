@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-21
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2594,6 +2594,12 @@ qsmainwnd::open_recent_file ()
     }
 }
 
+void
+qsmainwnd::enable_reload_button (bool flag)
+{
+    m_session_frame->enable_reload_button(flag);
+}
+
 /**
  *  Calls check(), and if it checks out (heh heh), remove all of the editor
  *  windows and then calls for an exit of the application.
@@ -3147,9 +3153,6 @@ qsmainwnd::set_song_mute_on ()
     perf().set_song_mute(mutegroups::action::on);
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
-
-//  if (not_nullptr(m_song_frame64))    /////////////////
-//      m_song_frame64->set_dirty();
 }
 
 /**
@@ -3162,9 +3165,6 @@ qsmainwnd::set_song_mute_off ()
     perf().set_song_mute(mutegroups::action::off);
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
-
-//  if (not_nullptr(m_song_frame64))    /////////////////
-//      m_song_frame64->set_dirty();
 }
 
 /**
@@ -3177,9 +3177,6 @@ qsmainwnd::set_song_mute_toggle ()
     perf().set_song_mute(mutegroups::action::toggle);
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
-
-//  if (not_nullptr(m_song_frame64))    /////////////////
-//      m_song_frame64->set_dirty();
 }
 
 void

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-10-24
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -104,18 +104,14 @@
 #include "play/seq.hpp"                 /* seq66::seq::limit()              */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 
-#if defined SEQ66_SWAP_COORDINATES      /* for EXPERIMENT only              */
-const bool s_swap_coordinates_def = true;
-#else
-const bool s_swap_coordinates_def = false;
-#endif
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
 
 namespace seq66
 {
+
+const bool s_swap_coordinates_def = false;
 
 /**
  *  Limits offloaded from the obsolete app limits header.

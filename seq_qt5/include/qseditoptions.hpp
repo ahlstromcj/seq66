@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-21
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  */
@@ -73,9 +73,11 @@ public:
     virtual ~qseditoptions();
 
     void enable_bus_item (int bus, bool enabled);
+    void enable_reload_button (bool flag);
 
 private:
 
+    void modify_rc();
     void modify_usr();
     void sync ();               /* makes dialog reflect internal settings   */
     void backup ();             /* backup preferences for cancel-changes    */
@@ -91,6 +93,16 @@ private:
     void show_sets_mode (rcsettings::setsmode sm);
     void show_session (usrsettings::session sm);
 
+    void reload_needed (bool flag)
+    {
+        m_reload_needed = flag;
+    }
+
+    bool reload_needed () const
+    {
+        return m_reload_needed;
+    }
+
     const performer & perf () const
     {
         return m_perf;
@@ -100,6 +112,7 @@ private:
     {
         return m_perf;
     }
+
 
 private slots:
 
@@ -132,6 +145,7 @@ private slots:
     void slot_show_full_paths_click ();
     void slot_long_buss_names_click ();
     void slot_lock_main_window_click ();
+    void slot_swap_coordinates_click ();
     void slot_rc_save_click ();
     void slot_rc_filename ();
     void slot_usr_save_click ();
@@ -172,7 +186,7 @@ private:
 
     /*
      * Backup variables for settings.  Not everything new is currently backed
-     * up, though.
+     * up, though.  We need something more comprehensive, et easier.
      */
 
     bool m_backup_JackTransport;
@@ -181,6 +195,13 @@ private:
     bool m_backup_NoteResume;
     bool m_backup_JackMidi;
     int m_backup_KeyHeight;
+
+    /**
+     *  Indicates that a reload is necessary for at least one important
+     *  setting.
+     */
+
+    bool m_reload_needed;
 
 };          // class qseditoptions
 

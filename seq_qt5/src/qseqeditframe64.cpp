@@ -2125,7 +2125,7 @@ qseqeditframe64::popup_sequence_menu ()
     connect(off, &QAction::triggered, SET_BG_SEQ(seq::limit()));
     (void) m_sequences_popup->addAction(off);
     (void) m_sequences_popup->addSeparator();
-    int seqsinset = perf().seqs_in_set();
+    int seqsinset = perf().screenset_size();
     int maxset = perf().screenset_max();
     for (int sset = 0; sset < maxset; ++sset)
     {

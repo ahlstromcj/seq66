@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-10-24
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -309,19 +309,25 @@ screenset::grid_to_seq (int row, int column) const
 bool
 screenset::seq_to_grid (seq::number seqno, int & row, int & column) const
 {
-    bool result = seq_in_set(seqno);
+    seqno -= offset();              /* convert to 0-to-31 range */
+    return index_to_grid(seqno, row, column);
+}
+
+bool
+screenset::index_to_grid (seq::number index, int & row, int & column) const
+{
+    bool result = index >= 0 && index < m_set_size;
     if (result)
     {
-        seqno -= offset();              /* convert to 0-to-31 range */
         if (m_swap_coordinates)
         {
-            column = seqno % m_columns;
-            row = (seqno / m_columns);
+            column = index % m_columns;
+            row = (index / m_columns);
         }
         else
         {
-            row = seqno % m_rows;
-            column = (seqno / m_rows);
+            row = index % m_rows;
+            column = (index / m_rows);
         }
     }
     return result;
@@ -524,7 +530,7 @@ screenset::armed (seq::number seqno, bool flag)
  */
 
 bool
-screenset::slot_function (slothandler p, bool use_set_offset)
+screenset::exec_slot_function (slothandler p, bool use_set_offset)
 {
     bool result = false;
     seq::number sn = use_set_offset ? offset() : 0 ;
@@ -546,11 +552,11 @@ screenset::slot_function (slothandler p, bool use_set_offset)
  */
 
 bool
-screenset::set_function (sethandler s, slothandler p)
+screenset::exec_set_function (sethandler s, slothandler p)
 {
-    bool result = s(*this, 0);          /* handle the set, index not used   */
+    bool result = s(*this, 0);              /* handle set, index not used   */
     if (result)
-        result = slot_function(p);      /* handle slots/sequences in set    */
+        result = exec_slot_function(p);     /* handle set's slots/sequences */
 
     return result;
 }

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-10-06
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -49,7 +49,7 @@
 namespace seq66
 {
 
-static const int s_usr_file_version = 8;
+static const int s_usr_file_version = 9;
 
 /**
  *  Principal constructor.
@@ -63,6 +63,7 @@ static const int s_usr_file_version = 8;
  *      7:  2021-09-20. Added "style-sheet-active" and "lock-main-window"
  *          flags.
  *      8:  2021-10-06: Added "convert-to-smf-l".
+ *      8:  2021-10-26: Added "swap-coordinates".
  *
  * \param name
  *      Provides the full file path specification to the configuration file.
@@ -319,6 +320,9 @@ usrfile::parse ()
     }
     else
     {
+        bool flag = get_boolean(file, tag, "swap-coordinates");
+        usr().swap_coordinates(flag);
+
         int scratch = get_integer(file, tag, "mainwnd-rows");
         (void) usr().mainwnd_rows(scratch);
         scratch = get_integer(file, tag, "mainwnd-columns");
@@ -327,8 +331,7 @@ usrfile::parse ()
         usr().mainwnd_spacing(scratch);
         scratch = get_integer(file, tag, "default-zoom");
         usr().zoom(scratch);
-
-        bool flag = get_boolean(file, tag, "global-seq-feature");
+        flag = get_boolean(file, tag, "global-seq-feature");
         usr().global_seq_feature(flag);
         flag = get_boolean(file, tag, "progress-bar-thick");
         usr().progress_bar_thick(flag);
@@ -743,6 +746,11 @@ usrfile::write ()
         "# were removed in version 5 of this file. The grid contains Qt buttons\n"
         "# For a flat style, use Qt themes or style-sheets.\n"
         "#\n"
+        "# 'swap-coordinates' simply swaps numbering so that pattern numbers\n"
+        "# vary fastest by column instead of the legacy, by rows. Currently\n"
+        "# applies only to screen-sets.  Will apply to mutes and set-numbers in\n"
+        "# the future.\n"
+        "#\n"
         "# 'mainwnd-rows' and 'mainwnd-columns' (option '-o sets=RxC') specify\n"
         "# rows/columns in the main grid. R ranges from 4 to 8, C from 4 to 12.\n"
         "# Values other than 4x8 have not been tested thoroughly.\n"
@@ -777,6 +785,7 @@ usrfile::write ()
         "\n[user-interface-settings]\n\n"
         ;
 
+    write_boolean(file, "swap-coordinates", usr().swap_coordinates());
     write_integer(file, "mainwnd-rows", usr().mainwnd_rows());
     write_integer(file, "mainwnd-columns", usr().mainwnd_cols());
     write_integer(file, "mainwnd-spacing", usr().mainwnd_spacing());

@@ -209,7 +209,7 @@ setmaster::screenset_index (screenset::number setno) const
  */
 
 bool
-setmaster::set_function (screenset::sethandler s)
+setmaster::exec_set_function (screenset::sethandler s)
 {
     bool result = false;
     screenset::number index = 0;
@@ -217,7 +217,7 @@ setmaster::set_function (screenset::sethandler s)
     {
         if (sset.second.usable())
         {
-            result = sset.second.set_function(s, index++);
+            result = sset.second.exec_set_function(s, index++);
             if (! result)
                 break;
         }
@@ -230,14 +230,14 @@ setmaster::set_function (screenset::sethandler s)
  */
 
 bool
-setmaster::set_function (screenset::sethandler s, screenset::slothandler p)
+setmaster::exec_set_function (screenset::sethandler s, screenset::slothandler p)
 {
     bool result = false;
     for (auto & sset : m_container)                 /* screenset reference  */
     {
         if (sset.second.usable())
         {
-            result = sset.second.set_function(s, p);
+            result = sset.second.exec_set_function(s, p);
             if (! result)
                 break;
         }
@@ -250,14 +250,14 @@ setmaster::set_function (screenset::sethandler s, screenset::slothandler p)
  */
 
 bool
-setmaster::set_function (screenset::slothandler p)
+setmaster::exec_set_function (screenset::slothandler p)
 {
     bool result = false;
     for (auto & sset : m_container)                 /* screenset reference  */
     {
         if (sset.second.usable())
         {
-            result = sset.second.slot_function(p);
+            result = sset.second.exec_slot_function(p);
             if (! result)
                 break;
         }

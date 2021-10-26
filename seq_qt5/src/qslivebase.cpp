@@ -125,7 +125,11 @@ qslivebase::set_bank (int bankid, bool hasfocus)
             (void) perf().set_playing_screenset(bankid);
             set_bank_values(bankname, bankid);         /* update the GUI   */
         }
-        reupdate();
+
+        /*
+         * ca 2021-10-26 This is premature.
+         * reupdate();
+         */
     }
     return result;
 }

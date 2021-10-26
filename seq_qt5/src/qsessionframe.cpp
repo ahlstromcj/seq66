@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2021-10-21
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  */
@@ -32,6 +32,7 @@
 #include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
 
 #include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
+#include "os/daemonize.hpp"             /* seq66::session_flag_restart      */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "qsessionframe.hpp"            /* seq66::qsessionframe, this class */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd                 */
@@ -76,11 +77,29 @@ qsessionframe::qsessionframe
     ui->sessionLogText->setEnabled(false);
     ui->sessionLogText->setEnabled(false);
     ui->songPathText->setEnabled(false);
+    ui->pushButtonReload->setEnabled(false);
+    connect
+    (
+        ui->pushButtonReload, SIGNAL(clicked(bool)),
+        this, SLOT(slot_flag_reload())
+    );
 }
 
 qsessionframe::~qsessionframe()
 {
     delete ui;
+}
+
+void
+qsessionframe::enable_reload_button (bool flag)
+{
+    ui->pushButtonReload->setEnabled(flag);
+}
+
+void
+qsessionframe::slot_flag_reload ()
+{
+    session_flag_restart();
 }
 
 void

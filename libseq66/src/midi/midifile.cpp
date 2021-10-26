@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-10-07
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1634,7 +1634,7 @@ midifile::finalize_sequence
     int screenset
 )
 {
-    int preferred_seqnum = seqnum + screenset * usr().seqs_in_set();
+    int preferred_seqnum = seqnum + screenset * p.screenset_size();
     return p.install_sequence(&s, preferred_seqnum, true);
 }
 
@@ -2933,7 +2933,7 @@ midifile::write_proprietary_track (performer & p)
     }
 
     unsigned groupcount = c_max_groups;         /* 32, the maximum          */
-    unsigned groupsize = p.seqs_in_set();
+    unsigned groupsize = p.screenset_size();
     int gmutesz = 0;
     if (mutes.group_save_to_midi() && mutes.any())
     {

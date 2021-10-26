@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-10-02
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -82,24 +82,6 @@ private:
      */
 
     int m_set_size;
-
-    /**
-     *  Storage for the number of rows in the layout of the set-master
-     *  (defaults to 4 rows).
-     *
-     *  Removed the const qualifier to avoid issues with containers.
-     */
-
-    int m_rows;
-
-    /**
-     *  Storage for the number of columns in the layout of the set-master
-     *  (defaults to 8 rows).
-     *
-     *  Removed the const qualifier to avoid issues with containers.
-     */
-
-    int m_columns;
 
     /**
      *  Holds a reference to the master set of sets.  This is currently always
@@ -240,10 +222,6 @@ private:
 
     screenset::number seq_set (seq::number s, int & offset) const;
 
-#if defined SEQ66_SETMAPPER_SEQ_SET_IS_USED
-    screenset::number seq_set (seq::number s, int & row, int & column) const;
-#endif
-
     /**
      *  Gets the offset of the sequence (re 0) in its screen-set.  It assumes
      *  the pointer is good.
@@ -262,6 +240,11 @@ private:
     bool seq_to_grid (seq::number seqno, int & row, int & column) const
     {
         return play_screen()->seq_to_grid(seqno, row, column);
+    }
+
+    bool index_to_grid (seq::number seqno, int & row, int & column) const
+    {
+        return play_screen()->index_to_grid(seqno, row, column);
     }
 
     int max_slot_shift () const
@@ -288,12 +271,12 @@ private:
 
     int rows () const
     {
-        return m_rows;
+        return play_screen()->rows();
     }
 
     int columns () const
     {
-        return m_columns;
+        return play_screen()->columns();
     }
 
     bool group_event () const
@@ -309,8 +292,9 @@ private:
     /**
      *  group_mode() starts out true, and allows mute_group_tracks() to work.
      *  It is set and unset via the "gmute" MIDI control and the group-on/off
-     *  keys.  m_mode_group_learn starts out false, and is set and unset via the
-     *  "glearn" MIDI control and the group-learn press and release actions.
+     *  keys.  m_mode_group_learn starts out false, and is set and unset via
+     *  the "glearn" MIDI control and the group-learn press and release
+     *  actions.
      */
 
     bool group_mode () const
@@ -548,30 +532,35 @@ private:
     }
 
     /*
-     * set_function(s) executes a set-handler for each set.
-     * set_function(s,p) runs a set-handler and a slot-handler for each set.
-     * set_function(p) runs the slot-handler for all patterns in all sets.
-     * slot_function(p) runs the slot-handler for the play-screen patterns.
+     * exec_set_function(s) executes a set-handler for each set.
+     * exec_set_function(s,p) runs a set-handler and a slot-handler for each
+     * set.  exec_set_function(p) runs the slot-handler for all patterns in
+     * all sets.  exec_slot_function(p) runs the slot-handler for the
+     * play-screen patterns.
      */
 
-    bool set_function (screenset::sethandler s)
+    bool exec_set_function (screenset::sethandler s)
     {
-        return master().set_function(s);
+        return master().exec_set_function(s);
     }
 
-    bool set_function (screenset::sethandler s, screenset::slothandler p)
+    bool exec_set_function (screenset::sethandler s, screenset::slothandler p)
     {
-        return master().set_function(s, p);
+        return master().exec_set_function(s, p);
     }
 
-    bool set_function (screenset::slothandler p)
+    bool exec_set_function (screenset::slothandler p)
     {
-        return master().set_function(p);
+        return master().exec_set_function(p);
     }
 
-    bool slot_function (screenset::slothandler p, bool use_set_offset = true)
+    bool exec_slot_function
+    (
+        screenset::slothandler p,
+        bool use_set_offset = true
+    )
     {
-        return play_screen()->slot_function(p, use_set_offset);
+        return play_screen()->exec_slot_function(p, use_set_offset);
     }
 
     void set_last_ticks (midipulse tick)
@@ -867,7 +856,7 @@ public:
 
     int screenset_size () const
     {
-        return m_set_size;
+        return m_set_size;                  /* play_screen()->set_size()    */
     }
 
     bool install_sequence (sequence * s, seq::number & seqno);

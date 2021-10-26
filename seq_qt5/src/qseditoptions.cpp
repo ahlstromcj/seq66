@@ -368,6 +368,14 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         this, SLOT(slot_lock_main_window_click())
     );
 
+    bool swapcoords = usr().swap_coordinates();
+    ui->checkBoxSwapCoordinates->setChecked(swapcoords);
+    connect
+    (
+        ui->checkBoxSwapCoordinates, SIGNAL(clicked(bool)),
+        this, SLOT(slot_swap_coordinates_click())
+    );
+
     /*
      * 'rc' file.  This file is always active, so that check-box is read-only.
      */
@@ -848,6 +856,14 @@ qseditoptions::slot_io_maps ()
 {
     perf().store_output_map();
     perf().store_input_map();
+
+    const inputslist & ipm = input_port_map();
+    const clockslist & opm = output_port_map();
+    bool outportmap = opm.active();
+    bool inportmap = ipm.active();
+    ui->outPortsMappedCheck->setChecked(outportmap);
+    ui->inPortsMappedCheck->setChecked(inportmap);
+    reload_needed(true);
 }
 
 void
@@ -941,6 +957,7 @@ qseditoptions::slot_ui_scaling ()
     QString qs = ui->lineEditUiScaling->text();                 /* w */
     QString qheight = ui->lineEditUiScalingHeight->text();      /* h */
     ui_scaling_helper(qs, qheight);
+    reload_needed(true);
 }
 
 /**
@@ -951,6 +968,9 @@ qseditoptions::slot_ui_scaling ()
 void
 qseditoptions::okay ()
 {
+    if (reload_needed())
+        enable_reload_button(true);
+
     backup();
     close();
 }
@@ -970,6 +990,8 @@ qseditoptions::cancel ()
     usr().key_height(m_backup_KeyHeight);
     usr().resume_note_ons(m_backup_NoteResume);
     perf().resume_note_ons(m_backup_NoteResume);
+    reload_needed(false);
+    enable_reload_button(false);
     sync();
     close();
 }
@@ -1037,6 +1059,18 @@ void
 qseditoptions::enable_bus_item (int bus, bool enabled)
 {
     m_parent_widget->enable_bus_item(bus, enabled);
+
+    /*
+     *  We need to make this item cause immediate action.
+     */
+
+    reload_needed(true);
+}
+
+void
+qseditoptions::enable_reload_button (bool flag)
+{
+    m_parent_widget->enable_reload_button(flag);
 }
 
 /**
@@ -1151,6 +1185,7 @@ qseditoptions::slot_nsm_url ()
 {
     QString url = ui->lineEditNsmUrl->text();
     usr().session_url(url.toStdString());
+    modify_usr();
 }
 
 void
@@ -1266,8 +1301,8 @@ qseditoptions::slot_palette_filename ()
     {
         rc().palette_filename(text);
         rc().auto_palette_save(true);
-        rc().auto_rc_save(true);
         ui->checkBoxSavePalette->setChecked(true);
+        modify_rc();
     }
 }
 
@@ -1276,6 +1311,7 @@ qseditoptions::slot_palette_save_click ()
 {
     bool on = ui->checkBoxSavePalette->isChecked();
     rc().auto_palette_save(on);
+    modify_rc();
 }
 
 void
@@ -1311,7 +1347,7 @@ qseditoptions::slot_palette_active_click ()
 {
     bool on = ui->checkBoxActivePalette->isChecked();
     rc().palette_active(on);
-    rc().auto_rc_save(true);
+    modify_rc();
 }
 
 void
@@ -1319,7 +1355,7 @@ qseditoptions::slot_verbose_active_click ()
 {
     bool on = ui->checkBoxVerbose->isChecked();
     rc().verbose(on);
-    rc().auto_rc_save(true);
+    modify_rc();
 }
 
 void
@@ -1327,6 +1363,7 @@ qseditoptions::slot_load_most_recent_click ()
 {
     bool on = ui->checkBoxLoadMostRecent->isChecked();
     rc().load_most_recent(on);
+    modify_rc();
 }
 
 void
@@ -1334,6 +1371,7 @@ qseditoptions::slot_show_full_paths_click ()
 {
     bool on = ui->checkBoxShowFullRecentPaths->isChecked();
     rc().full_recent_paths(on);
+    modify_rc();
 }
 
 void
@@ -1341,6 +1379,7 @@ qseditoptions::slot_long_buss_names_click ()
 {
     bool on = ui->checkBoxLongBussNames->isChecked();
     rc().port_naming(on ? "long" : "short");
+    modify_rc();
 }
 
 void
@@ -1350,6 +1389,14 @@ qseditoptions::slot_lock_main_window_click ()
     usr().lock_main_window(on);
     modify_usr();
     m_parent_widget->lock_main_window(on);
+}
+
+void
+qseditoptions::slot_swap_coordinates_click ()
+{
+    bool on = ui->checkBoxSwapCoordinates->isChecked();
+    usr().swap_coordinates(on);
+    modify_usr();
 }
 
 /**
@@ -1365,6 +1412,7 @@ qseditoptions::slot_rc_save_click ()
 {
     bool on = ui->checkBoxSaveRc->isChecked();
     rc().auto_rc_save(on);
+    reload_needed(true);
 }
 
 void
@@ -1375,9 +1423,17 @@ qseditoptions::slot_rc_filename ()
     if (text != rc().config_filename())
     {
         rc().config_filename(text);
-        rc().auto_rc_save(true);
-        ui->checkBoxSaveRc->setChecked(true);
+        modify_rc();
     }
+}
+
+void
+qseditoptions::modify_rc ()
+{
+    rc().auto_rc_save(true);
+    rc().modify();
+    reload_needed(true);
+    ui->checkBoxSaveRc->setChecked(true);
 }
 
 void
@@ -1385,6 +1441,7 @@ qseditoptions::modify_usr ()
 {
     rc().auto_usr_save(true);
     usr().modify();
+    reload_needed(true);
     ui->checkBoxSaveUsr->setChecked(true);
 }
 
@@ -1412,7 +1469,7 @@ qseditoptions::slot_usr_filename ()
     if (text != rc().user_filename())
     {
         rc().user_filename(text);
-        rc().auto_rc_save(true);
+        modify_rc();
         modify_usr();
     }
 }
@@ -1422,6 +1479,7 @@ qseditoptions::slot_mutes_save_click ()
 {
     bool on = ui->checkBoxSaveMutes->isChecked();
     rc().auto_mutes_save(on);
+    modify_rc();
 }
 
 void
@@ -1429,7 +1487,7 @@ qseditoptions::slot_mutes_active_click ()
 {
     bool on = ui->checkBoxActiveMutes->isChecked();
     rc().mute_group_active(on);
-    rc().auto_rc_save(true);
+    modify_rc();
 }
 
 void
@@ -1441,7 +1499,7 @@ qseditoptions::slot_mutes_filename ()
     {
         rc().mute_group_filename(text);
         rc().auto_mutes_save(true);
-        rc().auto_rc_save(true);
+        modify_rc();
         ui->checkBoxSaveMutes->setChecked(true);
     }
 }
@@ -1451,6 +1509,7 @@ qseditoptions::slot_playlist_save_click ()
 {
     bool on = ui->checkBoxSavePlaylist->isChecked();
     rc().auto_playlist_save(on);
+    modify_rc();
 }
 
 void
@@ -1458,7 +1517,7 @@ qseditoptions::slot_playlist_active_click ()
 {
     bool on = ui->checkBoxActivePlaylist->isChecked();
     rc().playlist_active(on);
-    rc().auto_rc_save(true);
+    modify_rc();
 }
 
 void
@@ -1484,7 +1543,7 @@ qseditoptions::slot_ctrl_active_click ()
 {
     bool on = ui->checkBoxActiveCtrl->isChecked();
     rc().midi_control_active(on);
-    rc().auto_rc_save(true);
+    modify_rc();
 }
 
 void
@@ -1496,7 +1555,7 @@ qseditoptions::slot_ctrl_filename ()
     {
         rc().midi_control_filename(text);
         rc().auto_ctrl_save(true);
-        rc().auto_rc_save(true);
+        modify_rc();
         ui->checkBoxSaveCtrl->setChecked(true);
     }
 }
@@ -1506,7 +1565,7 @@ qseditoptions::slot_drums_active_click ()
 {
     bool on = ui->checkBoxActiveDrums->isChecked();
     rc().notemap_active(on);
-    rc().auto_rc_save(true);
+    modify_rc();
 }
 
 void
@@ -1517,7 +1576,7 @@ qseditoptions::slot_drums_filename ()
     if (text != rc().notemap_filename())
     {
         rc().notemap_filename(text);
-        rc().auto_rc_save(true);
+        modify_rc();
         ui->checkBoxSaveDrums->setChecked(true);
     }
 }
@@ -1559,6 +1618,7 @@ void
 qseditoptions::slot_clock_start_modulo (int ticks)
 {
     rc().set_clock_mod(ticks);
+    modify_rc();
 }
 
 void
@@ -1585,6 +1645,7 @@ qseditoptions::slot_tempo_track_set ()
     std::string t = text.toStdString();
     int track = string_to_int(t);
     rc().tempo_track_number(track);
+    modify_rc();
 }
 
 void
@@ -1592,6 +1653,7 @@ qseditoptions::slot_record_by_channel ()
 {
     bool on = ui->checkBoxRecordByChannel->isChecked();
     rc().filter_by_channel(on);
+    modify_rc();
 }
 
 void
@@ -1599,6 +1661,7 @@ qseditoptions::slot_virtual_ports ()
 {
     bool on = ui->checkBoxVirtualPorts->isChecked();
     rc().manual_ports(on);
+    modify_rc();
 }
 
 void
@@ -1607,6 +1670,7 @@ qseditoptions::slot_virtual_out_count ()
     QString text = ui->lineEditOutputCount->text();
     int count = string_to_int(text.toStdString());
     rc().manual_port_count(count);
+    modify_rc();
 
     std::string value = std::to_string(rc().manual_port_count());
     ui->lineEditOutputCount->setText(qt(value));
@@ -1618,6 +1682,7 @@ qseditoptions::slot_virtual_in_count ()
     QString text = ui->lineEditInputCount->text();
     int count = string_to_int(text.toStdString());
     rc().manual_in_port_count(count);
+    modify_rc();
 
     std::string value = std::to_string(rc().manual_in_port_count());
     ui->lineEditInputCount->setText(qt(value));

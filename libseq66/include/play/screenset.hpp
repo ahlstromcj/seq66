@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-10-24
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -77,19 +77,30 @@ public:
     /**
      *  Provides a type alias for a function that can be called on all
      *  sequences in a set.  A caller will create this function and pass it to
-     *  the slot_function() function.  The value for the seq::number parameter
-     *  is provided by slot_function(). See qseqeditframe64 ::
-     *  popup_sequence_menu() for an example of the std::bind() call for this
-     *  kind of function.
+     *  the exec_slot_function() function.  The value for the seq::number
+     *  parameter is provided by exec_slot_function().
+     *
+     *  A good example of a slothandler function is created in performer ::
+     *  announce_playscreen() by binding performer :: announce_sequence () to
+     *  place-holder parameters and then calling exec_slot_function().
      */
 
     using slothandler = std::function<bool (seq::pointer, seq::number)>;
 
     /**
-     *  Provides a type alias for a function that can be called on all slots
-     *  in a set.  A caller will create this function and pass it to the
-     *  set_function() function. See qseqeditframe64 :: popup_sequence_menu()
-     *  for an example of the std::bind() call for this kind of function.
+     *  Provides a type alias for a function that can be called on a set.  A
+     *  caller will create this function and pass it to the
+     *  exec_set_function() function. There are two variations of
+     *  exec_set_function(), one which just calls the sethandler on a set, and
+     *  one that calls a sethandler, and then calls a slothandler on each slot
+     *  in the set.
+     *
+     *  A good example of a sethander is done in
+     *  qsetmaster :: initialize_table(), which binds qsetmaster :: set_line()
+     *  to place-holder parameters.
+     *
+     *  A lambda function is used in performer :: change_ppqn() and other
+     *  functions that set the values used in a set.
      */
 
     using sethandler = std::function<bool (screenset &, screenset::number)>;
@@ -427,21 +438,23 @@ public:
 
     seq::number grid_to_seq (int row, int column) const;
     bool seq_to_grid (seq::number seqno, int & row, int & column) const;
+    bool index_to_grid (seq::number seqno, int & row, int & column) const;
     bool needs_update () const;
 
     /*
-     * set_function(s, index) runs a set-handler with the two arguments.
-     * set_function(s, p) runs a set-handler, then calls slot_function().
-     * slot_function(p) runs a slot-handler for all slots in this set.
+     * exec_set_function(s, index) runs a set-handler with the two arguments.
+     * exec_set_function(s, p) runs a set-handler, then calls
+     * exec_slot_function().  exec_slot_function(p) runs a slot-handler for
+     * all slots in this set.
      */
 
-    bool set_function (sethandler s, screenset::number index)
+    bool exec_set_function (sethandler s, screenset::number index)
     {
         return s(*this, index);
     }
 
-    bool set_function (sethandler s, slothandler p);
-    bool slot_function (slothandler p, bool use_set_offset = true);
+    bool exec_set_function (sethandler s, slothandler p);
+    bool exec_slot_function (slothandler p, bool use_set_offset = true);
 
 private:
 

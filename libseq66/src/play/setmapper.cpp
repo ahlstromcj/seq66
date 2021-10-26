@@ -116,8 +116,6 @@ setmapper::setmapper
 ) :
     m_mute_groups           (mgs),
     m_set_size              (rows * columns),
-    m_rows                  (rows),
-    m_columns               (columns),
     m_set_master            (mc),
     m_sequence_count        (0),
     m_sequence_max
@@ -209,47 +207,6 @@ setmapper::add_all_sets_to_play_set (playset & p)
     }
     return result;
 }
-
-#if defined SEQ66_SETMAPPER_SEQ_SET_IS_USED
-
-/**
- *  Given the raw sequence number, returns the calculated set number and the
- *  row and column of the sequence in the set.
- *
- * \param seqno
- *      The raw sequence number.  Normally, this value can range from 0 to
- *      1023, or whatever the maximum is based on set size and number of sets.
- *
- * \param [out] row
- *      Holds the calculated row.  Clamped via the mod operator.
- *
- * \param [out] column
- *      Holds the calculated column.  Clamped via the mod operator.
- *
- * \return
- *      Returns the calculated set number.  It is clamped to a valid value.
- */
-
-screenset::number
-setmapper::seq_set (seq::number seqno, int & row, int & column) const
-{
-    screenset::number result = clamp(seqno / m_set_size);
-    int offset = seqno - result * m_set_size;
-
-    /*
-     * WRONG!  And we don't use this function anywhere, that's why we missed
-     * this issue.
-     *
-     * row = offset / m_columns;
-     * column = offset % m_columns;
-     */
-
-    row = offset % m_rows;
-    column = offset / m_rows;
-    return result;
-}
-
-#endif
 
 bool
 setmapper::copy_screenset (screenset::number srcset, screenset::number destset)

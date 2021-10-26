@@ -1325,11 +1325,6 @@ public:
         return mapper().columns();
     }
 
-    int seqs_in_set () const
-    {
-        return rows() * columns();
-    }
-
     int mute_rows () const
     {
         return mutes().rows();
@@ -1366,6 +1361,19 @@ public:
     bool seq_to_grid (seq::number seqno, int & row, int & column) const
     {
         return mapper().seq_to_grid(seqno, row, column);
+    }
+
+    bool index_to_grid (seq::number seqno, int & row, int & column) const
+    {
+        return mapper().index_to_grid(seqno, row, column);
+    }
+
+    int grid_to_index (int row, int column) const
+    {
+        return int
+        (
+            mapper().grid_to_seq(row, column) - playscreen_offset()
+        );
     }
 
     /**
@@ -2628,19 +2636,23 @@ public:
         midi_control_out().send_seq_event(seqno, what);
     }
 
-    bool slot_function (screenset::slothandler p, bool use_set_offset = true)
+    bool exec_slot_function
+    (
+        screenset::slothandler p,
+        bool use_set_offset = true
+    )
     {
-        return mapper().slot_function(p, use_set_offset);
+        return mapper().exec_slot_function(p, use_set_offset);
     }
 
-    bool set_function (screenset::sethandler s)
+    bool exec_set_function (screenset::sethandler s)
     {
-        return mapper().set_function(s);
+        return mapper().exec_set_function(s);
     }
 
-    bool set_function (screenset::sethandler s, screenset::slothandler p)
+    bool exec_set_function (screenset::sethandler s, screenset::slothandler p)
     {
-        return mapper().set_function(s, p);
+        return mapper().exec_set_function(s, p);
     }
 
     screenset::number set_playing_screenset (screenset::number setno);

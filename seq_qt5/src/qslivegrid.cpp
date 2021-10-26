@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-10-21
+ * \updates       2021-10-25
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -171,18 +171,9 @@ qslivegrid::qslivegrid (performer & p, qsmainwnd * window, QWidget * parent) :
     set_mode_text();
     qloopbutton::progress_box_size
     (
-        usr().progress_box_width(), usr().progress_box_height()
+        usr().progress_box_width(),
+        usr().progress_box_height()
     );
-
-    /*
-     * When done here, the buttons don't resize to the actual frame size.
-     * See paintEvent() instead.
-     *
-     * ui->loopGridLayout->activate();
-     * setLayout(ui->loopGridLayout);
-     * create_loop_buttons();
-     */
-
     m_timer = new QTimer(this);         /* timer for regular redraws    */
     m_timer->setInterval(2 * usr().window_redraw_rate());
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
@@ -239,13 +230,28 @@ qslivegrid::set_playlist_name (const std::string & plname, bool modified)
 void
 qslivegrid::conditional_update ()
 {
-    bool ok = ! m_loop_buttons.empty();
-    if (! ok)
+    if (m_loop_buttons.empty())
         return;
 
     sequence_key_check();
     if (perf().needs_update() || check_needs_update())
     {
+#if defined USE_UNI_DIMENSIONAL
+        for (auto pb : m_loop_buttons)
+        {
+            if (not_nullptr(pb))
+            {
+                seq::pointer s = pb->loop();
+                if (s)
+                {
+                    pb->set_checked(s->playing());
+                    pb->reupdate(true);
+                }
+                else
+                    pb->reupdate(false);
+            }
+        }
+#else
         for (int column = 0; column < columns(); ++column)
         {
             for (int row = 0; row < rows(); ++row)
@@ -265,6 +271,7 @@ qslivegrid::conditional_update ()
                 }
             }
         }
+#endif
     }
 }
 
@@ -286,7 +293,6 @@ qslivegrid::conditional_update ()
 void
 qslivegrid::create_loop_buttons ()
 {
-    int seqno = int(perf().playscreen_offset());
     int fw = ui->frame->width();
     int fh = ui->frame->height();
     m_slot_w = (fw - m_space_cols - 1) / columns() - sc_button_padding;
@@ -294,6 +300,18 @@ qslivegrid::create_loop_buttons ()
     for (int row = 0; row < rows(); ++row)
         ui->loopGridLayout->setRowMinimumHeight(row, m_slot_h + spacing());
 
+    for (int column = 0; column < columns(); ++column)
+        ui->loopGridLayout->setColumnMinimumWidth(column, m_slot_w + spacing());
+
+#if defined USE_UNI_DIMENSIONAL
+    int setsize = perf().screenset_size();
+    for (int seqno = 0; seqno < setsize; ++seqno)
+    {
+        qslotbutton * pb = create_one_button(seqno + seq_offset());
+        m_loop_buttons.push_back(pb);
+    }
+#else
+    int seqno = seq_offset();
     for (int column = 0; column < columns(); ++column)
     {
         gridrow buttonrow;                      /* vector for push-buttons  */
@@ -305,6 +323,8 @@ qslivegrid::create_loop_buttons ()
         }
         m_loop_buttons.push_back(buttonrow);    /* always do this           */
     }
+#endif
+
     measure_loop_buttons();                     /* always do this           */
 }
 
@@ -312,7 +332,7 @@ qslivegrid::create_loop_buttons ()
  *  This function just deletes all the pointers in our "2-D" array and then
  *  clears the array completely, so that it has a size of 0 x 0.  This
  *  function is meant to be used when completely recreating the button-layout
- *  grid.
+ *  grid. Note that we leave the original sequence/pattern along.
  */
 
 void
@@ -320,6 +340,15 @@ qslivegrid::clear_loop_buttons ()
 {
     if (! m_loop_buttons.empty())
     {
+#if defined USE_UNI_DIMENSIONAL
+        int setsize = perf().screenset_size();
+        for (int seqno = 0; seqno < setsize; ++seqno)
+        {
+            qslotbutton * pb = m_loop_buttons[seqno];
+            if (not_nullptr(pb))
+                delete pb;
+        }
+#else
         for (int column = 0; column < columns(); ++column)
         {
             for (int row = 0; row < rows(); ++row)
@@ -329,6 +358,7 @@ qslivegrid::clear_loop_buttons ()
                     delete pb;
             }
         }
+#endif
         m_loop_buttons.clear();
     }
 }
@@ -342,11 +372,18 @@ qslivegrid::measure_loop_buttons ()
 {
     m_x_max = m_y_max = 0;
     m_x_min = m_y_min = 99999;
+#if defined USE_UNI_DIMENSIONAL
+    int setsize = perf().screenset_size();
+    for (int seqno = 0; seqno < setsize; ++seqno)
+    {
+        qslotbutton * pb = loop_button(seqno);
+#else
     for (int column = 0; column < columns(); ++column)
     {
         for (int row = 0; row < rows(); ++row)
         {
             qslotbutton * pb = button(row, column);
+#endif
             if (not_nullptr(pb))
             {
                 QRect r = pb->geometry();
@@ -373,9 +410,11 @@ qslivegrid::measure_loop_buttons ()
             }
             else
             {
-                warnprint("qslivegrid::measure_loop_button(): null button");
+                warnprint("measure loop button: null button");
             }
+#if ! defined USE_UNI_DIMENSIONAL
         }
+#endif
     }
 }
 
@@ -418,7 +457,7 @@ qslivegrid::get_slot_coordinate (int x, int y, int & row, int & column)
  */
 
 qslotbutton *
-qslivegrid::create_one_button (int seqno)
+qslivegrid::create_one_button (seq::number seqno)
 {
     qslotbutton * result = nullptr;
     int row, column;
@@ -439,14 +478,14 @@ qslivegrid::create_one_button (int seqno)
             result = new qslotbutton(this, seqno, snstring, hotkey);
 
         ui->loopGridLayout->addWidget(result, row, column);
-        result->setFixedSize(btnsize);  // tiny height: result->resize(btnsize);
+        result->setFixedSize(btnsize);
         result->show();
         result->setEnabled(enabled);
         setup_button(result);
     }
     else
     {
-        errprintf("create_one_button(seq %d): invalid\n", seqno);
+        errprintf("create button (seq %d) failed\n", seqno);
     }
     return result;
 }
@@ -521,23 +560,25 @@ qslivegrid::set_bank_values (const std::string & bankname, int bankid)
 
 /**
  *  A brute-force function to get the desired slot-button pointer.
- *  Currently similar to the grid_to_seq() functions when using
- *  SEQ66_SWAP_COORDINATES.
+ *  Currently similar to the grid_to_seq() functions.
  */
 
 qslotbutton *
 qslivegrid::button (int row, int column)
 {
     qslotbutton * result = nullptr;
+#if defined USE_UNI_DIMENSIONAL
+    if (! m_loop_buttons.empty())
+    {
+        int index = perf().grid_to_index(row, column);
+        result = m_loop_buttons[index];
+    }
+#else
     if (! m_loop_buttons.empty() && ! m_loop_buttons[column].empty())
     {
-#if defined SEQ66_SWAP_COORDINATES
-        int index = int(perf().grid_to_seq(row, column);
-        result = m_loop_buttons[index];
-#else
         result = m_loop_buttons[column][row];
-#endif
     }
+#endif
     return result;
 }
 
@@ -549,14 +590,21 @@ qslivegrid::button (int row, int column)
  *      The number of the sequence to be looked up. This determines the row and
  *      column by a simple calculation.
  *
+ * \param offset
+ *      The playscreen offset, if needed.  The default is 0.
+ *
  * \return
  *      Returns a pointer to a qslotbutton or qloopbutton.  Returns a null
  *      pointer if a failure occurs.
  */
 
 qslotbutton *
-qslivegrid::button (int seqno)
+qslivegrid::loop_button (seq::number seqno, seq::number offset)
 {
+#if defined USE_UNI_DIMENSIONAL
+    seq::number base = seqno - offset;
+    return m_loop_buttons[base];
+#else
     qslotbutton * result = nullptr;
     int row, column;
     bool ok = perf().seq_to_grid(seq::number(seqno), row, column);
@@ -564,6 +612,8 @@ qslivegrid::button (int seqno)
         result = button(row, column);
 
     return result;
+#endif
+
 }
 
 /**
@@ -585,20 +635,20 @@ qslivegrid::delete_slot (int row, int column)
     return result;
 }
 
-#if defined SEQ66_SWAP_COORDINATES
+#if defined USE_UNI_DIMENSIONAL
 
 bool
 qslivegrid::delete_slot (seq::number seqno)
 {
     int row, column;
-    bool result = seq_to_grid(seqno, row, column);
-    if (seq_to_grid(seqno, row, column))
+    bool result = perf().index_to_grid(seqno, row, column);
+    if (result)
         result = delete_slot(row, column);
 
     return result;
 }
 
-#endif  // defined SEQ66_SWAP_COORDINATES
+#endif  // defined USE_UNI_DIMENSIONAL
 
 /**
  *  Generally, after calling this function, clear_loop_buttons() needs to be
@@ -612,15 +662,13 @@ qslivegrid::delete_all_slots ()
     if (result)
     {
         bool failed = false;
-#if defined SEQ66_SWAP_COORDINATES
-        seq::number seqno = 0;
-        for (auto buttonptr : m_loop_buttons)
+#if defined USE_UNI_DIMENSIONAL
+        int setsize = perf().screenset_size();
+        for (int seqno = 0; seqno < setsize; ++seqno)
         {
             result = delete_slot(seqno);
             if (! result)
                 failed = true;
-
-            ++seqno;
         }
 #else
         for (int column = 0; column < columns(); ++column)
@@ -664,6 +712,8 @@ qslivegrid::recreate_all_slots ()
     return result;
 }
 
+#if defined USE_REFRESH_SEQNO
+
 void
 qslivegrid::refresh (seq::number seqno)
 {
@@ -676,13 +726,14 @@ qslivegrid::refresh (seq::number seqno)
             qslotbutton * pb = button(row, column);
             if (not_nullptr(pb))
             {
-                bool armed = s->playing();
-                pb->set_checked(armed);
+                pb->set_checked(s->playing());
                 pb->reupdate(true);
             }
         }
     }
 }
+
+#endif
 
 /**
  *  This function helps the caller (usually qsmainwnd) tell all the buttons to
@@ -700,20 +751,19 @@ qslivegrid::refresh_all_slots ()
     if (result)
     {
         seq::number offset = perf().playscreen_offset();
-#if defined SEQ66_SWAP_COORDINATES
-        seq::number seqno = 0;
-        for (auto buttonptr : m_loop_buttons)
+#if defined USE_UNI_DIMENSIONAL
+//      seq::number seqno = 0;
+        for (auto pb : m_loop_buttons)
         {
             seq::pointer s = perf().get_sequence(offset);
             if (not_nullptr(s))
             {
-                bool armed = s->playing();
-                qslotbutton * pb = button(offset);
-                pb->set_checked(armed);
+//              qslotbutton * pb = loop_button(seqno);
+                pb->set_checked(s->playing());
                 pb->reupdate(true);
             }
             ++offset;
-            ++seqno;
+//          ++seqno;
         }
 #else
         for (int column = 0; column < columns(); ++column)
@@ -743,22 +793,38 @@ qslivegrid::modify_slot (qslotbutton * newslot, int row, int column)
     if (result)
     {
         ui->loopGridLayout->addWidget(newslot, row, column);
+
+#if defined USE_UNI_DIMENSIONAL
+        int index = perf().grid_to_index(row, column);
+        m_loop_buttons[index] = newslot;
+#else
         m_loop_buttons[column][row] = newslot;
+#endif
     }
     return result;
 }
 
+/**
+ *  We have found we need to pause the timer when switching banks while
+ *  playing, otherwise there is a high probability of a seqfault, due to
+ *  updating the user-interface (which deletes and rebuilts the slot buttons).
+ */
+
 void
 qslivegrid::update_bank (int bankid)
 {
+    m_timer->stop();
     qslivebase::update_bank(bankid);
     (void) recreate_all_slots();        /* sets m_redraw_buttons to true    */
+    m_timer->start();
 }
 
 void
 qslivegrid::update_bank ()
 {
+    m_timer->stop();
     (void) recreate_all_slots();        /* sets m_redraw_buttons to true    */
+    m_timer->start();
 
     // TODO
     // Need to update the bank-name field with the new bank.
@@ -1029,7 +1095,7 @@ qslivegrid::button_toggle_enabled (seq::number seqno)
     bool assigned = seqno != seq::unassigned();
     if (assigned)
     {
-        qslotbutton * pb = button(seqno);
+        qslotbutton * pb = loop_button(seqno);
         if (not_nullptr(pb))
         {
             seq::pointer s = pb->loop();
@@ -1050,7 +1116,7 @@ qslivegrid::button_toggle_checked (seq::number seqno)
     bool assigned = seqno != seq::unassigned();
     if (assigned)
     {
-        qslotbutton * pb = button(seqno);
+        qslotbutton * pb = loop_button(seqno, seq_offset());
         if (not_nullptr(pb))
         {
             seq::pointer s = pb->loop();

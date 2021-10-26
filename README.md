@@ -1,7 +1,7 @@
-# README for Seq66 0.97.1
+# README for Seq66 0.97.2
 
 Chris Ahlstrom
-2015-09-10 to 2021-10-21
+2015-09-10 to 2021-10-26
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -92,6 +92,8 @@ Windows, and using a conventional source tarball.
         *   Issue #60: Added 'rc' option to disable JACK port auto connect in
             normal mode.  Also present in Preferences / JACK.
         *   Issue #61: Rearranged console output to show the app name, in color.
+        *   Issue #63: Initial work on rotating numbering of patterns, sets, and
+            mutes, so that numbers vary faster by column than by row.
         *   Added textfix.qss as an example of making disabled text easier to
             read.
     *   Version 0.97.1:

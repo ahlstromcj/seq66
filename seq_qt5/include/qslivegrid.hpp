@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-10-14
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  *
@@ -42,6 +42,8 @@
 
 #include "qslivebase.hpp"               /* seq66::qslivebase ABC            */
 #include "play/screenset.hpp"           /* seq66::screenset class           */
+
+#define USE_UNI_DIMENSIONAL             /* EXPERIMENTAL                     */
 
 /*
  * Qt forward references.
@@ -78,7 +80,7 @@ class qslivegrid final : public qslivebase
 
 private:
 
-#if defined SEQ66_SWAP_COORDINATES
+#if defined USE_UNI_DIMENSIONAL
 
     using buttons = std::vector<qslotbutton *>;
 
@@ -98,7 +100,7 @@ private:
 
     using buttons = std::vector<gridrow>;
 
-#endif  // defined SEQ66_SWAP_COORDINATES
+#endif  // defined USE_UNI_DIMENSIONAL
 
 private:
 
@@ -116,13 +118,15 @@ public:
 
 private:                            // overrides of qslivebase functions
 
-    virtual void refresh ()
+    virtual void refresh () override
     {
         qslivebase::refresh();
         (void) refresh_all_slots();
     }
 
+#if defined USE_REFRESH_SEQNO
     virtual void refresh (seq::number seqno);
+#endif
 
     virtual void color_by_number (int i) override;
     virtual void set_mode_text (const std::string & mode = "") override;
@@ -161,14 +165,14 @@ private:                                // overrides of event handlers
 private:
 
     seq::number seq_id_from_xy (int click_x, int click_y);
-    qslotbutton * create_one_button (int seqno);
+    qslotbutton * create_one_button (seq::number seqno);
     qslotbutton * button (int row, int column);
-    qslotbutton * button (int seqno);
+    qslotbutton * loop_button (seq::number seqno, seq::number offset = 0);
     bool get_slot_coordinate (int x, int y, int & row, int & column);
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);
     bool delete_slot (int row, int column);
-#if defined SEQ66_SWAP_COORDINATES
+#if defined USE_UNI_DIMENSIONAL
     bool delete_slot (seq::number seqno);
 #endif
     bool delete_all_slots ();
