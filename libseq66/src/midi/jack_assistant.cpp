@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-10-23
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -913,21 +913,11 @@ jack_assistant::deinit ()
          */
 
         if (jack_deactivate(m_jack_client) != 0)
-        {
-            (void) error_message("Can't deactivate JACK transport");
-            result = false;
-        }
+            result = error_message("Can't deactivate JACK transport");
 
         if (jack_client_close(m_jack_client) != 0)
-        {
-            (void) error_message("Can't close JACK transport");
-        }
+            result = error_message("Can't close JACK transport");
     }
-    if (m_jack_running)
-        (void) info_message("JACK transport enabled");
-    else
-        (void) info_message("JACK transport disabled");
-
     return result;
 }
 

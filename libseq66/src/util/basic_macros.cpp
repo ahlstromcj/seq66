@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-10-20
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -125,7 +125,14 @@ info_message (const std::string & msg)
 bool
 status_message (const std::string & msg)
 {
-    std::cout << seq_client_tag(msglevel::info) << " " << msg << std::endl;
+    std::cout << seq_client_tag(msglevel::status) << " " << msg << std::endl;
+    return true;
+}
+
+bool
+special_message (const std::string & msg)
+{
+    std::cout << seq_client_tag(msglevel::special) << " " << msg << std::endl;
     return true;
 }
 
@@ -357,14 +364,11 @@ msgprintf (msglevel lev, std::string fmt, ...)
             break;
 
         case msglevel::info:
-
-            std::cout << seq_client_tag(msglevel::info) << " "
-                << output << std::endl;
-            break;
-
         case msglevel::warn:
+        case msglevel::status:
+        case msglevel::special:
 
-            std::cout << seq_client_tag(msglevel::warn) << " "
+            std::cout << seq_client_tag(lev) << " "
                 << output << std::endl;
             break;
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2021-10-20
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -262,20 +262,16 @@ seq_client_tag (msglevel el)
     {
         static const char * s_level_colors [] =
         {
-            "\033[0m",          /* goes back to normal color            */
+            "\033[0m",          /* goes back to normal console color    */
             "\033[1;34m",       /* info message blue (not green/black)  */
             "\033[1;33m",       /* warning message is yellow            */
-            "\033[1;31m"        /* error message is red                 */
+            "\033[1;31m",       /* error message is red                 */
+            "\033[1;32m",       /* status message is green              */
+            "\033[1;35m"        /* special message is magenta           */
         };
         std::string result = "[";
-        switch (el)
-        {
-            case msglevel::info:    result += s_level_colors[1];   break;
-            case msglevel::warn:    result += s_level_colors[2];   break;
-            case msglevel::error:   result += s_level_colors[2];   break;
-            default:
-                break;
-        }
+        int index = static_cast<int>(el);
+        result += s_level_colors[index];
         result += s_client_name_short;
         result += s_level_colors[0];
         result += "]";

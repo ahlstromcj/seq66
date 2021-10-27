@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2021-10-23
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -432,19 +432,8 @@ session_close ()
         printf("App marked for close....\n");
 #endif
 
-    sg_restart = false;
     sg_needs_close = false;
     return result;
-}
-
-/**
- *  Sets the flag for restarting the main() functions, instead of exiting.
- */
-
-void
-session_flag_restart ()
-{
-    sg_restart = true;
 }
 
 bool
@@ -482,6 +471,22 @@ void signal_for_save ()
 void signal_for_exit ()
 {
     sg_needs_close = true;
+}
+
+/**
+ *  Sets the flag for restarting the main() functions, instead of exiting.
+ */
+
+void
+signal_for_restart ()
+{
+    sg_restart = true;
+}
+
+void
+signal_end_restart ()
+{
+    sg_restart = false;
 }
 
 #if defined SEQ66_USE_PID_EXISTS

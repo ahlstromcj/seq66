@@ -124,7 +124,7 @@ playlistfile::set_error_message (const std::string & additional)
         msg += ": ";
         msg += additional;
     }
-    errprint(msg.c_str());
+    warn_message(msg);
     append_error_message(msg);
     return false;
 }

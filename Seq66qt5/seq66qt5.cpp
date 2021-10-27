@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2021-10-26
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -113,9 +113,16 @@ main (int argc, char * argv [])
                 break;
 
             if (seq66::session_close())
+            {
+                warnprint("Closing session");
                 break;
-
-            if (! seq66::session_restart())
+            }
+            if (seq66::session_restart())
+            {
+                warnprint("Reloading session");
+                seq66::signal_end_restart();        /* stop infinite loop   */
+            }
+            else
                 break;
         }
         else

@@ -176,7 +176,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
         {
             pen.setColor(progress_color());
             painter.setPen(pen);
-            painter.drawText(now - 2, 18, "O");
+            painter.drawText(now - 2, 18, "o");
         }
     }
     if (left >= xoff_left && left <= xoff_right)

@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-10-26
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -39,6 +39,7 @@
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "util/strfunctions.hpp"        /* seq66::string_replace()          */
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */
+#include "os/daemonize.hpp"             /* seq66::session_restart() check   */
 #include "palettefile.hpp"              /* seq66::palette_file config file  */
 #include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager              */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd (main window)   */
@@ -137,6 +138,9 @@ qt5nsmanager::refresh ()
             hide_gui();
         else
             show_gui();
+
+        if (session_restart())
+            quit();
     }
 }
 
@@ -309,8 +313,8 @@ qt5nsmanager::run ()
 void
 qt5nsmanager::quit ()
 {
-//  int exit_status = m_application.quit();     /* run main window loop     */
-//  return exit_status == EXIT_SUCCESS;
+    infoprint("Quitting this session");
+    m_application.quit();
 }
 
 void

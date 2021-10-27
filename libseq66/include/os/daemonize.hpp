@@ -23,7 +23,7 @@
  * \file          daemonize.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2021-10-23
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
@@ -108,7 +108,6 @@ extern std::string get_pid ();
  */
 
 extern void session_setup ();
-extern void session_flag_restart ();
 extern bool session_close ();
 extern bool session_save ();
 extern bool session_restart ();
@@ -120,6 +119,8 @@ extern bool session_restart ();
 
 extern void signal_for_save ();
 extern void signal_for_exit ();
+extern void signal_for_restart ();
+extern void signal_end_restart ();
 
 }        // namespace seq66
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-10-14
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -410,6 +410,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_right_tick            (0),
     m_start_tick            (0),
     m_tick                  (0),
+    m_max_extent            (0),
     m_jack_pad              (),                 /* data for JACK... & ALSA  */
     m_jack_tick             (0),
     m_usemidiclock          (false),            /* MIDI Clock support       */
@@ -1479,11 +1480,15 @@ performer::next_song_mode ()
     if (rc().song_start_auto())
     {
         song_mode(has_triggers);
-        song_recording(has_triggers);
+
+        /*
+         * No, the user has to turn this on!
+         *
+         * song_recording(has_triggers);
+         */
+
         if (has_triggers)
-        {
             set_song_mute(mutegroups::action::off);
-        }
     }
     else
     {
@@ -1491,7 +1496,12 @@ performer::next_song_mode ()
         bool mutem = rc().is_setsmode_normal();
         mute_all_tracks(mutem);
         song_mode(songmode);
-        song_recording(songmode && has_triggers);
+
+        /*
+         * No, the user has to turn this on!
+         *
+         * song_recording(songmode && has_triggers);
+         */
     }
 }
 
@@ -3802,7 +3812,10 @@ performer::start_playing ()
         * The "! m_reposition" doesn't seem to make sense.
         */
 
-       if (is_jack_master() && ! m_reposition)              // ca 2021-01-20
+        if (! song_recording())
+            m_max_extent = get_max_extent();
+
+       if (is_jack_master() && ! m_reposition)
            position_jack(true, get_left_tick());
     }
     else
@@ -3874,6 +3887,7 @@ performer::pause_playing ()
 void
 performer::stop_playing ()
 {
+    m_max_extent = 0;
     if (looping())
     {
         pause_playing();
@@ -3975,6 +3989,11 @@ performer::play (midipulse tick)
     if (tick != get_tick() || tick == 0)                /* avoid replays    */
     {
         bool songmode = song_mode();
+        if (m_max_extent > 0 && tick > m_max_extent)
+        {
+            auto_stop();
+            return;
+        }
         set_tick(tick);
         for (auto seqi : m_play_set.seq_container())
             seqi->play_queue(tick, songmode, resume_note_ons());
@@ -6716,7 +6735,7 @@ performer::open_note_mapper (const std::string & notefile)
             notemapfile nmf(*m_note_mapper, notefile, rc());
             result = nmf.parse();
             if (! result)
-                (void) error_message(nmf.error_message());
+                (void) error_message(nmf.get_error_message());
         }
     }
     return result;
@@ -6741,7 +6760,7 @@ performer::save_note_mapper (const std::string & notefile)
             notemapfile nmf(*m_note_mapper, nfname, rc());
             result = nmf.write();
             if (! result)
-                (void) error_message(nmf.error_message());
+                (void) error_message(nmf.get_error_message());
         }
     }
     return result;

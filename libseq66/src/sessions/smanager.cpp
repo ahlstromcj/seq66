@@ -109,7 +109,7 @@ smanager::smanager (const std::string & caps) :
 smanager::~smanager ()
 {
     if (rc().verbose())
-        (void) status_message("Exiting session manager");
+        (void) special_message("Exiting session manager");
 }
 
 /**

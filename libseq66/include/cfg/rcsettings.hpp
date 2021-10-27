@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-10-21
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -500,7 +500,7 @@ private:
      *  what the application name.
      */
 
-    const std::string m_application_name;
+    std::string m_application_name;
 
     /**
      *  New value to allow the user to violate the MIDI specification and use a

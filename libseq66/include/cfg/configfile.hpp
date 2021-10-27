@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-31
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -217,7 +217,7 @@ public:
         return int(std::streamoff(m_line_pos));
     }
 
-    static const std::string & error_message ()
+    static const std::string & get_error_message ()
     {
         return sm_error_message;
     }

@@ -1297,6 +1297,7 @@
    \index{variset}
    \begin{verbatim}
       [user-interface-settings]
+      swap-coordinates = false
       mainwnd-rows = 4
       mainwnd-columns = 8
       mainwnd-spacing = 2
@@ -1309,6 +1310,23 @@
       window-scale-y = 1
    \end{verbatim}
 
+   \texttt{swap-coordinates} allows for an alternate mapping of pattern
+   numbers.  (Later, it will also apply to mappings for set-numbers and
+   mute-group numbers.)  Here is the pattern layout:
+
+   \begin{verbatim}
+      [  0 ] [  1 ] [  2 ] [  3 ] [  4 ] [  5 ] [  6 ] [  7 ]
+      [  8 ] [  9 ] [ 10 ] [ 11 ] [ 12 ] [ 13 ] [ 14 ] [ 15 ]
+      [ 16 ] [ 17 ] [ 18 ] [ 19 ] [ 20 ] [ 21 ] [ 22 ] [ 23 ]
+      [ 24 ] [ 25 ] [ 26 ] [ 27 ] [ 28 ] [ 29 ] [ 30 ] [ 31 ]
+   \end{verbatim}
+
+   Compare it to the layout shown in
+   \sectionref{paragraph:patterns_pattern_keys}.
+
+   Note that \texttt{progress-bar-thick} also applies to the box that hold the
+   notes and progress-bar in the Live grid buttons.
+ 
    There are a number of additional user-interface options.  See the generated
    or sample 'usr' file for descriptions.  Also see the chapter on palettes.
 

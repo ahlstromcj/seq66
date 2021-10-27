@@ -1,7 +1,7 @@
 # Seq66 0.94.1 (and above) MIDI control configuration file
 #
 # /home/user/.config/seq66/qseq66-lp-mini.ctrl
-# Written 2021-06-11 08:42:31
+# Written 2021-10-27 08:42:31
 #
 # This file holds MIDI I/O control setups for Seq66. It follows the format
 # of the 'rc' configuration file, but is stored separately for flexibility
@@ -57,6 +57,10 @@ A sample line.  Just need to fill in the key (note value) needed for this
 row and set the pattern number at the left:
  
  2 [1 0 0x90 key 60] [1 0 0x90 key 15] [1 0 0x90 key 62] [1 0 0x90 key 12]
+ 
+Note that this file is NOT FINISHED.  We still need to rework it for
+swapped pattern numbers in the MIDI parts of the [loop-control]
+and [mute-group-control] sections.
 
 [midi-control-settings]
 

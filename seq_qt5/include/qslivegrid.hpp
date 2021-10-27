@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-10-26
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  *
@@ -42,8 +42,6 @@
 
 #include "qslivebase.hpp"               /* seq66::qslivebase ABC            */
 #include "play/screenset.hpp"           /* seq66::screenset class           */
-
-#define USE_UNI_DIMENSIONAL             /* EXPERIMENTAL                     */
 
 /*
  * Qt forward references.
@@ -80,27 +78,12 @@ class qslivegrid final : public qslivebase
 
 private:
 
-#if defined USE_UNI_DIMENSIONAL
+    /**
+     *  This vector represents all buttons. Rows and columns calculated only
+     *  when necessary.
+     */
 
     using buttons = std::vector<qslotbutton *>;
-
-#else
-
-    /**
-     *  This vector represents a row of buttons.  Its size will be the number
-     *  of columns in the grid.
-     */
-
-    using gridrow = std::vector<qslotbutton *>;
-
-    /**
-     *  This vector holds all of the rows of buttons.  Its size with be the
-     *  number of rows in the grid.
-     */
-
-    using buttons = std::vector<gridrow>;
-
-#endif  // defined USE_UNI_DIMENSIONAL
 
 private:
 
@@ -172,9 +155,7 @@ private:
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);
     bool delete_slot (int row, int column);
-#if defined USE_UNI_DIMENSIONAL
     bool delete_slot (seq::number seqno);
-#endif
     bool delete_all_slots ();
     bool recreate_all_slots ();
     bool refresh_all_slots ();

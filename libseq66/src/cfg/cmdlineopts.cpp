@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-10-23
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -658,7 +658,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
              * result = false;
              */
 
-            errmessage = options.error_message();
+            errmessage = options.get_error_message();
         }
     }
     else
@@ -716,7 +716,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
             }
             else
             {
-                errmessage = ufile.error_message();
+                errmessage = ufile.get_error_message();
                 result = false;
             }
         }
@@ -820,7 +820,7 @@ cmdlineopts::parse_mute_groups
         }
         else
         {
-            errmessage = options.error_message();
+            errmessage = options.get_error_message();
             result = false;
         }
     }

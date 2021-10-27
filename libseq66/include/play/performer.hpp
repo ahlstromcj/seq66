@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-10-14
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -756,6 +756,15 @@ private:                            /* key, midi, and op container section  */
      */
 
     mutable midipulse m_tick;
+
+    /**
+     *  Indicates the full extent of the song when in Song mode. Used for
+     *  stopping play at the end of the song.  If 0, it is not used.
+     *  Only set when Song mode is on.  Set when play starts, reset when play
+     *  stops.
+     */
+
+    midipulse m_max_extent;
 
     /**
      *  Holds a bunch of jack_assistant settings.

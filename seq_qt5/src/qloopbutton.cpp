@@ -178,7 +178,7 @@ qloopbutton::qloopbutton
     m_progress_box          (),
     m_event_box             ()
 {
-    m_text_font.setBold(true);
+    m_text_font.setBold(false);
     m_text_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     make_checkable();
     set_checked(m_is_checked);
@@ -675,7 +675,7 @@ qloopbutton::draw_progress_box (QPainter & painter)
 {
     QBrush brush(m_prog_back_color, Qt::SolidPattern);
     QPen pen(pen_color());                          /* #50: text_color()    */
-    const int penwidth = 2;
+    const int penwidth = m_prog_thickness;          /* 2 */
     bool qsnap = loop()->snap_it();
     Color backcolor = back_color();
     if (qsnap)                                      /* playing, queued, ... */
@@ -691,7 +691,7 @@ qloopbutton::draw_progress_box (QPainter & painter)
     else if (loop()->get_queued())
     {
         backcolor.setAlpha(s_alpha_queued);
-        pen.setWidth(penwidth);
+        // pen.setWidth(penwidth);
         pen.setStyle(Qt::SolidLine);
     }
     else if (loop()->one_shot())                   /* one-shot queued      */

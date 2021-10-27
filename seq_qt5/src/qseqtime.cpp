@@ -51,7 +51,7 @@ namespace seq66
 
 static const int s_x_tick_fix  =  2;        /* adjusts vertical grid lines  */
 static const int s_time_fix    =  9;        /* seqtime offset from seqroll  */
-static const int s_o_fix       =  6;        /* adjust position of "O" mark  */
+static const int s_o_fix       =  6;        /* adjust position of "o" mark  */
 static const int s_end_fix     = 10;        /* adjust position of "END" box */
 
 /**
@@ -199,7 +199,7 @@ qseqtime::paintEvent (QPaintEvent *)
         {
             pen.setColor(progress_color());
             painter.setPen(pen);
-            painter.drawText(now, 18, "O");
+            painter.drawText(now, 18, "o");
         }
     }
     pen.setColor(Qt::black);

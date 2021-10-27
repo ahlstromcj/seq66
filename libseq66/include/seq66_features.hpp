@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2020-10-20
+ * \updates       2020-10-27
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -73,7 +73,9 @@ enum class msglevel
     none,
     info,
     warn,
-    error
+    error,
+    status,
+    special
 };
 
 /*

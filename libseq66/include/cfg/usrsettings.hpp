@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-10-26
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -389,8 +389,9 @@ private:
 
     /**
      *  If set, makes progress bars thicker than 1 pixel... 2 pixels.
-     *  It isn't useful to support anything thicker.  The default is true --
-     *  use two pixels.
+     *  It isn't useful to support anything thicker.  The default is now to
+     *  use 1 pixel.  Also, this setting now applies to the progress box
+     *  itself.
      */
 
     bool m_progress_bar_thick;
@@ -859,8 +860,8 @@ public:
      * call.  However copying and assignment aren't even used at present.
      */
 
-    usrsettings (const usrsettings & rhs) = delete;
-    usrsettings & operator = (const usrsettings & rhs) = delete;
+    usrsettings (const usrsettings & rhs) = default;
+    usrsettings & operator = (const usrsettings & rhs) = default;
 
     virtual void set_defaults () override;
     virtual void normalize () override;

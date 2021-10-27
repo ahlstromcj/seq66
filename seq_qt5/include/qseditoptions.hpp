@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-26
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -45,6 +45,8 @@ namespace Ui
 {
     class qseditoptions;
 }
+
+class QButtonGroup;
 
 /*
  *  Do not document the namespace, it breaks Doxygen.
@@ -80,6 +82,8 @@ private:
     void modify_rc();
     void modify_usr();
     void sync ();               /* makes dialog reflect internal settings   */
+    void sync_rc ();            /* makes dialog reflect internal settings   */
+    void sync_usr ();           /* makes dialog reflect internal settings   */
     void backup ();             /* backup preferences for cancel-changes    */
     bool set_ppqn_combo ();
     void set_scaling_fields ();
@@ -179,22 +183,25 @@ private slots:
 private:
 
     Ui::qseditoptions * ui;
+    QButtonGroup * m_live_song_buttons;
     qsmainwnd * m_parent_widget;
     performer & m_perf;
     combo m_ppqn_list;
     bool m_is_initialized;
 
     /*
-     * Backup variables for settings.  Not everything new is currently backed
-     * up, though.  We need something more comprehensive, et easier.
+     * Backup variables for settings.
      */
 
-    bool m_backup_JackTransport;
-    bool m_backup_TimeMaster;
-    bool m_backup_MasterCond;
-    bool m_backup_NoteResume;
-    bool m_backup_JackMidi;
-    int m_backup_KeyHeight;
+    // bool m_backup_JackTransport;
+    // bool m_backup_TimeMaster;
+    // bool m_backup_MasterCond;
+    // bool m_backup_NoteResume;
+    // bool m_backup_JackMidi;
+    // int m_backup_KeyHeight;
+
+    rcsettings m_backup_rc;
+    usrsettings m_backup_usr;
 
     /**
      *  Indicates that a reload is necessary for at least one important
