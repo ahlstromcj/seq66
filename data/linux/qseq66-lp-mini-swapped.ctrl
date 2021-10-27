@@ -1,0 +1,395 @@
+# Seq66 0.94.1 (and above) MIDI control configuration file
+#
+# /home/user/.config/seq66/qseq66-lp-mini.ctrl
+# Written 2021-06-11 08:42:31
+#
+# This file holds MIDI I/O control setups for Seq66. It follows the format
+# of the 'rc' configuration file, but is stored separately for flexibility
+# It is always stored in the main configuration directory. To use this
+# file, specify it in the [midi-control-file] section in the 'rc' file.
+# Use the base-name (e.g. nanomap.ctrl).
+
+# Version 1 adds the [mute-control-out] and [automation-control-out]
+# sections. Versions 2 and 3 simplify the data items.
+
+[Seq66]
+
+config-type = "ctrl"
+version = 5
+
+# The [comments] section holds the user's documentation for this file.
+# The first completely empty, comment, or tag line ends the comment.
+
+[comments]
+
+This file was created by copying the default qseq66.ctrl file and
+changing the MIDI control section to the values found in the
+sequencer64-laumchpad.rc file.  This section provides for controlling
+the following actions:
+  
+o Patterns 0 to 31.  Patterns can be toggled by sending Note Ons on
+  on channel 1.  Observe that the Toggle entries are marked active.
+  This works with the Launchpad Mini.
+o Patterns 0 to 31 alternative.  Patterns can be turned on by sending
+  Note Ons on on channel 1, and turned off by sending Note Offs.
+  Make the Toggle entries inactive, and the On and Off entries active to
+  achieve this setup.
+o Muting 32 to 64 (mute groups 0 to 31).
+o Automation control 64 to 73.  This covers only part of the actions
+  that can be controlled via MIDI in Seq66; we still need to upgrade
+  the rest once we get familiar with our new LaunchPad Mini.
+ 
+See doc/launchpad-mini.ods for the mappings implemented by this 'ctrl' file.
+ 
+The default setup for the LaunchPad Mini is shown in the "Launchpad
+programmer's reference" file (launchpad-programmers-reference.pdf).
+Since, by default, the Mini uses Note Ons of velocity 0 instead of
+Note Offs, we set the data range from 1 to 127 instead of 0 to 127.
+ 
+For MIDI output to the Launchpad Mini, we make the following color
+mappings:
+ 
+     Arm         Mute       Queue      Deleted/Empty
+     Green       Red        Yellow     Off
+     60          15         62         12
+ 
+A sample line.  Just need to fill in the key (note value) needed for this
+row and set the pattern number at the left:
+ 
+ 2 [1 0 0x90 key 60] [1 0 0x90 key 15] [1 0 0x90 key 62] [1 0 0x90 key 12]
+
+[midi-control-settings]
+
+# Setting 'load-midi-control' to 'false' will cause an empty MIDI
+# control setup to be written!  Keep backups! The control-buss value
+# ranges from 0 to the maximum system input buss. If set, then that
+# buss will be allowed to send MIDI control. 255 (0xFF) means any
+# buss can send MIDI control. The buss(es) must be enabled in the
+# 'rc' file.  With ALSA, there is an extra 'announce' buss, which
+# will alter the numbering compared to JACK.
+#
+# The 'midi-enabled' flag applies to the MIDI controls; keystrokes
+# are always enabled. Supported keyboard layouts are 'qwerty' (the
+# default), 'qwertz', and 'azerty'. AZERTY turns off the auto-shift
+# feature for group-learn.
+
+load-key-controls = true
+load-midi-controls = true
+control-buss = 6
+midi-enabled = true
+button-offset = 0
+button-rows = 4
+button-columns = 8
+keyboard-layout = qwerty
+
+# The control stanza incorporates key control as well as MIDI, but
+# keys support only 'toggle', and key-release is an 'invert'. The
+# leftmost number on each line here is the pattern number (e.g.
+# 0 to 31); the group number, same range; or an automation control
+# number. This internal control number is followed by three groups of
+# bracketed numbers, each providing three different types of control:
+#
+#    Normal:           [toggle]    [on]        [off]
+#    Increment/Decr:   [increment] [increment] [decrement]
+#    Playback:         [pause]     [start]     [stop]
+#    Playlist/Song:    [by-value]  [next]      [previous]
+#
+# In each group, there are six numbers:
+#
+#    [on/off invert status d0 d1min d1max]
+#
+# 'on/off' enables/disables (1/0) the control for the pattern;
+# 'invert' (1/0) causes the opposite, but not all support this, and
+# all keystroke-releases set invert to true; 'status' is the MIDI
+# event to match (channel is NOT ignored), and if set to 0x00, the
+# control is disabled; 'd0' is the first data value, e.g. if status
+# is 0x90 (Note On), d0 represents the note number; d1min to d1max
+# is the range of data values detected, e.g. for a Note On, 1 to 127
+# indicate that any non-zero velocity will invoke the control.
+# Hex values can be used; precede with '0x'.
+#
+#  ------------------------- Loop, group, or automation-slot number
+# |    ---------------------- Name of the key (see the key map)
+# |   |
+# |   |      ---------------- Inverse
+# |   |     |  -------------- MIDI status/event byte (e.g. Note On)
+# |   |     | |  ------------ d0: Data 1 (e.g. Note number)
+# |   |     | | |  ---------- d1max: Data 2 min (e.g. Note velocity)
+# |   |     | | | |  -------- d1min: Data 2 max
+# |   |     | | | | |
+# v   v     v v v v v
+# 0 "F1" [0 0 0 0 0 0]   [0 0 0 0 0 0]   [0 0 0 0 0 0]
+#           Toggle          On              Off
+
+[loop-control]
+
+ 0 "1"           [ 0 0x90   0   1 127 ] [ 0 0x90   0   1 127 ] [ 0 0x80   0   1 127 ] # Loop 0
+ 1 "2"           [ 0 0x90  16   1 127 ] [ 0 0x90  16   1 127 ] [ 0 0x80  16   1 127 ] # Loop 1
+ 2 "3"           [ 0 0x90  32   1 127 ] [ 0 0x90  32   1 127 ] [ 0 0x80  32   1 127 ] # Loop 2
+ 3 "4"           [ 0 0x90  48   1 127 ] [ 0 0x90  48   1 127 ] [ 0 0x80  48   1 127 ] # Loop 3
+ 4 "5"           [ 0 0x90   1   1 127 ] [ 0 0x90   1   1 127 ] [ 0 0x80   1   1 127 ] # Loop 4
+ 5 "6"           [ 0 0x90  17   1 127 ] [ 0 0x90  17   1 127 ] [ 0 0x80  17   1 127 ] # Loop 5
+ 6 "7"           [ 0 0x90  33   1 127 ] [ 0 0x90  33   1 127 ] [ 0 0x80  33   1 127 ] # Loop 6
+ 7 "8"           [ 0 0x90  49   1 127 ] [ 0 0x90  49   1 127 ] [ 0 0x80  49   1 127 ] # Loop 7
+ 8 "q"           [ 0 0x90   2   1 127 ] [ 0 0x90   2   1 127 ] [ 0 0x80   2   1 127 ] # Loop 8
+ 9 "w"           [ 0 0x90  18   1 127 ] [ 0 0x90  18   1 127 ] [ 0 0x80  18   1 127 ] # Loop 9
+10 "e"           [ 0 0x90  34   1 127 ] [ 0 0x90  34   1 127 ] [ 0 0x80  34   1 127 ] # Loop 10
+11 "r"           [ 0 0x90  50   1 127 ] [ 0 0x90  50   1 127 ] [ 0 0x80  50   1 127 ] # Loop 11
+12 "t"           [ 0 0x90   3   1 127 ] [ 0 0x90   3   1 127 ] [ 0 0x80   3   1 127 ] # Loop 12
+13 "y"           [ 0 0x90  19   1 127 ] [ 0 0x90  19   1 127 ] [ 0 0x80  19   1 127 ] # Loop 13
+14 "u"           [ 0 0x90  35   1 127 ] [ 0 0x90  35   1 127 ] [ 0 0x80  35   1 127 ] # Loop 14
+15 "i"           [ 0 0x90  51   1 127 ] [ 0 0x90  51   1 127 ] [ 0 0x80  51   1 127 ] # Loop 15
+16 "a"           [ 0 0x90   4   1 127 ] [ 0 0x90   4   1 127 ] [ 0 0x80   4   1 127 ] # Loop 16
+17 "s"           [ 0 0x90  20   1 127 ] [ 0 0x90  20   1 127 ] [ 0 0x80  20   1 127 ] # Loop 17
+18 "d"           [ 0 0x90  36   1 127 ] [ 0 0x90  36   1 127 ] [ 0 0x80  36   1 127 ] # Loop 18
+19 "f"           [ 0 0x90  52   1 127 ] [ 0 0x90  52   1 127 ] [ 0 0x80  52   1 127 ] # Loop 19
+20 "g"           [ 0 0x90   5   1 127 ] [ 0 0x90   5   1 127 ] [ 0 0x80   5   1 127 ] # Loop 20
+21 "h"           [ 0 0x90  21   1 127 ] [ 0 0x90  21   1 127 ] [ 0 0x80  21   1 127 ] # Loop 21
+22 "j"           [ 0 0x90  37   1 127 ] [ 0 0x90  37   1 127 ] [ 0 0x80  37   1 127 ] # Loop 22
+23 "k"           [ 0 0x90  53   1 127 ] [ 0 0x90  53   1 127 ] [ 0 0x80  53   1 127 ] # Loop 23
+24 "z"           [ 0 0x90   6   1 127 ] [ 0 0x90   6   1 127 ] [ 0 0x80   6   1 127 ] # Loop 24
+25 "x"           [ 0 0x90  22   1 127 ] [ 0 0x90  22   1 127 ] [ 0 0x80  22   1 127 ] # Loop 25
+26 "c"           [ 0 0x90  38   1 127 ] [ 0 0x90  38   1 127 ] [ 0 0x80  38   1 127 ] # Loop 26
+27 "v"           [ 0 0x90  54   1 127 ] [ 0 0x90  54   1 127 ] [ 0 0x80  54   1 127 ] # Loop 27
+28 "b"           [ 0 0x90   7   1 127 ] [ 0 0x90   7   1 127 ] [ 0 0x80   7   1 127 ] # Loop 28
+29 "n"           [ 0 0x90  23   1 127 ] [ 0 0x90  23   1 127 ] [ 0 0x80  23   1 127 ] # Loop 29
+30 "m"           [ 0 0x90  39   1 127 ] [ 0 0x90  39   1 127 ] [ 0 0x80  39   1 127 ] # Loop 30
+31 ","           [ 0 0x90  55   1 127 ] [ 0 0x90  55   1 127 ] [ 0 0x80  55   1 127 ] # Loop 31
+
+[mute-group-control]
+
+ 0 "!"           [ 0 0x90  64   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 0
+ 1 "@"           [ 0 0x90  80   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 1
+ 2 "#"           [ 0 0x90  96   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 2
+ 3 "$"           [ 0 0x90 112   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 3
+ 4 "%"           [ 0 0x90  65   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 4
+ 5 "^"           [ 0 0x90  81   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 5
+ 6 "&"           [ 0 0x90  97   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 6
+ 7 "*"           [ 0 0x90 113   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 7
+ 8 "Q"           [ 0 0x90  66   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 8
+ 9 "W"           [ 0 0x90  82   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 9
+10 "E"           [ 0 0x90  98   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 10
+11 "R"           [ 0 0x90 114   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 11
+12 "T"           [ 0 0x90  67   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 12
+13 "Y"           [ 0 0x90  83   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 13
+14 "U"           [ 0 0x90  99   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 14
+15 "I"           [ 0 0x90 115   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 15
+16 "A"           [ 0 0x90  68   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 16
+17 "S"           [ 0 0x90  84   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 17
+18 "D"           [ 0 0x90 100   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 18
+19 "F"           [ 0 0x90 116   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 19
+20 "G"           [ 0 0x90  69   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 20
+21 "H"           [ 0 0x90  85   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 21
+22 "J"           [ 0 0x90 101   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 22
+23 "K"           [ 0 0x90 117   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 23
+24 "Z"           [ 0 0x90  70   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 24
+25 "X"           [ 0 0x90  86   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 25
+26 "C"           [ 0 0x90 102   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 26
+27 "V"           [ 0 0x90 118   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 27
+28 "B"           [ 0 0x90  71   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 28
+29 "N"           [ 0 0x90  87   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 29
+30 "M"           [ 0 0x90 103   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 30
+31 ">"           [ 0 0x90 119   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mute 31
+
+[automation-control]
+
+ 0 "'"           [ 0 0x00   0   0   0 ] [ 0 0x90 104   1 127 ] [ 0 0x00   0   0   0 ] # BPM Up
+ 1 ";"           [ 0 0x00   0   0   0 ] [ 0 0x90 120   1 127 ] [ 0 0x00   0   0   0 ] # BPM Dn
+ 2 "]"           [ 0 0x00   0   0   0 ] [ 0 0xb0 111   1 127 ] [ 0 0x00   0   0   0 ] # Set Up
+ 3 "["           [ 0 0x00   0   0   0 ] [ 0 0xb0 110   1 127 ] [ 0 0x00   0   0   0 ] # Set Dn
+ 4 "KP_Home"     [ 0 0x00   0   0   0 ] [ 0 0x90  40   1 127 ] [ 0 0x00   0   0   0 ] # Replace
+ 5 "Ins"         [ 0 0x00   0   0   0 ] [ 0 0x90  56   1 127 ] [ 0 0x00   0   0   0 ] # Snapshot
+ 6 "o"           [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Queue
+ 7 "`"           [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Group Mute
+ 8 "l"           [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Group Learn
+ 9 "Home"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Playing Set
+10 "."           [ 0 0xb0 106   1 127 ] [ 0 0xb0 107   1 127 ] [ 0 0xb0 105   1 127 ] # Playback
+11 "P"           [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Song Record
+12 "BS"          [ 0 0x00   0   0   0 ] [ 0 0x90  40   1 127 ] [ 0 0x00   0   0   0 ] # Solo
+13 "KP_/"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Thru
+14 "PageUp"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # BPM Page Up
+15 "PageDn"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # BPM Page Dn
+16 "KP_."        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Set Set
+17 "KP_*"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Record
+18 "KP_-"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Quan Record
+19 "KP_+"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reset Seq
+20 "|"           [ 0 0x00   0   0   0 ] [ 0 0x90  24   1 127 ] [ 0 0x00   0   0   0 ] # One-shot
+21 "F6"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # FF
+22 "F5"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Rewind
+23 "F1"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Top
+24 "F2"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Play List
+25 "F3"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Play Song
+26 "F9"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Tap BPM
+27 "Space"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Start
+28 "Esc"         [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Stop
+29 "KP_Ins"      [ 0 0x00   0   0   0 ] [ 0 0x90  72   1 127 ] [ 0 0x00   0   0   0 ] # Reserved 29
+30 "F8"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Toggle Mute
+31 "F7"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Song Pos
+32 "\"           [ 0 0x90   8   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Keep Queue
+33 "/"           [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Slot Shift
+34 "0"           [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mutes Clear
+35 "Quit"        [ 0 0x00   0   0   0 ] [ 0 0x90  88   1 127 ] [ 0 0x00   0   0   0 ] # Quit
+36 "="           [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Loop Edit
+37 "-"           [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Event Edit
+38 "F10"         [ 0 0x90  72   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Song Mode
+39 "F11"         [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Toggle JACK
+40 "F12"         [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Menu Mode
+41 "F4"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Follow JACK
+42 "~"           [ 0 0x00   0   0   0 ] [ 0 0xb0 104   1 127 ] [ 0 0x00   0   0   0 ] # Panic
+43 "0xf9"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Visibility
+44 "0xfa"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 44
+45 "0xfb"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 45
+46 "0xfc"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 47
+47 "0xfd"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 47
+48 "0xfe"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 48
+
+[midi-control-out-settings]
+
+set-size = 32
+output-buss = 5
+midi-enabled = true
+button-offset = 0
+button-rows = 4
+button-columns = 8
+
+[midi-control-out]
+
+#   --------------------- Pattern number (as applicable)
+#  |     ---------------- MIDI status+channel (e.g. Note On)
+#  |    |    ------------ data 1 (e.g. note number)
+#  |    |   |  ---------- data 2 (e.g. velocity)
+#  |    |   | |
+#  v    v   v v
+# 31 [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0]
+#       Arm      Mute      Queue    Delete
+#
+# This is a change (2021-02-10) from version 1 of this file.
+# A test of the status/event byte determines the enabled status,
+# and channel is incorporated into the status.  Much cleaner!
+# The order of the lines that follow must must be preserved.
+
+ 0 [ 0x90   0  60 ] [ 0x90   0  15 ] [ 0x90   0  62 ] [ 0x90   0  12 ]
+ 1 [ 0x90  16  60 ] [ 0x90  16  15 ] [ 0x90  16  62 ] [ 0x90  16  12 ]
+ 2 [ 0x90  32  60 ] [ 0x90  32  15 ] [ 0x90  32  62 ] [ 0x90  32  12 ]
+ 3 [ 0x90  48  60 ] [ 0x90  48  15 ] [ 0x90  48  62 ] [ 0x90  48  12 ]
+ 4 [ 0x90   1  60 ] [ 0x90   1  15 ] [ 0x90   1  62 ] [ 0x90   1  12 ]
+ 5 [ 0x90  17  60 ] [ 0x90  17  15 ] [ 0x90  17  62 ] [ 0x90  17  12 ]
+ 6 [ 0x90  33  60 ] [ 0x90  33  15 ] [ 0x90  33  62 ] [ 0x90  33  12 ]
+ 7 [ 0x90  49  60 ] [ 0x90  49  15 ] [ 0x90  49  62 ] [ 0x90  49  12 ]
+ 8 [ 0x90   2  60 ] [ 0x90   2  15 ] [ 0x90   2  62 ] [ 0x90   2  12 ]
+ 9 [ 0x90  18  60 ] [ 0x90  18  15 ] [ 0x90  18  62 ] [ 0x90  18  12 ]
+10 [ 0x90  34  60 ] [ 0x90  34  15 ] [ 0x90  34  62 ] [ 0x90  34  12 ]
+11 [ 0x90  50  60 ] [ 0x90  50  15 ] [ 0x90  50  62 ] [ 0x90  50  12 ]
+12 [ 0x90   3  60 ] [ 0x90   3  15 ] [ 0x90   3  62 ] [ 0x90   3  12 ]
+13 [ 0x90  19  60 ] [ 0x90  19  15 ] [ 0x90  19  62 ] [ 0x90  19  12 ]
+14 [ 0x90  35  60 ] [ 0x90  35  15 ] [ 0x90  35  62 ] [ 0x90  35  12 ]
+15 [ 0x90  51  60 ] [ 0x90  51  15 ] [ 0x90  51  62 ] [ 0x90  51  12 ]
+16 [ 0x90   4  60 ] [ 0x90   4  15 ] [ 0x90   4  62 ] [ 0x90   4  12 ]
+17 [ 0x90  20  60 ] [ 0x90  20  15 ] [ 0x90  20  62 ] [ 0x90  20  12 ]
+18 [ 0x90  36  60 ] [ 0x90  36  15 ] [ 0x90  36  62 ] [ 0x90  36  12 ]
+19 [ 0x90  52  60 ] [ 0x90  52  15 ] [ 0x90  52  62 ] [ 0x90  52  12 ]
+20 [ 0x90   5  60 ] [ 0x90   5  15 ] [ 0x90   5  62 ] [ 0x90   5  12 ]
+21 [ 0x90  21  60 ] [ 0x90  21  15 ] [ 0x90  21  62 ] [ 0x90  21  12 ]
+22 [ 0x90  37  60 ] [ 0x90  37  15 ] [ 0x90  37  62 ] [ 0x90  37  12 ]
+23 [ 0x90  53  60 ] [ 0x90  53  15 ] [ 0x90  53  62 ] [ 0x90  53  12 ]
+24 [ 0x90   6  60 ] [ 0x90   6  15 ] [ 0x90   6  62 ] [ 0x90   6  12 ]
+25 [ 0x90  22  60 ] [ 0x90  22  15 ] [ 0x90  22  62 ] [ 0x90  22  12 ]
+26 [ 0x90  38  60 ] [ 0x90  38  15 ] [ 0x90  38  62 ] [ 0x90  38  12 ]
+27 [ 0x90  54  60 ] [ 0x90  54  15 ] [ 0x90  54  62 ] [ 0x90  54  12 ]
+28 [ 0x90   7  60 ] [ 0x90   7  15 ] [ 0x90   7  62 ] [ 0x90   7  12 ]
+29 [ 0x90  23  60 ] [ 0x90  23  15 ] [ 0x90  23  62 ] [ 0x90  23  12 ]
+30 [ 0x90  39  60 ] [ 0x90  39  15 ] [ 0x90  39  62 ] [ 0x90  39  12 ]
+31 [ 0x90  55  60 ] [ 0x90  55  15 ] [ 0x90  55  62 ] [ 0x90  55  12 ]
+
+[mute-control-out]
+
+# The format of the mute and automation output events is simpler:
+#
+#  ---------------------- mute-group number
+# |    ------------------ MIDI status+channel (e.g. Note On)
+# |   |    -------------- data 1 (e.g. note number)
+# |   |   |  ------------ data 2 (e.g. velocity)
+# |   |   | |
+# v   v   v v
+# 1 [0x00 0 0 ] [0x00 0 0] [0x00 0 0]
+#       On         Off      Empty (dark)
+#
+# The mute-controls have an additional stanza for non-populated
+# ("deleted") mute-groups.
+
+ 0 [ 0x90  64  60 ] [ 0x90  64  15 ] [ 0x90  64  12 ]
+ 1 [ 0x90  80  60 ] [ 0x90  80  15 ] [ 0x90  80  12 ]
+ 2 [ 0x90  96  60 ] [ 0x90  96  15 ] [ 0x90  96  12 ]
+ 3 [ 0x90 112  60 ] [ 0x90 112  15 ] [ 0x90 112  12 ]
+ 4 [ 0x90  65  60 ] [ 0x90  65  15 ] [ 0x90  65  12 ]
+ 5 [ 0x90  81  60 ] [ 0x90  81  15 ] [ 0x90  81  12 ]
+ 6 [ 0x90  97  60 ] [ 0x90  97  15 ] [ 0x90  97  12 ]
+ 7 [ 0x90 113  60 ] [ 0x90 113  15 ] [ 0x90 113  12 ]
+ 8 [ 0x90  66  60 ] [ 0x90  66  15 ] [ 0x90  66  12 ]
+ 9 [ 0x90  82  60 ] [ 0x90  82  15 ] [ 0x90  82  12 ]
+10 [ 0x90  98  60 ] [ 0x90  98  15 ] [ 0x90  98  12 ]
+11 [ 0x90 114  60 ] [ 0x90 114  15 ] [ 0x90 114  12 ]
+12 [ 0x90  67  60 ] [ 0x90  67  15 ] [ 0x90  67  12 ]
+13 [ 0x90  83  60 ] [ 0x90  83  15 ] [ 0x90  83  12 ]
+14 [ 0x90  99  60 ] [ 0x90  99  15 ] [ 0x90  99  12 ]
+15 [ 0x90 115  60 ] [ 0x90 115  15 ] [ 0x90 115  12 ]
+16 [ 0x90  68  60 ] [ 0x90  68  15 ] [ 0x90  68  12 ]
+17 [ 0x90  84  60 ] [ 0x90  84  15 ] [ 0x90  84  12 ]
+18 [ 0x90 100  60 ] [ 0x90 100  15 ] [ 0x90 100  12 ]
+19 [ 0x90 116  60 ] [ 0x90 116  15 ] [ 0x90 116  12 ]
+20 [ 0x90  69  60 ] [ 0x90  69  15 ] [ 0x90  69  12 ]
+21 [ 0x90  85  60 ] [ 0x90  85  15 ] [ 0x90  85  12 ]
+22 [ 0x90 101  60 ] [ 0x90 101  15 ] [ 0x90 101  12 ]
+23 [ 0x90 117  60 ] [ 0x90 117  15 ] [ 0x90 117  12 ]
+24 [ 0x90  70  60 ] [ 0x90  70  15 ] [ 0x90  70  12 ]
+25 [ 0x90  86  60 ] [ 0x90  86  15 ] [ 0x90  86  12 ]
+26 [ 0x90 102  60 ] [ 0x90 102  15 ] [ 0x90 102  12 ]
+27 [ 0x90 118  60 ] [ 0x90 118  15 ] [ 0x90 118  12 ]
+28 [ 0x90  71  60 ] [ 0x90  71  15 ] [ 0x90  71  12 ]
+29 [ 0x90  87  60 ] [ 0x90  87  15 ] [ 0x90  87  12 ]
+30 [ 0x90 103  60 ] [ 0x90 103  15 ] [ 0x90 103  12 ]
+31 [ 0x90 119  60 ] [ 0x90 119  15 ] [ 0x90 119  12 ]
+
+[automation-control-out]
+
+# This format is similar to the [mute-control-out] format, but
+# the first number is an active-flag, not an index number.
+# The stanzas are on/off/inactive, except for 'snap', which is
+# store/restore/inactive.
+
+1 [ 0xb0 104  60 ] [ 0xb0 104  15 ] [ 0xb0 104  12 ]  # Panic
+1 [ 0xb0 105  60 ] [ 0xb0 105  15 ] [ 0xb0 105  12 ]  # Stop
+1 [ 0xb0 106  60 ] [ 0xb0 106  15 ] [ 0xb0 106  12 ]  # Pause
+1 [ 0xb0 107  60 ] [ 0xb0 107  15 ] [ 0xb0 107  12 ]  # Play
+1 [ 0xb0 108  60 ] [ 0xb0 108  15 ] [ 0xb0 108  12 ]  # Toggle_mutes
+1 [ 0xb0 109  60 ] [ 0xb0 109  15 ] [ 0xb0 109  12 ]  # Song_record
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Slot_shift
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Free
+1 [ 0x90   8  60 ] [ 0x90   8  15 ] [ 0x90   8  12 ]  # Queue
+1 [ 0x90  24  60 ] [ 0x90  24  15 ] [ 0x90  24  12 ]  # Oneshot
+1 [ 0x90  40  60 ] [ 0x90  40  15 ] [ 0x90  40  12 ]  # Replace
+1 [ 0x90  56  60 ] [ 0x90  56  15 ] [ 0x90  56  12 ]  # Snap
+1 [ 0x90  72  60 ] [ 0x90  72  15 ] [ 0x90  72  12 ]  # Song
+0 [ 0x0    0   0 ] [ 0x0    0   0 ] [ 0x0    0   0 ]  # Learn
+1 [ 0x90 104  60 ] [ 0x90 104  15 ] [ 0x90 104  12 ]  # BPM_Up
+1 [ 0x90 120  60 ] [ 0x90 120  15 ] [ 0x90 120  12 ]  # BPM_Dn
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # List_Up
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # List_Dn
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Song_Up
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Song_Dn
+1 [ 0xb0 110  60 ] [ 0xb0 110  15 ] [ 0xb0 110  12 ]  # Set_Up
+1 [ 0xb0 111  60 ] [ 0xb0 111  15 ] [ 0xb0 111  12 ]  # Set_Dn
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Tap_BPM
+1 [ 0x90  88  60 ] [ 0x90  88  15 ] [ 0x90  88  12 ]  # Quit
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Visibility
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_2
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_3
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_4
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_5
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_6
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_7
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_8
+
+# End of /home/user/.config/seq66/qseq66-lp-mini.ctrl
+#
+# vim: sw=4 ts=4 wm=4 et ft=dosini

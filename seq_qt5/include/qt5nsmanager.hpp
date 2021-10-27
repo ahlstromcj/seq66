@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-07-10
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -100,6 +100,7 @@ public:
 
 private:
 
+    void quit ();
     void show_gui ();
     void hide_gui ();
 

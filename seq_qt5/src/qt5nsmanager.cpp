@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-10-20
+ * \updates       2021-10-26
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -304,6 +304,13 @@ qt5nsmanager::run ()
 {
     int exit_status = m_application.exec();     /* run main window loop     */
     return exit_status == EXIT_SUCCESS;
+}
+
+void
+qt5nsmanager::quit ()
+{
+//  int exit_status = m_application.quit();     /* run main window loop     */
+//  return exit_status == EXIT_SUCCESS;
 }
 
 void
