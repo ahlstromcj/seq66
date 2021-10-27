@@ -110,12 +110,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     m_is_initialized        (false),
     m_backup_rc             (),
     m_backup_usr            (),
-//  m_backup_JackTransport  (false),
-//  m_backup_TimeMaster     (false),
-//  m_backup_MasterCond     (false),
-//  m_backup_NoteResume     (false),
-//  m_backup_JackMidi       (false),
-//  m_backup_KeyHeight      (usr().key_height())
     m_reload_needed         (false)
 {
     ui->setupUi(this);
@@ -171,14 +165,12 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * Play Options tab
      */
 
-//  ui->chkNoteResume->setChecked(usr().resume_note_ons());
     connect
     (
         ui->chkNoteResume, SIGNAL(stateChanged(int)),
         this, SLOT(slot_note_resume())
     );
 
-//  ui->chkUseFilesPPQN->setChecked(usr().use_file_ppqn());
     connect
     (
         ui->chkUseFilesPPQN, SIGNAL(stateChanged(int)),
@@ -194,7 +186,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     rgroup->addButton(ui->radio_setsmode_autoarm, setsmode_button_autoarm);
     rgroup->addButton(ui->radio_setsmode_additive, setsmode_button_additive);
     rgroup->addButton(ui->radio_setsmode_allsets, setsmode_button_allsets);
-//  show_sets_mode(rc().sets_mode());
     connect
     (
         rgroup, SIGNAL(buttonClicked(int)),
@@ -218,7 +209,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     (
         ui->radio_session_jack, static_cast<int>(usrsettings::session::jack)
     );
-//  show_session(usr().session_manager());
     connect
     (
         sgroup, SIGNAL(buttonClicked(int)),
@@ -290,14 +280,12 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
 
     ui->spinKeyHeight->setMinimum(usr().min_key_height());
     ui->spinKeyHeight->setMaximum(usr().max_key_height());
-//  ui->spinKeyHeight->setValue(usr().key_height());
     connect
     (
         ui->spinKeyHeight, SIGNAL(valueChanged(int)),
         this, SLOT(slot_key_height())
     );
 
-//  set_scaling_fields();
     connect
     (
         ui->lineEditUiScaling, SIGNAL(editingFinished()),
@@ -308,8 +296,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         ui->lineEditUiScalingHeight, SIGNAL(editingFinished()),
         this, SLOT(slot_ui_scaling())
     );
-
-//  set_set_size_fields();
     connect
     (
         ui->lineEditSetSize, SIGNAL(editingFinished()),
@@ -320,7 +306,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         ui->lineEditSetSizeColumns, SIGNAL(editingFinished()),
         this, SLOT(slot_set_size_columns())
     );
-//  set_progress_box_fields();
     connect
     (
         ui->lineEditProgressBox, SIGNAL(editingFinished()),
@@ -331,74 +316,56 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         ui->lineEditProgressBoxHeight, SIGNAL(editingFinished()),
         this, SLOT(slot_progress_box_height())
     );
-
-//  char tmp[32];
-//  snprintf(tmp, sizeof tmp, "%i", usr().fingerprint_size());
-//  ui->lineEditFingerprintSize->setText(tmp);
     connect
     (
         ui->lineEditFingerprintSize, SIGNAL(editingFinished()),
         this, SLOT(slot_fingerprint_size())
     );
-
-//  ui->checkBoxVerbose->setChecked(rc().verbose());
     connect
     (
         ui->checkBoxVerbose, SIGNAL(clicked(bool)),
         this, SLOT(slot_verbose_active_click())
     );
-
-//  ui->checkBoxLoadMostRecent->setChecked(rc().load_most_recent());
     connect
     (
         ui->checkBoxLoadMostRecent, SIGNAL(clicked(bool)),
         this, SLOT(slot_load_most_recent_click())
     );
-
-//  ui->checkBoxShowFullRecentPaths->setChecked(rc().full_recent_paths());
     connect
     (
         ui->checkBoxShowFullRecentPaths, SIGNAL(clicked(bool)),
         this, SLOT(slot_show_full_paths_click())
     );
-
-//  bool longportnames = rc().is_port_naming_long();
-//  ui->checkBoxLongBussNames->setChecked(longportnames);
     connect
     (
         ui->checkBoxLongBussNames, SIGNAL(clicked(bool)),
         this, SLOT(slot_long_buss_names_click())
     );
-
-//  bool lockwindow = usr().lock_main_window();
-//  ui->checkBoxLockMainWindow->setChecked(lockwindow);
     connect
     (
         ui->checkBoxLockMainWindow, SIGNAL(clicked(bool)),
         this, SLOT(slot_lock_main_window_click())
     );
-
-//  bool swapcoords = usr().swap_coordinates();
-//  ui->checkBoxSwapCoordinates->setChecked(swapcoords);
     connect
     (
         ui->checkBoxSwapCoordinates, SIGNAL(clicked(bool)),
         this, SLOT(slot_swap_coordinates_click())
+    );
+    connect
+    (
+        ui->checkBoxBoldGridSlots, SIGNAL(clicked(bool)),
+        this, SLOT(slot_bold_grid_slots_click())
     );
 
     /*
      * 'rc' file.  This file is always active, so that check-box is read-only.
      */
 
-//  QString filename = qt(rc().config_filename());
-//  ui->checkBoxSaveRc->setChecked(rc().auto_rc_save());
     connect
     (
         ui->checkBoxSaveRc, SIGNAL(clicked(bool)),
         this, SLOT(slot_rc_save_click())
     );
-//  ui->checkBoxActiveRc->setChecked(true);     /* ALWAYS active */
-//  ui->lineEditRc->setText(filename);
     connect
     (
         ui->lineEditRc, SIGNAL(editingFinished()),
@@ -409,20 +376,16 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * 'usr' file. Making 'usr' inactive is experimental.
      */
 
-//  filename = qt(rc().user_filename());
-//  ui->checkBoxSaveUsr->setChecked(rc().auto_usr_save());
     connect
     (
         ui->checkBoxSaveUsr, SIGNAL(clicked(bool)),
         this, SLOT(slot_usr_save_click())
     );
-//  ui->checkBoxActiveUsr->setChecked(rc().user_file_active());
     connect
     (
         ui->checkBoxActiveUsr, SIGNAL(clicked(bool)),
         this, SLOT(slot_usr_active_click())
     );
-//  ui->lineEditUsr->setText(filename);
     connect
     (
         ui->lineEditUsr, SIGNAL(editingFinished()),
@@ -433,20 +396,16 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * 'mutes' file
      */
 
-//  filename = qt(rc().mute_group_filename());
-//  ui->checkBoxSaveMutes->setChecked(rc().auto_mutes_save());
     connect
     (
         ui->checkBoxSaveMutes, SIGNAL(clicked(bool)),
         this, SLOT(slot_mutes_save_click())
     );
-//  ui->checkBoxActiveMutes->setChecked(rc().mute_group_active());
     connect
     (
         ui->checkBoxActiveMutes, SIGNAL(clicked(bool)),
         this, SLOT(slot_mutes_active_click())
     );
-//  ui->lineEditMutes->setText(filename);
     connect
     (
         ui->lineEditMutes, SIGNAL(editingFinished()),
@@ -457,20 +416,16 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * 'playlist' file
      */
 
-//  filename = qt(rc().playlist_filename());
-//  ui->checkBoxSavePlaylist->setChecked(rc().auto_playlist_save());
     connect
     (
         ui->checkBoxSavePlaylist, SIGNAL(clicked(bool)),
         this, SLOT(slot_playlist_save_click())
     );
-//  ui->checkBoxActivePlaylist->setChecked(rc().playlist_active());
     connect
     (
         ui->checkBoxActivePlaylist, SIGNAL(clicked(bool)),
         this, SLOT(slot_playlist_active_click())
     );
-//  ui->lineEditPlaylist->setText(filename);
     connect
     (
         ui->lineEditPlaylist, SIGNAL(editingFinished()),
@@ -482,15 +437,11 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * application is running, the "auto-save" check-box is read-only.
      */
 
-//  filename = qt(rc().midi_control_filename());
-//  ui->checkBoxSaveCtrl->setChecked(rc().auto_ctrl_save());    /* read-only */
-//  ui->checkBoxActiveCtrl->setChecked(rc().midi_control_active());
     connect
     (
         ui->checkBoxActiveCtrl, SIGNAL(clicked(bool)),
         this, SLOT(slot_ctrl_active_click())
     );
-//  ui->lineEditCtrl->setText(filename);
     connect
     (
         ui->lineEditCtrl, SIGNAL(editingFinished()),
@@ -502,15 +453,11 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * application is running, the "auto-save" check-box is read-only.
      */
 
-//  filename = qt(rc().notemap_filename());
-//  ui->checkBoxSaveDrums->setChecked(rc().auto_drums_save());  /* read-only */
-//  ui->checkBoxActiveDrums->setChecked(rc().notemap_active());
     connect
     (
         ui->checkBoxActiveDrums, SIGNAL(clicked(bool)),
         this, SLOT(slot_drums_active_click())
     );
-//  ui->lineEditDrums->setText(filename);
     connect
     (
         ui->lineEditDrums, SIGNAL(editingFinished()),
@@ -521,24 +468,16 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * 'palette' file.
      */
 
-//  std::string palname = rc().palette_filename();
-//  if (palname.empty())
-//      palname = rc().application_name() + ".palette";
-
-//  filename = qt(palname);
-//  ui->checkBoxSavePalette->setChecked(rc().auto_palette_save());
     connect
     (
         ui->checkBoxSavePalette, SIGNAL(clicked(bool)),
         this, SLOT(slot_palette_save_click())
     );
-//  ui->checkBoxActivePalette->setChecked(rc().palette_active());
     connect
     (
         ui->checkBoxActivePalette, SIGNAL(clicked(bool)),
         this, SLOT(slot_palette_active_click())
     );
-//  ui->lineEditPalette->setText(filename);
     connect
     (
         ui->lineEditPalette, SIGNAL(editingFinished()),
@@ -561,15 +500,11 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * Also note that this refers to a Qt Style Sheet.
      */
 
-//  filename = qt(usr().style_sheet());
-//  ui->checkBoxSaveStyleSheet->setChecked(rc().auto_qss_save());  /* read-only */
-//  ui->checkBoxActiveStyleSheet->setChecked(usr().style_sheet_active());
     connect
     (
         ui->checkBoxActiveStyleSheet, SIGNAL(clicked(bool)),
         this, SLOT(slot_stylesheet_active_click())
     );
-//  ui->lineEditStyleSheet->setText(filename);
     connect
     (
         ui->lineEditStyleSheet, SIGNAL(editingFinished()),
@@ -627,7 +562,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
             vboxclocks->addLayout(tempqc->layout());
         }
     }
-//  ui->outPortsMappedCheck->setChecked(outportmap);
 
     QSpacerItem * spacer = new QSpacerItem
     (
@@ -660,10 +594,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * The virtual port counts for input and output.
      */
 
-//  std::string value = std::to_string(rc().manual_port_count());
-//  ui->lineEditOutputCount->setText(qt(value));
-//  value = std::to_string(rc().manual_in_port_count());
-//  ui->lineEditInputCount->setText(qt(value));
     connect
     (
         ui->lineEditOutputCount, SIGNAL(editingFinished()),
@@ -697,20 +627,16 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
             vboxinputs->addWidget(tempqi->input_checkbox());
         }
     }
-//  ui->inPortsMappedCheck->setChecked(inportmap);
 
     /*
      * I/O Port Boolean options.
      */
 
-//  ui->checkBoxRecordByChannel->setChecked(rc().filter_by_channel());
     connect
     (
         ui->checkBoxRecordByChannel, SIGNAL(clicked(bool)),
         this, SLOT(slot_record_by_channel())
     );
-
-//  ui->checkBoxVirtualPorts->setChecked(rc().manual_ports());
     connect
     (
         ui->checkBoxVirtualPorts, SIGNAL(clicked(bool)),
@@ -993,14 +919,6 @@ qseditoptions::okay ()
 void
 qseditoptions::cancel ()
 {
-//  rc().with_jack_transport(m_backup_JackTransport);
-//  rc().with_jack_master_cond(m_backup_MasterCond);
-//  rc().with_jack_master(m_backup_TimeMaster);
-//  rc().with_jack_midi(m_backup_JackMidi);
-//  usr().key_height(m_backup_KeyHeight);
-//  usr().resume_note_ons(m_backup_NoteResume);
-//  perf().resume_note_ons(m_backup_NoteResume);
-
     rc() = m_backup_rc;
     usr() = m_backup_usr;
     reload_needed(false);
@@ -1018,13 +936,6 @@ qseditoptions::cancel ()
 void
 qseditoptions::backup ()
 {
-//  m_backup_JackTransport = rc().with_jack_transport();
-//  m_backup_JackMidi = rc().with_jack_midi();
-//  m_backup_MasterCond = rc().with_jack_master_cond();
-//  m_backup_TimeMaster = rc().with_jack_master();
-//  m_backup_KeyHeight = usr().key_height();
-//  m_backup_NoteResume = perf().resume_note_ons();
-
     m_backup_rc = rc();
     m_backup_usr = usr();
 }
@@ -1052,7 +963,6 @@ qseditoptions::sync_rc ()
     ui->chkJackAutoConnect->setChecked(rc().jack_auto_connect());
     ui->chkJackMaster->setDisabled(! rc().with_jack_transport());
     ui->chkJackConditional->setDisabled(! rc().with_jack_transport());
-
     show_sets_mode(rc().sets_mode());
 
     int rbid = perf().song_mode() ? playmode_button_song : playmode_button_live ;
@@ -1061,19 +971,13 @@ qseditoptions::sync_rc ()
         int bid = m_live_song_buttons->id(button);
         button->setChecked(bid == rbid);
     }
-
     ui->checkBoxVerbose->setChecked(rc().verbose());
     ui->checkBoxLoadMostRecent->setChecked(rc().load_most_recent());
     ui->checkBoxShowFullRecentPaths->setChecked(rc().full_recent_paths());
-
-    bool longportnames = rc().is_port_naming_long();
-    ui->checkBoxLongBussNames->setChecked(longportnames);
-
-    bool lockwindow = usr().lock_main_window();
-    ui->checkBoxLockMainWindow->setChecked(lockwindow);
-
-    bool swapcoords = usr().swap_coordinates();
-    ui->checkBoxSwapCoordinates->setChecked(swapcoords);
+    ui->checkBoxLongBussNames->setChecked(rc().is_port_naming_long());
+    ui->checkBoxLockMainWindow->setChecked(usr().lock_main_window());
+    ui->checkBoxSwapCoordinates->setChecked(usr().swap_coordinates());
+    ui->checkBoxBoldGridSlots->setChecked(usr().progress_bar_thick());
 
     QString filename = qt(rc().config_filename());
     ui->checkBoxSaveRc->setChecked(rc().auto_rc_save());
@@ -1506,6 +1410,14 @@ qseditoptions::slot_swap_coordinates_click ()
 {
     bool on = ui->checkBoxSwapCoordinates->isChecked();
     usr().swap_coordinates(on);
+    modify_usr();
+}
+
+void
+qseditoptions::slot_bold_grid_slots_click()
+{
+    bool on = ui->checkBoxBoldGridSlots->isChecked();
+    usr().progress_bar_thick(on);
     modify_usr();
 }
 

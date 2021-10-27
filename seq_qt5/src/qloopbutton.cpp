@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-10-21
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -178,7 +178,7 @@ qloopbutton::qloopbutton
     m_progress_box          (),
     m_event_box             ()
 {
-    m_text_font.setBold(false);
+    m_text_font.setBold(usr().progress_bar_thick());
     m_text_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     make_checkable();
     set_checked(m_is_checked);

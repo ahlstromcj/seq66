@@ -150,6 +150,7 @@ private slots:
     void slot_long_buss_names_click ();
     void slot_lock_main_window_click ();
     void slot_swap_coordinates_click ();
+    void slot_bold_grid_slots_click();
     void slot_rc_save_click ();
     void slot_rc_filename ();
     void slot_usr_save_click ();
@@ -192,13 +193,6 @@ private:
     /*
      * Backup variables for settings.
      */
-
-    // bool m_backup_JackTransport;
-    // bool m_backup_TimeMaster;
-    // bool m_backup_MasterCond;
-    // bool m_backup_NoteResume;
-    // bool m_backup_JackMidi;
-    // int m_backup_KeyHeight;
 
     rcsettings m_backup_rc;
     usrsettings m_backup_usr;

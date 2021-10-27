@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-10-26
+ * \updates       2021-10-27
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -768,7 +768,8 @@ usrfile::write ()
         "# SeqSpec (if true) or in each track (if false).\n"
         "#\n"
         "# 'progress-bar-thick specifies a thicker progress bar.  Default is 1\n"
-        "# pixel; thick is 2 pixels if set to true.\n"
+        "# pixel; thick is 2 pixels if set to true. Also makes the progress box\n"
+        "# border 2 pixels, and the slot font bold.\n"
         "#\n"
         "# 'inverse-colors' (option -K/--inverse) specifies use of an inverse\n"
         "# color palette. Palettes are for Seq66 drawing areas, not for the\n"

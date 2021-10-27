@@ -96,7 +96,9 @@ Windows, and using a conventional source tarball.
             mutes, so that numbers vary faster by column than by row.
         *   Added textfix.qss as an example of making disabled text easier to
             read.
-        *   Improved the saving/restoring of Edit / Preferences.
+        *   Improved the saving/restoring of Edit / Preferences.  Added option
+            "Bold Grid Slots" to make the progress bar and progress border thick,
+            and the slot font bold.
         *   Added the ability to reload the configuration via a button press
             that restarts the application.
     *   Version 0.97.1:

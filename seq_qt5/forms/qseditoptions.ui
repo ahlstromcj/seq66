@@ -27,7 +27,7 @@ in a very specific place; do Alt-C once or twice.
       </string>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -573,7 +573,7 @@ number using the channel number (0 to 15).</string>
          <x>10</x>
          <y>268</y>
          <width>337</width>
-         <height>241</height>
+         <height>271</height>
         </rect>
        </property>
        <property name="font">
@@ -594,7 +594,7 @@ number using the channel number (0 to 15).</string>
           <x>8</x>
           <y>44</y>
           <width>313</width>
-          <height>181</height>
+          <height>221</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -650,6 +650,13 @@ redirected to a log file.</string>
           <widget class="QCheckBox" name="checkBoxSwapCoordinates">
            <property name="text">
             <string>Swap Coordinates for Live Grid</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBoxBoldGridSlots">
+           <property name="text">
+            <string>Bold Grid Slot Font and Box</string>
            </property>
           </widget>
          </item>
