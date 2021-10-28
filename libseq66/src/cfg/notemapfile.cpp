@@ -214,9 +214,9 @@ notemapfile::write_stream (std::ofstream & file)
            "#\n"
            "#   midicvtpp --csv-drum GM_DD-11_Drums.csv --output ddrums.ini\n"
            "#\n"
-           "# This file can be used to convert the percussion of non-GM devices\n"
-           "# to GM, as best as permitted by GM percussion. Although it is a\n"
-           "# 'drums' file, it can be used for other note-mappings as well.\n"
+           "# This file can convert the percussion of non-GM devices to GM, as\n"
+           "# closely as possible. Although it is for drums, it can be used\n"
+           "# for other note-mappings.\n"
         ;
 
     /*
@@ -226,7 +226,7 @@ notemapfile::write_stream (std::ofstream & file)
     write_seq66_header(file, "drums", version());
     write_comment(file, mapper().comments_block().text());
     file <<
-        "# Drum/note mapping configuration for Seq66, stored in the HOME\n"
+        "# Drum/note-mapping configuration for Seq66, stored in the HOME\n"
         "# configuration directory.  To use this file, add this file-name to\n"
         "# '[note-mapper]' section of the 'rc' file. There's no user-interface\n"
         "# for this file. The main values are:\n"

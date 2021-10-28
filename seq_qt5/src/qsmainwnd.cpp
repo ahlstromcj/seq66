@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-26
+ * \updates       2021-10-28
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -254,9 +254,6 @@ qsmainwnd::qsmainwnd
 
     int w = usr().mainwnd_x();                  /* normal, maybe scaled     */
     int h = usr().mainwnd_y();
-    if (rc().investigate_disabled())
-        printf("Size %d x %d\n", w, h);
-
     resize(QSize(w, h));                        /* scaled values            */
     w = usr().mainwnd_x_min();                  /* scaled even smaller      */
     h = usr().mainwnd_y_min();
@@ -776,8 +773,14 @@ qsmainwnd::qsmainwnd
     }
 
     if (use_nsm())
-        rc().session_midi_filename(s_default_tune);
+    {
+        std::string tune_name = s_default_tune;
+        std::string fname = rc().midi_filename();
+        if (! fname.empty())
+            tune_name = fname;
 
+        rc().session_midi_filename(tune_name);
+    }
     (void) refresh_captions();
 
 #if defined SEQ66_PORTMIDI_SUPPORT

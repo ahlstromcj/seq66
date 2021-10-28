@@ -28,7 +28,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2021-08-31
+ * \updates       2021-10-28
  * \license       GNU GPLv2 or above
  *
  *  Provides a base class that can be used to manage the command-line version
@@ -43,8 +43,8 @@
 #include "sessions/smanager.hpp"        /* seq66::smanager                  */
 
 #if defined SEQ66_NSM_SUPPORT
-
 #include "nsm/nsmclient.hpp"            /* seq66::nsmclient                 */
+#endif
 
 /**
  *  The potential list of capabilities is
@@ -58,13 +58,7 @@
  *  -   optional-gui: Client has an optional GUI.
  */
 
-#define SEQ66_NSM_CLI_CAPABILITIES      ":message:dirty"
-
-#else
-
-#define SEQ66_NSM_CLI_CAPABILITIES      ""
-
-#endif
+const std::string c_cli_nsm_capabilities {":message:dirty:"};
 
 namespace seq66
 {
@@ -107,7 +101,7 @@ private:
 
 public:
 
-    clinsmanager (const std::string & caps = SEQ66_NSM_CLI_CAPABILITIES);
+    clinsmanager (const std::string & caps = c_cli_nsm_capabilities);
     virtual ~clinsmanager ();
 
 #if defined SEQ66_NSM_SUPPORT

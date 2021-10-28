@@ -145,7 +145,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Resets the beats/bar to 4.</string>
+        <string>Resets beats/bar to 4.</string>
        </property>
        <property name="text">
         <string>B</string>
@@ -201,7 +201,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Resets the beat-width to 4.</string>
+        <string>Resets beat-width to 4.</string>
        </property>
        <property name="text">
         <string>W</string>
@@ -257,7 +257,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Resets the pattern length to 1.</string>
+        <string>Resets pattern length to 1.</string>
        </property>
        <property name="text">
         <string>L</string>
@@ -850,7 +850,7 @@ the '0' key in the piano roll.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Snap size for the spacing of drawn notes. Resets it to
+        <string>Snap size for spacing drawn notes. Resets it to
 default snap size.</string>
        </property>
        <property name="text">
@@ -949,7 +949,7 @@ to the default value, 1/16.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Horizontal zoom level. Resets to the default zoom value, 2.</string>
+        <string>Horizontal zoom level. Resets to default value, 2.</string>
        </property>
        <property name="text">
         <string>Z</string>
@@ -971,7 +971,7 @@ to the default value, 1/16.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Horizontal zoom level in 'pixels:ticks'.  It is the number
+        <string>Horizontal zoom level in 'pixels:ticks'.  The number
 of ticks or pulses represented by 1 pixel.  A lower value
 zooms 'in'.</string>
        </property>
@@ -1033,7 +1033,7 @@ zooms 'in'.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Musical scale selection. Resets the scale selection to Off (Chromatic).</string>
+        <string>Musical scale selection. Resets scale to Off (Chromatic).</string>
        </property>
        <property name="text">
         <string>S</string>
@@ -1061,7 +1061,7 @@ zooms 'in'.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Selects the musical scale to show on the piano roll background.</string>
+        <string>Selects musical scale to show on piano roll background.</string>
        </property>
       </widget>
      </item>
@@ -1117,7 +1117,7 @@ zooms 'in'.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>The other pattern/sequence to show on the background of the piano roll.</string>
+        <string>The other pattern/sequence to show on background of piano roll.</string>
        </property>
        <property name="text">
         <string>Off</string>
@@ -1753,7 +1753,7 @@ Oneshot recording of a pattern.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Resets recording velocity to 'Free', which means whatever velocity is incoming.</string>
+        <string>Resets recording velocity to 'Free' (incoming velocity).</string>
        </property>
        <property name="text">
         <string>Vel</string>
@@ -1775,7 +1775,7 @@ Oneshot recording of a pattern.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Selects the Free mode of recording (incoming velocity preserved, or other velocities to force upon input.</string>
+        <string>Selects the Free mode of recording (incoming velocity), or a velocity to force upon input.</string>
        </property>
       </widget>
      </item>

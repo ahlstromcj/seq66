@@ -1148,10 +1148,10 @@ qseqeventframe::slot_dump ()
                 basename = file_extension_set(basename, ".text");
                 fspec = filename_concatenate(directory, basename);
                 if (! file_write_string(fspec, dump))
-                    printf("%s", dump.c_str());
+                    msgprintf(msglevel::status, "%s", dump);
             }
             else
-                printf("%s", dump.c_str());
+                msgprintf(msglevel::status, "%s", dump);
         }
     }
     set_selection_multi(false);

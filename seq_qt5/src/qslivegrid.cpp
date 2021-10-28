@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-10-27
+ * \updates       2021-10-28
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -207,6 +207,15 @@ void
 qslivegrid::set_playlist_name (const std::string & plname, bool modified)
 {
     std::string fullname = get_full_path(plname);
+
+    /*
+     * TO DO:  Fix loading a recent file from a non-session directory into the
+     * NSM midi directory.
+     */
+
+    if (fullname.empty())
+        fullname = filename_base(plname);
+
     if (fullname.empty())
         fullname = rc().no_name();
 

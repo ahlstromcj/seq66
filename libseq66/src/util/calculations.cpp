@@ -1222,7 +1222,6 @@ unit_truncation (double angle)
         double truncated = trunc(result);
         result -= truncated;
     }
-    // printf("angle = %f, mod value = %f\n", angle, result);
     return result;
 }
 

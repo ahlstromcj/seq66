@@ -149,7 +149,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Simply indicates if in JACK/ALSA/PM (PortMidi) mode.</string>
+         <string>Indicates if in JACK/ALSA/PM (PortMidi) mode.</string>
         </property>
         <property name="text">
          <string>PortMidi</string>
@@ -177,8 +177,8 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Indicates if in JACK Transport, Master, Master-Conditional,
-or no transport mode.</string>
+         <string>Indicates if in JACK Transport, Master, Master-Conditional
+mode.</string>
         </property>
         <property name="text">
          <string>Master</string>
@@ -206,8 +206,8 @@ or no transport mode.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Changes the PPQN value of the current song for all sets.
-This modifies the song, so a &quot;Save&quot; prompt will occur at exit.
+         <string>Change the PPQN value of song for ALL sets.
+This modifies the song; a &quot;Save&quot; prompt will occur at exit.
 It does not change Seq66's default PPQN.</string>
         </property>
         <property name="editable">
@@ -239,7 +239,7 @@ It does not change Seq66's default PPQN.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Sets the output bus for all patterns at once in the current set only.  It modifies the song.</string>
+         <string>Sets output bus for all patterns in the current set.  Modifies the song.</string>
         </property>
        </widget>
       </item>
@@ -728,7 +728,7 @@ It does not change Seq66's default PPQN.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Resets the internal play-set to the current set, no
+         <string>Resets the play-set to the current set, no
 matter what sets-mode is in force. </string>
         </property>
         <property name="text">
@@ -771,7 +771,7 @@ matter what sets-mode is in force. </string>
          </font>
         </property>
         <property name="toolTip">
-         <string>Shows the number of the active screen-set, including any active external live frame.</string>
+         <string>Number of the active screen-set, including the active external live frame.</string>
         </property>
         <property name="readOnly">
          <bool>true</bool>
@@ -856,7 +856,7 @@ matter what sets-mode is in force. </string>
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
-           <string>Panic - send global note off signal</string>
+           <string>Sends a global note off signal</string>
           </property>
           <property name="text">
            <string>Panic</string>
@@ -1057,7 +1057,7 @@ matter what sets-mode is in force. </string>
            </size>
           </property>
           <property name="toolTip">
-           <string>Shows and toggles the keep-queue status. Does not show one-shot queue status.</string>
+           <string>Shows/toggles keep-queue status. Does not show one-shot queue status.</string>
           </property>
           <property name="text">
            <string>Q</string>
@@ -1085,7 +1085,7 @@ matter what sets-mode is in force. </string>
            </size>
           </property>
           <property name="toolTip">
-           <string>Mute Group Learn. Click the L button, then press a mute-group key to store the mute state of the sequences in the Shift of that key.</string>
+           <string>Mute Group Learn. Click L, then press a key to store the state of the sequences in the Shift of that key.</string>
           </property>
           <property name="text">
            <string>Learn</string>
@@ -1262,7 +1262,7 @@ matter what sets-mode is in force. </string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Switch between BBT and HMS timing in the clock at the top.</string>
+         <string>Switch between BBT and HMS timing in the clock.</string>
         </property>
         <property name="text">
          <string>H:M:S</string>
@@ -1286,7 +1286,7 @@ matter what sets-mode is in force. </string>
            </size>
           </property>
           <property name="toolTip">
-           <string>Tap in time to set the beats per minute (BPM) value. After 5 seconds of no taps, the tap-counter will reset to 0. The default keystroke for tap-BPM is F9.</string>
+           <string>Tap in time to set beats per minute (BPM). After 5 seconds of no taps, the tap-counter resets to 0. Default keystroke is F9.</string>
           </property>
           <property name="text">
            <string>0</string>
@@ -1537,9 +1537,8 @@ matter what sets-mode is in force. </string>
     <string>&amp;Export Song...</string>
    </property>
    <property name="toolTip">
-    <string>Export the song performance layout as a Seq66
-MIDI file with triggers consolidated into a single
-trigger for each unmuted pattern.</string>
+    <string>Export song layout as a Seq66 MIDI file with
+triggers consolidated into a single one for each unmuted pattern.</string>
    </property>
   </action>
   <action name="actionExportMIDI">
@@ -1547,7 +1546,7 @@ trigger for each unmuted pattern.</string>
     <string>Export &amp;MIDI Only...</string>
    </property>
    <property name="toolTip">
-    <string>Export without Seq66 SeqSpecs, just with MIDI events
+    <string>Export without Seq66 SeqSpecs, just MIDI events
 and messages.</string>
    </property>
   </action>
@@ -1583,7 +1582,7 @@ and messages.</string>
     <string>&amp;Clear Mute Groups</string>
    </property>
    <property name="toolTip">
-    <string>Clears the mute groups so one can start over again.</string>
+    <string>Clears mute groups so one can start over again.</string>
    </property>
   </action>
   <action name="actionReloadMuteGroups">
@@ -1591,7 +1590,7 @@ and messages.</string>
     <string>&amp;Reload Mute Groups</string>
    </property>
    <property name="toolTip">
-    <string>Reloads the mute groups from the &quot;rc&quot; file, to restore the normal configuration.</string>
+    <string>Reloads mute groups from the &quot;mutes&quot; file.</string>
    </property>
   </action>
   <action name="actionMuteAllTracks">
@@ -1610,7 +1609,7 @@ and messages.</string>
     <string>&amp;Unmute All Tracks</string>
    </property>
    <property name="toolTip">
-    <string>Turns on all the tracks in the current set.</string>
+    <string>Arms all tracks in the current set.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+U</string>
@@ -1621,7 +1620,7 @@ and messages.</string>
     <string>To&amp;ggle All Tracks</string>
    </property>
    <property name="toolTip">
-    <string>Toggles the mute status of all tracks in the current set.</string>
+    <string>Toggles mute status of all tracks in the current set.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
@@ -1640,7 +1639,7 @@ and messages.</string>
     <string>Song Summary File...</string>
    </property>
    <property name="toolTip">
-    <string>Writes a text summary of the current song to a file
+    <string>Writes a text summary of the song to a file
 in the same directory as the original, with the extension
 &quot;.text&quot;.</string>
    </property>

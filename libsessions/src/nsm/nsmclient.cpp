@@ -85,15 +85,16 @@
  *      -#  Connect up callbacks (e.g. signals in Qt) for the following events:
  *          -   Open NSM session. The caller should first see if this nsmclient
  *              is active.  If so, close the session, which checks the
- *              dirty-count in order to ask the user if changes need to be saved.
+ *              dirty-count in order to ask the user if changes need to be
+ *              saved.
  *          -   Save NSM session.
  *          -   Show NSM session.
  *          -   Hide NSM session.
  *      -#  Applications must not register JACK clients until receiving an
  *          open message, which provides a unique client name prefix suitable
  *          for passing to JACK.
- *      -#  Call nsmclient::announce(APP_TITLE, ":switch:dirty:optional-gui:") if
- *          using a GUI.
+ *      -#  Call nsmclient::announce(APP_TITLE, ":switch:dirty:optional-gui:")
+ *          if using a GUI.
  *
  *  NSM_URL:
  *
@@ -569,9 +570,7 @@ nsmclient::broadcast
     {
         int argc = int(argv.size());
         for (int i = 0; i < argc; ++i)
-        {
-            printf("   [%d] %s\n", i, argv[i].c_str());
-        }
+            msgprintf(msglevel::info, "   [%d] %s", i, argv[i]);
     }
 }
 

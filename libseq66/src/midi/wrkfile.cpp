@@ -426,8 +426,7 @@ wrkfile::parse (performer & p, int screenset, bool importing)
         int vme = int(read_byte());     /* minor WRK version number         */
         int vma = int(read_byte());     /* major WRK version number         */
         int ck_id;
-        if (rc().verbose())
-            printf("[WRK Version: %d.%d]\n", vma, vme);
+        msgprintf(msglevel::status, "WRK Version: %d.%d", vma, vme);
 
         do
         {

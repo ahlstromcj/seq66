@@ -176,9 +176,9 @@ qseventslots::events_to_string () const
 }
 
 /**
- *  Provides the printf() format statement for a data value for both the data
- *  columns in the event table and the data field in the right-hand editable
- *  area of the event editor.
+ *  Provides the "printf()" format statement for a data value for both the
+ *  data columns in the event table and the data field in the right-hand
+ *  editable area of the event editor.
  */
 
 #define SEQ66_EVENT_DATA_FMT_DEC    "%d"

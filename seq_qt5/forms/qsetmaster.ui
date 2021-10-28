@@ -14,10 +14,10 @@
    <string>Set Master</string>
   </property>
   <property name="toolTip">
-   <string>The Set Master allows creation, viewing, deletion, and moving of sets.</string>
+   <string>Set Master allows creation, viewing, deletion, and moving of sets.</string>
   </property>
   <property name="whatsThis">
-   <string>This is the Set Master</string>
+   <string>The Set Master</string>
   </property>
   <property name="frameShape">
    <enum>QFrame::StyledPanel</enum>
@@ -122,7 +122,7 @@
       <item row="2" column="2">
        <widget class="QPushButton" name="m_button_show">
         <property name="toolTip">
-         <string>Show a condensed list of the sets and their tracks/loops/patterns.</string>
+         <string>Show a condensed list of sets and their patterns.</string>
         </property>
         <property name="text">
          <string>Show All Set Tracks</string>
@@ -175,7 +175,7 @@
       <item row="2" column="3">
        <widget class="QPushButton" name="m_button_delete">
         <property name="toolTip">
-         <string>Deletes the selected set.  No undo! Careful!</string>
+         <string>Deletes the selected set. No undo! Careful!</string>
         </property>
         <property name="text">
          <string>Delete Selected Set</string>

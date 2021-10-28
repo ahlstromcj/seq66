@@ -1146,17 +1146,6 @@ qseqeditframe64::scroll_by_step (qscrollmaster::dir d)
 void
 qseqeditframe64::paintEvent (QPaintEvent * qpep)
 {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    QRect r = qpep->rect();
-    printf
-    (
-        "qseqeditframe64::paintEvent(%d) at (x,y,w,h) = (%d, %d, %d, %d)\n",
-        s_count++, r.x(), r.y(), r.width(), r.height()
-    );
-#endif
-
     qpep->ignore();                         /* QFrame::paintEvent(qpep)     */
 }
 
@@ -1181,12 +1170,6 @@ qseqeditframe64::resizeEvent (QResizeEvent * qrep)
 void
 qseqeditframe64::wheelEvent (QWheelEvent * qwep)
 {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf("qseqeditframe64::wheelEvent(%d)\n", s_count++);
-#endif
-
     qwep->ignore();                         /* qseqframe::resizeEvent(qwep) */
 }
 

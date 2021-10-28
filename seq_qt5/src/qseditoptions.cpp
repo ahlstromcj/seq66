@@ -1632,7 +1632,7 @@ qseditoptions::slot_key_test (const QString &)
     {
         QChar first = s.at(0);
         ushort us = first.unicode();
-        printf("0x%x\n", unsigned(us));
+        msgprintf(msglevel::status, "0x%x", unsigned(us));
     }
 }
 

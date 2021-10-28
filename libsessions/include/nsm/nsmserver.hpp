@@ -48,9 +48,9 @@ public:
      *      The server responds to the "/nsm/server/broadcast" message.
      *
      * \var optional_gui
-     *      The server responds to "optional-gui" messages.  If this capability
-     *      is not present, then clients with "optional-gui" must always keep
-     *      themselves visible.
+     *      The server responds to "optional-gui" messages.  If this
+     *      capability is not present, then clients with "optional-gui" must
+     *      always keep themselves visible.
      */
 
     enum class caps

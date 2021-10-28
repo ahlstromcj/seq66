@@ -215,7 +215,7 @@
         <enum>Qt::ClickFocus</enum>
        </property>
        <property name="toolTip">
-        <string>Sets the active screen-set/bank.  Normally ranges from 0 to 31.</string>
+        <string>Sets active screen-set/bank. Range: 0 to 31.</string>
        </property>
        <property name="layoutDirection">
         <enum>Qt::LeftToRight</enum>

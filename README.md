@@ -1,7 +1,7 @@
 # README for Seq66 0.97.2
 
 Chris Ahlstrom
-2015-09-10 to 2021-10-27
+2015-09-10 to 2021-10-28
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -94,6 +94,7 @@ Windows, and using a conventional source tarball.
         *   Issue #61: Rearranged console output to show the app name, in color.
         *   Issue #63: Initial work on rotating numbering of patterns, sets, and
             mutes, so that numbers vary faster by column than by row.
+        *   Issue #64: Fix a bug in optional GUI, testing with Agordejo (NSM).
         *   Added textfix.qss as an example of making disabled text easier to
             read.
         *   Improved the saving/restoring of Edit / Preferences.  Added option

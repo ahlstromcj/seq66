@@ -14,10 +14,10 @@
    <string>Mute Master</string>
   </property>
   <property name="toolTip">
-   <string>Mute Master allows for viewing/editing of mute groups.</string>
+   <string>Mute Master: viewing/editing of mute groups.</string>
   </property>
   <property name="whatsThis">
-   <string>This is the Mute Master</string>
+   <string>The Mute Master</string>
   </property>
   <property name="frameShape">
    <enum>QFrame::StyledPanel</enum>
@@ -122,8 +122,8 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>When the set-size is 64 and 96 instead of 32,
-allows paging the Group Patterns grid.  A future feature.</string>
+         <string>When set-size is 64 and 96 instead of 32,
+allows paging patterns keys.</string>
         </property>
         <property name="wrapping">
          <bool>true</bool>
@@ -146,7 +146,7 @@ allows paging the Group Patterns grid.  A future feature.</string>
         </property>
         <property name="toolTip">
          <string>Saves mute groups to a file in the session
-configuration directory.</string>
+configuration.</string>
         </property>
         <property name="text">
          <string>Save All</string>
@@ -351,9 +351,8 @@ configuration directory.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Provides the base name for the mute-group file.
-Any path present is stripped.  The file is always
-saved to the session configuration directory.</string>
+         <string>Provides the base name for the mute-group file; the path
+is stripped.  Always saved to the session configuration.</string>
         </property>
         <property name="verticalScrollBarPolicy">
          <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -389,8 +388,8 @@ saved to the session configuration directory.</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>Causes mute statuses to be saved as stanzas of 1's
-and 0's.  The default setting.</string>
+           <string>Mute statuses are saved as stanzas of 1's
+and 0's. Default setting.</string>
           </property>
           <property name="text">
            <string>Binar&amp;y</string>
@@ -400,8 +399,8 @@ and 0's.  The default setting.</string>
         <item row="1" column="1">
          <widget class="QCheckBox" name="m_check_to_mutes">
           <property name="toolTip">
-           <string>If set, the mute-groups are saved to the
-&quot;Mutes File&quot; (*.mutes) at exit.</string>
+           <string>Mute-groups are saved to the
+&quot;mutes&quot; file at exit.</string>
           </property>
           <property name="text">
            <string>To Mutes</string>
@@ -417,9 +416,8 @@ and 0's.  The default setting.</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>If set, mute statuses are saved in hexadecimal
-format (e.g. 0xFF).  Useful if the set-size is larger
-than of 8 x 4.</string>
+           <string>Mute statuses are saved as hexadecimal (e.g. 0xFF).
+Useful if set-size is larger than 4 x 8.</string>
           </property>
           <property name="text">
            <string>He&amp;x</string>
@@ -429,8 +427,7 @@ than of 8 x 4.</string>
         <item row="0" column="1">
          <widget class="QCheckBox" name="m_check_to_midi">
           <property name="toolTip">
-           <string>If et, the mute-groups are saved in the MIDI
-file when it is saved.</string>
+           <string>Mute-groups are saved in the MIDI file.</string>
           </property>
           <property name="text">
            <string>To MIDI </string>
@@ -452,10 +449,9 @@ file when it is saved.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>If checked, toggling off a mute-group toggles only
-the patterns active in that group; patterns unmuted
-by the user will stay on.  Legacy behavior is to
-adhere strictly to the mute-group.</string>
+         <string>Toggling off a mute-group toggles only patterns
+active in that group; patterns unmuted by the user stay on.
+Legacy behavior adheres strictly to the mute-group.</string>
         </property>
         <property name="text">
          <string>Toggle Only Active</string>
@@ -471,8 +467,8 @@ adhere strictly to the mute-group.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>If set, load the mute-group section from the
-'mutes' file.  Disables loading it from the MIDI file.</string>
+         <string>Load the mute-group section from the
+'mutes' file. Disables loading it from the MIDI file.</string>
         </property>
         <property name="text">
          <string>Load Mutes from File</string>
@@ -489,8 +485,8 @@ adhere strictly to the mute-group.</string>
          <bool>false</bool>
         </property>
         <property name="toolTip">
-         <string>When active, the mute-group button in this
-tab can be used to toggle the mute-groups.</string>
+         <string>When active, the mute-group button here
+can toggle the mute-groups.</string>
         </property>
         <property name="text">
          <string>Trigger Mode</string>
@@ -513,10 +509,9 @@ tab can be used to toggle the mute-groups.</string>
          <bool>false</bool>
         </property>
         <property name="toolTip">
-         <string>Saves mute-group modifications to
-the mute-group settings.  One still needs to save
-the MIDI file or 'mutes' file, as applicable, to
-preserve this mute-group.</string>
+         <string>Save mute-group modifications to the configuration.
+Still need to save the MIDI or 'mutes' file,
+as applicable, to preserve this mute-group.</string>
         </property>
         <property name="text">
          <string>Update Group</string>

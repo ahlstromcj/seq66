@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-10-26
+ * \updates       2021-10-28
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -45,11 +45,7 @@
  * ":dirty:message:optional-gui:switch:"
  */
 
-#if defined SEQ66_NSM_SUPPORT
-#define SEQ66_NSM_QT5_CAPABILITIES      ":dirty:message:optional-gui"
-#else
-#define SEQ66_NSM_QT5_CAPABILITIES      ""
-#endif
+const std::string c_qt5_nsm_capabilities {":dirty:message:optional-gui:"};
 
 /*
  * Forward reference
@@ -62,7 +58,8 @@ namespace seq66
 {
 
 /**
- *  Provides the user-interface implmentation for the session manager.
+ *  Provides the graphical user-interface implementation for the session
+ *  manager client.
  */
 
 class qt5nsmanager : public QObject, public clinsmanager
@@ -75,7 +72,7 @@ public:
     (
         QApplication & app,
         QObject * parent         = nullptr,
-        const std::string & caps = SEQ66_NSM_QT5_CAPABILITIES
+        const std::string & caps = c_qt5_nsm_capabilities
     );
     virtual ~qt5nsmanager ();
 

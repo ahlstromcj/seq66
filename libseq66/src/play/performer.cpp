@@ -2525,14 +2525,14 @@ performer::launch_output_thread ()
             if (ok)
             {
 #if defined SEQ66_PLATFORM_LINUX
-                infoprint("Output priority elevated");
+                warn_message("Output priority elevated");
 #endif
             }
             else
             {
                 errprint
                 (
-                    "output_thread: couldn't set scheduler to FIFO, "
+                    "output thread: couldn't set scheduler to FIFO, "
                     "need root priviledges."
                 );
                 pthread_exit(0);
@@ -2560,14 +2560,14 @@ performer::launch_input_thread ()
             if (ok)
             {
 #if defined SEQ66_PLATFORM_LINUX
-                infoprint("Input priority elevated");
+                warn_message("Input priority elevated");
 #endif
             }
             else
             {
                 errprint
                 (
-                    "input_thread: couldn't set scheduler to FIFO, "
+                    "input thread: couldn't set scheduler to FIFO, "
                     "need root priviledges."
                 );
                 pthread_exit(0);
@@ -5542,7 +5542,7 @@ performer::midi_control_event (const event & ev, bool recording)
 void
 performer::signal_save ()
 {
-    printf("[ S A V E ! ]\n"); // TO DO
+    // warn_message("S A V E !"); // TO DO
     stop_playing();
     signal_for_save();              /* provided by the daemonize module */
 }
@@ -5550,7 +5550,7 @@ performer::signal_save ()
 void
 performer::signal_quit ()
 {
-    printf("[ Q U I T ! ]\n"); // TO DO
+    // warn_message("Q U I T !); // TO DO
     stop_playing();
     signal_for_exit();              /* provided by the daemonize module */
 }

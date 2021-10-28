@@ -86,7 +86,7 @@ seq::seq () :
 seq::~seq ()
 {
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("~seq()\n");
+    special_message("~seq()");
 #endif
 }
 

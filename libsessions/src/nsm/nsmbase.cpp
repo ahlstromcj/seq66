@@ -864,14 +864,20 @@ nsmbase::add_client_method (nsm::tag t, lo_method_handler h)
         if (t == nsm::tag::null)
         {
             const char * nul = NULL;
-            (void) lo_server_thread_add_method(m_lo_server_thread, nul, nul, h, this);
+            (void) lo_server_thread_add_method
+            (
+                m_lo_server_thread, nul, nul, h, this
+            );
             nsm::outgoing_msg("OSC", "", "Broadcast method added");
         }
         else
         {
             const char * m = message.c_str();
             const char * p = pattern.c_str();
-            (void) lo_server_thread_add_method(m_lo_server_thread, m, p, h, this);
+            (void) lo_server_thread_add_method
+            (
+                m_lo_server_thread, m, p, h, this
+            );
             nsm::outgoing_msg(message, pattern, "Client method added");
         }
     }

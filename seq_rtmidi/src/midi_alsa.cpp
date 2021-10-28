@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2021-08-11
+ * \updates       2021-10-28
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -194,7 +194,7 @@ midi_alsa::api_init_out ()
     m_local_addr_port = result;
     if (result < 0)
     {
-        errprint("snd_seq_create_simple_port(write) error");
+        error_message("ALSA create simple port error");
         return false;
     }
     result = snd_seq_connect_to                     /* connect to port  */
@@ -203,27 +203,16 @@ midi_alsa::api_init_out ()
     );
     if (result < 0)
     {
-        fprintf
+        msgprintf
         (
-            stderr, "snd_seq_connect_to(%d:%d) error\n",
+            msglevel::error, "ALSA connect to %d:%d error",
             m_dest_addr_client, m_dest_addr_port
         );
         return false;
     }
     else
-    {
         set_port_open();
 
-#if defined SEQ66_SHOW_API_CALLS
-        printf
-        (
-            "READ/output port '%s' created:\n local port %d connected to %d:%d\n",
-            busname.c_str(), m_local_addr_port,
-            m_dest_addr_client, m_dest_addr_port
-        );
-#endif
-
-    }
     return true;
 }
 
@@ -306,27 +295,16 @@ midi_alsa::api_init_in ()
     result = snd_seq_subscribe_port(m_seq, subs);
     if (result < 0)
     {
-        fprintf
+        msgprintf
         (
-            stderr, "snd_seq_connect_from(%d:%d) error\n",
+            msglevel::error, "ALSA connect from %d:%d error",
             m_dest_addr_client, m_dest_addr_port
         );
         return false;
     }
     else
-    {
         set_port_open();
-#if defined SEQ66_SHOW_API_CALLS
-        printf
-        (
-            "WRITE/input port '%s' created; sender %d:%d, "
-            "destination (local) %d:%d\n",
-            m_input_port_name.c_str(),
-            m_dest_addr_client, m_dest_addr_port,
-            m_local_addr_client, m_local_addr_port
-        );
-#endif
-    }
+
     return true;
 }
 
@@ -404,15 +382,6 @@ midi_alsa::api_init_out_sub ()
     {
         set_virtual_name(result, portname);
         set_port_open();
-
-#if defined SEQ66_SHOW_API_CALLS
-        printf
-        (
-            "virtual READ/output port '%s' created, local port %d\n",
-            portname.c_str(), result
-        );
-#endif
-
     }
     return true;
 }
@@ -448,11 +417,6 @@ midi_alsa::api_init_in_sub ()
     {
         set_virtual_name(result, portname);
         set_port_open();
-
-#if defined SEQ66_SHOW_API_CALLS
-        printf("virtual WRITE/input port 'seq66 in' created; port %d\n", result);
-#endif
-
     }
     return true;
 }
@@ -502,23 +466,13 @@ midi_alsa::api_deinit_in ()
     int result = snd_seq_unsubscribe_port(m_seq, subs);     /* unsubscribe  */
     if (result < 0)
     {
-        fprintf
+        msgprintf
         (
-            stderr, "snd_seq_unsubscribe_port(%d:%d) error\n",
+            msglevel::error, "ALSA unsubscribe port %d:%d error",
             m_dest_addr_client, m_dest_addr_port
         );
         return false;
     }
-
-#if defined SEQ66_SHOW_API_CALLS
-    printf
-    (
-        "WRITE/input port deinit'ed; sender %d:%d, destination (local) %d:%d\n",
-        m_dest_addr_client, m_dest_addr_port,
-        m_local_addr_client, m_local_addr_port
-    );
-#endif
-
     return true;
 }
 
@@ -736,17 +690,6 @@ midi_alsa::api_continue_from (midipulse tick_parameter, midipulse beats)
     snd_seq_event_output(m_seq, &evc);              /* pump into queue  */
     api_flush();
     snd_seq_event_output(m_seq, &ev);
-
-#if defined SEQ66_SHOW_API_CALLS
-    if (tick > 0)
-    {
-        printf
-        (
-            "midi_alsa::continue_from(%ld) local port %d\n", tick, m_local_addr_port
-        );
-    }
-#endif
-
 }
 
 /**

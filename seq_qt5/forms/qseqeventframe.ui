@@ -47,7 +47,7 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Shows the events in the pattern/sequence.  Events can be edited only with the controls at the right of this table.</string>
+      <string>Events in the pattern/sequence. Events can be edited only with the controls at the right.</string>
      </property>
      <property name="sizeAdjustPolicy">
       <enum>QAbstractScrollArea::AdjustToContents</enum>
@@ -258,7 +258,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Shows current time in bars:beats:pulses.  Edit to insert or modify events.</string>
+          <string>Current time in bars:beats:pulses. Edit to insert or modify events.</string>
          </property>
          <property name="text">
           <string>000:00:00000</string>
@@ -363,7 +363,7 @@
         </size>
        </property>
        <property name="statusTip">
-        <string>Shows the first data byte, if applicable.  Can be changed using decimal or hex (0xnn) notation.</string>
+        <string>The first data byte, if applicable. Change using decimal or hex (0xnn) notation.</string>
        </property>
        <property name="text">
         <string>0x00</string>
@@ -407,7 +407,7 @@
         </size>
        </property>
        <property name="statusTip">
-        <string>Shows the second data byte, if applicable.  Can be changed using decimal or hex (0xnn) notation.</string>
+        <string>The second data byte, if applicable.  Change using decimal or hex (0xnn) notation.</string>
        </property>
        <property name="text">
         <string>0x00</string>

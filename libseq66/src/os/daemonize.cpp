@@ -423,13 +423,8 @@ session_close ()
     bool result = sg_needs_close;
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-    if (sg_restart)
-    {
-        result = true;
-        sg_restart = false;
-    }
     if (result)
-        printf("App marked for close....\n");
+        warn_message("App marked for close...");
 #endif
 
     sg_needs_close = false;
@@ -457,7 +452,7 @@ session_save ()
     bool result = sg_needs_save;
 #if defined SEQ66_PLATFORM_DEBUG
     if (result)
-        printf("App marked for file_save....\n");
+        warn_message("Marked for file_save...");
 #endif
     sg_needs_save = false;
     return result;

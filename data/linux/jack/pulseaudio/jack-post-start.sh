@@ -11,9 +11,6 @@
 pactl load-module module-jack-sink
 pactl load-module module-jack-source
 
-export PULSESINKID=$(pactl list | grep -B 1 "Name: module-jack-sink" | grep Module | sed 's/[^0-9]//g')
-export PULSESOURCEID=$(pactl list | grep -B 1 "Name: module-jack-source" | grep Module | sed 's/[^0-9]//g')
-
 pacmd set-default-sink jack_out
 pacmd set-default-source jack_in
 

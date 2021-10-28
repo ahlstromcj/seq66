@@ -128,7 +128,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
     {
         if (measure_length() == 0)
         {
-            printf("qperftime measure-length is 0, cannot draw\n");
+            info_message("qperftime measure-length is 0, cannot draw");
             break;
         }
 

@@ -570,13 +570,6 @@ private:
 #endif
     void set_position (midipulse currenttick);
 
-    /*
-     * Use the functions from basic_macros.cpp
-     *
-     * static bool info_message (const std::string & msg);
-     * static bool error_message (const std::string & msg);
-     */
-
 };          // class jack_assistant
 
 /**

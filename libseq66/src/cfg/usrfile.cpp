@@ -181,10 +181,10 @@ usrfile::parse ()
             }
             else
             {
-                fprintf
+                msgprintf
                 (
-                    stderr, "? error adding %s (line = '%s')\n",
-                    label.c_str(), scanline()
+                    msglevel::error, "Error adding %s (line = '%s')",
+                    label, scanline()
                 );
             }
         }
@@ -245,10 +245,10 @@ usrfile::parse ()
         }
         else
         {
-            fprintf
+            msgprintf
             (
-                stderr, "? error adding %s (line = '%s')\n",
-                label.c_str(), scanline()
+                msglevel::error, "Error adding %s (line = '%s')",
+                label, scanline()
             );
         }
     }
@@ -473,7 +473,11 @@ usrfile::parse ()
                 else
                 {
                     logfile = strip_quotes(logfile);
-                    printf("[option_logfile: '%s']\n", logfile.c_str());
+                    msgprintf
+                    (
+                        msglevel::status, "option_logfile: '%s'",
+                        logfile
+                    );
                 }
                 usr().option_logfile(logfile);
             }

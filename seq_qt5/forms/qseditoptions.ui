@@ -20,18 +20,14 @@
       <bool>true</bool>
      </property>
      <property name="toolTip">
-      <string>A table of MIDI output ports/busses and clock 
-settings, input busses, and more.  There is a bug in the
-MIDI Clock tab where it won't respond to a click except
-in a very specific place; do Alt-C once or twice.
-      </string>
+      <string/>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
-       <string>Provides a list of MIDI output ports and clock settings.</string>
+       <string>A list of MIDI output ports and clock settings.</string>
       </property>
       <attribute name="title">
        <string>MIDI &amp;Clock</string>
@@ -67,7 +63,7 @@ in a very specific place; do Alt-C once or twice.
          </rect>
         </property>
         <property name="toolTip">
-         <string>Specifies the number of the tempo track.</string>
+         <string/>
         </property>
         <property name="readOnly">
          <bool>false</bool>
@@ -81,29 +77,28 @@ in a very specific place; do Alt-C once or twice.
          <rect>
           <x>64</x>
           <y>32</y>
-          <width>341</width>
+          <width>305</width>
           <height>21</height>
          </rect>
         </property>
         <property name="toolTip">
-         <string>Not yet functional.</string>
+         <string> </string>
         </property>
         <property name="text">
-         <string>Tempo track number (0 to 1023, 0 recommended)</string>
+         <string>Tempo track number (0 is best)</string>
         </property>
        </widget>
        <widget class="QPushButton" name="pushButtonTempoTrack">
         <property name="geometry">
          <rect>
-          <x>420</x>
+          <x>377</x>
           <y>30</y>
-          <width>162</width>
+          <width>205</width>
           <height>32</height>
          </rect>
         </property>
         <property name="toolTip">
-         <string>Saves the current tempo track number to the MIDI file. 
-Button not yet functional.</string>
+         <string>Saves the tempo track number to the MIDI file.</string>
         </property>
         <property name="text">
          <string>Set as Tempo Track</string>
@@ -138,7 +133,7 @@ Button not yet functional.</string>
          <height>30</height>
         </rect>
        </property>
-       <layout class="QHBoxLayout" name="horizLayoutClockStartModulo">
+       <layout class="QHBoxLayout" name="horizLayoutClockStartModulo" stretch="8,1">
         <item>
          <widget class="QLabel" name="labelClockStartModulo">
           <property name="font">
@@ -173,17 +168,15 @@ Button not yet functional.</string>
       <widget class="QPushButton" name="pushButtonStoreMap">
        <property name="geometry">
         <rect>
-         <x>432</x>
+         <x>389</x>
          <y>352</y>
-         <width>162</width>
+         <width>205</width>
          <height>32</height>
         </rect>
        </property>
        <property name="toolTip">
-        <string>Saves maps of I/O port numbers and names.  At exit,
-these maps are saved to the 'rc' file. Then, each port
-number can be found by name-lookup, in cases where
-the system's MIDI setup has changed.</string>
+        <string>Saves maps of I/O port numbers and names to the 'rc' file.
+Each port number can be found by name-lookup.</string>
        </property>
        <property name="text">
         <string>Save Clock/Input Maps</string>
@@ -192,9 +185,9 @@ the system's MIDI setup has changed.</string>
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>16</x>
+         <x>8</x>
          <y>488</y>
-         <width>161</width>
+         <width>181</width>
          <height>17</height>
         </rect>
        </property>
@@ -207,6 +200,9 @@ the system's MIDI setup has changed.</string>
        <property name="text">
         <string>Client Name:ID/UUID</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
       </widget>
       <widget class="QLineEdit" name="lineEditClientId">
        <property name="enabled">
@@ -214,14 +210,14 @@ the system's MIDI setup has changed.</string>
        </property>
        <property name="geometry">
         <rect>
-         <x>176</x>
+         <x>196</x>
          <y>480</y>
-         <width>217</width>
+         <width>185</width>
          <height>28</height>
         </rect>
        </property>
        <property name="toolTip">
-        <string>Holds the ALSA MIDI client number, if applicable.</string>
+        <string>Holds the MIDI client ID, as applicable.</string>
        </property>
        <property name="readOnly">
         <bool>true</bool>
@@ -236,9 +232,9 @@ the system's MIDI setup has changed.</string>
        </property>
        <property name="geometry">
         <rect>
-         <x>424</x>
-         <y>488</y>
-         <width>181</width>
+         <x>404</x>
+         <y>484</y>
+         <width>197</width>
          <height>23</height>
         </rect>
        </property>
@@ -312,7 +308,7 @@ the system's MIDI setup has changed.</string>
         <rect>
          <x>384</x>
          <y>12</y>
-         <width>81</width>
+         <width>121</width>
          <height>17</height>
         </rect>
        </property>
@@ -359,7 +355,7 @@ the system's MIDI setup has changed.</string>
          <x>10</x>
          <y>368</y>
          <width>591</width>
-         <height>117</height>
+         <height>149</height>
         </rect>
        </property>
        <property name="font">
@@ -371,18 +367,24 @@ the system's MIDI setup has changed.</string>
        <property name="title">
         <string/>
        </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
        <widget class="QCheckBox" name="checkBoxRecordByChannel">
         <property name="geometry">
          <rect>
           <x>20</x>
           <y>40</y>
-          <width>325</width>
+          <width>537</width>
           <height>21</height>
          </rect>
         </property>
         <property name="toolTip">
-         <string>If checked, incoming data is routed to the desired pattern
-number using the channel number (0 to 15).</string>
+         <string>If checked, incoming data routes to the pattern
+slot by channel number (0 to 15).</string>
         </property>
         <property name="text">
          <string>Record input into sequences according to channel</string>
@@ -392,8 +394,8 @@ number using the channel number (0 to 15).</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>68</y>
-          <width>221</width>
+          <y>72</y>
+          <width>257</width>
           <height>23</height>
          </rect>
         </property>
@@ -404,33 +406,39 @@ number using the channel number (0 to 15).</string>
        <widget class="QLabel" name="label_inputs">
         <property name="geometry">
          <rect>
-          <x>388</x>
+          <x>416</x>
           <y>72</y>
-          <width>54</width>
-          <height>17</height>
+          <width>77</width>
+          <height>21</height>
          </rect>
         </property>
         <property name="text">
          <string>Inputs</string>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
        </widget>
        <widget class="QLabel" name="label_outputs">
         <property name="geometry">
          <rect>
-          <x>264</x>
+          <x>284</x>
           <y>72</y>
-          <width>54</width>
-          <height>17</height>
+          <width>77</width>
+          <height>21</height>
          </rect>
         </property>
         <property name="text">
          <string>Outputs</string>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
        </widget>
        <widget class="QLineEdit" name="lineEditOutputCount">
         <property name="geometry">
          <rect>
-          <x>320</x>
+          <x>372</x>
           <y>68</y>
           <width>42</width>
           <height>28</height>
@@ -452,7 +460,7 @@ number using the channel number (0 to 15).</string>
        <widget class="QLineEdit" name="lineEditInputCount">
         <property name="geometry">
          <rect>
-          <x>444</x>
+          <x>504</x>
           <y>68</y>
           <width>42</width>
           <height>28</height>
@@ -484,35 +492,35 @@ number using the channel number (0 to 15).</string>
          <string>Input/Output Options</string>
         </property>
        </widget>
-      </widget>
-      <widget class="QCheckBox" name="inPortsMappedCheck">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>424</x>
-         <y>328</y>
-         <width>169</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Input Ports Mapped</string>
-       </property>
+       <widget class="QCheckBox" name="inPortsMappedCheck">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>104</y>
+          <width>245</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Input Ports Mapped</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QLabel" name="inputBussesLabel">
        <property name="geometry">
         <rect>
          <x>16</x>
          <y>8</y>
-         <width>97</width>
+         <width>129</width>
          <height>17</height>
         </rect>
        </property>
@@ -572,7 +580,7 @@ number using the channel number (0 to 15).</string>
         <rect>
          <x>10</x>
          <y>268</y>
-         <width>337</width>
+         <width>425</width>
          <height>271</height>
         </rect>
        </property>
@@ -593,7 +601,7 @@ number using the channel number (0 to 15).</string>
          <rect>
           <x>8</x>
           <y>44</y>
-          <width>313</width>
+          <width>405</width>
           <height>221</height>
          </rect>
         </property>
@@ -604,8 +612,7 @@ number using the channel number (0 to 15).</string>
             <bool>true</bool>
            </property>
            <property name="toolTip">
-            <string>Turns on verbose information written to the console or
-redirected to a log file.</string>
+            <string/>
            </property>
            <property name="text">
             <string>Verbose Console Output</string>
@@ -615,7 +622,7 @@ redirected to a log file.</string>
          <item>
           <widget class="QCheckBox" name="checkBoxLoadMostRecent">
            <property name="toolTip">
-            <string>Load the most recent file at startup, if checked.</string>
+            <string/>
            </property>
            <property name="text">
             <string>Load Most Recent File at Startup</string>
@@ -625,7 +632,7 @@ redirected to a log file.</string>
          <item>
           <widget class="QCheckBox" name="checkBoxShowFullRecentPaths">
            <property name="toolTip">
-            <string>Show the full path to each recent file, if checked.</string>
+            <string/>
            </property>
            <property name="text">
             <string>Show Full Path of Recent Files in Menu</string>
@@ -687,16 +694,16 @@ redirected to a log file.</string>
         <rect>
          <x>10</x>
          <y>38</y>
-         <width>369</width>
+         <width>413</width>
          <height>175</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayoutUiValues">
+       <layout class="QGridLayout" name="gridLayoutUiValues" columnstretch="8,2,1,2">
         <item row="1" column="3">
          <widget class="QLineEdit" name="lineEditUiScalingHeight">
           <property name="toolTip">
-           <string>Scales the main window at startup.  This is the height
-scale factor, ranging from 0.5 to 3.0.</string>
+           <string>Scales the height of main window at startup.
+Range: 0.5 to 3.0</string>
           </property>
           <property name="text">
            <string>1.0</string>
@@ -709,8 +716,8 @@ scale factor, ranging from 0.5 to 3.0.</string>
            <bool>true</bool>
           </property>
           <property name="toolTip">
-           <string>Set the set-size columns.  Ranges from 4 to 12,
-defaults to 8.</string>
+           <string>Set the set-size columns.
+Range: 4 to 12. Default: 8.</string>
           </property>
           <property name="text">
            <string>8</string>
@@ -720,9 +727,9 @@ defaults to 8.</string>
         <item row="0" column="1">
          <widget class="QSpinBox" name="spinKeyHeight">
           <property name="toolTip">
-           <string>Sets the default height of the piano keys in the pattern editor.
-Ranges from 6 to 32.  Use the &quot;-0+&quot; buttons or the &quot;v0V&quot; keys
-to temporarily zoom vertically.</string>
+           <string>Sets default height of piano keys in the pattern editor.
+Ranges from 6 to 32.  The &quot;-0+&quot; buttons or &quot;v0V&quot; keys
+zoom vertically.</string>
           </property>
           <property name="minimum">
            <number>4</number>
@@ -741,8 +748,8 @@ to temporarily zoom vertically.</string>
            <bool>true</bool>
           </property>
           <property name="toolTip">
-           <string>Set the set-size rows.  Ranges from 4 to 8,
-defaults to 4.</string>
+           <string>Set the set-size rows.
+Range: 4 to 8. Default: 4.</string>
           </property>
           <property name="text">
            <string>4</string>
@@ -757,6 +764,9 @@ defaults to 4.</string>
           <property name="text">
            <string>X</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
          </widget>
         </item>
         <item row="3" column="3">
@@ -765,9 +775,7 @@ defaults to 4.</string>
            <bool>true</bool>
           </property>
           <property name="toolTip">
-           <string>Sets the heights of the progress box as a fraction of
-the button height. Ranges from 0.1 to 0.5, or set to
-0 to not show the progress box. Defaults to 0.4.</string>
+           <string>Heights of the progress box as a fraction of button height. Range: 0.1 to 0.5, 0 hides the box. Default: 0.4.</string>
           </property>
           <property name="text">
            <string>0.4</string>
@@ -778,6 +786,9 @@ the button height. Ranges from 0.1 to 0.5, or set to
          <widget class="QLabel" name="label_x">
           <property name="text">
            <string>X</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -794,8 +805,8 @@ the button height. Ranges from 0.1 to 0.5, or set to
         <item row="1" column="1">
          <widget class="QLineEdit" name="lineEditUiScaling">
           <property name="toolTip">
-           <string>Scales the main window at startup.  This is the width
-scale factor, ranging from 0.5 to 3.0.</string>
+           <string>Scales the width of the main window at startup.
+Range: 0.5 to 3.0</string>
           </property>
           <property name="text">
            <string>1.0</string>
@@ -818,9 +829,8 @@ scale factor, ranging from 0.5 to 3.0.</string>
            <bool>true</bool>
           </property>
           <property name="toolTip">
-           <string>Sets the width of the progress box as a fraction of
-the button width. Ranges from 0.5 to 1.0, or set to
-0 to not show the progress box. Defaults to 0.8.</string>
+           <string>Width of the progress box as a fraction of button width.
+Range: 0.5 to 1.0, 0 hides the box. Default: 0.8.</string>
           </property>
           <property name="text">
            <string>0.8</string>
@@ -852,6 +862,9 @@ A primitive way to zoom.</string>
           <property name="text">
            <string>X</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
          </widget>
         </item>
         <item row="4" column="0">
@@ -870,11 +883,9 @@ A primitive way to zoom.</string>
            <bool>true</bool>
           </property>
           <property name="toolTip">
-           <string>The fingerprint is an abbreviated version of a long
-pattern displayed to save CPU time.  If not 0, and
-there are more Note On events than the fingerprint
-size, then the fingerprint is shown.  Ranges from 32
-to 128, and defaults to 32.</string>
+           <string>An abbreviated display of a long pattern to save CPU time.
+If more notes than this value, a fingerprint is shown.
+Range: 32 to 128, 0 disables.  Default: 32.</string>
           </property>
           <property name="text">
            <string>32</string>
@@ -893,7 +904,7 @@ to 128, and defaults to 32.</string>
       <widget class="QLabel" name="labelRestartNeeded">
        <property name="geometry">
         <rect>
-         <x>336</x>
+         <x>352</x>
          <y>16</y>
          <width>257</width>
          <height>16</height>
@@ -1017,7 +1028,7 @@ to 128, and defaults to 32.</string>
         </rect>
        </property>
        <property name="toolTip">
-        <string>Connect/reconnect to JACK transport.</string>
+        <string/>
        </property>
        <property name="text">
         <string>JACK Transport Co&amp;nnect</string>
@@ -1033,7 +1044,7 @@ to 128, and defaults to 32.</string>
         </rect>
        </property>
        <property name="toolTip">
-        <string>Disconnect from JACK transport.</string>
+        <string/>
        </property>
        <property name="text">
         <string>JACK Transport &amp;Disconnect</string>
@@ -1083,7 +1094,7 @@ to 128, and defaults to 32.</string>
          <widget class="QCheckBox" name="chkJackNative">
           <property name="toolTip">
            <string>Requests Seq66 to use the JACK system if it is running.
-Otherwise, ALSA is used.  Not available on Windows/Mac.</string>
+Otherwise, ALSA is used.</string>
           </property>
           <property name="text">
            <string>Native JACK &amp;MIDI (requires a restart)</string>
@@ -1092,6 +1103,10 @@ Otherwise, ALSA is used.  Not available on Windows/Mac.</string>
         </item>
         <item>
          <widget class="QCheckBox" name="chkJackAutoConnect">
+          <property name="toolTip">
+           <string>If checked (the default), then Seq66 automatically
+connects to the MIDI I/O ports it finds.</string>
+          </property>
           <property name="text">
            <string>JACK Auto-Connect</string>
           </property>
@@ -1139,7 +1154,7 @@ Otherwise, ALSA is used.  Not available on Windows/Mac.</string>
         <rect>
          <x>31</x>
          <y>248</y>
-         <width>104</width>
+         <width>141</width>
          <height>54</height>
         </rect>
        </property>
@@ -1147,8 +1162,7 @@ Otherwise, ALSA is used.  Not available on Windows/Mac.</string>
         <item>
          <widget class="QRadioButton" name="radio_live_mode">
           <property name="toolTip">
-           <string>Play the MIDI song in Live Mode, where each pattern
-plays in an endless loop.</string>
+           <string>Play MIDI in Live Mode:  each pattern plays in an endless loop.</string>
           </property>
           <property name="text">
            <string>&amp;Live Mode</string>
@@ -1158,8 +1172,8 @@ plays in an endless loop.</string>
         <item>
          <widget class="QRadioButton" name="radio_song_mode">
           <property name="toolTip">
-           <string>Play the MIDI song in Song Mode, where the playback of
-patterns is controlled by the layout drawn in the Song Editor.</string>
+           <string>Play MIDI in Song Mode: playback controlled by the layout
+in the Song Editor.</string>
           </property>
           <property name="text">
            <string>&amp;Song Mode</string>
@@ -1210,7 +1224,7 @@ patterns is controlled by the layout drawn in the Song Editor.</string>
            </font>
           </property>
           <property name="toolTip">
-           <string>When checked, unfinished notes are turned back on when
+           <string>Unfinished notes are turned back on when
 playback resumes.</string>
           </property>
           <property name="text">
@@ -1233,9 +1247,9 @@ playback resumes.</string>
            </font>
           </property>
           <property name="toolTip">
-           <string>When checked, the PPQN of the MIDI file being loaded
-overrides the default Seq66 PPQN.  Otherwise, the
-file's PPQN is scaled to the default PPQN.</string>
+           <string>The PPQN of the MIDI file loaded overrides the
+default PPQN.  Otherwise, the file PPQN scales to
+the default PPQN.</string>
           </property>
           <property name="text">
            <string>Use File's PPQN for pre-existing files</string>
@@ -1438,7 +1452,7 @@ Seq66 exits.</string>
         <rect>
          <x>8</x>
          <y>8</y>
-         <width>289</width>
+         <width>301</width>
          <height>145</height>
         </rect>
        </property>
@@ -1454,9 +1468,9 @@ Seq66 exits.</string>
        <widget class="QRadioButton" name="radio_session_none">
         <property name="geometry">
          <rect>
-          <x>16</x>
+          <x>12</x>
           <y>32</y>
-          <width>257</width>
+          <width>285</width>
           <height>23</height>
          </rect>
         </property>
@@ -1467,9 +1481,9 @@ Seq66 exits.</string>
        <widget class="QRadioButton" name="radio_session_nsm">
         <property name="geometry">
          <rect>
-          <x>16</x>
+          <x>12</x>
           <y>64</y>
-          <width>257</width>
+          <width>285</width>
           <height>23</height>
          </rect>
         </property>
@@ -1480,9 +1494,9 @@ Seq66 exits.</string>
        <widget class="QRadioButton" name="radio_session_jack">
         <property name="geometry">
          <rect>
-          <x>16</x>
+          <x>12</x>
           <y>96</y>
-          <width>257</width>
+          <width>285</width>
           <height>23</height>
          </rect>
         </property>
@@ -1513,9 +1527,9 @@ Seq66 exits.</string>
       <widget class="QLabel" name="label_session">
        <property name="geometry">
         <rect>
-         <x>304</x>
+         <x>324</x>
          <y>20</y>
-         <width>305</width>
+         <width>285</width>
          <height>189</height>
         </rect>
        </property>
@@ -1564,7 +1578,7 @@ required.</string>
         <rect>
          <x>96</x>
          <y>172</y>
-         <width>197</width>
+         <width>209</width>
          <height>25</height>
         </rect>
        </property>
@@ -2048,12 +2062,12 @@ path added to this name is stripped.</string>
          <rect>
           <x>300</x>
           <y>190</y>
-          <width>139</width>
+          <width>173</width>
           <height>25</height>
          </rect>
         </property>
         <property name="toolTip">
-         <string>Just what the button says :-)</string>
+         <string/>
         </property>
         <property name="text">
          <string>&amp;Save Palette Now</string>

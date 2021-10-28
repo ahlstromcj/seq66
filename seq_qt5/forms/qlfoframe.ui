@@ -200,7 +200,7 @@
     <item row="1" column="0">
      <widget class="QSlider" name="m_value_slider">
       <property name="toolTip">
-       <string>DC offset added to the modulating waveform.</string>
+       <string>DC offset to add to modulating waveform.</string>
       </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>

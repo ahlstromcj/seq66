@@ -326,10 +326,6 @@ qloopbutton::initialize_text ()
         m_bottom_left.set(lx, by, lw, bh, lflags, lowerleft);
         m_bottom_right.set(rx, by, rw, bh, rflags, hotkey);
         m_text_initialized = true;
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("Coord: L %3d; R %3d; T %2d; B %2d\n", lx, rx, ty, by);
-        printf("width: L %3d; R %3d; height T, B %2d\n", lw, rw, bh);
-#endif
     }
     else
         result = m_text_initialized;
@@ -738,16 +734,6 @@ qloopbutton::draw_pattern (QPainter & painter)
         int y0 = m_event_box.y();
         int xw = m_event_box.w();
         int yh = m_event_box.h();
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        int x1 = x0 + xw;
-        int y1 = y0 + yh;
-        printf
-        (
-            "x0, y0, w, h, x1, y1 = %d, %d, %d, %d, %d, %d\n",
-            x0, y0, xw, yh, x1, y1
-        );
-        printf("Note min, max = %d, %d\n", m_note_min, m_note_max);
-#endif
         if (m_fingerprinted)
         {
             if (loop()->transposable())

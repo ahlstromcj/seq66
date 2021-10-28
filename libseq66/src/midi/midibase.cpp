@@ -840,8 +840,7 @@ midibase::clock (midipulse tick)
 void
 midibase::show_clock (const std::string & context, midipulse tick)
 {
-    fprintf(stderr, "%s clock [%ld]\n", context.c_str(), tick);
-    fflush(stderr);
+    msgprintf(msglevel::error, "%s clock [%ld]", context, tick);
 }
 
 /**

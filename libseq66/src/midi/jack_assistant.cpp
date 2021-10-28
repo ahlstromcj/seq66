@@ -653,42 +653,6 @@ jack_assistant::~jack_assistant ()
 }
 
 /**
- *  Common-code for console messages.  Adds markers and a newline.
- *
- * \param msg
- *      The message to print, sans the newline.
- *
- * \return
- *      Returns true.
-
-bool
-jack_assistant::info_message (const std::string & msg)
-{
-    printf("[%s]\n", msg.c_str());
-    return true;
-}
- */
-
-/**
- *  Common-code for error messages.  Adds markers, and sets m_jack_running to
- *  false.
- *
- * \param msg
- *      The message to print, sans the newline.
- *
- * \return
- *      Returns false for convenience/brevity in setting function return
- *      values.
-
-bool
-jack_assistant::error_message (const std::string & msg)
-{
-    (void) info_message(msg);
-    return false;
-}
- */
-
-/**
  *  Tries to obtain the best information on the JACK client and the UUID
  *  assigned to this client.  Sets m_jack_client_name and m_jack_client_info
  *  as side-effects.

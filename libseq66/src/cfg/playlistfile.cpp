@@ -151,7 +151,7 @@ playlistfile::open (bool verify_it)
         if (verify_it)
         {
             if (m_show_on_stdout)
-                printf("Verifying playlist %s\n", name().c_str());
+                msgprintf(msglevel::status, "Verifying playlist %s", name());
 
             result = play_list().verify();                  /* weak verify  */
         }
@@ -262,8 +262,12 @@ playlistfile::parse ()
                 sscanf(scanline(), "number = %d", &listnumber);
 
             if (m_show_on_stdout)
-                printf("Processing playlist #%d\n", listnumber);
-
+            {
+                msgprintf
+                (
+                    msglevel::status, "Processing playlist #%d", listnumber
+                );
+            }
             if (next_data_line(file))
             {
                 std::string listline = line();
@@ -276,11 +280,14 @@ playlistfile::parse ()
                 {
                     listline = extract_variable(line(), "name");
                 }
-
                 plist.ls_list_name = listline;
                 if (m_show_on_stdout)
-                    printf("Playlist name '%s'\n", listline.c_str());
-
+                {
+                    msgprintf
+                    (
+                        msglevel::status, "Playlist name '%s'", listline
+                    );
+                }
                 if (next_data_line(file))
                 {
                     listline = line();
@@ -295,8 +302,13 @@ playlistfile::parse ()
                     plist.ls_file_directory = clean_path(listline);
                     slist.clear();
                     if (m_show_on_stdout)
-                        printf("Playlist directory '%s'\n", listline.c_str());
-
+                    {
+                        msgprintf
+                        (
+                            msglevel::status, "Playlist directory '%s'",
+                            listline
+                        );
+                    }
                     while (next_data_line(file))
                     {
                         int songnumber = -1;

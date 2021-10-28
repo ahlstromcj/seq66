@@ -661,16 +661,6 @@ midifile::grab_input_stream (const std::string & tag)
     m_error_is_fatal = false;
     if (result)
     {
-        /*
-         * Kind of annoying with playlists.  Also, be verbose only if asked to
-         * be, via the -v/--verbose option.  Actually, this is annoying for
-         * long path-names.
-         *
-         * std::string path = get_full_path(m_name);
-         * if (rc().verbose() && ! verify_mode())
-         *     printf("[Opened %s file, '%s']\n", tag.c_str(), path.c_str());
-         */
-
         m_file_size = file.tellg();                 /* get the end offset   */
         if (m_file_size <= sizeof(long))
         {
@@ -1700,9 +1690,10 @@ midifile::parse_prop_header (int file_size)
             }
             else
             {
-                fprintf
+                msgprintf
                 (
-                    stderr, "Unexpected meta type 0x%x near offset 0x%lx\n",
+                    msglevel::error,
+                    "Unexpected meta type 0x%x offset ~0x%lx",
                     int(type), long(m_pos)
                 );
             }
@@ -2802,7 +2793,11 @@ midifile::write_song (performer & p)
         {
             if (numtracks == 1)
             {
-                printf("[Exporting song to SMF 0, %d ppqn]\n", m_ppqn);
+                msgprintf
+                (
+                    msglevel::status, "Exporting song to SMF 0, %d ppqn",
+                    m_ppqn
+                );
                 result = write_header(numtracks, midiformat);
             }
             else
@@ -2816,7 +2811,7 @@ midifile::write_song (performer & p)
         }
         else
         {
-            printf("[Exporting song, %d ppqn]\n", m_ppqn);
+            msgprintf(msglevel::status, "Exporting song, %d ppqn", m_ppqn);
             result = write_header(numtracks, midiformat);
         }
     }
@@ -3207,14 +3202,14 @@ midifile::set_error_dump (const std::string & msg)
     char temp[80];
     snprintf
     (
-        temp, sizeof temp, "Near offset 0x%zx of 0x%zx bytes (%zu/%zu): ",
+        temp, sizeof temp, "Offset ~0x%zx of 0x%zx bytes (%zu/%zu): ",
         m_pos, m_file_size, m_pos, m_file_size
     );
     std::string result = temp;
     result += "\n";
     result += "   ";
     result += msg;
-    fprintf(stderr, "%s\n", result.c_str());
+    msgprintf(msglevel::error, "%s", result);
     m_error_message = result;
     m_error_is_fatal = true;
     m_disable_reported = true;

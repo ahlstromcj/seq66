@@ -167,7 +167,17 @@ clinsmanager::create_session (int argc, char * argv [])
             std::string appname = seq_client_name();    /* "seq66"          */
             std::string exename = seq_arg_0();          /* "qseq66"         */
             result = m_nsm_client->announce(appname, exename, capabilities());
-            if (! result)
+            if (result)
+            {
+                std::string note = "Announced ";
+                note += appname;
+                note += " ";
+                note += exename;
+                note += " ";
+                note += capabilities();
+                status_message(note);
+            }
+            else
                 file_error("Create session", "failed to announce");
         }
         else

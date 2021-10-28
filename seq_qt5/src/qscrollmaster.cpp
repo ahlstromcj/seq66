@@ -215,12 +215,6 @@ qscrollmaster::scroll_y_by_step (dir d)
 void
 qscrollmaster::wheelEvent (QWheelEvent * qwep)
 {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf("qscrollmaster::wheelEvent(%d)\n", s_count++);
-#endif
-
     qwep->ignore();                         /* QScrollArea::wheelEvent(qwep)  */
 }
 

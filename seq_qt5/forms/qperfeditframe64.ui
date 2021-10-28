@@ -333,7 +333,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>If active, the song piano roll scrolls to follow the progress bar in playback.</string>
+          <string>If active, the piano roll scrolls to follow progress bar.</string>
          </property>
          <property name="text">
           <string/>
@@ -412,8 +412,8 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Toggles the painting mode.  It provides a visual alternative
-to hold the right mouse button or using the &quot;p&quot; and &quot;x&quot;
+          <string>Toggles painting mode.  An alternative to holding
+the right mouse button or using the &quot;p&quot; and &quot;x&quot;
 keys.</string>
          </property>
          <property name="text">
@@ -443,10 +443,10 @@ keys.</string>
           </size>
          </property>
          <property name="toolTip">
-          <string>Turns on &quot;song record&quot; snap. When active, an added
-pattern will snap to the full length of the sequence
-like Seq24 (if snap is set to &quot;L&quot;) or the snap setting.
-Growing occurs a full snap length at a time.</string>
+          <string>Turns on &quot;song record&quot; snap. An added
+pattern snaps to the full length of the sequence like Seq24
+(with snap set to &quot;L&quot;) or to the snap setting.
+Growing occurs at snap length.</string>
          </property>
          <property name="text">
           <string>Snap</string>
@@ -474,9 +474,9 @@ Growing occurs a full snap length at a time.</string>
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Selects the desired movement and sizing snap value.
+          <string>Selects the movement and sizing snap value.
 &quot;L&quot; indicates full length. &quot;1/N&quot; means 1/Nth of a measure.
-Also affects the L/R guide markers, except that &quot;L&quot; means
+Also affects the L/R markers, except that &quot;L&quot; means
 &quot;1 measure L/R&quot;.  Use &quot;L&quot; only for patterns no longer than
 a few measures!</string>
          </property>
@@ -512,9 +512,9 @@ a few measures!</string>
      <item>
       <widget class="QComboBox" name="comboTranspose">
        <property name="toolTip">
-        <string>Selects the number of semitones to transpose the performance,
+        <string>The number of semitones to transpose the performance,
 for transposable patterns.  The transposition is done at
-playback time, on the fly.  It is not permanent.</string>
+playback time, on the fly.</string>
        </property>
        <property name="currentText">
         <string/>
@@ -709,11 +709,10 @@ playback time, on the fly.  It is not permanent.</string>
      <item>
       <widget class="QSpinBox" name="spinBoxTT">
        <property name="toolTip">
-        <string>Provides the transposition value for Trigger Transpose.
-It can range from -60 to +60 (5 octaves either way).
-It can be applied to a trigger block via a Ctrl-Right 
-click after this value is set.  To reset it, set it to 0
-and apply it to a trigger.</string>
+        <string>The transposition value for Trigger Transpose.
+Range: -60 to +60 (5 octaves each way).
+Apply it to a trigger block via Ctrl-right-click.
+To reset, set to 0 and apply it.</string>
        </property>
       </widget>
      </item>

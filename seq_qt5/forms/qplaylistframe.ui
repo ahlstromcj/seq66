@@ -262,7 +262,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Shows the full path to the play-list file.  Read-only.
+       <string>Full path to the play-list file.  Read-only.
        </string>
       </property>
       <property name="text">
@@ -297,9 +297,9 @@
     </size>
    </property>
    <property name="toolTip">
-    <string>The default song directory for the currently-selected play-list
+    <string>Default song directory for the current play-list
 section. Edit to enable Add List and Modify List,
-but not in Non Session Manager mode.</string>
+(but not in NSM mode.</string>
    </property>
    <property name="text">
     <string>None</string>
@@ -333,7 +333,7 @@ but not in Non Session Manager mode.</string>
     </size>
    </property>
    <property name="toolTip">
-    <string>Shows the MIDI control number for the selected 
+    <string>MIDI control number for the selected 
 play-list section. Edit to enable Add List and Modify List.
     </string>
    </property>
@@ -363,7 +363,7 @@ play-list section. Edit to enable Add List and Modify List.
     </size>
    </property>
    <property name="toolTip">
-    <string>Shows the name of the currently-selected play-list section.
+    <string>Name of the currently-selected play-list section.
 Edit to enable Add List and Modify List.</string>
    </property>
    <property name="text">
@@ -398,7 +398,7 @@ Edit to enable Add List and Modify List.</string>
     </size>
    </property>
    <property name="toolTip">
-    <string>Shows the directory where the selected
+    <string>Directory where the selected
 song is stored. Read-only.  Use the Load Song button
 to select an existing song.</string>
    </property>
@@ -434,7 +434,7 @@ to select an existing song.</string>
     </size>
    </property>
    <property name="toolTip">
-    <string>Shows the MIDI control number for the
+    <string>MIDI control number for the
 selected song. Edit to enable the Add Song
 and Modify Song buttons.  This is the only item that
 can be edited for a song.</string>
@@ -468,7 +468,7 @@ can be edited for a song.</string>
     </size>
    </property>
    <property name="toolTip">
-    <string>Shows the base file-name of the currently selected song. 
+    <string>Base file-name of the currently selected song. 
 Read-only.  Use the Load Song button to modify this entry.</string>
    </property>
    <property name="text">
@@ -813,7 +813,7 @@ the configured MIDI control comes in.</string>
     </rect>
    </property>
    <property name="toolTip">
-    <string>Shows the base directory holding all files in all playlists.
+    <string>Base directory holding all files in all playlists.
 Read-only.</string>
    </property>
    <property name="text">
@@ -849,7 +849,7 @@ Read-only.</string>
     </rect>
    </property>
    <property name="toolTip">
-    <string>Shows the full path to the currently-selected song.
+    <string>Full path to the currently-selected song.
 Read-only.</string>
    </property>
    <property name="text">
