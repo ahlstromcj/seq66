@@ -27,13 +27,19 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-04-27
+ * \updates       2021-10-29
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
  */
 
 #include <QFrame>
+
+#undef  SEQ66_USE_UNI_DIMENSION         /* EXPERIMENTAL                     */
+
+#if defined SEQ66_USE_UNI_DIMENSION
+#include <vector>                       /* std::vector container            */
+#endif
 
 #include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */
 #include "ctrl/opcontainer.hpp"         /* class seq66::opcontainer         */
@@ -241,6 +247,14 @@ private:
 
      qsmainwnd * m_main_window;
 
+#if defined SEQ66_USE_UNI_DIMENSION
+
+    /**
+     *  Access to buttons, more flexible for swapping coordinates.
+     */
+
+    using buttons = std::vector<QPushButton *>;
+
     /**
      *  Access to all the mute-group buttons.  This is an array forever fixed to
      *  4 x 8, because that's about all the keystrokes we have available to
@@ -248,7 +262,7 @@ private:
      *  mutegroups::Columns(), but C++ does not allow functions as array sizes.
      */
 
-    QPushButton * m_group_buttons [mutegroups::c_rows][mutegroups::c_columns];
+    buttons m_group_buttons;
 
     /**
      *  Access to all the pattern buttons.  It is the same size as the group
@@ -256,7 +270,15 @@ private:
      *  m_pattern_offset member.
      */
 
+    buttons m_pattern_buttons;
+
+#else
+
+    QPushButton * m_group_buttons [mutegroups::c_rows][mutegroups::c_columns];
+
     QPushButton * m_pattern_buttons [mutegroups::c_rows][mutegroups::c_columns];
+
+#endif  // defined SEQ66_USE_UNI_DIMENSION
 
     /**
      *  Indicates the currently-selected group number.

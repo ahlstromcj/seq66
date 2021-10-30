@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2021-01-14
+ * \updates       2021-10-29
  * \license       GNU GPLv2 or above
  *
  *  The setmaster class is meant to encapsulate the sets and their layout,
@@ -69,7 +69,9 @@ private:
     /**
      *  Holds the number of rows to use when creating a new set.  We could use
      *  the value in setmapper, but we might want the user-interface to create
-     *  sets directly at some point.
+     *  sets directly at some point.  This value along with m_screenset_columns
+     *  provides the size of a screenset, which can vary from the default 4 x 8
+     *  via configuration options.
      */
 
     int m_screenset_rows;
@@ -77,29 +79,33 @@ private:
     /**
      *  Holds the number of columns to use when creating a new set.  We could
      *  use the value in setmapper, but we might want the user-interface to
-     *  create
-     *  sets directly at some point.
+     *  create sets directly at some point.
      */
 
     int m_screenset_columns;
 
     /**
-     *  Storage for the number of rows in the layout of the set-master
-     *  (defaults to 4 rows).
-     *
-     *  Removed the const qualifier to avoid issues with containers.
+     *  Storage for the number of rows in the layout of the set-master. It
+     *  defaults to 4 rows and is actually considered to be a constant.
+     *  We removed the const qualifier to avoid issues with containers.
      */
 
-    int m_rows;
+    int m_rows;         /* const */
 
     /**
-     *  Storage for the number of columns in the layout of the set-master
-     *  (defaults to 8 rows).
-     *
-     *  Removed the const qualifier to avoid issues with containers.
+     *  Storage for the number of columns in the layout of the set-master. It
+     *  defaults to 8 columns is actually considered to be a constant.
+     *  We removed the const qualifier to avoid issues with containers.
      */
 
-    int m_columns;
+    int m_columns;      /* const */
+
+    /**
+     *  Experimental option to swap rows and columns for sets; see the similar
+     *  swappage for screensets and its patterns.
+     */
+
+    bool m_swap_coordinates;
 
     /**
      *  The maximum number of sets supported.  The main purpose for this value
@@ -130,7 +136,7 @@ private:
      *  static Rows() function.
      */
 
-    static const int c_rows     = screenset::c_default_rows;
+    static const int c_rows = screenset::c_default_rows;
 
     /**
      *  The canonical and default set size.  Used in relation to the
@@ -138,7 +144,7 @@ private:
      *  static Columns() function.
      */
 
-    static const int c_columns  = screenset::c_default_columns;
+    static const int c_columns = screenset::c_default_columns;
 
 public:
 
@@ -170,13 +176,15 @@ public:
         return c_rows * c_columns;
     }
 
+    bool swap_coordinates () const
+    {
+        return m_swap_coordinates;
+    }
+
 private:
 
-    screenset::number calculate_set (int row, int column) const;
-    bool calculate_coordinates
-    (
-        screenset::number setno, int & row, int & column
-    );
+    screenset::number grid_to_set (int row, int column) const;
+    bool index_to_grid (screenset::number setno, int & row, int & column);
 
     bool inside_set (int row, int column) const
     {

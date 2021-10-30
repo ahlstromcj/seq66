@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2020-11-24
+ * \updates       2021-10-29
  * \license       GNU GPLv2 or above
  *
  *  This class manages one of the lines in the "[mute-group]" section of the
@@ -98,6 +98,7 @@ mutegroup::mutegroup (mutegroup::number group, int rows, int columns) :
     m_mutegroup_vector  (m_group_size, midibool(false)),
     m_rows              (rows),
     m_columns           (columns),
+    m_swap_coordinates  (false), // usr().swap_coordinates() when READY
     m_group             (group >= 0 ? group : 0),
     m_group_offset      (m_group * m_group_size)
 {
@@ -185,6 +186,8 @@ mutegroup::armed_count () const
 /**
  *  Calculates the row and column for a given index.
  *
+ *  Compare to screenset::index_to_grid().
+ *
  * \param index
  *      This is the group or pattern number which, by default, can range
  *      from 0 to 31 (same as the size of a mute group is set to).
@@ -194,17 +197,46 @@ mutegroup::armed_count () const
  *      used.
  */
 
+//  screenset::index_to_grid().
+
 bool
-mutegroup::coordinate (int index, int & row, int & column) const
+mutegroup::mute_to_grid (int group, int & row, int & column) const
 {
-    int offset = index - int(m_group_offset);
+    int offset = group - int(m_group_offset);
     bool result = offset >= 0 && offset < int(m_group_size);
     if (result)
     {
-        row = index / m_columns;
-        column = index % m_columns;
+        if (swap_coordinates())
+        {
+            row = group / m_columns;
+            column = group % m_columns;
+        }
+        else
+        {
+            // WAS THIS THE WRONG THING TO DO????
+            //
+            // row = group / m_columns;
+            // column = group % m_columns;
+
+            row = group % m_rows;
+            column = group / m_rows;
+        }
     }
     return result;
+}
+
+int
+mutegroup::grid_to_mute (int row, int column)
+{
+    if (row < m_rows && column < m_columns)
+    {
+        if (swap_coordinates())
+            return m_group_offset + column + m_columns * row;
+        else
+            return m_group_offset + row + m_rows * column;
+    }
+    else
+        return 0;
 }
 
 /**
@@ -212,6 +244,7 @@ mutegroup::coordinate (int index, int & row, int & column) const
  *  for the given index.  It is used in controlling the active set.
  *
  * \param index
+ *      The offset into the mute-group vector of booleans.
  *
  * \return
  *      Returns true if the index was valid and the mute-group bit was set.

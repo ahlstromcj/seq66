@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-10-26
+ * \updates       2021-10-29
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -111,7 +111,7 @@ public:
      *  as well as the virtual layout of sets into rows and columns.
      */
 
-    static const int c_default_rows    =  4;
+    static const int c_default_rows = 4;
 
     /**
      *  Minimum number of rows in the main-window's grid.  This will remain
@@ -119,7 +119,7 @@ public:
      *  of sequences per set, at least at this time.
      */
 
-    static const int c_min_rows    =  4;
+    static const int c_min_rows = 4;
 
     /**
      *  Maximum number of rows in the main-window's grid.  With the default
@@ -133,7 +133,7 @@ public:
      *  Default number of columns in the main-window's grid.
      */
 
-    static const int c_default_columns =  8;
+    static const int c_default_columns = 8;
 
     /**
      *  Minimum number of columns in the main-window's grid.  Currently the
@@ -142,14 +142,14 @@ public:
      *  default 4 x 8 settings.
      */
 
-    static const int c_min_columns =  4;
+    static const int c_min_columns = 4;
 
     /**
      *  Maximum number of columns in the main-window's grid.  Currently the
      *  same as the default number.
      */
 
-    static const int c_max_columns =  12;
+    static const int c_max_columns = 12;
 
 private:
 
@@ -320,6 +320,11 @@ public:
     int columns () const
     {
         return m_columns;
+    }
+
+    bool swap_coordinates () const
+    {
+        return m_swap_coordinates;
     }
 
     int count () const

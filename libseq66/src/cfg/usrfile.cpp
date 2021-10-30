@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-10-27
+ * \updates       2021-10-29
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -747,13 +747,14 @@ usrfile::write ()
         "# [user-interface-settings]\n"
         "#\n"
         "# Configures some user-interface elements.  Many became obsolete and\n"
-        "# were removed in version 5 of this file. The grid contains Qt buttons\n"
-        "# For a flat style, use Qt themes or style-sheets.\n"
+        "# were removed in version 5 of this file. Also see [user-ui-tweaks].\n"
+        "# The grid holds Qt buttons. For styling, use Qt themes/style-sheets.\n"
         "#\n"
-        "# 'swap-coordinates' simply swaps numbering so that pattern numbers\n"
-        "# vary fastest by column instead of the legacy, by rows. Currently\n"
-        "# applies only to screen-sets.  Will apply to mutes and set-numbers in\n"
-        "# the future.\n"
+        "# 'swap-coordinates' swaps numbering so pattern numbers vary fastest\n"
+        "# by column instead of (legacy) rows.\n"
+        "#\n"
+        "# Currently applies only to screen-sets.  Will apply to mutes and\n"
+        "# set-numbers in the near future.\n"
         "#\n"
         "# 'mainwnd-rows' and 'mainwnd-columns' (option '-o sets=RxC') specify\n"
         "# rows/columns in the main grid. R ranges from 4 to 8, C from 4 to 12.\n"

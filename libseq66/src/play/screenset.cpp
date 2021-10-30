@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-10-26
+ * \updates       2021-10-29
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -266,14 +266,18 @@ screenset::first_seq () const
 /**
  *  The new version returns seq::unassigned if the row or column is out of
  *  range.
+ *
+ *  There is no "grid_to_index()" function needed as yet.
  */
+
+// OPTIMIZE ME!
 
 seq::number
 screenset::grid_to_seq (int row, int column) const
 {
     if (row < 0 || row >= m_rows || column < 0 || column >= m_columns)
         return seq::unassigned();
-    else if (m_swap_coordinates)
+    else if (swap_coordinates())
         return offset() + column + m_columns * row;
     else
         return offset() + row + m_rows * column;
@@ -319,15 +323,15 @@ screenset::index_to_grid (seq::number index, int & row, int & column) const
     bool result = index >= 0 && index < m_set_size;
     if (result)
     {
-        if (m_swap_coordinates)
+        if (swap_coordinates())
         {
+            row = index / m_columns;
             column = index % m_columns;
-            row = (index / m_columns);
         }
         else
         {
             row = index % m_rows;
-            column = (index / m_rows);
+            column = index / m_rows;
         }
     }
     return result;

@@ -1344,17 +1344,17 @@ public:
         return mutes().columns();
     }
 
-    screenset::number master_calculate_set (int row, int column) const
+    screenset::number master_grid_to_set (int row, int column) const
     {
-        return master().calculate_set(row, column);
+        return master().grid_to_set(row, column);
     }
 
-    bool master_calculate_coordinates
+    bool master_index_to_grid
     (
         screenset::number setno, int & row, int & column
     )
     {
-        return master().calculate_coordinates(setno, row, column);
+        return master().index_to_grid(setno, row, column);
     }
 
     bool master_inside_set (int row, int column) const

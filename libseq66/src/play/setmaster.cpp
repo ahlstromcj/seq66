@@ -24,10 +24,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2021-04-15
+ * \updates       2021-10-29
  * \license       GNU GPLv2 or above
  *
- *  Implements setmaster.
+ *  Implements setmaster.  The difference between the setmaster and setmapper
+ *  is that setmaster provides a constant number of sets (4 x 8) used for the
+ *  managerment of sets, while setmapper translates between the performer and
+ *  the playing (current) screenset.
  */
 
 #include <iostream>                     /* std::cout                        */
@@ -56,6 +59,7 @@ setmaster::setmaster (int setrows, int setcolumns) :
     m_screenset_columns     (setcolumns),
     m_rows                  (c_rows),                   /* constant         */
     m_columns               (c_columns),                /* constant         */
+    m_swap_coordinates      (false), // usr().swap_coordinates() when READY
     m_set_count             (m_rows * m_columns),
     m_highest_set           (-1),
     m_container             ()                          /* screensets map   */
@@ -86,6 +90,8 @@ setmaster::reset ()
  *  setmaster.cpp file.  This function is useful for picking the correct set in
  *  the qsetmaster button array.
  *
+ *  Compare to screenset::grid_to_seq().
+ *
  * Set Layout:
  *
  *  Like the sequences in the main (live) window, the set numbers are
@@ -98,9 +104,12 @@ setmaster::reset ()
     3   7   11  15  19  23  27  31
 \endverbatim
  *
- *  However, this grid never changes.  There's a strong dependency on the
- *  number of keys we can devote to this function (32) and the 4-rows by
- *  8-columns heritage of Seq24.
+ *  This layout can also be "swapped" so that increasing pattern numbers go from
+ *  left to right instead of from to bottom.
+ *
+ *  However, this grid never changes.  There's a strong dependency on the number
+ *  of keys we can devote to this function (32) and the 4-rows by 8-columns
+ *  heritage of Seq24.
  *
  * \param row
  *      Provides the desired row, clamped to a legal value.
@@ -115,25 +124,36 @@ setmaster::reset ()
  */
 
 screenset::number
-setmaster::calculate_set (int row, int column) const
+setmaster::grid_to_set (int row, int column) const
 {
     if (row < 0 || row >= m_rows || column < 0 || column >= m_columns)
         return 0;
+    else if (swap_coordinates())
+        return column + m_columns * row;
     else
-        return m_rows * column + row;
+        return row + m_rows * column;
 }
 
+/**
+ *  Compare to screenset::index_to_grid().
+ */
+
 bool
-setmaster::calculate_coordinates
-(
-    screenset::number setno, int & row, int & column
-)
+setmaster::index_to_grid (screenset::number setno, int & row, int & column)
 {
     bool result = is_screenset_valid(setno);
     if (result)
     {
-        row = setno % m_screenset_rows;
-        column = setno / m_screenset_rows;
+        if (swap_coordinates())
+        {
+            row = setno / m_screenset_columns;
+            column = setno % m_screenset_columns;
+        }
+        else
+        {
+            row = setno % m_screenset_rows;
+            column = setno / m_screenset_rows;
+        }
     }
     return result;
 }

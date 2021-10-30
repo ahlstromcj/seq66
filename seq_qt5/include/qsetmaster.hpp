@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-11
- * \updates       2021-06-22
+ * \updates       2021-10-28
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing screen-sets and sequences, and
@@ -39,6 +39,12 @@
  */
 
 #include <QFrame>
+
+#undef  SEQ66_USE_UNI_DIMENSION         /* EXPERIMENTAL                     */
+
+#if defined SEQ66_USE_UNI_DIMENSION
+#include <vector>                       /* std::vector container            */
+#endif
 
 #include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */
 #include "ctrl/opcontainer.hpp"         /* class seq66::opcontainer         */
@@ -91,6 +97,10 @@ private:
         set_name
     };
 
+#if defined SEQ66_USE_UNI_DIMENSION
+    using buttons = std::vector<QPushButton *>;
+#endif
+
 private:
 
     Q_OBJECT
@@ -141,7 +151,9 @@ private:
     }
 
     void create_set_buttons ();
+#if ! defined SEQ66_USE_UNI_DIMENSION
     void handle_set (int row, int column);
+#endif
     void handle_set (int setno);
     void delete_set (int setno);
     bool set_control
@@ -221,9 +233,13 @@ private:
      *  Access to all the screenset buttons.
      */
 
+#if defined SEQ66_USE_UNI_DIMENSION
+    buttons m_set_buttons;
+#else
     QPushButton * m_set_buttons
         [screenset::c_default_rows]
             [screenset::c_default_columns];
+#endif
 
     /**
      *  Indicates the currently-selected set number.

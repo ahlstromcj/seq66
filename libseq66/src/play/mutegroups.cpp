@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-06-09
+ * \updates       2021-10-29
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -47,6 +47,8 @@
 
 namespace seq66
 {
+
+bool mutegroups::s_swap_coordinates = false;
 
 /**
  *  Creates an empty, default mutegroups object.  The default size is 4 x 8,
@@ -80,7 +82,7 @@ mutegroups::mutegroups (int rows, int columns) :
     m_toggle_active_only        (false),
     m_legacy_mutes              (false)
 {
-    // no code needed
+    s_swap_coordinates = false; // LATER: (usr().swap_coordinates()),
 }
 
 /**
@@ -111,10 +113,14 @@ mutegroups::mutegroups (const std::string & name, int rows, int columns) :
     m_group_error               (false),
     m_group_mode                (true),         /* see its description  */
     m_group_learn               (false),
+    m_group_selected            (c_null_mute_group),
     m_group_present             (false),
-    m_group_save                (saving::both)
+    m_group_save                (saving::both),
+    m_group_load                (loading::both),    /* midi and mutes files */
+    m_toggle_active_only        (false),
+    m_legacy_mutes              (false)
 {
-    // no code needed
+    s_swap_coordinates = false; // LATER: (usr().swap_coordinates()),
 }
 
 /**
@@ -631,27 +637,33 @@ mutegroups::grid_to_group (int row, int column)
     if (column < 0)
         column = 0;
     else if (column >= Columns())
-        row = Columns() - 1;
+        column = Columns() - 1;
 
-    return row + column * Rows();
+    return Swap() ? (column + row * Columns()) : (row + column * Rows());
 }
 
 /**
  *  The "inverse" of grid_to_group().  This function is static.
+ *
+ *  Compare this to the non-static function mutegroup::mute_to_grid().
  */
 
 bool
-mutegroups::group_to_grid
-(
-    mutegroup::number group,
-    int & row, int & column
-)
+mutegroups::group_to_grid (mutegroup::number group, int & row, int & column)
 {
     bool result = group >= 0 && group < Size();
     if (result)
     {
-        row = group % Rows();
-        column = group / Rows();
+        if (Swap())
+        {
+            row = group / Columns();
+            column = group % Columns();
+        }
+        else
+        {
+            row = group % Rows();
+            column = group / Rows();
+        }
     }
     return result;
 }

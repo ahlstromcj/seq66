@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-06-09
+ * \updates       2021-10-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -129,6 +129,15 @@ private:
      */
 
     const int m_columns;
+
+    /**
+     *  Experimental option to swap rows and columns.  See the function
+     *  swap_coordinates().  This swap doesn't apply to the number of rows and
+     *  columns, but to whether incrementing the sequence number moves to the
+     *  next or othe next column.
+     */
+
+    bool m_swap_coordinates;
 
     /**
      *  Indicates the group (akin to the set or bank number) represented by
@@ -260,13 +269,18 @@ public:
         return m_columns;
     }
 
+    bool swap_coordinates () const
+    {
+        return m_swap_coordinates;
+    }
+
     bool any () const;
     void clear ();
     void show () const;
 
 private:
 
-    bool coordinate (int index, int & row, int & column) const;
+    bool mute_to_grid (int group, int & row, int & column) const;
 
     /**
      *  Calculates the group index (i.e. a pattern number) given by the rows,
@@ -277,11 +291,9 @@ private:
      *      legal value.
      */
 
-    int index (int r, int c)
-    {
-        return (r < m_rows) && (c < m_columns) ?
-            int(m_group_offset + r * c) : 0 ;
-    }
+    // WAS CALLED index()
+
+    int grid_to_mute (int row, int column);
 
 };              // class mutegroup
 

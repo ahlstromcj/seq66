@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-21
+ * \updates       2021-10-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -136,7 +136,11 @@ qsetmaster::qsetmaster
     setup_table();                      /* row and column sizing            */
     (void) initialize_table();          /* fill with sets                   */
     (void) populate_default_ops();      /* load key-automation support      */
+#if defined SEQ66_USE_UNI_DIMENSION
+    handle_set(0);                      /* guaranteed to be present         */
+#else
     handle_set(0, 0);                   /* guaranteed to be present         */
+#endif
     cb_perf().enregister(this);         /* register this for notifications  */
     m_timer = new QTimer(this);         /* timer for regular redraws        */
     m_timer->setInterval(100);          /* doesn't need to be super fast    */
@@ -156,11 +160,20 @@ qsetmaster::conditional_update ()
 {
     if (needs_update())                 /*  perf().needs_update() too iffy  */
     {
+#if defined SEQ66_USE_UNI_DIMENSION
+        for (int s = 0; s < setmaster::Size(); ++s)     /* s is set #   */
+        {
+            bool enabled = cb_perf().is_screenset_available(s);
+            bool checked = s == m_current_set;
+            m_set_buttons[s]->setEnabled(enabled);
+            m_set_buttons[s]->setChecked(checked);
+        }
+#else
         int r = seq::unassigned();
         int c = seq::unassigned();
-        bool ok = cb_perf().master_calculate_coordinates(m_current_set, r, c);
+        bool ok = cb_perf().master_index_to_grid(m_current_set, r, c);
         if (! ok)
-            ok = m_current_set == seq::unassigned();
+            ok = m_current_set == seq::unassigned();        /* ???? */
 
         if (ok)
         {
@@ -168,13 +181,14 @@ qsetmaster::conditional_update ()
             {
                 for (int column = 0; column < setmaster::Columns(); ++column)
                 {
-                    int s = int(cb_perf().master_calculate_set(row, column));
+                    int s = int(cb_perf().master_grid_to_set(row, column));
                     bool enabled = cb_perf().is_screenset_available(s);
                     bool checked = row == r && column == c;
                     m_set_buttons[row][column]->setEnabled(enabled);
                     m_set_buttons[row][column]->setChecked(checked);
                 }
             }
+#endif
             update();
             m_needs_update = false;
         }
@@ -333,7 +347,7 @@ qsetmaster::closeEvent (QCloseEvent * event)
 
 /**
  *  Creates a grid of buttons in the grid layout.  This grid is always
- *  4 x 8, as discussed in the setmapper::calculate_set() function, but if a
+ *  4 x 8, as discussed in the setmapper::grid_to_set() function, but if a
  *  smaller set number (count) is used, some buttons will be unlabelled and
  *  disabled.
  *
@@ -351,12 +365,38 @@ void
 qsetmaster::create_set_buttons ()
 {
     const QSize btnsize = QSize(32, 32);
+#if defined SEQ66_USE_UNI_DIMENSION
+    for (int s = 0; s < setmaster::Size(); ++s)             /* s is set #   */
+    {
+        bool enabled = cb_perf().is_screenset_available(s);
+        std::string snstring;
+        int row, column;
+        bool valid = cb_perf().master_index_to_grid(s, row, column);
+        if (valid)
+        {
+            bool enabled = cb_perf().is_screenset_available(s);
+            snstring = std::to_string(s);
+
+            QPushButton * temp = new QPushButton(qt(snstring));
+            ui->setGridLayout->addWidget(temp, row, column);
+            temp->setFixedSize(btnsize);
+            temp->show();
+            temp->setEnabled(enabled);
+            temp->setCheckable(true);
+            connect
+            (
+                temp, &QPushButton::released, [=] { handle_set(s); }
+            );
+            m_set_buttons[s] = temp;
+        }
+    }
+#else
     for (int row = 0; row < setmaster::Rows(); ++row)
     {
         for (int column = 0; column < setmaster::Columns(); ++column)
         {
             bool valid = cb_perf().master_inside_set(row, column);
-            int setno = int(cb_perf().master_calculate_set(row, column));
+            int setno = int(cb_perf().master_grid_to_set(row, column));
             bool enabled = cb_perf().is_screenset_available(setno);
             std::string snstring;
             if (valid)
@@ -367,7 +407,7 @@ qsetmaster::create_set_buttons ()
             temp->setFixedSize(btnsize);
             temp->show();
             temp->setEnabled(enabled);
-            temp->setCheckable(true);       /* ca 2021-01-14 */
+            temp->setCheckable(true);
             connect
             (
                 temp, &QPushButton::released, [=] { handle_set(row, column); }
@@ -375,14 +415,19 @@ qsetmaster::create_set_buttons ()
             m_set_buttons[row][column] = temp;
         }
     }
+#endif
 }
+
+#if ! defined SEQ66_USE_UNI_DIMENSION
 
 void
 qsetmaster::handle_set (int row, int column)
 {
-    screenset::number setno = cb_perf().master_calculate_set(row, column);
+    screenset::number setno = cb_perf().master_grid_to_set(row, column);
     handle_set(setno);
 }
+
+#endif
 
 void
 qsetmaster::handle_set (int setno)

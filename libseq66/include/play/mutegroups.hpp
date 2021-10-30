@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-06-09
+ * \updates       2021-10-29
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -172,6 +172,12 @@ private:
      */
 
     static const int c_mute_groups_max = 32;
+
+    /**
+     *  Experiment feature to swap coordinates.
+     */
+
+    static bool s_swap_coordinates;
 
     /**
      *  Holds a set of mutegroup objects keyed by the configured mute
@@ -342,13 +348,18 @@ public:
         return c_rows * c_columns;
     }
 
-    static mutegroup::number grid_to_group (int row, int column);
-    static bool group_to_grid(mutegroup::number g, int & row, int & column);
+    static bool Swap ()
+    {
+        return s_swap_coordinates;
+    }
 
     static int null_mute_group ()
     {
         return c_null_mute_group;
     }
+
+    static mutegroup::number grid_to_group (int row, int column);
+    static bool group_to_grid(mutegroup::number g, int & row, int & column);
 
     const std::string & name () const
     {
