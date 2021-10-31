@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-10-27
+ * \updates       2021-10-30
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -362,7 +362,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_current_seqno         (seq::unassigned()),
     m_moving_seq            (),
     m_seq_clipboard         (),
-    m_screenset_to_copy     (screenset::none()),
+    m_screenset_to_copy     (screenset::unassigned()),
     m_clocks                (),                 /* vector wrapper class     */
     m_inputs                (),                 /* vector wrapper class     */
     m_key_controls          ("Key controls"),
@@ -1931,7 +1931,7 @@ bool
 performer::copy_playscreen ()
 {
     screenset::number pscreen = playscreen_number();
-    bool result = pscreen != screenset::none();
+    bool result = pscreen != screenset::unassigned();
     if (result)
         m_screenset_to_copy = pscreen;
 
@@ -1941,9 +1941,9 @@ performer::copy_playscreen ()
 bool
 performer::paste_playscreen (screenset::number destination)
 {
-    bool result = m_screenset_to_copy != screenset::none();
+    bool result = m_screenset_to_copy != screenset::unassigned();
     if (result)
-        result = destination != screenset::none();
+        result = destination != screenset::unassigned();
 
     if (result)
         result = destination != m_screenset_to_copy;

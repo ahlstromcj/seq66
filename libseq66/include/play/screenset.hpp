@@ -167,7 +167,7 @@ private:
 
     /**
      *  Indicates that no set number has been assigned.  All valid set numbers
-     *  are greater than 0.
+     *  are greater than 0.  See the unassigned() function.
      */
 
     static const int sm_number_none = (-1);
@@ -282,9 +282,13 @@ public:
         return 2048;
     }
 
-    static number none ()
+    /**
+     *  Indicates that a set number has not been assigned.
+     */
+
+    static number unassigned ()
     {
-        return (-1);
+        return sm_number_none;
     }
 
     bool dummy () const

@@ -35,7 +35,7 @@
 
 #include <QFrame>
 
-#undef  SEQ66_USE_UNI_DIMENSION         /* EXPERIMENTAL                     */
+#define SEQ66_USE_UNI_DIMENSION         /* EXPERIMENTAL                     */
 
 #if defined SEQ66_USE_UNI_DIMENSION
 #include <vector>                       /* std::vector container            */

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-10-29
+ * \updates       2021-10-31
  * \license       GNU GPLv2 or above
  *
  */
@@ -95,8 +95,13 @@ qmutemaster::qmutemaster
     ui                      (new Ui::qmutemaster),
     m_timer                 (nullptr),
     m_main_window           (mainparent),
+#if defined SEQ66_USE_UNI_DIMENSION
+    m_group_buttons         (mutegroups::Size(), nullptr),  /* "2-D" arrary */
+    m_pattern_buttons       (mutegroups::Size(), nullptr),  /* "2-D" arrary */
+#else
     m_group_buttons         (),                             /* "2-D" arrary */
     m_pattern_buttons       (),                             /* "2-D" arrary */
+#endif
     m_current_group         (seq::unassigned()),            /* important    */
     m_group_count           (cb_perf().mutegroup_count()),
     m_button_row            (seq::unassigned()),
@@ -320,22 +325,21 @@ qmutemaster::set_column_widths (int total_width)
 }
 
 bool
-qmutemaster::set_current_group (int row)
+qmutemaster::set_current_group (int group)
 {
-    bool result = row != current_group();
+    bool result = group != current_group();
     if (result)
-        result = row >= 0 && row < cb_perf().mutegroup_count();
+        result = group >= 0 && group < cb_perf().mutegroup_count();
 
     if (result)
     {
         int gridrow, gridcolumn;
-        if (mutegroups::group_to_grid(row, gridrow, gridcolumn))    // NEEDED?
-            // NEEDED?
+        if (mutegroups::group_to_grid(group, gridrow, gridcolumn))
         {
             if (m_button_row >= 0)
             {
 #if defined SEQ66_USE_UNI_DIMENSION
-                QPushButton * temp = m_group_buttons[row];
+                QPushButton * temp = m_group_buttons[group];
 #else
                 QPushButton * temp =
                     m_group_buttons[m_button_row][m_button_column];
@@ -345,10 +349,10 @@ qmutemaster::set_current_group (int row)
             }
             m_button_row = gridrow;
             m_button_column = gridcolumn;
-            m_current_group = row;
+            m_current_group = group;
 
 #if defined SEQ66_USE_UNI_DIMENSION
-            QPushButton * temp = m_group_buttons[row];
+            QPushButton * temp = m_group_buttons[group];
 #else
             QPushButton * temp = m_group_buttons[m_button_row][m_button_column];
 #endif
@@ -499,14 +503,30 @@ void
 qmutemaster::create_group_buttons ()
 {
     const QSize btnsize = QSize(c_button_size, c_button_size);
-    int group_rows = mutegroups::Rows();
-    int group_columns = mutegroups::Columns();
 #if defined SEQ66_USE_UNI_DIMENSION
     for (int group = 0; group < mutegroups::Size(); ++group)
     {
-        TODO
+        int row, column;
+        if (mutegroups::group_to_grid(group, row, column))
+        {
+            std::string gstring = std::to_string(group);
+            QPushButton * temp = new QPushButton(qt(gstring));
+            temp->setFixedSize(btnsize);
+            ui->setGridLayout->addWidget(temp, row, column);
+            connect                             /* connect lambda function */
+            (
+                temp, &QPushButton::released,
+                [=] { handle_group_button(row, column); }
+            );
+            temp->show();
+            temp->setCheckable(true);
+            temp->setEnabled(false);
+            m_group_buttons[group] = temp;
+        }
     }
 #else
+    int group_rows = mutegroups::Rows();
+    int group_columns = mutegroups::Columns();
     for (int row = 0; row < group_rows; ++row)
     {
         for (int column = 0; column < group_columns; ++column)
@@ -539,14 +559,17 @@ void
 qmutemaster::update_group_buttons (enabling tomodify)
 {
     midibooleans groups = cb_perf().get_active_groups();
-    int group_rows = mutegroups::Rows();
-    int group_columns = mutegroups::Columns();
 #if defined SEQ66_USE_UNI_DIMENSION
     for (int group = 0; group < mutegroups::Size(); ++group)
     {
-        TODO
+        QPushButton * temp = m_group_buttons[group];
+        temp->setChecked(bool(groups[group]));
+        if (tomodify != enabling::leave)
+            temp->setEnabled(tomodify == enabling::enable);
     }
 #else
+    int group_rows = mutegroups::Rows();
+    int group_columns = mutegroups::Columns();
     for (int row = 0; row < group_rows; ++row)
     {
         for (int column = 0; column < group_columns; ++column)
@@ -609,14 +632,13 @@ qmutemaster::slot_trigger ()
     }
     else
     {
+        int row = m_button_row;
+        int column = m_button_column;
 #if defined SEQ66_USE_UNI_DIMENSION
-        mutegroup::number group = mutegroups::grid_to_group
-        (
-            m_button_row, m_button_column
-        );
-        QPushButton * temp = m_pattern_buttons[group];
+        mutegroup::number group = mutegroups::grid_to_group(row, column);
+        QPushButton * temp = m_group_buttons[group];
 #else
-        QPushButton * temp = m_group_buttons[m_button_row][m_button_column];
+        QPushButton * temp = m_group_buttons[row][column];
 #endif
         update_group_buttons(enabling::disable);
         update_pattern_buttons(enabling::disable);
@@ -795,7 +817,7 @@ qmutemaster::handle_group_button (int row, int column)
 {
 #if defined SEQ66_USE_UNI_DIMENSION
     mutegroup::number group = mutegroups::grid_to_group(row, column);
-    QPushButton * temp = m_pattern_buttons[group];
+    QPushButton * button = m_group_buttons[group];
 #else
     QPushButton * button = m_group_buttons[row][column];
 #endif
@@ -817,13 +839,10 @@ qmutemaster::handle_group_button (int row, int column)
     else
     {
         if (checked)                            /* was inactive, now active */
-        {
             update_pattern_buttons(enabling::enable);
-        }
         else                                    /* was active, now inactive */
-        {
             update_pattern_buttons(enabling::disable);
-        }
+
         ui->m_button_set_mutes->setEnabled(true);
     }
 }
@@ -968,14 +987,31 @@ void
 qmutemaster::create_pattern_buttons ()
 {
     const QSize btnsize = QSize(c_button_size, c_button_size);
-    int pattern_rows = cb_perf().mute_rows();
-    int pattern_columns = cb_perf().mute_columns();
 #if defined SEQ66_USE_UNI_DIMENSION
-    for (int group = 0; group < mutegroups::Size(); ++group)
+    int tracks = cb_perf().screenset_size();
+    for (int t = 0; t < tracks; ++t)
     {
-        TODO
+        int row, column;
+        if (cb_perf().master_index_to_grid(t, row, column))
+        {
+            std::string gstring = std::to_string(t);
+            QPushButton * temp = new QPushButton(qt(gstring));
+            ui->patternGridLayout->addWidget(temp, row, column);
+            temp->setFixedSize(btnsize);
+            connect                             /* connect lambda function */
+            (
+                temp, &QPushButton::released,
+                [=] { handle_pattern_button(row, column); }
+            );
+            temp->show();
+            temp->setCheckable(true);
+            temp->setEnabled(false);
+            m_pattern_buttons[t] = temp;
+        }
     }
 #else
+    int pattern_rows = cb_perf().mute_rows();
+    int pattern_columns = cb_perf().mute_columns();
     for (int row = 0; row < pattern_rows; ++row)
     {
         for (int column = 0; column < pattern_columns; ++column)
@@ -1004,25 +1040,27 @@ qmutemaster::create_pattern_buttons ()
  *  this run of the current MIDI file.
  *
  * \todo
- *      -   Calculate the pattern rows and columns the proper way.
- *      -   Deal with cases other than 4 x 8 properly.
  */
 
 void
 qmutemaster::update_pattern_buttons (enabling tomodify)
 {
-    int pattern_rows = cb_perf().mute_rows();
-    int pattern_columns = cb_perf().mute_columns();
     midibooleans mutes = cb_perf().get_mutes(current_group());
     if (! mutes.empty())
     {
         m_pattern_mutes = mutes;
 #if defined SEQ66_USE_UNI_DIMENSION
-    for (int group = 0; group < mutegroups::Size(); ++group)
-    {
-        TODO
-    }
+        int tracks = cb_perf().screenset_size();
+        for (int t = 0; t < tracks; ++t)
+        {
+            QPushButton * temp = m_pattern_buttons[t];
+            temp->setChecked(bool(mutes[t]));
+            if (tomodify != enabling::leave)
+                temp->setEnabled(tomodify == enabling::enable);
+        }
 #else
+        int pattern_rows = cb_perf().mute_rows();
+        int pattern_columns = cb_perf().mute_columns();
         for (int row = 0; row < pattern_rows; ++row)
         {
             for (int column = 0; column < pattern_columns; ++column)
@@ -1047,13 +1085,12 @@ qmutemaster::update_pattern_buttons (enabling tomodify)
 void
 qmutemaster::handle_pattern_button (int row, int column)
 {
+    seq::number s = cb_perf().grid_to_seq(row, column);
 #if defined SEQ66_USE_UNI_DIMENSION
-    mutegroup::number group = mutegroups::grid_to_group(row, column);
-    QPushButton * temp = m_pattern_buttons[group];
+    QPushButton * temp = m_pattern_buttons[s];
 #else
     QPushButton * temp = m_pattern_buttons[row][column];
 #endif
-    seq::number s = cb_perf().grid_to_seq(row, column);
     bool bitisset = bool(m_pattern_mutes[s]);
     bool enabled = temp->isChecked();
     if (bitisset != enabled)

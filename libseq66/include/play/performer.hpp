@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-10-27
+ * \updates       2021-10-30
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -425,7 +425,7 @@ private:
     sequence m_seq_clipboard;
 
     /**
-     *  Set to screenset::none().
+     *  Set to screenset::unassigned() at first.
      */
 
     screenset::number m_screenset_to_copy;

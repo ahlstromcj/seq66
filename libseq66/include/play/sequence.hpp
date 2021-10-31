@@ -1155,6 +1155,11 @@ public:
         return m_playing;
     }
 
+    bool armed () const
+    {
+        return m_playing;
+    }
+
     bool sequence_playing_toggle ();
     bool toggle_playing ();
     bool toggle_playing (midipulse tick, bool resumenoteons);
