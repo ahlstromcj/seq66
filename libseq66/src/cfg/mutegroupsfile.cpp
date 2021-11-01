@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-06-04
+ * \updates       2021-11-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -275,6 +275,7 @@ mutegroupsfile::write_stream (std::ofstream & file)
     std::string c = rc_ref().mute_groups().comments_block().text();
     write_comment(file, c);
     file <<
+        "#\n"
         "# The 'mutes' file holds the global mute-groups configuration. It is\n"
         "# is stored separately for flexibility, in the HOME configuration\n"
         "# directory.  To use this file, specify it in the [mute-group-file]\n"
@@ -393,7 +394,8 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
         "# All mute-group values are saved in this 'mutes' file, even if all\n"
         "# zero; if all are zero, they can be stripped out of the MIDI file by\n"
         "# by 'strip-empty-mutes'. If a hex number is found, each number is\n"
-        "# a bit mask, rather than a single bit.\n"
+        "# a bit mask, rather than a single bit. An optional quoted group name\n"
+        "# can be placed at the end of the line.\n"
         "\n"
             ;
 
@@ -438,9 +440,12 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
                 std::string stanza = write_stanza_bits(m.get(), usehex);
                 if (! stanza.empty())
                 {
-                    file << std::setw(2) << gmute << " "
-                        << stanza << std::endl
-                        ;
+                    std::string groupname = m.name();
+                    file << std::setw(2) << gmute << " " << stanza;
+                    if (! groupname.empty())
+                        file << " \"" << groupname << "\"";
+
+                    file << std::endl;
                 }
                 else
                 {
@@ -474,6 +479,13 @@ mutegroupsfile::parse_mutes_stanza (mutegroups & mutes)
         result = parse_stanza_bits(groupmutes, line());
         if (result)
             result = mutes.load(group, groupmutes);
+
+        if (result)
+        {
+            std::string quoted = next_quoted_string(line());    /* tricky */
+            if (! quoted.empty())
+                mutes.group_name(group, quoted);
+        }
     }
     return result;
 }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-10-29
+ * \updates       2021-11-01
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -522,9 +522,16 @@ public:
         return mute_group(gmute).armed_count();
     }
 
+    int group_names_letter_count () const;
+
     const std::string & group_name (mutegroup::number gmute) const
     {
         return mute_group(gmute).name();
+    }
+
+    void group_name (mutegroup::number gmute, const std::string & n)
+    {
+        mute_group(gmute).name(n);
     }
 
     bool clear ();

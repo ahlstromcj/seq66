@@ -3165,6 +3165,18 @@ public:                                 /* access functions for the containers *
         return mutes().group_name(group);
     }
 
+    /*
+     * TODO: modify() needed.
+     */
+
+    void group_name (mutegroup::number gmute, const std::string & n)
+    {
+        if (n != mutes().group_name(gmute))
+            modify();
+
+        mutes().group_name(gmute, n);
+    }
+
     const mutegroups & mutes () const
     {
         return m_mute_groups;

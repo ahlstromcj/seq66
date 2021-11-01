@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-10-26
+ * \updates       2021-11-01
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -95,6 +95,8 @@
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "util/calculations.hpp"        /* seq66::bpm_from_tempo_us() etc.  */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
+
+#define USE_WRITE_OF_MUTE_NAMES_TO_MIDI /* EXPERIMENTAL */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -2080,9 +2082,16 @@ midifile::parse_proprietary_track (performer & p, int file_size)
  *
  *  Also need to check for any mutes being present.
  *
- *  What about rows & columns?  Ultimately, the set-size must
- *  match that specified by the application's user-interface as
- *  must the rows and columns.
+ *  What about rows & columns?  Ultimately, the set-size must match that
+ *  specified by the application's user-interface as must the rows and columns.
+ *
+ * New:  We write the group name.  So the new format of mute-groups is:
+ *
+ *      -#  Split byte count for the number of groups and the size of each
+ *          group. Long, 4 bytes.
+ *      -#  Group number.  Byte value.
+ *      -#  Mute-group bit values, 1 byte each, and group-size of them.
+ *      -#  Optional:  The mute-group name in double quotes.
  */
 
 bool
@@ -2124,18 +2133,46 @@ midifile::parse_mute_groups (performer & p)
             }
             else
             {
+#if defined USE_WRITE_OF_MUTE_NAMES_TO_MIDI
+                std::string gname;
+#endif
                 mutes.legacy_mutes(false);
                 for (unsigned g = 0; g < groupcount; ++g)
                 {
                     midibooleans mutebits;
                     midilong group = read_byte();
+#if defined USE_WRITE_OF_MUTE_NAMES_TO_MIDI
+                    gname.clear();
+#endif
                     for (unsigned s = 0; s < groupsize; ++s)
                     {
                         midibyte gmutestate = read_byte();  /* byte for a bit */
                         bool status = gmutestate != 0;
                         mutebits.push_back(midibool(status));
                     }
-                    if (! mutes.load(group, mutebits))
+#if defined USE_WRITE_OF_MUTE_NAMES_TO_MIDI
+                    char letter = (char) read_byte();
+                    if (letter == '"')                     /* next a quote?  */
+                    {
+                        for (;;)
+                        {
+                            char letter = (char) read_byte();
+                            if (letter == '"')
+                                break;
+                            else
+                                gname += letter;
+                        }
+                    }
+                    else
+                        --m_pos;                            /* put it back  */
+#endif
+                    if (mutes.load(group, mutebits))
+                    {
+#if defined USE_WRITE_OF_MUTE_NAMES_TO_MIDI
+                        mutes.group_name(group, gname);
+#endif
+                    }
+                    else
                         break;                              /* often duplicate  */
                 }
             }
@@ -2190,6 +2227,19 @@ midifile::write_mute_groups (const performer & p)
                     write_byte(groupnumber);
                     for (auto mutestatus : mutebits)
                         write_byte(bool(mutestatus) ? 1 : 0);   /* better!  */
+
+#if defined USE_WRITE_OF_MUTE_NAMES_TO_MIDI
+                    std::string gname = m.name();
+                    if (! gname.empty())
+                    {
+                        write_byte(midibyte('"'));
+                        for (auto ch : gname)
+                            write_byte(midibyte(ch));
+
+                        write_byte(midibyte('"'));
+                    }
+#endif
+
                 }
                 else
                     break;
@@ -2958,12 +3008,10 @@ midifile::write_proprietary_track (performer & p)
         tracklength += prop_item_size(4);       /* c_tempo_track            */
     }
     tracklength += track_end_size();            /* Meta TrkEnd              */
-
     write_long(c_prop_chunk_tag);               /* "MTrk" or something else */
     write_long(tracklength);
     write_seq_number(c_prop_seq_number);        /* bogus sequence number    */
     write_track_name(c_prop_track_name);        /* bogus track name         */
-
     write_prop_header(c_midictrl, 4);           /* midi control tag + 4     */
     write_long(0);                              /* Seq24 writes only a zero */
     write_prop_header(c_midiclocks, 4);         /* bus mute/unmute data + 4 */
@@ -3003,6 +3051,18 @@ midifile::write_proprietary_track (performer & p)
         {
             unsigned gcount = to_compact_byte(groupcount);
             unsigned gsize = to_compact_byte(groupsize);
+
+#if defined USE_WRITE_OF_MUTE_NAMES_TO_MIDI
+
+            /*
+             * Add up the size of each mute-group name, including two
+             * double-quotes.
+             */
+
+            const mutegroups & mutes = p.mutes();
+            gsize += mutes.group_names_letter_count();
+#endif
+
             write_split_long(gcount, gsize);
         }
         (void) write_mute_groups(p);

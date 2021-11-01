@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-10-29
+ * \updates       2021-11-01
  * \license       GNU GPLv2 or above
  *
  *  This class manages one of the lines in the "[mute-group]" section of the
@@ -76,6 +76,7 @@
 
 #include <iostream>                     /* std::cout                        */
 
+#include "cfg/settings.hpp"             /* seq66::usr()                     */
 #include "play/mutegroup.hpp"           /* seq66::mutegroup class           */
 #include "util/strfunctions.hpp"        /* seq66::write_stanza_bits()       */
 
@@ -98,7 +99,7 @@ mutegroup::mutegroup (mutegroup::number group, int rows, int columns) :
     m_mutegroup_vector  (m_group_size, midibool(false)),
     m_rows              (rows),
     m_columns           (columns),
-    m_swap_coordinates  (false), // usr().swap_coordinates() when READY
+    m_swap_coordinates  (usr().swap_coordinates()),
     m_group             (group >= 0 ? group : 0),
     m_group_offset      (m_group * m_group_size)
 {

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-10-29
+ * \updates       2021-11-01
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -38,6 +38,7 @@
 #include <iomanip>                      /* std::setw() manipulator          */
 #include <iostream>                     /* std::cerr to note errors         */
 
+#include "cfg/settings.hpp"             /* seq66::usr()                     */
 #include "play/mutegroups.hpp"          /* seq66::mutegroups class          */
 
 /*
@@ -82,7 +83,7 @@ mutegroups::mutegroups (int rows, int columns) :
     m_toggle_active_only        (false),
     m_legacy_mutes              (false)
 {
-    s_swap_coordinates = false; // LATER: (usr().swap_coordinates()),
+    s_swap_coordinates = usr().swap_coordinates();
 }
 
 /**
@@ -120,7 +121,7 @@ mutegroups::mutegroups (const std::string & name, int rows, int columns) :
     m_toggle_active_only        (false),
     m_legacy_mutes              (false)
 {
-    s_swap_coordinates = false; // LATER: (usr().swap_coordinates()),
+    s_swap_coordinates = usr().swap_coordinates();
 }
 
 /**
@@ -664,6 +665,31 @@ mutegroups::group_to_grid (mutegroup::number group, int & row, int & column)
             row = group % Rows();
             column = group / Rows();
         }
+    }
+    return result;
+}
+
+/**
+ *  Counts the letters of each mute-group name, adding 2 to account for the
+ *  double-quote characters used in specifying a mute-group name.  The names
+ *  are written to the 'mutes' file and to the MIDI file, but, for the latter,
+ *  we have to check for the names byte-by-byte.  Also, if empty, the quotes
+ *  aren't written (and counted here).
+ */
+
+int
+mutegroups::group_names_letter_count () const
+{
+    int result = 0;
+    int group = 0;
+    for (const auto & mgpair : m_container)
+    {
+        const mutegroup & m = mgpair.second;
+        const std::string & gname = m.name();
+        if (! gname.empty())
+            result += gname.length() + 2;
+
+        ++group;
     }
     return result;
 }

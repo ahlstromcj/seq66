@@ -111,7 +111,7 @@
 namespace seq66
 {
 
-const bool s_swap_coordinates_def = false;
+static const bool s_swap_coordinates_def = false;
 
 /**
  *  Limits offloaded from the obsolete app limits header.

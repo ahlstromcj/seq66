@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2021-10-29
+ * \updates       2021-11-01
  * \license       GNU GPLv2 or above
  *
  *  Implements setmaster.  The difference between the setmaster and setmapper
@@ -36,6 +36,7 @@
 #include <iostream>                     /* std::cout                        */
 #include <sstream>                      /* std::ostringstream               */
 
+#include "cfg/settings.hpp"             /* seq66::usr()                     */
 #include "play/setmaster.hpp"           /* seq66::setmaster class           */
 
 /*
@@ -59,7 +60,7 @@ setmaster::setmaster (int setrows, int setcolumns) :
     m_screenset_columns     (setcolumns),
     m_rows                  (c_rows),                   /* constant         */
     m_columns               (c_columns),                /* constant         */
-    m_swap_coordinates      (false), // usr().swap_coordinates() when READY
+    m_swap_coordinates      (usr().swap_coordinates()),
     m_set_count             (m_rows * m_columns),
     m_highest_set           (-1),
     m_container             ()                          /* screensets map   */

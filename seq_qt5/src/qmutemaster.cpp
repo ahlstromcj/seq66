@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-10-31
+ * \updates       2021-11-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -225,6 +225,12 @@ qmutemaster::qmutemaster
         this, SLOT(slot_toggle_active())
     );
 
+    connect
+    (
+        ui->m_group_table, SIGNAL(cellChanged(int, int)),
+        this, SLOT(slot_cell_changed(int, int))
+    );
+
     QString mgfname = qt(rc().mute_group_filename());
     ui->m_mute_basename->setPlainText(mgfname);
     ui->m_mute_basename->setEnabled(true);
@@ -296,7 +302,7 @@ qmutemaster::setup_table ()
 {
     QStringList columns;
     int w = ui->m_group_table->width();
-    columns << "Group" << "Active" << "Key" << "Group Name (future)";
+    columns << "Group" << "Active" << "Key" << "Group Name";
     ui->m_group_table->setHorizontalHeaderLabels(columns);
     ui->m_group_table->setSelectionBehavior(QAbstractItemView::SelectRows);
     connect
@@ -308,6 +314,27 @@ qmutemaster::setup_table ()
     const int rows = ui->m_group_table->rowCount();
     for (int r = 0; r < rows; ++r)
         ui->m_group_table->setRowHeight(r, c_table_row_height);
+}
+
+void
+qmutemaster::slot_cell_changed (int row, int column)
+{
+    column_id cid = static_cast<column_id>(column);
+    if (cid == column_id::group_name)
+    {
+        QTableWidgetItem * c = cell(mutegroup::number(row), cid);
+        QString qtext = c->text();
+        std::string text = qtext.toStdString();
+        mutegroup::number m = mutegroup::number(row);
+
+        /*
+         * A cumbersome alternative.
+         *
+         * mutegroup & mg = cb_perf().mute_group(m);
+         */
+
+        cb_perf().group_name(m, text);
+    }
 }
 
 /**
