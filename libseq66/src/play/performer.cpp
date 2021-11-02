@@ -1584,8 +1584,8 @@ performer::inner_stop (bool midiclock)
  * \param sset
  *      The ID number of the screen-set, an index into the setmapper.
  *
- * \param notepad
- *      Provides the string date to copy into the notepad.
+ * \param name
+ *      Provides the string data to copy into the name.
  *
  * \param is_load_modification
  *      If true (the default is false), we do not want to set the modify flag,
@@ -1594,14 +1594,14 @@ performer::inner_stop (bool midiclock)
  */
 
 void
-performer::set_screenset_notepad
+performer::set_screenset_name
 (
     screenset::number sn,
-    const std::string & notepad,
+    const std::string & name,
     bool is_load_modification
 )
 {
-    bool changed = mapper().name(sn, notepad);
+    bool changed = mapper().name(sn, name);
     if (changed)
     {
         change mod = is_load_modification ? change::no : change::yes ;

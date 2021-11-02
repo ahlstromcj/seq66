@@ -772,7 +772,7 @@ void
 qsliveframe::update_bank_name (const std::string & name)
 {
     ui->txtBankName->setPlainText(name.c_str());
-    perf().set_screenset_notepad(m_bank_id, name, m_is_external);
+    perf().set_screenset_name(m_bank_id, name, m_is_external);
 }
 
 /**

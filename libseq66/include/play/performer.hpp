@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-10-30
+ * \updates       2021-11-02
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2733,16 +2733,16 @@ public:
 public:
 
     /**
-     *  A better name for get_screen_set_notepad(), adapted from Kepler34.
+     *  A better name for get_screen_set_name(), adapted from Kepler34.
      *  However, we will still refer to them as "sets".
      */
 
     std::string bank_name (int bank) const
     {
-        return get_screenset_notepad(bank);
+        return screenset_name(screenset::number(bank));
     }
 
-    std::string screenset_notepad (screenset::number sset) const
+    std::string screenset_name (screenset::number sset) const
     {
         return mapper().name(sset);
     }
@@ -2899,20 +2899,15 @@ public:         /* GUI-support functions */
     }
 
     /**
-     *  Returns the notepad text for the current screen-set.
+     *  Returns the name text for the current screen-set.
      */
 
-    std::string current_screenset_notepad () const
+    std::string current_screenset_name () const
     {
         return mapper().name();
     }
 
-    std::string get_screenset_notepad (screenset::number sn) const
-    {
-        return mapper().name(sn);
-    }
-
-    void set_screenset_notepad
+    void set_screenset_name
     (
         screenset::number sset,
         const std::string & note,
@@ -2950,14 +2945,7 @@ public:         /* GUI-support functions */
         return mapper().is_screenset_available(sset);
     }
 
-    /**
-     *  Sets the notepad text for the current screen-set.
-     *
-     * \param note
-     *      The string value to set into the notepad text.
-     */
-
-    void set_screenset_notepad (const std::string & note)
+    void set_screenset_name (const std::string & note)
     {
         mapper().name(note);
     }
@@ -3171,8 +3159,9 @@ public:                                 /* access functions for the containers *
 
     void group_name (mutegroup::number gmute, const std::string & n)
     {
-        if (n != mutes().group_name(gmute))
-            modify();
+        // Too much. FIXME
+        // if (n != mutes().group_name(gmute))
+        //     modify();
 
         mutes().group_name(gmute, n);
     }

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-28
+ * \updates       2021-11-02
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1381,11 +1381,11 @@ void
 qsmainwnd::update_window_title (const std::string & fn)
 {
     std::string itemname = fn.empty() ? perf().main_window_title(fn) : fn ;
-    itemname += " [*]";                             /* required by Qt 5 */
+    itemname += " [*]";                             /* required by Qt 5     */
 
     QString fname = qt(itemname);
-    setWindowModified(perf().modified());           /* shows the '*'    */
-    setWindowTitle(fname);
+    setWindowTitle(fname);                          /* title must come 1st  */
+    setWindowModified(perf().modified());           /* perhaps show the '*' */
 }
 
 /**

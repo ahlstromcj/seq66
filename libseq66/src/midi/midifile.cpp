@@ -1750,7 +1750,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
 {
     bool result = true;
     midilong ID = read_long();                      /* Get ID + Length      */
-    if (ID == c_prop_chunk_tag)                      /* magic number 'MTrk'  */
+    if (ID == c_prop_chunk_tag)                     /* magic number 'MTrk'  */
     {
         midilong tracklength = read_long();
         if (tracklength > 0)
@@ -1933,7 +1933,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
                 for (midishort i = 0; i < len; ++i)
                     notess += read_byte();                  /* unsigned!    */
 
-                p.set_screenset_notepad(x, notess, true);   /* load time    */
+                p.set_screenset_name(x, notess, true);      /* load time    */
             }
         }
         seqspec = parse_prop_header(file_size);
@@ -2972,7 +2972,7 @@ midifile::write_proprietary_track (performer & p)
     {
         if (s <= highset)                       /* unused tracks = no name  */
         {
-            const std::string & note = p.get_screenset_notepad(s);
+            const std::string & note = p.screenset_name(s);
             cnotesz += 2 + note.length();       /* short + note length      */
         }
     }
@@ -3016,13 +3016,13 @@ midifile::write_proprietary_track (performer & p)
     write_long(0);                              /* Seq24 writes only a zero */
     write_prop_header(c_midiclocks, 4);         /* bus mute/unmute data + 4 */
     write_long(0);                              /* Seq24 writes only a zero */
-    write_prop_header(c_notes, cnotesz);        /* notepad data tag + data  */
+    write_prop_header(c_notes, cnotesz);        /* namepad data tag + data  */
     write_short(maxsets);                       /* data, not a tag          */
     for (int s = 0; s < maxsets; ++s)           /* see "cnotesz" calc       */
     {
         if (s <= highset)                       /* unused tracks = no name  */
         {
-            const std::string & note = p.get_screenset_notepad(s);
+            const std::string & note = p.screenset_name(s);
             write_short(midishort(note.length()));
             for (unsigned n = 0; n < unsigned(note.length()); ++n)
                 write_byte(midibyte(note[n]));

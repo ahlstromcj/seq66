@@ -238,8 +238,7 @@ private:
     seq::number m_set_maximum;
 
     /**
-     *  Holds the notepad text/name for this screenset.  Replaces the
-     *  m_screenset_notepad[] array.
+     *  Holds the text/name for this screenset.
      */
 
     std::string m_set_name;

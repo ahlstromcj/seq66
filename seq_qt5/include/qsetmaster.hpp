@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-11
- * \updates       2021-10-28
+ * \updates       2021-11-02
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing screen-sets and sequences, and
@@ -39,12 +39,7 @@
  */
 
 #include <QFrame>
-
-#define SEQ66_USE_UNI_DIMENSION         /* EXPERIMENTAL                     */
-
-#if defined SEQ66_USE_UNI_DIMENSION
 #include <vector>                       /* std::vector container            */
-#endif
 
 #include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */
 #include "ctrl/opcontainer.hpp"         /* class seq66::opcontainer         */
@@ -97,9 +92,7 @@ private:
         set_name
     };
 
-#if defined SEQ66_USE_UNI_DIMENSION
     using buttons = std::vector<QPushButton *>;
-#endif
 
 private:
 
@@ -151,9 +144,6 @@ private:
     }
 
     void create_set_buttons ();
-#if ! defined SEQ66_USE_UNI_DIMENSION
-    void handle_set (int row, int column);
-#endif
     void handle_set (int setno);
     void delete_set (int setno);
     bool set_control
@@ -199,6 +189,7 @@ private slots:
     (
         int row, int /*column*/, int /*prevrow*/, int /*prevcolumn*/
     );
+    void slot_cell_changed (int row, int column);
 
 private:
 
@@ -233,13 +224,7 @@ private:
      *  Access to all the screenset buttons.
      */
 
-#if defined SEQ66_USE_UNI_DIMENSION
     buttons m_set_buttons;
-#else
-    QPushButton * m_set_buttons
-        [screenset::c_default_rows]
-            [screenset::c_default_columns];
-#endif
 
     /**
      *  Indicates the currently-selected set number.
@@ -264,6 +249,12 @@ private:
      */
 
     mutable bool m_needs_update;
+
+    /**
+     *  EXPERIMENT
+     */
+
+    bool m_table_initializing;
 
     /**
      *  Indicates that this view is embedded in a frame, and thus permanent.

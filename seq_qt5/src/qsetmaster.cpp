@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-31
+ * \updates       2021-11-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -55,8 +55,8 @@
  *  Specifies the current hardwired value for set_row_heights().
  */
 
-#define SEQ66_TABLE_ROW_HEIGHT          18
-#define SEQ66_TABLE_FIX                 48
+static const int c_table_row_height = 18;
+static const int c_table_fix        = 48;
 
 /*
  * Don't document the namespace.
@@ -98,15 +98,12 @@ qsetmaster::qsetmaster
     m_operations            ("Set Master Operations"),
     m_timer                 (nullptr),
     m_main_window           (mainparent),
-#if defined SEQ66_USE_UNI_DIMENSION
     m_set_buttons           (setmaster::Size(), nullptr),
-#else
-    m_set_buttons           (),         /* setmaster::Rows() and Columns()  */
-#endif
     m_current_set           (seq::unassigned()),
     m_current_row           (seq::unassigned()),
     m_current_row_count     (cb_perf().screenset_count()),
     m_needs_update          (true),
+    m_table_initializing    (true),
     m_is_permanent          (embedded)
 {
     ui->setupUi(this);
@@ -140,11 +137,7 @@ qsetmaster::qsetmaster
     setup_table();                      /* row and column sizing            */
     (void) initialize_table();          /* fill with sets                   */
     (void) populate_default_ops();      /* load key-automation support      */
-#if defined SEQ66_USE_UNI_DIMENSION
     handle_set(0);                      /* guaranteed to be present         */
-#else
-    handle_set(0, 0);                   /* guaranteed to be present         */
-#endif
     cb_perf().enregister(this);         /* register this for notifications  */
     m_timer = new QTimer(this);         /* timer for regular redraws        */
     m_timer->setInterval(100);          /* doesn't need to be super fast    */
@@ -164,7 +157,6 @@ qsetmaster::conditional_update ()
 {
     if (needs_update())                 /*  perf().needs_update() too iffy  */
     {
-#if defined SEQ66_USE_UNI_DIMENSION
         for (int s = 0; s < setmaster::Size(); ++s) /* s is the set number  */
         {
             bool enabled = cb_perf().is_screenset_available(s);
@@ -172,28 +164,6 @@ qsetmaster::conditional_update ()
             m_set_buttons[s]->setEnabled(enabled);
             m_set_buttons[s]->setChecked(checked);
         }
-#else
-        int r = seq::unassigned();
-        int c = seq::unassigned();
-        bool ok = cb_perf().master_index_to_grid(m_current_set, r, c);
-        if (! ok)
-            ok = m_current_set == seq::unassigned();
-
-        if (ok)
-        {
-            for (int row = 0; row < setmaster::Rows(); ++row)
-            {
-                for (int column = 0; column < setmaster::Columns(); ++column)
-                {
-                    int s = int(cb_perf().master_grid_to_set(row, column));
-                    bool enabled = cb_perf().is_screenset_available(s);
-                    bool checked = row == r && column == c;
-                    m_set_buttons[row][column]->setEnabled(enabled);
-                    m_set_buttons[row][column]->setChecked(checked);
-                }
-            }
-        }
-#endif
         update();
         m_needs_update = false;
     }
@@ -207,15 +177,20 @@ qsetmaster::setup_table ()
     ui->m_set_table->setHorizontalHeaderLabels(columns);
     ui->m_set_table->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->m_set_table->setSelectionMode(QAbstractItemView::SingleSelection);
-    set_column_widths(ui->m_set_table->width() + SEQ66_TABLE_FIX);
+    set_column_widths(ui->m_set_table->width() + c_table_fix);
     const int rows = ui->m_set_table->rowCount();
     for (int r = 0; r < rows; ++r)
-        ui->m_set_table->setRowHeight(r, SEQ66_TABLE_ROW_HEIGHT);
+        ui->m_set_table->setRowHeight(r, c_table_row_height);
 
     connect
     (
         ui->m_set_table, SIGNAL(currentCellChanged(int, int, int, int)),
         this, SLOT(slot_table_click_ex(int, int, int, int))
+    );
+    connect
+    (
+        ui->m_set_table, SIGNAL(cellChanged(int, int)),
+        this, SLOT(slot_cell_changed(int, int))
     );
 }
 
@@ -246,6 +221,7 @@ bool
 qsetmaster::initialize_table ()
 {
     bool result = false;
+    m_table_initializing = true;
     int rows = cb_perf().screenset_count();
     ui->m_set_table->clearContents();
     if (rows > 0)
@@ -260,11 +236,21 @@ qsetmaster::initialize_table ()
         );
         (void) cb_perf().exec_set_function(setfunc);
     }
+    m_table_initializing = false;
     return result;
 }
 
 /**
  *  Retrieve the table cell at the given row and column.
+ *
+ *  Issue:
+ *
+ *      When this is first called [via initialize_table()], the
+ *      QWidgetTableItem does not exist.  So we make a new one, which has no
+ *      text in it, and insert it.  This then sends the cellChanged(int, int)
+ *      signal, which calls slot_cell_changed(), which sets the set's name to
+ *      empty!  This issue must also be checked/fixed in qplaylistframe ::
+ *      cell(), qseqeventframe :: cell(), and qmutemaster :: cell().
  *
  * \param row
  *      The row number, which should be in the range of 0 to 32.
@@ -300,7 +286,7 @@ qsetmaster::set_line (screenset & sset, screenset::number row)
         int setno = int(sset.set_number());
         std::string setnostr = std::to_string(setno);
         qtip->setText(qt(setnostr));
-        qtip = cell(row, column_id::set_name);
+        qtip = cell(row, column_id::set_name);  // CLEARS sset.name() !!!!
         if (not_nullptr(qtip))
         {
             const std::string & setname = sset.name();
@@ -340,6 +326,28 @@ qsetmaster::slot_table_click_ex
 }
 
 void
+qsetmaster::slot_cell_changed (int row, int column)
+{
+    if (! m_table_initializing)
+    {
+        column_id cid = static_cast<column_id>(column);
+        if (cid == column_id::set_name)
+        {
+            screenset::number s = screenset::number(row);
+            QTableWidgetItem * c = cell(s, cid);
+            QString qtext = c->text();
+            std::string name = qtext.toStdString();
+            std::string oldname = cb_perf().screenset_name(s);
+            if (name != oldname)
+            {
+                cb_perf().set_screenset_name(s, name);
+                set_needs_update();
+            }
+        }
+    }
+}
+
+void
 qsetmaster::closeEvent (QCloseEvent * event)
 {
     cb_perf().unregister(this);            /* unregister this immediately      */
@@ -369,7 +377,6 @@ void
 qsetmaster::create_set_buttons ()
 {
     const QSize btnsize = QSize(32, 32);
-#if defined SEQ66_USE_UNI_DIMENSION
     for (int s = 0; s < setmaster::Size(); ++s)             /* s is set #   */
     {
         bool enabled = cb_perf().is_screenset_available(s);
@@ -388,44 +395,7 @@ qsetmaster::create_set_buttons ()
             m_set_buttons[s] = temp;
         }
     }
-#else
-    for (int row = 0; row < setmaster::Rows(); ++row)
-    {
-        for (int column = 0; column < setmaster::Columns(); ++column)
-        {
-            bool valid = cb_perf().master_inside_set(row, column);
-            int setno = int(cb_perf().master_grid_to_set(row, column));
-            bool enabled = cb_perf().is_screenset_available(setno);
-            std::string snstring;
-            if (valid)
-                snstring = std::to_string(setno);
-
-            QPushButton * temp = new QPushButton(qt(snstring));
-            ui->setGridLayout->addWidget(temp, row, column);
-            temp->setFixedSize(btnsize);
-            temp->show();
-            temp->setEnabled(enabled);
-            temp->setCheckable(true);
-            connect
-            (
-                temp, &QPushButton::released, [=] { handle_set(row, column); }
-            );
-            m_set_buttons[row][column] = temp;
-        }
-    }
-#endif
 }
-
-#if ! defined SEQ66_USE_UNI_DIMENSION
-
-void
-qsetmaster::handle_set (int row, int column)
-{
-    screenset::number setno = cb_perf().master_grid_to_set(row, column);
-    handle_set(setno);
-}
-
-#endif
 
 void
 qsetmaster::handle_set (int setno)
@@ -453,7 +423,7 @@ qsetmaster::slot_set_name ()
     if (m_current_set != screenset::unassigned())
     {
         std::string name = ui->m_set_name_text->text().toStdString();
-        cb_perf().set_screenset_notepad(m_current_set, name);
+        cb_perf().set_screenset_name(m_current_set, name);
         (void) initialize_table();      /* refill with sets */
     }
 }

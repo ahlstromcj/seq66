@@ -27,19 +27,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-10-29
+ * \updates       2021-11-02
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
  */
 
 #include <QFrame>
-
-#define SEQ66_USE_UNI_DIMENSION         /* EXPERIMENTAL                     */
-
-#if defined SEQ66_USE_UNI_DIMENSION
 #include <vector>                       /* std::vector container            */
-#endif
 
 #include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */
 #include "ctrl/opcontainer.hpp"         /* class seq66::opcontainer         */
@@ -248,8 +243,6 @@ private:
 
      qsmainwnd * m_main_window;
 
-#if defined SEQ66_USE_UNI_DIMENSION
-
     /**
      *  Access to buttons, more flexible for swapping coordinates.
      */
@@ -272,14 +265,6 @@ private:
      */
 
     buttons m_pattern_buttons;
-
-#else
-
-    QPushButton * m_group_buttons [mutegroups::c_rows][mutegroups::c_columns];
-
-    QPushButton * m_pattern_buttons [mutegroups::c_rows][mutegroups::c_columns];
-
-#endif  // defined SEQ66_USE_UNI_DIMENSION
 
     /**
      *  Indicates the currently-selected group number.

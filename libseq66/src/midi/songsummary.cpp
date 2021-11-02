@@ -367,7 +367,7 @@ songsummary::write_prop_header
 }
 
 void
-songsummary::write_notepads
+songsummary::write_set_names
 (
     std::ofstream & file,
     const performer & p
@@ -378,7 +378,7 @@ songsummary::write_notepads
     write_prop_header(file, c_notes, setcount);
     for (int s = 0; s < setcount; ++s)
     {
-        const std::string & note = p.get_screenset_notepad(s);
+        const std::string & note = p.screenset_name(s);
         file << "   Set #" <<std::dec << s << ": '" << note << "'\n";
     }
 }
@@ -456,7 +456,7 @@ songsummary::write_proprietary_track (std::ofstream & file, performer & p)
     file << "Start of SeqSpecs:" << "\n";
     write_prop_header(file, c_midictrl, 0);     /* midi control tag + 4     */
     write_prop_header(file, c_midiclocks, 0);   /* bus mute/unmute data + 4 */
-    write_notepads(file, p);
+    write_set_names(file, p);
     write_bpm(file, p);
     write_mutes(file, p);
     write_global_bg(file);

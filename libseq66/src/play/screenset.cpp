@@ -595,14 +595,27 @@ midipulse
 screenset::max_timestamp () const
 {
     midipulse result = 0;
+    int seqno = 0;
     for (const auto & s : m_container)
     {
         if (s.active())
         {
-            midipulse t = s.loop()->get_max_timestamp();
-            if (t > result)
-                result = t;
+            if (s.loop())
+            {
+                midipulse t = s.loop()->get_max_timestamp();
+                if (t > result)
+                    result = t;
+            }
+            else
+            {
+                errprintf
+                (
+                    "screenset::max_timestamp(): active null pointer seq %d\n",
+                    seqno
+                );
+            }
         }
+        ++seqno;
     }
     return result;
 }

@@ -89,7 +89,7 @@ protected:
         midilong control_tag,
         int value
     );
-    void write_notepads
+    void write_set_names
     (
         std::ofstream & file,
         const performer & p
