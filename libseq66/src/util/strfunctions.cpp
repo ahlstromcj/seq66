@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2021-04-19
+ * \updates       2021-11-03
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -959,7 +959,7 @@ simplify (const std::string & source)
  *      assumes that the number of bit values is perfectly divisible by 8.
  *      If the user makes a mistake, tough shitsky.
  *
- * \param newstyle
+ * \param hexstyle
  *      If true (the default), then hexadecimal values are written, in groups
  *      of 8 bits.  Hexadecimal values are better when set-size is greater than
  *      the legacy value, 32.
@@ -972,14 +972,14 @@ std::string
 write_stanza_bits
 (
     const midibooleans & bitbucket,
-    bool newstyle
+    bool hexstyle
 )
 {
     std::string result("[ ");
     int bitcount = int(bitbucket.size());
     if (bitcount > 0)
     {
-        if (newstyle)
+        if (hexstyle)
         {
             int bitcount = 8;                       /* group by 8 bits      */
             unsigned hexvalue = 0x00;
@@ -1085,7 +1085,7 @@ parse_stanza_bits
         midibooleans bitbucket;
         auto p = mutestanza.find_first_of("xX");
         auto bleft = mutestanza.find_first_of("[");
-        bool newstyle = p != std::string::npos;
+        bool hexstyle = p != std::string::npos;
         std::vector<std::string> tokens;
         int tokencount = tokenize_stanzas(tokens, mutestanza, bleft);
         result = tokencount > 0;
@@ -1098,10 +1098,14 @@ parse_stanza_bits
                 {
                     /* nothing to do */
                 }
+                else if (temp[0] == '"')        /* beginning of group name  */
+                {
+                    break;
+                }
                 else
                 {
                     unsigned v = unsigned(string_to_int(temp));
-                    if (newstyle)
+                    if (hexstyle)
                     {
                         if (v < 256)
                             push_8_bits(bitbucket, v);

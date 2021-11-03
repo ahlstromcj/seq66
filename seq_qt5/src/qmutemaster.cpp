@@ -285,7 +285,7 @@ qmutemaster::slot_clear_all_mutes ()
 void
 qmutemaster::clear_pattern_mutes ()
 {
-    m_pattern_mutes.clear();
+    m_pattern_mutes.clear();                                /* midibooleans */
     m_pattern_mutes.resize(cb_perf().mutegroup_count());    /* always 32    */
     m_pattern_offset = 0;
     m_trigger_mode = false;
@@ -341,8 +341,8 @@ qmutemaster::set_column_widths (int total_width)
 {
     ui->m_group_table->setColumnWidth(0, int(0.150f * total_width));
     ui->m_group_table->setColumnWidth(1, int(0.150f * total_width));
-    ui->m_group_table->setColumnWidth(2, int(0.150f * total_width));    // 0.100
-    ui->m_group_table->setColumnWidth(3, int(0.55f * total_width));     // 0.65
+    ui->m_group_table->setColumnWidth(2, int(0.150f * total_width));
+    ui->m_group_table->setColumnWidth(3, int(0.55f * total_width));
 }
 
 bool
@@ -357,11 +357,13 @@ qmutemaster::set_current_group (int group)
         int gridrow, gridcolumn;
         if (mutegroups::group_to_grid(group, gridrow, gridcolumn))
         {
+#if 0
             if (m_button_row >= 0)          // ???????
             {
                 QPushButton * temp = m_group_buttons[group];
                 temp->setEnabled(false);
             }
+#endif
             m_button_row = gridrow;
             m_button_column = gridcolumn;
             m_current_group = group;
@@ -423,7 +425,8 @@ qmutemaster::cell (mutegroup::number row, column_id col)
 
 /**
  *  Obtains the group number (row), number of active (arming) items in the
- *  mute-group, and the keystroke used to access that mute-group.
+ *  mute-group, and the keystroke used to access that mute-group. These are
+ *  then set into the cells of the corresponding column.
  */
 
 bool

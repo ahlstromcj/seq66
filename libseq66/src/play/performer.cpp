@@ -686,9 +686,19 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
         m_midi_control_out.is_enabled(false);
 
     m_mute_groups = rcs.mute_groups();              /* could be 0-sized     */
+
+#if defined SEQ66_PLATFORM_DEBUG
+    if (rc().investigate())
+        m_mute_groups.show("in performer");
+#endif
+
     song_mode(rcs.song_start_mode());               /* boolean setter       */
     filter_by_channel(rcs.filter_by_channel());
-//  tempo_track_number(rcs.tempo_track_number());   /* [midi-meta-events]   */
+
+    /*
+     * tempo_track_number(rcs.tempo_track_number());    // [midi-meta-events]
+     */
+
     m_resume_note_ons = usrs.resume_note_ons();
     return result;
 }

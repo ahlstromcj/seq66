@@ -213,12 +213,16 @@ mutegroupsfile::parse_stream (std::ifstream & file)
 
     if (good)
     {
-        mutes.loaded_from_mutes(load);          /* loaded to non-internal?  */
+        mutestorage.loaded_from_mutes(load);    /* loaded to non-internal?  */
+#if defined SEQ66_PLATFORM_DEBUG
+        if (rc().investigate())
+            mutestorage.show("read from 'mutes'");
+#endif
     }
     else
     {
-        mutes.reset_defaults();
-        mutes.loaded_from_mutes(false);
+        mutestorage.reset_defaults();
+        mutestorage.loaded_from_mutes(false);
     }
     return result;
 }

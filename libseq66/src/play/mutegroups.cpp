@@ -699,9 +699,9 @@ mutegroups::group_names_letter_count () const
  */
 
 void
-mutegroups::show (mutegroup::number gmute) const
+mutegroups::show (const std::string & tag, mutegroup::number gmute) const
 {
-    std::cout << "Mute-group size: " << count() << std::endl;
+    std::cout << "Mute-group " << tag << " size: " << count() << std::endl;
     if (gmute == c_null_mute_group)
     {
         int index = 0;
