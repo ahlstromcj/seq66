@@ -23,7 +23,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -82,7 +82,7 @@
          </rect>
         </property>
         <property name="toolTip">
-         <string> </string>
+         <string/>
         </property>
         <property name="text">
          <string>Tempo track number (0 is best)</string>
@@ -656,7 +656,7 @@ slot by channel number (0 to 15).</string>
          <item>
           <widget class="QCheckBox" name="checkBoxSwapCoordinates">
            <property name="text">
-            <string>Swap Coordinates for Live Grid</string>
+            <string>Swap Coordinates in All Grids</string>
            </property>
           </widget>
          </item>

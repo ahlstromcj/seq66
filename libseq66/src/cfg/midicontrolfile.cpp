@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-10-23
+ * \updates       2021-11-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -815,14 +815,11 @@ bool
 midicontrolfile::write_stream (std::ofstream & file)
 {
     write_date(file, "MIDI control");
-    file    <<
-    "# This file sets up MIDI I/O control for Seq66. It's format is like the\n"
-    "# 'rc' file, but stored separately for flexibility. It is stored in the\n"
-    "# the HOME configuration directory. To use this, list it as active, in the\n"
-    "# 'rc' file's [midi-control-file] section (e.g. \"nanomap.ctrl\").\n"
-    "\n"
-    "# Version 1 adds [mute-control-out] and [automation-control-out]. Versions\n"
-    "# 2 and 3 simplify the data items; 4 and 5 add more settings.\n"
+    file <<
+    "# Sets up MIDI I/O control for Seq66. The format is like the 'rc' file,\n"
+    "# in the HOME configuration directory. To use it, set it active in the\n"
+    "# 'rc' [midi-control-file] section. It adds [mute-control-out],\n"
+    "# [automation-control-out], a simpler format, and new settings.\n"
     ;
     write_seq66_header(file, "ctrl", version());
 
@@ -840,8 +837,8 @@ midicontrolfile::write_stream (std::ofstream & file)
     if (result)
     {
         file
-            << "\n# End of " << name() << "\n#\n"
-            << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
+            << "\n# End of " << name()
+            << "\n#\n# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
             ;
     }
     else
@@ -902,29 +899,26 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         const midicontrolin & mci = rc_ref().midi_control_in();
         bool disabled = mci.is_disabled();
         int bb = int(mci.nominal_buss());
-        std::string k(bool_to_string(rc_ref().load_key_controls()));
-        std::string m(bool_to_string(rc_ref().load_midi_control_in()));
         file <<
         "\n[midi-control-settings]\n\n"
-        "# Setting 'load-midi-control = false' causes an empty MIDI control\n"
-        "# to be written! Keep backups! The control-buss value ranges from 0\n"
-        "# to the maximum system input buss. If set, that buss will send MIDI\n"
-        "# control. 255 (0xFF) means any buss can send control. The buss(es)\n"
-        "# must be enabled in the 'rc' file.  With ALSA, there is an extra\n"
-        "# 'announce' buss, which alters the port numbering.\n"
+        "# These are input setting for controlling Seq66.\n"
+        "# 'load-midi-control' = false writes empty MIDI controls!! Keep\n"
+        "# backups! 'control-buss' values range from 0 to the highest system\n"
+        "# input buss. If set, that buss can send MIDI control. 255 (0xFF)\n"
+        "# means any buss enabled in the 'rc' file can send control. ALSA\n"
+        "# provides an extra 'announce' buss, altering port numbering.\n"
         "#\n"
-        "# The 'midi-enabled' flag applies to the MIDI controls; keystrokes\n"
-        "# are always enabled. Supported keyboard layouts are 'qwerty' (the\n"
-        "# default), 'qwertz', and 'azerty'. AZERTY turns off the auto-shift\n"
+        "# 'midi-enabled' applies to the MIDI controls; keystroke controls\n"
+        "# are always enabled. Supported keyboard layouts are 'qwerty'\n"
+        "# (default), 'qwertz', and 'azerty'. AZERTY turns off the auto-shift\n"
         "# feature for group-learn.\n\n"
-            << "load-key-controls = " << k << "\n"
-            << "load-midi-controls = " << m << "\n"
-            ;
-
+        ;
+        write_boolean(file, "load-key-controls", rc_ref().load_key_controls());
+        write_boolean(file, "load-midi-controls",rc_ref().load_midi_control_in());
         if (bb >= c_busscount_max)
-            file << "control-buss = 0xFF\n";
+            write_string(file, "control-buss", "0xFF");
         else
-            file << "control-buss = " << bb << "\n";
+            write_integer(file, "control-buss", bb);
 
         int defaultrows = mci.rows();
         int defaultcolumns = mci.columns();
@@ -934,21 +928,23 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         if (defaultcolumns == 0)
             defaultcolumns = usr().mainwnd_cols();
 
-        file
-            << "midi-enabled = " << (disabled ? "false" : "true") << "\n"
-            << "button-offset = " << mci.offset() << "\n"
-            << "button-rows = " << defaultrows << "\n"
-            << "button-columns = " << defaultcolumns << "\n"
-            << "keyboard-layout = " <<
-                rc_ref().key_controls().kbd_layout_to_string() << "\n";
-            ;
+        write_boolean(file, "midi-enabled", disabled);
+        write_integer(file, "button-offset", mci.offset());
+        write_integer(file, "button-rows", defaultrows);
+        write_integer(file, "button-columns", defaultcolumns);
+        write_string
+        (
+            file, "keyboard-layout",
+            rc_ref().key_controls().kbd_layout_to_string()
+        );
+
         file <<
         "\n"
-        "# A control stanza incorporates key control and MIDI, but keys\n"
-        "# support only 'toggle'; key-release is an 'invert'. The leftmost\n"
-        "# number on each line is the pattern number (e.g. 0 to 31); the group\n"
-        "# number, same range; or an automation control number.  This number is\n"
-        "# is followed by three groups of bracketed numbers, each providing 3\n"
+        "# A control stanza incorporates key control and MIDI. Keys support\n"
+        "# only 'toggle'; key-release is an 'invert'. The leftmost number on\n"
+        "# each line is the pattern number (e.g. 0 to 31), the group number\n"
+        "# (same range), or an automation control number.  This number is\n"
+        "# followed by three groups of bracketed numbers, each providing 3\n"
         "# types of control:\n"
         "#\n"
         "#    Normal:           [toggle]    [on]        [off]\n"
@@ -969,7 +965,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         "# ignored); if set to 0x00, the control is disabled; 'd0' is the\n"
         "# first data value (e.g. if status is 0x90 (Note On), d0 is the note\n"
         "# number; d1min to d1max is the range of data values detectable (e.g.\n"
-        "# 1 to 127 indicates that any non-zero velocity invokes the control.\n"
+        "# 1 to 127 indicates any non-zero velocity invokes the control.\n"
         "# Hex values can be used; precede with '0x'.\n"
         "#\n"
         "#  ---------------------- Loop, group, or automation-slot number\n"
@@ -1114,7 +1110,6 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
     /* const */ midicontrolout & mco = rc_ref().midi_control_out();
     int setsize = mco.screenset_size();
     int buss = int(mco.nominal_buss());
-    bool disabled = mco.is_disabled();
     bool result = buss >= 0;                /* do a very light sanity check */
     if (result)
     {
@@ -1126,17 +1121,13 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             );
             setsize = mco.screenset_size();
         }
-        file <<
-            "\n"
-            "[midi-control-out-settings]\n\n"
-            << "set-size = " << setsize << "\n"
-            << "output-buss = " << buss << "\n"
-            << "midi-enabled = " << (disabled ? "false" : "true") << "\n"
-            << "button-offset = " << mco.offset() << "\n"
-            << "button-rows = " << mco.rows() << "\n"
-            << "button-columns = " << mco.columns() << "\n"
-            ;
-
+        file << "\n[midi-control-out-settings]\n\n";
+        write_integer(file, "set-size", setsize);
+        write_integer(file, "output-buss", buss);
+        write_boolean(file, "midi-enabled", mco.is_disabled());
+        write_integer(file, "button-offset", mco.offset());
+        write_integer(file, "button-rows", mco.rows());
+        write_integer(file, "button-columns", mco.columns());
         file <<
             "\n"
             "[midi-control-out]\n"
@@ -1150,7 +1141,6 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             "# 31 [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0]\n"
             "#       Arm      Mute      Queue    Delete\n"
             ;
-
         file <<
             "#\n"
             "# In a change from version 1 of this file, a test of the\n"

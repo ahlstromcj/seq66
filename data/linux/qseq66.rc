@@ -1,7 +1,7 @@
-# Seq66 0.97.1 main ('rc') configuration file
+# Seq66 0.97.2 main ('rc') configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written 2021-10-13 10:08:14
+# Written 2021-11-04 14:00:24
 #
 # This file holds the main configuration for Seq66. It no longer
 # follows the format of the seq24rc configuration file much.
@@ -30,9 +30,7 @@ port-naming = short
 
 [comments]
 
-This is a test of the newly refactored 'rc' file.
-  
-This is the second line (after a space-blank) line.
+Add your comment block here
 
 # Provides a flag and a file-name for MIDI-control I/O settings. Use
 # '""' to indicate no 'ctrl' file. If none, the default internal
@@ -251,12 +249,15 @@ double-click-edit = true
 # auto: If the loaded tune has song triggers, use Song mode.
 #
 # jack-midi sets/unsets JACK MIDI, separate from JACK transport.
+# jack-auto-connect sets connecting to JACK ports found. Default =
+# true; use false to have a session manager make the connections.
 
 [jack-transport]
 
 transport-type = none
 song-start-mode = auto
 jack-midi = false
+jack-auto-connect = true
 
 # auto-save-rc sets automatic saving of the running configuration
 # 'rc' and other files.  True is Seq24 behavior. If set, many
@@ -278,7 +279,7 @@ save-old-mutes = false
 
 [last-used-dir]
 
-"/home/user/data/midi/"
+""
 
 # A list of the most recently-loaded MIDI files. 'full-paths' = true
 # indicates to show the full file-path in the menu.  The most recent

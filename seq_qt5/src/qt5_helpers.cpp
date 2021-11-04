@@ -207,10 +207,9 @@ show_import_midi_file_dialog (QWidget * parent, std::string & selectedfile)
 }
 
 /**
- *  Shows the "Open" play-list dialog.
- *
- *  Was starting from the rc().last_used_dir(), but should be the home
- *  directory for both normal and NSM sessions.
+ *  Shows the "Open" play-list dialog.  Was starting from the
+ *  rc().last_used_dir(), but should be the home directory for both normal and
+ *  NSM sessions.
  *
  * \param [inout] selectedfile
  *      A return value for the chosen file and path.  If not-empty when the

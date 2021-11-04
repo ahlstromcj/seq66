@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-10-29
+ * \updates       2021-11-04
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -49,6 +49,8 @@
 namespace seq66
 {
 
+static const int s_usr_legacy = 5;
+static const int s_usr_smf_1 = 8;
 static const int s_usr_file_version = 9;
 
 /**
@@ -63,7 +65,7 @@ static const int s_usr_file_version = 9;
  *      7:  2021-09-20. Added "style-sheet-active" and "lock-main-window"
  *          flags.
  *      8:  2021-10-06: Added "convert-to-smf-l".
- *      8:  2021-10-26: Added "swap-coordinates".
+ *      9:  2021-10-26: Added "swap-coordinates".
  *
  * \param name
  *      Provides the full file path specification to the configuration file.
@@ -169,7 +171,7 @@ usrfile::parse ()
             {
                 (void) next_data_line(file);
                 int instruments = 0;
-                sscanf(scanline(), "%d", &instruments);     /* no. of channels  */
+                sscanf(scanline(), "%d", &instruments); /* no. of channels  */
                 for (int j = 0; j < instruments; ++j)
                 {
                     int channel, instrument;
@@ -263,7 +265,7 @@ usrfile::parse ()
 
     int scratch = 0;
     std::string tag = "[user-interface-settings]";
-    if (file_version_number() < s_usr_file_version)
+    if (file_version_number() < s_usr_legacy)
     {
         if (line_after(file, tag))
         {
@@ -364,7 +366,7 @@ usrfile::parse ()
      */
 
     tag = "[user-midi-settings]";
-    if (file_version_number() < s_usr_file_version)
+    if (file_version_number() < s_usr_smf_1)
     {
         if (line_after(file, tag))
         {
@@ -455,7 +457,7 @@ usrfile::parse ()
      */
 
     tag = "[user-options]";
-    if (file_version_number() < s_usr_file_version)
+    if (file_version_number() < s_usr_legacy)
     {
         if (line_after(file, tag))
         {
@@ -599,10 +601,9 @@ usrfile::write ()
 
     write_date(file, "user ('usr')");
     file <<
-        "# This is a Seq66 'usr' file. Edit it and place it in the directory\n"
-        "# $HOME/.config/seq66. It allows applying aliases (alternate names)\n"
-        "# to each MIDI bus/port, channel, and control code, per channel. It\n"
-        "# has additional options not present in Seq24.\n"
+        "# 'usr' file. Edit it and place it in $HOME/.config/seq66. It allows\n"
+        "# aliases (alternate names) to each MIDI bus/port, channel, and\n"
+        "# control code, per channel. It has options not present in Seq24.\n"
         ;
 
     write_seq66_header(file, "usr", version());
@@ -610,27 +611,22 @@ usrfile::write ()
     file <<
         "# [user-midi-bus-definitions]\n"
         "#\n"
-        "# 1. Define your instruments and their control-code names, if they\n"
-        "#    have them.\n"
-        "# 2. Define a MIDI bus, its name, and what instruments are on which\n"
-        "#    channel.\n"
+        "# 1. Define instruments and their control-code names, as applicable.\n"
+        "# 2. Define MIDI busses, names, and the instruments on each channel.\n"
         "#\n"
-        "# In these MIDI buss definitions, channels are counted from 0-15, not\n"
-        "# 1-16.  Instruments not set here are set to -1 and are GM (General\n"
-        "# MIDI). These replacement labels are shown in MIDI Clocks, Inputs,\n"
-        "# the pattern editor buss, channel, and event drop-downs.  To disable\n"
-        "# the entries, set the counts to 0.\n"
+        "# In these definitions, channels are counted from 0-15, not 1-16.\n"
+        "# Instruments not set here are set to -1 and are GM (General MIDI).\n"
+        "# These labels are shown in MIDI Clocks, Inputs, the pattern editor\n"
+        "# buss, channel, and event drop-downs.  To disable entries, set\n"
+        "# counts to 0.\n"
         ;
 
     /*
      * [user-midi-bus-definitions]
      */
 
-    file << "\n"
-        "[user-midi-bus-definitions]\n"
-        "\n"
-        << usr().bus_count()
-        << "     # number of user-defined MIDI busses\n"
+    file << "\n[user-midi-bus-definitions]\n\n"
+        << usr().bus_count() << "     # number of user-defined MIDI busses\n"
         ;
 
     if (usr().bus_count() > 0)
@@ -672,20 +668,17 @@ usrfile::write ()
     }
 
     file << "\n"
-        "# In the following MIDI instrument definitions, active controller\n"
-        "# numbers (i.e. supported by the instrument) are paired with\n"
-        "# the (optional) name of the controller supported.\n"
+        "# In these MIDI instrument definitions, active controller numbers\n"
+        "# (i.e. supported by the instrument) are paired with the (optional)\n"
+        "# name of the controller supported.\n"
         ;
 
     /*
      * [user-instrument-definitions]
      */
 
-    file << "\n"
-        << "[user-instrument-definitions]\n"
-        << "\n"
-        << usr().instrument_count()
-        << "     # instrument list count\n"
+    file << "\n[user-instrument-definitions]\n\n"
+        << usr().instrument_count() << "     # instrument list count\n"
         ;
 
     if (usr().instrument_count() > 0)
@@ -705,8 +698,7 @@ usrfile::write ()
             std::string fixedname = add_quotes(uin.name());
             file
                 << "# Name of instrument\n\n"
-                << fixedname << "\n"
-                << "\n"
+                << fixedname << "\n\n"
                 << uin.controller_count()
                 << "    # number of MIDI controller number & name pairs\n"
                 ;
@@ -723,16 +715,12 @@ usrfile::write ()
                         fixedname = add_quotes(fixedname);
 
                     if (uin.controller_active(ctlr))
-                    {
                         file << ctlr << " " << fixedname << "\n";
-                    }
                 }
             }
         }
         else
-        {
             file << "? This instrument specification is invalid\n";
-        }
     }
 
     /*
@@ -751,10 +739,8 @@ usrfile::write ()
         "# The grid holds Qt buttons. For styling, use Qt themes/style-sheets.\n"
         "#\n"
         "# 'swap-coordinates' swaps numbering so pattern numbers vary fastest\n"
-        "# by column instead of (legacy) rows.\n"
-        "#\n"
-        "# Currently applies only to screen-sets.  Will apply to mutes and\n"
-        "# set-numbers in the near future.\n"
+        "# by column instead of (legacy) rows. This setting applies to the live\n"
+        "# grid, mute-group buttons, and set-buttons.\n"
         "#\n"
         "# 'mainwnd-rows' and 'mainwnd-columns' (option '-o sets=RxC') specify\n"
         "# rows/columns in the main grid. R ranges from 4 to 8, C from 4 to 12.\n"
@@ -790,7 +776,6 @@ usrfile::write ()
         "# 3.0, it changes the size of the main window proportionately.\n"
         "\n[user-interface-settings]\n\n"
         ;
-
     write_boolean(file, "swap-coordinates", usr().swap_coordinates());
     write_integer(file, "mainwnd-rows", usr().mainwnd_rows());
     write_integer(file, "mainwnd-columns", usr().mainwnd_cols());
@@ -809,14 +794,11 @@ usrfile::write ()
      */
 
     file << "\n"
-        "# [user-midi-ppqn]\n"
-        "#\n"
-        "# Seq66 separates file PPQN from the Seq66 PPQN the user wants.\n"
-        "# 'default-ppqn' specifies the Seq66 PPQN, from 32 to 19200, default\n"
-        "# = 192. 'use-file-ppqn' (recommended) indicates to use file PPQN.\n"
+        "# Seq66 separates file PPQN from the Seq66 PPQN. 'default-ppqn'\n"
+        "# specifies the Seq66 PPQN, from 32 to 19200, default = 192.\n"
+        "# 'use-file-ppqn' (recommended) indicates to use file PPQN.\n"
         "\n[user-midi-ppqn]\n\n"
         ;
-
     write_integer(file, "default-ppqn", usr().default_ppqn());
     write_boolean(file, "use-file-ppqn", usr().use_file_ppqn());
 
@@ -861,7 +843,6 @@ usrfile::write ()
         "# for a magnified view of tempo.\n"
         "\n[user-midi-settings]\n\n"
         ;
-
         write_boolean(file, "convert-to-smf-1", usr().convert_to_smf_1());
         write_integer(file, "beats-per-bar", usr().midi_beats_per_bar());
         write_integer(file, "beats-per-minute", usr().midi_beats_per_minute());
@@ -900,8 +881,7 @@ usrfile::write ()
         ;
 
     write_boolean(file, "daemonize", usr().option_daemonize());
-    std::string logfile = add_quotes(usr().option_logfile());
-    file << "log = " << logfile << "\n";
+    write_string(file, "log", usr().option_logfile(), true);
 
     /*
      * [user-ui-tweaks]
@@ -911,14 +891,13 @@ usrfile::write ()
         "# [user-ui-tweaks]\n"
         "#\n"
         "# key-height specifies the initial height (before vertical zoom) of\n"
-        "# the pattern editor keys.  Defaults to 10 pixels, ranges from 6 to\n"
-        "# 32.\n"
+        "# pattern editor keys.  Defaults to 10 pixels, ranges from 6 to 32.\n"
         "#\n"
-        "# key-view specifies how to show the labels for each key:\n"
+        "# key-view specifies the default for showing labels for each key:\n"
         "# 'octave-letters' (default), 'even_letters', 'all-letters',\n"
         "# 'even-numbers', and 'all-numbers'.\n"
         "#\n"
-        "# note-resume, if active, causes notes in progress to be resumed when\n"
+        "# note-resume, if active, causes notes-in-progress to be resumed when\n"
         "# the pattern is toggled back on.\n"
         "#\n"
         "# If specified, a style-sheet (e.g. 'qseq66.qss') is applied at\n"
@@ -944,12 +923,10 @@ usrfile::write ()
         ;
 
     write_integer(file, "key-height", usr().key_height());
-    file << "key-view = " << usr().key_view_string() << "\n";
+    write_string(file, "key-view", usr().key_view_string());
     write_boolean(file, "note-resume", usr().resume_note_ons());
     write_boolean(file, "style-sheet-active", usr().style_sheet_active());
-
-    std::string v = add_quotes(usr().style_sheet());
-    file << "style-sheet = " << v << "\n";
+    write_string(file, "style-sheet", usr().style_sheet(), true);
     write_integer(file, "fingerprint-size", usr().fingerprint_size());
     if (usr().progress_box_width() < 0.0)
         file << "progress-box-width = default\n";
@@ -969,8 +946,7 @@ usrfile::write ()
      * [user-session]
      */
 
-    file << "\n"
-        "# [user-session]\n"
+    file << "\n# [user-session]\n"
         "#\n"
         "# The session manager to use, if any. The 'session' value is 'none'\n"
         "# (default), 'nsm' (Non Session Manager), or 'jack' (JACK Session).\n"
@@ -980,13 +956,8 @@ usrfile::write ()
         "# NSM environment, and override these settings.\n"
         "\n[user-session]\n\n"
         ;
-
-    v = usr().session_url();
-    v = add_quotes(v);
-    file
-        << "session = " << usr().session_manager_name() << "\n"
-        << "url = " << v << "\n"
-        ;
+    write_string(file, "session", usr().session_manager_name());
+    write_string(file, "url", usr().session_url(), true);
 
     /*
      * [new-pattern-editor]
@@ -1003,20 +974,20 @@ usrfile::write ()
         "# true, allows recorded notes to wrap around to the pattern start.\n"
         "\n[new-pattern-editor]\n\n"
         ;
-
     write_boolean(file, "armed", usr().new_pattern_armed());
     write_boolean(file, "thru", usr().new_pattern_thru());
     write_boolean(file, "record", usr().new_pattern_record());
     write_boolean(file, "qrecord", usr().new_pattern_qrecord());
-    file << "record-style = " << usr().new_pattern_record_string() << "\n";
+    write_string(file, "record-style", usr().new_pattern_record_string());
     write_boolean(file, "wrap-around", usr().new_pattern_wraparound());
 
     /*
      * EOF
      */
 
-    file << "\n"
-        << "# End of " << name() << "\n#\n# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
+    file
+        << "\n# End of " << name() <<
+        "\n#\n# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
         ;
 
     file.close();

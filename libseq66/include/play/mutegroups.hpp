@@ -302,6 +302,14 @@ private:
     bool m_toggle_active_only;
 
     /**
+     *  If true, and there are no non-zero mutes, then they are not written to
+     *  the MIDI file.  The whole "c_mutegroups" SeqSpec section is not
+     *  written.
+     */
+
+    bool m_strip_empty;
+
+    /**
      *  Indicates the old Seq24/32/64/66 mute-group format, where all values
      *  were stored as longs.
      */
@@ -467,21 +475,7 @@ public:
     bool group_load (loading mgh);
     bool group_load (bool midi, bool mutes);
     std::string group_load_label () const;
-
-    void load_mute_groups (bool flag)
-    {
-        if (flag)
-        {
-            m_group_load = loading::mutes;
-        }
-        else
-        {
-            if (m_group_load == loading::both)
-                m_group_load = loading::midi;
-            else
-                m_group_load = loading::none;
-        }
-    }
+    void load_mute_groups (bool midi, bool mutes);
 
     bool group_load_from_mutes () const
     {
@@ -628,6 +622,11 @@ public:
         return m_legacy_mutes;
     }
 
+    bool strip_empty () const
+    {
+        return m_strip_empty;
+    }
+
 private:
 
     bool add (mutegroup::number gmute, const mutegroup & m);
@@ -674,6 +673,11 @@ private:
     void legacy_mutes (bool flag)
     {
         m_legacy_mutes = flag;
+    }
+
+    void strip_empty (bool flag)
+    {
+        m_strip_empty = flag;
     }
 
 };              // class mutegroups

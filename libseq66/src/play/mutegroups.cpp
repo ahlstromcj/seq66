@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-11-01
+ * \updates       2021-11-04
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -78,9 +78,10 @@ mutegroups::mutegroups (int rows, int columns) :
     m_group_learn               (false),
     m_group_selected            (c_null_mute_group),
     m_group_present             (false),
-    m_group_save                (saving::both),     /* midi and mutes files */
-    m_group_load                (loading::both),    /* midi and mutes files */
+    m_group_save                (saving::both),     /* midi or mutes files  */
+    m_group_load                (loading::both),    /* midi or mutes files  */
     m_toggle_active_only        (false),
+    m_strip_empty               (true),
     m_legacy_mutes              (false)
 {
     s_swap_coordinates = usr().swap_coordinates();
@@ -576,6 +577,19 @@ mutegroups::group_load_label () const
     return result;
 }
 
+void
+mutegroups::load_mute_groups (bool midi, bool mutes)
+{
+    if (mutes && midi)
+        m_group_load = loading::both;
+    else if (mutes)
+        m_group_load = loading::mutes;
+    else if (midi)
+        m_group_load = loading::midi;
+    else
+        m_group_load = loading::none;
+}
+
 bool
 mutegroups::clear ()
 {
@@ -596,11 +610,11 @@ bool
 mutegroups::reset_defaults ()
 {
     bool result = false;
-    int count = c_mute_groups_max;          /* not m_rows * m_columns   */
+    int count = c_mute_groups_max;              /* not m_rows * m_columns   */
     clear();
     for (int gmute = 0; gmute < count; ++gmute)
     {
-        mutegroup m;
+        mutegroup m(gmute);     /* m(mutegroup::number(gmute)) bad, why?    */
         result = add(gmute, m);
         if (! result)
             break;

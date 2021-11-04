@@ -108,12 +108,15 @@ rcsettings::rcsettings () :
     m_midi_filepath             (),
     m_jack_session_uuid         (),
     m_jack_session_active       (false),
+    m_last_used_dir             (double_quotes()),
 #if defined SEQ66_PLATFORM_WINDOWS      /* but see home_config_directory()  */
-    m_last_used_dir             (),
-#else
-    m_last_used_dir             ("~/"),
-#endif
     m_config_directory          (SEQ66_CLIENT_NAME),
+#else
+    m_config_directory
+    (
+        std::string(".config/") + std::string(SEQ66_CLIENT_NAME)
+    ),
+#endif
     m_config_filename           (SEQ66_CONFIG_NAME),    /* updated in body  */
     m_full_config_directory     (),
     m_user_file_active          (true),
@@ -143,11 +146,6 @@ rcsettings::rcsettings () :
     m_playlist_filename += ".playlist";
     m_notemap_filename += ".drums";
     m_palette_filename += ".palette";
-
-#if ! defined SEQ66_PLATFORM_WINDOWS    /* but see home_config_directory()  */
-    m_config_directory = std::string(".config/") + m_config_directory;
-#endif
-
 }
 
 /**
@@ -213,12 +211,11 @@ rcsettings::set_defaults ()
     m_midi_filepath.clear();
     m_jack_session_uuid.clear();
     m_jack_session_active       = false;
-    m_config_directory          = SEQ66_CLIENT_NAME;
+    m_last_used_dir             = double_quotes();
 #if defined SEQ66_PLATFORM_WINDOWS    /* but see home_config_directory()  */
-    m_last_used_dir.clear();
+    m_config_directory          = SEQ66_CLIENT_NAME;
 #else
-    m_last_used_dir             = "~/";
-    m_config_directory          = std::string(".config/") + m_config_directory;
+    m_config_directory = std::string(".config/") + std::string(SEQ66_CLIENT_NAME);
 #endif
     m_config_filename           = SEQ66_CONFIG_NAME;
     m_config_filename           += ".rc";

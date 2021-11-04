@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2021-11-03
+ * \updates       2021-11-04
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -37,13 +37,6 @@
 
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 
-/**
- *  A more readable way to depict the strings "" and "?".
- */
-
-#define SEQ66_DOUBLE_QUOTES     "\"\""
-#define SEQ66_QUESTION_MARK     "?"
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -52,40 +45,50 @@ namespace seq66
 {
 
 /**
+ *  Returns double quotes as a string.
+ */
+
+const std::string &
+double_quotes ()
+{
+    static const std::string s_double_quotes = std::string("\"\"");
+    return s_double_quotes;
+}
+
+/**
  *  Returns "" as a string for external callers.
  */
 
 std::string
 empty_string ()
 {
-    return std::string(SEQ66_DOUBLE_QUOTES);
+    return double_quotes();
 }
 
 /**
  *  Provides a way to work with a visible empty string (e.g. in a
  *  configuration file).  This function returns true if the string really is
  *  empty, or just contains two double quotes ("").
- *
- *  See the add_quotes() and double_quotes() functions and the
- *  SEQ66_DOUBLE_QUOTES macro.
+ *  See the add_quotes() and double_quotes() functions.
  */
 
 bool
 is_empty_string (const std::string & item)
 {
-    return item.empty() || item == SEQ66_DOUBLE_QUOTES;
+    return item.empty() || item == double_quotes();
 }
 
-std::string
+const std::string &
 questionable_string ()
 {
-    return std::string(SEQ66_QUESTION_MARK);
+    static const std::string s_question_mark = std::string("?");
+    return s_question_mark;
 }
 
 bool
 is_questionable_string (const std::string & item)
 {
-    return item == SEQ66_QUESTION_MARK;
+    return item == questionable_string();
 }
 
 bool
@@ -157,10 +160,10 @@ std::string
 next_quoted_string (const std::string & source, std::string::size_type pos)
 {
     std::string result;
-    auto lpos = source.find_first_of(SEQ66_DOUBLE_QUOTES, pos);
+    auto lpos = source.find_first_of(double_quotes(), pos);
     if (lpos != std::string::npos)
     {
-        auto rpos = source.find_first_of(SEQ66_DOUBLE_QUOTES, lpos + 1);
+        auto rpos = source.find_first_of(double_quotes(), lpos + 1);
         if (rpos != std::string::npos)
         {
             size_t len = size_t(rpos - lpos - 1);
@@ -259,36 +262,25 @@ strip_quotes (const std::string & item)
 std::string
 add_quotes (const std::string & item)
 {
-    std::string result;
-    if (item.empty())
+    std::string result = item;
+    if (result.empty())
     {
-        result = SEQ66_DOUBLE_QUOTES;
+        result = double_quotes();
     }
     else
     {
         bool quoted = false;
-        result = item;
         auto pos0 = result.find_first_of("\"");
         auto pos1 = result.find_last_of("\"");
         if (pos0 != std::string::npos && pos1 != std::string::npos)
         {
-            quoted = pos0 == 0 && pos1 == result.length() - 1;
+            if (pos1 != pos0)
+                quoted = pos0 == 0 && pos1 == result.length() - 1;
         }
         if (! quoted)
             result = "\"" + item + "\"";
     }
     return result;
-}
-
-/**
- *  Returns double quotes as a string.
- */
-
-const std::string &
-double_quotes ()
-{
-    static std::string s_double_quotes = std::string(SEQ66_DOUBLE_QUOTES);
-    return s_double_quotes;
 }
 
 /**

@@ -1,6 +1,22 @@
-TO DO for Seq66 0.97.0 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.97.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-09-23
+2019-04-13 to 2021-11-04
+
+Configuration:
+
+    Replace all "legacy" parsing by setting a message stating to save the old
+    files, remove them from "home", run Seq66 to recreate them, and update
+    them with any setting needed.  Do this for 0.98.0.
+
+Hot:
+
+    -   Changing set name does not set 'modify'.
+    -   External Live frame opening sets the set in the main window to the
+        same set.  Bug or Feature?
+    -   Document the ! Set button if not found documented ("!").
+    -   We need a button to reset to Set 0 for speed.
+    -   How does middle-click on a pattern signal the event-editor
+        functionality?
 
 UI:
 

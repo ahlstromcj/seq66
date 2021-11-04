@@ -1,14 +1,13 @@
-# Seq66 0.97.1 playlist configuration file
+# Seq66 0.97.2 playlist configuration file
 #
 # /home/ahlstrom/.config/seq66/qseq66.playlist
-# Written 2021-10-13 10:08:14
+# Written 2021-11-04 14:00:24
 #
-# This file holds multiple playlists. It consists of 1 or more
-# [playlist] sections.  Each has a user-specified number for sorting
-# and MIDI control, ranging from 0 to 127. Next comes a quoted display
-# name for this list, followed by the quoted name of the song folder
-# using the UNIX-style separator ('/'). It should be accessible from
-# wherever Seq66 is run.
+# This file holds multiple playlists, with one or more [playlist]
+# sections.  Each has a user-specified number for sorting and MIDI
+# control, ranging from 0 to 127. Next comes a quoted name for this
+# list, followed by the quoted name of the song folder using the UNIX
+# separator ('/'). It should be accessible wherever Seq66 is run.
 #
 # Next is a list of tunes, each starting with a MIDI control number
 # and the quoted name of the MIDI file, sorted by the control number.
@@ -32,7 +31,7 @@ version = 1
 unmute-new-song = false
 deep-verify = false
 
-# First provide the playlist settings, then its default storage folder
+# First provide the playlist settings, its default storage folder,
 # and then list each tune with its control number. The playlist
 # number is arbitrary but unique. 0 to 127 recommended for use with
 # the MIDI playlist control. Similar for the tune numbers. Each 
@@ -41,7 +40,7 @@ deep-verify = false
 [playlist]
 
 # This is a NON-FUNCTIONAL playlist SAMPLE. Please see one of the
-# sample playlist files shipping with Seq66.
+# sample playlist files shipped with Seq66.
 
 
 # End of /home/ahlstrom/.config/seq66/qseq66.playlist

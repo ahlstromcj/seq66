@@ -28,9 +28,9 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>351</x>
+     <x>391</x>
      <y>6</y>
-     <width>417</width>
+     <width>402</width>
      <height>401</height>
     </rect>
    </property>
@@ -213,7 +213,7 @@ configuration.</string>
     <rect>
      <x>10</x>
      <y>0</y>
-     <width>322</width>
+     <width>376</width>
      <height>275</height>
     </rect>
    </property>
@@ -332,6 +332,9 @@ configuration.</string>
       </item>
       <item>
        <widget class="QPlainTextEdit" name="m_mute_basename">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
@@ -351,8 +354,8 @@ configuration.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Provides the base name for the mute-group file; the path
-is stripped.  Always saved to the session configuration.</string>
+         <string>Go to Edit / Preferences / Session
+to edit this name.</string>
         </property>
         <property name="verticalScrollBarPolicy">
          <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -373,30 +376,24 @@ is stripped.  Always saved to the session configuration.</string>
          </font>
         </property>
         <property name="text">
-         <string>Write Format</string>
+         <string>Read/Write
+and Format</string>
         </property>
        </widget>
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QRadioButton" name="m_radio_binary">
-          <property name="maximumSize">
-           <size>
-            <width>80</width>
-            <height>16777215</height>
-           </size>
-          </property>
+        <item row="0" column="2">
+         <widget class="QCheckBox" name="m_check_to_midi">
           <property name="toolTip">
-           <string>Mute statuses are saved as stanzas of 1's
-and 0's. Default setting.</string>
+           <string>Mute-groups are saved in the MIDI file.</string>
           </property>
           <property name="text">
-           <string>Binar&amp;y</string>
+           <string>To MIDI </string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="1" column="2">
          <widget class="QCheckBox" name="m_check_to_mutes">
           <property name="toolTip">
            <string>Mute-groups are saved to the
@@ -407,7 +404,7 @@ and 0's. Default setting.</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="1" column="1">
          <widget class="QRadioButton" name="m_radio_hex">
           <property name="maximumSize">
            <size>
@@ -425,12 +422,33 @@ Useful if set-size is larger than 4 x 8.</string>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QCheckBox" name="m_check_to_midi">
+         <widget class="QRadioButton" name="m_radio_binary">
+          <property name="maximumSize">
+           <size>
+            <width>80</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="toolTip">
-           <string>Mute-groups are saved in the MIDI file.</string>
+           <string>Mute statuses are saved as stanzas of 1's
+and 0's. Default setting.</string>
           </property>
           <property name="text">
-           <string>To MIDI </string>
+           <string>Binar&amp;y</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QCheckBox" name="m_check_from_midi">
+          <property name="text">
+           <string>From MIDI</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="m_check_from_mutes">
+          <property name="text">
+           <string>From Mutes</string>
           </property>
          </widget>
         </item>
@@ -459,7 +477,7 @@ Legacy behavior adheres strictly to the mute-group.</string>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="m_check_load_mutes">
+       <widget class="QCheckBox" name="m_check_strip_empty">
         <property name="maximumSize">
          <size>
           <width>170</width>
@@ -467,11 +485,11 @@ Legacy behavior adheres strictly to the mute-group.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Load the mute-group section from the
-'mutes' file. Disables loading it from the MIDI file.</string>
+         <string>If there are no non-zero mute-group values,
+do not save them to the MIDI file.</string>
         </property>
         <property name="text">
-         <string>Load Mutes from File</string>
+         <string>Strip If No Mutes</string>
         </property>
        </widget>
       </item>

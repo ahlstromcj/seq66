@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-10-27
+ * \updates       2021-11-04
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -368,6 +368,13 @@ protected:
         std::ofstream & file,
         const std::string & name,
         float value
+    );
+    void write_string
+    (
+        std::ofstream & file,
+        const std::string & name,
+        std::string value,
+        bool quote_it = false
     );
     bool get_file_status
     (

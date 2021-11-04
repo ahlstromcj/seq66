@@ -1,17 +1,16 @@
-# Seq66 0.97.1 user ('usr') configuration file
+# Seq66 0.97.2 user ('usr') configuration file
 #
 # /home/usr/.config/seq66/qseq66.usr
-# Written 2021-10-13 10:08:14
+# Written 2021-11-04 14:00:24
 #
-# This is a Seq66 'usr' file. Edit it and place it in the directory
-# $HOME/.config/seq66. It allows applying aliases (alternate names)
-# to each MIDI bus/port, channel, and control code, per channel. It
-# has additional options not present in Seq24.
+# 'usr' file. Edit it and place it in $HOME/.config/seq66. It allows
+# aliases (alternate names) to each MIDI bus/port, channel, and
+# control code, per channel. It has options not present in Seq24.
 
 [Seq66]
 
 config-type = "usr"
-version = 8
+version = 9
 
 # [comments] holds user documentation for this file. The first empty,
 # hash-commented, or tag line ends the comment.
@@ -24,24 +23,22 @@ look empty with a space.
 
 # [user-midi-bus-definitions]
 #
-# 1. Define your instruments and their control-code names, if they
-#    have them.
-# 2. Define a MIDI bus, its name, and what instruments are on which
-#    channel.
+# 1. Define instruments and their control-code names, as applicable.
+# 2. Define MIDI busses, names, and the instruments on each channel.
 #
-# In these MIDI buss definitions, channels are counted from 0-15, not
-# 1-16.  Instruments not set here are set to -1 and are GM (General
-# MIDI). These replacement labels are shown in MIDI Clocks, Inputs,
-# the pattern editor buss, channel, and event drop-downs.  To disable
-# the entries, set the counts to 0.
+# In these definitions, channels are counted from 0-15, not 1-16.
+# Instruments not set here are set to -1 and are GM (General MIDI).
+# These labels are shown in MIDI Clocks, Inputs, the pattern editor
+# buss, channel, and event drop-downs.  To disable entries, set
+# counts to 0.
 
 [user-midi-bus-definitions]
 
 0     # number of user-defined MIDI busses
 
-# In the following MIDI instrument definitions, active controller
-# numbers (i.e. supported by the instrument) are paired with
-# the (optional) name of the controller supported.
+# In these MIDI instrument definitions, active controller numbers
+# (i.e. supported by the instrument) are paired with the (optional)
+# name of the controller supported.
 
 [user-instrument-definitions]
 
@@ -50,8 +47,12 @@ look empty with a space.
 # [user-interface-settings]
 #
 # Configures some user-interface elements.  Many became obsolete and
-# were removed in version 5 of this file. The grid contains Qt buttons
-# For a flat style, use Qt themes or style-sheets.
+# were removed in version 5 of this file. Also see [user-ui-tweaks].
+# The grid holds Qt buttons. For styling, use Qt themes/style-sheets.
+#
+# 'swap-coordinates' swaps numbering so pattern numbers vary fastest
+# by column instead of (legacy) rows. This setting applies to the live
+# grid, mute-group buttons, and set-buttons.
 #
 # 'mainwnd-rows' and 'mainwnd-columns' (option '-o sets=RxC') specify
 # rows/columns in the main grid. R ranges from 4 to 8, C from 4 to 12.
@@ -70,7 +71,8 @@ look empty with a space.
 # SeqSpec (if true) or in each track (if false).
 #
 # 'progress-bar-thick specifies a thicker progress bar.  Default is 1
-# pixel; thick is 2 pixels if set to true.
+# pixel; thick is 2 pixels if set to true. Also makes the progress box
+# border 2 pixels, and the slot font bold.
 #
 # 'inverse-colors' (option -K/--inverse) specifies use of an inverse
 # color palette. Palettes are for Seq66 drawing areas, not for the
@@ -87,23 +89,22 @@ look empty with a space.
 
 [user-interface-settings]
 
+swap-coordinates = false
 mainwnd-rows = 4
 mainwnd-columns = 8
 mainwnd-spacing = 2
 default-zoom = 2
 global-seq-feature = false
-progress-bar-thick = true
+progress-bar-thick = false
 inverse-colors = false
 dark-theme = false
 window-redraw-rate = 40
 window-scale = 1
 window-scale-y = 1
 
-# [user-midi-ppqn]
-#
-# Seq66 separates file PPQN from the Seq66 PPQN the user wants.
-# 'default-ppqn' specifies the Seq66 PPQN, from 32 to 19200, default
-# = 192. 'use-file-ppqn' (recommended) indicates to use file PPQN.
+# Seq66 separates file PPQN from the Seq66 PPQN. 'default-ppqn'
+# specifies the Seq66 PPQN, from 32 to 19200, default = 192.
+# 'use-file-ppqn' (recommended) indicates to use file PPQN.
 
 [user-midi-ppqn]
 
@@ -176,14 +177,13 @@ log = "/home/user/.config/seq66/log"
 # [user-ui-tweaks]
 #
 # key-height specifies the initial height (before vertical zoom) of
-# the pattern editor keys.  Defaults to 10 pixels, ranges from 6 to
-# 32.
+# pattern editor keys.  Defaults to 10 pixels, ranges from 6 to 32.
 #
-# key-view specifies how to show the labels for each key:
+# key-view specifies the default for showing labels for each key:
 # 'octave-letters' (default), 'even_letters', 'all-letters',
 # 'even-numbers', and 'all-numbers'.
 #
-# note-resume, if active, causes notes in progress to be resumed when
+# note-resume, if active, causes notes-in-progress to be resumed when
 # the pattern is toggled back on.
 #
 # If specified, a style-sheet (e.g. 'qseq66.qss') is applied at

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-10-21
+ * \updates       2021-11-04
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -1010,6 +1010,7 @@ rcfile::write ()
      * Initial comments and MIDI control section.
      */
 
+    std::string noname;
     write_date(file, "main ('rc')");
     file <<
         "# This file holds the main configuration for Seq66. It no longer\n"
@@ -1028,11 +1029,9 @@ rcfile::write ()
         ;
 
     write_seq66_header(file, "rc", version());
-    file <<
-        "verbose = " << bool_to_string(rc().verbose()) << "\n"
-        "sets-mode = " << rc().sets_mode_string() << "\n"
-        "port-naming = " << rc().port_naming_string() << "\n"
-        ;
+    write_boolean(file, "verbose", rc().verbose());
+    write_string(file, "sets-mode", rc().sets_mode_string());
+    write_string(file, "port-naming", rc().port_naming_string());
 
     /*
      * [comments]
@@ -1114,7 +1113,6 @@ rcfile::write ()
 
     std::string usrname = rc_ref().user_filespec();
     usrname = rc_ref().trim_home_directory(usrname);
-
     file << "\n"
         "# Provides a flag and a file-name for 'user' settings. Use '\"\"' \n"
         "# to indicate no 'usr' file. If none, there are no special user\n"
@@ -1125,7 +1123,6 @@ rcfile::write ()
         file, "[usr-file]",
         rc_ref().user_filename(), rc_ref().user_file_active()
     );
-
     file << "\n"
         "# Provides a play-list file and flag to activate it. If no list, use\n"
         "# '\"\"' and set active = false. Use the extension '.playlist'. Even\n"
@@ -1139,8 +1136,7 @@ rcfile::write ()
     std::string mbasedir = rc_ref().midi_base_directory();
     plname = rc_ref().trim_home_directory(plname);
     write_file_status(file, "[playlist]", plname, rc_ref().playlist_active());
-    mbasedir = add_quotes(mbasedir);
-    file << "base-directory = " << mbasedir << "\n";
+    write_string(file, "base-directory", mbasedir, true);
 
     file << "\n"
        "# Provides a flag and file-name for note-mapping. '\"\"' indicates\n"
@@ -1289,8 +1285,8 @@ rcfile::write ()
 
         mapstatus += "active";
         file << "\n"
-           "# This table, if present, allows the pattern to set buss numbers\n"
-           "# as usual, but the use the table to look up the true buss number\n"
+           "# This table allows the pattern to set buss numbers as usual,\n"
+           "# but the use the table to look up the true buss number\n"
            "# by the short form of the port name. Thus, if the ports change\n"
            "# their order in the MIDI system, the pattern can still output to\n"
            "# the proper port. The short names are the same with ALSA or with\n"
@@ -1414,12 +1410,11 @@ rcfile::write ()
     write_boolean(file, "save-old-mutes", rc_ref().save_old_mutes());
 
     std::string lud = rc_ref().last_used_dir();
-    lud = add_quotes(lud);
     file << "\n"
         "# Specifies the last-used and currently-active directory.\n"
         "\n[last-used-dir]\n\n"
-        << lud << "\n"
         ;
+    write_string(file, noname, rc_ref().last_used_dir(), true);
 
     /*
      *  Feature from Kepler34.
@@ -1441,8 +1436,7 @@ rcfile::write ()
         for (int i = 0; i < count; ++i)
         {
             std::string rfilespec = rc_ref().recent_file(i, false);
-            rfilespec = add_quotes(rfilespec);
-            file << rfilespec << "\n";
+            write_string(file, noname, rfilespec, true);
         }
     }
 

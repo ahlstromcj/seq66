@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-09-21
+ * \updates       2021-11-04
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -366,7 +366,7 @@ configfile::get_variable
 }
 
 /**
- *  Parses a line of the form "name = value".  Now exposed for used outside of
+ *  Parses a line of the form "name = value".  Now exposed for use outside of
  *  the get_variable() function.  This function assumes that the line has been
  *  found.
  *
@@ -535,6 +535,37 @@ configfile::write_float
 )
 {
     file << name << " = " << value << "\n";
+}
+
+/**
+ *  Handles a number of write-string cases.  We make copies of the string
+ *  value for internal use by this function.  Can optionally make sure the
+ *  value is quoted.  Empty strings are always quoted.
+ */
+
+void
+configfile::write_string
+(
+    std::ofstream & file,
+    const std::string & name,
+    std::string value,
+    bool quote_it
+)
+{
+    bool add_equals = true;
+    if (is_empty_string(name))              /* standalone, no-name string   */
+        add_equals = false;
+
+    if (is_missing_string(value))
+        quote_it = true;                    /* always quote empty strings   */
+
+    if (quote_it)
+        value = add_quotes(value);
+
+    if (add_equals)
+        file << name << " = " << value << "\n";
+    else
+        file << value << "\n";              /* a no-name value              */
 }
 
 /**

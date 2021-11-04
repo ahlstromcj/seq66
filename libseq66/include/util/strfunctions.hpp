@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-03-14 (Pi day!)
+ * \updates       2021-11-04
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -61,7 +61,7 @@ const std::string SEQ66_TRIM_CHARS_PATHS  = " /\\";
 extern bool is_empty_string (const std::string & item);
 extern std::string empty_string ();
 extern bool is_questionable_string (const std::string & item);
-extern std::string questionable_string ();
+extern const std::string & questionable_string ();
 extern bool is_missing_string (const std::string & item);
 extern bool contains (const std::string & original, const std::string & target);
 extern std::string strip_comments (const std::string & item);

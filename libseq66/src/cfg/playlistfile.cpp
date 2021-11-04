@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2021-07-31
+ * \updates       2021-11-04
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -273,13 +273,10 @@ playlistfile::parse ()
                 std::string listline = line();
                 playlist::song_list slist;
                 if (file_version_number() < s_playlist_file_version)
-                {
                     listline = strip_quotes(listline);
-                }
                 else
-                {
                     listline = extract_variable(line(), "name");
-                }
+
                 plist.ls_list_name = listline;
                 if (m_show_on_stdout)
                 {
@@ -480,12 +477,11 @@ playlistfile::write ()
     }
     write_date(file, "playlist");
     file <<
-        "# This file holds multiple playlists. It consists of 1 or more\n"
-        "# [playlist] sections.  Each has a user-specified number for sorting\n"
-        "# and MIDI control, ranging from 0 to 127. Next comes a quoted display\n"
-        "# name for this list, followed by the quoted name of the song folder\n"
-        "# using the UNIX-style separator ('/'). It should be accessible from\n"
-        "# wherever Seq66 is run.\n"
+        "# This file holds multiple playlists, with one or more [playlist]\n"
+        "# sections.  Each has a user-specified number for sorting and MIDI\n"
+        "# control, ranging from 0 to 127. Next comes a quoted name for this\n"
+        "# list, followed by the quoted name of the song folder using the UNIX\n"
+        "# separator ('/'). It should be accessible wherever Seq66 is run.\n"
         "#\n"
         "# Next is a list of tunes, each starting with a MIDI control number\n"
         "# and the quoted name of the MIDI file, sorted by the control number.\n"
@@ -506,13 +502,11 @@ playlistfile::write ()
      * [playlist-options]
      */
 
-    file << "\n"
-        << "[playlist-options]\n" << "\n"
-        ;
+    file << "\n[playlist-options]\n\n";
     write_boolean(file, "unmute-new-song", play_list().unmute_set_now());
     write_boolean(file, "deep-verify", play_list().deep_verify());
     file << "\n"
-       "# First provide the playlist settings, then its default storage folder\n"
+       "# First provide the playlist settings, its default storage folder,\n"
        "# and then list each tune with its control number. The playlist\n"
        "# number is arbitrary but unique. 0 to 127 recommended for use with\n"
        "# the MIDI playlist control. Similar for the tune numbers. Each \n"
@@ -527,14 +521,11 @@ playlistfile::write ()
     for (const auto & plpair : play_list().play_list_map())
     {
         const playlist::play_list_t & pl = plpair.second;
-        std::string listname = add_quotes(pl.ls_list_name);
-        std::string dirname = add_quotes(pl.ls_file_directory);
-        file << "\n"
-            "[playlist]\n\n"
-            << "number = " << pl.ls_midi_number << "\n"
-            << "name = " << listname << "\n"
-            << "directory = " << dirname << "\n\n"
-            ;
+        file << "\n[playlist]\n\n";
+
+        write_integer(file, "number", pl.ls_midi_number);
+        write_string(file, "name", pl.ls_list_name, true);
+        write_string(file, "directory", pl.ls_file_directory, true);
 
         /*
          * For each song, write the MIDI control number, followed only by
@@ -556,7 +547,7 @@ playlistfile::write ()
         file
         << "\n[playlist]\n\n"
            "# This is a NON-FUNCTIONAL playlist SAMPLE. Please see one of the\n"
-           "# sample playlist files shipping with Seq66.\n\n"
+           "# sample playlist files shipped with Seq66.\n\n"
             ;
     }
     file

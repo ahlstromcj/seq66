@@ -1,15 +1,12 @@
-# Seq66 0.97.1 MIDI control configuration file
+# Seq66 0.97.2 MIDI control configuration file
 #
 # /home/user/.config/seq66/qseq66.ctrl
-# Written 2021-10-13 10:08:12
+# Written 2021-11-04 14:00:22
 #
-# This file sets up MIDI I/O control for Seq66. It's format is like the
-# 'rc' file, but stored separately for flexibility. It is stored in the
-# the HOME configuration directory. To use this, list it as active, in the
-# 'rc' file's [midi-control-file] section (e.g. "nanomap.ctrl").
-
-# Version 1 adds [mute-control-out] and [automation-control-out]. Versions
-# 2 and 3 simplify the data items; 4 and 5 add more settings.
+# Sets up MIDI I/O control for Seq66. The format is like the 'rc' file,
+# in the HOME configuration directory. To use it, set it active in the
+# 'rc' [midi-control-file] section. It adds [mute-control-out],
+# [automation-control-out], a simpler format, and new settings.
 
 [Seq66]
 
@@ -25,32 +22,32 @@ Add your comment block here
 
 [midi-control-settings]
 
-# Setting 'load-midi-control = false' causes an empty MIDI control
-# to be written! Keep backups! The control-buss value ranges from 0
-# to the maximum system input buss. If set, that buss will send MIDI
-# control. 255 (0xFF) means any buss can send control. The buss(es)
-# must be enabled in the 'rc' file.  With ALSA, there is an extra
-# 'announce' buss, which alters the port numbering.
+# These are input setting for controlling Seq66.
+# 'load-midi-control' = false writes empty MIDI controls!! Keep
+# backups! 'control-buss' values range from 0 to the highest system
+# input buss. If set, that buss can send MIDI control. 255 (0xFF)
+# means any buss enabled in the 'rc' file can send control. ALSA
+# provides an extra 'announce' buss, altering port numbering.
 #
-# The 'midi-enabled' flag applies to the MIDI controls; keystrokes
-# are always enabled. Supported keyboard layouts are 'qwerty' (the
-# default), 'qwertz', and 'azerty'. AZERTY turns off the auto-shift
+# 'midi-enabled' applies to the MIDI controls; keystroke controls
+# are always enabled. Supported keyboard layouts are 'qwerty'
+# (default), 'qwertz', and 'azerty'. AZERTY turns off the auto-shift
 # feature for group-learn.
 
 load-key-controls = true
 load-midi-controls = true
 control-buss = 0xFF
-midi-enabled = false
+midi-enabled = true
 button-offset = 0
 button-rows = 4
 button-columns = 8
 keyboard-layout = qwerty
 
-# A control stanza incorporates key control and MIDI, but keys
-# support only 'toggle'; key-release is an 'invert'. The leftmost
-# number on each line is the pattern number (e.g. 0 to 31); the group
-# number, same range; or an automation control number.  This number is
-# is followed by three groups of bracketed numbers, each providing 3
+# A control stanza incorporates key control and MIDI. Keys support
+# only 'toggle'; key-release is an 'invert'. The leftmost number on
+# each line is the pattern number (e.g. 0 to 31), the group number
+# (same range), or an automation control number.  This number is
+# followed by three groups of bracketed numbers, each providing 3
 # types of control:
 #
 #    Normal:           [toggle]    [on]        [off]
@@ -68,7 +65,7 @@ keyboard-layout = qwerty
 # ignored); if set to 0x00, the control is disabled; 'd0' is the
 # first data value (e.g. if status is 0x90 (Note On), d0 is the note
 # number; d1min to d1max is the range of data values detectable (e.g.
-# 1 to 127 indicates that any non-zero velocity invokes the control.
+# 1 to 127 indicates any non-zero velocity invokes the control.
 # Hex values can be used; precede with '0x'.
 #
 #  ---------------------- Loop, group, or automation-slot number

@@ -96,8 +96,6 @@
 #include "util/calculations.hpp"        /* seq66::bpm_from_tempo_us() etc.  */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
 
-#define USE_WRITE_OF_MUTE_NAMES_TO_MIDI /* EXPERIMENTAL */
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -2133,24 +2131,19 @@ midifile::parse_mute_groups (performer & p)
             }
             else
             {
-#if defined USE_WRITE_OF_MUTE_NAMES_TO_MIDI
                 std::string gname;
-#endif
                 mutes.legacy_mutes(false);
                 for (unsigned g = 0; g < groupcount; ++g)
                 {
                     midibooleans mutebits;
                     midilong group = read_byte();
-#if defined USE_WRITE_OF_MUTE_NAMES_TO_MIDI
                     gname.clear();
-#endif
                     for (unsigned s = 0; s < groupsize; ++s)
                     {
                         midibyte gmutestate = read_byte();  /* byte for a bit */
                         bool status = gmutestate != 0;
                         mutebits.push_back(midibool(status));
                     }
-#if defined USE_WRITE_OF_MUTE_NAMES_TO_MIDI
                     char letter = (char) read_byte();
                     if (letter == '"')                     /* next a quote?  */
                     {
@@ -2165,13 +2158,9 @@ midifile::parse_mute_groups (performer & p)
                     }
                     else
                         --m_pos;                            /* put it back  */
-#endif
+
                     if (mutes.load(group, mutebits))
-                    {
-#if defined USE_WRITE_OF_MUTE_NAMES_TO_MIDI
                         mutes.group_name(group, gname);
-#endif
-                    }
                     else
                         break;                              /* often duplicate  */
                 }
