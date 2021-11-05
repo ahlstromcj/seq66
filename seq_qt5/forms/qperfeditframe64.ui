@@ -43,6 +43,9 @@
    </property>
    <item row="2" column="0">
     <layout class="QHBoxLayout" name="rollHorizLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QScrollArea" name="namesScrollArea">
        <property name="sizePolicy">
@@ -112,7 +115,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>681</width>
+          <width>687</width>
           <height>310</height>
          </rect>
         </property>
@@ -179,6 +182,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="dummyButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="minimumSize">
         <size>
          <width>84</width>
@@ -196,6 +202,9 @@
        </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -227,7 +236,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>662</width>
+          <width>672</width>
           <height>16</height>
          </rect>
         </property>
@@ -242,20 +251,26 @@
      </item>
      <item>
       <widget class="QPushButton" name="dummyButton2">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="minimumSize">
         <size>
-         <width>10</width>
+         <width>6</width>
          <height>24</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>24</width>
+         <width>14</width>
          <height>24</height>
         </size>
        </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
        </property>
       </widget>
      </item>

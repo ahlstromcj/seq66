@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-04
+ * \updates       2021-11-05
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2795,7 +2795,8 @@ qsmainwnd::panic()
 void
 qsmainwnd::slot_set_home ()
 {
-    update_bank(0);
+    // update_bank(0);
+    ui->spinBank->setValue(0);
 }
 
 /**
@@ -2862,6 +2863,12 @@ qsmainwnd::show_message_box (const std::string & msg_text)
             m_msg_error->exec();
         }
     }
+}
+
+void
+qsmainwnd::enable_save (bool flag)
+{
+    ui->actionSave->setEnabled(flag);
 }
 
 void

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-11-04
+ * \updates       2021-11-05
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3169,37 +3169,15 @@ public:                                 /* access functions for the containers *
         return mutes().group_name(group);
     }
 
-    /*
-     * TODO: modify() needed.
-     */
-
-    void group_name (mutegroup::number gmute, const std::string & n)
-    {
-        if (mutes().group_load_from_midi() && n != mutes().group_name(gmute))
-            modify();
-
-        mutes().group_name(gmute, n);
-    }
+    bool group_name (mutegroup::number gmute, const std::string & n);
 
     bool group_format_hex () const
     {
         return mutes().group_format_hex();
     }
 
-    void group_format_hex (bool flag)
-    {
-        if (flag != mutes().group_format_hex())
-            modify();
-
-        mutes().group_format_hex(flag);
-    }
-
-    void group_save (bool bmidi, bool bmutes)
-    {
-        mutes().group_save(bmidi, bmutes);
-        if (bmidi)
-            modify();
-    }
+    void group_format_hex (bool flag);
+    bool group_save (bool bmidi, bool bmutes);
 
     bool group_save_to_midi () const
     {
@@ -3226,13 +3204,7 @@ public:                                 /* access functions for the containers *
         return mutes().strip_empty();
     }
 
-    void strip_empty (bool flag)
-    {
-        if (flag != mutes().strip_empty())
-            modify();
-
-        mutes().strip_empty(flag);
-    }
+    bool strip_empty (bool flag);
 
     const mutegroups & mutes () const
     {

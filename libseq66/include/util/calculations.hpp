@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-10-18
+ * \updates       2021-11-05
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -101,16 +101,16 @@ extern bool pulses_to_midi_measures
     const midi_timing & seqparms,
     midi_measures & measures
 );
-extern std::string pulses_to_timestring
+extern std::string pulses_to_time_string
 (
     midipulse p,
     const midi_timing & timinginfo
 );
-extern std::string pulses_to_timestring
+extern std::string pulses_to_time_string
 (
-    midipulse pulses, midibpm bpm, int ppqn,
-    bool showus = true, bool showhrs = true
+    midipulse pulses, midibpm bpm, int ppqn, bool showus = true
 );
+extern int pulses_to_hours (midipulse pulses, midibpm bpm, int ppqn);
 extern midipulse measurestring_to_pulses
 (
     const std::string & measures,

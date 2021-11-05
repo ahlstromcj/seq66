@@ -332,17 +332,6 @@ pulses_to_midi_measures
     bool result = (W > 0) && (P > 0) && (B > 0);
     if (result)
     {
-#if defined USE_OLD_MEASURES_CALCULATION
-        double pf = 4.0 * P;                    /* pulses in 4 Q notes      */
-        double tbc = p * W / pf;                /* total beat-count for p   */
-        midipulse Lp = midipulse(pf) / W;       /* beat length in pulses    */
-        int beatticks = int(tbc) * Lp;          /* pulses in total beats    */
-        int b = int(tbc) % B;                   /* beat within measure re 0 */
-        int m = int(tbc / B) + 1;               /* number of measures       */
-        measures.measures(m);                   /* number of measures       */
-        measures.beats(b + 1);                  /* beats within the measure */
-        measures.divisions(int(p - beatticks)); /* leftover pulses / ticks  */
-#else
         double qnotes = 4.0 * B / W;            /* # of Q notes per measure */
         double measlength = P * qnotes;         /* # of pulses in a measure */
         int beatticks = measlength / B;         /* # of pulses in a beat    */
@@ -351,14 +340,13 @@ pulses_to_midi_measures
         measures.measures(m);                   /* number of measures       */
         measures.beats(metro);                  /* beats within the measure */
         measures.divisions(int(p % beatticks)); /* leftover pulses / ticks  */
-#endif
     }
     return result;
 }
 
 /**
  *  Converts a MIDI pulse/ticks/clock value into a string that represents
- *  "hours:minutes:seconds.fraction".  See the other pulses_to_timestring()
+ *  "hours:minutes:seconds.fraction".  See the other pulses_to_time_string()
  *  overload.
  *
  * \param p
@@ -370,13 +358,13 @@ pulses_to_midi_measures
  *      pulse-per-quarter-note of the song.
  *
  * \return
- *      Returns the return-value of the other pulses_to_timestring() function.
+ *      Returns the return-value of the other pulses_to_time_string() function.
  */
 
 std::string
-pulses_to_timestring (midipulse p, const midi_timing & timinginfo)
+pulses_to_time_string (midipulse p, const midi_timing & timinginfo)
 {
-    return pulses_to_timestring
+    return pulses_to_time_string
     (
         p, timinginfo.beats_per_minute(), timinginfo.ppqn()
     );
@@ -403,50 +391,35 @@ pulses_to_timestring (midipulse p, const midi_timing & timinginfo)
  *      Provides the pulses-per-quarter-note of the song.
  *
  * \param showus
- *      If true (the default), shows the microseconds as well.
- *
- * \param showhrs
- *      If true (the default), shows the hours even if 0.
+ *      If true (the default), shows the microseconds as well.  Hours are now
+ *      shown only if greater than zero.
  *
  * \return
  *      Returns the time-string representation of the pulse (ticks) value.
  */
 
 std::string
-pulses_to_timestring
-(
-    midipulse p, midibpm bpm, int ppqn,
-    bool showus, bool showhrs
-)
+pulses_to_time_string (midipulse p, midibpm bpm, int ppqn, bool showus)
 {
     unsigned long microseconds = ticks_to_delta_time_us(p, bpm, ppqn);
     int seconds = int(microseconds / 1000000UL);
     int minutes = seconds / 60;
     int hours = seconds / (60 * 60);
+    int hoursecs = hours * 60 * 60;
+    int minutesecs = minutes * 60;
     minutes -= hours * 60;
-    seconds -= (hours * 60 * 60) + (minutes * 60);
-    microseconds -= (hours * 60 * 60 + minutes * 60 + seconds) * 1000000UL;
+    seconds -= hoursecs + minutesecs;
 
-    char tmp[64];
-    if (! showus || (microseconds == 0))
+    char tmp[32];
+    if (showus)
     {
-        /*
-         * Why the spaces?  It is inconsistent.  But see the
-         * timestring_to_pulses() function first.
-         */
-
-        if (hours > 0 || showhrs)
-            snprintf(tmp, sizeof tmp, "%03d:%d:%02d   ", hours, minutes, seconds);
-        else
-            snprintf(tmp, sizeof tmp, "%d:%02d   ", minutes, seconds);
-    }
-    else
-    {
-        if (hours > 0 || showhrs)
+        microseconds -= (hoursecs + minutesecs + seconds) * 1000000UL;
+        microseconds /= 10000L;
+        if (hours > 0)
         {
             snprintf
             (
-                tmp, sizeof tmp, "%03d:%d:%02d.%02lu",
+                tmp, sizeof tmp, "%d:%02d:%02d.%02lu",
                 hours, minutes, seconds, microseconds
             );
         }
@@ -454,12 +427,36 @@ pulses_to_timestring
         {
             snprintf
             (
-                tmp, sizeof tmp, "%d:%02d.%02lu",
+                tmp, sizeof tmp, "%02d:%02d.%02lu",
                 minutes, seconds, microseconds
             );
         }
     }
+    else
+    {
+        /*
+         * Why the spaces?  It is inconsistent.  But see the
+         * timestring_to_pulses() function first.
+         */
+
+        if (hours > 0)
+            snprintf(tmp, sizeof tmp, "%d:%02d:%02d   ", hours, minutes, seconds);
+        else
+            snprintf(tmp, sizeof tmp, "%02d:%02d   ", minutes, seconds);
+    }
     return std::string(tmp);
+}
+
+/**
+ *  A handy function for checking for long songs (an hour or more).
+ */
+
+int
+pulses_to_hours (midipulse p, midibpm bpm, int ppqn)
+{
+    unsigned long microseconds = ticks_to_delta_time_us(p, bpm, ppqn);
+    int seconds = int(microseconds / 1000000UL);
+    return seconds / (60 * 60);
 }
 
 /**

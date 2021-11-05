@@ -1,7 +1,7 @@
 # README for Seq66 0.97.2
 
 Chris Ahlstrom
-2015-09-10 to 2021-11-04
+2015-09-10 to 2021-11-05
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -95,15 +95,13 @@ Windows, and using a conventional source tarball.
         *   Issue #63: Initial work on rotating numbering of patterns, sets, and
             mutes, so that numbers vary faster by column than by row.
         *   Issue #64: Fix a bug in optional GUI, testing with Agordejo (NSM).
-        *   Added textfix.qss as an example of making disabled text easier to
-            read.
+        *   Added textfix.qss to make disabled text easier to read in themes.
         *   Improved the saving/restoring of Edit / Preferences.  Added option
             "Bold Grid Slots" to make the progress bar and progress border thick,
             and the slot font bold.
         *   Added the ability to reload the configuration via a button press
             that restarts the application.
-        *   In the live grid, no longer show progress bar moving in unmuted
-            tracks.
+        *   No longer show the grid slot's progress bar moving in muted tracks.
         *   Mute-group names now stored in the 'mutes' file.  Also able to edit
             them in the Mutes tab.
         *   More streamlining of configuration writing.

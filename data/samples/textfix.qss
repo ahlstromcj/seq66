@@ -3,12 +3,17 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-10-20
- * \updates       2021-10-20
+ * \updates       2021-11-05
  * \license       Public domain
  *
  *  Provides a sample Qt style sheet for Seq66.  Makes the text of disabled
  *  elements easier to see in some light themes.
  */
+
+QLabel
+{
+    color : cornflowerblue;
+}
 
 QLineEdit:disabled
 {

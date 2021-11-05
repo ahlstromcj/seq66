@@ -600,7 +600,7 @@ editable_event::time_as_minutes ()
 {
     if (not_nullptr(parent()))
     {
-        return pulses_to_timestring(timestamp(), parent()->timing());
+        return pulses_to_time_string(timestamp(), parent()->timing());
     }
     else
     {

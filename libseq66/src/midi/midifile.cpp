@@ -2217,7 +2217,6 @@ midifile::write_mute_groups (const performer & p)
                     for (auto mutestatus : mutebits)
                         write_byte(bool(mutestatus) ? 1 : 0);   /* better!  */
 
-#if defined USE_WRITE_OF_MUTE_NAMES_TO_MIDI
                     std::string gname = m.name();
                     if (! gname.empty())
                     {
@@ -2227,8 +2226,6 @@ midifile::write_mute_groups (const performer & p)
 
                         write_byte(midibyte('"'));
                     }
-#endif
-
                 }
                 else
                     break;
@@ -3041,8 +3038,6 @@ midifile::write_proprietary_track (performer & p)
             unsigned gcount = to_compact_byte(groupcount);
             unsigned gsize = to_compact_byte(groupsize);
 
-#if defined USE_WRITE_OF_MUTE_NAMES_TO_MIDI
-
             /*
              * Add up the size of each mute-group name, including two
              * double-quotes.
@@ -3050,8 +3045,6 @@ midifile::write_proprietary_track (performer & p)
 
             const mutegroups & mutes = p.mutes();
             gsize += mutes.group_names_letter_count();
-#endif
-
             write_split_long(gcount, gsize);
         }
         (void) write_mute_groups(p);

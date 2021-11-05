@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-11-03
+ * \updates       2021-11-05
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -193,6 +193,7 @@ private:
     void clear_pattern_mutes ();
     bool load_mutegroups (const std::string & fullfilespec);
     bool save_mutegroups (const std::string & fullfilespec);
+    void enable_save ();
 
 signals:
 
@@ -230,8 +231,6 @@ private:
      */
 
     Ui::qmutemaster * ui;
-
-private:
 
     /**
      *  A timer for refreshing the frame as needed.

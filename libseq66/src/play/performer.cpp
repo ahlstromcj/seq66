@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-10-30
+ * \updates       2021-11-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1078,13 +1078,13 @@ std::string
 performer::pulses_to_measure_string (midipulse tick) const
 {
     midi_timing mt(bpm(), get_beats_per_bar(), get_beat_width(), ppqn());
-    return pulses_to_measurestring(tick, mt);
+    return seq66::pulses_to_measurestring(tick, mt);
 }
 
 std::string
 performer::pulses_to_time_string (midipulse tick) const
 {
-    return pulses_to_timestring(tick, bpm(), ppqn(), false);
+    return seq66::pulses_to_time_string(tick, bpm(), ppqn());
 }
 
 std::string
@@ -4379,7 +4379,7 @@ std::string
 performer::duration () const
 {
     midipulse tick = get_max_extent();
-    return pulses_to_timestring(tick, bpm(), ppqn(), false, false);
+    return seq66::pulses_to_time_string(tick, bpm(), ppqn());
 }
 
 /**
@@ -5657,6 +5657,56 @@ performer::populate_default_ops ()
         else
             break;
     }
+    return result;
+}
+
+/*
+ * -------------------------------------------------------------------------
+ *  Mutes / Mute-groups
+ * -------------------------------------------------------------------------
+ */
+
+bool
+performer::group_name (mutegroup::number gmute, const std::string & n)
+{
+    bool result = (mutes().group_save_to_midi() &&
+        n != mutes().group_name(gmute));
+
+    mutes().group_name(gmute, n);
+    if (result)
+        modify();
+
+    return result;
+}
+
+void
+performer::group_format_hex (bool flag)
+{
+    if (flag != mutes().group_format_hex())
+        modify();
+
+    mutes().group_format_hex(flag);
+}
+
+bool
+performer::group_save (bool bmidi, bool bmutes)
+{
+    bool result = bmidi != group_save_to_midi();
+    mutes().group_save(bmidi, bmutes);
+    if (result)
+        modify();
+
+    return result;
+}
+
+bool
+performer::strip_empty (bool flag)
+{
+    bool result = flag != mutes().strip_empty();
+    mutes().strip_empty(flag);
+    if (result)
+        modify();
+
     return result;
 }
 
