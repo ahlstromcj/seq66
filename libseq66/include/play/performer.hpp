@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-11-02
+ * \updates       2021-11-04
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2102,6 +2102,12 @@ public:
     }
 
     bool reload_mute_groups (std::string & errmessage);
+
+    void load_mute_groups (bool bmidi, bool bmutes)
+    {
+        mutes().load_mute_groups(bmidi, bmutes);
+    }
+
     bool set_ctrl_status
     (
         automation::action a,
@@ -2307,6 +2313,16 @@ public:
     bool unapply_mutes (mutegroup::number group);
     bool toggle_mutes (mutegroup::number group);
     bool toggle_active_mutes (mutegroup::number group);
+
+    bool toggle_active_only () const
+    {
+        return mutes().toggle_active_only();
+    }
+
+    void toggle_active_only (bool flag)
+    {
+        mutes().toggle_active_only(flag);
+    }
 
     midibpm decrement_beats_per_minute ();
     midibpm increment_beats_per_minute ();
@@ -3159,11 +3175,63 @@ public:                                 /* access functions for the containers *
 
     void group_name (mutegroup::number gmute, const std::string & n)
     {
-        // Too much. FIXME
-        // if (n != mutes().group_name(gmute))
-        //     modify();
+        if (mutes().group_load_from_midi() && n != mutes().group_name(gmute))
+            modify();
 
         mutes().group_name(gmute, n);
+    }
+
+    bool group_format_hex () const
+    {
+        return mutes().group_format_hex();
+    }
+
+    void group_format_hex (bool flag)
+    {
+        if (flag != mutes().group_format_hex())
+            modify();
+
+        mutes().group_format_hex(flag);
+    }
+
+    void group_save (bool bmidi, bool bmutes)
+    {
+        mutes().group_save(bmidi, bmutes);
+        if (bmidi)
+            modify();
+    }
+
+    bool group_save_to_midi () const
+    {
+        return mutes().group_save_to_midi();
+    }
+
+    bool group_load_from_midi () const
+    {
+        return mutes().group_load_from_midi();
+    }
+
+    bool group_load_from_mutes () const
+    {
+        return mutes().group_load_from_mutes();
+    }
+
+    bool group_save_to_mutes () const
+    {
+        return mutes().group_save_to_mutes();
+    }
+
+    bool strip_empty () const
+    {
+        return mutes().strip_empty();
+    }
+
+    void strip_empty (bool flag)
+    {
+        if (flag != mutes().strip_empty())
+            modify();
+
+        mutes().strip_empty(flag);
     }
 
     const mutegroups & mutes () const
@@ -3176,12 +3244,9 @@ public:                                 /* access functions for the containers *
         return m_mute_groups;
     }
 
-    bool clear_mute_groups ()
-    {
-        return mutes().clear();
-    }
+    bool clear_mute_groups ();
 
-    bool reset_mute_groups ()
+    bool reset_mute_groups ()                       /* see clear_mutes()    */
     {
         return mutes().reset_defaults();
     }

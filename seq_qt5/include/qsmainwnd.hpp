@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-26
+ * \updates       2021-11-04
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -410,6 +410,7 @@ signals:
 private slots:
 
     void slot_summary_save ();
+    void slot_set_home ();
     void update_bank (int newBank);
     void update_bank_text ();
     void start_playing ();

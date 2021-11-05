@@ -779,6 +779,13 @@ matter what sets-mode is in force. </string>
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="setHomeButton">
+        <property name="text">
+         <string>Set Home</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="setNumberLabel">
         <property name="minimumSize">
          <size>

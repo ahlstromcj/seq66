@@ -5717,7 +5717,8 @@ performer::put_mutes ()
 /**
  *  Clears the mute groups.  If there any to clear, then the subscribers are
  *  notified.  If the "mutes" "save-mutes-to" setting indicates saving it to
- *  the MIDI file, then this becomes a modify action.
+ *  the MIDI file, then this becomes a modify action. Compare to the
+ *  clear_mute_groups() function.
  */
 
 bool
@@ -5735,6 +5736,16 @@ performer::clear_mutes ()
             notify_mutes_change(mutegroup::unassigned(), c);
         }
     }
+    return result;
+}
+
+bool
+performer::clear_mute_groups ()
+{
+    bool result = mutes().clear();              /* clears mutes container   */
+    if (result)
+        modify();
+
     return result;
 }
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-02
+ * \updates       2021-11-04
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -713,6 +713,11 @@ qsmainwnd::qsmainwnd
     QString bname = qt(perf().bank_name(0));
     ui->txtBankName->setText(bname);
     ui->spinBank->setRange(0, perf().screenset_max() - 1);
+    connect
+    (
+        ui->setHomeButton, SIGNAL(clicked(bool)),
+        this, SLOT(slot_set_home())
+    );
     connect
     (
         ui->spinBank, SIGNAL(valueChanged(int)),
@@ -2781,6 +2786,16 @@ qsmainwnd::panic()
         ui->btnPause->setChecked(false);
         ui->btnPlay->setChecked(false);
     }
+}
+
+/**
+ *  Quickly changes to set 0.
+ */
+
+void
+qsmainwnd::slot_set_home ()
+{
+    update_bank(0);
 }
 
 /**

@@ -131,8 +131,7 @@ qmutemaster::qmutemaster
         ui->m_radio_hex, SIGNAL(toggled(bool)),
         this, SLOT(slot_hex_mode(bool))
     );
-    set_bin_hex(! cb_perf().mutes().group_format_hex());
-
+    set_bin_hex(! cb_perf().group_format_hex());
     ui->m_button_trigger->setEnabled(true);
     ui->m_button_trigger->setCheckable(true);
     connect
@@ -179,14 +178,14 @@ qmutemaster::qmutemaster
 
     connect(ui->m_button_save, SIGNAL(clicked()), this, SLOT(slot_save()));
     ui->m_check_to_midi->setEnabled(true);
-    ui->m_check_to_midi->setChecked(cb_perf().mutes().group_save_to_midi());
+    ui->m_check_to_midi->setChecked(cb_perf().group_save_to_midi());
     connect
     (
         ui->m_check_to_midi, SIGNAL(stateChanged(int)),
         this, SLOT(slot_write_to_midi())
     );
     ui->m_check_to_mutes->setEnabled(true);
-    ui->m_check_to_mutes->setChecked(cb_perf().mutes().group_save_to_mutes());
+    ui->m_check_to_mutes->setChecked(cb_perf().group_save_to_mutes());
     connect
     (
         ui->m_check_to_mutes, SIGNAL(stateChanged(int)),
@@ -201,7 +200,7 @@ qmutemaster::qmutemaster
     );
 
     ui->m_check_strip_empty->setEnabled(true);
-    ui->m_check_strip_empty->setChecked(cb_perf().mutes().strip_empty());
+    ui->m_check_strip_empty->setChecked(cb_perf().strip_empty());
     connect
     (
         ui->m_check_strip_empty, SIGNAL(stateChanged(int)),
@@ -211,7 +210,7 @@ qmutemaster::qmutemaster
     ui->m_check_from_mutes->setEnabled(true);
     ui->m_check_from_mutes->setChecked
     (
-        cb_perf().mutes().group_load_from_mutes()
+        cb_perf().group_load_from_mutes()
     );
     connect
     (
@@ -222,7 +221,7 @@ qmutemaster::qmutemaster
     ui->m_check_from_midi->setEnabled(true);
     ui->m_check_from_midi->setChecked
     (
-        cb_perf().mutes().group_load_from_midi()
+        cb_perf().group_load_from_midi()
     );
     connect
     (
@@ -233,7 +232,7 @@ qmutemaster::qmutemaster
     ui->m_check_toggle_active->setEnabled(true);
     ui->m_check_toggle_active->setChecked
     (
-        cb_perf().mutes().toggle_active_only()
+        cb_perf().toggle_active_only()
     );
     connect
     (
@@ -378,13 +377,6 @@ qmutemaster::set_current_group (int group)
         int gridrow, gridcolumn;
         if (mutegroups::group_to_grid(group, gridrow, gridcolumn))
         {
-#if 0
-            if (m_button_row >= 0)          // ???????
-            {
-                QPushButton * temp = m_group_buttons[group];
-                temp->setEnabled(false);
-            }
-#endif
             m_button_row = gridrow;
             m_button_column = gridcolumn;
             m_current_group = group;
@@ -602,7 +594,7 @@ qmutemaster::slot_mutes_file_modify ()
 void
 qmutemaster::slot_bin_mode (bool ischecked)
 {
-    cb_perf().mutes().group_format_hex(! ischecked);
+    cb_perf().group_format_hex(! ischecked);
     set_bin_hex(ischecked);
     ui->m_button_save->setEnabled(true);
 }
@@ -610,7 +602,7 @@ qmutemaster::slot_bin_mode (bool ischecked)
 void
 qmutemaster::slot_hex_mode (bool ischecked)
 {
-    cb_perf().mutes().group_format_hex(ischecked);
+    cb_perf().group_format_hex(ischecked);
     set_bin_hex(! ischecked);
     ui->m_button_save->setEnabled(true);
 }
@@ -772,7 +764,7 @@ qmutemaster::slot_write_to_midi ()
 {
     bool midichecked = ui->m_check_to_midi->isChecked();
     bool muteschecked = ui->m_check_to_mutes->isChecked();
-    cb_perf().mutes().group_save(midichecked, muteschecked);
+    cb_perf().group_save(midichecked, muteschecked);
 }
 
 void
@@ -780,14 +772,14 @@ qmutemaster::slot_write_to_mutes ()
 {
     bool midichecked = ui->m_check_to_midi->isChecked();
     bool muteschecked = ui->m_check_to_mutes->isChecked();
-    cb_perf().mutes().group_save(midichecked, muteschecked);
+    cb_perf().group_save(midichecked, muteschecked);
 }
 
 void
 qmutemaster::slot_strip_empty ()
 {
     bool ischecked = ui->m_check_strip_empty->isChecked();
-    cb_perf().mutes().strip_empty(ischecked);
+    cb_perf().strip_empty(ischecked);
 }
 
 void
@@ -795,7 +787,7 @@ qmutemaster::slot_load_mutes ()
 {
     bool muteschecked = ui->m_check_from_mutes->isChecked();
     bool midichecked = ui->m_check_from_midi->isChecked();
-    cb_perf().mutes().load_mute_groups(midichecked, muteschecked);
+    cb_perf().load_mute_groups(midichecked, muteschecked);
 }
 
 void
@@ -808,7 +800,7 @@ void
 qmutemaster::slot_toggle_active ()
 {
     bool ischecked = ui->m_check_toggle_active->isChecked();
-    cb_perf().mutes().toggle_active_only(ischecked);
+    cb_perf().toggle_active_only(ischecked);
 }
 
 /**
