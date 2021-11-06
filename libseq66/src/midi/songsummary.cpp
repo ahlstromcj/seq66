@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2021-10-26
+ * \updates       2021-11-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -233,7 +233,7 @@ songsummary::write_mute_groups
                 if (++count % 8 == 0)
                     file << " ";
             }
-            file << std::endl;
+            file << " \"" << m.name() << "\"" << std::endl;
         }
         else
         {

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-11-03
+ * \updates       2021-11-05
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -464,6 +464,11 @@ public:
         (
             m_group_save == saving::midi || m_group_save == saving::both
         );
+    }
+
+    bool saveable_to_midi () const
+    {
+        return group_save_to_midi() && any();
     }
 
     loading group_load () const

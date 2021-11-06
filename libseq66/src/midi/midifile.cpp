@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-11-01
+ * \updates       2021-11-06
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -104,12 +104,10 @@ namespace seq66
 {
 
 /**
- *  Magic numbers for handling mute-group formats.
+ *  Magic number for handling mute-group formats.
  */
 
-static const unsigned c_compact_mutes_shift    = 8;         /* 1 << 8 = 256 */
-static const unsigned c_legacy_mute_group      = 1024;      /* 0x0400       */
-static const unsigned c_compact_mute_group     = 256 << 16;
+static const unsigned c_legacy_mute_group   = 1024;         /* 0x0400       */
 
 /**
  *  A manifest constant for controlling the length of the stream buffering
@@ -204,24 +202,6 @@ static bool
 is_proptag (midilong p)
 {
     return (miditag(p) & c_prop_tag_word) == c_prop_tag_word;
-}
-
-static unsigned
-to_compact_byte (unsigned value)
-{
-    if (value > 0)
-        value <<= c_compact_mutes_shift;
-
-    return value;
-}
-
-static unsigned
-from_compact_byte (unsigned value)
-{
-    if (value > 0)
-        value >>= c_compact_mutes_shift;
-
-    return value;
 }
 
 /**
@@ -441,30 +421,27 @@ midifile::read_long ()
 midilong
 midifile::read_split_long (unsigned & highbytes, unsigned & lowbytes)
 {
-    midilong result = read_long();              /* amount of data           */
-    if (result == c_legacy_mute_group)
+    unsigned short high = static_cast<unsigned short>(read_byte());
+    high <<= 8;
+    high += static_cast<unsigned short>(read_byte());
+
+    unsigned short low = static_cast<unsigned short>(read_byte());
+    low <<= 8;
+    low += static_cast<unsigned short>(read_byte());
+
+    midilong result = (midilong(high) << 16) + midilong(low);
+    if (result == c_legacy_mute_group)                  /* 1024 (0x0400)    */
     {
-        highbytes = 32U;
-        lowbytes = 32U;
+        high = 32U;
+        low  = 32U;
     }
     else if (result == 0)
     {
-        highbytes = 0;
-        lowbytes = 0;
+        high = 0;
+        low  = 0;
     }
-    else
-    {
-        if (result >= c_compact_mute_group)
-        {
-            highbytes = from_compact_byte(result & 0xFFFF0000 >> 16);
-            lowbytes = from_compact_byte(result & 0x0000FFFF);
-        }
-        else
-        {
-            highbytes = result & 0xFFFF0000 >> 16;      /* was 8, bug! */
-            lowbytes = result & 0x0000FFFF;
-        }
-    }
+    highbytes = static_cast<unsigned>(high);
+    lowbytes = static_cast<unsigned>(low);
     return result;
 }
 
@@ -1428,6 +1405,10 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 s.loop_count_max(int(read_short()));
                                 len -= 2;
                             }
+                            else if (seqspec == c_mutegroups)
+                            {
+                                /* handled in parse_proprietary_track() */
+                            }
                             else if (is_proptag(seqspec))
                             {
                                 (void) set_error_dump
@@ -2106,10 +2087,6 @@ midifile::parse_mute_groups (performer & p)
         long len = long(read_split_long(groupcount, groupsize));
         if (len > 0)
         {
-            /*
-             * Alternative: legacyformat = len < c_compact_mute_group;
-             */
-
             bool legacyformat = len == c_legacy_mute_group;
             p.mutes().clear();                      /* makes it empty       */
             if (legacyformat)
@@ -2182,7 +2159,7 @@ bool
 midifile::write_mute_groups (const performer & p)
 {
     const mutegroups & mutes = p.mutes();
-    bool result = mutes.group_save_to_midi();
+    bool result = mutes.saveable_to_midi();
     if (result)
     {
         if (rc().save_old_mutes())
@@ -2262,22 +2239,26 @@ midifile::write_long (midilong x)
  * \param [out] highbytes
  *      Provides the value of the most significant 2 bytes of the four-byte
  *      ("long") value.  The most significant bytes are masked out; the values
- *      are limited to range from 0 to 65535, a short value. For mute-groups,
- *      this is the number of mute-groups.
+ *      are limited to range from 0 to 65535 = 0xFFFF, a short value. For
+ *      mute-groups, this is the number of mute-groups.
  *
  * \param [out] lowbytes
  *      Provides the value of the least significant 2 bytes of the four-byte
  *      ("long") value.  The most significant bytes are masked out; the values
- *      are limited to range from 0 to 65535, a short value. For mute-groups,
- *      this is the number of patterns in the mute-groups.
+ *      are limited to the same range as the \a highbytes parameter. For
+ *      mute-groups, this is the number of patterns in the mute-groups.
+ *
+ * \param oldstyle
+ *      If true (the default is false), then just write a long value of 1024.
+ *      Otherwise, the bytes are masked, shifted, and written.
  */
 
 void
-midifile::write_split_long (unsigned highbytes, unsigned lowbytes)
+midifile::write_split_long (unsigned highbytes, unsigned lowbytes, bool oldstyle)
 {
-    if (highbytes == 32U && lowbytes == 32U)
+    if (oldstyle)
     {
-        write_long(1024);               /* a long-standing legacy value */
+        write_long(c_legacy_mute_group); /* 1024, long-standing Seq24 value */
     }
     else
     {
@@ -2733,7 +2714,7 @@ midifile::write (performer & p, bool doseqspec)
         );
         if (file.is_open())
         {
-            char file_buffer[c_midi_line_max];  /* enable bufferization */
+            char file_buffer[c_midi_line_max];      /* enable bufferization */
             file.rdbuf()->pubsetbuf(file_buffer, sizeof file_buffer);
             for (auto c : m_char_list)              /* list of midibytes    */
             {
@@ -2892,7 +2873,7 @@ midifile::write_song (performer & p)
         );
         if (file.is_open())
         {
-            char file_buffer[c_midi_line_max];  /* enable bufferization */
+            char file_buffer[c_midi_line_max];      /* enable bufferization */
             file.rdbuf()->pubsetbuf(file_buffer, sizeof file_buffer);
             for (auto c : m_char_list)
             {
@@ -2966,14 +2947,16 @@ midifile::write_proprietary_track (performer & p)
     unsigned groupcount = c_max_groups;         /* 32, the maximum          */
     unsigned groupsize = p.screenset_size();
     int gmutesz = 0;
-    if (mutes.group_save_to_midi() && mutes.any())
+    if (mutes.saveable_to_midi())
     {
-        groupcount = unsigned(mutes.count());   /* no. of existing groups  */
+        groupcount = unsigned(mutes.count());   /* includes unused groups   */
         groupsize = unsigned(mutes.group_size());
         if (rc().save_old_mutes())
             gmutesz = 4 + groupcount * (4 + groupsize * 4); /* 4-->longs    */
         else
             gmutesz = 4 + groupcount * (1 + groupsize);     /* 1-->bytes    */
+
+        gmutesz += mutes.group_names_letter_count();        /* NEW NEW NEW  */
     }
     tracklength += seq_number_size();           /* bogus sequence number    */
     tracklength += track_name_size(c_prop_track_name);
@@ -3014,9 +2997,9 @@ midifile::write_proprietary_track (performer & p)
                 write_byte(midibyte(note[n]));
         }
         else
-            write_short(0);                     /* name is empty            */
+            write_short(0);                         /* name is empty        */
     }
-    write_prop_header(c_bpmtag, 4);             /* bpm tag + long data      */
+    write_prop_header(c_bpmtag, 4);                 /* bpm tag + long data  */
 
     /*
      *  We now encode the Seq66-specific BPM value by multiplying it
@@ -3025,45 +3008,28 @@ midifile::write_proprietary_track (performer & p)
      */
 
     midilong scaled_bpm = usr().scaled_bpm(p.get_beats_per_minute());
-    write_long(scaled_bpm);                     /* 4 bytes                  */
+    write_long(scaled_bpm);                         /* 4 bytes              */
     if (gmutesz > 0)
     {
         write_prop_header(c_mutegroups, gmutesz);   /* mute groups tag etc. */
-        if (rc().save_old_mutes())
-        {
-            write_split_long(groupcount, groupsize);
-        }
-        else
-        {
-            unsigned gcount = to_compact_byte(groupcount);
-            unsigned gsize = to_compact_byte(groupsize);
-
-            /*
-             * Add up the size of each mute-group name, including two
-             * double-quotes.
-             */
-
-            const mutegroups & mutes = p.mutes();
-            gsize += mutes.group_names_letter_count();
-            write_split_long(gcount, gsize);
-        }
+        write_split_long(groupcount, groupsize, rc().save_old_mutes());
         (void) write_mute_groups(p);
     }
     if (m_global_bgsequence)
     {
-        write_prop_header(c_musickey, 1);               /* control tag+1 */
-        write_byte(midibyte(usr().seqedit_key()));      /* key change    */
-        write_prop_header(c_musicscale, 1);             /* control tag+1 */
-        write_byte(midibyte(usr().seqedit_scale()));    /* scale change  */
-        write_prop_header(c_backsequence, 4);           /* control tag+4 */
-        write_long(long(usr().seqedit_bgsequence()));   /* background    */
+        write_prop_header(c_musickey, 1);                   /* control tag+1 */
+        write_byte(midibyte(usr().seqedit_key()));          /* key change    */
+        write_prop_header(c_musicscale, 1);                 /* control tag+1 */
+        write_byte(midibyte(usr().seqedit_scale()));        /* scale change  */
+        write_prop_header(c_backsequence, 4);               /* control tag+4 */
+        write_long(long(usr().seqedit_bgsequence()));       /* background    */
     }
-    write_prop_header(c_perf_bp_mes, 4);                /* control tag+4 */
-    write_long(long(p.get_beats_per_bar()));            /* perfedit BPM  */
-    write_prop_header(c_perf_bw, 4);                    /* control tag+4 */
-    write_long(long(p.get_beat_width()));               /* perfedit BW   */
-    write_prop_header(c_tempo_track, 4);                /* control tag+4 */
-    write_long(long(rc().tempo_track_number()));        /* perfedit BW   */
+    write_prop_header(c_perf_bp_mes, 4);                    /* control tag+4 */
+    write_long(long(p.get_beats_per_bar()));                /* perfedit BPM  */
+    write_prop_header(c_perf_bw, 4);                        /* control tag+4 */
+    write_long(long(p.get_beat_width()));                   /* perfedit BW   */
+    write_prop_header(c_tempo_track, 4);                    /* control tag+4 */
+    write_long(long(rc().tempo_track_number()));            /* perfedit BW   */
     write_track_end();
     return true;
 }

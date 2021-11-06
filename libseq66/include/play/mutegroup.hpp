@@ -81,7 +81,8 @@ private:
 
     /**
      *  Provides a mnemonic name for the group.  By default, it is of the
-     *  format "Group 1", and currently not modifiable.
+     *  format "Group 1", but can be modified directly in the mute-groups
+     *  table in the Mutes tab.
      */
 
     std::string m_name;

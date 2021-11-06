@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2021-05-18
+% \update      2021-11-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -101,7 +101,7 @@
 
    The authors of \textsl{Seq24} took trouble to ensure that the format
    of the MIDI files it writes are compatible with other MIDI applications.
-   \textsl{Seq24} also stores its "proprietary"
+   \textsl{Seq24} also stores its "proprietary" (an unfortunate legacy term).
    information (triggers, mute-groups, MIDI control
    information, etc.) in the file, but marked as per the MIDI specification
    so that other sequencers can read
@@ -155,6 +155,8 @@
    'ctrl' file, though \textsl{Seq66} will still read (and ignore)
    this \texttt{SeqSpec} if present.
    A \texttt{SeqSpec} named "gap" or "reserved" is not used.
+   \index{SeqSpec}
+   \index{SeqSpec!table}
 
    \begin{table}[htb]
       \centering
@@ -210,6 +212,8 @@
 \subsubsection{SeqSpec c\_midibus}
 \label{subsubsec:midi_format_track_seqspec_midibus}
 
+   \index{SeqSpec!c\_midibus}
+
    \begin{description}
       \item \texttt{c\_midibus}:
          specifies the desired output buss/port number for a track.
@@ -228,6 +232,8 @@
 
 \subsubsection{SeqSpec c\_midichannel}
 \label{subsubsec:midi_format_track_seqspec_midichannel}
+
+   \index{SeqSpec!c\_midichannel}
 
    \begin{description}
       \item \texttt{c\_midichannel}:
@@ -250,6 +256,8 @@
 \subsubsection{SeqSpec c\_midiclocks}
 \label{subsubsec:midi_format_track_seqspec_midiclocks}
 
+   \index{SeqSpec!c\_midiclocks}
+
    \begin{description}
       \item \texttt{c\_midiclocks}: specifies the clocking for the busses, but is inactive.
       \item \textsl{Length}: 8
@@ -266,6 +274,8 @@
 \subsubsection{SeqSpec c\_triggers}
 \label{subsubsec:midi_format_track_seqspec_triggers}
 
+   \index{SeqSpec!c\_triggers}
+
    \begin{description}
       \item \texttt{c\_triggers}:
          specifies the old format for song-performance triggers.
@@ -280,6 +290,8 @@
 
 \subsubsection{SeqSpec c\_notes}
 \label{subsubsec:midi_format_track_seqspec_notes}
+
+   \index{SeqSpec!c\_notes}
 
    \begin{description}
       \item \texttt{c\_notes}: specifies the names of the sets in the tune.
@@ -300,6 +312,8 @@
 
 \subsubsection{SeqSpec c\_timesig}
 \label{subsubsec:midi_format_track_seqspec_timesig}
+
+   \index{SeqSpec!c\_timesig}
 
    \begin{description}
       \item \texttt{c\_timesig}: specifies the time signature for a track.
@@ -323,6 +337,8 @@
 
 \subsubsection{SeqSpec c\_bpmtag}
 \label{subsubsec:midi_format_track_seqspec_bpmtag}
+
+   \index{SeqSpec!c\_bpmtag}
 
    \begin{description}
       \item \texttt{c\_bpmtag}: specifies the the BPM in a format allowing double
@@ -353,6 +369,8 @@
 \subsubsection{SeqSpec c\_triggers\_ex}
 \label{subsubsec:midi_format_track_seqspec_triggers_ex}
 
+   \index{SeqSpec!c\_triggers\_ex}
+
    \begin{description}
       \item \texttt{c\_triggers\_ex}: specifies the triggers for a given track.
       \item \textsl{Length}: 4 + triggercount * 12
@@ -378,9 +396,11 @@
 \subsubsection{SeqSpec c\_trig\_transpose}
 \label{subsubsec:midi_format_track_seqspec_trig_transpose}
 
+   \index{SeqSpec!c\_trig\_transpose}
+
    \begin{description}
-      \item \texttt{c\_trig\_transpose}: specifies the triggers for a given track,
-         plus a transposition value.
+      \item \texttt{c\_trig\_transpose}: specifies the triggers for a given
+         track, plus a transposition value.
       \item \textsl{Length}: 4 + triggercount * (12 + 1)
       \item \textsl{Format}: \texttt{0x24240020 [trigger-on off offset transpose]
          [ ... ]}
@@ -402,18 +422,52 @@
 \subsubsection{SeqSpec c\_mutegroups}
 \label{subsubsec:midi_format_track_seqspec_mutegroups}
 
+   \index{SeqSpec!c\_mutegroups}
+
+   Legacy format (for \textsl{Seq24} and early versions of \textsl{Seq66}:
+
    \begin{description}
       \item \texttt{c\_mutegroups}: specifies the mute-groups in play in a song.
+         The group and sequence counts are encoding in
+         a "split-long" format (denoted by "S") compatible with the legacy
+         (\textsl{Seq24}) format.
       \item \textsl{Length}: 4 + 4 * groupcount + 4 * seqcount
       \item \textsl{Format}: \texttt{0x24240009 groupcount:S seqcount:S groupdata...}
    \end{description}
 
-   Mute-groups are a feature that enable the toggling of arming/muting for
+   For newer versions of \textsl{Seq66},
+   a space-saving format (over \textsl{Seq24}) is used, which uses 1 byte,
+   instead of 4, to encode each mute status.
+
+   \begin{description}
+      \item \texttt{c\_mutegroups}: As above, except that it
+         includes an optional name for each group; the total size of these
+         names is the length of each name plus the surrounding quote
+         characters (namecount).  The group and sequence counts are encoding in
+         a "split-long" format (denoted by "S") compatible with the legacy
+         (\textsl{Seq24}) format.
+      \item \textsl{Length}: 4 + 1 * groupcount + 1 * seqcount + namecount
+      \item \textsl{Format}: \texttt{0x24240009 groupcount:S seqcount:S groupdata...}
+   \end{description}
+
+   In the new format, we combine the group-count and pattern-count into
+   one long value. This value is split, when read, into these counts.
+
+   By default, the groupdata is formatted as follows, where all data items are
+   encoded as bytes:
+
+   \begin{verbatim}
+      <Group number>
+      <32 values of 0 or 1 for mute statuses>
+      Optional: <"name...">
+   \end{verbatim}
+
+   Mute-groups enable the toggling of arming/muting for an arbitrary set of
    multiple patterns at once.  \textsl{Seq66} supports up to 32 mute-groups of
-   size 32 patterns.  More flexibility is planned and partially supported now.
+   size 32 patterns.  More flexibility is planned.
 
    Mute-groups can also be stored in a 'mutes' files, which is probably a better
-   place to store them.
+   place to store them if one uses a consistent setup for all one's tunes.
    (See \sectionref{subsubsec:configuration_mute_group_control}, and
    \sectionref{fig:mutes_master_tab}).
    Here, we describe how they are encoded in the song.
@@ -422,14 +476,13 @@
    Then, the groups are looped through. Each group has the format
    \texttt{groupnumber bits} where "bits" is a string of up to thirty-two
    4-byte (!) values indicating if the corresponding pattern is part of
-   the group.
-
-   This setup is a real space waster, and it is recommended to use only
-   the 'mutes' file, unless the song absolutely needs its own set of
-   mute-groups.
+   the group.  This setup is a real space waster, and in newer versions of
+   \textsl{Seq66}, the MIDI file encodes mute-groups using byte-size values.
 
 \subsubsection{SeqSpec c\_gap\_(ABCDEF)}
 \label{subsubsec:midi_format_track_seqspec_gap_abcdef}
+
+   \index{SeqSpec!c\_gap\_(ABCDEF) (unused)}
 
    This set of six
    \texttt{SeqSpec} values is a gap created by skipping from
@@ -439,6 +492,8 @@
 
 \subsubsection{SeqSpec c\_midictrl}
 \label{subsubsec:midi_format_track_seqspec_midictrl}
+
+   \index{SeqSpec!c\_midictrl (obsolete)}
 
    \begin{description}
       \item \texttt{c\_midictrl}: specifies the MIDI controls to be used.
@@ -458,6 +513,8 @@
 \subsubsection{SeqSpec c\_musickey}
 \label{subsubsec:midi_format_track_seqspec_musickey}
 
+   \index{SeqSpec!c\_musickey}
+
    \begin{description}
       \item \texttt{c\_musickey}: specifies the musical key for the song.
       \item \textsl{Length}: 5
@@ -473,6 +530,8 @@
 
 \subsubsection{SeqSpec c\_musicscale}
 \label{subsubsec:midi_format_track_seqspec_musicscale}
+
+   \index{SeqSpec!c\_musicscale}
 
    \begin{description}
       \item \texttt{c\_musicscale}: specifies the musical scale for the song.
@@ -491,6 +550,8 @@
 \subsubsection{SeqSpec c\_backsequence}
 \label{subsubsec:midi_format_track_seqspec_backsequence}
 
+   \index{SeqSpec!c\_backsequence}
+
    \begin{description}
       \item \texttt{c\_backsequence}:
          specifies the background sequence to be shown.
@@ -508,6 +569,8 @@
 
 \subsubsection{SeqSpec c\_transpose}
 \label{subsubsec:midi_format_track_seqspec_transpose}
+
+   \index{SeqSpec!c\_transpose}
 
    \begin{description}
       \item \texttt{c\_transpose}: specifies if a pattern can be transposed.
@@ -536,6 +599,8 @@
 \subsubsection{SeqSpec c\_perf\_bp\_mes}
 \label{subsubsec:midi_format_track_seqspec_perf_bp_mes}
 
+   \index{SeqSpec!c\_perf\_bp\_mes}
+
     \begin{description}
        \item \texttt{c\_perf\_bp\_mes}:
          specifies the beats-per-bar for the performance.
@@ -550,6 +615,8 @@
 
 \subsubsection{SeqSpec c\_perf\_bw}
 \label{subsubsec:midi_format_track_seqspec_perf_bw}
+
+   \index{SeqSpec!c\_perf\_bw}
 
    \begin{description}
       \item \texttt{c\_perf\_bw}:
@@ -566,6 +633,8 @@
 \subsubsection{SeqSpec c\_tempo\_map}
 \label{subsubsec:midi_format_track_seqspec_tempo_map}
 
+   \index{SeqSpec!c\_tempo\_map}
+
    \begin{description}
       \item \texttt{c\_tempo\_map}: Not implemented.
       \item \textsl{Length}: 5
@@ -574,8 +643,10 @@
 
    This section is an unimplemented \textsl{Seq32} feature.
 
-\subsubsection{SeqSpec c\_reserved\_(1\_2)}
+\subsubsection{SeqSpec c\_reserved\_(12)}
 \label{subsubsec:midi_format_track_seqspec_reserved_1_2}
+
+   \index{SeqSpec!c\_reserved\_(12)}
 
    \begin{description}
       \item \texttt{c\_reserved\_1\_2}: Reserved for expansion.
@@ -585,6 +656,8 @@
 
 \subsubsection{SeqSpec c\_tempo\_track}
 \label{subsubsec:midi_format_track_seqspec_tempo_track}
+
+   \index{SeqSpec!c\_tempo\_track}
 
    \begin{description}
       \item \texttt{c\_tempo\_track}:
@@ -598,6 +671,8 @@
 
 \subsubsection{SeqSpec c\_seq\_color}
 \label{subsubsec:midi_format_track_seqspec_seq_color}
+
+   \index{SeqSpec!c\_seq\_color}
 
    \begin{description}
       \item \texttt{c\_seq\_color}: specifies the color for a pattern.
@@ -616,6 +691,8 @@
 \subsubsection{SeqSpec c\_seq\_edit\_mode}
 \label{subsubsec:midi_format_track_seqspec_seq_edit_mode}
 
+   \index{SeqSpec!c\_seq\_edit\_mode (Kepler34)}
+
    \begin{description}
       \item \texttt{c\_seq\_edit\_mode}:
          specifies the editing mode of each pattern.
@@ -629,6 +706,8 @@
 
 \subsubsection{SeqSpec c\_seq\_loopcount}
 \label{subsubsec:midi_format_track_seqspec_seq_loopcount}
+
+   \index{SeqSpec!c\_seq\_loopcount}
 
    \begin{description}
       \item \texttt{c\_seq\_loopcount}:

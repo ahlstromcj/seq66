@@ -410,7 +410,7 @@ pulses_to_time_string (midipulse p, midibpm bpm, int ppqn, bool showus)
     minutes -= hours * 60;
     seconds -= hoursecs + minutesecs;
 
-    char tmp[32];
+    char tmp[48];
     if (showus)
     {
         microseconds -= (hoursecs + minutesecs + seconds) * 1000000UL;

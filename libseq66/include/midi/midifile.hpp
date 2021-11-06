@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-05-28
+ * \updates       2021-11-06
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -356,7 +356,10 @@ protected:
     }
 
     void write_long (midilong value);
-    void write_split_long (unsigned highbytes, unsigned lowbytes);
+    void write_split_long
+    (
+        unsigned highbytes, unsigned lowbytes, bool oldstyle = false
+    );
     void write_triple (midilong value);
     void write_short (midishort value);
 
