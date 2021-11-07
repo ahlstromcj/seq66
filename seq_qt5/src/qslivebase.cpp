@@ -61,7 +61,11 @@ qslivebase::qslivebase (performer & p, qsmainwnd * window, QWidget * parent) :
     m_performer         (p),
     m_parent            (window),
     m_font              (),
+#if defined USE_FOCUS_TO_CHANGE_ACTIVE_SET
     m_bank_id           (p.playscreen_number()),
+#else
+    m_bank_id           (3), // TEST TEST TEST
+#endif
     m_mainwnd_spacing   (usr().mainwnd_spacing()),          /* spacing()    */
     m_space_rows        (m_mainwnd_spacing * p.rows()),
     m_space_cols        (m_mainwnd_spacing * p.columns()),
@@ -99,8 +103,12 @@ qslivebase::~qslivebase()
 void
 qslivebase::set_bank ()
 {
+#if defined USE_FOCUS_TO_CHANGE_ACTIVE_SET
     int bank = int(perf().playscreen_number());
     set_bank(bank);
+#else
+    set_bank(m_bank_id);
+#endif
 }
 
 /**
@@ -122,7 +130,9 @@ qslivebase::set_bank (int bankid, bool hasfocus)
         if (hasfocus)
         {
             std::string bankname = perf().bank_name(bankid);
-            (void) perf().set_playing_screenset(bankid);
+            if (! is_external())
+                (void) perf().set_playing_screenset(bankid);
+
             set_bank_values(bankname, bankid);         /* update the GUI   */
         }
 

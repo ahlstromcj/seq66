@@ -51,7 +51,6 @@ class editable_events;                  /* forward reference to container   */
  *  An enumeration of the supported (in the Event Editor) MIDI channel-event
  *  status values values in qseqeventframe, as list in s_channel_event_names[]
  *  in the editable_event module.
- */
 
 enum class editable
 {
@@ -64,6 +63,7 @@ enum class editable
     pitch_wheel,
     max
 };
+ */
 
 /**
  *  Provides for the management of MIDI editable events.  It makes the

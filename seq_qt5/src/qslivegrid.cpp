@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-10-28
+ * \updates       2021-11-07
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -122,7 +122,10 @@ static const int c_minimum_height  = 180;
  *      in an external window.
  */
 
-qslivegrid::qslivegrid (performer & p, qsmainwnd * window, QWidget * parent) :
+qslivegrid::qslivegrid
+(
+    performer & p, qsmainwnd * window, int desired_bank, QWidget * parent
+) :
     qslivebase          (p, window, parent),
     ui                  (new Ui::qslivegrid),
     m_popup             (nullptr),
@@ -133,8 +136,7 @@ qslivegrid::qslivegrid (performer & p, qsmainwnd * window, QWidget * parent) :
     m_x_min             (0),
     m_x_max             (0),
     m_y_min             (0),
-    m_y_max             (0),
-    m_is_external       (is_nullptr(parent))
+    m_y_max             (0)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setFocusPolicy(Qt::StrongFocus);
@@ -148,7 +150,7 @@ qslivegrid::qslivegrid (performer & p, qsmainwnd * window, QWidget * parent) :
     int w = usr().scale_size(c_minimum_width);
     int h = usr().scale_size_y(c_minimum_height);
     ui->frame->setMinimumSize(QSize(w, h));
-    if (m_is_external)
+    if (is_external())
     {
         QString bname = qt(perf().bank_name(m_bank_id));
         ui->txtBankName->setText(bname);
@@ -717,7 +719,7 @@ qslivegrid::update_bank ()
 
     // TODO
     // Need to update the bank-name field with the new bank.
-    // if (m_is_external)
+    // if (is_external())
     //     ui->txtBankName->setText(qt(name));
 }
 
@@ -731,10 +733,10 @@ qslivegrid::update_bank ()
 void
 qslivegrid::update_bank_name (const std::string & name)
 {
-    if (m_is_external)
+    if (is_external())
         ui->txtBankName->setText(qt(name));
 
-    perf().set_screenset_name(m_bank_id, name, m_is_external);
+    perf().set_screenset_name(m_bank_id, name, is_external());
 }
 
 /**
@@ -1217,12 +1219,6 @@ qslivegrid::update_geometry ()
     updateGeometry();
 }
 
-void
-qslivegrid::change_event (QEvent * evp)
-{
-    changeEvent(evp);
-}
-
 /**
  *  This function is a helper for the other xxx_sequence() functions.  It
  *  obtains the sequence number, figures out the row and column, and creates a
@@ -1299,9 +1295,15 @@ qslivegrid::slot_set_bank_name ()
     update_bank_name(name);
 }
 
+void
+qslivegrid::change_event (QEvent * evp)
+{
+    changeEvent(evp);
+}
+
 /**
  *  This is not called when focus changes.  Instead, we have to call this from
- *  qsliveframeex::changeEvent().
+ *  qsliveframeex::changeEvent().  See change_event() above.
  */
 
 void
@@ -1313,7 +1315,9 @@ qslivegrid::changeEvent (QEvent * event)
         if (isActiveWindow())
         {
             m_has_focus = true;                 /* widget is now active     */
+#if defined USE_FOCUS_TO_CHANGE_ACTIVE_SET
             (void) perf().set_playing_screenset(m_bank_id);
+#endif
         }
         else
             m_has_focus = false;                /* widget is now inactive   */
@@ -1339,7 +1343,7 @@ qslivegrid::popup_menu ()
      *  this purpose.
      */
 
-    if (! m_is_external)
+    if (! is_external())
     {
         if (m_current_seq < perf().screenset_max())
         {
@@ -1374,7 +1378,7 @@ qslivegrid::popup_menu ()
     }
     if (perf().is_seq_active(m_current_seq))
     {
-        if (! m_is_external)
+        if (! is_external())
         {
             QAction * editseqex = new QAction
             (

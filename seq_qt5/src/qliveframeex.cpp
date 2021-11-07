@@ -88,7 +88,7 @@ qliveframeex::qliveframeex (performer & p, int ssnum, qsmainwnd * parent) :
     ui->setupUi(this);
 
     QGridLayout * layout = new QGridLayout(this);
-    m_live_frame = new qslivegrid(p, parent, nullptr);
+    m_live_frame = new qslivegrid(p, parent, ssnum, nullptr);
     layout->addWidget(m_live_frame);
     if (usr().window_is_scaled())           /* use scaling if applicable    */
     {

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-10-27
+ * \updates       2021-11-07
  * \license       GNU GPLv2 or above
  *
  *
@@ -95,6 +95,7 @@ public:
     (
         performer & perf,               /* performance master   */
         qsmainwnd * window,             /* functional parent    */
+        int desired_bank,               /* -1 or active set     */
         QWidget * parent = nullptr      /* Qt-parent            */
     );
     virtual ~qslivegrid ();
@@ -221,13 +222,6 @@ private:
     int m_x_max;
     int m_y_min;
     int m_y_max;
-
-    /**
-     *  Indicates if this window is an external window.  That is, there is not
-     *  tab parent.
-     */
-
-    bool m_is_external;
 
 };              // class qslivegrid
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-05
+ * \updates       2021-11-07
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -360,7 +360,7 @@ qsmainwnd::qsmainwnd
     m_dialog_about = new qsabout(this);
     m_dialog_build_info = new qsbuildinfo(this);
     make_perf_frame_in_tab();           /* create m_song_frame64 pointer    */
-    m_live_frame = new qslivegrid(perf(), this, ui->LiveTab);
+    m_live_frame = new qslivegrid(perf(), this, (-1), ui->LiveTab);
     if (not_nullptr(m_live_frame))
     {
         ui->LiveTabLayout->addWidget(m_live_frame);
@@ -1359,7 +1359,7 @@ qsmainwnd::redo_live_frame ()
     if (not_nullptr(m_live_frame))
         delete m_live_frame;
 
-    m_live_frame = new qslivegrid(perf(), this, ui->LiveTab);
+    m_live_frame = new qslivegrid(perf(), this, (-1), ui->LiveTab);
     if (not_nullptr(m_live_frame))
     {
         ui->LiveTabLayout->addWidget(m_live_frame);
@@ -2430,8 +2430,14 @@ qsmainwnd::tabWidgetClicked (int newindex)
                 seq::pointer seq = perf().get_sequence(seqid);
                 if (seq)
                 {
+                    /*
+                     * This code is called when first clicking on the
+                     * "Editor" tab. For the code called when selecting a
+                     * pattern to open in this tab, see load_editor() above.
+                     */
+
                     m_edit_frame = new (std::nothrow)
-                        qseqeditframe64(perf(), seqid, ui->EditTab);
+                        qseqeditframe64(perf(), seqid, ui->EditTab, true);
 
                     if (not_nullptr(m_edit_frame))
                     {
@@ -2795,8 +2801,7 @@ qsmainwnd::panic()
 void
 qsmainwnd::slot_set_home ()
 {
-    // update_bank(0);
-    ui->spinBank->setValue(0);
+    ui->spinBank->setValue(0);          // update_bank(0);
 }
 
 /**

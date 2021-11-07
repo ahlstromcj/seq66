@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2021-10-06
+ * \updates       2021-11-07
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child class, qslivegride, are Sequencer66's
@@ -42,6 +42,12 @@
 #include "play/screenset.hpp"           /* seq66::screenset class           */
 
 class QEvent;
+
+/*
+ * EXERIMENT IN PROGRESS
+ */
+
+#define USE_FOCUS_TO_CHANGE_ACTIVE_SET
 
 /*
  * Do not document a namespace, it can break Doxygen.
@@ -129,6 +135,11 @@ protected:
         bool result = m_needs_update;
         m_needs_update = false;
         return result;
+    }
+
+    bool is_external () const
+    {
+        return m_is_external;
     }
 
 protected:

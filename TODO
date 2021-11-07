@@ -12,8 +12,6 @@ Hot:
 
     -   External Live frame opening sets the set in the main window to the
         same set.  Bug or Feature?
-    -   Document the ! Set button if not found documented ("!").
-    -   We need a button to reset to Set 0 for speed.
     -   How does middle-click on a pattern signal the event-editor
         functionality?
 

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-10-22
+% \update      2021-11-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -270,9 +270,31 @@
 
    \begin{itemize}
       \item \textbf{Tabs}
-      \item \textbf{Menu}
       \item \textbf{Main Screen Controls}
+      \item \textbf{Menu}
    \end{itemize}
+
+\subsubsection{Tabs}
+\label{subsubsec:introduction_main_tabs}
+
+   The following tabs are present in \textsl{Seq66}:
+
+   \begin{itemize}
+      \item \textbf{Live}
+      \item \textbf{Song}
+      \item \textbf{Editor}
+      \item \textbf{Events}
+      \item \textbf{Playlists}
+      \item \textbf{Sets}
+      \item \textbf{Mutes}
+      \item \textbf{Session}
+   \end{itemize}
+
+   We present brief descriptions here and links to sections with more detail.
+   All tabs are discussed in more detail, each in its own section.
+
+\paragraph{Tabs / Live}
+\label{paragraph:introduction_main_tabs_live}
 
    The \textbf{Live} tab is foremost in the application.
    It provides a grid of \textsl{patterns}
@@ -287,9 +309,84 @@
    right corner of the button.
    Another name for the \textbf{Live} tab is the \textbf{Patterns Panel};
    it can be replicated in multiple external windows.
-   This tab and all the other tabs
-   will be discussed in more detail, each in its own section.
-   The \textbf{Menu} is also described later (see \sectionref{sec:menu}).
+   See \sectionref{sec:patterns_panel}.
+
+\paragraph{Tabs / Song}
+\label{paragraph:introduction_main_tabs_live}
+
+   The \textbf{Song Editor} combines all patterns
+   into a complete tune with controlled repetitions of each pattern.
+   It provides a way to lay out \textsl{triggers} for each pattern
+   that control playback without musician interaction.
+   The editing capabilities of the song editor are extensive, including
+   dragging triggers, addition transposition to triggers, and more.
+   See \sectionref{sec:song_editor}.
+
+\paragraph{Tabs / Editor}
+\label{paragraph:introduction_main_tabs_editor}
+
+   The \textbf{Pattern Editor} can be shown in the \textbf{Editor} tab or in an
+   external window.  When opened in the tab, the pattern editor is compressed
+   vertically by reducing the height of the "data" area and removing some
+   buttons.  Otherwise, the pattern editor works the same in the tab and in
+   external windows.
+   See \sectionref{sec:pattern_editor}.
+
+\paragraph{Tabs / Events}
+\label{paragraph:introduction_main_tabs_events}
+
+   The \textbf{Event Editor} provides a way to see the details of events
+   and to do some modifying of them.
+   It's meant for light usage; there are some less-used events that it cannot
+   edit.
+   It is especially useful in trouble-shooting.
+   See \sectionref{sec:event_editor}.
+
+\paragraph{Tabs / Playlist}
+\label{paragraph:introduction_main_tabs_playlist}
+
+   The \textbf{Playlist Editor} is meant for the creation of
+   play-lists.  One can create multiple playlists with multiple songs in each
+   playlist.  The selection of playlists and songs can be done via keystrokes
+   or MIDI control.
+
+   Note that editing of the playlists can also be done by directly editing a
+   \texttt{.playlist} file.
+
+   See \sectionref{sec:playlist}.
+
+\paragraph{Tabs / Sets}
+\label{paragraph:introduction_main_tabs_sets}
+
+   The \textbf{Sets Editor} allows one to see, edit, and rearrange the sets
+   that a tune contains.  Sets are also referred to as "banks".
+   A useful feature of sets is that they can selected and cause a major change
+   in the patterns that are playing.
+   See \sectionref{sec:setmaster}.
+
+\paragraph{Tabs / Mutes}
+\label{paragraph:introduction_main_tabs_mutes}
+
+   Mute-groups provide a way to turn on and turn off multiple patterns at once
+   via a keystroke or a MIDI control; the \textbf{Mutes Editor} also provides a
+   way to use buttons to control the mute-group.
+   Mute-groups can be saved in the
+   \texttt{.mutes} file or, optionally, in the tune itself.
+   See \sectionref{sec:mutes_master}.
+
+\paragraph{Tabs / Session}
+\label{paragraph:introduction_main_tabs_session}
+
+   The \textbf{Session} tab simply display some aspects of the running setup of
+   \textsl{Seq66}.  It displays the name of the session manager, if any, client
+   IDs, etc.  It also has a button reload the whole session after configuration
+   changes are made.  It will eventually also contain a log of events, similar
+   to the messages written to the terminal when \textsl{Seq66} is run from a
+   terminal shell.
+   Also see \sectionref{sec:sessions}.
+
+\subsubsection{Main Top Controls (Condensed View)}
+\label{subsubsec:introduction_main_top_controls}
 
    Here, we first discuss the top and bottom \textbf{Main} controls, as
    shown in the following collapsed figure:
@@ -303,9 +400,6 @@
 
    See the following section and
    \sectionref{subsubsec:introduction_main_bottom_controls}.
-
-\subsubsection{Main Top Controls (Condensed View)}
-\label{subsubsec:introduction_main_top_controls}
 
    The top panel of the Pattern window is simple, consisting of the
    name of the program and a few controls.

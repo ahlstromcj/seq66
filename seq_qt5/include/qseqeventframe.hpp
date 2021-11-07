@@ -139,7 +139,6 @@ private:
     int current_row () const;
     void populate_midich_combo ();
     void populate_status_combo ();
-    void setup_selection_combo (editable item);
 
 protected:                          // overrides of event handlers
 
