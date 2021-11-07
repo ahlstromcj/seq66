@@ -1,6 +1,6 @@
 TO DO for Seq66 0.97.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-11-04
+2019-04-13 to 2021-11-07
 
 Configuration:
 
@@ -10,7 +10,6 @@ Configuration:
 
 Hot:
 
-    -   Changing set name does not set 'modify'.
     -   External Live frame opening sets the set in the main window to the
         same set.  Bug or Feature?
     -   Document the ! Set button if not found documented ("!").
@@ -19,9 +18,6 @@ Hot:
         functionality?
 
 UI:
-
-    Leave the progress bar (in grid button) static if the pattern is not
-    armed.
 
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:

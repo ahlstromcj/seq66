@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-10-21
+ * \updates       2021-11-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -205,16 +205,6 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     );
 
     /*
-     * Combo-box for program change, controller, etc. to replace the bare
-     * text-edit fields ui->entry_ev_data_0 and ui->entry_ev_data_1, and
-     * the label ui->d0_label and ui->d1_label.
-     *
-     * Hidden for now.
-     */
-
-    ui->selection_combo_box->hide();
-
-    /*
      * Delete button.  Will set to enabled/disabled once fully initialized.
      */
 
@@ -342,81 +332,6 @@ qseqeventframe::populate_status_combo ()
 }
 
 void
-qseqeventframe::setup_selection_combo (editable item)
-{
-    bool showit = false;
-    if (item == editable::control)
-    {
-        showit = true;
-        ui->d0_label->hide();
-    }
-    else if (item == editable::program)
-    {
-        showit = true;
-        ui->d0_label->hide();
-        ui->d1_label->hide();
-        ui->entry_ev_data_1->text().clear();
-        ui->entry_ev_data_1->hide();
-    }
-    else
-    {
-        ui->d0_label->show();
-        ui->d1_label->show();
-        ui->entry_ev_data_1->show();
-        ui->selection_combo_box->setEnabled(false);
-        ui->selection_combo_box->hide();
-    }
-    if (showit)
-    {
-        int scbh = ui->selection_combo_box->height();
-        ui->selection_combo_box->setMaximumWidth(200);
-        ui->selection_combo_box->resize(200, scbh);
-        ui->selection_combo_box->setEnabled(true);
-        ui->selection_combo_box->show();
-    }
-}
-
-void
-qseqeventframe::populate_control_combo ()
-{
-    ui->selection_combo_box->clear();
-    for (int counter = 0; /* counter value */; ++counter)
-    {
-        std::string name = controller_name(counter);
-        if (name.empty())
-        {
-            break;
-        }
-        else
-        {
-            QString combotext(qt(name));
-            ui->selection_combo_box->insertItem(counter, combotext);
-        }
-    }
-    ui->selection_combo_box->setCurrentIndex(0);
-}
-
-void
-qseqeventframe::populate_program_combo ()
-{
-    ui->selection_combo_box->clear();
-    for (int counter = 0; /* counter value */; ++counter)
-    {
-        std::string name = gm_program_name(counter);
-        if (name.empty())
-        {
-            break;
-        }
-        else
-        {
-            QString combotext(qt(name));
-            ui->selection_combo_box->insertItem(counter, combotext);
-        }
-    }
-    ui->selection_combo_box->setCurrentIndex(0);
-}
-
-void
 qseqeventframe::set_selection_multi (bool multi)
 {
     QAbstractItemView::SelectionMode sm = multi ?
@@ -432,50 +347,6 @@ void
 qseqeventframe::slot_midi_channel (int /*index*/)
 {
     // Anything to do? We just need the text.
-}
-
-void
-qseqeventframe::slot_event_name (int index)
-{
-    bool connect_it = false;
-    if (index == static_cast<int>(editable::control))
-    {
-        setup_selection_combo(editable::control);
-        populate_control_combo();
-        connect_it = true;
-    }
-    else if (index == static_cast<int>(editable::program))
-    {
-        setup_selection_combo(editable::program);
-        populate_program_combo();
-        connect_it = true;
-    }
-    else
-        setup_selection_combo(editable::max);
-
-    if (connect_it)
-    {
-        connect
-        (
-            ui->selection_combo_box, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(slot_selection_combo(int))
-        );
-    }
-    else
-    {
-        disconnect
-        (
-            ui->selection_combo_box, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(slot_selection_combo(int))
-        );
-    }
-}
-
-void
-qseqeventframe::slot_selection_combo (int index)
-{
-    QString d0text = qt(std::to_string(index));
-    ui->entry_ev_data_0->setText(d0text);
 }
 
 void

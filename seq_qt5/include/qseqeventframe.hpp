@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-08-20
+ * \updates       2021-11-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -139,8 +139,6 @@ private:
     int current_row () const;
     void populate_midich_combo ();
     void populate_status_combo ();
-    void populate_control_combo ();
-    void populate_program_combo ();
     void setup_selection_combo (editable item);
 
 protected:                          // overrides of event handlers
@@ -161,8 +159,6 @@ private slots:
     void slot_cancel ();
     void update_seq_name ();
     void slot_midi_channel (int index);
-    void slot_event_name (int index);
-    void slot_selection_combo (int index);
     void slot_hex_data_state (int state);
 
 private:
