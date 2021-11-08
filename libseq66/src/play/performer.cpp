@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-11-05
+ * \updates       2021-11-08
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1604,7 +1604,7 @@ performer::inner_stop (bool midiclock)
  */
 
 void
-performer::set_screenset_name
+performer::screenset_name
 (
     screenset::number sn,
     const std::string & name,

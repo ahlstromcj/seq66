@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-07
+ * \updates       2021-11-08
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -355,19 +355,22 @@ qsmainwnd::qsmainwnd
     );
     m_msg_save_changes->setDefaultButton(QMessageBox::Save);
 
-    m_dialog_prefs = new qseditoptions(perf(), this);
-    m_beat_ind = new qsmaintime(perf(), ui->verticalWidget /*this*/, 4, 4);
-    m_dialog_about = new qsabout(this);
-    m_dialog_build_info = new qsbuildinfo(this);
+    m_dialog_prefs = new (std::nothrow) qseditoptions(perf(), this);
+    m_beat_ind = new (std::nothrow) qsmaintime(perf(), ui->verticalWidget /*this*/, 4, 4);
+    m_dialog_about = new (std::nothrow) qsabout(this);
+    m_dialog_build_info = new (std::nothrow) qsbuildinfo(this);
     make_perf_frame_in_tab();           /* create m_song_frame64 pointer    */
-    m_live_frame = new qslivegrid(perf(), this, (-1), ui->LiveTab);
+    m_live_frame = new (std::nothrow) qslivegrid
+    (
+        perf(), this, screenset::unassigned(), ui->LiveTab
+    );
     if (not_nullptr(m_live_frame))
     {
         ui->LiveTabLayout->addWidget(m_live_frame);
         m_live_frame->setFocus();
     }
 
-    m_playlist_frame = new qplaylistframe(perf(), this, ui->PlaylistTab);
+    m_playlist_frame = new (std::nothrow) qplaylistframe(perf(), this, ui->PlaylistTab);
     if (not_nullptr(m_playlist_frame))
         ui->PlaylistTabLayout->addWidget(m_playlist_frame);
 
@@ -710,7 +713,7 @@ qsmainwnd::qsmainwnd
      * Set Number and Name.
      */
 
-    QString bname = qt(perf().bank_name(0));
+    QString bname = qt(perf().set_name(0));
     ui->txtBankName->setText(bname);
     ui->spinBank->setRange(0, perf().screenset_max() - 1);
     connect
@@ -907,7 +910,7 @@ qsmainwnd::closeEvent (QCloseEvent * event)
 void
 qsmainwnd::make_perf_frame_in_tab ()
 {
-    m_song_frame64 = new qperfeditframe64(perf(), ui->SongTab);
+    m_song_frame64 = new (std::nothrow) qperfeditframe64(perf(), ui->SongTab);
     if (not_nullptr(m_song_frame64))
     {
         int bpmeasure = m_song_frame64->get_beats_per_measure();
@@ -1359,7 +1362,10 @@ qsmainwnd::redo_live_frame ()
     if (not_nullptr(m_live_frame))
         delete m_live_frame;
 
-    m_live_frame = new qslivegrid(perf(), this, (-1), ui->LiveTab);
+    m_live_frame = new (std::nothrow) qslivegrid
+    (
+        perf(), this, screenset::unassigned(), ui->LiveTab
+    );
     if (not_nullptr(m_live_frame))
     {
         ui->LiveTabLayout->addWidget(m_live_frame);
@@ -1412,7 +1418,10 @@ qsmainwnd::load_session_frame ()
 {
     if (is_nullptr(m_session_frame))
     {
-        qsessionframe * qsf = new qsessionframe(perf(), this, ui->SessionTab);
+        qsessionframe * qsf = new (std::nothrow) qsessionframe
+        (
+            perf(), this, ui->SessionTab
+        );
         if (not_nullptr(qsf))
         {
             ui->SessionTabLayout->addWidget(qsf);
@@ -1914,8 +1923,8 @@ qsmainwnd::import_into_set ()
                 std::string fn = path.toStdString();
                 bool is_wrk = file_extension_match(fn, "wrk");
                 midifile * f = is_wrk ?
-                    new wrkfile(fn, choose_ppqn(c_use_default_ppqn)) :
-                    new midifile(fn, choose_ppqn(c_use_default_ppqn))
+                    new (std::nothrow) wrkfile(fn, choose_ppqn(c_use_default_ppqn)) :
+                    new (std::nothrow) midifile(fn, choose_ppqn(c_use_default_ppqn))
                     ;
 
                 if (f->parse(perf(), setno, true))  /* true --> importing   */
@@ -2821,7 +2830,7 @@ qsmainwnd::update_bank (int bankid)
          * (void) perf().set_playing_screenset(m_live_frame->bank());
          */
 
-        std::string name = perf().bank_name(bankid);
+        std::string name = perf().set_name(bankid);
         QString newname = qt(name);
         ui->txtBankName->setText(newname);
     }
@@ -3442,7 +3451,7 @@ qsmainwnd::update_set_change (int setno)
     {
         if (setno != m_live_frame->bank())
         {
-            QString bname = qt(perf().bank_name(setno));
+            QString bname = qt(perf().set_name(setno));
             m_live_frame->update_bank(setno);       /* updates current bank */
             ui->spinBank->setValue(setno);          /* shows it in spinbox  */
             ui->txtBankName->setText(bname);        /* show set/bank name   */

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-02
+ * \updates       2021-11-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -337,10 +337,10 @@ qsetmaster::slot_cell_changed (int row, int column)
             QTableWidgetItem * c = cell(s, cid);
             QString qtext = c->text();
             std::string name = qtext.toStdString();
-            std::string oldname = cb_perf().screenset_name(s);
+            std::string oldname = cb_perf().set_name(s);
             if (name != oldname)
             {
-                cb_perf().set_screenset_name(s, name);
+                cb_perf().screenset_name(s, name);
                 set_needs_update();
             }
         }
@@ -404,7 +404,7 @@ qsetmaster::handle_set (int setno)
     {
         cb_perf().set_playing_screenset(setno);
         ui->m_set_number_text->setText(qt(std::to_string(setno)));
-        ui->m_set_name_text->setText(qt(cb_perf().bank_name(setno)));
+        ui->m_set_name_text->setText(qt(cb_perf().set_name(setno)));
         m_current_set = setno;
 
         /*
@@ -423,7 +423,7 @@ qsetmaster::slot_set_name ()
     if (m_current_set != screenset::unassigned())
     {
         std::string name = ui->m_set_name_text->text().toStdString();
-        cb_perf().set_screenset_name(m_current_set, name);
+        cb_perf().screenset_name(m_current_set, name);
         (void) initialize_table();      /* refill with sets */
     }
 }

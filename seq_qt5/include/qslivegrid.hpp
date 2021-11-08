@@ -93,10 +93,10 @@ public:
 
     qslivegrid
     (
-        performer & perf,               /* performance master   */
-        qsmainwnd * window,             /* functional parent    */
-        int desired_bank,               /* -1 or active set     */
-        QWidget * parent = nullptr      /* Qt-parent            */
+        performer & perf,                   /* performance master   */
+        qsmainwnd * window,                 /* functional parent    */
+        screenset::number bank = screenset::unassigned(),
+        QWidget * parent = nullptr          /* the Qt parent        */
     );
     virtual ~qslivegrid ();
 

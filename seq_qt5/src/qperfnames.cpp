@@ -154,7 +154,7 @@ qperfnames::paintEvent (QPaintEvent *)
                 pen.setColor(Qt::black);                // bank name sideways
                 painter.setPen(pen);
                 painter.save();                         // {
-                QString bank(qt(perf().bank_name(bank_id)));
+                QString bank(qt(perf().set_name(bank_id)));
                 painter.translate(12, text_y + bank.length() * 4);
                 painter.rotate(270);
                 painter.drawText(0, 0, bank);

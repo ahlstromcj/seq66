@@ -116,7 +116,7 @@ setmapper::setmapper
 ) :
     m_mute_groups           (mgs),
     m_set_size              (rows * columns),
-    m_set_master            (mc),
+    m_set_master            (mc),                   /* master() accessor    */
     m_sequence_count        (0),
     m_sequence_max
     (
@@ -250,9 +250,8 @@ setmapper::recount_sequences ()
 const screenset &
 setmapper::screen (seq::number seqno) const
 {
-    screenset::number s = seq_set(seqno);
-    return sets().find(s) != sets().end() ?
-        sets().at(s) : dummy_screenset() ;
+    screenset::number setno = seq_set(seqno);
+    return master().screen(setno);
 }
 
 /**
@@ -263,16 +262,17 @@ setmapper::screen (seq::number seqno) const
 screenset &
 setmapper::screen (seq::number seqno)
 {
-    screenset::number s = seq_set(seqno);
-    if (sets().find(s) != sets().end())
+    screenset::number setno = seq_set(seqno);
+    screenset & desired_screen = master().screen(setno);
+    if (desired_screen.usable())
     {
-        return sets().at(s);
+        return desired_screen;
     }
-    else if (master().is_screenset_valid(s))
+    else if (master().is_screenset_valid(setno))
     {
         if (seqno < seq::limit())
         {
-            auto newset = add_set(s);
+            auto newset = add_set(setno);
             return newset->second;
         }
         else

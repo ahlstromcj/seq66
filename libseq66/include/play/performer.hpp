@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-11-05
+ * \updates       2021-11-08
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -358,7 +358,7 @@ private:
      *  When the screenset changes, we put only the existing sequences in this
      *  vector to try to save time in the play() function.  This "play-set"
      *  feature offloads the performer::play() work to a special short vector
-     *  only active sequences.  We're desperately trying to reduce the CPU
+     *  of only active sequences.  We're desperately trying to reduce the CPU
      *  usage of this program when playing.  Without being connected to a
      *  synthesizer, playing the "b4uacuse" MIDI file in Live mode, with no
      *  pattern armed, the program eats up one whole CPU on an i7.  Setting
@@ -1367,9 +1367,14 @@ public:
         return mapper().grid_to_seq(row, column);
     }
 
-    bool seq_to_grid (seq::number seqno, int & row, int & column) const
+    bool seq_to_grid
+    (
+        seq::number seqno,
+        int & row, int & column,
+        bool global = false
+    ) const
     {
-        return mapper().seq_to_grid(seqno, row, column);
+        return mapper().seq_to_grid(seqno, row, column, global);
     }
 
     bool index_to_grid (seq::number seqno, int & row, int & column) const
@@ -2683,11 +2688,6 @@ public:
     screenset::number set_playing_screenset (screenset::number setno);
     void reset_playset ();
 
-    bool is_screenset_valid (screenset::number sset) const
-    {
-        return master().is_screenset_valid(sset);
-    }
-
     bool toggle_other_seqs (seq::number seqno, bool isshiftkey);
     bool toggle_other_names (seq::number seqno, bool isshiftkey);
 
@@ -2747,21 +2747,6 @@ public:
     }
 
 public:
-
-    /**
-     *  A better name for get_screen_set_name(), adapted from Kepler34.
-     *  However, we will still refer to them as "sets".
-     */
-
-    std::string bank_name (int bank) const
-    {
-        return screenset_name(screenset::number(bank));
-    }
-
-    std::string screenset_name (screenset::number sset) const
-    {
-        return mapper().name(sset);
-    }
 
     bool looping () const
     {
@@ -2923,12 +2908,10 @@ public:         /* GUI-support functions */
         return mapper().name();
     }
 
-    void set_screenset_name
-    (
-        screenset::number sset,
-        const std::string & note,
-        bool is_load_modification = false
-    );
+    bool is_screenset_valid (screenset::number setno) const
+    {
+        return master().is_screenset_valid(setno);
+    }
 
     /**
      *  Tests to see if the screen-set is active.  By "active", we mean that
@@ -2941,29 +2924,41 @@ public:         /* GUI-support functions */
      *      Returns true if the screen-set has an active pattern.
      */
 
-    bool is_screenset_active (screenset::number sset)
+    bool is_screenset_active (screenset::number setno)
     {
-        return mapper().is_screenset_active(sset);
+        return mapper().is_screenset_active(setno);
     }
 
     /**
      *  Tests to see if the screen-set is available... does it exist?
      *
-     * \param screenset
+     * \param setno
      *      The number of the screen-set to check, re 0.
      *
      * \return
-     *      Returns true if the screen-set is found in the std::map container.
+     *      Returns true if the screen-set is found in the set container.
      */
 
-    bool is_screenset_available (screenset::number sset)
+    bool is_screenset_available (screenset::number setno)
     {
-        return mapper().is_screenset_available(sset);
+        return mapper().is_screenset_available(setno);
     }
 
-    void set_screenset_name (const std::string & note)
+    void screenset_name (const std::string & note)
     {
         mapper().name(note);
+    }
+
+    void screenset_name
+    (
+        screenset::number setno,
+        const std::string & note,
+        bool is_load_modification = false
+    );
+
+    std::string set_name (screenset::number setno) const
+    {
+        return mapper().name(setno);
     }
 
     void song_recording_start ()

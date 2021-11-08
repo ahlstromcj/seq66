@@ -378,7 +378,7 @@ songsummary::write_set_names
     write_prop_header(file, c_notes, setcount);
     for (int s = 0; s < setcount; ++s)
     {
-        const std::string & note = p.screenset_name(s);
+        const std::string & note = p.set_name(s);
         file << "   Set #" <<std::dec << s << ": '" << note << "'\n";
     }
 }

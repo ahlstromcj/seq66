@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-10-26
+ * \updates       2021-11-08
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -85,7 +85,8 @@ private:
 
     /**
      *  Holds a reference to the master set of sets.  This is currently always
-     *  supplied by the performer object.
+     *  supplied by the performer object.  The set-master holds the container of
+     *  all existing sets.
      */
 
     setmaster & m_set_master;
@@ -224,7 +225,7 @@ private:
 
     /**
      *  Gets the offset of the sequence (re 0) in its screen-set.  It assumes
-     *  the pointer is good.
+     *  the pointer is good. Used only in performer::announce_sequence().
      */
 
     int seq_to_offset (seq::pointer s) const
@@ -237,9 +238,14 @@ private:
         return play_screen()->grid_to_seq(row, column);
     }
 
-    bool seq_to_grid (seq::number seqno, int & row, int & column) const
+    bool seq_to_grid
+    (
+        seq::number seqno,
+        int & row, int & column,
+        bool global = false
+    ) const
     {
-        return play_screen()->seq_to_grid(seqno, row, column);
+        return play_screen()->seq_to_grid(seqno, row, column, global);
     }
 
     bool index_to_grid (seq::number seqno, int & row, int & column) const
@@ -314,12 +320,13 @@ private:
 
     bool any_in_edit () const
     {
-        for (const auto & sset : sets())
-        {
-            if (sset.second.any_in_edit())
-                return true;
-        }
-        return false;
+        return master().any_in_edit();
+//      for (const auto & sset : sets())
+//      {
+//          if (sset.second.any_in_edit())
+//              return true;
+//      }
+//      return false;
     }
 
     bool is_seq_in_edit (seq::number seqno) const;
@@ -755,9 +762,16 @@ public:
     void show (bool showseqs = true) const;
 
     /**
-     *  Using std::map::operator [] is too problematic.  So we use at() and
-     *  avoid using illegal values.
+     *  The screen() functions look for the screen-set that contains the
+     *  specified (by number) sequence.  If not found, then the dummy
+     *  screen-set is returned.
+     *
+     *  The play_screen() functions return the screen that is showing in the
+     *  main Live grid.
      */
+
+    const screenset & screen (seq::number seqno) const;
+    screenset & screen (seq::number seqno);
 
     screenset * play_screen ()
     {
@@ -793,8 +807,6 @@ public:
     bool set_playscreen (screenset::number setno);
     bool set_playing_screenset (screenset::number setno);
     bool copy_screenset (screenset::number srcset, screenset::number destset);
-    const screenset & screen (seq::number seqno) const;
-    screenset & screen (seq::number seqno);
 
     /*
      *  Encapsulates some calls used in mainwnd.
@@ -957,12 +969,12 @@ private:
 
     setmaster::container & sets ()
     {
-        return m_set_master.set_container();
+        return master().set_container();
     }
 
     const setmaster::container & sets () const
     {
-        return m_set_master.set_container();
+        return master().set_container();
     }
 
 };              // class setmapper

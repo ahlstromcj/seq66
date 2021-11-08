@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2021-07-26
+ * \updates       2021-11-07
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the old mainwid class.
@@ -42,12 +42,17 @@ namespace seq66
 {
 
 /**
+ *  Principal constructor.
  *
  * \param p
  *      Provides the performer object to use for interacting with this sequence.
  *
  * \param window
  *      Provides the functional parent of this live frame.
+ *
+ * \param bank
+ *      Indicates the screenset number to use for the live grid.  If unassigned,
+ *      then the performer's active screenset number is used.
  *
  * \param parent
  *      Provides the Qt-parent window/widget for this container window.
@@ -56,16 +61,19 @@ namespace seq66
  *      in an external window.
  */
 
-qslivebase::qslivebase (performer & p, qsmainwnd * window, QWidget * parent) :
+qslivebase::qslivebase
+(
+    performer & p,
+    qsmainwnd * window,
+    screenset::number bank,
+    QWidget * parent
+) :
     QFrame              (parent),
     m_performer         (p),
     m_parent            (window),
     m_font              (),
-#if defined USE_FOCUS_TO_CHANGE_ACTIVE_SET
-    m_bank_id           (p.playscreen_number()),
-#else
-    m_bank_id           (3), // TEST TEST TEST
-#endif
+    m_show_perf_bank    (screenset::is_unassigned(bank)),
+    m_bank_id           (m_show_perf_bank ? p.playscreen_number() : bank),
     m_mainwnd_spacing   (usr().mainwnd_spacing()),          /* spacing()    */
     m_space_rows        (m_mainwnd_spacing * p.rows()),
     m_space_cols        (m_mainwnd_spacing * p.columns()),
@@ -85,6 +93,10 @@ qslivebase::qslivebase (performer & p, qsmainwnd * window, QWidget * parent) :
     m_needs_update      (false)
 {
     // No code needed
+
+#if defined SEQ66_PLATFORM_DEBUG
+    printf("qslivebase(bank = %d\n", int(m_bank_id));
+#endif
 }
 
 /**
@@ -103,12 +115,7 @@ qslivebase::~qslivebase()
 void
 qslivebase::set_bank ()
 {
-#if defined USE_FOCUS_TO_CHANGE_ACTIVE_SET
-    int bank = int(perf().playscreen_number());
-    set_bank(bank);
-#else
-    set_bank(m_bank_id);
-#endif
+    set_bank(m_bank_id);    /* set_bank(int(perf().playscreen_number()))    */
 }
 
 /**
@@ -129,8 +136,8 @@ qslivebase::set_bank (int bankid, bool hasfocus)
         m_bank_id = bankid;
         if (hasfocus)
         {
-            std::string bankname = perf().bank_name(bankid);
-            if (! is_external())
+            std::string bankname = perf().set_name(bankid);
+            if (show_perf_bank())                       // if (! is_external())
                 (void) perf().set_playing_screenset(bankid);
 
             set_bank_values(bankname, bankid);         /* update the GUI   */
@@ -154,6 +161,15 @@ qslivebase::update_bank (int bank)
 {
     m_has_focus = true;                                 /* widget active    */
     set_bank(bank, true);
+}
+
+seq::number
+qslivebase::seq_offset () const
+{
+    seq::number result = show_perf_bank() ?
+        perf().playscreen_offset() : usr().set_offset(bank()) ;
+
+    return result;
 }
 
 void

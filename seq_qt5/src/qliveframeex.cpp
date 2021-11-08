@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-16
- * \updates       2021-05-15
+ * \updates       2021-11-07
  * \license       GNU GPLv2 or above
  *
  *  This frame holds an external "Live" window that shows the grid of buttons
@@ -88,8 +88,10 @@ qliveframeex::qliveframeex (performer & p, int ssnum, qsmainwnd * parent) :
     ui->setupUi(this);
 
     QGridLayout * layout = new QGridLayout(this);
-    m_live_frame = new qslivegrid(p, parent, ssnum, nullptr);
-    layout->addWidget(m_live_frame);
+    m_live_frame = new (std::nothrow) qslivegrid(p, parent, ssnum, nullptr);
+    if (not_nullptr(m_live_frame))
+        layout->addWidget(m_live_frame);
+
     if (usr().window_is_scaled())           /* use scaling if applicable    */
     {
         QSize s = size();
@@ -102,12 +104,15 @@ qliveframeex::qliveframeex (performer & p, int ssnum, qsmainwnd * parent) :
             m_live_frame->repaint();
     }
 
-    std::string t = "Live Window Set #";
+    std::string t = "Live Grid Set #";
     t += std::to_string(ssnum);
     setWindowTitle(qt(t));
     show();
-    m_live_frame->update_bank(ssnum);
-    m_live_frame->show();
+    if (not_nullptr(m_live_frame))
+    {
+        m_live_frame->update_bank(ssnum);
+        m_live_frame->show();
+    }
 }
 
 /**
@@ -153,7 +158,7 @@ qliveframeex::changeEvent (QEvent * event)
     QWidget::changeEvent(event);
     if (event->type() == QEvent::ActivationChange)
     {
-        std::string t = "Live Window Set #";
+        std::string t = "Live Grid Set #";
         t += std::to_string(m_live_frame->bank());
         setWindowTitle(qt(t));
         m_live_frame->change_event(event);  // changeEvent(event)

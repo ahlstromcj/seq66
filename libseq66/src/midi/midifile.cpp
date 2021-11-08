@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-11-06
+ * \updates       2021-11-08
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1912,7 +1912,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
                 for (midishort i = 0; i < len; ++i)
                     notess += read_byte();                  /* unsigned!    */
 
-                p.set_screenset_name(x, notess, true);      /* load time    */
+                p.screenset_name(x, notess, true);          /* load time    */
             }
         }
         seqspec = parse_prop_header(file_size);
@@ -2939,7 +2939,7 @@ midifile::write_proprietary_track (performer & p)
     {
         if (s <= highset)                       /* unused tracks = no name  */
         {
-            const std::string & note = p.screenset_name(s);
+            const std::string & note = p.set_name(s);
             cnotesz += 2 + note.length();       /* short + note length      */
         }
     }
@@ -2991,7 +2991,7 @@ midifile::write_proprietary_track (performer & p)
     {
         if (s <= highset)                       /* unused tracks = no name  */
         {
-            const std::string & note = p.screenset_name(s);
+            const std::string & note = p.set_name(s);
             write_short(midishort(note.length()));
             for (unsigned n = 0; n < unsigned(note.length()); ++n)
                 write_byte(midibyte(note[n]));

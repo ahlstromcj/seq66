@@ -1059,6 +1059,11 @@ public:
         return m_mainwnd_rows * m_mainwnd_cols;
     }
 
+    int set_offset (int setno) const
+    {
+        return setno * set_size();
+    }
+
     bool swap_coordinates () const
     {
         return m_swap_coordinates;

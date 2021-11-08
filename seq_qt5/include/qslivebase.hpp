@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2021-11-07
+ * \updates       2021-11-08
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child class, qslivegride, are Sequencer66's
@@ -42,12 +42,6 @@
 #include "play/screenset.hpp"           /* seq66::screenset class           */
 
 class QEvent;
-
-/*
- * EXERIMENT IN PROGRESS
- */
-
-#define USE_FOCUS_TO_CHANGE_ACTIVE_SET
 
 /*
  * Do not document a namespace, it can break Doxygen.
@@ -74,18 +68,24 @@ public:
 
     qslivebase
     (
-        performer & perf,               /* performance master   */
-        qsmainwnd * window,             /* functional parent    */
-        QWidget * parent = nullptr      /* Qt-parent            */
+        performer & perf,                   /* performance master   */
+        qsmainwnd * window,                 /* functional parent    */
+        screenset::number bank = screenset::unassigned(),
+        QWidget * parent = nullptr          /* the Qt parent        */
     );
     virtual ~qslivebase ();
 
     bool set_bank (int newBank, bool hasfocus = false);
     void set_bank ();               // bank number retrieved from performer
 
-    int bank () const
+    screenset::number bank () const
     {
         return m_bank_id;           // same as the screen-set number
+    }
+
+    bool show_perf_bank () const
+    {
+        return m_show_perf_bank;
     }
 
     const performer & perf () const
@@ -103,19 +103,21 @@ public:
         return perf().columns();
     }
 
-    seq::number seq_offset () const
-    {
-        return perf().playscreen_offset();
-    }
+    seq::number seq_offset () const;
 
-    int spacing () const
+    bool seq_to_grid (seq::number seqno, int & row, int & column) const
     {
-        return m_mainwnd_spacing;
+        return perf().seq_to_grid(seqno, row, column, ! m_show_perf_bank);
     }
 
     seq::number current_seq () const
     {
         return m_current_seq;
+    }
+
+    int spacing () const
+    {
+        return m_mainwnd_spacing;
     }
 
 protected:
@@ -255,8 +257,16 @@ protected:
     QFont m_font;
 
     /**
+     *  Indicates if the live grid will show the specified bank number,
+     *  or the the current bank/set logged in the performer.
+     */
+
+    bool m_show_perf_bank;
+
+    /**
      *  Kepler34 calls "screensets" by the name "banks".  Same as the
-     *  screen-set number.
+     *  screen-set number. This is either the constructor-specified bank, or
+     *  is the same as the current bank/set logged in the performer.
      */
 
     int m_bank_id;

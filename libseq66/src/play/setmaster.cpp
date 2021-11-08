@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2021-11-01
+ * \updates       2021-11-08
  * \license       GNU GPLv2 or above
  *
  *  Implements setmaster.  The difference between the setmaster and setmapper
@@ -202,6 +202,21 @@ setmaster::screen (screenset::number setno) const
     return sp != m_container.end() ? sp->second : dummy_screenset();
 }
 
+bool
+setmaster::any_in_edit () const
+{
+    bool result = false;
+    for (const auto & sset : m_container)
+    {
+        if (sset.second.any_in_edit())
+        {
+            result = true;
+            break;
+        }
+    }
+    return result;
+}
+
 /**
  *  Given a set number, counts through the container until it finds the matching
  *  set number.  We have to brute-force the lookup because there may be
@@ -288,7 +303,7 @@ setmaster::exec_set_function (screenset::slothandler p)
 
 /**
  *  Does a brute-force lookup of the given set number, obtained by screenset
- *  :: set_number().  We must use the long form of the for loop here.  as far
+ *  :: set_number().  We must use the long form of the for loop here, as far
  *  as we can tell.
  *
  *  We could also do a find() on the map and return a dummy screenset, but
@@ -296,7 +311,7 @@ setmaster::exec_set_function (screenset::slothandler p)
  */
 
 setmaster::container::iterator
-setmaster::find_by_value (screenset::number setno)
+setmaster::find_by_value (screenset::number setno) // const
 {
     auto result = m_container.end();
     for (auto it = m_container.begin(); it != m_container.end(); ++it)

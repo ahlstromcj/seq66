@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2021-10-29
+ * \updates       2021-11-08
  * \license       GNU GPLv2 or above
  *
  *  The setmaster class is meant to encapsulate the sets and their layout,
@@ -181,46 +181,6 @@ public:
         return m_swap_coordinates;
     }
 
-private:
-
-    screenset::number grid_to_set (int row, int column) const;
-    bool index_to_grid (screenset::number setno, int & row, int & column);
-
-    bool inside_set (int row, int column) const
-    {
-        return (row >= 0) && (row < m_rows) &&
-            (column >= 0) && (column < m_columns);
-    }
-
-    void clear ()
-    {
-        m_container.clear();                    /* unconditional zappage!   */
-    }
-
-    int rows () const
-    {
-        return m_rows;
-    }
-
-    int columns () const
-    {
-        return m_columns;
-    }
-
-    /*
-     * exec_set_function(s) executes a set-handler for each set.
-     * exec_set_function(s,p) runs a set-handler and a slot-handler for each
-     * set.  exec_set_function(p) runs the slot-handler for all patterns in
-     * all sets.  exec_slot_function() uses the play-screen, and so is in
-     * setmapper, not here.
-     */
-
-    bool exec_set_function (screenset::sethandler s);
-    bool exec_set_function (screenset::sethandler s, screenset::slothandler p);
-    bool exec_set_function (screenset::slothandler p);
-
-public:
-
     std::string sets_to_string (bool showseqs = true) const;
     void show (bool showseqs = true) const;
 
@@ -264,12 +224,51 @@ public:
     int screenset_index (screenset::number setno) const;
     bool swap_sets (seq::number set0, seq::number set1);
 
+    bool any_in_edit () const;
+
+private:
+
+    screenset::number grid_to_set (int row, int column) const;
+    bool index_to_grid (screenset::number setno, int & row, int & column);
+
+    bool inside_set (int row, int column) const
+    {
+        return (row >= 0) && (row < m_rows) &&
+            (column >= 0) && (column < m_columns);
+    }
+
+    void clear ()
+    {
+        m_container.clear();                    /* unconditional zappage!   */
+    }
+
+    int rows () const
+    {
+        return m_rows;
+    }
+
+    int columns () const
+    {
+        return m_columns;
+    }
+
+    /*
+     * exec_set_function(s) executes a set-handler for each set.
+     * exec_set_function(s,p) runs a set-handler and a slot-handler for each
+     * set.  exec_set_function(p) runs the slot-handler for all patterns in
+     * all sets.  exec_slot_function() uses the play-screen, and so is in
+     * setmapper, not here.
+     */
+
+    bool exec_set_function (screenset::sethandler s);
+    bool exec_set_function (screenset::sethandler s, screenset::slothandler p);
+    bool exec_set_function (screenset::slothandler p);
+
 private:
 
     bool reset ();
-//  bool copy_screenset (screenset::number srcset, screenset::number destset);
     container::iterator add_set (screenset::number setno);
-    container::iterator find_by_value (screenset::number setno);
+    container::iterator find_by_value (screenset::number setno);    // const
 
     bool remove_set (screenset::number setno)
     {
@@ -306,6 +305,11 @@ private:
     }
 
     container & set_container ()        /* for setmapper and performer  */
+    {
+        return m_container;
+    }
+
+    const container & set_container () const
     {
         return m_container;
     }

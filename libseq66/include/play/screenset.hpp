@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-10-29
+ * \updates       2021-11-08
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -290,6 +290,16 @@ public:
         return sm_number_none;
     }
 
+    static bool is_unassigned (number n)
+    {
+        return n == sm_number_none;
+    }
+
+    bool is_unassigned () const
+    {
+        return m_set_number == sm_number_none;
+    }
+
     bool dummy () const
     {
         return m_set_number == limit();
@@ -297,7 +307,7 @@ public:
 
     bool usable () const
     {
-        return m_set_number != sm_number_none && ! dummy();
+        return ! is_unassigned() && ! dummy();
     }
 
     int set_size () const
@@ -445,7 +455,12 @@ public:
     }
 
     seq::number grid_to_seq (int row, int column) const;
-    bool seq_to_grid (seq::number seqno, int & row, int & column) const;
+    bool seq_to_grid
+    (
+        seq::number seqno,
+        int & row, int & column,
+        bool global = false
+    ) const;
     bool index_to_grid (seq::number seqno, int & row, int & column) const;
     bool needs_update () const;
 

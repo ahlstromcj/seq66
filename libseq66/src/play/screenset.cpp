@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-10-29
+ * \updates       2021-11-08
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -270,8 +270,6 @@ screenset::first_seq () const
  *  There is no "grid_to_index()" function needed as yet.
  */
 
-// OPTIMIZE ME!
-
 seq::number
 screenset::grid_to_seq (int row, int column) const
 {
@@ -311,30 +309,35 @@ screenset::grid_to_seq (int row, int column) const
  */
 
 bool
-screenset::seq_to_grid (seq::number seqno, int & row, int & column) const
+screenset::seq_to_grid
+(
+    seq::number seqno,
+    int & row, int & column,
+    bool global
+) const
 {
-    seqno -= offset();              /* convert to 0-to-31 range */
-    return index_to_grid(seqno, row, column);
+    seq::number index = global ? seqno : (seqno - offset()) ;
+    bool result = global || (index >= 0 && index < m_set_size);
+    if (result)
+        result = index_to_grid(index, row, column);
+
+    return result;
 }
 
 bool
 screenset::index_to_grid (seq::number index, int & row, int & column) const
 {
-    bool result = index >= 0 && index < m_set_size;
-    if (result)
+    if (swap_coordinates())
     {
-        if (swap_coordinates())
-        {
-            row = index / m_columns;
-            column = index % m_columns;
-        }
-        else
-        {
-            row = index % m_rows;
-            column = index / m_rows;
-        }
+        row = index / m_columns;
+        column = index % m_columns;
     }
-    return result;
+    else
+    {
+        row = index % m_rows;
+        column = index / m_rows;
+    }
+    return true;
 }
 
 bool

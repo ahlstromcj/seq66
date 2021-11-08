@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-11-07
+ * \updates       2021-11-08
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -115,6 +115,10 @@ static const int c_minimum_height  = 180;
  * \param window
  *      Provides the functional parent of this live frame.
  *
+ * \param bank
+ *      Indicates the screenset number to use for the live grid.  If unassigned,
+ *      then the performer's active screenset number is used.
+ *
  * \param parent
  *      Provides the Qt-parent window/widget for this container window.
  *      Defaults to null.  Normally, this is a pointer to the tab-widget
@@ -124,9 +128,12 @@ static const int c_minimum_height  = 180;
 
 qslivegrid::qslivegrid
 (
-    performer & p, qsmainwnd * window, int desired_bank, QWidget * parent
+    performer & p,
+    qsmainwnd * window,
+    screenset::number setno,
+    QWidget * parent
 ) :
-    qslivebase          (p, window, parent),
+    qslivebase          (p, window, setno, parent),
     ui                  (new Ui::qslivegrid),
     m_popup             (nullptr),
     m_timer             (nullptr),
@@ -152,7 +159,7 @@ qslivegrid::qslivegrid
     ui->frame->setMinimumSize(QSize(w, h));
     if (is_external())
     {
-        QString bname = qt(perf().bank_name(m_bank_id));
+        QString bname = qt(perf().set_name(bank()));
         ui->txtBankName->setText(bname);
         ui->spinBank->setRange(0, perf().screenset_max() - 1);
         connect
@@ -168,6 +175,12 @@ qslivegrid::qslivegrid
         ui->txtBankName->hide();
         ui->spinBank->hide();
     }
+
+    /*
+     * EXPERIMENTAL.
+     */
+
+    ui->buttonActivate->setEnabled(false);  // for now
 
     ui->labelPlaylistSong->setText("");
     set_mode_text();
@@ -293,9 +306,10 @@ qslivegrid::create_loop_buttons ()
         ui->loopGridLayout->setColumnMinimumWidth(column, m_slot_w + spacing());
 
     int setsize = perf().screenset_size();
+    int offset = seq_offset();
     for (int seqno = 0; seqno < setsize; ++seqno)
     {
-        qslotbutton * pb = create_one_button(seqno + seq_offset());
+        qslotbutton * pb = create_one_button(seqno + offset);
         m_loop_buttons.push_back(pb);
     }
     measure_loop_buttons();                     /* always do this           */
@@ -411,7 +425,7 @@ qslivegrid::create_one_button (seq::number seqno)
 {
     qslotbutton * result = nullptr;
     int row, column;
-    bool valid = perf().seq_to_grid(seqno, row, column);
+    bool valid = seq_to_grid(seqno, row, column);
     if (valid)
     {
         bool enabled = perf().is_screenset_active(seqno);
@@ -736,7 +750,7 @@ qslivegrid::update_bank_name (const std::string & name)
     if (is_external())
         ui->txtBankName->setText(qt(name));
 
-    perf().set_screenset_name(m_bank_id, name, is_external());
+    perf().screenset_name(bank(), name, is_external());
 }
 
 /**
@@ -1315,9 +1329,8 @@ qslivegrid::changeEvent (QEvent * event)
         if (isActiveWindow())
         {
             m_has_focus = true;                 /* widget is now active     */
-#if defined USE_FOCUS_TO_CHANGE_ACTIVE_SET
-            (void) perf().set_playing_screenset(m_bank_id);
-#endif
+            if (show_perf_bank())
+                (void) perf().set_playing_screenset(m_bank_id);
         }
         else
             m_has_focus = false;                /* widget is now inactive   */
