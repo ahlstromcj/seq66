@@ -1,7 +1,7 @@
 # README for Seq66 0.97.2
 
 Chris Ahlstrom
-2015-09-10 to 2021-11-07
+2015-09-10 to 2021-11-09
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -14,9 +14,9 @@ headless.  It does not support audio samples, just MIDI.
 __Seq66__ is a major refactoring of Sequencer64/Kepler34, both being reboots of
 __Seq24__ with modern C++ and new features.  Linux users can build this
 application from the source code.  See the INSTALL file; it has notes on many
-types on installation, including notes for OpenSUSE Tumbleweed.  Windows users can
-get an installer package on GitHub or build it with Qt Creator.  A comprehensive
-PDF user-manual is provided.
+types on installation, including notes for OpenSUSE Tumbleweed.  Windows users
+can get an installer package on GitHub or build it with Qt Creator.  A
+comprehensive PDF user-manual is provided.
 
 ![Alt text](doc/latex/images/main-window/main-window-fluxbox.png?raw=true "Seq66
 Dark-Cold Fluxbox")
@@ -92,13 +92,14 @@ Windows, and using a conventional source tarball.
         *   Issue #60: Added 'rc' option to disable JACK port auto connect in
             normal mode.  Also present in Preferences / JACK.
         *   Issue #61: Rearranged console output to show the app name, in color.
+            Also turns off color if redirected to a file.
         *   Issue #63: Initial work on rotating numbering of patterns, sets, and
             mutes, so that numbers vary faster by column than by row.
         *   Issue #64: Fix a bug in optional GUI, testing with Agordejo (NSM).
         *   Added textfix.qss to make disabled text easier to read in themes.
-        *   Improved the saving/restoring of Edit / Preferences.  Added option
-            "Bold Grid Slots" to make the progress bar and progress border thick,
-            and the slot font bold.
+        *   Improved the saving/restoring of Edit / Preferences.
+        *   Added option "Bold Grid Slots" to make the progress bar and progress
+            border thick, and the slot font bold.
         *   Added the ability to reload the configuration via a button press
             that restarts the application.
         *   More streamlining of configuration writing.

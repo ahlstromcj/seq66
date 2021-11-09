@@ -121,6 +121,7 @@ extern bool string_is_void (const std::string & s);
 extern bool strings_match (const std::string & target, const std::string & x);
 extern std::string bool_to_string (bool x);
 extern char bool_to_char (bool x);
+extern std::string pointer_to_string (void * ptr);
 extern int tokenize_stanzas
 (
     std::vector<std::string> & tokens,

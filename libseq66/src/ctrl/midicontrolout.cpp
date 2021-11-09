@@ -17,7 +17,7 @@
  */
 
 /**
- * \file          midicontrolout.hpp
+ * \file          midicontrolout.cpp
  *
  *  This module declares/defines the class for handling MIDI control
  *  <i>output</i> of the application.

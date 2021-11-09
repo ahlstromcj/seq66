@@ -576,7 +576,7 @@ cmdlineopts::parse_log_option (int argc, char * argv [])
 #else
         file_message("Running", argv[0]);
 #endif
-        rc().verbose(true);                 /* turn on is_debug() output    */
+        rc().verbose(true);
         file_message(exename, "Verbose mode enabled");
     }
     if (parse_o_options(argc, argv))

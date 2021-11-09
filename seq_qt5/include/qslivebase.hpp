@@ -78,7 +78,7 @@ public:
     bool set_bank (int newBank, bool hasfocus = false);
     void set_bank ();               // bank number retrieved from performer
 
-    screenset::number bank () const
+    screenset::number bank_id () const
     {
         return m_bank_id;           // same as the screen-set number
     }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-11-04
+ * \updates       2021-11-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -942,7 +942,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         "\n"
         "# A control stanza incorporates key control and MIDI. Keys support\n"
         "# only 'toggle'; key-release is an 'invert'. The leftmost number on\n"
-        "# each line is the pattern number (e.g. 0 to 31), the group number\n"
+        "# each line is the pattern number (eg. 0 to 31), the group number\n"
         "# (same range), or an automation control number.  This number is\n"
         "# followed by three groups of bracketed numbers, each providing 3\n"
         "# types of control:\n"
@@ -963,22 +963,22 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         "# the opposite, but not all support this; all keystroke-releases set\n"
         "# invert to true; 'status' is the MIDI event to match (channel is NOT\n"
         "# ignored); if set to 0x00, the control is disabled; 'd0' is the\n"
-        "# first data value (e.g. if status is 0x90 (Note On), d0 is the note\n"
-        "# number; d1min to d1max is the range of data values detectable (e.g.\n"
+        "# first data value (eg. if status is 0x90 (Note On), d0 is the note\n"
+        "# number; d1min to d1max is the range of data values detectable (eg.\n"
         "# 1 to 127 indicates any non-zero velocity invokes the control.\n"
         "# Hex values can be used; precede with '0x'.\n"
         "#\n"
-        "#  ---------------------- Loop, group, or automation-slot number\n"
-        "# |    ------------------ Name of the key (see the key map)\n"
+        "#  ---------------------- Loop/group/automation-slot number\n"
+        "# |    ------------------ Name of key (see the key map)\n"
         "# |   |\n"
         "# |   |      ------------ Inverse\n"
-        "# |   |     |  ---------- MIDI status/event byte (e.g. Note On)\n"
-        "# |   |     | |  -------- d0: Data 1 (e.g. Note number)\n"
-        "# |   |     | | |  ------ d1max: Data 2 min (e.g. Note velocity)\n"
+        "# |   |     |  ---------- MIDI status/event byte (eg. Note On)\n"
+        "# |   |     | |  -------- d0: Data 1 (eg. Note number)\n"
+        "# |   |     | | |  ------ d1max: Data 2 min (eg. Note velocity)\n"
         "# |   |     | | | |  ---- d1min: Data 2 max\n"
         "# |   |     | | | | |\n"
         "# v   v     v v v v v\n"
-        "# 0 \"F1\" [0 0 0 0 0 0]   [0 0 0 0 0 0]   [0 0 0 0 0 0]\n"
+        "# 0 \"F1\"   [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0]\n"
         "#           Toggle          On              Off\n"
         ;
 
@@ -1133,9 +1133,9 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             "[midi-control-out]\n"
             "\n"
             "#   ---------------- Pattern number (as applicable)\n"
-            "#  |     ----------- MIDI status+channel (e.g. Note On)\n"
-            "#  |    |    ------- data 1 (e.g. note number)\n"
-            "#  |    |   |  ----- data 2 (e.g. velocity)\n"
+            "#  |     ----------- MIDI status+channel (eg. Note On)\n"
+            "#  |    |    ------- data 1 (eg. note number)\n"
+            "#  |    |   |  ----- data 2 (eg. velocity)\n"
             "#  |    |   | |\n"
             "#  v    v   v v\n"
             "# 31 [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0]\n"
@@ -1191,9 +1191,9 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             "# The format of the mute and automation output events is simpler:\n"
             "#\n"
             "#  ----------------- mute-group number\n"
-            "# |    ------------- MIDI status+channel (e.g. Note On)\n"
-            "# |   |    --------- data 1 (e.g. note number)\n"
-            "# |   |   |  ------- data 2 (e.g. velocity)\n"
+            "# |    ------------- MIDI status+channel (eg. Note On)\n"
+            "# |   |    --------- data 1 (eg. note number)\n"
+            "# |   |   |  ------- data 2 (eg. velocity)\n"
             "# |   |   | |\n"
             "# v   v   v v\n"
             "# 1 [0x00 0 0 ] [0x00 0 0] [0x00 0 0]\n"

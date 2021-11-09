@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2020-10-27
+ * \updates       2020-11-09
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -70,12 +70,13 @@ namespace seq66
 
 enum class msglevel
 {
-    none,
-    info,
-    warn,
-    error,
-    status,
-    special
+    none,           /* default console color    */
+    info,           /* blue                     */
+    warn,           /* yellow                   */
+    error,          /* red                      */
+    status,         /* green                    */
+    special,        /* magenta                  */
+    debug           /* debug                    */
 };
 
 /*
@@ -99,7 +100,11 @@ extern const std::string & seq_app_type ();
 extern const std::string & seq_arg_0 ();
 extern const std::string & seq_client_name ();
 extern const std::string & seq_client_short ();
-extern std::string seq_client_tag (msglevel el = msglevel::none);
+extern std::string seq_client_tag
+(
+    msglevel el = msglevel::none,
+    bool showcolor = true
+);
 extern const std::string & seq_package_name ();
 extern const std::string & seq_version ();
 extern const std::string & seq_version_text ();

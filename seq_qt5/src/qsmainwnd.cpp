@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-08
+ * \updates       2021-11-09
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2827,7 +2827,7 @@ qsmainwnd::update_bank (int bankid)
 
         /*
          * Done in the call above:
-         * (void) perf().set_playing_screenset(m_live_frame->bank());
+         * (void) perf().set_playing_screenset(m_live_frame->bank_id());
          */
 
         std::string name = perf().set_name(bankid);
@@ -3449,7 +3449,7 @@ qsmainwnd::update_set_change (int setno)
     bool ok = not_nullptr(m_live_frame);
     if (ok)
     {
-        if (setno != m_live_frame->bank())
+        if (setno != m_live_frame->bank_id())
         {
             QString bname = qt(perf().set_name(setno));
             m_live_frame->update_bank(setno);       /* updates current bank */
@@ -3544,10 +3544,12 @@ qsmainwnd::changeEvent (QEvent * event)
         {
             if (not_nullptr(m_live_frame))
             {
-                screenset::number bank = m_live_frame->bank();
+                screenset::number bank = m_live_frame->bank_id();
                 screenset::number setno = perf().playscreen_number();
                 if (bank != setno)
+                {
                     (void) perf().set_playing_screenset(bank);
+                }
             }
         }
         else

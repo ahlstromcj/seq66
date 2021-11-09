@@ -111,19 +111,26 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="txtBankName"/>
+      <widget class="QLineEdit" name="txtBankName">
+       <property name="minimumSize">
+        <size>
+         <width>300</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="labelPlaylistSong">
        <property name="minimumSize">
         <size>
-         <width>320</width>
+         <width>32</width>
          <height>24</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>16777215</width>
+         <width>800</width>
          <height>24</height>
         </size>
        </property>
@@ -134,10 +141,35 @@
      </item>
      <item>
       <widget class="QPushButton" name="buttonActivate">
+       <property name="minimumSize">
+        <size>
+         <width>80</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
         <string>Activate</string>
        </property>
       </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item>
       <widget class="Line" name="line">

@@ -25,9 +25,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-10-27
+ * \updates       2021-11-09
  * \license       GNU GPLv2 or above
  *
+ *  One of the big new feature of some of these functions is writing the name of
+ *  the application in color before each message that is put out.
  */
 
 #include <assert.h>
@@ -38,7 +40,7 @@
 #include "util/basic_macros.hpp"        /* basic macros-cum-functions       */
 
 #if defined SEQ66_PLATFORM_UNIX
-#include <unistd.h>                     /* C::write(2)                      */
+#include <unistd.h>                     /* C::write(2), C::isatty(3)        */
 #endif
 
 #if defined SEQ66_PLATFORM_WINDOWS
@@ -84,8 +86,8 @@ not_nullptr_assert (void * ptr, const std::string & context)
     {
         std::cerr
             << seq_client_tag(msglevel::error) << " null pointer in context "
-            << context << std::endl
-            ;
+            << context << std::endl;
+
         result = false;
     }
 
@@ -100,6 +102,30 @@ not_nullptr_assert (void * ptr, const std::string & context)
 }
 
 #endif  // SEQ66_PLATFORM_DEBUG
+
+static bool
+is_a_tty (int fd)
+{
+#if defined SEQ66_PLATFORM_WINDOWS
+#define STDIN_FILENO    0
+#define STDOUT_FILENO   1
+#define STDERR_FILENO   2
+
+    int fileno;
+    switch (fd)
+    {
+        case STDIN_FILENO:  fileno = _fileno(stdin);    break;
+        case STDOUT_FILENO: fileno = _fileno(stdout);   break;
+        case STDERR_FILENO: fileno = _fileno(stderr);   break;
+        default:            fileno = (-1);              break;
+    }
+    int rc = (fileno >= 0) ? _isatty(fileno) : 90;
+    return rc == 1;                             /* fd refers to a terminal  */
+#else
+    int rc = isatty(fd);
+    return rc == 1;                             /* fd refers to a terminal  */
+#endif
+}
 
 /**
  *  Common-code for console informationational messages.  Adds markers and a
@@ -117,22 +143,31 @@ bool
 info_message (const std::string & msg)
 {
     if (rc().verbose())
-        std::cout << seq_client_tag(msglevel::info) << " " << msg << std::endl;
-
+    {
+        bool isterminal = is_a_tty(STDOUT_FILENO);
+        std::cout << seq_client_tag(msglevel::info, isterminal)
+            << " " << msg << std::endl;
+    }
     return true;
 }
 
 bool
 status_message (const std::string & msg)
 {
-    std::cout << seq_client_tag(msglevel::status) << " " << msg << std::endl;
+    bool isterminal = is_a_tty(STDOUT_FILENO);
+    std::cout << seq_client_tag(msglevel::status, isterminal)
+        << " " << msg << std::endl;
+
     return true;
 }
 
 bool
 special_message (const std::string & msg)
 {
-    std::cout << seq_client_tag(msglevel::special) << " " << msg << std::endl;
+    bool isterminal = is_a_tty(STDOUT_FILENO);
+    std::cout << seq_client_tag(msglevel::special, isterminal)
+        << " " << msg << std::endl;
+
     return true;
 }
 
@@ -150,7 +185,10 @@ special_message (const std::string & msg)
 bool
 warn_message (const std::string & msg)
 {
-    std::cout << seq_client_tag(msglevel::warn) << " " << msg << std::endl;
+    bool isterminal = is_a_tty(STDERR_FILENO);
+    std::cerr << seq_client_tag(msglevel::warn, isterminal)
+        << " " << msg << std::endl;
+
     return true;
 }
 
@@ -166,13 +204,29 @@ warn_message (const std::string & msg)
  */
 
 bool
-error_message (const std::string & msg)
+error_message (const std::string & msg, const std::string & data)
 {
-    std::string errmsg = msg;
-    if (errmsg.empty())
-        errmsg = "No error message; contact the programmer";
+    bool isterminal = is_a_tty(STDERR_FILENO);
+    std::cerr << seq_client_tag(msglevel::error, isterminal) << " " << msg;
+    if (! data.empty())
+        std::cerr << ": " << data;
 
-    std::cerr << seq_client_tag(msglevel::error) << " " << errmsg << std::endl;
+    std::cerr << std::endl;
+    return false;
+}
+
+bool
+debug_message (const std::string & msg, const std::string & data)
+{
+    if (rc().investigate())
+    {
+        bool isterminal = is_a_tty(STDERR_FILENO);
+        std::cerr << seq_client_tag(msglevel::debug, isterminal) << " " << msg;
+        if (! data.empty())
+            std::cerr << ": " << data;
+
+        std::cerr << std::endl;
+    }
     return false;
 }
 
@@ -194,9 +248,10 @@ error_message (const std::string & msg)
 bool
 file_error (const std::string & tag, const std::string & path)
 {
-    std::cerr << seq_client_tag(msglevel::error) << " "
-        << tag << ": '" << path << "'" << std::endl
-        ;
+    bool isterminal = is_a_tty(STDERR_FILENO);
+    std::cerr << seq_client_tag(msglevel::error, isterminal) << " "
+        << tag << ": '" << path << "'" << std::endl;
+
     return false;
 }
 
@@ -215,9 +270,9 @@ file_error (const std::string & tag, const std::string & path)
 void
 file_message (const std::string & tag, const std::string & path)
 {
-    std::cout << seq_client_tag(msglevel::info) << " "
-        << tag << ": '" << path << "'" << std::endl
-        ;
+    bool isterminal = is_a_tty(STDOUT_FILENO);
+    std::cout << seq_client_tag(msglevel::info, isterminal) << " "
+        << tag << ": '" << path << "'" << std::endl;
 }
 
 /**
@@ -364,18 +419,17 @@ msgprintf (msglevel lev, std::string fmt, ...)
             break;
 
         case msglevel::info:
-        case msglevel::warn:
         case msglevel::status:
         case msglevel::special:
 
-            std::cout << seq_client_tag(lev) << " "
-                << output << std::endl;
+            std::cout << seq_client_tag(lev) << " " << output << std::endl;
             break;
 
+        case msglevel::warn:
         case msglevel::error:
+        case msglevel::debug:
 
-            std::cerr << seq_client_tag(msglevel::error) << " "
-                << output << std::endl;
+            std::cerr << seq_client_tag(lev) << " " << output << std::endl;
             break;
         }
         va_end(args);                                       /* 2019-04-21   */

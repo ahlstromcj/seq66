@@ -775,6 +775,18 @@ bool_to_char (bool x)
     return x ? s_true : s_false ;
 }
 
+std::string
+pointer_to_string (void * ptr)
+{
+    /*
+     * long long int value = reinterpret_cast<ptr>;
+     */
+
+    char temp[32];
+    snprintf(temp, sizeof temp, "0x%p", ptr);
+    return std::string(temp);
+}
+
 /**
  *  Tokenizes a substanza, defined as the text between square brackets,
  *  including the square brackets.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-16
- * \updates       2021-11-07
+ * \updates       2021-11-09
  * \license       GNU GPLv2 or above
  *
  *  This frame holds an external "Live" window that shows the grid of buttons
@@ -115,13 +115,11 @@ qliveframeex::qliveframeex (performer & p, int ssnum, qsmainwnd * parent) :
     }
 }
 
-/**
- *  Deletes the user interface, then tells the editor parent to remove
- *  this object.
- */
-
 qliveframeex::~qliveframeex()
 {
+    if (not_nullptr(m_live_frame))      /* ca 2021-11-08 PROVISIONAL    */
+        delete m_live_frame;
+
     delete ui;
 }
 
@@ -159,7 +157,7 @@ qliveframeex::changeEvent (QEvent * event)
     if (event->type() == QEvent::ActivationChange)
     {
         std::string t = "Live Grid Set #";
-        t += std::to_string(m_live_frame->bank());
+        t += std::to_string(m_live_frame->bank_id());
         setWindowTitle(qt(t));
         m_live_frame->change_event(event);  // changeEvent(event)
     }

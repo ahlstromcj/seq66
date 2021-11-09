@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2021-10-27
+ * \updates       2021-11-09
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -239,20 +239,20 @@ seq_client_short ()
 }
 
 /**
- * Text color codes:
+ * Text color codes ('*' indicates the color is used below):
  *
- *  -   30 = black
- *  -   31 = red
- *  -   32 = green
- *  -   33 = yellow
- *  -   34 = blue
- *  -   35 = magenta
+ *  -   30 = black *
+ *  -   31 = red *
+ *  -   32 = green *
+ *  -   33 = yellow *
+ *  -   34 = blue *
+ *  -   35 = magenta *
  *  -   36 = cyan
  *  -   37 = white
  */
 
 std::string
-seq_client_tag (msglevel el)
+seq_client_tag (msglevel el, bool showcolor)
 {
     if (el == msglevel::none)
     {
@@ -267,13 +267,18 @@ seq_client_tag (msglevel el)
             "\033[1;33m",       /* warning message is yellow            */
             "\033[1;31m",       /* error message is red                 */
             "\033[1;32m",       /* status message is green              */
-            "\033[1;35m"        /* special message is magenta           */
+            "\033[1;35m",       /* special message is magenta           */
+            "\033[1;30m"        /* debug message is black               */
         };
         std::string result = "[";
         int index = static_cast<int>(el);
-        result += s_level_colors[index];
+        if (showcolor)
+            result += s_level_colors[index];
+
         result += s_client_name_short;
-        result += s_level_colors[0];
+        if (showcolor)
+            result += s_level_colors[0];
+
         result += "]";
         return result;
     }

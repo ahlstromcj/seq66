@@ -88,7 +88,7 @@ keyboard-layout = qwerty
 # |   |     | | | |  -------- d1min: Data 2 max
 # |   |     | | | | |
 # v   v     v v v v v
-# 0 "F1" [0 0 0 0 0 0]   [0 0 0 0 0 0]   [0 0 0 0 0 0]
+# 0 "F1"   [0 0 0 0 0]   [0 0 0 0 0 0]   [0 0 0 0 0 0]
 #           Toggle          On              Off
 
 [loop-control]

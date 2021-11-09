@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2021-11-07
+ * \updates       2021-11-09
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the old mainwid class.
@@ -92,11 +92,7 @@ qslivebase::qslivebase
     m_is_external       (is_nullptr(parent)),
     m_needs_update      (false)
 {
-    // No code needed
-
-#if defined SEQ66_PLATFORM_DEBUG
-    printf("qslivebase(bank = %d\n", int(m_bank_id));
-#endif
+    (void) debug_message("qlivebase bank ID", std::to_string(bank_id()));
 }
 
 /**
@@ -137,16 +133,11 @@ qslivebase::set_bank (int bankid, bool hasfocus)
         if (hasfocus)
         {
             std::string bankname = perf().set_name(bankid);
-            if (show_perf_bank())                       // if (! is_external())
+            if (! is_external())                        /* show_perf_bank() */
                 (void) perf().set_playing_screenset(bankid);
 
-            set_bank_values(bankname, bankid);         /* update the GUI   */
+            set_bank_values(bankname, bankid);         /* update the GUI    */
         }
-
-        /*
-         * ca 2021-10-26 This is premature.
-         * reupdate();
-         */
     }
     return result;
 }
@@ -163,11 +154,15 @@ qslivebase::update_bank (int bank)
     set_bank(bank, true);
 }
 
+/**
+ *  We should ultimately use setmaster rather than usrsettings here.
+ */
+
 seq::number
 qslivebase::seq_offset () const
 {
     seq::number result = show_perf_bank() ?
-        perf().playscreen_offset() : usr().set_offset(bank()) ;
+        perf().playscreen_offset() : usr().set_offset(bank_id()) ;
 
     return result;
 }

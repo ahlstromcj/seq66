@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2021-10-27
+ * \updates       2021-11-09
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -113,7 +113,14 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
 extern bool info_message (const std::string & msg);
 extern bool status_message (const std::string & msg);
 extern bool warn_message (const std::string & msg);
-extern bool error_message (const std::string & msg);
+extern bool error_message
+(
+    const std::string & msg, const std::string & data = ""
+);
+extern bool debug_message
+(
+    const std::string & msg, const std::string & data = ""
+);
 extern bool special_message (const std::string & msg);
 extern bool file_error (const std::string & tag, const std::string & filename);
 extern void file_message (const std::string & tag, const std::string & path);
@@ -122,21 +129,6 @@ extern void toggleprint (const std::string & tag, bool flag);
 extern void async_safe_strprint (const char * msg, size_t count);
 extern void msgprintf (seq66::msglevel lev, std::string fmt, ...);
 extern std::string msgsnprintf (std::string fmt, ...);
-
-/**
- *  Prepends "Debug" to the string and then printf()'s it.  No need
- *  for an iostream for this simple task.
- *
- * \param msg
- *      The debug message to be shown.
- */
-
-inline void
-debug_message (const std::string & msg)
-{
-    if (! msg.empty())
-        printf("Debug: '%s'\n", msg.c_str());
-}
 
 }               // namespace seq66
 

@@ -316,7 +316,9 @@ screenset::seq_to_grid
     bool global
 ) const
 {
-    seq::number index = global ? seqno : (seqno - offset()) ;
+    // seq::number index = global ? seqno : (seqno - offset()) ;
+
+    seq::number index = seqno - offset();
     bool result = global || (index >= 0 && index < m_set_size);
     if (result)
         result = index_to_grid(index, row, column);
@@ -327,6 +329,7 @@ screenset::seq_to_grid
 bool
 screenset::index_to_grid (seq::number index, int & row, int & column) const
 {
+    index %= m_set_size;                /* force it to be in range */
     if (swap_coordinates())
     {
         row = index / m_columns;

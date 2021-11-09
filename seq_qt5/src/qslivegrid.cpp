@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-11-08
+ * \updates       2021-11-09
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -79,6 +79,10 @@
 #include "qslivegrid.hpp"               /* seq66::qslivegrid                */
 #include "qsmainwnd.hpp"                /* the true parent of this class    */
 #include "qt5_helpers.hpp"              /* seq66::qt_keystroke() etc.       */
+
+#if defined SEQ66_PLATFORM_DEBUG
+#include "util/strfunctions.hpp"        /* seq66::pointer_to_string()       */
+#endif
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -159,7 +163,7 @@ qslivegrid::qslivegrid
     ui->frame->setMinimumSize(QSize(w, h));
     if (is_external())
     {
-        QString bname = qt(perf().set_name(bank()));
+        QString bname = qt(perf().set_name(bank_id()));
         ui->txtBankName->setText(bname);
         ui->spinBank->setRange(0, perf().screenset_max() - 1);
         connect
@@ -181,6 +185,8 @@ qslivegrid::qslivegrid
      */
 
     ui->buttonActivate->setEnabled(false);  // for now
+    if (! is_external())
+        ui->buttonActivate->hide();
 
     ui->labelPlaylistSong->setText("");
     set_mode_text();
@@ -309,8 +315,25 @@ qslivegrid::create_loop_buttons ()
     int offset = seq_offset();
     for (int seqno = 0; seqno < setsize; ++seqno)
     {
-        qslotbutton * pb = create_one_button(seqno + offset);
-        m_loop_buttons.push_back(pb);
+        /*
+         * This does old behavior (external live grid shows the desired set,
+         * and so does the main window.  Using seqno + offset yields buttons
+         * squashed to the right, and a blank main live grid!
+         *
+         * // int s = is_external() ? (seqno + offset) : seqno ;
+         */
+
+        int s = seqno + offset;                 /* provides old behavior    */
+        qslotbutton * pb = create_one_button(s);
+        if (not_nullptr(pb))
+        {
+            m_loop_buttons.push_back(pb);
+        }
+        else
+        {
+            (void) error_message("create button failed", std::to_string(s));
+            break;
+        }
     }
     measure_loop_buttons();                     /* always do this           */
 }
@@ -376,9 +399,7 @@ qslivegrid::measure_loop_buttons ()
                 m_y_max = y1;
         }
         else
-        {
-            warnprint("measure loop button: null button");
-        }
+            break;
     }
 }
 
@@ -446,10 +467,6 @@ qslivegrid::create_one_button (seq::number seqno)
         result->show();
         result->setEnabled(enabled);
         setup_button(result);
-    }
-    else
-    {
-        errprintf("create button (seq %d) failed\n", seqno);
     }
     return result;
 }
@@ -750,7 +767,7 @@ qslivegrid::update_bank_name (const std::string & name)
     if (is_external())
         ui->txtBankName->setText(qt(name));
 
-    perf().screenset_name(bank(), name, is_external());
+    perf().screenset_name(bank_id(), name, is_external());
 }
 
 /**
@@ -1216,13 +1233,7 @@ qslivegrid::reupdate ()
                 pb->reupdate();
             }
             else
-            {
-                /*
-                 * error_message("qslivegrid::reupdate() finds null button");
-                 */
-
                 break;
-            }
         }
     }
 }
@@ -1317,7 +1328,8 @@ qslivegrid::change_event (QEvent * evp)
 
 /**
  *  This is not called when focus changes.  Instead, we have to call this from
- *  qsliveframeex::changeEvent().  See change_event() above.
+ *  qsliveframeex::changeEvent().  See change_event() above.  Thus, this
+ *  function is called only for the external live frame.
  */
 
 void
@@ -1329,11 +1341,19 @@ qslivegrid::changeEvent (QEvent * event)
         if (isActiveWindow())
         {
             m_has_focus = true;                 /* widget is now active     */
-            if (show_perf_bank())
-                (void) perf().set_playing_screenset(m_bank_id);
+
+            /*
+             *  We don't want the external frame to change the active
+             *  screen-set.
+             *
+             *      if (show_perf_bank())
+             *          (void) perf().set_playing_screenset(bank_id());
+             */
         }
         else
+        {
             m_has_focus = false;                /* widget is now inactive   */
+        }
     }
 }
 
