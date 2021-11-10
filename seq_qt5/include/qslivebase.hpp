@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2021-11-08
+ * \updates       2021-11-10
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child class, qslivegride, are Sequencer66's
@@ -81,6 +81,11 @@ public:
     screenset::number bank_id () const
     {
         return m_bank_id;           // same as the screen-set number
+    }
+
+    const std::string & bank_name () const
+    {
+        return m_bank_name;
     }
 
     bool show_perf_bank () const
@@ -187,6 +192,16 @@ protected:
         // no code in the base class
     }
 
+    virtual void set_bank_values
+    (
+        const std::string & name = "",
+        int id = 0
+    )
+    {
+        m_bank_name = name;
+        m_bank_id = id;
+    }
+
 private:            // pure virtual functions
 
     virtual void calculate_base_sizes (seq::number, int &, int &)
@@ -199,11 +214,6 @@ private:            // pure virtual functions
     (
         const std::string & plname = "",
         bool modified = false
-    ) = 0;
-    virtual void set_bank_values
-    (
-        const std::string & bankname = "",
-        int bankid = 0
     ) = 0;
 
     virtual void reupdate () = 0;               /* update()         */
@@ -270,6 +280,13 @@ protected:
      */
 
     int m_bank_id;
+
+    /**
+     *  A copy of the bank name, which is not necessarily the name of the
+     *  playing screen-set.
+     */
+
+    std::string m_bank_name;
 
     /**
      *  These values are assigned to the values given by the constants of

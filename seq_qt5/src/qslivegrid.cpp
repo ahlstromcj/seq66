@@ -184,8 +184,16 @@ qslivegrid::qslivegrid
      * EXPERIMENTAL.
      */
 
-    ui->buttonActivate->setEnabled(false);  // for now
-    if (! is_external())
+    if (is_external())
+    {
+        ui->buttonActivate->setEnabled(true);
+        connect
+        (
+            ui->buttonActivate, SIGNAL(clicked(bool)),
+            this, SLOT(slot_activate_bank(bool))
+        );
+    }
+    else
         ui->buttonActivate->hide();
 
     ui->labelPlaylistSong->setText("");
@@ -533,10 +541,11 @@ qslivegrid::color_by_number (int i)
  */
 
 void
-qslivegrid::set_bank_values (const std::string & bankname, int bankid)
+qslivegrid::set_bank_values (const std::string & name, int id)
 {
-    ui->txtBankName->setText(qt(bankname));
-    ui->spinBank->setValue(bankid);
+    qslivebase::set_bank_values(name, id);
+    ui->txtBankName->setText(qt(name));
+    ui->spinBank->setValue(id);
 }
 
 /**
@@ -1318,6 +1327,12 @@ qslivegrid::slot_set_bank_name ()
     QString newname = ui->txtBankName->text();
     std::string name = newname.toStdString();
     update_bank_name(name);
+}
+
+void
+qslivegrid::slot_activate_bank (bool /*clicked*/)
+{
+    (void) perf().set_playing_screenset(bank_id());
 }
 
 void

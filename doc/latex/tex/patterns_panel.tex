@@ -33,25 +33,25 @@
    manages the configuration, controls the playback rate, adds tempo events,
    and opens the pattern, song, event, mute-groups, or playlist editors.
 
-   \index{live mode}
-   \index{mode!live}
-   \index{mode!song}
-   When the patterns panel has the focus,
-   and \textsl{Seq66} is \textsl{not} running in \textbf{Song} mode,
-   it puts \textsl{Seq66} in \textbf{Live} mode.
+%  \index{live mode}
+%  \index{mode!live}
+%  \index{mode!song}
+%  When the patterns panel has the focus,
+%  and \textsl{Seq66} is \textsl{not} running in \textbf{Song} mode,
+%  it puts \textsl{Seq66} in \textbf{Live} mode.
    The musician can
    control the playback and muting/unmuting of each pattern in
    the song, while it is playing, from within this window.
    One can also switch to other screensets, to work with a different
    part of the song.
 
-   \index{song mode}
-   \index{mode!song}
-   If the song editor (see \sectionref{sec:song_editor})
-   has the input focus, it automatically controls the muting/unmuting of
-   each pattern, and \textsl{Seq66} runs in \textbf{Song} mode.
-   (There are ways to override this behavior, such as the
-   \textbf{Song/Live} button.)
+%  \index{song mode}
+%  \index{mode!song}
+%  If the song editor (see \sectionref{sec:song_editor})
+%  has the input focus, it automatically controls the muting/unmuting of
+%  each pattern, and \textsl{Seq66} runs in \textbf{Song} mode.
+%  (There are ways to override this behavior, such as the
+%  \textbf{Song/Live} button.)
 
    For exposition, we divide the patterns panel
    into a menu bar, a top panel, a pattern panel (live frame/grid),
@@ -166,7 +166,7 @@
          This color is used when a pattern is
          first created by double-clicking on the slot.
          However, this color sticks even when notes are added.
-         But feel free to change it to another color, or no color.
+         Feel free to change it to another color, or no color.
       \item \textbf{Normal background}.
          Unarmed (muted) patterns show the
          unactivated/unchecked state of the button as per the \textsl{Qt}
@@ -185,7 +185,7 @@
          drawing long patterns.
       \item \textbf{Red events}.
          \index{event!drum note}
-         Indicates a pattern for which the new transpose feature is
+         Indicates a pattern for which the transpose feature is
          disabled.  Most useful with drum patterns.
       \item \textbf{Circular events}.
          \index{event!tempo}
@@ -203,7 +203,7 @@
    \index{pattern!right click}
    \index{slot!empty slot right-click}
    Right-clicking on an empty box one brings up a menu to create
-   a new loop, as well as some other operations.
+   a new loop or open an external live grid, as well as some other operations.
 
    \begin{enumber}
       \item \textbf{New pattern}
@@ -223,6 +223,9 @@
    This option brings up an external \textbf{Live} frame window, which
    is the same as the patterns panel, but can be used to show a different set
    in a multi-set project.  Up to 32 external live frames can be shown.
+   An external live grid can be activated by the \textbf{Activate} button,
+   which sets the playing screen-set
+   (and updates the main window to match).
 
 \begin{figure}[H]
    \centering 
@@ -231,10 +234,12 @@
    \label{fig:multiple_live_grids}
 \end{figure}
 
-   Note that the main window always shows the set of the currently
-   focussed external Live window.
-   We are not sure if this is a bug or a feature.
-   Also note that the right-click menu has some items removed, as indicated by
+%  Note that the main window always shows the set of the currently
+%  focussed external Live window.
+%  We are not sure if this is a bug or a feature.
+   Note that the right-click slot menu has some items removed when the live
+   grid is in an external window, or the main window is showing a set other
+   than set 0 , as indicated by
    the asterisks in the list below.
    We hope to rectify that in a future release.
 
@@ -259,7 +264,7 @@
       \item \textbf{Output Channel}
    \end{enumber}
 
-   The first two menu entries are the same as above.  However, since there is
+   The first menu entry is the same as above.  However, since there is
    already a pattern present in the slot, the user is prompted before erasing
    the current pattern and creating a new one.
 

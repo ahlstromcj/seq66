@@ -338,9 +338,6 @@ qseqeventframe::set_selection_multi (bool multi)
         QAbstractItemView::MultiSelection : QAbstractItemView::SingleSelection ;
 
     ui->eventTableWidget->setSelectionMode(sm);
-
-//  if (! multi)
-//      ui->eventTableWidget->clearSelection();
 }
 
 void

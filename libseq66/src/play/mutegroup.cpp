@@ -198,8 +198,6 @@ mutegroup::armed_count () const
  *      used.
  */
 
-//  screenset::index_to_grid().
-
 bool
 mutegroup::mute_to_grid (int group, int & row, int & column) const
 {
@@ -214,11 +212,6 @@ mutegroup::mute_to_grid (int group, int & row, int & column) const
         }
         else
         {
-            // WAS THIS THE WRONG THING TO DO????
-            //
-            // row = group / m_columns;
-            // column = group % m_columns;
-
             row = group % m_rows;
             column = group / m_rows;
         }

@@ -321,12 +321,6 @@ private:
     bool any_in_edit () const
     {
         return master().any_in_edit();
-//      for (const auto & sset : sets())
-//      {
-//          if (sset.second.any_in_edit())
-//              return true;
-//      }
-//      return false;
     }
 
     bool is_seq_in_edit (seq::number seqno) const;

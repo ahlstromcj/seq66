@@ -1,0 +1,18 @@
+[user]
+	name = User Ahlstrom
+	email = userahlstrom@gmail.com
+[core]
+	excludesfile = /home/user/.gitignore
+	editor = vim
+[diff]
+	tool = gvimdiff
+[difftool]
+	prompt = false
+[alias]
+	dt = difftool
+	last = log -1 HEAD
+    changes = diff --name-only
+[color]
+	ui = true
+[pull]
+	rebase = false

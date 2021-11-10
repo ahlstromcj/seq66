@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2021-11-09
+ * \updates       2021-11-10
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the old mainwid class.
@@ -74,6 +74,7 @@ qslivebase::qslivebase
     m_font              (),
     m_show_perf_bank    (screenset::is_unassigned(bank)),
     m_bank_id           (m_show_perf_bank ? p.playscreen_number() : bank),
+    m_bank_name         (),
     m_mainwnd_spacing   (usr().mainwnd_spacing()),          /* spacing()    */
     m_space_rows        (m_mainwnd_spacing * p.rows()),
     m_space_cols        (m_mainwnd_spacing * p.columns()),
@@ -133,10 +134,10 @@ qslivebase::set_bank (int bankid, bool hasfocus)
         if (hasfocus)
         {
             std::string bankname = perf().set_name(bankid);
-            if (! is_external())                        /* show_perf_bank() */
+            if (! is_external())                        /* show_per_bank()  */
                 (void) perf().set_playing_screenset(bankid);
 
-            set_bank_values(bankname, bankid);         /* update the GUI    */
+            set_bank_values(bankname, bankid);          /* update the GUI   */
         }
     }
     return result;

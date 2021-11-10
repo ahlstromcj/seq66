@@ -2948,11 +2948,11 @@ performer::set_quantized_recording (seq::number seqno, bool recordon, bool toggl
  *  have the GUI to control for progress.  This is implemented in sequence's
  *  version of this function.
  *
+ * \param s
+ *      The sequence pointer, which is checked.
+ *
  * \param oactive
  *      Provides the current status of the overwrite mode.
- *
- * \param seq
- *      The sequence number; the resulting pointer is checked.
  *
  * \param toggle
  *      If true, ignore the first flag and let the sequence toggle its
@@ -6053,7 +6053,6 @@ performer::increment_screenset (int amount)
     return set_playing_screenset(newnumber);
 }
 
-
 /*
  * -------------------------------------------------------------------------
  *  Automation functions
@@ -6495,7 +6494,7 @@ performer::automation_bpm_page_up_dn
     print_parameters(name, a, d0, d1, inverse);
     if (inverse)
     {
-        if (d0 >= 0)                                    /* not a keystroke  */
+        if (opcontrol::allowed(d0, inverse))            /* not a keystroke  */
         {
             if (a == automation::action::on)
                 page_decrement_beats_per_minute();
