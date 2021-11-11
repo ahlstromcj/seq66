@@ -84,7 +84,7 @@ keycontrol::keycontrol () :
  *      keycontrol::action::off.  The "none" action generally won't be used.
  *      Instead, we just don't create the keycontrol.
  *
- * \param opnumber
+ * \param opslot
  *      Provides the slot number of the control, which determines which slot
  *      function (see the automation::slot enumeration) is called.
  *
@@ -102,10 +102,10 @@ keycontrol::keycontrol
     const std::string & keyname,
     automation::category opcategory,
     automation::action actioncode,
-    automation::slot opnumber,
+    automation::slot opslot,
     int index
 ) :
-    opcontrol       (opname, opcategory, actioncode, opnumber, index),
+    opcontrol       (opname, opcategory, actioncode, opslot, index),
     m_key_name      (keyname),
     m_control_code  (index)
 {

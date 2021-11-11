@@ -1,4 +1,4 @@
-readme.txt for Seq66 0.97.1
+readme.txt for Seq66 0.97.3
 Chris Ahlstrom
 2015-09-10 to 2021-10-13
 

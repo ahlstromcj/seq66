@@ -1,4 +1,4 @@
-# README for Seq66 0.97.2
+# README for Seq66 0.97.3
 
 Chris Ahlstrom
 2015-09-10 to 2021-11-11
@@ -84,6 +84,11 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.97.3:
+        *   TODO:  allow controls to use D1, check into the Record key toggling
+            recording on all tracks.  Check the MIDI Record control can use d0
+            or d1 to select the pattern. Also check Windows build. Also New
+            Pattern in an external grid creates it in set 0.
     *   Version 0.97.2:
         *   Issue #57: Increased width of option fields for wider fonts.
         *   Issue #58: Indicate if NSM is running in Preferences / Sessions and
@@ -143,16 +148,6 @@ Windows, and using a conventional source tarball.
         *   Fixed minor bug in Import dialog handling.
         *   Refactoring for SMF 0 reading and export.
         *   Minor fix to flag changed tune (an asterisk).
-    *   Version 0.96.3:
-        *   Added ability to modify Note On and Note Off at the same time in the
-            event editor. Fixed and updated event::get_rank().
-        *   Fixed output port-map issue with lookup of "FLUID Synth". Removed
-            the random ID number; search the port name via containment, not
-            equality.
-        *   Usage of the JACK Session API restored, though "deprecated".
-            Removed all traces of LASH support. Added a configuration tab
-            for allowing session management via JACK or NSM.
-        *   Added an automation control for "save session".
 
     See the "NEWS" file for changes in earlier versions.
 

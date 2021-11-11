@@ -28,12 +28,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2019-02-23
+ * \updates       2021-11-11
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of concepts relating to control of pattern
- *  unmuting, group control, and a number of additional controls to make
- *  Seq66 controllable without a graphical user interface.  It is also used in
+ *  unmuting, group control, and a number of additional controls to make Seq66
+ *  controllable without a graphical user interface.  It is also used in
  *  handling automation keystrokes.
  *
  *  It requires C++11 and above.
@@ -63,15 +63,24 @@ public:
 
     /**
      *  Provides the function object with a signature needed to handle any
-     *  MIDI control operation.  The integers are generally the values of MIDI
-     *  d0 and d1, but the second value can also hold a pattern number or a
-     *  group number, and then it is called an "index".  For keystrokes, the
-     *  d0 value is always 0 [perhaps it should be -1?]. The boolean holds the
+     *  MIDI control operation. The parameters are:
+     *
+     *      -   Action code.
+     *      -   First data byte, d0.
+     *      -   Second data byte, d1.  [New as of 2021-11-11, 0.97.3]
+     *      -   Control code (index).
+     *      -   Inverse active.
+     *
+     *  For keystrokes, the d0 value is always (-1). The boolean holds the
      *  state of the inverse setting for MIDI control, and is always false for
-     *  key-control.
+     *  key-releases; these are generally ignored.
+     *
+     *  For a usage compatible with this type alias, see the type alias
+     *  performer::automation_function.
      */
 
-    using functor = std::function<bool (automation::action, int, int, bool)>;
+    using functor =
+        std::function<bool (automation::action, int, int, int, bool)>;
 
 private:
 
@@ -132,9 +141,13 @@ public:
      *  will not alter this object.
      */
 
-    bool call (automation::action a, int d0, int index, bool inverse) const
+    bool call
+    (
+        automation::action a, int d0, int d1,
+        int index, bool inverse
+    ) const
     {
-        return m_parent_function(a, d0, index, inverse);
+        return m_parent_function(a, d0, d1, index, inverse);
     }
 
     const std::string & name () const

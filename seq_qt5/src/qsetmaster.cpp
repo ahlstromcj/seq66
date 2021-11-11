@@ -24,9 +24,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-08
+ * \updates       2021-11-11
  * \license       GNU GPLv2 or above
  *
+ *  The set-master controls the existence and usage of all sets.  For control
+ *  of the play-screen (playing set), see the setmapper class.
  */
 
 #include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
@@ -646,7 +648,8 @@ qsetmaster::changeEvent (QEvent * event)
 bool
 qsetmaster::set_control
 (
-    automation::action a, int /*d0*/, int index, bool inverse
+    automation::action a, int /*d0*/, int /*d1*/,
+    int index, bool inverse
 )
 {
     bool result = a == automation::action::toggle;
@@ -669,9 +672,13 @@ qsetmaster::populate_default_ops ()
         opcontrol::category_name(automation::category::loop),   /* name     */
         automation::category::loop,                             /* category */
         automation::slot::loop,                                 /* opnumber */
-        [this] (automation::action a, int d0, int d1, bool inverse)
+        [this]
+        (
+            automation::action a, int d0, int d1,
+            int index, bool inverse
+        )
         {
-            return set_control(a, d0, d1, inverse);
+            return set_control(a, d0, d1, index, inverse);
         }
     );
     return m_operations.add(patmop);

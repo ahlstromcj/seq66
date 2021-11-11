@@ -65,13 +65,13 @@ opcontrol::opcontrol
     const std::string & opname,
     category opcategory,
     action opaction,
-    slot opnumber,
+    slot opslot,
     int index                               /* for pattern, mutes only      */
 ) :
     m_name          (opname),
     m_category      (opcategory),
     m_action        (opaction),
-    m_slot_number   (opnumber)
+    m_slot_number   (opslot)
 {
     if (m_name.empty())
         m_name = build_slot_name(index);

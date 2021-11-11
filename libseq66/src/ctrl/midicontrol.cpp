@@ -94,16 +94,16 @@ midicontrol::midicontrol () :
  *      implicit in the positioning of a sub-stanza in the stanza line
  *      consisting of three sub-stanzas.
  *
- * \param opnumber
+ * \param opslot
  *      Provides the slot number of the control, which determines which slot
  *      function (see the automation::slot enumeration) is called.  This
  *      specifies the pattern/loop function, mute-group function, or one of the
  *      roughly 48 automation functions.
  *
- * \param opcode
+ * \param index
  *      This value is useful in when calling the pattern and mute-group slot
  *      functions.  It contains the pattern number, mute-group number, or,
- *      redundantly re the opnumber parameter, the automation-slot number, that
+ *      redundantly re the opslot parameter, the automation-slot number, that
  *      the control is supposed to operate.  This number is the first number on
  *      each MIDI-control stanza line in the "ctrl" files.
  */
@@ -113,12 +113,12 @@ midicontrol::midicontrol
     const std::string & keyname,
     automation::category opcategory,
     automation::action actioncode,
-    automation::slot opnumber,
-    int opcode
+    automation::slot opslot,
+    int index
 ) :
     keycontrol
     (
-        "MIDI", keyname, opcategory, actioncode, opnumber, opcode
+        "MIDI", keyname, opcategory, actioncode, opslot, index
     ),
     m_active            (false),
     m_inverse_active    (false),

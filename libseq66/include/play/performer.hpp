@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-11-08
+ * \updates       2021-11-11
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -315,12 +315,14 @@ public:
 private:
 
     /**
-     *  Defines a pointer to a member automation function.
+     *  Defines a pointer to a member automation function. These functions
+     *  match the function signature of the midioperation::functor type.
      */
 
     using automation_function = bool (performer::*)
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
 
     /**
@@ -3267,7 +3269,7 @@ private:
     (
         const std::string & tag,
         automation::action a,
-        int d0, int d1, bool inverse
+        int d0, int d1, int index, bool inverse
     );
 
 public:
@@ -3357,11 +3359,13 @@ public:
 
     bool loop_control                   /* [loop-control]       */
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool mute_group_control             /* [mute-group-control] */
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool populate_default_ops ();
     bool add_automation                 /* [automation-control] */
@@ -3371,187 +3375,233 @@ public:
     );
     bool automation_no_op
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_bpm_up_dn
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_bpm_dn
     (
-        automation::action a,int d0, int d1, bool inverse
+        automation::action a,int d0, int d1,
+        int index, bool inverse
     );
     bool automation_ss_up_dn
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_ss_dn
     (
-        automation::action a,int d0, int d1, bool inverse
+        automation::action a,int d0, int d1,
+        int index, bool inverse
     );
     bool automation_replace
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_snapshot
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_queue
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_gmute
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_glearn
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_play_ss
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_playback
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_song_record
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_solo
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_thru
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_bpm_page_up_dn
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_bpm_page_dn
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_ss_set
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_record
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_quan_record
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_reset_seq
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_oneshot
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_FF
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_rewind
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_top
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_playlist
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_playlist_song
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_tap_bpm
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_start
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_stop
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_reserved_29
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_toggle_mutes
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_song_pointer
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_keep_queue
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_edit_pending
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_event_pending
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_slot_shift
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_mutes_clear
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_quit
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_song_mode
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_toggle_jack
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_menu_mode
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_follow_transport
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_panic
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_visibility
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
     bool automation_save_session
     (
-        automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1,
+        int index, bool inverse
     );
 
 };          // class performer

@@ -1,6 +1,6 @@
-TO DO for Seq66 0.97.2 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.97.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-11-07
+2019-04-13 to 2021-11-11
 
 Configuration:
 
@@ -8,12 +8,35 @@ Configuration:
     files, remove them from "home", run Seq66 to recreate them, and update
     them with any setting needed.  Do this for 0.98.0.
 
+
 Hot:
 
-    -   External Live frame opening sets the set in the main window to the
-        same set.  Bug or Feature?
     -   How does middle-click on a pattern signal the event-editor
         functionality?
+    -   Allow controls to use D1
+    -   Check into the Record key toggling recording on all tracks or on the
+        "track of interest".
+    -   Check that MIDI Record control can use d0 or d1 to select the pattern.
+        Same for Replace, Solo, Queue, Keep-queue, One-shot, Thru, Quan
+        Record, Reset Seq, Set Set.
+    -   Check the Windows build.
+    -   New Pattern in an external grid creates it in set 0.
+    -   Consider "loop-control" modes.
+
+        -   Muting/Unmuting.  This is the current and normal mode.
+        -   Recording.  The loop-control keys and events control the status of
+            recording for the given loop.
+
+            -   Merge. Overdub. New MIDI data is added, the existing MIDI data
+                remains.
+            -   Overwrite.
+            -   Expand.
+            -   One-shot. Useful enough?
+            -   Quantized for any of the above.  How?
+            -   Live (Provisional, Capture) recording.  Stored into a
+                temporary track to copy to a pattern or to discard.
+
+            For the Record key, let it affect a "selected" track?
 
 UI:
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-11-04
+ * \updates       2021-11-11
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -236,6 +236,10 @@ protected:
     (
         const std::string & sectionname,
         const std::string & additional = ""
+    );
+    static bool version_error_message
+    (
+        const std::string & configtype, int vnumber
     );
 
     void version (const std::string & v)

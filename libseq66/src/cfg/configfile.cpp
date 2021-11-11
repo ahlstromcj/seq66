@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-11-04
+ * \updates       2021-11-11
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -197,6 +197,17 @@ configfile::make_error_message
     errprint(msg);                      /* log to the console       */
     append_error_message(msg);          /* append to message string */
     return false;
+}
+
+bool
+configfile::version_error_message (const std::string & configtype, int vnumber)
+{
+    std::string msg = "'";
+    msg += configtype;
+    msg += "' file version ";
+    msg += std::to_string(vnumber);
+    msg += " is too old. Please upgrade.\n";
+    return make_error_message("Version error", msg);
 }
 
 /**

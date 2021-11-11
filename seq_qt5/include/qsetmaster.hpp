@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-11
- * \updates       2021-11-02
+ * \updates       2021-11-11
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing screen-sets and sequences, and
@@ -148,7 +148,8 @@ private:
     void delete_set (int setno);
     bool set_control
     (
-        automation::action a, int /*d0*/, int index, bool inverse
+        automation::action a, int /*d0*/, int /*d1*/,
+        int index, bool inverse
     );
     bool populate_default_ops ();
 

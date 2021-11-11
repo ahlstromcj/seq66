@@ -126,7 +126,7 @@ midicontrolfile::stanza::set (const midicontrol & mc)
  */
 
 /**
- *  Static function to create a detail error message.
+ *  Static function to create a detailed error message.
  */
 
 bool
@@ -558,39 +558,9 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
             mco.is_enabled(enabled);
             mco.offset(offset);
         }
-        if (file_version_number() < 2)          /* DEPRECATED */
+        if (file_version_number() < 2)
         {
-            infoprint("Reading version 1 'ctrl' file, will upgrade at exit");
-            for (int i = 0; i < sequences; ++i)
-            {
-                int a[8], b[8], c[8], d[8];
-                int sequence = 0;
-                (void) std::sscanf
-                (
-                    scanline(), sg_scanf_fmt_ctrl_out, &sequence,
-                    &a[0], &a[1], &a[2], &a[3], &a[4],
-                    &b[0], &b[1], &b[2], &b[3], &b[4],
-                    &c[0], &c[1], &c[2], &c[3], &c[4],
-                    &d[0], &d[1], &d[2], &d[3], &d[4]
-                );
-
-                /*
-                 *  Offset to avoid the deprecated enabled and channel values.
-                 */
-
-                mco.set_seq_event(i, midicontrolout::seqaction::arm, &a[2]);
-                mco.set_seq_event(i, midicontrolout::seqaction::mute, &b[2]);
-                mco.set_seq_event(i, midicontrolout::seqaction::queue, &c[2]);
-                mco.set_seq_event(i, midicontrolout::seqaction::remove, &d[2]);
-                if (i < (sequences - 1) && ! next_data_line(file))
-                {
-                    make_error_message
-                    (
-                        "midi-control-out version 1", "insufficient data"
-                    );
-                    break;
-                }
-            }
+            result = version_error_message("ctrl", file_version_number());
         }
         else
         {
@@ -683,7 +653,17 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                     read_triples(file, mco, midicontrolout::uiaction::quit);
                 }
             }
+            if (! ok)
+            {
+                 (void) make_error_message
+                 (
+                    "midi-control-out", "control-triple error"
+                );
+            }
         }
+        else
+            result = version_error_message("ctrl", file_version_number());
+
         if (file_version_number() >= s_ctrl_file_version)
         {
             read_triples(file, mco, midicontrolout::uiaction::visibility);
@@ -694,13 +674,6 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
             read_triples(file, mco, midicontrolout::uiaction::alt_6);
             read_triples(file, mco, midicontrolout::uiaction::alt_7);
             read_triples(file, mco, midicontrolout::uiaction::alt_8);
-        }
-        if (! ok)
-        {
-             (void) make_error_message
-             (
-                "midi-control-out", "control-triple error"
-            );
         }
         if (result)
             result = ok && ! is_error();
@@ -731,19 +704,10 @@ midicontrolfile::read_triples
 )
 {
     int enabled, ev_on[4], ev_off[4], ev_del[4];
-    if (file_version_number() < 2)              /* DEPRECATED */
+    if (file_version_number() < 2)
     {
-        int count = std::sscanf
-        (
-            scanline(), sg_scanf_fmt_ctrl_pair,
-            &enabled, &ev_on[0], &ev_on[1], &ev_on[2], &ev_on[3],
-            &ev_off[0], &ev_off[1], &ev_off[2], &ev_off[3]
-        );
-        ev_del[0] = ev_del[1] = ev_del[2] = ev_del[3] = 0;
-        if (count < 9)
-            ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
-
-        mco.set_event(a, enabled, &ev_on[1], &ev_off[1], &ev_del[1]);
+        (void) version_error_message("ctrl", file_version_number());
+        return false;
     }
     else
     {
@@ -1261,65 +1225,25 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
 {
     bool result = true;
     char charname[16];
-    int opcode = 0;
+    int index = 0;
     int a[8], b[8], c[8];
     automation::slot opslot = automation::slot::none;
     std::string keyname;
     int count = 0;
-    if (file_version_number() < 2)              /* DEPRECATED */
+
+    /*
+     * Was deprecated, now no longer supported.
+     */
+
+    if (file_version_number() < 2)
     {
-        count = std::sscanf
-        (
-            scanline(), sg_scanf_fmt_ctrl_in, &opcode, &charname[0],
-            &a[0], &a[1], &a[2], &a[3], &a[4], &a[5],
-            &b[0], &b[1], &b[2], &b[3], &b[4], &b[5],
-            &c[0], &c[1], &c[2], &c[3], &c[4], &c[5]
-        );
-        if (count == 20)
-        {
-            opslot = automation::slot::none;
-            if (opcat == automation::category::loop)
-                opslot = automation::slot::loop;
-            else if (opcat == automation::category::mute_group)
-                opslot = automation::slot::mute_group;
-            else if (opcat == automation::category::automation)
-                opslot = opcontrol::set_slot(opcode);
-
-            /*
-             *  Create control objects, whether active or not.  We want to save
-             *  all objects in the file, to avoid altering the user's preferences.
-             */
-
-            keyname = strip_quotes(std::string(charname));
-            midicontrol mca
-            (
-                keyname, opcat, automation::action::toggle, opslot, opcode
-            );
-            mca.set(&a[1]);
-            (void) m_temp_midi_ctrl_in.add(mca);
-
-            midicontrol mcb
-            (
-                keyname, opcat, automation::action::on, opslot, opcode
-            );
-            mcb.set(&b[1]);
-            (void) m_temp_midi_ctrl_in.add(mcb);
-
-            midicontrol mcc
-            (
-                keyname, opcat, automation::action::off, opslot, opcode
-            );
-            mcc.set(&c[1]);
-            (void) m_temp_midi_ctrl_in.add(mcc);
-        }
-        else
-            result = false;
+        result = version_error_message("ctrl", file_version_number());
     }
     else
     {
         count = std::sscanf
         (
-            scanline(), sg_scanf_fmt_ctrl_in_2, &opcode, &charname[0],
+            scanline(), sg_scanf_fmt_ctrl_in_2, &index, &charname[0],
             &a[0], &a[1], &a[2], &a[3], &a[4],
             &b[0], &b[1], &b[2], &b[3], &b[4],
             &c[0], &c[1], &c[2], &c[3], &c[4]
@@ -1332,7 +1256,7 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
             else if (opcat == automation::category::mute_group)
                 opslot = automation::slot::mute_group;
             else if (opcat == automation::category::automation)
-                opslot = opcontrol::set_slot(opcode);
+                opslot = opcontrol::set_slot(index);
 
             /*
              *  Create control objects, whether active or not.  We want to
@@ -1343,21 +1267,21 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
             keyname = strip_quotes(std::string(charname));
             midicontrol mca
             (
-                keyname, opcat, automation::action::toggle, opslot, opcode
+                keyname, opcat, automation::action::toggle, opslot, index
             );
             mca.set(a);
             (void) m_temp_midi_ctrl_in.add(mca);
 
             midicontrol mcb
             (
-                keyname, opcat, automation::action::on, opslot, opcode
+                keyname, opcat, automation::action::on, opslot, index
             );
             mcb.set(b);
             (void) m_temp_midi_ctrl_in.add(mcb);
 
             midicontrol mcc
             (
-                keyname, opcat, automation::action::off, opslot, opcode
+                keyname, opcat, automation::action::off, opslot, index
             );
             mcc.set(c);
             (void) m_temp_midi_ctrl_in.add(mcc);
@@ -1377,7 +1301,7 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
 
             keycontrol kc
             (
-                "", keyname, opcat, automation::action::toggle, opslot, opcode
+                "", keyname, opcat, automation::action::toggle, opslot, index
             );
             std::string keyname = strip_quotes(std::string(charname));
             ctrlkey ordinal = qt_keyname_ordinal(keyname);
