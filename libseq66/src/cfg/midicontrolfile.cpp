@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-11-09
+ * \updates       2021-11-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -558,7 +558,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
             mco.is_enabled(enabled);
             mco.offset(offset);
         }
-        if (file_version_number() < 2)
+        if (file_version_number() < 2)          /* DEPRECATED */
         {
             infoprint("Reading version 1 'ctrl' file, will upgrade at exit");
             for (int i = 0; i < sequences; ++i)
@@ -731,7 +731,7 @@ midicontrolfile::read_triples
 )
 {
     int enabled, ev_on[4], ev_off[4], ev_del[4];
-    if (file_version_number() < 2)
+    if (file_version_number() < 2)              /* DEPRECATED */
     {
         int count = std::sscanf
         (
@@ -1132,7 +1132,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             "\n"
             "[midi-control-out]\n"
             "\n"
-            "#   ---------------- Pattern number (as applicable)\n"
+            "#   ---------------- Pattern or device-button number)\n"
             "#  |     ----------- MIDI status+channel (eg. Note On)\n"
             "#  |    |    ------- data 1 (eg. note number)\n"
             "#  |    |   |  ----- data 2 (eg. velocity)\n"
@@ -1266,7 +1266,7 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
     automation::slot opslot = automation::slot::none;
     std::string keyname;
     int count = 0;
-    if (file_version_number() < 2)
+    if (file_version_number() < 2)              /* DEPRECATED */
     {
         count = std::sscanf
         (

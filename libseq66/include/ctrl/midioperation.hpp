@@ -132,9 +132,9 @@ public:
      *  will not alter this object.
      */
 
-    bool call (automation::action a, int d0, int d1, bool inverse) const
+    bool call (automation::action a, int d0, int index, bool inverse) const
     {
-        return m_parent_function(a, d0, d1, inverse);
+        return m_parent_function(a, d0, index, inverse);
     }
 
     const std::string & name () const

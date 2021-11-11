@@ -1841,6 +1841,12 @@
    These entries control
    \textsl{Seq66} actions like changing the BPM value, screen-set,
    record, solo, etc.
+
+   Note that automation controls that depend upon a parameter (such as group
+   number or loop number) can only work with a MIDI control.
+   MIDI control can provide parameters via a control value, note number or value,
+   etc.
+   Key control can provide only a "press" or "release" status.
    
    Each item in this group consists of one line.  Each line
    specifies a MIDI event that can cause a given
@@ -1855,7 +1861,7 @@
        . . .
       35 "Quit" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 0
        . . .
-      48 "0xfe" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] # Reserved 48
+      48 "0xfe" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]   # Reserved 48
    \end{verbatim}
 
    Note that "Quit" is not a 
