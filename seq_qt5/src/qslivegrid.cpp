@@ -1231,19 +1231,15 @@ qslivegrid::keyReleaseEvent (QKeyEvent * event)
 void
 qslivegrid::reupdate ()
 {
-    for (int column = 0; column < columns(); ++column)
+    for (auto pb : m_loop_buttons)
     {
-        for (int row = 0; row < rows(); ++row)
+        if (not_nullptr(pb))
         {
-            qslotbutton * pb = button(row, column);
-            if (not_nullptr(pb))
-            {
-                pb->setup();
-                pb->reupdate();
-            }
-            else
-                break;
+            pb->setup();
+            pb->reupdate();
         }
+        else
+            break;
     }
 }
 
