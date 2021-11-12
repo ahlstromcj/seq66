@@ -13,7 +13,7 @@ Hot:
 
     -   How does middle-click on a pattern signal the event-editor
         functionality?
-    -   Allow controls to use D1
+    -   Allow controls to use D1.  In place, not quite ready.
     -   Check into the Record key toggling recording on all tracks or on the
         "track of interest".
     -   Check that MIDI Record control can use d0 or d1 to select the pattern.

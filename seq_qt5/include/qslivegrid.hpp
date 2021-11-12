@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-11-09
+ * \updates       2021-11-12
  * \license       GNU GPLv2 or above
  *
  *
@@ -109,7 +109,7 @@ private:                            // overrides of qslivebase functions
     }
 
 #if defined USE_REFRESH_SEQNO
-    virtual void refresh (seq::number seqno);
+    virtual void refresh (seq::number seqno) override;
 #endif
 
     virtual void color_by_number (int i) override;

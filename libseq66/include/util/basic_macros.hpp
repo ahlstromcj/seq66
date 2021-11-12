@@ -100,14 +100,14 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
 /**
  *  Usage:      errprintfunc(cstring);
  *
- *    Provides an error reporting macro that includes the function name.
+ *    Provides error and informational reporting macro that includes the
+ *    function name.
  */
 
 #if defined __cplusplus
 #define errprintfunc(x) seq66::msgprintf(seq66::msglevel::error, \
  "%s: %s", __func__, x)
-#else
-#define errprintfunc(x) fprintf(stderr, "%s: %s", __func__, x)
+#define infoprintfunc() seq66::msgprintf(seq66::msglevel::info, "%s", __func__)
 #endif
 
 extern bool info_message (const std::string & msg);

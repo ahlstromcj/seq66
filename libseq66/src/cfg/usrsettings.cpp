@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-10-27
+ * \updates       2021-11-12
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -383,7 +383,8 @@ usrsettings::usrsettings () :
     m_new_pattern_record        (false),
     m_new_pattern_qrecord       (false),
     m_new_pattern_recordstyle   (recordstyle::merge),
-    m_new_pattern_wraparound    (false)
+    m_new_pattern_wraparound    (false),
+    m_loop_control_mode         (recordstyle::none)
 {
     // Empty body; it's no use to call normalize() here, see set_defaults().
 }
@@ -469,6 +470,7 @@ usrsettings::set_defaults ()
     m_new_pattern_qrecord = false;
     m_new_pattern_recordstyle = recordstyle::merge;
     m_new_pattern_wraparound = false;
+    m_loop_control_mode = recordstyle::none;
     normalize();                            // recalculate derived values
 }
 
@@ -529,6 +531,7 @@ usrsettings::new_pattern_record_string () const
     std::string result;
     switch (m_new_pattern_recordstyle)
     {
+    case recordstyle::none:         result = "none";        break;
     case recordstyle::merge:        result = "merge";       break;
     case recordstyle::overwrite:    result = "overwrite";   break;
     case recordstyle::expand:       result = "expand";      break;
@@ -536,6 +539,22 @@ usrsettings::new_pattern_record_string () const
     case recordstyle::max:          result = "merge";       break;
     }
     return result;
+}
+
+void
+usrsettings::loop_control_mode (const std::string & style)
+{
+    recordstyle rs = recordstyle::none;
+    if (style == "merge")
+        rs = recordstyle::merge;
+    if (style == "overwrite")
+        rs = recordstyle::overwrite;
+    else if (style == "expand")
+        rs = recordstyle::expand;
+    else if (style == "one-shot")
+        rs = recordstyle::oneshot;
+
+    m_loop_control_mode = rs;
 }
 
 std::string

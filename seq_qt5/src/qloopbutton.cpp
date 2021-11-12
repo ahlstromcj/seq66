@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-10-30
+ * \updates       2021-11-12
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -516,13 +516,13 @@ qloopbutton::reupdate (bool all)
  *
 \verbatim
              ----------------------------
-            | Title               Length |
+       top  | Title               Length |
             | Armed                      |
             |        ------------        |
             |       |  P A N E L |       |
             |        ------------        |
             |                            |
-            | buss-chan 4/4       hotkey |
+    bottom  | buss-chan 4/4       hotkey |
              ----------------------------
 \endverbatim
  *
@@ -580,7 +580,15 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 m_top_right.m_w, m_top_right.m_h
             );
             painter.drawText(box, m_top_right.m_flags, title);
-
+            if (loop()->recording())
+            {
+                int radius = usr().scale_size(9);
+                int clx = m_top_right.m_x + m_top_right.m_w - radius - 2;
+                int cly = m_top_right.m_y + m_top_right.m_h;
+                QBrush brush(drum_paint(), Qt::SolidPattern);
+                painter.setBrush(brush);
+                painter.drawEllipse(clx, cly, radius, radius);
+            }
             title = qt(m_bottom_left.m_label);
             box.setRect
             (
@@ -596,11 +604,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 m_bottom_right.m_w, m_bottom_right.m_h
             );
             painter.drawText(box, m_bottom_right.m_flags, title);
-
-            // TEST EXPERIMENT. This seems to work.  Why?
-
-            set_checked(loop()->playing());
-
+            set_checked(loop()->playing()); /* gets hot-key toggle to show  */
             if (loop()->playing())
                 title = "Armed";
             else if (loop()->get_queued())

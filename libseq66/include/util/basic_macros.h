@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2020-11-21
+ * \updates       2021-11-12
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -199,6 +199,7 @@
 
 #define infoprint(x)            fprintf(stderr, "%s\n", x)
 #define infoprintf(fmt, x)      fprintf(stderr, fmt, x)
+#define infoprintfunc()         fprintf(stdout, "%s\n", __func__)
 
 #else
 
@@ -211,6 +212,7 @@
 
 #define infoprint(x)
 #define infoprintf(fmt, x)
+#define infoprintfunc()
 
 #endif          // SEQ66_PLATFORM_DEBUG
 

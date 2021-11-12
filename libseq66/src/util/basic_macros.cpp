@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-11-09
+ * \updates       2021-11-12
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of
@@ -146,7 +146,10 @@ info_message (const std::string & msg)
     {
         bool isterminal = is_a_tty(STDOUT_FILENO);
         std::cout << seq_client_tag(msglevel::info, isterminal)
-            << " " << msg << std::endl;
+            << " " << msg;
+
+        if (! msg.empty())
+            std::cout << std::endl;
     }
     return true;
 }
@@ -411,25 +414,30 @@ msgprintf (msglevel lev, std::string fmt, ...)
         va_start(args, fmt);
 
         std::string output = formatted(fmt, args);          /* Steps 2 & 3  */
+        bool errtty = is_a_tty(STDERR_FILENO);
+        bool outtty = is_a_tty(STDOUT_FILENO);
         switch (lev)
         {
         case msglevel::none:
 
-            std::cout << seq_client_tag() << " " << output << std::endl;
+            std::cout << seq_client_tag(lev, outtty) << " "
+                << output << std::endl;
             break;
 
         case msglevel::info:
         case msglevel::status:
         case msglevel::special:
 
-            std::cout << seq_client_tag(lev) << " " << output << std::endl;
+            std::cout << seq_client_tag(lev, outtty) << " "
+                << output << std::endl;
             break;
 
         case msglevel::warn:
         case msglevel::error:
         case msglevel::debug:
 
-            std::cerr << seq_client_tag(lev) << " " << output << std::endl;
+            std::cerr << seq_client_tag(lev, errtty) << " "
+                << output << std::endl;
             break;
         }
         va_end(args);                                       /* 2019-04-21   */

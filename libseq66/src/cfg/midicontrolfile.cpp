@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-11-11
+ * \updates       2021-11-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -113,8 +113,8 @@ midicontrolfile::stanza::set (const midicontrol & mc)
         m_settings[index][0] = int(mc.inverse_active());
         m_settings[index][1] = int(mc.status());
         m_settings[index][2] = int(mc.d0());        /* note: d1 not needed  */
-        m_settings[index][3] = int(mc.min_value());
-        m_settings[index][4] = int(mc.max_value());
+        m_settings[index][3] = int(mc.min_d1());
+        m_settings[index][4] = int(mc.max_d1());
     }
     return true;
 }
@@ -861,7 +861,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
     if (result)
     {
         const midicontrolin & mci = rc_ref().midi_control_in();
-        bool disabled = mci.is_disabled();
+        bool enabled = ! mci.is_disabled();
         int bb = int(mci.nominal_buss());
         file <<
         "\n[midi-control-settings]\n\n"
@@ -892,7 +892,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         if (defaultcolumns == 0)
             defaultcolumns = usr().mainwnd_cols();
 
-        write_boolean(file, "midi-enabled", disabled);
+        write_boolean(file, "midi-enabled", enabled);
         write_integer(file, "button-offset", mci.offset());
         write_integer(file, "button-rows", defaultrows);
         write_integer(file, "button-columns", defaultcolumns);
@@ -905,30 +905,28 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         file <<
         "\n"
         "# A control stanza incorporates key control and MIDI. Keys support\n"
-        "# only 'toggle'; key-release is an 'invert'. The leftmost number on\n"
-        "# each line is the pattern number (eg. 0 to 31), the group number\n"
-        "# (same range), or an automation control number.  This number is\n"
-        "# followed by three groups of bracketed numbers, each providing 3\n"
-        "# types of control:\n"
+        "# 'toggle' and key-release is 'invert'. The leftmost number on each\n"
+        "# line is the loop number (eg. 0 to 31), the mutes number (same\n"
+        "# range), or an automation number. Three groups of bracketed numbers\n"
+        "# follow, each providing a type of control:\n"
         "#\n"
-        "#    Normal:           [toggle]    [on]        [off]\n"
-        "#    Increment/Decr:   [increment] [increment] [decrement]\n"
-        "#    Playback:         [pause]     [start]     [stop]\n"
-        "#    Playlist/Song:    [by-value]  [next]      [previous]\n"
+        "#    Normal:         [toggle]    [on]        [off]\n"
+        "#    Increment/Decr: [increment] [increment] [decrement]\n"
+        "#    Playback:       [pause]     [start]     [stop]\n"
+        "#    Playlist/Song:  [by-value]  [next]      [previous]\n"
         "#\n"
-        "# In each group, there are six numbers:\n"
+        "# In each group, there are 5 numbers:\n"
         "#\n"
-        "#    [on/off invert status d0 d1min d1max]\n"
+        "#    [invert status d0 d1min d1max]\n"
         ;
 
         file <<
         "#\n"
-        "# 'on/off' enables/disables (1/0) the control; 'invert' (1/0) causes\n"
-        "# the opposite, but not all support this; all keystroke-releases set\n"
-        "# invert to true; 'status' is the MIDI event to match (channel is NOT\n"
-        "# ignored); if set to 0x00, the control is disabled; 'd0' is the\n"
-        "# first data value (eg. if status is 0x90 (Note On), d0 is the note\n"
-        "# number; d1min to d1max is the range of data values detectable (eg.\n"
+        "# A valid status (> 0) enables the control; 'invert' (1/0) inverts\n"
+        "# the action, but not all support this; keystroke-release inverts.\n"
+        "# 'status' is the MIDI event to match (channel is NOT ignored); 'd0'\n"
+        "# is the first data value (eg. if 0x90 (Note On), d0 is the note\n"
+        "# number; d1min to d1max is the range of d1 values detectable (eg.\n"
         "# 1 to 127 indicates any non-zero velocity invokes the control.\n"
         "# Hex values can be used; precede with '0x'.\n"
         "#\n"
@@ -1088,7 +1086,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         file << "\n[midi-control-out-settings]\n\n";
         write_integer(file, "set-size", setsize);
         write_integer(file, "output-buss", buss);
-        write_boolean(file, "midi-enabled", mco.is_disabled());
+        write_boolean(file, "midi-enabled", ! mco.is_disabled());
         write_integer(file, "button-offset", mco.offset());
         write_integer(file, "button-rows", mco.rows());
         write_integer(file, "button-columns", mco.columns());
@@ -1109,8 +1107,8 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             "#\n"
             "# In a change from version 1 of this file, a test of the\n"
             "# status/event byte determines the enabled status, and channel\n"
-            "# is incorporated into the status.  Much cleaner! The order of\n"
-            "# the lines must must be preserved.\n"
+            "# is incorporated into the status.  The order of the lines must\n"
+            "# be preserved.\n"
             "\n"
             ;
 

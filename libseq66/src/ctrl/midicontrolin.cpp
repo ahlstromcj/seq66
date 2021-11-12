@@ -25,15 +25,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-06-15
+ * \updates       2021-11-12
  * \license       GNU GPLv2 or above
  *
  * MIDI control container:
  *
  *  Key:
  *
- *      The MIDI container is sorted by a key := { event status, d0 } with d1
- *      used for range-checking.
+ *      The MIDI container is sorted by a key := { event status, d0 }.
  *
  *  Value:
  *
@@ -41,7 +40,7 @@
  *
  *          opcontrol:      name, category, action, slot
  *          keycontrol:     key-name, control-code (pattern or group number)
- *          midicontrol:    active, inverse, status, d0, d1, min, max
+ *          midicontrol:    active, inverse, status, d0, d1, min d1, max d1
  *
  *  Run-time lookup:
  *
@@ -310,14 +309,13 @@ midicontrolin::show () const
         const midicontrol::key & k = mcpair.first;
         const midicontrol & mc = mcpair.second;
         int status = k.status();
-        int d0 = k.d0();
-        int d1 = k.d1();
+        int d0 = k.d0();                            // key::d1() removed
         cout
             << "["   << setw(3) << hex << right << index << "] "
             << "0x" << setw(2)
             << setfill('0') << hex << status << setfill(' ')
-            << " "   << setw(2) << hex << d0 << " " << setw(2) << hex << d1
-            << " "
+            << " "   << setw(2) << hex << d0 << " " //  << setw(2) << hex << d1
+            // << " "
             ;
         mc.show();                      /* shows the key and midi control   */
         ++index;

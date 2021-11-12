@@ -67,8 +67,8 @@ midicontrol::midicontrol () :
     m_status            (0),
     m_d0                (0),
     m_d1                (0),
-    m_min_value         (0),
-    m_max_value         (0)
+    m_min_d1            (0),
+    m_max_d1            (0)
 {
     // Empty body
 }
@@ -125,8 +125,8 @@ midicontrol::midicontrol
     m_status            (0),
     m_d0                (0),
     m_d1                (0),
-    m_min_value         (0),
-    m_max_value         (0)
+    m_min_d1            (0),
+    m_max_d1            (0)
 {
     // Empty body
 }
@@ -138,7 +138,7 @@ midicontrol::midicontrol
  * \param values
  *      Provides the 6 values, in an integer array, to set into the
  *      members in this order: m_control_code, m_action, m_active,
- *      m_inverse_active, m_status, m_d0, m_min_value, and m_max_value.
+ *      m_inverse_active, m_status, m_d0, m_min_d1, and m_max_d1.
  */
 
 void
@@ -147,8 +147,8 @@ midicontrol::set (int values [automation::SUBCOUNT])
     m_inverse_active = bool(values[automation::index::inverse]);
     m_status = values[automation::index::status];
     m_d0 = values[automation::index::data_1];
-    m_min_value = values[automation::index::data_2_min];
-    m_max_value = values[automation::index::data_2_max];
+    m_min_d1 = values[automation::index::data_2_min];
+    m_max_d1 = values[automation::index::data_2_max];
     m_active = m_status > 0x00;
 }
 
@@ -190,8 +190,8 @@ midicontrol::show (bool add_newline) const
         << " "   << "0x" << setw(2)
         << setfill('0') << hex <<status() << setfill(' ')
         << " "   << setw(3) << d0()
-        << " "   << setw(3) << min_value()
-        << " "   << setw(3) << max_value()
+        << " "   << setw(3) << min_d1()
+        << " "   << setw(3) << max_d1()
         << " ]"
         ;
     if (add_newline)

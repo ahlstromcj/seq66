@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-10-27
+ * \updates       2021-11-12
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -122,10 +122,13 @@ const int c_use_file_ppqn = 0;
  *  Provides the supported looping recording modes.  These values are used
  *  by the seqedit class, which provides a button with a popup menu to
  *  select one of these recording modes.
+ *
+ *  Merge is like overdub.
  */
 
 enum class recordstyle
 {
+    none,               /**< No special style.  Reserved for future.    */
     merge,              /**< Incoming events are merged into the loop.  */
     overwrite,          /**< Incoming events overwrite the loop.        */
     expand,             /**< Incoming events increase size of loop.     */
@@ -841,6 +844,12 @@ private:
     bool m_new_pattern_thru;
     bool m_new_pattern_record;
     bool m_new_pattern_qrecord;
+
+    /**
+     *  Provides the default recording style at startup. Compare to the
+     *  current recording style.
+     */
+
     recordstyle m_new_pattern_recordstyle;
 
     /**
@@ -850,6 +859,16 @@ private:
      */
 
     bool m_new_pattern_wraparound;
+
+    /**
+     *  Indicates the recording style mode in use with the 'ctrl' file's
+     *  "[loop-control]" section.  The legacy and normal mode if these
+     *  keystrokes and MIDI events is the arm/disarm/mute/unmute the patterns
+     *  in the pattern grid.  The rest of the modes make the loop-control
+     *  section perform the setting of record functions for patterns.
+     */
+
+    recordstyle m_loop_control_mode;
 
 public:
 
@@ -1519,6 +1538,11 @@ public:
 
     std::string new_pattern_record_string () const;
 
+    recordstyle loop_control_mode () const
+    {
+        return m_loop_control_mode;
+    }
+
     recordstyle new_pattern_recordstyle () const
     {
         return m_new_pattern_recordstyle;
@@ -1649,7 +1673,14 @@ public:         // used in main application module and the usrfile class
         m_new_pattern_qrecord = flag;
     }
 
+    void loop_control_mode (const std::string & style);
     void new_pattern_recordstyle (const std::string & style);
+
+    void loop_control_mode (recordstyle style)
+    {
+        if (style < recordstyle::max)
+            m_loop_control_mode = style;
+    }
 
     void new_pattern_recordstyle (recordstyle style)
     {

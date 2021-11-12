@@ -85,7 +85,10 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.97.3:
-        *   See TODO for now.
+        *   Added pattern-recording indicator to live-grid slots.
+        *   Refactored MIDI control for possible future usage of the D1 event
+            value.
+        *   Fixed the display of loop status changed via MIDI control.
     *   Version 0.97.2.1:
         *   Fixed odd breakage of loop-control hot-keys. Doh!
     *   Version 0.97.2:

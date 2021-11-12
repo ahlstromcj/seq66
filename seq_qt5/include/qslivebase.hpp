@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2021-11-10
+ * \updates       2021-11-12
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child class, qslivegride, are Sequencer66's
@@ -187,9 +187,14 @@ protected:
         set_needs_update();
     }
 
+    /*
+     * No support for refreshing only a specific slot in this base-class
+     * version.
+     */
+
     virtual void refresh (seq::number /*seqno*/)
     {
-        // no code in the base class
+        set_needs_update();
     }
 
     virtual void set_bank_values

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-10-18
+ * \updates       2021-11-12
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4615,6 +4615,9 @@ sequence::set_recording (bool recordon, bool toggle)
             m_recording = true;
         else
             m_recording = m_quantized_recording = false;    /* CAREFUL! */
+
+        set_dirty();
+        notify_trigger();                                   /* tricky!  */
     }
     return result;
 }

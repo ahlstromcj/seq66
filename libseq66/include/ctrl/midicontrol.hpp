@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-06-15
+ * \updates       2021-11-12
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -87,7 +87,6 @@ public:
         bussbyte m_buss;    /**< Indicates the port of the event.       */
         midibyte m_status;  /**< Provides the (incoming) event type.    */
         midibyte m_d0;      /**< Provides the first byte, for searches. */
-        midibyte m_d1;      /**< Provides the second byte, for ranging. */
 
     public:
 
@@ -96,11 +95,10 @@ public:
         key & operator = (const key &) = default;
         ~key () = default;
 
-        key (midibyte status, midibyte d0, midibyte d1 = 0) :
+        key (midibyte status, midibyte d0) :
             m_buss      (null_buss()),
             m_status    (status),
-            m_d0        (d0),
-            m_d1        (d1)
+            m_d0        (d0)
         {
             // no code
         }
@@ -108,10 +106,9 @@ public:
         key (const event & ev) :
             m_buss      (ev.input_bus()),
             m_status    (ev.get_status()),
-            m_d0        (0),
-            m_d1        (0)
+            m_d0        (0)
         {
-            ev.get_data(m_d0, m_d1);
+            ev.get_data(m_d0);
         }
 
         bool operator < (const key & rhs) const
@@ -135,11 +132,6 @@ public:
             return m_d0;
         }
 
-        midibyte d1 () const
-        {
-            return m_d1;
-        }
-
     };      // nested class key
 
 private:
@@ -159,8 +151,8 @@ private:
 
     /**
      *  Provides the value for the status.  Big question is, is the channel
-     *  included here?  Yes.  So the next question is, is it ignored?  We
-     *  don't think so.
+     *  included here?  Yes.  So the next question is, is it ignored?  No.
+     *  A number of control devices (eg. the Launchpad
      */
 
     midibyte m_status;
@@ -173,8 +165,9 @@ private:
     midibyte m_d0;
 
     /**
-     *  Provides the second data byte, d1.  Useful only with exact matches.
-     *  TBD.
+     *  Provides the second data byte, d1.  It is used to check that the
+     *  incoming d1 is in the range specified.  Also, though not used yet, it
+     *  can further refine the operation of a MIDI control.
      */
 
     midibyte m_d1;
@@ -184,14 +177,14 @@ private:
      *  if applicable.
      */
 
-    midibyte m_min_value;
+    midibyte m_min_d1;
 
     /**
      *  Provides the maximum value for the second data byte of the event, d1,
      *  if applicable.
      */
 
-    midibyte m_max_value;
+    midibyte m_max_d1;
 
 public:
 
@@ -248,14 +241,14 @@ public:
         return m_d1;
     }
 
-    int min_value () const
+    int min_d1 () const
     {
-        return m_min_value;
+        return m_min_d1;
     }
 
-    int max_value () const
+    int max_d1 () const
     {
-        return m_max_value;
+        return m_max_d1;
     }
 
     /*
@@ -267,7 +260,7 @@ public:
         return
         (
             ! m_active && m_status == 0 && m_d0 == 0 &&
-            m_d1 == 0 && m_min_value == 0 && m_max_value == 0
+            m_d1 == 0 && m_min_d1 == 0 && m_max_d1 == 0
         );
     }
 
@@ -297,16 +290,7 @@ public:
 
     bool in_range (midibyte d1) const
     {
-        return d1 >= midibyte(m_min_value) && d1 <= midibyte(m_max_value);
-    }
-
-    /**
-     *  Another version for quick key comparison.
-     */
-
-    bool in_range (const key & k) const
-    {
-        return in_range(k.m_d1);
+        return d1 >= midibyte(m_min_d1) && d1 <= midibyte(m_max_d1);
     }
 
 public:

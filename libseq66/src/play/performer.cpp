@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-11-11
+ * \updates       2021-11-12
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -2306,6 +2306,7 @@ performer::announce_playscreen ()
 {
     if (midi_control_out().is_enabled())
     {
+        infoprintfunc();
         screenset::slothandler sh = std::bind
         (
             &performer::announce_sequence, this,
@@ -2334,6 +2335,7 @@ performer::announce_exit (bool playstatesoff)
 {
     if (midi_control_out().is_enabled())
     {
+        infoprintfunc();
         midi_control_out().clear_sequences();
         if (playstatesoff)
         {
@@ -2356,6 +2358,7 @@ performer::announce_exit (bool playstatesoff)
 void
 performer::announce_automation (bool activate)
 {
+    infoprintfunc();
     midi_control_out().send_automation(activate);
 }
 
@@ -2367,6 +2370,7 @@ performer::announce_automation (bool activate)
 void
 performer::announce_mutes ()
 {
+    infoprintfunc();
     for (int g = 0; g < mutegroups::Size(); ++g)
     {
         bool hasany = mutes().any(mutegroup::number(g));
@@ -2405,6 +2409,7 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
 {
     bool ok = not_nullptr(s);
     midicontrolout::seqaction what;
+    infoprintfunc();
     if (ok)
     {
         what = s->playing() ?
@@ -5204,10 +5209,6 @@ performer::sequence_playing_toggle (seq::number seqno)
             }
         }
     }
-    // TEST EXPERIMENTAL
-    // if (result)
-    //     set_needs_update();
-
     return result;
 }
 
