@@ -1,7 +1,7 @@
 # README for Seq66 0.97.3
 
 Chris Ahlstrom
-2015-09-10 to 2021-11-11
+2015-09-10 to 2021-11-12
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -85,10 +85,9 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.97.3:
-        *   TODO:  allow controls to use D1, check into the Record key toggling
-            recording on all tracks.  Check the MIDI Record control can use d0
-            or d1 to select the pattern. Also check Windows build. Also New
-            Pattern in an external grid creates it in set 0.
+        *   See TODO for now.
+    *   Version 0.97.2.1:
+        *   Fixed odd breakage of loop-control hot-keys. Doh!
     *   Version 0.97.2:
         *   Issue #57: Increased width of option fields for wider fonts.
         *   Issue #58: Indicate if NSM is running in Preferences / Sessions and

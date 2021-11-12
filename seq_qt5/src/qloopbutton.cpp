@@ -596,6 +596,11 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 m_bottom_right.m_w, m_bottom_right.m_h
             );
             painter.drawText(box, m_bottom_right.m_flags, title);
+
+            // TEST EXPERIMENT. This seems to work.  Why?
+
+            set_checked(loop()->playing());
+
             if (loop()->playing())
                 title = "Armed";
             else if (loop()->get_queued())
@@ -686,8 +691,7 @@ qloopbutton::draw_progress_box (QPainter & painter)
     }
     else if (loop()->get_queued())
     {
-        backcolor.setAlpha(s_alpha_queued);
-        // pen.setWidth(penwidth);
+        backcolor.setAlpha(s_alpha_queued);         // pen.setWidth(penwidth);
         pen.setStyle(Qt::SolidLine);
     }
     else if (loop()->one_shot())                   /* one-shot queued      */

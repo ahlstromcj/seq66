@@ -5204,6 +5204,10 @@ performer::sequence_playing_toggle (seq::number seqno)
             }
         }
     }
+    // TEST EXPERIMENTAL
+    // if (result)
+    //     set_needs_update();
+
     return result;
 }
 
