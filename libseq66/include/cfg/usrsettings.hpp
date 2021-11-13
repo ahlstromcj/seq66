@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-11-12
+ * \updates       2021-11-13
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -850,7 +850,7 @@ private:
      *  current recording style.
      */
 
-    recordstyle m_new_pattern_recordstyle;
+    recordstyle m_new_pattern_record_style;
 
     /**
      *  If true, allow notes that wrap-around in a pattern.  That is, the Note
@@ -1537,20 +1537,29 @@ public:
     }
 
     std::string new_pattern_record_string () const;
+    std::string loop_control_mode_label () const;
 
     recordstyle loop_control_mode () const
     {
         return m_loop_control_mode;
     }
 
-    recordstyle new_pattern_recordstyle () const
+    recordstyle next_loop_control_mode ();
+    recordstyle previous_loop_control_mode ();
+
+    bool normal_loop_control () const
     {
-        return m_new_pattern_recordstyle;
+        return m_loop_control_mode == recordstyle::none;
     }
 
-    int new_pattern_recordcode () const
+    recordstyle new_pattern_record_style () const
     {
-        return static_cast<int>(m_new_pattern_recordstyle);
+        return m_new_pattern_record_style;
+    }
+
+    int new_pattern_record_code () const
+    {
+        return static_cast<int>(m_new_pattern_record_style);
     }
 
     bool new_pattern_wraparound () const
@@ -1674,7 +1683,7 @@ public:         // used in main application module and the usrfile class
     }
 
     void loop_control_mode (const std::string & style);
-    void new_pattern_recordstyle (const std::string & style);
+    void new_pattern_record_style (const std::string & style);
 
     void loop_control_mode (recordstyle style)
     {
@@ -1682,10 +1691,10 @@ public:         // used in main application module and the usrfile class
             m_loop_control_mode = style;
     }
 
-    void new_pattern_recordstyle (recordstyle style)
+    void new_pattern_record_style (recordstyle style)
     {
         if (style < recordstyle::max)
-            m_new_pattern_recordstyle = style;
+            m_new_pattern_record_style = style;
     }
 
     void new_pattern_wraparound (bool flag)

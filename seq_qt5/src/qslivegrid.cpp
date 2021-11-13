@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-11-09
+ * \updates       2021-11-13
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -179,11 +179,6 @@ qslivegrid::qslivegrid
         ui->txtBankName->hide();
         ui->spinBank->hide();
     }
-
-    /*
-     * EXPERIMENTAL.
-     */
-
     if (is_external())
     {
         ui->buttonActivate->setEnabled(true);
@@ -196,6 +191,13 @@ qslivegrid::qslivegrid
     else
         ui->buttonActivate->hide();
 
+    ui->buttonLoopMode->setEnabled(false);      // ENABLE WHEN READY!!!
+    show_loop_control_mode();
+    connect
+    (
+        ui->buttonLoopMode, SIGNAL(clicked(bool)),
+        this, SLOT(slot_loop_control_mode(bool))
+    );
     ui->labelPlaylistSong->setText("");
     set_mode_text();
     qloopbutton::progress_box_size
@@ -274,6 +276,7 @@ qslivegrid::conditional_update ()
     sequence_key_check();
     if (perf().needs_update() || check_needs_update())
     {
+        show_loop_control_mode();
         for (auto pb : m_loop_buttons)
         {
             if (not_nullptr(pb))
@@ -1329,6 +1332,20 @@ void
 qslivegrid::slot_activate_bank (bool /*clicked*/)
 {
     (void) perf().set_playing_screenset(bank_id());
+}
+
+void
+qslivegrid::slot_loop_control_mode (bool /*clicked*/)
+{
+    usr().next_loop_control_mode();
+    perf().set_needs_update();          // WORKS ONLY SPORADICALLY
+    show_loop_control_mode();
+}
+
+void
+qslivegrid::show_loop_control_mode ()
+{
+    ui->buttonLoopMode->setText(qt(usr().loop_control_mode_label()));
 }
 
 void

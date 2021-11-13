@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-11-12
+ * \updates       2021-11-13
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -382,7 +382,7 @@ usrsettings::usrsettings () :
     m_new_pattern_thru          (false),
     m_new_pattern_record        (false),
     m_new_pattern_qrecord       (false),
-    m_new_pattern_recordstyle   (recordstyle::merge),
+    m_new_pattern_record_style  (recordstyle::merge),
     m_new_pattern_wraparound    (false),
     m_loop_control_mode         (recordstyle::none)
 {
@@ -468,7 +468,7 @@ usrsettings::set_defaults ()
     m_new_pattern_thru = false;
     m_new_pattern_record = false;
     m_new_pattern_qrecord = false;
-    m_new_pattern_recordstyle = recordstyle::merge;
+    m_new_pattern_record_style = recordstyle::merge;
     m_new_pattern_wraparound = false;
     m_loop_control_mode = recordstyle::none;
     normalize();                            // recalculate derived values
@@ -512,7 +512,7 @@ usrsettings::progress_note_min_max (int vmin, int vmax)
 }
 
 void
-usrsettings::new_pattern_recordstyle (const std::string & style)
+usrsettings::new_pattern_record_style (const std::string & style)
 {
     recordstyle rs = recordstyle::merge;
     if (style == "overwrite")
@@ -522,21 +522,37 @@ usrsettings::new_pattern_recordstyle (const std::string & style)
     else if (style == "one-shot")
         rs = recordstyle::oneshot;
 
-    m_new_pattern_recordstyle = rs;
+    m_new_pattern_record_style = rs;
 }
 
 std::string
 usrsettings::new_pattern_record_string () const
 {
     std::string result;
-    switch (m_new_pattern_recordstyle)
+    switch (m_new_pattern_record_style)
     {
     case recordstyle::none:         result = "none";        break;
     case recordstyle::merge:        result = "merge";       break;
     case recordstyle::overwrite:    result = "overwrite";   break;
     case recordstyle::expand:       result = "expand";      break;
     case recordstyle::oneshot:      result = "one-shot";    break;
-    case recordstyle::max:          result = "merge";       break;
+    case recordstyle::max:          result = "error";       break;
+    }
+    return result;
+}
+
+std::string
+usrsettings::loop_control_mode_label () const
+{
+    std::string result;
+    switch (loop_control_mode())
+    {
+    case recordstyle::none:         result = "Loop";        break;
+    case recordstyle::merge:        result = "Overdub";     break;
+    case recordstyle::overwrite:    result = "Overwrite";   break;
+    case recordstyle::expand:       result = "Expand";      break;
+    case recordstyle::oneshot:      result = "One-shot";    break;
+    case recordstyle::max:          result = "Error";       break;
     }
     return result;
 }
@@ -555,6 +571,40 @@ usrsettings::loop_control_mode (const std::string & style)
         rs = recordstyle::oneshot;
 
     m_loop_control_mode = rs;
+}
+
+recordstyle
+usrsettings::next_loop_control_mode ()
+{
+    recordstyle result;
+    switch (loop_control_mode())
+    {
+    case recordstyle::none:         result = recordstyle::merge;        break;
+    case recordstyle::merge:        result = recordstyle::overwrite;    break;
+    case recordstyle::overwrite:    result = recordstyle::expand;       break;
+    case recordstyle::expand:       result = recordstyle::oneshot;      break;
+    case recordstyle::oneshot:      result = recordstyle::none;         break;
+    default:                        result = recordstyle::none;         break;
+    }
+    m_loop_control_mode = result;
+    return result;
+}
+
+recordstyle
+usrsettings::previous_loop_control_mode ()
+{
+    recordstyle result;
+    switch (loop_control_mode())
+    {
+    case recordstyle::none:         result = recordstyle::oneshot;      break;
+    case recordstyle::merge:        result = recordstyle::none;         break;
+    case recordstyle::overwrite:    result = recordstyle::merge;        break;
+    case recordstyle::expand:       result = recordstyle::overwrite;    break;
+    case recordstyle::oneshot:      result = recordstyle::expand;       break;
+    default:                        result = recordstyle::none;         break;
+    }
+    m_loop_control_mode = result;
+    return result;
 }
 
 std::string

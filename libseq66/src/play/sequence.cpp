@@ -5612,6 +5612,22 @@ sequence::expand_recording () const
     return result;
 }
 
+/*
+ *  Static member function.
+ */
+
+recordstyle
+sequence::loop_record_style (int ri)
+{
+    recordstyle result = recordstyle::none;
+    int min = loop_record_code(result);
+    int max = loop_record_code(recordstyle::max);
+    if (ri > min && ri < max)
+        result = static_cast<recordstyle>(ri);
+
+    return result;
+}
+
 /**
  *  Code to help user-interface callers.
  */
@@ -5619,10 +5635,8 @@ sequence::expand_recording () const
 bool
 sequence::update_recording (int index)
 {
-    recordstyle rectype = static_cast<recordstyle>(index);
-    bool result = rectype >= recordstyle::merge &&
-        rectype < recordstyle::max ;
-
+    recordstyle rectype = loop_record_style(index);
+    bool result = rectype != recordstyle::none;
     if (result)
     {
         switch (rectype)

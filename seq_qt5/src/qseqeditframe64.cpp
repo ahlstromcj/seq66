@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-10-21
+ * \updates       2021-11-13
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1038,16 +1038,16 @@ qseqeditframe64::qseqeditframe64
      * and "expand" (increase the size of the loop to accomodate new events).
      */
 
-    int lrmerge = sequence::loop_record(recordstyle::merge);
-    int lrreplace = sequence::loop_record(recordstyle::overwrite);
-    int lrexpand = sequence::loop_record(recordstyle::expand);
-    int lroneshot = sequence::loop_record(recordstyle::oneshot);
+    int lrmerge = sequence::loop_record_code(recordstyle::merge);
+    int lrreplace = sequence::loop_record_code(recordstyle::overwrite);
+    int lrexpand = sequence::loop_record_code(recordstyle::expand);
+    int lroneshot = sequence::loop_record_code(recordstyle::oneshot);
     ui->m_combo_rec_type->insertItem(lrmerge, "Merge");
     ui->m_combo_rec_type->insertItem(lrreplace, "Overwrite");
     ui->m_combo_rec_type->insertItem(lrexpand, "Expand");
     ui->m_combo_rec_type->insertItem(lroneshot, "Oneshot");
     if (seq_pointer()->is_new_pattern())
-        lrmerge = usr().new_pattern_recordcode();
+        lrmerge = usr().new_pattern_record_code();
 
     connect
     (
@@ -3189,7 +3189,7 @@ qseqeditframe64::thru_change (bool ischecked)
 void
 qseqeditframe64::update_record_type (int index)
 {
-    bool ok = seq_pointer()->update_recording(index);
+    bool ok = seq_pointer()->update_recording(index + 1);   /* 0 = none */
     if (ok)
         set_dirty();
 }

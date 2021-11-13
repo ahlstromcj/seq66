@@ -6612,7 +6612,15 @@ performer::automation_ss_set
 
 /**
  *  Implements the recording control.  This function sets the recording status
- *  of incoming MIDI events.  If \a inverse is true, nothing is done.
+ *  of incoming MIDI events.  If \a inverse is true, nothing is done. The same
+ *  operation occurs for the actions of toggle, on, and off (the latter two are
+ *  not supported by keystrokes.
+ *
+ *  As of 2021-11-13, this function sets the loop-control mode.  Normally, this
+ *  is "none", which means that loop-control toggles the mute status of the
+ *  specified pattern.  This function increments the mode to the next one,
+ *  looping back to none.  See usrsettings :: loop_control_mode() and the
+ *  usrsettings :: recordstyle enumeration.
  */
 
 bool
@@ -6626,13 +6634,12 @@ performer::automation_record
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
-        seq::number seqno = seq::number(d1);
         if (a == automation::action::toggle)
-            set_recording(seqno, false, true);                  /* toggles  */
+            (void) usr().next_loop_control_mode();
         else if (a == automation::action::on)
-            set_recording(seqno, true, false);                  /* on       */
+            (void) usr().next_loop_control_mode();
         else if (a == automation::action::off)
-            set_recording(seqno, false, false);                 /* off      */
+            (void) usr().previous_loop_control_mode();
     }
     return true;
 }

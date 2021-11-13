@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-11-12
+ * \updates       2021-11-13
  * \license       GNU GPLv2 or above
  *
  *
@@ -171,6 +171,7 @@ private:
     void setup_button (qslotbutton * pb);
     void popup_menu ();
     void sequence_key_check ();
+    void show_loop_control_mode ();
 
 signals:
 
@@ -194,6 +195,7 @@ private slots:
     void new_live_frame ();
     void slot_set_bank_name ();
     void slot_activate_bank (bool clicked);
+    void slot_loop_control_mode  (bool clicked);
 
 private:
 

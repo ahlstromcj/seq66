@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-10-18
+ * \updates       2021-11-13
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1703,7 +1703,9 @@ public:
     bool remove_selected ();
     bool remove_marked ();                      /* a forwarding function    */
 
-    static int loop_record (recordstyle r)
+    static recordstyle loop_record_style (int ri);
+
+    static int loop_record_code (recordstyle r)
     {
         return static_cast<int>(r);
     }
