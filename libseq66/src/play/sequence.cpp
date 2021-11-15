@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-11-12
+ * \updates       2021-11-14
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4645,6 +4645,9 @@ sequence::set_quantized_recording (bool qr, bool toggle)
         m_quantized_recording = qr;
         if (qr)
             result = set_recording(true, false);
+
+        if (result)
+            notify_trigger();                               /* tricky!  */
     }
     return result;
 }
@@ -4666,6 +4669,8 @@ sequence::set_overwrite_recording (bool ovwr, bool toggle)
         m_overwrite_recording = ovwr;
         if (ovwr)
             loop_reset(true);   /* on overwrite, always reset the sequence  */
+
+        notify_trigger();                               /* tricky!  */
     }
     return result;
 }
@@ -5620,8 +5625,8 @@ recordstyle
 sequence::loop_record_style (int ri)
 {
     recordstyle result = recordstyle::none;
-    int min = loop_record_code(result);
-    int max = loop_record_code(recordstyle::max);
+    int min = usr().loop_record_code(result);
+    int max = usr().loop_record_code(recordstyle::max);
     if (ri > min && ri < max)
         result = static_cast<recordstyle>(ri);
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-09
+ * \updates       2021-11-14
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2425,8 +2425,7 @@ qsmainwnd::tabWidgetClicked (int newindex)
             {
                 /*
                  * This is too mysterious, and not sure we want to bother to
-                 * update the live tab to show a new sequence.  Will think
-                 * about it.
+                 * update the live tab to show a new sequence.
                  *
                  * seqid = perf().playscreen_offset();
                  * (void) perf().new_sequence(seqid);
@@ -2468,8 +2467,7 @@ qsmainwnd::tabWidgetClicked (int newindex)
             {
                 /*
                  * This is too mysterious, and not sure we want to bother to
-                 * update the live tab to show a new sequence.  Will think
-                 * about it.
+                 * update the live tab to show a new sequence.
                  *
                  * seqid = perf().playscreen_offset();
                  * (void) perf().new_sequence(seqid);
@@ -3412,14 +3410,25 @@ qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
 }
 
 bool
+qsmainwnd::on_automation_change (automation::slot /* s */)
+{
+    bool result = not_nullptr(m_live_frame);
+    if (result)
+        m_live_frame->set_needs_update();
+
+    return result;
+}
+
+bool
 qsmainwnd::on_sequence_change (seq::number seqno, bool redo)
 {
     bool result = not_nullptr(m_live_frame);
     if (result)
     {
         m_live_frame->update_sequence(seqno, redo);
-        m_is_title_dirty = true;                        /* EXPERIMENTAL */
-        ui->actionSave->setEnabled(perf().modified());  /* EXPERIMENTAL */
+        ui->actionSave->setEnabled(perf().modified());
+        if (redo)
+            m_is_title_dirty = true;
     }
     return result;
 }
@@ -3431,7 +3440,7 @@ qsmainwnd::on_trigger_change (seq::number seqno)
     if (result)
     {
         m_live_frame->refresh(seqno);
-        ui->actionSave->setEnabled(perf().modified());  /* EXPERIMENTAL */
+        ui->actionSave->setEnabled(perf().modified());
     }
     return result;
 }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-11-13
+ * \updates       2021-11-14
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -1536,22 +1536,6 @@ public:
         return m_new_pattern_qrecord;
     }
 
-    std::string new_pattern_record_string () const;
-    std::string loop_control_mode_label () const;
-
-    recordstyle loop_control_mode () const
-    {
-        return m_loop_control_mode;
-    }
-
-    recordstyle next_loop_control_mode ();
-    recordstyle previous_loop_control_mode ();
-
-    bool normal_loop_control () const
-    {
-        return m_loop_control_mode == recordstyle::none;
-    }
-
     recordstyle new_pattern_record_style () const
     {
         return m_new_pattern_record_style;
@@ -1565,6 +1549,32 @@ public:
     bool new_pattern_wraparound () const
     {
         return m_new_pattern_wraparound;
+    }
+
+    std::string new_pattern_record_string () const;
+    std::string loop_control_mode_label () const;
+
+    recordstyle loop_control_mode () const
+    {
+        return m_loop_control_mode;
+    }
+
+    int loop_record_code (recordstyle rs) const
+    {
+        return static_cast<int>(rs);
+    }
+
+    int loop_record_code () const
+    {
+        return loop_record_code(m_loop_control_mode);
+    }
+
+    recordstyle next_loop_control_mode ();
+    recordstyle previous_loop_control_mode ();
+
+    bool normal_loop_control () const
+    {
+        return m_loop_control_mode == recordstyle::none;
     }
 
 public:         // used in main application module and the usrfile class

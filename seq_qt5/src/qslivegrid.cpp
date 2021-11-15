@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-11-13
+ * \updates       2021-11-15
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -165,40 +165,43 @@ qslivegrid::qslivegrid
     {
         QString bname = qt(perf().set_name(bank_id()));
         ui->txtBankName->setText(bname);
-        ui->spinBank->setRange(0, perf().screenset_max() - 1);
+//      ui->spinBank->setRange(0, perf().screenset_max() - 1);
         connect
         (
             ui->txtBankName, SIGNAL(editingFinished()),
             this, SLOT(slot_set_bank_name())
         );
-    }
-    else
-    {
-        ui->setNameLabel->hide();
-        ui->setNumberLabel->hide();
-        ui->txtBankName->hide();
-        ui->spinBank->hide();
-    }
-    if (is_external())
-    {
         ui->buttonActivate->setEnabled(true);
         connect
         (
             ui->buttonActivate, SIGNAL(clicked(bool)),
             this, SLOT(slot_activate_bank(bool))
         );
+        ui->buttonLoopMode->hide();
+//      ui->labelLoopMode->hide();
     }
     else
+    {
+        ui->setNameLabel->hide();
+//      ui->setNumberLabel->hide();
+        ui->txtBankName->hide();
+//      ui->spinBank->hide();
         ui->buttonActivate->hide();
-
-    ui->buttonLoopMode->setEnabled(false);      // ENABLE WHEN READY!!!
-    show_loop_control_mode();
-    connect
-    (
-        ui->buttonLoopMode, SIGNAL(clicked(bool)),
-        this, SLOT(slot_loop_control_mode(bool))
-    );
+        ui->buttonLoopMode->setEnabled(true);
+        show_loop_control_mode();
+        connect
+        (
+            ui->buttonLoopMode, SIGNAL(clicked(bool)),
+            this, SLOT(slot_loop_control_mode(bool))
+        );
+    }
     ui->labelPlaylistSong->setText("");
+
+    /*
+     * TODO: Set text according to play mode:  queue, keep queue, one-shot
+     * etc.
+     */
+
     set_mode_text();
     qloopbutton::progress_box_size
     (
@@ -548,7 +551,7 @@ qslivegrid::set_bank_values (const std::string & name, int id)
 {
     qslivebase::set_bank_values(name, id);
     ui->txtBankName->setText(qt(name));
-    ui->spinBank->setValue(id);
+//  ui->spinBank->setValue(id);
 }
 
 /**
@@ -1040,8 +1043,8 @@ qslivegrid::button_toggle_enabled (seq::number seqno)
 }
 
 /**
- *  This actually gets a qloopbutton.  Don't be fooled like I was.  The toggle
- *  call does its own button update.
+ *  Moved control to performer, and now rely upon the full cycle to work,
+ *  rather than toggling the button state(s) here.
  */
 
 void
@@ -1050,13 +1053,10 @@ qslivegrid::button_toggle_checked (seq::number seqno)
     bool assigned = seqno != seq::unassigned();
     if (assigned)
     {
-        qslotbutton * pb = loop_button(seqno, seq_offset());
-        if (not_nullptr(pb))
-        {
-            seq::pointer s = pb->loop();
-            if (s)
-                (void) pb->toggle_checked();
-        }
+        (void) perf().loop_control
+        (
+            automation::action::toggle, (-1), (-1), int(seqno), false
+        );
     }
 }
 
@@ -1337,8 +1337,7 @@ qslivegrid::slot_activate_bank (bool /*clicked*/)
 void
 qslivegrid::slot_loop_control_mode (bool /*clicked*/)
 {
-    usr().next_loop_control_mode();
-    perf().set_needs_update();          // WORKS ONLY SPORADICALLY
+    usr().next_loop_control_mode(); /* not needed perf().set_needs_update() */
     show_loop_control_mode();
 }
 

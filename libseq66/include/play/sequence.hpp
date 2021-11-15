@@ -1704,12 +1704,6 @@ public:
     bool remove_marked ();                      /* a forwarding function    */
 
     static recordstyle loop_record_style (int ri);
-
-    static int loop_record_code (recordstyle r)
-    {
-        return static_cast<int>(r);
-    }
-
     bool update_recording (int index);
 
     /**

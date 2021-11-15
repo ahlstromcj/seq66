@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2021-08-31
+ * \updates       2021-11-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -181,7 +181,7 @@ opcontrol::slot_name (slot s)
         "BPM Page Up",          // 14 bpm_page_up
         "BPM Page Dn",          // 15 bpm_page_dn
         "Set Set",              // 16 ss_set
-        "Record",               // 17 record
+        "Loop Mode",            // 17 loop_mode
         "Quan Record",          // 18 quan_record
         "Reset Seq",            // 19 reset_seq
         "One-shot",             // 20 mod_oneshot

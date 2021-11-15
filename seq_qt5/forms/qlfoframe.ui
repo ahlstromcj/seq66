@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>591</width>
-    <height>351</height>
+    <width>586</width>
+    <height>320</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,7 +57,7 @@
    <property name="geometry">
     <rect>
      <x>480</x>
-     <y>310</y>
+     <y>280</y>
      <width>80</width>
      <height>24</height>
     </rect>
@@ -72,7 +72,7 @@
      <x>368</x>
      <y>50</y>
      <width>201</width>
-     <height>251</height>
+     <height>221</height>
     </rect>
    </property>
    <property name="title">
@@ -84,7 +84,7 @@
       <x>16</x>
       <y>30</y>
       <width>173</width>
-      <height>211</height>
+      <height>173</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="m_wave_layout">
@@ -150,13 +150,13 @@
    <property name="geometry">
     <rect>
      <x>376</x>
-     <y>310</y>
+     <y>280</y>
      <width>89</width>
      <height>24</height>
     </rect>
    </property>
    <property name="text">
-    <string>&amp;Reset Data</string>
+    <string>&amp;Reset</string>
    </property>
   </widget>
   <widget class="QWidget" name="layoutWidget">
@@ -165,7 +165,7 @@
      <x>10</x>
      <y>51</y>
      <width>345</width>
-     <height>281</height>
+     <height>257</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="sliderGridLayout">

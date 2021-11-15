@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-09-19
- * \updates       2021-07-26
+ * \updates       2021-11-14
  * \license       GNU GPLv2 or above
  *
  *  All this button can do is enable a new pattern to be created.  It is
@@ -129,6 +129,13 @@ protected:
     bool m_horiz_compressed;
 
     /**
+     *  Indicates if the slot button has a pattern assigned to it. Defaults to
+     *  false; gets set in the derived class (qloopbutton).
+     */
+
+    bool m_is_active;
+
+    /**
      *  Indicates if the button is checkable, or just clickable.  Empty slots
      *  need to be enabled, but not checkable, so that we can do different
      *  things with them.  We could probably just hook up a different callback
@@ -198,6 +205,11 @@ public:
         return m_hotkey;
     }
 
+    bool is_active () const
+    {
+        return m_is_active;
+    }
+
     bool is_checkable () const
     {
         return m_is_checkable;
@@ -210,9 +222,19 @@ protected:
         return m_slot_parent;
     }
 
+    void make_inactive ()
+    {
+        m_is_active = false;
+    }
+
+    void make_active ()
+    {
+        m_is_active = true;
+    }
+
     void make_checkable ()
     {
-        m_is_checkable = true;;
+        m_is_checkable = true;
     }
 
     bool is_dirty () const

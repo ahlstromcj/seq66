@@ -1,7 +1,7 @@
 # README for Seq66 0.97.3
 
 Chris Ahlstrom
-2015-09-10 to 2021-11-12
+2015-09-10 to 2021-11-15
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -18,8 +18,7 @@ types on installation, including notes for OpenSUSE Tumbleweed.  Windows users
 can get an installer package on GitHub or build it with Qt Creator.  A
 comprehensive PDF user-manual is provided.
 
-![Alt text](doc/latex/images/main-window/main-window-fluxbox.png?raw=true "Seq66
-Dark-Cold Fluxbox")
+![Alt text](doc/latex/images/main-window/main-windows.png?raw=true "Seq66")
 
 # Major Features
 
@@ -86,6 +85,10 @@ Windows, and using a conventional source tarball.
 
     *   Version 0.97.3:
         *   Added pattern-recording indicator to live-grid slots.
+        *   Replace useless "Record" automation command with a "Loop Mode"
+            command to move between normal loop mode in the Live grid to various
+            record-toggling modes:  Overdub (merge), Overwrite, Expand, and
+            One-shot.
         *   Refactored MIDI control for possible future usage of the D1 event
             value.
         *   Fixed the display of loop status changed via MIDI control.

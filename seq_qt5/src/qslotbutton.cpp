@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2021-10-21
+ * \updates       2021-11-14
  * \license       GNU GPLv2 or above
  *
  *  This object is just a QPushButton with number label.  See seq66::qslivegrid
@@ -83,6 +83,7 @@ qslotbutton::qslotbutton
     m_back_color        (background_paint()),               /* tentative    */
     m_vert_compressed   (usr().vertically_compressed()),
     m_horiz_compressed  (usr().horizontally_compressed()),
+    m_is_active         (false),
     m_is_checkable      (false),
     m_is_dirty          (true)
 {
@@ -120,6 +121,8 @@ qslotbutton::setup ()
  *  A silly little wrapper for the Qt update() function.
  */
 
+#if defined USE_THIS_CODE
+
 void
 qslotbutton::reupdate (bool all)
 {
@@ -129,6 +132,16 @@ qslotbutton::reupdate (bool all)
         update();
     }
 }
+
+#else
+
+void
+qslotbutton::reupdate (bool /*all*/)
+{
+    // no code
+}
+
+#endif
 
 }           // namespace seq66
 

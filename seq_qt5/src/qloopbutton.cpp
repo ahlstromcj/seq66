@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-11-12
+ * \updates       2021-11-14
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -180,6 +180,7 @@ qloopbutton::qloopbutton
 {
     m_text_font.setBold(usr().progress_bar_thick());
     m_text_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
+    make_active();
     make_checkable();
     set_checked(m_is_checked);
 
@@ -298,26 +299,13 @@ qloopbutton::initialize_text ()
         std::string chanstr = loop()->channel_string();
         std::string lowerleft, hotkey;
         char tmp[32];
-        if (rc().show_ui_sequence_number())
-        {
-            snprintf
-            (
-                tmp, sizeof tmp, "%-3d %d-%s %d/%d",
-                sn, bus, chanstr.c_str(), bpb, bw
-            );
-        }
-        else
-        {
-            snprintf
-            (
-                tmp, sizeof tmp, "%d-%s %d/%d",
-                bus, chanstr.c_str(), bpb, bw
-            );
-        }
+        snprintf
+        (
+            tmp, sizeof tmp, "%-3d %d-%s %d/%d",
+            sn, bus, chanstr.c_str(), bpb, bw
+        );
         lowerleft = std::string(tmp);
-        if (rc().show_ui_sequence_key())
-            hotkey = m_hotkey;
-
+        hotkey = m_hotkey;
         if (loop()->loop_count_max() > 0)
             lengthstr += "*";
 
@@ -495,19 +483,22 @@ qloopbutton::toggle_checked ()
 void
 qloopbutton::reupdate (bool all)
 {
-    if (all)
+    if (is_active())           /* NEW ca 2021-11-14 */
     {
-        m_text_initialized = false;
-        if (initialize_text())
-            update();
-    }
-    else
-    {
-        int x = m_progress_box.m_x;
-        int y = m_progress_box.m_y;
-        int w = m_progress_box.m_w;
-        int h = m_progress_box.m_h;
-        update(x, y, w, h);
+        if (all)
+        {
+            m_text_initialized = false;
+            if (initialize_text())
+                update();
+        }
+        else
+        {
+            int x = m_progress_box.m_x;
+            int y = m_progress_box.m_y;
+            int w = m_progress_box.m_w;
+            int h = m_progress_box.m_h;
+            update(x, y, w, h);
+        }
     }
 }
 

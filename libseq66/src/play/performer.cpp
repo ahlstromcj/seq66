@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-11-12
+ * \updates       2021-11-14
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -388,6 +388,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_needs_update          (true),
     m_is_busy               (false),            /* try this flag for now    */
     m_looping               (false),
+    m_record_mode           (recordmode::normal),
     m_song_recording        (false),
     m_song_record_snap      (true),
     m_resume_note_ons       (usr().resume_note_ons()),
@@ -496,6 +497,13 @@ performer::unregister (callbacks * pfcb)
         if (it != m_notify.end())
             (void) m_notify.erase(it);
     }
+}
+
+void
+performer::notify_automation_change (automation::slot s)
+{
+    for (auto notify : m_notify)
+        (void) notify->on_automation_change(s);
 }
 
 void
@@ -893,14 +901,12 @@ performer::ui_set_clock (bussbyte bus, e_clock clocktype)
  *  mainwnd or perfnames modules.  This string goes on the bottom-left of
  *  those user-interface elements.
  *
- *  The format of this string is something like the following example,
- *  depending on the "show sequence numbers" option.  The values shown are, in
- *  this order, sequence number (if allowed), buss number, channel number,
- *  beats per bar, and beat width.
+ *  The format of this string is something like the following example.  The
+ *  values shown are: sequence number, buss number, channel number, beats per
+ *  bar, and beat width.
  *
 \verbatim
-        No sequence number:     31-16 4/4
-        Sequence number:        9  31-16 4/4
+        9  31-16 4/4
 \endverbatim
  *
  *  The sequence number and buss number are re 0, while the channel number is
@@ -935,11 +941,7 @@ performer::sequence_label (const sequence & seq) const
         int bpb = int(seq.get_beats_per_bar());
         int bw = int(seq.get_beat_width());
         char tmp[32];
-        if (rc().show_ui_sequence_number())                  /* new feature! */
-            snprintf(tmp, sizeof tmp, "%-3d %d-%d %d/%d", sn, bus, chan, bpb, bw);
-        else
-            snprintf(tmp, sizeof tmp, "%d-%d %d/%d", bus, chan, bpb, bw);
-
+        snprintf(tmp, sizeof tmp, "%-3d %d-%d %d/%d", sn, bus, chan, bpb, bw);
         result = std::string(tmp);
     }
     return result;
@@ -967,8 +969,7 @@ performer::sequence_label (seq::number seqno) const
 /**
  *  Creates the sequence title, adjusting it for scaling down.  This title is
  *  used in the slots to show the (possibly shortened) pattern title. Note
- *  that the sequence title will also show the sequence length, in measures,
- *  if the rc().show_ui_sequence_key() option is active.
+ *  that the sequence title will also show the sequence length, in measures.
  *
  * \param seq
  *      Provides the reference to the sequence, use for getting the sequence
@@ -5533,11 +5534,6 @@ performer::midi_control_event (const event & ev, bool recording)
                 {
                     /*
                      * See Note above.
-                     *
-                     * process_the_action = s == automation::slot::start ||
-                     *     s == automation::slot::stop ||
-                     *     s == automation::slot::record ||
-                     *     s == automation::slot::pattern_edit ;
                      */
                 }
                 if (process_the_action)
@@ -5942,8 +5938,8 @@ performer::loop_control
     name += std::to_string(loopnumber);
     print_parameters(name, a, d0, d1, loopnumber, inverse);
 
-    seq::number sn = mapper().play_seq(loopnumber);
-    bool result = sn >= 0;
+    seq::number seqno = mapper().play_seq(loopnumber);
+    bool result = seqno >= 0;
     if (result && ! inverse)
     {
         if (slot_shift() > 0)
@@ -5951,27 +5947,46 @@ performer::loop_control
             if (columns() == setmaster::Columns())
             {
                 if (rows() > setmaster::Rows())
-                    sn += slot_shift() * rows();        /* move down x rows */
+                    seqno += slot_shift() * rows();     /* move down x rows */
             }
             else
-                sn += slot_shift() * screenset_size();
+                seqno += slot_shift() * screenset_size();
 
             clear_slot_shift();
         }
-        m_pending_loop = sn;
+        m_pending_loop = seqno;
         if (m_seq_edit_pending || m_event_edit_pending)
         {
-            result = false;             /* let the caller handle it */
+            result = false;                             /* let caller do it */
         }
         else
         {
-            if (a == automation::action::toggle)
-                (void) sequence_playing_toggle(sn);
-            else if (a == automation::action::on)
-                (void) sequence_playing_change(sn, true);
-            else if (a == automation::action::off)
-                (void) sequence_playing_change(sn, false);
+            if (usr().normal_loop_control())
+            {
+                if (a == automation::action::toggle)
+                    (void) sequence_playing_toggle(seqno);
+                else if (a == automation::action::on)
+                    (void) sequence_playing_change(seqno, true);
+                else if (a == automation::action::off)
+                    (void) sequence_playing_change(seqno, false);
+            }
+            else
+            {
+                const seq::pointer s = get_sequence(seqno);
+                if (s)
+                {
+                    bool rec = ! s->recording();
+                    if (m_record_mode == recordmode::normal)
+                        result = set_recording(s, rec, false);
+                    else if (m_record_mode == recordmode::quantize)
+                        result = set_quantized_recording(s, rec, false);
+                    else if (m_record_mode == recordmode::tighten)
+                        (void) error_message("record tighten not implemented");
+                }
+            }
         }
+        if (result)
+            notify_sequence_change(seqno, change::no);
     }
     return result;
 }
@@ -6624,13 +6639,13 @@ performer::automation_ss_set
  */
 
 bool
-performer::automation_record
+performer::automation_loop_mode
 (
     automation::action a, int d0, int d1,
     int index, bool inverse
 )
 {
-    std::string name = "Record";
+    std::string name = "Loop Mode";
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
@@ -6640,6 +6655,8 @@ performer::automation_record
             (void) usr().next_loop_control_mode();
         else if (a == automation::action::off)
             (void) usr().previous_loop_control_mode();
+
+        notify_automation_change(automation::slot::loop_mode);
     }
     return true;
 }
@@ -7676,7 +7693,7 @@ performer::sm_auto_func_list [] =
     },
     { automation::slot::bpm_page_dn, &performer::automation_bpm_page_dn  },
     { automation::slot::ss_set, &performer::automation_ss_set            },
-    { automation::slot::record, &performer::automation_record            },
+    { automation::slot::loop_mode, &performer::automation_loop_mode      },
     { automation::slot::quan_record, &performer::automation_quan_record  },
     { automation::slot::reset_seq, &performer::automation_reset_seq      },
     { automation::slot::mod_oneshot, &performer::automation_oneshot      },

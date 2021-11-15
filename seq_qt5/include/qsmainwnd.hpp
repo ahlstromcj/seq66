@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-05
+ * \updates       2021-11-15
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -186,6 +186,7 @@ protected:                              // performer callbacks
     (
         const keystroke & k, bool success
     ) override;
+    virtual bool on_automation_change (automation::slot s) override;
     virtual bool on_sequence_change (seq::number seqno, bool recreate) override;
     virtual bool on_trigger_change (seq::number seqno) override;
     virtual bool on_set_change

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-11-11
+ * \updates       2021-11-14
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -124,11 +124,23 @@ public:
      *  functionality of logging and recording tempo is in place.
      */
 
-    enum class record_tempo
+    enum class recordtempo
     {
         log_event,
         on,
         off,
+        max
+    };
+
+    /**
+     *  Indicates the recording mode when recording is in progress.
+     */
+
+    enum class recordmode
+    {
+        normal,
+        quantize,
+        tighten,        /* not supported yet */
         max
     };
 
@@ -595,6 +607,13 @@ private:                            /* key, midi, and op container section  */
     bool m_looping;
 
     /**
+     *  Normal, quantize, or (unsupported) tighten. Indicates if recording into
+     *  a sequence will be quantized or not.
+     */
+
+    recordmode m_record_mode;
+
+    /**
      *  Indicates to record live sequence-trigger changes into the Song data.
      */
 
@@ -960,6 +979,7 @@ public:
 
     void enregister (callbacks * pfcb);             /* for notifications    */
     void unregister (callbacks * pfcb);
+    void notify_automation_change (automation::slot s);
     void notify_set_change (screenset::number setno, change mod = change::yes);
     void notify_mutes_change (screenset::number setno, change mod = change::yes);
     void notify_sequence_change (seq::number seqno, change mod = change::yes);
@@ -3463,7 +3483,7 @@ public:
         automation::action a, int d0, int d1,
         int index, bool inverse
     );
-    bool automation_record
+    bool automation_loop_mode
     (
         automation::action a, int d0, int d1,
         int index, bool inverse

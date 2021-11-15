@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-11-13
+ * \updates       2021-11-14
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1038,10 +1038,10 @@ qseqeditframe64::qseqeditframe64
      * and "expand" (increase the size of the loop to accomodate new events).
      */
 
-    int lrmerge = sequence::loop_record_code(recordstyle::merge);
-    int lrreplace = sequence::loop_record_code(recordstyle::overwrite);
-    int lrexpand = sequence::loop_record_code(recordstyle::expand);
-    int lroneshot = sequence::loop_record_code(recordstyle::oneshot);
+    int lrmerge = usr().loop_record_code(recordstyle::merge);
+    int lrreplace = usr().loop_record_code(recordstyle::overwrite);
+    int lrexpand = usr().loop_record_code(recordstyle::expand);
+    int lroneshot = usr().loop_record_code(recordstyle::oneshot);
     ui->m_combo_rec_type->insertItem(lrmerge, "Merge");
     ui->m_combo_rec_type->insertItem(lrreplace, "Overwrite");
     ui->m_combo_rec_type->insertItem(lrexpand, "Expand");

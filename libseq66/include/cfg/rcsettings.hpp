@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-10-27
+ * \updates       2021-11-14
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -261,14 +261,6 @@ private:
      */
 
     midicontrolout m_midi_control_out;
-
-    /*
-     * Much more complete descriptions of these options can be found in the
-     * seq66.rc file.
-     */
-
-    bool m_show_ui_sequence_key;    /**< Moved from key_performers.         */
-    bool m_show_ui_sequence_number; /**< Moved from key_performers.         */
 
     /**
      *  Provides the Song Position, in 16th notes, at which MIDI clocking will
@@ -644,16 +636,6 @@ public:
     midicontrolout & midi_control_out ()
     {
         return m_midi_control_out;
-    }
-
-    bool show_ui_sequence_key () const
-    {
-        return m_show_ui_sequence_key;
-    }
-
-    bool show_ui_sequence_number () const
-    {
-        return m_show_ui_sequence_number;
     }
 
     int get_clock_mod () const
@@ -1142,16 +1124,6 @@ public:
     void midi_control_buss (bussbyte b)
     {
         m_midi_control_buss = b;
-    }
-
-    void show_ui_sequence_key (bool flag)
-    {
-        m_show_ui_sequence_key = flag;
-    }
-
-    void show_ui_sequence_number (bool flag)
-    {
-        m_show_ui_sequence_number = flag;
     }
 
     /**
