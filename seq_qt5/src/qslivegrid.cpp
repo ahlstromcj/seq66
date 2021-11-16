@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-11-15
+ * \updates       2021-11-16
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -165,7 +165,6 @@ qslivegrid::qslivegrid
     {
         QString bname = qt(perf().set_name(bank_id()));
         ui->txtBankName->setText(bname);
-//      ui->spinBank->setRange(0, perf().screenset_max() - 1);
         connect
         (
             ui->txtBankName, SIGNAL(editingFinished()),
@@ -178,21 +177,25 @@ qslivegrid::qslivegrid
             this, SLOT(slot_activate_bank(bool))
         );
         ui->buttonLoopMode->hide();
-//      ui->labelLoopMode->hide();
+        ui->buttonRecordMode->hide();
     }
     else
     {
         ui->setNameLabel->hide();
-//      ui->setNumberLabel->hide();
         ui->txtBankName->hide();
-//      ui->spinBank->hide();
         ui->buttonActivate->hide();
         ui->buttonLoopMode->setEnabled(true);
         show_loop_control_mode();
+        show_record_mode();
         connect
         (
             ui->buttonLoopMode, SIGNAL(clicked(bool)),
             this, SLOT(slot_loop_control_mode(bool))
+        );
+        connect
+        (
+            ui->buttonRecordMode, SIGNAL(clicked(bool)),
+            this, SLOT(slot_record_mode(bool))
         );
     }
     ui->labelPlaylistSong->setText("");
@@ -280,6 +283,7 @@ qslivegrid::conditional_update ()
     if (perf().needs_update() || check_needs_update())
     {
         show_loop_control_mode();
+        show_record_mode();
         for (auto pb : m_loop_buttons)
         {
             if (not_nullptr(pb))
@@ -1337,14 +1341,39 @@ qslivegrid::slot_activate_bank (bool /*clicked*/)
 void
 qslivegrid::slot_loop_control_mode (bool /*clicked*/)
 {
-    usr().next_loop_control_mode(); /* not needed perf().set_needs_update() */
-    show_loop_control_mode();
+    perf().next_loop_control_mode();
+
+    /*
+     * The "needs-update" flag should get this refreshed by the timer
+     * callback.
+     *
+     * show_loop_control_mode();
+     */
+}
+
+void
+qslivegrid::slot_record_mode (bool /*clicked*/)
+{
+    perf().next_record_mode();
+
+    /*
+     * The "needs-update" flag should get this refreshed by the timer
+     * callback.
+     *
+     * show_record_mode();
+     */
 }
 
 void
 qslivegrid::show_loop_control_mode ()
 {
     ui->buttonLoopMode->setText(qt(usr().loop_control_mode_label()));
+}
+
+void
+qslivegrid::show_record_mode ()
+{
+    ui->buttonRecordMode->setText(qt(perf().record_mode_label()));
 }
 
 void

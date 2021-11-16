@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-11-14
+ * \updates       2021-11-16
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -157,6 +157,7 @@ sequence::sequence (int ppqn) :
     m_overwrite_recording       (false),
     m_oneshot_recording         (false),
     m_quantized_recording       (false),
+    m_tightened_recording       (false),
     m_thru                      (false),
     m_queued                    (false),
     m_one_shot                  (false),
@@ -307,6 +308,7 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
          *  m_overwrite_recording
          *  m_oneshot_recording
          *  m_quantized_recording
+         *  m_tightened_recording
          *  m_thru
          *  m_queued
          *  m_one_shot
@@ -2041,7 +2043,7 @@ sequence::cut_selected (bool copyevents)
  *
  *      -   copy_selected()
  *      -   paste_selected()
- *      -   quantize_events()
+ *      -   quantize_events() [quantizes or tightens base on a parameter]
  *
  *  The alternative to reconstructing the map is to erase-and-insert the
  *  events modified in the code above, rather than just tweaking their values,
@@ -2857,8 +2859,8 @@ sequence::check_loop_reset ()
  *  needed.  If recording:
  *
  *      -   If the pattern is playing, the event is added.
- *      -   If the pattern is playing and quantized record is in force, the
- *          note's timestamp is altered.
+ *      -   If the pattern is playing and quantized/tightened record is in
+ *          force, the note's timestamp is altered.
  *      -   If not playing, but the event is a Note On or Note Off, we add it
  *          and keep track of it.
  *
@@ -2994,7 +2996,7 @@ sequence::stream_event (event & ev)
         if (ev.is_note_off())
             link_new();                                 /* removed locking  */
 
-        if (quantizing() && perf()->is_pattern_playing())
+        if (quantizing_or_tightening() && perf()->is_pattern_playing())
         {
             if (ev.is_note_off())
             {
@@ -3005,7 +3007,10 @@ sequence::stream_event (event & ev)
                     timestamp, note, timestamp, note,
                     eventlist::select::selecting
                 );
-                quantize_events(EVENT_NOTE_ON, 0, 1, true);
+                if (quantizing())
+                    quantize_events(EVENT_NOTE_ON, 0, 1, true);
+                else    /* if tightening() */
+                    quantize_events(EVENT_NOTE_ON, 0, 2, true);
             }
         }
     }
@@ -4604,7 +4609,7 @@ sequence::set_recording (bool recordon, bool toggle)
     if (toggle)
         recordon = ! m_recording;
 
-    bool result = recordon != m_recording;
+    bool result = toggle || recordon != m_recording;
     if (result)
         result = master_bus()->set_sequence_input(recordon, this);
 
@@ -4612,10 +4617,13 @@ sequence::set_recording (bool recordon, bool toggle)
     {
         m_notes_on = 0;                 /* reset the step-edit note counter */
         if (recordon)
+        {
             m_recording = true;
+        }
         else
-            m_recording = m_quantized_recording = false;    /* CAREFUL! */
-
+        {
+            m_recording = m_quantized_recording = m_tightened_recording = false;
+        }
         set_dirty();
         notify_trigger();                                   /* tricky!  */
     }
@@ -4644,6 +4652,26 @@ sequence::set_quantized_recording (bool qr, bool toggle)
     {
         m_quantized_recording = qr;
         if (qr)
+            result = set_recording(true, false);
+
+        if (result)
+            notify_trigger();                               /* tricky!  */
+    }
+    return result;
+}
+
+bool
+sequence::set_tightened_recording (bool tr, bool toggle)
+{
+    automutex locker(m_mutex);
+    if (toggle)
+        tr = ! m_tightened_recording;
+
+    bool result = tr != m_tightened_recording;
+    if (result)
+    {
+        m_tightened_recording = tr;
+        if (tr)
             result = set_recording(true, false);
 
         if (result)

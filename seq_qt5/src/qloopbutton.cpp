@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-11-14
+ * \updates       2021-11-16
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -71,11 +71,20 @@
  *  Alpha values for various states, not yet members, not yet configurable.
  */
 
-const int s_alpha_playing       = 255;
-const int s_alpha_muted         = 100;
-const int s_alpha_qsnap         = 180;
-const int s_alpha_queued        = 148;
-const int s_alpha_oneshot       = 148;
+static const int s_alpha_playing       = 255;
+static const int s_alpha_muted         = 100;
+static const int s_alpha_qsnap         = 180;
+static const int s_alpha_queued        = 148;
+static const int s_alpha_oneshot       = 148;
+
+/**
+ *  Font and annunciator sizes.  These are for normal size, and get scaled for
+ *  other sizes.
+ */
+
+static const int s_fontsize_main    = 7;
+static const int s_fontsize_record  = 6;
+static const int s_radius_record    = 11;
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -266,7 +275,7 @@ qloopbutton::initialize_text ()
         int bh = usr().scale_size_y(12);
         int rx = int(0.50 * w) + lx - 2 * dx - 2;       // - 2 added
         int by = int(0.85 * h) + dy;
-        int fontsize = usr().scale_font_size(7);
+        int fontsize = usr().scale_font_size(s_fontsize_main);
         if (vert_compressed())
         {
             ty += 2;
@@ -573,12 +582,30 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             painter.drawText(box, m_top_right.m_flags, title);
             if (loop()->recording())
             {
-                int radius = usr().scale_size(9);
+                int radius = usr().scale_size(s_radius_record);
                 int clx = m_top_right.m_x + m_top_right.m_w - radius - 2;
                 int cly = m_top_right.m_y + m_top_right.m_h;
+                int tlx = clx + usr().scale_size(2);
+                int tly = cly + radius - usr().scale_size(2);
                 QBrush brush(drum_paint(), Qt::SolidPattern);
                 painter.setBrush(brush);
                 painter.drawEllipse(clx, cly, radius, radius);
+                if (loop()->quantizing_or_tightening())
+                {
+                    int fontsize = usr().scale_font_size(s_fontsize_record);
+                    QFont font;
+                    font.setPointSize(fontsize);
+                    font.setBold(true);
+                    painter.save();
+                    painter.setPen(Qt::black);
+                    painter.setFont(font);
+                    if (loop()->quantizing())
+                        painter.drawText(tlx, tly, "Q");
+                    else if (loop()->tightening())
+                        painter.drawText(tlx + 2, tly, "T");
+
+                    painter.restore();
+                }
             }
             title = qt(m_bottom_left.m_label);
             box.setRect

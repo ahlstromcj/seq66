@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>662</width>
-    <height>352</height>
+    <width>664</width>
+    <height>354</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -215,6 +215,25 @@
        </property>
        <property name="text">
         <string>Mode</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonRecordMode">
+       <property name="minimumSize">
+        <size>
+         <width>80</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>RMode</string>
        </property>
       </widget>
      </item>

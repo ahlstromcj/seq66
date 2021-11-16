@@ -3414,7 +3414,7 @@ qsmainwnd::on_automation_change (automation::slot /* s */)
 {
     bool result = not_nullptr(m_live_frame);
     if (result)
-        m_live_frame->set_needs_update();
+        m_live_frame->set_needs_update();       /* brute force */
 
     return result;
 }

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-11-14
+ * \updates       2021-11-16
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -2946,6 +2946,23 @@ performer::set_quantized_recording (seq::number seqno, bool recordon, bool toggl
     return set_quantized_recording(s, recordon, toggle);
 }
 
+bool
+performer::set_tightened_recording (seq::number seqno, bool recordon, bool toggle)
+{
+    seq::pointer s = get_sequence(seqno);
+    return set_tightened_recording(s, recordon, toggle);
+}
+
+bool
+performer::set_tightened_recording (seq::pointer s, bool recordon, bool toggle)
+{
+    bool result = bool(s);
+    if (result)
+        result = s->set_tightened_recording(recordon, toggle);
+
+    return result;
+}
+
 /**
  *  Set recording for overwrite.  This feature was obtained from jfrey-xx on
  *  GitHub.
@@ -5232,6 +5249,60 @@ performer::replace_for_solo (seq::number seqno)
     return result;
 }
 
+std::string
+performer::record_mode_label () const
+{
+    std::string result;
+    switch (record_mode())
+    {
+    case recordmode::normal:        result = "Normal";      break;
+    case recordmode::quantize:      result = "Quantize";    break;
+    case recordmode::tighten:       result = "Tighten";     break;
+    default:                        result = "Normal";      break;
+    }
+    return result;
+}
+
+/*
+ *  In the following two functions, we could have the caller call
+ *
+ *      automation_quan_record(a, (-1), (-1), 0, false)
+ *
+ *  instead, where a = automation::action::toggle/yes/no.
+ */
+
+performer::recordmode
+performer::next_record_mode ()
+{
+    recordmode result;
+    switch (record_mode())
+    {
+    case recordmode::normal:        result = recordmode::quantize;  break;
+    case recordmode::quantize:      result = recordmode::tighten;   break;
+    case recordmode::tighten:       result = recordmode::normal;    break;
+    default:                        result = recordmode::normal;    break;
+    }
+    m_record_mode = result;
+    notify_automation_change(automation::slot::quan_record);
+    return result;
+}
+
+performer::recordmode
+performer::previous_record_mode ()
+{
+    recordmode result;
+    switch (record_mode())
+    {
+    case recordmode::normal:        result = recordmode::tighten;   break;
+    case recordmode::quantize:      result = recordmode::normal;    break;
+    case recordmode::tighten:       result = recordmode::quantize;  break;
+    default:                        result = recordmode::normal;    break;
+    }
+    m_record_mode = result;
+    notify_automation_change(automation::slot::quan_record);
+    return result;
+}
+
 sequence::playback
 performer::toggle_song_start_mode ()
 {
@@ -5900,6 +5971,20 @@ performer::learn_mutes (mutegroup::number group)
  * -------------------------------------------------------------------------
  */
 
+void
+performer::next_loop_control_mode ()
+{
+    (void) usr().next_loop_control_mode();
+    notify_automation_change(automation::slot::loop_mode);
+}
+
+void
+performer::previous_loop_control_mode ()
+{
+    (void) usr().previous_loop_control_mode();
+    notify_automation_change(automation::slot::loop_mode);
+}
+
 /**
  *  Provides the pattern-control function... hot-keys that toggle the patterns
  *  in the current set.
@@ -5975,13 +6060,19 @@ performer::loop_control
                 const seq::pointer s = get_sequence(seqno);
                 if (s)
                 {
-                    bool rec = ! s->recording();
+                    bool rec = false;                   /* !s->recording()  */
+                    bool toggle = false;
+                    if (a == automation::action::toggle)
+                        toggle = true;
+                    else if (a == automation::action::on)
+                        rec = true;
+
                     if (m_record_mode == recordmode::normal)
-                        result = set_recording(s, rec, false);
+                        result = set_recording(s, rec, toggle);
                     else if (m_record_mode == recordmode::quantize)
-                        result = set_quantized_recording(s, rec, false);
+                        result = set_quantized_recording(s, rec, toggle);
                     else if (m_record_mode == recordmode::tighten)
-                        (void) error_message("record tighten not implemented");
+                        result = set_tightened_recording(s, rec, toggle);
                 }
             }
         }
@@ -6650,13 +6741,17 @@ performer::automation_loop_mode
     if (! inverse)
     {
         if (a == automation::action::toggle)
-            (void) usr().next_loop_control_mode();
+            next_loop_control_mode();
         else if (a == automation::action::on)
-            (void) usr().next_loop_control_mode();
+            next_loop_control_mode();
         else if (a == automation::action::off)
-            (void) usr().previous_loop_control_mode();
+            previous_loop_control_mode();
 
-        notify_automation_change(automation::slot::loop_mode);
+        /*
+         *  Done in the functions called above:
+         *
+         *      notify_automation_change(automation::slot::loop_mode);
+         */
     }
     return true;
 }
@@ -6676,13 +6771,18 @@ performer::automation_quan_record
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
-        seq::number seqno = seq::number(d1);
         if (a == automation::action::toggle)
-            set_quantized_recording(seqno, false, true);        /* toggles  */
+            (void) next_record_mode();
         else if (a == automation::action::on)
-            set_quantized_recording(seqno, true, false);        /* on       */
+            (void) next_record_mode();
         else if (a == automation::action::off)
-            set_quantized_recording(seqno, false, false);       /* off      */
+            (void) previous_record_mode();
+
+        /*
+         *  Done in the functions called above:
+         *
+         *      notify_automation_change(automation::slot::quan_record);
+         */
     }
     return true;
 }

@@ -1,7 +1,7 @@
 # README for Seq66 0.97.3
 
 Chris Ahlstrom
-2015-09-10 to 2021-11-15
+2015-09-10 to 2021-11-16
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -89,6 +89,8 @@ Windows, and using a conventional source tarball.
             command to move between normal loop mode in the Live grid to various
             record-toggling modes:  Overdub (merge), Overwrite, Expand, and
             One-shot.
+        *   Also refactored the quantize control to move through states of
+        *   normal, quantize, and tighten.
         *   Refactored MIDI control for possible future usage of the D1 event
             value.
         *   Fixed the display of loop status changed via MIDI control.

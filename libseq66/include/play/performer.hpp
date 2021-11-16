@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-11-14
+ * \updates       2021-11-16
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1898,6 +1898,7 @@ public:
     bool set_sequence_name (seq::pointer s, const std::string & name);
     bool set_recording (seq::pointer s, bool active, bool toggle);
     bool set_quantized_recording (seq::pointer s, bool active, bool toggle);
+    bool set_tightened_recording (seq::pointer s, bool active, bool toggle);
     bool set_overwrite_recording (seq::pointer s, bool active, bool toggle);
     bool set_thru (seq::pointer s, bool active, bool toggle);
     bool selected_trigger
@@ -2725,6 +2726,15 @@ public:
 
     bool are_any_armed ();
 
+    recordmode record_mode () const
+    {
+        return m_record_mode;
+    }
+
+    std::string record_mode_label () const;
+    recordmode next_record_mode ();
+    recordmode previous_record_mode ();
+
     /*
      * This is a long-standing request from user's, adapted from Kepler34.
      */
@@ -3079,6 +3089,7 @@ private:
     void playlist_activate (bool on);
     bool set_recording (seq::number seqno, bool active, bool toggle);
     bool set_quantized_recording (seq::number seqno, bool active, bool toggle);
+    bool set_tightened_recording (seq::number seqno, bool active, bool toggle);
     bool set_overwrite_recording (seq::number seqno, bool active, bool toggle);
     bool set_thru (seq::number seqno, bool active, bool toggle);
     bool log_current_tempo ();
@@ -3377,6 +3388,8 @@ public:
         return result;
     }
 
+    void next_loop_control_mode ();
+    void previous_loop_control_mode ();
     bool loop_control                   /* [loop-control]       */
     (
         automation::action a, int d0, int d1,

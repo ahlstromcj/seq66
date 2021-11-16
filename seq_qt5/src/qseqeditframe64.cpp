@@ -1353,9 +1353,9 @@ qseqeditframe64::conditional_update ()
     if (seq_pointer()->check_loop_reset())
     {
         /*
-         * Now we need to update the event and data panes.  Note that the notes
-         * update during the next pass through the loop only if more notes come
-         * in on the input buss.
+         * Now we need to update the event and data panes.  Note that the
+         * notes update during the next pass through the loop only if more
+         * notes come in on the input buss.
          */
 
         set_dirty();

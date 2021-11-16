@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-11-13
+ * \updates       2021-11-16
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -421,6 +421,12 @@ private:
      */
 
     bool m_quantized_recording;
+
+    /**
+     *  True if recording in tighten mode.
+     */
+
+    bool m_tightened_recording;
 
     /**
      *  True if recording in MIDI-through mode.
@@ -1182,6 +1188,7 @@ public:
 
     bool set_recording (bool recordon, bool toggle = false);
     bool set_quantized_recording (bool qr, bool toggle = false);
+    bool set_tightened_recording (bool tr, bool toggle = false);
     bool set_overwrite_recording (bool ovwr, bool toggle = false);
     bool set_thru (bool thru_active, bool toggle = false);
 
@@ -1198,6 +1205,21 @@ public:
     bool quantizing () const
     {
         return m_recording && m_quantized_recording;
+    }
+
+    bool tightened_recording () const
+    {
+        return m_tightened_recording;
+    }
+
+    bool tightening () const
+    {
+        return m_recording && m_tightened_recording;
+    }
+
+    bool quantizing_or_tightening () const
+    {
+        return m_recording && (m_quantized_recording || m_tightened_recording);
     }
 
     bool expanded_recording () const
