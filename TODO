@@ -1,6 +1,6 @@
 TO DO for Seq66 0.97.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-11-11
+2019-04-13 to 2021-11-17
 
 Configuration:
 
@@ -192,7 +192,7 @@ EXTANT ISSUES:
 #41 NSM: hide seq66 on closing window, do not exit?
     If closing the window, rather than quitting the app, could change the its
     visibility state to hidden.
-    STATUS:  I think we fixed this one, will retest.
+    STATUS:  Fixed, using a show toggle.
 
 #44 "Record live sequence changes" functionality
     Currently the "record live sequence changes" only adds patterns into the
@@ -237,6 +237,17 @@ EXTANT ISSUES:
 
 #53 MIDI CC sequencing
     STATUS: See the thread on GitHub.
+
+#64 NSM: UI show up after restarting the app
+    This issue is complex.  First, NSM is supposed to tell the applications in
+    the session to hide after startup.  Neither agordejo or its
+    non-session-manager clone do this; they send only a command to show.
+    So, for now, we have changed the code so that the show command from NSM
+    acts as a toggle on visibility.
+
+#67 NSM failed to save midi file on raspberry pi
+    STATUS: Fixed by making filename_concatenate() work even if the file base
+    has a path already.
 
 PATTERNS:
 

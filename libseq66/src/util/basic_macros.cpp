@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-11-12
+ * \updates       2021-11-17
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of

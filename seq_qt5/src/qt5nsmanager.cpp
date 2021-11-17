@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-11-16
+ * \updates       2021-11-17
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -75,7 +75,7 @@ qt5nsmanager::qt5nsmanager
     m_application   (app),
     m_timer         (nullptr),
     m_window        (),
-    m_is_hidden     (true)
+    m_is_hidden     (false)
 {
     /*
      * Should we use this timer or a performer callback?
@@ -122,7 +122,7 @@ qt5nsmanager::refresh ()
 #endif
         }
 
-        bool hide = m_is_hidden;
+        bool hide = false;
         if (perf()->show_hide_pending())
         {
             hide = perf()->hidden();
@@ -135,10 +135,15 @@ qt5nsmanager::refresh ()
 #endif
         }
         if (hide)
-            hide_gui();
+        {
+            if (! m_is_hidden)
+                hide_gui();
+        }
         else
-            show_gui();
-
+        {
+            if (m_is_hidden)
+                show_gui();
+        }
         if (session_restart())
             quit();
     }
@@ -415,18 +420,19 @@ qt5nsmanager::show_gui ()
 {
     if (m_window && m_is_hidden)
     {
+        status_message("GUI is showing...");
         m_window->show();
         m_is_hidden = false;
+        perf()->hidden(false);          /* turns off show-hide pending flag */
 
 #if defined SEQ66_NSM_SUPPORT
-        if (perf()->show_hide_pending())
-        {
+//      if (perf()->show_hide_pending())
+//      {
             if (not_nullptr(nsm_client()))
                 nsm_client()->send_visibility(true);
-        }
+//      }
 #endif
 
-        perf()->hidden(false);          /* turns off show-hide pending flag */
     }
 }
 
@@ -435,18 +441,19 @@ qt5nsmanager::hide_gui ()
 {
     if (m_window && ! m_is_hidden)
     {
+        status_message("GUI is hiding...");
         m_window->hide();
         m_is_hidden = true;
+        perf()->hidden(true);          /* turns off show-hide pending flag */
 
 #if defined SEQ66_NSM_SUPPORT
-        if (perf()->show_hide_pending())
-        {
+//      if (perf()->show_hide_pending())
+//      {
             if (not_nullptr(nsm_client()))
                 nsm_client()->send_visibility(false);
-        }
+//      }
 #endif
 
-        perf()->hidden(true);          /* turns off show-hide pending flag */
     }
 }
 

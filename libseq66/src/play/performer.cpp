@@ -2307,7 +2307,10 @@ performer::announce_playscreen ()
 {
     if (midi_control_out().is_enabled())
     {
-        infoprintfunc();
+        /*
+         * infoprintfunc();
+         */
+
         screenset::slothandler sh = std::bind
         (
             &performer::announce_sequence, this,
@@ -2336,7 +2339,10 @@ performer::announce_exit (bool playstatesoff)
 {
     if (midi_control_out().is_enabled())
     {
-        infoprintfunc();
+        /*
+         * infoprintfunc();
+         */
+
         midi_control_out().clear_sequences();
         if (playstatesoff)
         {
@@ -2359,7 +2365,10 @@ performer::announce_exit (bool playstatesoff)
 void
 performer::announce_automation (bool activate)
 {
-    infoprintfunc();
+    /*
+     * infoprintfunc();
+     */
+
     midi_control_out().send_automation(activate);
 }
 
@@ -2371,7 +2380,10 @@ performer::announce_automation (bool activate)
 void
 performer::announce_mutes ()
 {
-    infoprintfunc();
+    /*
+     * infoprintfunc();
+     */
+
     for (int g = 0; g < mutegroups::Size(); ++g)
     {
         bool hasany = mutes().any(mutegroup::number(g));
@@ -2410,7 +2422,11 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
 {
     bool ok = not_nullptr(s);
     midicontrolout::seqaction what;
-    infoprintfunc();
+
+    /*
+     * infoprintfunc();
+     */
+
     if (ok)
     {
         what = s->playing() ?

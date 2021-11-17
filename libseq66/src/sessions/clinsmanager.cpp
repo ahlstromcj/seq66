@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2021-11-16
+ * \updates       2021-11-17
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -269,10 +269,10 @@ clinsmanager::save_session (std::string & msg, bool ok)
              */
 
             if (! nsm_active())
-                show_message("Session mgr", msg);
+                show_message(session_tag(), msg);
         }
         else
-            show_error("Session mgr", msg);
+            show_error(session_tag(), msg);
     }
     return result;
 }
@@ -384,7 +384,7 @@ clinsmanager::session_manager_name (const std::string & mgrname)
 {
     smanager::session_manager_name(mgrname);
     if (! mgrname.empty())
-        file_message("Session mgr", mgrname);
+        file_message(session_tag(), mgrname);
 }
 
 void
@@ -392,7 +392,7 @@ clinsmanager::session_manager_path (const std::string & pathname)
 {
     smanager::session_manager_path(pathname);
     if (! pathname.empty())
-        file_message("Session path", pathname);
+        file_message(session_tag("path"), pathname);
 }
 
 void
@@ -400,7 +400,7 @@ clinsmanager::session_display_name (const std::string & dispname)
 {
     smanager::session_display_name(dispname);
     if (! dispname.empty())
-        file_message("Session name", dispname);
+        file_message(session_tag("name"), dispname);
 }
 
 void
@@ -408,7 +408,7 @@ clinsmanager::session_client_id (const std::string & clid)
 {
     smanager::session_client_id(clid);
     if (! clid.empty())
-        file_message("Session client ID", clid);
+        file_message(session_tag("client ID"), clid);
 }
 
 /**

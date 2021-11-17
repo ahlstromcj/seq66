@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2021-08-05
+ * \updates       2021-11-17
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -241,10 +241,10 @@ nsmbase::start_thread ()
         if (rcode == 0)                                     /* successful?  */
         {
             if (rc().verbose())
-                file_message("S66", "OSC server thread started");
+                file_message(session_tag(), "OSC server thread started");
         }
         else
-            file_error("S66", "OSC server thread failed to start");
+            file_error(session_tag(), "OSC server thread failed to start");
     }
 }
 
@@ -319,13 +319,13 @@ nsmbase::initialize ()
                  */
             }
             else
-                file_message("NSM", "bad server");
+                file_error("NSM", "bad server");
         }
         else
-            file_message("NSM", "bad server thread");
+            file_error("NSM", "bad server thread");
     }
     else
-        file_message("NSM", "bad server address");
+        file_error("NSM", "bad server address");
 
     return result;
 }
@@ -340,7 +340,7 @@ nsmbase::lo_is_valid () const
 {
     bool result = not_nullptr_2(m_lo_address, m_lo_server);
     if (! result)
-        file_message("NSM error", "Null OSC address or server");
+        file_error("NSM", "Null OSC address or server");
 
     return result;
 }
@@ -375,7 +375,7 @@ nsmbase::msg_check (int timeoutms)
         {
             result = true;
             if (rc().verbose())
-                file_message("S66", "Waiting for reply...");
+                file_message(session_tag(), "Waiting for reply...");
 
             while (lo_server_recv_noblock(m_lo_server, 0))
             {
@@ -383,7 +383,7 @@ nsmbase::msg_check (int timeoutms)
             }
         }
         if (! result)
-            file_message("S66", "No reply!");
+            file_message(session_tag(), "No reply!");
     }
     return result;
 }
@@ -1018,7 +1018,7 @@ reply_string (nsm::error errorcode)
     {
     case nsm::error::ok:
 
-        result = "OK";
+        result = "Acknowledged";
         break;
 
     case nsm::error::general:
@@ -1154,9 +1154,9 @@ incoming_msg
     {
         std::string text = msgsnprintf
         (
-            "%s<--%s [%s]", cbname.c_str(), message.c_str(), pattern.c_str()
+            "%s<--NSM: %s [%s]", cbname.c_str(), message.c_str(), pattern.c_str()
         );
-        file_message("NSM", text);
+        special_message(text);
     }
 }
 
@@ -1174,7 +1174,7 @@ outgoing_msg
         (
             "%s-->[%s] %s", message.c_str(), pattern.c_str(), data.c_str()
         );
-        file_message("S66", text);
+        file_message(session_tag(), text);
     }
 }
 

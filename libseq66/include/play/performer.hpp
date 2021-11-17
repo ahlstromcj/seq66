@@ -963,7 +963,10 @@ private:                            /* key, midi, and op container section  */
      *  Indicates if the graphical user-interface is visible.  Currently
      *  applies only to the main window.  This item can be toggled by the
      *  automation::visibility automation control or by the (Non) session
-     *  manager.
+     *  manager.  The show-hide-pending flag is set indicating a change in
+     *  visibility from a keystroke or MIDI control; the GUI polling loop must
+     *  then check hidden() to see what to do, overriding any session-manager
+     *  commands.
      */
 
     std::atomic<bool> m_hidden;
@@ -3079,7 +3082,7 @@ public:         /* GUI-support functions */
 
 private:
 
-    void hidden (bool flag)
+    void hidden (bool flag)                         /* only for GUI to call */
     {
         m_hidden = flag;                            /* qt5nsmanager         */
         m_show_hide_pending = false;                /* tricky code          */

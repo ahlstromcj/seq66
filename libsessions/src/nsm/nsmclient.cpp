@@ -317,6 +317,11 @@ osc_nsm_show
 /**
  *  This function could also be called osc_hide_gui().  See the nsm-proxy
  *  code.
+ *
+ * Warning:
+ *
+ *      The agordejo version of "non-session-manager" never calls this
+ *      function.  It calls osc_nsm_show()!
  */
 
 static int
@@ -513,24 +518,29 @@ nsmclient::label (const std::string & label)
 }
 
 /**
- *  Client show optional GUI.  The derived class must provide this
+ *  Client show optional GUI.  The GUI manager class must provide this
  *  functionality.  The message from the server is:
  *
  *      /nsm/client/show_optional_gui
+ *
+ * Warning:  Currently agordejo's non-session-manager sends only this one!
  */
 
 void
 nsmclient::show (const std::string & path)
 {
+    bool hide = ! hidden();         /* act as a toggle due to agordejo  */
     nsm_debug("show");
-    hidden(false);
-    send_from_client(nsm::tag::reply, path, "OK");
+    hidden(hide);
+    send_from_client(nsm::tag::reply, path, "Show OK");
 }
 
 /*
  * Client hide optional GUI.  The message from the server is:
  *
  *      /nsm/client/hide_optional_gui
+ *
+ * Warning:  Currently agordejo's non-session-manager does not send this one!
  */
 
 void
@@ -538,7 +548,7 @@ nsmclient::hide (const std::string & path)
 {
     nsm_debug("hide");
     hidden(true);
-    send_from_client(nsm::tag::reply, path, "OK");  // ss
+    send_from_client(nsm::tag::reply, path, "Hide OK");
 }
 
 void

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2020-11-09
+ * \updates       2021-11-17
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -108,6 +108,7 @@ extern std::string seq_client_tag
 extern const std::string & seq_package_name ();
 extern const std::string & seq_version ();
 extern const std::string & seq_version_text ();
+extern std::string session_tag (const std::string & refinement = "");
 extern std::string seq_build_details ();
 
 }           // namespace seq66
