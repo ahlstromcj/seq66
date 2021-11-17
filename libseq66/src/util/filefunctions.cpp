@@ -1510,7 +1510,8 @@ std::string
 filename_concatenate (const std::string & path, const std::string & filebase)
 {
     std::string result = clean_path(path);
-    result += filebase;
+    std::string base = filename_base(filebase);     /* strip existing path  */
+    result += base;
     return result;
 }
 

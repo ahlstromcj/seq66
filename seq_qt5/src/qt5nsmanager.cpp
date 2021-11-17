@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-10-27
+ * \updates       2021-11-16
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
