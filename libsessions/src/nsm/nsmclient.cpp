@@ -529,9 +529,13 @@ nsmclient::label (const std::string & label)
 void
 nsmclient::show (const std::string & path)
 {
+#if defined USE_SHOW_TOGGLE_HACK
     bool hide = ! hidden();         /* act as a toggle due to agordejo  */
-    nsm_debug("show");
     hidden(hide);
+#else
+    hidden(false);
+#endif
+    nsm_debug("show");
     send_from_client(nsm::tag::reply, path, "Show OK");
 }
 

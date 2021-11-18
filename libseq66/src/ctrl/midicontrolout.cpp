@@ -184,7 +184,7 @@ action_to_string (midicontrolout::uiaction a)
     case midicontrolout::uiaction::slot_shift:      return "Slot_shift";
     case midicontrolout::uiaction::free:            return "Free";
     case midicontrolout::uiaction::queue:           return "Queue";
-    case midicontrolout::uiaction::oneshot:         return "Oneshot";
+    case midicontrolout::uiaction::oneshot:         return "One-shot";
     case midicontrolout::uiaction::replace:         return "Replace";
     case midicontrolout::uiaction::snap:            return "Snap";
     case midicontrolout::uiaction::song:            return "Song";

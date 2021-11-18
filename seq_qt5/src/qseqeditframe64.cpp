@@ -1045,7 +1045,7 @@ qseqeditframe64::qseqeditframe64
     ui->m_combo_rec_type->insertItem(lrmerge, "Merge");
     ui->m_combo_rec_type->insertItem(lrreplace, "Overwrite");
     ui->m_combo_rec_type->insertItem(lrexpand, "Expand");
-    ui->m_combo_rec_type->insertItem(lroneshot, "Oneshot");
+    ui->m_combo_rec_type->insertItem(lroneshot, "One-shot");
     if (seq_pointer()->is_new_pattern())
         lrmerge = usr().new_pattern_record_code();
 

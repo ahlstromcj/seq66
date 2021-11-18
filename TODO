@@ -21,22 +21,6 @@ Hot:
         Record, Reset Seq, Set Set.
     -   Check the Windows build.
     -   New Pattern in an external grid creates it in set 0.
-    -   Consider "loop-control" modes.
-
-        -   Muting/Unmuting.  This is the current and normal mode.
-        -   Recording.  The loop-control keys and events control the status of
-            recording for the given loop.
-
-            -   Merge. Overdub. New MIDI data is added, the existing MIDI data
-                remains.
-            -   Overwrite.
-            -   Expand.
-            -   One-shot. Useful enough?
-            -   Quantized for any of the above.  How?
-            -   Live (Provisional, Capture) recording.  Stored into a
-                temporary track to copy to a pattern or to discard.
-
-            For the Record key, let it affect a "selected" track?
 
 UI:
 

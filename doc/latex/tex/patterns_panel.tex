@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-10-15
+% \update      2021-11-17
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -23,7 +23,12 @@
    and combines them to create a full song.
    This is a powerful way to work, and makes one productive quickly.
 
-   The \textbf{Patterns Panel} (or \textbf{Live Frame}
+   \index{Patterns Panel}
+   \index{Live Frame}
+   \index{Live Grid}
+   The \textbf{Patterns Panel}, also called the
+   \textbf{Live Frame} or
+   \textbf{Live Grid} or
    is in the center of the
    \index{main window}
    \textbf{main window} of \textsl{Seq66}.
@@ -102,7 +107,6 @@
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.75]{pattern-window-main-panel-items.png}
    \includegraphics[scale=0.75]{tabs/live/pattern-popup-menu.png}
    \caption{Patterns Panel Pop-up Menu}
    \label{fig:patterns_panel_popup_menu}
@@ -197,8 +201,6 @@
    This feature was adopted from \textsl{Kepler34} \cite{kepler34}.
    The color is more saturated when the pattern is unmuted.
    \index{pattern!color menu}
-%  The pattern menu for sequence color is shown in the previous figure.
-%  We've used colors in most of the examples in this manual.
 
    \index{pattern!right click}
    \index{slot!empty slot right-click}
@@ -234,9 +236,6 @@
    \label{fig:multiple_live_grids}
 \end{figure}
 
-%  Note that the main window always shows the set of the currently
-%  focussed external Live window.
-%  We are not sure if this is a bug or a feature.
    Note that the right-click slot menu has some items removed when the live
    grid is in an external window, or the main window is showing a set other
    than set 0 , as indicated by
@@ -298,8 +297,6 @@
    the effect can be a bit confusing at first,
    because it also toggles the armed/muted status of the slot
    quickly twice (leaving it as it was).
-%  It takes some getting
-%  used to, but we miss it when using \textsl{Seq24}.
 
    \index{editing shortcut}
    \index{keys!=}
@@ -735,7 +732,7 @@
    queuing, and snapshots, see reference \cite{wootangent1}.
 
 \paragraph{Other Pattern Clicks}
-\label{paragraph:patterns_pattern_Clicks}
+\label{paragraph:patterns_pattern_clicks}
 
    \index{pattern!left click}
    \index{pattern!mute toggle}
@@ -785,6 +782,77 @@
    mute-groups can be used for that purpose.
 %  Holding the \texttt{Alt} key and clicking the same
 %  pattern again will unmute all of the other patterns.
+
+\paragraph{Pattern Recording Modes}
+\label{paragraph:patterns_recording_modes}
+
+   \textsl{Seq66} has always had the feature of turning on recording, including
+   quantized recording, in the pattern editor.
+   With version 0.97.3, it also provides for
+   \index{recording!modes}
+   recording modes.  With this new feature, the normal loop muting/unmuting
+   functionality of the \textbf{Live Grid} can be changed to allow the toggling
+   of recording of each pattern.
+   This new functionality is enabled by two buttons in the main window grid and
+   by two refactored keystroke/MIDI controls ("Record" and "Quan Record").
+   The normal mode (mute/unmute) is called \textbf{Loop}.
+   It has been supplemented by four recording modes.
+   Here are the modes:
+
+   \begin{itemize}
+      \item \textbf{Loop}.
+         This mode is the legacy and long-time standard mode of
+         \textsl{Seq24}, \textsl{Sequencer64}, and \textsl{Seq66}.
+         When in this mode, a click on a pattern slot, a loop-control
+         keystroke, or a loop-control MIDI event, will change the mute/unmute,
+         armed/unarmed status of a pattern.
+      \item \textbf{Overdub}.
+         \index{merge}
+         \index{overdub}
+         \index{record!merge}
+         \index{record!overdub}
+         This mode is selected by clicking on the \textbf{Loop} button,
+         or using the \textbf{Record} control.
+         These commands cycle between all the modes in this list.
+         Overdub is the same as the \textbf{Merge} option in the 
+         pattern editor.
+         It enables recording that accumulates note events in each pass of
+         looping through the pattern.
+      \item \textbf{Overwrite.}
+         \index{overwrite}
+         \index{recording!overwrite}
+         When the loop restarts over and a note is pressed,
+         then the existing notes in that loop are erased,
+         and the new note is added.
+      \item \textbf{Expand}.
+         \index{expand}
+         \index{recording!expand}
+         Once the end of the loop is near, whether or
+         not any notes are being input, another measure is added to the length
+         of the loop.
+      \item \textbf{One-shot}.
+         \index{one-shot}
+         \index{recording!one-shot}
+         When this option is set, with the record button on, and no pattern
+         playing, recording won't start until a note comes in, and when the
+         first note comes in, the progress bar starts at the left (time 0).
+         As each new set of notes at the same timestamp come in, the
+         notes are recorded and the current time advances by one snap value.
+   \end{itemize}
+
+   Once the recording mode is set, then the recording type comes into play:
+
+   \begin{itemize}
+      \item \textbf{Normal}.
+         Plain recording, events recorded with timestamps unaltered.
+         Indicated by a red circle.
+      \item \textbf{Quantize}.
+         When recording, quantize the incoming events.
+         Indicated by a red circle and a "Q" inside it in a pattern slot.
+      \item \textbf{Tighten}.
+         A weaker version of \textbf{Quantize}.
+         Indicated by a red circle and a "T" inside it in a pattern slot.
+   \end{itemize}
 
 \subsection{Patterns / Bottom Panel}
 \label{subsec:patterns_panel_bottom}

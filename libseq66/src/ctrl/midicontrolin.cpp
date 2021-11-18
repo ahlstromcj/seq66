@@ -287,7 +287,7 @@ midicontrolin::status_string () const
     else if (is_snapshot())
         result = "Snapshot";
     else if (is_oneshot())
-        result = "Oneshot";
+        result = "One-shot";
     else if (is_learn())
         result = "Learn";
 
