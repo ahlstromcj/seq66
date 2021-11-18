@@ -263,62 +263,10 @@ usrfile::parse ()
      * used, at this time.  More to come.
      */
 
-    int scratch = 0;
     std::string tag = "[user-interface-settings]";
     if (file_version_number() < s_usr_legacy)
     {
-        if (line_after(file, tag))
-        {
-            (void) next_data_line(file); // usr().set_grid_style(scratch)
-            (void) next_data_line(file); // usr().grid_brackets(scratch);
-            sscanf(scanline(), "%d", &scratch);
-            (void) usr().mainwnd_rows(scratch);
-            (void) next_data_line(file);
-            sscanf(scanline(), "%d", &scratch);
-            (void) usr().mainwnd_cols(scratch);
-            (void) next_data_line(file);
-            (void) next_data_line(file); // usr().max_sets(scratch);
-            (void) next_data_line(file); // usr().mainwnd_border(scratch);
-            sscanf(scanline(), "%d", &scratch);
-            usr().mainwnd_spacing(scratch);
-            (void) next_data_line(file);
-            (void) next_data_line(file); // usr().control_height(scratch);
-            sscanf(scanline(), "%d", &scratch);
-            usr().zoom(scratch);
-            (void) next_data_line(file);
-            sscanf(scanline(), "%d", &scratch);
-            usr().global_seq_feature(scratch != 0);
-            (void) next_data_line(file);
-            (void) next_data_line(file); // usr().use_new_font(scratch != 0);
-            (void) next_data_line(file); // usr().allow_two_perfedits(...);
-            (void) next_data_line(file); // usr().perf_h_page_increment(...);
-            if (next_data_line(file))    // usr().perf_v_page_increment(...);
-            {
-                (void) next_data_line(file); // usr().progress_bar_colored(...);
-                sscanf(scanline(), "%d", &scratch);
-                usr().progress_bar_thick(scratch != 0);
-                (void) next_data_line(file);
-                sscanf(scanline(), "%d", &scratch);
-                usr().inverse_colors(scratch != 0);
-                (void) next_data_line(file);
-                sscanf(scanline(), "%d", &scratch);
-                usr().window_redraw_rate(scratch);
-                (void) next_data_line(file);
-                (void) next_data_line(file); // usr().use_more_icons(scratch != 0);
-                (void) next_data_line(file); // usr().block_rows(scratch);
-                (void) next_data_line(file); // usr().block_columns(scratch);
-                if (next_data_line(file))    // usr().block_independent(...);
-                {
-                    float scale = 1.0f;
-                    float scaley = 1.0f;
-                    int count = sscanf(scanline(), "%f %f", &scale, &scaley);
-                    if (count == 1)
-                        usr().window_scale(scale, 0.0, true);
-                    else if (count == 2)
-                        usr().window_scale(scale, scaley, true);
-                }
-            }
-        }
+        (void) version_error_message("usr", file_version_number());
     }
     else
     {
@@ -457,43 +405,12 @@ usrfile::parse ()
      */
 
     tag = "[user-options]";
-    if (file_version_number() < s_usr_legacy)
-    {
-        if (line_after(file, tag))
-        {
-            int scratch = 0;
-            sscanf(scanline(), "%d", &scratch);
-            usr().option_daemonize(scratch != 0);
+    flag = get_boolean(file, tag, "daemonize");
+    usr().option_daemonize(flag);
 
-            char temp[256];
-            if (next_data_line(file))
-            {
-                sscanf(scanline(), "%s", temp);
-                std::string logfile = std::string(temp);
-                if (is_empty_string(logfile))
-                    logfile.clear();
-                else
-                {
-                    logfile = strip_quotes(logfile);
-                    msgprintf
-                    (
-                        msglevel::status, "option_logfile: '%s'",
-                        logfile
-                    );
-                }
-                usr().option_logfile(logfile);
-            }
-        }
-    }
-    else
-    {
-        bool flag = get_boolean(file, tag, "daemonize");
-        usr().option_daemonize(flag);
-
-        std::string logfile = get_variable(file, tag, "log");
-        logfile = strip_quotes(logfile);
-        usr().option_logfile(logfile);
-    }
+    std::string logfile = get_variable(file, tag, "log");
+    logfile = strip_quotes(logfile);
+    usr().option_logfile(logfile);
 
     /*
      * [user-ui-tweaks].  The variables in this section are, in this order:

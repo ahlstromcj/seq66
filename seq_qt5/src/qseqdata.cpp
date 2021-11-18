@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-27
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -38,6 +38,7 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qseqdata.hpp"                 /* seq66::qseqdata class            */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
+#include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -96,10 +97,7 @@ qseqdata::qseqdata
     m_font.setPointSize(8);                     /* was 6        */
     m_font.setBold(true);
     cb_perf().enregister(this);
-    m_timer = new QTimer(this);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
-    m_timer->setInterval(4 * usr().window_redraw_rate());
-    m_timer->start();
+    m_timer = qt_timer(this, "qseqdata", 2, SLOT(conditional_update()));
 }
 
 /**

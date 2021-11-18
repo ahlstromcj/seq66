@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-14
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -812,10 +812,7 @@ qsmainwnd::qsmainwnd
     show();
     show_song_mode(m_song_mode);
     cb_perf().enregister(this);
-    m_timer = new QTimer(this);
-    m_timer->setInterval(3 * usr().window_redraw_rate());
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(refresh()));
-    m_timer->start();
+    m_timer = qt_timer(this, "qsmainwnd", 3, SLOT(conditional_update()));
 }
 
 /**
@@ -1457,7 +1454,7 @@ qsmainwnd::remove_set_master ()
  */
 
 void
-qsmainwnd::refresh ()
+qsmainwnd::conditional_update ()
 {
     if (session_close())
     {

@@ -288,19 +288,11 @@ Pm_hosterror_text_mutable (void)
     return &pm_hosterror_text[0];
 }
 
-/**
- * \setter pm_hosterror
- */
-
 void
 Pm_set_hosterror (int flag)
 {
     pm_hosterror = flag;
 }
-
-/**
- * \getter pm_hosterror
- */
 
 int
 Pm_hosterror (void)
@@ -308,19 +300,11 @@ Pm_hosterror (void)
     return pm_hosterror;
 }
 
-/**
- * \setter pm_initialized
- */
-
 void
 Pm_set_initialized (int flag)
 {
     pm_initialized = flag;
 }
-
-/**
- * \getter pm_initialized
- */
 
 int
 Pm_initialized (void)
@@ -328,19 +312,11 @@ Pm_initialized (void)
     return pm_initialized;
 }
 
-/**
- * \setter pm_show_debug
- */
-
 void
 Pm_set_show_debug (int flag)
 {
     pm_show_debug = flag;
 }
-
-/**
- * \getter pm_show_debug
- */
 
 int
 Pm_show_debug (void)
@@ -348,19 +324,11 @@ Pm_show_debug (void)
     return pm_show_debug;
 }
 
-/**
- * \setter pm_exit_on_error
- */
-
 void
 Pm_set_exit_on_error (int flag)
 {
     pm_exit_on_error = flag;
 }
-
-/**
- * \getter pm_exit_on_error
- */
 
 int
 Pm_exit_on_error (void)
@@ -368,19 +336,11 @@ Pm_exit_on_error (void)
     return pm_exit_on_error;
 }
 
-/**
- * \setter pm_error_present
- */
-
 void
 Pm_set_error_present (int flag)
 {
     pm_error_present = flag;
 }
-
-/**
- * \getter pm_error_present
- */
 
 int
 Pm_error_present (void)
@@ -1184,9 +1144,6 @@ Pm_Write (PortMidiStream * stream, PmEvent * buffer, int32_t length)
     {
         uint32_t msg = buffer[i].message;
         bits = 0;
-
-        /* is this a SysEx message? */
-
         if (Pm_MessageStatus(msg) == MIDI_SYSEX)
         {
             if (midi->sysex_in_progress)
@@ -1555,20 +1512,18 @@ Pm_OpenInput
      */
 
     if (buffersize <= 0)
-        buffersize = 256;                   /* default buffer size */
+        buffersize = 256;                   /* default buffer size      */
 
     midi->queue = Pm_QueueCreate(buffersize, (int32_t) sizeof(PmEvent));
     if (! midi->queue)
     {
-        /* free portMidi data */
-
         *stream = nullptr;
-        pm_free(midi);
+        pm_free(midi);                      /* free portMidi data       */
         err = pmInsufficientMemory;
         goto error_return;
     }
-    midi->buffer_len = buffersize;          /* portMidi input storage */
-    midi->latency = 0;                      /* not used */
+    midi->buffer_len = buffersize;          /* portMidi input storage   */
+    midi->latency = 0;                      /* not used                 */
     midi->sysex_in_progress = FALSE;
     midi->sysex_message = 0;
     midi->sysex_message_count = 0;
@@ -2032,17 +1987,13 @@ pm_flush_sysex (PmInternal * midi, PmTimestamp timestamp)
 /**
  *  pm_read_short() is the place where all input messages arrive from
  *  system-dependent code such as pmwinmm.c. Here, the messages are entered
- *  into the PortMidi input buffer.
+ *  into the PortMidi input buffer.  MIDI filtering is applied here.
  */
 
 void
 pm_read_short (PmInternal * midi, PmEvent * event)
 {
-    int status;
-
-    /* MIDI filtering is applied here */
-
-    status = Pm_MessageStatus(event->message);
+    int status = Pm_MessageStatus(event->message);
     if
     (
         ! pm_status_filtered(status, midi->filters) &&

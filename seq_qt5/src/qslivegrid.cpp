@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-11-16
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -211,10 +211,7 @@ qslivegrid::qslivegrid
         usr().progress_box_width(),
         usr().progress_box_height()
     );
-    m_timer = new QTimer(this);         /* timer for regular redraws    */
-    m_timer->setInterval(2 * usr().window_redraw_rate());
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
-    m_timer->start();
+    m_timer = qt_timer(this, "qslivegrid", 2, SLOT(conditional_update()));
 }
 
 /**

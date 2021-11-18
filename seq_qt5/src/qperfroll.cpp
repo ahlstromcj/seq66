@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-13
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -49,6 +49,7 @@
 #include "qperfeditframe64.hpp"
 #include "qperfnames.hpp"
 #include "qperfroll.hpp"
+#include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -124,10 +125,7 @@ qperfroll::qperfroll
     m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     m_font.setBold(true);
     m_font.setPointSize(s_vfont_size_normal);
-    m_timer = new QTimer(this);
-    m_timer->setInterval(2 * usr().window_redraw_rate());
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
-    m_timer->start();
+    m_timer = qt_timer(this, "qsperfroll", 2, SLOT(conditional_update()));
 }
 
 /**

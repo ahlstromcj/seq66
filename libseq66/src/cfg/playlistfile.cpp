@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2021-11-04
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -223,19 +223,7 @@ playlistfile::parse ()
         std::string tag = "[playlist-options]";
         if (file_version_number() < s_playlist_file_version)
         {
-            if (line_after(file, tag))
-            {
-                int unmute = 0;
-                sscanf(scanline(), "%d", &unmute);
-                play_list().unmute_set_now(unmute != 0);
-                if (next_data_line(file))
-                {
-                    sscanf(scanline(), "%d", &unmute);
-                    play_list().deep_verify(unmute != 0);
-                }
-                else
-                    play_list().deep_verify(false);
-            }
+            result = version_error_message("playlist", file_version_number());
         }
         else
         {
@@ -256,11 +244,7 @@ playlistfile::parse ()
             int listnumber = -1;
             int songcount = 0;
             playlist::play_list_t plist;            /* current playlist     */
-            if (file_version_number() < s_playlist_file_version)
-                sscanf(scanline(), "%d", &listnumber);  /* playlist number      */
-            else
-                sscanf(scanline(), "number = %d", &listnumber);
-
+            sscanf(scanline(), "number = %d", &listnumber);
             if (m_show_on_stdout)
             {
                 msgprintf
@@ -272,11 +256,7 @@ playlistfile::parse ()
             {
                 std::string listline = line();
                 playlist::song_list slist;
-                if (file_version_number() < s_playlist_file_version)
-                    listline = strip_quotes(listline);
-                else
-                    listline = extract_variable(line(), "name");
-
+                listline = extract_variable(line(), "name");
                 plist.ls_list_name = listline;
                 if (m_show_on_stdout)
                 {
@@ -288,14 +268,7 @@ playlistfile::parse ()
                 if (next_data_line(file))
                 {
                     listline = line();
-                    if (file_version_number() < s_playlist_file_version)
-                    {
-                        listline = strip_quotes(listline);
-                    }
-                    else
-                    {
-                        listline = extract_variable(line(), "directory");
-                    }
+                    listline = extract_variable(line(), "directory");
                     plist.ls_file_directory = clean_path(listline);
                     slist.clear();
                     if (m_show_on_stdout)

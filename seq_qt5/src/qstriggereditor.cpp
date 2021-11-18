@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-18
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -41,6 +41,7 @@
 #include "qseqdata.hpp"                 /* seq66::qseqdata class            */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qstriggereditor.hpp"          /* seq66::qstriggereditor class     */
+#include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -86,14 +87,7 @@ qstriggereditor::qstriggereditor
     setAttribute(Qt::WA_OpaquePaintEvent);          /* no erase on repaint  */
     setFocusPolicy(Qt::StrongFocus);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    m_timer = new QTimer(this);
-    m_timer->setInterval(4 * usr().window_redraw_rate());
-    QObject::connect
-    (
-        m_timer, SIGNAL(timeout()),
-        this, SLOT(conditional_update())
-    );
-    m_timer->start();
+    m_timer = qt_timer(this, "qstriggereditor", 2, SLOT(conditional_update()));
 }
 
 /**

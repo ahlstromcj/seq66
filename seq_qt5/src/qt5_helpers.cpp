@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2021-10-20
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -32,6 +32,7 @@
 #include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QKeyEvent>
 #include <QPushButton>
+#include <QTimer>
 
 #include "cfg/settings.hpp"             /* seq66::rc().home_config_dir...() */
 #include "util/filefunctions.hpp"       /* seq66 file-name manipulations    */
@@ -157,6 +158,48 @@ QString
 qt (const std::string & text)
 {
     return QString::fromStdString(text);
+}
+
+QTimer *
+qt_timer
+(
+    QObject * self,
+    const std::string & name,
+    int redraw_factor,
+    const char * slotname
+)
+{
+    QTimer * result = new QTimer(self);
+    if (not_nullptr(result))
+    {
+        int interval = redraw_factor * usr().window_redraw_rate();
+        if (rc().investigate())
+        {
+            std::string msg = "Timer '";
+            msg += name;
+            msg += "' created at rate ";
+            msg += std::to_string(interval);
+            msg += " for slot ";
+            msg += slotname;
+            (void) debug_message(msg);
+        }
+        result->setInterval(interval);
+        QMetaObject::Connection c =
+            QObject::connect(result, SIGNAL(timeout()), self, slotname);
+
+        if (bool(c))
+            result->start();
+        else
+            error_message("Connection invalid");
+    }
+    else
+    {
+        std::string msg = "Could not create timer '";
+        msg += name;
+        msg += "'";
+        error_message(msg);
+    }
+    return result;
 }
 
 /**

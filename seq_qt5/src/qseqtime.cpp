@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-09
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -35,7 +35,8 @@
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
-#include "qseqtime.hpp"
+#include "qseqtime.hpp"                 /* seq66::qseqtime class            */
+#include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -75,14 +76,7 @@ qseqtime::qseqtime
     m_font.setBold(true);
     m_font.setPointSize(6);
     setMouseTracking(true);         /* track mouse movement without a click */
-    m_timer = new QTimer(this);
-    m_timer->setInterval(2 * usr().window_redraw_rate());
-    QObject::connect
-    (
-        m_timer, SIGNAL(timeout()),
-        this, SLOT(conditional_update())
-    );
-    m_timer->start();
+    m_timer = qt_timer(this, "qseqtime", 2, SLOT(conditional_update()));
 }
 
 /**

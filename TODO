@@ -1,25 +1,18 @@
 TO DO for Seq66 0.97.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-11-17
+2019-04-13 to 2021-11-18
 
 Configuration:
 
-    Replace all "legacy" parsing by setting a message stating to save the old
-    files, remove them from "home", run Seq66 to recreate them, and update
-    them with any setting needed.  Do this for 0.98.0.
-
+    Replace "legacy" parsing. The remaining one is 'usr' for s_usr_smf_1.
 
 Hot:
 
     -   How does middle-click on a pattern signal the event-editor
         functionality?
     -   Allow controls to use D1.  In place, not quite ready.
-    -   Check into the Record key toggling recording on all tracks or on the
-        "track of interest".
-    -   Check that MIDI Record control can use d0 or d1 to select the pattern.
-        Same for Replace, Solo, Queue, Keep-queue, One-shot, Thru, Quan
-        Record, Reset Seq, Set Set.
-    -   Check the Windows build.
+    -   Check the Windows build.  Runs, but starts eating a whole CPU!
+        Test it on hardware.
     -   New Pattern in an external grid creates it in set 0.
 
 UI:

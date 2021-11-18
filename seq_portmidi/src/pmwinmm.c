@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2020-08-12
+ * \updates     2021-11-18
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -272,7 +272,8 @@ pm_winmm_general_inputs (void)
         pm_log_buffer_append(temp);
         for
         (
-            in = 0, index = midi_input_index; in < (UINT_PTR) midi_num_inputs;
+            in = 0, index = midi_input_index;
+            in < (UINT_PTR) midi_num_inputs;
             ++in, ++index
         )
         {
@@ -776,10 +777,9 @@ get_free_output_buffer (PmInternal * midi)
             );
             if (! m->buffers_expanded)              /* 2. Expand SysEx buff */
             {
-                LPMIDIHDR * new_buffers = (LPMIDIHDR *) pm_alloc
-                (
-                    (m->num_buffers + NUM_EXPANSION_BUFFERS) * sizeof(LPMIDIHDR)
-                );
+                int buffcount = m->num_buffers + NUM_EXPANSION_BUFFERS;
+                size_t sz = buffcount * sizeof(LPMIDIHDR);
+                LPMIDIHDR * new_buffers = (LPMIDIHDR *) pm_alloc(sz);
                 if (is_nullptr(new_buffers))        /* 3. No Memory         */
                     continue;
 
@@ -787,13 +787,11 @@ get_free_output_buffer (PmInternal * midi)
                  * Copy buffers to new_buffers and replace buffers.
                  */
 
-                memcpy
-                (
-                    new_buffers, m->buffers, m->num_buffers * sizeof(LPMIDIHDR)
-                );
+                sz = m->num_buffers * sizeof(LPMIDIHDR);
+                memcpy(new_buffers, m->buffers, sz);
                 pm_free(m->buffers);
                 m->buffers = new_buffers;
-                m->max_buffers = m->num_buffers + NUM_EXPANSION_BUFFERS;
+                m->max_buffers = buffcount;
                 m->buffers_expanded = TRUE;
             }
 

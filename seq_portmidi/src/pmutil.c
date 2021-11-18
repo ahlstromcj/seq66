@@ -25,22 +25,18 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2018-05-24
+ * \updates     2021-11-18
  * \license     GNU GPLv2 or above
  *
  */
 
 #include <stdlib.h>
 #include <assert.h>
-#include <string.h>                     /* bzero(3) in Linux            */
+#include <string.h>                     /* C::memset(3) in Linux            */
 
 #include "portmidi.h"
 #include "pmutil.h"
 #include "pminternal.h"
-
-#if defined SEQ66_PLATFORM_WINDOWS
-#define bzero(addr, siz)    memset(addr, 0, siz)
-#endif
 
 /**
  *  PortMidi queue element.
@@ -78,15 +74,14 @@ Pm_QueueCreate (long num_msgs, int32_t bytes_per_msg)
 
     queue->len = num_msgs * (int32s_per_msg + 1);
     queue->buffer = (int32_t *) pm_alloc(queue->len * sint32);
-    bzero(queue->buffer, queue->len * sint32);  // memset() ???
+    memset(queue->buffer, 0, queue->len * sint32);
     if (! queue->buffer)
     {
         pm_free(queue);
         return NULL;
     }
-    else
+    else                                /* allocate the "peek" buffer   */
     {
-        /* allocate the "peek" buffer */
 
         queue->peek = (int32_t *) pm_alloc(int32s_per_msg * sint32);
         if (! queue->peek)
@@ -98,7 +93,7 @@ Pm_QueueCreate (long num_msgs, int32_t bytes_per_msg)
             return NULL;
         }
     }
-    bzero(queue->buffer, queue->len * sint32);
+    memset(queue->buffer, 0, queue->len * sint32);
     queue->head = 0;
     queue->tail = 0;
 
@@ -202,9 +197,11 @@ Pm_Dequeue(PmQueue * q, void * msg)
         i = j;
     }
 
-    /* signal that data has been removed by zeroing: */
+    /*
+     * Signal that data has been removed by zeroing the buffer.
+     */
 
-    bzero((char *) &queue->buffer[head], sint32 * queue->msg_size); // memset()
+    memset(&queue->buffer[head], 0, sint32 * queue->msg_size);
     head += queue->msg_size;                            /* update head */
     if (head == queue->len)
         head = 0;
@@ -260,7 +257,7 @@ Pm_Enqueue (PmQueue * q, void * msg)
         return pmBufferOverflow;
     }
 
-    /* queue is has room for message, and overflow flag is cleared */
+    /* queue is has room for a message, and overflow flag is cleared */
 
     ptr = &queue->buffer[tail];
     dest = ptr + 1;

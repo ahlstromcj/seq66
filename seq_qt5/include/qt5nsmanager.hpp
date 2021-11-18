@@ -105,7 +105,7 @@ signals:                                /* from session client callbacks    */
 
 private slots:
 
-    void refresh ();                    /* timer poll for dirty/clean       */
+    void conditional_update ();         /* timer poll for dirty/clean       */
 
 private:
 

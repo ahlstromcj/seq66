@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2021-10-20
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -237,11 +237,7 @@ qplaylistframe::qplaylistframe
     ui->currentSongPath->setReadOnly(true);
     ui->currentSongPath->setEnabled(false);
     reset_playlist();                       /* if (perf().playlist_mode())  */
-
-    m_timer = new QTimer(this);             /* timer for regular redraws    */
-    m_timer->setInterval(4 * usr().window_redraw_rate());
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
-    m_timer->start();
+    m_timer = qt_timer(this, "qplaylistframe", 4, SLOT(conditional_update()));
 }
 
 /**

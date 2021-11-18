@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-20
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -119,13 +119,7 @@ qseqroll::qseqroll
     m_font.setPointSize(6);                         /* 8 is too obtrusive   */
     set_snap(seqp->snap());
     show();
-    m_timer = new QTimer(this);
-    m_timer->setInterval(1 * usr().window_redraw_rate());
-    QObject::connect
-    (
-        m_timer, SIGNAL(timeout()), this, SLOT(conditional_update())
-    );
-    m_timer->start();
+    m_timer = qt_timer(this, "qseqroll", 1, SLOT(conditional_update()));
 }
 
 /**

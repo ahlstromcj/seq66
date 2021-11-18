@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-11-11
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -131,8 +131,6 @@ protected:
      */
 
     static int sm_float_default;
-
-protected:
 
     /**
      *  The current line of text being processed.  This member receives
@@ -241,6 +239,12 @@ protected:
     (
         const std::string & configtype, int vnumber
     );
+
+    void file_version (const std::string & v)
+    {
+        if (! v.empty())
+            m_file_version = v;
+    }
 
     void version (const std::string & v)
     {

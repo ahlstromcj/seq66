@@ -194,10 +194,6 @@ Pt_Start (int resolution, PtCallback * callback, void * userData)
     return ptNoError;
 }
 
-/**
- *
- */
-
 PtError
 Pt_Stop (void)
 {
@@ -211,19 +207,11 @@ Pt_Stop (void)
     return ptNoError;
 }
 
-/**
- *
- */
-
 int
 Pt_Started ()
 {
     return time_started_flag;
 }
-
-/**
- *
- */
 
 PtTimestamp
 Pt_Time ()
@@ -235,10 +223,6 @@ Pt_Time ()
     milliseconds = now.millitm - time_offset.millitm;
     return seconds * 1000 + milliseconds;
 }
-
-/**
- *
- */
 
 void
 Pt_Sleep (int32_t duration)

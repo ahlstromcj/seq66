@@ -1,14 +1,13 @@
 @echo off
-
 :: **************************************************************************
-:: Build Release Package
+:: Seq66 Windows Build-Release Package
 :: --------------------------------------------------------------------------
 ::
 :: \file        build_release_package.bat
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2021-10-20
+:: \update      2021-11-18
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -19,19 +18,21 @@
 ::
 :: Requirements:
 ::
+::       0. Decide whether to a 32-bit or a 64-bit build.  Modify the
+::          environment variables and steps below to accommodate your choice.
 ::       1. Runs in Windows only.
 ::       2. Requires QtCreator to be installed, and configured to provide
 ::          the 32-bit Mingw tools, including mingw32-make.exe, and
-::          qmake.exe.  The PATH must included the path to both executables.
+::          qmake.exe.  The PATH must include the path to both executables.
 ::          See "Path Additions" below.  We have not tried
-::          using the Microsoft C++ compiler yet.
+::          using the Microsoft C++ compiler yet. Any takers?
 ::       3. Requires 7-Zip to be installed and accessible from the DOS
 ::          command-line, as 7z.exe.
 ::
 :: Path Additions:
 ::
-::       1. C:\Qt\Qt5.12.9\5.12.9\mingw73_32\bin
-::       2. C:\Qt\Qt5.12.9\Tools\mingw73_32\bin
+::       1. C:\Qt\Qt5.12.9\5.12.9\mingw73_32\bin    (or 64-bit)
+::       2. C:\Qt\Qt5.12.9\Tools\mingw73_32\bin     (ditto)
 ::
 ::      Depending on the versions some things will be different.
 ::
@@ -39,11 +40,12 @@
 ::          "Qt5.12.9" subdirectories.
 ::       b. Might also need to change the "73" version number in "mingw73_32".
 ::       c. Can also change to 64-bit:  "mingw73_64".  In this case warnings or
-::          errors might be exposed in the Windows PortMidi C files.
+::          errors might be exposed in the Windows PortMidi C files, though
+::          we check both builds.
 ::
 :: Build Instructions:
 ::
-::      Note that steps 5 through 9 can be performed on Linux with the
+::      Note that steps 6 through 10 can be performed on Linux with the
 ::      "packages" script.  On my Windows build machine, the source is placed
 ::      in C:\Users\chris\Documents\Home\seq66.
 ::
@@ -127,8 +129,9 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.97.2
+set PROJECT_VERSION=0.98.0
 set PROJECT_DRIVE=C:
+set PROJECT_BITS=32
 
 :: PROJECT_BASE is the directory that is the immediate parent of the seq66
 :: directory.  Adjust this value for your setup.
@@ -167,24 +170,14 @@ cd %SHADOW_DIR%
 
 cd
 echo qmake -makefile -recursive %CONFIG_SET% %PROJECT_ROOT%\%PROJECT_FILE%
-echo mingw32-make (output to make.log)
+echo mingw%PROJECT_BITS%-make (output to make.log)
 qmake -makefile -recursive %CONFIG_SET% %PROJECT_ROOT%\%PROJECT_FILE%
-mingw32-make > make.log 2>&1
+mingw%PROJECT_BITS%-make > make.log 2>&1
 
 :: windeployqt Seq66qt5\release
 
 echo windeployqt %RELEASE_DIR%
 windeployqt %RELEASE_DIR%
-
-:: mkdir Seq66qt5\release\data
-::
-:: xcopy sucks!
-::
-:: xcopy ..\seq66\data\* Seq66qt5\release\data
-::
-:: copy ..\seq66\data\qpseq66.* Seq66qt5\release\data
-:: copy ..\seq66\data\*.pdf Seq66qt5\release\data
-:: copy ..\seq66\data\*.txt Seq66qt5\release\data
 
 echo mkdir %RELEASE_DIR%\%AUX_DIR%
 echo xcopy %PROJECT_ROOT%\%AUX_DIR% %RELEASE_DIR%\%AUX_DIR% /f /s /y /i

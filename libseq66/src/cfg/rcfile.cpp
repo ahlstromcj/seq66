@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-11-04
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -238,15 +238,7 @@ rcfile::parse ()
     std::string tag = "[midi-control-file]";
     if (file_version_number() < s_rc_file_version)
     {
-        if (line_after(file, tag))
-        {
-            ok = ! is_missing_string(line());           /* "", "?", empty   */
-            if (ok)
-            {
-                std::string mcfname = strip_quotes(line());
-                rc_ref().midi_control_filename(mcfname);    /* base name    */
-            }
-        }
+        (void) version_error_message("rc", file_version_number());
     }
     else
     {
@@ -268,27 +260,11 @@ rcfile::parse ()
     }
 
     tag = "[mute-group-file]";
-    if (file_version_number() < s_rc_file_version)
-    {
-        if (line_after(file, tag))
-        {
-            ok = ! is_missing_string(line());
-            if (ok)
-            {
-                std::string mgfname = strip_quotes(line());
-                rc_ref().mute_group_filename(mgfname);  /* basename.ext     */
-                rc_ref().mute_group_active(true);
-            }
-        }
-    }
-    else
-    {
-        std::string pfname;
-        bool active = get_file_status(file, tag, pfname);
-        rc_ref().mute_group_active(active);
-        rc_ref().mute_group_filename(pfname);   /* [[/]path/] basename.ext  */
-    }
 
+    std::string pfname;
+    bool active = get_file_status(file, tag, pfname);
+    rc_ref().mute_group_active(active);
+    rc_ref().mute_group_filename(pfname);   /* [[/]path/] basename.ext  */
     fullpath = rc_ref().mute_group_filespec();
     file_message("Reading mutes", fullpath);
     ok = parse_mute_group_section(fullpath, true);
@@ -301,52 +277,14 @@ rcfile::parse ()
     }
 
     tag = "[usr-file]";
-    if (file_version_number() < s_rc_file_version)
-    {
-        if (line_after(file, tag))
-        {
-            ok = ! is_missing_string(line());
-            if (ok)
-            {
-                std::string mgfname = strip_quotes(line());
-                rc_ref().user_filename(mgfname);            /* base name    */
-            }
-        }
-    }
-    else
-    {
-        std::string pfname;
-        bool active = get_file_status(file, tag, pfname);
-        rc_ref().user_file_active(active);
-        rc_ref().user_filename(pfname);                     /* base name    */
-    }
+    active = get_file_status(file, tag, pfname);
+    rc_ref().user_file_active(active);
+    rc_ref().user_filename(pfname);                     /* base name    */
 
-    int flag = 0;
     tag = "[palette-file]";
-    if (file_version_number() < s_rc_file_version)
-    {
-        if (line_after(file, tag))
-        {
-            std::sscanf(scanline(), "%d", &flag);
-            rc_ref().palette_active(flag != 0);
-            if (next_data_line(file))
-            {
-                ok = ! is_missing_string(line());
-                if (ok)
-                {
-                    std::string pfname = strip_quotes(line());
-                    rc_ref().palette_filename(pfname);      /* base name    */
-                }
-            }
-        }
-    }
-    else
-    {
-        std::string pfname;
-        bool active = get_file_status(file, tag, pfname);
-        rc_ref().palette_active(active);
-        rc_ref().palette_filename(pfname);              /* base name    */
-    }
+    active = get_file_status(file, tag, pfname);
+    rc_ref().palette_active(active);
+    rc_ref().palette_filename(pfname);              /* base name    */
 
     /*
      * JACK transport settings are currently accessed only via the rcsetting's
@@ -360,6 +298,7 @@ rcfile::parse ()
     s = get_variable(file, tag, "transport-type");
     if (s.empty())
     {
+        int flag = 0;
         if (line_after(file, tag))
         {
             std::sscanf(scanline(), "%d", &flag);                /* 1 */
@@ -407,40 +346,15 @@ rcfile::parse ()
 
     bool use_manual_ports = false;
     tag = "[manual-ports]";
-    if (file_version_number() < s_rc_file_version)
-    {
-        if (line_after(file, tag))
-        {
-            std::sscanf(scanline(), "%d", &flag);
-            use_manual_ports = bool(flag);
-            rc_ref().manual_ports(use_manual_ports);
-            if (next_data_line(file))
-            {
-                int count;
-                std::sscanf(scanline(), "%d", &count);
-                rc().manual_port_count(count);
-            }
-            if (next_data_line(file))
-            {
-                int count;
-                std::sscanf(scanline(), "%d", &count);
-                rc().manual_in_port_count(count);
-            }
-        }
-        else
-            (void) make_error_message(tag, "section missing");
-    }
-    else
-    {
-        bool flag = get_boolean(file, tag, "virtual-ports");
-        use_manual_ports = flag;
-        rc_ref().manual_ports(flag);
 
-        int count = get_integer(file, tag, "output-port-count");
-        rc().manual_port_count(count);
-        count = get_integer(file, tag, "input-port-count");
-        rc().manual_in_port_count(count);
-    }
+    bool flag = get_boolean(file, tag, "virtual-ports");
+    use_manual_ports = flag;
+    rc_ref().manual_ports(flag);
+
+    int count = get_integer(file, tag, "output-port-count");
+    rc().manual_port_count(count);
+    count = get_integer(file, tag, "input-port-count");
+    rc().manual_in_port_count(count);
 
     /*
      *  When Seq66 exits, it saves all of the inputs it has.  If an input is
@@ -605,117 +519,34 @@ rcfile::parse ()
     int ticks = 64;
     bool recordbychannel = false;
     tag = "[midi-clock-mod-ticks]";
-    if (file_version_number() < s_rc_file_version)
-    {
-        if (line_after(file, tag))
-        {
-            int count = std::sscanf(scanline(), "%d", &ticks);
-            if (count > 0)
-            {
-                int flag = 0;
-                count = std::sscanf(scanline(), "%d", &flag);
-                recordbychannel = flag != 0;
-            }
-        }
-        else
-            return make_error_message(tag, "section missing");
-    }
-    else
-    {
-        ticks = get_integer(file, tag, "ticks");
-        recordbychannel = get_boolean(file, tag, "record-by-channel");
-    }
+    ticks = get_integer(file, tag, "ticks");
+    recordbychannel = get_boolean(file, tag, "record-by-channel");
     rc_ref().set_clock_mod(ticks);
     rc_ref().filter_by_channel(recordbychannel);
 
     int track = 0;
     tag = "[midi-meta-events]";
-    if (file_version_number() < s_rc_file_version)
-    {
-        if (line_after(file, tag))
-            (void) std::sscanf(scanline(), "%d", &track);
-        else
-            return make_error_message(tag, "section missing");
-    }
-    else
-    {
-        track = get_integer(file, tag, "tempo-track");
-    }
+    track = get_integer(file, tag, "tempo-track");
     rc_ref().tempo_track_number(track);     /* MIDI file can override this  */
-
     tag = "[reveal-ports]";
-    if (file_version_number() < s_rc_file_version)
-    {
-        if (line_after(file, tag))
-        {
-            std::sscanf(scanline(), "%d", &flag);
-            if (! rc_ref().reveal_ports())
-                rc_ref().reveal_ports(bool(flag));
-        }
-        else
-            (void) make_error_message(tag, "data line missing");
-    }
-    else
-    {
-        /*
-         * If this flag is already raised, it was raised on the command line,
-         * and we don't want to change it.  An ugly special case.
-         */
 
-        if (! rc_ref().reveal_ports())
-        {
-            bool flag = get_boolean(file, tag, "show-system-ports");
-            rc_ref().reveal_ports(bool(flag));
-        }
+    /*
+     * If this flag is already raised, it was raised on the command line,
+     * and we don't want to change it.  An ugly special case.
+     */
+
+    if (! rc_ref().reveal_ports())
+    {
+        bool flag = get_boolean(file, tag, "show-system-ports");
+        rc_ref().reveal_ports(bool(flag));
     }
 
     tag = "[interaction-method]";
-    if (file_version_number() < s_rc_file_version)
-    {
-        if (line_after(file, tag))
-        {
-            int method = 0;
-            std::sscanf(scanline(), "%d", &method);
 
-#if defined SEQ66_USE_FRUITY_CODE         /* will not be supported in seq66   */
-            /*
-             * This now returns true if the value was correct, we should check it.
-             */
-
-            if (! rc_ref().interaction_method(method))
-                (void) make_error_message(tag, "illegal value");
-
-#endif  // SEQ66_USE_FRUITY_CODE
-
-            if (next_data_line(file))
-            {
-                std::sscanf(scanline(), "%d", &method);
-                rc_ref().allow_mod4_mode(method != 0);
-            }
-            if (next_data_line(file))
-            {
-                std::sscanf(scanline(), "%d", &method);
-                rc_ref().allow_snap_split(method != 0);
-            }
-            if (next_data_line(file))
-            {
-                std::sscanf(scanline(), "%d", &method);
-                rc_ref().allow_click_edit(method != 0);
-            }
-        }
-        else
-        {
-            /* A missing interaction-method section is not an error. */
-        }
-    }
-    else
-    {
-        bool flag = get_boolean(file, tag, "snap-split");
-        rc_ref().allow_snap_split(flag);
-        flag = get_boolean(file, tag, "double-click-edit");
-        rc_ref().allow_click_edit(flag);
-    }
-
+    flag = get_boolean(file, tag, "snap-split");
+    rc_ref().allow_snap_split(flag);
+    flag = get_boolean(file, tag, "double-click-edit");
+    rc_ref().allow_click_edit(flag);
     tag = "[last-used-dir]";
     if (line_after(file, tag))
     {
@@ -734,22 +565,12 @@ rcfile::parse ()
     int recentcount;
     if (gotrf)
     {
-        if (file_version_number() < s_rc_file_version)
-        {
-            int loadrecent;
-            int number = std::sscanf(scanline(), "%d %d", &recentcount, &loadrecent);
-            if (number > 1)
-                rc_ref().load_most_recent(loadrecent != 0);
-        }
-        else
-        {
-            bool fullpaths = get_boolean(file, tag, "full-paths");
-            bool loadem = get_boolean(file, tag, "load-most-recent");
-            recentcount = get_integer(file, tag, "count");
-            rc_ref().load_most_recent(loadem);
-            rc_ref().full_recent_paths(fullpaths);
-            (void) next_data_line(file);    /* skip "load-most-recent" line */
-        }
+        bool fullpaths = get_boolean(file, tag, "full-paths");
+        bool loadem = get_boolean(file, tag, "load-most-recent");
+        recentcount = get_integer(file, tag, "count");
+        rc_ref().load_most_recent(loadem);
+        rc_ref().full_recent_paths(fullpaths);
+        (void) next_data_line(file);    /* skip "load-most-recent" line */
     }
     else
         (void) make_error_message(tag, "section missing");
@@ -786,140 +607,25 @@ rcfile::parse ()
         }
     }
 
-    bool playlistpresent = true;
     rc_ref().playlist_active(false);
     tag = "[playlist]";
-    if (file_version_number() < s_rc_file_version)
+    active = get_file_status(file, tag, pfname);
+    rc_ref().playlist_active(active);
+    rc_ref().playlist_filename(pfname);                 /* base name    */
+    pfname = get_variable(file, tag, "base-directory");
+    if (! is_missing_string(pfname))
     {
-        playlistpresent = line_after(file, tag);
-        if (playlistpresent)
-        {
-            bool exists = false;
-            int flag = 0;
-            std::sscanf(scanline(), "%d", &flag);       /* playlist-active? */
-            if (next_data_line(file))
-            {
-                std::string fname = strip_quotes(line());
-                exists = ! is_missing_string(fname);
-                if (exists)
-                {
-                    /*
-                     * Prepend the home configuration directory and, if
-                     * needed, the playlist extension.  Also, even if we can't
-                     * find the playlist file, leave the name set for when the
-                     * 'rc' file is saved.
-                     */
-
-                    bool active = flag != 0;
-                    std::string fspec = rc_ref().make_config_filespec
-                    (
-                        fname, ".playlist"
-                    );
-                    exists = file_exists(fspec);
-                    if (exists)
-                    {
-                        rc_ref().playlist_filename(fname);
-                        rc_ref().playlist_active(active);
-                    }
-                    else
-                    {
-                        rc_ref().clear_playlist(true);
-                        if (active)
-                            file_error("No such playlist", fname);
-                    }
-                }
-            }
-            if (next_data_line(file))
-            {
-                std::string midibase = trimline();
-                if (! is_missing_string(midibase))
-                {
-                    file_message("Playlist MIDI base directory", midibase);
-                    rc_ref().midi_base_directory(midibase);
-                }
-            }
-        }
-        else
-        {
-            /* A missing playlist section is not an error. */
-        }
+        file_message("Playlist MIDI base directory", pfname);
+        rc_ref().midi_base_directory(pfname);
     }
-    else
-    {
-        std::string pfname;
-        bool active = get_file_status(file, tag, pfname);
-        rc_ref().playlist_active(active);
-        rc_ref().playlist_filename(pfname);                 /* base name    */
-        pfname = get_variable(file, tag, "base-directory");
-        if (! is_missing_string(pfname))
-        {
-            file_message("Playlist MIDI base directory", pfname);
-            rc_ref().midi_base_directory(pfname);
-        }
-    }
-
     rc_ref().notemap_active(false);
     tag = "[note-mapper]";
-    if (file_version_number() < s_rc_file_version)
-    {
-        if (line_after(file, tag))
-        {
-            int flag = 0;
-            std::sscanf(scanline(), "%d", &flag);
-            if (next_data_line(file))
-            {
-                std::string fname = strip_quotes(line());
-
-                /*
-                 * Prepend the home configuration directory and, if needed,
-                 * the drums extension.  The name, if set, is always set, even
-                 * the the note-map is flagged as not active.
-                 */
-
-                bool active = flag != 0;
-                std::string f = rc_ref().make_config_filespec(fname, ".drums");
-                bool exists = file_exists(f);
-                rc_ref().notemap_filename(fname);
-                if (exists)
-                {
-                    rc_ref().notemap_active(active);
-                }
-                else
-                {
-                    if (active)
-                        file_error("No such note-mapper", fname);
-                }
-            }
-        }
-        else
-        {
-            /* A missing note-mapper section is not an error. */
-        }
-    }
-    else
-    {
-        std::string pfname;
-        bool active = get_file_status(file, tag, pfname);
-        rc_ref().notemap_active(active);
-        rc_ref().notemap_filename(pfname);                  /* base name    */
-    }
-
-    int method = 1;             /* preserve seq24 option if not present     */
+    active = get_file_status(file, tag, pfname);
+    rc_ref().notemap_active(active);
+    rc_ref().notemap_filename(pfname);                  /* base name    */
     tag = "[auto-option-save]";
-    if (file_version_number() < s_rc_file_version)
-    {
-        if (line_after(file, tag))
-        {
-            int count = std::sscanf(scanline(), "%d", &method);
-            if (count == 1)
-                rc_ref().auto_rc_save(bool(method));
-        }
-    }
-    else
-    {
-        bool flag = get_boolean(file, tag, "auto-save-rc");
-        rc_ref().auto_rc_save(flag);
-    }
+    flag = get_boolean(file, tag, "auto-save-rc");
+    rc_ref().auto_rc_save(flag);
 
     bool f = get_boolean(file, tag, "save-old-triggers");
     rc_ref().save_old_triggers(f);

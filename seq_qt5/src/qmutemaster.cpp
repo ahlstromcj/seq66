@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-11-05
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -254,10 +254,7 @@ qmutemaster::qmutemaster
 
     cb_perf().enregister(this);         /* register this for notifications  */
     group_needs_update();               /* guarantee the initial load       */
-    m_timer = new QTimer(this);         /* timer for regular redraws        */
-    m_timer->setInterval(100);          /* doesn't need to be super fast    */
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
-    m_timer->start();
+    m_timer = qt_timer(this, "qmutemaster", 3, SLOT(conditional_update()));
 }
 
 /**

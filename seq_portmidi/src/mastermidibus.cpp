@@ -47,7 +47,10 @@ namespace seq66
 {
 
 /**
- *  The base-class constructor fills the array for our busses.
+ *  The base-class constructor fills the array for our busses.  New features.
+ *  Turn off exiting upon errors so that the application has a chance to come
+ *  up and display the error(s).  Set BPM and PPQN in the PortMidi module.
+ *  The ppqn parameter defaults to -1 here.
  *
  * \param ppqn
  *      Provides the PPQN value for this object.  However, in most cases, the
@@ -58,16 +61,9 @@ namespace seq66
  *      c_beats_per_minute.
  */
 
-mastermidibus::mastermidibus (int ppqn, midibpm bpm)
- :
+mastermidibus::mastermidibus (int ppqn, midibpm bpm) :
     mastermidibase      (ppqn, bpm)
 {
-    /**
-     * New features. Turn off exiting upon errors so that the application
-     * has a chance to come up and display the error(s).  Set BPM and PPQN
-     * in the PortMidi module.  The ppqn parameter defaults to -1 here.
-     */
-
     Pm_set_exit_on_error(FALSE);
     Pt_Set_Midi_Timing(double(bpm), ppqn);              /* do this first    */
     Pm_Initialize();                                    /* do this second   */

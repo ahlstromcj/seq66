@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-11-17
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -85,17 +85,13 @@ qt5nsmanager::qt5nsmanager
     set_qt_version(std::string(QT_VERSION_STR));
 #endif
 
-    m_timer = new QTimer(this);
-    m_timer->setInterval(4 * usr().window_redraw_rate());       /* no hurry */
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(refresh()));
-    m_timer->start();
+    m_timer = qt_timer(this, "qt5nsmanager", 4, SLOT(conditional_update()));
 }
 
 qt5nsmanager::~qt5nsmanager ()
 {
     m_timer->stop();
-    if (rc().investigate())
-        status_message("Exiting qt5nsmanager");
+    (void) special_message("Exiting qt5nsmanager");
 }
 
 /**
@@ -109,7 +105,7 @@ qt5nsmanager::~qt5nsmanager ()
  */
 
 void
-qt5nsmanager::refresh ()
+qt5nsmanager::conditional_update ()
 {
     if (not_nullptr(perf()))
     {

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-11
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  *  The set-master controls the existence and usage of all sets.  For control
@@ -141,10 +141,7 @@ qsetmaster::qsetmaster
     (void) populate_default_ops();      /* load key-automation support      */
     handle_set(0);                      /* guaranteed to be present         */
     cb_perf().enregister(this);         /* register this for notifications  */
-    m_timer = new QTimer(this);         /* timer for regular redraws        */
-    m_timer->setInterval(100);          /* doesn't need to be super fast    */
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
-    m_timer->start();
+    m_timer = qt_timer(this, "qsetmaster", 3, SLOT(conditional_update()));
 }
 
 qsetmaster::~qsetmaster()

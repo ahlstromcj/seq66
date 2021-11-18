@@ -104,11 +104,12 @@ mutegroupsfile::~mutegroupsfile ()
  *
  *  [mute-group]
  *
- *      The mute-group starts with a line that indicates up to 32 mute-groups are
- *      defined. A common value is 1024, which means there are 32 groups times 32
- *      keys.  But this value is currently thrown away.  This value is followed by
- *      32 lines of data, each contained 4 sets of 8 settings.  See the seq66-doc
- *      project on GitHub for a much more detailed description of this section.
+ *      The mute-group starts with a line that indicates up to 32 mute-groups
+ *      are defined. A common value is 1024, which means there are 32 groups
+ *      times 32 keys.  But this value is currently thrown away.  This value
+ *      is followed by 32 lines of data, each contained 4 sets of 8 settings.
+ *      See the seq66-doc project on GitHub for a much more detailed
+ *      description of this section.
  */
 
 bool

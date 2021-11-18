@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2021-10-27
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -357,60 +357,28 @@ reroute_stdio (const std::string & logfile, bool closem)
     return result;
 }
 
-#if defined SEQ66_PLATFORM_LINUX
+/*
+ * --------------------------------------------------------------------------
+ *  Functions common to Linux and Windows
+ * --------------------------------------------------------------------------
+ */
 
 /*
- *  Session-handling is Linux-only.
+ *  Session-handling atomic booleans.
  */
 
 static std::atomic<bool> sg_needs_close {};
 static std::atomic<bool> sg_needs_save {};
 static std::atomic<bool> sg_restart {};
 
-/**
- *  Provides a basic session handler, called upon receipt of a POSIX signal.
- *
- *  Note that SIGSTOP and SIGKILL cannot be blocked, ignored, or caught by a
- *  handler.  Also note that SIGKILL bypass the SIGTERM handler; it is a last
- *  resort for runaway processes that don't respond to SIGTERM.
- */
-
-static void
-session_handler (int sig)
+bool
+session_restart ()
 {
-    psignal(sig, "Signal caught");
-    switch (sig)
-    {
-    case SIGINT:                        /* 2: Ctrl-C "terminal interrupt"   */
+    bool result = sg_restart;
+    if (sg_needs_close)
+        result = false;
 
-        sg_needs_close = true;
-        break;
-
-    case SIGTERM:                       /* 15: "terminate process"          */
-
-        sg_needs_close = true;
-        break;
-
-    case SIGUSR1:                       /* 10: "user-defined signal 1       */
-
-        sg_needs_save = true;
-        break;
-    }
-}
-
-/**
- *  Sets up the application to intercept SIGINT, SIGTERM, and SIGUSR1.
- */
-
-void
-session_setup ()
-{
-    struct sigaction action;
-    memset(&action, 0, sizeof action);
-    action.sa_handler = session_handler;
-    sigaction(SIGINT, &action, NULL);                   /* SIGINT is 2      */
-    sigaction(SIGTERM, &action, NULL);                  /* SIGTERM is 15    */
-    sigaction(SIGUSR1, &action, NULL);                  /* SIGUSR1 is 10    */
+    return result;
 }
 
 /**
@@ -428,16 +396,6 @@ session_close ()
 #endif
 
     sg_needs_close = false;
-    return result;
-}
-
-bool
-session_restart ()
-{
-    bool result = sg_restart;
-    if (sg_needs_close)
-        result = false;
-
     return result;
 }
 
@@ -482,6 +440,63 @@ void
 signal_end_restart ()
 {
     sg_restart = false;
+}
+
+/*
+ * --------------------------------------------------------------------------
+ *  Functions for Linux
+ * --------------------------------------------------------------------------
+ */
+
+#if defined SEQ66_PLATFORM_LINUX
+
+/**
+ *  Provides a basic session handler, called upon receipt of a POSIX signal.
+ *
+ *  Note that SIGSTOP and SIGKILL cannot be blocked, ignored, or caught by a
+ *  handler.  Also note that SIGKILL bypass the SIGTERM handler; it is a last
+ *  resort for runaway processes that don't respond to SIGTERM.
+ */
+
+static void
+session_handler (int sig)
+{
+    psignal(sig, "Signal caught");
+    switch (sig)
+    {
+    case SIGINT:                        /* 2: Ctrl-C "terminal interrupt"   */
+
+        sg_needs_close = true;
+        break;
+
+    case SIGTERM:                       /* 15: "terminate process"          */
+
+        sg_needs_close = true;
+        break;
+
+    case SIGUSR1:                       /* 10: "user-defined signal 1       */
+
+        sg_needs_save = true;
+        break;
+    }
+}
+
+/**
+ *  Sets up the application to intercept SIGINT, SIGTERM, and SIGUSR1.
+ */
+
+void
+session_setup ()
+{
+    struct sigaction action;
+    memset(&action, 0, sizeof action);
+    action.sa_handler = session_handler;
+    sg_needs_close = false;
+    sg_needs_save = false;
+    sg_restart = false;
+    sigaction(SIGINT, &action, NULL);                   /* SIGINT is 2      */
+    sigaction(SIGTERM, &action, NULL);                  /* SIGTERM is 15    */
+    sigaction(SIGUSR1, &action, NULL);                  /* SIGUSR1 is 10    */
 }
 
 #if defined SEQ66_USE_PID_EXISTS
@@ -537,32 +552,18 @@ get_pid ()
 
 #else
 
+/*
+ * --------------------------------------------------------------------------
+ *  Functions for Windows
+ * --------------------------------------------------------------------------
+ */
+
 void
 session_setup ()
 {
-    // no code at this time
-}
-
-bool
-session_close ()
-{
-    return false;
-}
-
-bool
-session_save ()
-{
-    return false;
-}
-
-void signal_for_save ()
-{
-    // no code at this time
-}
-
-void signal_for_exit ()
-{
-    // no code at this time
+    sg_needs_close = false;
+    sg_needs_save = false;
+    sg_restart = false;
 }
 
 #if defined SEQ66_USE_PID_EXISTS

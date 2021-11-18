@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-12
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -39,6 +39,7 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qperfeditframe64.hpp"
 #include "qperftime.hpp"
+#include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -60,7 +61,7 @@ qperftime::qperftime
     QWidget             (parent),
     qperfbase           (p, zoom, snap, 1, 1 * 1),
     m_parent_frame      (frame),                /* frame64() accessor   */
-    m_timer             (new QTimer(this)),     /* refresh/redraw timer */
+    m_timer             (nullptr),              /* refresh/redraw timer */
     m_font              (),
     m_move_left         (false)
 {
@@ -69,12 +70,7 @@ qperftime::qperftime
     m_font.setBold(true);
     m_font.setPointSize(6);
     setMouseTracking(true);         /* track mouse movement without a click */
-    connect
-    (
-        m_timer, SIGNAL(timeout()), this, SLOT(conditional_update())
-    );
-    m_timer->setInterval(2 * usr().window_redraw_rate());
-    m_timer->start();
+    m_timer = qt_timer(this, "qperftime", 2, SLOT(conditional_update()));
 }
 
 /**

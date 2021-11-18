@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-11-14
+ * \updates       2021-11-18
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1099,14 +1099,7 @@ qseqeditframe64::qseqeditframe64
 
     set_initialized();
     cb_perf().enregister(this);                             /* notification */
-    m_timer = new QTimer(this);                             /* redraw timer */
-    m_timer->setInterval(2 * usr().window_redraw_rate());   /* 20           */
-    QObject::connect
-    (
-        m_timer, SIGNAL(timeout()),
-        this, SLOT(conditional_update())
-    );
-    m_timer->start();
+    m_timer = qt_timer(this, "qseqeditframe64", 2, SLOT(conditional_update()));
 }
 
 qseqeditframe64::~qseqeditframe64 ()
@@ -1338,7 +1331,7 @@ qseqeditframe64::initialize_panels ()
 void
 qseqeditframe64::conditional_update ()
 {
-    update_midi_buttons();                      /* mirror current states    */
+    // update_midi_buttons();                   /* mirror current states    */
 
     bool expandrec = seq_pointer()->expand_recording();
     if (expandrec)
@@ -1359,6 +1352,7 @@ qseqeditframe64::conditional_update ()
          */
 
         set_dirty();
+        update_midi_buttons();                  /* mirror current states    */
     }
 }
 

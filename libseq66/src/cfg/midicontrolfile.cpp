@@ -47,8 +47,10 @@ namespace seq66
 {
 
 /*
- * Version 4: Baseline for this configuration file.
- * Version 5: Adds 8 more potential midi-control-out entries.
+ * Provides the number of the latest official version of this file.
+ *
+ *  Version 4: Baseline for this configuration file.
+ *  Version 5: Adds 8 more potential midi-control-out entries.
  */
 
 static const int s_ctrl_file_version = 5;
@@ -230,15 +232,6 @@ midicontrolfile::parse_stream (std::ifstream & file)
 {
     bool result = true;
     file.seekg(0, std::ios::beg);                   /* seek to the start    */
-
-    /*
-     * This is iffy, because we're setting the code version variable from the
-     * version value in the file, and it might be an old file.  This will
-     * cause trouble later when we forget about it.
-     *
-     * version(parse_version(file));
-     */
-
     (void) parse_version(file);
 
     std::string s = parse_comments(file);
@@ -592,27 +585,24 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         }
 
         /*
-         *  If enabled, this adds two section markers and one section for
-         *  mutes, similar to the ctrl-pair options that follow this clause.
+         *  This code (now permanent) adds two section markers and one section
+         *  for mutes, similar to the ctrl-pair options that follow this
+         *  clause.
          */
 
         bool ok = true;
-        bool mute_out_enabled = file_version_number() > 0;
-        if (mute_out_enabled)
+        if (line_after(file, "[mute-control-out]"))
         {
-            if (line_after(file, "[mute-control-out]"))
+            int M = mutegroups::Size();
+            for (int m = 0; m < M; ++m)
             {
-                int M = mutegroups::Size();
-                for (int m = 0; m < M; ++m)
-                {
-                    ok = read_mutes_triple(file, mco, m) || (m == (M - 1));
-                    if (! ok)
-                        break;                  /* currently not an error   */
-                }
+                ok = read_mutes_triple(file, mco, m) || (m == (M - 1));
+                if (! ok)
+                    break;                  /* currently not an error   */
             }
-            if (ok)
-                ok = line_after(file, "[automation-control-out]");
         }
+        if (ok)
+            ok = line_after(file, "[automation-control-out]");
 
         /* Non-sequence (automation) actions */
 

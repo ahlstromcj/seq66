@@ -85,9 +85,7 @@ seq::seq () :
 
 seq::~seq ()
 {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    special_message("~seq()");
-#endif
+    // no code needed
 }
 
 bool

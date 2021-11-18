@@ -71,12 +71,10 @@
  *  beefore the opening parenthesis.
  */
 
+#define MASK_DESCRIPTOR_CLIENT(x)   ( (((int) (intptr_t) (x)) >> 8) & 0xff )
+#define MASK_DESCRIPTOR_PORT(x)     ( ((int) (intptr_t) (x)) & 0xff )
 #define MAKE_DESCRIPTOR(client, port) \
     ( (void *) (intptr_t) ( ((client) << 8) | (port)) )
-
-#define MASK_DESCRIPTOR_CLIENT(x)       ( (((int) (intptr_t) (x)) >> 8) & 0xff )
-
-#define MASK_DESCRIPTOR_PORT(x)         ( ((int) (intptr_t) (x)) & 0xff )
 
 extern pm_fns_node pm_linuxalsa_in_dictionary;
 extern pm_fns_node pm_linuxalsa_out_dictionary;
@@ -174,10 +172,6 @@ alsa_use_queue (void)
     return pmNoError;
 }
 
-/**
- *
- */
-
 static void
 alsa_unuse_queue (void)
 {
@@ -218,10 +212,6 @@ midi_message_length (PmMessage message)
     }
 }
 
-/**
- *
- */
-
 static PmError
 alsa_out_open (PmInternal * midi, void * UNUSED(driverinfo))
 {
@@ -250,10 +240,6 @@ alsa_out_open (PmInternal * midi, void * UNUSED(driverinfo))
     /* fill in fields of desc, which is passed to pm_write routines */
 
     midi->descriptor = desc;
-
-    //                 ((((int) (intptr_t) (x)) >> 8) & 0xff)
-    //  desc->client = ((((int) (intptr_t) (client_port)) >> 8) & 0xff);
-
     desc->client = MASK_DESCRIPTOR_CLIENT(client_port);
     desc->port = MASK_DESCRIPTOR_PORT(client_port);
     desc->this_port = midi->device_id;
@@ -324,10 +310,7 @@ alsa_out_open (PmInternal * midi, void * UNUSED(driverinfo))
  */
 
 static PmError
-alsa_write_byte
-(
-    PmInternal * midi, midibyte_t byte, PmTimestamp timestamp
-)
+alsa_write_byte (PmInternal * midi, midibyte_t byte, PmTimestamp timestamp)
 {
     alsa_descriptor_type desc = (alsa_descriptor_type) midi->descriptor;
     snd_seq_event_t ev;
@@ -381,7 +364,7 @@ alsa_write_byte
              * ev.dest.client = SND_SEQ_ADDRESS_SUBSCRIBERS;
              */
 
-            snd_seq_ev_set_direct(&ev);     /* send event out without queueing */
+            snd_seq_ev_set_direct(&ev); /* send event out without queueing */
         }
         if (VERBOSE_ON)
             printf("Sending event\n");
@@ -623,10 +606,6 @@ alsa_abort (PmInternal * UNUSED(midi))
 
 #endif
 
-/**
- *
- */
-
 static PmError
 alsa_write_flush (PmInternal * midi, PmTimestamp UNUSED(timestamp))
 {
@@ -638,10 +617,6 @@ alsa_write_flush (PmInternal * midi, PmTimestamp UNUSED(timestamp))
     desc->error = pmNoError;
     return pmNoError;
 }
-
-/**
- *
- */
 
 static PmError
 alsa_write_short (PmInternal * midi, PmEvent * event)
@@ -692,10 +667,6 @@ alsa_synchronize (PmInternal * UNUSED(midi))
 {
     return 0;
 }
-
-/**
- *
- */
 
 static void
 handle_event (snd_seq_event_t * ev)
@@ -943,10 +914,6 @@ alsa_poll (PmInternal * UNUSED(midi))
     return pmNoError;
 }
 
-/**
- *
- */
-
 static unsigned
 alsa_has_host_error (PmInternal * midi)
 {
@@ -955,7 +922,6 @@ alsa_has_host_error (PmInternal * midi)
 }
 
 /**
- *
  *  alsa_get_host_error (PmInternal * midi, char * msg, unsigned len)
  */
 
@@ -966,10 +932,6 @@ alsa_get_host_error (struct pm_internal_struct * midi, char * msg, unsigned len)
     int err = ((Pm_hosterror() != pmNoError) || desc->error);
     get_alsa_error_text(msg, len, err);
 }
-
-/**
- *
- */
 
 pm_fns_node pm_linuxalsa_in_dictionary =
 {
@@ -987,10 +949,6 @@ pm_fns_node pm_linuxalsa_in_dictionary =
     alsa_has_host_error,
     alsa_get_host_error
 };
-
-/**
- *
- */
 
 pm_fns_node pm_linuxalsa_out_dictionary =
 {
@@ -1107,10 +1065,6 @@ pm_linuxalsa_init (void)
     }
     return pmNoError;
 }
-
-/**
- *
- */
 
 void
 pm_linuxalsa_term (void)

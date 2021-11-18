@@ -452,7 +452,7 @@ private slots:
     void showqsabout ();
     void showqsbuildinfo ();
     void tabWidgetClicked (int newindex);
-    void refresh ();                        /* redraw certain GUI elements  */
+    void conditional_update ();             /* redraw certain GUI elements  */
     void load_editor (int seqid);
     void load_event_editor (int seqid);
     void load_qseqedit (int seqid);
