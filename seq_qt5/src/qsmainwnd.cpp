@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-18
+ * \updates       2021-11-19
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -3423,6 +3423,9 @@ qsmainwnd::on_sequence_change (seq::number seqno, bool redo)
     if (result)
     {
         m_live_frame->update_sequence(seqno, redo);
+        for (auto ip : m_open_live_frames)
+            ip.second->update_sequence(seqno, redo);
+
         ui->actionSave->setEnabled(perf().modified());
         if (redo)
             m_is_title_dirty = true;

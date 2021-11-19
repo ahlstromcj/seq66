@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-16
- * \updates       2021-11-15
+ * \updates       2021-11-19
  * \license       GNU GPLv2 or above
  *
  *  This frame holds an external "Live" window that shows the grid of buttons
@@ -140,6 +140,14 @@ qliveframeex::update_draw_geometry ()
     if (not_nullptr(m_live_frame))
         m_live_frame->update_geometry();
 }
+
+void
+qliveframeex::update_sequence (int seqno, bool redo)
+{
+    if (not_nullptr(m_live_frame))
+        m_live_frame->update_sequence(seq::number(seqno), redo);
+}
+
 
 /**
  *  This function is called when focus changes.  We forward the call to the

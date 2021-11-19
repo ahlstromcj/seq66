@@ -687,11 +687,11 @@ mastermidibase::api_poll_for_midi ()
     if (result > 0)
     {
         if (result <= 2)
-            (void) microsleep();                /* is this sensible?    */
+            (void) microsleep(std_sleep_us());      /* is this sensible?    */
     }
     else
     {
-        (void) microsleep();
+        (void) microsleep(std_sleep_us());
     }
     return result;
 }

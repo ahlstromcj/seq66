@@ -23,7 +23,7 @@
  * \file          timing.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2021-04-23
+ * \updates       2021-11-19
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
@@ -63,13 +63,10 @@ namespace seq66
  *  Free functions for Linux and Windows support.
  */
 
-#if defined SEQ66_PLATFORM_LINUX
-extern void set_for_microsleep (struct timespec & ts, int us);
-extern bool microsleep (struct timespec & ts);
-#endif
-
-extern bool microsleep (int us = (-1));
+extern int std_sleep_us ();
+extern bool microsleep (int us);
 extern bool millisleep (int ms);
+extern void thread_yield ();
 extern long microtime ();
 extern long millitime ();
 extern bool set_thread_priority (std::thread & t, int p = 1);

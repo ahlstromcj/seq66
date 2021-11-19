@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-16
- * \updates       2018-09-16
+ * \updates       2021-11-19
  * \license       GNU GPLv2 or above
  *
  *  The sequence editing window is known as the "Pattern Editor".  Kepler34
@@ -74,6 +74,7 @@ public:
     virtual ~qliveframeex ();
 
     void update_draw_geometry ();
+    void update_sequence (int seqno, bool redo);
 
 protected:
 

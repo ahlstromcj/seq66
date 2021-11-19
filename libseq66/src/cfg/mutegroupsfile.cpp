@@ -208,7 +208,7 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     if (good)
     {
         mutestorage.loaded_from_mutes(load);    /* loaded to non-internal?  */
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         if (rc().investigate())
             mutestorage.show("read from 'mutes'");
 #endif

@@ -109,7 +109,6 @@
 #include "util/filefunctions.hpp"       /* seq66::executable_full_path()    */
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase class             */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm new message functions */
-#include "os/timing.hpp"                /* seq66::microsleep()              */
 
 #define NSM_API_VERSION_MAJOR   1
 #define NSM_API_VERSION_MINOR   0

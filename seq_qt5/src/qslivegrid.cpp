@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-11-18
+ * \updates       2021-11-19
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -72,7 +72,7 @@
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "play/performer.hpp"           /* seq66::performer class           */
-#include "os/timing.hpp"                /* seq66::microsleep()              */
+#include "os/timing.hpp"                /* seq66::millisleep()              */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5 class     */
 #include "qloopbutton.hpp"              /* seq66::qloopbutton (qslotbutton) */
@@ -838,7 +838,7 @@ qslivegrid::seq_id_from_xy (int click_x, int click_y)
     int result = seq::unassigned();
     int row, column;
     if (get_slot_coordinate(click_x, click_y, row, column))
-         result = int(perf().grid_to_seq(row, column));
+         result = int(perf().grid_to_seq(bank_id(), row, column));
 
     return result;
 }
@@ -1015,13 +1015,10 @@ qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
         }
         else
         {
+#if defined USE_OLD_CODE
             (void) perf().request_sequence(m_current_seq);
-
-            /*
-             * Now done in request_sequence().
-             *
-             * perf().get_sequence(m_current_seq)->set_dirty();
-             */
+#else
+#endif
         }
         signal_call_editor_ex(m_current_seq);
     }
@@ -1065,25 +1062,21 @@ void
 qslivegrid::new_sequence ()
 {
     bool createseq = true;
-    if (perf().is_seq_active(m_current_seq))
+    seq::number current = current_seq();
+    if (perf().is_seq_active(current))
     {
         int choice = m_msg_box->exec();
         if (choice == QMessageBox::Yes)
-            createseq = perf().remove_sequence(m_current_seq);
+            createseq = perf().remove_sequence(current);
         else
             createseq = false;
     }
     if (createseq)
     {
-        if (perf().request_sequence(m_current_seq))
+        if (perf().request_sequence(current))
         {
-            /*
-             * Now done in request_sequence().
-             *
-             * perf().get_sequence(m_current_seq)->set_dirty();
-             */
-
-            alter_sequence(m_current_seq);
+            msgprintf(msglevel::status, "New sequence %d", int(current));
+            alter_sequence(current);
         }
     }
 }

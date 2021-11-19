@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2021-10-28
+ * \updates       2021-11-19
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -492,7 +492,7 @@ int
 midi_in_alsa::api_poll_for_midi ()
 {
     rtmidi_in_data * rtindata = m_alsa_data.m_alsa_rtmidiin;    // BOGUS
-    (void) microsleep();
+    (void) microsleep(std_sleep_us());
 #if defined SEQ66_USER_CALLBACK_SUPPORT
     return rtindata->using_callback() ? 0 : rtindata->queue().count();
 #else

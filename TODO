@@ -8,11 +8,7 @@ Configuration:
 
 Hot:
 
-    -   How does middle-click on a pattern signal the event-editor
-        functionality?
     -   Allow controls to use D1.  In place, not quite ready.
-    -   Check the Windows build.  Runs, but starts eating a whole CPU!
-        Test it on hardware.
     -   New Pattern in an external grid creates it in set 0.
 
 UI:

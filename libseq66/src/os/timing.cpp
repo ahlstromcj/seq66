@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2021-04-23
+ * \updates       2021-11-19
  * \license       GNU GPLv2 or above
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -39,7 +39,7 @@
  *  Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "util/basic_macros.hpp"        /* errprint() macro                 */
+#include "util/basic_macros.hpp"        /* error_message()                  */
 #include "os/timing.hpp"                /* seq66::microsleep(), etc.        */
 
 #if defined SEQ66_PLATFORM_LINUX
@@ -71,6 +71,24 @@
 
 namespace seq66
 {
+
+/**
+ *  Provides a standard wait time to use, in an explicit function.
+ */
+
+static int c_default_sleep_time_us = 10;
+
+int
+std_sleep_us ()
+{
+    return c_default_sleep_time_us;
+}
+
+/*
+ * --------------------------------------------------------------------------
+ *  microsleep() and millisleep()
+ * --------------------------------------------------------------------------
+ */
 
 /*
  *  This free-function in the seq66 namespace provides a way to suspend a
@@ -125,13 +143,6 @@ millisleep (int ms)
 
 #if defined SEQ66_PLATFORM_LINUX
 
-void
-set_for_microsleep (struct timespec & ts, int us)
-{
-    ts.tv_sec = us / 1000000;
-    ts.tv_nsec = (us % 1000000) * 1000;             /* 1000 ns granularity  */
-}
-
 /**
  *  Sleeps for the given number of microseconds. nanosleep() is a Linux
  *  function which has some advantage over sleep(3) and usleep(3), such as not
@@ -142,9 +153,9 @@ set_for_microsleep (struct timespec & ts, int us)
  *  multiplication calls.
  *
  * \param us
- *      Provides the desired number of microseconds to wait.  If set to 0, then
- *      a sched_yield() is called, similar to Sleep(0) in Windows.  If set to
- *      -1 (the default), then a default value of 10 us is used.
+ *      Provides the desired number of microseconds to wait. Must be greater
+ *      than 0.  Use thread_yield() if you just want to yield the CPU.
+ *      Use std_sleep_us() if you want the normal sleep time.
  *
  * \return
  *      Returns true if the full sleep occurred, or if interruped by a signal.
@@ -153,41 +164,35 @@ set_for_microsleep (struct timespec & ts, int us)
 bool
 microsleep (int us)
 {
-    bool result = us >= -1;
+    bool result = us > 0;
     if (result)
     {
-        if (us == 0)
+        int rc;
+        if (us == c_default_sleep_time_us)          /* an optimization      */
         {
-            sched_yield();
+            static bool s_uninitialized = true;
+            static timespec s_ts;
+            if (s_uninitialized)
+            {
+                s_uninitialized = false;
+                s_ts.tv_sec = 0;
+                s_ts.tv_nsec = c_default_sleep_time_us * 1000;
+            }
+            rc = nanosleep(&s_ts, NULL);
         }
         else
         {
-            int rc;
-            if (us == (-1))
-            {
-                static bool s_uninitialized = true;
-                static timespec s_ts;
-                if (s_uninitialized)
-                {
-                    static const int s_us = 10;     /* 100 was the original */
-                    s_uninitialized = false;
-                    s_ts.tv_sec = 0;
-                    s_ts.tv_nsec = s_us * 1000;
-                }
-                rc = nanosleep(&s_ts, NULL);
-            }
-            else
-            {
-                struct timespec ts;
-                ts.tv_sec = us / 1000000;
-                ts.tv_nsec = (us % 1000000) * 1000; /* 1000 ns granularity  */
-                rc = nanosleep(&ts, NULL);
-            }
-            result = rc == 0 || rc == EINTR;
+            struct timespec ts;
+            ts.tv_sec = us / 1000000;
+            ts.tv_nsec = (us % 1000000) * 1000;     /* 1000 ns granularity  */
+            rc = nanosleep(&ts, NULL);
         }
+        result = rc == 0 || rc == EINTR;
     }
     return result;
 }
+
+#if defined USE_EDUCATIONAL_CODE    /* :-) */
 
 bool
 microsleep (struct timespec & ts)
@@ -196,10 +201,83 @@ microsleep (struct timespec & ts)
     return rc == 0 || rc == EINTR;
 }
 
+#endif
+
+#elif defined SEQ66_PLATFORM_WINDOWS
+
+/**
+ *  This implementation comes from https://gist.github.com/ngryman/6482577 and
+ *  performs busy-waiting, meaning it will NOT relinquish the processor.
+ *
+ * \param us
+ *      Provides the desired number of microseconds to wait. Must be greater
+ *      than 0.
+ *
+ * \return
+ *      Returns true only if all calls succeeded.  It doesn't matter if the
+ *      wait completed, at this point.
+ */
+
+bool
+microsleep (int us)
+{
+    bool result = us > 0;
+    if (result)
+    {
+        HANDLE timer = CreateWaitableTimer(NULL, TRUE, NULL);
+        bool result = timer != NULL;
+        if (result)
+        {
+            LARGE_INTEGER ft;
+            ft.QuadPart = -(10 * (__int64) us);
+            result = SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0) != 0;
+            if (result)
+                result = WaitForSingleObject(timer, INFINITE) != WAIT_FAILED;
+
+            CloseHandle(timer);
+        }
+    }
+    return result;
+}
+
+#endif
+
+/*
+ * --------------------------------------------------------------------------
+ *  thread_yield()
+ * --------------------------------------------------------------------------
+ */
+
+#if defined SEQ66_PLATFORM_LINUX
+
+void
+thread_yield ()
+{
+    (void) sched_yield();               /* always succeeds in Linux */
+}
+
+#elif defined SEQ66_PLATFORM_WINDOWS
+
+void
+thread_yield ()
+{
+    Sleep(0);
+}
+
+#endif
+
+/*
+ * --------------------------------------------------------------------------
+ *  microtime() and millitime()
+ * --------------------------------------------------------------------------
+ */
+
+#if defined SEQ66_PLATFORM_LINUX
+
 /**
  *  Gets the current system time in microseconds.
  *
- *  Should we try rounding of the nanoseconds here and in millitime()?
+ *  Should we try rounding off the nanoseconds here and in millitime()?
  */
 
 long
@@ -226,99 +304,7 @@ millitime ()
     return (t.tv_sec * 1000) + (t.tv_nsec / 1000000);
 }
 
-/**
- * In Linux, sets the thread priority for the calling thread, either the
- * performer input thread or output thread.
- *
- * \param p
- *      This is the desired priority of the thread, ranging from 1 (low), to
- *      99 (high).  The default value is 1.
- *
- * \return
- *      Returns true if the scheduling call succeeded.
- */
-
-bool
-set_thread_priority (std::thread & t, int p)
-{
-    int minp = sched_get_priority_min(SCHED_FIFO);
-    int maxp = sched_get_priority_max(SCHED_FIFO);
-    if (p >= minp && p <= maxp)
-    {
-        struct sched_param schp;
-        memset(&schp, 0, sizeof(sched_param));
-        schp.sched_priority = p;                /* Linux range: 1 to 99 */
-#if defined SEQ66_PLATFORM_PTHREADS
-        int rc = pthread_setschedparam(t.native_handle(), SCHED_FIFO, &schp);
-#else
-        int rc = sched_setscheduler(t.native_handle(), SCHED_FIFO, &schp);
-#endif
-        return rc == 0;
-    }
-    else
-    {
-        char temp[80];
-        snprintf
-        (
-            temp, sizeof temp,
-            "Priority %d outside of range %d-%d", p, minp, maxp
-        );
-        errprint(temp);     // errprintf(fmt, p, minp, maxp);
-        return false;
-    }
-}
-
-bool
-set_timer_services (bool /*on*/)
-{
-    return true;
-}
-
 #elif defined SEQ66_PLATFORM_WINDOWS
-
-/**
- *  This implementation comes from https://gist.github.com/ngryman/6482577 and
- *  performs busy-waiting, meaning it will NOT relinquish the processor.
- *
- * \param us
- *      Provides the desired number of microseconds to wait.
- *
- * \return
- *      Returns true only if all calls succeeded.  It doesn't matter if the
- *      wait completed, at this point.
- */
-
-bool
-microsleep (int us)
-{
-    bool result = us >= 0;
-    if (result)
-    {
-        if (us == 0)
-        {
-            Sleep(0);
-        }
-        else
-        {
-            if (us == (-1))
-                us = 100;
-
-            HANDLE timer = CreateWaitableTimer(NULL, TRUE, NULL);
-            bool result = timer != NULL;
-            if (result)
-            {
-                LARGE_INTEGER ft;
-                ft.QuadPart = -(10 * (__int64) us);
-                result = SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0) != 0;
-                if (result)
-                    result = WaitForSingleObject(timer, INFINITE) != WAIT_FAILED;
-
-                CloseHandle(timer);
-            }
-        }
-    }
-    return result;
-}
 
 /**
  *  Gets the current system time in microseconds.  Currently, we use
@@ -379,6 +365,70 @@ millitime ()
     return long(timeGetTime());
 }
 
+#endif
+
+/*
+ * --------------------------------------------------------------------------
+ *  set_thread_priority() and set_timer_services()
+ * --------------------------------------------------------------------------
+ */
+
+#if defined SEQ66_PLATFORM_LINUX
+
+/**
+ * In Linux, sets the thread priority for the calling thread, either the
+ * performer input thread or output thread.
+ *
+ * \param p
+ *      This is the desired priority of the thread, ranging from 1 (low), to
+ *      99 (high).  The default value is 1.
+ *
+ * \return
+ *      Returns true if the scheduling call succeeded.
+ */
+
+bool
+set_thread_priority (std::thread & t, int p)
+{
+    int minp = sched_get_priority_min(SCHED_FIFO);
+    int maxp = sched_get_priority_max(SCHED_FIFO);
+    if (p >= minp && p <= maxp)
+    {
+        struct sched_param schp;
+        memset(&schp, 0, sizeof(sched_param));
+        schp.sched_priority = p;                /* Linux range: 1 to 99 */
+#if defined SEQ66_PLATFORM_PTHREADS
+        int rc = pthread_setschedparam(t.native_handle(), SCHED_FIFO, &schp);
+#else
+        int rc = sched_setscheduler(t.native_handle(), SCHED_FIFO, &schp);
+#endif
+        return rc == 0;
+    }
+    else
+    {
+        char temp[80];
+        snprintf
+        (
+            temp, sizeof temp,
+            "Priority %d outside of range %d-%d", p, minp, maxp
+        );
+        error_message(temp);
+        return false;
+    }
+}
+
+/**
+ *  Linux doesn't need this, so we just act like it works.
+ */
+
+bool
+set_timer_services (bool /*on*/)
+{
+    return true;
+}
+
+#elif defined SEQ66_PLATFORM_WINDOWS
+
 /**
  *  In Windows, currently does nothing.  An upgrade for the future.
  *  The handle must have the THREAD_SET_INFORMATION or
@@ -412,7 +462,7 @@ set_thread_priority (std::thread & t, int p)
         result = ok != 0;
         if (! result)
         {
-            errprint("Windows set-priority error... access rights issue?");
+            error_message("Windows set-priority error... access rights?");
         }
     }
     return result;
@@ -420,6 +470,11 @@ set_thread_priority (std::thread & t, int p)
     return p > 0 || t.joinable();
 #endif
 }
+
+/**
+ *  Necessary for proper input and output timing using our portmidi
+ *  implementation under windows.
+ */
 
 bool
 set_timer_services (bool on)

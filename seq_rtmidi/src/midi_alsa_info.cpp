@@ -77,7 +77,6 @@
 #include "midi/event.hpp"               /* seq66::event and other tokens    */
 #include "midi/midibus_common.hpp"      /* from the libseq66 sub-project    */
 #include "midi_alsa_info.hpp"           /* seq66::midi_alsa_info            */
-#include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "util/calculations.hpp"        /* seq66::tempo_us_from_bpm()       */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
 

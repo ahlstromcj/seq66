@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-11-08
+ * \updates       2021-11-19
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -281,6 +281,19 @@ screenset::grid_to_seq (int row, int column) const
         return offset() + row + m_rows * column;
 }
 
+seq::number
+screenset::grid_to_seq (screenset::number setno, int row, int column) const
+{
+    if (row < 0 || row >= m_rows || column < 0 || column >= m_columns)
+        return seq::unassigned();
+
+    seq::number offset = setno * m_set_size;
+    if (swap_coordinates())
+        return offset + column + m_columns * row;
+    else
+        return offset + row + m_rows * column;
+}
+
 /**
  *  Converts a sequence number to a (row, column) pair according to the layout
  *  shown below.
@@ -316,8 +329,6 @@ screenset::seq_to_grid
     bool global
 ) const
 {
-    // seq::number index = global ? seqno : (seqno - offset()) ;
-
     seq::number index = seqno - offset();
     bool result = global || (index >= 0 && index < m_set_size);
     if (result)

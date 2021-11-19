@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2021-11-17
+ * \updates       2021-11-19
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -35,7 +35,7 @@
 #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "os/daemonize.hpp"             /* seq66::session_setup(), _close() */
-#include "os/timing.hpp"                /* seq66::microsleep()              */
+#include "os/timing.hpp"                /* seq66::millisleep()              */
 #include "sessions/clinsmanager.hpp"    /* seq66::clinsmanager class        */
 #include "util/filefunctions.hpp"       /* seq66::pathname_concatenate()    */
 #include "util/strfunctions.hpp"        /* seq66::contains()                */
@@ -299,13 +299,6 @@ clinsmanager::run ()
                 file_error(msg, "CLI");
             }
         }
-
-        /*
-         * Seems too short.  Let's use the redraw rate.
-         *
-         *  microsleep(1000);                       // 1 ms
-         */
-
         millisleep(m_poll_period_ms);
     }
     return true;

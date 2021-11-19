@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-11-08
+ * \updates       2021-11-19
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -455,6 +455,11 @@ public:
     }
 
     seq::number grid_to_seq (int row, int column) const;
+    seq::number grid_to_seq
+    (
+        screenset::number setno,
+        int row, int column
+    ) const;
     bool seq_to_grid
     (
         seq::number seqno,

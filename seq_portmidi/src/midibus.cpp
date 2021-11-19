@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-11
+ * \updates       2021-11-19
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the midibus class.
@@ -44,6 +44,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::rc_settings               */
 #include "midi/event.hpp"               /* seq66::event and macros          */
+#include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "midibus_pm.hpp"               /* seq66::midibus for PortMIDI      */
 
 /*
@@ -114,15 +115,22 @@ midibus::~midibus ()
 int
 midibus::api_poll_for_midi ()
 {
+    int result = 0;
     if (not_nullptr(m_pms) && queue_number() >= 0)          /* buss number  */
     {
         PmError err = Pm_Poll(m_pms);
-        if (err == pmNoError || err == pmNoData)   // || err == pmGotData)
-            return 0;
-        else if (err == pmGotData)
-            return 1;
+        if (err == pmGotData)
+            result = 1;
     }
-    return 0;
+
+    /*
+     * EXPERIMENTAL for Windows CPU usage.
+     */
+
+     if (result == 0)
+         (void) microsleep(std_sleep_us());
+
+    return result;
 }
 
 /**

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-11-08
+ * \updates       2021-11-19
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -236,6 +236,15 @@ private:
     seq::number grid_to_seq (int row, int column) const
     {
         return play_screen()->grid_to_seq(row, column);
+    }
+
+    seq::number grid_to_seq
+    (
+        screenset::number setno,
+        int row, int column
+    ) const
+    {
+        return play_screen()->grid_to_seq(setno, row, column);
     }
 
     bool seq_to_grid

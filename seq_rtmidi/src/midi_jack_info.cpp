@@ -553,7 +553,7 @@ midi_jack_info::api_port_start
 int
 midi_jack_info::api_poll_for_midi ()
 {
-    (void) microsleep();
+    (void) microsleep(std_sleep_us());
     return 0;
 }
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-11-16
+ * \updates       2021-11-19
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -220,11 +220,11 @@
  *          SCHED_FIFO scheduling policy so that it gets the best chance of
  *          grabbing the processor when it needs it.
  *
- *          When everything is in place things work incredibly well. The system
- *          can be running an audio task with no dropouts and a few milliseconds
- *          of latency while the computer is being loaded with disk accesses,
- *          screen refreshes and whatnot. The mouse gets jerky, windows update
- *          very slowly but not a dropout to be heard.
+ *          When everything is in place things work incredibly well. The
+ *          system can be running an audio task with no dropouts and a few
+ *          milliseconds of latency while the computer is being loaded with
+ *          disk accesses, screen refreshes and whatnot. The mouse gets jerky,
+ *          windows update very slowly but not a dropout to be heard.
  *
  *      http://www.informit.com/articles/article.aspx?p=101760&seqNum=4:
  *
@@ -695,8 +695,8 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
 
     m_mute_groups = rcs.mute_groups();              /* could be 0-sized     */
 
-#if defined SEQ66_PLATFORM_DEBUG
-    if (rc().investigate())
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    if (rc().verbose())
         m_mute_groups.show("in performer");
 #endif
 
@@ -1458,16 +1458,6 @@ performer::ui_change_set_bus (int buss)
     bool result = is_good_buss(b);
     if (result)
     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        if (rc().investigate_disabled())
-        {
-            printf
-            (
-                "Playset: %d sets, %d patterns\n",
-                m_play_set.set_count(), m_play_set.seq_count()
-            );
-        }
-#endif
         for (auto seqi : m_play_set.seq_container())
             seqi->set_midi_bus(b, true);    /* calls notification function  */
 
@@ -2435,15 +2425,6 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
     else
         what = midicontrolout::seqaction::remove;
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    std::string act = seqaction_to_string(what);
-    int loopnumber = (-1);
-    if (not_nullptr(s))
-        loopnumber = int(s->seq_number());
-
-    printf("loop %d seqno %d action '%s'\n", loopnumber, int(sn), act.c_str());
-#endif
-
     send_seq_event(sn, what);
     return true;
 }
@@ -3218,8 +3199,10 @@ void
 performer::output_func ()
 {
     if (! set_timer_services(true))         /* wrapper for Win-only func.   */
+    {
+        (void) set_timer_services(false);
         return;
-
+    }
     show_cpu();
     while (m_io_active)                     /* this variable is now atomic  */
     {
@@ -3366,15 +3349,6 @@ performer::output_func ()
 
                     static bool jack_position_once = false;
                     midipulse rtick = get_right_tick();     /* can change? */
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                    printf
-                    (
-                        "C = %ld, L = %ld, R = %ld\n",
-                        long(pad().js_current_tick),
-                        long(get_left_tick()),
-                        long(rtick)
-                    );
-#endif
                     if (pad().js_current_tick >= rtick)
                     {
                         if (is_jack_master() && ! jack_position_once)
@@ -3438,7 +3412,7 @@ performer::output_func ()
             }
             else
             {
-                printf("play underrun %ld us          \r", delta_us);
+                fprintf(stderr, "play underrun %ld us          \r", delta_us);
                 (void) microsleep(1);
             }
             if (pad().js_jack_stopped)
@@ -3470,7 +3444,7 @@ performer::output_func ()
         m_master_bus->flush();
         m_master_bus->stop();
     }
-    set_timer_services(false);
+    (void) set_timer_services(false);
 }
 
 /**

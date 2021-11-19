@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-11-16
+ * \updates       2021-11-19
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1390,6 +1390,15 @@ public:
     seq::number grid_to_seq (int row, int column) const
     {
         return mapper().grid_to_seq(row, column);
+    }
+
+    seq::number grid_to_seq
+    (
+        screenset::number setno,
+        int row, int column
+    ) const
+    {
+        return mapper().grid_to_seq(setno, row, column);
     }
 
     bool seq_to_grid

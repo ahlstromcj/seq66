@@ -78,7 +78,7 @@
    <property name="title">
     <string>Wave Type</string>
    </property>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="radioButtonLayoutWidget">
     <property name="geometry">
      <rect>
       <x>16</x>
@@ -159,7 +159,7 @@
     <string>&amp;Reset</string>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="slidersLayoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>

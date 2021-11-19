@@ -1,7 +1,7 @@
 # README for Seq66 0.97.3
 
 Chris Ahlstrom
-2015-09-10 to 2021-11-18
+2015-09-10 to 2021-11-19
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -93,8 +93,10 @@ Windows, and using a conventional source tarball.
         *   normal, quantize, and tighten.
         *   Refactored MIDI control for possible future usage of the D1 event
             value.
+        *   Fixes to external live grid handling.
         *   Fixed the display of loop status changed via MIDI control.
-        *   Fixed and updated the Windows build.
+        *   Fixed and updated the Windows build.  Mitigated high CPU usage
+            when not (!) playing; fixed a bug in microsleep() for Windows.
     *   Version 0.97.2.1:
         *   Fixed odd breakage of loop-control hot-keys. Doh!
     *   Version 0.97.2:
