@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2021-11-12
+ * \updates       2021-11-20
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child class, qslivegride, are Sequencer66's
@@ -88,11 +88,6 @@ public:
         return m_bank_name;
     }
 
-    bool show_perf_bank () const
-    {
-        return m_show_perf_bank;
-    }
-
     const performer & perf () const
     {
         return m_performer;
@@ -112,7 +107,7 @@ public:
 
     bool seq_to_grid (seq::number seqno, int & row, int & column) const
     {
-        return perf().seq_to_grid(seqno, row, column, ! m_show_perf_bank);
+        return perf().seq_to_grid(seqno, row, column, is_external());
     }
 
     seq::number current_seq () const
@@ -270,13 +265,6 @@ protected:
      */
 
     QFont m_font;
-
-    /**
-     *  Indicates if the live grid will show the specified bank number,
-     *  or the the current bank/set logged in the performer.
-     */
-
-    bool m_show_perf_bank;
 
     /**
      *  Kepler34 calls "screensets" by the name "banks".  Same as the

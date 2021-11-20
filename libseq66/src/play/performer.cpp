@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-11-19
+ * \updates       2021-11-20
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -288,8 +288,9 @@
  */
 
 #include <algorithm>                    /* std::find() for std::vector      */
-#include <iostream>                     /* std::cout                        */
 #include <cmath>                        /* std::round()                     */
+#include <iostream>                     /* std::cout                        */
+#include <sstream>                      /* std::ostringstream               */
 
 #include "cfg/cmdlineopts.hpp"          /* cmdlineopts::parse_mute_groups   */
 #include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile            */
@@ -4810,6 +4811,8 @@ performer::show_key_error (const keystroke & k, const std::string & tag)
 
 /**
  *  This static function merely prints the parameters passed to it.
+ *  This function, enabled by the --verbose flag (and in the 'rc' file),
+ *  allows one to see the incoming automation commands.
  */
 
 void
@@ -4821,14 +4824,14 @@ performer::print_parameters
 {
     if (rc().verbose())
     {
-        std::cout
-            << tag << " '" << opcontrol::action_name(a) << "'; "
+        std::ostringstream os;
+        os << tag << " '" << opcontrol::action_name(a) << "'; "
             << "d0 = " << d0 << "; "
             << "d1 = " << d1 << "; "
             << "index = " << index << "; "
             << "inv = " << inverse
-            << std::endl
             ;
+        (void) info_message(os.str());
     }
 }
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-11-19
+ * \updates       2021-11-20
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -461,7 +461,8 @@ qslivegrid::create_one_button (seq::number seqno)
 {
     qslotbutton * result = nullptr;
     int row, column;
-    bool valid = seq_to_grid(seqno, row, column);
+//  bool valid = seq_to_grid(seqno, row, column, is_external());
+    bool valid = perf().seq_to_grid(seqno, row, column, is_external());
     if (valid)
     {
         bool enabled = perf().is_screenset_active(seqno);
@@ -681,7 +682,7 @@ void
 qslivegrid::refresh (seq::number seqno)
 {
     int row, column;
-    if (perf().seq_to_grid(seqno, row, column))             /* side-effects */
+    if (perf().seq_to_grid(seqno, row, column, is_external())) /* side-effects */
     {
         seq::pointer s = perf().get_sequence(seqno);
         if (not_nullptr(s))
@@ -800,12 +801,12 @@ qslivegrid::update_sequence (seq::number seqno, bool redo)
 {
     if (redo)
     {
-        alter_sequence(seqno);
+        alter_sequence(seqno);          /* similar to below, but recreates  */
     }
     else
     {
         int row, column;
-        if (perf().seq_to_grid(seqno, row, column))
+        if (perf().seq_to_grid(seqno, row, column, is_external()))
         {
             qslotbutton * pb = button(row, column);
             if (not_nullptr(pb))
@@ -1075,7 +1076,7 @@ qslivegrid::new_sequence ()
     {
         if (perf().request_sequence(current))
         {
-            msgprintf(msglevel::status, "New sequence %d", int(current));
+            msgprintf(msglevel::status, "New Pattern %d", int(current));
             alter_sequence(current);
         }
     }
@@ -1256,7 +1257,7 @@ void
 qslivegrid::alter_sequence (seq::number seqno)
 {
     int row, column;
-    if (perf().seq_to_grid(seqno, row, column))
+    if (perf().seq_to_grid(seqno, row, column, is_external()))
     {
         qslotbutton * pb = create_one_button(seqno);
         if (not_nullptr(pb))
@@ -1357,13 +1358,79 @@ qslivegrid::slot_record_mode (bool /*clicked*/)
 void
 qslivegrid::show_loop_control_mode ()
 {
-    ui->buttonLoopMode->setText(qt(usr().loop_control_mode_label()));
+    static bool s_uninitialized = true;
+    static QPalette s_palette;
+    QPushButton * button = ui->buttonLoopMode;
+    if (s_uninitialized)
+    {
+        s_uninitialized = false;
+        s_palette = button->palette();
+    }
+    if (usr().normal_loop_control())
+    {
+        button->setPalette(s_palette);
+        button->update();
+    }
+    else
+    {
+        QPalette pal = button->palette();
+        QColor c;
+        switch (usr().loop_control_mode())
+        {
+        case recordstyle::merge:        c.setNamedColor("red");     break;
+        case recordstyle::overwrite:    c.setNamedColor("#FF6000"); break;
+        case recordstyle::expand:       c.setNamedColor("#FF8000"); break;
+        case recordstyle::oneshot:      c.setNamedColor("#FFA000"); break;
+        default:
+            break;
+        }
+        pal.setColor(QPalette::Button, c);
+        button->setAutoFillBackground(true);
+        button->setPalette(pal);
+        button->update();
+    }
+    button->setText(qt(usr().loop_control_mode_label()));
 }
 
 void
 qslivegrid::show_record_mode ()
 {
-    ui->buttonRecordMode->setText(qt(perf().record_mode_label()));
+    static bool s_uninitialized = true;
+    static QPalette s_palette;
+    QPushButton * button = ui->buttonRecordMode;
+    if (s_uninitialized)
+    {
+        s_uninitialized = false;
+        s_palette = button->palette();
+    }
+    if (perf().record_mode() == performer::recordmode::normal)
+    {
+        button->setPalette(s_palette);
+        button->update();
+    }
+    else
+    {
+        QPalette pal = button->palette();
+        QColor c;
+        switch (perf().record_mode())
+        {
+        case performer::recordmode::quantize:
+            c.setNamedColor("#00C0C0");
+            break;
+
+        case performer::recordmode::tighten:
+            c.setNamedColor("#009090");
+            break;
+
+        default:
+            break;
+        }
+        pal.setColor(QPalette::Button, c);
+        button->setAutoFillBackground(true);
+        button->setPalette(pal);
+        button->update();
+    }
+    button->setText(qt(perf().record_mode_label()));
 }
 
 void

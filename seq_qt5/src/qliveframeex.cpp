@@ -148,7 +148,6 @@ qliveframeex::update_sequence (int seqno, bool redo)
         m_live_frame->update_sequence(seq::number(seqno), redo);
 }
 
-
 /**
  *  This function is called when focus changes.  We forward the call to the
  *  actual live-frame or live-grid.

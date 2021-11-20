@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2021-11-17
+ * \updates       2021-11-20
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -65,7 +65,18 @@ namespace seq66
 {
 
 /**
- *  An indicator of the message level.
+ *  An indicator of the message level.  Used in the message functions defined
+ *  in the basic_macros C++ modules, and elsewhere to specify the level.
+ *
+ *      -   none. Used only to rever back to no color in message functions.
+ *      -   info. Messages that should appear only in verbose mode.
+ *      -   warn. Message about problems or statuses that are minor.
+ *      -   error. More serious problems.
+ *      -   status. Messages that show the progesss of the application even
+ *          when not in verbose mode.
+ *      -   special. Messages that need to stand out. No strict criteria,
+ *          though.
+ *      -   debug. Message that should appear only in investigate mode.
  */
 
 enum class msglevel

@@ -274,7 +274,7 @@ void
 file_message (const std::string & tag, const std::string & path)
 {
     bool isterminal = is_a_tty(STDOUT_FILENO);
-    std::cout << seq_client_tag(msglevel::info, isterminal) << " "
+    std::cout << seq_client_tag(msglevel::status, isterminal) << " "
         << tag << ": '" << path << "'" << std::endl;
 }
 

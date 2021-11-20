@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2021-11-17
+ * \updates       2021-11-20
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -264,10 +264,10 @@ seq_client_tag (msglevel el, bool showcolor)
         static const char * s_level_colors [] =
         {
             "\033[0m",          /* goes back to normal console color    */
-            "\033[1;34m",       /* info message blue (not green/black)  */
+            "\033[1;32m",       /* info message green                   */
             "\033[1;33m",       /* warning message is yellow            */
             "\033[1;31m",       /* error message is red                 */
-            "\033[1;32m",       /* status message is green              */
+            "\033[1;34m",       /* status message is blue               */
             "\033[1;35m",       /* special message is magenta           */
             "\033[1;30m"        /* debug message is black               */
         };

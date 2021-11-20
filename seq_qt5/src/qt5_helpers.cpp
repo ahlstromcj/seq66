@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2021-11-18
+ * \updates       2021-11-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -74,7 +74,7 @@ qt_keystroke_test (QKeyEvent * event, keystroke::action act)
         k, modifiers.c_str(), ktext.c_str(), press ? "press" : "release",
         scode, kcode, ordinal
     );
-    (void) warn_message(tmp);
+    (void) info_message(tmp);
     return keystroke(0, press);                 /* disable the key action   */
 }
 

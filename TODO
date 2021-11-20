@@ -1,6 +1,6 @@
 TO DO for Seq66 0.97.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-11-18
+2019-04-13 to 2021-11-20
 
 Configuration:
 
@@ -9,7 +9,6 @@ Configuration:
 Hot:
 
     -   Allow controls to use D1.  In place, not quite ready.
-    -   New Pattern in an external grid creates it in set 0.
 
 UI:
 
@@ -218,9 +217,68 @@ EXTANT ISSUES:
     So, for now, we have changed the code so that the show command from NSM
     acts as a toggle on visibility.
 
+#66 Toggle MIDI Recording via CC message
+    
+    I think modes generally should be triggerable individually. Especially if
+    there   will be more to come in the future, it will get messy when you
+    only have a single button for them.  I think that a next candidate would
+    be for copy and clear mode.  In copy mode, the first grid button press
+    would highlight a pattern and the second one would paste it to the
+    appropriate slot.  On clear mode, the patterns could be emptied or removed
+    via the grid buttons on   the controller.
+
+    We could end up with a lot of modes, perhaps more than keystrokes could
+    support.  If a MIDI controller can emit specific D2 data programmably from
+    0 to 127 (for Notes, D1 is the note number and D2 is the velocity; for
+    Controllers, D1 is the CC number and D2 is the value), then we could
+    consolidate modes in one command (and preserve the stepping through the
+    modes as an alternative for less flexible controllers).
+
 #67 NSM failed to save midi file on raspberry pi
     STATUS: Fixed by making filename_concatenate() work even if the file base
     has a path already.
+
+#68 MIDI controller initialization step
+    The Launchpad Pro MK3 needs to be put in a special programmer mode before
+    it can  work nicely with Seq66.  This is done by sending a SysEx message
+    that is documented in the programmers manual.  There could be other
+    controllers with similar needs as well.  It would be nice if there would
+    be a way to send a list of MIDI messages to the   controller on the
+    application startup and a separate list on shutdown.
+
+    Actually I have been thinking about the mode transition logic and it would
+    be nice to have support for temporary transition.
+    Here is my original suggested flow
+
+    1. Controller button pressed
+    2. MIDI CC message with `on value` sent
+    3. Seq66 reacts to the message and changes modes
+    4. Controller button released
+    5. MIDI CC message with `off value` sent
+    6. Seq66 does nothing
+    7. ...
+    8. Same controller button pressed
+    9. MIDI CC message with `on value` sent
+    10. Seq66 reacts to the message and changes to neutral mode
+    11. Controller button released
+    12. MIDI CC message with `off value` sent
+    13. Seq66 does nothing
+
+    A temporary transition would be engaged by holding a button down on the
+    MIDI controller and then releasing it later.  While the button is held
+    down, Seq66 switches to the configured mode, the grid buttons can then be
+    used to engage with the mode. When the button is released,Seq66 switches
+    back to the previous mode and not to the neutral one.  This could be
+    implemented via a timer that starts when a CC from a button press is
+    released. If the button is released under a threshold amount of time then
+    the mode is toggled permamently. If no `button released` CC message is
+    received within a threshold amount of time then the transition becomes
+    temporary and when the `button released` CC message is finally received
+    then Seq66 switches back to the previous mode.
+
+    The idea is that with a MIDI controller you could assign different
+    functions to a single button.  It would also fit nicely with a Launchpad
+    where apart from the grid buttons, there are "mode" buttons on the side.
 
 PATTERNS:
 
@@ -247,16 +305,6 @@ seq_portmidi/src/pmmacosxcm.c *:
     Figure out the proper client and port values for calls to pm_add_device().
     See seq_portmidi/src/pmwinmm.c.
 
-seq_portmidi/src/mastermidibus.cpp *:
-
-    Implement api_set_ppqn().
-    Implement api_set_beats_per_minute().
-    Declare and Implement api_flush().
-    Declare and Implement api_start().
-    Declare and Implement api_stop().
-    Declare and Implement api_continue_from().
-    Declare and Implement api_port_start().
-
 seq_rtmidi/src/midi_alsa_info.cpp *:
 
     In api_get_midi_event(), implement support for:
@@ -265,20 +313,9 @@ seq_rtmidi/src/midi_alsa_info.cpp *:
         SND_SEQ_EVENT_PORT_EXIT.
         SND_SEQ_EVENT_PORT_CHANGE (could be difficult).
 
-seq_qt5/src/qseqbase.cpp:
-
-    mouseReleaseEvent():  Implement undirtying when undoing.
-
-seq_qt5/src/qperfroll.cpp:
-
-    paintEvent(): handle DRAW_TEMPO
-
 libseq66/src/play/performer.cpp:
 
     Implement solo, FF, rewind, and many more.  Investigate!!!
 
-libseq66/src/midi/editable_event.cpp:
-
-    set_status_from_string(): Implement the to-do functionality if practical.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh
