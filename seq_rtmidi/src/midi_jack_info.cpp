@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2021-09-10
+ * \updates       2021-11-22
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information
@@ -337,7 +337,7 @@ midi_jack_info::get_all_port_info ()
         }
         else
         {
-            std::vector<std::string> client_name_list;
+            tokenization client_name_list;
             int client = -1;
             int count = 0;
             while (not_nullptr(inports[count]))
@@ -390,7 +390,7 @@ midi_jack_info::get_all_port_info ()
         }
         else
         {
-            std::vector<std::string> client_name_list;
+            tokenization client_name_list;
             int client = -1;
             int count = 0;
             while (not_nullptr(outports[count]))

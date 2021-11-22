@@ -25,12 +25,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2021-11-14
+ * \updates       2021-11-22
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "ctrl/opcontrol.hpp"           /* seq66::opcontrol base class      */
+#include "util/basic_macros.hpp"        /* seq66::tokenization alias        */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -162,7 +163,7 @@ opcontrol::action_name (action a)
 std::string
 opcontrol::slot_name (slot s)
 {
-    static std::vector<std::string> s_slot_names =
+    static tokenization s_slot_names =
     {
         "BPM Up",               //  0 bpm_up
         "BPM Dn",               //  1 bpm_dn

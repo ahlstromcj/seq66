@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-11-19
+ * \updates       2021-11-22
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -21,7 +21,7 @@
 #include <vector>                       /* std::vector                      */
 
 #include "seq66_features.hpp"           /* feature (SUPPORT) macros         */
-#include "util/basic_macros.h"          /* is_nullptr() & not_nullptr()     */
+#include "util/basic_macros.hpp"          /* is_nullptr() & not_nullptr()     */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm::tag                  */
 
 #if defined SEQ66_LIBLO_SUPPORT
@@ -85,7 +85,7 @@ extern void outgoing_msg
     const std::string & data = "sent"
 );
 
-extern std::vector<std::string> convert_lo_args
+extern tokenization convert_lo_args
 (
     const std::string & pattern,
     int argc, lo_arg ** argv
@@ -369,7 +369,7 @@ public:
     (
         const std::string & message,
         const std::string & pattern,
-        const std::vector<std::string> & argv
+        const tokenization & argv
     ) = 0;
     virtual bool announce
     (

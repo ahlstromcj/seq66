@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-11-13
+ * \updates       2021-11-22
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -221,7 +221,7 @@ usrfile::parse ()
                 if (! next_data_line(file))
                     break;
 
-                std::vector<std::string> instpair = tokenize(line(), " ");
+                tokenization instpair = tokenize(line(), " ");
                 if (instpair.size() >= 1)
                 {
                     int c = std::stoi(instpair[0]);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-10-18
+ * \updates       2021-11-22
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -156,7 +156,7 @@ extract_timing_numbers
     std::string & fraction
 )
 {
-    std::vector<std::string> tokens;
+    tokenization tokens;
     int count = tokenize_string(s, tokens);
     part_1.clear();
     part_2.clear();
@@ -203,7 +203,7 @@ int
 tokenize_string
 (
     const std::string & source,
-    std::vector<std::string> & tokens
+    tokenization & tokens
 )
 {
     static std::string s_delims = ":. ";

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-11-19
+ * \updates       2021-11-22
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2699,6 +2699,11 @@ public:
     void send_seq_event (int seqno, midicontrolout::seqaction what)
     {
         midi_control_out().send_seq_event(seqno, what);
+    }
+
+    void send_macro (const std::string & name)
+    {
+        midi_control_out().send_macro(name);
     }
 
     bool exec_slot_function

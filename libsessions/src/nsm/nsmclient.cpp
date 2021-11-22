@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2021-07-12
+ * \updates       2021-11-22
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -359,7 +359,7 @@ osc_nsm_broadcast
     if (pnsmc == NULL)
         return -1;
 
-    std::vector<std::string> arguments = nsm::convert_lo_args(types, argc, argv);
+    tokenization arguments = nsm::convert_lo_args(types, argc, argv);
     nsm::incoming_msg("Broadcast", path, types);
     pnsmc->broadcast(path, types, arguments);
     return 0;
@@ -577,7 +577,7 @@ nsmclient::broadcast
 (
     const std::string & /*message*/,
     const std::string & /*pattern*/,
-    const std::vector<std::string> & argv
+    const tokenization & argv
 )
 {
     if (lo_is_valid())

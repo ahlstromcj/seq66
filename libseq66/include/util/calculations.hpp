@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-11-05
+ * \updates       2021-11-22
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -87,7 +87,7 @@ extern int extract_timing_numbers
 extern int tokenize_string
 (
     const std::string & source,
-    std::vector<std::string> & tokens
+    tokenization & tokens
 );
 extern std::string pulses_to_string (midipulse p);
 extern std::string pulses_to_measurestring

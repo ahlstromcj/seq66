@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2021-11-09
+ * \updates       2021-11-22
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -44,9 +44,9 @@
  */
 
 #include <cstdio>                       /* std::printf()                    */
-#include <string>
+#include <vector>                       /* std::vector                      */
 
-#include "seq66_features.hpp"           /* the C++-compatible definitions   */
+#include "seq66_features.hpp"           /* C++ definitions, std::string     */
 #include "util/basic_macros.h"          /* C-style definitions/features     */
 
 /*
@@ -55,6 +55,16 @@
 
 namespace seq66
 {
+
+/*
+ *  Common data types.
+ */
+
+/**
+ *  Provides an easy-to-search container for strings.
+ */
+
+using tokenization = std::vector<std::string>;
 
 /*
  * Global functions.  The not_nullptr_assert() function is a macro in

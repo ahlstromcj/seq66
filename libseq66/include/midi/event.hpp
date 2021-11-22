@@ -1011,7 +1011,7 @@ public:
      *      Returns true if the function succeeded.
      */
 
-    bool set_sysex (midibyte * data, int len)
+    bool set_sysex (const midibyte * data, int len)
     {
         reset_sysex();
         return append_sysex(data, len);

@@ -863,18 +863,32 @@ midi_jack::send_message (const midi_message & message)
 }
 
 /**
- * \todo
- *      Flesh out this routine.
+ *  Work on this routine now in progress.
+ *
+ *  The event::sysex data type is a vector of midibytes.
  */
 
 void
-midi_jack::api_sysex (const event * /* e24 */)
+midi_jack::api_sysex (const event * e24)
 {
-    // Will put this one off until later....
+    midi_message message;
+    const event::sysex & data = e24->get_sysex();
+    int data_size = e24->sysex_size();
+    for (int offset = 0; offset < data_size; ++offset)
+    {
+        message.push(data[offset]);
+        if (m_jack_data.valid_buffer())
+        {
+            if (! send_message(message))
+            {
+                errprint("JACK API play failed");
+            }
+        }
+    }
 }
 
 /**
- *  It seems like JACK doesn't have the concept of flushing event.
+ *  It seems like JACK doesn't have the concept of flushing events.
  */
 
 void

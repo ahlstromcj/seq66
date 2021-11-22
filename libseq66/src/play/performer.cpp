@@ -3743,6 +3743,9 @@ performer::midi_song_pos (const event & ev)
 }
 
 /**
+ * BUG: This function is called for handling input, but it actually is meant
+ *      for sending output.
+ *
  * EVENT_MIDI_SYSEX:
  *
  *      These messages are system-wide messages.  We filter system-wide
