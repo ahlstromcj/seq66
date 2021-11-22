@@ -110,6 +110,16 @@ OpenSUSE Tumbleweed:
     One might need to run the "reconf" script located in contrib/scripts/reconf.
     Otherwise ./configure drops an error.  Lastly, run ./configure and make.
 
+Fedora:
+    $ mkdir -p ~/.local/bin/qt
+    $ ln -s /bin/qmake-qt5 ~/.local/bin/qmake
+    $ ln -s /bin/rcc-qt5 ~/.local/bin/rcc
+    $ ln -s /bin/uic-qt5 ~/.local/bin/uic
+    $ ln -s /bin/lrelease-qt5 ~/.local/bin/lrelease
+    $ ln -s /bin/lupdate-qt5 ~/.local/bin/lupdate
+    $ ln -s /bin/moc-qt5 ~/.local/bin/moc
+    $ export PATH=$PATH:~/.local/bin/qt
+
 Advanced Steps:
 
     These steps are meant for those who want to try the various versions of

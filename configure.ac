@@ -78,8 +78,11 @@ AC_DEFINE(APP_TYPE, ["qt5"], "The type of the Seq66 executable, qt/cli")
 AC_DEFINE(APP_ENGINE, ["rtmidi"], "Seq66 MIDI engine, rtmidi/portmidi")
 build_os="'$(uname -srm)'"
 AC_DEFINE_UNQUOTED(APP_BUILD_OS, ["$build_os"], "OS/kernel where build was done")
-build_issue="'$(cat /etc/issue.net)'"
-AC_DEFINE_UNQUOTED(APP_BUILD_ISSUE, ["$build_issue"], "Distro of build")
+AC_DEFINE_UNQUOTED(
+                   APP_BUILD_ISSUE,
+                   dnl Get the value of /etc/issue.net and remove new lines.
+                   "[m4_normalize(esyscmd([cat /etc/issue.net]))]",
+                   "Distro of build")
 AC_DEFINE(CLIENT_NAME, ["seq66"], "The name to display as client/port")
 
 VERSION="0.97.2.1"

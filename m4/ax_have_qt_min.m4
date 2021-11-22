@@ -77,7 +77,7 @@ AC_DEFUN([AX_HAVE_QT_MIN],
   AC_MSG_CHECKING(for Qt)
   # If we have Qt5 or later in the path, we're golden
   ver=`qmake --version | grep -o "Qt version ."`
-  if test "$ver" ">" "Qt version 4"; then
+  if test "$ver" "==" "Qt version 5"; then
     have_qt=yes
     # This pro file dumps qmake's variables, but it only works on Qt 5 or later
     am_have_qt_pro=`mktemp`
