@@ -234,6 +234,11 @@ EXTANT ISSUES:
     consolidate modes in one command (and preserve the stepping through the
     modes as an alternative for less flexible controllers).
 
+    Ideally there would be an automation control for cycling through the modes
+    and one for each mode separately.  Then people could chose if they want to
+    set up a control that cycles through the options or set up a control that
+    instantly activates a specific mode.
+
 #67 NSM failed to save midi file on raspberry pi
     STATUS: Fixed by making filename_concatenate() work even if the file base
     has a path already.

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-11-20
+ * \updates       2021-11-22
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1377,10 +1377,10 @@ qslivegrid::show_loop_control_mode ()
         QColor c;
         switch (usr().loop_control_mode())
         {
-        case recordstyle::merge:        c.setNamedColor("red");     break;
-        case recordstyle::overwrite:    c.setNamedColor("#FF6000"); break;
-        case recordstyle::expand:       c.setNamedColor("#FF8000"); break;
-        case recordstyle::oneshot:      c.setNamedColor("#FFA000"); break;
+        case recordstyle::merge:        c.setNamedColor("#FF0000");     break;
+        case recordstyle::overwrite:    c.setNamedColor("#C00000");     break;
+        case recordstyle::expand:       c.setNamedColor("#900000");     break;
+        case recordstyle::oneshot:      c.setNamedColor("#600000");     break;
         default:
             break;
         }
