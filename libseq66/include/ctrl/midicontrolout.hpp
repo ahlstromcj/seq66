@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-11-22
+ * \updates       2021-11-23
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -355,9 +355,20 @@ public:
     }
 
     void send_macro (const std::string & name, bool flush = true);
+
     std::string macro_lines () const
     {
         return m_macro_events.lines();
+    }
+
+    tokenization macro_names () const
+    {
+        return m_macro_events.macro_names();
+    }
+
+    bool make_macro_defaults ()
+    {
+        return m_macro_events.make_defaults();
     }
 
 };          // class midicontrolout

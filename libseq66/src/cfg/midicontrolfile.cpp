@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-11-12
+ * \updates       2021-11-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -652,16 +652,15 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                     {
                         tokenization t = tokenize(line(), "=");
                         ok = mco.add_macro(t);
+                        if (ok)
+                            ok = next_data_line(file);
                     }
                 }
+                else
+                    ok = mco.make_macro_defaults();
             }
             else
-            {
-                 (void) make_error_message
-                 (
-                    "midi-control-out", "control-triple error"
-                );
-            }
+                make_error_message("midi-control-out", "read-triple error");
         }
         else
             result = version_error_message("ctrl", file_version_number());
@@ -1103,7 +1102,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             "#  |    |   | |\n"
             "#  v    v   v v\n"
             "# 31 [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0]\n"
-            "#       Arm      Mute      Queue    Delete\n"
+            "#      Arm          Mute         Queue        Delete\n"
             ;
         file <<
             "#\n"
@@ -1219,7 +1218,8 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
 
         file << "\n[macro-control-out]\n\n"
             "# This format is 'macroname = [ hex bytes | macro-references]'.\n"
-            "# Macro references are macro-names preceded by a '$'.\n\n"
+            "# Macro references are macro-names preceded by a '$'. If a macro\n"
+            "# starts with 0, it is disabled. See the user manual.\n\n"
             ;
 
         std::string lines = mco.macro_lines();

@@ -1,0 +1,25 @@
+# This file provides samples and ideas for the Launchpad Mini.
+#
+# Copy the [macro-control-out] section and paste it into your
+# qseq66.ctrl or other 'ctrl' file.
+
+[macro-control-out]
+
+drum-layout = $header 0x02
+header = 0xb0 0x00
+reset = $header 0x00
+shutdown = $header 0x00
+startup = $x-y-layout
+x-y-layout = $header 0x01
+
+# Some ideas follow:
+
+[macro-control-out-ex]
+
+grid-mapping = $header $mode:0x1-0x2
+double-buffering = $header $bits:0x20-0x3d
+all-leds = $header $brightness:0x7d-0x7f
+duty-cycle = 0xb0 $mode:0x1e-0x1f $data
+rapid-led-update = 0x92 $vel1 $vel2
+
+# vim: sw=4 ts=4 wm=4 et ft=dosini

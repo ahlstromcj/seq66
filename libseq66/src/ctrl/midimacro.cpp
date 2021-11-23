@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2021-11-22
+ * \updates       2021-11-23
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacro is of the following format:
@@ -60,12 +60,27 @@ midimacro::midimacro (const std::string & name, const std::string & values) :
     m_name      (name),
     m_tokens    (),
     m_bytes     (),
-    m_is_valid  (),
-    m_has_value (false)
+    m_is_valid  ()
 {
     m_is_valid = tokenize(values);
     if (m_is_valid)
-        m_has_value = ! m_tokens[0].empty();
+        m_is_valid = ! m_tokens[0].empty();
+}
+
+void
+midimacro::bytes (const midistring & b)
+{
+    bool valid = false;
+    m_bytes = b;
+    for (auto c : b)
+    {
+        if (c > 0)
+        {
+            valid = true;
+            break;
+        }
+    }
+    m_is_valid = valid;
 }
 
 bool

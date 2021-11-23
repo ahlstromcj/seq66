@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with refactoring by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-11-22
+ * \updates       2021-11-23
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -457,38 +457,33 @@ midicontrolout::send_macro (const std::string & name, bool /*flush*/)
 {
     if (is_enabled() && not_nullptr(m_master_bus))
     {
-        midistring bytes = m_macro_events.bytes(name);
-        int len = int(bytes.length());
-        if (len > 3)                            /* assume sysex */
+        midistring byts = m_macro_events.bytes(name);
+        if (! byts.empty())
         {
-            event ev;
-            const midibyte * b = static_cast<const midibyte *>(bytes.data());
-            (void) ev.set_sysex(b, len);
-            m_master_bus->sysex(&ev);
-        }
-        else
-        {
-            midibyte d0 = 0;
-            midibyte d1 = 0;
-            if (len == 3)
+            int len = int(byts.length());
+            if (len > 3)                            /* assume sysex */
             {
-                d0 = bytes[1];
-                d1 = bytes[2];
+                event ev;
+                const midibyte * b = midi_bytes(byts);
+                (void) ev.set_sysex(b, len);
+                m_master_bus->sysex(&ev);           /* flush?       */
             }
-            else if (len == 2)
-                d0 = bytes[1];
+            else
+            {
+                midibyte d0 = 0;
+                midibyte d1 = 0;
+                if (len == 3)
+                {
+                    d0 = byts[1];
+                    d1 = byts[2];
+                }
+                else if (len == 2)
+                    d0 = byts[1];
 
-            event ev(0, bytes[0], d0, d1);
-            m_master_bus->sysex(&ev);
+                event ev(0, byts[0], d0, d1);
+                m_master_bus->sysex(&ev);           /* flush?       */
+            }
         }
-
-        /*
-        if (flush)
-            m_master_bus->play_and_flush(true_buss(), &ev, ev.channel());
-        else
-            m_master_bus->play(true_buss(), &ev, ev.channel());
-         */
-
     }
 }
 

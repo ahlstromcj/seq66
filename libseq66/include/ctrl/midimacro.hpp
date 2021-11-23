@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2021-11-22
+ * \updates       2021-11-23
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -83,17 +83,12 @@ private:
     midistring m_bytes;
 
     /**
-     *  Is the macro good?  It is good if there is a name, and even if there is
-     *  no value.
+     *  Is the macro good?  It is good if there is a name, if there's at least
+     *  one byte value or reference token, and the byte value isn't 0.
+     *  Even if invalid, the macro will be loaded and saved.
      */
 
     bool m_is_valid;
-
-    /**
-     *  Does the macro have a value?
-     */
-
-    bool m_has_value;
 
 public:
 
@@ -127,11 +122,6 @@ public:
         return m_is_valid;
     }
 
-    bool has_value () const
-    {
-        return m_has_value;
-    }
-
 private:
 
     bool tokenize (const std::string & values);
@@ -141,10 +131,7 @@ private:
         m_name = n;
     }
 
-    void bytes (const midistring & b)
-    {
-        m_bytes = b;
-    }
+    void bytes (const midistring & b);
 
 };          // class midimacro
 

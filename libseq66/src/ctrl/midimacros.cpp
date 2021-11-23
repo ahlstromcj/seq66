@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2021-11-22
+ * \updates       2021-11-23
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -55,10 +55,23 @@
 namespace seq66
 {
 
+/**
+ *  Constant static macro names.
+ */
 
-midimacros::midimacros () : m_macros ()
+const std::string midimacros::header    = "header";
+const std::string midimacros::reset     = "reset";
+const std::string midimacros::startup   = "startup";
+const std::string midimacros::shutdown  = "shutdown";
+
+/**
+ *  Default constructor.
+ */
+
+midimacros::midimacros () :
+    m_macros ()
 {
-   // todo
+   // No code needed
 }
 
 /**
@@ -143,13 +156,16 @@ midimacros::expand (midimacro & m)
 }
 
 midistring
-midimacros::bytes (const std::string & name)
+midimacros::bytes (const std::string & name) const
 {
     midistring result;
     const auto cit = m_macros.find(name);
     if (cit != m_macros.end())
-        result = cit->second.bytes();
-
+    {
+        const midimacro & m = cit->second;
+        if (m.is_valid())
+            result = m.bytes();
+    }
     return result;
 }
 
@@ -157,10 +173,50 @@ std::string
 midimacros::lines () const
 {
     std::string result;
-    for (auto & m : m_macros)
+    for (const auto & m : m_macros)
     {
         result += m.second.line();
         result += "\n";
+    }
+    return result;
+}
+
+tokenization
+midimacros::macro_names () const
+{
+    tokenization result;
+    for (const auto & m : m_macros)         /* const auto & [key, value] */
+        result.push_back(m.second.name());
+
+    return result;
+}
+
+/**
+ *  This function creates some defaults to ensure that there is a valid
+ *  macro-control section in the 'ctrl' file.  These are not useable, but will
+ *  be checked for at (for example) startup and shutdown.
+ */
+
+bool
+midimacros::make_defaults ()
+{
+    static const std::string s_defaults [] =
+    {
+        "header = 0x00 0x00 0x00        # fill in with device's SysEx header",
+        "reset = 0x00 0x00 0x00         # fill in with device's reset command",
+        "startup = 0x00 0x00 0x00       # sent at start, if not empty",
+        "shutdown = 0x00 0x00 0x00      # sent at exit, if not empty",
+        ""
+    };
+    bool result = count() == 0;
+    if (result)
+    {
+        for (int i = 0; ! s_defaults[i].empty(); ++i)
+        {
+            tokenization t = seq66::tokenize(s_defaults[i], "=");
+            if (! add(t))
+                break;
+        }
     }
     return result;
 }

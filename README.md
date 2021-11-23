@@ -1,7 +1,7 @@
-# README for Seq66 0.97.3
+# README for Seq66 0.98.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-11-19
+2015-09-10 to 2021-11-23
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -83,6 +83,9 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.98.0:
+        *   Added "MIDI macros" to the 'ctrl' file.  A work in progress right
+            now.
     *   Version 0.97.3:
         *   Added pattern-recording indicator to live-grid slots.
         *   Replace useless "Record" automation command with a "Loop Mode"

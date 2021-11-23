@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2021-10-27
+ * \updates       2021-11-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -83,6 +83,12 @@ qsessionframe::qsessionframe
         ui->pushButtonReload, SIGNAL(clicked(bool)),
         this, SLOT(slot_flag_reload())
     );
+    populate_macro_combo();
+    connect
+    (
+        ui->macroComboBox, SIGNAL(currentTextChanged(const QString &)),
+        this, SLOT(slot_macro_pick(const QString &))
+    );
 }
 
 qsessionframe::~qsessionframe()
@@ -101,6 +107,38 @@ qsessionframe::slot_flag_reload ()
 {
     signal_for_restart();
     warnprint("Session reload request");
+}
+
+void
+qsessionframe::populate_macro_combo ()
+{
+    tokenization t = perf().macro_names();
+    if (! t.empty())
+    {
+        int counter = 0;
+        ui->macroComboBox->clear();
+        for (const auto & name : t)
+        {
+            if (name.empty())
+            {
+                break;
+            }
+            else
+            {
+                QString combotext(qt(name));
+                ui->macroComboBox->insertItem(counter++, combotext);
+            }
+        }
+    }
+}
+
+void
+qsessionframe::slot_macro_pick (const QString & name)
+{
+    if (! name.isEmpty())
+    {
+        perf().send_macro(name.toStdString());
+    }
 }
 
 void

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2021-11-22
+ * \updates       2021-11-23
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -49,14 +49,19 @@ namespace seq66
 {
 
 /**
- *  Represents a string of midibytes and provides the infrastructure for reading
- *  them.
+ *  Represents a string of midibytes and provides the infrastructure for
+ *  reading them.
  */
 
 class midimacros
 {
 
 public:
+
+    static const std::string header;
+    static const std::string reset;
+    static const std::string startup;
+    static const std::string shutdown;
 
     using container = std::map<std::string, midimacro>;
 
@@ -92,8 +97,10 @@ public:
     }
 
     bool expand ();
-    midistring bytes (const std::string & name);
+    midistring bytes (const std::string & name) const;
     std::string lines () const;
+    tokenization macro_names () const;
+    bool make_defaults ();
 
 private:
 

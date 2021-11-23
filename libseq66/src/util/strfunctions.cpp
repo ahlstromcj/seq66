@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2021-11-22
+ * \updates       2021-11-23
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -510,6 +510,10 @@ has_digit (const std::string & s)
                 result = true;
                 break;
             }
+            else if (std::isspace(c))
+                continue;
+            else
+                break;
         }
     }
     return result;

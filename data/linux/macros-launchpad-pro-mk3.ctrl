@@ -1,0 +1,111 @@
+# This file provides samples, explanations, and ideas for the Launchpad Pro
+# MK3, which is much more complex than the Launchpad Mini.
+#
+# Copy the [macro-control-out] section and paste it into your
+# qseq66.ctrl or other 'ctrl' file.
+
+
+[macro-control-out]
+
+header = 0xf0 0x00 0x20 0x29 0x02 0x0e
+command = $header $command-byte
+get-current-layout = $header 0x00 0xf7
+live-mode = $header 0x0e 0x00 0xf7
+programmer-mode = $header 0x0e 0x01 0xf7
+
+drum-layout = $header 0x02
+reset = $header 0x00
+shutdown = $header 0x00
+startup = $x-y-layout
+x-y-layout = $header 0x01
+
+# Some ideas follow:
+
+[macro-control-out-ex]
+
+device-inquiry = 0xf0 0x7e 0x7f 0x06 0x01 0xf7
+device-inquiry-response-1 = 0xf0 0x7e 0x00 0x06 0x02 0x00 0x20 0x29 0x13 0x01 0x00 0x00 $app-version 0xf7
+device-inquiry-response-1 = 0xf0 0x7e 0x00 0x06 0x02 0x00 0x20 0x29 0x13 0x11 0x00 0x00 $boot-version 0xf7
+mode = $header 0x0e $mode:0x00-0x01 0xf7
+
+grid-mapping = $header $mode:0x1-0x2
+double-buffering = $header $bits:0x20-0x3d
+all-leds = $header $brightness:0x7d-0x7f
+duty-cycle = 0xb0 $mode:0x1e-0x1f $data
+rapid-led-update = 0x92 $vel1 $vel2
+
+[midi-device-inquiry]
+
+# Here is the Identity Request message:
+#
+# 0xF0  SysEx
+# 0x7E  Non-Realtime
+# 0x7F  The SysEx channel. Could be from 0x00 to 0x7F.
+#       Here we set it to "disregard channel".
+# 0x06  Sub-ID -- General Information
+# 0x01  Sub-ID2 -- Identity Request
+# 0xF7  End of SysEx
+#
+# Here is the Identity Reply message:
+#
+# 0xF0  SysEx
+# 0x7E  Non-Realtime
+# 0x7F  The SysEx channel. Could be from 0x00 to 0x7F.
+#       Here we set it to "disregard channel".
+# 0x06  Sub-ID -- General Information
+# 0x02  Sub-ID2 -- Identity Reply
+# 0xID  Manufacturer's ID
+# 0xf1  The f1 and f2 bytes make up the family code. Each
+# 0xf2  manufacturer assigns different family codes to his products.
+# 0xp1  The p1 and p2 bytes make up the model number. Each
+# 0xp2  manufacturer assigns different model numbers to his products.
+# 0xv1  The v1, v2, v3 and v4 bytes make up the version number.
+# 0xv2
+# 0xv3
+# 0xv4
+# 0xF7  End of SysEx
+#
+# Host => Launchpad Pro [MK3]:
+#
+# Hex Version: F0h 00h 20h 29h 02h 0Eh 00h <layout> <page> 00h F7h
+#
+# 0x00 Session (only selectable in DAW mode)
+# 0x01 Fader
+# 0x02 Chord
+# 0x03 Custom Mode
+# 0x04 Note / Drum
+# 0x05 Scale Settings
+# 0x06 Sequencer Settings
+# 0x07 Sequencer Steps
+# 0x08 Sequencer Velocity
+# 0x09 Sequencer Pattern Settings
+# 0x0A Sequencer Probability
+# 0x0B Sequencer Mutation
+# 0x0C Sequencer Micro Step
+# 0x0D Sequencer Projects
+# 0x0E Sequencer Patterns
+# 0x0F Sequencer Tempo
+# 0x10 Sequencer Swing
+# 0x11 Programmer Mode
+# 0x12 Settings Menu
+# 0x13 Custom mode Settings
+#
+# Where the available pages are:
+#
+# 00h-07h for Custom Mode Views
+# 00h-03h for any Sequencer View
+# 00h-03h for Fader view
+# 00h-04h for Settings Menu
+# 00h for any other view
+#
+# Programmer Mode provides an alternative to Session Mode for creating
+# scripts. In Programmer Mode, every pad and button sends out a MIDI message
+# and may be lit with the same message.  In Programmer Mode, access to all
+# Launchpad Pro [MK3] functionality is disabled. Therefore, pressing the Mode
+# buttons will not cause Launchpad Pro [MK3] to change modes when in
+# Programmer Mode.  All buttons and pads accept either Note or Control Change
+# messages.  The indicated type is which is sent by the device on the MIDI
+# interface when the corresponding button or pad is pressed.
+
+# vim: sw=4 ts=4 wm=4 et ft=dosini
+

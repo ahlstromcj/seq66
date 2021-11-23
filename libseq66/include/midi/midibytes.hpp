@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-10-18
+ * \updates       2021-11-23
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -608,6 +608,12 @@ abs_midibyte_value (int b)
         return max_midi_value();
     else
         return midibyte(b);
+}
+
+inline const midibyte *
+midi_bytes (const midistring & b)
+{
+    return static_cast<const midibyte *>(b.data());
 }
 
 /**
