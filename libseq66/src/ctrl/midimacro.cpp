@@ -60,9 +60,12 @@ midimacro::midimacro (const std::string & name, const std::string & values) :
     m_name      (name),
     m_tokens    (),
     m_bytes     (),
-    m_is_valid  (tokenize(values))
+    m_is_valid  (),
+    m_has_value (false)
 {
-    // No other code
+    m_is_valid = tokenize(values);
+    if (m_is_valid)
+        m_has_value = ! m_tokens[0].empty();
 }
 
 bool
@@ -70,6 +73,19 @@ midimacro::tokenize (const std::string & values)
 {
     m_tokens = seq66::tokenize(values);         /* from strfunctions module */
     return m_tokens.size() > 0;
+}
+
+std::string
+midimacro::line () const
+{
+    std::string result = name();
+    result += " =";
+    for (const auto & t : tokens())
+    {
+        result += " ";
+        result += t;
+    }
+    return result;
 }
 
 }           // namespace seq66

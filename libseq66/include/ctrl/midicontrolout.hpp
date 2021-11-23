@@ -355,6 +355,10 @@ public:
     }
 
     void send_macro (const std::string & name, bool flush = true);
+    std::string macro_lines () const
+    {
+        return m_macro_events.lines();
+    }
 
 };          // class midicontrolout
 

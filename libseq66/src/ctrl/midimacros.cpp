@@ -153,6 +153,18 @@ midimacros::bytes (const std::string & name)
     return result;
 }
 
+std::string
+midimacros::lines () const
+{
+    std::string result;
+    for (auto & m : m_macros)
+    {
+        result += m.second.line();
+        result += "\n";
+    }
+    return result;
+}
+
 }           // namespace seq66
 
 /*

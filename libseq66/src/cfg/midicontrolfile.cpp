@@ -643,7 +643,19 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                     read_triples(file, mco, midicontrolout::uiaction::quit);
                 }
             }
-            if (! ok)
+            if (ok)
+            {
+                ok = line_after(file, "[macro-control-out]");
+                if (ok)
+                {
+                    while (ok)
+                    {
+                        tokenization t = tokenize(line(), "=");
+                        ok = mco.add_macro(t);
+                    }
+                }
+            }
+            else
             {
                  (void) make_error_message
                  (
@@ -1200,6 +1212,23 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         write_triples(file, mco, midicontrolout::uiaction::alt_6);
         write_triples(file, mco, midicontrolout::uiaction::alt_7);
         write_triples(file, mco, midicontrolout::uiaction::alt_8);
+
+        /*
+         * Write any macros that exist.
+         */
+
+        file << "\n[macro-control-out]\n\n"
+            "# This format is 'macroname = [ hex bytes | macro-references]'.\n"
+            "# Macro references are macro-names preceded by a '$'.\n\n"
+            ;
+
+        std::string lines = mco.macro_lines();
+        if (lines.empty())
+        {
+            file << "startup =\nshutdown =\n";
+        }
+        else
+            file << lines << std::endl;
     }
     return result;
 }

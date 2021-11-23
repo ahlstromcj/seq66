@@ -951,6 +951,7 @@ simplify (const std::string & source)
             bool ok = std::isalpha(t[0]);
             if (! ok)
                 ok = t.find_first_of(s_special) == std::string::npos;
+
             if (ok)
             {
                 if (first_one)

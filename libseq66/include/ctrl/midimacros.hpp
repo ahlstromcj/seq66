@@ -93,6 +93,7 @@ public:
 
     bool expand ();
     midistring bytes (const std::string & name);
+    std::string lines () const;
 
 private:
 

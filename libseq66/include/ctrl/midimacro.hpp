@@ -83,10 +83,17 @@ private:
     midistring m_bytes;
 
     /**
-     *  Is the macro good?
+     *  Is the macro good?  It is good if there is a name, and even if there is
+     *  no value.
      */
 
     bool m_is_valid;
+
+    /**
+     *  Does the macro have a value?
+     */
+
+    bool m_has_value;
 
 public:
 
@@ -108,17 +115,7 @@ public:
         return m_tokens;
     }
 
-/*
-    const std::string & token (int i) const
-    {
-        return i < count() ? m_tokens[i] : std::string("") ;
-    }
-
-    int count () const
-    {
-        return int(m_tokens.size());
-    }
-    */
+    std::string line () const;
 
     const midistring & bytes () const
     {
@@ -128,6 +125,11 @@ public:
     bool is_valid () const
     {
         return m_is_valid;
+    }
+
+    bool has_value () const
+    {
+        return m_has_value;
     }
 
 private:
