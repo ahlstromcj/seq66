@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-11-23
+ * \updates       2021-11-24
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -363,12 +363,17 @@ public:
 
     tokenization macro_names () const
     {
-        return m_macro_events.macro_names();
+        return m_macro_events.names();
+    }
+
+    midistring macro_bytes (const std::string & name) const
+    {
+        return m_macro_events.bytes(name);
     }
 
     std::string macro_byte_strings () const
     {
-        return m_macro_events.macro_byte_strings();
+        return m_macro_events.byte_strings();
     }
 
     bool make_macro_defaults ()

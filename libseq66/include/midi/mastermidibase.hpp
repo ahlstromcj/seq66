@@ -253,10 +253,10 @@ public:
     void port_exit (int client, int port);
     void play (bussbyte bus, event * e24, midibyte channel);
     void play_and_flush (bussbyte bus, event * e24, midibyte channel);
+    void sysex (bussbyte bus, const event * event);
     void continue_from (midipulse tick);
     void init_clock (midipulse tick);
     void emit_clock (midipulse tick);
-    void sysex (const event * event);
     void print () const;
     void flush ();
     void panic (int displaybuss = c_bussbyte_max);          /* kepler34 func  */

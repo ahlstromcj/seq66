@@ -24,14 +24,16 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2021-11-20
+ * \updates       2021-11-24
  * \license       GNU GPLv2 or above
  *
  */
 
+#include <QComboBox>
 #include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QKeyEvent>
 #include <QPushButton>
+#include <QStandardItemModel>
 #include <QTimer>
 
 #include "cfg/settings.hpp"             /* seq66::rc().home_config_dir...() */
@@ -200,6 +202,21 @@ qt_timer
         error_message(msg);
     }
     return result;
+}
+
+/**
+ *  Helper for handling enabled/disabled items in a combo-box
+ */
+
+void
+enable_combobox_item (QComboBox * box, int index, bool enabled)
+{
+    QStandardItemModel * m = qobject_cast<QStandardItemModel *>(box->model());
+    QStandardItem * item = m->item(index);
+    if (enabled)
+        item->setFlags(item->flags() | Qt::ItemIsEnabled);
+    else
+        item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
 }
 
 /**

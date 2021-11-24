@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2021-11-19
+ * \updates       2021-11-24
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -590,7 +590,8 @@ min (long a, long b)
  *  simply for visibility.  Why 80000?
  */
 
-#define SEQ66_USLEEP_US     80000
+static const int c_sysex_sleep_us   = 80000;
+static const int c_sysex_chunk      =   256;
 
 /**
  *  Takes a native SYSEX event, encodes it to an ALSA event, and then
@@ -606,9 +607,9 @@ midi_alsa::api_sysex (const event * e24)
     snd_seq_event_t ev;
     snd_seq_ev_clear(&ev);                              /* clear event      */
     snd_seq_ev_set_priority(&ev, 1);
-    snd_seq_ev_set_source(&ev, m_local_addr_port);      /* set source       */
     snd_seq_ev_set_subs(&ev);
     snd_seq_ev_set_direct(&ev);                         /* it's immediate   */
+    snd_seq_ev_set_source(&ev, m_local_addr_port);      /* set source       */
 
     /*
      *  Replaced by a vector of midibytes:
@@ -620,19 +621,43 @@ midi_alsa::api_sysex (const event * e24)
      *  stored contiguously (in order to be accessible via random-access
      *  iterators).
      *
-     *  256 == c_midi_alsa_sysex_chunk
+     *  We send the sysex data in chunks, with a sleep, for slower devices.
      */
 
-    const int chunk = 256;
     event::sysex & data = const_cast<event::sysex &>(e24->get_sysex());
     int data_size = e24->sysex_size();
-    for (int offset = 0; offset < data_size; offset += chunk)
+    if (data_size < c_sysex_chunk)
     {
-        int data_left = data_size - offset;
-        snd_seq_ev_set_sysex(&ev, min(data_left, chunk), &data[offset]);
-        snd_seq_event_output_direct(m_seq, &ev);        /* pump into queue  */
-        usleep(SEQ66_USLEEP_US);
-        api_flush();
+        snd_seq_ev_set_sysex(&ev, data_size, &data[0]);
+
+        int rc = snd_seq_event_output_direct(m_seq, &ev);
+        if (rc >= 0)
+        {
+            api_flush();
+        }
+        else
+        {
+            errprint("sending complete SysEx failed");
+        }
+    }
+    else
+    {
+        for (int offset = 0; offset < data_size; offset += c_sysex_chunk)
+        {
+            int data_left = data_size - offset;
+            snd_seq_ev_set_sysex(&ev, min(data_left, c_sysex_chunk), &data[offset]);
+
+            int rc = snd_seq_event_output_direct(m_seq, &ev);
+            if (rc >= 0)
+            {
+                usleep(c_sysex_sleep_us);
+                api_flush();
+            }
+            else
+            {
+                errprint("sending SysEx failed");
+            }
+        }
     }
 }
 

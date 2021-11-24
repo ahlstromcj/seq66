@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2020-10-26
+ * \updates       2020-11-24
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of the midibus class.
@@ -389,6 +389,13 @@ midibus::api_play (const event * e24, midibyte channel)
 {
     if (not_nullptr(m_rt_midi))
         m_rt_midi->api_play(e24, channel);
+}
+
+void
+midibus::api_sysex (const event * e24)
+{
+    if (not_nullptr(m_rt_midi))
+        m_rt_midi->api_sysex(e24);
 }
 
 /**

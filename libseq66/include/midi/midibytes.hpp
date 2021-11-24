@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-11-23
+ * \updates       2021-11-24
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -616,7 +616,7 @@ midi_bytes (const midistring & b)
     return static_cast<const midibyte *>(b.data());
 }
 
-extern std::string midi_bytes_string (const midistring & b);
+extern std::string midi_bytes_string (const midistring & b, int limit = 0);
 
 /**
  *  Compares a channel value to the maximum (and illegal) value.

@@ -17,7 +17,7 @@
  */
 
 /**
- * \file          qinputcheckbox.hpp
+ * \file          qinputcheckbox.cpp
  *
  *  This class supports a MIDI Input check-box, associating it with a
  *  particular MIDI input buss.

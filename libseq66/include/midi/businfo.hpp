@@ -325,20 +325,8 @@ public:
             bi.clock(tick);
     }
 
-    /**
-     *  Handles SysEx events; used for output busses.
-     *
-     * \param ev
-     *      Provides the SysEx event to handle.
-     */
-
-    void sysex (const event * ev)
-    {
-        for (auto & bi : m_container)       /* vector of businfo copies     */
-            bi.sysex(ev);
-    }
-
-    void play (bussbyte bus, event * e24, midibyte channel);
+    void play (bussbyte bus, const event * e24, midibyte channel);
+    void sysex (bussbyte bus, const event * ev);
     bool set_clock (bussbyte bus, e_clock clocktype);
 
     /**

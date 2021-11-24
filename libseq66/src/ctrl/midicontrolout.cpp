@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with refactoring by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-11-23
+ * \updates       2021-11-24
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -453,7 +453,7 @@ midicontrolout::send_automation (bool activate)
 }
 
 void
-midicontrolout::send_macro (const std::string & name, bool /*flush*/)
+midicontrolout::send_macro (const std::string & name, bool flush)
 {
     if (is_enabled() && not_nullptr(m_master_bus))
     {
@@ -461,12 +461,12 @@ midicontrolout::send_macro (const std::string & name, bool /*flush*/)
         if (! byts.empty())
         {
             int len = int(byts.length());
-            if (len > 3)                            /* assume sysex */
+            if (len > 3)                                    /* assume sysex */
             {
                 event ev;
                 const midibyte * b = midi_bytes(byts);
                 (void) ev.set_sysex(b, len);
-                m_master_bus->sysex(&ev);           /* flush?       */
+                m_master_bus->sysex(true_buss(), &ev);      /* flushes      */
             }
             else
             {
@@ -481,7 +481,10 @@ midicontrolout::send_macro (const std::string & name, bool /*flush*/)
                     d0 = byts[1];
 
                 event ev(0, byts[0], d0, d1);
-                m_master_bus->sysex(&ev);           /* flush?       */
+                if (flush)
+                    m_master_bus->play_and_flush(true_buss(), &ev, ev.channel());
+                else
+                    m_master_bus->play(true_buss(), &ev, ev.channel());
             }
         }
     }

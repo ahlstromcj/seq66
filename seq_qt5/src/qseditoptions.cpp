@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-27
+ * \updates       2021-11-24
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -548,18 +548,35 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
 
     QWidget * central = new QWidget;
     QVBoxLayout * vboxclocks = new QVBoxLayout(central);
-    mastermidibus * masterbus = perf().master_bus();
+    mastermidibus * mmb = perf().master_bus();
     const clockslist & opm = output_port_map();
     bool outportmap = opm.active();
-    if (not_nullptr(masterbus))
+    if (not_nullptr(mmb))
     {
-        int buses = outportmap ? opm.count() : masterbus->get_num_out_buses() ;
+        int buses = outportmap ? opm.count() : mmb->get_num_out_buses() ;
         ui->clocksScrollArea->setWidget(central);
         ui->clocksScrollArea->setWidgetResizable(true);
         for (int bus = 0; bus < buses; ++bus)
         {
             qclocklayout * tempqc = new qclocklayout(this, perf(), bus);
             vboxclocks->addLayout(tempqc->layout());
+        }
+
+        /*
+         * Output MIDI control buss combo-box population.
+         */
+
+        ui->comboBoxMidiOutBuss->addItem("Disabled");
+        for (int bus = 0; bus < buses; ++bus)
+        {
+            e_clock ec;
+            std::string busname;
+            if (perf().ui_get_clock(bussbyte(bus), ec, busname))
+            {
+                bool enabled = ec != e_clock::disabled;
+                ui->comboBoxMidiOutBuss->addItem(qt(busname));
+                enable_combobox_item(ui->comboBoxMidiOutBuss, bus + 1, enabled);
+            }
         }
     }
 
@@ -616,9 +633,9 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     QVBoxLayout * vboxinputs = new QVBoxLayout(central2);
     const inputslist & ipm = input_port_map();
     bool inportmap = ipm.active();
-    if (not_nullptr(masterbus))
+    if (not_nullptr(mmb))
     {
-        int buses = inportmap ? ipm.count() : masterbus->get_num_in_buses() ;
+        int buses = inportmap ? ipm.count() : mmb->get_num_in_buses() ;
         ui->inputsScrollArea->setWidget(central2);
         ui->inputsScrollArea->setWidgetResizable(true);
         for (int bus = 0; bus < buses; ++bus)
@@ -626,7 +643,44 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
             qinputcheckbox * tempqi = new qinputcheckbox(this, perf(), bus);
             vboxinputs->addWidget(tempqi->input_checkbox());
         }
+
+        /*
+         * Input MIDI control buss combo-box population.
+         */
+
+        ui->comboBoxMidiInBuss->addItem("Disabled");
+        for (int bus = 0; bus < buses; ++bus)
+        {
+            std::string busname;
+            bool inputing;
+            bool enabled = ! perf().is_input_system_port(bus);
+            bool gotbussinfo = perf().ui_get_input(bus, inputing, busname);
+            if (gotbussinfo && enabled)
+                enabled = true;
+
+            ui->comboBoxMidiInBuss->addItem(qt(busname));
+            enable_combobox_item(ui->comboBoxMidiInBuss, bus + 1, enabled);
+        }
+
+        bool active = perf().midi_control_in().is_enabled();
+        int activebuss = active ? perf().midi_control_in().true_buss() + 1 : 0 ;
+        ui->comboBoxMidiOutBuss->setCurrentIndex(activebuss);
+        connect
+        (
+            ui->comboBoxMidiOutBuss, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(slot_input_bus(int))
+        );
+
     }
+
+    int activebuss = perf().midi_control_in().true_buss();
+    ui->comboBoxMidiInBuss->setCurrentIndex(activebuss);
+    connect
+    (
+        ui->comboBoxMidiInBuss, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(slot_input_bus(int))
+    );
+
 
     /*
      * I/O Port Boolean options.
@@ -1066,19 +1120,15 @@ qseditoptions::sync_usr ()
 
 /**
  *  Instead of this sequence of calls, we could send a Qt signal from
- *  qclocklayout to eventually call the qsmainwnd slot.
+ *  qclocklayout to eventually call the qsmainwnd slot.  We need to make this
+ *  item cause immediate action.
  */
 
 void
 qseditoptions::enable_bus_item (int bus, bool enabled)
 {
     m_parent_widget->enable_bus_item(bus, enabled);
-
-    /*
-     *  We need to make this item cause immediate action.
-     */
-
-    reload_needed(true);
+    reload_needed(true);                                /* immediate action */
 }
 
 void
@@ -1641,6 +1691,22 @@ qseditoptions::slot_clock_start_modulo (int ticks)
 {
     rc().set_clock_mod(ticks);
     modify_rc();
+}
+
+void
+qseditoptions::slot_output_bus (int index)
+{
+    bool enable = index >= 0;
+    perf().midi_control_out().is_enabled(enable);
+    perf().midi_control_out().true_buss(index - 1);
+}
+
+void
+qseditoptions::slot_input_bus (int index)
+{
+    bool enable = index >= 0;
+    perf().midi_control_in().is_enabled(enable);
+    perf().midi_control_in().true_buss(index - 1);
 }
 
 void

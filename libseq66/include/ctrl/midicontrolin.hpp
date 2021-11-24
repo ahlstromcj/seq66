@@ -61,6 +61,9 @@ class keycontainer;
 class midicontrolin final : public midicontrolbase
 {
 
+    friend class midicontrolfile;
+    friend class performer;
+
 public:
 
     /**

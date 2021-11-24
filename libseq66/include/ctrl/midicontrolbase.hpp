@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2019-11-25
- * \updates       2021-06-09
+ * \updates       2021-11-14
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -55,6 +55,7 @@ namespace seq66
 class midicontrolbase
 {
 
+    friend class qseditoptions;
     friend class midicontrolfile;
     friend class performer;
 

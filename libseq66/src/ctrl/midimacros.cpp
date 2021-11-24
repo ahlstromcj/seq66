@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2021-11-23
+ * \updates       2021-11-24
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -59,6 +59,7 @@ namespace seq66
  *  Constant static macro names.
  */
 
+const std::string midimacros::footer    = "footer";
 const std::string midimacros::header    = "header";
 const std::string midimacros::reset     = "reset";
 const std::string midimacros::startup   = "startup";
@@ -181,7 +182,7 @@ midimacros::lines () const
 }
 
 tokenization
-midimacros::macro_names () const
+midimacros::names () const
 {
     tokenization result;
     for (const auto & m : m_macros)         /* const auto & [key, value] */
@@ -191,7 +192,7 @@ midimacros::macro_names () const
 }
 
 std::string
-midimacros::macro_byte_strings () const
+midimacros::byte_strings () const
 {
     std::string result;
     for (const auto & m : m_macros)
@@ -216,11 +217,12 @@ midimacros::make_defaults ()
 {
     static const std::string s_defaults [] =
     {
-        "header = 0x00 0x00 0x00        # fill in with device's SysEx header",
-        "reset = 0x00 0x00 0x00         # fill in with device's reset command",
-        "startup = 0x00 0x00 0x00       # sent at start, if not empty",
-        "shutdown = 0x00 0x00 0x00      # sent at exit, if not empty",
-        ""
+        "footer = 0xF7                   # End-of-SysEx byte",
+        "header = 0xF0 0x00 0x00         # device SysEx header, 0xF0 required",
+        "reset = $header 0x00 $footer    # fill in with device's reset command",
+        "startup = $header 0x00 $footer  # sent at start, if not empty",
+        "shutdown = $header 0x00 $footer # sent at exit, if not empty",
+        ""  /* list terminator */
     };
     bool result = count() == 0;
     if (result)

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-11-23
+ * \updates       2021-11-24
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -3560,7 +3560,7 @@ performer::poll_cycle ()
                 {
                     midi_song_pos(ev);
                 }
-                else if (ev.is_sysex())             /* what about channel?  */
+                else if (ev.is_sysex())
                 {
                     midi_sysex(ev);
                 }
@@ -3745,9 +3745,6 @@ performer::midi_song_pos (const event & ev)
 }
 
 /**
- * BUG: This function is called for handling input, but it actually is meant
- *      for sending output.
- *
  * EVENT_MIDI_SYSEX:
  *
  *      These messages are system-wide messages.  We filter system-wide
@@ -3764,6 +3761,10 @@ performer::midi_song_pos (const event & ev)
  *      Also available (but macroed out) is Stazed's parse_sysex() function.
  *      It seems specific to certain Yamaha devices, but might prove useful
  *      later.
+ *
+ *      Not sure what to do with this code, so we just show the data if
+ *      allowed to.  We would need to add back the non-buss version of the
+ *      various sysex() functions.
  */
 
 void
@@ -3772,8 +3773,12 @@ performer::midi_sysex (const event & ev)
     if (rc().show_midi())
         ev.print();
 
-    if (rc().pass_sysex())
-        m_master_bus->sysex(&ev);
+    /*
+     *  if (rc().pass_sysex())
+     *  {
+     *      m_master_bus->sysex(&ev);
+     *  }
+     */
 }
 
 /**

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2021-06-10
+ * \updates       2021-11-24
  * \license       GNU GPLv2 or above
  *
  *  This midibus module is the RtMidi version of the midibus
@@ -114,6 +114,7 @@ protected:
     virtual void api_stop () override;
     virtual void api_clock (midipulse tick) override;
     virtual void api_play (const event * e24, midibyte channel) override;
+    virtual void api_sysex (const event * e24) override;
 
 };          // class midibus (rtmidi version)
 

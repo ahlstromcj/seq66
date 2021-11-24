@@ -649,6 +649,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                 if (ok)
                 {
                     int count = 0;
+                    mco.clear_macros();         /* clear it for each pass   */
                     while (ok)
                     {
                         tokenization t = tokenize(line(), "=");

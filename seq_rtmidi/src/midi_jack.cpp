@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-08-11
+ * \updates       2021-11-24
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -863,7 +863,9 @@ midi_jack::send_message (const midi_message & message)
 }
 
 /**
- *  Work on this routine now in progress.
+ *  Work on this routine now in progress.  Unlike the ALSA implementation,
+ *  we do not try to send large messages (greater than 255 bytes) in
+ *  chunks.
  *
  *  The event::sysex data type is a vector of midibytes.
  */
@@ -881,7 +883,7 @@ midi_jack::api_sysex (const event * e24)
         {
             if (! send_message(message))
             {
-                errprint("JACK API play failed");
+                errprint("JACK API SysEx failed");
             }
         }
     }
