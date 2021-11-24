@@ -100,6 +100,7 @@ public:
     midistring bytes (const std::string & name) const;
     std::string lines () const;
     tokenization macro_names () const;
+    std::string macro_byte_strings () const;
     bool make_defaults ();
 
 private:

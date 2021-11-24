@@ -90,13 +90,11 @@ midimacros::add (const tokenization & tokens)
     {
         std::string key = tokens[0];
         std::string data = tokens[1];
-        if (result)
-        {
-            midimacro m(key, data);             /* further tokenizes        */
-            auto p = std::make_pair(key, m);
-            auto r = m_macros.insert(p);        /* r: pair<iteration, bool> */
-            result = r.second;
-        }
+
+        midimacro m(key, data);             /* further tokenizes        */
+        auto p = std::make_pair(key, m);
+        auto r = m_macros.insert(p);        /* r: pair<iteration, bool> */
+        result = r.second;
     }
     return result;
 }
@@ -115,10 +113,11 @@ midimacros::expand ()
     {
         for (auto & m : m_macros)
         {
-            midistring b = expand(m.second);
+            midimacro & mac = m.second;
+            midistring b = expand(mac);
             result = ! b.empty();
             if (result)
-                m.second.bytes(b);
+                mac.bytes(b);
             else
                 break;
         }
@@ -188,6 +187,21 @@ midimacros::macro_names () const
     for (const auto & m : m_macros)         /* const auto & [key, value] */
         result.push_back(m.second.name());
 
+    return result;
+}
+
+std::string
+midimacros::macro_byte_strings () const
+{
+    std::string result;
+    for (const auto & m : m_macros)
+    {
+        const midimacro & mac = m.second;
+        result += mac.name();
+        result += ": ";
+        result += midi_bytes_string(mac.bytes());
+        result += "\n";
+    }
     return result;
 }
 

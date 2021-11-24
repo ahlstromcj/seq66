@@ -366,6 +366,11 @@ public:
         return m_macro_events.macro_names();
     }
 
+    std::string macro_byte_strings () const
+    {
+        return m_macro_events.macro_byte_strings();
+    }
+
     bool make_macro_defaults ()
     {
         return m_macro_events.make_defaults();

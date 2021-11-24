@@ -616,6 +616,8 @@ midi_bytes (const midistring & b)
     return static_cast<const midibyte *>(b.data());
 }
 
+extern std::string midi_bytes_string (const midistring & b);
+
 /**
  *  Compares a channel value to the maximum (and illegal) value.
  */

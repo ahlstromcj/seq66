@@ -913,19 +913,26 @@ tokenize
     {
         std::size_t previous = 0;
         std::size_t current = source.find(delimiter);
-        while (current != std::string::npos)
+        if (current == std::string::npos)
         {
-            std::string temp = source.substr(previous, current - previous);
-            temp = trim(temp);
-            result.push_back(temp);
-            previous = current + 1;
-            current = source.find(delimiter, previous);
+            result.push_back(source);
         }
-        if (previous > 0)
+        else
         {
-            std::string temp = source.substr(previous, current - previous);
-            temp = trim(temp);
-            result.push_back(temp);
+            while (current != std::string::npos)
+            {
+                std::string temp = source.substr(previous, current - previous);
+                temp = trim(temp);
+                result.push_back(temp);
+                previous = current + 1;
+                current = source.find(delimiter, previous);
+            }
+            if (previous > 0)
+            {
+                std::string temp = source.substr(previous, current - previous);
+                temp = trim(temp);
+                result.push_back(temp);
+            }
         }
     }
     return result;

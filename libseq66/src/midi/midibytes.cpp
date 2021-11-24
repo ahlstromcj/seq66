@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2019-10-07
+ * \updates       2021-11-23
  * \license       GNU GPLv2 or above
  *
  *  These classes were originally structures, but now they are "constant"
@@ -296,6 +296,22 @@ midi_booleans::true_count () const
         bool bit = bool(mb);
         if (bit)
             ++result;
+    }
+    return result;
+}
+
+std::string
+midi_bytes_string (const midistring & b)
+{
+    std::string result;
+    int len = int(b.length());
+    for (int i = 0; i < len; ++i)
+    {
+        char tmp[8];
+        (void) snprintf(tmp, sizeof tmp, "0x%02x", unsigned(b[i]));
+        result += tmp;
+        if (i < (len + 1))
+            result += " ";
     }
     return result;
 }

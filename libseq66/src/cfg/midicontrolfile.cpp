@@ -648,13 +648,24 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                 ok = line_after(file, "[macro-control-out]");
                 if (ok)
                 {
+                    int count = 0;
                     while (ok)
                     {
                         tokenization t = tokenize(line(), "=");
                         ok = mco.add_macro(t);
                         if (ok)
+                        {
+                            ++count;
                             ok = next_data_line(file);
+                        }
                     }
+                    if (count > 0)
+                        ok = mco.expand_macros();
+
+                    if (ok)
+                        (void) info_message(mco.macro_byte_strings());
+                    else
+                        make_error_message("macro-control-out", "error");
                 }
                 else
                     ok = mco.make_macro_defaults();
