@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-24
+ * \updates       2021-11-25
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -551,6 +551,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     mastermidibus * mmb = perf().master_bus();
     const clockslist & opm = output_port_map();
     bool outportmap = opm.active();
+    QComboBox * out = ui->comboBoxMidiOutBuss;
     if (not_nullptr(mmb))
     {
         int buses = outportmap ? opm.count() : mmb->get_num_out_buses() ;
@@ -566,7 +567,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
          * Output MIDI control buss combo-box population.
          */
 
-        ui->comboBoxMidiOutBuss->addItem("Disabled");
+        out->addItem("Disabled");
         for (int bus = 0; bus < buses; ++bus)
         {
             e_clock ec;
@@ -574,10 +575,20 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
             if (perf().ui_get_clock(bussbyte(bus), ec, busname))
             {
                 bool enabled = ec != e_clock::disabled;
-                ui->comboBoxMidiOutBuss->addItem(qt(busname));
-                enable_combobox_item(ui->comboBoxMidiOutBuss, bus + 1, enabled);
+                out->addItem(qt(busname));
+                enable_combobox_item(out, bus + 1, enabled);
             }
         }
+
+        bool active = perf().midi_control_out().is_enabled();
+        int buss = perf().midi_control_out().nominal_buss(); // true_buss()
+        int activebuss = active ? buss + 1 : 0 ;
+        out->setCurrentIndex(activebuss);
+        connect
+        (
+            out, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(slot_output_bus(int))
+        );
     }
 
     QSpacerItem * spacer = new QSpacerItem
@@ -633,6 +644,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     QVBoxLayout * vboxinputs = new QVBoxLayout(central2);
     const inputslist & ipm = input_port_map();
     bool inportmap = ipm.active();
+    QComboBox * in = ui->comboBoxMidiInBuss;
     if (not_nullptr(mmb))
     {
         int buses = inportmap ? ipm.count() : mmb->get_num_in_buses() ;
@@ -648,39 +660,30 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
          * Input MIDI control buss combo-box population.
          */
 
-        ui->comboBoxMidiInBuss->addItem("Disabled");
+        in->addItem("Disabled");
         for (int bus = 0; bus < buses; ++bus)
         {
             std::string busname;
             bool inputing;
+            bool good = perf().ui_get_input(bus, inputing, busname);
             bool enabled = ! perf().is_input_system_port(bus);
-            bool gotbussinfo = perf().ui_get_input(bus, inputing, busname);
-            if (gotbussinfo && enabled)
+            in->addItem(qt(busname));
+            if (good && enabled)
                 enabled = true;
 
-            ui->comboBoxMidiInBuss->addItem(qt(busname));
-            enable_combobox_item(ui->comboBoxMidiInBuss, bus + 1, enabled);
+            enable_combobox_item(in, bus + 1, enabled);
         }
 
         bool active = perf().midi_control_in().is_enabled();
-        int activebuss = active ? perf().midi_control_in().true_buss() + 1 : 0 ;
-        ui->comboBoxMidiOutBuss->setCurrentIndex(activebuss);
+        int buss = perf().midi_control_in().nominal_buss(); // true_buss()
+        int activebuss = active ? buss  + 1 : 0 ;
+        in->setCurrentIndex(activebuss);
         connect
         (
-            ui->comboBoxMidiOutBuss, SIGNAL(currentIndexChanged(int)),
+            in, SIGNAL(currentIndexChanged(int)),
             this, SLOT(slot_input_bus(int))
         );
-
     }
-
-    int activebuss = perf().midi_control_in().true_buss();
-    ui->comboBoxMidiInBuss->setCurrentIndex(activebuss);
-    connect
-    (
-        ui->comboBoxMidiInBuss, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(slot_input_bus(int))
-    );
-
 
     /*
      * I/O Port Boolean options.
@@ -1696,17 +1699,29 @@ qseditoptions::slot_clock_start_modulo (int ticks)
 void
 qseditoptions::slot_output_bus (int index)
 {
-    bool enable = index >= 0;
-    perf().midi_control_out().is_enabled(enable);
-    perf().midi_control_out().true_buss(index - 1);
+    int oldindex = perf().midi_control_out().nominal_buss() + 1;
+    if (index != oldindex)
+    {
+        bool enable = index >= 0;
+        perf().midi_control_out().is_enabled(enable);
+        perf().midi_control_out().nominal_buss(index - 1);
+        rc().auto_ctrl_save(true);
+        ui->checkBoxSaveCtrl->setChecked(true);
+    }
 }
 
 void
 qseditoptions::slot_input_bus (int index)
 {
-    bool enable = index >= 0;
-    perf().midi_control_in().is_enabled(enable);
-    perf().midi_control_in().true_buss(index - 1);
+    int oldindex = perf().midi_control_in().nominal_buss() + 1;
+    if (index != oldindex)
+    {
+        bool enable = index >= 0;
+        perf().midi_control_in().is_enabled(enable);
+        perf().midi_control_in().nominal_buss(index - 1);
+        rc().auto_ctrl_save(true);
+        ui->checkBoxSaveCtrl->setChecked(true);
+    }
 }
 
 void
