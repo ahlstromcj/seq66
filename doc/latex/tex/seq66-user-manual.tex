@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-11-15
+% \update      2021-11-26
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -60,7 +60,8 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.35]{main-window/main-window-fluxbox.png}
+%  \includegraphics[scale=0.65]{main-window/main-window-fluxbox.png}
+   \includegraphics[scale=0.35]{main-window/main-windows.png}
    \caption*{Seq66 Main Windows}
 \end{figure}
 
@@ -90,33 +91,33 @@
       \item \url{https://github.com/ahlstromcj/seq66.git}
    \end{itemize}
 
-   \textsl{Seq66} is \textsl{Sequencer64} refactored for newer versions of
-   \textsl{C++} with cruft cleanup.  It drops the
-   \textsl{Gtkmm} user-interface in favor of \textsl{Qt 5},
-   and has better handling of sets, mute-groups, sessions, configuration files,
-   and more.
-   It supports for the \textsl{Non Session Manager}, the ability to
-   modify the color palette, and Qt style-sheets.
-   Be prepared to note some significant differences
-   between \textsl{Seq66} and \textsl{Sequencer64}.
-
-   We also have many contributors to acknowledge.
-   Please see \sectionref{sec:kudos}.
-   It is out-of-date!  If your name is not there, ping us!
+   Feel free to clone or fork it!
 
 \subsection{Seq66: What!?}
 \label{subsec:what_is_seq66}
 
-   \textsl{Seq66} is a reboot of \textsl{Sequencer64}, which
-   is itself a reboot of \textsl{Seq24},
-   a live-looping sequencer with an interface similar to a hardware sequencer.
+   \textsl{Seq66} is \textsl{Sequencer64},
+   a reboot of \textsl{Seq24},
+   a live-looping sequencer with an interface similar to a hardware sequencer,
+   refactored for newer versions of
+   \textsl{C++} with cruft cleanup.  It drops the
+   \textsl{Gtkmm} user-interface in favor of \textsl{Qt 5},
+   and has better handling of sets, mute-groups, sessions, configuration files,
+   play-lists, and automation control.
+   It supports the \textsl{Non Session Manager},
+   modifying the color palette, and Qt style-sheets.
+   Be prepared to note some significant differences
+   between \textsl{Seq66} and \textsl{Sequencer64}.
+
    \textsl{Seq66} is not a synthesizer.  It requires a hardware
    synthesizer or a software synthesizer.  It does not handle audio data,
-   just MIDI.
-
-   \textsl{Seq66} works with \textsl{ALSA}, \textsl{JACK},
+   just MIDI.  It works with \textsl{ALSA}, \textsl{JACK},
    \textsl{PortMidi}, and \textsl{Windows}. It uses close-to-the-latest C++
    features for faster and simpler code.
+
+   We have many contributors to acknowledge.
+   Please see \sectionref{sec:kudos}.
+   It is out-of-date!  If your name is not there, ping us!
 
 \subsection{Seq66: Why!?}
 \label{subsec:introduction_vs_others}
@@ -136,10 +137,12 @@
    \textsl{Seq66} versus \textsl{Sequencer64}.
 
    \begin{itemize}
-      \item Qt 5 as the standard user-interface. Changing the window size works
-         much better.
+      \item Qt 5 as the standard user-interface, with
+         a better live frame using Qt push-buttons.
+         Changing the main window's size works well.
       \item A song editor tab for laying out patterns into a complete
-         performance. Includes transposable triggers.
+         performance. Includes transposable triggers. Also can be
+         opened in its own window.
       \item A mutes editor tab, improvements to mutes handling, control, and
          status display.
       \item A playlist editor tab, with improved flexibility and automation.
@@ -147,8 +150,6 @@
       \item A events editor tab for basic fixing of minor event issues.
       \item A session tab (and Edit / Preference pages) for making sure that
          \textsl{Seq66} is running in the desired environment and configuation.
-      \item A better live frame (main window and external windows) using
-         Qt buttons.
       \item Non Session Manager support. A sessions tab which shows the current
          locations of configuration files for the run.
       \item Repartitioning of the configuration files into separate files for
@@ -157,20 +158,21 @@
       \item Improved alternate keyboard layout support.
       \item Mapping of port names to a consistent set of port numbers.
       \item Ability to export songs in SMF 0 format.
-      \item Palette files and Qt style-sheets can be used to configure the colors
+      \item Palette files and Qt style-sheets can reconfigure the colors
          of the painted text, lines, patterns, and the size and color of
          the user-interface items.
-         Qt style-sheets can be useful in tweaking items, such as text in
-         disabled controls that is difficult to see.
-      \item More efficient lookups for controls; lambda functions.
+%        Qt style-sheets can be useful in tweaking items, such as text in
+%        disabled controls that is difficult to see.
+      \item More efficient lookups for controls using control maps
+         and lambda functions.
    \end{itemize}
 
    For developers, a \textsl{Seq66} build is customizable via C macros,
    by enabling/disabling options at 'configure' time, and by many
    command-line arguments.  We cannot show all permutations of settings in this
    document, so don't be surprised if some screenshots don't quite match
-   one's setup.  Distro maintainers might create their own build
-   configurations.
+   one's setup.
+   Distro maintainers may create their own build configurations.
 
 \subsection{Document Structure}
 \label{subsec:introduction_document_structure}

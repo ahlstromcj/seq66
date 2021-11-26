@@ -1979,6 +1979,56 @@
    except by selecting an illegal mute-group keystroke.
    Also see \sectionref{sec:mutes_master}.
 
+\paragraph{Automation / Record Modes and Quantization}
+\label{paragraph:configuration_midi_record_quan}
+
+   For release 0.97.3,
+   \index{patterns-panel!modes}
+   \index{grid modes}
+   \textbf{grid modes} have been introduced.
+   The \textbf{Record} and \textbf{Quan Record} automation controls have been
+   refactored to cycle through these modes.
+
+   Grid mode changes the function of the main window's patterns panel so that
+   it can be used to initiate record instead of toggling mute status,
+   regardless of whether the toggling is done via the buttons, hot-keys, or
+   MIDI controls.  The following modes are supported:
+
+   \begin{itemize}
+      \item \textbf{Loop}.
+         This mode is the long-standing normal usage of the grid, to
+         mute/unmute (disarm/arm) the patterns.
+      \item \textbf{Overdub}.
+         This mode is the same as the \textbf{Merge} mode in the pattern
+         editor.  Clicking a grid will turn on/off the overdub recording mode
+         for that pattern.
+      \item \textbf{Overwrite}.
+         This mode causes the grid button to turn on overwrite recording.
+         Previously recorded notes in the pattern are erased on the next cycle
+         when new notes come in.
+      \item \textbf{Expand}.
+         This mode causes the grid button to turn on expand recording.
+         The length of the pattern keeps increasing until playback/recording is
+         stopped.
+      \item \textbf{One-shot}.
+         This mode allows for step recording.
+   \end{itemize}
+
+   Also supported is changing the mode of recording:
+   \begin{itemize}
+      \item \textbf{Normal}.
+         Incoming events are recorded as is.
+      \item \textbf{Quantize}.
+         Incoming events are quantized to the snap value of the pattern.
+      \item \textbf{Tighten}.
+         Incoming events are partially quantized to the snap value of the
+         pattern.  This mode is accessible only via this recording mode; there
+         is no such button in the pattern editor.
+      \end{itemize}
+
+   See \sectionref{subsec:pattern_editor_bottom} for more information on these
+   recording modes.
+
 \paragraph{Automation / Screen-Set Play}
 \label{paragraph:configuration_midi_ctrl_ssplay}
 

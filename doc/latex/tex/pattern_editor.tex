@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-10-19
+% \update      2021-11-26
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1140,7 +1140,7 @@
       \item \textbf{MIDI Thru Toggle}
       \item \textbf{MIDI Record Toggle}
       \item \textbf{MIDI Record Quantized}
-      \item \textbf{Loop Record Type} (Merge, Replace, Expand, Oneshot)
+      \item \textbf{Loop Record Type} (Merge, Replace, Expand, One-shot)
       \item \textbf{Record Velocity and Reset}
    \end{enumber}
 
@@ -1304,11 +1304,17 @@
    This button routes incoming MIDI data into
    \textsl{Seq66}, which then saves the data to its buffer, and also
    displays the new information (notes) in the piano roll view.
+   Note that \textsl{Seq66}'s pattern grid can be put in various recording
+   modes (e.g. overdub/merge versus overwrite) where, instead of
+   muting/unmuting the patterns, it turns on recording (without opening the
+   pattern editor).
 
    \itempar{MIDI Record Quantized}{pattern editor!quantized record}
    This button will causes MIDI data to be recorded, but be
    quantized on the fly before recording it.
    The quantization is to the current snap value.
+   Quantization can be turned on globally in \textsl{Seq66}'s pattern grid
+   as well.
 
    \itempar{Loop Record Type}{pattern editor!recording type}
    In \textsl{Seq24}, the pattern recording worked by merging new notes played
