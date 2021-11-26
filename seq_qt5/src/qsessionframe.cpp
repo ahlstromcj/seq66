@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2021-10-27
+ * \updates       2021-11-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -56,6 +56,16 @@
 namespace seq66
 {
 
+/**
+ *  Limit for showing macro bytes in the combo-box.
+ */
+
+static const int c_macro_byte_max = 18;
+
+/**
+ *  Principle constructor.
+ */
+
 qsessionframe::qsessionframe
 (
     performer & p,
@@ -83,6 +93,12 @@ qsessionframe::qsessionframe
         ui->pushButtonReload, SIGNAL(clicked(bool)),
         this, SLOT(slot_flag_reload())
     );
+    populate_macro_combo();
+    connect
+    (
+        ui->macroComboBox, SIGNAL(currentTextChanged(const QString &)),
+        this, SLOT(slot_macro_pick(const QString &))
+    );
 }
 
 qsessionframe::~qsessionframe()
@@ -101,6 +117,46 @@ qsessionframe::slot_flag_reload ()
 {
     signal_for_restart();
     warnprint("Session reload request");
+}
+
+void
+qsessionframe::populate_macro_combo ()
+{
+    tokenization t = perf().macro_names();
+    if (! t.empty())
+    {
+        int counter = 0;
+        ui->macroComboBox->clear();
+        for (const auto & name : t)
+        {
+            if (name.empty())
+            {
+                break;
+            }
+            else
+            {
+                midistring bytes = perf().macro_bytes(name);
+                std::string bs = midi_bytes_string(bytes, c_macro_byte_max);
+                std::string combined = name;
+                combined += ": ";
+                combined += bs;
+                QString combotext(qt(combined));
+                ui->macroComboBox->insertItem(counter++, combotext);
+            }
+        }
+    }
+}
+
+void
+qsessionframe::slot_macro_pick (const QString & name)
+{
+    if (! name.isEmpty())
+    {
+        std::string line = name.toStdString();
+        size_t pos = line.find_first_of(":");
+        line = line.substr(0, pos);
+        perf().send_macro(line);
+    }
 }
 
 void

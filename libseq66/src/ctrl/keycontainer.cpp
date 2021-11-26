@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-11-12
+ * \updates       2021-11-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -337,7 +337,7 @@ keycontainer::kbd_layout_to_string (keyboard::layout lay)
 void
 keycontainer::add_defaults ()
 {
-    static std::vector<std::string> s_keys_pattern =
+    static tokenization s_keys_pattern =
     {
         "1", /*  0 */ "q", /*  1 */ "a", /*  2 */ "z", /*  3 */
         "2", /*  4 */ "w", /*  5 */ "s", /*  6 */ "x", /*  7 */
@@ -348,7 +348,7 @@ keycontainer::add_defaults ()
         "7", /* 24 */ "u", /* 25 */ "j", /* 26 */ "m", /* 27 */
         "8", /* 28 */ "i", /* 29 */ "k", /* 30 */ ",", /* 31 */
     };
-    static std::vector<std::string> s_keys_mute_group =
+    static tokenization s_keys_mute_group =
     {
         "!", /*  0 */ "Q", /*  1 */ "A", /*  2 */ "Z", /*  3 */
         "@", /*  4 */ "W", /*  5 */ "S", /*  6 */ "X", /*  7 */

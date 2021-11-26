@@ -17,7 +17,7 @@
  */
 
 /**
- * \file          qclocklayout.hpp
+ * \file          qclocklayout.cpp
  *
  *  This class supports a MIDI Clocks label and a set of radio-buttons for
  *  selecting the clock style (off, on POS, on MOD), associating it with a
@@ -217,7 +217,7 @@ qclocklayout::clock_callback_clicked (int id)
 }           // namespace seq66
 
 /*
- * qclocklayout.hpp
+ * qclocklayout.cpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

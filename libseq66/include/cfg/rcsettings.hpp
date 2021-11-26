@@ -508,10 +508,7 @@ private:
     /**
      *  Holds a few MIDI file-names most recently used.  Although this is a
      *  vector, we do not let it grow past SEQ66_RECENT_FILES_MAX.
-     *
      *  New feature from Oli Kester's kepler34 project.
-     *
-     * std::vector<std::string> m_recent_files;
      */
 
     recent m_recent_files;

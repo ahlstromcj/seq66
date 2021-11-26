@@ -4,7 +4,7 @@
 "
 "  Language:      C/C++
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-09-04 to 2021-05-09
+"  Last Change:   2006-09-04 to 2021-11-22
 "  Project:       XPC Suite library project
 "  Usage:
 "
@@ -34,7 +34,7 @@
 " Our type definitions for new classes and types added by the XPCC++ library
 "------------------------------------------------------------------------------
 
-syn keyword XPCC midistring seq64 seq66
+syn keyword XPCC midistring seq64 seq66 tokenization
 
 "------------------------------------------------------------------------------
 " Our type definition for inside comments

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2021-05-19
+ * \updates       2021-11-22
  * \license       GNU GPLv2 or above
  *
  *  A couple of universal helper functions remain as inline functions in the
@@ -57,14 +57,6 @@ namespace seq66
 class combo
 {
 
-public:
-
-    /**
-     *  The data type for the container of list items.
-     */
-
-    using container = std::vector<std::string>;
-
 private:
 
     /**
@@ -73,14 +65,14 @@ private:
      *  caller.
      */
 
-    container m_list_items;
+    tokenization m_list_items;
 
 public:
 
     combo ();
     combo (const combo &) = default;
     combo & operator = (const combo &) = default;
-    combo (const container & slist);
+    combo (const tokenization & slist);
     ~combo () = default;
 
     int count () const
@@ -130,7 +122,7 @@ extern rcsettings & rc ();
 extern usrsettings & usr ();
 extern int choose_ppqn (int ppqn);
 extern int ppqn_list_value (int index = (-1));
-extern const combo::container & default_ppqns();
+extern const tokenization & default_ppqns();
 extern void set_configuration_defaults ();
 
 /**

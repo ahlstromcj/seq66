@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-11-12
+ * \updates       2021-11-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -643,13 +643,36 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                     read_triples(file, mco, midicontrolout::uiaction::quit);
                 }
             }
-            if (! ok)
+            if (ok)
             {
-                 (void) make_error_message
-                 (
-                    "midi-control-out", "control-triple error"
-                );
+                ok = line_after(file, "[macro-control-out]");
+                if (ok)
+                {
+                    int count = 0;
+                    mco.clear_macros();         /* clear it for each pass   */
+                    while (ok)
+                    {
+                        tokenization t = tokenize(line(), "=");
+                        ok = mco.add_macro(t);
+                        if (ok)
+                        {
+                            ++count;
+                            ok = next_data_line(file);
+                        }
+                    }
+                    if (count > 0)
+                        ok = mco.expand_macros();
+
+                    if (ok)
+                        (void) info_message(mco.macro_byte_strings());
+                    else
+                        make_error_message("macro-control-out", "error");
+                }
+                else
+                    ok = mco.make_macro_defaults();
             }
+            else
+                make_error_message("midi-control-out", "read-triple error");
         }
         else
             result = version_error_message("ctrl", file_version_number());
@@ -1091,7 +1114,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             "#  |    |   | |\n"
             "#  v    v   v v\n"
             "# 31 [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0]\n"
-            "#       Arm      Mute      Queue    Delete\n"
+            "#      Arm          Mute         Queue        Delete\n"
             ;
         file <<
             "#\n"
@@ -1200,6 +1223,24 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         write_triples(file, mco, midicontrolout::uiaction::alt_6);
         write_triples(file, mco, midicontrolout::uiaction::alt_7);
         write_triples(file, mco, midicontrolout::uiaction::alt_8);
+
+        /*
+         * Write any macros that exist.
+         */
+
+        file << "\n[macro-control-out]\n\n"
+            "# This format is 'macroname = [ hex bytes | macro-references]'.\n"
+            "# Macro references are macro-names preceded by a '$'. If a macro\n"
+            "# starts with 0, it is disabled. See the user manual.\n\n"
+            ;
+
+        std::string lines = mco.macro_lines();
+        if (lines.empty())
+        {
+            file << "startup =\nshutdown =\n";
+        }
+        else
+            file << lines << std::endl;
     }
     return result;
 }

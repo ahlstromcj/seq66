@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-11-19
+ * \updates       2021-11-24
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -469,14 +469,6 @@ private:                            /* key, midi, and op container section  */
      */
 
     midicontrolin m_midi_control_in;
-
-    /**
-     *  Specifies a single buss that is allowed to apply MIDI control to the
-     *  application.  If set to c_bussbyte_max, any buss can control the
-     *  application.
-     */
-
-    bussbyte m_midi_control_buss;
 
     /**
      *  Provides the class encapsulating MIDI control output.
@@ -2699,6 +2691,21 @@ public:
     void send_seq_event (int seqno, midicontrolout::seqaction what)
     {
         midi_control_out().send_seq_event(seqno, what);
+    }
+
+    void send_macro (const std::string & name)
+    {
+        midi_control_out().send_macro(name);
+    }
+
+    tokenization macro_names () const
+    {
+        return midi_control_out().macro_names();
+    }
+
+    midistring macro_bytes (const std::string & name) const
+    {
+        return midi_control_out().macro_bytes(name);
     }
 
     bool exec_slot_function

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>638</width>
-    <height>672</height>
+    <width>640</width>
+    <height>674</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -36,9 +36,9 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>400</y>
+         <y>424</y>
          <width>591</width>
-         <height>73</height>
+         <height>81</height>
         </rect>
        </property>
        <property name="font">
@@ -50,6 +50,12 @@
        <property name="title">
         <string/>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
        <widget class="QLineEdit" name="lineEditTempoTrack">
         <property name="enabled">
          <bool>true</bool>
@@ -57,7 +63,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>30</y>
+          <y>44</y>
           <width>42</width>
           <height>28</height>
          </rect>
@@ -76,7 +82,7 @@
         <property name="geometry">
          <rect>
           <x>64</x>
-          <y>32</y>
+          <y>48</y>
           <width>305</width>
           <height>21</height>
          </rect>
@@ -92,7 +98,7 @@
         <property name="geometry">
          <rect>
           <x>377</x>
-          <y>30</y>
+          <y>40</y>
           <width>205</width>
           <height>32</height>
          </rect>
@@ -107,8 +113,8 @@
        <widget class="QLabel" name="label_4">
         <property name="geometry">
          <rect>
-          <x>8</x>
-          <y>8</y>
+          <x>20</x>
+          <y>20</y>
           <width>141</width>
           <height>17</height>
          </rect>
@@ -186,7 +192,7 @@ Each port number can be found by name-lookup.</string>
        <property name="geometry">
         <rect>
          <x>8</x>
-         <y>488</y>
+         <y>528</y>
          <width>181</width>
          <height>17</height>
         </rect>
@@ -211,7 +217,7 @@ Each port number can be found by name-lookup.</string>
        <property name="geometry">
         <rect>
          <x>196</x>
-         <y>480</y>
+         <y>520</y>
          <width>185</width>
          <height>28</height>
         </rect>
@@ -233,7 +239,7 @@ Each port number can be found by name-lookup.</string>
        <property name="geometry">
         <rect>
          <x>404</x>
-         <y>484</y>
+         <y>524</y>
          <width>197</width>
          <height>23</height>
         </rect>
@@ -340,6 +346,34 @@ Each port number can be found by name-lookup.</string>
        <property name="text">
         <string>Port</string>
        </property>
+      </widget>
+      <widget class="QWidget" name="horizontalLayoutWidget_2">
+       <property name="geometry">
+        <rect>
+         <x>28</x>
+         <y>388</y>
+         <width>557</width>
+         <height>45</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLabel" name="label_12">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>MIDI Control Output (Display) Bus</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBoxMidiOutBuss"/>
+        </item>
+       </layout>
       </widget>
      </widget>
      <widget class="QWidget" name="tabMidiInput">
@@ -566,6 +600,37 @@ slot by channel number (0 to 15).</string>
          </rect>
         </property>
        </widget>
+      </widget>
+      <widget class="QWidget" name="horizontalLayoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>16</x>
+         <y>316</y>
+         <width>585</width>
+         <height>49</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="labelMidiCtrlIn">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>MIDI Control Input (Automation) Bus</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBoxMidiInBuss"/>
+        </item>
+       </layout>
       </widget>
      </widget>
      <widget class="QWidget" name="tabDisplay">
@@ -924,7 +989,7 @@ Range: 32 to 128, 0 disables.  Default: 32.</string>
         <rect>
          <x>8</x>
          <y>228</y>
-         <width>141</width>
+         <width>413</width>
          <height>29</height>
         </rect>
        </property>
@@ -1652,7 +1717,7 @@ required.</string>
        </widget>
        <widget class="QCheckBox" name="checkBoxSaveCtrl">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="geometry">
          <rect>

@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2021-07-12
+ * \updates       2021-11-22
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -129,7 +129,7 @@ public:     // session client method overrides
     (
         const std::string & message,
         const std::string & pattern,
-        const std::vector<std::string> & argv
+        const tokenization & argv
     ) override;
     virtual bool announce
     (

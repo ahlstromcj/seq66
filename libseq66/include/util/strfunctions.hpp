@@ -27,17 +27,15 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-11-04
+ * \updates       2021-11-22
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
  */
 
 #include <memory>                       /* std::unique_ptr<> template class */
-#include <string>                       /* std::string class                */
-#include <vector>                       /* std::vector class                */
 
-#include "midi/midibytes.hpp"           /* seq66::midibool type             */
+#include "midi/midibytes.hpp"           /* seq66::midibool, string, vector  */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -124,15 +122,15 @@ extern char bool_to_char (bool x);
 extern std::string pointer_to_string (void * ptr);
 extern int tokenize_stanzas
 (
-    std::vector<std::string> & tokens,
+    tokenization & tokens,
     const std::string & source,
     std::string::size_type bleft = 0,
     const std::string & brackets = ""
 );
-extern std::vector<std::string> tokenize
+extern tokenization tokenize
 (
     const std::string & source,
-    const std::string delimiter = " "
+    const std::string & delimiter = " "
 );
 extern std::string simplify (const std::string & source);
 extern std::string write_stanza_bits

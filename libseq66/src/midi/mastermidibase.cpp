@@ -294,10 +294,8 @@ mastermidibase::panic (int displaybuss)
 }
 
 /**
- *  Handle the sending of SYSEX events.  The event is sent to all MIDI output
- *  busses.  Then flush() is called.
- *
- *  There's currently no implementation-specific API function for this call.
+ *  Handle the sending of SYSEX events.  There's currently no
+ *  implementation-specific API function for this call.
  *
  * \threadsafe
  *
@@ -306,18 +304,16 @@ mastermidibase::panic (int displaybuss)
  */
 
 void
-mastermidibase::sysex (const event * ev)
+mastermidibase::sysex (bussbyte bus, const event * ev)
 {
     automutex locker(m_mutex);
-    m_outbus_array.sysex(ev);
-    api_flush();
+    m_outbus_array.sysex(bus, ev);
 }
 
 /**
- *  Handle the playing of MIDI events on the MIDI buss given by the
- *  parameter, as long as it is a legal buss number.
- *
- *  There's currently no implementation-specific API function here.
+ *  Handle the playing of MIDI events on the MIDI buss given by the parameter,
+ *  as long as it is a legal buss number.  There's currently no
+ *  implementation-specific API function here.
  *
  * \threadsafe
  *

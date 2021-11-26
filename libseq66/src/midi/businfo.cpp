@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2020-12-28
+ * \updates       2021-11-24
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -398,10 +398,24 @@ busarray::initialize ()
  */
 
 void
-busarray::play (bussbyte bus, event * e24, midibyte channel)
+busarray::play (bussbyte bus, const event * e24, midibyte channel)
 {
     if (bus < count() && m_container[bus].active())
         m_container[bus].bus()->play(e24, channel);
+}
+
+/**
+ *  Handles SysEx events; used for output busses.
+ *
+ * \param ev
+ *      Provides the SysEx event to handle.
+ */
+
+void
+busarray::sysex (bussbyte bus, const event * e24)
+{
+    if (bus < count() && m_container[bus].active())
+        m_container[bus].bus()->sysex(e24);
 }
 
 /**

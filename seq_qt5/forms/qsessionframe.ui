@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>680</width>
-    <height>457</height>
+    <width>686</width>
+    <height>463</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -143,7 +143,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry">
     <rect>
      <x>80</x>
-     <y>144</y>
+     <y>188</y>
      <width>93</width>
      <height>32</height>
     </rect>
@@ -171,7 +171,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry">
     <rect>
      <x>180</x>
-     <y>136</y>
+     <y>180</y>
      <width>480</width>
      <height>130</height>
     </rect>
@@ -202,7 +202,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>232</y>
+     <y>276</y>
      <width>137</width>
      <height>32</height>
     </rect>
@@ -401,7 +401,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>272</y>
+     <y>316</y>
      <width>630</width>
      <height>30</height>
     </rect>
@@ -428,6 +428,41 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="readOnly">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>24</x>
+     <y>148</y>
+     <width>141</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Macro Execution</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="macroComboBox">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>144</y>
+     <width>481</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="currentText">
+    <string/>
+   </property>
+   <property name="insertPolicy">
+    <enum>QComboBox::InsertAlphabetically</enum>
    </property>
   </widget>
  </widget>

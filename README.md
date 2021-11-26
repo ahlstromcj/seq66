@@ -1,4 +1,4 @@
-# README for Seq66 0.97.3
+# README for Seq66 0.98.0
 
 Chris Ahlstrom
 2015-09-10 to 2021-11-26
@@ -83,6 +83,12 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.98.0:
+        *   Added "MIDI macros" to the 'ctrl' file.  Can send SysEx or other
+            messages from a drop-down list; automatic startup and exit messages.
+            More to come.
+        *   Added api_sysex() overrides, at last.
+        *   Added Preference items for MIDI control I/O.
     *   Version 0.97.3:
         *   Added pattern-recording indicator to live-grid slots.
         *   Replace useless "Record" automation command with a "Loop Mode"

@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2021-09-13
+# \update      2021-11-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -157,6 +157,8 @@ libseq66_la_SOURCES = \
  ctrl/midicontrolbase.cpp \
  ctrl/midicontrol.cpp \
  ctrl/midicontrolout.cpp \
+ ctrl/midimacro.cpp \
+ ctrl/midimacros.cpp \
  ctrl/midioperation.cpp \
  ctrl/opcontainer.cpp \
  ctrl/opcontrol.cpp \

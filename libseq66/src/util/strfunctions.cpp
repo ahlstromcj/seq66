@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2021-11-04
+ * \updates       2021-11-23
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -510,6 +510,10 @@ has_digit (const std::string & s)
                 result = true;
                 break;
             }
+            else if (std::isspace(c))
+                continue;
+            else
+                break;
         }
     }
     return result;
@@ -820,7 +824,7 @@ pointer_to_string (void * ptr)
 int
 tokenize_stanzas
 (
-    std::vector<std::string> & tokens,
+    tokenization & tokens,
     const std::string & source,
     std::string::size_type bleft,
     const std::string & brackets
@@ -885,6 +889,8 @@ tokenize_stanzas
  *      -   "1.0x2.0"
  *      -   "1.0 2.0"
  *
+ *  No matter what the delimiter, spaces are trimmed from each token.
+ *
  * \param source
  *      Provides the string to be parsed into tokens.
  *
@@ -892,30 +898,42 @@ tokenize_stanzas
  *      The character separating the tokens.  Defaults to a Space character.
  *
  * \return
- *      Returns the number of tokens converted in a string vector of size:
- *      0, 1, or 2.
+ *      Returns the number of tokens converted in a string vector.
  */
 
-std::vector<std::string>
+tokenization
 tokenize
 (
     const std::string & source,
-    const std::string delimiter
+    const std::string & delimiter
 )
 {
-    std::vector<std::string> result;
+    tokenization result;
     if (source.size() >= 3)                             /* a sanity check   */
     {
         std::size_t previous = 0;
         std::size_t current = source.find(delimiter);
-        while (current != std::string::npos)
+        if (current == std::string::npos)
         {
-            result.push_back(source.substr(previous, current - previous));
-            previous = current + 1;
-            current = source.find(delimiter, previous);
+            result.push_back(source);
         }
-        if (previous > 0)
-            result.push_back(source.substr(previous, current - previous));
+        else
+        {
+            while (current != std::string::npos)
+            {
+                std::string temp = source.substr(previous, current - previous);
+                temp = trim(temp);
+                result.push_back(temp);
+                previous = current + 1;
+                current = source.find(delimiter, previous);
+            }
+            if (previous > 0)
+            {
+                std::string temp = source.substr(previous, current - previous);
+                temp = trim(temp);
+                result.push_back(temp);
+            }
+        }
     }
     return result;
 }
@@ -930,7 +948,7 @@ std::string
 simplify (const std::string & source)
 {
     std::string result;
-    std::vector<std::string> tokens = tokenize(source);
+    tokenization tokens = tokenize(source);
     if (tokens.empty())
     {
         result = source;
@@ -944,6 +962,7 @@ simplify (const std::string & source)
             bool ok = std::isalpha(t[0]);
             if (! ok)
                 ok = t.find_first_of(s_special) == std::string::npos;
+
             if (ok)
             {
                 if (first_one)
@@ -1090,7 +1109,7 @@ parse_stanza_bits
         auto p = mutestanza.find_first_of("xX");
         auto bleft = mutestanza.find_first_of("[");
         bool hexstyle = p != std::string::npos;
-        std::vector<std::string> tokens;
+        tokenization tokens;
         int tokencount = tokenize_stanzas(tokens, mutestanza, bleft);
         result = tokencount > 0;
         if (result)

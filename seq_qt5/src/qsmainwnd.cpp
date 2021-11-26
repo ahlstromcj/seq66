@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-19
+ * \updates       2021-11-24
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -74,7 +74,6 @@
 #include <QMessageBox>                  /* QMessageBox                      */
 #include <QResizeEvent>                 /* QResizeEvent                     */
 #include <QScreen>                      /* Qscreen                          */
-#include <QStandardItemModel>           /* for disabling combobox entries   */
 #include <QTimer>                       /* QTimer                           */
 #include <iomanip>                      /* std::hex, std::setw()            */
 #include <sstream>                      /* std::ostringstream               */
@@ -847,15 +846,7 @@ void
 qsmainwnd::enable_bus_item (int bus, bool enabled)
 {
     int index = bus + 1;
-    QStandardItemModel * model = qobject_cast<QStandardItemModel *>
-    (
-        ui->cmb_global_bus->model()
-    );
-    QStandardItem * item = model->item(index);
-    if (enabled)
-        item->setFlags(item->flags() | Qt::ItemIsEnabled);
-    else
-        item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+    enable_combobox_item(ui->cmb_global_bus, index, enabled);
 }
 
 void

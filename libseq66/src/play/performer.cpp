@@ -367,10 +367,10 @@ performer::performer (int ppqn, int rows, int columns) :
     m_clocks                (),                 /* vector wrapper class     */
     m_inputs                (),                 /* vector wrapper class     */
     m_key_controls          ("Key controls"),
-    m_midi_control_in       ("performer input controls"),
-    m_midi_control_out      ("performer output controls"),
+    m_midi_control_in       ("Perf ctrl in"),
+    m_midi_control_out      ("Perf ctrl out"),
     m_mute_groups           ("Mute groups", rows, columns),
-    m_operations            ("Performer Operations"),
+    m_operations            ("Performer ops"),
     m_set_master            (rows, columns),    /* 32 row x column sets     */
     m_set_mapper                                /* accessed via mapper()    */
     (
@@ -2263,6 +2263,7 @@ performer::launch (int ppqn)
             m_io_active = true;
             launch_input_thread();
             launch_output_thread();
+            midi_control_out().send_macro(midimacros::startup);
             (void) set_playing_screenset(0);
         }
         else
@@ -2616,6 +2617,7 @@ performer::finish ()
         stop_playing();                     /* see notes in banner          */
         reset_sequences();                  /* stop all output upon exit    */
         announce_exit(true);                /* blank device completely      */
+        midi_control_out().send_macro(midimacros::shutdown);
         m_io_active = m_is_running = false;
         cv().signal();                      /* signal the end of play       */
         if (m_out_thread_launched && m_out_thread.joinable())
@@ -3558,7 +3560,7 @@ performer::poll_cycle ()
                 {
                     midi_song_pos(ev);
                 }
-                else if (ev.is_sysex())             /* what about channel?  */
+                else if (ev.is_sysex())
                 {
                     midi_sysex(ev);
                 }
@@ -3759,6 +3761,10 @@ performer::midi_song_pos (const event & ev)
  *      Also available (but macroed out) is Stazed's parse_sysex() function.
  *      It seems specific to certain Yamaha devices, but might prove useful
  *      later.
+ *
+ *      Not sure what to do with this code, so we just show the data if
+ *      allowed to.  We would need to add back the non-buss version of the
+ *      various sysex() functions.
  */
 
 void
@@ -3767,8 +3773,12 @@ performer::midi_sysex (const event & ev)
     if (rc().show_midi())
         ev.print();
 
-    if (rc().pass_sysex())
-        m_master_bus->sysex(&ev);
+    /*
+     *  if (rc().pass_sysex())
+     *  {
+     *      m_master_bus->sysex(&ev);
+     *  }
+     */
 }
 
 /**

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-07-12
+ * \updates       2021-11-24
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -41,6 +41,7 @@
 #include <vector>                       /* std::vector<>                    */
 
 #include "ctrl/midicontrolbase.hpp"     /* seq66::midicontrolbase class     */
+#include "ctrl/midimacros.hpp"          /* seq66::midimacros class          */
 #include "midi/event.hpp"               /* seq66::event class               */
 #include "midi/mastermidibus.hpp"       /* seq66::mastermidibus class       */
 
@@ -272,6 +273,13 @@ private:
     uiactions m_mutes_events;
 
     /**
+     *  New feature to output MIDI messages ("macros"), useful in setting up
+     *  Launchpads etc.
+     */
+
+    midimacros m_macro_events;
+
+    /**
      *  Holds the screenset size, to use rather than calling the container.
      */
 
@@ -325,6 +333,53 @@ public:
     void send_event (uiaction what, actionindex which);
     void send_learning (bool learning);
     void send_automation (bool activate);
+
+    void clear_macros ()
+    {
+        m_macro_events.clear();
+    }
+
+    bool add_macro (const tokenization & tokens)
+    {
+        return m_macro_events.add(tokens);
+    }
+
+    int count_macros () const
+    {
+        return int(m_macro_events.count());
+    }
+
+    bool expand_macros ()
+    {
+        return m_macro_events.expand();
+    }
+
+    void send_macro (const std::string & name, bool flush = true);
+
+    std::string macro_lines () const
+    {
+        return m_macro_events.lines();
+    }
+
+    tokenization macro_names () const
+    {
+        return m_macro_events.names();
+    }
+
+    midistring macro_bytes (const std::string & name) const
+    {
+        return m_macro_events.bytes(name);
+    }
+
+    std::string macro_byte_strings () const
+    {
+        return m_macro_events.byte_strings();
+    }
+
+    bool make_macro_defaults ()
+    {
+        return m_macro_events.make_defaults();
+    }
 
 };          // class midicontrolout
 

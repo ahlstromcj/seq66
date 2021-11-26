@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2021-11-18
+ * \updates       2021-11-22
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -1177,10 +1177,10 @@ outgoing_msg
     }
 }
 
-std::vector<std::string>
+tokenization
 convert_lo_args (const std::string & pattern, int argc, lo_arg ** argv)
 {
-    std::vector<std::string> result;
+    tokenization result;
     if (argc > 0)
     {
         for (int i = 0; i < argc; ++i)

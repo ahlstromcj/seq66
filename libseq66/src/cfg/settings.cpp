@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2021-07-20
+ * \updates       2021-11-22
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -51,7 +51,7 @@ combo::combo () : m_list_items ()
     m_list_items.push_back("");
 }
 
-combo::combo (const container & slist) : m_list_items ()
+combo::combo (const tokenization & slist) : m_list_items ()
 {
     m_list_items.push_back("");
     for (const auto & s : slist)
@@ -84,10 +84,10 @@ combo::ctoi (int index) const
  *  below for internal integer versions.
  */
 
-const combo::container &
+const tokenization &
 default_ppqns ()
 {
-    static combo::container s_default_ppqn_list =
+    static tokenization s_default_ppqn_list =
     {
         "32", "48", "96", "192", "240",
         "384", "768", "960", "1920", "2400",

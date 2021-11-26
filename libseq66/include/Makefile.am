@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2021-09-13
+# \update      2021-11-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -111,6 +111,8 @@ nobase_include_HEADERS = \
  ctrl/midicontrol.hpp \
  ctrl/midicontrolbase.hpp \
  ctrl/midicontrolout.hpp \
+ ctrl/midimacro.hpp \
+ ctrl/midimacros.hpp \
  ctrl/midioperation.hpp \
  ctrl/opcontainer.hpp \
  ctrl/opcontrol.hpp \

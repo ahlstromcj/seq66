@@ -1,0 +1,31 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+##
+# \file        make-qt5-links
+# \library     bin
+# \author      Chris Ahlstrom, Fi3
+# \date        2021-11-22 to 2021-11-23
+# \version     $Revision$
+# \license     GNU GPLv2 or above
+#
+#  This script creates the links needed to adapt OpenSUSE and Fedora to
+#  use qt5 for qmake, rcc, moc, etc.  Thanks to Seq66 users sivejc and fi3.
+#
+#  One might want to add the PATH update to one's profile/bashrc.
+#
+#------------------------------------------------------------------------------
+
+mkdir -p ~/.local/bin/qt
+ln -s /bin/qmake-qt5 ~/.local/bin/qmake
+ln -s /bin/rcc-qt5 ~/.local/bin/rcc
+ln -s /bin/uic-qt5 ~/.local/bin/uic
+ln -s /bin/lrelease-qt5 ~/.local/bin/lrelease
+ln -s /bin/lupdate-qt5 ~/.local/bin/lupdate
+ln -s /bin/moc-qt5 ~/.local/bin/moc
+export PATH=$PATH:~/.local/bin/qt
+
+#******************************************************************************
+# make-qt5-links (Seq66)
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 wm=4 et ft=sh
+#------------------------------------------------------------------------------

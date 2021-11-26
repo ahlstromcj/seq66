@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-11-13
+ * \updates       2021-11-22
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -923,7 +923,7 @@ bool
 usrsettings::parse_window_scale (const std::string & source)
 {
     bool result = false;
-    std::vector<std::string> tokens = seq66::tokenize(source, "x");
+    tokenization tokens = seq66::tokenize(source, "x");
     if (tokens.size() > 0)
     {
         double value1 = std::stod(tokens[0]);

@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.97.0
+INSTALL for Seq66 v. 0.98.0
 Chris Ahlstrom
-2015-09-10 to 2021-10-10
+2015-09-10 to 2021-11-23
 
 Getting Seq66 requires building the code or going to
 "sequencer64-packages/seq66" on GitHub to get an install pack.  The bootstrap
@@ -110,15 +110,12 @@ OpenSUSE Tumbleweed:
     One might need to run the "reconf" script located in contrib/scripts/reconf.
     Otherwise ./configure drops an error.  Lastly, run ./configure and make.
 
+    Also see contrib/scripts/make-qt5-links for OpenSUSE and Fedora, which
+    encapsulates the commands shown above.
+
 Fedora:
-    $ mkdir -p ~/.local/bin/qt
-    $ ln -s /bin/qmake-qt5 ~/.local/bin/qmake
-    $ ln -s /bin/rcc-qt5 ~/.local/bin/rcc
-    $ ln -s /bin/uic-qt5 ~/.local/bin/uic
-    $ ln -s /bin/lrelease-qt5 ~/.local/bin/lrelease
-    $ ln -s /bin/lupdate-qt5 ~/.local/bin/lupdate
-    $ ln -s /bin/moc-qt5 ~/.local/bin/moc
-    $ export PATH=$PATH:~/.local/bin/qt
+
+    Same as for OpenSUSE above.
 
 Advanced Steps:
 
