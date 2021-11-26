@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-11-20
+ * \updates       2021-11-26
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -3413,7 +3413,7 @@ performer::output_func ()
             }
             else
             {
-                fprintf(stderr, "play underrun %ld us          \r", delta_us);
+                fprintf(stderr, "Play underrun %ld us          \r", delta_us);
                 (void) microsleep(1);
             }
             if (pad().js_jack_stopped)
