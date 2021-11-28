@@ -15,9 +15,19 @@ QLabel
     color : cornflowerblue;
 }
 
+QLineEdit
+{
+    color : cornflowerblue;
+}
+
 QLineEdit:disabled
 {
     color: red;
+}
+
+QTextEdit
+{
+    color : cornflowerblue;
 }
 
 QTextEdit:disabled
@@ -25,9 +35,19 @@ QTextEdit:disabled
     color: red;
 }
 
+QCheckBox
+{
+    color : cornflowerblue;
+}
+
 QCheckBox:disabled
 {
     color: red;
+}
+
+QRadioButton
+{
+    color : cornflowerblue;
 }
 
 QRadioButton:disabled
@@ -35,14 +55,29 @@ QRadioButton:disabled
     color: red;
 }
 
+QDoubleSpinBox
+{
+    color : cornflowerblue;
+}
+
 QDoubleSpinBox:disabled
 {
     color: red;
 }
 
+QSpinBox
+{
+    color : cornflowerblue;
+}
+
 QSpinBox:disabled
 {
     color: red;
+}
+
+QComboBox
+{
+    color : cornflowerblue;
 }
 
 QComboBox:disabled

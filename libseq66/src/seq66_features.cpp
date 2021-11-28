@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2021-11-20
+ * \updates       2021-11-26
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -37,9 +37,8 @@
 
 #include "seq66_features.hpp"           /* feature macros, seq66 namespace  */
 
-#if defined SEQ66_JACK_SUPPORT
-#include <jack/jack.h>                  /* jack_get_version()               */
-#include <alsa/version.h>               /* SND_LIB_VERSION_STR, tricky      */
+#if defined SEQ66_PLATFORM_UNIX
+#include <unistd.h>                     /* C::write(2)                      */
 #endif
 
 /*
@@ -239,6 +238,30 @@ seq_client_short ()
     return s_client_name_short;
 }
 
+bool
+is_a_tty (int fd)
+{
+#if defined SEQ66_PLATFORM_WINDOWS
+#define STDIN_FILENO    0
+#define STDOUT_FILENO   1
+#define STDERR_FILENO   2
+
+    int fileno;
+    switch (fd)
+    {
+        case STDIN_FILENO:  fileno = _fileno(stdin);    break;
+        case STDOUT_FILENO: fileno = _fileno(stdout);   break;
+        case STDERR_FILENO: fileno = _fileno(stderr);   break;
+        default:            fileno = (-1);              break;
+    }
+    int rc = (fileno >= 0) ? _isatty(fileno) : 90;
+    return rc == 1;                             /* fd refers to a terminal  */
+#else
+    int rc = isatty(fd);
+    return rc == 1;                             /* fd refers to a terminal  */
+#endif
+}
+
 /**
  * Text color codes ('*' indicates the color is used below):
  *
@@ -253,7 +276,7 @@ seq_client_short ()
  */
 
 std::string
-seq_client_tag (msglevel el, bool showcolor)
+seq_client_tag (msglevel el)
 {
     if (el == msglevel::none)
     {
@@ -273,6 +296,10 @@ seq_client_tag (msglevel el, bool showcolor)
         };
         std::string result = "[";
         int index = static_cast<int>(el);
+        bool iserror = el == msglevel::error || el == msglevel::warn ||
+            el == msglevel::debug;
+
+        bool showcolor = is_a_tty(iserror ? STDERR_FILENO : STDOUT_FILENO);
         if (showcolor)
             result += s_level_colors[index];
 

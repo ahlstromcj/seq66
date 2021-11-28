@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-10-19
+ * \updates       2021-11-27
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -668,10 +668,8 @@ event::set_meta_status (midibyte metatype)
  *      nothing is done.
  *
  * \return
- *      Returns false if there was an EVENT_MIDI_SYSEX_END byte in the
- *      appended data, or if an error occurred, and the caller needs to stop
- *      trying to process the data.  We're not quite sure what to do with any
- *      extra data that remains.
+ *      Returns true if there was data to add.  The End-of-SysEx byte is
+ *      included.
  */
 
 bool
@@ -683,11 +681,16 @@ event::append_sysex (const midibyte * data, int dsize)
         for (int i = 0; i < dsize; ++i)
         {
             m_sysex.push_back(data[i]);
-            if (data[i] == EVENT_MIDI_SYSEX_END)
-            {
-                result = false;
-                break;                  /* is this the right thing to do? */
-            }
+
+            /*
+             *
+             *  if (data[i] == EVENT_MIDI_SYSEX_END)
+             *  {
+             *      result = false;
+             *      break;             // is this the right thing to do? //
+             *  }
+             *
+             */
         }
     }
     else

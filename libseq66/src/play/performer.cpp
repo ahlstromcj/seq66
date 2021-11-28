@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-11-26
+ * \updates       2021-11-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -660,8 +660,20 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
         ipm.active(false);
         opm.active(false);
     }
-    if (rcs.key_controls().count() > 0)             /* could be 0-sized     */
+
+    int kcount = rcs.key_controls().count();
+    int micount = rcs.midi_control_in().count();
+    int moacount = rcs.midi_control_out().action_count();
+    int momcount = rcs.midi_control_out().macro_count();
+    if (kcount > 0)
         m_key_controls = rcs.key_controls();
+
+    msgprintf
+    (
+        msglevel::status,
+        "Controls: %d keys; %d MIDI in; %d automation displays; %d macros",
+        kcount, micount, moacount, momcount
+    );
 
     /*
      * We need to copy the MIDI input controls whether the user has enabled
@@ -681,11 +693,9 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
     else
         m_midi_control_in.is_enabled(false);
 
-    if (rcs.midi_control_in().count() == 0)
-    {
-        if (rcs.key_controls().count() > 0)
-            m_midi_control_in.add_blank_controls(m_key_controls);
-    }
+    if (micount == 0 && kcount > 0)
+        m_midi_control_in.add_blank_controls(m_key_controls);
+
     namedbus = rcs.midi_control_out().nominal_buss();
     truebus = true_output_bus(namedbus);
     m_midi_control_out = rcs.midi_control_out();
@@ -3415,6 +3425,7 @@ performer::output_func ()
             }
             else
             {
+                print_client_tag(msglevel::warn);
                 fprintf(stderr, "Play underrun %ld us          \r", delta_us);
                 (void) microsleep(1);
             }

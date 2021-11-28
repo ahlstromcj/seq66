@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-11-24
+ * \updates       2021-11-27
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -193,8 +193,7 @@ private:
 
     /**
      *  Provides a type for a vector of action pairs, which can be essentially
-     *  unlimited in size.  However, currently, the number needed is
-     *  action::max, or 15.
+     *  unlimited in size.
      */
 
     using actionlist = std::vector<actions>;
@@ -334,6 +333,11 @@ public:
     void send_learning (bool learning);
     void send_automation (bool activate);
 
+    int action_count () const
+    {
+        return int(m_ui_events.size());
+    }
+
     void clear_macros ()
     {
         m_macro_events.clear();
@@ -344,9 +348,9 @@ public:
         return m_macro_events.add(tokens);
     }
 
-    int count_macros () const
+    int macro_count () const
     {
-        return int(m_macro_events.count());
+        return m_macro_events.count();
     }
 
     bool expand_macros ()

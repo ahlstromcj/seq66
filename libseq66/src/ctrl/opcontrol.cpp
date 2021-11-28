@@ -154,10 +154,14 @@ opcontrol::action_name (action a)
  *  return the base name of an operation slot.
  *
  *  Compare this list to the similar list in libseq66/src/ctrl/automation.cpp.
- *  They differ in letter case and (slightly) in numbering.
+ *  and its header file.  *  They differ in letter case and (slightly)
+ *  in numbering.
  *
  *  This list is meant mainly for decorating the configuration file and for
  *  human-readable reporting.
+ *
+ *  Note the asterisks; they indicate the slots having MIDI output display
+ *  in the midicontrolout::uiaction enumeration.
  */
 
 std::string
@@ -165,18 +169,18 @@ opcontrol::slot_name (slot s)
 {
     static tokenization s_slot_names =
     {
-        "BPM Up",               //  0 bpm_up
-        "BPM Dn",               //  1 bpm_dn
-        "Set Up",               //  2 ss_up
-        "Set Dn",               //  3 ss_dn
-        "Replace",              //  4 mod_replace
-        "Snapshot",             //  5 mod_snapshot
-        "Queue",                //  6 mod_queue
+        "BPM Up",               //  0 bpm_up *
+        "BPM Dn",               //  1 bpm_dn *
+        "Set Up",               //  2 ss_up *
+        "Set Dn",               //  3 ss_dn *
+        "Replace",              //  4 mod_replace *
+        "Snapshot",             //  5 mod_snapshot *
+        "Queue",                //  6 mod_queue *
         "Group Mute",           //  7 mod_gmute
-        "Group Learn",          //  8 mod_glearn
+        "Group Learn",          //  8 mod_glearn *
         "Playing Set",          //  9 play_ss
-        "Playback",             // 10 playback (pause)
-        "Song Record",          // 11 song_record
+        "Playback",             // 10 playback (pause) * * *
+        "Song Record",          // 11 song_record *
         "Solo",                 // 12 solo
         "Thru",                 // 13 thru
         "BPM Page Up",          // 14 bpm_page_up
@@ -185,33 +189,33 @@ opcontrol::slot_name (slot s)
         "Loop Mode",            // 17 loop_mode
         "Quan Record",          // 18 quan_record
         "Reset Seq",            // 19 reset_seq
-        "One-shot",             // 20 mod_oneshot
+        "One-shot",             // 20 mod_oneshot *
         "FF",                   // 21 FF
         "Rewind",               // 22 rewind
         "Top",                  // 23 top (song beginning or L marker)
-        "Play List",            // 24 playlist
-        "Play Song",            // 25 playlist_song
-        "Tap BPM",              // 26 tap_bpm
+        "Play List",            // 24 playlist * *
+        "Play Song",            // 25 playlist_song * *
+        "Tap BPM",              // 26 tap_bpm *
         "Start",                // 27 start
-        "Stop",                 // 28 stop
+        "Stop",                 // 28 stop ?
         "Reserved 29",          // 29 reserved_29
-        "Toggle Mute",          // 30 toggle_mutes
+        "Toggle Mute",          // 30 toggle_mutes *
         "Song Pos",             // 31 song_pointer
         "Keep Queue",           // 32 keep_queue
-        "Slot Shift",           // 33 slot_shift
+        "Slot Shift",           // 33 slot_shift *
         "Mutes Clear",          // 34 reserved_34
-        "Quit",                 // 35 quit
+        "Quit",                 // 35 quit *
         "Loop Edit",            // 36 pattern_edit
         "Event Edit",           // 37 event_edit
-        "Song Mode",            // 38 song_mode
+        "Song Mode",            // 38 song_mode *
         "Toggle JACK",          // 39 toggle_jack
         "Menu Mode",            // 40 menu_mode
         "Follow JACK",          // 41 follow_transport
-        "Panic",                // 42 panic
-        "Visibility",           // 43 visibility
+        "Panic",                // 42 panic *
+        "Visibility",           // 43 visibility *
         "Save Session",         // 44 save_session
         "Reserved 45",          // 45 reserved_45
-        "Reserved 47",          // 46 reserved_46
+        "Reserved 46",          // 46 reserved_46
         "Reserved 47",          // 47 reserved_47
         "Reserved 48",          // 48 reserved_48
         "Maximum",              // -- used only for limit-checking

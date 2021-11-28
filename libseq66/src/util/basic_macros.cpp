@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-11-17
+ * \updates       2021-11-27
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of
@@ -40,7 +40,7 @@
 #include "util/basic_macros.hpp"        /* basic macros-cum-functions       */
 
 #if defined SEQ66_PLATFORM_UNIX
-#include <unistd.h>                     /* C::write(2), C::isatty(3)        */
+#include <unistd.h>                     /* C::write(2)                      */
 #endif
 
 #if defined SEQ66_PLATFORM_WINDOWS
@@ -103,30 +103,6 @@ not_nullptr_assert (void * ptr, const std::string & context)
 
 #endif  // SEQ66_PLATFORM_DEBUG
 
-static bool
-is_a_tty (int fd)
-{
-#if defined SEQ66_PLATFORM_WINDOWS
-#define STDIN_FILENO    0
-#define STDOUT_FILENO   1
-#define STDERR_FILENO   2
-
-    int fileno;
-    switch (fd)
-    {
-        case STDIN_FILENO:  fileno = _fileno(stdin);    break;
-        case STDOUT_FILENO: fileno = _fileno(stdout);   break;
-        case STDERR_FILENO: fileno = _fileno(stderr);   break;
-        default:            fileno = (-1);              break;
-    }
-    int rc = (fileno >= 0) ? _isatty(fileno) : 90;
-    return rc == 1;                             /* fd refers to a terminal  */
-#else
-    int rc = isatty(fd);
-    return rc == 1;                             /* fd refers to a terminal  */
-#endif
-}
-
 /**
  *  Common-code for console informationational messages.  Adds markers and a
  *  newline.
@@ -144,10 +120,7 @@ info_message (const std::string & msg)
 {
     if (rc().verbose())
     {
-        bool isterminal = is_a_tty(STDOUT_FILENO);
-        std::cout << seq_client_tag(msglevel::info, isterminal)
-            << " " << msg;
-
+        std::cout << seq_client_tag(msglevel::info) << " " << msg;
         if (! msg.empty())
             std::cout << std::endl;
     }
@@ -157,20 +130,14 @@ info_message (const std::string & msg)
 bool
 status_message (const std::string & msg)
 {
-    bool isterminal = is_a_tty(STDOUT_FILENO);
-    std::cout << seq_client_tag(msglevel::status, isterminal)
-        << " " << msg << std::endl;
-
+    std::cout << seq_client_tag(msglevel::status) << " " << msg << std::endl;
     return true;
 }
 
 bool
 special_message (const std::string & msg)
 {
-    bool isterminal = is_a_tty(STDOUT_FILENO);
-    std::cout << seq_client_tag(msglevel::special, isterminal)
-        << " " << msg << std::endl;
-
+    std::cout << seq_client_tag(msglevel::special) << " " << msg << std::endl;
     return true;
 }
 
@@ -188,10 +155,7 @@ special_message (const std::string & msg)
 bool
 warn_message (const std::string & msg)
 {
-    bool isterminal = is_a_tty(STDERR_FILENO);
-    std::cerr << seq_client_tag(msglevel::warn, isterminal)
-        << " " << msg << std::endl;
-
+    std::cerr << seq_client_tag(msglevel::warn) << " " << msg << std::endl;
     return true;
 }
 
@@ -209,8 +173,7 @@ warn_message (const std::string & msg)
 bool
 error_message (const std::string & msg, const std::string & data)
 {
-    bool isterminal = is_a_tty(STDERR_FILENO);
-    std::cerr << seq_client_tag(msglevel::error, isterminal) << " " << msg;
+    std::cerr << seq_client_tag(msglevel::error) << " " << msg;
     if (! data.empty())
         std::cerr << ": " << data;
 
@@ -223,8 +186,7 @@ debug_message (const std::string & msg, const std::string & data)
 {
     if (rc().investigate())
     {
-        bool isterminal = is_a_tty(STDERR_FILENO);
-        std::cerr << seq_client_tag(msglevel::debug, isterminal) << " " << msg;
+        std::cerr << seq_client_tag(msglevel::debug) << " " << msg;
         if (! data.empty())
             std::cerr << ": " << data;
 
@@ -251,8 +213,7 @@ debug_message (const std::string & msg, const std::string & data)
 bool
 file_error (const std::string & tag, const std::string & path)
 {
-    bool isterminal = is_a_tty(STDERR_FILENO);
-    std::cerr << seq_client_tag(msglevel::error, isterminal) << " "
+    std::cerr << seq_client_tag(msglevel::error) << " "
         << tag << ": '" << path << "'" << std::endl;
 
     return false;
@@ -273,9 +234,27 @@ file_error (const std::string & tag, const std::string & path)
 void
 file_message (const std::string & tag, const std::string & path)
 {
-    bool isterminal = is_a_tty(STDOUT_FILENO);
-    std::cout << seq_client_tag(msglevel::status, isterminal) << " "
+    std::cout << seq_client_tag(msglevel::status) << " "
         << tag << ": '" << path << "'" << std::endl;
+}
+
+/**
+ *  This function just prints a colored tag to the proper output based on
+ *  message level.
+ */
+
+void
+print_client_tag (msglevel el)
+{
+    std::string tag = seq_client_tag(el);
+    bool iserror = el == msglevel::error || el == msglevel::warn ||
+        el == msglevel::debug;
+
+    tag += " ";
+    if (iserror)
+        std::cerr << tag;
+    else
+        std::cout << tag;
 }
 
 /**
@@ -402,7 +381,7 @@ async_safe_strprint (const char * msg, size_t count)
 void
 msgprintf (msglevel lev, std::string fmt, ...)
 {
-    if (rc().verbose() && ! fmt.empty())
+    if (! fmt.empty())
     {
         /*
          * cppcheck: Using reference 'fmt' as parameter for va_start() results
@@ -414,30 +393,30 @@ msgprintf (msglevel lev, std::string fmt, ...)
         va_start(args, fmt);
 
         std::string output = formatted(fmt, args);          /* Steps 2 & 3  */
-        bool errtty = is_a_tty(STDERR_FILENO);
-        bool outtty = is_a_tty(STDOUT_FILENO);
         switch (lev)
         {
         case msglevel::none:
 
-            std::cout << seq_client_tag(lev, outtty) << " "
-                << output << std::endl;
+            std::cout << seq_client_tag(lev) << " " << output << std::endl;
             break;
 
         case msglevel::info:
+
+            if (rc().verbose())
+                std::cout << seq_client_tag(lev) << " " << output << std::endl;
+            break;
+
         case msglevel::status:
         case msglevel::special:
 
-            std::cout << seq_client_tag(lev, outtty) << " "
-                << output << std::endl;
+            std::cout << seq_client_tag(lev) << " " << output << std::endl;
             break;
 
         case msglevel::warn:
         case msglevel::error:
         case msglevel::debug:
 
-            std::cerr << seq_client_tag(lev, errtty) << " "
-                << output << std::endl;
+            std::cerr << seq_client_tag(lev) << " " << output << std::endl;
             break;
         }
         va_end(args);                                       /* 2019-04-21   */

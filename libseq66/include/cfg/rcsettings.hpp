@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-11-14
+ * \updates       2021-11-27
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -240,6 +240,16 @@ private:
      */
 
     bool m_load_midi_controls;
+
+    /**
+     *  New.  If true, leave empty (inactive) MIDI control entries out of the
+     *  "[midi-control-settings]" containter.  This has the side effect of
+     *  causing empty entries to not be written to the 'ctrl' file,
+     *  potentially confusing. However, it can reduce the size of the control
+     *  container dramatically, saving look-up time and memory.
+     */
+
+    bool m_drop_empty_in_controls;
 
     /**
      *  Provides a way to pick which input buss will be used as the MIDI
@@ -608,6 +618,11 @@ public:
     bool load_midi_control_in () const
     {
         return m_load_midi_controls;
+    }
+
+    bool drop_empty_in_controls () const
+    {
+        return m_drop_empty_in_controls;
     }
 
     bussbyte midi_control_buss () const
@@ -1116,6 +1131,11 @@ public:
     void load_midi_control_in (bool flag)
     {
         m_load_midi_controls = flag;
+    }
+
+    void drop_empty_in_controls (bool flag)
+    {
+        m_drop_empty_in_controls = flag;
     }
 
     void midi_control_buss (bussbyte b)

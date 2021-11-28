@@ -1,0 +1,164 @@
+# This file provides samples, explanations, and ideas for the Akai APC40 Mk2.
+#
+# Copy the [macro-control-out] section and paste it into your
+# qseq66.ctrl or other 'ctrl' file.
+
+
+[macro-control-out]
+
+footer = 0xF7
+header = 0xf0 0x47 0x7F 0x29 0x60 0x00 0x04 0x00 0xVH 0xVM 0xVF $footer
+# command = $header $command-byte
+# get-current-layout = $header 0x00 $footer
+# live-mode = $header 0x0e 0x00 $footer
+# programmer-mode = $header 0x0e 0x01 $footer
+
+# drum-layout = $header 0x02
+# reset = $header 0x00
+# shutdown = $header 0x00
+# startup = $x-y-layout
+# x-y-layout = $header 0x01
+
+# Some ideas follow:
+
+[macro-control-out-ex]
+
+# Akai-Specific Header from PC to Controller:
+#
+# Format of Outbound Message Type 0 (Introduction Message):
+#
+#   0xF0            MIDI SysEx start
+#   0x47            Manufacturers ID
+#   0x7F            System Exclusive Device ID
+#   0x29            Product model ID
+#   0x60            Message type identifier
+#   0x00            Number of data bytes (most significant)
+#   0x04            Number of data bytes (least significant)
+#   0x4M            Application/configuration ID (M = 0, 1, or 2)
+#   0xVH            PC Application software version major
+#   0xVM            PC Application software version minor
+#   0xVF            PC Application software bug-fix level
+#   0xF7            MIDI SysEx terminator
+#
+# Message type identifiers:
+#
+#   0x60            Introduction message
+#   0x61            Introduction message response
+#
+# Modes:
+#
+#   0   0x40        Generic mode
+#   1   0x41        Ableton Live mode
+#   2   0x42        Alternate Ableton Live mode
+#
+# APC40 Mk2 Response from Introduction Message:
+#
+#   0xF0            MIDI SysEx start
+#   0x47            Manufacturers ID
+#   0x7F            System Exclusive Device ID
+#   0x29            Product model ID
+#   0x61            Message type identifier
+#   0x00            Number of data bytes (most significant)
+#   0x04            Number of data bytes (least significant) [0x09 ???]
+#   0xS1 to 0xS9    Current values of Knobs #1 to #9
+#   0xF7            MIDI SysEx terminator
+#
+# Format of Outbound Message Type 1 (LEDs):
+#
+#  Note On:         0x9T LED# state   (T is used for the track strips)
+#  Note Off:        0x8T LED# ignored (turns the LED off)
+#
+#  The state is for color, OFF, ON, blinking, etc.  See the manual for the
+#  mapping of note numbers to LEDs and for color mappings.
+#
+#  Velocity 0 = Off, 1 to 127 = On.
+#
+# Format of Outbound Message Type 2 (Controller Value Update):
+# 
+# Controller:       0xBT CC# value  (T is used for the track strips)
+#
+#   See the manual for the mapping of CC numbers to control knobs, sliders,
+#   rings, footswitch..., and values for LED states
+#
+# Inbound Messages (from APC240 to computer):
+#
+#   Type Note 1 (Note-On and Note-Off):
+#
+#       These messages work with two-state controls (buttons), with a Note-On
+#       when depressed, and Note-Off when release.  The channel value is used
+#       for the track strips.  The ID (note) number determines the control
+#       surface object, and the control value is either non-zero (Note On) or
+#       ignored (Note Off).  See the manual for the ID-to-controller mappings.
+#
+#  Note On:         0x9T ID# 0x7F
+#  Note Off:        0x8T LED# ignored (turns the LED off)
+#
+#   Type CC 1 (Absolute Controller Messages):
+#
+#       Controller: 0xBT ID# value
+#
+#       See the manual for the ID-to-fader/knob mappings.
+#
+#   Type CC 2 (Relative Controller Messages):
+#   
+#       Reports changes in value.
+#   
+# Device Inquiry Format:
+#
+#   0xF0            MIDI SysEx start
+#   0x7E            Non-Realtime message
+#   0xNN            MiDI channel 0x00-0x0F or 0x7F for Omni inquiry
+#   0x06            Inquiry message
+#   0x01            Inquiry request
+#   0xF7            MIDI SysEx terminator
+#
+# APC40 Mk2 Response:
+#
+#   0xF0            MIDI SysEx start
+#   0x7E            Non-Realtime message
+#   0xNN            Common MiDI channel setting 0x00-0x0F
+#   0x06            Inquiry message
+#   0x02            Inquiry response
+#   0x47            Manufacturer ID
+#   0x29            Product model ID
+#   0x00            Number of data bytes (most significant)
+#   0x19            Number of data bytes (least significant)
+#   0xV1            Software version major (most significant)
+#   0xV2            Software version major (least significant)
+#   0xV3            Software version minor (most significant)
+#   0xV4            Software version minor (least significant)
+#   0xID            SysEx device ID
+#   0xS1 to 0xS4    Serial, reserved, all set to 0x00
+#   0xDD            15 manufacturing data bytes
+#   0x00            The last manufacturing data bytes
+#   0xF7            MIDI SysEx terminator
+#
+# Note On/Off:
+#
+#   0x9n 0xnn 0xvv  n = channel, nn = note number, vv = velocity or 0x7F
+#   0x8n 0xnn 0xvv  n = channel, nn = note number, vv = velocity or 0x7F
+#
+# Messages:
+#
+#   The APC40 Mk2 sends MIDI controller-change (CC) messages from its buttons
+#   and knobs, and receives CC message to turn LEDs On/Off.
+#
+#   0xBn 0xnn 0xvv  n = channel, nn = CC number, vv = velocity or 0x7F
+#
+
+# device-inquiry = 0xf0 0x7e 0x7f 0x06 0x01 0xf7
+# device-inquiry-response-1 = 0xf0 0x7e 0x00 0x06 0x02 0x00 0x20 0x29 0x13 0x01 0x00 0x00 $app-version 0xf7
+# device-inquiry-response-1 = 0xf0 0x7e 0x00 0x06 0x02 0x00 0x20 0x29 0x13 0x11 0x00 0x00 $boot-version 0xf7
+# mode = $header 0x0e $mode:0x00-0x01 0xf7
+
+# grid-mapping = $header $mode:0x1-0x2
+# double-buffering = $header $bits:0x20-0x3d
+# all-leds = $header $brightness:0x7d-0x7f
+# duty-cycle = 0xb0 $mode:0x1e-0x1f $data
+# rapid-led-update = 0x92 $vel1 $vel2
+
+[midi-device-inquiry]
+
+
+# vim: sw=4 ts=4 wm=4 et ft=dosini
+

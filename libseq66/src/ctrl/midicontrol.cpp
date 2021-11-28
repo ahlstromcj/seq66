@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2019-02-24
+ * \updates       2021-11-27
  * \license       GNU GPLv2 or above
  *
  *  The idea behind the MIDI control automation setup is that an incoming
@@ -139,9 +139,13 @@ midicontrol::midicontrol
  *      Provides the 6 values, in an integer array, to set into the
  *      members in this order: m_control_code, m_action, m_active,
  *      m_inverse_active, m_status, m_d0, m_min_d1, and m_max_d1.
+ *
+ * \return
+ *      Returns true if the control is active.  That is, it has a non-zero
+ *      status.  This is a convenience return value.
  */
 
-void
+bool
 midicontrol::set (int values [automation::SUBCOUNT])
 {
     m_inverse_active = bool(values[automation::index::inverse]);
@@ -150,6 +154,7 @@ midicontrol::set (int values [automation::SUBCOUNT])
     m_min_d1 = values[automation::index::data_2_min];
     m_max_d1 = values[automation::index::data_2_max];
     m_active = m_status > 0x00;
+    return m_active;
 }
 
 /**

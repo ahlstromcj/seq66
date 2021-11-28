@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2021-11-22
+ * \updates       2021-11-26
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -132,8 +132,9 @@ extern bool debug_message
     const std::string & msg, const std::string & data = ""
 );
 extern bool special_message (const std::string & msg);
-extern bool file_error (const std::string & tag, const std::string & filename);
 extern void file_message (const std::string & tag, const std::string & path);
+extern bool file_error (const std::string & tag, const std::string & filename);
+extern void print_client_tag (msglevel el);
 extern void boolprint (const std::string & tag, bool flag);
 extern void toggleprint (const std::string & tag, bool flag);
 extern void async_safe_strprint (const char * msg, size_t count);

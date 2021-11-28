@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-11-23
+ * \updates       2021-11-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -246,6 +246,8 @@ midicontrolfile::parse_stream (std::ifstream & file)
     rc_ref().load_key_controls(flag);
     flag = get_boolean(file, mctag, "load-midi-controls");
     rc_ref().load_midi_control_in(flag);
+    flag = get_boolean(file, mctag, "drop-empty-controls");
+    rc_ref().drop_empty_in_controls(flag);
 
     bool loadmidi = rc_ref().load_midi_control_in();
     bool loadkeys = rc_ref().load_key_controls();
@@ -273,6 +275,10 @@ midicontrolfile::parse_stream (std::ifstream & file)
     {
         bool good = line_after(file, "[loop-control]");
         int count = 0;
+        bool keep_empties = ! rc_ref().drop_empty_in_controls();
+        if (keep_empties)
+            status_message("Keeping empty MIDI-In controls");
+
         while (good)                            /* not at end of section?   */
         {
             if (! line().empty())               /* any value in section?    */
@@ -422,21 +428,6 @@ midicontrolfile::parse ()
     return result;
 }
 
-/**
- *  These format statements assume the active and inverse flags are a single
- *  digit (0 or 1), and that the rest of the values can optionally be preceded
- *  by "0x" (which is a better format for displaying event statuses).
- *
- *  The "%10s" specifier scans for up to 10 non-whitespace characters.  The
- *  double-quotes are stripped off after reading the key's name.
- *
- *  These format string are used in parse_control_stanza(),
- *  parse_midi_control_out(), and read_triples().
- */
-
-static const char * const sg_scanf_fmt_ctrl_in =
-"%d %10s [ %d %d %i %i %i %i ] [ %d %d %i %i %i %i ] [ %d %d %i %i %i %i ]";
-
 /*
  *  Removes the "enabled" flag from each control-input stanza: loops,
  *  mute-groups, and automation.  The "inverse" flag remains.
@@ -449,13 +440,6 @@ static const char * const sg_scanf_fmt_ctrl_in_2 =
 "%d %s [ %d %i %i %i %i ] [ %d %i %i %i %i ] [ %d %i %i %i %i ]";
 
 /*
- * For version 1 only.
- */
-
-static const char * const sg_scanf_fmt_ctrl_out =
-"%d [ %d %i %i %i %i ] [ %d %i %i %i %i ] [ %d %i %i %i %i ] [ %d %i %i %i %i ]";
-
-/*
  *  Removes the "enabled" flag, replaced by testing for status not equal to
  *  0x00.  Also removes the channel value, which becomes part of the status
  *  value.  Used for [midi-control-out].
@@ -465,33 +449,12 @@ static const char * const sg_scanf_fmt_ctrl_out_2 =
     "%d [ %i %i %i ] [ %i %i %i ] [ %i %i %i ] [ %i %i %i ]";
 
 /*
- * For version 1 only.
- */
-
-static const char * const sg_scanf_fmt_ctrl_pair =
-    "%d [ %i %i %i %i ] [ %i %i %i %i ]";
-
-/*
- *  Removes the channel value.  Used for [automation-control-out].
- */
-
-static const char * const sg_scanf_fmt_ctrl_pair_2 =
-    "%d [ %i %i %i ] [ %i %i %i ]";
-
-/*
  *  Adds a third stanze, "del" (unconfigured) value.  Used for
  *  [automation-control-out].
  */
 
 static const char * const sg_scanf_fmt_triples =
     "%d [ %i %i %i ] [ %i %i %i ] [ %i %i %i ]";
-
-/*
- * For version 1 only.
- */
-
-static const char * const sg_scanf_fmt_mutes_triple_1 =
-    "%d [ %i %i %i %i ] [ %i %i %i %i ] [ %i %i %i %i ]";
 
 /*
  *  Removes the channel value.  It goes into the status value instead.
@@ -620,28 +583,30 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                 read_triples(file, mco, midicontrolout::uiaction::song_record);
                 read_triples(file, mco, midicontrolout::uiaction::slot_shift);
                 read_triples(file, mco, midicontrolout::uiaction::free);
-            }
-            if (ok)
-            {
-                ok = read_triples(file, mco, midicontrolout::uiaction::queue);
-                if (ok)
-                {
-                    read_triples(file, mco, midicontrolout::uiaction::oneshot);
-                    read_triples(file, mco, midicontrolout::uiaction::replace);
-                    read_triples(file, mco, midicontrolout::uiaction::snap);
-                    read_triples(file, mco, midicontrolout::uiaction::song);
-                    read_triples(file, mco, midicontrolout::uiaction::learn);
-                    read_triples(file, mco, midicontrolout::uiaction::bpm_up);
-                    read_triples(file, mco, midicontrolout::uiaction::bpm_dn);
-                    read_triples(file, mco, midicontrolout::uiaction::list_up);
-                    read_triples(file, mco, midicontrolout::uiaction::list_dn);
-                    read_triples(file, mco, midicontrolout::uiaction::song_up);
-                    read_triples(file, mco, midicontrolout::uiaction::song_dn);
-                    read_triples(file, mco, midicontrolout::uiaction::set_up);
-                    read_triples(file, mco, midicontrolout::uiaction::set_dn);
-                    read_triples(file, mco, midicontrolout::uiaction::tap_bpm);
-                    read_triples(file, mco, midicontrolout::uiaction::quit);
-                }
+                read_triples(file, mco, midicontrolout::uiaction::queue);
+                read_triples(file, mco, midicontrolout::uiaction::oneshot);
+                read_triples(file, mco, midicontrolout::uiaction::replace);
+                read_triples(file, mco, midicontrolout::uiaction::snap);
+                read_triples(file, mco, midicontrolout::uiaction::song);
+                read_triples(file, mco, midicontrolout::uiaction::learn);
+                read_triples(file, mco, midicontrolout::uiaction::bpm_up);
+                read_triples(file, mco, midicontrolout::uiaction::bpm_dn);
+                read_triples(file, mco, midicontrolout::uiaction::list_up);
+                read_triples(file, mco, midicontrolout::uiaction::list_dn);
+                read_triples(file, mco, midicontrolout::uiaction::song_up);
+                read_triples(file, mco, midicontrolout::uiaction::song_dn);
+                read_triples(file, mco, midicontrolout::uiaction::set_up);
+                read_triples(file, mco, midicontrolout::uiaction::set_dn);
+                read_triples(file, mco, midicontrolout::uiaction::tap_bpm);
+                read_triples(file, mco, midicontrolout::uiaction::quit);
+                read_triples(file, mco, midicontrolout::uiaction::visibility);
+                read_triples(file, mco, midicontrolout::uiaction::alt_2);
+                read_triples(file, mco, midicontrolout::uiaction::alt_3);
+                read_triples(file, mco, midicontrolout::uiaction::alt_4);
+                read_triples(file, mco, midicontrolout::uiaction::alt_5);
+                read_triples(file, mco, midicontrolout::uiaction::alt_6);
+                read_triples(file, mco, midicontrolout::uiaction::alt_7);
+                read_triples(file, mco, midicontrolout::uiaction::alt_8);
             }
             if (ok)
             {
@@ -677,17 +642,6 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         else
             result = version_error_message("ctrl", file_version_number());
 
-        if (file_version_number() >= s_ctrl_file_version)
-        {
-            read_triples(file, mco, midicontrolout::uiaction::visibility);
-            read_triples(file, mco, midicontrolout::uiaction::alt_2);
-            read_triples(file, mco, midicontrolout::uiaction::alt_3);
-            read_triples(file, mco, midicontrolout::uiaction::alt_4);
-            read_triples(file, mco, midicontrolout::uiaction::alt_5);
-            read_triples(file, mco, midicontrolout::uiaction::alt_6);
-            read_triples(file, mco, midicontrolout::uiaction::alt_7);
-            read_triples(file, mco, midicontrolout::uiaction::alt_8);
-        }
         if (result)
             result = ok && ! is_error();
     }
@@ -719,8 +673,7 @@ midicontrolfile::read_triples
     int enabled, ev_on[4], ev_off[4], ev_del[4];
     if (file_version_number() < 2)
     {
-        (void) version_error_message("ctrl", file_version_number());
-        return false;
+        return version_error_message("ctrl", file_version_number());
     }
     else
     {
@@ -750,28 +703,9 @@ midicontrolfile::read_mutes_triple
     int group
 )
 {
-    if (version_number() < 2)
+    if (file_version_number() < 2)
     {
-        /*
-         * Index 0 is the channel, which has been removed.  We pass in only
-         * the last three values.
-         */
-
-        int number, ev_on[4], ev_off[4], ev_del[4];
-        int count = std::sscanf
-        (
-            scanline(), sg_scanf_fmt_mutes_triple_1, &number,
-            &ev_on[0],  &ev_on[1],  &ev_on[2],  &ev_on[3],
-            &ev_off[0], &ev_off[1], &ev_off[2], &ev_off[3],
-            &ev_del[0], &ev_del[1], &ev_del[2], &ev_del[3]
-        );
-        if (count < 9)
-            ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
-
-        if (count < 13)
-            ev_del[0] = ev_del[1] = ev_del[2] = ev_del[3] = 0;
-
-        mco.set_mutes_event(group, &ev_on[1], &ev_off[1], &ev_del[1]);
+        return version_error_message("ctrl", file_version_number());
     }
     else
     {
@@ -793,10 +727,10 @@ midicontrolfile::write_stream (std::ofstream & file)
 {
     write_date(file, "MIDI control");
     file <<
-    "# Sets up MIDI I/O control for Seq66. The format is like the 'rc' file,\n"
-    "# in the HOME configuration directory. To use it, set it active in the\n"
-    "# 'rc' [midi-control-file] section. It adds [mute-control-out],\n"
-    "# [automation-control-out], a simpler format, and new settings.\n"
+    "# Sets up MIDI I/O control. The format is like the 'rc' file, in the\n"
+    "# HOME configuration directory. To use it, set it active in the 'rc'\n"
+    "# [midi-control-file] section. It adds mute and automation button,\n"
+    "# display, a simpler format, and new settings.\n"
     ;
     write_seq66_header(file, "ctrl", version());
 
@@ -892,6 +826,10 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         ;
         write_boolean(file, "load-key-controls", rc_ref().load_key_controls());
         write_boolean(file, "load-midi-controls",rc_ref().load_midi_control_in());
+        write_boolean
+        (
+            file, "drop-empty-controls", rc_ref().drop_empty_in_controls()
+        );
         if (bb >= c_busscount_max)
             write_string(file, "control-buss", "0xFF");
         else
@@ -945,7 +883,6 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         "#\n"
         "#  ---------------------- Loop/group/automation-slot number\n"
         "# |    ------------------ Name of key (see the key map)\n"
-        "# |   |\n"
         "# |   |      ------------ Inverse\n"
         "# |   |     |  ---------- MIDI status/event byte (eg. Note On)\n"
         "# |   |     | |  -------- d0: Data 1 (eg. Note number)\n"
@@ -1231,13 +1168,21 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         file << "\n[macro-control-out]\n\n"
             "# This format is 'macroname = [ hex bytes | macro-references]'.\n"
             "# Macro references are macro-names preceded by a '$'. If a macro\n"
-            "# starts with 0, it is disabled. See the user manual.\n\n"
+            "# starts with 0, it is disabled. See the user manual. Some values\n"
+            "# should always be define: footer, header, reset, startup, and\n"
+            "# shutdown.\n\n"
             ;
 
         std::string lines = mco.macro_lines();
         if (lines.empty())
         {
-            file << "startup =\nshutdown =\n";
+            file <<
+                "footer =\n"
+                "header =\n"
+                "reset =\n"
+                "startup =\n"
+                "shutdown =\n"
+                ;
         }
         else
             file << lines << std::endl;
@@ -1259,6 +1204,7 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
     automation::slot opslot = automation::slot::none;
     std::string keyname;
     int count = 0;
+    bool keep_empties = ! rc_ref().drop_empty_in_controls();
 
     /*
      * Was deprecated, now no longer supported.
@@ -1298,22 +1244,22 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
             (
                 keyname, opcat, automation::action::toggle, opslot, index
             );
-            mca.set(a);
-            (void) m_temp_midi_ctrl_in.add(mca);
+            if (mca.set(a) || keep_empties)
+                (void) m_temp_midi_ctrl_in.add(mca);
 
             midicontrol mcb
             (
                 keyname, opcat, automation::action::on, opslot, index
             );
-            mcb.set(b);
-            (void) m_temp_midi_ctrl_in.add(mcb);
+            if (mcb.set(b) || keep_empties)
+                (void) m_temp_midi_ctrl_in.add(mcb);
 
             midicontrol mcc
             (
                 keyname, opcat, automation::action::off, opslot, index
             );
-            mcc.set(c);
-            (void) m_temp_midi_ctrl_in.add(mcc);
+            if (mcc.set(c) || keep_empties)
+                (void) m_temp_midi_ctrl_in.add(mcc);
         }
         else
             result = false;
@@ -1387,7 +1333,7 @@ midicontrolfile::container_to_stanzas (const midicontrolin & mc)
             }
             else
             {
-                stanza s(mco);                /* includes settings sect.  */
+                stanza s(mco);                  /* includes settings sect.  */
                 auto sz = m_stanzas.size();
                 auto p = std::make_pair(k, s);
                 (void) m_stanzas.insert(p);
