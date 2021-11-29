@@ -1728,9 +1728,9 @@ supported by this control.</string>
        </property>
        <property name="toolTip">
         <string>Select recording type for loop patterns: 
-Merge events (legacy)'
-Overwrite events;
-Expand the pattern length while recording;
+Merge events (legacy).
+Overwrite events.
+Expand pattern length while recording.
 Oneshot recording of a pattern.</string>
        </property>
        <property name="currentText">

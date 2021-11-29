@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2021-11-22
+ * \updates       2021-11-29
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -522,43 +522,47 @@ nsmclient::label (const std::string & label)
  *  functionality.  The message from the server is:
  *
  *      /nsm/client/show_optional_gui
- *
- * Warning:  Currently agordejo's non-session-manager sends only this one!
  */
 
 void
 nsmclient::show (const std::string & path)
 {
-#if defined USE_SHOW_TOGGLE_HACK
-    bool hide = ! hidden();         /* act as a toggle due to agordejo  */
-    hidden(hide);
-#else
+    std::string msg = "show " + path;
+    nsm_debug(msg);
     hidden(false);
-#endif
-    nsm_debug("show");
-    send_from_client(nsm::tag::reply, path, "Show OK");
+
+    /*
+     * Misread API.mu... there is no response necessary here.
+     *
+     *      send_from_client(nsm::tag::reply, path, "Show OK");
+     */
 }
 
 /*
  * Client hide optional GUI.  The message from the server is:
  *
  *      /nsm/client/hide_optional_gui
- *
- * Warning:  Currently agordejo's non-session-manager does not send this one!
  */
 
 void
 nsmclient::hide (const std::string & path)
 {
-    nsm_debug("hide");
+    std::string msg = "hide " + path;
+    nsm_debug(msg);
     hidden(true);
-    send_from_client(nsm::tag::reply, path, "Hide OK");
+
+    /*
+     * Misread API.mu... there is no response necessary here.
+     *
+     *      send_from_client(nsm::tag::reply, path, "Hide OK");
+     */
 }
 
 void
 nsmclient::send_visibility (bool isshown)
 {
     nsm::tag status = isshown ? nsm::tag::shown : nsm::tag::hidden ;
+    hidden(! isshown);
     send_from_client(status);
 }
 

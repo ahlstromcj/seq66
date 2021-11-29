@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2021-11-22
+ * \updates       2021-11-29
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -203,7 +203,6 @@ nsmbase::nsmbase
     m_lo_server_thread  (nullptr),
     m_lo_server         (nullptr),
     m_active            (false),        /* an atomic boolean value          */
-    m_visible           (true),         /* not yet completely worked out    */
     m_dirty             (false),
     m_dirty_count       (0),
     m_manager           (),
@@ -430,31 +429,6 @@ nsmbase::update_dirty_count (bool updatedirt)
             m_dirty = true;
         else if (m_dirty && ! updatedirt)
             m_dirty = false;
-    }
-}
-
-/**
- *  Sends the proper message for showing/hiding the user-interface, either:
- *
- *      -   /nsm/client/gui_is_hidden
- *      -   /nsm/client/gui_is_shown.
- *
- *  Also sets the m_visible member.
- *
- *  Don't confuse the messages above with the messages sent from the server:
- *
- *      -   /nsm/client/hide_optional_gui
- *      -   /nsm/client/show_optional_gui
- */
-
-void
-nsmbase::visible (bool isvisible)
-{
-    if (lo_is_valid())
-    {
-        const char * path = nsm::visible_msg(isvisible).c_str();
-        (void) send(path, "");
-        m_visible = isvisible;      /* check the reply? */
     }
 }
 

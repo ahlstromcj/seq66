@@ -36,7 +36,7 @@ Add your comment block here
 
 load-key-controls = true
 load-midi-controls = true
-control-buss = 0xFF
+control-buss = 2
 midi-enabled = true
 button-offset = 0
 button-rows = 4

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-11-14
+ * \updates       2021-11-29
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -835,6 +835,15 @@ private:
     bool m_in_nsm_session;
 
     /**
+     *  Indicates the visibility status of the application.  It is normally
+     *  always true.  However, if the user toggles invisibility while in an
+     *  NSM session, then it can be set to false, so that invisibility can be
+     *  restored when started again by NSM.
+     */
+
+    bool m_session_visibility;
+
+    /**
      *  [new-pattern-editor]
      *
      *  A new feature, in progress.
@@ -1511,6 +1520,11 @@ public:
         return m_in_nsm_session;
     }
 
+    bool session_visibility () const
+    {
+        return m_session_visibility;
+    }
+
     const std::string & session_url () const
     {
         return m_session_url;
@@ -1665,6 +1679,11 @@ public:         // used in main application module and the usrfile class
     void in_nsm_session (bool f)
     {
         m_in_nsm_session = f;
+    }
+
+    void session_visibility (bool f)
+    {
+        m_session_visibility = f;
     }
 
     void session_url (const std::string & value)

@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-10-28
+ * \updates       2021-11-29
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -98,6 +98,7 @@ public:
 private:
 
     void quit ();
+    void handle_show_hide (bool hide);
     void show_gui ();
     void hide_gui ();
 
@@ -112,7 +113,7 @@ private:
     QApplication & m_application;
     QTimer * m_timer;
     std::unique_ptr<qsmainwnd> m_window;
-    bool m_is_hidden;
+    bool m_was_hidden;
 
 };          // class qt5nsmanager
 

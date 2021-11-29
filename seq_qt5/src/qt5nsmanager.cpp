@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-11-18
+ * \updates       2021-11-29
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -75,7 +75,7 @@ qt5nsmanager::qt5nsmanager
     m_application   (app),
     m_timer         (nullptr),
     m_window        (),
-    m_is_hidden     (false)
+    m_was_hidden    (false)
 {
     /*
      * Should we use this timer or a performer callback?
@@ -118,27 +118,20 @@ qt5nsmanager::conditional_update ()
 #endif
         }
 
-        bool hide = false;
         if (perf()->show_hide_pending())
         {
-            hide = perf()->hidden();
+            bool hide = perf()->hidden();
+            handle_show_hide(hide);
         }
         else
         {
 #if defined SEQ66_NSM_SUPPORT
             if (not_nullptr(nsm_client()))
-                hide = nsm_client()->hidden();
+            {
+                bool hide = nsm_client()->hidden();
+                handle_show_hide(hide);
+            }
 #endif
-        }
-        if (hide)
-        {
-            if (! m_is_hidden)
-                hide_gui();
-        }
-        else
-        {
-            if (m_is_hidden)
-                show_gui();
         }
         if (session_restart())
             quit();
@@ -182,7 +175,20 @@ qt5nsmanager::create_window ()
         {
             m_window.reset(qm);
             m_window->attach_session(this);         /* ATTACH/DETACH        */
-            show_gui();                             /* m_window->show()     */
+
+            if (not_nullptr(nsm_client()))
+            {
+                bool hidden = ! usr().session_visibility();
+printf("Session visibility '%s'\n", hidden ? "hidden" : "shown");
+                m_was_hidden = ! hidden;             /* force GUI show/hide  */
+                handle_show_hide(hidden);
+            }
+            else
+            {
+printf("NO NSM AT THIS POINT\n");
+                show_gui();                         /* m_window->show()     */
+            }
+
             (void) smanager::create_window();       /* just house-keeping   */
             if (error_active())
             {
@@ -412,21 +418,35 @@ qt5nsmanager::session_client_id (const std::string & clid)
 }
 
 void
+qt5nsmanager::handle_show_hide (bool hide)
+{
+    if (hide != m_was_hidden)
+    {
+        if (not_nullptr(nsm_client()))      /* are we under NSM control?    */
+        {
+            usr().session_visibility(! hide);
+            rc().auto_ctrl_save(true);
+        }
+        m_was_hidden = hide;
+        if (hide)
+            hide_gui();
+        else
+            show_gui();
+    }
+}
+
+void
 qt5nsmanager::show_gui ()
 {
-    if (m_window && m_is_hidden)
+    if (m_window)
     {
         status_message("GUI is showing...");
         m_window->show();
-        m_is_hidden = false;
         perf()->hidden(false);          /* turns off show-hide pending flag */
 
 #if defined SEQ66_NSM_SUPPORT
-//      if (perf()->show_hide_pending())
-//      {
-            if (not_nullptr(nsm_client()))
-                nsm_client()->send_visibility(true);
-//      }
+        if (not_nullptr(nsm_client()))
+            nsm_client()->send_visibility(true);
 #endif
 
     }
@@ -435,19 +455,15 @@ qt5nsmanager::show_gui ()
 void
 qt5nsmanager::hide_gui ()
 {
-    if (m_window && ! m_is_hidden)
+    if (m_window)
     {
         status_message("GUI is hiding...");
         m_window->hide();
-        m_is_hidden = true;
         perf()->hidden(true);          /* turns off show-hide pending flag */
 
 #if defined SEQ66_NSM_SUPPORT
-//      if (perf()->show_hide_pending())
-//      {
-            if (not_nullptr(nsm_client()))
-                nsm_client()->send_visibility(false);
-//      }
+        if (not_nullptr(nsm_client()))
+            nsm_client()->send_visibility(false);
 #endif
 
     }

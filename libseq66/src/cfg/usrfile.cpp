@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-11-22
+ * \updates       2021-11-29
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -467,6 +467,12 @@ usrfile::parse ()
 
     s = get_variable(file, "[user-session]", "url");
     usr().session_url(strip_quotes(s));
+    s = get_variable(file, "[user-session]", "visibility");
+    if (! s.empty())                    /* check succeeds, get it for real  */
+    {
+        flag = get_boolean(file, "[user-session]", "visibility");
+        usr().session_visibility(flag);
+    }
     flag = get_boolean(file, "[new-pattern-editor]", "armed");
     usr().new_pattern_armed(flag);
     flag = get_boolean(file, "[new-pattern-editor]", "thru");
@@ -866,15 +872,16 @@ usrfile::write ()
     file << "\n# [user-session]\n"
         "#\n"
         "# The session manager to use, if any. The 'session' value is 'none'\n"
-        "# (default), 'nsm' (Non Session Manager), or 'jack' (JACK Session).\n"
-        "# 'url' can be set to the value set by nsmd when run outside of the\n"
-        "# the NSM user-interface. Set 'url' only if running nsmd stand-alone;\n"
-        "# use a matching --osc-port number. Seq66 will detect if running in an\n"
-        "# NSM environment, and override these settings.\n"
+        "# (default), 'nsm' (Non/New Session Manager), or 'jack'. 'url' can be\n"
+        "# be set to the value set by nsmd when run by command-line. Set 'url'\n"
+        "# only if running nsmd stand-alone; use the --osc-port number. Seq66\n"
+        "# detects if started in an NSM environment, though. The visibility\n"
+        "# flag is used only by NSM to restore visibility.\n"
         "\n[user-session]\n\n"
         ;
     write_string(file, "session", usr().session_manager_name());
     write_string(file, "url", usr().session_url(), true);
+    write_boolean(file, "visibility", usr().session_visibility());
 
     /*
      * [new-pattern-editor]

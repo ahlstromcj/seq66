@@ -44,6 +44,10 @@
 #include "rtmidi_info.hpp"              /* seq66::rtmidi_info, etc.         */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
 
+#if defined SEQ66_JACK_SUPPORT
+#include <jack/jack.h>                  /* jack_get_version_string()        */
+#endif
+
 #if defined SEQ66_BUILD_UNIX_JACK
 #include "midi_jack.hpp"
 #endif

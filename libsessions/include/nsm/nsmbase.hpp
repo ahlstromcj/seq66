@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2021-11-22
+ * \updates       2021-11-29
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -134,7 +134,6 @@ private:
 
     mutable std::atomic<bool> m_active;
 
-    bool m_visible;
     bool m_dirty;
     int m_dirty_count;
     std::string m_manager;
@@ -333,7 +332,6 @@ public:             // virtual methods for callbacks in nsmbase
 
 protected:          // virtual methods
 
-    virtual void visible (bool isvisible);
     virtual bool progress (float percent);
     virtual bool is_dirty ();
     virtual bool is_clean ();
