@@ -139,9 +139,6 @@ EXTANT ISSUES:
     STATUS: Provisional support in 0.91.3.  See Edit / Preferences / Play /
     Sets Mode.
 
-#32 NSM: save session
-    STATUS: Needs retests.
-
 #33 NSM not working here
     STATUS:  Will start retesting soon.
 
@@ -160,6 +157,9 @@ EXTANT ISSUES:
 
 #40 NSM: seq66 in a new session should provide a blank project
     Currently it imports the previously used MIDI file.
+    STATUS: If an existing HOME configuration exists, it is copied to the new
+    session directory.  This is by design.  If you want a new configuration,
+    then move or hide the HOME configuration.
 
 #41 NSM: hide seq66 on closing window, do not exit?
     If closing the window, rather than quitting the app, could change the its

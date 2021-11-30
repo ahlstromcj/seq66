@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-11-29
+ * \updates       2021-11-30
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -101,6 +101,10 @@ private:
     void handle_show_hide (bool hide);
     void show_gui ();
     void hide_gui ();
+    void send_visibility (bool visible);
+    void set_last_dirty ();
+    void client_show_hide ();
+    void set_session_url ();
 
 signals:                                /* from session client callbacks    */
 

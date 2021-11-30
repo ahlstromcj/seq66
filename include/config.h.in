@@ -1,6 +1,6 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2021-11-26"
+#define VERSION_DATE_SHORT "2021-11-30"
 #define VERSION "0.98.0"
 
 
@@ -53,6 +53,9 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <jack/jack.h> header file. */
+#undef HAVE_JACK_JACK_H
 
 /* Define to 1 if you have the `asound' library (-lasound). */
 #undef HAVE_LIBASOUND
@@ -110,6 +113,9 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Enable JACK version string */
+#undef JACK_GET_VERSION_STRING
 
 /* Define to enable JACK session */
 #undef JACK_SESSION

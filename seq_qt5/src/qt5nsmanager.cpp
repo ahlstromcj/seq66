@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-11-29
+ * \updates       2021-11-30
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -77,21 +77,20 @@ qt5nsmanager::qt5nsmanager
     m_window        (),
     m_was_hidden    (false)
 {
-    /*
-     * Should we use this timer or a performer callback?
-     */
-
 #if defined QT_VERSION_STR
     set_qt_version(std::string(QT_VERSION_STR));
 #endif
 
-    m_timer = qt_timer(this, "qt5nsmanager", 4, SLOT(conditional_update()));
+    /*
+     * EXPERIMENTAL:  Move this to create_window().
+     * m_timer = qt_timer(this, "qt5nsmanager", 5, SLOT(conditional_update()));
+     */
 }
 
 qt5nsmanager::~qt5nsmanager ()
 {
     m_timer->stop();
-    (void) special_message("Exiting qt5nsmanager");
+    (void) session_message("Exiting qt5nsmanager");
 }
 
 /**
@@ -110,29 +109,13 @@ qt5nsmanager::conditional_update ()
     if (not_nullptr(perf()))
     {
         if (perf()->modified() != last_dirty_status())
-        {
-            last_dirty_status(perf()->modified());
-#if defined SEQ66_NSM_SUPPORT
-            if (not_nullptr(nsm_client()))
-                nsm_client()->dirty(last_dirty_status());
-#endif
-        }
+            set_last_dirty();
 
         if (perf()->show_hide_pending())
-        {
-            bool hide = perf()->hidden();
-            handle_show_hide(hide);
-        }
+            handle_show_hide(perf()->hidden());
         else
-        {
-#if defined SEQ66_NSM_SUPPORT
-            if (not_nullptr(nsm_client()))
-            {
-                bool hide = nsm_client()->hidden();
-                handle_show_hide(hide);
-            }
-#endif
-        }
+            client_show_hide();
+
         if (session_restart())
             quit();
     }
@@ -175,21 +158,24 @@ qt5nsmanager::create_window ()
         {
             m_window.reset(qm);
             m_window->attach_session(this);         /* ATTACH/DETACH        */
-
             if (not_nullptr(nsm_client()))
             {
-                bool hidden = ! usr().session_visibility();
-printf("Session visibility '%s'\n", hidden ? "hidden" : "shown");
+                bool visible = usr().session_visibility();
+                bool hidden = ! visible;
+                std::string status = "NSM startup ";
+                status += visible ? "visible" : "hidden" ;
+                session_message(status);
                 m_was_hidden = ! hidden;             /* force GUI show/hide  */
                 handle_show_hide(hidden);
             }
             else
-            {
-printf("NO NSM AT THIS POINT\n");
                 show_gui();                         /* m_window->show()     */
-            }
 
             (void) smanager::create_window();       /* just house-keeping   */
+            m_timer = qt_timer
+            (
+                this, "qt5nsmanager", 5, SLOT(conditional_update())
+            );
             if (error_active())
             {
                 show_error("", error_message());
@@ -250,18 +236,7 @@ printf("NO NSM AT THIS POINT\n");
                     file_message("Session ID", clid);
                     file_message("Session song path", rc().midi_filename());
                 }
-
-#if defined SEQ66_NSM_SUPPORT
-                if (not_nullptr(nsm_client()))
-                {
-                    std::string url = nsm_client()->nsm_url();
-                    m_window->session_URL(url);
-                }
-                else
-                    m_window->session_URL("None");
-#else
-                m_window->session_URL("None");
-#endif
+                set_session_url();
             }
         }
     }
@@ -320,7 +295,7 @@ qt5nsmanager::run ()
 void
 qt5nsmanager::quit ()
 {
-    infoprint("Quitting this session");
+    session_message("Quitting the session");
     m_application.quit();
 }
 
@@ -422,10 +397,10 @@ qt5nsmanager::handle_show_hide (bool hide)
 {
     if (hide != m_was_hidden)
     {
-        if (not_nullptr(nsm_client()))      /* are we under NSM control?    */
+        if (not_nullptr(nsm_client()))  /* are we under NSM control?        */
         {
             usr().session_visibility(! hide);
-            rc().auto_ctrl_save(true);
+            rc().auto_usr_save(true);
         }
         m_was_hidden = hide;
         if (hide)
@@ -440,15 +415,9 @@ qt5nsmanager::show_gui ()
 {
     if (m_window)
     {
-        status_message("GUI is showing...");
-        m_window->show();
         perf()->hidden(false);          /* turns off show-hide pending flag */
-
-#if defined SEQ66_NSM_SUPPORT
-        if (not_nullptr(nsm_client()))
-            nsm_client()->send_visibility(true);
-#endif
-
+        m_window->show();
+        send_visibility(true);
     }
 }
 
@@ -457,16 +426,56 @@ qt5nsmanager::hide_gui ()
 {
     if (m_window)
     {
-        status_message("GUI is hiding...");
+        perf()->hidden(true);          /* turns off show-hide pending flag  */
         m_window->hide();
-        perf()->hidden(true);          /* turns off show-hide pending flag */
+        send_visibility(false);
+    }
+}
+
+void
+qt5nsmanager::send_visibility (bool visible)
+{
+    status_message(visible ? "GUI is showing..." : "GUI is hiding...");
+#if defined SEQ66_NSM_SUPPORT
+    if (not_nullptr(nsm_client()))
+        nsm_client()->send_visibility(visible);
+#endif
+}
+
+void
+qt5nsmanager::set_last_dirty ()
+{
+    last_dirty_status(perf()->modified());
 
 #if defined SEQ66_NSM_SUPPORT
-        if (not_nullptr(nsm_client()))
-            nsm_client()->send_visibility(false);
+    if (not_nullptr(nsm_client()))
+        nsm_client()->dirty(last_dirty_status());
 #endif
+}
 
+void
+qt5nsmanager::client_show_hide ()
+{
+#if defined SEQ66_NSM_SUPPORT
+    if (not_nullptr(nsm_client()))
+        handle_show_hide(nsm_client()->hidden());
+#endif
+}
+
+void
+qt5nsmanager::set_session_url ()
+{
+#if defined SEQ66_NSM_SUPPORT
+    if (not_nullptr(nsm_client()))
+    {
+        std::string url = nsm_client()->nsm_url();
+        m_window->session_URL(url);
     }
+    else
+        m_window->session_URL("None");
+#else
+    m_window->session_URL("None");
+#endif
 }
 
 }           // namespace seq66

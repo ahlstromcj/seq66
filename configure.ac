@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2021-11-26
+dnl \update        2021-11-30
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -273,8 +273,14 @@ if test "$jack" != "no"; then
                 AC_MSG_RESULT([JACK session support enabled.]);
             fi
         fi
-        AC_MSG_RESULT([JACK support enabled.]);
-
+        AC_MSG_RESULT([JACK support enabled.])
+        AC_CHECK_HEADERS([jack/jack.h])
+        AC_CHECK_LIB([jack], [jack_get_version_string],
+            jack_get_version="yes", jack_get_version="no")
+        if test "$jack_get_version" = "yes"; then
+            AC_DEFINE(JACK_GET_VERSION_STRING, 1, [Enable JACK version string])
+            AC_MSG_RESULT([JACK jack_get_version_string available.]);
+        fi
     else
         AC_MSG_WARN([Could not find JACK library, disabling JACK.])
     fi
@@ -428,7 +434,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2021-11-26"
+#define VERSION_DATE_SHORT "2021-11-30"
 #define VERSION "0.98.0"
 
 )

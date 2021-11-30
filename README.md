@@ -1,7 +1,7 @@
 # README for Seq66 0.98.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-11-29
+2015-09-10 to 2021-11-30
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -84,12 +84,14 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.98.0:
+        *   Issues fixed: #41, #73.
         *   Added "MIDI macros" to the 'ctrl' file.  Can send SysEx or other
             messages from a drop-down list; automatic startup and exit messages.
             More to come.
         *   Added api_sysex() overrides, at last.
         *   Added Preference items for MIDI control I/O.
         *   Work on issue #41 and other NSM issues.
+        *   Added check for jack_get_version_string() for issue #73.
     *   Version 0.97.3:
         *   Added pattern-recording indicator to live-grid slots.
         *   Replace useless "Record" automation command with a "Loop Mode"
@@ -131,40 +133,6 @@ Windows, and using a conventional source tarball.
             handling.
         *   Removed dead-code from the event-editor frame.
         *   Changing behavior of external live frames for more flexibility.
-    *   Version 0.97.1:
-        *   Fixed a bad bug in displaying Notes in the data & event panels in
-            the pattern editor, caused by premature ... optimization.
-            per issue #61.
-        *   Added working tempo-track code to Edit / Preferences / MIDI Clock.
-        *   Added exponential ramping of Event Panel events to the pattern LFO
-            dialog.
-        *   Added the ability to move selected Event Panel events using the
-            Left/Right arrow keys.
-        *   Improved the handling of sets and external live grids.
-        *   Updated documentation extensively. Optimized some images.
-        *   Stopped bootstrap --full-clean from removing Makefile.in files.
-    *   Version 0.97.0:
-        *   Added limited vertical zoom to the song editor (performance roll).
-            Still has vertical scroll issues.
-        *   Added more Preferences settings, enabled some that were not yet
-            implemented.  Upgraded the handling of the configuration files.
-            By default, the 'rc' file is always saved, in case ports change.
-        *   Added option "wrap-around" (for notes) to the 'usr' file.
-        *   Added option "lock-main-window" to the 'usr' file to prevent
-            resizing the window.
-        *   Added code to show unlinked note events on the seqroll, the "u"
-            key to remove them, and the "=" key to relink them.
-        *   Added more build information to --version and Help / Build Info.
-        *   Fixed drawing slot-button borders, drawn with no pattern color now.
-        *   Got auto-scaling of the slot button font working.
-        *   Implemented the Help / About links as per issue #21.
-        *   Added OpenSUSE INSTALL notes from the sivecj/Seq66 fork.
-        *   Improved the display and editing of tempo events, especially in the
-            pattern editor. Also tightened handling of status values.
-        *   Can now copy/paste a pattern from one MIDI file to another.
-        *   Fixed minor bug in Import dialog handling.
-        *   Refactoring for SMF 0 reading and export.
-        *   Minor fix to flag changed tune (an asterisk).
 
     See the "NEWS" file for changes in earlier versions.
 

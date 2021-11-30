@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2021-11-26
+ * \updates       2021-11-29
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -291,7 +291,7 @@ seq_client_tag (msglevel el)
             "\033[1;33m",       /* warning message is yellow            */
             "\033[1;31m",       /* error message is red                 */
             "\033[1;34m",       /* status message is blue               */
-            "\033[1;35m",       /* special message is magenta           */
+            "\033[1;36m",       /* session message is cyan              */
             "\033[1;30m"        /* debug message is black               */
         };
         std::string result = "[";

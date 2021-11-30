@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2021-09-10
+% \update      2021-11-30
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -51,6 +51,10 @@
          way to save their patching (connections) in \textsl{JACK}.
          However, it supports more functionality and has
          strict requirements the application must follow.
+         Development of NSM has, for various reasons, been suspended, but
+         offshoots such as \textsl{Agordejo} (\cite{agodejo}}
+         and \textsl{RaySession} (\cite{raysession})
+         continue to advance.
    \end{enumber}
 
    If one desires session management, \textsl{NSM} is the way to go.
@@ -244,14 +248,14 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 
 \begin{verbatim}
    $ qseq66 
-   [No 'rc' file, will create: qseq66.rc/ctrl/midi/mutes]
-   [No 'usr' file, will create: /home/user/.config/seq66/qseq66.usr]
-   [File exists: /home/user/.config/seq66/qseq66.rc]
-   [Saving initial config files to session directory!]
-   [Writing 'rc': /home/user/.config/seq66/qseq66.rc]
-   [Writing 'ctrl': /home/user/.config/seq66/qseq66.ctrl]
-   [Writing 'mutes': /home/user/.config/seq66/qseq66.mutes]
-   [Writing 'usr': /home/user/.config/seq66/qseq66.usr]
+   No 'rc' file, will create: qseq66.rc/ctrl/midi/mutes
+   No 'usr' file, will create: /home/user/.config/seq66/qseq66.usr
+   File exists: /home/user/.config/seq66/qseq66.rc
+   Saving initial config files to session directory!
+   Writing 'rc': /home/user/.config/seq66/qseq66.rc
+   Writing 'ctrl': /home/user/.config/seq66/qseq66.ctrl
+   Writing 'mutes': /home/user/.config/seq66/qseq66.mutes
+   Writing 'usr': /home/user/.config/seq66/qseq66.usr
    . . .
 \end{verbatim}
 
@@ -310,6 +314,12 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 
    It is then important to start \texttt{qseq66} in the normal manner again,
    and verify that everything works as expected.
+
+   As the next section shows, if one wants to start with a blank configuration,
+   simply move or hide any existing \textsl{Seq66} configuration files from the
+   "HOME" (\texttt{/home/user/.config/seq66})
+   configuration directory before
+   creating an NSM session and adding \textsl{Seq66} to it.
 
 \subsubsection{Seq66 Session Management / NSM / Run in NSM}
 \label{subsec:sessions_nsm_first_run_in_nsm}

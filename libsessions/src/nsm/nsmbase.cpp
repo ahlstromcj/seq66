@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2021-11-29
+ * \updates       2021-11-30
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -173,7 +173,7 @@ osc_nsm_error
 )
 {
     nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
-    if (is_nullptr(pnsmc))      /* || (! nsm::is_announce(&argv[0]->s))) */
+    if (is_nullptr(pnsmc))
         return -1;
 
     nsm::incoming_msg("Error", path, types);
@@ -239,10 +239,10 @@ nsmbase::start_thread ()
         if (rcode == 0)                                     /* successful?  */
         {
             if (rc().verbose())
-                file_message(session_tag(), "OSC server thread started");
+                session_message("OSC server thread started");
         }
         else
-            file_error(session_tag(), "OSC server thread failed to start");
+            error_message("OSC server thread start failed");
     }
 }
 
@@ -288,7 +288,8 @@ nsmbase::initialize ()
                 case LO_TCP:    ps = "TCP";     break;
                 case LO_UNIX:   ps = "UNIX";    break;
             }
-            file_message("OSC protocol", ps);
+            ps += " OSC protocol";
+            session_message(ps);
         }
         m_lo_server_thread = lo_server_thread_new_with_proto(NULL, proto, NULL);
         result = not_nullptr(m_lo_server_thread);
@@ -317,13 +318,13 @@ nsmbase::initialize ()
                  */
             }
             else
-                file_error("NSM", "bad server");
+                error_message("OSC bad server");
         }
         else
-            file_error("NSM", "bad server thread");
+            error_message("OSC bad server thread");
     }
     else
-        file_error("NSM", "bad server address");
+        error_message("OSC bad server address");
 
     return result;
 }
@@ -338,7 +339,7 @@ nsmbase::lo_is_valid () const
 {
     bool result = not_nullptr_2(m_lo_address, m_lo_server);
     if (! result)
-        file_error("NSM", "Null OSC address or server");
+        error_message("Null OSC address or server");
 
     return result;
 }
@@ -373,7 +374,7 @@ nsmbase::msg_check (int timeoutms)
         {
             result = true;
             if (rc().verbose())
-                file_message(session_tag(), "Waiting for reply...");
+                session_message("NSM waiting for reply...");
 
             while (lo_server_recv_noblock(m_lo_server, 0))
             {
@@ -381,7 +382,7 @@ nsmbase::msg_check (int timeoutms)
             }
         }
         if (! result)
-            file_message(session_tag(), "No reply!");
+            error_message("NSM no reply!");
     }
     return result;
 }
@@ -940,10 +941,16 @@ nsmbase::send_from_client
         if (result)
         {
             if (rc().verbose())
-                file_message("OSC message sent", message);
+            {
+                std::string msg = "OSC message sent" + message;
+                session_message(msg);
+            }
         }
         else
-            file_message("OSC message send FAILURE", message);
+        {
+            std::string msg = "OSC message send FAILURE" + message;
+            error_message(msg);
+        }
     }
     return result;
 }
@@ -1106,10 +1113,9 @@ get_url ()
     usr().in_nsm_session(active);
     if (rc().verbose())
     {
-        if (active)
-            file_message("NSM", result);
-        else
-            file_message("NSM", "URL not present");
+        std::string msg = "NSM URL ";
+        msg += active ? result : "not found" ;
+        session_message(msg);
     }
     return result;
 }
@@ -1127,9 +1133,10 @@ incoming_msg
     {
         std::string text = msgsnprintf
         (
-            "%s<--NSM: %s [%s]", cbname.c_str(), message.c_str(), pattern.c_str()
+            "%s<--NSM: %s [%s]",
+            cbname.c_str(), message.c_str(), pattern.c_str()
         );
-        (void) special_message(text);
+        (void) session_message(text);
     }
 }
 
@@ -1145,9 +1152,10 @@ outgoing_msg
     {
         std::string text = msgsnprintf
         (
-            "%s-->[%s] %s", message.c_str(), pattern.c_str(), data.c_str()
+            "%s-->[%s] %s",
+            message.c_str(), pattern.c_str(), data.c_str()
         );
-        file_message(session_tag(), text);
+        session_message(text);
     }
 }
 

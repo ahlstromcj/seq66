@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-11-27
+ * \updates       2021-11-30
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of
@@ -135,9 +135,9 @@ status_message (const std::string & msg)
 }
 
 bool
-special_message (const std::string & msg)
+session_message (const std::string & msg)
 {
-    std::cout << seq_client_tag(msglevel::special) << " " << msg << std::endl;
+    std::cout << seq_client_tag(msglevel::session) << " " << msg << std::endl;
     return true;
 }
 
@@ -407,7 +407,7 @@ msgprintf (msglevel lev, std::string fmt, ...)
             break;
 
         case msglevel::status:
-        case msglevel::special:
+        case msglevel::session:
 
             std::cout << seq_client_tag(lev) << " " << output << std::endl;
             break;

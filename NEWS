@@ -1,10 +1,44 @@
-NEWS for Seq66 0.97.3
+NEWS for Seq66 0.98.0
 Chris Ahlstrom
-2015-07-10 to 2021-09-20
+2015-07-10 to 2021-11-30
 
 This file collects major changes that are older and clutter up
-the README file.  This file should be called "OLD NEWS".
+the README.md file.  This file should be called "OLD NEWS".
 
+    -   Version 0.97.1:
+        -   Fixed a bad bug in displaying Notes in the data & event panels in
+            the pattern editor, caused by premature ... optimization.
+            per issue #61.
+        -   Added working tempo-track code to Edit / Preferences / MIDI Clock.
+        -   Added exponential ramping of Event Panel events to the pattern LFO
+            dialog.
+        -   Added the ability to move selected Event Panel events using the
+            Left/Right arrow keys.
+        -   Improved the handling of sets and external live grids.
+        -   Updated documentation extensively. Optimized some images.
+        -   Stopped bootstrap --full-clean from removing Makefile.in files.
+    -   Version 0.97.0:
+        -   Added limited vertical zoom to the song editor (performance roll).
+            Still has vertical scroll issues.
+        -   Added more Preferences settings, enabled some that were not yet
+            implemented.  Upgraded the handling of the configuration files.
+            By default, the 'rc' file is always saved, in case ports change.
+        -   Added option "wrap-around" (for notes) to the 'usr' file.
+        -   Added option "lock-main-window" to the 'usr' file to prevent
+            resizing the window.
+        -   Added code to show unlinked note events on the seqroll, the "u"
+            key to remove them, and the "=" key to relink them.
+        -   Added more build information to --version and Help / Build Info.
+        -   Fixed drawing slot-button borders, drawn with no pattern color now.
+        -   Got auto-scaling of the slot button font working.
+        -   Implemented the Help / About links as per issue #21.
+        -   Added OpenSUSE INSTALL notes from the sivecj/Seq66 fork.
+        -   Improved the display and editing of tempo events, especially in the
+            pattern editor. Also tightened handling of status values.
+        -   Can now copy/paste a pattern from one MIDI file to another.
+        -   Fixed minor bug in Import dialog handling.
+        -   Refactoring for SMF 0 reading and export.
+        -   Minor fix to flag changed tune (an asterisk).
     -   Version 0.96.3:
         -   Added ability to modify Note On and Note Off at the same time in the
             event editor. Fixed and updated event::get_rank().

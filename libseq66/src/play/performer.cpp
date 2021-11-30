@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-11-27
+ * \updates       2021-11-30
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1923,7 +1923,7 @@ performer::set_playing_screenset (screenset::number setno)
 
 /**
  *  Clears the whole play-set and refills it with the current playscreen.
- *  If auto-arm is in force, will unmte them.  Does not signal a set-change,
+ *  If auto-arm is in force, will unmute them.  Does not signal a set-change,
  *  because the playing set hasn't changed.
  */
 
@@ -6807,6 +6807,12 @@ performer::automation_quan_record
  *
  *  What about the "extend sequence" mode?  What about the return codes?
  *  What about the (new) "oneshot" pattern recording mode?
+ *
+ *  As is, this function is a bit useless, as we know of no MIDI controllers
+ *  that allow for precise specification of the d1 value, whether vi CC data
+ *  value or Note velocity.
+ *
+ *  Perhaps we should use it for a call to reset_sequences().
  */
 
 bool
@@ -6816,10 +6822,11 @@ performer::automation_reset_seq
     int index, bool inverse
 )
 {
-    std::string name = "Reset Sequence";
+    std::string name = "Reset Sequences";
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
+#if defined USE_OLD_IMPLEMENTATION
         seq::number seqno = seq::number(d1);
         if (a == automation::action::toggle)
             set_overwrite_recording(seqno, false, true);        /* toggles  */
@@ -6827,6 +6834,10 @@ performer::automation_reset_seq
             set_overwrite_recording(seqno, true, false);        /* on       */
         else if (a == automation::action::off)
             set_overwrite_recording(seqno, false, false);       /* off      */
+#else
+        reset_sequences();
+        reset_playset();
+#endif
     }
     return true;
 }

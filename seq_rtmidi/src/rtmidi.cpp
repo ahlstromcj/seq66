@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2029-09-15
+ * \updates       2021-11-30
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.
@@ -68,7 +68,9 @@ namespace seq66
  */
 
 /**
- *  Default constructor.
+ *  Default constructor.  We have commented out the call to
+ *  jack_get_version_string() because it is not present in the original
+ *  version of JACK.
  *
  * \param parentbus
  *      This is the midibus that the rtmidi object is going to implement, by
@@ -84,9 +86,14 @@ rtmidi::rtmidi (midibus & parentbus, rtmidi_info & info) :
     m_midi_info     (info),
     m_midi_api      (nullptr)
 {
+#if defined SEQ66_JACK_GET_VERSION_STRING
     const char * jv = jack_get_version_string();
     if (not_nullptr(jv) && strlen(jv) > 0)
         set_jack_version(std::string(jv));
+#else
+    std::string jv{"JACK < v. 1"};
+    set_jack_version(jv);
+#endif
 
 #if defined SND_LIB_VERSION_STR
     set_alsa_version(std::string(SND_LIB_VERSION_STR));

@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2021-11-19
+ * \updates       2021-11-30
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -95,7 +95,7 @@ clinsmanager::detect_session (std::string & url)
 #if defined SEQ66_NSM_SUPPORT
 
     std::string tenturl = nsm::get_url();           /* a tentative URL      */
-    infoprint("Checking for NSM_URL");
+    session_message("Checking for NSM_URL");
     if (! tenturl.empty())
     {
         result = true;
@@ -106,7 +106,7 @@ clinsmanager::detect_session (std::string & url)
         result = usr().want_nsm_session();          /* user wants NSM usage */
         if (result)
         {
-            infoprint("Checking 'usr' for NSM URL");
+            session_message("Checking 'usr' for NSM URL");
             tenturl = usr().session_url();          /* try 'usr' file's URL */
             if (tenturl.empty())                    /* configured NSM URL?  */
             {
@@ -137,13 +137,10 @@ clinsmanager::detect_session (std::string & url)
  *  "[user-session]" "url" value.  This is useful in trouble-shooting, for
  *  example.  Finally, just in case the user has set up the "usr" file for
  *  running NSM, but hasn't started non-session-manager or nsmd itself, we use
- *  the new pid_exists() function to make sure that nsmd is indeed running.
- *  Ay!
+ *  the new pid_exists() function to make sure that nsmd is indeed running.  Ay!
  *
  *  If all is well, a new nsmclient is created, and an announce/open handshake
- *  starts.
- *
- *  This function is called before create_window().
+ *  starts.  This function is called before create_window().
  */
 
 bool

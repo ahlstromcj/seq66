@@ -262,17 +262,14 @@ protected:
     void nsm_debug (const std::string & tag);
     void add_client_method (nsm::tag t, lo_method_handler h);
     void add_server_method (nsm::tag t, lo_method_handler h);
-
     bool send_announcement
     (
         const std::string & appname,
         const std::string & exename,
         const std::string & capabilities
     );
-
     void start_thread ();
     void stop_thread ();
-
     void update_dirty_count (bool flag = true);
 
     // Session client reply methods

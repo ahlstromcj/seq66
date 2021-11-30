@@ -764,8 +764,8 @@ rcfile::write ()
         if (active || ! exists)
         {
             /*
-             * Eventually we should provide a write_midi_contro_file() function
-             * in the midicontrolfile module to do this work.
+             * Eventually we should provide a write_midi_control_file()
+             * function in the midicontrolfile module to do this work.
              */
 
             midicontrolfile mcf(mcfname, rc_ref());

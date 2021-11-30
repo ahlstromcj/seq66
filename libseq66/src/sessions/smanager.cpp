@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2021-09-30
+ * \updates       2021-11-30
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -102,13 +102,13 @@ smanager::smanager (const std::string & caps) :
 /**
  *  We found that on a Debian developer laptop, this destructor took a couple
  *  of seconds to call get_deleter().  Works fine on our Ubuntu developer
- *  laptop.  Weird.  The infoprint() may also mitigate a race condition that
- *  hangs the app at exit on some machines.
+ *  laptop.  Weird.  Actually might have been a side-effect of installing a
+ *  KxStudio PPA.
  */
 
 smanager::~smanager ()
 {
-    (void) special_message("Exiting session manager");
+    (void) session_message("Exiting session manager");
 }
 
 /**
@@ -747,7 +747,10 @@ smanager::error_handling ()
  *      -   open_playlist()
  *      -   open_note_mapper()
  *      -   open_midi_file() if specified on command-line; otherwise
- *      -   open most-recent file if that option is enabled
+ *      -   Open most-recent file if that option is enabled:
+ *          Get full path to the most recently-opened or imported file.  What if
+ *          smanager::open_midi_file() has already been called via the
+ *          command-line? Then skip this step.
  *      -   create_window()
  *      -   run(), done in main()
  *      -   close_session(), done in main()
@@ -782,12 +785,6 @@ smanager::create (int argc, char * argv [])
             {
                 if (result && rc().load_most_recent())
                 {
-                    /*
-                     * Get full path to the most recently-opened or imported
-                     * file.  What if smanager::open_midi_file() has already
-                     * been called via the command-line? Then skip this step.
-                     */
-
                     std::string midifname = rc().recent_file(0, false);
                     if (! midifname.empty())
                     {

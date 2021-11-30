@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.98.0
 Chris Ahlstrom
-2015-09-10 to 2021-11-29
+2015-09-10 to 2021-11-30
 
 Getting Seq66 requires building the code or going to
 "sequencer64-packages/seq66" on GitHub to get an install pack.  The bootstrap
@@ -62,8 +62,8 @@ Autotools Build and Install:
 
     If "configure" or "make" emit errors, make sure libtool is installed, and
     then run the script "reconf", stored in "contrib/scripts/reconf".  This
-    should make soft links to /usr/share/automake files. Then try the above
-    commands again.
+    should make soft links to /usr/share/automake files in the aux-files
+    directory. Then try the above commands again.
 
     Also note that the qmake executable must exist.  If it is not found,
     check for the existence of an alternate name (e.g. qmake-qt5) and

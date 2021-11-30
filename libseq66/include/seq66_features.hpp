@@ -74,8 +74,7 @@ namespace seq66
  *      -   error. More serious problems.
  *      -   status. Messages that show the progesss of the application even
  *          when not in verbose mode.
- *      -   special. Messages that need to stand out. No strict criteria,
- *          though.
+ *      -   session. Messages that need to stand out in session management.
  *      -   debug. Message that should appear only in investigate mode.
  */
 
@@ -86,7 +85,7 @@ enum class msglevel
     warn,           /* yellow                   */
     error,          /* red                      */
     status,         /* green                    */
-    special,        /* magenta                  */
+    session,        /* cyan                     */
     debug           /* debug                    */
 };
 

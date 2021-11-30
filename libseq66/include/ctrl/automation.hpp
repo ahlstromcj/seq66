@@ -237,6 +237,38 @@ enum class slot
     reserved_46,        /**< 46: Reserved for expansion.                    */
     reserved_47,        /**< 47: Reserved for expansion.                    */
     reserved_48,        /**< 48: Reserved for expansion.                    */
+
+#if defined USE_PROPOSED_NEW_AUTOMATION
+
+    /*
+     * Proposed massive expansion in automation. Grid mode selection.
+     *
+     * Note that grid_overdub and grid_overwrite are kind of already covered by
+     * reset_seq above!
+     */
+
+    grid_loop,          /**< 49: Normal operation of the main grid.         */
+    grid_overdub,       /**< 50: Select overdub/merge recording triggering. */
+    grid_overwrite,     /**< 51: Select overdub recording triggering.       */
+    grid_expand,        /**< 52: Select expand recording triggering.        */
+    grid_oneshot,       /**< 53: Select oneshot recording triggering.       */
+    grid_reserved_54,   /**< 54: Reserved for recording expansion.          */
+    grid_copy,          /**< 55: Grid slot copies the pattern.              */
+    grid_paste,         /**< 56: Grid slot pastes to the pattern.           */
+    grid_clear,         /**< 57: Grid slot clears only events.              */
+    grid_delete,        /**< 58: Grid slot deletes the pattern.             */
+    grid_thru,          /**< 59: Grid slot turns on MIDI thru.              */
+    grid_velocity,      /**< 59: Grid slot toggles free velocity.           */
+    grid_double,        /**< 61: Grid slot doubles the pattern length.      */
+
+    grid_quant_none,    /**< xx: Grid slot remove recording quantization.   */
+    grid_quant_full,    /**< xx: Grid slot full quantization recording.     */
+    grid_quant_tighten, /**< xx: Grid slot tighten quantization recording.  */
+    grid_quant_random,  /**< xx: Grid slot salts the recording randomly.    */
+    grid_quant_jitter,  /**< xx: Grid slot jitter the velocity.             */
+
+#endif
+
     max,                /**< Used only for termination/range-checking.      */
 
     /*
