@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-04-28
+ * \updates       2021-12-02
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of keycontrol objects keyed by a key ordinal
@@ -143,6 +143,13 @@ private:
      */
 
     keyboard::layout m_kbd_layout;
+
+    /**
+     *  Prevents multiple reloading of the keys.  Make sure it works with
+     *  modiifed keyboard layouts!
+     */
+
+    bool m_defaults_loaded;
 
 public:
 

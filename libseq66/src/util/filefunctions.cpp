@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-09-24
+ * \updates       2021-12-02
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -783,7 +783,7 @@ file_write_string (const std::string & filename, const std::string & text)
         size_t rc = fwrite(fulltext.c_str(), sizeof(char), len, fptr);
         if (rc < len)
         {
-            errprintf("could not write to '%s'", filename.c_str());
+            file_error("Write failed", filename);
             result = false;
         }
         (void) file_close(fptr, filename);
@@ -915,25 +915,33 @@ file_append_log
     const std::string & data
 )
 {
-    FILE * fp = file_open(filename, "a");           /* open for appending   */
-    bool result = not_nullptr(fp);
-    if (result)
+    std::string text = trim(data);
+    if (text.empty())
     {
-        std::string log = "\n";
-        log += current_date_time();
-        log += "\n";
-        log += data.data();
-        log += "\n\n";
-
-        size_t rc = fwrite(log.data(), sizeof(char), log.size(), fp);
-        if (rc < log.size())
-        {
-            errprintf("could not write to '%s'", filename.c_str());
-            result = false;
-        }
-        (void) file_close(fp, filename);
+        return true;                                /* no need to open      */
     }
-    return result;
+    else
+    {
+        FILE * fp = file_open(filename, "a");       /* open for appending   */
+        bool result = not_nullptr(fp);
+        if (result)
+        {
+            std::string log = "\n";
+            log += current_date_time();
+            log += "\n";
+            log += text.data();
+            log += "\n\n";
+
+            size_t rc = fwrite(log.data(), sizeof(char), log.size(), fp);
+            if (rc < log.size())
+            {
+                file_error("Write failed", filename);
+                result = false;
+            }
+            (void) file_close(fp, filename);
+        }
+        return result;
+    }
 }
 
 /**
@@ -1736,9 +1744,7 @@ set_current_directory (const std::string & path)
         int rcode = S_CHDIR(path.c_str());
         result = is_posix_success(rcode);
         if (! result)
-        {
-            errprintf("could not set current directory '%s'", path.c_str());
-        }
+            file_error("chdir() failed", path);
     }
     return result;
 }

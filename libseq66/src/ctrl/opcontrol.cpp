@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2021-11-22
+ * \updates       2021-12-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -188,7 +188,7 @@ opcontrol::slot_name (slot s)
         "Set Set",              // 16 ss_set
         "Loop Mode",            // 17 loop_mode
         "Quan Record",          // 18 quan_record
-        "Reset Seq",            // 19 reset_seq
+        "Reset Sets",           // 19 reset_sets
         "One-shot",             // 20 mod_oneshot *
         "FF",                   // 21 FF
         "Rewind",               // 22 rewind
@@ -201,6 +201,11 @@ opcontrol::slot_name (slot s)
         "Reserved 29",          // 29 reserved_29
         "Toggle Mute",          // 30 toggle_mutes *
         "Song Pos",             // 31 song_pointer
+
+        /*
+         * The following add to what Seq64 supports.
+         */
+
         "Keep Queue",           // 32 keep_queue
         "Slot Shift",           // 33 slot_shift *
         "Mutes Clear",          // 34 reserved_34
@@ -218,13 +223,70 @@ opcontrol::slot_name (slot s)
         "Reserved 46",          // 46 reserved_46
         "Reserved 47",          // 47 reserved_47
         "Reserved 48",          // 48 reserved_48
-        "Maximum",              // -- used only for limit-checking
-        "Loop",                 // 50 indicates the pattern key group
-        "Mute",                 // 51 indicates the mute key group
-        "Auto"                  // 52 indicates automation key group
+
+#if defined USE_PROPOSED_NEW_AUTOMATION
+
+        /*
+         * Proposed massive expansion in automation. Grid mode selection.
+         */
+
+        "Record Overdub",
+        "Record Overwrite",
+        "Record Expand",
+        "Record Oneshot",
+        "Grid Loop",
+        "Grid Record",
+        "Grid Copy",
+        "Grid Paste",
+        "Grid Clear",
+        "Grid Delete",
+        "Grid Thru",
+        "Grid Solo",
+        "Grid Velocity",
+        "Grid Double",
+
+        /*
+         * Grid quantization type selection.
+         */
+
+        "Quant None",
+        "Quant Full",
+        "Quant Tighten",
+        "Quant Random",
+        "Quant Jitter",
+        "Reserved 68",
+
+        /*
+         * A few more likely candidates.
+         */
+
+        "BBT/HMS",
+        "LR Loop",
+        "Undo Record",
+        "Redo Record",
+        "Transpose Song",
+        "Copy Set",
+        "Paste Set",
+        "Toggle Tracks",
+
+        /*
+         * Set playing modes.
+         */
+
+        "Sets Normal",
+        "Sets Auto",
+        "Sets Additive",
+        "All Sets"
+
+#endif
+
+        "",                     // Maximum -- used only for limit-checking
+        "Loop",                 // Indicates the pattern key group
+        "Mute",                 // Indicates the mute key group
+        "Auto"                  // Indicates automation key group
     };
     std::string result;
-    if (s >= slot::bpm_up && s <= slot::automation)
+    if (s >= slot::bpm_up && s < slot::max)
     {
         int index = static_cast<int>(s);
         result = s_slot_names[index];

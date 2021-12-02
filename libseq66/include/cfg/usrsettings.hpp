@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-11-29
+ * \updates       2021-12-02
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -121,18 +121,38 @@ const int c_use_file_ppqn = 0;
 /**
  *  Provides the supported looping recording modes.  These values are used
  *  by the seqedit class, which provides a button with a popup menu to
- *  select one of these recording modes.
- *
- *  Merge is like overdub.
+ *  select one of these recording modes. These correspond to automation
+ *  slots record_overdub (merge), record_overwrite, record_expand, and
+ *  record_oneshot.
  */
 
 enum class recordstyle
 {
-    none,               /**< No special style.  Reserved for future.    */
+    none,               /**< No special style. Normal grid-slot mode.   */
     merge,              /**< Incoming events are merged into the loop.  */
     overwrite,          /**< Incoming events overwrite the loop.        */
     expand,             /**< Incoming events increase size of loop.     */
     oneshot,            /**< Stop when length of loop is reached.       */
+    max                 /**< Provides an illegal/length value.          */
+};
+
+/**
+ *  These enumerations correspond to the automation slots: grid_loop,
+ *  grid_record, grid_copy, ... grid_double.
+ */
+
+enum class gridmode
+{
+    loop,               /**< Normal grid-slot mode.                     */
+    record,             /**< Use one of the available recording modes.  */
+    copy,               /**< Copy any pattern that is selected.         */
+    paste,              /**< Paste the copied pattern to selected slot. */
+    slot_clear,         /**< Clear all events in selected pattern slot. */
+    slot_delete,        /**< Delete the pattern from the selected slot. */
+    thru,               /**< Set MIDI Thru for the selected pattern.    */
+    solo,               /**< Solo the selected pattern.                 */
+    velocity,           /**< Toggle between Free & hard-wired velocity. */
+    double_length,      /**< Double the length of the selected pattern. */
     max                 /**< Provides an illegal/length value.          */
 };
 
@@ -877,7 +897,16 @@ private:
      *  section perform the setting of record functions for patterns.
      */
 
-    recordstyle m_loop_control_mode;
+    recordstyle m_grid_record_style;
+
+    /**
+     *  Indicates the global selected mode for the main-window's grid.
+     *  Modes consist of loop (the normal used of the grid to do muting and
+     *  unmuting), record (use the grid to turn recording on for a pattern,
+     *  copy (use the grid to copy patterns), and more.
+     */
+
+    gridmode m_grid_mode;
 
 public:
 
@@ -1566,30 +1595,37 @@ public:
     }
 
     std::string new_pattern_record_string () const;
-    std::string loop_control_mode_label () const;
+    std::string grid_record_style_label () const;
 
-    recordstyle loop_control_mode () const
+    recordstyle grid_record_style () const
     {
-        return m_loop_control_mode;
+        return m_grid_record_style;
     }
 
-    int loop_record_code (recordstyle rs) const
+    int grid_record_code (recordstyle rs) const
     {
         return static_cast<int>(rs);
     }
 
-    int loop_record_code () const
+    int grid_record_code () const
     {
-        return loop_record_code(m_loop_control_mode);
+        return grid_record_code(m_grid_record_style);
     }
 
-    recordstyle next_loop_control_mode ();
-    recordstyle previous_loop_control_mode ();
+    recordstyle next_grid_record_style ();
+    recordstyle previous_grid_record_style ();
 
-    bool normal_loop_control () const
+    bool no_grid_record () const
     {
-        return m_loop_control_mode == recordstyle::none;
+        return m_grid_record_style == recordstyle::none;
     }
+
+    gridmode grid_mode () const
+    {
+        return m_grid_mode;
+    }
+
+    std::string grid_mode_label () const;
 
 public:         // used in main application module and the usrfile class
 
@@ -1711,13 +1747,13 @@ public:         // used in main application module and the usrfile class
         m_new_pattern_qrecord = flag;
     }
 
-    void loop_control_mode (const std::string & style);
+    void grid_record_style (const std::string & style);
     void new_pattern_record_style (const std::string & style);
 
-    void loop_control_mode (recordstyle style)
+    void grid_record_style (recordstyle style)
     {
         if (style < recordstyle::max)
-            m_loop_control_mode = style;
+            m_grid_record_style = style;
     }
 
     void new_pattern_record_style (recordstyle style)
@@ -1729,6 +1765,11 @@ public:         // used in main application module and the usrfile class
     void new_pattern_wraparound (bool flag)
     {
         m_new_pattern_wraparound = flag;
+    }
+
+    void grid_mode (gridmode mode)
+    {
+        m_grid_mode = mode;
     }
 
     void default_ppqn (int ppqn);

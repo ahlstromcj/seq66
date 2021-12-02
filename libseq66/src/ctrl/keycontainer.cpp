@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-11-22
+ * \updates       2021-12-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -55,7 +55,8 @@ keycontainer::keycontainer () :
     m_mute_keys         (),
     m_loaded_from_rc    (false),
     m_use_auto_shift    (true),
-    m_kbd_layout        (keyboard::layout::qwerty)
+    m_kbd_layout        (keyboard::layout::qwerty),
+    m_defaults_loaded   (false)
 {
     add_defaults();
 }
@@ -387,7 +388,7 @@ keycontainer::add_defaults ()
         { "KP_.",      automation::action::on      },  // 16 ss_set
         { "KP_*",      automation::action::on      },  // 17 record
         { "KP_-",      automation::action::on      },  // 18 quan_record
-        { "KP_+",      automation::action::on      },  // 19 reset_seq
+        { "KP_+",      automation::action::on      },  // 19 reset_sets
         { "|",         automation::action::on      },  // 20 mod_oneshot
         { "F6",        automation::action::on      },  // 21 FF
         { "F5",        automation::action::on      },  // 22 rewind
@@ -411,17 +412,83 @@ keycontainer::add_defaults ()
         { "F12",       automation::action::on      },  // 40 menu_mode
         { "F4",        automation::action::on      },  // 41 follow_transport
         { "~",         automation::action::on      },  // 42 panic
-        { "0xf9",      automation::action::toggle  },  // 43 visibility
-        { "0xfa",      automation::action::off     },  // 44 save_session
-        { "0xfb",      automation::action::off     },  // 45 reserved_45
-        { "0xfc",      automation::action::off     },  // 46 reserved_46
-        { "0xfd",      automation::action::off     },  // 47 reserved_47
-        { "0xfe",      automation::action::off     },  // 48 reserved_48
+        { "0xe0",      automation::action::toggle  },  // 43 visibility
+        { "0xe1",      automation::action::off     },  // 44 save_session
+        { "0xe2",      automation::action::off     },  // 45 reserved_45
+        { "0xe3",      automation::action::off     },  // 46 reserved_46
+        { "0xe4",      automation::action::off     },  // 47 reserved_47
+        { "0xe5",      automation::action::off     },  // 48 reserved_48
+
+#if defined USE_PROPOSED_NEW_AUTOMATION
+
+        /*
+         * Proposed massive expansion in automation. Grid mode selection.
+         */
+
+        { "0xe6",      automation::action::off     },  // 49 record_overdub
+        { "0xe7",      automation::action::off     },  // 50 record_overwrite
+        { "0xe8",      automation::action::off     },  // 51 record_expand
+        { "0xe9",      automation::action::off     },  // 52 record_oneshot
+        { "0xea",      automation::action::off     },  // 53 grid_loop
+        { "0xeb",      automation::action::off     },  // 54 grid_record
+        { "0xec",      automation::action::off     },  // 55 grid_copy
+        { "0xed",      automation::action::off     },  // 56 grid_paste
+        { "0xee",      automation::action::off     },  // 57 grid_clear
+        { "0xef",      automation::action::off     },  // 58 grid_delete
+        { "0xf0",      automation::action::off     },  // 59 grid_thru
+        { "0xf1",      automation::action::off     },  // 60 grid_solo
+        { "0xf2",      automation::action::off     },  // 61 grid_velocity
+        { "0xf3",      automation::action::off     },  // 62 grid_double
+
+        /*
+         * Grid quantization type selection.
+         */
+
+        { "0xf4",      automation::action::off     },  // 63 grid_quant_none,
+        { "0xf5",      automation::action::off     },  // 64 grid_quant_full,
+        { "0xf6",      automation::action::off     },  // 65 grid_quant_tighten,
+        { "0xf7",      automation::action::off     },  // 66 grid_quant_random,
+        { "0xf8",      automation::action::off     },  // 67 grid_quant_jitter,
+        { "0xf9",      automation::action::off     },  // 68 grid_quant_68,
+
+        /*
+         * A few more likely candidates.
+         */
+
+        { "0xfa",      automation::action::off     },  // 69 mod_bbt_hms,
+        { "0xfb",      automation::action::off     },  // 70 mod_LR_loop,
+        { "0xfc",      automation::action::off     },  // 71 mod_undo_recording,
+        { "0xfd",      automation::action::off     },  // 72 mod_redo_recording,
+        { "0xfe",      automation::action::off     },  // 73 mod_transpose_song,
+        { "US",        automation::action::off     },  // 74 mod_copy_set,
+        { "RS",        automation::action::off     },  // 75 mod_paste_set,
+        { "SOH",       automation::action::off     },  // 76 mod_toggle_tracks,
+
+        /*
+         * Set playing modes.
+         */
+
+        { "STX",      automation::action::off     },  // 77 set_mode_normal,
+        { "ETX",      automation::action::off     },  // 78 set_mode_auto,
+        { "EOT",      automation::action::off     },  // 79 set_mode_additive,
+        { "ENQ",      automation::action::off     },  // 80 set_mode_all_sets,
+
+#endif
+
         { "0xff",      automation::action::off     },  // -- maximum
+
+        /*
+         * Unnecessary
+         *
         { "g0",        automation::action::toggle  },  // loop/pattern function
         { "g1",        automation::action::toggle  },  // mute_group function
         { "g3",        automation::action::none    }   // automation functions
+         *
+         */
     };
+
+    if (m_defaults_loaded)
+        return;
 
     clear();
 
@@ -473,11 +540,13 @@ keycontainer::add_defaults ()
 
     /*
      * Automation-control keys. Any way to grab the real name from Qt?
+     * Doesn't matter, we need our own names.
      */
 
     tagprefix = "Auto ";
     automation::category c = automation::category::automation;
-    for (int auslot = 0; auslot < int(s_keys_automation.size()); ++auslot)
+    int ausmax = int(s_keys_automation.size()) - 1;     /* stop before 0xff */
+    for (int auslot = 0; auslot < ausmax; ++auslot)
     {
         automation::slot s = static_cast<automation::slot>(auslot);
         automation::action a = s_keys_automation[auslot].kd_action;
@@ -486,15 +555,18 @@ keycontainer::add_defaults ()
         ctrlkey ordinal = qt_keyname_ordinal(keyname);
         if (is_invalid_ordinal(ordinal))
         {
-            /* not sure we want to see a message here */
+#if defined SEQ66_PLATFORM_DEBUG
+            continue;           /* not sure we want to see a message here   */
+#endif
         }
         else
         {
             keycontrol kc(nametag, keyname, c, a, s, auslot);
-            if (! add(ordinal, kc))     /*  && int(ordinal) != (-1))    */
+            if (! add(ordinal, kc))
                 break;
         }
     }
+    m_defaults_loaded = true;
     m_loaded_from_rc = false;
 }
 

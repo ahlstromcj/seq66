@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-11-29
+ * \updates       2021-12-02
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -385,7 +385,8 @@ usrsettings::usrsettings () :
     m_new_pattern_qrecord       (false),
     m_new_pattern_record_style  (recordstyle::merge),
     m_new_pattern_wraparound    (false),
-    m_loop_control_mode         (recordstyle::none)
+    m_grid_record_style         (recordstyle::none),
+    m_grid_mode                 (gridmode::loop)
 {
     // Empty body; it's no use to call normalize() here, see set_defaults().
 }
@@ -472,7 +473,8 @@ usrsettings::set_defaults ()
     m_new_pattern_qrecord = false;
     m_new_pattern_record_style = recordstyle::merge;
     m_new_pattern_wraparound = false;
-    m_loop_control_mode = recordstyle::none;
+    m_grid_record_style = recordstyle::none;
+    m_grid_mode = gridmode::loop;
     normalize();                            // recalculate derived values
 }
 
@@ -527,6 +529,10 @@ usrsettings::new_pattern_record_style (const std::string & style)
     m_new_pattern_record_style = rs;
 }
 
+/**
+ *  Hmmmmmmm on the next two functions.
+ */
+
 std::string
 usrsettings::new_pattern_record_string () const
 {
@@ -544,10 +550,10 @@ usrsettings::new_pattern_record_string () const
 }
 
 std::string
-usrsettings::loop_control_mode_label () const
+usrsettings::grid_record_style_label () const
 {
     std::string result;
-    switch (loop_control_mode())
+    switch (grid_record_style())
     {
     case recordstyle::none:         result = "Loop";        break;
     case recordstyle::merge:        result = "Overdub";     break;
@@ -560,7 +566,7 @@ usrsettings::loop_control_mode_label () const
 }
 
 void
-usrsettings::loop_control_mode (const std::string & style)
+usrsettings::grid_record_style (const std::string & style)
 {
     recordstyle rs = recordstyle::none;
     if (style == "merge")
@@ -572,14 +578,14 @@ usrsettings::loop_control_mode (const std::string & style)
     else if (style == "one-shot")
         rs = recordstyle::oneshot;
 
-    m_loop_control_mode = rs;
+    m_grid_record_style = rs;
 }
 
 recordstyle
-usrsettings::next_loop_control_mode ()
+usrsettings::next_grid_record_style ()
 {
     recordstyle result;
-    switch (loop_control_mode())
+    switch (grid_record_style())
     {
     case recordstyle::none:         result = recordstyle::merge;        break;
     case recordstyle::merge:        result = recordstyle::overwrite;    break;
@@ -588,15 +594,15 @@ usrsettings::next_loop_control_mode ()
     case recordstyle::oneshot:      result = recordstyle::none;         break;
     default:                        result = recordstyle::none;         break;
     }
-    m_loop_control_mode = result;
+    m_grid_record_style = result;
     return result;
 }
 
 recordstyle
-usrsettings::previous_loop_control_mode ()
+usrsettings::previous_grid_record_style ()
 {
     recordstyle result;
-    switch (loop_control_mode())
+    switch (grid_record_style())
     {
     case recordstyle::none:         result = recordstyle::oneshot;      break;
     case recordstyle::merge:        result = recordstyle::none;         break;
@@ -605,7 +611,28 @@ usrsettings::previous_loop_control_mode ()
     case recordstyle::oneshot:      result = recordstyle::expand;       break;
     default:                        result = recordstyle::none;         break;
     }
-    m_loop_control_mode = result;
+    m_grid_record_style = result;
+    return result;
+}
+
+std::string
+usrsettings::grid_mode_label () const
+{
+    std::string result;
+    switch (grid_mode())
+    {
+    case gridmode::loop:            result = "Loop";        break;
+    case gridmode::record:          result = "Record";      break;
+    case gridmode::copy:            result = "Copy";        break;
+    case gridmode::paste:           result = "Paste";       break;
+    case gridmode::slot_clear:      result = "Clear";       break;
+    case gridmode::slot_delete:     result = "Delete";      break;
+    case gridmode::thru:            result = "Thru";        break;
+    case gridmode::solo:            result = "Solo";        break;
+    case gridmode::velocity:        result = "Velocity";    break;
+    case gridmode::double_length:   result = "Double";      break;
+    case gridmode::max:             result = "Error";       break;
+    }
     return result;
 }
 

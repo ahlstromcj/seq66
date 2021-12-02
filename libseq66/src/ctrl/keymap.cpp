@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-06-06
+ * \updates       2021-12-02
  * \license       GNU GPLv2 or above
  */
 
@@ -704,7 +704,7 @@ initialize_key_maps (bool reinit)
         }
         s_are_maps_initialized = keymap_size() >= 0xfe;
         if (! s_are_maps_initialized)
-            errprint("Key map unable to be initialized");
+            error_message("Key map unable to be initialized");
     }
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI

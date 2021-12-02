@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-11-24
+ * \updates       2021-12-02
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3407,8 +3407,8 @@ public:
         return result;
     }
 
-    void next_loop_control_mode ();
-    void previous_loop_control_mode ();
+    void next_grid_record_style ();
+    void previous_grid_record_style ();
     bool loop_control                   /* [loop-control]       */
     (
         automation::action a, int d0, int d1,
@@ -3525,7 +3525,7 @@ public:
         automation::action a, int d0, int d1,
         int index, bool inverse
     );
-    bool automation_reset_seq
+    bool automation_reset_sets
     (
         automation::action a, int d0, int d1,
         int index, bool inverse
@@ -3655,6 +3655,17 @@ public:
         automation::action a, int d0, int d1,
         int index, bool inverse
     );
+
+#if defined USE_PROPOSED_NEW_AUTOMATION
+
+    void set_record_style (recordstyle rs);
+    bool automation_record_style
+    (
+        automation::action a, int d0, int d1,
+        int index, bool inverse
+    );
+
+#endif
 
 };          // class performer
 

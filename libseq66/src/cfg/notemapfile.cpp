@@ -385,7 +385,7 @@ copy_notemapper
         }
         else
         {
-            file_error("Open failed", source);
+            file_error("Copy failed", source);
         }
     }
     else

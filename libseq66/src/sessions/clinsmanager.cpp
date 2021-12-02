@@ -314,7 +314,8 @@ clinsmanager::run ()
  *  client ID (seq66.nYMVC).  We append the client ID and create this
  *  directory, followng the lead of Non-Mixer and Qtractor.
  *
- *  Note: At this point, the performer [perf()] does not yet exist!
+ *  Note: At this point, the performer [perf()] does not yet exist, but
+ *  the 'rc', 'usr', 'ctrl', and 'mutes' files have been parsed.
  *
  *  The first thing to do is grab the current (and default) configuration
  *  directory (in the user's HOME area).  We may need it, in order to find the

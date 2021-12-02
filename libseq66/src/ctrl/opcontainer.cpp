@@ -68,7 +68,7 @@ opcontainer::opcontainer (const std::string & name) :
 }
 
 /**
- *  Adds a midioperation to the container, it it is not the automation slot.
+ *  Adds a midioperation to the container, if it is not the automation slot.
  *
  * \param op
  *      The operation's object, which provides the op-number, the automation

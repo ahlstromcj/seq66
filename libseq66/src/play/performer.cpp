@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-11-30
+ * \updates       2021-12-02
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -60,7 +60,7 @@
  *  ss_set:             Key, MIDI: Set current set as playing screen-set.
  *  record:             Key: Toggle. MIDI: Toggle/On/Off.
  *  quan_record:        Key: Toggle. MIDI: Toggle/On/Off.
- *  reset_seq:          Key: Toggle. MIDI: Toggle/On/Off.
+ *  reset_sets:         Key: Toggle. MIDI: Toggle/On/Off.
  *  mod_oneshot:        Key: Press-On/Release-Off. MIDI: Toggle = On.
  *  FF:                 TODO.
  *  rewind:             TODO.
@@ -5641,7 +5641,6 @@ performer::midi_control_event (const event & ev, bool recording)
 void
 performer::signal_save ()
 {
-    // warn_message("S A V E !"); // TO DO
     stop_playing();
     signal_for_save();              /* provided by the daemonize module */
 }
@@ -5649,7 +5648,6 @@ performer::signal_save ()
 void
 performer::signal_quit ()
 {
-    // warn_message("Q U I T !); // TO DO
     stop_playing();
     signal_for_exit();              /* provided by the daemonize module */
 }
@@ -5986,16 +5984,16 @@ performer::learn_mutes (mutegroup::number group)
  */
 
 void
-performer::next_loop_control_mode ()
+performer::next_grid_record_style ()
 {
-    (void) usr().next_loop_control_mode();
+    (void) usr().next_grid_record_style();
     notify_automation_change(automation::slot::loop_mode);
 }
 
 void
-performer::previous_loop_control_mode ()
+performer::previous_grid_record_style ()
 {
-    (void) usr().previous_loop_control_mode();
+    (void) usr().previous_grid_record_style();
     notify_automation_change(automation::slot::loop_mode);
 }
 
@@ -6060,7 +6058,7 @@ performer::loop_control
         }
         else
         {
-            if (usr().normal_loop_control())
+            if (usr().no_grid_record())
             {
                 if (a == automation::action::toggle)
                     (void) sequence_playing_toggle(seqno);
@@ -6739,7 +6737,7 @@ performer::automation_ss_set
  *  As of 2021-11-13, this function sets the loop-control mode.  Normally, this
  *  is "none", which means that loop-control toggles the mute status of the
  *  specified pattern.  This function increments the mode to the next one,
- *  looping back to none.  See usrsettings :: loop_control_mode() and the
+ *  looping back to none.  See usrsettings :: grid_record_style() and the
  *  usrsettings :: recordstyle enumeration.
  */
 
@@ -6755,11 +6753,11 @@ performer::automation_loop_mode
     if (! inverse)
     {
         if (a == automation::action::toggle)
-            next_loop_control_mode();
+            next_grid_record_style();
         else if (a == automation::action::on)
-            next_loop_control_mode();
+            next_grid_record_style();
         else if (a == automation::action::off)
-            previous_loop_control_mode();
+            previous_grid_record_style();
 
         /*
          *  Done in the functions called above:
@@ -6802,21 +6800,11 @@ performer::automation_quan_record
 }
 
 /**
- *  Implements reset_seq.  It determines if pattern recording merges notes or
- *  overwrites them upon loop-return.
- *
- *  What about the "extend sequence" mode?  What about the return codes?
- *  What about the (new) "oneshot" pattern recording mode?
- *
- *  As is, this function is a bit useless, as we know of no MIDI controllers
- *  that allow for precise specification of the d1 value, whether vi CC data
- *  value or Note velocity.
- *
- *  Perhaps we should use it for a call to reset_sequences().
+ *  We now use it for a call to reset_sequences() and reset_playset().
  */
 
 bool
-performer::automation_reset_seq
+performer::automation_reset_sets
 (
     automation::action a, int d0, int d1,
     int index, bool inverse
@@ -6962,6 +6950,13 @@ performer::automation_playlist
     }
     return result;
 }
+
+/*
+ * ----------------------------------------------------------------------
+ *  More performer::automation_xxx() functions follow this group of
+ *  functions.
+ * ----------------------------------------------------------------------
+ */
 
 /**
  *  This function calls the seq66::read_midi_file() free function, and then
@@ -7338,10 +7333,16 @@ performer::save_playlist (const std::string & pl)
     return result;
 }
 
+/*
+ * ----------------------------------------------------------------------
+ *  More performer::automation_xxx() functions:
+ * ----------------------------------------------------------------------
+ */
+
 /**
- *  Implements playlist control.  If \a inverse is true, nothing is done.  Note
- *  that currently the GUI may hardwire the usage of the arrow keys for this
- *  functionality.
+ *  Implements playlist control.  If \a inverse is true, nothing is done.
+ *  Note that currently the GUI may hardwire the usage of the arrow keys for
+ *  this functionality.
  */
 
 bool
@@ -7790,6 +7791,74 @@ performer::automation_save_session
     return result;
 }
 
+#if defined USE_PROPOSED_NEW_AUTOMATION
+
+/**
+ *  Values are none, merge, overwrite, expand, and one-shot.
+ */
+
+void
+performer::set_record_style (recordstyle rs)
+{
+    if (rs < recordstyle::max)
+    {
+        usr().grid_record_style(rs);
+        if (rs == recordstyle::none)
+        {
+            /*
+             * Should we turn off quantization?
+             */
+
+            m_record_mode = recordmode::normal;     /* turn off quantize    */
+        }
+        notify_automation_change(automation::slot::loop_mode);
+        notify_automation_change(automation::slot::quan_record);
+    }
+}
+
+bool
+performer::automation_record_style
+(
+    automation::action a, int d0, int d1,
+    int index, bool inverse
+)
+{
+    std::string name = "Record Overdub"; // opcontrol::slot_name(index)
+    bool result = true;
+    print_parameters(name, a, d0, d1, index, inverse);
+    if (a == automation::action::on && ! inverse)
+    {
+        automation::slot s = automation::slot_cast(index);
+        recordstyle rs;
+        switch (s)
+        {
+            case automation::slot::record_overdub:
+                rs = recordstyle::merge;
+                break;
+
+            case automation::slot::record_overwrite:
+                rs = recordstyle::overwrite;
+                break;
+
+            case automation::slot::record_expand:
+                rs = recordstyle::expand;
+                break;
+
+            case automation::slot::record_oneshot:
+                rs = recordstyle::oneshot;
+                break;
+
+            default:
+                rs = recordstyle::max;
+                break;
+        }
+        set_record_style(rs);
+    }
+    return result;
+}
+
+#endif
+
 /**
  *  Provides a list of all the functions that can be configured to be called
  *  upon configured keystrokes or incoming MIDI messages.
@@ -7820,7 +7889,7 @@ performer::sm_auto_func_list [] =
     { automation::slot::ss_set, &performer::automation_ss_set            },
     { automation::slot::loop_mode, &performer::automation_loop_mode      },
     { automation::slot::quan_record, &performer::automation_quan_record  },
-    { automation::slot::reset_seq, &performer::automation_reset_seq      },
+    { automation::slot::reset_sets, &performer::automation_reset_sets    },
     { automation::slot::mod_oneshot, &performer::automation_oneshot      },
     { automation::slot::FF, &performer::automation_FF                    },
     { automation::slot::rewind, &performer::automation_rewind            },
@@ -7871,6 +7940,74 @@ performer::sm_auto_func_list [] =
     { automation::slot::reserved_46, &performer::automation_no_op        },
     { automation::slot::reserved_47, &performer::automation_no_op        },
     { automation::slot::reserved_48, &performer::automation_no_op        },
+
+#if defined USE_PROPOSED_NEW_AUTOMATION
+
+    /*
+     * Proposed massive expansion in automation. Grid mode selection.
+     */
+
+    {
+        automation::slot::record_overdub,
+        &performer::automation_record_style
+    },
+    {
+        automation::slot::record_overwrite,
+        &performer::automation_record_style
+    },
+    {
+        automation::slot::record_expand,
+        &performer::automation_record_style
+    },
+    {
+        automation::slot::record_oneshot,
+        &performer::automation_record_style
+    },
+    { automation::slot::grid_loop,          &performer::automation_no_op },
+    { automation::slot::grid_record,        &performer::automation_no_op },
+    { automation::slot::grid_copy,          &performer::automation_no_op },
+    { automation::slot::grid_paste,         &performer::automation_no_op },
+    { automation::slot::grid_clear,         &performer::automation_no_op },
+    { automation::slot::grid_delete,        &performer::automation_no_op },
+    { automation::slot::grid_thru,          &performer::automation_no_op },
+    { automation::slot::grid_solo,          &performer::automation_no_op },
+    { automation::slot::grid_velocity,      &performer::automation_no_op },
+    { automation::slot::grid_double,        &performer::automation_no_op },
+
+    /*
+     * Grid quantization type selection.
+     */
+
+    { automation::slot::grid_quant_none,    &performer::automation_no_op },
+    { automation::slot::grid_quant_full,    &performer::automation_no_op },
+    { automation::slot::grid_quant_tighten, &performer::automation_no_op },
+    { automation::slot::grid_quant_random,  &performer::automation_no_op },
+    { automation::slot::grid_quant_jitter,  &performer::automation_no_op },
+    { automation::slot::grid_quant_68,      &performer::automation_no_op },
+
+    /*
+     * A few more likely candidates.
+     */
+
+    { automation::slot::mod_bbt_hms,        &performer::automation_no_op },
+    { automation::slot::mod_LR_loop,        &performer::automation_no_op },
+    { automation::slot::mod_undo_recording, &performer::automation_no_op },
+    { automation::slot::mod_redo_recording, &performer::automation_no_op },
+    { automation::slot::mod_transpose_song, &performer::automation_no_op },
+    { automation::slot::mod_copy_set,       &performer::automation_no_op },
+    { automation::slot::mod_paste_set,      &performer::automation_no_op },
+    { automation::slot::mod_toggle_tracks,  &performer::automation_no_op },
+
+    /*
+     * Set playing modes.
+     */
+
+    { automation::slot::set_mode_normal,    &performer::automation_no_op },
+    { automation::slot::set_mode_auto,      &performer::automation_no_op },
+    { automation::slot::set_mode_additive,  &performer::automation_no_op },
+    { automation::slot::set_mode_all_sets,  &performer::automation_no_op },
+
+#endif
 
     /*
      * Terminator

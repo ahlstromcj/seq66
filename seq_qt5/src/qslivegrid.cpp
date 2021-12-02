@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-11-22
+ * \updates       2021-12-02
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -185,12 +185,12 @@ qslivegrid::qslivegrid
         ui->txtBankName->hide();
         ui->buttonActivate->hide();
         ui->buttonLoopMode->setEnabled(true);
-        show_loop_control_mode();
+        show_grid_record_style();
         show_record_mode();
         connect
         (
             ui->buttonLoopMode, SIGNAL(clicked(bool)),
-            this, SLOT(slot_loop_control_mode(bool))
+            this, SLOT(slot_grid_record_style(bool))
         );
         connect
         (
@@ -279,7 +279,7 @@ qslivegrid::conditional_update ()
     sequence_key_check();
     if (perf().needs_update() || check_needs_update())
     {
-        show_loop_control_mode();
+        show_grid_record_style();
         show_record_mode();
         for (auto pb : m_loop_buttons)
         {
@@ -1330,15 +1330,15 @@ qslivegrid::slot_activate_bank (bool /*clicked*/)
 }
 
 void
-qslivegrid::slot_loop_control_mode (bool /*clicked*/)
+qslivegrid::slot_grid_record_style (bool /*clicked*/)
 {
-    perf().next_loop_control_mode();
+    perf().next_grid_record_style();
 
     /*
      * The "needs-update" flag should get this refreshed by the timer
      * callback.
      *
-     * show_loop_control_mode();
+     * show_grid_record_style();
      */
 }
 
@@ -1356,7 +1356,7 @@ qslivegrid::slot_record_mode (bool /*clicked*/)
 }
 
 void
-qslivegrid::show_loop_control_mode ()
+qslivegrid::show_grid_record_style ()
 {
     static bool s_uninitialized = true;
     static QPalette s_palette;
@@ -1366,7 +1366,7 @@ qslivegrid::show_loop_control_mode ()
         s_uninitialized = false;
         s_palette = button->palette();
     }
-    if (usr().normal_loop_control())
+    if (usr().no_grid_record())
     {
         button->setPalette(s_palette);
         button->update();
@@ -1375,7 +1375,7 @@ qslivegrid::show_loop_control_mode ()
     {
         QPalette pal = button->palette();
         QColor c;
-        switch (usr().loop_control_mode())
+        switch (usr().grid_record_style())
         {
         case recordstyle::merge:        c.setNamedColor("#FF0000");     break;
         case recordstyle::overwrite:    c.setNamedColor("#C00000");     break;
@@ -1389,7 +1389,7 @@ qslivegrid::show_loop_control_mode ()
         button->setPalette(pal);
         button->update();
     }
-    button->setText(qt(usr().loop_control_mode_label()));
+    button->setText(qt(usr().grid_record_style_label()));
 }
 
 void

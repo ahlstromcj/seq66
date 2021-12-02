@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-11-28
+ * \updates       2021-12-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -251,9 +251,16 @@ midicontrolfile::parse_stream (std::ifstream & file)
 
     bool loadmidi = rc_ref().load_midi_control_in();
     bool loadkeys = rc_ref().load_key_controls();
-    s = get_variable(file, mctag, "control-buss");
 
+#if defined USE_OLD_CODE
+    s = get_variable(file, mctag, "control-buss");
     int buss = string_to_int(s, default_control_in_buss());
+#else
+    int buss = get_buss_number(file, false, mctag, "control-buss");
+    if (buss < 0)
+        buss = default_control_in_buss();
+#endif
+
     bool enabled = get_boolean(file, mctag, "midi-enabled");
     int offset = 0, rows = 0, columns = 0;
     result = parse_control_sizes(file, mctag, offset, rows, columns);
@@ -475,11 +482,17 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
     std::string mctag = "[midi-control-out-settings]";
     std::string s = get_variable(file, mctag, "set-size");
     int sequences = string_to_int(s, setmaster::Size());
+#if defined USE_OLD_CODE
     s = get_variable(file, mctag, "output-buss");
     if (s.empty())
         s = get_variable(file, mctag, "buss");          /* the old tag name */
 
     int buss = string_to_int(s, default_control_out_buss());
+#else
+    int buss = get_buss_number(file, true, mctag, "output-buss");
+    if (buss < 0)
+        buss = default_control_out_buss();
+#endif
     bool enabled = false;
     s = get_variable(file, mctag, "midi-enabled");
     if (s.empty())
@@ -818,6 +831,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         "# input buss. If set, that buss can send MIDI control. 255 (0xFF)\n"
         "# means any buss enabled in the 'rc' file can send control. ALSA\n"
         "# provides an extra 'announce' buss, altering port numbering.\n"
+        "# If port-mapping is enabled, the port nick-name can be provided.\n"
         "#\n"
         "# 'midi-enabled' applies to the MIDI controls; keystroke controls\n"
         "# are always enabled. Supported keyboard layouts are 'qwerty'\n"
@@ -830,10 +844,15 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         (
             file, "drop-empty-controls", rc_ref().drop_empty_in_controls()
         );
+
+#if defined USE_OLD_CODE
         if (bb >= c_busscount_max)
             write_string(file, "control-buss", "0xFF");
         else
             write_integer(file, "control-buss", bb);
+#else
+        write_buss_info(file, false, "control-buss", bb);
+#endif
 
         int defaultrows = mci.rows();
         int defaultcolumns = mci.columns();
@@ -1021,21 +1040,26 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
 {
     /* const */ midicontrolout & mco = rc_ref().midi_control_out();
     int setsize = mco.screenset_size();
-    int buss = int(mco.nominal_buss());
-    bool result = buss >= 0;                /* do a very light sanity check */
+    int bb = int(mco.nominal_buss());
+    bool result = bb >= 0;                /* do a very light sanity check */
     if (result)
     {
         if (setsize == 0)
         {
             mco.initialize
             (
-                buss, screenset::c_default_rows, screenset::c_default_columns
+                bb, screenset::c_default_rows, screenset::c_default_columns
             );
             setsize = mco.screenset_size();
         }
         file << "\n[midi-control-out-settings]\n\n";
         write_integer(file, "set-size", setsize);
-        write_integer(file, "output-buss", buss);
+
+#if defined USE_OLD_CODE
+        write_integer(file, "output-buss", bb);
+#else
+        write_buss_info(file, true, "output-buss", bb);
+#endif
         write_boolean(file, "midi-enabled", ! mco.is_disabled());
         write_integer(file, "button-offset", mco.offset());
         write_integer(file, "button-rows", mco.rows());
@@ -1298,6 +1322,99 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
         result = false;
     }
     return result;
+}
+
+/**
+ *  A potential candidate to move to configfile.
+ *
+ *  Also need a write_buss_number().
+ */
+
+int
+midicontrolfile::get_buss_number
+(
+    std::ifstream & file,
+    bool isoutputport,
+    const std::string & tag,
+    const std::string & varname
+)
+{
+    const int defalt = (-1);
+    int result = defalt;
+    std::string s = get_variable(file, tag, varname);
+    if (! s.empty())
+    {
+        result = string_to_int(s, defalt);
+        if (result == defalt)               /* could not convert as integer */
+        {
+            if (isoutputport)
+            {
+                clockslist & opm = output_port_map();
+                if (opm.active())
+                {
+                    bussbyte b = opm.bus_from_nick_name(s);     /* 0 to FF  */
+                    result = int(b);
+                    msgprintf
+                    (
+                        msglevel::status, "Output buss '%s' port %d", s, result
+                    );
+                }
+            }
+            else
+            {
+                inputslist & ipm = input_port_map();
+                if (ipm.active())
+                {
+                    bussbyte b = ipm.bus_from_nick_name(s);     /* 0 to FF  */
+                    result = int(b);
+                    msgprintf
+                    (
+                        msglevel::status, "Input buss '%s' port %d", s, result
+                    );
+                }
+            }
+        }
+    }
+    return result;
+}
+
+void
+midicontrolfile::write_buss_info
+(
+    std::ofstream & file,
+    bool isoutputport,
+    const std::string & varname,
+    int nominalbuss
+)
+{
+    bool active = false;
+    if (isoutputport)
+    {
+        clockslist & opm = output_port_map();
+        active = opm.active();
+        if (active)
+        {
+            std::string buss_string = opm.port_name_from_bus(nominalbuss);
+            write_string(file, varname, buss_string);
+        }
+    }
+    else
+    {
+        inputslist & ipm = input_port_map();
+        active = ipm.active();
+        if (active)
+        {
+            std::string buss_string = ipm.port_name_from_bus(nominalbuss);
+            write_string(file, varname, buss_string);
+        }
+    }
+    if (! active)
+    {
+        if (nominalbuss >= c_busscount_max)
+            write_string(file, varname, "0xFF");
+        else
+            write_integer(file, varname, nominalbuss);
+    }
 }
 
 /**

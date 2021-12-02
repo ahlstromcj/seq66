@@ -5653,8 +5653,8 @@ recordstyle
 sequence::loop_record_style (int ri)
 {
     recordstyle result = recordstyle::none;
-    int min = usr().loop_record_code(result);
-    int max = usr().loop_record_code(recordstyle::max);
+    int min = usr().grid_record_code(result);
+    int max = usr().grid_record_code(recordstyle::max);
     if (ri > min && ri < max)
         result = static_cast<recordstyle>(ri);
 

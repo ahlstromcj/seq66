@@ -757,11 +757,12 @@ rcfile::write ()
     std::string mcfname = rc_ref().midi_control_filespec();
     bool exists = file_exists(mcfname);
     bool active = rc_ref().midi_control_active();
+    bool recreate = active || ! exists;
     const midicontrolin & ctrls = rc_ref().midi_control_in();
     bool result = ctrls.count() > 0;
     if (result)
     {
-        if (active || ! exists)
+        if (recreate)
         {
             /*
              * Eventually we should provide a write_midi_control_file()
@@ -776,21 +777,28 @@ rcfile::write ()
     }
     else
     {
-        if (active || ! exists)
+        if (recreate)
         {
-            keycontainer keys;              /* call the default constructor */
+            // keycontainer keys;              /* call the default constructor */
+
+            keycontainer & keys = rc().key_controls();
             midicontrolin & ctrls = rc_ref().midi_control_in();
             midicontrolfile mcf(mcfname, rc_ref());
             ctrls.add_blank_controls(keys);
-            result = mcf.container_to_stanzas(ctrls);
-            if (result)
-                ok = mcf.write();
+
+            /*
+             * midicontrolfile::write() does this:
+             *
+             *      result = mcf.container_to_stanzas(ctrls);
+             */
+
+            ok = mcf.write();
         }
     }
     file << "\n"
-        "# Provides a flag and a file-name for MIDI-control I/O settings. Use\n"
-        "# '\"\"' to indicate no 'ctrl' file. If none, the default internal\n"
-        "# keystrokes are used, with no MIDI control I/O.\n"
+        "# Provides a flag and file-name for MIDI-control I/O settings.\n"
+        "# '\"\"' means no 'ctrl' file. If none, the default keystrokes\n"
+        "# are used, with no MIDI control.\n"
        ;
     write_file_status
     (
@@ -807,9 +815,9 @@ rcfile::write ()
         ok = mgf.write();
 
     file << "\n"
-        "# Provides a flag and a file-name for mute-groups settings. Use\n"
-        "# '\"\"' to indicate no 'mutes' file. If none, there are no mute\n"
-        "# groups unless the MIDI file contains some.\n"
+        "# Provides a flag and file-name for mute-groups settings.\n"
+        "# '\"\"' means no 'mutes' file. If none, there are no mute\n"
+        "# groups, unless the MIDI file contains some.\n"
        ;
     write_file_status
     (
@@ -820,8 +828,8 @@ rcfile::write ()
     std::string usrname = rc_ref().user_filespec();
     usrname = rc_ref().trim_home_directory(usrname);
     file << "\n"
-        "# Provides a flag and a file-name for 'user' settings. Use '\"\"' \n"
-        "# to indicate no 'usr' file. If none, there are no special user\n"
+        "# Provides a flag and file-name for 'user' settings. '\"\"'\n"
+        "# means no 'usr' file. If none, there are no special user\n"
         "# settings.  Using no 'usr' file should be considered experimental.\n"
        ;
     write_file_status
@@ -830,7 +838,7 @@ rcfile::write ()
         rc_ref().user_filename(), rc_ref().user_file_active()
     );
     file << "\n"
-        "# Provides a play-list file and flag to activate it. If no list, use\n"
+        "# Provides a flag and play-list file. If no list, use\n"
         "# '\"\"' and set active = false. Use the extension '.playlist'. Even\n"
         "# if not active, the play-list file is read. 'base-directory' sets the\n"
         "# sets the directory holding all MIDI files in all play-lists, useful\n"
@@ -845,7 +853,7 @@ rcfile::write ()
     write_string(file, "base-directory", mbasedir, true);
 
     file << "\n"
-       "# Provides a flag and file-name for note-mapping. '\"\"' indicates\n"
+       "# Provides a flag and file-name for note-mapping. '\"\"' means no\n"
        "# 'drums' file. Use the extension '.drums'. This file is used when the\n"
        "# user invokes the note-conversion operation in the pattern editor of a\n"
        "# transposable pattern. Make the pattern temporarily transposable to\n"
@@ -1100,12 +1108,12 @@ rcfile::write ()
     write_boolean(file, "jack-midi", rc_ref().with_jack_midi());
     write_boolean(file, "jack-auto-connect", rc_ref().jack_auto_connect());
     file << "\n"
-        "# auto-save-rc sets automatic saving of the running configuration\n"
+        "# 'auto-save-rc' sets automatic saving of the running configuration\n"
         "# 'rc' and other files.  True is Seq24 behavior. If set, many\n"
         "# command-line settings are saved to configuration files. There is\n"
         "# no user-interface control for this setting.\n"
         "#\n"
-        "# The old-triggers value indicates to save triggers in a format\n"
+        "# The 'old-triggers' value means to save triggers in a format\n"
         "# compatible with Seq24.  Otherwise, triggers are saved with an\n"
         "# additional 'transpose' setting. Similarly, the old-mutes value,\n"
         "# if true, saves mute-groups as long values (!) instead of bytes.\n"
@@ -1129,7 +1137,7 @@ rcfile::write ()
     int count = rc_ref().recent_file_count();
     file << "\n"
         "# A list of the most recently-loaded MIDI files. 'full-paths' = true\n"
-        "# indicates to show the full file-path in the menu.  The most recent\n"
+        "# means to show the full file-path in the menu.  The most recent\n"
         "# file (top of list) can be loaded via 'load-most-recent' at startup.\n"
         "\n[recent-files]\n\n"
         ;

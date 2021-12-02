@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-11-14
+ * \updates       2021-12-02
  * \license       GNU GPLv2 or above
  *
  *  Currently, there is no code in this file.
@@ -207,6 +207,14 @@ string_to_action (const std::string & s)
         return action::none;
 }
 
+/*
+ *  This code is currently unused.  We currently don't need to lookup by a
+ *  slots string name, and use performer::print_parameters() on a
+ *  hardwired name.
+ */
+
+#if defined SEQ66_USE_SLOT_STRING_CONVERSIONS
+
 using slot_pair = struct
 {
     slot slotcode;
@@ -218,7 +226,7 @@ using slot_pair = struct
  *  They differ in letter case and (slightly) in numbering.
  *
  *  This list is meant for (eventually) lookups of names rather than numbers
- *  configuration files.
+ *  in configuration files.
  */
 
 static slot_pair
@@ -247,7 +255,7 @@ s_slotnamelist [] =
     { slot::ss_set,           "ss_set"          },
     { slot::loop_mode,        "loop_mode"       },
     { slot::quan_record,      "quan_record"     },
-    { slot::reset_seq,        "reset_seq"       },
+    { slot::reset_sets,       "reset_sets"      },
     { slot::mod_oneshot,      "mod_oneshot"     },
     { slot::FF,               "FF"              },
     { slot::rewind,           "rewind"          },
@@ -260,6 +268,11 @@ s_slotnamelist [] =
     { slot::reserved_29,      "reserved_29"     },
     { slot::toggle_mutes,     "toggle_mutes"    },
     { slot::song_pointer,     "song_pointer"    },
+
+    /*
+     * The following add to what Seq64 supports.
+     */
+
     { slot::keep_queue,       "keep_queue"      },
     { slot::slot_shift,       "slot_shift"      },
     { slot::mutes_clear,      "mutes_clear"     },
@@ -277,14 +290,69 @@ s_slotnamelist [] =
     { slot::reserved_46,      "reserved_46"     },
     { slot::reserved_47,      "reserved_47"     },
     { slot::reserved_48,      "reserved_48"     },
-    { slot::max,              "maximum"         },
-    { slot::loop,             "loop"            },
-    { slot::mute_group,       "mute_group"      },
-    { slot::automation,       "automation"      },
-    { slot::illegal,          "illegal"         }
-};
 
-#if defined SEQ66_USE_SLOT_STRING_CONVERSIONS
+#if defined USE_PROPOSED_NEW_AUTOMATION
+
+    /*
+     * Proposed massive expansion in automation. Grid mode selection.
+     */
+
+    { slot::record_overdub,     "record_overdub"        },
+    { slot::record_overwrite,   "record_overwrite"      },
+    { slot::record_expand,      "record_expand"         },
+    { slot::record_oneshot,     "record_oneshot"        },
+    { slot::grid_loop,          "grid_loop"             },
+    { slot::grid_record,        "grid_record"           },
+    { slot::grid_copy,          "grid_copy"             },
+    { slot::grid_paste,         "grid_paste"            },
+    { slot::grid_clear,         "grid_clear"            },
+    { slot::grid_delete,        "grid_delete"           },
+    { slot::grid_thru,          "grid_thru"             },
+    { slot::grid_solo,          "grid_solo"             },
+    { slot::grid_velocity,      "grid_velocity"         },
+    { slot::grid_double,        "grid_double"           },
+
+    /*
+     * Grid quantization type selection.
+     */
+
+    { slot::grid_quant_none,    "grid_quant_none"       },
+    { slot::grid_quant_full,    "grid_quant_full"       },
+    { slot::grid_quant_tighten, "grid_quant_tighten"    },
+    { slot::grid_quant_random,  "grid_quant_random"     },
+    { slot::grid_quant_jitter,  "grid_quant_jitter"     },
+    { slot::grid_quant_68,      "grid_quant_68"         },
+
+    /*
+     * A few more likely candidates.
+     */
+
+    { slot::mod_bbt_hms,        "mod_bbt_hms"           },
+    { slot::mod_LR_loop,        "mod_LR_loop"           },
+    { slot::mod_undo_recording, "mod_undo_recording"    },
+    { slot::mod_redo_recording, "mod_redo_recording"    },
+    { slot::mod_transpose_song, "mod_transpose_song"    },
+    { slot::mod_copy_set,       "mod_copy_set"          },
+    { slot::mod_paste_set,      "mod_paste_set"         },
+    { slot::mod_toggle_tracks,  "mod_toggle_tracks"     },
+
+    /*
+     * Set playing modes.
+     */
+
+    { slot::set_mode_normal,    "set_mode_normal"       },
+    { slot::set_mode_auto,      "set_mode_auto"         },
+    { slot::set_mode_additive,  "set_mode_additive"     },
+    { slot::set_mode_all_sets,  "set_mode_all_sets"     },
+
+#endif
+
+    { slot::max,              "maximum"                 },
+    { slot::loop,             "loop"                    },
+    { slot::mute_group,       "mute_group"              },
+    { slot::automation,       "automation"              },
+    { slot::illegal,          "illegal"                 }
+};
 
 /*
  * This function is not used.  And the slotname field is basically the same as

@@ -1113,9 +1113,11 @@ get_url ()
     usr().in_nsm_session(active);
     if (rc().verbose())
     {
-        std::string msg = "NSM URL ";
-        msg += active ? result : "not found" ;
-        session_message(msg);
+        if (active)
+        {
+            std::string msg = "NSM URL " + result;
+            session_message(msg);
+        }
     }
     return result;
 }

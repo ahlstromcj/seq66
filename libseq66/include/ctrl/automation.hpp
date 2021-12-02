@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-11-14
+ * \updates       2021-12-02
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -38,6 +38,8 @@
  */
 
 #include <string>
+
+#define USE_PROPOSED_NEW_AUTOMATION // completely EXPERIMENTAL
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -146,9 +148,9 @@ enum class action
 };
 
 /**
- *  Pseudo control values for associating MIDI events, for the automation
- *  of some of the controls in seq66. Unlike the earlier version,
- *  this version is not necessarily tied to the 32-pattern paradigm.
+ *  Pseudo control values for associating MIDI events, for the automation of
+ *  some of the controls in seq66. Unlike the earlier version, this version is
+ *  not necessarily tied to the 32-pattern paradigm.
  *
  *  Each slot value is tied to a particular performer member function.  Each
  *  slot accesses the performer member function via a lambda loaded into a
@@ -156,15 +158,15 @@ enum class action
  *  hoped.
  *
  *  The controls are read in from the 'ctrl' configuration files, but are no
- *  longer written to the c_midictrl section of the "proprietary" final track in
- *  a Seq66 MIDI file.  The controls represented by slot values are part of the
- *  automation (user-interface) section of the 'ctrl' file.
+ *  longer written to the c_midictrl section of the "proprietary" final track
+ *  in a Seq66 MIDI file.  The controls represented by slot values are part of
+ *  the automation (user-interface) section of the 'ctrl' file.
  *
  *  Unlike the original controls, all of the control groups (pattern,
  *  mute-group, and automation) all support a number of controls not
- *  necessarily equal to 32.  Also, up/down controls have been folded into
- *  one control.  We need to be able to convert between old and new
- *  "control" numbers.
+ *  necessarily equal to 32.  Also, up/down controls have been folded into one
+ *  control.  We need to be able to convert between old and new "control"
+ *  numbers.
  *
  *  See opcontrol::slot_name() to get the display name of each slot.
  *
@@ -195,14 +197,14 @@ enum class slot
     play_ss,            /**< 9: Sets the playing screen-set (bank).         */
     playback,           /**< 10: Key pause, and MIDI for pause/start/stop.  */
     song_record,        /**< 11: Sets recording of a live song performance. */
-    solo,               /**< 12: TODO, intended to solo track.              */
-    thru,               /**< 13: Enables/disables the MIDI THRU control.    */
+    solo,   /* grid? */ /**< 12: TODO, intended to solo track.              */
+    thru,   /* grid? */ /**< 13: Enables/disables the MIDI THRU control.    */
     bpm_page_up,        /**< 14: Increments BMP by a configured page value. */
     bpm_page_dn,        /**< 15: Decrements BMP by a configured page value. */
     ss_set,             /**< 16: Key: set screen-set; MIDI: playing set.    */
     loop_mode,          /**< 17: Moves between loop muting and recording.   */
     quan_record,        /**< 18: Enables/disables quantized recording.      */
-    reset_seq,          /**< 19: Controls loop overwrite versus reset.      */
+    reset_sets,         /**< 19: Resets all patterns/playing set.           */
     mod_oneshot,        /**< 20: Set status of one-shot queuing.            */
     FF,                 /**< 21: Fast-forwards the clock (pulse counter.)   */
     rewind,             /**< 22: Rewinds the clock (pulse counter).         */
@@ -242,30 +244,55 @@ enum class slot
 
     /*
      * Proposed massive expansion in automation. Grid mode selection.
-     *
-     * Note that grid_overdub and grid_overwrite are kind of already covered by
-     * reset_seq above!
      */
 
-    grid_loop,          /**< 49: Normal operation of the main grid.         */
-    grid_overdub,       /**< 50: Select overdub/merge recording triggering. */
-    grid_overwrite,     /**< 51: Select overdub recording triggering.       */
-    grid_expand,        /**< 52: Select expand recording triggering.        */
-    grid_oneshot,       /**< 53: Select oneshot recording triggering.       */
-    grid_reserved_54,   /**< 54: Reserved for recording expansion.          */
+    record_overdub,     /**< 49: Select overdub/merge recording triggering. */
+    record_overwrite,   /**< 50: Select overdub recording triggering.       */
+    record_expand,      /**< 51: Select expand recording triggering.        */
+    record_oneshot,     /**< 52: Select oneshot recording triggering.       */
+    grid_loop,          /**< 53: Normal operation of the main grid.         */
+    grid_record,        /**< 54: Use one of the record modes for slots.     */
     grid_copy,          /**< 55: Grid slot copies the pattern.              */
     grid_paste,         /**< 56: Grid slot pastes to the pattern.           */
     grid_clear,         /**< 57: Grid slot clears only events.              */
     grid_delete,        /**< 58: Grid slot deletes the pattern.             */
     grid_thru,          /**< 59: Grid slot turns on MIDI thru.              */
-    grid_velocity,      /**< 59: Grid slot toggles free velocity.           */
-    grid_double,        /**< 61: Grid slot doubles the pattern length.      */
+    grid_solo,          /**< 60: Grid slot turns on solo.                   */
+    grid_velocity,      /**< 61: Grid slot toggles free velocity.           */
+    grid_double,        /**< 62: Grid slot doubles the pattern length.      */
 
-    grid_quant_none,    /**< xx: Grid slot remove recording quantization.   */
-    grid_quant_full,    /**< xx: Grid slot full quantization recording.     */
-    grid_quant_tighten, /**< xx: Grid slot tighten quantization recording.  */
-    grid_quant_random,  /**< xx: Grid slot salts the recording randomly.    */
-    grid_quant_jitter,  /**< xx: Grid slot jitter the velocity.             */
+    /*
+     * Grid quantization type selection.
+     */
+
+    grid_quant_none,    /**< 63: Grid slot remove recording quantization.   */
+    grid_quant_full,    /**< 64: Grid slot full quantization recording.     */
+    grid_quant_tighten, /**< 65: Grid slot tighten quantization recording.  */
+    grid_quant_random,  /**< 66: Grid slot salts the recording randomly.    */
+    grid_quant_jitter,  /**< 67: Grid slot jitter the velocity.             */
+    grid_quant_68,      /**< 68: Reserved for expansion.                    */
+
+    /*
+     * A few more likely candidates.
+     */
+
+    mod_bbt_hms,        /**< xx: Toggle between time-display modes.         */
+    mod_LR_loop,        /**< xx: Toggle looping between the L and R marks.  */
+    mod_undo_recording, /**< xx: Undo events in current active pattern. ??? */
+    mod_redo_recording, /**< xx: Redo events in current active pattern. ??? */
+    mod_transpose_song, /**< xx: Apply song transpose. ??????               */
+    mod_copy_set,       /**< xx: Copy the current playing set.              */
+    mod_paste_set,      /**< xx: Paste into the current active set.         */
+    mod_toggle_tracks,  /**< xx: Toggle the armed status of the active set. */
+
+    /*
+     * Set playing modes.
+     */
+
+    set_mode_normal,    /**< xx: A set selection replaces the playing set.  */
+    set_mode_auto,      /**< xx: Set selection starts the new set playing.  */
+    set_mode_additive,  /**< xx: Set selection adds the new set to playing. */
+    set_mode_all_sets,  /**< xx: All sets play at the same time.            */
 
 #endif
 
@@ -283,6 +310,16 @@ enum class slot
     automation,         /**< Useful to set and retrieve the name.           */
     illegal             /**< A value to flag illegality.                    */
 };
+
+/*
+ *  Free-functions for slots.
+ */
+
+inline slot
+slot_cast (int s)
+{
+    return static_cast<slot>(s);
+}
 
 /**
  *  Provides the status bits that used to be in the old perform class.

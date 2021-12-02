@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-11-12
+ * \updates       2021-12-02
  * \license       GNU GPLv2 or above
  *
  * MIDI control container:
@@ -177,6 +177,8 @@ midicontrolin::add_blank_controls (const keycontainer & kc)
     }
 }
 
+#if USE_MERGE_KEY_FUNCTION              /* currently unused */
+
 /**
  *  Looks for the given automation category and operation slot number, and
  *  inserts the key code if found.
@@ -237,6 +239,8 @@ midicontrolin::merge_key
     }
     return result;
 }
+
+#endif
 
 /**
  *  Looks up the MIDI-control object matching the given key value. Remember

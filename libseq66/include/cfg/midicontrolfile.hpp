@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-07-11
+ * \updates       2021-12-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -199,6 +199,20 @@ private:
     bool parse_control_stanza (automation::category opcategory);
     bool parse_midi_control_out (std::ifstream & file);
     void show_stanza (const stanza & stan) const;
+    int get_buss_number
+    (
+        std::ifstream & file,
+        bool isoutputport,
+        const std::string & tag,
+        const std::string & varname
+    );
+    void write_buss_info
+    (
+        std::ofstream & file,
+        bool isoutputport,
+        const std::string & varname,
+        int nominalbuss
+    );
 
     storage & stanzas ()
     {

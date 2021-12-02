@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-11-18
+ * \updates       2021-12-02
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -192,7 +192,7 @@ configfile::make_error_message
     if (! additional.empty())
         msg += additional;
 
-    errprint(msg);                      /* log to the console       */
+    error_message(msg);                 /* log to the console       */
     append_error_message(msg);          /* append to message string */
     return false;
 }
@@ -676,9 +676,7 @@ configfile::next_section (std::ifstream & file, const std::string & tag)
             else
             {
                 if (file.bad())
-                {
-                    errprint("bad file stream reading config file");
-                }
+                    error_message("bad file stream reading config file");
                 else
                     ok = get_line(file);        /* trims the white space   */
             }
@@ -750,9 +748,7 @@ configfile::line_after
         else
         {
             if (file.bad())
-            {
-                errprint("bad file stream reading config file");
-            }
+                error_message("bad file stream reading config file");
             else
                 ok = get_line(file);            /* trims the white space    */
         }
@@ -801,9 +797,7 @@ configfile::find_tag (std::ifstream & file, const std::string & tag)
         else
         {
             if (file.bad())
-            {
-                errprint("bad file stream reading config file");
-            }
+                error_message("bad file stream reading config file");
             else
                 ok = get_line(file);            /* trims the white space    */
         }
@@ -832,7 +826,9 @@ configfile::get_tag_value (const std::string & tag)
     }
     else
     {
-        errprintf("[%s] tag has no intger value", tag.c_str());
+        std::string msg = tag;
+        msg += " tag has no integer value";
+        error_message(tag);
     }
     return result;
 }
@@ -851,7 +847,7 @@ configfile::write_date (std::ofstream & file, const std::string & tag)
 /**
  *  Sets the error message, which can later be displayed to the user.
  *  Actually, it now appends the error message, so all can be displayed in the
- *  user-interface.
+ *  user-interface.  We also avoid annoying duplicates.
  *
  * \param msg
  *      Provides the error message to be set.
@@ -868,10 +864,13 @@ configfile::append_error_message (const std::string & msg)
     else
     {
         sm_is_error = true;
-        if (! sm_error_message.empty())
-            sm_error_message += "\n";   /* converted to "<br>" in msg box   */
+        if (msg != sm_error_message)        /* avoid duplicate if possible  */
+        {
+            if (! sm_error_message.empty())
+                sm_error_message += "\n";   /* converts to <br> in msg box  */
 
-        sm_error_message += msg;
+            sm_error_message += msg;
+        }
     }
 }
 
