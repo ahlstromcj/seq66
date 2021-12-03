@@ -384,14 +384,11 @@ copy_notemapper
                 file_error("Write failed", destination);
         }
         else
-        {
             file_error("Copy failed", source);
-        }
     }
     else
-    {
         file_error("Note-map file", "none");
-    }
+
     return result;
 }
 

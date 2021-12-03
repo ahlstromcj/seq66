@@ -316,9 +316,27 @@ enum class slot
  */
 
 inline slot
-slot_cast (int s)
+int_to_slot_cast (int s)
 {
     return static_cast<slot>(s);
+}
+
+inline int
+slot_to_int_cast (slot s)
+{
+    return static_cast<int>(s);
+}
+
+inline int
+original_slot_count ()
+{
+    return static_cast<int>(slot::record_overdub);      /* tricky */
+}
+
+inline int
+current_slot_count ()
+{
+    return static_cast<int>(slot::max);
 }
 
 /**

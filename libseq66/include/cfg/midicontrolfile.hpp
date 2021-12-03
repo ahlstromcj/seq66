@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-12-01
+ * \updates       2021-12-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -196,8 +196,9 @@ private:
         ctrlkey ordinal,
         int lineno
     );
-    bool parse_control_stanza (automation::category opcategory);
+    bool parse_control_stanza (automation::category opcat, int index = 0);
     bool parse_midi_control_out (std::ifstream & file);
+    bool add_default_automation_stanzas (int count);
     void show_stanza (const stanza & stan) const;
     int get_buss_number
     (
@@ -247,6 +248,16 @@ private:
     );
 
 };              // class midicontrolfile
+
+/*
+ *  Free functions for the control file.
+ */
+
+extern bool write_midi_control_file
+(
+    const std::string & mcfname,
+    rcsettings & rcs
+);
 
 }               // namespace seq66
 

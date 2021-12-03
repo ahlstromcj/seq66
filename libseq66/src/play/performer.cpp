@@ -7828,7 +7828,7 @@ performer::automation_record_style
     print_parameters(name, a, d0, d1, index, inverse);
     if (a == automation::action::on && ! inverse)
     {
-        automation::slot s = automation::slot_cast(index);
+        automation::slot s = automation::int_to_slot_cast(index);
         recordstyle rs;
         switch (s)
         {

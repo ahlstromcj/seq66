@@ -20,14 +20,15 @@
  * \file          midicontrolfile.cpp
  *
  *  This module declares/defines the base class for managing the reading and
- *  writing of the midi-control sections of the "rc" file.
+ *  writing of the midi-control sections of the 'rc' file.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-12-01
+ * \updates       2021-12-03
  * \license       GNU GPLv2 or above
  *
+ *  This class handles the 'ctrl' file.
  */
 
 #include <iostream>                     /* std::cout                        */
@@ -37,6 +38,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "ctrl/keymap.hpp"              /* seq66::qt_keyname_ordinal()      */
 #include "play/setmaster.hpp"           /* seq66::setmaster::Size() static  */
+#include "util/filefunctions.hpp"       /* seq66::file_exists()             */
 #include "util/strfunctions.hpp"        /* seq66::strip_quotes()            */
 
 /*
@@ -51,9 +53,11 @@ namespace seq66
  *
  *  Version 4: Baseline for this configuration file.
  *  Version 5: Adds 8 more potential midi-control-out entries.
+ *  Version 6: Adds a large number of new automation controls. Version
+ *             5 files will be renamed (for backup) and replaced.
  */
 
-static const int s_ctrl_file_version = 5;
+static const int s_ctrl_file_version = 6;
 
 /*
  * -------------------------------------------------------------------------
@@ -251,15 +255,9 @@ midicontrolfile::parse_stream (std::ifstream & file)
 
     bool loadmidi = rc_ref().load_midi_control_in();
     bool loadkeys = rc_ref().load_key_controls();
-
-#if defined USE_OLD_CODE
-    s = get_variable(file, mctag, "control-buss");
-    int buss = string_to_int(s, default_control_in_buss());
-#else
     int buss = get_buss_number(file, false, mctag, "control-buss");
     if (buss < 0)
         buss = default_control_in_buss();
-#endif
 
     bool enabled = get_boolean(file, mctag, "midi-enabled");
     int offset = 0, rows = 0, columns = 0;
@@ -335,6 +333,14 @@ midicontrolfile::parse_stream (std::ifstream & file)
         if (count > 0)
         {
             infoprintf("%d automation-control lines", count);
+            if (count < automation::current_slot_count())   /* pre-defined  */
+            {
+                /*
+                 * TO DO
+                 *
+                 * add_default_automation_stanzas(count);
+                 */
+            }
         }
         if (rc_ref().verbose())
         {
@@ -422,15 +428,20 @@ midicontrolfile::parse ()
     std::ifstream file(name(), std::ios::in | std::ios::ate);
     if (! file.is_open())
     {
-        errprintf
-        (
-            "midicontrolfile::parse(): error opening %s for reading",
-            name().c_str()
-        );
+        file_error("Open failed", name());
         result = false;
     }
     else
-        result = parse_stream(file);
+    {
+        /*
+        if (file_version_number() < 6)
+        {
+            TODO
+        }
+        else
+         */
+            result = parse_stream(file);
+    }
 
     return result;
 }
@@ -482,17 +493,10 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
     std::string mctag = "[midi-control-out-settings]";
     std::string s = get_variable(file, mctag, "set-size");
     int sequences = string_to_int(s, setmaster::Size());
-#if defined USE_OLD_CODE
-    s = get_variable(file, mctag, "output-buss");
-    if (s.empty())
-        s = get_variable(file, mctag, "buss");          /* the old tag name */
-
-    int buss = string_to_int(s, default_control_out_buss());
-#else
     int buss = get_buss_number(file, true, mctag, "output-buss");
     if (buss < 0)
         buss = default_control_out_buss();
-#endif
+
     bool enabled = false;
     s = get_variable(file, mctag, "midi-enabled");
     if (s.empty())
@@ -742,8 +746,8 @@ midicontrolfile::write_stream (std::ofstream & file)
     file <<
     "# Sets up MIDI I/O control. The format is like the 'rc' file, in the\n"
     "# HOME configuration directory. To use it, set it active in the 'rc'\n"
-    "# [midi-control-file] section. It adds mute and automation button,\n"
-    "# display, a simpler format, and new settings.\n"
+    "# [midi-control-file] section. It adds loop, mute, & automation buttons,\n"
+    "# MIDI display, new settings, and macros.\n"
     ;
     write_seq66_header(file, "ctrl", version());
 
@@ -804,8 +808,12 @@ midicontrolfile::write ()
 }
 
 /**
- *  Writes the [midi-control] section to the given file stream.  This can also
- *  be called by the rcfile object to just dump the data into that file.
+ *  Writes these sections to the given file stream:
+ *
+ *      -   [midi-control-settings]
+ *      -   [loop-control]
+ *      -   [mute-group-control]
+ *      -   [automation-control]
  *
  * \param file
  *      Provides the output file stream to write to.
@@ -825,13 +833,13 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         int bb = int(mci.nominal_buss());
         file <<
         "\n[midi-control-settings]\n\n"
-        "# These are input setting for controlling Seq66.\n"
-        "# 'load-midi-control' = false writes empty MIDI controls!! Keep\n"
-        "# backups! 'control-buss' values range from 0 to the highest system\n"
-        "# input buss. If set, that buss can send MIDI control. 255 (0xFF)\n"
-        "# means any buss enabled in the 'rc' file can send control. ALSA\n"
-        "# provides an extra 'announce' buss, altering port numbering.\n"
-        "# If port-mapping is enabled, the port nick-name can be provided.\n"
+        "# These are input settings to control Seq66. 'load-midi-control'\n"
+        "# = false writes empty MIDI controls!! Keepbackups! 'control-buss'\n"
+        "# values range from 0 to the highest systeminput buss. If set, that\n"
+        "# buss can send MIDI control. 255 (0xFF) means any enabled input\n"
+        "# file can send control. ALSA provides an extra 'announce' buss,\n"
+        "# altering port numbering re JACK. If port-mapping is enabled, the\n"
+        "# port nick-name can be provided.\n"
         "#\n"
         "# 'midi-enabled' applies to the MIDI controls; keystroke controls\n"
         "# are always enabled. Supported keyboard layouts are 'qwerty'\n"
@@ -839,20 +847,15 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         "# feature for group-learn.\n\n"
         ;
         write_boolean(file, "load-key-controls", rc_ref().load_key_controls());
-        write_boolean(file, "load-midi-controls",rc_ref().load_midi_control_in());
+        write_boolean
+        (
+            file, "load-midi-controls", rc_ref().load_midi_control_in()
+        );
         write_boolean
         (
             file, "drop-empty-controls", rc_ref().drop_empty_in_controls()
         );
-
-#if defined USE_OLD_CODE
-        if (bb >= c_busscount_max)
-            write_string(file, "control-buss", "0xFF");
-        else
-            write_integer(file, "control-buss", bb);
-#else
         write_buss_info(file, false, "control-buss", bb);
-#endif
 
         int defaultrows = mci.rows();
         int defaultcolumns = mci.columns();
@@ -1054,12 +1057,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         }
         file << "\n[midi-control-out-settings]\n\n";
         write_integer(file, "set-size", setsize);
-
-#if defined USE_OLD_CODE
-        write_integer(file, "output-buss", bb);
-#else
         write_buss_info(file, true, "output-buss", bb);
-#endif
         write_boolean(file, "midi-enabled", ! mco.is_disabled());
         write_integer(file, "button-offset", mco.offset());
         write_integer(file, "button-rows", mco.rows());
@@ -1219,16 +1217,17 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
  */
 
 bool
-midicontrolfile::parse_control_stanza (automation::category opcat)
+midicontrolfile::parse_control_stanza
+(
+    automation::category opcat,
+    int index
+)
 {
     bool result = true;
-    char charname[16];
-    int index = 0;
-    int a[8], b[8], c[8];
     automation::slot opslot = automation::slot::none;
-    std::string keyname;
     int count = 0;
     bool keep_empties = ! rc_ref().drop_empty_in_controls();
+    std::string keyname;
 
     /*
      * Was deprecated, now no longer supported.
@@ -1240,13 +1239,29 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
     }
     else
     {
-        count = std::sscanf
-        (
-            scanline(), sg_scanf_fmt_ctrl_in_2, &index, &charname[0],
-            &a[0], &a[1], &a[2], &a[3], &a[4],
-            &b[0], &b[1], &b[2], &b[3], &b[4],
-            &c[0], &c[1], &c[2], &c[3], &c[4]
-        );
+        int a[8] { };
+        int b[8] { };
+        int c[8] { };
+        if (index == 0)
+        {
+            char charname[16];
+            count = std::sscanf
+            (
+                scanline(), sg_scanf_fmt_ctrl_in_2, &index, &charname[0],
+                &a[0], &a[1], &a[2], &a[3], &a[4],
+                &b[0], &b[1], &b[2], &b[3], &b[4],
+                &c[0], &c[1], &c[2], &c[3], &c[4]
+            );
+            keyname = strip_quotes(std::string(charname));
+        }
+        else
+        {
+            char temp[8];
+            snprintf(temp, sizeof temp, "0x%02x", index);
+            keyname = std::string(temp);
+            count = 17;
+        }
+
         if (count == 17)
         {
             opslot = automation::slot::none;
@@ -1263,7 +1278,6 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
              *  preferences.
              */
 
-            keyname = strip_quotes(std::string(charname));
             midicontrol mca
             (
                 keyname, opcat, automation::action::toggle, opslot, index
@@ -1302,7 +1316,6 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
             (
                 "", keyname, opcat, automation::action::toggle, opslot, index
             );
-            std::string keyname = strip_quotes(std::string(charname));
             ctrlkey ordinal = qt_keyname_ordinal(keyname);
             bool ok = m_temp_key_controls.add(ordinal, kc);
             if (ok)
@@ -1320,6 +1333,28 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
     {
         errprintf("unexpected control count %d in stanza", count);
         result = false;
+    }
+    return result;
+}
+
+/**
+ *  Adds to key-controls and midi-control-in controls in cases where the 'ctrl'
+ *  file pre-dates the significant increase in automation slots.
+ */
+
+bool
+midicontrolfile::add_default_automation_stanzas (int starting_index)
+{
+    bool result = true;
+    int ending_index = automation::current_slot_count();
+    for (int i = starting_index; i < ending_index; ++i)
+    {
+        bool ok = parse_control_stanza(automation::category::automation, i);
+        if (! ok)
+        {
+            result = false;
+            break;
+        }
     }
     return result;
 }
@@ -1426,9 +1461,11 @@ midicontrolfile::write_buss_info
 bool
 midicontrolfile::container_to_stanzas (const midicontrolin & mc)
 {
-    bool result = mc.count() > 0;
+    int current_count = mc.count();
+    bool result = current_count > 0;
     if (result)
     {
+        m_stanzas.clear();                      /* new ca 2021-12-03        */
         for (const auto & m : mc.container())
         {
             const midicontrol & mco = m.second;
@@ -1464,6 +1501,16 @@ midicontrolfile::container_to_stanzas (const midicontrolin & mc)
                 break;
             }
         }
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        int origslotcount = automation::original_slot_count();
+        int currslotcount = automation::current_slot_count();
+        printf
+        (
+            "mc.count() = %d, orig slots = %d, curr slots = %d\n",
+            current_count, origslotcount, currslotcount
+        );
+#endif
     }
     return result;
 }
@@ -1505,6 +1552,59 @@ midicontrolfile::show_stanzas () const
         for (const auto & stz : m_stanzas)
             show_stanza(stz.second);
     }
+}
+
+/**
+ *  A free function to write the MIDI control file..It handles these cases:
+ *
+ *  -   Recreating the file if the controls are active or if the file does
+ *      not exist.
+ *      -   If controls exist:
+ *          -   If less than the maximum number (automation::slot::max), then
+ *              pad the container to the max (the keycontainer always
+ *              defaults to full size, so it can be used as a reference).
+ *          -   If full-sized already, just write the file.
+ *      -   Otherwise, use the key-controls to populate blank MIDI controls
+ *          to the full-size of the automation slots.
+ */
+
+bool
+write_midi_control_file
+(
+    const std::string & mcfname,
+    rcsettings & rcs
+)
+{
+    bool exists = file_exists(mcfname);
+    bool active = rcs.midi_control_active();
+    bool recreate = active || ! exists;
+    const midicontrolin & ctrls = rcs.midi_control_in();
+    bool result = ctrls.count() > 0;
+    file_message("Writing ctrl", mcfname);
+    if (result)
+    {
+        if (recreate)
+        {
+            midicontrolfile mcf(mcfname, rcs);
+            if (result)
+                result = mcf.write();
+        }
+    }
+    else
+    {
+        if (recreate)
+        {
+            keycontainer & keys = rcs.key_controls();
+            midicontrolin & ctrls = rcs.midi_control_in();
+            midicontrolfile mcf(mcfname, rcs);
+            ctrls.add_blank_controls(keys);
+            result = mcf.write();
+        }
+    }
+    if (! result)
+        file_error("Write ctrl failed", mcfname);
+
+    return result;
 }
 
 }           // namespace seq66

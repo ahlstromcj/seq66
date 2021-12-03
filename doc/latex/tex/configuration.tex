@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-10-21
+% \update      2021-12-03
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -504,14 +504,18 @@
    data for all configuration files:
 
    \begin{verbatim}
-      verbose = false
       sets-mode = normal
       port-namng = short
    \end{verbatim}
 
-   \index{verbose}
-   \texttt{verbose} is the same as the \texttt{-{}-verbose} command-line option,
-   except that, if set to "true", it affects every invocation of \textsl{Seq66}.
+% We save, but no longer read, this option from the 'rc' file.
+%
+%     verbose = false
+%
+%  \index{verbose}
+%  \texttt{verbose} is the same as the \texttt{-{}-verbose} command-line
+%  option, except that, if set to "true", it affects every invocation of
+%  \textsl{Seq66}.
 
    \index{sets-mode}
    The \texttt{sets-mode} option determines how patterns are muted when the

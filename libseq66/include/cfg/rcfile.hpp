@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-11-08
+ * \updates       2021-12-03
  * \license       GNU GPLv2 or above
  *
  *  The ~/.seq66rc or ~/.config/seq66.rc files are
@@ -81,10 +81,6 @@ public:
         bool separatefile = false
     );
 
-private:
-
-    bool write_midi_control (std::ofstream & file);
-    bool write_mute_groups (std::ofstream & file);
 
 };          // class rcfile
 

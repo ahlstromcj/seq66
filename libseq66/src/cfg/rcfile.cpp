@@ -25,17 +25,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-11-18
+ * \updates       2021-12-03
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
- *  in layout.  The documentation for this module is supplemented by the
- *  following GitHub projects:
- *
- *      -   https://github.com/ahlstromcj/seq66-doc.git
- *
- *  Those documents also relate these file settings to the application's
- *  command-line options.
+ *  in layout.  See the user's manual included with Seq66.
  *
  *  Note that the parse() and write() functions process sections in a
  *  different order!  The reason this does not mess things up is that the
@@ -214,16 +208,22 @@ rcfile::parse ()
     if (! set_up_ifstream(file))            /* verifies [Seq66]: version    */
         return false;
 
-    bool verby = get_boolean(file, "[Seq66]", "verbose");
+    /*
+     * We no longer read the verbosity.  It should be only a command line
+     * option, otherwise it gets annoying.
+     *
+     * bool verby = get_boolean(file, "[Seq66]", "verbose");
+     * rc_ref().verbose(verby);
+     */
+
     std::string s = parse_version(file);
     if (s.empty() || file_version_old(file))
         rc_ref().auto_rc_save(true);
 
-    rc().verbose(verby);
     s = get_variable(file, "[Seq66]", "sets-mode");
-    rc().sets_mode(s);
+    rc_ref().sets_mode(s);
     s = get_variable(file, "[Seq66]", "port-naming");
-    rc().port_naming(s);
+    rc_ref().port_naming(s);
 
     /*
      * [comments] Header comments (hash-tag lead) are skipped during parsing.
@@ -352,9 +352,9 @@ rcfile::parse ()
     rc_ref().manual_ports(flag);
 
     int count = get_integer(file, tag, "output-port-count");
-    rc().manual_port_count(count);
+    rc_ref().manual_port_count(count);
     count = get_integer(file, tag, "input-port-count");
-    rc().manual_in_port_count(count);
+    rc_ref().manual_in_port_count(count);
 
     /*
      *  When Seq66 exits, it saves all of the inputs it has.  If an input is
@@ -725,19 +725,21 @@ rcfile::write ()
         "# 'version' is set by Seq66; it is used to detect older configuration\n"
         "# files, which are upgraded to the new version when saved.\n"
         "#\n"
+        "# 'verbose' just indicates the status of --verbose at exit.\n"
+        "#\n"
         "# 'sets-mode' affects set muting when moving to the next set. 'normal'\n"
         "# leaves the next set muted. 'auto-arm' unmutes it. 'additive' keeps\n"
         "# the previous set armed when moving to the next set. 'all-sets' arms\n"
         "# all sets at once.\n"
         "#\n"
-        "# 'port-naming' values are 'short' or 'long'.  'short' shows the port\n"
-        "# number and short name; 'long' shows all number and the long name.\n"
+        "# 'port-naming' values are 'short' or 'long'.  'short' shows the\n"
+        "# number and short name; 'long' shows the long name.\n"
         ;
 
     write_seq66_header(file, "rc", version());
-    write_boolean(file, "verbose", rc().verbose());
-    write_string(file, "sets-mode", rc().sets_mode_string());
-    write_string(file, "port-naming", rc().port_naming_string());
+    write_boolean(file, "verbose", rc_ref().verbose());
+    write_string(file, "sets-mode", rc_ref().sets_mode_string());
+    write_string(file, "port-naming", rc_ref().port_naming_string());
 
     /*
      * [comments]
@@ -746,55 +748,15 @@ rcfile::write ()
     write_comment(file, rc_ref().comments_block().text());
 
     /*
+     * [midi-control-file]
+     *
      * Note that, if there are no controls (e.g. there were none to read, as
      * occurs the first time Seq66 is run), then we create one and populate it
      * with blanks.
-     *
-     * rc_ref().use_midi_control_file() is now always true.  The check and the
-     * else clause removed on 2021-05-12.
      */
 
     std::string mcfname = rc_ref().midi_control_filespec();
-    bool exists = file_exists(mcfname);
-    bool active = rc_ref().midi_control_active();
-    bool recreate = active || ! exists;
-    const midicontrolin & ctrls = rc_ref().midi_control_in();
-    bool result = ctrls.count() > 0;
-    if (result)
-    {
-        if (recreate)
-        {
-            /*
-             * Eventually we should provide a write_midi_control_file()
-             * function in the midicontrolfile module to do this work.
-             */
-
-            midicontrolfile mcf(mcfname, rc_ref());
-            result = mcf.container_to_stanzas(ctrls);
-            if (result)
-                ok = mcf.write();
-        }
-    }
-    else
-    {
-        if (recreate)
-        {
-            // keycontainer keys;              /* call the default constructor */
-
-            keycontainer & keys = rc().key_controls();
-            midicontrolin & ctrls = rc_ref().midi_control_in();
-            midicontrolfile mcf(mcfname, rc_ref());
-            ctrls.add_blank_controls(keys);
-
-            /*
-             * midicontrolfile::write() does this:
-             *
-             *      result = mcf.container_to_stanzas(ctrls);
-             */
-
-            ok = mcf.write();
-        }
-    }
+    ok = write_midi_control_file(mcfname, rc_ref());
     file << "\n"
         "# Provides a flag and file-name for MIDI-control I/O settings.\n"
         "# '\"\"' means no 'ctrl' file. If none, the default keystrokes\n"
@@ -810,7 +772,7 @@ rcfile::write ()
     mutegroupsfile mgf(mgfname, rc_ref());
     mgfname = rc_ref().trim_home_directory(mgfname);
 
-    const mutegroups & mgroups = rc().mute_groups();
+    const mutegroups & mgroups = rc_ref().mute_groups();
     if (mgroups.group_save_to_mutes())
         ok = mgf.write();
 
@@ -1164,54 +1126,6 @@ rcfile::write ()
 
     file.close();
     return true;
-}
-
-/**
- *  Writes the [midi-control] section to the given file stream.  It leverages
- *  the function midicontrolfile::write_midi_conrol().
- *
- * \param file
- *      Provides the output file stream to write to.
- *
- * \param separatefile
- *      If true, the [midi-control] section is being written to a separate
- *      file.  The default value is false.
- *
- * \return
- *      Returns true if the write operations all succeeded.
- */
-
-bool
-rcfile::write_midi_control (std::ofstream & file)
-{
-    midicontrolfile mcf(name(), rc_ref());
-    bool result = mcf.container_to_stanzas(rc_ref().midi_control_in());
-    if (result)
-        result = mcf.write_midi_control(file);
-
-    return result;
-}
-
-/**
- *  Writes the [mute-group] section to the given file stream.  It leverages
- *  the function mutegroupsfile::write_mute_groups().
- *
- * \param file
- *      Provides the output file stream to write to.
- *
- * \param separatefile
- *      If true, the [mute-group] section is being written to a separate
- *      file.  The default value is false.
- *
- * \return
- *      Returns true if the write operations all succeeded.
- */
-
-bool
-rcfile::write_mute_groups (std::ofstream & file)
-{
-    mutegroupsfile mgf(name(), rc_ref());
-    return mgf.write_mute_groups(file);
 }
 
 }           // namespace seq66

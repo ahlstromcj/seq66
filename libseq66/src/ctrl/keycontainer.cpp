@@ -548,7 +548,7 @@ keycontainer::add_defaults ()
     int ausmax = int(s_keys_automation.size()) - 1;     /* stop before 0xff */
     for (int auslot = 0; auslot < ausmax; ++auslot)
     {
-        automation::slot s = static_cast<automation::slot>(auslot);
+        automation::slot s = automation::int_to_slot_cast(auslot);
         automation::action a = s_keys_automation[auslot].kd_action;
         std::string nametag = opcontrol::slot_name(s);
         std::string keyname = s_keys_automation[auslot].kd_name;
