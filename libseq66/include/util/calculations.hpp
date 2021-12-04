@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-11-22
+ * \updates       2021-12-04
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -41,6 +41,7 @@
 #include <vector>
 
 #include "midi/midibytes.hpp"           /* midipulse alias and much more    */
+#include "util/basic_macros.hpp"        /* seq66::tokenization container    */
 
 /*
  * Global functions in the seq66 namespace for MIDI timing calculations.

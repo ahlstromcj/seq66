@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2021-07-19
+ * \updates       2021-12-04
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations
@@ -38,6 +38,7 @@
 #include "midi/midibus_common.hpp"      /* values and e_clock enumeration   */
 #include "midi/midibytes.hpp"           /* seq66::midibyte alias            */
 #include "util/automutex.hpp"           /* seq66::recmutex recursive mutex  */
+#include "util/basic_macros.h"          /* not_nullptr() macro              */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -509,7 +510,6 @@ public:             // protected: public for seq_rtmidi midi_api
 
     virtual bool api_get_midi_event (event * inev)
     {
-        errprint("api_get_midi_event() BASE VERSION CALLED");
         return not_nullptr(inev);
     }
 

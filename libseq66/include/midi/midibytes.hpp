@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-11-24
+ * \updates       2021-12-04
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -48,8 +48,6 @@
 #include <climits>                      /* ULONG_MAX and other limits       */
 #include <string>                       /* std::string class                */
 #include <vector>                       /* std::vector<midibool>            */
-
-#include "util/basic_macros.hpp"        /* insure build macros defined      */
 
 /*
  *  Since we're using unsigned variables for counting pulses, we can't do the
@@ -109,15 +107,6 @@ using miditag = uint32_t;
  */
 
 using midilong = unsigned long;
-
-/**
- *  This value is used for representing pattern, mute-group, and automation
- *  operations.  It overlaps with automation::slot values.
- *
- *  Currently unused.
- */
-
-using ctrlop = unsigned short;
 
 /**
  *  This value is used for representing pattern, mute-group, and automation

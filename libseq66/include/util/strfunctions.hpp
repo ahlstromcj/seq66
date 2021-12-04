@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-11-22
+ * \updates       2021-12-04
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -36,6 +36,7 @@
 #include <memory>                       /* std::unique_ptr<> template class */
 
 #include "midi/midibytes.hpp"           /* seq66::midibool, string, vector  */
+#include "util/basic_macros.hpp"        /* seq66::tokenization container    */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

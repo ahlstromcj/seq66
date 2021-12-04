@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2021-11-23
+ * \updates       2021-12-04
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -39,6 +39,7 @@
  */
 
 #include "midi/midibytes.hpp"           /* seq66::bussbyte data type        */
+#include "util/basic_macros.hpp"        /* seq66::tokenization container    */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

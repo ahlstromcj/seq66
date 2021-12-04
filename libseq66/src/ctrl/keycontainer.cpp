@@ -365,6 +365,13 @@ keycontainer::add_defaults ()
      *  Indicates the default keystroke and action status of a particular
      *  automation keystroke operation.  Matches the automation::slot enum
      *  class.
+     *
+     *  Default keystrokes still available (around 24 of them):
+     *
+     *      " ( ) + 9 : > ? L O ) _ p { } DEL Del Tab BkTab BkSpace
+     *      End KP_End KP_Del KP_PageUp, KP_PageFn KP_. KP_/
+     *      KP_Left, Right, Up, Down ?
+     *      Return ? Enter ?
      */
 
     static std::vector<keydefault> s_keys_automation =
@@ -382,7 +389,7 @@ keycontainer::add_defaults ()
         { ".",         automation::action::toggle  },  // 10 playback (pause)
         { "P",         automation::action::on      },  // 11 song_record
         { "BS",        automation::action::on      },  // 12 solo
-        { "KP_/",      automation::action::on      },  // 13 thru
+        { "LF",        automation::action::on      },  // 13 thru
         { "PageUp",    automation::action::on      },  // 14 bpm_page_up
         { "PageDn",    automation::action::on      },  // 15 bpm_page_dn
         { "KP_.",      automation::action::on      },  // 16 ss_set
@@ -412,12 +419,12 @@ keycontainer::add_defaults ()
         { "F12",       automation::action::on      },  // 40 menu_mode
         { "F4",        automation::action::on      },  // 41 follow_transport
         { "~",         automation::action::on      },  // 42 panic
-        { "0xe0",      automation::action::toggle  },  // 43 visibility
-        { "0xe1",      automation::action::off     },  // 44 save_session
-        { "0xe2",      automation::action::off     },  // 45 reserved_45
-        { "0xe3",      automation::action::off     },  // 46 reserved_46
-        { "0xe4",      automation::action::off     },  // 47 reserved_47
-        { "0xe5",      automation::action::off     },  // 48 reserved_48
+        { "0xf9",      automation::action::toggle  },  // 43 visibility
+        { "0xfa",      automation::action::off     },  // 44 save_session
+        { "0xfb",      automation::action::off     },  // 45 reserved_45
+        { "0xfc",      automation::action::off     },  // 46 reserved_46
+        { "0xfd",      automation::action::off     },  // 47 reserved_47
+        { "0xfe",      automation::action::off     },  // 48 reserved_48
 
 #if defined USE_PROPOSED_NEW_AUTOMATION
 
@@ -425,53 +432,53 @@ keycontainer::add_defaults ()
          * Proposed massive expansion in automation. Grid mode selection.
          */
 
-        { "0xe6",      automation::action::off     },  // 49 record_overdub
-        { "0xe7",      automation::action::off     },  // 50 record_overwrite
-        { "0xe8",      automation::action::off     },  // 51 record_expand
-        { "0xe9",      automation::action::off     },  // 52 record_oneshot
-        { "0xea",      automation::action::off     },  // 53 grid_loop
-        { "0xeb",      automation::action::off     },  // 54 grid_record
-        { "0xec",      automation::action::off     },  // 55 grid_copy
-        { "0xed",      automation::action::off     },  // 56 grid_paste
-        { "0xee",      automation::action::off     },  // 57 grid_clear
-        { "0xef",      automation::action::off     },  // 58 grid_delete
-        { "0xf0",      automation::action::off     },  // 59 grid_thru
-        { "0xf1",      automation::action::off     },  // 60 grid_solo
-        { "0xf2",      automation::action::off     },  // 61 grid_velocity
-        { "0xf3",      automation::action::off     },  // 62 grid_double
+        { "Sh_F1",     automation::action::off     },  // 49 record_overdub
+        { "Sh_F2",     automation::action::off     },  // 50 record_overwrite
+        { "Sh_F3",     automation::action::off     },  // 51 record_expand
+        { "Sh_F4",     automation::action::off     },  // 52 record_oneshot
+        { "Sh_F5",     automation::action::off     },  // 53 grid_loop
+        { "Sh_F6",     automation::action::off     },  // 54 grid_record
+        { "Sh_F7",     automation::action::off     },  // 55 grid_copy
+        { "Sh_F8",     automation::action::off     },  // 56 grid_paste
+        { "Sh_F9",     automation::action::off     },  // 57 grid_clear
+        { "Sh_F10",    automation::action::off     },  // 58 grid_delete
+        { "Sh_F11",    automation::action::off     },  // 59 grid_thru
+        { "Sh_F12",    automation::action::off     },  // 60 grid_solo
+        { "0xe0",      automation::action::off     },  // 61 grid_velocity
+        { "0xe1",      automation::action::off     },  // 62 grid_double
 
         /*
          * Grid quantization type selection.
          */
 
-        { "0xf4",      automation::action::off     },  // 63 grid_quant_none,
-        { "0xf5",      automation::action::off     },  // 64 grid_quant_full,
-        { "0xf6",      automation::action::off     },  // 65 grid_quant_tighten,
-        { "0xf7",      automation::action::off     },  // 66 grid_quant_random,
-        { "0xf8",      automation::action::off     },  // 67 grid_quant_jitter,
-        { "0xf9",      automation::action::off     },  // 68 grid_quant_68,
+        { "0xe2",      automation::action::off     },  // 63 grid_quant_none,
+        { "0xe3",      automation::action::off     },  // 64 grid_quant_full,
+        { "0xe4",      automation::action::off     },  // 65 grid_quant_tighten,
+        { "0xe5",      automation::action::off     },  // 66 grid_quant_random,
+        { "0xe6",      automation::action::off     },  // 67 grid_quant_jitter,
+        { "0xe7",      automation::action::off     },  // 68 grid_quant_68,
 
         /*
          * A few more likely candidates.
          */
 
-        { "0xfa",      automation::action::off     },  // 69 mod_bbt_hms,
-        { "0xfb",      automation::action::off     },  // 70 mod_LR_loop,
-        { "0xfc",      automation::action::off     },  // 71 mod_undo_recording,
-        { "0xfd",      automation::action::off     },  // 72 mod_redo_recording,
-        { "0xfe",      automation::action::off     },  // 73 mod_transpose_song,
-        { "US",        automation::action::off     },  // 74 mod_copy_set,
-        { "RS",        automation::action::off     },  // 75 mod_paste_set,
-        { "SOH",       automation::action::off     },  // 76 mod_toggle_tracks,
+        { "0xe8",      automation::action::off     },  // 69 mod_bbt_hms,
+        { "0xe9",      automation::action::off     },  // 70 mod_LR_loop,
+        { "0xea",      automation::action::off     },  // 71 mod_undo_recording,
+        { "0xeb",      automation::action::off     },  // 72 mod_redo_recording,
+        { "0xec",      automation::action::off     },  // 73 mod_transpose_song,
+        { "0xed",      automation::action::off     },  // 74 mod_copy_set,
+        { "0xee",      automation::action::off     },  // 75 mod_paste_set,
+        { "0xef",      automation::action::off     },  // 76 mod_toggle_tracks,
 
         /*
          * Set playing modes.
          */
 
-        { "STX",      automation::action::off     },  // 77 set_mode_normal,
-        { "ETX",      automation::action::off     },  // 78 set_mode_auto,
-        { "EOT",      automation::action::off     },  // 79 set_mode_additive,
-        { "ENQ",      automation::action::off     },  // 80 set_mode_all_sets,
+        { "0x8c",      automation::action::off     },  // 77 set_mode_normal,
+        { "0x8d",      automation::action::off     },  // 78 set_mode_auto,
+        { "0x8e",      automation::action::off     },  // 79 set_mode_additive,
+        { "0x8f",      automation::action::off     },  // 80 set_mode_all_sets,
 
 #endif
 

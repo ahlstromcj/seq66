@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-11-24
+ * \updates       2021-12-04
  * \license       GNU GPLv2 or above
  *
  *  These classes were originally structures, but now they are "constant"
@@ -35,6 +35,7 @@
 #include <algorithm>                    /* std::rotate() function           */
 
 #include "midi/midibytes.hpp"           /* seq66::midi_timing, _measures    */
+#include "util/basic_macros.h"          /* not_nullptr() macro              */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
