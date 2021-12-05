@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2019-03-24
+ * \updates       2021-12-04
  * \license       GNU GPLv2 or above
  *
  *  This class is similar in intent to the midicontrol class, but is simpler
@@ -57,6 +57,8 @@ namespace seq66
 
 class keycontrol : public opcontrol
 {
+
+    friend class keycontainer;
 
 private:
 
@@ -87,6 +89,19 @@ private:
 
     int m_control_code;       // pattern or mute-group number
 
+    /**
+     *  The ordinal of this key-control.  This is an index into the
+     *  keymap, and might be useful in the future to filter out certain ordinals
+     *  when processing the keys.  For example, we might want to allow control
+     *  codes to be used in order to gain extra slots for automation controls to
+     *  which we will never map keystrokes, but need to provide for MIDI
+     *  control.
+     *
+     *  Side note:  Seq66 will never automate more than 254 functions.
+     */
+
+    ctrlkey m_ordinal;
+
 public:
 
     /*
@@ -94,7 +109,7 @@ public:
      *  when the desired one cannot be found.
      */
 
-    keycontrol ();
+    keycontrol () = default;
 
     /*
      * The move and copy constructors, the move and copy assignment operators,
@@ -157,6 +172,23 @@ public:
     }
 
     void show (bool add_newline = true) const;
+
+    ctrlkey ordinal () const
+    {
+        return m_ordinal;
+    }
+
+    bool is_ctrl_ordinal () const
+    {
+        return m_ordinal < 0x1f;
+    }
+
+private:
+
+    void ordinal (ctrlkey ck)
+    {
+        m_ordinal = ck;
+    }
 
 };              // class keycontrol
 

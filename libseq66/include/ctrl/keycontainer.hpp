@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-02
+ * \updates       2021-12-04
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of keycontrol objects keyed by a key ordinal
@@ -98,6 +98,8 @@ private:
         std::string kd_name;            /**< The human-readable key name.   */
         automation::action kd_action;   /**< The action for that key.       */
     };
+
+    using defaults = std::vector<keydefault>;
 
     /**
      *  The container itself.
@@ -218,11 +220,13 @@ public:
         return kbd_layout_to_string(m_kbd_layout);
     }
 
-public:
-
     void show () const;
 
+    static const std::string & automation_key_name (int index);
+
 private:
+
+    static const defaults & keys_automation ();
 
     void add_defaults ();               /* many statics inside this one!    */
 

@@ -291,8 +291,6 @@ s_slotnamelist [] =
     { slot::reserved_47,      "reserved_47"     },
     { slot::reserved_48,      "reserved_48"     },
 
-#if defined USE_PROPOSED_NEW_AUTOMATION
-
     /*
      * Proposed massive expansion in automation. Grid mode selection.
      */
@@ -345,7 +343,9 @@ s_slotnamelist [] =
     { slot::set_mode_additive,  "set_mode_additive"     },
     { slot::set_mode_all_sets,  "set_mode_all_sets"     },
 
-#endif
+    /*
+     * Tricky ending.
+     */
 
     { slot::max,              "maximum"                 },
     { slot::loop,             "loop"                    },

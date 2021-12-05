@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-12-03
+ * \updates       2021-12-04
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -334,13 +334,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
         {
             infoprintf("%d automation-control lines", count);
             if (count < automation::current_slot_count())   /* pre-defined  */
-            {
-                /*
-                 * TO DO
-                 *
-                 * add_default_automation_stanzas(count);
-                 */
-            }
+                 add_default_automation_stanzas(count);
         }
         if (rc_ref().verbose())
         {
@@ -1213,15 +1207,13 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
 }
 
 /**
- *  For automation, slot and code are the same numeric value.
+ *  For automation, slot and code are the same numeric value. We've
+ *  added code so that blank stanzas can be automatically added to
+ *  older configuration files.
  */
 
 bool
-midicontrolfile::parse_control_stanza
-(
-    automation::category opcat,
-    int index
-)
+midicontrolfile::parse_control_stanza (automation::category opcat, int index)
 {
     bool result = true;
     automation::slot opslot = automation::slot::none;
@@ -1242,6 +1234,7 @@ midicontrolfile::parse_control_stanza
         int a[8] { };
         int b[8] { };
         int c[8] { };
+        bool ok;
         if (index == 0)
         {
             char charname[16];
@@ -1253,16 +1246,14 @@ midicontrolfile::parse_control_stanza
                 &c[0], &c[1], &c[2], &c[3], &c[4]
             );
             keyname = strip_quotes(std::string(charname));
+            ok = count == 17;
         }
         else
         {
-            char temp[8];
-            snprintf(temp, sizeof temp, "0x%02x", index);
-            keyname = std::string(temp);
-            count = 17;
+            keyname = keycontainer::automation_key_name(index);
+            ok = ! keyname.empty();
         }
-
-        if (count == 17)
+        if (ok)
         {
             opslot = automation::slot::none;
             if (opcat == automation::category::loop)

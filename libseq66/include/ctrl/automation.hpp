@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-02
+ * \updates       2021-12-04
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -38,8 +38,6 @@
  */
 
 #include <string>
-
-#define USE_PROPOSED_NEW_AUTOMATION // completely EXPERIMENTAL
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -240,8 +238,6 @@ enum class slot
     reserved_47,        /**< 47: Reserved for expansion.                    */
     reserved_48,        /**< 48: Reserved for expansion.                    */
 
-#if defined USE_PROPOSED_NEW_AUTOMATION
-
     /*
      * Proposed massive expansion in automation. Grid mode selection.
      */
@@ -294,7 +290,9 @@ enum class slot
     set_mode_additive,  /**< xx: Set selection adds the new set to playing. */
     set_mode_all_sets,  /**< xx: All sets play at the same time.            */
 
-#endif
+    /*
+     * Tricky ending.
+     */
 
     max,                /**< Used only for termination/range-checking.      */
 

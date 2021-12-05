@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-12-02
+ * \updates       2021-12-04
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -7791,8 +7791,6 @@ performer::automation_save_session
     return result;
 }
 
-#if defined USE_PROPOSED_NEW_AUTOMATION
-
 /**
  *  Values are none, merge, overwrite, expand, and one-shot.
  */
@@ -7856,8 +7854,6 @@ performer::automation_record_style
     }
     return result;
 }
-
-#endif
 
 /**
  *  Provides a list of all the functions that can be configured to be called
@@ -7941,8 +7937,6 @@ performer::sm_auto_func_list [] =
     { automation::slot::reserved_47, &performer::automation_no_op        },
     { automation::slot::reserved_48, &performer::automation_no_op        },
 
-#if defined USE_PROPOSED_NEW_AUTOMATION
-
     /*
      * Proposed massive expansion in automation. Grid mode selection.
      */
@@ -8006,8 +8000,6 @@ performer::sm_auto_func_list [] =
     { automation::slot::set_mode_auto,      &performer::automation_no_op },
     { automation::slot::set_mode_additive,  &performer::automation_no_op },
     { automation::slot::set_mode_all_sets,  &performer::automation_no_op },
-
-#endif
 
     /*
      * Terminator

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2021-12-02
+ * \updates       2021-12-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -224,8 +224,6 @@ opcontrol::slot_name (slot s)
         "Reserved 47",          // 47 reserved_47
         "Reserved 48",          // 48 reserved_48
 
-#if defined USE_PROPOSED_NEW_AUTOMATION
-
         /*
          * Proposed massive expansion in automation. Grid mode selection.
          */
@@ -278,7 +276,9 @@ opcontrol::slot_name (slot s)
         "Sets Additive",
         "All Sets"
 
-#endif
+        /*
+         * Tricky ending.
+         */
 
         "",                     // Maximum -- used only for limit-checking
         "Loop",                 // Indicates the pattern key group

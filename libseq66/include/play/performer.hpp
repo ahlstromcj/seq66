@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-12-02
+ * \updates       2021-12-04
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3656,16 +3656,12 @@ public:
         int index, bool inverse
     );
 
-#if defined USE_PROPOSED_NEW_AUTOMATION
-
     void set_record_style (recordstyle rs);
     bool automation_record_style
     (
         automation::action a, int d0, int d1,
         int index, bool inverse
     );
-
-#endif
 
 };          // class performer
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2019-04-30
+ * \updates       2021-12-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -41,20 +41,6 @@
 
 namespace seq66
 {
-
-/**
- *  This default constructor creates a "zero" object.  Every member is
- *  either false or some other form of zero.  This object is useful as a
- *  return value for container lookups that do not succeed.
- */
-
-keycontrol::keycontrol () :
-    opcontrol       (),
-    m_key_name      (),
-    m_control_code  (0)
-{
-    // Empty body
-}
 
 /**
  *  This constructor assigns the basic values of control name, number, and
@@ -107,7 +93,8 @@ keycontrol::keycontrol
 ) :
     opcontrol       (opname, opcategory, actioncode, opslot, index),
     m_key_name      (keyname),
-    m_control_code  (index)
+    m_control_code  (index),
+    m_ordinal       (0xff)              /* set when addint to keycontainer  */
 {
     // Empty body
 }

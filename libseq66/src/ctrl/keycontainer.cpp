@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-02
+ * \updates       2021-12-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -85,8 +85,9 @@ keycontainer::keycontainer (const std::string & name) :
  *      internal value ranging from 0x00 to 0xfe that can be tied to an
  *      operation/control.  For the ASCII character set, this value is the
  *      same as the key-code returned by the Qt function nativeVirtualKey().
- *      For other character, we have to look up the key-code to find the
- *      proper ordinal.
+ *      For other characters, we have to look up the key-code to find the
+ *      proper ordinal. This value is also stored in the keycontrol for future
+ *      use.
  *
  * \param op
  *      Provides the key-control operation to be triggered by this keystroke.
@@ -99,8 +100,11 @@ bool
 keycontainer::add (ctrlkey ordinal, const keycontrol & op)
 {
     bool result = false;
+    keycontrol & nc = const_cast<keycontrol &>(op);
+    nc.ordinal(ordinal);                    /* now we can set key's ordinal */
+
     auto sz = m_container.size();
-    auto p = std::make_pair(ordinal, op); /* std::pair<ctrlkey, keycontrol> */
+    auto p = std::make_pair(ordinal, op);   /* pair<ctrlkey, keycontrol>    */
     (void) m_container.insert(p);
     result = m_container.size() == (sz + 1);
     if (result)
@@ -330,51 +334,34 @@ keycontainer::kbd_layout_to_string (keyboard::layout lay)
     return result;
 }
 
+const std::string &
+keycontainer::automation_key_name (int index)
+{
+    static std::string s_dummy;
+    const defaults & keylist = keys_automation();
+    if (index >= 0 && index < int(keylist.size()))
+        return keylist[index].kd_name;
+    else
+        return s_dummy;
+}
+
 /**
- *  We had to put the static vectors inside this function because they were
- *  not initialized in time for their usage.  Odd.
+ *  Indicates the default keystroke and action status of a particular
+ *  automation keystroke operation.  Matches the automation::slot enum
+ *  class.
+ *
+ *  Default keystrokes still available (around 24 of them):
+ *
+ *      " ( ) + 9 : > ? L O ) _ p { } DEL Del Tab BkTab BkSpace
+ *      End KP_End KP_Del KP_PageUp, KP_PageFn KP_. KP_/
+ *      KP_Left, Right, Up, Down ?
+ *      Return ? Enter ?
  */
 
-void
-keycontainer::add_defaults ()
+const keycontainer::defaults &
+keycontainer::keys_automation ()
 {
-    static tokenization s_keys_pattern =
-    {
-        "1", /*  0 */ "q", /*  1 */ "a", /*  2 */ "z", /*  3 */
-        "2", /*  4 */ "w", /*  5 */ "s", /*  6 */ "x", /*  7 */
-        "3", /*  8 */ "e", /*  9 */ "d", /* 10 */ "c", /* 11 */
-        "4", /* 12 */ "r", /* 13 */ "f", /* 14 */ "v", /* 15 */
-        "5", /* 16 */ "t", /* 17 */ "g", /* 18 */ "b", /* 19 */
-        "6", /* 20 */ "y", /* 21 */ "h", /* 22 */ "n", /* 23 */
-        "7", /* 24 */ "u", /* 25 */ "j", /* 26 */ "m", /* 27 */
-        "8", /* 28 */ "i", /* 29 */ "k", /* 30 */ ",", /* 31 */
-    };
-    static tokenization s_keys_mute_group =
-    {
-        "!", /*  0 */ "Q", /*  1 */ "A", /*  2 */ "Z", /*  3 */
-        "@", /*  4 */ "W", /*  5 */ "S", /*  6 */ "X", /*  7 */
-        "#", /*  8 */ "E", /*  9 */ "D", /* 10 */ "C", /* 11 */
-        "$", /* 12 */ "R", /* 13 */ "F", /* 14 */ "V", /* 15 */
-        "%", /* 16 */ "T", /* 17 */ "G", /* 18 */ "B", /* 19 */
-        "^", /* 20 */ "Y", /* 21 */ "H", /* 22 */ "N", /* 23 */
-        "&", /* 24 */ "U", /* 25 */ "J", /* 26 */ "M", /* 27 */
-        "*", /* 28 */ "I", /* 29 */ "K", /* 30 */ "<", /* 31 */
-    };
-
-    /*
-     *  Indicates the default keystroke and action status of a particular
-     *  automation keystroke operation.  Matches the automation::slot enum
-     *  class.
-     *
-     *  Default keystrokes still available (around 24 of them):
-     *
-     *      " ( ) + 9 : > ? L O ) _ p { } DEL Del Tab BkTab BkSpace
-     *      End KP_End KP_Del KP_PageUp, KP_PageFn KP_. KP_/
-     *      KP_Left, Right, Up, Down ?
-     *      Return ? Enter ?
-     */
-
-    static std::vector<keydefault> s_keys_automation =
+    static defaults s_keys_automation =
     {
         { "'",         automation::action::on      },  //  0 bpm_up
         { ";",         automation::action::on      },  //  1 bpm_dn
@@ -425,8 +412,6 @@ keycontainer::add_defaults ()
         { "0xfc",      automation::action::off     },  // 46 reserved_46
         { "0xfd",      automation::action::off     },  // 47 reserved_47
         { "0xfe",      automation::action::off     },  // 48 reserved_48
-
-#if defined USE_PROPOSED_NEW_AUTOMATION
 
         /*
          * Proposed massive expansion in automation. Grid mode selection.
@@ -480,18 +465,44 @@ keycontainer::add_defaults ()
         { "0x8e",      automation::action::off     },  // 79 set_mode_additive,
         { "0x8f",      automation::action::off     },  // 80 set_mode_all_sets,
 
-#endif
+        /*
+         * Tricky ending.
+         */
 
         { "0xff",      automation::action::off     },  // -- maximum
+    };
+    return s_keys_automation;
+}
 
-        /*
-         * Unnecessary
-         *
-        { "g0",        automation::action::toggle  },  // loop/pattern function
-        { "g1",        automation::action::toggle  },  // mute_group function
-        { "g3",        automation::action::none    }   // automation functions
-         *
-         */
+/**
+ *  We had to put the static vectors inside this function because they were
+ *  not initialized in time for their usage.  Odd.
+ */
+
+void
+keycontainer::add_defaults ()
+{
+    static tokenization s_keys_pattern =
+    {
+        "1", /*  0 */ "q", /*  1 */ "a", /*  2 */ "z", /*  3 */
+        "2", /*  4 */ "w", /*  5 */ "s", /*  6 */ "x", /*  7 */
+        "3", /*  8 */ "e", /*  9 */ "d", /* 10 */ "c", /* 11 */
+        "4", /* 12 */ "r", /* 13 */ "f", /* 14 */ "v", /* 15 */
+        "5", /* 16 */ "t", /* 17 */ "g", /* 18 */ "b", /* 19 */
+        "6", /* 20 */ "y", /* 21 */ "h", /* 22 */ "n", /* 23 */
+        "7", /* 24 */ "u", /* 25 */ "j", /* 26 */ "m", /* 27 */
+        "8", /* 28 */ "i", /* 29 */ "k", /* 30 */ ",", /* 31 */
+    };
+    static tokenization s_keys_mute_group =
+    {
+        "!", /*  0 */ "Q", /*  1 */ "A", /*  2 */ "Z", /*  3 */
+        "@", /*  4 */ "W", /*  5 */ "S", /*  6 */ "X", /*  7 */
+        "#", /*  8 */ "E", /*  9 */ "D", /* 10 */ "C", /* 11 */
+        "$", /* 12 */ "R", /* 13 */ "F", /* 14 */ "V", /* 15 */
+        "%", /* 16 */ "T", /* 17 */ "G", /* 18 */ "B", /* 19 */
+        "^", /* 20 */ "Y", /* 21 */ "H", /* 22 */ "N", /* 23 */
+        "&", /* 24 */ "U", /* 25 */ "J", /* 26 */ "M", /* 27 */
+        "*", /* 28 */ "I", /* 29 */ "K", /* 30 */ "<", /* 31 */
     };
 
     if (m_defaults_loaded)
@@ -552,13 +563,13 @@ keycontainer::add_defaults ()
 
     tagprefix = "Auto ";
     automation::category c = automation::category::automation;
-    int ausmax = int(s_keys_automation.size()) - 1;     /* stop before 0xff */
+    int ausmax = int(keys_automation().size()) - 1;     /* stop before 0xff */
     for (int auslot = 0; auslot < ausmax; ++auslot)
     {
         automation::slot s = automation::int_to_slot_cast(auslot);
-        automation::action a = s_keys_automation[auslot].kd_action;
+        automation::action a = keys_automation()[auslot].kd_action;
         std::string nametag = opcontrol::slot_name(s);
-        std::string keyname = s_keys_automation[auslot].kd_name;
+        std::string keyname = keys_automation()[auslot].kd_name;
         ctrlkey ordinal = qt_keyname_ordinal(keyname);
         if (is_invalid_ordinal(ordinal))
         {
