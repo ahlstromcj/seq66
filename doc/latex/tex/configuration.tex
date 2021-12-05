@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-12-03
+% \update      2021-12-05
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -324,7 +324,7 @@
 
 %  \optionline{n/a}{-{}-pass-sysex}
 %     Passes any incoming SYSEX messages to all outputs.
-%	Not yet fully implemented.
+%   Not yet fully implemented.
 
    \optionline{-k}{-{}-show-keys}
       Prints pressed key value.
@@ -1450,7 +1450,7 @@
    \index{usr!option-logfile}
    \begin{verbatim}
       [user-options]
-		daemonize = false
+      daemonize = false
       log = "seq66.log"
    \end{verbatim}
 
@@ -1589,11 +1589,11 @@
 \label{paragraph:user_file_added_options_pattern_editor}
 
    \texttt{[new-pattern-editor]} contains settings values for recording
-	 when a new pattern editor is opened. A new pattern is indicated when
-	the loop has the default name, \textsl{Unititled}.
- 	These values save time during a live recording session.
+    when a new pattern editor is opened. A new pattern is indicated when
+   the loop has the default name, \textsl{Unititled}.
+    These values save time during a live recording session.
    The valid values for record-style are \texttt{merge},
- 	\texttt{overwrite}, and \texttt{expand}.
+    \texttt{overwrite}, and \texttt{expand}.
 
    \begin{verbatim}
       [new-pattern-editor]
@@ -1655,7 +1655,7 @@
    using the new variables feature of the configuration.  Look at the sample or
    generated file to see the layout of these items.
 
-	\begin{verbatim}
+   \begin{verbatim}
       [midi-control-settings]
       load-key-controls = true
       load-midi-controls = true
@@ -1665,7 +1665,7 @@
       button-rows = 4
       button-columns = 8
       keyboard-layout = qwerty
-	\end{verbatim}
+   \end{verbatim}
 
    \begin{itemize}
       \item \texttt{load-key-controls}.
@@ -1677,7 +1677,8 @@
          The control-buss value ranges from 0 to the maximum buss provided by
          the hardware on the system. If set, then only that buss will be allowed
          to send MIDI control.  A value of 255 or 0xff means any buss can send
-         MIDI control.
+         MIDI control. If port-mapping is enabled, the short name (nick-name) of
+         the port can be used.
       \item \texttt{midi-enabled}.
          If set to "true", then the MIDI controls will be used.
          It can be set to "false", while keeping the configuration in place
@@ -1694,7 +1695,9 @@
          Still in progress.
       \item \texttt{keyboard-layout}.
          Provides a way to adapt to non-US keyboards.
-         Currently, the only supported values are "qwerty" and "azerty".
+         Currently, the only supported values are "normal" ("qwerty"), "qwertzy",
+         and "azerty".
+         For "azerty", the auto-shift feature of group-learning is disabled.
          The handling of keyboards can be quite complex, and differ between
          Linux distros and Windows.
          Especially problematic are the "dead keys" supported by some locales.
@@ -2069,7 +2072,9 @@ This MIDI control sets the playing screen-set.
          Provides the set size.  The default is 32, in a 4 x 8 grid.
       \item \texttt{output-buss}.
          Indicates where automation-display controls are to be sent.
-         Specify the output buss to which the display device is attached.
+         Specify the output buss to which the display device is attached. If
+         port-mapping is enabled, the short name (nick-name) of the port can be
+         used.
       \item \texttt{midi-enabled}.
          If set to "true", then the MIDI control outputs will be used.
          It can be set to "false", while keeping the configuration in place
@@ -2109,9 +2114,6 @@ This MIDI control sets the playing screen-set.
       31 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
    \end{verbatim}
 
-   \begin{verbatim}
-   \end{verbatim}
-
    There are additional automation controls whose status can be displayed:
 
    \begin{verbatim}
@@ -2126,6 +2128,51 @@ This MIDI control sets the playing screen-set.
    See the sample files for more detailed descriptions.
    Also see \sectionref{sec:launchpad_mini}; it showns a fairly comprehensive
    setup based on the file \texttt{data/linux/qseq66-lp-mini.ctrl}.
+
+\subsubsection{'ctrl' File / Macro Control Output}
+\label{subsubsec:configuration_ctrl_macro_control_out}
+
+   This section provides a way to send setup information to a MIDI device,
+   such as the \textsl{Novation Launchpad Pro Mk3}.
+   There is too much involved (especially that device) to discuss in
+   detail here, but this feature can be used to put a device into
+   "programmer" mode at \textsl{Seq66} startup and back into
+   "normal" mode at \textsl{Seq66} shutdown.
+
+   Here is a hypothetical sample for the Mk3:
+
+   \begin{verbatim}
+      [macro-control-out]
+      footer = 0xf7
+      header =0xf0 0x00 0x20 0x29 0x02 0x0e 
+      reset = $shutdown
+      shutdown = $live-mode
+      startup = $programmer-mode
+      live-mode = $header 0x0e 0x00 $footer
+      programmer-mode = $header 0x0e 0x01 $footer
+   \end{verbatim}
+
+   The macros "footer", "header", "reset", "startup", and "shutdown"
+   are written to the 'ctrl' file if not already present, though
+   they won't have any definition.
+   The first three are useful in other macros, while "startup" and
+   "shutdown", if defined with actual data, are sent at the launch
+   and shutdown, respectively, of \textsl{Seq66}.
+
+   Also note that these macros can be re-used in other macros, to
+   increase the readability of the macros and to reduce the
+   chance for mistakes.
+
+   Note, too, that many devices required a device-specific
+   SysEx header to precede the command-data, and the 0xf7
+   End-of-SysEx "footer" to end the command.
+
+   There is no limit to the number of macros that can be defined.
+   To send any of them directly at any time, go to the
+   \textbf{Session} tab and select a macro from the drop-down list.
+
+   There is currently no way to send them via MIDI control.
+   That could be a feature of the future.
 
 \input{defaultkeys}
 
@@ -2157,12 +2204,14 @@ This MIDI control sets the playing screen-set.
    This code tells \textsl{Seq66} to (1) ignore the automatic shift-lock
    feature when learning mutes; and (2) slightly alters the internal key-map to
    place a few extended ASCII characters in it.  This is necessary because of
-   the extra keys and because one must use the Shift key to get the numbers on
-   the numeric row of the keyboard.
+   the extra keys and because one must use the
+   \texttt{Shift} key to get the numbers on
+   the numeric row of that keyboard layout.
 
    \textbf{QWERTZ}.
-   We don't currently supply this layout, since it is quite similar to the
-   default \textbf{QWERTY} layout; the user can easily edit it.
+   We do not currently supply this layout, even though we support it, since it is
+   quite similar to the default \textbf{QWERTY} layout;
+   the user can easily edit it.
    Exit from \texttt{qseq66}, then copy the \texttt{qseq66.ctrl}
    file to \texttt{qseq66-qwertz.ctrl} (or a better name).  Edit the latter to
    change "z" to "y", "y" to "z", "Z" to "Y", and "Y" to "Z".
@@ -2173,7 +2222,18 @@ This MIDI control sets the playing screen-set.
       "qseq66-qwertz.ctrl"
    \end{verbatim}
 
-   After exiting \texttt{qseq66}, the 'ctrl' file one has specified
+   In the 'ctrl' file, make sure to specify the keyboard layout:
+
+   \begin{verbatim}
+      [midi-control-settings]
+      keyboard-layout = qwerty
+   \end{verbatim}
+
+   Available layouts are "normal" (or "qwerty"),
+   "qwertz", or "azerty".  For now; more may be added as called for by users.
+
+   After starting and then exiting \texttt{qseq66},
+   the 'ctrl' file one has specified
    should still have the new settings.
    As usual, keep all your configurations in a safe place, such as a tar-file or
    ZIP-file.

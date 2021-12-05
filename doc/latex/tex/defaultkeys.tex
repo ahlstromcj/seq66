@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-12-04
-% \update      2021-12-04
+% \update      2021-12-05
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -49,269 +49,386 @@ it sometimes difficult.
          Needs investigation.
    \end{itemize}
 
+   Because of the size of the table, and not wanting to deal with \textsl{LaTEX}
+   long-table issues, we break the table into sections.
+   These tables follow, some of them moved into following pages.
+   
+   The first section is \tableref{table:key_defaults_ctrl_keys}.
+   Because of potential conflicts with user-interface keys, we do
+   not recommend configuring them.  However, we do use some of them for controls
+   that are not yet effective. And, go ahead a try them if you want.  The user
+   rules!
 
-   \begin{table}[htb]
+   \begin{table}[htb!]
       \centering
-      \caption{All SeqSpec Items}
-      \label{table:seqspec_items_all}
+      \caption{Key Defaults. Control Keys}
+      \label{table:key_defaults_ctrl_keys}
       \begin{tabular}{l l l l l}
         \textbf{Function} & \textbf{Status} & \textbf{Ordinal} & \textbf{Name} & \textbf{Modifier} \\
-        "None"               & (X)  &  0x00   & "NUL"        & Ctrl \\
-        "None"               & (X)  &  0x01   & "SOH"        & Ctrl \\
-        "None"               & (X)  &  0x02   & "STX"        & Ctrl \\
-        "None"               & (X)  &  0x03   & "ETX"        & Ctrl \\
-        "None"               & (X)  &  0x04   & "EOT"        & Ctrl \\
-        "None"               & (X)  &  0x05   & "ENQ"        & Ctrl \\
-        "None"               & (X)  &  0x06   & "ACK"        & Ctrl \\
-        "None"               & (X)  &  0x07   & "BEL"        & Ctrl \\
-        "Solo"               & (!)  &  0x08   & "BS"         & Ctrl \\
-        "None"               & (X)  &  0x09   & "HT"         & Ctrl \\
-        "Thru"               & (!)  &  0x0a   & "LF"         & Ctrl \\
-        "None"               & (X)  &  0x0b   & "VT"         & Ctrl \\
-        "None"               & (X)  &  0x0c   & "FF"         & Ctrl \\
-        "None"               & (X)  &  0x0d   & "CR"         & Ctrl \\
-        "None"               & (X)  &  0x0e   & "SO"         & Ctrl \\
-        "None"               & (X)  &  0x0f   & "SI"         & Ctrl \\
-        "None"               & (X)  &  0x10   & "DLE"        & Ctrl \\
-        "None"               & (X)  &  0x11   & "DC1"        & Ctrl \\
-        "None"               & (X)  &  0x12   & "DC2"        & Ctrl \\
-        "None"               & (X)  &  0x13   & "DC3"        & Ctrl \\
-        "None"               & (X)  &  0x14   & "DC4"        & Ctrl \\
-        "None"               & (X)  &  0x15   & "NAK"        & Ctrl \\
-        "None"               & (X)  &  0x16   & "SYN"        & Ctrl \\
-        "None"               & (X)  &  0x17   & "ETB"        & Ctrl \\
-        "None"               & (X)  &  0x18   & "CAN"        & Ctrl \\
-        "None"               & (X)  &  0x19   & "EM"         & Ctrl \\
-        "None"               & (X)  &  0x1a   & "SUB"        & Ctrl \\
-        "None"               & (X)  &  0x1b   & "ESC"        & Ctrl \\
-        "None"               & (X)  &  0x1c   & "FS"         & Ctrl \\
-        "None"               & (X)  &  0x1d   & "GS"         & Ctrl \\
-        "None"               & (X)  &  0x1e   & "RS"         & Ctrl-Shift \\
-        "None"               & (X)  &  0x1f   & "US"         & Ctrl-Shift \\
-        "Start/Stop"         & (H)  &  0x20   & "Space"      & none \\
-        "None"               & (D)  &  0x21   & "!"          & Shift \\
-        "None"               & (A)  &  0x22   & "\""         & Shift \\
-        "None"               & (D)  &  0x23   & "\#"         & Shift \\
-        "None"               & (D)  &  0x24   & "\$"         & Shift \\
-        "None"               & (D)  &  0x25   & "\%"         & Shift \\
-        "None"               & (D)  &  0x26   & "\&"         & Shift \\
-        "BPM Up"             & (D)  &  0x27   & "'"          & Shift \\
-        "None"               & (A)  &  0x28   & "("          & Shift \\
-        "None"               & (A)  &  0x29   & ")"          & Shift \\
-        "None"               & (D)  &  0x2a   & "*"          & Shift \\
-        "None"               & (A)  &  0x2b   & "+"          & Shift \\
-        "None"               & (D)  &  0x2c   & ","          & none \\
-        "Event Edit"         & (D)  &  0x2d   & "-"          & Set-mode \\
-        "Play/Pause"         & (H)  &  0x2e   & "."          & none \\
-        "Slot Shift"         & (H)  &  0x2f   & "/"          & none \\
-        "Clear Mutes"        & (D)  &  0x30   & "0"          & none \\
-        "None"               & (D)  &  0x31   & "1"          & none \\
-        "None"               & (D)  &  0x32   & "2"          & none \\
-        "None"               & (D)  &  0x33   & "3"          & none \\
-        "None"               & (D)  &  0x34   & "4"          & none \\
-        "None"               & (D)  &  0x35   & "5"          & none \\
-        "None"               & (D)  &  0x36   & "6"          & none \\
-        "None"               & (D)  &  0x37   & "7"          & none \\
-        "None"               & (D)  &  0x38   & "8"          & none \\
-        "None"               & (A)  &  0x39   & "9"          & none \\
-        "None"               & (A)  &  0x3a   & ":"          & Shift \\
-        "BPM Down"           & (D)  &  0x3b   & ";"          & none \\
-        "None"               & (D)  &  0x3c   & "<"          & Shift \\
-        "Pattern Edit"       & (D)  &  0x3d   & "="          & Set-mode \\
-        "None"               & (A)  &  0x3e   & ">"          & Shift \\
-        "None"               & (A)  &  0x3f   & "?"          & Shift \\
-        "None"               & (D)  &  0x40   & "@"          & Shift \\
-        "None"               & (D)  &  0x41   & "A"          & Shift \\
-        "None"               & (D)  &  0x42   & "B"          & Shift \\
-        "None"               & (D)  &  0x43   & "C"          & Shift \\
-        "None"               & (D)  &  0x44   & "D"          & Shift \\
-        "None"               & (D)  &  0x45   & "E"          & Shift \\
-        "None"               & (D)  &  0x46   & "F"          & Shift \\
-        "None"               & (D)  &  0x47   & "G"          & Shift \\
-        "None"               & (D)  &  0x48   & "H"          & Shift \\
-        "None"               & (D)  &  0x49   & "I"          & Shift \\
-        "None"               & (D)  &  0x4a   & "J"          & Shift \\
-        "None"               & (D)  &  0x4b   & "K"          & Shift \\
-        "None"               & (A)  &  0x4c   & "L"          & Shift \\
-        "None"               & (D)  &  0x4d   & "M"          & Shift \\
-        "None"               & (D)  &  0x4e   & "N"          & Shift \\
-        "None"               & (A)  &  0x4f   & "O"          & Shift \\
-        "Song Record"        & (D)  &  0x50   & "P"          & Shift \\
-        "None"               & (D)  &  0x51   & "Q"          & Shift \\
-        "None"               & (D)  &  0x52   & "R"          & Shift \\
-        "None"               & (D)  &  0x53   & "S"          & Shift \\
-        "None"               & (D)  &  0x54   & "T"          & Shift \\
-        "None"               & (D)  &  0x55   & "U"          & Shift \\
-        "None"               & (D)  &  0x56   & "V"          & Shift \\
-        "None"               & (D)  &  0x57   & "W"          & Shift \\
-        "None"               & (D)  &  0x58   & "X"          & Shift \\
-        "None"               & (D)  &  0x59   & "Y"          & Shift \\
-        "None"               & (D)  &  0x5a   & "Z"          & Shift \\
-        "Screenset Down"     & (D)  &  0x5b   & "["          & none \\
-        "Keep Queue"         & (D)  &  0x5c   & "\\"         & none \\
-        "Screenset Up"       & (D)  &  0x5d   & "]"          & none \\
-        "None"               & (D)  &  0x5e   & "\^"         & Shift \\
-        "None"               & (A)  &  0x5f   & "\_"         & Shift \\
-        "Group Mute"         & (D)  &  0x60   & "`"          & none \\
-        "None"               & (D)  &  0x61   & "a"          & none \\
-        "None"               & (D)  &  0x62   & "b"          & none \\
-        "None"               & (D)  &  0x63   & "c"          & none \\
-        "None"               & (D)  &  0x64   & "d"          & none \\
-        "None"               & (D)  &  0x65   & "e"          & none \\
-        "None"               & (D)  &  0x66   & "f"          & none \\
-        "None"               & (D)  &  0x67   & "g"          & none \\
-        "None"               & (D)  &  0x68   & "h"          & none \\
-        "None"               & (D)  &  0x69   & "i"          & none \\
-        "None"               & (D)  &  0x6a   & "j"          & none \\
-        "None"               & (D)  &  0x6b   & "k"          & none \\
-        "Group Learn"        & (D)  &  0x6c   & "l"          & none \\
-        "None"               & (D)  &  0x6d   & "m"          & none \\
-        "None"               & (D)  &  0x6e   & "n"          & none \\
-        "Queue"              & (D)  &  0x6f   & "o"          & none \\
-        "None"               & (A)  &  0x70   & "p"          & none \\
-        "None"               & (D)  &  0x71   & "q"          & none \\
-        "None"               & (D)  &  0x72   & "r"          & none \\
-        "None"               & (D)  &  0x73   & "s"          & none \\
-        "None"               & (D)  &  0x74   & "t"          & none \\
-        "None"               & (D)  &  0x75   & "u"          & none \\
-        "None"               & (D)  &  0x76   & "v"          & none \\
-        "None"               & (D)  &  0x77   & "w"          & none \\
-        "None"               & (D)  &  0x78   & "x"          & none \\
-        "None"               & (D)  &  0x79   & "y"          & none \\
-        "None"               & (D)  &  0x7a   & "z"          & none \\
-        "None"               & (A)  &  0x7b   & "\{"         & Shift \\
-        "Oneshot Queue"      & (D)  &  0x7c   & "|"          & Shift \\
-        "None"               & (A)  &  0x7d   & "\}"          & Shift \\
-        "Panic Button"       & (D)  &  0x7e   & "~"          & Shift \\
-        "None"               & (A)  &  0x7f   & "DEL"        & none \\
-        "Stop"               & (H)  &  0x80   & "Esc"        & none \\
-        "None"               & (A)  &  0x81   & "Tab"        & none \\
-        "None"               & (A)  &  0x82   & "BkTab"      & Shift \\
-        "None"               & (A)  &  0x83   & "BkSpace"    & none \\
-        "None"               & (?)  &  0x84   & "Return"     & none \\
-        "None"               & (?)  &  0x85   & "Enter"      & Keypad \\
-        "Snapshot"           & (D)  &  0x86   & "Ins"        & none \\
-        "None"               & (A)  &  0x87   & "Del"        & none \\
-        "None"               & (p)  &  0x88   & "0x88"       & none \\
-        "None"               & (p)  &  0x89   & "0x89"       & none \\
-        "None"               & (X)  &  0x8a   & "SysReq"     & none \\
-        "None"               & (X)  &  0x8b   & "Clear"      & none \\
-        "None"               & (d)  &  0x8c   & "0x8c"       & none \\
-        "None"               & (d)  &  0x8d   & "0x8d"       & none \\
-        "None"               & (d)  &  0x8e   & "0x8e"       & none \\
-        "None"               & (d)  &  0x8f   & "0x8f"       & none \\
-        "Play Screenset"     & (D)  &  0x90   & "Home"       & none \\
-        "None"               & (A)  &  0x91   & "End"        & none \\
-        "None"               & (H)  &  0x92   & "Left"       & none \\
-        "None"               & (H)  &  0x93   & "Up"         & none \\
-        "None"               & (H)  &  0x94   & "Right"      & none \\
-        "None"               & (H)  &  0x95   & "Down"       & none \\
-        "BPM Page Up"        & (D)  &  0x96   & "PageUp"     & none \\
-        "BPM Page Down"      & (D)  &  0x97   & "PageDn"     & none \\
-        "None"               & (X)  &  0x98   & "Shift\_L"   &  Shift \\
-        "None"               & (X)  &  0x99   & "Ctrl\_L"    &  Ctrl \\
-        "None"               & (X)  &  0x9a   & "Meta"       & Meta \\
-        "None"               & (X)  &  0x9b   & "Alt\_L"     &  Alt \\
-        "None"               & (X)  &  0x9c   & "CapsLk"     & none \\
-        "None"               & (X)  &  0x9d   & "NumLk"      & none \\
-        "None"               & (X)  &  0x9e   & "ScrlLk"     & none \\
-        "None"               & (p)  &  0x9f   & "0x9f"       & none \\
-        "Top (beginning)"    & (D)  &  0xa0   & "F1"         & none \\
-        "Next Playlist"      & (D)  &  0xa1   & "F2"         & none \\
-        "Next Song"          & (D)  &  0xa2   & "F3"         & none \\
-        "Follow Transport"   & (D)  &  0xa3   & "F4"         & none \\
-        "Rew (depr)"         & (D)  &  0xa4   & "F5"         & none \\
-        "FF (depr)"          & (D)  &  0xa5   & "F6"         & none \\
-        "Song Pointer"       & (D)  &  0xa6   & "F7"         & none \\
-        "Toggle Mutes"       & (D)  &  0xa7   & "F8"         & none \\
-        "Tap BPM"            & (D)  &  0xa8   & "F9"         & none \\
-        "Song/Live Mode"     & (D)  &  0xa9   & "F10"        & none \\
-        "JACK Transport"     & (D)  &  0xaa   & "F11"        & none \\
-        "Menu Mode (depr)"   & (D)  &  0xab   & "F12"        & none \\
-        "None"               & (X)  &  0xac   & "Super\_L"   &  none \\
-        "None"               & (X)  &  0xad   & "Super\_R"   &  none \\
-        "None"               & (X)  &  0xae   & "Menu"       & none \\
-        "None"               & (X)  &  0xaf   & "Hyper\_L"   &  none \\
-        "None"               & (X)  &  0xb0   & "Hyper\_R"   &  none \\
-        "None"               & (X)  &  0xb1   & "Help"       & none \\
-        "None"               & (X)  &  0xb2   & "Dir\_L"     &  none \\
-        "None"               & (X)  &  0xb3   & "Dir\_R"     &  none \\
-        "Record Overdub"     & (D)  &  0xb4   & "Sh\_F1"     &  Shift \\
-        "Record Overwrite"   & (D)  &  0xb5   & "Sh\_F2"     &  Shift \\
-        "Record Expand"      & (D)  &  0xb6   & "Sh\_F3"     &  Shift \\
-        "Record One-shot"    & (D)  &  0xb7   & "Sh\_F4"     &  Shift \\
-        "Grid Loop Mode"     & (d)  &  0xb8   & "Sh\_F5"     &  Shift \\
-        "Grid Record Mode"   & (d)  &  0xb9   & "Sh\_F6"     &  Shift-mode \\
-        "Grid Copy Mode"     & (d)  &  0xba   & "Sh\_F7"     &  Shift-mode \\
-        "Grid Paste Mode"    & (d)  &  0xbb   & "Sh\_F8"     &  Shift-mode \\
-        "Grid Clear Mode"    & (d)  &  0xbc   & "Sh\_F9"     &  Shift-mode \\
-        "Grid Delete Mode"   & (d)  &  0xbd   & "Sh\_F10"    &  Shift-mode \\
-        "Grid Thru Mode"     & (d)  &  0xbe   & "Sh\_F11"    &  Shift-mode \\
-        "Grid Solo Mode"     & (d)  &  0xbf   & "Sh\_F12"    &  Shift-mode \\
-        "Reserved"           & (D)  &  0xc0   & "KP\_Ins"    &  Keypad \\
-        "None"               & (A)  &  0xc1   & "KP\_Del"    &  Keypad \\
-        "None"               & (X)  &  0xc2   & "Pause"      & Shift \\
-        "None"               & (X)  &  0xc3   & "Print"      & Shift \\
-        "Replace"            & (D)  &  0xc4   & "KP\_Home"   &  Keypad \\
-        "None"               & (A)  &  0xc5   & "KP\_End"    &  Keypad \\
-        "None"               & (?)  &  0xc6   & "KP\_Left"   &  Keypad \\
-        "None"               & (?)  &  0xc7   & "KP\_Up"     &  Keypad \\
-        "None"               & (?)  &  0xc8   & "KP\_Right"  &  Keypad \\
-        "None"               & (?)  &  0xc9   & "KP\_Down"   &  Keypad \\
-        "None"               & (A)  &  0xca   & "KP\_PageUp" &  Keypad \\
-        "None"               & (A)  &  0xcb   & "KP\_PageDn" &  Keypad \\
-        "None"               & (X)  &  0xcc   & "KP\_Begin"  &  none \\
-        "None"               & (p)  &  0xcd   & "0xcd"       & none \\
-        "None"               & (p)  &  0xce   & "0xce"       & none \\
-        "None"               & (p)  &  0xcf   & "0xcf"       & none \\
-        "Record *"           & (D)  &  0xd0   & "KP\_*"      &  Keypad \\
-        "Reset Play-set"     & (D)  &  0xd1   & "KP\_+"      &  Keypad \\
-        "None"               & (X)  &  0xd2   & "KP\_,",     &  Keypad \\
-        "Quantize Record *"  & (D)  &  0xd3   & "KP\_-"      &  Keypad \\
-        "Set Screenset"      & (D)  &  0xd4   & "KP\_."      &  Shift-Keypad \\
-        "None"               & (A)  &  0xd5   & "KP\_/"      &  Keypad \\
-        "None"               & (p)  &  0xd6   & "0xd6"       & none \\
-        "None"               & (X)  &  0xd7   & "Shift\_R"   &  Shift \\
-        "None"               & (X)  &  0xd8   & "Ctrl\_R"    &  Ctrl \\
-        "None"               & (D)  &  0xd9   & "KP\_."      &  Keypad \\
-        "None"               & (X)  &  0xda   & "Alt\_R"     &  Group \\
-        "None"               & (X)  &  0xdb   & "Shift\_Lr"  &  none \\
-        "None"               & (X)  &  0xdc   & "Shift\_Rr"  &  none \\
-        "None"               & (X)  &  0xdd   & "Ctrl\_Lr"   &  none \\
-        "None"               & (X)  &  0xde   & "Ctrl\_Rr"   &  none \\
-        "Quit/Exit"          & (X)  &  0xdf   & "Quit"       & MIDI-control-only \\
-        "Grid Veloc. Mode"   & (d)  &  0xe0   & "0xe0"       & none \\
-        "Grid Double Mode"   & (d)  &  0xe1   & "0xe1"       & none \\
-        "Grid Quant None"    & (d)  &  0xe2   & "0xe2"       & none \\
-        "Grid Quant Full"    & (d)  &  0xe3   & "0xe3"       & none \\
-        "Grid Quant Tight"   & (d)  &  0xe4   & "0xe4"       & none \\
-        "Grid Quant Random"  & (d)  &  0xe5   & "0xe5"       & none \\
-        "Grid Quant Jitter"  & (d)  &  0xe6   & "0xe6"       & none \\
-        "Grid Quant Reser."  & (d)  &  0xe7   & "0xe7"       & none \\
-        "BBT/HMS"            & (d)  &  0xe8   & "0xe8"       & none \\
-        "L/R Loop Mode"      & (d)  &  0xe9   & "0xe9"       & none \\
-        "Undo Record"        & (d)  &  0xea   & "0xea"       & none \\
-        "Redo Record"        & (d)  &  0xeb   & "0xeb"       & none \\
-        "Transpose Song"     & (d)  &  0xec   & "0xec"       & none \\
-        "Copy Set"           & (d)  &  0xed   & "0xed"       & none \\
-        "Paste Set"          & (d)  &  0xee   & "0xee"       & none \\
-        "Toggle Tracks"      & (d)  &  0xef   & "0xef"       & none \\
-        "Set Mode Normal"    & (p)  &  0xf0   & "0xf0"       & none \\
-        "Set Mode Auto"      & (p)  &  0xf1   & "0xf1"       & none \\
-        "Set Mode Adding"    & (p)  &  0xf2   & "0xf2"       & none \\
-        "Set Mode All"       & (p)  &  0xf3   & "0xf3"       & none \\
-        "None"               & (p)  &  0xf4   & "0xf4"       & none \\
-        "None"               & (p)  &  0xf5   & "0xf5"       & none \\
-        "None"               & (p)  &  0xf6   & "0xf6"       & none \\
-        "None"               & (p)  &  0xf7   & "0xf7"       & none \\
-        "None"               & (p)  &  0xf8   & "0xf8"       & none \\
-        "Visibility"         & (D)  &  0xf9   & "0xf9"       & none \\
-        "Save Session"       & (D)  &  0xfa   & "0xfa"       & none \\
-        "Reserved"           & (D)  &  0xfb   & "0xfb"       & none \\
-        "Reserved"           & (D)  &  0xfc   & "0xfc"       & none \\
-        "Reserved"           & (D)  &  0xfd   & "0xfd"       & none \\
-        "Reserved"           & (D)  &  0xfe   & "0xfe"       & none \\
-        "Terminator"         & (X)  &  0xff   & "Null\_ff"   &  Illegal-value \\
+        None               & (X)  &  0x00   & "NUL"        & Ctrl \\
+        None               & (X)  &  0x01   & "SOH"        & Ctrl \\
+        None               & (X)  &  0x02   & "STX"        & Ctrl \\
+        None               & (X)  &  0x03   & "ETX"        & Ctrl \\
+        None               & (X)  &  0x04   & "EOT"        & Ctrl \\
+        None               & (X)  &  0x05   & "ENQ"        & Ctrl \\
+        None               & (X)  &  0x06   & "ACK"        & Ctrl \\
+        None               & (X)  &  0x07   & "BEL"        & Ctrl \\
+        Solo               & (!)  &  0x08   & "BS"         & Ctrl \\
+        None               & (X)  &  0x09   & "HT"         & Ctrl \\
+        Thru               & (!)  &  0x0a   & "LF"         & Ctrl \\
+        None               & (X)  &  0x0b   & "VT"         & Ctrl \\
+        None               & (X)  &  0x0c   & "FF"         & Ctrl \\
+        None               & (X)  &  0x0d   & "CR"         & Ctrl \\
+        None               & (X)  &  0x0e   & "SO"         & Ctrl \\
+        None               & (X)  &  0x0f   & "SI"         & Ctrl \\
+        None               & (X)  &  0x10   & "DLE"        & Ctrl \\
+        None               & (X)  &  0x11   & "DC1"        & Ctrl \\
+        None               & (X)  &  0x12   & "DC2"        & Ctrl \\
+        None               & (X)  &  0x13   & "DC3"        & Ctrl \\
+        None               & (X)  &  0x14   & "DC4"        & Ctrl \\
+        None               & (X)  &  0x15   & "NAK"        & Ctrl \\
+        None               & (X)  &  0x16   & "SYN"        & Ctrl \\
+        None               & (X)  &  0x17   & "ETB"        & Ctrl \\
+        None               & (X)  &  0x18   & "CAN"        & Ctrl \\
+        None               & (X)  &  0x19   & "EM"         & Ctrl \\
+        None               & (X)  &  0x1a   & "SUB"        & Ctrl \\
+        None               & (X)  &  0x1b   & "ESC"        & Ctrl \\
+        None               & (X)  &  0x1c   & "FS"         & Ctrl \\
+        None               & (X)  &  0x1d   & "GS"         & Ctrl \\
+        None               & (X)  &  0x1e   & "RS"         & Ctrl-Shift \\
+        None               & (X)  &  0x1f   & "US"         & Ctrl-Shift \\
+      \end{tabular}
+   \end{table}
+
+   The next section is \tableref{table:key_defaults_ascii_keys_1}.
+   These deal with some of the pattern hot-keys ("Loop")
+   and their shifted mute-group ("Mutes") keys.
+   We do not show the numbers, as they are logically laid out on the U.S.
+   keyboard.
+   The Space and Period keys are hardwired ("*")
+   for Start/Stop/Pause in the pattern piano roll and the song-editor
+   piano roll.
+
+   \begin{table}[htb!]
+      \centering
+      \caption{Key Defaults. ASCII Keys 1}
+      \label{table:key_defaults_ascii_keys_1}
+      \begin{tabular}{l l l l l}
+        \textbf{Function} & \textbf{Status} & \textbf{Ordinal} & \textbf{Name} & \textbf{Modifier} \\
+        Start/Stop *       & (H)  &  0x20   & "Space"      & none \\
+        Mutes              & (D)  &  0x21   & "!"          & Shift \\
+        None               & (A)  &  0x22   & "\""         & Shift \\
+        Mutes              & (D)  &  0x23   & "\#"         & Shift \\
+        Mutes              & (D)  &  0x24   & "\$"         & Shift \\
+        Mutes              & (D)  &  0x25   & "\%"         & Shift \\
+        Mutes              & (D)  &  0x26   & "\&"         & Shift \\
+        BPM Up             & (D)  &  0x27   & "'"          & Shift \\
+        None               & (A)  &  0x28   & "("          & Shift \\
+        None               & (A)  &  0x29   & ")"          & Shift \\
+        Mutes              & (D)  &  0x2a   & "*"          & Shift \\
+        None               & (A)  &  0x2b   & "+"          & Shift \\
+        None               & (D)  &  0x2c   & ","          & none \\
+        Event Edit         & (D)  &  0x2d   & "-"          & Set-mode \\
+        Play/Pause *       & (H)  &  0x2e   & "."          & none \\
+        Slot Shift         & (H)  &  0x2f   & "/"          & none \\
+        Clear Mutes        & (D)  &  0x30   & "0"          & none \\
+        Loop               & (D)  &  0x31   & "1"          & none \\
+        Loop               & (D)  &  0x32   & "2"          & none \\
+        Loop               & (D)  &  0x33   & "3"          & none \\
+        Loop               & (D)  &  0x34   & "4"          & none \\
+        Loop               & (D)  &  0x35   & "5"          & none \\
+        Loop               & (D)  &  0x36   & "6"          & none \\
+        Loop               & (D)  &  0x37   & "7"          & none \\
+        Loop               & (D)  &  0x38   & "8"          & none \\
+        None               & (A)  &  0x39   & "9"          & none \\
+        None               & (A)  &  0x3a   & ":"          & Shift \\
+        BPM Down           & (D)  &  0x3b   & ";"          & none \\
+        Loop               & (D)  &  0x3c   & "<"          & Shift \\
+        Pattern Edit       & (D)  &  0x3d   & "="          & Set-mode \\
+        None               & (A)  &  0x3e   & ">"          & Shift \\
+        None               & (A)  &  0x3f   & "?"          & Shift \\
+      \end{tabular}
+   \end{table}
+
+   The next section is \tableref{table:key_defaults_ascii_keys_2}.
+   These deal mainly with the shifted mute-group ("Mutes") keys.
+
+   \begin{table}[htb!]
+      \centering
+      \caption{Key Defaults. ASCII Keys 2}
+      \label{table:key_defaults_ascii_keys_2}
+      \begin{tabular}{l l l l l}
+        \textbf{Function} & \textbf{Status} & \textbf{Ordinal} & \textbf{Name} & \textbf{Modifier} \\
+        Mutes              & (D)  &  0x40   & "@"          & Shift \\
+        Mutes              & (D)  &  0x41   & "A"          & Shift \\
+        Mutes              & (D)  &  0x42   & "B"          & Shift \\
+        Mutes              & (D)  &  0x43   & "C"          & Shift \\
+        Mutes              & (D)  &  0x44   & "D"          & Shift \\
+        Mutes              & (D)  &  0x45   & "E"          & Shift \\
+        Mutes              & (D)  &  0x46   & "F"          & Shift \\
+        Mutes              & (D)  &  0x47   & "G"          & Shift \\
+        Mutes              & (D)  &  0x48   & "H"          & Shift \\
+        Mutes              & (D)  &  0x49   & "I"          & Shift \\
+        Mutes              & (D)  &  0x4a   & "J"          & Shift \\
+        Mutes              & (D)  &  0x4b   & "K"          & Shift \\
+        Mutes              & (A)  &  0x4c   & "L"          & Shift \\
+        Mutes              & (D)  &  0x4d   & "M"          & Shift \\
+        Mutes              & (D)  &  0x4e   & "N"          & Shift \\
+        None               & (A)  &  0x4f   & "O"          & Shift \\
+        Song Record        & (D)  &  0x50   & "P"          & Shift \\
+        Mutes              & (D)  &  0x51   & "Q"          & Shift \\
+        Mutes              & (D)  &  0x52   & "R"          & Shift \\
+        Mutes              & (D)  &  0x53   & "S"          & Shift \\
+        Mutes              & (D)  &  0x54   & "T"          & Shift \\
+        Mutes              & (D)  &  0x55   & "U"          & Shift \\
+        Mutes              & (D)  &  0x56   & "V"          & Shift \\
+        Mutes              & (D)  &  0x57   & "W"          & Shift \\
+        Mutes              & (D)  &  0x58   & "X"          & Shift \\
+        Mutes              & (D)  &  0x59   & "Y"          & Shift \\
+        Mutes              & (D)  &  0x5a   & "Z"          & Shift \\
+        Screenset Down     & (D)  &  0x5b   & "["          & none \\
+        Keep Queue         & (D)  &  0x5c   & "\\"         & none \\
+        Screenset Up       & (D)  &  0x5d   & "]"          & none \\
+        Mutes              & (D)  &  0x5e   & "\^"         & Shift \\
+        None               & (A)  &  0x5f   & "\_"         & Shift \\
+        Group Mute         & (D)  &  0x60   & "`"          & none \\
+      \end{tabular}
+   \end{table}
+
+   The next section is \tableref{table:key_defaults_ascii_keys_3}.
+   These are mainly devoted to the "Loop" keys, which are laid out in
+   a logical order on the keyboard.
+
+   \begin{table}[htb!]
+      \centering
+      \caption{Key Defaults. ASCII Keys 3}
+      \label{table:key_defaults_ascii_keys_3}
+      \begin{tabular}{l l l l l}
+        \textbf{Function} & \textbf{Status} & \textbf{Ordinal} & \textbf{Name} & \textbf{Modifier} \\
+        Loop               & (D)  &  0x61   & "a"          & none \\
+        Loop               & (D)  &  0x62   & "b"          & none \\
+        Loop               & (D)  &  0x63   & "c"          & none \\
+        Loop               & (D)  &  0x64   & "d"          & none \\
+        Loop               & (D)  &  0x65   & "e"          & none \\
+        Loop               & (D)  &  0x66   & "f"          & none \\
+        Loop               & (D)  &  0x67   & "g"          & none \\
+        Loop               & (D)  &  0x68   & "h"          & none \\
+        Loop               & (D)  &  0x69   & "i"          & none \\
+        Loop               & (D)  &  0x6a   & "j"          & none \\
+        Loop               & (D)  &  0x6b   & "k"          & none \\
+        Group Learn        & (D)  &  0x6c   & "l"          & none \\
+        Loop               & (D)  &  0x6d   & "m"          & none \\
+        Loop               & (D)  &  0x6e   & "n"          & none \\
+        Queue              & (D)  &  0x6f   & "o"          & none \\
+        None               & (A)  &  0x70   & "p"          & none \\
+        Loop               & (D)  &  0x71   & "q"          & none \\
+        Loop               & (D)  &  0x72   & "r"          & none \\
+        Loop               & (D)  &  0x73   & "s"          & none \\
+        Loop               & (D)  &  0x74   & "t"          & none \\
+        Loop               & (D)  &  0x75   & "u"          & none \\
+        Loop               & (D)  &  0x76   & "v"          & none \\
+        Loop               & (D)  &  0x77   & "w"          & none \\
+        Loop               & (D)  &  0x78   & "x"          & none \\
+        Loop               & (D)  &  0x79   & "y"          & none \\
+        Loop               & (D)  &  0x7a   & "z"          & none \\
+        None               & (A)  &  0x7b   & "\{"         & Shift \\
+        Oneshot Queue      & (D)  &  0x7c   & "|"          & Shift \\
+        None               & (A)  &  0x7d   & "\}"         & Shift \\
+        Panic Button       & (D)  &  0x7e   & "~"          & Shift \\
+        None               & (A)  &  0x7f   & "DEL"        & none \\
+      \end{tabular}
+   \end{table}
+
+   The next section is \tableref{table:key_defaults_extended_keys_1}.
+   Some of these keys (Esc and the arrow keys) are
+   hardwired ("*").
+   We are not sure what will happen if you try to redefine them.
+   Also note the keys with hexadecimal number names (e.g. \texttt{0x88}).
+   These are keys that we have not yet found mapped to a keystroke
+   by the \textsl{Qt} keystroke system.
+   Some of them are used as placeholders in the default key assignments
+   of automation-control functions implemented only via MIDI control.
+
+   \begin{table}[htb!]
+      \centering
+      \caption{Key Defaults. Extended Keys 1}
+      \label{table:key_defaults_extended_keys_1}
+      \begin{tabular}{l l l l l}
+        \textbf{Function} & \textbf{Status} & \textbf{Ordinal} & \textbf{Name} & \textbf{Modifier} \\
+        Stop *             & (H)  &  0x80   & "Esc"        & none \\
+        None               & (A)  &  0x81   & "Tab"        & none \\
+        None               & (A)  &  0x82   & "BkTab"      & Shift \\
+        None               & (A)  &  0x83   & "BkSpace"    & none \\
+        None               & (?)  &  0x84   & "Return"     & none \\
+        None               & (?)  &  0x85   & "Enter"      & Keypad \\
+        Snapshot           & (D)  &  0x86   & "Ins"        & none \\
+        None               & (A)  &  0x87   & "Del"        & none \\
+        None               & (p)  &  0x88   & "0x88"       & none \\
+        None               & (p)  &  0x89   & "0x89"       & none \\
+        None               & (X)  &  0x8a   & "SysReq"     & none \\
+        None               & (X)  &  0x8b   & "Clear"      & none \\
+        None               & (d)  &  0x8c   & "0x8c"       & none \\
+        None               & (d)  &  0x8d   & "0x8d"       & none \\
+        None               & (d)  &  0x8e   & "0x8e"       & none \\
+        None               & (d)  &  0x8f   & "0x8f"       & none \\
+        Play Screenset     & (D)  &  0x90   & "Home"       & none \\
+        None               & (A)  &  0x91   & "End"        & none \\
+        Previous Song *    & (H)  &  0x92   & "Left"       & none \\
+        Prev. Playlist *   & (H)  &  0x93   & "Up"         & none \\
+        Next Song *        & (H)  &  0x94   & "Right"      & none \\
+        Next Playlist .*   & (H)  &  0x95   & "Down"       & none \\
+        BPM Page Up        & (D)  &  0x96   & "PageUp"     & none \\
+        BPM Page Down      & (D)  &  0x97   & "PageDn"     & none \\
+        None               & (X)  &  0x98   & "Shift\_L"   & Shift \\
+        None               & (X)  &  0x99   & "Ctrl\_L"    & Ctrl \\
+        None               & (X)  &  0x9a   & "Meta"       & Meta \\
+        None               & (X)  &  0x9b   & "Alt\_L"     & Alt \\
+        None               & (X)  &  0x9c   & "CapsLk"     & none \\
+        None               & (X)  &  0x9d   & "NumLk"      & none \\
+        None               & (X)  &  0x9e   & "ScrlLk"     & none \\
+        None               & (p)  &  0x9f   & "0x9f"       & none \\
+      \end{tabular}
+   \end{table}
+
+   The next section is \tableref{table:key_defaults_extended_keys_2}.
+   The main definitions here are for the "Function" and "Shift-Function"
+   keys. Also note that one should avoid overriding the modifier keys.
+   (But hey, see what happens!)
+
+   \begin{table}[htb!]
+      \centering
+      \caption{Key Defaults. Extended Keys 2}
+      \label{table:key_defaults_extended_keys_2}
+      \begin{tabular}{l l l l l}
+        \textbf{Function} & \textbf{Status} & \textbf{Ordinal} & \textbf{Name} & \textbf{Modifier} \\
+        Top (beginning)    & (D)  &  0xa0   & "F1"         & none \\
+        Next Playlist      & (D)  &  0xa1   & "F2"         & none \\
+        Next Song          & (D)  &  0xa2   & "F3"         & none \\
+        Follow Transport   & (D)  &  0xa3   & "F4"         & none \\
+        Rew (depr)         & (D)  &  0xa4   & "F5"         & none \\
+        FF (depr)          & (D)  &  0xa5   & "F6"         & none \\
+        Song Pointer       & (D)  &  0xa6   & "F7"         & none \\
+        Toggle Mutes       & (D)  &  0xa7   & "F8"         & none \\
+        Tap BPM            & (D)  &  0xa8   & "F9"         & none \\
+        Song/Live Mode     & (D)  &  0xa9   & "F10"        & none \\
+        JACK Transport     & (D)  &  0xaa   & "F11"        & none \\
+        Menu Mode (depr)   & (D)  &  0xab   & "F12"        & none \\
+        None               & (X)  &  0xac   & "Super\_L"   & none \\
+        None               & (X)  &  0xad   & "Super\_R"   & none \\
+        None               & (X)  &  0xae   & "Menu"       & none \\
+        None               & (X)  &  0xaf   & "Hyper\_L"   & none \\
+        None               & (X)  &  0xb0   & "Hyper\_R"   & none \\
+        None               & (X)  &  0xb1   & "Help"       & none \\
+        None               & (X)  &  0xb2   & "Dir\_L"     & none \\
+        None               & (X)  &  0xb3   & "Dir\_R"     & none \\
+        Record Overdub     & (D)  &  0xb4   & "Sh\_F1"     & Shift \\
+        Record Overwrite   & (D)  &  0xb5   & "Sh\_F2"     & Shift \\
+        Record Expand      & (D)  &  0xb6   & "Sh\_F3"     & Shift \\
+        Record One-shot    & (D)  &  0xb7   & "Sh\_F4"     & Shift \\
+        Grid Loop Mode     & (d)  &  0xb8   & "Sh\_F5"     & Shift \\
+        Grid Record Mode   & (d)  &  0xb9   & "Sh\_F6"     & Shift-mode \\
+        Grid Copy Mode     & (d)  &  0xba   & "Sh\_F7"     & Shift-mode \\
+        Grid Paste Mode    & (d)  &  0xbb   & "Sh\_F8"     & Shift-mode \\
+        Grid Clear Mode    & (d)  &  0xbc   & "Sh\_F9"     & Shift-mode \\
+        Grid Delete Mode   & (d)  &  0xbd   & "Sh\_F10"    & Shift-mode \\
+        Grid Thru Mode     & (d)  &  0xbe   & "Sh\_F11"    & Shift-mode \\
+        Grid Solo Mode     & (d)  &  0xbf   & "Sh\_F12"    & Shift-mode \\
+        Reserved           & (D)  &  0xc0   & "KP\_Ins"    & Keypad \\
+      \end{tabular}
+   \end{table}
+
+   The next section is \tableref{table:key_defaults_extended_keys_3}.
+   Note the some of the keypad keys are assigned, but there are many
+   available.  Presumably the keypad arrow keys are distinct from
+   the main arrow keys, but that has not yet been tested.
+
+   \begin{table}[htb!]
+      \centering
+      \caption{Key Defaults. Extended Keys 3}
+      \label{table:key_defaults_extended_keys_3}
+      \begin{tabular}{l l l l l}
+        \textbf{Function} & \textbf{Status} & \textbf{Ordinal} & \textbf{Name} & \textbf{Modifier} \\
+        None               & (A)  &  0xc1   & "KP\_Del"    & Keypad \\
+        None               & (X)  &  0xc2   & "Pause"      & Shift \\
+        None               & (X)  &  0xc3   & "Print"      & Shift \\
+        Replace            & (D)  &  0xc4   & "KP\_Home"   & Keypad \\
+        None               & (A)  &  0xc5   & "KP\_End"    & Keypad \\
+        None               & (?)  &  0xc6   & "KP\_Left"   & Keypad \\
+        None               & (?)  &  0xc7   & "KP\_Up"     & Keypad \\
+        None               & (?)  &  0xc8   & "KP\_Right"  & Keypad \\
+        None               & (?)  &  0xc9   & "KP\_Down"   & Keypad \\
+        None               & (A)  &  0xca   & "KP\_PageUp" & Keypad \\
+        None               & (A)  &  0xcb   & "KP\_PageDn" & Keypad \\
+        None               & (X)  &  0xcc   & "KP\_Begin"  & none \\
+        None               & (p)  &  0xcd   & "0xcd"       & none \\
+        None               & (p)  &  0xce   & "0xce"       & none \\
+        None               & (p)  &  0xcf   & "0xcf"       & none \\
+        Record Increment   & (D)  &  0xd0   & "KP\_*"      & Keypad \\
+        Reset Play-set     & (D)  &  0xd1   & "KP\_+"      & Keypad \\
+        None               & (X)  &  0xd2   & "KP\_,",     & Keypad \\
+        Quan Record Incr.  & (D)  &  0xd3   & "KP\_-"      & Keypad \\
+        Set Screenset      & (D)  &  0xd4   & "KP\_."      & Shift-Keypad \\
+        None               & (A)  &  0xd5   & "KP\_/"      & Keypad \\
+        None               & (p)  &  0xd6   & "0xd6"       & none \\
+        None               & (X)  &  0xd7   & "Shift\_R"   & Shift \\
+        None               & (X)  &  0xd8   & "Ctrl\_R"    & Ctrl \\
+        None               & (D)  &  0xd9   & "KP\_."      & Keypad \\
+        None               & (X)  &  0xda   & "Alt\_R"     & Group \\
+        None               & (X)  &  0xdb   & "Shift\_Lr"  & none \\
+        None               & (X)  &  0xdc   & "Shift\_Rr"  & none \\
+        None               & (X)  &  0xdd   & "Ctrl\_Lr"   & none \\
+        None               & (X)  &  0xde   & "Ctrl\_Rr"   & none \\
+        Quit/Exit          & (X)  &  0xdf   & "Quit"       & MIDI-control-only \\
+      \end{tabular}
+   \end{table}
+
+   The next section is \tableref{table:key_defaults_extended_keys_4}.
+   There are many functions assigned in this section, but no
+   real \textsl{Qt} keys defined.  So this section is somewhat reserved
+   for additional MIDI controls that will not have corresponding keystrokes.
+   There are a lot more MIDI controls that keystrokes, especially leaving out the
+   Ctrl, Shift, Alt, Super, and Hyper key combinations, which should be
+   reserved for the operating system, window manager, and
+   \textsl{Qt} user interface.
+
+   \begin{table}[htb!]
+      \centering
+      \caption{Key Defaults. Extended Keys 4}
+      \label{table:key_defaults_extended_keys_4}
+      \begin{tabular}{l l l l l}
+        \textbf{Function} & \textbf{Status} & \textbf{Ordinal} & \textbf{Name} & \textbf{Modifier} \\
+        Grid Veloc. Mode   & (d)  &  0xe0   & "0xe0"       & none \\
+        Grid Double Mode   & (d)  &  0xe1   & "0xe1"       & none \\
+        Grid Quant None    & (d)  &  0xe2   & "0xe2"       & none \\
+        Grid Quant Full    & (d)  &  0xe3   & "0xe3"       & none \\
+        Grid Quant Tight   & (d)  &  0xe4   & "0xe4"       & none \\
+        Grid Quant Random  & (d)  &  0xe5   & "0xe5"       & none \\
+        Grid Quant Jitter  & (d)  &  0xe6   & "0xe6"       & none \\
+        Grid Quant Reser.  & (d)  &  0xe7   & "0xe7"       & none \\
+        BBT/HMS            & (d)  &  0xe8   & "0xe8"       & none \\
+        L/R Loop Mode      & (d)  &  0xe9   & "0xe9"       & none \\
+        Undo Record        & (d)  &  0xea   & "0xea"       & none \\
+        Redo Record        & (d)  &  0xeb   & "0xeb"       & none \\
+        Transpose Song     & (d)  &  0xec   & "0xec"       & none \\
+        Copy Set           & (d)  &  0xed   & "0xed"       & none \\
+        Paste Set          & (d)  &  0xee   & "0xee"       & none \\
+        Toggle Tracks      & (d)  &  0xef   & "0xef"       & none \\
+        Set Mode Normal    & (p)  &  0xf0   & "0xf0"       & none \\
+        Set Mode Auto      & (p)  &  0xf1   & "0xf1"       & none \\
+        Set Mode Adding    & (p)  &  0xf2   & "0xf2"       & none \\
+        Set Mode All       & (p)  &  0xf3   & "0xf3"       & none \\
+        None               & (p)  &  0xf4   & "0xf4"       & none \\
+        None               & (p)  &  0xf5   & "0xf5"       & none \\
+        None               & (p)  &  0xf6   & "0xf6"       & none \\
+        None               & (p)  &  0xf7   & "0xf7"       & none \\
+        None               & (p)  &  0xf8   & "0xf8"       & none \\
+        Visibility         & (D)  &  0xf9   & "0xf9"       & none \\
+        Save Session       & (D)  &  0xfa   & "0xfa"       & none \\
+        Reserved           & (D)  &  0xfb   & "0xfb"       & none \\
+        Reserved           & (D)  &  0xfc   & "0xfc"       & none \\
+        Reserved           & (D)  &  0xfd   & "0xfd"       & none \\
+        Reserved           & (D)  &  0xfe   & "0xfe"       & none \\
+        Terminator         & (X)  &  0xff   & "Null\_ff"   &  Illegal-value \\
       \end{tabular}
    \end{table}
 

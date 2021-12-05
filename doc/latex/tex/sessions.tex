@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2021-12-04
+% \update      2021-12-05
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -15,7 +15,7 @@
 %
 %-------------------------------------------------------------------------------
 
-\section{Seq66 Session Management}
+\section{Session Management}
 \label{sec:sessions}
 
    Session management helps recreate complex setups and provide some uniformity
@@ -79,7 +79,7 @@
    and restart \textsl{Seq66}.  This option (\texttt{jack-auto-connect}
    can also be changed in the 'rc' file.
 
-\subsection{Seq66 Session Management / Signals}
+\subsection{Session Management / Signals}
 \label{subsec:sessions_signals}
 
    \index{sessions!signals}
@@ -117,7 +117,7 @@
 
    More to come on how to use \texttt{nsm-proxy}.
 
-\subsection{Seq66 Session Management / JACK Session}
+\subsection{Session Management / JACK Session}
 \label{subsec:sessions_jack}
 
    Although deprecated by the \textsl{JACK} authors in favor of \textsl{NSM},
@@ -231,7 +231,7 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    for system-wide usage, in
    \texttt{/usr/bin/} or \texttt{/usr/local/bin}).
 
-\subsubsection{Seq66 Session Management / NSM / First Run Without NSM}
+\subsubsection{Session Management / NSM / First Run Without NSM}
 \label{subsec:sessions_nsm_first_run_without_nsm}
 
    This section discusses what happen when \textsl{Seq66} is installed, then
@@ -479,7 +479,7 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    and "seq66.nXYZT" (for example) when under session management.  This makes
    it possible to run multiple instances of \textsl{Seq66}.
 
-\subsubsection{Seq66 Session Management / NSM / Run with Remote NSM}
+\subsubsection{Session Management / NSM / Run with Remote NSM}
 \label{subsec:sessions_nsm_before_using_nsm}
 
    As described in the \textsl{NSM} documentation, the \texttt{nsmd} daemon can
@@ -518,7 +518,7 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    session manager.  It will detect the absense of the session manager and run
    normally.
 
-\subsubsection{Seq66 Session Management / Sessions Tab}
+\subsubsection{Session Management / Sessions Tab}
 \label{subsubsec:sessions_tab}
 
    The \textsl{Session} tab is a \textsl{read-only} tab
@@ -536,6 +536,11 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    \includegraphics[scale=0.65]{tabs/session/qseq66-session-tab.png}
    \caption*{Session Tab When Running Under NSM}
 \end{figure}
+
+   Note: this diagram is a bit out of date.  Missing are the status of the
+   controls, which are disabled, as most are for information only.
+   Also missing are the \textbf{Reload Session} button and the
+   \textbf{Macro Execution} drop-down, which are described below.
 
    \index{sessions!ui}
    This section describes the \textsl{Session} tab in the main
@@ -557,6 +562,16 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
       \item The generated client ID for the session.
       \item The log of action of the session manager. Not yet supported,
          though one can see what is happening by running in a console window.
+      \item Macro Execution.
+         This drop-down contains all of the macros defined in the 'ctrl' file's
+         \texttt{[macro-control-out]} section.
+         By selecting one, it is automatically sent out via the
+         \texttt{[output-buss]} port defined in the 'ctrl' file.
+      \item Reload Session.
+         After editing some of the preferences in the \textbf{Edit / Preferences}
+         dialog, one can visit this tab and press this button to essentially
+         restart \textsl{Seq66}, reloading the new configuration.
+         Be careful!
    \end{itemize}
 
 \subsubsection{Seq66 Session Management / NSM / File Menu}
