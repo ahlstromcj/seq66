@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-06
- * \updates       2021-10-23
+ * \updates       2021-12-06
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of system MIDI information
@@ -105,7 +105,8 @@ midi_port_info::add
     bool makevirtual,
     bool makesystem,
     bool makeinput,
-    int queuenumber
+    int queuenumber,
+    const std::string & alias
 )
 {
     port_info temp;
@@ -117,6 +118,7 @@ midi_port_info::add
     temp.m_is_input = makeinput;
     temp.m_is_virtual = makevirtual;
     temp.m_is_system = makesystem;
+    temp.m_port_alias = alias;
     m_port_container.push_back(temp);
     m_port_count = int(m_port_container.size());
     if (rc().verbose())
@@ -127,8 +129,9 @@ midi_port_info::add
         char tmp[128];
         snprintf
         (
-            tmp, sizeof tmp, "Found port %s:%s of type %s %s %s",
-            clientname.c_str(), portname.c_str(), vport, iport, sport
+            tmp, sizeof tmp, "Found port %s:%s (%s) of type %s %s %s",
+            clientname.c_str(), portname.c_str(), alias.c_str(),
+            vport, iport, sport
         );
         info_message(tmp);
     }

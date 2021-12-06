@@ -263,6 +263,17 @@ public:
     void dump_midi_input (event in);                        /* seq32 function */
     std::string get_midi_out_bus_name (bussbyte bus) const;
     std::string get_midi_in_bus_name (bussbyte bus) const;
+
+    std::string get_midi_out_alias (bussbyte bus) const
+    {
+        return m_master_clocks.get_alias(bus);
+    }
+
+    std::string get_midi_in_alias (bussbyte bus) const
+    {
+        return m_master_inputs.get_alias(bus);
+    }
+
     int poll_for_midi ();
     bool set_sequence_input (bool state, sequence * seq);
     bool is_more_input ();

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2021-11-22
+ * \updates       2021-12-06
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information
@@ -64,7 +64,8 @@
 #include "midi_jack_info.hpp"           /* seq66::midi_jack_info            */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
-#include "util/calculations.hpp"        /* extract_port_names()             */
+#include "util/calculations.hpp"        /* seq66::extract_port_names()      */
+#include "util/strfunctions.hpp"        /* seq66::contains()                */
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -148,8 +149,7 @@ midi_jack_info::midi_jack_info
 ) :
     midi_info               (appname, ppqn, bpm),
     m_jack_ports            (),
-    m_jack_client           (nullptr),              /* inited for connect() */
-    m_jack_client_2         (nullptr)
+    m_jack_client           (nullptr)               /* inited for connect() */
 {
     silence_jack_info();
     m_jack_client = connect();
@@ -272,10 +272,6 @@ midi_jack_info::extract_names
  *      port, we want to use an input port to do that.  Therefore, we search
  *      for the <i> opposite </i> kind of port.
  *
- *  If in multi-client mode, then this function disconnects the JACK client
- *  afterward. At this point, we have got all the data we need, and are not
- *  providing a client to each JACK port we create.
- *
  *  If there is no system input port, or no system output port, then we add a
  *  virtual port of that type so that the application has something to work
  *  with.
@@ -311,18 +307,16 @@ midi_jack_info::get_all_port_info ()
     int result = 0;
     if (not_nullptr(m_jack_client))
     {
-        input_ports().clear();
-        output_ports().clear();
-
         const char ** inports = jack_get_ports    /* list of JACK ports   */
         (
             m_jack_client, NULL,
             JACK_DEFAULT_MIDI_TYPE,
             JackPortIsInput                            /* tricky   */
         );
+        input_ports().clear();
         if (is_nullptr(inports))                  /* check port validity  */
         {
-            warnprint("no JACK input port available, creating virtual port");
+            warnprint("No JACK input ports, creating virtual port");
             int clientnumber = 0;
             int portnumber = 0;
             std::string clientname = seq_client_name();
@@ -345,6 +339,10 @@ midi_jack_info::get_all_port_info ()
                 std::string fullname = inports[count];
                 std::string clientname;
                 std::string portname;
+                std::string alias = get_port_alias(fullname);
+                if (alias == fullname)
+                    alias.clear();
+
                 extract_names(fullname, clientname, portname);
                 if (client == -1 || clientname != client_name_list.back())
                 {
@@ -355,7 +353,7 @@ midi_jack_info::get_all_port_info ()
                 (
                     client, clientname, count, portname,
                     midibase::c_normal_port, midibase::c_normal_port,
-                    midibase::c_input_port
+                    midibase::c_input_port, 0, alias
                 );
                 ++count;
             }
@@ -369,6 +367,7 @@ midi_jack_info::get_all_port_info ()
             JACK_DEFAULT_MIDI_TYPE,
             JackPortIsOutput                       /* tricky   */
         );
+        output_ports().clear();
         if (is_nullptr(outports))                  /* check port validity  */
         {
             /*
@@ -376,7 +375,7 @@ midi_jack_info::get_all_port_info ()
              * As with the input port, we create a virtual port.
              */
 
-            warnprint("no JACK output port available, creating virtual port");
+            warnprint("No JACK output ports, creating virtual port");
             int client = 0;
             std::string clientname = seq_client_name();
             std::string portname = "midi out 0";
@@ -398,6 +397,10 @@ midi_jack_info::get_all_port_info ()
                 std::string fullname = outports[count];
                 std::string clientname;
                 std::string portname;
+                std::string alias = get_port_alias(fullname);
+                if (alias == fullname)
+                    alias.clear();
+
                 extract_names(fullname, clientname, portname);
                 if (client == -1 || clientname != client_name_list.back())
                 {
@@ -408,7 +411,7 @@ midi_jack_info::get_all_port_info ()
                 (
                     client, clientname, count, portname,
                     midibase::c_normal_port, midibase::c_normal_port,
-                    midibase::c_output_port
+                    midibase::c_output_port, 0, alias
                 );
                 ++count;
             }
@@ -423,30 +426,84 @@ midi_jack_info::get_all_port_info ()
 }
 
 /**
- *  Flushes our local queue events out into JACK.  This is also a midi_jack
- *  function.
+ *  If the name includes "system:", try getting an alias instead via
+ *  jack_port_by_name() and jack_port_get_aliases().
+ *
+ *  The cast of the result of malloc() is needed in C++, but not C.
+ *
+ *  The jack_port_t pointer type is actually an opaque value equivalent to an
+ *  integer greater than 1, which is a port index.
+ *
+ *  Examples of aliases retrieved:
+ *
+\verbatim
+      Out-port: "system:midi_capture_2":
+
+        alsa_pcm:Launchpad-Mini/midi_capture_1
+        Launchpad-Mini:midi/capture_1
+\endverbatim
+ *
+\verbatim
+      In-port "system:midi_playback_2":
+
+        alsa_pcm:Launchpad-Mini/midi_playback_1
+        Launchpad-Mini:midi/playback_1
+\endverbatim
+ *
+ *  Ports created by "a2jmidid --export-hw" do not have JACK aliases.  Ports
+ *  created by Seq66 do not have JACK aliases.  Ports created by qsynth do not
+ *  have JACK aliases.
  */
 
-void
-midi_jack_info::api_flush ()
+std::string
+midi_jack_info::get_port_alias (const std::string & name)
 {
-    // No code yet
+    bool is_system_port = contains(name, "system:");    /* brittle code */
+    std::string result;
+    if (is_system_port)
+    {
+        jack_port_t * p = jack_port_by_name(m_jack_client, name.c_str());
+        if (not_NULL(p))
+        {
+            char * aliases[2];
+            const int sz = jack_port_name_size();
+            aliases[0] = reinterpret_cast<char *>(malloc(sz));  /* alsa_pcm */
+            aliases[1] = reinterpret_cast<char *>(malloc(sz));  /* dev name */
+            aliases[0][0] = aliases[1][0] = 0;
+            int rc = jack_port_get_aliases(p, aliases);
+            if (rc > 1)
+            {
+                std::string nick = std::string(aliases[1]);     /* brittle? */
+                auto colonpos = nick.find_first_of(":");        /* brittle? */
+                if (colonpos != std::string::npos)
+                    result = nick.substr(0, colonpos);
+            }
+            else
+            {
+                if (rc < 0)
+                    errprint("JACK port aliases error");
+                else
+                    warnprint("no usable JACK port alias");
+            }
+            free(aliases[0]);
+            free(aliases[1]);
+        }
+    }
+    else
+        result = name;
+
+    return result;
 }
 
 /**
  *  Sets up all of the ports, represented by midibus objects, that have
  *  been created.
  *
- *  If multi-client usage has been specified, each non-virtual port that has
- *  been set up (with its own JACK client pointer) is activated, and then
- *  connected to its corresponding remote system port.
+ *  The main JACK client is activated, and then all non-virtual ports are
+ *  simply connected.
  *
- *  Otherwise, the main JACK client is activated, and then all non-virtual
- *  ports are simply connected.
- *
- *  Each JACK port's midi_jack::api_connect() function decides, based on
- *  multi-client status, whether or not to activate before making the
- *  connection.
+ *  Each JACK port's midi_jack::api_connect() function decides whether or not
+ *  to activate before making the connection.
  *
  * \return
  *      Returns true if activation succeeds.
@@ -498,6 +555,7 @@ midi_jack_info::api_set_ppqn (int p)
 /**
  *  Sets the BPM numeric value, then makes JACK calls to set up the BPM
  *  tempo.  These calls might need to be done in a JACK callback.
+ *  Why is this called twice?
  *
  * \param b
  *      The desired new BPM value to set.
@@ -543,7 +601,7 @@ midi_jack_info::api_port_start
     mastermidibus & /*masterbus*/, int /*bus*/, int /*port*/
 )
 {
-    // no code, was multi-client code
+    // no code
 }
 
 /**

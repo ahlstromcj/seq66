@@ -190,6 +190,13 @@ private:
     std::string m_port_name;
 
     /**
+     *  The alias of the MIDI port.  This item is specific to JACK, and is
+     *  empty for other APIs.
+     */
+
+    std::string m_port_alias;
+
+    /**
      *  The last (most recent? final?) tick.
      */
 
@@ -242,7 +249,8 @@ public:
         midibpm bpm,                        /* default_bpm                  */
         bool makevirtual,                   /* false                        */
         bool isinput,                       /* false                        */
-        bool makesystem                     /* false                        */
+        bool makesystem,                    /* false                        */
+        const std::string & portalias = ""  /* JACK only                    */
     );
 
     virtual ~midibase ();
@@ -264,6 +272,11 @@ public:
     const std::string & port_name () const
     {
         return m_port_name;
+    }
+
+    const std::string & port_alias () const
+    {
+        return m_port_alias;
     }
 
     std::string connect_name () const;
@@ -416,12 +429,6 @@ public:
         const std::string & appname,
         const std::string & busname,
         const std::string & portname
-    );
-    void set_multi_name
-    (
-        const std::string & appname,
-        const std::string & localbusname,
-        const std::string & remoteportname
     );
 
     /**

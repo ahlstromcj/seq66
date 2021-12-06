@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2020-11-24
+ * \updates       2021-12-06
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of the midibus class.
@@ -103,20 +103,20 @@ midibus::midibus
         rt.ppqn(), rt.bpm(),
         makevirtual,
         isinput,
-        makesystem
+        makesystem,
+        rt.get_port_alias(index)
     ),
     m_rt_midi       (nullptr),
     m_master_info   (rt)
 {
     if (makevirtual)
     {
-        bus_name(rc().app_client_name());
-
         /*
          * Set the buss ID for virtual ports to 0.  We might consider another
          * number.
          */
 
+        bus_name(rc().app_client_name());
         if (is_null_buss(bus_id()))
             set_bus_id(0);
 

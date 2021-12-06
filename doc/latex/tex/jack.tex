@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-28
-% \update      2021-09-02
+% \update      2021-12-05
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -14,7 +14,7 @@
 %
 %-------------------------------------------------------------------------------
 
-\section{Seq66 JACK}
+\section{JACK}
 \label{sec:jack}
 
    This section describes some details concerning the JACK support of
@@ -45,7 +45,7 @@
    The following sections discuss the JACK transport support and the native
    JACK MIDI support.
 
-\subsection{Seq66 JACK / Transport}
+\subsection{JACK / Transport}
 \label{subsec:jack_transport}
 
    JACK transport support is \textsl{separate} from native JACK MIDI support.
@@ -125,7 +125,7 @@
    Note that, in \textsl{Seq66}, a changed BPM resets to the file-value after
    restart.  Bug or feature?
 
-\subsection{Seq66 JACK / Native MIDI}
+\subsection{JACK / Native MIDI}
 \label{subsec:jack_native_midi}
 
    Currently, \textsl{Seq66} will connect to a JACK
@@ -151,7 +151,7 @@
    That is, they are saved to the 'rc' configuration file at exit,
    so one does not have to specify them in subsequent \textsl{seq66} sessions.
 
-\subsubsection{Seq66 JACK / MIDI Output}
+\subsubsection{JACK / MIDI Output}
 \label{subsubsec:jack_midi_output}
 
    By default (or depending on the 'rc' configuration file),
@@ -193,7 +193,7 @@
  5 0 "[5] 1:5 seq66:yoshimi-01 midi in"
    \end{verbatim}
 
-\subsubsection{Seq66 JACK / MIDI Input}
+\subsubsection{JACK / MIDI Input}
 \label{subsubsec:jack_midi_input}
 
    The input ports also end up with long names:
@@ -210,7 +210,7 @@
    When the check-box for a buss is selected, that input can be captured by
    \texttt{seq66}.
 
-\subsubsection{Seq66 JACK / MIDI Virtual Ports}
+\subsubsection{JACK / MIDI Virtual Ports}
 \label{subsubsec:jack_midi_virtual_ports}
 
    \index{ports!manual}
@@ -238,7 +238,7 @@
    The \textbf{MIDI Clock} and \textbf{MIDI Input} tabs reflect
    what is seen in \textsl{QJackCtl}.
 
-\subsubsection{Seq66 JACK / MIDI and a2jmidid}
+\subsubsection{JACK / MIDI and a2jmidid}
 \label{subsubsec:jack_midi_a2jmidid}
 
    One thing we saw is that \texttt{seq66} can deal with the odd naming
@@ -279,13 +279,23 @@
    Once ready, 
    Run \texttt{startjack} and wait patiently for it to set up.
 
-\subsection{Seq66 JACK / Trouble-Shooting}
+\subsection{JACK / Trouble-Shooting}
 \label{subsec:jack_testing}
 
    This section describes some trouble-shooting that can be done with JACK.
 
-\subsubsection{Seq66 JACK / Trouble-Shooting / MIDI Clock}
+\subsubsection{JACK / Trouble-Shooting / MIDI Clock}
 \label{subsubsec:jack_testing_midi_clock}
+
+   There are three common timecode formats: LTC (Linear Time Code),
+   MTC (MIDI Time Code), and MIDI Clock, as well
+   as JACK transport.
+   This section describes MIDI Clock.
+   It is an alternative to using JACK transport to synchronize devices.
+
+   MIDI Clock is not a timecode format but tempo-based time. The absolute
+   reference point is expressed as beats-per-minute and bar:beat:tick.
+   There is no concept of sample-locking for MIDI clock signals.
 
 \paragraph{JACK MIDI Clock Send}
 \label{paragraph:jack_testing_midi_clock_send}
@@ -342,7 +352,52 @@
    \textsl{seq66debug} should display a rapid stream of MIDI Clock messages.
    If not, check the setup and, if correct, report a bug!
 
-\subsection{Seq66 JACK / QJackCtl}
+\subsubsection{JACK / Trouble-Shooting / JACK Ports}
+\label{subsubsec:jack_testing_midi_clock}
+
+   As noted in
+   \sectionref{subsubsec:jack_midi_output}, and
+   \sectionref{subsubsec:jack_midi_input},
+   \texttt{a2jmidid -{}-export-hw} can be used to bridge USB MIDI
+   hardware to JACK.  However, on some systems, this bridge can be
+   avoided, at the expense of a little confusion.
+
+   For example, look at this partial output of the \texttt{jack\_lsp}
+   command:
+
+   \begin{verbatim}
+      system:midi_playback_1
+      system:midi_capture_2
+      system:midi_playback_2
+      system:midi_capture_3
+      system:midi_playback_3
+      system:midi_capture_4
+      system:midi_playback_4
+      fluidsynth-midi:midi_00
+   \end{verbatim}
+
+   The "system" ports correspond to real MIDI devices on this system, but which
+   ones?  To find out, run \texttt{jack\_lsp --aliases}.  Here is just one
+   device output:
+
+   \begin{verbatim}
+   system:midi_capture_2
+      alsa_pcm:Launchpad-Mini/midi_playback_1
+      Launchpad-Mini:midi/playback_1
+   system:midi_playback_2
+      alsa_pcm:Launchpad-Mini/midi_capture_1
+      Launchpad-Mini:midi/capture_1
+   \end{verbatim}
+
+   So system MIDI device 2 is the \textsl{Launchpad Mini}, and
+   will show up in \textsl{Seq66} as an I/O device on port 1.
+   (Port 0 is usually the system MIDI Thru port).
+
+   Of course, with this arrangement, port-mapping cannot be used.
+   In the future, we may be able to ensure the aliases are always
+   present in \textsl{Seq66}.
+
+\subsection{JACK / QJackCtl}
 \label{subsec:jack_qjackctl}
 
    This section is a placeholder for discussion of \textsl{QJackCtl},
@@ -355,7 +410,7 @@
    path. Running JACK in synchronous mode creates less Xruns in JACK2, which
    is now the default.
 
-\subsection{Seq66 JACK / PulseAudio}
+\subsection{JACK / PulseAudio}
 \label{subsec:jack_pulseaudio}
 
    After years of avoiding \textsl{PulseAudio} assiduously, we found a

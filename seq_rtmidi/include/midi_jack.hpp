@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2019-12-15
+ * \updates       2021-12-06
  * \license       See above.
  *
  *    In this refactoring, we've stripped out most of the original RtMidi

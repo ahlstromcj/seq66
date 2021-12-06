@@ -56,14 +56,12 @@ namespace seq66
 struct midi_jack_data
 {
     /**
-     *  Holds the JACK sequencer client pointer so that it can be used
-     *  by the midibus objects.  This is actually an opaque pointer; there is
-     *  no way to get the actual fields in this structure; they can only be
-     *  accessed through functions in the JACK API.  Note that it is also
-     *  stored as a void pointer in midi_info::m_midi_handle.  This item
-     *  can either be the single JACK client created by the midi_jack_info
-     *  object, or a JACK client created by the midi_jack object in the
-     *  "multi-client" mode (which is not yet complete or usable).
+     *  Holds the JACK sequencer client pointer so that it can be used by the
+     *  midibus objects.  This is actually an opaque pointer; there is no way
+     *  to get the actual fields in this structure; they can only be accessed
+     *  through functions in the JACK API.  Note that it is also stored as a
+     *  void pointer in midi_info::m_midi_handle.  This item is the single
+     *  JACK client created by the midi_jack_info object.
      */
 
     jack_client_t * m_jack_client;

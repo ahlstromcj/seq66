@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-12-16
+ * \updates       2021-12-06
  * \license       See above.
  *
  *  The big difference between this class (seq66::rtmidi) and
@@ -188,13 +188,12 @@ public:
     }
 
     /**
-     *  Gets the buss/client ID for a MIDI interfaces.  This is the left-hand
-     *  side of a X:Y pair (such as 128:0).
+     *  Gets the buss/client ID for a MIDI interface via the selected API
+     *  subsystem.  This is the left-hand side of a X:Y pair (such as 128:0).
      *
      *  This function is a new part of the RtMidi interface.
      *
-     * \return
-     *      Returns the buss/client value as provided by the selected API.
+     * \return Returns the buss/client value as provided by the selected API.
      */
 
     virtual int get_bus_id () const
@@ -202,40 +201,25 @@ public:
         return parent_bus().bus_id();       /* get_api()->bus_id()      */
     }
 
-    /**
-     * \return
-     *      Returns the buss name from the selected API subsystem.
-     */
-
     virtual std::string bus_name () const
     {
         return parent_bus().bus_name();     /* get_api()->bus_name()    */
     }
-
-    /**
-     * \return
-     *      Returns the port ID number from the selected API subsystem.
-     */
 
     virtual int port_id () const
     {
         return parent_bus().port_id();      /* get_api()->port_id()     */
     }
 
-    /**
-     * \return
-     *      Returns the port name from the selected API subsystem.
-     */
-
     virtual std::string get_port_name ()
     {
         return parent_bus().port_name();    /* get_api()->port_name()   */
     }
 
-    /**
-     *  \return
-     *      This value depends on the MIDI mode setting (input versus output).
-     */
+    virtual std::string get_port_alias ()
+    {
+        return parent_bus().port_name();    /* get_api()->port_alias()  */
+    }
 
     int get_port_count ()
     {
@@ -244,7 +228,7 @@ public:
 
     /**
      *  \return
-     *      This value is the sum of the number of input and output ports.
+     *      Returns the sum of the number of input and output ports.
      */
 
     int full_port_count ()

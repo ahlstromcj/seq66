@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-11-24
+ * \updates       2021-12-06
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -449,17 +449,9 @@ jack_shutdown_callback (void * arg)
  * \param masterinfo
  *      Provides a reference to the midi_jack_info object that may provide
  *      extra informatino that is needed by this port.  Too many entities!
- *
- * \param multiclient
- *      If true, use multiple JACK clients.  Experimental, not really ready
- *      for prime time.
  */
 
-midi_jack::midi_jack
-(
-    midibus & parentbus,
-    midi_info & masterinfo
-) :
+midi_jack::midi_jack (midibus & parentbus, midi_info & masterinfo) :
     midi_api            (parentbus, masterinfo),
     m_remote_port_name  (),
     m_jack_info         (dynamic_cast<midi_jack_info &>(masterinfo)),
@@ -673,7 +665,7 @@ midi_jack::set_virtual_name (int portid, const std::string & portname)
 
 /*
  *  This initialization is like the "open_virtual_port()" function of the
- *  RtMidi library.  However, unlike the ALSA case... to be determined.
+ *  RtMidi library.
  *
  * \return
  *      Returns true if all steps of the initialization succeeded.
@@ -891,6 +883,8 @@ midi_jack::api_sysex (const event * e24)
 
 /**
  *  It seems like JACK doesn't have the concept of flushing events.
+ *  The actual function called right now is midi_jack_info::api_flush(), via
+ *  rtmidi_info::api_flush(), and it is also an empty function.
  */
 
 void
@@ -1020,7 +1014,6 @@ midi_jack::send_byte (midibyte evbyte)
     }
 }
 
-
 /**
  *  Empty body for setting PPQN.
  */
@@ -1046,6 +1039,8 @@ midi_jack::api_set_beats_per_minute (midibpm /*bpm*/)
  *  from get_port_name(index), which simply looks up the port-name in the
  *  attached midi_info object.
  *
+ *  This function is never called!
+ *
  * \return
  *      Returns the full port name ("clientname:portname") if the port has
  *      already been opened/registered; otherwise an empty string is returned.
@@ -1063,6 +1058,8 @@ midi_jack::api_get_port_name ()
 
 /**
  *  Closes the JACK client handle.
+ *
+ *  This function is currently not called!
  */
 
 void
@@ -1233,6 +1230,8 @@ midi_jack::register_port (bool input, const std::string & portname)
 /**
  *  Closes the MIDI port by calling jack_port_unregister() and
  *  nullifying the port pointer.
+ *
+ *  This function is not called at application exit!
  */
 
 void
@@ -1441,8 +1440,7 @@ midi_in_jack::~midi_in_jack()
  *      Provides information about the JACK system as found on this machine.
  */
 
-midi_out_jack::midi_out_jack (midibus & parentbus, midi_info & masterinfo)
- :
+midi_out_jack::midi_out_jack (midibus & parentbus, midi_info & masterinfo) :
     midi_jack       (parentbus, masterinfo)
 {
     /*

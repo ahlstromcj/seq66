@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2020-12-14
+ * \updates       2021-12-06
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -153,7 +153,8 @@ midibase::midibase
     midibpm bpm,
     bool makevirtual,
     bool isinput,
-    bool makesystem
+    bool makesystem,
+    const std::string & portalias
 ) :
     m_bus_index         (index),
     m_bus_id            (bus_id == (-1) ? 0 : bus_id),  /* uninited midi_info */
@@ -166,6 +167,7 @@ midibase::midibase
     m_display_name      (),
     m_bus_name          (busname),
     m_port_name         (portname),
+    m_port_alias        (portalias),
     m_lasttick          (0),
     m_is_virtual_port   (makevirtual),
     m_is_input_port     (isinput),
@@ -360,73 +362,6 @@ midibase::set_alt_name
         );
         bus_name(bname);
         port_name(pname);
-        display_name(alias);
-    }
-}
-
-/**
- *  Sets the name of the buss in yet another different way, suitable for the
- *  multiclient mode of some APIs (such as JACK).  If the port is virtual,
- *  this function just calls set_name().  Otherwise, it reassembles the name
- *  so that it refers to a port found on the system, but modified to make it a
- *  unique client port.  For example:
- *
- *      [0] 128:0 yoshimi:midi in
- *
- *  is transformed to this:
- *
- *      [0] 128:0 seq66-yoshimi:midi in
- *
- *  The name in the latter is the original buss name, "seq66" plus the remote
- *  port's buss name (extracted from the long name), plus the remote port's
- *  short port name (extracted from the long name).
- *
- * Internal parameter:
- *
- * \param appname
- *      This is the name of the client, or application.  Not to be confused
- *      with the ALSA client-name, which is actually a buss or subsystem name.
- *
- * \param localbusname
- *      Provides the name of the sub-system, such as "Midi Through",
- *      "TiMidity", "yoshimi", or "seq66".  It is assumed this parameter has
- *      already been set properly.
- *
- * \param remoteportname
- *      Provides the name of the port.  In JACK, this should be the long port
- *      name, such as "qmidiarp:in" or "yoshimi:midi in".  It is assumed this
- *      parameter has already been set properly.
- */
-
-void
-midibase::set_multi_name
-(
-    const std::string & appname,
-    const std::string & localbusname,
-    const std::string & remoteportname
-)
-{
-    if (is_virtual_port())
-    {
-        set_name(appname, localbusname, remoteportname);
-    }
-    else
-    {
-        std::string bname = localbusname;
-        std::string rbname = extract_bus_name(remoteportname);
-        std::string rpname = extract_port_name(remoteportname);
-        bname += "-";
-        bname += rbname;
-        bus_name(bname);
-        port_name(rpname);
-
-        char alias[128];
-        snprintf                            /* copy the client name parts */
-        (
-            alias, sizeof alias, "[%d] %d:%d %s:%s",
-            bus_index(), bus_id(), port_id(),
-            bus_name().c_str(), port_name().c_str()
-        );
         display_name(alias);
     }
 }

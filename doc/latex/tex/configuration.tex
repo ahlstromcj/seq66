@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-12-05
+% \update      2021-12-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -623,19 +623,6 @@
    \figureref{fig:pattern_editor_oneshot_recording}, and the surrounding
    discussion.
 
-\subsubsection{'rc' File / Port Map}
-\label{subsubsec:configuration_rc_port_map}
-
-   The 'rc' file also supports a port map, which maps I/O ports from a
-   permanent buss number to the actual system buss number.
-   The pattern is set to output to a specific buss number; this buss number is
-   associated with a port name; this port name is looked up to see what
-   system buss number is the one to be used.  When the system setup changes,
-   the pattern does not need to changed; only the port mapping may need to be
-   changed.  If the port map covers all I/O ports ever possible on a system, it
-   will not need to be changed.  See \sectionref{sec:port_mapping}; it contains
-   more details.
-
 \subsubsection{'rc' File / MIDI-Clock Section}
 \label{subsec:configuration_rc_midi_clock}
 
@@ -711,6 +698,92 @@
    arrangement, we allow the user to
    and change the tempo track to another pattern.
 
+\subsubsection{'rc' File / MIDI Input}
+\label{subsubsec:configuration_rc_midi_input}
+
+   \index{[midi-input]}
+   This configuration item is represented in the
+   \textbf{MIDI Input} tab in the \textbf{Edit / Preferences}.
+   The first number is a line count, and would equal the number of
+   supported input ports.
+   After that, this 'rc' entry here has two variables;
+   the first is the port number,
+   and the second number indicates whether it is disabled (0), or enabled (1).
+   The next lines show the input busses present on the system (normally).
+
+   \begin{verbatim}
+      [midi-input]
+      2   # number of MIDI busses
+      0 1    "[0] 0:1 system:announce"
+      1 0    "[1] 14:0 Midi Through Port-0"
+      2 0    "[2] 28:0 nanoKEY2 MIDI 1"
+      3 0    "[3] 48:0 Launchpad Mini MIDI 1"
+   \end{verbatim}
+
+   Note that the "system:announce" buss is present only for ALSA, not for JACK.
+   This will change the port numbering.
+   Again, see the 'rc' file itself for more information.
+
+\subsubsection{'rc' File / Manual (Virtual) Ports}
+\label{subsubsec:configuration_rc_manual_ports}
+
+   The name of this setting is a bit of a misnomer in a couple of ways:
+
+   \index{ports!virtual}
+   \index{ports!manual}
+   \begin{enumerate}
+      \item It actually refers to the usage of \textsl{virtual} MIDI ports.
+         These are ports that are set up by the application so that other
+         devices, applications, or session managers can connect
+         \textsl{manually} to the MIDI application.
+      \item This option is not just for ALSA.  It can also be used when
+         running in native JACK mode, to support
+         virtual JACK ports that can be connected manually (e.g. in the
+         \textsl{QJackCtl} application.)
+   \end{enumerate}
+
+   \index{[manual-ports]}
+   \begin{verbatim}
+      [manual-ports]
+      virtual-ports = false   # 'true' = manual (virtual) ALSA or JACK ports
+      output-port-count = 8   # number of manual/virtual output ports
+      input-port-count = 4    # number of manual/virtual input ports
+   \end{verbatim}
+
+   \index{--auto-ports}
+   The opposite of \texttt{-{}-manual-ports} is \texttt{-{}-auto-ports},
+   which is the normal mode of running \textsl{Seq66}.
+   In this mode, system MIDI input/output devices are discovered and
+   automatically connected.
+
+   It will create port names as per the settings in the 'usr' configuration
+   file's sections:
+
+   \begin{verbatim}
+      [user-midi-bus-definitions]
+      [user-midi-bus-N]
+   \end{verbatim}
+
+   These definitions can be used by JACK for connection, and these
+   definitions can be used to specifically rename the ports that exist in the
+   system.
+   This option is misleading if one wants to have access to the
+   actual ALSA/JACK ports that exist on the system.
+   The next option gets around that issue.
+
+\subsubsection{'rc' File / Port Map}
+\label{subsubsec:configuration_rc_port_map}
+
+   The 'rc' file also supports a port map, which maps I/O ports from a
+   permanent buss number to the actual system buss number.
+   The pattern is set to output to a specific buss number; this buss number is
+   associated with a port name; this port name is looked up to see what
+   system buss number is the one to be used.  When the system setup changes,
+   the pattern does not need to changed; only the port mapping may need to be
+   changed.  If the port map covers all I/O ports ever possible on a system, it
+   will not need to be changed.  See \sectionref{sec:port_mapping}; it contains
+   more details.
+
 \subsubsection{'rc' File / Keyboard Control Section}
 \label{subsubsec:configuration_rc_keyboard_control}
 
@@ -775,76 +848,7 @@
    This option is useful if one want to rely on a session manager to make the
    connections.
 
-\subsubsection{'rc' File / MIDI Input}
-\label{subsubsec:configuration_rc_midi_input}
-
-   \index{[midi-input]}
-   This configuration item is represented in the
-   \textbf{MIDI Input} tab in the \textbf{Edit / Preferences}.
-   The first number is a line count, and would equal the number of
-   supported input ports.
-   After that, this 'rc' entry here has two variables;
-   the first is the port number,
-   and the second number indicates whether it is disabled (0), or enabled (1).
-   The next lines show the input busses present on the system (normally).
-
-   \begin{verbatim}
-      [midi-input]
-      2   # number of MIDI busses
-      0 1    "[0] 0:1 system:announce"
-      1 0    "[1] 14:0 Midi Through Port-0"
-   \end{verbatim}
-
-   Again, see the 'rc' file itself for more information.
-
-\subsubsection{'rc' File / Manual ALSA Ports}
-\label{subsubsec:configuration_rc_manual_ports}
-
-   The name of this setting is a bit of a misnomer in a couple of ways:
-
-   \index{ports!virtual}
-   \index{ports!manual}
-   \begin{enumerate}
-      \item It actually refers to the usage of \textsl{virtual} MIDI ports.
-         These are ports that are set up by the application so that other
-         devices, applications, or session managers can connect
-         \textsl{manually} to the MIDI application.
-      \item This option is not just for ALSA.  It can also be used when
-         running in native JACK mode, to support
-         virtual JACK ports that can be connected manually (e.g. in the
-         \textsl{QJackCtl} application.)
-   \end{enumerate}
-
-   \index{[manual-ports]}
-   \begin{verbatim}
-      [manual-ports]
-      virtual-ports = false   # 'true' = manual (virtual) ALSA or JACK ports
-      output-port-count = 8   # number of manual/virtual output ports
-      input-port-count = 4    # number of manual/virtual input ports
-   \end{verbatim}
-
-   \index{--auto-ports}
-   The opposite of \texttt{-{}-manual-ports} is \texttt{-{}-auto-ports},
-   which is the normal mode of running \textsl{Seq66}.
-   In this mode, system MIDI input/output devices are discovered and
-   automatically connected.
-
-   It will create port names as per the settings in the 'usr' configuration
-   file's sections:
-
-   \begin{verbatim}
-      [user-midi-bus-definitions]
-      [user-midi-bus-N]
-   \end{verbatim}
-
-   These definitions can be used by JACK for connection, and these
-   definitions can be used to specifically rename the ports that exist in the
-   system.
-   This option is misleading if one wants to have access to the
-   actual ALSA/JACK ports that exist on the system.
-   The next option gets around that issue.
-
-\subsubsection{'rc' File / Reveal ALSA Ports}
+\subsubsection{'rc' File / Reveal Ports}
 \label{subsubsec:configuration_rc_reveal_ports}
 
    This option applies to both ALSA and JACK.

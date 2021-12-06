@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2021-11-24
+ * \updates       2021-12-06
  * \license       GNU GPLv2 or above
  *
  *  This midibus module is the RtMidi version of the midibus

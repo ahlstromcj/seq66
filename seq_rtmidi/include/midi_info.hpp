@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-12-05
- * \updates       2021-07-19
+ * \updates       2021-12-06
  * \license       See above.
  *
  *  We need to have a way to get all of the API information from each
@@ -94,6 +94,7 @@ private:
         bool m_is_input;            /**< Indicates an input port.            */
         bool m_is_virtual;          /**< Indicates an manual/virtual port.   */
         bool m_is_system;           /**< Built-in port, almost always false. */
+        std::string m_port_alias;   /**< Can be non-empty in JACK setups.    */
     };
 
     /**
@@ -121,7 +122,8 @@ public:
         bool makevirtual,                   // midibase::c_virtual_port
         bool makesystem,                    // midibase::c_system_port
         bool makeinput,                     // midibase::c_input_port
-        int queuenumber = bad_id()
+        int queuenumber = bad_id(),
+        const std::string & alias = ""
     );
     void add (const midibus * m);
 
@@ -171,6 +173,14 @@ public:
     {
         if (index < get_port_count())
             return m_port_container[index].m_port_name;
+        else
+            return std::string("");
+    }
+
+    std::string get_port_alias (int index) const
+    {
+        if (index < get_port_count())
+            return m_port_container[index].m_port_alias;
         else
             return std::string("");
     }
@@ -459,6 +469,12 @@ public:
     {
         const midi_port_info & mpi = nc_midi_port_info();
         return mpi.get_port_name(index);
+    }
+
+    virtual std::string get_port_alias (int index) const
+    {
+        const midi_port_info & mpi = nc_midi_port_info();
+        return mpi.get_port_alias(index);
     }
 
     virtual bool get_input (int index) const

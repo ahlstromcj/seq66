@@ -118,16 +118,18 @@ listsbase::add
 (
     int buss,
     const std::string & name,
-    const std::string & nickname
+    const std::string & nickname,
+    const std::string & alias
 )
 {
     bool result = buss >= 0 && ! name.empty();
     if (result)
     {
         io ioitem;
-        ioitem.io_enabled = true;                   // ??????
+        ioitem.io_enabled = true;
         ioitem.out_clock = e_clock::off;
         ioitem.io_name = name;
+        ioitem.io_alias = alias;
         if (nickname.empty())
         {
             std::string nick = extract_nickname(name);
@@ -210,6 +212,14 @@ listsbase::set_nick_name (bussbyte bus, const std::string & name)
         it->second.io_nick_name = name;
 }
 
+void
+listsbase::set_alias (bussbyte bus, const std::string & alias)
+{
+    auto it = m_master_io.find(bus);
+    if (it != m_master_io.end())
+        it->second.io_alias = alias;
+}
+
 std::string
 listsbase::get_name (bussbyte bus, bool addnumber) const
 {
@@ -234,6 +244,17 @@ listsbase::get_nick_name (bussbyte bus, bool addnumber) const
 
     if (addnumber && ! result.empty())
         result = "[" + std::to_string(int(bus)) + "] " + result;
+
+    return result;
+}
+
+std::string
+listsbase::get_alias (bussbyte bus) const
+{
+    static std::string s_dummy;
+    auto it = m_master_io.find(bus);
+    std::string result = it != m_master_io.end() ?
+        it->second.io_alias : s_dummy ;
 
     return result;
 }
@@ -515,8 +536,9 @@ listsbase::to_string (const std::string & tag) const
         temp += iopair.second.io_enabled ? "Enabled;  " : "Disabled; " ;
         temp += "Clock = " + e_clock_to_string(iopair.second.out_clock);
         temp += "\n   ";
-        temp += "Name:     " + iopair.second.io_name + "\n   ";
-        temp += "Nickname: " + iopair.second.io_nick_name + "\n";
+        temp += "Name:     " + iopair.second.io_name + "\n  ";
+        temp += "Nickname: " + iopair.second.io_nick_name + "\n  ";
+        temp += "Alias:    " + iopair.second.io_alias + "\n";
         result += temp;
         ++count;
     }

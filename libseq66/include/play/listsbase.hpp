@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2021-03-15
+ * \updates       2021-12-06
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -77,6 +77,7 @@ protected:
         e_clock out_clock;          /**<< The clock setting for this buss.  */
         std::string io_name;        /**<< The name of the I/O buss.         */
         std::string io_nick_name;   /**<< The short name of the I/O buss.   */
+        std::string io_alias;       /**<< FYI only, and only for JACK.      */
     };
 
     /**
@@ -145,8 +146,10 @@ public:
 
     void set_name (bussbyte bus, const std::string & name);
     void set_nick_name (bussbyte bus, const std::string & name);
+    void set_alias (bussbyte bus, const std::string & name);
     std::string get_name (bussbyte bus, bool addnumber = false) const;
     std::string get_nick_name (bussbyte bus, bool addnumber = false) const;
+    std::string get_alias (bussbyte bus) const;
     bussbyte bus_from_nick_name (const std::string & nick) const;
     std::string port_name_from_bus (bussbyte nominalbuss) const;
     void show (const std::string & tag) const;
@@ -163,7 +166,8 @@ protected:
     (
         int buss,
         const std::string & name,
-        const std::string & nickname = ""
+        const std::string & nickname = "",
+        const std::string & alias = ""
     );
     const io & get_io_block (const std::string & nickname) const;
 

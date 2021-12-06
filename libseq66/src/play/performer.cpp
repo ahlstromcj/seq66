@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-12-04
+ * \updates       2021-12-06
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -808,20 +808,30 @@ bool
 performer::ui_get_input (bussbyte bus, bool & active, std::string & n) const
 {
     const inputslist & ipm = input_port_map();
-    std::string busname;
     bool disabled = false;
+    std::string name;
+    std::string alias;
     if (ipm.active())
     {
-        n = ipm.get_name(bus);
+        name = ipm.get_name(bus);
+        alias = ipm.get_alias(bus);
         active = ipm.get(bus);
         disabled = ipm.is_disabled(bus);
     }
     else if (master_bus())
     {
-        n = master_bus()->get_midi_in_bus_name(bus);
+        name = master_bus()->get_midi_in_bus_name(bus);
+        alias = master_bus()->get_midi_in_alias(bus);
         active = master_bus()->get_input(bus);
     }
-    return ! n.empty() && ! disabled;
+    if (! alias.empty())
+    {
+        name += " (";
+        name += alias;
+        name += ")";
+    }
+    n = name;
+    return ! name.empty() && ! disabled;
 }
 
 /**
@@ -858,18 +868,28 @@ bool
 performer::ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const
 {
     const clockslist & opm = output_port_map();
-    std::string busname;
+    std::string name;
+    std::string alias;
     if (opm.active())
     {
-        n = opm.get_name(bus);
+        name = opm.get_name(bus);
+        alias = opm.get_alias(bus);
         e = opm.get(bus);
     }
     else if (master_bus())
     {
-        n = master_bus()->get_midi_out_bus_name(bus);
+        name = master_bus()->get_midi_out_bus_name(bus);
+        alias = master_bus()->get_midi_out_alias(bus);
         e = master_bus()->get_clock(bus);
     }
-    return ! n.empty();
+    if (! alias.empty())
+    {
+        name += " (";
+        name += alias;
+        name += ")";
+    }
+    n = name;
+    return ! name.empty();
 }
 
 /**

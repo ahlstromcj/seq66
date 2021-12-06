@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-03
+ * \updates       2021-12-06
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -385,16 +385,6 @@ rcfile::parse ()
                         rc_ref().inputs().add(bus, bool(bus_on), line());
                         ++b;
                     }
-                    /*
-                     * This is BOGUS
-                     *
-                    else if (count == 1)
-                    {
-                        bool flag = bool(bus);
-                        rc_ref().filter_by_channel(flag);
-                        toggleprint("Filter-by-channel", flag);
-                    }
-                     */
                 }
                 if (b < inbuses)
                     return make_error_message(tag, "too few buses");
@@ -884,10 +874,15 @@ rcfile::write ()
     {
         bool bus_on = rc_ref().inputs().get(bus);
         std::string activestring = bus_on ? "1" : "0";
+        std::string alias = rc_ref().inputs().get_alias(bus);
         file
             << int(bus) << " " << activestring << "    \""
-            << rc_ref().inputs().get_name(bus) << "\"\n"
+            << rc_ref().inputs().get_name(bus) << "\""
             ;
+        if (! alias.empty())
+            file << "        # " << alias;
+
+        file << "\n";
     }
 
     const inputslist & inpsref = input_port_map();
@@ -944,10 +939,15 @@ rcfile::write ()
     for (bussbyte bus = 0; bus < outbuses; ++bus)
     {
         int bus_on = clock_to_int(rc_ref().clocks().get(bus));
+        std::string alias = rc_ref().clocks().get_alias(bus);
         file
             << int(bus) << " " << bus_on << "    \""
-            << rc_ref().clocks().get_name(bus) << "\"\n"
+            << rc_ref().clocks().get_name(bus) << "\""
             ;
+        if (! alias.empty())
+            file << "        # " << alias;
+
+        file << "\n";
     }
 
     const clockslist & outsref = output_port_map();

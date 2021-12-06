@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2021-07-19
+ * \updates       2021-12-06
  * \license       See above.
  *
  *    We need to have a way to get all of the JACK information of
@@ -70,9 +70,9 @@ private:
     using portlist = std::vector<midi_jack *>;
 
     /**
-     *  Holds the port data.  Not for use with the multi-client option.
-     *  This list is iterated in the input and output portions of the JACK
-     *  process callback.  This class does not own the pointers.
+     *  Holds the port data.  This list is iterated in the input and output
+     *  portions of the JACK process callback.  This class does not own the
+     *  pointers.
      */
 
     portlist m_jack_ports;
@@ -83,18 +83,9 @@ private:
      *  no way to get the actual fields in this structure; they can only be
      *  accessed through functions in the JACK API.  Note that it is also
      *  stored as a void pointer in midi_info::m_midi_handle.
-     *
-     *  In multi-client mode, this pointer is the output client pointer.
      */
 
     jack_client_t * m_jack_client;
-
-    /**
-     *  Holds the JACK input client pointer if multi-client mode is in force.
-     *  Otherwise, it is an unused null pointer.
-     */
-
-    jack_client_t * m_jack_client_2;
 
 public:
 
@@ -119,13 +110,26 @@ public:
     virtual void api_set_beats_per_minute (midibpm b) override;
     virtual void api_port_start
     (
-        mastermidibus & masterbus, int bus, int port
+        mastermidibus & masterbus,
+        int bus, int port
     ) override;
-    virtual void api_flush () override;
+
+    /**
+     *  Flushes our local queue events out into JACK.  This is also a
+     *  midi_jack function that's never called.  This function is called a
+     *  lot.
+     */
+
+    virtual void api_flush () override
+    {
+        // no code
+    }
 
 private:
 
     virtual int get_all_port_info () override;
+
+    std::string get_port_alias (const std::string & name);
 
     /**
      * \getter m_jack_client

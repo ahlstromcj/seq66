@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Refactoring by Chris Ahlstrom
  * \date          2016-12-08
- * \updates       2021-08-13
+ * \updates       2021-12-06
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  * \license       GNU GPLv2 or above
  *
@@ -128,7 +128,7 @@ public:
 
     /**
      *  Add midibus information to the input ports.  Also adds the midibus to
-     *  a lit of busses to connect in mastermidibus.  This function is meant
+     *  a list of busses to connect in mastermidibus.  This function is meant
      *  for virtual ports.
      */
 
@@ -139,9 +139,9 @@ public:
     }
 
     /**
-     *  Add midibus information to the output ports.  Also adds the midibus
-     *  to a lit of busses to connect in mastermidibus.  This function is
-     *  meant for virtual ports.
+     *  Add midibus information to the output ports.  Also adds the midibus to
+     *  a list of busses to connect in mastermidibus.  This function is meant
+     *  for virtual ports.
      */
 
     void add_output (const midibus * m)
@@ -202,6 +202,11 @@ public:
     std::string get_port_name (int index) const
     {
         return get_api_info()->get_port_name(index);
+    }
+
+    std::string get_port_alias (int index) const
+    {
+        return get_api_info()->get_port_alias(index);
     }
 
     bool get_input (int index) const

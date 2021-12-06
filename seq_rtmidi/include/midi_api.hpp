@@ -256,6 +256,11 @@ public:
         return parent_bus().port_name();
     }
 
+    const std::string & port_alias () const
+    {
+        return parent_bus().port_alias();
+    }
+
     std::string connect_name () const
     {
         return parent_bus().connect_name();
@@ -335,16 +340,6 @@ protected:
     )
     {
         parent_bus().set_alt_name(appname, busname, portname);
-    }
-
-    void set_multi_name
-    (
-        const std::string & appname,
-        const std::string & localbusname,
-        const std::string & remoteportname
-    )
-    {
-        parent_bus().set_name(appname, localbusname, remoteportname);
     }
 
     /*

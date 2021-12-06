@@ -99,7 +99,7 @@ is_missing_string (const std::string & item)
 
 /**
  *  Indicates if one string can be found within another.  Doesn't force the
- *  called to use size_type.
+ *  caller to use size_type.
  */
 
 bool
