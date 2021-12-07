@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-12-06
+ * \updates       2021-12-07
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -2302,7 +2302,8 @@ performer::launch (int ppqn)
         /*
          * Get and store the clocks and inputs created (disabled or not) by
          * the mastermidibus during api_init().  After this call, the clocks
-         * and inputs now have name.
+         * and inputs now have names.  These calls are necessary to populate
+         * the port lists the first time Seq66 is run.
          */
 
         m_master_bus->copy_io_busses();

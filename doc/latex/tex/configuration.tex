@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-12-06
+% \update      2021-12-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -652,7 +652,41 @@
       . . .
    \end{verbatim}
 
-   Note that the 'rc' file has a port-naming option, as described earlier.
+   If there are USB MIDI devices plugged in (on \textsl{Linux} using JACK),
+   they will show up with system names that have no meaning to the user.
+   In this case, an "alias" looked up by JACK is appended as a comment in the
+   'rc' files, and also shows up in the port lists in the user interface.
+   For example:
+
+   \begin{verbatim}
+      0 0    "[0] 0:0 system:midi_capture_1"        # Midi-Through
+      1 1    "[1] 0:1 seq66:system midi_capture_5"  # Launchpad-Mini
+      2 0    "[2] 0:2 system:midi_capture_3"        # USB-Midi
+      3 0    "[3] 0:3 system:midi_capture_4"        # nanoKEY2
+   \end{verbatim}
+
+   Note the difference in naming of the enabled port (Launchpad-Mini).
+   The appended label is \textsl{not} part of the port name;
+   it is there simply to help the user select the correct system port.
+   This same setup applies to MIDI input ports as well.
+
+   Ports created by \texttt{a2jmidid --export-hw} do not have JACK aliases.
+   Ports created by Seq66 do not have JACK aliases.  Ports created by MIDI
+   applications such as \textsl{Qsynth} do not have JACK aliases. Ports
+   created by ALSA or \textsl{Windows} do not have aliases.
+
+   On some \textsl{Linux} systems (or all?),
+   these USB system ports can be accessed without
+   exposing the ports via \texttt{a2jmidid}.
+
+   One can see all the aliases on a JACK setup, if desired, using the following
+   command:
+
+   \begin{verbatim}
+      $ jack_lsp --aliases
+   \end{verbatim}
+
+   Note that the 'rc' file has a port-mapping option, as described earlier.
 
 \subsubsection{'rc' File / MIDI Clock Mod Ticks}
 \label{subsubsec:configuration_rc_midi_cmt}

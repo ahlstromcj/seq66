@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-13
+ * \updates       2021-12-07
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -102,6 +102,10 @@ mastermidibus::~mastermidibus ()
  *  example, for an input port found called "qmidiarp:in 1", we want to create
  *  a "shadow" output port called "seq66:qmidiarp in 1".
  *
+ *  Also, as a new feature for 0.98.0, we extract a port alias (JACK only) for
+ *  system port names that do not contain the name of the ALSA USB device in
+ *  them; the alias might contain that more human-readable name.
+ *
  *  For every MIDI output found on the system this function creates a
  *  corresponding input port, and connects it to the system MIDI output.  For
  *  For example, for an output port found called "qmidiarp:out 1", we want to
@@ -140,34 +144,35 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
         m_midi_master.clear();
 
         int num_buses = rc().manual_port_count();
-        for (int i = 0; i < num_buses; ++i)             /* output busses    */
+        for (int bus = 0; bus < num_buses; ++bus)       /* output busses    */
         {
             midibus * m = new (std::nothrow) midibus
             (
-                m_midi_master, i,
+                m_midi_master, bus,
                 midibase::c_virtual_port,
                 midibase::c_output_port,
-                i /* bussoverride */                    /* breaks ALSA?     */
+                bus /* bussoverride */                  /* breaks ALSA?     */
             );
             if (not_nullptr(m))
             {
-                m_outbus_array.add(m, clock(i));        /* must come 1st    */
+                m_outbus_array.add(m, clock(bus));      /* must come 1st    */
                 m_midi_master.add_output(m);            /* must come 2nd    */
             }
         }
         num_buses = rc().manual_in_port_count();
-        for (int i = 0; i < num_buses; ++i)             /* input busses     */
+        for (int bus = 0; bus < num_buses; ++bus)       /* input busses     */
         {
             midibus * m = new (std::nothrow) midibus    /* input buss       */
             (
-                m_midi_master, i,
+                m_midi_master, bus,
                 midibase::c_virtual_port,
                 midibase::c_input_port,
-                i
+                bus
             );
             if (not_nullptr(m))
             {
-                m_inbus_array.add(m, input(0));         /* must come 1st    */
+                // m_inbus_array.add(m, input(0)); ???  /* must come 1st    */
+                m_inbus_array.add(m, input(bus));       /* must come 1st    */
                 m_midi_master.add_input(m);             /* must come 2nd    */
             }
         }
@@ -185,44 +190,54 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
         {
             m_midi_master.midi_mode(midibase::c_input_port);     /* ugh! */
             unsigned inports = m_midi_master.get_port_count();
-            for (unsigned i = 0; i < inports; ++i)
+            for (unsigned bus = 0; bus < inports; ++bus)
             {
-                bool isvirtual = m_midi_master.get_virtual(i);
-                bool issystem = m_midi_master.get_system(i);
+                bool isvirtual = m_midi_master.get_virtual(bus);
+                bool issystem = m_midi_master.get_system(bus);
                 midibus * m = new (std::nothrow) midibus
                 (
-                    m_midi_master, i, isvirtual, isinput,
+                    m_midi_master, bus, isvirtual, isinput,
                     null_buss(), issystem
                 );
                 if (not_nullptr(m))
                 {
                     if (swap_io)
-                        m_outbus_array.add(m, clock(i));
+                    {
+                        set_midi_out_alias(bus, m->port_alias());
+                        m_outbus_array.add(m, clock(bus));
+                    }
                     else
-                        m_inbus_array.add(m, input(i));
-
+                    {
+                        set_midi_in_alias(bus, m->port_alias());
+                        m_inbus_array.add(m, input(bus));
+                    }
                     m_midi_master.add_bus(m);           /* must come 2nd    */
                 }
             }
             m_midi_master.midi_mode(midibase::c_output_port);    /* ugh! */
 
             unsigned outports = m_midi_master.get_port_count();
-            for (unsigned i = 0; i < outports; ++i)
+            for (unsigned bus = 0; bus < outports; ++bus)
             {
-                bool isvirtual = m_midi_master.get_virtual(i);
-                bool issystem = m_midi_master.get_system(i);
+                bool isvirtual = m_midi_master.get_virtual(bus);
+                bool issystem = m_midi_master.get_system(bus);
                 midibus * m = new (std::nothrow) midibus
                 (
-                    m_midi_master, i, isvirtual, isoutput,
+                    m_midi_master, bus, isvirtual, isoutput,
                     null_buss(), issystem
                 );
                 if (not_nullptr(m))
                 {
                     if (swap_io)
-                        m_inbus_array.add(m, input(i));
+                    {
+                        set_midi_in_alias(bus, m->port_alias());
+                        m_inbus_array.add(m, input(bus));
+                    }
                     else
-                        m_outbus_array.add(m, clock(i));
-
+                    {
+                        set_midi_out_alias(bus, m->port_alias());
+                        m_outbus_array.add(m, clock(bus));
+                    }
                     m_midi_master.add_bus(m);           /* must come 2nd    */
                 }
             }
@@ -230,14 +245,6 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
     }
     set_beats_per_minute(bpm);
     set_ppqn(ppqn);
-
-    /*
-     * Deferred until later in startup.  See the comment here in the
-     * seq_alsamidi version of this module.
-     *
-     * m_outbus_array.set_all_clocks();
-     * m_inbus_array.set_all_inputs();
-     */
 }
 
 /**

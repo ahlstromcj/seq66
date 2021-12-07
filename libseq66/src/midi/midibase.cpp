@@ -154,7 +154,7 @@ midibase::midibase
     bool makevirtual,
     bool isinput,
     bool makesystem,
-    const std::string & portalias
+    const std::string & portalias       // new for version 0.98.0
 ) :
     m_bus_index         (index),
     m_bus_id            (bus_id == (-1) ? 0 : bus_id),  /* uninited midi_info */

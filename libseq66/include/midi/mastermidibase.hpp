@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2021-08-04
+ * \updates       2021-12-07
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -263,6 +263,16 @@ public:
     void dump_midi_input (event in);                        /* seq32 function */
     std::string get_midi_out_bus_name (bussbyte bus) const;
     std::string get_midi_in_bus_name (bussbyte bus) const;
+
+    void set_midi_out_alias (bussbyte bus, const std::string & alias)
+    {
+        m_master_clocks.set_alias(bus, alias);
+    }
+
+    void set_midi_in_alias (bussbyte bus, const std::string & alias)
+    {
+        m_master_inputs.set_alias(bus, alias);
+    }
 
     std::string get_midi_out_alias (bussbyte bus) const
     {

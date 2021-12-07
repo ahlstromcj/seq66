@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-08-23
+ * \updates       2021-12-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -72,7 +72,8 @@ inputslist::add
     int buss,
     bool flag,
     const std::string & name,
-    const std::string & nickname
+    const std::string & nickname,
+    const std::string & alias
 )
 {
     bool result = buss >= 0 && ! name.empty();
@@ -86,6 +87,7 @@ inputslist::add
         ioitem.io_enabled = flag;
         ioitem.out_clock = e_clock::off;        /* not e_clock::disabled!   */
         ioitem.io_name = portname;
+        ioitem.io_alias = alias;
         if (nickname.empty())
         {
             std::string nick = extract_nickname(portname);

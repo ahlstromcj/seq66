@@ -158,6 +158,7 @@ qt5nsmanager::create_window ()
         {
             m_window.reset(qm);
             m_window->attach_session(this);         /* ATTACH/DETACH        */
+#if defined SEQ66_NSM_SUPPORT
             if (not_nullptr(nsm_client()))
             {
                 bool visible = usr().session_visibility();
@@ -169,6 +170,7 @@ qt5nsmanager::create_window ()
                 handle_show_hide(hidden);
             }
             else
+#endif
                 show_gui();                         /* m_window->show()     */
 
             (void) smanager::create_window();       /* just house-keeping   */
@@ -397,11 +399,13 @@ qt5nsmanager::handle_show_hide (bool hide)
 {
     if (hide != m_was_hidden)
     {
+#if defined SEQ66_NSM_SUPPORT
         if (not_nullptr(nsm_client()))  /* are we under NSM control?        */
         {
             usr().session_visibility(! hide);
             rc().auto_usr_save(true);
         }
+#endif
         m_was_hidden = hide;
         if (hide)
             hide_gui();

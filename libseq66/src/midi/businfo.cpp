@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2021-11-24
+ * \updates       2021-12-07
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -552,6 +552,19 @@ busarray::get_midi_bus_name (int bus) const
             );
             result = tmp;
         }
+    }
+    return result;
+}
+
+std::string
+busarray::get_midi_alias (int bus) const
+{
+    std::string result;
+    if (bus < count())
+    {
+        const businfo & bi = m_container[bus];
+        const midibus * buss = bi.bus();
+        result = buss->port_alias();            /* whether active/inactive  */
     }
     return result;
 }

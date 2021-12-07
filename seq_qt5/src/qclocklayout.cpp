@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2021-10-20
+ * \updates       2021-12-07
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
@@ -49,6 +49,8 @@
 
 namespace seq66
 {
+
+static const size_t c_max_name_length = 40;    /* 32 */
 
 /**
  *  Creates a single line in the MIDI Clocks "Clock" group-box.  We will use
@@ -114,27 +116,23 @@ qclocklayout::setup_ui ()
     bool gotbussinfo = perf().ui_get_clock(m_bus, clocking, busname);
     if (gotbussinfo)
     {
-        const size_t maxnamelength = 32;
-        if (busname.length() > maxnamelength)
-            busname = busname.substr(0, maxnamelength);
+        if (busname.length() > c_max_name_length)
+            busname = busname.substr(0, c_max_name_length);
 
         m_horizlayout_clockline = new QHBoxLayout();
         m_horizlayout_clockline->setContentsMargins(0, 0, 0, 0);
         m_spacer_clock = new QSpacerItem
         (
-            20, 20, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum
+            2, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum
         );
 
         QString qbname = qt(busname);
         m_label_outputbusname = new QLabel();
         m_label_outputbusname->setText(qbname);
-        m_label_outputbusname->setEnabled(clocking != e_clock::disabled);
-
         m_rbutton_portdisabled = new QRadioButton("Disabled");
         m_rbutton_clockoff = new QRadioButton("Off");
-        m_rbutton_clockonpos = new QRadioButton("On(Pos)");
-        m_rbutton_clockonmod = new QRadioButton("On(Mod)");
-
+        m_rbutton_clockonpos = new QRadioButton("On:Pos");
+        m_rbutton_clockonmod = new QRadioButton("On:Mod");
         m_rbutton_group = new QButtonGroup(this);
         m_rbutton_group->addButton
         (
@@ -143,17 +141,16 @@ qclocklayout::setup_ui ()
         m_rbutton_group->addButton(m_rbutton_clockoff, int(e_clock::off));
         m_rbutton_group->addButton(m_rbutton_clockonpos, int(e_clock::pos));
         m_rbutton_group->addButton(m_rbutton_clockonmod, int(e_clock::mod));
-
         m_horizlayout_clockline->addWidget(m_label_outputbusname);
         m_horizlayout_clockline->addItem(m_spacer_clock);
         m_horizlayout_clockline->addWidget(m_rbutton_portdisabled);
         m_horizlayout_clockline->addWidget(m_rbutton_clockoff);
         m_horizlayout_clockline->addWidget(m_rbutton_clockonpos);
         m_horizlayout_clockline->addWidget(m_rbutton_clockonmod);
-
         switch (clocking)
         {
         case e_clock::disabled:
+            m_label_outputbusname->setEnabled(false);
             m_rbutton_portdisabled->setChecked(true);
             m_rbutton_portdisabled->setEnabled(false);
 
@@ -168,14 +165,17 @@ qclocklayout::setup_ui ()
             break;
 
         case e_clock::off:
+            m_label_outputbusname->setEnabled(true);
             m_rbutton_clockoff->setChecked(true);
             break;
 
         case e_clock::pos:
+            m_label_outputbusname->setEnabled(true);
             m_rbutton_clockonpos->setChecked(true);
             break;
 
         case e_clock::mod:
+            m_label_outputbusname->setEnabled(true);
             m_rbutton_clockonmod->setChecked(true);
             break;
 

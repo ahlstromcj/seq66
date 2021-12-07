@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2021-08-04
+ * \updates       2021-12-07
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -414,17 +414,13 @@ void
 mastermidibase::copy_io_busses ()
 {
     m_master_inputs.clear();
-    int buses = m_inbus_array.count();          /* get_num_in_buses()   */
+    int buses = m_inbus_array.count();              /* get_num_in_buses()   */
     for (int bus = 0; bus < buses; ++bus)
     {
         bool inputflag = m_inbus_array.get_input(bus);
         std::string name = m_inbus_array.get_midi_bus_name(bus);
-
-        /*
-         * TODO: use the buss number from the source!!!
-         */
-
-        m_master_inputs.add(bus, inputflag, name);
+        std::string alias = m_outbus_array.get_midi_alias(bus);
+        m_master_inputs.add(bus, inputflag, name, "", alias);
     }
     m_master_clocks.clear();
     buses = m_outbus_array.count();                 /* get_num_out_buses()  */
@@ -432,12 +428,8 @@ mastermidibase::copy_io_busses ()
     {
         e_clock clk = m_outbus_array.get_clock(bus);
         std::string name = m_outbus_array.get_midi_bus_name(bus);
-
-        /*
-         * TODO:  Use the buss from the source !!!
-         */
-
-        m_master_clocks.add(bus, clk, name);
+        std::string alias = m_outbus_array.get_midi_alias(bus);
+        m_master_clocks.add(bus, clk, name, "", alias);
     }
 }
 

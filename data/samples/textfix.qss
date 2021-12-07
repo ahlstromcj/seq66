@@ -3,7 +3,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-10-20
- * \updates       2021-11-05
+ * \updates       2021-12-07
  * \license       Public domain
  *
  *  Provides a sample Qt style sheet for Seq66.  Makes the text of disabled
@@ -15,6 +15,11 @@ QLabel
     color : cornflowerblue;
 }
 
+QLabel:disabled
+{
+    color: #F0A080;
+}
+
 QLineEdit
 {
     color : cornflowerblue;
@@ -22,7 +27,7 @@ QLineEdit
 
 QLineEdit:disabled
 {
-    color: red;
+    color: #F0A080;
 }
 
 QTextEdit
@@ -32,7 +37,7 @@ QTextEdit
 
 QTextEdit:disabled
 {
-    color: red;
+    color: #F0A080;
 }
 
 QCheckBox
@@ -42,7 +47,7 @@ QCheckBox
 
 QCheckBox:disabled
 {
-    color: red;
+    color: #F0A080;
 }
 
 QRadioButton
@@ -52,7 +57,7 @@ QRadioButton
 
 QRadioButton:disabled
 {
-    color: red;
+    color: #F0A080;
 }
 
 QDoubleSpinBox
@@ -62,7 +67,7 @@ QDoubleSpinBox
 
 QDoubleSpinBox:disabled
 {
-    color: red;
+    color: #F0A080;
 }
 
 QSpinBox
@@ -72,7 +77,7 @@ QSpinBox
 
 QSpinBox:disabled
 {
-    color: red;
+    color: #F0A080;
 }
 
 QComboBox
@@ -82,7 +87,7 @@ QComboBox
 
 QComboBox:disabled
 {
-    color: red;
+    color: #F0A080;
 }
 
 /*
