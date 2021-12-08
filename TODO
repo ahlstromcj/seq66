@@ -1,6 +1,6 @@
-TO DO for Seq66 0.97.3 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.98.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-11-20
+2019-04-13 to 2021-12-07
 
 Configuration:
 
@@ -21,7 +21,6 @@ UI:
             -   Tempo / BPM min and max
         -   Play Options:
             -   New-pattern editor options (check-boxes)
-            -   Record-style dropdown
             -   Sets-mode options
         -   Config Options: (new)
             -   Log-file

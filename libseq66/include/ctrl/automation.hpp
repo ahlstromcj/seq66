@@ -206,7 +206,7 @@ enum class slot
     mod_oneshot,        /**< 20: Set status of one-shot queuing.            */
     FF,                 /**< 21: Fast-forwards the clock (pulse counter.)   */
     rewind,             /**< 22: Rewinds the clock (pulse counter).         */
-    top,                /**< 22: Set to song beginning or L marker.         */
+    top,                /**< 23: Set to song beginning or L marker.         */
     playlist,           /**< 24: MIDI only, arrow keys hardwired.           */
     playlist_song,      /**< 25: MIDI only, arrow keys hardwired.           */
     tap_bpm,            /**< 26: Tap key for estimating BPM.                */
@@ -272,29 +272,29 @@ enum class slot
      * A few more likely candidates.
      */
 
-    mod_bbt_hms,        /**< xx: Toggle between time-display modes.         */
-    mod_LR_loop,        /**< xx: Toggle looping between the L and R marks.  */
-    mod_undo_recording, /**< xx: Undo events in current active pattern. ??? */
-    mod_redo_recording, /**< xx: Redo events in current active pattern. ??? */
-    mod_transpose_song, /**< xx: Apply song transpose. ??????               */
-    mod_copy_set,       /**< xx: Copy the current playing set.              */
-    mod_paste_set,      /**< xx: Paste into the current active set.         */
-    mod_toggle_tracks,  /**< xx: Toggle the armed status of the active set. */
+    mod_bbt_hms,        /**< 69: Toggle between time-display modes.         */
+    mod_LR_loop,        /**< 70: Toggle looping between the L and R marks.  */
+    mod_undo_recording, /**< 71: Undo events in current active pattern. ??? */
+    mod_redo_recording, /**< 72: Redo events in current active pattern. ??? */
+    mod_transpose_song, /**< 73: Apply song transpose. ??????               */
+    mod_copy_set,       /**< 74: Copy the current playing set.              */
+    mod_paste_set,      /**< 75: Paste into the current active set.         */
+    mod_toggle_tracks,  /**< 76: Toggle the armed status of the active set. */
 
     /*
      * Set playing modes.
      */
 
-    set_mode_normal,    /**< xx: A set selection replaces the playing set.  */
-    set_mode_auto,      /**< xx: Set selection starts the new set playing.  */
-    set_mode_additive,  /**< xx: Set selection adds the new set to playing. */
-    set_mode_all_sets,  /**< xx: All sets play at the same time.            */
+    set_mode_normal,    /**< 77: A set selection replaces the playing set.  */
+    set_mode_auto,      /**< 78: Set selection starts the new set playing.  */
+    set_mode_additive,  /**< 79: Set selection adds the new set to playing. */
+    set_mode_all_sets,  /**< 80: All sets play at the same time.            */
 
     /*
      * Tricky ending.
      */
 
-    max,                /**< Used only for termination/range-checking.      */
+    max,                /**< 81: Used only for termination/range-checking.  */
 
     /*
      * The following are used for selection the correct op function.  Pattern

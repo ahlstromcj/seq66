@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2021-04-23
+ * \updates       2021-12-07
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -118,7 +118,7 @@ public:
 
     static std::string category_name (automation::category c);
     static std::string action_name (automation::action a);
-    static std::string slot_name (automation::slot s);
+    static std::string automation_slot_name (automation::slot s);
     static automation::slot set_slot (int opcode);
 
     bool is_usable () const
@@ -199,9 +199,9 @@ public:
         return m_slot_number;
     }
 
-    std::string slot_name () const
+    std::string automation_slot_name () const
     {
-        return slot_name(m_slot_number);
+        return automation_slot_name(m_slot_number);
     }
 
     std::string build_slot_name (int index) const;

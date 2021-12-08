@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-11-11
+ * \updates       2021-12-07
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of concepts relating to control of pattern
@@ -172,7 +172,7 @@ public:
 
     std::string slot_name () const
     {
-        return opcontrol::slot_name(m_op_number);
+        return opcontrol::automation_slot_name(m_op_number);
     }
 
 public:

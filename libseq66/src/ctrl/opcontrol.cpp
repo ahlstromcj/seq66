@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2021-12-04
+ * \updates       2021-12-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -91,19 +91,19 @@ opcontrol::build_slot_name (int index) const
     std::string result;
     if (m_category == category::loop)
     {
-        result = slot_name(slot::loop);
+        result = automation_slot_name(slot::loop);
         result += " ";
         result += std::to_string(static_cast<int>(index));
     }
     else if (m_category == category::mute_group)
     {
-        result = slot_name(slot::mute_group);
+        result = automation_slot_name(slot::mute_group);
         result += " ";
         result += std::to_string(static_cast<int>(index));
     }
     else if (m_category == category::automation)
     {
-        result = slot_name(m_slot_number);
+        result = automation_slot_name(m_slot_number);
     }
     return result;
 }
@@ -165,7 +165,7 @@ opcontrol::action_name (action a)
  */
 
 std::string
-opcontrol::slot_name (slot s)
+opcontrol::automation_slot_name (slot s)
 {
     static tokenization s_slot_names =
     {
@@ -228,65 +228,70 @@ opcontrol::slot_name (slot s)
          * Proposed massive expansion in automation. Grid mode selection.
          */
 
-        "Record Overdub",
-        "Record Overwrite",
-        "Record Expand",
-        "Record Oneshot",
-        "Grid Loop",
-        "Grid Record",
-        "Grid Copy",
-        "Grid Paste",
-        "Grid Clear",
-        "Grid Delete",
-        "Grid Thru",
-        "Grid Solo",
-        "Grid Velocity",
-        "Grid Double",
+        "Record Overdub",       // 49: record_overdub
+        "Record Overwrite",     // 50: record_overwrite
+        "Record Expand",        // 51: record_expand
+        "Record Oneshot",       // 52: record_oneshot
+        "Grid Loop",            // 53: grid_loop
+        "Grid Record",          // 54: grid_record
+        "Grid Copy",            // 55: grid_copy
+        "Grid Paste",           // 56: grid_paste
+        "Grid Clear",           // 57: grid_clear
+        "Grid Delete",          // 58: grid_delete
+        "Grid Thru",            // 59: grid_thru
+        "Grid Solo",            // 60: grid_solo
+        "Grid Velocity",        // 61: grid_velocity
+        "Grid Double",          // 62: grid_double
 
         /*
          * Grid quantization type selection.
          */
 
-        "Quant None",
-        "Quant Full",
-        "Quant Tighten",
-        "Quant Random",
-        "Quant Jitter",
-        "Reserved 68",
+        "Quant None",           // 63: grid_quant_none
+        "Quant Full",           // 64: grid_quant_full
+        "Quant Tighten",        // 65: grid_quant_tighten
+        "Quant Random",         // 66: grid_quant_random
+        "Quant Jitter",         // 67: grid_quant_jitter
+        "Reserved 68",          // 68: grid_quant_68
 
         /*
          * A few more likely candidates.
          */
 
-        "BBT/HMS",
-        "LR Loop",
-        "Undo Record",
-        "Redo Record",
-        "Transpose Song",
-        "Copy Set",
-        "Paste Set",
-        "Toggle Tracks",
+        "BBT/HMS",              // 69: mod_bbt_hms
+        "LR Loop",              // 70: mod_LR_loop
+        "Undo Record",          // 71: mod_undo_recording
+        "Redo Record",          // 72: mod_redo_recording
+        "Transpose Song",       // 73: mod_transpose_song
+        "Copy Set",             // 74: mod_copy_set
+        "Paste Set",            // 75: mod_paste_set
+        "Toggle Tracks",        // 76: mod_toggle_tracks
 
         /*
          * Set playing modes.
          */
 
-        "Sets Normal",
-        "Sets Auto",
-        "Sets Additive",
-        "All Sets"
+        "Sets Normal",          // 77: set_mode_norman
+        "Sets Auto",            // 78: set_mode_auto
+        "Sets Additive",        // 79: set_mode_additieve
+        "All Sets",             // 80: set_mode_all_sets
 
         /*
          * Tricky ending.
          */
 
-        "",                     // Maximum -- used only for limit-checking
+        "Max",                  // 81: Maximum -- used only for limit-checking
+
+        /*
+         * The following selectthe correct op function.
+         */
+
         "Loop",                 // Indicates the pattern key group
         "Mute",                 // Indicates the mute key group
         "Auto"                  // Indicates automation key group
     };
     std::string result;
-    if (s >= slot::bpm_up && s < slot::max)
+    if (s >= slot::bpm_up && s <= slot::automation)
     {
         int index = static_cast<int>(s);
         result = s_slot_names[index];

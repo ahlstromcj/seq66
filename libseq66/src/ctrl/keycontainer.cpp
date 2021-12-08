@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-04
+ * \updates       2021-12-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -568,7 +568,7 @@ keycontainer::add_defaults ()
     {
         automation::slot s = automation::int_to_slot_cast(auslot);
         automation::action a = keys_automation()[auslot].kd_action;
-        std::string nametag = opcontrol::slot_name(s);
+        std::string nametag = opcontrol::automation_slot_name(s);
         std::string keyname = keys_automation()[auslot].kd_name;
         ctrlkey ordinal = qt_keyname_ordinal(keyname);
         if (is_invalid_ordinal(ordinal))

@@ -1,17 +1,17 @@
-# Seq66 0.97.2 MIDI control configuration file
+# Seq66 0.98.0 MIDI control configuration file
 #
 # /home/user/.config/seq66/qseq66.ctrl
-# Written 2021-11-04 14:00:22
+# Written 2021-12-07 16:43:23
 #
-# Sets up MIDI I/O control for Seq66. The format is like the 'rc' file,
-# in the HOME configuration directory. To use it, set it active in the
-# 'rc' [midi-control-file] section. It adds [mute-control-out],
-# [automation-control-out], a simpler format, and new settings.
+# Sets up MIDI I/O control. The format is like the 'rc' file, in the
+# HOME configuration directory. To use it, set it active in the 'rc'
+# [midi-control-file] section. It adds loop, mute, & automation buttons,
+# MIDI display, new settings, and macros.
 
 [Seq66]
 
 config-type = "ctrl"
-version = 5
+version = 6
 
 # [comments] holds user documentation for this file. The first empty,
 # hash-commented, or tag line ends the comment.
@@ -22,12 +22,13 @@ Add your comment block here
 
 [midi-control-settings]
 
-# These are input setting for controlling Seq66.
-# 'load-midi-control' = false writes empty MIDI controls!! Keep
-# backups! 'control-buss' values range from 0 to the highest system
-# input buss. If set, that buss can send MIDI control. 255 (0xFF)
-# means any buss enabled in the 'rc' file can send control. ALSA
-# provides an extra 'announce' buss, altering port numbering.
+# These are input settings to control Seq66. 'load-midi-control'
+# = false writes empty MIDI controls!! Keepbackups! 'control-buss'
+# values range from 0 to the highest systeminput buss. If set, that
+# buss can send MIDI control. 255 (0xFF) means any enabled input
+# file can send control. ALSA provides an extra 'announce' buss,
+# altering port numbering re JACK. If port-mapping is enabled, the
+# port nick-name can be provided.
 #
 # 'midi-enabled' applies to the MIDI controls; keystroke controls
 # are always enabled. Supported keyboard layouts are 'qwerty'
@@ -36,6 +37,7 @@ Add your comment block here
 
 load-key-controls = true
 load-midi-controls = true
+drop-empty-controls = false
 control-buss = 2
 midi-enabled = true
 button-offset = 0
@@ -44,41 +46,38 @@ button-columns = 8
 keyboard-layout = qwerty
 
 # A control stanza incorporates key control and MIDI. Keys support
-# only 'toggle'; key-release is an 'invert'. The leftmost number on
-# each line is the pattern number (e.g. 0 to 31), the group number
-# (same range), or an automation control number.  This number is
-# followed by three groups of bracketed numbers, each providing 3
-# types of control:
+# 'toggle' and key-release is 'invert'. The leftmost number on each
+# line is the loop number (eg. 0 to 31), the mutes number (same
+# range), or an automation number. Three groups of bracketed numbers
+# follow, each providing a type of control:
 #
 #    Normal:           [toggle]    [on]        [off]
 #    Increment/Decr:   [increment] [increment] [decrement]
 #    Playback:         [pause]     [start]     [stop]
 #    Playlist/Song:    [by-value]  [next]      [previous]
 #
-# In each group, there are six numbers:
+# In each group, there are 5 numbers:
 #
-#    [on/off invert status d0 d1min d1max]
+#    [invert status d0 d1min d1max]
 #
-# 'on/off' enables/disables (1/0) the control; 'invert' (1/0) causes
-# the opposite, but not all support this; all keystroke-releases set
-# invert to true; 'status' is the MIDI event to match (channel is NOT
-# ignored); if set to 0x00, the control is disabled; 'd0' is the
-# first data value (e.g. if status is 0x90 (Note On), d0 is the note
-# number; d1min to d1max is the range of data values detectable (e.g.
+# A valid status (> 0) enables the control; 'invert' (1/0) inverts
+# the action, but not all support this; keystroke-release inverts.
+# 'status' is the MIDI event to match (channel is NOT ignored); 'd0'
+# is the first data value (eg. if 0x90 (Note On), d0 is the note
+# number; d1min to d1max is the range of d1 values detectable (eg.
 # 1 to 127 indicates any non-zero velocity invokes the control.
 # Hex values can be used; precede with '0x'.
 #
-#  ---------------------- Loop, group, or automation-slot number
-# |    ------------------ Name of the key (see the key map)
-# |   |
+#  ---------------------- Loop/group/automation-slot number
+# |    ------------------ Name of key (see the key map)
 # |   |      ------------ Inverse
-# |   |     |  ---------- MIDI status/event byte (e.g. Note On)
-# |   |     | |  -------- d0: Data 1 (e.g. Note number)
-# |   |     | | |  ------ d1max: Data 2 min (e.g. Note velocity)
+# |   |     |  ---------- MIDI status/event byte (eg. Note On)
+# |   |     | |  -------- d0: Data 1 (eg. Note number)
+# |   |     | | |  ------ d1max: Data 2 min (eg. Note velocity)
 # |   |     | | | |  ---- d1min: Data 2 max
 # |   |     | | | | |
 # v   v     v v v v v
-# 0 "F1" [0 0 0 0 0 0]   [0 0 0 0 0 0]   [0 0 0 0 0 0]
+# 0 "F1"   [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0]
 #           Toggle          On              Off
 
 [loop-control]
@@ -170,9 +169,9 @@ keyboard-layout = qwerty
 14 "PageUp"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # BPM Page Up
 15 "PageDn"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # BPM Page Dn
 16 "KP_."        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Set Set
-17 "KP_*"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Record
+17 "KP_*"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Loop Mode
 18 "KP_-"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Quan Record
-19 "KP_+"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reset Seq
+19 "KP_+"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reset Sets
 20 "|"           [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # One-shot
 21 "F6"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # FF
 22 "F5"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Rewind
@@ -202,6 +201,38 @@ keyboard-layout = qwerty
 46 "0xfc"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 47
 47 "0xfd"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 47
 48 "0xfe"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 48
+49 "Sh_F1"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Record Overdub
+50 "Sh_F2"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Record Overwrite
+51 "Sh_F3"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Record Expand
+52 "Sh_F4"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Record Oneshot
+53 "Sh_F5"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Loop
+54 "Sh_F6"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Record
+55 "Sh_F7"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Copy
+56 "Sh_F8"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Paste
+57 "Sh_F9"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Clear
+58 "Sh_F10"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Delete
+59 "Sh_F11"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Thru
+60 "Sh_F12"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Solo
+61 "0xe0"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Velocity
+62 "0xe1"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Double
+63 "0xe2"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Quant None
+64 "0xe3"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Quant Full
+65 "0xe4"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Quant Tighten
+66 "0xe5"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Quant Random
+67 "0xe6"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Quant Jitter
+68 "0xe7"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 68
+69 "0xe8"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # BBT/HMS
+70 "0xe9"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # LR Loop
+71 "0xea"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Undo Record
+72 "0xeb"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Redo Record
+73 "0xec"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Transpose Song
+74 "0xed"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Copy Set
+75 "0xee"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Paste Set
+76 "0xef"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Toggle Tracks
+77 "0x8c"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Sets Normal
+78 "0x8d"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Sets Auto
+79 "0x8e"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Sets Additive
+80 "0x8f"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # All Sets
 
 [midi-control-out-settings]
 
@@ -214,10 +245,10 @@ button-columns = 8
 
 [midi-control-out]
 
-#   ---------------- Pattern number (as applicable)
-#  |     ----------- MIDI status+channel (e.g. Note On)
-#  |    |    ------- data 1 (e.g. note number)
-#  |    |   |  ----- data 2 (e.g. velocity)
+#   ---------------- Pattern or device-button number)
+#  |     ----------- MIDI status+channel (eg. Note On)
+#  |    |    ------- data 1 (eg. note number)
+#  |    |   |  ----- data 2 (eg. velocity)
 #  |    |   | |
 #  v    v   v v
 # 31 [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0]
@@ -225,8 +256,8 @@ button-columns = 8
 #
 # In a change from version 1 of this file, a test of the
 # status/event byte determines the enabled status, and channel
-# is incorporated into the status.  Much cleaner! The order of
-# the lines must must be preserved.
+# is incorporated into the status.  The order of the lines must
+# be preserved.
 
  0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
  1 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]
@@ -266,9 +297,9 @@ button-columns = 8
 # The format of the mute and automation output events is simpler:
 #
 #  ----------------- mute-group number
-# |    ------------- MIDI status+channel (e.g. Note On)
-# |   |    --------- data 1 (e.g. note number)
-# |   |   |  ------- data 2 (e.g. velocity)
+# |    ------------- MIDI status+channel (eg. Note On)
+# |   |    --------- data 1 (eg. note number)
+# |   |   |  ------- data 2 (eg. velocity)
 # |   |   | |
 # v   v   v v
 # 1 [0x00 0 0 ] [0x00 0 0] [0x00 0 0]
@@ -326,7 +357,7 @@ button-columns = 8
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Slot_shift
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Free
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Queue
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Oneshot
+0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # One-shot
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Replace
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Snap
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Song
@@ -349,6 +380,21 @@ button-columns = 8
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_6
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_7
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_8
+
+[macro-control-out]
+
+# This format is 'macroname = [ hex bytes | macro-references]'.
+# Macro references are macro-names preceded by a '$'. If a macro
+# starts with 0, it is disabled. See the user manual. Some values
+# should always be define: footer, header, reset, startup, and
+# shutdown.
+
+footer = 0xF7
+header = 0xF0 0x00 0x00
+reset = $header 0x00 $footer
+shutdown = $header 0x00 $footer
+startup = $header 0x00 $footer
+
 
 # End of /home/user/.config/seq66/qseq66.ctrl
 #

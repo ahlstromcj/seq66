@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-02-11
+ * \updates       2021-12-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -120,7 +120,7 @@ opcontainer::show () const
     {
         std::cout
             << "[" << std::setw(2) << std::right << index << "] "
-            << opcontrol::slot_name(oc.first) << ": "
+            << opcontrol::automation_slot_name(oc.first) << ": "
             ;
 
         oc.second.show();

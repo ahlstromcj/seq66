@@ -143,7 +143,7 @@ midicontrolin::add (const midicontrol & mc)
         std::cerr
             << "Duplicate or invalid opslot for '" << mc.name()
             << "' Category " << mc.category_name()
-            << " Slot " << mc.slot_name()
+            << " Slot " << mc.automation_slot_name()
             << std::endl
             ;
     }
