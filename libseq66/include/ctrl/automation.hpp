@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-04
+ * \updates       2021-12-08
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -239,13 +239,18 @@ enum class slot
     reserved_48,        /**< 48: Reserved for expansion.                    */
 
     /*
-     * Proposed massive expansion in automation. Grid mode selection.
+     * Proposed massive expansion in automation. Record mode selection.
      */
 
     record_overdub,     /**< 49: Select overdub/merge recording triggering. */
     record_overwrite,   /**< 50: Select overdub recording triggering.       */
     record_expand,      /**< 51: Select expand recording triggering.        */
     record_oneshot,     /**< 52: Select oneshot recording triggering.       */
+
+    /*
+     * Proposed massive expansion in automation. Grid mode selection.
+     */
+
     grid_loop,          /**< 53: Normal operation of the main grid.         */
     grid_record,        /**< 54: Use one of the record modes for slots.     */
     grid_copy,          /**< 55: Grid slot copies the pattern.              */
@@ -308,34 +313,6 @@ enum class slot
     automation,         /**< Useful to set and retrieve the name.           */
     illegal             /**< A value to flag illegality.                    */
 };
-
-/*
- *  Free-functions for slots.
- */
-
-inline slot
-int_to_slot_cast (int s)
-{
-    return static_cast<slot>(s);
-}
-
-inline int
-slot_to_int_cast (slot s)
-{
-    return static_cast<int>(s);
-}
-
-inline int
-original_slot_count ()
-{
-    return static_cast<int>(slot::record_overdub);      /* tricky */
-}
-
-inline int
-current_slot_count ()
-{
-    return static_cast<int>(slot::max);
-}
 
 /**
  *  Provides the status bits that used to be in the old perform class.
@@ -547,6 +524,34 @@ extern slot string_to_slot (const std::string & s);
 #endif
 
 }               // namespace automation
+
+/*
+ *  Free-functions for slots.
+ */
+
+inline automation::slot
+int_to_slot_cast (int s)
+{
+    return static_cast<automation::slot>(s);
+}
+
+inline int
+slot_to_int_cast (automation::slot s)
+{
+    return static_cast<int>(s);
+}
+
+inline int
+original_slot_count ()
+{
+    return static_cast<int>(automation::slot::record_overdub);  /* tricky */
+}
+
+inline int
+current_slot_count ()
+{
+    return static_cast<int>(automation::slot::max);
+}
 
 }               // namespace seq66
 

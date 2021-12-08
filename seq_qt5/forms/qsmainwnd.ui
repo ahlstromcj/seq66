@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>884</width>
-    <height>602</height>
+    <width>886</width>
+    <height>604</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -442,7 +442,7 @@ It does not change Seq66's default PPQN.</string>
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>7</number>
       </property>
       <widget class="QWidget" name="LiveTab">
        <property name="sizePolicy">
@@ -1392,7 +1392,7 @@ matter what sets-mode is in force. </string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>884</width>
+     <width>886</width>
      <height>22</height>
     </rect>
    </property>

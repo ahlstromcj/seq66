@@ -1,7 +1,7 @@
 # README for Seq66 0.98.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-12-07
+2015-09-10 to 2021-12-08
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and playlists
@@ -84,11 +84,11 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.98.0:
-        *   Fixed issue #41 "Hide Seq66 on closing window" by adding a
-            "visibility" automation command and by fixing the response to
-            "hide/show" messages from NSM. Note that the NSM API permits the
-            "Quit" command to exit the application. Also see the comments at
-            issue #64 "NSM: UI show up after restarting the app".
+        *   Fixed issue #41 "Hide Seq66 on closing window" via a "visibility"
+            automation command and by fixing the response to "hide/show"
+            messages from NSM. Note that the NSM API permits the "Quit" command
+            to exit the application. Also see the comments at issue #64 "NSM: UI
+            show up after restarting the app".
         *   Fixed issue #73 "Compile error because of jack_get_version_string"
             by detecting the presence of this function in configure.ac.
         *   Added "MIDI macros" to the 'ctrl' file.  Can send SysEx or other
@@ -99,8 +99,9 @@ Windows, and using a conventional source tarball.
             device (e.g. "Launchpad-Mini").
         *   Added api_sysex() overrides, at last.
         *   Added Preference items for MIDI control I/O.
-        *   Work on issue #41 and other NSM issues.
-        *   Added check for jack_get_version_string() for issue #73.
+        *   Improved the display of the MIDI file-name in title and live grid.
+        *   Improving grid-mode functionality, adding more automation controls,
+            in progress.
     *   Version 0.97.3:
         *   Added pattern-recording indicator to live-grid slots.
         *   Replace useless "Record" automation command with a "Loop Mode"

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-12-02
+ * \updates       2021-12-08
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -119,7 +119,7 @@ const int c_use_default_ppqn = (-1);
 const int c_use_file_ppqn = 0;
 
 /**
- *  Provides the supported looping recording modes.  These values are used
+ *  Provides the supported loop recording modes.  These values are used
  *  by the seqedit class, which provides a button with a popup menu to
  *  select one of these recording modes. These correspond to automation
  *  slots record_overdub (merge), record_overwrite, record_expand, and
@@ -128,7 +128,6 @@ const int c_use_file_ppqn = 0;
 
 enum class recordstyle
 {
-    none,               /**< No special style. Normal grid-slot mode.   */
     merge,              /**< Incoming events are merged into the loop.  */
     overwrite,          /**< Incoming events overwrite the loop.        */
     expand,             /**< Incoming events increase size of loop.     */
@@ -1609,7 +1608,7 @@ public:
 
     int grid_record_code () const
     {
-        return grid_record_code(m_grid_record_style);
+        return grid_record_code(grid_record_style());
     }
 
     recordstyle next_grid_record_style ();
@@ -1617,7 +1616,7 @@ public:
 
     bool no_grid_record () const
     {
-        return m_grid_record_style == recordstyle::none;
+        return grid_mode() != gridmode::record;
     }
 
     gridmode grid_mode () const
@@ -1625,7 +1624,22 @@ public:
         return m_grid_mode;
     }
 
-    std::string grid_mode_label () const;
+    gridmode grid_mode (int gm) const
+    {
+        return static_cast<gridmode>(gm);
+    }
+
+    int grid_mode_code (gridmode gm) const
+    {
+        return static_cast<int>(gm);
+    }
+
+    int grid_mode_code () const
+    {
+        return grid_mode_code(grid_mode());
+    }
+
+    std::string grid_mode_label (gridmode gm = gridmode::max) const;
 
 public:         // used in main application module and the usrfile class
 

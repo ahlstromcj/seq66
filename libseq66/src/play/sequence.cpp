@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-11-16
+ * \updates       2021-12-08
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -5652,7 +5652,7 @@ sequence::expand_recording () const
 recordstyle
 sequence::loop_record_style (int ri)
 {
-    recordstyle result = recordstyle::none;
+    recordstyle result = recordstyle::merge;
     int min = usr().grid_record_code(result);
     int max = usr().grid_record_code(recordstyle::max);
     if (ri > min && ri < max)
@@ -5669,7 +5669,7 @@ bool
 sequence::update_recording (int index)
 {
     recordstyle rectype = loop_record_style(index);
-    bool result = rectype != recordstyle::none;
+    bool result = rectype != recordstyle::max;
     if (result)
     {
         switch (rectype)

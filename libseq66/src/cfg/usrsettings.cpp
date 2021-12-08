@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-12-02
+ * \updates       2021-12-08
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -385,7 +385,7 @@ usrsettings::usrsettings () :
     m_new_pattern_qrecord       (false),
     m_new_pattern_record_style  (recordstyle::merge),
     m_new_pattern_wraparound    (false),
-    m_grid_record_style         (recordstyle::none),
+    m_grid_record_style         (recordstyle::merge),
     m_grid_mode                 (gridmode::loop)
 {
     // Empty body; it's no use to call normalize() here, see set_defaults().
@@ -473,7 +473,7 @@ usrsettings::set_defaults ()
     m_new_pattern_qrecord = false;
     m_new_pattern_record_style = recordstyle::merge;
     m_new_pattern_wraparound = false;
-    m_grid_record_style = recordstyle::none;
+    m_grid_record_style = recordstyle::merge;
     m_grid_mode = gridmode::loop;
     normalize();                            // recalculate derived values
 }
@@ -539,7 +539,6 @@ usrsettings::new_pattern_record_string () const
     std::string result;
     switch (m_new_pattern_record_style)
     {
-    case recordstyle::none:         result = "none";        break;
     case recordstyle::merge:        result = "merge";       break;
     case recordstyle::overwrite:    result = "overwrite";   break;
     case recordstyle::expand:       result = "expand";      break;
@@ -555,7 +554,6 @@ usrsettings::grid_record_style_label () const
     std::string result;
     switch (grid_record_style())
     {
-    case recordstyle::none:         result = "Loop";        break;
     case recordstyle::merge:        result = "Overdub";     break;
     case recordstyle::overwrite:    result = "Overwrite";   break;
     case recordstyle::expand:       result = "Expand";      break;
@@ -568,9 +566,7 @@ usrsettings::grid_record_style_label () const
 void
 usrsettings::grid_record_style (const std::string & style)
 {
-    recordstyle rs = recordstyle::none;
-    if (style == "merge")
-        rs = recordstyle::merge;
+    recordstyle rs = recordstyle::merge;
     if (style == "overwrite")
         rs = recordstyle::overwrite;
     else if (style == "expand")
@@ -587,12 +583,11 @@ usrsettings::next_grid_record_style ()
     recordstyle result;
     switch (grid_record_style())
     {
-    case recordstyle::none:         result = recordstyle::merge;        break;
     case recordstyle::merge:        result = recordstyle::overwrite;    break;
     case recordstyle::overwrite:    result = recordstyle::expand;       break;
     case recordstyle::expand:       result = recordstyle::oneshot;      break;
-    case recordstyle::oneshot:      result = recordstyle::none;         break;
-    default:                        result = recordstyle::none;         break;
+    case recordstyle::oneshot:      result = recordstyle::merge;        break;
+    default:                        result = recordstyle::merge;        break;
     }
     m_grid_record_style = result;
     return result;
@@ -604,22 +599,24 @@ usrsettings::previous_grid_record_style ()
     recordstyle result;
     switch (grid_record_style())
     {
-    case recordstyle::none:         result = recordstyle::oneshot;      break;
-    case recordstyle::merge:        result = recordstyle::none;         break;
+    case recordstyle::merge:        result = recordstyle::oneshot;      break;
     case recordstyle::overwrite:    result = recordstyle::merge;        break;
     case recordstyle::expand:       result = recordstyle::overwrite;    break;
     case recordstyle::oneshot:      result = recordstyle::expand;       break;
-    default:                        result = recordstyle::none;         break;
+    default:                        result = recordstyle::merge;        break;
     }
     m_grid_record_style = result;
     return result;
 }
 
 std::string
-usrsettings::grid_mode_label () const
+usrsettings::grid_mode_label (gridmode gm) const
 {
     std::string result;
-    switch (grid_mode())
+    if (gm == gridmode::max)
+        gm = grid_mode();
+
+    switch (gm)
     {
     case gridmode::loop:            result = "Loop";        break;
     case gridmode::record:          result = "Record";      break;
@@ -631,7 +628,7 @@ usrsettings::grid_mode_label () const
     case gridmode::solo:            result = "Solo";        break;
     case gridmode::velocity:        result = "Velocity";    break;
     case gridmode::double_length:   result = "Double";      break;
-    case gridmode::max:             result = "Error";       break;
+    default:                        result = "Error";       break;
     }
     return result;
 }

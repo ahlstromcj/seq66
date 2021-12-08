@@ -333,7 +333,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
         if (count > 0)
         {
             infoprintf("%d automation-control lines", count);
-            if (count < automation::current_slot_count())   /* pre-defined  */
+            if (count < current_slot_count())   /* pre-defined  */
                  add_default_automation_stanzas(count);
         }
         if (rc_ref().verbose())
@@ -1337,7 +1337,7 @@ bool
 midicontrolfile::add_default_automation_stanzas (int starting_index)
 {
     bool result = true;
-    int ending_index = automation::current_slot_count();
+    int ending_index = current_slot_count();
     for (int i = starting_index; i < ending_index; ++i)
     {
         bool ok = parse_control_stanza(automation::category::automation, i);
@@ -1494,8 +1494,8 @@ midicontrolfile::container_to_stanzas (const midicontrolin & mc)
         }
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-        int origslotcount = automation::original_slot_count();
-        int currslotcount = automation::current_slot_count();
+        int origslotcount = original_slot_count();
+        int currslotcount = current_slot_count();
         printf
         (
             "mc.count() = %d, orig slots = %d, curr slots = %d\n",

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-12-02
+ * \updates       2021-12-08
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -199,18 +199,24 @@ qslivegrid::qslivegrid
         );
     }
     ui->labelPlaylistSong->setText("");
-
-    /*
-     * TODO: Set text according to play mode:  queue, keep queue, one-shot
-     * etc.
-     */
-
-    set_mode_text();
     qloopbutton::progress_box_size
     (
         usr().progress_box_width(),
         usr().progress_box_height()
     );
+
+    /*
+     * Live grid mode settings.
+     */
+
+    populate_grid_mode();
+    set_grid_mode();
+    connect
+    (
+        ui->comboGridMode, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(slot_grid_mode(int))
+    );
+
     m_timer = qt_timer(this, "qslivegrid", 2, SLOT(conditional_update()));
 }
 
@@ -227,10 +233,36 @@ qslivegrid::~qslivegrid()
 }
 
 void
-qslivegrid::set_mode_text (const std::string & mode)
+qslivegrid::set_grid_mode ()
 {
-    QString mtext = qt(mode);
-    ui->labelMode->setText(mtext);
+    int gcode = usr().grid_mode_code();
+    ui->comboGridMode->setCurrentIndex(gcode);
+}
+
+/**
+ *  Populate the combo box from grid_loop, grid_record, and, as implemented
+ *  more automation::slot::grid_xxxxx values up to grid_double.
+ */
+
+void
+qslivegrid::populate_grid_mode ()
+{
+    ui->comboGridMode->clear();
+    int ending = usr().grid_mode_code(gridmode::record);   // FOR NOW
+    for (int counter = 0; counter <= ending; ++counter)
+    {
+        gridmode gm = usr().grid_mode(counter);
+        std::string modename = usr().grid_mode_label(gm);
+        QString combotext(qt(modename));
+        ui->comboGridMode->insertItem(counter, combotext);
+    }
+}
+
+void
+qslivegrid::slot_grid_mode (int index)
+{
+    gridmode gm = usr().grid_mode(index);
+    perf().set_grid_mode(gm);
 }
 
 /**
@@ -241,6 +273,8 @@ void
 qslivegrid::set_playlist_name (const std::string & plname, bool modified)
 {
     std::string fullname = get_full_path(plname);
+    std::string path;
+    std::string basename;
 
     /*
      * TO DO:  Fix loading a recent file from a non-session directory into the
@@ -248,16 +282,31 @@ qslivegrid::set_playlist_name (const std::string & plname, bool modified)
      */
 
     if (fullname.empty())
+    {
         fullname = filename_base(plname);
+        if (fullname.empty())
+            fullname = rc().no_name();
 
-    if (fullname.empty())
-        fullname = rc().no_name();
+        basename = fullname;
+    }
+    else
+    {
+        bool ok = filename_split(fullname, path, basename);
+        if (! ok)
+            basename = fullname;
+    }
+
 
     if (modified)
-        fullname += " *";
+        basename += " *";
 
-    QString pln = qt(fullname);
-    ui->labelPlaylistSong->setText(pln);
+    QString name = qt(basename);
+    ui->labelPlaylistSong->setText(name);
+    if (! path.empty())
+    {
+        QString p = qt(path);
+        ui->labelPlaylistSong->setToolTip(p);
+    }
     (void) recreate_all_slots();
 }
 

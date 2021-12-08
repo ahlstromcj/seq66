@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-12-07
+ * \updates       2021-12-08
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1078,31 +1078,24 @@ performer::main_window_title (const std::string & filename) const
 {
     std::string result = seq_package_name() + std::string(" ");
     std::string itemname = rc().no_name();
-
-#if defined SHOW_PPQN_IN_WINDOW_TITLE
-    int p = ppqn();                                 /* choose_ppqn(m_ppqn)  */
-    char temp[32];
-    snprintf(temp, sizeof temp, " %d PPQN", p);
-#endif
-
     if (filename.empty())
     {
         std::string fn = rc().midi_filename();
         if (! fn.empty())
         {
-            std::string name = shorten_file_spec(fn, c_long_path_max);
-            itemname = name;
+
+            std::string path;
+            std::string name;
+            if (filename_split(fn, path, name))
+                itemname = name;
+            else
+                itemname = shorten_file_spec(fn, c_long_path_max);
         }
     }
     else
         itemname = filename;
 
-#if defined SHOW_PPQN_IN_WINDOW_TITLE
-    result += itemname + std::string(temp);
-#else
-    result += filename_base(itemname);
-#endif
-
+    result += itemname;
     return result;
 }
 
@@ -7822,14 +7815,6 @@ performer::set_record_style (recordstyle rs)
     if (rs < recordstyle::max)
     {
         usr().grid_record_style(rs);
-        if (rs == recordstyle::none)
-        {
-            /*
-             * Should we turn off quantization?
-             */
-
-            m_record_mode = recordmode::normal;     /* turn off quantize    */
-        }
         notify_automation_change(automation::slot::loop_mode);
         notify_automation_change(automation::slot::quan_record);
     }
@@ -7842,12 +7827,12 @@ performer::automation_record_style
     int index, bool inverse
 )
 {
-    std::string name = "Record Overdub"; // opcontrol::slot_name(index)
+    std::string name = "Record Style"; // opcontrol::slot_name(index)
     bool result = true;
     print_parameters(name, a, d0, d1, index, inverse);
     if (a == automation::action::on && ! inverse)
     {
-        automation::slot s = automation::int_to_slot_cast(index);
+        automation::slot s = int_to_slot_cast(index);
         recordstyle rs;
         switch (s)
         {
@@ -7872,6 +7857,53 @@ performer::automation_record_style
                 break;
         }
         set_record_style(rs);
+    }
+    return result;
+}
+
+/**
+ *  Values are none, merge, overwrite, expand, and one-shot.
+ */
+
+void
+performer::set_grid_mode (gridmode gm)
+{
+    if (gm < gridmode::max)
+    {
+        usr().grid_mode(gm);
+        notify_automation_change(automation::slot::loop_mode);
+    }
+}
+
+bool
+performer::automation_grid_mode
+(
+    automation::action a, int d0, int d1,
+    int index, bool inverse
+)
+{
+    std::string name = "Grid Mode";
+    bool result = true;
+    print_parameters(name, a, d0, d1, index, inverse);
+    if (a == automation::action::on && ! inverse)
+    {
+        automation::slot s = int_to_slot_cast(index);
+        gridmode gm;
+        switch (s)
+        {
+            case automation::slot::grid_loop:
+                gm = gridmode::loop;
+                break;
+
+            case automation::slot::record_overwrite:
+                gm = gridmode::record;
+                break;
+
+            default:
+                gm = gridmode::max;
+                break;
+        }
+        set_grid_mode(gm);
     }
     return result;
 }
@@ -7978,16 +8010,46 @@ performer::sm_auto_func_list [] =
         automation::slot::record_oneshot,
         &performer::automation_record_style
     },
-    { automation::slot::grid_loop,          &performer::automation_no_op },
-    { automation::slot::grid_record,        &performer::automation_no_op },
-    { automation::slot::grid_copy,          &performer::automation_no_op },
-    { automation::slot::grid_paste,         &performer::automation_no_op },
-    { automation::slot::grid_clear,         &performer::automation_no_op },
-    { automation::slot::grid_delete,        &performer::automation_no_op },
-    { automation::slot::grid_thru,          &performer::automation_no_op },
-    { automation::slot::grid_solo,          &performer::automation_no_op },
-    { automation::slot::grid_velocity,      &performer::automation_no_op },
-    { automation::slot::grid_double,        &performer::automation_no_op },
+    {
+        automation::slot::grid_loop,
+        &performer::automation_grid_mode
+    },
+    {
+        automation::slot::grid_record,
+        &performer::automation_grid_mode
+    },
+    {
+        automation::slot::grid_copy,
+        &performer::automation_grid_mode
+    },
+    {
+        automation::slot::grid_paste,
+        &performer::automation_grid_mode
+    },
+    {
+        automation::slot::grid_clear,
+        &performer::automation_grid_mode
+    },
+    {
+        automation::slot::grid_delete,
+        &performer::automation_grid_mode
+    },
+    {
+        automation::slot::grid_thru,
+        &performer::automation_grid_mode
+    },
+    {
+        automation::slot::grid_solo,
+        &performer::automation_grid_mode
+    },
+    {
+        automation::slot::grid_velocity,
+        &performer::automation_grid_mode
+    },
+    {
+        automation::slot::grid_double,
+        &performer::automation_grid_mode
+    },
 
     /*
      * Grid quantization type selection.

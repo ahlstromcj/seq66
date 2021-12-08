@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-24
+ * \updates       2021-12-08
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1477,12 +1477,17 @@ qsmainwnd::conditional_update ()
         m_is_looping = perf().looping();
         ui->btnLoop->setChecked(m_is_looping);
     }
-    if (m_control_status != perf().ctrl_status())
-    {
-        m_control_status = perf().ctrl_status();
-        if (not_nullptr(m_live_frame))
-            m_live_frame->set_mode_text(perf().ctrl_status_string());
-    }
+
+    /*
+     * Currently removed from the live frame.
+     *
+     *  if (m_control_status != perf().ctrl_status())
+     *  {
+     *      m_control_status = perf().ctrl_status();
+     *      if (not_nullptr(m_live_frame))
+     *          m_live_frame->set_mode_text(perf().ctrl_status_string());
+     *  }
+     */
 
     midipulse tick = perf().get_tick();
     if (tick != m_previous_tick)

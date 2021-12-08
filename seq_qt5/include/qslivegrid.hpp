@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-12-02
+ * \updates       2021-12-08
  * \license       GNU GPLv2 or above
  *
  *
@@ -113,7 +113,6 @@ private:                            // overrides of qslivebase functions
 #endif
 
     virtual void color_by_number (int i) override;
-    virtual void set_mode_text (const std::string & mode = "") override;
     virtual void set_playlist_name
     (
         const std::string & plname = "",
@@ -173,6 +172,8 @@ private:
     void sequence_key_check ();
     void show_grid_record_style ();
     void show_record_mode ();
+    void populate_grid_mode ();
+    void set_grid_mode ();
 
 signals:
 
@@ -198,6 +199,7 @@ private slots:
     void slot_activate_bank (bool clicked);
     void slot_grid_record_style (bool clicked);
     void slot_record_mode (bool clicked);
+    void slot_grid_mode (int index);
 
 private:
 

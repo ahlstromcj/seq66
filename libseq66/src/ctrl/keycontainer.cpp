@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-07
+ * \updates       2021-12-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -566,7 +566,7 @@ keycontainer::add_defaults ()
     int ausmax = int(keys_automation().size()) - 1;     /* stop before 0xff */
     for (int auslot = 0; auslot < ausmax; ++auslot)
     {
-        automation::slot s = automation::int_to_slot_cast(auslot);
+        automation::slot s = int_to_slot_cast(auslot);
         automation::action a = keys_automation()[auslot].kd_action;
         std::string nametag = opcontrol::automation_slot_name(s);
         std::string keyname = keys_automation()[auslot].kd_name;
