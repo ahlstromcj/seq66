@@ -622,11 +622,11 @@ usrsettings::grid_mode_label (gridmode gm) const
     case gridmode::record:          result = "Record";      break;
     case gridmode::copy:            result = "Copy";        break;
     case gridmode::paste:           result = "Paste";       break;
-    case gridmode::slot_clear:      result = "Clear";       break;
-    case gridmode::slot_delete:     result = "Delete";      break;
+    case gridmode::clear:           result = "Clear";       break;
+    case gridmode::remove:          result = "Delete";      break;
     case gridmode::thru:            result = "Thru";        break;
     case gridmode::solo:            result = "Solo";        break;
-    case gridmode::velocity:        result = "Velocity";    break;
+    case gridmode::cut:             result = "Cut";         break;
     case gridmode::double_length:   result = "Double";      break;
     default:                        result = "Error";       break;
     }

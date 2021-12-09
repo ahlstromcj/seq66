@@ -146,11 +146,11 @@ enum class gridmode
     record,             /**< Use one of the available recording modes.  */
     copy,               /**< Copy any pattern that is selected.         */
     paste,              /**< Paste the copied pattern to selected slot. */
-    slot_clear,         /**< Clear all events in selected pattern slot. */
-    slot_delete,        /**< Delete the pattern from the selected slot. */
+    clear,              /**< Clear all events in selected pattern slot. */
+    remove,             /**< Delete the pattern from the selected slot. */
     thru,               /**< Set MIDI Thru for the selected pattern.    */
     solo,               /**< Solo the selected pattern.                 */
-    velocity,           /**< Toggle between Free & hard-wired velocity. */
+    cut,                /**< Cut a pattern (copy and delete).           */
     double_length,      /**< Double the length of the selected pattern. */
     max                 /**< Provides an illegal/length value.          */
 };

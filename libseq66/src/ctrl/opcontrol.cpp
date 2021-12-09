@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2021-12-07
+ * \updates       2021-12-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -186,7 +186,7 @@ opcontrol::automation_slot_name (slot s)
         "BPM Page Up",          // 14 bpm_page_up
         "BPM Page Dn",          // 15 bpm_page_dn
         "Set Set",              // 16 ss_set
-        "Loop Mode",            // 17 loop_mode
+        "Loop Mode",            // 17 loop_mode (increment/decrement)
         "Quan Record",          // 18 quan_record
         "Reset Sets",           // 19 reset_sets
         "One-shot",             // 20 mod_oneshot *
@@ -228,30 +228,30 @@ opcontrol::automation_slot_name (slot s)
          * Proposed massive expansion in automation. Grid mode selection.
          */
 
-        "Record Overdub",       // 49: record_overdub
-        "Record Overwrite",     // 50: record_overwrite
-        "Record Expand",        // 51: record_expand
-        "Record Oneshot",       // 52: record_oneshot
-        "Grid Loop",            // 53: grid_loop
-        "Grid Record",          // 54: grid_record
-        "Grid Copy",            // 55: grid_copy
-        "Grid Paste",           // 56: grid_paste
-        "Grid Clear",           // 57: grid_clear
-        "Grid Delete",          // 58: grid_delete
-        "Grid Thru",            // 59: grid_thru
-        "Grid Solo",            // 60: grid_solo
-        "Grid Velocity",        // 61: grid_velocity
-        "Grid Double",          // 62: grid_double
+        "Overdub",              // 49: record_overdub
+        "Overwrite",            // 50: record_overwrite
+        "Expand",               // 51: record_expand
+        "Oneshot",              // 52: record_oneshot
+        "Loop",                 // 53: grid_loop
+        "Record",               // 54: grid_record
+        "Copy",                 // 55: grid_copy
+        "Paste",                // 56: grid_paste
+        "Clear",                // 57: grid_clear
+        "Delete",               // 58: grid_delete
+        "Thru",                 // 59: grid_thru
+        "Solo",                 // 60: grid_solo
+        "Cut",                  // 61: grid_velocity
+        "Double",               // 62: grid_double
 
         /*
          * Grid quantization type selection.
          */
 
-        "Quant None",           // 63: grid_quant_none
-        "Quant Full",           // 64: grid_quant_full
-        "Quant Tighten",        // 65: grid_quant_tighten
-        "Quant Random",         // 66: grid_quant_random
-        "Quant Jitter",         // 67: grid_quant_jitter
+        "Q None",               // 63: grid_quant_none
+        "Q Full",               // 64: grid_quant_full
+        "Q Tighten",            // 65: grid_quant_tighten
+        "Q Random",             // 66: grid_quant_random
+        "Q Jitter",             // 67: grid_quant_jitter
         "Reserved 68",          // 68: grid_quant_68
 
         /*

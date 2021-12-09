@@ -154,7 +154,7 @@ qslivegrid::qslivegrid
     ui->setupUi(this);
     m_msg_box = new QMessageBox(this);
     m_msg_box->setText(tr("A pattern is present."));
-    m_msg_box->setInformativeText(tr("Overwrite it with a blank pattern?"));
+    m_msg_box->setInformativeText(tr("Overwrite with a blank pattern?"));
     m_msg_box->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     m_msg_box->setDefaultButton(QMessageBox::No);
 
@@ -248,7 +248,7 @@ void
 qslivegrid::populate_grid_mode ()
 {
     ui->comboGridMode->clear();
-    int ending = usr().grid_mode_code(gridmode::record);   // FOR NOW
+    int ending = usr().grid_mode_code(gridmode::double_length);
     for (int counter = 0; counter <= ending; ++counter)
     {
         gridmode gm = usr().grid_mode(counter);
@@ -510,7 +510,6 @@ qslivegrid::create_one_button (seq::number seqno)
 {
     qslotbutton * result = nullptr;
     int row, column;
-//  bool valid = seq_to_grid(seqno, row, column, is_external());
     bool valid = perf().seq_to_grid(seqno, row, column, is_external());
     if (valid)
     {
@@ -1322,7 +1321,7 @@ qslivegrid::copy_sequence ()
 {
     if (qslivebase::copy_seq())
     {
-        // no code
+        // no other code needed here
     }
 }
 

@@ -256,10 +256,10 @@ enum class slot
     grid_copy,          /**< 55: Grid slot copies the pattern.              */
     grid_paste,         /**< 56: Grid slot pastes to the pattern.           */
     grid_clear,         /**< 57: Grid slot clears only events.              */
-    grid_delete,        /**< 58: Grid slot deletes the pattern.             */
+    grid_delete,        /**< 58: Grid slot deletes (removes) the pattern.   */
     grid_thru,          /**< 59: Grid slot turns on MIDI thru.              */
     grid_solo,          /**< 60: Grid slot turns on solo.                   */
-    grid_velocity,      /**< 61: Grid slot toggles free velocity.           */
+    grid_cut,           /**< 61: Grid slot cuts the pattern.                */
     grid_double,        /**< 62: Grid slot doubles the pattern length.      */
 
     /*

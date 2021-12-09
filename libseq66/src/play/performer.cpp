@@ -3041,11 +3041,11 @@ performer::set_overwrite_recording (seq::number seqno, bool oactive, bool toggle
 /**
  *  Encapsulates code used by seqedit::thru_change_callback().
  *
- * \param recordon
- *      Provides the current status of the Record button.
- *
  * \param thruon
  *      Provides the current status of the Thru button.
+ *
+ * \param toggle
+ *      Indicates to toggle the status.
  *
  * \param s
  *      The sequence that the seqedit window represents.  This pointer is
@@ -6074,12 +6074,50 @@ performer::loop_control
         {
             if (usr().no_grid_record())
             {
-                if (a == automation::action::toggle)
-                    (void) sequence_playing_toggle(seqno);
-                else if (a == automation::action::on)
-                    (void) sequence_playing_change(seqno, true);
-                else if (a == automation::action::off)
-                    (void) sequence_playing_change(seqno, false);
+                gridmode gm = usr().grid_mode();
+                if (gm == gridmode::loop)
+                {
+                    if (a == automation::action::toggle)
+                        (void) sequence_playing_toggle(seqno);
+                    else if (a == automation::action::on)
+                        (void) sequence_playing_change(seqno, true);
+                    else if (a == automation::action::off)
+                        (void) sequence_playing_change(seqno, false);
+                }
+                else if (gm == gridmode::copy)
+                {
+                    result = copy_sequence(seqno);
+                }
+                else if (gm == gridmode::paste)
+                {
+                    result = paste_sequence(seqno);
+                }
+                else if (gm == gridmode::clear)
+                {
+                    // TODO:  need a clear_sequence() function and an
+                    //        entry in qslivebase and the qslivegrid macro
+                }
+                else if (gm == gridmode::remove)
+                {
+                    result = remove_sequence(seqno);
+                }
+                else if (gm == gridmode::thru)
+                {
+                    seq::pointer s = get_sequence(seqno);
+                    result = set_thru(s, false, true);  /* true --> toggle  */
+                }
+                else if (gm == gridmode::solo)
+                {
+                    result = replace_for_solo(seqno);   /* is this valid?   */
+                }
+                else if (gm == gridmode::cut)
+                {
+                    result = cut_sequence(seqno);
+                }
+                else if (gm == gridmode::double_length)
+                {
+                    // TODO
+                }
             }
             else
             {
@@ -7895,8 +7933,40 @@ performer::automation_grid_mode
                 gm = gridmode::loop;
                 break;
 
-            case automation::slot::record_overwrite:
+            case automation::slot::grid_record:
                 gm = gridmode::record;
+                break;
+
+            case automation::slot::grid_copy:
+                gm = gridmode::copy;
+                break;
+
+            case automation::slot::grid_paste:
+                gm = gridmode::paste;
+                break;
+
+            case automation::slot::grid_clear:
+                gm = gridmode::clear;
+                break;
+
+            case automation::slot::grid_delete:
+                gm = gridmode::remove;
+                break;
+
+            case automation::slot::grid_thru:
+                gm = gridmode::thru;
+                break;
+
+            case automation::slot::grid_solo:
+                gm = gridmode::solo;
+                break;
+
+            case automation::slot::grid_cut:
+                gm = gridmode::cut;
+                break;
+
+            case automation::slot::grid_double:
+                gm = gridmode::double_length;
                 break;
 
             default:
@@ -8043,7 +8113,7 @@ performer::sm_auto_func_list [] =
         &performer::automation_grid_mode
     },
     {
-        automation::slot::grid_velocity,
+        automation::slot::grid_cut,
         &performer::automation_grid_mode
     },
     {
