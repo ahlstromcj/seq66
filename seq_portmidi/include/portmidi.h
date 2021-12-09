@@ -25,12 +25,12 @@
  *      PortMidi Portable Real-Time MIDI Library, PortMidi API Header File,
  *      Latest version available at:
  *
- *          http://sourceforge.net/projects/portmedia.
+ *          http://sourceforge.net/projects/portmedia
  *
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2020-07-12
+ * \updates     2021-12-09
  * \license     GNU GPLv2 or above
  *
  * Copyright (c) 1999-2000 Ross Bencina and Phil Burk
@@ -111,6 +111,10 @@ PMEXPORT PmError Pm_OpenOutput
     void * time_info,
     int32_t latency
 );
+
+#if defined USE_C_MILLISLEEP
+PMEXPORT void c_millisleep (int ms);
+#endif
 
 /*
  * Filter bit-mask definitions

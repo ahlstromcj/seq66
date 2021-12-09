@@ -80,8 +80,7 @@ recmutex::init_global_mutex ()
  *  Constructor for recmutex.
  */
 
-recmutex::recmutex () :
-    m_mutex_lock ()                     /* uninitialized pthread_mutex_t    */
+recmutex::recmutex () : m_mutex_lock () /* uninitialized pthread_mutex_t    */
 {
     init_global_mutex();                /* might not need global mutex, tho */
     m_mutex_lock = MUTEX_INITIALIZER;

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-12-08
+ * \updates       2021-12-09
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -252,9 +252,11 @@ qslivegrid::populate_grid_mode ()
     for (int counter = 0; counter <= ending; ++counter)
     {
         gridmode gm = usr().grid_mode(counter);
+        bool enabled = gm != gridmode::clear && gm != gridmode::double_length;
         std::string modename = usr().grid_mode_label(gm);
         QString combotext(qt(modename));
         ui->comboGridMode->insertItem(counter, combotext);
+        enable_combobox_item(ui->comboGridMode, counter, enabled);
     }
 }
 
@@ -1393,11 +1395,11 @@ qslivegrid::slot_grid_record_style (bool /*clicked*/)
 void
 qslivegrid::slot_record_mode (bool /*clicked*/)
 {
-    perf().next_record_mode();
+    usr().next_record_mode();
 
     /*
      * The "needs-update" flag should get this refreshed by the timer
-     * callback.
+     * callback.  We may need to call the perf automation function!
      *
      * show_record_mode();
      */
@@ -1451,7 +1453,7 @@ qslivegrid::show_record_mode ()
         s_uninitialized = false;
         s_palette = button->palette();
     }
-    if (perf().record_mode() == performer::recordmode::normal)
+    if (usr().record_mode() == recordmode::normal)
     {
         button->setPalette(s_palette);
         button->update();
@@ -1460,13 +1462,13 @@ qslivegrid::show_record_mode ()
     {
         QPalette pal = button->palette();
         QColor c;
-        switch (perf().record_mode())
+        switch (usr().record_mode())
         {
-        case performer::recordmode::quantize:
+        case recordmode::quantize:
             c.setNamedColor("#00C0C0");
             break;
 
-        case performer::recordmode::tighten:
+        case recordmode::tighten:
             c.setNamedColor("#009090");
             break;
 
@@ -1478,7 +1480,7 @@ qslivegrid::show_record_mode ()
         button->setPalette(pal);
         button->update();
     }
-    button->setText(qt(perf().record_mode_label()));
+    button->setText(qt(usr().record_mode_label()));
 }
 
 void

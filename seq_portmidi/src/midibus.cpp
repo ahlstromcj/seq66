@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-11-19
+ * \updates       2021-12-09
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the midibus class.
@@ -108,6 +108,9 @@ midibus::~midibus ()
  *  occur.  FALSE and TRUE are just too limiting.  FALSE == pmNoError and
  *  pmNoData, and TRUE == any other value.
  *
+ *  EXPERIMENTAL for Windows CPU usage. Sleep for one millisecond,
+ *  not 10 microseconds.
+ *
  * \return
  *      Returns 0 if the polling succeeded, and 1 if it failed.
  */
@@ -116,19 +119,14 @@ int
 midibus::api_poll_for_midi ()
 {
     int result = 0;
-    if (not_nullptr(m_pms) && queue_number() >= 0)          /* buss number  */
+    if (not_nullptr(m_pms) && queue_number() >= 0)      /* buss number      */
     {
         PmError err = Pm_Poll(m_pms);
         if (err == pmGotData)
             result = 1;
     }
-
-    /*
-     * EXPERIMENTAL for Windows CPU usage.
-     */
-
-     if (result == 0)
-         (void) microsleep(std_sleep_us());
+    if (result == 0)
+         (void) microsleep(1000);                       /* std_sleep_us()   */
 
     return result;
 }
@@ -185,7 +183,7 @@ midibus::api_init_in ()
 
 /**
  *  Takes a native event, and encodes to a Windows message, and writes it to
- *  the queue.  It fills a small byte buffer, sets the MIDI channel, make a
+ *  the queue.  It fills a small byte buffer, sets the MIDI channel, makes a
  *  message of it, and writes the message.
  *
  * \question

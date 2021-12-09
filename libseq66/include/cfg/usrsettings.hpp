@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-12-08
+ * \updates       2021-12-09
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -117,6 +117,31 @@ const int c_use_default_ppqn = (-1);
  */
 
 const int c_use_file_ppqn = 0;
+
+/**
+ *  Provides settings for tempo recording.  Currently not used, though the
+ *  functionality of logging and recording tempo is in place.
+ */
+
+enum class recordtempo
+{
+    log_event,
+    on,
+    off,
+    max
+};
+
+/**
+ *  Indicates the recording mode when recording is in progress.
+ */
+
+enum class recordmode
+{
+    normal,
+    quantize,
+    tighten,        /* not supported yet */
+    max
+};
 
 /**
  *  Provides the supported loop recording modes.  These values are used
@@ -889,6 +914,13 @@ private:
     bool m_new_pattern_wraparound;
 
     /**
+     *  Normal, quantize, or (unsupported) tighten. Indicates if recording into
+     *  a sequence will be quantized or not.
+     */
+
+    recordmode m_record_mode;
+
+    /**
      *  Indicates the recording style mode in use with the 'ctrl' file's
      *  "[loop-control]" section.  The legacy and normal mode if these
      *  keystrokes and MIDI events is the arm/disarm/mute/unmute the patterns
@@ -1594,6 +1626,15 @@ public:
     }
 
     std::string new_pattern_record_string () const;
+
+    recordmode record_mode () const
+    {
+        return m_record_mode;
+    }
+
+    std::string record_mode_label () const;
+    recordmode next_record_mode ();
+    recordmode previous_record_mode ();
     std::string grid_record_style_label () const;
 
     recordstyle grid_record_style () const

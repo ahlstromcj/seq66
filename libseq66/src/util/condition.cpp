@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-15
+ * \updates       2021-12-09
  * \license       GNU GPLv2 or above
  *
  *  2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
@@ -173,6 +173,46 @@ void
 condition::wait (int ms)
 {
     p_imple->wait(ms);
+}
+
+/*
+ * --------------------------------------------------------------------------
+ *  A C++-only implmenation
+ * --------------------------------------------------------------------------
+ *
+ *  See:
+ *
+ *      https://www.modernescpp.com/index.php/
+ *          c-core-guidelines-be-aware-of-the-traps-of-condition-variables
+ */
+
+synchronizer::synchronizer () :
+    m_helper_mutex      (),
+    m_condition_var     (),
+    m_condition_ready   (false)
+{
+    // no other code
+}
+
+bool
+synchronizer::wait ()
+{
+    std::unique_lock<std::mutex> locker(m_helper_mutex);
+    while (! ready())
+    {
+        m_condition_var.wait(locker);
+        if (ready())
+            break;
+    }
+    return true;
+}
+
+void
+synchronizer::signal ()
+{
+    std::lock_guard<std::mutex> locker(m_helper_mutex);
+    m_condition_ready = true;
+    m_condition_var.notify_one();
 }
 
 }           // namespace seq66

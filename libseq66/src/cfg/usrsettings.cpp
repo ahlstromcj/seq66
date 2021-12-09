@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-12-08
+ * \updates       2021-12-09
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -385,6 +385,7 @@ usrsettings::usrsettings () :
     m_new_pattern_qrecord       (false),
     m_new_pattern_record_style  (recordstyle::merge),
     m_new_pattern_wraparound    (false),
+    m_record_mode               (recordmode::normal),
     m_grid_record_style         (recordstyle::merge),
     m_grid_mode                 (gridmode::loop)
 {
@@ -473,9 +474,10 @@ usrsettings::set_defaults ()
     m_new_pattern_qrecord = false;
     m_new_pattern_record_style = recordstyle::merge;
     m_new_pattern_wraparound = false;
+    m_record_mode = recordmode::normal;
     m_grid_record_style = recordstyle::merge;
     m_grid_mode = gridmode::loop;
-    normalize();                            // recalculate derived values
+    normalize();                            /* recalculate derived values   */
 }
 
 /**
@@ -545,6 +547,58 @@ usrsettings::new_pattern_record_string () const
     case recordstyle::oneshot:      result = "one-shot";    break;
     case recordstyle::max:          result = "error";       break;
     }
+    return result;
+}
+
+std::string
+usrsettings::record_mode_label () const
+{
+    std::string result;
+    switch (record_mode())
+    {
+    case recordmode::normal:        result = "No Quan";     break;
+    case recordmode::quantize:      result = "Quantize";    break;
+    case recordmode::tighten:       result = "Tighten";     break;
+    default:                        result = "Normal";      break;
+    }
+    return result;
+}
+
+/*
+ *  In the following two functions, we could have the caller call
+ *
+ *      automation_quan_record(a, (-1), (-1), 0, false)
+ *
+ *  instead, where a = automation::action::toggle/yes/no.
+ */
+
+recordmode
+usrsettings::next_record_mode ()
+{
+    recordmode result;
+    switch (record_mode())
+    {
+    case recordmode::normal:        result = recordmode::quantize;  break;
+    case recordmode::quantize:      result = recordmode::tighten;   break;
+    case recordmode::tighten:       result = recordmode::normal;    break;
+    default:                        result = recordmode::normal;    break;
+    }
+    m_record_mode = result;
+    return result;
+}
+
+recordmode
+usrsettings::previous_record_mode ()
+{
+    recordmode result;
+    switch (record_mode())
+    {
+    case recordmode::normal:        result = recordmode::tighten;   break;
+    case recordmode::quantize:      result = recordmode::normal;    break;
+    case recordmode::tighten:       result = recordmode::quantize;  break;
+    default:                        result = recordmode::normal;    break;
+    }
+    m_record_mode = result;
     return result;
 }
 

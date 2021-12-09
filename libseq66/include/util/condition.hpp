@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-15
+ * \updates       2021-12-09
  * \license       GNU GPLv2 or above
  *
  *  This module defines the class seq66::condition_var, which provides a common
@@ -37,6 +37,9 @@
  *
  *  2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
  */
+
+#include <atomic>
+#include <condition_variable>
 
 #include "util/recmutex.hpp"            /* seq66::recmutex wrapper class    */
 
@@ -120,6 +123,37 @@ public:
     void wait (int ms);
 
 };          // class condition
+
+/*
+ * --------------------------------------------------------------------------
+ *  A C++-only implmenation
+ * --------------------------------------------------------------------------
+ */
+
+class synchronizer
+{
+
+private:
+
+    std::mutex m_helper_mutex;
+
+    std::condition_variable m_condition_var;
+
+    std::atomic<bool> m_condition_ready;
+
+public:
+
+    synchronizer ();
+
+    bool ready () const
+    {
+        return m_condition_ready;
+    }
+
+    bool wait ();
+    void signal ();
+
+};          // class synchronzier
 
 }           // namespace seq66
 

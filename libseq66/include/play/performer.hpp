@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-12-08
+ * \updates       2021-12-09
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -54,6 +54,8 @@
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "play/setmapper.hpp"           /* seq66::seqmanager and seqstatus  */
 #include "util/condition.hpp"           /* seq66::condition (variable)      */
+
+#undef  USE_SYNCHRONIZER_CLASS          /* EXPERIMENTAL, has seqfault issue */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -118,31 +120,6 @@ class performer
 #endif  // SEQ66_JACK_SUPPORT
 
 public:
-
-    /**
-     *  Provides settings for tempo recording.  Currently not used, though the
-     *  functionality of logging and recording tempo is in place.
-     */
-
-    enum class recordtempo
-    {
-        log_event,
-        on,
-        off,
-        max
-    };
-
-    /**
-     *  Indicates the recording mode when recording is in progress.
-     */
-
-    enum class recordmode
-    {
-        normal,
-        quantize,
-        tighten,        /* not supported yet */
-        max
-    };
 
     /**
      *  Provides a setting for the fast-forward and rewind functionality.
@@ -599,13 +576,6 @@ private:                            /* key, midi, and op container section  */
     bool m_looping;
 
     /**
-     *  Normal, quantize, or (unsupported) tighten. Indicates if recording into
-     *  a sequence will be quantized or not.
-     */
-
-    recordmode m_record_mode;
-
-    /**
      *  Indicates to record live sequence-trigger changes into the Song data.
      */
 
@@ -855,7 +825,11 @@ private:                            /* key, midi, and op container section  */
      *  signalled in the performer destructor.
      */
 
+#if defined USE_SYNCHRONIZER_CLASS
+    synchronizer m_condition_var;
+#else
     condition m_condition_var;
+#endif
 
 #if defined SEQ66_JACK_SUPPORT
 
@@ -2745,15 +2719,6 @@ public:
 
     bool are_any_armed ();
 
-    recordmode record_mode () const
-    {
-        return m_record_mode;
-    }
-
-    std::string record_mode_label () const;
-    recordmode next_record_mode ();
-    recordmode previous_record_mode ();
-
     /*
      * This is a long-standing request from user's, adapted from Kepler34.
      */
@@ -3306,10 +3271,17 @@ private:
     void midi_song_pos (const event & ev);
     void midi_sysex (const event & ev);
 
+#if defined USE_SYNCHRONIZER_CLASS
+    synchronizer & cv ()
+    {
+        return m_condition_var;
+    }
+#else
     condition & cv ()
     {
         return m_condition_var;
     }
+#endif
 
 private:
 

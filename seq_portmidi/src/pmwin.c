@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2021-06-23
+ * \updates     2021-12-09
  * \license     GNU GPLv2 or above
 
  *  This file needs to implement pm_init(), which calls various routines to
@@ -35,6 +35,7 @@
  *  might need to register devices for WinMM, DirectX, and others.
  */
 
+#include <windows.h>
 #include <stdlib.h>
 
 #include "util/basic_macros.h"          /* not_nullptr() macro, etc.        */
@@ -42,12 +43,6 @@
 #include "pmutil.h"
 #include "pmwinmm.h"
 #include "portmidi.h"
-
-#if defined SEQ66_PLATFORM_DEBUG
-#include <stdio.h>
-#endif
-
-#include <windows.h>
 
 /**
  *  This macro is part of Microsoft's tchar.h, but we want to use it only as

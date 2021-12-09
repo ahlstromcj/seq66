@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2021-11-29
+ * \updates       2021-12-09
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -38,7 +38,11 @@
 #include "seq66_features.hpp"           /* feature macros, seq66 namespace  */
 
 #if defined SEQ66_PLATFORM_UNIX
-#include <unistd.h>                     /* C::write(2)                      */
+#include <unistd.h>                     /* C::isatty(3)                     */
+#endif
+
+#if defined SEQ66_PLATFORM_WINDOWS
+#include <io.h>                         /* C::_isatty() for Windows         */
 #endif
 
 /*

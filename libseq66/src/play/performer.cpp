@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-12-08
+ * \updates       2021-12-09
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -389,7 +389,6 @@ performer::performer (int ppqn, int rows, int columns) :
     m_needs_update          (true),
     m_is_busy               (false),            /* try this flag for now    */
     m_looping               (false),
-    m_record_mode           (recordmode::normal),
     m_song_recording        (false),
     m_song_record_snap      (true),
     m_resume_note_ons       (usr().resume_note_ons()),
@@ -1567,10 +1566,14 @@ performer::inner_start ()
             is_running(true);
             pad().js_jack_stopped = false;
 
+#if defined USE_SYNCHRONIZER_CLASS
+            cv().signal();
+#else
 #if ! defined SEQ66_PLATFORM_WINDOWS
             automutex lk(cv().locker());        /* use condition's recmutex */
 #endif
             cv().signal();
+#endif
             send_onoff_event(midicontrolout::uiaction::play, true);
             send_onoff_event(midicontrolout::uiaction::panic, false);
         }
@@ -2643,7 +2646,11 @@ performer::finish ()
         announce_exit(true);                /* blank device completely      */
         midi_control_out().send_macro(midimacros::shutdown);
         m_io_active = m_is_running = false;
+#if defined USE_SYNCHRONIZER_CLASS
         cv().signal();                      /* signal the end of play       */
+#else
+        cv().signal();                      /* signal the end of play       */
+#endif
         if (m_out_thread_launched && m_out_thread.joinable())
         {
             m_out_thread.join();
@@ -3233,6 +3240,9 @@ performer::output_func ()
     show_cpu();
     while (m_io_active)                     /* this variable is now atomic  */
     {
+#if defined USE_SYNCHRONIZER_CLASS
+        cv().wait();
+#else
         SEQ66_SCOPE_LOCK                    /* only a marker macro          */
         {
             automutex lk(cv().locker());    /* deadlock?                    */
@@ -3243,6 +3253,7 @@ performer::output_func ()
                     break;
             }
         }
+#endif
         if (done())                         /* we're done, quit working     */
             break;
 
@@ -3439,9 +3450,16 @@ performer::output_func ()
             }
             else
             {
-                print_client_tag(msglevel::warn);
-                fprintf(stderr, "Play underrun %ld us          \r", delta_us);
-                (void) microsleep(1);
+                if (delta_us != 0)
+                {
+                    print_client_tag(msglevel::warn);
+                    fprintf
+                    (
+                        stderr, "Play underrun %ld us          \r",
+                        delta_us
+                    );
+                    (void) microsleep(1);
+                }
             }
             if (pad().js_jack_stopped)
                 inner_stop();
@@ -5277,60 +5295,6 @@ performer::replace_for_solo (seq::number seqno)
     return result;
 }
 
-std::string
-performer::record_mode_label () const
-{
-    std::string result;
-    switch (record_mode())
-    {
-    case recordmode::normal:        result = "Normal";      break;
-    case recordmode::quantize:      result = "Quantize";    break;
-    case recordmode::tighten:       result = "Tighten";     break;
-    default:                        result = "Normal";      break;
-    }
-    return result;
-}
-
-/*
- *  In the following two functions, we could have the caller call
- *
- *      automation_quan_record(a, (-1), (-1), 0, false)
- *
- *  instead, where a = automation::action::toggle/yes/no.
- */
-
-performer::recordmode
-performer::next_record_mode ()
-{
-    recordmode result;
-    switch (record_mode())
-    {
-    case recordmode::normal:        result = recordmode::quantize;  break;
-    case recordmode::quantize:      result = recordmode::tighten;   break;
-    case recordmode::tighten:       result = recordmode::normal;    break;
-    default:                        result = recordmode::normal;    break;
-    }
-    m_record_mode = result;
-    notify_automation_change(automation::slot::quan_record);
-    return result;
-}
-
-performer::recordmode
-performer::previous_record_mode ()
-{
-    recordmode result;
-    switch (record_mode())
-    {
-    case recordmode::normal:        result = recordmode::tighten;   break;
-    case recordmode::quantize:      result = recordmode::normal;    break;
-    case recordmode::tighten:       result = recordmode::quantize;  break;
-    default:                        result = recordmode::normal;    break;
-    }
-    m_record_mode = result;
-    notify_automation_change(automation::slot::quan_record);
-    return result;
-}
-
 sequence::playback
 performer::toggle_song_start_mode ()
 {
@@ -6131,11 +6095,11 @@ performer::loop_control
                     else if (a == automation::action::on)
                         rec = true;
 
-                    if (m_record_mode == recordmode::normal)
+                    if (usr().record_mode() == recordmode::normal)
                         result = set_recording(s, rec, toggle);
-                    else if (m_record_mode == recordmode::quantize)
+                    else if (usr().record_mode() == recordmode::quantize)
                         result = set_quantized_recording(s, rec, toggle);
-                    else if (m_record_mode == recordmode::tighten)
+                    else if (usr().record_mode() == recordmode::tighten)
                         result = set_tightened_recording(s, rec, toggle);
                 }
             }
@@ -6836,17 +6800,13 @@ performer::automation_quan_record
     if (! inverse)
     {
         if (a == automation::action::toggle)
-            (void) next_record_mode();
+            (void) usr().next_record_mode();
         else if (a == automation::action::on)
-            (void) next_record_mode();
+            (void) usr().next_record_mode();
         else if (a == automation::action::off)
-            (void) previous_record_mode();
+            (void) usr().previous_record_mode();
 
-        /*
-         *  Done in the functions called above:
-         *
-         *      notify_automation_change(automation::slot::quan_record);
-         */
+        notify_automation_change(automation::slot::quan_record);
     }
     return true;
 }

@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2021-11-18
+ * \updates     2021-12-09
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -238,13 +238,15 @@ typedef struct midiwinmm_struct
 } midiwinmm_node, * midiwinmm_type;
 
 /**
- *  General MIDI device input queries.  If we can't open a particular system-level
- *  MIDI interface (WinMM), we consider that system/API unavailable and move on
- *  without an error.  This function is called third at startup.
+ *  General MIDI device input queries.  If we can't open a particular
+ *  system-level MIDI interface (WinMM), we consider that system/API
+ *  unavailable and move on without an error.  This function is called third
+ *  at startup.
  *
- *  In the original PortMidi implementation, midiInGetDevCaps() and pm_add_devices
- *  are called for devices 0 to midiInGetNumDevs()-1.  Here, since we may have
- *  already gotten an input mapper, we add to the device index appropriately.
+ *  In the original PortMidi implementation, midiInGetDevCaps() and
+ *  pm_add_devices are called for devices 0 to midiInGetNumDevs()-1.  Here,
+ *  since we may have already gotten an input mapper, we add to the device
+ *  index appropriately.
  */
 
 static void
@@ -729,17 +731,14 @@ found_sysex_buffer:
 
 /**
  *  1. Cycle through buffers, modulo m->num_buffers.
- *
  *  2. Expand SysEx buffer.  If we're trying to send a sysex message, maybe the
  *     message is too big and we need more message buffers.  Expand the buffer
  *     pool by 128KB using 1024-byte buffers.  First, expand the buffers array if
  *     necessary.
- *
  *  3. No Memory.  If no memory, we could return a no-memory error, but user
  *     probably will be unprepared to deal with it. Maybe the MIDI driver is
  *     temporarily hung so we should just wait.  I don't know the right answer,
  *     but waiting is easier.
- *
  *  4. Just Keep Polling. Otherwise, we've allocated all NUM_EXPANSION_BUFFERS
  *     buffers, and we have no free buffers to send. We'll just keep polling to
  *     see if any buffers show up.
@@ -781,7 +780,12 @@ get_free_output_buffer (PmInternal * midi)
                 size_t sz = buffcount * sizeof(LPMIDIHDR);
                 LPMIDIHDR * new_buffers = (LPMIDIHDR *) pm_alloc(sz);
                 if (is_nullptr(new_buffers))        /* 3. No Memory         */
+                {
+#if defined USE_C_MILLISLEEP
+                    c_millisleep(1);
+#endif
                     continue;
+                }
 
                 /*
                  * Copy buffers to new_buffers and replace buffers.
@@ -803,15 +807,24 @@ get_free_output_buffer (PmInternal * midi)
             {
                 r = allocate_buffer(EXPANSION_BUFFER_LEN);
                 if (is_nullptr(r))                  /* 3. No Memory (again) */
+                {
+#if defined USE_C_MILLISLEEP
+                    c_millisleep(1);
+#endif
                     continue;
-
+                }
                 m->buffers[m->num_buffers++] = r;
                 goto found_buffer;                  /* break out of 2 loops */
             }
 
             /*
-             * 4. Just Keep Polling.
+             * 4. Just Keep Polling.  We also add a 1 millisecond wait
+             *    to see if we can reduce CPU usage.
              */
+
+#if defined USE_C_MILLISLEEP
+            c_millisleep(1);
+#endif
         }
     }
 
@@ -940,7 +953,7 @@ winmm_in_open (PmInternal * midi, void * driverInfo)
 
     if (dwDevice == UINT_MIDIMAPPER)
     {
-        pm_log_buffer_append("Opening the MIDI Mapper for input\n");
+        pm_log_buffer_append("Opening MIDI Mapper for input\n");
     }
     else if (dwDevice < 32)            /* sanity check */
     {
@@ -1210,6 +1223,13 @@ winmm_in_callback
             );
             remaining -= amt;
             processed += amt;
+
+            /*
+             * EXPERIMENTAL
+             */
+
+            if (amt == 0)
+                break;
         }
 
         /*
@@ -1806,7 +1826,7 @@ winmm_end_sysex (PmInternal * midi, PmTimestamp timestamp)
 
     /*
      * Something bad happened earlier, do not report an error because it would
-     * have been reported (at least) once already.  a(n old) version of MIDI
+     * have been reported (at least) once already.  A(n old) version of MIDI
      * YOKE requires a zero byte after the sysex message, but do not increment
      * dwBytesRecorded.
      */
@@ -1917,12 +1937,13 @@ winmm_write_byte
     if (hdr->dwBytesRecorded >= hdr->dwBufferLength - 1)
         rslt = winmm_end_sysex(midi, timestamp);
 
-#if 0
+#if defined SEQ66_USE_EXPANDING_SYSEX_BUFFERS
     /*
-     *  This code is here as an aid in case you want sysex buffers to expand to
-     *  hold large messages completely. If so, you will want to change
-     *  SYSEX_BYTES_PER_BUFFER above to some variable that remembers the buffer
-     *  size. A good place to put this value would be in the hdr->dwUser field.
+     *  This code is here as an aid in case you want sysex buffers to expand
+     *  to hold large messages completely. If so, you will want to change
+     *  SYSEX_BYTES_PER_BUFFER above to some variable that remembers the
+     *  buffer size. A good place to put this value would be in the
+     *  hdr->dwUser field.
      *
      *  rslt = resize_sysex_buffer(midi, m->sysex_byte_count,
      *      m->sysex_byte_count * 2); *

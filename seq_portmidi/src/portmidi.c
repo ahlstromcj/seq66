@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2021-08-05
+ * \updates     2021-12-09
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -96,6 +96,16 @@
 #include "pmutil.h"
 #include "portmidi.h"
 #include "porttime.h"
+
+#if defined SEQ66_PLATFORM_LINUX
+#include <unistd.h>                     /* Linux C::usleep() function       */
+#elif defined SEQ66_PLATFORM_UNIX
+#include <sys/select.h>                 /* POSIX C::select() function       */
+#endif
+
+#if defined SEQ66_PLATFORM_WINDOWS
+#include <synchapi.h>                   /* Windows C::Sleep() function      */
+#endif
 
 /**
  *  MIDI status (event) values.
@@ -197,6 +207,36 @@ static int pm_error_present = FALSE;
 
 static char pm_error_message [PM_HOST_ERROR_MSG_LEN];
 
+#if defined USE_C_MILLISLEEP
+
+/**
+ *  A simplistic sleep function for Linux and Windows C code.
+ */
+
+void
+c_millisleep (int ms)
+{
+#if defined SEQ66_PLATFORM_DEBUG
+    fprintf(stderr, "millisleep(%d)\n", ms);
+#endif
+
+#if defined SEQ66_PLATFORM_LINUX
+    (void) usleep(1000 * ms);
+#elif defined SEQ66_PLATFORM_UNIX
+    struct timeval tv;
+    struct timeval * tvptr = &tv;
+    tv.tv_usec = long(ms % 1000) * 1000;
+    tv.tv_sec = long(ms / 1000);
+    (void) select(0, 0, 0, 0, tvptr) != (-1);
+#elif defined SEQ66_PLATFORM_WINDOWS
+    Sleep((DWORD) ms);
+#else
+#error c_millisleep not defined for this platform
+#endif
+}
+
+#endif  // USE_C_MILLISLEEP
+
 /**
  *  Provides a case-insensitive implementation of strstr() that doesn't need a
  *  C extension function.  Not necessarily efficient, and handles only string
@@ -247,7 +287,8 @@ strstrcase (const char * src, const char * target)
             tempsrc[isrc] = (char) tolower((unsigned char) src[isrc]);
 
         for (itarget = 0; itarget < lentarget; ++itarget)
-            temptarget[itarget] = (char) tolower((unsigned char) target[itarget]);
+            temptarget[itarget] =
+                (char) tolower((unsigned char) target[itarget]);
 
         result = not_nullptr(strstr(tempsrc, temptarget));
     }
@@ -393,7 +434,7 @@ Pm_set_error_message (const char * msg)
 const char *
 Pm_error_message (void)
 {
-    static const char * s_unknown_msg = "Unspecified portmidi error";
+    static const char * s_unknown_msg = "portmidi error";
     return pm_error_message[0] == '\0' ?
         s_unknown_msg : &pm_error_message[0] ;
 }
@@ -411,7 +452,7 @@ pm_errmsg (PmError err, int deviceid)
         char temp[PM_STRING_MAX];
         (void) snprintf
         (
-            temp, sizeof temp, "PortMidi host error: [%d] '%s'\n",
+            temp, sizeof temp, "portmidi host error: [%d] '%s'\n",
             deviceid, pm_hosterror_text
         );
         pm_log_buffer_append(temp);
@@ -425,7 +466,7 @@ pm_errmsg (PmError err, int deviceid)
         const char * errmsg = Pm_GetErrorText(err);
         (void) snprintf
         (
-            temp, sizeof temp, "PortMidi call failed: [%d] '%s'\n",
+            temp, sizeof temp, "portmidi call failed: [%d] '%s'\n",
             deviceid, errmsg
         );
         Pm_set_error_message(temp);
@@ -433,7 +474,13 @@ pm_errmsg (PmError err, int deviceid)
     }
     else
     {
-        // Anything to clear if there is no error?
+        /*
+         * Anything to clear if there is no error?
+         */
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        fprintf(stderr, "portmidi debug message\n");
+#endif
     }
     return err;
 }
@@ -532,7 +579,6 @@ pm_add_device
     pm_descriptors[pm_descriptor_index].internalDescriptor = nullptr;
     pm_descriptors[pm_descriptor_index].dictionary = dictionary;
     ++pm_descriptor_index;
-
     snprintf
     (
         temp, sizeof temp, "PortMidi: %s %s added",
@@ -546,6 +592,7 @@ pm_add_device
 
 /**
  *  Utility to look up device, given a pattern. Note: the pattern is modified.
+ *  We first parse pattern into name_pref and interf_pref parts.
  */
 
 int
@@ -553,9 +600,6 @@ pm_find_default_device (char * pattern, int is_input)
 {
     int id = pmNoDevice;
     int i;
-
-    /* first parse pattern into name, interf parts */
-
     char * interf_pref = "";            /* initially assume it's not there  */
     char * name_pref = strstr(pattern, ", ");
     if (name_pref)                      /* found separator, adjust pointer  */
@@ -671,7 +715,10 @@ none_open (PmInternal * UNUSED(midi), void * UNUSED(driverinfo))
 }
 
 static void
-none_get_host_error (PmInternal * UNUSED(midi), char * msg, unsigned UNUSED(len))
+none_get_host_error
+(
+    PmInternal * UNUSED(midi), char * msg, unsigned UNUSED(len)
+)
 {
     *msg = 0;       // empty string
 }
@@ -753,7 +800,7 @@ Pm_GetErrorText (PmError errnum)
         break;
 
     case pmInternalError:
-        msg = "Internal PortMidi error";
+        msg = "Internal portmidi error";
         break;
 
     case pmBufferOverflow:
@@ -873,7 +920,6 @@ Pm_Initialize (void)
 {
     if (! Pm_initialized())
     {
-        // pm_error_present = FALSE, pm_error_message[0] = 0
         pm_descriptor_max = 0;              /* declared in pminternal.h */
         pm_descriptor_index = 0;            /* declared in pminternal.h */
         pm_descriptors = nullptr;           /* declared in pminternal.h */
@@ -988,6 +1034,12 @@ Pm_Read (PortMidiStream * stream, PmEvent * buffer, int32_t length)
             );
             Pm_set_hosterror(TRUE);
         }
+#if defined SEQ66_PLATFORM_DEBUG
+        fprintf(stderr, "Pm_Read error\n");
+#endif
+#if defined USE_C_MILLISLEEP
+        (void) c_millisleep(1);
+#endif
         return pm_errmsg(err, deviceid);
     }
 
@@ -1022,7 +1074,9 @@ Pm_Poll (PortMidiStream * stream)
     PmError result = pmNoError;
     Pm_set_hosterror(FALSE);
     if (is_nullptr(midi))
+    {
         result = pmBadPtr;
+    }
     else
     {
         deviceid = midi->device_id;
@@ -1043,8 +1097,14 @@ Pm_Poll (PortMidiStream * stream)
             );
            Pm_set_hosterror(TRUE);
         }
+#if defined SEQ66_PLATFORM_DEBUG
+        fprintf(stderr, "Pm_Poll error\n");
+#endif
         return pm_errmsg(result, deviceid);
     }
+#if defined SEQ66_PLATFORM_DEBUG
+        fprintf(stderr, "Pm_Poll()\n");
+#endif
     return ! Pm_QueueEmpty(midi->queue);
 }
 
@@ -1096,7 +1156,9 @@ Pm_Write (PortMidiStream * stream, PmEvent * buffer, int32_t length)
     int i;
     int bits;
     if (is_nullptr(midi))
+    {
         err = pmBadPtr;
+    }
     else
     {
         deviceid = midi->device_id;
@@ -1107,7 +1169,6 @@ Pm_Write (PortMidiStream * stream, PmEvent * buffer, int32_t length)
         else
             err = pmNoError;
     }
-
     if (err != pmNoError)
         goto pm_write_error;
 
@@ -1335,6 +1396,9 @@ Pm_WriteSysEx (PortMidiStream * stream, PmTimestamp when, midibyte_t * msg)
     buffer[0].timestamp = when;
     for (;;)
     {
+#if defined SEQ66_PLATFORM_DEBUG
+    fprintf(stderr, "Pm_WriteSysEx\n");
+#endif
         buffer[bufx].message |= ((*msg) << shift); /* put next byte in buffer */
         shift += 8;
         if (*msg++ == MIDI_EOX)
