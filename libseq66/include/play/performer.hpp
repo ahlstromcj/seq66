@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-12-09
+ * \updates       2021-12-10
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -53,9 +53,7 @@
 #include "play/playlist.hpp"            /* seq66::playlist                  */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "play/setmapper.hpp"           /* seq66::seqmanager and seqstatus  */
-#include "util/condition.hpp"           /* seq66::condition (variable)      */
-
-#undef  USE_SYNCHRONIZER_CLASS          /* EXPERIMENTAL, has seqfault issue */
+#include "util/condition.hpp"           /* seq66::condition/synchronizer    */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -149,6 +147,36 @@ public:
         removed,        /**< Change was a removal; more specific than yes.  */
         signal,         /**< Could alter the UI from a different thread.    */
         max
+    };
+
+    /**
+     *  A nest class to provide an implementation of the synchronizer
+     *  class.
+     */
+
+    class synch : public synchronizer
+    {
+
+    private:
+
+        performer & m_perf;
+
+    public:
+
+        synch (performer & p) : synchronizer (), m_perf (p)
+        {
+            // no code
+        }
+
+        synch () = delete;
+        synch (const synch &) = delete;
+        synch & operator =(const synch &) = delete;
+
+        virtual bool predicate () const override
+        {
+            return m_perf.is_running() || m_perf.done();
+        }
+
     };
 
     /**
@@ -542,7 +570,7 @@ private:                            /* key, midi, and op container section  */
      *  flag, m_is_pattern_playing.
      */
 
-    bool m_is_running;
+    std::atomic<bool> m_is_running;
 
     /**
      *  Indicates that a pattern is playing.  It replaces rc_settings ::
@@ -822,14 +850,12 @@ private:                            /* key, midi, and op container section  */
      *  A condition variable to protect playback.  It is signalled if playback
      *  has been started.  The output thread function waits on this variable
      *  until m_is_running and m_io_active are false.  This variable is also
-     *  signalled in the performer destructor.
+     *  signalled in the performer destructor.  This implementation is
+     *  new for 0.98.0, and it avoids segfaults, exit-hangs, and high CPU
+     *  usage in Windows that have occurred with other implmentations.
      */
 
-#if defined USE_SYNCHRONIZER_CLASS
-    synchronizer m_condition_var;
-#else
-    condition m_condition_var;
-#endif
+    synch m_condition_var;
 
 #if defined SEQ66_JACK_SUPPORT
 
@@ -3271,17 +3297,10 @@ private:
     void midi_song_pos (const event & ev);
     void midi_sysex (const event & ev);
 
-#if defined USE_SYNCHRONIZER_CLASS
-    synchronizer & cv ()
+    synch & cv ()
     {
         return m_condition_var;
     }
-#else
-    condition & cv ()
-    {
-        return m_condition_var;
-    }
-#endif
 
 private:
 

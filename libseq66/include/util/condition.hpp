@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-12-09
+ * \updates       2021-12-10
  * \license       GNU GPLv2 or above
  *
  *  This module defines the class seq66::condition_var, which provides a common
@@ -39,7 +39,7 @@
  */
 
 #include <atomic>
-#include <condition_variable>
+#include <condition_variable>           /* for seq66::synchronizer class    */
 
 #include "util/recmutex.hpp"            /* seq66::recmutex wrapper class    */
 
@@ -52,9 +52,9 @@ namespace seq66
 
 /**
  *  A mutex works best in conjunction with a condition variable.  The "has-a"
- *  relationship is more logical than an "is-a" relationship.
- *  Note the additional member function condition::wait_on_predicate(), which
- *  allow the usage of a test function returning a boolean.
+ *  relationship is more logical than an "is-a" relationship.  Note the
+ *  additional member function condition::wait_on_predicate(), which allow the
+ *  usage of a test function returning a boolean.
  */
 
 class condition
@@ -70,19 +70,19 @@ private:
     class impl;
 
     /**
-     *  Provides a recursive mutex that can be used by the whole
-     *  application, and is.
+     *  Provides a recursive mutex that can be used by the whole application,
+     *  and is.
      */
 
     static recmutex sm_recursive_mutex;
 
     /**
-     *  Our recursive mutex (not the normal C++11 non-recursive mutex) used for
-     *  locking the conditional wait operation.  We use our own automutex, not
-     *  the recursive mutex that std::unique_lock<> require.
-     *  Provides a mutex lock usable by a single module or class.
-     *  However, this mutex ends up being a copy of the static
-     *  sm_recursive_mutex (and, of course, a different "object").
+     *  Our recursive mutex (not the normal C++11 non-recursive mutex) used
+     *  for locking the conditional wait operation.  We use our own automutex,
+     *  not the recursive mkutex that std::unique_lock<> require.  Provides a
+     *  mutex lock usable by a single module or class.  However, this mutex
+     *  ends up being a copy of the static sm_recursive_mutex (and, of course,
+     *  a different "object").
      */
 
     mutable recmutex m_mutex_lock;
@@ -135,23 +135,37 @@ class synchronizer
 
 private:
 
+    /**
+     *  Used for locking the condition variable.
+     */
+
     std::mutex m_helper_mutex;
 
-    std::condition_variable m_condition_var;
+    /**
+     *  The new-style (for Seq66) condition variable.  It replaces the pthread
+     *  implementation, at least when used in the performer class.
+     */
 
-    std::atomic<bool> m_condition_ready;
+    std::condition_variable m_condition_var;
 
 public:
 
     synchronizer ();
-
-    bool ready () const
-    {
-        return m_condition_ready;
-    }
+    synchronizer (const synchronizer &) = delete;
+    synchronizer & operator = (const synchronizer &) = delete;
+    virtual ~synchronizer () = default;
 
     bool wait ();
     void signal ();
+
+    /**
+     * The user of this class must derive a class to properly define this
+     * function.  It should return true when some internal thread is ready to
+     * run or when the thread has raised a flag for an exit.  See
+     * performer::predicate() for a useful override.
+     */
+
+    virtual bool predicate () const = 0;
 
 };          // class synchronzier
 

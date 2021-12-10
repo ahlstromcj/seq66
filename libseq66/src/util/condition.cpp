@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-12-09
+ * \updates       2021-12-10
  * \license       GNU GPLv2 or above
  *
  *  2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
@@ -62,15 +62,15 @@ private:
     using variable = pthread_cond_t;
 
     /**
-     *  We need a global condition-variable so that it can coordinate threads in
-     *  different objects.
+     *  We need a global condition-variable so that it can coordinate threads
+     *  in different objects.
      */
 
     static variable sm_cond;
 
     /**
-     *  Provides a class-specific way to wait for a condition to change.  It is
-     *  normally set to the static variable sm_cond.
+     *  Provides a class-specific way to wait for a condition to change.  It
+     *  is normally set to the static variable sm_cond.
      */
 
     variable & m_cond;
@@ -98,8 +98,8 @@ public:
     }
 
     /**
-     *  Waits for the condition variable.  If we use std::condition_variable, we
-     *  would need to provide a non-recursive mutex for locking.  This
+     *  Waits for the condition variable.  If we use std::condition_variable,
+     *  we would need to provide a non-recursive mutex for locking.  This
      *  somehow freezes some things.  A battle we will fight another day.
      */
 
@@ -180,16 +180,25 @@ condition::wait (int ms)
  *  A C++-only implmenation
  * --------------------------------------------------------------------------
  *
- *  See:
+ *  How does the synchronisation work? The program has two threads. They use a
+ *  wait function and a signal function, respectively.  The signal() function
+ *  in one thread notifies, using the condition variable, that it is done with
+ *  the preparation for work. While holding the lock, the other thread waits
+ *  for its notification: using the condition variable, the lock mutex, and
+ *  the predicate function.
  *
- *      https://www.modernescpp.com/index.php/
+ *  The sender and receiver both need a lock. In the case of the sender, a
+ *  std::lock_guard is sufficient, because it calls to lock and unlock only
+ *  once.  In the case of the receiver, a std::unique_lock is necessary
+ *  because it usually frequently locks and unlocks its mutex.
+ *
+ *  See: https://www.modernescpp.com/index.php/
  *          c-core-guidelines-be-aware-of-the-traps-of-condition-variables
  */
 
 synchronizer::synchronizer () :
     m_helper_mutex      (),
-    m_condition_var     (),
-    m_condition_ready   (false)
+    m_condition_var     ()
 {
     // no other code
 }
@@ -198,20 +207,14 @@ bool
 synchronizer::wait ()
 {
     std::unique_lock<std::mutex> locker(m_helper_mutex);
-    while (! ready())
-    {
-        m_condition_var.wait(locker);
-        if (ready())
-            break;
-    }
-    return true;
+    m_condition_var.wait(locker, [this]{ return predicate(); });
+    return predicate();
 }
 
 void
 synchronizer::signal ()
 {
     std::lock_guard<std::mutex> locker(m_helper_mutex);
-    m_condition_ready = true;
     m_condition_var.notify_one();
 }
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-12-09
+ * \updates       2021-12-10
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -422,14 +422,12 @@ performer::performer (int ppqn, int rows, int columns) :
     m_dont_reset_ticks      (false),            /* support for pausing      */
     m_is_modified           (false),
     m_selected_seqs         (),
-    m_condition_var         (),                 /* private access via cv()  */
+    m_condition_var         (*this),            /* private access via cv()  */
 #if defined SEQ66_JACK_SUPPORT
     m_jack_asst
     (
-        *this,
-        usr().bpm_default(),                    /* beats per minute         */
-        m_ppqn,
-        usr().bpb_default(),                    /* beats per bar (measure)  */
+        *this, usr().bpm_default(),             /* beats per minute         */
+        m_ppqn, usr().bpb_default(),            /* beats per bar (measure)  */
         usr().bw_default()                      /* beat width (denominator) */
     ),
 #endif
@@ -1536,8 +1534,8 @@ performer::next_song_mode ()
  *  the condition.
  *
  *  Note that we reverse unlocking/signalling from what Seq64 does (BUG!!!)
- *  Manual unlocking should be done before notifying, to avoid waking waking up
- *  the waiting thread, only to lock again.  See the notify_one() notes for
+ *  Manual unlocking should be done before notifying, to avoid waking waking
+ *  up the waiting thread, only to lock again.  See the notify_one() notes for
  *  details.
  *
  *  This function should be considered the "second thread", that is the thread
@@ -1563,17 +1561,9 @@ performer::inner_start ()
             if (song_mode())
                 off_sequences();                /* mute for song playback   */
 
-            is_running(true);
+            is_running(true);                   /* part of cv()'s predicate */
             pad().js_jack_stopped = false;
-
-#if defined USE_SYNCHRONIZER_CLASS
             cv().signal();
-#else
-#if ! defined SEQ66_PLATFORM_WINDOWS
-            automutex lk(cv().locker());        /* use condition's recmutex */
-#endif
-            cv().signal();
-#endif
             send_onoff_event(midicontrolout::uiaction::play, true);
             send_onoff_event(midicontrolout::uiaction::panic, false);
         }
@@ -2633,6 +2623,9 @@ performer::launch_input_thread ()
  *  in QJackCtl).  So playback starts while loading a MIDI file while Seq66
  *  starts.  Not only is this kind of surprising, it can lead to a seqfault at
  *  random times.
+ *
+ *  Also note that m_is_running and m_io_active are both used in the
+ *  performer::synch::predicate() override.
  */
 
 bool
@@ -2645,12 +2638,9 @@ performer::finish ()
         reset_sequences();                  /* stop all output upon exit    */
         announce_exit(true);                /* blank device completely      */
         midi_control_out().send_macro(midimacros::shutdown);
-        m_io_active = m_is_running = false;
-#if defined USE_SYNCHRONIZER_CLASS
+        m_io_active = false;                /* set done() for predicate     */
+        m_is_running = false;               /* set is_running() off         */
         cv().signal();                      /* signal the end of play       */
-#else
-        cv().signal();                      /* signal the end of play       */
-#endif
         if (m_out_thread_launched && m_out_thread.joinable())
         {
             m_out_thread.join();
@@ -3240,21 +3230,8 @@ performer::output_func ()
     show_cpu();
     while (m_io_active)                     /* this variable is now atomic  */
     {
-#if defined USE_SYNCHRONIZER_CLASS
-        cv().wait();
-#else
-        SEQ66_SCOPE_LOCK                    /* only a marker macro          */
-        {
-            automutex lk(cv().locker());    /* deadlock?                    */
-            while (! is_running())
-            {
-                cv().wait();
-                if (done())                 /* if stopping, kill the thread */
-                    break;
-            }
-        }
-#endif
-        if (done())                         /* we're done, quit working     */
+        cv().wait();                        /* lock mutex, predicate wait   */
+        if (done())                         /* if stopping, kill the thread */
             break;
 
         pad().initialize(0, looping(), song_mode());
