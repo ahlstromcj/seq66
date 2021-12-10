@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-11-18
+ * \updates       2021-12-10
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -338,6 +338,7 @@ protected:
         const std::string & configtype,
         const std::string & version
     );
+    void write_seq66_footer (std::ofstream & file);
     bool get_boolean
     (
         std::ifstream & file,

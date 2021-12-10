@@ -248,16 +248,34 @@
 
    \begin{verbatim}
       [loop-control]
-       0 "1"  [ 0x90  0 1 127 ] [ 0x90  0 1 127 ] ...
-       1 "q"  [ 0x90 16 1 127 ] [ 0x90 16 1 127 ] ...
-       2 "a"  [ 0x90 32 1 127 ] [ 0x90 32 1 127 ] ...
-       3 "z"  [ 0x90 48 1 127 ] [ 0x90 48 1 127 ] ...
+       0 "1"  [ 0x90  0 1 127 ] [ 0x00  0 1 127 ] [ 0x00  0 1 127 ] ...
+       1 "q"  [ 0x90 16 1 127 ] [ 0x00  0 1 127 ] [ 0x00 16 1 127 ] ...
+       2 "a"  [ 0x90 32 1 127 ] [ 0x00 32 1 127 ] [ 0x00 32 1 127 ] ...
+       3 "z"  [ 0x90 48 1 127 ] [ 0x00 48 1 127 ] [ 0x00 48 1 127 ] ...
+       . . .
    \end{verbatim}
 
-   The note values (0, 16, 32, 48) are in decimal. Why?  Less to type.
-   The whole section is 32 lines, so only the top 4 rows of the Mini are
-   assigned to loop-control by this configuration file.  The pattern numbers are
-   shown inside each Mini slot:
+   The note values (0, 16, 32, 48) are in decimal. Why?
+   Less to type, easier to understand.
+   The whole \texttt{[loop-control]} section is 32 lines;
+   only the top 4 rows of the Mini are shown here.
+   Also note that, above, only the "Toggle" stanza is active.
+   The "On" and "Off" stanzas use "0x00", which disables them, even
+   if some data values are specified.
+
+   If we want the loop armed only while the button is held, we would
+   define something like:
+
+   \begin{verbatim}
+      [loop-control]
+       0 "1"  [ 0x00  0 1 127 ] [ 0x90  0 1 127 ] [ 0x80  0 1 127 ] ...
+       1 "q"  [ 0x00 16 1 127 ] [ 0x90  0 1 127 ] [ 0x80 16 1 127 ] ...
+       2 "a"  [ 0x00 32 1 127 ] [ 0x90 32 1 127 ] [ 0x80 32 1 127 ] ...
+       3 "z"  [ 0x00 48 1 127 ] [ 0x90 48 1 127 ] [ 0x80 48 1 127 ] ...
+       . . .
+   \end{verbatim}
+
+   The pattern-number mapping for each Mini slot:
 
    \begin{verbatim}
         1     2     3     4     5     6     7     8 
@@ -267,8 +285,8 @@
       [  3 ] [  7 ] [ 11 ] [ 15 ] [ 19 ] [ 23 ] [ 27 ] [ 31 ] D
    \end{verbatim}
 
-   By pressing the appropriate button on the Mini, a pattern toggles between being
-   armed and being muted.
+   By pressing the appropriate button on the Mini, a pattern toggles between
+   being armed and being muted.
 
 \paragraph{[mute-group-control]}
 \label{paragraph:patterns_mute_group_control}

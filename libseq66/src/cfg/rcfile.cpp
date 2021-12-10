@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-06
+ * \updates       2021-12-10
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -1115,15 +1115,7 @@ rcfile::write ()
             write_string(file, noname, rfilespec, true);
         }
     }
-
-    /*
-     * EOF
-     */
-
-    file << "\n# End of " << name()
-        << "\n#\n# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
-        ;
-
+    write_seq66_footer(file);
     file.close();
     return true;
 }

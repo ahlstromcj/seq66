@@ -1,7 +1,7 @@
 # Seq66 0.97.2 user ('usr') configuration file
 #
 # /home/usr/.config/seq66/qseq66.usr
-# Written 2021-11-04 14:00:24
+# Written 2021-12-03 07:49:33
 #
 # 'usr' file. Edit it and place it in $HOME/.config/seq66. It allows
 # aliases (alternate names) to each MIDI bus/port, channel, and
@@ -172,7 +172,7 @@ bpm-maximum = 600
 [user-options]
 
 daemonize = false
-log = "/home/user/.config/seq66/log"
+log = "/home/user/.config/seq66/seq66.log"
 
 # [user-ui-tweaks]
 #
@@ -223,16 +223,17 @@ lock-main-window = false
 # [user-session]
 #
 # The session manager to use, if any. The 'session' value is 'none'
-# (default), 'nsm' (Non Session Manager), or 'jack' (JACK Session).
-# 'url' can be set to the value set by nsmd when run outside of the
-# the NSM user-interface. Set 'url' only if running nsmd stand-alone;
-# use a matching --osc-port number. Seq66 will detect if running in an
-# NSM environment, and override these settings.
+# (default), 'nsm' (Non/New Session Manager), or 'jack'. 'url' can be
+# be set to the value set by nsmd when run by command-line. Set 'url'
+# only if running nsmd stand-alone; use the --osc-port number. Seq66
+# detects if started in an NSM environment, though. The visibility
+# flag is used only by NSM to restore visibility.
 
 [user-session]
 
 session = none
 url = ""
+visibility = true
 
 # [new-pattern-editor]
 #

@@ -5,6 +5,33 @@ Chris Ahlstrom
 This file collects major changes that are older and clutter up
 the README.md file.  This file should be called "OLD NEWS".
 
+    -   Version 0.97.2.1:
+        -   Fixed odd breakage of loop-control hot-keys. Doh!
+    -   Version 0.97.2:
+        -   Issue #57: Increased width of option fields for wider fonts.
+        -   Issue #58: Indicate if NSM is running in Preferences / Sessions and
+            disable other session selections at that point.
+        -   Issue #59: Spelling error(s) fixed.
+        -   Issue #60: Added 'rc' option to disable JACK port auto connect in
+            normal mode.  Also present in Preferences / JACK.
+        -   Issue #61: Rearranged console output to show the app name, in color.
+            Also turns off color if redirected to a file.
+        -   Issue #63: Initial work on rotating numbering of patterns, sets, and
+            mutes, so that numbers vary faster by column than by row.
+        -   Issue #64: Fix a bug in optional GUI, testing with Agordejo (NSM).
+        -   Added textfix.qss to make disabled text easier to read in themes.
+        -   Improved the saving/restoring of Edit / Preferences.
+        -   Added option "Bold Grid Slots" to make the progress bar and progress
+            border thick, and the slot font bold.
+        -   Added the ability to reload the configuration via a button press
+            that restarts the application.
+        -   More streamlining of configuration writing.
+        -   No longer show the grid slot progress bar moving in muted tracks.
+        -   Mute-group names now stored in the 'mutes' file.  Also able to edit
+            them in the Mutes tab.  Also fixed botched mutes-in-MIDI-file
+            handling.
+        -   Removed dead-code from the event-editor frame.
+        -   Changing behavior of external live frames for more flexibility.
     -   Version 0.97.1:
         -   Fixed a bad bug in displaying Notes in the data & event panels in
             the pattern editor, caused by premature ... optimization.

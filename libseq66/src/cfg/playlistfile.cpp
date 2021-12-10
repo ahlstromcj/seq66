@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2021-11-18
+ * \updates       2021-12-10
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -523,12 +523,7 @@ playlistfile::write ()
            "# sample playlist files shipped with Seq66.\n\n"
             ;
     }
-    file
-        << "\n"
-        << "# End of " << name() << "\n#\n"
-        << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"   /* ft for nice colors */
-        ;
-
+    write_seq66_footer(file);
     file.close();
     return true;
 }

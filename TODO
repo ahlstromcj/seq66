@@ -1,14 +1,14 @@
 TO DO for Seq66 0.98.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-12-07
+2019-04-13 to 2021-12-11
 
 Configuration:
 
     Replace "legacy" parsing. The remaining one is 'usr' for s_usr_smf_1.
 
-Hot:
+Windows:
 
-    -   Allow controls to use D1.  In place, not quite ready.
+    Change to creating a 64-bit installer and adjust the instructions.
 
 UI:
 
@@ -38,7 +38,7 @@ Port-Mapping:
 Automation:
 
     Can we leverage continuous controllers (CC) to support modifying synth
-    parameters through input automation?
+    parameters through input automation? See the new "macro" facility.
 
 From Testing:
 

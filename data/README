@@ -1,11 +1,11 @@
-Data Directory for Seq66 0.97.1
+Data Directory for Seq66 0.97.1 and above
 Chris Ahlstrom
-2018-01-02 to 2021-10-13
+2018-01-02 to 2021-12-11
 
 This directory contains files to be installed in the ${prefix}/share/seq66-0.97
-directory ("prefix" is /usr/share or /usr/local/share) on Linux, or in the
-installation ${install}/data directory (e.g. C:/Program Files (x86)/Seq66/data)
-on Windows.
+(replace 0.97 with the latest version).  directory ("prefix" is /usr/share
+or /usr/local/share) on Linux, or in the installation ${install}/data
+directory (e.g. C:/Program Files (x86)/Seq66/data) on Windows.
 
 Seq66 will create the configuration directory and configuration file
 the first time, but we also supply some samples.  The files include alternate

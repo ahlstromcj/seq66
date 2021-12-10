@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-12-04
+ * \updates       2021-12-10
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -757,14 +757,7 @@ midicontrolfile::write_stream (std::ofstream & file)
         result = write_midi_control_out(file);
 
     if (result)
-    {
-        file
-            << "\n# End of " << name()
-            << "\n#\n# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
-            ;
-    }
-    else
-        file_error("Write fail", name());
+        write_seq66_footer(file);
 
     return result;
 }
@@ -889,25 +882,30 @@ midicontrolfile::write_midi_control (std::ofstream & file)
 
         file <<
         "#\n"
-        "# A valid status (> 0) enables the control; 'invert' (1/0) inverts\n"
+        "# A valid status (> 0x00) enables the control; 'invert' (1/0) inverts\n"
         "# the action, but not all support this; keystroke-release inverts.\n"
         "# 'status' is the MIDI event to match (channel is NOT ignored); 'd0'\n"
-        "# is the first data value (eg. if 0x90 (Note On), d0 is the note\n"
+        "# is the first data value (eg. if 0x90, Note On, d0 is the note\n"
         "# number; d1min to d1max is the range of d1 values detectable (eg.\n"
         "# 1 to 127 indicates any non-zero velocity invokes the control.\n"
         "# Hex values can be used; precede with '0x'.\n"
         "#\n"
-        "#  ---------------------- Loop/group/automation-slot number\n"
-        "# |    ------------------ Name of key (see the key map)\n"
-        "# |   |      ------------ Inverse\n"
-        "# |   |     |  ---------- MIDI status/event byte (eg. Note On)\n"
-        "# |   |     | |  -------- d0: Data 1 (eg. Note number)\n"
-        "# |   |     | | |  ------ d1max: Data 2 min (eg. Note velocity)\n"
-        "# |   |     | | | |  ---- d1min: Data 2 max\n"
-        "# |   |     | | | | |\n"
-        "# v   v     v v v v v\n"
-        "# 0 \"F1\"   [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0]\n"
-        "#           Toggle          On              Off\n"
+        "#  ------------------------ Loop/group/automation-slot number\n"
+        "# |    -------------------- Name of key (see the key map)\n"
+        "# |   |      -------------- Inverse\n"
+        "# |   |     |    ---------- MIDI status/event byte (eg. Note On)\n"
+        "# |   |     |   |   ------- d0: Data 1 (eg. Note number)\n"
+        "# |   |     |   |  |  ----- d1max: Data 2 min (eg. Note velocity)\n"
+        "# |   |     |   |  | |   -- d1min: Data 2 max\n"
+        "# |   |     |   |  | |  |\n"
+        "# v   v     v   v  v v  v\n"
+        "# 0 \"F1\"   [0 0x90 0 1 127] [0 0x00 0 0 0] [0 0x00 0 0 0]\n"
+        "#             Toggle           On              Off\n"
+        "#\n"
+        "# Note that MIDI controls can send a Note On upon a press, and a Note\n"
+        "# Off on release. To use a control as a toggle, define only the\n"
+        "# Toggle stanza.  For the control to act only while held, define the\n"
+        "# On and Off stanzas with appropriate statuses for press-and-release.\n"
         ;
 
         /*

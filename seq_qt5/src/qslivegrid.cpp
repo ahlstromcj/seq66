@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-12-09
+ * \updates       2021-12-10
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -185,6 +185,7 @@ qslivegrid::qslivegrid
         ui->txtBankName->hide();
         ui->buttonActivate->hide();
         ui->buttonLoopMode->setEnabled(true);
+        ui->buttonRecordMode->setEnabled(true);
         show_grid_record_style();
         show_record_mode();
         connect
@@ -1383,26 +1384,12 @@ void
 qslivegrid::slot_grid_record_style (bool /*clicked*/)
 {
     perf().next_grid_record_style();
-
-    /*
-     * The "needs-update" flag should get this refreshed by the timer
-     * callback.
-     *
-     * show_grid_record_style();
-     */
 }
 
 void
 qslivegrid::slot_record_mode (bool /*clicked*/)
 {
-    usr().next_record_mode();
-
-    /*
-     * The "needs-update" flag should get this refreshed by the timer
-     * callback.  We may need to call the perf automation function!
-     *
-     * show_record_mode();
-     */
+    perf().next_record_mode();
 }
 
 void
@@ -1464,14 +1451,8 @@ qslivegrid::show_record_mode ()
         QColor c;
         switch (usr().record_mode())
         {
-        case recordmode::quantize:
-            c.setNamedColor("#00C0C0");
-            break;
-
-        case recordmode::tighten:
-            c.setNamedColor("#009090");
-            break;
-
+        case recordmode::quantize:      c.setNamedColor("#00C0C0");     break;
+        case recordmode::tighten:       c.setNamedColor("#009090");     break;
         default:
             break;
         }

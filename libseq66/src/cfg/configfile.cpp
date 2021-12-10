@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-02
+ * \updates       2021-12-10
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -480,6 +480,15 @@ configfile::write_seq66_header
     file <<
         "\n[Seq66]\n\nconfig-type = \"" << configtype << "\"\n"
         "version = " << ver << "\n"
+        ;
+}
+
+void
+configfile::write_seq66_footer (std::ofstream & file)
+{
+    file
+        << "\n# End of " << name() <<
+        "\n#\n# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
         ;
 }
 

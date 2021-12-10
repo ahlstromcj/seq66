@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-08
+ * \updates       2021-12-10
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -200,8 +200,8 @@ enum class slot
     bpm_page_up,        /**< 14: Increments BMP by a configured page value. */
     bpm_page_dn,        /**< 15: Decrements BMP by a configured page value. */
     ss_set,             /**< 16: Key: set screen-set; MIDI: playing set.    */
-    loop_mode,          /**< 17: Moves between loop muting and recording.   */
-    quan_record,        /**< 18: Enables/disables quantized recording.      */
+    record_style,       /**< 17: Moves between recording styles like merge. */
+    quan_record,        /**< 18: Moves to next/previous quantize type.      */
     reset_sets,         /**< 19: Resets all patterns/playing set.           */
     mod_oneshot,        /**< 20: Set status of one-shot queuing.            */
     FF,                 /**< 21: Fast-forwards the clock (pulse counter.)   */

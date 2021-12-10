@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-12-07
+% \update      2021-12-10
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1843,6 +1843,13 @@
       z x c v b n m <
    \end{verbatim}
 
+   Please note that the buttons on some (or most) MIDI controllers send a
+   message on press and another message on release.  One can set such buttons
+   up as toggle buttons by defining only the "Toggle" (first) stanza.
+   Or one can have the button active the function on press, and then deactivate
+   it on release by defining the "On" (second) and "Off" (third) stanzas
+   appropriately.
+
 \subsubsection{'ctrl' File / Mute-Group Control}
 \label{subsubsec:configuration_ctrl_mute_group_control}
 
@@ -2033,6 +2040,9 @@
    \textbf{grid modes} have been introduced.
    The \textbf{Record} and \textbf{Quan Record} automation controls have been
    refactored to cycle through these modes.
+
+   In release 0.98.0, additional automation commands provide direct access to
+   each mode.
 
    Grid mode changes the function of the main window's patterns panel so that
    it can be used to initiate record instead of toggling mute status,

@@ -1563,7 +1563,7 @@ performer::inner_start ()
 
             is_running(true);                   /* part of cv()'s predicate */
             pad().js_jack_stopped = false;
-            cv().signal();
+            cv().signal();                      /* signal we are running    */
             send_onoff_event(midicontrolout::uiaction::play, true);
             send_onoff_event(midicontrolout::uiaction::panic, false);
         }
@@ -5938,18 +5938,36 @@ performer::learn_mutes (mutegroup::number group)
  * -------------------------------------------------------------------------
  */
 
+/*
+ *  For the next two functions, compare to performer::set_record_style().
+ */
+
 void
 performer::next_grid_record_style ()
 {
     (void) usr().next_grid_record_style();
-    notify_automation_change(automation::slot::loop_mode);
+    notify_automation_change(automation::slot::record_style);
 }
 
 void
 performer::previous_grid_record_style ()
 {
     (void) usr().previous_grid_record_style();
-    notify_automation_change(automation::slot::loop_mode);
+    notify_automation_change(automation::slot::record_style);
+}
+
+void
+performer::next_record_mode ()
+{
+    (void) usr().next_record_mode();
+    notify_automation_change(automation::slot::quan_record);
+}
+
+void
+performer::previous_record_mode ()
+{
+    (void) usr().previous_record_mode();
+    notify_automation_change(automation::slot::quan_record);
 }
 
 /**
@@ -6735,13 +6753,13 @@ performer::automation_ss_set
  */
 
 bool
-performer::automation_loop_mode
+performer::automation_record_style
 (
     automation::action a, int d0, int d1,
     int index, bool inverse
 )
 {
-    std::string name = "Loop Mode";
+    std::string name = "Record Style";
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
@@ -6755,7 +6773,7 @@ performer::automation_loop_mode
         /*
          *  Done in the functions called above:
          *
-         *      notify_automation_change(automation::slot::loop_mode);
+         *      notify_automation_change(automation::slot::record_style);
          */
     }
     return true;
@@ -6777,11 +6795,11 @@ performer::automation_quan_record
     if (! inverse)
     {
         if (a == automation::action::toggle)
-            (void) usr().next_record_mode();
+            next_record_mode();
         else if (a == automation::action::on)
-            (void) usr().next_record_mode();
+            next_record_mode();
         else if (a == automation::action::off)
-            (void) usr().previous_record_mode();
+            previous_record_mode();
 
         notify_automation_change(automation::slot::quan_record);
     }
@@ -7790,13 +7808,12 @@ performer::set_record_style (recordstyle rs)
     if (rs < recordstyle::max)
     {
         usr().grid_record_style(rs);
-        notify_automation_change(automation::slot::loop_mode);
-        notify_automation_change(automation::slot::quan_record);
+        notify_automation_change(automation::slot::record_style);
     }
 }
 
 bool
-performer::automation_record_style
+performer::automation_record_style_select
 (
     automation::action a, int d0, int d1,
     int index, bool inverse
@@ -7837,7 +7854,7 @@ performer::automation_record_style
 }
 
 /**
- *  Values are none, merge, overwrite, expand, and one-shot.
+ *  Values are loop, record, copy, ... double (length).
  */
 
 void
@@ -7846,7 +7863,7 @@ performer::set_grid_mode (gridmode gm)
     if (gm < gridmode::max)
     {
         usr().grid_mode(gm);
-        notify_automation_change(automation::slot::loop_mode);
+        notify_automation_change(automation::slot::grid_loop);
     }
 }
 
@@ -7943,7 +7960,10 @@ performer::sm_auto_func_list [] =
     },
     { automation::slot::bpm_page_dn, &performer::automation_bpm_page_dn  },
     { automation::slot::ss_set, &performer::automation_ss_set            },
-    { automation::slot::loop_mode, &performer::automation_loop_mode      },
+    {
+        automation::slot::record_style,
+        &performer::automation_record_style
+    },
     { automation::slot::quan_record, &performer::automation_quan_record  },
     { automation::slot::reset_sets, &performer::automation_reset_sets    },
     { automation::slot::mod_oneshot, &performer::automation_oneshot      },
@@ -8003,19 +8023,19 @@ performer::sm_auto_func_list [] =
 
     {
         automation::slot::record_overdub,
-        &performer::automation_record_style
+        &performer::automation_record_style_select
     },
     {
         automation::slot::record_overwrite,
-        &performer::automation_record_style
+        &performer::automation_record_style_select
     },
     {
         automation::slot::record_expand,
-        &performer::automation_record_style
+        &performer::automation_record_style_select
     },
     {
         automation::slot::record_oneshot,
-        &performer::automation_record_style
+        &performer::automation_record_style_select
     },
     {
         automation::slot::grid_loop,

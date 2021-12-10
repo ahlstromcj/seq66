@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-11-04
+ * \updates       2021-12-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -306,14 +306,7 @@ mutegroupsfile::write_stream (std::ofstream & file)
 
     bool result = write_mute_groups(file);
     if (result)
-    {
-        file
-            << "\n# End of " << name() << "\n#\n"
-            << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
-            ;
-    }
-    else
-        file_error("Write fail", name());
+        write_seq66_footer(file);
 
     return result;
 }

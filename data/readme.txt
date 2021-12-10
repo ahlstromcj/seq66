@@ -1,6 +1,6 @@
-readme.txt for Seq66 0.97.3
+readme.txt for Seq66 0.98.0
 Chris Ahlstrom
-2015-09-10 to 2021-10-13
+2015-09-10 to 2021-12-11
 
 Seq66 is a refactoring of a reboot (sequencer64) of seq24, extending it with new
 features and bug fixes, and incorporation of "Modern C++" (C++11 or C++14).  It
@@ -12,9 +12,9 @@ of the project directory, which can be downloaded via Git:
 
     https://github.com/ahlstromcj/seq66.git
 
-It is also installed in "/usr/local/share/doc/seq66-0.97" along with ODF
-spreadsheets describing the control keys and Launchpad Mini configuration.
-It covers everything that seq66 can do.
+It is also installed in "/usr/local/share/doc/seq66-0.97" (or a later version
+number) along with ODF spreadsheets describing the control keys and Launchpad
+Mini configuration.  It covers everything that seq66 can do.
     
 Prebuilt Debian packages, Windows installers, and source tarballs are
 available here, in the project directory for Sequencer64 packages:

@@ -3400,6 +3400,8 @@ public:
 
     void next_grid_record_style ();
     void previous_grid_record_style ();
+    void next_record_mode ();
+    void previous_record_mode ();
     bool loop_control                   /* [loop-control]       */
     (
         automation::action a, int d0, int d1,
@@ -3506,7 +3508,7 @@ public:
         automation::action a, int d0, int d1,
         int index, bool inverse
     );
-    bool automation_loop_mode
+    bool automation_record_style
     (
         automation::action a, int d0, int d1,
         int index, bool inverse
@@ -3648,7 +3650,7 @@ public:
     );
 
     void set_record_style (recordstyle rs);
-    bool automation_record_style
+    bool automation_record_style_select
     (
         automation::action a, int d0, int d1,
         int index, bool inverse

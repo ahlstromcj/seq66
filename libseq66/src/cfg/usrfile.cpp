@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-11-29
+ * \updates       2021-12-10
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -904,16 +904,7 @@ usrfile::write ()
     write_boolean(file, "qrecord", usr().new_pattern_qrecord());
     write_string(file, "record-style", usr().new_pattern_record_string());
     write_boolean(file, "wrap-around", usr().new_pattern_wraparound());
-
-    /*
-     * EOF
-     */
-
-    file
-        << "\n# End of " << name() <<
-        "\n#\n# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
-        ;
-
+    write_seq66_footer(file);
     file.close();
     return true;
 }

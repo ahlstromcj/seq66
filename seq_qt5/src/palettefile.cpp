@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2021-10-13
+ * \updates       2021-12-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -292,10 +292,7 @@ palettefile::write_stream (std::ofstream & file)
             << "backseq = " << sbackseq << "\n"
             ;
     }
-    file
-        << "\n# End of " << name() << "\n#\n"
-        << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
-        ;
+    write_seq66_footer(file);
     return true;
 }
 
