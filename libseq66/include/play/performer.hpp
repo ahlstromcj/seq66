@@ -3402,6 +3402,7 @@ public:
     void previous_grid_record_style ();
     void next_record_mode ();
     void previous_record_mode ();
+    void record_mode (recordmode rm);
     bool loop_control                   /* [loop-control]       */
     (
         automation::action a, int d0, int d1,

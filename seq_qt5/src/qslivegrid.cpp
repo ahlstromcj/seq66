@@ -1440,7 +1440,7 @@ qslivegrid::show_record_mode ()
         s_uninitialized = false;
         s_palette = button->palette();
     }
-    if (usr().record_mode() == recordmode::normal)
+    if (usr().no_grid_record())
     {
         button->setPalette(s_palette);
         button->update();

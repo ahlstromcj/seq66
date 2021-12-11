@@ -1632,6 +1632,12 @@ public:
         return m_record_mode;
     }
 
+    void record_mode (recordmode rm)
+    {
+        if (rm < recordmode::max)
+            m_record_mode = rm;
+    }
+
     std::string record_mode_label () const;
     recordmode next_record_mode ();
     recordmode previous_record_mode ();

@@ -5970,6 +5970,13 @@ performer::previous_record_mode ()
     notify_automation_change(automation::slot::quan_record);
 }
 
+void
+performer::record_mode (recordmode rm)
+{
+    (void) usr().record_mode(rm);
+    notify_automation_change(automation::slot::quan_record);
+}
+
 /**
  *  Provides the pattern-control function... hot-keys that toggle the patterns
  *  in the current set.
@@ -6790,7 +6797,7 @@ performer::automation_quan_record
     int index, bool inverse
 )
 {
-    std::string name = "Quantized Record";
+    std::string name = "Q Record";
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
@@ -7863,6 +7870,11 @@ performer::set_grid_mode (gridmode gm)
     if (gm < gridmode::max)
     {
         usr().grid_mode(gm);
+        if (gm != gridmode::record)
+        {
+            usr().record_mode(recordmode::normal);
+            usr().grid_record_style(recordstyle::merge);
+        }
         notify_automation_change(automation::slot::grid_loop);
     }
 }
