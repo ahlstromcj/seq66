@@ -1,0 +1,109 @@
+NSIS Notes
+Chris Ahlstrom
+2021-12-11 to 2021-12-11
+
+This directory contains files that allow Linux and Windows users to create
+an NSIS installer for Seq66.
+
+Currently, the Windows version of Seq66 is a 32-application, and the Linux
+"makensis" program creates a 32-bit installer.
+
+Here are some notes for creating an installer for a 64-bit version of Seq66.
+The process involves modifications to the build-release DOS batch file and
+the NSIS files in this directory.
+
+Source:
+
+    https://www.bojankomazec.com/2011/10/nsis-installer-for-64-bit-windows.html
+    
+    "Here are some tips for creating (32-bit) NSIS installer which installs
+    64-bit application on 64-bit Windows."
+
+Since NSIS is currently a 32-bit program, it redirects installations by
+default to "C:\Program Files (x86)" and uses, from the Windows Registry,
+only "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node".
+
+The "x64" plug-in provides a macro, "RunningX64", which returns true if the
+installer is running on 64-bit Windows under WoW64 emulation.  It can be
+obtained from: "http://nsis.sourceforge.net/Include/x64.nsh".
+
+Once detecting 64-bit host, we need to:
+
+    -   Set "C:\Program Files" as the install directory, using $PROGRAMFILES64
+        instead of $PROGRAMFILES.
+    -   Enable access to the 64-bit Registry with the SetRegView NSIS command.
+
+    Setup.nsi:
+
+        !include x64.nsh
+
+        ; Set the initial value for $INSTDIR.
+
+        InstallDir "$PROGRAMFILES\${MY_COMPANY}\${MY_APP}"
+        . . .
+        ${If} ${RunningX64} 
+            DetailPrint "Installer running on 64-bit host"
+
+            ; Disable Registry redirection to enable access to th e64-bit
+            ; portion of the Registry.
+
+            SetRegView 64
+
+            ; Change the install directory.
+
+            StrCpy $INSTDIR "$PROGRAMFILES64\${MY_COMPANY}\${MY_APP}"
+
+        ${EndIf}
+
+    I think that is all we need.  The steps that follow require building
+    code with Visual Studio, and we do not need it.
+
+    ========================================================
+
+    To detect whether some 64-bit process is running, use the FindProcDLL
+    plug-in (there are couple of versions available but I found only this
+    one - FindProcDLL_mod_by_hnedka.7z - working for me; please have a look
+    at this forum thread). Download this archived file, unpack it and copy
+    FindProcDLL.dll to your ..\NSIS\Plugins directory.
+
+		${If} ${RunningX64}
+		   FindProcDLL::FindProc "Some64BitProcess.exe"
+		   ${If} $R0 == 1
+			  DetailPrint "FindProcDLL::FindProc() returned 1 (process is running)"
+		   ${ElseIf} $R0 == 0
+			  DetailPrint "FindProcDLL::FindProc() returned 0 (process is not running)"
+		   ${Else}
+			  DetailPrint "FindProcDLL::FindProc() returned unexpected value"                               
+		   ${Endif}                                                  
+		${Else} 
+		...
+
+    "NSIS Unicode FindProc / KillProc plug-in", 'FindProc Unicode-source.zip':
+
+        https://sourceforge.net/projects/findkillprocuni/files/
+
+    FindProcDLL_mod_by_hnedka.7z can be found at:
+
+        http://forums.winamp.com/attachment.php?attachmentid=48888&d=1307099823
+
+Additional notes:
+
+	If you need to install either a 32-bit or 64-bit file, you can do this:
+
+	${If} ${RunningX64}
+	File "/oname=MyFile.exe" "files\MyFile64.exe"
+	${Else}
+	File "files\MyFile.exe"
+	${EndIf}
+
+	If you need to register a DLL, you can do this:
+
+	${If} ${RunningX64}
+	ExecWait 'regsvr32.exe /s "$INSTDIR\MyDLL.dll"'
+	${Else}
+	RegDLL "$INSTDIR\MyDLL.dll"
+	${EndIf}
+
+	(Or use Library.nsh)
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

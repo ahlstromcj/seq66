@@ -1,7 +1,11 @@
-Ways to color Seq66:
+Ways to Color Seq66
+Chris Ahlstrom
+2021-08-04 to 2021-12-12
 
     1.  Desktop theme:  Select a desktop theme supported by Qt/KDE. Gtk themes
-        can also work.
+        can also work. On our main development laptop, selecting the Gtk
+        support in qt5ct will cause very long delays (30 seconds!) in
+        opening many applications, including Seq66.
 
     2.  qseq66.usr:
 
@@ -15,17 +19,25 @@ Ways to color Seq66:
 
         2.  In the "[user-ui-tweaks]" section, change the empty style-sheet
             filename:  style-sheet = "qseq66.qss" which can affect only certain
-            types of Qt widget.  It cannot affect the text that Seq66 draws on
-            the buttons nor the lines drawn in the pattern-progress box.
-            Those colors have to be handled by a 'palette' file.
+            types of Qt widget. Style-sheets do not affect the text that Seq66
+            draws on the buttons nor the lines drawn in the pattern-progress box,
+            because Seq66 chooses these colors from a 'palette' file.  Some useful
+            or "interesting" style tweaks can be found in the "data/samples"
+            directory.
 
     3. qseq66.palette:
+
+        The palette controls the coloring of the backgrounds, lines, text,
+        notes, selection boxes, and selected pattern colors. In addition,
+        it can alter the background brush style for notes, scales, and
+        the background pattern.
 
         1.  In the "data" directory, the following palette files are available:
 
                 ./linux/qseq66.palette
                 ./linux/qseq66-alt-gray.palette
                 ./linux/qseq66-gray.palette
+                ./samples/qseq66-sample.palette
                 ./win/qpseq66.palette
 
         2.  To create your own palette:
@@ -65,7 +77,7 @@ Color notes:
     Also, the color of the text in an empty button is dependent on the theme.
     It can be altered, though, via a Qt style-sheet as noted earlier.
 
-Gradient:
+Gradient in style-sheets:
 
     Gradient is handled in a box, and parameters are in percent (0.0 to 1.0):
 
@@ -88,4 +100,4 @@ Gradient:
         stop:1 green        // finish at green
     )
 
-
+# vim: sw=4 ts=4 wm=8 et ft=sh

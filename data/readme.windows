@@ -1,6 +1,6 @@
-readme.windows for Seq66 0.98.0
+readme.windows for Seq66 0.98.0 and above
 Chris Ahlstrom
-2018-05-13 to 2021-12-11
+2018-05-13 to 2021-12-12
 
 This README file tells you how to run the native Windows implmentation of
 seq66, an executable named qpseq66.exe.  It provides some notes on Seq66 and
@@ -20,10 +20,10 @@ cases.
 Why the name qpseq66.exe instead of seq66.exe? The "q" stands for the Qt user
 interface, and the "p" stands for the PortMidi-based engine used for Windows.
 
-Once installed, go to C:/Program Files (x86)/Seq66 and create a desktop
+Once installed, go to "C:/Program Files (x86)/Seq66" and create a desktop
 shortcut for qpseq66.exe, with the following command line (for a default
 Windows 10 setup having only the MIDI Mapper and the Microsoft wave-table
-synthesizer installed:
+synthesizer installed):
 
     C:\Program Files (x86)\Seq66\qpseq66.exe
 

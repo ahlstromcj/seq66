@@ -5,7 +5,7 @@
 # \file            DIR_COLORS
 # \author          Chris Ahlstrom
 # \date            2008-02-26
-# \updates         2021-05-13
+# \updates         2021-12-12
 # \version         $Revision$
 # \license         $XPC_SUITE_GPL_LICENSE$
 #
@@ -233,6 +233,7 @@ EXEC 01;32
 .tex 00;32
 .texi 00;32
 .tjx 00;32
+.text 00;32
 .txt 00;32
 .TXT 00;32
 .uml 00;32

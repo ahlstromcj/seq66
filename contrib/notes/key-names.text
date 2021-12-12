@@ -42,3 +42,4 @@ GS       =        ]        }        NumLk      Sh_F10     Null_dd    Null_fd
 RS       >        ^        ~        ScrlLk     Sh_F11     Null_de    Null_fe
 US       ?        _        DEL      Null_9f    Sh_F12     Null_df    Null_ff
 
+# vim: sw=4 ts=4 wm=8 et ft=sh

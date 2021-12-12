@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2021-11-18
+:: \update      2021-12-12
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -74,10 +74,10 @@
 ::          d. Or cd to the seq66\nsis directory and try
 ::             "build_release_package.bat > build.log 2>&1"
 ::       6. The result is a file such as "qpseq66-release-package-0.90.1.7z".
-::          It is found in seq66/../seq66-release/Seq66qt5.  Also, a
-::          log file is made in seq66/../seq66-release/make.log,
+::          It is found in seq66/../seq66-release-32/Seq66qt5.  Also, a
+::          log file is made in seq66/../seq66-release-32/make.log,
 ::          which can be checked for build warnings and errors. If you cannot
-::          find these files, search for 'seq66-release'.
+::          find these files, search for 'seq66-release-32'.
 ::       7. In Linux (have not tried NSIS in Windows yet), copy this 7z file
 ::          to the root 'seq66' directory.  If the directory 'seq66/release'
 ::          exists, remove the 'release' directory as shown in the next step.
@@ -122,14 +122,14 @@
 ::          where "rtmidi" can be replaced with whatever the current build
 ::          is, such as "cli" or "portmidi" or "qt".
 ::
-:: This batch file completely removes the old Windows seq66-release directory
+:: This batch file completely removes the old Windows seq66-release-32 directory
 :: and re-does everything.
 ::
 :: See the set of variable immediately below.
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.98.0
+set PROJECT_VERSION=0.98.1
 set PROJECT_DRIVE=C:
 set PROJECT_BITS=32
 
@@ -144,7 +144,7 @@ set PROJECT_BASE=\Users\Chris\Documents\Home
 set PROJECT_ROOT=..\seq66
 set PROJECT_FILE=seq66.pro
 set PROJECT_7ZIP="qpseq66-release-package-%PROJECT_VERSION%.7z"
-set SHADOW_DIR=seq66-release
+set SHADOW_DIR=seq66-release-%PROJECT_BITS%
 set APP_DIR=Seq66qt5
 set RELEASE_DIR=%APP_DIR%\release
 set CONFIG_SET="CONFIG += release"
@@ -159,8 +159,8 @@ set DOC_DIR=doc
 
 cd %PROJECT_BASE%
 
-:: mkdir seq66-release
-:: cd seq66-release
+:: mkdir seq66-release-32
+:: cd seq66-release-32
 
 del /S /Q %SHADOW_DIR% > NUL
 mkdir %SHADOW_DIR%

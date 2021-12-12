@@ -1,11 +1,11 @@
-INSTALL for Seq66 v. 0.98.0
+INSTALL for Seq66 v. 0.98.0 and above
 Chris Ahlstrom
-2015-09-10 to 2021-11-30
+2015-09-10 to 2021-12-12
 
-Getting Seq66 requires building the code or going to
-"sequencer64-packages/seq66" on GitHub to get an install pack.  The bootstrap
-setup is primarily aimed at developers, but is easy to use with the
-instructions below.  Different versions of the program can be built:
+Getting Seq66 requires building the code or going to "sequencer64-packages/seq66"
+on GitHub to get an installation package.  The bootstrap setup is primarily
+aimed at developers, but is easy to use with the instructions below.  Different
+versions of the program can be built:
 
     -   qseq66.  The "rtmidi" engine version, with a Qt5 user-interface a la
         Kepler34.  Native ALSA, JACK MIDI and JACK transport; fall-back to ALSA;
