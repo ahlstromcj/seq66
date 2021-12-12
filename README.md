@@ -83,6 +83,7 @@ Windows, and using a conventional source tarball.
 
     *   Version 0.98.1:
         *   Work on creating an NSIS installer for a 64-bit Windows build.
+        *   Fixed a stupid segfault bug with the --help option.  Doh!
     *   Version 0.98.0:
         *   Fixed issue #41 "Hide Seq66 on closing window" via a "visibility"
             automation command and by fixing the response to "hide/show"

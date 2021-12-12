@@ -1,6 +1,6 @@
-TO DO for Seq66 0.98.0 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.98.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-12-11
+2019-04-13 to 2021-12-12
 
 Configuration:
 
@@ -24,8 +24,8 @@ UI:
 
         -   Display:
             -   Global seq feature (global vs pattern background pattern, key,
-                and scale)
-            -   Tempo / BPM min and max
+                and scale).
+            -   Tempo / BPM min and max.
         -   Play Options:
             -   New-pattern editor options (check-boxes)
             -   Sets-mode options
@@ -35,6 +35,11 @@ UI:
             -   Load key and midi controls (does this work?)
             -   Control buss (in and out)
             -   Enabled (in and out)
+
+More UI:
+
+        -   Add max-measure display to the max-time shown in the song
+            editor.
 
 Port-Mapping:
 

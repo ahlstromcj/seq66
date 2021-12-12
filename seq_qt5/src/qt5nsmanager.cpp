@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-11-30
+ * \updates       2021-12-12
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -84,13 +84,17 @@ qt5nsmanager::qt5nsmanager
     /*
      * EXPERIMENTAL:  Move this to create_window().
      * m_timer = qt_timer(this, "qt5nsmanager", 5, SLOT(conditional_update()));
+     * When running help, the timer pointer is null in the constructor.
      */
 }
 
 qt5nsmanager::~qt5nsmanager ()
 {
-    m_timer->stop();
-    (void) session_message("Exiting qt5nsmanager");
+    if (not_nullptr(m_timer))
+        m_timer->stop();
+
+    if (! is_help())
+        (void) session_message("Exiting qt5nsmanager");
 }
 
 /**

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-10-27
+ * \updates       2021-12-12
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -91,7 +91,6 @@ cmdlineopts::s_long_options [] =
     {"help",                0, 0, 'h'},
     {"version",             0, 0, 'V'},
     {"verbose",             0, 0, 'v'},
-    {"quiet",               0, 0, 'Q'},
     {"investigate",         0, 0, 'i'},
     {"home",                required_argument, 0, 'H'},
 #if defined SEQ66_NSM_SUPPORT
@@ -185,7 +184,7 @@ cmdlineopts::s_long_options [] =
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:DdF:f:gH:hiJjKkl:M:mNnoPpQq:RrSsTtU:uVvWwX:x:Zz#";
+    "AaB:b:Cc:DdF:f:gH:hiJjKkl:M:mNnoPpq:RrSsTtU:uVvWwX:x:Zz#";
 
 /**
  *  Provides help text.
@@ -196,7 +195,6 @@ static const std::string s_help_1a =
 "   -h, --help, ?            Show this help and exit.\n"
 "   -V, --version, #         Show program version/build and exit.\n"
 "   -v, --verbose            Verbose mode, show more data to the console.\n"
-"   -Q, --quiet              Turn off verbose mode.\n"
 #if defined SEQ66_NSM_SUPPORT
 "   -n, --nsm                Activate Non/New Session Manager support.\n"
 "   -T, --no-nsm             Ignore NSM in 'usr' file. T for 'typical'.\n"
@@ -253,11 +251,11 @@ static const std::string s_help_2 =
 "   -N, --no-jack-midi       Use ALSA MIDI, even with JACK Transport. See -A.\n"
 "   -t, --jack-midi          Use JACK MIDI, separately from JACK Transport.\n"
 "   -W, --jack-connect       Auto-connect to JACK ports. The default.\n"
-"   -w, --no-jack-connect    Don't connect to JACK ports. Good with sessions.\n"
+"   -w, --no-jack-connect    Don't connect to JACK ports. Good with NSM.\n"
 #if defined SEQ66_JACK_SESSION
-"   -U, --jack-session uuid  Set UUID for JACK session. This turns on JACK\n"
-"                            session management. Set it to 'on' to enable;\n"
-"                            JACK sets the UUID later.\n"
+"   -U, --jack-session uuid  Set UUID for JACK session; turns on session\n"
+"                            management. Use 'on' to enable it and let JACK\n"
+"                            set the UUID.\n"
 #endif
 #endif
 "   -d, --record-by-channel  Divert MIDI input by channel into the patterns\n"
@@ -1012,10 +1010,6 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'p':
             rc().priority(true);
-            break;
-
-        case 'Q':
-            rc().verbose(false);
             break;
 
         case 'q':

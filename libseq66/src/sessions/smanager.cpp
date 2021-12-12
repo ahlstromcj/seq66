@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2021-11-30
+ * \updates       2021-12-12
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -108,7 +108,8 @@ smanager::smanager (const std::string & caps) :
 
 smanager::~smanager ()
 {
-    (void) session_message("Exiting session manager");
+    if (! is_help())
+        (void) session_message("Exiting session manager");
 }
 
 /**
@@ -164,6 +165,7 @@ smanager::main_settings (int argc, char * argv [])
     if (is_help)
     {
         m_is_help = true;
+        result = false;
     }
     else
     {
