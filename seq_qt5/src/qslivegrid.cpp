@@ -1094,7 +1094,9 @@ qslivegrid::button_toggle_enabled (seq::number seqno)
 
 /**
  *  Moved control to performer, and now rely upon the full cycle to work,
- *  rather than toggling the button state(s) here.
+ *  rather than toggling the button state(s) here.  We need to have the
+ *  loop_control() function use only index values (e.g. only 0 to 31),
+ *  and get the actual pattern number via the current play-set.
  */
 
 void

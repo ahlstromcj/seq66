@@ -1410,10 +1410,7 @@ public:
 
     int grid_to_index (int row, int column) const
     {
-        return int
-        (
-            mapper().grid_to_seq(row, column) - playscreen_offset()
-        );
+        return int(mapper().grid_to_index(row, column));
     }
 
     /**

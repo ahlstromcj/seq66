@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-11-19
+ * \updates       2021-12-13
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -454,6 +454,7 @@ public:
         return seqno >= m_set_offset && seqno < m_set_maximum;
     }
 
+    seq::number grid_to_index (int row, int column) const;
     seq::number grid_to_seq (int row, int column) const;
     seq::number grid_to_seq
     (
@@ -490,12 +491,7 @@ private:
     seq::pointer find_by_number (seq::number seqno);
     bool fill_play_set (playset & p, bool clearit = true);
     bool add_to_play_set (playset & p, seq::number seqno);
-
-    seq::number play_seq (int delta)
-    {
-        return offset() != seq::unassigned() ?
-            offset() + delta : seq::unassigned() ;
-    }
+    seq::number play_seq (seq::number seqno);
 
     void off_sequences ();
     void song_recording_start (midipulse current_tick);

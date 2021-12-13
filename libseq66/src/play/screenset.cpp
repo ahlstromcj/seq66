@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-11-19
+ * \updates       2021-12-13
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -263,35 +263,35 @@ screenset::first_seq () const
     return result;
 }
 
-/**
- *  The new version returns seq::unassigned if the row or column is out of
- *  range.
- *
- *  There is no "grid_to_index()" function needed as yet.
- */
-
 seq::number
-screenset::grid_to_seq (int row, int column) const
+screenset::grid_to_index (int row, int column) const
 {
     if (row < 0 || row >= m_rows || column < 0 || column >= m_columns)
         return seq::unassigned();
     else if (swap_coordinates())
-        return offset() + column + m_columns * row;
+        return column + m_columns * row;
     else
-        return offset() + row + m_rows * column;
+        return row + m_rows * column;
+}
+
+seq::number
+screenset::grid_to_seq (int row, int column) const
+{
+    seq::number result = grid_to_index(row, column);
+    if (! seq::unassigned(result))
+        result += offset();
+
+    return result;
 }
 
 seq::number
 screenset::grid_to_seq (screenset::number setno, int row, int column) const
 {
-    if (row < 0 || row >= m_rows || column < 0 || column >= m_columns)
-        return seq::unassigned();
+    seq::number result = grid_to_index(row, column);
+    if (! seq::unassigned(result))
+        result += setno * m_set_size;         /* add the set offset   */
 
-    seq::number offset = setno * m_set_size;
-    if (swap_coordinates())
-        return offset + column + m_columns * row;
-    else
-        return offset + row + m_rows * column;
+    return result;
 }
 
 /**
@@ -877,6 +877,18 @@ bool
 screenset::add_to_play_set (playset & p, seq::number seqno)
 {
     return p.add(*this, seqno);
+}
+
+seq::number
+screenset::play_seq (seq::number seqno)
+{
+    seq::number result = seqno;
+    if (result < set_size())
+    {
+        if (offset() != seq::unassigned())
+            result = seqno + offset();
+    }
+    return result;
 }
 
 /**

@@ -2094,16 +2094,31 @@ sequence::paste_selected (midipulse tick, int note)
     return result;
 }
 
+/**
+ *  This function can be tricky.  Do we want to make sure the beat-widths and
+ *  beats-per-bar match, or force the destination to match?  We also need to
+ *  lengthen the destination if necessary.
+ */
+
 bool
 sequence::merge_events (const sequence & source)
 {
-    automutex locker(m_mutex);
     const eventlist & clipbd = source.events();
-    push_undo();                                /* push undo, no lock   */
-    bool result = m_events.merge(clipbd);
-    if (result)
-        modify();
+    int bw = source.get_beat_width();
+    int bpb = source.get_beats_per_bar();
+    midipulse len = source.get_length();
+    automutex locker(m_mutex);
+    set_beat_width(bw);
+    set_beats_per_bar(bpb);
 
+    bool result = set_length(len, false, false);
+    if (result)
+    {
+        push_undo();                                /* push undo, no lock   */
+        result = m_events.merge(clipbd);
+        if (result)
+            modify();
+    }
     return result;
 }
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-08
+ * \updates       2021-12-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -417,20 +417,20 @@ keycontainer::keys_automation ()
          * Proposed massive expansion in automation. Grid mode selection.
          */
 
-        { "Sh_F1",     automation::action::off     },  // 49 record_overdub
-        { "Sh_F2",     automation::action::off     },  // 50 record_overwrite
-        { "Sh_F3",     automation::action::off     },  // 51 record_expand
-        { "Sh_F4",     automation::action::off     },  // 52 record_oneshot
-        { "Sh_F5",     automation::action::off     },  // 53 grid_loop
-        { "Sh_F6",     automation::action::off     },  // 54 grid_record
-        { "Sh_F7",     automation::action::off     },  // 55 grid_copy
-        { "Sh_F8",     automation::action::off     },  // 56 grid_paste
-        { "Sh_F9",     automation::action::off     },  // 57 grid_clear
-        { "Sh_F10",    automation::action::off     },  // 58 grid_delete
-        { "Sh_F11",    automation::action::off     },  // 59 grid_thru
-        { "Sh_F12",    automation::action::off     },  // 60 grid_solo
-        { "0xe0",      automation::action::off     },  // 61 grid_velocity
-        { "0xe1",      automation::action::off     },  // 62 grid_double
+        { "Sh_F11",    automation::action::off     },  // 49 record_overdub
+        { "Sh_F12",    automation::action::off     },  // 50 record_overwrite
+        { "0xe0",      automation::action::off     },  // 51 record_expand
+        { "0xe1",      automation::action::off     },  // 52 record_oneshot
+        { "Sh_F1",     automation::action::off     },  // 53 grid_loop
+        { "Sh_F2",     automation::action::off     },  // 54 grid_record
+        { "Sh_F3",     automation::action::off     },  // 55 grid_copy
+        { "Sh_F4",     automation::action::off     },  // 56 grid_paste
+        { "Sh_F5",     automation::action::off     },  // 57 grid_clear
+        { "Sh_F6",     automation::action::off     },  // 58 grid_delete
+        { "Sh_F7",     automation::action::off     },  // 59 grid_thru
+        { "Sh_F8",     automation::action::off     },  // 60 grid_solo
+        { "Sh_F9",     automation::action::off     },  // 61 grid_cut
+        { "Sh_F10",    automation::action::off     },  // 62 grid_double
 
         /*
          * Grid quantization type selection.

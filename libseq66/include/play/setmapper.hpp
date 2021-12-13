@@ -226,11 +226,17 @@ private:
     /**
      *  Gets the offset of the sequence (re 0) in its screen-set.  It assumes
      *  the pointer is good. Used only in performer::announce_sequence().
+     *  But see grid_to_index() below.
      */
 
     int seq_to_offset (seq::pointer s) const
     {
         return s->seq_number() % m_set_size;
+    }
+
+    seq::number grid_to_index (int row, int column) const
+    {
+        return play_screen()->grid_to_index(row, column);
     }
 
     seq::number grid_to_seq (int row, int column) const
@@ -674,9 +680,9 @@ private:
      *  bad value (-1) is returned if the play-screen does not exist.
      */
 
-    seq::number play_seq (int delta)
+    seq::number play_seq (seq::number seqno)
     {
-        return play_screen()->play_seq(delta);
+        return play_screen()->play_seq(seqno);
     }
 
     void save_queued (int hotseq)

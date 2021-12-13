@@ -1,6 +1,6 @@
 MIDI Sample and Test Files
 Chris Ahlstrom
-2015-09-11 to 2020-05-13
+2015-09-11 to 2021-12-13
 
 This directory contains contributed MIDI files for examples and testing.
 Also see the test files from the midicvt as described in
@@ -30,11 +30,15 @@ the "example1" file.
       reading of the MIDI file.  So this is a new test case.  It resulted
       in a fix to the handling of running status.
 
-   allofarow.mid:
+   buffalo.mid:
 
-      A file having a lot of empty tracks and one filled track.
-      In Sequencer64, it loads as 140 BPM, but plays really slowly.
-      In seq24, it loads as 120 BPM, but plays somewhat normally!
+      A song with 5 sets:
+
+         0. Tempo, piano, organ, organ 2, and bass.
+         1. Drums, kick drum, side stick, closed hi-hat.
+         2. Empty patterns with percussion names only.
+         3. All empty patterns.
+         4. Two empty patterns.
 
    click_4_4.midi:
    

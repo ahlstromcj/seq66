@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-12-10
+ * \updates       2021-12-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1254,10 +1254,10 @@ performer::remove_sequence (seq::number seqno)
     bool result = mapper().remove_sequence(seqno);
     if (result)
     {
-        modify();
-        seqno -= playscreen_offset();
-        send_seq_event(seqno, midicontrolout::seqaction::remove);
+        seq::number buttonno = seqno - playscreen_offset();
+        send_seq_event(buttonno, midicontrolout::seqaction::remove);
         notify_sequence_change(seqno, change::recreate);            /* NEW */
+        modify();
     }
     return result;
 }
@@ -1499,6 +1499,7 @@ void
 performer::next_song_mode ()
 {
     bool has_triggers = mapper().trigger_count() > 0;
+    (void) set_playing_screenset(screenset::number(0)); /* ca 2021-12-13    */
     if (rc().song_start_auto())
     {
         song_mode(has_triggers);
@@ -2280,7 +2281,6 @@ performer::launch (int ppqn)
             launch_input_thread();
             launch_output_thread();
             midi_control_out().send_macro(midimacros::startup);
-            (void) set_playing_screenset(0);
         }
         else
             m_error_pending = true;
@@ -2299,6 +2299,7 @@ performer::launch (int ppqn)
             announce_playscreen();
             announce_mutes();
             announce_automation();
+            (void) set_playing_screenset(screenset::number(0));
         }
     }
     return result;
@@ -6015,6 +6016,10 @@ performer::loop_control
     name += std::to_string(loopnumber);
     print_parameters(name, a, d0, d1, loopnumber, inverse);
 
+    /*
+     * We need to enforce a rule to use the playscreen offset when needed.
+     */
+
     seq::number seqno = mapper().play_seq(loopnumber);
     bool result = seqno >= 0;
     if (result && ! inverse)
@@ -6529,7 +6534,7 @@ performer::automation_play_ss
     std::string name = "Play Screen-Set";
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
-        set_playing_screenset(screenset::number(d1));
+        (void) set_playing_screenset(screenset::number(d1));
 
     return true;
 }
@@ -6741,7 +6746,7 @@ performer::automation_ss_set
     std::string name = "Screen-Set Set";
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
-        (void) set_playing_screenset(d1);
+        (void) set_playing_screenset(screenset::number(d1));
 
     return true;
 }
