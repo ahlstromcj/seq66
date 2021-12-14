@@ -1,0 +1,40 @@
+The 4x4 Test
+Chris Ahlstrom
+2021-12-13 to 2021-12-13
+
+The 4x4 test is meant to test the following things:
+
+   -  The usages of a 4x4 grid, without and with swapping the pattern rows
+      and columns.
+   -  Port-mapping, both for MIDI instrument I/O and for MIDI control and
+      display.
+   -  The handling of various grid modes.
+
+By taking an existing file with a lot of empty patterns and numerous sets,
+along with trying to make some changes to that file, there were some bugs
+that were found and fixed, including errors in the handling of --help,
+extended automation keys for grid modes, setting set 0 when opening a MIDI
+file, expanding a pattern when merging a longer one into it; and pattern
+access in sets > 0.
+
+Steps:
+
+   -  Run the following command in order to create a new configuration
+      directory to hold the 4x4 test configuration. Then exit Seq66 and
+      verify that the configuration files are created in that directory:
+
+      $ qseq66 --home ~/.config/seq66/4x4
+
+      The files created are qseq66.ctrl, qseq66.mutes, qseq66.playlist
+      qseq66.usr, qseq66.drums, qseq66.palette, and, last, but not least,
+      qseq66.rc.
+      
+      This command has to be run every time the tests are performed, because
+      we currently do not have a mechanism to save the changed "home"
+      configuration setting.  Maybe we need a "registry" :-D.
+
+   -  Copy the configuration files in contrib/tests/4x4 to that directory.
+      The file buff.midi will be used later, and does not need to be copied.
+   -
+
+# vim: sw=3 ts=3 wm=8 et ft=sh

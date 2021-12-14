@@ -59,7 +59,7 @@ Let the testing begin!
 
 [midi-control-file]
 
-active = false
+active = true
 name = "qseq66.ctrl"
 
 # Provides a flag and file-name for mute-groups settings.
