@@ -1,0 +1,68 @@
+# Seq66 0.98.1 main ('rc') configuration file
+#
+# jack_portmaps.rc
+# Written 2021-12-15 12:09:32
+# This file is only an EXCERPT.
+#
+# This file shows what happens on one of our development systems when
+# running JACK and the a2jmidid (to export hardware).  This doubles the number
+# of system/hardware I/O ports.  Either version (e.g. port 1 and port 5 below)
+# will work, but we grab the JACK aliases for names that contain "system:"
+
+[midi-input]
+
+8      # number of input MIDI busses
+
+0 0    "[0] 0:0 system:midi_capture_1"        # Midi-Through
+1 0    "[1] 0:1 system:midi_capture_2"        # Launchpad-Mini
+2 0    "[2] 0:2 system:midi_capture_3"        # USB-Midi
+3 0    "[3] 0:3 system:midi_capture_4"        # nanoKEY2
+4 0    "[4] 1:4 a2j:Midi Through [14] (capture): Midi Through Port-0"
+5 0    "[5] 1:5 a2j:Launchpad Mini [32] (capture): Launchpad Mini MIDI 1"
+6 0    "[6] 1:6 a2j:USB Midi [36] (capture): USB Midi MIDI 1"
+7 0    "[7] 1:7 a2j:nanoKEY2 [40] (capture): nanoKEY2 MIDI 1"
+
+[midi-input-map]
+
+1   # map is active
+
+0   "midi_capture_1"      # Midi-Through
+1   "midi_capture_2"      # Launchpad-Mini
+2   "midi_capture_3"      # USB-Midi
+3   "midi_capture_4"      # nanoKEY2
+4   "Midi Through Port-0"
+5   "Launchpad Mini MIDI 1"
+6   "USB Midi MIDI 1"
+7   "nanoKEY2 MIDI 1"
+
+[midi-clock]
+
+9      # number of MIDI clocks (output busses)
+
+0 0    "[0] 0:0 seq66:system midi_playback_1"        # Midi-Through
+1 0    "[1] 0:1 seq66:system midi_playback_2"        # Launchpad-Mini
+2 0    "[2] 0:2 seq66:system midi_playback_3"        # USB-Midi
+3 0    "[3] 0:3 seq66:system midi_playback_4"        # nanoKEY2
+4 0    "[4] 1:4 seq66:a2j Midi Through [14] (playback): Midi Through Port-0"
+5 0    "[5] 1:5 seq66:a2j Launchpad Mini [32] (playback): Launchpad Mini MIDI 1"
+6 0    "[6] 1:6 seq66:a2j USB Midi [36] (playback): USB Midi MIDI 1"
+7 0    "[7] 1:7 seq66:a2j nanoKEY2 [40] (playback): nanoKEY2 MIDI 1"
+8 0    "[8] 2:8 seq66:fluidsynth-midi midi_00"
+
+[midi-clock-map]
+
+1   # map is active
+
+0   "system midi_playback_1"      # Midi-Through
+1   "system midi_playback_2"      # Launchpad-Mini
+2   "system midi_playback_3"      # USB-Midi
+3   "system midi_playback_4"      # nanoKEY2
+4   "Midi Through Port-0"
+5   "Launchpad Mini MIDI 1"
+6   "USB Midi MIDI 1"
+7   "nanoKEY2 MIDI 1"
+8   "fluidsynth-midi midi_00"
+
+# End of jack_portmaps.rc
+#
+# vim: sw=4 ts=4 wm=4 et ft=dosini

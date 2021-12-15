@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-10
+ * \updates       2021-12-15
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -722,8 +722,8 @@ rcfile::write ()
         "# the previous set armed when moving to the next set. 'all-sets' arms\n"
         "# all sets at once.\n"
         "#\n"
-        "# 'port-naming' values are 'short' or 'long'.  'short' shows the\n"
-        "# number and short name; 'long' shows the long name.\n"
+        "# 'port-naming' is 'short' or 'long'. If short, the name shown in the\n"
+        "# port dialogs leaves off the numbering.\n"
         ;
 
     write_seq66_header(file, "rc", version());
@@ -961,13 +961,14 @@ rcfile::write ()
 
         mapstatus += "active";
         file << "\n"
-           "# This table allows the pattern to set buss numbers as usual,\n"
-           "# but the use the table to look up the true buss number\n"
-           "# by the short form of the port name. Thus, if the ports change\n"
-           "# their order in the MIDI system, the pattern can still output to\n"
-           "# the proper port. The short names are the same with ALSA or with\n"
-           "# JACK with the a2jmidi bridge running. Note that port-mapping is\n"
-           "# disabled in manual/virtual port mode.\n"
+           "# Patterns use buss numbers, not names. If present, this table,\n"
+           "# provides 'virtual' buss numbers that you set up to match your\n"
+           "# devices and use in all your patterns.  The buss number is looked\n"
+           "# up in this table, the port nick-name is retrieved, and the real\n"
+           "# buss number is obtained and used. Thus, if the ports change order\n"
+           "# in the MIDI system, the pattern will still use the proper port.\n"
+           "# The short nick-names are the same with ALSA or JACK (a2jmidid\n"
+           "# bridge). Port-mapping is disabled in manual/virtual port mode.\n"
            "\n[midi-clock-map]\n\n"
         << activestring << "   # " << mapstatus << "\n\n"
         << output_port_map_list()

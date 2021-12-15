@@ -1,7 +1,7 @@
 # Seq66 0.98.1 MIDI control configuration file
 #
-# /home/user/.config/seq66/4x4/qseq66.ctrl
-# Written 2021-12-12 11:16:25
+# /home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/qseq66.ctrl
+# Written 2021-12-14 11:20:00
 #
 # Sets up MIDI I/O control. The format is like the 'rc' file, in the
 # HOME configuration directory. To use it, set it active in the 'rc'
@@ -39,7 +39,7 @@ This control ('ctrl') file is meant for the 4x4 test.  See the file
 load-key-controls = true
 load-midi-controls = true
 drop-empty-controls = false
-control-buss = 0xFF
+control-buss = ""
 midi-enabled = false
 button-offset = 0
 button-rows = 4
@@ -243,8 +243,8 @@ keyboard-layout = qwerty
 [midi-control-out-settings]
 
 set-size = 32
-output-buss = 0xFF
-midi-enabled = true
+output-buss = ""
+midi-enabled = false
 button-offset = 0
 button-rows = 4
 button-columns = 8
@@ -398,9 +398,10 @@ button-columns = 8
 footer =
 header =
 reset =
-startup =
 shutdown =
+startup =
 
-# End of /home/user/.config/seq66/4x4/qseq66.ctrl
+
+# End of /home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/qseq66.ctrl
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

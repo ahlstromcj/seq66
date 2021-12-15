@@ -458,7 +458,7 @@ midi_jack_info::get_all_port_info ()
 std::string
 midi_jack_info::get_port_alias (const std::string & name)
 {
-    bool is_system_port = contains(name, "system:");    /* brittle code */
+    bool is_system_port = contains(name, "system:");        /* brittle code */
     std::string result;
     if (is_system_port)
     {
@@ -482,16 +482,11 @@ midi_jack_info::get_port_alias (const std::string & name)
             {
                 if (rc < 0)
                     errprint("JACK port aliases error");
-                else
-                    warnprint("no usable JACK port alias");
             }
             free(aliases[0]);
             free(aliases[1]);
         }
     }
-    else
-        result = name;
-
     return result;
 }
 

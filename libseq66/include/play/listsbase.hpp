@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2021-12-06
+ * \updates       2021-12-14
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -169,6 +169,7 @@ protected:
         const std::string & nickname = "",
         const std::string & alias = ""
     );
+    bool add (int buss, io & ioitem, const std::string & nickname);
     const io & get_io_block (const std::string & nickname) const;
 
 };              // class listsbase

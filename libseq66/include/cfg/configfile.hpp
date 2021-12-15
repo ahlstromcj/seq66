@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-10
+ * \updates       2021-12-15
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -363,7 +363,8 @@ protected:
     (
         std::ofstream & file,
         const std::string & name,
-        int value
+        int value,
+        bool usehex = false
     );
     float get_float
     (

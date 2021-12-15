@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-07
+ * \updates       2021-12-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -96,17 +96,7 @@ clockslist::add
         ioitem.out_clock = clocktype;
         ioitem.io_name = portname;
         ioitem.io_alias = alias;
-        if (nickname.empty())
-        {
-            std::string nick = extract_nickname(portname);
-            ioitem.io_nick_name = nick;
-        }
-        else
-            ioitem.io_nick_name = nickname;
-
-        auto p = std::make_pair(bussbyte(buss), ioitem);
-        m_master_io.insert(p);          // later, check the insertion
-        result = true;
+        result = listsbase::add(buss, ioitem, nickname);
     }
     return result;
 }
@@ -196,15 +186,11 @@ build_output_port_map (const clockslist & cl)
         cloutref.active(true);
         for (int b = 0; b < cl.count(); ++b)
         {
-            std::string name = std::to_string(b);
             bussbyte bb = bussbyte(b);
-
-            /*
-             * TODO: use the buss from the source and iterate through the
-             * souce.
-             */
-
-            result = cloutref.add(b, e_clock::off, cl.get_nick_name(bb), name);
+            std::string nick = cl.get_nick_name(bb);
+            std::string number = std::to_string(b);
+            std::string alias = cl.get_alias(bb);
+            result = cloutref.add(b, e_clock::off, nick, number, alias);
             if (! result)
             {
                 cloutref.clear();

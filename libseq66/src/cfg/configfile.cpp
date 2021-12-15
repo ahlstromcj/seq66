@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-10
+ * \updates       2021-12-15
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -48,6 +48,7 @@
  */
 
 #include <cctype>                       /* std::isspace(), std::isdigit()   */
+#include <iomanip>                      /* std::hex, std::setw()            */
 
 #include "cfg/configfile.hpp"           /* seq66:: configfile class         */
 #include "cfg/rcsettings.hpp"           /* seq66::rcsettings class          */
@@ -522,10 +523,14 @@ configfile::write_integer
 (
     std::ofstream & file,
     const std::string & name,
-    int value
+    int value,
+    bool usehex
 )
 {
-    file << name << " = " << value << "\n";
+    if (usehex)
+        file << name << " = 0x" << std::hex << std::setw(2) << value << "\n";
+    else
+        file << name << " = " << value << "\n";
 }
 
 float

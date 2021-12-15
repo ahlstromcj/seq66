@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-07
+ * \updates       2021-12-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -88,17 +88,7 @@ inputslist::add
         ioitem.out_clock = e_clock::off;        /* not e_clock::disabled!   */
         ioitem.io_name = portname;
         ioitem.io_alias = alias;
-        if (nickname.empty())
-        {
-            std::string nick = extract_nickname(portname);
-            ioitem.io_nick_name = nick;
-        }
-        else
-            ioitem.io_nick_name = nickname;
-
-        auto p = std::make_pair(bussbyte(buss), ioitem);
-        m_master_io.insert(p);          // later, check the insertion
-        result = true;
+        result = listsbase::add(buss, ioitem, nickname);
     }
     return result;
 }
@@ -187,14 +177,11 @@ build_input_port_map (const inputslist & il)
         inpsref.active(true);
         for (int b = 0; b < il.count(); ++b)
         {
-            std::string name = std::to_string(b);
             bussbyte bb = bussbyte(b);
-
-            /*
-             * TODO: use the source buss number.
-             */
-
-            result = inpsref.add(b, true, il.get_nick_name(bb), name);
+            std::string nick = il.get_nick_name(bb);
+            std::string number = std::to_string(b);
+            std::string alias = il.get_alias(bb);
+            result = inpsref.add(b, true, nick, number, alias);
             if (! result)
             {
                 inpsref.clear();

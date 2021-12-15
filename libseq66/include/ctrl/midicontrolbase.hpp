@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2019-11-25
- * \updates       2021-11-14
+ * \updates       2021-12-15
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -227,7 +227,7 @@ protected:
 inline bussbyte
 default_control_in_buss ()
 {
-    return bussbyte(0xFF);
+    return null_buss();
 }
 
 /**
@@ -239,7 +239,7 @@ default_control_in_buss ()
 inline bussbyte
 default_control_out_buss ()
 {
-    return bussbyte(0x0F);
+    return null_buss();
 }
 
 }           // namespace seq66

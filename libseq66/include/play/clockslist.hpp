@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-12-07
+ * \updates       2021-12-14
  * \license       GNU GPLv2 or above
  *
  *  Defines some midibus constants and the seq66::clock enumeration.  In

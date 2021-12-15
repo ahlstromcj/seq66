@@ -1,7 +1,7 @@
 # Seq66 0.98.1 main ('rc') configuration file
 #
-# /home/user/.config/seq66/4x4/qseq66.rc
-# Written 2021-12-12 11:19:29
+# /home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/qseq66.rc
+# Written 2021-12-14 11:20:00
 #
 # This file holds the main configuration for Seq66. It no longer
 # follows the format of the seq24rc configuration file much.
@@ -42,7 +42,6 @@ usage patterns:
 For this test configuration, we move the "Loop" keystrokes for patterns 16 to 31
 to other automation functions.  The "Mute"keystrokes (i.e. the shifted keys)
 remain the same.
-
 To enable this configuration first run the following command (Linux):
  
     $ qseq66 --home ~/.config/seq66/4x4
@@ -147,6 +146,18 @@ input-port-count = 4
 2 0    "[2] 0:2 system:midi_capture_3"        # USB-Midi
 3 0    "[3] 0:3 system:midi_capture_4"        # nanoKEY2
 
+# This table is similar to the [midi-clock-map] section.
+# Port-mapping is disabled in manual/virtual port mode.
+
+[midi-input-map]
+
+1   # map is active
+
+0   "midi_capture_1"
+1   "midi_capture_2"
+2   "midi_capture_3"
+3   "midi_capture_4"
+
 # These system ports are available for output, for playback/control.
 # From JACK's view, these are 'capture' devices. The first line shows
 # the count of MIDI 'capture' ports. Each line shows the buss number
@@ -172,6 +183,24 @@ input-port-count = 4
 2 0    "[2] 0:2 seq66:system midi_playback_3"        # USB-Midi
 3 0    "[3] 0:3 seq66:system midi_playback_4"        # nanoKEY2
 4 0    "[4] 1:4 seq66:fluidsynth-midi midi_00"
+
+# This table allows the pattern to set buss numbers as usual,
+# but the use the table to look up the true buss number
+# by the short form of the port name. Thus, if the ports change
+# their order in the MIDI system, the pattern can still output to
+# the proper port. The short names are the same with ALSA or with
+# JACK with the a2jmidi bridge running. Note that port-mapping is
+# disabled in manual/virtual port mode.
+
+[midi-clock-map]
+
+1   # map is active
+
+0   "system midi_playback_1"
+1   "system midi_playback_2"
+2   "system midi_playback_3"
+3   "system midi_playback_4"
+4   "fluidsynth-midi midi_00"
 
 # 'ticks' provides the Song Position (in 16th notes) at which
 # clocking begins if the buss is set to MIDI Clock Mod setting.
@@ -248,7 +277,7 @@ save-old-mutes = false
 
 [last-used-dir]
 
-""
+"/home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4"
 
 # A list of the most recently-loaded MIDI files. 'full-paths' = true
 # means to show the full file-path in the menu.  The most recent
@@ -258,9 +287,10 @@ save-old-mutes = false
 
 full-paths = false
 load-most-recent = true
-count = 0
+count = 1
 
+"/home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/buff.midi"
 
-# End of /home/user/.config/seq66/4x4/qseq66.rc
+# End of /home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/qseq66.rc
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

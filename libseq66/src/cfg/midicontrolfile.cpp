@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-12-10
+ * \updates       2021-12-15
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -255,10 +255,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
 
     bool loadmidi = rc_ref().load_midi_control_in();
     bool loadkeys = rc_ref().load_key_controls();
-    int buss = get_buss_number(file, false, mctag, "control-buss");
-    if (buss < 0)
-        buss = default_control_in_buss();
-
+    bussbyte buss = get_buss_number(file, false, mctag, "control-buss");
     bool enabled = get_boolean(file, mctag, "midi-enabled");
     int offset = 0, rows = 0, columns = 0;
     result = parse_control_sizes(file, mctag, offset, rows, columns);
@@ -487,10 +484,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
     std::string mctag = "[midi-control-out-settings]";
     std::string s = get_variable(file, mctag, "set-size");
     int sequences = string_to_int(s, setmaster::Size());
-    int buss = get_buss_number(file, true, mctag, "output-buss");
-    if (buss < 0)
-        buss = default_control_out_buss();
-
+    bussbyte buss = get_buss_number(file, true, mctag, "output-buss");
     bool enabled = false;
     s = get_variable(file, mctag, "midi-enabled");
     if (s.empty())
@@ -817,7 +811,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
     {
         const midicontrolin & mci = rc_ref().midi_control_in();
         bool enabled = ! mci.is_disabled();
-        int bb = int(mci.nominal_buss());
+        bussbyte bb = mci.nominal_buss();
         file <<
         "\n[midi-control-settings]\n\n"
         "# These are input settings to control Seq66. 'load-midi-control'\n"
@@ -1035,8 +1029,8 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
 {
     /* const */ midicontrolout & mco = rc_ref().midi_control_out();
     int setsize = mco.screenset_size();
-    int bb = int(mco.nominal_buss());
-    bool result = bb >= 0;                /* do a very light sanity check */
+    bussbyte bb = mco.nominal_buss();
+    bool result = is_valid_buss(bb);            /* very light sanity check  */
     if (result)
     {
         if (setsize == 0)
@@ -1349,12 +1343,11 @@ midicontrolfile::add_default_automation_stanzas (int starting_index)
 }
 
 /**
- *  A potential candidate to move to configfile.
- *
- *  Also need a write_buss_number().
+ *  The counterpart is write_buss_info().  This function depends on the 'rc'
+ *  file being read first, in case port-mapping is specified.
  */
 
-int
+bussbyte
 midicontrolfile::get_buss_number
 (
     std::ifstream & file,
@@ -1383,6 +1376,8 @@ midicontrolfile::get_buss_number
                         msglevel::status, "Output buss '%s' port %d", s, result
                     );
                 }
+                else
+                    result = int(default_control_out_buss());
             }
             else
             {
@@ -1396,6 +1391,8 @@ midicontrolfile::get_buss_number
                         msglevel::status, "Input buss '%s' port %d", s, result
                     );
                 }
+                else
+                    result = int(default_control_in_buss());
             }
         }
     }
@@ -1408,7 +1405,7 @@ midicontrolfile::write_buss_info
     std::ofstream & file,
     bool isoutputport,
     const std::string & varname,
-    int nominalbuss
+    bussbyte nominalbuss
 )
 {
     bool active = false;
@@ -1434,10 +1431,10 @@ midicontrolfile::write_buss_info
     }
     if (! active)
     {
-        if (nominalbuss >= c_busscount_max)
-            write_string(file, varname, "0xFF");
-        else
-            write_integer(file, varname, nominalbuss);
+        write_integer
+        (
+            file, varname, int(nominalbuss), is_null_buss(nominalbuss)
+        );
     }
 }
 

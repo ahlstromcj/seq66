@@ -1,7 +1,7 @@
 # Seq66 0.98.1 mute-groups configuration file
 #
-# /home/user/.config/seq66/4x4/qseq66.mutes
-# Written 2021-12-12 11:19:29
+# /home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/qseq66.mutes
+# Written 2021-12-14 11:20:00
 #
 # Used in the [mute-group-file] section of the 'rc' file, making it
 # easier to manage multiple sets of mute groups. To use this file,
@@ -19,6 +19,7 @@ version = 0
 
 Currently no testing is in place for the mutes.  Soon!
   
+
 # load-mute-groups: set to 'none', or 'mutes' to load from the 'mutes'
 # file, 'midi' to load from the song, or 'both' to try to
 # to read from the 'mutes' first, then the 'midi' file.
@@ -55,7 +56,7 @@ strip-empty = true
 mute-group-rows = 4
 mute-group-columns = 8
 mute-group-count = 32
-mute-group-selected = -1
+mute-group-selected = 0
 groups-format = binary
 toggle-active-only = false
 
@@ -99,6 +100,6 @@ toggle-active-only = false
 30 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 30"
 31 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 31"
 
-# End of /home/user/.config/seq66/4x4/qseq66.mutes
+# End of /home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/qseq66.mutes
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

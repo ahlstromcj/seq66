@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-08-22
+ * \updates       2021-12-15
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -130,9 +130,25 @@ listsbase::add
         ioitem.out_clock = e_clock::off;
         ioitem.io_name = name;
         ioitem.io_alias = alias;
+        result = add(buss, ioitem, nickname);
+    }
+    return result;
+}
+
+bool
+listsbase::add
+(
+    int buss,
+    io & ioitem,
+    const std::string & nickname
+)
+{
+    bool result = buss >= 0;
+    if (result)
+    {
         if (nickname.empty())
         {
-            std::string nick = extract_nickname(name);
+            std::string nick = extract_nickname(ioitem.io_name);
             ioitem.io_nick_name = nick;
         }
         else
@@ -311,6 +327,9 @@ listsbase::extract_nickname (const std::string & name) const
         {
             auto cpos = name.find_last_of(":");
             ++cpos;
+            if (name[cpos] == ' ')
+                cpos = name.find_first_not_of(" ", cpos);
+
             result = name.substr(cpos);
         }
         else
@@ -419,13 +438,20 @@ std::string
 listsbase::port_name_from_bus (bussbyte nominalbuss) const
 {
     std::string result;
-    std::string nick = std::to_string(int(nominalbuss));
-    for (const auto & iopair : m_master_io)
+    if (is_null_buss(nominalbuss))
     {
-        if (nick == iopair.second.io_nick_name)
+        result = "0xFF";
+    }
+    else
+    {
+        std::string nick = std::to_string(int(nominalbuss));
+        for (const auto & iopair : m_master_io)
         {
-            result = iopair.second.io_name;
-            break;
+            if (nick == iopair.second.io_nick_name)
+            {
+                result = iopair.second.io_name;
+                break;
+            }
         }
     }
     return result;
@@ -508,6 +534,11 @@ listsbase::e_clock_to_string (e_clock e) const
     return result;
 }
 
+/**
+ *  This function is used by input_port_map_list() and output_port_map_list()
+ *  in rcfile to dump the maps into the 'rc' file.
+ */
+
 std::string
 listsbase::port_map_list () const
 {
@@ -516,10 +547,18 @@ listsbase::port_map_list () const
     {
         for (const auto & iopair : m_master_io)
         {
-            std::string port = iopair.second.io_nick_name;
-            std::string name = iopair.second.io_name;
-            std::string temp = port + "   \"" + name + "\"\n";
+            const io & item = iopair.second;
+            std::string port = item.io_nick_name;      /* a number */
+            std::string name = item.io_name;
+            std::string alias = item.io_alias;
+            std::string temp = port + "   \"" + name + "\"";
             result += temp;
+            if (! alias.empty())
+            {
+                result += "      # ";
+                result += alias;
+            }
+            result += "\n";
         }
     }
     return result;
