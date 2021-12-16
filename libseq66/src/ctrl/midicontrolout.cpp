@@ -291,10 +291,11 @@ midicontrolout::send_seq_event (int index, seqaction what, bool flush)
                     "send_seq_event(%s): %s\n", act.c_str(), evstring.c_str()
                 );
 #endif
+                bussbyte tb = true_buss();
                 if (flush)
-                    m_master_bus->play_and_flush(true_buss(), &ev, ev.channel());
+                    m_master_bus->play_and_flush(tb, &ev, ev.channel());
                 else
-                    m_master_bus->play(true_buss(), &ev, ev.channel());
+                    m_master_bus->play(tb, &ev, ev.channel());
             }
         }
     }
@@ -461,12 +462,13 @@ midicontrolout::send_macro (const std::string & name, bool flush)
         if (! byts.empty())
         {
             int len = int(byts.length());
+            bussbyte tb = true_buss();
             if (len > 3)                                    /* assume sysex */
             {
                 event ev;
                 const midibyte * b = midi_bytes(byts);
                 (void) ev.set_sysex(b, len);
-                m_master_bus->sysex(true_buss(), &ev);      /* flushes      */
+                m_master_bus->sysex(tb, &ev);               /* flushes      */
             }
             else
             {
@@ -482,9 +484,9 @@ midicontrolout::send_macro (const std::string & name, bool flush)
 
                 event ev(0, byts[0], d0, d1);
                 if (flush)
-                    m_master_bus->play_and_flush(true_buss(), &ev, ev.channel());
+                    m_master_bus->play_and_flush(tb, &ev, ev.channel());
                 else
-                    m_master_bus->play(true_buss(), &ev, ev.channel());
+                    m_master_bus->play(tb, &ev, ev.channel());
             }
         }
     }

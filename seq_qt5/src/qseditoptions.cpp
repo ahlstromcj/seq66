@@ -581,7 +581,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         }
 
         bool active = perf().midi_control_out().is_enabled();
-        int buss = perf().midi_control_out().nominal_buss(); // true_buss()
+        int buss = perf().midi_control_out().nominal_buss();
         int activebuss = active ? buss + 1 : 0 ;
         out->setCurrentIndex(activebuss);
         connect
@@ -675,7 +675,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         }
 
         bool active = perf().midi_control_in().is_enabled();
-        int buss = perf().midi_control_in().nominal_buss(); // true_buss()
+        int buss = perf().midi_control_in().nominal_buss();
         int activebuss = active ? buss  + 1 : 0 ;
         in->setCurrentIndex(activebuss);
         connect

@@ -179,7 +179,10 @@ protected:
 
     void true_buss (bussbyte b)
     {
-        m_true_buss = b;
+        if (is_good_buss(b))
+            m_true_buss = b;
+        else
+            is_enabled(false);
     }
 
     void is_blank (bool flag)

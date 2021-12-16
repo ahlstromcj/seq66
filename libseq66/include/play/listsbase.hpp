@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2021-12-14
+ * \updates       2021-12-16
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -39,6 +39,8 @@
 
 #include "midi/midibus_common.hpp"      /* enum class e_clock, etc.         */
 #include "midi/midibytes.hpp"           /* bussbyte and other types         */
+
+#define USE_ALIAS_IF_PRESENT            /* EXPERIMENTAL                     */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -151,6 +153,7 @@ public:
     std::string get_nick_name (bussbyte bus, bool addnumber = false) const;
     std::string get_alias (bussbyte bus) const;
     bussbyte bus_from_nick_name (const std::string & nick) const;
+    bussbyte bus_from_alias (const std::string & alias) const;
     std::string port_name_from_bus (bussbyte nominalbuss) const;
     void show (const std::string & tag) const;
     bool add_list_line (const std::string & line);

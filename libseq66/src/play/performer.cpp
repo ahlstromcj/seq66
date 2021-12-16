@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-12-13
+ * \updates       2021-12-16
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -677,31 +677,33 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
      * them or not.  Otherwise, the controls are replaced by the defaults
      * during the 'ctrl' file save at exit, which is surprising to the poor
      * user.  See issue #47.
-     *
-     *  if (rcs.midi_control_in().is_enabled())
-     *  if (rcs.midi_control_out().is_enabled())
      */
+
+#if defined USE_OLD_CODE
 
     bussbyte namedbus = rcs.midi_control_in().nominal_buss();
     bussbyte truebus = true_input_bus(namedbus);
     m_midi_control_in = rcs.midi_control_in();
-    if (is_good_buss(truebus))
-        m_midi_control_in.true_buss(truebus);
-    else
-        m_midi_control_in.is_enabled(false);
-
+    m_midi_control_in.true_buss(truebus);
     if (micount == 0 && kcount > 0)
         m_midi_control_in.add_blank_controls(m_key_controls);
 
     namedbus = rcs.midi_control_out().nominal_buss();
     truebus = true_output_bus(namedbus);
     m_midi_control_out = rcs.midi_control_out();
-    if (is_good_buss(truebus))
-        m_midi_control_out.true_buss(truebus);
-    else
-        m_midi_control_out.is_enabled(false);
-
+    m_midi_control_out.true_buss(truebus);
     m_mute_groups = rcs.mute_groups();              /* could be 0-sized     */
+
+#else
+
+    m_midi_control_in = rcs.midi_control_in();
+    if (micount == 0 && kcount > 0)
+        m_midi_control_in.add_blank_controls(m_key_controls);
+
+    m_midi_control_out = rcs.midi_control_out();
+    m_mute_groups = rcs.mute_groups();              /* could be 0-sized     */
+
+#endif
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
     if (rc().verbose())
@@ -2264,6 +2266,8 @@ performer::create_master_bus ()
  *      We probably need a bpm parameter for consistency at some point.
  */
 
+#if defined USE_OLD_CODE
+
 bool
 performer::launch (int ppqn)
 {
@@ -2304,6 +2308,58 @@ performer::launch (int ppqn)
     }
     return result;
 }
+
+#else
+
+bool
+performer::launch (int ppqn)
+{
+    bool result = create_master_bus();      /* calls set_port_statuses()    */
+    if (result)
+    {
+        (void) init_jack_transport();
+        m_master_bus->init(ppqn, m_bpm);    /* calls api_init() per API     */
+        result = activate();
+        if (result)
+        {
+            /*
+             * Get and store the clocks and inputs created (disabled or not) by
+             * the mastermidibus during api_init().  After this call, the clocks
+             * and inputs now have names.  These calls are necessary to populate
+             * the port lists the first time Seq66 is run.
+             */
+
+            m_master_bus->copy_io_busses();
+            m_master_bus->get_port_statuses(m_clocks, m_inputs);
+
+            /*
+             * Moved from get_settings() so that aliases, if present, are
+             * obtained at this point.
+             */
+
+            bussbyte namedbus = m_midi_control_in.nominal_buss();
+            bussbyte truebus = true_input_bus(namedbus);
+            m_midi_control_in.true_buss(truebus);
+            namedbus = m_midi_control_out.nominal_buss();
+            truebus = true_output_bus(namedbus);
+            m_midi_control_out.true_buss(truebus);
+
+            m_io_active = true;
+            launch_input_thread();
+            launch_output_thread();
+            midi_control_out().send_macro(midimacros::startup);
+            announce_playscreen();
+            announce_mutes();
+            announce_automation();
+            (void) set_playing_screenset(screenset::number(0));
+        }
+        else
+            m_error_pending = true;
+    }
+    return result;
+}
+
+#endif
 
 /**
  *  Announces the current mute states of the now-current play-screen.  This

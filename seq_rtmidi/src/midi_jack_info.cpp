@@ -473,10 +473,23 @@ midi_jack_info::get_port_alias (const std::string & name)
             int rc = jack_port_get_aliases(p, aliases);
             if (rc > 1)
             {
-                std::string nick = std::string(aliases[1]);     /* brittle? */
-                auto colonpos = nick.find_first_of(":");        /* brittle? */
+                std::string nick = std::string(aliases[1]);     /* brittle  */
+                auto colonpos = nick.find_first_of(":");        /* brittle  */
                 if (colonpos != std::string::npos)
                     result = nick.substr(0, colonpos);
+
+                /*
+                 * Another bit of brittleness:  the name generated via the
+                 * a2jmidid program uses spaces, but the system alias returned
+                 * by JACK uses a hyphen.  Convert them to spaces.
+                 */
+
+                auto hyphenpos = result.find_first_of("-");        /* brittle  */
+                while (hyphenpos != std::string::npos)
+                {
+                    result[hyphenpos] = ' ';
+                    hyphenpos = result.find_first_of("-", hyphenpos);
+                }
             }
             else
             {

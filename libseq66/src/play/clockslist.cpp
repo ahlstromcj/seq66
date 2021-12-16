@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-14
+ * \updates       2021-12-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -183,7 +183,6 @@ build_output_port_map (const clockslist & cl)
     {
         clockslist & cloutref = output_port_map();
         cloutref.clear();
-        cloutref.active(true);
         for (int b = 0; b < cl.count(); ++b)
         {
             bussbyte bb = bussbyte(b);
@@ -197,6 +196,7 @@ build_output_port_map (const clockslist & cl)
                 break;
             }
         }
+        cloutref.active(result);
     }
     return result;
 }
@@ -213,10 +213,11 @@ build_output_port_map (const clockslist & cl)
  *      ports.
  *
  * \param seqbuss
- *      Provides the buss number to be mapped to the true buss number. The
- *      nominal buss number is the number stored with each pattern in the
- *      tune, and should never change just because the set of MIDI equipment
- *      changes.
+ *      Provides the 'virtual' (nominal) buss number to be mapped to the true
+ *      buss number. The 'virtual' (nominal) buss number is the number stored
+ *      with each pattern in the MIDI tune, and should never change just because
+ *      the set of MIDI equipment changes.  In this manner, one can easily remap
+ *      the configuration to fit the setup on someone else's system.
  *
  * \return
  *      If the port map exists, the looked-up port/buss number is returned. If
@@ -244,7 +245,13 @@ true_output_bus (const clockslist & cl, bussbyte seqbuss)
             }
             else
             {
+#if defined USE_ALIAS_IF_PRESENT
+                result = cl.bus_from_alias(shortname);
+                if (is_null_buss(result))
+                    result = cl.bus_from_nick_name(shortname);
+#else
                 result = cl.bus_from_nick_name(shortname);
+#endif
                 if (is_null_buss(result))
                 {
                     const char * sn = shortname.c_str();

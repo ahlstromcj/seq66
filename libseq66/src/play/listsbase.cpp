@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-15
+ * \updates       2021-12-16
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -421,6 +421,21 @@ listsbase::bus_from_nick_name (const std::string & nick) const
     return result;
 }
 
+bussbyte
+listsbase::bus_from_alias (const std::string & alias) const
+{
+    bussbyte result = null_buss();
+    for (const auto & iopair : m_master_io)
+    {
+        if (alias == iopair.second.io_alias)
+        {
+            result = iopair.first;
+            break;
+        }
+    }
+    return result;
+}
+
 /**
  *  Looks up the nick-name, which should be a string version of the nominal
  *  buss number.  Returns the port name (short name) if found in the list.
@@ -487,7 +502,11 @@ listsbase::match_up (const listsbase & source)
     }
 }
 
-/*
+/**
+ *  Given a port-name (which might be a nick-name), this function checks if the
+ *  master (internal) I/O item's nick-name or alias matches the given nick-name.
+ *  If it matches, then that internal item is returned.
+ *
  * Issue:
  *
  *  The [midi-clock] name and the [midi-clock-map] nick-name might be like:
@@ -510,11 +529,17 @@ listsbase::get_io_block (const std::string & nickname) const
     }
     for (const auto & iopair : m_master_io)
     {
-        // bool matches = iopair.second.io_nick_name == nickname;
+        const io & item = iopair.second;
+#if defined USE_ALIAS_IF_PRESENT
+        const std::string & comparison = item.io_alias.empty() ?
+            item.io_nick_name : item.io_alias ;
+#else
+        const std::string & comparison = item.io_nick_name;
+#endif
 
-        bool matches = contains(iopair.second.io_nick_name, nickname);
+        bool matches = contains(comparison, nickname);
         if (matches)
-            return iopair.second;
+            return item;            /* iopair.second */
     }
     return s_dummy_io;
 }
@@ -537,6 +562,9 @@ listsbase::e_clock_to_string (e_clock e) const
 /**
  *  This function is used by input_port_map_list() and output_port_map_list()
  *  in rcfile to dump the maps into the 'rc' file.
+ *
+ *  One trick here is that, if there is an alias, that is written first, and
+ *  port's system name is written as a comment.
  */
 
 std::string
@@ -551,12 +579,17 @@ listsbase::port_map_list () const
             std::string port = item.io_nick_name;      /* a number */
             std::string name = item.io_name;
             std::string alias = item.io_alias;
-            std::string temp = port + "   \"" + name + "\"";
-            result += temp;
-            if (! alias.empty())
+            if (alias.empty())
             {
+                std::string temp = port + "   \"" + name + "\"";
+                result += temp;
+            }
+            else
+            {
+                std::string temp = port + "   \"" + alias + "\"";
+                result += temp;
                 result += "      # ";
-                result += alias;
+                result += name;
             }
             result += "\n";
         }

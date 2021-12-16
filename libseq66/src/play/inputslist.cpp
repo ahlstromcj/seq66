@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-14
+ * \updates       2021-12-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -174,7 +174,6 @@ build_input_port_map (const inputslist & il)
     {
         inputslist & inpsref = input_port_map();
         inpsref.clear();
-        inpsref.active(true);
         for (int b = 0; b < il.count(); ++b)
         {
             bussbyte bb = bussbyte(b);
@@ -188,6 +187,7 @@ build_input_port_map (const inputslist & il)
                 break;
             }
         }
+        inpsref.active(result);
     }
     return result;
 }
@@ -235,7 +235,13 @@ true_input_bus (const inputslist & cl, bussbyte seqbuss)
             }
             else
             {
+#if defined USE_ALIAS_IF_PRESENT
+                result = cl.bus_from_alias(shortname);
+                if (is_null_buss(result))
+                    result = cl.bus_from_nick_name(shortname);
+#else
                 result = cl.bus_from_nick_name(shortname);
+#endif
                 if (is_null_buss(result))
                 {
                     const char * sn = shortname.c_str();
