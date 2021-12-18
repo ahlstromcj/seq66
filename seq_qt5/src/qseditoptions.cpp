@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-25
+ * \updates       2021-12-17
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -617,6 +617,11 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         ui->pushButtonStoreMap, SIGNAL(clicked(bool)),
         this, SLOT(slot_io_maps())
     );
+    connect
+    (
+        ui->pushButtonRemoveMap, SIGNAL(clicked(bool)),
+        this, SLOT(slot_remove_io_maps())
+    );
 
     /*
      * The virtual port counts for input and output.
@@ -856,6 +861,16 @@ qseditoptions::slot_io_maps ()
     bool inportmap = ipm.active();
     ui->outPortsMappedCheck->setChecked(outportmap);
     ui->inPortsMappedCheck->setChecked(inportmap);
+    reload_needed(true);
+}
+
+void
+qseditoptions::slot_remove_io_maps ()
+{
+    perf().remove_output_map();
+    perf().remove_input_map();
+    ui->outPortsMappedCheck->setChecked(false);
+    ui->inPortsMappedCheck->setChecked(false);
     reload_needed(true);
 }
 

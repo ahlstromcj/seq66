@@ -27,11 +27,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2021-12-16
+ * \updates       2021-12-18
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
- *  for "convenience".  :-)
+ *  for "convenience". :-) Oh, and for port-mapping.
  */
 
 #include <string>                       /* std::string                      */
@@ -66,11 +66,7 @@ protected:
      *  clock setting will be off (not disabled) for all input values.  This
      *  is so that we can disable missing inputs when port-mapping.  The clock
      *  setting will be disabled for output values that are actually disabled
-     *  by the user or are missing from the actual system ports.  Note that
-     *  io_alt_name is used instead of io_nick_name in cases where the
-     *  nick-name is too minimal.  For example, the nickname of
-     *  "yoshimi:input" is "input", which could conflict with the nicknames of
-     *  other inputs.
+     *  by the user or are missing from the actual system ports.
      */
 
     using io = struct
@@ -114,11 +110,29 @@ public:
 
     listsbase (bool pmflag = false);
     virtual ~listsbase () = default;
+
+    virtual std::string io_list_lines () const = 0;
+    virtual bool add_list_line (const std::string & line);
+
+    static bool parse_port_line
+    (
+        const std::string & line,
+        int & portnumber,
+        int & portstatus,
+        std::string & portname
+    );
+
     void match_up (const listsbase & source);
 
     void clear ()
     {
         m_master_io.clear();
+    }
+
+    void deactivate ()
+    {
+        clear();
+        m_is_active = false;
     }
 
     int count () const
@@ -156,18 +170,35 @@ public:
     bussbyte bus_from_alias (const std::string & alias) const;
     std::string port_name_from_bus (bussbyte nominalbuss) const;
     void show (const std::string & tag) const;
-    bool add_list_line (const std::string & line);
     bool is_disabled (bussbyte bus) const;
 
 protected:
 
+    container & master_io ()
+    {
+        return m_master_io;
+    }
+
+    const container & master_io () const
+    {
+        return m_master_io;
+    }
+
+    std::string to_string (const std::string & tag) const;
     std::string extract_nickname (const std::string & name) const;
     std::string e_clock_to_string (e_clock e) const;
-    std::string port_map_list () const;
-    std::string to_string (const std::string & tag) const;
+    std::string port_map_list (bool isclock) const;
+    std::string io_line
+    (
+        int portnumber,
+        int status,
+        const std::string & portname,
+        const std::string & portalias = ""
+    ) const;
     bool add
     (
         int buss,
+        int status,
         const std::string & name,
         const std::string & nickname = "",
         const std::string & alias = ""

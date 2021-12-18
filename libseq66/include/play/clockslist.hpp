@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-12-14
+ * \updates       2021-12-18
  * \license       GNU GPLv2 or above
  *
  *  Defines some midibus constants and the seq66::clock enumeration.  In
@@ -53,6 +53,7 @@ namespace seq66
 
 class clockslist final : public listsbase
 {
+    friend bool build_output_port_map (const clockslist & lb);
 
 public:
 
@@ -62,6 +63,10 @@ public:
     }
 
     virtual ~clockslist () = default;
+
+    virtual std::string io_list_lines () const override;
+    virtual bool add_list_line (const std::string & line) override;
+
     bool add
     (
         int buss,
@@ -81,6 +86,7 @@ public:
 
 extern clockslist & output_port_map ();
 extern bool build_output_port_map (const clockslist & lb);
+extern void clear_output_port_map ();
 extern bussbyte true_output_bus (const clockslist & cl, bussbyte nominalbuss);
 extern std::string output_port_name (bussbyte b, bool addnumber = false);
 extern bussbyte output_port_number (bussbyte b);

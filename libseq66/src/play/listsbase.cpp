@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-16
+ * \updates       2021-12-18
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -117,6 +117,7 @@ bool
 listsbase::add
 (
     int buss,
+    int status,
     const std::string & name,
     const std::string & nickname,
     const std::string & alias
@@ -126,8 +127,8 @@ listsbase::add
     if (result)
     {
         io ioitem;
-        ioitem.io_enabled = true;
-        ioitem.out_clock = e_clock::off;
+        ioitem.io_enabled = status > 0;
+        ioitem.out_clock = int_to_clock(status);    /* e_clock::off */
         ioitem.io_name = name;
         ioitem.io_alias = alias;
         result = add(buss, ioitem, nickname);
@@ -176,18 +177,14 @@ listsbase::add
 bool
 listsbase::add_list_line (const std::string & line)
 {
-    bool result = false;
-    std::string temp = line;
-    auto lpos = temp.find_first_of("0123456789");
-    if (lpos != std::string::npos)
+    int pnumber;
+    int pstatus;
+    std::string pname;
+    bool result = parse_port_line(line, pnumber, pstatus, pname);
+    if (result)
     {
-        int portnum = std::stoi(temp);
-        std::string portname = next_quoted_string(temp, lpos);
-        if (! portname.empty())
-        {
-            std::string pnum = std::to_string(portnum);
-            result = add(portnum, portname, pnum);
-        }
+        std::string pnum = std::to_string(pnumber);
+        result = add(pnumber, pstatus, pname, pnum);    /* no alias */
     }
     return result;
 }
@@ -495,17 +492,18 @@ listsbase::match_up (const listsbase & source)
 {
     for (auto & iopair : m_master_io)
     {
-        const std::string & portname = iopair.second.io_name;  /* nick-name */
+        io & item = iopair.second;
+        const std::string & portname = item.io_name;  /* nick-name */
         const io & sourceio = source.get_io_block(portname);
-        iopair.second.io_enabled = sourceio.io_enabled;
-        iopair.second.out_clock = sourceio.out_clock;
+        item.io_enabled = sourceio.io_enabled;
+        item.out_clock = sourceio.out_clock;
     }
 }
 
 /**
- *  Given a port-name (which might be a nick-name), this function checks if the
- *  master (internal) I/O item's nick-name or alias matches the given nick-name.
- *  If it matches, then that internal item is returned.
+ *  Given a port-name (which might be a nick-name), this function checks if
+ *  the master (internal) I/O item's nick-name or alias matches the given
+ *  nick-name.  If it matches, then that internal item is returned.
  *
  * Issue:
  *
@@ -563,12 +561,16 @@ listsbase::e_clock_to_string (e_clock e) const
  *  This function is used by input_port_map_list() and output_port_map_list()
  *  in rcfile to dump the maps into the 'rc' file.
  *
- *  One trick here is that, if there is an alias, that is written first, and
- *  port's system name is written as a comment.
+ *  Compare this function to io_list_lines(). This one does not emit an alias,
+ *  as port-maps don't use them.
+ *
+ * \param isclock
+ *      Unfortunately, we need to determine the derived object (clockslist vs
+ *      inputslist) with this freakin' flag.
  */
 
 std::string
-listsbase::port_map_list () const
+listsbase::port_map_list (bool isclock) const
 {
     std::string result;
     if (not_empty())
@@ -576,25 +578,93 @@ listsbase::port_map_list () const
         for (const auto & iopair : m_master_io)
         {
             const io & item = iopair.second;
-            std::string port = item.io_nick_name;      /* a number */
-            std::string name = item.io_name;
-            std::string alias = item.io_alias;
-            if (alias.empty())
-            {
-                std::string temp = port + "   \"" + name + "\"";
-                result += temp;
-            }
+            std::string pname = item.io_name;
+            int pnumber = string_to_int(item.io_nick_name);
+            int pstatus;
+            if (isclock)
+                pstatus = clock_to_int(item.out_clock);
             else
-            {
-                std::string temp = port + "   \"" + alias + "\"";
-                result += temp;
-                result += "      # ";
-                result += name;
-            }
-            result += "\n";
+                pstatus = item.io_enabled ? 1 : 0 ;
+
+            std::string tmp = io_line(pnumber, pstatus, pname);
+            result += tmp;
         }
     }
     return result;
+}
+
+/**
+ *  Static function to parse port lines in a unified fashion.
+ */
+
+bool
+listsbase::parse_port_line
+(
+    const std::string & line,
+    int & portnumber,
+    int & portstatus,
+    std::string & portname
+)
+{
+    tokenization tokens = tokenize(line);
+    bool result = tokens.size() >= 2;
+    if (result)
+    {
+        int pnumber = string_to_int(tokens[0]);
+        int pstatus = 0;
+        if (std::isdigit(tokens[1][0]))
+            pstatus = string_to_int(tokens[1]);
+
+        std::string pname = next_quoted_string(line);
+        if (pname.empty())
+        {
+            result = false;
+        }
+        else
+        {
+            portnumber = pnumber;
+            portstatus = pstatus;
+            portname   = pname;
+        }
+    }
+    return result;
+}
+
+/**
+ *  This virtual base-class function writes a port line (for the 'rc' file)
+ *  from a clockslist or inputslist.  The line consists of two integers,
+ *  followed by the quoted port name, and optionally followed by the alias,
+ *  shown as a comment.
+ */
+
+std::string
+listsbase::io_line
+(
+    int portnumber,
+    int status,
+    const std::string & portname,
+    const std::string & portalias
+) const
+{
+    std::string name = add_quotes(portname);
+    char tmp[128];
+    if (portalias.empty())
+    {
+        snprintf
+        (
+            tmp, sizeof tmp, "%2d %2d   %s\n",
+            portnumber, status, name.c_str()
+        );
+    }
+    else
+    {
+        snprintf
+        (
+            tmp, sizeof tmp, "%2d %2d   %-40s  # '%s'\n",
+            portnumber, status, name.c_str(), portalias.c_str()
+        );
+    }
+    return std::string(tmp);
 }
 
 std::string
@@ -604,13 +674,14 @@ listsbase::to_string (const std::string & tag) const
     int count = 0;
     for (const auto & iopair : m_master_io)
     {
+        const io & item = iopair.second;
         std::string temp = std::to_string(count) + ". ";
-        temp += iopair.second.io_enabled ? "Enabled;  " : "Disabled; " ;
-        temp += "Clock = " + e_clock_to_string(iopair.second.out_clock);
+        temp += item.io_enabled ? "Enabled;  " : "Disabled; " ;
+        temp += "Clock = " + e_clock_to_string(item.out_clock);
         temp += "\n   ";
-        temp += "Name:     " + iopair.second.io_name + "\n  ";
-        temp += "Nickname: " + iopair.second.io_nick_name + "\n  ";
-        temp += "Alias:    " + iopair.second.io_alias + "\n";
+        temp += "Name:     " + item.io_name + "\n  ";
+        temp += "Nickname: " + item.io_nick_name + "\n  ";
+        temp += "Alias:    " + item.io_alias + "\n";
         result += temp;
         ++count;
     }

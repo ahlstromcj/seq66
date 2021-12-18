@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-16
+ * \updates       2021-12-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -101,6 +101,21 @@ clockslist::add
     return result;
 }
 
+bool
+clockslist::add_list_line (const std::string & line)
+{
+    int pnumber;
+    int pstatus;
+    std::string pname;
+    bool result = parse_port_line(line, pnumber, pstatus, pname);
+    if (result)
+    {
+        e_clock clocktype = int_to_clock(pstatus);
+        result = add(pnumber, clocktype, pname);
+    }
+    return result;
+}
+
 /**
  *  Sets a single clock item, if in the currently existing range.
  *  Mostly meant for use by the Options / MIDI Input tab and configuration
@@ -128,6 +143,21 @@ clockslist::get (bussbyte bus) const
     return it != m_master_io.end() ? it->second.out_clock : e_clock::off ;
 }
 
+std::string
+clockslist::io_list_lines () const
+{
+    std::string result;
+    int bus = 0;
+    for (const auto & iopair : m_master_io)
+    {
+        const io & item = iopair.second;
+        int status = clock_to_int(item.out_clock);
+        result += io_line(bus, status, item.io_name, item.io_alias);
+        ++bus;
+    }
+    return result;
+}
+
 /*
  * Free functions
  */
@@ -147,8 +177,8 @@ output_port_map ()
 std::string
 output_port_name (bussbyte b, bool addnumber)
 {
-    const clockslist & cloutref = output_port_map();
-    return cloutref.get_name(b, addnumber);
+    const clockslist & opm = output_port_map();
+    return opm.get_name(b, addnumber);
 }
 
 /**
@@ -160,10 +190,10 @@ bussbyte
 output_port_number (bussbyte b)
 {
     bussbyte result = b;
-    const clockslist & cloutref = output_port_map();
-    std::string nickname = cloutref.get_nick_name(b);
+    const clockslist & opm = output_port_map();
+    std::string nickname = opm.get_nick_name(b);
     if (! nickname.empty())
-        result = std::stoi(nickname);
+        result = string_to_int(nickname);
 
     return result;
 }
@@ -173,6 +203,9 @@ output_port_number (bussbyte b)
  *  outputs where the io_name field of each element is the nick-ndame of the
  *  source clockslist's element, and the io_nick_name field is the index
  *  number (starting from 0) converted to a string.
+ *
+ *  If an alias exists, it is used in preference to the nick-name.  See
+ *  the add() function.
  */
 
 bool
@@ -181,24 +214,35 @@ build_output_port_map (const clockslist & cl)
     bool result = cl.not_empty();
     if (result)
     {
-        clockslist & cloutref = output_port_map();
-        cloutref.clear();
-        for (int b = 0; b < cl.count(); ++b)
+        clockslist & opm = output_port_map();
+        opm.clear();
+        int bus = 0;
+        for (const auto & iopair : cl.master_io())
         {
-            bussbyte bb = bussbyte(b);
-            std::string nick = cl.get_nick_name(bb);
-            std::string number = std::to_string(b);
-            std::string alias = cl.get_alias(bb);
-            result = cloutref.add(b, e_clock::off, nick, number, alias);
+            const listsbase::io & item = iopair.second;
+            std::string number = std::to_string(bus);
+            if (item.io_alias.empty())
+                result = opm.add(bus, e_clock::off, item.io_nick_name, number);
+            else
+                result = opm.add(bus, e_clock::off, item.io_alias, number);
+
             if (! result)
             {
-                cloutref.clear();
+                opm.clear();
                 break;
             }
+            ++bus;
         }
-        cloutref.active(result);
+        opm.active(result);
     }
     return result;
+}
+
+void
+clear_output_port_map ()
+{
+    clockslist & opm = output_port_map();
+    opm.deactivate();
 }
 
 /**
@@ -233,10 +277,10 @@ true_output_bus (const clockslist & cl, bussbyte seqbuss)
     bussbyte result = seqbuss;
     if (! is_null_buss(result))
     {
-        const clockslist & cloutref = output_port_map();
-        if (cloutref.active())
+        const clockslist & opm = output_port_map();
+        if (opm.active())
         {
-            std::string shortname = cloutref.port_name_from_bus(seqbuss);
+            std::string shortname = opm.port_name_from_bus(seqbuss);
             if (shortname.empty())
             {
                 std::string msg = string_format("No output buss %d", seqbuss);
@@ -287,8 +331,8 @@ true_output_bus (const clockslist & cl, bussbyte seqbuss)
 std::string
 output_port_map_list ()
 {
-    const clockslist & cloutref = output_port_map();
-    return cloutref.port_map_list();
+    const clockslist & opm = output_port_map();
+    return opm.port_map_list(true);                 /* is clock */
 }
 
 }               // namespace seq66

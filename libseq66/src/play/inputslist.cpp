@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-16
+ * \updates       2021-12-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -85,10 +85,25 @@ inputslist::add
 
         io ioitem;
         ioitem.io_enabled = flag;
-        ioitem.out_clock = e_clock::off;        /* not e_clock::disabled!   */
+        ioitem.out_clock = e_clock::off;        /* not e_clock::disabled    */
         ioitem.io_name = portname;
         ioitem.io_alias = alias;
         result = listsbase::add(buss, ioitem, nickname);
+    }
+    return result;
+}
+
+bool
+inputslist::add_list_line (const std::string & line)
+{
+    int pnumber;
+    int pstatus;
+    std::string pname;
+    bool result = parse_port_line(line, pnumber, pstatus, pname);
+    if (result)
+    {
+        bool enabled = pstatus > 0;
+        result = add(pnumber, enabled, pname);
     }
     return result;
 }
@@ -119,6 +134,21 @@ inputslist::get (bussbyte bus) const
     return it != m_master_io.end() ?  it->second.io_enabled : false ;
 }
 
+std::string
+inputslist::io_list_lines () const
+{
+    std::string result;
+    int bus = 0;
+    for (const auto & iopair : m_master_io)
+    {
+        const io & item = iopair.second;
+        int status = item.io_enabled ? 1 : 0 ;
+        result += io_line(bus, status, item.io_name, item.io_alias);
+        ++bus;
+    }
+    return result;
+}
+
 /*
  * Free functions
  */
@@ -138,8 +168,8 @@ input_port_map ()
 std::string
 input_port_name (bussbyte b, bool addnumber)
 {
-    const inputslist & inpsref = input_port_map();
-    return inpsref.get_name(b, addnumber);
+    const inputslist & ipm = input_port_map();
+    return ipm.get_name(b, addnumber);
 }
 
 /**
@@ -151,10 +181,10 @@ bussbyte
 input_port_number (bussbyte b)
 {
     bussbyte result = b;
-    const inputslist & inpsref = input_port_map();
-    std::string nickname = inpsref.get_nick_name(b);
+    const inputslist & ipm = input_port_map();
+    std::string nickname = ipm.get_nick_name(b);
     if (! nickname.empty())
-        result = std::stoi(nickname);
+        result = string_to_int(nickname);
 
     return result;
 }
@@ -172,24 +202,35 @@ build_input_port_map (const inputslist & il)
     bool result = il.not_empty();
     if (result)
     {
-        inputslist & inpsref = input_port_map();
-        inpsref.clear();
-        for (int b = 0; b < il.count(); ++b)
+        inputslist & ipm = input_port_map();
+        ipm.clear();
+        int bus = 0;
+        for (const auto & iopair : il.master_io())
         {
-            bussbyte bb = bussbyte(b);
-            std::string nick = il.get_nick_name(bb);
-            std::string number = std::to_string(b);
-            std::string alias = il.get_alias(bb);
-            result = inpsref.add(b, true, nick, number, alias);
+            const listsbase::io & item = iopair.second;
+            std::string number = std::to_string(bus);
+            if (item.io_alias.empty())
+                result = ipm.add(bus, true, item.io_nick_name, number);
+            else
+                result = ipm.add(bus, true, item.io_alias, number);
+
             if (! result)
             {
-                inpsref.clear();
+                ipm.clear();
                 break;
             }
+            ++bus;
         }
-        inpsref.active(result);
+        ipm.active(result);
     }
     return result;
+}
+
+void
+clear_input_port_map ()
+{
+    inputslist & ipm = input_port_map();
+    ipm.deactivate();
 }
 
 /**
@@ -223,10 +264,10 @@ true_input_bus (const inputslist & cl, bussbyte seqbuss)
     bussbyte result = seqbuss;
     if (! is_null_buss(result))
     {
-        const inputslist & inpsref = input_port_map();
-        if (inpsref.active())
+        const inputslist & ipm = input_port_map();
+        if (ipm.active())
         {
-            std::string shortname = inpsref.port_name_from_bus(seqbuss);
+            std::string shortname = ipm.port_name_from_bus(seqbuss);
             if (shortname.empty())
             {
                 std::string msg = string_format("No input buss %d", seqbuss);
@@ -276,8 +317,8 @@ true_input_bus (const inputslist & cl, bussbyte seqbuss)
 std::string
 input_port_map_list ()
 {
-    const inputslist & inpsref = input_port_map();
-    return inpsref.port_map_list();
+    const inputslist & ipm = input_port_map();
+    return ipm.port_map_list(false);                /* not clock */
 }
 
 }               // namespace seq66

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-15
+ * \updates       2021-12-18
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -40,6 +40,8 @@
  *  Finally, note that seq66 no longer supports the Seq24 file format;
  *  too much has changed.
  */
+
+#include <iomanip>                      /* std::setw() I/O manipulator      */
 
 #include "cfg/midicontrolfile.hpp"      /* seq66::midicontrolfile class     */
 #include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile class      */
@@ -344,11 +346,9 @@ rcfile::parse ()
         }
     }
 
-    bool use_manual_ports = false;
     tag = "[manual-ports]";
 
     bool flag = get_boolean(file, tag, "virtual-ports");
-    use_manual_ports = flag;
     rc_ref().manual_ports(flag);
 
     int count = get_integer(file, tag, "output-port-count");
@@ -366,32 +366,26 @@ rcfile::parse ()
      */
 
     tag = "[midi-input]";
-    if (! use_manual_ports)
+    ok = line_after(file, tag);
+    if (ok)
     {
-        if (line_after(file, tag))
+        int inbuses = 0;
+        int count = std::sscanf(scanline(), "%d", &inbuses);
+        ok = count > 0 && is_good_busscount(inbuses);
+    }
+    if (ok)
+    {
+        rc_ref().inputs().clear();
+        while (next_data_line(file))
         {
-            int inbuses = 0;
-            int count = std::sscanf(scanline(), "%d", &inbuses);
-            if (count > 0 && inbuses > 0)
-            {
-                int b = 0;
-                rc_ref().inputs().clear();
-                while (next_data_line(file))
-                {
-                    int bus, bus_on;
-                    count = std::sscanf(scanline(), "%d %d", &bus, &bus_on);
-                    if (count == 2)
-                    {
-                        rc_ref().inputs().add(bus, bool(bus_on), line());
-                        ++b;
-                    }
-                }
-                if (b < inbuses)
-                    return make_error_message(tag, "too few buses");
-            }
+            ok = rc_ref().inputs().add_list_line(line());
+            if (! ok)
+                return make_error_message(tag, "in-bus data line error");
         }
-        else
-            return make_error_message(tag, "section missing");
+    }
+    else
+    {
+        return make_error_message(tag, "section missing");
     }
 
     /*
@@ -407,7 +401,7 @@ rcfile::parse ()
         inputref.clear();
         (void) std::sscanf(scanline(), "%d", &activeflag);
         inputref.active(activeflag != 0);
-        for ( ; next_data_line(file); )
+        while (next_data_line(file))
         {
             if (inputref.add_list_line(line()))
             {
@@ -422,44 +416,34 @@ rcfile::parse ()
             infoprintf("%d midi-input-map entries added", count);
         }
     }
-    tag = "[midi-clock]";
-    if (ok)
-        ok = ! use_manual_ports && line_after(file, tag);
 
-    int outbuses = 0;
+    /*
+     * One thing about MIDI clock values.  If a device (e.g. Korg nanoKEY2)
+     * is present in a system when Seq66 is exited, it will be saved in the
+     * [midi-clock] list.  When unplugged, it will be read here at startup,
+     * but won't be shown.  The next exit finds it removed from this list.
+     * Also, we want to pre-allocate the number of clock entries needed, and
+     * then use the buss number to populate the list of clocks, in the odd
+     * event that the user changed the bus-order of the entries.
+     */
+
+    tag = "[midi-clock]";
+    ok = line_after(file, tag);
     if (ok)
     {
-        std::sscanf(scanline(), "%d", &outbuses);
-        ok = next_data_line(file) && is_good_busscount(outbuses);
+        int outbuses = 0;
+        int count = std::sscanf(scanline(), "%d", &outbuses);
+        ok = count > 0 && is_good_busscount(outbuses);
     }
     if (ok)
     {
-        /*
-         * One thing about MIDI clock values.  If a device (e.g. Korg nanoKEY2)
-         * is present in a system when Seq66 is exited, it will be saved in the
-         * [midi-clock] list.  When unplugged, it will be read here at startup,
-         * but won't be shown.  The next exit finds it removed from this list.
-         * Also, we want to pre-allocate the number of clock entries needed, and
-         * then use the buss number to populate the list of clocks, in the odd
-         * event that the user changed the bus-order of the entries.
-         */
 
         rc_ref().clocks().clear();
-        for (int i = 0; i < outbuses; ++i)
+        while (next_data_line(file))
         {
-            int bus, bus_on;
-            int count = std::sscanf(scanline(), "%d %d", &bus, &bus_on);
-            ok = count == 2;
-            if (ok)
-            {
-                e_clock e = int_to_clock(bus_on);
-                rc_ref().clocks().add(bus, e, line());
-                ok = next_data_line(file);
-                if (! ok && i < (outbuses-1))
-                    return make_error_message(tag, "missing data line");
-            }
-            else
-                return make_error_message(tag, "data line error");
+            ok = rc_ref().clocks().add_list_line(line());
+            if (! ok)
+                return make_error_message(tag, "out-bus data line error");
         }
     }
     else
@@ -490,7 +474,7 @@ rcfile::parse ()
         clocsref.clear();
         (void) std::sscanf(scanline(), "%d", &activeflag);
         clocsref.active(activeflag != 0);
-        for ( ; next_data_line(file); )
+        while (next_data_line(file))
         {
             if (clocsref.add_list_line(line()))
             {
@@ -867,29 +851,17 @@ rcfile::write ()
        "# second number is the input status, disabled (0) or\n"
        "# enabled (1). The item in quotes is the input-buss name.\n"
        "\n[midi-input]\n\n"
-        << int(inbuses) << "      # number of input MIDI busses\n\n"
+        << std::setw(2) << int(inbuses)
+        << "      # number of input MIDI busses\n\n"
         ;
 
-    for (bussbyte bus = 0; bus < inbuses; ++bus)
-    {
-        bool bus_on = rc_ref().inputs().get(bus);
-        std::string activestring = bus_on ? "1" : "0";
-        std::string alias = rc_ref().inputs().get_alias(bus);
-        file
-            << int(bus) << " " << activestring << "    \""
-            << rc_ref().inputs().get_name(bus) << "\""
-            ;
-        if (! alias.empty())
-            file << "        # " << alias;
-
-        file << "\n";
-    }
+    file << rc_ref().inputs().io_list_lines();
 
     const inputslist & inpsref = input_port_map();
     if (inpsref.not_empty())
     {
         bool active = inpsref.active();
-        std::string activestring = active ? "1" : "0";
+        std::string activestring = active ? " 1" : " 0";
         std::string mapstatus = "map is ";
         if (! active)
             mapstatus += "not ";
@@ -899,7 +871,7 @@ rcfile::write ()
            "# This table is similar to the [midi-clock-map] section.\n"
            "# Port-mapping is disabled in manual/virtual port mode.\n"
            "\n[midi-input-map]\n\n"
-        << activestring << "   # " << mapstatus << "\n\n"
+        << activestring << "      # " << mapstatus << "\n\n"
         << input_port_map_list()
         ;
     }
@@ -927,34 +899,23 @@ rcfile::write ()
         "#   1 = MIDI Clock on; Song Position and MIDI Continue are sent.\n"
         "#   2 = MIDI Clock Modulo.\n"
         "#\n"
-        "# With Clock Modulo, MIDI clocking doesn't begin until song position\n"
-        "# reaches the start modulo value [midi-clock-mod-ticks]. One can\n"
+        "# With Clock Modulo, clocking doesn't begin until song position\n"
+        "# reaches the start-modulo value [midi-clock-mod-ticks]. One can\n"
         "# disable a port manually for devices that are present, but not\n"
         "# available (because another application, e.g. Windows MIDI Mapper,\n"
         "# has exclusive access to the device.\n"
         "\n[midi-clock]\n\n"
-        << int(outbuses) << "      # number of MIDI clocks (output busses)\n\n"
+        << std::setw(2) << int(outbuses)
+        << "      # number of MIDI clocks (output busses)\n\n"
         ;
 
-    for (bussbyte bus = 0; bus < outbuses; ++bus)
-    {
-        int bus_on = clock_to_int(rc_ref().clocks().get(bus));
-        std::string alias = rc_ref().clocks().get_alias(bus);
-        file
-            << int(bus) << " " << bus_on << "    \""
-            << rc_ref().clocks().get_name(bus) << "\""
-            ;
-        if (! alias.empty())
-            file << "        # " << alias;
-
-        file << "\n";
-    }
+    file << rc_ref().clocks().io_list_lines();
 
     const clockslist & outsref = output_port_map();
     if (outsref.not_empty())
     {
         bool active = outsref.active();
-        std::string activestring = active ? "1" : "0";
+        std::string activestring = active ? " 1" : " 0";
         std::string mapstatus = "map is ";
         if (! active)
             mapstatus += "not ";
@@ -970,7 +931,7 @@ rcfile::write ()
            "# The short nick-names are the same with ALSA or JACK (a2jmidid\n"
            "# bridge). Port-mapping is disabled in manual/virtual port mode.\n"
            "\n[midi-clock-map]\n\n"
-        << activestring << "   # " << mapstatus << "\n\n"
+        << activestring << "      # " << mapstatus << "\n\n"
         << output_port_map_list()
         ;
     }

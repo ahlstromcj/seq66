@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-12-10
+ * \updates       2021-12-17
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2456,6 +2456,11 @@ public:
         (void) build_output_port_map(m_clocks);
     }
 
+    void remove_output_map ()
+    {
+        clear_output_port_map();
+    }
+
     bussbyte true_output_bus (bussbyte nominalbuss) const
     {
         return seq66::true_output_bus(m_clocks, nominalbuss);
@@ -2464,6 +2469,11 @@ public:
     void store_input_map ()
     {
         (void) build_input_port_map(m_inputs);
+    }
+
+    void remove_input_map ()
+    {
+        clear_input_port_map();
     }
 
     bussbyte true_input_bus (bussbyte nominalbuss) const

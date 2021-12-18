@@ -24,77 +24,29 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-12-16
+ * \updates       2021-12-17
  * \license       GNU GPLv2 or above
  *
- *  Also read the comments in the Sequencer64 version of this module,
- *  perform.
+ *  Also read the comments in the Seq64 version of this module, perform.
+ *  This class is probably the single most important class in Seq66, as it
+ *  supports sequences, mute-groups, sets, playback, JACK, and more.
  *
- *  This class is probably the single most important class in Seq66, as
- *  it supports sequences, mute-groups, sets, playback, JACK, and more.
+ *  The automation slots supported are defined in the enumeration seq66 ::
+ *  automation :: slot. Their human readable names are defined in opcontrol ::
+ *  automation_slot_name (). Their default keystrokes are defined in
+ *  keycontainer :: keys_automation (). Their internal name are defined in the
+ *  automation.cpp module, in the static array s_slotnamelist[]. The
+ *  automation call-back functions are defined in this module, the performer
+ *  module.  More information is included in the user's manual, in section
+ *  9.5.7 "'ctrl' File / Keyboard / Default Assignments" and in the
+ *  Libreoffice spreadsheets in the "doc" directory, which may be out-of-date.
  *
- *  Here are the slots supported, and what they are suppose to do for
- *  keystrokes versus MIDI controls.  MIDI can support toggle, on, and off
- *  actions.  Keystrokes can only be pressed and release. Each keystroke can
+ *  Keystrokes versus MIDI controls:  MIDI can support toggle, on, and off
+ *  actions.  Keystrokes can only be pressed and released. Each keystroke can
  *  be used for a toggle, which should be triggered on a press event or a
- *  release event, but not both.  A keystroke's press event can be used for an
- *  on, and the release event can be used for an off.  These two modes of
- *  operation depend on the slot(s) involved.
- *
- *  bpm_up:             Key: Toggle = Up. MIDI: Toggle/On/Off = Up/Up/Down.
- *  bpm_dn:             Passes Off to bpm_up to decrement it.
- *  ss_up:              Key: Toggle = Up. MIDI: Toggle/On/Off = Up/Up/Down.
- *  ss_dn:              Passes Off to ss_up to decrement it.
- *  mod_replace:        Key: Toggle. MIDI: Toggle = On.
- *  mod_snapshot:       Key: Toggle. MIDI: Toggle = On.
- *  mod_queue:          Key: Toggle. MIDI: Toggle = On.
- *  mod_gmute:          Key: Toggle. MIDI: Toggle/On/Off. Group On/Off.
- *  mod_glearn:         Key: Press-On/Release-Off.
- *  play_ss:            Key, MIDI:  All events set the screenset.
- *  playback:           Key pause, and MIDI for pause/start/stop.
- *  song_record:        Key, MIDI: Toggle/On/Off song_recording() status.
- *  solo:               TODO, intended to solo track.
- *  thru:               Key: Toggle. MIDI: Toggle/On/Off.
- *  bpm_page_up:        Key: Toggle = Up. MIDI: Toggle/On/Off = Up/Up/Down.
- *  bpm_page_dn:        Passes Off to bpm_page_up to decrement it.
- *  ss_set:             Key, MIDI: Set current set as playing screen-set.
- *  record:             Key: Toggle. MIDI: Toggle/On/Off.
- *  quan_record:        Key: Toggle. MIDI: Toggle/On/Off.
- *  reset_sets:         Key: Toggle. MIDI: Toggle/On/Off.
- *  mod_oneshot:        Key: Press-On/Release-Off. MIDI: Toggle = On.
- *  FF:                 TODO.
- *  rewind:             TODO.
- *  top:                TODO.
- *  playlist:           MIDI only, arrow keys hardwired.
- *  playlist_song:      MIDI only, arrow keys hardwired.
- *  tap_bpm,            Tap key for estimating BPM.
- *  start:              auto_stop() and auto_play()
- *  stop:               auto_stop()
- *  reserved_29         No longer use snapshot 2.
- *  toggle_mutes        Mute-groups actions toggle, on, and off.
- *  song_pointer        TODO.
- *  keep_queue:         Key: Toggle (compare to "queue").
- *  slot_shift:         Each instance of this control add the set size to
- *                      the key's configured slot/pattern value.
- *  mutes_clear:        Set all mute groups to unarmed.
- *  quit:               Quit, close, exit the application.
- *  pattern_edit:       GUI action, bring up pattern for editing.
- *  event_edit:         GUI action, bring up the event editor.
- *  song_mode:          GUI. Toggle between Song Mode and Live Mode.
- *  toggle_jack:        GUI. Toggle between JACK and ALSA support.
- *  menu_mode:          GUI. Switch menu between enabled/disabled.
- *  follow_transport:   GUI. Toggle between following JACK or not.
- *  panic:              Provides a panic button to stop all notes.
- *  visibility:         Toggles the appearance of the main window (only).
- *  save_session:       Save the MIDI and configuration files.
- *  reserved_45:        Reserved for expansion.
- *  reserved_46:        Reserved for expansion.
- *  reserved_47:        Reserved for expansion.
- *  reserved_48:        Reserved for expansion.
- *  max:                Used only for termination/range-checking.
- *  loop:               Key: Toggle-only. MIDI: Toggle/On/Off.
- *  mute_group:         Key: Toggle-only. MIDI: Toggle/On/Off.
- *  automation:         See the items above.
+ *  release event, but not both.  A keystroke's press event can alos be used
+ *  for an on, and the release event can be used for an off.  These two modes
+ *  of operation depend on the slot(s) involved.
  *
  *  Playscreen vs screenset in Seq24:
  *
@@ -678,32 +630,12 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
      * during the 'ctrl' file save at exit, which is surprising to the poor
      * user.  See issue #47.
      */
-
-#if defined USE_OLD_CODE
-
-    bussbyte namedbus = rcs.midi_control_in().nominal_buss();
-    bussbyte truebus = true_input_bus(namedbus);
-    m_midi_control_in = rcs.midi_control_in();
-    m_midi_control_in.true_buss(truebus);
-    if (micount == 0 && kcount > 0)
-        m_midi_control_in.add_blank_controls(m_key_controls);
-
-    namedbus = rcs.midi_control_out().nominal_buss();
-    truebus = true_output_bus(namedbus);
-    m_midi_control_out = rcs.midi_control_out();
-    m_midi_control_out.true_buss(truebus);
-    m_mute_groups = rcs.mute_groups();              /* could be 0-sized     */
-
-#else
-
     m_midi_control_in = rcs.midi_control_in();
     if (micount == 0 && kcount > 0)
         m_midi_control_in.add_blank_controls(m_key_controls);
 
     m_midi_control_out = rcs.midi_control_out();
     m_mute_groups = rcs.mute_groups();              /* could be 0-sized     */
-
-#endif
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
     if (rc().verbose())
@@ -2266,84 +2198,42 @@ performer::create_master_bus ()
  *      We probably need a bpm parameter for consistency at some point.
  */
 
-#if defined USE_OLD_CODE
-
-bool
-performer::launch (int ppqn)
-{
-    bool result = create_master_bus();  /* also calls set_port_statuses()   */
-    if (result)
-    {
-        (void) init_jack_transport();
-
-        m_master_bus->init(ppqn, m_bpm);    /* calls api_init() per API     */
-
-        bool ok = activate();
-        if (ok)
-        {
-            m_io_active = true;
-            launch_input_thread();
-            launch_output_thread();
-            midi_control_out().send_macro(midimacros::startup);
-        }
-        else
-            m_error_pending = true;
-
-        /*
-         * Get and store the clocks and inputs created (disabled or not) by
-         * the mastermidibus during api_init().  After this call, the clocks
-         * and inputs now have names.  These calls are necessary to populate
-         * the port lists the first time Seq66 is run.
-         */
-
-        m_master_bus->copy_io_busses();
-        m_master_bus->get_port_statuses(m_clocks, m_inputs);
-        if (ok)
-        {
-            announce_playscreen();
-            announce_mutes();
-            announce_automation();
-            (void) set_playing_screenset(screenset::number(0));
-        }
-    }
-    return result;
-}
-
-#else
-
 bool
 performer::launch (int ppqn)
 {
     bool result = create_master_bus();      /* calls set_port_statuses()    */
     if (result)
     {
+        /*
+         * Moved from get_settings() so that aliases, if present, are
+         * obtained at this point.
+         */
+
+        bussbyte namedbus = m_midi_control_in.nominal_buss();
+        bussbyte truebus = true_input_bus(namedbus);
+        m_midi_control_in.true_buss(truebus);
+        namedbus = m_midi_control_out.nominal_buss();
+        truebus = true_output_bus(namedbus);
+        m_midi_control_out.true_buss(truebus);
+
         (void) init_jack_transport();
         m_master_bus->init(ppqn, m_bpm);    /* calls api_init() per API     */
         result = activate();
         if (result)
         {
             /*
-             * Get and store the clocks and inputs created (disabled or not) by
-             * the mastermidibus during api_init().  After this call, the clocks
-             * and inputs now have names.  These calls are necessary to populate
-             * the port lists the first time Seq66 is run.
+             * Get and store the clocks and inputs created (disabled or not)
+             * by the mastermidibus during api_init().  After this call, the
+             * clocks and inputs now have names.  These calls are necessary to
+             * populate the port lists the first time Seq66 is run.
+             *
+             * m_master_bus->get_port_statuses(m_clocks, m_inputs); the
+             * statuses from e.g. midi_jack_info are already obtained in the
+             * call stack of create_master_bus().
              */
 
             m_master_bus->copy_io_busses();
             m_master_bus->get_port_statuses(m_clocks, m_inputs);
-
-            /*
-             * Moved from get_settings() so that aliases, if present, are
-             * obtained at this point.
-             */
-
-            bussbyte namedbus = m_midi_control_in.nominal_buss();
-            bussbyte truebus = true_input_bus(namedbus);
-            m_midi_control_in.true_buss(truebus);
-            namedbus = m_midi_control_out.nominal_buss();
-            truebus = true_output_bus(namedbus);
-            m_midi_control_out.true_buss(truebus);
-
             m_io_active = true;
             launch_input_thread();
             launch_output_thread();
@@ -2358,8 +2248,6 @@ performer::launch (int ppqn)
     }
     return result;
 }
-
-#endif
 
 /**
  *  Announces the current mute states of the now-current play-screen.  This
@@ -2373,10 +2261,6 @@ performer::announce_playscreen ()
 {
     if (midi_control_out().is_enabled())
     {
-        /*
-         * infoprintfunc();
-         */
-
         screenset::slothandler sh = std::bind
         (
             &performer::announce_sequence, this,
@@ -6889,18 +6773,8 @@ performer::automation_reset_sets
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
-#if defined USE_OLD_IMPLEMENTATION
-        seq::number seqno = seq::number(d1);
-        if (a == automation::action::toggle)
-            set_overwrite_recording(seqno, false, true);        /* toggles  */
-        else if (a == automation::action::on)
-            set_overwrite_recording(seqno, true, false);        /* on       */
-        else if (a == automation::action::off)
-            set_overwrite_recording(seqno, false, false);       /* off      */
-#else
         reset_sequences();
         reset_playset();
-#endif
     }
     return true;
 }
