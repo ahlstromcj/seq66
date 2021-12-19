@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-18
+ * \updates       2021-12-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -88,7 +88,7 @@ inputslist::add
         ioitem.out_clock = e_clock::off;        /* not e_clock::disabled    */
         ioitem.io_name = portname;
         ioitem.io_alias = alias;
-        result = listsbase::add(buss, ioitem, nickname);
+        result = portslist::add(buss, ioitem, nickname);
     }
     return result;
 }
@@ -207,7 +207,7 @@ build_input_port_map (const inputslist & il)
         int bus = 0;
         for (const auto & iopair : il.master_io())
         {
-            const listsbase::io & item = iopair.second;
+            const portslist::io & item = iopair.second;
             std::string number = std::to_string(bus);
             if (item.io_alias.empty())
                 result = ipm.add(bus, true, item.io_nick_name, number);
@@ -230,7 +230,17 @@ void
 clear_input_port_map ()
 {
     inputslist & ipm = input_port_map();
-    ipm.deactivate();
+    ipm.activate(portslist::status::cleared);
+}
+
+void
+activate_input_port_map (bool flag)
+{
+    inputslist & ipm = input_port_map();
+    portslist::status s = flag ?
+        portslist::status::on : portslist::status::off ;
+
+    ipm.activate(s);
 }
 
 /**
@@ -276,13 +286,10 @@ true_input_bus (const inputslist & cl, bussbyte seqbuss)
             }
             else
             {
-#if defined USE_ALIAS_IF_PRESENT
                 result = cl.bus_from_alias(shortname);
                 if (is_null_buss(result))
                     result = cl.bus_from_nick_name(shortname);
-#else
-                result = cl.bus_from_nick_name(shortname);
-#endif
+
                 if (is_null_buss(result))
                 {
                     const char * sn = shortname.c_str();

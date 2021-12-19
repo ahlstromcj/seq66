@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-12-17
+ * \updates       2021-12-19
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -622,6 +622,17 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         ui->pushButtonRemoveMap, SIGNAL(clicked(bool)),
         this, SLOT(slot_remove_io_maps())
     );
+    connect
+    (
+        ui->inPortsMappedCheck, SIGNAL(clicked(bool)),
+        this, SLOT(slot_activate_input_map())
+    );
+    connect
+    (
+        ui->outPortsMappedCheck, SIGNAL(clicked(bool)),
+        this, SLOT(slot_activate_output_map())
+    );
+
 
     /*
      * The virtual port counts for input and output.
@@ -867,11 +878,27 @@ qseditoptions::slot_io_maps ()
 void
 qseditoptions::slot_remove_io_maps ()
 {
-    perf().remove_output_map();
-    perf().remove_input_map();
+    perf().clear_output_map();
+    perf().clear_input_map();
     ui->outPortsMappedCheck->setChecked(false);
     ui->inPortsMappedCheck->setChecked(false);
     reload_needed(true);
+}
+
+void
+qseditoptions::slot_activate_input_map ()
+{
+    bool active = ui->inPortsMappedCheck->isChecked();
+    perf().activate_input_map(active);
+    modify_rc();
+}
+
+void
+qseditoptions::slot_activate_output_map ()
+{
+    bool active = ui->outPortsMappedCheck->isChecked();
+    perf().activate_output_map(active);
+    modify_rc();
 }
 
 void

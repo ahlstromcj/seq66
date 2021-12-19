@@ -20,14 +20,14 @@
  */
 
 /**
- * \file          listsbase.hpp
+ * \file          portslist.hpp
  *
  *  An abstract base class for inputslist and clockslist.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2021-12-18
+ * \updates       2021-12-19
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -39,8 +39,6 @@
 
 #include "midi/midibus_common.hpp"      /* enum class e_clock, etc.         */
 #include "midi/midibytes.hpp"           /* bussbyte and other types         */
-
-#define USE_ALIAS_IF_PRESENT            /* EXPERIMENTAL                     */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -54,10 +52,24 @@ namespace seq66
  *  mastermidibus and the performer object.
  */
 
-class listsbase
+class portslist
 {
     friend std::string output_port_map_list ();
     friend std::string input_port_map_list ();
+
+public:
+
+    /**
+     *  A boolean is not quite enough for activating, deactivating, and
+     *  deactivating and clearing a port list.
+     */
+
+    enum class status
+    {
+        cleared,
+        off,
+        on
+    };
 
 protected:
 
@@ -84,7 +96,6 @@ protected:
 
     using container = std::map<bussbyte, io>;
 
-
     /**
      *  Saves the input or clock settings obtained from the "rc" (options)
      *  file so that they can be loaded into the mastermidibus once it is
@@ -108,11 +119,13 @@ protected:
 
 public:
 
-    listsbase (bool pmflag = false);
-    virtual ~listsbase () = default;
+    portslist (bool pmflag = false);
+    virtual ~portslist () = default;
 
     virtual std::string io_list_lines () const = 0;
-    virtual bool add_list_line (const std::string & line);
+    virtual bool add_list_line (const std::string & line) = 0;
+
+    bool add_map_line (const std::string & line);
 
     static bool parse_port_line
     (
@@ -122,18 +135,14 @@ public:
         std::string & portname
     );
 
-    void match_up (const listsbase & source);
+    void match_up (const portslist & source);
 
     void clear ()
     {
         m_master_io.clear();
     }
 
-    void deactivate ()
-    {
-        clear();
-        m_is_active = false;
-    }
+    void activate (status s);
 
     int count () const
     {
@@ -206,14 +215,14 @@ protected:
     bool add (int buss, io & ioitem, const std::string & nickname);
     const io & get_io_block (const std::string & nickname) const;
 
-};              // class listsbase
+};              // class portslist
 
 }               // namespace seq66
 
 #endif          // SEQ66_LISTSBASE_HPP
 
 /*
- * listsbase.hpp
+ * portslist.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

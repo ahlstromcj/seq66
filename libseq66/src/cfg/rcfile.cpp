@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-18
+ * \updates       2021-12-19
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -403,7 +403,7 @@ rcfile::parse ()
         inputref.active(activeflag != 0);
         while (next_data_line(file))
         {
-            if (inputref.add_list_line(line()))
+            if (inputref.add_map_line(line()))
             {
                 ++count;
             }
@@ -476,7 +476,7 @@ rcfile::parse ()
         clocsref.active(activeflag != 0);
         while (next_data_line(file))
         {
-            if (clocsref.add_list_line(line()))
+            if (clocsref.add_map_line(line()))
             {
                 ++count;
             }
@@ -850,7 +850,9 @@ rcfile::write ()
        "# are 'playback' devices. The first number is a buss number, and the\n"
        "# second number is the input status, disabled (0) or\n"
        "# enabled (1). The item in quotes is the input-buss name.\n"
-       "\n[midi-input]\n\n"
+       "\n"
+       "[midi-input]\n"
+       "\n"
         << std::setw(2) << int(inbuses)
         << "      # number of input MIDI busses\n\n"
         ;
@@ -869,8 +871,9 @@ rcfile::write ()
         mapstatus += "active";
         file << "\n"
            "# This table is similar to the [midi-clock-map] section.\n"
-           "# Port-mapping is disabled in manual/virtual port mode.\n"
-           "\n[midi-input-map]\n\n"
+           "\n"
+           "[midi-input-map]\n"
+           "\n"
         << activestring << "      # " << mapstatus << "\n\n"
         << input_port_map_list()
         ;
@@ -904,7 +907,9 @@ rcfile::write ()
         "# disable a port manually for devices that are present, but not\n"
         "# available (because another application, e.g. Windows MIDI Mapper,\n"
         "# has exclusive access to the device.\n"
-        "\n[midi-clock]\n\n"
+        "\n"
+        "[midi-clock]\n"
+        "\n"
         << std::setw(2) << int(outbuses)
         << "      # number of MIDI clocks (output busses)\n\n"
         ;
@@ -929,8 +934,10 @@ rcfile::write ()
            "# buss number is obtained and used. Thus, if the ports change order\n"
            "# in the MIDI system, the pattern will still use the proper port.\n"
            "# The short nick-names are the same with ALSA or JACK (a2jmidid\n"
-           "# bridge). Port-mapping is disabled in manual/virtual port mode.\n"
-           "\n[midi-clock-map]\n\n"
+           "# bridge).\n"
+           "\n"
+           "[midi-clock-map]\n"
+           "\n"
         << activestring << "      # " << mapstatus << "\n\n"
         << output_port_map_list()
         ;

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-12-18
+ * \updates       2021-12-19
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs, pulled out of the old perform module.
@@ -37,7 +37,7 @@
 #include <string>                       /* std::string                      */
 #include <vector>                       /* std::vector for input values     */
 
-#include "play/listsbase.hpp"           /* seq66::listsbase base class      */
+#include "play/portslist.hpp"           /* seq66::portslist base class      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -51,13 +51,13 @@ namespace seq66
  *  performer object.
  */
 
-class inputslist final : public listsbase
+class inputslist final : public portslist
 {
     friend bool build_input_port_map (const inputslist & lb);
 
 public:
 
-    inputslist (bool pmflag = false) : listsbase (pmflag)
+    inputslist (bool pmflag = false) : portslist (pmflag)
     {
         // Nothing to do
     }
@@ -87,6 +87,7 @@ public:
 extern inputslist & input_port_map ();
 extern bool build_input_port_map (const inputslist & lb);
 extern void clear_input_port_map ();
+extern void activate_input_port_map (bool flag);
 extern bussbyte true_input_bus (const inputslist & cl, bussbyte nominalbuss);
 extern std::string input_port_name (bussbyte b, bool addnumber = false);
 extern bussbyte input_port_number (bussbyte b);

@@ -17,14 +17,14 @@
  */
 
 /**
- * \file          listsbase.cpp
+ * \file          portslist.cpp
  *
- *  This module defines some of the more complex functions of the listsbase.
+ *  This module defines some of the more complex functions of the portslist.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-18
+ * \updates       2021-12-19
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -34,7 +34,7 @@
 #include <iostream>                     /* std::cout, etc.                  */
 
 #include "cfg/settings.hpp"             /* seq66::rc() accessor             */
-#include "play/listsbase.hpp"           /* seq66::listsbase class           */
+#include "play/portslist.hpp"           /* seq66::portslist class           */
 #include "util/calculations.hpp"        /* seq66::extract_port_names()      */
 #include "util/strfunctions.hpp"        /* seq66::strncompare()             */
 
@@ -106,15 +106,23 @@ detect_short_name (const std::string & portname)
  *  included here for better debugging.
  */
 
-listsbase::listsbase (bool pmflag) :
+portslist::portslist (bool pmflag) :
     m_master_io     (),
     m_is_port_map   (pmflag)
 {
     // Nothing to do
 }
 
+void
+portslist::activate (status s)
+{
+    m_is_active = s == status::on;
+    if (s == status::cleared)
+        clear();
+}
+
 bool
-listsbase::add
+portslist::add
 (
     int buss,
     int status,
@@ -137,7 +145,7 @@ listsbase::add
 }
 
 bool
-listsbase::add
+portslist::add
 (
     int buss,
     io & ioitem,
@@ -175,7 +183,7 @@ listsbase::add
  */
 
 bool
-listsbase::add_list_line (const std::string & line)
+portslist::add_map_line (const std::string & line)
 {
     int pnumber;
     int pstatus;
@@ -195,7 +203,7 @@ listsbase::add_list_line (const std::string & line)
  */
 
 bool
-listsbase::is_disabled (bussbyte bus) const
+portslist::is_disabled (bussbyte bus) const
 {
     bool result = true;
     auto it = m_master_io.find(bus);
@@ -206,7 +214,7 @@ listsbase::is_disabled (bussbyte bus) const
 }
 
 void
-listsbase::set_name (bussbyte bus, const std::string & name)
+portslist::set_name (bussbyte bus, const std::string & name)
 {
     auto it = m_master_io.find(bus);
     if (it != m_master_io.end())
@@ -218,7 +226,7 @@ listsbase::set_name (bussbyte bus, const std::string & name)
 }
 
 void
-listsbase::set_nick_name (bussbyte bus, const std::string & name)
+portslist::set_nick_name (bussbyte bus, const std::string & name)
 {
     auto it = m_master_io.find(bus);
     if (it != m_master_io.end())
@@ -226,7 +234,7 @@ listsbase::set_nick_name (bussbyte bus, const std::string & name)
 }
 
 void
-listsbase::set_alias (bussbyte bus, const std::string & alias)
+portslist::set_alias (bussbyte bus, const std::string & alias)
 {
     auto it = m_master_io.find(bus);
     if (it != m_master_io.end())
@@ -234,7 +242,7 @@ listsbase::set_alias (bussbyte bus, const std::string & alias)
 }
 
 std::string
-listsbase::get_name (bussbyte bus, bool addnumber) const
+portslist::get_name (bussbyte bus, bool addnumber) const
 {
     static std::string s_dummy;
     auto it = m_master_io.find(bus);
@@ -248,7 +256,7 @@ listsbase::get_name (bussbyte bus, bool addnumber) const
 }
 
 std::string
-listsbase::get_nick_name (bussbyte bus, bool addnumber) const
+portslist::get_nick_name (bussbyte bus, bool addnumber) const
 {
     static std::string s_dummy;
     auto it = m_master_io.find(bus);
@@ -262,7 +270,7 @@ listsbase::get_nick_name (bussbyte bus, bool addnumber) const
 }
 
 std::string
-listsbase::get_alias (bussbyte bus) const
+portslist::get_alias (bussbyte bus) const
 {
     static std::string s_dummy;
     auto it = m_master_io.find(bus);
@@ -314,7 +322,7 @@ count_colons (const std::string & name)
  */
 
 std::string
-listsbase::extract_nickname (const std::string & name) const
+portslist::extract_nickname (const std::string & name) const
 {
     std::string result;
     int colons = count_colons(name);
@@ -404,7 +412,7 @@ listsbase::extract_nickname (const std::string & name) const
  */
 
 bussbyte
-listsbase::bus_from_nick_name (const std::string & nick) const
+portslist::bus_from_nick_name (const std::string & nick) const
 {
     bussbyte result = null_buss();
     for (const auto & iopair : m_master_io)
@@ -419,7 +427,7 @@ listsbase::bus_from_nick_name (const std::string & nick) const
 }
 
 bussbyte
-listsbase::bus_from_alias (const std::string & alias) const
+portslist::bus_from_alias (const std::string & alias) const
 {
     bussbyte result = null_buss();
     for (const auto & iopair : m_master_io)
@@ -447,7 +455,7 @@ listsbase::bus_from_alias (const std::string & alias) const
  */
 
 std::string
-listsbase::port_name_from_bus (bussbyte nominalbuss) const
+portslist::port_name_from_bus (bussbyte nominalbuss) const
 {
     std::string result;
     if (is_null_buss(nominalbuss))
@@ -475,7 +483,7 @@ listsbase::port_name_from_bus (bussbyte nominalbuss) const
  *  of the disabled ports.  Each port in the port-map is looked up in the
  *  given source list.  If not found, it is disabled.
  *
- *  Currently, it is assumed that the "this" here is the listsbase object
+ *  Currently, it is assumed that the "this" here is the portslist object
  *  returned by the input_port_map() or output_port_map() functions. Recall
  *  that its full-name is the nick-name of an actual port, and its nick-name
  *  is a string version of the port-number.  Too tricky... unless it works.
@@ -488,7 +496,7 @@ listsbase::port_name_from_bus (bussbyte nominalbuss) const
  */
 
 void
-listsbase::match_up (const listsbase & source)
+portslist::match_up (const portslist & source)
 {
     for (auto & iopair : m_master_io)
     {
@@ -514,8 +522,8 @@ listsbase::match_up (const listsbase & source)
  *
  */
 
-const listsbase::io &
-listsbase::get_io_block (const std::string & nickname) const
+const portslist::io &
+portslist::get_io_block (const std::string & nickname) const
 {
     static bool s_needs_initing = true;
     static io s_dummy_io;
@@ -528,12 +536,8 @@ listsbase::get_io_block (const std::string & nickname) const
     for (const auto & iopair : m_master_io)
     {
         const io & item = iopair.second;
-#if defined USE_ALIAS_IF_PRESENT
         const std::string & comparison = item.io_alias.empty() ?
-            item.io_nick_name : item.io_alias ;
-#else
-        const std::string & comparison = item.io_nick_name;
-#endif
+            item.io_nick_name : item.io_alias ;     /* TODO */
 
         bool matches = contains(comparison, nickname);
         if (matches)
@@ -543,7 +547,7 @@ listsbase::get_io_block (const std::string & nickname) const
 }
 
 std::string
-listsbase::e_clock_to_string (e_clock e) const
+portslist::e_clock_to_string (e_clock e) const
 {
     std::string result;
     switch (e)
@@ -570,7 +574,7 @@ listsbase::e_clock_to_string (e_clock e) const
  */
 
 std::string
-listsbase::port_map_list (bool isclock) const
+portslist::port_map_list (bool isclock) const
 {
     std::string result;
     if (not_empty())
@@ -598,7 +602,7 @@ listsbase::port_map_list (bool isclock) const
  */
 
 bool
-listsbase::parse_port_line
+portslist::parse_port_line
 (
     const std::string & line,
     int & portnumber,
@@ -638,7 +642,7 @@ listsbase::parse_port_line
  */
 
 std::string
-listsbase::io_line
+portslist::io_line
 (
     int portnumber,
     int status,
@@ -668,7 +672,7 @@ listsbase::io_line
 }
 
 std::string
-listsbase::to_string (const std::string & tag) const
+portslist::to_string (const std::string & tag) const
 {
     std::string result = "I/O List: '" + tag + "'\n";
     int count = 0;
@@ -689,7 +693,7 @@ listsbase::to_string (const std::string & tag) const
 }
 
 void
-listsbase::show (const std::string & tag) const
+portslist::show (const std::string & tag) const
 {
     std::string listdump = to_string(tag);
     std::cout << listdump << std::endl;
@@ -698,7 +702,7 @@ listsbase::show (const std::string & tag) const
 }               // namespace seq66
 
 /*
- * listsbase.cpp
+ * portslist.cpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

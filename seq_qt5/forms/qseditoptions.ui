@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>642</width>
-    <height>676</height>
+    <width>646</width>
+    <height>680</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -36,7 +36,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>424</y>
+         <y>420</y>
          <width>591</width>
          <height>81</height>
         </rect>
@@ -63,7 +63,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>44</y>
+          <y>40</y>
           <width>42</width>
           <height>28</height>
          </rect>
@@ -82,7 +82,7 @@
         <property name="geometry">
          <rect>
           <x>64</x>
-          <y>48</y>
+          <y>44</y>
           <width>305</width>
           <height>21</height>
          </rect>
@@ -98,7 +98,7 @@
         <property name="geometry">
          <rect>
           <x>377</x>
-          <y>40</y>
+          <y>36</y>
           <width>205</width>
           <height>32</height>
          </rect>
@@ -198,7 +198,7 @@ Each port number can be found by name-lookup.</string>
        <property name="geometry">
         <rect>
          <x>8</x>
-         <y>528</y>
+         <y>516</y>
          <width>181</width>
          <height>17</height>
         </rect>
@@ -223,7 +223,7 @@ Each port number can be found by name-lookup.</string>
        <property name="geometry">
         <rect>
          <x>196</x>
-         <y>520</y>
+         <y>512</y>
          <width>185</width>
          <height>28</height>
         </rect>
@@ -240,13 +240,13 @@ Each port number can be found by name-lookup.</string>
       </widget>
       <widget class="QCheckBox" name="outPortsMappedCheck">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="geometry">
         <rect>
          <x>404</x>
-         <y>524</y>
-         <width>197</width>
+         <y>516</y>
+         <width>209</width>
          <height>23</height>
         </rect>
        </property>
@@ -257,7 +257,7 @@ Each port number can be found by name-lookup.</string>
         </font>
        </property>
        <property name="toolTip">
-        <string>If checked, an output port map was loaded.</string>
+        <string>If checked, the output port map was active.</string>
        </property>
        <property name="text">
         <string>Output Ports Mapped</string>
@@ -392,6 +392,28 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="text">
         <string>Remove Maps</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="inPortsMappedCheck">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>404</x>
+         <y>548</y>
+         <width>209</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Input Ports Mapped</string>
        </property>
       </widget>
      </widget>
@@ -543,28 +565,6 @@ slot by channel number (0 to 15).</string>
         </property>
         <property name="text">
          <string>Input/Output Options</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="inPortsMappedCheck">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>104</y>
-          <width>245</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Input Ports Mapped</string>
         </property>
        </widget>
       </widget>
@@ -2209,7 +2209,6 @@ path added to this name is stripped.</string>
   <tabstop>lineEditClientId</tabstop>
   <tabstop>clocksScrollArea</tabstop>
   <tabstop>checkBoxRecordByChannel</tabstop>
-  <tabstop>inPortsMappedCheck</tabstop>
   <tabstop>inputsScrollArea</tabstop>
   <tabstop>btnJackConnect</tabstop>
   <tabstop>btnJackDisconnect</tabstop>
