@@ -1369,7 +1369,7 @@ midicontrolfile::get_buss_number
                 clockslist & opm = output_port_map();
                 if (opm.active())
                 {
-                    bussbyte b = opm.bus_from_nick_name(s);     /* 0 to FF  */
+                    bussbyte b = opm.bus_from_name(s);          /* 0 to FF  */
                     result = int(b);
                     msgprintf
                     (
@@ -1384,7 +1384,7 @@ midicontrolfile::get_buss_number
                 inputslist & ipm = input_port_map();
                 if (ipm.active())
                 {
-                    bussbyte b = ipm.bus_from_nick_name(s);     /* 0 to FF  */
+                    bussbyte b = ipm.bus_from_name(s);          /* 0 to FF  */
                     result = int(b);
                     msgprintf
                     (
@@ -1405,36 +1405,33 @@ midicontrolfile::write_buss_info
     std::ofstream & file,
     bool isoutputport,
     const std::string & varname,
-    bussbyte nominalbuss
+    bussbyte nb                     /* nominalbuss */
 )
 {
     bool active = false;
+    std::string buss_string;
     if (isoutputport)
     {
         clockslist & opm = output_port_map();
         active = opm.active();
         if (active)
-        {
-            std::string buss_string = opm.port_name_from_bus(nominalbuss);
-            write_string(file, varname, buss_string);
-        }
+            buss_string = opm.port_name_from_bus(nb);
     }
     else
     {
         inputslist & ipm = input_port_map();
         active = ipm.active();
         if (active)
-        {
-            std::string buss_string = ipm.port_name_from_bus(nominalbuss);
-            write_string(file, varname, buss_string);
-        }
+            buss_string = ipm.port_name_from_bus(nb);
     }
-    if (! active)
+    if (active)
     {
-        write_integer
-        (
-            file, varname, int(nominalbuss), is_null_buss(nominalbuss)
-        );
+        buss_string = add_quotes(buss_string);
+        write_string(file, varname, buss_string);
+    }
+    else
+    {
+        write_integer(file, varname, int(nb), is_null_buss(nb));
     }
 }
 

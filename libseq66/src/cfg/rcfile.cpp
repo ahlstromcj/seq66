@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-19
+ * \updates       2021-12-20
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -237,6 +237,9 @@ rcfile::parse ()
         rc_ref().comments_block().set(s);
 
     bool ok = true;                                     /* start hopefully! */
+
+#if defined USE_ORIGINAL_LOCATION
+
     std::string tag = "[midi-control-file]";
     if (file_version_number() < s_rc_file_version)
     {
@@ -260,8 +263,14 @@ rcfile::parse ()
         info += "'";
         return make_error_message(tag, info);
     }
-
     tag = "[mute-group-file]";
+
+#else
+
+    std::string tag = "[mute-group-file]";
+    std::string fullpath;
+
+#endif
 
     std::string pfname;
     bool active = get_file_status(file, tag, pfname);
@@ -488,6 +497,35 @@ rcfile::parse ()
             }
         }
         infoprintf("%d midi-clock-map entries added", count);
+    }
+
+    /*
+     * Moved from ORIGINAL_LOCATION above so that we have the port-mapping
+     * in place for use here.
+     */
+
+    tag = "[midi-control-file]";
+    if (file_version_number() < s_rc_file_version)
+    {
+        (void) version_error_message("rc", file_version_number());
+    }
+    else
+    {
+        std::string pfname;
+        bool active = get_file_status(file, tag, pfname);
+        rc_ref().midi_control_active(active);
+        rc_ref().midi_control_filename(pfname);             /* base name    */
+    }
+
+    fullpath = rc_ref().midi_control_filespec();
+    file_message("Reading ctrl", fullpath);
+    ok = parse_midi_control_section(fullpath, true);
+    if (! ok)
+    {
+        std::string info = "'";
+        info += fullpath;
+        info += "'";
+        return make_error_message(tag, info);
     }
 
     int ticks = 64;

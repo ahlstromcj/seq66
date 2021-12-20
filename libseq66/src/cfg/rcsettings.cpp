@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-11-27
+ * \updates       2021-12-20
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -1157,12 +1157,8 @@ rcsettings::sets_mode_string (setsmode v) const
 void
 rcsettings::port_naming (const std::string & v)
 {
-    if (v == "short")
-        m_port_naming = portnaming::shortnames;
-    else if (v == "long")
-        m_port_naming = portnaming::longnames;
-    else
-        m_port_naming = portnaming::shortnames;
+    m_port_naming = (v == "long") ?
+        portnaming::longnames : portnaming::shortnames ;
 }
 
 std::string

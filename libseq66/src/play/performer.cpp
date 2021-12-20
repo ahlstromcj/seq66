@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-12-17
+ * \updates       2021-12-20
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -740,12 +740,13 @@ performer::ui_get_input (bussbyte bus, bool & active, std::string & n) const
 {
     const inputslist & ipm = input_port_map();
     bool disabled = false;
+    bool longform = rc().is_port_naming_long();
     std::string name;
     std::string alias;
     if (ipm.active())
     {
-        name = ipm.get_name(bus);
-        alias = ipm.get_alias(bus);
+        name = ipm.get_name(bus, longform);
+        alias = ipm.get_alias(bus, longform);
         active = ipm.get(bus);
         disabled = ipm.is_disabled(bus);
     }
@@ -799,12 +800,13 @@ bool
 performer::ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const
 {
     const clockslist & opm = output_port_map();
+    bool longform = rc().is_port_naming_long();
     std::string name;
     std::string alias;
     if (opm.active())
     {
-        name = opm.get_name(bus);
-        alias = opm.get_alias(bus);
+        name = opm.get_name(bus, longform);
+        alias = opm.get_alias(bus, longform);
         e = opm.get(bus);
     }
     else if (master_bus())
@@ -2204,18 +2206,6 @@ performer::launch (int ppqn)
     bool result = create_master_bus();      /* calls set_port_statuses()    */
     if (result)
     {
-        /*
-         * Moved from get_settings() so that aliases, if present, are
-         * obtained at this point.
-         */
-
-        bussbyte namedbus = m_midi_control_in.nominal_buss();
-        bussbyte truebus = true_input_bus(namedbus);
-        m_midi_control_in.true_buss(truebus);
-        namedbus = m_midi_control_out.nominal_buss();
-        truebus = true_output_bus(namedbus);
-        m_midi_control_out.true_buss(truebus);
-
         (void) init_jack_transport();
         m_master_bus->init(ppqn, m_bpm);    /* calls api_init() per API     */
         result = activate();
@@ -2234,6 +2224,18 @@ performer::launch (int ppqn)
 
             m_master_bus->copy_io_busses();
             m_master_bus->get_port_statuses(m_clocks, m_inputs);
+
+            /*
+             * Moved from get_settings() so that aliases, if present, are
+             * obtained by this point.
+             */
+
+            bussbyte namedbus = m_midi_control_in.nominal_buss();
+            bussbyte truebus = true_input_bus(namedbus);
+            m_midi_control_in.true_buss(truebus);
+            namedbus = m_midi_control_out.nominal_buss();
+            truebus = true_output_bus(namedbus);
+            m_midi_control_out.true_buss(truebus);
             m_io_active = true;
             launch_input_thread();
             launch_output_thread();

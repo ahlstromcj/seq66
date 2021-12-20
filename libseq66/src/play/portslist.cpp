@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-19
+ * \updates       2021-12-20
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -270,12 +270,15 @@ portslist::get_nick_name (bussbyte bus, bool addnumber) const
 }
 
 std::string
-portslist::get_alias (bussbyte bus) const
+portslist::get_alias (bussbyte bus, bool addnumber) const
 {
     static std::string s_dummy;
     auto it = m_master_io.find(bus);
     std::string result = it != m_master_io.end() ?
         it->second.io_alias : s_dummy ;
+
+    if (addnumber && ! result.empty())
+        result = "[" + std::to_string(int(bus)) + "] " + result;
 
     return result;
 }
@@ -395,6 +398,21 @@ portslist::extract_nickname (const std::string & name) const
     if (result.empty())
         result = name;
 
+    return result;
+}
+
+bussbyte
+portslist::bus_from_name (const std::string & nick) const
+{
+    bussbyte result = null_buss();
+    for (const auto & iopair : m_master_io)
+    {
+        if (nick == iopair.second.io_name)
+        {
+            result = iopair.first;
+            break;
+        }
+    }
     return result;
 }
 
