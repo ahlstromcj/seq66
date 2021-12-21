@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-12-02
+ * \updates       2021-12-21
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1321,7 +1321,7 @@ normalize_path (const std::string & path, bool to_unix, bool terminate)
             if (pos != std::string::npos)
                 std::replace(result.begin(), result.end(), '\\', '/');
 
-            if (terminate && result[result.length()-1] != '/')
+            if (terminate && result.back() != '/')
                 result += "/";
         }
         else
@@ -1330,7 +1330,7 @@ normalize_path (const std::string & path, bool to_unix, bool terminate)
             if (pos != std::string::npos)
                 std::replace(result.begin(), result.end(), '/', '\\');
 
-            if (terminate && result[result.length()-1] != '\\')
+            if (terminate && result.back() != '\\')
                 result += "\\";
         }
     }
@@ -1381,7 +1381,7 @@ shorten_file_spec (const std::string & fpath, int leng)
         std::string ellipse("...");
         std::size_t halflength = (std::size_t(leng) - ellipse.size()) / 2 - 1;
         std::string result = newpath.substr(0, halflength);
-        std::string lastpart = newpath.substr(pathsize-halflength-1);
+        std::string lastpart = newpath.substr(pathsize - halflength - 1);
         result = result + ellipse + lastpart;
         return result;
     }

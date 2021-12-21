@@ -1,6 +1,6 @@
 TO DO for Seq66 0.98.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-12-12
+2019-04-13 to 2021-12-21
 
 Configuration:
 
@@ -47,6 +47,9 @@ Port-Mapping:
     seq_portmidi/src/midibus.cpp.  The workaround is to specify long port
     names in the 'rc' file.
 
+    Need to call the port-mapping match_up() function when the user clicks in
+    the port lists in the Clocks and Input tabs.
+
 Automation:
 
     Can we leverage continuous controllers (CC) to support modifying synth
@@ -55,8 +58,6 @@ Automation:
 From Testing:
 
     Ctrl-U (unmute all) unmutes the next set as well.
-
-    Test port-mapping some more.
 
     When zooming, try to keep the same viewport in view.  Got this working
     for horizontal seqroll and perfroll, but not for vertical (refactoring

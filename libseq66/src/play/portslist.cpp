@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-20
+ * \updates       2021-12-21
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -108,6 +108,7 @@ detect_short_name (const std::string & portname)
 
 portslist::portslist (bool pmflag) :
     m_master_io     (),
+    m_is_active     (false),
     m_is_port_map   (pmflag)
 {
     // Nothing to do
@@ -165,34 +166,6 @@ portslist::add
 
         auto p = std::make_pair(bussbyte(buss), ioitem);
         m_master_io.insert(p);          // later, check the insertion
-    }
-    return result;
-}
-
-/**
- *  Parses a string of the form:
- *
- *      0   "Nickname of the Port"
- *
- *  These lines are created by output_port_map_list().  Their format is
- *  strict.  These lines are those created in the port_map_list() function.
- *
- * \return
- *      Returns true if the line started with a number, followed by text
- *      contained inside double-quotes.
- */
-
-bool
-portslist::add_map_line (const std::string & line)
-{
-    int pnumber;
-    int pstatus;
-    std::string pname;
-    bool result = parse_port_line(line, pnumber, pstatus, pname);
-    if (result)
-    {
-        std::string pnum = std::to_string(pnumber);
-        result = add(pnumber, pstatus, pname, pnum);    /* no alias */
     }
     return result;
 }
@@ -496,7 +469,11 @@ portslist::port_name_from_bus (bussbyte nominalbuss) const
 }
 
 /**
- *  Sets the enabled/disabled status in a port-map based on the source list.
+ *  Sets the enabled/disabled status in the source port-list based on the
+ *  statuses set in the port-map.  The port-map is what the user will see
+ *  in the MIDI Clocks and Inputs tabs, and that is where the user will
+ *  enable/disable the ports.
+ *
  *  Used to prepare the lists for showing the port-map along with the status
  *  of the disabled ports.  Each port in the port-map is looked up in the
  *  given source list.  If not found, it is disabled.
@@ -514,15 +491,18 @@ portslist::port_name_from_bus (bussbyte nominalbuss) const
  */
 
 void
-portslist::match_up (const portslist & source)
+portslist::match_up (/*const*/ portslist & source)
 {
-    for (auto & iopair : m_master_io)
+    if (is_port_map())
     {
-        io & item = iopair.second;
-        const std::string & portname = item.io_name;  /* nick-name */
-        const io & sourceio = source.get_io_block(portname);
-        item.io_enabled = sourceio.io_enabled;
-        item.out_clock = sourceio.out_clock;
+        for (auto & iopair : m_master_io)
+        {
+            io & item = iopair.second;
+            const std::string & portname = item.io_name;  /* nick-name */
+            io & sourceio = source.io_block(portname);
+            sourceio.io_enabled = item.io_enabled;
+            sourceio.out_clock = item.out_clock;
+        }
     }
 }
 
@@ -541,7 +521,7 @@ portslist::match_up (const portslist & source)
  */
 
 const portslist::io &
-portslist::get_io_block (const std::string & nickname) const
+portslist::const_io_block (const std::string & nickname) const
 {
     static bool s_needs_initing = true;
     static io s_dummy_io;
@@ -628,26 +608,16 @@ portslist::parse_port_line
     std::string & portname
 )
 {
-    tokenization tokens = tokenize(line);
-    bool result = tokens.size() >= 2;
+    tokenization tokens = tokenize_quoted(line);
+    bool result = tokens.size() >= 3;       /* buss, status, & quoted name  */
     if (result)
     {
         int pnumber = string_to_int(tokens[0]);
-        int pstatus = 0;
-        if (std::isdigit(tokens[1][0]))
-            pstatus = string_to_int(tokens[1]);
-
-        std::string pname = next_quoted_string(line);
-        if (pname.empty())
-        {
-            result = false;
-        }
-        else
-        {
-            portnumber = pnumber;
-            portstatus = pstatus;
-            portname   = pname;
-        }
+        int pstatus = string_to_int(tokens[1], (-1));
+        std::string pname = tokens[2];      /* next_quoted_string(line)     */
+        portnumber = pnumber;
+        portstatus = pstatus;
+        portname   = pname;
     }
     return result;
 }

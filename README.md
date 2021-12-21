@@ -1,7 +1,7 @@
 # README for Seq66 0.98.1
 
 Chris Ahlstrom
-2015-09-10 to 2021-12-15
+2015-09-10 to 2021-12-21
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management,
@@ -87,7 +87,9 @@ Windows, and using a conventional source tarball.
         *   Changed some extended automation keys (for grid modes).
         *   Minor fixes: (1) Set to set 0 when opening a MIDI file; (2) Expand a
             pattern when merging a longer one into it; (3) fixed pattern access
-            in sets > 0; (4) fixes for port-mapping and naming.
+            in sets > 0; (4) fixed an error in string tokenization.
+        *   Fixes for port-mapping and naming; if present, the user sets the
+            status of the port-map, which is copied to the matching port.
     *   Version 0.98.0:
         *   Fixed issue #41 "Hide Seq66 on closing window" via a "visibility"
             automation command and by fixing the response to "hide/show"

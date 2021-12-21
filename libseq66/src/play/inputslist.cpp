@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-19
+ * \updates       2021-12-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -104,6 +104,36 @@ inputslist::add_list_line (const std::string & line)
     {
         bool enabled = pstatus > 0;
         result = add(pnumber, enabled, pname);
+    }
+    return result;
+}
+
+/**
+ *  Parses a string of the form:
+ *
+ *      0 1 "Nickname of the Port" (nick-name or alias)
+ *
+ *  These lines are created by input_ or output_port_map_list().  Their
+ *  format is strict.  These lines are those created in the
+ *  port_map_list() function.
+ *
+ * \return
+ *      Returns true if the line started with a number, followed by text
+ *      contained inside double-quotes.
+ */
+
+bool
+inputslist::add_map_line (const std::string & line)
+{
+    int pnumber;
+    int pstatus;
+    std::string pname;
+    bool result = parse_port_line(line, pnumber, pstatus, pname);
+    if (result)
+    {
+        bool enabled = pstatus > 0;
+        std::string pnum = std::to_string(pnumber);
+        result = add(pnumber, enabled, pname, pnum);    /* no alias */
     }
     return result;
 }

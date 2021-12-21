@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2021-11-23
+ * \updates       2021-12-21
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -894,7 +894,7 @@ tokenize_stanzas
  * \param source
  *      Provides the string to be parsed into tokens.
  *
- * \param delimiter
+ * \param delimiters
  *      The character separating the tokens.  Defaults to a Space character.
  *
  * \return
@@ -905,33 +905,75 @@ tokenization
 tokenize
 (
     const std::string & source,
-    const std::string & delimiter
+    const std::string & delimiters
 )
 {
     tokenization result;
-    if (source.size() >= 3)                             /* a sanity check   */
+    std::size_t previous = source.find_first_not_of(delimiters);
+    while (previous != std::string::npos)
     {
-        std::size_t previous = 0;
-        std::size_t current = source.find(delimiter);
+        std::size_t current = source.find_first_of(delimiters, previous);
         if (current == std::string::npos)
         {
-            result.push_back(source);
+            std::string temp = trim(source.substr(previous));
+            result.push_back(temp);
+            break;
         }
         else
         {
-            while (current != std::string::npos)
+            std::string temp = trim(source.substr(previous, current-previous));
+            result.push_back(temp);
+            previous = source.find_first_not_of(delimiters, current);
+        }
+    }
+    return result;
+}
+
+/**
+ *  This function makes values in quotes into a single token, and it uses the
+ *  space and tab to delimit tokens.  Otherwise it is like tokenize() above.
+ *  It handles only double quotes, which should match.  We don't want to watch
+ *  out for apostrophes.  The quotes are stripped.
+ */
+
+tokenization
+tokenize_quoted (const std::string & source)
+{
+    tokenization result;
+    tokenization temp = tokenize(source, " \t");
+    if (! temp.empty())
+    {
+        bool quotes = false;
+        std::string quoted;
+        for (const auto & token : temp)
+        {
+            if (token[0] == '"')
             {
-                std::string temp = source.substr(previous, current - previous);
-                temp = trim(temp);
-                result.push_back(temp);
-                previous = current + 1;
-                current = source.find(delimiter, previous);
+                quotes = true;
+                quoted = token.substr(1);
             }
-            if (previous > 0)
+            else
             {
-                std::string temp = source.substr(previous, current - previous);
-                temp = trim(temp);
-                result.push_back(temp);
+                if (token.back() == '"')
+                {
+                    if (quotes)
+                    {
+                        quotes = false;
+                        quoted += " ";
+                        quoted += token.substr(0, token.length() - 1);
+                        result.push_back(quoted);
+                    }
+                }
+                else
+                {
+                    if (quotes)
+                    {
+                        quoted += " ";
+                        quoted += token;
+                    }
+                    else
+                        result.push_back(token);
+                }
             }
         }
     }

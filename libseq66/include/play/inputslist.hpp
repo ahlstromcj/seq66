@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-12-19
+ * \updates       2021-12-21
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs, pulled out of the old perform module.
@@ -57,7 +57,7 @@ class inputslist final : public portslist
 
 public:
 
-    inputslist (bool pmflag = false) : portslist (pmflag)
+    inputslist (bool isportmap = false) : portslist (isportmap)
     {
         // Nothing to do
     }
@@ -66,6 +66,7 @@ public:
 
     virtual std::string io_list_lines () const override;
     virtual bool add_list_line (const std::string & line) override;
+    virtual bool add_map_line (const std::string & line) override;
 
     bool add
     (

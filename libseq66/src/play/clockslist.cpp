@@ -117,6 +117,36 @@ clockslist::add_list_line (const std::string & line)
 }
 
 /**
+ *  Parses a string of the form:
+ *
+ *      0 1 "Nickname of the Port" (nick-name or alias)
+ *
+ *  These lines are created by input_ or output_port_map_list().  Their
+ *  format is strict.  These lines are those created in the
+ *  port_map_list() function.
+ *
+ * \return
+ *      Returns true if the line started with a number, followed by text
+ *      contained inside double-quotes.
+ */
+
+bool
+clockslist::add_map_line (const std::string & line)
+{
+    int pnumber;
+    int pstatus;
+    std::string pname;
+    bool result = parse_port_line(line, pnumber, pstatus, pname);
+    if (result)
+    {
+        e_clock clocktype = int_to_clock(pstatus);
+        std::string pnum = std::to_string(pnumber);
+        result = add(pnumber, clocktype, pname, pnum);    /* no alias */
+    }
+    return result;
+}
+
+/**
  *  Sets a single clock item, if in the currently existing range.
  *  Mostly meant for use by the Options / MIDI Input tab and configuration
  *  files.

@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-04
+ * \updates       2021-12-21
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -133,6 +133,7 @@ extern tokenization tokenize
     const std::string & source,
     const std::string & delimiter = " "
 );
+extern tokenization tokenize_quoted (const std::string & source);
 extern std::string simplify (const std::string & source);
 extern std::string write_stanza_bits
 (

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2021-12-20
+ * \updates       2021-12-21
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -124,8 +124,7 @@ public:
 
     virtual std::string io_list_lines () const = 0;
     virtual bool add_list_line (const std::string & line) = 0;
-
-    bool add_map_line (const std::string & line);
+    virtual bool add_map_line (const std::string & line) = 0;
 
     static bool parse_port_line
     (
@@ -135,7 +134,7 @@ public:
         std::string & portname
     );
 
-    void match_up (const portslist & source);
+    void match_up (/*const*/ portslist & source);
 
     void clear ()
     {
@@ -214,7 +213,12 @@ protected:
         const std::string & alias = ""
     );
     bool add (int buss, io & ioitem, const std::string & nickname);
-    const io & get_io_block (const std::string & nickname) const;
+    const io & const_io_block (const std::string & nickname) const;
+
+    io & io_block (const std::string & nickname)
+    {
+        return const_cast<io &>(const_io_block(nickname));
+    }
 
 };              // class portslist
 

@@ -434,13 +434,14 @@ mastermidibase::copy_io_busses ()
 }
 
 /**
- *  Used in the performer class to pass the settings read from the "rc"
- *  file to here.  There is an converse function defined above. This function
- *  gets the I/O port-map ports and copies them into the provided I/O lists.
+ *  Used in the performer class to pass the settings read from the "rc" file
+ *  to here.  There is an converse function defined above. This function gets
+ *  the I/O port-map ports and copies them into the provided I/O lists.
  *
  *  How it works:  The listbase::match_up() function here takes the master I/O
  *  lists, which come from the I/O section in the 'rc' file, and sets the
- *  matching internal I/O port-maps to the statuses of the I/O settings.
+ *  matching statuses of the I/O settings to the statuses of the matching
+ *  internal I/O port-maps.
  */
 
 void
