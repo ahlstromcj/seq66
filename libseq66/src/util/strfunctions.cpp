@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2021-12-21
+ * \updates       2021-12-22
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -949,8 +949,16 @@ tokenize_quoted (const std::string & source)
         {
             if (token[0] == '"')
             {
-                quotes = true;
-                quoted = token.substr(1);
+                if (token.back() == '"')            /* single-word quote    */
+                {
+                    quoted = token.substr(1, token.length() - 2);
+                    result.push_back(quoted);
+                }
+                else
+                {
+                    quotes = true;
+                    quoted = token.substr(1);
+                }
             }
             else
             {

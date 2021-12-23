@@ -2493,7 +2493,7 @@ public:
 
     /**
      *  Sets a single clock item, if in the currently existing range.
-     *  Mostly meant for use by the Options / MIDI Input tab.
+     *  Mostly meant for use by the Options / MIDI Clocks tab.
      */
 
     void set_clock (bussbyte bus, e_clock clocktype)

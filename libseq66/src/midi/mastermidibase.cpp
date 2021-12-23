@@ -447,15 +447,27 @@ mastermidibase::copy_io_busses ()
 void
 mastermidibase::get_port_statuses (clockslist & outs, inputslist & ins)
 {
+    get_out_port_statuses(outs);
+    get_in_port_statuses(ins);
+}
+
+void
+mastermidibase::get_out_port_statuses (clockslist & outs)
+{
     clockslist & opm = output_port_map();
     if (opm.not_empty())
         opm.match_up(m_master_clocks);
 
+    outs = m_master_clocks;     /* the actual system clocks information     */
+}
+
+void
+mastermidibase::get_in_port_statuses (inputslist & ins)
+{
     inputslist & ipm = input_port_map();
     if (ipm.not_empty())
         ipm.match_up(m_master_inputs);
 
-    outs = m_master_clocks;     /* the actual system clocks information     */
     ins = m_master_inputs;      /* the actual system inputs information     */
 }
 

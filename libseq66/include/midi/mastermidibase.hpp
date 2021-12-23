@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2021-12-07
+ * \updates       2021-12-21
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -329,6 +329,8 @@ protected:
     }
 
     void get_port_statuses (clockslist & outs, inputslist & ins);
+    void get_out_port_statuses (clockslist & outs);
+    void get_in_port_statuses (inputslist & ins);
 
     e_clock clock (bussbyte bus)
     {

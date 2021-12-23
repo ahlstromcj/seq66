@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-20
+ * \updates       2021-12-22
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -422,8 +422,8 @@ rcfile::parse ()
                 inputref.active(false);
                 break;
             }
-            infoprintf("%d midi-input-map entries added", count);
         }
+        infoprintf("%d midi-input-map entries added", count);
     }
 
     /*
