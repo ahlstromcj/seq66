@@ -18,109 +18,146 @@
 \section{Port Mapping}
 \label{sec:port_mapping}
 
-   \textsl{Seq66}, like \textsl{Seq24}, bases its I/O port scheme on buss
-   numbers (also called "port numbers").  This numbering scheme applies whether
+   \textsl{Seq66}, like \textsl{Seq24}, bases its I/O port scheme on buss/port
+   numbers.
+   This numbering scheme applies whether
    \textsl{ALSA}, \textsl{JACK}, or \textsl{Windows Multimedia}
    are used as the MIDI engine, and whether \textsl{Seq66} is running with
-   "automatic" ports or "manual" (virtual, software-created) ports.
+   "automatic" ports or "manual" (virtual software-created) ports.
    These buss numbers range from 0 on upward
    based on the I/O MIDI ports active in the system.
    In "automatic" (non-virtual, non-manual) mode
    these ports represent the hardware ports and application ports.
-   In "manual" mode, these ports represent virtual ports
-   that can be connected through other software under \textsl{ALSA} or
-   \textsl{JACK}.
+   In "manual" mode, these ports represent virtual ports that the user
+   can connect manually.
 
-   A given pattern/loop/sequence can be assigned to output to a given port via
-   a buss number that is saved with the pattern.  Thus, when a tune is loaded,
-   each sequence can automatically output to the desired MIDI device, by number.
+   A pattern/loop/sequence is assigned to output to a given port via
+   a buss number saved with the pattern.  When a tune is loaded,
+   each pattern outputs to the port specified in the pattern.
 
-   The problem is that the list of MIDI devices can change, with devices being
-   reordered, removed, or added to the set of MIDI devices available on the
-   system.  Or if the song is opened on someone else's computer.
+   The problem is that MIDI device setups can change, with devices being
+   reordered, removed, or added to the MIDI devices available on the system.
+   Or if the song is opened on someone else's computer.
    We do not want to store port names in the MIDI file.
    They are too long and change between the systems of each user.
-   Better to let the user determine the mapping of port numbers.
-   Port mapping provides a solution to this issue.  It allows
-   the buss number stored with a pattern to be remapped to another buss number,
-   based on the "nick name" of the port.
+   Better to let the user determine the port-mapping.
+   Mapping allows the buss number stored with a pattern to be
+   remapped to another buss number based on the "nick-name" (or alias)
+   of the port.
    It uses a simple lookup to map names to numbers.
 
-   The "nick name" is a shortened version of the port name provided by the MIDI
-   device. For example, the long name of a MIDI port might be
+   The "nick-name" is a shortened version of the MIDI device name assigned
+   by the system.
+   For example, the long name of a MIDI port might be
    \texttt{[5] 44:0 E-MU XMidi1X1 Tab MIDI 1}.
    The nick-name is \texttt{E-MU XMidi1X1 Tab MIDI 1}.
    In order find the correct port number, the long name is checked to see if it
    \textsl{contains} the nick-name, and, if so, the corresponding port number is
    returned.  The user can edit the 'rc' file to shorten the nick-name, if
-   desired.
-   Thus, a nick-name \texttt{E-MU XMidi1X1} would work.
+   desired; a nick-name \texttt{E-MU XMidi1X1} would work.
+
+   In addition, under \textsl{JACK}, there is a facility to get the "alias" of
+   USB MIDI ports.  This allows the user to see that the port name
+   \texttt{system:midi\_capture\_5} is actually a "nanoKEY2" device.
+
+   So, with port-mapping enabled, one can set up the tune to read and play MIDI
+   using the mapped ports, and later move to another computer, modify the
+   port-map to match, and read and play without issue.
+
+   The easiest way to start port-mapping is to go to
+   \textbf{Edit / Preferences / MIDI Clock}.
+   Here, we see the long MIDI port names made up by the system, along
+   with the \textsl{JACK} aliases that can be retrieved, and which make it easy
+   to see which devices are in play.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_clock_pre_portmap.png}
+   \caption{Clocks List Before Port Mapping}
+   \label{fig:clocks_list_before_port_mapping}
+\end{figure}
+
+   Click on the \textbf{Save Maps} button.
+   Then either restart \textsl{Seq66} or go to the \textbf{Session} tab
+   in the main window and click the \textbf{Reload Session} button.
+   Back in \textbf{Edit / Preferences / MIDI Clock},
+   one sees that the simpler names are in use.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_clock_post_portmap.png}
+   \caption{Clocks List After Port Mapping}
+   \label{fig:clocks_list_after_port_mapping}
+\end{figure}
+
+   To remove the mappings, click the \textbf{Remove Maps} button.
 
    As with the normal port listings, the port-mappings are managed in the
    \textsl{Seq66} 'rc' file.
+   One can edit that file to rearrange the mapped ports.
 
 \subsection{Output Port Mapping}
 \label{subsec:output_port_mapping}
 
    Assume that the system has the following set of ports.  These busses are
-   stored in the 'rc' file when \textsl{Seq66} exits.
+   stored in the 'rc' file when \textsl{Seq66} exits.  Note the \textsl{JACK}
+   aliases shown at the right as comments.
 
    \begin{verbatim}
       [midi-clock]
-      7      # number of MIDI clocks (output busses)
-      0 0    "[0] 14:0 Midi Through Port-0"
-      1 0    "[1] 32:0 nanoKEY2 MIDI 1"
-      2 0    "[2] 36:0 Launchpad Mini MIDI 1"
-      3 0    "[3] 40:0 Q25 MIDI 1"
-      4 0    "[4] 36:0 E-MU XMidi1X1 Tab MIDI 1"
-      5 0    "[5] 128:0 yoshimi:input"
-      6 0    "[6] 128:0 FLUID Synth (1070760):Synth input port (1070760:0)"
+       5      # number of MIDI clocks (output busses)
+       0  0   "[0] 0:0 seq66:system midi_playback_1"    # 'Midi Through'
+       1  0   "[1] 0:1 seq66:system midi_playback_6"    # 'Launchpad Mini'
+       2  0   "[2] 0:2 seq66:system midi_playback_3"    # 'USB Midi'
+       3  0   "[3] 0:3 seq66:system midi_playback_5"    # 'nanoKEY2'
+       4  0   "[4] 1:4 seq66:fluidsynth-midi midi_00"
    \end{verbatim}
 
    If some items are unplugged, then this list will change, so we save it while
    still running \textsl{Seq66}:
    click the
-   \textbf{Save Clock/Input Maps} button in the
+   \textbf{Save Maps} button in the
    \textbf{Edit / Preferences/ MIDI Clock} dialog. 
    The result is are new sections in the 'rc' file (one for clocks, one for
    inputs).  Here is the clock map:
 
    \begin{verbatim}
       [midi-clock-map]
-      1   # map is active
-      0   "Midi Through Port-0"
-      1   "Launchpad Mini MIDI 1"
-      2   "nanoKEY2 MIDI 1"
-      3   "yoshimi:input"
-      4   "E-MU XMidi1X1 Tab MIDI 1"
-      5   "FLUID Synth"                # "qsynth midi_00"
+       1      # map is active
+       0  0   "Midi Through"
+       1  0   "Launchpad Mini"
+       2  0   "USB Midi"
+       3  0   "nanoKEY2"
+       4  0   "fluidsynth-midi midi_00"
    \end{verbatim}
    
-   It is simpler, containing only an index number and shorter versions of the
-   port names, called "nick-names".  These index numbers can be used like buss
-   numbers: they can be stored in a pattern, and used to direct output to a
-   device by name.  Let's say we've unplugged some devices, so that the system
-   MIDI clocks list is now shorter:
+   It is simpler, showing the nick-names (or aliases) of the ports.
+   These index numbers can be used as buss numbers: they can be stored
+   in a pattern, and used to direct output to a
+   device by name.
 
-   \begin{verbatim}
-      [midi-clock]
-      4      # number of MIDI clocks (output busses)
-      0 0    "[0] 14:0 Midi Through Port-0"
-      1 0    "[4] 32:0 E-MU XMidi1X1 Tab MIDI 1"
-      2 0    "[2] 36:0 Launchpad Mini MIDI 1"
-      3 0    "[3] 128:0 yoshimi:input"
-   \end{verbatim}
+%  Let's say we've unplugged some devices, so that the system
+%  MIDI clocks list is now shorter:
 
-   So, if a pattern has stored mapped-buss 2 "E-MU XMidi1X1 MIDI 1"
-   as its output buss,
-   and the output port map is active, the "2" is looked up in the map, the
-   nick-name "E-MU XMidi1X1 MIDI 1" grabbed,
-   looked up in the system list, which
-   returns "4" as the actual system buss number to use for output.
+%  \begin{verbatim}
+%     [midi-clock]
+%     4      # number of MIDI clocks (output busses)
+%     0 0    "[0] 14:0 Midi Through Port-0"
+%     1 0    "[4] 32:0 E-MU XMidi1X1 Tab MIDI 1"
+%     2 0    "[2] 36:0 Launchpad Mini MIDI 1"
+%     3 0    "[3] 128:0 yoshimi:input"
+%  \end{verbatim}
 
-   On the other hand, if a pattern has stored a missing item as its output
+%  So, if a pattern has stored mapped-buss 2 "E-MU XMidi1X1 MIDI 1"
+%  as its output buss,
+%  and the output port map is active, the "2" is looked up in the map, the
+%  nick-name "E-MU XMidi1X1 MIDI 1" grabbed,
+%  looked up in the system list, which
+%  returns "4" as the actual system buss number to use for output.
+
+   If a pattern has stored a missing item as its output
    buss number, this number will not be found in the system list, so that the
-   pattern will need to be rerouted to an existing port.
+   pattern will need to be remapped to an existing port.
 
    Note that the mapping can be disabled by setting the first value to 0.  In
    that case, \textsl{Seq66} uses buss numbers in the normal way.
@@ -128,13 +165,13 @@
    put into the dropdown; any missing items are noted and are shown as
    disabled.
 
-   Also note the entries for "FLUID Synth".  The long name is really long, and
-   it contains a semi-random numerical ID that changes every time QSynth is run.
-   For simplicity, only the name before the parenthesis is saved as the
-   nick-name.  Fortunately, only one instance of Qsynth can run.
-   However, note that "FLUID Synth" is the name of
-   \textsl{QSynth} under \textsl{ALSA},
-   while "qsynth midi\_00" is the name under \textsl{JACK}.  
+%  Also note the entries for "FLUID Synth".  The long name is really long, and
+%  it contains a semi-random numerical ID that changes every time QSynth is run.
+%  For simplicity, only the name before the parenthesis is saved as the
+%  nick-name.  Fortunately, only one instance of Qsynth can run.
+%  However, note that "FLUID Synth" is the name of
+%  \textsl{QSynth} under \textsl{ALSA},
+%  while "qsynth midi\_00" is the name under \textsl{JACK}.  
 
    If the map is not active, then only the actual system output ports are
    shown in the user interface.
@@ -146,14 +183,11 @@
    initial system input setup:
 
    \begin{verbatim}
-      [midi-input]
-      6      # number of input MIDI busses
-      0 1    "[0] 0:1 system:announce"
-      1 0    "[1] 14:0 Midi Through Port-0"
-      2 0    "[2] 28:0 nanoKEY2 MIDI 1"
-      3 0    "[3] 36:0 E-MU XMidi1X1 Tab MIDI 1"
-      4 0    "[4] 40:0 USB Midi MIDI 1"
-      5 0    "[5] 44:0 Launchpad Mini MIDI 1"
+       4      # number of input MIDI busses
+       0  1   "[0] 0:0 seq66:system midi_capture_1"     # 'Midi Through'
+       1  1   "[1] 0:1 seq66:system midi_capture_6"     # 'Launchpad Mini'
+       2  1   "[2] 0:2 seq66:system midi_capture_3"     # 'USB Midi'
+       3  1   "[3] 0:3 seq66:system midi_capture_5"     # 'nanoKEY2'
    \end{verbatim}
 
    Note that the "system:announce" buss is always disabled, as \textsl{Seq66}
@@ -161,12 +195,11 @@
 
    \begin{verbatim}
       [midi-input-map]
-      0   "announce"
-      1   "Midi Through Port-0"
-      2   "nanoKEY2 MIDI 1"
-      3   "E-MU XMidi1X1 Tab MIDI 1"
-      4   "USB Midi MIDI 1"
-      5   "Launchpad Mini MIDI 1"
+       1      # map is active
+       0  1   "Midi Through"
+       1  1   "Launchpad Mini"
+       2  1   "USB Midi"
+       3  1   "nanoKEY2"
    \end{verbatim}
 
    Other than being input devices, this input map works like the output
@@ -187,23 +220,25 @@
 
    \begin{verbatim}
       [midi-input-map]
-      1   # map is active
-      0   "announce"
-      1   "Midi Through Port-0"
-      2   "Launchpad Mini MIDI 1"
-      3   "nanoKEY2 MIDI 1"
-      4   "Q25 MIDI 1"
-      5   "E-MU XMidi1X1 Tab MIDI 1"
+      1       # map is active
+      0  0    "announce"
+      1  0    "Midi Through Port-0"
+      2  0    "Launchpad Mini MIDI 1"
+      3  0    "nanoKEY2 MIDI 1"
+      4  0    "Q25 MIDI 1"
+      5  0    "E-MU XMidi1X1 Tab MIDI 1"
    \end{verbatim}
+
+   And:
 
    \begin{verbatim}
       [midi-clock-map]
-      1   # map is active
-      0   "Midi Through Port-0"
-      1   "Launchpad Mini MIDI 1"
-      2   "nanoKEY2 MIDI 1"
-      3   "Q25 MIDI 1"
-      4   "E-MU XMidi1X1 Tab MIDI 1"
+      1       # map is active
+      0  0    "Midi Through Port-0"
+      1  0    "Launchpad Mini MIDI 1"
+      2  0    "nanoKEY2 MIDI 1"
+      3  0    "Q25 MIDI 1"
+      4  0    "E-MU XMidi1X1 Tab MIDI 1"
    \end{verbatim}
 
    These two maps reflect the configuration at the time they were saved.
@@ -215,6 +250,7 @@
    \begin{verbatim}
       6   # number of input MIDI busses
       3 0    "[3] 36:0 Launchpad Mini MIDI 1"
+
       5   # number of MIDI clocks (output busses)
       2 0    "[2] 36:0 Launchpad Mini MIDI 1"
    \end{verbatim}
@@ -248,6 +284,9 @@
    With this setup, the lights on the Mini light-up at start-up, and the
    buttons control the pattern, mute-groups, and automation features set up in
    the above-mentioned 'ctrl' file.
+   
+   As of version 0.98.1, the buss number can be replaced with the name of the
+   device, e.g. "Launchpad Mini".
 
    Perhaps tricky, but once one has set up a whole suite of I/O device maps,
    one can reliably use these hard-wired port numbers to look up the actual
