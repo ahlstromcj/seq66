@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-11-30
+% \update      2021-12-24
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -23,6 +23,27 @@
    they are used in \textsl{Seq66}.  Various terms have been used over
    the years to mean the same thing (e.g. "sequence", "pattern", "loop",
    "track", and "slot"), so it is good to clarify the terminology.
+
+\subsection{Concepts / Reload Session}
+\label{subsec:concepts_reload_session}
+
+   While \textsl{Seq66} is fairly flexible, changes in devices setups and other
+   settings generally required the user to \textsl{reload session}.
+   This reload can be done in two ways:
+
+   \begin{itemize}
+      \item \textbf{Restart Seq66}.
+         Once a setting is changed, or a new arrangement of devices occurs,
+         exit \textsl{Seq66}, examine or edit the various configuration files (if
+         desired), and start \textsl{Seq66} again.
+      \item \textbf{Session / Reload Session}.
+         When settings in \textbf{Edit / Preferences} are changed, the
+         \textbf{Reload Session} button becomes enabled.
+         Click it, and the result is basically like restarting \textsl{Seq66}.
+   \end{itemize}
+
+   In the future, we will make \textsl{Seq66} able to better detect and
+   reconfigure for system changes and preferences changes.
 
 \subsection{Concepts / Terms}
 \label{subsec:concepts_terms}

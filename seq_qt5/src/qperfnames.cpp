@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-26
+ * \updates       2021-12-25
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -114,8 +114,7 @@ qperfnames::paintEvent (QPaintEvent *)
 {
     int y_s = 0;
     int y_f = height() / track_height();
-    int set_count = perf().screenset_count();           // not seqs_in_set()!
-    int set_y = track_height() * set_count / 2;
+    int set_count = setmaster::Size();                  /* number of rows   */
     QPainter painter(this);
     QPen pen(fore_color());
     QBrush brush(Qt::lightGray);
@@ -126,6 +125,7 @@ qperfnames::paintEvent (QPaintEvent *)
     painter.setBrush(brush);
     painter.setFont(m_font);
     painter.drawRect(0, 0, width(), height() - 1);      // rectangle border
+    int set_y = track_height() * set_count / 2;
     for (int y = y_s; y <= y_f; ++y)
     {
         int seq_id = y;
@@ -134,7 +134,6 @@ qperfnames::paintEvent (QPaintEvent *)
             int rect_x = 6 * 2 + 2;
             int rect_y = track_height() * seq_id;
             int rect_w = c_names_x - 15;
-            int text_y = rect_y + set_y;
             if ((seq_id % set_count) == 0)              // 1st seq in bank?
             {
                 char ss[16];
@@ -147,6 +146,7 @@ qperfnames::paintEvent (QPaintEvent *)
                 painter.setBrush(brush);
                 painter.drawRect(1, name_y(seq_id) + 1, 13, track_height() - 1);
 
+                int text_y = rect_y + set_y;
                 QString bankss(ss);
                 pen.setColor(fore_color());             // for bank number
                 painter.setPen(pen);
@@ -154,6 +154,7 @@ qperfnames::paintEvent (QPaintEvent *)
                 pen.setColor(Qt::black);                // bank name sideways
                 painter.setPen(pen);
                 painter.save();                         // {
+
                 QString bank(qt(perf().set_name(bank_id)));
                 painter.translate(12, text_y + bank.length() * 4);
                 painter.rotate(270);

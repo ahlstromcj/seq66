@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2021-05-15
+# \update         2021-12-26
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -114,7 +114,6 @@ HEADERS += include/gui_palette_qt5.hpp \
  include/qsessionframe.hpp \
  include/qsetmaster.hpp \
  include/qseventslots.hpp \
- include/qskeymaps.hpp \
  include/qslivebase.hpp \
  include/qslivegrid.hpp \
  include/qslotbutton.hpp \
@@ -158,7 +157,6 @@ SOURCES += src/gui_palette_qt5.cpp \
  src/qsessionframe.cpp \
  src/qsetmaster.cpp \
  src/qseventslots.cpp \
- src/qskeymaps.cpp \
  src/qslivebase.cpp \
  src/qslivegrid.cpp \
  src/qslotbutton.cpp \

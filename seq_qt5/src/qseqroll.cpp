@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-18
+ * \updates       2021-12-26
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -58,7 +58,9 @@ namespace seq66
  *  Default value for randomization.  Currently the only value supported.
  */
 
-const int c_randomize_range = 4;        /* randomize range in ticks         */
+static const int c_randomize_range  = 4;        /* randomize range in ticks */
+static const int c_border_width     = 2;
+static const int c_pen_width        = 1;
 
 /**
  *  Principal constructor.
@@ -353,7 +355,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
      */
 
     call_draw_notes(painter, view);
-    pen.setWidth(1);
+    pen.setWidth(c_pen_width);
 
     /*
      *  Draw the playhead.
@@ -450,13 +452,15 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     QBrush brush(back_color());                     /* brush(Qt::NoBrush)   */
     QPen pen(grey_color());                         /* pen(Qt::lightGray)   */
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
+    pen.setWidth(c_border_width);                   /* border thickness     */
     painter.fillRect(r, brush);                     /* blank the viewport   */
     painter.setBrush(brush);
     painter.setPen(pen);
     painter.drawRect(r);
-    for (int key = 1; key <= c_notes_count; ++key)     /* for each note row    */
+    pen.setWidth(c_pen_width);                          /* line thickness   */
+    for (int key = 1; key <= c_notes_count; ++key)      /* each note row    */
     {
-        int remkeys = c_notes_count - key;             /* remaining keys       */
+        int remkeys = c_notes_count - key;              /* remaining keys   */
         int modkey = remkeys - scroll_offset_v() + octkey;
 
         /*
@@ -557,7 +561,7 @@ qseqroll::draw_notes
     QPen pen(fore_color());
     QPen error_pen(Qt::magenta);
     pen.setStyle(Qt::SolidLine);
-    pen.setWidth(1);
+    pen.setWidth(c_pen_width);
     painter.setPen(pen);
     painter.setBrush(brush);
 
@@ -778,7 +782,7 @@ qseqroll::draw_drum_notes
     QBrush brush(Qt::NoBrush);
     QPen pen(drum_color());         /* draw red boxes from drum loop    */
     pen.setStyle(Qt::SolidLine);
-    pen.setWidth(1);
+    pen.setWidth(c_pen_width);
     brush.setStyle(Qt::SolidPattern);
     painter.setPen(pen);
     painter.setBrush(brush);

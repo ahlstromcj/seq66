@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2021-09-03
+# \update      2021-12-26
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -328,7 +328,6 @@ libseq_qt5_la_SOURCES = \
  qseqtime.cpp \
  qsetmaster.cpp \
  qseventslots.cpp \
- qskeymaps.cpp \
  qslivebase.cpp \
  qslivegrid.cpp \
  qslotbutton.cpp \

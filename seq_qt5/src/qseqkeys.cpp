@@ -71,7 +71,8 @@ static const int sc_keyarea_x   = sc_key_x + sc_keyoffset_x + 2;
  *  Manifest constant.
  */
 
-static const int sc_null_key = (-1);
+static const int sc_null_key        = (-1);
+static const int sc_border_width    = 2;
 
 /**
  *  Principal constructor.
@@ -124,12 +125,6 @@ qseqkeys::paintEvent (QPaintEvent *)
     QPainter painter(this);
     QPen pen(Qt::black);
     QBrush brush (Qt::SolidPattern);
-    pen.setStyle(Qt::SolidLine);
-    brush.setColor(Qt::darkGray);
-    painter.setPen(pen);
-    painter.setBrush(brush);
-    painter.drawRect(0, 0, sc_keyarea_x, total_height());   /* border       */
-
     int keyx = sc_keyoffset_x + 1;
     int keyy = 0;
     int numy = 8;
@@ -137,6 +132,13 @@ qseqkeys::paintEvent (QPaintEvent *)
     int nh_1 = nh - 1;
     int nh_4 = nh - 4;
     int nh_5 = nh - 5;
+    pen.setStyle(Qt::SolidLine);
+    pen.setWidth(sc_border_width);
+    brush.setColor(Qt::darkGray);
+    painter.setPen(pen);
+    painter.setBrush(brush);
+    painter.drawRect(0, 0, sc_keyarea_x, total_height());   /* border       */
+    pen.setWidth(1);
     for (int i = 0; i < c_notes_count; ++i, keyy += nh, numy += nh)
     {
         int keyvalue = c_notes_count - i - 1;

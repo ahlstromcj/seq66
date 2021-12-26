@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+#******************************************************************************
+# qtests (Seq66)
+#------------------------------------------------------------------------------
+##
+# \file           qtests
+# \library        Seq66
+# \author         Chris Ahlstrom
+# \date           2021-12-14
+# \update         2021-12-14
+# \version        $Revision$
+# \license        $XPC_SUITE_GPL_LICENSE$
+#
+#   This module serves to implement some of the test documented in
+#   contrib/tests/4x4/README.  See that file for issues and to-dos.
+#
+#------------------------------------------------------------------------------
+
+GITPATH="$HOME/Home/ca/mls/git"
+PROJPATH="$GITPATH/seq66"
+EXEDIR="Seq66qt5"
+DEBUGPATH="$GITPATH/shadow-seq66-rtmidi"
+DEBUGNAME="qrseq66"
+EXENAME="qseq66"
+EXECUTABLE="$PROJPATH/$EXEDIR/$EXENAME"
+DEBUGABLE="$DEBUGPATH/$EXEDIR/$DEBUGNAME"
+TESTFOLDER="contrib/tests/4x4"
+
+# TESTCONFIGS="$HOME/.config/seq66/4x4"
+
+TESTFILES="$PROJPATH/$TESTFOLDER"
+TESTCOMMAND="$EXECUTABLE --home $TESTFILES $TESTFILES/buff.midi"
+
+# A very long command with all the directories expanded!
+#
+# echo "$TESTCOMMAND"
+# exec $TESTCOMMAND &
+
+$TESTCOMMAND &
+
+#******************************************************************************
+# qtests (Seq66)
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 wm=4 et ft=sh
+#------------------------------------------------------------------------------
+

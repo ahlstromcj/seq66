@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-10-14
+% \update      2021-12-24
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -410,8 +410,9 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_clock_tab.png}
-   \caption{MIDI Clock Tab, ALSA Devices}
+%  \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_clock_tab.png}
+   \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_clock_post_portmap.png}
+   \caption{MIDI Clock Tab}
    \label{fig:midi_clock_tab}
 \end{figure}
 
@@ -420,11 +421,25 @@
    \begin{enumber}
       \item \textbf{Ports and Clocks Table}
       \item \textbf{Clock Start Modulo}
-      \item \textbf{Save Clock/Input Maps}
+      \item \textbf{Save Maps}
+      \item \textbf{Remove Maps}
+      \item \textbf{MIDI Control Output Bus}
       \item \textbf{Meta Events}
       \item \textbf{Client Name:ID/UUID}
       \item \textbf{Output Ports Mapped}
+      \item \textbf{Input Ports Mapped}
    \end{enumber}
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
+
+   \itempar{Ports and Clocks}{output!ports and clocks}
+   \index{output ports}
+
+   This table shows the available MIDI outputs and their status.
+   If the set of system MIDI devices and software devices has changed since
+   the last run, this list could be in error.  Restart the application
+   and see if it is now correct.  Currently, there is no way to edit the list
+   except in the 'rc' file.  Also, enabling port-mapping is an issue.
 
    The \textbf{Ports and Clocks} table contains the following elements,
    although some can be removed by specifying the
@@ -442,15 +457,17 @@
       \item \textbf{Clock Start Modulo}
    \end{enumber}
 
-   The format of the left side of the entry listing is like the following:
+   The format of the left side of the entry listing is like the following
+   (if port-mapping is not enabled, the port-naming option is "long", and the
+   MIDI subsystem is ALSA):
 
    \begin{verbatim}
       [5] 128:4 yoshimi:input
        ^  ^   ^ ^        ^
        |  |   | |        |
-       |  |   | |         ---- Port name
+       |  |   | |         ---- Port/buss name
        |  |   |  ------------- Client name
-       |  |    --------------- Port number
+       |  |    --------------- Port/buss number
        |   ------------------- Client number
         ---------------------- Index number
    \end{verbatim}
@@ -544,12 +561,30 @@
    It is the \texttt{[midi-clock-mod-ticks]} option in the \textsl{Seq66}
    'rc' file.
 
-   \itempar{Save Clock/Input Maps}{midi clock!port mapping}
+   \itempar{Save Maps}{midi i/o!port mapping}
    \index{port mapping}
    \index{port!mapping}
    Pressing this button saves the current set of MIDI I/O ports to sections in
    the 'rc' file.  These sections can be enabled in order to support
    port-mapping in subsequent runs of \textsl{Seq66}.
+   Generally, after pressing this option, one will want to stop
+   \textsl{Seq66}, rearrange the clock and input maps in the
+   'rc' file with a text editor, back up this file in a safe place,
+   and restart \textsl{Seq66}.
+
+   \itempar{Remove Maps}{midi i/o!remove mapping}
+   \index{remove mapping}
+   \index{port! remove mapping}
+   Pressing this button removes the port mapping.
+   Once done, either restart \textsl{Seq66} or go to the \textbf{Session}
+   tab and click the \textbf{Reload Session} button.
+   (See \sectionref{subsec:concepts_reload_session}.)
+
+   \itempar{MIDI Control Output Bus}{midi control!output buss}
+   \index{midi control!output}
+   Use this control to select the output bus used to display
+   application-automation status, loop status, and mute-group status.
+   Requires a \textsl{reload session} to take effect.
 
    \itempar{Meta Events}{midi clock!meta events}
    \index{tempo-track-number}
@@ -575,12 +610,19 @@
          Under JACK, the UUID that JACK assigned to \textsl{Seq66} is shown.
    \end{enumerate}
 
+   \itempar{Output Ports Mapped}{mapping!output}
+   This check-box shows if the port-mapper is active for the output ports.
+   It becomes set if the \textbf{Save Maps} button is clicked, and unset if the
+   \textbf{Remove Maps} button is clicked.
+   Uncheck this button and \textsl{reload session} for the setting
+   to take effect.
 
-   \itempar{Output Ports Mapped}{mapping}
-   This read-only check-box shows if the port-mapper is active for the output
-   ports.  This item can only be edited by closing the application, editing the
-   'rc' file, and restarting the application.
-   (It is difficult to see in the figure with the selected theme. Doh!)
+   \itempar{Input Ports Mapped}{mapping!input}
+   This check-box shows if the port-mapper is active for the input ports.
+   It becomes set if the \textbf{Save Maps} button is clicked, and unset if the
+   \textbf{Remove Maps} button is clicked.
+   Uncheck this button and \textsl{reload session} for the setting
+   to take effect.
 
 %  \index{todo!manual alsa gui option}
 %  There is currently no user-interface item corresponding to the "manual-ports"
@@ -630,19 +672,19 @@
    \itempar{Input Buses}{input buses}
    \textbf{Input Buses} delineates the MIDI input devices as noted above.
 
+   \itempar{MIDI Control Input Bus}{midi control!input buss}
+   \index{midi control!input}
+   Use this control to select the input bus used for MIDI control automation of 
+   application actions, loop actions, and mute-group actions.
+   Requires a \textsl{reload session} to take effect.
+
    \itempar{Input Options}{input options}
    \index{input options}
    \textbf{Input Options} adds further refinements to MIDI input.
    Currenty it has only one setting, for recording input into patterns by the
    channel in each event.
 
-   \itempar{Input Ports Mapped}{mapping}
-   This stand-alone
-   read-only check-box shows if the port-mapper is active for the input
-   ports.  This item can only be modified by closing the application, editing
-   the 'rc' file, and restarting the application.
-
-   \itempar{Input/Output Option}{I/O options}
+   \itempar{Input/Output Recording}{record!by channel}
    \index{input by channel}
    \textbf{Record input into sequence according to channel}
    causes MIDI input with multiple channels to be distributed to
@@ -650,11 +692,14 @@
    When disabled, the normal recording behavior dumps all data into the current
    sequence, regardless of channel.
 
-   \index{input by channel}
+   \itempar{Input/Output Virtual Ports}{ports!virtual}
    \textbf{Use virtual (manual) I/O Ports}
    This new option
    allows for configuration of the manual-ports option from within the
-   user-interace.  A restart is necessary for this option to take effect.
+   user-interace. 
+   Once the option is enable
+   A \textsl{reload session} (see \sectionref{subsec:concepts_reload_session})
+   is necessary for this option to take effect.
 
 \paragraph{Menu / Edit / Preferences / Keyboard}
 \label{paragraph:menu_edit_preferences_keyboard}
@@ -729,6 +774,12 @@
    \textbf{12 x 8}
    as well.
 
+   \textbf{Warning}:
+
+   A different set size alter the 'ctrl' file radically.
+   We still have to work through all the implications of changing the set size,
+   so back up your configuration and proceed with caution!
+
    \itempar{Progress Boxes}{progress-box size}
    Provides a way to change the size of the progress box in each button.
    Values are width and height fractions (up to 1.0) re the button size.
@@ -755,12 +806,44 @@
    is shown in the menu.  Although they can be uncomfortably long, they can
    show files that have the same name, but in different directores.
 
-   \itempar{Long Port/Buss Name}{long buss names}
+   \itempar{Long Port/Buss Name}{buss names!long}
+   \index{buss names!short}
    Controls how much port information is shown in the clocks and input
-   listings.  For the "portmidi" implementation, keep this option checked.
+   listings.  For the "portmidi" (e.g. \textsl{Windows})
+   implementation, keep this option checked.
 
-   \itempar{Lock Main Window}{lock main window}
+   \itempar{Lock Main Window}{main window!lock}
    This item makes the window non-resizable after startup.
+
+   \itempar{Swap Coordinates}{grid!swap coordinates}
+   Normally, \textsl{Seq66} displays the pattern and mute-groups grids
+   where the pattern numbers increase fastest downward.
+   Some might prefer to have pattern numbers increase fastest rightward.
+   This setting make the patterns show in the more conventional manner.
+
+   \textbf{Warning}:
+
+      \begin{itemize}
+         \item This setting requires the 'ctrl' file to be rewritten
+            if one want to preserve the normal layout for the pattern hot-keys
+            and the mute-group hot-keys.
+         \item This setting has not been rigorously tested, so be prepared for
+            some issues.
+      \end{itemize}
+
+   A 'ctrl' file for the swapped setting is provided
+   in \texttt{qseq66-swapped.ctrl} in the \texttt{data/linux}
+   directory, but it might not be completely correct yet.
+
+   \itempar{Bold Slot Font}{grid!bold}
+   \index{font!bold}
+   \index{progress bar!thick}
+   This setting makes the font in the live grid bold, and it allows
+   make the progress-bar thick in the grid and in the Live and Song piano
+   rolls.
+
+   It is the same as the \texttt{progress-bar-thick = true} option in the 'usr'
+   file. See \sectionref{subsubsec:usr_file_user_interface_settings}.
  
 \paragraph{Menu / Edit / Preferences / JACK}
 \label{paragraph:menu_edit_preferences_jack}
@@ -994,7 +1077,10 @@
 
    \itempar{UUID}{edit!UUID}
    \textbf{UUID} is a read-only field that shows any UUID that's relevant to a
-   session.  Also see the \textbf{Session} tab in the main window.
+   session. Normally has a value only in a \textsl{JACK} or
+   \textsl{NSM} session.
+   Also see the \textbf{Session} tab in the main window
+   (\sectionref{sec:sessions}).
 
    \itempar{Configuration Files}{edit!configuration}
    \textbf{Configuration Files}

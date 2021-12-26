@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-18
+ * \updates       2021-12-26
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -62,14 +62,17 @@ namespace seq66
  *  Alpha values for various states, not yet members, not yet configurable.
  */
 
-static const int s_alpha_playing    = 255;
-static const int s_alpha_muted      = 100;
+static const int c_alpha_playing    = 255;
+static const int c_alpha_muted      = 100;
 
 /**
  *  Initial sizing for the perf-roll.  The baseline PPQN is defined in
  *  usrsettings.
  */
 
+static const int c_ycorrection      = (-1);     /* horizontal grid line fix */
+static const int c_border_width     = 2;
+static const int c_pen_width        = 2;
 static const int c_background_x     = (c_baseline_ppqn*4*16) / c_perf_scale_x;
 static const int c_size_box_w       = 6;
 static const int c_size_box_click_w = c_size_box_w + 1 ;
@@ -178,11 +181,11 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
     QPen pen(fore_color());
     pen.setStyle(Qt::SolidLine);
 
-#if defined THIS_CODE_ADDS_VALUE
+// #if defined THIS_CODE_ADDS_VALUE
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.drawRect(0, 0, width(), height());
-#endif
+// #endif
 
     if (! is_initialized())
         set_initialized();
@@ -204,11 +207,11 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
             drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
         );
         old_rect().set(x, y, w, h + track_height());
-        brush.setStyle(Qt::SolidPattern);           // doesn't work
-        brush.setColor(grey_color());               // doesn't work
+        brush.setStyle(Qt::SolidPattern);
+        brush.setColor(grey_color());
         pen.setStyle(Qt::SolidLine);
         pen.setColor(sel_color());
-        pen.setWidth(2);
+        pen.setWidth(c_pen_width);
         painter.setBrush(brush);
         painter.setPen(pen);
         painter.drawRect(x, y, w, h + track_height());
@@ -224,6 +227,7 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
     int yheight = r.height() - 1;
     pen.setStyle(Qt::SolidLine);                    // draw border
     pen.setColor(Qt::black);
+    pen.setWidth(c_border_width);
     painter.setPen(pen);
     painter.drawRect(0, 0, xwidth, yheight);
 #endif
@@ -233,16 +237,10 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
     pen.setColor(progress_color());
     pen.setStyle(Qt::SolidLine);
     if (usr().progress_bar_thick())
-        pen.setWidth(2);
+        pen.setWidth(c_pen_width);
 
     painter.setPen(pen);
     painter.drawLine(progress_x, 1, progress_x, height() - 2);
-
-    /*
-     * Not needed.
-     * if (usr().progress_bar_thick())
-     *      pen.setWidth(1);
-     */
 }
 
 bool
@@ -826,13 +824,13 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
     QBrush brush(back_color());                         /* Qt::NoBrush      */
     QPen pen(fore_color());                             /* Qt::black        */
     pen.setStyle(Qt::SolidLine);
-    pen.setWidth(2);
+    pen.setWidth(c_pen_width);
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.drawRect(0, 0, width(), height());          /* full width       */
     for (int i = 0; i < height(); i += track_height())  /* horizontal lines */
     {
-        int y = i - 2;
+        int y = i + c_ycorrection;                      /* - 2 */
         painter.drawLine(0, y, xwidth, y);
     }
 
@@ -897,9 +895,9 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
             int c = perf().color(seqid);
             Color backcolor = get_color_fix(PaletteColor(c));
             if (s->playing())
-                backcolor.setAlpha(s_alpha_playing);
+                backcolor.setAlpha(c_alpha_playing);
             else
-                backcolor.setAlpha(s_alpha_muted);
+                backcolor.setAlpha(c_alpha_muted);
 
             int lenw = tix_to_pix(lens);
             int h = track_height() - 1;
