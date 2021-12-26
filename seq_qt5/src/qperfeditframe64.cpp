@@ -134,10 +134,6 @@ qperfeditframe64::qperfeditframe64
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     /*
-     * What about the window title?
-     */
-
-    /*
      * Snap.  Fill options for grid snap combo box and set the default.
      * We need an obvious macro for "6".
      */
