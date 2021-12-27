@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>646</width>
-    <height>680</height>
+    <width>648</width>
+    <height>682</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -1910,7 +1910,7 @@ required.</string>
           <x>160</x>
           <y>70</y>
           <width>125</width>
-          <height>21</height>
+          <height>24</height>
          </rect>
         </property>
        </widget>
@@ -1923,7 +1923,7 @@ required.</string>
           <x>160</x>
           <y>100</y>
           <width>125</width>
-          <height>21</height>
+          <height>24</height>
          </rect>
         </property>
        </widget>
@@ -1936,7 +1936,7 @@ required.</string>
           <x>160</x>
           <y>130</y>
           <width>125</width>
-          <height>21</height>
+          <height>24</height>
          </rect>
         </property>
        </widget>
@@ -1949,7 +1949,7 @@ required.</string>
           <x>160</x>
           <y>160</y>
           <width>125</width>
-          <height>21</height>
+          <height>24</height>
          </rect>
         </property>
        </widget>
@@ -1962,7 +1962,7 @@ required.</string>
           <x>448</x>
           <y>70</y>
           <width>125</width>
-          <height>21</height>
+          <height>24</height>
          </rect>
         </property>
        </widget>
@@ -1975,7 +1975,7 @@ required.</string>
           <x>448</x>
           <y>100</y>
           <width>125</width>
-          <height>21</height>
+          <height>24</height>
          </rect>
         </property>
        </widget>
@@ -2003,7 +2003,7 @@ required.</string>
           <x>160</x>
           <y>190</y>
           <width>125</width>
-          <height>21</height>
+          <height>24</height>
          </rect>
         </property>
         <property name="toolTip">
@@ -2137,7 +2137,7 @@ path added to this name is stripped.</string>
           <x>448</x>
           <y>130</y>
           <width>125</width>
-          <height>21</height>
+          <height>24</height>
          </rect>
         </property>
        </widget>

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-09-12
+ * \updates       2021-12-27
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll),
@@ -140,6 +140,7 @@ private slots:
     void grow ();
     void follow (bool ischecked);
     void entry_mode (bool ischecked);
+    void slot_duration (bool ischecked);
     void reset_trigger_transpose (bool ischecked);
     void set_trigger_transpose (int tpose);
     void v_zoom_in ();
@@ -152,6 +153,7 @@ private:
     performer & m_mainperf;
     QPalette * m_palette;
     bool m_is_external;
+    bool m_duration_mode;               /* true == H:M:S.fraction       */
     int m_snap;                         /* set snap-to in pulses/ticks  */
     int m_beats_per_measure;
     int m_beat_width;

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2021-12-21
+ * \updates       2021-12-27
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -78,7 +78,9 @@ protected:
      *  clock setting will be off (not disabled) for all input values.  This
      *  is so that we can disable missing inputs when port-mapping.  The clock
      *  setting will be disabled for output values that are actually disabled
-     *  by the user or are missing from the actual system ports.
+     *  by the user or are missing from the actual system ports.  There is
+     *  also a static function valid() in portslist to check that the io_name
+     *  is not empty.
      */
 
     using io = struct
@@ -133,8 +135,9 @@ public:
         int & portstatus,
         std::string & portname
     );
+    static bool valid (const io & item);
 
-    void match_up (/*const*/ portslist & source);
+    void match_system_to_map (/*const*/ portslist & source);
 
     void clear ()
     {

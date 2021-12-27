@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>857</width>
-    <height>382</height>
+    <width>859</width>
+    <height>384</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -81,7 +81,7 @@
           <x>0</x>
           <y>0</y>
           <width>16</width>
-          <height>312</height>
+          <height>314</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -115,8 +115,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>687</width>
-          <height>310</height>
+          <width>691</width>
+          <height>314</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -236,7 +236,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>672</width>
+          <width>676</width>
           <height>16</height>
          </rect>
         </property>
@@ -732,6 +732,19 @@ To reset, set to 0 and apply it.</string>
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="btnDuration">
+       <property name="text">
+        <string>20:20.20</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -743,16 +756,6 @@ To reset, set to 0 and apply it.</string>
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_Duration">
-       <property name="toolTip">
-        <string>Estimated song duration, based on patterns and triggers.</string>
-       </property>
-       <property name="text">
-        <string>0:0:0</string>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>

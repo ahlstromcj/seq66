@@ -129,7 +129,7 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.98.1
+set PROJECT_VERSION=0.98.2
 set PROJECT_DRIVE=C:
 set PROJECT_BITS=32
 

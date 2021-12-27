@@ -1,6 +1,6 @@
-TO DO for Seq66 0.98.1 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.98.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-12-25
+2019-04-13 to 2021-12-27
 
 Configuration:
 
@@ -11,7 +11,6 @@ Windows:
     -   Disable JACK UI elements in Windows builds.
     -   The installer build include a *.o file!
     -   Change to creating a 64-bit installer and adjust the instructions.
-    -   Create a better/dark Qt theme for Windows.
     -   In the live grid, move the top text up 1 pixel.  Move the bottom text
         up 2 pixels. Maybe reduce the font size by 1. Also consist the for the
         piano rolls.
@@ -36,19 +35,11 @@ UI:
             -   Control buss (in and out)
             -   Enabled (in and out)
 
-More UI:
-
-        -   Add max-measure display to the max-time shown in the song
-            editor.
-
 Port-Mapping:
 
     Running qpseq66 on Linux:  "QSynth" is named "PortMidi"! See
     seq_portmidi/src/midibus.cpp.  The workaround is to specify long port
     names in the 'rc' file.
-
-    Need to call the port-mapping match_up() function when the user clicks in
-    the port lists in the Clocks and Input tabs.
 
 Automation:
 

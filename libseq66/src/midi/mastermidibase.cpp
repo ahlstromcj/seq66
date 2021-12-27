@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2021-12-07
+ * \updates       2021-12-27
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -438,10 +438,10 @@ mastermidibase::copy_io_busses ()
  *  to here.  There is an converse function defined above. This function gets
  *  the I/O port-map ports and copies them into the provided I/O lists.
  *
- *  How it works:  The listbase::match_up() function here takes the master I/O
- *  lists, which come from the I/O section in the 'rc' file, and sets the
- *  matching statuses of the I/O settings to the statuses of the matching
- *  internal I/O port-maps.
+ *  How it works:  The portslist::match_system_to_map() function here takes the
+ *  master I/O lists, which come from the I/O section in the 'rc' file, and
+ *  sets the matching statuses of the I/O settings to the statuses of the
+ *  matching internal I/O port-maps.
  */
 
 void
@@ -456,7 +456,7 @@ mastermidibase::get_out_port_statuses (clockslist & outs)
 {
     clockslist & opm = output_port_map();
     if (opm.not_empty())
-        opm.match_up(m_master_clocks);
+        opm.match_system_to_map(m_master_clocks);
 
     outs = m_master_clocks;     /* the actual system clocks information     */
 }
@@ -466,7 +466,7 @@ mastermidibase::get_in_port_statuses (inputslist & ins)
 {
     inputslist & ipm = input_port_map();
     if (ipm.not_empty())
-        ipm.match_up(m_master_inputs);
+        ipm.match_system_to_map(m_master_inputs);
 
     ins = m_master_inputs;      /* the actual system inputs information     */
 }

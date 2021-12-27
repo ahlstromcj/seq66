@@ -1,7 +1,7 @@
-# README for Seq66 0.98.1
+# README for Seq66 0.98.2
 
 Chris Ahlstrom
-2015-09-10 to 2021-12-26
+2015-09-10 to 2021-12-27
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management,
@@ -81,6 +81,9 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.98.2:
+        *   Added detection of missing system ports when mapping ports.
+        *   Song duration label is now a button to select time versus measures.
     *   Version 0.98.1:
         *   Work on creating an NSIS installer for a 64-bit Windows build.
         *   Fixed a stupid segfault bug with the --help option.  Doh!

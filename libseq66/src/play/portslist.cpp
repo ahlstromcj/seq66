@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-21
+ * \updates       2021-12-27
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -487,11 +487,15 @@ portslist::port_name_from_bus (bussbyte nominalbuss) const
  * \param source
  *      The source for the statuses to be applied.  Ultimately, the sources
  *      are the clocks and inputs from the performer, provided by
- *      mastermidibase :: get_port_statuses().
+ *      mastermidibase :: get_port_statuses(), which gets the system ports.
+ *
+ * \return
+ *      Returns true if all the port-map entries mapped to a source port item.
+ *      If false is returned, the port-map may need to be reconstructed.
  */
 
 void
-portslist::match_up (/*const*/ portslist & source)
+portslist::match_system_to_map (/*const*/ portslist & source)
 {
     if (is_port_map())
     {
@@ -500,8 +504,16 @@ portslist::match_up (/*const*/ portslist & source)
             io & item = iopair.second;
             const std::string & portname = item.io_name;  /* nick-name */
             io & sourceio = source.io_block(portname);
-            sourceio.io_enabled = item.io_enabled;
-            sourceio.out_clock = item.out_clock;
+            if (valid(sourceio))
+            {
+                sourceio.io_enabled = item.io_enabled;
+                sourceio.out_clock = item.out_clock;
+            }
+            else
+            {
+                item.io_enabled = false;
+                item.out_clock = e_clock::disabled;
+            }
         }
     }
 }
@@ -620,6 +632,17 @@ portslist::parse_port_line
         portname   = pname;
     }
     return result;
+}
+
+/**
+ *  Static function to test an io object for validity.  To be valid it must
+ *  have a non-empty io_name field.
+ */
+
+bool
+portslist::valid (const io & item)
+{
+    return ! item.io_name.empty();
 }
 
 /**

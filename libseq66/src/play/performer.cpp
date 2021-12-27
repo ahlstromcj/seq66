@@ -4363,10 +4363,10 @@ performer::get_max_extent () const
 }
 
 std::string
-performer::duration () const
+performer::duration (bool dur) const
 {
     midipulse tick = get_max_extent();
-    return seq66::pulses_to_time_string(tick, bpm(), ppqn());
+    return dur ? pulses_to_time_string(tick) : pulses_to_measure_string(tick) ;
 }
 
 /**

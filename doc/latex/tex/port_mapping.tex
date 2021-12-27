@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-12-29
-% \update      2021-12-24
+% \update      2021-12-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -33,7 +33,7 @@
 
    A pattern/loop/sequence is assigned to output to a given port via
    a buss number saved with the pattern.  When a tune is loaded,
-   each pattern outputs to the port specified in the pattern.
+   each pattern outputs to the port number specified in the pattern.
 
    The problem is that MIDI device setups can change, with devices being
    reordered, removed, or added to the MIDI devices available on the system.
@@ -90,7 +90,13 @@
    \label{fig:clocks_list_after_port_mapping}
 \end{figure}
 
-   To remove the mappings, click the \textbf{Remove Maps} button.
+   At startup, \textsl{Seq66} matches the port-map to the ports that exist on
+   the system.  If there is no matching system port for a mapped port, then
+   that mapped port will show up as disabled in the port lists.
+
+   To remove the port mappings, click the \textbf{Remove Maps} button.
+   To reconstruct the current setup, click on the \textbf{Save Maps} button to
+   get the new mapping..
 
    As with the normal port listings, the port-mappings are managed in the
    \textsl{Seq66} 'rc' file.
@@ -285,8 +291,9 @@
    buttons control the pattern, mute-groups, and automation features set up in
    the above-mentioned 'ctrl' file.
    
-   As of version 0.98.1, the buss number can be replaced with the name of the
-   device, e.g. "Launchpad Mini".
+   As of version 0.98.1, the buss number will be replaced with the name of the
+   device, e.g. \texttt{output-buss = "Launchpad Mini"}, if port-mapping
+   is active.
 
    Perhaps tricky, but once one has set up a whole suite of I/O device maps,
    one can reliably use these hard-wired port numbers to look up the actual

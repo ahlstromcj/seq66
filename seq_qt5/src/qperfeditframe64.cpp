@@ -122,6 +122,7 @@ qperfeditframe64::qperfeditframe64
     m_mainperf              (p),
     m_palette               (nullptr),
     m_is_external           (isexternal),
+    m_duration_mode         (true),
     m_snap                  (8),
     m_beats_per_measure     (4),
     m_beat_width            (4),
@@ -399,8 +400,14 @@ qperfeditframe64::qperfeditframe64
     set_beats_per_measure(perf().get_beats_per_bar());
     set_beat_width(perf().get_beat_width());
 
-    std::string dur = perf().duration();
-    ui->label_Duration->setText(qt(dur));
+    std::string dur = perf().duration(m_duration_mode);
+    ui->btnDuration->setText(qt(dur));
+    ui->btnDuration->setChecked(m_duration_mode);
+    connect
+    (
+        ui->btnDuration, SIGNAL(clicked(bool)),
+        this, SLOT(slot_duration(bool))
+    );
 }
 
 qperfeditframe64::~qperfeditframe64 ()
@@ -644,6 +651,15 @@ qperfeditframe64::entry_mode (bool ischecked)
 }
 
 void
+qperfeditframe64::slot_duration (bool ischecked)
+{
+    m_duration_mode = ischecked;
+
+    std::string dur = perf().duration(ischecked);
+    ui->btnDuration->setText(qt(dur));
+}
+
+void
 qperfeditframe64::update_entry_mode (bool on)
 {
     ui->btnEntryMode->setChecked(on);
@@ -659,8 +675,8 @@ qperfeditframe64::update_entry_mode (bool on)
 void
 qperfeditframe64::update_sizes ()
 {
-    std::string dur = perf().duration();
-    ui->label_Duration->setText(qt(dur));
+    std::string dur = perf().duration(m_duration_mode);
+    ui->btnDuration->setText(qt(dur));
     m_perfnames->resize();
     m_perfnames->updateGeometry();
     m_perfroll->resize();
@@ -676,8 +692,8 @@ qperfeditframe64::update_sizes ()
 void
 qperfeditframe64::set_dirty ()
 {
-    std::string dur = perf().duration();
-    ui->label_Duration->setText(qt(dur));
+    std::string dur = perf().duration(m_duration_mode);
+    ui->btnDuration->setText(qt(dur));
     m_perfnames->reupdate();
     m_perfroll->set_dirty();
     m_perftime->set_dirty();
