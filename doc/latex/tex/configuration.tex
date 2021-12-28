@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-12-10
+% \update      2021-12-28
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1699,8 +1699,6 @@
 
    \begin{verbatim}
       [midi-control-settings]
-      load-key-controls = true
-      load-midi-controls = true
       control-buss = 3              # or 0xff
       midi-enabled = true
       button-offset = 0
@@ -1710,11 +1708,6 @@
    \end{verbatim}
 
    \begin{itemize}
-      \item \texttt{load-key-controls}.
-         Generally, this should always be set to "true".
-      \item \texttt{load-midi-controls}.
-         This one could plausibly disabled, but for live performance will
-         certainly be set to "true".
       \item \texttt{control-buss}.
          The control-buss value ranges from 0 to the maximum buss provided by
          the hardware on the system. If set, then only that buss will be allowed

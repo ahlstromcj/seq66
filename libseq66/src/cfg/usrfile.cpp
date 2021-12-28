@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-10
+ * \updates       2021-12-28
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -64,7 +64,7 @@ static const int s_usr_file_version = 9;
  *      6:  2021-07-26. Added progress-note-min and progress-note-max.
  *      7:  2021-09-20. Added "style-sheet-active" and "lock-main-window"
  *          flags.
- *      8:  2021-10-06: Added "convert-to-smf-l".
+ *      8:  2021-10-06: Added "convert-to-smf-1".
  *      9:  2021-10-26: Added "swap-coordinates".
  *
  * \param name
@@ -316,59 +316,7 @@ usrfile::parse ()
     tag = "[user-midi-settings]";
     if (file_version_number() < s_usr_smf_1)
     {
-        if (line_after(file, tag))
-        {
-            int scratch = 0;
-            (void) next_data_line(file);
-            sscanf(scanline(), "%d", &scratch);
-            usr().midi_beats_per_bar(scratch);
-
-            float beatspm;
-            (void) next_data_line(file);
-            sscanf(scanline(), "%f", &beatspm);
-            usr().midi_beats_per_minute(midibpm(beatspm));
-
-            (void) next_data_line(file);
-            sscanf(scanline(), "%d", &scratch);
-            usr().midi_beat_width(scratch);
-
-            (void) next_data_line(file);
-            sscanf(scanline(), "%d", &scratch);
-            usr().midi_buss_override(char(scratch));
-
-            if (next_data_line(file))
-            {
-                sscanf(scanline(), "%d", &scratch);
-                usr().velocity_override(scratch);
-            }
-            if (next_data_line(file))
-            {
-                sscanf(scanline(), "%d", &scratch);
-                usr().bpm_precision(scratch);
-            }
-            if (next_data_line(file))
-            {
-                float inc;
-                sscanf(scanline(), "%f", &inc);
-                usr().bpm_step_increment(midibpm(inc));
-            }
-            if (next_data_line(file))
-            {
-                float inc;
-                sscanf(scanline(), "%f", &inc);
-                usr().bpm_page_increment(midibpm(inc));
-            }
-            if (next_data_line(file))
-            {
-                sscanf(scanline(), "%f", &beatspm);
-                usr().midi_bpm_minimum(midibpm(beatspm));
-            }
-            if (next_data_line(file))
-            {
-                sscanf(scanline(), "%f", &beatspm);
-                usr().midi_bpm_maximum(midibpm(beatspm));
-            }
-        }
+        (void) version_error_message("usr", file_version_number());
     }
     else
     {

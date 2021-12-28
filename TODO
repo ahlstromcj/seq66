@@ -1,10 +1,6 @@
 TO DO for Seq66 0.98.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-12-27
-
-Configuration:
-
-    Replace "legacy" parsing. The remaining one is 'usr' for s_usr_smf_1.
+2019-04-13 to 2021-12-28
 
 Windows:
 
@@ -27,13 +23,8 @@ UI:
             -   Tempo / BPM min and max.
         -   Play Options:
             -   New-pattern editor options (check-boxes)
-            -   Sets-mode options
         -   Config Options: (new)
             -   Log-file
-        -   Control Options: (new)
-            -   Load key and midi controls (does this work?)
-            -   Control buss (in and out)
-            -   Enabled (in and out)
 
 Port-Mapping:
 
@@ -47,8 +38,6 @@ Automation:
     parameters through input automation? See the new "macro" facility.
 
 From Testing:
-
-    Ctrl-U (unmute all) unmutes the next set as well.
 
     When zooming, try to keep the same viewport in view.  Got this working
     for horizontal seqroll and perfroll, but not for vertical (refactoring
@@ -99,28 +88,12 @@ EXTANT ISSUES:
 #16 Ableton Live transport support?
     Go to this issue in Github to see the thread.
 
-#17 Connect midi devices by name
-    Currently midi devices are mapped by bus number. This is a problem when
-    devices are added and removed, which happens a lot for me. Why not storing
-    and connecting midi devices by name instead?
-    This could even be backwards-compatible: when the configuration file has a
-    bus number, use that, if it is a string, connect by name.
-    STATUS:  A "port-mapping" configuation in the 'rc' file is now supported.
-    It uses a lookup to map names to numbers.  We do not want to store port
-    names in the MIDI file.  They are too long and change between the systems
-    of each user.  Let the user determine the mapping of port numbers.
-    Mostly tested; works for patterns and for MIDI I/O control.
-
 #18 Mute Group does not toggle
     Also I have noticed that when I activate a mute group I am not able to
     activate patterns that do not belong to the activated mute group. It is
     normal?
     STATUS: I want to double-check this one.  This may now be fixed via
     fixes for issue #49.
-
-#21 Wrong links in about dialog
-    STATUS: Closed.  It would be good to work up a way to open the link
-    in the default browser.
 
 #24 Release notes in release tag message?
     I would like to add seq66 to https://libreav.org/updates
@@ -142,19 +115,6 @@ EXTANT ISSUES:
     STATUS: Provisional support in 0.91.3.  See Edit / Preferences / Play /
     Sets Mode.
 
-#33 NSM not working here
-    STATUS:  Will start retesting soon.
-
-    I add a new pattern, add a couple notes, then click File / Save to
-    save the tune.  It DOES NOT save the tune, because at that point it
-    does not have a name.  [I consider this to be a BUG, there should be a
-    default file-name already in place, or a prompt for a filename.]
-
-    I edit an in-session config to load the latest file, which is not part
-    of the session.  Seq66 does not get to the UI when first starting the
-    session.  It does do it the next time, loading the file.  The actual
-    operation should be in import, I think.
-
 #37 Song editor scrolling?
     STATUS: To be investigated.
 
@@ -163,11 +123,6 @@ EXTANT ISSUES:
     STATUS: If an existing HOME configuration exists, it is copied to the new
     session directory.  This is by design.  If you want a new configuration,
     then move or hide the HOME configuration.
-
-#41 NSM: hide seq66 on closing window, do not exit?
-    If closing the window, rather than quitting the app, could change the its
-    visibility state to hidden.
-    STATUS:  Fixed, using a show toggle.
 
 #44 "Record live sequence changes" functionality
     Currently the "record live sequence changes" only adds patterns into the
@@ -213,13 +168,6 @@ EXTANT ISSUES:
 #53 MIDI CC sequencing
     STATUS: See the thread on GitHub.
 
-#64 NSM: UI show up after restarting the app
-    This issue is complex.  First, NSM is supposed to tell the applications in
-    the session to hide after startup.  Neither agordejo or its
-    non-session-manager clone do this; they send only a command to show.
-    So, for now, we have changed the code so that the show command from NSM
-    acts as a toggle on visibility.
-
 #66 Toggle MIDI Recording via CC message
     
     I think modes generally should be triggerable individually. Especially if
@@ -241,10 +189,6 @@ EXTANT ISSUES:
     and one for each mode separately.  Then people could chose if they want to
     set up a control that cycles through the options or set up a control that
     instantly activates a specific mode.
-
-#67 NSM failed to save midi file on raspberry pi
-    STATUS: Fixed by making filename_concatenate() work even if the file base
-    has a path already.
 
 #68 MIDI controller initialization step
     The Launchpad Pro MK3 needs to be put in a special programmer mode before
@@ -300,30 +244,6 @@ Tons of TO DOs in performer!
     that the perfroll clears, but not the perfnames!  We need to derive all
     qperf GUIs from qperfbase.  Actually, they both clear, only if clicked on.
 
-    When copying a large track and pasting into a smaller one, consider
-    altering the length of the smaller track to match.
-
-    We have implented a Merge Pattern facility.
-
-List of To-Do Items for the Refactoring.  An asterisk means it should also be
-fixed in Seq64.
-
-seq_portmidi/src/pmmacosxcm.c *:
-
-    Figure out the proper client and port values for calls to pm_add_device().
-    See seq_portmidi/src/pmwinmm.c.
-
-seq_rtmidi/src/midi_alsa_info.cpp *:
-
-    In api_get_midi_event(), implement support for:
-
-        SND_SEQ_EVENT_PORT_START.
-        SND_SEQ_EVENT_PORT_EXIT.
-        SND_SEQ_EVENT_PORT_CHANGE (could be difficult).
-
-libseq66/src/play/performer.cpp:
-
     Implement solo, FF, rewind, and many more.  Investigate!!!
-
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

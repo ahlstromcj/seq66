@@ -64,21 +64,16 @@ c_cedilla) to be used in the MIDI control settings.
 
 [midi-control-settings]
 
-# Setting 'load-midi-control' to 'false' will cause an empty MIDI
-# control setup to be written!  Keep backups! The control-buss value
-# ranges from 0 to the maximum system input buss. If set, then that
-# buss will be allowed to send MIDI control. 255 (0xFF) means any
-# buss can send MIDI control. The buss(es) must be enabled in the
-# 'rc' file.  With ALSA, there is an extra 'announce' buss, which
-# will alter the numbering compared to JACK.
+# The control-buss value ranges from 0 to the maximum system input buss. If set,
+# then that buss will be allowed to send MIDI control. 255 (0xFF) means any buss
+# can send MIDI control. The buss(es) must be enabled in the 'rc' file.  With
+# ALSA, there is an extra 'announce' buss, which will alter the numbering
+# compared to JACK.
 #
-# The 'midi-enabled' flag applies to the MIDI controls; keystrokes
-# are always enabled. Supported keyboard layouts are 'qwerty' (the
-# default), 'qwertz', and 'azerty'. AZERTY turns off the auto-shift
-# feature for group-learn.
+# The 'midi-enabled' flag applies to the MIDI controls; keystrokes are always
+# enabled. Supported keyboard layouts are 'qwerty' (the default), 'qwertz', and
+# 'azerty'. AZERTY turns off the auto-shift feature for group-learn.
 
-load-key-controls = true
-load-midi-controls = true
 control-buss = 0xFF
 midi-enabled = false
 button-offset = 0

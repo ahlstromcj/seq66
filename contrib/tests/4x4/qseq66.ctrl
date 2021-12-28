@@ -23,21 +23,15 @@ This control ('ctrl') file is meant for the 4x4 test.  See the file
 
 [midi-control-settings]
 
-# These are input settings to control Seq66. 'load-midi-control'
-# = false writes empty MIDI controls!! Keepbackups! 'control-buss'
-# values range from 0 to the highest systeminput buss. If set, that
-# buss can send MIDI control. 255 (0xFF) means any enabled input
-# file can send control. ALSA provides an extra 'announce' buss,
-# altering port numbering re JACK. If port-mapping is enabled, the
-# port nick-name can be provided.
+# 'control-buss' values range from 0 to the highest systeminput buss. If set,
+# that buss can send MIDI control. 255 (0xFF) means any enabled input file can
+# send control. ALSA provides an extra 'announce' buss, altering port numbering
+# re JACK. If port-mapping is enabled, the port nick-name can be provided.
 #
-# 'midi-enabled' applies to the MIDI controls; keystroke controls
-# are always enabled. Supported keyboard layouts are 'qwerty'
-# (default), 'qwertz', and 'azerty'. AZERTY turns off the auto-shift
-# feature for group-learn.
+# 'midi-enabled' applies to the MIDI controls; keystroke controls are always
+# enabled. Supported keyboard layouts are 'qwerty' (default), 'qwertz', and
+# 'azerty'. AZERTY turns off the auto-shift feature for group-learn.
 
-load-key-controls = true
-load-midi-controls = true
 drop-empty-controls = false
 control-buss = ""
 midi-enabled = false

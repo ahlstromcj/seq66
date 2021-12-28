@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-11-27
+ * \updates       2021-12-28
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -220,26 +220,10 @@ private:
     mutegroups m_mute_groups;
 
     /**
-     *  Indicates if we want to load the key controls.  Generally, we do.
-     *  This setting is made by the [midi-control-flags] load-key-control
-     *  entry in the MIDI control section.
-     */
-
-    bool m_load_key_controls;
-
-    /**
      *  Holds the key-container.
      */
 
     keycontainer m_keycontainer;
-
-    /**
-     *  Indicates if we want to load the MIDI controls.  Generally, we do.
-     *  This setting is made by the [midi-control-flags] load-midi-control
-     *  entry in the MIDI control section.
-     */
-
-    bool m_load_midi_controls;
 
     /**
      *  New.  If true, leave empty (inactive) MIDI control entries out of the
@@ -600,11 +584,6 @@ public:
         return m_mute_groups;
     }
 
-    bool load_key_controls () const
-    {
-        return m_load_key_controls;
-    }
-
     const keycontainer & key_controls () const
     {
         return m_keycontainer;
@@ -613,11 +592,6 @@ public:
     keycontainer & key_controls ()
     {
         return m_keycontainer;
-    }
-
-    bool load_midi_control_in () const
-    {
-        return m_load_midi_controls;
     }
 
     bool drop_empty_in_controls () const
@@ -1122,16 +1096,6 @@ public:
     }
 
 public:
-
-    void load_key_controls (bool flag)
-    {
-        m_load_key_controls = flag;
-    }
-
-    void load_midi_control_in (bool flag)
-    {
-        m_load_midi_controls = flag;
-    }
 
     void drop_empty_in_controls (bool flag)
     {

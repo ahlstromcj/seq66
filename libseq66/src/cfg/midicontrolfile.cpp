@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-12-15
+ * \updates       2021-12-28
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -199,8 +199,6 @@ midicontrolfile::~midicontrolfile ()
  *  [midi-control-settings]  (was "midi-control-flags")
  *
 \verbatim
-        load-key-controls
-        load-midi-controls
         control-buss
         midi-enabled
         button-offset
@@ -246,15 +244,9 @@ midicontrolfile::parse_stream (std::ifstream & file)
     if (bad_position(find_tag(file, mctag)))
         mctag = "[midi-control-flags]";             /* earlier name for it  */
 
-    bool flag = get_boolean(file, mctag, "load-key-controls");
-    rc_ref().load_key_controls(flag);
-    flag = get_boolean(file, mctag, "load-midi-controls");
-    rc_ref().load_midi_control_in(flag);
-    flag = get_boolean(file, mctag, "drop-empty-controls");
+    bool flag = get_boolean(file, mctag, "drop-empty-controls");
     rc_ref().drop_empty_in_controls(flag);
 
-    bool loadmidi = rc_ref().load_midi_control_in();
-    bool loadkeys = rc_ref().load_key_controls();
     bussbyte buss = get_buss_number(file, false, mctag, "control-buss");
     bool enabled = get_boolean(file, mctag, "midi-enabled");
     int offset = 0, rows = 0, columns = 0;
@@ -267,89 +259,85 @@ midicontrolfile::parse_stream (std::ifstream & file)
         m_temp_midi_ctrl_in.is_enabled(enabled);
         m_temp_midi_ctrl_in.offset(offset);
     }
-    if (loadkeys)
+
+    std::string layout = get_variable(file, mctag, "keyboard-layout");
+    m_temp_key_controls.clear();
+    m_temp_key_controls.set_kbd_layout(layout);
+
+    bool good = line_after(file, "[loop-control]");
+    int count = 0;
+    bool keep_empties = ! rc_ref().drop_empty_in_controls();
+    if (keep_empties)
+        status_message("Keeping empty MIDI-In controls");
+
+    while (good)                            /* not at end of section?   */
     {
-        std::string layout = get_variable(file, mctag, "keyboard-layout");
-        m_temp_key_controls.clear();
-        m_temp_key_controls.set_kbd_layout(layout);
-    }
-    if (loadmidi || loadkeys)
-    {
-        bool good = line_after(file, "[loop-control]");
-        int count = 0;
-        bool keep_empties = ! rc_ref().drop_empty_in_controls();
-        if (keep_empties)
-            status_message("Keeping empty MIDI-In controls");
+        if (! line().empty())               /* any value in section?    */
+            good = parse_control_stanza(automation::category::loop);
 
-        while (good)                            /* not at end of section?   */
+        if (good)
         {
-            if (! line().empty())               /* any value in section?    */
-                good = parse_control_stanza(automation::category::loop);
-
-            if (good)
-            {
-                good = next_data_line(file);
-                ++count;
-            }
-        }
-        if (count > 0)
-        {
-            infoprintf("%d loop-control lines", count);
-        }
-        good = line_after(file, "[mute-group-control]");
-        count = 0;
-        while (good)                            /* not at end of section?   */
-        {
-            if (! line().empty())               /* any value in section?    */
-                good = parse_control_stanza(automation::category::mute_group);
-
-            if (good)
-            {
-                good = next_data_line(file);
-                ++count;
-            }
-        }
-        if (count > 0)
-        {
-            infoprintf("%d mute-group-control lines", count);
-        }
-
-        good = line_after(file, "[automation-control]");
-        count = 0;
-        while (good)                            /* not at end of section?   */
-        {
-            if (! line().empty())               /* any value in section?    */
-                good = parse_control_stanza(automation::category::automation);
-
-            if (good)
-            {
-                good = next_data_line(file);
-                ++count;
-            }
-        }
-        if (count > 0)
-        {
-            infoprintf("%d automation-control lines", count);
-            if (count < current_slot_count())   /* pre-defined  */
-                 add_default_automation_stanzas(count);
-        }
-        if (rc_ref().verbose())
-        {
-            static bool s_not_shown = true;
-            if (s_not_shown)
-            {
-                s_not_shown = false;            /* show only once per run   */
-                m_temp_key_controls.show();
-            }
+            good = next_data_line(file);
+            ++count;
         }
     }
-    if (loadmidi && m_temp_midi_ctrl_in.count() > 0)
+    if (count > 0)
+    {
+        infoprintf("%d loop-control lines", count);
+    }
+    good = line_after(file, "[mute-group-control]");
+    count = 0;
+    while (good)                            /* not at end of section?   */
+    {
+        if (! line().empty())               /* any value in section?    */
+            good = parse_control_stanza(automation::category::mute_group);
+
+        if (good)
+        {
+            good = next_data_line(file);
+            ++count;
+        }
+    }
+    if (count > 0)
+    {
+        infoprintf("%d mute-group-control lines", count);
+    }
+
+    good = line_after(file, "[automation-control]");
+    count = 0;
+    while (good)                            /* not at end of section?   */
+    {
+        if (! line().empty())               /* any value in section?    */
+            good = parse_control_stanza(automation::category::automation);
+
+        if (good)
+        {
+            good = next_data_line(file);
+            ++count;
+        }
+    }
+    if (count > 0)
+    {
+        infoprintf("%d automation-control lines", count);
+        if (count < current_slot_count())   /* pre-defined  */
+             add_default_automation_stanzas(count);
+    }
+    if (rc_ref().verbose())
+    {
+        static bool s_not_shown = true;
+        if (s_not_shown)
+        {
+            s_not_shown = false;            /* show only once per run   */
+            m_temp_key_controls.show();
+        }
+    }
+    if (m_temp_midi_ctrl_in.count() > 0)
     {
         rc_ref().midi_control_in().clear();
         rc_ref().midi_control_in() = m_temp_midi_ctrl_in;
         rc_ref().midi_control_in().inactive_allowed(true);  /* always true  */
     }
-    if (rc_ref().load_key_controls() && m_temp_key_controls.count() > 0)
+    if (m_temp_key_controls.count() > 0)
     {
         rc_ref().key_controls().clear();
         rc_ref().key_controls() = m_temp_key_controls;
@@ -814,24 +802,18 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         bussbyte bb = mci.nominal_buss();
         file <<
         "\n[midi-control-settings]\n\n"
-        "# These are input settings to control Seq66. 'load-midi-control'\n"
-        "# = false writes empty MIDI controls!! Keepbackups! 'control-buss'\n"
-        "# values range from 0 to the highest systeminput buss. If set, that\n"
-        "# buss can send MIDI control. 255 (0xFF) means any enabled input\n"
-        "# file can send control. ALSA provides an extra 'announce' buss,\n"
-        "# altering port numbering re JACK. If port-mapping is enabled, the\n"
-        "# port nick-name can be provided.\n"
+        "# Input settings to control Seq66. 'control-buss' values range from\n"
+        "# 0 to the highest system input buss. If set, that buss can send\n"
+        "# MIDI control. 255 (0xFF) means any enabled input device can send\n"
+        "# control. ALSA provides an extra 'announce' buss, altering port\n"
+        "# numbering re JACK. If port-mapping is enabled, the port nick-name\n"
+        "# can be provided.\n"
         "#\n"
         "# 'midi-enabled' applies to the MIDI controls; keystroke controls\n"
         "# are always enabled. Supported keyboard layouts are 'qwerty'\n"
         "# (default), 'qwertz', and 'azerty'. AZERTY turns off the auto-shift\n"
         "# feature for group-learn.\n\n"
         ;
-        write_boolean(file, "load-key-controls", rc_ref().load_key_controls());
-        write_boolean
-        (
-            file, "load-midi-controls", rc_ref().load_midi_control_in()
-        );
         write_boolean
         (
             file, "drop-empty-controls", rc_ref().drop_empty_in_controls()
@@ -1013,7 +995,7 @@ midicontrolfile::write_mutes_triple
         group, midicontrolout::action_del
     );
     file
-        << std::setw(2) << group << " "
+        << std::setw(2) << std::dec << group << " "
         << act1str << " " << act2str << " " << act3str << "\n"
         ;
     return file.good();
@@ -1063,10 +1045,9 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             ;
         file <<
             "#\n"
-            "# In a change from version 1 of this file, a test of the\n"
-            "# status/event byte determines the enabled status, and channel\n"
-            "# is incorporated into the status.  The order of the lines must\n"
-            "# be preserved.\n"
+            "# In a change from version 1 of this file, a test of the status\n"
+            "# byte determines the enabled status, and channel is included in the\n"
+            "# status.\n"
             "\n"
             ;
 
@@ -1086,7 +1067,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             {
                 int minimum, maximum;
                 midicontrolout::seqaction_range(minimum, maximum);
-                file << std::setw(2) << seq << std::setw(0);
+                file << std::setw(2) << std::dec << seq;
                 for (int a = minimum; a < maximum; ++a)
                 {
                     event ev = mco.get_seq_event
@@ -1108,7 +1089,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         }
         file <<
             "\n[mute-control-out]\n\n"
-            "# The format of the mute and automation output events is simpler:\n"
+            "# The format of the mute and automation output events is similar:\n"
             "#\n"
             "#  ----------------- mute-group number\n"
             "# |    ------------- MIDI status+channel (eg. Note On)\n"
@@ -1287,30 +1268,27 @@ midicontrolfile::parse_control_stanza (automation::category opcat, int index)
     }
     if (result)
     {
-        if (rc_ref().load_key_controls())
-        {
-            /*
-             *  Make reverse-lookup map<pattern, keystroke> for the show_ui
-             *  functions.  It would be an addition to the keycontainer class.
-             *  keyname = key_controls().key_name(slotnumber);
-             */
+        /*
+         *  Make reverse-lookup map<pattern, keystroke> for the show_ui
+         *  functions.  It would be an addition to the keycontainer class.
+         *  keyname = key_controls().key_name(slotnumber);
+         */
 
-            keycontrol kc
-            (
-                "", keyname, opcat, automation::action::toggle, opslot, index
-            );
-            ctrlkey ordinal = qt_keyname_ordinal(keyname);
-            bool ok = m_temp_key_controls.add(ordinal, kc);
-            if (ok)
-            {
-                if (opcat == automation::category::loop)
-                    ok = m_temp_key_controls.add_slot(kc);
-                else if (opcat == automation::category::mute_group)
-                    ok = m_temp_key_controls.add_mute(kc);
-            }
-            if (! ok)
-                (void) keycontrol_error_message(kc, ordinal, line_number());
+        keycontrol kc
+        (
+            "", keyname, opcat, automation::action::toggle, opslot, index
+        );
+        ctrlkey ordinal = qt_keyname_ordinal(keyname);
+        bool ok = m_temp_key_controls.add(ordinal, kc);
+        if (ok)
+        {
+            if (opcat == automation::category::loop)
+                ok = m_temp_key_controls.add_slot(kc);
+            else if (opcat == automation::category::mute_group)
+                ok = m_temp_key_controls.add_mute(kc);
         }
+        if (! ok)
+            (void) keycontrol_error_message(kc, ordinal, line_number());
     }
     else
     {

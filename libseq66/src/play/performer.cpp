@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-12-22
+ * \updates       2021-12-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -5852,7 +5852,9 @@ bool
 performer::apply_session_mutes ()
 {
     bool result = mutes().any() && mutes().group_valid();
-    if (result)
+    if (rc().song_start_auto())
+        result = mapper().trigger_count() == 0; /* triggers imply song mode */
+    else
         result = ! rc().song_start_mode();      /* don't apply in song mode */
 
     if (result)

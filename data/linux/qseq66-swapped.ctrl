@@ -25,20 +25,15 @@ This is the version with the 'usr' setting 'swap-coordinates' set.
 
 [midi-control-settings]
 
-# Setting 'load-midi-control = false' causes an empty MIDI control
-# to be written! Keep backups! The control-buss value ranges from 0
-# to the maximum system input buss. If set, that buss will send MIDI
-# control. 255 (0xFF) means any buss can send control. The buss(es)
-# must be enabled in the 'rc' file.  With ALSA, there is an extra
+# The control-buss value ranges from 0 to the maximum system input buss. If set,
+# that buss will send MIDI control. 255 (0xFF) means any buss can send control.
+# The buss(es) must be enabled in the 'rc' file.  With ALSA, there is an extra
 # 'announce' buss, which alters the port numbering.
 #
-# The 'midi-enabled' flag applies to the MIDI controls; keystrokes
-# are always enabled. Supported keyboard layouts are 'qwerty' (the
-# default), 'qwertz', and 'azerty'. AZERTY turns off the auto-shift
-# feature for group-learn.
+# The 'midi-enabled' flag applies to the MIDI controls; keystrokes are always
+# enabled. Supported keyboard layouts are 'qwerty' (the default), 'qwertz', and
+# 'azerty'. AZERTY turns off the auto-shift feature for group-learn.
 
-load-key-controls = true
-load-midi-controls = true
 control-buss = 0xFF
 midi-enabled = false
 button-offset = 0

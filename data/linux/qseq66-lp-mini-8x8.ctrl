@@ -65,16 +65,11 @@ on the Mini, with states of off, green (play), red (stop), and yellow (pause).
 
 [midi-control-settings]
 
-# Note that setting 'load-midi-control' to 'false' will cause an
-# empty MIDI control setup to be written!  Keep backups! The 
-# control-buss value should range from 0 to the maximum buss available
-# on your system.  If set, then only that buss will be allowed to
-# provide MIDI control. A value of 255 or 0xff means any buss can.
-# The 'midi-enabled' flag applies to the MIDI controls; keystrokes
-# are always enabled.
+# The control-buss value should range from 0 to the maximum buss available on
+# your system.  If set, then only that buss will be allowed to provide MIDI
+# control. A value of 255 or 0xff means any buss can.  The 'midi-enabled' flag
+# applies to the MIDI controls; keystrokes are always enabled.
 
-load-key-controls = true
-load-midi-controls = true
 control-buss = 6
 midi-enabled = true
 button-offset = 0

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-12-20
+ * \updates       2021-12-28
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -65,9 +65,7 @@ rcsettings::rcsettings () :
     m_clocks                    (),         /* vector wrapper class     */
     m_inputs                    (),         /* vector wrapper class     */
     m_mute_groups               (),
-    m_load_key_controls         (true),
     m_keycontainer              ("rc"),
-    m_load_midi_controls        (true),
     m_drop_empty_in_controls    (false),    /* the legacy value         */
     m_midi_control_buss         (null_buss()),
     m_midi_control_in           ("rc"),
@@ -158,15 +156,9 @@ rcsettings::set_defaults ()
      * m_clocks.clear();
      * m_inputs.clear();
      * m_mute_groups.clear();
-     */
-
-    m_load_key_controls         = true;
-
-    /*
      * m_keycontainer.clear();              // what is best?
      */
 
-    m_load_midi_controls        = true;
     m_drop_empty_in_controls    = false;
     m_midi_control_buss         = null_buss();
 
