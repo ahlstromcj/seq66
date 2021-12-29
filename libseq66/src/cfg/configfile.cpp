@@ -635,9 +635,9 @@ configfile::write_comment
 )
 {
     file << "\n"
-        "# [comments] holds user documentation for this file. The first empty,\n"
-        "# hash-commented, or tag line ends the comment.\n"
-        "\n[comments]\n\n" << commenttext
+"# [comments] holds user documentation for this file. The first empty, hash-\n"
+"# commented, or tag line ends the comment.\n"
+"\n[comments]\n\n" << commenttext
         ;
 }
 

@@ -180,9 +180,9 @@ smanager::main_settings (int argc, char * argv [])
     else
     {
         /*
-         *  If parsing fails, report it and disable usage of the application
-         *  and saving bad garbage out when exiting.  Still must launch,
-         *  otherwise a segfault occurs via dependencies in the qsmainwnd.
+         *  If parsing fails, report it and disable usage of the application and
+         *  saving bad garbage out when exiting.  Still must launch, otherwise a
+         *  segfault occurs via dependencies in the qsmainwnd.
          */
 
         std::string errmessage;                     /* just in case!        */
@@ -195,17 +195,20 @@ smanager::main_settings (int argc, char * argv [])
         optionindex = cmdlineopts::parse_command_line_options(argc, argv);
         if (cmdlineopts::parse_o_options(argc, argv))
         {
-            /*
-             * The user may have specified -o options that are also set up in
-             * the 'usr' file.  The command line needs to take precedence.
-             * The "log" option is processed early in the startup sequence.
-             * These same settings are made in the cmdlineopts module.
-             */
-
-            std::string logfile = usr().option_logfile();
-            if (usr().option_use_logfile() && ! logfile.empty())
-                (void) reroute_stdio(logfile);
+            /* anything to do? */
         }
+
+        /*
+         * The user may have specified -o options that are also set up in the
+         * 'usr' file.  The command line needs to take precedence.  The "log"
+         * option is processed early in the startup sequence.  These same
+         * settings are made in the cmdlineopts module.
+         */
+
+        std::string logfile = usr().option_logfile();
+        if (usr().option_use_logfile())
+            (void) reroute_stdio(logfile);
+
         if (result)                                 /* get MIDI file-name?  */
         {
             m_midi_filename.clear();

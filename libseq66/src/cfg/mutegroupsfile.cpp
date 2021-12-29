@@ -265,43 +265,38 @@ mutegroupsfile::write_stream (std::ofstream & file)
 {
     write_date(file, "mute-groups");
     file <<
-           "# Used in the [mute-group-file] section of the 'rc' file, making it\n"
-           "# easier to manage multiple sets of mute groups. To use this file,\n"
-           "# specify it in [mute-group-file] file and set 'active = true'.\n"
+"# Used in the [mute-group-file] section of the 'rc' file, making it easier to\n"
+"# multiple mute groups. To use this file, specify it in [mute-group-file] file\n"
+"# and set 'active = true'.\n"
         ;
     write_seq66_header(file, "mutes", version());
 
     std::string c = rc_ref().mute_groups().comments_block().text();
     write_comment(file, c);
     file <<
-        "\n"
-        "# load-mute-groups: set to 'none', or 'mutes' to load from the 'mutes'\n"
-        "# file, 'midi' to load from the song, or 'both' to try to\n"
-        "# to read from the 'mutes' first, then the 'midi' file.\n"
-        "#\n"
-        "# save-mutes-to: 'both' writes the mutes to the 'mutes' and MIDI file;\n"
-        "# 'midi' writes only to the MIDI file; and the 'mutes' only to the\n"
-        "# 'mutes' file.\n"
-        "#\n"
-        "# strip-empty: If true, all-zero mute-groups are not written to the\n"
-        "# MIDI file.\n"
-        "#\n"
-        "# mute-group-rows and mute-group-columns: Specifies the size of the\n"
-        "# grid.  Keep these values at 4 and 8; mute-group-count is only for\n"
-        "# sanity-checking.\n"
-        "#\n"
-        "# groups-format: 'binary' means write mutes as 0 or 1; 'hex' means\n"
-        "# write them as hexadecimal numbers (e.g. 0xff), useful for larger set\n"
-        "# sizes.\n"
-        "#\n"
-        "# mute-group-selected: if 0 to 31, and mutes are available either from\n"
-        "# this file or from the MIDI file, then this mute-group is applied at\n"
-        "# startup; useful in restoring a session. Set to -1 to disable.\n"
-        "#\n"
-        "# toggle-active-only: when a mute-group is toggled off, all patterns,\n"
-        "# even those outside the mute-group, are muted.  If this flag is set\n"
-        "# to true, only patterns in the mute-group are muted. Any patterns\n"
-        "# unmuted directly by the user remain unmuted.\n"
+"\n"
+"# load-mute-groups: set to 'none', or 'mutes' to load from the 'mutes' file,\n"
+"# 'midi' to load from the song, or 'both' to try to to read from 'mutes' first,\n"
+"# then the 'midi' file.\n"
+"#\n"
+"# save-mutes-to: 'both' writes the mutes to the 'mutes' and MIDI file; 'midi'\n"
+"# writes only to the MIDI file; and the mutes only to the 'mutes' file.\n"
+"#\n"
+"# strip-empty: If true, all-zero mute-groups are not written to the MIDI file.\n"
+"#\n"
+"# mute-group-rows and mute-group-columns: Specifies the size of the grid. Keep\n"
+"# these values at 4 and 8; mute-group-count is only for sanity-checking.\n"
+"#\n"
+"# groups-format: 'binary' means write mutes as 0 or 1; 'hex' means write them as\n"
+"# hexadecimal numbers (e.g. 0xff), useful for larger set sizes.\n"
+"#\n"
+"# mute-group-selected: if 0 to 31, and mutes are available either from this file\n"
+"# or from the MIDI file, then this mute-group is applied at startup; useful in\n"
+"# restoring a session. Set to -1 to disable.\n"
+"#\n"
+"# toggle-active-only: when a mute-group is toggled off, all patterns, even those\n"
+"# outside the mute-group, are muted.  If this flag is set, only patterns in the\n"
+"# mute-group are muted. Patterns unmuted directly by the user remain unmuted.\n"
         ;
 
     bool result = write_mute_groups(file);
@@ -376,11 +371,10 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
         write_string(file, "groups-format", gf);
         write_boolean(file, "toggle-active-only", mutes.toggle_active_only());
         file << "\n[mute-groups]\n\n" <<
-        "# Mute-group values are saved in the 'mutes' file, even if all zeroes.\n"
-        "# They can be stripped out of the MIDI file by 'strip-empty-mutes'.\n"
-        "# A hex number indicates each number is a bit-mask, not a single bit.\n"
-        "# An optional quoted group name can be placed at the end of the line.\n"
-        "\n"
+"# Mute-group values are saved in the 'mutes' file, even if all zeroes. They can\n"
+"# be stripped out of the MIDI file by 'strip-empty-mutes'. A hex value indicates\n"
+"# a bit-mask, not a single bit. An  quoted group name can be placed at the end\n"
+"# of the line.\n\n"
         ;
 
         bool load = mutes.group_load_from_mutes();

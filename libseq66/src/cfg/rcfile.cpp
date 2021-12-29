@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-22
+ * \updates       2021-12-29
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -731,21 +731,20 @@ rcfile::write ()
     std::string noname;
     write_date(file, "main ('rc')");
     file <<
-        "# This file holds the main configuration for Seq66. It no longer\n"
-        "# follows the format of the seq24rc configuration file much.\n"
-        "#\n"
-        "# 'version' is set by Seq66; it is used to detect older configuration\n"
-        "# files, which are upgraded to the new version when saved.\n"
-        "#\n"
-        "# 'verbose' just indicates the status of --verbose at exit.\n"
-        "#\n"
-        "# 'sets-mode' affects set muting when moving to the next set. 'normal'\n"
-        "# leaves the next set muted. 'auto-arm' unmutes it. 'additive' keeps\n"
-        "# the previous set armed when moving to the next set. 'all-sets' arms\n"
-        "# all sets at once.\n"
-        "#\n"
-        "# 'port-naming' is 'short' or 'long'. If short, the name shown in the\n"
-        "# port dialogs leaves off the numbering.\n"
+"# This file holds the main configuration for Seq66. It no longer follows the\n"
+"# format of the seq24rc configuration file.\n"
+"#\n"
+"# 'version' is set by Seq66; it is used to detect older configuration files,\n"
+"# which are upgraded to the new version when saved.\n"
+"#\n"
+"# 'verbose' just indicates the status of --verbose at exit.\n"
+"#\n"
+"# 'sets-mode' affects set muting when moving to the next set. 'normal' leaves\n"
+"# the next set muted. 'auto-arm' unmutes it. 'additive' keeps the previous set\n"
+"# armed when moving to the next set. 'all-sets' arms all sets at once.\n"
+"#\n"
+"# 'port-naming' is 'short' or 'long'. If short, the name shown in the port\n"
+"# dialogs leaves off port numbering.\n"
         ;
 
     write_seq66_header(file, "rc", version());
@@ -770,9 +769,8 @@ rcfile::write ()
     std::string mcfname = rc_ref().midi_control_filespec();
     ok = write_midi_control_file(mcfname, rc_ref());
     file << "\n"
-        "# Provides a flag and file-name for MIDI-control I/O settings.\n"
-        "# '\"\"' means no 'ctrl' file. If none, the default keystrokes\n"
-        "# are used, with no MIDI control.\n"
+"# Provides a flag and file-name for MIDI-control I/O settings. '\"\"' means\n"
+"# no 'ctrl' file. If none, default keystrokes are used, with no MIDI control.\n"
        ;
     write_file_status
     (
@@ -789,9 +787,9 @@ rcfile::write ()
         ok = mgf.write();
 
     file << "\n"
-        "# Provides a flag and file-name for mute-groups settings.\n"
-        "# '\"\"' means no 'mutes' file. If none, there are no mute\n"
-        "# groups, unless the MIDI file contains some.\n"
+"# Provides a flag and file-name for mute-groups settings. '\"\"' means no\n"
+"# 'mutes' file. If none, there are no mute groups, unless the MIDI file\n"
+"# contains some.\n"
        ;
     write_file_status
     (
@@ -802,9 +800,9 @@ rcfile::write ()
     std::string usrname = rc_ref().user_filespec();
     usrname = rc_ref().trim_home_directory(usrname);
     file << "\n"
-        "# Provides a flag and file-name for 'user' settings. '\"\"'\n"
-        "# means no 'usr' file. If none, there are no special user\n"
-        "# settings.  Using no 'usr' file should be considered experimental.\n"
+"# Provides a flag and file-name for 'user' settings. '\"\"' means no 'usr'\n"
+"# file. If none, there are no special user settings. Using no 'usr' file\n"
+"# should be considered experimental.\n"
        ;
     write_file_status
     (
@@ -812,12 +810,11 @@ rcfile::write ()
         rc_ref().user_filename(), rc_ref().user_file_active()
     );
     file << "\n"
-        "# Provides a flag and play-list file. If no list, use\n"
-        "# '\"\"' and set active = false. Use the extension '.playlist'. Even\n"
-        "# if not active, the play-list file is read. 'base-directory' sets the\n"
-        "# sets the directory holding all MIDI files in all play-lists, useful\n"
-        "# when copying play-lists/tunes from one place to another; it\n"
-        "# preserves sub-directories (e.g. in creating an NSM session).\n"
+"# Provides a flag and play-list file. If no list, use '\"\"' and set active\n"
+"# = false. Use the extension '.playlist'. Even if not active, the play-list\n"
+"# file is read. 'base-directory' sets the directory holding all MIDI files\n"
+"# in all play-lists, useful when copying play-lists/tunes from one place to\n"
+"# another; it preserves sub-directories (e.g. in creating an NSM session).\n"
         ;
 
     std::string plname = rc_ref().playlist_filename();
@@ -827,11 +824,10 @@ rcfile::write ()
     write_string(file, "base-directory", mbasedir, true);
 
     file << "\n"
-       "# Provides a flag and file-name for note-mapping. '\"\"' means no\n"
-       "# 'drums' file. Use the extension '.drums'. This file is used when the\n"
-       "# user invokes the note-conversion operation in the pattern editor of a\n"
-       "# transposable pattern. Make the pattern temporarily transposable to\n"
-       "# allow this operation.\n"
+"# Provides a flag and file-name for note-mapping. '\"\"' means no 'drums' file.\n"
+"# This file is used when the user invokes the note-conversion operation in\n"
+"# the pattern editor of a transposable pattern. Make the pattern temporarily\n"
+"# transposable to allow this operation.\n"
        ;
 
     std::string drumfile = rc_ref().notemap_filename();
@@ -844,9 +840,9 @@ rcfile::write ()
      */
 
     file << "\n"
-       "# Provides a flag and a file-name to allow modifying the palette\n"
-       "# using the file given below.  Use '\"\"' to indicate no 'palette'\n"
-       "# file. If none or not active, the internal palette is used.\n"
+"# Provides a flag and a file-name to allow modifying the palette using the file\n"
+"# specified. Use '\"\"' to indicate no 'palette' file. If none or not active,\n"
+"# the internal palette is used.\n"
        ;
     write_file_status
     (
@@ -859,11 +855,11 @@ rcfile::write ()
      */
 
     file << "\n"
-       "# Defines features of MIDI meta-event handling. Tempo events occur in\n"
-       "# the first track (pattern 0), but one can move tempo elsewhere. It\n"
-       "# It changes where tempo events are recorded.  The default is 0, the\n"
-       "# maximum is 1023. A pattern must exist at this number.\n"
-       "\n[midi-meta-events]\n\n"
+"# Defines features of MIDI meta-event handling. Tempo events occur in the first\n"
+"# track (pattern 0), but one can move tempo elsewhere. It changes where tempo\n"
+"# events are recorded. The default is 0, the maximum is 1023. A pattern must\n"
+"# exist at this number.\n"
+"\n[midi-meta-events]\n\n"
            ;
     write_integer(file, "tempo-track", rc_ref().tempo_track_number());
 
@@ -872,11 +868,11 @@ rcfile::write ()
      */
 
     file << "\n"
-       "# Set to true to have Seq66 create virtual ALSA/JACK I/O ports and not\n"
-       "# auto-connect to other clients.  It allows up to 48 output ports and\n"
-       "# 48 input ports (defaults to 8 and 4). Set to false to auto-connect\n"
-       "# Seq66 to the system's existing ALSA/JACK MIDI ports.\n"
-        "\n[manual-ports]\n\n"
+"# Set this to have Seq66 create virtual ALSA/JACK I/O ports and not auto-connect\n"
+"# to other clients. It allows up to 48 output ports and 48 input ports\n"
+"# (defaults to 8 and 4). Set to false to auto-connect Seq66 to the system's\n"
+"# existing ALSA/JACK MIDI ports.\n"
+"\n[manual-ports]\n\n"
         ;
     write_boolean(file, "virtual-ports", rc_ref().manual_ports());
     write_integer(file, "output-port-count", rc_ref().manual_port_count());
@@ -884,13 +880,11 @@ rcfile::write ()
 
     int inbuses = bussbyte(rc_ref().inputs().count());
     file << "\n"
-       "# These system ports are available for input. From JACK's view, these\n"
-       "# are 'playback' devices. The first number is a buss number, and the\n"
-       "# second number is the input status, disabled (0) or\n"
-       "# enabled (1). The item in quotes is the input-buss name.\n"
-       "\n"
-       "[midi-input]\n"
-       "\n"
+"# These system ports are available for input. From JACK's view, these are\n"
+"# 'playback' devices. The first number is the buss, the second number is the\n"
+"# input status, disabled (0) or enabled (1). The item in quotes is the\n"
+"# input-buss name.\n\n"
+"[midi-input]\n\n"
         << std::setw(2) << int(inbuses)
         << "      # number of input MIDI busses\n\n"
         ;
@@ -930,24 +924,22 @@ rcfile::write ()
 
     bussbyte outbuses = bussbyte(rc_ref().clocks().count());
     file << "\n"
-        "# These system ports are available for output, for playback/control.\n"
-        "# From JACK's view, these are 'capture' devices. The first line shows\n"
-        "# the count of MIDI 'capture' ports. Each line shows the buss number\n"
-        "# and clock status of that buss:\n"
-        "#\n"
-        "#  -1 = The output port is disabled.\n"
-        "#   0 = MIDI Clock is off. The output port is enabled.\n"
-        "#   1 = MIDI Clock on; Song Position and MIDI Continue are sent.\n"
-        "#   2 = MIDI Clock Modulo.\n"
-        "#\n"
-        "# With Clock Modulo, clocking doesn't begin until song position\n"
-        "# reaches the start-modulo value [midi-clock-mod-ticks]. One can\n"
-        "# disable a port manually for devices that are present, but not\n"
-        "# available (because another application, e.g. Windows MIDI Mapper,\n"
-        "# has exclusive access to the device.\n"
-        "\n"
-        "[midi-clock]\n"
-        "\n"
+"# These system ports are available for output, for playback/control. From JACK's\n"
+"# view, these are 'capture' devices. The first line shows the count of 'capture'\n"
+"# ports. Each line shows the buss number and clock status of that buss:\n"
+"#\n"
+"#  -1 = The output port is disabled.\n"
+"#   0 = MIDI Clock is off. The output port is enabled.\n"
+"#   1 = MIDI Clock on; Song Position and MIDI Continue are sent.\n"
+"#   2 = MIDI Clock Modulo.\n"
+"#\n"
+"# With Clock Modulo, clocking doesn't begin until song position reaches the\n"
+"# start-modulo value [midi-clock-mod-ticks]. One can disable a port manually\n"
+"# for devices that are present, but not available (because another application,\n"
+"# e.g. Windows MIDI Mapper, has exclusive access to the device.\n"
+"\n"
+"[midi-clock]\n"
+"\n"
         << std::setw(2) << int(outbuses)
         << "      # number of MIDI clocks (output busses)\n\n"
         ;
@@ -965,17 +957,15 @@ rcfile::write ()
 
         mapstatus += "active";
         file << "\n"
-           "# Patterns use buss numbers, not names. If present, this table,\n"
-           "# provides 'virtual' buss numbers that you set up to match your\n"
-           "# devices and use in all your patterns.  The buss number is looked\n"
-           "# up in this table, the port nick-name is retrieved, and the real\n"
-           "# buss number is obtained and used. Thus, if the ports change order\n"
-           "# in the MIDI system, the pattern will still use the proper port.\n"
-           "# The short nick-names are the same with ALSA or JACK (a2jmidid\n"
-           "# bridge).\n"
-           "\n"
-           "[midi-clock-map]\n"
-           "\n"
+"# Patterns use buss numbers, not names. If present, this table, provides virtual\n"
+"# buss numbers you set up to match your devices and use in all your patterns.\n"
+"# The buss number is looked up in this table, the port nick-name is retrieved,\n"
+"# and the real buss number is obtained and used. Thus, if the ports change order\n"
+"# in the MIDI system, the pattern will still use the proper port. The short\n"
+"# nick-names are the same with ALSA or JACK (a2jmidid bridge).\n"
+"\n"
+"[midi-clock-map]\n"
+"\n"
         << activestring << "      # " << mapstatus << "\n\n"
         << output_port_map_list()
         ;
@@ -987,13 +977,12 @@ rcfile::write ()
      */
 
     file << "\n"
-        "# 'ticks' provides the Song Position (in 16th notes) at which\n"
-        "# clocking begins if the buss is set to MIDI Clock Mod setting.\n"
-        "# 'record-by-channel' allows the master MIDI bus to record/filter\n"
-        "# incoming MIDI data by channel, adding each new MIDI event to the\n"
-        "# pattern that is set to that channel.  This option adopted from the\n"
-        "# Seq32 project at GitHub.\n"
-        "\n[midi-clock-mod-ticks]\n\n"
+"# 'ticks' provides the Song Position (in 16th notes) at which clocking begins if\n"
+"# the buss is set to MIDI Clock Mod setting. 'record-by-channel' allows the\n"
+"# master MIDI bus to record/filter incoming MIDI data by channel, adding each\n"
+"# new MIDI event to the pattern that is set to that channel. Option adopted\n"
+"# from the Seq32 project at GitHub.\n"
+"\n[midi-clock-mod-ticks]\n\n"
        ;
     write_integer(file, "ticks", midibus::get_clock_mod());
     write_boolean(file, "record-by-channel", rc_ref().filter_by_channel());
@@ -1003,10 +992,9 @@ rcfile::write ()
      */
 
     file << "\n"
-       "# Set to true to have Seq66 ignore port names defined in the 'usr'\n"
-       "# file.  Use this option to to see the system ports as detected\n"
-       "# by ALSA/JACK.\n"
-       "\n[reveal-ports]\n\n"
+"# Set to true to have Seq66 ignore port names defined in the 'usr' file. Use\n"
+"# this option to to see the system ports as detected by ALSA/JACK.\n"
+"\n[reveal-ports]\n\n"
        ;
     write_boolean(file, "show-system-ports", rc_ref().reveal_ports());
 
@@ -1015,14 +1003,13 @@ rcfile::write ()
      */
 
     file << "\n"
-       "# Sets mouse usage for drawing/editing patterns. 'Fruity' mode is NOT\n"
-       "# supported in Seq66. Also obsolete is the Mod4 feature. Other settings\n"
-       "# are available: 'snap-split' enables splitting song-editor triggers\n"
-       "# at a snap position instead of in its middle. Split is done by a\n"
-       "# middle-click or Ctrl-left click. 'double-click-edit' allows double-\n"
-       "# click on a slot to open it in a pattern editor. Set it to false if\n"
-       "# you don't like how it works.\n"
-       "\n[interaction-method]\n\n"
+"# Sets mouse usage for drawing/editing patterns. 'Fruity' mode is NOT present in\n"
+"# Seq66. Other settings are available: 'snap-split' enables splitting\n"
+"# song-editor triggers at a snap position instead of in its middle. Split is\n"
+"# done by a middle-click or ctrl-left click. 'double-click-edit' allows double-\n"
+"# click on a slot to open it in a pattern editor. Set it to false if\n"
+"# you don't like how it works.\n"
+"\n[interaction-method]\n\n"
         ;
     write_boolean(file, "snap-split", rc_ref().allow_snap_split());
     write_boolean(file, "double-click-edit", rc_ref().allow_click_edit());
@@ -1056,37 +1043,35 @@ rcfile::write ()
         jacktransporttype = "conditional";
 
     file << "\n"
-        "# transport-type enables synchronizing with JACK Transport. Values:\n"
-        "# none:        No JACK Transport in use.\n"
-        "# slave:       Use JACK Transport as Slave.\n"
-        "# master:      Attempt to serve as JACK Transport Master.\n"
-        "# conditional: Serve as JACK master if no JACK master exists.\n"
-        "#\n"
-        "# song-start-mode playback is either Live, Song, or Auto:\n"
-        "# live: Muting & unmuting of loops in the main window.\n"
-        "# song: Playback uses Song (performance) editor data.\n"
-        "# auto: If the loaded tune has song triggers, use Song mode.\n"
-        "#\n"
-        "# jack-midi sets/unsets JACK MIDI, separate from JACK transport.\n"
-        "# jack-auto-connect sets connecting to JACK ports found. Default =\n"
-        "# true; use false to have a session manager make the connections.\n"
-        "\n[jack-transport]\n\n"
+"# transport-type enables synchronizing with JACK Transport. Values:\n"
+"# none:        No JACK Transport in use.\n"
+"# slave:       Use JACK Transport as Slave.\n"
+"# master:      Attempt to serve as JACK Transport Master.\n"
+"# conditional: Serve as JACK master if no JACK master exists.\n"
+"#\n"
+"# song-start-mode playback is either Live, Song, or Auto:\n"
+"# live: Muting & unmuting of loops in the main window.\n"
+"# song: Playback uses Song (performance) editor data.\n"
+"# auto: If the loaded tune has song triggers, use Song mode.\n"
+"#\n"
+"# jack-midi sets/unsets JACK MIDI, separate from JACK transport.\n"
+"# jack-auto-connect sets connecting to JACK ports found. Default = true; use\n"
+"# false to have a session manager make the connections.\n"
+"\n[jack-transport]\n\n"
         << "transport-type = " << jacktransporttype << "\n"
         << "song-start-mode = " << rc_ref().song_mode_string() << "\n"
         ;
     write_boolean(file, "jack-midi", rc_ref().with_jack_midi());
     write_boolean(file, "jack-auto-connect", rc_ref().jack_auto_connect());
     file << "\n"
-        "# 'auto-save-rc' sets automatic saving of the running configuration\n"
-        "# 'rc' and other files.  True is Seq24 behavior. If set, many\n"
-        "# command-line settings are saved to configuration files. There is\n"
-        "# no user-interface control for this setting.\n"
-        "#\n"
-        "# The 'old-triggers' value means to save triggers in a format\n"
-        "# compatible with Seq24.  Otherwise, triggers are saved with an\n"
-        "# additional 'transpose' setting. Similarly, the old-mutes value,\n"
-        "# if true, saves mute-groups as long values (!) instead of bytes.\n"
-        "\n[auto-option-save]\n\n"
+"# 'auto-save-rc' sets automatic saving of the  'rc' and other files. If set,\n"
+"# many command-line settings are saved to configuration files.\n"
+"#\n"
+"# The 'old-triggers' value means to save triggers in a format compatible with\n"
+"# Seq24. Otherwise, triggers are saved with an additional 'transpose'\n"
+"# setting. Similarly, the old-mutes value, if true, saves mute-groups as long\n"
+"# values (!) instead of bytes.\n"
+"\n[auto-option-save]\n\n"
         ;
     write_boolean(file, "auto-save-rc", rc_ref().auto_rc_save());
     write_boolean(file, "save-old-triggers", rc_ref().save_old_triggers());
@@ -1105,10 +1090,10 @@ rcfile::write ()
 
     int count = rc_ref().recent_file_count();
     file << "\n"
-        "# A list of the most recently-loaded MIDI files. 'full-paths' = true\n"
-        "# means to show the full file-path in the menu.  The most recent\n"
-        "# file (top of list) can be loaded via 'load-most-recent' at startup.\n"
-        "\n[recent-files]\n\n"
+"# A list of the most recently-loaded MIDI files. 'full-paths' = true means to\n"
+"# show the full file-path in the menu. The most recent file (top of list) can\n"
+"# be loaded via 'load-most-recent' at startup.\n"
+"\n[recent-files]\n\n"
         ;
     write_boolean(file, "full-paths", rc_ref().full_recent_paths());
     write_boolean(file, "load-most-recent", rc_ref().load_most_recent());

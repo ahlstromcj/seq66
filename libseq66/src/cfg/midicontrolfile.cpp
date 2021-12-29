@@ -192,9 +192,9 @@ midicontrolfile::~midicontrolfile ()
  *
  *  [comments]
  *
- *      [comments] Header commentary is skipped during parsing.  However, we
- *      now try to read an optional comment block.  This block is part of the
- *      MIDI container object, not part of the rcsettings object.
+ *      [comments] Header commentary is skipped during parsing.  However, we now
+ *      try to read an optional comment block.  This block is part of the MIDI
+ *      container object, not part of the rcsettings object.
  *
  *  [midi-control-settings]  (was "midi-control-flags")
  *
@@ -209,14 +209,13 @@ midicontrolfile::~midicontrolfile ()
  *  [midi-control] and [midi-control-file]
  *
  *      Get the number of sequence definitions provided in the following
- *      section.  Ranges from 32 on up.  Then read in all of the sequence
- *      lines.  The first 32 apply to the first screen set.  There can also be
- *      a comment line "# mute in group" followed by 32 more lines.  Then
- *      there are additional comments and single lines for BPM up, BPM down,
- *      Screen Set Up, Screen Set Down, Mod Replace, Mod Snapshot, Mod Queue,
- *      Mod Gmute, Mod Glearn, and Screen Set Play.  These are all forms of
- *      MIDI automation useful to control the playback while not sitting near
- *      the computer.
+ *      section.  Ranges from 32 on up.  Then read in all of the sequence lines.
+ *      The first 32 apply to the first screen set.  There can also be a comment
+ *      line "# mute in group" followed by 32 more lines.  Then there are
+ *      additional comments and single lines for BPM up, BPM down, Screen Set
+ *      Up, Screen Set Down, Mod Replace, Mod Snapshot, Mod Queue, Mod Gmute,
+ *      Mod Glearn, and Screen Set Play.  These are all forms of MIDI automation
+ *      useful to control the playback while not sitting near the computer.
  *
  *  [loop-control]
  *  [mute-group-control]
@@ -225,8 +224,8 @@ midicontrolfile::~midicontrolfile ()
  *      Provides the stanzas that define the various controls, both keys and
  *      MIDI controls.
  *
- *      Note that there are no default MIDI controls, but there are default
- *      key controls.  See the keys defined in keycontainer::add_defaults().
+ *      Note that there are no default MIDI controls, but there are default key
+ *      controls.  See the keys defined in keycontainer::add_defaults().
  */
 
 bool
@@ -270,9 +269,9 @@ midicontrolfile::parse_stream (std::ifstream & file)
     if (keep_empties)
         status_message("Keeping empty MIDI-In controls");
 
-    while (good)                            /* not at end of section?   */
+    while (good)                                /* not at end of section?   */
     {
-        if (! line().empty())               /* any value in section?    */
+        if (! line().empty())                   /* any value in section?    */
             good = parse_control_stanza(automation::category::loop);
 
         if (good)
@@ -287,9 +286,9 @@ midicontrolfile::parse_stream (std::ifstream & file)
     }
     good = line_after(file, "[mute-group-control]");
     count = 0;
-    while (good)                            /* not at end of section?   */
+    while (good)                                /* not at end of section?   */
     {
-        if (! line().empty())               /* any value in section?    */
+        if (! line().empty())                   /* any value in section?    */
             good = parse_control_stanza(automation::category::mute_group);
 
         if (good)
@@ -305,9 +304,9 @@ midicontrolfile::parse_stream (std::ifstream & file)
 
     good = line_after(file, "[automation-control]");
     count = 0;
-    while (good)                            /* not at end of section?   */
+    while (good)                                /* not at end of section?   */
     {
-        if (! line().empty())               /* any value in section?    */
+        if (! line().empty())                   /* any value in section?    */
             good = parse_control_stanza(automation::category::automation);
 
         if (good)
@@ -319,7 +318,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
     if (count > 0)
     {
         infoprintf("%d automation-control lines", count);
-        if (count < current_slot_count())   /* pre-defined  */
+        if (count < current_slot_count())       /* pre-defined  */
              add_default_automation_stanzas(count);
     }
     if (rc_ref().verbose())
@@ -327,7 +326,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
         static bool s_not_shown = true;
         if (s_not_shown)
         {
-            s_not_shown = false;            /* show only once per run   */
+            s_not_shown = false;                /* show only once per run   */
             m_temp_key_controls.show();
         }
     }
@@ -411,16 +410,7 @@ midicontrolfile::parse ()
         result = false;
     }
     else
-    {
-        /*
-        if (file_version_number() < 6)
-        {
-            TODO
-        }
-        else
-         */
-            result = parse_stream(file);
-    }
+        result = parse_stream(file);
 
     return result;
 }
@@ -618,13 +608,12 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                             ok = next_data_line(file);
                         }
                     }
-                    if (count > 0)
-                        ok = mco.expand_macros();
-
+                    ok = count > 0;
                     if (ok)
+                    {
+                        (void) mco.expand_macros();
                         (void) info_message(mco.macro_byte_strings());
-                    else
-                        make_error_message("macro-control-out", "error");
+                    }
                 }
                 else
                     ok = mco.make_macro_defaults();
@@ -720,10 +709,9 @@ midicontrolfile::write_stream (std::ofstream & file)
 {
     write_date(file, "MIDI control");
     file <<
-    "# Sets up MIDI I/O control. The format is like the 'rc' file, in the\n"
-    "# HOME configuration directory. To use it, set it active in the 'rc'\n"
-    "# [midi-control-file] section. It adds loop, mute, & automation buttons,\n"
-    "# MIDI display, new settings, and macros.\n"
+"# Sets up MIDI I/O control. The format is like the 'rc' file. To use it, set it\n"
+"# active in the 'rc' [midi-control-file] section. It adds loop, mute, &\n"
+"# automation buttons, MIDI display, new settings, and macros.\n"
     ;
     write_seq66_header(file, "ctrl", version());
 
@@ -801,18 +789,16 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         bool enabled = ! mci.is_disabled();
         bussbyte bb = mci.nominal_buss();
         file <<
-        "\n[midi-control-settings]\n\n"
-        "# Input settings to control Seq66. 'control-buss' values range from\n"
-        "# 0 to the highest system input buss. If set, that buss can send\n"
-        "# MIDI control. 255 (0xFF) means any enabled input device can send\n"
-        "# control. ALSA provides an extra 'announce' buss, altering port\n"
-        "# numbering re JACK. If port-mapping is enabled, the port nick-name\n"
-        "# can be provided.\n"
-        "#\n"
-        "# 'midi-enabled' applies to the MIDI controls; keystroke controls\n"
-        "# are always enabled. Supported keyboard layouts are 'qwerty'\n"
-        "# (default), 'qwertz', and 'azerty'. AZERTY turns off the auto-shift\n"
-        "# feature for group-learn.\n\n"
+"\n[midi-control-settings]\n\n"
+"# Input settings to control Seq66. 'control-buss' ranges from 0 to the highest\n"
+"# system input buss. If set, that buss can send MIDI control. 255 (0xFF) means\n"
+"# any enabled input device can send control. ALSA provides an extra 'announce'\n"
+"# buss, altering port numbering vice JACK. If port-mapping is enabled, the port\n"
+"# nick-name can be provided.\n"
+"#\n"
+"# 'midi-enabled' applies to the MIDI controls; keystroke controls are always\n"
+"# enabled. Supported keyboard layouts are 'qwerty' (default), 'qwertz', and\n"
+"# 'azerty'. AZERTY turns off auto-shift for group-learn.\n\n"
         ;
         write_boolean
         (
@@ -839,49 +825,46 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         );
 
         file <<
-        "\n"
-        "# A control stanza incorporates key control and MIDI. Keys support\n"
-        "# 'toggle' and key-release is 'invert'. The leftmost number on each\n"
-        "# line is the loop number (eg. 0 to 31), the mutes number (same\n"
-        "# range), or an automation number. Three groups of bracketed numbers\n"
-        "# follow, each providing a type of control:\n"
-        "#\n"
-        "#    Normal:         [toggle]    [on]        [off]\n"
-        "#    Increment/Decr: [increment] [increment] [decrement]\n"
-        "#    Playback:       [pause]     [start]     [stop]\n"
-        "#    Playlist/Song:  [by-value]  [next]      [previous]\n"
-        "#\n"
-        "# In each group, there are 5 numbers:\n"
-        "#\n"
-        "#    [invert status d0 d1min d1max]\n"
+"\n"
+"# A control stanza incorporates key control and MIDI. Keys support 'toggle', and\n"
+"# key-release is 'invert'. The leftmost number on each line is the loop number\n"
+"# (0 to 31), the mutes number (same range), or an automation number. 3 groups of\n"
+"# of bracketed numbers follow, each providing a type of control:\n"
+"#\n"
+"#    Normal:         [toggle]    [on]        [off]\n"
+"#    Increment/Decr: [increment] [increment] [decrement]\n"
+"#    Playback:       [pause]     [start]     [stop]\n"
+"#    Playlist/Song:  [by-value]  [next]      [previous]\n"
+"#\n"
+"# In each group, there are 5 numbers:\n"
+"#\n"
+"#    [invert status d0 d1min d1max]\n"
         ;
 
         file <<
-        "#\n"
-        "# A valid status (> 0x00) enables the control; 'invert' (1/0) inverts\n"
-        "# the action, but not all support this; keystroke-release inverts.\n"
-        "# 'status' is the MIDI event to match (channel is NOT ignored); 'd0'\n"
-        "# is the first data value (eg. if 0x90, Note On, d0 is the note\n"
-        "# number; d1min to d1max is the range of d1 values detectable (eg.\n"
-        "# 1 to 127 indicates any non-zero velocity invokes the control.\n"
-        "# Hex values can be used; precede with '0x'.\n"
-        "#\n"
-        "#  ------------------------ Loop/group/automation-slot number\n"
-        "# |    -------------------- Name of key (see the key map)\n"
-        "# |   |      -------------- Inverse\n"
-        "# |   |     |    ---------- MIDI status/event byte (eg. Note On)\n"
-        "# |   |     |   |   ------- d0: Data 1 (eg. Note number)\n"
-        "# |   |     |   |  |  ----- d1max: Data 2 min (eg. Note velocity)\n"
-        "# |   |     |   |  | |   -- d1min: Data 2 max\n"
-        "# |   |     |   |  | |  |\n"
-        "# v   v     v   v  v v  v\n"
-        "# 0 \"F1\"   [0 0x90 0 1 127] [0 0x00 0 0 0] [0 0x00 0 0 0]\n"
-        "#             Toggle           On              Off\n"
-        "#\n"
-        "# Note that MIDI controls can send a Note On upon a press, and a Note\n"
-        "# Off on release. To use a control as a toggle, define only the\n"
-        "# Toggle stanza.  For the control to act only while held, define the\n"
-        "# On and Off stanzas with appropriate statuses for press-and-release.\n"
+"#\n"
+"# A valid status (> 0x00) enables the control; 'invert' (1/0) inverts the,\n"
+"# the action, but not all support this.  'status' is the MIDI event to match\n"
+"# (channel is NOT ignored); 'd0' is the first data value (eg. if 0x90, Note On,\n"
+"# d0 is the note number; d1min to d1max is the range of d1 values detectable.\n"
+"# Hex values can be used; precede with '0x'.\n"
+"#\n"
+"#  ------------------------ Loop/group/automation-slot number\n"
+"# |    -------------------- Name of key (see the key map)\n"
+"# |   |      -------------- Inverse\n"
+"# |   |     |    ---------- MIDI status/event byte (eg. Note On)\n"
+"# |   |     |   |   ------- d0: Data 1 (eg. Note number)\n"
+"# |   |     |   |  |  ----- d1max: Data 2 min (eg. Note velocity)\n"
+"# |   |     |   |  | |   -- d1min: Data 2 max\n"
+"# |   |     |   |  | |  |\n"
+"# v   v     v   v  v v  v\n"
+"# 0 \"F1\"   [0 0x90 0 1 127] [0 0x00 0 0 0] [0 0x00 0 0 0]\n"
+"#             Toggle           On              Off\n"
+"#\n"
+"# MIDI controls often send a Note On upon a press and a Note Off on release.\n"
+"# To use a control as a toggle, define only the Toggle stanza. For the control\n"
+"# to act only while held, define the On and Off stanzas with appropriate\n"
+"# statuses for press-and-release.\n"
         ;
 
         /*
@@ -1031,24 +1014,21 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         write_integer(file, "button-rows", mco.rows());
         write_integer(file, "button-columns", mco.columns());
         file <<
-            "\n"
-            "[midi-control-out]\n"
-            "\n"
-            "#   ---------------- Pattern or device-button number)\n"
-            "#  |     ----------- MIDI status+channel (eg. Note On)\n"
-            "#  |    |    ------- data 1 (eg. note number)\n"
-            "#  |    |   |  ----- data 2 (eg. velocity)\n"
-            "#  |    |   | |\n"
-            "#  v    v   v v\n"
-            "# 31 [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0]\n"
-            "#      Arm          Mute         Queue        Delete\n"
-            ;
-        file <<
-            "#\n"
-            "# In a change from version 1 of this file, a test of the status\n"
-            "# byte determines the enabled status, and channel is included in the\n"
-            "# status.\n"
-            "\n"
+"\n"
+"[midi-control-out]\n"
+"\n"
+"#   ---------------- Pattern or device-button number)\n"
+"#  |     ----------- MIDI status+channel (eg. Note On)\n"
+"#  |    |    ------- data 1 (eg. note number)\n"
+"#  |    |   |  ----- data 2 (eg. velocity)\n"
+"#  |    |   | |\n"
+"#  v    v   v v\n"
+"# 31 [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0]\n"
+"#      Arm          Mute         Queue        Delete\n"
+"#\n"
+"# A test of the status byte determines the enabled status, and channel is\n"
+"# included in the status.\n"
+"\n"
             ;
 
         if (mco.is_blank())
@@ -1088,21 +1068,21 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             }
         }
         file <<
-            "\n[mute-control-out]\n\n"
-            "# The format of the mute and automation output events is similar:\n"
-            "#\n"
-            "#  ----------------- mute-group number\n"
-            "# |    ------------- MIDI status+channel (eg. Note On)\n"
-            "# |   |    --------- data 1 (eg. note number)\n"
-            "# |   |   |  ------- data 2 (eg. velocity)\n"
-            "# |   |   | |\n"
-            "# v   v   v v\n"
-            "# 1 [0x00 0 0 ] [0x00 0 0] [0x00 0 0]\n"
-            "#       On         Off      Empty (dark)\n"
-            "#\n"
-            "# The mute-controls have an additional stanza for non-populated\n"
-            "# (\"deleted\") mute-groups.\n"
-            "\n"
+"\n[mute-control-out]\n\n"
+"# The format of the mute and automation output events is similar:\n"
+"#\n"
+"#  ----------------- mute-group number\n"
+"# |    ------------- MIDI status+channel (eg. Note On)\n"
+"# |   |    --------- data 1 (eg. note number)\n"
+"# |   |   |  ------- data 2 (eg. velocity)\n"
+"# |   |   | |\n"
+"# v   v   v v\n"
+"# 1 [0x00 0 0 ] [0x00 0 0] [0x00 0 0]\n"
+"#       On         Off      Empty (dark)\n"
+"#\n"
+"# The mute-controls have an additional stanza for non-populated (\"deleted\")\n"
+"# mute-groups.\n"
+"\n"
             ;
 
         for (int m = 0; m < mutegroups::Size(); ++m)
@@ -1112,10 +1092,9 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         }
 
         file << "\n[automation-control-out]\n\n"
-            "# This format is similar to [mute-control-out], but the first\n"
-            "# number is an active-flag, not an index number. The stanzas\n"
-            "# are on / off / inactive, except for 'snap', which is store /\n"
-            "# restore / inactive.\n\n"
+"# This format is similar to [mute-control-out], but the first number is an\n"
+"# active-flag, not an index number. The stanzas are are on / off / inactive,\n"
+"# except for 'snap', which is store /  restore / inactive.\n\n"
             ;
         write_triples(file, mco, midicontrolout::uiaction::panic);
         write_triples(file, mco, midicontrolout::uiaction::stop);
@@ -1155,11 +1134,9 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
          */
 
         file << "\n[macro-control-out]\n\n"
-            "# This format is 'macroname = [ hex bytes | macro-references]'.\n"
-            "# Macro references are macro-names preceded by a '$'. If a macro\n"
-            "# starts with 0, it is disabled. See the user manual. Some values\n"
-            "# should always be define: footer, header, reset, startup, and\n"
-            "# shutdown.\n\n"
+"# This format is 'macroname = [ hex bytes | macro-references]'. Macro references\n"
+"# are macro-names preceded by a '$'.  Some values should always be defined, even\n"
+"# if empty: footer, header, reset, startup, and shutdown.\n\n"
             ;
 
         std::string lines = mco.macro_lines();

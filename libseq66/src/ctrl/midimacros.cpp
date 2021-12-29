@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2021-11-24
+ * \updates       2021-12-29
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -86,15 +86,17 @@ midimacros::midimacros () :
 bool
 midimacros::add (const tokenization & tokens)
 {
-    bool result = tokens.size() == 2;           /* the name, then the data  */
+    bool result = tokens.size() >= 1;           /* the name, then the data  */
     if (result)
     {
         std::string key = tokens[0];
-        std::string data = tokens[1];
+        std::string data;
+        if (tokens.size() > 1)                  /* any data?                */
+            data = tokens[1];
 
-        midimacro m(key, data);             /* further tokenizes        */
+        midimacro m(key, data);                 /* further tokenizes        */
         auto p = std::make_pair(key, m);
-        auto r = m_macros.insert(p);        /* r: pair<iteration, bool> */
+        auto r = m_macros.insert(p);            /* r: pair<iteration, bool> */
         result = r.second;
     }
     return result;
