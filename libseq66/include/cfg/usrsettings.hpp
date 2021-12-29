@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-12-09
+ * \updates       2021-12-29
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -1744,6 +1744,8 @@ public:         // used in main application module and the usrfile class
     void option_logfile (const std::string & logfile)
     {
         m_user_option_logfile = logfile;
+        m_user_use_logfile = ! logfile.empty();
+        set_option_bit(option_log);
     }
 
     void key_height (int h)

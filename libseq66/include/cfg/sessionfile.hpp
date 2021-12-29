@@ -1,5 +1,5 @@
-#if ! defined SEQ66_RCFILE_HPP
-#define SEQ66_RCFILE_HPP
+#if ! defined SEQ66_SESSIONFILE_HPP
+#define SEQ66_SESSIONFILE_HPP
 
 /*
  *  This file is part of seq66.
@@ -20,19 +20,17 @@
  */
 
 /**
- * \file          rcfile.hpp
+ * \file          sessionfile.hpp
  *
- *  This module declares/defines the base class for managing the qseq66.rc
- *  configuration file.
+ *  This module declares/defines the base class for managing the special
+ *  read-only session.rc configuration file.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
- * \date          2015-07-24
- * \updates       2021-12-03
+ * \date          2021-12-29
+ * \updates       2021-12-29
  * \license       GNU GPLv2 or above
  *
- *  The ~/.seq66rc or ~/.config/seq66.rc files are
- *  referred to as the "rc" files.
  */
 
 #include "cfg/configfile.hpp"
@@ -45,12 +43,10 @@ namespace seq66
 {
 
 /**
- *  Provides a file for reading and writing the application' main
- *  configuration file.  The settings that are passed around are provided
- *  or used by the performer class.
+ *  Provides a file for reading a special session setup, usually for testing.
  */
 
-class rcfile final : public configfile
+class sessionfile final : public configfile
 {
 
 private:
@@ -61,35 +57,28 @@ private:
 
 public:
 
-    rcfile (const std::string & name, rcsettings & rcs);
+    sessionfile (const std::string & name, rcsettings & rcs);
 
-    rcfile () = delete;
-    rcfile (const rcfile &) = delete;
-    rcfile & operator = (const rcfile &) = delete;
-    virtual ~rcfile () = default;
+    sessionfile () = delete;
+    sessionfile (const sessionfile &) = delete;
+    sessionfile & operator = (const sessionfile &) = delete;
+    virtual ~sessionfile () = default;
 
     virtual bool parse () override;
-    virtual bool write () override;
-    bool parse_mute_group_section
-    (
-        const std::string & fname,
-        bool separatefile = false
-    );
-    bool parse_midi_control_section
-    (
-        const std::string & fname,
-        bool separatefile = false
-    );
 
+    virtual bool write () override
+    {
+        return false;
+    }
 
-};          // class rcfile
+};          // class sessionfile
 
 }           // namespace seq66
 
-#endif      // SEQ66_RCFILE_HPP
+#endif      // SEQ66_SESSIONFILE_HPP
 
 /*
- * rcfile.hpp
+ * sessionfile.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

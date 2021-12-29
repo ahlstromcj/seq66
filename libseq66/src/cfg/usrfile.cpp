@@ -480,6 +480,7 @@ usrfile::write ()
     write_seq66_header(file, "usr", version());
     write_comment(file, usr().comments_block().text());
     file <<
+        "#\n"
         "# [user-midi-bus-definitions]\n"
         "#\n"
         "# 1. Define instruments and their control-code names, as applicable.\n"

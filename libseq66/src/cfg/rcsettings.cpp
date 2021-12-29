@@ -572,6 +572,44 @@ rcsettings::trim_home_directory (const std::string & filepath)
 }
 
 /**
+ *  Moved here from cmdlineopts.
+ *
+ *  If no "rc" file exists, then, of course, we will create them upon
+ *  exit.  But we also want to force the new style of output, where the
+ *  key/MIDI controls and the mute-groups are in separate files ending
+ *  with the extensions "ctrl" and "mutes", respectively.  Also, the
+ *  mute-groups container is populated with zero values.  Finally, the
+ *  user may have specified an altername configuration-file name on
+ *  the command-line (e.g. "myseq66" versus the default, "qseq66",
+ *  which is the application name.
+ *
+ *      std::string cfgname = rc().application_name();
+ */
+
+void
+rcsettings::create_config_names ()
+{
+    std::string cfgname = rc().config_filename();       /* "xyzt.rc"    */
+    cfgname = filename_base(cfgname, true);             /* strip ".rc"  */
+
+    std::string cf = file_extension_set(cfgname, ".ctrl");
+    std::string mf = file_extension_set(cfgname, ".mutes");
+    std::string uf = file_extension_set(cfgname, ".usr");
+    std::string pl = file_extension_set(cfgname, ".playlist");
+    std::string nm = file_extension_set(cfgname, ".drums");
+    std::string pa = file_extension_set(cfgname, ".palette");
+    std::string af = cfgname + ".rc/ctrl/midi/mutes/drums/playlist/palette";
+    rc().midi_control_filename(cf);
+    rc().mute_group_filename(mf);
+    rc().user_filename(uf);
+    rc().playlist_filename(pl);
+    rc().notemap_filename(nm);
+    rc().palette_filename(pa);
+    rc().mute_groups().reset_defaults();
+    file_message("No rc file, will create", af);
+}
+
+/**
  *  We need a way to handle the following configuration-file paths:
  *
  *      -   "base.ext": Prepend the HOME directory.

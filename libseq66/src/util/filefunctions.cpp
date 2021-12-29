@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-12-21
+ * \updates       2021-12-29
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -992,7 +992,7 @@ name_has_path (const std::string & filename)
 bool
 name_has_root_path (const std::string & filename)
 {
-    auto pos = filename.find_first_of("/");
+    auto pos = filename.find_first_of("~/");    /* "~" == "/home/usr"       */
     bool result = pos != std::string::npos;
 #if defined SEQ66_PLATFORM_WINDOWS
     if (! result)
@@ -1002,7 +1002,7 @@ name_has_root_path (const std::string & filename)
     }
 #endif
     if (result)
-        result = pos == 0;              /* path starts with "/" or "\"  */
+        result = pos == 0;              /* path starts with "/", "~", "\"   */
 
 #if defined SEQ66_PLATFORM_WINDOWS
     if (! result)

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2021-12-12
+ * \updates       2021-12-29
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -53,6 +53,7 @@
 #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
 #include "cfg/notemapfile.hpp"          /* seq66::notemapfile functions     */
 #include "cfg/playlistfile.hpp"         /* seq66::playlistfile functions    */
+#include "cfg/sessionfile.hpp"          /* seq66::sessionfile               */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "midi/midifile.hpp"            /* seq66::write_midi_file()         */
 #include "play/performer.hpp"           /* seq66::performer                 */
@@ -140,11 +141,20 @@ smanager::main_settings (int argc, char * argv [])
     set_app_name(SEQ66_APP_NAME);       /* "qseq66" by default              */
     set_arg_0(argv[0]);                 /* how it got started               */
 
+    std::string sessionfilename = rc().make_config_filespec("session.rc");
+    bool sessionmodified = false;
+    if (file_readable(sessionfilename))
+    {
+        sessionfile sf(sessionfilename, rc());
+        sessionmodified = sf.parse();
+    }
+
     /*
      * If "-o log=file.ext" occurred, handle it early on in startup.
      */
 
-    (void) cmdlineopts::parse_log_option(argc, argv);
+    if (! sessionmodified)
+        (void) cmdlineopts::parse_log_option(argc, argv);
 
     /**
      * Set up objects that are specific to the GUI.  Pass them to the
@@ -352,14 +362,8 @@ smanager::open_note_mapper ()
         if (! notemapname.empty())
         {
             result = perf()->open_note_mapper(notemapname);
-            if (result)
-            {
-            }
-            else
-            {
-                // append_error_message(perf()->error_message());
+            if (! result)
                 result = true;                          /* avoid early exit  */
-            }
         }
     }
     else

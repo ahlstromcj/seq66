@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2021-12-19
+# \update      2021-12-29
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -143,6 +143,7 @@ libseq66_la_SOURCES = \
  cfg/rcsettings.cpp \
  cfg/recent.cpp \
  cfg/scales.cpp \
+ cfg/sessionfile.cpp \
  cfg/settings.cpp \
  cfg/userinstrument.cpp \
  cfg/usermidibus.cpp \

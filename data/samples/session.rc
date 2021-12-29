@@ -1,0 +1,34 @@
+# Seq66 0.98.2 session 'rc' configuration file
+#
+# /home/user/.config/seq66/session.rc
+# Written 2021-12-29 00:00:00
+#
+# This file holds the redirection of the main configuration for Seq66.
+# Here are the options supported:
+#
+#   'home':         If not empty, replaces "~/.config/seq66".  It is the same as
+#                   the --home command-line option.
+#
+#   'client-name':  Changes the label for the application.  It is the same as
+#                   --client-name option.
+#
+#   'config':       Changes the base name of the configuration.  It is the same
+#                   as the --config optin.
+
+[Seq66]
+
+config-type = "rc"
+version = 0
+home = "~/.config/seq66/4x4"
+client-name = "seq664x4"
+config = "x66"
+log = "4x4.log"
+
+[comments]
+
+This file is meant to change the configuration directory or files for a Seq66
+session.  It is a read-only file meant mostly for test situations.
+
+# End of /home/user/.config/seq66/session.rc
+#
+# vim: sw=4 ts=4 wm=4 et ft=dosini

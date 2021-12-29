@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-12-28
+ * \updates       2021-12-29
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -538,7 +538,7 @@ public:
     std::string make_config_filespec
     (
         const std::string & base,
-        const std::string & ext
+        const std::string & ext = ""
     ) const;
 
     std::string config_filespec () const;
@@ -1347,6 +1347,7 @@ public:
         m_palette_filename = fn;
     }
 
+    void create_config_names ();
     void set_save_list (bool state);
     void set_save (const std::string & name, bool value);
 

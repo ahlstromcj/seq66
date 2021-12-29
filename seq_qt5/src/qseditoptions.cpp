@@ -1108,11 +1108,7 @@ qseditoptions::sync_rc ()
     ui->checkBoxActiveDrums->setChecked(rc().notemap_active());
     ui->lineEditDrums->setText(filename);
 
-    std::string palname = rc().palette_filename();
-    if (palname.empty())
-        palname = rc().application_name() + ".palette";
-
-    filename = qt(palname);
+    filename = qt(rc().palette_filename());
     ui->checkBoxSavePalette->setChecked(rc().auto_palette_save());
     ui->checkBoxActivePalette->setChecked(rc().palette_active());
     ui->lineEditPalette->setText(filename);

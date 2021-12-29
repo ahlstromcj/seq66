@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-12-12
+ * \updates       2021-12-29
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -508,8 +508,6 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                                 result = true;
                                 arg = strip_quotes(arg);
                                 usr().option_logfile(arg);
-                                if (! arg.empty())
-                                    usr().option_use_logfile(true);
                             }
                             else if (optionname == "sets")
                             {
@@ -661,39 +659,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
     }
     else
     {
-        /**
-         *  If no "rc" file exists, then, of course, we will create them upon
-         *  exit.  But we also want to force the new style of output, where the
-         *  key/MIDI controls and the mute-groups are in separate files ending
-         *  with the extensions "ctrl" and "mutes", respectively.  Also, the
-         *  mute-groups container is populated with zero values.  Finally, the
-         *  user may have specified an altername configuration-file name on
-         *  the command-line (e.g. "myseq66" versus the default, "qseq66",
-         *  which is the application name.
-         *
-         *      std::string cfgname = rc().application_name();
-         */
-
-        std::string cfgname = rc().config_filename();       /* "xyzt.rc"    */
-        cfgname = filename_base(cfgname, true);             /* strip ".rc"  */
-
-        std::string cf = file_extension_set(cfgname, ".ctrl");
-        std::string mf = file_extension_set(cfgname, ".mutes");
-        std::string uf = file_extension_set(cfgname, ".usr");
-        std::string pl = file_extension_set(cfgname, ".playlist");
-        std::string nm = file_extension_set(cfgname, ".drums");
-        std::string af = cfgname + ".rc/ctrl/midi/mutes";
-        /*
-         * af += "/drums/playlist", later maybe?
-         */
-
-        rc().midi_control_filename(cf);
-        rc().mute_group_filename(mf);
-        rc().user_filename(uf);
-        rc().playlist_filename(pl);
-        rc().notemap_filename(nm);
-        rc().mute_groups().reset_defaults();
-        file_message("No rc file, will create", af);
+        rc().create_config_names();
     }
     if (result)
     {

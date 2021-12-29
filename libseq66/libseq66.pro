@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2021-12-19
+# \update      2021-12-29
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -58,6 +58,7 @@ HEADERS += include/seq66_features.h \
  include/cfg/rcsettings.hpp \
  include/cfg/recent.hpp \
  include/cfg/scales.hpp \
+ include/cfg/sessionfile.hpp \
  include/cfg/settings.hpp \
  include/cfg/userinstrument.hpp \
  include/cfg/usermidibus.hpp \
@@ -136,6 +137,7 @@ SOURCES += src/seq66_features.cpp \
  src/cfg/rcsettings.cpp \
  src/cfg/recent.cpp \
  src/cfg/scales.cpp \
+ src/cfg/sessionfile.cpp \
  src/cfg/settings.cpp \
  src/cfg/userinstrument.cpp \
  src/cfg/usermidibus.cpp \
