@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-12-29
+ * \updates       2021-12-30
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -267,6 +267,7 @@ private:
 
     bool m_verbose;                 /**< Message-showing setting.           */
     bool m_investigate;             /**< An option for the test of the day. */
+    std::string m_inspection_tag;   /**< A sessionfile tag to set a test.   */
 
     /**
      *  A replacement for m_auto_option_save and all "save" options except for
@@ -642,6 +643,16 @@ public:
     bool investigate_disabled () const
     {
         return false;
+    }
+
+    const std::string & inspection_tag () const
+    {
+        return m_inspection_tag;
+    }
+
+    bool inspecting () const
+    {
+        return ! m_inspection_tag.empty();
     }
 
     bool auto_options_save () const;
@@ -1129,6 +1140,11 @@ public:
     void investigate (bool flag)
     {
         m_investigate = flag;
+    }
+
+    void inspection_tag (const std::string & t)
+    {
+        m_inspection_tag = t;
     }
 
     void auto_rc_save (bool flag);

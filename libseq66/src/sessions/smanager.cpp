@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2021-12-29
+ * \updates       2021-12-30
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -141,20 +141,6 @@ smanager::main_settings (int argc, char * argv [])
     set_app_name(SEQ66_APP_NAME);       /* "qseq66" by default              */
     set_arg_0(argv[0]);                 /* how it got started               */
 
-    std::string sessionfilename = rc().make_config_filespec("session.rc");
-    bool sessionmodified = false;
-    if (file_readable(sessionfilename))
-    {
-        sessionfile sf(sessionfilename, rc());
-        sessionmodified = sf.parse();
-    }
-
-    /*
-     * If "-o log=file.ext" occurred, handle it early on in startup.
-     */
-
-    if (! sessionmodified)
-        (void) cmdlineopts::parse_log_option(argc, argv);
 
     /**
      * Set up objects that are specific to the GUI.  Pass them to the
@@ -169,7 +155,6 @@ smanager::main_settings (int argc, char * argv [])
      * performer::launch() function.
      */
 
-    (void) cmdlineopts::parse_command_line_options(argc, argv);
     bool is_help = cmdlineopts::help_check(argc, argv);
     int optionindex = -1;
     if (is_help)
@@ -179,6 +164,25 @@ smanager::main_settings (int argc, char * argv [])
     }
     else
     {
+        bool sessionmodified = false;
+        (void) cmdlineopts::parse_command_line_options(argc, argv);
+        if (rc().inspecting())
+        {
+            std::string sessionfilename = rc().make_config_filespec("session.rc");
+            if (file_readable(sessionfilename))
+            {
+                sessionfile sf(sessionfilename, rc().inspection_tag(), rc());
+                sessionmodified = sf.parse();
+            }
+        }
+
+        /*
+         * If "-o log=file.ext" occurred, handle it early on in startup.
+         */
+
+        if (! sessionmodified)
+            (void) cmdlineopts::parse_log_option(argc, argv);
+
         /*
          *  If parsing fails, report it and disable usage of the application and
          *  saving bad garbage out when exiting.  Still must launch, otherwise a

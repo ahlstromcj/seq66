@@ -6,22 +6,31 @@
 # This file holds the redirection of the main configuration for Seq66.
 # Here are the options supported:
 #
-#   'home':         If not empty, replaces "~/.config/seq66".  It is the same as
-#                   the --home command-line option.
-#
-#   'client-name':  Changes the label for the application.  It is the same as
-#                   --client-name option.
-#
-#   'config':       Changes the base name of the configuration.  It is the same
-#                   as the --config optin.
+#   -   'home'. If not empty, replaces "~/.config/seq66".  It is the same as
+#       the --home command-line option.
+#   -   'client-name'. Changes the label for the application.  It is the same
+#       as the --client-name option.
+#   -   'config'. Changes the base name of the configuration.  It is the same
+#       as the --config option.
+#   -   'log'.  Sets up a log file. Similar to --option log=x.y.
 
 [Seq66]
 
 config-type = "rc"
 version = 0
-home = "~/.config/seq66/4x4"
-client-name = "seq664x4"
+
+[test]
+
+home = "~/.config/seq66/test"
+client-name = "seq66test"
 config = "x66"
+log = "test.log"
+
+[4x4]
+
+home = "contrib/tests/4x4"
+client-name = "seq664x4"
+config = "qseq66"
 log = "4x4.log"
 
 [comments]

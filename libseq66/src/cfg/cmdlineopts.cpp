@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-12-29
+ * \updates       2021-12-30
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -91,6 +91,7 @@ cmdlineopts::s_long_options [] =
     {"help",                0, 0, 'h'},
     {"version",             0, 0, 'V'},
     {"verbose",             0, 0, 'v'},
+    {"inspect",             required_argument, 0, 'I'},
     {"investigate",         0, 0, 'i'},
     {"home",                required_argument, 0, 'H'},
 #if defined SEQ66_NSM_SUPPORT
@@ -161,7 +162,7 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         0123456789#@AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz
-        x         x xx::x:xx  :: x:x xxxxx :xxxx *xx :xxxxxxx:xxxx::  aa
+        x         x xx::x:xx  :: x:x:xxxxx :xxxx *xx :xxxxxxx:xxxx::  aa
 \endverbatim
  *
  *  * Note that 'o' options arguments cannot be included here due to issues
@@ -184,7 +185,7 @@ cmdlineopts::s_long_options [] =
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:DdF:f:gH:hiJjKkl:M:mNnoPpq:RrSsTtU:uVvWwX:x:Zz#";
+    "AaB:b:Cc:DdF:f:gH:hI:iJjKkl:M:mNnoPpq:RrSsTtU:uVvWwX:x:Zz#";
 
 /**
  *  Provides help text.
@@ -907,6 +908,10 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         case 'h':
             show_help();
             result = c_null_option;
+            break;
+
+        case 'I':
+            rc().inspection_tag(soptarg);
             break;
 
         case 'i':

@@ -21,7 +21,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2021-12-19
+# \update      2021-12-29
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -161,18 +161,18 @@ am_libseq66_la_OBJECTS = seq66_features.lo cfg/basesettings.lo \
 	cfg/cmdlineopts.lo cfg/comments.lo cfg/configfile.lo \
 	cfg/midicontrolfile.lo cfg/mutegroupsfile.lo \
 	cfg/notemapfile.lo cfg/playlistfile.lo cfg/rcfile.lo \
-	cfg/rcsettings.lo cfg/recent.lo cfg/scales.lo cfg/settings.lo \
-	cfg/userinstrument.lo cfg/usermidibus.lo cfg/usrfile.lo \
-	cfg/usrsettings.lo ctrl/automation.lo ctrl/keycontainer.lo \
-	ctrl/keycontrol.lo ctrl/keymap.lo ctrl/keystroke.lo \
-	ctrl/midicontrolin.lo ctrl/midicontrolbase.lo \
-	ctrl/midicontrol.lo ctrl/midicontrolout.lo ctrl/midimacro.lo \
-	ctrl/midimacros.lo ctrl/midioperation.lo ctrl/opcontainer.lo \
-	ctrl/opcontrol.lo midi/businfo.lo midi/controllers.lo \
-	midi/editable_event.lo midi/editable_events.lo midi/event.lo \
-	midi/eventlist.lo midi/jack_assistant.lo \
-	midi/mastermidibase.lo midi/midibase.lo midi/midibytes.lo \
-	midi/midifile.lo midi/midi_splitter.lo \
+	cfg/rcsettings.lo cfg/recent.lo cfg/scales.lo \
+	cfg/sessionfile.lo cfg/settings.lo cfg/userinstrument.lo \
+	cfg/usermidibus.lo cfg/usrfile.lo cfg/usrsettings.lo \
+	ctrl/automation.lo ctrl/keycontainer.lo ctrl/keycontrol.lo \
+	ctrl/keymap.lo ctrl/keystroke.lo ctrl/midicontrolin.lo \
+	ctrl/midicontrolbase.lo ctrl/midicontrol.lo \
+	ctrl/midicontrolout.lo ctrl/midimacro.lo ctrl/midimacros.lo \
+	ctrl/midioperation.lo ctrl/opcontainer.lo ctrl/opcontrol.lo \
+	midi/businfo.lo midi/controllers.lo midi/editable_event.lo \
+	midi/editable_events.lo midi/event.lo midi/eventlist.lo \
+	midi/jack_assistant.lo midi/mastermidibase.lo midi/midibase.lo \
+	midi/midibytes.lo midi/midifile.lo midi/midi_splitter.lo \
 	midi/midi_vector_base.lo midi/midi_vector.lo \
 	midi/songsummary.lo midi/wrkfile.lo play/clockslist.lo \
 	play/inputslist.lo play/portslist.lo play/mutegroup.lo \
@@ -214,12 +214,13 @@ am__depfiles_remade = ./$(DEPDIR)/seq66_features.Plo \
 	cfg/$(DEPDIR)/mutegroupsfile.Plo cfg/$(DEPDIR)/notemapfile.Plo \
 	cfg/$(DEPDIR)/playlistfile.Plo cfg/$(DEPDIR)/rcfile.Plo \
 	cfg/$(DEPDIR)/rcsettings.Plo cfg/$(DEPDIR)/recent.Plo \
-	cfg/$(DEPDIR)/scales.Plo cfg/$(DEPDIR)/settings.Plo \
-	cfg/$(DEPDIR)/userinstrument.Plo cfg/$(DEPDIR)/usermidibus.Plo \
-	cfg/$(DEPDIR)/usrfile.Plo cfg/$(DEPDIR)/usrsettings.Plo \
-	ctrl/$(DEPDIR)/automation.Plo ctrl/$(DEPDIR)/keycontainer.Plo \
-	ctrl/$(DEPDIR)/keycontrol.Plo ctrl/$(DEPDIR)/keymap.Plo \
-	ctrl/$(DEPDIR)/keystroke.Plo ctrl/$(DEPDIR)/midicontrol.Plo \
+	cfg/$(DEPDIR)/scales.Plo cfg/$(DEPDIR)/sessionfile.Plo \
+	cfg/$(DEPDIR)/settings.Plo cfg/$(DEPDIR)/userinstrument.Plo \
+	cfg/$(DEPDIR)/usermidibus.Plo cfg/$(DEPDIR)/usrfile.Plo \
+	cfg/$(DEPDIR)/usrsettings.Plo ctrl/$(DEPDIR)/automation.Plo \
+	ctrl/$(DEPDIR)/keycontainer.Plo ctrl/$(DEPDIR)/keycontrol.Plo \
+	ctrl/$(DEPDIR)/keymap.Plo ctrl/$(DEPDIR)/keystroke.Plo \
+	ctrl/$(DEPDIR)/midicontrol.Plo \
 	ctrl/$(DEPDIR)/midicontrolbase.Plo \
 	ctrl/$(DEPDIR)/midicontrolin.Plo \
 	ctrl/$(DEPDIR)/midicontrolout.Plo ctrl/$(DEPDIR)/midimacro.Plo \
@@ -575,6 +576,7 @@ libseq66_la_SOURCES = \
  cfg/rcsettings.cpp \
  cfg/recent.cpp \
  cfg/scales.cpp \
+ cfg/sessionfile.cpp \
  cfg/settings.cpp \
  cfg/userinstrument.cpp \
  cfg/usermidibus.cpp \
@@ -729,6 +731,7 @@ cfg/rcfile.lo: cfg/$(am__dirstamp) cfg/$(DEPDIR)/$(am__dirstamp)
 cfg/rcsettings.lo: cfg/$(am__dirstamp) cfg/$(DEPDIR)/$(am__dirstamp)
 cfg/recent.lo: cfg/$(am__dirstamp) cfg/$(DEPDIR)/$(am__dirstamp)
 cfg/scales.lo: cfg/$(am__dirstamp) cfg/$(DEPDIR)/$(am__dirstamp)
+cfg/sessionfile.lo: cfg/$(am__dirstamp) cfg/$(DEPDIR)/$(am__dirstamp)
 cfg/settings.lo: cfg/$(am__dirstamp) cfg/$(DEPDIR)/$(am__dirstamp)
 cfg/userinstrument.lo: cfg/$(am__dirstamp) \
 	cfg/$(DEPDIR)/$(am__dirstamp)
@@ -896,6 +899,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/rcsettings.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/recent.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/scales.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/sessionfile.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/settings.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/userinstrument.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/usermidibus.Plo@am__quote@ # am--include-marker
@@ -1161,6 +1165,7 @@ distclean: distclean-am
 	-rm -f cfg/$(DEPDIR)/rcsettings.Plo
 	-rm -f cfg/$(DEPDIR)/recent.Plo
 	-rm -f cfg/$(DEPDIR)/scales.Plo
+	-rm -f cfg/$(DEPDIR)/sessionfile.Plo
 	-rm -f cfg/$(DEPDIR)/settings.Plo
 	-rm -f cfg/$(DEPDIR)/userinstrument.Plo
 	-rm -f cfg/$(DEPDIR)/usermidibus.Plo
@@ -1282,6 +1287,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f cfg/$(DEPDIR)/rcsettings.Plo
 	-rm -f cfg/$(DEPDIR)/recent.Plo
 	-rm -f cfg/$(DEPDIR)/scales.Plo
+	-rm -f cfg/$(DEPDIR)/sessionfile.Plo
 	-rm -f cfg/$(DEPDIR)/settings.Plo
 	-rm -f cfg/$(DEPDIR)/userinstrument.Plo
 	-rm -f cfg/$(DEPDIR)/usermidibus.Plo

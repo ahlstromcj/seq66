@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-12-29
- * \updates       2021-12-29
+ * \updates       2021-12-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -51,13 +51,22 @@ class sessionfile final : public configfile
 
 private:
 
-    /*
-     * Currently no additional members.
+    /**
+     *  Provides the tag section from which to get the values.  If empty, then
+     *  the session file is disabled.  The name is returned wrapped by square
+     *  brackets, for direct use in the scanning.
      */
+
+    std::string m_tag_name;
 
 public:
 
-    sessionfile (const std::string & name, rcsettings & rcs);
+    sessionfile
+    (
+        const std::string & filename,
+        const std::string & tag,
+        rcsettings & rcs
+    );
 
     sessionfile () = delete;
     sessionfile (const sessionfile &) = delete;
@@ -70,6 +79,8 @@ public:
     {
         return false;
     }
+
+    std::string tag_name () const;
 
 };          // class sessionfile
 

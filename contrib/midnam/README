@@ -1,0 +1,61 @@
+MIDI Name Format Notes
+Chris Ahlstrom
+2021-12-29 to 2021-12-29
+
+This README provides notes on the Pro Tools MIDNAM format.
+
+Header:
+
+   <!DOCTYPE MIDINameDocument PUBLIC "-
+      //MIDI Manufacturers Association//DTD MIDINameDocument 1.0//EN"
+      "http://www.midi.org/dtds/MIDINameDocument10.dtd">
+<MIDINameDocument>
+  <Author>. . .</Author>
+
+The file starts with:
+
+  <MasterDeviceNames>
+    <Manufacturer>Roland</Manufacturer>
+    <Model>MT-32</Model>
+    <CustomDeviceMode Name="Mode 1">
+      <ChannelNameSetAssignments>
+        <ChannelNameSetAssign Channel="1" NameSet=""/>
+
+The ChannelNameSet:
+
+    <ChannelNameSet Name="Name Set 1">
+      <AvailableForChannels>
+        <AvailableChannel Channel="1" Available="false"/>
+        <AvailableChannel Channel="2" Available="true"/>
+          . . .
+      <PatchBank Name="Piano">
+        <PatchNameList>
+          <Patch Number="1" Name="AcouPiano1" ProgramChange="0"/>
+          <Patch Number="2" Name="AcouPiano2" ProgramChange="1"/>
+          <Patch Number="3" Name="AcouPiano3" ProgramChange="2"/>
+          <Patch Number="4" Name="ElecPiano1" ProgramChange="3"/>
+          <Patch Number="5" Name="ElecPiano2" ProgramChange="4"/>
+          <Patch Number="6" Name="ElecPiano3" ProgramChange="5"/>
+          <Patch Number="7" Name="ElecPiano4" ProgramChange="6"/>
+          <Patch Number="8" Name="Honkytonk" ProgramChange="7"/>
+        </PatchNameList>
+      </PatchBank>
+      <PatchBank Name="Organ">
+        <PatchNameList>
+          <Patch Number="9" Name="Elec Org 1" ProgramChange="8"/>
+         . . .
+
+The 'usr' file:
+
+Instead of devices, Seq66 has a list of MIDI buss definitions and a list of
+MIDI instrument definitions.
+
+User-Instrument data:
+
+   Number (implied by section header)
+   Name of instrument
+   Number of MIDI controller entries
+   A list of controller names for each of those entries.
+
+
+# vim: sw=3 ts=3 wm=8 et ft=sh

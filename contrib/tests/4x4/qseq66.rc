@@ -40,8 +40,9 @@ usage patterns:
     Added automation controls
  
 For this test configuration, we move the "Loop" keystrokes for patterns 16 to 31
-to other automation functions.  The "Mute"keystrokes (i.e. the shifted keys)
+to other automation functions.  The "Mute" keystrokes (i.e. the shifted keys)
 remain the same.
+ 
 To enable this configuration first run the following command (Linux):
  
     $ qseq66 --home ~/.config/seq66/4x4

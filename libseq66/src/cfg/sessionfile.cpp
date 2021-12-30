@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-12-29
- * \updates       2021-12-29
+ * \updates       2021-12-30
  * \license       GNU GPLv2 or above
  *
  *  This file is a read-only file created manually by the user in order
@@ -60,10 +60,33 @@ static const int s_session_file_version = 0;
  *      file-specification.
  */
 
-sessionfile::sessionfile (const std::string & name, rcsettings & rcs) :
-    configfile  (name, rcs)
+sessionfile::sessionfile
+(
+    const std::string & filename,
+    const std::string & tag,
+    rcsettings & rcs
+) :
+    configfile  (filename, rcs),
+    m_tag_name  (tag)
 {
     version(s_session_file_version);
+}
+
+/**
+ *  Builds and returns the tag name.
+ */
+
+std::string
+sessionfile::tag_name () const
+{
+    std::string result;
+    if (! m_tag_name.empty())
+    {
+        result = "[";
+        result += m_tag_name;
+        result += "]";
+    }
+    return result;
 }
 
 /**
@@ -81,7 +104,7 @@ sessionfile::parse ()
     std::ifstream file(name(), std::ios::in | std::ios::ate);
     if (set_up_ifstream(file))            /* verifies [Seq66]: version    */
     {
-        std::string tag = "[Seq66]";
+        std::string tag = tag_name();
         std::string s = get_variable(file, tag, "home");
         if (! s.empty())
         {
