@@ -1,7 +1,7 @@
 # Seq66 0.98.2 session 'rc' configuration file
 #
 # /home/user/.config/seq66/session.rc
-# Written 2021-12-29 00:00:00
+# Written 2021-12-31 00:00:00
 #
 # This file holds the redirection of the main configuration for Seq66.
 # Here are the options supported:
@@ -16,7 +16,7 @@
 
 [Seq66]
 
-config-type = "rc"
+config-type = "session"
 version = 0
 
 [test]
@@ -28,7 +28,7 @@ log = "test.log"
 
 [4x4]
 
-home = "contrib/tests/4x4"
+home = "~/Home/ca/mls/git/seq66/contrib/tests/4x4"
 client-name = "seq664x4"
 config = "qseq66"
 log = "4x4.log"

@@ -1256,16 +1256,19 @@ midicontrolfile::parse_control_stanza (automation::category opcat, int index)
             "", keyname, opcat, automation::action::toggle, opslot, index
         );
         ctrlkey ordinal = qt_keyname_ordinal(keyname);
-        bool ok = m_temp_key_controls.add(ordinal, kc);
-        if (ok)
+        if (! is_invalid_ordinal(ordinal))          /* ca 2021-12-31 */
         {
-            if (opcat == automation::category::loop)
-                ok = m_temp_key_controls.add_slot(kc);
-            else if (opcat == automation::category::mute_group)
-                ok = m_temp_key_controls.add_mute(kc);
+            bool ok = m_temp_key_controls.add(ordinal, kc);
+            if (ok)
+            {
+                if (opcat == automation::category::loop)
+                    ok = m_temp_key_controls.add_slot(kc);
+                else if (opcat == automation::category::mute_group)
+                    ok = m_temp_key_controls.add_mute(kc);
+            }
+            if (! ok)
+                (void) keycontrol_error_message(kc, ordinal, line_number());
         }
-        if (! ok)
-            (void) keycontrol_error_message(kc, ordinal, line_number());
     }
     else
     {
@@ -1493,7 +1496,7 @@ midicontrolfile::show_stanzas () const
 }
 
 /**
- *  A free function to write the MIDI control file..It handles these cases:
+ *  A free function to write the MIDI control file. It handles these cases:
  *
  *  -   Recreating the file if the controls are active or if the file does
  *      not exist.
@@ -1518,7 +1521,6 @@ write_midi_control_file
     bool recreate = active || ! exists;
     const midicontrolin & ctrls = rcs.midi_control_in();
     bool result = ctrls.count() > 0;
-    file_message("Writing ctrl", mcfname);
     if (result)
     {
         if (recreate)

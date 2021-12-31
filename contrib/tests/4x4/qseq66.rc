@@ -49,7 +49,11 @@ To enable this configuration first run the following command (Linux):
  
 Once the 4x4 directory exists, copy the test configuration:
  
-    $ cp data/tests/4x4/* ~/.config/seq66/4x4
+    $ cp contrib/tests/4x4/* ~/.config/seq66/4x4
+ 
+An alternative is to do the test in place by copying the "session.rc" file to
+~/.config/seq66 and point the "4x4" config variable to the full-path to
+contrib/tests/4x4.  Then run "qseq66 --inspect 4x4".
  
 Let the testing begin!
 

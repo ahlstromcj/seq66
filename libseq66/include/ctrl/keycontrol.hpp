@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-04
+ * \updates       2021-12-31
  * \license       GNU GPLv2 or above
  *
  *  This class is similar in intent to the midicontrol class, but is simpler
@@ -61,6 +61,12 @@ class keycontrol : public opcontrol
     friend class keycontainer;
 
 private:
+
+    /**
+     *  The name used to represent any key that cannot be used.
+     */
+
+    static const std::string scm_dead_key_name;
 
     /**
      *  Provides the name of keystroke associated with this control.  This

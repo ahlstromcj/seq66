@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-12-04
+ * \updates       2021-12-31
  * \license       GNU GPLv2 or above
  *
  */
@@ -34,6 +34,7 @@
 #include <iostream>                     /* std::cout (using namespace std)  */
 
 #include "ctrl/keycontrol.hpp"          /* seq66::keycontrol class          */
+#include "ctrl/keymap.hpp"              /* seq66::qt_ordinal_keyname()      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -41,6 +42,13 @@
 
 namespace seq66
 {
+
+/**
+ *  The name for keys that are unused.  They should not be added to a
+ *  keycontainer, but they are needed in the base class of midicontrol.
+ */
+
+const std::string keycontrol::scm_dead_key_name = "Blank";
 
 /**
  *  This constructor assigns the basic values of control name, number, and
@@ -94,9 +102,12 @@ keycontrol::keycontrol
     opcontrol       (opname, opcategory, actioncode, opslot, index),
     m_key_name      (keyname),
     m_control_code  (index),
-    m_ordinal       (0xff)              /* set when addint to keycontainer  */
+    m_ordinal       (qt_keyname_ordinal(keyname))
 {
-    // Empty body
+    if (is_invalid_ordinal(m_ordinal))
+    {
+        m_key_name = scm_dead_key_name;
+    }
 }
 
 /**

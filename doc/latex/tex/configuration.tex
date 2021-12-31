@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-12-29
+% \update      2021-12-31
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -139,11 +139,12 @@
 \subsubsection{[comments] Section}
 \label{subsec:configuration_common_comments_section}
 
-   This section is also informational, but the user can edit this section to
-   include information describing the purpose of the file.  For example, a
-   'ctrl' file for a \textsl{Novation Launchpad} might describe the purpose of
-   this file.  The comments stop at the first blank (not even spaces) line.  To
-   skip a line in the comment, put a single space character on the blank line.
+   The "comments" section is also informational, but the user can edit this
+   section to include information describing the purpose of the file.  For
+   example, a 'ctrl' file for a \textsl{Novation Launchpad} might describe the
+   purpose of this file.  The comments stop at the first blank (not even spaces)
+   line.  To skip a line in the comment, put a single space character on the
+   blank line.
 
 \subsubsection{Numeric Settings}
 \label{subsec:configuration_common_numeric_settings}
@@ -209,8 +210,8 @@
    upgraded automatically.
 
    A stanza in a \textsl{Seq66} configuration file consists of some data at the
-   beginning, a set of values bracketed by square brackets, and some optional
-   data at the end.  The values inside the square brackets are numeric, and can
+   beginning, a set of values bracketed by square brackets, and a comment
+   at the end.  The values inside the square brackets are numeric, and can
    be in decimal format, sometimes hexadecimal format, or in binary "0/1"
    format.
 
@@ -1632,7 +1633,7 @@
 \subsection{'ctrl' File}
 \label{subsec:configuration_ctrl}
 
-   Like \textsl{Seq24}, \textsl{Seq66} provides a way to control the
+   \textsl{Seq66} provides a way to control the
    application to some extent via a MIDI controller, such as a MIDI keyboard or
    a MIDI pad.  The current section describes this feature;
    additional resources and ideas can be found at \url{linuxaudio.org}
@@ -1650,8 +1651,8 @@
 
    The 'ctrl' file provides settings for keyboard control, MIDI control, and
    for specifying MIDI output to reflect \textsl{automation} commands in a
-   device such as the \textsl{LaunchPad Mini}.  The name of this file is
-   specfied in the 'rc' file as noted earlier.
+   device such as the \textsl{LaunchPad Mini}.  The name of this file and its
+   active status are specfied in the 'rc' file as noted earlier.
 
 \subsubsection{'ctrl' File / MIDI Control Settings}
 \label{subsubsec:configuration_ctrl_midi_control_settings}
@@ -1742,6 +1743,14 @@
 
    The first number is an index number, starting at 0.  It indicates what
    loop the control line will affect.
+
+   \index{keys!control}
+   The second column is the name of the keystroke that will act as a toggle or
+   action key.
+   \index{keys!blank}
+   If the key name is \texttt{Blank}, then there is no keystroke for that
+   pattern control.  The user can specify multiple blank keys as desired.
+
    The numbers in the leftmost brackets define a \textsl{Toggle} control;
    the numbers in the middle brackets define an \textsl{On} control;
    the numbers in the rightmost brackets define an \textsl{Off} control.
@@ -1840,6 +1849,9 @@
    mute-group patterns are defined in the 'mutes' configuration file (or in the
    \textsl{Seq66} MIDI file itself.
 
+   Again, a key name of \texttt{Blank} can be used to disable a keystroke for
+   that line.
+
    The mutes MIDI control setup resembles a matrix match the shifted versions
    of the loop control keys.  The default matrix
    uses the central keys on the keyboard, laid out in a 4 x 8 grid matching the
@@ -1883,7 +1895,12 @@
       48 "0xfe" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]   # Reserved 48
    \end{verbatim}
 
-   Note that "Quit" is not a 
+   Note that "Quit" is not a real keystroke.  It is a placeholder in the internal
+   keystroke map for the functionality of quitting \textsl{Seq66} via MIDI
+   control.  Qt provides other ways to quit via keystroke.
+
+   Again, a key name of \texttt{Blank} can be used to disable a keystroke for
+   a line.
 
    The stanzas meaning can change depending on the type of control.  Here are
    the important styles:
