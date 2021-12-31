@@ -1,52 +1,47 @@
-# Seq66 0.98.1 mute-groups configuration file
+# Seq66 0.98.2 mute-groups configuration file
 #
 # /home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/qseq66.mutes
-# Written 2021-12-14 11:20:00
+# Written 2021-12-31 13:42:47
 #
-# Used in the [mute-group-file] section of the 'rc' file, making it
-# easier to manage multiple sets of mute groups. To use this file,
-# specify it in [mute-group-file] file and set 'active = true'.
+# Used in the [mute-group-file] section of the 'rc' file, making it easier to
+# multiple mute groups. To use this file, specify it in [mute-group-file] file
+# and set 'active = true'.
 
 [Seq66]
 
 config-type = "mutes"
 version = 0
 
-# [comments] holds user documentation for this file. The first empty,
-# hash-commented, or tag line ends the comment.
+# [comments] holds user documentation for this file. The first empty, hash-
+# commented, or tag line ends the comment.
 
 [comments]
 
 Currently no testing is in place for the mutes.  Soon!
   
 
-# load-mute-groups: set to 'none', or 'mutes' to load from the 'mutes'
-# file, 'midi' to load from the song, or 'both' to try to
-# to read from the 'mutes' first, then the 'midi' file.
+# load-mute-groups: set to 'none', or 'mutes' to load from the 'mutes' file,
+# 'midi' to load from the song, or 'both' to try to to read from 'mutes' first,
+# then the 'midi' file.
 #
-# save-mutes-to: 'both' writes the mutes to the 'mutes' and MIDI file;
-# 'midi' writes only to the MIDI file; and the 'mutes' only to the
-# 'mutes' file.
+# save-mutes-to: 'both' writes the mutes to the 'mutes' and MIDI file; 'midi'
+# writes only to the MIDI file; and the mutes only to the 'mutes' file.
 #
-# strip-empty: If true, all-zero mute-groups are not written to the
-# MIDI file.
+# strip-empty: If true, all-zero mute-groups are not written to the MIDI file.
 #
-# mute-group-rows and mute-group-columns: Specifies the size of the
-# grid.  Keep these values at 4 and 8; mute-group-count is only for
-# sanity-checking.
+# mute-group-rows and mute-group-columns: Specifies the size of the grid. Keep
+# these values at 4 and 8; mute-group-count is only for sanity-checking.
 #
-# groups-format: 'binary' means write mutes as 0 or 1; 'hex' means
-# write them as hexadecimal numbers (e.g. 0xff), useful for larger set
-# sizes.
+# groups-format: 'binary' means write mutes as 0 or 1; 'hex' means write them as
+# hexadecimal numbers (e.g. 0xff), useful for larger set sizes.
 #
-# mute-group-selected: if 0 to 31, and mutes are available either from
-# this file or from the MIDI file, then this mute-group is applied at
-# startup; useful in restoring a session. Set to -1 to disable.
+# mute-group-selected: if 0 to 31, and mutes are available either from this file
+# or from the MIDI file, then this mute-group is applied at startup; useful in
+# restoring a session. Set to -1 to disable.
 #
-# toggle-active-only: when a mute-group is toggled off, all patterns,
-# even those outside the mute-group, are muted.  If this flag is set
-# to true, only patterns in the mute-group are muted. Any patterns
-# unmuted directly by the user remain unmuted.
+# toggle-active-only: when a mute-group is toggled off, all patterns, even those
+# outside the mute-group, are muted.  If this flag is set, only patterns in the
+# mute-group are muted. Patterns unmuted directly by the user remain unmuted.
 
 [mute-group-flags]
 
@@ -62,10 +57,10 @@ toggle-active-only = false
 
 [mute-groups]
 
-# Mute-group values are saved in the 'mutes' file, even if all zeroes.
-# They can be stripped out of the MIDI file by 'strip-empty-mutes'.
-# A hex number indicates each number is a bit-mask, not a single bit.
-# An optional quoted group name can be placed at the end of the line.
+# Mute-group values are saved in the 'mutes' file, even if all zeroes. They can
+# be stripped out of the MIDI file by 'strip-empty-mutes'. A hex value indicates
+# a bit-mask, not a single bit. An  quoted group name can be placed at the end
+# of the line.
 
  0 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 0"
  1 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 1"

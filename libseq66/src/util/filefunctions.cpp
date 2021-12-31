@@ -987,6 +987,7 @@ name_has_path (const std::string & filename)
         x:
 \endverbatim
  *
+ *  Also, using the circumflex (for /home/user) is treated as a root path.
  */
 
 bool

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-12-21
+ * \updates       2021-12-31
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -102,6 +102,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc(), seq66::usr()        */
 #include "play/screenset.hpp"           /* seq66::screenset constants       */
 #include "play/seq.hpp"                 /* seq66::seq::limit()              */
+#include "util/filefunctions.hpp"       /* seq66::name_has_root_path()      */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 
 /*
@@ -1460,6 +1461,8 @@ usrsettings::bpm_page_increment (midibpm increment)
     m_bpm_page_increment = increment;
 }
 
+#if 0
+
 /**
  * \getter m_user_option_logfile
  *
@@ -1487,6 +1490,28 @@ usrsettings::option_logfile () const
         result += m_user_option_logfile;
     }
     return result;
+}
+
+#endif
+
+void
+usrsettings::option_logfile (const std::string & logfile)
+{
+    if (logfile.empty())
+        return;                         /* will never null out the logfile  */
+
+    if (name_has_root_path(logfile))
+    {
+        m_user_option_logfile = logfile;
+    }
+    else
+    {
+        std::string home = rc().home_config_directory();
+        std::string fullpath = filename_concatenate(home, logfile);
+        m_user_option_logfile = fullpath;
+    }
+    m_user_use_logfile = ! logfile.empty();
+    set_option_bit(option_log);
 }
 
 void

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-28
+ * \updates       2021-12-31
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -358,7 +358,8 @@ usrfile::parse ()
 
     std::string logfile = get_variable(file, tag, "log");
     logfile = strip_quotes(logfile);
-    usr().option_logfile(logfile);
+    if (! logfile.empty())
+        usr().option_logfile(logfile);
 
     /*
      * [user-ui-tweaks].  The variables in this section are, in this order:

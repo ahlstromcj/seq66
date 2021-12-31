@@ -762,10 +762,6 @@ private:
     std::string m_user_option_logfile;
 
     /*
-     *  [user-work-arounds]
-     */
-
-    /*
      *  [user-ui-tweaks]
      */
 
@@ -1476,7 +1472,10 @@ public:
         return m_user_use_logfile;
     }
 
-    std::string option_logfile () const;
+    std::string option_logfile () const
+    {
+        return m_user_option_logfile;
+    }
 
     int min_key_height () const;
     int max_key_height () const;
@@ -1741,12 +1740,7 @@ public:         // used in main application module and the usrfile class
         }
     }
 
-    void option_logfile (const std::string & logfile)
-    {
-        m_user_option_logfile = logfile;
-        m_user_use_logfile = ! logfile.empty();
-        set_option_bit(option_log);
-    }
+    void option_logfile (const std::string & logfile);
 
     void key_height (int h)
     {
