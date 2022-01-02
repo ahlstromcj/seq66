@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Date    2022-01-02
+# Updated 2022-01-02
+#
+# YOSHPATH="/usr/bin"
+#
+# Starts Yoshimi with our oft-used GM patch setup for Yoshimi, and Qsynth.
+# Meant to be done under ALSA.  Make sure Qsynth is set for ALSA.
+# Yoshimi is kind of flaky on our system when run in the background, so we run
+# it second.
+
+YOSHPATH="/usr/bin"
+YOSHIMI="yoshimi"
+OPTIONS="-aA"
+REPOPATH="Home/ca/mls/git"
+CFGPATH="$HOME/$REPOPATH/yoshimi-cookbook/sequencer64/b4uacuse"
+
+if [ "$1" == "latest" ] ; then
+    YOSHPATH="/usr/local/bin"
+    YOSHIMI="yoshimi-1.7.2rc1"
+    shift
+fi
+
+echo "Running QSynth..."
+qsynth &
+sleep 2
+
+echo "Running $YOSHPATH/$YOSHIMI $OPTIONS --state=$CFGPATH/yoshimi-b4uacuse-gm.state..."
+exec $YOSHPATH/$YOSHIMI $OPTIONS --state=$CFGPATH/yoshimi-b4uacuse-gm.state
+
+# vim: ts=3 sw=3 wm=4 et ft=sh

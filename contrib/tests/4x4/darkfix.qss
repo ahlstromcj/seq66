@@ -1,0 +1,129 @@
+/*
+ * \file          textfix.qss
+ * \library       seq66 application
+ * \author        Chris Ahlstrom
+ * \date          2021-10-20
+ * \updates       2022-01-02
+ * \license       Public domain
+ *
+ *  Provides a sample Qt style sheet for Seq66.  Makes the text of disabled
+ *  elements easier to see in some light themes.
+ */
+
+QLabel
+{
+    color : cornflowerblue;
+}
+
+QLabel:disabled
+{
+    color: #F0A080;
+}
+
+QLineEdit
+{
+    color : cornflowerblue;
+}
+
+QLineEdit:disabled
+{
+    color: #F0A080;
+}
+
+QTextEdit
+{
+    color : cornflowerblue;
+}
+
+QTextEdit:disabled
+{
+    color: #F0A080;
+}
+
+QCheckBox
+{
+    color : cornflowerblue;
+}
+
+QCheckBox:disabled
+{
+    color: #F0A080;
+}
+
+QPushButton
+{
+    color : cornflowerblue;
+}
+
+QPushButton:disabled
+{
+    color: #F0A080;
+}
+
+QRadioButton
+{
+    color : cornflowerblue;
+}
+
+QRadioButton:disabled
+{
+    color: #F0A080;
+}
+
+QTabWidget
+{
+    color : cornflowerblue;
+}
+
+QTabWidget:disabled
+{
+    color: #F0A080;
+}
+
+QDoubleSpinBox
+{
+    color : cornflowerblue;
+}
+
+QDoubleSpinBox:disabled
+{
+    color: #F0A080;
+}
+
+/*
+ * alternate-background-color : cornflowerblue;
+ */
+
+QScrollBar
+{
+    background-color : #805040;
+}
+
+QScrollBar:handle
+{
+    background-color : cornflowerblue;
+}
+
+QSpinBox
+{
+    color : cornflowerblue;
+}
+
+QSpinBox:disabled
+{
+    color: #F0A080;
+}
+
+QComboBox
+{
+    color : cornflowerblue;
+}
+
+QComboBox:disabled
+{
+    color: #F0A080;
+}
+
+/*
+ * vim: sw=4 ts=4 wm=4 et ft=css
+ */

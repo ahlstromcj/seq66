@@ -1,7 +1,7 @@
-# Seq66 0.98.2 MIDI control configuration file
+# Seq66 0.98.3 MIDI control configuration file
 #
 # /home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/qseq66.ctrl
-# Written 2021-12-31 13:42:47
+# Written 2022-01-02 11:51:02
 #
 # Sets up MIDI I/O control. The format is like the 'rc' file. To use it, set it
 # active in the 'rc' [midi-control-file] section. It adds loop, mute, &
@@ -33,7 +33,7 @@ This control ('ctrl') file is meant for the 4x4 test.  See the file
 # 'azerty'. AZERTY turns off auto-shift for group-learn.
 
 drop-empty-controls = false
-control-buss = 0xff
+control-buss = "0xFF"
 midi-enabled = false
 button-offset = 0
 button-rows = 4
@@ -234,7 +234,7 @@ keyboard-layout = qwerty
 [midi-control-out-settings]
 
 set-size = 32
-output-buss = 0xff
+output-buss = "0xFF"
 midi-enabled = false
 button-offset = 0
 button-rows = 4

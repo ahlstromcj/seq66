@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-18
+ * \updates       2022-01-02
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -170,6 +170,10 @@ qseqdata::paintEvent (QPaintEvent * qpep)
         if (! s->get_next_event_match(m_status, m_cc, cev))
             break;
 
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        cev->print();
+#endif
+
         midipulse tick = cev->timestamp();
         if (tick >= start_tick && tick <= end_tick)
         {
@@ -210,9 +214,18 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             }
             if (normal_event)
             {
+#if defined SEQ66_REQUIRE_SEQ_CHANNEL_MATCH                 /* too much! */
                 bool ok;
                 if (cev->has_channel())
                 {
+                    /*
+                     * This is problematic.  The dropdown doesn't select notes
+                     * with channel, it just selects note events. The
+                     * event::match_status() doesn't filter on channel.
+                     * We should not filter based on the sequence's hard-wired
+                     * channel, iether.
+                     */
+
                     midibyte schan = s->seq_midi_channel();
                     if (is_null_channel(schan))
                         ok = true;
@@ -227,18 +240,20 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 
                 if (ok)
                 {
-                    pen.setColor(selected ? sel_paint() : fore_color());
-                    painter.setPen(pen);
-                    painter.drawLine(event_x, event_height, event_x, height());
-                    snprintf(digits, sizeof digits, "%3d", d1);
-
-                    QString val = digits;
-                    pen.setColor(fore_color());
-                    painter.setPen(pen);
-                    painter.drawText(x_offset, y_offset,      val.at(0));
-                    painter.drawText(x_offset, y_offset +  9, val.at(1));
-                    painter.drawText(x_offset, y_offset + 18, val.at(2));
+                    // the code below
                 }
+#endif
+                pen.setColor(selected ? sel_paint() : fore_color());
+                painter.setPen(pen);
+                painter.drawLine(event_x, event_height, event_x, height());
+                snprintf(digits, sizeof digits, "%3d", d1);
+
+                QString val = digits;
+                pen.setColor(fore_color());
+                painter.setPen(pen);
+                painter.drawText(x_offset, y_offset,      val.at(0));
+                painter.drawText(x_offset, y_offset +  9, val.at(1));
+                painter.drawText(x_offset, y_offset + 18, val.at(2));
             }
         }
     }

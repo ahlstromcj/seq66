@@ -1,7 +1,7 @@
-# Seq66 0.98.2 main ('rc') configuration file
+# Seq66 0.98.3 main ('rc') configuration file
 #
 # /home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/qseq66.rc
-# Written 2021-12-31 13:42:47
+# Written 2022-01-02 11:51:02
 #
 # This file holds the main configuration for Seq66. It no longer follows the
 # format of the seq24rc configuration file.
@@ -144,9 +144,21 @@ input-port-count = 4
 
  0  1   "[0] 0:1 system:announce"
  1  0   "[1] 14:0 Midi Through Port-0"
- 2  0   "[2] 32:0 Launchpad Mini MIDI 1"
+ 2  1   "[2] 32:0 Launchpad Mini MIDI 1"
  3  0   "[3] 36:0 USB Midi MIDI 1"
- 4  0   "[4] 40:0 nanoKEY2 MIDI 1"
+ 4  1   "[4] 40:0 nanoKEY2 MIDI 1"
+
+# This table is similar to the [midi-clock-map] section.
+
+[midi-input-map]
+
+ 1      # map is active
+
+ 0  1   "announce"
+ 1  0   "Midi Through Port-0"
+ 2  1   "Launchpad Mini MIDI 1"
+ 3  0   "USB Midi MIDI 1"
+ 4  1   "nanoKEY2 MIDI 1"
 
 # These system ports are available for output, for playback/control. From JACK's
 # view, these are 'capture' devices. The first line shows the count of 'capture'
@@ -164,12 +176,32 @@ input-port-count = 4
 
 [midi-clock]
 
- 4      # number of MIDI clocks (output busses)
+ 6      # number of MIDI clocks (output busses)
 
  0  0   "[0] 14:0 Midi Through Port-0"
  1  0   "[1] 32:0 Launchpad Mini MIDI 1"
  2  0   "[2] 36:0 USB Midi MIDI 1"
  3  0   "[3] 40:0 nanoKEY2 MIDI 1"
+ 4  0   "[4] 128:0 FLUID Synth (1509983):Synth input port (1509983:0)"
+ 5  0   "[5] 129:0 yoshimi:input"
+
+# Patterns use buss numbers, not names. If present, this table, provides virtual
+# buss numbers you set up to match your devices and use in all your patterns.
+# The buss number is looked up in this table, the port nick-name is retrieved,
+# and the real buss number is obtained and used. Thus, if the ports change order
+# in the MIDI system, the pattern will still use the proper port. The short
+# nick-names are the same with ALSA or JACK (a2jmidid bridge).
+
+[midi-clock-map]
+
+ 1      # map is active
+
+ 0  0   "FLUID Synth"
+ 1  0   "yoshimi:input"
+ 2  0   "Launchpad Mini MIDI 1"
+ 3  0   "Midi Through Port-0"
+ 4  0   "USB Midi MIDI 1"
+ 5  0   "nanoKEY2 MIDI 1"
 
 # 'ticks' provides the Song Position (in 16th notes) at which clocking begins if
 # the buss is set to MIDI Clock Mod setting. 'record-by-channel' allows the

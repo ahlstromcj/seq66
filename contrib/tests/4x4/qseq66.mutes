@@ -1,7 +1,7 @@
-# Seq66 0.98.2 mute-groups configuration file
+# Seq66 0.98.3 mute-groups configuration file
 #
 # /home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/qseq66.mutes
-# Written 2021-12-31 13:42:47
+# Written 2022-01-02 11:51:02
 #
 # Used in the [mute-group-file] section of the 'rc' file, making it easier to
 # multiple mute groups. To use this file, specify it in [mute-group-file] file
@@ -51,7 +51,7 @@ strip-empty = true
 mute-group-rows = 4
 mute-group-columns = 8
 mute-group-count = 32
-mute-group-selected = 0
+mute-group-selected = -1
 groups-format = binary
 toggle-active-only = false
 

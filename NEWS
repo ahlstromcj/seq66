@@ -1,10 +1,24 @@
 NEWS for Seq66 0.98.0 and above
 Chris Ahlstrom
-2015-07-10 to 2021-11-30
+2015-07-10 to 2022-01-01
 
 This file collects major changes that are older and clutter up
 the README.md file.  This file should be called "OLD NEWS".
 
+    -   Version 0.97.3:
+        -   Added pattern-recording indicator to live-grid slots.
+        -   Replace useless "Record" automation command with a "Loop Mode"
+            command to move between normal loop mode in the Live grid to various
+            record-toggling modes:  Overdub (merge), Overwrite, Expand, and
+            One-shot.
+        -   Also refactored the quantize control to move through states of
+        -   normal, quantize, and tighten.
+        -   Refactored MIDI control for possible future usage of the D1 event
+            value.
+        -   Fixes to external live grid handling.
+        -   Fixed the display of loop status changed via MIDI control.
+        -   Fixed and updated the Windows build.  Mitigated high CPU usage
+            when not (!) playing; fixed a bug in microsleep() for Windows.
     -   Version 0.97.2.1:
         -   Fixed odd breakage of loop-control hot-keys. Doh!
     -   Version 0.97.2:

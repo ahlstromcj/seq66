@@ -1,6 +1,6 @@
 The 4x4 Test
 Chris Ahlstrom
-2021-12-13 to 2021-12-31
+2021-12-13 to 2022-01-02
 
 The 4x4 test is meant to test the following things:
 
@@ -31,10 +31,21 @@ Steps:
       
       This command has to be run every time the tests are performed, because
       we currently do not have a mechanism to save the changed "home"
-      configuration setting.  Maybe we need a "registry" :-D.
+      configuration setting.  Maybe we need a "registry" :-D.  But see
+      below.
 
    -  Copy the configuration files in contrib/tests/4x4 to that directory.
       The file buff.midi will be used later, and does not need to be copied.
-   -
+
+   -  As an alternative, copy "data/samples/session.rc" to the default
+      home configuration directory, and edit it to suit the existing file
+      system.  Then run Seq66 using the test option "--inspect 4x4".
+
+Port-mapping:
+
+   On this system, for this test, we run ALSA, with yoshimi starting first
+   and Qsynth starting second.  We also use the Launchpad Mini as
+   controller and display.
+
 
 # vim: sw=3 ts=3 wm=8 et ft=sh

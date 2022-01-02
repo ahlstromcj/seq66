@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-12-19
+ * \updates       2022-02-02
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1114,7 +1114,15 @@ qseditoptions::sync_rc ()
     ui->lineEditPalette->setText(filename);
 
     filename = qt(usr().style_sheet());
-    ui->checkBoxSaveStyleSheet->setChecked(rc().auto_qss_save());  /* read-only */
+
+    /*
+     * We will never save the style sheet from within Seq66.  We leave the
+     * checkbox visible, unchecked, and disabled.
+     *
+     * ui->checkBoxSaveStyleSheet->hide();
+     */
+
+    ui->checkBoxSaveStyleSheet->setChecked(false);
     ui->checkBoxActiveStyleSheet->setChecked(usr().style_sheet_active());
     ui->lineEditStyleSheet->setText(filename);
 
@@ -1709,9 +1717,14 @@ qseditoptions::slot_stylesheet_filename ()
     std::string text = qs.toStdString();
     if (text != usr().style_sheet())
     {
+        bool check = ! qs.isEmpty();
         usr().style_sheet(text);
+        ui->checkBoxActiveStyleSheet->setChecked(check);
         modify_usr();
-        ui->checkBoxSaveStyleSheet->setChecked(true);
+
+        /*
+         * Now hidden: ui->checkBoxSaveStyleSheet->setChecked(true);
+         */
     }
 }
 

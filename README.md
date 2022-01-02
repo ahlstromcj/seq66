@@ -1,7 +1,7 @@
-# README for Seq66 0.98.2
+# README for Seq66 0.98.3
 
 Chris Ahlstrom
-2015-09-10 to 2022-01-01
+2015-09-10 to 2022-01-02
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management,
@@ -81,6 +81,10 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.98.3:
+        *   Fixed old bug in showing note events; they were filtered by the
+            pattern's configured channel!
+        *   Tweaks to style-sheet handling.
     *   Version 0.98.2:
         *   Fixed issue #74, where -1 for "no buss-override" was being converted
             to 0.
@@ -124,20 +128,6 @@ Windows, and using a conventional source tarball.
         *   Improved the display of the MIDI file-name in title and live grid.
         *   Improving grid-mode functionality, adding more automation controls,
             in progress.
-    *   Version 0.97.3:
-        *   Added pattern-recording indicator to live-grid slots.
-        *   Replace useless "Record" automation command with a "Loop Mode"
-            command to move between normal loop mode in the Live grid to various
-            record-toggling modes:  Overdub (merge), Overwrite, Expand, and
-            One-shot.
-        *   Also refactored the quantize control to move through states of
-        *   normal, quantize, and tighten.
-        *   Refactored MIDI control for possible future usage of the D1 event
-            value.
-        *   Fixes to external live grid handling.
-        *   Fixed the display of loop status changed via MIDI control.
-        *   Fixed and updated the Windows build.  Mitigated high CPU usage
-            when not (!) playing; fixed a bug in microsleep() for Windows.
 
     See the "NEWS" file for changes in earlier versions.
 
