@@ -58,24 +58,10 @@ seq66includedir = @seq66includedir@
 seq66libdir = @seq66libdir@
 
 #******************************************************************************
-# Compiler and linker flags
-#------------------------------------------------------------------------------
-#
-#  $(GTKMM_CFLAGS)
-#
-#------------------------------------------------------------------------------
-
-AM_CXXFLAGS = \
- -I../include \
- -I$(top_srcdir)/include \
- $(JACK_CFLAGS) \
- -DSEQ66_GIT_VERSION=\"$(git_info)\" \
- -Wall $(MM_WFLAGS)
-
-#******************************************************************************
 # Source files
+#----------------------------------------------------------------------------
 #
-#  We have replace pkginclude_HEADERS with the nobase version in order to have
+#  We have replaced pkginclude_HEADERS with the nobase version in order to have
 #  the header subdirectories created and used during "make install".  This
 #  is necessary so that the #include statements are valid.
 #

@@ -6,7 +6,7 @@
 # \library    	Documents
 # \author     	Chris Ahlstrom
 # \date       	2020-10-02
-# \update     	2021-02-04
+# \update     	2022-01-03
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -40,7 +40,7 @@ all: manual
 
 manual: tex-stamp
 	latexmk -g -silent -pdf seq66-user-manual
-	cp seq66-user-manual.pdf $(top_srcdir)/doc
+	cp seq66-user-manual.pdf $(top_srcdir)/data/share/doc
 
 tex-stamp:
 	touch tex-stamp

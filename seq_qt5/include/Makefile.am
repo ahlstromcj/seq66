@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2017-09-06
-# \update      2021-12-26
+# \update      2022-01-03
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -25,11 +25,6 @@
 
 AUTOMAKE_OPTIONS = foreign dist-zip dist-bzip2
 MAINTAINERCLEANFILES = Makefile.in Makefile $(AUX_DIST)
-
-#******************************************************************************
-# CLEANFILES
-#------------------------------------------------------------------------------
-
 CLEANFILES = *.gc* *.moc.cpp
 MOSTLYCLEANFILES = *~
 
@@ -63,8 +58,6 @@ includedir = @seq66includedir@
 libdir = @seq66libdir@
 datadir = @datadir@
 datarootdir = @datarootdir@
-seq66includedir = @seq66includedir@
-seq66libdir = @seq66libdir@
 
 #******************************************************************************
 # Source files

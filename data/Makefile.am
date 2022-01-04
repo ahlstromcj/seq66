@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2018-01-02
-# \updates     2021-04-16
+# \updates     2022-01-03
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -32,7 +32,7 @@ MAINTAINERCLEANFILES = Makefile.in Makefile $(AUX_DIST)
 #
 #------------------------------------------------------------------------------
 
-EXTRA_DIST = README readme.* license.txt linux/*.*  midi/*.* samples/*.* win/*.*
+EXTRA_DIST = README readme.* license.txt linux/*.* midi/*.* samples/*.* win/*.* share/*
 
 #*****************************************************************************
 #	Macros
@@ -70,7 +70,8 @@ datarootdir = @datarootdir@
 pkgdatadir = @pkgdatadir@
 seq66datadir = @seq66datadir@
 
-# datarootdir = $(prefix)/share
+datafolder = $(DESTDIR)$(datadir)
+docfolder = $(DESTDIR)$(seq66docdir)
 
 #******************************************************************************
 # Local project directories
@@ -90,6 +91,15 @@ builddir = @abs_top_builddir@
 #
 #------------------------------------------------------------------------------
 
+# desktopdir = $(datadir)/applications
+# desktop_in_files = share/applications/seq66.desktop.in
+# desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+# 
+# icondir = $(datadir)/icons/hicolor/128x128/apps
+# icon_DATA = $(top_srcdir)/data/share/icons/hicolor/128x128/apps/qseq66.png
+# icondir = $(datadir)/icons/hicolor/
+# icon_DATA = $(top_srcdir)/data/share/icons/hicolor/
+
 #******************************************************************************
 # Installing documentation and other "data" files.
 #------------------------------------------------------------------------------
@@ -105,20 +115,36 @@ builddir = @abs_top_builddir@
 #------------------------------------------------------------------------------
 
 install-data-local:
-	@echo "Copying Seq66 data to $(DESTDIR)$(seq66ddatadir)..."
-	mkdir -p $(DESTDIR)$(seq66datadir)
-	cp -r -p $(top_builddir)/data/* $(DESTDIR)$(seq66datadir)
-	@echo "Copying Seq66 documentation to $(DESTDIR)$(seq66docdir)..."
-	mkdir -p $(DESTDIR)$(seq66docdir)
-	cp -r -p $(top_builddir)/doc/*.pdf $(DESTDIR)$(seq66docdir)
-	cp -r -p $(top_srcdir)/doc/*.ods $(DESTDIR)$(seq66docdir)
+	@echo "Copying Seq66 data to $(datafolder) ..."
+	mkdir -p $(datafolder)
+	mkdir -p $(datafolder)/linux
+	mkdir -p $(datafolder)/midi
+	mkdir -p $(datafolder)/pixmaps
+	mkdir -p $(datafolder)/samples
+	mkdir -p $(datafolder)/seq66cli
+	mkdir -p $(datafolder)/win
+	mkdir -p $(datafolder)/wrk
+	cp -r -p $(top_builddir)/data/linux/* $(datafolder)/linux/
+	cp -r -p $(top_builddir)/data/midi/* $(datafolder)/midi/
+	cp -r -p $(top_builddir)/data/pixmaps/* $(datafolder)/pixmaps/
+	cp -r -p $(top_builddir)/data/samples/* $(datafolder)/samples/
+	cp -r -p $(top_builddir)/data/seq66cli/* $(datafolder)/seq66cli/
+	cp -r -p $(top_builddir)/data/win/* $(datafolder)/win/
+	cp -r -p $(top_builddir)/data/wrk/* $(datafolder)/wrk/
+	cp -p $(top_srcdir)/data/share/applications/seq66.desktop $(datafolder)/applications/
+	cp -r -p $(top_srcdir)/data/share/icons/* $(datafolder)/icons/
+	@echo "Copying Seq66 documentation to $(docfolder)..."
+	mkdir -p $(docfolder)
+	cp -r -p $(top_srcdir)/data/share/doc/*.pdf $(docfolder)
+	cp -r -p $(top_srcdir)/data/share/doc/*.ods $(docfolder)
 
 #******************************************************************************
 # uninstall-hook
 #------------------------------------------------------------------------------
 
 uninstall-hook:
-	rm -rf $(DESTDIR)$(seq66datadir)
+	rm -rf $(datafolder)
+	rm -rf $(docfolder)
 
 #******************************************************************************
 # Makefile.am (seq66/include)

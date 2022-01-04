@@ -21,7 +21,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2017-09-06
-# \update      2021-12-26
+# \update      2022-01-03
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -396,10 +396,6 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign dist-zip dist-bzip2
 MAINTAINERCLEANFILES = Makefile.in Makefile $(AUX_DIST)
-
-#******************************************************************************
-# CLEANFILES
-#------------------------------------------------------------------------------
 CLEANFILES = *.gc* *.moc.cpp
 MOSTLYCLEANFILES = *~
 

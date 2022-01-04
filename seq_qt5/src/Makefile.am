@@ -98,6 +98,12 @@ top_srcdir = @top_srcdir@
 builddir = @abs_top_builddir@
 
 #*****************************************************************************
+# libtool
+#-----------------------------------------------------------------------------
+
+version = $(SEQ66_API_MAJOR):$(SEQ66_API_MINOR):$(SEQ66_API_PATCH)
+
+#*****************************************************************************
 # git_version
 #-----------------------------------------------------------------------------
 # git_version = $(shell git describe --abbrev=7 --always --tags)
@@ -130,12 +136,6 @@ libsessions_libs = -L$(libseq66_libdir) -lsessions
 libsessions_file = $(libseq66_libdir)/libsessions.la
 seq_rtmidi_incdir = $(top_srcdir)/seq_rtmidi/include
 seq_portmidi_incdir = $(top_srcdir)/seq_portmidi/include
-
-#*****************************************************************************
-# libtool
-#-----------------------------------------------------------------------------
-
-version = $(SEQ66_API_MAJOR):$(SEQ66_API_MINOR):$(SEQ66_API_PATCH)
 
 #******************************************************************************
 # Compiler and linker flags (later, PortMidi)
@@ -358,3 +358,4 @@ uninstall-hook:
 #------------------------------------------------------------------------------
 # 	vim: ts=3 sw=3 ft=automake
 #------------------------------------------------------------------------------
+

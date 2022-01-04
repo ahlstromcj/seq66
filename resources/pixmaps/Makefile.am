@@ -6,7 +6,7 @@
 # \library     seq66 application
 # \author      Chris Ahlstrom
 # \date        2015-09-11
-# \update      2021-10-04
+# \update      2022-01-03
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -40,7 +40,9 @@ EXTRA_DIST = \
  live_mode.xpm \
  logo.xpm \
  loop.xpm \
+ menu_empty_inv.xpm \
  menu_empty.xpm \
+ menu_full_inv.xpm \
  menu_full.xpm \
  menu.xpm \
  midi.xpm \
@@ -55,11 +57,11 @@ EXTRA_DIST = \
  quantize.xpm \
  rec.xpm \
  redo.xpm \
- route66.xpm \
+ right.xpm \
  route66rwb-32x32.xpm \
  route66rwb-64x64.xpm \
+ route66.xpm \
  scale.xpm \
- SEQ66_24x24.xpm \
  seq66_32.xpm \
  seq66.xpm \
  seq-editor.xpm \

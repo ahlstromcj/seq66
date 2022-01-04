@@ -6,7 +6,7 @@
 # \library    	seq_rtmidi library
 # \author     	Chris Ahlstrom
 # \date       	2016-11-19
-# \update      2017-02-10
+# \update      2022-01-03
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -54,24 +54,6 @@ includedir = @seq66includedir@
 libdir = @seq66libdir@
 datadir = @datadir@
 datarootdir = @datarootdir@
-seq66includedir = @seq66includedir@
-seq66libdir = @seq66libdir@
-
-#******************************************************************************
-# Compiler and linker flags
-#------------------------------------------------------------------------------
-#
-#  $(GTKMM_CFLAGS)
-#  $(JACK_CFLAGS)
-#
-#------------------------------------------------------------------------------
-
-AM_CXXFLAGS = \
- -I../include \
- -I$(top_srcdir)/include \
- -I$(top_srcdir)/seq_rtmidi/include \
- -DSEQ66_GIT_VERSION=\"$(git_info)\" \
- -Wall $(MM_WFLAGS)
 
 #******************************************************************************
 # Source files

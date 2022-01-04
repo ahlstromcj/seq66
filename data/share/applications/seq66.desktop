@@ -1,12 +1,12 @@
 [Desktop Entry]
 Name=Seq66
-Version=0.98.3
+Version=0.98
 GenericName=Live Grid Sequencer
 Comment=MIDI Loop Sequencer derived from seq24
 Comment[fr]=Séquenceur de boucle MIDI dérivé de seq24
-Icon=/usr/share/pixmaps/seq66.xpm
-Type=Application
-Categories=AudioVideo;Audio;Sequencer;X-Alsa;X-Jack;Midi;X-MIDI;
 Exec=qseq66
 Terminal=false
-X-NSM-Capable=true
+Type=Application
+Icon=qseq66
+Categories=AudioVideo;Audio;Sequencer;X-Alsa;X-Jack;Midi;X-MIDI;
+X-NSM-capable=true
