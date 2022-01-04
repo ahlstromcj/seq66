@@ -3217,7 +3217,7 @@ midifile::set_error_dump (const std::string & msg)
     result += "\n";
     result += "   ";
     result += msg;
-    msgprintf(msglevel::error, "%s", result);
+    msgprintf(msglevel::error, "%s", result.c_str());
     m_error_message = result;
     m_error_is_fatal = true;
     m_disable_reported = true;

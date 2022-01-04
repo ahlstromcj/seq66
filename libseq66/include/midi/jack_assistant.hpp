@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2021-10-23
+ * \updates       2022-01-04
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -607,6 +607,12 @@ extern jack_client_t * create_jack_client
     std::string uuid = ""       /* deprecated */
 );
 extern std::string get_jack_client_uuid (jack_client_t * jc);
+extern bool set_jack_client_property
+(
+    jack_client_t * jc,
+    const std::string & key,
+    const std::string & value
+);
 extern void show_jack_statuses (unsigned bits);
 extern std::string jack_state_name (const jack_transport_state_t & state);
 

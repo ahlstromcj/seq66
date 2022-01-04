@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-10-26
+ * \updates       2022-01-04
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -107,6 +107,11 @@
 #include "midi/jack_assistant.hpp"      /* this seq66::jack_ass class       */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "cfg/settings.hpp"             /* "rc" and "user" settings         */
+
+#if defined SEQ66_JACK_METADATA
+#include <jack/metadata.h>
+#include <jack/uuid.h>
+#endif
 
 #if defined SEQ66_JACK_SESSION          /* deprecated, use Non Session Mgr. */
 #include "midi/midifile.hpp"            /* seq66::midifile class            */
@@ -420,6 +425,10 @@ create_jack_client (std::string clientname, std::string uuid)
     return result;                      /* bad result handled by caller     */
 }
 
+/**
+ *  A free function in the Seq66 namespace
+ */
+
 std::string
 get_jack_client_uuid (jack_client_t * jc)
 {
@@ -432,6 +441,37 @@ get_jack_client_uuid (jack_client_t * jc)
         {
             result = luuid;
             jack_free(luuid);
+        }
+    }
+    return result;
+}
+
+bool
+set_jack_client_property
+(
+    jack_client_t * jc,
+    const std::string & key,
+    const std::string & value
+)
+{
+    std::string uuid = get_jack_client_uuid(jc);
+    bool result = ! uuid.empty();
+    if (result)
+    {
+        jack_uuid_t u2;
+        int rc = jack_uuid_parse(uuid.c_str(), &u2);
+        result = rc == 0;
+        if (result)
+        {
+#if defined SEQ66_JACK_METADATA
+            const char * k = key.c_str();
+            const char * v = value.c_str();
+            const char * type = "";
+            rc = jack_set_property(jc, u2, k, v, type);
+            result = rc == 0;
+#else
+            result = false;
+#endif
         }
     }
     return result;

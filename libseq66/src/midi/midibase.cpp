@@ -775,7 +775,7 @@ midibase::clock (midipulse tick)
 void
 midibase::show_clock (const std::string & context, midipulse tick)
 {
-    msgprintf(msglevel::error, "%s clock [%ld]", context, tick);
+    msgprintf(msglevel::error, "%s clock [%ld]", context.c_str(), tick);
 }
 
 /**

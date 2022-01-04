@@ -588,7 +588,7 @@ nsmclient::broadcast
     {
         int argc = int(argv.size());
         for (int i = 0; i < argc; ++i)
-            msgprintf(msglevel::info, "   [%d] %s", i, argv[i]);
+            msgprintf(msglevel::info, "   [%d] %s", i, argv[i].c_str());
     }
 }
 

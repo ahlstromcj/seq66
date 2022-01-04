@@ -16538,6 +16538,7 @@ $as_echo "JACK session support enabled." >&6; };
         fi
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK support enabled." >&5
 $as_echo "JACK support enabled." >&6; }
+
         for ac_header in jack/jack.h
 do :
   ac_fn_c_check_header_mongrel "$LINENO" "jack/jack.h" "ac_cv_header_jack_jack_h" "$ac_includes_default"
@@ -16598,6 +16599,22 @@ $as_echo "#define JACK_GET_VERSION_STRING 1" >>confdefs.h
 
             { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK jack_get_version_string available." >&5
 $as_echo "JACK jack_get_version_string available." >&6; };
+        fi
+
+        ac_fn_c_check_header_mongrel "$LINENO" "jack/metadata.h" "ac_cv_header_jack_metadata_h" "$ac_includes_default"
+if test "x$ac_cv_header_jack_metadata_h" = xyes; then :
+  jack_metadata="yes"
+else
+  jack_metadata="no"
+fi
+
+
+        if test "$jack_metadata" == "yes"; then
+
+$as_echo "#define JACK_METADATA 1" >>confdefs.h
+
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK metadata support enabled." >&5
+$as_echo "JACK metadata support enabled." >&6; };
         fi
     else
         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not find JACK library, disabling JACK." >&5

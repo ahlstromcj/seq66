@@ -56,6 +56,11 @@
 
 #if defined SEQ66_JACK_SUPPORT
 
+#if defined SEQ66_JACK_METADATA
+#include <jack/metadata.h>
+#include "base64_images.hpp"
+#endif
+
 #include "cfg/settings.hpp"             /* seq66::rc() configuration object */
 #include "midi/event.hpp"               /* seq66::event and other tokens    */
 #include "midi/jack_assistant.hpp"      /* seq66::create_jack_client()      */
@@ -66,6 +71,16 @@
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
 #include "util/calculations.hpp"        /* seq66::extract_port_names()      */
 #include "util/strfunctions.hpp"        /* seq66::contains()                */
+
+
+/**
+ *  This item exists in the JACK 2 source code, but not in the installed JACK
+ *  headers on our development system.
+ */
+
+#if defined SEQ66_JACK_METADATA
+static const char * const JACK_METADATA_ICON_NAME = "icon-name";
+#endif
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -215,6 +230,27 @@ midi_jack_info::connect ()
                 (
                     m_jack_client, jack_shutdown_callback, (void *) this
                 );
+
+#if defined SEQ66_JACK_METADATA
+                bool ok = set_jack_client_property
+                (
+                    m_jack_client, JACK_METADATA_ICON_NAME, seq_app_name()
+                );
+                if (ok)
+                {
+                    ok = set_jack_client_property
+                    (
+                        m_jack_client, JACK_METADATA_ICON_SMALL, qseq66_32x32
+                    );
+                }
+                if (ok)
+                {
+                    ok = set_jack_client_property
+                    (
+                        m_jack_client, JACK_METADATA_ICON_LARGE, qseq66_32x32
+                    );
+                }
+#endif
             }
             else
             {

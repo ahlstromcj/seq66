@@ -117,6 +117,9 @@
 /* Enable JACK version string */
 #undef JACK_GET_VERSION_STRING
 
+/* Define to enable JACK metadata */
+#undef JACK_METADATA
+
 /* Define to enable JACK session */
 #undef JACK_SESSION
 

@@ -6,7 +6,7 @@
 # \library    	seq_rtmidi library
 # \author     	Chris Ahlstrom
 # \date       	2016-11-19
-# \update      2022-01-03
+# \update      2022-01-04
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -60,6 +60,7 @@ datarootdir = @datarootdir@
 #----------------------------------------------------------------------------
 
 pkginclude_HEADERS = \
+   base64_images.hpp \
    mastermidibus_rm.hpp \
    midibus_rm.hpp \
 	midi_alsa.hpp \

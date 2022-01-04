@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-12-28
+ * \updates       2022-02-04
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -1331,7 +1331,8 @@ midicontrolfile::get_buss_number
                     result = int(b);
                     msgprintf
                     (
-                        msglevel::status, "Output buss '%s' port %d", s, result
+                        msglevel::status, "Output buss '%s' port %d",
+                        s.c_str(), result
                     );
                 }
                 else
@@ -1346,7 +1347,8 @@ midicontrolfile::get_buss_number
                     result = int(b);
                     msgprintf
                     (
-                        msglevel::status, "Input buss '%s' port %d", s, result
+                        msglevel::status, "Input buss '%s' port %d",
+                        s.c_str(), result
                     );
                 }
                 else

@@ -151,8 +151,12 @@ playlistfile::open (bool verify_it)
         if (verify_it)
         {
             if (m_show_on_stdout)
-                msgprintf(msglevel::status, "Verifying playlist %s", name());
-
+            {
+                msgprintf
+                (
+                    msglevel::status, "Verifying playlist %s", name().c_str()
+                );
+            }
             result = play_list().verify();                  /* weak verify  */
         }
     }
@@ -262,7 +266,8 @@ playlistfile::parse ()
                 {
                     msgprintf
                     (
-                        msglevel::status, "Playlist name '%s'", listline
+                        msglevel::status, "Playlist name '%s'",
+                        listline.c_str()
                     );
                 }
                 if (next_data_line(file))
@@ -276,7 +281,7 @@ playlistfile::parse ()
                         msgprintf
                         (
                             msglevel::status, "Playlist directory '%s'",
-                            listline
+                            listline.c_str()
                         );
                     }
                     while (next_data_line(file))

@@ -1,7 +1,7 @@
 # README for Seq66 0.98.3
 
 Chris Ahlstrom
-2015-09-10 to 2022-01-02
+2015-09-10 to 2022-01-04
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management,
@@ -85,6 +85,7 @@ Windows, and using a conventional source tarball.
         *   Fixed old bug in showing note events; they were filtered by the
             pattern's configured channel!
         *   Tweaks to style-sheet handling.
+        *   Fixed misuses of msgprintf().
     *   Version 0.98.2:
         *   Fixed issue #74, where -1 for "no buss-override" was being converted
             to 0.

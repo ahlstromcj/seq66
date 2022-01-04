@@ -271,12 +271,20 @@ if test "$jack" != "no"; then
             fi
         fi
         AC_MSG_RESULT([JACK support enabled.])
+
         AC_CHECK_HEADERS([jack/jack.h])
         AC_CHECK_LIB([jack], [jack_get_version_string],
             jack_get_version="yes", jack_get_version="no")
         if test "$jack_get_version" = "yes"; then
             AC_DEFINE(JACK_GET_VERSION_STRING, 1, [Enable JACK version string])
             AC_MSG_RESULT([JACK jack_get_version_string available.]);
+        fi
+
+        AC_CHECK_HEADER(jack/metadata.h, jack_metadata="yes",
+            jack_metadata="no")
+        if test "$jack_metadata" == "yes"; then
+            AC_DEFINE(JACK_METADATA, 1, [Define to enable JACK metadata])
+            AC_MSG_RESULT([JACK metadata support enabled.]);
         fi
     else
         AC_MSG_WARN([Could not find JACK library, disabling JACK.])

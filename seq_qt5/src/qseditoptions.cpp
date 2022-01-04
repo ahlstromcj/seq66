@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-02-02
+ * \updates       2022-02-04
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1757,6 +1757,7 @@ qseditoptions::slot_output_bus (int index)
         perf().midi_control_out().is_enabled(enable);
         perf().midi_control_out().nominal_buss(index - 1);
         rc().auto_ctrl_save(true);
+        reload_needed(true);
         ui->checkBoxSaveCtrl->setChecked(true);
     }
 }
@@ -1771,6 +1772,7 @@ qseditoptions::slot_input_bus (int index)
         perf().midi_control_in().is_enabled(enable);
         perf().midi_control_in().nominal_buss(index - 1);
         rc().auto_ctrl_save(true);
+        reload_needed(true);
         ui->checkBoxSaveCtrl->setChecked(true);
     }
 }
@@ -1789,6 +1791,7 @@ qseditoptions::slot_tempo_track ()
         int track = string_to_int(t);
         bool ok = track >= 0 && track < seq::maximum();
         ui->pushButtonTempoTrack->setEnabled(ok);
+        reload_needed(true);
     }
 }
 

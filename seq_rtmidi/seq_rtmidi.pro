@@ -6,7 +6,7 @@
 # \library    	qpseq66 application
 # \author     	Chris Ahlstrom
 # \date       	2020-05-29
-# \update      2020-06-01
+# \update      2022-01-04
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -38,6 +38,7 @@ DEFINES += "SEQ66_MIDILIB=rtmidi"
 DEFINES += "SEQ66_RTMIDI_SUPPORT=1"
 
 HEADERS += \
+ include/base64_images.hpp \
  include/mastermidibus_rm.hpp \
  include/midibus_rm.hpp \
  include/midi_alsa.hpp \
