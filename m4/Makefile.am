@@ -6,7 +6,7 @@
 # \library    	seq66
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update       2021-03-10
+# \update      2022-01-04
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -53,7 +53,7 @@ EXTRA_DIST = alsa.m4 \
  xpc_doxygen.m4 \
  xpc_errorlog.m4 \
  xpc_mingw.m4 \
- xpc_mingw32.m4 \
+ xpc_mingw.m4 \
  xpc_nullptr.m4 \
  xpc_thisptr.m4
 

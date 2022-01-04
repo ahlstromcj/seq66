@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2018-11-11
-# \updates     2021-06-28
+# \updates     2022-01-04
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -29,7 +29,7 @@ MOSTLYCLEANFILES = *~
 # Extra files in the top-level directory
 #-----------------------------------------------------------------------------
 
-EXTRA_DIST = bootstrap pack README VERSION INSTALL NEWS ChangeLog
+EXTRA_DIST = bootstrap pack README.md VERSION INSTALL NEWS ChangeLog TODO
 
 #*****************************************************************************
 # Packaging
@@ -71,7 +71,6 @@ SEQ66_LT_AGE = @SEQ66_LT_AGE@
 #		datarootdir     = /usr/local/share
 #		seq66libdir     = /usr/local/lib/seq66
 #		seq66docdir     = /usr/local/share/doc/seq66.1
-#		seq66doxygendir = doc
 #		seq66includedir = /usr/local/include/seq66.1
 #		localedir       = /usr/local/share/locale
 #
@@ -85,7 +84,6 @@ libdir = @seq66libdir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 seq66docdir = @seq66docdir@
-seq66doxygendir = @seq66doxygendir@
 seq66includedir = @seq66includedir@
 seq66libdir = @seq66libdir@
 localedir = $(datadir)/locale
@@ -200,7 +198,6 @@ show:
 	@echo "seq66libdir               = $(seq66libdir)"
 	@echo "seq66datadir              = $(seq66datadir)"
 	@echo "seq66docdir               = $(seq66docdir)"
-	@echo "seq66doxygendir           = $(seq66doxygendir)"
 	@echo "seq66includedir           = $(seq66includedir)"
 	@echo "localedir                 = $(localedir)"
 	@echo

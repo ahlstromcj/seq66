@@ -3,8 +3,8 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2021-11-18
-; Version:      0.98.2
+; Updated:      2022-01-04
+; Version:      0.98.3
 ;
 ; Usage of this Windows build script:
 ;
@@ -92,12 +92,12 @@ Unicode True
 !insertmacro MUI_PAGE_WELCOME
 
 !define MUI_LICENSEPAGE_CHECKBOX
-!insertmacro MUI_PAGE_LICENSE "..\data\license.txt"
+!insertmacro MUI_PAGE_LICENSE "..\data\license.text"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 
-!define MUI_FINISHPAGE_SHOWREADME "..\data\readme.txt"
+!define MUI_FINISHPAGE_SHOWREADME "..\data\readme.text"
 !insertmacro MUI_PAGE_FINISH
 !insertmacro MUI_UNPAGE_INSTFILES
 
@@ -297,8 +297,8 @@ Section Uninstall
 
     ExpandEnvStrings $0 %COMSPEC%
 
-;   Delete "$INSTDIR\license.txt"
-;   Delete "$INSTDIR\readme.txt"
+;   Delete "$INSTDIR\license.text"
+;   Delete "$INSTDIR\readme.text"
 
     Delete "$INSTDIR\uninst.exe"
     RMDir /r "$INSTDIR"

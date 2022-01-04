@@ -444,7 +444,6 @@ seq66datadir = @seq66datadir@
 # Install directories
 #------------------------------------------------------------------------------
 seq66docdir = @seq66docdir@
-seq66doxygendir = @seq66doxygendir@
 seq66includedir = @seq66includedir@
 seq66libdir = @seq66libdir@
 seq66pixdir = @seq66pixdir@

@@ -21,7 +21,7 @@
 # \library    	seq66
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update       2021-03-10
+# \update      2022-01-04
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -315,7 +315,6 @@ runstatedir = @runstatedir@
 sbindir = @sbindir@
 seq66datadir = @seq66datadir@
 seq66docdir = @seq66docdir@
-seq66doxygendir = @seq66doxygendir@
 seq66includedir = @seq66includedir@
 seq66libdir = @seq66libdir@
 seq66pixdir = @seq66pixdir@
@@ -359,7 +358,7 @@ EXTRA_DIST = alsa.m4 \
  xpc_doxygen.m4 \
  xpc_errorlog.m4 \
  xpc_mingw.m4 \
- xpc_mingw32.m4 \
+ xpc_mingw.m4 \
  xpc_nullptr.m4 \
  xpc_thisptr.m4
 

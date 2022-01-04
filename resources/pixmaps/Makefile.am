@@ -6,7 +6,7 @@
 # \library     seq66 application
 # \author      Chris Ahlstrom
 # \date        2015-09-11
-# \update      2022-01-03
+# \update      2022-01-04
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -54,6 +54,7 @@ EXTRA_DIST = \
  play2.xpm \
  play.xpm \
  q_rec.xpm \
+ qseq66.png \
  quantize.xpm \
  rec.xpm \
  redo.xpm \
@@ -92,7 +93,7 @@ EXTRA_DIST = \
 
 pixmapdir = $(datadir)/pixmaps
 
-pixmap_DATA = route66rwb-32x32.xpm route66rwb-64x64.xpm route66.xpm seq66.xpm
+pixmap_DATA = route66rwb-32x32.xpm route66rwb-64x64.xpm route66.xpm qseq66.png
 
 #*****************************************************************************
 # Makefile.am (seq66)

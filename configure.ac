@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2022-01-01
+dnl \update        2022-01-04
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -176,9 +176,6 @@ AC_SUBST(seq66docdir)
 
 seq66datadir="${datadir}/seq66-${SEQ66_API_VERSION}"
 AC_SUBST(seq66datadir)
-
-seq66doxygendir="${datadir}/doc/seq66-${SEQ66_API_VERSION}"
-AC_SUBST(seq66doxygendir)
 
 seq66pixdir="${datadir}/pixmaps/seq66-${SEQ66_API_VERSION}"
 AC_SUBST(seq66pixdir)
@@ -434,7 +431,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2022-01-01"
+#define VERSION_DATE_SHORT "2022-01-04"
 #define VERSION "0.98.3"
 
 )

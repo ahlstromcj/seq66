@@ -698,7 +698,6 @@ PKG_CONFIG
 LATEX
 DOXYGEN
 seq66pixdir
-seq66doxygendir
 seq66datadir
 seq66docdir
 seq66libdir
@@ -16030,9 +16029,6 @@ seq66docdir="${datadir}/doc/seq66-${SEQ66_API_VERSION}"
 
 
 seq66datadir="${datadir}/seq66-${SEQ66_API_VERSION}"
-
-
-seq66doxygendir="${datadir}/doc/seq66-${SEQ66_API_VERSION}"
 
 
 seq66pixdir="${datadir}/pixmaps/seq66-${SEQ66_API_VERSION}"
