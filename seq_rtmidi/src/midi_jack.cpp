@@ -166,6 +166,10 @@
 
 #if defined SEQ66_JACK_SUPPORT
 
+#if defined SEQ66_JACK_METADATA
+#include <jack/metadata.h>
+#endif
+
 #include <sstream>
 
 #include <jack/midiport.h>
@@ -1170,6 +1174,14 @@ midi_jack::connect_port
  *  Note that the buffer size of non-built-in port type is 0, and so it is
  *  ignored.
  *
+ * JackPortIsTerminal:
+ *
+ *      For an input port, the data received by the port will not be passed on
+ *      or made available at any other port.  For an output port, the data
+ *      available at the port does not originate from any other port. Audio
+ *      synthesizers, I/O hardware interface clients, HDR systems are examples
+ *      of clients that would set this flag for their ports.
+ *
  * \tricky
  *      If we are registering an input port, this means that we got the input
  *      port from the system.  In order to connect to that port, we have
@@ -1211,6 +1223,14 @@ midi_jack::register_port (bool input, const std::string & portname)
         {
             port_handle(p);
             result = true;
+
+#if defined SEQ66_JACK_METADATA
+            (void) set_jack_port_property   // EXPERIMENTAL:  Does not work
+            (
+                client_handle(), p, JACK_METADATA_PRETTY_NAME, "Pretty Name"
+            );
+#endif
+
             if (rc().verbose())
             {
                 infoprintf("JACK port registered: '%s'", portname.c_str());

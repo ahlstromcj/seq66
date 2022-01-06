@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2021-12-06
+ * \updates       2022-01-05
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information
@@ -71,16 +71,6 @@
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
 #include "util/calculations.hpp"        /* seq66::extract_port_names()      */
 #include "util/strfunctions.hpp"        /* seq66::contains()                */
-
-
-/**
- *  This item exists in the JACK 2 source code, but not in the installed JACK
- *  headers on our development system.
- */
-
-#if defined SEQ66_JACK_METADATA
-static const char * const JACK_METADATA_ICON_NAME = "icon-name";
-#endif
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -234,20 +224,23 @@ midi_jack_info::connect ()
 #if defined SEQ66_JACK_METADATA
                 bool ok = set_jack_client_property
                 (
-                    m_jack_client, JACK_METADATA_ICON_NAME, seq_app_name()
+                    m_jack_client, JACK_METADATA_ICON_NAME,
+                    seq_app_name()              /* text/plain or "" */
                 );
                 if (ok)
                 {
                     ok = set_jack_client_property
                     (
-                        m_jack_client, JACK_METADATA_ICON_SMALL, qseq66_32x32
+                        m_jack_client, JACK_METADATA_ICON_SMALL,
+                        qseq66_32x32, "image/png;base64"
                     );
                 }
                 if (ok)
                 {
                     ok = set_jack_client_property
                     (
-                        m_jack_client, JACK_METADATA_ICON_LARGE, qseq66_32x32
+                        m_jack_client, JACK_METADATA_ICON_LARGE,
+                        qseq66_128x128, "image/png;base64"
                     );
                 }
 #endif

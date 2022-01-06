@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2022-01-04
+ * \updates       2022-01-05
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -111,6 +111,15 @@
 #if defined SEQ66_JACK_METADATA
 #include <jack/metadata.h>
 #include <jack/uuid.h>
+
+/**
+ *  This item exists in the JACK 2 source code, but not in the installed JACK
+ *  headers on our development system.
+ */
+
+const char * const JACK_METADATA_ICON_NAME =
+    "http://jackaudio.org/metadata/icon-name";
+
 #endif
 
 #if defined SEQ66_JACK_SESSION          /* deprecated, use Non Session Mgr. */
@@ -427,12 +436,24 @@ create_jack_client (std::string clientname, std::string uuid)
 
 /**
  *  A free function in the Seq66 namespace
+ *
+ *  This works to get back the correct client name:
+ *
+ *      char * name = jack_get_client_name_by_uuid(jc, luuid);
  */
 
 std::string
 get_jack_client_uuid (jack_client_t * jc)
 {
     std::string result;
+#if defined SEQ66_JACK_SESSION          /* deprecated, use Non Session Mgr. */
+    char * luuid = jack_client_get_uuid(jc);
+    if (not_nullptr(luuid))
+    {
+        result = luuid;                 /* see note in the banner           */
+        jack_free(luuid);
+    }
+#else
     char * lname = jack_get_client_name(jc);
     if (not_nullptr(lname))
     {
@@ -440,42 +461,80 @@ get_jack_client_uuid (jack_client_t * jc)
         if (not_nullptr(luuid))
         {
             result = luuid;
-            jack_free(luuid);
+
+            /*
+             * Apparently not needed here: jack_free(luuid);
+             */
         }
     }
+#endif
     return result;
 }
+
+#if defined SEQ66_JACK_METADATA
+
+/**
+ *  Need type to be "image/png;" in some of these calls.
+ *
+ * \param key
+ *      Provides the name of this property, as a URI string.
+ *
+ * \param value
+ *      Provides the value of the property, a null-terminated string.
+ *
+ * \param type
+ *      Provides the type of data as an empty string (implies UTF-8
+ *      text/plain), a MIME type such as "image/png;base64" (image) or a URI
+ *      such as http://www.w3.org/2001/XMLSchema#int (integer).
+ */
 
 bool
 set_jack_client_property
 (
     jack_client_t * jc,
     const std::string & key,
-    const std::string & value
+    const std::string & value,
+    const std::string & type
 )
 {
     std::string uuid = get_jack_client_uuid(jc);
     bool result = ! uuid.empty();
     if (result)
     {
-        jack_uuid_t u2;
+        jack_uuid_t u2 = JACK_UUID_EMPTY_INITIALIZER;
         int rc = jack_uuid_parse(uuid.c_str(), &u2);
         result = rc == 0;
         if (result)
         {
-#if defined SEQ66_JACK_METADATA
             const char * k = key.c_str();
             const char * v = value.c_str();
-            const char * type = "";
-            rc = jack_set_property(jc, u2, k, v, type);
+            const char * t = type.c_str();
+            rc = jack_set_property(jc, u2, k, v, t);
             result = rc == 0;
-#else
-            result = false;
-#endif
         }
     }
     return result;
 }
+
+bool
+set_jack_port_property
+(
+    jack_client_t * jc,
+    jack_port_t * jp,
+    const std::string & key,
+    const std::string & value,
+    const std::string & type
+)
+{
+    jack_uuid_t uuid = jack_port_uuid(jp);
+    const char * k = key.c_str();
+    const char * v = value.c_str();
+    const char * t = type.c_str();
+    int rc = jack_set_property(jc, uuid, k, v, t);
+    return rc == 0;
+}
+
+#endif  // defined SEQ66_JACK_METADATA
 
 /**
  *  Provides a list of JACK status bits, and a brief string to explain the

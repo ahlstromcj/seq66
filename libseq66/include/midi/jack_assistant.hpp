@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2022-01-04
+ * \updates       2022-01-05
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -45,6 +45,15 @@
 
 #if defined SEQ66_JACK_SESSION
 #include <jack/session.h>
+#endif
+
+/**
+ *  This item exists in the JACK 2 source code, but not in the installed JACK
+ *  headers on our development system.
+ */
+
+#if defined SEQ66_JACK_METADATA
+extern const char * const JACK_METADATA_ICON_NAME;
 #endif
 
 #else
@@ -607,12 +616,25 @@ extern jack_client_t * create_jack_client
     std::string uuid = ""       /* deprecated */
 );
 extern std::string get_jack_client_uuid (jack_client_t * jc);
+
+#if defined SEQ66_JACK_METADATA
 extern bool set_jack_client_property
 (
     jack_client_t * jc,
     const std::string & key,
-    const std::string & value
+    const std::string & value,
+    const std::string & type = "text/plain"
 );
+extern bool set_jack_port_property
+(
+    jack_client_t * jc,
+    jack_port_t * jp,
+    const std::string & key,
+    const std::string & value,
+    const std::string & type = "text/plain"
+);
+#endif
+
 extern void show_jack_statuses (unsigned bits);
 extern std::string jack_state_name (const jack_transport_state_t & state);
 

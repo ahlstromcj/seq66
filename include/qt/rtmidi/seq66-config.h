@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-31
- * \updates       2022-01-01
+ * \updates       2022-01-04
  * \license       GNU GPLv2 or above
  *
  *  Qt Rtmidi Linux and Windows versions, hardwired for use with
@@ -70,7 +70,7 @@
 #endif
 
 #if ! defined SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2022-01-01"
+#define SEQ66_VERSION_DATE_SHORT "2022-01-04"
 #endif
 
 #if ! defined SEQ66_VERSION
@@ -293,6 +293,16 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #if ! defined SEQ66_HAVE_UNISTD_H
 #define SEQ66_HAVE_UNISTD_H 1
+#endif
+
+/* Enable JACK version string */
+#if ! defined SEQ66_JACK_GET_VERSION_STRING
+#define SEQ66_JACK_GET_VERSION_STRING 1
+#endif
+
+/* Define to enable JACK metadata */
+#if ! defined SEQ66_JACK_METADATA
+#define SEQ66_JACK_METADATA 1
 #endif
 
 /*

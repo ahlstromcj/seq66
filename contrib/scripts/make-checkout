@@ -4,7 +4,7 @@
 # \file        make-checkout
 # \library     bin
 # \author      Chris Ahlstrom
-# \date        2020-10-10 to 2021-10-21
+# \date        2020-10-10 to 2022-01-04
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
@@ -21,7 +21,7 @@ git checkout configure
 git checkout aux-files/ltmain.sh
 git checkout data/Makefile.in
 git checkout doc/Makefile.in
-git checkout doc/seq66-user-manual.pdf
+git checkout data/share/doc/seq66-user-manual.pdf
 # git checkout doc/dox/Makefile.in
 git checkout doc/latex/Makefile.in
 git checkout doc/latex/tex/Makefile.in
