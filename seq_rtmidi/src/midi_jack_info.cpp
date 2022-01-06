@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-01-05
+ * \updates       2022-01-06
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information
@@ -225,7 +225,7 @@ midi_jack_info::connect ()
                 bool ok = set_jack_client_property
                 (
                     m_jack_client, JACK_METADATA_ICON_NAME,
-                    seq_app_name()              /* text/plain or "" */
+                    seq_icon_name()              /* text/plain or "" */
                 );
                 if (ok)
                 {

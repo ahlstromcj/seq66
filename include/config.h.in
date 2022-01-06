@@ -1,6 +1,6 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2022-01-04"
+#define VERSION_DATE_SHORT "2022-01-06"
 #define VERSION "0.98.3"
 
 
@@ -113,6 +113,9 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* The canonical icon name for freedesktop */
+#undef ICON_NAME
 
 /* Enable JACK version string */
 #undef JACK_GET_VERSION_STRING

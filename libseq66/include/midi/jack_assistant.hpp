@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2022-01-05
+ * \updates       2022-01-06
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -53,7 +53,18 @@
  */
 
 #if defined SEQ66_JACK_METADATA
-extern const char * const JACK_METADATA_ICON_NAME;
+
+#if defined __cplusplus
+extern "C"
+{
+#endif
+
+extern const char * JACK_METADATA_ICON_NAME;
+
+#if defined __cplusplus
+} /* namespace */
+#endif
+
 #endif
 
 #else

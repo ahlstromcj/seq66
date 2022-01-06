@@ -664,6 +664,7 @@ BUILD_PORTMIDI_FALSE
 BUILD_PORTMIDI_TRUE
 BUILD_DOCS_FALSE
 BUILD_DOCS_TRUE
+ICON_NAME
 CONFIG_NAME
 CLIENT_NAME
 APP_BUILD_OS
@@ -853,6 +854,7 @@ enable_libtool_lock
 enable_docs
 enable_jack
 enable_jack_session
+enable_jack_metadata
 enable_nsm
 enable_rtmidi
 with_alsa_prefix
@@ -1535,6 +1537,7 @@ Optional Features:
   --enable-docs           Enable developer document support
   --disable-jack          Disable JACK support
   --disable-jack-session  Disable JACK session support
+  --enable-jack-metadata  Enable JACK metadata support
   --disable-nsm           Enable NSM support
   --disable-rtmidi        Disable rtmidi MIDI engine
   --disable-alsatest      Do not try to compile and run a test Alsa program
@@ -4583,7 +4586,6 @@ PACKAGE="seq66"
 cat >>confdefs.h <<_ACEOF
 #define PACKAGE "$PACKAGE"
 _ACEOF
-
 
 
 
@@ -16321,6 +16323,15 @@ else
 fi
 
 
+
+# Check whether --enable-jack-metadata was given.
+if test "${enable_jack_metadata+set}" = set; then :
+  enableval=$enable_jack_metadata; jack_metadata=$enableval
+else
+  jack_metadata=no
+fi
+
+
 if test "$jack" != "no"; then
 
 
@@ -16601,7 +16612,8 @@ $as_echo "#define JACK_GET_VERSION_STRING 1" >>confdefs.h
 $as_echo "JACK jack_get_version_string available." >&6; };
         fi
 
-        ac_fn_c_check_header_mongrel "$LINENO" "jack/metadata.h" "ac_cv_header_jack_metadata_h" "$ac_includes_default"
+        if test "$jack_metadata" = "yes"; then
+            ac_fn_c_check_header_mongrel "$LINENO" "jack/metadata.h" "ac_cv_header_jack_metadata_h" "$ac_includes_default"
 if test "x$ac_cv_header_jack_metadata_h" = xyes; then :
   jack_metadata="yes"
 else
@@ -16609,12 +16621,13 @@ else
 fi
 
 
-        if test "$jack_metadata" == "yes"; then
+            if test "$jack_metadata" == "yes"; then
 
 $as_echo "#define JACK_METADATA 1" >>confdefs.h
 
-            { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK metadata support enabled." >&5
+                { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK metadata support enabled." >&5
 $as_echo "JACK metadata support enabled." >&6; };
+            fi
         fi
     else
         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not find JACK library, disabling JACK." >&5
@@ -16763,6 +16776,9 @@ $as_echo "#define APP_ENGINE \"rtmidi\"" >>confdefs.h
 
 
 $as_echo "#define CONFIG_NAME \"seq66\"" >>confdefs.h
+
+
+$as_echo "#define ICON_NAME \"qseq66\"" >>confdefs.h
 
 
 $as_echo "#define RTMIDI_SUPPORT 1" >>confdefs.h
@@ -16999,6 +17015,9 @@ $as_echo "#define APP_TYPE \"qt5\"" >>confdefs.h
 
 
 $as_echo "#define CONFIG_NAME \"qseq66\"" >>confdefs.h
+
+
+$as_echo "#define ICON_NAME \"qseq66\"" >>confdefs.h
 
     alsa_save_CFLAGS="$CFLAGS"
 alsa_save_LDFLAGS="$LDFLAGS"
@@ -18096,6 +18115,9 @@ $as_echo "#define APP_ENGINE \"rtmidi\"" >>confdefs.h
 
 $as_echo "#define CONFIG_NAME \"seq66cli\"" >>confdefs.h
 
+
+$as_echo "#define ICON_NAME \"qseq66\"" >>confdefs.h
+
     if test "x$mingw" != "xyes" ; then
         build_rtcli="yes"
         build_qtmidi="no"
@@ -18333,6 +18355,9 @@ $as_echo "#define APP_NAME \"seq66portmidi\"" >>confdefs.h
 
 $as_echo "#define CONFIG_NAME \"seq66portmidi\"" >>confdefs.h
 
+
+$as_echo "#define ICON_NAME \"qseq66\"" >>confdefs.h
+
     alsa_save_CFLAGS="$CFLAGS"
 alsa_save_LDFLAGS="$LDFLAGS"
 alsa_save_LIBS="$LIBS"
@@ -18544,6 +18569,7 @@ else
     { $as_echo "$as_me:${as_lineno-$LINENO}: PortMidi build disabled." >&5
 $as_echo "$as_me: PortMidi build disabled." >&6;};
 fi
+
 
 
 

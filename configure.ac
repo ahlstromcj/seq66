@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2022-01-04
+dnl \update        2022-01-06
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -71,8 +71,6 @@ dnl    name of the client application for display, and the version.
 PACKAGE="seq66"
 AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
 AC_SUBST(PACKAGE)
-
-dnl AC_DEFINE(APP_NAME, ["seq66"], "The default name of the Seq66 executable")
 
 AC_DEFINE(APP_TYPE, ["qt5"], "The type of the Seq66 executable, qt/cli")
 AC_DEFINE(APP_ENGINE, ["rtmidi"], "Seq66 MIDI engine, rtmidi/portmidi")
@@ -256,6 +254,13 @@ AC_ARG_ENABLE(jack-session,
     [jack_session=$enableval],
     [jack_session=yes])
 
+dnl Having issues with JACK metadata, so making is disabled by default.
+
+AC_ARG_ENABLE(jack-metadata,
+    [AS_HELP_STRING(--enable-jack-metadata, [Enable JACK metadata support])],
+    [jack_metadata=$enableval],
+    [jack_metadata=no])
+
 if test "$jack" != "no"; then
     PKG_CHECK_MODULES(JACK, jack >= 0.90.0, jack_found="yes", jack_found="no")
     if test "$jack_found" = "yes"; then
@@ -280,11 +285,13 @@ if test "$jack" != "no"; then
             AC_MSG_RESULT([JACK jack_get_version_string available.]);
         fi
 
-        AC_CHECK_HEADER(jack/metadata.h, jack_metadata="yes",
-            jack_metadata="no")
-        if test "$jack_metadata" == "yes"; then
-            AC_DEFINE(JACK_METADATA, 1, [Define to enable JACK metadata])
-            AC_MSG_RESULT([JACK metadata support enabled.]);
+        if test "$jack_metadata" = "yes"; then
+            AC_CHECK_HEADER(jack/metadata.h, jack_metadata="yes",
+                jack_metadata="no")
+            if test "$jack_metadata" == "yes"; then
+                AC_DEFINE(JACK_METADATA, 1, [Define to enable JACK metadata])
+                AC_MSG_RESULT([JACK metadata support enabled.]);
+            fi
         fi
     else
         AC_MSG_WARN([Could not find JACK library, disabling JACK.])
@@ -348,6 +355,7 @@ if test "$rtmidi" != "no"; then
     AC_DEFINE(APP_NAME, ["seq66"], [Names the JACK/ALSA version of application])
     AC_DEFINE(APP_ENGINE, ["rtmidi"], [Names the MIDI engine of the application])
     AC_DEFINE(CONFIG_NAME, ["seq66"], [Configuration file name])
+    AC_DEFINE(ICON_NAME, ["qseq66"], [The canonical icon name for freedesktop])
     AC_DEFINE(RTMIDI_SUPPORT, 1, [Indicates if rtmidi is enabled])
     AM_PATH_ALSA(0.9.0)
     AC_MSG_RESULT([rtmidi engine build enabled.]);
@@ -370,6 +378,7 @@ if test "$ac_qtmidi" != "no"; then
     AC_DEFINE(APP_ENGINE, ["rtmidi"], [Name of the MIDI engine])
     AC_DEFINE(APP_TYPE, ["qt5"], [Name of the UI of the application])
     AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration base file name])
+    AC_DEFINE(ICON_NAME, ["qseq66"], [The canonical icon name for freedesktop])
     AM_PATH_ALSA(0.9.0)
     AX_HAVE_QT_MIN
     AC_MSG_RESULT([qt user-interface build enabled.]);
@@ -389,6 +398,7 @@ if test "$cli" != "no"; then
     AC_DEFINE(APP_TYPE, ["cli"], [Name of the UI])
     AC_DEFINE(APP_ENGINE, ["rtmidi"], [Name of the MIDI engine])
     AC_DEFINE(CONFIG_NAME, ["seq66cli"], [Configuration file name])
+    AC_DEFINE(ICON_NAME, ["qseq66"], [The canonical icon name for freedesktop])
     if test "x$mingw" != "xyes" ; then
         build_rtcli="yes"
         build_qtmidi="no"
@@ -413,6 +423,7 @@ if test "$portmidi" != "no"; then
     AC_DEFINE(PORTMIDI_SUPPORT, 1, [Indicates if PortMidi is enabled])
     AC_DEFINE(APP_NAME, ["seq66portmidi"], [Name of this application])
     AC_DEFINE(CONFIG_NAME, ["seq66portmidi"], [Configuration file name])
+    AC_DEFINE(ICON_NAME, ["qseq66"], [The canonical icon name for freedesktop])
     AM_PATH_ALSA(0.9.0)
     AC_MSG_RESULT([PortMidi build enabled.]);
 else
@@ -425,6 +436,7 @@ AC_SUBST(APP_ENGINE)
 AC_SUBST(APP_BUILD_OS)
 AC_SUBST(CLIENT_NAME)
 AC_SUBST(CONFIG_NAME)
+AC_SUBST(ICON_NAME)
 
 AM_CONDITIONAL([BUILD_DOCS], [test "$build_docs" = "yes"])
 AM_CONDITIONAL([BUILD_PORTMIDI], [test "$build_portmidi" = "yes"])
@@ -439,7 +451,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2022-01-04"
+#define VERSION_DATE_SHORT "2022-01-06"
 #define VERSION "0.98.3"
 
 )

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2021-11-26
+ * \updates       2022-01-06
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -110,6 +110,7 @@ extern const std::string & seq_app_type ();
 extern const std::string & seq_arg_0 ();
 extern const std::string & seq_client_name ();
 extern const std::string & seq_client_short ();
+extern const std::string & seq_icon_name ();
 extern bool is_a_tty (int fd);
 extern std::string seq_client_tag (msglevel el = msglevel::none);
 extern const std::string & seq_package_name ();

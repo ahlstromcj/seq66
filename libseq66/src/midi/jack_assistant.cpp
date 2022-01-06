@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2022-01-05
+ * \updates       2022-01-06
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -108,6 +108,8 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "cfg/settings.hpp"             /* "rc" and "user" settings         */
 
+#if defined SEQ66_JACK_SESSION          /* deprecated, use Non Session Mgr. */
+
 #if defined SEQ66_JACK_METADATA
 #include <jack/metadata.h>
 #include <jack/uuid.h>
@@ -117,13 +119,13 @@
  *  headers on our development system.
  */
 
-const char * const JACK_METADATA_ICON_NAME =
+const char * JACK_METADATA_ICON_NAME =
     "http://jackaudio.org/metadata/icon-name";
 
 #endif
 
-#if defined SEQ66_JACK_SESSION          /* deprecated, use Non Session Mgr. */
 #include "midi/midifile.hpp"            /* seq66::midifile class            */
+
 #endif
 
 /*

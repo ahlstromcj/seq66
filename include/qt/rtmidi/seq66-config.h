@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-31
- * \updates       2022-01-04
+ * \updates       2022-01-06
  * \license       GNU GPLv2 or above
  *
  *  Qt Rtmidi Linux and Windows versions, hardwired for use with
@@ -70,7 +70,7 @@
 #endif
 
 #if ! defined SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2022-01-04"
+#define SEQ66_VERSION_DATE_SHORT "2022-01-06"
 #endif
 
 #if ! defined SEQ66_VERSION
@@ -153,6 +153,10 @@
 
 #if ! defined SEQ66_CONFIG_NAME
 #define SEQ66_CONFIG_NAME "qrseq66"
+#endif
+
+#if ! defined SEQ66_ICON_NAME
+#define SEQ66_ICON_NAME "qseq66"
 #endif
 
 /*
@@ -300,10 +304,13 @@
 #define SEQ66_JACK_GET_VERSION_STRING 1
 #endif
 
-/* Define to enable JACK metadata */
-#if ! defined SEQ66_JACK_METADATA
-#define SEQ66_JACK_METADATA 1
-#endif
+/* Define to enable JACK metadata -- disabled for now due to issues */
+/*
+ *
+ * #if ! defined SEQ66_JACK_METADATA
+ * #define SEQ66_JACK_METADATA 1
+ * #endif
+ */
 
 /*
  * Define to enable JACK session.  It is deprecated by the JACK developers,

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-12-06
+ * \updates       2022-01-06
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
