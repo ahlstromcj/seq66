@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-31
+ * \updates       2022-01-07
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -416,12 +416,8 @@ usrfile::parse ()
 
     s = get_variable(file, "[user-session]", "url");
     usr().session_url(strip_quotes(s));
-    s = get_variable(file, "[user-session]", "visibility");
-    if (! s.empty())                    /* check succeeds, get it for real  */
-    {
-        flag = get_boolean(file, "[user-session]", "visibility");
-        usr().session_visibility(flag);
-    }
+    flag = get_boolean(file, "[user-session]", "visibility", 0, true);
+    usr().session_visibility(flag);
     flag = get_boolean(file, "[new-pattern-editor]", "armed");
     usr().new_pattern_armed(flag);
     flag = get_boolean(file, "[new-pattern-editor]", "thru");
@@ -480,7 +476,7 @@ usrfile::write ()
     write_seq66_header(file, "usr", version());
     write_comment(file, usr().comments_block().text());
     file <<
-"#\n"
+"\n"
 "# [user-midi-bus-definitions]\n"
 "#\n"
 "# 1. Define instruments and their control-code names, as applicable.\n"
@@ -695,10 +691,8 @@ usrfile::write ()
 "# 'convert-to-smf-1' controls if SMF 0 files are split into SMF 1 when read.\n"
 "# 'buss-override' sets the output port for all patterns, for testing etc.\n"
 "# Don't save the MIDI file unless you want to save the buss value!\n"
-"#\n"
 "# 'velocity-override' when adding notes in the pattern editor is set via the\n"
 "# 'Vol' button.  -1 ('Free'), preserves incoming velocity.\n"
-"#\n"
 "# 'bpm-precision' (spinner and MIDI control) is 0, 1, or 2.\n"
 "# 'bpm-step-increment' affects the spinner and MIDI control. For 1 decimal,\n"
 "# 0.1 is good. For 2, 0.01 is good, 0.05 is faster. Set 'bpm-page-increment'\n"
@@ -812,9 +806,10 @@ usrfile::write ()
 "#\n"
 "# The session manager to use, if any. 'session' is 'none' (default), 'nsm'\n"
 "# (Non/New Session Manager), or 'jack'. 'url' can be set to the value set by\n"
-"# nsmd when run by command-line. Set 'url' only if running nsmd stand-alone;\n"
-"# use the --osc-port number. Seq66 detects if started in NSM, though. The\n"
-"# visibility flag is used only by NSM to restore visibility.\n"
+"# nsmd when run by command-line. Set 'url' if running nsmd stand-alone; use\n"
+"# the --osc-port number. Seq66 detects if started in NSM. The visibility flag\n"
+"# is used only by NSM to restore visibility. 'copy-config' indicates if the\n"
+"# existing home configuration is copied to a new NSM session.\n"
 "\n[user-session]\n\n"
         ;
     write_string(file, "session", usr().session_manager_name());

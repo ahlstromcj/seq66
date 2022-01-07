@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2021-12-30
+ * \updates       2022-01-07
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -258,7 +258,7 @@ smanager::main_settings (int argc, char * argv [])
  *
  *      -#  main_settings().  Gets the normal Seq66 configuration items from
  *          the "rc", "usr", "mutes", "ctrl", and "playlist" files.
- *      -#  create_session().  Sets up the session and does the "announce"
+ *      -#  create_session().  Sets up the session and does the NSM "announce"
  *          handshake protocol. We ignore the return code so that Seq66 can
  *          run even if NSM is not available.  This call also receives the
  *          "open" response, which provides the NSM path, display name, and
@@ -306,7 +306,7 @@ smanager::create_performer ()
         result = perf()->launch(ppqn);              /* usr().midi_ppqn())   */
         if (! result)
         {
-            errprint("performer::launch() failed");
+            errprint("performer launch failed");
         }
     }
     else
@@ -897,7 +897,8 @@ smanager::create_configuration
         }
         else
         {
-            rc().set_save_list(true);                   /* save them all    */
+            usr().session_visibility(false);            /* new session=hide */
+            rc().set_save_list(true);                   /* save all configs */
             result = make_directory_path(mainpath);
             if (result)
             {

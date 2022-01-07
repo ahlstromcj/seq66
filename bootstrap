@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2021-10-13
+# \update         2022-01-07
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -18,10 +18,13 @@
 #     Use this script in any manner whatsoever.  You don't even need to give
 #     me any credit.  However, keep in mind the value of the GPL in keeping
 #     software and its descendant modifications available to the community for
-#     all time.  runs the configure script by default.
+#     all time.  Runs the configure script by default.
 #
-#     This file provides the functionality we expect to find in an
-#     autogen.sh script.
+#     This file provides the functionality we expect to find in an autogen.sh
+#     script.  Also see contrib/scripts/reconf, which is less comprehensive
+#     but more standard.
+#
+#     Also see the helper functions in contrib/scripts/strap_functions.
 #
 #------------------------------------------------------------------------------
 
@@ -33,9 +36,9 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2021-10-13"
-export SEQ66_LIBRARY_API_VERSION="0.97"
-export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.1"
+export SEQ66_SCRIPT_EDIT_DATE="2022-01-07"
+export SEQ66_LIBRARY_API_VERSION="0.98"
+export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.3"
 
 #******************************************************************************
 #  Version info
@@ -95,7 +98,7 @@ EXTRAFLAGS=""
 if [ "$1" == "--help" ] ; then
 
    cat << E_O_F
-Usage: ./bootstrap [options]                             (0.96.3-2021-09-03)
+Usage: ./bootstrap [options]                             (0.98.3-2022-01-06)
 
 'bootstrap' sets up GNU automake and libtool support for the Seq66 project
 and creates the 'configure' script.  It can super-clean the project, removing
@@ -115,6 +118,7 @@ passing long options to the configure script for some canned setups.
  -pm                 Configure for qpseq66.  Implies --enable-portmidi.
  -rm                 Configure for qseq66 (JACK version, the default).
                      Implies --enable-rtmidi.  The official GUI is Qt 5.
+ --metadata          Enable JACK metadata support.  Still has issues.
  -cli                Configure for seq66cli (command-line rtmidi version).
  --no-nsm            Disable Non Session Manager support.  Saves some code.
  --manual            Build the user manual.
@@ -198,6 +202,10 @@ if [ $# -ge 1 ] ; then
             EXTRAFLAGS+=" --enable-rtmidi"
             ;;
 
+         --metadata | -md | --enable-jack-metadata)
+            EXTRAFLAGS+=" --enable-jack-metadata"
+            ;;
+
          --cli | -cli)
             DORTCLI="yes"
             DORELEASE="yes"
@@ -247,7 +255,6 @@ echo "EXTRAFLAGS = $EXTRAFLAGS"
 
 if [ $DOCLEAN == "yes" ] ; then
    make clean 
-#  clean_cfgfiles
    clean_gnufiles
    clean_tempfiles
    clean_m4
@@ -263,7 +270,6 @@ if [ $DOFULLCLEAN == "yes" ] ; then
    rm -f include/stamp-h1
    rm -f include/seq66-config.h
    rm -rf po
-#  rm -f configure
    clean_debfiles
    echo "   All junk files removed."
 

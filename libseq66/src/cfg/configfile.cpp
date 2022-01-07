@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-15
+ * \updates       2022-01-07
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -463,11 +463,12 @@ configfile::get_boolean
     std::ifstream & file,
     const std::string & tag,
     const std::string & variablename,
-    int position
+    int position,
+    bool defalt
 )
 {
     std::string value = get_variable(file, tag, variablename, position);
-    return string_to_bool(value);
+    return string_to_bool(value, defalt);
 }
 
 void

@@ -4,14 +4,14 @@
 # \file        reconf
 # \library     bin
 # \author      Chris Ahlstrom
-# \date        2020-11-25 to 2020-11-25
+# \date        2020-11-25 to 2022-01-07
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
-# This script can be run when make fails due to local variations on the versions
-# of the GNU autotools.
+#  This script can be run when make fails due to local variations on the
+#  versions of the GNU autotools.
 #
-# Not sure why version numbers are used in GNU autotools.
+#  Not sure why version numbers are used in GNU autotools.
 #
 #------------------------------------------------------------------------------
 

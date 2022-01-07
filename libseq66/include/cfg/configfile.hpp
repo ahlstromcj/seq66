@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-15
+ * \updates       2022-01-07
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -344,7 +344,8 @@ protected:
         std::ifstream & file,
         const std::string & tag,
         const std::string & variablename,
-        int position = 0
+        int position = 0,
+        bool defalt = false
     );
     void write_boolean
     (
