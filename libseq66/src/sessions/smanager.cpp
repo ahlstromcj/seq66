@@ -898,15 +898,16 @@ smanager::create_configuration
         else
         {
             usr().session_visibility(false);            /* new session=hide */
+            rc().load_most_recent(false);               /* don't load MIDI  */
             rc().set_save_list(true);                   /* save all configs */
             result = make_directory_path(mainpath);
             if (result)
             {
-                file_message("Created", mainpath);
+                file_message("Ready", mainpath);
                 result = make_directory_path(cfgfilepath);
                 if (result)
                 {
-                    file_message("Created", cfgfilepath);
+                    file_message("Ready", cfgfilepath);
                     rc().full_config_directory(cfgfilepath);
                 }
             }
@@ -914,7 +915,7 @@ smanager::create_configuration
             {
                 result = make_directory_path(midifilepath);
                 if (result)
-                    file_message("Created", midifilepath);
+                    file_message("Ready", midifilepath);
             }
             if (result)
             {
@@ -937,7 +938,7 @@ smanager::create_configuration
 
                 std::string dstplayfile = file_path_set(srcplayfile, cfgfilepath);
                 std::string dstnotefile = file_path_set(srcnotefile, cfgfilepath);
-                file_message("Saving configuration to session", cfgfilepath);
+                file_message("Saving session configuration", cfgfilepath);
                 rc().auto_usr_save(true);
 
                 /*

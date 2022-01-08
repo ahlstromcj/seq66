@@ -227,7 +227,7 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    development, and has been reimplemented as a \textsl{GitHub} project,
    the \textsl{New Session Manager}.
 
-   General, the applications it manages should be installed normally (that is,
+   The applications it manages should be installed normally (that is,
    for system-wide usage, in
    \texttt{/usr/bin/} or \texttt{/usr/local/bin}).
 
@@ -315,11 +315,21 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    It is then important to start \texttt{qseq66} in the normal manner again,
    and verify that everything works as expected.
 
-   As the next section shows, if one wants to start with a blank configuration,
-   simply move or hide any existing \textsl{Seq66} configuration files from the
+   \textbf{Warning}.
+   As the next section shows, if one wants to start with a
+   \textsl{blank} NSM configuration,
+   simply \textsl{move or hide}
+   any existing \textsl{Seq66} configuration files from the
    "HOME" (\texttt{/home/user/.config/seq66})
    configuration directory before
    creating an NSM session and adding \textsl{Seq66} to it.
+
+   We are considered expanding the \textbf{File / Import into session...}
+   command to do this automatic importing manually.
+   \index{NSM!template}
+   On the other hand, the user can use the configuration
+   in \texttt{/home/user/.config/seqq66} as a stock configuration
+   to use as a \textsl{template} when creating a new session.
 
 \subsubsection{Seq66 Session Management / NSM / Run in NSM}
 \label{subsec:sessions_nsm_first_run_in_nsm}
@@ -334,6 +344,8 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    in the \textsl{NSM} session directory.
    If these configuration files \textsl{do} exist,
    then they are \textsl{replicated} in the \textsl{NSM} session directory.
+   If the configuration specifies play-lists, the whole play-list, including
+   the MIDI files, are replicated in the NSM session.
 
    \textbf{No existing normal configuration}.
    Here, we have just installed \textsl{Seq66}, but have not

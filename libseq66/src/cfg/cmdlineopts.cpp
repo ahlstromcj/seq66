@@ -687,7 +687,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
         }
         else
         {
-            file_message("No usr file, will create", rcn);
+            file_message("No usr file", rcn);
         }
     }
     return result;

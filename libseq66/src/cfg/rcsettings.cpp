@@ -600,7 +600,7 @@ rcsettings::create_config_names ()
     std::string pl = file_extension_set(cfgname, ".playlist");
     std::string nm = file_extension_set(cfgname, ".drums");
     std::string pa = file_extension_set(cfgname, ".palette");
-    std::string af = cfgname + ".rc/ctrl/midi/mutes/drums/playlist/palette";
+    std::string af = cfgname + ".rc,ctrl,midi,mutes,drums,playlist,palette";
     rc().midi_control_filename(cf);
     rc().mute_group_filename(mf);
     rc().user_filename(uf);
@@ -608,7 +608,7 @@ rcsettings::create_config_names ()
     rc().notemap_filename(nm);
     rc().palette_filename(pa);
     rc().mute_groups().reset_defaults();
-    file_message("No rc file, will create", af);
+    file_message("No rc file, creating", af);
 }
 
 /**
