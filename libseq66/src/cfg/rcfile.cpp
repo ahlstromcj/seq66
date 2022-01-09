@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-29
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -108,14 +108,14 @@ static const int s_rc_file_version = 2;
  */
 
 rcfile::rcfile (const std::string & name, rcsettings & rcs) :
-    configfile  (name, rcs)
+    configfile  (name, rcs, ".rc")
 {
     version(s_rc_file_version);
 }
 
 /**
- *  Parse the ~/.config/seq66/qseq66.rc file.  After this function is
- *  called, the performer::get_settings() function can be used to populate the
+ *  Parse the ~/.config/seq66/qseq66.rc file.  After this function is called,
+ *  the performer::get_settings() function can be used to populate the
  *  performer with the settings it needs.
  *
  *  [midi-control-file]

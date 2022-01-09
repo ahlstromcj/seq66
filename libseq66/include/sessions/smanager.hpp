@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2021-08-30
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -176,11 +176,27 @@ public:
         return  bool(m_perf_pointer) ? m_perf_pointer->error_pending() : true ;
     }
 
+#if defined USE_IMPORT_INTO_SESSION
+    bool make_paths
+    (
+        const std::string & path,
+        std::string & outcfgpath,
+        std::string & outmidipath
+    );
+    bool import_into_session
+    (
+        const std::string & path,
+        const std::string & sourcebase
+    );
+#endif
+
 public:
 
     virtual bool create_session (int argc = 0, char * argv [] = nullptr);
     virtual bool close_session (std::string & msg, bool ok = true);
+#if defined SEQ66_SESSION_DETACHABLE
     virtual bool detach_session (std::string & msg, bool ok = true);
+#endif
     virtual bool save_session (std::string & msg, bool ok = true);
     virtual bool create_window ();
     virtual bool create_project

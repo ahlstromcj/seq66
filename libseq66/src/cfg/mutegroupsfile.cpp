@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-12-10
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -80,7 +80,7 @@ mutegroupsfile::mutegroupsfile
     rcsettings & rcs,
     bool allowinactive
 ) :
-    configfile              (filename, rcs),
+    configfile              (filename, rcs, ".mutes"),
     m_legacy_format         (true),                 // true only for now
     m_allow_inactive        (allowinactive),
     m_section_count         (mutegroup::c_default_rows),

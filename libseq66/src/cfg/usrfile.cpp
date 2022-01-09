@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-01-07
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -77,7 +77,7 @@ static const int s_usr_file_version = 9;
  */
 
 usrfile::usrfile (const std::string & name, rcsettings & rcs) :
-    configfile (name, rcs)
+    configfile (name, rcs, ".usr")
 {
     version(s_usr_file_version);
 }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2022-02-04
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -170,7 +170,7 @@ midicontrolfile::midicontrolfile
     const std::string & filename,
     rcsettings & rcs
 ) :
-    configfile              (filename, rcs),
+    configfile              (filename, rcs, ".ctrl"),
     m_temp_key_controls     (),                             /* reading only */
     m_temp_midi_ctrl_in     ("ctrl"),                       /* reading only */
     m_stanzas               ()

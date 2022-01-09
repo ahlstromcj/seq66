@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-12-29
- * \updates       2021-12-30
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  *  This file is a read-only file created manually by the user in order
@@ -66,7 +66,7 @@ sessionfile::sessionfile
     const std::string & tag,
     rcsettings & rcs
 ) :
-    configfile  (filename, rcs),
+    configfile  (filename, rcs, ".rc"),
     m_tag_name  (tag)
 {
     version(s_session_file_version);

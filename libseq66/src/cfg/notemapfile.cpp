@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2021-11-04
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -65,7 +65,7 @@ notemapfile::notemapfile
     const std::string & filename,
     rcsettings & rcs
 ) :
-    configfile      (filename, rcs),
+    configfile      (filename, rcs, ".drums"),
     m_note_mapper   (mapper)
 {
     // Empty body

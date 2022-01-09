@@ -67,6 +67,7 @@ extern bool file_close
     FILE * filehandle,
     const std::string & filename = ""
 );
+extern bool file_delete (const std::string & filespec);
 extern bool file_copy
 (
     const std::string & file,

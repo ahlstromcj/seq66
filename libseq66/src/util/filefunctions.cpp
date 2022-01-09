@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-12-29
+ * \updates       2022-01-09
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -101,6 +101,7 @@
 #define S_OPEN      _sopen_s            /* Microsoft's safe open()          */
 #define S_RMDIR     _rmdir              /* Microsoft's rmdir()              */
 #define S_STAT      _stat               /* Microsoft's stat function        */
+#define S_UNLINK    _unlink             /* Microsoft file deletion function */
 #define S_MAX_FNAME _MAX_FNAME          /* Microsoft's filename size (260!) */
 #define S_MAX_PATH  _MAX_PATH           /* Microsoft's path size (260!)     */
 
@@ -118,6 +119,7 @@ using stat_t = struct _stat;
 #define S_OPEN      _sopen_s            /* Microsoft's safe open()          */
 #define S_RMDIR     rmdir
 #define S_STAT      stat
+#define S_UNLINK    _unlink             /* Microsoft file deletion function */
 #define S_MAX_FNAME _MAX_FNAME          /* Microsoft's filename size (260!) */
 #define S_MAX_PATH  _MAX_PATH           /* Microsoft's path size (260!)     */
 
@@ -139,6 +141,7 @@ using stat_t = struct stat;
 #define S_OPEN      open                /* ISO/POSIX/BSD safe open()        */
 #define S_RMDIR     rmdir               /* ISO/POSIX/BSD rmdir()            */
 #define S_STAT      stat                /* ISO/POSIX/BSD stat function      */
+#define S_UNLINK    unlink              /* ISO etc. file deletion function  */
 #define S_MAX_FNAME NAME_MAX            /* ISO/POSIX/BSD stat function      */
 #define S_MAX_PATH  PATH_MAX            /* POSIX path size                  */
 
@@ -825,6 +828,20 @@ file_close (FILE * filehandle, const std::string & filename)
     return result;
 }
 
+bool
+file_delete (const std::string & filespec)
+{
+    bool result = ! filespec.empty();
+    if (result)
+    {
+        int rc = unlink(filespec.c_str());
+        result = rc != (-1);
+        if (! result)
+            file_error("Delete failed", filespec);
+    }
+    return result;
+}
+
 /**
  *  Copies a file to a file with a different name.  The file names can be
  *  absolute, or they can be relative.  This function will refuse to copy a
@@ -1223,12 +1240,12 @@ get_current_directory ()
         }
         else
         {
-            errprint("empty directory name returned");
+            errprint("empty current directory name");
         }
     }
     else
     {
-        errprint("could not get current directory");
+        errprint("current directory unavailable");
     }
     return result;
 }
@@ -1552,7 +1569,6 @@ pathname_concatenate (const std::string & path0, const std::string & path1)
     result += cleanpath1;
     return result;
 }
-
 
 /**
  *  This function is a kind of inverse of filename_concatenate().  Note that

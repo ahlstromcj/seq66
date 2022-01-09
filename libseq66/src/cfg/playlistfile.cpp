@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2021-12-10
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -88,7 +88,7 @@ playlistfile::playlistfile
     rcsettings & rcs,
     bool show_on_stdout
 ) :
-    configfile          (filename, rcs),
+    configfile          (filename, rcs, ".playlist"),
     m_play_list         (pl),
     m_show_on_stdout    (show_on_stdout)
 {

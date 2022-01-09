@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2021-12-10
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -67,7 +67,7 @@ palettefile::palettefile
     const std::string & filename,
     rcsettings & rcs
 ) :
-    configfile      (filename, rcs),
+    configfile      (filename, rcs, ".palette"),
     m_palettes      (mapper)
 {
     // Empty body

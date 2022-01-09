@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-12-08
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -40,7 +40,7 @@
  *  Save session    save_session()          Save MIDI (and config?) in session
  *  Save As         HIDDEN                  See Export from Session
  *  Export from ... save_file_as()          Copy MIDI file outside of session
- *  Close           quit_session            Detach from session management
+ *  Close (hidden)  quit_session            Detach from session management
  *
  * Normal Menu Entries:
  *
@@ -1716,6 +1716,8 @@ qsmainwnd::save_session ()
     return result;
 }
 
+#if defined SEQ66_SESSION_DETACHABLE
+
 /**
  *  Not yet ready for prime time.
  */
@@ -1742,6 +1744,8 @@ qsmainwnd::detach_session ()
     }
     return result;
 }
+
+#endif
 
 bool
 qsmainwnd::save_file (const std::string & fname, bool updatemenu)
@@ -2629,6 +2633,8 @@ qsmainwnd::quit ()
     }
 }
 
+#if defined SEQ66_SESSION_DETACHABLE
+
 /**
  *  Calls check(), and if it checks out (heh heh), removes all of the editor
  *  windows and then calls for an exit of the application.  It "detaches" from
@@ -2662,6 +2668,8 @@ qsmainwnd::quit_session ()
         }
     }
 }
+
+#endif
 
 /**
  *  By experimenting, we see that the live frame gets all of the keystrokes.
@@ -2970,8 +2978,15 @@ qsmainwnd::connect_nsm_slots ()
         this, SLOT(save_file_as())
     );
 
+#if defined SEQ66_SESSION_DETACHABLE
+
     /*
-     * File / Close.
+     * File / Close. The original author of NSM asked us what the heck "detach
+     * session" meant, but his own documentation says this:
+     *
+     *      :::: Close (as distinguished from Quit or Exit)
+     *      This option *MUST* be disabled unless its meaning is to disconnect
+     *      the application from session management.
      */
 
     ui->actionClose->setText("&Detach Session");
@@ -2982,6 +2997,13 @@ qsmainwnd::connect_nsm_slots ()
         this, SLOT(quit_session())
     );
     ui->actionClose->setEnabled(false);
+
+#else
+
+    ui->actionClose->setVisible(false); // ui->actionClose->hide();
+
+#endif
+
 }
 
 void
@@ -3004,10 +3026,12 @@ qsmainwnd::disconnect_nsm_slots ()
     (
         ui->actionSave_As, SIGNAL(triggered(bool)), this, SLOT(save_file_as())
     );
+#if defined SEQ66_SESSION_DETACHABLE
     disconnect
     (
         ui->actionClose, SIGNAL(triggered(bool)), this, SLOT(quit_session())
     );
+#endif
 }
 
 void
@@ -3061,12 +3085,16 @@ qsmainwnd::connect_normal_slots ()
         this, SLOT(save_file_as())
     );
 
+#if defined SEQ66_SESSION_DETACHABLE
+
     /*
      * File / Close.  Hide it.  Used only for NSM; otherwise the stock
      * Quit enty is used.
      */
 
     ui->actionClose->setVisible(false);
+
+#endif
 
     /*
      * File / Recent MIDI files

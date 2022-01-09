@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2021-11-29
+ * \updates       2022-01-09
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -383,10 +383,12 @@ protected:
     virtual bool save_session ();
     virtual bool close_session ();
 
+#if defined SEQ66_SESSION_DETACHABLE
     virtual bool detach_session ()
     {
         return close_session();
     }
+#endif
 
 };          // class nsmbase
 

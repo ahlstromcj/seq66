@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-12-12
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -281,6 +281,8 @@ qt5nsmanager::close_session (std::string & msg, bool ok)
     return saved && closed;
 }
 
+#if defined SEQ66_SESSION_DETACHABLE
+
 /**
  *  Will do more with this later.  Currently we just call the base class.
  */
@@ -290,6 +292,8 @@ qt5nsmanager::detach_session (std::string & msg, bool ok)
 {
     return clinsmanager::detach_session(msg, ok);
 }
+
+#endif
 
 bool
 qt5nsmanager::run ()

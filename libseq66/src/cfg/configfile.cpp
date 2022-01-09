@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-01-07
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -53,6 +53,7 @@
 #include "cfg/configfile.hpp"           /* seq66:: configfile class         */
 #include "cfg/rcsettings.hpp"           /* seq66::rcsettings class          */
 #include "util/calculations.hpp"        /* seq66::current_date_time() etc.  */
+#include "util/filefunctions.hpp"       /* seq66::filename_base() etc.      */
 #include "util/strfunctions.hpp"        /* strncompare() for std::string    */
 
 /*
@@ -71,6 +72,17 @@ std::string configfile::sm_error_message;
 bool configfile::sm_is_error = false;
 int configfile::sm_int_default = -9999;
 int configfile::sm_float_default = -9999.0f;
+tokenization configfile::sm_file_extensions
+{
+    ".ctrl",
+    ".drums",
+    ".mutes",
+    ".palette",
+    ".playlist",
+    ".qss",
+    ".rc",
+    ".usr"
+};
 
 /**
  *  Provides the string plus rcsettings constructor for a configuration file.
@@ -84,14 +96,20 @@ int configfile::sm_float_default = -9999.0f;
  *      usrfile.
  */
 
-configfile::configfile (const std::string & name, rcsettings & rcs) :
-    m_rc            (rcs),
-    m_name          (name),
-    m_version       ("0"),
-    m_file_version  ("0"),
-    m_line          (),
-    m_line_number   (0),
-    m_line_pos      (0)
+configfile::configfile
+(
+    const std::string & name,
+    rcsettings & rcs,
+    const std::string & fileext
+) :
+    m_rc                (rcs),
+    m_file_extension    (fileext),
+    m_name              (name),
+    m_version           ("0"),
+    m_file_version      ("0"),
+    m_line              (),
+    m_line_number       (0),
+    m_line_pos          (0)
 {
     // no code needed
 }
@@ -905,7 +923,7 @@ configfile::set_up_ifstream (std::ifstream & instream)
             (
                 temp, sizeof temp, "Version not found: %s\n", name().c_str()
             );
-            result = make_error_message("rc", temp);
+            result = make_error_message(file_extension(), temp);
         }
         else
         {
@@ -924,7 +942,64 @@ configfile::set_up_ifstream (std::ifstream & instream)
     {
         char temp[128];
         snprintf(temp, sizeof temp, "Read open fail: %s\n", name().c_str());
-        result = make_error_message("rc", temp);
+        result = make_error_message(file_extension(), temp);
+    }
+    return result;
+}
+
+/*
+ *  Free functions.
+ */
+
+bool
+delete_configuration (const std::string & path, const std::string & basename)
+{
+    bool result = ! path.empty() && ! basename.empty();
+    if (result)
+    {
+        std::string base = filename_base(basename, true);   /* strip .ext */
+        for (const auto & ext : configfile::sm_file_extensions)
+        {
+            std::string fname = filename_concatenate(path, base);
+            fname = file_extension_set(fname, ext);
+            if (file_exists(fname))
+                (void) file_delete(fname);
+        }
+    }
+    return result;
+}
+
+bool
+copy_configuration
+(
+    const std::string & source,         /* path */
+    const std::string & basename,
+    const std::string & destination     /* path */
+)
+{
+    bool result = ! source.empty() &&
+        ! basename.empty() && ! destination.empty();
+
+    if (result)
+    {
+        std::string base = filename_base(basename, true);   /* strip .ext */
+        for (const auto & ext : configfile::sm_file_extensions)
+        {
+            std::string srcname = filename_concatenate(source, base);
+            srcname = file_extension_set(srcname, ext);
+            if (file_exists(srcname))
+            {
+                std::string destname = filename_concatenate(destination, base);
+                destname = file_extension_set(destname, ext);
+
+                bool ok = file_copy(srcname, destname);
+                if (! ok)
+                {
+                    result = false;
+                    break;
+                }
+            }
+        }
     }
     return result;
 }

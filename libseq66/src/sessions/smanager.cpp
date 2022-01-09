@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2022-01-07
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -64,7 +64,7 @@
 #include "util/filefunctions.hpp"       /* seq66::file_readable() etc.      */
 
 #if defined SEQ66_PORTMIDI_SUPPORT
-#include "portmidi.h"        /*  Pm_error_present(), Pm_hosterror_message() */
+#include "portmidi.h"                   /* Pm_error_present()               */
 #endif
 
 /*
@@ -141,17 +141,14 @@ smanager::main_settings (int argc, char * argv [])
     set_app_name(SEQ66_APP_NAME);       /* "qseq66" by default              */
     set_arg_0(argv[0]);                 /* how it got started               */
 
-
     /**
-     * Set up objects that are specific to the GUI.  Pass them to the
-     * performer constructor.  Then parse any command-line options to see if
-     * they might affect what gets read from the 'rc' or 'user' configuration
-     * files.  They will be parsed again later so that they can still override
-     * whatever other settings were made via the configuration files.
-     *
-     * However, we currently have a issue where the mastermidibus created by
-     * the performer object gets the default PPQN value, because the "user"
-     * configuration file has not been read at that point.  See the
+     * Set up objects specific to the GUI for the performer.  Parse command-line
+     * options to see if they affect what gets read from the 'rc' or 'usr'
+     * configuration files. They will be parsed again later so that they can
+     * still override whatever other settings were made via the configuration
+     * files.  However, we currently have a issue where the mastermidibus
+     * created by the performer object gets the default PPQN value, because the
+     * "user" configuration file has not been read at that point.  See the
      * performer::launch() function.
      */
 
@@ -456,6 +453,8 @@ smanager::close_session (std::string & msg, bool ok)
     return result;
 }
 
+#if defined SEQ66_SESSION_DETACHABLE
+
 /**
  *  Detaches the session, with an option to handle errors in the session.
  *  It does not stop the performer.
@@ -492,6 +491,8 @@ smanager::detach_session (std::string & /*msg*/, bool ok)
     usr().in_nsm_session(false);                        /* global flag      */
     return result;
 }
+
+#endif
 
 /**
  *  This function saves the following files (so far):
@@ -874,7 +875,8 @@ smanager::create_configuration
     if (result)
     {
         std::string homepath = rc().home_config_directory();
-        std::string rcfile = cfgfilepath + rc().config_filename();
+        std::string rcbase = rc().config_filename();
+        std::string rcfile = filename_concatenate(cfgfilepath, rcbase);
         bool already_created = file_exists(rcfile);
         rc().midi_filepath(midifilepath);               /* do this first    */
         if (already_created)
@@ -1063,6 +1065,243 @@ smanager::read_configuration
     }
     return result;
 }
+
+#if defined USE_IMPORT_INTO_SESSION
+
+bool
+smanager::make_paths
+(
+    const std::string & path,
+    std::string & outcfgpath,
+    std::string & outmidipath
+)
+{
+    bool result = ! path.empty();
+    if (result)
+    {
+        std::string cfgpath = path;
+        std::string midipath = path;
+        std::string homepath = rc().home_config_directory();
+        if (nsm_active())
+        {
+            outcfgpath = pathname_concatenate(cfgpath, "config");
+            outmidipath = pathname_concatenate(midipath, "midi");
+        }
+        else
+            outmidipath.clear();
+    }
+    return result;
+}
+
+/**
+ *  Function for the main window to call.
+ *
+ *  When this function succeeds, we need to signal a session-reload and the
+ *  following settings:
+ *
+ *  rc().load_most_recent(false);               // don't load MIDI  //
+ *  rc().set_save_list(true);                   // save all configs //
+ */
+
+bool
+smanager::import_into_session
+(
+    const std::string & sourcepath,
+    const std::string & sourcebase      /* e.g. qrseq66.rc */
+)
+{
+    bool result = ! sourcepath.empty() && ! sourcebase.empty();
+    if (result)
+    {
+        // from clinsmanager::create_project()
+
+
+    }
+    return result;
+}
+
+/**
+ *  This function is like create_configuration(), but the source is not the
+ *  standard configuration=file directory, but a directory chosen by the user.
+ *  This function should be called only for importing a configuration into an NSM
+ *  session directory.
+ *
+ * \param mainpath
+ *      Not sure if we need this yet.  It is either the "manager path"
+ *      (obtained from NSM) or rc().home_config_directory.
+ *
+ * \param sourcepath
+ *      The source path is the path to the configuration files chosen for
+ *      import by the user.  Often it is the usual ~/.config/seq66 directory.
+ *
+ * \param sourcebase
+ *      This is the actual configuration file chosen by the user.  It can be any
+ *      file qseq66.*, only the first part of the name (e.g. "qseq66") is used.
+ *
+ * \param cfgfilepath
+ *      This is the configuration directory used in this NSM session.  It is
+ *      often something like "~/NSM Sessions/MySession/seq66.nLTQC/config.
+ *      This is the destination for the imported configuration files.
+ *
+ * \param midifilepath
+ *      This is the MIDI directory used in this NSM session.  It is often
+ *      something like "~/NSM Sessions/MySession/seq66.nLTQC/midi.
+ *      This is the destination for the imported MIDI files (due to being
+ *      part of an imported play-list.
+ *
+ * \return
+ *      Returns true if the import succeeded.
+ */
+
+bool
+smanager::import_configuration
+(
+    const std::string & mainpath,
+    const std::string & sourcepath,
+    const std::string & sourcebase,
+    const std::string & cfgfilepath,
+    const std::string & midifilepath
+)
+{
+    bool result = ! sourcepath.empty() && ! sourcebase.empty();
+    if (result)
+    {
+        std::string rcbase = file_extension_set(sourcebase, ".rc");
+        std::string rcfile = filename_concatenate(sourcepath, rcbase);
+        result = file_exists(rcfile);                   /* a valid source   */
+        if (result)
+        {
+            file_message("File exists", rcfile);        /* comforting       */
+            result = read_configuration(argc, argv, cfgfilepath, midifilepath);
+            if (result)
+            {
+                if (usr().in_nsm_session())
+                {
+                    rc().auto_rc_save(true);
+                }
+                else
+                {
+                    bool u = rc().auto_usr_save();      /* --user-save?     */
+                    rc().set_save_list(false);          /* save them all    */
+                    rc().auto_usr_save(u);              /* restore it       */
+                }
+            }
+        }
+
+
+        if (result)
+        {
+            /*
+             * At this point, the existing NSM session directory holds the old
+             * configuration files.  We need to delete them and replace them
+             * with the imported ones, get the new configuration, and import
+             * any playlists.
+             */
+
+            /*
+             * Make sure the configuration is created in the session right
+             * now, in case the session manager tells the app to quit
+             * (without saving).  We need to replace the path part, if
+             * any, in the playlist and notemapper file-names, and prepend
+             * the new home directory.  Note that, at this point, the
+             * performer has not yet been created.
+             */
+
+            std::string srcplayfile = rc().playlist_filename();
+            std::string srcnotefile = rc().notemap_filename();
+            if (srcplayfile.empty())
+                srcplayfile = "empty.playlist";
+
+            if (srcnotefile.empty())
+                srcnotefile = "empty.drums";
+
+            std::string dstplayfile = file_path_set(srcplayfile, cfgfilepath);
+            std::string dstnotefile = file_path_set(srcnotefile, cfgfilepath);
+            file_message("Saving session configuration", cfgfilepath);
+            rc().auto_usr_save(true);
+
+            /*
+             * Unnecessary. We already have the base name, and don't need
+             * to prepend the configuration/session directory.
+             *
+             *      rc().playlist_filename(dstplayfile);
+             *      rc().notemap_filename(dstnotefile);
+             */
+
+            if (usr().in_nsm_session())
+                rc().auto_rc_save(true);
+
+            result = cmdlineopts::write_options_files();
+            if (result)
+            {
+                if (! rc().playlist_active())
+                {
+                    warnprint("Play-list inactive, saving anyway");
+                }
+                if (dstplayfile.empty())
+                {
+                    file_error("Play-list file", "none");
+                }
+                else
+                {
+                    std::string s("Temp");
+                    performer * p(nullptr);
+                    std::shared_ptr<playlist> plp;
+                    plp.reset(new (std::nothrow) playlist(p, s, false));
+                    result = bool(plp);
+                    if (result)
+                    {
+                        srcplayfile = file_path_set(srcplayfile, sourcepath);
+                        (void) save_playlist(*plp, srcplayfile, dstplayfile);
+                        if (! midifilepath.empty())
+                        {
+                            (void) copy_playlist_songs
+                            (
+                                *plp, srcplayfile, midifilepath
+                            );
+                        }
+
+                        /*
+                         * The first is where MIDI files are stored in the
+                         * session, and the second is where they are
+                         * stored for the play-list.  Currently, the same
+                         * directory.  Not considered to be an issue at
+                         * this time.
+                         */
+
+                        rc().midi_filepath(midifilepath);
+                        rc().midi_base_directory(midifilepath);
+                    }
+                }
+            }
+            if (result)
+            {
+                if (! rc().notemap_active())
+                {
+                    warnprint("Note-map not active, saving anyway");
+                }
+
+                std::string destination = rc().notemap_filename();
+                if (destination.empty())
+                {
+                    warnprint("Note-map file name empty");
+                }
+                else
+                {
+                    std::shared_ptr<notemapper> nmp;
+                    nmp.reset(new (std::nothrow) notemapper());
+                    result = bool(nmp);
+                    file_message("Note-mapper save", destination);
+                    srcnotefile = file_path_set(srcnotefile, sourcepath);
+                    (void) copy_notemapper(*nmp, srcnotefile, destination);
+                }
+            }
+        }
+    }
+    return result;
+}
+
+#endif
 
 }           // namespace seq66
 

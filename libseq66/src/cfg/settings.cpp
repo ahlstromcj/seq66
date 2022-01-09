@@ -87,7 +87,7 @@ combo::ctoi (int index) const
 const tokenization &
 default_ppqns ()
 {
-    static tokenization s_default_ppqn_list =
+    static tokenization s_default_ppqn_list
     {
         "32", "48", "96", "192", "240",
         "384", "768", "960", "1920", "2400",

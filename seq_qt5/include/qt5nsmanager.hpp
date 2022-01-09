@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-11-30
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -77,7 +77,9 @@ public:
     virtual ~qt5nsmanager ();
 
     virtual bool close_session (std::string & msg, bool ok = true) override;
+#if defined SEQ66_SESSION_DETACHABLE
     virtual bool detach_session (std::string & msg, bool ok = true) override;
+#endif
     virtual bool create_window () override;
     virtual void show_message
     (

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-15
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -435,13 +435,15 @@ private slots:
     void new_session ();
     bool save_file (const std::string & fname = "", bool updatemenu = true);
     bool save_session ();
-    bool detach_session ();
     bool save_file_as ();
     bool export_file_as_midi (const std::string & fname = "");
     bool export_file_as_smf_0 (const std::string & fname = "");
     bool export_song (const std::string & fname = "");
     void quit ();
+#if defined SEQ66_SESSION_DETACHABLE
+    bool detach_session ();
     void quit_session ();
+#endif
     void import_into_set ();                /* normal import into set       */
     void import_into_session ();            /* import MIDI into session     */
     void select_and_load_file ();

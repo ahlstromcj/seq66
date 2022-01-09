@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-01-07
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -37,6 +37,8 @@
 
 #include <fstream>                      /* std::streampos                   */
 #include <string>                       /* std::string, the ubiquitous one  */
+
+#include "util/basic_macros.hpp"        /* seq66::tokenization vector       */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -66,6 +68,18 @@ namespace seq66
 class configfile
 {
 
+    friend bool delete_configuration
+    (
+        const std::string & path,
+        const std::string & basename
+    );
+    friend bool copy_configuration
+    (
+        const std::string & source,
+        const std::string & basename,
+        const std::string & destination
+    );
+
 private:
 
     /**
@@ -80,6 +94,27 @@ private:
 
     static bool sm_is_error;
 
+    /**
+     *  Provides a numerical flag to use a default value for an integer.
+     */
+
+    static int sm_int_default;
+
+    /**
+     *  Provides a numerical flag to use a default value for a double or float
+     *  value.
+     */
+
+    static int sm_float_default;
+
+    /**
+     *  Supported ile-extensions.  The qss extension is included, but only
+     *  canoncial names like qseq66.qss will be manipulated (apart from being
+     *  read).
+     */
+
+    static tokenization sm_file_extensions;
+
 private:
 
     /**
@@ -87,6 +122,12 @@ private:
      */
 
     rcsettings & m_rc;
+
+    /**
+     *  The file extension of the configuration file.
+     */
+
+    std::string m_file_extension;
 
     /**
      *  Provides the name of the configuration or other file being parsed.
@@ -120,19 +161,6 @@ private:
 protected:
 
     /**
-     *  Provides a numerical flag to use a default value for an integer.
-     */
-
-    static int sm_int_default;
-
-    /**
-     *  Provides a numerical flag to use a default value for a double or float
-     *  value.
-     */
-
-    static int sm_float_default;
-
-    /**
      *  The current line of text being processed.  This member receives
      *  an input line, and so needs to be a character buffer.
      */
@@ -153,7 +181,12 @@ protected:
 
 public:
 
-    configfile (const std::string & name, rcsettings & rcs);
+    configfile
+    (
+        const std::string & name,
+        rcsettings & rcs,
+        const std::string & fileext
+    );
 
     configfile () = delete;
     configfile (const configfile &) = delete;
@@ -174,6 +207,11 @@ public:
     std::string parse_comments (std::ifstream & file);
     std::string parse_version (std::ifstream & file);
     bool file_version_old (std::ifstream & file);
+
+    const std::string & file_extension () const
+    {
+        return m_file_extension;
+    }
 
     const std::string & name () const
     {
@@ -408,6 +446,22 @@ protected:
     );
 
 };          // class configfile
+
+/*
+ *  Free functions.
+ */
+
+extern bool delete_configuration
+(
+    const std::string & path,
+    const std::string & basename
+);
+extern bool copy_configuration
+(
+    const std::string & source,
+    const std::string & basename,
+    const std::string & destination
+);
 
 }           // namespace seq66
 

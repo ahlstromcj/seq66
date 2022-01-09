@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2021-11-30
+ * \updates       2022-01-09
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -220,6 +220,8 @@ clinsmanager::close_session (std::string & msg, bool ok)
     return smanager::close_session(msg, ok);
 }
 
+#if defined SEQ66_SESSION_DETACHABLE
+
 /**
  *  Somewhat of the inverse of create_session().
  */
@@ -241,6 +243,8 @@ clinsmanager::detach_session (std::string & msg, bool ok)
 #endif
     return smanager::detach_session(msg, ok);
 }
+
+#endif
 
 /**
  *  Saves the active MIDI file, and then calls the base-class version of
@@ -349,6 +353,12 @@ clinsmanager::create_project
     bool result = ! path.empty();
     if (result)
     {
+#if defined USE_IMPORT_INTO_SESSION
+        std::string cfgpath;
+        std::string midipath;
+        result = make_paths(path, cfgpath, midipath);
+        if (result)
+#else
         std::string cfgpath = path;
         std::string midipath = path;
         std::string homepath = rc().home_config_directory();
@@ -359,8 +369,9 @@ clinsmanager::create_project
         }
         else
             midipath.clear();
+#endif
 
-        result = create_configuration(argc, argv, path, cfgpath, midipath);
+            result = create_configuration(argc, argv, path, cfgpath, midipath);
     }
 #if defined SEQ66_NSM_SUPPORT
     if (m_nsm_client)
