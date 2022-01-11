@@ -353,24 +353,10 @@ clinsmanager::create_project
     bool result = ! path.empty();
     if (result)
     {
-#if defined USE_IMPORT_INTO_SESSION
         std::string cfgpath;
         std::string midipath;
-        result = make_paths(path, cfgpath, midipath);
+        result = make_path_names(path, cfgpath, midipath);
         if (result)
-#else
-        std::string cfgpath = path;
-        std::string midipath = path;
-        std::string homepath = rc().home_config_directory();
-        if (nsm_active())
-        {
-            cfgpath = pathname_concatenate(cfgpath, "config");
-            midipath = pathname_concatenate(midipath, "midi");
-        }
-        else
-            midipath.clear();
-#endif
-
             result = create_configuration(argc, argv, path, cfgpath, midipath);
     }
 #if defined SEQ66_NSM_SUPPORT

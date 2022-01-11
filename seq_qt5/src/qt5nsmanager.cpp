@@ -80,12 +80,6 @@ qt5nsmanager::qt5nsmanager
 #if defined QT_VERSION_STR
     set_qt_version(std::string(QT_VERSION_STR));
 #endif
-
-    /*
-     * EXPERIMENTAL:  Move this to create_window().
-     * m_timer = qt_timer(this, "qt5nsmanager", 5, SLOT(conditional_update()));
-     * When running help, the timer pointer is null in the constructor.
-     */
 }
 
 qt5nsmanager::~qt5nsmanager ()
@@ -156,12 +150,14 @@ qt5nsmanager::create_window ()
                 (void) open_palette(global_palette(), palfile);
         }
 
-        qsmainwnd * qm = new (std::nothrow) qsmainwnd(*p, mfname, usensm);
+        qsmainwnd * qm = new (std::nothrow) qsmainwnd(*p, mfname, usensm, this);
         result = not_nullptr(qm);
         if (result)
         {
             m_window.reset(qm);
+#if defined SEQ66_SESSION_DETACHABLE
             m_window->attach_session(this);         /* ATTACH/DETACH        */
+#endif
 #if defined SEQ66_NSM_SUPPORT
             if (not_nullptr(nsm_client()))
             {

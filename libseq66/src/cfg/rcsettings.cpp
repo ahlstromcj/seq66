@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-12-30
+ * \updates       2022-01-10
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -589,26 +589,28 @@ rcsettings::trim_home_directory (const std::string & filepath)
  */
 
 void
-rcsettings::create_config_names ()
+rcsettings::create_config_names (const std::string & base)
 {
-    std::string cfgname = rc().config_filename();       /* "xyzt.rc"    */
-    cfgname = filename_base(cfgname, true);             /* strip ".rc"  */
+    std::string cfgname = base.empty() ? rc().config_filename() : base ;
+    cfgname = filename_base(cfgname, true);             /* strip extension  */
 
+    std::string cc = file_extension_set(cfgname, ".rc");
+    std::string uf = file_extension_set(cfgname, ".usr");
     std::string cf = file_extension_set(cfgname, ".ctrl");
     std::string mf = file_extension_set(cfgname, ".mutes");
-    std::string uf = file_extension_set(cfgname, ".usr");
     std::string pl = file_extension_set(cfgname, ".playlist");
     std::string nm = file_extension_set(cfgname, ".drums");
     std::string pa = file_extension_set(cfgname, ".palette");
     std::string af = cfgname + ".rc,ctrl,midi,mutes,drums,playlist,palette";
+    rc().config_filename(cc);
+    rc().user_filename(uf);
     rc().midi_control_filename(cf);
     rc().mute_group_filename(mf);
-    rc().user_filename(uf);
     rc().playlist_filename(pl);
     rc().notemap_filename(nm);
     rc().palette_filename(pa);
     rc().mute_groups().reset_defaults();
-    file_message("No rc file, creating", af);
+    file_message("Configuration files", af);
 }
 
 /**

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2021-11-24
+ * \updates       2022-01-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -80,6 +80,12 @@ extern QTimer * qt_timer
 extern void enable_combobox_item (QComboBox * box, int index, bool enabled);
 extern bool show_open_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_import_midi_file_dialog (QWidget * parent, std::string & file);
+extern bool show_import_project_dialog
+(
+    QWidget * parent,
+    std::string & selecteddir,
+    std::string & selectedfile
+);
 extern bool show_playlist_dialog
 (
     QWidget * parent,

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-01-09
+ * \updates       2022-01-11
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -100,6 +100,7 @@ namespace seq66
     class qslivegrid;
     class qsmaintime;
     class smanager;
+    class qt5nsmanager;
 
 /**
  * The main window of Kepler34... er, I mean Seq66.
@@ -124,7 +125,7 @@ public:
         performer & p,
         const std::string & midifilename    = "",
         bool usensm                         = false,
-        QWidget * parent                    = nullptr
+        qt5nsmanager * sessionmgr           = nullptr // QWidget * p = nullptr
     );
     virtual ~qsmainwnd ();
 
@@ -282,12 +283,13 @@ private:
 private:
 
     Ui::qsmainwnd * ui;
+    qt5nsmanager * m_session_mgr;           /* LATER: unique_ptr()? */
     int m_initial_width;
     int m_initial_height;
     qslivebase * m_live_frame;
     qperfeditex * m_perfedit;
     qperfeditframe64 * m_song_frame64;
-    qseqframe * m_edit_frame;           /* was qseqeditframe */
+    qseqframe * m_edit_frame;
     qseqeventframe * m_event_frame;
     qplaylistframe * m_playlist_frame;
     QErrorMessage * m_msg_error;
@@ -395,15 +397,6 @@ private:
 
     bool m_shrunken;
 
-    /**
-     *  Thinking about this one. How can we attach and detach from a session
-     *  from this main window?  We need to pass this back to the session
-     *  manager?  For now, let's use a bare pointer that is not null unless
-     *  we are "detached".
-     */
-
-    smanager * m_session_mgr_ptr;
-
 signals:
 
     void signal_set_change (int setno);
@@ -441,11 +434,13 @@ private slots:
     bool export_song (const std::string & fname = "");
     void quit ();
 #if defined SEQ66_SESSION_DETACHABLE
+    void attach_session (smanager * sp);
     bool detach_session ();
     void quit_session ();
 #endif
-    void import_into_set ();                /* normal import into set       */
-    void import_into_session ();            /* import MIDI into session     */
+    void import_midi_into_set ();           /* normal import into set       */
+    void import_midi_into_session ();       /* import MIDI into session     */
+    void import_project ();                 /* import a configuration       */
     void select_and_load_file ();
     void show_open_list_dialog ();
     void show_save_list_dialog ();          /* NOT YET CONNECTED            */
@@ -482,11 +477,10 @@ private slots:
 private:
 
     void remove_set_master ();
-    void attach_session (smanager * sp);    // UNNECESSARY?
 
-    smanager * session ()
+    qt5nsmanager * session ()
     {
-        return m_session_mgr_ptr;
+        return m_session_mgr;
     }
 
 };          // class qsmainwnd

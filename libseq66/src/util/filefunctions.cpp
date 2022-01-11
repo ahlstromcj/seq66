@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-01-09
+ * \updates       2022-01-11
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1684,7 +1684,12 @@ file_extension (const std::string & path)
 
 /**
  *  This function makes sure that the file-extension of the given path is set
- *  to the given extension parameter.
+ *  to the given extension parameter. Styles that need to be handled:
+ *
+ *  -   /dir0/dir1/name[.ext]
+ *  -   /home/user/.config/seq66/qseq66[.ext]
+ *  -   /dir0/dir1/dir2.xyz/name
+ *  -   /dir0/dir1/name/
  *
  * \param path
  *      Provides the path-name, which can have an extension, or not. It can
@@ -1693,7 +1698,7 @@ file_extension (const std::string & path)
  * \param ext
  *      Provides the desired extension.  It must include the period, as in
  *      ".ctrl". If this parameter is empty, and an extension exists, it is
- *      stripped off.  This is the default value.
+ *      stripped off.  The default value is empty.
  *
  * \return
  *      Returns a copy of the augmented (or extension-stripped) string.
@@ -1703,17 +1708,27 @@ std::string
 file_extension_set (const std::string & path, const std::string & ext)
 {
     std::string result;
-    auto ppos = path.find_last_of(".");
-    if (ppos != std::string::npos)
+    if (! path.empty())
     {
-        result = path.substr(0, ppos);
-        if (! ext.empty())
+        bool extpresent = false;
+        auto ppos = path.find_last_of(".");
+        if (ppos != std::string::npos)
+        {
+            auto spos = path.find_last_of("/");
+            if (ppos > spos)
+                extpresent = true;
+        }
+        if (extpresent)
+        {
+            result = path.substr(0, ppos);
+            if (! ext.empty())
+                result += ext;
+        }
+        else
+        {
+            result = path;
             result += ext;
-    }
-    else
-    {
-        result = path;
-        result += ext;
+        }
     }
     return result;
 }

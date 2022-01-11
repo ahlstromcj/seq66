@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-01-09
+ * \updates       2022-01-11
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -958,6 +958,8 @@ delete_configuration (const std::string & path, const std::string & basename)
     if (result)
     {
         std::string base = filename_base(basename, true);   /* strip .ext */
+        std::string msg = "Deleting " + base + " from";
+        file_message(msg, path);
         for (const auto & ext : configfile::sm_file_extensions)
         {
             std::string fname = filename_concatenate(path, base);
@@ -983,15 +985,20 @@ copy_configuration
     if (result)
     {
         std::string base = filename_base(basename, true);   /* strip .ext */
+        std::string sourcename = filename_concatenate(source, base);
+        std::string destinationname = filename_concatenate(destination, base);
+        std::string msg = "Copying " + source + base + " to";
+        file_message(msg, destination);
         for (const auto & ext : configfile::sm_file_extensions)
         {
-            std::string srcname = filename_concatenate(source, base);
-            srcname = file_extension_set(srcname, ext);
+            // std::string srcname = filename_concatenate(source, base);
+            // srcname = file_extension_set(srcname, ext);
+            std::string srcname = file_extension_set(sourcename, ext);
             if (file_exists(srcname))
             {
-                std::string destname = filename_concatenate(destination, base);
-                destname = file_extension_set(destname, ext);
-
+                // std::string destname = filename_concatenate(destination, base);
+                // destname = file_extension_set(destname, ext);
+                std::string destname = file_extension_set(destinationname, ext);
                 bool ok = file_copy(srcname, destname);
                 if (! ok)
                 {

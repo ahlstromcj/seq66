@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-12-30
+ * \updates       2022-01-10
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -421,10 +421,10 @@ cmdlineopts::help_check (int argc, char * argv [])
         )
         {
             result = true;
+            break;
         }
         else if (arg == "?")
         {
-            show_help();
             result = true;
             break;
         }
@@ -627,69 +627,72 @@ cmdlineopts::parse_log_option (int argc, char * argv [])
  * \return
  *      Returns true if the reading of both configuration files succeeded, or
  *      if they did not exist.  In the latter case, they will be saved as new
- *      files upon exit.
+ *      files upon exit.  In other words, missing configuration files is not
+ *      an error.
  */
 
 bool
 cmdlineopts::parse_options_files (std::string & errmessage)
 {
     std::string rcn = rc().config_filespec();
-    bool result = true;
-    if (file_read_writable(rcn))
+    bool result = parse_rc_file(rcn, errmessage);
+    if (result)
     {
-        rcfile options(rcn, rc());
-        file_message("Reading rc", rcn);
-        if (options.parse())
-        {
-            /*
-             * Nothing to do?
-             */
-        }
-        else
-        {
-            /*
-             * Let's continue with the defaults if there is no usable 'rc'
-             * file, rather than skipping a lot of other setup, which can
-             * cause mysterious segfaults.
-             *
-             * result = false;
-             */
+        rcn = rc().user_filespec();
+        result = parse_usr_file(rcn, errmessage);
+    }
+    return result;
+}
 
+bool
+cmdlineopts::parse_rc_file
+(
+    const std::string & filespec,
+    std::string & errmessage
+)
+{
+    bool result = true;
+    if (file_readable(filespec))
+    {
+        rcfile options(filespec, rc());
+        file_message("Reading rc", filespec);
+        result = options.parse();
+        if (! result)
+        {
             errmessage = options.get_error_message();
+            file_error("rc", errmessage);
         }
     }
     else
     {
+        file_message("No file", filespec);
         rc().create_config_names();
     }
-    if (result)
+    return result;
+}
+
+bool
+cmdlineopts::parse_usr_file
+(
+    const std::string & filespec,
+    std::string & errmessage
+)
+{
+    bool result = true;
+    if (file_readable(filespec))
     {
-        rcn = rc().user_filespec();
-        if (file_read_writable(rcn))
+        usrfile ufile(filespec, rc());
+        file_message("Reading usr", filespec);
+        result = ufile.parse();
+        if (! result)
         {
-            usrfile ufile(rcn, rc());
-            file_message("Reading usr", rcn);
-            if (ufile.parse())
-            {
-                /*
-                 * Since we are parsing this file after the creation of the
-                 * performer object, we may need to modify some performer
-                 * members here.  These changes must also be made after
-                 * parsing the command line in the main module (e.g. in
-                 * seq66rtmidi.cpp).
-                 */
-            }
-            else
-            {
-                errmessage = ufile.get_error_message();
-                result = false;
-            }
-        }
-        else
-        {
-            file_message("No usr file", rcn);
+            errmessage = ufile.get_error_message();
+            file_error("usr", errmessage);
         }
     }
+    else
+        file_message("No file", filespec);
+
     return result;
 }
 
@@ -1146,18 +1149,14 @@ cmdlineopts::write_rc_file (const std::string & filebase)
         }
         else
         {
-            std::string name = filebase;
-            name += ".rc";
+            std::string name = filename_concatenate(filebase, ".rc");
             rcn = rc().config_filespec(name);
         }
 
         rcfile options(rcn, seq66::rc());
-        if (options.write())
-        {
-            // Anything to do?
-        }
-        else
-            result = false;
+        result = options.write();
+        if (! result)
+            file_error("Write failed", rcn);
     }
     return result;
 }
@@ -1175,18 +1174,14 @@ cmdlineopts::write_usr_file (const std::string & filebase)
         }
         else
         {
-            std::string name = filebase;
-            name += ".usr";
+            std::string name = filename_concatenate(filebase, ".usr");
             usrn = rc().user_filespec(name);
         }
 
         usrfile userstuff(usrn, rc());
-        if (userstuff.write())
-        {
-            // Anything to do?
-        }
-        else
-            result = false;
+        result = userstuff.write();
+        if (! result)
+            file_error("Write failed", usrn);
     }
     return result;
 }

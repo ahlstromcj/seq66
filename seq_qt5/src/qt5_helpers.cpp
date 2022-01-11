@@ -24,9 +24,23 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2021-11-24
+ * \updates       2022-01-11
  * \license       GNU GPLv2 or above
  *
+ *  The items provided externally are:
+ *
+ *      -   qt_keystroke(). Returns an "ordinal" for Qt keystroke.
+ *      -   qt_set_icon(). Sets an icon for a push-button.
+ *      -   qt().  Converts an std::sring to a QString.
+ *      -   qt_timer(). Encapsulates creating and starting a timer, with a
+ *          callback given by a Qt slot-name.
+ *      -   enable_combox_item(). Handles the appearance of a combo box.
+ *      -   show_open_midi_file_dialog()
+ *      -   show_import_midi_file_dialog()
+ *      -   show_import_project_dialog()
+ *      -   show_playlist_dialog()
+ *      -   show_text_file_dialog()
+ *      -   show_file_dialog()
  */
 
 #include <QComboBox>
@@ -258,12 +272,46 @@ show_open_midi_file_dialog (QWidget * parent, std::string & selectedfile)
 bool
 show_import_midi_file_dialog (QWidget * parent, std::string & selectedfile)
 {
+    std::string caption = "Import MIDI File into Current Set";
     return show_file_dialog
     (
-        parent, selectedfile, "Import MIDI File into Current Set",
-        midi_wrk_wildcards(),
+        parent, selectedfile, caption, midi_wrk_wildcards(),
         OpeningFile, NormalFile
     );
+}
+
+bool
+show_import_project_dialog
+(
+    QWidget * parent,
+    std::string & selecteddir,
+    std::string & selectedfile
+)
+{
+    std::string filter = "Config (*.rc);; All (*)";
+    std::string caption = "Import Project Configuration";
+    std::string selection;
+    bool result = show_file_dialog
+    (
+        parent, selection, caption, filter, OpeningFile, ConfigFile
+    );
+    if (result)
+    {
+        std::string dir;
+        std::string file;
+        result = filename_split(selection, dir, file);
+        if (result)
+        {
+            selecteddir = dir;
+            selectedfile = file;
+        }
+    }
+    if (! result)
+    {
+        selecteddir.clear();
+        selectedfile.clear();
+    }
+    return result;
 }
 
 /**

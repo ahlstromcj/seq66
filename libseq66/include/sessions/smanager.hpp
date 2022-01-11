@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2022-01-09
+ * \updates       2022-01-10
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -176,8 +176,7 @@ public:
         return  bool(m_perf_pointer) ? m_perf_pointer->error_pending() : true ;
     }
 
-#if defined USE_IMPORT_INTO_SESSION
-    bool make_paths
+    bool make_path_names
     (
         const std::string & path,
         std::string & outcfgpath,
@@ -188,7 +187,13 @@ public:
         const std::string & path,
         const std::string & sourcebase
     );
-#endif
+    bool import_configuration
+    (
+        const std::string & sourcepath,
+        const std::string & sourcebase,
+        const std::string & cfgfilepath,
+        const std::string & midifilepath
+    );
 
 public:
 
@@ -287,6 +292,12 @@ protected:
         const std::string & cfgfilepath,
         const std::string & midifilepath
     );
+    bool create_playlist
+    (
+        const std::string & cfgfilepath,
+        const std::string & midifilepath
+    );
+    bool create_notemap (const std::string & cfgfilepath);
     bool read_configuration
     (
         int argc, char * argv [],

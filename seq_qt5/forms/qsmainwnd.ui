@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>886</width>
-    <height>604</height>
+    <width>888</width>
+    <height>606</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1392,7 +1392,7 @@ matter what sets-mode is in force. </string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>886</width>
+     <width>888</width>
      <height>22</height>
     </rect>
    </property>
@@ -1400,18 +1400,32 @@ matter what sets-mode is in force. </string>
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export</string>
+     </property>
+     <addaction name="actionExportSMF0"/>
+     <addaction name="actionExportMIDI"/>
+     <addaction name="actionExportSong"/>
+    </widget>
+    <widget class="QMenu" name="menuImport">
+     <property name="title">
+      <string>Import</string>
+     </property>
+     <addaction name="actionImportProject"/>
+     <addaction name="actionImportMIDI"/>
+     <addaction name="actionImportPlaylist"/>
+    </widget>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
     <addaction name="actionOpenPlaylist"/>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
-    <addaction name="actionExportSong"/>
-    <addaction name="actionExportMIDI"/>
-    <addaction name="actionExportSMF0"/>
     <addaction name="separator"/>
-    <addaction name="actionImport_MIDI"/>
     <addaction name="separator"/>
+    <addaction name="menuImport"/>
+    <addaction name="menuExport"/>
     <addaction name="actionClose"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -1455,7 +1469,7 @@ matter what sets-mode is in force. </string>
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="actionImport_MIDI">
+  <action name="actionImportMIDI">
    <property name="text">
     <string>&amp;Import MIDI to Current Set...</string>
    </property>
@@ -1464,6 +1478,17 @@ matter what sets-mode is in force. </string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionImportProject">
+   <property name="text">
+    <string>Import Pro&amp;ject Configuraton...</string>
+   </property>
+   <property name="toolTip">
+    <string>Import a configuration from another directory.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+J</string>
    </property>
   </action>
   <action name="actionOpen">
@@ -1674,6 +1699,11 @@ in the same directory as the original, with the extension
   <action name="actionPasteToCurrentSet">
    <property name="text">
     <string>Paste To Current Set</string>
+   </property>
+  </action>
+  <action name="actionImportPlaylist">
+   <property name="text">
+    <string>Import Playlist</string>
    </property>
   </action>
  </widget>

@@ -27,7 +27,7 @@
  *
  * \author  Chris Ahlstrom
  * \date    2015-11-20
- * \updates 2021-09-13
+ * \updates 2022-01-10
  * \version $Revision$
  *
  *    Also see the filefunctions.cpp and strfunctions modules.
@@ -81,6 +81,16 @@ public:
 
     static bool help_check (int argc, char * argv []);
     static bool parse_options_files (std::string & errmessage);
+    static bool parse_rc_file
+    (
+        const std::string & filespec,
+        std::string & errmessage
+    );
+    static bool parse_usr_file
+    (
+        const std::string & filespec,
+        std::string & errmessage
+    );
     static bool parse_mute_groups
     (
         rcsettings & rcs,

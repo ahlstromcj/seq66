@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-01-09
+ * \updates       2022-01-11
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -36,7 +36,7 @@
  * Menu Entries for NSM:
  *
  *  New MIDI FIle   new_session()           Clear file/playlist, set new name
- *  Import [Open]   import_into_session()   Imports only a MIDI file
+ *  Import [Open]   import_midi_into_session()   Imports only a MIDI file.
  *  Save session    save_session()          Save MIDI (and config?) in session
  *  Save As         HIDDEN                  See Export from Session
  *  Export from ... save_file_as()          Copy MIDI file outside of session
@@ -54,7 +54,8 @@
  *
  *  Export Song     export_song()           Export song merging triggers
  *  Export as MIDI  export_file_as...()     Save as regular MIDI file
- *  Import MIDI     import_into_set()       Import MIDI into current set
+ *  Import MIDI     import_midi_into_set()  Import MIDI into current set
+ *  Import Project  import_project()        Import a project configuration
  *  Quit/Exit       quit()                  Normal Qt application closing
  *  Help            showqsabout()           Show Help About (version info)
  *                  showqsbuildinfo()       Show features of the build
@@ -99,8 +100,9 @@
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd main window     */
 #include "qslivegrid.hpp"               /* seq66::qslivegrid panel          */
 #include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
+#include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager session mgr. */
 #include "util/filefunctions.hpp"       /* seq66::file_extension_match()    */
-#include "sessions/smanager.hpp"        /* seq66::save_, attach_session()   */
+// #include "sessions/smanager.hpp"        /* seq66::save_, attach_session()   */
 
 /*
  *  A signal handler is defined in daemonize.cpp, used for quick & dirty
@@ -207,11 +209,12 @@ qsmainwnd::qsmainwnd
     performer & p,
     const std::string & midifilename,
     bool usensm,
-    QWidget * parent
+    qt5nsmanager * sessionmgr               // QWidget * parent
 ) :
-    QMainWindow             (parent),
+    QMainWindow             (nullptr),      // (parent) was always null
     performer::callbacks    (p),
     ui                      (new Ui::qsmainwnd),
+    m_session_mgr           (sessionmgr),
     m_initial_width         (0),
     m_initial_height        (0),
     m_live_frame            (nullptr),
@@ -246,8 +249,7 @@ qsmainwnd::qsmainwnd
     m_open_live_frames      (),
     m_perf_frame_visible    (false),
     m_current_main_set      (0),
-    m_shrunken              (usr().shrunken()),
-    m_session_mgr_ptr       (nullptr)
+    m_shrunken              (usr().shrunken())
 {
     ui->setupUi(this);
 
@@ -394,14 +396,26 @@ qsmainwnd::qsmainwnd
         ui->smf0Button->show();
 
     /*
-     * File / Import MIDI to Current Set...
+     * File / Import MIDI to Current Set... This action reads a MIDI file and
+     * inserts it into the currently-selected set.
      */
 
     connect
     (
-        ui->actionImport_MIDI, SIGNAL(triggered(bool)),
-        this, SLOT(import_into_set())
+        ui->actionImportMIDI, SIGNAL(triggered(bool)),
+        this, SLOT(import_midi_into_set())
     );
+
+    /**
+     * File / Import project
+     */
+
+    connect
+    (
+        ui->actionImportProject, SIGNAL(triggered(bool)),
+        this, SLOT(import_project())
+    );
+
     if (use_nsm())
         connect_nsm_slots();
     else
@@ -856,19 +870,6 @@ qsmainwnd::set_ppqn_text (const std::string & text)
     ui->lineEditPpqn->setText(ppqnstring);
 }
 
-/*
- *  Note that the "use NSM" flag is set at construction time.
- */
-
-void
-qsmainwnd::attach_session (smanager * sp)   // UNNECESSARY?
-{
-    if (not_nullptr(sp))
-        m_session_mgr_ptr = sp;
-    else
-        use_nsm(false);
-}
-
 /**
  *  Handles closing this window by calling check(), and, if it returns false,
  *  ignoring the close event.
@@ -1064,7 +1065,7 @@ qsmainwnd::slot_summary_save ()
  */
 
 void
-qsmainwnd::import_into_session ()
+qsmainwnd::import_midi_into_session ()
 {
     if (use_nsm())
     {
@@ -1134,7 +1135,7 @@ qsmainwnd::select_and_load_file ()
 
 /**
  *  Shows the "Open" file dialog, if not within an NSM session.  Otherwise,
- *  import_into_session() is called.
+ *  import_midi_into_session() is called.
  */
 
 bool
@@ -1718,6 +1719,19 @@ qsmainwnd::save_session ()
 
 #if defined SEQ66_SESSION_DETACHABLE
 
+/*
+ *  Note that the "use NSM" flag is set at construction time.
+ */
+
+void
+qsmainwnd::attach_session (smanager * sp)   // UNNECESSARY?
+{
+    if (not_nullptr(sp))
+        m_session_mgr_ptr = sp;
+    else
+        use_nsm(false);
+}
+
 /**
  *  Not yet ready for prime time.
  */
@@ -1734,7 +1748,7 @@ qsmainwnd::detach_session ()
             result = session()->detach_session(msg);
             if (result)
             {
-                m_session_mgr_ptr = nullptr;
+                m_session_mgr = nullptr;        /* dangerous */
                 use_nsm(false);
             }
             else
@@ -1743,6 +1757,40 @@ qsmainwnd::detach_session ()
         }
     }
     return result;
+}
+
+/**
+ *  Calls check(), and if it checks out (heh heh), removes all of the editor
+ *  windows and then calls for an exit of the application.  It "detaches" from
+ *  the session.  To do that, we need to:
+ *
+ *      -   Tell the session manager that we are leaving the session.  Is this
+ *          permanent or just temporary?
+ *      -   Detach from the session:  nullify the pointer and reset the
+ *          session flag.
+ *      -   Recreate the main window menus.
+ *
+ *  From the NSM API:
+ *
+ *      This option MUST be disabled unless its meaning is to disconnect
+ *      the application from session management.
+ */
+
+void
+qsmainwnd::quit_session ()
+{
+    if (use_nsm())
+    {
+        if (check())
+        {
+            if (detach_session()) // currently causes an INCOMPLETE Quit later
+            {
+                use_nsm(false);
+                disconnect_nsm_slots();
+                connect_normal_slots();
+            }
+        }
+    }
 }
 
 #endif
@@ -1905,7 +1953,7 @@ qsmainwnd::export_song (const std::string & fname)
 }
 
 void
-qsmainwnd::import_into_set ()
+qsmainwnd::import_midi_into_set ()
 {
     std::string selectedfile;
     bool selected = show_import_midi_file_dialog(this, selectedfile);
@@ -1940,6 +1988,18 @@ qsmainwnd::import_into_set ()
                 show_message_box(msg);
             }
         }
+    }
+}
+
+void
+qsmainwnd::import_project()
+{
+    std::string selecteddir;
+    std::string selectedfile;
+    bool selected = show_import_project_dialog(this, selecteddir, selectedfile);
+    if (selected && not_nullptr(session()))
+    {
+        (void) session()->import_into_session(selecteddir, selectedfile);
     }
 }
 
@@ -2633,44 +2693,6 @@ qsmainwnd::quit ()
     }
 }
 
-#if defined SEQ66_SESSION_DETACHABLE
-
-/**
- *  Calls check(), and if it checks out (heh heh), removes all of the editor
- *  windows and then calls for an exit of the application.  It "detaches" from
- *  the session.  To do that, we need to:
- *
- *      -   Tell the session manager that we are leaving the session.  Is this
- *          permanent or just temporary?
- *      -   Detach from the session:  nullify the pointer and reset the
- *          session flag.
- *      -   Recreate the main window menus.
- *
- *  From the NSM API:
- *
- *      This option MUST be disabled unless its meaning is to disconnect
- *      the application from session management.
- */
-
-void
-qsmainwnd::quit_session ()
-{
-    if (use_nsm())
-    {
-        if (check())
-        {
-            if (detach_session()) // currently causes an INCOMPLETE Quit later
-            {
-                use_nsm(false);
-                disconnect_nsm_slots();
-                connect_normal_slots();
-            }
-        }
-    }
-}
-
-#endif
-
 /**
  *  By experimenting, we see that the live frame gets all of the keystrokes.
  *  So we moved much of the processing to that class.  If the event isn't
@@ -2934,7 +2956,7 @@ qsmainwnd::connect_nsm_slots ()
      * File / Import into Session. Do we need an "Open Session"?
      */
 
-    ui->actionOpen->setText("&Import into Session...");
+    ui->actionOpen->setText("&Import MIDI into Session...");
     ui->actionOpen->setToolTip
     (
         "Import a MIDI or Seq66 MIDI file into the current session."
@@ -3016,7 +3038,7 @@ qsmainwnd::disconnect_nsm_slots ()
     disconnect
     (
         ui->actionOpen, SIGNAL(triggered(bool)),
-        this, SLOT(import_into_session())
+        this, SLOT(import_midi_into_session())
     );
     disconnect
     (

@@ -118,7 +118,7 @@ playlistfile::~playlistfile ()
 bool
 playlistfile::set_error_message (const std::string & additional)
 {
-    std::string msg = "Play-list file";
+    std::string msg = "Playlist file";
     if (! additional.empty())
     {
         msg += ": ";
@@ -580,7 +580,7 @@ open_playlist
     }
     else
     {
-        file_error("Play-list file to open", "none");
+        file_error("Playlist file", "none");
         pl.mode(false);
     }
     return result;
@@ -616,22 +616,14 @@ save_playlist
     if (result)
     {
         playlistfile plf(destination, pl, rc(), false); /* false --> quiet  */
-
-        /*
-         * Redundant: file_message("Play-list save", destination);
-         */
-
         pl.file_name(destination);
         result = plf.write();
         if (! result)
-        {
-            file_error("Play-list write failed", destination);
-        }
+            file_error("Playlist write failed", destination);
     }
     else
-    {
-        file_error("Play-list file to save", "none");
-    }
+        file_error("Playlist file to save", "none");
+
     return result;
 }
 
@@ -671,12 +663,12 @@ save_playlist
         }
         else
         {
-            file_error("Play-list open failed", source);
+            file_error("Open failed", source);
         }
     }
     else
     {
-        file_error("Play-list file to save", "none");
+        file_error("Playlist file", "none");
     }
     return result;
 }
@@ -711,14 +703,14 @@ copy_playlist_songs
     if (result)
     {
         std::string msg = source + " --> " + destination;
-        file_message("Play-list copy", msg);
+        file_message("Playlist copy", msg);
         result = pl.copy_songs(destination);
         if (! result)
             file_error("Copy failed", destination);
     }
     else
     {
-        file_error("Play-list file directories", "<empty>");
+        file_error("Playlist file directories", "<empty>");
     }
     return result;
 }
