@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2022-01-10
+ * \updates       2022-01-13
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -180,7 +180,8 @@ public:
     (
         const std::string & path,
         std::string & outcfgpath,
-        std::string & outmidipath
+        std::string & outmidipath,
+        const std::string & midisubdir = ""
     );
     bool import_into_session
     (

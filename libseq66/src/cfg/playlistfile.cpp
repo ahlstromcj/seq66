@@ -677,6 +677,15 @@ save_playlist
  *  This function uses the playlist to copy all of the MIDI files noted in the
  *  source playlist file.
  *
+ *  Note that the directory structure is somewhat preserved in the destination.
+ *  For example, here is an input directory and the resultant output directory
+ *  for the import of ca_midi.playlist:
+ *
+ *      -   /pub/Audio/MIDI/archives/Ca/Mid/FM Synth/
+ *      -   ~/.config/seq66/playlists/ca_midi/pub/Audio/MIDI/.../Mid/FM Synth/
+ *
+ *  Is this good or bad?
+ *
  *  \param [in] plp
  *      Provides a pointer to the playlist, which should have been filled with
  *      playlist data.

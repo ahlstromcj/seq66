@@ -288,7 +288,7 @@ show_import_project_dialog
     std::string & selectedfile
 )
 {
-    std::string filter = "Config (*.rc);; All (*)";
+    std::string filter = "Config (*.rc);;All files(*)";
     std::string caption = "Import Project Configuration";
     std::string selection;
     bool result = show_file_dialog
@@ -319,12 +319,21 @@ show_import_project_dialog
  *  rc().last_used_dir(), but should be the home directory for both normal and
  *  NSM sessions.
  *
+ * \param parent
+ *      Provides the parent widget of this dialog.
+ *
  * \param [inout] selectedfile
  *      A return value for the chosen file and path.  If not-empty when the
  *      call is made, show the user that directory instead of the home
  *      configuration directory.  Callers should just provide the base-name of
  *      the file when saving a file under session management!  For opening a
  *      file, not a big deal.
+ *
+ * \param saving
+ *      Indicates saving versus opening the file. The two values are:
+ *
+ *          -   SavingFile = true
+ *          -   OpeningFile = false
  *
  * \return
  *      Returns true if the returned path can be used.

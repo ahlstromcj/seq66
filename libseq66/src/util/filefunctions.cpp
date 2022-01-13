@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-01-11
+ * \updates       2022-01-13
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -245,7 +245,7 @@ s_stringcopy
         if (rcode == 0)
             result = true;
         else
-            warn_message(T_("stringcopy truncation"));
+            warn_message("stringcopy truncation");
 #else
         if (sourcelimit < destsize)              /* truncation impossible   */
         {
@@ -253,7 +253,7 @@ s_stringcopy
             result = true;
         }
         else                                     /* truncation definite     */
-            warn_message(T_("stringcopy truncation"));
+            warn_message("stringcopy truncation");
 
         (void) strncpy(destination, source, destsize);
         destination[destsize-1] = 0;
@@ -300,7 +300,7 @@ string_errno (errno_t errnum)
         ok = (errnum >= 0) && (errnum < ELAST) ? (rcode == 0) : false ;
     }
     else
-        ok = s_stringcopy(dest, sizeof dest, T_("Possible truncation"));
+        ok = s_stringcopy(dest, sizeof dest, "Possible truncation");
 
 #endif
 
@@ -602,7 +602,7 @@ file_name_good (const std::string & fname)
     {
         result = fname != "stdout" && fname != "stdin" && fname != "stderr";
         if (! result)
-            file_message(T_("file-name invalid"), fname);
+            file_message("file-name invalid", fname);
     }
     return result;
 }
@@ -665,7 +665,7 @@ file_mode_good (const std::string & mode)
             }
         }
         if (! result)
-            file_message(T_("file-mode invalid"), mode);
+            file_message("file-mode invalid", mode);
     }
     return result;
 }
@@ -812,7 +812,7 @@ file_write_string (const std::string & filename, const std::string & text)
 bool
 file_close (FILE * filehandle, const std::string & filename)
 {
-    bool result = not_nullptr_assert(filehandle, T_("file_close() null handle"));
+    bool result = not_nullptr_assert(filehandle, "file_close() null handle");
     if (result)
     {
         int rcode = fclose(filehandle);
@@ -822,7 +822,7 @@ file_close (FILE * filehandle, const std::string & filename)
     {
         /*
          * if (! filename.empty())
-         *     errprintex(filename, T_("File"));
+         *     errprintex(filename, "File");
          */
     }
     return result;
@@ -853,10 +853,13 @@ file_delete (const std::string & filespec)
  *  if the file already exists.)
  *
  * \param oldfile
- *      The full path to the source file.
+ *      The full path to the source file. Includes the path and the base-name
+ *      of the file.
  *
  * \param newfile
- *      The full path to the destination file.
+ *      The full path to the destination file.  If there is no base file-name
+ *      (e.g. "file.ext") then the base file-name of \a oldfile will be
+ *      appended.
  *
  * \todo
  *      Consider fflush() to flush the user-space buffers provided by the C
@@ -879,15 +882,28 @@ file_copy
     bool result = file_name_good(oldfile) && file_name_good(newfile);
     if (result)
     {
-        result = get_full_path(newfile) != get_full_path(oldfile);
+        std::string destfilespec = newfile;
+        std::string destpath;
+        std::string destbase;
+        result = filename_split(newfile, destpath, destbase);
         if (result)
+        {
+            if (destbase.empty())
+            {
+                std::string sourcebase = filename_base(oldfile);
+                destfilespec = filename_concatenate(destpath, sourcebase);
+            }
+        }
+
+        bool ok = get_full_path(oldfile) != get_full_path(destfilespec);
+        if (result && ok)
         {
             FILE * input = file_open_for_read(oldfile);
             if (not_nullptr(input))
             {
                 bool okinput = false;
                 bool okoutput = false;
-                FILE * output = file_create_for_write(newfile);
+                FILE * output = file_create_for_write(destfilespec);
                 if (not_nullptr(output))
                 {
                     int ci;
@@ -897,14 +913,12 @@ file_copy
                         if (co == EOF)
                             break;
                     }
-                    okoutput = file_close(output, newfile);
+                    okoutput = file_close(output, destfilespec);
                 }
                 okinput = file_close(input, oldfile);
                 result = okinput && okoutput;
             }
         }
-        else
-            warn_message(T_("filenames are equivalent"));
     }
     return result;
 }

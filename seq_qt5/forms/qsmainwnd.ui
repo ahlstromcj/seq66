@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>888</width>
-    <height>606</height>
+    <width>890</width>
+    <height>608</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1392,7 +1392,7 @@ matter what sets-mode is in force. </string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>888</width>
+     <width>890</width>
      <height>22</height>
     </rect>
    </property>
@@ -1415,6 +1415,7 @@ matter what sets-mode is in force. </string>
      <addaction name="actionImportProject"/>
      <addaction name="actionImportMIDI"/>
      <addaction name="actionImportPlaylist"/>
+     <addaction name="actionImportMIDIIntoSession"/>
     </widget>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
@@ -1474,7 +1475,7 @@ matter what sets-mode is in force. </string>
     <string>&amp;Import MIDI to Current Set...</string>
    </property>
    <property name="toolTip">
-    <string>Import MIDI file, optionally into different bank/set.</string>
+    <string>Import MIDI file into (different) bank/set.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
@@ -1703,7 +1704,18 @@ in the same directory as the original, with the extension
   </action>
   <action name="actionImportPlaylist">
    <property name="text">
-    <string>Import Playlist</string>
+    <string>Import Playlist...</string>
+   </property>
+   <property name="toolTip">
+    <string>Import a playlist into the session.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionImportMIDIIntoSession">
+   <property name="text">
+    <string>Import MIDI into Session</string>
    </property>
   </action>
  </widget>

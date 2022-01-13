@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-12-27
+ * \updates       2022-01-13
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1090,6 +1090,12 @@ public:
     bool save_mutegroups (const std::string & mfg = "");
     bool open_playlist (const std::string & pl, bool show_on_stdout = false);
     bool save_playlist (const std::string & pl = "");
+    bool import_playlist
+    (
+        const std::string & sourcefile,
+        const std::string & cfgfilepath,
+        const std::string & midifilepath
+    );
 
     bool remove_playlist ()
     {

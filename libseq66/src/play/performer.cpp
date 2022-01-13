@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-12-28
+ * \updates       2022-01-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -7191,6 +7191,76 @@ performer::save_mutegroups (const std::string & mgf)
         if (result)
         {
             // nothing to do
+        }
+    }
+    return result;
+}
+
+/**
+ *  Imports a play-list from one directory to another.
+ *
+ *      -#  Provide the full path to the source playlist file.  This path is
+ *          normally acquired from a playlist dialog box that starts in
+ *          the current home configuration directory; but it can reside
+ *          anywhere in the file system.
+ *      -#  Copy the playlist file to the session configuration directory:
+ *          -#  Normal: home config directory
+ *          -#  NSM: session_directory/config
+ *      -#  Load the playlist to set its filename and to get its parameters.
+ *      -#  Copy the playlist's MIDI files to session MIDI directory:
+ *          -#  Normal: home config directory/midi
+ *          -#  NSM: session_directory/midi
+ *      -#  Adjust the playlist base directory and its internal directory
+ *          hierarchy to match the new location of files.
+ *      -#  Make playlist active and official in the 'rc' file.
+ *          -#  The 'active' flag.
+ *          -#  The base 'name' of the file.
+ *          -#  The 'base-directory'
+ *
+ *  What to do about absolute directories?  Leave them be?
+ *
+ * \param sourcefile
+ *      Provides the full path to the playlist file to import.
+ *
+ * \param cfgpath
+ *      The destination where the caller wants to put the playlist. For NSM
+ *      session destinations, this path will end with "config".
+ *
+ * \param midipath
+ *      The destination where the caller wants to put the MIDI file. For NSM
+ *      session destinations or for normal home destinations, this path will
+ *      end with "midi".  Or maybe something more specific?  Should we ignore
+ *      absolute paths and leave them be?
+ */
+
+bool
+performer::import_playlist
+(
+    const std::string & sourcefile,
+    const std::string & cfgpath,
+    const std::string & midipath
+)
+{
+    bool result = file_readable(sourcefile);
+    if (result)
+        result = ! cfgpath.empty() && ! midipath.empty();
+
+    if (result)
+    {
+        result = make_directory_path(cfgpath);      /* make it exist    */
+        if (result)
+            result = make_directory_path(midipath);
+
+        if (result)
+        {
+            std::string sourcebase = filename_base(sourcefile);
+            std::string filespec = filename_concatenate(cfgpath, sourcebase);
+            result = file_copy(sourcefile, cfgpath);
+            if (result)
+                result = open_playlist(filespec);
+
+            if (result)
+                result = copy_playlist_songs(*m_play_list, filespec, midipath);
         }
     }
     return result;

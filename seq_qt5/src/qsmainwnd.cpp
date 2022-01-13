@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-01-11
+ * \updates       2022-01-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -357,7 +357,10 @@ qsmainwnd::qsmainwnd
     m_msg_save_changes->setDefaultButton(QMessageBox::Save);
 
     m_dialog_prefs = new (std::nothrow) qseditoptions(perf(), this);
-    m_beat_ind = new (std::nothrow) qsmaintime(perf(), ui->verticalWidget /*this*/, 4, 4);
+    m_beat_ind = new (std::nothrow) qsmaintime
+    (
+        perf(), ui->verticalWidget /*this*/, 4, 4
+    );
     m_dialog_about = new (std::nothrow) qsabout(this);
     m_dialog_build_info = new (std::nothrow) qsbuildinfo(this);
     make_perf_frame_in_tab();           /* create m_song_frame64 pointer    */
@@ -370,8 +373,10 @@ qsmainwnd::qsmainwnd
         ui->LiveTabLayout->addWidget(m_live_frame);
         m_live_frame->setFocus();
     }
-
-    m_playlist_frame = new (std::nothrow) qplaylistframe(perf(), this, ui->PlaylistTab);
+    m_playlist_frame = new (std::nothrow) qplaylistframe
+    (
+        perf(), this, ui->PlaylistTab
+    );
     if (not_nullptr(m_playlist_frame))
         ui->PlaylistTabLayout->addWidget(m_playlist_frame);
 
@@ -396,8 +401,8 @@ qsmainwnd::qsmainwnd
         ui->smf0Button->show();
 
     /*
-     * File / Import MIDI to Current Set... This action reads a MIDI file and
-     * inserts it into the currently-selected set.
+     * File / Import / Import MIDI to Current Set. This action reads a MIDI
+     * file and inserts it into the currently-selected set.
      */
 
     connect
@@ -407,7 +412,7 @@ qsmainwnd::qsmainwnd
     );
 
     /**
-     * File / Import project
+     * File / Import / Import Project.
      */
 
     connect
@@ -416,16 +421,22 @@ qsmainwnd::qsmainwnd
         this, SLOT(import_project())
     );
 
+    /**
+     * File / Import / Import Playlist. This action will import a playlsit
+     * and all of the tunes associated with it.
+     */
+
+    connect
+    (
+        ui->actionImportPlaylist, SIGNAL(triggered(bool)),
+        this, SLOT(import_playlist())
+    );
+
     if (use_nsm())
         connect_nsm_slots();
     else
         connect_normal_slots();
 
-    connect
-    (
-        ui->actionOpenPlaylist, SIGNAL(triggered(bool)),
-        this, SLOT(show_open_list_dialog())
-    );
     connect(ui->actionQuit, SIGNAL(triggered(bool)), this, SLOT(quit()));
 
     /*
@@ -1152,9 +1163,40 @@ qsmainwnd::show_open_file_dialog (std::string & selectedfile)
 }
 
 /**
- *  Opens the dialog to request a playlist.  This action should be allowed
- *  in an NSM session.  This is a slot, which calls a member function that
- *  callers can call directly and get a boolean status, unlike this function.
+ *  For importing a playlist file and all of the songs it contains.
+ */
+
+void
+qsmainwnd::import_playlist ()
+{
+    std::string sourcepath;
+    bool ok = show_playlist_dialog(this, sourcepath, OpeningFile);
+    if (ok)
+    {
+        std::string destdir = rc().home_config_directory();
+        std::string cfgpath;
+        std::string midipath;
+        std::string midisubdir = "playlists";
+        std::string midibase = filename_base(sourcepath, true); /* no ext */
+        midisubdir = pathname_concatenate(midisubdir, midibase);
+        ok = session()->make_path_names(destdir, cfgpath, midipath, midisubdir);
+        if (ok)
+            ok = perf().import_playlist(sourcepath, cfgpath, midipath);
+
+        if (ok)
+        {
+            rc().playlist_active(true);
+            rc().playlist_filename(filename_base(sourcepath));
+            rc().midi_base_directory(midipath);
+        }
+    }
+}
+
+/**
+ *  Opens the dialog to request a playlist.  This action should not be allowed
+ *  in an NSM session; instead, a playlist can be imported. This is a slot,
+ *  which calls a member function that callers can call directly and get a
+ *  boolean status, unlike this function.
  */
 
 void
@@ -2953,19 +2995,27 @@ qsmainwnd::connect_nsm_slots ()
     );
 
     /*
-     * File / Import into Session. Do we need an "Open Session"?
+     * File / Open versus File / Import / Import MIDI into Session.
      */
 
-    ui->actionOpen->setText("&Import MIDI into Session...");
-    ui->actionOpen->setToolTip
+    ui->actionOpen->setVisible(false);
+    ui->actionImportMIDIIntoSession->setText("&Import MIDI into Session...");
+    ui->actionImportMIDIIntoSession->setToolTip
     (
-        "Import a MIDI or Seq66 MIDI file into the current session."
+        "Import a MIDI/Seq66 file into the current session."
     );
+    ui->menuImport->addAction(ui->actionImportMIDIIntoSession);
     connect
     (
-        ui->actionOpen, SIGNAL(triggered(bool)),
+        ui->actionImportMIDIIntoSession, SIGNAL(triggered(bool)),
         this, SLOT(import_into_session())
     );
+
+    /*
+     * File / Open Playlist
+     */
+
+    ui->actionOpenPlaylist->setVisible(false);
 
     /*
      * File / Save Session.
@@ -2974,7 +3024,7 @@ qsmainwnd::connect_nsm_slots ()
     ui->actionSave->setText("&Save");
     ui->actionSave->setToolTip
     (
-        "Save the current MIDI file and the configuration in the session."
+        "Save the current MIDI file and configuration in the session."
     );
     connect
     (
@@ -3028,6 +3078,8 @@ qsmainwnd::connect_nsm_slots ()
 
 }
 
+#if defined SEQ66_SESSION_DETACHABLE
+
 void
 qsmainwnd::disconnect_nsm_slots ()
 {
@@ -3037,7 +3089,7 @@ qsmainwnd::disconnect_nsm_slots ()
     );
     disconnect
     (
-        ui->actionOpen, SIGNAL(triggered(bool)),
+        ui->actionImportMIDIIntoSession, SIGNAL(triggered(bool)),
         this, SLOT(import_midi_into_session())
     );
     disconnect
@@ -3048,13 +3100,13 @@ qsmainwnd::disconnect_nsm_slots ()
     (
         ui->actionSave_As, SIGNAL(triggered(bool)), this, SLOT(save_file_as())
     );
-#if defined SEQ66_SESSION_DETACHABLE
     disconnect
     (
         ui->actionClose, SIGNAL(triggered(bool)), this, SLOT(quit_session())
     );
-#endif
 }
+
+#endif
 
 void
 qsmainwnd::connect_normal_slots ()
@@ -3073,15 +3125,28 @@ qsmainwnd::connect_normal_slots ()
     connect(ui->actionNew, SIGNAL(triggered(bool)), this, SLOT(new_file()));
 
     /*
-     * File / Open.
+     * File / Open versus File / Import / Import MIDI into Session.
      */
 
+    ui->actionImportMIDIIntoSession->setVisible(false);
     ui->actionOpen->setText("&Open...");
+    ui->actionOpen->setVisible(true);
     ui->actionOpen->setToolTip("Open a standard or Seq66 MIDI file.");
     connect
     (
         ui->actionOpen, SIGNAL(triggered(bool)),
         this, SLOT(select_and_load_file())
+    );
+
+    /*
+     * File / Open Playlist.  Also see the Load button in qsessionframe.
+     */
+
+    ui->actionOpenPlaylist->setVisible(true);
+    connect
+    (
+        ui->actionOpenPlaylist, SIGNAL(triggered(bool)),
+        this, SLOT(show_open_list_dialog())
     );
 
     /*
@@ -3127,6 +3192,8 @@ qsmainwnd::connect_normal_slots ()
     update_recent_files_menu();
 }
 
+#if defined SEQ66_SESSION_DETACHABLE
+
 void
 qsmainwnd::disconnect_normal_slots ()
 {
@@ -3151,6 +3218,8 @@ qsmainwnd::disconnect_normal_slots ()
     if (not_nullptr(m_menu_recent) && m_menu_recent->isWidgetType())
         delete m_menu_recent;
 }
+
+#endif
 
 /**
  *  Opens the Performance Editor (Song Editor).

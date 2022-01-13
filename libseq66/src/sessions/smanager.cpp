@@ -951,6 +951,11 @@ smanager::create_playlist
     if (srcplayfile.empty())
         srcplayfile = "empty.playlist";
 
+    /*
+     * The following calls splits the srcplayfile into a path and basename,
+     * then appends the basename to the cfgfilepath.
+     */
+
     std::string dstplayfile = file_path_set(srcplayfile, cfgfilepath);
     if (! rc().playlist_active())
     {
@@ -1071,7 +1076,8 @@ smanager::make_path_names
 (
     const std::string & path,
     std::string & outcfgpath,
-    std::string & outmidipath
+    std::string & outmidipath,
+    const std::string & midisubdir
 )
 {
     bool result = ! path.empty();
@@ -1079,16 +1085,21 @@ smanager::make_path_names
     {
         std::string cfgpath = path;
         std::string midipath = path;
+        std::string subdir = "midi";
+        if (! midisubdir.empty())
+            subdir = midisubdir;
+
         if (usr().in_nsm_session())         // nsm_active()
         {
-            outcfgpath = pathname_concatenate(cfgpath, "config");
-            outmidipath = pathname_concatenate(midipath, "midi");
+            cfgpath = pathname_concatenate(cfgpath, "config");
+            midipath = pathname_concatenate(midipath, midisubdir);
         }
         else
         {
-            outcfgpath = cfgpath;
-            outmidipath.clear();
+            midipath = pathname_concatenate(midipath, midisubdir);
         }
+        outcfgpath = cfgpath;
+        outmidipath = midipath;
     }
     return result;
 }
@@ -1115,7 +1126,7 @@ smanager::import_into_session
     bool result = ! sourcepath.empty() && ! sourcebase.empty();
     if (result)
     {
-        std::string destdir = rc().home_config_directory(); // manager_path()
+        std::string destdir = rc().home_config_directory();
         std::string destbase = rc().config_filename();
         std::string cfgpath;
         std::string midipath;
