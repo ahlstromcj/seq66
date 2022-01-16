@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-01-13
+ * \updates       2022-01-14
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -66,6 +66,8 @@
 #define SEQ66_PATH_SLASH_CHAR           '/'
 #define SEQ66_ENV_HOME                  "HOME"
 #endif
+
+#define SEQ66_PATH_SLASHES              "/\\"
 
 /*
  *  More legacy configuration macros.
@@ -1198,6 +1200,22 @@ make_directory_path (const std::string & directory_name)
 }
 
 /**
+ *  Simply removes the initial path slash. Meant for playlist usage, and is very
+ *  simplistic at this time.
+ */
+
+std::string
+make_path_relative (const std::string & path)
+{
+    std::string result = path;
+    auto spos = result.find_first_of(SEQ66_PATH_SLASHES);
+    if (spos == 0)
+        result = result.substr(1);
+
+    return result;
+}
+
+/**
  *  Deletes a directory based on its directory name.  This function first makes
  *  sure that the name is valid, using the file_name_good() function.
  *
@@ -1511,6 +1529,19 @@ append_file
     return normalize_path(result, to_unix, false);
 }
 
+/**
+ *  Concatenates paths.  Used by playlist processing only at present.
+ *
+ *  The paths are first trimmed of white-space.  The beginning path retains any
+ *  path characters (forward or backward slash it has at the start and end of the
+ *  path. If it doesn't have one at the end, one is added.
+ *
+ *  The second path is stripped of any slash it has at the beginning, converting
+ *  it to a relative path. And end slash is added, if necessary.
+ *
+ *  Compare this function to pathname_concatenate().
+ */
+
 std::string
 append_path
 (
@@ -1523,13 +1554,22 @@ append_path
     std::string pn = pathname;
     if (! result.empty())
     {
-        (void) rtrim(result, SEQ66_TRIM_CHARS_PATHS);
-        result += path_slash();
+        (void) trim(result);                            /* whitespace out   */
+
+        auto spos = result.find_last_of(SEQ66_PATH_SLASHES);
+        auto endindex = result.length() - 1;
+        if (spos == std::string::npos || spos != endindex)
+            result += path_slash();
     }
     if (! pn.empty())
     {
-        (void) trim(pn, SEQ66_TRIM_CHARS_PATHS);
-        pn += path_slash();
+        (void) trim(pn);
+        (void) ltrim(pn, SEQ66_TRIM_CHARS_PATHS);
+
+        auto spos = pn.find_last_of(SEQ66_PATH_SLASHES);
+        auto endindex = pn.length() - 1;
+        if (spos == std::string::npos || spos != endindex)
+            pn += path_slash();
     }
     result += pn;
     return normalize_path(result, to_unix, true);
@@ -1557,6 +1597,7 @@ filename_concatenate (const std::string & path, const std::string & filebase)
 
 /**
  *  This function concatenates two paths robustly, if not efficiently.
+ *  Compare this function to append_path().
  *
  * \param path0
  *      The main path, which can be a root path or a relative path. It is

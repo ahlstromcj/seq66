@@ -364,8 +364,13 @@ midi_alsa_info::api_flush ()
 }
 
 /**
- *  Sets the PPQN numeric value, then makes ALSA calls to set up the PPQ
- *  tempo.
+ *  Sets the PPQN numeric value, then makes ALSA calls to set up the PPQN
+ *  tempo.  The steps are:
+ *
+ *      -   Allocate tempo structure.
+ *      -   Fill tempo structure with current tempo info.
+ *      -   Set the PPQN.
+ *      -   Give tempo structure to the queue.
  *
  * \param p
  *      The desired new PPQN value to set.
@@ -378,7 +383,7 @@ midi_alsa_info::api_set_ppqn (int p)
 
     int queue = global_queue();
     snd_seq_queue_tempo_t * tempo;
-    snd_seq_queue_tempo_alloca(&tempo);             /* allocate tempo struct */
+    snd_seq_queue_tempo_alloca(&tempo);                 /* allocate struct  */
     snd_seq_get_queue_tempo(m_alsa_seq, queue, tempo);
     snd_seq_queue_tempo_set_ppq(tempo, p);
     snd_seq_set_queue_tempo(m_alsa_seq, queue, tempo);
@@ -386,7 +391,12 @@ midi_alsa_info::api_set_ppqn (int p)
 
 /**
  *  Sets the BPM numeric value, then makes ALSA calls to set up the BPM
- *  tempo.
+ *  tempo.  The steps are:
+ *
+ *      -   Allocate tempo structure.
+ *      -   Fill tempo structure with current tempo info.
+ *      -   Set the tempo.
+ *      -   Give tempo structure to the queue.
  *
  * \param b
  *      The desired new BPM value to set.

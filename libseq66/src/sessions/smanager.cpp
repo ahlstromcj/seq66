@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2022-01-10
+ * \updates       2022-01-16
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -1091,12 +1091,16 @@ smanager::make_path_names
 
         if (usr().in_nsm_session())         // nsm_active()
         {
+            midipath = pathname_concatenate(cfgpath, subdir);
             cfgpath = pathname_concatenate(cfgpath, "config");
-            midipath = pathname_concatenate(midipath, midisubdir);
         }
         else
         {
-            midipath = pathname_concatenate(midipath, midisubdir);
+            /*
+             * There's no "config" subdirectory outside of an NSM session.
+             */
+
+            midipath = pathname_concatenate(midipath, subdir);
         }
         outcfgpath = cfgpath;
         outmidipath = midipath;
@@ -1143,8 +1147,6 @@ smanager::import_into_session
             (
                 sourcepath, sourcebase, cfgpath, midipath
             );
-            if (result)
-                signal_for_restart();           /* "reboot" the application */
         }
     }
     return result;

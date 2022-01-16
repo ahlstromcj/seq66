@@ -719,7 +719,7 @@ midi_alsa::api_continue_from (midipulse tick_parameter, midipulse beats)
 
 /**
  *  This function gets the MIDI clock a-runnin', if the clock type is not
- *  e_clock::off.
+ *  e_clock::off.  The clock-enabled status is checked in midibase::start().
  */
 
 void
@@ -797,7 +797,7 @@ midi_alsa::api_set_ppqn (int ppqn)
 {
     int queue = parent_bus().queue_number();
     snd_seq_queue_tempo_t * tempo;
-    snd_seq_queue_tempo_alloca(&tempo);             /* allocate tempo struct */
+    snd_seq_queue_tempo_alloca(&tempo);
     snd_seq_get_queue_tempo(m_seq, queue, tempo);
     snd_seq_queue_tempo_set_ppq(tempo, ppqn);
     snd_seq_set_queue_tempo(m_seq, queue, tempo);

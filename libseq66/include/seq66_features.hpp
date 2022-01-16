@@ -48,8 +48,8 @@
  *
  *    Currently, we've tested all the experimental options to the extent of
  *    building them successfully.  However, enabling them is currently
- *    TEMPORARY; we want to build with them all disabled, and enable them
- *    one-by-one in a controlled, tested manner.
+ *    temporary; we want to build with them all disabled, and enable them
+ *    one-by-one in a controlled, tested manner... one of these years.
  */
 
 #include <string>

@@ -66,7 +66,7 @@ clinsmanager::clinsmanager (const std::string & caps) :
 
 clinsmanager::~clinsmanager ()
 {
-    // no code yet
+    // no code
 }
 
 /**

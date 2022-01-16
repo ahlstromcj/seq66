@@ -1402,20 +1402,20 @@ matter what sets-mode is in force. </string>
     </property>
     <widget class="QMenu" name="menuExport">
      <property name="title">
-      <string>Export</string>
+      <string>&amp;Export</string>
      </property>
-     <addaction name="actionExportSMF0"/>
      <addaction name="actionExportMIDI"/>
      <addaction name="actionExportSong"/>
+     <addaction name="actionExportSMF0"/>
     </widget>
     <widget class="QMenu" name="menuImport">
      <property name="title">
-      <string>Import</string>
+      <string>&amp;Import</string>
      </property>
      <addaction name="actionImportProject"/>
      <addaction name="actionImportMIDI"/>
-     <addaction name="actionImportPlaylist"/>
      <addaction name="actionImportMIDIIntoSession"/>
+     <addaction name="actionImportPlaylist"/>
     </widget>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
@@ -1676,7 +1676,7 @@ and messages.</string>
   </action>
   <action name="actionClose">
    <property name="text">
-    <string>Close</string>
+    <string>&amp;Close</string>
    </property>
    <property name="toolTip">
     <string>Close Session</string>

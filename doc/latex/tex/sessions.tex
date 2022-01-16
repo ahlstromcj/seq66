@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2021-12-05
+% \update      2022-01-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -331,9 +331,12 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 %  configuration directory before
 %  creating an NSM session and adding \textsl{Seq66} to it.
 
-   We have added a command, \textbf{File / Import Project...}
+   We have added a command, \textbf{File / Import / Import Project}
    command to import the configuration files from one directory into the
    current \textsl{NSM} session configuration directory.
+   This import used to be automatic, but is too surprising to an unsuspecting
+   user.
+
 %  \index{NSM!template}
 %  On the other hand, the user can use the configuration
 %  in \texttt{/home/user/.config/seqq66} as a stock configuration
@@ -342,13 +345,13 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 \subsubsection{Seq66 Session Management / NSM / Run in NSM}
 \label{subsec:sessions_nsm_first_run_in_nsm}
 
-   When \textsl{Seq66} is run in \textsl{NSM} for the first time,
-   a stock default configuration is created when
+   Note: When \textsl{Seq66} is run in \textsl{NSM} for the first time,
+   a stock default configuration is saved when
    \textsl{Seq66} exits.
-   This is different from earlier behaving, where the home configuration was
+   This is different from earlier behavior, where the home configuration was
    imported automatically.
    Now, the user must use the
-   \textbf{File / Import Project...}
+   \textbf{File / Import / Import Project...}
    command.
 
 %  When \textsl{Seq66} is run in \textsl{NSM} for the first time,
@@ -396,8 +399,12 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 \end{verbatim}
 
    \index{sessions!non-starter}
+   \index{sessions!liblo library}
    If \textsl{NSM} refuses to start, make sure that the \texttt{liblo} library
-   from the OSC project is installed.  If it is installed, then check the
+   from the OSC project is installed.
+   \index{sessions!/etc/hosts}
+   \index{sessions!loopback interface}
+   If it is installed, then check the
    \texttt{/etc/hosts} file to make sure that a loopback interface is
    defined. In some versions of \textsl{Linux}, it isn't defined properly,
    and the \textsl{NSM} daemon (\texttt{nsmd}) will not start.
@@ -440,11 +447,20 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
     ready to receive commands.
 \end{verbatim}
 
+   Important: the \textsl{Seq66} user-interface will not show at first.
+   It is hidden so that the screen is not inundated with the windows of all the
+   applications that are (eventually) running under the session.
+   This is especially annoying with tiled window managers.
+   In order to see the \textsl{Seq77} user-interface, click on
+   the \textbf{GUI} button in the session line shown in the \textsl{NSM} window .
+
    Once \textsl{Seq66} is running under \textsl{NSM},
    then click the \textbf{Save}
    button at the top of the \textsl{NSM} interface in order
-   to save the session information.  This is an important step.
-   One can see what has been created to support the session;
+   to save the session information.
+   This is an \textsl{important} step.
+   After \textsl{Seq66} exits,
+   one can see what has been created to support the session;
    the directory that \textsl{NSM}
    creates by default is \texttt{/home/user/NSM Sessions}.
 
@@ -456,7 +472,10 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
      +-- seq66.nGJDW/
      |   +-- config/
      |   |   +-- qseq66.ctrl
+     |   |   +-- qseq66.drums
      |   |   +-- qseq66.mutes
+     |   |   +-- qseq66.palette
+     |   |   +-- qseq66.playlist
      |   |   +-- qseq66.rc
      |   |   +-- qseq66.usr
      |   +-- midi/
@@ -557,10 +576,11 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    When not running in a session, the normal configuration directory and files
    are shown.  When running in an \textsl{NSM} section, the configuration
    information received from \textsl{NSM} is displayed.
+   It is meant to display information to
+   help the user understand what is happening in the run.
 
-   This tab is not yet fully functional and is meant to display information to
-   help the user understand what is happening in the run.  In particular,
-  \textbf{Session Log} does not yet work.
+   This tab is not yet fully functional.
+   In particular, \textbf{Session Log} does not yet work.
 
 \begin{figure}[H]
    \centering 
@@ -593,7 +613,13 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          \texttt{[macro-control-out]} section.
          By selecting one, it is automatically sent out via the
          \texttt{[output-buss]} port defined in the 'ctrl' file.
+         The "startup" and "shutdown" macros, if defined,
+         are sent automatically. "Startup" is useful to put
+         a MIDI controller into the proper mode for controlling and displaying
+         information in \textsl{Seq66}, and "shutdown" can return the controller
+         to its normal operating mode.
       \item Reload Session.
+         \index{restart!manual}
          After editing some of the preferences in the \textbf{Edit / Preferences}
          dialog, one can visit this tab and press this button to essentially
          restart \textsl{Seq66}, reloading the new configuration.
@@ -611,8 +637,9 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.65]{tabs/session/nsm-qseq66-menus.png}
-   \caption*{File Menu When Running Under NSM}
+%  \includegraphics[scale=0.65]{tabs/session/nsm-qseq66-menus.png}
+   \includegraphics[scale=0.65]{tabs/session/nsm-qseq66-menus-2.png}
+   \caption*{File Menu When Running Under NSM, Composite View}
 \end{figure}
 
    The following items describe the menu entries.
@@ -625,39 +652,58 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          session.  A relative path can be included.  This name is needed
          because there is no "Save As" option when running in an \textsl{NSM}
          session.
-      \item \textbf{Import into Session}.
+      \item \textbf{Import / Import Project Configuration...}
+         Imports a whole project configuration into the current NSM session.
+         This functionality used to be automatic (importing the "home"
+         configuration), but it is better left to the user to do.
+         \index{restart!automatic}
+         However, the restart of \textsl{Seq66} after this operation is
+         automatic.  Be careful!
+      \item \textbf{Import / Import MIDI to Current Set...}
+         This action works the same as in normal mode.
+         This item allows the user to grab a MIDI file from anywhere and import
+         it into the current set.
+         The default directory that comes up in the
+         prompt is the "last-used directory" from the session 'rc' file.
+      \item \textbf{Import / Import Playlist...}
+         This action works the same as in normal mode.
+         The destination is the NSM session directory.
+         \index{restart!automatic}
+         Once the playlist is imported,
+         \textsl{Seq66} is automatically \textsl{\textbf{restarted}}
+         in order to load the playlist.
+         Be careful!
+      \item \textbf{Import / Import into Session...}
          Prompts the user for a MIDI file to
          be imported (copied) into the current session.  The path to the file
          is then adjusted to use the \textsl{NSM} \texttt{midi} subdirectory.
-      \item \textbf{Open Playlist}.
-         Works the same as without session
-         management, but gets the list from the session directory.
-      \item \textbf{Save Session}.
-         This function saves the main configuration
-         files (except for the 'usr' file), saves the play-list and note-mapper
-         files, if in use, and saves the current MIDI file, if any.
-      \item \textbf{Export Song As MIDI}.
+%     \item \textbf{Open Playlist}.
+%        Works the same as without session
+%        management, but gets the list from the session directory.
+%     \item \textbf{Save Session}.
+%        This function saves the main configuration
+%        files (except for the 'usr' file), saves the play-list and note-mapper
+%        files, if in use, and saves the current MIDI file, if any.
+      \item \textbf{Export / Export Song...}
          Allows exporting the current song as a stock MIDI file, using the
          performance information (triggers) to write the MIDI data as it would
          be played in "song" mode.
          The default directory that comes up in the
          prompt is the "last-used directory" from the session 'rc' file.
-      \item \textbf{Export MIDI Only}.
+      \item \textbf{Export / Export MIDI Only...}
          Allows exporting the current song as a stock MIDI file.
          The "proprietary" SeqSpec data is \textsl{not} written.
          The default directory that comes up in the
          prompt is the "last-used directory" from the session 'rc' file.
-      \item \textbf{Import MIDI to Current Set}.
-         This item allows the user to grab a MIDI file from anywhere and import
-         it into the current set.
-         The default directory that comes up in the
-         prompt is the "last-used directory" from the session 'rc' file.
-      \item \textbf{Detach}.
-         Allows \textsl{Seq66} to detach from session management.
-         This process simply disconnects from \textsl{NSM} and restores the
-         normal \textsl{File} menu.
-         Currently, it is disabled because it causes issues that we cannot yet
-         solve.
+      \item \textbf{Export / Export SMF 0...}
+         This action works the same as in normal mode.
+         It converts the destination file to SMF 0 format.
+%     \item \textbf{Detach}.
+%        Allows \textsl{Seq66} to detach from session management.
+%        This process simply disconnects from \textsl{NSM} and restores the
+%        normal \textsl{File} menu.
+%        Currently, it is disabled because it causes issues that we cannot yet
+%        solve.
       \item \textbf{Quit}.
          Quits \textsl{Seq66}.
          There are no messages to send to \textsl{NSM} in this case.

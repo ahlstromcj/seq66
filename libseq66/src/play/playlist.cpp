@@ -361,16 +361,17 @@ playlist::copy_songs (const std::string & destination)
         result = make_directory_path(dst);
         if (result)
         {
-            file_message("Created directory", dst);
+            file_message("Playlist directory", dst);
             for (const auto & plpair : m_play_lists)
             {
-                const song_list & sl = plpair.second.ls_song_list;
-                file_message("Processing list", plpair.second.ls_list_name);
+                const play_list_t & pl = plpair.second;
+                const song_list & sl = pl.ls_song_list;
+                file_message("Playlist", pl.ls_list_name);
                 for (const auto & sci : sl)
                 {
                     const song_spec_t & s = sci.second;
                     std::string fname = song_filepath(s);
-                    file_message("Processing song", fname);
+                    file_message("Song", fname);
                     result = file_exists(fname);
                     if (result)
                     {
@@ -382,13 +383,13 @@ playlist::copy_songs (const std::string & destination)
                             result = file_copy(fname, d);
                             if (! result)
                             {
-                                set_file_error_message("Failed to copy", d);
+                                set_file_error_message("Copy failed", d);
                                 break;
                             }
                         }
                         else
                         {
-                            set_file_error_message("Failed to make", d);
+                            set_file_error_message("Create failed", d);
                             break;
                         }
                     }
@@ -403,7 +404,16 @@ playlist::copy_songs (const std::string & destination)
             }
             if (result)
             {
-                // rc().midi_base_directory(xyz);
+                /*
+                 * Now we need to make each playlist directory relative.
+                 */
+
+                for (auto & plpair : m_play_lists)
+                {
+                    play_list_t & pl = plpair.second;
+                    std::string playdir = pl.ls_file_directory;
+                    pl.ls_file_directory = make_path_relative(playdir);
+                }
             }
         }
         else

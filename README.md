@@ -1,7 +1,7 @@
 # README for Seq66 0.98.3
 
 Chris Ahlstrom
-2015-09-10 to 2022-01-11
+2015-09-10 to 2022-01-15
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management,
@@ -82,6 +82,8 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.98.3:
+        *   Fixed issue #76.  Fixed broken MIDI Start handling. Added setting
+            the tempo via a tempo event.  Still thinking about MMC.
         *   Fixed old bug in showing note events; they were filtered by the
             pattern's configured channel!
         *   Tweaks to style-sheet handling.
@@ -89,7 +91,10 @@ Windows, and using a conventional source tarball.
         *   In a new NSM session, do not load the most-recent MIDI file, even
             if specified in the imported configuration.  Also, no longer do an
             automatic import of the home configuration to the NSM configuration.
-            Instead, use the "File / Import Project" menu entry.
+            Instead, use the "File / Import / Import Project" menu entry.
+            See the user manual for how this works.
+        *   Added a "File / Import / Import Playlist" command.
+            See the user manual for how this works.
     *   Version 0.98.2:
         *   Fixed issue #74, where -1 for "no buss-override" was being converted
             to 0.

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-01-10
+ * \updates       2022-01-15
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -1147,6 +1147,11 @@ public:
         m_inspection_tag = t;
     }
 
+    void set_imported_playlist
+    (
+        const std::string & sourcepath,
+        const std::string & midipath
+    );
     void auto_rc_save (bool flag);
 
     void auto_usr_save (bool flag)

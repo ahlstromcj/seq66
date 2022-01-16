@@ -35,7 +35,7 @@
  *      Add filepath to BAD playlist message.
  */
 
-#include <map>
+#include <map>                          /* std::map<>                       */
 
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 

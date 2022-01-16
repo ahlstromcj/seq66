@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-12-24
+% \update      2022-01-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -28,18 +28,25 @@
    The \textbf{File} menu is used to save and load files in
    Standard MIDI Format 0 or 1, \textsl{Cakewalk} "WRK",
    and \textsl{Seq66} MIDI files.
-   The \textsl{Seq66} menu entry contains the sub-items shown below.
+   It also supports a list of recent files, and (new with versio 0.98.3)
+   sub-menus for import and export functions, which have expanded quite a bit.
+
+   The \textsl{Seq66} \textbf{File} menu contains the sub-items shown below.
 %  \figureref{fig:menu_file_items}.
    The next few sub-sections discuss
    the sub-items in the \textbf{File} menu.
    Please note that these entries are different
    if \textsl{Seq66} is started under the control of the
    \textsl{Non Session Manager}.  
+   See \sectionref{subsubsec:sessions_file_menu}.
+   However, the import and export menus remain the same, although there are
+   slight differences in how they work.
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.75]{main-menu/file/livegrid-dark-menu-file.png}
-   \caption{Seq66 Menu File Items}
+%  \includegraphics[scale=0.75]{main-menu/file/livegrid-dark-menu-file.png}
+   \includegraphics[scale=0.75]{main-menu/file/livegrid-dark-menu-file-2.png}
+   \caption{Seq66 Menu File Items, Composite View}
    \label{fig:menu_file_items}
 \end{figure}
 
@@ -50,10 +57,23 @@
       \item \textbf{Recent MIDI files}
       \item \textbf{Save}
       \item \textbf{Save As}
-      \item \textbf{Export Song...}
-      \item \textbf{Export MIDI Only...}
-      \item \textbf{Export SMF 0...}
-      \item \textbf{Import MIDI to Current Set}
+      \item \textbf{Import}
+      \begin{enumber}
+         \item \textbf{Import Project Configuration...}
+         \item \textbf{Import MIDI to Current Set...}
+         \item \textbf{Import Playlist...}
+         \index{restart!automatic}
+         Once the playlist is imported,
+         \textsl{Seq66} is automatically \textsl{\textbf{restarted}}
+         in order to load the playlist.
+         Be careful!
+      \end{enumber}
+      \item \textbf{Export}
+      \begin{enumber}
+         \item \textbf{Export MIDI Only...}
+         \item \textbf{Export Song...}
+         \item \textbf{Export SMF 0...}
+      \end{enumber}
       \item \textbf{Quit} (\textbf{Exit} in \textsl{Windows})
    \end{enumber}
 
@@ -210,7 +230,18 @@
    (Channel and port meta events are
    considered \textsl{obsolete} in the MIDI standard.)
 
-\subsubsection{Menu / File / Import MIDI}
+\subsubsection{Menu / File / Import / Import Project Configuration}
+\label{subsubsec:menu_file_import_project_configuration}
+
+   This command is useful to grab an existing project configuration
+   (i.e. the set of \texttt{qseq66.*} files) and copy it
+   to another directory.
+   This command is most useful in importing a project into a new
+   NSM session.  Previously, the "home" project would be imported automatically
+   into a new NSM session, but this was deemed confusing by some users, and
+   properly so!
+
+\subsubsection{Menu / File / Import / Import MIDI to Current Set}
 \label{subsubsec:menu_file_import}
 
    The \textbf{Import} menu entry imports an SMF 0
@@ -219,7 +250,46 @@
    This functionality is explained in detail in
    \sectionref{subsec:midi_export_file_import}.
 
-\subsubsection{Menu / File / Export Song as MIDI}
+\subsubsection{Menu / File / Import / Import Playlist}
+\label{subsubsec:menu_file_import_playlisMIDI to Current Sett}
+
+   A user can create a playlist that accesses MIDI files anywhere in the file
+   system.
+   However, in a session manager, it is preferable to have the configuration
+   self-contained if possible.
+   Even without a session manager, it can be useful to move a playlist to a
+   subdirectory in order to separate it and its MIDI files from other
+   playlists.
+
+   This menu entry does a lot of things; here are the steps:
+
+   \begin{itemize}
+      \item Copy the selected playlist file into the current configuration
+         directory.  This directory is one of the following:
+         \begin{itemize}
+            \item The default "home" directory,
+               \texttt{\textasciitilde/.config/seq66}.
+            \item A "home" directory specified by the \texttt{--home} option.
+            \item The session directory created by \textsl{NSM}.
+         \end{itemize}
+         For discussion, this directory is called "HOME".
+      \item In HOME, create a directory called \texttt{playlist/listname}, where
+         "listname" is the base part of the playlist name, as in
+         \texttt{listname.playlist}.
+      \item The playlist is opened, parsed, and all of the MIDI tunes specified
+         in that file are copied into the new playlist directory, preserving
+         the directory directory structure of the original playlist.
+      \item The 'rc' file is modified to specify the new playlist,
+         specify that it is \texttt{active},
+         to specify the new \texttt{base-directory} for all of the tunes,
+         and to specify that the playlist will be saved at exit.
+      \item Lastly, \textsl{Seq66} will be
+         \index{restart!automatic}
+         \textsl{\textbf{restarted}} automatically to load the new playlist.
+         You have been warned!
+   \end{itemize}
+
+\subsubsection{Menu / File / Export / Export Song as MIDI}
 \label{subsubsec:menu_file_export}
 
    Thanks to the \textsl{Seq32} project, the ability to export songs to MIDI
@@ -228,7 +298,7 @@
    This functionality is explained in detail in
    \sectionref{subsec:midi_export_song_export}.
 
-\subsubsection{Menu / File / Export MIDI Only}
+\subsubsection{Menu / File / Export / Export MIDI Only}
 \label{subsubsec:menu_file_export_midi_only}
 
    Sometimes it might be useful to export only the non-vendor-specific
@@ -237,7 +307,7 @@
    This functionality is explained in detail in
    \sectionref{subsec:midi_export_file_export_midi_only}.
 
-\subsubsection{Menu / File / Export SMF 0}
+\subsubsection{Menu / File / Export / Export SMF 0}
 \label{subsubsec:menu_file_export_smf_0}
 
    This feature is new since version 0.97.  It allows all tracks in the song to
@@ -576,6 +646,7 @@
    \index{remove mapping}
    \index{port! remove mapping}
    Pressing this button removes the port mapping.
+   \index{restart!manual}
    Once done, either restart \textsl{Seq66} or go to the \textbf{Session}
    tab and click the \textbf{Reload Session} button.
    (See \sectionref{subsec:concepts_reload_session}.)
@@ -925,7 +996,8 @@
 
    If one makes a change in the JACK transport settings, it is best to
    then press the \textbf{JACK Transport Disconnect} button, then the
-   \textbf{JACK Transport Connect} button.  Another option is to restart
+   \textbf{JACK Transport Connect} button.
+   Another option is to restart
    \textsl{Seq66}... the settings are automatically saved when
    \textsl{Seq66} exits.
 

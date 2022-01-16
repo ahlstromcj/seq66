@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2021-11-24
+ * \updates       2022-01-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -115,8 +115,7 @@ qsessionframe::enable_reload_button (bool flag)
 void
 qsessionframe::slot_flag_reload ()
 {
-    signal_for_restart();
-    warnprint("Session reload request");
+    signal_for_restart();           /* warnprint("Session reload request"); */
 }
 
 void

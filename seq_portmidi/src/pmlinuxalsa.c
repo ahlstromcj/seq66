@@ -51,7 +51,7 @@
  *  source, and you can turn them on by changing false to true below:
  */
 
-#define VERBOSE_ON          0                   // TEMPORARY
+#define VERBOSE_ON  0
 
 /*
  *  Check for ALSA version.

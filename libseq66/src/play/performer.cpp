@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-01-13
+ * \updates       2022-01-15
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1637,7 +1637,7 @@ performer::set_beats_per_minute (midibpm bpm)
     if (usr().bpm_is_valid(int(bpm)))
     {
         bpm = fix_tempo(bpm);
-        return jack_set_beats_per_minute(bpm);
+        return jack_set_beats_per_minute(bpm);  /* not just JACK, though    */
     }
     else
         return false;
@@ -3523,6 +3523,15 @@ performer::poll_cycle ()
                 {
                     midi_song_pos(ev);
                 }
+                else if (ev.is_tempo())             /* added for issue #76  */
+                {
+                    /*
+                     * Should we do this only if JACK transport is not
+                     * enabled?
+                     */
+
+                    (void) set_beats_per_minute(ev.tempo());
+                }
                 else if (ev.is_sysex())
                 {
                     midi_sysex(ev);
@@ -3581,16 +3590,20 @@ performer::poll_cycle ()
  *      behavior seems reasonable, though the function names Seq66 uses are
  *      different.  Used when starting from the beginning of the song.  Obey
  *      the MIDI time clock.
+ *
+ * Issue #76:
+ *
+ *      Somehow auto_stop() was placed after auto_play().  Brain fart?
  */
 
 void
 performer::midi_start ()
 {
+    auto_stop();
     song_start_mode(sequence::playback::live);
     auto_play();
     m_midiclockrunning = m_usemidiclock = true;
     m_midiclocktick = m_midiclockpos = 0;
-    auto_stop();
     if (rc().verbose())
         infoprint("MIDI Start");
 }

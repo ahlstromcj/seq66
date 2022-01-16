@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-10-20
-% \update      2021-09-30
+% \update      2022-01-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -24,10 +24,17 @@
    \ref{subsubsec:menu_file_export_midi_only}, on page
    \pageref{subsubsec:menu_file_import}.
 
-\subsection{Import MIDI}
-\label{subsec:midi_export_file_import}
+\subsection{File / Import Menu}
+\label{subsec:midi_export_file_import_menu}
 
-   The \textbf{Import} menu entry imports an SMF 0
+   The actions for importing files have been move to the new
+   \textbf{File / Import} menu in order to keep from cluttering the
+   ever-expanding file menu.
+
+\subsubsection{Import MIDI to Current Set}
+\label{subsubsec:midi_export_file_import}
+
+   The \textbf{File / Import / Import to Current Set} menu entry imports an SMF 0
    or SMF 1 MIDI file as one or more patterns, one pattern per track, and
    imports them into the currently-active set.
    Even long tracks, that aren't short loops, are imported.
@@ -59,12 +66,55 @@
    Finally, conversion to SMF 1 for SMF 0 files can be disabled using the
    'usr' option \texttt{[user-midi-settings] convert-to-smf-1}.
 
-\subsection{Export Song as MIDI}
-\label{subsec:midi_export_song_export}
+\subsubsection{Import Project Configuration}
+\label{subsubsec:midi_export_file_import_project}
+
+   This operation allows one to copy all of the \texttt{qseq66.*} configuration
+   files from one directory to another.  It is most useful when
+   importing a configuration into a new \textsl{NSM} session.
+   \index{restart!automatic}
+   Once the files are copy, \textsl{Seq66} is automatically restarted,
+   in order to load the new configuration.  Be careful!
+
+   Note that the names of the configuration files being impported should
+   match the canonical names.  That is, the base names should all be
+   \texttt{qseq66} (or \texttt{qpseq66} for \textsl{Windows}.)
+
+\subsubsection{Import Playlist}
+\label{subsubsec:midi_export_file_import_playlist}
+
+   This operation allows one to copy a playlist
+   from one directory to another.  It is most useful when
+   importing a configuration into a new \textsl{NSM} session.
+   It copies the playlist file (e.g. \texttt{liveset.playlist})
+   into the destination configuration directory.
+
+   Then it creates a subdirectory with the name
+   \texttt{playlist/liveset} (for example).
+   It then copies all of the MIDI files that were referenced in the
+   original playlist into this new directory, preserving
+   the directory structure.
+
+   It then wires in and activates the new playlist in the
+   'rc' file, and sets the new base directory for the MIDI files.
+
+   \index{restart!automatic}
+   Lastly, it restarts \textsl{Seq66}, to load in the new playlist.
+   Be careful!
+
+\subsection{File / Export Menu}
+\label{subsec:midi_export_file_export_menu}
+
+   The actions for exporting files have been move to the new
+   \textbf{File / Export} menu in order to keep from cluttering the
+   ever-expanding file menu.
+
+\subsubsection{Export Song}
+\label{subsubsec:midi_export_song_export}
 
    Thanks to \textsl{Seq32}, exporting song performances (see the
    \textbf{Song Editor}) to standard MIDI format has been added.
-   The \textbf{Export Song as MIDI} operation modifies the song in the
+   The \textbf{File / Export / Export Song} operation modifies the song in the
    following ways:
 
    \begin{itemize}
@@ -155,8 +205,8 @@
    shows.
    6911 is almost 36 beats (9 measures).  Something to figure out.
 
-\subsection{Export MIDI Only}
-\label{subsec:midi_export_file_export_midi_only}
+\subsubsection{Export MIDI Only}
+\label{subsubsec:midi_export_file_export_midi_only}
 
    Sometimes it might be useful to export only the non-sequencer-specific
    (non-SeqSpec) data from a \textsl{Seq66} song.
@@ -165,13 +215,14 @@
    might balk at some SeqSpec item in the song, and refuse to load the MIDI
    file.
    For such cases,
-   the \textbf{Export MIDI Only} menu item writes a file that does not contain
+   the \textbf{File / Export / Export MIDI Only} menu
+   item writes a file that does not contain
    the SeqSpec data for each track, and does not include all the SeqSpec data
    (such as mute groups) that is normally written to the end of the
    \textsl{Seq66} MIDI file.
 
-\subsection{Export SMF 0}
-\label{subsec:midi_export_file_export_smf_0}
+\subsubsection{Export SMF 0}
+\label{subsubsec:midi_export_file_export_smf_0}
 
    In some cases it might be useful to convert a \textsl{Seq66} MIDI file to a
    single-track SMF 0 file.
@@ -180,7 +231,8 @@
    the tracks to be exported (combined into a single track) must be unmuted
    and have layouts in the song editor.
 
-   This action removes all the existing tracks and merges them into track 0.
+   The \textbf{File / Export / Export SMF 0 } menu
+   action removes all the existing tracks and merges them into track 0.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

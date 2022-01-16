@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-01-13
+ * \updates       2022-01-16
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -83,6 +83,7 @@
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "midi/songsummary.hpp"         /* seq66::write_song_summary()      */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
+#include "os/daemonize.hpp"             /* seq66::signal_for_restart()      */
 #include "qliveframeex.hpp"             /* seq66::qliveframeex container    */
 #include "qmutemaster.hpp"              /* shows a map of mute-groups       */
 #include "qperfeditex.hpp"              /* seq66::qperfeditex container     */
@@ -102,7 +103,6 @@
 #include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
 #include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager session mgr. */
 #include "util/filefunctions.hpp"       /* seq66::file_extension_match()    */
-// #include "sessions/smanager.hpp"        /* seq66::save_, attach_session()   */
 
 /*
  *  A signal handler is defined in daemonize.cpp, used for quick & dirty
@@ -1181,13 +1181,13 @@ qsmainwnd::import_playlist ()
         midisubdir = pathname_concatenate(midisubdir, midibase);
         ok = session()->make_path_names(destdir, cfgpath, midipath, midisubdir);
         if (ok)
-            ok = perf().import_playlist(sourcepath, cfgpath, midipath);
-
-        if (ok)
         {
-            rc().playlist_active(true);
-            rc().playlist_filename(filename_base(sourcepath));
-            rc().midi_base_directory(midipath);
+            ok = perf().import_playlist(sourcepath, cfgpath, midipath);
+            if (ok)
+            {
+                rc().set_imported_playlist(sourcepath, midipath);
+                signal_for_restart();           /* "reboot" the application */
+            }
         }
     }
 }
@@ -2041,7 +2041,8 @@ qsmainwnd::import_project()
     bool selected = show_import_project_dialog(this, selecteddir, selectedfile);
     if (selected && not_nullptr(session()))
     {
-        (void) session()->import_into_session(selecteddir, selectedfile);
+        if (session()->import_into_session(selecteddir, selectedfile))
+            signal_for_restart();               /* "reboot" the application */
     }
 }
 
@@ -3012,7 +3013,7 @@ qsmainwnd::connect_nsm_slots ()
     );
 
     /*
-     * File / Open Playlist
+     * File / Open Playlist.
      */
 
     ui->actionOpenPlaylist->setVisible(false);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-01-10
+ * \updates       2022-01-15
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -283,6 +283,24 @@ rcsettings::auto_options_save () const
         auto_rc_save() || auto_usr_save() ||
         rc().is_modified() || usr().is_modified()
     );
+}
+
+/**
+ *  After importing a playlist, call this function to make it permanent (but
+ *  will need to reload the sesson.
+ */
+
+void
+rcsettings::set_imported_playlist
+(
+    const std::string & sourcepath,
+    const std::string & midipath
+)
+{
+    playlist_active(true);
+    playlist_filename(filename_base(sourcepath));
+    midi_base_directory(midipath);
+    auto_playlist_save(true);
 }
 
 void
