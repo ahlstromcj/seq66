@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+#******************************************************************************
+# make_ametro
+#------------------------------------------------------------------------------
+##
+# \file           make_ametro
+# \library        Any project
+# \author         Chris Ahlstrom
+# \date           2022-01-17
+# \update         2022-01-17
+# \version        $Revision$
+# \license        $XPC_SUITE_GPL_LICENSE$
+#
+#     This script just makes the "ametro" program for now. The original
+#     instruction in ametro.c were wrong or out-of-date, and led to unresolved
+#     ALSA functions.
+#
+#------------------------------------------------------------------------------
+
+gcc -o ametro ametro.c -lasound
+
+#******************************************************************************
+# make_ametro
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 et ft=sh
+#------------------------------------------------------------------------------
