@@ -96,7 +96,14 @@ rtmidi::rtmidi (midibus & parentbus, rtmidi_info & info) :
 #endif
 
 #if defined SND_LIB_VERSION_STR
+
+    /*
+     * Since this is build info, we do not use the run-time version of ALSA
+     * that can be obtained from snd_asoundlib_version().
+     */
+
     set_alsa_version(std::string(SND_LIB_VERSION_STR));
+
 #endif
 }
 

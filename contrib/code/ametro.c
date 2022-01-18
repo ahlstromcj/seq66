@@ -36,6 +36,7 @@
  *      -   White space alignment.
  *      -   Tweaks to coding conventions.
  *      -   Added ability to output start, stop, and continue clock events.
+ *      -   More comprehensive error detection.
  *
  *  Further research:
  *
@@ -51,6 +52,10 @@
 #include <signal.h>
 #include <getopt.h>
 #include <string.h>
+
+#include <sys/ioctl.h>
+#include <termios.h>
+#include <unistd.h>
 
 #include <alsa/asoundlib.h>
 
@@ -86,6 +91,7 @@ int verbose     = TRUE;
 int master      = FALSE;
 int notes       = TRUE;
 int slave       = FALSE;
+
 typedef enum
 {
     CT_START,
@@ -95,24 +101,38 @@ typedef enum
 
 } clock_type;
 
+void make_clock_event (int tick, clock_type ct);
+
+void
+show_error (const char * msg)
+{
+    fprintf(stderr, "Error: %s\n", msg);
+}
+
+void
+show_error_string (const char * msg, int rc)
+{
+    fprintf(stderr, "%s (%s)\n", msg, snd_strerror(rc));
+}
+
+void
+show_msg (const char * msg)
+{
+    printf("%s\n", msg);
+}
+
 void
 usage ()
 {
-    fprintf
+    show_msg
     (
-        stderr,
 "Usage:\n"
 "  ametro\n"
-"       [--output CLIENT:PORT]\n"
-"       [--resolution PPQ]\n"
-"       [--signature N:M]\n"
-"       [--tempo BPM]\n"
-"       [--weak NOTE]\n"
-"       [--strong NOTE]\n"
-"       [--quiet]\n"
-"       [--velocity 0..127]\n"
-"       [--channel 0..15]\n"
-"       [--program 0..127]\n"
+"       [ --output CLIENT:PORT ]   [ --resolution PPQ ]\n"
+"       [ --signature N:M ]        [ --tempo BPM ]\n"
+"       [ --weak NOTE ]            [ --strong NOTE ]\n"
+"       [ --velocity 0..127 ]      [ --channel 0..15 ]\n"
+"       [ --program 0..127 ]       (more options shown below)\n"
 "\n"
 "Options:\n"
 "\n"
@@ -139,6 +159,164 @@ usage ()
     );
 }
 
+/**
+ *  This function changes the standard input from "canonical" mode (which
+ *  means it buffers until a newline is read) into raw mode, where it will
+ *  return one keystroke at a time.
+ *
+ *      set_raw_mode(TRUE) will turn on nonblocking I/O for standard input.
+ *
+ *      set_raw_mode(FALSE) will reset I/O to work like normal.
+ */
+
+static int raw_mode = FALSE;                   /* default:  canonical mode */
+
+void
+set_raw_mode (int flag)
+{
+	static struct termios old_tio;              /* to save the old settings */
+	if (flag && ! raw_mode)                     /* save original term mode  */
+    {
+		int rc = tcgetattr(STDIN_FILENO, &old_tio);
+        if (rc == 0)
+        {
+            struct termios tio = old_tio;
+
+            /*
+             * Disable echo and canonical (cooked) mode.
+             */
+
+            tio.c_lflag &= ~(ICANON | ECHO);
+            rc = tcsetattr(STDIN_FILENO, TCSANOW, &tio);
+            if (rc != 0)
+            {
+                show_error("tcsetattr() failed to start raw mode");
+            }
+            else
+            {
+                raw_mode = TRUE;
+                show_msg("Raw console termio activated");
+            }
+        }
+	}
+    else if (! flag && raw_mode)                /* restore terminal mode    */
+    {
+		int rc = tcsetattr(STDIN_FILENO,TCSANOW, &old_tio);
+        if (rc != 0)
+        {
+            show_error("tcsetattr() failed to restore cooked mode");
+        }
+        else
+        {
+            raw_mode = FALSE;
+            show_msg("Raw console termio deactivated");
+        }
+	}
+}
+
+/**
+ *  Returns how many bytes are waiting in the input buffer.
+ *
+ * Precondition:
+ *
+ *      Requires set_raw_mode(true) to work.
+ *
+ * Example:
+ *
+ *  int bytes_available = kbcount() returns how many bytes are in the input
+ *  queue to be read>
+ */
+
+int
+kbcount ()
+{
+	int count = 0;
+	if (raw_mode)
+        ioctl(STDIN_FILENO, FIONREAD, &count);
+
+	return count;
+}
+
+/**
+ *  Does a non-blocking I/O read from standard input and returns one
+ *  keystroke.  It is a lightweight equivalent to ncurses' getch() function.
+ *  It returns all characters, including Esc.
+ *
+ * Precondition:
+ *
+ *      Requires set_raw_mode(true) to work.
+ *
+ * Example:
+ *
+ *      int ch = quick_read() returns -1 if no key has been hit, or the key
+ *      actually struck.
+ */
+
+int
+quick_read ()
+{
+    int result = (-1);
+    if (raw_mode)
+    {
+        int bytes_available = kbcount();
+        if (bytes_available > 0)
+        {
+            int c = getchar();
+            --bytes_available;
+            if (bytes_available == 0)
+            {
+                result = c;
+
+                /*
+                 * Debugging only:
+                 *
+                 * if (verbose)
+                 *     printf("char 0x%02x returned\n", c);
+                 */
+            }
+
+            /*
+             * Dump the remaining bytes.  We don't need them for our simple
+             * purposes.  Also we don't care about mouse events.
+             */
+
+            for (int i = 0; i < bytes_available; ++i)
+            {
+                c = getchar();
+
+                /*
+                 * Debugging only:
+                 *
+                 * if (verbose)
+                 *     printf("Discarding char 0x%02x\n", c);
+                 */
+            }
+        }
+	}
+	return result;
+}
+
+void
+bail_out ()
+{
+    set_raw_mode(FALSE);
+}
+
+int
+handle_char (int ch, int tick)
+{
+    int result = 0;         /* 1 == 'Esc' */
+    switch (ch)
+    {
+    case 's':   make_clock_event(0, CT_START);      break;
+    case 'c':   make_clock_event(0, CT_CONTINUE);   break;
+    case 'x':   make_clock_event(0, CT_STOP);       break;
+    case '.':   make_clock_event(0, CT_CLOCK);      break;
+    case 033:   result = 1;                         break;
+    }
+    return result;
+}
+
 void
 open_sequencer ()
 {
@@ -148,10 +326,15 @@ open_sequencer ()
     );
     if (rc < 0)
     {
-        fprintf(stderr, "Error opening ALSA sequencer\n");
+        show_error("Opening ALSA sequencer");
         exit(EXIT_FAILURE);
     }
-    snd_seq_set_client_name(seq_handle, "Metronome");
+    rc = snd_seq_set_client_name(seq_handle, "Metronome");
+    if (rc < 0)
+    {
+        show_error("Naming ALSA sequencer");
+        exit(EXIT_FAILURE);
+    }
     port_out_id = snd_seq_create_simple_port
     (
         seq_handle, "output",
@@ -160,7 +343,7 @@ open_sequencer ()
     );
     if (port_out_id < 0)
     {
-        fprintf(stderr, "Error creating output port\n");
+        show_error("Creating output port");
         snd_seq_close(seq_handle);
         exit(EXIT_FAILURE);
     }
@@ -172,25 +355,34 @@ open_sequencer ()
     );
     if (port_in_id < 0)
     {
-        fprintf(stderr, "Error creating input port\n");
+        show_error("creating input port");
         snd_seq_close(seq_handle);
         exit(EXIT_FAILURE);
     }
 }
 
 /**
- *  Subscribe to a destination port. It's name or address must already be in the
- *  global variable port_address.
+ *  Subscribe to a destination port. It's name or address must already be in
+ *  the global variable port_address.
  */
 
 void
 subscribe ()
 {
-    int rc;
-    snd_seq_addr_t dest, source;
+    snd_seq_addr_t dest;
+    snd_seq_addr_t source;
     snd_seq_port_subscribe_t * subs;
-    source.client = snd_seq_client_id(seq_handle);
-    source.port = port_out_id;
+    int rc = snd_seq_client_id(seq_handle);
+    if (rc >= 0)
+    {
+        source.client = rc;
+        source.port = port_out_id;
+    }
+    else
+    {
+        show_error("Could not get client ID");
+        exit(EXIT_FAILURE);
+    }
     rc = snd_seq_parse_address(seq_handle, &dest, port_address);
     if (rc < 0)
     {
@@ -206,14 +398,14 @@ subscribe ()
     rc = snd_seq_get_port_subscription(seq_handle, subs);
     if (rc == 0)
     {
-        fprintf(stderr, "Connection is already subscribed\n");
+        show_error("Connection already subscribed");
         snd_seq_close(seq_handle);
         exit(EXIT_FAILURE);
     }
     rc = snd_seq_subscribe_port(seq_handle, subs);
     if (rc < 0)
     {
-        fprintf(stderr, "Connection failed (%s)\n", snd_strerror(errno));
+        show_error_string("Connection failed", rc);
         snd_seq_close(seq_handle);
         exit(EXIT_FAILURE);
     }
@@ -226,7 +418,12 @@ subscribe ()
 void
 create_queue ()
 {
-     queue_id = snd_seq_alloc_queue(seq_handle);
+    queue_id = snd_seq_alloc_queue(seq_handle);
+    if (queue_id < 0)
+    {
+        show_error("Could not get queue ID");
+        exit(EXIT_FAILURE);
+    }
 }
 
 void
@@ -281,54 +478,84 @@ continue_queue ()
 void
 make_note (unsigned char note, int tick)
 {
+    int sendcount;
     snd_seq_event_t ev;
     snd_seq_ev_clear(&ev);
     snd_seq_ev_set_note(&ev, channel, note, velocity, 1);
     snd_seq_ev_schedule_tick(&ev, queue_id, 1, tick);
     snd_seq_ev_set_source(&ev, port_out_id);
     snd_seq_ev_set_subs(&ev);
-    snd_seq_event_output_direct(seq_handle, &ev);
+    sendcount = snd_seq_event_output_direct(seq_handle, &ev);
+    if (sendcount < 0)
+        show_error("make_note() output-direct");
 }
 
 void
 make_echo (int tick)
 {
+    int sendcount;
     snd_seq_event_t ev;
     snd_seq_ev_clear(&ev);
     ev.type = SND_SEQ_EVENT_USR1;
     snd_seq_ev_schedule_tick(&ev, queue_id, 1, tick);
     snd_seq_ev_set_dest(&ev, snd_seq_client_id(seq_handle), port_in_id);
-    snd_seq_event_output_direct(seq_handle, &ev);
+    sendcount = snd_seq_event_output_direct(seq_handle, &ev);
+    if (sendcount < 0)
+        show_error("make_echo() output-direct");
 }
 
 void
 make_clock (int tick)
 {
+    int sendcount;
     snd_seq_event_t ev;
     snd_seq_ev_clear(&ev);
     ev.type = SND_SEQ_EVENT_CLOCK;
     snd_seq_ev_schedule_tick(&ev, queue_id, 1, tick);
     snd_seq_ev_set_source(&ev, port_out_id);
     snd_seq_ev_set_subs(&ev);
-    snd_seq_event_output_direct(seq_handle, &ev);
+    sendcount = snd_seq_event_output_direct(seq_handle, &ev);
+    if (sendcount < 0)
+        show_error("make_clock() output-direct");
 }
 
 void
 make_clock_event (int tick, clock_type ct)
 {
+    const char * msg = "?";
+    int sendcount;
     snd_seq_event_t ev;
     snd_seq_ev_clear(&ev);
     switch (ct)
     {
-        case CT_START:      ev.type = SND_SEQ_EVENT_START;      break;
-        case CT_CONTINUE:   ev.type = SND_SEQ_EVENT_CONTINUE;   break;
-        case CT_STOP:       ev.type = SND_SEQ_EVENT_STOP;       break;
-        case CT_CLOCK:      ev.type = SND_SEQ_EVENT_CLOCK;      break;
+        case CT_START:
+            ev.type = SND_SEQ_EVENT_START;
+            msg = "start";
+            break;
+
+        case CT_CONTINUE:
+            ev.type = SND_SEQ_EVENT_CONTINUE;
+            msg = "continue";
+            break;
+
+        case CT_STOP:
+            ev.type = SND_SEQ_EVENT_STOP;
+            msg = "stop";
+            break;
+
+        case CT_CLOCK:
+            ev.type = SND_SEQ_EVENT_CLOCK;
+            msg = "clock";
+            break;
     }
     snd_seq_ev_schedule_tick(&ev, queue_id, 1, tick);
     snd_seq_ev_set_source(&ev, port_out_id);
     snd_seq_ev_set_subs(&ev);
-    snd_seq_event_output_direct(seq_handle, &ev);
+    sendcount = snd_seq_event_output_direct(seq_handle, &ev);
+    if (sendcount >= 0)
+        show_msg(msg);
+    else
+        show_error("make_clock_event() output-direct");
 }
 
 void
@@ -363,20 +590,29 @@ pattern ()
     }
     make_echo(tick);
     if (verbose)
-    {
-        fprintf(stderr, "measure: %5d\r", ++measure);
-    }
+        printf("Measure: %5d\r", ++measure);
 }
 
 void
 set_program ()
 {
+    int sendcount;
     snd_seq_event_t ev;
+    if (verbose)
+    {
+        printf
+        (
+            "Setting program %d, channel %d for output port %d\n",
+            program, channel, port_out_id
+        );
+    }
     snd_seq_ev_clear(&ev);
     snd_seq_ev_set_pgmchange(&ev, channel, program);
     snd_seq_ev_set_source(&ev, port_out_id);
     snd_seq_ev_set_subs(&ev);
-    snd_seq_event_output_direct(seq_handle, &ev);
+    sendcount = snd_seq_event_output_direct(seq_handle, &ev);
+    if (sendcount < 0)
+        show_error_string("set_program() output-direct failed", sendcount);
 }
 
 void
@@ -513,14 +749,14 @@ parse_options (int argc, char * argv [])
             x = strtol(optarg, &sep, 10);
             if ((x < 1) | (x > 32) | (*sep != ':'))
             {
-                fprintf(stderr, "Invalid time signature\n");
+                show_error("Invalid time signature");
                 return 1;
             }
             num_parts = x;
             x = strtol(++sep, NULL, 10);
             if ((x < 1) | (x > 32))
             {
-                fprintf(stderr, "Invalid time signature\n");
+                show_error("Invalid time signature");
                 return 1;
             }
             part_fig = x;
@@ -568,7 +804,7 @@ main (int argc, char * argv [])
     struct pollfd * pfd;
     if (verbose)
     {
-        fprintf(stderr, "ametro - MIDI metronome using ALSA sequencer\n");
+        show_msg("ametro: MIDI metronome using ALSA sequencer");
     }
     if (parse_options(argc, argv) != 0)
     {
@@ -588,19 +824,26 @@ main (int argc, char * argv [])
 
         if (port_address == NULL)
         {
-            fprintf
+            show_error
             (
-                stderr,
-                "No client/port specified. Supply one as an argument or set\n"
-                "the environment variable ALSA_OUTPUT_PORTS.\n"
+                "No client/port specified. Use --output or set"
+                "environment value ALSA_OUTPUT_PORTS"
             );
             usage();
             return EXIT_FAILURE;
         }
     }
 
+	/*
+     * These next three lines prevent us from leaving the terminal in a bad
+     * state if we ctrl-c out or exit(). The bail_out() function is the
+     * callback when we quit; call it to clean up the terminal.
+     */
+
+	atexit(bail_out);
     signal(SIGINT, sigterm_exit);
     signal(SIGTERM, sigterm_exit);
+    set_raw_mode(TRUE);
     open_sequencer();
     create_queue();
     subscribe();
@@ -616,13 +859,23 @@ main (int argc, char * argv [])
     }
     for (;;)
     {
+        int ch = quick_read();
+        if (ch > 0)
+        {
+            if (handle_char(ch, 0) == 1)
+                break;
+        }
         if (poll(pfd, npfd, 1000) > 0)
         {
-            for (j = 0; j < npfd; j++)
+            for (j = 0; j < npfd; ++j)
             {
                 if (pfd[j].revents > 0)
                     midi_action();
             }
+        }
+        else
+        {
+            show_error("Poll failed");
         }
     }
 }

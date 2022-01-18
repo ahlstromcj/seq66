@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 #******************************************************************************
 # make_ametro
@@ -8,7 +8,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2022-01-17
-# \update         2022-01-17
+# \update         2022-01-18
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -18,7 +18,16 @@
 #
 #------------------------------------------------------------------------------
 
-gcc -o ametro ametro.c -lasound
+DEBUGFLAG=""
+
+if [ "$1" == "debug" ] ; then
+   DEBUGFLAG="-g"
+   echo "Building ametro for debugging..."
+else
+   echo "Building ametro..."
+fi
+
+gcc $DEBUGFLAG -o ametro ametro.c -lasound
 
 #******************************************************************************
 # make_ametro

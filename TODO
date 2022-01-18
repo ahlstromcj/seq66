@@ -1,6 +1,6 @@
-TO DO for Seq66 0.98.2 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.98.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-12-28
+2019-04-13 to 2022-01-18
 
 Windows:
 
@@ -31,6 +31,16 @@ Port-Mapping:
     Running qpseq66 on Linux:  "QSynth" is named "PortMidi"! See
     seq_portmidi/src/midibus.cpp.  The workaround is to specify long port
     names in the 'rc' file.
+
+MIDI:
+
+    ALSA:
+
+        When running 'qseq66 -A -o virtual=2,1', arecordmidi shows 2
+        ports 'seq66:midi out 1' and 'seq66:midi out 2', while aplaymidi shows
+        the better 'seq66::seq66 in'.
+
+        Use const char * snd_asoundlib_version () to get the ALSA version.
 
 Automation:
 
