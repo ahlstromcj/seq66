@@ -1,0 +1,56 @@
+# This file provides samples, explanations, and ideas for MMC control.
+#
+# Copy the [macro-control-out] section and paste it into your
+# qseq66.ctrl or other 'ctrl' file.
+#
+# header = 0xf0 0x47 0x7F 0x29 0x60 0x00 0x04 0x00 0xVH 0xVM 0xVF $footer
+#
+# Format:
+#
+#   F0 F7 devid subid1 [subid2 [parameters]] F7
+#
+#   devid ranges from 0 to 7F, with 7F being "all devices".
+#
+#   subid1 (and subid2 for MMC) values:
+#
+#   01 = Long Form MTC
+#   02 = MIDI Show Control
+#   03 = Notation Information
+#   04 = Device Control
+#   05 = Real Time MTC Cueing
+#   06 = MIDI Machine Control Command (MMC)
+#        01 Stop
+#        02 Play
+#        03 Deferred Play (play after no longer busy)
+#        04 Fast Forward
+#        05 Rewind
+#        06 Record Strobe (Punch in/out | Punch In)
+#        07 Record Exit (Punch out (music) | Punch out)
+#        08 Record Pause
+#        09 Pause (pause playback)
+#        0A Eject (disengage media container from MMC device)
+#        0B Chase
+#        0D MMC Reset (to default/startup state)
+#        40 Write (Record Ready, Arm Tracks)
+#           Parameters: <length1> 4F <length2> <track-bitmap-bytes>
+#        44 Goto (Locate)
+#            Parameters: <length>=06 01 <hours> <minutes> <seconds>
+#                   <frames> <subframes>
+#        47 Shuttle
+#           Parameters: <length>=03 <sh> <sm> <sl> (MIDI Std Speed codes)
+#   07 = MIDI Machine Control Response (MMC)
+#        Response state, plus values detailing response state.
+#   08 = Single Note Retune
+
+[macro-control-out]
+
+dev-id = 0x00    # or whatever
+footer = 0xF7
+command = F0 F7 $dev-id 0x06
+response = F0 F7 $dev-id 0x07
+
+
+
+
+# vim: sw=4 ts=4 wm=4 et ft=dosini
+

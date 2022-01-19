@@ -40,6 +40,9 @@ MIDI:
         ports 'seq66:midi out 1' and 'seq66:midi out 2', while aplaymidi shows
         the better 'seq66::seq66 in'.
 
+        However, it looks like we cannot create more than one virtual input
+        port!
+
         Use const char * snd_asoundlib_version () to get the ALSA version.
 
 Automation:

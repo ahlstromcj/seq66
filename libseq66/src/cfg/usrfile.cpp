@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-01-09
+ * \updates       2022-01-19
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -689,16 +689,16 @@ usrfile::write ()
 "# 'bpm-maximum':        0.0       127.0\n"
 "#\n"
 "# 'convert-to-smf-1' controls if SMF 0 files are split into SMF 1 when read.\n"
-"# 'buss-override' sets the output port for all patterns, for testing etc.\n"
-"# Don't save the MIDI file unless you want to save the buss value!\n"
-"# 'velocity-override' when adding notes in the pattern editor is set via the\n"
-"# 'Vol' button.  -1 ('Free'), preserves incoming velocity.\n"
+"# 'buss-override' sets the output port for all patterns, for testing, etc.\n"
+"# This value will be saved if you save the MIDI file!!!\n"
+"# 'velocity-override' controls adding notes in the pattern editor; see the\n"
+"# 'Vol' button. -1 ('Free'), preserves incoming velocity.\n"
 "# 'bpm-precision' (spinner and MIDI control) is 0, 1, or 2.\n"
 "# 'bpm-step-increment' affects the spinner and MIDI control. For 1 decimal,\n"
 "# 0.1 is good. For 2, 0.01 is good, 0.05 is faster. Set 'bpm-page-increment'\n"
 "# larger than the step-increment; used with the Page-Up/Page-Down keys in the\n"
 "# spinner. BPM minimum/maximum sets the range in tempo graphing; defaults to\n"
-"0.0 to 127.0. Decrease it for a magnified view of tempo.\n"
+"# 0.0 to 127.0. Decrease it for a magnified view of tempo.\n"
 "\n[user-midi-settings]\n\n"
         ;
         write_boolean(file, "convert-to-smf-1", usr().convert_to_smf_1());

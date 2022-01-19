@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>890</width>
-    <height>608</height>
+    <width>892</width>
+    <height>610</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1392,7 +1392,7 @@ matter what sets-mode is in force. </string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>890</width>
+     <width>892</width>
      <height>22</height>
     </rect>
    </property>
@@ -1427,7 +1427,6 @@ matter what sets-mode is in force. </string>
     <addaction name="separator"/>
     <addaction name="menuImport"/>
     <addaction name="menuExport"/>
-    <addaction name="actionClose"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuAbout">

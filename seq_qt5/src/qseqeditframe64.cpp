@@ -220,7 +220,7 @@ s_lookup_bw (int bw)
 
 static const int s_measures_items [] =
 {
-    1, 2, 3, 4, 5, 6, 7, 8, 16, 32, 64, 128
+    1, 2, 3, 4, 5, 6, 7, 8, 16, 24, 32, 64, 96, 128
 };
 static const int s_measures_count = sizeof(s_measures_items) / sizeof(int);
 

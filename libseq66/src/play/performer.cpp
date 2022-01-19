@@ -3530,7 +3530,8 @@ performer::poll_cycle ()
                      * enabled?
                      */
 
-                    (void) set_beats_per_minute(ev.tempo());
+                    if (is_jack_master() || ! is_jack_running())
+                        (void) set_beats_per_minute(ev.tempo());
                 }
                 else if (ev.is_sysex())
                 {

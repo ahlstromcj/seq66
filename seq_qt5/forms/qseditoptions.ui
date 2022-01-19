@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>650</width>
-    <height>684</height>
+    <width>652</width>
+    <height>686</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,7 +37,7 @@
         <rect>
          <x>10</x>
          <y>420</y>
-         <width>591</width>
+         <width>597</width>
          <height>81</height>
         </rect>
        </property>
@@ -83,7 +83,7 @@
          <rect>
           <x>64</x>
           <y>44</y>
-          <width>305</width>
+          <width>189</width>
           <height>21</height>
          </rect>
         </property>
@@ -91,15 +91,15 @@
          <string/>
         </property>
         <property name="text">
-         <string>Tempo track number (0 is best)</string>
+         <string>Tempo track number</string>
         </property>
        </widget>
        <widget class="QPushButton" name="pushButtonTempoTrack">
         <property name="geometry">
          <rect>
-          <x>377</x>
+          <x>433</x>
           <y>36</y>
-          <width>205</width>
+          <width>157</width>
           <height>32</height>
          </rect>
         </property>
@@ -107,7 +107,7 @@
          <string>Saves the tempo track number to the MIDI file.</string>
         </property>
         <property name="text">
-         <string>Set as Tempo Track</string>
+         <string>Set Tempo Track</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_4">
@@ -127,6 +127,32 @@
         </property>
         <property name="text">
          <string>Meta Events</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="comboBoxBpmPrecision">
+        <property name="geometry">
+         <rect>
+          <x>368</x>
+          <y>40</y>
+          <width>57</width>
+          <height>25</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_13">
+        <property name="geometry">
+         <rect>
+          <x>288</x>
+          <y>44</y>
+          <width>77</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Precision</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </widget>
@@ -358,7 +384,7 @@ Each port number can be found by name-lookup.</string>
         <rect>
          <x>28</x>
          <y>388</y>
-         <width>577</width>
+         <width>581</width>
          <height>45</height>
         </rect>
        </property>

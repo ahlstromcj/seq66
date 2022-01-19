@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-10-19
+ * \updates       2022-01-19
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -579,7 +579,8 @@ protected:
 
     /**
      *  We don't want a progress bar for patterns that just contain textual
-     *  information.
+     *  information. Tempo event are important, though, and visible in some
+     *  pattern views.
      */
 
     static bool is_playable_msg (midibyte m)
@@ -1261,7 +1262,7 @@ public:
 
     bool is_playable () const
     {
-        return is_playable_msg(m_status);
+        return is_playable_msg(m_status) || is_tempo();
     }
 
     bool is_selected_status (midibyte status) const

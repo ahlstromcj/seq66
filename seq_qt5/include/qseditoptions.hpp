@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-12-19
+ * \updates       2022-01-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -179,6 +179,7 @@ private slots:
     void slot_clock_start_modulo (int arg);
     void slot_output_bus (int arg);
     void slot_input_bus (int arg);
+    void slot_bpm_precision (int index);
     void slot_tempo_track ();
     void slot_tempo_track_set ();
     void slot_record_by_channel ();

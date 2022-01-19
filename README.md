@@ -1,7 +1,7 @@
 # README for Seq66 0.98.3
 
 Chris Ahlstrom
-2015-09-10 to 2022-01-18
+2015-09-10 to 2022-01-19
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management,
@@ -87,7 +87,7 @@ Windows, and using a conventional source tarball.
         *   Fixed old bug in showing note events; they were filtered by the
             pattern's configured channel!
         *   Tweaks to style-sheet handling.
-        *   Fixed misuses of msgprintf().
+        *   Fixed misuses of msgprintf(). Other minor bug fixes.
         *   In a new NSM session, do not load the most-recent MIDI file, even
             if specified in the imported configuration.  Also, no longer do an
             automatic import of the home configuration to the NSM configuration.
@@ -95,6 +95,8 @@ Windows, and using a conventional source tarball.
             See the user manual for how this works.
         *   Added a "File / Import / Import Playlist" command.
             See the user manual for how this works.
+        *   Made virtual port names in ALSA more consistent.
+        *   Added Preferences item for the BPM Precision setting.
         *   Added contrib/code/ametro.c to provide ALSA test for MIDI clocking.
     *   Version 0.98.2:
         *   Fixed issue #74, where -1 for "no buss-override" was being converted

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2021-12-06
+ * \updates       2022-01-19
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -50,6 +50,8 @@
 #include "midi/event.hpp"               /* seq66::event (MIDI event)        */
 #include "midi/midibase.hpp"            /* seq66::midibase for ALSA         */
 #include "util/calculations.hpp"        /* clock_ticks_from_ppqn()          */
+
+#undef  SEQ66_DEINIIT_DISABLED_PORTS    /* EXPERIMENTAL                     */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -651,6 +653,7 @@ bool
 midibase::set_clock (e_clock clocktype)
 {
     bool result = false;
+#if defined SEQ66_DEINIIT_DISABLED_PORTS
     if (m_clock_type != clocktype)
     {
         m_clock_type = clocktype;
@@ -664,6 +667,13 @@ midibase::set_clock (e_clock clocktype)
         else
             (void) deinit_out();
     }
+#else
+    m_clock_type = clocktype;
+    if (m_is_virtual_port)
+        result = init_out_sub();
+    else
+        result = init_out();
+#endif
     return result;
 }
 
@@ -696,6 +706,7 @@ midibase::set_input (bool inputing)
         m_inputing = true;
         result = init_in();
     }
+#if defined SEQ66_DEINIIT_DISABLED_PORTS
     else if (m_inputing != inputing)
     {
         m_inputing = inputing;
@@ -709,6 +720,16 @@ midibase::set_input (bool inputing)
         else
             result = deinit_in();
     }
+#else
+    else
+    {
+        m_inputing = inputing;
+        if (m_is_virtual_port)
+            result = init_in_sub();
+        else
+            result = init_in();
+    }
+#endif
     return result;
 }
 

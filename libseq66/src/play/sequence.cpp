@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-12-08
+ * \updates       2022-01-19
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4420,35 +4420,33 @@ bool
 sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
 {
     automutex locker(m_mutex);
-    bool result = false;
-    bool was_playing = playing();
-    set_playing(false);                     /* turn everything off          */
-    if (len > 0)
+    bool result = len != m_length;
+    if (result)
     {
-        if (len < midipulse(m_ppqn / 4))
-            len = midipulse(m_ppqn / 4);
+        bool was_playing = playing();
+        set_playing(false);                 /* turn everything off          */
+        if (len > 0)
+        {
+            if (len < midipulse(m_ppqn / 4))
+                len = midipulse(m_ppqn / 4);
 
-        m_length = len;
-        result = true;
+            m_length = len;
+            result = true;
+        }
+        else
+            len = get_length();
+
+        m_events.set_length(len);
+        m_triggers.set_length(len);         /* must precede adjust call     */
+        if (adjust_triggers)
+            m_triggers.adjust_offsets_to_length(len);
+
+        if (verify)
+            verify_and_link();
+
+        if (was_playing)                    /* start up and refresh         */
+            set_playing(true);
     }
-    else
-        len = get_length();
-
-    /*
-     * We should set the measures count here.
-     */
-
-    m_events.set_length(len);
-    m_triggers.set_length(len);             /* must precede adjust call     */
-    if (adjust_triggers)
-        m_triggers.adjust_offsets_to_length(len);
-
-    if (verify)
-        verify_and_link();
-
-    if (was_playing)                    /* start up and refresh             */
-        set_playing(true);
-
     return result;
 }
 
@@ -4461,8 +4459,8 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
  *  just because the length (number of measures) changed.
  *
  * \warning
- *      The measures calculation is useless if the BPM (beats/minute) varies
- *      throughout the song.
+ *      The measures calculation is somewhat useless if the BPM (beats/minute)
+ *      varies throughout the song.
  *
  * \param bpb
  *      Provides the beats per bar (measure).
@@ -4482,11 +4480,10 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
 bool
 sequence::apply_length (int bpb, int ppqn, int bw, int measures)
 {
-    if (ppqn != m_ppqn)
-    {
-        // what to do?
-    }
     bool result = set_length(seq66::measures_to_ticks(bpb, ppqn, bw, measures));
+    if (result)
+        notify_change(true);
+
     calculate_unit_measure();                 /* for progress and redrawing   */
     return result;
 }

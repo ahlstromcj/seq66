@@ -161,7 +161,7 @@ bool
 inputslist::get (bussbyte bus) const
 {
     auto it = m_master_io.find(bus);
-    return it != m_master_io.end() ?  it->second.io_enabled : false ;
+    return it != m_master_io.end() ? it->second.io_enabled : false ;
 }
 
 std::string

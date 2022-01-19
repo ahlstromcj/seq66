@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2021-11-24
+ * \updates       2022-01-19
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -132,8 +132,7 @@ namespace seq66
  *      Provides the information about the desired port, and more.
  */
 
-midi_alsa::midi_alsa (midibus & parentbus, midi_info & masterinfo)
- :
+midi_alsa::midi_alsa (midibus & parentbus, midi_info & masterinfo) :
     midi_api            (parentbus, masterinfo),
     m_seq
     (
@@ -142,11 +141,7 @@ midi_alsa::midi_alsa (midibus & parentbus, midi_info & masterinfo)
     m_dest_addr_client  (parentbus.bus_id()),
     m_dest_addr_port    (parentbus.port_id()),
     m_local_addr_client (snd_seq_client_id(m_seq)),     /* our client ID    */
-    m_local_addr_port   (-1),
-    m_input_port_name
-    (
-        rc().app_client_name() + (parentbus.is_input_port() ? " in" : " out")
-    )
+    m_local_addr_port   (-1)
 {
     set_client_id(m_local_addr_client);
     set_name(SEQ66_CLIENT_NAME, bus_name(), port_name());
@@ -194,7 +189,7 @@ midi_alsa::api_init_out ()
     m_local_addr_port = result;
     if (result < 0)
     {
-        error_message("ALSA create simple port error");
+        error_message("ALSA create output port failed");
         return false;
     }
     result = snd_seq_connect_to                     /* connect to port  */
@@ -268,7 +263,7 @@ midi_alsa::api_init_in ()
     m_local_addr_port = result;
     if (result < 0)
     {
-        errprint("snd_seq_create_simple_port(read) error");
+        error_message("ALSA create input port failed");
         return false;
     }
 
@@ -375,7 +370,7 @@ midi_alsa::api_init_out_sub ()
     m_local_addr_port = result;
     if (result < 0)
     {
-        errprint("snd_seq_create_simple_port(write) error");
+        error_message("ALSA create output virtual port failed");
         return false;
     }
     else
@@ -402,15 +397,14 @@ midi_alsa::api_init_in_sub ()
 
     int result = snd_seq_create_simple_port             /* create ports */
     (
-        m_seq,
-        m_input_port_name.c_str(),                      // portname.c_str()
+        m_seq, portname.c_str(),
         SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE,
         SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION
     );
     m_local_addr_port = result;
     if (result < 0)
     {
-        errprint("snd_seq_create_simple_port(write) error");
+        error_message("ALSA create input virtual port failed");
         return false;
     }
     else
@@ -486,12 +480,12 @@ midi_alsa::api_deinit_in ()
  *  problematic.
  */
 
-#if defined SEQ66_USE_MIDI_ALSA_POLL          // LEAVE UNDEFINED
+#if defined SEQ66_USE_MIDI_ALSA_POLL    /* LEAVE UNDEFINED */
 
 int
 midi_in_alsa::api_poll_for_midi ()
 {
-    rtmidi_in_data * rtindata = m_alsa_data.m_alsa_rtmidiin;    // BOGUS
+    rtmidi_in_data * rtindata = m_alsa_data.m_alsa_rtmidiin;    /* BOGUS */
     (void) microsleep(std_sleep_us());
 #if defined SEQ66_USER_CALLBACK_SUPPORT
     return rtindata->using_callback() ? 0 : rtindata->queue().count();

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2017-06-02
+ * \updates       2022-01-19
  * \license       GNU GPLv2 or above
  *
  *  The midi_alsa module is the Linux version of the midi_alsa module.
@@ -101,7 +101,7 @@ private:
      *  with the word "in" appended.
      */
 
-    const std::string m_input_port_name;
+    const std::string m_port_name;
 
 public:
 

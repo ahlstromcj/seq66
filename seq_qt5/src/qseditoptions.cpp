@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-02-04
+ * \updates       2022-01-19
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -606,6 +606,18 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     (
         ui->lineEditTempoTrack, SIGNAL(editingFinished()),
         this, SLOT(slot_tempo_track())
+    );
+
+    for (int i = 0; i <= 2; ++i)            /* c_max_bpm_precision */
+    {
+        QString s = QString::number(i);
+        ui->comboBoxBpmPrecision->insertItem(i, s);
+    }
+    ui->comboBoxBpmPrecision->setCurrentIndex(usr().bpm_precision());
+    connect
+    (
+        ui->comboBoxBpmPrecision, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(slot_bpm_precision(int))
     );
     connect
     (
@@ -1793,6 +1805,13 @@ qseditoptions::slot_tempo_track ()
         ui->pushButtonTempoTrack->setEnabled(ok);
         reload_needed(true);
     }
+}
+
+void
+qseditoptions::slot_bpm_precision (int index)
+{
+    usr().bpm_precision(index);
+    modify_usr();
 }
 
 void
