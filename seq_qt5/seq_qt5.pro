@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2021-12-26
+# \update         2022-01-20
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -97,6 +97,7 @@ HEADERS += include/gui_palette_qt5.hpp \
  include/qperfroll.hpp \
  include/qperftime.hpp \
  include/qplaylistframe.hpp \
+ include/qportwidget.hpp \
  include/qsabout.hpp \
  include/qsbuildinfo.hpp \
  include/qscrollmaster.h \
@@ -140,6 +141,7 @@ SOURCES += src/gui_palette_qt5.cpp \
  src/qperfroll.cpp \
  src/qperftime.cpp \
  src/qplaylistframe.cpp \
+ src/qportwidget.cpp \
  src/qsabout.cpp \
  src/qsbuildinfo.cpp \
  src/qscrollmaster.cpp \

@@ -25,14 +25,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-20
- * \updates       2021-10-20
+ * \updates       2022-01-20
  * \license       GNU GPLv2 or above
  *
  *  This class is used in the qseditoptions settings-dialog class.
  */
 
 #include <QtWidgets/QCheckBox>
-#include <QtWidgets/QWidget>
 
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qinputcheckbox.hpp"           /* seq66::qinputcheckbox class      */
@@ -69,10 +68,7 @@ namespace seq66
  */
 
 qinputcheckbox::qinputcheckbox (QWidget * parent, performer & p, int bus) :
-    QWidget                     (parent),
-    m_performance               (p),
-    m_bus                       (bus),
-    m_parent_widget             (parent),
+    qportwidget                 (parent, p, bus),
     m_chkbox_inputactive        (nullptr)
 {
     setup_ui();
@@ -93,8 +89,8 @@ qinputcheckbox::setup_ui ()
 {
     std::string busname;
     bool inputing;
-    bool disabled = perf().is_input_system_port(m_bus);
-    bool gotbussinfo = perf().ui_get_input(m_bus, inputing, busname);
+    bool disabled = perf().is_input_system_port(bus());
+    bool gotbussinfo = perf().ui_get_input(bus(), inputing, busname);
     if (! gotbussinfo)
         disabled = true;
 
@@ -116,7 +112,7 @@ void
 qinputcheckbox::input_callback_clicked (int state)
 {
     bool inputing = state == Qt::Checked;
-    perf().ui_set_input(m_bus, inputing);
+    perf().ui_set_input(bus(), inputing);
 }
 
 }           // namespace seq66

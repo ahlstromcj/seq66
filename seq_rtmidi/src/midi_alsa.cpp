@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2022-01-19
+ * \updates       2022-01-20
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -98,6 +98,22 @@
 
 namespace seq66
 {
+
+/**
+ *  Outputs the error string returned by the ALSA subsystem.
+ */
+
+static void
+show_alsa_error (int rcode)
+{
+    const char * errmsg = snd_strerror(rcode);
+    if (not_nullptr(errmsg))
+    {
+        std::string em = errmsg;
+        msgprintf(msglevel::error, "ALSA reports '%s'", em);
+    }
+}
+
 
 /**
  *  Provides a constructor with client number, port number, ALSA sequencer
@@ -182,27 +198,29 @@ midi_alsa::api_init_out ()
         SND_SEQ_PORT_TYPE_APPLICATION;
 
     std::string busname = parent_bus().bus_name();
-    int result = snd_seq_create_simple_port         /* create ports     */
+    int rc = snd_seq_create_simple_port         /* create ports     */
     (
         m_seq, busname.c_str(), s_caps, s_apps
     );
-    m_local_addr_port = result;
-    if (result < 0)
+    m_local_addr_port = rc;
+    if (rc < 0)
     {
         error_message("ALSA create output port failed");
+        show_alsa_error(rc);
         return false;
     }
-    result = snd_seq_connect_to                     /* connect to port  */
+    rc = snd_seq_connect_to                     /* connect to port  */
     (
         m_seq, m_local_addr_port, m_dest_addr_client, m_dest_addr_port
     );
-    if (result < 0)
+    if (rc < 0)
     {
         msgprintf
         (
             msglevel::error, "ALSA connect to %d:%d error",
             m_dest_addr_client, m_dest_addr_port
         );
+        show_alsa_error(rc);
         return false;
     }
     else
@@ -254,16 +272,17 @@ bool
 midi_alsa::api_init_in ()
 {
     std::string portname = parent_bus().port_name();
-    int result = snd_seq_create_simple_port             /* create ports */
+    int rc = snd_seq_create_simple_port             /* create ports */
     (
         m_seq, portname.c_str(),
         SND_SEQ_PORT_CAP_NO_EXPORT | SND_SEQ_PORT_CAP_WRITE,
         SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION
     );
-    m_local_addr_port = result;
-    if (result < 0)
+    m_local_addr_port = rc;
+    if (rc < 0)
     {
         error_message("ALSA create input port failed");
+        show_alsa_error(rc);
         return false;
     }
 
@@ -287,14 +306,15 @@ midi_alsa::api_init_in ()
     int queue = parent_bus().queue_number();
     snd_seq_port_subscribe_set_queue(subs, queue);
     snd_seq_port_subscribe_set_time_update(subs, 1);
-    result = snd_seq_subscribe_port(m_seq, subs);
-    if (result < 0)
+    rc = snd_seq_subscribe_port(m_seq, subs);
+    if (rc < 0)
     {
         msgprintf
         (
             msglevel::error, "ALSA connect from %d:%d error",
             m_dest_addr_client, m_dest_addr_port
         );
+        show_alsa_error(rc);
         return false;
     }
     else
@@ -457,14 +477,15 @@ midi_alsa::api_deinit_in ()
     snd_seq_port_subscribe_set_queue(subs, queue);
     snd_seq_port_subscribe_set_time_update(subs, queue);    /* get ticks    */
 
-    int result = snd_seq_unsubscribe_port(m_seq, subs);     /* unsubscribe  */
-    if (result < 0)
+    int rc = snd_seq_unsubscribe_port(m_seq, subs);         /* unsubscribe  */
+    if (rc < 0)
     {
         msgprintf
         (
             msglevel::error, "ALSA unsubscribe port %d:%d error",
             m_dest_addr_client, m_dest_addr_port
         );
+        show_alsa_error(rc);
         return false;
     }
     return true;

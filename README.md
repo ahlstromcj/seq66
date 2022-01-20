@@ -1,7 +1,7 @@
 # README for Seq66 0.98.3
 
 Chris Ahlstrom
-2015-09-10 to 2022-01-19
+2015-09-10 to 2022-01-20
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management,
@@ -95,7 +95,8 @@ Windows, and using a conventional source tarball.
             See the user manual for how this works.
         *   Added a "File / Import / Import Playlist" command.
             See the user manual for how this works.
-        *   Made virtual port names in ALSA more consistent.
+        *   Made virtual port names in ALSA more consistent. Also create the
+            ports (in JACK, too) even if disabled.  Still experimental.
         *   Added Preferences item for the BPM Precision setting.
         *   Added contrib/code/ametro.c to provide ALSA test for MIDI clocking.
     *   Version 0.98.2:

@@ -28,12 +28,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-20
- * \updates       2020-07-26
+ * \updates       2022-01-20
  * \license       GNU GPLv2 or above
  *
  */
 
-#include <QtWidgets/QWidget>
+#include "qportwidget.hpp"              /* seq66::qportwidget base class    */
 
 /*
  *  Forward reference.
@@ -47,14 +47,13 @@ class QCheckBox;
 
 namespace seq66
 {
-    class performer;
 
 /**
  *  This class represent a single line holding the setting (enabled/disabled
  *  for a single MIDI input buss.
  */
 
-class qinputcheckbox : public QWidget
+class qinputcheckbox : public qportwidget       // QWidget
 {
     Q_OBJECT
 
@@ -75,10 +74,6 @@ public:
 private:
 
     void setup_ui ();
-    performer & perf ()
-    {
-        return m_performance;
-    }
 
 signals:
 
@@ -88,9 +83,6 @@ private slots:
 
 private:
 
-    performer & m_performance;
-    int m_bus;
-    QWidget * m_parent_widget;                      /* currently not used   */
     QCheckBox * m_chkbox_inputactive;
 
 };

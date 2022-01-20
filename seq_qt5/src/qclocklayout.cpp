@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2021-12-07
+ * \updates       2022-01-20
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
@@ -68,10 +68,7 @@ static const size_t c_max_name_length = 40;    /* 32 */
  */
 
 qclocklayout::qclocklayout (QWidget * parent, performer & p, int bus) :
-    QWidget                     (parent),
-    m_performance               (p),
-    m_bus                       (bus),
-    m_parent_widget             (dynamic_cast<qseditoptions *>(parent)),
+    qportwidget                 (parent, p, bus),
     m_horizlayout_clockline     (nullptr),
     m_spacer_clock              (nullptr),
     m_label_outputbusname       (nullptr),
@@ -113,7 +110,7 @@ qclocklayout::setup_ui ()
 {
     std::string busname;
     e_clock clocking;
-    bool gotbussinfo = perf().ui_get_clock(m_bus, clocking, busname);
+    bool gotbussinfo = perf().ui_get_clock(bus(), clocking, busname);
     if (gotbussinfo)
     {
         if (busname.length() > c_max_name_length)
@@ -150,6 +147,7 @@ qclocklayout::setup_ui ()
         switch (clocking)
         {
         case e_clock::disabled:
+
             m_label_outputbusname->setEnabled(false);
             m_rbutton_portdisabled->setChecked(true);
             m_rbutton_portdisabled->setEnabled(false);
@@ -165,21 +163,25 @@ qclocklayout::setup_ui ()
             break;
 
         case e_clock::off:
+
             m_label_outputbusname->setEnabled(true);
             m_rbutton_clockoff->setChecked(true);
             break;
 
         case e_clock::pos:
+
             m_label_outputbusname->setEnabled(true);
             m_rbutton_clockonpos->setChecked(true);
             break;
 
         case e_clock::mod:
+
             m_label_outputbusname->setEnabled(true);
             m_rbutton_clockonmod->setChecked(true);
             break;
 
         case e_clock::max:      /* will never occur */
+
             break;
         }
     }
@@ -205,13 +207,13 @@ qclocklayout::clock_callback_clicked (int id)
 
     e_clock clocking = static_cast<e_clock>(id);
     bool enable = clocking != e_clock::disabled;
-    perf().ui_set_clock(m_bus, clocking);
+    perf().ui_set_clock(bus(), clocking);
     m_label_outputbusname->setEnabled(enable);
     m_rbutton_portdisabled->setEnabled(enable);
     m_rbutton_clockoff->setEnabled(true);
     m_rbutton_clockonpos->setEnabled(enable);
     m_rbutton_clockonmod->setEnabled(enable);
-    m_parent_widget->enable_bus_item(m_bus, enable);
+    parent_widget()->enable_bus_item(bus(), enable);
 }
 
 }           // namespace seq66

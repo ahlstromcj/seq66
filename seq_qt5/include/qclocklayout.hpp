@@ -29,14 +29,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2020-07-27
+ * \updates       2022-01-20
  * \license       GNU GPLv2 or above
  *
  *  Provides the layout for a single MIDI output buss clocking user-interface
  *  setup.
  */
 
-#include <QtWidgets/QWidget>
+#include "qportwidget.hpp"              /* seq66::qportwidget base class    */
 
 /*
  *  Forward references.
@@ -55,8 +55,6 @@ class QSpacerItem;
 
 namespace seq66
 {
-    class performer;
-    class qseditoptions;
 
 /**
  *  This class is a widget that supports a row of radio-buttons that let the
@@ -68,7 +66,7 @@ namespace seq66
  *      -   On (Mod).
  */
 
-class qclocklayout : public QWidget
+class qclocklayout : public qportwidget     // QWidget
 {
     Q_OBJECT
 
@@ -89,10 +87,6 @@ public:
 private:
 
     void setup_ui ();
-    performer & perf ()
-    {
-        return m_performance;
-    }
 
 signals:
 
@@ -101,27 +95,6 @@ private slots:
     void clock_callback_clicked (int id);
 
 private:
-
-    /**
-     *  Provides a reference to the single performer object associated with the
-     *  MIDI output buss represented by this layout.  One question is will we
-     *  have to change the reference to a shared pointer.
-     */
-
-    performer & m_performance;
-
-    /**
-     *  Provides the buss number, re 0, of the MIDI output bus represented by
-     *  this layout.
-     */
-
-    int m_bus;
-
-    /**
-     *  For telling the parent function.
-     */
-
-    qseditoptions * m_parent_widget;
 
     /**
      * m_horizlayout_clockline holds the label and all of the radio buttons for

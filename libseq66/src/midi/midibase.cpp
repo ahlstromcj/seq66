@@ -51,7 +51,8 @@
 #include "midi/midibase.hpp"            /* seq66::midibase for ALSA         */
 #include "util/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 
-#undef  SEQ66_DEINIIT_DISABLED_PORTS    /* EXPERIMENTAL                     */
+#define SEQ66_DEINIIT_DISABLED_PORTS    /* EXPERIMENTAL to disable this     */
+#undef  SEQ66_FULL_SET_CLOCK            /* weird, causes double out ports   */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -641,13 +642,14 @@ midibase::start ()
 }
 
 /**
- *  Need to revisit this at some point.
+ *  Need to revisit this at some point. If we enable the full set_clock(), we
+ *  get two instances of each output port.
  *
  * \param clocktype
  *      The value used to set the clock-type.
  */
 
-#if defined THIS_CODE_WORKS
+#if defined SEQ66_FULL_SET_CLOCK
 
 bool
 midibase::set_clock (e_clock clocktype)

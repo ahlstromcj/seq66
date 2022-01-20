@@ -1,6 +1,6 @@
 TO DO for Seq66 0.98.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-01-18
+2019-04-13 to 2022-01-20
 
 Windows:
 
@@ -36,12 +36,9 @@ MIDI:
 
     ALSA:
 
-        When running 'qseq66 -A -o virtual=2,1', arecordmidi shows 2
-        ports 'seq66:midi out 1' and 'seq66:midi out 2', while aplaymidi shows
-        the better 'seq66::seq66 in'.
-
-        However, it looks like we cannot create more than one virtual input
-        port!
+        When toggling a virtual input port, another port with the same
+        number gets created.  Looks like this bug as been around for awhile.
+        It also yields an ALSA unsubscribe error.
 
         Use const char * snd_asoundlib_version () to get the ALSA version.
 
