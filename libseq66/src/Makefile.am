@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2021-12-29
+# \update      2022-01-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -108,6 +108,8 @@ git_info = "$(git_version) $(git_branch)"
 #
 #------------------------------------------------------------------------------
 
+AM_CFLAGS = $(CFLAGS) -I ../include
+
 AM_CXXFLAGS = \
  -I../include \
  -I$(top_srcdir)/include \
@@ -131,6 +133,7 @@ lib_LTLIBRARIES = libseq66.la
 
 libseq66_la_SOURCES = \
  seq66_features.cpp \
+ function_calls_gnu.c \
  cfg/basesettings.cpp \
  cfg/cmdlineopts.cpp \
  cfg/comments.cpp \

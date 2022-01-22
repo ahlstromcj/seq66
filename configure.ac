@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2022-01-06
+dnl \update        2022-01-22
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -352,9 +352,9 @@ dnl AC_DEFINE(APP_TYPE, ["qt"], [Names the UI of the application])
 if test "$rtmidi" != "no"; then
     build_rtmidi="yes"
     build_portmidi="no"
-    AC_DEFINE(APP_NAME, ["seq66"], [Names the JACK/ALSA version of application])
+    AC_DEFINE(APP_NAME, ["qseq66"], [Names the JACK/ALSA version of application])
     AC_DEFINE(APP_ENGINE, ["rtmidi"], [Names the MIDI engine of the application])
-    AC_DEFINE(CONFIG_NAME, ["seq66"], [Configuration file name])
+    AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration file name])
     AC_DEFINE(ICON_NAME, ["qseq66"], [The canonical icon name for freedesktop])
     AC_DEFINE(RTMIDI_SUPPORT, 1, [Indicates if rtmidi is enabled])
     AM_PATH_ALSA(0.9.0)

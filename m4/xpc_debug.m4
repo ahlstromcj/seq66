@@ -6,7 +6,7 @@ dnl \file       	xpc_debug.m4
 dnl \library    	xpc_suite subproject
 dnl \author     	Chris Ahlstrom
 dnl \date       	2008-03-04
-dnl \updates      2020-06-14
+dnl \updates      2022-01-22
 dnl \version    	$Revision$
 dnl \license    	$XPC_SUITE_GPL_LICENSE$
 dnl
@@ -14,6 +14,7 @@ dnl   Tests whether the user wants debugging, test coverage support, or
 dnl   profiling.
 dnl
 dnl      --enable-debug
+dnl      --enable-calls (and debug)
 dnl      --enable-coverage
 dnl      --enable-profile
 dnl
@@ -38,8 +39,8 @@ dnl   supplement DEBUG:  _DEBUG.
 dnl
 dnl   The main variable that results from this script is DBGFLAGS.
 dnl
-dnl   Also defined are DOCOVERAGE, COVFLAGS, DOPROFILE, PROFLAGS, and DODEBUG,
-dnl   but normally we don't need them.
+dnl   Also defined are DOCOVERAGE, COVFLAGS, DOPROFILE, PROFLAGS, DODEBUG,
+dnl   and DOCALLS but normally we don't need them.
 dnl
 dnl ---------------------------------------------------------------------------
 
@@ -152,7 +153,7 @@ yes=gdb)],
             debug=no
          ])
 
-      AM_CONDITIONAL(DODEBUG, test x$debug = xyes)
+      AM_CONDITIONAL(DODEBUG, test x$debug != xno)
       if test "x$debug" = "xyes" ; then
          OPTFLAGS="-O0"
          DBGFLAGS="-g $OPTFLAGS $MORFLAGS"
@@ -163,13 +164,36 @@ yes=gdb)],
          AC_MSG_RESULT(yes)
       elif test "x$debug" = "xgdb" ; then
          OPTFLAGS="-O0"
-         DBGFLAGS="-g $OPTFLAGS $MORFLAGS"
+         DBGFLAGS="-ggdb $OPTFLAGS $MORFLAGS"
          AC_MSG_RESULT(yes)
       else
          if test "x$OPTFLAGS" = "x" ; then
             OPTFLAGS="-O3"
             DBGFLAGS=""
          fi
+         AC_MSG_RESULT(no)
+      fi
+
+      AC_MSG_CHECKING([whether to enable debug and function instrumentation])
+      AC_ARG_ENABLE(calls,
+         [  --enable-debug=(no/yes) Turn on call instrumentation (default=no)],
+         [
+          case "${enableval}" in
+           yes) calls=yes ;;
+            no) calls=no  ;;
+             *) AC_MSG_ERROR(bad value ${enableval} for --enable-calls) ;;
+          esac
+         ],
+         [
+            calls=no
+         ])
+
+      AM_CONDITIONAL(DOCALLS, test x$calls = xyes)
+      if test "x$calls" = "xyes" ; then
+         OPTFLAGS="-O0"
+         DBGFLAGS="-ggdb $OPTFLAGS $MORFLAGS -finstrument-functions"
+         AC_MSG_RESULT(yes)
+      else
          AC_MSG_RESULT(no)
       fi
    fi

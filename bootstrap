@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2022-01-07
+# \update         2022-01-22
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -36,7 +36,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2022-01-07"
+export SEQ66_SCRIPT_EDIT_DATE="2022-01-22"
 export SEQ66_LIBRARY_API_VERSION="0.98"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.3"
 
@@ -69,6 +69,7 @@ checkdir libseq66
 DOBOOTSTRAP="yes"
 DONSM="yes"
 DOCLEAN="no"
+DOCALLS="no"
 DODEBUG="no"
 DOPROFILING="no"
 DOFULLCLEAN="no"
@@ -98,7 +99,7 @@ EXTRAFLAGS=""
 if [ "$1" == "--help" ] ; then
 
    cat << E_O_F
-Usage: ./bootstrap [options]                             (0.98.3-2022-01-06)
+Usage: ./bootstrap [options]                             (0.98.3-2022-01-22)
 
 'bootstrap' sets up GNU automake and libtool support for the Seq66 project
 and creates the 'configure' script.  It can super-clean the project, removing
@@ -110,6 +111,8 @@ passing long options to the configure script for some canned setups.
                      bootstrap script will need to be run again.
  --debug, -ed        Configure for debugging and disable shared libraries for
                      easier debugging.  Also: --enable-debug=gdb
+ --calls             Add GNU instrumentation calls for function entry. Enables
+                     debugging as well.
  --profile, -prof    Enable profiling and debugging.
  --release, -er      Configure for release.  Sets up a 'silent' build as well.
                      Either --debug or --release must be specified.
@@ -168,6 +171,11 @@ if [ $# -ge 1 ] ; then
             EXTRAFLAGS+=" --disable-shared --enable-static"
             ;;
 
+         --calls)
+            DOCALLS="yes"
+            EXTRAFLAGS+=" --disable-shared --enable-static"
+            ;;
+
          --debdebug | -dd)
             DODEBUG="yes"
             ;;
@@ -175,7 +183,7 @@ if [ $# -ge 1 ] ; then
          --profile | -prof | --prof)
             DODEBUG="yes"
             DOPROFILING="yes"
-            EXTRAFLAGS+=" --enable-profile"
+            EXTRAFLAGS+=" --enable-profile --disable-shared"
             ;;
 
          --release | -er | --enable-release)
@@ -527,11 +535,16 @@ E_O_F
          echo "Running './configure --enable-debug=gdb $EXTRAFLAGS'"
          ./configure --enable-debug=gdb $EXTRAFLAGS
 
+      elif [ "$DOCALLS" == "yes" ] ; then
+
+         echo "Running './configure --enable-calls $EXTRAFLAGS'"
+         ./configure --enable-calls $EXTRAFLAGS
+
       elif [ "$DORELEASE" == "yes" ] ; then
 
          echo "Running './configure --enable-silent-rules $EXTRAFLAGS'"
          ./configure --enable-silent-rules $EXTRAFLAGS
-         echo "Note that running 'make V=1' will turn on full command output."
+         echo "Running 'make V=1' will turn on full command output."
 
       else
 
@@ -540,7 +553,7 @@ E_O_F
 Run './configure' to configure Seq66 for compilation, or
 './configure --help' for configuration options.  Useful options:
 
-      --enable-debug=gdb  --disable-shared  --enable-silent-rules
+      --enable-debug=gdb  --enable-calls --disable-shared  --enable-silent-rules
       --enable-rtmidi (default)  --enable-cli (no GUI)  --enable-portmidi
 
 E_O_F
