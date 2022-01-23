@@ -643,7 +643,10 @@ PTHREAD_LIBS
 PTHREAD_CXX
 PTHREAD_CC
 ax_pthread_config
+CALLFLAG
 DBGFLAGS
+DOCALLS_FALSE
+DOCALLS_TRUE
 DODEBUG_FALSE
 DODEBUG_TRUE
 PROFLAGS
@@ -867,6 +870,7 @@ enable_portmidi
 enable_coverage
 enable_profile
 enable_debug
+enable_calls
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1548,6 +1552,7 @@ Optional Features:
   --enable-profile=(no/yes/gprof/prof) Turn on profiling builds (default=no, yes=gprof)
   --enable-debug=(no/yes/db/gdb) Turn on debug builds (default=no,
 yes=gdb)
+  --enable-debug=(no/yes) Turn on call instrumentation (default=no)
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -16769,13 +16774,13 @@ if test "$rtmidi" != "no"; then
     build_rtmidi="yes"
     build_portmidi="no"
 
-$as_echo "#define APP_NAME \"seq66\"" >>confdefs.h
+$as_echo "#define APP_NAME \"qseq66\"" >>confdefs.h
 
 
 $as_echo "#define APP_ENGINE \"rtmidi\"" >>confdefs.h
 
 
-$as_echo "#define CONFIG_NAME \"seq66\"" >>confdefs.h
+$as_echo "#define CONFIG_NAME \"qseq66\"" >>confdefs.h
 
 
 $as_echo "#define ICON_NAME \"qseq66\"" >>confdefs.h
@@ -18638,6 +18643,7 @@ fi
    OPTFLAGS=""
    DBGFLAGS=""
    MORFLAGS=""
+   CALLFLAG=""
 
    if test -n "$GCC"; then
 
@@ -18772,7 +18778,7 @@ else
 fi
 
 
-       if test x$debug = xyes; then
+       if test x$debug != xno; then
   DODEBUG_TRUE=
   DODEBUG_FALSE='#'
 else
@@ -18792,7 +18798,7 @@ $as_echo "yes" >&6; }
 $as_echo "yes" >&6; }
       elif test "x$debug" = "xgdb" ; then
          OPTFLAGS="-O0"
-         DBGFLAGS="-g $OPTFLAGS $MORFLAGS"
+         DBGFLAGS="-ggdb $OPTFLAGS $MORFLAGS"
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
       else
@@ -18803,7 +18809,43 @@ $as_echo "yes" >&6; }
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
       fi
+
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable debug and function instrumentation" >&5
+$as_echo_n "checking whether to enable debug and function instrumentation... " >&6; }
+      # Check whether --enable-calls was given.
+if test "${enable_calls+set}" = set; then :
+  enableval=$enable_calls;
+          case "${enableval}" in
+           yes) calls=yes ;;
+            no) calls=no  ;;
+             *) as_fn_error $? "bad value ${enableval} for --enable-calls" "$LINENO" 5 ;;
+          esac
+
+else
+
+            calls=no
+
+fi
+
+
+       if test x$calls = xyes; then
+  DOCALLS_TRUE=
+  DOCALLS_FALSE='#'
+else
+  DOCALLS_TRUE='#'
+  DOCALLS_FALSE=
+fi
+
+      if test "x$calls" = "xyes" ; then
+         CALLFLAG="-finstrument-functions"
+         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+      else
+         { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+      fi
    fi
+
 
 
 cat >>confdefs.h <<_ACEOF
@@ -20490,6 +20532,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${DODEBUG_TRUE}" && test -z "${DODEBUG_FALSE}"; then
   as_fn_error $? "conditional \"DODEBUG\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${DOCALLS_TRUE}" && test -z "${DOCALLS_FALSE}"; then
+  as_fn_error $? "conditional \"DOCALLS\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${GNU_WIN_TRUE}" && test -z "${GNU_WIN_FALSE}"; then

@@ -21,7 +21,7 @@
 # \library    	seq_rtmidi library
 # \author     	Chris Ahlstrom
 # \date       	2016-11-19
-# \update      2017-01-04
+# \update      2022-01-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -255,6 +255,7 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+CALLFLAG = @CALLFLAG@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -486,6 +487,7 @@ AM_CXXFLAGS = \
  -I$(top_srcdir)/seq_rtmidi/include \
  $(ALSA_CFLAGS) \
  $(JACK_CFLAGS) \
+ $(CALLFLAG) \
  -DSEQ66_GIT_VERSION=\"$(git_info)\"
 
 

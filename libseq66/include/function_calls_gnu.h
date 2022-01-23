@@ -25,18 +25,19 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-01-21
- * \updates       2022-01-21
+ * \updates       2022-01-22
  * \license       GNU GPLv2 or above
  *
  *  Requires the use of gcc's -finstrument-functions option.
  */
 
-#include "seq66_platform_macros.h"
+#include "seq66_features.h"             /* feature macros only, for C code  */
 
 #if defined SEQ66_PLATFORM_GNU
 
-extern void __cyg_profile_func_enter (void *, void *)
-    __attribute__((no_instrument_function));
+extern void __attribute__((no_instrument_function))
+__cyg_profile_func_enter (void *, void *);
+
 
 #endif  // defined SEQ66_PLATFORM_GNU
 

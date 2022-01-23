@@ -14,7 +14,7 @@ dnl   Tests whether the user wants debugging, test coverage support, or
 dnl   profiling.
 dnl
 dnl      --enable-debug
-dnl      --enable-calls (and debug)
+dnl      --enable-calls (sets a flag and enables debug)
 dnl      --enable-coverage
 dnl      --enable-profile
 dnl
@@ -52,6 +52,7 @@ AC_DEFUN([AC_XPC_DEBUGGING],
    OPTFLAGS=""
    DBGFLAGS=""
    MORFLAGS=""
+   CALLFLAG=""
 
    if test -n "$GCC"; then
 
@@ -190,14 +191,14 @@ yes=gdb)],
 
       AM_CONDITIONAL(DOCALLS, test x$calls = xyes)
       if test "x$calls" = "xyes" ; then
-         OPTFLAGS="-O0"
-         DBGFLAGS="-ggdb $OPTFLAGS $MORFLAGS -finstrument-functions"
+         CALLFLAG="-finstrument-functions"
          AC_MSG_RESULT(yes)
       else
          AC_MSG_RESULT(no)
       fi
    fi
    AC_SUBST([DBGFLAGS])
+   AC_SUBST(CALLFLAG)
    AC_DEFINE_UNQUOTED([DBGFLAGS], [$DBGFLAGS],
    [Define DBGFLAGS=-g -O0 -DDEBUG -fno-inline if debug support is wanted.])
 

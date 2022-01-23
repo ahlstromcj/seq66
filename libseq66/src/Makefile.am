@@ -119,6 +119,7 @@ AM_CXXFLAGS = \
  -I$(top_srcdir)/seq_rtmidi/include \
  $(ALSA_CFLAGS) \
  $(JACK_CFLAGS) \
+ $(CALLFLAG) \
  -DSEQ66_GIT_VERSION=\"$(git_info)\"
 
 #******************************************************************************

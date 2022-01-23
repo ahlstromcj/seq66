@@ -111,8 +111,8 @@ passing long options to the configure script for some canned setups.
                      bootstrap script will need to be run again.
  --debug, -ed        Configure for debugging and disable shared libraries for
                      easier debugging.  Also: --enable-debug=gdb
- --calls             Add GNU instrumentation calls for function entry. Enables
-                     debugging as well.
+ --calls             Add GNU instrumentation calls for function entry. But the
+                     trace output is much too voluminous to be useful.
  --profile, -prof    Enable profiling and debugging.
  --release, -er      Configure for release.  Sets up a 'silent' build as well.
                      Either --debug or --release must be specified.
@@ -173,7 +173,7 @@ if [ $# -ge 1 ] ; then
 
          --calls)
             DOCALLS="yes"
-            EXTRAFLAGS+=" --disable-shared --enable-static"
+            EXTRAFLAGS+=""
             ;;
 
          --debdebug | -dd)
@@ -538,7 +538,7 @@ E_O_F
       elif [ "$DOCALLS" == "yes" ] ; then
 
          echo "Running './configure --enable-calls $EXTRAFLAGS'"
-         ./configure --enable-calls $EXTRAFLAGS
+         ./configure --enable-debug=gdb --enable-calls $EXTRAFLAGS
 
       elif [ "$DORELEASE" == "yes" ] ; then
 
