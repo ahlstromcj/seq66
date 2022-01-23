@@ -37,8 +37,8 @@ MIDI:
     ALSA:
 
         When toggling a virtual input port, another port with the same
-        number gets created.  Looks like this bug as been around for awhile.
-        It also yields an ALSA unsubscribe error.
+        number gets created.  Looks like this bug has been around for awhile.
+        It also yields an ALSA unsubscribe error when disabling an input.
 
         Use const char * snd_asoundlib_version () to get the ALSA version.
 

@@ -1,7 +1,7 @@
 # README for Seq66 0.98.3
 
 Chris Ahlstrom
-2015-09-10 to 2022-01-20
+2015-09-10 to 2022-01-23
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management,
@@ -99,6 +99,7 @@ Windows, and using a conventional source tarball.
             ports (in JACK, too) even if disabled.  Still experimental.
         *   Added Preferences item for the BPM Precision setting.
         *   Added contrib/code/ametro.c to provide ALSA test for MIDI clocking.
+        *   Added GNU -finstrument-functions support, but too problematic.
     *   Version 0.98.2:
         *   Fixed issue #74, where -1 for "no buss-override" was being converted
             to 0.
