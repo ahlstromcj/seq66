@@ -188,26 +188,6 @@ all-local:
 # Debugging targets
 #------------------------------------------------------------------------------
 
-show:
-	@echo "Install directories:"
-	@echo
-	@echo "prefix                    = $(prefix)"
-	@echo "datadir                   = $(datadir)"
-	@echo "datarootdir               = $(datarootdir)"
-	@echo "libdir                    = $(libdir)"
-	@echo "seq66libdir               = $(seq66libdir)"
-	@echo "seq66datadir              = $(seq66datadir)"
-	@echo "seq66docdir               = $(seq66docdir)"
-	@echo "seq66includedir           = $(seq66includedir)"
-	@echo "localedir                 = $(localedir)"
-	@echo
-	@echo "Local directories:"
-	@echo
-	@echo "top_srcdir                = $(top_srcdir) [project root directory]"
-	@echo "srcdir                    = $(srcdir)"
-	@echo "top_builddir              = $(top_builddir)"
-	@echo "builddir                  = $(builddir)"
-
 showver:
 	@echo "PACKAGE                   = $(PACKAGE)"
 	@echo "VERSION                   = $(VERSION)"

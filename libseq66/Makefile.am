@@ -70,26 +70,6 @@ all-local:
 	@echo "Top source-directory 'top_srcdir' is $(top_srcdir)"
 	@echo "* * * * * All libseq66 build items completed * * * * *"
 
-#******************************************************************************
-# Directories
-#------------------------------------------------------------------------------
-
-show:
-	@echo "Install directories:"
-	@echo
-	@echo "prefix        = $(prefix)"
-	@echo "datadir       = $(datadir)"
-	@echo "datarootdir   = $(datarootdir)"
-	@echo "libdir        = $(libdir)"
-	@echo "localedir     = $(localedir)"
-	@echo
-	@echo "Local directories:"
-	@echo
-	@echo "top_srcdir    = $(top_srcdir) [project root directory]"
-	@echo "srcdir    		= $(srcdir)"
-	@echo "top_builddir  = $(top_builddir)"
-	@echo "builddir      = $(builddir)"
-
 #*****************************************************************************
 # Makefile.am (libseq66)
 #-----------------------------------------------------------------------------

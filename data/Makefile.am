@@ -3,16 +3,18 @@
 #------------------------------------------------------------------------------
 ##
 # \file     	Makefile.am
-# \library     seq66
+# \library     seq66/data
 # \author      Chris Ahlstrom
 # \date        2018-01-02
-# \updates     2022-01-04
+# \updates     2022-01-24
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #   	This module provides an Automake makefile for the project's
 #     seq66/data directory.  These are files we want to copy to
 #     /usr/share/seq66 upon installation.
+#
+#     ca 2022-01-24 Fixes for issue #45, missed a couple DESTDIR usages.
 #
 #------------------------------------------------------------------------------
 
@@ -69,9 +71,10 @@ datadir = @datadir@
 datarootdir = @datarootdir@
 pkgdatadir = @pkgdatadir@
 seq66datadir = @seq66datadir@
-
+seq66docdir = @seq66docdir@
 datafolder = $(DESTDIR)$(seq66datadir)
 docfolder = $(DESTDIR)$(seq66docdir)
+applicfolder = $(DESTDIR)$(prefix)/share/applications
 
 #******************************************************************************
 # Local project directories
@@ -127,6 +130,7 @@ install-data-local:
 	mkdir -p $(datafolder)/seq66cli
 	mkdir -p $(datafolder)/win
 	mkdir -p $(datafolder)/wrk
+	mkdir -p $(applicfolder)
 	cp -r -p $(top_builddir)/data/readme.* $(datafolder)/
 	cp -r -p $(top_builddir)/data/license.* $(datafolder)/
 	cp -r -p $(top_builddir)/data/linux/* $(datafolder)/linux/
@@ -136,8 +140,8 @@ install-data-local:
 	cp -r -p $(top_builddir)/data/seq66cli/* $(datafolder)/seq66cli/
 	cp -r -p $(top_builddir)/data/win/* $(datafolder)/win/
 	cp -r -p $(top_builddir)/data/wrk/* $(datafolder)/wrk/
-	cp -p $(top_srcdir)/data/share/applications/seq66.desktop $(datadir)/applications/
-	cp -r -p $(top_srcdir)/data/share/icons/* $(datadir)/icons/
+	cp -p $(top_srcdir)/data/share/applications/seq66.desktop $(applicfolder)
+	cp -r -p $(top_srcdir)/data/share/icons/* $(datafolder)/icons/
 	@echo "Copying Seq66 documentation to $(docfolder)..."
 	mkdir -p $(docfolder)
 	cp -r -p $(top_srcdir)/data/share/doc/*.pdf $(docfolder)
@@ -154,11 +158,11 @@ install-data-local:
 uninstall-hook:
 	rm -rf $(datafolder)
 	rm -rf $(docfolder)
-	rm -f $(datadir)/applications/seq66.desktop
-	find $(datadir)/icons/ -iname "*seq66*.png" -exec rm -f '{}' \;
+	rm -f $(datafolder)/applications/seq66.desktop
+	find $(datafolder)/icons/ -iname "*seq66*.png" -exec rm -f '{}' \;
 
 #******************************************************************************
-# Makefile.am (seq66/include)
+# Makefile.am (seq66/data)
 #------------------------------------------------------------------------------
 # vim: ts=3 sw=3 noet ft=automake
 #------------------------------------------------------------------------------

@@ -6,7 +6,7 @@
 # \library    	doc/dox
 # \author     	Chris Ahlstrom
 # \date       	2015-09-10
-# \update     	2020-11-25
+# \update     	2022-01-24
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -17,6 +17,8 @@
 #
 # 		Also, we leave it to the user to decide if the programmer's documentation
 # 		should be built.  The PDFs are not checked into git.
+#
+# 		The dox is no longer present in the SUBDIRS of doc/Makefile.am.
 #
 #-------------------------------------------------------------------------------
 
@@ -36,7 +38,7 @@ CLEANFILES = dox-stamp \
 #  EXTRA_DIST
 #------------------------------------------------------------------------------
 
-EXTRA_DIST = make_dox make-helper optimize *.cfg *.dox # *.pdf
+EXTRA_DIST = make_dox make-helper optimize *.cfg *.dox
 
 #******************************************************************************
 # Local project directories
@@ -91,8 +93,7 @@ clean-local:
 install-data-local:
 	@echo "Copying Seq66 documentation to $(DESTDIR)$(seq66docdir)..."
 	mkdir -p $(DESTDIR)$(seq66docdir)
-	cp -r -p $(top_builddir)/doc/*.pdf $(DESTDIR)$(seq66docdir)
-	cp -r -p $(top_srcdir)/doc/*.ods $(DESTDIR)$(seq66docdir)
+	cp -r -p $(top_builddir)/doc/dox/*.pdf $(DESTDIR)$(seq66docdir)
 
 #*******************************************************************************
 # uninstall-hook
@@ -106,7 +107,8 @@ uninstall-hook:
 	rm -rf $(DESTDIR)$(seq66docdir)
 
 #******************************************************************************
-# Makefile.am (dox)
+# Makefile.am (doc/dox)
 #------------------------------------------------------------------------------
 # vim: ts=3 sw=3 noet ft=automake
 #------------------------------------------------------------------------------
+

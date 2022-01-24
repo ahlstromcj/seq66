@@ -21,12 +21,14 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2020-10-02
-# \updates     2021-03-08
+# \updates     2022-01-24
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #     This Makefile manages the "doc" directory.  It supports a number of
 #     sub-projects
+#
+#     ca 2022-01-24 Fixes found while working on issue #45.
 #
 #-----------------------------------------------------------------------------
 
@@ -400,6 +402,8 @@ EXTRA_DIST = make_dox *.cfg dox/*.dox *.pdf *.ods
 #-----------------------------------------------------------------------------
 #
 # We now make the Doxygen documentation only manually: dox removed.
+# Actually we also make the LaTeX/PDF documentation manually as well (to
+# avoid checking in the binary/pdf file all the time.
 #
 #-----------------------------------------------------------------------------
 SUBDIRS = latex
@@ -659,7 +663,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-data-local
+install-data-am:
 
 install-dvi: install-dvi-recursive
 
@@ -704,23 +708,21 @@ ps: ps-recursive
 ps-am:
 
 uninstall-am:
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
-.MAKE: $(am__recursive_targets) install-am install-strip uninstall-am
+
+.MAKE: $(am__recursive_targets) install-am install-strip
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am check \
 	check-am clean clean-generic clean-libtool cscopelist-am ctags \
 	ctags-am distclean distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am \
-	install-data-local install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-hook
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am tags tags-am uninstall uninstall-am
 
 .PRECIOUS: Makefile
 
@@ -734,27 +736,27 @@ uninstall-am:
 # 	   method doesn't work because /usr/bin/install will only install files,
 # 	   and automake doesn't give it the switch needed to install directories.
 #
-# 	   Also, since we don't always build the documentation, we copied these
-# 	   commands to data/Makefile.am as well.
+# 	   Also, since we don't always build the documentation, we moved these
+# 	   commands to data/Makefile.am.
 #
 #------------------------------------------------------------------------------
-
-install-data-local:
-	@echo "Copying Seq66 documentation to $(seq66docdir)..."
-	mkdir -p $(seq66docdir)
-	cp -r -p $(top_srcdir)/doc/*.pdf $(seq66docdir)
-	cp -r -p $(top_srcdir)/doc/*.ods $(seq66docdir)
+#
+# install-data-local:
+#	@echo "Copying Seq66 documentation to $(seq66docdir)..."
+#	mkdir -p $(seq66docdir)
+#	cp -r -p $(top_srcdir)/doc/*.pdf $(seq66docdir)
+#	cp -r -p $(top_srcdir)/doc/*.ods $(seq66docdir)
+#
+#------------------------------------------------------------------------------
 
 #*******************************************************************************
 # uninstall-hook
 #-------------------------------------------------------------------------------
 #
-#		Quick and dirty method used.
+# uninstall-hook:
+#	rm -rf $(seq66docdir)
 #
 #-------------------------------------------------------------------------------
-
-uninstall-hook:
-	rm -rf $(seq66docdir)
 
 #****************************************************************************
 # Makefile.am (seq66 top-level)
