@@ -1,4 +1,4 @@
-# README for Seq66 0.98.3
+# README for Seq66 0.98.3.1
 
 Chris Ahlstrom
 2015-09-10 to 2022-01-23
@@ -81,6 +81,9 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.98.3.1:
+        *   Revisited issue #45. Doh!
+        *   Cleaned up the Makefiles, fixed minor issues.
     *   Version 0.98.3:
         *   Fixed issue #76.  Fixed broken MIDI Start handling. Added setting
             the tempo via a tempo event.  Still thinking about MMC.
