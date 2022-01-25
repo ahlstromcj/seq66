@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2021-05-14
+2015-09-09 to 2022-01-25
 
 Creating a GitHub Repository:
 
@@ -161,19 +161,21 @@ into your branch, if you intend to do further work in that branch:
     $ get merge master
     $ git push origin develop
 
-Delete a branch on your local filesystem, use -d or -D (to force):
+Branch delete/remove:
 
-    $ git branch -d [name_of_branch]
+    First delete the branch on github:
 
-Delete the branch on github:
+        $ git push origin :name_of_branch           -or-
+        $ git push origin --delete name_of_branch
 
-    $ git push origin :[name_of_branch]   -or-
-    $ git push origin --delete [name_of_branch]
+    Follow that up with this command on all your local copies:
 
-Follow that up with this command on all your local copies:
+        $ git fetch --all --prune                  -or-
+        $ git branch -d name_of_branch
 
-    $ git fetch --all --prune                  -or-
-    $ git branch -d name_of_branch             (as noted above)
+    The prune command has failed on one of our systems with a Python
+    error regarding apt_pkg.  Even if python-apt or python3-apt are
+    installed.
 
 Caching your credentials (be careful!):
 
