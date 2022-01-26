@@ -120,6 +120,10 @@ protected:
 private:
 
     void port_list (const std::string & tag);
+    midibus * make_virtual_output_bus (int bus);
+    midibus * make_virtual_input_bus (int bus);
+    midibus * make_output_bus (int bus);
+    midibus * make_input_bus (int bus);
 
 };          // class mastermidibus
 
