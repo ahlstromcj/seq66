@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-01-06
+ * \updates       2022-01-27
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information
@@ -247,14 +247,14 @@ midi_jack_info::connect ()
             }
             else
             {
-                m_error_string = "JACK can't set I/O callback";
-                error(rterror::WARNING, m_error_string);
+                m_error_string = "JACK cannot set I/O callback";
+                error(rterror::warning, m_error_string);
             }
         }
         else
         {
             m_error_string = "JACK server not running";
-            error(rterror::WARNING, m_error_string);
+            error(rterror::warning, m_error_string);
         }
     }
     return result;
@@ -353,8 +353,7 @@ midi_jack_info::get_all_port_info ()
             input_ports().add
             (
                 clientnumber, clientname, portnumber, portname,
-                midibase::c_virtual_port, midibase::c_normal_port,
-                midibase::c_input_port
+                midibase::io::input, midibase::port::manual
             );
             ++result;
         }
@@ -381,8 +380,8 @@ midi_jack_info::get_all_port_info ()
                 input_ports().add
                 (
                     client, clientname, count, portname,
-                    midibase::c_normal_port, midibase::c_normal_port,
-                    midibase::c_input_port, 0, alias
+                    midibase::io::input, midibase::port::normal,
+                    0, alias
                 );
                 ++count;
             }
@@ -411,8 +410,7 @@ midi_jack_info::get_all_port_info ()
             output_ports().add
             (
                 client, clientname, 0, portname,
-                midibase::c_virtual_port, midibase::c_normal_port,
-                midibase::c_output_port
+                midibase::io::output, midibase::port::manual
             );
             ++result;
         }
@@ -439,8 +437,8 @@ midi_jack_info::get_all_port_info ()
                 output_ports().add
                 (
                     client, clientname, count, portname,
-                    midibase::c_normal_port, midibase::c_normal_port,
-                    midibase::c_output_port, 0, alias
+                    midibase::io::output, midibase::port::normal,
+                    0, alias
                 );
                 ++count;
             }
@@ -569,8 +567,8 @@ midi_jack_info::api_connect ()
     }
     if (! result)
     {
-        m_error_string = "JACK can't activate and connect I/O";
-        error(rterror::WARNING, m_error_string);
+        m_error_string = "JACK cannot activate/connect I/O";
+        error(rterror::warning, m_error_string);
     }
     return result;
 }

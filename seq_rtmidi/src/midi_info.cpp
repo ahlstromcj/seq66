@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-06
- * \updates       2021-12-06
+ * \updates       2022-01-27
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of system MIDI information
@@ -53,8 +53,7 @@ namespace seq66
  *  Principal constructor.
  */
 
-midi_port_info::midi_port_info ()
- :
+midi_port_info::midi_port_info () :
     m_port_count        (0),
     m_port_container    ()
 {
@@ -76,23 +75,24 @@ midi_port_info::midi_port_info ()
  * \param portname
  *      Provides the system or user-supplied name for the port.
  *
- * \param makevirtual
+ * \param iotype
+ *      Indicates if the port is an input port or an output port.
+ *
+ * \param porttype
  *      If the system currently has no input or output port available, then we
  *      want to create a virtual port so that the application has something to
- *      work with.
- *
- * \param makesystem
- *      In some systems, we need to create and activate a system port, such as
- *      a timer port or an ALSA announce port.  For all other ports, this
- *      value is false.
- *
- * \param makeinput
- *      Indicates if the port is an input port or an output port.
+ *      work with.  In some systems, we need to create and activate a system
+ *      port, such as a timer port or an ALSA announce port.  For all other
+ *      ports, this value is note used.
  *
  * \param queuenumber
  *      Provides the optional queue number, if applicable.  For example, the
  *      seq66 application grabs the client number (normally valued at 1)
  *      from the ALSA subsystem.
+ *
+ * \param alias
+ *      In some JACK configurations an alias is available.  This lets one see
+ *      the device's model name without running the a2jmidid daemon.
  */
 
 void
@@ -102,9 +102,8 @@ midi_port_info::add
     const std::string & clientname,
     int portnumber,
     const std::string & portname,
-    bool makevirtual,
-    bool makesystem,
-    bool makeinput,
+    midibase::io iotype,
+    midibase::port porttype,
     int queuenumber,
     const std::string & alias
 )
@@ -115,15 +114,17 @@ midi_port_info::add
     temp.m_port_number = portnumber;
     temp.m_port_name = portname;
     temp.m_queue_number = queuenumber;
-    temp.m_is_input = makeinput;
-    temp.m_is_virtual = makevirtual;
-    temp.m_is_system = makesystem;
+    temp.m_io_type = iotype;
+    temp.m_port_type = porttype;
     temp.m_port_alias = alias;
     m_port_container.push_back(temp);
     m_port_count = int(m_port_container.size());
     if (rc().verbose())
     {
-        const char * vport = makevirtual ? "virtual" : "non-virtual" ;
+        bool makevirtual = porttype == midibase::port::manual;
+        bool makesystem = porttype == midibase::port::system;
+        bool makeinput =  iotype == midibase::io::input;
+        const char * vport = makevirtual ? "virtual" : "automatic" ;
         const char * iport = makeinput ? "input" : "output" ;
         const char * sport = makesystem ? "system" : "device" ;
         char tmp[128];
@@ -148,8 +149,7 @@ midi_port_info::add (const midibus * m)
     (
         m->bus_id(), m->bus_name(),
         m->port_id(), m->port_name(),
-        m->is_virtual_port(), m->queue_number(),
-        m->is_system_port(), m->is_input_port()
+        m->io_type(), m->port_type()
     );
 }
 
@@ -230,7 +230,7 @@ midi_info::midi_info
  */
 
 void
-midi_info::error (rterror::Type type, const std::string & errorstring)
+midi_info::error (rterror::kind errtype, const std::string & errorstring)
 {
     /*
      * Not a big fan of throwing errors, especially since we currently log
@@ -239,7 +239,7 @@ midi_info::error (rterror::Type type, const std::string & errorstring)
      * throw rterror(errorstring, type);
      */
 
-    if (type != rterror::MAX)
+    if (errtype != rterror::max)
         errprint(errorstring);
 }
 
@@ -259,7 +259,7 @@ midi_info::port_list () const
     std::ostringstream os;
     midi_info * nc_this = const_cast<midi_info *>(this);
 
-    nc_this->midi_mode(midibase::c_input_port);
+    nc_this->midi_mode(midibase::io::input);
     os << "Input ports (" << inportcount << "):" << std::endl;
     for (int i = 0; i < inportcount; ++i)
     {
@@ -281,7 +281,7 @@ midi_info::port_list () const
         os << std::endl;
     }
 
-    nc_this->midi_mode(midibase::c_output_port);
+    nc_this->midi_mode(midibase::io::input);
     os << "Output ports (" << outportcount << "):" << std::endl;
     for (int o = 0; o < outportcount; ++o)
     {

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-11-30
+ * \updates       2022-01-27
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.
@@ -145,7 +145,7 @@ rtmidi::~rtmidi ()
 rtmidi_in::rtmidi_in (midibus & parentbus, rtmidi_info & info) :
     rtmidi   (parentbus, info)
 {
-    if (rtmidi_info::selected_api() != RTMIDI_API_UNSPECIFIED)
+    if (rtmidi_info::selected_api() != rtmidi_api::unspecified)
     {
         openmidi_api(rtmidi_info::selected_api(), info);
         if (is_nullptr(get_api()))
@@ -160,7 +160,7 @@ rtmidi_in::rtmidi_in (midibus & parentbus, rtmidi_info & info) :
          * so this is fallback code.
          */
 
-        std::vector<rtmidi_api> apis;
+        rtmidi_api_list apis;
         rtmidi_info::get_compiled_api(apis);
         for (unsigned i = 0; i < apis.size(); ++i)
         {
@@ -181,7 +181,7 @@ rtmidi_in::rtmidi_in (midibus & parentbus, rtmidi_info & info) :
              */
 
             std::string errortext = "no rtmidi API support found";
-            throw(rterror(errortext, rterror::UNSPECIFIED));
+            throw(rterror(errortext, rterror::unspecified));
         }
     }
 }
@@ -216,11 +216,11 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
     {
         midi_info & midiinfo = *(info.get_api_info());
         delete_api();
-        if (api == RTMIDI_API_UNSPECIFIED)
+        if (api == rtmidi_api::unspecified)
         {
             if (rc().with_jack_midi())
             {
-                if (api == RTMIDI_API_UNIX_JACK)
+                if (api == rtmidi_api::jack)
                 {
 #if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
                     midi_in_jack * mijp = new (std::nothrow) midi_in_jack
@@ -237,7 +237,7 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
             }
             if (! got_an_api)
             {
-                if (api == RTMIDI_API_LINUX_ALSA)
+                if (api == rtmidi_api::alsa)
                 {
 #if defined SEQ66_BUILD_LINUX_ALSA
                     midi_in_alsa * miap = new (std::nothrow) midi_in_alsa
@@ -253,7 +253,7 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
                 }
             }
         }
-        else if (api == RTMIDI_API_UNIX_JACK)
+        else if (api == rtmidi_api::jack)
         {
 #if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
             midi_in_jack * mijp = new (std::nothrow) midi_in_jack
@@ -264,7 +264,7 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
                 set_api(mijp);
 #endif
         }
-        else if (api == RTMIDI_API_LINUX_ALSA)
+        else if (api == rtmidi_api::alsa)
         {
 #if defined SEQ66_BUILD_LINUX_ALSA
             midi_in_alsa * miap = new (std::nothrow) midi_in_alsa
@@ -306,7 +306,7 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
 rtmidi_out::rtmidi_out (midibus & parentbus, rtmidi_info & info) :
     rtmidi   (parentbus, info)
 {
-    if (rtmidi_info::selected_api() != RTMIDI_API_UNSPECIFIED)
+    if (rtmidi_info::selected_api() != rtmidi_api::unspecified)
     {
         openmidi_api(rtmidi_info::selected_api(), info);
         if (not_nullptr(get_api()))
@@ -324,7 +324,7 @@ rtmidi_out::rtmidi_out (midibus & parentbus, rtmidi_info & info) :
      * so this is fallback code.
      */
 
-    std::vector<rtmidi_api> apis;
+    rtmidi_api_list apis;
     rtmidi_info::get_compiled_api(apis);
     for (unsigned i = 0; i < apis.size(); ++i)
     {
@@ -346,7 +346,7 @@ rtmidi_out::rtmidi_out (midibus & parentbus, rtmidi_info & info) :
          */
 
         std::string errorText = "no rtmidi API support found";
-        throw(rterror(errorText, rterror::UNSPECIFIED));
+        throw(rterror(errorText, rterror::unspecified));
     }
 }
 
@@ -381,11 +381,11 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
     {
         midi_info & midiinfo = *(info.get_api_info());
         delete_api();
-        if (api == RTMIDI_API_UNSPECIFIED)
+        if (api == rtmidi_api::unspecified)
         {
             if (rc().with_jack_midi())
             {
-                if (api == RTMIDI_API_UNIX_JACK)
+                if (api == rtmidi_api::jack)
                 {
 #if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
                     midi_out_jack * mojp = new (std::nothrow) midi_out_jack
@@ -402,7 +402,7 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
             }
             if (! got_an_api)
             {
-                if (api == RTMIDI_API_LINUX_ALSA)
+                if (api == rtmidi_api::alsa)
                 {
 #if defined SEQ66_BUILD_LINUX_ALSA
                     midi_out_alsa * moap = new (std::nothrow) midi_out_alsa
@@ -418,7 +418,7 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
                 }
             }
         }
-        else if (api == RTMIDI_API_UNIX_JACK)
+        else if (api == rtmidi_api::jack)
         {
 #if defined SEQ66_BUILD_UNIX_JACK
 #if defined SEQ66_JACK_SUPPORT
@@ -434,7 +434,7 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
 #endif
 #endif
         }
-        else if (api == RTMIDI_API_LINUX_ALSA)
+        else if (api == rtmidi_api::alsa)
         {
 #if defined SEQ66_BUILD_LINUX_ALSA
             midi_out_alsa * moap = new (std::nothrow) midi_out_alsa

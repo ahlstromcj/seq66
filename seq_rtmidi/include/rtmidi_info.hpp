@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Refactoring by Chris Ahlstrom
  * \date          2016-12-08
- * \updates       2021-12-06
+ * \updates       2022-01-27
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  * \license       GNU GPLv2 or above
  *
@@ -69,7 +69,7 @@ private:
 
     /**
      *  To save repeated queries, we save this value.  Its default value is
-     *  RTMIDI_API_UNSPECIFIED.
+     *  rtmidi_api::unspecified.
      */
 
     static rtmidi_api sm_selected_api;
@@ -97,7 +97,7 @@ public:
      *  compiled for certain operating systems.
      */
 
-    static void get_compiled_api (std::vector<rtmidi_api> & apis);
+    static void get_compiled_api (rtmidi_api_list & apis);
 
     /**
      *  Sets the input or output mode for getting data.
@@ -109,12 +109,18 @@ public:
     }
 
     /**
-     *  Sets the input or output mode for getting data.
+     *  Sets the input or output mode for getting data. The flag is true to
+     *  set up for input processing.
      */
 
     void midi_mode (bool flag)
     {
         get_api_info()->midi_mode(flag);
+    }
+
+    void midi_mode (midibase::io iotype)
+    {
+        midi_mode(iotype == midibase::io::input);
     }
 
     /**
@@ -273,6 +279,8 @@ public:
      * There is no need for a corresponding port-exit function, because
      * the functionality in it is not API-specific.
      *
+     * (Having second thoughts about this statement.)
+     *
      *  void api_port_exit (int client, int port)
      *  {
      *      get_api_info()->api_port_exit(client, port);
@@ -322,10 +330,9 @@ protected:
     }
 
     /**
-     * \setter m_info_api
-     *      This function also checks the pointer and returns false if it is
-     *      not valid.  This feature is important to allow a missing API (e.g.
-     *      the JACK server is not running) to be detected.
+     *  This function also checks the pointer and returns false if it is not
+     *  valid.  This feature is important to allow a missing API (e.g.  the
+     *  JACK server is not running) to be detected.
      */
 
     bool set_api_info (midi_info * ma)

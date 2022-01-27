@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone, 2003-2012; refactoring by Chris Ahlstrom
  * \date          2016-11-19
- * \updates       2021-11-18
+ * \updates       2022-01-27
  * \license       See above.
  *
  *  We include this test code in our library, rather than in a separate
@@ -54,7 +54,7 @@ namespace seq66
  *
  * \param i
  *      The integer value code for the desired API.  Must range from
- *      int(RTMIDI_API_UNSPECIFIED) to int(RTMIDI_API_DUMMY).
+ *      int(rtmidi_api::unspecified) to int(rtmidi_api::max) minus one.
  *
  * \return
  *      Returns a human-readable name for the API.
@@ -67,9 +67,9 @@ midi_api_name (int i)
     static bool s_map_is_initialized = false;
     if (! s_map_is_initialized)
     {
-        s_api_map[RTMIDI_API_UNSPECIFIED] = "Unspecified";
-        s_api_map[RTMIDI_API_LINUX_ALSA]  = "Linux ALSA";
-        s_api_map[RTMIDI_API_UNIX_JACK]   = "Jack Client";
+        s_api_map[rtmidi_api::unspecified]  = "Unspecified";
+        s_api_map[rtmidi_api::alsa]         = "ALSA";
+        s_api_map[rtmidi_api::jack]         = "Jack";
 
 #if defined SEQ66_USE_RTMIDI_API_ALL
         /*
@@ -79,16 +79,16 @@ midi_api_name (int i)
          * have no way to test it right now.
          */
 
-        s_api_map[RTMIDI_API_MACOSX_CORE] = "OS-X CoreMidi";
-        s_api_map[RTMIDI_API_WINDOWS_MM]  = "Windows MultiMedia";
-        s_api_map[RTMIDI_API_DUMMY]       = "rtmidi dummy";
+        s_api_map[rtmidi_api::macosx_core]  = "OSX CoreMidi";
+        s_api_map[rtmidi_api::windows_mm]   = "Win MultiMedia";
+        s_api_map[rtmidi_api::dummy]        = "Dummy";
 #endif
 
         s_map_is_initialized = true;
     }
 
     std::string result = "Unknown MIDI API";
-    if (i >= int(RTMIDI_API_UNSPECIFIED) && i < int(RTMIDI_API_MAXIMUM))
+    if (i >= int(rtmidi_api::unspecified) && i < int(rtmidi_api::max))
         result = s_api_map[rtmidi_api(i)];
 
     return result;
@@ -109,29 +109,27 @@ midi_probe ()
 {
     static rtmidi_info s_rtmidi_info_dummy
     (
-        RTMIDI_API_UNSPECIFIED, "probe", 192, 120
+        rtmidi_api::unspecified, "probe", 192, 120
     );
     static midibus s_midibus_dummy(s_rtmidi_info_dummy, 0);
-    std::vector<rtmidi_api> apis;
+    rtmidi_api_list apis;
     rtmidi_info::get_compiled_api(apis);
     std::cout << "\nCompiled APIs:\n";
     for (unsigned i = 0; i < apis.size(); ++i)
     {
-        std::cout << "  " << midi_api_name(apis[i]) << std::endl;
+        std::cout << "  " << midi_api_name(i) << std::endl;
     }
 
     try                         /* rtmidi constructors; exceptions possible */
     {
         rtmidi_info dummyinfo
         (
-            RTMIDI_API_UNSPECIFIED, "probe", 192, 120
+            rtmidi_api::unspecified, "probe", 192, 120
         );
         rtmidi_in midiin(s_midibus_dummy, dummyinfo);
-        std::cout
-            << "MIDI Input/Output API: "
-            << midi_api_name(rtmidi_info::selected_api())
-            << std::endl
-            ;
+        int index = api_to_int(rtmidi_info::selected_api());
+        std::string name = midi_api_name(index);
+        std::cout << "MIDI Input/Output API: " << name << std::endl ;
 
         int nports = midiin.get_port_count();
         std::cout << nports << " MIDI input sources:" << std::endl;

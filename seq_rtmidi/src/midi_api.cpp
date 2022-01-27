@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-08-13
+ * \updates       2022-01-27
  * \license       See above.
  *
  *  In this refactoring, we had to adapt the existing Seq66
@@ -79,8 +79,7 @@ midi_api::~midi_api ()
 }
 
 /**
- *  \return
- *      Returns true if the port is an input port.
+ *  Returns true if the port is an input port.
  */
 
 bool
@@ -92,9 +91,6 @@ midi_api::is_input_port () const
 /**
  *  A virtual port is what Seq24 called a "manual" port.  It is a MIDI port
  *  that an application can create as if it is a real ALSA port.
- *
- *  \return
- *      Returns true if the port is an input port.
  */
 
 bool
@@ -107,9 +103,6 @@ midi_api::is_virtual_port () const
  *  A system port is one that is independent of the devices and applications
  *  that exist.  In the ALSA subsystem, the only system port is the "announce"
  *  port.
- *
- *  \return
- *      Returns true if the port is an system port.
  */
 
 bool
@@ -132,7 +125,7 @@ midi_api::is_system_port () const
  */
 
 void
-midi_api::error (rterror::Type type, const std::string & errorstring)
+midi_api::error (rterror::kind errtype, const std::string & errorstring)
 {
     if (m_error_callback)
     {
@@ -142,7 +135,7 @@ midi_api::error (rterror::Type type, const std::string & errorstring)
         m_first_error_occurred = true;
 
         const std::string errorMessage = errorstring;
-        m_error_callback(type, errorMessage, m_error_callback_user_data);
+        m_error_callback(errtype, errorMessage, m_error_callback_user_data);
         m_first_error_occurred = false;
         return;
     }
@@ -165,9 +158,9 @@ midi_api::error (rterror::Type type, const std::string & errorstring)
  */
 
 void
-midi_api::master_midi_mode (bool input)
+midi_api::master_midi_mode (midibase::io iotype)
 {
-    m_master_info.midi_mode(input);
+    m_master_info.midi_mode(iotype);
 }
 
 #if defined SEQ66_USER_CALLBACK_SUPPORT
@@ -191,13 +184,13 @@ midi_api::user_callback (rtmidi_callback_t callback, void * userdata)
     if (m_input_data.using_callback())
     {
         m_error_string = "callback function is already set";
-        error(rterror::WARNING, m_error_string);
+        error(rterror::warning, m_error_string);
         return;
     }
     if (is_nullptr(callback))
     {
         m_error_string = "callback function is null";
-        error(rterror::WARNING, m_error_string);
+        error(rterror::warning, m_error_string);
         return;
     }
     m_input_data.user_callback(callback);
@@ -224,7 +217,7 @@ midi_api::cancel_callback ()
     else
     {
         m_error_string = "no callback function was set";
-        error(rterror::WARNING, m_error_string);
+        error(rterror::warning, m_error_string);
     }
 }
 

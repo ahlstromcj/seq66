@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-12-06
+ * \updates       2022-01-26
  * \license       See above.
  *
  *    In this refactoring, we've stripped out most of the original RtMidi
@@ -105,8 +105,7 @@ public:
     virtual void set_port_suspended (bool flag) override;
 
     /**
-     * \getter m_jack_client
-     *      This is the platform-specific version of midi_handle().
+     *  This is the platform-specific version of midi_handle().
      */
 
     jack_client_t * client_handle ()
@@ -156,11 +155,11 @@ protected:
     bool create_ringbuffer (size_t rbsize);
     bool connect_port
     (
-        bool input,
+        midibase::io iotype,
         const std::string & sourceportname,
         const std::string & destportname
     );
-    bool register_port (bool input, const std::string & portname);
+    bool register_port (midibase::io iotype, const std::string & portname);
 
 protected:
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-12-07
+ * \updates       2022-01-27
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -40,8 +40,8 @@
 
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "midi/event.hpp"               /* seq66::event                     */
-#include "mastermidibus_rm.hpp"         /* seq66::mastermidibus, RtMIDI     */
-#include "midibus_rm.hpp"               /* seq66::midibus, RtMIDI           */
+#include "mastermidibus_rm.hpp"         /* seq66::mastermidibus, rtmidi     */
+#include "midibus_rm.hpp"               /* seq66::midibus, rtmidi           */
 
 #define SEQ66_USE_JACK_POLLING_FLAG     /* until we reconcile ALSA/JACK     */
 
@@ -64,12 +64,11 @@ namespace seq66
  *      c_beats_per_minute.
  */
 
-mastermidibus::mastermidibus (int ppqn, midibpm bpm)
- :
+mastermidibus::mastermidibus (int ppqn, midibpm bpm) :
     mastermidibase      (ppqn, bpm),
-    m_midi_master
+    m_midi_master                                           /* rtmidi_info  */
     (
-        rc().with_jack_midi() ? RTMIDI_API_UNIX_JACK : RTMIDI_API_LINUX_ALSA,
+        rc().with_jack_midi() ? rtmidi_api::jack : rtmidi_api::alsa,
         rc().app_client_name(), ppqn, bpm
     ),
     m_use_jack_polling  (rc().with_jack_midi())
@@ -141,22 +140,21 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
     m_midi_master.api_set_beats_per_minute(bpm);
     if (rc().manual_ports())                            /* virtual ports    */
     {
+        int num_buses = rc().manual_port_count();       /* output count     */
         m_midi_master.clear();
-
-        int num_buses = rc().manual_port_count();
         for (int bus = 0; bus < num_buses; ++bus)       /* output busses    */
         {
-            midibus * m = make_virtual_output_bus(bus);
+            midibus * m = make_virtual_bus(bus, midibase::io::output);
             if (not_nullptr(m))
             {
                 m_outbus_array.add(m, clock(bus));      /* must come 1st    */
                 m_midi_master.add_output(m);            /* must come 2nd    */
             }
         }
-        num_buses = rc().manual_in_port_count();
+        num_buses = rc().manual_in_port_count();        /* input count      */
         for (int bus = 0; bus < num_buses; ++bus)       /* input busses     */
         {
-            midibus * m = make_virtual_input_bus(bus);
+            midibus * m = make_virtual_bus(bus, midibase::io::input);
             if (not_nullptr(m))
             {
                 m_inbus_array.add(m, input(bus));       /* must come 1st    */
@@ -166,63 +164,64 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
     }
     else
     {
+        bool swap_io = m_midi_master.selected_api() == rtmidi_api::jack;
         unsigned nports = m_midi_master.full_port_count();
-        bool swap_io = rc().with_jack_midi();
-        bool isinput = swap_io ?
-            midibase::c_output_port : midibase::c_input_port;
-        bool isoutput = swap_io ?
-            midibase::c_input_port : midibase::c_output_port;
-
         if (nports > 0)
         {
-            m_midi_master.midi_mode(midibase::c_input_port);     /* ugh! */
+            midibase::io iodirection = midibase::io::input;
+            if (swap_io)
+                iodirection = midibase::io::output;
+
+            m_midi_master.midi_mode(midibase::io::input);       /* mode!    */
+
             unsigned inports = m_midi_master.get_port_count();
             for (unsigned bus = 0; bus < inports; ++bus)
             {
-                // bool isvirtual = m_midi_master.get_virtual(bus);
-                // bool issystem = m_midi_master.get_system(bus);
-                midibus * m = new (std::nothrow) midibus
-                (
-                    m_midi_master, bus, isvirtual, isinput,
-                    null_buss(), issystem
-                );
+                midibus * m = make_normal_bus(bus, iodirection);
                 if (not_nullptr(m))
                 {
                     if (swap_io)
                     {
-                        set_midi_out_alias(bus, m->port_alias());
+                        set_midi_alias
+                        (
+                            bus, midibase::io::input, m->port_alias()
+                        );
                         m_outbus_array.add(m, clock(bus));
                     }
                     else
                     {
-                        set_midi_in_alias(bus, m->port_alias());
+                        set_midi_alias
+                        (
+                            bus, midibase::io::input, m->port_alias()
+                        );
                         m_inbus_array.add(m, input(bus));
                     }
                     m_midi_master.add_bus(m);           /* must come 2nd    */
                 }
             }
-            m_midi_master.midi_mode(midibase::c_output_port);    /* ugh! */
+            iodirection = swap_io ? midibase::io::input : midibase::io::output ;
+            m_midi_master.midi_mode(midibase::io::output);    /* ugh! mode! */
 
             unsigned outports = m_midi_master.get_port_count();
             for (unsigned bus = 0; bus < outports; ++bus)
             {
-                bool isvirtual = m_midi_master.get_virtual(bus);
-                bool issystem = m_midi_master.get_system(bus);
-                midibus * m = new (std::nothrow) midibus
-                (
-                    m_midi_master, bus, isvirtual, isoutput,
-                    null_buss(), issystem
-                );
+                midibus * m = make_normal_bus(bus, iodirection);
                 if (not_nullptr(m))
                 {
                     if (swap_io)
                     {
-                        set_midi_in_alias(bus, m->port_alias());
+                        set_midi_alias
+                        (
+                            bus, midibase::io::input, m->port_alias()
+                        );
                         m_inbus_array.add(m, input(bus));
                     }
                     else
                     {
-                        set_midi_out_alias(bus, m->port_alias());
+                        set_midi_alias
+                        (
+                            bus, midibase::io::output, m->port_alias()
+                        );
                         m_outbus_array.add(m, clock(bus));
                     }
                     m_midi_master.add_bus(m);           /* must come 2nd    */
@@ -235,53 +234,27 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
 }
 
 midibus *
-mastermidibus::make_virtual_output_bus (int bus)
+mastermidibus::make_virtual_bus (int bus, midibase::io iotype)
 {
     midibus * m = new (std::nothrow) midibus
     (
-        m_midi_master, bus,
-        midibase::c_virtual_port,
-        midibase::c_output_port,
-        bus /* bussoverride */
+        m_midi_master, bus, iotype, midibase::port::manual, bus
     );
     return m;
 }
 
 midibus *
-mastermidibus::make_virtual_input_bus (int bus)
+mastermidibus::make_normal_bus (int bus, midibase::io iotype)
 {
-    midibus * m = new (std::nothrow) midibus
-    (
-        m_midi_master, bus,
-        midibase::c_virtual_port,
-        midibase::c_input_port,
-        bus
-    );
-    return m;
-}
+    midibase::port porttype = midibase::port::normal;
+    if (m_midi_master.get_virtual(bus))
+        porttype = midibase::port::manual;
+    else if (m_midi_master.get_system(bus))
+        porttype = midibase::port::system;
 
-midibus *
-mastermidibus::make_output_bus (int bus)
-{
-    bool isvirtual = m_midi_master.get_virtual(bus);
-    bool issystem = m_midi_master.get_system(bus);
     midibus * m = new (std::nothrow) midibus
     (
-        m_midi_master, bus, isvirtual, false, /* isinput */
-        null_buss(), issystem
-    );
-    return m;
-}
-
-midibus *
-mastermidibus::make_input_bus (int bus)
-{
-    bool isvirtual = m_midi_master.get_virtual(bus);
-    bool issystem = m_midi_master.get_system(bus);
-    midibus * m = new (std::nothrow) midibus
-    (
-        m_midi_master, bus, isvirtual, true, /* isoutput */
-        null_buss(), issystem
+        m_midi_master, bus, iotype, porttype, null_buss()
     );
     return m;
 }
@@ -344,7 +317,7 @@ mastermidibus::api_poll_for_midi ()
 }
 
 /**
- *  Grab a MIDI event.  For the ALSA implementation, this call
+ *  Grab a MIDI event.  For the ALSA implementation, this call is ...???
  *
  * \threadsafe
  */

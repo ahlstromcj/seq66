@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-01-06
+ * \updates       2022-01-27
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -532,7 +532,7 @@ midi_jack::api_init_out ()
             (
                 rc().application_name(), rc().app_client_name(), remoteportname
             );
-            result = register_port(midibase::c_output_port, port_name());
+            result = register_port(midibase::io::output, port_name());
         }
     }
     return result;
@@ -592,7 +592,7 @@ midi_jack::api_init_in ()
         (
             rc().application_name(), rc().app_client_name(), remoteportname
         );
-        result = register_port(midibase::c_input_port, port_name());
+        result = register_port(midibase::io::input, port_name());
     }
     return result;
 }
@@ -612,9 +612,9 @@ midi_jack::api_connect ()
     std::string localname = connect_name();     /* modified!    */
     bool result;
     if (is_input_port())
-        result = connect_port(midibase::c_input_port, remotename, localname);
+        result = connect_port(midibase::io::input, remotename, localname);
     else
-        result = connect_port(midibase::c_output_port, localname, remotename);
+        result = connect_port(midibase::io::output, localname, remotename);
 
     if (result)
         set_port_open();
@@ -678,7 +678,7 @@ midi_jack::set_virtual_name (int portid, const std::string & portname)
 bool
 midi_jack::api_init_out_sub ()
 {
-    master_midi_mode(midibase::c_output_port);      /* this is necessary */
+    master_midi_mode(midibase::io::output);      /* this is necessary */
     int portid = parent_bus().port_id();
     bool result = portid >= 0;
     if (! result)
@@ -698,7 +698,7 @@ midi_jack::api_init_out_sub ()
             portname += " ";
             portname += std::to_string(portid);
         }
-        result = register_port(midibase::c_output_port, portname);
+        result = register_port(midibase::io::output, portname);
         if (result)
         {
             set_virtual_name(portid, portname);
@@ -718,7 +718,7 @@ midi_jack::api_init_out_sub ()
 bool
 midi_jack::api_init_in_sub ()
 {
-    master_midi_mode(midibase::c_input_port);
+    master_midi_mode(midibase::io::input);
     int portid = parent_bus().port_id();
     bool result = portid >= 0;
     if (! result)
@@ -741,7 +741,7 @@ midi_jack::api_init_in_sub ()
             portname += " ";
             portname += std::to_string(portid);
         }
-        result = register_port(midibase::c_input_port, portname);
+        result = register_port(midibase::io::input, portname);
         if (result)
         {
             set_virtual_name(portid, portname);
@@ -1082,7 +1082,7 @@ midi_jack::close_client ()
             m_error_string += " (id ";
             m_error_string += std::to_string(id);
             m_error_string += ")";
-            error(rterror::DRIVER_ERROR, m_error_string);
+            error(rterror::driver_error, m_error_string);
         }
     }
 }
@@ -1097,7 +1097,7 @@ midi_jack::close_client ()
  * \param input
  *      Indicates true if the port to register and connect is an input port,
  *      and false if the port is an output port.  Useful macros for
- *      readability: midibase::c_input_port and midibase::c_output_port.
+ *      readability: midibase::io::input and midibase::io::output.
  *
  * \param srcportname
  *      Provides the destination port-name for the connection.  For input,
@@ -1124,7 +1124,7 @@ midi_jack::close_client ()
 bool
 midi_jack::connect_port
 (
-    bool input,
+    midibase::io iotype,
     const std::string & srcportname,
     const std::string & destportname
 )
@@ -1150,13 +1150,14 @@ midi_jack::connect_port
                 }
                 else
                 {
+                    bool input = iotype == midibase::io::input;
                     m_error_string = "JACK error connecting port ";
                     m_error_string += input ? "input '" : "output '";
                     m_error_string += srcportname;
                     m_error_string += "' to '";
                     m_error_string += destportname;
                     m_error_string += "'";
-                    error(rterror::DRIVER_ERROR, m_error_string);
+                    error(rterror::driver_error, m_error_string);
                 }
             }
         }
@@ -1191,9 +1192,7 @@ midi_jack::connect_port
  *      here.
  *
  * \param input
- *      Indicates true if the port to register input port, and false if the
- *      port is an output port.  Two boolean constants can be used for this
- *      purpose: midibase::c_input_port and midibase::c_output_port.
+ *      Indicates if the port to register is an input or output port
  *
  * \param portname
  *      Provides the local name of the port.  This is the full name
@@ -1207,12 +1206,14 @@ midi_jack::connect_port
  */
 
 bool
-midi_jack::register_port (bool input, const std::string & portname)
+midi_jack::register_port (midibase::io iotype, const std::string & portname)
 {
     bool result = not_nullptr(port_handle());
     if (! result)
     {
-        unsigned long flag = input ? JackPortIsInput : JackPortIsOutput;
+        unsigned long flag = iotype == midibase::io::input ?
+            JackPortIsInput : JackPortIsOutput ;
+
         unsigned long buffsize = 0;
         jack_port_t * p = jack_port_register
         (
@@ -1241,7 +1242,7 @@ midi_jack::register_port (bool input, const std::string & portname)
             m_error_string = "JACK error registering port";
             m_error_string += " ";
             m_error_string += portname;
-            error(rterror::DRIVER_ERROR, m_error_string);
+            error(rterror::driver_error, m_error_string);
         }
     }
     return result;
@@ -1290,7 +1291,7 @@ midi_jack::create_ringbuffer (size_t rbsize)
         if (! result)
         {
             m_error_string = "JACK ringbuffer error";
-            error(rterror::WARNING, m_error_string);
+            error(rterror::warning, m_error_string);
         }
     }
     return result;

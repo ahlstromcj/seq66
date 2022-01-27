@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-01-15
+ * \updates       2022-01-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -752,8 +752,12 @@ performer::ui_get_input (bussbyte bus, bool & active, std::string & n) const
     }
     else if (master_bus())
     {
-        name = master_bus()->get_midi_in_bus_name(bus);
-        alias = master_bus()->get_midi_in_alias(bus);
+        /*
+         * Should we do this in one call?
+         */
+
+        name = master_bus()->get_midi_bus_name(bus, midibase::io::input);
+        alias = master_bus()->get_midi_alias(bus, midibase::io::input);
         active = master_bus()->get_input(bus);
     }
     if (! alias.empty())
@@ -811,8 +815,8 @@ performer::ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const
     }
     else if (master_bus())
     {
-        name = master_bus()->get_midi_out_bus_name(bus);
-        alias = master_bus()->get_midi_out_alias(bus);
+        name = master_bus()->get_midi_bus_name(bus, midibase::io::output);
+        alias = master_bus()->get_midi_alias(bus, midibase::io::output);
         e = master_bus()->get_clock(bus);
     }
     if (! alias.empty())
@@ -4045,25 +4049,31 @@ performer::count_exportable () const
  *
  * Prerequisites:
  *
- *  1.  The same prequisites for exporting a song: a. Events in each track to
- *  be part of the export.  b. Each track unmuted.  c. Trigger(s) in the
- *  tracks to combine.  2.  At least valid pattern slot available.  This will
- *  normally not be an issue.
+ *  -#  The same prequisites for exporting a song:
+ *      -#  Events in each track to be part of the export.
+ *      -#  Each track unmuted.
+ *      -#  Trigger(s) in the tracks to combine.
+ *  -#  At least one valid pattern slot available.  This will normally not be
+ *      an issue.
  *
  * Process:
  *
- *  x.  If slot 0 has a pattern, move it to the first open slot.  x.  Set up
- *  the destination pattern in slot 0 to be channel-free.  x.  For all other
- *  patterns, no matter the set (or in the playset): x.  Check the export of
- *  that pattern for validity.  x.  Make sure all channel events have the
- *  desired channel.  x.  Copy that pattern to the performers's pattern
- *  clipboard using performer::copy_sequence(), which replaces the clipboard's
- *  contents.  Alternative:  use cut_sequence().  x.  Merge the clipboard
- *  pattern into the destination pattern.  x.  Finalize the file: x.  Make
- *  sure the midifile class gets the SMF value (0) and provides it to
- *  write_midi_file(), for one track.  The performer can store this format.
- *  x.  midifile::write_song(perf()) is called by the Song Export menu item in
- *  qsmainwnd.  x.  write_header()
+ *  -#  If slot 0 has a pattern, move it to the first open slot.
+ *  -#  Set up the destination pattern in slot 0 to be channel-free.
+ *  -#  For all other patterns, no matter the set (or in the playset):
+ *  -#  Check the export of that pattern for validity.
+ *  -#  Make sure all channel events have the desired channel.
+ *  -#  Copy that pattern to the performers's pattern clipboard using
+ *      performer::copy_sequence(), which replaces the clipboard's
+ *      contents.  Alternative:  use cut_sequence().
+ *  -#  Merge the clipboard pattern into the destination pattern.
+ *  -#  Finalize the file:
+ *      -#  Make sure the midifile class gets the SMF value (0) and provides
+ *          it to write_midi_file(), for one track.  The performer can store
+ *          this format.
+ *      -#  midifile::write_song(perf()) is called by the Song Export menu
+ *          item in qsmainwnd.
+ *      -#  write_header()
  *
  *  We start with slot 0, and search for the first open slot (as a side-effect
  *  of new_sequence() and install_sequence() to put the SMF 0 data.

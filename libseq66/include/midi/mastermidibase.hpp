@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2021-12-21
+ * \updates       2022-01-27
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -39,6 +39,7 @@
 #include <vector>                       /* for channel-filtered recording   */
 
 #include "midi/businfo.hpp"             /* seq66::businfo & busarray        */
+#include "midi/midibase.hpp"            /* seq66::midibase::io enum class   */
 #include "midi/midibus_common.hpp"      /* enum class e_clock, etc.         */
 #include "play/clockslist.hpp"          /* list of seq66::e_clock settings  */
 #include "play/inputslist.hpp"          /* list of boolean input settings   */
@@ -68,7 +69,7 @@ class mastermidibase
 protected:
 
     /**
-     *  The ALSA/MIDI client ID.
+     *  The ALSA/JACK MIDI client ID.
      */
 
     int m_client_id;
@@ -81,7 +82,7 @@ protected:
     int m_max_busses;
 
     /**
-     *  MIDI buss announcer.
+     *  MIDI buss announcer. Only for ALSA.
      */
 
     midibus * m_bus_announce;
@@ -237,9 +238,8 @@ public:
     }
 
     /**
-     * \getter m_seq
-     *      Used only in performer::input_func() when not filtering MIDI input
-     *      by channel.
+     *  Used only in performer::input_func() when not filtering MIDI input by
+     *  channel.
      */
 
     sequence * get_sequence () const
@@ -261,27 +261,24 @@ public:
     void flush ();
     void panic (int displaybuss = c_bussbyte_max);          /* kepler34 func  */
     void dump_midi_input (event in);                        /* seq32 function */
-    std::string get_midi_out_bus_name (bussbyte bus) const;
-    std::string get_midi_in_bus_name (bussbyte bus) const;
+    std::string get_midi_bus_name (bussbyte bus, midibase::io iotype) const;
 
-    void set_midi_out_alias (bussbyte bus, const std::string & alias)
+    void set_midi_alias
+    (
+        bussbyte bus, midibase::io iotype, const std::string & alias
+    )
     {
-        m_master_clocks.set_alias(bus, alias);
+        if (iotype == midibase::io::input)
+            m_master_inputs.set_alias(bus, alias);
+        else
+            m_master_clocks.set_alias(bus, alias);
     }
 
-    void set_midi_in_alias (bussbyte bus, const std::string & alias)
+    std::string get_midi_alias (bussbyte bus, midibase::io iotype) const
     {
-        m_master_inputs.set_alias(bus, alias);
-    }
-
-    std::string get_midi_out_alias (bussbyte bus) const
-    {
-        return m_master_clocks.get_alias(bus);
-    }
-
-    std::string get_midi_in_alias (bussbyte bus) const
-    {
-        return m_master_inputs.get_alias(bus);
+        return iotype == midibase::io::input ?
+            m_master_inputs.get_alias(bus) :
+            m_master_clocks.get_alias(bus) ;
     }
 
     int poll_for_midi ();

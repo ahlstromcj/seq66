@@ -49,7 +49,7 @@ namespace seq66
  *  Exception handling class for rtexmidi.
  *
  *  The rterror class is quite simple but it does allow errors to be
- *  "caught" by rterror::Type. See the rtexmidi documentation to know
+ *  "caught" by rterror::kind. See the rtexmidi documentation to know
  *  which methods can throw an rterror.
  *
  *  Please note that, in this refactoring of rtmidi, we've done away with all
@@ -63,20 +63,20 @@ class rterror : public std::exception
 
 public:
 
-    enum Type
+    enum kind
     {
-        WARNING,           /**< A non-critical error.                       */
-        DEBUG_WARNING,     /**< Non-critical error useful for debugging.    */
-        UNSPECIFIED,       /**< The default, unspecified error type.        */
-        NO_DEVICES_FOUND,  /**< No devices found on system.                 */
-        INVALID_DEVICE,    /**< An invalid device ID was specified.         */
-        MEMORY_ERROR,      /**< An error occured during memory allocation.  */
-        INVALID_PARAMETER, /**< Invalid parameter specified to a function.  */
-        INVALID_USE,       /**< The function was called incorrectly.        */
-        DRIVER_ERROR,      /**< A system driver error occured.              */
-        SYSTEM_ERROR,      /**< A system error occured.                     */
-        THREAD_ERROR,      /**< A thread error occured.                     */
-        MAX                /**< An "illegal" value for range-checking       */
+        warning,           /**< A non-critical error.                       */
+        debug_warning,     /**< Non-critical error useful for debugging.    */
+        unspecified,       /**< The default, unspecified error type.        */
+        no_devices_found,  /**< No devices found on system.                 */
+        invalid_device,    /**< An invalid device ID was specified.         */
+        memory_error,      /**< An error occured during memory allocation.  */
+        invalid_parameter, /**< Invalid parameter specified to a function.  */
+        invalid_use,       /**< The function was called incorrectly.        */
+        driver_error,      /**< A system driver error occured.              */
+        system_error,      /**< A system error occured.                     */
+        thread_error,      /**< A thread error occured.                     */
+        max                /**< An "illegal" value for range-checking       */
     };
 
 private:
@@ -91,17 +91,17 @@ private:
      *  Holds the type or severity of the exception.
      */
 
-    Type m_type;
+    kind m_type;
 
 public:
 
     rterror
     (
         const std::string & message,
-        Type type = rterror::UNSPECIFIED
+        kind errtype = rterror::unspecified
     ) :
         m_message(message),
-        m_type(type)
+        m_type(errtype)
     {
         // no code
     }
@@ -124,7 +124,7 @@ public:
      *  Returns the thrown error message type.
      */
 
-    virtual const Type & getType () const
+    virtual const kind & getType () const
     {
         return m_type;
     }
@@ -155,16 +155,16 @@ public:
  *  Note that class behaviour is undefined after a critical error (not
  *  a warning) is reported.
  *
- * \param type
+ * \param errtype
  *      Type of error.
  *
- * \param errorText
+ * \param errormsg
  *      Error description.
  */
 
 using rterror_callback = void (*)
 (
-    rterror::Type type,
+    rterror::kind errtype,
     const std::string & errormsg,
     void * userdata
 );

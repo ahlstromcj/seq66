@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-12-05
- * \updates       2021-12-06
+ * \updates       2022-01-27
  * \license       See above.
  *
  *  We need to have a way to get all of the API information from each
@@ -91,9 +91,8 @@ private:
         int m_port_number;          /**< The minor port number of the port.  */
         std::string m_port_name;    /**< The system's name for the port.     */
         int m_queue_number;         /**< A number used in some APIs.         */
-        bool m_is_input;            /**< Indicates an input port.            */
-        bool m_is_virtual;          /**< Indicates an manual/virtual port.   */
-        bool m_is_system;           /**< Built-in port, almost always false. */
+        midibase::io m_io_type;     /**< Indicates input versus output.      */
+        midibase::port m_port_type; /**< Indicates normal/virtual/system.    */
         std::string m_port_alias;   /**< Can be non-empty in JACK setups.    */
     };
 
@@ -119,11 +118,10 @@ public:
         const std::string & clientname,     // buss name
         int portnumber,
         const std::string & portname,
-        bool makevirtual,                   // midibase::c_virtual_port
-        bool makesystem,                    // midibase::c_system_port
-        bool makeinput,                     // midibase::c_input_port
+        midibase::io iotype,
+        midibase::port porttype,
         int queuenumber = bad_id(),
-        const std::string & alias = ""
+        const std::string & alias = ""      // not always available from JACK
     );
     void add (const midibus * m);
 
@@ -188,23 +186,23 @@ public:
     bool get_input (int index) const
     {
         if (index < get_port_count())
-            return m_port_container[index].m_is_input;
+            return m_port_container[index].m_io_type == midibase::io::input;
         else
-            return midibase::c_output_port;          /* i.e. false */
+            return false;
     }
 
     bool get_virtual (int index) const
     {
         if (index < get_port_count())
-            return m_port_container[index].m_is_virtual;
+            return m_port_container[index].m_port_type == midibase::port::manual;
         else
-            return midibase::c_normal_port;          /* i.e. false */
+            return false;
     }
 
     bool get_system (int index) const
     {
         if (index < get_port_count())
-            return m_port_container[index].m_is_system;
+            return m_port_container[index].m_port_type == midibase::port::system;
         else
             return false;
     }
@@ -346,6 +344,11 @@ public:
     void midi_mode (bool flag)
     {
         m_midi_mode_input = flag;
+    }
+
+    void midi_mode (midibase::io iotype)
+    {
+        midi_mode(iotype == midibase::io::input);
     }
 
     void * midi_handle ()
@@ -518,18 +521,17 @@ public:
      *  A basic error reporting function for midi_info classes.
      */
 
-    void error (rterror::Type type, const std::string & errorstring);
+    void error (rterror::kind errtype, const std::string & errorstring);
 
     virtual int get_all_port_info () = 0;
 
 protected:
 
     /**
-     *  Adds the midibus to a quick list of all ports for use in the
-     *  api_connect() call in mastermidibus.  We could add the midibus
-     *  pointer to the midi_port_info structure, but that information
-     *  is strictly for representing data obtained by querying the system
-     *  via the selected API.
+     *  Adds the midibus to a list of all ports for use in the api_connect()
+     *  call in mastermidibus.  We could add the midibus pointer to the
+     *  midi_port_info structure, but that information is strictly for data
+     *  obtained by querying the system via the selected API.
      */
 
     void add_bus (const midibus * m)
@@ -556,12 +558,10 @@ protected:
 private:
 
     /**
-     * \getter m_input or m_output
-     *      Used for retrieving values from the input or output containers.
-     *      The caller must insure the proper container by calling the
-     *      midi_mode() function with the value of true
-     *      (midibase::c_input_port) or false (midibase::c_output_port) first.
-     *      Ugly stuff.  I hate it.
+     *  Used for retrieving values from the input or output containers.  The
+     *  caller must insure the proper container by calling the midi_mode()
+     *  function with the value of true (midibase::c_input_port) or false
+     *  (midibase::c_output_port) first.  Ugly stuff.  I hate it.
      */
 
     const midi_port_info & nc_midi_port_info () const
