@@ -292,7 +292,7 @@ bool
 smanager::create_performer ()
 {
     bool result = false;
-    int ppqn = choose_ppqn(c_use_default_ppqn);     /* usr().midi_ppqn()    */
+    int ppqn = choose_ppqn();
     int rows = usr().mainwnd_rows();
     int cols = usr().mainwnd_cols();
     pointer p(new (std::nothrow) performer(ppqn, rows, cols));
@@ -301,7 +301,7 @@ smanager::create_performer ()
     {
         (void) p->get_settings(rc(), usr());
         m_perf_pointer = std::move(p);              /* change the ownership */
-        result = perf()->launch(ppqn);              /* usr().midi_ppqn())   */
+        result = perf()->launch(ppqn);
         if (! result)
         {
             errprint("performer launch failed");

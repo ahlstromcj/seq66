@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-11-08
+ * \updates       2022-01-29
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -104,10 +104,20 @@ namespace seq66
 {
 
 /**
+ *  Minimal MIDI file size.  Just used for a sanity check.
+ *
+ * <Header Chunk> = <chunk type><length><format><ntrks><division>
+ *
+ * Bytes:                 4   +   4   +   2  +   2   +   2   = 14
+ */
+
+static const size_t c_minimum_midi_file_size = 14;
+
+/**
  *  Magic number for handling mute-group formats.
  */
 
-static const unsigned c_legacy_mute_group   = 1024;         /* 0x0400       */
+static const unsigned c_legacy_mute_group = 1024;           /* 0x0400       */
 
 /**
  *  A manifest constant for controlling the length of the stream buffering
@@ -638,10 +648,17 @@ midifile::grab_input_stream (const std::string & tag)
     m_error_is_fatal = false;
     if (result)
     {
-        m_file_size = file.tellg();                 /* get the end offset   */
-        if (m_file_size <= sizeof(long))
+        try
         {
-            result = set_error("Invalid file size... reading a directory?");
+            m_file_size = file.tellg();             /* get the end offset   */
+        }
+        catch (...)
+        {
+            m_file_size = 0;
+        }
+        if (m_file_size < c_minimum_midi_file_size)
+        {
+            result = set_error("File too small");
         }
         else
         {
@@ -2628,7 +2645,7 @@ bool
 midifile::write (performer & p, bool doseqspec)
 {
     automutex locker(m_mutex);
-    bool result = m_ppqn >= c_minimum_ppqn && m_ppqn <= c_maximum_ppqn;
+    bool result = usr().is_ppqn_valid(m_ppqn);
     m_error_message.clear();
     if (! result)
         m_error_message = "Invalid PPQN for MIDI file to write.";

@@ -25,18 +25,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-01-27
+ * \updates       2022-01-28
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
  *  class.  There is a lot of common code between these two versions!
  */
-
-#include "util/basic_macros.hpp"
-
-#if defined SEQ66_HAVE_LIBASOUND
-#include <sys/poll.h>
-#endif
 
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "midi/event.hpp"               /* seq66::event                     */
@@ -146,20 +140,14 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
         {
             midibus * m = make_virtual_bus(bus, midibase::io::output);
             if (not_nullptr(m))
-            {
-                m_outbus_array.add(m, clock(bus));      /* must come 1st    */
                 m_midi_master.add_output(m);            /* must come 2nd    */
-            }
         }
         num_buses = rc().manual_in_port_count();        /* input count      */
         for (int bus = 0; bus < num_buses; ++bus)       /* input busses     */
         {
             midibus * m = make_virtual_bus(bus, midibase::io::input);
             if (not_nullptr(m))
-            {
-                m_inbus_array.add(m, input(bus));       /* must come 1st    */
                 m_midi_master.add_input(m);             /* must come 2nd    */
-            }
         }
     }
     else
@@ -168,9 +156,8 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
         unsigned nports = m_midi_master.full_port_count();
         if (nports > 0)
         {
-            midibase::io iodirection = midibase::io::input;
-            if (swap_io)
-                iodirection = midibase::io::output;
+            midibase::io iodirection = swap_io ?
+                midibase::io::output : midibase::io::input ;
 
             m_midi_master.midi_mode(midibase::io::input);       /* mode!    */
 
@@ -179,25 +166,7 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
             {
                 midibus * m = make_normal_bus(bus, iodirection);
                 if (not_nullptr(m))
-                {
-                    if (swap_io)
-                    {
-                        set_midi_alias
-                        (
-                            bus, midibase::io::input, m->port_alias()
-                        );
-                        m_outbus_array.add(m, clock(bus));
-                    }
-                    else
-                    {
-                        set_midi_alias
-                        (
-                            bus, midibase::io::input, m->port_alias()
-                        );
-                        m_inbus_array.add(m, input(bus));
-                    }
                     m_midi_master.add_bus(m);           /* must come 2nd    */
-                }
             }
             iodirection = swap_io ? midibase::io::input : midibase::io::output ;
             m_midi_master.midi_mode(midibase::io::output);    /* ugh! mode! */
@@ -207,25 +176,7 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
             {
                 midibus * m = make_normal_bus(bus, iodirection);
                 if (not_nullptr(m))
-                {
-                    if (swap_io)
-                    {
-                        set_midi_alias
-                        (
-                            bus, midibase::io::input, m->port_alias()
-                        );
-                        m_inbus_array.add(m, input(bus));
-                    }
-                    else
-                    {
-                        set_midi_alias
-                        (
-                            bus, midibase::io::output, m->port_alias()
-                        );
-                        m_outbus_array.add(m, clock(bus));
-                    }
                     m_midi_master.add_bus(m);           /* must come 2nd    */
-                }
             }
         }
     }
@@ -240,6 +191,13 @@ mastermidibus::make_virtual_bus (int bus, midibase::io iotype)
     (
         m_midi_master, bus, iotype, midibase::port::manual, bus
     );
+    if (not_nullptr(m))
+    {
+        if (iotype == midibase::io::input)
+            m_inbus_array.add(m, input(bus));
+        else
+            m_outbus_array.add(m, clock(bus));
+    }
     return m;
 }
 
@@ -256,6 +214,14 @@ mastermidibus::make_normal_bus (int bus, midibase::io iotype)
     (
         m_midi_master, bus, iotype, porttype, null_buss()
     );
+    if (not_nullptr(m))
+    {
+        set_midi_alias(bus, iotype, m->port_alias());
+        if (iotype == midibase::io::input)
+            m_inbus_array.add(m, input(bus));
+        else
+            m_outbus_array.add(m, clock(bus));
+    }
     return m;
 }
 

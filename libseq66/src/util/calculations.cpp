@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-11-22
+ * \updates       2022-01-29
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -750,7 +750,7 @@ log2_time_sig_value (int tsd)
  *
  *  Currently the Base values are hardwired (see usrsettings).  The base
  *  pixels value is c_pixels_per_substep = 6, and the base PPQN is
- *  c_baseline_ppqn = 192.  The numerator of this equation is well within
+ *  usr().base_ppqn() = 192.  The numerator of this equation is well within
  *  the limit of a 32-bit integer.
  *
  * \param ppqn
@@ -767,12 +767,12 @@ log2_time_sig_value (int tsd)
 midipulse
 pulses_per_substep (midipulse ppqn, int zoom)
 {
-    return (ppqn * zoom * c_pixels_per_substep) / c_baseline_ppqn;
+    return (ppqn * zoom * c_pixels_per_substep) / usr().base_ppqn();
 }
 
 /**
  *  Similar to pulses_per_substep(), but for a single pixel.  Actually, what
- *  this function does is scale the PPQN against c_baseline_ppqn (192).
+ *  this function does is scale the PPQN against usr().base_ppqn() (192).
  *
  * \param ppqn
  *      Provides the actual PPQN used by the currently-loaded tune.
@@ -780,7 +780,7 @@ pulses_per_substep (midipulse ppqn, int zoom)
  * \param zoom
  *      Provides the current zoom value.  Defaults to 1, which can be used
  *      to simply get the ratio between the actual PPQN, but only when PPQN >=
- *      c_baseline_ppqn.  Use pulses_scaled() instead.
+ *      usr().base_ppqn().  Use pulses_scaled() instead.
  *
  * \return
  *      The result of the above equation is returned.
@@ -789,7 +789,7 @@ pulses_per_substep (midipulse ppqn, int zoom)
 midipulse
 pulses_per_pixel (midipulse ppqn, int zoom)
 {
-    midipulse result = (ppqn * zoom) / c_baseline_ppqn;
+    midipulse result = (ppqn * zoom) / usr().base_ppqn();
     if (result == 0)
         result = 1;
 
@@ -799,7 +799,7 @@ pulses_per_pixel (midipulse ppqn, int zoom)
 midipulse
 pulses_scaled (midipulse tick, midipulse ppqn, int zoom)
 {
-    double factor = (double(ppqn) * zoom) / c_baseline_ppqn;
+    double factor = (double(ppqn) * zoom) / usr().base_ppqn();
     return midipulse(tick * factor + 0.5);
 }
 

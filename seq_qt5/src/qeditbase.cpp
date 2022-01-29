@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2021-07-20
+ * \updates       2022-01-29
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -34,7 +34,7 @@
  *  progress bar during playback.  See the seqroll::m_progress_follow member.
  */
 
-#include "cfg/usrsettings.hpp"          /* seq66::usrsettings constants     */
+#include "cfg/settings.hpp"             /* seq66::usr()                     */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qeditbase.hpp"
 
@@ -78,7 +78,10 @@ qeditbase::qeditbase
     m_scale_zoom            (m_scale * zoom()),     /* see change_ppqn()    */
     m_padding_x             (padding),
     m_snap                  (snap),
-    m_grid_snap             (rescale_tick(snap, p.ppqn(), c_baseline_ppqn)),
+    m_grid_snap
+    (
+        rescale_tick(snap, p.ppqn(), usr().base_ppqn())
+    ),
     m_beat_length           (p.ppqn()),             /* see change_ppqn()    */
     m_measure_length        (m_beat_length * 4),    /* see change_ppqn()    */
     m_selecting             (false),
@@ -271,9 +274,9 @@ int
 zoom_power_of_2 (int ppqn)
 {
     int result = c_default_zoom;
-    if (ppqn > c_baseline_ppqn)
+    if (ppqn > usr().base_ppqn())
     {
-        int zoom = result * ppqn / c_baseline_ppqn;
+        int zoom = result * ppqn / usr().base_ppqn();
         zoom >>= 1;                                     /* "divide" by 2    */
         zoom <<= 1;                                     /* "multiply" by 2  */
         result = zoom;

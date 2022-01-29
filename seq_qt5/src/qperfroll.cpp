@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-12-26
+ * \updates       2022-01-29
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -73,7 +73,7 @@ static const int c_alpha_muted      = 100;
 static const int c_ycorrection      = (-1);     /* horizontal grid line fix */
 static const int c_border_width     = 2;
 static const int c_pen_width        = 2;
-static const int c_background_x     = (c_baseline_ppqn*4*16) / c_perf_scale_x;
+static const int c_background_x     = (c_base_ppqn * 4 * 16) / c_perf_scale_x;
 static const int c_size_box_w       = 6;
 static const int c_size_box_click_w = c_size_box_w + 1 ;
 

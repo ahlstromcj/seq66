@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-11-18
+ * \updates       2022-01-29
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -186,8 +186,8 @@ namespace seq66
  *  correct the snap ticks to the actual PPQN ratio.
  */
 
-int qseqeditframe64::sm_initial_snap         = c_baseline_ppqn / 4;
-int qseqeditframe64::sm_initial_note_length  = c_baseline_ppqn / 4;
+int qseqeditframe64::sm_initial_snap         = c_base_ppqn / 4;
+int qseqeditframe64::sm_initial_note_length  = c_base_ppqn / 4;
 int qseqeditframe64::sm_initial_chord        = 0;
 
 /**
@@ -756,10 +756,10 @@ qseqeditframe64::qseqeditframe64
         this, SLOT(reset_grid_snap())
     );
 
-    set_snap(rescale_tick(sm_initial_snap, perf().ppqn(), c_baseline_ppqn));
+    set_snap(rescale_tick(sm_initial_snap, perf().ppqn(), usr().base_ppqn()));
     set_note_length
     (
-        rescale_tick(sm_initial_note_length, perf().ppqn(), c_baseline_ppqn)
+        rescale_tick(sm_initial_note_length, perf().ppqn(), usr().base_ppqn())
     );
     qt_set_icon(note_length_xpm, ui->m_button_note);
     connect
@@ -2490,8 +2490,8 @@ bool
 qseqeditframe64::change_ppqn (int ppqn)
 {
     int zoom = usr().zoom();
-    set_snap(rescale_tick(sm_initial_snap, ppqn, c_baseline_ppqn));
-    set_note_length(rescale_tick(sm_initial_note_length, ppqn, c_baseline_ppqn));
+    set_snap(rescale_tick(sm_initial_snap, ppqn, usr().base_ppqn()));
+    set_note_length(rescale_tick(sm_initial_note_length, ppqn, usr().base_ppqn()));
     if (usr().adapt_zoom())
         zoom = zoom_power_of_2(ppqn);
 

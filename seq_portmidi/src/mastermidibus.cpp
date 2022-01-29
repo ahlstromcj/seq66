@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-08-07
+ * \updates       2022-01-28
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -131,10 +131,13 @@ mastermidibus::api_init (int ppqn, midibpm /*bpm*/)
              * hmmmmm), the port ID, and the client name.
              */
 
-            midibus * m = new midibus(numouts, numouts, i, dev_info->name);
-            m->is_input_port(false);
-            m->is_virtual_port(false);
-            m_outbus_array.add(m, clock(numouts));      /* not i    */
+            midibus * m = new (std::nothrow) midibus
+            (
+                numouts, numouts, i, dev_info->name
+            );
+            m->is_input_port(false);                    /* add to ctor!     */
+            m->is_virtual_port(false);                  /* add to ctor!     */
+            m_outbus_array.add(m, clock(numouts));      /* not i            */
             ++numouts;
         }
         else if (dev_info->input)
@@ -144,10 +147,13 @@ mastermidibus::api_init (int ppqn, midibpm /*bpm*/)
              * name.
              */
 
-            midibus * m = new midibus(numins, numins, i, dev_info->name);
-            m->is_input_port(true);
-            m->is_virtual_port(false);
-            m_inbus_array.add(m, input(numins));        /* not i    */
+            midibus * m = new (std::nothrow) midibus
+            (
+                numins, numins, i, dev_info->name
+            );
+            m->is_input_port(true);                     /* add to ctor!     */
+            m->is_virtual_port(false);                  /* add to ctor!     */
+            m_inbus_array.add(m, input(numins));        /* not i            */
             ++numins;
         }
     }
@@ -160,7 +166,7 @@ mastermidibus::api_init (int ppqn, midibpm /*bpm*/)
     set_sequence_input(false, nullptr);
 
 #if defined SEQ66_USE_ANNOUNCE_BUS_WITH_PORTMIDI
-    m_bus_announce = new midibus
+    m_bus_announce = new (std::nothrow) midibus
     (
         snd_seq_client_id(m_alsa_seq),
         SND_SEQ_CLIENT_SYSTEM, SND_SEQ_PORT_SYSTEM_ANNOUNCE,

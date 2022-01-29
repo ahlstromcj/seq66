@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-01-19
+ * \updates       2022-01-29
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -5461,7 +5461,7 @@ midipulse
 sequence::handle_size (midipulse start, midipulse finish)
 {
     static const midipulse s_handlesize = 16;
-    midipulse result = s_handlesize * m_ppqn / c_baseline_ppqn;
+    midipulse result = s_handlesize * m_ppqn / usr().base_ppqn();
     midipulse notelength = finish - start;
     if (notelength < result / 3)
         result = notelength / 3;
