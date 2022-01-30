@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-11-30
+ * \updates       2022-01-30
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of
@@ -33,6 +33,7 @@
  */
 
 #include <assert.h>
+#include <string.h>                     /* C::strlen(3)                     */
 #include <cstdarg>                      /* see "man stdarg(3)"              */
 #include <iostream>
 
@@ -41,10 +42,14 @@
 
 #if defined SEQ66_PLATFORM_UNIX
 #include <unistd.h>                     /* C::write(2)                      */
+#define S_WRITE     write               /* POSIX write(2)                   */
 #endif
 
-#if defined SEQ66_PLATFORM_WINDOWS
+#if defined SEQ66_PLATFORM_WINDOWS      /* Microsoft platform               */
 #include <io.h>                         /* C::_write()                      */
+#if defined SEQ66_PLATFORM_MSVC         /* Microsoft compiler vs MingW      */
+#endif
+#define S_WRITE     _write              /* Microsoft's write()              */
 #endif
 
 /*
@@ -331,23 +336,56 @@ toggleprint (const std::string & tag, bool flag)
     msgprintf(msglevel::info, fmt, flag ? "on" : "off");
 }
 
+/*
+ *  Provided for convenience and for avoid those annoying warnings about
+ *  "declared with attribute warn_unused_result [-Wunused-result]".
+ */
+
+static void
+write_msg (int fd, const char * msg, size_t count)
+{
+    if (S_WRITE(fd, msg, count) == (-1))
+    {
+        /*
+         *  Generally should fail only if interrupted by a signal-handler
+         *  before any bytes are written.  See the man-page for write(2).
+         */
+    }
+}
+
 /**
- *  Meant for use in signal handlers.
+ *  Meant for use in signal handlers.  For the colors, hardwired here, see
+ *  s_level_colors in the seq66_features.cpp modules.
  */
 
 void
-async_safe_strprint (const char * msg, size_t count)
+async_safe_strprint (const char * msg)
 {
-#if defined SEQ66_PLATFORM_UNIX
-    if (write(STDOUT_FILENO, msg, count) == 0)
+    if (not_nullptr(msg))
     {
-        // ignore -Wunused-result warning
+        size_t count = strlen(msg);
+        if (count > 0)
+        {
+            write_msg(STDOUT_FILENO, "\033[1;30m", 7); /* black */
+            write_msg(STDOUT_FILENO, msg, count);
+            write_msg(STDOUT_FILENO, "\033[0m", 4);
+        }
     }
-#else
-#if defined SEQ66_PLATFORM_WINDOWS
-    (void) _write(STDOUT_FILENO, msg, count);
-#endif
-#endif
+}
+
+void
+async_safe_errprint (const char * msg)
+{
+    if (not_nullptr(msg))
+    {
+        size_t count = strlen(msg);
+        if (count > 0)
+        {
+            write_msg(STDERR_FILENO, "\033[1;31m", 7); /* red */
+            write_msg(STDERR_FILENO, msg, count);
+            write_msg(STDERR_FILENO, "\033[0m", 4);
+        }
+    }
 }
 
 /**

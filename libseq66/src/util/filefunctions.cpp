@@ -81,13 +81,13 @@
 #include <sys/auxv.h>                   /* getauxvalue() glibc function     */
 #endif
 
-#if defined SEQ66_PLATFORM_WINDOWS      /* Microsoft compiler               */
+#if defined SEQ66_PLATFORM_WINDOWS      /* Microsoft platform               */
 
 #include <dir.h>                        /* file-name info and getcwd()      */
 #include <io.h>                         /* _access_s()                      */
 #include <share.h>                      /* _SH_DENYNO                       */
 
-#if defined SEQ66_PLATFORM_MSVC         /* versus Windows with Qt+MingW     */
+#if defined SEQ66_PLATFORM_MSVC         /* Microsoft compiler vs MingW      */
 #define F_OK        0x00                /* existence                        */
 #define X_OK        0x01                /* executable, not useful w/Windows */
 #define W_OK        0x02                /* writability                      */

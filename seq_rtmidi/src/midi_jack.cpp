@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-01-27
+ * \updates       2022-01-30
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -287,7 +287,7 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
 #endif
                     if (! rtindata->queue().add(message))
                     {
-                        async_safe_strprint("~", 1);
+                        async_safe_strprint("~");
                         overflow = true;
                         break;
                     }
@@ -295,32 +295,29 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
             }
             else
             {
+                const char * errmsg = "rtmidi input error";
                 if (rc == ENODATA)
                 {
                     /*
                      * ENODATA = 61: No data available.
                      */
 
-                    std::string s = "rtmidi input: ENODATA = ";
-                    s += std::to_string(rc);
-                    async_safe_strprint(s.data(), s.length() - 1);
+                    errmsg = "rtmidi input: ENODATA";
                 }
-                else
+                else if (rc == ENOBUFS)
                 {
                     /*
                      * ENOBUFS = 105: No buffer space available can happen.
                      */
 
-                    std::string s = "rtmidi input: ERROR = ";
-                    s += std::to_string(rc);
-                    async_safe_strprint(s.data(), s.length() - 1);
-                    break;
+                    errmsg = "rtmidi input: ENOBUFS";
                 }
+                async_safe_errprint(errmsg);
             }
         }
         if (overflow)
         {
-            async_safe_strprint(" Message overflow \n", 19);
+            async_safe_errprint(" Message overflow ");
             return (-1);
         }
     }
@@ -408,9 +405,7 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
             );
         }
         else
-        {
-            async_safe_strprint("midi event reserve null pointer", 31);
-        }
+            async_safe_errprint("midi event reserve null pointer");
     }
     return 0;
 }
@@ -429,14 +424,60 @@ jack_shutdown_callback (void * arg)
 {
     midi_jack_info * jack = (midi_jack_info *)(arg);
     if (not_nullptr(jack))
-    {
-        async_safe_strprint("[JACK shutdown]", 15);
-    }
+        async_safe_strprint("JACK shutdown");
     else
-    {
-        async_safe_strprint("JACK shutdown null pointer", 26);
-    }
+        async_safe_errprint("JACK shutdown null pointer");
 }
+
+#if defined SEQ66_JACK_DETECTION_CALLBACKS      /* NOT YET READY !!!        */
+
+/**
+ * Parameters:
+ *
+ * \param a
+ *      One of two ports connected/disconnected.
+ *
+ * \param b
+ *      One of two ports connected/disconnected.
+ *
+ * \param connect
+ *      Non-zero if ports were connected, zero if ports were disconnected.
+ *
+ * \param arg
+ *      Pointer to a client supplied data (a midi_jack_info pointer).
+ */
+
+void
+jack_port_connect_callback
+(
+    jack_port_id_t a, jack_port_id_t b,
+    int connect, void * arg
+)
+{
+    async_safe_strprint("jack_port_connect_callback() called");
+}
+
+/**
+ * Parameters:
+ *
+ * \param port
+ *      The ID of the port.
+ *
+ * \param ev_value
+ *      The registration value. It is non-zero if the port is being registered,
+ *      and zero if the port is being unregistered.
+ *
+ * \param arg
+ *      Pointer to a client supplied data (a midi_jack_info pointer).
+ */
+
+void
+jack_port_register_callback (jack_port_id_t port, int ev_value, void * arg)
+{
+    async_safe_strprint("jack_port_register_callback() called");
+}
+
+#endif
 
 /*
  * MIDI JACK base class

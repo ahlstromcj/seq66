@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-01-27
+ * \updates       2022-01-30
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information
@@ -86,6 +86,20 @@ namespace seq66
 extern int jack_process_rtmidi_input (jack_nframes_t nframes, void * arg);
 extern int jack_process_rtmidi_output (jack_nframes_t nframes, void * arg);
 extern void jack_shutdown_callback (void * arg);
+
+#if defined SEQ66_JACK_DETECTION_CALLBACKS      /* NOT YET READY !!!        */
+
+extern void jack_port_connect_callback
+(
+    jack_port_id_t a, jack_port_id_t b,
+    int connect, void * arg
+);
+extern void jack_port_register_callback
+(
+    jack_port_id_t port, int ev_value, void * arg
+);
+
+#endif
 
 /**
  *  Provides a JACK callback function that uses the callbacks defined in the
@@ -220,6 +234,33 @@ midi_jack_info::connect ()
                 (
                     m_jack_client, jack_shutdown_callback, (void *) this
                 );
+
+#if defined SEQ66_JACK_DETECTION_CALLBACKS      /* NOT YET READY !!!        */
+                r = jack_set_port_connect_callback
+                (
+                    m_jack_client, jack_port_connect_callback, (void *) this
+                );
+                if (r != 0)
+                {
+                    m_error_string = "JACK cannot set port-connect callback";
+                    error(rterror::warning, m_error_string);
+                }
+                else
+                {
+                    r = jack_set_port_registration_callback
+                    (
+                        m_jack_client, jack_port_register_callback,
+                        (void *) this
+                    );
+                    if (r != 0)
+                    {
+                        m_error_string =
+                            "JACK cannot set port-register callback";
+
+                        error(rterror::warning, m_error_string);
+                    }
+                }
+#endif
 
 #if defined SEQ66_JACK_METADATA
                 bool ok = set_jack_client_property
