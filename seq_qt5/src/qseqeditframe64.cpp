@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-11-18
+ * \updates       2022-01-31
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -3183,7 +3183,7 @@ qseqeditframe64::thru_change (bool ischecked)
 void
 qseqeditframe64::update_record_type (int index)
 {
-    bool ok = seq_pointer()->update_recording(index + 1);   /* 0 = none */
+    bool ok = seq_pointer()->update_recording(index);   /* ca 2022-01-31    */
     if (ok)
         set_dirty();
 }
