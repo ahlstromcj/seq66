@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2021-11-22
+ * \updates       2022-01-29
  * \license       GNU GPLv2 or above
  *
  *  A couple of universal helper functions remain as inline functions in the
@@ -120,7 +120,7 @@ public:
 
 extern rcsettings & rc ();
 extern usrsettings & usr ();
-extern int choose_ppqn (int ppqn);
+extern int choose_ppqn (int ppqn = c_use_default_ppqn);
 extern int ppqn_list_value (int index = (-1));
 extern const tokenization & default_ppqns();
 extern void set_configuration_defaults ();
@@ -132,8 +132,7 @@ extern void set_configuration_defaults ();
 inline bool
 ppqn_in_range (int ppqn)
 {
-    return usr().use_file_ppqn() ||
-        (ppqn >= c_minimum_ppqn && ppqn <= c_maximum_ppqn);
+    return usr().use_file_ppqn() || usr().is_ppqn_valid(ppqn);
 }
 
 }           // namespace seq66

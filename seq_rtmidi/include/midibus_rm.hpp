@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2021-12-06
+ * \updates       2022-01-26
  * \license       GNU GPLv2 or above
  *
  *  This midibus module is the RtMidi version of the midibus
@@ -36,7 +36,7 @@
  */
 
 #include "midi/midibase.hpp"            /* seq66::midibase class (new)      */
-#include "rtmidi_types.hpp"             /* midibase::c_normal_port          */
+#include "rtmidi_types.hpp"             /* midibase::port::normal           */
 
 /*
  * Do not document a namespace; it breaks Doxygen.
@@ -89,10 +89,9 @@ public:
     (
         rtmidi_info & rt,
         int index,
-        bool makevirtual    = midibase::c_normal_port,
-        bool isinput        = midibase::c_output_port,
-        int bussoverride    = null_buss(),
-        bool makesystem     = false
+        midibase::io iotype     = io::output,
+        midibase::port porttype = port::normal,
+        int bussoverride        = null_buss()
     );
 
     virtual ~midibus ();

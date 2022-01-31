@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2021-12-04
+ * \updates       2022-01-27
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations
@@ -71,26 +71,24 @@ public:
      *  functions.
      */
 
-static const bool c_output_port  = false;   /* the MIDI mode is not input   */
-static const bool c_input_port   = true;    /* the MIDI mode is input       */
+    enum class io
+    {
+        input,
+        output
+    };
 
     /**
-     *  Constants for selecting virtual versus normal ports in a more obvious
-     *  way.  Used in the rtmidi midibus constructors.  Tested by the
-     *  is_virtual_port() functions.
+     *  Constants for selecting virtual versus normal versus built-in system
+     *  ports.  Used in the rtmidi midibus constructors.  Tested by the
+     *  is_virtual_port() and is_system_port() functions.
      */
 
-static const bool c_normal_port  = false;   /* the MIDI port is not virtual */
-static const bool c_virtual_port = true;    /* the MIDI port is virtual     */
-
-    /**
-     *  Constants for indicating if the port is a built-in system port versus
-     *  a port that exists because a MIDI device is plugged in or some
-     *  application has set up a virtual port.  Tested by the is_system_port()
-     *  functions.
-     */
-
-static const bool c_system_port  = true;    /* API always exposes this port */
+    enum class port
+    {
+        normal,         /**< Able to be automatically connected.            */
+        manual,         /**< A virtual port (virtual is a keyword, though). */
+        system          /**< A system port (ALSA only).                     */
+    };
 
 private:
 
@@ -204,10 +202,10 @@ private:
 
     /**
      *  Indicates if the port is to be a virtual port.  The default is to
-     *  create a system port (true).
-     */
+     *  create an automatic (normal) port (true).
 
     bool m_is_virtual_port;
+     */
 
     /**
      *  Indicates if the port is to be an input (versus output) port.
@@ -216,17 +214,17 @@ private:
      *  port... one of them will fail.
      */
 
-    bool m_is_input_port;
+    io m_io_type;
 
     /**
      *  Indicates if the port is a system port.  Two examples are the ALSA
      *  System Timer buss and the ALSA System Announce bus, the latter being
      *  necessary for input subscription and notification.  For most ports,
-     *  this value will be false.  A restricted setter is provided.
-     *  Only the rtmidi ALSA implementation sets this flag.
+     *  this value will be port::normal.  A restricted setter is provided.
+     *  Only the rtmidi ALSA implementation sets up system ports.
      */
 
-    bool m_is_system_port;
+    port m_port_type;
 
     /**
      *  Locking mutex. This one is based on std:::recursive_mutex.
@@ -247,15 +245,16 @@ public:
         int queue,                          /* bad_id()                     */
         int ppqn,                           /* use_default_ppqn             */
         midibpm bpm,                        /* default_bpm                  */
-        bool makevirtual,                   /* false                        */
-        bool isinput,                       /* false                        */
-        bool makesystem,                    /* false                        */
+        io iotype,
+        port porttype,
         const std::string & portalias = ""  /* JACK only                    */
     );
 
     virtual ~midibase ();
 
+#if defined SEQ66_SHOW_BUS_VALUES
     void show_bus_values ();
+#endif
 
     static void show_clock (const std::string & context, midipulse tick);
 
@@ -320,53 +319,58 @@ public:
         return (m_port_id == port) && (m_bus_id == bus);
     }
 
+    port port_type () const
+    {
+        return m_port_type;
+    }
+
     bool is_virtual_port () const
     {
-        return m_is_virtual_port;
+        return m_port_type == port::manual;
     }
 
     /**
-     * \setter m_is_virtual_port
-     *      This function is needed in the rtmidi library to set the
-     *      is-virtual flag in the api_init_*_sub() functions, so that
-     *      midi_alsa, midi_jack (and any other additional APIs that end up
-     *      supported by our heavily-refactored rtmidi library), as well as
-     *      the original midibus, can know that they represent a virtual port.
+     *  This function is needed in the rtmidi library to set the is-virtual
+     *  flag in the api_init_*_sub() functions, so that midi_alsa, midi_jack
+     *  (and any other additional APIs that end up supported by our
+     *  heavily-refactored rtmidi library), as well as the original midibus,
+     *  can know that they represent a virtual port.
      */
 
     void is_virtual_port (bool flag)
     {
-        m_is_virtual_port = flag;
+        if (! is_system_port())
+            m_port_type = flag ? port::manual : port::normal;
+    }
+
+    io io_type () const
+    {
+        return m_io_type;
     }
 
     bool is_input_port () const
     {
-        return m_is_input_port;
+        return m_io_type == io::input;
     }
 
     bool is_output_port () const
     {
-        return ! m_is_input_port;
+        return m_io_type == io::output;
     }
 
     void is_input_port (bool flag)
     {
-        m_is_input_port = flag;
+        m_io_type = flag ? io::input : io::output ;
     }
 
     bool is_system_port () const
     {
-        return m_is_system_port;
+        return m_port_type == port::system;
     }
 
-    bool is_port_connectable () const
+    bool is_port_connectable () const       /* used only in midi_jack_info  */
     {
         return ! port_disabled() && ! is_virtual_port();
-    }
-
-    void set_system_port_flag ()
-    {
-        m_is_system_port = true;
     }
 
     bool set_clock (e_clock clocktype);
@@ -383,7 +387,8 @@ public:
 
     bool clock_enabled () const
     {
-        return m_clock_type != e_clock::off && m_clock_type != e_clock::disabled;
+        return m_clock_type != e_clock::off &&
+            m_clock_type != e_clock::disabled;
     }
 
     bool get_input () const
@@ -473,7 +478,7 @@ public:
     void print ();
     bool set_input (bool inputing);
 
-public:             // protected: public for seq_rtmidi midi_api
+public:
 
     void display_name (const std::string & name)
     {
@@ -491,9 +496,8 @@ public:             // protected: public for seq_rtmidi midi_api
     }
 
     /**
-     * \setter m_port_id
-     *      Useful for setting the port ID when using the rtmidi_info object
-     *      to inspect and create a list of busses and ports.
+     *  Useful for setting the port ID when using the rtmidi_info object to
+     *  inspect and create a list of busses and ports.
      */
 
     void set_port_id (int id)

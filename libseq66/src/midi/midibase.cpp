@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2022-01-19
+ * \updates       2022-01-27
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -128,19 +128,23 @@ int midibase::m_clock_mod = 16 * 4;
  * \param bpm
  *      Provides the BPM value.
  *
- * \param makevirtual
- *      Indicates that the port represented by this object is to be virtual.
- *      Defaults to false.  This could also be set via the init_in(),
- *      init_out(), init_in_sub(), or init_out_sub() routines.  Doing it here
- *      seems okay.
- *
- * \param isinput
+ * \param iotype
  *      Indicates that this midibus represents and input port, as opposed to
  *      an output port.
  *
- * \param makesystem
+ * \param porttype
+ *      Indicates that the port represented by this object is to be virtual.
  *      Indicates that the port represented by this object is a system port.
- *      Currently true only for ALSA system ports (timer or announce ports).
+ *      This could also be set via the init_in(),
+ *      init_out(), init_in_sub(), or init_out_sub() routines.  Doing it here
+ *      seems okay.
+ *      Currently only ALSA does system ports (timer or announce ports).
+ *
+ * \param portalias
+ *      In some versions of JACK (or in some configurations of JACK?) the
+ *      command "jack_lsp --alias" will show the names of the actual devices
+ *      associated with each port.  If available, we can take advantage of
+ *      that and not have to use the "a2jmidid --export-hw" command.
  */
 
 midibase::midibase
@@ -154,9 +158,8 @@ midibase::midibase
     int queue,
     int ppqn,
     midibpm bpm,
-    bool makevirtual,
-    bool isinput,
-    bool makesystem,
+    io iotype,
+    port porttype,
     const std::string & portalias       // new for version 0.98.0
 ) :
     m_bus_index         (index),
@@ -172,18 +175,11 @@ midibase::midibase
     m_port_name         (portname),
     m_port_alias        (portalias),
     m_lasttick          (0),
-    m_is_virtual_port   (makevirtual),
-    m_is_input_port     (isinput),
-    m_is_system_port    (makesystem),
+    m_io_type           (iotype),
+    m_port_type         (porttype),
     m_mutex             ()
 {
-    if (makevirtual)
-    {
-        /*
-         * Currently done in seq_rtmidi/src/midibus.cpp
-         */
-    }
-    else
+    if (m_port_type != port::manual)
     {
         if (! busname.empty() && ! portname.empty())
         {
@@ -191,7 +187,7 @@ midibase::midibase
         }
         else
         {
-            errprint("programmer error in midibase()");
+            errprint("midibase() programmer error");
         }
     }
 }
@@ -661,7 +657,7 @@ midibase::set_clock (e_clock clocktype)
         m_clock_type = clocktype;
         if (clocktype != e_clock::disabled)
         {
-            if (m_is_virtual_port)
+            if (is_virtual_port())
                 result = init_out_sub();
             else
                 result = init_out();
@@ -671,7 +667,7 @@ midibase::set_clock (e_clock clocktype)
     }
 #else
     m_clock_type = clocktype;
-    if (m_is_virtual_port)
+    if (is_virtual_port())
         result = init_out_sub();
     else
         result = init_out();
@@ -703,7 +699,7 @@ bool
 midibase::set_input (bool inputing)
 {
     bool result = false;
-    if (m_is_system_port)
+    if (is_system_port())
     {
         m_inputing = true;
         result = init_in();
@@ -714,7 +710,7 @@ midibase::set_input (bool inputing)
         m_inputing = inputing;
         if (inputing)
         {
-            if (m_is_virtual_port)
+            if (is_virtual_port())
                 result = init_in_sub();
             else
                 result = init_in();
@@ -726,7 +722,7 @@ midibase::set_input (bool inputing)
     else
     {
         m_inputing = inputing;
-        if (m_is_virtual_port)
+        if (is_virtual_port())
             result = init_in_sub();
         else
             result = init_in();
@@ -801,6 +797,8 @@ midibase::show_clock (const std::string & context, midipulse tick)
     msgprintf(msglevel::error, "%s clock [%ld]", context.c_str(), tick);
 }
 
+#if defined SEQ66_SHOW_BUS_VALUES
+
 /**
  * Shows most midibase members.
  */
@@ -828,6 +826,8 @@ midibase::show_bus_values ()
         );
     }
 }
+
+#endif      // defined SEQ66_SHOW_BUS_VALUES
 
 }           // namespace seq66
 

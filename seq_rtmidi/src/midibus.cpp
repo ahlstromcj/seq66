@@ -69,27 +69,26 @@ namespace seq66
  *      desired client and port information.  It is an index into the
  *      info container held by the rtmidi object.
  *
- * \param makevirtual
- *      Indicates that the port is virtual, as opposed to normal.
- *
- * \param isinput
+ * \param iotype
  *      Indicates that the port is an input port, as opposed to an output port.
+ *      However, in JACK we need to swap the I/O semantics. For now we must
+ *      let the caller (mastermidibus) do this.
+ *
+ * \param porttype
+ *      Indicates that the port is also a system port (i.e. always present) or
+ *      indicates that the port is virtual, as opposed to normal.
  *
  * \param bussoverride
  *      Optional buss ID, if not equal to the index parameter.
- *
- * \param makesystem
- *      Indicates that the port is also a system port (i.e. always present).
  */
 
 midibus::midibus
 (
     rtmidi_info & rt,
     int index,
-    bool makevirtual,
-    bool isinput,
-    int bussoverride,
-    bool makesystem
+    midibase::io iotype,
+    midibase::port porttype,
+    int bussoverride
 ) :
     midibase
     (
@@ -101,15 +100,14 @@ midibus::midibus
         index,
         rt.global_queue(),
         rt.ppqn(), rt.bpm(),
-        makevirtual,
-        isinput,
-        makesystem,
+        iotype,                     /* perhaps I/O is swapped */
+        porttype,
         rt.get_port_alias(index)
     ),
     m_rt_midi       (nullptr),
     m_master_info   (rt)
 {
-    if (makevirtual)
+    if (porttype == port::manual)
     {
         /*
          * Set the buss ID for virtual ports to 0.  We might consider another
@@ -120,6 +118,7 @@ midibus::midibus
         if (is_null_buss(bus_id()))
             set_bus_id(0);
 
+        bool isinput = iotype == midibase::io::input;
         std::string pname = "midi ";
         pname += isinput ? "in" : "out";
         if (index >= 0)

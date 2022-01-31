@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; modifications by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-12-16
+ * \updates       2022-01-27
  * \license       See above.
  *
  *  Declares the following classes:
@@ -80,9 +80,9 @@ private:
     midibus & m_parent_bus;
 
     /**
-     *  Although this really is useful only for MIDI input objects,
-     *  the split of the midi_api is not as convenient for re-use
-     *  as is the split for derived classes like midi_in_jack/midi_out_jack.
+     *  Although this really is useful only for MIDI input objects, the split
+     *  of the midi_api is not as convenient for re-use as is the split for
+     *  derived classes like midi_in_jack/midi_out_jack.
      */
 
     rtmidi_in_data m_input_data;
@@ -223,13 +223,13 @@ public:
         return m_parent_bus;
     }
 
-    void master_midi_mode (bool input);
+    void master_midi_mode (midibase::io iotype);
 
     /*
      *  A basic error reporting function for rtmidi classes.
      */
 
-    void error (rterror::Type type, const std::string & errorstring);
+    void error (rterror::kind errtype, const std::string & errorstring);
 
 #if defined SEQ66_USER_CALLBACK_SUPPORT
 

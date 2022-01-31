@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-08
- * \updates       2020-04-08
+ * \updates       2022-01-27
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.  This class
@@ -57,7 +57,7 @@ namespace seq66
  *  Holds the selected API code.
  */
 
-rtmidi_api rtmidi_info::sm_selected_api = RTMIDI_API_UNSPECIFIED;
+rtmidi_api rtmidi_info::sm_selected_api = rtmidi_api::unspecified;
 
 /**
  * \getter SEQ66_RTMIDI_VERSION
@@ -82,7 +82,7 @@ rtmidi_info::get_version ()
  */
 
 void
-rtmidi_info::get_compiled_api (std::vector<rtmidi_api> & apis)
+rtmidi_info::get_compiled_api (rtmidi_api_list & apis)
 {
     apis.clear();
 
@@ -96,18 +96,18 @@ rtmidi_info::get_compiled_api (std::vector<rtmidi_api> & apis)
      */
 
 #if defined SEQ66_BUILD_UNIX_JACK
-     if (rc().with_jack_midi())
-        apis.push_back(RTMIDI_API_UNIX_JACK);
+     if (rc().with_jack_midi())                 /* hmmmmm */
+        apis.push_back(rtmidi_api::jack);
 #endif
 
 #if defined SEQ66_BUILD_LINUX_ALSA
-        apis.push_back(RTMIDI_API_LINUX_ALSA);
+        apis.push_back(rtmidi_api::alsa);
 #endif
 
     if (apis.empty())
     {
         std::string errortext = "no rtmidi API support found";
-        throw(rterror(errortext, rterror::UNSPECIFIED));
+        throw(rterror(errortext, rterror::unspecified));
     }
 }
 
@@ -125,7 +125,7 @@ rtmidi_info::rtmidi_info
 ) :
     m_info_api  (nullptr)
 {
-    if (api != RTMIDI_API_UNSPECIFIED)
+    if (api != rtmidi_api::unspecified)
     {
         bool ok = openmidi_api(api, appname, ppqn, bpm);
         if (ok)
@@ -145,7 +145,7 @@ rtmidi_info::rtmidi_info
         }
     }
 
-    std::vector<rtmidi_api> apis;
+    rtmidi_api_list apis;
     get_compiled_api(apis);
     for (unsigned i = 0; i < apis.size(); ++i)
     {
@@ -173,7 +173,7 @@ rtmidi_info::rtmidi_info
     if (is_nullptr(get_api_info()))
     {
         std::string errortext = "no rtmidi API support found";
-        throw(rterror(errortext, rterror::UNSPECIFIED));
+        throw(rterror(errortext, rterror::unspecified));
     }
 }
 
@@ -227,7 +227,7 @@ rtmidi_info::openmidi_api
     delete_api();
 
 #if defined SEQ66_BUILD_UNIX_JACK
-    if (api == RTMIDI_API_UNIX_JACK)
+    if (api == rtmidi_api::jack)
     {
         if (rc().with_jack_midi())
         {
@@ -260,7 +260,7 @@ rtmidi_info::openmidi_api
 #endif
 
 #if defined SEQ66_BUILD_LINUX_ALSA
-    if (api == RTMIDI_API_LINUX_ALSA)
+    if (api == rtmidi_api::alsa)
     {
         midi_alsa_info * maip = new (std::nothrow) midi_alsa_info
         (

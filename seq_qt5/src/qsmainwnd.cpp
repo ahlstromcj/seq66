@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-01-16
+ * \updates       2022-01-29
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1936,7 +1936,7 @@ qsmainwnd::export_file_as_midi (const std::string & fname)
     }
     else
     {
-        midifile f(filename, choose_ppqn(c_use_default_ppqn));
+        midifile f(filename, choose_ppqn());
         result = f.write(perf(), false);           /* no SeqSpec       */
         if (! result)
             show_message_box(f.error_message());
@@ -1981,7 +1981,7 @@ qsmainwnd::export_song (const std::string & fname)
     }
     else
     {
-        midifile f(filename, choose_ppqn(c_use_default_ppqn));
+        midifile f(filename, choose_ppqn());
         bool result = f.write_song(perf());
         if (result)
         {
@@ -2010,8 +2010,8 @@ qsmainwnd::import_midi_into_set ()
                 std::string fn = path.toStdString();
                 bool is_wrk = file_extension_match(fn, "wrk");
                 midifile * f = is_wrk ?
-                    new (std::nothrow) wrkfile(fn, choose_ppqn(c_use_default_ppqn)) :
-                    new (std::nothrow) midifile(fn, choose_ppqn(c_use_default_ppqn))
+                    new (std::nothrow) wrkfile(fn, choose_ppqn()) :
+                    new (std::nothrow) midifile(fn, choose_ppqn())
                     ;
 
                 if (f->parse(perf(), setno, true))  /* true --> importing   */
@@ -3440,7 +3440,7 @@ qsmainwnd::export_file_as_smf_0 (const std::string & fname)
     {
         if (perf().convert_to_smf_0())
         {
-            midifile f(filename, choose_ppqn(c_use_default_ppqn));
+            midifile f(filename, choose_ppqn());
             result = f.write(perf(), false);           /* no SeqSpec       */
             if (result)
             {

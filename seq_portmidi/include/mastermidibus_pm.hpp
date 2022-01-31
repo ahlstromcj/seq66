@@ -22,7 +22,8 @@
 /**
  * \file          mastermidibus_pm.hpp
  *
- *  This module declares/defines the base class for MIDI I/O for Windows.
+ *  This module declares/defines the base class for MIDI I/O for Windows, using
+ *  our adaptation of the PortMidi API.
  *
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
@@ -53,12 +54,6 @@ namespace seq66
 class mastermidibus : public mastermidibase
 {
 
-private:
-
-    /*
-     *  All members have been moved into the new base class.
-     */
-
 public:
 
     mastermidibus () = delete;
@@ -68,7 +63,7 @@ public:
 
 protected:
 
-    virtual void api_init (int ppqn, midibpm /*bpm*/);
+    virtual void api_init (int ppqn, midibpm bpm);
     virtual bool api_get_midi_event (event * in);
     virtual void api_set_ppqn (int ppqn);
     virtual void api_set_beats_per_minute (midibpm bpm);

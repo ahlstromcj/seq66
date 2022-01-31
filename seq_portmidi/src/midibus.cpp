@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-12-09
+ * \updates       2022-01-29
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the midibus class.
@@ -66,17 +66,33 @@ s_portname (const std::string & name, int index)
  *  There's a little confusion with the port ID parameter(s).  Also, the
  *  default values of queue, ppqn, bpm, and makevirtual are passed to the
  *  midibase constructor.  PortMidi does not support those constructs.
+ *
+ * Question:
+ *
+ *      Should we call s_portname with "clientname, index")?
  */
 
 midibus::midibus
 (
-    int index, int bus_id, int port_id, const std::string & clientname
+    int index, int bus_id, int port_id,
+    const std::string & clientname
 ) :
     midibase
     (
-        rc().application_name(), s_portname("PortMidi", index), clientname,
-        index, bus_id, port_id, port_id, c_use_default_ppqn, 120.0,
-        false, false, false
+//      EXPERIMENTAL as noted in the banner.
+//      rc().application_name(), s_portname("PortMidi", index), clientname,
+        rc().application_name(),            // appname
+        s_portname(clientname, index),      // busname
+        clientname,                         // portname
+        index,
+        bus_id,
+        port_id,
+        port_id,                            // queue number
+        usr().use_default_ppqn(),           // PPQN flag value (-1)
+        usr().bpm_default(),                // 120.0,
+        midibase::io::output,               // false,
+        midibase::port::normal              // false,
+//      false
         /* PM uses 'queue' still */
     ),
     m_pms (nullptr)

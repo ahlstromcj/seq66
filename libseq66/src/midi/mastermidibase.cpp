@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2021-12-27
+ * \updates       2022-01-27
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -582,9 +582,6 @@ mastermidibase::is_input_system_port (bussbyte bus)
 }
 
 /**
- *  Get the MIDI output buss name for the given (legal) buss number.
- *  This function is used for display purposes, and is also written to the
- *  options ("rc") file.
  *
  *  This function adds the retrieval of client and port numbers that are not
  *  needed in the portmidi implementation, but seem generally useful to
@@ -598,47 +595,47 @@ mastermidibase::is_input_system_port (bussbyte bus)
  *      Provides the actual system output buss number.  Checked before usage.
  *
  * \return
- *      Returns the buss name as a standard C++ string.  Also contains an
- *      indication that the buss is disconnected or unconnected.  If the buss
- *      number is illegal, this string is empty.
+ *      Returns the buss name as a standard C++ string.
  */
 
-std::string
-mastermidibase::get_midi_out_bus_name (bussbyte bus) const
-{
-    std::string result;
-    if (rc().is_port_naming_long())
-        result = m_master_clocks.get_name(bus, false);
-    else
-        result = m_master_clocks.get_nick_name(bus, true);  /* add number   */
-
-    return result;
-}
-
 /**
- *  Get the MIDI input buss name for the given (legal) buss number.
+ *  Get the MIDI input/output buss name for the given (legal) buss number.
+ *  This function is used for display purposes, and is also written to the
+ *  options ("rc") file.
  *
  *  This function adds the retrieval of client and port numbers that are not
  *  needed in the portmidi implementation, but seem generally useful to
  *  support in all implementations.
  *
  * \param bus
- *      Provides the input buss number.
+ *      Provides the I/O buss number.
+ *
+ * \param iotype
+ *      Indicates which I/O list is used for the lookup.
  *
  * \return
  *      Returns the buss name as a standard C++ string.  Also contains an
- *      indication that the buss is disconnected or unconnected.
+ *      indication that the buss is disconnected or unconnected.  If the buss
+ *      number is illegal, this string is empty.
  */
 
 std::string
-mastermidibase::get_midi_in_bus_name (bussbyte bus) const
+mastermidibase::get_midi_bus_name (bussbyte bus, midibase::io iotype) const
 {
     std::string result;
-    if (rc().is_port_naming_long())
-        result = m_master_inputs.get_name(bus, false);
+    bool longname = rc().is_port_naming_long();
+    if (iotype == midibase::io::input)
+    {
+        result = longname ?
+            m_master_inputs.get_name(bus, false) :
+            m_master_inputs.get_nick_name(bus, true) ;
+    }
     else
-        result = m_master_inputs.get_nick_name(bus, true);  /* add number   */
-
+    {
+        result = longname ?
+            m_master_clocks.get_name(bus, false) :
+            m_master_clocks.get_nick_name(bus, true) ;
+    }
     return result;
 }
 

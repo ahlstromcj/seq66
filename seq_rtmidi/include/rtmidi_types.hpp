@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2020-12-14
+ * \updates       2022-01-27
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -48,7 +48,7 @@
  * queuing and call-back mechanism, have been preserved.
  */
 
-#define SEQ66_RTMIDI_VERSION "2.1.1"        /* revision at fork time        */
+#define SEQ66_RTMIDI_VERSION "2.1.1"        /* the revision at fork time    */
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -69,26 +69,51 @@ const int c_default_queue_size  = 100;
  *    large monolithic modules.
  */
 
-enum rtmidi_api
+enum class rtmidi_api
 {
-    RTMIDI_API_UNSPECIFIED,     /**< Search for a working compiled API.     */
-    RTMIDI_API_LINUX_ALSA,      /**< Advanced Linux Sound Architecture API. */
-    RTMIDI_API_UNIX_JACK,       /**< JACK Low-Latency MIDI Server API.      */
+    unspecified,        /**< Search for a working compiled API.     */
+    alsa,               /**< Advanced Linux Sound Architecture API. */
+    jack,               /**< JACK Low-Latency MIDI Server API.      */
 
 #if defined SEQ66_USE_RTMIDI_API_ALL
 
     /*
      * Not supported until we get a simplified seq66-friendly API worked out.
+     * Windows (and presumably OSX) is currently supported by the Seq66
+     * portmidi library.
      */
 
-    RTMIDI_API_MACOSX_CORE,     /**< Macintosh OS-X Core Midi API.          */
-    RTMIDI_API_WINDOWS_MM,      /**< Microsoft Multimedia MIDI API.         */
-    RTMIDI_API_DUMMY,           /**< A compilable but non-functional API.   */
+    macosx_core,        /**< Macintosh OS-X Core Midi API.          */
+    windows_mm,         /**< Microsoft Multimedia MIDI API.         */
+    dummy,              /**< A compilable but non-functional API.   */
 
 #endif
 
-    RTMIDI_API_MAXIMUM          /**< A count of APIs; an erroneous value.   */
+    max                 /**< A count of APIs; an erroneous value.   */
 };
+
+/**
+ *  Provides a container of API values.
+ */
+
+using rtmidi_api_list = std::vector<rtmidi_api>;
+
+/*
+ * Inline functions.
+ */
+
+inline rtmidi_api
+int_to_api (int index)
+{
+    return index < static_cast<int>(rtmidi_api::max) ?
+        static_cast<rtmidi_api>(index) : rtmidi_api::max ;
+}
+
+inline int
+api_to_int (rtmidi_api api)
+{
+    return static_cast<int>(api);
+}
 
 /**
  *  Provides a handy capsule for a MIDI message, based on the

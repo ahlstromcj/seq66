@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2021-12-06
+ * \updates       2022-01-30
  * \license       See above.
  *
  *    We need to have a way to get all of the JACK information of
@@ -46,6 +46,8 @@
 
 #include <jack/jack.h>
 #include "midi_jack_data.hpp"           /* seq66::midi_jack_data            */
+
+#undef  SEQ66_JACK_DETECTION_CALLBACKS  /* NOT YET READY !!!                */
 
 /*
  * Do not document the namespace; it breaks Doxygen.

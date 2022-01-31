@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-07-19
+ * \updates       2022-01-26
  * \license       GNU GPLv2 or above
  *
  *  This mastermidibus module is the Linux (and, soon, JACK) version of the
@@ -66,10 +66,9 @@ private:
     rtmidi_info m_midi_master;
 
     /**
-     *  Indicates we are running with JACK MIDI enabled, and need to
-     *  use each port's ability to poll for and get MIDI events, rather
-     *  than use ALSA's method of calling functions from the "MIDI master"
-     *  object.
+     *  Indicates we are running with JACK MIDI enabled, and need to use each
+     *  port's ability to poll for and get MIDI events, rather than use ALSA's
+     *  method of calling functions from the "MIDI master" object.
      */
 
     bool m_use_jack_polling;
@@ -120,6 +119,8 @@ protected:
 private:
 
     void port_list (const std::string & tag);
+    midibus * make_virtual_bus (int bus, midibase::io iotype);
+    midibus * make_normal_bus (int bus, midibase::io iotype);
 
 };          // class mastermidibus
 

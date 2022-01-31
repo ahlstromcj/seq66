@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2022-01-20
+ * \updates       2022-01-28
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -99,8 +99,11 @@
 namespace seq66
 {
 
+#if defined USE_SHOW_ALSA_ERROR
+
 /**
  *  Outputs the error string returned by the ALSA subsystem.
+ *  However, this snd_strerror() returns garbage.  Incorrec usage?
  */
 
 static void
@@ -114,6 +117,7 @@ show_alsa_error (int rcode)
     }
 }
 
+#endif
 
 /**
  *  Provides a constructor with client number, port number, ALSA sequencer
@@ -206,7 +210,9 @@ midi_alsa::api_init_out ()
     if (rc < 0)
     {
         error_message("ALSA create output port failed");
+#if defined USE_SHOW_ALSA_ERROR
         show_alsa_error(rc);
+#endif
         return false;
     }
     rc = snd_seq_connect_to                     /* connect to port  */
@@ -220,7 +226,9 @@ midi_alsa::api_init_out ()
             msglevel::error, "ALSA connect to %d:%d error",
             m_dest_addr_client, m_dest_addr_port
         );
+#if defined USE_SHOW_ALSA_ERROR
         show_alsa_error(rc);
+#endif
         return false;
     }
     else
@@ -282,7 +290,9 @@ midi_alsa::api_init_in ()
     if (rc < 0)
     {
         error_message("ALSA create input port failed");
+#if defined USE_SHOW_ALSA_ERROR
         show_alsa_error(rc);
+#endif
         return false;
     }
 
@@ -314,7 +324,9 @@ midi_alsa::api_init_in ()
             msglevel::error, "ALSA connect from %d:%d error",
             m_dest_addr_client, m_dest_addr_port
         );
+#if defined USE_SHOW_ALSA_ERROR
         show_alsa_error(rc);
+#endif
         return false;
     }
     else
@@ -485,7 +497,9 @@ midi_alsa::api_deinit_in ()
             msglevel::error, "ALSA unsubscribe port %d:%d error",
             m_dest_addr_client, m_dest_addr_port
         );
+#if defined USE_SHOW_ALSA_ERROR
         show_alsa_error(rc);
+#endif
         return false;
     }
     return true;

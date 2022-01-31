@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-12-31
+ * \updates       2022-01-29
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -162,6 +162,14 @@ static const midibpm c_min_bpm_increment      =    0.01;
 static const midibpm c_def_bpm_increment      =    1.0;
 static const midibpm c_max_bpm_increment      =    50.0;
 static const midibpm c_def_bpm_page_increment =    10.0;
+
+/**
+ *  Minimum and maximum supported PPQN values.  Now hidden, used in the public
+ *  function usrsettings::is_ppqn_valid().
+ */
+
+static const int c_minimum_ppqn  =    32;
+static const int c_maximum_ppqn  = 19200;
 
 /**
  *  Velocity values.
@@ -330,8 +338,8 @@ usrsettings::usrsettings () :
      */
 
     m_convert_to_smf_1          (true),
-    m_default_ppqn              (c_baseline_ppqn),
-    m_midi_ppqn                 (c_baseline_ppqn),
+    m_default_ppqn              (c_base_ppqn),
+    m_midi_ppqn                 (c_base_ppqn),
     m_use_file_ppqn             (true),
     m_file_ppqn                 (0),
     m_midi_beats_per_measure    (c_def_beats_per_measure),
@@ -423,8 +431,8 @@ usrsettings::set_defaults ()
     m_seqchars_x = 15;
     m_seqchars_y =  5;
     m_convert_to_smf_1 = true;
-    m_default_ppqn = c_baseline_ppqn;
-    m_midi_ppqn = c_baseline_ppqn;
+    m_default_ppqn = c_base_ppqn;
+    m_midi_ppqn = c_base_ppqn;
     m_use_file_ppqn = true;
     m_file_ppqn = 0;
     m_midi_beats_per_measure = c_def_beats_per_measure;
@@ -1178,6 +1186,18 @@ usrsettings::default_ppqn (int value)
 {
     if (value >= c_minimum_ppqn && value <= c_maximum_ppqn)
         m_default_ppqn = value;
+}
+
+int
+usrsettings::base_ppqn () const
+{
+    return c_base_ppqn;
+}
+
+bool
+usrsettings::is_ppqn_valid (int ppqn) const
+{
+    return ppqn >= c_minimum_ppqn && ppqn <= c_maximum_ppqn;
 }
 
 /**

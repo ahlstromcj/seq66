@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-01-06
+ * \updates       2022-01-30
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information
@@ -86,6 +86,20 @@ namespace seq66
 extern int jack_process_rtmidi_input (jack_nframes_t nframes, void * arg);
 extern int jack_process_rtmidi_output (jack_nframes_t nframes, void * arg);
 extern void jack_shutdown_callback (void * arg);
+
+#if defined SEQ66_JACK_DETECTION_CALLBACKS      /* NOT YET READY !!!        */
+
+extern void jack_port_connect_callback
+(
+    jack_port_id_t a, jack_port_id_t b,
+    int connect, void * arg
+);
+extern void jack_port_register_callback
+(
+    jack_port_id_t port, int ev_value, void * arg
+);
+
+#endif
 
 /**
  *  Provides a JACK callback function that uses the callbacks defined in the
@@ -221,6 +235,33 @@ midi_jack_info::connect ()
                     m_jack_client, jack_shutdown_callback, (void *) this
                 );
 
+#if defined SEQ66_JACK_DETECTION_CALLBACKS      /* NOT YET READY !!!        */
+                r = jack_set_port_connect_callback
+                (
+                    m_jack_client, jack_port_connect_callback, (void *) this
+                );
+                if (r != 0)
+                {
+                    m_error_string = "JACK cannot set port-connect callback";
+                    error(rterror::warning, m_error_string);
+                }
+                else
+                {
+                    r = jack_set_port_registration_callback
+                    (
+                        m_jack_client, jack_port_register_callback,
+                        (void *) this
+                    );
+                    if (r != 0)
+                    {
+                        m_error_string =
+                            "JACK cannot set port-register callback";
+
+                        error(rterror::warning, m_error_string);
+                    }
+                }
+#endif
+
 #if defined SEQ66_JACK_METADATA
                 bool ok = set_jack_client_property
                 (
@@ -247,14 +288,14 @@ midi_jack_info::connect ()
             }
             else
             {
-                m_error_string = "JACK can't set I/O callback";
-                error(rterror::WARNING, m_error_string);
+                m_error_string = "JACK cannot set I/O callback";
+                error(rterror::warning, m_error_string);
             }
         }
         else
         {
             m_error_string = "JACK server not running";
-            error(rterror::WARNING, m_error_string);
+            error(rterror::warning, m_error_string);
         }
     }
     return result;
@@ -353,8 +394,7 @@ midi_jack_info::get_all_port_info ()
             input_ports().add
             (
                 clientnumber, clientname, portnumber, portname,
-                midibase::c_virtual_port, midibase::c_normal_port,
-                midibase::c_input_port
+                midibase::io::input, midibase::port::manual
             );
             ++result;
         }
@@ -381,8 +421,8 @@ midi_jack_info::get_all_port_info ()
                 input_ports().add
                 (
                     client, clientname, count, portname,
-                    midibase::c_normal_port, midibase::c_normal_port,
-                    midibase::c_input_port, 0, alias
+                    midibase::io::input, midibase::port::normal,
+                    0, alias
                 );
                 ++count;
             }
@@ -411,8 +451,7 @@ midi_jack_info::get_all_port_info ()
             output_ports().add
             (
                 client, clientname, 0, portname,
-                midibase::c_virtual_port, midibase::c_normal_port,
-                midibase::c_output_port
+                midibase::io::output, midibase::port::manual
             );
             ++result;
         }
@@ -439,8 +478,8 @@ midi_jack_info::get_all_port_info ()
                 output_ports().add
                 (
                     client, clientname, count, portname,
-                    midibase::c_normal_port, midibase::c_normal_port,
-                    midibase::c_output_port, 0, alias
+                    midibase::io::output, midibase::port::normal,
+                    0, alias
                 );
                 ++count;
             }
@@ -569,8 +608,8 @@ midi_jack_info::api_connect ()
     }
     if (! result)
     {
-        m_error_string = "JACK can't activate and connect I/O";
-        error(rterror::WARNING, m_error_string);
+        m_error_string = "JACK cannot activate/connect I/O";
+        error(rterror::warning, m_error_string);
     }
     return result;
 }

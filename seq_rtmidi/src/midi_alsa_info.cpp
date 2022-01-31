@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-10-23
+ * \updates       2022-01-26
  * \license       See above.
  *
  *  API information found at:
@@ -143,8 +143,8 @@ midi_alsa_info::midi_alsa_info
     );
     if (result < 0)
     {
-        m_error_string = "error opening ALSA sequencer client";
-        error(rterror::DRIVER_ERROR, m_error_string);
+        m_error_string = "error opening ALSA seq client";
+        error(rterror::driver_error, m_error_string);
     }
     else
     {
@@ -283,9 +283,7 @@ midi_alsa_info::get_all_port_info ()
         (
             SND_SEQ_CLIENT_SYSTEM, "system",
             SND_SEQ_PORT_SYSTEM_ANNOUNCE, "announce",
-            midibase::c_normal_port,                /* false = not virtual  */
-            true,                                   /* system port          */
-            midibase::c_input_port,                 /* input port           */
+            midibase::io::input, midibase::port::system,
             global_queue()
         );
         ++count;
@@ -319,8 +317,8 @@ midi_alsa_info::get_all_port_info ()
                     input_ports().add
                     (
                         client, clientname, portnumber, portname,
-                        midibase::c_normal_port, midibase::c_normal_port,
-                        midibase::c_input_port, global_queue()
+                        midibase::io::input, midibase::port::normal,
+                        global_queue()
                     );
                     ++count;
                 }
@@ -329,8 +327,7 @@ midi_alsa_info::get_all_port_info ()
                     output_ports().add
                     (
                         client, clientname, portnumber, portname,
-                        midibase::c_normal_port, midibase::c_normal_port,
-                        midibase::c_output_port
+                        midibase::io::input, midibase::port::normal
                     );
                     ++count;
                 }
@@ -604,10 +601,10 @@ midi_alsa_info::show_event (snd_seq_event_t * ev, const char * tag)
  * ALSA events:
  *
  *      The ALSA events are listed in the snd_seq_event_type enumeration in
- *      /usr/lib/alsa/seq_event.h, where the "normal" MIDI events (from Note On
- *      to Key Signature) have values ranging from 5 to almost 30.  But there are
- *      some special ALSA events we need to handle in a different manner
- *      (currently by ignoring them):
+ *      /usr/lib/alsa/seq_event.h, where the "normal" MIDI events (from Note
+ *      On to Key Signature) have values ranging from 5 to almost 30.  But
+ *      there are some special ALSA events we need to handle in a different
+ *      manner (currently by ignoring them):
  *
  *      -  0x3c: SND_SEQ_EVENT_CLIENT_START
  *      -  0x3d: SND_SEQ_EVENT_CLIENT_EXIT
@@ -669,8 +666,8 @@ midi_alsa_info::api_get_midi_event (event * inev)
         {
             /*
              * Figure out how to best do this.  It has way too many parameters
-             * now, and is currently meant to be called from mastermidibus.  See
-             * mastermidibase::port_start().
+             * now, and is currently meant to be called from mastermidibus.
+             * See mastermidibase::port_start().
              *
              * port_start(masterbus, ev->data.addr.client, ev->data.addr.port);
              * api_port_start (mastermidibus & masterbus, int bus, int port)
@@ -728,8 +725,8 @@ midi_alsa_info::api_get_midi_event (event * inev)
     /*
      *  Note that ev->time.tick is always 0.  (Same in Seq32).  Not sure about
      *  this handling of SysEx data. Apparently one can get only up to ALSA
-     *  buffer size (4096) of data.  Also, the snd_seq_event_input() function is
-     *  said to block!
+     *  buffer size (4096) of data.  Also, the snd_seq_event_input() function
+     *  is said to block!
      */
 
     long bytes = snd_midi_event_decode(midi_ev, buffer, sizeof buffer, ev);
