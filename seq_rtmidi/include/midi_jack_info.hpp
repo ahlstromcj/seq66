@@ -47,7 +47,7 @@
 #include <jack/jack.h>
 #include "midi_jack_data.hpp"           /* seq66::midi_jack_data            */
 
-#undef  SEQ66_JACK_DETECTION_CALLBACKS  /* NOT YET READY !!!                */
+#define SEQ66_JACK_DETECTION_CALLBACKS  /* NOT YET READY !!!                */
 
 /*
  * Do not document the namespace; it breaks Doxygen.

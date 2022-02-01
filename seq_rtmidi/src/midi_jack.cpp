@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-01-30
+ * \updates       2022-02-01
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -1123,7 +1123,7 @@ midi_jack::close_client ()
             m_error_string += " (id ";
             m_error_string += std::to_string(id);
             m_error_string += ")";
-            error(rterror::driver_error, m_error_string);
+            error(rterror::kind::driver_error, m_error_string);
         }
     }
 }
@@ -1198,7 +1198,7 @@ midi_jack::connect_port
                     m_error_string += "' to '";
                     m_error_string += destportname;
                     m_error_string += "'";
-                    error(rterror::driver_error, m_error_string);
+                    error(rterror::kind::driver_error, m_error_string);
                 }
             }
         }
@@ -1283,7 +1283,7 @@ midi_jack::register_port (midibase::io iotype, const std::string & portname)
             m_error_string = "JACK error registering port";
             m_error_string += " ";
             m_error_string += portname;
-            error(rterror::driver_error, m_error_string);
+            error(rterror::kind::driver_error, m_error_string);
         }
     }
     return result;
@@ -1332,7 +1332,7 @@ midi_jack::create_ringbuffer (size_t rbsize)
         if (! result)
         {
             m_error_string = "JACK ringbuffer error";
-            error(rterror::warning, m_error_string);
+            error(rterror::kind::warning, m_error_string);
         }
     }
     return result;

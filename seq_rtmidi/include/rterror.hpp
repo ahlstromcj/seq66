@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-08-13
+ * \updates       2022-02-01
  * \license       See above.
  *
  *    In this refactoring...
@@ -63,7 +63,7 @@ class rterror : public std::exception
 
 public:
 
-    enum kind
+    enum class kind
     {
         warning,           /**< A non-critical error.                       */
         debug_warning,     /**< Non-critical error useful for debugging.    */
@@ -95,13 +95,9 @@ private:
 
 public:
 
-    rterror
-    (
-        const std::string & message,
-        kind errtype = rterror::unspecified
-    ) :
-        m_message(message),
-        m_type(errtype)
+    rterror (const std::string & message, kind errtype = kind::unspecified) :
+        m_message   (message),
+        m_type      (errtype)
     {
         // no code
     }

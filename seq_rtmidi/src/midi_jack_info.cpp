@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-01-30
+ * \updates       2022-02-01
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information
@@ -243,7 +243,7 @@ midi_jack_info::connect ()
                 if (r != 0)
                 {
                     m_error_string = "JACK cannot set port-connect callback";
-                    error(rterror::warning, m_error_string);
+                    error(rterror::kind::warning, m_error_string);
                 }
                 else
                 {
@@ -257,7 +257,7 @@ midi_jack_info::connect ()
                         m_error_string =
                             "JACK cannot set port-register callback";
 
-                        error(rterror::warning, m_error_string);
+                        error(rterror::kind::warning, m_error_string);
                     }
                 }
 #endif
@@ -289,13 +289,13 @@ midi_jack_info::connect ()
             else
             {
                 m_error_string = "JACK cannot set I/O callback";
-                error(rterror::warning, m_error_string);
+                error(rterror::kind::warning, m_error_string);
             }
         }
         else
         {
             m_error_string = "JACK server not running";
-            error(rterror::warning, m_error_string);
+            error(rterror::kind::warning, m_error_string);
         }
     }
     return result;
@@ -609,7 +609,7 @@ midi_jack_info::api_connect ()
     if (! result)
     {
         m_error_string = "JACK cannot activate/connect I/O";
-        error(rterror::warning, m_error_string);
+        error(rterror::kind::warning, m_error_string);
     }
     return result;
 }

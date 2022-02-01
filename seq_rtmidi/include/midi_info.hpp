@@ -400,6 +400,8 @@ public:
         return m_bpm;
     }
 
+    virtual int get_all_port_info () = 0;
+
     /**
      *  Special setter.
      */
@@ -522,8 +524,6 @@ public:
      */
 
     void error (rterror::kind errtype, const std::string & errorstring);
-
-    virtual int get_all_port_info () = 0;
 
 protected:
 

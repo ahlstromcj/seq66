@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-01-27
+ * \updates       2022-02-01
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.
@@ -181,7 +181,7 @@ rtmidi_in::rtmidi_in (midibus & parentbus, rtmidi_info & info) :
              */
 
             std::string errortext = "no rtmidi API support found";
-            throw(rterror(errortext, rterror::unspecified));
+            throw(rterror(errortext, rterror::kind::unspecified));
         }
     }
 }
@@ -346,7 +346,7 @@ rtmidi_out::rtmidi_out (midibus & parentbus, rtmidi_info & info) :
          */
 
         std::string errorText = "no rtmidi API support found";
-        throw(rterror(errorText, rterror::unspecified));
+        throw(rterror(errorText, rterror::kind::unspecified));
     }
 }
 
