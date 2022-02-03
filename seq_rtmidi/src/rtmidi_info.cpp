@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-08
- * \updates       2022-02-01
+ * \updates       2022-02-02
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.  This class

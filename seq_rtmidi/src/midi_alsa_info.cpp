@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-01
+ * \updates       2022-02-02
  * \license       See above.
  *
  *  API information found at:
@@ -267,26 +267,38 @@ midi_alsa_info::check_port_type (snd_seq_port_info_t * pinfo) const
  *      true error.
  */
 
+#if 0
 int
 midi_alsa_info::get_all_port_info ()
 {
-    int count = 0;
+    return get_all_port_info(input_ports(), output_ports());
+}
+#endif
+
+int
+midi_alsa_info::get_all_port_info
+(
+    midi_port_info & inputports,
+    midi_port_info & outputports
+)
+{
+    int result = 0;
     if (not_nullptr(m_alsa_seq))
     {
         snd_seq_port_info_t * pinfo;                /* point to member      */
         snd_seq_client_info_t * cinfo;
         snd_seq_client_info_alloca(&cinfo);
         snd_seq_client_info_set_client(cinfo, -1);
-        input_ports().clear();
-        output_ports().clear();
-        input_ports().add
+        inputports.clear();
+        outputports.clear();
+        inputports.add
         (
             SND_SEQ_CLIENT_SYSTEM, "system",
             SND_SEQ_PORT_SYSTEM_ANNOUNCE, "announce",
             midibase::io::input, midibase::port::system,
             global_queue()
         );
-        ++count;
+        ++result;
         while (snd_seq_query_next_client(m_alsa_seq, cinfo) >= 0)
         {
             int client = snd_seq_client_info_get_client(cinfo);
@@ -314,22 +326,22 @@ midi_alsa_info::get_all_port_info ()
                 int portnumber = snd_seq_port_info_get_port(pinfo);
                 if ((caps & sm_input_caps) == sm_input_caps)
                 {
-                    input_ports().add
+                    inputports.add
                     (
                         client, clientname, portnumber, portname,
                         midibase::io::input, midibase::port::normal,
                         global_queue()
                     );
-                    ++count;
+                    ++result;
                 }
                 if ((caps & sm_output_caps) == sm_output_caps)
                 {
-                    output_ports().add
+                    outputports.add
                     (
                         client, clientname, portnumber, portname,
                         midibase::io::input, midibase::port::normal
                     );
-                    ++count;
+                    ++result;
                 }
                 else
                 {
@@ -343,10 +355,10 @@ midi_alsa_info::get_all_port_info ()
             }
         }
     }
-    if (count == 0)
-        count = -1;
+    if (result == 0)
+        result = (-1);
 
-    return count;
+    return result;
 }
 
 /**

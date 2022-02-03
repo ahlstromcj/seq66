@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-01
+ * \updates       2022-02-03
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -170,6 +170,7 @@
 #include <jack/metadata.h>
 #endif
 
+#include <cstring>                      /* std::strcpy(), std::strcat()     */
 #include <sstream>
 
 #include <jack/midiport.h>
@@ -429,7 +430,7 @@ jack_shutdown_callback (void * arg)
         async_safe_errprint("JACK shutdown null pointer");
 }
 
-#if defined SEQ66_JACK_DETECTION_CALLBACKS      /* NOT YET READY !!!        */
+#if defined SEQ66_JACK_PORT_CONNECT_CALLBACK
 
 /**
  * Parameters:
@@ -450,12 +451,25 @@ jack_shutdown_callback (void * arg)
 void
 jack_port_connect_callback
 (
-    jack_port_id_t a, jack_port_id_t b,
+    jack_port_id_t port_a, jack_port_id_t port_b,
     int connect, void * arg
 )
 {
-    async_safe_strprint("jack_port_connect_callback() called");
+    char value[c_async_safe_utoa_size];
+    char temp[2 * c_async_safe_utoa_size + 48];
+    std::strcpy(temp, "port-connect(");
+    async_safe_utoa(unsigned(port_a), value);
+    std::strcat(temp, value);
+    async_safe_utoa(unsigned(port_b), value);
+    std::strcat(temp, value);
+    async_safe_utoa(unsigned(connect), value);
+    std::strcat(temp, connect != 0 ? " connect" : " disconnect");
+    std::strcat(temp, value);
+    std::strcat(temp, not_nullptr(arg) ? " arg)" : " nullptr)");
+    async_safe_strprint(temp);
 }
+
+#endif
 
 /**
  * Parameters:
@@ -474,10 +488,15 @@ jack_port_connect_callback
 void
 jack_port_register_callback (jack_port_id_t port, int ev_value, void * arg)
 {
-    async_safe_strprint("jack_port_register_callback() called");
+    char value[c_async_safe_utoa_size];
+    char temp[c_async_safe_utoa_size + 48];
+    std::strcpy(temp, "port-register(");
+    async_safe_utoa(unsigned(port), value);
+    std::strcat(temp, value);
+    std::strcat(temp, ev_value != 0 ? " register" : " unregister");
+    std::strcat(temp, not_nullptr(arg) ? " arg" : " nullptr");
+    async_safe_strprint(temp);
 }
-
-#endif
 
 /*
  * MIDI JACK base class

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2022-01-30
+ * \updates       2022-02-03
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of
@@ -366,7 +366,7 @@ async_safe_strprint (const char * msg)
         size_t count = strlen(msg);
         if (count > 0)
         {
-            write_msg(STDOUT_FILENO, "\033[1;30m", 7); /* black */
+            write_msg(STDOUT_FILENO, "\033[1;30m[seq66] ", 15); /* black */
             write_msg(STDOUT_FILENO, msg, count);
             write_msg(STDOUT_FILENO, "\033[0m", 4);
         }
@@ -381,11 +381,57 @@ async_safe_errprint (const char * msg)
         size_t count = strlen(msg);
         if (count > 0)
         {
-            write_msg(STDERR_FILENO, "\033[1;31m", 7); /* red */
+            write_msg(STDERR_FILENO, "\033[1;31m[seq66] ",15); /* red */
             write_msg(STDERR_FILENO, msg, count);
             write_msg(STDERR_FILENO, "\033[0m", 4);
         }
     }
+}
+
+/**
+ *  This function assumes the programmer knows what she's doing.  The pointer
+ *  should be good and the buffer should be 24 characters.  After getting the
+ *  digits, the count is the number of digits, which is 1 at a minimum.
+ *
+ * \param value
+ *      The unsigned value to convert to an ASCII null-terminated string.
+ *
+ * \param destination
+ *      Provides a 24-byte buffer to hold the resulting string.  Assumed to be
+ *      valid and at least that large, for speed.
+ *
+ * \param spacebefore
+ *      If true (the default), then output a space first.  This helps in
+ *      printing a number of values rapidly in a row.
+ */
+
+void
+async_safe_utoa (unsigned value, char * destination, bool spacebefore)
+{
+    const unsigned ascii_base = unsigned('0');
+    char reversed[c_async_safe_utoa_size];
+    int count = 0;
+    do
+    {
+        unsigned remainder = value % 10;
+        reversed[count++] = char(remainder) + ascii_base;
+        value /= 10;
+
+    } while (value != 0);
+
+    int index = 0;
+    int limit = count;
+    if (spacebefore)
+    {
+        destination[index++] = ' ';
+        ++limit;
+    }
+    for ( ; index < limit; ++index)
+    {
+        --count;
+        destination[index] = reversed[count];
+    }
+    destination[index] = 0;             /* append the string terminator */
 }
 
 /**

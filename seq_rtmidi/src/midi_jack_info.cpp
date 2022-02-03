@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-02-01
+ * \updates       2022-02-03
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information
@@ -87,19 +87,19 @@ extern int jack_process_rtmidi_input (jack_nframes_t nframes, void * arg);
 extern int jack_process_rtmidi_output (jack_nframes_t nframes, void * arg);
 extern void jack_shutdown_callback (void * arg);
 
-#if defined SEQ66_JACK_DETECTION_CALLBACKS      /* NOT YET READY !!!        */
-
+#if defined SEQ66_JACK_PORT_CONNECT_CALLBACK
 extern void jack_port_connect_callback
 (
     jack_port_id_t a, jack_port_id_t b,
     int connect, void * arg
 );
+#endif
+
 extern void jack_port_register_callback
 (
     jack_port_id_t port, int ev_value, void * arg
 );
 
-#endif
 
 /**
  *  Provides a JACK callback function that uses the callbacks defined in the
@@ -235,7 +235,7 @@ midi_jack_info::connect ()
                     m_jack_client, jack_shutdown_callback, (void *) this
                 );
 
-#if defined SEQ66_JACK_DETECTION_CALLBACKS      /* NOT YET READY !!!        */
+#if defined SEQ66_JACK_PORT_CONNECT_CALLBACK
                 r = jack_set_port_connect_callback
                 (
                     m_jack_client, jack_port_connect_callback, (void *) this
@@ -245,22 +245,19 @@ midi_jack_info::connect ()
                     m_error_string = "JACK cannot set port-connect callback";
                     error(rterror::kind::warning, m_error_string);
                 }
-                else
-                {
-                    r = jack_set_port_registration_callback
-                    (
-                        m_jack_client, jack_port_register_callback,
-                        (void *) this
-                    );
-                    if (r != 0)
-                    {
-                        m_error_string =
-                            "JACK cannot set port-register callback";
-
-                        error(rterror::kind::warning, m_error_string);
-                    }
-                }
 #endif
+                r = jack_set_port_registration_callback
+                (
+                    m_jack_client, jack_port_register_callback,
+                    (void *) this
+                );
+                if (r != 0)
+                {
+                    m_error_string =
+                        "JACK cannot set port-register callback";
+
+                    error(rterror::kind::warning, m_error_string);
+                }
 
 #if defined SEQ66_JACK_METADATA
                 bool ok = set_jack_client_property
@@ -371,8 +368,20 @@ midi_jack_info::extract_names
  *      ports.  If there is no JACK client, then -1 is returned.
  */
 
+#if 0
 int
 midi_jack_info::get_all_port_info ()
+{
+    return get_all_port_info(input_ports(), output_ports());
+}
+#endif
+
+int
+midi_jack_info::get_all_port_info
+(
+    midi_port_info & inputports,
+    midi_port_info & outputports
+)
 {
     int result = 0;
     if (not_nullptr(m_jack_client))
@@ -383,7 +392,7 @@ midi_jack_info::get_all_port_info ()
             JACK_DEFAULT_MIDI_TYPE,
             JackPortIsInput                            /* tricky   */
         );
-        input_ports().clear();
+        inputports.clear();
         if (is_nullptr(inports))                  /* check port validity  */
         {
             warnprint("No JACK input ports, creating virtual port");
@@ -391,7 +400,7 @@ midi_jack_info::get_all_port_info ()
             int portnumber = 0;
             std::string clientname = seq_client_name();
             std::string portname = "midi in 0";
-            input_ports().add
+            inputports.add
             (
                 clientnumber, clientname, portnumber, portname,
                 midibase::io::input, midibase::port::manual
@@ -418,7 +427,7 @@ midi_jack_info::get_all_port_info ()
                     client_name_list.push_back(clientname);
                     ++client;
                 }
-                input_ports().add
+                inputports.add
                 (
                     client, clientname, count, portname,
                     midibase::io::input, midibase::port::normal,
@@ -436,7 +445,7 @@ midi_jack_info::get_all_port_info ()
             JACK_DEFAULT_MIDI_TYPE,
             JackPortIsOutput                       /* tricky   */
         );
-        output_ports().clear();
+        outputports.clear();
         if (is_nullptr(outports))                  /* check port validity  */
         {
             /*
@@ -448,7 +457,7 @@ midi_jack_info::get_all_port_info ()
             int client = 0;
             std::string clientname = seq_client_name();
             std::string portname = "midi out 0";
-            output_ports().add
+            outputports.add
             (
                 client, clientname, 0, portname,
                 midibase::io::output, midibase::port::manual
@@ -475,7 +484,7 @@ midi_jack_info::get_all_port_info ()
                     client_name_list.push_back(clientname);
                     ++client;
                 }
-                output_ports().add
+                outputports.add
                 (
                     client, clientname, count, portname,
                     midibase::io::output, midibase::port::normal,
@@ -488,7 +497,7 @@ midi_jack_info::get_all_port_info ()
         }
     }
     else
-        result = -1;
+        result = (-1);
 
     return result;
 }

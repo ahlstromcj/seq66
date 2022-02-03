@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-04
- * \updates       2021-10-23
+ * \updates       2022-02-01
  * \license       See above.
  *
  *    We need to have a way to get all of the ALSA information of
@@ -118,7 +118,11 @@ public:
 
 private:
 
-    virtual int get_all_port_info () override;
+    virtual int get_all_port_info
+    (
+        midi_port_info & inports,
+        midi_port_info & outports
+    ) override;
 
     void get_poll_descriptors ();
     void remove_poll_descriptors ();

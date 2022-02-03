@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-12-05
- * \updates       2022-01-27
+ * \updates       2022-02-02
  * \license       See above.
  *
  *  We need to have a way to get all of the API information from each
@@ -400,7 +400,17 @@ public:
         return m_bpm;
     }
 
-    virtual int get_all_port_info () = 0;
+
+    virtual int get_all_port_info ()
+    {
+        return get_all_port_info(input_ports(), output_ports());
+    }
+
+    virtual int get_all_port_info
+    (
+        midi_port_info & inports,
+        midi_port_info & outports
+    ) = 0;
 
     /**
      *  Special setter.
