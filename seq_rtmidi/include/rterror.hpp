@@ -46,11 +46,8 @@ namespace seq66
 {
 
 /**
- *  Exception handling class for rtexmidi.
- *
- *  The rterror class is quite simple but it does allow errors to be
- *  "caught" by rterror::kind. See the rtexmidi documentation to know
- *  which methods can throw an rterror.
+ *  Exception handling class for our version of "rtmidi".  The rterror class is
+ *  quite simple but it does allow errors to be "caught" by rterror::kind.
  *
  *  Please note that, in this refactoring of rtmidi, we've done away with all
  *  the exception specifications, on the advice of Herb Sutter.  They may be

@@ -267,14 +267,6 @@ midi_alsa_info::check_port_type (snd_seq_port_info_t * pinfo) const
  *      true error.
  */
 
-#if 0
-int
-midi_alsa_info::get_all_port_info ()
-{
-    return get_all_port_info(input_ports(), output_ports());
-}
-#endif
-
 int
 midi_alsa_info::get_all_port_info
 (

@@ -400,6 +400,9 @@ public:
         return m_bpm;
     }
 
+    /**
+     *  No need to override this one, though it is virtual.
+     */
 
     virtual int get_all_port_info ()
     {

@@ -27,8 +27,7 @@
  * \library       seq66 application
  * \author        Refactoring by Chris Ahlstrom
  * \date          2016-12-08
- * \updates       2022-01-27
- * \license       See the rtexmidi.lic file.  Too big for a header file.
+ * \updates       2022-02-05
  * \license       GNU GPLv2 or above
  *
  *  This class is like the rtmidi_in and rtmidi_out classes, but cut down to
@@ -233,6 +232,11 @@ public:
     int get_all_port_info ()
     {
         return get_api_info()->get_all_port_info();
+    }
+
+    int get_all_port_info (midi_port_info & in, midi_port_info & out)
+    {
+        return get_api_info()->get_all_port_info(in, out);
     }
 
     int queue_number (int index) const

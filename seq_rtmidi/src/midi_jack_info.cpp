@@ -88,11 +88,12 @@ extern int jack_process_rtmidi_output (jack_nframes_t nframes, void * arg);
 extern void jack_shutdown_callback (void * arg);
 
 #if defined SEQ66_JACK_PORT_CONNECT_CALLBACK
+
 extern void jack_port_connect_callback
 (
-    jack_port_id_t a, jack_port_id_t b,
-    int connect, void * arg
+    jack_port_id_t a, jack_port_id_t b, int connect, void * arg
 );
+
 #endif
 
 extern void jack_port_register_callback
@@ -368,14 +369,6 @@ midi_jack_info::extract_names
  *      ports.  If there is no JACK client, then -1 is returned.
  */
 
-#if 0
-int
-midi_jack_info::get_all_port_info ()
-{
-    return get_all_port_info(input_ports(), output_ports());
-}
-#endif
-
 int
 midi_jack_info::get_all_port_info
 (
@@ -383,7 +376,7 @@ midi_jack_info::get_all_port_info
     midi_port_info & outputports
 )
 {
-    int result = 0;
+    int result = (-1);
     if (not_nullptr(m_jack_client))
     {
         const char ** inports = jack_get_ports    /* list of JACK ports   */
@@ -393,6 +386,7 @@ midi_jack_info::get_all_port_info
             JackPortIsInput                            /* tricky   */
         );
         inputports.clear();
+        result = 0;
         if (is_nullptr(inports))                  /* check port validity  */
         {
             warnprint("No JACK input ports, creating virtual port");
@@ -496,9 +490,6 @@ midi_jack_info::get_all_port_info
             result += count;
         }
     }
-    else
-        result = (-1);
-
     return result;
 }
 

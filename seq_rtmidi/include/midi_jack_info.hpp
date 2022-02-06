@@ -102,8 +102,7 @@ public:
     virtual ~midi_jack_info ();
 
     /**
-     * \getter m_jack_client
-     *      This is the platform-specific version of midi_handle().
+     *  This is the platform-specific version of midi_handle().
      */
 
     jack_client_t * client_handle ()

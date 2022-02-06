@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2022-02-03
+ * \updates       2022-02-06
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of
@@ -355,8 +355,14 @@ write_msg (int fd, const char * msg, size_t count)
 
 /**
  *  Meant for use in signal handlers.  For the colors, hardwired here, see
- *  s_level_colors in the seq66_features.cpp modules.
+ *  s_level_colors in the seq66_features.cpp modules. The "seq66" tag is
+ *  black (no error) or red (error).  The text is blue.  The character count
+ *  is programmer supplied (see the comments).
  */
+
+static const char * s_start = "[\033[1;30mseq66\033[0m] \033[1;34m";    // 26
+static const char * s_error = "[\033[1;31mseq66\033[0m] \033[1;34m";    // 26
+static const char * s_eol   = "\033[0m\n";                              //  5
 
 void
 async_safe_strprint (const char * msg)
@@ -366,9 +372,9 @@ async_safe_strprint (const char * msg)
         size_t count = strlen(msg);
         if (count > 0)
         {
-            write_msg(STDOUT_FILENO, "\033[1;30m[seq66] ", 15); /* black */
+            write_msg(STDOUT_FILENO, s_start, 26);
             write_msg(STDOUT_FILENO, msg, count);
-            write_msg(STDOUT_FILENO, "\033[0m", 4);
+            write_msg(STDOUT_FILENO, s_eol, 5);
         }
     }
 }
@@ -381,9 +387,9 @@ async_safe_errprint (const char * msg)
         size_t count = strlen(msg);
         if (count > 0)
         {
-            write_msg(STDERR_FILENO, "\033[1;31m[seq66] ",15); /* red */
+            write_msg(STDERR_FILENO, s_error, 26);
             write_msg(STDERR_FILENO, msg, count);
-            write_msg(STDERR_FILENO, "\033[0m", 4);
+            write_msg(STDERR_FILENO, s_eol, 5);
         }
     }
 }

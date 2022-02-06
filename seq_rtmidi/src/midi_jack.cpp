@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-03
+ * \updates       2022-02-06
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -222,6 +222,11 @@ namespace seq66
  *  This function used to be static, but now we make it available to
  *  midi_jack_info.  Also note the s_null_detected flag.
  *
+ * Error codes:
+ *
+ *      ENODATA = 61: No data available.
+ *      ENOBUFS = 105: No buffer space available can happen.
+ *
  * \param nframes
  *    The frame number to be processed.
  *
@@ -298,21 +303,10 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
             {
                 const char * errmsg = "rtmidi input error";
                 if (rc == ENODATA)
-                {
-                    /*
-                     * ENODATA = 61: No data available.
-                     */
-
                     errmsg = "rtmidi input: ENODATA";
-                }
                 else if (rc == ENOBUFS)
-                {
-                    /*
-                     * ENOBUFS = 105: No buffer space available can happen.
-                     */
-
                     errmsg = "rtmidi input: ENOBUFS";
-                }
+
                 async_safe_errprint(errmsg);
             }
         }
@@ -406,7 +400,7 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
             );
         }
         else
-            async_safe_errprint("midi event reserve null pointer");
+            async_safe_errprint("JACK event reserve null pointer");
     }
     return 0;
 }
@@ -455,24 +449,42 @@ jack_port_connect_callback
     int connect, void * arg
 )
 {
-    char value[c_async_safe_utoa_size];
-    char temp[2 * c_async_safe_utoa_size + 48];
-    std::strcpy(temp, "port-connect(");
-    async_safe_utoa(unsigned(port_a), value);
-    std::strcat(temp, value);
-    async_safe_utoa(unsigned(port_b), value);
-    std::strcat(temp, value);
-    async_safe_utoa(unsigned(connect), value);
-    std::strcat(temp, connect != 0 ? " connect" : " disconnect");
-    std::strcat(temp, value);
-    std::strcat(temp, not_nullptr(arg) ? " arg)" : " nullptr)");
-    async_safe_strprint(temp);
+    midi_jack_info * jack = (midi_jack_info *)(arg);
+    if (not_nullptr(jack))
+    {
+        if (rc().verbose())
+        {
+            char value[c_async_safe_utoa_size];
+            char temp[2 * c_async_safe_utoa_size + 48];
+            std::strcpy(temp, "port-connect(");
+            async_safe_utoa(unsigned(port_a), value);
+            std::strcat(temp, value);
+            async_safe_utoa(unsigned(port_b), value);
+            std::strcat(temp, value);
+            async_safe_utoa(unsigned(connect), value);
+            std::strcat(temp, connect != 0 ? " connect" : " disconnect");
+            std::strcat(temp, value);
+            std::strcat(temp, not_nullptr(arg) ? " arg)" : " nullptr)");
+            async_safe_strprint(temp);
+        }
+    }
 }
 
 #endif
 
 /**
- * Parameters:
+ *  Provides a callback for registering a port, so that we can detect when a
+ *  port appears or disappears.  We need to think about the process to see how
+ *  we can leverage it.  One thing we can do is call:
+ *
+ *      jack_port_t * jpt = jack_port_by_id(jack_client_t, jack_port_id_t)
+ *
+ *  The original port handle is set via the port_handle() setter called in the
+ *  member function register_port(). If this port_handle can be found in the
+ *  list of ports, that should mean that it is a Seq66 port, and nothing should
+ *  be done.  Otherwise, the I/O port containers should be updated.
+ *
+ *  Also see the api_get_port_name() function and the midi_jack_data class.
  *
  * \param port
  *      The ID of the port.
@@ -486,16 +498,51 @@ jack_port_connect_callback
  */
 
 void
-jack_port_register_callback (jack_port_id_t port, int ev_value, void * arg)
+jack_port_register_callback (jack_port_id_t portid, int ev_value, void * arg)
 {
-    char value[c_async_safe_utoa_size];
-    char temp[c_async_safe_utoa_size + 48];
-    std::strcpy(temp, "port-register(");
-    async_safe_utoa(unsigned(port), value);
-    std::strcat(temp, value);
-    std::strcat(temp, ev_value != 0 ? " register" : " unregister");
-    std::strcat(temp, not_nullptr(arg) ? " arg" : " nullptr");
-    async_safe_strprint(temp);
+    midi_jack_info * jack = (midi_jack_info *)(arg);
+    if (not_nullptr(jack))
+    {
+        jack_client_t * handle = jack->client_handle();
+        jack_port_t * portptr = nullptr;
+        if (not_nullptr(handle))
+        {
+            bool mine = false;
+            portptr = jack_port_by_id(handle, portid);
+            if (not_nullptr(portptr))
+                mine = jack_port_is_mine(handle, portptr) != 0;
+
+            if (rc().verbose())
+            {
+                char value[c_async_safe_utoa_size];
+                char temp[c_async_safe_utoa_size + 48];
+                async_safe_utoa(unsigned(portid), &value[0], false);
+                std::strcpy(temp, "Port-");
+                std::strcat
+                (
+                    temp, ev_value != 0 ? "register: " : "unregister: "
+                );
+                std::strcat(temp, value);
+                if (is_nullptr(arg))
+                    std::strcat(temp, " nullptr!");
+
+                async_safe_strprint(temp);
+                if (not_nullptr(portptr))
+                {
+                    const char * porttype = jack_port_type(portptr);
+                    async_safe_strprint(porttype);
+                    if (mine)
+                        async_safe_strprint("Seq66 port");
+                }
+            }
+            if (! mine)
+            {
+                /*
+                 * TODO: trigger a reassessment of ports.
+                 */
+            }
+        }
+    }
 }
 
 /*

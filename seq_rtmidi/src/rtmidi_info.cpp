@@ -141,7 +141,7 @@ rtmidi_info::rtmidi_info
         }
         else
         {
-            errprintfunc("no system support for specified API");
+            errprintfunc("no support for specified API");
         }
     }
 
