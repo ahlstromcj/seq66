@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2022-02-03
+ * \updates       2022-02-08
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -126,18 +126,36 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
 #define infoprintfunc() seq66::msgprintf(seq66::msglevel::info, "%s", __func__)
 #endif
 
-extern bool info_message (const std::string & msg);
-extern bool status_message (const std::string & msg);
-extern bool warn_message (const std::string & msg);
+extern bool info_message
+(
+    const std::string & msg,
+    const std::string & data = ""
+);
+extern bool status_message
+(
+    const std::string & msg,
+    const std::string & data = ""
+);
+extern bool warn_message
+(
+    const std::string & msg,
+    const std::string & data = ""
+);
 extern bool error_message
 (
-    const std::string & msg, const std::string & data = ""
+    const std::string & msg,
+    const std::string & data = ""
 );
 extern bool debug_message
 (
-    const std::string & msg, const std::string & data = ""
+    const std::string & msg,
+    const std::string & data = ""
 );
-extern bool session_message (const std::string & msg);
+extern bool session_message
+(
+    const std::string & msg,
+    const std::string & data = ""
+);
 extern void file_message (const std::string & tag, const std::string & path);
 extern bool file_error (const std::string & tag, const std::string & filename);
 extern void print_client_tag (msglevel el);

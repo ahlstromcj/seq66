@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2022-01-06
+ * \updates       2022-02-07
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -640,6 +640,14 @@ extern bool set_jack_port_property
 (
     jack_client_t * jc,
     jack_port_t * jp,
+    const std::string & key,
+    const std::string & value,
+    const std::string & type = "text/plain"
+);
+extern bool set_jack_port_property
+(
+    jack_client_t * jc,
+    const std::string & portname,
     const std::string & key,
     const std::string & value,
     const std::string & type = "text/plain"

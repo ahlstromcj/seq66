@@ -307,10 +307,10 @@
 /* Define to enable JACK metadata -- disabled for now due to issues */
 /*
  *
- * #if ! defined SEQ66_JACK_METADATA
- * #define SEQ66_JACK_METADATA 1
- * #endif
  */
+#if ! defined SEQ66_JACK_METADATA
+#define SEQ66_JACK_METADATA 1
+#endif
 
 /*
  * Define to enable JACK session.  It is deprecated by the JACK developers,

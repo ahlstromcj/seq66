@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2022-01-06
+ * \updates       2022-02-08
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -531,8 +531,31 @@ set_jack_port_property
     jack_uuid_t uuid = jack_port_uuid(jp);
     const char * k = key.c_str();
     const char * v = value.c_str();
-    const char * t = type.c_str();
-    int rc = jack_set_property(jc, uuid, k, v, t);
+    const char * t = type.empty() ? NULL : type.c_str() ;   /* important!   */
+    int rc = ::jack_set_property(jc, uuid, k, v, t);
+    return rc == 0;
+}
+
+/**
+ *  This version does not seem to work.
+ */
+
+bool
+set_jack_port_property
+(
+    jack_client_t * jc,
+    const std::string & portname,
+    const std::string & key,
+    const std::string & value,
+    const std::string & type
+)
+{
+    jack_port_t * jp = ::jack_port_by_name(jc, portname.c_str());
+    jack_uuid_t uuid = ::jack_port_uuid(jp);
+    const char * k = key.c_str();
+    const char * v = value.c_str();
+    const char * t = type.empty() ? NULL : type.c_str() ;   /* important!   */
+    int rc = ::jack_set_property(jc, uuid, k, v, t);    // use t == NULL?
     return rc == 0;
 }
 
@@ -765,7 +788,7 @@ jack_assistant::~jack_assistant ()
 void
 jack_assistant::get_jack_client_info ()
 {
-    char * actualname = jack_get_client_name(m_jack_client);
+    char * actualname = ::jack_get_client_name(m_jack_client);
     if (not_nullptr(actualname))
     {
         m_jack_client_uuid = get_jack_client_uuid(m_jack_client);
@@ -860,14 +883,14 @@ jack_assistant::init ()
         }
         else
         {
-            m_frame_rate = jack_get_sample_rate(m_jack_client);
+            m_frame_rate = ::jack_get_sample_rate(m_jack_client);
             get_jack_client_info();
-            jack_on_shutdown            /* no return value, surprisingly    */
+            ::jack_on_shutdown                          /* no return value  */
             (
                 m_jack_client, jack_transport_shutdown, (void *) this
             );
 
-            int jackcode = jack_set_process_callback    /* notes in banner  */
+            int jackcode = ::jack_set_process_callback  /* notes in banner  */
             (
                 m_jack_client, jack_transport_callback, (void *) this
             );
@@ -881,7 +904,7 @@ jack_assistant::init ()
 #if defined SEQ66_JACK_SESSION
         if (result && usr().want_jack_session())
         {
-            int jackcode = jack_set_session_callback
+            int jackcode = ::jack_set_session_callback
             (
                 m_jack_client, jack_session_callback, (void *) this
             );
@@ -909,7 +932,7 @@ jack_assistant::init ()
                  */
 
                 bool cond = rc().with_jack_master_cond();
-                int jackcode = jack_set_timebase_callback
+                int jackcode = ::jack_set_timebase_callback
                 (
                     m_jack_client, cond, jack_timebase_callback, (void *) this
                 );
@@ -967,7 +990,7 @@ jack_assistant::deinit ()
         if (is_master())
         {
             m_timebase = timebase::none;
-            if (jack_release_timebase(m_jack_client) != 0)
+            if (::jack_release_timebase(m_jack_client) != 0)
                 (void) error_message("Cannot release JACK timebase");
         }
 
@@ -977,10 +1000,10 @@ jack_assistant::deinit ()
          * thus important as well.
          */
 
-        if (jack_deactivate(m_jack_client) != 0)
+        if (::jack_deactivate(m_jack_client) != 0)
             result = error_message("Can't deactivate JACK transport");
 
-        if (jack_client_close(m_jack_client) != 0)
+        if (::jack_client_close(m_jack_client) != 0)
             result = error_message("Can't close JACK transport");
     }
     return result;
@@ -1006,7 +1029,7 @@ jack_assistant::activate ()
     bool result = true;
     if (not_nullptr(m_jack_client))
     {
-        int rc = jack_activate(m_jack_client);
+        int rc = ::jack_activate(m_jack_client);
         result = rc == 0;
         if (result)
         {
@@ -1031,7 +1054,7 @@ jack_assistant::start ()
 {
     if (m_jack_running)
     {
-        jack_transport_start(m_jack_client);
+        ::jack_transport_start(m_jack_client);
         if (is_master())
             set_position(parent().get_tick());
     }
@@ -1048,7 +1071,7 @@ void
 jack_assistant::stop ()
 {
     if (m_jack_running)
-        jack_transport_stop(m_jack_client);
+        ::jack_transport_stop(m_jack_client);
     else if (rc().with_jack())
         (void) error_message("Sync stop: JACK not running");
 }
@@ -1071,12 +1094,12 @@ jack_assistant::set_beats_per_minute (midibpm bpminute)
         m_beats_per_minute = bpminute;
         if (not_nullptr(m_jack_client))
         {
-            (void) jack_transport_query(m_jack_client, &m_jack_pos);
+            (void) ::jack_transport_query(m_jack_client, &m_jack_pos);
             m_jack_pos.beats_per_minute = bpminute;
-            int jackcode = jack_transport_reposition(m_jack_client, &m_jack_pos);
-            if (jackcode != 0)
+            int rc = ::jack_transport_reposition(m_jack_client, &m_jack_pos);
+            if (rc != 0)
             {
-                errprint("jack_transport_reposition(): bad position structure");
+                errprint("JACK transport bad position structure");
             }
         }
     }
@@ -1157,7 +1180,7 @@ jack_assistant::position (bool songmode, midipulse tick)
          * playback, or seek to a new location."
          */
 
-        if (jack_transport_locate(m_jack_client, jack_frame) != 0)
+        if (::jack_transport_locate(m_jack_client, jack_frame) != 0)
             (void) info_message("jack_transport_locate() failed");
     }
     if (parent().is_running())
@@ -1226,10 +1249,10 @@ jack_assistant::set_position (midipulse tick)
     pos.valid = (jack_position_bits_t)(pos.valid | JackBBTFrameOffset);
     pos.bbt_offset = 0;
 
-    int jackcode = jack_transport_reposition(m_jack_client, &pos);
+    int jackcode = ::jack_transport_reposition(m_jack_client, &pos);
     if (jackcode != 0)
     {
-        errprint("jack_assistant::set_position(): bad position structure");
+        errprint("JACK set position bad position structure");
     }
 }
 
@@ -1273,8 +1296,8 @@ int
 jack_assistant::sync (jack_transport_state_t state)
 {
     int result = 0;                     /* seq66 always returns 1   */
-    m_frame_current = jack_get_current_transport_frame(m_jack_client);
-    (void) jack_transport_query(m_jack_client, &m_jack_pos);
+    m_frame_current = ::jack_get_current_transport_frame(m_jack_client);
+    (void) ::jack_transport_query(m_jack_client, &m_jack_pos);
 
     jack_nframes_t rate = m_jack_pos.frame_rate;
     if (rate == 0)
@@ -1449,7 +1472,7 @@ jack_assistant::session_event (jack_session_event_t * ev)
      *      rc().midi_filepath(filepath);
      */
 
-    if (jack_session_reply(m_jack_client, ev) != 0)
+    if (::jack_session_reply(m_jack_client, ev) != 0)
     {
         errprint("JACK session reply failed");
     }
@@ -1474,7 +1497,7 @@ jack_assistant::session_event (jack_session_event_t * ev)
         file_message("Session command", cmd);
         file_message("Session path", filepath);
     }
-    jack_session_event_free(ev);
+    ::jack_session_event_free(ev);
     if (quit)
         parent().signal_quit();                     /* session_close()      */
     else
@@ -1562,7 +1585,7 @@ jack_assistant::output (jack_scratchpad & pad)
     if (m_jack_running)
     {
         pad.js_init_clock = false;              /* no init until a good lock */
-        m_transport_state = jack_transport_query(m_jack_client, &m_jack_pos);
+        m_transport_state = ::jack_transport_query(m_jack_client, &m_jack_pos);
 
         /* See Issue #48 above */
 
@@ -1573,7 +1596,7 @@ jack_assistant::output (jack_scratchpad & pad)
         if (transport_rolling_now())
         {
             midipulse midi_ticks;
-            m_frame_current = jack_get_current_transport_frame(m_jack_client);
+            m_frame_current = ::jack_get_current_transport_frame(m_jack_client);
             m_frame_last = m_frame_current;
             pad.js_dumping = true;              /* "[Start JACK Playback]"  */
 
@@ -1619,7 +1642,7 @@ jack_assistant::output (jack_scratchpad & pad)
 
         if (pad.js_dumping)
         {
-            m_frame_current = jack_get_current_transport_frame(m_jack_client);
+            m_frame_current = ::jack_get_current_transport_frame(m_jack_client);
             if (m_frame_current > m_frame_last)         /* moving ahead?    */
             {
                 /*
@@ -1632,7 +1655,7 @@ jack_assistant::output (jack_scratchpad & pad)
                     m_jack_tick += jack_ticks_delta(diff, m_jack_pos);
                 }
                 else
-                    info_message("jack_assistant::output() 2: zero frame rate");
+                    info_message("JACK output 2 zero frame rate");
 
                 m_frame_last = m_frame_current;
             }
@@ -1858,7 +1881,7 @@ jack_assistant::current_jack_position () const
         double ppqn = double(get_ppqn());
         double Bpbar = beats_per_measure();
         double Bw = beat_width();
-        jack_nframes_t frame = jack_get_current_transport_frame(client());
+        jack_nframes_t frame = ::jack_get_current_transport_frame(client());
         double tick2 = frame * Bpbar * ppqn / (15.0 * jack_frame_rate() * Bw);
 
         /*

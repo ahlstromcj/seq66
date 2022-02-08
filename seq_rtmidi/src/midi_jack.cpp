@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-06
+ * \updates       2022-02-08
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -166,15 +166,15 @@
 
 #if defined SEQ66_JACK_SUPPORT
 
-#if defined SEQ66_JACK_METADATA
-#include <jack/metadata.h>
-#endif
-
 #include <cstring>                      /* std::strcpy(), std::strcat()     */
 #include <sstream>
 
 #include <jack/midiport.h>
 #include <jack/ringbuffer.h>
+
+#if defined SEQ66_JACK_METADATA_TEST
+#include <jack/metadata.h>
+#endif
 
 #include "cfg/settings.hpp"             /* seq66::rc() accessor function    */
 #include "midi/event.hpp"               /* seq66::event from main library   */
@@ -252,14 +252,14 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
     bool enabled = rtindata->is_enabled();
     if (enabled)
     {
-        void * buff = jack_port_get_buffer(jackdata->m_jack_port, nframes);
+        void * buff = ::jack_port_get_buffer(jackdata->m_jack_port, nframes);
         jack_midi_event_t jmevent;
         jack_time_t jtime;
-        int evcount = jack_midi_get_event_count(buff);
+        int evcount = ::jack_midi_get_event_count(buff);
         bool overflow = false;
         for (int j = 0; j < evcount; ++j)
         {
-            int rc = jack_midi_event_get(&jmevent, buff, j);
+            int rc = ::jack_midi_event_get(&jmevent, buff, j);
             if (rc == 0)
             {
                 midi_message message;
@@ -268,7 +268,7 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
                     message.push(jmevent.buffer[i]);
 
                 jack_time_t delta_jtime;
-                jtime = jack_get_time();            /* compute delta time   */
+                jtime = ::jack_get_time();          /* compute delta time   */
                 if (rtindata->first_message())
                 {
                     rtindata->first_message(false);
@@ -367,8 +367,8 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
 {
     static size_t s_offset = 0;
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
-    void * buf = jack_port_get_buffer(jackdata->m_jack_port, nframes);
-    jack_midi_clear_buffer(buf);                    /* no nullptr test      */
+    void * buf = ::jack_port_get_buffer(jackdata->m_jack_port, nframes);
+    ::jack_midi_clear_buffer(buf);                  /* no nullptr test      */
 
     /*
      * A for-loop over the number of nframes?  See discussion above.
@@ -379,7 +379,7 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
     while (jack_ringbuffer_read_space(jackdata->m_jack_buffsize) > 0)
     {
         int space;
-        (void) jack_ringbuffer_read
+        (void) ::jack_ringbuffer_read
         (
             jackdata->m_jack_buffsize, (char *) &space, sizeof space
         );
@@ -390,11 +390,11 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
          * operation?
          */
 
-        jack_midi_data_t * md = jack_midi_event_reserve(buf, s_offset, space);
+        jack_midi_data_t * md = ::jack_midi_event_reserve(buf, s_offset, space);
         if (not_nullptr(md))
         {
             char * mididata = reinterpret_cast<char *>(md);
-            (void) jack_ringbuffer_read         /* copy into mididata */
+            (void) ::jack_ringbuffer_read           /* copy into mididata   */
             (
                 jackdata->m_jack_buffmessage, mididata, size_t(space)
             );
@@ -452,7 +452,7 @@ jack_port_connect_callback
     midi_jack_info * jack = (midi_jack_info *)(arg);
     if (not_nullptr(jack))
     {
-        if (rc().verbose())
+        if (rc().investigate())
         {
             char value[c_async_safe_utoa_size];
             char temp[2 * c_async_safe_utoa_size + 48];
@@ -474,10 +474,9 @@ jack_port_connect_callback
 
 /**
  *  Provides a callback for registering a port, so that we can detect when a
- *  port appears or disappears.  We need to think about the process to see how
- *  we can leverage it.  One thing we can do is call:
- *
- *      jack_port_t * jpt = jack_port_by_id(jack_client_t, jack_port_id_t)
+ *  port appears or disappears in the system.  We use jack_port_by_id() to
+ *  get the port, then jack_port_is_mine() so that we can avoid processing our
+ *  own port.
  *
  *  The original port handle is set via the port_handle() setter called in the
  *  member function register_port(). If this port_handle can be found in the
@@ -486,10 +485,17 @@ jack_port_connect_callback
  *
  *  Also see the api_get_port_name() function and the midi_jack_data class.
  *
+ * Desired activity steps:
+ *
+ *      -#  Startup.
+ *          -#  As done now, gather the input and output ports into these
+ *              containers (midi_port_info).
+ *          -#  Also make copies of these containers.
+ *
  * \param port
  *      The ID of the port.
  *
- * \param ev_value
+ * \param regv
  *      The registration value. It is non-zero if the port is being registered,
  *      and zero if the port is being unregistered.
  *
@@ -498,7 +504,7 @@ jack_port_connect_callback
  */
 
 void
-jack_port_register_callback (jack_port_id_t portid, int ev_value, void * arg)
+jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
 {
     midi_jack_info * jack = (midi_jack_info *)(arg);
     if (not_nullptr(jack))
@@ -508,32 +514,33 @@ jack_port_register_callback (jack_port_id_t portid, int ev_value, void * arg)
         if (not_nullptr(handle))
         {
             bool mine = false;
-            portptr = jack_port_by_id(handle, portid);
+            portptr = ::jack_port_by_id(handle, portid);
             if (not_nullptr(portptr))
-                mine = jack_port_is_mine(handle, portptr) != 0;
+                mine = ::jack_port_is_mine(handle, portptr) != 0;
+            else
+                return;                 /* fatal error, bug out */
 
-            if (rc().verbose())
+            if (rc().investigate())
             {
+                const char * porttype = ::jack_port_type(portptr);
                 char value[c_async_safe_utoa_size];
-                char temp[c_async_safe_utoa_size + 48];
+                char temp[128];
                 async_safe_utoa(unsigned(portid), &value[0], false);
                 std::strcpy(temp, "Port-");
-                std::strcat
-                (
-                    temp, ev_value != 0 ? "register: " : "unregister: "
-                );
+                std::strcat(temp, regv != 0 ? "register:" : "unregister:");
+                std::strcat(temp, " ");
                 std::strcat(temp, value);
+                std::strcat(temp, " '");
+                std::strcat(temp, ::jack_port_name(portptr));
+                std::strcat(temp, "': ");
                 if (is_nullptr(arg))
-                    std::strcat(temp, " nullptr!");
+                    std::strcat(temp, "nullptr! ");
+
+                std::strcat(temp, porttype);
+                if (mine)
+                    std::strcat(temp, ", Seq66 port");
 
                 async_safe_strprint(temp);
-                if (not_nullptr(portptr))
-                {
-                    const char * porttype = jack_port_type(portptr);
-                    async_safe_strprint(porttype);
-                    if (mine)
-                        async_safe_strprint("Seq66 port");
-                }
             }
             if (! mine)
             {
@@ -581,10 +588,10 @@ midi_jack::midi_jack (midibus & parentbus, midi_info & masterinfo) :
 midi_jack::~midi_jack ()
 {
     if (not_nullptr(m_jack_data.m_jack_buffsize))
-        jack_ringbuffer_free(m_jack_data.m_jack_buffsize);
+        ::jack_ringbuffer_free(m_jack_data.m_jack_buffsize);
 
     if (not_nullptr(m_jack_data.m_jack_buffmessage))
-        jack_ringbuffer_free(m_jack_data.m_jack_buffmessage);
+        ::jack_ringbuffer_free(m_jack_data.m_jack_buffmessage);
 }
 
 void
@@ -752,7 +759,7 @@ midi_jack::set_virtual_name (int portid, const std::string & portname)
     bool result = not_nullptr(client_handle());
     if (result)
     {
-        char * cname = jack_get_client_name(client_handle());
+        char * cname = ::jack_get_client_name(client_handle());
         result = not_nullptr(cname);
         if (result)
         {
@@ -952,11 +959,11 @@ midi_jack::send_message (const midi_message & message)
 #if defined SEQ66_PLATFORM_DEBUG_TMI
         message.show();
 #endif
-        int count1 = jack_ringbuffer_write
+        int count1 = ::jack_ringbuffer_write
         (
             m_jack_data.m_jack_buffmessage, message.array(), message.count()
         );
-        int count2 = jack_ringbuffer_write
+        int count2 = ::jack_ringbuffer_write
         (
             m_jack_data.m_jack_buffsize, (char *) &nbytes, sizeof nbytes
         );
@@ -1023,11 +1030,11 @@ midi_jack::api_continue_from (midipulse tick, midipulse /*beats*/)
     midibpm beats_per_minute = bpm();
     uint64_t tick_rate =
     (
-        uint64_t(jack_get_sample_rate(client_handle())) * tick * 60.0
+        uint64_t(::jack_get_sample_rate(client_handle())) * tick * 60.0
     );
     long tpb_bpm = long(ticks_per_beat * beats_per_minute * 4.0 / beat_width);
     uint64_t jack_frame = tick_rate / tpb_bpm;
-    if (jack_transport_locate(client_handle(), jack_frame) != 0)
+    if (::jack_transport_locate(client_handle(), jack_frame) != 0)
         (void) info_message("jack api_continue_from() failed");
 
     /*
@@ -1050,7 +1057,7 @@ midi_jack::api_continue_from (midipulse tick, midipulse /*beats*/)
 void
 midi_jack::api_start ()
 {
-    jack_transport_start(client_handle());
+    ::jack_transport_start(client_handle());
     send_byte(EVENT_MIDI_START);
 }
 
@@ -1063,7 +1070,7 @@ midi_jack::api_start ()
 void
 midi_jack::api_stop ()
 {
-    jack_transport_stop(client_handle());
+    ::jack_transport_stop(client_handle());
     send_byte(EVENT_MIDI_STOP);
 }
 
@@ -1178,7 +1185,7 @@ midi_jack::close_client ()
 {
     if (not_nullptr(client_handle()))
     {
-        int rc = jack_client_close(client_handle());
+        int rc = ::jack_client_close(client_handle());
         client_handle(nullptr);
         if (rc != 0)
         {
@@ -1242,7 +1249,7 @@ midi_jack::connect_port
         result = ! srcportname.empty() && ! destportname.empty();
         if (result)
         {
-            int rc = jack_connect
+            int rc = ::jack_connect
             (
                 client_handle(), srcportname.c_str(), destportname.c_str()
             );
@@ -1322,7 +1329,7 @@ midi_jack::register_port (midibase::io iotype, const std::string & portname)
             JackPortIsInput : JackPortIsOutput ;
 
         unsigned long buffsize = 0;
-        jack_port_t * p = jack_port_register
+        jack_port_t * p = ::jack_port_register
         (
             client_handle(), portname.c_str(), JACK_DEFAULT_MIDI_TYPE,
             flag, buffsize
@@ -1332,17 +1339,22 @@ midi_jack::register_port (midibase::io iotype, const std::string & portname)
             port_handle(p);
             result = true;
 
-#if defined SEQ66_JACK_METADATA
-            (void) set_jack_port_property   // EXPERIMENTAL:  Does not work
+#if defined SEQ66_JACK_METADATA_TEST
+#if defined USE_METADATA_TEST_1
+            (void) set_jack_port_property                   /* it works! */
             (
                 client_handle(), p, JACK_METADATA_PRETTY_NAME, "Pretty Name"
             );
+#else
+            (void) set_jack_port_property                   /* no good! */
+            (
+                client_handle(), portname, JACK_METADATA_PRETTY_NAME,
+                "Pretty Name"
+            );
+#endif
 #endif
 
-            if (rc().verbose())
-            {
-                infoprintf("JACK port registered: '%s'", portname.c_str());
-            }
+            debug_message("JACK port registered", portname);
         }
         else
         {
@@ -1367,7 +1379,7 @@ midi_jack::close_port ()
 {
     if (not_nullptr(client_handle()) && not_nullptr(port_handle()))
     {
-        jack_port_unregister(client_handle(), port_handle());
+        ::jack_port_unregister(client_handle(), port_handle());
         port_handle(nullptr);
     }
 }
@@ -1382,11 +1394,11 @@ midi_jack::create_ringbuffer (size_t rbsize)
     bool result = rbsize > 0;
     if (result)
     {
-        jack_ringbuffer_t * rb = jack_ringbuffer_create(rbsize);
+        jack_ringbuffer_t * rb = ::jack_ringbuffer_create(rbsize);
         if (not_nullptr(rb))
         {
             m_jack_data.m_jack_buffsize = rb;
-            rb = jack_ringbuffer_create(rbsize);
+            rb = ::jack_ringbuffer_create(rbsize);
             if (not_nullptr(rb))
                 m_jack_data.m_jack_buffmessage = rb;
             else
@@ -1505,22 +1517,18 @@ midi_in_jack::api_get_midi_event (event * inev)
             if (st >= EVENT_MIDI_REALTIME && rc().verbose())
             {
                 static int s_count = 0;
-                char c = '.';
-                if (st == EVENT_MIDI_CLOCK)
-                    c = 'C';
-                else if (st == EVENT_MIDI_ACTIVE_SENSE)
-                    c = 'S';
-                else if (st == EVENT_MIDI_RESET)
-                    c = 'R';
-                else if (st == EVENT_MIDI_START)
-                    c = '>';
-                else if (st == EVENT_MIDI_CONTINUE)
-                    c = '|';
-                else if (st == EVENT_MIDI_STOP)
-                    c = '<';
-                else if (st == EVENT_MIDI_SYSEX)
-                    c = 'X';
-
+                char c;
+                switch (st)
+                {
+                case EVENT_MIDI_CLOCK:          c = 'C';    break;
+                case EVENT_MIDI_ACTIVE_SENSE:   c = 'S';    break;
+                case EVENT_MIDI_RESET:          c = 'R';    break;
+                case EVENT_MIDI_START:          c = '>';    break;
+                case EVENT_MIDI_CONTINUE:       c = '|';    break;
+                case EVENT_MIDI_STOP:           c = '<';    break;
+                case EVENT_MIDI_SYSEX:          c = 'X';    break;
+                default:                        c = '.';    break;
+                }
                 (void) putchar(c);
                 if (++s_count == 80)
                 {

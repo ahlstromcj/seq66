@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2022-02-06
+ * \updates       2022-02-08
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of
@@ -115,34 +115,47 @@ not_nullptr_assert (void * ptr, const std::string & context)
  * \param msg
  *      The message to print, sans the newline.
  *
+ * \param data
+ *      Additional information about the message. Optional.
+ *
  * \return
  *      Returns true, so that the caller can show the message and return the
  *      status at the same time.
  */
 
 bool
-info_message (const std::string & msg)
+info_message (const std::string & msg, const std::string & data)
 {
     if (rc().verbose())
     {
         std::cout << seq_client_tag(msglevel::info) << " " << msg;
-        if (! msg.empty())
-            std::cout << std::endl;
+        if (! data.empty())
+            std::cout << ": " << data;
+
+        std::cout << std::endl;
     }
     return true;
 }
 
 bool
-status_message (const std::string & msg)
+status_message (const std::string & msg, const std::string & data)
 {
-    std::cout << seq_client_tag(msglevel::status) << " " << msg << std::endl;
+    std::cout << seq_client_tag(msglevel::status) << " " << msg;
+    if (! data.empty())
+        std::cout << ": " << data;
+
+    std::cout << std::endl;
     return true;
 }
 
 bool
-session_message (const std::string & msg)
+session_message (const std::string & msg, const std::string & data)
 {
-    std::cout << seq_client_tag(msglevel::session) << " " << msg << std::endl;
+    std::cout << seq_client_tag(msglevel::session) << " " << msg;
+    if (! data.empty())
+        std::cout << ": " << data;
+
+    std::cout << std::endl;
     return true;
 }
 
@@ -152,15 +165,22 @@ session_message (const std::string & msg)
  * \param msg
  *      The message to print, sans the newline.
  *
+ * \param data
+ *      Additional information about the message. Optional.
+ *
  * \return
  *      Returns true, so that the caller can show the message and return the
  *      status at the same time.
  */
 
 bool
-warn_message (const std::string & msg)
+warn_message (const std::string & msg, const std::string & data)
 {
-    std::cerr << seq_client_tag(msglevel::warn) << " " << msg << std::endl;
+    std::cerr << seq_client_tag(msglevel::warn) << " " << msg;
+    if (! data.empty())
+        std::cerr << ": " << data;
+
+    std::cerr << std::endl;
     return true;
 }
 
@@ -169,6 +189,9 @@ warn_message (const std::string & msg)
  *
  * \param msg
  *      The message to print, sans the newline.
+ *
+ * \param data
+ *      Additional information about the message. Optional.
  *
  * \return
  *      Returns false for convenience/brevity in setting function return
@@ -186,6 +209,19 @@ error_message (const std::string & msg, const std::string & data)
     return false;
 }
 
+/**
+ *  Common-code for debug messages.  Adds markers, and returns false.
+ *
+ * \param msg
+ *      The message to print, sans the newline.
+ *
+ * \param data
+ *      Additional information about the error. Optional.
+ *
+ * \return
+ *      Returns true.  Rarely used, if at all.
+ */
+
 bool
 debug_message (const std::string & msg, const std::string & data)
 {
@@ -197,7 +233,7 @@ debug_message (const std::string & msg, const std::string & data)
 
         std::cerr << std::endl;
     }
-    return false;
+    return true;
 }
 
 /**

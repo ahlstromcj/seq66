@@ -138,7 +138,7 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
         m_midi_master.clear();
         for (int bus = 0; bus < num_buses; ++bus)       /* output busses    */
         {
-            midibus * m = make_virtual_bus(bus, midibase::io::output);
+           midibus * m = make_virtual_bus(bus, midibase::io::output);
             if (not_nullptr(m))
                 m_midi_master.add_output(m);            /* must come 2nd    */
         }
