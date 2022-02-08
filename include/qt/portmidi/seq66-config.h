@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2022-01-23
+ * \updates       2022-02-08
  * \license       GNU GPLv2 or above
  *
  *  Qt Portmidi Linux and Windows versions, hardwired for use with
@@ -293,8 +293,10 @@
  * won't work.
  */
 
-#undef SEQ66_JACK_SESSION
 #undef SEQ66_JACK_SUPPORT
+#undef SEQ66_JACK_SESSION
+#undef SEQ66_JACK_GET_VERSION_STRING
+#undef SEQ66_JACK_METADATA
 #undef SEQ66_NSM_SUPPORT
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */

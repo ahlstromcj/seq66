@@ -132,7 +132,8 @@ info_message (const std::string & msg, const std::string & data)
         if (! data.empty())
             std::cout << ": " << data;
 
-        std::cout << std::endl;
+        if (! msg.empty())
+            std::cout << std::endl;
     }
     return true;
 }
@@ -144,7 +145,9 @@ status_message (const std::string & msg, const std::string & data)
     if (! data.empty())
         std::cout << ": " << data;
 
-    std::cout << std::endl;
+    if (! msg.empty())
+        std::cout << std::endl;
+
     return true;
 }
 
@@ -155,7 +158,9 @@ session_message (const std::string & msg, const std::string & data)
     if (! data.empty())
         std::cout << ": " << data;
 
-    std::cout << std::endl;
+    if (! msg.empty())
+        std::cout << std::endl;
+
     return true;
 }
 
@@ -180,7 +185,9 @@ warn_message (const std::string & msg, const std::string & data)
     if (! data.empty())
         std::cerr << ": " << data;
 
-    std::cerr << std::endl;
+    if (! msg.empty())
+        std::cerr << std::endl;
+
     return true;
 }
 
@@ -205,7 +212,9 @@ error_message (const std::string & msg, const std::string & data)
     if (! data.empty())
         std::cerr << ": " << data;
 
-    std::cerr << std::endl;
+    if (! msg.empty())
+        std::cerr << std::endl;
+
     return false;
 }
 
@@ -231,7 +240,8 @@ debug_message (const std::string & msg, const std::string & data)
         if (! data.empty())
             std::cerr << ": " << data;
 
-        std::cerr << std::endl;
+        if (! msg.empty())
+            std::cerr << std::endl;
     }
     return true;
 }

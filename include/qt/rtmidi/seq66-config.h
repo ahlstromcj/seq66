@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-31
- * \updates       2022-01-26
+ * \updates       2022-02-08
  * \license       GNU GPLv2 or above
  *
  *  Qt Rtmidi Linux and Windows versions, hardwired for use with
@@ -304,10 +304,8 @@
 #define SEQ66_JACK_GET_VERSION_STRING 1
 #endif
 
-/* Define to enable JACK metadata -- disabled for now due to issues */
-/*
- *
- */
+/* Define to enable JACK metadata */
+
 #if ! defined SEQ66_JACK_METADATA
 #define SEQ66_JACK_METADATA 1
 #endif
