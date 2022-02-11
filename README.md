@@ -85,6 +85,8 @@ Windows, and using a conventional source tarball.
         *   Fixed bug in recording-type selector in seqedit. Added a one-shot
             reset option.
         *   Fixed some metadata problems as per issue #75.
+        *   Fixed an issue with the H:M:S display being changed by changing the
+            beat-width, a bug going back to Seq24's JACK transport support.
         *   MIDI API refactoring for the future; detecting JACK port
             registration.
     *   Version 0.98.3.1:

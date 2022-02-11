@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2022-02-07
+ * \updates       2022-02-11
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -479,7 +479,12 @@ public:
         return m_jack_tick;
     }
 
-    const jack_position_t & get_jack_pos () const
+    const jack_position_t & jack_pos () const
+    {
+        return m_jack_pos;
+    }
+
+    jack_position_t & jack_pos ()
     {
         return m_jack_pos;
     }
@@ -567,15 +572,23 @@ private:
      *  Convenience function for internal use.  Should we change 4.0 to a
      *  member value?  What does it mean?
      *
+     *  The old tick_multiplier() matches what seq24 does, but it
+     *  makes the tick delta dependent on "beatwidth / 4". It is was a bug,
+     *  Dave.
+     *
      * \return
      *      Returns the multiplier to convert a JACK tick value according to
-     *      the PPQN, ticks/beat, and beat-type settings.
+     *      the PPQN, ticks/beat, but not the beat-type.
      */
 
     double tick_multiplier () const
     {
-        double denom = (m_jack_pos.ticks_per_beat * m_jack_pos.beat_type / 4.0);
+#if defined USE_BAD_TICK_MULTIPLIER
+        double denom = (jack_pos().ticks_per_beat * jack_pos().beat_type / 4.0);
         return double(m_ppqn) / denom;
+#else
+        return double(m_ppqn) / jack_pos().ticks_per_beat;
+#endif
     }
 
     jack_client_t * client_open (const std::string & clientname);

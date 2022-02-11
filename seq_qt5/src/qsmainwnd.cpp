@@ -1442,6 +1442,17 @@ qsmainwnd::toggle_time_format (bool /*on*/)
     m_tick_time_as_bbt = ! m_tick_time_as_bbt;
     QString label = m_tick_time_as_bbt ? "B:B:T" : "H:M:S" ;
     ui->btn_set_HMS->setText(label);
+    update_time(perf().get_tick());
+}
+
+void
+qsmainwnd::update_time (midipulse tick)
+{
+    std::string t = m_tick_time_as_bbt ?
+        perf().pulses_to_measure_string(tick) :
+        perf().pulses_to_time_string(tick) ;
+
+    ui->label_HMS->setText(qt(t));
 }
 
 void
@@ -1542,11 +1553,7 @@ qsmainwnd::conditional_update ()
         m_previous_tick = tick;
         if (not_nullptr(m_beat_ind))
         {
-            std::string t = m_tick_time_as_bbt ?
-                perf().pulses_to_measure_string(tick) :
-                perf().pulses_to_time_string(tick) ;
-
-            ui->label_HMS->setText(qt(t));
+            update_time(tick);
             m_beat_ind->update();
         }
     }

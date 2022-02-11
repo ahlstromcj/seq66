@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2022-02-08
+ * \updates       2022-02-11
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -108,6 +108,8 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "cfg/settings.hpp"             /* "rc" and "user" settings         */
 
+#define SEQ66_USE_BPMINUTE_CALCULATION  /* portfix branch 2022-02-11        */
+
 #if defined SEQ66_JACK_SESSION          /* deprecated, use Non Session Mgr. */
 
 #if defined SEQ66_JACK_METADATA
@@ -186,7 +188,7 @@ jack_debug_print
     static long s_output_counter = 0;
     if ((s_output_counter++ % 100) == 0)
     {
-        const jack_position_t & p = jack.get_jack_pos();
+        const jack_position_t & p = jack.jack_pos();
         double jtick = jack.get_jack_tick();
 
         /*
@@ -1094,9 +1096,9 @@ jack_assistant::set_beats_per_minute (midibpm bpminute)
         m_beats_per_minute = bpminute;
         if (not_nullptr(m_jack_client))
         {
-            (void) ::jack_transport_query(m_jack_client, &m_jack_pos);
-            m_jack_pos.beats_per_minute = bpminute;
-            int rc = ::jack_transport_reposition(m_jack_client, &m_jack_pos);
+            (void) ::jack_transport_query(m_jack_client, &jack_pos());
+            jack_pos().beats_per_minute = bpminute;
+            int rc = ::jack_transport_reposition(m_jack_client, &jack_pos());
             if (rc != 0)
             {
                 errprint("JACK transport bad position structure");
@@ -1297,9 +1299,9 @@ jack_assistant::sync (jack_transport_state_t state)
 {
     int result = 0;                     /* seq66 always returns 1   */
     m_frame_current = ::jack_get_current_transport_frame(m_jack_client);
-    (void) ::jack_transport_query(m_jack_client, &m_jack_pos);
+    (void) ::jack_transport_query(m_jack_client, &jack_pos());
 
-    jack_nframes_t rate = m_jack_pos.frame_rate;
+    jack_nframes_t rate = jack_pos().frame_rate;
     if (rate == 0)
     {
         /*
@@ -1313,8 +1315,16 @@ jack_assistant::sync (jack_transport_state_t state)
     else
         result = 1;
 
-    m_jack_tick = m_frame_current * m_jack_pos.ticks_per_beat *
-        m_jack_pos.beats_per_minute / (rate * 60.0) ;
+    double ppqn = jack_pos().ticks_per_beat;
+
+#if defined SEQ66_USE_BPMINUTE_CALCULATION      // portfix branch 2022-02-11
+    double bpminute = jack_pos().beats_per_minute;
+    m_jack_tick = m_frame_current * ppqn * bpminute / (rate * 60.0);
+#else
+    double bpbar = beats_per_measure();         // vice beats-per-minute
+    double bw = beat_width();
+    m_jack_tick = m_frame_current * bpbar * ppqn / (15.0 * rate * bw);
+#endif
 
     m_frame_last = m_frame_current;
     m_transport_state_last = m_transport_state = state;
@@ -1368,6 +1378,11 @@ jack_sync_callback
     jack_assistant * jack = static_cast<jack_assistant *>(arg);
     if (not_nullptr(jack))
     {
+        /*
+         * See the following function's modification in portfix branch
+         * on 2022-02-11.
+         */
+
         result = jack->sync(state);         /* use the new member function  */
     }
     else
@@ -1585,14 +1600,14 @@ jack_assistant::output (jack_scratchpad & pad)
     if (m_jack_running)
     {
         pad.js_init_clock = false;              /* no init until a good lock */
-        m_transport_state = ::jack_transport_query(m_jack_client, &m_jack_pos);
+        m_transport_state = ::jack_transport_query(m_jack_client, &jack_pos());
 
         /* See Issue #48 above */
 
-        m_jack_pos.beats_per_bar = m_beats_per_measure;
-        m_jack_pos.beat_type = m_beat_width;
-        m_jack_pos.ticks_per_beat = m_ppqn * c_jack_factor;
-        m_jack_pos.beats_per_minute = parent().get_beats_per_minute();
+        jack_pos().beats_per_bar = m_beats_per_measure;
+        jack_pos().beat_type = m_beat_width;
+        jack_pos().ticks_per_beat = m_ppqn * c_jack_factor;
+        jack_pos().beats_per_minute = parent().get_beats_per_minute();
         if (transport_rolling_now())
         {
             midipulse midi_ticks;
@@ -1605,7 +1620,7 @@ jack_assistant::output (jack_scratchpad & pad)
              * making these calculations.
              */
 
-            m_jack_tick = jack_ticks(m_jack_pos);
+            m_jack_tick = jack_ticks(jack_pos());
             midi_ticks = midipulse(m_jack_tick * tick_multiplier() + 0.5);
             parent().set_last_ticks(midi_ticks);
             pad.set_current_tick_ex(midi_ticks);
@@ -1649,16 +1664,17 @@ jack_assistant::output (jack_scratchpad & pad)
                  * Seq32 uses tempo map if in song mode here, instead.
                  */
 
-                if (m_jack_pos.frame_rate > 0)          /* usually 48000    */
+                if (jack_pos().frame_rate > 0)          /* usually 48000    */
                 {
                     int diff = int(m_frame_current - m_frame_last);
-                    m_jack_tick += jack_ticks_delta(diff, m_jack_pos);
+                    m_jack_tick += jack_ticks_delta(diff, jack_pos());
                 }
                 else
                     info_message("JACK output 2 zero frame rate");
 
                 m_frame_last = m_frame_current;
             }
+
 
             double midi_ticks = m_jack_tick * tick_multiplier();
             double delta = midi_ticks - pad.js_ticks_converted_last;
@@ -1709,12 +1725,12 @@ jack_assistant::update_timebase_master (jack_transport_state_t s)
                 m_timebase = timebase::slave;
         }
     }
-    if (m_timebase_tracking == 0 && ! (m_jack_pos.valid & JackPositionBBT))
+    if (m_timebase_tracking == 0 && ! (jack_pos().valid & JackPositionBBT))
     {
         m_timebase_tracking = -1;
         m_timebase = timebase::none;            /* i.e. a regular client    */
     }
-    else if (m_timebase_tracking < 0 && (m_jack_pos.valid & JackPositionBBT))
+    else if (m_timebase_tracking < 0 && (jack_pos().valid & JackPositionBBT))
     {
         m_timebase_tracking = 0;
         m_timebase = timebase::slave;           /* external master exists   */
@@ -1878,20 +1894,26 @@ jack_assistant::current_jack_position () const
 {
     if (not_nullptr(client()))
     {
+        uint32_t rate = jack_frame_rate();
         double ppqn = double(get_ppqn());
-        double Bpbar = beats_per_measure();
-        double Bw = beat_width();
         jack_nframes_t frame = ::jack_get_current_transport_frame(client());
-        double tick2 = frame * Bpbar * ppqn / (15.0 * jack_frame_rate() * Bw);
+#if defined SEQ66_USE_BPMINUTE_CALCULATION      // portfix branch 2022-02-11
+        double bpminute = get_beats_per_minute();
+        double tick2 = frame * ppqn * bpminute / (rate * 60.0);
+#else
+        double bpbar = beats_per_measure();
+        double bw = beat_width();
+        double tick2 = frame * bpbar * ppqn / (15.0 * rate * bw);
+#endif
 
         /*
-         * double Tpb = ppqn * c_jack_factor;          // ticks/beat
-         * double tick = frame * Tpb * Bpbar / (jack_frame_rate() * 60.0);
-         * tick *= (ppqn / (Tpb * Bw / 4.0));
+         * double tpb = ppqn * c_jack_factor;          // ticks/beat
+         * double tick = frame * tpb * bpbar / (jack_frame_rate() * 60.0);
+         * tick *= (ppqn / (tpb * bw / 4.0));
          * printf("tick = %f; tick2 = %f\n", tick, tick2);
          */
 
-        return tick2;
+        return long(tick2);
     }
     else
     {

@@ -480,6 +480,7 @@ private slots:
 private:
 
     void remove_set_master ();
+    void update_time (midipulse tick);
 
     qt5nsmanager * session ()
     {

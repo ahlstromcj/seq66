@@ -3488,7 +3488,7 @@ performer::poll_cycle ()
             {
                 if (ev.below_sysex())                       /* below 0xF0   */
                 {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                     std::string estr = ev.to_string();
                     status_message("MIDI event", estr);
 #endif
