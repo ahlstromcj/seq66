@@ -440,6 +440,13 @@ private:
     sequence::editmode m_edit_mode;
 
     /**
+     *  Indicates the last-selected recording mode, for use with safely using
+     *  the one-shot reset option.
+     */
+
+    recordstyle m_last_record_style;
+
+    /**
      *  Update timer for pass-along to the roll, event, and data classes.
      */
 

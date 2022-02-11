@@ -257,7 +257,7 @@ AC_ARG_ENABLE(jack-session,
 dnl JACK metadata, seems to work, so now enabled by default.
 
 AC_ARG_ENABLE(jack-metadata,
-    [AS_HELP_STRING(--enable-jack-metadata, [Enable JACK metadata support])],
+    [AS_HELP_STRING(--disable-jack-metadata, [Disable JACK metadata support])],
     [jack_metadata=$enableval],
     [jack_metadata=yes])
 
@@ -304,7 +304,7 @@ dnl LASH support has been deleted, this time for good.  We will support only
 dnl JACK Session and NSM.  Enable NSM support.  Now ready for prime time!
 
 AC_ARG_ENABLE(nsm,
-  AS_HELP_STRING([--disable-nsm], [Enable NSM support]),
+  AS_HELP_STRING([--disable-nsm], [Disable NSM support]),
   [ac_nsm=$enableval],
   [ac_nsm=yes])
 

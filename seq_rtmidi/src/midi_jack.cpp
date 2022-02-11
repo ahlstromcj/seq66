@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-08
+ * \updates       2022-02-09
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -520,7 +520,7 @@ jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
             else
                 return;                 /* fatal error, bug out */
 
-            if (rc().investigate())
+            if (rc().investigate() && ! mine)       /* otherwise it is TMI  */
             {
                 const char * porttype = ::jack_port_type(portptr);
                 char value[c_async_safe_utoa_size];

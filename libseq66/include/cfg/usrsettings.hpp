@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-01-29
+ * \updates       2022-02-11
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -155,6 +155,7 @@ enum class recordstyle
     overwrite,          /**< Incoming events overwrite the loop.        */
     expand,             /**< Incoming events increase size of loop.     */
     oneshot,            /**< Stop when length of loop is reached.       */
+    oneshot_reset,      /**< Clear the pattern and reset last-ticks.    */
     max                 /**< Provides an illegal/length value.          */
 };
 
@@ -1646,6 +1647,14 @@ public:
     recordstyle grid_record_style () const
     {
         return m_grid_record_style;
+    }
+
+    recordstyle grid_record_style (int rs) const
+    {
+        recordstyle rscast = static_cast<recordstyle>(rs);
+        return
+            rscast >= recordstyle::merge && rscast < recordstyle::max ?
+            rscast : recordstyle::merge ;
     }
 
     int grid_record_code (recordstyle rs) const

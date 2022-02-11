@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-01-29
+ * \updates       2022-02-11
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2941,10 +2941,10 @@ sequence::stream_event (event & ev)
                 set_dirty();
             }
         }
-        ev.mod_timestamp(get_length());         /* adjust tick re length    */
+        ev.mod_timestamp(get_length());                 /* adjust tick      */
         if (recording())
         {
-            if (perf()->is_pattern_playing())   /* m_parent->is_running()   */
+            if (perf()->is_pattern_playing())
             {
                 if (ev.is_note_on() && m_rec_vol > usr().preserve_velocity())
                     ev.note_velocity(m_rec_vol);        /* modify incoming  */
@@ -2979,18 +2979,22 @@ sequence::stream_event (event & ev)
                 }
                 else if (ev.is_note_on())
                 {
-                    bool keepvelocity = m_rec_vol == usr().preserve_velocity();
-                    if (! keepvelocity)
-                        ev.note_velocity(m_rec_vol);
+                    if (m_last_tick < get_length())
+                    {
+                        if (m_rec_vol != usr().preserve_velocity())
+                            ev.note_velocity(m_rec_vol);    /* keep veloc.  */
 
-                    ev.set_timestamp(mod_last_tick());
-                    m_events_undo.push(m_events);       /* push_undo()      */
-                    if (auto_step_reset() && m_step_count == 0)
-                        m_last_tick = 0;                /* set_last_tick()  */
+                        ev.set_timestamp(mod_last_tick());
+                        if (auto_step_reset() && m_step_count == 0)
+                            m_last_tick = 0;
 
-                    bool ok = add_note(snap() - m_events.note_off_margin(), ev);
-                    if (ok)
-                        ++m_notes_on;
+                        bool ok = add_note
+                        (
+                            snap() - m_events.note_off_margin(), ev
+                        );
+                        if (ok)
+                            ++m_notes_on;
+                    }
                 }
                 else
                 {
@@ -5715,6 +5719,13 @@ sequence::update_recording (int index)
             set_overwrite_recording(false, false);
             auto_step_reset(true);
             oneshot_recording(true);
+            break;
+
+        case recordstyle::oneshot_reset:
+
+            clear_events();
+            m_last_tick = 0;
+            set_recording(true);
             break;
 
         default:

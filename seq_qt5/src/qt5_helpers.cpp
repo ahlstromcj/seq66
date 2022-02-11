@@ -34,7 +34,7 @@
  *      -   qt().  Converts an std::sring to a QString.
  *      -   qt_timer(). Encapsulates creating and starting a timer, with a
  *          callback given by a Qt slot-name.
- *      -   enable_combox_item(). Handles the appearance of a combo box.
+ *      -   enable_combobox_item(). Handles the appearance of a combo box.
  *      -   show_open_midi_file_dialog()
  *      -   show_import_midi_file_dialog()
  *      -   show_import_project_dialog()
