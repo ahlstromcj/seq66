@@ -3422,13 +3422,15 @@ performer::output_func ()
  *  input events.  Many of them are now handled by functions for easier reading
  *  and trouble-shooting (of MIDI clock).
  *
- *
  *  For events less than or equal to SysEx, we call midi_control_event() to
  *  handle the MIDI controls that Sequencer64 supports.  (These are
  *  configurable in the "rc" configuration file.) We test for MIDI control
  *  events even if "dumping".  Otherwise, we cannot handle any more control
  *  events once recording is turned on.  Warning:  This can slow down
  *  recording.
+ *
+ *  "Dumping" means that we are dumping MIDI input events into a sequence.
+ *  It means "recording".
  *
  *  We currently ignore these events on input.  MIGHT NOT BE VALID.  STILL
  *  INVESTIGATING.  EVENT_MIDI_ACTIVE_SENSE and EVENT_MIDI_RESET are filtered
@@ -3486,14 +3488,15 @@ performer::poll_cycle ()
             {
                 if (ev.below_sysex())                       /* below 0xF0   */
                 {
+#if defined SEQ66_PLATFORM_DEBUG
+                    std::string estr = ev.to_string();
+                    status_message("MIDI event", estr);
+#endif
                     if (m_master_bus->is_dumping())         /* see banner   */
                     {
                         if (midi_control_event(ev, true))   /* quick check  */
                         {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                            std::string estr = to_string(ev);
-                            infoprintf("MIDI ctrl event %s", estr);
-#endif
+                            // No code at this time
                         }
                         else
                         {

@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2022-01-30
+ * \updates       2022-02-08
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -55,6 +55,12 @@
 
 namespace seq66
 {
+
+/*
+ *  Used in async_safe_utoa().
+ */
+
+const int c_async_safe_utoa_size = 24;
 
 /*
  *  Common data types.
@@ -120,18 +126,36 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
 #define infoprintfunc() seq66::msgprintf(seq66::msglevel::info, "%s", __func__)
 #endif
 
-extern bool info_message (const std::string & msg);
-extern bool status_message (const std::string & msg);
-extern bool warn_message (const std::string & msg);
+extern bool info_message
+(
+    const std::string & msg,
+    const std::string & data = ""
+);
+extern bool status_message
+(
+    const std::string & msg,
+    const std::string & data = ""
+);
+extern bool warn_message
+(
+    const std::string & msg,
+    const std::string & data = ""
+);
 extern bool error_message
 (
-    const std::string & msg, const std::string & data = ""
+    const std::string & msg,
+    const std::string & data = ""
 );
 extern bool debug_message
 (
-    const std::string & msg, const std::string & data = ""
+    const std::string & msg,
+    const std::string & data = ""
 );
-extern bool session_message (const std::string & msg);
+extern bool session_message
+(
+    const std::string & msg,
+    const std::string & data = ""
+);
 extern void file_message (const std::string & tag, const std::string & path);
 extern bool file_error (const std::string & tag, const std::string & filename);
 extern void print_client_tag (msglevel el);
@@ -139,6 +163,12 @@ extern void boolprint (const std::string & tag, bool flag);
 extern void toggleprint (const std::string & tag, bool flag);
 extern void async_safe_strprint (const char * msg);
 extern void async_safe_errprint (const char * msg);
+extern void async_safe_utoa
+(
+    unsigned value,
+    char * destination,
+    bool spacebefore = true
+);
 extern void msgprintf (seq66::msglevel lev, std::string fmt, ...);
 extern std::string msgsnprintf (std::string fmt, ...);
 

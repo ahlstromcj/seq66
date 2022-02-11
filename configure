@@ -1541,8 +1541,8 @@ Optional Features:
   --enable-docs           Enable developer document support
   --disable-jack          Disable JACK support
   --disable-jack-session  Disable JACK session support
-  --enable-jack-metadata  Enable JACK metadata support
-  --disable-nsm           Enable NSM support
+  --disable-jack-metadata Disable JACK metadata support
+  --disable-nsm           Disable NSM support
   --disable-rtmidi        Disable rtmidi MIDI engine
   --disable-alsatest      Do not try to compile and run a test Alsa program
   --disable-qt            Disable Qt5 user-interface
@@ -4617,7 +4617,7 @@ _ACEOF
 $as_echo "#define CLIENT_NAME \"seq66\"" >>confdefs.h
 
 
-VERSION="0.98.4"
+VERSION="0.98.4-portfix"
 cat >>confdefs.h <<_ACEOF
 #define VERSION "$VERSION"
 _ACEOF
@@ -16333,7 +16333,7 @@ fi
 if test "${enable_jack_metadata+set}" = set; then :
   enableval=$enable_jack_metadata; jack_metadata=$enableval
 else
-  jack_metadata=no
+  jack_metadata=yes
 fi
 
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-06
- * \updates       2022-01-27
+ * \updates       2022-02-01
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of system MIDI information
@@ -239,7 +239,7 @@ midi_info::error (rterror::kind errtype, const std::string & errorstring)
      * throw rterror(errorstring, type);
      */
 
-    if (errtype != rterror::max)
+    if (errtype != rterror::kind::max)
         errprint(errorstring);
 }
 

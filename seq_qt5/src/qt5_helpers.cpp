@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2022-01-11
+ * \updates       2022-02-08
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -34,7 +34,7 @@
  *      -   qt().  Converts an std::sring to a QString.
  *      -   qt_timer(). Encapsulates creating and starting a timer, with a
  *          callback given by a Qt slot-name.
- *      -   enable_combox_item(). Handles the appearance of a combo box.
+ *      -   enable_combobox_item(). Handles the appearance of a combo box.
  *      -   show_open_midi_file_dialog()
  *      -   show_import_midi_file_dialog()
  *      -   show_import_project_dialog()
@@ -189,6 +189,8 @@ qt_timer
     if (not_nullptr(result))
     {
         int interval = redraw_factor * usr().window_redraw_rate();
+
+#if defined SHOW_TIMER_CREATION         /* this has been well vetted, quiet */
         if (rc().investigate())
         {
             std::string msg = "Timer '";
@@ -199,6 +201,8 @@ qt_timer
             msg += slotname;
             (void) debug_message(msg);
         }
+#endif
+
         result->setInterval(interval);
         QMetaObject::Connection c =
             QObject::connect(result, SIGNAL(timeout()), self, slotname);

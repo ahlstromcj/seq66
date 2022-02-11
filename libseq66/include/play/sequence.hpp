@@ -1600,6 +1600,11 @@ public:
     void pause (bool song_mode = false);    /* playback::live vs song   */
     void reset_draw_trigger_marker ();
 
+    void clear_events ()
+    {
+        m_events.clear();
+    }
+
     event::buffer::const_iterator cbegin () const
     {
         return m_events.cbegin();

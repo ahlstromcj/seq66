@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2022-01-30
+ * \updates       2022-02-08
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of
@@ -115,17 +115,23 @@ not_nullptr_assert (void * ptr, const std::string & context)
  * \param msg
  *      The message to print, sans the newline.
  *
+ * \param data
+ *      Additional information about the message. Optional.
+ *
  * \return
  *      Returns true, so that the caller can show the message and return the
  *      status at the same time.
  */
 
 bool
-info_message (const std::string & msg)
+info_message (const std::string & msg, const std::string & data)
 {
     if (rc().verbose())
     {
         std::cout << seq_client_tag(msglevel::info) << " " << msg;
+        if (! data.empty())
+            std::cout << ": " << data;
+
         if (! msg.empty())
             std::cout << std::endl;
     }
@@ -133,16 +139,28 @@ info_message (const std::string & msg)
 }
 
 bool
-status_message (const std::string & msg)
+status_message (const std::string & msg, const std::string & data)
 {
-    std::cout << seq_client_tag(msglevel::status) << " " << msg << std::endl;
+    std::cout << seq_client_tag(msglevel::status) << " " << msg;
+    if (! data.empty())
+        std::cout << ": " << data;
+
+    if (! msg.empty())
+        std::cout << std::endl;
+
     return true;
 }
 
 bool
-session_message (const std::string & msg)
+session_message (const std::string & msg, const std::string & data)
 {
-    std::cout << seq_client_tag(msglevel::session) << " " << msg << std::endl;
+    std::cout << seq_client_tag(msglevel::session) << " " << msg;
+    if (! data.empty())
+        std::cout << ": " << data;
+
+    if (! msg.empty())
+        std::cout << std::endl;
+
     return true;
 }
 
@@ -152,15 +170,24 @@ session_message (const std::string & msg)
  * \param msg
  *      The message to print, sans the newline.
  *
+ * \param data
+ *      Additional information about the message. Optional.
+ *
  * \return
  *      Returns true, so that the caller can show the message and return the
  *      status at the same time.
  */
 
 bool
-warn_message (const std::string & msg)
+warn_message (const std::string & msg, const std::string & data)
 {
-    std::cerr << seq_client_tag(msglevel::warn) << " " << msg << std::endl;
+    std::cerr << seq_client_tag(msglevel::warn) << " " << msg;
+    if (! data.empty())
+        std::cerr << ": " << data;
+
+    if (! msg.empty())
+        std::cerr << std::endl;
+
     return true;
 }
 
@@ -169,6 +196,9 @@ warn_message (const std::string & msg)
  *
  * \param msg
  *      The message to print, sans the newline.
+ *
+ * \param data
+ *      Additional information about the message. Optional.
  *
  * \return
  *      Returns false for convenience/brevity in setting function return
@@ -182,9 +212,24 @@ error_message (const std::string & msg, const std::string & data)
     if (! data.empty())
         std::cerr << ": " << data;
 
-    std::cerr << std::endl;
+    if (! msg.empty())
+        std::cerr << std::endl;
+
     return false;
 }
+
+/**
+ *  Common-code for debug messages.  Adds markers, and returns false.
+ *
+ * \param msg
+ *      The message to print, sans the newline.
+ *
+ * \param data
+ *      Additional information about the error. Optional.
+ *
+ * \return
+ *      Returns true.  Rarely used, if at all.
+ */
 
 bool
 debug_message (const std::string & msg, const std::string & data)
@@ -195,9 +240,10 @@ debug_message (const std::string & msg, const std::string & data)
         if (! data.empty())
             std::cerr << ": " << data;
 
-        std::cerr << std::endl;
+        if (! msg.empty())
+            std::cerr << std::endl;
     }
-    return false;
+    return true;
 }
 
 /**
@@ -355,8 +401,14 @@ write_msg (int fd, const char * msg, size_t count)
 
 /**
  *  Meant for use in signal handlers.  For the colors, hardwired here, see
- *  s_level_colors in the seq66_features.cpp modules.
+ *  s_level_colors in the seq66_features.cpp modules. The "seq66" tag is
+ *  black (no error) or red (error).  The text is blue.  The character count
+ *  is programmer supplied (see the comments).
  */
+
+static const char * s_start = "[\033[1;30mseq66\033[0m] \033[1;34m";    // 26
+static const char * s_error = "[\033[1;31mseq66\033[0m] \033[1;34m";    // 26
+static const char * s_eol   = "\033[0m\n";                              //  5
 
 void
 async_safe_strprint (const char * msg)
@@ -366,9 +418,9 @@ async_safe_strprint (const char * msg)
         size_t count = strlen(msg);
         if (count > 0)
         {
-            write_msg(STDOUT_FILENO, "\033[1;30m", 7); /* black */
+            write_msg(STDOUT_FILENO, s_start, 26);
             write_msg(STDOUT_FILENO, msg, count);
-            write_msg(STDOUT_FILENO, "\033[0m", 4);
+            write_msg(STDOUT_FILENO, s_eol, 5);
         }
     }
 }
@@ -381,11 +433,57 @@ async_safe_errprint (const char * msg)
         size_t count = strlen(msg);
         if (count > 0)
         {
-            write_msg(STDERR_FILENO, "\033[1;31m", 7); /* red */
+            write_msg(STDERR_FILENO, s_error, 26);
             write_msg(STDERR_FILENO, msg, count);
-            write_msg(STDERR_FILENO, "\033[0m", 4);
+            write_msg(STDERR_FILENO, s_eol, 5);
         }
     }
+}
+
+/**
+ *  This function assumes the programmer knows what she's doing.  The pointer
+ *  should be good and the buffer should be 24 characters.  After getting the
+ *  digits, the count is the number of digits, which is 1 at a minimum.
+ *
+ * \param value
+ *      The unsigned value to convert to an ASCII null-terminated string.
+ *
+ * \param destination
+ *      Provides a 24-byte buffer to hold the resulting string.  Assumed to be
+ *      valid and at least that large, for speed.
+ *
+ * \param spacebefore
+ *      If true (the default), then output a space first.  This helps in
+ *      printing a number of values rapidly in a row.
+ */
+
+void
+async_safe_utoa (unsigned value, char * destination, bool spacebefore)
+{
+    const unsigned ascii_base = unsigned('0');
+    char reversed[c_async_safe_utoa_size];
+    int count = 0;
+    do
+    {
+        unsigned remainder = value % 10;
+        reversed[count++] = char(remainder) + ascii_base;
+        value /= 10;
+
+    } while (value != 0);
+
+    int index = 0;
+    int limit = count;
+    if (spacebefore)
+    {
+        destination[index++] = ' ';
+        ++limit;
+    }
+    for ( ; index < limit; ++index)
+    {
+        --count;
+        destination[index] = reversed[count];
+    }
+    destination[index] = 0;             /* append the string terminator */
 }
 
 /**

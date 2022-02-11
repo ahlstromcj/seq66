@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-01-31
+ * \updates       2022-02-11
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -388,6 +388,7 @@ qseqeditframe64::qseqeditframe64
     m_first_event_name      ("(no events)"),
     m_have_focus            (false),
     m_edit_mode             (perf().edit_mode(seqid)),
+    m_last_record_style     (recordstyle::merge),
     m_timer                 (nullptr)
 {
     ui->setupUi(this);
@@ -1042,20 +1043,30 @@ qseqeditframe64::qseqeditframe64
     int lrreplace = usr().grid_record_code(recordstyle::overwrite);
     int lrexpand = usr().grid_record_code(recordstyle::expand);
     int lroneshot = usr().grid_record_code(recordstyle::oneshot);
+    int lrreset = usr().grid_record_code(recordstyle::oneshot_reset);
     ui->m_combo_rec_type->insertItem(lrmerge, "Merge");
     ui->m_combo_rec_type->insertItem(lrreplace, "Overwrite");
     ui->m_combo_rec_type->insertItem(lrexpand, "Expand");
     ui->m_combo_rec_type->insertItem(lroneshot, "One-shot");
+    ui->m_combo_rec_type->insertItem(lrreset, "One-shot Reset");
     if (seq_pointer()->is_new_pattern())
+    {
         lrmerge = usr().new_pattern_record_code();
+        m_last_record_style = usr().new_pattern_record_style();
+        enable_combobox_item
+        (
+            ui->m_combo_rec_type, lrreset, lrmerge == lroneshot
+        );
+    }
+    else
+        enable_combobox_item(ui->m_combo_rec_type, lrreset, false);
 
+    ui->m_combo_rec_type->setCurrentIndex(lrmerge);
     connect
     (
         ui->m_combo_rec_type, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_record_type(int))
     );
-
-    ui->m_combo_rec_type->setCurrentIndex(lrmerge);
 
     /*
      * Recording Volume Button and Combo Box
@@ -1331,8 +1342,6 @@ qseqeditframe64::initialize_panels ()
 void
 qseqeditframe64::conditional_update ()
 {
-    // update_midi_buttons();                   /* mirror current states    */
-
     bool expandrec = seq_pointer()->expand_recording();
     if (expandrec)
     {
@@ -3180,10 +3189,26 @@ qseqeditframe64::thru_change (bool ischecked)
         update_midi_buttons();
 }
 
+/**
+ *  If the last recording style is oneshot we can select reset. If we then
+ *  select oneshot_reset, we reset the sequence and reselect oneshot.
+ */
+
 void
 qseqeditframe64::update_record_type (int index)
 {
-    bool ok = seq_pointer()->update_recording(index);   /* ca 2022-01-31    */
+    int lroneshot = usr().grid_record_code(recordstyle::oneshot);
+    int lrreset = usr().grid_record_code(recordstyle::oneshot_reset);
+    bool ok = seq_pointer()->update_recording(index);
+    enable_combobox_item(ui->m_combo_rec_type, lrreset, index == lroneshot);
+    if (index == lrreset)                               /* oneshot reset    */
+    {
+        if (m_last_record_style == recordstyle::oneshot)
+        {
+            ui->m_combo_rec_type->setCurrentIndex(lroneshot);
+        }
+    }
+    m_last_record_style = usr().grid_record_style(index);
     if (ok)
         set_dirty();
 }

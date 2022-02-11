@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-01-30
+ * \updates       2022-02-03
  * \license       See above.
  *
  *    We need to have a way to get all of the JACK information of
@@ -47,7 +47,13 @@
 #include <jack/jack.h>
 #include "midi_jack_data.hpp"           /* seq66::midi_jack_data            */
 
-#undef  SEQ66_JACK_DETECTION_CALLBACKS  /* NOT YET READY !!!                */
+/*
+ * This feature works, but if both the port-connect and port-registration
+ * callbacks are defined, they interfere with each other.  We really need to
+ * know only that a new port has registered with the system.
+ */
+
+#undef  SEQ66_JACK_PORT_CONNECT_CALLBACK
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -96,8 +102,7 @@ public:
     virtual ~midi_jack_info ();
 
     /**
-     * \getter m_jack_client
-     *      This is the platform-specific version of midi_handle().
+     *  This is the platform-specific version of midi_handle().
      */
 
     jack_client_t * client_handle ()
@@ -129,7 +134,12 @@ public:
 
 private:
 
-    virtual int get_all_port_info () override;
+
+    virtual int get_all_port_info
+    (
+        midi_port_info & inports,
+        midi_port_info & outports
+    ) override;
 
     std::string get_port_alias (const std::string & name);
 

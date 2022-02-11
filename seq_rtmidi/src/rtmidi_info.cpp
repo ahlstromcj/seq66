@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-08
- * \updates       2022-01-27
+ * \updates       2022-02-02
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.  This class
@@ -107,7 +107,7 @@ rtmidi_info::get_compiled_api (rtmidi_api_list & apis)
     if (apis.empty())
     {
         std::string errortext = "no rtmidi API support found";
-        throw(rterror(errortext, rterror::unspecified));
+        throw(rterror(errortext, rterror::kind::unspecified));
     }
 }
 
@@ -141,7 +141,7 @@ rtmidi_info::rtmidi_info
         }
         else
         {
-            errprintfunc("no system support for specified API");
+            errprintfunc("no support for specified API");
         }
     }
 
@@ -173,7 +173,7 @@ rtmidi_info::rtmidi_info
     if (is_nullptr(get_api_info()))
     {
         std::string errortext = "no rtmidi API support found";
-        throw(rterror(errortext, rterror::unspecified));
+        throw(rterror(errortext, rterror::kind::unspecified));
     }
 }
 

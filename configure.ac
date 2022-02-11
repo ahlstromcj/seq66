@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2022-01-25
+dnl \update        2022-02-08
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -254,12 +254,12 @@ AC_ARG_ENABLE(jack-session,
     [jack_session=$enableval],
     [jack_session=yes])
 
-dnl Having issues with JACK metadata, so making is disabled by default.
+dnl JACK metadata, seems to work, so now enabled by default.
 
 AC_ARG_ENABLE(jack-metadata,
-    [AS_HELP_STRING(--enable-jack-metadata, [Enable JACK metadata support])],
+    [AS_HELP_STRING(--disable-jack-metadata, [Disable JACK metadata support])],
     [jack_metadata=$enableval],
-    [jack_metadata=no])
+    [jack_metadata=yes])
 
 if test "$jack" != "no"; then
     PKG_CHECK_MODULES(JACK, jack >= 0.90.0, jack_found="yes", jack_found="no")
@@ -304,7 +304,7 @@ dnl LASH support has been deleted, this time for good.  We will support only
 dnl JACK Session and NSM.  Enable NSM support.  Now ready for prime time!
 
 AC_ARG_ENABLE(nsm,
-  AS_HELP_STRING([--disable-nsm], [Enable NSM support]),
+  AS_HELP_STRING([--disable-nsm], [Disable NSM support]),
   [ac_nsm=$enableval],
   [ac_nsm=yes])
 
@@ -451,7 +451,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2022-01-25"
+#define VERSION_DATE_SHORT "2022-02-08"
 #define VERSION "0.98.4-portfix"
 
 )

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2022-01-29
+ * \updates       2022-02-10
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -550,11 +550,12 @@ usrsettings::new_pattern_record_string () const
     std::string result;
     switch (m_new_pattern_record_style)
     {
-    case recordstyle::merge:        result = "merge";       break;
-    case recordstyle::overwrite:    result = "overwrite";   break;
-    case recordstyle::expand:       result = "expand";      break;
-    case recordstyle::oneshot:      result = "one-shot";    break;
-    case recordstyle::max:          result = "error";       break;
+    case recordstyle::merge:            result = "merge";           break;
+    case recordstyle::overwrite:        result = "overwrite";       break;
+    case recordstyle::expand:           result = "expand";          break;
+    case recordstyle::oneshot:          result = "one-shot";        break;
+    case recordstyle::oneshot_reset:    result = "one-shot-reset";  break;
+    case recordstyle::max:              result = "error";           break;
     }
     return result;
 }
@@ -617,11 +618,12 @@ usrsettings::grid_record_style_label () const
     std::string result;
     switch (grid_record_style())
     {
-    case recordstyle::merge:        result = "Overdub";     break;
-    case recordstyle::overwrite:    result = "Overwrite";   break;
-    case recordstyle::expand:       result = "Expand";      break;
-    case recordstyle::oneshot:      result = "One-shot";    break;
-    case recordstyle::max:          result = "Error";       break;
+    case recordstyle::merge:            result = "Overdub";         break;
+    case recordstyle::overwrite:        result = "Overwrite";       break;
+    case recordstyle::expand:           result = "Expand";          break;
+    case recordstyle::oneshot:          result = "One-shot";        break;
+    case recordstyle::oneshot_reset:    result = "One-shot Reset";  break;
+    case recordstyle::max:              result = "Error";           break;
     }
     return result;
 }
