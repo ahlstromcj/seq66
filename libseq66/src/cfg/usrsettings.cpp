@@ -284,7 +284,7 @@ static const float c_progress_box_width_min  = 0.50;
 static const float c_progress_box_width      = 0.80;
 static const float c_progress_box_width_max  = 1.00;
 static const float c_progress_box_height_min = 0.10;
-static const float c_progress_box_height     = 0.40;
+static const float c_progress_box_height     = 0.30;
 static const float c_progress_box_height_max = 0.50;
 
 /**
