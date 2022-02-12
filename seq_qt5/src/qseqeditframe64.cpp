@@ -1048,7 +1048,7 @@ qseqeditframe64::qseqeditframe64
     ui->m_combo_rec_type->insertItem(lrreplace, "Overwrite");
     ui->m_combo_rec_type->insertItem(lrexpand, "Expand");
     ui->m_combo_rec_type->insertItem(lroneshot, "One-shot");
-    ui->m_combo_rec_type->insertItem(lrreset, "One-shot Reset");
+    ui->m_combo_rec_type->insertItem(lrreset, "1-shot reset");
     if (seq_pointer()->is_new_pattern())
     {
         lrmerge = usr().new_pattern_record_code();

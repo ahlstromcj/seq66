@@ -4617,7 +4617,7 @@ _ACEOF
 $as_echo "#define CLIENT_NAME \"seq66\"" >>confdefs.h
 
 
-VERSION="0.98.4-portfix"
+VERSION="0.98.4"
 cat >>confdefs.h <<_ACEOF
 #define VERSION "$VERSION"
 _ACEOF
