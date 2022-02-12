@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-11-26
+% \update      2022-02-12
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -792,8 +792,6 @@
    This new functionality is enabled by two buttons in the main window grid and
    by two refactored keystroke/MIDI controls ("Record" and "Quan Record").
    The normal mode (mute/unmute) is called \textbf{Loop}.
-   It has been supplemented by four recording modes.
-   Here are the modes:
 
    \begin{itemize}
       \item \textbf{Loop}.
@@ -802,27 +800,56 @@
          When in this mode, a click on a pattern slot, a loop-control
          keystroke, or a loop-control MIDI event, will change the mute/unmute,
          armed/unarmed status of a pattern.
+      \item \textbf{Record}.
+         A click/key on the pattern turns on recording for that pattern.
+      \item \textbf{Copy}.
+         Copies the selected pattern into the clipboard.
+      \item \textbf{Paste}.
+         Pastes the clipboard into the selected pattern.
+      \item \textbf{Clear}.
+         Removes the events from the selected pattern.  Careful!
+         Not yet ready.
+      \item \textbf{Delete}.
+         Deletes the selected pattern.  Careful!
+      \item \textbf{Thru}.
+         Turns on the MIDI Thru functionality of the selected pattern.
+      \item \textbf{Solo}.
+         Soloes the selected pattern.
+      \item \textbf{Cut}.
+         Deletes the selected pattern and copies it into the clipboard.
+      \item \textbf{Double}.
+         Doubles the length of the selected pattern.
+         Not yet ready.
+   \end{itemize}
+   It has been supplemented by four recording modes.
+   Here are the modes:
+
+   \begin{itemize}
       \item \textbf{Overdub}.
          \index{merge}
          \index{overdub}
          \index{record!merge}
          \index{record!overdub}
          This mode is selected by clicking on the \textbf{Loop} button,
-         or using the \textbf{Record} control.
+         then using the \textbf{Record} control.
          These commands cycle between all the modes in this list.
          Overdub is the same as the \textbf{Merge} option in the 
          pattern editor.
+         Clicking a grid will turn on/off the overdub recording mode
+         for that pattern.
          It enables recording that accumulates note events in each pass of
          looping through the pattern.
       \item \textbf{Overwrite.}
          \index{overwrite}
          \index{recording!overwrite}
+         This mode causes the grid button to turn on overwrite recording.
          When the loop restarts over and a note is pressed,
          then the existing notes in that loop are erased,
          and the new note is added.
       \item \textbf{Expand}.
          \index{expand}
          \index{recording!expand}
+         This mode causes the grid button to turn on expand recording.
          Once the end of the loop is near, whether or
          not any notes are being input, another measure is added to the length
          of the loop.
@@ -834,20 +861,41 @@
          first note comes in, the progress bar starts at the left (time 0).
          As each new set of notes at the same timestamp come in, the
          notes are recorded and the current time advances by one snap value.
+         Once the end of the pattern lenght is reached, recording is turned
+         off.
+      \item \textbf{One-shot Reset}.
+         \index{one-shot reset}
+         \index{recording!one-shot reset}
+         When the \textbf{One-shot} option is selected, this new option
+         is enabled.
+         When clicked, three things happen:
+         \begin{itemize}
+            \item All the (note) events just recorded are \textsl{erased}.
+            \item One-short counters/flags are \textsl{reset}.
+            \item Recording is turned \textsl{back on}.
+         \end{itemize}
+         Thus, one can easily re-do a one-short recording.
    \end{itemize}
 
-   Once the recording mode is set, then the recording type comes into play:
+   Once the recording mode is turned on, then the recording type comes into
+   play:
 
    \begin{itemize}
-      \item \textbf{Normal}.
+      \item \textbf{No Quan}.
+         Incoming events are recorded as is.
          Plain recording, events recorded with timestamps unaltered.
          Indicated by a red circle.
       \item \textbf{Quantize}.
          When recording, quantize the incoming events.
+         Incoming events are quantized to the snap value of the pattern.
          Indicated by a red circle and a "Q" inside it in a pattern slot.
       \item \textbf{Tighten}.
          A weaker version of \textbf{Quantize}.
+         Incoming events are partially quantized to the snap value of the
+         pattern.
          Indicated by a red circle and a "T" inside it in a pattern slot.
+         This mode is accessible only via this recording mode; there
+         is no such button in the pattern editor.
    \end{itemize}
 
 \subsection{Patterns / Bottom Panel}

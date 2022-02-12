@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-12-31
+% \update      2022-02-12
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -2035,37 +2035,43 @@
 
    \begin{itemize}
       \item \textbf{Loop}.
-         This mode is the long-standing normal usage of the grid, to
-         mute/unmute (disarm/arm) the patterns.
-      \item \textbf{Overdub}.
-         This mode is the same as the \textbf{Merge} mode in the pattern
-         editor.  Clicking a grid will turn on/off the overdub recording mode
-         for that pattern.
-      \item \textbf{Overwrite}.
-         This mode causes the grid button to turn on overwrite recording.
-         Previously recorded notes in the pattern are erased on the next cycle
-         when new notes come in.
-      \item \textbf{Expand}.
-         This mode causes the grid button to turn on expand recording.
-         The length of the pattern keeps increasing until playback/recording is
-         stopped.
-      \item \textbf{One-shot}.
-         This mode allows for step recording.
+      \item \textbf{Record}.
+      \item \textbf{Copy}.
+      \item \textbf{Paste}.
+      \item \textbf{Clear}.
+      \item \textbf{Delete}.
+      \item \textbf{Thru}.
+      \item \textbf{Solo}.
+      \item \textbf{Cut}.
+      \item \textbf{Double}.
    \end{itemize}
 
-   Also supported is changing the mode of recording:
+   A click or a hot-key will cause the selected function above to be applied to
+   the pattern denoted by the click/key.
+   For details, see \sectionref{paragraph:patterns_recording_modes}.
+
+   In \textbf{Record} mode, the following settings are enabled:
+
    \begin{itemize}
-      \item \textbf{Normal}.
-         Incoming events are recorded as is.
+      \item \textbf{Overdub}.
+      \item \textbf{Overwrite}.
+      \item \textbf{Expand}.
+      \item \textbf{One-shot}.
+      \item \textbf{One-shot Reset}.
+   \end{itemize}
+
+   For details, see \sectionref{paragraph:patterns_recording_modes}.
+
+   Also supported is changing the mode of recording:
+
+   \begin{itemize}
+      \item \textbf{No Quan}.
       \item \textbf{Quantize}.
-         Incoming events are quantized to the snap value of the pattern.
       \item \textbf{Tighten}.
-         Incoming events are partially quantized to the snap value of the
-         pattern.  This mode is accessible only via this recording mode; there
-         is no such button in the pattern editor.
       \end{itemize}
 
-   See \sectionref{subsec:pattern_editor_bottom} for more information on these
+   For details, see \sectionref{paragraph:patterns_recording_modes}.
+   Also see \sectionref{subsec:pattern_editor_bottom} for more information on these
    recording modes.
 
 \paragraph{Automation / Screen-Set Play}

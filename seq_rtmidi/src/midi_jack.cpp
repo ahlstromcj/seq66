@@ -1026,7 +1026,7 @@ void
 midi_jack::api_continue_from (midipulse tick, midipulse /*beats*/)
 {
     int beat_width = 4;                                 // no m_beat_width !!!
-    int ticks_per_beat = ppqn() * 10;
+    int ticks_per_beat = ppqn() * 10;                   // why 10 !!!
     midibpm beats_per_minute = bpm();
     uint64_t tick_rate =
     (

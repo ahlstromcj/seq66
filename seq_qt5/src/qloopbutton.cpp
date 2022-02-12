@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-11-16
+ * \updates       2022-02-12
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -83,8 +83,8 @@ static const int s_alpha_oneshot       = 148;
  */
 
 static const int s_fontsize_main    = 7;
-static const int s_fontsize_record  = 6;
-static const int s_radius_record    = 11;
+static const int s_fontsize_record  = 5;
+static const int s_radius_record    = 8;
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -587,7 +587,10 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 int cly = m_top_right.m_y + m_top_right.m_h;
                 int tlx = clx + usr().scale_size(2);
                 int tly = cly + radius - usr().scale_size(2);
+                QPen pen2(drum_paint());
                 QBrush brush(drum_paint(), Qt::SolidPattern);
+                painter.save();         // NEW
+                painter.setPen(pen2);
                 painter.setBrush(brush);
                 painter.drawEllipse(clx, cly, radius, radius);
                 if (loop()->quantizing_or_tightening())
@@ -596,16 +599,14 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                     QFont font;
                     font.setPointSize(fontsize);
                     font.setBold(true);
-                    painter.save();
                     painter.setPen(Qt::black);
                     painter.setFont(font);
                     if (loop()->quantizing())
                         painter.drawText(tlx, tly, "Q");
                     else if (loop()->tightening())
                         painter.drawText(tlx + 2, tly, "T");
-
-                    painter.restore();
                 }
+                painter.restore();      // NEW
             }
             title = qt(m_bottom_left.m_label);
             box.setRect

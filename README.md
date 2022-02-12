@@ -1,4 +1,4 @@
-# README for Seq66 0.98.4]
+# README for Seq66 0.98.4
 
 Chris Ahlstrom
 2015-09-10 to 2022-02-11
