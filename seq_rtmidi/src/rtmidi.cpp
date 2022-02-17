@@ -83,8 +83,8 @@ namespace seq66
 
 rtmidi::rtmidi (midibus & parentbus, rtmidi_info & info) :
     midi_api        (parentbus, *(info.get_api_info())),
-    m_midi_info     (info),
-    m_midi_api      (nullptr)
+    m_rtmidi_info   (info),
+    m_midi_api      (nullptr)           /* get_api() pointer accessor       */
 {
 #if defined SEQ66_JACK_GET_VERSION_STRING
     const char * jv = jack_get_version_string();

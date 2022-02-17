@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2021-12-06
+ * \updates       2022-02-16
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of the midibus class.
@@ -100,12 +100,12 @@ midibus::midibus
         index,
         rt.global_queue(),
         rt.ppqn(), rt.bpm(),
-        iotype,                     /* perhaps I/O is swapped */
+        iotype,                         /* perhaps I/O is swapped (JACK)    */
         porttype,
         rt.get_port_alias(index)
     ),
     m_rt_midi       (nullptr),
-    m_master_info   (rt)
+    m_master_info   (rt)                /* master_info() accessor           */
 {
     if (porttype == port::manual)
     {
@@ -160,7 +160,7 @@ midibus::~midibus ()
 {
     if (not_nullptr(m_rt_midi))
     {
-        delete m_rt_midi;           // Pm_Close(m_rt_midi)
+        delete m_rt_midi;
         m_rt_midi = nullptr;
     }
 }
@@ -258,7 +258,7 @@ midibus::api_init_out ()
     bool result = false;
     try
     {
-        m_rt_midi = new rtmidi_out(*this, m_master_info);
+        m_rt_midi = new rtmidi_out(*this, master_info());
         result = m_rt_midi->api_init_out();
     }
     catch (const rterror & err)
@@ -281,7 +281,7 @@ midibus::api_init_out_sub ()
     bool result = false;
     try
     {
-        m_rt_midi = new rtmidi_out(*this, m_master_info);
+        m_rt_midi = new rtmidi_out(*this, master_info());
         result = m_rt_midi->api_init_out_sub();
     }
     catch (const rterror & err)
@@ -306,7 +306,7 @@ midibus::api_init_in ()
     try
     {
         if (is_nullptr(m_rt_midi))
-            m_rt_midi = new rtmidi_in(*this, m_master_info);
+            m_rt_midi = new rtmidi_in(*this, master_info());
 
         result = m_rt_midi->api_init_in();
     }
@@ -330,7 +330,7 @@ midibus::api_init_in_sub ()
     bool result = false;
     try
     {
-        m_rt_midi = new rtmidi_in(*this, m_master_info);
+        m_rt_midi = new rtmidi_in(*this, master_info());
         result = m_rt_midi->api_init_in_sub();
     }
     catch (const rterror & err)

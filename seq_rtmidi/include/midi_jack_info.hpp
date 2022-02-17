@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-02-03
+ * \updates       2022-02-16
  * \license       See above.
  *
  *    We need to have a way to get all of the JACK information of
@@ -44,7 +44,8 @@
 #include "midi_info.hpp"                /* seq66::midi_port_info etc.       */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 
-#include <jack/jack.h>
+#include <jack/jack.h>                  /* JACK (2) API                     */
+
 #include "midi_jack_data.hpp"           /* seq66::midi_jack_data            */
 
 /*
@@ -163,6 +164,16 @@ private:
     );
 
 private:
+
+    const portlist & jack_ports () const
+    {
+        return m_jack_ports;
+    }
+
+    portlist & jack_ports ()
+    {
+        return m_jack_ports;
+    }
 
     /**
      *  Adds a pointer to a JACK port.

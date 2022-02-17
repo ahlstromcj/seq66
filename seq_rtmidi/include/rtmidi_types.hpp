@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2022-01-27
+ * \updates       2022-02-17
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -294,7 +294,6 @@ private:
      */
 
     bool m_first_message;
-    void * m_api_data;
 
 #if defined SEQ66_USER_CALLBACK_SUPPORT
 
@@ -376,21 +375,6 @@ public:
     }
 
 #endif
-
-    const void * api_data () const
-    {
-        return m_api_data;
-    }
-
-    void * api_data ()
-    {
-        return m_api_data;
-    }
-
-    void api_data (void * dataptr)
-    {
-        m_api_data = dataptr;
-    }
 
 #if defined SEQ66_USER_CALLBACK_SUPPORT
 

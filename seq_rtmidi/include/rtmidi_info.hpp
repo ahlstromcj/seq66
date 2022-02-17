@@ -68,7 +68,8 @@ private:
 
     /**
      *  To save repeated queries, we save this value.  Its default value is
-     *  rtmidi_api::unspecified.
+     *  rtmidi_api::unspecified.  The enum class rtmidi_api is defined in
+     *  rtmidi_types.hpp
      */
 
     static rtmidi_api sm_selected_api;

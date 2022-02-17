@@ -24,19 +24,34 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-06
- * \updates       2022-02-01
+ * \updates       2022-02-17
  * \license       See above.
  *
- *  This class is meant to collect a whole bunch of system MIDI information
+ * Classes defined:
+ *
+ *      -   port_info. A structure class holding data about a port.
+ *      -   midi_port_info. Holds multiple port_infos and provides accessors.
+ *      -   midi_info. Holds input and output midi_portinfos.
+ *
+ *  These classes are meant to collect a whole bunch of system MIDI information
  *  about client/buss number, port numbers, and port names, and hold it
  *  for usage when creating midibus objects and midi_api objects.
+ *
+ * Port Refresh Idea:
+ *
+ *      -#  When midi_info :: get_all_port_info() is called, copy midi_info ::
+ *          input_ports() and output_ports() midi_info :: m_previous_input and
+ *          midi_info :: m_previous_output.
+ *      -#  Detect when a MIDI port registers or unregisters.
+ *      -#  Compare the old set of ports to the new set found by
+ *          get_all_port_info() to find new ports or missing ports.
  */
 
 #include <sstream>                      /* std::ostringstream               */
 
 #include "cfg/settings.hpp"             /* access to rc() configuration     */
-#include "midi/midibus.hpp"
-#include "midi_info.hpp"
+#include "midi/midibus.hpp"             /* select portmidi/rtmidi headers   */
+#include "midi_info.hpp"                /* seq66::midi_info etc.            */
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -49,8 +64,36 @@ namespace seq66
  * class midi_port_info
  */
 
+port_info::port_info
+(
+    int clientnumber,
+    const std::string & clientname,
+    int portnumber,
+    const std::string & portname,
+    midibase::io iotype,
+    midibase::port porttype,
+    int queuenumber,
+    const std::string & alias
+) :
+    m_client_number (clientnumber),
+    m_client_name   (clientname),
+    m_port_number   (portnumber),
+    m_port_name     (portname),
+    m_queue_number  (queuenumber),
+    m_io_type       (iotype),
+    m_port_type     (porttype),
+    m_port_alias    (alias),
+    m_internal_id   (null_system_port_id())
+{
+    // No other code
+}
+
+/*
+ * class midi_port_info
+ */
+
 /**
- *  Principal constructor.
+ *  Default constructor.  Instantiated just for visibility.
  */
 
 midi_port_info::midi_port_info () :
@@ -108,18 +151,14 @@ midi_port_info::add
     const std::string & alias
 )
 {
-    port_info temp;
-    temp.m_client_number = clientnumber;
-    temp.m_client_name = clientname;
-    temp.m_port_number = portnumber;
-    temp.m_port_name = portname;
-    temp.m_queue_number = queuenumber;
-    temp.m_io_type = iotype;
-    temp.m_port_type = porttype;
-    temp.m_port_alias = alias;
+    port_info temp
+    (
+        clientnumber, clientname, portnumber, portname,
+        iotype, porttype, queuenumber, alias
+    );
     m_port_container.push_back(temp);
     m_port_count = int(m_port_container.size());
-    if (rc().verbose())
+    if (rc().investigate())
     {
         bool makevirtual = porttype == midibase::port::manual;
         bool makesystem = porttype == midibase::port::system;
@@ -130,7 +169,7 @@ midi_port_info::add
         char tmp[128];
         snprintf
         (
-            tmp, sizeof tmp, "Found port %s:%s (%s) of type %s %s %s",
+            tmp, sizeof tmp, "Port '%s:%s' %s (%s %s %s)",
             clientname.c_str(), portname.c_str(), alias.c_str(),
             vport, iport, sport
         );
@@ -210,9 +249,10 @@ midi_info::midi_info
     m_app_name          (appname),
     m_ppqn              (ppqn),
     m_bpm               (bpm),
+    m_midi_port_refresh (false),
     m_error_string      ()
 {
-    //
+    // No code
 }
 
 /**

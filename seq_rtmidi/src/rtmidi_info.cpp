@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-08
- * \updates       2022-02-02
+ * \updates       2022-02-13
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.  This class
@@ -130,11 +130,11 @@ rtmidi_info::rtmidi_info
         bool ok = openmidi_api(api, appname, ppqn, bpm);
         if (ok)
         {
-            if (not_nullptr(get_api_info()))
+            if (not_nullptr(get_api_info()))        /* TODO: encapsulate    */
             {
-                if (get_api_info()->get_all_port_info() >= 0)
+                if (get_all_port_info() >= 0)
                 {
-                    selected_api(api);      /* log the API that worked      */
+                    selected_api(api);              /* log API that worked  */
                     return;
                 }
             }
@@ -156,11 +156,11 @@ rtmidi_info::rtmidi_info
              * applications) yet in place.
              */
 
-            if (not_nullptr(get_api_info()))
+            if (not_nullptr(get_api_info()))        /* TODO: encapsulate    */
             {
-                if (get_api_info()->get_all_port_info() >= 0)
+                if (get_all_port_info() >= 0)
                 {
-                    selected_api(apis[i]);  /* log first API that worked    */
+                    selected_api(apis[i]);          /* log API that worked  */
                     break;
                 }
             }

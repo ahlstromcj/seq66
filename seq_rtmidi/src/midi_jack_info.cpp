@@ -24,32 +24,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-02-08
+ * \updates       2022-02-14
  * \license       See above.
  *
- *  This class is meant to collect a whole bunch of JACK information
- *  about client number, port numbers, and port names, and hold them
- *  for usage when creating JACK midibus objects and midi_jack API objects.
- *
- * Multi-client mode:
- *
- *  As noted in issue #73 on GitHub, JACK MIDI timing can be a bit off:
- *
- *      I always notice small "timing drops" ...  when using jack midi. There
- *      is no xrun, but just playing a regular kick with a high bpm, it's easy
- *      to notice the time between kicks is not perfectly regular. Using alsa
- *      midi, it always works as expected.  Oh, I just noticed this timing
- *      issue is highly depending on jack buffer size.  I initially had it set
- *      to 1024 (and 3 periods). Issue is subtle but can be heard.  Then I
- *      tested with 256, and couldn't really hear the issue (but then I have
- *      occasional xruns, very few but still).  Then I tested with 2048, and
- *      the issue gets really worse, really easy to hear it.  A TimeTest.midi
- *      file is provided to demonstrate this issue.
- *
- *  So we're going to try to put MIDI input and output on separate clients, as
- *  an option.
- *
- *  GitHub issue #165: enabled a build and run with no JACK support.
+ *  This class is meant to collect a whole bunch of JACK information about
+ *  client number, port numbers, and port names, and hold them for usage when
+ *  creating JACK midibus objects and midi_jack API objects.
  */
 
 #include "seq66-config.h"
@@ -100,7 +80,6 @@ extern void jack_port_register_callback
 (
     jack_port_id_t port, int ev_value, void * arg
 );
-
 
 /**
  *  Provides a JACK callback function that uses the callbacks defined in the
@@ -383,17 +362,17 @@ midi_jack_info::get_all_port_info
     int result = (-1);
     if (not_nullptr(m_jack_client))
     {
-        const char ** inports = jack_get_ports    /* list of JACK ports   */
+        const char ** inports = jack_get_ports    /* list of the JACK ports */
         (
             m_jack_client, NULL,
             JACK_DEFAULT_MIDI_TYPE,
-            JackPortIsInput                            /* tricky   */
+            JackPortIsInput                       /* tricky JACK code       */
         );
         inputports.clear();
         result = 0;
-        if (is_nullptr(inports))                  /* check port validity  */
+        if (is_nullptr(inports))                  /* check port validity    */
         {
-            warnprint("No JACK input ports, creating virtual port");
+            warnprint("No JACK in-ports; making a virtual port");
             int clientnumber = 0;
             int portnumber = 0;
             std::string clientname = seq_client_name();
@@ -418,6 +397,12 @@ midi_jack_info::get_all_port_info
                 std::string alias = get_port_alias(fullname);
                 if (alias == fullname)
                     alias.clear();
+
+                /*
+                 * TODO:  somehow get the 32-bit ID of the port and add it as a
+                 * system port ID to use for lookup when detecting newly
+                 * registered or unregistered ports.
+                 */
 
                 extract_names(fullname, clientname, portname);
                 if (client == -1 || clientname != client_name_list.back())
@@ -451,7 +436,7 @@ midi_jack_info::get_all_port_info
              * As with the input port, we create a virtual port.
              */
 
-            warnprint("No JACK output ports, creating virtual port");
+            warnprint("No JACK out-ports, making a virtual port");
             int client = 0;
             std::string clientname = seq_client_name();
             std::string portname = "midi out 0";
@@ -525,6 +510,15 @@ midi_jack_info::get_all_port_info
  *  Ports created by "a2jmidid --export-hw" do not have JACK aliases.  Ports
  *  created by Seq66 do not have JACK aliases.  Ports created by qsynth do not
  *  have JACK aliases.
+ *
+ * \param name
+ *      Provides the name of the port as retrieved by jack_get_ports(). This
+ *      name is used to look up the JACK port handle.
+ *
+ * \return
+ *      Returns the alias, if it exists, for a system port.  That is, one with
+ *      "system:" in its name.  Brittle.  And some JACK systems do not provide
+ *      and alias.
  */
 
 std::string
@@ -541,7 +535,10 @@ midi_jack_info::get_port_alias (const std::string & name)
             const int sz = ::jack_port_name_size();
             aliases[0] = reinterpret_cast<char *>(malloc(sz));  /* alsa_pcm */
             aliases[1] = reinterpret_cast<char *>(malloc(sz));  /* dev name */
-            aliases[0][0] = aliases[1][0] = 0;
+            if (is_nullptr_2(aliases[0], aliases[1]))
+                return result;                                  /* bug out  */
+
+            aliases[0][0] = aliases[1][0] = 0;                  /* 0 length */
             int rc = ::jack_port_get_aliases(p, aliases);
             if (rc > 1)
             {
@@ -567,6 +564,8 @@ midi_jack_info::get_port_alias (const std::string & name)
             {
                 if (rc < 0)
                     errprint("JACK port aliases error");
+                else
+                    infoprint("JACK aliases unavailable");
             }
             free(aliases[0]);
             free(aliases[1]);

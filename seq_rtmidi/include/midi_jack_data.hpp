@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-02
- * \updates       2019-02-09
+ * \updates       2022-02-17
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.

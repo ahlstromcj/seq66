@@ -412,7 +412,7 @@ create_jack_client (std::string clientname, std::string uuid)
         if (not_nullptr(result) && rc().investigate())
         {
             char t[80];
-            snprintf(t, sizeof t, "client opened with UUID %s", uid);
+            snprintf(t, sizeof t, "client opened, UUID %s", uid);
             (void) info_message(t);
         }
     }
@@ -577,11 +577,11 @@ s_status_pairs [] =
     },
     {
         JackInvalidOption,
-        "JackInvalidOption: operation used an invalid/unsupported option"
+        "JackInvalidOption: used an invalid/unsupported option"
     },
     {
         JackNameNotUnique,
-        "JackNameNotUnique: client name was not unique"
+        "JackNameNotUnique: client name not unique"
     },
     {
         JackServerStarted,
@@ -589,11 +589,11 @@ s_status_pairs [] =
     },
     {
         JackServerFailed,
-        "JackServerFailed: unable to connect to JACK server"
+        "JackServerFailed: cannot connect to JACK server"
     },
     {
         JackServerError,
-        "JackServerError: communication error with JACK server"
+        "JackServerError: JACK servercommunication error"
     },
     {
         JackNoSuchClient,

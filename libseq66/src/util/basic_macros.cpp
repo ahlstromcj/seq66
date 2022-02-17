@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2022-02-08
+ * \updates       2022-02-15
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of
@@ -107,6 +107,110 @@ not_nullptr_assert (void * ptr, const std::string & context)
 }
 
 #endif  // SEQ66_PLATFORM_DEBUG
+
+/**
+ *  Provided for convenience and for avoid those annoying warnings about
+ *  "declared with attribute warn_unused_result [-Wunused-result]".
+ */
+
+static void
+write_msg (int fd, const char * msg, size_t count)
+{
+    if (S_WRITE(fd, msg, count) == (-1))
+    {
+        /*
+         *  Generally should fail only if interrupted by a signal-handler
+         *  before any bytes are written.  See the man-page for write(2).
+         */
+    }
+}
+
+/**
+ *  Meant for use in signal handlers.  For the colors, hardwired here, see
+ *  s_level_colors in the seq66_features.cpp modules. The "seq66" tag is
+ *  black (no error) or red (error).  The text is black.  The character count
+ *  is programmer supplied (see the comments).
+ */
+
+static const char * s_start = "[\033[1;30mseq66\033[0m] \033[1;30m";    // 26
+static const char * s_error = "[\033[1;31mseq66\033[0m] \033[1;30m";    // 26
+static const char * s_eol   = "\033[0m\n";                              //  5
+
+void
+async_safe_strprint (const char * msg)
+{
+    if (not_nullptr(msg))
+    {
+        size_t count = strlen(msg);
+        if (count > 0)
+        {
+            write_msg(STDOUT_FILENO, s_start, 26);
+            write_msg(STDOUT_FILENO, msg, count);
+            write_msg(STDOUT_FILENO, s_eol, 5);
+        }
+    }
+}
+
+void
+async_safe_errprint (const char * msg)
+{
+    if (not_nullptr(msg))
+    {
+        size_t count = strlen(msg);
+        if (count > 0)
+        {
+            write_msg(STDERR_FILENO, s_error, 26);
+            write_msg(STDERR_FILENO, msg, count);
+            write_msg(STDERR_FILENO, s_eol, 5);
+        }
+    }
+}
+
+/**
+ *  This function assumes the programmer knows what she's doing.  The pointer
+ *  should be good and the buffer should be 24 characters.  After getting the
+ *  digits, the count is the number of digits, which is 1 at a minimum.
+ *
+ * \param value
+ *      The unsigned value to convert to an ASCII null-terminated string.
+ *
+ * \param destination
+ *      Provides a 24-byte buffer to hold the resulting string.  Assumed to be
+ *      valid and at least that large, for speed.
+ *
+ * \param spacebefore
+ *      If true (the default), then output a space first.  This helps in
+ *      printing a number of values rapidly in a row.
+ */
+
+void
+async_safe_utoa (unsigned value, char * destination, bool spacebefore)
+{
+    const unsigned ascii_base = unsigned('0');
+    char reversed[c_async_safe_utoa_size];
+    int count = 0;
+    do
+    {
+        unsigned remainder = value % 10;
+        reversed[count++] = char(remainder) + ascii_base;
+        value /= 10;
+
+    } while (value != 0);
+
+    int index = 0;
+    int limit = count;
+    if (spacebefore)
+    {
+        destination[index++] = ' ';
+        ++limit;
+    }
+    for ( ; index < limit; ++index)
+    {
+        --count;
+        destination[index] = reversed[count];
+    }
+    destination[index] = 0;             /* append the string terminator */
+}
 
 /**
  *  Common-code for console informationational messages.  Adds markers and a
@@ -219,6 +323,13 @@ error_message (const std::string & msg, const std::string & data)
 }
 
 /**
+ *  More sneaky escape sequences for coloring.
+ */
+
+static const char * s_black  = "\033[1;30m";
+static const char * s_normal = "\033[0m";
+
+/**
  *  Common-code for debug messages.  Adds markers, and returns false.
  *
  * \param msg
@@ -236,12 +347,16 @@ debug_message (const std::string & msg, const std::string & data)
 {
     if (rc().investigate())
     {
-        std::cerr << seq_client_tag(msglevel::debug) << " " << msg;
+        std::cerr
+            << seq_client_tag(msglevel::debug) << " "
+            << s_black << msg
+            ;
+
         if (! data.empty())
             std::cerr << ": " << data;
 
         if (! msg.empty())
-            std::cerr << std::endl;
+            std::cerr << s_normal << std::endl;
     }
     return true;
 }
@@ -380,110 +495,6 @@ toggleprint (const std::string & tag, bool flag)
 {
     std::string fmt = tag + " %s";
     msgprintf(msglevel::info, fmt, flag ? "on" : "off");
-}
-
-/*
- *  Provided for convenience and for avoid those annoying warnings about
- *  "declared with attribute warn_unused_result [-Wunused-result]".
- */
-
-static void
-write_msg (int fd, const char * msg, size_t count)
-{
-    if (S_WRITE(fd, msg, count) == (-1))
-    {
-        /*
-         *  Generally should fail only if interrupted by a signal-handler
-         *  before any bytes are written.  See the man-page for write(2).
-         */
-    }
-}
-
-/**
- *  Meant for use in signal handlers.  For the colors, hardwired here, see
- *  s_level_colors in the seq66_features.cpp modules. The "seq66" tag is
- *  black (no error) or red (error).  The text is blue.  The character count
- *  is programmer supplied (see the comments).
- */
-
-static const char * s_start = "[\033[1;30mseq66\033[0m] \033[1;34m";    // 26
-static const char * s_error = "[\033[1;31mseq66\033[0m] \033[1;34m";    // 26
-static const char * s_eol   = "\033[0m\n";                              //  5
-
-void
-async_safe_strprint (const char * msg)
-{
-    if (not_nullptr(msg))
-    {
-        size_t count = strlen(msg);
-        if (count > 0)
-        {
-            write_msg(STDOUT_FILENO, s_start, 26);
-            write_msg(STDOUT_FILENO, msg, count);
-            write_msg(STDOUT_FILENO, s_eol, 5);
-        }
-    }
-}
-
-void
-async_safe_errprint (const char * msg)
-{
-    if (not_nullptr(msg))
-    {
-        size_t count = strlen(msg);
-        if (count > 0)
-        {
-            write_msg(STDERR_FILENO, s_error, 26);
-            write_msg(STDERR_FILENO, msg, count);
-            write_msg(STDERR_FILENO, s_eol, 5);
-        }
-    }
-}
-
-/**
- *  This function assumes the programmer knows what she's doing.  The pointer
- *  should be good and the buffer should be 24 characters.  After getting the
- *  digits, the count is the number of digits, which is 1 at a minimum.
- *
- * \param value
- *      The unsigned value to convert to an ASCII null-terminated string.
- *
- * \param destination
- *      Provides a 24-byte buffer to hold the resulting string.  Assumed to be
- *      valid and at least that large, for speed.
- *
- * \param spacebefore
- *      If true (the default), then output a space first.  This helps in
- *      printing a number of values rapidly in a row.
- */
-
-void
-async_safe_utoa (unsigned value, char * destination, bool spacebefore)
-{
-    const unsigned ascii_base = unsigned('0');
-    char reversed[c_async_safe_utoa_size];
-    int count = 0;
-    do
-    {
-        unsigned remainder = value % 10;
-        reversed[count++] = char(remainder) + ascii_base;
-        value /= 10;
-
-    } while (value != 0);
-
-    int index = 0;
-    int limit = count;
-    if (spacebefore)
-    {
-        destination[index++] = ' ';
-        ++limit;
-    }
-    for ( ; index < limit; ++index)
-    {
-        --count;
-        destination[index] = reversed[count];
-    }
-    destination[index] = 0;             /* append the string terminator */
 }
 
 /**

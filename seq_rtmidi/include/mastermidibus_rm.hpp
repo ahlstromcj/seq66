@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-01-26
+ * \updates       2022-02-16
  * \license       GNU GPLv2 or above
  *
  *  This mastermidibus module is the Linux (and, soon, JACK) version of the
@@ -93,7 +93,7 @@ protected:
 
     virtual void api_set_ppqn (int p) override
     {
-        m_midi_master.api_set_ppqn(p);
+        midi_master().api_set_ppqn(p);
     }
 
     /**
@@ -103,24 +103,39 @@ protected:
 
     virtual void api_set_beats_per_minute (midibpm b) override
     {
-        m_midi_master.api_set_beats_per_minute(b);
+        midi_master().api_set_beats_per_minute(b);
     }
 
     virtual void api_flush () override
     {
-        m_midi_master.api_flush();
+        midi_master().api_flush();
     }
 
     virtual void api_port_start (mastermidibus & masterbus, int bus, int port)
     {
-        m_midi_master.api_port_start(masterbus, bus, port);
+        midi_master().api_port_start(masterbus, bus, port);
     }
 
 private:
 
-    void port_list (const std::string & tag);
+    /*
+     * Would this function be useful?
+     *
+     * void port_list (const std::string & tag);
+     */
+
     midibus * make_virtual_bus (int bus, midibase::io iotype);
     midibus * make_normal_bus (int bus, midibase::io iotype);
+
+    const rtmidi_info & midi_master () const
+    {
+        return m_midi_master;
+    }
+
+    rtmidi_info & midi_master ()
+    {
+        return m_midi_master;
+    }
 
 };          // class mastermidibus
 

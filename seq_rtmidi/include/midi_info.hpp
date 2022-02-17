@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-12-05
- * \updates       2022-02-02
+ * \updates       2022-02-17
  * \license       See above.
  *
  *  We need to have a way to get all of the API information from each
@@ -54,9 +54,16 @@
  *  An alternate name for this class could be "midi_master".  :-)
  */
 
-#include "rterror.hpp"
-#include "rtmidi_types.hpp"
-#include "util/basic_macros.hpp"
+#include "rterror.hpp"                  /* seq66::rterror exception class   */
+#include "rtmidi_types.hpp"             /* seq66::rtmidi_api, midi_message  */
+
+/**
+ *  A potential future feature, macroed to avoid issues until it is perfected.
+ *  Meant to allow detecting changes in the set of MIDI ports, and disconnecting
+ *  or connecting as appropriate, if not in manual/virtual mode.
+ */
+
+#undef  SEQ66_MIDI_PORT_REFRESH
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -70,31 +77,56 @@ class mastermidibus;
 class midibus;
 
 /**
- *  A class for holding port information.
+ *  A structure for hold basic information about a single (MIDI) port.
+ *  Except for the virtual-vs-normal status, this information is obtained by
+ *  scanning the system at the startup time of the application.
+ */
+
+class port_info
+{
+
+    friend class midi_port_info;
+
+private:
+
+    int m_client_number;            /**< The major buss number of the port. */
+    std::string m_client_name;      /**< The system's name for the client.  */
+    int m_port_number;              /**< The minor port number of the port. */
+    std::string m_port_name;        /**< The system's name for the port.    */
+    int m_queue_number;             /**< A number used in some APIs.        */
+    midibase::io m_io_type;         /**< Indicates input versus output.     */
+    midibase::port m_port_type;     /**< Indicates normal/virtual/system.   */
+    std::string m_port_alias;       /**< Can be non-empty in JACK setups.   */
+    uint32_t m_internal_id;         /**< Internal port number.              */
+
+public:
+
+    port_info () = default;
+    port_info
+    (
+        int clientnumber,
+        const std::string & clientname,
+        int portnumber,
+        const std::string & portname,
+        midibase::io iotype,
+        midibase::port porttype,
+        int queuenumber,
+        const std::string & alias
+    );
+    port_info (const port_info &) = default;
+    port_info & operator = (const port_info &) = default;
+    ~port_info () = default;
+
+};
+
+/**
+ *  A class for holding port information for a number of ports.
  */
 
 class midi_port_info
 {
 
 private:
-
-    /**
-     *  Hold the information for a single port.  Except for the
-     *  virtual-vs-normal status, this information is obtained by scanning
-     *  the system at the startup time of the application.
-     */
-
-    using port_info = struct
-    {
-        int m_client_number;        /**< The major buss number of the port.  */
-        std::string m_client_name;  /**< The system's name for the client.   */
-        int m_port_number;          /**< The minor port number of the port.  */
-        std::string m_port_name;    /**< The system's name for the port.     */
-        int m_queue_number;         /**< A number used in some APIs.         */
-        midibase::io m_io_type;     /**< Indicates input versus output.      */
-        midibase::port m_port_type; /**< Indicates normal/virtual/system.    */
-        std::string m_port_alias;   /**< Can be non-empty in JACK setups.    */
-    };
 
     /**
      *  Holds the number of ports counted.
@@ -111,6 +143,9 @@ private:
 public:
 
     midi_port_info ();
+    midi_port_info (const midi_port_info &) = default;
+    midi_port_info & operator = (const midi_port_info &) = default;
+    ~midi_port_info () = default;
 
     void add
     (
@@ -251,6 +286,24 @@ class midi_info
 
 private:
 
+#if defined SEQ66_MIDI_PORT_REFRESH
+
+    /**
+     *  Stores that last input configuration, used when port-registration or
+     *  port-unregistration is detected.
+     */
+
+    static midi_port_info m_previous_input;
+
+    /**
+     *  Stores that last output configuration, used when port-registration or
+     *  port-unregistration is detected.
+     */
+
+    static midi_port_info m_previous_output;
+
+#endif  //  SEQ66_MIDI_PORT_REFRESH
+
     /**
      *  Indicates which mode we're in, input or output.  We have to pick the
      *  mode we need to be in with the set_mode() function before we do a
@@ -314,6 +367,12 @@ private:
      */
 
     midibpm m_bpm;
+
+    /**
+     *  Always false until this feature is complete.
+     */
+
+    bool m_midi_port_refresh;
 
 protected:
 
@@ -398,6 +457,11 @@ public:
     midibpm bpm () const
     {
         return m_bpm;
+    }
+
+    bool midi_port_refresh () const
+    {
+        return m_midi_port_refresh;
     }
 
     /**
@@ -588,6 +652,25 @@ private:
     }
 
 };          // midi_info
+
+/*
+ *  Free functions in the seq66 namespace.
+ *
+ *  In the latest versions of JACK, 0xFFFE is the macro "NO_PORT".  Although
+ *  krufty, we can use this value in Seq66 no matter the version of JACK.
+ */
+
+inline uint32_t
+null_system_port_id ()
+{
+    return 0xFFFE;
+}
+
+inline bool
+is_null_system_port_id (uint32_t portid)
+{
+    return portid == null_system_port_id();
+}
 
 }           // namespace seq66
 

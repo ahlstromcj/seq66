@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2022-01-25
+2015-09-09 to 2022-02-12
 
 Creating a GitHub Repository:
 
@@ -13,20 +13,20 @@ project:
     $ git commit -m "Created this new and wonderful project."
 
 In GitHub, create the new repository (without the LICENSE and README
-files, which you can create locally).  Then copy the repository URL to the
+files, which one can create locally).  Then copy the repository URL to the
 system clipboard.  We will call it $MY_GITHUB_URL.  Add the remote
-URL, verify it, and push your local repository to it.
+URL, verify it, and push this local repository to it.
 
     $ git remote add origin $MY_GITHUB_URL
     $ git remote -v
     $ git push -u origin master
 
-Now you are ready to work, making changes locally and pushing them to
+Now we are ready to work, making changes locally and pushing them to
 GitHub.
 
-Create a Repository on Your Own Server:
+Create a Repository on a Local Server:
 
-On a side note, if you want to create a local repository called "proj.git"
+On a side note, if one wants to create a local repository called "proj.git"
 on a machine with many users, who are all in the group "devs", initialize
 the repository to be "shared":
 
@@ -39,15 +39,15 @@ sure to find:
 
     [core]
     bare = true
-    sharedrepository = 1    (i.e. "true")
+    sharedrepository = 1                # i.e. "true"
 
 Then change the group owner of the repository, if not already set to
 "devs" by git:
 
     $ chgrp -R devs proj.git
 
-To get your code to this new bare repository, first go to the top-level
-directory in your code base (e.g. the "proj") directory.  Then:
+To get the code to this new bare repository, first go to the top-level
+directory in the code base (e.g. the "proj") directory.  Then:
 
     $ git init
     $ git add .
@@ -62,24 +62,22 @@ Repository Management:
    https://github.com/Kunena/Kunena-Forum/wiki/
       Create-a-new-branch-with-git-and-manage-branches and others
 
-In a github fork, keep the master branch clean (no changes pending).
-Then you can create a branch from your master. Each time you want to
-commit a bug or a feature, create a branch for it, which is a copy of your
-master branch.
+In a github fork, keep the master branch clean (no changes pending).  Then
+one can create a branch from the master. Each time one wants to commit a bug
+or a feature, create a branch for it, which is a copy of the master branch.
 
-When you do a pull request on a branch, you can continue to work on another
-branch and make another pull request on this other branch.
-
-To determine what changes were made in a pull request, use the following
-command.  If you just want the files listed, leave off the -p.
+When doing a pull request on a branch, one can continue to work on another
+branch and make another pull request on this other branch.  To determine
+what changes were made in a pull request, use the following command.  To
+just list the files, leave off the -p.
 
     $ git request-pull -p master https://github.com/ahlstromcj/sequencer64.git
 
-Create the branch on your local machine and switch to it:
+Create the branch on the local machine and switch to it:
 
     $ git checkout -b [name_of_your_branch]
 
-If you want to branch from another branch, add it to the command:
+To branch from another branch, add it to the command:
 
     $ git checkout -b [name_of_your_branch] [name of existing branch]
 
@@ -97,7 +95,7 @@ Here is an example of a feature branch from the tutorial
     $ git branch -d myfeature           # Deleted branch myfeature (was 05e9557).
     $ git push origin develop
 
-When the branch is ready, push the branch to your "origin" remote on
+When the branch is ready, push the branch to the "origin" remote on
 GitHub as in the example above:
 
     $ git push origin [name_of_your_branch]
@@ -106,55 +104,51 @@ Better, to make sure git pull will work, set an upstream branch:
 
     $ git push -u origin [name_of_your_branch]
 
-When you want to commit something in your branch, be sure to first
-checkout the branch.
-
-If git claims you cannot check out a branch, just do the following command
-to tell your local git about any new branches:
+When you want to modify and commit something in the branch, first checkout
+the branch.  If git claims it cannot check out a branch, do the
+following command to tell the local git repo about new branches:
 
     $ git fetch
 
-Update your branch when the original branch from official repository has been
+Update the branch when the original branch from official repository has been
 updated:
 
     $ git fetch [name_of_your_remote]
 
 (It is important to be aware that the fetch command does not do a merge,
-while a pull command does attempt to do a merge.  Doing a pull of one
-branch while the current branch is a different one is something one
-generally does not want to do.)
+while a pull command does attempt to do a merge.  Doing a pull of one branch
+while the current branch is a different one is something one generally
+does not want to do.)
 
-Others can track your branch in this manner to simplify the git push
-command:
+Others can track the branch in this manner to simplify the git push command:
 
     $ git checkout --track -b your_branch origin/your_branch
     $ git commit -m "the relevant message"
     $ git push
 
-Then you need to apply (merge) changes. If your branch is derived from the
-"develop" branch you need to do:
+Then apply (merge) the changes. If the branch is derived from the
+"develop" branch do this action:
 
     $ git checkout master
     $ git merge [name_of_your_remote]/develop
 
-If you had set up an upstream branch, then this command will suffice: 
+If one had set up an upstream branch, then this command will suffice: 
 
     $ git merge develop
 
 One can add the --no-commit option to allow for inspecting the merge and
 doing further tweaking of the merge before committing the merge.
 
-Then make any minor tweaks or version stamping you need to make your
-master official.  Also, it is beneficial to tag the release (as discussed
-below) to make it easier for users to determine the differences between
-major/minor releases, without having to study a bunch of intermediate
-commits.
+Then make any minor tweaks or version stamping needed to make the master
+official.  Also, it is beneficial to tag the release (as discussed below) to
+make it easier for users to determine the differences between major/minor
+releases, without having to study a bunch of intermediate commits.
 
 One can also merge from master to a feature-branch without a checkout:
 
     $ git merge master feature-branch
 
-You will probably also want to merge back any tweaks made to master back
+One will probably also want to merge back any tweaks made to master back
 into your branch, if you intend to do further work in that branch:
 
     $ git checkout develop
@@ -168,7 +162,7 @@ Branch delete/remove:
         $ git push origin :name_of_branch           -or-
         $ git push origin --delete name_of_branch
 
-    Follow that up with this command on all your local copies:
+    Follow that up with this command on all the local copies:
 
         $ git fetch --all --prune                  -or-
         $ git branch -d name_of_branch
@@ -177,28 +171,27 @@ Branch delete/remove:
     error regarding apt_pkg.  Even if python-apt or python3-apt are
     installed.
 
-Caching your credentials (be careful!):
+Caching ones credentials (be careful!):
 
     $ git config credential.helper store
 
 Pulls and merges:
 
-    For a GitHub project, you can use the handy "Merge pull request"
-    button on your project page, or you can do it from the command line.
+    For a GitHub project, one can use the handy "Merge pull request"
+    button on the project page, or do it from the command line.
 
-    Step 1: From your project repository, check out a new branch and test
+    Step 1: From the project repository, check out a new branch and test
             the changes.
 
-    $ git checkout -b TDeagan-mute_groups master        [or a branch]
+    $ git checkout -b TDeagan-mute_groups master    # or a branch
     $ git pull https://github.com/TDeagan/sequencer64.git mute_groups
 
-    Step 2: Verify that the changes are reasonable and correct, building
-            if you need to.  The following command will let you see
-            all the changes, and you can build and test if the changes look
-            suspicious.
+    Step 2: Verify that the changes are reasonable and correct, building if
+            needed.  The following command will show all the changes, and
+            one can build and test if the changes look suspicious.
 
-    $ git diff --name-only master                       How many files changed?
-    $ git difftool master                               View them (e.g.  gvimdiff)
+    $ git diff --name-only master                   # How many files changed?
+    $ git difftool master                           # View them (e.g.  gvimdiff)
 
     Step 3: Merge the changes and update on GitHub.
 
@@ -217,7 +210,7 @@ Trial merge:
 
     $ git diff --cached
 
-    And you can undo the merge, even if it is a fast-forward merge:
+    And one can undo the merge, even if it is a fast-forward merge:
 
     $ git merge --abort
 
@@ -225,13 +218,13 @@ Trial merge:
 
 Tagging:
 
-    We want to tag release points (e.g. 0.9.9.xx) with a tag of the
+    We want to tag release points (e.g. 0.99.9) with a tag of the
     same name.  We create an annotated tag, which adds information and
     requires a commit message, and is meant for public consumption.
 
-    $ git log               [to get the commit hash, abcd1234 (fake example)]
-    $ git tag -a 0.9.9.xx -m "New version 0.9.9.xx tagged" abcd1234
-    $ git push origin 0.9.9.xx              - or -
+    $ git log               # to get the commit hash, abcd1234 (for example)
+    $ git tag -a 0.99.9 -m "New version 0.99.9.xx tagged" abcd1234
+    $ git push origin 0.99.9                 - or -
     $ git push origin --tags
 
     An alternative tag command, thanks to Milkii Brewster, is:
@@ -240,15 +233,24 @@ Tagging:
 
     He also notes the the GitHub "Create Release" feature can be used.
 
+    If one tags the wrong commit, simply re-tag with the correct commit,
+    and add the "-f" (force) option.
+
     Note that each tag to be published needs to be pushed as well.
     Also note that, if the commit hash is missing, HEAD is assumed.
-    A user can get the tagged code via a command like the following.
 
-    $ git checkout -b version.xx 0.9.9.xx
+Tag Checkout:
 
-    But be careful about modifications; if committed, they represent new
-    work you might need to merge later, but the new work will not be part
-    of the tagged commit.
+    A user can get the tagged code into a new branch via commands like the
+    following. First, fetch tags from the remote repository. Then check out
+    the desired tag into a branch with the desired name:
+
+    $ git fetch --all --tags
+    $ git checkout tags/0.99.9 -b newbranch
+
+    Be careful about modifications; if committed, they represent new work
+    one might need to merge later, but the new work will not be part of the
+    tagged commit.
 
     To get all of the tags for a project, a simple pull (of all items) is
     necessary:
@@ -289,7 +291,7 @@ Tagging:
     $ git fetch --all --tags --prune
     $ git checkout tags/<tagname> [-b branch name]
 
-    The branch name is optional; you might not want to make a branch, and
+    The branch name is optional; one might not want to make a branch, and
     just get the tagged version.
 
     $ ./pack 0.94.6
@@ -314,7 +316,7 @@ Cherry-Picking:
 
     And then one can push the fix and the new tag.
 
-    See this article on why you should generally avoid cherry-picking
+    See this article on why one should generally avoid cherry-picking
     in git:
 
         http://www.draconianoverlord.com/2013/09/07/no-cherry-picking.html

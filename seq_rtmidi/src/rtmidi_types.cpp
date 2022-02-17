@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-01
- * \updates       2020-12-14
+ * \updates       2022-02-17
  * \license       See above.
  *
  *  Provides some basic types for the (heavily-factored) rtmidi library, very
@@ -49,8 +49,7 @@ namespace seq66
  *  Constructs an empty MIDI message.
  */
 
-midi_message::midi_message ()
- :
+midi_message::midi_message () :
     m_bytes     (),
     m_timestamp (0.0)
 {
@@ -89,8 +88,7 @@ midi_message::show () const
  *  Default constructor.
  */
 
-midi_queue::midi_queue ()
- :
+midi_queue::midi_queue () :
     m_front     (0),
     m_back      (0),
     m_size      (0),
@@ -223,7 +221,6 @@ rtmidi_in_data::rtmidi_in_data ()
  :
     m_queue             (),
     m_first_message     (true),
-    m_api_data          (nullptr),
 #if defined SEQ66_USER_CALLBACK_SUPPORT
     m_using_callback    (false),
     m_user_callback     (nullptr),

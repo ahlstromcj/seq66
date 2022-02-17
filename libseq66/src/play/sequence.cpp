@@ -740,7 +740,10 @@ sequence::calculate_measures () const
  *  into a 3/4 measure, the number of ticks is 3/4th of the original, and we'd
  *  have to rescale the notes to that new number.  If we leave the notes alone,
  *  then the measure-count increments, and in playback an space of silence is
- *  introduced.
+ *  introduced.  Better to avoid changing the numerator.
+ *
+ *  If we change 4/4 to 4/8, then playback slows down by half.  Be aware of
+ *  this feature.
  *
  * \return
  *      Returns the whole number of measure in the current length of the

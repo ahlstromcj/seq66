@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2022-01-26
+ * \updates       2022-02-16
  * \license       GNU GPLv2 or above
  *
  *  This midibus module is the RtMidi version of the midibus
@@ -64,17 +64,17 @@ class midibus final : public midibase
 private:
 
     /**
-     *  The RtMidi API interface object this midibus will be creating and then
-     *  using.
+     *  The rtmidi API interface input or output object this midibus will be
+     *  creating and then used. TODO: This needs to be an std::unique_ptr().
      */
 
     rtmidi * m_rt_midi;
 
     /**
-     *  For Seq66, the ALSA model used requires that all the midibus
-     *  objects use the same ALSA sequencer "handle".  The rtmidi_info object
-     *  used for enumerating the ports is a good place to get this handle.
-     *  It is an extension of the legacy RtMidi interface.
+     *  For Seq66, the ALSA model used requires that all the midibus objects
+     *  use the same ALSA sequencer "handle".  The rtmidi_info object used for
+     *  enumerating the ports is a good place to get this handle.  It is an
+     *  extension of the legacy RtMidi interface.
      */
 
     rtmidi_info & m_master_info;
@@ -97,6 +97,18 @@ public:
     virtual ~midibus ();
 
     virtual bool api_connect ();
+
+private:
+
+    const rtmidi_info & master_info () const
+    {
+        return m_master_info;
+    }
+
+    rtmidi_info & master_info ()
+    {
+        return m_master_info;
+    }
 
 protected:
 

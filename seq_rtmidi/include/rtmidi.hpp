@@ -70,7 +70,7 @@ private:
      *  We might make it a static object at some point.
      */
 
-    rtmidi_info & m_midi_info;
+    rtmidi_info & m_rtmidi_info;
 
     /**
      *  Points to the API I/O object (e.g. midi_alsa or midi_jack) for which
@@ -223,7 +223,7 @@ public:
 
     int get_port_count ()
     {
-        return m_midi_info.get_port_count();
+        return m_rtmidi_info.get_port_count();
     }
 
     /**
@@ -233,7 +233,7 @@ public:
 
     int full_port_count ()
     {
-        return m_midi_info.full_port_count();
+        return m_rtmidi_info.full_port_count();
     }
 
     const midi_api * get_api () const

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-01-28
+ * \updates       2022-02-16
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -111,11 +111,11 @@ mastermidibus::~mastermidibus ()
  *
  *  Also, the midibus pointers created here are local, but the busarray::add()
  *  function manages them, using the std::unique_ptr<> template.  We could use
- *  std::unique_ptr<> here, and even std::make_unique() if we wanted to require
- *  C++14 at this time.
+ *  std::unique_ptr<> here, and even std::make_unique() if we wanted to
+ *  require C++14 at this time.
  *
- *  Are these good conventions, or potentially confusing to users?  They
- *  match what the legacy seq66 and seq66 do for ALSA.
+ *  Are these good conventions, or potentially confusing to users?  They match
+ *  what the legacy seq66 and seq66 do for ALSA.
  *
  * \param ppqn
  *      Provides the (possibly new) value of PPQN to set.  ALSA has a function
@@ -130,53 +130,54 @@ mastermidibus::~mastermidibus ()
 void
 mastermidibus::api_init (int ppqn, midibpm bpm)
 {
-    m_midi_master.api_set_ppqn(ppqn);
-    m_midi_master.api_set_beats_per_minute(bpm);
+    midi_master().api_set_ppqn(ppqn);
+    midi_master().api_set_beats_per_minute(bpm);
     if (rc().manual_ports())                            /* virtual ports    */
     {
         int num_buses = rc().manual_port_count();       /* output count     */
-        m_midi_master.clear();
+        midi_master().clear();
         for (int bus = 0; bus < num_buses; ++bus)       /* output busses    */
         {
            midibus * m = make_virtual_bus(bus, midibase::io::output);
             if (not_nullptr(m))
-                m_midi_master.add_output(m);            /* must come 2nd    */
+                midi_master().add_output(m);            /* must come 2nd    */
         }
         num_buses = rc().manual_in_port_count();        /* input count      */
         for (int bus = 0; bus < num_buses; ++bus)       /* input busses     */
         {
             midibus * m = make_virtual_bus(bus, midibase::io::input);
             if (not_nullptr(m))
-                m_midi_master.add_input(m);             /* must come 2nd    */
+                midi_master().add_input(m);             /* must come 2nd    */
         }
     }
     else
     {
-        bool swap_io = m_midi_master.selected_api() == rtmidi_api::jack;
-        unsigned nports = m_midi_master.full_port_count();
+        bool swap_io = midi_master().selected_api() == rtmidi_api::jack;
+        unsigned nports = midi_master().full_port_count();
         if (nports > 0)
         {
             midibase::io iodirection = swap_io ?
                 midibase::io::output : midibase::io::input ;
 
-            m_midi_master.midi_mode(midibase::io::input);       /* mode!    */
+            debug_message("Adding midibus port objects");
+            midi_master().midi_mode(midibase::io::input);     /* ugh! mode! */
 
-            unsigned inports = m_midi_master.get_port_count();
+            unsigned inports = midi_master().get_port_count();
             for (unsigned bus = 0; bus < inports; ++bus)
             {
                 midibus * m = make_normal_bus(bus, iodirection);
                 if (not_nullptr(m))
-                    m_midi_master.add_bus(m);           /* must come 2nd    */
+                    midi_master().add_bus(m);
             }
             iodirection = swap_io ? midibase::io::input : midibase::io::output ;
-            m_midi_master.midi_mode(midibase::io::output);    /* ugh! mode! */
+            midi_master().midi_mode(midibase::io::output);    /* ugh! mode! */
 
-            unsigned outports = m_midi_master.get_port_count();
+            unsigned outports = midi_master().get_port_count();
             for (unsigned bus = 0; bus < outports; ++bus)
             {
                 midibus * m = make_normal_bus(bus, iodirection);
                 if (not_nullptr(m))
-                    m_midi_master.add_bus(m);           /* must come 2nd    */
+                    midi_master().add_bus(m);
             }
         }
     }
@@ -189,7 +190,7 @@ mastermidibus::make_virtual_bus (int bus, midibase::io iotype)
 {
     midibus * m = new (std::nothrow) midibus
     (
-        m_midi_master, bus, iotype, midibase::port::manual, bus
+        midi_master(), bus, iotype, midibase::port::manual, bus
     );
     if (not_nullptr(m))
     {
@@ -205,14 +206,14 @@ midibus *
 mastermidibus::make_normal_bus (int bus, midibase::io iotype)
 {
     midibase::port porttype = midibase::port::normal;
-    if (m_midi_master.get_virtual(bus))
+    if (midi_master().get_virtual(bus))
         porttype = midibase::port::manual;
-    else if (m_midi_master.get_system(bus))
+    else if (midi_master().get_system(bus))
         porttype = midibase::port::system;
 
     midibus * m = new (std::nothrow) midibus
     (
-        m_midi_master, bus, iotype, porttype, null_buss()
+        midi_master(), bus, iotype, porttype, null_buss()
     );
     if (not_nullptr(m))
     {
@@ -235,7 +236,7 @@ mastermidibus::activate ()
 {
     bool result = mastermidibase::activate();
     if (result)
-        result = m_midi_master.api_connect();      /* activates, too    */
+        result = midi_master().api_connect();      /* activates, too    */
 
     return result;
 }
@@ -276,7 +277,7 @@ mastermidibus::api_poll_for_midi ()
     if (m_use_jack_polling)                             /* run-time option  */
         return mastermidibase::api_poll_for_midi();     /* inbus-array poll */
     else
-        return m_midi_master.api_poll_for_midi();       /* ALSA poll        */
+        return midi_master().api_poll_for_midi();       /* ALSA poll        */
 #else
     return mastermidibase::api_poll_for_midi();         /* inbus-array poll */
 #endif
@@ -295,7 +296,7 @@ mastermidibus::api_get_midi_event (event * inev)
     if (m_use_jack_polling)
         return m_inbus_array.get_midi_event(inev);
     else
-        return m_midi_master.api_get_midi_event(inev);
+        return midi_master().api_get_midi_event(inev);
 #else
     return m_inbus_array.get_midi_event(inev);
 #endif

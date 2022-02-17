@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-09
+ * \updates       2022-02-16
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -187,7 +187,7 @@
  *  Delimits the size of the JACK ringbuffer.
  */
 
-#define JACK_RINGBUFFER_SIZE 16384      /* default size for ringbuffer  */
+static const size_t c_jack_ringbuffer_size = 16384;
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -417,7 +417,7 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
 void
 jack_shutdown_callback (void * arg)
 {
-    midi_jack_info * jack = (midi_jack_info *)(arg);
+    midi_jack_info * jack = reinterpret_cast<midi_jack_info *>(arg);
     if (not_nullptr(jack))
         async_safe_strprint("JACK shutdown");
     else
@@ -427,7 +427,9 @@ jack_shutdown_callback (void * arg)
 #if defined SEQ66_JACK_PORT_CONNECT_CALLBACK
 
 /**
- * Parameters:
+ *  Port-connect and port-register callbacks seem to get interleaved, making
+ *  for confusing output.  We currently want to know only about registration,
+ *  anwyay.
  *
  * \param a
  *      One of two ports connected/disconnected.
@@ -449,7 +451,7 @@ jack_port_connect_callback
     int connect, void * arg
 )
 {
-    midi_jack_info * jack = (midi_jack_info *)(arg);
+    midi_jack_info * jack = reinterpret_cast<midi_jack_info *>(arg);
     if (not_nullptr(jack))
     {
         if (rc().investigate())
@@ -492,21 +494,21 @@ jack_port_connect_callback
  *              containers (midi_port_info).
  *          -#  Also make copies of these containers.
  *
- * \param port
- *      The ID of the port.
+ * \param portid
+ *      The ID of the port. It is a 32-bit unsigned integer.
  *
  * \param regv
  *      The registration value. It is non-zero if the port is being registered,
  *      and zero if the port is being unregistered.
  *
  * \param arg
- *      Pointer to a client supplied data (a midi_jack_info pointer).
+ *      Pointer to a client supplied data, the midi_jack_info object.
  */
 
 void
 jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
 {
-    midi_jack_info * jack = (midi_jack_info *)(arg);
+    midi_jack_info * jack = reinterpret_cast<midi_jack_info *>(arg);
     if (not_nullptr(jack))
     {
         jack_client_t * handle = jack->client_handle();
@@ -518,31 +520,39 @@ jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
             if (not_nullptr(portptr))
                 mine = ::jack_port_is_mine(handle, portptr) != 0;
             else
-                return;                 /* fatal error, bug out */
+                return;                             /* fatal error, bug out */
 
-            if (rc().investigate() && ! mine)       /* otherwise it is TMI  */
+            if (rc().investigate())
             {
                 const char * porttype = ::jack_port_type(portptr);
                 char value[c_async_safe_utoa_size];
                 char temp[128];
                 async_safe_utoa(unsigned(portid), &value[0], false);
-                std::strcpy(temp, "Port-");
-                std::strcat(temp, regv != 0 ? "register:" : "unregister:");
+                std::strcpy(temp, "Port ");
+                std::strcat(temp, regv != 0 ? "reg" : "unreg");
                 std::strcat(temp, " ");
                 std::strcat(temp, value);
-                std::strcat(temp, " '");
-                std::strcat(temp, ::jack_port_name(portptr));
-                std::strcat(temp, "': ");
+                std::strcat(temp, "-");
+                std::strncat(temp, ::jack_port_name(portptr), 32); // truncate
+                std::strcat(temp, "=");
                 if (is_nullptr(arg))
                     std::strcat(temp, "nullptr! ");
 
                 std::strcat(temp, porttype);
                 if (mine)
-                    std::strcat(temp, ", Seq66 port");
+                    std::strcat(temp, "; seq66");
 
                 async_safe_strprint(temp);
             }
-            if (! mine)
+            if (mine)
+            {
+                /*
+                 * TODO: get the port ID into the list (busarray, whatever)
+                 *       so it can be checked for later registrations and
+                 *       unregistrations.
+                 */
+            }
+            else
             {
                 /*
                  * TODO: trigger a reassessment of ports.
@@ -576,7 +586,7 @@ midi_jack::midi_jack (midibus & parentbus, midi_info & masterinfo) :
     m_jack_data         ()
 {
     client_handle(reinterpret_cast<jack_client_t *>(masterinfo.midi_handle()));
-    (void) m_jack_info.add(*this);
+    (void) jack_info().add(*this);
 }
 
 /**
@@ -587,19 +597,19 @@ midi_jack::midi_jack (midibus & parentbus, midi_info & masterinfo) :
 
 midi_jack::~midi_jack ()
 {
-    if (not_nullptr(m_jack_data.m_jack_buffsize))
-        ::jack_ringbuffer_free(m_jack_data.m_jack_buffsize);
+    if (not_nullptr(jack_data().m_jack_buffsize))
+        ::jack_ringbuffer_free(jack_data().m_jack_buffsize);
 
-    if (not_nullptr(m_jack_data.m_jack_buffmessage))
-        ::jack_ringbuffer_free(m_jack_data.m_jack_buffmessage);
+    if (not_nullptr(jack_data().m_jack_buffmessage))
+        ::jack_ringbuffer_free(jack_data().m_jack_buffmessage);
 }
 
 void
 midi_jack::set_port_suspended (bool flag)
 {
     midi_api::set_port_suspended(flag);
-    if (not_nullptr(m_jack_data.m_jack_rtmidiin))
-        m_jack_data.m_jack_rtmidiin->is_enabled(! flag);
+    if (not_nullptr(jack_data().m_jack_rtmidiin))
+        jack_data().m_jack_rtmidiin->is_enabled(! flag);
 }
 
 /**
@@ -634,8 +644,7 @@ midi_jack::api_init_out ()
     {
         std::string remoteportname = connect_name();    /* "bus:port"   */
         remote_port_name(remoteportname);
-
-        result = create_ringbuffer(JACK_RINGBUFFER_SIZE);
+        result = create_ringbuffer(c_jack_ringbuffer_size);
         if (result)
         {
             set_alt_name
@@ -679,7 +688,7 @@ midi_jack::api_init_out ()
  *
  *  Note that we cannot connect ports until we are activated, and we cannot be
  *  activated until all ports are properly set up.  We also need to fill in
- *  the m_jack_data member here.
+ *  the jack_data() member here.
  *
  * \return
  *      Returns true if the function was successful, and sets the flag
@@ -801,7 +810,7 @@ midi_jack::api_init_out_sub ()
         result = portid >= 0;
     }
     if (result)
-        result = create_ringbuffer(JACK_RINGBUFFER_SIZE);
+        result = create_ringbuffer(c_jack_ringbuffer_size);
 
     if (result)
     {
@@ -840,11 +849,6 @@ midi_jack::api_init_in_sub ()
         portid = bus_index();
         result = portid >= 0;
     }
-
-    /*
-     * No need for a JACK ringbuffer for input?
-     */
-
     if (result)
     {
         std::string portname = master_info().get_port_name(bus_index());
@@ -928,7 +932,7 @@ midi_jack::api_play (const event * e24, midibyte channel)
     if (e24->is_two_bytes())
         message.push(d1);
 
-    if (m_jack_data.valid_buffer())
+    if (jack_data().valid_buffer())
     {
         if (! send_message(message))
         {
@@ -961,11 +965,11 @@ midi_jack::send_message (const midi_message & message)
 #endif
         int count1 = ::jack_ringbuffer_write
         (
-            m_jack_data.m_jack_buffmessage, message.array(), message.count()
+            jack_data().m_jack_buffmessage, message.array(), message.count()
         );
         int count2 = ::jack_ringbuffer_write
         (
-            m_jack_data.m_jack_buffsize, (char *) &nbytes, sizeof nbytes
+            jack_data().m_jack_buffsize, (char *) &nbytes, sizeof nbytes
         );
         result = (count1 > 0) && (count2 > 0);
     }
@@ -989,7 +993,7 @@ midi_jack::api_sysex (const event * e24)
     for (int offset = 0; offset < data_size; ++offset)
     {
         message.push(data[offset]);
-        if (m_jack_data.valid_buffer())
+        if (jack_data().valid_buffer())
         {
             if (! send_message(message))
             {
@@ -1123,7 +1127,7 @@ midi_jack::send_byte (midibyte evbyte)
 {
     midi_message message;
     message.push(evbyte);
-    if (m_jack_data.valid_buffer())
+    if (jack_data().valid_buffer())
     {
         if (! send_message(message))
         {
@@ -1353,12 +1357,22 @@ midi_jack::register_port (midibase::io iotype, const std::string & portname)
             );
 #endif
 #endif
-
-            debug_message("JACK port registered", portname);
+            if (rc().investigate())
+            {
+                std::string longname = portname;
+                std::string shortname = ::jack_port_short_name(p);
+                if (shortname != portname)
+                {
+                    longname += " \"";
+                    longname += shortname;
+                    longname += "\"";
+                }
+                debug_message("Registered", longname);
+            }
         }
         else
         {
-            m_error_string = "JACK error registering port";
+            m_error_string = "JACK port register error";
             m_error_string += " ";
             m_error_string += portname;
             error(rterror::kind::driver_error, m_error_string);
@@ -1397,10 +1411,10 @@ midi_jack::create_ringbuffer (size_t rbsize)
         jack_ringbuffer_t * rb = ::jack_ringbuffer_create(rbsize);
         if (not_nullptr(rb))
         {
-            m_jack_data.m_jack_buffsize = rb;
+            jack_data().m_jack_buffsize = rb;
             rb = ::jack_ringbuffer_create(rbsize);
             if (not_nullptr(rb))
-                m_jack_data.m_jack_buffmessage = rb;
+                jack_data().m_jack_buffmessage = rb;
             else
                 result = false;
         }
@@ -1447,8 +1461,8 @@ midi_in_jack::midi_in_jack (midibus & parentbus, midi_info & masterinfo)
      * api_init_in() or api_init_out() when the port is registered.
      */
 
-    m_jack_data.m_jack_rtmidiin = input_data();
-    m_jack_data.m_jack_rtmidiin->is_enabled(parentbus.get_input());
+    jack_data().m_jack_rtmidiin = input_data();
+    jack_data().m_jack_rtmidiin->is_enabled(parentbus.get_input());
 }
 
 /**
@@ -1462,7 +1476,7 @@ midi_in_jack::midi_in_jack (midibus & parentbus, midi_info & masterinfo)
 int
 midi_in_jack::api_poll_for_midi ()
 {
-    rtmidi_in_data * rtindata = m_jack_data.m_jack_rtmidiin;
+    rtmidi_in_data * rtindata = jack_data().m_jack_rtmidiin;
     (void) microsleep(std_sleep_us());
 
 #if defined SEQ66_USER_CALLBACK_SUPPORT
@@ -1498,7 +1512,7 @@ midi_in_jack::api_poll_for_midi ()
 bool
 midi_in_jack::api_get_midi_event (event * inev)
 {
-    rtmidi_in_data * rtindata = m_jack_data.m_jack_rtmidiin;
+    rtmidi_in_data * rtindata = jack_data().m_jack_rtmidiin;
     bool result = ! rtindata->queue().empty();
     if (result)
     {
