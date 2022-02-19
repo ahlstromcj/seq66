@@ -365,7 +365,7 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
 int
 jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
 {
-    static size_t s_offset = 0;
+    const size_t s_offset = 0;
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
     void * buf = ::jack_port_get_buffer(jackdata->m_jack_port, nframes);
     ::jack_midi_clear_buffer(buf);                  /* no nullptr test      */
@@ -516,14 +516,27 @@ jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
         if (not_nullptr(handle))
         {
             bool mine = false;
+            std::string fullname;
             portptr = ::jack_port_by_id(handle, portid);
             if (not_nullptr(portptr))
+            {
+                const char * fn = ::jack_port_name(portptr);
+                if (not_nullptr(fn))
+                    fullname = std::string(fn);
+
                 mine = ::jack_port_is_mine(handle, portptr) != 0;
+            }
             else
                 return;                             /* fatal error, bug out */
 
             if (rc().investigate())
             {
+                /*
+                 * NOTE: this might be over-kill.  JACK documentation says
+                 * this function does not need to be suitable for real-time
+                 * execution.  But what about async-safety?
+                 */
+
                 const char * porttype = ::jack_port_type(portptr);
                 char value[c_async_safe_utoa_size];
                 char temp[128];
@@ -533,7 +546,7 @@ jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
                 std::strcat(temp, " ");
                 std::strcat(temp, value);
                 std::strcat(temp, "-");
-                std::strncat(temp, ::jack_port_name(portptr), 32); // truncate
+                std::strncat(temp, fullname.c_str(), 32);   /* truncate it  */
                 std::strcat(temp, "=");
                 if (is_nullptr(arg))
                     std::strcat(temp, "nullptr! ");

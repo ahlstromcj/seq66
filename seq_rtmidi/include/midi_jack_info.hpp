@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-02-16
+ * \updates       2022-02-18
  * \license       See above.
  *
  *    We need to have a way to get all of the JACK information of
@@ -40,13 +40,11 @@
 
 #if defined SEQ66_JACK_SUPPORT
 
-#include "mastermidibus_rm.hpp"
-#include "midi_info.hpp"                /* seq66::midi_port_info etc.       */
-#include "midi/midibus.hpp"             /* seq66::midibus                   */
-
 #include <jack/jack.h>                  /* JACK (2) API                     */
 
-#include "midi_jack_data.hpp"           /* seq66::midi_jack_data            */
+#include "mastermidibus_rm.hpp"         /* adds a rtmidi_info "MIDI master" */
+#include "midi_info.hpp"                /* seq66::midi_port_info etc.       */
+#include "midi/midibus.hpp"             /* seq66::midibus                   */
 
 /*
  * This feature works, but if both the port-connect and port-registration
@@ -181,7 +179,7 @@ private:
 
     bool add (midi_jack & mj)
     {
-        m_jack_ports.push_back(&mj);
+        jack_ports().push_back(&mj);
         return true;
     }
 

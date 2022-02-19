@@ -66,7 +66,7 @@ private:
 
     /**
      *  Contains information about the ports (system or client) enumerated by
-     *  the API.
+     *  the API. Currently has child classes midi_alsa_info and midi_jack_info.
      */
 
     midi_info & m_master_info;

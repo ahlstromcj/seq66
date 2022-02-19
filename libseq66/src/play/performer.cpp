@@ -2174,7 +2174,7 @@ performer::create_master_bus ()
          *  clocks, as opposed to what's in the rc file?
          */
 
-        m_master_bus.reset(new(std::nothrow) mastermidibus(m_ppqn, m_bpm));
+        m_master_bus.reset(new (std::nothrow) mastermidibus(m_ppqn, m_bpm));
         if (m_master_bus)
         {
             mastermidibus * mmb = m_master_bus.get();

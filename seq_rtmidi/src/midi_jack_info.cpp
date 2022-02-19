@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-02-14
+ * \updates       2022-02-18
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -46,6 +46,7 @@
 #include "midi/jack_assistant.hpp"      /* seq66::create_jack_client()      */
 #include "midi/midibus_common.hpp"      /* from the libseq66 sub-project    */
 #include "midi_jack.hpp"                /* seq66::midi_jack_info            */
+#include "midi_jack_data.hpp"           /* seq66::midi_jack_data            */
 #include "midi_jack_info.hpp"           /* seq66::midi_jack_info            */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
@@ -110,7 +111,7 @@ jack_process_io (jack_nframes_t nframes, void * arg)
              * appropriately.
              */
 
-            for (auto mj : self->m_jack_ports)      /* midi_jack pointers   */
+            for (auto mj : self->jack_ports())      /* midi_jack pointers   */
             {
                 midi_jack_data * mjp = &mj->jack_data();
                 if (mj->parent_bus().is_input_port())
@@ -362,7 +363,7 @@ midi_jack_info::get_all_port_info
     int result = (-1);
     if (not_nullptr(m_jack_client))
     {
-        const char ** inports = jack_get_ports    /* list of the JACK ports */
+        const char ** inports = ::jack_get_ports  /* list of the JACK ports */
         (
             m_jack_client, NULL,
             JACK_DEFAULT_MIDI_TYPE,
@@ -422,7 +423,7 @@ midi_jack_info::get_all_port_info
             result += count;
         }
 
-        const char ** outports = jack_get_ports    /* list of JACK ports   */
+        const char ** outports = ::jack_get_ports  /* list of JACK ports   */
         (
             m_jack_client, NULL,
             JACK_DEFAULT_MIDI_TYPE,

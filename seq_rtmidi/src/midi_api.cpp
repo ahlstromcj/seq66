@@ -153,14 +153,13 @@ midi_api::error (rterror::kind errtype, const std::string & errorstring)
 }
 
 /**
- * \getter m_master_info.midi_mode()
- *      This function makes it a bit simpler on the caller.
+ *  This function makes it a bit simpler on the caller.
  */
 
 void
 midi_api::master_midi_mode (midibase::io iotype)
 {
-    m_master_info.midi_mode(iotype);
+    master_info().midi_mode(iotype);
 }
 
 #if defined SEQ66_USER_CALLBACK_SUPPORT

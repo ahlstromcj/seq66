@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-02
- * \updates       2022-02-17
+ * \updates       2022-02-18
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -93,9 +93,22 @@ struct midi_jack_data
 
     jack_time_t m_jack_lasttime;
 
+#if defined SEQ66_MIDI_PORT_REFRESH
+
+    /**
+     *  An unsigned 32-bit port ID that starts out as null_system_port_id(),
+     *  and, at least in JACK can be filled with actual internal port number
+     *  assigned during port registration.
+     */
+
+    jack_port_id_t m_internal_port_id;
+
+#endif
+
     /**
      *  Holds special data peculiar to the client and its MIDI input
-     *  processing.
+     *  processing. This data consists of the midi_queue message queue and a
+     *  few boolean flags.
      */
 
     rtmidi_in_data * m_jack_rtmidiin;
@@ -110,6 +123,9 @@ struct midi_jack_data
         m_jack_buffsize     (nullptr),
         m_jack_buffmessage  (nullptr),
         m_jack_lasttime     (0),
+#if defined SEQ66_MIDI_PORT_REFRESH
+        m_internal_port_id  (null_system_port_id()),
+#endif
         m_jack_rtmidiin     (nullptr)
     {
         // Empty body
@@ -133,6 +149,20 @@ struct midi_jack_data
     {
         return not_nullptr(m_jack_buffsize) && not_nullptr(m_jack_buffmessage);
     }
+
+#if defined SEQ66_MIDI_PORT_REFRESH
+
+    jack_port_id_t internal_port_id () const
+    {
+        return m_internal_port_id;
+    }
+
+    void internal_port_id (uint32_t id)
+    {
+        m_internal_port_id = id;
+    }
+
+#endif
 
 };          // class midi_jack_data
 

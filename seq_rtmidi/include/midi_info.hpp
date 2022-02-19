@@ -653,25 +653,6 @@ private:
 
 };          // midi_info
 
-/*
- *  Free functions in the seq66 namespace.
- *
- *  In the latest versions of JACK, 0xFFFE is the macro "NO_PORT".  Although
- *  krufty, we can use this value in Seq66 no matter the version of JACK.
- */
-
-inline uint32_t
-null_system_port_id ()
-{
-    return 0xFFFE;
-}
-
-inline bool
-is_null_system_port_id (uint32_t portid)
-{
-    return portid == null_system_port_id();
-}
-
 }           // namespace seq66
 
 #endif      // SEQ66_MIDI_INFO_HPP
