@@ -180,13 +180,9 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
     QBrush brush(Qt::white, Qt::NoBrush);
     QPen pen(fore_color());
     pen.setStyle(Qt::SolidLine);
-
-// #if defined THIS_CODE_ADDS_VALUE
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.drawRect(0, 0, width(), height());
-// #endif
-
     if (! is_initialized())
         set_initialized();
 

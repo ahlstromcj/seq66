@@ -6,7 +6,7 @@
 # \library    	qpseq66 application
 # \author     	Chris Ahlstrom
 # \date       	2020-05-29
-# \update      2022-01-04
+# \update      2022-02-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -38,7 +38,6 @@ DEFINES += "SEQ66_MIDILIB=rtmidi"
 DEFINES += "SEQ66_RTMIDI_SUPPORT=1"
 
 HEADERS += \
- include/base64_images.hpp \
  include/mastermidibus_rm.hpp \
  include/midibus_rm.hpp \
  include/midi_alsa.hpp \
@@ -77,7 +76,7 @@ SOURCES += \
 # the simplest way to provide a Qt-only rtmidi build for those who don't wish
 # to install autotools.
 
-INCLUDEPATH = ../include/qt/rtmidi include ../libseq66/include
+INCLUDEPATH = ../include/qt/rtmidi ../libseq66/include include
 
 #******************************************************************************
 # seq_rtmidi.pro (qpseq66)

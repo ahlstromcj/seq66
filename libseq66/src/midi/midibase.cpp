@@ -51,7 +51,7 @@
 #include "midi/midibase.hpp"            /* seq66::midibase for ALSA         */
 #include "util/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 
-#define SEQ66_DEINIIT_DISABLED_PORTS    /* EXPERIMENTAL to disable this     */
+#undef  SEQ66_DEINIT_DISABLED_PORTS     /* EXPERIMENTAL to disable this     */
 #undef  SEQ66_FULL_SET_CLOCK            /* weird, causes double out ports   */
 
 /*
@@ -651,7 +651,7 @@ bool
 midibase::set_clock (e_clock clocktype)
 {
     bool result = false;
-#if defined SEQ66_DEINIIT_DISABLED_PORTS
+#if defined SEQ66_DEINIT_DISABLED_PORTS
     if (m_clock_type != clocktype)
     {
         m_clock_type = clocktype;
@@ -704,7 +704,7 @@ midibase::set_input (bool inputing)
         m_inputing = true;
         result = init_in();
     }
-#if defined SEQ66_DEINIIT_DISABLED_PORTS
+#if defined SEQ66_DEINIT_DISABLED_PORTS
     else if (m_inputing != inputing)
     {
         m_inputing = inputing;

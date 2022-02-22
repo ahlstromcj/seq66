@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-01-15
+ * \updates       2022-02-21
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -134,7 +134,8 @@ rcsettings::rcsettings () :
     m_tempo_track_number        (0),
     m_recent_files              (),
     m_load_most_recent          (true),
-    m_full_recent_paths         (false)
+    m_full_recent_paths         (false),
+    m_portmaps_active           (false)
 {
     m_midi_control_in.inactive_allowed(true);
     m_config_filename += ".rc";
@@ -241,6 +242,7 @@ rcsettings::set_defaults ()
     m_recent_files.clear();
     m_load_most_recent = true;
     m_full_recent_paths = false;
+    m_portmaps_active = false;
     set_config_files(SEQ66_CONFIG_NAME);
     set_save_list(false);
 }

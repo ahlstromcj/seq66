@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-02-18
+ * \updates       2022-02-22
  * \license       See above.
  *
  *    We need to have a way to get all of the JACK information of
@@ -71,6 +71,10 @@ class midi_jack_info final : public midi_info
 {
     friend class midi_jack;
     friend int jack_process_io (jack_nframes_t nframes, void * arg);
+    friend void jack_port_register_callback
+    (
+        jack_port_id_t portid, int regv, void * arg
+    );
 
 private:
 
@@ -133,7 +137,6 @@ public:
 
 private:
 
-
     virtual int get_all_port_info
     (
         midi_port_info & inports,
@@ -162,6 +165,25 @@ private:
     );
 
 private:
+
+    void update_port_list
+    (
+        bool is_my_port,
+        int portid,
+        bool registration,
+        const std::string & shortname,
+        const std::string & longname
+    );
+
+#if defined SEQ66_MIDI_PORT_REFRESH
+    midi_jack * lookup_midi_jack
+    (
+        const std::string & shortname,
+        const std::string & longname = ""
+    );
+#endif
+
+    void show_details () const;
 
     const portlist & jack_ports () const
     {

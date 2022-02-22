@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-06
- * \updates       2022-02-17
+ * \updates       2022-02-21
  * \license       See above.
  *
  * Classes defined:
@@ -158,18 +158,18 @@ midi_port_info::add
     );
     m_port_container.push_back(temp);
     m_port_count = int(m_port_container.size());
-    if (rc().investigate())
+    if (rc().verbose() && ! rc().investigate())
     {
         bool makevirtual = porttype == midibase::port::manual;
         bool makesystem = porttype == midibase::port::system;
         bool makeinput =  iotype == midibase::io::input;
-        const char * vport = makevirtual ? "virtual" : "automatic" ;
+        const char * vport = makevirtual ? "virtual" : "auto" ;
         const char * iport = makeinput ? "input" : "output" ;
         const char * sport = makesystem ? "system" : "device" ;
         char tmp[128];
         snprintf
         (
-            tmp, sizeof tmp, "Port '%s:%s' %s (%s %s %s)",
+            tmp, sizeof tmp, "\"%s:%s\" %s (%s %s %s)",
             clientname.c_str(), portname.c_str(), alias.c_str(),
             vport, iport, sport
         );

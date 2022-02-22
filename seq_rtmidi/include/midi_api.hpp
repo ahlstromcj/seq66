@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; modifications by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-01-27
+ * \updates       2022-02-22
  * \license       See above.
  *
  *  Declares the following classes:
@@ -244,6 +244,12 @@ public:
 
     /*
      * Pass-alongs to the midibus representing this object's generic data.
+     *
+     * Ones not passed along at this time:
+     *
+     *      display_name()
+     *      client_id()
+     *      set_clock() [could be useful in disabling a midi_jack/midi_alsa port.
      */
 
     const std::string & bus_name () const
@@ -261,6 +267,11 @@ public:
         return parent_bus().port_alias();
     }
 
+    bool enabled () const
+    {
+        return ! parent_bus().port_disabled();
+    }
+
     std::string connect_name () const
     {
         return parent_bus().connect_name();
@@ -271,6 +282,7 @@ public:
         return parent_bus().bus_index();
     }
 
+#if 0
     int bus_id () const
     {
         return parent_bus().bus_id();
@@ -280,6 +292,7 @@ public:
     {
         return parent_bus().port_id();
     }
+#endif
 
     int ppqn () const
     {

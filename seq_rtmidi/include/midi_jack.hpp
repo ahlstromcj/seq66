@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-16
+ * \updates       2022-02-19
  * \license       See above.
  *
  *    In this refactoring, we've stripped out most of the original RtMidi
@@ -35,8 +35,6 @@
  *    MIDI.  The method that Seq66's mastermidibus uses to initialize
  *    port has been transplanted to this rtmidi library.  The name "rtmidi" is
  *    now somewhat misleading.
- *
- *  GitHub issue #165: enabled a build and run with no JACK support.
  */
 
 #include <string>
@@ -70,7 +68,8 @@ private:
 
     /**
      *  Preserves the original name of the remote port, so it can be used
-     *  later for connection.
+     *  later for connection and for analyzing port registration /
+     *  unregistration.
      */
 
     std::string m_remote_port_name;
@@ -229,6 +228,7 @@ private:
     void send_realtime_message (midibyte evbyte);
     bool send_message (const midi_message & message);
     bool set_virtual_name (int portid, const std::string & portname);
+    std::string details () const;
 
 };          // class midi_jack
 

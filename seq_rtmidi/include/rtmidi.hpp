@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2021-12-06
+ * \updates       2022-02-22
  * \license       See above.
  *
  *  The big difference between this class (seq66::rtmidi) and
@@ -196,6 +196,7 @@ public:
      * \return Returns the buss/client value as provided by the selected API.
      */
 
+#if 0
     virtual int get_bus_id () const
     {
         return parent_bus().bus_id();       /* get_api()->bus_id()      */
@@ -210,6 +211,7 @@ public:
     {
         return parent_bus().port_id();      /* get_api()->port_id()     */
     }
+#endif
 
     virtual std::string get_port_name ()
     {

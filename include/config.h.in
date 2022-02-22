@@ -1,6 +1,6 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2022-02-17"
+#define VERSION_DATE_SHORT "2022-02-22"
 #define VERSION "0.98.5"
 
 
@@ -134,6 +134,9 @@
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
+
+/* Define to enable JACK port refresh */
+#undef MIDI_PORT_REFRESH
 
 /* Define to enable NSM */
 #undef NSM_SUPPORT

@@ -24,13 +24,15 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-02-18
+ * \updates       2022-02-22
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
  *  client number, port numbers, and port names, and hold them for usage when
  *  creating JACK midibus objects and midi_jack API objects.
  */
+
+#include <cstring>                      /* std::strcpy(), std::strcat()     */
 
 #include "seq66-config.h"
 
@@ -501,6 +503,8 @@ midi_jack_info::get_all_port_info
         Launchpad-Mini:midi/capture_1
 \endverbatim
  *
+ *  and
+ *
 \verbatim
       In-port "system:midi_playback_2":
 
@@ -573,6 +577,155 @@ midi_jack_info::get_port_alias (const std::string & name)
         }
     }
     return result;
+}
+
+/**
+ *  Handle port registration and unregistration.  A feature for the future!
+ *
+ * \param is_my_port
+ *      Provides the result of the call to the jack_port_is_mine() function.
+ *
+ * \param portid
+ *      Provides the port number provided to the port-registration callback.
+ *
+ * \param registration
+ *      True if the port is being registered, and false if it is being
+ *      unregistered with JACK.
+ *
+ * \param portname
+ *      Provides the name obtained by calling jack_port_short_name().
+ */
+
+void
+midi_jack_info::update_port_list
+(
+    bool is_my_port,
+    int portid,
+    bool registration,
+    const std::string & shortname,
+    const std::string & longname
+)
+{
+    /* TEST CODE ONLY */
+
+#if defined USE_PORTSMAP_ACTIVE_STATUS
+    bool permitted = rc().portmaps_active();
+#else
+    bool permitted = true;
+#endif
+
+
+    if (permitted)
+    {
+#if defined SEQ66_MIDI_PORT_REFRESH
+        midi_jack * mj = lookup_midi_jack(shortname, longname);
+        if (not_nullptr(mj))
+        {
+            //
+        }
+
+        if (is_my_port)
+        {
+            /*
+             * TODO: get the port ID into the list (busarray, whatever)
+             *       so it can be checked for later registrations and
+             *       unregistrations.
+             */
+        }
+        else
+        {
+            /*
+             * TODO: trigger a reassessment of ports.
+             */
+        }
+#endif  // defined SEQ66_MIDI_PORT_REFRESH
+
+    }
+    else
+    {
+        if (! rc().investigate() && ! is_my_port)
+        {
+            std::string pinfo = shortname;
+            pinfo += " ";
+            pinfo += registration ? "registered" : "unregistered";
+            pinfo += ". Ignored";
+            info_message("External port", pinfo);
+        }
+    }
+}
+
+#if defined SEQ66_MIDI_PORT_REFRESH
+
+/**
+ *  By this time, the midi_jack::port_name() returns the short name of the
+ *  port as registered, so we can look up port_name() here.
+ *
+ * Important:
+ *
+ *      At present, the list of midi_jacks contains only the ones that are
+ *      enabled!
+ */
+
+midi_jack *
+midi_jack_info::lookup_midi_jack
+(
+    const std::string & shortname,
+    const std::string & longname
+)
+{
+    midi_jack * result = nullptr;
+    if (! shortname.empty())
+    {
+        for (const auto mj : jack_ports())          /* midi_jack pointers   */
+        {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+            printf
+            (
+                "!! Short name:     '%s'\n"
+                "   Long name:      '%s'\n"
+                "   MJ Port name:   '%s'\n"
+                "   MJ Remote name: '%s'\n"
+                ,
+                shortname.c_str(),
+                longname.c_str(),
+                mj->port_name().c_str(),
+                mj->remote_port_name().c_str()
+            );
+#endif
+            bool match = mj->port_name() == shortname;
+            if (! match && ! longname.empty())
+                match = mj->port_name() == longname;
+
+            if (match)
+            {
+                result = mj;
+                printf("=== Found %s\n", shortname.c_str());    // TEMPORARY !!!!
+                ////// break;
+            }
+        }
+    }
+    return result;
+}
+
+#endif  // defined SEQ66_MIDI_PORT_REFRESH
+
+/**
+ *  Useful for trouble-shooting and exploration.
+ */
+
+void
+midi_jack_info::show_details () const
+{
+    int count = 0;
+    for (const auto mj : jack_ports())              /* midi_jack pointers   */
+    {
+        std::string d = "Index ";
+        d += std::to_string(count);
+        d += ": ";
+        d += mj->details();
+        printf("%s\n", d.c_str());
+        ++count;
+    }
 }
 
 /**

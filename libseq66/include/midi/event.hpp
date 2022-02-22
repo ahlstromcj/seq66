@@ -588,12 +588,11 @@ protected:
         return m != EVENT_MIDI_META && m != EVENT_MIDI_SYSEX;
     }
 
-    /*
-     *  Static functions used in analysizing MIDI events by external callers
-     *  such as midifile, rtmidi, and midi_jack.
-     */
-
 public:
+
+    /*
+     *  Static functions used in analysizing MIDI events by external callers.
+     */
 
     /**
      *  Static test for the channel message/statuse values: Note On, Note Off,

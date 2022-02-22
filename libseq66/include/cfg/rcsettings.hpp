@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-01-15
+ * \updates       2022-02-21
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -524,6 +524,14 @@ private:
 
     bool m_full_recent_paths;
 
+    /**
+     *  Indicates if both the input and output port-maps are active. Needed as
+     *  a convenience for callers that need to know the statuses of both
+     *  ports.
+     */
+
+    bool m_portmaps_active;
+
 public:
 
     rcsettings ();
@@ -994,6 +1002,11 @@ public:
         return m_full_recent_paths;
     }
 
+    bool portmaps_active () const
+    {
+        return m_portmaps_active;
+    }
+
     const std::string & config_directory () const
     {
         return m_config_directory;
@@ -1316,6 +1329,11 @@ public:
     void full_recent_paths (bool f)
     {
         m_full_recent_paths = f;
+    }
+
+    void portmaps_active (bool f)
+    {
+        m_portmaps_active = f;
     }
 
     bool interaction_method (int v)

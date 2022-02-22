@@ -604,7 +604,6 @@ qslivegrid::set_bank_values (const std::string & name, int id)
 {
     qslivebase::set_bank_values(name, id);
     ui->txtBankName->setText(qt(name));
-//  ui->spinBank->setValue(id);
 }
 
 /**

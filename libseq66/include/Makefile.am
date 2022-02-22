@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2022-01-22
+# \update      2022-02-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -68,8 +68,9 @@ seq66libdir = @seq66libdir@
 #----------------------------------------------------------------------------
 
 nobase_include_HEADERS = \
- seq66_features.h \
+ base64_images.hpp \
  function_calls_gnu.h \
+ seq66_features.h \
  seq66_features.hpp \
  seq66_platform_macros.h \
  cfg/basesettings.hpp \

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-16
+ * \updates       2022-02-21
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -487,12 +487,63 @@ jack_port_connect_callback
  *
  *  Also see the api_get_port_name() function and the midi_jack_data class.
  *
+ * Notes:
+ *
+ *  -   For a2j ports, the long and short names are like this:
+ *      -   Long: 'a2j:nanoKEY2 [20] (playback): nanoKEY2 nanoKEY2 _ CTRL'
+ *      -   Short: 'nanoKEY2 [20] (playback): nanoKEY2 nanoKEY2 _ CTRL'
+ *  -   For Seq66's connections to a2j ports, the long and short names are
+ *      like this:
+ *      -   Long: 'seq66:a2j nanoKEY2 [20] (playback): nanoKEY2 nanoKEY2 _ CTRL'
+ *      -   Short: 'a2j nanoKEY2 [20] (playback): nanoKEY2 nanoKEY2 _ CTRL'
+ *  -   FluidSynth (on Ubuntu 20):
+ *      -   Long: 'fluidsynth-midi:midi_00'
+ *      -   Short: 'midi_00'.
+ *
  * Desired activity steps:
  *
  *      -#  Startup.
  *          -#  As done now, gather the input and output ports into these
  *              containers (midi_port_info).
  *          -#  Also make copies of these containers.
+ *      -#  MORE
+ *
+ * Rules for handling port registration and unregistration:
+ *
+ *      -#  Port change detection.
+ *          -#  Changes should only be detected in non-Seq66 ("not mine") ports.
+ *          -#  This occurs when a registratio or un-registration causes the
+ *              callback to occur.
+ *      -#  No special processing unless the user has enabled port-mapping.
+ *          Otherwise, Seq66 port numbers, which are simply indexes into the
+ *          port vectors, would change, breaking the song.
+ *      -#  Ports are never removed from the port map.
+ *          -#  Unregistered ports are simply disabled.
+ *          -#  New ports are appended to the port map.
+ *          -#  Ports accumulate.  The user must (currently) edit the 'rc' file
+ *              to remove ports from the port-map, and restart the application.
+ *      -#  Port removal.
+ *          -#  Detection. Examine the active ports and the port map.
+ *              -#  If the port is not in the active port list, do nothing.
+ *              -#  If the port is not in the port map, do nothing.
+ *          -#  Disable or de-initialize the port in:
+ *              -#  In midi_jack_info/midi_info.
+ *              -#  The port map.
+ *              -#  The mastermidibus. ???
+ *              -#  The busarray.
+ *      -#  Port addition.
+ *          -#  Detection. Examine the active ports and the port map.
+ *              -#  If the port is in the active port list, do nothing.
+ *              -#  If the port is in the port map, enable it.
+ *          -#  If the port is new:
+ *              -#  Append it to the portmap.
+ *              -#  Append it to midi_jack_info/midi_info.
+ *              -#  Add it to the mastermidis. ???
+ *              -#  Add it to the busarray and initialize it.
+ *      -#  User interface.  It must be updated to reflect the new port map.
+ *          -#  Edit / Preferences MIDI Clock and MIDI Input.
+ *          -#  Main window port list.
+ *          #   The pattern editor(s) (if output).
  *
  * \param portid
  *      The ID of the port. It is a 32-bit unsigned integer.
@@ -508,69 +559,70 @@ jack_port_connect_callback
 void
 jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
 {
-    midi_jack_info * jack = reinterpret_cast<midi_jack_info *>(arg);
-    if (not_nullptr(jack))
+    midi_jack_info * jackinfo = reinterpret_cast<midi_jack_info *>(arg);
+    if (not_nullptr(jackinfo))
     {
-        jack_client_t * handle = jack->client_handle();
+        jack_client_t * handle = jackinfo->client_handle();
         jack_port_t * portptr = nullptr;
         if (not_nullptr(handle))
         {
             bool mine = false;
-            std::string fullname;
+            std::string longname;
+            std::string shortname;
+            std::string porttype;
             portptr = ::jack_port_by_id(handle, portid);
             if (not_nullptr(portptr))
             {
-                const char * fn = ::jack_port_name(portptr);
-                if (not_nullptr(fn))
-                    fullname = std::string(fn);
+                const char * ln = ::jack_port_name(portptr);
+                const char * sn = ::jack_port_short_name(portptr);
+                if (not_nullptr(ln))
+                    longname = std::string(ln);
+
+                if (not_nullptr(sn))
+                    shortname = std::string(sn);
 
                 mine = ::jack_port_is_mine(handle, portptr) != 0;
+                porttype = ::jack_port_type(portptr);
             }
             else
                 return;                             /* fatal error, bug out */
 
             if (rc().investigate())
             {
+
                 /*
-                 * NOTE: this might be over-kill.  JACK documentation says
-                 * this function does not need to be suitable for real-time
-                 * execution.  But what about async-safety?
+                 * JACK documentation says this function does not need to be
+                 * suitable for real-time execution.  But what about
+                 * async-safety? It seems to be necessary; debug_message()
+                 * yields intermixed output.
                  */
 
-                const char * porttype = ::jack_port_type(portptr);
                 char value[c_async_safe_utoa_size];
                 char temp[128];
                 async_safe_utoa(unsigned(portid), &value[0], false);
                 std::strcpy(temp, "Port ");
-                std::strcat(temp, regv != 0 ? "reg" : "unreg");
-                std::strcat(temp, " ");
                 std::strcat(temp, value);
-                std::strcat(temp, "-");
-                std::strncat(temp, fullname.c_str(), 32);   /* truncate it  */
-                std::strcat(temp, "=");
+                std::strcat(temp, ": ");
+                std::strcat(temp, regv != 0 ? "Reg" : "Unreg");
+                std::strcat(temp, " ");
+                std::strncat(temp, shortname.c_str(), 34);   /* truncate it  */
+                std::strcat(temp, "/ ");
                 if (is_nullptr(arg))
                     std::strcat(temp, "nullptr! ");
 
-                std::strcat(temp, porttype);
+                std::strcat(temp, porttype.c_str());
                 if (mine)
-                    std::strcat(temp, "; seq66");
+                    std::strcat(temp, " seq66");
 
                 async_safe_strprint(temp);
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+                show_details();
+#endif
             }
-            if (mine)
-            {
-                /*
-                 * TODO: get the port ID into the list (busarray, whatever)
-                 *       so it can be checked for later registrations and
-                 *       unregistrations.
-                 */
-            }
-            else
-            {
-                /*
-                 * TODO: trigger a reassessment of ports.
-                 */
-            }
+            jackinfo->update_port_list
+            (
+                mine, int(portid), regv, shortname, longname
+            );
         }
     }
 }
@@ -583,6 +635,14 @@ jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
  *  Note that this constructor also adds its object to the midi_jack_info port
  *  list, so that the JACK callback functions can iterate through all of the
  *  JACK ports in use by this application, performing work on them.
+ *
+ *  In midi_jack::api_init_[in/out](), which occurs in midibus::api_init_out()
+ *  and results in a call to midi_jack::api_init_out(), the call to
+ *  set_alt_name() changes the port name from something like "midi" to
+ *  "fluidsynth-midi midi".  That is, it makes the name out of the client name
+ *  and (minimal) port name.
+ *
+ *  This is the short name we can look up.
  *
  * \param parentbus
  *      Provides a reference to the midibus that represents this object.
@@ -664,10 +724,12 @@ midi_jack::api_init_out ()
             (
                 rc().application_name(), rc().app_client_name(), remoteportname
             );
+#if defined USE_REDUNDANT_SET_NAME_CALL
             parent_bus().set_alt_name
             (
                 rc().application_name(), rc().app_client_name(), remoteportname
             );
+#endif
             result = register_port(midibase::io::output, port_name());
         }
     }
@@ -724,10 +786,12 @@ midi_jack::api_init_in ()
         (
             rc().application_name(), rc().app_client_name(), remoteportname
         );
+#if defined USE_REDUNDANT_SET_NAME_CALL
         parent_bus().set_alt_name
         (
             rc().application_name(), rc().app_client_name(), remoteportname
         );
+#endif
         result = register_port(midibase::io::input, port_name());
     }
     return result;
@@ -790,20 +854,45 @@ midi_jack::set_virtual_name (int portid, const std::string & portname)
             port_name(portname);
             set_name(rc().app_client_name(), clientname, portname);
 
-            /*
-             * Already done.
-             *
-             * parent_bus().set_name
-             * (
-             *      rc().app_client_name(), clientname, portname
-             * );
-             */
+#if defined USE_REDUNDANT_SET_NAME_CALL
+            parent_bus().set_name
+            (
+                 rc().app_client_name(), clientname, portname
+            );
+#endif
         }
     }
     return result;
 }
 
-/*
+/**
+ *  Useful for trouble-shooting and exploration. We find that the port name (of
+ *  client:port) is, as expected, the JACK short name. For example,
+ *  "fluidsynth-midi midi_00".  The remote name obtained from midibase ::
+ *  connect_name() is just the constructed "bus:port" name:
+ *  "fulidsynth-midi:midi_00".  For a2jmidi-supplied ports, though, the
+ *  port/short and remote names are the same.
+ */
+
+std::string
+midi_jack::details () const
+{
+    /*
+     * TMI:
+     *      std::string result = parent_bus().display_name();
+     *      result += ", ";
+     *      result += parent_bus().bus_name();
+     */
+
+    std::string result = parent_bus().bus_name();
+    result += " : ";
+    result += parent_bus().port_name();
+    result += " --> ";
+    result += m_remote_port_name;
+    return result;
+}
+
+/**
  *  This initialization is like the "open_virtual_port()" function of the
  *  RtMidi library.
  *

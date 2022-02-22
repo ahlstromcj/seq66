@@ -182,7 +182,9 @@ private:
 
     /**
      *  The name of the MIDI port.  This should be the name of a specific device
-     *  or port on a major device.
+     *  or port on a major device.  This value, for JACK is reconstructed by
+     *  set_alt_name() so that it is essentially the "short" port name that JACK
+     *  recognizes.
      */
 
     std::string m_port_name;

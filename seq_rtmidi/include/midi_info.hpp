@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-12-05
- * \updates       2022-02-17
+ * \updates       2022-02-22
  * \license       See above.
  *
  *  We need to have a way to get all of the API information from each
@@ -61,9 +61,13 @@
  *  A potential future feature, macroed to avoid issues until it is perfected.
  *  Meant to allow detecting changes in the set of MIDI ports, and disconnecting
  *  or connecting as appropriate, if not in manual/virtual mode.
+ *
+ *  It is now definable (currently for test purposes) in the configuration
+ *  process and in the rtmidi qmake configuration, so that it may be centrally
+ *  located, because it may have implication throughout Seq66.
+ *
+ * #undef  SEQ66_MIDI_PORT_REFRESH
  */
-
-#undef  SEQ66_MIDI_PORT_REFRESH
 
 /*
  * Do not document the namespace; it breaks Doxygen.

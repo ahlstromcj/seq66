@@ -341,11 +341,9 @@ busarray::add (midibus * bus, bool inputing)
     {
         size_t count = m_container.size();
         businfo b(bus);
-//      if (inputing)
-//      {
-            if (! bus->get_input())
-                bus->set_input(inputing);       /* will call init_in()      */
-//      }
+        if (! bus->get_input())
+            bus->set_input(inputing);           /* will call init_in()      */
+
         b.init_input(inputing);                 /* sets the flag, important */
         m_container.push_back(b);               /* now we can push a copy   */
 #if defined SEQ66_SHOW_API_CALLS

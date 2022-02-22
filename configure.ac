@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2022-02-17
+dnl \update        2022-02-22
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -294,11 +294,28 @@ if test "$jack" != "no"; then
             fi
         fi
     else
-        AC_MSG_WARN([Could not find JACK library, disabling JACK.])
+        AC_MSG_WARN([No JACK library, disabling JACK.])
     fi
 else
     AC_MSG_NOTICE([JACK disabled in the configuration.]);
 fi
+
+dnl Port-refresh support.  Far from ready for prime-time, but added for
+dnl exploration and testing.  Disabled by default.
+
+AC_ARG_ENABLE(refresh,
+    [AS_HELP_STRING(--enable-refresh, [Enable JACK port refresh support])],
+    [ac_refresh=$enableval],
+    [ac_refresh=no])
+
+if test "$ac_refresh" != "no"; then
+    AC_DEFINE(MIDI_PORT_REFRESH, 1, [Define to enable JACK port refresh])
+    AC_MSG_RESULT([JACK port refresh TEST CODE enabled.])
+else
+    AC_MSG_NOTICE([JACK port refresh not enabled.])
+fi
+
+AC_SUBST(MIDI_PORT_REFRESH)
 
 dnl LASH support has been deleted, this time for good.  We will support only
 dnl JACK Session and NSM.  Enable NSM support.  Now ready for prime time!
@@ -451,7 +468,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2022-02-17"
+#define VERSION_DATE_SHORT "2022-02-22"
 #define VERSION "0.98.5"
 
 )

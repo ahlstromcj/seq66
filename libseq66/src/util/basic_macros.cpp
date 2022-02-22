@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2022-02-15
+ * \updates       2022-02-22
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of
@@ -135,6 +135,8 @@ write_msg (int fd, const char * msg, size_t count)
 static const char * s_start = "[\033[1;30mseq66\033[0m] \033[1;30m";    // 26
 static const char * s_error = "[\033[1;31mseq66\033[0m] \033[1;30m";    // 26
 static const char * s_eol   = "\033[0m\n";                              //  5
+static const char * s_label = "[seq66] ";                               //  8
+static const char * s_nl    = "\n";                                     //  1
 
 void
 async_safe_strprint (const char * msg)
@@ -144,9 +146,18 @@ async_safe_strprint (const char * msg)
         size_t count = strlen(msg);
         if (count > 0)
         {
-            write_msg(STDOUT_FILENO, s_start, 26);
-            write_msg(STDOUT_FILENO, msg, count);
-            write_msg(STDOUT_FILENO, s_eol, 5);
+            if (is_a_tty(STDOUT_FILENO))
+            {
+                write_msg(STDOUT_FILENO, s_start, 26);
+                write_msg(STDOUT_FILENO, msg, count);
+                write_msg(STDOUT_FILENO, s_eol, 5);
+            }
+            else
+            {
+                write_msg(STDOUT_FILENO, s_label, 8);
+                write_msg(STDOUT_FILENO, msg, count);
+                write_msg(STDOUT_FILENO, s_nl, 1);
+            }
         }
     }
 }
@@ -159,9 +170,18 @@ async_safe_errprint (const char * msg)
         size_t count = strlen(msg);
         if (count > 0)
         {
-            write_msg(STDERR_FILENO, s_error, 26);
-            write_msg(STDERR_FILENO, msg, count);
-            write_msg(STDERR_FILENO, s_eol, 5);
+            if (is_a_tty(STDERR_FILENO))
+            {
+                write_msg(STDERR_FILENO, s_error, 26);
+                write_msg(STDERR_FILENO, msg, count);
+                write_msg(STDERR_FILENO, s_eol, 5);
+            }
+            else
+            {
+                write_msg(STDERR_FILENO, s_label, 8);
+                write_msg(STDERR_FILENO, msg, count);
+                write_msg(STDERR_FILENO, s_nl, 1);
+            }
         }
     }
 }
@@ -339,7 +359,7 @@ static const char * s_normal = "\033[0m";
  *      Additional information about the error. Optional.
  *
  * \return
- *      Returns true.  Rarely used, if at all.
+ *      Returns true.  The return value here is rarely used, if at all.
  */
 
 bool
@@ -347,16 +367,21 @@ debug_message (const std::string & msg, const std::string & data)
 {
     if (rc().investigate())
     {
-        std::cerr
-            << seq_client_tag(msglevel::debug) << " "
-            << s_black << msg
-            ;
+        std::cerr << seq_client_tag(msglevel::debug) << " ";
+        if (is_a_tty(STDERR_FILENO))
+            std::cerr << s_black;
 
+        std::cerr << msg;
         if (! data.empty())
             std::cerr << ": " << data;
 
         if (! msg.empty())
-            std::cerr << s_normal << std::endl;
+        {
+            if (is_a_tty(STDERR_FILENO))
+                std::cerr << s_normal << std::endl;
+            else
+                std::cerr << std::endl;
+        }
     }
     return true;
 }

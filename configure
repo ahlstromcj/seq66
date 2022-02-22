@@ -694,6 +694,7 @@ LIBLO_CFLAGS
 NSM_DEPS
 NSM_LIBS
 NSM_CFLAGS
+MIDI_PORT_REFRESH
 JACK_LIBS
 JACK_CFLAGS
 PKG_CONFIG_LIBDIR
@@ -858,6 +859,7 @@ enable_docs
 enable_jack
 enable_jack_session
 enable_jack_metadata
+enable_refresh
 enable_nsm
 enable_rtmidi
 with_alsa_prefix
@@ -1542,6 +1544,7 @@ Optional Features:
   --disable-jack          Disable JACK support
   --disable-jack-session  Disable JACK session support
   --disable-jack-metadata Disable JACK metadata support
+  --enable-refresh        Enable JACK port refresh support
   --disable-nsm           Disable NSM support
   --disable-rtmidi        Disable rtmidi MIDI engine
   --disable-alsatest      Do not try to compile and run a test Alsa program
@@ -16635,13 +16638,35 @@ $as_echo "JACK metadata support enabled." >&6; };
             fi
         fi
     else
-        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not find JACK library, disabling JACK." >&5
-$as_echo "$as_me: WARNING: Could not find JACK library, disabling JACK." >&2;}
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: No JACK library, disabling JACK." >&5
+$as_echo "$as_me: WARNING: No JACK library, disabling JACK." >&2;}
     fi
 else
     { $as_echo "$as_me:${as_lineno-$LINENO}: JACK disabled in the configuration." >&5
 $as_echo "$as_me: JACK disabled in the configuration." >&6;};
 fi
+
+
+# Check whether --enable-refresh was given.
+if test "${enable_refresh+set}" = set; then :
+  enableval=$enable_refresh; ac_refresh=$enableval
+else
+  ac_refresh=no
+fi
+
+
+if test "$ac_refresh" != "no"; then
+
+$as_echo "#define MIDI_PORT_REFRESH 1" >>confdefs.h
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK port refresh TEST CODE enabled." >&5
+$as_echo "JACK port refresh TEST CODE enabled." >&6; }
+else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: JACK port refresh not enabled." >&5
+$as_echo "$as_me: JACK port refresh not enabled." >&6;}
+fi
+
+
 
 
 # Check whether --enable-nsm was given.

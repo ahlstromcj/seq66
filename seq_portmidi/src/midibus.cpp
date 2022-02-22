@@ -61,15 +61,10 @@ s_portname (const std::string & name, int index)
 }
 
 /**
- *  Principal constructor.
- *
- *  There's a little confusion with the port ID parameter(s).  Also, the
- *  default values of queue, ppqn, bpm, and makevirtual are passed to the
- *  midibase constructor.  PortMidi does not support those constructs.
- *
- * Question:
- *
- *      Should we call s_portname with "clientname, index")?
+ *  Principal constructor.  There's a little confusion with the port ID
+ *  parameter(s).  Also, the default values of queue, ppqn, bpm, and makevirtual
+ *  are passed to the midibase constructor.  PortMidi does not support those
+ *  constructs.
  */
 
 midibus::midibus
@@ -79,8 +74,6 @@ midibus::midibus
 ) :
     midibase
     (
-//      EXPERIMENTAL as noted in the banner.
-//      rc().application_name(), s_portname("PortMidi", index), clientname,
         rc().application_name(),            // appname
         s_portname(clientname, index),      // busname
         clientname,                         // portname
@@ -91,9 +84,7 @@ midibus::midibus
         usr().use_default_ppqn(),           // PPQN flag value (-1)
         usr().bpm_default(),                // 120.0,
         midibase::io::output,               // false,
-        midibase::port::normal              // false,
-//      false
-        /* PM uses 'queue' still */
+        midibase::port::normal              // false
     ),
     m_pms (nullptr)
 {
