@@ -1,7 +1,7 @@
 # README for Seq66 0.98.5
 
 Chris Ahlstrom
-2015-09-10 to 2022-02-21
+2015-09-10 to 2022-02-23
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management,
@@ -82,7 +82,10 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.98.5:
-        *   Adding JACK access functions for the future.
+        *   Our client name ("seq66") is no longer shown, nor saved in the 'rc'
+            file. Easier to use multiple Seq66's with the --client-name option.
+        *   Adding JACK access functions for the future. Improved internal
+            port initialization code.
         *   Updating Dia diagram, finding and fixing issues and dead code.
         *   Added global internal check for both portmaps being active.
     *   Version 0.98.4:

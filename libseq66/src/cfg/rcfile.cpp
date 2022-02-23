@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-02-21
+ * \updates       2022-02-23
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -873,10 +873,10 @@ rcfile::write ()
      */
 
     file << "\n"
-"# Set this to have Seq66 create virtual ALSA/JACK I/O ports and not auto-connect\n"
-"# to other clients. It allows up to 48 output ports and 48 input ports\n"
-"# (defaults to 8 and 4). Set to false to auto-connect Seq66 to the system's\n"
-"# existing ALSA/JACK MIDI ports.\n"
+"# Set to true to create virtual ALSA/JACK I/O ports and not auto-connect\n"
+"# to other clients. It allows up to 48 output or input ports (defaults to 8\n"
+"# and 4). Set to false to auto-connect Seq66 to the existing ALSA/JACK MIDI\n"
+"# ports.\n"
 "\n[manual-ports]\n\n"
         ;
     write_boolean(file, "virtual-ports", rc_ref().manual_ports());
@@ -886,12 +886,12 @@ rcfile::write ()
     int inbuses = bussbyte(rc_ref().inputs().count());
     file << "\n"
 "# These system ports are available for input. From JACK's view, these are\n"
-"# 'playback' devices. The first number is the buss, the second number is the\n"
-"# input status, disabled (0) or enabled (1). The item in quotes is the\n"
-"# input-buss name.\n\n"
+"# 'playback' devices. The first number is the bus, the second number is the\n"
+"# input status, disabled (0) or enabled (1). The item in quotes is the full\n"
+"# input bus name.\n\n"
 "[midi-input]\n\n"
         << std::setw(2) << int(inbuses)
-        << "      # number of input MIDI busses\n\n"
+        << "      # number of input MIDI buses\n\n"
         ;
 
     file << rc_ref().inputs().io_list_lines();
@@ -929,9 +929,9 @@ rcfile::write ()
 
     bussbyte outbuses = bussbyte(rc_ref().clocks().count());
     file << "\n"
-"# These system ports are available for output, for playback/control. From JACK's\n"
-"# view, these are 'capture' devices. The first line shows the count of 'capture'\n"
-"# ports. Each line shows the buss number and clock status of that buss:\n"
+"# These ports are available for output, for playback/control. From JACK's\n"
+"# view, these are 'capture' devices. The first line shows the count of output\n"
+"# ports. Each line shows the bus number and clock status of that bus:\n"
 "#\n"
 "#  -1 = The output port is disabled.\n"
 "#   0 = MIDI Clock is off. The output port is enabled.\n"
@@ -940,13 +940,13 @@ rcfile::write ()
 "#\n"
 "# With Clock Modulo, clocking doesn't begin until song position reaches the\n"
 "# start-modulo value [midi-clock-mod-ticks]. One can disable a port manually\n"
-"# for devices that are present, but not available (because another application,\n"
+"# for devices that are present, but unavailable (because another application,\n"
 "# e.g. Windows MIDI Mapper, has exclusive access to the device.\n"
 "\n"
 "[midi-clock]\n"
 "\n"
         << std::setw(2) << int(outbuses)
-        << "      # number of MIDI clocks (output busses)\n\n"
+        << "      # number of MIDI clocks (output buses)\n\n"
         ;
 
     file << rc_ref().clocks().io_list_lines();
@@ -962,10 +962,10 @@ rcfile::write ()
 
         mapstatus += "active";
         file << "\n"
-"# Patterns use buss numbers, not names. If present, this table, provides virtual\n"
-"# buss numbers you set up to match your devices and use in all your patterns.\n"
-"# The buss number is looked up in this table, the port nick-name is retrieved,\n"
-"# and the real buss number is obtained and used. Thus, if the ports change order\n"
+"# Patterns use bus numbers, not names. If present, this table provides virtual\n"
+"# bus numbers set up to match real devices and to use in all song patterns.\n"
+"# The bus number is looked up in this table, the port nick-name is retrieved,\n"
+"# and the real bus number is obtained and used. Thus, if the ports change order\n"
 "# in the MIDI system, the pattern will still use the proper port. The short\n"
 "# nick-names are the same with ALSA or JACK (a2jmidid bridge).\n"
 "\n"
@@ -983,7 +983,7 @@ rcfile::write ()
 
     file << "\n"
 "# 'ticks' provides the Song Position (in 16th notes) at which clocking begins if\n"
-"# the buss is set to MIDI Clock Mod setting. 'record-by-channel' allows the\n"
+"# the bus is set to MIDI Clock Mod setting. 'record-by-channel' allows the\n"
 "# master MIDI bus to record/filter incoming MIDI data by channel, adding each\n"
 "# new MIDI event to the pattern that is set to that channel. Option adopted\n"
 "# from the Seq32 project at GitHub.\n"

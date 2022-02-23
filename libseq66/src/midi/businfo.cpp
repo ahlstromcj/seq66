@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2021-12-07
+ * \updates       2022-02-23
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -166,7 +166,12 @@ businfo::initialize ()
         {
             if (bus()->is_input_port())         /* not built in master bus  */
             {
+#if defined ENABLE_EARLY_INITING
                 // do nothing here
+#else
+                result = bus()->is_virtual_port() ?
+                    bus()->init_in_sub() : bus()->init_in() ;
+#endif
             }
             else
             {
@@ -341,8 +346,10 @@ busarray::add (midibus * bus, bool inputing)
     {
         size_t count = m_container.size();
         businfo b(bus);
+#if defined ENABLE_EARLY_INITING
         if (! bus->get_input())
             bus->set_input(inputing);           /* will call init_in()      */
+#endif
 
         b.init_input(inputing);                 /* sets the flag, important */
         m_container.push_back(b);               /* now we can push a copy   */
@@ -554,6 +561,32 @@ busarray::get_midi_bus_name (int bus) const
     return result;
 }
 
+/**
+ *  The function gets the port name.  We're trying to keep our own client name
+ *  (normally "seq66") out of the 'rc' input and clock sections.
+ */
+
+
+std::string
+busarray::get_midi_port_name (int bus) const
+{
+    std::string result;
+    if (bus < count())
+    {
+        const businfo & bi = m_container[bus];
+        const midibus * buss = bi.bus();
+        result = buss->port_name();
+    }
+    return result;
+}
+
+/**
+ *  This function gets only the alias name of the port, if it exists.
+ *  Some (later) versions of JACK support getting the alias in the manner
+ *  of "a2jmidid --export-hw", which can be used to use the device's model name
+ *  rather that some generic name.
+ */
+
 std::string
 busarray::get_midi_alias (int bus) const
 {
@@ -562,7 +595,7 @@ busarray::get_midi_alias (int bus) const
     {
         const businfo & bi = m_container[bus];
         const midibus * buss = bi.bus();
-        result = buss->port_alias();            /* whether active/inactive  */
+        result = buss->port_alias();
     }
     return result;
 }
@@ -638,6 +671,7 @@ busarray::port_exit (int client, int port)
 bool
 busarray::set_input (bussbyte bus, bool inputing)
 {
+#if defined ENABLE_EARLY_INITING
     bool result = bus < count();
     if (result)
     {
@@ -648,6 +682,18 @@ busarray::set_input (bussbyte bus, bool inputing)
         bi.init_input(inputing);
     }
     return result;
+#else
+    bool current = get_input(bus);
+    bool result = bus < count() && current != inputing;
+    if (result)
+    {
+        businfo & bi = m_container[bus];
+        result = bi.active() || ! current;
+        if (result)
+            bi.init_input(inputing);
+    }
+    return result;
+#endif
 }
 
 /**

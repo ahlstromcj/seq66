@@ -885,9 +885,9 @@ midi_jack::details () const
      */
 
     std::string result = parent_bus().bus_name();
-    result += " : ";
+    result += ":";
     result += parent_bus().port_name();
-    result += " --> ";
+    result += "--->";
     result += m_remote_port_name;
     return result;
 }

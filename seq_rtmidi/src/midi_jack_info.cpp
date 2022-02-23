@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-02-22
+ * \updates       2022-02-23
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -698,9 +698,11 @@ midi_jack_info::lookup_midi_jack
 
             if (match)
             {
+                if (rc().investigate())
+                    async_safe_strprint(mj->port_name().c_str());
+
                 result = mj;
-                printf("=== Found %s\n", shortname.c_str());    // TEMPORARY !!!!
-                ////// break;
+                break;
             }
         }
     }
