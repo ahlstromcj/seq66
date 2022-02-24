@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2022-01-13
+ * \updates       2022-02-24
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -283,6 +283,11 @@ protected:
     void last_dirty_status (bool flag)
     {
         m_last_dirty_status = flag;
+    }
+
+    void is_help (bool flag)
+    {
+        m_is_help = flag;
     }
 
     void append_error_message (const std::string & message = "") const;

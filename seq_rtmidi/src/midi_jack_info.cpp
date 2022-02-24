@@ -606,37 +606,58 @@ midi_jack_info::update_port_list
     const std::string & longname
 )
 {
-    /* TEST CODE ONLY */
-
 #if defined USE_PORTSMAP_ACTIVE_STATUS
     bool permitted = rc().portmaps_active();
 #else
     bool permitted = true;
 #endif
 
-
     if (permitted)
     {
 #if defined SEQ66_MIDI_PORT_REFRESH
         midi_jack * mj = lookup_midi_jack(shortname, longname);
-        if (not_nullptr(mj))
-        {
-            //
-        }
-
-        if (is_my_port)
+        bool is_new = is_nullptr(mj);
+        if (is_new)
         {
             /*
-             * TODO: get the port ID into the list (busarray, whatever)
-             *       so it can be checked for later registrations and
-             *       unregistrations.
+             *  Add the port to this list and to the appropriate busarray.
+             *  This begs the question, how to detect input versus output?
+             *  If all is established, we can query the midibus associated
+             *  this midi_jack_info.
              */
+
+            if (is_my_port)
+            {
+                /*
+                 * Should not do anything.  This port will be added to the
+                 * useful ports for Seq66 in the normal course of handling.
+                 */
+            }
+            else
+            {
+                /*
+                 * A new external port.  Add it to the busarray, midi_jack_info
+                 * list, and to the portmap as "disabled". Then it can be
+                 * checked for later registrations and unregistrations.
+                 */
+            }
         }
         else
         {
-            /*
-             * TODO: trigger a reassessment of ports.
-             */
+            if (is_my_port)
+            {
+                /*
+                 * The port exists.  If unregistered, simply disable the port in
+                 * this list and in the busarray. If registered, make sure the
+                 * port status is unchanged.
+                 */
+            }
+            else
+            {
+                /*
+                 * Same as above?
+                 */
+            }
         }
 #endif  // defined SEQ66_MIDI_PORT_REFRESH
 

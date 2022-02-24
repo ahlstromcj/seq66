@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-01-10
+ * \updates       2022-02-24
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -65,10 +65,13 @@ namespace seq66
 
 /**
  *  Provides a return value for parse_command_line_options() that indicates a
- *  help-related option was specified.
+ *  help-related option was specified.  Also include are values that
+ *  getopt_long(3) returns when an issue is encountered.
  */
 
 static const int c_null_option = 99999;
+static const int c_missing_arg = ':';
+static const int c_bad_option  = '?';
 
 /**
  *  Sets up the "hardwired" version text for Seq66.  This value
@@ -183,9 +186,13 @@ cmdlineopts::s_long_options [] =
  *      difficult-to-find issues. Shhhh, it's a secret!
  */
 
-const std::string
-cmdlineopts::s_arg_list =
-    "AaB:b:Cc:DdF:f:gH:hI:iJjKkl:M:mNnoPpq:RrSsTtU:uVvWwX:x:Zz#";
+#if defined SEQ66_JACK_SUPPORT      // how to handle no SEQ66_NSM_SUPPORT?
+#define CMD_OPTS    "0#AaB:b:Cc:DdF:f:gH:hI:iJjKkl:M:mNnoPpq:RrSsTtU:uVvWwX:x:Zz#"
+#else
+#define CMD_OPTS    "0#AaB:b:c:DdF:f:H:hI:iKkl:M:mnoPpq:RrsTuVvX:x:Zz#"
+#endif
+
+const std::string cmdlineopts::s_arg_list = CMD_OPTS;
 
 /**
  *  Provides help text.
@@ -569,12 +576,13 @@ cmdlineopts::parse_log_option (int argc, char * argv [])
     if (contains(exename, "verbose"))       /* symlink to dev's program     */
     {
 #if defined SEQ66_PLATFORM_DEBUG
-        file_message("Running debug version", argv[0]);
+        file_message("Running debug/investigate version", argv[0]);
 #else
         file_message("Running", argv[0]);
 #endif
         rc().verbose(true);
-        file_message(exename, "Verbose mode enabled");
+        rc().investigate(true);
+        file_message(exename, "Verbose/investigate mode enabled");
     }
     if (parse_o_options(argc, argv))
     {
@@ -819,6 +827,7 @@ cmdlineopts::parse_mute_groups
  *
  * \return
  *      Returns the value of optind if no help-related options were provided.
+ *      Returns (-1) if an error occurred.
  */
 
 int
@@ -834,10 +843,20 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         int c = getopt_long
         (
             argc, argv,
-            s_arg_list.c_str(),         /* e.g. "Crb:q:Li:jM:pU:Vx:..." */
+            s_arg_list.c_str(),             /* e.g. "Crb:q:Li:jM:pU:Vx:..." */
             s_long_options, &option_index
         );
-        if (c == (-1))
+        if (c == c_missing_arg)             /* missing argument indicator   */
+        {
+            errprint("An option is missing an argument");
+            return (-1);
+        }
+        else if (c == c_bad_option)
+        {
+            errprint("A non-existent option or missing argument specified");
+            return (-1);
+        }
+        else if (c == (-1))
             break;
 
         std::string soptarg;
@@ -848,6 +867,11 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         {
         case '0':
             usr().convert_to_smf_1(false);
+            break;
+
+        case '#':
+            std::cout << SEQ66_VERSION << std::endl;
+            result = c_null_option;
             break;
 
         case 'A':
@@ -1016,9 +1040,11 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 #endif
 
+#if defined SEQ66_JACK_SUPPORT
         case 't':
             rc().with_jack_midi(true);
             break;
+#endif
 
 #if defined SEQ66_JACK_SESSION
         case 'U':
@@ -1069,11 +1095,6 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().manual_ports(false);
             rc().reveal_ports(true);
             rc().auto_usr_save(true);
-            break;
-
-        case '#':
-            std::cout << SEQ66_VERSION << std::endl;
-            result = c_null_option;
             break;
 
         default:

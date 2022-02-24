@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2022-02-12
+% \update      2022-02-24
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1567,8 +1567,11 @@
    The \texttt{progress-box-height} options provide a way to expand or reduce
    the size of the progess box in each grid button.
    It is purely a user preference.
-   The values range from 0.0 to 1.0 (full size).  If either is 0,
-   then the box isn't drawn, and the pattern appears directly on the button.
+   The width ranges from 0.5 to 1.0 (full size), with a default of 0.8.
+   The height ranges from 0.1 to 1.0 (full size), with a default 0f 0.3.
+   If either is 0, then the box isn't drawn, and the pattern appears directly
+   on the button.
+   Try setting both the width and height to 0.9 for an interesting effect.
 
    \index{progress-note-min}
    \index{progress!note-min}

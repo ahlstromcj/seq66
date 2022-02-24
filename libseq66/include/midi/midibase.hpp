@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2022-01-27
+ * \updates       2022-02-24
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations
@@ -69,18 +69,23 @@ public:
      *  which has a number of such stub functions so that we can use the
      *  midi_info and midi_api derived classes.  Tested by the is_input_port()
      *  functions.
+     *
+     *  We could add "max" to this enumeration.
      */
 
     enum class io
     {
-        input,
-        output
+        input,          /**< The port is an input MIDI port.                */
+        output,         /**< The port is an output MIDI port.               */
+        indeterminate   /**< Cannot determine the type of the port.         */
     };
 
     /**
      *  Constants for selecting virtual versus normal versus built-in system
      *  ports.  Used in the rtmidi midibus constructors.  Tested by the
      *  is_virtual_port() and is_system_port() functions.
+     *
+     *  We could add "indeterminate" and "max" to this enumeration.
      */
 
     enum class port

@@ -1,6 +1,6 @@
-TO DO for Seq66 0.98.3 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.98.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-01-20
+2019-04-13 to 2022-02-24
 
 Windows:
 
@@ -41,6 +41,9 @@ MIDI:
         It also yields an ALSA unsubscribe error when disabling an input.
 
         Use const char * snd_asoundlib_version () to get the ALSA version.
+
+    Fallback to ALSA if JACK is not running is broken.  Or is it that jackdbus
+    is interfering?
 
 Automation:
 

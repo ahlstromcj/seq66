@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-21
+ * \updates       2022-02-24
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -567,6 +567,8 @@ jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
         if (not_nullptr(handle))
         {
             bool mine = false;
+            int flags = 0;
+            midibase::io iotype = midibase::io::indeterminate;
             std::string longname;
             std::string shortname;
             std::string porttype;
@@ -582,7 +584,12 @@ jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
                     shortname = std::string(sn);
 
                 mine = ::jack_port_is_mine(handle, portptr) != 0;
+                flags = ::jack_port_flags(portptr);
                 porttype = ::jack_port_type(portptr);
+                if (flags | JackPortIsInput)
+                    iotype = midibase::io::input;
+                else if (flags | JackPortIsOutput)
+                    iotype = midibase::io::output;
             }
             else
                 return;                             /* fatal error, bug out */
@@ -597,15 +604,23 @@ jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
                  * yields intermixed output.
                  */
 
+                const char * iot = "TBD";
                 char value[c_async_safe_utoa_size];
                 char temp[128];
+                if (iotype == midibase::io::input)
+                    iot = " In";
+                else if (iotype == midibase::io::output)
+                    iot = "Out";
+
                 async_safe_utoa(unsigned(portid), &value[0], false);
                 std::strcpy(temp, "Port ");
                 std::strcat(temp, value);
                 std::strcat(temp, ": ");
                 std::strcat(temp, regv != 0 ? "Reg" : "Unreg");
                 std::strcat(temp, " ");
-                std::strncat(temp, shortname.c_str(), 34);   /* truncate it  */
+                std::strcat(temp, iot);
+                std::strcat(temp, " ");
+                std::strncat(temp, shortname.c_str(), 30);   /* truncate it  */
                 std::strcat(temp, "/ ");
                 if (is_nullptr(arg))
                     std::strcat(temp, "nullptr! ");
@@ -754,7 +769,7 @@ midi_jack::api_init_out ()
  *          -#  Get port name via master_info().connect_name().
  *          -#  Call jack_client_open() with or without a UUID.
  *          -#  Call jack_set_process_callback() for input/output.
- *          -#  Call jack_activate().  Premature?
+ *          -#  Call jack_activate().
  *      -#  register_port(INPUT...).  The flag is JackPortIsInput.
  *      -#  connect_port(INPUT...).  Call jack_connect(srcport, destport).
  *
@@ -1431,14 +1446,23 @@ midi_jack::register_port (midibase::io iotype, const std::string & portname)
     bool result = not_nullptr(port_handle());
     if (! result)
     {
+        unsigned long buffsize = 0;
         unsigned long flag = iotype == midibase::io::input ?
             JackPortIsInput : JackPortIsOutput ;
+        const char * porttype = JACK_DEFAULT_MIDI_TYPE;
 
-        unsigned long buffsize = 0;
+        /*
+         * At least in the version of JACK on our developer laptop,
+         * using our own port type string fails. This is contrary
+         * to the current JACK documentation for jack_port_register().
+         *
+         * if (port_type() == midibase::port::manual)
+         *      porttype = "virtual midi";
+         */
+
         jack_port_t * p = ::jack_port_register
         (
-            client_handle(), portname.c_str(), JACK_DEFAULT_MIDI_TYPE,
-            flag, buffsize
+            client_handle(), portname.c_str(), porttype, flag, buffsize
         );
         if (not_nullptr(p))
         {

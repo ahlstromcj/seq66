@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.98.0 and above
 Chris Ahlstrom
-2015-09-10 to 2021-12-12
+2015-09-10 to 2022-02-24
 
 Getting Seq66 requires building the code or going to "sequencer64-packages/seq66"
 on GitHub to get an installation package.  The bootstrap setup is primarily
@@ -303,8 +303,8 @@ Qmake-based Install:
         $ qmake -makefile -recursive "CONFIG += rtmidi" ../seq66/seq66.pro
         $ qmake -makefile -recursive "CONFIG += debug rtmidi" ../seq66/seq66.pro
 
-    See the contrib/scripts/qbuild Bash script for an automation of this
-    process.
+    Followed by the "make" operation. See the "contrib/scripts/qbuild" Bash
+    script for an automation of this process.
 
 Windows:
 

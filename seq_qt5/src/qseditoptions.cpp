@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-02-21
+ * \updates       2022-02-24
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1425,13 +1425,16 @@ qseditoptions::slot_palette_filename ()
 {
     const QString qs = ui->lineEditPalette->text();
     std::string text = qs.toStdString();
-    text = filename_base(text);
-    if (text != rc().palette_filename())
+    if (! text.empty())
     {
-        rc().palette_filename(text);
-        rc().auto_palette_save(true);
-        ui->checkBoxSavePalette->setChecked(true);
-        modify_rc();
+        text = filename_base(text);
+        if (text != rc().palette_filename())
+        {
+            rc().palette_filename(text);
+            rc().auto_palette_save(true);
+            ui->checkBoxSavePalette->setChecked(true);
+            modify_rc();
+        }
     }
 }
 
@@ -1662,12 +1665,15 @@ qseditoptions::slot_playlist_filename ()
 {
     const QString qs = ui->lineEditPlaylist->text();
     std::string text = qs.toStdString();
-    if (text != rc().playlist_filename())
+    if (! text.empty())
     {
-        perf().playlist_filename(text); /* rc().playlist_filename(text) */
-        rc().auto_playlist_save(true);
-        rc().auto_rc_save(true);
-        ui->checkBoxSavePlaylist->setChecked(true);
+        if (text != rc().playlist_filename())
+        {
+            perf().playlist_filename(text); /* rc().playlist_filename(text) */
+            rc().auto_playlist_save(true);
+            rc().auto_rc_save(true);
+            ui->checkBoxSavePlaylist->setChecked(true);
+        }
     }
 }
 
@@ -1688,12 +1694,15 @@ qseditoptions::slot_ctrl_filename ()
 {
     const QString qs = ui->lineEditCtrl->text();
     std::string text = qs.toStdString();
-    if (text != rc().midi_control_filename())
+    if (! text.empty())
     {
-        rc().midi_control_filename(text);
-        rc().auto_ctrl_save(true);
-        modify_rc();
-        ui->checkBoxSaveCtrl->setChecked(true);
+        if (text != rc().midi_control_filename())
+        {
+            rc().midi_control_filename(text);
+            rc().auto_ctrl_save(true);
+            modify_rc();
+            ui->checkBoxSaveCtrl->setChecked(true);
+        }
     }
 }
 
@@ -1710,11 +1719,14 @@ qseditoptions::slot_drums_filename ()
 {
     const QString qs = ui->lineEditDrums->text();
     std::string text = qs.toStdString();
-    if (text != rc().notemap_filename())
+    if (! text.empty())
     {
-        rc().notemap_filename(text);
-        modify_rc();
-        ui->checkBoxSaveDrums->setChecked(true);
+        if (text != rc().notemap_filename())
+        {
+            rc().notemap_filename(text);
+            modify_rc();
+            ui->checkBoxSaveDrums->setChecked(true);
+        }
     }
 }
 
@@ -1731,16 +1743,19 @@ qseditoptions::slot_stylesheet_filename ()
 {
     const QString qs = ui->lineEditStyleSheet->text();
     std::string text = qs.toStdString();
-    if (text != usr().style_sheet())
+    if (! text.empty())
     {
-        bool check = ! qs.isEmpty();
-        usr().style_sheet(text);
-        ui->checkBoxActiveStyleSheet->setChecked(check);
-        modify_usr();
+        if (text != usr().style_sheet())
+        {
+            bool check = ! qs.isEmpty();
+            usr().style_sheet(text);
+            ui->checkBoxActiveStyleSheet->setChecked(check);
+            modify_usr();
 
-        /*
-         * Now hidden: ui->checkBoxSaveStyleSheet->setChecked(true);
-         */
+            /*
+             * Now hidden: ui->checkBoxSaveStyleSheet->setChecked(true);
+             */
+        }
     }
 }
 
@@ -1823,9 +1838,12 @@ qseditoptions::slot_tempo_track_set ()
 {
     QString text = ui->lineEditTempoTrack->text();
     std::string t = text.toStdString();
-    int track = string_to_int(t);
-    rc().tempo_track_number(track);
-    modify_rc();
+    if (! t.empty())
+    {
+        int track = string_to_int(t);
+        rc().tempo_track_number(track);
+        modify_rc();
+    }
 }
 
 void

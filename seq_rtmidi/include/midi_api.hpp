@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; modifications by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-22
+ * \updates       2022-02-24
  * \license       See above.
  *
  *  Declares the following classes:
@@ -265,6 +265,11 @@ public:
     const std::string & port_alias () const
     {
         return parent_bus().port_alias();
+    }
+
+    midibase::port port_type () const
+    {
+        return parent_bus().port_type();
     }
 
     bool enabled () const

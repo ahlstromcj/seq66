@@ -276,7 +276,8 @@ static const int c_mainwnd_spacing = 2;            // try 4 or 6 instead of 2
 
 /**
  *  Provides the defaults for the progress box in the qloopbuttons.
- *  Zero is also an acceptable value.
+ *  Zero is also an acceptable value. 1.0 for both width and height are
+ *  interesting, and now valid.
  */
 
 static const float c_progress_box_none       = 0.00;
@@ -285,7 +286,7 @@ static const float c_progress_box_width      = 0.80;
 static const float c_progress_box_width_max  = 1.00;
 static const float c_progress_box_height_min = 0.10;
 static const float c_progress_box_height     = 0.30;
-static const float c_progress_box_height_max = 0.50;
+static const float c_progress_box_height_max = 1.00;    // 0.50;
 
 /**
  *  Provides the default for the fingerprinting of the qloopbuttons.

@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2022-02-22
+dnl \update        2022-02-24
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -246,7 +246,7 @@ AC_ARG_ENABLE(jack,
     [jack=$enableval],
     [jack=yes])
 
-dnl JACK session support is now deprecated (circa 2020-10-26), and so now the
+dnl JACK session support is now deprecated (circa 2020-10-26), but still the
 dnl default for this option is 'no'.  JACK recommends using NSM instead!
 
 AC_ARG_ENABLE(jack-session,
@@ -468,7 +468,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2022-02-22"
+#define VERSION_DATE_SHORT "2022-02-24"
 #define VERSION "0.98.5"
 
 )

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2022-01-16
+ * \updates       2022-02-24
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -152,18 +152,24 @@ smanager::main_settings (int argc, char * argv [])
      * performer::launch() function.
      */
 
-    bool is_help = cmdlineopts::help_check(argc, argv);
+    bool ishelp = cmdlineopts::help_check(argc, argv);
     int optionindex = -1;
-    if (is_help)
+    bool sessionmodified = false;
+    if (ishelp)
     {
         (void) cmdlineopts::parse_command_line_options(argc, argv);
-        m_is_help = true;
+        is_help(true);
         result = false;
     }
     else
     {
-        bool sessionmodified = false;
-        (void) cmdlineopts::parse_command_line_options(argc, argv);
+        int rcode = cmdlineopts::parse_command_line_options(argc, argv);
+        result = rcode != (-1);
+        if (! result)
+            is_help(true);              /* a hack to avoid create_window()  */
+    }
+    if (result)
+    {
         if (rc().inspecting())
         {
             std::string sessionfilename = rc().make_config_filespec("session.rc");
@@ -195,24 +201,22 @@ smanager::main_settings (int argc, char * argv [])
             append_error_message(errmessage);       /* raises the message   */
         }
         optionindex = cmdlineopts::parse_command_line_options(argc, argv);
-        if (cmdlineopts::parse_o_options(argc, argv))
+        result = optionindex >= 0;
+        if (result)
         {
-            /* anything to do? */
-        }
+            (void) cmdlineopts::parse_o_options(argc, argv);
 
-        /*
-         * The user may have specified -o options that are also set up in the
-         * 'usr' file.  The command line needs to take precedence.  The "log"
-         * option is processed early in the startup sequence.  These same
-         * settings are made in the cmdlineopts module.
-         */
+            /*
+             * The user migh specify -o options that are also set up in the
+             * 'usr' file; the command line must take precedence. The "log"
+             * option is processed early in the startup sequence.  These same
+             * settings are made in the cmdlineopts module.
+             */
 
-        std::string logfile = usr().option_logfile();
-        if (usr().option_use_logfile())
-            (void) reroute_stdio(logfile);
+            std::string logfile = usr().option_logfile();
+            if (usr().option_use_logfile())
+                (void) reroute_stdio(logfile);
 
-        if (result)                                 /* get MIDI file-name?  */
-        {
             m_midi_filename.clear();
             if (optionindex < argc)                 /* MIDI filename given? */
             {
@@ -587,7 +591,7 @@ smanager::save_session (std::string & msg, bool ok)
         else
         {
             result = false;
-            if (! m_is_help)
+            if (! is_help())
             {
                 (void) cmdlineopts::write_options_files("erroneous");
                 if (error_active())
@@ -1060,8 +1064,12 @@ smanager::read_configuration
 
         if (argc > 1)
         {
-            (void) cmdlineopts::parse_command_line_options(argc, argv);
-            (void) cmdlineopts::parse_o_options(argc, argv);
+            int rcode = cmdlineopts::parse_command_line_options(argc, argv);
+            result = rcode != (-1);
+            if (result)
+                (void) cmdlineopts::parse_o_options(argc, argv);
+            else
+                is_help(true);          /* a hack to avoid create_window()  */
         }
     }
     else
