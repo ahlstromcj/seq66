@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-28
-% \update      2021-12-05
+% \update      2022-02-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -193,6 +193,13 @@
  5 0 "[5] 1:5 seq66:yoshimi-01 midi in"
    \end{verbatim}
 
+   A feature new with version 0.98.5 is that an output port can be enabled or
+   disabled in the 
+	\textbf{Edit / Preferences / MIDI Clock} tab,
+   and the change in status takes effect immediately.
+   One minor issue is that, upon reenabling, a stray note or two might be
+   emiited.
+
 \subsubsection{JACK / MIDI Input}
 \label{subsubsec:jack_midi_input}
 
@@ -209,6 +216,11 @@
 
    When the check-box for a buss is selected, that input can be captured by
    \texttt{seq66}.
+
+   A feature new with version 0.98.5 is that an output port can be enabled or
+   disabled in the 
+	\textbf{Edit / Preferences / MIDI Input} tab,
+   and the change in status takes effect immediately.
 
 \subsubsection{JACK / MIDI Virtual Ports}
 \label{subsubsec:jack_midi_virtual_ports}

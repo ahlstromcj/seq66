@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-02-23
+ * \updates       2022-02-27
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -115,15 +115,18 @@ jack_process_io (jack_nframes_t nframes, void * arg)
 
             for (auto mj : self->jack_ports())      /* midi_jack pointers   */
             {
-                midi_jack_data * mjp = &mj->jack_data();
-                if (mj->parent_bus().is_input_port())
+                if (mj->enabled())
                 {
-                    int rc = jack_process_rtmidi_input(nframes, mjp);
-                    if (rc == (-1))
-                        break;
+                    midi_jack_data * mjp = &mj->jack_data();
+                    if (mj->parent_bus().is_input_port())
+                    {
+                        int rc = jack_process_rtmidi_input(nframes, mjp);
+                        if (rc == (-1))
+                            break;
+                    }
+                    else
+                        (void) jack_process_rtmidi_output(nframes, mjp);
                 }
-                else
-                    (void) jack_process_rtmidi_output(nframes, mjp);
             }
         }
     }
@@ -523,7 +526,7 @@ midi_jack_info::get_all_port_info
  * \return
  *      Returns the alias, if it exists, for a system port.  That is, one with
  *      "system:" in its name.  Brittle.  And some JACK systems do not provide
- *      and alias.
+ *      an alias.
  */
 
 std::string
@@ -667,9 +670,17 @@ midi_jack_info::update_port_list
         if (! rc().investigate() && ! is_my_port)
         {
             std::string pinfo = shortname;
+            pinfo += " #";
+            pinfo += std::to_string(portid);
+            if (! longname.empty())
+            {
+                pinfo += "(";
+                pinfo += longname;
+                pinfo += ")";
+            }
             pinfo += " ";
             pinfo += registration ? "registered" : "unregistered";
-            pinfo += ". Ignored";
+            pinfo += "; ignored";
             info_message("External port", pinfo);
         }
     }
@@ -760,6 +771,8 @@ midi_jack_info::show_details () const
  *
  *  Each JACK port's midi_jack::api_connect() function decides whether or not
  *  to activate before making the connection.
+ *
+ * Issue #60: GUI option to disable auto midi port creation/connection.
  *
  * \return
  *      Returns true if activation succeeds.

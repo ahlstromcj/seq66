@@ -283,7 +283,7 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
     if (not_nullptr(j))
     {
         jack_position_t pos;
-        jack_transport_state_t s = jack_transport_query(j->client(), &pos);
+        jack_transport_state_t s = ::jack_transport_query(j->client(), &pos);
         performer & p = j->parent();
         if (p.is_running())
         {
@@ -402,13 +402,13 @@ create_jack_client (std::string clientname, std::string uuid)
     jack_options_t options = JackNoStartServer;
     if (uuid.empty())
     {
-        result = jack_client_open(name, options, ps);
+        result = ::jack_client_open(name, options, ps);
     }
     else
     {
         const char * uid = uuid.c_str();
         options = static_cast<jack_options_t>(JackNoStartServer|JackSessionID);
-        result = jack_client_open(name, options, ps, uid);
+        result = ::jack_client_open(name, options, ps, uid);
         if (not_nullptr(result) && rc().investigate())
         {
             char t[80];
@@ -451,14 +451,14 @@ get_jack_client_uuid (jack_client_t * jc)
 {
     std::string result;
 #if defined SEQ66_JACK_SESSION          /* deprecated, use Non Session Mgr. */
-    char * luuid = jack_client_get_uuid(jc);
+    char * luuid = ::jack_client_get_uuid(jc);
     if (not_nullptr(luuid))
     {
         result = luuid;                 /* see note in the banner           */
         jack_free(luuid);
     }
 #else
-    char * lname = jack_get_client_name(jc);
+    char * lname = ::jack_get_client_name(jc);
     if (not_nullptr(lname))
     {
         char * luuid = jack_get_uuid_for_client_name(jc, lname);
@@ -506,14 +506,14 @@ set_jack_client_property
     if (result)
     {
         jack_uuid_t u2 = JACK_UUID_EMPTY_INITIALIZER;
-        int rc = jack_uuid_parse(uuid.c_str(), &u2);
+        int rc = ::jack_uuid_parse(uuid.c_str(), &u2);
         result = rc == 0;
         if (result)
         {
             const char * k = key.c_str();
             const char * v = value.c_str();
             const char * t = type.c_str();
-            rc = jack_set_property(jc, u2, k, v, t);
+            rc = ::jack_set_property(jc, u2, k, v, t);
             result = rc == 0;
         }
     }
@@ -530,7 +530,7 @@ set_jack_port_property
     const std::string & type
 )
 {
-    jack_uuid_t uuid = jack_port_uuid(jp);
+    jack_uuid_t uuid = ::jack_port_uuid(jp);
     const char * k = key.c_str();
     const char * v = value.c_str();
     const char * t = type.empty() ? NULL : type.c_str() ;   /* important!   */

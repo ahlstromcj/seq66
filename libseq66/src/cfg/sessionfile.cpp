@@ -29,7 +29,16 @@
  * \license       GNU GPLv2 or above
  *
  *  This file is a read-only file created manually by the user in order
- *  to create an isolated consistent setup, e.g. for testing.
+ *  to create an isolated consistent setup, e.g. for testing.  It provides a
+ *  single file, always named "session.rc", and locating in the Seq66
+ *  configuration directory.  The file has named sections, each of which
+ *  specifies the home configuration directory, the client-name, the base
+ *  name of the configration files to use, and the name of a log file.
+ *
+ *  It's main parameter is rc().inspection_tag(), which specifies the section
+ *  of the session.rc file to use.  See the --inspect or -I option.
+ *
+ *  See "data/samples/session.rc" for a documented example.
  */
 
 #include "cfg/sessionfile.hpp"          /* seq66::sessionfile class         */

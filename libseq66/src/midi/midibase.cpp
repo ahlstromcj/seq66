@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2022-02-22
+ * \updates       2022-02-26
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -50,9 +50,6 @@
 #include "midi/event.hpp"               /* seq66::event (MIDI event)        */
 #include "midi/midibase.hpp"            /* seq66::midibase for ALSA         */
 #include "util/calculations.hpp"        /* clock_ticks_from_ppqn()          */
-
-#undef  SEQ66_DEINIT_DISABLED_PORTS     /* EXPERIMENTAL to disable this     */
-#undef  SEQ66_FULL_SET_CLOCK            /* weird, causes double out ports   */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -166,7 +163,7 @@ midibase::midibase
     m_bus_id            (bus_id == (-1) ? 0 : bus_id),  /* uninited midi_info */
     m_port_id           (port_id),
     m_clock_type        (e_clock::off),
-    m_inputing          (false),
+    m_io_active         (false),
     m_ppqn              (choose_ppqn(ppqn)),
     m_bpm               (bpm),
     m_queue             (queue),
@@ -406,7 +403,7 @@ midibase::connect_name () const
 int
 midibase::poll_for_midi ()
 {
-    return m_inputing ? api_poll_for_midi() : 0 ;
+    return m_io_active ? api_poll_for_midi() : 0 ;
 }
 
 /**
@@ -562,6 +559,48 @@ midibase::flush ()
 }
 
 /**
+ *  Need to revisit this at some point. If we enable the full set_clock(), we
+ *  get two instances of each output port.
+ *
+ * \param clocktype
+ *      The value used to set the clock-type.
+ */
+
+bool
+midibase::set_clock (e_clock clocktype)
+{
+    m_clock_type = clocktype;
+    m_io_active = clocktype != e_clock::disabled;
+    return true;
+}
+
+/**
+ *  Set status to of "inputting" to the given value.  If the parameter is
+ *  true, then init_in() is called; otherwise, deinit_in() is called.
+ *
+ * \param inputing
+ *      The inputing value to set.  For input system ports, it is always set
+ *      to true, no matter how it is configured in the "rc" file.
+ */
+
+bool
+midibase::set_input (bool inputing)
+{
+    bool result = false;
+    if (is_system_port())
+    {
+        m_io_active = true;
+        result = init_in();         /* is this init really necessary now?   */
+    }
+    else
+    {
+        m_io_active = inputing;
+        result = true;
+    }
+    return result;
+}
+
+/**
  *  Initialize the clock, continuing from the given tick.  This function
  *  doesn't depend upon the MIDI API in use.  Here, e_clock::off and
  *  e_clock::disabled have the same effect... none.
@@ -573,35 +612,30 @@ midibase::flush ()
 void
 midibase::init_clock (midipulse tick)
 {
-    if (m_ppqn == 0)
-        return;
-
-    if (m_clock_type == e_clock::pos && tick != 0)
+    if (port_enabled() && m_ppqn > 0)        /* new check for enabled    */
     {
-        continue_from(tick);
-    }
-    else if (m_clock_type == e_clock::mod || tick == 0)
-    {
-        start();
+        if (m_clock_type == e_clock::pos && tick != 0)
+        {
+            continue_from(tick);
+        }
+        else if (m_clock_type == e_clock::mod || tick == 0)
+        {
+            start();
 
-        /*
-         * The next equation is effectively (m_ppqn / 4) * 16 * 4,
-         * or m_ppqn * 16.  Note that later we have pp16th = (m_ppqn / 4).
-         */
+            /*
+             * The next equation is effectively (m_ppqn / 4) * 16 * 4, or
+             * m_ppqn * 16.  Note that later we have pp16th = (m_ppqn / 4).
+             * If any left-overs, wait for next beat (16th note) to clock.
+             */
 
-        midipulse clock_mod_ticks = (m_ppqn / 4) * m_clock_mod;
-        midipulse leftover = (tick % clock_mod_ticks);
-        midipulse starting_tick = tick - leftover;
+            midipulse clock_mod_ticks = (m_ppqn / 4) * m_clock_mod;
+            midipulse leftover = (tick % clock_mod_ticks);
+            midipulse starting_tick = tick - leftover;
+            if (leftover > 0)
+                starting_tick += clock_mod_ticks;
 
-        /*
-         * Was there anything left? Then wait for next beat (16th note)
-         * to start clocking.
-         */
-
-        if (leftover > 0)
-            starting_tick += clock_mod_ticks;
-
-        m_lasttick = starting_tick - 1;
+            m_lasttick = starting_tick - 1;
+        }
     }
 }
 
@@ -626,9 +660,7 @@ midibase::continue_from (midipulse tick)
 
     m_lasttick = starting_tick - 1;
     if (clock_enabled())
-    {
         api_continue_from(tick, beats);
-    }
 }
 
 /**
@@ -641,103 +673,7 @@ midibase::start ()
 {
     m_lasttick = -1;
     if (clock_enabled())
-    {
         api_start();
-    }
-}
-
-/**
- *  Need to revisit this at some point. If we enable the full set_clock(), we
- *  get two instances of each output port.
- *
- * \param clocktype
- *      The value used to set the clock-type.
- */
-
-#if defined SEQ66_FULL_SET_CLOCK
-
-bool
-midibase::set_clock (e_clock clocktype)
-{
-    bool result = false;
-#if defined SEQ66_DEINIT_DISABLED_PORTS
-    if (m_clock_type != clocktype)
-    {
-        m_clock_type = clocktype;
-        if (clocktype != e_clock::disabled)
-        {
-            if (is_virtual_port())
-                result = init_out_sub();
-            else
-                result = init_out();
-        }
-        else
-            (void) deinit_out();
-    }
-#else
-    m_clock_type = clocktype;
-    if (is_virtual_port())
-        result = init_out_sub();
-    else
-        result = init_out();
-#endif
-    return result;
-}
-
-#else
-
-bool
-midibase::set_clock (e_clock clocktype)
-{
-    m_clock_type = clocktype;
-    return true;
-}
-
-#endif
-
-/**
- *  Set status to of "inputting" to the given value.  If the parameter is
- *  true, then init_in() is called; otherwise, deinit_in() is called.
- *
- * \param inputing
- *      The inputing value to set.  For input system ports, it is always set
- *      to true, no matter how it is configured in the "rc" file.
- */
-
-bool
-midibase::set_input (bool inputing)
-{
-    bool result = false;
-    if (is_system_port())
-    {
-        m_inputing = true;
-        result = init_in();
-    }
-#if defined SEQ66_DEINIT_DISABLED_PORTS
-    else if (m_inputing != inputing)
-    {
-        m_inputing = inputing;
-        if (inputing)
-        {
-            if (is_virtual_port())
-                result = init_in_sub();
-            else
-                result = init_in();
-        }
-        else
-            result = deinit_in();
-    }
-#else
-    else
-    {
-        m_inputing = inputing;
-        if (is_virtual_port())
-            result = init_in_sub();
-        else
-            result = init_in();
-    }
-#endif
-    return result;
 }
 
 /**
@@ -748,17 +684,8 @@ void
 midibase::stop ()
 {
     m_lasttick = -1;
-
-    /*
-     * Hmmmmm.
-     *
-     * if (clock_enabled())
-     */
-
-    if (m_clock_type != e_clock::off)
-    {
+    if (clock_enabled())
         api_stop();
-    }
 }
 
 /**

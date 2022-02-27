@@ -1,6 +1,6 @@
 TO DO for Seq66 0.98.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-02-24
+2019-04-13 to 2022-02-25
 
 Windows:
 
@@ -43,7 +43,12 @@ MIDI:
         Use const char * snd_asoundlib_version () to get the ALSA version.
 
     Fallback to ALSA if JACK is not running is broken.  Or is it that jackdbus
-    is interfering?
+    is interfering? On another computer, that seems to be the case. Seq66
+    creates virtual ports in that case, but we need to test that they are
+    useful, and consider activating the manual-port settings in the 'rc' file.
+
+    Also, would it be useful to provide a way to better name each virtual
+    port?
 
 Automation:
 
@@ -174,6 +179,7 @@ EXTANT ISSUES:
     (I have used Ray-Session , but I guess it acts as others NSM managers)
 
     Note:  Probably need an option to not auto-connect while NSM is running.
+    However, this can be set in the 'rc' file.
 
 #49 Unable to unmute loops after group learn.
     STATUS: Done.  Needs more testing.

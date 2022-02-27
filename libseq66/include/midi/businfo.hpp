@@ -180,7 +180,7 @@ public:
          */
 
         if (not_nullptr(bus()))
-            bus()->set_input_status(flag);
+            bus()->set_io_status(flag);
     }
 
 private:

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2022-01-27
+ * \updates       2022-02-27
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -366,8 +366,10 @@ mastermidibase::set_clock (bussbyte bus, e_clock clocktype)
     automutex locker(m_mutex);
     bool result = m_outbus_array.set_clock(bus, clocktype);
     if (result)
+    {
+        flush();
         result = save_clock(bus, clocktype);    /* save into the vector */
-
+    }
     return result;
 }
 
@@ -499,8 +501,10 @@ mastermidibase::set_input (bussbyte bus, bool inputing)
     automutex locker(m_mutex);
     bool result = m_inbus_array.set_input(bus, inputing);
     if (result)
+    {
+        flush();
         result = save_input(bus, inputing);     /* save into the vector */
-
+    }
     return result;
 }
 

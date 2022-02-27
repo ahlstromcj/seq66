@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>652</width>
-    <height>686</height>
+    <width>654</width>
+    <height>688</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -1244,7 +1244,7 @@ connects to the MIDI I/O ports it finds.</string>
          <rect>
           <x>8</x>
           <y>4</y>
-          <width>129</width>
+          <width>189</width>
           <height>17</height>
          </rect>
         </property>
@@ -1255,7 +1255,7 @@ connects to the MIDI I/O ports it finds.</string>
          </font>
         </property>
         <property name="text">
-         <string>JACK Start</string>
+         <string>JACK/ALSA Start Mode</string>
         </property>
        </widget>
       </widget>
@@ -1650,7 +1650,7 @@ Seq66 exits.</string>
        </property>
        <property name="text">
         <string>NSM is used automatically if Seq66 is
- running in an NSM session.  The check-
+running in an NSM session.  The check-
 mark indicates that Seq66 wants to attach
 to an NSM session at the given URL.
 
@@ -1658,7 +1658,7 @@ JACK session management will occur only
 if checked, even if Seq66 is spawned by it.
 
 As usual for many changes, a restart is
-required.</string>
+required.  See the Session tab.</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_nsm_url">
@@ -1666,7 +1666,7 @@ required.</string>
         <rect>
          <x>16</x>
          <y>176</y>
-         <width>77</width>
+         <width>89</width>
          <height>17</height>
         </rect>
        </property>
@@ -1677,7 +1677,7 @@ required.</string>
         </font>
        </property>
        <property name="text">
-        <string>JACK UUID</string>
+        <string>UUID</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1686,9 +1686,9 @@ required.</string>
       <widget class="QLineEdit" name="lineEditNsmUrl">
        <property name="geometry">
         <rect>
-         <x>96</x>
+         <x>116</x>
          <y>172</y>
-         <width>209</width>
+         <width>189</width>
          <height>25</height>
         </rect>
        </property>

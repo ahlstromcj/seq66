@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; modifications by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-24
+ * \updates       2022-02-27
  * \license       See above.
  *
  *  Declares the following classes:
@@ -274,8 +274,15 @@ public:
 
     bool enabled () const
     {
-        return ! parent_bus().port_disabled();
+        return parent_bus().port_enabled();
     }
+
+#if 0
+    void set_io_status (bool flag)
+    {
+        parent_bus().set_io_status(flag);
+    }
+#endif
 
     std::string connect_name () const
     {

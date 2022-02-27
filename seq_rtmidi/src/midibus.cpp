@@ -223,7 +223,10 @@ midibus::api_connect ()
 int
 midibus::api_poll_for_midi ()
 {
-    return not_nullptr(m_rt_midi) ? m_rt_midi->api_poll_for_midi() : 0 ;
+    if (port_enabled())
+        return not_nullptr(m_rt_midi) ? m_rt_midi->api_poll_for_midi() : 0 ;
+    else
+        return 0;
 }
 
 /**
@@ -239,7 +242,13 @@ midibus::api_poll_for_midi ()
 bool
 midibus::api_get_midi_event (event * inev)
 {
-    return not_nullptr(m_rt_midi) ? m_rt_midi->api_get_midi_event(inev) : false ;
+    if (port_enabled())
+    {
+        return not_nullptr(m_rt_midi) ?
+            m_rt_midi->api_get_midi_event(inev) : false ;
+    }
+    else
+        return false;
 }
 
 /**

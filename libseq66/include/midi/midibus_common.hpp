@@ -127,9 +127,9 @@ clock_to_int (e_clock e)
 }
 
 inline bool
-clock_is_disabled (e_clock ce)
+clocking_enabled (e_clock ce)
 {
-    return ce == e_clock::disabled;
+    return ce == e_clock::pos || ce == e_clock::mod;
 }
 
 }           // namespace seq66

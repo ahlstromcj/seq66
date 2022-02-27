@@ -1,4 +1,4 @@
-`configure' configures Seq66 0.96.3 to adapt to many kinds of systems.
+`configure' configures Seq66 0.98.5 to adapt to many kinds of systems.
 
 Usage: ./configure [OPTION]... [VAR=VALUE]...
 
@@ -84,16 +84,19 @@ Optional Features:
   --enable-docs           Enable developer document support
   --disable-jack          Disable JACK support
   --disable-jack-session  Disable JACK session support
-  --enable-nsm            Enable NSM support (default=yes)
-  --enable-rtmidi         Enable rtmidi build, default MIDI engine
+  --disable-jack-metadata Disable JACK metadata support
+  --enable-refresh        Enable JACK port refresh support
+  --disable-nsm           Disable NSM support
+  --disable-rtmidi        Disable rtmidi MIDI engine
   --disable-alsatest      Do not try to compile and run a test Alsa program
-  --enable-qt             Enable Qt5 user-interface build
+  --disable-qt            Disable Qt5 user-interface
   --enable-cli            Enable rtmidi command-line build
-  --enable-portmidi       Enable PortMidi build (for testing)
+  --enable-portmidi       Enable PortMidi build)
   --enable-coverage=(no/yes) Turn on a test-coverage build (default=no)
   --enable-profile=(no/yes/gprof/prof) Turn on profiling builds (default=no, yes=gprof)
   --enable-debug=(no/yes/db/gdb) Turn on debug builds (default=no,
 yes=gdb)
+  --enable-debug=(no/yes) Turn on call instrumentation (default=no)
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-02-24
+ * \updates       2022-02-25
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -116,6 +116,8 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     m_live_song_buttons = new QButtonGroup(this);
     backup();
 
+#if defined SEQ66_JACK_SUPPORT
+
     /*
      * Jack Sync tab.  JACK Transport Connect/Disconnect buttons.
      */
@@ -160,6 +162,18 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         ui->chkJackAutoConnect, SIGNAL(stateChanged(int)),
         this, SLOT(slot_jack_auto_connect())
     );
+
+#else
+
+    ui->btnJackConnect->setEnabled(false);
+    ui->btnJackDisconnect->setEnabled(false);
+    ui->chkJackTransport->setEnabled(false);
+    ui->chkJackConditional->setEnabled(false);
+    ui->chkJackMaster->setEnabled(false);
+    ui->chkJackNative->setEnabled(false);
+    ui->chkJackAutoConnect->setEnabled(false);
+
+#endif  // defined SEQ66_JACK_SUPPORT
 
     /*
      * Play Options tab
@@ -215,6 +229,14 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         this, SLOT(slot_session(int))
     );
 
+#if ! defined SEQ66_JACK_SESSION
+    ui->radio_session_jack->setEnabled(false);
+#endif
+
+#if ! defined SEQ66_NSM_SUPPORT
+    ui->radio_session_nsm->setEnabled(false);
+#endif
+
     /*
      * The URL text-edit.
      */
@@ -247,27 +269,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
 
     m_live_song_buttons->addButton(ui->radio_live_mode, playmode_button_live);
     m_live_song_buttons->addButton(ui->radio_song_mode, playmode_button_song);
-
-    /*
-     * Note that "foreach" is a Qt-specific keyword, not a C++ keyword.
-     */
-
-
-    /*
-     * Code moved to sync_rc():
-
-    int rbid = perf().song_mode() ? playmode_button_song : playmode_button_live ;
-    foreach (QAbstractButton * button, m_live_song_buttons->buttons())
-    {
-        int bid = m_live_song_buttons->id(button);
-        if (bid == rbid)
-        {
-            button->setChecked(true);
-            break;
-        }
-    }
-     */
-
     connect
     (
         m_live_song_buttons, SIGNAL(buttonClicked(int)),
@@ -936,16 +937,21 @@ qseditoptions::show_session (usrsettings::session sm)
 
     if (tenturl.empty())
     {
+#if defined SEQ66_NSM_SUPPORT
         if (usr().want_nsm_session())
         {
             url_modifiable = true;
             tenturl = usr().session_url();
         }
+#endif
+#if defined SEQ66_JACK_SESSION
         else if (usr().want_jack_session())
         {
             tenturl = rc().jack_session();          /* JACK session UUID    */
         }
+#endif
     }
+    ui->label_nsm_url->setEnabled(false);
     if (usr().in_nsm_session())
     {
         ui->radio_session_none->setChecked(false);
@@ -955,6 +961,7 @@ qseditoptions::show_session (usrsettings::session sm)
 #if defined SEQ66_NSM_SUPPORT
         ui->radio_session_nsm->setChecked(true);
         ui->radio_session_nsm->setEnabled(true);
+        ui->label_nsm_url->setEnabled(true);
         ui->label_nsm_url->setText("NSM URL");
         ui->lineEditNsmUrl->setText(qt(tenturl));
 #endif
@@ -971,6 +978,7 @@ qseditoptions::show_session (usrsettings::session sm)
             case usrsettings::session::nsm:
 #if defined SEQ66_NSM_SUPPORT
                 ui->radio_session_nsm->setChecked(true);
+                ui->label_nsm_url->setEnabled(true);
                 ui->label_nsm_url->setText("NSM URL");
                 ui->lineEditNsmUrl->setText(qt(tenturl));
 #endif
@@ -979,6 +987,7 @@ qseditoptions::show_session (usrsettings::session sm)
             case usrsettings::session::jack:
 #if defined SEQ66_JACK_SESSION
                 ui->radio_session_jack->setChecked(true);
+                ui->label_nsm_url->setEnabled(true);
                 ui->label_nsm_url->setText("JACK UUID");
                 ui->lineEditNsmUrl->setText(qt(tenturl));
 #endif
@@ -996,7 +1005,12 @@ qseditoptions::slot_session (int buttonno)
 {
     usrsettings::session current = usr().session_manager();
     if (buttonno == static_cast<int>(usrsettings::session::nsm))
+    {
         usr().session_manager("nsm");
+        ui->label_nsm_url->setEnabled(true);
+        ui->label_nsm_url->setText("NSM URL");
+        ui->lineEditNsmUrl->setEnabled(true);
+    }
     else if (buttonno == static_cast<int>(usrsettings::session::jack))
         usr().session_manager("jack");
     else
@@ -1063,6 +1077,8 @@ qseditoptions::backup ()
  *  Sync with preferences.  In other words, the current values in the various
  *  settings objects are used to set the user-interface elements in this
  *  dialog.
+ *
+ *  Note that "foreach" is a Qt-specific keyword, not a C++ keyword.
  */
 
 void
@@ -1079,7 +1095,12 @@ qseditoptions::sync_rc ()
     ui->chkJackMaster->setChecked(rc().with_jack_master());
     ui->chkJackConditional->setChecked(rc().with_jack_master_cond());
     ui->chkJackNative->setChecked(rc().with_jack_midi());
+#if defined SEQ66_JACK_SUPPORT
     ui->chkJackAutoConnect->setChecked(rc().jack_auto_connect());
+#else
+    rc().jack_auto_connect(false);
+    ui->chkJackAutoConnect->setChecked(false);
+#endif
     ui->chkJackMaster->setDisabled(! rc().with_jack_transport());
     ui->chkJackConditional->setDisabled(! rc().with_jack_transport());
     show_sets_mode(rc().sets_mode());

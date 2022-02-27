@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-02-24
+ * \updates       2022-02-26
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -123,6 +123,7 @@ cmdlineopts::s_long_options [] =
 #endif
     {"no-jack-midi",        0, 0, 'N'},
     {"jack-midi",           0, 0, 't'},
+    {"jack",                0, 0, '9'},         /* the same as --jack-midi  */
     {"no-jack-connect",     0, 0, 'w'},
     {"jack-connect",        0, 0, 'W'},
 #endif
@@ -187,9 +188,9 @@ cmdlineopts::s_long_options [] =
  */
 
 #if defined SEQ66_JACK_SUPPORT      // how to handle no SEQ66_NSM_SUPPORT?
-#define CMD_OPTS    "0#AaB:b:Cc:DdF:f:gH:hI:iJjKkl:M:mNnoPpq:RrSsTtU:uVvWwX:x:Zz#"
+#define CMD_OPTS "09#AaB:b:Cc:DdF:f:gH:hI:iJjKkl:M:mNnoPpq:RrSsTtU:uVvWwX:x:Zz#"
 #else
-#define CMD_OPTS    "0#AaB:b:c:DdF:f:H:hI:iKkl:M:mnoPpq:RrsTuVvX:x:Zz#"
+#define CMD_OPTS "0#AaB:b:c:DdF:f:H:hI:iKkl:M:mnoPpq:RrsTuVvX:x:Zz#"
 #endif
 
 const std::string cmdlineopts::s_arg_list = CMD_OPTS;
@@ -257,7 +258,7 @@ static const std::string s_help_2 =
 "   -J, --jack-master        Try to be JACK Master. Also sets -j.\n"
 "   -C, --jack-master-cond   Fail if there's already a Jack Master; sets -j.\n"
 "   -N, --no-jack-midi       Use ALSA MIDI, even with JACK Transport. See -A.\n"
-"   -t, --jack-midi          Use JACK MIDI, separately from JACK Transport.\n"
+"   -t, --jack, --jack-midi  Use JACK MIDI, separately from JACK Transport.\n"
 "   -W, --jack-connect       Auto-connect to JACK ports. The default.\n"
 "   -w, --no-jack-connect    Don't connect to JACK ports. Good with NSM.\n"
 #if defined SEQ66_JACK_SESSION
@@ -869,6 +870,12 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             usr().convert_to_smf_1(false);
             break;
 
+#if defined SEQ66_JACK_SUPPORT
+        case '9':                   /* added for consistency with --alsa    */
+            rc().with_jack_midi(true);
+            break;
+#endif
+
         case '#':
             std::cout << SEQ66_VERSION << std::endl;
             result = c_null_option;
@@ -938,7 +945,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'I':
-            rc().inspection_tag(soptarg);
+            rc().inspection_tag(soptarg);   /* see smanager and sessionfile */
             break;
 
         case 'i':
@@ -1065,6 +1072,8 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().verbose(true);
             break;
 
+#if defined SEQ66_JACK_SUPPORT
+
         case 'W':
             rc().jack_auto_connect(true);
             break;
@@ -1072,6 +1081,8 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         case 'w':
             rc().jack_auto_connect(false);
             break;
+
+#endif
 
         case 'X':
             rc().playlist_active(rc().playlist_filename_checked(soptarg));

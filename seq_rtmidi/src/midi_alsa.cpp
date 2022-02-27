@@ -573,25 +573,28 @@ static const size_t s_sysex_size_max = 512; /* Hydrogen uses 32 for input!  */
 void
 midi_alsa::api_play (const event * e24, midibyte channel)
 {
-    snd_midi_event_t * midi_ev;                         /* ALSA MIDI parser */
-    int rc = snd_midi_event_new(s_event_size_max, &midi_ev);
-    if (rc == 0)
+    if (parent_bus().port_enabled())
     {
-        snd_seq_event_t ev;                             /* event memory     */
-        midibyte buffer[4];                             /* temp MIDI data   */
-        buffer[0] = e24->get_status(channel);           /* status + channel */
-        e24->get_data(buffer[1], buffer[2]);            /* set MIDI data    */
-        snd_seq_ev_clear(&ev);                          /* clear event      */
-        snd_midi_event_encode(midi_ev, buffer, 3, &ev); /* 3 raw bytes      */
-        snd_midi_event_free(midi_ev);                   /* free the parser  */
-        snd_seq_ev_set_source(&ev, m_local_addr_port);  /* set source       */
-        snd_seq_ev_set_subs(&ev);                       /* subscriber bcast */
-        snd_seq_ev_set_direct(&ev);                     /* it is immediate  */
-        snd_seq_event_output(m_seq, &ev);               /* pump into queue  */
-    }
-    else
-    {
-        errprint("api_play() out-of-memory error");
+        snd_midi_event_t * midi_ev;                         /* MIDI parser  */
+        int rc = snd_midi_event_new(s_event_size_max, &midi_ev);
+        if (rc == 0)
+        {
+            snd_seq_event_t ev;                             /* event memory */
+            midibyte buffer[4];                             /* temp data    */
+            buffer[0] = e24->get_status(channel);           /* status+chan  */
+            e24->get_data(buffer[1], buffer[2]);            /* set the data */
+            snd_seq_ev_clear(&ev);                          /* clear event  */
+            snd_midi_event_encode(midi_ev, buffer, 3, &ev); /* 3 raw bytes  */
+            snd_midi_event_free(midi_ev);                   /* free parser  */
+            snd_seq_ev_set_source(&ev, m_local_addr_port);  /* set source   */
+            snd_seq_ev_set_subs(&ev);                       /* subscriber   */
+            snd_seq_ev_set_direct(&ev);                     /* immediate    */
+            snd_seq_event_output(m_seq, &ev);               /* pump to que  */
+        }
+        else
+        {
+            errprint("api_play() out-of-memory error");
+        }
     }
 }
 
@@ -674,7 +677,10 @@ midi_alsa::api_sysex (const event * e24)
         for (int offset = 0; offset < data_size; offset += c_sysex_chunk)
         {
             int data_left = data_size - offset;
-            snd_seq_ev_set_sysex(&ev, min(data_left, c_sysex_chunk), &data[offset]);
+            snd_seq_ev_set_sysex
+            (
+                &ev, min(data_left, c_sysex_chunk), &data[offset]
+            );
 
             int rc = snd_seq_event_output_direct(m_seq, &ev);
             if (rc >= 0)
@@ -723,27 +729,30 @@ midi_alsa::api_flush ()
 void
 midi_alsa::api_continue_from (midipulse tick_parameter, midipulse beats)
 {
-    snd_seq_event_t ev;
-    snd_seq_ev_clear(&ev);                          /* clear event      */
-    ev.type = SND_SEQ_EVENT_CONTINUE;
+    if (parent_bus().port_enabled())
+    {
+        snd_seq_event_t ev;
+        snd_seq_ev_clear(&ev);                          /* clear event      */
+        ev.type = SND_SEQ_EVENT_CONTINUE;
 
-    snd_seq_event_t evc;
-    snd_seq_ev_clear(&evc);                         /* clear event      */
-    evc.type = SND_SEQ_EVENT_SONGPOS;
-    evc.data.control.value = beats;
-    snd_seq_ev_set_fixed(&ev);
-    snd_seq_ev_set_fixed(&evc);
-    snd_seq_ev_set_priority(&ev, 1);
-    snd_seq_ev_set_priority(&evc, 1);
-    snd_seq_ev_set_source(&evc, m_local_addr_port); /* set the source   */
-    snd_seq_ev_set_subs(&evc);
-    snd_seq_ev_set_source(&ev, m_local_addr_port);
-    snd_seq_ev_set_subs(&ev);
-    snd_seq_ev_set_direct(&ev);                     /* it's immediate   */
-    snd_seq_ev_set_direct(&evc);
-    snd_seq_event_output(m_seq, &evc);              /* pump into queue  */
-    api_flush();
-    snd_seq_event_output(m_seq, &ev);
+        snd_seq_event_t evc;
+        snd_seq_ev_clear(&evc);                         /* clear event      */
+        evc.type = SND_SEQ_EVENT_SONGPOS;
+        evc.data.control.value = beats;
+        snd_seq_ev_set_fixed(&ev);
+        snd_seq_ev_set_fixed(&evc);
+        snd_seq_ev_set_priority(&ev, 1);
+        snd_seq_ev_set_priority(&evc, 1);
+        snd_seq_ev_set_source(&evc, m_local_addr_port); /* set the source   */
+        snd_seq_ev_set_subs(&evc);
+        snd_seq_ev_set_source(&ev, m_local_addr_port);
+        snd_seq_ev_set_subs(&ev);
+        snd_seq_ev_set_direct(&ev);                     /* it's immediate   */
+        snd_seq_ev_set_direct(&evc);
+        snd_seq_event_output(m_seq, &evc);              /* pump into queue  */
+        api_flush();
+        snd_seq_event_output(m_seq, &ev);
+    }
 }
 
 /**
@@ -754,15 +763,18 @@ midi_alsa::api_continue_from (midipulse tick_parameter, midipulse beats)
 void
 midi_alsa::api_start ()
 {
-    snd_seq_event_t ev;
-    snd_seq_ev_clear(&ev);                          /* memsets it to 0  */
-    ev.type = SND_SEQ_EVENT_START;
-    snd_seq_ev_set_fixed(&ev);
-    snd_seq_ev_set_priority(&ev, 1);
-    snd_seq_ev_set_source(&ev, m_local_addr_port);  /* set the source   */
-    snd_seq_ev_set_subs(&ev);
-    snd_seq_ev_set_direct(&ev);                     /* it's immediate   */
-    snd_seq_event_output(m_seq, &ev);               /* pump into queue  */
+    if (parent_bus().port_enabled())
+    {
+        snd_seq_event_t ev;
+        snd_seq_ev_clear(&ev);                          /* memsets it to 0  */
+        ev.type = SND_SEQ_EVENT_START;
+        snd_seq_ev_set_fixed(&ev);
+        snd_seq_ev_set_priority(&ev, 1);
+        snd_seq_ev_set_source(&ev, m_local_addr_port);  /* set the source   */
+        snd_seq_ev_set_subs(&ev);
+        snd_seq_ev_set_direct(&ev);                     /* it's immediate   */
+        snd_seq_event_output(m_seq, &ev);               /* pump into queue  */
+    }
 }
 
 /**
@@ -772,15 +784,18 @@ midi_alsa::api_start ()
 void
 midi_alsa::api_stop ()
 {
-    snd_seq_event_t ev;
-    snd_seq_ev_clear(&ev);                          /* memsets it to 0      */
-    ev.type = SND_SEQ_EVENT_STOP;
-    snd_seq_ev_set_fixed(&ev);
-    snd_seq_ev_set_priority(&ev, 1);
-    snd_seq_ev_set_source(&ev, m_local_addr_port);  /* set the source       */
-    snd_seq_ev_set_subs(&ev);
-    snd_seq_ev_set_direct(&ev);                     /* it's immediate       */
-    snd_seq_event_output(m_seq, &ev);               /* pump into queue      */
+    if (parent_bus().port_enabled())
+    {
+        snd_seq_event_t ev;
+        snd_seq_ev_clear(&ev);                          /* memsets it to 0  */
+        ev.type = SND_SEQ_EVENT_STOP;
+        snd_seq_ev_set_fixed(&ev);
+        snd_seq_ev_set_priority(&ev, 1);
+        snd_seq_ev_set_source(&ev, m_local_addr_port);  /* set the source   */
+        snd_seq_ev_set_subs(&ev);
+        snd_seq_ev_set_direct(&ev);                     /* it's immediate   */
+        snd_seq_event_output(m_seq, &ev);               /* pump into queue  */
+    }
 }
 
 /**
@@ -893,8 +908,7 @@ midi_alsa::remove_queued_on_events (int tag)
  *  calls.
  */
 
-midi_in_alsa::midi_in_alsa (midibus & parentbus, midi_info & masterinfo)
- :
+midi_in_alsa::midi_in_alsa (midibus & parentbus, midi_info & masterinfo) :
     midi_alsa   (parentbus, masterinfo)
 {
     // Empty body
@@ -906,8 +920,7 @@ midi_in_alsa::midi_in_alsa (midibus & parentbus, midi_info & masterinfo)
  *  calls.
  */
 
-midi_out_alsa::midi_out_alsa (midibus & parentbus, midi_info & masterinfo)
- :
+midi_out_alsa::midi_out_alsa (midibus & parentbus, midi_info & masterinfo) :
     midi_alsa   (parentbus, masterinfo)
 {
     // Empty body

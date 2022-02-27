@@ -219,6 +219,10 @@ namespace seq66
  *  The ALSA code polls for events, and that model is also available here.
  *  We're still working exactly how it will work best.
  *
+ *  Since this is an input port, buff is the area that contains data from the
+ *  "remote" (i.e. outside our application) port.  We do not check
+ *  midi_jack_data::m_jack_port here, it should be good, or else.
+ *
  *  This function used to be static, but now we make it available to
  *  midi_jack_info.  Also note the s_null_detected flag.
  *
@@ -241,13 +245,6 @@ int
 jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
 {
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
-
-    /*
-     * Since this is an input port, buff is the area that contains data from
-     * the "remote" (i.e. outside our application) port.  We do not check
-     * midi_jack_data::m_jack_port here, it should be good, or else.
-     */
-
     rtmidi_in_data * rtindata = jackdata->m_jack_rtmidiin;
     bool enabled = rtindata->is_enabled();
     if (enabled)
@@ -586,9 +583,9 @@ jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
                 mine = ::jack_port_is_mine(handle, portptr) != 0;
                 flags = ::jack_port_flags(portptr);
                 porttype = ::jack_port_type(portptr);
-                if (flags | JackPortIsInput)
+                if (flags & JackPortIsInput)
                     iotype = midibase::io::input;
-                else if (flags | JackPortIsOutput)
+                else if (flags & JackPortIsOutput)
                     iotype = midibase::io::output;
             }
             else
@@ -596,12 +593,10 @@ jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
 
             if (rc().investigate())
             {
-
                 /*
-                 * JACK documentation says this function does not need to be
-                 * suitable for real-time execution.  But what about
-                 * async-safety? It seems to be necessary; debug_message()
-                 * yields intermixed output.
+                 * JACK docs say this function doesn't need to be suitable for
+                 * real-time execution. But what about async-safety? It seems
+                 * to be necessary; debug_message() yields intermixed output.
                  */
 
                 const char * iot = "TBD";

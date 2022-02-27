@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2022-02-23
+ * \updates       2022-02-27
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -536,26 +536,30 @@ busarray::get_midi_bus_name (int bus) const
                 result = tmp;
             }
             else
-            {
                 result = buss->display_name();
-            }
         }
         else
         {
-            char tmp[80];                           /* copy names */
-            std::string status = "virtual";
-            if (bi.initialized())
-                status = "disconnected";
+            /*
+             * This is stupid.  It's redundant and ruins the port name.
+             *
+             *  char tmp[80];                           // copy names //
+             *  std::string status = "virtual";
+             *  if (bi.initialized())
+             *      status = "disconnected";
+             *
+             *  if (buss->port_disabled())
+             *      status = "disabled";
+             *
+             *  snprintf
+             *  (
+             *      tmp, sizeof tmp, "%s (%s)",
+             *      buss->display_name().c_str(), status.c_str()
+             *  );
+             *  result = tmp;
+             */
 
-            if (buss->port_disabled())
-                status = "disabled";
-
-            snprintf
-            (
-                tmp, sizeof tmp, "%s (%s)",
-                buss->display_name().c_str(), status.c_str()
-            );
-            result = tmp;
+            result = buss->display_name();
         }
     }
     return result;
@@ -688,6 +692,14 @@ busarray::set_input (bussbyte bus, bool inputing)
     if (result)
     {
         businfo & bi = m_container[bus];
+
+        /*
+         *  The init_input() call here first sets the m_init_input flag in
+         *  businfor.  Then it sets the I/O status flag of the midibus. It
+         *  does this only if the businfo is active (i.e. initialized) and the
+         *  status has changed.
+         */
+
         result = bi.active() || ! current;
         if (result)
             bi.init_input(inputing);

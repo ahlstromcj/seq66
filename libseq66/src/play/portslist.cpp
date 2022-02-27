@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-27
+ * \updates       2022-02-26
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -126,7 +126,7 @@ bool
 portslist::add
 (
     int buss,
-    int status,
+    int status,                                 /* covers bool or e_clock   */
     const std::string & name,
     const std::string & nickname,
     const std::string & alias
@@ -137,7 +137,7 @@ portslist::add
     {
         io ioitem;
         ioitem.io_enabled = status > 0;
-        ioitem.out_clock = int_to_clock(status);    /* e_clock::off */
+        ioitem.out_clock = int_to_clock(status);
         ioitem.io_name = name;
         ioitem.io_alias = alias;
         result = add(buss, ioitem, nickname);
@@ -171,17 +171,46 @@ portslist::add
 }
 
 /**
- *  New rule:  whether input or output, a clock value of "disabled" marks the
- *  port as missing or otherwise unusable.
+ *  Added for clarity, convenience, and, last, but not least, cohesion.
+ *  The issue is that this can mess up the clock type, so we leave that alone
+ *  and rely on the boolean, which we should have been doing all along.
+ *
+ * \param portio
+ *      The iterator to the io structure for the port.
+ *
+ * \param input
+ *      The desired enabled status of the port.
+ *
+ * \return
+ *      Returns true if the buss number lookup succeeded.
  */
 
 bool
-portslist::is_disabled (bussbyte bus) const
+portslist::set_enabled (bussbyte bus, bool enabled)
 {
-    bool result = true;
+    auto it = m_master_io.find(bus);
+    bool result = it != m_master_io.end();
+    if (result)
+        it->second.io_enabled = enabled;
+
+    return result;
+}
+
+/**
+ *  New rule:  whether input or output, an input value of "disabled" marks the
+ *  port as missing or otherwise unusable. This is enforced in the child
+ *  classes' set() functions.  The old check has some issues, in retrospect:
+ *
+ *      result = it->second.out_clock == e_clock::disabled;
+ */
+
+bool
+portslist::is_enabled (bussbyte bus) const
+{
+    bool result = false;
     auto it = m_master_io.find(bus);
     if (it != m_master_io.end())
-        result = it->second.out_clock == e_clock::disabled;
+        result = it->second.io_enabled;
 
     return result;
 }

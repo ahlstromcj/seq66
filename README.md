@@ -1,7 +1,7 @@
 # README for Seq66 0.98.5
 
 Chris Ahlstrom
-2015-09-10 to 2022-02-24
+2015-09-10 to 2022-02-27
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management,
@@ -82,6 +82,8 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.98.5:
+        *   Added the ability to disable/enable input and output on the fly in
+            the MIDI Clock and Input tabs.
         *   The client name ("seq66") is no longer shown, nor saved in the 'rc'
             file. Easier to use multiple Seq66's with the --client-name option.
         *   Adding JACK access functions for the future. Improved internal
@@ -91,6 +93,7 @@ Windows, and using a conventional source tarball.
         *   Fixed bad slot connection for import_midi_into_session().
         *   Bad command-line options now cause an exit. This includes JACK
             options when Seq66 is built without JACK support.
+        *   Improve the coherence of JACK-less builds. Some related NSM tweaks.
     *   Version 0.98.4:
         *   Fixed bug in recording-type selector in seqedit. Added a one-shot
             reset option.

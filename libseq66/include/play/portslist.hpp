@@ -1,5 +1,5 @@
-#if ! defined SEQ66_LISTSBASE_HPP
-#define SEQ66_LISTSBASE_HPP
+#if ! defined SEQ66_PORTLIST_HPP
+#define SEQ66_PORTLIST_HPP
 
 /*
  *  This file is part of seq66.
@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2021-12-27
+ * \updates       2022-02-26
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -66,9 +66,9 @@ public:
 
     enum class status
     {
-        cleared,
-        off,
-        on
+        cleared,                        /**< Deactivate and clear the list. */
+        off,                            /**< Deactivate the list.           */
+        on                              /**< Activate the list.             */
     };
 
 protected:
@@ -182,7 +182,13 @@ public:
     bussbyte bus_from_alias (const std::string & alias) const;
     std::string port_name_from_bus (bussbyte nominalbuss) const;
     void show (const std::string & tag) const;
-    bool is_disabled (bussbyte bus) const;
+    bool set_enabled (bussbyte bus, bool enabled);
+    bool is_enabled (bussbyte bus) const;
+
+    bool is_disabled (bussbyte bus) const
+    {
+        return ! is_enabled(bus);
+    }
 
 protected:
 
@@ -227,7 +233,7 @@ protected:
 
 }               // namespace seq66
 
-#endif          // SEQ66_LISTSBASE_HPP
+#endif          // SEQ66_PORTLIST_HPP
 
 /*
  * portslist.hpp

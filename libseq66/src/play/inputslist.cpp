@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-12-21
+ * \updates       2022-02-26
  * \license       GNU GPLv2 or above
  *
  */
@@ -142,6 +142,15 @@ inputslist::add_map_line (const std::string & line)
  *  Sets a single clock item, if in the currently existing range.
  *  Mostly meant for use by the Options / MIDI Input tab and configuration
  *  files.
+ *
+ * \param bus
+ *      The buss number, used to look up the io structure.
+ *
+ * \param input
+ *      The desired enabled status of the port.
+ *
+ * \return
+ *      Returns true if the buss number lookup succeeded.
  */
 
 bool

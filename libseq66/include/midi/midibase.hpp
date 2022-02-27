@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2022-02-24
+ * \updates       2022-02-26
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations
@@ -135,19 +135,19 @@ private:
     /**
      *  The type of clock to use.  The special value e_clock::disabled means
      *  we will not be using the port, so that a failure in setting up the
-     *  port is not a "fatal error".  (We could have added an "m_outputing"
-     *  boolean as an alternative.)
+     *  port is not a "fatal error".  We could have added an "m_outputing"
+     *  boolean as an alternative. However, we can overload m_inputing instead.
      */
 
     e_clock m_clock_type;
 
     /**
-     *  This flag indicates if an input bus has been selected for action as an
-     *  input device (such as a MIDI controller).  It is turned on if the user
-     *  selects the port in the Options / MIDI Input tab.
+     *  This flag indicates if an input or output bus has been selected for
+     *  action as an input device (such as a MIDI controller).  It is turned on
+     *  if the user selects the port in the Options / MIDI Input tab.
      */
 
-    bool m_inputing;
+    bool m_io_active;               // m_inputing;
 
     /**
      *  Provides the PPQN value in force, currently a constant.
@@ -206,13 +206,6 @@ private:
      */
 
     midipulse m_lasttick;
-
-    /**
-     *  Indicates if the port is to be a virtual port.  The default is to
-     *  create an automatic (normal) port (true).
-
-    bool m_is_virtual_port;
-     */
 
     /**
      *  Indicates if the port is to be an input (versus output) port.
@@ -387,25 +380,29 @@ public:
         return m_clock_type;
     }
 
+    bool port_enabled () const
+    {
+        return m_io_active;
+    }
+
     bool port_disabled () const
     {
-        return m_clock_type == e_clock::disabled;
+        return ! port_enabled();    /* m_clock_type == e_clock::disabled    */
     }
 
     bool clock_enabled () const
     {
-        return m_clock_type != e_clock::off &&
-            m_clock_type != e_clock::disabled;
+        return clocking_enabled(m_clock_type);  /* pos and mod */
     }
 
     bool get_input () const
     {
-        return m_inputing;
+        return m_io_active;
     }
 
-    void set_input_status (bool flag)
+    void set_io_status (bool flag)
     {
-        m_inputing = flag;
+        m_io_active = flag;
     }
 
     int queue_number () const
