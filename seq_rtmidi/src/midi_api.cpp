@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-01
+ * \updates       2022-02-28
  * \license       See above.
  *
  *  In this refactoring, we had to adapt the existing Seq66
@@ -60,7 +60,6 @@ midi_api::midi_api (midibus & parentbus, midi_info & masterinfo) :
     m_parent_bus                (parentbus),
     m_input_data                (),
     m_connected                 (false),
-    m_suspended                 (false),
     m_error_string              (),
     m_error_callback            (0),
     m_first_error_occurred      (false),

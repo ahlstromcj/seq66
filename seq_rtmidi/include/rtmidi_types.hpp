@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2022-02-17
+ * \updates       2022-02-28
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -310,14 +310,6 @@ private:
 
     bool m_continue_sysex;
 
-    /**
-     *  This flag is used in order to allow the JACK callbacks to not respond
-     *  to disabled ports.  Ultimately, we want be able to remove ports and
-     *  disassociate them from the JACK callbacks... a future endeavor.
-     */
-
-    bool m_is_enabled;
-
 public:
 
     rtmidi_in_data ();
@@ -330,16 +322,6 @@ public:
     midi_queue & queue ()
     {
         return m_queue;
-    }
-
-    bool is_enabled () const
-    {
-        return m_is_enabled;
-    }
-
-    void is_enabled (bool flag)
-    {
-        m_is_enabled = flag;
     }
 
     bool first_message () const

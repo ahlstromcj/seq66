@@ -274,7 +274,7 @@ int
 mastermidibus::api_poll_for_midi ()
 {
 #if defined SEQ66_USE_JACK_POLLING_FLAG
-    if (m_use_jack_polling)                             /* run-time option  */
+    if (m_use_jack_polling)                             /* --jack-midi set  */
         return mastermidibase::api_poll_for_midi();     /* inbus-array poll */
     else
         return midi_master().api_poll_for_midi();       /* ALSA poll        */

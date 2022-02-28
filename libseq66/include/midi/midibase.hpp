@@ -370,7 +370,7 @@ public:
 
     bool is_port_connectable () const       /* used only in midi_jack_info  */
     {
-        return ! port_disabled() && ! is_virtual_port();
+        return port_enabled() && ! is_virtual_port();
     }
 
     bool set_clock (e_clock clocktype);
@@ -383,11 +383,6 @@ public:
     bool port_enabled () const
     {
         return m_io_active;
-    }
-
-    bool port_disabled () const
-    {
-        return ! port_enabled();    /* m_clock_type == e_clock::disabled    */
     }
 
     bool clock_enabled () const

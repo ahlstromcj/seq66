@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-24
+ * \updates       2022-02-28
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -246,79 +246,69 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
 {
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
     rtmidi_in_data * rtindata = jackdata->m_jack_rtmidiin;
-    bool enabled = rtindata->is_enabled();
-    if (enabled)
+    void * buff = ::jack_port_get_buffer(jackdata->m_jack_port, nframes);
+    jack_midi_event_t jmevent;
+    jack_time_t jtime;
+    int evcount = ::jack_midi_get_event_count(buff);
+    bool overflow = false;
+    for (int j = 0; j < evcount; ++j)
     {
-        void * buff = ::jack_port_get_buffer(jackdata->m_jack_port, nframes);
-        jack_midi_event_t jmevent;
-        jack_time_t jtime;
-        int evcount = ::jack_midi_get_event_count(buff);
-        bool overflow = false;
-        for (int j = 0; j < evcount; ++j)
+        int rc = ::jack_midi_event_get(&jmevent, buff, j);
+        if (rc == 0)
         {
-            int rc = ::jack_midi_event_get(&jmevent, buff, j);
-            if (rc == 0)
-            {
-                midi_message message;
-                int eventsize = int(jmevent.size);
-                for (int i = 0; i < eventsize; ++i)
-                    message.push(jmevent.buffer[i]);
+            midi_message message;
+            int eventsize = int(jmevent.size);
+            jtime = ::jack_get_time();          /* compute delta time   */
+            for (int i = 0; i < eventsize; ++i)
+                message.push(jmevent.buffer[i]);
 
-                jack_time_t delta_jtime;
-                jtime = ::jack_get_time();          /* compute delta time   */
-                if (rtindata->first_message())
-                {
-                    rtindata->first_message(false);
-                    delta_jtime = jack_time_t(0);
-                }
-                else
-                {
-                    jtime -= jackdata->m_jack_lasttime;
-                    delta_jtime = jack_time_t(jtime * 0.000001);
-                }
-                message.timestamp(delta_jtime);
-                jackdata->m_jack_lasttime = jtime;
-                if (! rtindata->continue_sysex())
-                {
-#if defined SEQ66_USER_CALLBACK_SUPPORT
-                    if (rtindata->using_callback())
-                    {
-                        rtmidi_callback_t callback = rtindata->user_callback();
-                        callback(message, rtindata->user_data());
-                    }
-                    else
-#endif
-                    if (! rtindata->queue().add(message))
-                    {
-                        async_safe_strprint("~");
-                        overflow = true;
-                        break;
-                    }
-                }
+            jack_time_t delta_jtime;
+//          jtime = ::jack_get_time();          /* compute delta time   */
+            if (rtindata->first_message())
+            {
+                rtindata->first_message(false);
+                delta_jtime = jack_time_t(0);
             }
             else
             {
-                const char * errmsg = "rtmidi input error";
-                if (rc == ENODATA)
-                    errmsg = "rtmidi input: ENODATA";
-                else if (rc == ENOBUFS)
-                    errmsg = "rtmidi input: ENOBUFS";
-
-                async_safe_errprint(errmsg);
+                jtime -= jackdata->m_jack_lasttime;
+                delta_jtime = jack_time_t(jtime * 0.000001);
+            }
+            message.timestamp(delta_jtime);
+            jackdata->m_jack_lasttime = jtime;
+            if (! rtindata->continue_sysex())
+            {
+#if defined SEQ66_USER_CALLBACK_SUPPORT
+                if (rtindata->using_callback())
+                {
+                    rtmidi_callback_t callback = rtindata->user_callback();
+                    callback(message, rtindata->user_data());
+                }
+                else
+#endif
+                if (! rtindata->queue().add(message))
+                {
+                    async_safe_strprint("~");
+                    overflow = true;
+                    break;
+                }
             }
         }
-        if (overflow)
+        else
         {
-            async_safe_errprint(" Message overflow ");
-            return (-1);
+            const char * errmsg = "rtmidi input error";
+            if (rc == ENODATA)
+                errmsg = "rtmidi input: ENODATA";
+            else if (rc == ENOBUFS)
+                errmsg = "rtmidi input: ENOBUFS";
+
+            async_safe_errprint(errmsg);
         }
     }
-    else
+    if (overflow)
     {
-        /*
-         *  If not enabled, a common case with multiple inputs, we can't do
-         *  anything useful, even in debugging.
-         */
+        async_safe_errprint(" Message overflow ");
+        return (-1);
     }
     return 0;
 }
@@ -687,14 +677,6 @@ midi_jack::~midi_jack ()
         ::jack_ringbuffer_free(jack_data().m_jack_buffmessage);
 }
 
-void
-midi_jack::set_port_suspended (bool flag)
-{
-    midi_api::set_port_suspended(flag);
-    if (not_nullptr(jack_data().m_jack_rtmidiin))
-        jack_data().m_jack_rtmidiin->is_enabled(! flag);
-}
-
 /**
  *  Initialize the MIDI output port.  This initialization is done when the
  *  "manual ports" option is not in force.  This code is basically what was
@@ -719,29 +701,16 @@ bool
 midi_jack::api_init_out ()
 {
     bool result = true;
-    if (is_port_suspended())
+    std::string remoteportname = connect_name();    /* "bus:port"   */
+    remote_port_name(remoteportname);
+    result = create_ringbuffer(c_jack_ringbuffer_size);
+    if (result)
     {
-        set_port_suspended(false);
-    }
-    else
-    {
-        std::string remoteportname = connect_name();    /* "bus:port"   */
-        remote_port_name(remoteportname);
-        result = create_ringbuffer(c_jack_ringbuffer_size);
-        if (result)
-        {
-            set_alt_name
-            (
-                rc().application_name(), rc().app_client_name(), remoteportname
-            );
-#if defined USE_REDUNDANT_SET_NAME_CALL
-            parent_bus().set_alt_name
-            (
-                rc().application_name(), rc().app_client_name(), remoteportname
-            );
-#endif
-            result = register_port(midibase::io::output, port_name());
-        }
+        set_alt_name
+        (
+            rc().application_name(), rc().app_client_name(), remoteportname
+        );
+        result = register_port(midibase::io::output, port_name());
     }
     return result;
 }
@@ -783,28 +752,13 @@ midi_jack::api_init_out ()
 bool
 midi_jack::api_init_in ()
 {
-    bool result = true;
-    if (is_port_suspended())
-    {
-        set_port_suspended(false);
-    }
-    else
-    {
-        std::string remoteportname = connect_name();    /* "bus:port"       */
-        remote_port_name(remoteportname);
-        set_alt_name
-        (
-            rc().application_name(), rc().app_client_name(), remoteportname
-        );
-#if defined USE_REDUNDANT_SET_NAME_CALL
-        parent_bus().set_alt_name
-        (
-            rc().application_name(), rc().app_client_name(), remoteportname
-        );
-#endif
-        result = register_port(midibase::io::input, port_name());
-    }
-    return result;
+    std::string remoteportname = connect_name();    /* "bus:port"       */
+    remote_port_name(remoteportname);
+    set_alt_name
+    (
+        rc().application_name(), rc().app_client_name(), remoteportname
+    );
+    return register_port(midibase::io::input, port_name());
 }
 
 /**
@@ -1583,7 +1537,6 @@ midi_in_jack::midi_in_jack (midibus & parentbus, midi_info & masterinfo)
      */
 
     jack_data().m_jack_rtmidiin = input_data();
-    jack_data().m_jack_rtmidiin->is_enabled(parentbus.get_input());
 }
 
 /**

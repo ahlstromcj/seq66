@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-02-21
+ * \updates       2022-02-28
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -98,6 +98,7 @@ rcsettings::rcsettings () :
     m_manual_port_count         (c_output_buss_default),
     m_manual_in_port_count      (c_input_buss_default),
     m_reveal_ports              (false),
+    m_init_disabled_ports       (false),
     m_print_keys                (false),
     m_interaction_method        (interaction::seq24),
     m_sets_mode                 (setsmode::normal),
@@ -196,6 +197,7 @@ rcsettings::set_defaults ()
     m_manual_port_count         = c_output_buss_default;
     m_manual_in_port_count      = c_input_buss_default;
     m_reveal_ports              = false;
+    m_init_disabled_ports       = false;
     m_print_keys                = false;
     m_interaction_method        = interaction::seq24;
     m_sets_mode                 = setsmode::normal;

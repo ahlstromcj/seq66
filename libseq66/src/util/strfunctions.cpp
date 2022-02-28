@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2021-01-01
+ * \updates       2022-02-28
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -498,7 +498,7 @@ string_replace
 }
 
 static bool
-has_digit (const std::string & s)
+has_digit (const std::string & s, bool floating = false)
 {
     bool result = false;
     if (! s.empty())
@@ -510,6 +510,13 @@ has_digit (const std::string & s)
             {
                 if (count++ == 0)
                     continue;               /* skip leading sign character  */
+                else
+                    break;                  /* end the search               */
+            }
+            if (floating && c == '.')
+            {
+                if (count++ == 0)
+                    continue;               /* skip leading decimal point   */
                 else
                     break;                  /* end the search               */
             }
@@ -578,7 +585,7 @@ string_to_bool (const std::string & s, bool defalt)
 double
 string_to_double (const std::string & s, double defalt)
 {
-    return has_digit(s) ? std::stod(s, nullptr) : defalt ;
+    return has_digit(s, true) ? std::stod(s, nullptr) : defalt ;
 }
 
 /**

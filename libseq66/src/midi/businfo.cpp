@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2022-02-27
+ * \updates       2022-02-28
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -46,9 +46,9 @@
  *          businfo container.
  */
 
+#include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
 #include "midi/businfo.hpp"             /* seq66::businfo class             */
 #include "midi/event.hpp"               /* seq66::event class               */
-#include "util/basic_macros.hpp"
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -162,7 +162,7 @@ businfo::initialize ()
     bool result = not_nullptr(bus());           /* a bit too tricky now     */
     if (result)
     {
-        if (! bus()->port_disabled())           /* is port enabled?         */
+        if (bus()->port_enabled() || rc().init_disabled_ports())
         {
             if (bus()->is_input_port())         /* not built in master bus  */
             {
@@ -541,22 +541,8 @@ busarray::get_midi_bus_name (int bus) const
         else
         {
             /*
-             * This is stupid.  It's redundant and ruins the port name.
-             *
-             *  char tmp[80];                           // copy names //
-             *  std::string status = "virtual";
-             *  if (bi.initialized())
-             *      status = "disconnected";
-             *
-             *  if (buss->port_disabled())
-             *      status = "disabled";
-             *
-             *  snprintf
-             *  (
-             *      tmp, sizeof tmp, "%s (%s)",
-             *      buss->display_name().c_str(), status.c_str()
-             *  );
-             *  result = tmp;
+             * The display name gets saved, and so must be used unaltered
+             * here.
              */
 
             result = buss->display_name();

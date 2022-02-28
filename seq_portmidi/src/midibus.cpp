@@ -252,7 +252,7 @@ midibus::api_continue_from (midipulse /* tick */, midipulse beats)
 void
 midibus::api_start ()
 {
-    if (not_nullptr(m_pms) && ! port_disabled())
+    if (not_nullptr(m_pms) && port_enabled())
     {
         PmEvent event;
         event.timestamp = 0;
@@ -269,7 +269,7 @@ midibus::api_start ()
 void
 midibus::api_stop ()
 {
-    if (not_nullptr(m_pms) && ! port_disabled())
+    if (not_nullptr(m_pms) && port_enabled())
     {
         PmEvent event;
         event.timestamp = 0;
@@ -294,7 +294,7 @@ midibus::api_stop ()
 void
 midibus::api_clock (midipulse /* tick */)
 {
-    if (not_nullptr(m_pms) && ! port_disabled())
+    if (not_nullptr(m_pms) && port_enabled())
     {
         PmEvent event;
         event.timestamp = 0;                /* WHY NOT use 'tick' here? */

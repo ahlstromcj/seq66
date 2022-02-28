@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-02-23
+ * \updates       2022-02-28
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -226,6 +226,9 @@ rcfile::parse ()
     rc_ref().sets_mode(s);
     s = get_variable(file, "[Seq66]", "port-naming");
     rc_ref().port_naming(s);
+
+    bool initem = get_boolean(file, "[Seq66]", "init-disabled-ports");
+    rc_ref().init_disabled_ports(initem);
 
     /*
      * [comments] Header comments (hash-tag lead) are skipped during parsing.
@@ -750,12 +753,15 @@ rcfile::write ()
 "#\n"
 "# 'port-naming' is 'short' or 'long'. If short, the name shown in the port\n"
 "# dialogs leaves off port numbering.\n"
+"#\n"
+"# 'init-disabled-ports' is experimental. It allows live toggle of port state.\n"
         ;
 
     write_seq66_header(file, "rc", version());
     write_boolean(file, "verbose", rc_ref().verbose());
     write_string(file, "sets-mode", rc_ref().sets_mode_string());
     write_string(file, "port-naming", rc_ref().port_naming_string());
+    write_boolean(file, "init-disabled-ports", rc_ref().init_disabled_ports());
 
     /*
      * [comments]

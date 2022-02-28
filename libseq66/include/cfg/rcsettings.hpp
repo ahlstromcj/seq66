@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-02-21
+ * \updates       2022-02-28
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -296,6 +296,7 @@ private:
     int m_manual_port_count;        /**< [manual-ports] outputjport count.  */
     int m_manual_in_port_count;     /**< [manual-ports] inputjport count.   */
     bool m_reveal_ports;            /**< [reveal-ports] setting.            */
+    bool m_init_disabled_ports;     /**< A new test option. EXPERIMENTAL.   */
     bool m_print_keys;              /**< Show hot-key in main window slot.  */
     interaction m_interaction_method; /**< Interaction method: no support.  */
     setsmode m_sets_mode;           /**< How to handle set changes.         */
@@ -857,6 +858,11 @@ public:
         return m_reveal_ports;
     }
 
+    bool init_disabled_ports () const
+    {
+        return m_init_disabled_ports;
+    }
+
     bool print_keys () const
     {
         return m_print_keys;
@@ -1274,6 +1280,11 @@ public:
     void reveal_ports (bool flag)
     {
         m_reveal_ports = flag;
+    }
+
+    void init_disabled_ports (bool flag)
+    {
+        m_init_disabled_ports = flag;
     }
 
     void print_keys (bool flag)

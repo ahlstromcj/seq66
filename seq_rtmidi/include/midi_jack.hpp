@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-19
+ * \updates       2022-02-28
  * \license       See above.
  *
  *    In this refactoring, we've stripped out most of the original RtMidi
@@ -100,8 +100,6 @@ public:
 
     midi_jack (midibus & parentbus, midi_info & masterinfo);
     virtual ~midi_jack ();
-
-    virtual void set_port_suspended (bool flag) override;
 
     /**
      *  This is the platform-specific version of midi_handle().
