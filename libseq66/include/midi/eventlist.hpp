@@ -52,12 +52,10 @@
  *  we will now use std::vector for the event list.
  */
 
-#include <algorithm>                    /* std::sort(), std::merge()    */
-#include <atomic>                       /* std::atomic<bool> usage      */
-#include <string>                       /* std::string                  */
-#include <vector>                       /* std::vector                  */
+#include <algorithm>                    /* std::sort(), std::merge()        */
+#include <atomic>                       /* std::atomic<bool> usage          */
 
-#include "midi/event.hpp"
+#include "midi/event.hpp"               /* seq66::event, event::buffer      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

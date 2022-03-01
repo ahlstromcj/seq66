@@ -122,7 +122,7 @@ jack_process_io (jack_nframes_t nframes, void * arg)
                     {
                         int rc = jack_process_rtmidi_input(nframes, mjp);
                         if (rc == (-1))
-                            break;
+                            continue;   /* COMMENTED FOR EXPERIMENT break; */
                     }
                     else
                         (void) jack_process_rtmidi_output(nframes, mjp);

@@ -231,7 +231,7 @@ namespace seq66
  *      ENODATA = 61: No data available.
  *      ENOBUFS = 105: No buffer space available can happen.
  *
- * \param nframes
+ * \param frameno
  *    The frame number to be processed.
  *
  * \param arg
@@ -242,11 +242,11 @@ namespace seq66
  */
 
 int
-jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
+jack_process_rtmidi_input (jack_nframes_t frameno, void * arg)
 {
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
     rtmidi_in_data * rtindata = jackdata->m_jack_rtmidiin;
-    void * buff = ::jack_port_get_buffer(jackdata->m_jack_port, nframes);
+    void * buff = ::jack_port_get_buffer(jackdata->m_jack_port, frameno);
     jack_midi_event_t jmevent;
     jack_time_t jtime;
     int evcount = ::jack_midi_get_event_count(buff);
@@ -258,12 +258,11 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
         {
             midi_message message;
             int eventsize = int(jmevent.size);
-            jtime = ::jack_get_time();          /* compute delta time   */
             for (int i = 0; i < eventsize; ++i)
                 message.push(jmevent.buffer[i]);
 
             jack_time_t delta_jtime;
-//          jtime = ::jack_get_time();          /* compute delta time   */
+            jtime = ::jack_get_time();          /* compute delta time   */
             if (rtindata->first_message())
             {
                 rtindata->first_message(false);
@@ -339,7 +338,7 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
  *  tests, we are getting 1024 frames, and the code seems to work without that
  *  loop.
  *
- * \param nframes
+ * \param frameno
  *    The frame number to be processed.
  *
  * \param arg
@@ -350,15 +349,15 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
  */
 
 int
-jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
+jack_process_rtmidi_output (jack_nframes_t frameno, void * arg)
 {
     const size_t s_offset = 0;
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
-    void * buf = ::jack_port_get_buffer(jackdata->m_jack_port, nframes);
+    void * buf = ::jack_port_get_buffer(jackdata->m_jack_port, frameno);
     ::jack_midi_clear_buffer(buf);                  /* no nullptr test      */
 
     /*
-     * A for-loop over the number of nframes?  See discussion above.
+     * A for-loop over the number of frames?  See discussion above.
      * Why are we reading here?  That's where our app has dumped the next set
      * of MIDI events to output.
      */
@@ -372,9 +371,8 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
         );
 
         /*
-         * s_offset is always zero. Using nframes instead of s_offset = 0
-         * causes notes not to be played.  Probably because this is a write
-         * operation?
+         * s_offset is always 0. Using frameno instead of s_offset causes
+         * notes not to be played.  Because this is a write operation?
          */
 
         jack_midi_data_t * md = ::jack_midi_event_reserve(buf, s_offset, space);
@@ -639,7 +637,7 @@ jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
  *  In midi_jack::api_init_[in/out](), which occurs in midibus::api_init_out()
  *  and results in a call to midi_jack::api_init_out(), the call to
  *  set_alt_name() changes the port name from something like "midi" to
- *  "fluidsynth-midi midi".  That is, it makes the name out of the client name
+ *  "fluidsynth-midi:midi".  That is, it makes the name out of the client name
  *  and (minimal) port name.
  *
  *  This is the short name we can look up.

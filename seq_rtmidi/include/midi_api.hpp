@@ -262,13 +262,6 @@ public:
         return parent_bus().port_enabled();
     }
 
-#if 0
-    void set_io_status (bool flag)
-    {
-        parent_bus().set_io_status(flag);
-    }
-#endif
-
     std::string connect_name () const
     {
         return parent_bus().connect_name();
@@ -279,7 +272,10 @@ public:
         return parent_bus().bus_index();
     }
 
-#if 0
+    /*
+     * The next two functions are useful in debugging.
+     */
+
     int bus_id () const
     {
         return parent_bus().bus_id();
@@ -289,7 +285,6 @@ public:
     {
         return parent_bus().port_id();
     }
-#endif
 
     int ppqn () const
     {
@@ -331,6 +326,10 @@ protected:
     {
         parent_bus().port_name(name);
     }
+
+    /*
+     *  Is this ever called?
+     */
 
     void set_name
     (

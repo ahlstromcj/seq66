@@ -32,9 +32,8 @@
  *  tempo) have been added to the container.
  */
 
-#include "cfg/settings.hpp"             /* usr()                            */
-#include "midi/eventlist.hpp"
-#include "util/basic_macros.hpp"
+#include "cfg/settings.hpp"             /* seq66::usr()                     */
+#include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "util/calculations.hpp"        /* seq66::randomize(), etc.         */
 
 /*

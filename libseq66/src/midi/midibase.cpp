@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2022-02-26
+ * \updates       2022-03-01
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -345,26 +345,12 @@ midibase::set_alt_name
     {
         std::string bname = busname;
         std::string pname = portname;
-        std::size_t colonpos = pname.find_first_of(":");
-        if (colonpos != std::string::npos)
-            pname[colonpos] = ' ';
-
         char alias[128];
-#if defined SEQ66_SHOW_OUR_CLIENT_NAME
-        snprintf                            /* copy the client name parts */
-        (
-            alias, sizeof alias, "[%d] %d:%d %s:%s",
-            bus_index(), bus_id(), port_id(),
-            bname.c_str(), pname.c_str()
-        );
-#else
         snprintf                            /* copy the client name parts */
         (
             alias, sizeof alias, "[%d] %d:%d %s",
-            bus_index(), bus_id(), port_id(),
-            pname.c_str()
+            bus_index(), bus_id(), port_id(), pname.c_str()
         );
-#endif
         bus_name(bname);
         port_name(pname);
         display_name(alias);
