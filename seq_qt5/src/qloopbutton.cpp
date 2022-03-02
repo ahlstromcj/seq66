@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2022-02-12
+ * \updates       2022-03-02
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -377,6 +377,7 @@ qloopbutton::initialize_fingerprint ()
                 m_fingerprint[i] = m_fingerprint_count[i] = 0;
 
             int nh = n1 - n0;
+            loop()->draw_lock();
             for (auto cev = loop()->cbegin(); ! loop()->cend(cev); ++cev)
             {
                 sequence::note_info ni;
@@ -400,6 +401,7 @@ qloopbutton::initialize_fingerprint ()
                 else
                     m_fingerprint[i] = midishort(y);
             }
+            loop()->draw_unlock();
             for (int i = 0; i < i1; ++i)
             {
                 if (m_fingerprint_count[i] > 1)
@@ -816,6 +818,7 @@ qloopbutton::draw_pattern (QPainter & painter)
                 pen.setColor(drum_color());
 
             painter.setPen(pen);
+            loop()->draw_lock();
             for (auto cev = loop()->cbegin(); ! loop()->cend(cev); ++cev)
             {
                 sequence::note_info ni;
@@ -846,6 +849,7 @@ qloopbutton::draw_pattern (QPainter & painter)
                     painter.drawLine(sx, y, fx, y);
                 }
             }
+            loop()->draw_unlock();
         }
     }
 }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-02-11
+ * \updates       2022-03-02
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2997,6 +2997,7 @@ sequence::stream_event (event & ev)
                             ev.note_velocity(m_rec_vol);    /* keep veloc.  */
 
                         ev.set_timestamp(mod_last_tick());
+                        /// m_events_undo.push(m_events);   // needed still?
                         if (auto_step_reset() && m_step_count == 0)
                             m_last_tick = 0;
 

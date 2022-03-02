@@ -570,7 +570,6 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             preview_w -= 6;
             rectangle_x += 2;
             rectangle_y += 2;
-
             for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
             {
                 sequence::note_info ni;

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-11-16
+ * \updates       2022-03-02
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1603,6 +1603,23 @@ public:
     void clear_events ()
     {
         m_events.clear();
+    }
+
+    /*
+     *  These two functions are an attempt to remove a seqfault that can occur
+     *  in qseqdata, qseqroll, qloopbutton, etc. when processing multiple
+     *  inputs hitting keys wildly.  May need to update all event-drawing GUI
+     *  classes if the segfaults keep occuring.
+     */
+
+    void draw_lock () const
+    {
+        m_mutex.lock();
+    }
+
+    void draw_unlock () const
+    {
+        m_mutex.unlock();
     }
 
     event::buffer::const_iterator cbegin () const

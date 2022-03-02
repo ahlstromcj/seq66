@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-18
+ * \updates       2022-03-02
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -211,6 +211,7 @@ qstriggereditor::paintEvent (QPaintEvent *)
     pen.setColor(fore_color());                     /* Qt::black            */
     pen.setStyle(Qt::SolidLine);
     brush.setStyle(Qt::SolidPattern);
+    s->draw_lock();
     for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
         if (! s->get_next_event_match(m_status, m_cc, cev))
@@ -236,6 +237,7 @@ qstriggereditor::paintEvent (QPaintEvent *)
             painter.drawRect(x, y, qc_eventevent_x - 1, qc_eventevent_y - 1);
         }
     }
+    s->draw_unlock();
 
     int h = qc_eventevent_y;
     int y = (qc_eventarea_y - h) / 2;               /* draw selection       */

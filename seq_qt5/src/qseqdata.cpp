@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-01-02
+ * \updates       2022-03-02
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -165,14 +165,11 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     seq::pointer s = seq_pointer();
     midipulse start_tick = pix_to_tix(r.x());
     midipulse end_tick = start_tick + pix_to_tix(r.width());
+    s->draw_lock();
     for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
         if (! s->get_next_event_match(m_status, m_cc, cev))
             break;
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        cev->print();
-#endif
 
         midipulse tick = cev->timestamp();
         if (tick >= start_tick && tick <= end_tick)
@@ -257,6 +254,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             }
         }
     }
+    s->draw_unlock();
     if (m_line_adjust)                          /* draw edit line           */
     {
         int x, y, w, h;

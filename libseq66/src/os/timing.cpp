@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2021-11-19
+ * \updates       2022-03-02
  * \license       GNU GPLv2 or above
  *
  *  Provides support for cross-platform time-related functions.
@@ -64,12 +64,10 @@ namespace seq66
  *  Provides a standard wait time to use, in an explicit function.
  */
 
-static int c_default_sleep_time_us = 10;
-
 int
 std_sleep_us ()
 {
-    return c_default_sleep_time_us;
+    return 10;                              /* was c_default_sleep_time_us  */
 }
 
 /*
@@ -156,7 +154,7 @@ microsleep (int us)
     if (result)
     {
         int rc;
-        if (us == c_default_sleep_time_us)          /* an optimization      */
+        if (us == std_sleep_us())                   /* an optimization      */
         {
             static bool s_uninitialized = true;
             static timespec s_ts;
@@ -164,7 +162,7 @@ microsleep (int us)
             {
                 s_uninitialized = false;
                 s_ts.tv_sec = 0;
-                s_ts.tv_nsec = c_default_sleep_time_us * 1000;
+                s_ts.tv_nsec = us * 1000;
             }
             rc = nanosleep(&s_ts, NULL);
         }

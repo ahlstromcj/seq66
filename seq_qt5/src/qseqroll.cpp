@@ -574,6 +574,7 @@ qseqroll::draw_notes
     int unitheight = unit_height();
     int unitdecr = unit_height() - 2;
     int noteheight = unitheight - 3;
+    s->draw_lock();
     for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
         sequence::note_info ni;
@@ -585,25 +586,15 @@ qseqroll::draw_notes
         {
 #if defined SEQ66_SHOW_TEMPO_IN_PIANO_ROLL
             int x = xoffset(ni.start());
-#if defined USE_SIMPLISTIC_CODE
-            int y = total_height() - ((127 - 48) * noteheight); // at C3
-#else
-            /*
-            midibpm max = usr().midi_bpm_maximum();
-            midibpm min = usr().midi_bpm_minimum();
-            double tempo = double(ni.velocity());
-            int y = int((max - tempo) / (max - min) * 128) + 0;
-            */
             double tempo = double(ni.velocity());
             int tnote = tempo_to_note_value(tempo);
             int y = total_height() - (tnote * unitheight) - unitdecr;
-#endif
             pen.setColor(fore_color());
             brush.setColor(tempo_color());
             painter.setPen(pen);
             painter.setBrush(brush);
             draw_tempo(painter, x, y, ni.velocity());
-#endif  //SEQ66_SHOW_TEMPO_IN_PIANO_ROLL
+#endif  // SEQ66_SHOW_TEMPO_IN_PIANO_ROLL
             continue;
         }
 
@@ -708,6 +699,7 @@ qseqroll::draw_notes
             }
         }
     }
+    s->draw_unlock();
 }
 
 /*
@@ -805,14 +797,10 @@ qseqroll::draw_drum_notes
         {
 #if defined SEQ66_SHOW_TEMPO_IN_PIANO_ROLL
             int x = xoffset(ni.start());
-#if defined USE_SIMPLISTIC_CODE
-            int y = total_height() - ((127 - 48) * noteheight); // at C3
-#else
             midibpm max = usr().midi_bpm_maximum();
             midibpm min = usr().midi_bpm_minimum();
             double tempo = double(ni.velocity());
             int y = int((max - tempo) / (max - min) * 128) + 0;
-#endif
             pen.setColor(fore_color());
             brush.setColor(tempo_color());
             painter.setPen(pen);

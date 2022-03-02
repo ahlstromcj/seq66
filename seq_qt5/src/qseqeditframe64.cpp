@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-02-11
+ * \updates       2022-03-02
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2869,9 +2869,11 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
      */
 
     auto cev = s->cbegin();
-    if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
-        tempo = true;
-
+    if (! s->cend(cev))
+    {
+        if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
+            tempo = true;
+    }
     if (not_nullptr(m_events_popup))
         delete m_events_popup;
 
@@ -3026,9 +3028,11 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     }
 
     auto cev = s->cbegin();
-    if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
-        tempo = any_events = true;
-
+    if (! s->cend(cev))
+    {
+        if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
+            tempo = any_events = true;
+    }
     if (not_nullptr(m_minidata_popup))
         delete m_minidata_popup;
 
