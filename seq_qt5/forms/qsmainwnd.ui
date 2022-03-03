@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>894</width>
-    <height>612</height>
+    <width>898</width>
+    <height>616</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -729,16 +729,36 @@ It does not change Seq66's default PPQN.</string>
        </widget>
       </item>
       <item>
+       <widget class="QLineEdit" name="txtUnderrun">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>44</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="setResetButton">
         <property name="minimumSize">
          <size>
-          <width>28</width>
+          <width>24</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>28</width>
+          <width>24</width>
           <height>28</height>
          </size>
         </property>
@@ -798,7 +818,7 @@ matter what sets-mode is in force. </string>
         <property name="maximumSize">
          <size>
           <width>56</width>
-          <height>16777215</height>
+          <height>28</height>
          </size>
         </property>
         <property name="text">
@@ -1398,7 +1418,7 @@ matter what sets-mode is in force. </string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>894</width>
+     <width>898</width>
      <height>22</height>
     </rect>
    </property>

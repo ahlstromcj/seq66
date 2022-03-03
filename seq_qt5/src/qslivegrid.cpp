@@ -217,7 +217,6 @@ qslivegrid::qslivegrid
         ui->comboGridMode, SIGNAL(currentIndexChanged(int)),
         this, SLOT(slot_grid_mode(int))
     );
-
     m_timer = qt_timer(this, "qslivegrid", 2, SLOT(conditional_update()));
 }
 

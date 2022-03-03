@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-28
+ * \updates       2022-03-03
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -246,35 +246,34 @@ jack_process_rtmidi_input (jack_nframes_t frameno, void * arg)
 {
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
     rtmidi_in_data * rtindata = jackdata->m_jack_rtmidiin;
-    void * buff = ::jack_port_get_buffer(jackdata->m_jack_port, frameno);
-    jack_midi_event_t jmevent;
-    jack_time_t jtime;
-    int evcount = ::jack_midi_get_event_count(buff);
+    void * buf = ::jack_port_get_buffer(jackdata->m_jack_port, frameno);
+    int evcount = ::jack_midi_get_event_count(buf);
     bool overflow = false;
     for (int j = 0; j < evcount; ++j)
     {
-        int rc = ::jack_midi_event_get(&jmevent, buff, j);
-        if (rc == 0)
+        jack_midi_event_t jmevent;
+        int rc = ::jack_midi_event_get(&jmevent, buf, j);
+        if (rc == 0)                                /* ENODATA if buf empty */
         {
-            midi_message message;
-            int eventsize = int(jmevent.size);
-            for (int i = 0; i < eventsize; ++i)
-                message.push(jmevent.buffer[i]);
-
-            jack_time_t delta_jtime;
-            jtime = ::jack_get_time();          /* compute delta time   */
+            jack_time_t jtime = ::jack_get_time();  /* compute delta time   */
+            jack_time_t delta_jtime;                /* uint64_t             */
             if (rtindata->first_message())
             {
                 rtindata->first_message(false);
-                delta_jtime = jack_time_t(0);
+                delta_jtime = 0;
             }
             else
             {
                 jtime -= jackdata->m_jack_lasttime;
                 delta_jtime = jack_time_t(jtime * 0.000001);
             }
-            message.timestamp(delta_jtime);
             jackdata->m_jack_lasttime = jtime;
+
+            midi_message message(delta_jtime);
+            int eventsize = int(jmevent.size);
+            for (int i = 0; i < eventsize; ++i)
+                message.push(jmevent.buffer[i]);
+
             if (! rtindata->continue_sysex())
             {
 #if defined SEQ66_USER_CALLBACK_SUPPORT
@@ -385,7 +384,7 @@ jack_process_rtmidi_output (jack_nframes_t frameno, void * arg)
             );
         }
         else
-            async_safe_errprint("JACK event reserve null pointer");
+            async_safe_errprint("JACK Event Reserve null pointer");
     }
     return 0;
 }
@@ -404,9 +403,9 @@ jack_shutdown_callback (void * arg)
 {
     midi_jack_info * jack = reinterpret_cast<midi_jack_info *>(arg);
     if (not_nullptr(jack))
-        async_safe_strprint("JACK shutdown");
+        async_safe_strprint("JACK Shutdown");
     else
-        async_safe_errprint("JACK shutdown null pointer");
+        async_safe_errprint("JACK Shutdown null pointer");
 }
 
 #if defined SEQ66_JACK_PORT_CONNECT_CALLBACK
@@ -1000,7 +999,7 @@ midi_jack::api_play (const event * e24, midibyte channel)
     {
         if (! send_message(message))
         {
-            errprint("JACK API play failed");
+            errprint("JACK Play failed");
         }
     }
 }
@@ -1024,14 +1023,11 @@ midi_jack::send_message (const midi_message & message)
     bool result = nbytes > 0;
     if (result)
     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        message.show();
-#endif
-        int count1 = ::jack_ringbuffer_write
+        int count1 = ::jack_ringbuffer_write    /* write the message bytes  */
         (
-            jack_data().m_jack_buffmessage, message.array(), message.count()
+            jack_data().m_jack_buffmessage, message.array(), nbytes // message.count()
         );
-        int count2 = ::jack_ringbuffer_write
+        int count2 = ::jack_ringbuffer_write    /* write raw message size ! */
         (
             jack_data().m_jack_buffsize, (char *) &nbytes, sizeof nbytes
         );
@@ -1041,11 +1037,16 @@ midi_jack::send_message (const midi_message & message)
 }
 
 /**
- *  Work on this routine now in progress.  Unlike the ALSA implementation,
- *  we do not try to send large messages (greater than 255 bytes) in
- *  chunks.
+ *  Work on this routine now in progress.  Unlike the ALSA implementation, we
+ *  do not try to send large messages (greater than 255 bytes) in chunks.
  *
- *  The event::sysex data type is a vector of midibytes.
+ *  The event::sysex data type is a vector of midibytes.  Also note that both
+ *  Meta and Sysex messages are covered by the event :: is_ex_data() function
+ *  and via the sysex() function to send data.
+ *
+ *  This SysEx capability is also used in the midicontrolout class to create
+ *  an event that contains the MIDI bytes of a control macro, which can then
+ *  be sent out via mastermidibus :: sysex().
  */
 
 void
@@ -1055,14 +1056,13 @@ midi_jack::api_sysex (const event * e24)
     const event::sysex & data = e24->get_sysex();
     int data_size = e24->sysex_size();
     for (int offset = 0; offset < data_size; ++offset)
-    {
         message.push(data[offset]);
-        if (jack_data().valid_buffer())
+
+    if (jack_data().valid_buffer())
+    {
+        if (! send_message(message))
         {
-            if (! send_message(message))
-            {
-                errprint("JACK API SysEx failed");
-            }
+            errprint("JACK SysEx failed");
         }
     }
 }
@@ -1103,7 +1103,7 @@ midi_jack::api_continue_from (midipulse tick, midipulse /*beats*/)
     long tpb_bpm = long(ticks_per_beat * beats_per_minute * 4.0 / beat_width);
     uint64_t jack_frame = tick_rate / tpb_bpm;
     if (::jack_transport_locate(client_handle(), jack_frame) != 0)
-        (void) info_message("jack api_continue_from() failed");
+        (void) info_message("JACK Continue failed");
 
     /*
      * New code to work like the ALSA version, needs testing.  Related to
@@ -1195,7 +1195,7 @@ midi_jack::send_byte (midibyte evbyte)
     {
         if (! send_message(message))
         {
-            errprint("JACK send_byte() failed");
+            errprint("JACK Send byte failed");
         }
     }
 }
@@ -1259,7 +1259,7 @@ midi_jack::close_client ()
         {
             int index = bus_index();
             int id = parent_bus().port_id();
-            m_error_string = "JACK closing port #";
+            m_error_string = "JACK Close port ";
             m_error_string += std::to_string(index);
             m_error_string += " (id ";
             m_error_string += std::to_string(id);
@@ -1333,7 +1333,7 @@ midi_jack::connect_port
                 else
                 {
                     bool input = iotype == midibase::io::input;
-                    m_error_string = "JACK error connecting port ";
+                    m_error_string = "JACK Connect error";
                     m_error_string += input ? "input '" : "output '";
                     m_error_string += srcportname;
                     m_error_string += "' to '";
@@ -1445,7 +1445,7 @@ midi_jack::register_port (midibase::io iotype, const std::string & portname)
         }
         else
         {
-            m_error_string = "JACK port register error";
+            m_error_string = "JACK Register error";
             m_error_string += " ";
             m_error_string += portname;
             error(rterror::kind::driver_error, m_error_string);
@@ -1496,7 +1496,7 @@ midi_jack::create_ringbuffer (size_t rbsize)
 
         if (! result)
         {
-            m_error_string = "JACK ringbuffer error";
+            m_error_string = "JACK Ringbuffer error";
             error(rterror::kind::warning, m_error_string);
         }
     }

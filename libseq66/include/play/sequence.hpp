@@ -1614,12 +1614,14 @@ public:
 
     void draw_lock () const
     {
-        m_mutex.lock();
+        if (recording())
+            m_mutex.lock();
     }
 
     void draw_unlock () const
     {
-        m_mutex.unlock();
+        if (recording())
+            m_mutex.unlock();
     }
 
     event::buffer::const_iterator cbegin () const

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2022-02-17
+% \update      2022-03-03
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -529,6 +529,7 @@
 
    \begin{itemize}
       \item \textbf{Set Name}
+      \item \textbf{Uderrun Indicator} (not shown)
       \item \textbf{Set Reset ("!")}
       \item \textbf{Active Set Indicator}
       \item \textbf{Set 0}
@@ -540,6 +541,15 @@
 
    This text field shows the name of the current set, and also allows editing
    the set name.
+
+\paragraph{Underrun Indicator}
+\label{paragraph:introduction_underrun_indicator}
+
+   This text field is empty under normal circumstances, including during
+   playback.  However, if one opens a pattern editor for a pattern with a lot
+   of events, this field will start flashing numbers, which indicate the
+   current underrun value in microseconds.  This gives an indication that
+   timing of playback might be off a bit, usually less than 10 milliseconds.
 
 \paragraph{Set Reset ("!")}
 \label{paragraph:introduction_set_reset}

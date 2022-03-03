@@ -1,6 +1,13 @@
 TO DO for Seq66 0.98.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-02-25
+2019-04-13 to 2022-03-03
+
+Sooner rather than later:
+
+    -   In midicontrolout::send_macro(), we need only 1 way to send, not 2.
+    -   setname() again in midibus body! OPTIMIZE.
+    -   set_alt_name() has appname = "qrseq66" not "seq66" in debug build.
+    -   Make the new draw_lock()/_unlock() air-tight.
 
 Windows:
 

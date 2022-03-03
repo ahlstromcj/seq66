@@ -658,6 +658,14 @@ private:                            /* key, midi, and op container section  */
     int m_current_beats;
 
     /**
+     *  Holds the underrun value for possible display during very busy
+     *  playback; even more likely now that most event-drawing loops are
+     *  locked.  See sequence::draw_lock() and draw_unlock().
+     */
+
+    long m_delta_us;
+
+    /**
      *  Indicates the first time the tap button was ... tapped.
      */
 
@@ -2129,6 +2137,11 @@ public:
     int current_beats () const
     {
         return m_current_beats;
+    }
+
+    long delta_us () const
+    {
+        return m_delta_us;
     }
 
     void clear_current_beats ()

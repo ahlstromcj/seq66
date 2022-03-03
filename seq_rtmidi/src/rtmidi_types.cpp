@@ -49,9 +49,9 @@ namespace seq66
  *  Constructs an empty MIDI message.
  */
 
-midi_message::midi_message () :
+midi_message::midi_message (double ts) :
     m_bytes     (),
-    m_timestamp (0.0)
+    m_timestamp (ts)
 {
     // Empty body
 }

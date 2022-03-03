@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-01-27
+ * \updates       2022-03-03
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -349,6 +349,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_bpm                   (usr().midi_beats_per_minute()),
     m_resolution_change     (true),
     m_current_beats         (0),
+    m_delta_us              (0),
     m_base_time_ms          (0),
     m_last_time_ms          (0),
     m_beats_per_bar         (usr().midi_beats_per_bar()),
@@ -1420,7 +1421,12 @@ performer::ui_change_set_bus (int buss)
     if (result)
     {
         for (auto seqi : m_play_set.seq_container())
-            seqi->set_midi_bus(b, true);    /* calls notification function  */
+        {
+            if (seqi)
+                seqi->set_midi_bus(b, true);    /* calls notify function    */
+            else
+                error_message("set bus on null sequence");
+        }
 
         screenset::number setno = mapper().playscreen_number();
         notify_set_change(setno, change::yes);
@@ -3371,9 +3377,11 @@ performer::output_func ()
             if (delta_us > 0)
             {
                 (void) microsleep(int(delta_us));           /* timing.hpp   */
+                m_delta_us = 0;
             }
             else
             {
+#if defined SEQ66_PLATFORM_DEBUG
                 if (delta_us != 0)
                 {
                     print_client_tag(msglevel::warn);
@@ -3382,8 +3390,14 @@ performer::output_func ()
                         stderr, "Play underrun %ld us          \r",
                         delta_us
                     );
-                    (void) microsleep(1);
+                    /*
+                     * 2022-03-03 Why do we sleep here?
+                     *
+                     * (void) microsleep(1);
+                     */
                 }
+#endif
+                m_delta_us = delta_us;
             }
             if (pad().js_jack_stopped)
                 inner_stop();
@@ -4014,8 +4028,12 @@ performer::play (midipulse tick)
         }
         set_tick(tick);
         for (auto seqi : m_play_set.seq_container())
-            seqi->play_queue(tick, songmode, resume_note_ons());
-
+        {
+            if (seqi)
+                seqi->play_queue(tick, songmode, resume_note_ons());
+            else
+                error_message("play found null sequence");
+        }
         m_master_bus->flush();                          /* flush MIDI buss  */
     }
 }

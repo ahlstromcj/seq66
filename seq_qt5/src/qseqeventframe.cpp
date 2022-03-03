@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-11-07
+ * \updates       2022-03-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -342,6 +342,12 @@ qseqeventframe::set_selection_multi (bool multi)
 
 void
 qseqeventframe::slot_midi_channel (int /*index*/)
+{
+    // Anything to do? We just need the text.
+}
+
+void
+qseqeventframe::slot_event_name (int /*index*/)
 {
     // Anything to do? We just need the text.
 }
