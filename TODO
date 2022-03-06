@@ -1,9 +1,11 @@
 TO DO for Seq66 0.98.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-03-04
+2019-04-13 to 2022-03-06
 
 Windows:
 
+    -   mastermidibase::activate() fails at m_outbus_array.initialize().
+        Error initing port 1; it should be disabled?
     -   Disable JACK UI elements in Windows builds.
     -   The installer build include a *.o file!
     -   Change to creating a 64-bit installer and adjust the instructions.
@@ -11,6 +13,10 @@ Windows:
         up 2 pixels. Maybe reduce the font size by 1. Also consist the for the
         piano rolls.
     -   The default Qt theme pushes the seqtime rightward by about 6 pixels.
+
+Ports:
+
+    -   Investigate deinit_in() and _out().
 
 UI:
 
@@ -25,6 +31,8 @@ UI:
             -   New-pattern editor options (check-boxes)
         -   Config Options: (new)
             -   Log-file
+        -   Add an option to enable double-click pattern editing. (It is an
+            [interaction-method] double-click-edit 'rc' option.
 
 Port-Mapping:
 
@@ -33,6 +41,9 @@ Port-Mapping:
     names in the 'rc' file.
 
 MIDI:
+
+    Investigate busarray::set_input() for supporting manual reconnecting.
+    Ditto for busarray::get_input() and midibus::api_connect() [rtmidi].
 
     ALSA:
 

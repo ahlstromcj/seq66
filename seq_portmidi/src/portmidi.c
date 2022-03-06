@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2021-12-09
+ * \updates     2022-03-06
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -1102,7 +1102,7 @@ Pm_Poll (PortMidiStream * stream)
 #endif
         return pm_errmsg(result, deviceid);
     }
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         fprintf(stderr, "Pm_Poll()\n");
 #endif
     return ! Pm_QueueEmpty(midi->queue);

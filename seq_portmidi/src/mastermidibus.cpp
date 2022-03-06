@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-01-28
+ * \updates       2022-03-06
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -206,7 +206,7 @@ mastermidibus::api_get_midi_event (event * in)
     for (int b = 0; b < count; ++b)
     {
         midibus * m = m_inbus_array.bus(b);
-        if (m->m_inputing)
+        if (m->port_enabled())
         {
             PmEvent pme;
             PmInternal * midi = (PmInternal *) m->m_pms;

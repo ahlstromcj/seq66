@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2022-03-04
+ * \updates       2022-03-06
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of the midibus class.
@@ -168,6 +168,8 @@ midibus::~midibus ()
  *  configured (by the user or the "rc" configuration file), then it is not
  *  connected, and this is not an error.  Output ports are always connected.
  *
+ *  WHY IS THE ABOVE THE CASE?
+ *
  *  Note that the api_connect() function will errprint is own errors.  But if
  *  we expected to be able to connect, and have a null rt_midi pointer, then
  *  this is a reported error.
@@ -181,7 +183,8 @@ bool
 midibus::api_connect ()
 {
     bool result = true;
-    if (get_input() || is_output_port())
+
+    if (port_enabled() || is_output_port()) // get_input() || is_output_port()
     {
         result = not_nullptr(m_rt_midi);
         if (result)

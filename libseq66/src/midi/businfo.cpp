@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2022-02-28
+ * \updates       2022-03-06
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -142,7 +142,7 @@ businfo::businfo (const businfo & rhs)
  *  "disabled".
  *
  *      "Active" is used for:  enabling play(), set_clock(), get_clock(),
- *      get_midi_bus_name(), set_input(), get_input(), is_system_port(),
+ *      get_midi_bus_name(), set_input(), port_enabled(), is_system_port(),
  *      replacement_port().
  *
  *      "Initialized" is used for: . . .
@@ -162,25 +162,9 @@ businfo::initialize ()
     bool result = not_nullptr(bus());           /* a bit too tricky now     */
     if (result)
     {
-        if (bus()->port_enabled() || rc().init_disabled_ports())
-        {
-            if (bus()->is_input_port())         /* not built in master bus  */
-            {
-#if defined ENABLE_EARLY_INITING
-                // do nothing here
-#else
-                result = bus()->is_virtual_port() ?
-                    bus()->init_in_sub() : bus()->init_in() ;
-#endif
-            }
-            else
-            {
-                result = bus()->is_virtual_port() ?
-                    bus()->init_out_sub() : bus()->init_out() ;
-            }
-            if (result)
-                activate();                     /* "initialized" & "active" */
-        }
+        result = bus()->initialize(rc().init_disabled_ports());
+        if (result)
+            activate();                         /* "initialized" & "active" */
     }
     else
     {
@@ -346,11 +330,6 @@ busarray::add (midibus * bus, bool inputing)
     {
         size_t count = m_container.size();
         businfo b(bus);
-#if defined ENABLE_EARLY_INITING
-        if (! bus->get_input())
-            bus->set_input(inputing);           /* will call init_in()      */
-#endif
-
         b.init_input(inputing);                 /* sets the flag, important */
         m_container.push_back(b);               /* now we can push a copy   */
 #if defined SEQ66_SHOW_API_CALLS
@@ -661,19 +640,7 @@ busarray::port_exit (int client, int port)
 bool
 busarray::set_input (bussbyte bus, bool inputing)
 {
-#if defined ENABLE_EARLY_INITING
-    bool result = bus < count();
-    if (result)
-    {
-        businfo & bi = m_container[bus];
-        if (bi.active())
-            result = bi.bus()->set_input(inputing);
-
-        bi.init_input(inputing);
-    }
-    return result;
-#else
-    bool current = get_input(bus);
+    bool current = get_input(bus);                          /* see below    */
     bool result = bus < count() && current != inputing;
     if (result)
     {
@@ -691,7 +658,6 @@ busarray::set_input (bussbyte bus, bool inputing)
             bi.init_input(inputing);
     }
     return result;
-#endif
 }
 
 /**
@@ -704,7 +670,7 @@ busarray::set_input (bussbyte bus, bool inputing)
  *
  * \return
  *      If the buss is a system buss, always returns true.  Otherwise, if the
- *      buss is inactive, returns false. Otherwise, the buss's get_input()
+ *      buss is inactive, returns false. Otherwise, the buss's port_enabled()
  *      status is returned.
  */
 
@@ -716,7 +682,8 @@ busarray::get_input (bussbyte bus) const
     {
         const businfo & bi = m_container[bus];
         if (bi.active())
-            result = bi.bus()->is_system_port() ? true : bi.bus()->get_input();
+            result = bi.bus()->is_system_port() ?
+                true : bi.bus()->port_enabled();
     }
     return result;
 }

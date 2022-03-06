@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2022-02-26
+ * \updates       2022-03-06
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations
@@ -147,7 +147,7 @@ private:
      *  if the user selects the port in the Options / MIDI Input tab.
      */
 
-    bool m_io_active;               // m_inputing;
+    bool m_io_active;
 
     /**
      *  Provides the PPQN value in force, currently a constant.
@@ -380,19 +380,14 @@ public:
         return m_clock_type;
     }
 
-    bool port_enabled () const
+    bool port_enabled () const                  /* replaces get_input() */
     {
         return m_io_active;
     }
 
     bool clock_enabled () const
     {
-        return clocking_enabled(m_clock_type);  /* pos and mod */
-    }
-
-    bool get_input () const
-    {
-        return m_io_active;
+        return clocking_enabled(m_clock_type);  /* pos and mod enabled  */
     }
 
     void set_io_status (bool flag)
@@ -460,12 +455,6 @@ public:
 
     int poll_for_midi ();
     bool get_midi_event (event * inev);
-    bool init_out ();
-    bool init_in ();
-    bool deinit_out ();
-    bool deinit_in ();
-    bool init_out_sub ();
-    bool init_in_sub ();
     void play (const event * e24, midibyte channel);
     void sysex (const event * e24);
     void flush ();
@@ -476,6 +465,16 @@ public:
     void init_clock (midipulse tick);
     void print ();
     bool set_input (bool inputing);
+    bool initialize (bool initdisabled);
+
+private:
+
+    bool init_out ();
+    bool init_in ();
+    bool init_out_sub ();
+    bool init_in_sub ();
+    bool deinit_in ();
+    bool deinit_out ();
 
 public:
 

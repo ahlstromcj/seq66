@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2022-03-01
+ * \updates       2022-03-06
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -410,6 +410,26 @@ midibase::get_midi_event (event * inev)
 }
 
 /**
+ *  Wrapper function for businfo::initialize().
+ */
+
+bool
+midibase::initialize (bool initdisabled)
+{
+    bool result = true;
+    bool ok = port_enabled() || initdisabled;
+    if (ok)
+    {
+        if (is_input_port())         /* not built in master bus  */
+            result = is_virtual_port() ?  init_in_sub() : init_in() ;
+        else
+            result = is_virtual_port() ?  init_out_sub() : init_out() ;
+    }
+    return result;
+}
+
+
+/**
  *  Initialize the MIDI output port.
  *
  * \return
@@ -739,12 +759,12 @@ midibase::show_bus_values ()
             "connect name:      %s\n"
             "bus : port name:   %s : %s\n"
             "bus type:          %s %s %s\n"
-            "clock & inputing:  %d & %s\n"
+            "clock & enabling:  %d & %s\n"
             ,
             display_name().c_str(), connect_name().c_str(),
             m_bus_name.c_str(), m_port_name.c_str(),
             vport, iport, sport,
-            int(get_clock()), get_input() ? "yes" : "no"
+            int(get_clock()), port_enabled() ? "yes" : "no"
         );
     }
 }
