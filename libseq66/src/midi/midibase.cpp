@@ -420,10 +420,26 @@ midibase::initialize (bool initdisabled)
     bool ok = port_enabled() || initdisabled;
     if (ok)
     {
-        if (is_input_port())         /* not built in master bus  */
-            result = is_virtual_port() ?  init_in_sub() : init_in() ;
+        if (is_input_port())
+        {
+            if (is_virtual_port())
+                result = init_in_sub();
+            else
+                result = init_in();
+        }
         else
-            result = is_virtual_port() ?  init_out_sub() : init_out() ;
+        {
+            if (is_virtual_port())
+                result = init_out_sub();
+            else
+                result = init_out();
+        }
+    }
+    else
+    {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        warnprint("breakpoint");
+#endif
     }
     return result;
 }
