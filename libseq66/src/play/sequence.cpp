@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-03-02
+ * \updates       2022-03-04
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -152,6 +152,7 @@ sequence::sequence (int ppqn) :
     m_was_playing               (false),
     m_playing                   (false),
     m_recording                 (false),
+    m_draw_locked               (false),
     m_auto_step_reset           (false),
     m_expanded_recording        (false),
     m_overwrite_recording       (false),
@@ -303,6 +304,7 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
          *  m_was_playing
          *  m_playing
          *  m_recording
+         *  m_draw_locked
          *  m_auto_step_reset
          *  m_expanded_recording
          *  m_overwrite_recording

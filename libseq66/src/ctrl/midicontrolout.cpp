@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with refactoring by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-11-24
+ * \updates       2022-03-03
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -463,7 +463,14 @@ midicontrolout::send_macro (const std::string & name, bool flush)
         {
             int len = int(byts.length());
             bussbyte tb = true_buss();
-            if (len > 3)                                    /* assume sysex */
+
+            /*
+             * This test is inadequate.
+             *
+             * if (len > 3)                                // assume sysex  //
+             */
+
+            if (event::is_ex_data_msg(byts[0]))
             {
                 event ev;
                 const midibyte * b = midi_bytes(byts);
@@ -472,17 +479,8 @@ midicontrolout::send_macro (const std::string & name, bool flush)
             }
             else
             {
-                midibyte d0 = 0;
-                midibyte d1 = 0;
-                if (len == 3)
-                {
-                    d0 = byts[1];
-                    d1 = byts[2];
-                }
-                else if (len == 2)
-                    d0 = byts[1];
-
-                event ev(0, byts[0], d0, d1);
+                midibyte d1 = len == 3 ? byts[2] : 0 ;
+                event ev(0, byts[0], byts[1], d1);
                 if (flush)
                     m_master_bus->play_and_flush(tb, &ev, ev.channel());
                 else

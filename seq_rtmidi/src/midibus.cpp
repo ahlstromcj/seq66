@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2022-02-16
+ * \updates       2022-03-04
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of the midibus class.
@@ -38,13 +38,6 @@
 #include "midibus_rm.hpp"               /* seq66::midibus for rtmidi        */
 #include "rtmidi.hpp"                   /* RtMidi updated API header file   */
 #include "rtmidi_info.hpp"              /* seq66::rtmidi_info (new)         */
-
-/**
- *  A manifest constant for the RtMidi version of the api_poll_for_midi()
- *  function.
- */
-
-#define SEQ66_RTMIDI_POLL_FOR_MIDI_SLEEP_MS     10
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -144,10 +137,15 @@ midibus::midibus
             if (id >= 0)
                 set_bus_id(id);
 
-            set_name
-            (
-                rt.app_name(), rt.get_bus_name(index), rt.get_port_name(index)
-            );
+            /*
+             * This is called with identical parameters in the midibase class.
+             *
+             *   set_name
+             *   (
+             *      rt.app_name(), rt.get_bus_name(index),
+             *      rt.get_port_name(index)
+             *   );
+             */
         }
     }
 }

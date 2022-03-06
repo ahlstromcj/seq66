@@ -37,12 +37,33 @@
  *  not, but only for Windows at this time.  Seems to work fine under Linux.
  *  However, we're commenting it out for now and simply disabling the locking
  *  of the condition variable's signal() call.  Could be really problematic.
+ *
+ * https://en.cppreference.com/w/cpp/named_req/BasicLockable
+ *
+ *  BasicLockable requirements describe the minimal characteristics of types
+ *  that provide exclusive blocking semantics for execution agents (i.e.
+ *  threads).
+ *
+ *      -#  lock().  Precondition = none.  Blocks until a lock can be acquired
+ *          for the current execution agent (thread, process, task). If an
+ *          exception is thrown, no lock is acquired.
+ *      -# unlock. Precondition = The current execution agent holds a
+ *          non-shared lock. Releases the non-shared lock held by the
+ *          execution agent.  Throws no exceptions.
+ *
+ * https://en.cppreference.com/w/cpp/named_req/Lockable
+ *
+ *  Lockable extends the BasicLockable requirements to include attempted
+ *  locking via try_lock(). It Attempts to acquire the lock for the current
+ *  execution agent (thread, process, task) without blocking. If an exception
+ *  is thrown, no lock is obtained.
  */
 
 /*
  *  We need to expose the native mutex type so that automutex can access it.
  *  We could go back to putting the mutex, automutex, and condition definitions
- *  in a single mode, perhaps.
+ *  in a single module, perhaps.  We also use pthread_mutex_t rather than the
+ *  C++ mutex, as noted above.
  */
 
 #include <pthread.h>

@@ -1,7 +1,7 @@
 # README for Seq66 0.98.5
 
 Chris Ahlstrom
-2015-09-10 to 2022-03-03
+2015-09-10 to 2022-03-05
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management,
@@ -83,7 +83,7 @@ Windows, and using a conventional source tarball.
 
     *   Version 0.98.5:
         *   Added locking for the event-drawing loops to prevent segfaults.
-            Active only when recording, to prevent iterator invalidation.
+            Active only when recording; prevents iterator invalidation.
         *   Added an underrun indicator to the main window.
         *   The client name ("seq66") is no longer shown, nor saved in the 'rc'
             file. Easier to use multiple Seq66's with the --client-name option.
@@ -96,7 +96,7 @@ Windows, and using a conventional source tarball.
         *   Adding JACK access functions for the future. Improved internal
             port initialization code. Removed some non-useful rtmidi code.
         *   Adding the ability to disable/enable input and output on the fly in
-            the MIDI Clock and Input tabs.  Still in progress.
+            the MIDI Clock and Input tabs.  Still in progress, though.
     *   Version 0.98.4:
         *   Fixed bug in recording-type selector in seqedit. Added a one-shot
             reset option.

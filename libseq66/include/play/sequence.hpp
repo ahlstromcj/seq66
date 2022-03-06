@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-03-02
+ * \updates       2022-03-04
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -383,6 +383,7 @@ private:
      */
 
     bool m_recording;
+    mutable bool m_draw_locked;
 
     /**
      *  If true, the first incoming event in the step-edit (auto-step) part of
@@ -1614,14 +1615,20 @@ public:
 
     void draw_lock () const
     {
-        if (recording())
+        if (recording() && ! m_draw_locked)
+        {
             m_mutex.lock();
+            m_draw_locked = true;       /* mutable */
+        }
     }
 
     void draw_unlock () const
     {
-        if (recording())
+        if (m_draw_locked)
+        {
+            m_draw_locked = false;      /* mutable */
             m_mutex.unlock();
+        }
     }
 
     event::buffer::const_iterator cbegin () const
@@ -1839,6 +1846,11 @@ private:
     {
         return m_channel_match ?
             event::mask_channel(e.get_status()) == m_midi_channel : true ;
+    }
+
+    void draw_locked (bool flag)
+    {
+        m_draw_locked = flag;
     }
 
     void one_shot (bool f)

@@ -1,0 +1,40 @@
+The Hierarchy of Qt GUI Classes
+Chris Ahlstrom
+2021-12-26 to 2021-12-26
+
+This file simply shows the Seq66 hierarchy of GUI classes. The asterisks
+means that qbase is the most basic class in that hierarchy.  This set of
+classes includes mainly those that draw directly onto a "canvas".
+
+    qclocklayout : QWidget
+    qlfoframe : QFrame
+    qinputcheckbox : QWidget
+    qliveframeex : QWidget
+    qlooputton : qslotbutton : QPushButton
+
+*   qperfbase : qeditbase : qbase
+
+    qperfeditex : QWidget
+    qperfeditframe64 : QFrame
+*   qperfnames : QWidget, qperfbase ...
+*   qperfroll : QWidget, qperfbase ...
+
+*   qseqbase : qeditbase : qbase
+
+*   qseqdata : QWidget, qseqbase ..., performer::callbacks
+*   qseqroll : QWidget, qseqbase ...
+    qseqeditex : QWidget
+*   qseqeditframe64 : qseqframe, performer::callbacks
+*   qseqframe : QFrame, qbase
+*   qseqkeys : QWidget, qseqbase, ...
+*   qseqtime : QWidget, qseqbase, ...
+*   qstriggereditor : QWidget, qseqbase, ...
+    qslivegrid : qlivebase : QFrame
+    qsmaintime : QWidget
+
+    qseqeventframe : QFrame, performer::callbacks
+    qsmainwnd : QMainWindow, performer::callbacks
+    qsetmaster : QFrame, performer::callbacks
+    qmutemaster : QFrame, performer::callbacks
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

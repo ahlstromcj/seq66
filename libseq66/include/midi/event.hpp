@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-01-19
+ * \updates       2022-03-03
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -531,10 +531,11 @@ public:
 #endif
 
     /*
-     *  Static functions used in event and editable event.
+     *  Static functions used in event and editable event.  These can be useful
+     *  to any caller.
      */
 
-protected:
+public:
 
     static bool is_system_msg (midibyte m)
     {
