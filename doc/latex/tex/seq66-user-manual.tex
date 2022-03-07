@@ -547,9 +547,12 @@
 
    This text field is empty under normal circumstances, including during
    playback.  However, if one opens a pattern editor for a pattern with a lot
-   of events, this field will start flashing numbers, which indicate the
+   of events, and turns on recording for that pattern, then this field might
+   start flashing numbers, which indicate the
    current underrun value in microseconds.  This gives an indication that
    timing of playback might be off a bit, usually less than 10 milliseconds.
+   This happens because the event-list is locked during redrawing,
+   when recording, to avoid problems when new notes come in.
 
 \paragraph{Set Reset ("!")}
 \label{paragraph:introduction_set_reset}
