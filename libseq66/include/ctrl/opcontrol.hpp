@@ -93,7 +93,7 @@ private:
      *  mute-group control, this is the group number to obtain the
      *  mute-group-control midioperation object.  For an automation control,
      *  this is the number of the performer operation to call, of type
-     *  automation::slot.  The values above automation::slot::maximum are used
+     *  automation::slot.  The values above automation::slot::max are used
      *  for pattern and mute-group function selection.
      */
 

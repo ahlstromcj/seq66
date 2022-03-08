@@ -1,7 +1,7 @@
-# README for Seq66 0.98.5
+# README for Seq66 0.98.6
 
 Chris Ahlstrom
-2015-09-10 to 2022-03-05
+2015-09-10 to 2022-03-08
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management,
@@ -45,10 +45,9 @@ with Qt Creator.  Provides a comprehensive PDF user-manual.
 
 ##  Non Session Manager
 
-    *   Support for this manager is complete.
-    *   Handles stopping and saving.
-    *   Handles display of details about the session.
-    *   Still needs to be tested with NSM's jackpatch.
+    *   Support for NSM, New Session Manager, RaySession, Agordejo....
+    *   Handles starting, stopping, hiding, and session saving.
+    *   Displays details about the session.
 
 ##  Multiple Builds
 

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; modifications by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-28
+ * \updates       2022-03-08
  * \license       See above.
  *
  *  Declares the following classes:
@@ -131,10 +131,6 @@ public:
     midi_api (midibus & parentbus, midi_info & masterinfo);
     virtual ~midi_api ();
 
-    bool is_input_port () const;
-    bool is_virtual_port () const;
-    bool is_system_port () const;
-
 public:
 
     /**
@@ -234,8 +230,35 @@ public:
      *
      *      display_name()
      *      client_id()
-     *      set_clock() [could be useful in disabling a midi_jack/midi_alsa port.
+     *      set_clock() [useful in disabling a midi_jack/midi_alsa port?]
      */
+
+    bool is_input_port () const
+    {
+        return parent_bus().is_input_port();
+    }
+
+    /**
+     *  A virtual port is what Seq24 called a "manual" port.  It is a MIDI
+     *  port that an application can create as if it is a real ALSA or
+     *  JACK port.
+     */
+
+    bool is_virtual_port () const
+    {
+        return parent_bus().is_virtual_port();
+    }
+
+    /**
+     *  A system port is one that is independent of the devices and
+     *  applications that exist.  In the ALSA subsystem, the only system port
+     *  is the "announce" port (and the unused "timer" port).
+     */
+
+    bool is_system_port () const
+    {
+        return parent_bus().is_system_port();
+    }
 
     const std::string & bus_name () const
     {
@@ -344,11 +367,10 @@ protected:
     void set_alt_name
     (
         const std::string & appname,
-        const std::string & busname,
-        const std::string & portname
+        const std::string & busname
     )
     {
-        parent_bus().set_alt_name(appname, busname, portname);
+        parent_bus().set_alt_name(appname, busname);
     }
 
     /*

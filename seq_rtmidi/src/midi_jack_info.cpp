@@ -117,16 +117,23 @@ jack_process_io (jack_nframes_t nframes, void * arg)
             {
                 if (mj->enabled())
                 {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+                    if (mj->is_input_port())
+                        printf("Enabled: %s\n", mj->port_name().c_str());
+#endif
                     midi_jack_data * mjp = &mj->jack_data();
                     if (mj->parent_bus().is_input_port())
-                    {
-                        int rc = jack_process_rtmidi_input(nframes, mjp);
-                        if (rc == (-1))
-                            continue;   /* COMMENTED FOR EXPERIMENT break; */
-                    }
+                        (void) jack_process_rtmidi_input(nframes, mjp);
                     else
                         (void) jack_process_rtmidi_output(nframes, mjp);
                 }
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+                else
+                {
+                    if (mj->is_input_port())
+                        printf("Disabled: %s\n", mj->port_name().c_str());
+                }
+#endif
             }
         }
     }

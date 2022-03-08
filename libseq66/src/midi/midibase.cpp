@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2022-03-06
+ * \updates       2022-03-07
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -315,6 +315,8 @@ midibase::set_name
  *  As a side-effect, the "short" portname is changed, from (for example)
  *  "midi in" to "yoshimi midi in".
  *
+ *  This function is used only by the MIDI JACK modules.
+ *
  * \param appname
  *      This is the name of the client, or application.  Not to be confused
  *      with the ALSA/JACK client-name, which is actually a buss or subsystem
@@ -323,20 +325,16 @@ midibase::set_name
  * \param busname
  *      Provides the name of the sub-system, such as "Midi Through",
  *      "TiMidity", or "seq66".
- *
- * \param portname
- *      Provides the name of the port.  In JACK, this should be the full port
- *      name, such as "qmidiarp:in".
  */
 
 void
 midibase::set_alt_name
 (
     const std::string & appname,
-    const std::string & busname,
-    const std::string & portname
+    const std::string & busname
 )
 {
+    std::string portname = connect_name();
     if (is_virtual_port())
     {
         set_name(appname, busname, portname);
@@ -408,6 +406,22 @@ midibase::get_midi_event (event * inev)
 {
     return api_get_midi_event(inev);
 }
+
+/**
+ *  Indicates if we can connect a port (even if disabled).  Used only in
+ *  midi_jack_info.so far.
+ */
+
+bool
+midibase::is_port_connectable () const
+{
+    bool result = ! is_virtual_port();
+    if (result)
+        result = port_enabled() || rc().init_disabled_ports();
+
+    return result;
+}
+
 
 /**
  *  Wrapper function for businfo::initialize().

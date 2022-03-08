@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-03-03
+ * \updates       2022-03-07
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -238,7 +238,7 @@ namespace seq66
  *    A pointer to the midi_jack_data structure to be processed.
  *
  * \return
- *    Returns 0.
+ *    Returns 0 unless overflow occurs, then -1 is returned.
  */
 
 int
@@ -703,10 +703,7 @@ midi_jack::api_init_out ()
     result = create_ringbuffer(c_jack_ringbuffer_size);
     if (result)
     {
-        set_alt_name
-        (
-            rc().application_name(), rc().app_client_name(), remoteportname
-        );
+        set_alt_name(rc().application_name(), rc().app_client_name());
         result = register_port(midibase::io::output, port_name());
     }
     return result;
@@ -751,10 +748,7 @@ midi_jack::api_init_in ()
 {
     std::string remoteportname = connect_name();    /* "bus:port"       */
     remote_port_name(remoteportname);
-    set_alt_name
-    (
-        rc().application_name(), rc().app_client_name(), remoteportname
-    );
+    set_alt_name(rc().application_name(), rc().app_client_name());
     return register_port(midibase::io::input, port_name());
 }
 

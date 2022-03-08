@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-11-05
+ * \updates       2022-03-07
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -113,7 +113,7 @@ public:
         mutes,              /**< Save mute groups to the 'mutes' file.      */
         midi,               /**< Write mute groups only to the MIDI file.   */
         both,               /**< Write the mute groups to both files.       */
-        maximum             /**< Keep this last... it is only a size value. */
+        max                 /**< Keep this last... it is only a size value. */
     };
 
     /**
@@ -127,7 +127,7 @@ public:
         mutes,              /**< Load mute groups only from 'mutes' file.   */
         midi,               /**< Load from MIDI, ignoring the 'mutes' file. */
         both,               /**< Read from 'mutes'; if none, then MIDI.     */
-        maximum             /**< Keep this last... it is only a size value. */
+        max                 /**< Keep this last... it is only a size value. */
     };
 
 public:

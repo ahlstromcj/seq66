@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-18
- * \updates       2020-12-24
+ * \updates       2022-03-07
  * \license       GNU GPLv2 or above
  *
  *  This module is inspired by MidiPerformance::getSequenceColor() in
@@ -112,7 +112,7 @@ enum class PaletteColor
     color_29,
     color_30,
     dk_grey,            // color_31
-    maximum             // first illegal palette value, not in color set
+    max                 // first illegal palette value, not in color set
 };
 
 /**
@@ -138,7 +138,7 @@ enum class InvertibleColor
     dk_grey,            /**< Heavy grid lines.                              */
     lt_grey,            /**< Light grid lines.                              */
     extra,              /**< Just an addition color to make it 16 colors.   */
-    maximum             /**< First illegal palette value, not in color set. */
+    max                 /**< First illegal palette value, not in color set. */
 };
 
 /**
@@ -285,7 +285,7 @@ template <typename COLOR>
 const COLOR &
 palette<COLOR>::get_color (PaletteColor index) const
 {
-    if (index >= PaletteColor::black && index < PaletteColor::maximum)
+    if (index >= PaletteColor::black && index < PaletteColor::max)
     {
         int key = static_cast<int>(index);
         return m_container.at(key).ppt_color;
@@ -301,7 +301,7 @@ template <typename COLOR>
 std::string
 palette<COLOR>::get_color_name (PaletteColor index) const
 {
-    if (index >= PaletteColor::black && index < PaletteColor::maximum)
+    if (index >= PaletteColor::black && index < PaletteColor::max)
     {
         int key = static_cast<int>(index);
         return m_container.at(key).ppt_color_name;
@@ -347,7 +347,7 @@ template <typename COLOR>
 const COLOR &
 palette<COLOR>::get_color (InvertibleColor index) const
 {
-    if (index >= InvertibleColor::black && index < InvertibleColor::maximum)
+    if (index >= InvertibleColor::black && index < InvertibleColor::max)
     {
         int key = static_cast<int>(index);
         return m_container.at(key).ppt_color;
@@ -360,7 +360,7 @@ template <typename COLOR>
 std::string
 palette<COLOR>::get_color_name (InvertibleColor index) const
 {
-    if (index >= InvertibleColor::black && index < InvertibleColor::maximum)
+    if (index >= InvertibleColor::black && index < InvertibleColor::max)
     {
         int key = static_cast<int>(index);
         return m_container.at(key).ppt_color_name;

@@ -1,23 +1,33 @@
-# Seq66 Release Notes 0.93.0
+# Seq66 Release Notes 0.98.5
 ==============================
 Chris Ahlstrom
-2020-11-15 to 2021-03-28
+2020-11-15 to 2022-03-08
 
-This file lists the major changes for this version from the previous version.
-Also see the README.md and INSTALL files.
+This file lists only the major changes for this version from the previous
+version.  Also see the README.md, ChangeLog, and INSTALL files.
 
-## New Stuff
+## Feature List
 
-Apart from minor updates that occur as we test this software in actual
-sessions, most of the work involves testing, finding bugs, fixing them, and
-making sure the documentation is in accord with the functionality, and vice
-versa.
+    *   Non Session Manager (NSM) protocol support.
+    *   JACK Session support. Deprecated, but still useful for some.
+    *   JACK Metadata Support. Works on systems with a version of JACK
+        that supports it. JACK aliases also supported if available.
+    *   Port mapping. Each pattern holds a port number, which can be mapped to
+        a specific system MIDI device or application.
+    *   Mute groups. Enable/disable a complete set of patterns at once.
+    *   Playlist. Allow easy navigation between tunes in a list.
+    *   Windows build. Uses an internal implementaton of PortMidi. NSIS
+        installer.
+    *   Automation. Allows a MIDI device to be used for control of most
+        functions. Status displays to a MIDI device as well.
+    *   Support for SMF 0 and SMF 1 files, plus sequencer-specific information.
 
 ## Documentation
 
-The LaTeX documentation used for generation of the PDF manual is basically
-In order to build this documentation, change the the "doc/latex" directory and
-run "make".  The results are generated in the "pdf" directory.
+The LaTeX documentation used for generation of the PDF manual is done. If
+you want to rebuild this document, change the the "doc/latex" directory and
+run "make".  The file "seq66-user-manual.pdf" is generated in the
+"data/share/doc" directory.
 
 ## Final Notes
 

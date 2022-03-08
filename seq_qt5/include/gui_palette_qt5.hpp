@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2021-04-29
+ * \updates       2022-03-07
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -154,12 +154,12 @@ public:
 
     static int palette_size ()
     {
-        return palette_to_int(maximum);
+        return palette_to_int(max);
     }
 
     static int invertible_size ()
     {
-        return inv_palette_to_int(maximum);
+        return inv_palette_to_int(max);
     }
 
     void reset ()

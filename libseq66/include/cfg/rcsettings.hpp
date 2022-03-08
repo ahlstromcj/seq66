@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-02-28
+ * \updates       2022-03-07
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -169,7 +169,7 @@ public:
     {
         seq24,          /**< Use the normal mouse interactions.         */
         fruity,         /**< The "fruity" mouse interactions. To do.    */
-        maximum         /**< Keep this last... a size value.            */
+        max             /**< Keep this last... a size value.            */
     };
 
     /**
@@ -183,7 +183,7 @@ public:
         autoarm,        /**< Mute current set, load and unmute new set. */
         additive,       /**< Keep current set armed when changing sets. */
         allsets,        /**< Arm all sets at once.                      */
-        maximum         /**< Keep this last... a size value.            */
+        max             /**< Keep this last... a size value.            */
     };
 
     /**
@@ -196,7 +196,7 @@ public:
     {
         shortnames,     /**< Use short names: "[0] MIDI Through Port".  */
         longnames,      /**< Long names: "[0] 36:0 MIDI Through Port".  */
-        maximum         /**< Keep this last... a size value.            */
+        max             /**< Keep this last... a size value.            */
     };
 
 private:

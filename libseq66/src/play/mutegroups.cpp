@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-11-04
+ * \updates       2022-03-07
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -464,7 +464,7 @@ mutegroups::group_learn (bool flag)
 bool
 mutegroups::group_save (saving mgh)
 {
-    if (mgh >= saving::mutes && mgh < saving::maximum)
+    if (mgh >= saving::mutes && mgh < saving::max)
     {
         m_group_save = mgh;
         return true;
@@ -520,7 +520,7 @@ mutegroups::group_save_label () const
 bool
 mutegroups::group_load (loading mgh)
 {
-    if (mgh >= loading::none && mgh < loading::maximum)
+    if (mgh >= loading::none && mgh < loading::max)
     {
         m_group_load = mgh;
         return true;

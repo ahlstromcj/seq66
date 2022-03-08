@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2022-03-06
+ * \updates       2022-03-07
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations
@@ -368,11 +368,7 @@ public:
         return m_port_type == port::system;
     }
 
-    bool is_port_connectable () const       /* used only in midi_jack_info  */
-    {
-        return port_enabled() && ! is_virtual_port();
-    }
-
+    bool is_port_connectable () const;
     bool set_clock (e_clock clocktype);
 
     e_clock get_clock () const
@@ -426,8 +422,7 @@ public:
     void set_alt_name
     (
         const std::string & appname,
-        const std::string & busname,
-        const std::string & portname
+        const std::string & busname
     );
 
     /**
