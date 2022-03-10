@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2022-03-06
+ * \updates       2022-03-09
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of the midibus class.
@@ -175,32 +175,26 @@ midibus::~midibus ()
  *  this is a reported error.
  *
  * \return
- *      Returns true if the connection was made succuessfully, or there was no
- *      need to make the connection.
+ *      Returns true if the connection was made successfully.
  */
 
 bool
 midibus::api_connect ()
 {
-    bool result = true;
-
-    if (port_enabled() || is_output_port()) // get_input() || is_output_port()
+    bool result = not_nullptr(m_rt_midi);
+    if (result)
     {
-        result = not_nullptr(m_rt_midi);
-        if (result)
-        {
-            result = m_rt_midi->api_connect();
-        }
-        else
-        {
-            char temp[80];
-            snprintf
-            (
-                temp, sizeof temp, "null rtmidi pointer, port '%s'",
-                display_name().c_str()
-            );
-            errprintfunc(temp);
-        }
+        result = m_rt_midi->api_connect();
+    }
+    else
+    {
+        char temp[80];
+        snprintf
+        (
+            temp, sizeof temp, "null pointer port '%s'",
+            display_name().c_str()
+        );
+        errprintfunc(temp);
     }
     return result;
 }

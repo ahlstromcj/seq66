@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2022-03-07
+ * \updates       2022-03-09
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -375,39 +375,6 @@ midibase::connect_name () const
 }
 
 /**
- *  Polls for MIDI events.  This is a fix for a PortMidi bug, but it is needed
- *  for all.
- *
- * \return
- *      Returns a value greater than 0 if MIDI events are available.
- *      Otherwise 0 is returned, or -1 for some APIs (ALSA) when an internal
- *      error occurs.
- */
-
-int
-midibase::poll_for_midi ()
-{
-    return m_io_active ? api_poll_for_midi() : 0 ;
-}
-
-/**
- *  Obtains a MIDI event.
- *
- * \param inev
- *      Points the event to be filled with the MIDI event data.
- *
- * \return
- *      Returns true if an event was found, thus making the return parameter
- *      useful.
- */
-
-bool
-midibase::get_midi_event (event * inev)
-{
-    return api_get_midi_event(inev);
-}
-
-/**
  *  Indicates if we can connect a port (even if disabled).  Used only in
  *  midi_jack_info.so far.
  */
@@ -458,82 +425,6 @@ midibase::initialize (bool initdisabled)
     return result;
 }
 
-
-/**
- *  Initialize the MIDI output port.
- *
- * \return
- *      Returns true unless setting up MIDI failed in some way.
- */
-
-bool
-midibase::init_out ()
-{
-    return api_init_out();
-}
-
-/**
- *  Initialize the MIDI input port.
- *
- * \return
- *      Returns true unless setting up MIDI failed in some way.
- */
-
-bool
-midibase::init_in ()
-{
-    return api_init_in();
-}
-
-/**
- *  Initialize the output in a different way?
- *
- * \return
- *      Returns true unless setting up the ALSA port failed in some way.
- */
-
-bool
-midibase::init_out_sub ()
-{
-    return api_init_out_sub();      // no portmidi implementation
-}
-
-/**
- *  Initialize the output in a different way?
- *
- * \return
- *      Returns true unless setting up the ALSA port failed in some way.
- */
-
-bool
-midibase::init_in_sub ()
-{
-    return api_init_in_sub();       // no portmidi implementation
-}
-
-/**
- *  Deinitialize the MIDI output.
- */
-
-bool
-midibase::deinit_out ()
-{
-    return api_deinit_out();
-}
-
-/**
- *  Deinitialize the MIDI input.  Set the input and the output ports.
- *  The destination port is actually our local port.
- *
- * \return
- *      Returns true, unless an error occurs.
- */
-
-bool
-midibase::deinit_in ()
-{
-    return api_deinit_in();
-}
 
 /**
  *  Prints m_name.

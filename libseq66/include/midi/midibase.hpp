@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2022-03-07
+ * \updates       2022-03-09
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations
@@ -448,8 +448,37 @@ public:
         return m_clock_mod;
     }
 
-    int poll_for_midi ();
-    bool get_midi_event (event * inev);
+    /**
+     *  Obtains a MIDI event.
+     *
+     * \param inev
+     *      Points the event to be filled with the MIDI event data.
+     *
+     * \return
+     *      Returns true if an event was found, thus making the return parameter
+     *      useful.
+     */
+
+    bool get_midi_event (event * inev)
+    {
+        return api_get_midi_event(inev);
+    }
+
+    /**
+     *  Polls for MIDI events.  This is a fix for a PortMidi bug, but it is
+     *  needed for all.
+     *
+     * \return
+     *      Returns a value greater than 0 if MIDI events are available.
+     *      Otherwise 0 is returned, or -1 for some APIs (ALSA) when an internal
+     *      error occurs.
+     */
+
+    int poll_for_midi ()
+    {
+        return m_io_active ? api_poll_for_midi() : 0 ;
+    }
+
     void play (const event * e24, midibyte channel);
     void sysex (const event * e24);
     void flush ();
@@ -464,12 +493,35 @@ public:
 
 private:
 
-    bool init_out ();
-    bool init_in ();
-    bool init_out_sub ();
-    bool init_in_sub ();
-    bool deinit_in ();
-    bool deinit_out ();
+    bool init_out ()
+    {
+        return api_init_out();
+    }
+
+    bool init_in ()
+    {
+        return api_init_in();
+    }
+
+    bool init_out_sub ()
+    {
+        return api_init_out_sub();      // no portmidi implementation
+    }
+
+    bool init_in_sub ()
+    {
+        return api_init_in_sub();       // no portmidi implementation
+    }
+
+    bool deinit_in ()
+    {
+        return api_deinit_out();
+    }
+
+    bool deinit_out ()
+    {
+        return api_deinit_in();
+    }
 
 public:
 
