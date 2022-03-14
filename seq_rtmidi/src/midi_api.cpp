@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-03-08
+ * \updates       2022-03-13
  * \license       See above.
  *
  *  In this refactoring, we had to adapt the existing Seq66
@@ -127,66 +127,6 @@ midi_api::master_midi_mode (midibase::io iotype)
 {
     master_info().midi_mode(iotype);
 }
-
-#if defined SEQ66_USER_CALLBACK_SUPPORT
-
-/**
- *  Wires in a MIDI input callback function.
- *
- *  We moved it into the base class, trading convenience for the chance of
- *  confusion.
- *
- * \param callback
- *      Provides the callback function.
- *
- * \param userdata
- *      Provides the user data needed by the callback function.
- */
-
-void
-midi_api::user_callback (rtmidi_callback_t callback, void * userdata)
-{
-    if (m_input_data.using_callback())
-    {
-        m_error_string = "callback function already set";
-        error(rterror::kind::warning, m_error_string);
-        return;
-    }
-    if (is_nullptr(callback))
-    {
-        m_error_string = "callback function null";
-        error(rterror::kind::warning, m_error_string);
-        return;
-    }
-    m_input_data.user_callback(callback);
-    m_input_data.user_data(userdata);
-    m_input_data.using_callback(true);
-}
-
-/**
- *  Removes the MIDI input callback and some items related to it.
- *
- *  We moved it into the base class, trading convenience for the chance of
- *  confusion.
- */
-
-void
-midi_api::cancel_callback ()
-{
-    if (m_input_data.using_callback())
-    {
-        m_input_data.user_callback(nullptr);
-        m_input_data.user_data(nullptr);
-        m_input_data.using_callback(false);
-    }
-    else
-    {
-        m_error_string = "no callback function";
-        error(rterror::kind::warning, m_error_string);
-    }
-}
-
-#endif      // defined SEQ66_USER_CALLBACK_SUPPORT
 
 }           // namespace seq66
 

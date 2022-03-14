@@ -2999,7 +2999,6 @@ sequence::stream_event (event & ev)
                             ev.note_velocity(m_rec_vol);    /* keep veloc.  */
 
                         ev.set_timestamp(mod_last_tick());
-                        /// m_events_undo.push(m_events);   // needed still?
                         if (auto_step_reset() && m_step_count == 0)
                             m_last_tick = 0;
 
@@ -3043,7 +3042,7 @@ sequence::stream_event (event & ev)
                 );
                 if (quantizing())
                     quantize_events(EVENT_NOTE_ON, 0, 1, true);
-                else    /* if tightening() */
+                else                                    /* if tightening()  */
                     quantize_events(EVENT_NOTE_ON, 0, 2, true);
             }
         }

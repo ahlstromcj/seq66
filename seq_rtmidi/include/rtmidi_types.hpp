@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2022-03-03
+ * \updates       2022-03-13
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -295,18 +295,9 @@ private:
 
     bool m_first_message;
 
-#if defined SEQ66_USER_CALLBACK_SUPPORT
-
     /**
-     *  We currently don't use this feature, and do not plan to.  Keep it
-     *  around, Justin Case.
+     *  Indicates that SysEx is still coming in.
      */
-
-    bool m_using_callback;
-    rtmidi_callback_t m_user_callback;
-    void * m_user_data;
-
-#endif
 
     bool m_continue_sysex;
 
@@ -343,56 +334,6 @@ public:
     {
         m_continue_sysex = flag;
     }
-
-#if defined SEQ66_USER_CALLBACK_SUPPORT
-
-    bool using_callback () const
-    {
-        return m_using_callback;
-    }
-
-    void using_callback (bool flag)
-    {
-        m_using_callback = flag;
-    }
-
-#endif
-
-#if defined SEQ66_USER_CALLBACK_SUPPORT
-
-    const void * user_data () const
-    {
-        return m_user_data;
-    }
-
-    void * user_data ()
-    {
-        return m_user_data;
-    }
-
-    void user_data (void * dataptr)
-    {
-        m_user_data = dataptr;
-    }
-
-    rtmidi_callback_t user_callback () const
-    {
-        return m_user_callback;
-    }
-
-    /**
-     * \setter m_user_callback
-     *      This should be done immediately after opening the port to avoid
-     *      having incoming messages written to the queue instead of sent to
-     *      the callback function.
-     */
-
-    void user_callback (rtmidi_callback_t cbptr)
-    {
-        m_user_callback = cbptr;
-    }
-
-#endif
 
 };          // class rtmidi_in_data
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone, 2003-2012; refactoring by Chris Ahlstrom
  * \date          2016-11-19
- * \updates       2022-01-27
+ * \updates       2022-03-13
  * \license       See above.
  *
  *  We include this test code in our library, rather than in a separate
@@ -165,58 +165,6 @@ midi_probe ()
     }
     return 0;
 }
-
-#if defined SEQ66_USER_CALLBACK_SUPPORT
-
-/**
- *  Provides the callback for midi_input_test().
- */
-
-static void
-midi_input_callback (midi_message & message, void * /*userdata*/)
-{
-    if (! message.empty())
-    {
-        std::cout
-            << "Message (" << message.count() << " bytes, "
-            << "delta = " << message.timestamp() << "):"
-            << std::endl
-            ;
-        for (int i = 0; i < message.count(); ++i)
-        {
-            std::cout << "  byte[" << i << "] = " << int(message[i]) << "; ";
-        }
-    }
-}
-
-/**
- *  Provides testing the MIDI input process for 10 seconds.
- */
-
-bool
-midi_input_test (rtmidi_info & info, int portindex)
-{
-    bool result = false;
-    try
-    {
-        static midibus s_midibus_dummy(info, portindex);
-        rtmidi_in midiin(s_midibus_dummy, info);
-        midiin.user_callback(midi_input_callback);
-        result = true;
-        if (result)
-        {
-            std::cout << "You have 10 seconds to play some MIDI" << std::endl;
-            millisleep(10000);
-        }
-    }
-    catch (rterror & e)
-    {
-        e.print_message();
-    }
-    return result;
-}
-
-#endif      // defined SEQ66_USER_CALLBACK_SUPPORT
 
 }           // namespace seq66
 

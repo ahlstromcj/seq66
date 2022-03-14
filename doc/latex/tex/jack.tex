@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-28
-% \update      2022-02-27
+% \update      2022-03-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -24,8 +24,9 @@
    MIDI engine for that system.
    The JACK support is very loosely based on the RtMIDI project
    \cite{rtmidi}.
-   This mode also supports fallback-to-ALSA if the JACK
-   server is not running.
+   This mode also supports fallback to ALSA if the JACK server is not running.
+   \textsl{However}, if the \texttt{jack-dbus} is running, then a pair of virtual
+   ports are created.
 
    To enable the JACK transport support at run-time on
    \textsl{Linux}, the options

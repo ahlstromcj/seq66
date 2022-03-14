@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-11-26
+% \update      2022-03-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -147,9 +147,12 @@
    \textsl{Seq66} will, when it reads such a short pattern
    from a MIDI file,
 
+   \index{expand}
+   \index{recording!expand}
    A feature from user \textsl{stazed} allows the pattern to expand
    indefinitely while the user inputs MIDI from a controller, via the
    \textbf{Expand} option of the \textbf{Loop Record Type}.
+   This works best in \textbf{Live} mode.
 
 %  See \sectionref{subsec:pattern_editor_bottom} below.
 
@@ -1350,6 +1353,12 @@
          of the loop.
          This continues indefinitely, whether or not any notes are
          being played/recorded.
+         \index{recording!expand issue}
+         This works best in \textbf{Live} mode.
+         In \textbf{Song} mode, only one measure is added each time play is
+         started, and playback stops when the song is complete.
+         A workaround is to add a long track, perhaps empty, to the song.
+         Awaiting user complaints to decide what to do.
       \item \textbf{Oneshot}.
          \index{oneshot}
          \index{recording!oneshot}

@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.98.0 and above
 Chris Ahlstrom
-2015-09-10 to 2022-02-24
+2015-09-10 to 2022-03-13
 
 Getting Seq66 requires building the code or going to "sequencer64-packages/seq66"
 on GitHub to get an installation package.  The bootstrap setup is primarily
@@ -362,15 +362,9 @@ MANUALLY-DEFINED MACROS IN CODE:
     these macros.  We have consolidated them into a single file,
     libseq66/include/seq66_features.h, to make them easier to find and edit.
 
-    SEQ66_USER_CALLBACK_SUPPORT
-
-        This option activates support for "rtmidi"-style user-callbacks.
-        This support is used only in some test code (see the midi_probe)
-        module, and is no long included in normal builds.
-
     SEQ66_USE_METRONOME_FADE
 
-        Define if it is desired to waster CPU cycles on a fancier
+        Define if it is desired to waste CPU cycles on a fancier
         time-indicator bar.
 
     USE_xxxxxx:

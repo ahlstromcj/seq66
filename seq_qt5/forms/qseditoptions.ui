@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>654</width>
-    <height>688</height>
+    <width>656</width>
+    <height>690</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -712,7 +712,7 @@ slot by channel number (0 to 15).</string>
           <x>8</x>
           <y>44</y>
           <width>405</width>
-          <height>221</height>
+          <height>228</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -774,6 +774,13 @@ slot by channel number (0 to 15).</string>
           <widget class="QCheckBox" name="checkBoxBoldGridSlots">
            <property name="text">
             <string>Bold Grid Slot Font and Box</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBoxDoubleClickEdit">
+           <property name="text">
+            <string>Double Click for Pattern Editor</string>
            </property>
           </widget>
          </item>

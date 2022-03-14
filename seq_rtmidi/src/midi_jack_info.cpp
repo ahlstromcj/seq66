@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-02-27
+ * \updates       2022-03-13
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -944,11 +944,7 @@ void
 silence_jack_info (bool silent)
 {
     if (silent)
-    {
-#if ! defined SEQ66_SHOW_API_CALLS
         ::jack_set_info_function(jack_message_bit_bucket);
-#endif
-    }
 }
 
 }           // namespace seq66

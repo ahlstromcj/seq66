@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-03-03
+ * \updates       2022-03-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -794,7 +794,9 @@ performer::ui_set_input (bussbyte bus, bool active)
     if (result)
     {
         inputslist & ipm = input_port_map();
-        result = ipm.set(bus, active);
+        if (ipm.active())
+            result = ipm.set(bus, active);
+
         set_input(bus, active);
         mapper().set_dirty();
     }
@@ -852,7 +854,9 @@ performer::ui_set_clock (bussbyte bus, e_clock clocktype)
     if (result)
     {
         clockslist & opm = output_port_map();
-        result = opm.set(bus, clocktype);
+        if (opm.active())
+            result = opm.set(bus, clocktype);
+
         set_clock(bus, clocktype);
         mapper().set_dirty();
     }

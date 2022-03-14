@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-02
+ * \updates       2022-03-13
  * \license       See above.
  *
  *  API information found at:
@@ -63,14 +63,16 @@
  *
  * Capability bits (FYI):
  *
- *      SND_SEQ_PORT_CAP_READ           0x01
- *      SND_SEQ_PORT_CAP_WRITE          0x02
- *      SND_SEQ_PORT_CAP_SYNC_READ      0x04
- *      SND_SEQ_PORT_CAP_SYNC_WRITE     0x08
- *      SND_SEQ_PORT_CAP_DUPLEX         0x10
- *      SND_SEQ_PORT_CAP_SUBS_READ      0x20
- *      SND_SEQ_PORT_CAP_SUBS_WRITE     0x40
- *      SND_SEQ_PORT_CAP_NO_EXPORT      0x80
+ \verbatim
+        SND_SEQ_PORT_CAP_READ           0x01
+        SND_SEQ_PORT_CAP_WRITE          0x02
+        SND_SEQ_PORT_CAP_SYNC_READ      0x04
+        SND_SEQ_PORT_CAP_SYNC_WRITE     0x08
+        SND_SEQ_PORT_CAP_DUPLEX         0x10
+        SND_SEQ_PORT_CAP_SUBS_READ      0x20
+        SND_SEQ_PORT_CAP_SUBS_WRITE     0x40
+        SND_SEQ_PORT_CAP_NO_EXPORT      0x80
+ \endverbatim
  */
 
 #include "cfg/settings.hpp"             /* seq66::rc() configuration object */
@@ -94,13 +96,13 @@ namespace seq66
  *  -   0                       Blocking mode.
  *  -   SND_SEQ_NONBLOCK        Non-blocking mode.
  *
- *  We did reduce the polling timeout from 1000 milliseconds to 100
+ *  We did reduce the polling timeout from 1000 milliseconds (in Seq24) to 100
  *  milliseconds, and now, after testing, 10 milliseconds, and removed the
  *  additional 100 microsecond wait.
  */
 
-static const int c_poll_wait_ms = 10;
-static const int c_open_block_mode = SND_SEQ_NONBLOCK;
+static const int c_poll_wait_ms     = 10;
+static const int c_open_block_mode  = SND_SEQ_NONBLOCK;
 
 /*
  * Initialization of static members.
@@ -380,9 +382,8 @@ midi_alsa_info::api_flush ()
 void
 midi_alsa_info::api_set_ppqn (int p)
 {
-    midi_info::api_set_ppqn(p);
-
     int queue = global_queue();
+    midi_info::api_set_ppqn(p);
     snd_seq_queue_tempo_t * tempo;
     snd_seq_queue_tempo_alloca(&tempo);                 /* allocate struct  */
     snd_seq_get_queue_tempo(m_alsa_seq, queue, tempo);
@@ -406,9 +407,8 @@ midi_alsa_info::api_set_ppqn (int p)
 void
 midi_alsa_info::api_set_beats_per_minute (midibpm b)
 {
-    midi_info::api_set_beats_per_minute(b);
-
     int queue = global_queue();
+    midi_info::api_set_beats_per_minute(b);
     snd_seq_queue_tempo_t * tempo;
     snd_seq_queue_tempo_alloca(&tempo);          /* allocate tempo struct */
     snd_seq_get_queue_tempo(m_alsa_seq, queue, tempo);
@@ -417,9 +417,8 @@ midi_alsa_info::api_set_beats_per_minute (midibpm b)
 }
 
 /**
- *  Polls for any ALSA MIDI information using a timeout value of 1000
- *  milliseconds.  Identical to seq_alsamidi's mastermidibus ::
- *  api_poll_for_midi(), which waits 1 millisecond if no input is pending.
+ *  Polls for any ALSA MIDI information using a timeout value of 10
+ *  milliseconds.
  *
  * \return
  *      Returns the result of the call to poll() on the global ALSA poll
@@ -495,21 +494,17 @@ midi_alsa_info::api_poll_for_midi ()
 void
 midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
 {
-    snd_seq_client_info_t * cinfo;                      /* get bus info       */
+    snd_seq_client_info_t * cinfo;                          /* get bus info  */
     snd_seq_client_info_alloca(&cinfo);
     snd_seq_get_any_client_info(m_alsa_seq, bus, cinfo);
-    snd_seq_port_info_t * pinfo;                        /* get port info      */
+    snd_seq_port_info_t * pinfo;                            /* get port info */
     snd_seq_port_info_alloca(&pinfo);
     snd_seq_get_any_port_info(m_alsa_seq, bus, port, pinfo);
 
-#if defined SEQ66_SHOW_API_CALLS
-    warnprintf("midi_alsa_info::port_start(%d:%d)\n", bus, port);
-#endif
-
-    int cap = snd_seq_port_info_get_capability(pinfo);  /* get its capability */
+    int cap = snd_seq_port_info_get_capability(pinfo);      /* get caps      */
     if (ALSA_CLIENT_CHECK(pinfo))
     {
-        if (CAP_FULL_WRITE(cap) && ALSA_CLIENT_CHECK(pinfo)) /* outputs */
+        if (CAP_FULL_WRITE(cap) && ALSA_CLIENT_CHECK(pinfo)) /* outputs      */
         {
             int bus_slot = masterbus.m_outbus_array.count();
             int test = masterbus.m_outbus_array.replacement_port(bus, port);

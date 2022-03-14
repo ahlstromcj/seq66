@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-01-19
+ * \updates       2022-03-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -154,6 +154,7 @@ private slots:
     void slot_lock_main_window_click ();
     void slot_swap_coordinates_click ();
     void slot_bold_grid_slots_click();
+    void slot_double_click_edit ();
     void slot_rc_save_click ();
     void slot_rc_filename ();
     void slot_usr_save_click ();

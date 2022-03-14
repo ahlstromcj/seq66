@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-02-25
+ * \updates       2022-03-13
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -356,6 +356,11 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     (
         ui->checkBoxBoldGridSlots, SIGNAL(clicked(bool)),
         this, SLOT(slot_bold_grid_slots_click())
+    );
+    connect
+    (
+        ui->checkBoxDoubleClickEdit, SIGNAL(clicked(bool)),
+        this, SLOT(slot_double_click_edit())
     );
 
     /*
@@ -1553,11 +1558,19 @@ qseditoptions::slot_swap_coordinates_click ()
 }
 
 void
-qseditoptions::slot_bold_grid_slots_click()
+qseditoptions::slot_bold_grid_slots_click ()
 {
     bool on = ui->checkBoxBoldGridSlots->isChecked();
     usr().progress_bar_thick(on);
     modify_usr();
+}
+
+void
+qseditoptions::slot_double_click_edit ()
+{
+    bool on = ui->checkBoxDoubleClickEdit->isChecked();
+    rc().allow_click_edit(on);
+    modify_rc();
 }
 
 /**

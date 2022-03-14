@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-01
- * \updates       2022-02-28
+ * \updates       2022-03-13
  * \license       See above.
  *
  *  Provides some basic types for the (heavily-factored) rtmidi library, very
@@ -221,11 +221,6 @@ rtmidi_in_data::rtmidi_in_data ()
  :
     m_queue             (),
     m_first_message     (true),
-#if defined SEQ66_USER_CALLBACK_SUPPORT
-    m_using_callback    (false),
-    m_user_callback     (nullptr),
-    m_user_data         (nullptr),
-#endif
     m_continue_sysex    (false)
 {
     // no body

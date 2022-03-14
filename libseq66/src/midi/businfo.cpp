@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2022-03-06
+ * \updates       2022-03-13
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -289,13 +289,6 @@ busarray::add (midibus * bus, e_clock clock)
         businfo b(bus);
         b.init_clock(clock);
         m_container.push_back(b);                       /* creates a copy   */
-#if defined SEQ66_SHOW_API_CALLS
-        printf
-        (
-            "Added output bus %s, clock %d\n",
-            bus->display_name().c_str(), int(clock)
-        );
-#endif
         result = m_container.size() == (count + 1);
     }
     return result;
@@ -332,13 +325,6 @@ busarray::add (midibus * bus, bool inputing)
         businfo b(bus);
         b.init_input(inputing);                 /* sets the flag, important */
         m_container.push_back(b);               /* now we can push a copy   */
-#if defined SEQ66_SHOW_API_CALLS
-        printf
-        (
-            "Added input bus %s, inputing = %s\n",
-            bus->display_name().c_str(), inputing ? "yes" : "no"
-        );
-#endif
         result = m_container.size() == (count + 1);
     }
     return result;

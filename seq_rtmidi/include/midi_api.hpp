@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; modifications by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-03-08
+ * \updates       2022-03-13
  * \license       See above.
  *
  *  Declares the following classes:
@@ -211,17 +211,6 @@ public:
      */
 
     void error (rterror::kind errtype, const std::string & errorstring);
-
-#if defined SEQ66_USER_CALLBACK_SUPPORT
-
-    /*
-     * Moved from the now-removed midi_in_api class.
-     */
-
-    void user_callback (rtmidi_callback_t callback, void * userdata);
-    void cancel_callback ();
-
-#endif
 
     /*
      * Pass-alongs to the midibus representing this object's generic data.

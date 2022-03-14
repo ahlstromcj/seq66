@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-03-07
+ * \updates       2022-03-13
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -226,6 +226,12 @@ namespace seq66
  *  This function used to be static, but now we make it available to
  *  midi_jack_info.  Also note the s_null_detected flag.
  *
+ * Question:
+ *
+ *      When MIDI input comes in, does it accumulate if we don't call
+ *      jack_midi_get_event()? Should we get it even if the port is
+ *      disabled, and then just not use it?
+ *
  * Error codes:
  *
  *      ENODATA = 61: No data available.
@@ -276,14 +282,6 @@ jack_process_rtmidi_input (jack_nframes_t frameno, void * arg)
 
             if (! rtindata->continue_sysex())
             {
-#if defined SEQ66_USER_CALLBACK_SUPPORT
-                if (rtindata->using_callback())
-                {
-                    rtmidi_callback_t callback = rtindata->user_callback();
-                    callback(message, rtindata->user_data());
-                }
-                else
-#endif
                 if (! rtindata->queue().add(message))
                 {
                     async_safe_strprint("~");
@@ -1544,12 +1542,7 @@ midi_in_jack::api_poll_for_midi ()
 {
     rtmidi_in_data * rtindata = jack_data().m_jack_rtmidiin;
     (void) microsleep(std_sleep_us());
-
-#if defined SEQ66_USER_CALLBACK_SUPPORT
-    return rtindata->using_callback() ? 0 : rtindata->queue().count() ;
-#else
     return rtindata->queue().count();
-#endif
 }
 
 /**

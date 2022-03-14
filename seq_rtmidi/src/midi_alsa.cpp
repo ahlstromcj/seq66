@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2022-01-28
+ * \updates       2022-03-13
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -35,6 +35,13 @@
  *  and it was getting very painful to warp RtMidi to fit.
  *
  * Examples of subscription:
+ *
+ *  In ALSA library, subscription is done via snd_seq_subscribe_port()
+ *  function. It takes the argument of snd_seq_port_subscribe_t record
+ *  pointer. Suppose that you have a client which will receive data from a
+ *  MIDI input device. The source and destination addresses are like the
+ *  below:
+ *
  *	Capture from keyboard:
  *
  *		Assume MIDI input port = 64:0, application port = 128:0, and queue for
@@ -60,6 +67,13 @@
     }
 \endverbatim
  *
+ *      Question: can we simply replace the above with the following code, which
+ *      seems to work.
+ *
+\verbatim
+ *      snd_seq_connect_from(seq, 0, 65, 1);    // myport, srcclient, srcport
+\endverbatim
+ *
  *  Output to MIDI device:
  *
  *      Assume MIDI output port = 65:1 and application port = 128:0. The
@@ -81,6 +95,16 @@
     }
 \endverbatim
  *
+ *      This example can be simplified by using the snd_seq_connect_to()
+ *      function (as done in the RtMidi library).
+ *
+\verbatim
+    void subscribe_output(snd_seq_t *seq)
+    {
+        snd_seq_connect_to(seq, 0, 65, 1);  // myport, destclient, destport
+    }
+\endverbatim
+ *
  *  See http://www.alsa-project.org/alsa-doc/alsa-lib/seq.html for a wealth of
  *  information on ALSA sequencing.
  */
@@ -92,32 +116,14 @@
 #include "midi_info.hpp"                /* seq66::midi_info                 */
 #include "util/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 
+#define USE_SND_SEQ_CONNECT_FROM        /* EXPERIMENTAL, seems to work      */
+
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
 
 namespace seq66
 {
-
-#if defined USE_SHOW_ALSA_ERROR
-
-/**
- *  Outputs the error string returned by the ALSA subsystem.
- *  However, this snd_strerror() returns garbage.  Incorrec usage?
- */
-
-static void
-show_alsa_error (int rcode)
-{
-    const char * errmsg = snd_strerror(rcode);
-    if (not_nullptr(errmsg))
-    {
-        std::string em = errmsg;
-        msgprintf(msglevel::error, "ALSA reports '%s'", em);
-    }
-}
-
-#endif
 
 /**
  *  Provides a constructor with client number, port number, ALSA sequencer
@@ -210,9 +216,6 @@ midi_alsa::api_init_out ()
     if (rc < 0)
     {
         error_message("ALSA create output port failed");
-#if defined USE_SHOW_ALSA_ERROR
-        show_alsa_error(rc);
-#endif
         return false;
     }
     rc = snd_seq_connect_to                     /* connect to port  */
@@ -226,9 +229,6 @@ midi_alsa::api_init_out ()
             msglevel::error, "ALSA connect to %d:%d error",
             m_dest_addr_client, m_dest_addr_port
         );
-#if defined USE_SHOW_ALSA_ERROR
-        show_alsa_error(rc);
-#endif
         return false;
     }
     else
@@ -239,32 +239,6 @@ midi_alsa::api_init_out ()
 
 /**
  *  Initialize the MIDI input port.
- *
- * Subscription handlers:
- *
- *  In ALSA library, subscription is done via snd_seq_subscribe_port()
- *  function. It takes the argument of snd_seq_port_subscribe_t record
- *  pointer. Suppose that you have a client which will receive data from a
- *  MIDI input device. The source and destination addresses are like the
- *  below:
- *
-\verbatim
-    snd_seq_addr_t sender, dest;
-    sender.client = MIDI_input_client;
-    sender.port = MIDI_input_port;
-    dest.client = my_client;
-    dest.port = my_port;
-\endverbatim
- *
-    To set these values as the connection call like this.
- *
-\verbatim
-    snd_seq_port_subscribe_t *subs;
-    snd_seq_port_subscribe_alloca(&subs);
-    snd_seq_port_subscribe_set_sender(subs, &sender);
-    snd_seq_port_subscribe_set_dest(subs, &dest);
-    snd_seq_subscribe_port(handle, subs);
-\endverbatim
  *
  * \tricky
  *      One important thing to note is that this input port is initialized
@@ -290,12 +264,15 @@ midi_alsa::api_init_in ()
     if (rc < 0)
     {
         error_message("ALSA create input port failed");
-#if defined USE_SHOW_ALSA_ERROR
-        show_alsa_error(rc);
-#endif
         return false;
     }
 
+#if defined USE_SND_SEQ_CONNECT_FROM
+    rc = snd_seq_connect_from
+    (
+        m_seq, m_local_addr_port, m_dest_addr_client, m_dest_addr_port
+    );
+#else
     snd_seq_port_subscribe_t * subs;
     snd_seq_port_subscribe_alloca(&subs);
 
@@ -317,6 +294,7 @@ midi_alsa::api_init_in ()
     snd_seq_port_subscribe_set_queue(subs, queue);
     snd_seq_port_subscribe_set_time_update(subs, 1);
     rc = snd_seq_subscribe_port(m_seq, subs);
+#endif
     if (rc < 0)
     {
         msgprintf
@@ -324,9 +302,6 @@ midi_alsa::api_init_in ()
             msglevel::error, "ALSA connect from %d:%d error",
             m_dest_addr_client, m_dest_addr_port
         );
-#if defined USE_SHOW_ALSA_ERROR
-        show_alsa_error(rc);
-#endif
         return false;
     }
     else
@@ -340,7 +315,7 @@ midi_alsa::api_init_in ()
  *  that the midibus constructor for a virtual ALSA port doesn't not have all
  *  of the information it needs at that point.  Here, we can get this
  *  information and get the actual data we need to rename the port to
- *  something accurate.  Same as the seq_alsamidi version of this function.
+ *  something accurate.
  *
  * \return
  *      Returns true if all of the information could be obtained.  If false is
@@ -497,17 +472,14 @@ midi_alsa::api_deinit_in ()
             msglevel::error, "ALSA unsubscribe port %d:%d error",
             m_dest_addr_client, m_dest_addr_port
         );
-#if defined USE_SHOW_ALSA_ERROR
-        show_alsa_error(rc);
-#endif
         return false;
     }
     return true;
 }
 
 /**
- *  This function is supposed to poll for MIDI data, but the current
- *  ALSA implementation DOES NOT USE THIS FUNCTION.  Commented out.
+ *  This function is supposed to poll for MIDI data, but the current ALSA
+ *  implementation DOES NOT USE THIS FUNCTION.  Commented out.
  *
  *  Instead, this function, called indirectly via mastermidibase ::
  *  is_more_input(), always returns 0.  And if we try to return the ALSA poll
@@ -515,18 +487,14 @@ midi_alsa::api_deinit_in ()
  *  problematic.
  */
 
-#if defined SEQ66_USE_MIDI_ALSA_POLL    /* LEAVE UNDEFINED */
+#if defined SEQ66_USE_MIDI_ALSA_POLL                    /* LEAVE UNDEFINED  */
 
 int
 midi_in_alsa::api_poll_for_midi ()
 {
-    rtmidi_in_data * rtindata = m_alsa_data.m_alsa_rtmidiin;    /* BOGUS */
+    rtmidi_in_data * rtindata = m_alsa_data.m_alsa_rtmidiin;    /* BOGUS    */
     (void) microsleep(std_sleep_us());
-#if defined SEQ66_USER_CALLBACK_SUPPORT
-    return rtindata->using_callback() ? 0 : rtindata->queue().count();
-#else
     return rtindata->queue().count();
-#endif
 }
 
 #else
@@ -593,7 +561,7 @@ midi_alsa::api_play (const event * e24, midibyte channel)
         }
         else
         {
-            errprint("api_play() out-of-memory error");
+            errprint("ALSA out-of-memory error");
         }
     }
 }
@@ -648,10 +616,9 @@ midi_alsa::api_sysex (const event * e24)
      *
      *      midibyte * data = e24->get_sysex();
      *
-     *  This is a bit tricky, and relies on the standard property of
-     *  std::vector where all n elements of the vector are guaranteed to be
-     *  stored contiguously (in order to be accessible via random-access
-     *  iterators).
+     *  This tack relies on the standard property of std::vector, where all n
+     *  elements of the vector are guaranteed to be stored contiguously (in
+     *  order to be accessible via random-access iterators).
      *
      *  We send the sysex data in chunks, with a sleep, for slower devices.
      */
@@ -669,7 +636,7 @@ midi_alsa::api_sysex (const event * e24)
         }
         else
         {
-            errprint("sending complete SysEx failed");
+            errprint("Sending complete SysEx failed");
         }
     }
     else
@@ -690,7 +657,7 @@ midi_alsa::api_sysex (const event * e24)
             }
             else
             {
-                errprint("sending SysEx failed");
+                errprint("Sending SysEx failed");
             }
         }
     }
@@ -720,14 +687,8 @@ midi_alsa::api_flush ()
  *      The beats value calculated by midibase::continue_from().
  */
 
-#if defined SEQ66_SHOW_API_CALLS
-#define tick_parameter tick
-#else
-#define tick_parameter /* tick */
-#endif
-
 void
-midi_alsa::api_continue_from (midipulse tick_parameter, midipulse beats)
+midi_alsa::api_continue_from (midipulse /* tick */, midipulse beats)
 {
     if (parent_bus().port_enabled())
     {
@@ -809,15 +770,8 @@ midi_alsa::api_stop ()
  */
 
 void
-midi_alsa::api_clock (midipulse tick)
+midi_alsa::api_clock (midipulse /*tick*/)
 {
-    if (tick >= 0)
-    {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        midibase::show_clock("ALSA", tick);
-#endif
-    }
-
     snd_seq_event_t ev;
     snd_seq_ev_clear(&ev);                          /* clear event          */
     ev.type = SND_SEQ_EVENT_CLOCK;
