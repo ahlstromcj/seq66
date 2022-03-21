@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2022-02-24
+ * \updates       2022-03-21
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -924,7 +924,12 @@ smanager::create_configuration
             if (usr().in_nsm_session())
             {
                 usr().session_visibility(false);        /* new session=hide */
-                rc().load_most_recent(false);           /* don't load MIDI  */
+
+#if defined NSM_DISABLE_LOAD_MOST_RECENT
+                rc().load_most_recent(false;            /* don't load MIDI  */
+#else
+                rc().load_most_recent(true);            /* issue #41        */
+#endif
             }
 #if defined DO_NOT_BELAY_UNTIL_EXIT
             if (result)
@@ -1217,10 +1222,19 @@ smanager::import_configuration
             if (result)
                 result = cmdlineopts::parse_usr_file(usrfile, errmessage);
 
+            /*
+             * Don't change this.
+             */
+
             if (result)
             {
+#if defined NSM_DISABLE_LOAD_MOST_RECENT
                 if (usr().in_nsm_session())
                     rc().load_most_recent(false);       /* don't load MIDI  */
+#else
+                if (usr().in_nsm_session())
+                    rc().load_most_recent(true);        /* issue #41        */
+#endif
             }
         }
         if (result)

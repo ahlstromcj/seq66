@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-02-22
+ * \updates       2022-03-20
  * \license       See above.
  *
  *    We need to have a way to get all of the JACK information of
@@ -193,6 +193,11 @@ private:
     portlist & jack_ports ()
     {
         return m_jack_ports;
+    }
+
+    int count () const
+    {
+        return int(m_jack_ports.size());
     }
 
     /**

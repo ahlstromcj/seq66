@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-03-03
+ * \updates       2022-03-21
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1787,7 +1787,7 @@ qsmainwnd::save_session ()
  */
 
 void
-qsmainwnd::attach_session (smanager * sp)   // UNNECESSARY?
+qsmainwnd::attach_session (smanager * sp)
 {
     if (not_nullptr(sp))
         m_session_mgr_ptr = sp;
@@ -1856,7 +1856,7 @@ qsmainwnd::quit_session ()
     }
 }
 
-#endif
+#endif  // defined SEQ66_SESSION_DETACHABLE
 
 bool
 qsmainwnd::save_file (const std::string & fname, bool updatemenu)
@@ -2750,10 +2750,19 @@ qsmainwnd::enable_reload_button (bool flag)
 void
 qsmainwnd::quit ()
 {
-    if (check())
+    if (use_nsm())
     {
-        remove_all_editors();
-        QCoreApplication::exit();
+        perf().hidden(true);
+        hide();
+        m_session_mgr->send_visibility(false);
+    }
+    else
+    {
+        if (check())
+        {
+            remove_all_editors();
+            QCoreApplication::exit();
+        }
     }
 }
 
@@ -3071,6 +3080,12 @@ qsmainwnd::connect_nsm_slots ()
         ui->actionSave_As, SIGNAL(triggered(bool)),
         this, SLOT(save_file_as())
     );
+
+    /*
+     * File / Quit ---> File / Hide
+     */
+
+    ui->actionQuit->setText("Hide");
 
 #if defined SEQ66_SESSION_DETACHABLE
 

@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2022-02-08
+ * \updates       2022-03-20
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -161,12 +161,12 @@ extern bool file_error (const std::string & tag, const std::string & filename);
 extern void print_client_tag (msglevel el);
 extern void boolprint (const std::string & tag, bool flag);
 extern void toggleprint (const std::string & tag, bool flag);
-extern void async_safe_strprint (const char * msg);
-extern void async_safe_errprint (const char * msg);
+extern void async_safe_strprint (const char * msg, bool colorit = true);
+extern void async_safe_errprint (const char * msg, bool colorit = true);
 extern void async_safe_utoa
 (
-    unsigned value,
     char * destination,
+    unsigned number,
     bool spacebefore = true
 );
 extern void msgprintf (seq66::msglevel lev, std::string fmt, ...);

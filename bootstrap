@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2022-02-24
+# \update         2022-03-17
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -36,9 +36,9 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2022-02-24"
+export SEQ66_SCRIPT_EDIT_DATE="2022-03-17"
 export SEQ66_LIBRARY_API_VERSION="0.98"
-export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.5"
+export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.6"
 
 #******************************************************************************
 #  Version info
@@ -80,6 +80,7 @@ DOSTATIC="no"
 DOTESTING="no"
 DOVERSION="no"
 DOPORTMIDI="no"
+DOPORTREFRESH="no"
 DOPROGMANUAL="no"
 LOGFILENAME=""
 M4DIR="m4"
@@ -99,7 +100,7 @@ EXTRAFLAGS=""
 if [ "$1" == "--help" ] ; then
 
    cat << E_O_F
-Usage: ./bootstrap [options]                             (0.98.3-2022-02-24)
+Usage: ./bootstrap [options]                             (0.98.3-2022-03-17)
 
 'bootstrap' sets up GNU automake and libtool support for the Seq66 project
 and creates the 'configure' script.  It can super-clean the project, removing
@@ -118,15 +119,19 @@ passing long options to the configure script for some canned setups.
                      Either --debug or --release must be specified.
                      Also: --enable-release.
  --static            Do a static release build.
- -pm                 Configure for qpseq66.  Implies --enable-portmidi.
- -rm                 Configure for qseq66 (JACK version, the default).
+ --portmidi, -pm     Configure for qpseq66.  Implies --enable-portmidi.
+ --rtmidi, -rm       Configure for qseq66 (ALSA/JACK version, the default).
                      Implies --enable-rtmidi.  The official GUI is Qt 5.
+ --refresh, -pr      Enables the port-refresh feature for JACK.  Will be
+                     the default once it works.
+ --disable-jack, -dj Disables JACK support, enables rtmidi.
  --no-metadata       Disable JACK metadata support.
- -cli                Configure for seq66cli (command-line rtmidi version).
+ --cli, -cli         Configure for seq66cli (command-line rtmidi version).
  --no-nsm            Disable Non Session Manager support.  Saves some code.
  --manual            Build the user manual.
  --help              Show this help text.
 
+There are some options too rare to document here. Read the bootstrap script.
 The default (no options) bootstraps the project (e.g. runs 'autoheader'.)
 Then one must run 'configure', which sets up for a normal release build.
 A common option for 'bootstrap' is --enable-debug (-ed), which adds
@@ -208,6 +213,11 @@ if [ $# -ge 1 ] ; then
          --rtmidi | -rm | --rm)
             DORTMIDI="yes"
             EXTRAFLAGS+=" --enable-rtmidi"
+            ;;
+
+         --refresh | -pr | --pr)
+            DOPORTREFRESH="yes"
+            EXTRAFLAGS+=" --enable-refresh"
             ;;
 
          --disable-jack | -dj)

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-03-13
+ * \updates       2022-03-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -75,10 +75,10 @@ public:
     virtual ~qseditoptions();
 
     void enable_bus_item (int bus, bool enabled);
-    void enable_reload_button (bool flag);
 
 private:
 
+    void enable_reload_button (bool flag);
     void modify_rc();
     void modify_usr();
     void sync ();               /* makes dialog reflect internal settings   */
@@ -96,11 +96,7 @@ private:
     );
     void show_sets_mode (rcsettings::setsmode sm);
     void show_session (usrsettings::session sm);
-
-    void reload_needed (bool flag)
-    {
-        m_reload_needed = flag;
-    }
+    void reload_needed (bool flag);
 
     bool reload_needed () const
     {
@@ -172,6 +168,7 @@ private slots:
     void slot_drums_filename ();
     void slot_stylesheet_active_click ();
     void slot_stylesheet_filename ();
+    void slot_flag_reload ();
     void slot_palette_save_now_click ();
     void slot_palette_save_click ();
     void slot_palette_active_click ();

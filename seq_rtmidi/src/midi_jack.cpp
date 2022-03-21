@@ -441,11 +441,11 @@ jack_port_connect_callback
             char value[c_async_safe_utoa_size];
             char temp[2 * c_async_safe_utoa_size + 48];
             std::strcpy(temp, "port-connect(");
-            async_safe_utoa(unsigned(port_a), value);
+            async_safe_utoa(value, unsigned(port_a));
             std::strcat(temp, value);
-            async_safe_utoa(unsigned(port_b), value);
+            async_safe_utoa(value, unsigned(port_b));
             std::strcat(temp, value);
-            async_safe_utoa(unsigned(connect), value);
+            async_safe_utoa(value, unsigned(connect));
             std::strcat(temp, connect != 0 ? " connect" : " disconnect");
             std::strcat(temp, value);
             std::strcat(temp, not_nullptr(arg) ? " arg)" : " nullptr)");
@@ -592,7 +592,7 @@ jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
                 else if (iotype == midibase::io::output)
                     iot = "Out";
 
-                async_safe_utoa(unsigned(portid), &value[0], false);
+                async_safe_utoa(value, unsigned(portid), false);
                 std::strcpy(temp, "Port ");
                 std::strcat(temp, value);
                 std::strcat(temp, ": ");

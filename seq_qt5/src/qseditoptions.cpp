@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-03-13
+ * \updates       2022-03-21
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -32,6 +32,7 @@
 
 #include <QButtonGroup>
 
+#include "os/daemonize.hpp"             /* seq66::signal_for_restart()      */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "util/filefunctions.hpp"       /* seq66::filename_base()           */
 #include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
@@ -364,6 +365,10 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     );
 
     /*
+     * Session tab.
+     */
+
+    /*
      * 'rc' file.  This file is always active, so that check-box is read-only.
      */
 
@@ -530,6 +535,17 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
 
     ui->text_edit_key->hide();
     ui->label_key->hide();
+
+    /*
+     * Reload/restart button.
+     */
+
+    ui->pushButtonReload->setEnabled(false);
+    connect
+    (
+        ui->pushButtonReload, SIGNAL(clicked(bool)),
+        this, SLOT(slot_flag_reload())
+    );
 
     /*
      * OK/Cancel Buttons
@@ -876,6 +892,14 @@ qseditoptions::slot_jack_auto_connect ()
 {
     rc().jack_auto_connect(ui->chkJackAutoConnect->isChecked());
     sync();
+}
+
+void
+qseditoptions::reload_needed (bool flag)
+{
+    m_reload_needed = flag;
+    if (flag)
+        enable_reload_button(true);
 }
 
 void
@@ -1226,6 +1250,7 @@ void
 qseditoptions::enable_reload_button (bool flag)
 {
     m_parent_widget->enable_reload_button(flag);
+    ui->pushButtonReload->setEnabled(flag);
 }
 
 /**
@@ -1791,6 +1816,12 @@ qseditoptions::slot_stylesheet_filename ()
              */
         }
     }
+}
+
+void
+qseditoptions::slot_flag_reload ()
+{
+    signal_for_restart();           /* warnprint("Session reload request"); */
 }
 
 void

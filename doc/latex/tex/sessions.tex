@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2022-01-16
+% \update      2022-03-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -642,6 +642,10 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    \caption*{File Menu When Running Under NSM, Composite View}
 \end{figure}
 
+   This has been changed for 0.98.6; the \textbf{Quit} menu entry becomes
+   \textbf{Hide}, as per the NSM protocol.  Also have fixed a bug that disables
+   the load-most-recent option under NSM.
+
    The following items describe the menu entries.
 
    \begin{itemize}
@@ -704,11 +708,14 @@ qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 %        normal \textsl{File} menu.
 %        Currently, it is disabled because it causes issues that we cannot yet
 %        solve.
-      \item \textbf{Quit}.
-         Quits \textsl{Seq66}.
-         There are no messages to send to \textsl{NSM} in this case.
-         The \texttt{nsmd} daemon detects that the \textsl{Seq66} client has
-         disappeared (and notes that on the console output, if available).
+      \item \textbf{Hide}.
+         This menu item replaces the \textbf{Quit} item.
+         It hides the main window and tells NSM about it.
+%     \item \textbf{Quit}.
+%        Quits \textsl{Seq66}.
+%        There are no messages to send to \textsl{NSM} in this case.
+%        The \texttt{nsmd} daemon detects that the \textsl{Seq66} client has
+%        disappeared (and notes that on the console output, if available).
    \end{itemize}
 
    At some point we would like to present a small tutorial showing a session

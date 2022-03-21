@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2022-01-09
+ * \updates       2022-03-21
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -64,6 +64,8 @@ namespace seq66
 
 class qt5nsmanager : public QObject, public clinsmanager
 {
+    friend class qsmainwnd;                     /* for send_visibility()    */
+
 	Q_OBJECT
 
 public:

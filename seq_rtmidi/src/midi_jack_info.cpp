@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-03-13
+ * \updates       2022-03-20
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -109,15 +109,14 @@ jack_process_io (jack_nframes_t nframes, void * arg)
         if (not_nullptr(self))
         {
             /*
-             * Here we want to go through the I/O ports and route the data
-             * appropriately.
+             * Go through the I/O ports and route the data appropriately.
              */
 
-            for (auto mj : self->jack_ports())      /* midi_jack pointers   */
+            for (auto mj : self->jack_ports())  /* midi_jack pointers       */
             {
                 if (mj->enabled())
                 {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI            /* printf() asynch unsafe   */
                     if (mj->is_input_port())
                         printf("Enabled: %s\n", mj->port_name().c_str());
 #endif
@@ -127,7 +126,7 @@ jack_process_io (jack_nframes_t nframes, void * arg)
                     else
                         (void) jack_process_rtmidi_output(nframes, mjp);
                 }
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI            /* printf() asynch unsafe   */
                 else
                 {
                     if (mj->is_input_port())
@@ -715,21 +714,36 @@ midi_jack_info::lookup_midi_jack
     midi_jack * result = nullptr;
     if (! shortname.empty())
     {
-        for (const auto mj : jack_ports())          /* midi_jack pointers   */
+        const portlist & ports = jack_ports();      /* midi_jack pointers   */
+
+#if defined SEQ66_PLATFORM_DEBUG
+        char value[c_async_safe_utoa_size];
+        char temp[512];
+        if (rc().investigate())
         {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            printf
-            (
-                "!! Short name:     '%s'\n"
-                "   Long name:      '%s'\n"
-                "   MJ Port name:   '%s'\n"
-                "   MJ Remote name: '%s'\n"
-                ,
-                shortname.c_str(),
-                longname.c_str(),
-                mj->port_name().c_str(),
-                mj->remote_port_name().c_str()
-            );
+            async_safe_utoa(value, unsigned(count()));
+            std::strcpy(temp, "!! Port lookup: ");
+            std::strcat(temp, value);
+            std::strcat(temp, " jack ports\n  short:  ");
+            std::strcat(temp, shortname.c_str());
+            std::strcat(temp, "\n   long:  ");
+            std::strcat(temp, longname.c_str());
+            async_safe_strprint(temp, false);
+        }
+#endif
+
+        for (const auto mj : ports)
+        {
+#if defined SEQ66_PLATFORM_DEBUG
+            if (rc().investigate())
+            {
+                temp[0] = 0;
+                std::strcpy(temp, "jack port: ");
+                std::strcat(temp, mj->port_name().c_str());
+                std::strcat(temp, "\n        jack remote: ");
+                std::strcat(temp, mj->remote_port_name().c_str());
+                async_safe_strprint(temp);
+            }
 #endif
             bool match = mj->port_name() == shortname;
             if (! match && ! longname.empty())
@@ -758,7 +772,8 @@ void
 midi_jack_info::show_details () const
 {
     int count = 0;
-    for (const auto mj : jack_ports())              /* midi_jack pointers   */
+    const portlist & ports = jack_ports();          /* midi_jack pointers   */
+    for (const auto mj : ports)
     {
         std::string d = "Index ";
         d += std::to_string(count);

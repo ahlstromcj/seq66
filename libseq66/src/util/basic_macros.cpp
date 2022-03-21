@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2022-02-22
+ * \updates       2022-03-20
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of
@@ -139,14 +139,14 @@ static const char * s_label = "[seq66] ";                               //  8
 static const char * s_nl    = "\n";                                     //  1
 
 void
-async_safe_strprint (const char * msg)
+async_safe_strprint (const char * msg, bool colorit)
 {
     if (not_nullptr(msg))
     {
         size_t count = strlen(msg);
         if (count > 0)
         {
-            if (is_a_tty(STDOUT_FILENO))
+            if (is_a_tty(STDOUT_FILENO) && colorit)
             {
                 write_msg(STDOUT_FILENO, s_start, 26);
                 write_msg(STDOUT_FILENO, msg, count);
@@ -163,14 +163,14 @@ async_safe_strprint (const char * msg)
 }
 
 void
-async_safe_errprint (const char * msg)
+async_safe_errprint (const char * msg, bool colorit)
 {
     if (not_nullptr(msg))
     {
         size_t count = strlen(msg);
         if (count > 0)
         {
-            if (is_a_tty(STDERR_FILENO))
+            if (is_a_tty(STDERR_FILENO) && colorit)
             {
                 write_msg(STDERR_FILENO, s_error, 26);
                 write_msg(STDERR_FILENO, msg, count);
@@ -191,12 +191,12 @@ async_safe_errprint (const char * msg)
  *  should be good and the buffer should be 24 characters.  After getting the
  *  digits, the count is the number of digits, which is 1 at a minimum.
  *
- * \param value
- *      The unsigned value to convert to an ASCII null-terminated string.
- *
  * \param destination
  *      Provides a 24-byte buffer to hold the resulting string.  Assumed to be
  *      valid and at least that large, for speed.
+ *
+ * \param number
+ *      The unsigned value to convert to an ASCII null-terminated string.
  *
  * \param spacebefore
  *      If true (the default), then output a space first.  This helps in
@@ -204,18 +204,18 @@ async_safe_errprint (const char * msg)
  */
 
 void
-async_safe_utoa (unsigned value, char * destination, bool spacebefore)
+async_safe_utoa (char * destination, unsigned number, bool spacebefore)
 {
     const unsigned ascii_base = unsigned('0');
     char reversed[c_async_safe_utoa_size];
     int count = 0;
     do
     {
-        unsigned remainder = value % 10;
+        unsigned remainder = number % 10;
         reversed[count++] = char(remainder) + ascii_base;
-        value /= 10;
+        number /= 10;
 
-    } while (value != 0);
+    } while (number != 0);
 
     int index = 0;
     int limit = count;

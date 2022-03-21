@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>686</width>
-    <height>463</height>
+    <width>688</width>
+    <height>465</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -219,8 +219,11 @@ p, li { white-space: pre-wrap; }
      <height>32</height>
     </size>
    </property>
+   <property name="toolTip">
+    <string>Restarts the whole application, reloading any changed settings.</string>
+   </property>
    <property name="text">
-    <string>Reload Session</string>
+    <string>Restart Session</string>
    </property>
   </widget>
   <widget class="QTextEdit" name="sessionManagerNameText">
