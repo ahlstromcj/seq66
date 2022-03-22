@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2022-03-07
+% \update      2022-03-22
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -252,30 +252,29 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.65]{main-window/main-window-light-gridstyle-3-markup.png}
-   \caption{Seq66 Main Screen}
-   \label{fig:main_screen}
+%  \includegraphics[scale=0.65]{main-window/main-window-light-gridstyle-3-markup.png}
+   \includegraphics[scale=0.65]{main-window/main-window-0_98_6-annotated.png}
+   \caption{Seq66 Main Screen, Annotated}
+   \label{fig:main_screen_annotated}
 \end{figure}
 
    The \textsl{Seq66} main window appears as shown above.
    This figure has many differences from the \textsl{Seq24} main window,
    but the functionality is similar.
    \textsl{Seq66} behaves better on resizing, and can also
-   be configured to start with its size scaled up or scaled down.
-   Most features, including the "look" of the application,
+   be configured to start with its size scaled up or down.
+   Its features, including the "look" of the application,
    can be configured via the 'rc', 'usr', 'ctrl', 'drums', 'playlist', 'mutes',
    and 'palette' configuration files, via command-line options, via
-   desktop themes, and via Qt style-sheets ('qss' files).
-%  There are many new front-panel items in \textsl{Seq66}.
-%  Many of these buttons have configurable keystrokes and configurable MIDI
-%  controls.
+   desktop themes, and via Qt ('qss') style-sheets.
 
    We break the discussion into sections for the following
    groups shown in the figure above:
 
    \begin{itemize}
       \item \textbf{Tabs}
-      \item \textbf{Main Screen Controls}
+      \item \textbf{Main Top}
+      \item \textbf{Main Bottom}
       \item \textbf{Menu}
    \end{itemize}
 
@@ -341,10 +340,9 @@
 \label{paragraph:introduction_main_tabs_events}
 
    The \textbf{Event Editor} provides a way to see the details of events
-   and to do some modifying of them.
-   It's meant for light usage; there are some less-used events that it cannot
-   edit.
-   It is especially useful in trouble-shooting.
+   and to do some modifying of them.  It's meant for light usage; there are
+   some less-used events that it cannot edit.
+   It is especially useful in trouble-shooting a song.
    See \sectionref{sec:event_editor}.
 
 \paragraph{Tabs / Playlist}
@@ -356,9 +354,7 @@
    or MIDI control.
 
    Note that editing of the playlists can also be done by directly editing a
-   \texttt{.playlist} file.
-
-   See \sectionref{sec:playlist}.
+   \texttt{.playlist} file.  See \sectionref{sec:playlist}.
 
 \paragraph{Tabs / Sets}
 \label{paragraph:introduction_main_tabs_sets}
@@ -390,7 +386,7 @@
    terminal shell.
    Also see \sectionref{sec:sessions}.
 
-\subsubsection{Main Top Controls (Condensed View)}
+\subsubsection{Main Top Controls}
 \label{subsubsec:introduction_main_top_controls}
 
    Here, we first discuss the top and bottom \textbf{Main} controls, as
@@ -398,9 +394,10 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.75]{main-window/main-window-controls.png}
-   \caption{Main Screen Controls}
-   \label{fig:main_screen_controls}
+%  \includegraphics[scale=0.75]{main-window/main-window-controls.png}
+   \includegraphics[scale=0.75]{main-window/main-window-top.png}
+   \caption{Main Window Top Controls}
+   \label{fig:main_window_top_controls}
 \end{figure}
 
    See the following section and
@@ -411,24 +408,26 @@
    The top main control items are, from left to right:
 
    \begin{itemize}
+      \item \textbf{Seq66 Logo}
+      \item \textbf{Engine Status}
       \item \textbf{PPQN Selection}
       \item \textbf{Buss Override for Play-set}
       \item \textbf{Global Beats Per Measure}
       \item \textbf{Global Beat Width}
-      \item \textbf{BBT or HMS Time Display}
-      \item \textbf{Beat Indicator}
+      \item \textbf{BBT/HMS Time Display}
+      \item \textbf{Beat Indicator Bar}
    \end{itemize}
 
-   Not shown are some status indicators that can appear to the right of the
-   "Seq66" logo:
+   The status indicators that can appear to the right of the logo:
 
    \begin{itemize}
       \item \textbf{ALSA} appears if running using ALSA for MIDI.
       \item \textbf{JACK} appears if running using JACK for MIDI.
-      \item \textbf{Master} appears if running using JACK transport, as
+      \item \textbf{JACK Master} appears if running using JACK transport, as
          transport master.
          JACK transport can be used even if using ALSA for MIDI.
-      \item \textbf{Slave} appears if using JACK transport as transport slave.
+      \item \textbf{JACK Slave} appears if using JACK transport as
+         transport slave.
       \item \textbf{Portmidi} appears if using the internal portmidi-derived
          MIDI engine.  This is currently always the case on \textsl{Windows}.
    \end{itemize}
@@ -525,14 +524,24 @@
 \label{subsubsec:introduction_main_bottom_controls}
 
    The bottom main control items take up two rows.
-   The first row contains:
+   Here is the first row:
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.75]{main-window/main-window-controls.png}
+   \includegraphics[scale=0.75]{main-window/main-window-bottom-1.png}
+   \caption{Main Window Bottom, First Row}
+   \label{fig:main_window_bottom_1}
+\end{figure}
+
+   It contains:
 
    \begin{itemize}
       \item \textbf{Set Name}
-      \item \textbf{Uderrun Indicator} (not shown)
+      \item \textbf{Underrun Indicator}
       \item \textbf{Set Reset ("!")}
       \item \textbf{Active Set Indicator}
-      \item \textbf{Set 0}
+      \item \textbf{Set 0 Selector}
       \item \textbf{Set Changer}
    \end{itemize}
 
@@ -610,6 +619,16 @@
 \subsubsection{Main Bottom Controls, Second Row}
 \label{subsubsec:introduction_main_bottom_controls_2}
 
+   Here is the second row:
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.75]{main-window/main-window-controls.png}
+   \includegraphics[scale=0.75]{main-window/main-window-bottom-2.png}
+   \caption{Main Window Bottom, Second Row}
+   \label{fig:main_window_bottom_2}
+\end{figure}
+
    On to the next section of the main bottom buttons, the second row contains:
 
    \begin{itemize}
@@ -617,8 +636,8 @@
       \item \textbf{Stop Button}
       \item \textbf{Pause Button}
       \item \textbf{Play Button}
-      \item \textbf{Loop Button} (not shown, new since 0.93.0)
-      \item \textbf{Live Record}
+      \item \textbf{Loop Button}
+      \item \textbf{Live Song Record}
       \item \textbf{Keep Queue Button}
       \item \textbf{Mute Group Learn Button}
       \item \textbf{Developer Test Button}
@@ -653,12 +672,12 @@
 \paragraph{Pause Button}
 \label{paragraph:introduction_pause_button}
 
-   This button stops playback, but does not rewind to the beginning of the song.
-   It also resumes playback at the same point as the pause.
-   By default, the \texttt{Period} key operates this function,
-   and there is a MIDI-control slot and a MIDI-announcement slot available for it.
-   This key is also hardwired to pause and start playback in the pattern editor and
-   the song editor.
+   This button stops playback, but does not rewind to the beginning of the
+   song.  It also resumes playback at the same point as the pause.  By default,
+   the \texttt{Period} key operates this function, and there is a MIDI-control
+   slot and a MIDI-announcement slot available for it.  This key is also
+   hardwired to pause and start playback in the pattern editor and the song
+   editor.
 
 \paragraph{Play Button}
 \label{paragraph:introduction_play_button}
@@ -682,10 +701,10 @@
    In addition, looping can now be done in both the Live and Song modes of
    playback.
 
-\paragraph{Live Record Button}
+\paragraph{Live Song Record Button}
 \label{paragraph:introduction_live_record_button}
 
-   This button causes a live playing session to be recorded.
+   This button causes a live playing session to be recorded to Song mode.
    That is, triggers are added to the song automatically as the musician mutes
    and unmutes patterns, and the triggers can then be
    seen as layouts in the \textsl{Song} editor.
@@ -703,12 +722,16 @@
 \paragraph{Mute Group Learn Button}
 \label{paragraph:introduction_mute_group_learn_button}
 
+   \index{L button}
    Also called the "L" button.
    Sets up to learn the current set of active patterns ("mute group") into a
    mute-group.
    When in group-learn mode, the \texttt{Shift} key cannot be hit, so the
    group-learn mode automatically converts the keys to their shifted versions.
    This feature known as \textsl{shift-lock} or \textsl{auto-shift}.
+   This feature is not used if a non-QWERTY keyboard layout is
+   specified in the 'ctrl' file.
+
    After pressing the "L" button, the user can then press a keystroke, which is
    automatically shifted, and the pattern set is saved, and can be recalled by
    that button (shifted) later.  It can be saved in a 'mutes' file, as part of

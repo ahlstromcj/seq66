@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-09-13
+% \update      2022-03-22
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -299,7 +299,7 @@
 \label{subsec:song_editor_measures_ruler}
 
    \index{measures ruler}
-   The measures ruler ("bar indicator")
+   The measures ruler ("bar indicator", or "Time")
    consists of a \textsl{timeline} at the top and the 
    \textbf{L marker} and \textbf{R marker} mentioned above.
 
@@ -307,14 +307,23 @@
    of the arrangement panel.  It provides a place to put the left and right
    markers.  In the \textsl{Seq24} documentation, it is called the "bar
    indicator".
-   There are some hidden details in the measures panel.
-   One can move the mouse to the top-half of the ruler, and the cursor changes
-   to a vertical pointer.
-   In this case, a click will set the starting point, shown by a red dot in the
-   time-line and a vertical red line in the piano roll.
+   There are some hidden details (tricks) in the measures panel.
 
-   One can move the mouse to the top-half of the ruler, and the cursor changes
-   to a "finger" pointer. Here, the "L" and "R" markers can be moved.
+   \begin{itemize}
+      \item \textbf{In the upper half} of the time-line,
+         the mouse pointer changes to a vertical pointer.
+         Clicking there then shows a red dot; these mark
+         the starting position of playback.
+         This is useful for review.
+      \item \textbf{In the lower half} of the time-line,
+         the mouse pointer changes to a "finger" icon.
+         Left-clicking there then moves the "L" marker to that point.
+         Right-clicking there moves the "R" marker to that point.
+         ("R" will never precede "L", though).
+         If the \textbf{Loop} button in the main window is active, then
+         playback will loop between the "L" and "R" buttons.
+         This looping now works with both Live and Song modes.
+   \end{itemize}
 
    \index{measures ruler!left-click}
    Left-click in the bottom-half of the measures ruler to move and drop an

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-02-12
+% \update      2022-03-22
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -108,7 +108,7 @@
 
    This dialog lets one type a file-name, highlighting the first file
    that matches the characters typed.
-   \textsl{Seq66} can open \textsl{Seq66}, MIDI SMF 0 and SMF 1 files, and
+   \textsl{Seq66} can open \textsl{Seq66}, MIDI SMF 0, and SMF 1 files, and
    \textsl{Cakewalk} WRK files.
    If the file is an SMF 0 file, where all channels appear on one track, the
    track is split so that each channel (0 to 15) is stored in the corresponding
@@ -143,22 +143,31 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.65]{main-menu/file/dark-menu-recent-files.png}
+   \includegraphics[scale=0.65]{main-menu/file/menu-recent-files.png}
    \caption{Seq66 Menu File Recent Files}
+   \label{fig:menu_file_recent_files}
+\end{figure}
+
+   Here is the long form when the 'rc' file's
+   \texttt{[recent-files] full-paths} value is set to true:
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.65]{main-menu/file/dark-menu-recent-files.png}
+   \includegraphics[scale=0.65]{main-menu/file/menu-recent-files-long.png}
+   \caption{Seq66 Menu File Recent Files, Full Paths}
    \label{fig:menu_file_recent_files}
 \end{figure}
 
    This list is saved in the \texttt{[recent-files]} section of the
    'rc' configuration file.
-   In the menu, only the last part of the file-name is
-   shown, but in the 'rc' file,
-   the full path to the file-name is stored.
+   In the 'rc' file, the full path to the file-name is stored.
    This path is in "UNIX" format, using the forward slash, or solidus,
    as the path separator, even in \textsl{Windows}.
    The \texttt{full-paths} option can be set to show the full path in the
    recent-files drop-down menu.
    Only unique entries are included in the recent-files list.
-   The limit is 10 recent-file entries.
+   The limit is 12 recent-file entries.
    This is a feature from \textsl{Kepler34} \cite{kepler34}.
    One can also set \textsl{Seq66} to load the most-recent file at startup.
    Here is an example from an 'rc' file:
@@ -481,7 +490,8 @@
 \begin{figure}[H]
    \centering 
 %  \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_clock_tab.png}
-   \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_clock_post_portmap.png}
+%  \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_clock_post_portmap.png}
+   \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_clock_tab.png}
    \caption{MIDI Clock Tab}
    \label{fig:midi_clock_tab}
 \end{figure}
@@ -528,7 +538,7 @@
    \end{enumber}
 
    The format of the left side of the entry listing is like the following
-   (if port-mapping is not enabled, the port-naming option is "long", and the
+   when the port-naming option is "long", and the
    MIDI subsystem is ALSA):
 
    \begin{verbatim}
@@ -659,13 +669,28 @@
 
    \itempar{Meta Events}{midi clock!meta events}
    \index{tempo-track-number}
-   This section consists of one item, the Tempo Track number.
-   It allows the user to move the tempo track from pattern 0 to
+   This section consists of the following items:
+
+   \begin{enumerate}
+      \item \textbf{Tempo track number}
+      \item \textbf{Precision}
+   \end{enumerate}
+
+   \textbf{Tempo track number}
+   allows the user to move the tempo track from pattern 0 to
    another pattern.  Changing this option is not recommended, since track 1 (0)
    is the official track for tempo events, but \textsl{Seq66} allows the
    user to record tempo events to another track.  \textsl{Seq66} will
    process tempo events in any pattern.
    \textsl{The "Set as Tempo Track" button to the right is not yet functional.}
+
+   \index{usr!bpm-precision}
+   \textbf{Precision}
+   allows setting the number of digits past the decimal point to 0, 1, or 2.
+   This is also a 'usr' setting.
+   See \sectionref{subsubsec:usr_file_user_midi_settings}.
+   The BPM (tempo) is stored in the MIDI file multiplied by 1000 to accommodate
+   the decimal places.
 
    \itempar{Client Name:ID/UUID}{client ID}
    This read-only text field shows two things:
@@ -971,12 +996,16 @@
          automatically enabled as well.
       \item \textbf{Native JACK MIDI}.
          \index{JACK!native midi}
-         This option is for the \texttt{seq66} version of
+         This option is for the \texttt{qseq66} (Linux) version of
          \textsl{Seq66}.
          If set, MIDI input and output use native JACK MIDI,
          rather than ALSA.  However, if JACK is not running on the
          system, then \texttt{seq66} will fall back to ALSA mode.
-         The command-line option is \texttt{-{}-jack-midi}.
+         (However, if \texttt{jackdbus} is running, but the JACK engine is not,
+         then a couple of non-working manual ports are created.  To be fixed in
+         the future.)
+         The command-line option is \texttt{-{}-jack-midi}
+         or \texttt{-{}-jack}.
       \item \textbf{JACK Auto-Connect}.
          \index{JACK!auto-connect}
          This option has been true for a long time in \textsl{Seq66}, and
