@@ -454,7 +454,7 @@ signal_end_restart ()
  *  Provides a basic session handler, called upon receipt of a POSIX signal.
  *
  *  Note that SIGSTOP and SIGKILL cannot be blocked, ignored, or caught by a
- *  handler.  Also note that SIGKILL bypass the SIGTERM handler; it is a last
+ *  handler.  Also note that SIGKILL bypasses the SIGTERM handler; it is a last
  *  resort for runaway processes that don't respond to SIGTERM.
  */
 
@@ -491,9 +491,7 @@ session_setup ()
     struct sigaction action;
     memset(&action, 0, sizeof action);
     action.sa_handler = session_handler;
-    sg_needs_close = false;
-    sg_needs_save = false;
-    sg_restart = false;
+    sg_needs_close = sg_needs_save = sg_restart = false;
     sigaction(SIGINT, &action, NULL);                   /* SIGINT is 2      */
     sigaction(SIGTERM, &action, NULL);                  /* SIGTERM is 15    */
     sigaction(SIGUSR1, &action, NULL);                  /* SIGUSR1 is 10    */
@@ -561,9 +559,7 @@ get_pid ()
 void
 session_setup ()
 {
-    sg_needs_close = false;
-    sg_needs_save = false;
-    sg_restart = false;
+    sg_needs_close = sg_needs_save = sg_restart = false;
 }
 
 #if defined SEQ66_USE_PID_EXISTS
