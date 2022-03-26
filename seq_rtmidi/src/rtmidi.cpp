@@ -315,7 +315,7 @@ rtmidi_out::rtmidi_out (midibus & parentbus, rtmidi_info & info) :
         }
         else
         {
-            errprintfunc("no system support for specified API argument");
+            errprintfunc("no system support for specified API");
         }
     }
 

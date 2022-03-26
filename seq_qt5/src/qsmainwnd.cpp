@@ -1714,7 +1714,7 @@ qsmainwnd::new_session ()
         std::string defname = rc().midi_filename();
         QString text = QInputDialog::getText
         (
-            this, tr("New Session MIDI File"),      /* parent and title     */
+            this, tr("Session MIDI File"),          /* parent and title     */
             tr("MIDI FIle Base Name"),              /* input field label    */
             QLineEdit::Normal, qt(defname), &ok
         );
@@ -1903,7 +1903,7 @@ qsmainwnd::save_file_as ()
 {
     bool result = false;
     std::string prompt = use_nsm() ?
-        "Export MIDI file from NSM session as..." : "Save MIDI file as..." ;
+        "Export MIDI file from session as..." : "Save MIDI file as..." ;
 
     std::string currentfile = rc().midi_filename();
     std::string filename = filename_prompt(prompt, currentfile);

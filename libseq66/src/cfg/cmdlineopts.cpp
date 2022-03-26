@@ -228,8 +228,8 @@ static const std::string s_help_1b =
 "   -B, --buss b             Covers the 'bus' versus 'buss' confusion.\n"
 "   -l, --client-name label  Use this name instead of 'seq66'. Overridden by a\n"
 "                            session manager.\n"
-"   -q, --ppqn qn            Specify default PPQN to replace 192.  The MIDI\n"
-"                            file might specify its own PPQN.\n"
+"   -q, --ppqn qn            Specify default PPQN to replace 192.  The MIDI file\n"
+"                            can specify its own PPQN.\n"
 "   -p, --priority           Run high priority, FIFO scheduler (needs root).\n"
 "   -P, --pass-sysex         Passes incoming SysEx messages to all outputs.\n"
 "                            Not yet fully implemented.\n"
@@ -849,12 +849,12 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         );
         if (c == c_missing_arg)             /* missing argument indicator   */
         {
-            errprint("An option is missing an argument");
+            errprint("Option missing an argument");
             return (-1);
         }
         else if (c == c_bad_option)
         {
-            errprint("A non-existent option or missing argument specified");
+            errprint("Non-existent option");
             return (-1);
         }
         else if (c == (-1))

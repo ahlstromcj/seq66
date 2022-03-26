@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Refactoring by Chris Ahlstrom
  * \date          2016-12-08
- * \updates       2022-02-05
+ * \updates       2022-03-26
  * \license       GNU GPLv2 or above
  *
  *  This class is like the rtmidi_in and rtmidi_out classes, but cut down to

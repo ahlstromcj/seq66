@@ -421,7 +421,7 @@ mastermidibase::copy_io_busses ()
     {
         bool inputflag = m_inbus_array.get_input(bus);
         std::string name = m_inbus_array.get_midi_bus_name(bus);
-        std::string alias = m_outbus_array.get_midi_alias(bus);
+        std::string alias = m_inbus_array.get_midi_alias(bus);
         m_master_inputs.add(bus, inputflag, name, "", alias);
     }
     m_master_clocks.clear();

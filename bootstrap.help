@@ -1,0 +1,42 @@
+Usage: ./bootstrap [options]                             (0.98.3-2022-03-17)
+
+'bootstrap' sets up GNU automake and libtool support for the Seq66 project
+and creates the 'configure' script.  It can super-clean the project, removing
+all generated files and directories.  It provides options to save trouble
+passing long options to the configure script for some canned setups.
+
+ --clean             Delete the usual derived files from the project.
+ --full-clean        Delete all derived and configure-related files.  The
+                     bootstrap script will need to be run again.
+ --debug, -ed        Configure for debugging and disable shared libraries for
+                     easier debugging.  Also: --enable-debug=gdb
+ --calls             Add GNU instrumentation calls for function entry. But the
+                     trace output is much too voluminous to be useful.
+ --profile, -prof    Enable profiling and debugging.
+ --release, -er      Configure for release.  Sets up a 'silent' build as well.
+                     Either --debug or --release must be specified.
+                     Also: --enable-release.
+ --static            Do a static release build.
+ --portmidi, -pm     Configure for qpseq66.  Implies --enable-portmidi.
+ --rtmidi, -rm       Configure for qseq66 (ALSA/JACK version, the default).
+                     Implies --enable-rtmidi.  The official GUI is Qt 5.
+ --refresh, -pr      Enables the port-refresh feature for JACK.  Will be
+                     the default once it works.
+ --disable-jack, -dj Disables JACK support, enables rtmidi.
+ --no-metadata       Disable JACK metadata support.
+ --cli, -cli         Configure for seq66cli (command-line rtmidi version).
+ --no-nsm            Disable Non Session Manager support.  Saves some code.
+ --manual            Build the user manual.
+ --help              Show this help text.
+
+There are some options too rare to document here. Read the bootstrap script.
+The default (no options) bootstraps the project (e.g. runs 'autoheader'.)
+Then one must run 'configure', which sets up for a normal release build.
+A common option for 'bootstrap' is --enable-debug (-ed), which adds
+--disable-shared and sets up the configure script for debugging without
+needing "libtool --mode=execute gdb qseq66".  The most common command
+sequence would be:
+
+    $ ./bootstrap -er
+    $ make &> make.log
+

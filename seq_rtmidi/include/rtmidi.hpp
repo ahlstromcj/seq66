@@ -308,10 +308,7 @@ public:
 
 protected:
 
-    void openmidi_api
-    (
-        rtmidi_api api, rtmidi_info & info //, int index = SEQ66_NO_INDEX
-    );
+    void openmidi_api (rtmidi_api api, rtmidi_info & info);
 
 };
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2022-03-21
+ * \updates       2022-03-26
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -224,7 +224,11 @@ smanager::main_settings (int argc, char * argv [])
                 std::string errmsg;
                 if (file_readable(fname))
                 {
+                    std::string path;               /* not used here        */
+                    std::string basename;
                     m_midi_filename = fname;
+                    if (filename_split(fname, path, basename))
+                        rc().midi_filename(basename);
                 }
                 else
                 {
@@ -1051,8 +1055,8 @@ smanager::read_configuration
     rc().midi_filepath(midifilepath);           /* set MIDI dir     */
     if (! midifilepath.empty())
     {
-        file_message("NSM MIDI path", rc().midi_filepath());
-        file_message("NSM MIDI file", rc().midi_filename());
+        file_message("MIDI path", rc().midi_filepath());
+        file_message("MIDI file", rc().midi_filename());
     }
 
     std::string errmessage;

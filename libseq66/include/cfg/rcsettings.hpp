@@ -143,19 +143,6 @@ enum class timebase
 
 class rcsettings final : public basesettings
 {
-    /*
-     * Too many friends need access to the protected setters.
-     *
-     *      friend class cmdlineopts;
-     *      friend class clinsmanager;
-     *      friend class converter;
-     *      friend class midicontrolfile;
-     *      friend class mutegroupsfile;
-     *      friend class optionsfile;
-     *      friend class performer;
-     *      friend class rcfile;
-     *      friend class rtmidi_info;
-     */
 
 public:
 

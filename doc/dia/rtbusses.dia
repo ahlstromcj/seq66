@@ -1923,13 +1923,13 @@
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O7">
       <dia:attribute name="obj_pos">
-        <dia:point val="61.8137,15.4313"/>
+        <dia:point val="61.8137,15.3646"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="61.7637,15.3813;76.2362,22.0813"/>
+        <dia:rectangle val="61.7637,15.3146;76.2362,22.0146"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="61.8137,15.4313"/>
+        <dia:point val="61.8137,15.3646"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="14.372499999999999"/>
@@ -2232,17 +2232,17 @@
     </dia:object>
     <dia:object type="UML - Association" version="2" id="O8">
       <dia:attribute name="obj_pos">
-        <dia:point val="61.8137,17.3313"/>
+        <dia:point val="61.8137,17.2646"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="47.3802,3.96427;62.5637,18.1863"/>
+        <dia:rectangle val="47.3802,3.96427;62.5637,18.1196"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="61.8137,17.3313"/>
-        <dia:point val="54.2719,17.3313"/>
+        <dia:point val="61.8137,17.2646"/>
+        <dia:point val="54.2719,17.2646"/>
         <dia:point val="54.2719,4.70927"/>
         <dia:point val="47.4302,4.70927"/>
       </dia:attribute>
@@ -2425,18 +2425,18 @@
     </dia:object>
     <dia:object type="UML - Association" version="2" id="O10">
       <dia:attribute name="obj_pos">
-        <dia:point val="68.9999,15.3809"/>
+        <dia:point val="68.9999,15.3142"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="68.2499,6.70519;69.7499,16.1809"/>
+        <dia:rectangle val="68.2499,6.70519;69.7499,16.1142"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="68.9999,15.3809"/>
-        <dia:point val="68.9999,10.718"/>
-        <dia:point val="68.9916,10.718"/>
+        <dia:point val="68.9999,15.3142"/>
+        <dia:point val="68.9999,10.6847"/>
+        <dia:point val="68.9916,10.6847"/>
         <dia:point val="68.9916,6.75519"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
@@ -3001,17 +3001,17 @@
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O14">
       <dia:attribute name="obj_pos">
-        <dia:point val="61.8137,21.5313"/>
+        <dia:point val="61.8137,21.4646"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="49.6,20.6813;61.8637,41.8077"/>
+        <dia:rectangle val="49.6,20.6146;61.8637,41.8077"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="61.8137,21.5313"/>
-        <dia:point val="49.65,21.5313"/>
+        <dia:point val="61.8137,21.4646"/>
+        <dia:point val="49.65,21.4646"/>
         <dia:point val="49.65,41.7577"/>
         <dia:point val="49.7447,41.7577"/>
       </dia:attribute>
@@ -3760,18 +3760,18 @@
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O19">
       <dia:attribute name="obj_pos">
-        <dia:point val="68.9999,22.0817"/>
+        <dia:point val="68.9999,22.015"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="68.1499,22.0317;75.2984,28.8552"/>
+        <dia:rectangle val="68.1499,21.965;75.2984,28.8552"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="68.9999,22.0817"/>
-        <dia:point val="68.9999,25.8435"/>
-        <dia:point val="75.2484,25.8435"/>
+        <dia:point val="68.9999,22.015"/>
+        <dia:point val="68.9999,25.875"/>
+        <dia:point val="75.2484,25.875"/>
         <dia:point val="75.2484,28.8052"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
@@ -3780,7 +3780,7 @@
         <dia:enum val="1"/>
       </dia:attribute>
       <dia:attribute name="orth_autoroute">
-        <dia:boolean val="true"/>
+        <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>##</dia:string>
@@ -4198,7 +4198,7 @@
             <dia:string>#Calls rtmidi_info::api_port_start()#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -4256,7 +4256,7 @@
         <dia:point val="15.8383,52.2902"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="15.8383,51.6961;30.9058,54.0411"/>
+        <dia:rectangle val="15.8383,51.6961;30.9283,54.0411"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -4266,7 +4266,7 @@ midi_xxxx_info.  Could pass the mastermidibus
 to this function.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -4401,19 +4401,19 @@ to this function.#</dia:string>
     </dia:object>
     <dia:object type="UML - Association" version="2" id="O27">
       <dia:attribute name="obj_pos">
-        <dia:point val="46.3807,15.5502"/>
+        <dia:point val="46.3807,15.5511"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="45.6307,12.5936;48.1171,16.3502"/>
+        <dia:rectangle val="45.6307,12.5935;48.1171,16.3511"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="46.3807,15.5502"/>
+        <dia:point val="46.3807,15.5511"/>
         <dia:point val="46.3807,13.7469"/>
         <dia:point val="46.3771,13.7469"/>
-        <dia:point val="46.3771,12.6436"/>
+        <dia:point val="46.3771,12.6435"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -4421,7 +4421,7 @@ to this function.#</dia:string>
         <dia:enum val="1"/>
       </dia:attribute>
       <dia:attribute name="orth_autoroute">
-        <dia:boolean val="true"/>
+        <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>##</dia:string>
@@ -4472,7 +4472,7 @@ to this function.#</dia:string>
         <dia:real val="0.10000000000000001"/>
       </dia:attribute>
       <dia:attribute name="line_colour">
-        <dia:color val="#000000ff"/>
+        <dia:color val="#0000ffff"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O5" connection="8"/>
@@ -4481,17 +4481,17 @@ to this function.#</dia:string>
     </dia:object>
     <dia:object type="UML - Association" version="2" id="O28">
       <dia:attribute name="obj_pos">
-        <dia:point val="61.8137,19.9313"/>
+        <dia:point val="61.8137,19.8646"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="32.3768,19.1475;62.5637,20.7863"/>
+        <dia:rectangle val="32.3768,19.1146;62.5637,20.7475"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="61.8137,19.9313"/>
-        <dia:point val="46.7702,19.9313"/>
+        <dia:point val="61.8137,19.8646"/>
+        <dia:point val="46.7702,19.8646"/>
         <dia:point val="46.7702,19.8925"/>
         <dia:point val="32.4268,19.8925"/>
       </dia:attribute>
@@ -4652,7 +4652,7 @@ to this function.#</dia:string>
             <dia:string>#via new() (pointers)#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -4674,18 +4674,18 @@ to this function.#</dia:string>
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O31">
       <dia:attribute name="obj_pos">
-        <dia:point val="68.9999,22.0817"/>
+        <dia:point val="68.9999,22.015"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="59.9451,22.0317;69.8499,28.926"/>
+        <dia:rectangle val="59.9451,21.965;69.8499,28.926"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="68.9999,22.0817"/>
-        <dia:point val="68.9999,25.8789"/>
-        <dia:point val="59.9951,25.8789"/>
+        <dia:point val="68.9999,22.015"/>
+        <dia:point val="68.9999,25.8455"/>
+        <dia:point val="59.9951,25.8455"/>
         <dia:point val="59.9951,28.876"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
@@ -5192,7 +5192,7 @@ to this function.#</dia:string>
 APIs get_all_port_info() function#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -5648,7 +5648,7 @@ APIs get_all_port_info() function#</dia:string>
         <dia:point val="49.9334,36.275"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="49.9334,35.6809;55.2184,37.2259"/>
+        <dia:rectangle val="49.9334,35.6809;55.2309,37.2259"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -5657,7 +5657,7 @@ APIs get_all_port_info() function#</dia:string>
 and aggregation#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -6382,7 +6382,7 @@ and aggregation#</dia:string>
         <dia:real val="0.10000000000000001"/>
       </dia:attribute>
       <dia:attribute name="line_colour">
-        <dia:color val="#000000ff"/>
+        <dia:color val="#0000ffff"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O41" connection="8"/>
@@ -6979,7 +6979,7 @@ and aggregation#</dia:string>
         <dia:point val="0.780713,15.5488"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="0.780713,14.9547;13.2257,27.6997"/>
+        <dia:rectangle val="0.780713,14.9547;13.2563,27.6997"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -7002,7 +7002,7 @@ and aggregation#</dia:string>
     busarrays.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -7038,7 +7038,7 @@ provide helper functions and API-
 specific MIDI-related calls.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -7063,7 +7063,7 @@ specific MIDI-related calls.#</dia:string>
         <dia:point val="70.2676,34.3243"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="70.2676,33.7302;82.5226,37.6752"/>
+        <dia:rectangle val="70.2676,33.7302;82.5451,37.6752"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -7075,7 +7075,7 @@ which might be better in the "info"
 class).#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -7166,7 +7166,7 @@ class).#</dia:string>
         <dia:point val="68.1815,49.5683"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="68.1815,48.9742;79.219,51.3192"/>
+        <dia:rectangle val="68.1815,48.9742;79.1856,51.3192"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -7176,7 +7176,7 @@ client, port handle, ringbuffer, and
  rtmidi_in_data (see top).#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -7469,7 +7469,7 @@ client, port handle, ringbuffer, and
         <dia:point val="79.8986,-5.84241"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="79.8986,-6.43647;83.7961,-5.69147"/>
+        <dia:rectangle val="79.8986,-6.43647;84.3586,-5.69147"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -7477,7 +7477,7 @@ client, port handle, ringbuffer, and
             <dia:string>#rtbusses.dia#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="80" name="Helvetica-Bold"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -7502,7 +7502,7 @@ client, port handle, ringbuffer, and
         <dia:point val="62.6728,-4.3417"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="62.6728,-4.93576;76.6478,-2.59076"/>
+        <dia:rectangle val="62.6728,-4.93576;76.6703,-2.59076"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -7512,7 +7512,7 @@ module. The "queue" is a home-grown ring
 buffer of MIDI messages.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -7614,27 +7614,27 @@ buffer of MIDI messages.#</dia:string>
     </dia:object>
     <dia:object type="Standard - Text" version="1" id="O70">
       <dia:attribute name="obj_pos">
-        <dia:point val="41.2236,-0.72403"/>
+        <dia:point val="41.2236,-0.857363"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="41.2236,-1.31809;57.3036,1.82691"/>
+        <dia:rectangle val="41.2236,-1.45143;57.3286,1.69357"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
           <dia:attribute name="string">
             <dia:string>#The rtmidi version of midibus also has a reference
 to an rtmidi_info object to handle initialization,
-polling, output, etc. This item is a "master"
+polling, output, etc. That item is a "master"
 to support MIDI functionality.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="41.2236,-0.72403"/>
+            <dia:point val="41.2236,-0.857363"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000ff"/>
@@ -7686,7 +7686,7 @@ to support MIDI functionality.#</dia:string>
         <dia:point val="-9.54463,64.9733"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-9.54463,64.3792;-5.64713,65.1242"/>
+        <dia:rectangle val="-9.54463,64.3792;-5.08463,65.1242"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -7694,7 +7694,7 @@ to support MIDI functionality.#</dia:string>
             <dia:string>#rtbusses.dia#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="80" name="Helvetica-Bold"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -7933,7 +7933,7 @@ to support MIDI functionality.#</dia:string>
         <dia:real val="0.10000000000000001"/>
       </dia:attribute>
       <dia:attribute name="line_colour">
-        <dia:color val="#000000ff"/>
+        <dia:color val="#0000ffff"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O74" connection="8"/>
@@ -8027,7 +8027,7 @@ to support MIDI functionality.#</dia:string>
         <dia:point val="34.3846,11.5796"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="34.3846,10.9855;41.1721,11.7305"/>
+        <dia:rectangle val="34.3846,10.9514;41.5921,11.7392"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -8035,16 +8035,16 @@ to support MIDI functionality.#</dia:string>
             <dia:string>#How to keep in sync?#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
-            <dia:real val="0.80000000000000004"/>
+            <dia:real val="0.84596106240550739"/>
           </dia:attribute>
           <dia:attribute name="pos">
             <dia:point val="34.3846,11.5796"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000ff"/>
+            <dia:color val="#0000ffff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="0"/>
@@ -8601,10 +8601,10 @@ to support MIDI functionality.#</dia:string>
     </dia:object>
     <dia:object type="Standard - Text" version="1" id="O88">
       <dia:attribute name="obj_pos">
-        <dia:point val="50.4128,23.4135"/>
+        <dia:point val="52.1461,24.2135"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="50.4128,22.8194;64.9578,25.1644"/>
+        <dia:rectangle val="52.1461,23.6194;66.7368,25.9644"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -8614,13 +8614,13 @@ to process MIDI I/O through the other  JACK
 process callbacks.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="50.4128,23.4135"/>
+            <dia:point val="52.1461,24.2135"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000ff"/>
@@ -8651,7 +8651,7 @@ initialized(), in mastermidibus::activate(). These
 are stored in the portlist vector.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -8687,7 +8687,7 @@ to create new midi_[in/out]_jack
 objects to handle I/O.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -8745,7 +8745,7 @@ objects to handle I/O.#</dia:string>
         <dia:point val="15.7554,55.6337"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="15.7554,55.0396;32.7354,57.3846"/>
+        <dia:rectangle val="15.7554,55.0396;32.7479,57.3846"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -8755,7 +8755,7 @@ API functions via the get_api_info() function.  Is there
 any way to streamline this process?#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -8780,7 +8780,7 @@ any way to streamline this process?#</dia:string>
         <dia:point val="-6.69463,59.0837"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-6.69463,58.4896;13.6354,63.2346"/>
+        <dia:rectangle val="-6.69463,58.4896;13.6579,63.2346"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -8793,7 +8793,7 @@ port numbers from midi_port_info into:
     midi_jacks via the rtmidi_info master.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -8818,7 +8818,7 @@ port numbers from midi_port_info into:
         <dia:point val="15.7554,59.6837"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="15.7554,59.0896;33.5654,61.4346"/>
+        <dia:rectangle val="15.7554,59.0896;33.6004,61.4346"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -8828,7 +8828,7 @@ rtmidi_info (as shown above) to tell it to update its
 list of ports/midibusses.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -8853,7 +8853,7 @@ list of ports/midibusses.#</dia:string>
         <dia:point val="0.622033,39.0004"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="0.622033,38.4063;11.9095,41.5513"/>
+        <dia:rectangle val="0.622033,38.4063;11.9445,41.5513"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -8864,7 +8864,7 @@ present.  It can also create virtual
 (manual) busses.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -8889,7 +8889,7 @@ present.  It can also create virtual
         <dia:point val="33.172,9.06353"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="33.172,8.46947;53.0545,10.0145"/>
+        <dia:rectangle val="33.172,8.46947;53.0911,10.0145"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -8898,7 +8898,7 @@ present.  It can also create virtual
 internal port IDs. Currently obtained only at startup.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
@@ -8920,10 +8920,10 @@ internal port IDs. Currently obtained only at startup.#</dia:string>
     </dia:object>
     <dia:object type="Standard - Text" version="1" id="O97">
       <dia:attribute name="obj_pos">
-        <dia:point val="16.7554,-0.736472"/>
+        <dia:point val="16.7554,-0.869805"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.7554,-1.33053;38.8379,1.81447"/>
+        <dia:rectangle val="16.7554,-1.46387;38.8379,1.68113"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -8934,13 +8934,13 @@ the api_xxx() functions.  Consider that pointer a port proxy.  The
 in the api_init_xxx() functions called when the port/bus is created.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="16.7554,-0.736472"/>
+            <dia:point val="16.7554,-0.869805"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000ff"/>
@@ -9565,13 +9565,179 @@ in the api_init_xxx() functions called when the port/bus is created.#</dia:strin
 the midi_jack constructor.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
           </dia:attribute>
           <dia:attribute name="height">
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
             <dia:point val="39.5833,31.4639"/>
+          </dia:attribute>
+          <dia:attribute name="color">
+            <dia:color val="#000000ff"/>
+          </dia:attribute>
+          <dia:attribute name="alignment">
+            <dia:enum val="0"/>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
+      <dia:attribute name="valign">
+        <dia:enum val="3"/>
+      </dia:attribute>
+    </dia:object>
+    <dia:object type="Standard - BezierLine" version="0" id="O114">
+      <dia:attribute name="obj_pos">
+        <dia:point val="46.3807,16.7005"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="47.1572,16.3943;52.131,28.743"/>
+      </dia:attribute>
+      <dia:attribute name="bez_points">
+        <dia:point val="46.3807,16.7005"/>
+        <dia:point val="46.684,16.7005"/>
+        <dia:point val="55.925,13.9417"/>
+        <dia:point val="47.2941,28.6061"/>
+      </dia:attribute>
+      <dia:attribute name="corner_types">
+        <dia:enum val="0"/>
+        <dia:enum val="0"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#0000ffff"/>
+      </dia:attribute>
+      <dia:attribute name="line_width">
+        <dia:real val="0.20000000298023224"/>
+      </dia:attribute>
+      <dia:attribute name="line_style">
+        <dia:enum val="3"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow">
+        <dia:enum val="22"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow_length">
+        <dia:real val="0.5"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow_width">
+        <dia:real val="0.5"/>
+      </dia:attribute>
+      <dia:attribute name="end_arrow">
+        <dia:enum val="22"/>
+      </dia:attribute>
+      <dia:attribute name="end_arrow_length">
+        <dia:real val="0.5"/>
+      </dia:attribute>
+      <dia:attribute name="end_arrow_width">
+        <dia:real val="0.5"/>
+      </dia:attribute>
+      <dia:connections>
+        <dia:connection handle="0" to="O5" connection="8"/>
+        <dia:connection handle="3" to="O74" connection="4"/>
+      </dia:connections>
+    </dia:object>
+    <dia:object type="Standard - BezierLine" version="0" id="O115">
+      <dia:attribute name="obj_pos">
+        <dia:point val="18.1621,5.03553"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="13.8423,4.56192;18.1621,16.4925"/>
+      </dia:attribute>
+      <dia:attribute name="bez_points">
+        <dia:point val="18.1621,5.03553"/>
+        <dia:point val="16.9801,5.03553"/>
+        <dia:point val="12.4583,8.73936"/>
+        <dia:point val="14.6018,16.4925"/>
+      </dia:attribute>
+      <dia:attribute name="corner_types">
+        <dia:enum val="0"/>
+        <dia:enum val="0"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#0000ffff"/>
+      </dia:attribute>
+      <dia:attribute name="line_width">
+        <dia:real val="0.20000000298023224"/>
+      </dia:attribute>
+      <dia:attribute name="line_style">
+        <dia:enum val="3"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow">
+        <dia:enum val="22"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow_length">
+        <dia:real val="0.5"/>
+      </dia:attribute>
+      <dia:attribute name="start_arrow_width">
+        <dia:real val="0.5"/>
+      </dia:attribute>
+      <dia:attribute name="end_arrow">
+        <dia:enum val="22"/>
+      </dia:attribute>
+      <dia:attribute name="end_arrow_length">
+        <dia:real val="0.5"/>
+      </dia:attribute>
+      <dia:attribute name="end_arrow_width">
+        <dia:real val="0.5"/>
+      </dia:attribute>
+      <dia:connections>
+        <dia:connection handle="0" to="O41" connection="6"/>
+        <dia:connection handle="3" to="O4" connection="12"/>
+      </dia:connections>
+    </dia:object>
+    <dia:object type="Standard - Text" version="1" id="O116">
+      <dia:attribute name="obj_pos">
+        <dia:point val="35.725,40.3394"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="35.725,39.7453;41.6125,41.2903"/>
+      </dia:attribute>
+      <dia:attribute name="text">
+        <dia:composite type="text">
+          <dia:attribute name="string">
+            <dia:string>#lookup_by_name()
+#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="font">
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
+          </dia:attribute>
+          <dia:attribute name="height">
+            <dia:real val="0.80000000000000004"/>
+          </dia:attribute>
+          <dia:attribute name="pos">
+            <dia:point val="35.725,40.3394"/>
+          </dia:attribute>
+          <dia:attribute name="color">
+            <dia:color val="#000000ff"/>
+          </dia:attribute>
+          <dia:attribute name="alignment">
+            <dia:enum val="0"/>
+          </dia:attribute>
+        </dia:composite>
+      </dia:attribute>
+      <dia:attribute name="valign">
+        <dia:enum val="3"/>
+      </dia:attribute>
+    </dia:object>
+    <dia:object type="Standard - Text" version="1" id="O117">
+      <dia:attribute name="obj_pos">
+        <dia:point val="61.8583,35.2576"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="61.8583,34.6635;66.7783,36.2085"/>
+      </dia:attribute>
+      <dia:attribute name="text">
+        <dia:composite type="text">
+          <dia:attribute name="string">
+            <dia:string>#Add an internal
+ID code?#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="font">
+            <dia:font family="sans" style="8" name="Helvetica-Oblique"/>
+          </dia:attribute>
+          <dia:attribute name="height">
+            <dia:real val="0.80000000000000004"/>
+          </dia:attribute>
+          <dia:attribute name="pos">
+            <dia:point val="61.8583,35.2576"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000ff"/>

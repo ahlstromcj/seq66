@@ -3376,7 +3376,7 @@ write_midi_file
     std::string fname = fn.empty() ? rc().midi_filename() : fn ;
     if (fname.empty())
     {
-        errmsg = "No file-name for write_midi_file()";
+        errmsg = "No file-name to write";
     }
     else
     {

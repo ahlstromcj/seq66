@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-03-20
+ * \updates       2022-03-26
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -785,7 +785,7 @@ midi_jack_info::show_details () const
 }
 
 /**
- *  Sets up all of the ports, represented by midibus objects, that have
+ *  Sets up all of the I/O ports, represented by midibus objects, that have
  *  been created.
  *
  *  The main JACK client is activated, and then all non-virtual ports are

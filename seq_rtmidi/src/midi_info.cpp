@@ -234,16 +234,11 @@ midi_port_info::get_port_index (int client, int port)
  *  Principal constructor.
  */
 
-midi_info::midi_info
-(
-    const std::string & appname,
-    int ppqn,
-    midibpm bpm
-) :
+midi_info::midi_info (const std::string & appname, int ppqn, midibpm bpm) :
     m_midi_mode_input   (true),
     m_input             (),                 /* midi_port_info for inputs    */
     m_output            (),                 /* midi_port_info for outputs   */
-    m_bus_container     (),
+    m_bus_container     (),                 /* holds all I/O buss pointers  */
     m_global_queue      (c_bad_id),         /* a la mastermidibase; created */
     m_midi_handle       (nullptr),          /* usually looked up or created */
     m_app_name          (appname),
