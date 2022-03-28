@@ -319,9 +319,7 @@ show_import_project_dialog
 }
 
 /**
- *  Shows the "Open" play-list dialog.  Was starting from the
- *  rc().last_used_dir(), but should be the home directory for both normal and
- *  NSM sessions.
+ *  Shows the "Open" play-list dialog.
  *
  * \param parent
  *      Provides the parent widget of this dialog.

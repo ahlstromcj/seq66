@@ -209,9 +209,9 @@ qsmainwnd::qsmainwnd
     performer & p,
     const std::string & midifilename,
     bool usensm,
-    qt5nsmanager * sessionmgr               // QWidget * parent
+    qt5nsmanager * sessionmgr
 ) :
-    QMainWindow             (nullptr),      // (parent) was always null
+    QMainWindow             (nullptr),
     performer::callbacks    (p),
     ui                      (new Ui::qsmainwnd),
     m_session_mgr           (sessionmgr),
@@ -1508,9 +1508,7 @@ qsmainwnd::conditional_update ()
         return;
     }
     if (session_save())
-    {
-        (void) save_session();      /* ca 2021-08-31 instead of save_file() */
-    }
+        (void) save_session();
 
     int active_screenset = int(perf().playscreen_number());
     std::string b = "#";

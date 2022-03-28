@@ -88,7 +88,9 @@ Windows, and using a conventional source tarball.
         *   Removed long-unused "rtmidi callback" code and other disabled code.
         *   Got user-manual screenshots up-to-date.
         *   Fixed a minor bug involving setting input aliases.
+        *   Fixed bug with setting last-used-directory to "".
         *   Upgraded and fixed file-name splitting and rebuilding.
+        *   Modify flag now set when painting notes in seqroll.
     *   Version 0.98.5:
         *   Added locking for the event-drawing loops to prevent segfaults.
             Active only when recording; prevents iterator invalidation.

@@ -1078,10 +1078,9 @@ rcfile::write ()
 "# 'auto-save-rc' sets automatic saving of the  'rc' and other files. If set,\n"
 "# many command-line settings are saved to configuration files.\n"
 "#\n"
-"# The 'old-triggers' value means to save triggers in a format compatible with\n"
-"# Seq24. Otherwise, triggers are saved with an additional 'transpose'\n"
-"# setting. Similarly, the old-mutes value, if true, saves mute-groups as long\n"
-"# values (!) instead of bytes.\n"
+"# 'old-triggers' saves triggers in a format compatible with Seq24. Otherwise,\n"
+"# triggers are saved with an additional 'transpose' setting. The old-mutes\n"
+"# value, if true, saves mute-groups as long values (!) instead of bytes.\n"
 "\n[auto-option-save]\n\n"
         ;
     write_boolean(file, "auto-save-rc", rc_ref().auto_rc_save());
@@ -1090,7 +1089,7 @@ rcfile::write ()
 
     std::string lud = rc_ref().last_used_dir();
     file << "\n"
-        "# Specifies the last-used and currently-active directory.\n"
+        "# Specifies the last-used/currently-active directory.\n"
         "\n[last-used-dir]\n\n"
         ;
     write_string(file, noname, rc_ref().last_used_dir(), true);
@@ -1101,9 +1100,9 @@ rcfile::write ()
 
     int count = rc_ref().recent_file_count();
     file << "\n"
-"# A list of the most recently-loaded MIDI files. 'full-paths' = true means to\n"
-"# show the full file-path in the menu. The most recent file (top of list) can\n"
-"# be loaded via 'load-most-recent' at startup.\n"
+"# The most recently-loaded MIDI files. 'full-paths' = true means to show the\n"
+"# full file-path in the menu. The most recent file (top of list) can be loaded\n"
+"# via 'load-most-recent' at startup.\n"
 "\n[recent-files]\n\n"
         ;
     write_boolean(file, "full-paths", rc_ref().full_recent_paths());

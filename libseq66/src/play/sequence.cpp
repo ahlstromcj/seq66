@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-03-04
+ * \updates       2022-03-28
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2533,8 +2533,10 @@ sequence::add_painted_note
         }
     }
     if (result)
+    {
         verify_and_link();
-
+        modify();                               /* no easy way to undo this */
+    }
     return result;
 }
 

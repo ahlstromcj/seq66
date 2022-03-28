@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-02-28
+ * \updates       2022-03-28
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -107,7 +107,7 @@ rcsettings::rcsettings () :
     m_midi_filepath             (),
     m_jack_session_uuid         (),
     m_jack_session_active       (false),
-    m_last_used_dir             (double_quotes()),
+    m_last_used_dir             (),                     /* double_quotes()  */
 #if defined SEQ66_PLATFORM_WINDOWS      /* but see home_config_directory()  */
     m_config_directory          (SEQ66_CLIENT_NAME),
 #else
@@ -206,8 +206,8 @@ rcsettings::set_defaults ()
     m_midi_filepath.clear();
     m_jack_session_uuid.clear();
     m_jack_session_active       = false;
-    m_last_used_dir             = double_quotes();
-#if defined SEQ66_PLATFORM_WINDOWS    /* but see home_config_directory()  */
+    m_last_used_dir.clear();                /* double_quotes()              */
+#if defined SEQ66_PLATFORM_WINDOWS          /* see home_config_directory()  */
     m_config_directory          = SEQ66_CLIENT_NAME;
 #else
     m_config_directory = std::string(".config/") + std::string(SEQ66_CLIENT_NAME);
@@ -960,8 +960,6 @@ rcsettings::jack_session (const std::string & uuid)
 }
 
 /**
- * \setter m_last_used_dir
- *
  * \param value
  *      The value to use to make the setting.  It needs to be a directory, not
  *      a file.  Also, we now expand a relative directory to the full path to
