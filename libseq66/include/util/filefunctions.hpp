@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-01-14
+ * \updates       2022-03-28
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -128,6 +128,13 @@ extern bool filename_split
     const std::string & fullpath,
     std::string & path,
     std::string & filebase
+);
+extern bool filename_split_ext
+(
+    const std::string & fullpath,
+    std::string & path,
+    std::string & filebare,
+    std::string & ext
 );
 extern std::string file_path_set
 (

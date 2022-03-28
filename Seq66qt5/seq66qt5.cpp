@@ -127,7 +127,7 @@ main (int argc, char * argv [])
         }
         else
         {
-            exit_status = EXIT_FAILURE;
+            exit_status = EXIT_FAILURE;             /* --help or error      */
             break;
         }
     }

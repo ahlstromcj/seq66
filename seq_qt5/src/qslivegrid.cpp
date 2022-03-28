@@ -277,12 +277,6 @@ qslivegrid::set_playlist_name (const std::string & plname, bool modified)
     std::string fullname = get_full_path(plname);
     std::string path;
     std::string basename;
-
-    /*
-     * TO DO:  Fix loading a recent file from a non-session directory into the
-     * NSM midi directory.
-     */
-
     if (fullname.empty())
     {
         fullname = filename_base(plname);
@@ -297,8 +291,6 @@ qslivegrid::set_playlist_name (const std::string & plname, bool modified)
         if (! ok)
             basename = fullname;
     }
-
-
     if (modified)
         basename += " *";
 

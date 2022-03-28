@@ -1,7 +1,7 @@
 # README for Seq66 0.98.6
 
 Chris Ahlstrom
-2015-09-10 to 2022-03-25
+2015-09-10 to 2022-03-28
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management,
@@ -88,6 +88,7 @@ Windows, and using a conventional source tarball.
         *   Removed long-unused "rtmidi callback" code and other disabled code.
         *   Got user-manual screenshots up-to-date.
         *   Fixed a minor bug involving setting input aliases.
+        *   Upgraded and fixed file-name splitting and rebuilding.
     *   Version 0.98.5:
         *   Added locking for the event-drawing loops to prevent segfaults.
             Active only when recording; prevents iterator invalidation.

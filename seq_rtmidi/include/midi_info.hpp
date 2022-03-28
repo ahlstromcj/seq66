@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-12-05
- * \updates       2022-02-22
+ * \updates       2022-03-27
  * \license       See above.
  *
  *  We need to have a way to get all of the API information from each
@@ -529,67 +529,67 @@ public:
 
     virtual int get_port_count () const
     {
-        const midi_port_info & mpi = nc_midi_port_info();
+        const midi_port_info & mpi = const_midi_port_info();
         return mpi.get_port_count();
     }
 
     virtual int get_bus_id (int index) const
     {
-        const midi_port_info & mpi = nc_midi_port_info();
+        const midi_port_info & mpi = const_midi_port_info();
         return mpi.get_bus_id(index);
     }
 
     virtual std::string get_bus_name (int index) const
     {
-        const midi_port_info & mpi = nc_midi_port_info();
+        const midi_port_info & mpi = const_midi_port_info();
         return mpi.get_bus_name(index);
     }
 
     virtual int get_port_id (int index) const
     {
-        const midi_port_info & mpi = nc_midi_port_info();
+        const midi_port_info & mpi = const_midi_port_info();
         return mpi.get_port_id(index);
     }
 
     virtual std::string get_port_name (int index) const
     {
-        const midi_port_info & mpi = nc_midi_port_info();
+        const midi_port_info & mpi = const_midi_port_info();
         return mpi.get_port_name(index);
     }
 
     virtual std::string get_port_alias (int index) const
     {
-        const midi_port_info & mpi = nc_midi_port_info();
+        const midi_port_info & mpi = const_midi_port_info();
         return mpi.get_port_alias(index);
     }
 
     virtual bool get_input (int index) const
     {
-        const midi_port_info & mpi = nc_midi_port_info();
+        const midi_port_info & mpi = const_midi_port_info();
         return mpi.get_input(index);
     }
 
     virtual bool get_virtual (int index) const
     {
-        const midi_port_info & mpi = nc_midi_port_info();
+        const midi_port_info & mpi = const_midi_port_info();
         return mpi.get_virtual(index);
     }
 
     virtual bool get_system (int index) const
     {
-        const midi_port_info & mpi = nc_midi_port_info();
+        const midi_port_info & mpi = const_midi_port_info();
         return mpi.get_system(index);
     }
 
     virtual int queue_number (int index) const
     {
-        const midi_port_info & mpi = nc_midi_port_info();
+        const midi_port_info & mpi = const_midi_port_info();
         return mpi.get_queue_number(index);
     }
 
     std::string connect_name (int index) const
     {
-        const midi_port_info & mpi = nc_midi_port_info();
+        const midi_port_info & mpi = const_midi_port_info();
         return mpi.connect_name(index);
     }
 
@@ -645,15 +645,17 @@ private:
      *  (midibase::c_output_port) first.  Ugly stuff.  I hate it.
      */
 
-    const midi_port_info & nc_midi_port_info () const
+    const midi_port_info & const_midi_port_info () const
     {
         return m_midi_mode_input ? m_input : m_output ;
     }
 
+#if 0
     midi_port_info & ref_midi_port_info ()
     {
         return m_midi_mode_input ? m_input : m_output ;
     }
+#endif
 
 };          // midi_info
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-01-14
+ * \updates       2022-03-28
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1633,6 +1633,7 @@ pathname_concatenate (const std::string & path0, const std::string & path1)
  *
  * \param fullpath
  *      The putative full file-specification, including path and base-name.
+ *      Assumed to be trimmed of white-space on both ends.
  *
  * \param [out] path
  *      The destination for the path portion of the full path.
@@ -1658,6 +1659,8 @@ filename_split
     std::string temp = normalize_path(fullpath);
     auto spos = temp.find_last_of("/");
     bool result = spos != std::string::npos;
+    path.clear();
+    filebase.clear();
     if (result)
     {
         auto pos = spos + 1;
@@ -1665,9 +1668,46 @@ filename_split
         filebase = temp.substr(pos, temp.length() - pos);
     }
     else
-    {
-        path.clear();
         filebase = fullpath;
+
+    return result;
+}
+
+/**
+ *  This function also splits out the file extension.
+ */
+
+bool
+filename_split_ext
+(
+    const std::string & fullpath,
+    std::string & path,                         /* can end up empty         */
+    std::string & filebare,                     /* will not have extension  */
+    std::string & ext                           /* can end up empty         */
+)
+{
+    std::string filebase;                               /* not filebare :-) */
+    bool result = filename_split(fullpath, path, filebase);
+    bool ok = ! filebase.empty();
+    ext.clear();
+    if (ok)
+    {
+        auto hpos = filebase.find_first_of(".");
+        auto ppos = filebase.find_last_of(".");
+        if (hpos == ppos && hpos == 0)                  /* one dot at start */
+        {
+            filebare = filebase;
+        }
+        else
+        {
+            if (ppos != std::string::npos)
+            {
+                filebare = filebase.substr(0, ppos);
+                ext = filebase.substr(ppos, filebase.length() - ppos);
+            }
+            else
+                filebare = filebase;
+        }
     }
     return result;
 }
@@ -1765,12 +1805,14 @@ file_extension_set (const std::string & path, const std::string & ext)
     std::string result;
     if (! path.empty())
     {
+#if USE_OLD_CODE
         bool extpresent = false;
         auto ppos = path.find_last_of(".");
         if (ppos != std::string::npos)
         {
-            auto spos = path.find_last_of("/");
-            if (ppos > spos)
+            auto spos = path.find_last_of("/");         /* slash position   */
+            bool havespos = spos != std::string::npos;  /* slash exists     */
+            if (havespos && ppos > spos)                /* period is last   */
                 extpresent = true;
         }
         if (extpresent)
@@ -1784,6 +1826,17 @@ file_extension_set (const std::string & path, const std::string & ext)
             result = path;
             result += ext;
         }
+#else
+    std::string pathspec;
+    std::string filebare;
+    std::string extdummy;
+    bool ok = filename_split_ext(path, pathspec, filebare, extdummy);
+    if (ok)
+        result += pathspec;
+
+    result += filebare;
+    result += ext;
+#endif
     }
     return result;
 }

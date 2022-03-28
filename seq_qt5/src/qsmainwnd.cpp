@@ -1710,8 +1710,14 @@ qsmainwnd::new_session ()
 {
     if (use_nsm())
     {
+        /*
+         * We need show only the base name of the file.
+         */
+
         bool ok;
-        std::string defname = rc().midi_filename();
+        std::string path, defname;
+        (void) filename_split(rc().midi_filename(), path, defname);
+//      std::string defname = rc().midi_filename();
         QString text = QInputDialog::getText
         (
             this, tr("Session MIDI File"),          /* parent and title     */
