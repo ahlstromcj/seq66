@@ -23,7 +23,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -1251,7 +1251,7 @@ connects to the MIDI I/O ports it finds.</string>
          <rect>
           <x>8</x>
           <y>4</y>
-          <width>189</width>
+          <width>161</width>
           <height>17</height>
          </rect>
         </property>
@@ -1263,6 +1263,24 @@ connects to the MIDI I/O ports it finds.</string>
         </property>
         <property name="text">
          <string>JACK/ALSA Start Mode</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_14">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>4</y>
+          <width>181</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>(applies only for current run)</string>
         </property>
        </widget>
       </widget>
@@ -1309,7 +1327,7 @@ in the Song Editor.</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="group_flags">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -1538,6 +1556,88 @@ Seq66 exits.</string>
           </property>
           <property name="text">
            <string>All Sets.  All sets can play at the same time.</string>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="group_startmode">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>108</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>120</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="title">
+          <string>Song Start Mode</string>
+         </property>
+         <widget class="QRadioButton" name="radio_startmode_live">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>20</y>
+            <width>94</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Live</string>
+          </property>
+         </widget>
+         <widget class="QRadioButton" name="radio_startmode_song">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>50</y>
+            <width>94</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Song</string>
+          </property>
+         </widget>
+         <widget class="QRadioButton" name="radio_startmode_auto">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>80</y>
+            <width>94</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Auto</string>
           </property>
          </widget>
         </widget>

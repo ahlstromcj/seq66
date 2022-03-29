@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-03-21
+ * \updates       2022-03-29
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -97,11 +97,21 @@ enum setsmode_button_t
 };
 
 /**
+ *  Button number for the Song Start Mode radio-buttons.
+ */
+
+enum startmode_button_t
+{
+    startmode_button_live,
+    startmode_button_song,
+    startmode_button_auto
+};
+
+/**
  *  The main constructor.
  */
 
-qseditoptions::qseditoptions (performer & p, QWidget * parent)
- :
+qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     QDialog                 (parent),
     ui                      (new Ui::qseditoptions),
     m_live_song_buttons     (nullptr),
@@ -205,6 +215,20 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     (
         rgroup, SIGNAL(buttonClicked(int)),
         this, SLOT(slot_sets_mode(int))
+    );
+
+    /*
+     *  Group-box for changing the "start mode".
+     */
+
+    QButtonGroup * rgroup2 = new QButtonGroup(this);
+    rgroup2->addButton(ui->radio_startmode_live, startmode_button_live);
+    rgroup2->addButton(ui->radio_startmode_song, startmode_button_song);
+    rgroup2->addButton(ui->radio_startmode_auto, startmode_button_auto);
+    connect
+    (
+        rgroup2, SIGNAL(buttonClicked(int)),
+        this, SLOT(slot_start_mode(int))
     );
 
     /*
@@ -826,8 +850,31 @@ qseditoptions::show_sets_mode (rcsettings::setsmode sm)
 }
 
 void
+qseditoptions::show_start_mode (sequence::playback sm)
+{
+    switch (sm)
+    {
+        case sequence::playback::live:
+            ui->radio_startmode_live->setChecked(true);
+            break;
+
+        case sequence::playback::song:
+            ui->radio_startmode_song->setChecked(true);
+            break;
+
+        case sequence::playback::automatic:
+            ui->radio_startmode_auto->setChecked(true);
+            break;
+
+        default:
+            break;
+    }
+}
+
+void
 qseditoptions::slot_sets_mode (int buttonno)
 {
+    rcsettings::setsmode previous = rc().sets_mode();
     if (buttonno == setsmode_button_autoarm)
         rc().sets_mode("auto-arm");
     else if (buttonno == setsmode_button_additive)
@@ -836,6 +883,24 @@ qseditoptions::slot_sets_mode (int buttonno)
         rc().sets_mode("auto-arm");
     else
         rc().sets_mode("normal");
+
+    if (rc().sets_mode() != previous)
+        modify_rc();
+}
+
+void
+qseditoptions::slot_start_mode (int buttonno)
+{
+    sequence::playback previous = rc().get_song_start_mode();
+    if (buttonno == startmode_button_live)
+        rc().song_start_mode_by_string("live");
+    else if (buttonno == startmode_button_song)
+        rc().song_start_mode_by_string("song");
+    else
+        rc().song_start_mode_by_string("auto");
+
+    if (rc().get_song_start_mode() != previous)
+        modify_rc();
 }
 
 void
@@ -1133,6 +1198,7 @@ qseditoptions::sync_rc ()
     ui->chkJackMaster->setDisabled(! rc().with_jack_transport());
     ui->chkJackConditional->setDisabled(! rc().with_jack_transport());
     show_sets_mode(rc().sets_mode());
+    show_start_mode(rc().get_song_start_mode());
 
     int rbid = perf().song_mode() ? playmode_button_song : playmode_button_live ;
     foreach (QAbstractButton * button, m_live_song_buttons->buttons())

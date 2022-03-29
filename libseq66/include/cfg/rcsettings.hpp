@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-03-07
+ * \updates       2022-03-29
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -763,6 +763,11 @@ public:
         return m_song_start_mode == sequence::playback::song;
     }
 
+    sequence::playback get_song_start_mode () const
+    {
+        return m_song_start_mode;
+    }
+
     /**
      *  Was returning m_song_start_mode == sequence::playback::automatic, but
      *  this conflates run-time mode with desired initial mode.
@@ -1236,7 +1241,7 @@ public:
             sequence::playback::song : sequence::playback::live ;
     }
 
-    void song_start_mode (const std::string & s);
+    void song_start_mode_by_string (const std::string & s);
 
     void filter_by_channel (bool flag)
     {

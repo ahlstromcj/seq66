@@ -1,10 +1,75 @@
 NEWS for Seq66 0.98.0 and above
 Chris Ahlstrom
-2015-07-10 to 2022-01-01
+2015-07-10 to 2022-03-29
 
 This file collects major changes that are older and clutter up
 the README.md file.  This file should be called "OLD NEWS".
 
+    -   Version 0.98.3.1:
+        -   Revisited issue #45. Doh!
+        -   Cleaned up the Makefiles, fixed minor issues.
+    -   Version 0.98.3:
+        -   Fixed issue #76.  Fixed broken MIDI Start handling. Added setting
+            the tempo via a tempo event.  Still thinking about MMC.
+        -   Fixed old bug in showing note events; they were filtered by the
+            pattern-configured channel!
+        -   Tweaks to style-sheet handling.
+        -   Fixed misuses of msgprintf(). Other minor bug fixes.
+        -   In a new NSM session, do not load the most-recent MIDI file, even
+            if specified in the imported configuration.  Also, no longer do an
+            automatic import of the home configuration to the NSM configuration.
+            Instead, use the "File / Import / Import Project" menu entry.
+            See the user manual for how this works.
+        -   Added a "File / Import / Import Playlist" command.
+            See the user manual for how this works.
+        -   Made virtual port names in ALSA more consistent. Also create the
+            ports (in JACK, too) even if disabled.  Still experimental.
+        -   Added Preferences item for the BPM Precision setting.
+        -   Added contrib/code/ametro.c to provide ALSA test for MIDI clocking.
+        -   Added GNU -finstrument-functions support, but too problematic.
+    -   Version 0.98.2:
+        -   Fixed issue #74, where -1 for "no buss-override" was being converted
+            to 0.
+        -   Added detection of missing system ports when mapping ports.
+        -   Song duration label is now a button to select time versus measures.
+        -   Removed useless flags for loading keystroke and MIDI controls.
+        -   Avoid applying mute-group 0 if song has triggers and song-mode is
+            'auto'.
+        -   Fixes to log-file handling.
+        -   Added "Blank" for disabling keystrokes in the 'ctrl' file.
+    -   Version 0.98.1:
+        -   Work on creating an NSIS installer for a 64-bit Windows build.
+        -   Fixed a stupid segfault bug with the --help option.  Doh!
+        -   Changed some extended automation keys (for grid modes).
+        -   Minor fixes: (1) Set to set 0 when opening a MIDI file; (2) Expand a
+            pattern when merging a longer one into it; (3) fixed pattern access
+            in sets > 0; (4) fixed an error in string tokenization.
+        -   Fixes for port-mapping and naming; if present, the user sets the
+            status of the port-map, which is copied to the matching port.
+        -   Fixes in song-editor set-names display.
+        -   Removed unused module qskeymaps.
+    -   Version 0.98.0:
+        -   Fixed issue #41 "Hide Seq66 on closing window" via a "visibility"
+            automation command and by fixing the response to "hide/show"
+            messages from NSM. Note that the NSM API permits the "Quit" command
+            to exit the application. Also see the comments at issue #64 "NSM: UI
+            show up after restarting the app".
+        -   Fixed issue #73 "Compile error because of jack_get_version_string"
+            by detecting the presence of this function in configure.ac.
+        -   Truly fixed high CPU usage in Windows version of the condition
+            variable "wait".  Replaced pthread implementation with C++'s
+            condition_variable.
+        -   Added "MIDI macros" to the 'ctrl' file.  Can send SysEx or other
+            messages from a drop-down list; automatic startup and exit messages.
+            More to come.
+        -   Added a feature to extract JACK port aliases and show them
+            to the user so that the system port can be associated with a named
+            device (e.g. "Launchpad-Mini").
+        -   Added api_sysex() overrides, at last.
+        -   Added Preference items for MIDI control I/O.
+        -   Improved the display of the MIDI file-name in title and live grid.
+        -   Improving grid-mode functionality, adding more automation controls,
+            in progress.
     -   Version 0.97.3:
         -   Added pattern-recording indicator to live-grid slots.
         -   Replace useless "Record" automation command with a "Loop Mode"
@@ -95,7 +160,7 @@ the README.md file.  This file should be called "OLD NEWS".
             when using JACK.  Many other channel-handling improvements.
         -   Fixed a related issue: null (status = 0) control events were sent.
         -   Fixed a bug in "portmidi" MIDI input handling where only the last
-            device's events would be processed.
+            device events would be processed.
         -   Improved pause/continue support with JACK transport.
         -   Fixed 'rc' allow-click-edit feature.
         -   Made the buss-override settings act more consistently.
@@ -144,11 +209,11 @@ the README.md file.  This file should be called "OLD NEWS".
         -   Improved arrow-key handling in seqroll.
         -   Removed PortMidi Java configuration parsing code.
         -   Important fixes to NSM sessions.
-        -   Added 'one-shot' option the the 'usr' file's record-style setting.
+        -   Added 'one-shot' option the the 'usr' file record-style setting.
         -   Improved support for making the user-interface smaller; 4x4 sets.
         -   Added the "enigmatic" scale.
         -   Fixes to handling of musical key, scale, and background pattern.
-        -   Finalized the scale-finder code (Ctrl-K in the pattern editor's
+        -   Finalized the scale-finder code (Ctrl-K in the pattern editor
             piano roll.)
         -   Updated libtool support, now seq66cli is under 200K in size.
         -   Removed QtWidget directory from qclocklayout #includes for issue
@@ -205,7 +270,7 @@ the README.md file.  This file should be called "OLD NEWS".
         -   Further fixes and flexibility for handling mute-groups.
         -   Fixed the installation of libseq66 and libsession library header
             files in "make install" to preserve their base subdirectories.
-            (The other libraries currently don't use base subdirectories.)
+            (The other libraries currently do not use base subdirectories.)
     -   Version 0.93.1:
         -   Work in progress on issue #47; added a keyboard-layout option to the
             'ctrl' file to disable auto-shift and tweak the internal key-map for
@@ -218,7 +283,7 @@ the README.md file.  This file should be called "OLD NEWS".
             text to match the theme.  This can be overridden by a palette file.
         -   Fixed issue #51 (show-stopper!), where playback with JACK transport
             enable was extremely erratic on some platforms.
-        -   Add clearing of the performer's "play-set" for "File / New" to
+        -   Add clearing of the performer "play-set" for "File / New" to
             prevent the previous song from being playable. :-D
         -   Activate usage of (larger) seqedit frame in the "Edit" tab via
             a 'usr' option.  Adapted the size to better fit, but the user still
@@ -234,7 +299,7 @@ the README.md file.  This file should be called "OLD NEWS".
         -   Added a transpose value to song editor triggers to support shifting
             patterns automatically during Song play.  Added an 'rc' option to
             save MIDI files using the original triggers.
-        -   Improved the song editor's vertical scrollbar, it adjusts to the
+        -   Improved the song editor vertical scrollbar, it adjusts to the
             number of actual sets.
         -   Added the L/R marker feature to the external pattern editor, and
             Song mode is no longer required to use it.  This makes it easier
@@ -382,4 +447,4 @@ the README.md file.  This file should be called "OLD NEWS".
             public consumption, after residing on a server (a Toshiba laptop) at
             home for months.
 
-# vim: sw=4 ts=4 wm=4 et ft=sh
+# vim: sw=4 ts=4 wm=4 et ft=markdown

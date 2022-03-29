@@ -1,6 +1,6 @@
 TO DO for Seq66 0.98.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-03-26
+2019-04-13 to 2022-03-29
 
 Windows:
 
@@ -32,8 +32,6 @@ UI:
             -   Add song-start-mode radio buttons.
         -   Config Options: (new)
             -   Log-file
-        -   Add an option to enable double-click pattern editing. (It is an
-            [interaction-method] double-click-edit 'rc' option.
 
     -   Underrun display not consistent with console output with Chameleon tune.
 

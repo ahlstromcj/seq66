@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-02-28
+ * \updates       2022-03-29
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -342,7 +342,7 @@ rcfile::parse ()
          */
 
         s = get_variable(file, tag, "song-start-mode");
-        rc_ref().song_start_mode(s);
+        rc_ref().song_start_mode_by_string(s);
 
         bool flag = get_boolean(file, tag, "jack-midi");
         rc_ref().with_jack_midi(flag);

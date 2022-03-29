@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-03-21
+ * \updates       2022-03-29
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1713,9 +1713,12 @@ qsmainwnd::new_session ()
          */
 
         bool ok;
+        std::string tune_name = rc().midi_filename();
         std::string path, defname;
-        (void) filename_split(rc().midi_filename(), path, defname);
-//      std::string defname = rc().midi_filename();
+        if (tune_name.empty())
+            tune_name = s_default_tune;
+
+        (void) filename_split(tune_name, path, defname);
         QString text = QInputDialog::getText
         (
             this, tr("Session MIDI File"),          /* parent and title     */

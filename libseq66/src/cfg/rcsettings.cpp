@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-03-28
+ * \updates       2022-03-29
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -364,9 +364,9 @@ rcsettings::song_mode_string () const
 }
 
 void
-rcsettings::song_start_mode (const std::string & s)
+rcsettings::song_start_mode_by_string (const std::string & s)
 {
-    if (s == "song" || s == "true" || s == "1")
+    if (s == "song" || s == "true")
     {
         m_song_start_mode = sequence::playback::song;
         m_song_start_is_auto = false;

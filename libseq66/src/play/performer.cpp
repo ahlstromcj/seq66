@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-03-13
+ * \updates       2022-03-29
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -307,7 +307,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_play_set              (),
     m_play_list             (),
     m_note_mapper           (new notemapper()),
-    m_song_start_mode       (sequence::playback::live),
+    m_song_start_mode       (sequence::playback::automatic),
     m_reposition            (false),
     m_excell_FF_RW          (1.0),
     m_FF_RW_button_type     (ff_rw::none),
@@ -643,7 +643,9 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
         m_mute_groups.show("in performer");
 #endif
 
-    song_mode(rcs.song_start_mode());               /* boolean setter       */
+    if (! rc().song_start_auto())
+        song_start_mode(rcs.get_song_start_mode());      /* force the mode   */
+
     filter_by_channel(rcs.filter_by_channel());
 
     /*
@@ -674,7 +676,14 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
 bool
 performer::put_settings (rcsettings & rcs, usrsettings & usrs)
 {
-    bool pb = song_mode();
+    /*
+     * We cannot allow changes made outside of the Preferences GUI to
+     * be saved (e.g the Live/Song button in the main window).
+     *
+     *  bool pb = song_mode();
+     *  rcs.song_start_mode(pb);
+     */
+
     m_master_bus->get_port_statuses(m_clocks, m_inputs);
     rcs.clocks() = m_clocks;
     rcs.inputs() = m_inputs;
@@ -682,7 +691,6 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     rcs.midi_control_in() = m_midi_control_in;
     rcs.midi_control_out() = m_midi_control_out;
     rcs.mute_groups() = m_mute_groups;
-    rcs.song_start_mode(pb);
     rcs.filter_by_channel(m_filter_by_channel);
     usrs.resume_note_ons(m_resume_note_ons);
 
@@ -1465,8 +1473,8 @@ performer::next_song_mode ()
     }
     else
     {
-        bool songmode = rc().song_start_mode();
         bool mutem = rc().is_setsmode_normal();
+        bool songmode = rc().song_start_mode();     /* song vs live here    */
         mute_all_tracks(mutem);
         song_mode(songmode);
 

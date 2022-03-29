@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-03-21
+ * \updates       2022-03-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -95,6 +95,7 @@ private:
         const QString & heighttext
     );
     void show_sets_mode (rcsettings::setsmode sm);
+    void show_start_mode (sequence::playback sm);
     void show_session (usrsettings::session sm);
     void reload_needed (bool flag);
 
@@ -113,10 +114,10 @@ private:
         return m_perf;
     }
 
-
 private slots:
 
     void slot_sets_mode (int buttonno);
+    void slot_start_mode (int buttonno);
     void slot_jack_mode (int buttonno);
     void slot_jack_connect ();
     void slot_jack_disconnect ();

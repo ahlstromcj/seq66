@@ -1,10 +1,10 @@
-# Seq66 Release Notes 0.98.5
+# Seq66 Release Notes 0.98.6
 ==============================
 Chris Ahlstrom
-2020-11-15 to 2022-03-08
+2020-11-15 to 2022-03-29
 
 This file lists only the major changes for this version from the previous
-version.  Also see the README.md, ChangeLog, and INSTALL files.
+version.  Also see the README.md, ChangeLog, NEWS, and INSTALL files.
 
 ## Feature List
 
@@ -24,14 +24,13 @@ version.  Also see the README.md, ChangeLog, and INSTALL files.
 
 ## Documentation
 
-The LaTeX documentation used for generation of the PDF manual is done. If
-you want to rebuild this document, change the the "doc/latex" directory and
-run "make".  The file "seq66-user-manual.pdf" is generated in the
-"data/share/doc" directory.
+LaTeX/pdflatex is used for generation of the PDF manual in "data/share/doc".  To
+rebuild this document, change the the "doc/latex" directory and run "make".  The
+file "seq66-user-manual.pdf" is generated in the "data/share/doc" directory.
 
 ## Final Notes
 
-All too many bug fixes and minor improvements.
+All too many bug fixes and minor improvements.  Never-ending!
 
 /*
  * vim: sw=4 ts=4 wm=4 et ft=markdown

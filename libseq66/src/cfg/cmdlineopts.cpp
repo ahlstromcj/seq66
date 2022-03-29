@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-02-26
+ * \updates       2022-03-29
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -980,7 +980,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'M':
 
-            rc().song_start_mode(std::string(soptarg));
+            rc().song_start_mode_by_string(std::string(soptarg));
             break;
 
         case 'm':
