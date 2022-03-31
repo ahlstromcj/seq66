@@ -7,14 +7,13 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2021-12-09
-:: \update      2021-12-09
+:: \update      2022-03-30
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a debug build of Seq66 for
-::      Windows.  We need it to figure out why Seq66 uses less CPU when
+::      Windows.  We needed it to figure out why Seq66 uses less CPU when
 ::      playing than when not playing, and uses a high amount of CPU when
 ::      not playing.  And using Qt Creator's debugger doesn't cut it.
-::
 ::      We won't repeat any discussion found in the build_release_package
 ::      batch file.
 ::
@@ -63,7 +62,7 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.98.0
+set PROJECT_VERSION=0.98.6
 set PROJECT_DRIVE=C:
 set PROJECT_BITS=32
 set PROJECT_BASE=\Users\Chris\Documents\Home

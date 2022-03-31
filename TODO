@@ -1,12 +1,12 @@
 TO DO for Seq66 0.98.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-03-29
+2019-04-13 to 2022-03-30
 
 Windows:
 
     -   mastermidibase::activate() fails at m_outbus_array.initialize().
         Error initing port 1; it should be disabled?
-    -   Disable JACK UI elements in Windows builds.
+    -   Disable JACK UI elements in Windows builds (almost done).
     -   The installer build include a *.o file!
     -   Change to creating a 64-bit installer and adjust the instructions.
     -   In the live grid, move the top text up 1 pixel.  Move the bottom text

@@ -29,7 +29,7 @@
 
 !define VER_MAIN_PURPOSE    "Seq66 for Windows"
 !define VER_NUMBER          "0.98"
-!define VER_REVISION        "3"
+!define VER_REVISION        "6"
 !define VER_VARIANT         "Windows"
 !define PRODUCT_VERSION     "${VER_NUMBER} ${VER_VARIANT} (rev ${VER_REVISION})"
 !define PRODUCT_PUBLISHER   "C. Ahlstrom (ahlstromcj@gmail.com)"

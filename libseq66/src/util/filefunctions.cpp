@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-03-28
+ * \updates       2022-03-30
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1805,38 +1805,15 @@ file_extension_set (const std::string & path, const std::string & ext)
     std::string result;
     if (! path.empty())
     {
-#if USE_OLD_CODE
-        bool extpresent = false;
-        auto ppos = path.find_last_of(".");
-        if (ppos != std::string::npos)
-        {
-            auto spos = path.find_last_of("/");         /* slash position   */
-            bool havespos = spos != std::string::npos;  /* slash exists     */
-            if (havespos && ppos > spos)                /* period is last   */
-                extpresent = true;
-        }
-        if (extpresent)
-        {
-            result = path.substr(0, ppos);
-            if (! ext.empty())
-                result += ext;
-        }
-        else
-        {
-            result = path;
-            result += ext;
-        }
-#else
-    std::string pathspec;
-    std::string filebare;
-    std::string extdummy;
-    bool ok = filename_split_ext(path, pathspec, filebare, extdummy);
-    if (ok)
-        result += pathspec;
+        std::string pathspec;
+        std::string filebare;
+        std::string extdummy;
+        bool ok = filename_split_ext(path, pathspec, filebare, extdummy);
+        if (ok)
+            result += pathspec;
 
-    result += filebare;
-    result += ext;
-#endif
+        result += filebare;
+        result += ext;
     }
     return result;
 }

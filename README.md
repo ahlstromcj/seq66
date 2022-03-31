@@ -1,21 +1,21 @@
 # README for Seq66 0.98.6
 
 Chris Ahlstrom
-2015-09-10 to 2022-03-29
+2015-09-10 to 2022-03-30
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
 chord-aware piano-roll interface, song editor for creative composition, and
 control via MIDI automation for live performance.  Mute-groups enable/disable
 multiple patterns with one keystroke or MIDI control. Supports NSM (Non Session
-Manager) on Linux; can also run headless.  It does not support audio samples, just
-MIDI.
+Manager) on Linux; can also run headless.  It does not support audio samples,
+just MIDI.
 
-__Seq66__ is a major refactoring of Sequencer64/Kepler34, rebooting __Seq24__ with
-modern C++ and new features.  Linux users can build this application from the
-source code.  See the INSTALL file; it has notes on many types on installation.
-Windows users can get an installer package on GitHub or build it with Qt Creator.
-Provides a comprehensive PDF user-manual.
+__Seq66__ is a major refactoring of Sequencer64/Kepler34, rebooting __Seq24__
+with modern C++ and new features.  Linux users can build this application from
+the source code.  See the INSTALL file; it has notes on many types on
+installation.  Windows users can get an installer package on GitHub or build it
+with Qt Creator.  Provides a comprehensive PDF user-manual.
 
 ![Alt text](doc/latex/images/main-window/main-windows.png?raw=true "Seq66")
 
@@ -81,7 +81,8 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.98.6:
-        *   Revisited issue #41 to make sure "Quit" is "Hide" under NSM.
+        *   Revisited issue #41 to make sure "Quit" is "Hide" under NSM. Also
+            fixed issue with the "newtune.midi" default name.
         *   Disabling/enabling JACK input and output on the fly in Preferences
             works.
         *   Added Preferences options to toggle the double-click edit feature
@@ -93,6 +94,7 @@ Windows, and using a conventional source tarball.
         *   Upgraded and fixed file-name splitting and rebuilding.
         *   Modify flag now set when painting notes in seqroll.
         *   Fixed handling of Live/Song mode in performer and in 'rc' saving.
+        *   Improved appearance of Loop/Record/Quantize buttons in main grid.
     *   Version 0.98.5:
         *   Added locking for the event-drawing loops to prevent segfaults.
             Active only when recording; prevents iterator invalidation.

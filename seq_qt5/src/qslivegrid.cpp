@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-12-10
+ * \updates       2022-03-30
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1052,16 +1052,8 @@ qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
 
         m_current_seq = seq_id_from_xy(event->x(), event->y());
         if (perf().is_seq_active(m_current_seq))
-        {
             button_toggle_checked(m_current_seq);   /* undo press-toggle    */
-        }
-        else
-        {
-#if defined USE_OLD_CODE
-            (void) perf().request_sequence(m_current_seq);
-#else
-#endif
-        }
+
         signal_call_editor_ex(m_current_seq);
     }
 }
@@ -1394,10 +1386,12 @@ qslivegrid::show_grid_record_style ()
     {
         s_uninitialized = false;
         s_palette = button->palette();
+        button->setEnabled(false);
     }
     if (usr().no_grid_record())
     {
         button->setPalette(s_palette);
+        button->setEnabled(false);
         button->update();
     }
     else
@@ -1416,6 +1410,7 @@ qslivegrid::show_grid_record_style ()
         pal.setColor(QPalette::Button, c);
         button->setAutoFillBackground(true);
         button->setPalette(pal);
+        button->setEnabled(true);
         button->update();
     }
     button->setText(qt(usr().grid_record_style_label()));
@@ -1430,11 +1425,13 @@ qslivegrid::show_record_mode ()
     if (s_uninitialized)
     {
         s_uninitialized = false;
+        button->setEnabled(false);
         s_palette = button->palette();
     }
     if (usr().no_grid_record())
     {
         button->setPalette(s_palette);
+        button->setEnabled(false);
         button->update();
     }
     else
@@ -1451,6 +1448,7 @@ qslivegrid::show_record_mode ()
         pal.setColor(QPalette::Button, c);
         button->setAutoFillBackground(true);
         button->setPalette(pal);
+        button->setEnabled(true);
         button->update();
     }
     button->setText(qt(usr().record_mode_label()));
