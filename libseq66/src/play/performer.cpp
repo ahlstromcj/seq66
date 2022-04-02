@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-03-29
+ * \updates       2022-04-02
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1114,17 +1114,20 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
     if (result)
     {
         s->set_parent(this);                    /* also sets a lot of stuff */
-        if (! fileload)
-            modify();
+//      if (! fileload)
+//          modify();
 
-        if (rc().is_setsmode_clear())
+        if (rc().is_setsmode_clear())           /* i.e. normal or auto-arm  */
         {
             /*
              * This code is wasteful.  It clears the playset and refills it
              * with the latest set of patterns in the screenset.
              */
 
-            result = mapper().fill_play_set(m_play_set);
+            if (is_running())
+                result = mapper().add_to_play_set(m_play_set, s);
+            else
+                result = mapper().fill_play_set(m_play_set);
         }
         else if (rc().is_setsmode_allsets())
         {
@@ -1135,6 +1138,8 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
 
             result = mapper().add_to_play_set(m_play_set, s);
         }
+        if (! fileload)
+            modify();
     }
     return result;
 }
@@ -1174,9 +1179,13 @@ performer::new_sequence (seq::number & finalseq, seq::number seq)
         if (result)                                 /* new 2021-10-01   */
         {
             const seq::pointer s = get_sequence(seq);
-            s->set_dirty();
-            finalseq = s->seq_number();
-            notify_sequence_change(finalseq, change::recreate);
+            result = not_nullptr(s);
+            if (result)
+            {
+                s->set_dirty();
+                finalseq = s->seq_number();
+                notify_sequence_change(finalseq, change::recreate);
+            }
         }
     }
     return result;

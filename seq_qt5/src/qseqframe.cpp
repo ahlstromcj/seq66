@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2021-02-21
+ * \updates       2022-04-02
  * \license       GNU GPLv2 or above
  *
  *  Seq66 (Qt version) has two different pattern editor frames to
@@ -100,16 +100,20 @@ qseqframe::~qseqframe ()
 bool
 qseqframe::repitch_all ()
 {
-    std::string filename = rc().notemap_filespec();
-    sequence & s = *seq_pointer();
-    bool result = perf().repitch_all(filename, s);
+    sequence * s = seq_pointer().get();
+    bool result = not_nullptr(s);
     if (result)
     {
-        set_dirty();
-    }
-    else
-    {
-        // need to display error message somehow
+        std::string filename = rc().notemap_filespec();
+        result = perf().repitch_all(filename, *s);
+        if (result)
+        {
+            set_dirty();
+        }
+        else
+        {
+            // need to display error message somehow
+        }
     }
     return result;
 }
@@ -117,16 +121,20 @@ qseqframe::repitch_all ()
 bool
 qseqframe::repitch_selected ()
 {
-    std::string filename = rc().notemap_filespec();
-    sequence & s = *seq_pointer();
-    bool result = perf().repitch_selected(filename, s);
+    sequence * s = seq_pointer().get();
+    bool result = not_nullptr(s);
     if (result)
     {
-        set_dirty();
-    }
-    else
-    {
-        // need to display error message somehow
+        std::string filename = rc().notemap_filespec();
+        bool result = perf().repitch_selected(filename, *s);
+        if (result)
+        {
+            set_dirty();
+        }
+        else
+        {
+            // need to display error message somehow
+        }
     }
     return result;
 }

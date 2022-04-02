@@ -471,6 +471,11 @@ jack_port_connect_callback
  *
  * Notes:
  *
+ *  -   The documentation for jack_set_port_registration_callback() says that
+ *      all notifications are received in a separate non-real-time thread, so
+ *      the code doesn't need to be suitable for real-time execution. What about
+ *      re-entrant? Async-safe?  Based on tests, we are pretty sure that
+ *      a series of calls don't interfere with each other.
  *  -   For a2j ports, the long and short names are like this:
  *      -   Long: 'a2j:nanoKEY2 [20] (playback): nanoKEY2 nanoKEY2 _ CTRL'
  *      -   Short: 'nanoKEY2 [20] (playback): nanoKEY2 nanoKEY2 _ CTRL'
@@ -494,7 +499,7 @@ jack_port_connect_callback
  *
  *      -#  Port change detection.
  *          -#  Changes should only be detected in non-Seq66 ("not mine") ports.
- *          -#  This occurs when a registratio or un-registration causes the
+ *          -#  This occurs when registration or un-registration causes the
  *              callback to occur.
  *      -#  No special processing unless the user has enabled port-mapping.
  *          Otherwise, Seq66 port numbers, which are simply indexes into the

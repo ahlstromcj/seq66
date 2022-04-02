@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-03-29
+ * \updates       2022-04-02
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1182,6 +1182,11 @@ qseditoptions::sync ()
     sync_usr();
 }
 
+/*
+ * Get all the settings from the 'rc' file and make the GUI controls
+ * match them.
+ */
+
 void
 qseditoptions::sync_rc ()
 {
@@ -1206,6 +1211,11 @@ qseditoptions::sync_rc ()
         int bid = m_live_song_buttons->id(button);
         button->setChecked(bid == rbid);
     }
+
+    /*
+     * Sync all the settings for "UI Boolean Options.
+     */
+
     ui->checkBoxVerbose->setChecked(rc().verbose());
     ui->checkBoxLoadMostRecent->setChecked(rc().load_most_recent());
     ui->checkBoxShowFullRecentPaths->setChecked(rc().full_recent_paths());
@@ -1213,6 +1223,7 @@ qseditoptions::sync_rc ()
     ui->checkBoxLockMainWindow->setChecked(usr().lock_main_window());
     ui->checkBoxSwapCoordinates->setChecked(usr().swap_coordinates());
     ui->checkBoxBoldGridSlots->setChecked(usr().progress_bar_thick());
+    ui->checkBoxDoubleClickEdit->setChecked(rc().allow_click_edit());
 
     QString filename = qt(rc().config_filename());
     ui->checkBoxSaveRc->setChecked(rc().auto_rc_save());

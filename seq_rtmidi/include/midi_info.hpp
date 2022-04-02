@@ -650,13 +650,6 @@ private:
         return m_midi_mode_input ? m_input : m_output ;
     }
 
-#if 0
-    midi_port_info & ref_midi_port_info ()
-    {
-        return m_midi_mode_input ? m_input : m_output ;
-    }
-#endif
-
 };          // midi_info
 
 }           // namespace seq66

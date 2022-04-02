@@ -1484,39 +1484,6 @@ usrsettings::bpm_page_increment (midibpm increment)
     m_bpm_page_increment = increment;
 }
 
-#if 0
-
-/**
- * \getter m_user_option_logfile
- *
- * \return
- *      This function returns rc().config_directory() + m_user_option_logfile
- *      if the latter does not contain a path marker ("/").  Otherwise, it
- *      returns m_user_option_logfile, which must be a full path specification
- *      to the desired log-file.
- */
-
-std::string
-usrsettings::option_logfile () const
-{
-    std::string result;
-    if (! m_user_option_logfile.empty())
-    {
-        std::size_t slashpos = m_user_option_logfile.find_first_of("/");
-        if (slashpos == std::string::npos)
-        {
-            result = rc().home_config_directory();
-            char lastchar = result.back();      /* [result.length() - 1]    */
-            if (lastchar != '/')
-                result += '/';
-        }
-        result += m_user_option_logfile;
-    }
-    return result;
-}
-
-#endif
-
 void
 usrsettings::option_logfile (const std::string & logfile)
 {

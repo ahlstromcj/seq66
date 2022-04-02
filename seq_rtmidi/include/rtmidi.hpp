@@ -187,32 +187,6 @@ public:
        return get_api()->is_port_open();
     }
 
-    /**
-     *  Gets the buss/client ID for a MIDI interface via the selected API
-     *  subsystem.  This is the left-hand side of a X:Y pair (such as 128:0).
-     *
-     *  This function is a new part of the RtMidi interface.
-     *
-     * \return Returns the buss/client value as provided by the selected API.
-     */
-
-#if 0
-    virtual int get_bus_id () const
-    {
-        return parent_bus().bus_id();       /* get_api()->bus_id()      */
-    }
-
-    virtual std::string bus_name () const
-    {
-        return parent_bus().bus_name();     /* get_api()->bus_name()    */
-    }
-
-    virtual int port_id () const
-    {
-        return parent_bus().port_id();      /* get_api()->port_id()     */
-    }
-#endif
-
     virtual std::string get_port_name ()
     {
         return parent_bus().port_name();    /* get_api()->port_name()   */
