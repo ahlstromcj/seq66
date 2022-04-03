@@ -402,6 +402,11 @@ qseqeditframe64::qseqeditframe64
     {
         set_beats_per_measure(s->get_beats_per_bar());
         set_beat_width(s->get_beat_width());
+        m_edit_bus = s->seq_midi_bus();
+        m_edit_channel = s->midi_channel();         /* 0-15, null           */
+        seqname = s->name();
+        loopcountmax = s->loop_count_max();
+        initialize_panels();                        /* uses seq_pointer()   */
         if (usr().global_seq_feature())
         {
             set_scale(usr().seqedit_scale());
@@ -417,11 +422,6 @@ qseqeditframe64::qseqeditframe64
             set_key(s->musical_key());
             set_background_sequence(s->background_sequence());
         }
-        m_edit_bus = s->seq_midi_bus();
-        m_edit_channel = s->midi_channel();         /* 0-15, null           */
-        seqname = s->name();
-        loopcountmax = s->loop_count_max();
-        initialize_panels();                        /* uses seq_pointer()   */
         if (s->is_new_pattern())
         {
             isnewpattern = true;
@@ -2203,14 +2203,14 @@ qseqeditframe64::set_background_sequence (int seqnum)
     {
         if (seqnum < usr().max_sequence())      /* even more restrictive */
         {
-            char n[24];
-            snprintf(n, sizeof n, "[%d] %.13s", seqnum, s->name().c_str());
             if (seq::disabled(seqnum) || ! perf().is_seq_active(seqnum))
             {
                 ui->m_entry_sequence->setText("Off");
             }
             else
             {
+                char n[24];
+                snprintf(n, sizeof n, "[%d] %.13s", seqnum, s->name().c_str());
                 m_bgsequence = seqnum;
                 ui->m_entry_sequence->setText(n);
                 if (usr().global_seq_feature())
@@ -2219,6 +2219,8 @@ qseqeditframe64::set_background_sequence (int seqnum)
                 seq_pointer()->background_sequence(seqnum);
                 if (not_nullptr(m_seqroll))
                     m_seqroll->set_background_sequence(true, seqnum);
+
+                set_dirty();
             }
         }
     }

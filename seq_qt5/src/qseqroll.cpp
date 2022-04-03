@@ -94,7 +94,7 @@ qseqroll::qseqroll
     m_note_length           (p.ppqn() * 4 / 16),
     m_note_off_margin       (2),
     m_background_sequence   (seq::unassigned()),
-    m_drawing_background_seq (false),
+    m_draw_background_seq   (false),
     m_status                (0),
     m_cc                    (0),
     m_edit_mode             (mode),
@@ -276,7 +276,7 @@ qseqroll::scroll_offset (int x)
 /**
  *  This function sets the given sequence onto the piano roll of the pattern
  *  editor, so that the musician can have another pattern to play against.
- *  The state parameter sets the boolean m_drawing_background_seq.
+ *  The state parameter sets the boolean m_draw_background_seq.
  *
  * \param state
  *      If true, the background sequence will be drawn.
@@ -290,11 +290,11 @@ qseqroll::scroll_offset (int x)
 void
 qseqroll::set_background_sequence (bool state, int seq)
 {
-    if (state != m_drawing_background_seq && m_background_sequence != seq)
+    if (state != m_draw_background_seq && m_background_sequence != seq)
     {
         if (seq::legal(seq))
         {
-            m_drawing_background_seq = state;
+            m_draw_background_seq = state;
             m_background_sequence = seq;
         }
         if (is_initialized())
@@ -431,7 +431,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
 void
 qseqroll::call_draw_notes (QPainter & painter, const QRect & view)
 {
-    if (m_drawing_background_seq)
+    if (m_draw_background_seq)
         draw_notes(painter, view, true);
 
     if (is_drum_mode())
@@ -542,10 +542,9 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
 }
 
 /**
- * Draw the current pixmap frame.  Note that, if the width and height
- * change, we will have to reevaluate.
- * Draw the events. This currently draws all of them.  Drawing all them only
- * needs to be drawn once.
+ * Draw the current pixmap frame.  Note that, if the width and height change, we
+ * will have to reevaluate.  Draw the events. This currently draws all of them.
+ * Drawing all them only needs to be drawn once.
  */
 
 void

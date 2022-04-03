@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-27
+ * \updates       2022-04-03
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -264,7 +264,7 @@ private:
      *  Set to true if the drawing of the background sequence is to be done.
      */
 
-    bool m_drawing_background_seq;
+    bool m_draw_background_seq;
 
     /**
      *  The current status/event selected in the seqedit.  Not used in seqroll

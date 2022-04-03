@@ -23,7 +23,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -36,7 +36,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>420</y>
+         <y>430</y>
          <width>597</width>
          <height>81</height>
         </rect>
@@ -578,7 +578,7 @@ slot by channel number (0 to 15).</string>
         <property name="geometry">
          <rect>
           <x>8</x>
-          <y>8</y>
+          <y>10</y>
           <width>181</width>
           <height>17</height>
          </rect>
@@ -710,7 +710,7 @@ slot by channel number (0 to 15).</string>
         <property name="geometry">
          <rect>
           <x>8</x>
-          <y>-4</y>
+          <y>10</y>
           <width>157</width>
           <height>17</height>
          </rect>
@@ -725,7 +725,7 @@ slot by channel number (0 to 15).</string>
          <string>UI Boolean Options</string>
         </property>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>9</x>
@@ -1097,7 +1097,7 @@ Range: 4 to 12. Default: 8.</string>
        <property name="geometry">
         <rect>
          <x>8</x>
-         <y>12</y>
+         <y>20</y>
          <width>145</width>
          <height>17</height>
         </rect>
@@ -1139,7 +1139,7 @@ Range: 4 to 12. Default: 8.</string>
         <property name="geometry">
          <rect>
           <x>8</x>
-          <y>8</y>
+          <y>10</y>
           <width>181</width>
           <height>17</height>
          </rect>
@@ -1270,7 +1270,7 @@ connects to the MIDI I/O ports it finds.</string>
         <property name="geometry">
          <rect>
           <x>8</x>
-          <y>4</y>
+          <y>10</y>
           <width>161</width>
           <height>17</height>
          </rect>
