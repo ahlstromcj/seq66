@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-02
+ * \updates       2022-04-03
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -386,6 +386,11 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     (
         ui->checkBoxDoubleClickEdit, SIGNAL(clicked(bool)),
         this, SLOT(slot_double_click_edit())
+    );
+    connect
+    (
+        ui->checkBoxGlobalSeqFeature, SIGNAL(clicked(bool)),
+        this, SLOT(slot_global_seq_feature())
     );
 
     /*
@@ -1283,7 +1288,6 @@ qseditoptions::sync_rc ()
     ui->lineEditOutputCount->setText(qt(value));
     value = std::to_string(rc().manual_in_port_count());
     ui->lineEditInputCount->setText(qt(value));
-
     ui->checkBoxRecordByChannel->setChecked(rc().filter_by_channel());
 }
 
@@ -1307,7 +1311,7 @@ qseditoptions::sync_usr ()
 
     snprintf(tmp, sizeof tmp, "%i", usr().fingerprint_size());
     ui->lineEditFingerprintSize->setText(tmp);
-
+    ui->checkBoxGlobalSeqFeature->setChecked(usr().global_seq_feature());
 }
 
 /**
@@ -1673,6 +1677,14 @@ qseditoptions::slot_double_click_edit ()
     bool on = ui->checkBoxDoubleClickEdit->isChecked();
     rc().allow_click_edit(on);
     modify_rc();
+}
+
+void
+qseditoptions::slot_global_seq_feature ()
+{
+    bool on = ui->checkBoxGlobalSeqFeature->isChecked();
+    usr().global_seq_feature(on);
+    modify_usr();
 }
 
 /**

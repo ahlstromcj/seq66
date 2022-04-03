@@ -1576,8 +1576,6 @@ qsmainwnd::conditional_update ()
             std::string dus = std::to_string(int(-delta));
             ui->txtUnderrun->setText(QString::fromStdString(dus));
         }
-//      else
-//          ui->txtUnderrun->setText(" ");
     }
     else
         ui->txtUnderrun->setText(" ");

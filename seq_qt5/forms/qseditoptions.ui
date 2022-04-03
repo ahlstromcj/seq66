@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>660</width>
-    <height>694</height>
+    <width>662</width>
+    <height>696</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -690,8 +690,8 @@ slot by channel number (0 to 15).</string>
         <rect>
          <x>10</x>
          <y>240</y>
-         <width>425</width>
-         <height>271</height>
+         <width>577</width>
+         <height>293</height>
         </rect>
        </property>
        <property name="font">
@@ -706,99 +706,6 @@ slot by channel number (0 to 15).</string>
        <property name="flat">
         <bool>false</bool>
        </property>
-       <widget class="QWidget" name="layoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>8</x>
-          <y>25</y>
-          <width>405</width>
-          <height>241</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <item>
-          <widget class="QCheckBox" name="checkBoxVerbose">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="toolTip">
-            <string/>
-           </property>
-           <property name="text">
-            <string>Verbose Console Output</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBoxLoadMostRecent">
-           <property name="toolTip">
-            <string/>
-           </property>
-           <property name="text">
-            <string>Load Most Recent File at Startup</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBoxShowFullRecentPaths">
-           <property name="toolTip">
-            <string/>
-           </property>
-           <property name="text">
-            <string>Show Full Path of Recent Files in Menu</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBoxLongBussNames">
-           <property name="text">
-            <string>Long Port/Buss Names</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBoxLockMainWindow">
-           <property name="text">
-            <string>Lock Main Window</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBoxSwapCoordinates">
-           <property name="text">
-            <string>Swap Coordinates in All Grids</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBoxBoldGridSlots">
-           <property name="text">
-            <string>Bold Grid Slot Font and Box</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBoxDoubleClickEdit">
-           <property name="text">
-            <string>Double Click for Pattern Editor</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </widget>
        <widget class="QLabel" name="label_7">
         <property name="geometry">
          <rect>
@@ -817,6 +724,93 @@ slot by channel number (0 to 15).</string>
         <property name="text">
          <string>UI Boolean Options</string>
         </property>
+       </widget>
+       <widget class="QWidget" name="">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>26</y>
+          <width>565</width>
+          <height>257</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="checkBoxLongBussNames">
+           <property name="text">
+            <string>Long Port/Buss Names</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QCheckBox" name="checkBoxSwapCoordinates">
+           <property name="text">
+            <string>Swap Coordinates in All Grids</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="checkBoxShowFullRecentPaths">
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="text">
+            <string>Show Full Path of Recent Files</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QCheckBox" name="checkBoxLockMainWindow">
+           <property name="text">
+            <string>Lock Main Window</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="checkBoxLoadMostRecent">
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="text">
+            <string>Load Most Recent File (startup)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="checkBoxVerbose">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="text">
+            <string>Verbose Console Output</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QCheckBox" name="checkBoxBoldGridSlots">
+           <property name="text">
+            <string>Bold Grid Slot Font and Box</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="checkBoxDoubleClickEdit">
+           <property name="text">
+            <string>Double Click for Pattern Editor</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="checkBoxGlobalSeqFeature">
+           <property name="text">
+            <string>Global Background/Scale/Key</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
       <widget class="QWidget" name="layoutWidgetGuiOptions">
@@ -1047,9 +1041,9 @@ Range: 4 to 12. Default: 8.</string>
       <widget class="QLabel" name="labelRestartNeeded">
        <property name="geometry">
         <rect>
-         <x>352</x>
+         <x>328</x>
          <y>16</y>
-         <width>257</width>
+         <width>265</width>
          <height>16</height>
         </rect>
        </property>

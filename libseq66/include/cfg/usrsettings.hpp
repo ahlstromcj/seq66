@@ -33,7 +33,7 @@
  *
  *  This module defines the following categories of "global" variables that
  *  are good to collect in one place, especially for settings stored in the
- *  "user" configuration file (<code> seq66.usr </code>):
+ *  'usr' configuration file (<code> seq66.usr </code>):
  *
  *      -   The [user-midi-bus] settings, collected in the usermidibus
  *          class.
@@ -197,7 +197,7 @@ enum class showkeys
  *  Holds the current values of sequence settings and settings that can
  *  modify the number of sequences and the configuration of the
  *  user-interface.  These settings will eventually be made part of the
- *  "user" settings file.
+ *  'usr' settings file.
  */
 
 class usrsettings final : public basesettings
@@ -260,7 +260,7 @@ private:
     using Instruments = std::vector<userinstrument>;
 
     /**
-     *  Provides data about the MIDI busses, readable from the "user"
+     *  Provides data about the MIDI busses, readable from the 'usr'
      *  configuration file.  Since this object is a vector, its size is
      *  adjustable.
      */
@@ -268,7 +268,7 @@ private:
     Busses m_midi_buses;
 
     /**
-     *  Provides data about the MIDI instruments, readable from the "user"
+     *  Provides data about the MIDI instruments, readable from the 'usr'
      *  configuration file.  The size is adjustable, and grows as objects
      *  are added.
      */
@@ -278,7 +278,7 @@ private:
     /**
      *  [user-interface-settings]
      *
-     *  These are not labelled, but are present in the "user" configuration
+     *  These are not labelled, but are present in the 'usr' configuration
      *  file in the following order:
      *
      *      -#  mainwnd-rows
@@ -381,7 +381,7 @@ private:
      *  If false, the user can still save the key/scale/background-sequence
      *  values with each individual sequence, so they can be different.
      *
-     *  This value will be true by default, unless changed in the "user"
+     *  This value will be true by default, unless changed in the 'usr'
      *  configuration file.
      */
 
@@ -654,7 +654,7 @@ private:
      *      rcsettings.  Would probably want the left 32 or the first 32
      *      items in the main window only to be subject to keystroke control.
      *      This value is calculated by the normalize() function, and is <i>
-     *      not </i> part of the "user" configuration file.
+     *      not </i> part of the 'usr' configuration file.
      */
 
     int m_seqs_in_set;                  /* not include in .usr file     */
@@ -662,7 +662,7 @@ private:
     /**
      *  Number of group-mute tracks/sequences/patterns that can be supported,
      *  which is m_seqs_in_set squared, or 1024.  This value is <i> not </i>
-     *  part of the "user" configuration file; it is calculated by the
+     *  part of the 'usr' configuration file; it is calculated by the
      *  normalize() function.
      */
 
@@ -702,12 +702,12 @@ private:
 
     /**
      *  Provides a temporary variable that can be set from the command line to
-     *  cause the "user" state to be saved into the "user" configuration file.
+     *  cause the 'usr' state to be saved into the 'usr' configuration file.
      *
      *  Normally, this state is not saved.  It is not saved because there is
      *  currently no user-interface for editing it, and because it can pick up
      *  some command-line options, and it is not right to have them written
-     *  to the "user" configuration file.
+     *  to the 'usr' configuration file.
      *
      *  (The "rc" configuration file is a different case, having historically
      *  always been saved, and having a number of command-line options, such
@@ -715,7 +715,7 @@ private:
      *  system.)
      *
      *  Anyway, this flag can be set by the --user-save option.  This setting
-     *  is never saved.  But note that, if no "user" configuration file is
+     *  is never saved.  But note that, if no 'usr' configuration file is
      *  found, it is then saved anyway.
      *
      *  Now see the named_bools list rcsettings::m_save_list instead.
@@ -1264,7 +1264,7 @@ public:
      * \setter m_seqedit_bgsequence
      *
      *      Note that seq::legal() allows the seq::limit() (0x800 = 2048)
-     *      value, to turn off the use of a background sequence.
+     *      value, to turn off the use of a global background sequence.
      */
 
     void seqedit_bgsequence (int seqnum)

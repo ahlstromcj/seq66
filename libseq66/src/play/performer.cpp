@@ -1114,9 +1114,6 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
     if (result)
     {
         s->set_parent(this);                    /* also sets a lot of stuff */
-//      if (! fileload)
-//          modify();
-
         if (rc().is_setsmode_clear())           /* i.e. normal or auto-arm  */
         {
             /*

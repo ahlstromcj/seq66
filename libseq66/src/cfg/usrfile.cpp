@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-01-19
+ * \updates       2022-04-03
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -618,9 +618,9 @@ usrfile::write ()
 "# = 2. Larger PPQNs require larger zoom to look good. Seq66 adapts the zoom to\n"
 "# the PPQN if set to 0. The unit of zoom is ticks/pixel.\n"
 "#\n"
-"# 'global-seq-feature' specifies if the key, scale, and background pattern are\n"
-"# are applied to all patterns, or separately to each.  These values are stored\n"
-"# in the MIDI file in the global SeqSpec (if true) or in each track.\n"
+"# 'global-seq-feature' applies the key, scale, and background pattern to all\n"
+"# patterns versus separately to each.  If all, these values are stored in the\n"
+"# MIDI file in the global SeqSpec versus in each track.\n"
 "#\n"
 "# 'progress-bar-thick specifies a thicker progress bar.  Default is 1 pixel;\n"
 "# thick is 2 pixels if set to true. Also makes the progress box border\n"

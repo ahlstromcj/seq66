@@ -262,7 +262,8 @@ const std::string midifile::sm_meta_text_labels[8] =
  *      If true, write any non-default values of the key, scale, and
  *      background sequence to the global "proprietary" section of the MIDI
  *      file, instead of to each sequence.  Note that this option is only used
- *      in writing; reading can handle either format transparently.
+ *      in writing; reading can handle either format transparently. Depends on
+ *      usr().global_seq_feature() returning true.
  *
  * \param verifymode
  *      If set to true, we are opening files just to verify them before

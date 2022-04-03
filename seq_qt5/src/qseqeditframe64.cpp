@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-02
+ * \updates       2022-04-03
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -402,9 +402,21 @@ qseqeditframe64::qseqeditframe64
     {
         set_beats_per_measure(s->get_beats_per_bar());
         set_beat_width(s->get_beat_width());
-        set_scale(s->musical_scale());
-        set_key(s->musical_key());
-        set_background_sequence(s->background_sequence());
+        if (usr().global_seq_feature())
+        {
+            set_scale(usr().seqedit_scale());
+            set_key(usr().seqedit_key());
+            set_background_sequence(usr().seqedit_bgsequence());
+            s->musical_scale(usr().seqedit_scale());
+            s->musical_key(usr().seqedit_key());
+            s->background_sequence(usr().seqedit_bgsequence());
+        }
+        else
+        {
+            set_scale(s->musical_scale());
+            set_key(s->musical_key());
+            set_background_sequence(s->background_sequence());
+        }
         m_edit_bus = s->seq_midi_bus();
         m_edit_channel = s->midi_channel();         /* 0-15, null           */
         seqname = s->name();
@@ -856,11 +868,6 @@ qseqeditframe64::qseqeditframe64
         QString combo_text = qt(musical_key_name(key));
         ui->m_combo_key->insertItem(key, combo_text);
     }
-//  if (seq_pointer()->musical_key() != c_key_of_C)
-//      set_key(seq_pointer()->musical_key());
-//  else
-//      set_key(usr().seqedit_key());
-
     ui->m_combo_key->setCurrentIndex(m_key);
     connect
     (
@@ -884,11 +891,6 @@ qseqeditframe64::qseqeditframe64
         QString combo_text = qt(musical_scale_name(scale));
         ui->m_combo_scale->insertItem(scale, combo_text);
     }
-//  if (seq_pointer()->musical_scale() != c_scales_off)
-//      set_scale(seq_pointer()->musical_scale());
-//  else
-//      set_scale(usr().seqedit_scale());
-
     ui->m_combo_scale->setCurrentIndex(m_scale);
     connect
     (
@@ -916,13 +918,6 @@ qseqeditframe64::qseqeditframe64
         this, SLOT(sequences())
     );
     popup_sequence_menu();              /* create the initial popup menu    */
-//  if (seq::valid(seq_pointer()->background_sequence()))
-//      m_bgsequence = seq_pointer()->background_sequence();
-//  else
-//      if (seq::valid(usr().seqedit_bgsequence()))
-//          m_bgsequence = usr().seqedit_bgsequence();
-//
-//  set_background_sequence(m_bgsequence);
 
     /*
      * Tiny vertical zoom keys
@@ -998,7 +993,6 @@ qseqeditframe64::qseqeditframe64
       * Loop-count Spin Box.
       */
 
-//  ui->m_spin_loop_count->setValue(seq_pointer()->loop_count_max());
     ui->m_spin_loop_count->setValue(loopcountmax);
     ui->m_spin_loop_count->setReadOnly(false);
     connect
@@ -1013,10 +1007,6 @@ qseqeditframe64::qseqeditframe64
 
     qt_set_icon(play_xpm, ui->m_toggle_play);
     ui->m_toggle_play->setCheckable(true);
-
-//  if (seq_pointer()->is_new_pattern())
-//      play_change(usr().new_pattern_armed());
-
     connect
     (
         ui->m_toggle_play, SIGNAL(toggled(bool)),
@@ -1029,9 +1019,6 @@ qseqeditframe64::qseqeditframe64
 
     qt_set_icon(thru_xpm, ui->m_toggle_thru);
     ui->m_toggle_thru->setCheckable(true);
-//  if (seq_pointer()->is_new_pattern())
-//      thru_change(usr().new_pattern_thru());
-
     connect
     (
         ui->m_toggle_thru, SIGNAL(toggled(bool)),
@@ -1044,9 +1031,6 @@ qseqeditframe64::qseqeditframe64
 
     qt_set_icon(rec_xpm, ui->m_toggle_record);
     ui->m_toggle_record->setCheckable(true);
-//  if (seq_pointer()->is_new_pattern())
-//      record_change(usr().new_pattern_record());
-
     connect
     (
         ui->m_toggle_record, SIGNAL(toggled(bool)),
@@ -1059,9 +1043,6 @@ qseqeditframe64::qseqeditframe64
 
     qt_set_icon(q_rec_xpm, ui->m_toggle_qrecord);
     ui->m_toggle_qrecord->setCheckable(true);
-//  if (seq_pointer()->is_new_pattern())
-//      q_record_change(usr().new_pattern_qrecord());
-
     connect
     (
         ui->m_toggle_qrecord, SIGNAL(toggled(bool)),
@@ -2217,34 +2198,32 @@ qseqeditframe64::set_background_sequence (int seqnum)
     if (! seq::valid(seqnum))
         return;
 
-    m_bgsequence = seqnum;                      /* should check this value!  */
-    if (usr().global_seq_feature())
-        usr().seqedit_bgsequence(seqnum);
-
-    if (seq::disabled(seqnum) || ! perf().is_seq_active(seqnum))
-    {
-        ui->m_entry_sequence->setText("Off");
-        if (not_nullptr(m_seqroll))
-            m_seqroll->set_background_sequence(false, seq::limit());
-    }
-
     seq::pointer s = perf().get_sequence(seqnum);
     if (not_nullptr(s))
     {
-        char name[24];
-        snprintf(name, sizeof name, "[%d] %.13s", seqnum, s->name().c_str());
-        ui->m_entry_sequence->setText(name);
-        if (not_nullptr(m_seqroll))
-            m_seqroll->set_background_sequence(true, seqnum);
-
         if (seqnum < usr().max_sequence())      /* even more restrictive */
         {
-            if (usr().global_seq_feature())
-                usr().seqedit_bgsequence(seqnum);
+            char n[24];
+            snprintf(n, sizeof n, "[%d] %.13s", seqnum, s->name().c_str());
+            if (seq::disabled(seqnum) || ! perf().is_seq_active(seqnum))
+            {
+                ui->m_entry_sequence->setText("Off");
+            }
             else
+            {
+                m_bgsequence = seqnum;
+                ui->m_entry_sequence->setText(n);
+                if (usr().global_seq_feature())
+                    usr().seqedit_bgsequence(seqnum);
+
                 seq_pointer()->background_sequence(seqnum);
+                if (not_nullptr(m_seqroll))
+                    m_seqroll->set_background_sequence(true, seqnum);
+            }
         }
     }
+    else
+        msgprintf(msglevel::error, "null pattern %d", seqnum);
 }
 
 /**
@@ -2541,7 +2520,10 @@ qseqeditframe64::change_ppqn (int ppqn)
 {
     int zoom = usr().zoom();
     set_snap(rescale_tick(sm_initial_snap, ppqn, usr().base_ppqn()));
-    set_note_length(rescale_tick(sm_initial_note_length, ppqn, usr().base_ppqn()));
+    set_note_length
+    (
+        rescale_tick(sm_initial_note_length, ppqn, usr().base_ppqn())
+    );
     if (usr().adapt_zoom())
         zoom = zoom_power_of_2(ppqn);
 
@@ -2646,7 +2628,8 @@ qseqeditframe64::update_key (int index)
 void
 qseqeditframe64::set_key (int key)
 {
-    if (legal_key(key))             // if (key != m_key && legal_key(key))
+    sequence * s = seq_pointer().get();
+    if (legal_key(key) && not_nullptr(s))
     {
         m_key = key;
         ui->m_combo_key->setCurrentIndex(key);
@@ -2658,14 +2641,12 @@ qseqeditframe64::set_key (int key)
 
         if (usr().global_seq_feature())
             usr().seqedit_key(key);
-        else
-        {
-            sequence * s = seq_pointer().get();
-            if (not_nullptr(s))
-                s->musical_key(midibyte(key));
-        }
+
+        s->musical_key(midibyte(key));
         set_dirty();
     }
+    else
+        errprint("null pattern");
 }
 
 void
@@ -2691,7 +2672,8 @@ qseqeditframe64::update_scale (int index)
 void
 qseqeditframe64::set_scale (int scale)
 {
-    if (legal_scale(scale))
+    sequence * s = seq_pointer().get();
+    if (legal_scale(scale) && not_nullptr(s))
     {
         m_scale = scale;
         ui->m_combo_scale->setCurrentIndex(scale);
@@ -2700,14 +2682,12 @@ qseqeditframe64::set_scale (int scale)
 
         if (usr().global_seq_feature())
             usr().seqedit_scale(scale);
-        else
-        {
-            sequence * s = seq_pointer().get();
-            if (not_nullptr(s))
-                s->musical_scale(midibyte(scale));
-        }
+
+        s->musical_scale(midibyte(scale));
         set_dirty();
     }
+    else
+        errprint("null pattern");
 }
 
 void
