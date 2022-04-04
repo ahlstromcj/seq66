@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-01-29
+ * \updates       2022-04-04
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -800,7 +800,7 @@ midifile::parse (performer & p, int screenset, bool importing)
             if (m_pos < m_file_size)                    /* any data left?   */
             {
                 if (! importing)
-                    result = parse_proprietary_track(p, m_file_size);
+                    result = parse_seqspec_track(p, m_file_size);
             }
             if (result && importing)
                  p.modify();                            /* modify flag      */
@@ -1425,7 +1425,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             }
                             else if (seqspec == c_mutegroups)
                             {
-                                /* handled in parse_proprietary_track() */
+                                /* handled in parse_seqspec_track() */
                             }
                             else if (is_proptag(seqspec))
                             {
@@ -1671,7 +1671,7 @@ midifile::finalize_sequence
  */
 
 midilong
-midifile::parse_prop_header (int file_size)
+midifile::parse_seqspec_header (int file_size)
 {
     midilong result = 0;
     if ((file_size - m_pos) > int(sizeof(midilong)))
@@ -1743,7 +1743,7 @@ midifile::parse_prop_header (int file_size)
  */
 
 bool
-midifile::parse_proprietary_track (performer & p, int file_size)
+midifile::parse_seqspec_track (performer & p, int file_size)
 {
     bool result = true;
     midilong ID = read_long();                      /* Get ID + Length      */
@@ -1791,296 +1791,220 @@ midifile::parse_proprietary_track (performer & p, int file_size)
         skip(-4);                                   /* unread the "ID code" */
 
     if (result)
-    {
-        /*
-         * This section depends on the ordering and presence of all supported
-         * SeqSpecs, and hence is kind of brittle.  It would be better to loop
-         * here and use a switch-statement to figure out which code to
-         * execute.
-         */
+        result = prop_header_loop(p, file_size);
 
-        midilong seqspec = parse_prop_header(file_size);
-
-        /*
-         * Seq24 would store the MIDI control setting in the MIDI file.  While
-         * this could be a useful feature, it seems a bit confusing, since the
-         * user/musician will more likely define those controls for his set of
-         * equipment to apply to all songs.
-         *
-         * Furthermore, we would need to load these control settings into a
-         * midicontrolin (see ctrl/midicontrolin modules).
-         * And, lastly, Seq24 never wrote these controls to the file.  It
-         * merely wrote the c_midictrl code, followed by a long 0.
-         * For now, we are going to evade this functionality.  We will
-         * continue to write this section, and try to read it, but expect it
-         * to be empty.
-         *
-         * Track-specific SeqSpecs handled in parse_smf_1():
-         *
-         *  c_midibus          c_timesig         c_midichannel    c_musickey *
-         *  c_musicscale *     c_backsequence *  c_transpose *    c_seq_color
-         *  c_seq_edit_mode !  c_seq_loopcount   c_triggers       c_triggers_ex
-         *  c_trig_transpose
-         *
-         * Global SeqSpecs handled here:
-         *
-         *  c_midictrl         c_midiclocks      c_notes          c_bpmtag
-         *  c_mutegroups       c_musickey *      c_musicscale *
-         *  c_backsequence *   c_perf_bp_mes     c_perf_bw        c_tempo_map !
-         *  c_reserved_1 !     c_reserved_2 !    c_tempo_track
-         *  c_seq_edit_mode !
-         *
-         * Not handled:
-         *
-         *  c_gap_A to _F      c_reserved_3 and _4
-         */
-
-        if (seqspec == c_midictrl)
-        {
-            int ctrls = int(read_long());
-
-            /*
-             * Some old code wrote some bad files, we need to work around that
-             * and fix it.  The value of max_sequence() is generally 1024.
-             */
-
-            if (ctrls > usr().max_sequence())
-            {
-                skip(-4);
-                (void) set_error_dump
-                (
-                    "Bad MIDI-control sequence count, fixing.\n"
-                    "Please save the file now!",
-                    midilong(ctrls)
-                );
-                ctrls = midilong(read_byte());
-            }
-            midibyte a[6];
-            for (int i = 0; i < ctrls; ++i)
-            {
-                read_byte_array(a, 6);
-
-#if defined USE_MIDI_CONTROL_IN_SONGS                   /* deprecated */
-                p.midi_control_toggle(i).set(a);
-#endif
-                read_byte_array(a, 6);
-
-#if defined USE_MIDI_CONTROL_IN_SONGS
-                p.midi_control_on(i).set(a);
-#endif
-                read_byte_array(a, 6);
-
-#if defined USE_MIDI_CONTROL_IN_SONGS
-                p.midi_control_off(i).set(a);
-#endif
-            }
-        }
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_midiclocks)
-        {
-            /*
-             * Some old code wrote some bad files, we work around and fix it.
-             */
-
-            int busscount = int(read_long());
-
-#if defined USE_MIDI_CLOCK_IN_SONGS
-            if (busscount > c_busscount_max)
-            {
-                (void) set_error_dump
-                (
-                    "Bad buss count, fixing; please save the file now."
-                );
-                skip(-4);
-                busscount = int(read_byte());
-            }
-#endif  // defined USE_MIDI_CLOCK_IN_SONGS
-
-            mastermidibus * masterbus = p.master_bus();
-            if (not_nullptr(masterbus))
-            {
-                for (int buss = 0; buss < busscount; ++buss)
-                {
-                    bussbyte clocktype = read_byte();
-                    masterbus->set_clock
-                    (
-                        bussbyte(buss), static_cast<e_clock>(clocktype)
-                    );
-                }
-            }
-        }
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_notes)
-        {
-            /*
-             * The default number of sets is c_max_sets = 32.  This is also
-             * the initial minimum number of screen-set names, though some
-             * can be empty.  More than 32 sets can be supported, though that
-             * claim is currently untested.  The highest set number is
-             * determined by the highest pattern number; the
-             * setmaster::add_set() function creates a new set when a pattern
-             * number falls outside the boundaries of the existing sets.
-             */
-
-            midishort screen_sets = read_short();
-            for (midishort x = 0; x < screen_sets; ++x)
-            {
-                midishort len = read_short();               /* string size  */
-                std::string notess;
-                for (midishort i = 0; i < len; ++i)
-                    notess += read_byte();                  /* unsigned!    */
-
-                p.screenset_name(x, notess, true);          /* load time    */
-            }
-        }
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_bpmtag)                            /* beats/minute */
-        {
-            /*
-             * Should check here for a conflict between the Tempo meta event
-             * and this tag's value.  NOT YET.  Also, as of 2017-03-22, we
-             * want to be able to handle two decimal points of precision in
-             * BPM.  See the function banner for a discussion.
-             */
-
-            midilong longbpm = read_long();
-            midibpm bpm = usr().unscaled_bpm(longbpm);
-            p.set_beats_per_minute(bpm);                    /* 2nd setter   */
-        }
-
-        /*
-         * Read in the mute group information.  If the length of the mute
-         * group section is 0, then this file is a Seq42 file, and we
-         * ignore the section.  (Thanks to Stazed for that catch!)
-         */
-
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_mutegroups)
-            (void) parse_mute_groups(p);
-
-        /*
-         * We let Seq66 read this new stuff even the global-background
-         * sequence is in force.  That flag affects only the writing of the
-         * MIDI file, not the reading.
-         */
-
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_musickey)
-        {
-            int key = int(read_byte());
-            usr().seqedit_key(key);
-        }
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_musicscale)
-        {
-            int scale = int(read_byte());
-            usr().seqedit_scale(scale);
-        }
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_backsequence)
-        {
-            int seqnum = int(read_long());
-            usr().seqedit_bgsequence(seqnum);
-        }
-
-        /*
-         * Store the beats/measure and beat-width values from the perfedit
-         * window.
-         */
-
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_perf_bp_mes)
-        {
-            int bpmes = int(read_long());
-            p.set_beats_per_bar(bpmes);
-        }
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_perf_bw)
-        {
-            int bw = int(read_long());
-            p.set_beat_width(bw);
-        }
-
-#if defined USE_THESE_SEQSPECS
-
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_tempo_map)
-        {
-            /*
-             * A stazed feature not implemented.
-             */
-        }
-
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_reserved_1)
-        {
-            /*
-             * Reserved for other projects to use.
-             */
-        }
-
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_reserved_2)
-        {
-            /*
-             * Reserved for other projects to use.
-             */
-        }
-
-#endif  // USE_THESE_SEQSPECS
-
-        /*
-         * If this value is present and greater than 0, set it into the
-         * performance.  It might override the value specified in the "rc"
-         * configuration file.
-         */
-
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_tempo_track)
-        {
-            int tempotrack = int(read_long());
-            if (tempotrack >= 0)
-                rc().tempo_track_number(tempotrack);
-        }
-
-#if defined SEQ66_SEQUENCE_EDIT_MODE_GLOBAL
-
-        /*
-         * Sequence editing mode are a feature of Kepler34.  We don't know
-         * what these modes do, yet, but let's leave room for them.
-         *
-         * We will eventually store this in the MIDI file. Also the current
-         * code below will SKIP DATA!!!  So we are disabling it!!!
-         */
-
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_seq_edit_mode)
-        {
-            for (int track = 0; track < p.sequence_high(); ++track)
-            {
-                if (p.is_seq_active(track))
-                    p.edit_mode(track, sequence::editmode(read_long()));
-            }
-        }
-
-#endif  // SEQ66_SEQUENCE_EDIT_MODE_GLOBAL
-
-        /*
-         * ADD NEW CONTROL TAGS AT THE END OF THE LIST HERE.  Don't forget to
-         * fill in any blanks with new code above, if need be.
-         */
-    }
     return result;
 }
 
 /**
+ *  This section used to depend on the ordering and presence of all supported
+ * SeqSpecs, and hence was kind of brittle.  Now we loop
+ * here and use a switch-statement to figure out which code to
+ * execute.
+ *
+ *  Seq24 would store the MIDI control setting in the MIDI file.  While
+ * this could be a useful feature, it seems a bit confusing, since the
+ * user/musician will more likely define those controls for his set of
+ * equipment to apply to all songs.
+ *
+ *  Furthermore, we would need to load these control settings into a
+ * midicontrolin (see ctrl/midicontrolin modules).
+ * And, lastly, Seq24 never wrote these controls to the file.  It
+ * merely wrote the c_midictrl code, followed by a long 0.
+ * For now, we are going to evade this functionality.  We will
+ * continue to write this section, and try to read it, but expect it
+ * to be empty.
+ *
+ * Track-specific SeqSpecs handled in parse_smf_1():
+ *
+ *      c_midibus          c_timesig         c_midichannel    c_musickey *
+ *      c_musicscale *     c_backsequence *  c_transpose *    c_seq_color
+ *      c_seq_edit_mode !  c_seq_loopcount   c_triggers       c_triggers_ex
+ *      c_trig_transpose
+ *
+ * Global SeqSpecs handled here:
+ *
+ *      c_midictrl         c_midiclocks      c_notes          c_bpmtag
+ *      c_mutegroups       c_musickey *      c_musicscale *
+ *      c_backsequence *   c_perf_bp_mes     c_perf_bw        c_tempo_map !
+ *      c_reserved_1 !     c_reserved_2 !    c_tempo_track
+ *      c_seq_edit_mode !
+ *
+ * Not handled:
+ *
+ *      c_gap_A to _F      c_reserved_3      c_reserved_4
+ */
+
+bool
+midifile::prop_header_loop (performer & p, int file_size)
+{
+    bool ok = true;
+    while (ok)
+    {
+        midilong seqspec = parse_seqspec_header(file_size);
+        ok = seqspec > 0;
+        if (ok)
+        {
+            switch (seqspec)
+            {
+            case c_midictrl:        ok = parse_c_midictrl(p);       break;
+            case c_midiclocks:      ok = parse_c_midiclocks(p);     break;
+            case c_notes:           ok = parse_c_notes(p);          break;
+            case c_bpmtag:          ok = parse_c_bpmtag(p);         break;
+            case c_mutegroups:      (void) parse_c_mutegroups(p);   break;
+            case c_musickey:        ok = parse_c_musickey();        break;
+            case c_musicscale:      ok = parse_c_musicscale();      break;
+            case c_backsequence:    ok = parse_c_backsequence();    break;
+            case c_perf_bp_mes:     ok = parse_c_perf_bp_mes(p);    break;
+            case c_perf_bw:         ok = parse_c_perf_bw(p);        break;
+            case c_tempo_track:     ok = parse_c_tempo_track();     break;
+#if defined SEQ66_SEQUENCE_EDIT_MODE_GLOBAL
+            case c_seq_edit_mode:   ok = parse_c_seq_edit_mode(p);  break;
+#endif
+#if defined USE_THESE_SEQSPECS      /* stazed features not implemented */
+            case c_tempo_map:
+            case c_reserved_1:
+            case c_reserved_2:
+                break;
+#endif
+            }
+        }
+    }
+    return true;
+}
+
+/*
+ * Some old code wrote some bad files, we need to work around that and fix it.
+ * The value of max_sequence() is generally 1024.
+ */
+
+bool
+midifile::parse_c_midictrl (performer & /* p*/)
+{
+    int ctrls = int(read_long());
+    if (ctrls > usr().max_sequence())
+    {
+        skip(-4);
+        (void) set_error_dump
+        (
+            "Bad MIDI-control sequence count, fixing.\n"
+            "Please save the file now!",
+            midilong(ctrls)
+        );
+        ctrls = midilong(read_byte());
+    }
+    midibyte a[6];
+    for (int i = 0; i < ctrls; ++i)
+    {
+        read_byte_array(a, 6);
+
+#if defined USE_MIDI_CONTROL_IN_SONGS                   /* deprecated */
+        p.midi_control_toggle(i).set(a);
+#endif
+        read_byte_array(a, 6);
+
+#if defined USE_MIDI_CONTROL_IN_SONGS
+        p.midi_control_on(i).set(a);
+#endif
+        read_byte_array(a, 6);
+
+#if defined USE_MIDI_CONTROL_IN_SONGS
+        p.midi_control_off(i).set(a);
+#endif
+    }
+    return true;
+}
+
+/*
+ * Some old code wrote some bad files, we work around and fix it.
+ */
+
+bool
+midifile::parse_c_midiclocks (performer & p)
+{
+    int busscount = int(read_long());
+
+#if defined USE_MIDI_CLOCK_IN_SONGS
+    if (busscount > c_busscount_max)
+    {
+        (void) set_error_dump
+        (
+            "Bad buss count, fixing; please save the file now."
+        );
+        skip(-4);
+        busscount = int(read_byte());
+    }
+#endif  // defined USE_MIDI_CLOCK_IN_SONGS
+
+    mastermidibus * masterbus = p.master_bus();
+    if (not_nullptr(masterbus))
+    {
+        for (int buss = 0; buss < busscount; ++buss)
+        {
+            bussbyte clocktype = read_byte();
+            masterbus->set_clock
+            (
+                bussbyte(buss), static_cast<e_clock>(clocktype)
+            );
+        }
+    }
+    return true;
+}
+
+/*
+ * The default number of sets is c_max_sets = 32.  This is also the initial
+ * minimum number of screen-set names, though some can be empty.  More than 32
+ * sets can be supported, though that claim is currently untested.  The
+ * highest set number is determined by the highest pattern number; the
+ * setmaster::add_set() function creates a new set when a pattern number falls
+ * outside the boundaries of the existing sets.
+ */
+
+bool
+midifile::parse_c_notes (performer & p)
+{
+    midishort screen_sets = read_short();
+    for (midishort x = 0; x < screen_sets; ++x)
+    {
+        midishort len = read_short();               /* string size  */
+        std::string notess;
+        for (midishort i = 0; i < len; ++i)
+            notess += read_byte();                  /* unsigned!    */
+
+        p.screenset_name(x, notess, true);          /* load time    */
+    }
+    return true;
+}
+
+/*
+ * Should check here for a conflict between the Tempo meta event and this
+ * tag's value.  NOT YET.  Also, as of 2017-03-22, we want to be able to
+ * handle two decimal points of precision in BPM.  See the prop_header_loop()
+ * function banner for a discussion.
+ */
+
+bool
+midifile::parse_c_bpmtag (performer & p)
+{
+    midilong longbpm = read_long();
+    midibpm bpm = usr().unscaled_bpm(longbpm);
+    p.set_beats_per_minute(bpm);                    /* 2nd setter   */
+    return true;
+}
+
+/**
+ *  Read in the mute group information.  If the length of the mute group
+ *  section is 0, then this file is a Seq42 file, and we ignore the section.
+ *  (Thanks to Stazed for that catch!)
+ *
  *  Updated mute-groups parsing that supports the old style "32 x 32"
  *  mutegroups, and more variable setup.  Lots to do yet!
  *
  *  Also need to check for any mutes being present.
  *
  *  What about rows & columns?  Ultimately, the set-size must match that
- *  specified by the application's user-interface as must the rows and columns.
+ *  specified by the application's user-interface as must the rows and
+ *  columns.
  *
  * New:  We write the group name.  So the new format of mute-groups is:
  *
@@ -2092,7 +2016,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
  */
 
 bool
-midifile::parse_mute_groups (performer & p)
+midifile::parse_c_mutegroups (performer & p)
 {
     mutegroups & mutes = p.mutes();
     bool result = mutes.group_load_from_midi();
@@ -2165,6 +2089,94 @@ midifile::parse_mute_groups (performer & p)
     return result;
 }
 
+/*
+ * We let Seq66 read this new stuff even the global-background sequence is in
+ * force.  That flag affects only the writing of the MIDI file, not the
+ * reading.
+ */
+
+bool
+midifile::parse_c_musickey ()
+{
+    int key = int(read_byte());
+    usr().seqedit_key(key);
+    return true;
+}
+
+bool
+midifile::parse_c_musicscale ()
+{
+    int scale = int(read_byte());
+    usr().seqedit_scale(scale);
+    return true;
+}
+
+bool
+midifile::parse_c_backsequence ()
+{
+    int seqnum = int(read_long());
+    usr().seqedit_bgsequence(seqnum);
+    return true;
+}
+
+/*
+ * Store the beats/measure and beat-width values from the perfedit window.
+ */
+
+bool
+midifile::parse_c_perf_bp_mes (performer & p)
+{
+    int bpmes = int(read_long());
+    p.set_beats_per_bar(bpmes);
+    return true;
+}
+
+bool
+midifile::parse_c_perf_bw (performer & p)
+{
+    int bw = int(read_long());
+    p.set_beat_width(bw);
+    return true;
+}
+
+/*
+ * If this value is present and greater than 0, set it into the performance.
+ * It might override the value specified in the "rc" configuration file.
+ */
+
+bool
+midifile::parse_c_tempo_track ()
+{
+    int tempotrack = int(read_long());
+    if (tempotrack >= 0)
+        rc().tempo_track_number(tempotrack);
+
+    return true;
+}
+
+#if defined SEQ66_SEQUENCE_EDIT_MODE_GLOBAL
+
+/*
+ * Sequence editing mode are a feature of Kepler34.  We don't know what these
+ * modes do, yet, but let's leave room for them.
+ *
+ * We will eventually store this in the MIDI file. Also the current code below
+ * will SKIP DATA, so we are disabling it!
+ */
+
+bool
+midifile::parse_c_seq_edit_mode (performer & p)
+{
+    for (int track = 0; track < p.sequence_high(); ++track)
+    {
+        if (p.is_seq_active(track))
+            p.edit_mode(track, sequence::editmode(read_long()));
+    }
+    return true;
+}
+
+#endif
+
 /**
  *  For each groups in the mute-groups, write the status bits to the
  *  c_mutegroups SeqSpec.
@@ -2174,7 +2186,7 @@ midifile::parse_mute_groups (performer & p)
  */
 
 bool
-midifile::write_mute_groups (const performer & p)
+midifile::write_c_mutegroups (const performer & p)
 {
     const mutegroups & mutes = p.mutes();
     bool result = mutes.saveable_to_midi();
@@ -2562,7 +2574,7 @@ midifile::write_time_sig (int beatsperbar, int beatwidth)
  */
 
 void
-midifile::write_prop_header (midilong control_tag, long len)
+midifile::write_seqspec_header (midilong control_tag, long len)
 {
     write_byte(0);                      /* delta time                   */
     write_byte(EVENT_MIDI_META);        /* 0xFF meta marker             */
@@ -2590,11 +2602,11 @@ midifile::write_track (const midi_vector & lst)
 
 /**
  *  Calculates the size of a proprietary item, as written by the
- *  write_prop_header() function, plus whatever is called to write the data.
- *  If using the new format, the length includes the sum of sequencer-specific
- *  tag (0xFF 0x7F) and the size of the variable-length value.  Then, for the
- *  new format, 4 bytes are added for the Seq24 MIDI control
- *  value, and then the data length is added.
+ *  write_seqspec_header() function, plus whatever is called to write the
+ *  data.  If using the new format, the length includes the sum of
+ *  sequencer-specific tag (0xFF 0x7F) and the size of the variable-length
+ *  value.  Then, for the new format, 4 bytes are added for the Seq24 MIDI
+ *  control value, and then the data length is added.
  *
  * \param data_length
  *      Provides the data length value to be encoded.
@@ -2720,7 +2732,7 @@ midifile::write (performer & p, bool doseqspec)
     }
     if (result && doseqspec)
     {
-        result = write_proprietary_track(p);
+        result = write_seqspec_track(p);
         if (! result)
             m_error_message = "Could not write SeqSpec track.";
     }
@@ -2943,7 +2955,7 @@ midifile::write_song (performer & p)
  */
 
 bool
-midifile::write_proprietary_track (performer & p)
+midifile::write_seqspec_track (performer & p)
 {
     const mutegroups & mutes = p.mutes();
     long tracklength = 0;
@@ -2999,11 +3011,11 @@ midifile::write_proprietary_track (performer & p)
     write_long(tracklength);
     write_seq_number(c_prop_seq_number);        /* bogus sequence number    */
     write_track_name(c_prop_track_name);        /* bogus track name         */
-    write_prop_header(c_midictrl, 4);           /* midi control tag + 4     */
+    write_seqspec_header(c_midictrl, 4);        /* midi control tag + 4     */
     write_long(0);                              /* Seq24 writes only a zero */
-    write_prop_header(c_midiclocks, 4);         /* bus mute/unmute data + 4 */
+    write_seqspec_header(c_midiclocks, 4);      /* bus mute/unmute data + 4 */
     write_long(0);                              /* Seq24 writes only a zero */
-    write_prop_header(c_notes, cnotesz);        /* namepad data tag + data  */
+    write_seqspec_header(c_notes, cnotesz);     /* namepad data tag + data  */
     write_short(maxsets);                       /* data, not a tag          */
     for (int s = 0; s < maxsets; ++s)           /* see "cnotesz" calc       */
     {
@@ -3017,7 +3029,7 @@ midifile::write_proprietary_track (performer & p)
         else
             write_short(0);                         /* name is empty        */
     }
-    write_prop_header(c_bpmtag, 4);                 /* bpm tag + long data  */
+    write_seqspec_header(c_bpmtag, 4);              /* bpm tag + long data  */
 
     /*
      *  We now encode the Seq66-specific BPM value by multiplying it
@@ -3029,25 +3041,25 @@ midifile::write_proprietary_track (performer & p)
     write_long(scaled_bpm);                         /* 4 bytes              */
     if (gmutesz > 0)
     {
-        write_prop_header(c_mutegroups, gmutesz);   /* mute groups tag etc. */
+        write_seqspec_header(c_mutegroups, gmutesz);   /* mute groups tag etc. */
         write_split_long(groupcount, groupsize, rc().save_old_mutes());
-        (void) write_mute_groups(p);
+        (void) write_c_mutegroups(p);
     }
     if (m_global_bgsequence)
     {
-        write_prop_header(c_musickey, 1);                   /* control tag+1 */
-        write_byte(midibyte(usr().seqedit_key()));          /* key change    */
-        write_prop_header(c_musicscale, 1);                 /* control tag+1 */
-        write_byte(midibyte(usr().seqedit_scale()));        /* scale change  */
-        write_prop_header(c_backsequence, 4);               /* control tag+4 */
-        write_long(long(usr().seqedit_bgsequence()));       /* background    */
+        write_seqspec_header(c_musickey, 1);             /* control tag+1   */
+        write_byte(midibyte(usr().seqedit_key()));       /* key change      */
+        write_seqspec_header(c_musicscale, 1);           /* control tag+1   */
+        write_byte(midibyte(usr().seqedit_scale()));     /* scale change    */
+        write_seqspec_header(c_backsequence, 4);         /* control tag+4   */
+        write_long(long(usr().seqedit_bgsequence()));    /* background      */
     }
-    write_prop_header(c_perf_bp_mes, 4);                    /* control tag+4 */
-    write_long(long(p.get_beats_per_bar()));                /* perfedit BPM  */
-    write_prop_header(c_perf_bw, 4);                        /* control tag+4 */
-    write_long(long(p.get_beat_width()));                   /* perfedit BW   */
-    write_prop_header(c_tempo_track, 4);                    /* control tag+4 */
-    write_long(long(rc().tempo_track_number()));            /* perfedit BW   */
+    write_seqspec_header(c_perf_bp_mes, 4);              /* control tag+4   */
+    write_long(long(p.get_beats_per_bar()));             /* perfedit BPM    */
+    write_seqspec_header(c_perf_bw, 4);                  /* control tag+4   */
+    write_long(long(p.get_beat_width()));                /* perfedit BW     */
+    write_seqspec_header(c_tempo_track, 4);              /* control tag+4   */
+    write_long(long(rc().tempo_track_number()));         /* perfedit BW     */
     write_track_end();
     return true;
 }

@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2022-01-09
+ * \updates       2022-04-04
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -302,7 +302,15 @@ void
 qt5nsmanager::quit ()
 {
     session_message("Quitting the session");
-    m_application.quit();
+
+    /*
+     * Using the window's quit provides a prompt to save, and also avoids a
+     * segfault when exiting with changes pending.
+     *
+     *          m_application.quit();
+     */
+
+    m_window->quit();
 }
 
 void

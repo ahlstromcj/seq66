@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-04-03
+ * \updates       2022-04-04
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1688,21 +1688,9 @@ public:
         return m_musical_key;
     }
 
-    void musical_key (int key)
-    {
-        if (legal_key(key))
-            m_musical_key = midibyte(key);
-    }
-
     midibyte musical_scale () const
     {
         return m_musical_scale;
-    }
-
-    void musical_scale (int scale)
-    {
-        if (legal_scale(scale))
-            m_musical_scale = midibyte(scale);
     }
 
     int background_sequence () const
@@ -1710,14 +1698,11 @@ public:
         return int(m_background_sequence);
     }
 
-    void background_sequence (int bs)
-    {
-        m_background_sequence = short(bs);      /* no validation */
-    }
-
+    void musical_key (int key, bool user_change = false);
+    void musical_scale (int scale, bool user_change = false);
+    void background_sequence (int bs, bool user_change = false);
     void show_events () const;
     void copy_events (const eventlist & newevents);
-
     void calculate_unit_measure () const;
     midipulse unit_measure () const;
     midipulse expand_threshold () const;

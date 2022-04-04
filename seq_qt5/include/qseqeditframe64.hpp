@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-09-27
+ * \updates       2022-04-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -276,9 +276,9 @@ private:        /* setters and getters          */
     void set_note_length (int nlen);
     void set_snap (midipulse s);
     void set_chord (int chord);
-    void set_key (int key);
-    void set_scale (int key);
-    void set_background_sequence (int seqnum);
+    void set_key (int key, bool user_change = false);
+    void set_scale (int key, bool user_change = false);
+    void set_background_sequence (int seqnum, bool user_change = false);
     void set_transpose_image (bool istransposable);
     void set_event_entry
     (

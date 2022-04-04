@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-03
+ * \updates       2022-04-04
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -379,6 +379,51 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
         verify_and_link();                          /* NoteOn <---> NoteOff */
         if (! toclipboard)
             modify();
+    }
+}
+
+void
+sequence::musical_key (int key, bool user_change)
+{
+    if (legal_key(key))
+    {
+        bool change = key != m_musical_key;
+        if (change)
+        {
+            m_musical_key = midibyte(key);
+            if (user_change)
+                modify();
+        }
+    }
+}
+
+void
+sequence::musical_scale (int scale, bool user_change)
+{
+    if (legal_scale(scale))
+    {
+        bool change = scale != m_musical_scale;
+        if (change)
+        {
+            m_musical_scale = midibyte(scale);
+            if (user_change)
+                modify();
+        }
+    }
+}
+
+void
+sequence::background_sequence (int bs, bool user_change)
+{
+    if (seq::legal(bs))
+    {
+        bool change = bs != m_background_sequence;
+        if (change)
+        {
+            m_background_sequence = short(bs);
+            if (user_change)
+                modify();
+        }
     }
 }
 

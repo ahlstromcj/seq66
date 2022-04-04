@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-03-29
+ * \updates       2022-04-04
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -228,7 +228,6 @@ qsmainwnd::qsmainwnd
     m_timer                 (nullptr),
     m_menu_recent           (nullptr),          /* QMenu *                  */
     m_recent_action_list    (),                 /* QList<QAction *>         */
-    m_main_perf             (p),
     m_beat_ind              (nullptr),
     m_dialog_prefs          (nullptr),
     m_dialog_about          (nullptr),
@@ -275,7 +274,7 @@ qsmainwnd::qsmainwnd
 
     (void) set_ppqn_combo();
 
-    int ppqn = perf().ppqn();
+    int ppqn = cb_perf().ppqn();
     std::string pstring = std::to_string(ppqn);
     set_ppqn_text(pstring);
     if (m_shrunken)
@@ -298,7 +297,7 @@ qsmainwnd::qsmainwnd
      */
 
     const clockslist & opm = output_port_map();
-    mastermidibus * mmb = perf().master_bus();
+    mastermidibus * mmb = cb_perf().master_bus();
     ui->cmb_global_bus->addItem("None");
     if (not_nullptr(mmb))
     {
@@ -309,7 +308,7 @@ qsmainwnd::qsmainwnd
         {
             e_clock ec;
             std::string busname;
-            if (perf().ui_get_clock(bussbyte(bus), ec, busname))
+            if (cb_perf().ui_get_clock(bussbyte(bus), ec, busname))
             {
                 bool disabled = ec == e_clock::disabled;
                 ui->cmb_global_bus->addItem(qt(busname));
@@ -356,17 +355,17 @@ qsmainwnd::qsmainwnd
     );
     m_msg_save_changes->setDefaultButton(QMessageBox::Save);
 
-    m_dialog_prefs = new (std::nothrow) qseditoptions(perf(), this);
+    m_dialog_prefs = new (std::nothrow) qseditoptions(cb_perf(), this);
     m_beat_ind = new (std::nothrow) qsmaintime
     (
-        perf(), ui->verticalWidget /*this*/, 4, 4
+        cb_perf(), ui->verticalWidget /*this*/, 4, 4
     );
     m_dialog_about = new (std::nothrow) qsabout(this);
     m_dialog_build_info = new (std::nothrow) qsbuildinfo(this);
     make_perf_frame_in_tab();           /* create m_song_frame64 pointer    */
     m_live_frame = new (std::nothrow) qslivegrid
     (
-        perf(), this, screenset::unassigned(), ui->LiveTab
+        cb_perf(), this, screenset::unassigned(), ui->LiveTab
     );
     if (not_nullptr(m_live_frame))
     {
@@ -375,7 +374,7 @@ qsmainwnd::qsmainwnd
     }
     m_playlist_frame = new (std::nothrow) qplaylistframe
     (
-        perf(), this, ui->PlaylistTab
+        cb_perf(), this, ui->PlaylistTab
     );
     if (not_nullptr(m_playlist_frame))
         ui->PlaylistTabLayout->addWidget(m_playlist_frame);
@@ -395,7 +394,7 @@ qsmainwnd::qsmainwnd
         ui->actionExportSMF0, SIGNAL(triggered(bool)),
         this, SLOT(export_file_as_smf_0())
     );
-    if (perf().smf_format() != 0)
+    if (cb_perf().smf_format() != 0)
         ui->smf0Button->hide();
     else
         ui->smf0Button->show();
@@ -548,7 +547,7 @@ qsmainwnd::qsmainwnd
     }
     else
     {
-        ui->btnLoop->setChecked(perf().looping());
+        ui->btnLoop->setChecked(cb_perf().looping());
         connect(ui->btnLoop, SIGNAL(clicked(bool)), this, SLOT(set_loop(bool)));
         qt_set_icon(loop_xpm, ui->btnLoop);
     }
@@ -652,7 +651,7 @@ qsmainwnd::qsmainwnd
 
     ui->spinBpm->setDecimals(usr().bpm_precision());
     ui->spinBpm->setSingleStep(usr().bpm_step_increment());
-    ui->spinBpm->setValue(perf().bpm());
+    ui->spinBpm->setValue(cb_perf().bpm());
     ui->spinBpm->setReadOnly(false);
     connect
     (
@@ -737,9 +736,9 @@ qsmainwnd::qsmainwnd
      * Set Number and Name.
      */
 
-    QString bname = qt(perf().set_name(0));
+    QString bname = qt(cb_perf().set_name(0));
     ui->txtBankName->setText(bname);
-    ui->spinBank->setRange(0, perf().screenset_max() - 1);
+    ui->spinBank->setRange(0, cb_perf().screenset_max() - 1);
     connect
     (
         ui->setHomeButton, SIGNAL(clicked(bool)),
@@ -910,7 +909,7 @@ qsmainwnd::closeEvent (QCloseEvent * event)
 void
 qsmainwnd::make_perf_frame_in_tab ()
 {
-    m_song_frame64 = new (std::nothrow) qperfeditframe64(perf(), ui->SongTab);
+    m_song_frame64 = new (std::nothrow) qperfeditframe64(cb_perf(), ui->SongTab);
     if (not_nullptr(m_song_frame64))
     {
         int bpmeasure = m_song_frame64->get_beats_per_measure();
@@ -934,7 +933,7 @@ qsmainwnd::make_perf_frame_in_tab ()
 void
 qsmainwnd::stop_playing ()
 {
-    perf().auto_stop();
+    cb_perf().auto_stop();
     ui->btnPause->setChecked(false);
     ui->btnPlay->setChecked(false);
 }
@@ -946,8 +945,8 @@ qsmainwnd::stop_playing ()
 void
 qsmainwnd::pause_playing ()
 {
-    perf().auto_pause();
-    ui->btnPlay->setChecked(perf().is_running());
+    cb_perf().auto_pause();
+    ui->btnPlay->setChecked(cb_perf().is_running());
 }
 
 /**
@@ -957,7 +956,7 @@ qsmainwnd::pause_playing ()
 void
 qsmainwnd::start_playing ()
 {
-    perf().auto_play();
+    cb_perf().auto_play();
     ui->btnPause->setChecked(false);
     ui->btnPlay->setChecked(true);
 }
@@ -965,7 +964,7 @@ qsmainwnd::start_playing ()
 void
 qsmainwnd::set_loop (bool looping)
 {
-    perf().looping(looping);
+    cb_perf().looping(looping);
     if (not_nullptr(m_perfedit))
         m_perfedit->set_loop_button(looping);
 }
@@ -973,7 +972,7 @@ qsmainwnd::set_loop (bool looping)
 void
 qsmainwnd::song_recording (bool record)
 {
-    perf().song_recording(record);
+    cb_perf().song_recording(record);
 }
 
 void
@@ -1003,7 +1002,7 @@ qsmainwnd::show_song_mode (bool songmode)
 void
 qsmainwnd::set_song_mode (bool /*songmode*/)
 {
-    bool playmode = perf().toggle_song_mode();
+    bool playmode = cb_perf().toggle_song_mode();
     if (! playmode)
         song_recording(false);
 
@@ -1017,7 +1016,7 @@ qsmainwnd::set_ppqn_combo ()
     int count = m_ppqn_list.count();
     if (count > 0)
     {
-        std::string p = std::to_string(perf().ppqn());
+        std::string p = std::to_string(cb_perf().ppqn());
         QString combo_text = qt(p);
         ui->cmb_ppqn->clear();
         ui->cmb_ppqn->insertItem(0, combo_text);
@@ -1026,7 +1025,7 @@ qsmainwnd::set_ppqn_combo ()
             p = m_ppqn_list.at(i);
             combo_text = qt(p);
             ui->cmb_ppqn->insertItem(i, combo_text);
-            if (std::stoi(p) == perf().ppqn())
+            if (std::stoi(p) == cb_perf().ppqn())
                 result = true;
         }
         ui->cmb_ppqn->setCurrentIndex(0);
@@ -1037,14 +1036,14 @@ qsmainwnd::set_ppqn_combo ()
 void
 qsmainwnd::update_bpm (double bpm)
 {
-    perf().set_beats_per_minute(midibpm(bpm));
+    cb_perf().set_beats_per_minute(midibpm(bpm));
 }
 
 void
 qsmainwnd::edit_bpm ()
 {
     midibpm bpm = ui->spinBpm->value();
-    perf().set_beats_per_minute(bpm);
+    cb_perf().set_beats_per_minute(bpm);
 }
 
 void
@@ -1059,7 +1058,7 @@ qsmainwnd::slot_summary_save ()
     {
         fname = file_extension_set(fname, ".text");
         if (show_text_file_dialog(this, fname))
-            write_song_summary(perf(), fname);
+            write_song_summary(cb_perf(), fname);
     }
 }
 
@@ -1182,7 +1181,7 @@ qsmainwnd::import_playlist ()
         ok = session()->make_path_names(destdir, cfgpath, midipath, midisubdir);
         if (ok)
         {
-            ok = perf().import_playlist(sourcepath, cfgpath, midipath);
+            ok = cb_perf().import_playlist(sourcepath, cfgpath, midipath);
             if (ok)
             {
                 rc().set_imported_playlist(sourcepath, midipath);
@@ -1218,7 +1217,7 @@ qsmainwnd::open_list_dialog ()
         {
             result = m_playlist_frame->load_playlist(fname);
             if (! result)
-                show_message_box(perf().playlist_error_message());
+                show_message_box(cb_perf().playlist_error_message());
         }
     }
     return result;
@@ -1244,13 +1243,13 @@ qsmainwnd::save_list_dialog ()
     if (result)
     {
         fname = file_extension_set(fname, ".playlist");
-        result = perf().save_playlist(fname);
+        result = cb_perf().save_playlist(fname);
         if (result)
         {
             /* performer will handle rc().playlist_filename(fname) */
         }
         else
-            show_message_box(perf().playlist_error_message());
+            show_message_box(cb_perf().playlist_error_message());
     }
     return result;
 }
@@ -1338,7 +1337,7 @@ bool
 qsmainwnd::open_file (const std::string & fn)
 {
     std::string errmsg;
-    bool result = perf().read_midi_file(fn, errmsg);    /* updates recents  */
+    bool result = cb_perf().read_midi_file(fn, errmsg); /* update recents   */
     if (result)
     {
         redo_live_frame();
@@ -1368,7 +1367,7 @@ qsmainwnd::open_file (const std::string & fn)
 
         if (! use_nsm())                        /* does this menu exist?    */
         {
-            ui->actionSave->setEnabled(file_writable(fn));
+            enable_save(file_writable(fn));
             update_recent_files_menu();
         }
         m_is_title_dirty = true;
@@ -1395,7 +1394,7 @@ qsmainwnd::redo_live_frame ()
 
     m_live_frame = new (std::nothrow) qslivegrid
     (
-        perf(), this, screenset::unassigned(), ui->LiveTab
+        cb_perf(), this, screenset::unassigned(), ui->LiveTab
     );
     if (not_nullptr(m_live_frame))
     {
@@ -1422,12 +1421,12 @@ qsmainwnd::redo_live_frame ()
 void
 qsmainwnd::update_window_title (const std::string & fn)
 {
-    std::string itemname = fn.empty() ? perf().main_window_title(fn) : fn ;
+    std::string itemname = fn.empty() ? cb_perf().main_window_title(fn) : fn ;
     itemname += " [*]";                             /* required by Qt 5     */
 
     QString fname = qt(itemname);
     setWindowTitle(fname);                          /* title must come 1st  */
-    setWindowModified(perf().modified());           /* perhaps show the '*' */
+    setWindowModified(cb_perf().modified());        /* perhaps show the '*' */
 }
 
 /**
@@ -1442,15 +1441,15 @@ qsmainwnd::toggle_time_format (bool /*on*/)
     m_tick_time_as_bbt = ! m_tick_time_as_bbt;
     QString label = m_tick_time_as_bbt ? "B:B:T" : "H:M:S" ;
     ui->btn_set_HMS->setText(label);
-    update_time(perf().get_tick());
+    update_time(cb_perf().get_tick());
 }
 
 void
 qsmainwnd::update_time (midipulse tick)
 {
     std::string t = m_tick_time_as_bbt ?
-        perf().pulses_to_measure_string(tick) :
-        perf().pulses_to_time_string(tick) ;
+        cb_perf().pulses_to_measure_string(tick) :
+        cb_perf().pulses_to_time_string(tick) ;
 
     ui->label_HMS->setText(qt(t));
 }
@@ -1462,7 +1461,7 @@ qsmainwnd::load_session_frame ()
     {
         qsessionframe * qsf = new (std::nothrow) qsessionframe
         (
-            perf(), this, ui->SessionTab
+            cb_perf(), this, ui->SessionTab
         );
         if (not_nullptr(qsf))
         {
@@ -1479,7 +1478,7 @@ qsmainwnd::load_session_frame ()
 void
 qsmainwnd::reset_sets ()
 {
-    perf().reset_playset();
+    cb_perf().reset_playset();
 }
 
 void
@@ -1510,38 +1509,38 @@ qsmainwnd::conditional_update ()
     if (session_save())
         (void) save_session();
 
-    int active_screenset = int(perf().playscreen_number());
+    int active_screenset = int(cb_perf().playscreen_number());
     std::string b = "#";
     b += std::to_string(active_screenset);
     b += " of ";
-    b += std::to_string(perf().screenset_count());
+    b += std::to_string(cb_perf().screenset_count());
     ui->entry_active_set->setText(qt(b));
-    if (ui->button_keep_queue->isChecked() != perf().is_keep_queue())
-        ui->button_keep_queue->setChecked(perf().is_keep_queue());
+    if (ui->button_keep_queue->isChecked() != cb_perf().is_keep_queue())
+        ui->button_keep_queue->setChecked(cb_perf().is_keep_queue());
 
-    if (m_song_mode != perf().song_mode())
+    if (m_song_mode != cb_perf().song_mode())
     {
-        m_song_mode = perf().song_mode();
+        m_song_mode = cb_perf().song_mode();
         show_song_mode(m_song_mode);
     }
-    if (m_is_looping != perf().looping())
+    if (m_is_looping != cb_perf().looping())
     {
-        m_is_looping = perf().looping();
+        m_is_looping = cb_perf().looping();
         ui->btnLoop->setChecked(m_is_looping);
     }
 
     /*
      * Currently removed from the live frame.
      *
-     *  if (m_control_status != perf().ctrl_status())
+     *  if (m_control_status != cb_perf().ctrl_status())
      *  {
-     *      m_control_status = perf().ctrl_status();
+     *      m_control_status = cb_perf().ctrl_status();
      *      if (not_nullptr(m_live_frame))
-     *          m_live_frame->set_mode_text(perf().ctrl_status_string());
+     *          m_live_frame->set_mode_text(cb_perf().ctrl_status_string());
      *  }
      */
 
-    midipulse tick = perf().get_tick();
+    midipulse tick = cb_perf().get_tick();
     if (tick != m_previous_tick)
     {
         /*
@@ -1561,16 +1560,16 @@ qsmainwnd::conditional_update ()
         m_is_title_dirty = false;
         update_window_title();          /* puts current MIDI file in title  */
     }
-    if (m_is_playing_now != perf().is_running())
+    if (m_is_playing_now != cb_perf().is_running())
     {
-        m_is_playing_now = perf().is_running();
+        m_is_playing_now = cb_perf().is_running();
         ui->btnStop->setChecked(false);
         ui->btnPause->setChecked(false);
         ui->btnPlay->setChecked(m_is_playing_now);
     }
     if (m_is_playing_now)
     {
-        long delta = perf().delta_us();
+        long delta = cb_perf().delta_us();
         if (delta < 0)
         {
             std::string dus = std::to_string(int(-delta));
@@ -1580,7 +1579,7 @@ qsmainwnd::conditional_update ()
     else
         ui->txtUnderrun->setText(" ");
 
-    if (perf().tap_bpm_timeout())
+    if (cb_perf().tap_bpm_timeout())
         set_tap_button(0);
 }
 
@@ -1596,7 +1595,7 @@ bool
 qsmainwnd::check ()
 {
     bool result = false;
-    if (perf().modified() && ! use_nsm())
+    if (cb_perf().modified() && ! use_nsm())
     {
         int choice = m_msg_save_changes->exec();
         switch (choice)
@@ -1608,7 +1607,7 @@ qsmainwnd::check ()
 
         case QMessageBox::Discard:
 
-            perf().unmodify();          /* avoid saving in save_session()   */
+            cb_perf().unmodify();       /* avoid saving in save_session()   */
             result = true;
             break;
 
@@ -1668,13 +1667,13 @@ qsmainwnd::filename_prompt
 void
 qsmainwnd::new_file ()
 {
-    if (check() && perf().clear_all())              /* don't clear playlist */
+    if (check() && cb_perf().clear_all())           /* don't clear playlist */
     {
-        ui->actionSave->setEnabled(true);
+        enable_save(true);
         m_is_title_dirty = true;
         redo_live_frame();
         remove_all_editors();
-        (void) perf().reset_mute_groups();          /* no modify() call     */
+        (void) cb_perf().reset_mute_groups();       /* no modify() call     */
         if (! usr().is_buss_override())
             ui->cmb_global_bus->setCurrentIndex(0);
 
@@ -1725,12 +1724,12 @@ qsmainwnd::new_session ()
         );
         if (ok)
         {
-            if (perf().clear_all())                 /* like new_file()      */
+            if (cb_perf().clear_all())              /* like new_file()      */
             {
                 m_is_title_dirty = true;
                 redo_live_frame();
                 remove_all_editors();
-                (void) perf().reset_mute_groups();  /* no modify() call     */
+                (void) cb_perf().reset_mute_groups();  /* no modify() call  */
                 if (not_nullptr(m_mute_master))
                     m_mute_master->group_needs_update();
             }
@@ -1888,7 +1887,7 @@ qsmainwnd::save_file (const std::string & fname, bool updatemenu)
         }
 
         std::string errmsg;
-        result = write_midi_file(perf(), filename, errmsg);
+        result = write_midi_file(cb_perf(), filename, errmsg);
         if (result)
         {
             if (updatemenu)                     /* or ! use_nsm()           */
@@ -1963,7 +1962,7 @@ qsmainwnd::export_file_as_midi (const std::string & fname)
     else
     {
         midifile f(filename, choose_ppqn());
-        result = f.write(perf(), false);           /* no SeqSpec       */
+        result = f.write(cb_perf(), false);           /* no SeqSpec       */
         if (! result)
             show_message_box(f.error_message());
     }
@@ -2008,7 +2007,7 @@ qsmainwnd::export_song (const std::string & fname)
     else
     {
         midifile f(filename, choose_ppqn());
-        bool result = f.write_song(perf());
+        bool result = f.write_song(cb_perf());
         if (result)
         {
             rc().add_recent_file(filename);
@@ -2032,7 +2031,7 @@ qsmainwnd::import_midi_into_set ()
         {
             try
             {
-                int setno = int(perf().playscreen_number());
+                int setno = int(cb_perf().playscreen_number());
                 std::string fn = path.toStdString();
                 bool is_wrk = file_extension_match(fn, "wrk");
                 midifile * f = is_wrk ?
@@ -2040,9 +2039,9 @@ qsmainwnd::import_midi_into_set ()
                     new (std::nothrow) midifile(fn, choose_ppqn())
                     ;
 
-                if (f->parse(perf(), setno, true))  /* true --> importing   */
+                if (f->parse(cb_perf(), setno, true))  /* true-->importing  */
                 {
-                    ui->spinBpm->setValue(perf().bpm());
+                    ui->spinBpm->setValue(cb_perf().bpm());
                     ui->spinBpm->setDecimals(usr().bpm_precision());
                     ui->spinBpm->setSingleStep(usr().bpm_step_increment());
                     update_bank(setno);
@@ -2114,7 +2113,7 @@ qsmainwnd::showqsbuildinfo ()
 void
 qsmainwnd::load_editor (int seqid)
 {
-    seq::pointer seq = perf().get_sequence(seqid);
+    seq::pointer seq = cb_perf().get_sequence(seqid);
     bool ok = bool(seq);
 
 #if defined DISALLOW_EDITOR_CONFLICT
@@ -2133,7 +2132,7 @@ qsmainwnd::load_editor (int seqid)
 
         m_edit_frame = new (std::nothrow) qseqeditframe64
         (
-            perf(), seqid, ui->EditTab, true                /* short one    */
+            cb_perf(), seqid, ui->EditTab, true             /* short one    */
         );
         ui->EditTabLayout->addWidget(m_edit_frame);
         m_edit_frame->show();
@@ -2150,7 +2149,7 @@ qsmainwnd::load_editor (int seqid)
 void
 qsmainwnd::load_event_editor (int seqid)
 {
-    seq::pointer seq = perf().get_sequence(seqid);
+    seq::pointer seq = cb_perf().get_sequence(seqid);
     bool ok = bool(seq);
 
 #if defined DISALLOW_EDITOR_CONFLICT
@@ -2176,7 +2175,7 @@ void
 qsmainwnd::load_set_master ()
 {
     qsetmaster * qsm = new (std::nothrow)
-        qsetmaster(perf(), true, this, ui->SetMasterTab);
+        qsetmaster(cb_perf(), true, this, ui->SetMasterTab);
 
     if (not_nullptr(qsm))
     {
@@ -2189,7 +2188,7 @@ void
 qsmainwnd::load_mute_master ()
 {
     qmutemaster * qsm = new (std::nothrow)
-        qmutemaster(perf(), this, ui->MuteMasterTab);
+        qmutemaster(cb_perf(), this, ui->MuteMasterTab);
 
     if (not_nullptr(qsm))
     {
@@ -2219,13 +2218,13 @@ qsmainwnd::load_mute_master ()
 void
 qsmainwnd::load_qseqedit (int seqid)
 {
-    if (perf().is_seq_active(seqid))
+    if (cb_perf().is_seq_active(seqid))
     {
         auto ei = m_open_editors.find(seqid);
         if (ei == m_open_editors.end())
         {
             qseqeditex * ex = new (std::nothrow)
-                qseqeditex(perf(), seqid, this);
+                qseqeditex(cb_perf(), seqid, this);
 
             if (not_nullptr(ex))
             {
@@ -2306,7 +2305,7 @@ qsmainwnd::load_qperfedit (bool /*on*/)
 {
     if (is_nullptr(m_perfedit))
     {
-        qperfeditex * ex = new (std::nothrow) qperfeditex(perf(), this);
+        qperfeditex * ex = new (std::nothrow) qperfeditex(cb_perf(), this);
         if (not_nullptr(ex))
         {
             m_perfedit = ex;
@@ -2388,14 +2387,14 @@ qsmainwnd::remove_qperfedit ()
 void
 qsmainwnd::load_live_frame (int ssnum)
 {
-    if (ssnum >= 0 && ssnum < perf().screenset_max())
+    if (ssnum >= 0 && ssnum < cb_perf().screenset_max())
     {
         auto ei = m_open_live_frames.find(ssnum);
         if (ei == m_open_live_frames.end())
         {
             qliveframeex * ex = new (std::nothrow) qliveframeex
             (
-                perf(), ssnum, this
+                cb_perf(), ssnum, this
             );
             if (not_nullptr(ex))
             {
@@ -2450,7 +2449,7 @@ qsmainwnd::update_ppqn_by_text (const QString & text)
     if (! temp.empty())
     {
         int p = std::stoi(temp);
-        if (perf().change_ppqn(p))
+        if (cb_perf().change_ppqn(p))
         {
             set_ppqn_text(temp);
             m_ppqn_list.current(temp);
@@ -2473,13 +2472,13 @@ qsmainwnd::update_ppqn_by_text (const QString & text)
 void
 qsmainwnd::update_midi_bus (int index)
 {
-    mastermidibus * mmb = perf().master_bus();
+    mastermidibus * mmb = cb_perf().master_bus();
     if (not_nullptr(mmb))
     {
         if (index == 0)
             usr().midi_buss_override(null_buss());  /* for the "None" entry */
         else
-            (void) perf().ui_change_set_bus(index - 1);
+            (void) cb_perf().ui_change_set_bus(index - 1);
     }
 }
 
@@ -2491,7 +2490,7 @@ void
 qsmainwnd::update_beat_length (int blindex)
 {
     int bl = blindex == s_beat_length_count ? 32 : blindex + 1 ;
-    if (perf().set_beat_width(bl))
+    if (cb_perf().set_beat_width(bl))
     {
         if (not_nullptr(m_song_frame64))
             m_song_frame64->set_beat_width(bl);
@@ -2518,7 +2517,7 @@ void
 qsmainwnd::update_beats_per_measure (int bmindex)
 {
     int bm = bmindex == s_beat_measure_count ? 32 : bmindex + 1;
-    if (perf().set_beats_per_measure(bm))
+    if (cb_perf().set_beats_per_measure(bm))
     {
         if (not_nullptr(m_beat_ind))
             m_beat_ind->beats_per_measure(bm);
@@ -2541,7 +2540,7 @@ void
 qsmainwnd::tabWidgetClicked (int newindex)
 {
     bool isnull = is_nullptr(m_edit_frame);
-    seq::number seqid = perf().first_seq();         /* seq in playscreen?   */
+    seq::number seqid = cb_perf().first_seq();      /* seq in playscreen?   */
     if (isnull)
     {
         if (newindex == Tab_Edit)
@@ -2553,15 +2552,15 @@ qsmainwnd::tabWidgetClicked (int newindex)
                  * This is too mysterious, and not sure we want to bother to
                  * update the live tab to show a new sequence.
                  *
-                 * seqid = perf().playscreen_offset();
-                 * (void) perf().new_sequence(seqid);
+                 * seqid = cb_perf().playscreen_offset();
+                 * (void) cb_perf().new_sequence(seqid);
                  */
 
                 ignore = true;
             }
             if (! ignore)
             {
-                seq::pointer seq = perf().get_sequence(seqid);
+                seq::pointer seq = cb_perf().get_sequence(seqid);
                 if (seq)
                 {
                     /*
@@ -2571,7 +2570,7 @@ qsmainwnd::tabWidgetClicked (int newindex)
                      */
 
                     m_edit_frame = new (std::nothrow)
-                        qseqeditframe64(perf(), seqid, ui->EditTab, true);
+                        qseqeditframe64(cb_perf(), seqid, ui->EditTab, true);
 
                     if (not_nullptr(m_edit_frame))
                     {
@@ -2595,8 +2594,8 @@ qsmainwnd::tabWidgetClicked (int newindex)
                  * This is too mysterious, and not sure we want to bother to
                  * update the live tab to show a new sequence.
                  *
-                 * seqid = perf().playscreen_offset();
-                 * (void) perf().new_sequence(seqid);
+                 * seqid = cb_perf().playscreen_offset();
+                 * (void) cb_perf().new_sequence(seqid);
                  */
 
                 ignore = true;
@@ -2621,7 +2620,7 @@ qsmainwnd::tabWidgetClicked (int newindex)
 bool
 qsmainwnd::make_event_frame (int seqid)
 {
-    seq::pointer seq = perf().get_sequence(seqid);
+    seq::pointer seq = cb_perf().get_sequence(seqid);
     bool result = bool(seq);
     if (result)
     {
@@ -2631,7 +2630,7 @@ qsmainwnd::make_event_frame (int seqid)
             delete m_event_frame;
         }
         m_event_frame = new (std::nothrow)
-            qseqeventframe(perf(), seqid, ui->EventTab);
+            qseqeventframe(cb_perf(), seqid, ui->EventTab);
 
         if (not_nullptr(m_event_frame))
         {
@@ -2757,7 +2756,7 @@ qsmainwnd::quit ()
 {
     if (use_nsm())
     {
-        perf().hidden(true);
+        cb_perf().hidden(true);
         hide();
         m_session_mgr->send_visibility(false);
     }
@@ -2860,12 +2859,12 @@ qsmainwnd::handle_key_press (const keystroke & k)
     }
     if (! done)
     {
-        done = perf().midi_control_keystroke(k);
-        if (perf().seq_edit_pending())
+        done = cb_perf().midi_control_keystroke(k);
+        if (cb_perf().seq_edit_pending())
         {
             done = true;
         }
-        else if (perf().event_edit_pending())
+        else if (cb_perf().event_edit_pending())
         {
             done = true;
         }
@@ -2882,7 +2881,7 @@ qsmainwnd::handle_key_release (const keystroke & k)
 {
     bool result = ! k.is_press();
     if (result)
-        result = perf().midi_control_keystroke(k);
+        result = cb_perf().midi_control_keystroke(k);
 
     return result;
 }
@@ -2894,7 +2893,7 @@ qsmainwnd::handle_key_release (const keystroke & k)
 void
 qsmainwnd::panic()
 {
-    if (perf().panic())
+    if (cb_perf().panic())
     {
         ui->btnStop->setChecked(false);
         ui->btnPause->setChecked(false);
@@ -2926,10 +2925,10 @@ qsmainwnd::update_bank (int bankid)
 
         /*
          * Done in the call above:
-         * (void) perf().set_playing_screenset(m_live_frame->bank_id());
+         * (void) cb_perf().set_playing_screenset(m_live_frame->bank_id());
          */
 
-        std::string name = perf().set_name(bankid);
+        std::string name = cb_perf().set_name(bankid);
         QString newname = qt(name);
         ui->txtBankName->setText(newname);
     }
@@ -3294,9 +3293,9 @@ qsmainwnd::open_performance_edit ()
 void
 qsmainwnd::apply_song_transpose ()
 {
-    if (perf().get_transpose() != 0)
+    if (cb_perf().get_transpose() != 0)
     {
-        perf().apply_song_transpose();
+        cb_perf().apply_song_transpose();
     }
 }
 
@@ -3308,7 +3307,7 @@ void
 qsmainwnd::reload_mute_groups ()
 {
     std::string errmessage;
-    bool result = perf().reload_mute_groups(errmessage);
+    bool result = cb_perf().reload_mute_groups(errmessage);
     if (! result)
         show_message_box("Reload of mute-groups failed");
 }
@@ -3324,11 +3323,11 @@ qsmainwnd::reload_mute_groups ()
 void
 qsmainwnd::clear_mute_groups ()
 {
-    if (perf().clear_mute_groups())     /* did any mute statuses change?    */
+    if (cb_perf().clear_mute_groups())  /* did any mute statuses change?    */
     {
         if (check())
         {
-            if (perf().is_running())
+            if (cb_perf().is_running())
                 stop_playing();
         }
     }
@@ -3341,7 +3340,7 @@ qsmainwnd::clear_mute_groups ()
 void
 qsmainwnd::set_song_mute_on ()
 {
-    perf().set_song_mute(mutegroups::action::on);
+    cb_perf().set_song_mute(mutegroups::action::on);
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
 }
@@ -3353,7 +3352,7 @@ qsmainwnd::set_song_mute_on ()
 void
 qsmainwnd::set_song_mute_off ()
 {
-    perf().set_song_mute(mutegroups::action::off);
+    cb_perf().set_song_mute(mutegroups::action::off);
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
 }
@@ -3365,7 +3364,7 @@ qsmainwnd::set_song_mute_off ()
 void
 qsmainwnd::set_song_mute_toggle ()
 {
-    perf().set_song_mute(mutegroups::action::toggle);
+    cb_perf().set_song_mute(mutegroups::action::toggle);
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
 }
@@ -3373,19 +3372,19 @@ qsmainwnd::set_song_mute_toggle ()
 void
 qsmainwnd::set_playscreen_copy ()
 {
-    if (perf().copy_playscreen())
+    if (cb_perf().copy_playscreen())
         ui->actionPasteToCurrentSet->setEnabled(true);
 }
 
 void
 qsmainwnd::set_playscreen_paste ()
 {
-    (void) perf().paste_playscreen(perf().playscreen_number());
+    (void) cb_perf().paste_playscreen(cb_perf().playscreen_number());
 
     /*
      * We want to allow multiple pastes of the same screenset.
      *
-     *  if (perf().paste_playscreen(perf().playscreen_number()))
+     *  if (cb_perf().paste_playscreen(cb_perf().playscreen_number()))
      *      ui->actionPasteToCurrentSet->setEnabled(false);
      */
 }
@@ -3398,10 +3397,10 @@ qsmainwnd::set_playscreen_paste ()
 void
 qsmainwnd::learn_toggle ()
 {
-    perf().learn_toggle();
+    cb_perf().learn_toggle();
     qt_set_icon
     (
-        perf().is_group_learn() ? learn2_xpm : learn_xpm, ui->button_learn
+        cb_perf().is_group_learn() ? learn2_xpm : learn_xpm, ui->button_learn
     );
 }
 
@@ -3412,15 +3411,15 @@ qsmainwnd::learn_toggle ()
 void
 qsmainwnd::tap ()
 {
-    midibpm bpm = perf().update_tap_bpm();
+    midibpm bpm = cb_perf().update_tap_bpm();
     update_tap(bpm);
 }
 
 void
 qsmainwnd::update_tap (midibpm bpm)
 {
-    set_tap_button(perf().current_beats());
-    if (perf().current_beats() > 1)             /* first one is useless */
+    set_tap_button(cb_perf().current_beats());
+    if (cb_perf().current_beats() > 1)             /* first one is useless  */
         ui->spinBpm->setValue(bpm);
 }
 
@@ -3447,7 +3446,7 @@ void
 qsmainwnd::queue_it ()
 {
     bool is_active = ui->button_keep_queue->isChecked();
-    perf().set_keep_queue(is_active);
+    cb_perf().set_keep_queue(is_active);
 }
 
 void
@@ -3479,10 +3478,10 @@ qsmainwnd::export_file_as_smf_0 (const std::string & fname)
     }
     else
     {
-        if (perf().convert_to_smf_0())
+        if (cb_perf().convert_to_smf_0())
         {
             midifile f(filename, choose_ppqn());
-            result = f.write(perf(), false);           /* no SeqSpec       */
+            result = f.write(cb_perf(), false);        /* no SeqSpec       */
             if (result)
             {
                 rc().session_midi_filename(filename);
@@ -3499,7 +3498,7 @@ qsmainwnd::export_file_as_smf_0 (const std::string & fname)
                 ;
             show_message_box(msg);
         }
-        if (perf().smf_format() != 0)
+        if (cb_perf().smf_format() != 0)
             ui->smf0Button->hide();
         else
             ui->smf0Button->show();
@@ -3568,7 +3567,7 @@ qsmainwnd::on_automation_change (automation::slot /* s */)
 {
     bool result = not_nullptr(m_live_frame);
     if (result)
-        m_live_frame->set_needs_update();       /* brute force */
+        m_live_frame->set_needs_update();           /* brute force          */
 
     return result;
 }
@@ -3583,7 +3582,7 @@ qsmainwnd::on_sequence_change (seq::number seqno, bool redo)
         for (auto ip : m_open_live_frames)
             ip.second->update_sequence(seqno, redo);
 
-        ui->actionSave->setEnabled(perf().modified());
+        enable_save(cb_perf().modified());          /* or use redo flag?    */
         if (redo)
             m_is_title_dirty = true;
     }
@@ -3597,7 +3596,7 @@ qsmainwnd::on_trigger_change (seq::number seqno)
     if (result)
     {
         m_live_frame->refresh(seqno);
-        ui->actionSave->setEnabled(perf().modified());
+        enable_save(cb_perf().modified());
     }
     return result;
 }
@@ -3617,7 +3616,7 @@ qsmainwnd::update_set_change (int setno)
     {
         if (setno != m_live_frame->bank_id())
         {
-            QString bname = qt(perf().set_name(setno));
+            QString bname = qt(cb_perf().set_name(setno));
             m_live_frame->update_bank(setno);       /* updates current bank */
             ui->spinBank->setValue(setno);          /* shows it in spinbox  */
             ui->txtBankName->setText(bname);        /* show set/bank name   */
@@ -3625,7 +3624,7 @@ qsmainwnd::update_set_change (int setno)
         else
             m_live_frame->update_bank();            /* updates current bank */
 
-        bool cancopy = perf().playscreen_active_count() > 0;
+        bool cancopy = cb_perf().playscreen_active_count() > 0;
         ui->actionCopyCurrentSet->setEnabled(cancopy);
 
         if (not_nullptr(m_song_frame64))
@@ -3666,22 +3665,22 @@ qsmainwnd::update_song_action (int playaction)
     {
     case playlist::action::next_list:
 
-        result = perf().open_next_list();
+        result = cb_perf().open_next_list();
         break;
 
     case playlist::action::next_song:
 
-        result = perf().open_next_song();
+        result = cb_perf().open_next_song();
         break;
 
     case playlist::action::previous_song:
 
-        result = perf().open_previous_song();
+        result = cb_perf().open_previous_song();
         break;
 
     case playlist::action::previous_list:
 
-        result = perf().open_previous_list();
+        result = cb_perf().open_previous_list();
         break;
 
     default:
@@ -3690,9 +3689,9 @@ qsmainwnd::update_song_action (int playaction)
     }
     if (result)
     {
-        perf().next_song_mode();
+        cb_perf().next_song_mode();
         m_is_title_dirty = true;
-        update_window_title(perf().playlist_song_basename());
+        update_window_title(cb_perf().playlist_song_basename());
     }
 }
 
@@ -3711,10 +3710,10 @@ qsmainwnd::changeEvent (QEvent * event)
             if (not_nullptr(m_live_frame))
             {
                 screenset::number bank = m_live_frame->bank_id();
-                screenset::number setno = perf().playscreen_number();
+                screenset::number setno = cb_perf().playscreen_number();
                 if (bank != setno)
                 {
-                    (void) perf().set_playing_screenset(bank);
+                    (void) cb_perf().set_playing_screenset(bank);
                 }
             }
         }
@@ -3749,19 +3748,19 @@ qsmainwnd::refresh_captions ()
     if (result)
     {
         std::string newname;
-        if (perf().playlist_active())
-            newname = perf().playlist_song();
+        if (cb_perf().playlist_active())
+            newname = cb_perf().playlist_song();
         else
             newname = rc().midi_filename();
 
-        m_live_frame->set_playlist_name(newname, perf().modified());
+        m_live_frame->set_playlist_name(newname, cb_perf().modified());
     }
-    if (perf().playlist_active())
+    if (cb_perf().playlist_active())
     {
-        std::string newname = perf().playlist_song_basename();
+        std::string newname = cb_perf().playlist_song_basename();
         update_window_title(newname);
     }
-    ui->actionSave->setEnabled(perf().modified());
+    enable_save(cb_perf().modified());
     return result;
 }
 

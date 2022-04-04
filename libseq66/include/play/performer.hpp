@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-01-13
+ * \updates       2022-04-04
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3348,6 +3348,11 @@ private:
         automation::action a,
         int d0, int d1, int index, bool inverse
     );
+
+    static bool changed (change mod)
+    {
+        return mod == change::yes || mod == change::removed;
+    }
 
 public:
 

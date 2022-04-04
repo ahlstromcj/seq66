@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-03
+ * \updates       2022-04-04
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1430,18 +1430,13 @@ qseqeditframe64::reset_beats_per_measure ()
 {
     seq::number seqno = seq_pointer()->seq_number();
     ui->m_combo_bpm->setCurrentIndex(usr().bpb_default() - 1);
-
-    /*
-     * TODO:  work this out better.
-     */
-
     perf().notify_sequence_change(seqno, performer::change::recreate);
-    update_draw_geometry();     // set_dirty();
+    update_draw_geometry();
 }
 
 /**
- *  Applies the new beats/bar (beats/measure) value to the sequence and the user
- *  interface.
+ *  Applies the new beats/bar (beats/measure) value to the sequence and the
+ *  user interface.
  *
  * \param bpm
  *      The desired beats/measure value.
@@ -1695,7 +1690,7 @@ qseqeditframe64::set_chord (int chord)
 void
 qseqeditframe64::update_midi_bus (int index)
 {
-    set_midi_bus(index, true);
+    set_midi_bus(index, true);                      /* always a user-change */
 }
 
 /**
@@ -1705,7 +1700,7 @@ qseqeditframe64::update_midi_bus (int index)
 void
 qseqeditframe64::reset_midi_bus ()
 {
-    set_midi_bus(0, true);                      // NEW
+    set_midi_bus(0, true);                          /* always a user-change */
 }
 
 /**
@@ -1809,13 +1804,13 @@ qseqeditframe64::repopulate_midich_combo (int buss)
 void
 qseqeditframe64::update_midi_channel (int index)
 {
-    set_midi_channel(index, true);
+    set_midi_channel(index, true);                  /* always a user-change */
 }
 
 void
 qseqeditframe64::reset_midi_channel ()
 {
-    set_midi_channel(0, true);
+    set_midi_channel(0, true);                      /* always a user-change */
 }
 
 /**
@@ -2107,11 +2102,13 @@ qseqeditframe64::sequences ()
 }
 
 /**
- *  A case where a macro makes the code easier to read.
+ *  A case where a macro makes the code easier to read. The first parameter is
+ *  the sequence number, and the second indicates that the user made the
+ *  setting.
  */
 
-#define SET_BG_SEQ(seq) \
-    std::bind(&qseqeditframe64::set_background_sequence, this, seq)
+#define SET_BG_SEQ(seq, change) \
+    std::bind(&qseqeditframe64::set_background_sequence, this, seq, change)
 
 /**
  *  Builds the menu for the Background Sequences button on the fly.  Analogous
@@ -2127,7 +2124,7 @@ qseqeditframe64::popup_sequence_menu ()
     }
 
     QAction * off = new QAction(tr("Off"), m_sequences_popup);
-    connect(off, &QAction::triggered, SET_BG_SEQ(seq::limit()));
+    connect(off, &QAction::triggered, SET_BG_SEQ(seq::limit(), true));
     (void) m_sequences_popup->addAction(off);
     (void) m_sequences_popup->addSeparator();
     int seqsinset = perf().screenset_size();
@@ -2152,7 +2149,7 @@ qseqeditframe64::popup_sequence_menu ()
 
                     QAction * item = new QAction(tr(name), menusset);
                     menusset->addAction(item);
-                    connect(item, &QAction::triggered, SET_BG_SEQ(s));
+                    connect(item, &QAction::triggered, SET_BG_SEQ(s, true));
                 }
             }
         }
@@ -2193,7 +2190,7 @@ qseqeditframe64::update_note_entry (bool on)
  */
 
 void
-qseqeditframe64::set_background_sequence (int seqnum)
+qseqeditframe64::set_background_sequence (int seqnum, bool user_change)
 {
     if (! seq::valid(seqnum))
         return;
@@ -2216,7 +2213,7 @@ qseqeditframe64::set_background_sequence (int seqnum)
                 if (usr().global_seq_feature())
                     usr().seqedit_bgsequence(seqnum);
 
-                seq_pointer()->background_sequence(seqnum);
+                seq_pointer()->background_sequence(seqnum, user_change);
                 if (not_nullptr(m_seqroll))
                     m_seqroll->set_background_sequence(true, seqnum);
 
@@ -2622,13 +2619,13 @@ qseqeditframe64::update_key (int index)
 {
     if (index != m_key && legal_key(index))
     {
-        set_key(index);
+        set_key(index, true);                       /* always a user-change */
         set_dirty();
     }
 }
 
 void
-qseqeditframe64::set_key (int key)
+qseqeditframe64::set_key (int key, bool user_change)
 {
     sequence * s = seq_pointer().get();
     if (legal_key(key) && not_nullptr(s))
@@ -2644,7 +2641,7 @@ qseqeditframe64::set_key (int key)
         if (usr().global_seq_feature())
             usr().seqedit_key(key);
 
-        s->musical_key(midibyte(key));
+        s->musical_key(midibyte(key), user_change);
         set_dirty();
     }
     else
@@ -2654,7 +2651,7 @@ qseqeditframe64::set_key (int key)
 void
 qseqeditframe64::reset_key ()
 {
-    set_key(c_key_of_C);
+    set_key(c_key_of_C, true);                      /* always a user-change */
 }
 
 /**
@@ -2664,7 +2661,7 @@ qseqeditframe64::reset_key ()
 void
 qseqeditframe64::update_scale (int index)
 {
-    set_scale(index);
+    set_scale(index, true);                         /* always a user-change */
 }
 
 /**
@@ -2672,7 +2669,7 @@ qseqeditframe64::update_scale (int index)
  */
 
 void
-qseqeditframe64::set_scale (int scale)
+qseqeditframe64::set_scale (int scale, bool user_change)
 {
     sequence * s = seq_pointer().get();
     if (legal_scale(scale) && not_nullptr(s))
@@ -2685,7 +2682,7 @@ qseqeditframe64::set_scale (int scale)
         if (usr().global_seq_feature())
             usr().seqedit_scale(scale);
 
-        s->musical_scale(midibyte(scale));
+        s->musical_scale(midibyte(scale), user_change);
         set_dirty();
     }
     else
@@ -2695,7 +2692,7 @@ qseqeditframe64::set_scale (int scale)
 void
 qseqeditframe64::reset_scale ()
 {
-    set_scale(c_scales_off);
+    set_scale(c_scales_off, true);                  /* always a user-change */
 }
 
 void

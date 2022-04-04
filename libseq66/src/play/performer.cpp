@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-04-02
+ * \updates       2022-04-04
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -457,14 +457,21 @@ performer::notify_automation_change (automation::slot s)
         (void) notify->on_automation_change(s);
 }
 
+/*
+ *  Note that we need to call modify() before telling the subscribers, so that
+ *  they can check the status of the performer.  This is not strictly
+ *  necessary, but some subscribers still call performer::modified() instead
+ *  of using the parameter.
+ */
+
 void
 performer::notify_set_change (screenset::number setno, change mod)
 {
+    if (changed(mod))
+        modify();
+
     for (auto notify : m_notify)
         (void) notify->on_set_change(setno, mod);
-
-    if (mod == change::yes || mod == change::removed)
-        modify();
 }
 
 void
@@ -487,11 +494,11 @@ void
 performer::notify_sequence_change (seq::number seqno, change mod)
 {
     bool redo = mod == change::recreate;
-    for (auto notify : m_notify)
-        (void) notify->on_sequence_change(seqno, redo);
-
     if (mod == change::yes || redo)
         modify();
+
+    for (auto notify : m_notify)
+        (void) notify->on_sequence_change(seqno, redo);
 }
 
 /**

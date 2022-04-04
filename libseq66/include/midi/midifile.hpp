@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-11-06
+ * \updates       2022-04-04
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -331,10 +331,28 @@ protected:
     bool grab_input_stream (const std::string & tag);
     bool parse_smf_0 (performer & p, int screenset);
     bool parse_smf_1 (performer & p, int screenset, bool is_smf0 = false);
-    midilong parse_prop_header (int file_size);
-    bool parse_proprietary_track (performer & p, int file_size);
-    bool parse_mute_groups (performer & p);
-    bool write_mute_groups (const performer & p);
+
+    midilong parse_seqspec_header (int file_size);
+    bool parse_seqspec_track (performer & p, int file_size);
+    bool prop_header_loop (performer & p, int file_size);
+    bool parse_c_midictrl (performer & p);
+    bool parse_c_midiclocks (performer & p);
+    bool parse_c_notes (performer & p);
+    bool parse_c_bpmtag (performer & p);
+    bool parse_c_mutegroups (performer & p);
+    bool parse_c_musickey ();
+    bool parse_c_musicscale ();
+    bool parse_c_backsequence ();
+    bool parse_c_perf_bp_mes (performer & p);
+    bool parse_c_perf_bw (performer & p);
+    bool parse_c_tempo_track ();
+#if defined SEQ66_SEQUENCE_EDIT_MODE_GLOBAL
+    bool parse_c_seq_edit_mode (performer & p);
+#endif
+
+
+    bool write_c_mutegroups (const performer & p);
+
     bool checklen (midilong len, midibyte type);
     void add_trigger (sequence & seq, midishort ppqn, bool tposable);
     void add_old_trigger (sequence & seq);
@@ -391,8 +409,8 @@ protected:
 #if defined USE_WRITE_TIME_SIG
     void write_time_sig (int beatsperbar, int beatwidth);
 #endif
-    void write_prop_header (midilong tag, long len);
-    bool write_proprietary_track (performer & p);
+    void write_seqspec_header (midilong tag, long len);
+    bool write_seqspec_track (performer & p);
     long varinum_size (long len) const;
     long prop_item_size (long datalen) const;
     bool set_error (const std::string & msg);

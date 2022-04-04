@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-01-13
+ * \updates       2022-04-04
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -142,7 +142,7 @@ public:
 
     int ppqn () const
     {
-        return perf().ppqn();
+        return cb_perf().ppqn();
     }
 
     bool open_playlist ()
@@ -206,18 +206,6 @@ private:                                // overrides of event handlers
 protected:
 
     void report_message (const std::string & msg, bool good);
-
-protected:
-
-    const performer & perf () const
-    {
-        return m_main_perf;
-    }
-
-    performer & perf ()
-    {
-        return m_main_perf;
-    }
 
 private:
 
@@ -299,7 +287,6 @@ private:
     QTimer * m_timer;
     QMenu * m_menu_recent;
     QList<QAction *> m_recent_action_list;
-    performer & m_main_perf;
     qsmaintime * m_beat_ind;
     qseditoptions * m_dialog_prefs;
     qsabout * m_dialog_about;
