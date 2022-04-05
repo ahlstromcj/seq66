@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-04
+ * \updates       2022-04-05
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1037,6 +1037,7 @@ void
 qsmainwnd::update_bpm (double bpm)
 {
     cb_perf().set_beats_per_minute(midibpm(bpm));
+    enable_save();
 }
 
 void
@@ -1044,6 +1045,7 @@ qsmainwnd::edit_bpm ()
 {
     midibpm bpm = ui->spinBpm->value();
     cb_perf().set_beats_per_minute(bpm);
+    enable_save();
 }
 
 void
@@ -2455,6 +2457,7 @@ qsmainwnd::update_ppqn_by_text (const QString & text)
             m_ppqn_list.current(temp);
             ui->cmb_ppqn->setItemText(0, text);
             usr().file_ppqn(p);
+            enable_save();
         }
     }
 }
@@ -2476,9 +2479,14 @@ qsmainwnd::update_midi_bus (int index)
     if (not_nullptr(mmb))
     {
         if (index == 0)
+        {
             usr().midi_buss_override(null_buss());  /* for the "None" entry */
+        }
         else
+        {
             (void) cb_perf().ui_change_set_bus(index - 1);
+            enable_save();
+        }
     }
 }
 
@@ -2492,6 +2500,7 @@ qsmainwnd::update_beat_length (int blindex)
     int bl = blindex == s_beat_length_count ? 32 : blindex + 1 ;
     if (cb_perf().set_beat_width(bl))
     {
+        enable_save();
         if (not_nullptr(m_song_frame64))
             m_song_frame64->set_beat_width(bl);
 
@@ -2519,6 +2528,7 @@ qsmainwnd::update_beats_per_measure (int bmindex)
     int bm = bmindex == s_beat_measure_count ? 32 : bmindex + 1;
     if (cb_perf().set_beats_per_measure(bm))
     {
+        enable_save();
         if (not_nullptr(m_beat_ind))
             m_beat_ind->beats_per_measure(bm);
 
@@ -3327,6 +3337,7 @@ qsmainwnd::clear_mute_groups ()
     {
         if (check())
         {
+            enable_save();
             if (cb_perf().is_running())
                 stop_playing();
         }
@@ -3436,6 +3447,7 @@ qsmainwnd::set_tap_button (int beats)
     char temp[8];
     snprintf(temp, sizeof temp, "%d", beats);
     ui->button_tap_bpm->setText(temp);
+    enable_save();
 }
 
 /**

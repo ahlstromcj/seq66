@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2022-02-10
+ * \updates       2022-04-05
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -539,6 +539,14 @@ usrsettings::new_pattern_record_style (const std::string & style)
         rs = recordstyle::oneshot;
 
     m_new_pattern_record_style = rs;
+}
+
+void
+usrsettings::clear_global_seq_features ()
+{
+    seqedit_scale(c_scales_off);
+    seqedit_key(c_key_of_C);
+    seqedit_bgsequence(seq::limit());
 }
 
 /**

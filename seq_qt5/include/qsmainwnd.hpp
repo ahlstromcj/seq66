@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-04
+ * \updates       2022-04-05
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -215,7 +215,7 @@ private:
 
 private:
 
-    void enable_save (bool flag);
+    void enable_save (bool flag = true);
     void make_perf_frame_in_tab ();
 
     /*

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-02-11
+ * \updates       2022-04-05
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -1232,6 +1232,8 @@ public:
     {
         m_global_seq_feature_save = flag;
     }
+
+    void clear_global_seq_features ();
 
     int seqedit_scale () const
     {

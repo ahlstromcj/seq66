@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-04-04
+ * \updates       2022-04-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2016,6 +2016,7 @@ bool
 performer::clear_all (bool /* clearplaylist */ )
 {
     bool result = clear_song();
+    usr().clear_global_seq_features();
     if (result)
     {
         m_play_set.clear();             /* dump active patterns             */
@@ -7009,6 +7010,7 @@ performer::read_midi_file
 )
 {
     errmsg.clear();
+    usr().clear_global_seq_features();
     bool result = seq66::read_midi_file(*this, fn, ppqn(), errmsg, addtorecent);
     if (result)
     {
