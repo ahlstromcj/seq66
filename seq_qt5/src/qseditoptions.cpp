@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-03
+ * \updates       2022-04-06
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -592,6 +592,26 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     );
 
     /*
+     * Apply/Reset buttons.
+     */
+
+    connect
+    (
+        ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply),
+        SIGNAL(clicked()), this, SLOT(apply())
+    );
+    ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply)->
+        setEnabled(false);
+
+    connect
+    (
+        ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Reset),
+        SIGNAL(clicked()), this, SLOT(reset())
+    );
+    ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Reset)->
+        setEnabled(false);
+
+    /*
      * Set up the MIDI Clock tab.  We use the new qclocklayout class to hold
      * most of the complex code needed to handle the list of output ports and
      * clock radio-buttons.
@@ -784,6 +804,9 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding
     );
     vboxinputs->addItem(spacer2);
+    ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Ok)->
+        setEnabled(false);
+
     sync();
 
     std::string clid = perf().client_id_string();
@@ -968,8 +991,20 @@ void
 qseditoptions::reload_needed (bool flag)
 {
     m_reload_needed = flag;
-    if (flag)
-        enable_reload_button(true);
+    enable_reload_button(flag);
+    ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply)->
+        setEnabled(flag);
+
+    ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Reset)->
+        setEnabled(flag);
+
+    ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Ok)->
+        setEnabled(flag);
+
+    sync();
+
+//  if (flag)
+//      enable_reload_button(true);
 }
 
 void
@@ -1129,34 +1164,54 @@ qseditoptions::slot_ui_scaling ()
 }
 
 /**
- *  Backs up the current settings logged into the various settings object into
- *  the "backup" members, then calls close().
+ *  Just closes.  Any modifications are already in the rc() and usr() objects.
  */
 
 void
 qseditoptions::okay ()
 {
-    if (reload_needed())
-        enable_reload_button(true);
+    /*
+     * Not needed here:
+     *
+     * if (reload_needed())
+     *     enable_reload_button(true);
+     *
+     * backup();
+     */
 
-    backup();
     close();
 }
 
 /**
- *  Restores the settings from the "backup" variables, then calls
- *  sync()
+ *  Restores the settings from the "backup" variables when the user cancels
+ *  the edit.
+ *
+ *  Not necessary here: sync();
  */
 
 void
 qseditoptions::cancel ()
 {
+    reset();
+    close();
+}
+
+void
+qseditoptions::apply ()
+{
+    m_backup_rc = rc();
+    m_backup_usr = usr();
+    reload_needed(true);
+//  enable_reload_button(true);
+}
+
+void
+qseditoptions::reset ()
+{
     rc() = m_backup_rc;
     usr() = m_backup_usr;
     reload_needed(false);
-    enable_reload_button(false);
-    sync();
-    close();
+//  enable_reload_button(false);
 }
 
 /**

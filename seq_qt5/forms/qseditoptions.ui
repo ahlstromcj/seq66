@@ -162,7 +162,7 @@
          <x>30</x>
          <y>352</y>
          <width>338</width>
-         <height>30</height>
+         <height>31</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizLayoutClockStartModulo" stretch="8,1">
@@ -819,7 +819,7 @@ slot by channel number (0 to 15).</string>
          <x>10</x>
          <y>38</y>
          <width>413</width>
-         <height>161</height>
+         <height>177</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayoutUiValues" columnstretch="8,2,1,2">
@@ -2352,7 +2352,7 @@ path added to this name is stripped.</string>
    <item>
     <widget class="QDialogButtonBox" name="buttonBoxOptionsDialog">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
      </property>
     </widget>
    </item>

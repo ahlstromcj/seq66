@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-01-17
- * \updates       2021-07-26
+ * \updates       2022-04-06
  * \license       GNU GPLv2 or above
  *
  *  This module defines some items common to all configuration files that get
@@ -123,6 +123,11 @@ public:
     void modify ()
     {
         m_is_modified = true;
+    }
+
+    void unmodify ()
+    {
+        m_is_modified = false;
     }
 
     int ordinal_version () const

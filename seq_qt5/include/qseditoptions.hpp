@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-03
+ * \updates       2022-04-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -134,6 +134,8 @@ private slots:
     void slot_nsm_url ();
     void okay ();
     void cancel ();
+    void apply ();
+    void reset ();
     void slot_note_resume ();
     void slot_ppqn_by_text (const QString & text);
     void slot_use_file_ppqn ();
