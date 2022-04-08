@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-06
+ * \updates       2022-04-08
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -550,20 +550,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         ui->lineEditStyleSheet, SIGNAL(editingFinished()),
         this, SLOT(slot_stylesheet_filename())
     );
-
-    /*
-     * For testing only
-     *
-    connect
-    (
-        ui->text_edit_key, SIGNAL(textChanged(const QString &)),
-        this, SLOT(slot_key_test(const QString &))
-    );
-     *
-     */
-
-    ui->text_edit_key->hide();
-    ui->label_key->hide();
 
     /*
      * Reload/restart button.
@@ -1966,18 +1952,6 @@ void
 qseditoptions::slot_flag_reload ()
 {
     signal_for_restart();           /* warnprint("Session reload request"); */
-}
-
-void
-qseditoptions::slot_key_test (const QString &)
-{
-    QString s = ui->text_edit_key->text();
-    if (s.length() > 0)
-    {
-        QChar first = s.at(0);
-        ushort us = first.unicode();
-        msgprintf(msglevel::status, "0x%x", unsigned(us));
-    }
 }
 
 void

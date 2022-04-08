@@ -786,20 +786,6 @@ public:
 
     void partial_assign (const sequence & rhs, bool toclipboard = false);
 
-#if defined USE_SET_EDITING_FULL_SIGNATURE
-
-    /*
-     * Not needed, but kept based on Seq64's seqedit usage.
-     */
-
-    void seq_in_edit (midibyte status, midibyte cc, midipulse snap, int scale)
-    {
-        m_status = status;
-        m_cc = cc;
-    }
-
-#endif
-
     eventlist & events ()
     {
         return m_events;

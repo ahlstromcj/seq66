@@ -568,7 +568,7 @@ qslivegrid::setup_button (qslotbutton * pb)
     if (not_nullptr(pb))
     {
         pb->setup();
-        pb->reupdate();
+        pb->reupdate(true);
     }
 }
 
@@ -716,29 +716,6 @@ qslivegrid::recreate_all_slots ()
     }
     return result;
 }
-
-#if defined USE_REFRESH_SEQNO
-
-void
-qslivegrid::refresh (seq::number seqno)
-{
-    int row, column;
-    if (perf().seq_to_grid(seqno, row, column, is_external())) /* side-effects */
-    {
-        seq::pointer s = perf().get_sequence(seqno);
-        if (not_nullptr(s))
-        {
-            qslotbutton * pb = button(row, column);
-            if (not_nullptr(pb))
-            {
-                pb->set_checked(s->playing());
-                pb->reupdate(true);
-            }
-        }
-    }
-}
-
-#endif
 
 /**
  *  This function helps the caller (usually qsmainwnd) tell all the buttons to
@@ -1269,7 +1246,7 @@ qslivegrid::reupdate ()
         if (not_nullptr(pb))
         {
             pb->setup();
-            pb->reupdate();
+            pb->reupdate(true);
         }
         else
             break;

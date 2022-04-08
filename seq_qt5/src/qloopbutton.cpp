@@ -478,7 +478,7 @@ qloopbutton::toggle_checked ()
     {
         bool checked = loop()->playing();
         set_checked(checked);
-        reupdate();
+        reupdate(true);
     }
     return result;
 }
@@ -494,7 +494,7 @@ qloopbutton::toggle_checked ()
 void
 qloopbutton::reupdate (bool all)
 {
-    if (is_active())           /* NEW ca 2021-11-14 */
+    if (is_active())
     {
         if (all)
         {

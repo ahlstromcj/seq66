@@ -395,12 +395,6 @@ private:
 
     long m_measures;
 
-#if defined USE_STAZED_ODD_EVEN_SELECTION
-    int m_pp_whole;
-    int m_pp_eighth;
-    int m_pp_sixteenth;
-#endif
-
     /**
      *  Indicates what MIDI channel the data window is currently editing.
      */

@@ -178,17 +178,6 @@ microsleep (int us)
     return result;
 }
 
-#if defined USE_EDUCATIONAL_CODE    /* :-) */
-
-bool
-microsleep (struct timespec & ts)
-{
-    int rc = nanosleep(&ts, NULL);
-    return rc == 0 || rc == EINTR;
-}
-
-#endif
-
 #elif defined SEQ66_PLATFORM_WINDOWS
 
 /**

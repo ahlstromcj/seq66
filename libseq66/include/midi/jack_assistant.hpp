@@ -583,12 +583,7 @@ private:
 
     double tick_multiplier () const
     {
-#if defined USE_BAD_TICK_MULTIPLIER
-        double denom = (jack_pos().ticks_per_beat * jack_pos().beat_type / 4.0);
-        return double(m_ppqn) / denom;
-#else
         return double(m_ppqn) / jack_pos().ticks_per_beat;
-#endif
     }
 
     jack_client_t * client_open (const std::string & clientname);

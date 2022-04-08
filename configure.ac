@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2022-03-21
+dnl \update        2022-04-09
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -72,7 +72,7 @@ PACKAGE="seq66"
 AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
 AC_SUBST(PACKAGE)
 
-AC_DEFINE(APP_TYPE, ["qt5"], "The type of the Seq66 executable, qt/cli")
+AC_DEFINE(APP_TYPE, ["qt5"], "Type of the Seq66 executable, qt/cli")
 AC_DEFINE(APP_ENGINE, ["rtmidi"], "Seq66 MIDI engine, rtmidi/portmidi")
 build_os="'$(uname -srm)'"
 
@@ -83,7 +83,7 @@ AC_DEFINE_UNQUOTED(
    APP_BUILD_ISSUE,
    "[m4_normalize(esyscmd([cat /etc/issue.net]))]",
    "Distro of build")
-   AC_DEFINE(CLIENT_NAME, ["seq66"], "The name to display as client/port")
+   AC_DEFINE(CLIENT_NAME, ["seq66"], "Name to display as client/port")
 
 VERSION="0.98.6"
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
@@ -186,9 +186,9 @@ ac_cflags="${CFLAGS}"
 dnl Check for header files.  Added more to support daemonization.
 
 m4_warn([obsolete],
-[The preprocessor macro STDC_HEADERS is obsolete. 
- Except in unusual embedded environments, you can safely include all 
- ISO C90 headers unconditionally.])
+[Preprocessor macro STDC_HEADERS is obsolete. 
+ Except in unusual embedded environments, one can include all ISO C90
+ headers unconditionally.])
 
 dnl Autoupdate added the next two lines to ensure that your configure
 dnl script's behavior did not change.  They are probably safe to remove.
@@ -272,17 +272,17 @@ if test "$jack" != "no"; then
                             jack_session_found="no")
             if test "$jack_session_found" = "yes"; then
                 AC_DEFINE(JACK_SESSION, 1, [Define to enable JACK session])
-                AC_MSG_RESULT([JACK session support enabled.]);
+                AC_MSG_RESULT([JACK session support enabled]);
             fi
         fi
-        AC_MSG_RESULT([JACK support enabled.])
+        AC_MSG_RESULT([JACK support enabled])
 
         AC_CHECK_HEADERS([jack/jack.h])
         AC_CHECK_LIB([jack], [jack_get_version_string],
             jack_get_version="yes", jack_get_version="no")
         if test "$jack_get_version" = "yes"; then
             AC_DEFINE(JACK_GET_VERSION_STRING, 1, [Enable JACK version string])
-            AC_MSG_RESULT([JACK jack_get_version_string available.]);
+            AC_MSG_RESULT([JACK jack_get_version_string available]);
         fi
 
         if test "$jack_metadata" = "yes"; then
@@ -290,29 +290,29 @@ if test "$jack" != "no"; then
                 jack_metadata="no")
             if test "$jack_metadata" == "yes"; then
                 AC_DEFINE(JACK_METADATA, 1, [Define to enable JACK metadata])
-                AC_MSG_RESULT([JACK metadata support enabled.]);
+                AC_MSG_RESULT([JACK metadata support enabled]);
             fi
         fi
     else
-        AC_MSG_WARN([No JACK library, disabling JACK.])
+        AC_MSG_WARN([No JACK library, disabling JACK])
     fi
 else
-    AC_MSG_NOTICE([JACK disabled in the configuration.]);
+    AC_MSG_NOTICE([JACK disabled in the configuration]);
 fi
 
 dnl Port-refresh support.  Far from ready for prime-time, but added for
 dnl exploration and testing.  Disabled by default.
 
 AC_ARG_ENABLE(refresh,
-    [AS_HELP_STRING(--enable-refresh, [Enable JACK port refresh support])],
+    [AS_HELP_STRING(--enable-port-refresh, [Enable JACK port refresh support])],
     [ac_refresh=$enableval],
     [ac_refresh=no])
 
 if test "$ac_refresh" != "no"; then
     AC_DEFINE(MIDI_PORT_REFRESH, 1, [Define to enable JACK port refresh])
-    AC_MSG_RESULT([JACK port refresh TEST CODE enabled.])
+    AC_MSG_RESULT([JACK port refresh test code enabled])
 else
-    AC_MSG_NOTICE([JACK port refresh not enabled.])
+    AC_MSG_NOTICE([JACK port refresh not enabled])
 fi
 
 AC_SUBST(MIDI_PORT_REFRESH)
@@ -332,12 +332,12 @@ NSM_LIBS=
 NSM_DEPS=
 
 if test "$ac_nsm" != "no"; then
-    AC_DEFINE(NSM_SUPPORT, 1, [Define if NSM support is available.])
+    AC_DEFINE(NSM_SUPPORT, 1, [Define if NSM support is available])
     NSM_CFLAGS="-I ../libsessions/include"
     NSM_LIBS="-llo -L../libsessions/src/.libs/ -lsessions"
     NSM_DEPS="../libsessions/src/.libs/libsessions.la"
     AC_DEFINE(NSM_SUPPORT, 1, [Define to enable NSM])
-    AC_MSG_RESULT([Sessions/NSM support enabled.]);
+    AC_MSG_RESULT([Sessions/NSM support enabled]);
 fi
 
 AC_SUBST(NSM_CFLAGS)
@@ -348,16 +348,16 @@ dnl Check for now-required LIBLO library, needed for NSM support.
 
 PKG_CHECK_MODULES([LIBLO], [liblo], [ac_liblo="yes"], [ac_liblo="no"])
 if test "x$ac_liblo" = "xyes"; then
-    AC_DEFINE(LIBLO_SUPPORT, 1, [Define if LIBLO library is available.])
+    AC_DEFINE(LIBLO_SUPPORT, 1, [Define if LIBLO library is available])
     AC_SUBST(LIBLO_CFLAGS)
     AC_SUBST(LIBLO_LIBS)
-    AC_MSG_RESULT([LIBLO support enabled.]);
+    AC_MSG_RESULT([LIBLO support enabled]);
 else
-    AC_MSG_ERROR([LIBLO library not found, OSC dev package required.])
+    AC_MSG_ERROR([LIBLO library not found, LibOSC dev package required])
     ac_nsm="no"
 fi
 
-dnl "RtMidi" support.  This is now the default build for Seq66.
+dnl "rtmidi" support.  This is now the default build for Seq66.
 
 AC_ARG_ENABLE(rtmidi,
     [AS_HELP_STRING(--disable-rtmidi, [Disable rtmidi MIDI engine])],
@@ -372,10 +372,10 @@ if test "$rtmidi" != "no"; then
     AC_DEFINE(APP_NAME, ["qseq66"], [Names the JACK/ALSA version of application])
     AC_DEFINE(APP_ENGINE, ["rtmidi"], [Names the MIDI engine of the application])
     AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration file name])
-    AC_DEFINE(ICON_NAME, ["qseq66"], [The canonical icon name for freedesktop])
+    AC_DEFINE(ICON_NAME, ["qseq66"], [Canonical icon name for Freedesktop])
     AC_DEFINE(RTMIDI_SUPPORT, 1, [Indicates if rtmidi is enabled])
     AM_PATH_ALSA(0.9.0)
-    AC_MSG_RESULT([rtmidi engine build enabled.]);
+    AC_MSG_RESULT([rtmidi engine build enabled]);
 fi
 
 dnl "Qt" support.  Enabled by default, and actually mandatory for this
@@ -395,10 +395,10 @@ if test "$ac_qtmidi" != "no"; then
     AC_DEFINE(APP_ENGINE, ["rtmidi"], [Name of the MIDI engine])
     AC_DEFINE(APP_TYPE, ["qt5"], [Name of the UI of the application])
     AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration base file name])
-    AC_DEFINE(ICON_NAME, ["qseq66"], [The canonical icon name for freedesktop])
+    AC_DEFINE(ICON_NAME, ["qseq66"], [Canonical icon name for Freedesktop])
     AM_PATH_ALSA(0.9.0)
     AX_HAVE_QT_MIN
-    AC_MSG_RESULT([qt user-interface build enabled.]);
+    AC_MSG_RESULT([qt user-interface build enabled]);
 fi
 
 dnl "CLI" or "Command-line" support.
@@ -409,13 +409,13 @@ AC_ARG_ENABLE(cli,
     [cli=no])
 
 if test "$cli" != "no"; then
-    AC_MSG_RESULT([rtmidi command-line build enabled.]);
+    AC_MSG_RESULT([rtmidi command-line build enabled]);
     AC_DEFINE(APP_NAME, ["seq66cli"], [Name of the CLI version of application])
     AC_DEFINE(APP_CLI, [1], [Indicate the CLI version])
     AC_DEFINE(APP_TYPE, ["cli"], [Name of the UI])
     AC_DEFINE(APP_ENGINE, ["rtmidi"], [Name of the MIDI engine])
     AC_DEFINE(CONFIG_NAME, ["seq66cli"], [Configuration file name])
-    AC_DEFINE(ICON_NAME, ["qseq66"], [The canonical icon name for freedesktop])
+    AC_DEFINE(ICON_NAME, ["qseq66"], [Canonical icon name for Freedesktop])
     if test "x$mingw" != "xyes" ; then
         build_rtcli="yes"
         build_qtmidi="no"
@@ -426,25 +426,25 @@ if test "$cli" != "no"; then
     need_qt="no"
 fi
 
-dnl PortMidi support.  Deprecated for Linux, but we still build it, for
+dnl portmidi support.  Deprecated for Linux, but we still build it, for
 dnl testing purposes. It needs the ALSA libraries to work.
 
 AC_ARG_ENABLE(portmidi,
-    [AS_HELP_STRING(--enable-portmidi, [Enable PortMidi build)])],
+    [AS_HELP_STRING(--enable-portmidi, [Enable portmidi build)])],
     [portmidi=$enableval],
     [portmidi=no])
 
 if test "$portmidi" != "no"; then
     build_portmidi="yes"
     build_rtmidi="no"
-    AC_DEFINE(PORTMIDI_SUPPORT, 1, [Indicates if PortMidi is enabled])
+    AC_DEFINE(PORTMIDI_SUPPORT, 1, [Indicates if portmidi is enabled])
     AC_DEFINE(APP_NAME, ["seq66portmidi"], [Name of this application])
     AC_DEFINE(CONFIG_NAME, ["seq66portmidi"], [Configuration file name])
-    AC_DEFINE(ICON_NAME, ["qseq66"], [The canonical icon name for freedesktop])
+    AC_DEFINE(ICON_NAME, ["qseq66"], [Canonical icon name for Freedesktop])
     AM_PATH_ALSA(0.9.0)
-    AC_MSG_RESULT([PortMidi build enabled.]);
+    AC_MSG_RESULT([Portmidi build enabled]);
 else
-    AC_MSG_NOTICE([PortMidi build disabled.]);
+    AC_MSG_NOTICE([Portmidi build disabled]);
 fi
 
 AC_SUBST(APP_NAME)
@@ -468,7 +468,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2022-03-21"
+#define VERSION_DATE_SHORT "2022-04-09"
 #define VERSION "0.98.6"
 
 )

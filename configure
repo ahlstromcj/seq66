@@ -1544,13 +1544,13 @@ Optional Features:
   --disable-jack          Disable JACK support
   --disable-jack-session  Disable JACK session support
   --disable-jack-metadata Disable JACK metadata support
-  --enable-refresh        Enable JACK port refresh support
+  --enable-port-refresh   Enable JACK port refresh support
   --disable-nsm           Disable NSM support
   --disable-rtmidi        Disable rtmidi MIDI engine
   --disable-alsatest      Do not try to compile and run a test Alsa program
   --disable-qt            Disable Qt5 user-interface
   --enable-cli            Enable rtmidi command-line build
-  --enable-portmidi       Enable PortMidi build)
+  --enable-portmidi       Enable portmidi build)
   --enable-coverage=(no/yes) Turn on a test-coverage build (default=no)
   --enable-profile=(no/yes/gprof/prof) Turn on profiling builds (default=no, yes=gprof)
   --enable-debug=(no/yes/db/gdb) Turn on debug builds (default=no,
@@ -16551,12 +16551,12 @@ fi
 
 $as_echo "#define JACK_SESSION 1" >>confdefs.h
 
-                { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK session support enabled." >&5
-$as_echo "JACK session support enabled." >&6; };
+                { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK session support enabled" >&5
+$as_echo "JACK session support enabled" >&6; };
             fi
         fi
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK support enabled." >&5
-$as_echo "JACK support enabled." >&6; }
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK support enabled" >&5
+$as_echo "JACK support enabled" >&6; }
 
         for ac_header in jack/jack.h
 do :
@@ -16616,8 +16616,8 @@ fi
 
 $as_echo "#define JACK_GET_VERSION_STRING 1" >>confdefs.h
 
-            { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK jack_get_version_string available." >&5
-$as_echo "JACK jack_get_version_string available." >&6; };
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK jack_get_version_string available" >&5
+$as_echo "JACK jack_get_version_string available" >&6; };
         fi
 
         if test "$jack_metadata" = "yes"; then
@@ -16633,17 +16633,17 @@ fi
 
 $as_echo "#define JACK_METADATA 1" >>confdefs.h
 
-                { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK metadata support enabled." >&5
-$as_echo "JACK metadata support enabled." >&6; };
+                { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK metadata support enabled" >&5
+$as_echo "JACK metadata support enabled" >&6; };
             fi
         fi
     else
-        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: No JACK library, disabling JACK." >&5
-$as_echo "$as_me: WARNING: No JACK library, disabling JACK." >&2;}
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: No JACK library, disabling JACK" >&5
+$as_echo "$as_me: WARNING: No JACK library, disabling JACK" >&2;}
     fi
 else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: JACK disabled in the configuration." >&5
-$as_echo "$as_me: JACK disabled in the configuration." >&6;};
+    { $as_echo "$as_me:${as_lineno-$LINENO}: JACK disabled in the configuration" >&5
+$as_echo "$as_me: JACK disabled in the configuration" >&6;};
 fi
 
 
@@ -16659,11 +16659,11 @@ if test "$ac_refresh" != "no"; then
 
 $as_echo "#define MIDI_PORT_REFRESH 1" >>confdefs.h
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK port refresh TEST CODE enabled." >&5
-$as_echo "JACK port refresh TEST CODE enabled." >&6; }
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: JACK port refresh test code enabled" >&5
+$as_echo "JACK port refresh test code enabled" >&6; }
 else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: JACK port refresh not enabled." >&5
-$as_echo "$as_me: JACK port refresh not enabled." >&6;}
+    { $as_echo "$as_me:${as_lineno-$LINENO}: JACK port refresh not enabled" >&5
+$as_echo "$as_me: JACK port refresh not enabled" >&6;}
 fi
 
 
@@ -16692,8 +16692,8 @@ $as_echo "#define NSM_SUPPORT 1" >>confdefs.h
 
 $as_echo "#define NSM_SUPPORT 1" >>confdefs.h
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: Sessions/NSM support enabled." >&5
-$as_echo "Sessions/NSM support enabled." >&6; };
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: Sessions/NSM support enabled" >&5
+$as_echo "Sessions/NSM support enabled" >&6; };
 fi
 
 
@@ -16778,10 +16778,10 @@ $as_echo "#define LIBLO_SUPPORT 1" >>confdefs.h
 
 
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: LIBLO support enabled." >&5
-$as_echo "LIBLO support enabled." >&6; };
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: LIBLO support enabled" >&5
+$as_echo "LIBLO support enabled" >&6; };
 else
-    as_fn_error $? "LIBLO library not found, OSC dev package required." "$LINENO" 5
+    as_fn_error $? "LIBLO library not found, LibOSC dev package required" "$LINENO" 5
     ac_nsm="no"
 fi
 
@@ -17018,8 +17018,8 @@ fi
 
 
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: rtmidi engine build enabled." >&5
-$as_echo "rtmidi engine build enabled." >&6; };
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: rtmidi engine build enabled" >&5
+$as_echo "rtmidi engine build enabled" >&6; };
 fi
 
 
@@ -18114,8 +18114,8 @@ $as_echo "$ax_cv_qt_test_result" >&6; }
           ax_qt_main.$ac_ext ax_qt_main.o ax_qt_main
   fi
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: qt user-interface build enabled." >&5
-$as_echo "qt user-interface build enabled." >&6; };
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: qt user-interface build enabled" >&5
+$as_echo "qt user-interface build enabled" >&6; };
 fi
 
 
@@ -18128,8 +18128,8 @@ fi
 
 
 if test "$cli" != "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: rtmidi command-line build enabled." >&5
-$as_echo "rtmidi command-line build enabled." >&6; };
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: rtmidi command-line build enabled" >&5
+$as_echo "rtmidi command-line build enabled" >&6; };
 
 $as_echo "#define APP_NAME \"seq66cli\"" >>confdefs.h
 
@@ -18593,11 +18593,11 @@ fi
 
 
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: PortMidi build enabled." >&5
-$as_echo "PortMidi build enabled." >&6; };
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: Portmidi build enabled" >&5
+$as_echo "Portmidi build enabled" >&6; };
 else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: PortMidi build disabled." >&5
-$as_echo "$as_me: PortMidi build disabled." >&6;};
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Portmidi build disabled" >&5
+$as_echo "$as_me: Portmidi build disabled" >&6;};
 fi
 
 

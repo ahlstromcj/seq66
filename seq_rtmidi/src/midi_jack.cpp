@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-03-13
+ * \updates       2022-04-08
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -811,13 +811,6 @@ midi_jack::set_virtual_name (int portid, const std::string & portname)
             set_port_id(portid);
             port_name(portname);
             set_name(rc().app_client_name(), clientname, portname);
-
-#if defined USE_REDUNDANT_SET_NAME_CALL
-            parent_bus().set_name
-            (
-                 rc().app_client_name(), clientname, portname
-            );
-#endif
         }
     }
     return result;
@@ -1413,19 +1406,11 @@ midi_jack::register_port (midibase::io iotype, const std::string & portname)
             port_handle(p);
             result = true;
 
-#if defined SEQ66_JACK_METADATA_TEST
-#if defined USE_METADATA_TEST_1
-            (void) set_jack_port_property                   /* it works! */
+#if defined SEQ66_JACK_METADATA_TEST                        /* undefined    */
+            (void) set_jack_port_property                   /* it works!    */
             (
                 client_handle(), p, JACK_METADATA_PRETTY_NAME, "Pretty Name"
             );
-#else
-            (void) set_jack_port_property                   /* no good! */
-            (
-                client_handle(), portname, JACK_METADATA_PRETTY_NAME,
-                "Pretty Name"
-            );
-#endif
 #endif
             if (rc().investigate())
             {

@@ -108,10 +108,6 @@ private:                            // overrides of qslivebase functions
         (void) refresh_all_slots();
     }
 
-#if defined USE_REFRESH_SEQNO
-    virtual void refresh (seq::number seqno) override;
-#endif
-
     virtual void color_by_number (int i) override;
     virtual void set_playlist_name
     (
@@ -123,7 +119,6 @@ private:                            // overrides of qslivebase functions
         const std::string & name = "",
         int id = 0
     ) override;
-
     virtual void update_bank (int bank) override;
     virtual void update_bank () override;
     virtual void update_bank_name (const std::string & name) override;
@@ -217,6 +212,7 @@ private:
     /**
      *  A two-dimensional vector of buttons containing a vector of rows, each
      *  row being a vector of columns.
+     *
      *  The fastest varying index is the row: m_loop_buttons[column][row].
      */
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2021-11-14
+ * \updates       2022-04-08
  * \license       GNU GPLv2 or above
  *
  *  This object is just a QPushButton with number label.  See seq66::qslivegrid
@@ -116,32 +116,6 @@ qslotbutton::setup ()
     std::string snstring = std::to_string(m_slot_number);
     setText(qt(snstring));
 }
-
-/**
- *  A silly little wrapper for the Qt update() function.
- */
-
-#if defined USE_THIS_CODE
-
-void
-qslotbutton::reupdate (bool all)
-{
-    if (all)
-    {
-        m_is_dirty = true;
-        update();
-    }
-}
-
-#else
-
-void
-qslotbutton::reupdate (bool /*all*/)
-{
-    // no code
-}
-
-#endif
 
 }           // namespace seq66
 

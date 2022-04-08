@@ -395,10 +395,6 @@ extern midicontrolout::uiaction & operator ++ (midicontrolout::uiaction & e);
 extern std::string seqaction_to_string (midicontrolout::seqaction a);
 extern std::string action_to_string (midicontrolout::uiaction a);
 
-#if defined USE_ACTION_TO_TYPE_STRING
-extern std::string action_to_type_string (midicontrolout::uiaction a);
-#endif
-
 }           // namespace seq66
 
 #endif      // SEQ66_MIDICONTROLOUT_HPP

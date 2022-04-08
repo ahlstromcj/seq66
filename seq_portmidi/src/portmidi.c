@@ -216,10 +216,6 @@ static char pm_error_message [PM_HOST_ERROR_MSG_LEN];
 void
 c_millisleep (int ms)
 {
-#if defined SEQ66_PLATFORM_DEBUG
-    fprintf(stderr, "millisleep(%d)\n", ms);
-#endif
-
 #if defined SEQ66_PLATFORM_LINUX
     (void) usleep(1000 * ms);
 #elif defined SEQ66_PLATFORM_UNIX

@@ -158,16 +158,6 @@ public:
 
     bool add (const midicontrol & mc);
     void add_blank_controls (const keycontainer & kc);
-
-#if USE_MERGE_KEY_FUNCTION              /* currently unused */
-    bool merge_key
-    (
-        automation::category opcat,
-        const std::string & keyname,
-        int opslot
-    );
-#endif
-
     const midicontrol & control (const midicontrol::key & k) const;
     std::string status_string () const;
 

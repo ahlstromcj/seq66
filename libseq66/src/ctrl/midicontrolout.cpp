@@ -212,33 +212,6 @@ action_to_string (midicontrolout::uiaction a)
     }
 }
 
-#if defined USE_ACTION_TO_TYPE_STRING
-
-/**
- *  A "to_string" function for the control file.
- */
-
-std::string
-action_to_type_string (midicontrolout::uiaction a)
-{
-    std::string result = "unknown";
-    switch (a)
-    {
-    case midicontrolout::uiaction::snap:
-
-        result = "store/restore/inactive";
-        break;
-
-    default:
-
-        result = "on/off/inactive";                 /* the most common case */
-        break;
-    }
-    return result;
-}
-
-#endif
-
 /**
  *  Send out notification about playing status of a sequence.
  *

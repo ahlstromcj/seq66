@@ -304,7 +304,10 @@ protected:
         return m_back_color;
     }
 
-    virtual void reupdate (bool all = true);
+    virtual void reupdate (bool /*all*/)
+    {
+        // no code, handles empty button
+    }
 
     virtual void draw_progress (QPainter & /*p*/, midipulse /*tick*/)
     {

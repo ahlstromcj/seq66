@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-06
+ * \updates       2022-04-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -177,7 +177,6 @@ private slots:
     void slot_palette_save_click ();
     void slot_palette_active_click ();
     void slot_palette_filename ();
-    void slot_key_test (const QString &);
     void slot_clock_start_modulo (int arg);
     void slot_output_bus (int arg);
     void slot_input_bus (int arg);

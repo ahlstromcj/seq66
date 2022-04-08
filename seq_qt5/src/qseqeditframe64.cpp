@@ -377,11 +377,6 @@ qseqeditframe64::qseqeditframe64
     m_key                   (usr().seqedit_key()),
     m_bgsequence            (0),                    /* set in ctor body     */
     m_measures              (0),
-#if defined USE_STAZED_ODD_EVEN_SELECTION
-    m_pp_whole              (0),
-    m_pp_eighth             (0),
-    m_pp_sixteenth          (0),
-#endif
     m_edit_bus              (0),
     m_edit_channel          (0),                    /* 0-15, null           */
     m_first_event           (max_midibyte()),

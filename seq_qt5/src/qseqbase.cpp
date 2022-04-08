@@ -105,7 +105,7 @@ qseqbase::set_scroll_y (int y)
     m_scroll_offset_key = y / c_key_y;      // m_unit_height
 }
 
-#endif  // USE_SCROLLING_CODE
+#endif  // SEQ66_USE_SCROLLING_CODE
 
 /**
  *  Checks for the dirtiness of the user-interface or the current sequence.

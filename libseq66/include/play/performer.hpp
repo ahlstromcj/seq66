@@ -3142,10 +3142,6 @@ private:
     bool create_master_bus ();
     void reset_sequences (bool pause = false);
 
-#if defined USE_STAZED_PARSE_SYSEX
-    void parse_sysex (event ev);
-#endif
-
     /**
      *  Convenience function for perfedit's collapse functionality.
      */

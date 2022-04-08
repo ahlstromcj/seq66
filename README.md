@@ -1,7 +1,7 @@
 # README for Seq66 0.98.6
 
 Chris Ahlstrom
-2015-09-10 to 2022-04-05
+2015-09-10 to 2022-04-08
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -84,9 +84,9 @@ Windows, and using a conventional source tarball.
         *   Revisited issue #41 to make sure "Quit" is "Hide" under NSM. Also
             fixed issue with the "newtune.midi" default name.
         *   Disabling/enabling JACK input and output on the fly in Preferences
-            works.
+            works, as long as they had been enabled at startup.
         *   Added Preferences options to toggle the double-click edit feature
-            and select the Live/Song/Auto mode.
+            and select the Live/Song/Auto mode.  Added Apply/Reset buttons.
         *   Removed long-unused "rtmidi callback" code and other disabled code.
         *   Got user-manual screenshots up-to-date.
         *   Fixed a minor bug involving setting input aliases.
@@ -98,6 +98,7 @@ Windows, and using a conventional source tarball.
         *   Improved modification detection of sequences and main window.
         *   Refactored global SeqSpecs for better robustness, fewer surprises.
         *   Added a file-changed check before restarting the application.
+        *   More code/macro cleanup.
     *   Version 0.98.5:
         *   Added locking for the event-drawing loops to prevent segfaults.
             Active only when recording; prevents iterator invalidation.

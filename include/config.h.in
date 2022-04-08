@@ -1,6 +1,6 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2022-03-21"
+#define VERSION_DATE_SHORT "2022-04-09"
 #define VERSION "0.98.6"
 
 
@@ -23,7 +23,7 @@
 /* Name of the UI */
 #undef APP_TYPE
 
-/* "The name to display as client/port" */
+/* "Name to display as client/port" */
 #undef CLIENT_NAME
 
 /* Configuration file name */
@@ -114,7 +114,7 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* The canonical icon name for freedesktop */
+/* Canonical icon name for Freedesktop */
 #undef ICON_NAME
 
 /* Enable JACK version string */
@@ -129,7 +129,7 @@
 /* Define to enable JACK driver */
 #undef JACK_SUPPORT
 
-/* Define if LIBLO library is available. */
+/* Define if LIBLO library is available */
 #undef LIBLO_SUPPORT
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
@@ -162,7 +162,7 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* Indicates if PortMidi is enabled */
+/* Indicates if portmidi is enabled */
 #undef PORTMIDI_SUPPORT
 
 /* Define PROFLAGS=-pg (gprof) or -p (prof) if profile support is wanted. */

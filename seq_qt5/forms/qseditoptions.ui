@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>662</width>
-    <height>696</height>
+    <width>664</width>
+    <height>698</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -1060,38 +1060,12 @@ Range: 4 to 12. Default: 8.</string>
        <property name="geometry">
         <rect>
          <x>8</x>
-         <y>208</y>
+         <y>220</y>
          <width>413</width>
          <height>16</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout"/>
-      </widget>
-      <widget class="QLabel" name="label_key">
-       <property name="geometry">
-        <rect>
-         <x>24</x>
-         <y>552</y>
-         <width>73</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Key</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="text_edit_key">
-       <property name="geometry">
-        <rect>
-         <x>112</x>
-         <y>552</y>
-         <width>41</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>For testing only.  Normally hidden.</string>
-       </property>
       </widget>
       <widget class="QLabel" name="label_6">
        <property name="geometry">
@@ -2370,7 +2344,6 @@ path added to this name is stripped.</string>
   <tabstop>checkBoxVerbose</tabstop>
   <tabstop>checkBoxLoadMostRecent</tabstop>
   <tabstop>checkBoxShowFullRecentPaths</tabstop>
-  <tabstop>text_edit_key</tabstop>
   <tabstop>pushButtonStoreMap</tabstop>
   <tabstop>pushButtonTempoTrack</tabstop>
   <tabstop>outPortsMappedCheck</tabstop>

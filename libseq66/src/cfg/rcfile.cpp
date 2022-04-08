@@ -240,41 +240,8 @@ rcfile::parse ()
         rc_ref().comments_block().set(s);
 
     bool ok = true;                                     /* start hopefully! */
-
-#if defined USE_ORIGINAL_LOCATION
-
-    std::string tag = "[midi-control-file]";
-    if (file_version_number() < s_rc_file_version)
-    {
-        (void) version_error_message("rc", file_version_number());
-    }
-    else
-    {
-        std::string pfname;
-        bool active = get_file_status(file, tag, pfname);
-        rc_ref().midi_control_active(active);
-        rc_ref().midi_control_filename(pfname);             /* base name    */
-    }
-
-    std::string fullpath = rc_ref().midi_control_filespec();
-    file_message("Reading ctrl", fullpath);
-    ok = parse_midi_control_section(fullpath, true);
-    if (! ok)
-    {
-        std::string info = "'";
-        info += fullpath;
-        info += "'";
-        return make_error_message(tag, info);
-    }
-    tag = "[mute-group-file]";
-
-#else
-
     std::string tag = "[mute-group-file]";
     std::string fullpath;
-
-#endif
-
     std::string pfname;
     bool active = get_file_status(file, tag, pfname);
     rc_ref().mute_group_active(active);

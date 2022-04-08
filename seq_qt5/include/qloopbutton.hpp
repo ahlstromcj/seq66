@@ -236,6 +236,9 @@ public:
 protected:
 
     virtual void draw_progress (QPainter & p, midipulse tick) override;
+
+protected:
+
     void draw_progress_box (QPainter & painter);
     void draw_pattern (QPainter & painter);
     void initialize_fingerprint ();
@@ -251,9 +254,8 @@ private:
     virtual void focusInEvent (QFocusEvent *) override;
     virtual void focusOutEvent (QFocusEvent *) override;
     virtual void resizeEvent (QResizeEvent *) override;
-#if defined USE_QLOOPBUTTON_SIZEHINT
-    virtual QSize sizeHint () const override;
-#endif
+
+private:
 
     bool initialize_text ();
 

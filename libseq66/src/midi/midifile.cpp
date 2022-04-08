@@ -1875,7 +1875,9 @@ midifile::prop_header_loop (performer & p, int file_size)
 
 /*
  * Some old code wrote some bad files, we need to work around that and fix it.
- * The value of max_sequence() is generally 1024.
+ * The value of max_sequence() is generally 1024. Note that we no longer
+ * support setting up MIDI control in a song.  Too mysterious, and the 'ctrl'
+ * file is far more powerful (and handles keystrokes at the same time).
  */
 
 bool
@@ -1897,20 +1899,8 @@ midifile::parse_c_midictrl (performer & /* p*/)
     for (int i = 0; i < ctrls; ++i)
     {
         read_byte_array(a, 6);
-
-#if defined USE_MIDI_CONTROL_IN_SONGS                   /* deprecated */
-        p.midi_control_toggle(i).set(a);
-#endif
         read_byte_array(a, 6);
-
-#if defined USE_MIDI_CONTROL_IN_SONGS
-        p.midi_control_on(i).set(a);
-#endif
         read_byte_array(a, 6);
-
-#if defined USE_MIDI_CONTROL_IN_SONGS
-        p.midi_control_off(i).set(a);
-#endif
     }
     return true;
 }
@@ -1923,19 +1913,6 @@ bool
 midifile::parse_c_midiclocks (performer & p)
 {
     int busscount = int(read_long());
-
-#if defined USE_MIDI_CLOCK_IN_SONGS
-    if (busscount > c_busscount_max)
-    {
-        (void) set_error_dump
-        (
-            "Bad buss count, fixing; please save the file now."
-        );
-        skip(-4);
-        busscount = int(read_byte());
-    }
-#endif  // defined USE_MIDI_CLOCK_IN_SONGS
-
     mastermidibus * masterbus = p.master_bus();
     if (not_nullptr(masterbus))
     {
