@@ -83,17 +83,18 @@ Windows, and using a conventional source tarball.
     *   Version 0.98.6:
         *   Revisited issue #41 to make sure "Quit" is "Hide" under NSM. Also
             fixed issue with the "newtune.midi" default name.
+        *   Fixed a minor bug involving setting input aliases.
+        *   Fixed bug with setting last-used-directory to "".
+        *   Fixed handling of Live/Song mode in performer and in 'rc' saving.
+        *   Fixed stupid seqedit bug for selecting beats/bar.
         *   Disabling/enabling JACK input and output on the fly in Preferences
             works, as long as they had been enabled at startup.
         *   Added Preferences options to toggle the double-click edit feature
             and select the Live/Song/Auto mode.  Added Apply/Reset buttons.
         *   Removed long-unused "rtmidi callback" code and other disabled code.
         *   Got user-manual screenshots up-to-date.
-        *   Fixed a minor bug involving setting input aliases.
-        *   Fixed bug with setting last-used-directory to "".
         *   Upgraded and fixed file-name splitting and rebuilding.
         *   Modify flag now set when painting notes in seqroll.
-        *   Fixed handling of Live/Song mode in performer and in 'rc' saving.
         *   Improved appearance of Loop/Record/Quantize buttons in main grid.
         *   Improved modification detection of sequences and main window.
         *   Refactored global SeqSpecs for better robustness, fewer surprises.

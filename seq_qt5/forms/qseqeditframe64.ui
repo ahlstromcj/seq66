@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>480</height>
+    <width>802</width>
+    <height>482</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -452,13 +452,13 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>17</width>
+         <width>16</width>
          <height>20</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>17</width>
+         <width>16</width>
          <height>20</height>
         </size>
        </property>
@@ -497,13 +497,13 @@ the '0' key in the piano roll.</string>
       <widget class="QPushButton" name="btnKeyVZoomIn">
        <property name="minimumSize">
         <size>
-         <width>17</width>
+         <width>16</width>
          <height>20</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>17</width>
+         <width>16</width>
          <height>20</height>
         </size>
        </property>
@@ -549,7 +549,7 @@ the '0' key in the piano roll.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>708</width>
+          <width>712</width>
           <height>24</height>
          </rect>
         </property>
@@ -637,8 +637,8 @@ the '0' key in the piano roll.</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>38</width>
-            <height>132</height>
+            <width>48</width>
+            <height>144</height>
            </rect>
           </property>
          </widget>
@@ -702,8 +702,8 @@ the '0' key in the piano roll.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>714</width>
-          <height>144</height>
+          <width>718</width>
+          <height>148</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -1135,13 +1135,13 @@ zooms 'in'.</string>
       <widget class="QPushButton" name="m_button_note_entry">
        <property name="minimumSize">
         <size>
-         <width>48</width>
+         <width>46</width>
          <height>24</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>48</width>
+         <width>46</width>
          <height>24</height>
         </size>
        </property>
@@ -1187,7 +1187,7 @@ zooms 'in'.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>708</width>
+          <width>712</width>
           <height>24</height>
          </rect>
         </property>
@@ -1363,7 +1363,7 @@ the note-map, if any, to the note events in this pattern.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>706</width>
+          <width>708</width>
           <height>128</height>
          </rect>
         </property>

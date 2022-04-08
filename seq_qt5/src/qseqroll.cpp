@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-12-26
+ * \updates       2022-04-08
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -498,10 +498,12 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
 
     int bpbar = seq_pointer()->get_beats_per_bar();
     int bwidth = seq_pointer()->get_beat_width();
+
     midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
     midipulse ticks_per_bar = bpbar * ticks_per_beat;
     midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
-    midipulse increment = ticks_per_step;       /* ticks_per_step or 1      */
+
+    midipulse increment = ticks_per_step;       /* ticks_per_step           */
     midipulse endtick = pix_to_tix(r.x() + r.width());
     midipulse starttick = pix_to_tix(r.x());
     starttick -= starttick % ticks_per_step;
@@ -509,7 +511,10 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     /*
      * Draw vertical grid lines.  Incrementing by ticks_per_step only works for
      * PPQN of certain multiples or for certain time offsets.  Therefore, need
-     * to check every darn tick!!!!
+     * to check every darn tick!!!! No, that causes aliasing in drawing
+     * horizontal lines. :-D
+     *
+     * for (int tick = starttick; tick < endtick; ++tick)
      */
 
     for (int tick = starttick; tick < endtick; tick += increment)
