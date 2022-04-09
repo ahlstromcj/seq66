@@ -21,7 +21,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2017-09-06
-# \update      2022-01-20
+# \update      2022-04-09
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -421,6 +421,7 @@ pkginclude_HEADERS = \
  qliveframeex.hpp \
  qloopbutton.hpp \
  qmutemaster.hpp \
+ qpatternfix.hpp \
  qperfbase.hpp \
  qperfeditex.hpp \
  qperfeditframe64.hpp \

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-04
+ * \updates       2022-04-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -240,6 +240,7 @@ private slots:
     void events ();
     void data ();
     void show_lfo_frame ();
+    void show_pattern_fix ();
     void play_change (bool ischecked);
     void thru_change (bool ischecked);
     void record_change (bool ischecked);

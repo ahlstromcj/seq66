@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2022-01-20
+# \update         2022-04-09
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -66,6 +66,7 @@ UI_DIR = forms
 FORMS += forms/qlfoframe.ui \
  forms/qliveframeex.ui \
  forms/qmutemaster.ui \
+ forms/qpatternfix.ui \
  forms/qperfeditex.ui \
  forms/qperfeditframe64.ui \
  forms/qplaylistframe.ui \
@@ -90,6 +91,7 @@ HEADERS += include/gui_palette_qt5.hpp \
  include/qliveframeex.hpp \
  include/qloopbutton.hpp \
  include/qmutemaster.hpp \
+ include/qpatternfix.hpp \
  include/qperfbase.hpp \
  include/qperfeditex.hpp \
  include/qperfeditframe64.hpp \
@@ -134,6 +136,7 @@ SOURCES += src/gui_palette_qt5.cpp \
  src/qliveframeex.cpp \
  src/qloopbutton.cpp \
  src/qmutemaster.cpp \
+ src/qpatternfix.cpp \
  src/qperfbase.cpp \
  src/qperfeditex.cpp \
  src/qperfeditframe64.cpp \

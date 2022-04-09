@@ -1,5 +1,5 @@
-#if ! defined SEQ66_QLFOFRAME_HPP
-#define SEQ66_QLFOFRAME_HPP
+#if ! defined SEQ66_QPATTERNFIX_HPP
+#define SEQ66_QPATTERNFIX_HPP
 
 /*
  *  This file is part of seq66.
@@ -20,14 +20,14 @@
  */
 
 /**
- * \file          qlfoframe.hpp
+ * \file          qpatternfix.hpp
  *
- *  This module declares/defines the base class for the LFO window.
+ *  This module declares/defines the base class for the pattern-fix window.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
- * \date          2018-01-01
- * \updates       2021-10-18
+ * \date          2022-04-09
+ * \updates       2022-04-09
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -46,13 +46,13 @@ class QButtonGroup;
 class QLineEdit;
 
 /*
- * This is necessary to keep the compiler from thinking Ui::qlfoframe
+ * This is necessary to keep the compiler from thinking Ui::qpatternfix
  * would be found in the seq66 namespace.
  */
 
 namespace Ui
 {
-    class qlfoframe;
+    class qpatternfix;
 }
 
 /*
@@ -71,13 +71,13 @@ namespace seq66
  *  a slider.  And the numbers can be edited directly.
  */
 
-class qlfoframe final : public QFrame
+class qpatternfix final : public QFrame
 {
     Q_OBJECT
 
 public:
 
-    qlfoframe
+    qpatternfix
     (
         performer & p,
         seq::pointer seqp,
@@ -85,7 +85,7 @@ public:
         qseqeditframe64 * editparent    = nullptr,
         QWidget * parent                = nullptr
     );
-    virtual ~qlfoframe ();
+    virtual ~qpatternfix ();
 
     /*
      * Not yet implemented !
@@ -104,25 +104,6 @@ private:
         return m_performer;
     }
 
-    /**
-     *  Converts a slider value to a double value.  Slider values are a 100
-     *  times (m_scale_factor) what they need to be.
-     */
-
-    double to_double (int v)
-    {
-        return double(v) / m_scale_factor;
-    }
-
-    /**
-     *  Converts a double value to a slider value.
-     */
-
-    int to_slider (double v)
-    {
-        return int(v * double(m_scale_factor) + 0.5);
-    }
-
     void set_value_text (double value, QLineEdit * textline);
     void wave_type_change (int waveid);
 
@@ -135,12 +116,7 @@ private slots:
      *  buttonClicked() signal that sets the wave-form to use.
      */
 
-    void scale_lfo_change ();
-    void value_text_change ();
-    void range_text_change ();
-    void speed_text_change ();
-    void phase_text_change ();
-    void use_measure_clicked (int state);
+    void pattern_change ();
     void reset ();
 
 private:
@@ -149,7 +125,7 @@ private:
      *  The use Qt user-interface object pointer.
      */
 
-    Ui::qlfoframe * ui;
+    Ui::qpatternfix * ui;
 
     /**
      *  Provides a way to treat the wave radio-buttons as a group.  Had issues
@@ -157,7 +133,7 @@ private:
      *  use its checkedButton() function.
      */
 
-    QButtonGroup * m_wave_group;
+    QButtonGroup * m_groupppppp;
 
     /**
      *  Access to the performance controller.
@@ -191,67 +167,19 @@ private:
     qseqeditframe64 * m_edit_frame;
 
     /**
-     *  We need a scale factor in order to use the integer values of the
-     *  sliders with two digits of precision after the decimal.
-     */
-
-    const int m_scale_factor = 100;
-
-    /**
-     *  Value.  Ranges from 0.0 to 127.0. It is initialized to its starting
-     *  value, 64.0.  Also defined are the minimum and maximum, but as statics
-     *  in the cpp module.
-     */
-
-    double m_value;
-
-    /**
-     *  Range.  Ranges from 0.0 to 127.0. It is initialized to its starting
-     *  value, 64.0.  Also defined are the minimum and maximum, but as statics
-     *  in the cpp module.
-     */
-
-    double m_range;
-
-    /**
-     *  Speed.
-     */
-
-    double m_speed;
-
-    /**
-     *  Phase.
-     */
-
-    double m_phase;
-
-    /**
-     *  Wave type.
-     */
-
-    waveform m_wave;
-
-    /**
-     *  If true, use the measure as the range for periodicity, as opposed to
-     *  the full length of the pattern.
-     */
-
-    bool m_use_measure;
-
-    /**
      *  Indicates the LFO modified status.
      */
 
     bool m_is_modified;
 
-};          // class qlfoframe
+};          // class qpatternfix
 
 }           // namespace seq66
 
-#endif // SEQ66_QLFOFRAME_HPP
+#endif // SEQ66_QPATTERNFIX_HPP
 
 /*
- * qlfoframe.hpp
+ * qpatternfix.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

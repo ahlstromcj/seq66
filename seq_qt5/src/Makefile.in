@@ -21,7 +21,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2022-01-20
+# \update      2022-04-09
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -166,7 +166,8 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 = ../include/qclocklayout.moc.lo \
 	../include/qinputcheckbox.moc.lo ../include/qlfoframe.moc.lo \
 	../include/qliveframeex.moc.lo ../include/qloopbutton.moc.lo \
-	../include/qmutemaster.moc.lo ../include/qperfeditex.moc.lo \
+	../include/qmutemaster.moc.lo ../include/qpatternfix.moc.lo \
+	../include/qperfeditex.moc.lo \
 	../include/qperfeditframe64.moc.lo \
 	../include/qperfnames.moc.lo ../include/qperfroll.moc.lo \
 	../include/qperftime.moc.lo ../include/qplaylistframe.moc.lo \
@@ -184,16 +185,16 @@ am__objects_1 = ../include/qclocklayout.moc.lo \
 am__objects_2 = $(am__objects_1)
 am_libseq_qt5_la_OBJECTS = gui_palette_qt5.lo palettefile.lo qbase.lo \
 	qclocklayout.lo qeditbase.lo qinputcheckbox.lo qlfoframe.lo \
-	qliveframeex.lo qloopbutton.lo qmutemaster.lo qperfbase.lo \
-	qperfeditex.lo qperfeditframe64.lo qperfnames.lo qperfroll.lo \
-	qperftime.lo qplaylistframe.lo qportwidget.lo qsabout.lo \
-	qsbuildinfo.lo qscrollmaster.lo qseditoptions.lo qseqbase.lo \
-	qseqdata.lo qseqeditex.lo qseqeditframe64.lo qseqeventframe.lo \
-	qseqframe.lo qseqkeys.lo qseqroll.lo qseqstyle.lo \
-	qsessionframe.lo qseqtime.lo qsetmaster.lo qseventslots.lo \
-	qslivebase.lo qslivegrid.lo qslotbutton.lo qsmaintime.lo \
-	qsmainwnd.lo qstriggereditor.lo qt5_helpers.lo qt5nsmanager.lo \
-	$(am__objects_2)
+	qliveframeex.lo qloopbutton.lo qmutemaster.lo qpatternfix.lo \
+	qperfbase.lo qperfeditex.lo qperfeditframe64.lo qperfnames.lo \
+	qperfroll.lo qperftime.lo qplaylistframe.lo qportwidget.lo \
+	qsabout.lo qsbuildinfo.lo qscrollmaster.lo qseditoptions.lo \
+	qseqbase.lo qseqdata.lo qseqeditex.lo qseqeditframe64.lo \
+	qseqeventframe.lo qseqframe.lo qseqkeys.lo qseqroll.lo \
+	qseqstyle.lo qsessionframe.lo qseqtime.lo qsetmaster.lo \
+	qseventslots.lo qslivebase.lo qslivegrid.lo qslotbutton.lo \
+	qsmaintime.lo qsmainwnd.lo qstriggereditor.lo qt5_helpers.lo \
+	qt5nsmanager.lo $(am__objects_2)
 libseq_qt5_la_OBJECTS = $(am_libseq_qt5_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -224,6 +225,7 @@ am__depfiles_remade = ../include/$(DEPDIR)/qclocklayout.moc.Plo \
 	../include/$(DEPDIR)/qliveframeex.moc.Plo \
 	../include/$(DEPDIR)/qloopbutton.moc.Plo \
 	../include/$(DEPDIR)/qmutemaster.moc.Plo \
+	../include/$(DEPDIR)/qpatternfix.moc.Plo \
 	../include/$(DEPDIR)/qperfeditex.moc.Plo \
 	../include/$(DEPDIR)/qperfeditframe64.moc.Plo \
 	../include/$(DEPDIR)/qperfnames.moc.Plo \
@@ -255,23 +257,23 @@ am__depfiles_remade = ../include/$(DEPDIR)/qclocklayout.moc.Plo \
 	./$(DEPDIR)/qeditbase.Plo ./$(DEPDIR)/qinputcheckbox.Plo \
 	./$(DEPDIR)/qlfoframe.Plo ./$(DEPDIR)/qliveframeex.Plo \
 	./$(DEPDIR)/qloopbutton.Plo ./$(DEPDIR)/qmutemaster.Plo \
-	./$(DEPDIR)/qperfbase.Plo ./$(DEPDIR)/qperfeditex.Plo \
-	./$(DEPDIR)/qperfeditframe64.Plo ./$(DEPDIR)/qperfnames.Plo \
-	./$(DEPDIR)/qperfroll.Plo ./$(DEPDIR)/qperftime.Plo \
-	./$(DEPDIR)/qplaylistframe.Plo ./$(DEPDIR)/qportwidget.Plo \
-	./$(DEPDIR)/qsabout.Plo ./$(DEPDIR)/qsbuildinfo.Plo \
-	./$(DEPDIR)/qscrollmaster.Plo ./$(DEPDIR)/qseditoptions.Plo \
-	./$(DEPDIR)/qseqbase.Plo ./$(DEPDIR)/qseqdata.Plo \
-	./$(DEPDIR)/qseqeditex.Plo ./$(DEPDIR)/qseqeditframe64.Plo \
-	./$(DEPDIR)/qseqeventframe.Plo ./$(DEPDIR)/qseqframe.Plo \
-	./$(DEPDIR)/qseqkeys.Plo ./$(DEPDIR)/qseqroll.Plo \
-	./$(DEPDIR)/qseqstyle.Plo ./$(DEPDIR)/qseqtime.Plo \
-	./$(DEPDIR)/qsessionframe.Plo ./$(DEPDIR)/qsetmaster.Plo \
-	./$(DEPDIR)/qseventslots.Plo ./$(DEPDIR)/qslivebase.Plo \
-	./$(DEPDIR)/qslivegrid.Plo ./$(DEPDIR)/qslotbutton.Plo \
-	./$(DEPDIR)/qsmaintime.Plo ./$(DEPDIR)/qsmainwnd.Plo \
-	./$(DEPDIR)/qstriggereditor.Plo ./$(DEPDIR)/qt5_helpers.Plo \
-	./$(DEPDIR)/qt5nsmanager.Plo
+	./$(DEPDIR)/qpatternfix.Plo ./$(DEPDIR)/qperfbase.Plo \
+	./$(DEPDIR)/qperfeditex.Plo ./$(DEPDIR)/qperfeditframe64.Plo \
+	./$(DEPDIR)/qperfnames.Plo ./$(DEPDIR)/qperfroll.Plo \
+	./$(DEPDIR)/qperftime.Plo ./$(DEPDIR)/qplaylistframe.Plo \
+	./$(DEPDIR)/qportwidget.Plo ./$(DEPDIR)/qsabout.Plo \
+	./$(DEPDIR)/qsbuildinfo.Plo ./$(DEPDIR)/qscrollmaster.Plo \
+	./$(DEPDIR)/qseditoptions.Plo ./$(DEPDIR)/qseqbase.Plo \
+	./$(DEPDIR)/qseqdata.Plo ./$(DEPDIR)/qseqeditex.Plo \
+	./$(DEPDIR)/qseqeditframe64.Plo ./$(DEPDIR)/qseqeventframe.Plo \
+	./$(DEPDIR)/qseqframe.Plo ./$(DEPDIR)/qseqkeys.Plo \
+	./$(DEPDIR)/qseqroll.Plo ./$(DEPDIR)/qseqstyle.Plo \
+	./$(DEPDIR)/qseqtime.Plo ./$(DEPDIR)/qsessionframe.Plo \
+	./$(DEPDIR)/qsetmaster.Plo ./$(DEPDIR)/qseventslots.Plo \
+	./$(DEPDIR)/qslivebase.Plo ./$(DEPDIR)/qslivegrid.Plo \
+	./$(DEPDIR)/qslotbutton.Plo ./$(DEPDIR)/qsmaintime.Plo \
+	./$(DEPDIR)/qsmainwnd.Plo ./$(DEPDIR)/qstriggereditor.Plo \
+	./$(DEPDIR)/qt5_helpers.Plo ./$(DEPDIR)/qt5nsmanager.Plo
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -658,6 +660,7 @@ moc_qt_headers = \
  ../include/qliveframeex.hpp \
  ../include/qloopbutton.hpp \
  ../include/qmutemaster.hpp \
+ ../include/qpatternfix.hpp \
  ../include/qperfeditex.hpp \
  ../include/qperfeditframe64.hpp \
  ../include/qperfnames.hpp \
@@ -690,6 +693,7 @@ uic_qt_forms = \
  $(formsdir)/qlfoframe.ui \
  $(formsdir)/qliveframeex.ui \
  $(formsdir)/qmutemaster.ui \
+ $(formsdir)/qpatternfix.ui \
  $(formsdir)/qperfeditex.ui \
  $(formsdir)/qperfeditframe64.ui \
  $(formsdir)/qplaylistframe.ui \
@@ -721,6 +725,7 @@ libseq_qt5_la_SOURCES = \
  qliveframeex.cpp \
  qloopbutton.cpp \
  qmutemaster.cpp \
+ qpatternfix.cpp \
  qperfbase.cpp \
  qperfeditex.cpp \
  qperfeditframe64.cpp \
@@ -845,6 +850,8 @@ clean-libLTLIBRARIES:
 	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qmutemaster.moc.lo: ../include/$(am__dirstamp) \
 	../include/$(DEPDIR)/$(am__dirstamp)
+../include/qpatternfix.moc.lo: ../include/$(am__dirstamp) \
+	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qperfeditex.moc.lo: ../include/$(am__dirstamp) \
 	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qperfeditframe64.moc.lo: ../include/$(am__dirstamp) \
@@ -915,6 +922,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qliveframeex.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qloopbutton.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qmutemaster.moc.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qpatternfix.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qperfeditex.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qperfeditframe64.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qperfnames.moc.Plo@am__quote@ # am--include-marker
@@ -951,6 +959,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qliveframeex.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qloopbutton.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qmutemaster.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qpatternfix.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qperfbase.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qperfeditex.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qperfeditframe64.Plo@am__quote@ # am--include-marker
@@ -1164,6 +1173,7 @@ distclean: distclean-am
 	-rm -f ../include/$(DEPDIR)/qliveframeex.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qloopbutton.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qmutemaster.moc.Plo
+	-rm -f ../include/$(DEPDIR)/qpatternfix.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qperfeditex.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qperfeditframe64.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qperfnames.moc.Plo
@@ -1200,6 +1210,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/qliveframeex.Plo
 	-rm -f ./$(DEPDIR)/qloopbutton.Plo
 	-rm -f ./$(DEPDIR)/qmutemaster.Plo
+	-rm -f ./$(DEPDIR)/qpatternfix.Plo
 	-rm -f ./$(DEPDIR)/qperfbase.Plo
 	-rm -f ./$(DEPDIR)/qperfeditex.Plo
 	-rm -f ./$(DEPDIR)/qperfeditframe64.Plo
@@ -1284,6 +1295,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ../include/$(DEPDIR)/qliveframeex.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qloopbutton.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qmutemaster.moc.Plo
+	-rm -f ../include/$(DEPDIR)/qpatternfix.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qperfeditex.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qperfeditframe64.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qperfnames.moc.Plo
@@ -1320,6 +1332,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/qliveframeex.Plo
 	-rm -f ./$(DEPDIR)/qloopbutton.Plo
 	-rm -f ./$(DEPDIR)/qmutemaster.Plo
+	-rm -f ./$(DEPDIR)/qpatternfix.Plo
 	-rm -f ./$(DEPDIR)/qperfbase.Plo
 	-rm -f ./$(DEPDIR)/qperfeditex.Plo
 	-rm -f ./$(DEPDIR)/qperfeditframe64.Plo

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-08
+ * \updates       2022-04-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -98,6 +98,7 @@
 #include "midi/controllers.hpp"         /* seq66::controller_name()         */
 #include "play/performer.hpp"           /* seq66::performer reference       */
 #include "qlfoframe.hpp"                /* seq66::qlfoframe dialog class    */
+#include "qpatternfix.hpp"              /* seq66::qpatternfix dialog class  */
 #include "qseqdata.hpp"                 /* seq66::qseqdata panel            */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qseqkeys.hpp"                 /* seq66::qseqkeys panel            */
@@ -1909,6 +1910,7 @@ qseqeditframe64::popup_tool_menu ()
     QMenu * menuselect = new QMenu(tr("&Select..."), m_tools_popup);
     QMenu * menutiming = new QMenu(tr("&Timing..."), m_tools_popup);
     QMenu * menupitch  = new QMenu(tr("&Pitch transpose..."), m_tools_popup);
+    QMenu * menumore = new QMenu(tr("&More tools..."), m_tools_popup);
     QMenu * menuharmonic = nullptr;
     if (m_scale > 0)
         menuharmonic  = new QMenu(tr("&Harmonic transpose..."), m_tools_popup);
@@ -1940,6 +1942,16 @@ qseqeditframe64::popup_tool_menu ()
     tighten->setShortcut(tr("Ctrl+T"));
     connect(tighten, SIGNAL(triggered(bool)), this, SLOT(tighten_notes()));
     menutiming->addAction(tighten);
+
+    QAction * lfobox = new QAction(tr("LFO..."), m_tools_popup);
+    lfobox->setShortcut(tr("Ctrl+L"));
+    connect(lfobox, SIGNAL(triggered(bool)), this, SLOT(show_lfo_frame()));
+    menumore->addAction(lfobox);
+
+    QAction * fixbox = new QAction(tr("Pattern fix..."), m_tools_popup);
+    fixbox->setShortcut(tr("Ctrl+F"));
+    connect(fixbox, SIGNAL(triggered(bool)), this, SLOT(show_pattern_fix()));
+    menumore->addAction(fixbox);
 
     QAction * transpose[2 * c_octave_size];     /* plain pitch transposings */
     QAction * harmonic[2 * c_harmonic_size];    /* harmonic transpositions  */
@@ -2000,6 +2012,7 @@ qseqeditframe64::popup_tool_menu ()
     m_tools_popup->addMenu(menuselect);
     m_tools_popup->addMenu(menutiming);
     m_tools_popup->addMenu(menupitch);
+    m_tools_popup->addMenu(menumore);
     if (m_scale > 0)
         m_tools_popup->addMenu(menuharmonic);
 }
@@ -3130,6 +3143,15 @@ qseqeditframe64::show_lfo_frame ()
         m_lfo_wnd = new qlfoframe(perf(), seq_pointer(), *m_seqdata);
 
     m_lfo_wnd->show();
+}
+
+void
+qseqeditframe64::show_pattern_fix ()
+{
+//  if (is_nullptr(m_lfo_wnd))
+//      m_lfo_wnd = new qlfoframe(perf(), seq_pointer(), *m_seqdata);
+//
+//  m_lfo_wnd->show();
 }
 
 /**

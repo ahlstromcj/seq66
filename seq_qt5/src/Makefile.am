@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2022-01-20
+# \update      2022-04-09
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -239,6 +239,7 @@ moc_qt_headers = \
  ../include/qliveframeex.hpp \
  ../include/qloopbutton.hpp \
  ../include/qmutemaster.hpp \
+ ../include/qpatternfix.hpp \
  ../include/qperfeditex.hpp \
  ../include/qperfeditframe64.hpp \
  ../include/qperfnames.hpp \
@@ -272,6 +273,7 @@ uic_qt_forms = \
  $(formsdir)/qlfoframe.ui \
  $(formsdir)/qliveframeex.ui \
  $(formsdir)/qmutemaster.ui \
+ $(formsdir)/qpatternfix.ui \
  $(formsdir)/qperfeditex.ui \
  $(formsdir)/qperfeditframe64.ui \
  $(formsdir)/qplaylistframe.ui \
@@ -305,6 +307,7 @@ libseq_qt5_la_SOURCES = \
  qliveframeex.cpp \
  qloopbutton.cpp \
  qmutemaster.cpp \
+ qpatternfix.cpp \
  qperfbase.cpp \
  qperfeditex.cpp \
  qperfeditframe64.cpp \

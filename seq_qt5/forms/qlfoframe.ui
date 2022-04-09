@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>586</width>
-    <height>320</height>
+    <width>588</width>
+    <height>339</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,7 +57,7 @@
    <property name="geometry">
     <rect>
      <x>480</x>
-     <y>280</y>
+     <y>296</y>
      <width>80</width>
      <height>24</height>
     </rect>
@@ -72,7 +72,7 @@
      <x>368</x>
      <y>50</y>
      <width>201</width>
-     <height>221</height>
+     <height>241</height>
     </rect>
    </property>
    <property name="title">
@@ -84,7 +84,7 @@
       <x>16</x>
       <y>30</y>
       <width>173</width>
-      <height>173</height>
+      <height>199</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="m_wave_layout">
@@ -129,7 +129,7 @@
         <bool>true</bool>
        </property>
        <property name="text">
-        <string>Exponential Rise</string>
+        <string>E&amp;xponential Rise</string>
        </property>
       </widget>
      </item>
@@ -150,7 +150,7 @@
    <property name="geometry">
     <rect>
      <x>376</x>
-     <y>280</y>
+     <y>296</y>
      <width>89</width>
      <height>24</height>
     </rect>
@@ -165,7 +165,7 @@
      <x>10</x>
      <y>51</y>
      <width>345</width>
-     <height>257</height>
+     <height>269</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="sliderGridLayout">
