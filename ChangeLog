@@ -1,3 +1,195 @@
+2022-04-08  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp: Fixed
+	stupid seqedit bug setting beats/bar.
+	* README.md, TODO, VERSION, bootstrap, configure, configure.ac,
+	doc/dox/doxy-common.cfg, doc/latex/tex/menu.tex,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/ctrl/midicontrolin.hpp,
+	libseq66/include/ctrl/midicontrolout.hpp,
+	libseq66/include/midi/jack_assistant.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/seq66_features.h,
+	libseq66/include/seq66_features.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/ctrl/midicontrolin.cpp,
+	libseq66/src/ctrl/midicontrolout.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/os/timing.cpp,
+	libseq66/src/play/screenset.cpp, seq_portmidi/src/portmidi.c,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qloopbutton.hpp,
+	seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qslivegrid.hpp, seq_qt5/include/qslotbutton.hpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseqbase.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qslotbutton.cpp,
+	seq_rtmidi/src/midi_jack.cpp: Code cleanup of macros, unused UI
+	items.
+
+2022-04-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/cfg/basesettings.hpp,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/src/qseditoptions.cpp: Added Apply/Reset buttons to
+	Preferences dialog.
+
+2022-04-05  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/cfg/usrsettings.hpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qsmainwnd.cpp: Clear
+	global seq features from last tune, even more detection of
+	modification.
+
+2022-04-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/midi/midi_vector_base.hpp,
+	libseq66/include/midi/midifile.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: Better pattern modification detection,
+	SeqSpec reading, restart handling.
+
+2022-04-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qseqroll.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp: 
+	Global-seq-feature work, may be complete.
+	* libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsmainwnd.cpp: Getting
+	global-seq-feature working right, in progress.
+
+2022-04-02  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/src/cfg/usrsettings.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqframe.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_rtmidi/include/midi_info.hpp,
+	seq_rtmidi/include/rtmidi.hpp, seq_rtmidi/src/midi_jack.cpp: Working
+	on a potential segfault when adding a new track while playing.
+
+2022-03-31  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/src/util/filefunctions.cpp,
+	nsis/Seq66Constants.nsh, nsis/build_debug_code.bat,
+	nsis/build_release_package.bat, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/src/qslivegrid.cpp: Removed dead code, minor GUI tweaks.
+
+2022-03-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES.md, TODO,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qsmainwnd.cpp: Fixed
+	issues with Live/Song mode, Preferences updates.
+
+2022-03-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp: Fixed
+	setting last-used-directory and modify status with painted notes.
+	* README.md, Seq66qt5/seq66qt5.cpp,
+	contrib/code/test/filename_split.cpp, doc/dia/rtbusses.dia,
+	doc/dia/rtjack_init.dia, libseq66/include/util/filefunctions.hpp,
+	libseq66/src/util/filefunctions.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_rtmidi/include/midi_info.hpp,
+	seq_rtmidi/src/mastermidibus.cpp: Fixed filename splitting/building,
+	updated diagrams.
+
+2022-03-26  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, bootstrap.help, doc/dia/rtbusses.dia,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/sessions/smanager.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_rtmidi/include/rtmidi.hpp,
+	seq_rtmidi/include/rtmidi_info.hpp, seq_rtmidi/src/midi_info.cpp,
+	seq_rtmidi/src/midi_jack_info.cpp, seq_rtmidi/src/rtmidi.cpp,
+	seq_rtmidi/src/rtmidi_info.cpp: Fixed Dia files, minor bugs,
+	cleanup.
+
+2022-03-23  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* arch/package/PKGBUILD, doc/dia/rtbusses.dia,
+	libseq66/src/os/daemonize.cpp: Added initial Dia JACK sequence
+	diagram, updated Arch PKGBUILS.
+
+2022-03-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, doc/latex/tex/menu.tex,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/patterns_panel.tex,
+	doc/latex/tex/seq66-user-manual.tex, doc/latex/tex/sessions.tex,
+	doc/latex/tex/song_editor.tex: Updated the user manual.
+
+2022-03-21  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, bootstrap, configure, configure.ac,
+	doc/latex/tex/sessions.tex, include/config.h.in,
+	libseq66/include/util/basic_macros.hpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/basic_macros.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/forms/qsessionframe.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/include/qsessionframe.hpp,
+	seq_qt5/include/qt5nsmanager.hpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_rtmidi/include/midi_jack_info.hpp,
+	seq_rtmidi/src/midi_jack.cpp, seq_rtmidi/src/midi_jack_info.cpp: 
+	Revisited issue #41, added another reload button.
+
+2022-03-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, README.md, doc/latex/tex/jack.tex,
+	doc/latex/tex/pattern_editor.tex, libseq66/src/midi/businfo.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/src/qseditoptions.cpp, seq_rtmidi/include/midi_api.hpp,
+	seq_rtmidi/include/rtmidi.hpp, seq_rtmidi/include/rtmidi_types.hpp,
+	seq_rtmidi/src/midi_alsa.cpp, seq_rtmidi/src/midi_alsa_info.cpp,
+	seq_rtmidi/src/midi_api.cpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_info.cpp, seq_rtmidi/src/midi_probe.cpp,
+	seq_rtmidi/src/rtmidi_types.cpp: Add UI for click-to-edit, removed
+	JACK callback code.
+
+2022-03-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/midi/midibase.hpp,
+	libseq66/src/midi/midibase.cpp, seq_rtmidi/src/midibus.cpp: JACK
+	port enable/disable fixed, very minor optimizing.
+
+2022-03-08  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES.md, VERSION, configure, configure.ac,
+	doc/latex/tex/seq66-user-manual.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/ctrl/opcontrol.hpp,
+	libseq66/include/midi/midibase.hpp,
+	libseq66/include/play/mutegroups.hpp,
+	libseq66/include/util/palette.hpp, libseq66/src/midi/midibase.cpp,
+	libseq66/src/play/mutegroups.cpp,
+	seq_qt5/include/gui_palette_qt5.hpp,
+	seq_rtmidi/include/midi_api.hpp, seq_rtmidi/src/midi_api.cpp,
+	seq_rtmidi/src/midi_jack.cpp, seq_rtmidi/src/midi_jack_info.cpp: 
+	Setup for 0.98.6, tweaking some enum classes.
+
+2022-03-07  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* ChangeLog, doc/latex/tex/seq66-user-manual.tex: Version 0.98.5.
 2022-03-06  Chris Ahlstrom <ahlstromcj@gmail.com>
 
 	* VERSION, configure.ac, include/config.h.in,
