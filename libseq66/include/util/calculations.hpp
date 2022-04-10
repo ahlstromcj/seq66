@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-12-04
+ * \updates       2022-04-10
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -51,30 +51,96 @@ namespace seq66
 {
 
 /**
- *  Provides a clear enumation of wave types supported by the wave function.
- *  We still have to clarify these type values, though.
+ *  Provides a clear enumeration of wave types supported by the wave function.
+ *  See qlfoframe.
  */
 
 enum class waveform
 {
-    none = 0,                   /**< No waveform, never used.           */
-    sine,                       /**< Sine wave modulation.              */
-    sawtooth,                   /**< Saw-tooth (ramp) modulation.       */
-    reverse_sawtooth,           /**< Reverse saw-tooth (decay).         */
-    triangle,                   /**< No waveform, never used.           */
-    exponential,                /**< A partial exponential rise.        */
-    reverse_exponential         /**< A partial exponential fall.        */
+    none = 0,                   /**< No waveform, never used.               */
+    sine,                       /**< Sine wave modulation.                  */
+    sawtooth,                   /**< Saw-tooth (ramp) modulation.           */
+    reverse_sawtooth,           /**< Reverse saw-tooth (decay).             */
+    triangle,                   /**< No waveform, never used.               */
+    exponential,                /**< A partial exponential rise.            */
+    reverse_exponential         /**< A partial exponential fall.            */
 };
-
-/*
- * Free functions in the seq66 namespace.
- */
 
 inline int
 cast (waveform wv)
 {
     return static_cast<int>(wv);
 }
+
+inline waveform
+waveform_cast (int v)
+{
+    return static_cast<waveform>(v);
+}
+
+/**
+ *  Provides the short list of options for fixing a pattern length in the
+ *  qpatternfix dialog.
+ */
+
+enum class lengthfix
+{
+    none = 0,                   /**< Not adjusting pattern length.          */
+    measures,                   /**< The user sets the desired measures.    */
+    rescale                     /**< The user wants to rescale the pattern. */
+};
+
+inline int
+cast (lengthfix lv)
+{
+    return static_cast<int>(lv);
+}
+
+inline lengthfix
+lengthfix_cast (int v)
+{
+    return static_cast<lengthfix>(v);
+}
+
+/**
+ *  Provides the short list of options for the type of quantization used in
+ *  the qpatternfix dialog.  Might be useful elsewhere as well.
+ */
+
+enum class quantization
+{
+    none = 0,                   /**< Not adjusting the timing of pattern.   */
+    tighten,                    /**< Adjusting timing less forcefully.      */
+    full                        /**< Adjusting timing strictly.             */
+};
+
+inline int
+cast (quantization lv)
+{
+    return static_cast<int>(lv);
+}
+
+inline quantization
+quantization_cast (int v)
+{
+    return static_cast<quantization>(v);
+}
+
+/**
+ *  Manifest constants for the "Effect" GroupBox in qpatternfix.
+ */
+
+using effect_t = enum effect_type
+{
+    effect_none         = 0x00,
+    effect_shifted      = 0x01,
+    effect_shrunk       = 0x02,
+    effect_expanded     = 0x04
+};
+
+/*
+ * Free functions in the seq66 namespace.
+ */
 
 extern std::string wave_type_name (waveform wv);
 extern int extract_timing_numbers
@@ -457,7 +523,7 @@ measures_to_ticks (int bpb, int ppqn, int bw, int measures = 1)
 }
 
 /**
- *  The inverse of measures_to_ticks.
+ *  The inverse of measures_to_ticks().
  *
  * \param B
  *      The B value in the equation, beats/measure or beats/bar.

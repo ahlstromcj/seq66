@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-18
+ * \updates       2022-04-10
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -102,6 +102,11 @@ private:
     performer & perf ()
     {
         return m_performer;
+    }
+
+    seq::pointer seqp ()
+    {
+        return m_seq;
     }
 
     /**
@@ -226,7 +231,7 @@ private:
     double m_phase;
 
     /**
-     *  Wave type.
+     *  Wave type from the calculations module.
      */
 
     waveform m_wave;

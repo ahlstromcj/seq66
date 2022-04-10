@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2022-04-09
+# \update         2022-04-10
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -123,6 +123,7 @@ HEADERS += include/gui_palette_qt5.hpp \
  include/qsmaintime.hpp \
  include/qsmainwnd.hpp \
  include/qstriggereditor.hpp \
+ include/qt5_helper.h \
  include/qt5_helpers.hpp \
  include/qt5nsmanager.hpp
 

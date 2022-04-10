@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-09
+ * \updates       2022-04-10
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -365,6 +365,7 @@ qseqeditframe64::qseqeditframe64
     ui                      (new Ui::qseqeditframe64),
     m_short_version         (shorter),              /* short_version()  */
     m_lfo_wnd               (nullptr),
+    m_patternfix_wnd        (nullptr),
     m_tools_popup           (nullptr),
     m_sequences_popup       (nullptr),
     m_events_popup          (nullptr),
@@ -1132,6 +1133,9 @@ qseqeditframe64::~qseqeditframe64 ()
     if (not_nullptr(m_lfo_wnd))
         delete m_lfo_wnd;
 
+    if (not_nullptr(m_patternfix_wnd))
+        delete m_patternfix_wnd;
+
     cb_perf().unregister(this);
     delete ui;
 }
@@ -1434,20 +1438,20 @@ qseqeditframe64::reset_beats_per_measure ()
  *  Applies the new beats/bar (beats/measure) value to the sequence and the
  *  user interface.
  *
- * \param bpm
+ * \param bpb
  *      The desired beats/measure value.
  */
 
 void
-qseqeditframe64::set_beats_per_measure (int bpm)
+qseqeditframe64::set_beats_per_measure (int bpb)
 {
     sequence * s = seq_pointer().get();
-    m_beats_per_bar = bpm;
+    m_beats_per_bar = bpb;
     if (not_nullptr(s))
     {
         int measures = get_measures();
-        s->set_beats_per_bar(bpm);
-        s->apply_length(bpm, perf().ppqn(), s->get_beat_width(), measures);
+        s->set_beats_per_bar(bpb);
+        s->apply_length(bpb, perf().ppqn(), s->get_beat_width(), measures);
         update_draw_geometry();
     }
 }
@@ -1464,11 +1468,7 @@ void
 qseqeditframe64::set_measures (int len)
 {
     m_measures = len;
-    seq_pointer()->apply_length
-    (
-        seq_pointer()->get_beats_per_bar(), perf().ppqn(),
-        seq_pointer()->get_beat_width(), len
-    );
+    seq_pointer()->apply_length(len);           /* use the simpler overload */
     set_dirty();
 }
 
@@ -3136,6 +3136,13 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     }
 }
 
+/*
+ * Warning:
+ *
+ *      In the next 2 functions, not providing "this" means we have to delete
+ *      both dialogs in the destructor. Should we fix this?
+ */
+
 void
 qseqeditframe64::show_lfo_frame ()
 {
@@ -3148,10 +3155,10 @@ qseqeditframe64::show_lfo_frame ()
 void
 qseqeditframe64::show_pattern_fix ()
 {
-//  if (is_nullptr(m_lfo_wnd))
-//      m_lfo_wnd = new qlfoframe(perf(), seq_pointer(), *m_seqdata);
-//
-//  m_lfo_wnd->show();
+    if (is_nullptr(m_patternfix_wnd))
+        m_patternfix_wnd = new qpatternfix(perf(), seq_pointer(), *m_seqdata);
+
+    m_patternfix_wnd->show();
 }
 
 /**
@@ -3361,6 +3368,20 @@ qseqeditframe64::remove_lfo_frame ()
     {
         delete m_lfo_wnd;
         m_lfo_wnd = nullptr;
+    }
+}
+
+/**
+ *  Removes the pattern-fix frame.
+ */
+
+void
+qseqeditframe64::remove_patternfix_frame ()
+{
+    if (not_nullptr(m_patternfix_wnd))
+    {
+        delete m_patternfix_wnd;
+        m_patternfix_wnd = nullptr;
     }
 }
 

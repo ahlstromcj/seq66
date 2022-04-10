@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-20
+ * \updates       2022-04-10
  * \license       GNU GPLv2 or above
  *
  *  The LFO (low-frequency oscillator) provides a way to modulate the
@@ -42,6 +42,7 @@
 #include "qlfoframe.hpp"                /* seq66::qlfoframe class           */
 #include "qseqdata.hpp"                 /* seq66::qseqdata for status, CC   */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64, parent   */
+#include "qt5_helper.h"                 /* QT5_HELPER_RADIO_SIGNAL macro    */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 #include "util/calculations.hpp"        /* seq66::wave enum class values    */
 
@@ -113,6 +114,7 @@ qlfoframe::qlfoframe
     ui->setupUi(this);
     connect(ui->m_button_reset, SIGNAL(clicked()), this, SLOT(reset()));
     connect(ui->m_button_close, SIGNAL(clicked()), this, SLOT(close()));
+
     m_wave_group = new QButtonGroup(this);
     m_wave_group->addButton(ui->m_radio_wave_none, cast(waveform::none));
     m_wave_group->addButton(ui->m_radio_wave_sine, cast(waveform::sine));
@@ -130,14 +132,7 @@ qlfoframe::qlfoframe
     ui->m_radio_wave_none->setChecked(true);    /* match m_wave member init */
     connect
     (
-        m_wave_group,
-#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
-        static_cast<void(QButtonGroup::*) (int)>(&QButtonGroup::buttonClicked),
-#elif QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-        QOverload<int>::of(&QButtonGroup::buttonClicked),
-#else
-        QOverload<int>::of(&QButtonGroup::idClicked),
-#endif
+        m_wave_group, QT5_HELPER_RADIO_SIGNAL,
         [=](int id) { wave_type_change(id); }
     );
 
@@ -328,7 +323,7 @@ qlfoframe::phase_text_change ()
 void
 qlfoframe::wave_type_change (int waveid)
 {
-    m_wave = static_cast<waveform>(waveid);
+    m_wave = waveform_cast(waveid);
     reset();
     scale_lfo_change();
 }
@@ -345,7 +340,7 @@ qlfoframe::scale_lfo_change ()
     m_range = to_double(ui->m_range_slider->value());
     m_speed = to_double(ui->m_speed_slider->value());
     m_phase = to_double(ui->m_phase_slider->value());
-    m_seq->change_event_data_lfo
+    seqp()->change_event_data_lfo
     (
         m_value, m_range, m_speed, m_phase, m_wave,
         m_seqdata.status(), m_seqdata.cc(), m_use_measure
@@ -378,9 +373,9 @@ qlfoframe::use_measure_clicked (int state)
 void
 qlfoframe::reset ()
 {
-    m_seq->events() = m_backup_events;
-    m_seq->set_dirty();
-    m_seqdata.set_dirty();
+    seqp()->events() = m_backup_events;
+    seqp()->set_dirty();                                /* for redrawing    */
+    m_seqdata.set_dirty();                              /* for redrawing    */
     m_is_modified = false;
 }
 

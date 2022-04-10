@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-04
+ * \updates       2022-04-10
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -701,7 +701,7 @@ void
 sequence::calculate_unit_measure () const
 {
     automutex locker(m_mutex);
-    m_unit_measure = get_beats_per_bar() * (m_ppqn * 4) / get_beat_width();
+    m_unit_measure = get_beats_per_bar() * (get_ppqn() * 4) / get_beat_width();
 }
 
 /**
@@ -2467,6 +2467,63 @@ sequence::change_event_data_lfo
     }
     if (modified)
         modify();
+}
+
+/**
+ *  Does a lot of things at once, to all events in the pattern.
+ *  See the qpatternfix dialog.
+ *
+ *  Here's the process:
+ *
+ *      -#  If alignleft is set, all events timestamps are decreased by the
+ *          offset of the first event.
+ *      -#  If the fixtype is lengthfix::measures, then the scale-factor is
+ *          calculated.
+ *      -#  If the fixtype is lengthfix::rescale, then the scale factor is
+ *          used directly.
+ *
+ * \param fixtype
+ *      Indicates if the length of the pattern is to be affected, either by
+ *      setting the number of measures, or by scaling the pattern.  In either
+ *      of those cases, the timestamps of all events will be adjusted
+ *      accordingly.
+ *
+ * \param measures
+ *      The final length of the pattern,  Ignored if the fixtype is not
+ *      lengthfix::measures.
+ *
+ * \param scalefactor
+ *      The factor used to change the length of the pattern,  Ignored if the
+ *      fixtype is not lengthfix::rescale. Sanity checked to not too small,
+ *      not too large, and not 0.
+ *
+ * \param quantype
+ *      Indicates if all events are to be tighted or quantized.
+ *
+ * \param alignleft
+ *      Indicates if the offset of the first event or, preferably first note
+ *      event, is to be adjusted to 0, shifting all events by the same ammount
+ *      of time.
+ *
+ * \param [out] effect
+ *      Indicate the effect(s) of the change, using the effect_t enumeration
+ *      in the calculations module.
+ */
+
+bool
+sequence::fix_pattern
+(
+    lengthfix fixtype,
+    int measures,
+    float scalefactor,
+    quantization quantype,
+    bool alignleft, effect_t & effect                       /* side-effect  */
+)
+{
+    bool result = false;
+
+
+    return result;
 }
 
 /**

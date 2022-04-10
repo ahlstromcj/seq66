@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-04-04
+ * \updates       2022-04-10
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -49,7 +49,7 @@
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
-#include "util/calculations.hpp"        /* measures_to_ticks()              */
+#include "util/calculations.hpp"        /* seq66::measures_to_ticks() etc.  */
 #include "util/palette.hpp"             /* enum class ThumbColor            */
 
 /**
@@ -1552,6 +1552,12 @@ public:
     (
         double dcoffset, double range, double speed, double phase,
         waveform w, midibyte status, midibyte cc, bool usemeasure = false
+    );
+    bool fix_pattern                        /* for the qpatternfix dialog   */
+    (
+        lengthfix fixtype, int measures, float scalefactor,
+        quantization quantype,
+        bool alignleft, effect_t & effect   /* note the side-effect         */
     );
     void increment_selected (midibyte status, midibyte /*control*/);
     void decrement_selected (midibyte status, midibyte /*control*/);

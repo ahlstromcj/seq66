@@ -87,6 +87,7 @@ namespace Ui
 namespace seq66
 {
     class qlfoframe;
+    class qpatternfix;
     class qseqeditex;
     class screenset;
 
@@ -99,6 +100,7 @@ namespace seq66
 class qseqeditframe64 final : public qseqframe, protected performer::callbacks
 {
     friend class qlfoframe;
+    friend class qpatternfix;
     friend class qseqeditex;
     friend class qseqkeys;
     friend class qseqroll;
@@ -179,6 +181,7 @@ private:
 
     void scroll_by_step (qscrollmaster::dir d);
     void remove_lfo_frame ();
+    void remove_patternfix_frame ();
     QIcon * create_menu_image (bool state);
 
 signals:
@@ -310,10 +313,16 @@ private:
     bool m_short_version;
 
     /**
-     *  The LFO window object used by the pattern editor.
+     *  The LFO window object that might used by the pattern editor.
      */
 
     qlfoframe * m_lfo_wnd;
+
+    /**
+     *  The pattern-fix window object that might used by the pattern editor.
+     */
+
+    qpatternfix * m_patternfix_wnd;
 
     /**
      *  Menu for Tools.

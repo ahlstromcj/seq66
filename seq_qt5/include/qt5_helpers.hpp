@@ -1,5 +1,5 @@
-#if ! defined SEQ24_QT5_HELPERS_HPP
-#define SEQ24_QT5_HELPERS_HPP
+#if ! defined SEQ66_QT5_HELPERS_HPP
+#define SEQ66_QT5_HELPERS_HPP
 
 /*
  *  This file is part of seq66.
@@ -22,7 +22,8 @@
 /**
  * \file          qt5_helpers.hpp
  *
- *  This module declares/defines some helpful macros or functions.
+ *  This module declares/defines some helpful free functions to support Qt and
+ *  C++ integration.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
@@ -106,7 +107,7 @@ extern bool show_file_dialog
 
 }               // namespace seq66
 
-#endif          // SEQ24_QT5_HELPERS_HPP
+#endif          // SEQ66_QT5_HELPERS_HPP
 
 /*
  * qt5_helpers.hpp

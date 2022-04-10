@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-09
+ * \updates       2022-04-10
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -36,7 +36,7 @@
 #include <QFrame>
 
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */
-#include "util/calculations.hpp"        /* seq66::waveform enum class type  */
+#include "util/calculations.hpp"        /* seq66::lengthfix enum class type */
 
 /*
  *  Forward declarations for Qt.
@@ -93,6 +93,14 @@ public:
      * void toggle_visible ();
      */
 
+    bool modified () const
+    {
+        return m_is_modified;
+    }
+
+    void modify ();
+    void unmodify ();
+
 protected:
 
     virtual void closeEvent (QCloseEvent *) override;
@@ -104,6 +112,11 @@ private:
         return m_performer;
     }
 
+    seq::pointer seqp ()
+    {
+        return m_seq;
+    }
+
     void set_value_text (double value, QLineEdit * textline);
     void wave_type_change (int waveid);
 
@@ -112,12 +125,17 @@ signals:
 private slots:
 
     /*
-     *  We use a lambda function for the slot for the QButtonGroup ::
-     *  buttonClicked() signal that sets the wave-form to use.
+     *  We use lambda functions for the slot for the QButtonGroup ::
+     *  buttonClicked() signals.
      */
 
-    void pattern_change ();
-    void reset ();
+    void slot_length_fix (int fixlengthid);
+    void slot_measure_change (int len);
+    void slot_scale_change ();
+    void slot_quan_change (int quanid);
+    void slot_align_change (int dummy);
+    void slot_set ();
+    void slot_reset ();
 
 private:
 
@@ -128,12 +146,17 @@ private:
     Ui::qpatternfix * ui;
 
     /**
-     *  Provides a way to treat the wave radio-buttons as a group.  Had issues
-     *  trying to set this up in Qt Creator. To get the checked value,
-     *  use its checkedButton() function.
+     * To access the radio-buttons in the GroupBox, ui->group_box_length, we
+     * need to create a button-group.
      */
 
-    QButtonGroup * m_groupppppp;
+    QButtonGroup * m_fixlength_group;
+
+    /**
+     * Access to radio-buttons for quantization.
+     */
+
+    QButtonGroup * m_quan_group;
 
     /**
      *  Access to the performance controller.
@@ -161,10 +184,46 @@ private:
     eventlist m_backup_events;
 
     /**
+     *  Holds the original pattern length in measures.
+     */
+
+    int m_backup_measures;
+
+    /**
      *  The seqedit frame that owns (sort of) this LFO window.
      */
 
     qseqeditframe64 * m_edit_frame;
+
+    /**
+     *  The current way the user has selected to fix the length.
+     */
+
+    lengthfix m_length_type;
+
+    /**
+     *  The current way the user has selected for quantization.
+     */
+
+    quantization m_quan_type;
+
+    /**
+     *  The current number of measures for the adjustment.
+     */
+
+    int m_measures;
+
+    /**
+     *  The current scale factor in the user-interface.
+     */
+
+    double m_scale_factor;
+
+    /**
+     *  Indicates if left-alignment of the pattern is specified.
+     */
+
+    bool m_align_left;
 
     /**
      *  Indicates the LFO modified status.
