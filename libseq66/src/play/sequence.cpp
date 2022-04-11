@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-10
+ * \updates       2022-04-11
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -296,6 +296,9 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
         m_transposable              = rhs.m_transposable;
         m_notes_on                  = 0;
         m_master_bus                = rhs.m_master_bus;     /* a pointer    */
+        m_unit_measure              = rhs.m_unit_measure;
+        m_name                      = rhs.m_name;
+        m_ppqn                      = rhs.m_ppqn;
 
         /*
          *  These values are set fine for this purpose by the constructor
@@ -323,11 +326,6 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
          *  m_song_recording_snap
          *  m_song_record_tick
          *  m_loop_reset
-         */
-
-        m_unit_measure              = rhs.m_unit_measure;   /* 2021-07-27   */
-
-        /*
          *  m_dirty_main
          *  m_dirty_edit
          *  m_dirty_perf
@@ -335,21 +333,12 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
          *  m_seq_in_edit
          *  m_status
          *  m_cc
-         */
-
-        m_name                      = rhs.m_name;
-
-        /*
          *  m_last_tick
          *  m_queued_tick
          *  m_trigger_offset
          *  m_maxbeats
-         */
-
-        m_ppqn                      = rhs.m_ppqn;
-
-        /*
          *  m_seq_number
+         *  m_mutex
          */
 
         m_seq_color                 = rhs.m_seq_color;
@@ -367,11 +356,6 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
         m_musical_key               = rhs.m_musical_key;
         m_musical_scale             = rhs.m_musical_scale;
         m_background_sequence       = rhs.m_background_sequence;
-
-        /*
-         *  m_mutex
-         */
-
         for (auto & p : m_playing_notes)            /* no notes playing now */
             p = 0;
 
@@ -2477,10 +2461,16 @@ sequence::change_event_data_lfo
  *
  *      -#  If alignleft is set, all events timestamps are decreased by the
  *          offset of the first event.
- *      -#  If the fixtype is lengthfix::measures, then the scale-factor is
- *          calculated.
  *      -#  If the fixtype is lengthfix::rescale, then the scale factor is
  *          used directly.
+ *      -#  If quantization or tightened are supplied, these operations are
+ *          performed.
+ *      -#  If the fixtype is lengthfix::measures, then the scale-factor is
+ *          calculated for display purposes. The pattern length is updated;
+ *          if shorter than the maximum timestamp, then hanging events are
+ *          trimmed.
+ *      -#  The maximum timestamp is calculated, and the measures (and hence
+ *          length) may end up being modified.
  *
  * \param fixtype
  *      Indicates if the length of the pattern is to be affected, either by
@@ -2488,14 +2478,16 @@ sequence::change_event_data_lfo
  *      of those cases, the timestamps of all events will be adjusted
  *      accordingly.
  *
- * \param measures
+ * \param [inout] measures
  *      The final length of the pattern,  Ignored if the fixtype is not
- *      lengthfix::measures.
+ *      lengthfix::measures, but the new bar count is returned here for display
+ *      purposes.
  *
- * \param scalefactor
+ * \param [inout] scalefactor
  *      The factor used to change the length of the pattern,  Ignored if the
  *      fixtype is not lengthfix::rescale. Sanity checked to not too small,
- *      not too large, and not 0.
+ *      not too large, and not 0.  Might be changed according to process, so that
+ *      the final value can be displayed.
  *
  * \param quantype
  *      Indicates if all events are to be tighted or quantized.
@@ -2506,7 +2498,7 @@ sequence::change_event_data_lfo
  *      of time.
  *
  * \param [out] effect
- *      Indicate the effect(s) of the change, using the effect_t enumeration
+ *      Indicate the effect(s) of the change, using the fixeffect enumeration
  *      in the calculations module.
  */
 
@@ -2514,14 +2506,82 @@ bool
 sequence::fix_pattern
 (
     lengthfix fixtype,
-    int measures,
-    float scalefactor,
+    int & measures,
+    double & scalefactor,
     quantization quantype,
-    bool alignleft, effect_t & effect                       /* side-effect  */
+    bool alignleft, fixeffect & efx                         /* side-effect  */
 )
 {
-    bool result = false;
+    automutex locker(m_mutex);
+    bool result = true;
+    int currentbars = get_measures();
+    midipulse currentlen = get_length();
+    fixeffect tempefx = fixeffect::none;
+    push_undo();
+    if (alignleft)
+    {
+        alignleft = m_events.align_left();                  /* realigned?   */
+        if (alignleft)
+            bit_set(tempefx, fixeffect::shifted);
+        else
+            result = false;                                 /* op failed    */
+    }
+    if (result)
+    {
+        if (fixtype == lengthfix::rescale)
+        {
+            result = m_events.apply_time_factor(scalefactor);
+        }
+        if (quantype == quantization::tighten)
+        {
+            result = m_events.quantize_all_events(snap(), 2);
+        }
+        else if (quantype == quantization::full)
+        {
+            result = m_events.quantize_all_events(snap(), 1);
+        }
+        if (result)
+        {
+            if (fixtype == lengthfix::measures)
+            {
+                if (measures != currentbars && measures > 0)
+                {
+                    scalefactor = double(measures) / double(currentbars);
+                    currentbars = measures;
+                }
+            }
+        }
+        if (result)
+        {
+            /*
+             * Set the new length (measures or scaled). This also verifies
+             * links and prunes events past the length.
+             */
 
+            midipulse len = unit_measure() * currentbars ;
+            if (fixtype == lengthfix::rescale)
+                len = midipulse(len * scalefactor + 0.5);
+
+            result = set_length(len);
+            if (result)
+            {
+                if (fixtype == lengthfix::rescale)
+                    measures = calculate_measures();
+
+                if (len > currentlen)
+                    bit_set(tempefx, fixeffect::expanded);
+                else if (len < currentlen)
+                    bit_set(tempefx, fixeffect::shrunk);
+
+                efx = tempefx;
+                set_dirty();
+                verify_and_link();
+                modify(true);                       /* call notify_change() */
+            }
+        }
+    }
+    else
+        pop_undo();
 
     return result;
 }
@@ -4626,7 +4686,7 @@ bool
 sequence::extend_length ()
 {
     automutex locker(m_mutex);
-    midipulse len = get_max_timestamp();
+    midipulse len = m_events.get_max_timestamp();
     bool result = len > get_length();
     if (len > get_length())
     {
@@ -5368,40 +5428,6 @@ sequence::push_quantize
     return quantize_events(status, cc, divide, linked);     /* sets dirty   */
 }
 
-#if defined USE_STAZED_COMPANDING
-
-void
-sequence::multiply_pattern (double multiplier)
-{
-    automutex locker(m_mutex);
-    m_events_undo.push(m_events);               /* push_undo(), no lock */
-    midipulse orig_length = get_length();
-    midipulse new_length = midipulse(orig_length * multiplier);
-    if (new_length > orig_length)
-        (void) set_length(new_length);
-
-    for (auto & er : m_events)
-    {
-        midipulse timestamp = er.timestamp();
-        if (er.is_note_off())
-            timestamp += m_events.note_off_margin();
-
-        timestamp *= multiplier;
-        if (er.is_note_off())
-            timestamp -= m_events.note_off_margin();
-
-        timestamp %= get_length();
-        er.set_timestamp(timestamp);
-    }
-    verify_and_link();
-    if (new_length < orig_length)
-        (void) set_length(new_length);
-
-    set_dirty();                        /* tells perfedit to update     */
-}
-
-#endif
-
 /**
  *  A member function to dump a summary of events stored in the event-list of
  *  a sequence.  Later, use to_string().
@@ -5931,18 +5957,6 @@ sequence::handle_edit_action (eventlist::edit action, int var)
         transpose_notes(var, musical_scale());
         set_dirty();                            /* updates perfedit     */
         break;
-
-#if defined USE_STAZED_COMPANDING
-
-    case eventlist::edit::expand_pattern:
-
-        multiply_pattern(2.0);
-        break;
-
-    case eventlist::edit::compress_pattern:
-        multiply_pattern(0.5);
-        break;
-#endif
 
     default:
         break;

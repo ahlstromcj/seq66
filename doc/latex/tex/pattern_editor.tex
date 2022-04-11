@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-03-22
+% \update      2022-04-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -259,11 +259,50 @@
          regardless of the key and scale in force for the pattern.
          \index{modify pitch}
          Selecting this item entry brings up a sub-menu.
-      \item \textbf{Harmonic Transpose Selected}, which makes sure
+      \item \textbf{Harmonic transpose}, which makes sure
          that all transpositions stay on the selected scale.
-         If the scale selection is off, this is the same as plain pitch
-         transpose.
+         If the scale selection is \textbf{Off}, this is the same as plain pitch
+         transpose, and so is not shown.
+      \item \textbf{Pattern fix} allows for fixing up a new pattern
+         that was recorded with some timing errors.
+         See the figure below.
    \end{enumber}
+
+\begin{figure}[H]
+   \centering 
+  \includegraphics[scale=1.0]{pattern-editor/patternfix.png}
+   \caption{Pattern Fix}
+   \label{fig:pattern_editor_pattern_fix}
+\end{figure}
+
+   \index{pattern-editor!fix}
+   When this dialog is used, the time-stamp of \textsl{every event} in the
+   pattern will be changed.
+   It is fairly intuitive to use.
+   Once selected, the pattern number is shown in the title-bar and in a
+   read-only text field.
+
+   \textbf{Length Change} allows for no change, setting the number of measures,
+   or scaling the pattern.  Changing the number of measures will shrink or
+   expand the duration of the pattern.  So will changing the scale-factor,
+   which is useful for doubling or halving the duration of the pattern.
+
+   \textbf{Effect} does not do anything except show the effect of the
+   changes.  (Making it read-only makes it almost invisible in some themes.)
+
+   \textbf{Quantization} works the same as the Tool entries of the same name,
+   but works on \textsl{all events}.
+
+   \textbf{Other Fixes} currently allows the pattern to be aligned to the left
+   of the sequence, removing any delays.
+
+   The process followed is applying the left-alignment (if selected), then
+   doing the scaling (if selected), then the quantization/tightening (if
+   selected), then changing the number of measures (if selected). Lastly, the
+   effect of the change is shown, if applicable.
+
+   Any accidental changes can be reset in this dialog, or by undone in the
+   pattern-editor itself with \texttt{Ctrl-Z}.
 
    \itempar{Follow Progress}{pattern editor!tools}
    This button toggles whether or not the progress bar follows

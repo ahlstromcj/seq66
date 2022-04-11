@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-10
+ * \updates       2022-04-11
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -48,6 +48,7 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qpatternfix.hpp"              /* seq66::qpatternfix class         */
 #include "qseqdata.hpp"                 /* seq66::qseqdata for status, CC   */
+#include "qstriggereditor.hpp"          /* seq66::qstriggereditor class     */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64, parent   */
 #include "qt5_helper.h"                 /* QT5_HELPER_RADIO_SIGNAL macro    */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
@@ -90,6 +91,7 @@ qpatternfix::qpatternfix
     performer & p,
     seq::pointer seqptr,
     qseqdata & sdata,
+    qstriggereditor & sevents,
     qseqeditframe64 * editparent,
     QWidget * parent
 ) :
@@ -100,6 +102,7 @@ qpatternfix::qpatternfix
     m_performer         (p),
     m_seq               (seqptr),
     m_seqdata           (sdata),
+    m_qstriggereditor   (sevents),
     m_backup_events     (seqp()->events()),             /* for slot_reset() */
     m_backup_measures   (seqp()->get_measures()),
     m_edit_frame        (editparent),
@@ -157,7 +160,7 @@ qpatternfix::qpatternfix
     ui->line_edit_pick->setText(qt(temp));
     connect
     (
-        ui->line_edit_pick, SIGNAL(valueChanged(int)),
+        ui->line_edit_pick, SIGNAL(editingFinished()),
         this, SLOT(slot_measure_change())
     );
     temp = std::to_string(1);                       /* actually a float     */
@@ -242,8 +245,14 @@ qpatternfix::modify ()
 void
 qpatternfix::unmodify ()
 {
+    std::string temp = std::to_string(seqp()->get_measures());
+    ui->line_edit_pick->setText(qt(temp));
+    ui->line_edit_scale->setText("1.0");
     ui->btn_set->setEnabled(false);
     ui->btn_reset->setEnabled(false);
+    ui->btn_effect_shift->setChecked(false);
+    ui->btn_effect_shrink->setChecked(false);
+    ui->btn_effect_expand->setChecked(false);
     m_is_modified = false;
 }
 
@@ -256,19 +265,27 @@ qpatternfix::slot_length_fix (int fixlengthid)
 }
 
 void
-qpatternfix::slot_measure_change (int measures)
+qpatternfix::slot_measure_change ()
 {
-    bool changed = measures != seqp()->get_measures();
-    seqp()->apply_length(measures);             /* use the simpler overload */
-    if (changed)
-        modify();
+    bool ok;
+    QString t = ui->line_edit_pick->text();
+    int m = t.toInt(&ok);
+    if (ok)
+    {
+        bool changed = m != m_measures;         /* seqp()->get_measures()   */
+        if (changed)
+        {
+            m_measures = m;
+            modify();
+        }
+    }
 }
 
 void
 qpatternfix::slot_scale_change ()
 {
     bool ok;
-    QString t = ui->line_edit_pick->text();
+    QString t = ui->line_edit_scale->text();
     double v = t.toDouble(&ok);
     if (ok)
     {
@@ -308,7 +325,7 @@ qpatternfix::slot_align_change (int state)
 void
 qpatternfix::slot_set ()
 {
-    effect_t efx = effect_none;
+    fixeffect efx = fixeffect::none;
     bool success = seqp()->fix_pattern
     (
         m_length_type, m_measures, m_scale_factor,
@@ -316,11 +333,25 @@ qpatternfix::slot_set ()
     );
     if (success)
     {
-        ui->btn_effect_shift->setChecked(efx & effect_shifted);
-        ui->btn_effect_shrink->setChecked(efx & effect_shrunk);
-        ui->btn_effect_expand->setChecked(efx & effect_expanded);
+        std::string temp = std::to_string(m_measures);
+        ui->line_edit_pick->setText(qt(temp));
+        temp = std::to_string(m_scale_factor);
+        ui->line_edit_scale->setText(qt(temp));
+        ui->btn_effect_shift->setChecked
+        (
+            bit_test(efx, fixeffect::shifted)
+        );
+        ui->btn_effect_shrink->setChecked
+        (
+            bit_test(efx, fixeffect::shrunk)
+        );
+        ui->btn_effect_expand->setChecked
+        (
+            bit_test(efx, fixeffect::expanded)
+        );
         seqp()->set_dirty();                            /* for redrawing    */
-        m_seqdata.set_dirty();                          /* for redrawing    */
+        m_seqdata.set_dirty();                          /* ditto            */
+        m_qstriggereditor.set_dirty();                  /* tritto           */
         unmodify();
     }
 }
@@ -332,6 +363,7 @@ qpatternfix::slot_reset ()
     seqp()->events() = m_backup_events;
     seqp()->set_dirty();                                /* for redrawing    */
     m_seqdata.set_dirty();                              /* for redrawing    */
+    m_qstriggereditor.set_dirty();                      /* tritto           */
     unmodify();
 }
 

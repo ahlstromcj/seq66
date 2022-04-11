@@ -325,10 +325,11 @@ private:
     qpatternfix * m_patternfix_wnd;
 
     /**
-     *  Menu for Tools.
+     *  Menus for Tools and it Harmonic Transpose sub-menu.
      */
 
     QMenu * m_tools_popup;
+    QMenu * m_tools_harmonic;
 
     /**
      *  Menu for the Background Sequences button.

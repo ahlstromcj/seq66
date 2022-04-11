@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-04-10
+ * \updates       2022-04-11
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1074,10 +1074,6 @@ public:
         return m_seq_in_edit;
     }
 
-    /*
-     * Documented at the definition point in the cpp module.
-     */
-
     bool set_length
     (
         midipulse len = 0,
@@ -1555,9 +1551,9 @@ public:
     );
     bool fix_pattern                        /* for the qpatternfix dialog   */
     (
-        lengthfix fixtype, int measures, float scalefactor,
+        lengthfix fixtype, int & measures, double & scalefactor,
         quantization quantype,
-        bool alignleft, effect_t & effect   /* note the side-effect         */
+        bool alignleft, fixeffect & effect  /* note the side-effect         */
     );
     void increment_selected (midibyte status, midibyte /*control*/);
     void decrement_selected (midibyte status, midibyte /*control*/);
@@ -1669,10 +1665,6 @@ public:
 
 #if defined USE_STAZED_SHIFT_SUPPORT
     void shift_notes (midipulse ticks);
-#endif
-
-#if defined USE_STAZED_COMPANDING
-    void multiply_pattern (double multiplier);
 #endif
 
     midibyte musical_key () const

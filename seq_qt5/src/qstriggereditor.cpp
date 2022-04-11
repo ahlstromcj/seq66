@@ -30,7 +30,7 @@
  *
  *  This class represents the central piano-roll user-interface area of the
  *  performance/song editor.  It is not the best name, since the earlier Seq64
- *  name was seqevent.
+ *  name was seqevent.  It is the Qt version of the seqevent class.
  */
 
 #include <QApplication>                 /* QApplication keyboardModifiers() */

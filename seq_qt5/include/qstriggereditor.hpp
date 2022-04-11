@@ -22,7 +22,7 @@
 /**
  * \file          qstriggereditor.hpp
  *
- *  This module declares/defines the base class for the Performance window
+ *  This module declares/defines the base class for the Pattern Editor window
  *  piano roll.
  *
  * \library       seq66 application
@@ -32,7 +32,8 @@
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
- *  performance/song editor.
+ *  performance/song editor. It is the Qt version of the seqevent class, and
+ *  is used in qseqeditframe64.
  */
 
 #include <QWidget>

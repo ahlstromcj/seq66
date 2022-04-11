@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-04-10
+ * \updates       2022-04-11
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -130,13 +130,27 @@ quantization_cast (int v)
  *  Manifest constants for the "Effect" GroupBox in qpatternfix.
  */
 
-using effect_t = enum effect_type
+enum class fixeffect
 {
-    effect_none         = 0x00,
-    effect_shifted      = 0x01,
-    effect_shrunk       = 0x02,
-    effect_expanded     = 0x04
+    none        = 0x00,
+    shifted     = 0x01,
+    shrunk      = 0x02,
+    expanded    = 0x04,
+    all         = 0x07
 };
+
+inline bool
+bit_test (fixeffect lhs, fixeffect rhs)
+{
+    return (static_cast<int>(lhs) & static_cast<int>(rhs)) != 0;
+}
+
+inline void
+bit_set (fixeffect lhs, fixeffect rhs)
+{
+    int L = static_cast<int>(lhs) | static_cast<int>(rhs);
+    lhs = static_cast<fixeffect>(L);
+}
 
 /*
  * Free functions in the seq66 namespace.

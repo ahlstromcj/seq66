@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-10
+ * \updates       2022-04-11
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -64,6 +64,7 @@ namespace seq66
     class performer;
     class qseqdata;
     class qseqeditframe64;
+    class qstriggereditor;
 
 /**
  *  This class is the Qt 5 version of the lfownd class. It has one important
@@ -82,6 +83,7 @@ public:
         performer & p,
         seq::pointer seqp,
         qseqdata & sdata,
+        qstriggereditor & sevents,
         qseqeditframe64 * editparent    = nullptr,
         QWidget * parent                = nullptr
     );
@@ -130,7 +132,7 @@ private slots:
      */
 
     void slot_length_fix (int fixlengthid);
-    void slot_measure_change (int len);
+    void slot_measure_change ();
     void slot_scale_change ();
     void slot_quan_change (int quanid);
     void slot_align_change (int dummy);
@@ -175,6 +177,12 @@ private:
      */
 
     qseqdata & m_seqdata;
+
+    /**
+     *  The qstriggereditor associated with this window.
+     */
+
+    qstriggereditor & m_qstriggereditor;
 
     /**
      *  Holds the original data in order to allow for a complete undo of the

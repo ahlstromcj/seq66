@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-09-29
+ * \updates       2022-04-11
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -389,8 +389,10 @@ eventlist::link_notes
  *  This function verifies state: all note-ons have an off, and it links
  *  note-offs with their note-ons.
  *
- *  It also links the tempos in a separate pass (it makes the logic easier and
- *  the amount of time should be unnoticeable to the user.
+ * No longer correct:
+ *
+ *      It also links the tempos in a separate pass (it makes the logic easier
+ *      and the amount of time should be unnoticeable to the user).
  *
  * Stazed (seq32):
  *
@@ -404,11 +406,11 @@ eventlist::link_notes
  *
  * \param slength
  *      Provides the length beyond which events will be pruned. Normally the
- *      called supplies sequence::get_length().
+ *      caller supplies sequence::get_length().
  *
  * \param wrap
  *      Optionally (the default is false) wrap when relinking.  Can be used to
- *      override usr().new_pattern_wraparound().  Defaults to false.
+ *      override usr().new_pattern_wraparound().
  */
 
 void
@@ -607,8 +609,8 @@ eventlist::remove_unlinked_notes ()
  *      tested for 0.  The caller should do it.
  *
  * \param fixlink
- *      False by default, this parameter indicates if linked events are to be
- *      adjusted against the length of the pattern
+ *      This parameter indicates if linked events are to be
+ *      adjusted against the length of the pattern.
  */
 
 bool
@@ -672,6 +674,47 @@ eventlist::quantize_events
                 }
             }
         }
+    }
+    if (result)
+        verify_and_link();                          /* sorts them again!!!  */
+
+    return result;
+}
+
+/**
+ *  Quantizes all events, unconditionally.  No adjustment for wrapped notes
+ *  is made.
+ *
+ * \param snap_tick
+ *      Provides the maximum amount to move the events.  Actually, events are
+ *      moved to the previous or next snap_tick value depend on whether they
+ *      are halfway to the next one or not.
+ *
+ * \param divide
+ *      An indicator of the amount of quantization.  The values are either
+ *      1 ("quantize") or 2 ("tighten").
+ */
+
+bool
+eventlist::quantize_all_events (int snap, int divide)
+{
+    bool result = false;
+    midipulse seqlength = get_length();
+    for (auto & er : m_events)
+    {
+        midipulse t = er.timestamp();
+        midipulse tremainder = snap > 0 ? (t % snap) : 0 ;
+        midipulse tdelta;
+        if (tremainder < snap / 2)
+            tdelta = -(tremainder / divide);
+        else
+            tdelta = (snap - tremainder) / divide;
+
+        if ((tdelta + t) >= seqlength)  /* wrap-around Note On      */
+            tdelta = -t;
+
+        er.set_timestamp(t + tdelta);
+        result = true;
     }
     if (result)
         verify_and_link();                          /* sorts them again!!!  */
@@ -807,6 +850,92 @@ eventlist::move_selected_events (midipulse delta_tick)
             midipulse newts = adjust_timestamp(er, delta_tick);
             er.set_timestamp(newts);
             result = true;
+        }
+    }
+    return result;
+}
+
+/**
+ *  Makes the first event start at time 0. Might also change the length of
+ *  the pattern.
+ *
+ * \param relink
+ *      If true, the events are sorted and relinked.
+ *
+ * \return
+ *      Returns true all timestamps were adjusted.Otherwise, false is
+ *      returned, which means the original events should be restored.
+ */
+
+bool
+eventlist::align_left (bool relink)
+{
+    bool result = ! empty();
+    if (result)
+    {
+        const auto startev = m_events.begin();
+        midipulse ts = startev->timestamp();
+        result = ts > 0;
+        if (result)
+        {
+            for (auto & ev : m_events)
+            {
+                midipulse newstamp = ev.timestamp() - ts;
+                if (newstamp >= 0)
+                {
+                    ev.set_timestamp(newstamp);
+                }
+                else
+                {
+                    result = false;
+                    break;
+                }
+            }
+            if (result && relink)
+            {
+                sort();
+                verify_and_link();
+                result = get_max_timestamp();
+            }
+        }
+    }
+    return result;
+}
+
+bool
+eventlist::apply_time_factor (double factor, bool relink)
+{
+    bool result = ! empty() && factor > 0.001;
+    if (result)
+    {
+        for (auto & ev : m_events)
+        {
+            midipulse newstamp = ev.timestamp();
+            if (newstamp >= 0)
+            {
+                if (ev.is_note_off())
+                    newstamp += note_off_margin();
+
+                newstamp *= factor;
+                if (ev.is_note_off())
+                    newstamp -= note_off_margin();
+
+                /*
+                 * Useful?  if (relink) newstamp %= get_length();
+                 */
+
+                ev.set_timestamp(newstamp);
+            }
+            else
+            {
+                result = false;
+                break;
+            }
+        }
+        if (result && relink)
+        {
+            sort();
+            verify_and_link();
         }
     }
     return result;

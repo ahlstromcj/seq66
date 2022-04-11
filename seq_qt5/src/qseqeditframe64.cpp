@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-10
+ * \updates       2022-04-11
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -367,6 +367,7 @@ qseqeditframe64::qseqeditframe64
     m_lfo_wnd               (nullptr),
     m_patternfix_wnd        (nullptr),
     m_tools_popup           (nullptr),
+    m_tools_harmonic        (nullptr),
     m_sequences_popup       (nullptr),
     m_events_popup          (nullptr),
     m_minidata_popup        (nullptr),
@@ -399,6 +400,7 @@ qseqeditframe64::qseqeditframe64
     {
         set_beats_per_measure(s->get_beats_per_bar());
         set_beat_width(s->get_beat_width());
+        m_scale = s->musical_scale();
         m_edit_bus = s->seq_midi_bus();
         m_edit_channel = s->midi_channel();         /* 0-15, null           */
         seqname = s->name();
@@ -1907,14 +1909,12 @@ void
 qseqeditframe64::popup_tool_menu ()
 {
     m_tools_popup = new QMenu(this);
+
     QMenu * menuselect = new QMenu(tr("&Select..."), m_tools_popup);
     QMenu * menutiming = new QMenu(tr("&Timing..."), m_tools_popup);
     QMenu * menupitch  = new QMenu(tr("&Pitch transpose..."), m_tools_popup);
+    QMenu * menuharmonic = new QMenu(tr("&Harmonic transpose..."), m_tools_popup);
     QMenu * menumore = new QMenu(tr("&More tools..."), m_tools_popup);
-    QMenu * menuharmonic = nullptr;
-    if (m_scale > 0)
-        menuharmonic  = new QMenu(tr("&Harmonic transpose..."), m_tools_popup);
-
     QAction * selectall = new QAction(tr("Select all"), m_tools_popup);
     selectall->setShortcut(tr("Ctrl+A"));
     connect
@@ -1979,7 +1979,7 @@ qseqeditframe64::popup_tool_menu ()
                 transpose[index], SIGNAL(triggered(bool)),
                 this, SLOT(transpose_notes())
             );
-            if (m_scale > 0 && harmonic_number_valid(t))
+            if (harmonic_number_valid(t))
             {
                 /*
                  * Harmonic transpose menu entries.
@@ -2005,16 +2005,16 @@ qseqeditframe64::popup_tool_menu ()
         else
         {
             menupitch->addSeparator();
-            if (m_scale > 0)
-                menuharmonic->addSeparator();
+            menuharmonic->addSeparator();
         }
     }
     m_tools_popup->addMenu(menuselect);
     m_tools_popup->addMenu(menutiming);
     m_tools_popup->addMenu(menupitch);
+    m_tools_popup->addMenu(menuharmonic);
     m_tools_popup->addMenu(menumore);
-    if (m_scale > 0)
-        m_tools_popup->addMenu(menuharmonic);
+    m_tools_harmonic = menuharmonic;
+    m_tools_harmonic->setEnabled(m_scale > 0);
 }
 
 /**
@@ -2691,6 +2691,9 @@ qseqeditframe64::set_scale (int scale, bool user_change)
             usr().seqedit_scale(scale);
 
         s->musical_scale(midibyte(scale), user_change);
+        if (not_nullptr(m_tools_harmonic))
+            m_tools_harmonic->setEnabled(m_scale > 0);
+
         set_dirty();
     }
     else
@@ -3156,9 +3159,14 @@ void
 qseqeditframe64::show_pattern_fix ()
 {
     if (is_nullptr(m_patternfix_wnd))
-        m_patternfix_wnd = new qpatternfix(perf(), seq_pointer(), *m_seqdata);
-
-    m_patternfix_wnd->show();
+    {
+        m_patternfix_wnd = new qpatternfix
+        (
+            perf(), seq_pointer(), *m_seqdata, *m_seqevent
+        );
+        if (not_nullptr(m_patternfix_wnd))
+            m_patternfix_wnd->show();
+    }
 }
 
 /**

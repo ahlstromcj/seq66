@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>605</width>
-    <height>316</height>
+    <width>568</width>
+    <height>297</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,9 @@
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>48</x>
+     <x>24</x>
      <y>8</y>
-     <width>525</width>
+     <width>505</width>
      <height>31</height>
     </rect>
    </property>
@@ -62,8 +62,8 @@
   <widget class="QGroupBox" name="group_box_length">
    <property name="geometry">
     <rect>
-     <x>44</x>
-     <y>64</y>
+     <x>20</x>
+     <y>52</y>
      <width>245</width>
      <height>165</height>
     </rect>
@@ -130,11 +130,17 @@
   <widget class="QGroupBox" name="group_box_quantize">
    <property name="geometry">
     <rect>
-     <x>436</x>
-     <y>64</y>
+     <x>392</x>
+     <y>52</y>
      <width>153</width>
      <height>165</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
    </property>
    <property name="title">
     <string>Quantization</string>
@@ -174,13 +180,22 @@
    </widget>
   </widget>
   <widget class="QGroupBox" name="group_box_effect">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
-     <x>300</x>
-     <y>64</y>
+     <x>268</x>
+     <y>52</y>
      <width>120</width>
      <height>165</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
    </property>
    <property name="title">
     <string>Effect</string>
@@ -198,7 +213,7 @@
      <item>
       <widget class="QCheckBox" name="btn_effect_shift">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="text">
         <string>Shift</string>
@@ -208,7 +223,7 @@
      <item>
       <widget class="QCheckBox" name="btn_effect_shrink">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="text">
         <string>Shrin&amp;k</string>
@@ -218,7 +233,7 @@
      <item>
       <widget class="QCheckBox" name="btn_effect_expand">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="text">
         <string>E&amp;xpand</string>
@@ -231,11 +246,17 @@
   <widget class="QGroupBox" name="group_box_other">
    <property name="geometry">
     <rect>
-     <x>48</x>
-     <y>232</y>
+     <x>24</x>
+     <y>220</y>
      <width>241</width>
-     <height>80</height>
+     <height>57</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
    </property>
    <property name="title">
     <string>Other Fixes</string>
@@ -257,8 +278,8 @@
   <widget class="QWidget" name="layoutWidgetAlignLeft">
    <property name="geometry">
     <rect>
-     <x>308</x>
-     <y>256</y>
+     <x>260</x>
+     <y>244</y>
      <width>269</width>
      <height>31</height>
     </rect>
