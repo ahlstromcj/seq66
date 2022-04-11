@@ -2522,7 +2522,7 @@ sequence::fix_pattern
     {
         alignleft = m_events.align_left();                  /* realigned?   */
         if (alignleft)
-            bit_set(tempefx, fixeffect::shifted);
+            tempefx = bit_set(tempefx, fixeffect::shifted);
         else
             result = false;                                 /* op failed    */
     }
@@ -2548,6 +2548,7 @@ sequence::fix_pattern
                 {
                     scalefactor = double(measures) / double(currentbars);
                     currentbars = measures;
+                    result = m_events.apply_time_factor(scalefactor);
                 }
             }
         }
@@ -2558,7 +2559,7 @@ sequence::fix_pattern
              * links and prunes events past the length.
              */
 
-            midipulse len = unit_measure() * currentbars ;
+            midipulse len = unit_measure() * currentbars;
             if (fixtype == lengthfix::rescale)
                 len = midipulse(len * scalefactor + 0.5);
 
@@ -2569,9 +2570,9 @@ sequence::fix_pattern
                     measures = calculate_measures();
 
                 if (len > currentlen)
-                    bit_set(tempefx, fixeffect::expanded);
+                    tempefx = bit_set(tempefx, fixeffect::expanded);
                 else if (len < currentlen)
-                    bit_set(tempefx, fixeffect::shrunk);
+                    tempefx = bit_set(tempefx, fixeffect::shrunk);
 
                 efx = tempefx;
                 set_dirty();

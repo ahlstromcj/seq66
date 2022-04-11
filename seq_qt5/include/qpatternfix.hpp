@@ -101,7 +101,7 @@ public:
     }
 
     void modify ();
-    void unmodify ();
+    void unmodify (bool reset_fields = true);
 
 protected:
 

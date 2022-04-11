@@ -145,11 +145,12 @@ bit_test (fixeffect lhs, fixeffect rhs)
     return (static_cast<int>(lhs) & static_cast<int>(rhs)) != 0;
 }
 
-inline void
+inline fixeffect
 bit_set (fixeffect lhs, fixeffect rhs)
 {
     int L = static_cast<int>(lhs) | static_cast<int>(rhs);
     lhs = static_cast<fixeffect>(L);
+    return lhs;
 }
 
 /*

@@ -122,6 +122,9 @@ qpatternfix::qpatternfix
     std::string number = std::to_string(int(seqp()->seq_number()));
     ui->line_edit_pattern->setText(qt(number));
     ui->line_edit_pattern->setEnabled(false);           /* no user-edit yet */
+    number = std::to_string(int(seqp()->get_length()));
+    ui->line_edit_pulses->setText(qt(number));
+    ui->line_edit_pulses->setEnabled(false);            /* no user-edit yet */
 
     /*
      *  connect
@@ -243,16 +246,19 @@ qpatternfix::modify ()
 }
 
 void
-qpatternfix::unmodify ()
+qpatternfix::unmodify (bool reset_fields)
 {
-    std::string temp = std::to_string(seqp()->get_measures());
-    ui->line_edit_pick->setText(qt(temp));
-    ui->line_edit_scale->setText("1.0");
-    ui->btn_set->setEnabled(false);
+    if (reset_fields)
+    {
+        std::string temp = std::to_string(seqp()->get_measures());
+        ui->line_edit_pick->setText(qt(temp));
+        ui->line_edit_scale->setText("1.0");
+        ui->btn_effect_shift->setChecked(false);
+        ui->btn_effect_shrink->setChecked(false);
+        ui->btn_effect_expand->setChecked(false);
+    }
+    /* ui->btn_set->setEnabled(false); */          /* correct? */
     ui->btn_reset->setEnabled(false);
-    ui->btn_effect_shift->setChecked(false);
-    ui->btn_effect_shrink->setChecked(false);
-    ui->btn_effect_expand->setChecked(false);
     m_is_modified = false;
 }
 
@@ -275,7 +281,9 @@ qpatternfix::slot_measure_change ()
         bool changed = m != m_measures;         /* seqp()->get_measures()   */
         if (changed)
         {
+            ui->btn_change_pick->setChecked(true);
             m_measures = m;
+            m_length_type = lengthfix::measures;
             modify();
         }
     }
@@ -295,6 +303,7 @@ qpatternfix::slot_scale_change ()
             bool changed = v != m_scale_factor;
             if (changed)
             {
+                ui->btn_change_scale->setChecked(true);
                 m_scale_factor = v;
                 modify();
             }
@@ -325,7 +334,7 @@ qpatternfix::slot_align_change (int state)
 void
 qpatternfix::slot_set ()
 {
-    fixeffect efx = fixeffect::none;
+    fixeffect efx;                                  /* set in fix_pattern() */
     bool success = seqp()->fix_pattern
     (
         m_length_type, m_measures, m_scale_factor,
@@ -333,26 +342,22 @@ qpatternfix::slot_set ()
     );
     if (success)
     {
-        std::string temp = std::to_string(m_measures);
+        bool bitshifted = bit_test(efx, fixeffect::shifted);
+        bool bitshrunk = bit_test(efx, fixeffect::shrunk);
+        bool bitexpanded = bit_test(efx, fixeffect::expanded);
+        std::string temp = std::to_string(int(seqp()->get_length()));
+        ui->line_edit_pulses->setText(qt(temp));
+        temp = std::to_string(m_measures);
         ui->line_edit_pick->setText(qt(temp));
         temp = std::to_string(m_scale_factor);
         ui->line_edit_scale->setText(qt(temp));
-        ui->btn_effect_shift->setChecked
-        (
-            bit_test(efx, fixeffect::shifted)
-        );
-        ui->btn_effect_shrink->setChecked
-        (
-            bit_test(efx, fixeffect::shrunk)
-        );
-        ui->btn_effect_expand->setChecked
-        (
-            bit_test(efx, fixeffect::expanded)
-        );
+        ui->btn_effect_shift->setChecked(bitshifted);
+        ui->btn_effect_shrink->setChecked(bitshrunk);
+        ui->btn_effect_expand->setChecked(bitexpanded);
         seqp()->set_dirty();                            /* for redrawing    */
         m_seqdata.set_dirty();                          /* ditto            */
         m_qstriggereditor.set_dirty();                  /* tritto           */
-        unmodify();
+        unmodify(false);                                /* keep fields      */
     }
 }
 
@@ -364,7 +369,7 @@ qpatternfix::slot_reset ()
     seqp()->set_dirty();                                /* for redrawing    */
     m_seqdata.set_dirty();                              /* for redrawing    */
     m_qstriggereditor.set_dirty();                      /* tritto           */
-    unmodify();
+    unmodify();                                         /* change fields    */
 }
 
 void

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>568</width>
-    <height>297</height>
+    <width>570</width>
+    <height>299</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -54,6 +54,32 @@
         <width>56</width>
         <height>16777215</height>
        </size>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="line_edit_pulses">
+      <property name="maximumSize">
+       <size>
+        <width>56</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="maximumSize">
+       <size>
+        <width>64</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Pulses</string>
       </property>
      </widget>
     </item>

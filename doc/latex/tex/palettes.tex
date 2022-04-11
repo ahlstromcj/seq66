@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-12-29
-% \update      2021-02-19
+% \update      2022-04-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -58,6 +58,10 @@
 
    If this palette file is active, it is loaded, changing all of the palettes,
    and thus the coloring of \textsl{Seq64}.
+
+   In \sectionref{subsec:palettes_theming}, some weird behavior with
+   the \texttt{qt5ct} configuration application and non-Qt-based window managers
+   is discussed.
 
 \subsection{Palettes Setup}
 \label{subsec:palettes_setup}
@@ -160,6 +164,37 @@ project.
    number of palette items, synchronizing the palette with the current desktop
    them semi-automatically, and providing a user interface to drag-and-drop
    colors.
+
+\subsection{Theming}
+\label{subsec:palettes_theming}
+
+   When using a non-Qt-based window manager or desktop manager, such as our
+   favorite, \textsl{Fluxbox}, in conjunction with \textsl{GTK+} themes,
+   there can be issues on some \textsl{Linux} distros.
+
+   First, if using a Gtk theme setter (e.g. \textsl{gtk-chtheme}), one wants to
+   use \textsl{qt5ct} to set Qt to work with Gtk themes.
+   For this to work well, use this setting in the \texttt{.bashrc} or
+   \texttt{.profile}:
+
+   \begin{verbatim}
+      export QT_QPA_PLATFORMTHEME=gtk2
+   \end{verbatim}
+
+   If not, use the following setting:
+
+   \begin{verbatim}
+      export QT_QPA_PLATFORMTHEME=qt5ct
+   \end{verbatim}
+
+   One might still encounter the issue that, with a Gtk theme, applications
+   take about 20 to 30 seconds to start up!
+
+   More information to come.
+
+   Also see the style-sheet discussion in
+   \sectionref{sec:configuration}.
+
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

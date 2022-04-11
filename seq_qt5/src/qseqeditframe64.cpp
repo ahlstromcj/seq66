@@ -1916,7 +1916,7 @@ qseqeditframe64::popup_tool_menu ()
     QMenu * menuharmonic = new QMenu(tr("&Harmonic transpose..."), m_tools_popup);
     QMenu * menumore = new QMenu(tr("&More tools..."), m_tools_popup);
     QAction * selectall = new QAction(tr("Select all"), m_tools_popup);
-    selectall->setShortcut(tr("Ctrl+A"));
+    // selectall->setShortcut(tr("Ctrl+A"));
     connect
     (
         selectall, SIGNAL(triggered(bool)),
@@ -1925,7 +1925,7 @@ qseqeditframe64::popup_tool_menu ()
     menuselect->addAction(selectall);
 
     QAction * selectinverse = new QAction(tr("Inverse selection"), m_tools_popup);
-    selectinverse->setShortcut(tr("Ctrl+Shift+I"));
+    // selectinverse->setShortcut(tr("Ctrl+Shift+I"));
     connect
     (
         selectinverse, SIGNAL(triggered(bool)),
@@ -1934,22 +1934,22 @@ qseqeditframe64::popup_tool_menu ()
     menuselect->addAction(selectinverse);
 
     QAction * quantize = new QAction(tr("Quantize"), m_tools_popup);
-    quantize->setShortcut(tr("Ctrl+Q"));
+    // quantize->setShortcut(tr("Ctrl+Q"));
     connect(quantize, SIGNAL(triggered(bool)), this, SLOT(quantize_notes()));
     menutiming->addAction(quantize);
 
     QAction * tighten = new QAction(tr("Tighten"), m_tools_popup);
-    tighten->setShortcut(tr("Ctrl+T"));
+    // tighten->setShortcut(tr("Ctrl+T"));
     connect(tighten, SIGNAL(triggered(bool)), this, SLOT(tighten_notes()));
     menutiming->addAction(tighten);
 
     QAction * lfobox = new QAction(tr("LFO..."), m_tools_popup);
-    lfobox->setShortcut(tr("Ctrl+L"));
+    // lfobox->setShortcut(tr("Ctrl+L"));
     connect(lfobox, SIGNAL(triggered(bool)), this, SLOT(show_lfo_frame()));
     menumore->addAction(lfobox);
 
     QAction * fixbox = new QAction(tr("Pattern fix..."), m_tools_popup);
-    fixbox->setShortcut(tr("Ctrl+F"));
+    // fixbox->setShortcut(tr("Ctrl+F"));
     connect(fixbox, SIGNAL(triggered(bool)), this, SLOT(show_pattern_fix()));
     menumore->addAction(fixbox);
 
