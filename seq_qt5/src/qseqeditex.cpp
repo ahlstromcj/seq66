@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-10-20
+ * \updates       2022-04-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -108,15 +108,22 @@ qseqeditex::~qseqeditex()
 }
 
 /**
- *  Tells the parent window to remove this container frame when the user
- *  closes it.
+ *  First test the enclosed seqedit frame to close (which then should cause
+ *  that to tell it's LFO and Pattern-Fix windows to close.  Then
+ *  tells the parent window to close (and automatically remove this container
+ *  frame when the user closes it.
+ *
+ *  Hopefully there's no race condition here.
  */
 
 void
 qseqeditex::closeEvent (QCloseEvent *)
 {
     if (not_nullptr(m_edit_parent))
+    {
+        m_edit_frame->close();
         m_edit_parent->remove_editor(m_seq_id);
+    }
 }
 
 /**

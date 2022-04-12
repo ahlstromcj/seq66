@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2022-04-11
+ * \updates       2022-04-12
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -432,7 +432,8 @@ private:                                /* functions for friend sequence    */
 
     void set_length (midipulse len)
     {
-        m_length = len;
+        if (len > 0)
+            m_length = len;
     }
 
 };          // class eventlist

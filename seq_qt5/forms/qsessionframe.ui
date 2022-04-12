@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>688</width>
-    <height>465</height>
+    <width>690</width>
+    <height>467</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -469,6 +469,17 @@ p, li { white-space: pre-wrap; }
    </property>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>sessionManagerNameText</tabstop>
+  <tabstop>sessionNameText</tabstop>
+  <tabstop>sessionUrlText</tabstop>
+  <tabstop>displayNameText</tabstop>
+  <tabstop>clientIdText</tabstop>
+  <tabstop>macroComboBox</tabstop>
+  <tabstop>sessionLogText</tabstop>
+  <tabstop>pushButtonReload</tabstop>
+  <tabstop>songPathText</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

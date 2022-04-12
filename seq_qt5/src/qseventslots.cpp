@@ -1180,8 +1180,12 @@ qseventslots::increment_bottom ()
 int
 qseventslots::calculate_measures () const
 {
+#if defined USE_OLD_CODE
     midipulse unitmeasure = seq_pointer()->unit_measure();
     return 1 + get_length() / unitmeasure;
+#else
+    return seq_pointer()->calculate_measures();
+#endif
 }
 
 }           // namespace seq66

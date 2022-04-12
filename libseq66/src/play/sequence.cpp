@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-11
+ * \updates       2022-04-12
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -681,23 +681,15 @@ sequence::set_beat_width (int beatwidth)
  *  beats/bar, P is the PPQN, and W is the beat-width.
  */
 
-void
-sequence::calculate_unit_measure () const
+midipulse
+sequence::unit_measure (bool reset) const
 {
     automutex locker(m_mutex);
-    m_unit_measure = get_beats_per_bar() * (get_ppqn() * 4) / get_beat_width();
-}
-
-/**
- * \getter m_unit_measure
- */
-
-midipulse
-sequence::unit_measure () const
-{
-    if (m_unit_measure == 0)
-        calculate_unit_measure();
-
+    if (m_unit_measure == 0 || reset)
+    {
+        m_unit_measure = get_beats_per_bar() *
+            (get_ppqn() * 4) / get_beat_width() ;
+    }
     return m_unit_measure;
 }
 
@@ -751,12 +743,17 @@ sequence::progress_value () const
  */
 
 int
-sequence::calculate_measures () const
+sequence::calculate_measures (bool reset) const
 {
+#if defined USE_OLD_CODE
     if (m_unit_measure == 0)
         calculate_unit_measure();
 
     return 1 + (get_length() - 1) / m_unit_measure;
+#else
+    midipulse um = unit_measure(reset);
+    return 1 + (get_length() - 1) / um;
+#endif
 }
 
 /**
@@ -4546,8 +4543,8 @@ sequence::set_midi_bus (bussbyte nominalbus, bool user_change)
 
 /**
  *  Sets the length (m_length) and adjusts triggers for it, if desired.
- *  This function is called in seqedit::apply_length(), when the user
- *  selects a sequence length in measures.  This function is also called
+ *  This function is called in qseqeditframe64, when the user changes
+ *  beats/bar or the sequence length in measures.  This function is also called
  *  when reading a MIDI file.
  *
  *  There's an issue, though.  If the application is compiled to use the
@@ -4665,9 +4662,10 @@ sequence::apply_length (int bpb, int ppqn, int bw, int measures)
 {
     bool result = set_length(seq66::measures_to_ticks(bpb, ppqn, bw, measures));
     if (result)
+    {
+        (void) unit_measure(true);          /* for progress and redrawing   */
         notify_change(true);
-
-    calculate_unit_measure();                 /* for progress and redrawing   */
+    }
     return result;
 }
 
@@ -4691,9 +4689,14 @@ sequence::extend_length ()
     bool result = len > get_length();
     if (len > get_length())
     {
+
+#if defined USE_OLD_CODE
         calculate_unit_measure();               /* redo m_unit_measure      */
 
         int measures = int(double(len) / m_unit_measure + 0.5);
+#else
+        int measures = int(double(len) / unit_measure(true) + 0.5); /* TIME */
+#endif
         len = m_unit_measure * measures;
         result = set_length(len, false, false); /* no trig adjust or verify */
     }
@@ -5384,8 +5387,9 @@ sequence::change_ppqn (int p)
             (
                  get_beats_per_bar(), p, get_beat_width(), get_measures()
             );
+            // m_events.set_length(len);                // see set_length()
             m_triggers.change_ppqn(p);
-            m_triggers.set_length(m_length);
+            // m_triggers.set_length(m_length);         // see set_length()
         }
     }
     return result;

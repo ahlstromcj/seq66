@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-09
+ * \updates       2022-04-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -171,6 +171,7 @@ protected:      /* QWidget overrides                */
     virtual void wheelEvent (QWheelEvent *) override;
     virtual void keyPressEvent (QKeyEvent *) override;
     virtual void keyReleaseEvent (QKeyEvent *) override;
+    virtual void closeEvent (QCloseEvent *) override;
 
 private:
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>588</width>
-    <height>339</height>
+    <width>590</width>
+    <height>341</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -268,6 +268,26 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>m_measures_check_box</tabstop>
+  <tabstop>m_value_slider</tabstop>
+  <tabstop>m_value_text</tabstop>
+  <tabstop>m_range_slider</tabstop>
+  <tabstop>m_range_text</tabstop>
+  <tabstop>m_speed_slider</tabstop>
+  <tabstop>m_speed_text</tabstop>
+  <tabstop>m_phase_slider</tabstop>
+  <tabstop>m_phase_text</tabstop>
+  <tabstop>m_radio_wave_none</tabstop>
+  <tabstop>m_radio_wave_sine</tabstop>
+  <tabstop>m_radio_wave_saw</tabstop>
+  <tabstop>m_radio_wave_revsaw</tabstop>
+  <tabstop>m_radio_wave_triangle</tabstop>
+  <tabstop>m_radio_wave_exp</tabstop>
+  <tabstop>m_radio_wave_revexp</tabstop>
+  <tabstop>m_button_reset</tabstop>
+  <tabstop>m_button_close</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

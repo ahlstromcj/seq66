@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>898</width>
-    <height>616</height>
+    <width>900</width>
+    <height>618</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1418,8 +1418,8 @@ matter what sets-mode is in force. </string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>898</width>
-     <height>22</height>
+     <width>900</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1709,7 +1709,7 @@ and messages.</string>
   </action>
   <action name="actionSongSummary">
    <property name="text">
-    <string>Song Summary File...</string>
+    <string>&amp;Song Summary File...</string>
    </property>
    <property name="toolTip">
     <string>Writes a text summary of the song to a file
@@ -1719,12 +1719,15 @@ in the same directory as the original, with the extension
   </action>
   <action name="actionCopyCurrentSet">
    <property name="text">
-    <string>Copy Current Set</string>
+    <string>C&amp;opy Current Set</string>
    </property>
   </action>
   <action name="actionPasteToCurrentSet">
    <property name="text">
     <string>Paste To Current Set</string>
+   </property>
+   <property name="iconText">
+    <string>P&amp;aste To Current Set</string>
    </property>
   </action>
   <action name="actionImportPlaylist">

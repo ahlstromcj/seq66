@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-11
+ * \updates       2022-04-12
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -89,12 +89,6 @@ public:
     );
     virtual ~qpatternfix ();
 
-    /*
-     * Not yet implemented !
-     *
-     * void toggle_visible ();
-     */
-
     bool modified () const
     {
         return m_is_modified;
@@ -119,6 +113,7 @@ private:
         return m_seq;
     }
 
+    void set_dirty ();
     void set_value_text (double value, QLineEdit * textline);
     void wave_type_change (int waveid);
 

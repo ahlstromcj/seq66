@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-11
+ * \updates       2022-04-12
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -538,8 +538,8 @@ qseqeditframe64::qseqeditframe64
     set_beat_width(bw);
 
     /*
-     * Pattern Length in Measures. Fill the options for
-     * the beats per measure combo-box, and set the default.
+     * Pattern Length in Measures. Fill the options for the beats per measure
+     * combo-box, and set the default.
      */
 
     qt_set_icon(length_short_xpm, ui->m_button_length);
@@ -571,7 +571,7 @@ qseqeditframe64::qseqeditframe64
         this, SLOT(text_measures(const QString &))
     );
     if (not_nullptr(s))
-        s->calculate_unit_measure();        /* must precede set_measures() */
+        (void) s->unit_measure();        /* must precede set_measures()     */
 
     set_measures(get_measures());
 
@@ -1105,6 +1105,18 @@ qseqeditframe64::qseqeditframe64
         ui->m_combo_rec_vol, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_recording_volume(int))
     );
+
+    /*
+     * This little button is a workaround for Qt's lack of a signal
+     * when the window manager's "X" button in the title bar of a non-main
+     * window is clicked.  Doesn't work right, leaves a ghost window and
+     * a seqfault at application exit.
+     *
+     * connect(ui->btn_close, SIGNAL(clicked()), this, SLOT(close()));
+     */
+
+    ui->btn_close->hide();
+
     set_recording_volume(usr().velocity_override());
     repopulate_usr_combos(m_edit_bus, m_edit_channel);
     set_midi_bus(m_edit_bus);
@@ -1132,12 +1144,6 @@ qseqeditframe64::qseqeditframe64
 qseqeditframe64::~qseqeditframe64 ()
 {
     m_timer->stop();
-    if (not_nullptr(m_lfo_wnd))
-        delete m_lfo_wnd;
-
-    if (not_nullptr(m_patternfix_wnd))
-        delete m_patternfix_wnd;
-
     cb_perf().unregister(this);
     delete ui;
 }
@@ -1245,6 +1251,18 @@ qseqeditframe64::keyReleaseEvent (QKeyEvent *)
 }
 
 /**
+ *  Passes along the signal to close the windows.
+ */
+
+void
+qseqeditframe64::closeEvent (QCloseEvent * event)
+{
+    remove_lfo_frame();
+    remove_patternfix_frame();
+    event->accept();
+}
+
+/**
  *  Currently this function is not called.  To be investigated
  */
 
@@ -1349,10 +1367,6 @@ qseqeditframe64::initialize_panels ()
     int maximum = ui->rollScrollArea->verticalScrollBar()->maximum();
     ui->rollScrollArea->verticalScrollBar()->setValue((minimum + maximum) / 2);
 }
-
-/*
- * Play the SLOTS!
- */
 
 /**
  *  We need to set the dirty state while the sequence has been changed.
@@ -1915,8 +1929,7 @@ qseqeditframe64::popup_tool_menu ()
     QMenu * menupitch  = new QMenu(tr("&Pitch transpose..."), m_tools_popup);
     QMenu * menuharmonic = new QMenu(tr("&Harmonic transpose..."), m_tools_popup);
     QMenu * menumore = new QMenu(tr("&More tools..."), m_tools_popup);
-    QAction * selectall = new QAction(tr("Select all"), m_tools_popup);
-    // selectall->setShortcut(tr("Ctrl+A"));
+    QAction * selectall = new QAction(tr("Select &all"), m_tools_popup);
     connect
     (
         selectall, SIGNAL(triggered(bool)),
@@ -1924,8 +1937,7 @@ qseqeditframe64::popup_tool_menu ()
     );
     menuselect->addAction(selectall);
 
-    QAction * selectinverse = new QAction(tr("Inverse selection"), m_tools_popup);
-    // selectinverse->setShortcut(tr("Ctrl+Shift+I"));
+    QAction * selectinverse = new QAction(tr("&Invert selection"), m_tools_popup);
     connect
     (
         selectinverse, SIGNAL(triggered(bool)),
@@ -1933,23 +1945,19 @@ qseqeditframe64::popup_tool_menu ()
     );
     menuselect->addAction(selectinverse);
 
-    QAction * quantize = new QAction(tr("Quantize"), m_tools_popup);
-    // quantize->setShortcut(tr("Ctrl+Q"));
+    QAction * quantize = new QAction(tr("&Quantize"), m_tools_popup);
     connect(quantize, SIGNAL(triggered(bool)), this, SLOT(quantize_notes()));
     menutiming->addAction(quantize);
 
-    QAction * tighten = new QAction(tr("Tighten"), m_tools_popup);
-    // tighten->setShortcut(tr("Ctrl+T"));
+    QAction * tighten = new QAction(tr("&Tighten"), m_tools_popup);
     connect(tighten, SIGNAL(triggered(bool)), this, SLOT(tighten_notes()));
     menutiming->addAction(tighten);
 
-    QAction * lfobox = new QAction(tr("LFO..."), m_tools_popup);
-    // lfobox->setShortcut(tr("Ctrl+L"));
+    QAction * lfobox = new QAction(tr("&LFO..."), m_tools_popup);
     connect(lfobox, SIGNAL(triggered(bool)), this, SLOT(show_lfo_frame()));
     menumore->addAction(lfobox);
 
-    QAction * fixbox = new QAction(tr("Pattern fix..."), m_tools_popup);
-    // fixbox->setShortcut(tr("Ctrl+F"));
+    QAction * fixbox = new QAction(tr("Pattern &fix..."), m_tools_popup);
     connect(fixbox, SIGNAL(triggered(bool)), this, SLOT(show_pattern_fix()));
     menumore->addAction(fixbox);
 
@@ -3366,7 +3374,9 @@ qseqeditframe64::do_action (eventlist::edit action, int var)
 }
 
 /**
- *  Removes the LFO editor frame.
+ *  Removes the LFO editor frame.  For 0.98.7, we had the issue where closing
+ *  the seqedit frame would leave this window and the pattern-fix window
+ *  open. So now, instead of deleting them, we signal them to close.
  */
 
 void
@@ -3374,8 +3384,12 @@ qseqeditframe64::remove_lfo_frame ()
 {
     if (not_nullptr(m_lfo_wnd))
     {
+#if defined USE_OLD_CODE
         delete m_lfo_wnd;
         m_lfo_wnd = nullptr;
+#else
+        m_lfo_wnd->close();
+#endif
     }
 }
 
@@ -3388,8 +3402,12 @@ qseqeditframe64::remove_patternfix_frame ()
 {
     if (not_nullptr(m_patternfix_wnd))
     {
+#if defined USE_OLD_CODE
         delete m_patternfix_wnd;
         m_patternfix_wnd = nullptr;
+#else
+        m_patternfix_wnd->close();
+#endif
     }
 }
 

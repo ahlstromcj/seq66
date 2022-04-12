@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>802</width>
-    <height>482</height>
+    <width>804</width>
+    <height>484</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -549,7 +549,7 @@ the '0' key in the piano roll.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>712</width>
+          <width>714</width>
           <height>24</height>
          </rect>
         </property>
@@ -638,7 +638,7 @@ the '0' key in the piano roll.</string>
             <x>0</x>
             <y>0</y>
             <width>48</width>
-            <height>144</height>
+            <height>134</height>
            </rect>
           </property>
          </widget>
@@ -703,7 +703,7 @@ the '0' key in the piano roll.</string>
           <x>0</x>
           <y>0</y>
           <width>718</width>
-          <height>148</height>
+          <height>139</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -1187,7 +1187,7 @@ zooms 'in'.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>712</width>
+          <width>710</width>
           <height>24</height>
          </rect>
         </property>
@@ -1363,7 +1363,7 @@ the note-map, if any, to the note events in this pattern.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>708</width>
+          <width>710</width>
           <height>128</height>
          </rect>
         </property>
@@ -1448,7 +1448,7 @@ the note-map, if any, to the note events in this pattern.</string>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="spacer_button_6">
+        <widget class="QPushButton" name="btn_close">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -1464,11 +1464,22 @@ the note-map, if any, to the note events in this pattern.</string>
            <height>28</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Closes this window and any child windows.
+A workaround for Qt's lack of a signal for closing
+a non-main window frame.</string>
+         </property>
          <property name="text">
-          <string/>
+          <string>X</string>
          </property>
          <property name="flat">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>672</width>
-    <height>362</height>
+    <width>674</width>
+    <height>364</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -244,6 +244,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>txtBankName</tabstop>
+  <tabstop>comboGridMode</tabstop>
+  <tabstop>buttonActivate</tabstop>
+  <tabstop>buttonLoopMode</tabstop>
+  <tabstop>buttonRecordMode</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

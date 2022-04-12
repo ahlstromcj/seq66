@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-04-11
+ * \updates       2022-04-12
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -950,7 +950,7 @@ public:
     void pop_trigger_undo ();
     void pop_trigger_redo ();
     void set_name (const std::string & name = "");
-    int calculate_measures () const;
+    int calculate_measures (bool reset = false) const;
     int get_measures () const;
 
     bool event_threshold () const
@@ -1089,15 +1089,8 @@ public:
         );
     }
 
-    bool apply_length (int bpb, int ppqn, int bw, int measures = 1);
     bool extend_length ();
-
-    /**
-     *  An overload that gets its values from this sequence object.
-     *
-     * \param meas
-     *      The number of measures to apply.  Defaults to 1.
-     */
+    bool apply_length (int bpb, int ppqn, int bw, int measures = 1);
 
     bool apply_length (int meas = 1)
     {
@@ -1687,8 +1680,7 @@ public:
     void background_sequence (int bs, bool user_change = false);
     void show_events () const;
     void copy_events (const eventlist & newevents);
-    void calculate_unit_measure () const;
-    midipulse unit_measure () const;
+    midipulse unit_measure (bool reset = false) const;
     midipulse expand_threshold () const;
     midipulse progress_value () const;
 

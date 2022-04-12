@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>774</width>
-    <height>426</height>
+    <width>776</width>
+    <height>428</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,7 +59,7 @@
        <number>4</number>
       </property>
       <attribute name="horizontalHeaderVisible">
-       <bool>true</bool>
+       <bool>false</bool>
       </attribute>
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
@@ -541,6 +541,26 @@ as applicable, to preserve this mute-group.</string>
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>m_group_table</tabstop>
+  <tabstop>m_pattern_offset_spinbox</tabstop>
+  <tabstop>m_button_save</tabstop>
+  <tabstop>m_button_load</tabstop>
+  <tabstop>m_button_up</tabstop>
+  <tabstop>m_button_down</tabstop>
+  <tabstop>m_mute_basename</tabstop>
+  <tabstop>m_check_from_midi</tabstop>
+  <tabstop>m_check_from_mutes</tabstop>
+  <tabstop>m_radio_binary</tabstop>
+  <tabstop>m_radio_hex</tabstop>
+  <tabstop>m_check_to_midi</tabstop>
+  <tabstop>m_check_to_mutes</tabstop>
+  <tabstop>m_check_toggle_active</tabstop>
+  <tabstop>m_check_strip_empty</tabstop>
+  <tabstop>m_button_trigger</tabstop>
+  <tabstop>m_button_clear_all</tabstop>
+  <tabstop>m_button_set_mutes</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

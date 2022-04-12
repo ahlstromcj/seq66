@@ -696,11 +696,11 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
      <property name="columnCount">
       <number>6</number>
      </property>
-     <attribute name="verticalHeaderDefaultSectionSize">
-      <number>18</number>
-     </attribute>
      <attribute name="verticalHeaderMinimumSectionSize">
       <number>16</number>
+     </attribute>
+     <attribute name="verticalHeaderDefaultSectionSize">
+      <number>18</number>
      </attribute>
      <row/>
      <row/>
@@ -760,6 +760,22 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>eventTableWidget</tabstop>
+  <tabstop>m_entry_name</tabstop>
+  <tabstop>entry_ev_timestamp</tabstop>
+  <tabstop>combo_ev_name</tabstop>
+  <tabstop>channel_combo_box</tabstop>
+  <tabstop>entry_ev_data_0</tabstop>
+  <tabstop>entry_ev_data_1</tabstop>
+  <tabstop>hex_data_check_box</tabstop>
+  <tabstop>button_del</tabstop>
+  <tabstop>button_clear</tabstop>
+  <tabstop>button_ins</tabstop>
+  <tabstop>button_save</tabstop>
+  <tabstop>button_modify</tabstop>
+  <tabstop>button_dump</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-05
+ * \updates       2022-04-12
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2293,7 +2293,13 @@ qsmainwnd::remove_all_editors ()
         qseqeditex * qep = ei->second;      /* save the pointer             */
         m_open_editors.erase(ei++);         /* remove pointer, inc iterator */
         if (not_nullptr(qep))
+        {
+#if defined USE_OLD_CODE
             delete qep;                     /* delete the pointer           */
+#else
+            qep->close();                   /* just signal to close         */
+#endif
+        }
     }
 }
 

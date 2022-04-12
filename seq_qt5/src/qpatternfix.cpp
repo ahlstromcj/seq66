@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-11
+ * \updates       2022-04-12
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -256,9 +256,9 @@ qpatternfix::unmodify (bool reset_fields)
         ui->btn_effect_shift->setChecked(false);
         ui->btn_effect_shrink->setChecked(false);
         ui->btn_effect_expand->setChecked(false);
+        ui->btn_reset->setEnabled(false);
     }
-    /* ui->btn_set->setEnabled(false); */          /* correct? */
-    ui->btn_reset->setEnabled(false);
+    ui->btn_set->setEnabled(false);                     /* correct?         */
     m_is_modified = false;
 }
 
@@ -331,6 +331,18 @@ qpatternfix::slot_align_change (int state)
     }
 }
 
+/**
+ *  A convenience/encapsulation function.
+ */
+
+void
+qpatternfix::set_dirty ()
+{
+    seqp()->set_dirty();                                /* for redrawing    */
+    m_seqdata.set_dirty();                              /* for redrawing    */
+    m_qstriggereditor.set_dirty();                      /* tritto           */
+}
+
 void
 qpatternfix::slot_set ()
 {
@@ -354,9 +366,7 @@ qpatternfix::slot_set ()
         ui->btn_effect_shift->setChecked(bitshifted);
         ui->btn_effect_shrink->setChecked(bitshrunk);
         ui->btn_effect_expand->setChecked(bitexpanded);
-        seqp()->set_dirty();                            /* for redrawing    */
-        m_seqdata.set_dirty();                          /* ditto            */
-        m_qstriggereditor.set_dirty();                  /* tritto           */
+        set_dirty();                                    /* for redrawing    */
         unmodify(false);                                /* keep fields      */
     }
 }
@@ -366,9 +376,7 @@ qpatternfix::slot_reset ()
 {
     seqp()->apply_length(m_backup_measures);            /* simple overload  */
     seqp()->events() = m_backup_events;
-    seqp()->set_dirty();                                /* for redrawing    */
-    m_seqdata.set_dirty();                              /* for redrawing    */
-    m_qstriggereditor.set_dirty();                      /* tritto           */
+    set_dirty();                                        /* for redrawing    */
     unmodify();                                         /* change fields    */
 }
 

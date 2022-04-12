@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>570</width>
-    <height>299</height>
+    <width>572</width>
+    <height>301</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -353,6 +353,26 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>btn_change_none</tabstop>
+  <tabstop>line_edit_none</tabstop>
+  <tabstop>btn_change_pick</tabstop>
+  <tabstop>line_edit_pick</tabstop>
+  <tabstop>btn_change_scale</tabstop>
+  <tabstop>line_edit_scale</tabstop>
+  <tabstop>btn_quan_none</tabstop>
+  <tabstop>btn_quan_tighten</tabstop>
+  <tabstop>btn_quan_full</tabstop>
+  <tabstop>btn_align_left</tabstop>
+  <tabstop>btn_set</tabstop>
+  <tabstop>btn_reset</tabstop>
+  <tabstop>btn_close</tabstop>
+  <tabstop>btn_effect_expand</tabstop>
+  <tabstop>btn_effect_shrink</tabstop>
+  <tabstop>btn_effect_shift</tabstop>
+  <tabstop>line_edit_pattern</tabstop>
+  <tabstop>line_edit_pulses</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
