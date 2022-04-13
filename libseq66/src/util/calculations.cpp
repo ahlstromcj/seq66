@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-01-29
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -89,10 +89,16 @@ namespace seq66
 /**
  *  This value represent the smallest horizontal unit in a Sequencer66 grid.
  *  It is the number of pixels in the smallest increment between vertical
- *  lines in the grid.
+ *  lines in the grid.  For a zoom of 2, this number gets doubled.
  */
 
 static const int c_pixels_per_substep = 6;
+
+/**
+ *  This value represents the fundamental beats-per-bar.
+ */
+
+static const int c_qn_beats = 4;
 
 /**
  *  Convenience function.
@@ -332,14 +338,14 @@ pulses_to_midi_measures
     bool result = (W > 0) && (P > 0) && (B > 0);
     if (result)
     {
-        double qnotes = 4.0 * B / W;            /* # of Q notes per measure */
-        double measlength = P * qnotes;         /* # of pulses in a measure */
-        int beatticks = measlength / B;         /* # of pulses in a beat    */
-        int m = int(p / measlength) + 1;        /* measure number of pulse  */
-        int metro = 1 + ((p * W / P / 4 ) % B); /* see qsmaintime           */
-        measures.measures(m);                   /* number of measures       */
-        measures.beats(metro);                  /* beats within the measure */
-        measures.divisions(int(p % beatticks)); /* leftover pulses / ticks  */
+        double qnotes = double(c_qn_beats) * B / W; /* Q notes per measure  */
+        double measlength = P * qnotes;             /* pulses in a measure  */
+        int beatticks = measlength / B;             /* pulses in a beat     */
+        int m = int(p / measlength) + 1;            /* measure no. of pulse */
+        int metro = 1 + ((p * W / P / c_qn_beats ) % B);
+        measures.measures(m);                       /* number of measures   */
+        measures.beats(metro);                      /* beats within measure */
+        measures.divisions(int(p % beatticks));     /* leftover pulses      */
     }
     return result;
 }
@@ -566,7 +572,7 @@ midi_measures_to_pulses
     if (b < 0)
         b = 0;
 
-    double qn_per_beat = 4.0 / seqparms.beat_width();
+    double qn_per_beat = double(c_qn_beats) / seqparms.beat_width();
     result = 0;
     if (m > 0)
         result += int(m * seqparms.beats_per_measure() * qn_per_beat);
@@ -764,10 +770,10 @@ log2_time_sig_value (int tsd)
  *      The result of the above equation is returned.
  */
 
-midipulse
+int
 pulses_per_substep (midipulse ppqn, int zoom)
 {
-    return (ppqn * zoom * c_pixels_per_substep) / usr().base_ppqn();
+    return int((ppqn * zoom * c_pixels_per_substep) / usr().base_ppqn());
 }
 
 /**
@@ -786,7 +792,7 @@ pulses_per_substep (midipulse ppqn, int zoom)
  *      The result of the above equation is returned.
  */
 
-midipulse
+int
 pulses_per_pixel (midipulse ppqn, int zoom)
 {
     midipulse result = (ppqn * zoom) / usr().base_ppqn();
@@ -796,6 +802,8 @@ pulses_per_pixel (midipulse ppqn, int zoom)
     return result;
 }
 
+#if defined USE_PULSES_SCALED
+
 midipulse
 pulses_scaled (midipulse tick, midipulse ppqn, int zoom)
 {
@@ -803,14 +811,16 @@ pulses_scaled (midipulse tick, midipulse ppqn, int zoom)
     return midipulse(tick * factor + 0.5);
 }
 
+#endif
+
 /**
  *  Internal function for simple calculation of a power of 2 without a lot of
  *  math.  Use for calculating the denominator of a time signature.
  *
  * \param logbase2
  *      Provides the power to which 2 is to be raised.  This integer is
- *      probably only rarely greater than 4 (which represents a denominator of
- *      16).
+ *      probably only rarely greater than 5 (which represents a denominator of
+ *      32).
  *
  * \return
  *      Returns 2 raised to the logbase2 power.
@@ -1088,6 +1098,8 @@ note_value_to_tempo (midibyte note)
     return slope;
 }
 
+#if defined USE_PULSE_DIVIDE
+
 /**
  *  Calculates the quotient and remainder of a midipulse division, which is a
  *  common operation in Seq66.  This function also avoids division by
@@ -1124,6 +1136,8 @@ pulse_divide (midipulse numerator, midipulse denominator, midipulse & remainder)
 
     return result;
 }
+
+#endif  // defined USE_PULSE_DIVIDE
 
 /**
  *  Calculates a wave function for use as an LFO (low-frequency oscillator)

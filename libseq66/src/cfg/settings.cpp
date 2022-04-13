@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2021-11-22
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -43,23 +43,31 @@ namespace seq66
 {
 
 /**
- *  The combo default constructor.
+ *  The combolist default constructor.  Currrently used in qseditoptions and
+ *  qsmainwnd.
  */
 
-combo::combo () : m_list_items ()
+combolist::combolist (bool use_default) :
+    m_list_items    (),
+    m_use_default   (use_default)
 {
-    m_list_items.push_back("");
+    if (m_use_default)
+        m_list_items.push_back("");
 }
 
-combo::combo (const tokenization & slist) : m_list_items ()
+combolist::combolist (const tokenization & slist, bool use_default) :
+    m_list_items    (),
+    m_use_default   (use_default)
 {
-    m_list_items.push_back("");
+    if (m_use_default)
+        m_list_items.push_back("");
+
     for (const auto & s : slist)
         m_list_items.push_back(s);
 }
 
 std::string
-combo::at (int index) const
+combolist::at (int index) const
 {
     std::string result;
     if (index >= 0 && index < int(m_list_items.size()))
@@ -69,31 +77,84 @@ combo::at (int index) const
 }
 
 int
-combo::ctoi (int index) const
+combolist::ctoi (int index) const
 {
     int result = (-1);
     std::string s = at(index);
-    if (! s.empty())
+    try
+    {
         result = std::stoi(s);
-
+    }
+    catch (std::invalid_argument const &)
+    {
+        // no code
+    }
     return result;
 }
 
+int
+combolist::index (const std::string & target) const
+{
+    int result = 0;                         /* for failure, use first item  */
+    int counter = 0;
+    for (const auto & s : m_list_items)
+    {
+        if (counter == 0 && m_use_default)
+        {
+            ++counter;
+            continue;
+        }
+        if (s == target)
+        {
+            result = counter;
+            break;
+        }
+        ++counter;
+    }
+    return result;
+}
+
+int
+combolist::index (int value) const
+{
+    std::string target = std::to_string(value);
+    return index(target);
+}
+
 /**
- *  This list is useful in the user-interface.  Also see ppqn_list_value()
- *  below for internal integer versions.
+ *  These lists are useful in the user-interfaces.
  */
 
 const tokenization &
-default_ppqns ()
+measure_items ()
 {
-    static tokenization s_default_ppqn_list
+    static const tokenization s_measure_list
     {
-        "32", "48", "96", "192", "240",
-        "384", "768", "960", "1920", "2400",
-        "3840", "7680", "9600", "19200"
+        "1", "2", "3", "4", "5", "6", "7", "8",
+        "16", "24", "32", "64", "96", "128"
     };
-    return s_default_ppqn_list;
+    return s_measure_list;
+}
+
+const tokenization &
+beatwidth_items ()
+{
+    static const tokenization s_beatwidth_list
+    {
+        "1", "2", "4", "6", "8", "16", "32"
+    };
+    return s_beatwidth_list;
+}
+
+const tokenization &
+snap_items ()
+{
+    static const tokenization s_snap_list
+    {
+        "1", "2", "4", "8", "16", "32", "64", "128", "-",
+        "3", "6", "12", "24", "48", "96", "192"
+    };
+    return s_snap_list;
 }
 
 /**
@@ -141,6 +202,8 @@ set_configuration_defaults ()
     usr().set_defaults();
 }
 
+#if defined USE_PPQN_LIST_VALUE
+
 /**
  *  Available PPQN values.  The default is 192.  The first item uses the edit
  *  text for a non-standard default PPQN (like 333).  However, note that the
@@ -176,6 +239,25 @@ ppqn_list_value (int index)
         result = s_count;
 
     return result;
+}
+
+#endif  // defined USE_PPQN_LIST_VALUE
+
+/**
+ *  This list is useful in the user-interface.  Also see ppqn_list_value()
+ *  below for internal integer versions.
+ */
+
+const tokenization &
+default_ppqns ()
+{
+    static tokenization s_default_ppqn_list
+    {
+        "32", "48", "96", "192", "240",
+        "384", "768", "960", "1920", "2400",
+        "3840", "7680", "9600", "19200"
+    };
+    return s_default_ppqn_list;
 }
 
 /**

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2022-01-29
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *  A couple of universal helper functions remain as inline functions in the
@@ -54,26 +54,33 @@ namespace seq66
  *  contains the default or current value.
  */
 
-class combo
+class combolist
 {
 
 private:
 
     /**
-     *  The list of values.  Starts out at size 1.  Items can only be added,
-     *  not changed or removed.  However, the 0th item can be changed by the
-     *  caller.
+     *  The list of values.  Starts out at size 1, with the first item being an
+     *  empty string that can be replaced with a default value.  Items apart from
+     *  the first item can only be added, not changed or removed.  caller.
      */
 
     tokenization m_list_items;
 
+    /**
+     *  If true, use the first item as a blank item, to be filled in later as the
+     *  default or current value.
+     */
+
+    bool m_use_default;
+
 public:
 
-    combo ();
-    combo (const combo &) = default;
-    combo & operator = (const combo &) = default;
-    combo (const tokenization & slist);
-    ~combo () = default;
+    combolist (bool use_default = false);
+    combolist (const tokenization & slist, bool use_default = false);
+    combolist (const combolist &) = default;
+    combolist & operator = (const combolist &) = default;
+    ~combolist () = default;
 
     int count () const
     {
@@ -87,16 +94,20 @@ public:
 
     void current (const std::string & s)
     {
-        m_list_items[0] = s;
+        if (m_use_default)
+            m_list_items[0] = s;
     }
 
     void current (int v)
     {
-        m_list_items[0] = std::to_string(v);
+        if (m_use_default)
+            m_list_items[0] = std::to_string(v);
     }
 
     std::string at (int index) const;
     int ctoi (int index) const;
+    int index (const std::string & target) const;
+    int index (int value) const;
 
     void add (const std::string & s)
     {
@@ -109,7 +120,7 @@ public:
         add(s);
     }
 
-};          // class combo
+};          // class combolist
 
 /*
  *  Returns a reference to the global rcsettings and usrsettings objects.
@@ -121,8 +132,15 @@ public:
 extern rcsettings & rc ();
 extern usrsettings & usr ();
 extern int choose_ppqn (int ppqn = c_use_default_ppqn);
+
+#if defined USE_PPQN_LIST_VALUE
 extern int ppqn_list_value (int index = (-1));
-extern const tokenization & default_ppqns();
+#endif
+
+extern const tokenization & default_ppqns ();
+extern const tokenization & measure_items ();
+extern const tokenization & beatwidth_items ();
+extern const tokenization & snap_items ();
 extern void set_configuration_defaults ();
 
 /**

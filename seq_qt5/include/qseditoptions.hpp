@@ -28,14 +28,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-08
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <QDialog>
 
-#include "cfg/settings.hpp"             /* seq66::combo class and helpers   */
+#include "cfg/settings.hpp"             /* seq66::combolist class, helpers  */
 
 /*
  *  Do not document the namespace, it breaks Doxygen.
@@ -194,7 +194,7 @@ private:
     QButtonGroup * m_live_song_buttons;
     qsmainwnd * m_parent_widget;
     performer & m_perf;
-    combo m_ppqn_list;
+    combolist m_ppqn_list;
     bool m_is_initialized;
 
     /*

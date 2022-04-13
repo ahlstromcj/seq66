@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-04-11
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -479,7 +479,7 @@ double_ticks_from_ppqn (int ppqn)
  *  the the same as in a 4/4 measure.
  */
 
-inline midipulse
+inline int
 pulses_per_measure (int ppqn)
 {
     return 4 * ppqn;
@@ -575,15 +575,22 @@ ticks_to_beats (midipulse p, int P, int B, int W)
  *  Free functions in the seq66 namespace.
  */
 
-extern midipulse pulses_per_substep (midipulse ppqn, int zoom = 1);
-extern midipulse pulses_per_pixel (midipulse ppqn, int zoom = 1);
+extern int pulses_per_substep (midipulse ppqn, int zoom = 1);
+extern int pulses_per_pixel (midipulse ppqn, int zoom = 1);
+
+#if defined USE_PULSES_SCALED
 extern midipulse pulses_scaled (midipulse tick, midipulse ppqn, int zoom = 1);
+#endif
+
+#if defined USE_PULSE_DIVIDE
 extern midipulse pulse_divide
 (
     midipulse numerator,
     midipulse denominator,
     midipulse & remainder
 );
+#endif
+
 extern double wave_func (double angle, waveform wavetype);
 extern double unit_truncation (double angle);
 extern double exp_normalize (double angle, bool negate = false);

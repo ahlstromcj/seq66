@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-12
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -94,7 +94,6 @@
 #include <QScrollBar>
 #include <QStandardItemModel>           /* for disabling combobox entries   */
 
-#include "cfg/settings.hpp"             /* seq66::usr().controller_name()   */
 #include "midi/controllers.hpp"         /* seq66::controller_name()         */
 #include "play/performer.hpp"           /* seq66::performer reference       */
 #include "qlfoframe.hpp"                /* seq66::qlfoframe dialog class    */
@@ -192,70 +191,12 @@ int qseqeditframe64::sm_initial_note_length  = c_base_ppqn / 4;
 int qseqeditframe64::sm_initial_chord        = 0;
 
 /**
- * To reduce the amount of written code, we use a static array to
- * initialize the beat-width entries.  Nope, now we go from 1 to 16 and tack on
- * 32 to match the main-window's global time signature handling.
- *
- *  static const int s_width_items [] = { 1, 2, 4, 8, 16, 32 };
- *  static const int s_width_count = sizeof(s_width_items) / sizeof(int);
+ *  To reduce the amount of written code, we use the following count to cover
+ *  beats/measure ranging from 1 to 16, plus an additional value of 32.  The user
+ *  can always manually edit odd beats/measure values.
  */
 
 static const int s_beat_measure_count   = 16;
-static const int s_beat_length_count    = 16;
-
-/**
- *  Looks up a beat-width value and returns the index into the combo-box.
- *  Now we use 1 to 16 and 32 as values instead of a filled static array.
- */
-
-static int
-s_lookup_bw (int bw)
-{
-    return bw == 32 ? s_beat_length_count : bw - 1 ;
-}
-
-/**
- * To reduce the amount of written code, we use a static array to
- * initialize the measures entries.
- */
-
-static const int s_measures_items [] =
-{
-    1, 2, 3, 4, 5, 6, 7, 8, 16, 24, 32, 64, 96, 128
-};
-static const int s_measures_count = sizeof(s_measures_items) / sizeof(int);
-
-/**
- *  Looks up a beat-width value.
- */
-
-static int
-s_lookup_measures (int m)
-{
-    int result = 0;
-    for (int wi = 0; wi < s_measures_count; ++wi)
-    {
-        if (s_measures_items[wi] == m)
-        {
-            result = wi;
-            break;
-        }
-    }
-    return result;
-}
-
-/**
- *  These static items are used to fill in and select the proper snap values
- *  for the grids.  Note that they are not members, though they could be.
- *  These values are also used for note length.  See update_grid_snap() and
- *  update_note_length().
- */
-
-static const int s_snap_items [] =
-{
-    1, 2, 4, 8, 16, 32, 64, 128, 0, 3, 6, 12, 24, 48, 96, 192
-};
-static const int s_snap_count = sizeof(s_snap_items) / sizeof(int);
 
 /**
  *  These static items are used to fill in and select the proper zoom values for
@@ -371,8 +312,11 @@ qseqeditframe64::qseqeditframe64
     m_sequences_popup       (nullptr),
     m_events_popup          (nullptr),
     m_minidata_popup        (nullptr),
+    m_measures_list         (measure_items()),      /* see settings module  */
     m_beats_per_bar         (0),                    /* set in ctor body     */
+    m_beatwidth_list        (beatwidth_items()),    /* see settings module  */
     m_beat_width            (0),                    /* set in ctor body     */
+    m_snap_list             (snap_items()),         /* see settings module  */
     m_snap                  (sm_initial_snap),
     m_note_length           (sm_initial_note_length),
     m_scale                 (0),                    /* set in ctor body     */
@@ -467,7 +411,7 @@ qseqeditframe64::qseqeditframe64
 
     /*
      * Beats Per Bar.  Fill the options for the beats per measure combo-box,
-     * and set the default.
+     * and set the default.  These range from 1 to 16, plus a value of 32.
      */
 
     qt_set_icon(down_xpm, ui->m_button_bpm);
@@ -513,15 +457,19 @@ qseqeditframe64::qseqeditframe64
         this, SLOT(reset_beat_width())
     );
 
-    for (int w = 0; w < s_beat_length_count; ++w)
+#if defined USE_OLD_CODE
+    for (int i = 0; i < s_beat_width_count; ++i)
     {
-        QString combo_text = QString::number(w + 1);
+        int w = s_beat_width_items[i];
+        QString combo_text = QString::number(w);
         ui->m_combo_bw->insertItem(w, combo_text);
     }
-    ui->m_combo_bw->insertItem(s_beat_length_count, thirtytwo);
+#else
+    (void) fill_combobox(ui->m_combo_bw, m_beatwidth_list);
+#endif
 
-    int bwindex = s_lookup_bw(m_beat_width);
-    int bw = m_beat_width;              /* seq_pointer()->get_beat_width(); */
+    int bwindex = m_beatwidth_list.index(m_beat_width);
+    int bw = m_beat_width;              /* seq_pointer()->get_beat_width() */
     std::string bstring = std::to_string(bw);
     ui->m_combo_bw->setCurrentIndex(bwindex);
     ui->m_combo_bw->setEditText(qt(bstring));
@@ -548,14 +496,18 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_length, SIGNAL(clicked(bool)),
         this, SLOT(reset_measures())
     );
+#if defined USE_OLD_CODE
     for (int m = 0; m < s_measures_count; ++m)
     {
         std::string itext = std::to_string(s_measures_items[m]);
         QString combo_text = qt(itext);
         ui->m_combo_length->insertItem(m, combo_text);
     }
+#else
+    (void) fill_combobox(ui->m_combo_length, m_measures_list);
+#endif
 
-    int len_index = s_lookup_measures(m_measures);
+    int len_index = m_measures_list.index(m_measures);
     int measures = not_nullptr(s) ? s->calculate_measures() : 1 ;
     std::string mstring = std::to_string(measures);
     ui->m_combo_length->setCurrentIndex(len_index);
@@ -769,6 +721,7 @@ qseqeditframe64::qseqeditframe64
      *  adapted to Qt 5.
      */
 
+#if defined USE_OLD_CODE
     for (int si = 0; si < s_snap_count; ++si)
     {
         int item = s_snap_items[si];
@@ -789,12 +742,17 @@ qseqeditframe64::qseqeditframe64
         }
     }
     ui->m_combo_snap->setCurrentIndex(4);               /* 16th-note entry  */
+    ui->m_combo_note->setCurrentIndex(4);               /* ditto            */
+#else
+    (void) fill_combobox(ui->m_combo_snap, m_snap_list, 4, "1/"); /* 1/16th */
+    (void) fill_combobox(ui->m_combo_note, m_snap_list, 4, "1/"); /* ditto  */
+#endif
+
     connect
     (
         ui->m_combo_snap, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_grid_snap(int))
     );
-    ui->m_combo_note->setCurrentIndex(4);               /* ditto            */
     connect
     (
         ui->m_combo_note, SIGNAL(currentIndexChanged(int)),
@@ -1419,6 +1377,7 @@ void
 qseqeditframe64::update_beats_per_measure (int index)
 {
     ++index;
+
     int bpb = index == s_beat_measure_count ? 32 : index ;
     if (bpb != m_beats_per_bar)
     {
@@ -1521,7 +1480,13 @@ qseqeditframe64::get_measures ()
 void
 qseqeditframe64::update_beat_width (int index)
 {
-    int bw = index == s_beat_length_count ? 32 : index + 1 ;
+#if defined USE_OLD_CODE
+    ++index;
+
+    int bw = index == s_beat_width_count ? 32 : index ;
+#else
+    int bw = m_beatwidth_list.ctoi(index);
+#endif
     if (bw != m_beat_width)
     {
         set_beat_width(bw);
@@ -1550,7 +1515,7 @@ qseqeditframe64::text_beat_width (const QString & text)
 void
 qseqeditframe64::reset_beat_width ()
 {
-    int index = s_lookup_bw(usr().bw_default());
+    int index = m_beatwidth_list.index(usr().bw_default());
     ui->m_combo_bw->setCurrentIndex(index);
     update_draw_geometry();
 }
@@ -1581,7 +1546,11 @@ qseqeditframe64::set_beat_width (int bw)
 void
 qseqeditframe64::update_measures (int index)
 {
+#if defined USE_OLD_CODE
     int m = s_measures_items[index];
+#else
+    int m = m_measures_list.ctoi(index);
+#endif
     if (m != m_measures)
     {
         set_measures(m);
@@ -1609,12 +1578,12 @@ qseqeditframe64::text_measures (const QString & text)
 void
 qseqeditframe64::next_measures ()
 {
-    int index = s_lookup_measures(m_measures);
-    if (++index >= s_measures_count)
+    int index = m_measures_list.index(m_measures);
+    if (++index >= m_measures_list.count())
         index = 0;
 
     ui->m_combo_length->setCurrentIndex(index);
-    int m = s_measures_items[index];
+    int m = m_measures_list.ctoi(index);
     if (m != m_measures)
         set_measures(m);
 }
@@ -2416,7 +2385,7 @@ qseqeditframe64::update_grid_snap (int index)
     if (index >= 0 && index < s_snap_count)
     {
         int qnfactor = perf().ppqn() * 4;
-        int item = s_snap_items[index];
+        int item = m_snap_list.ctoi(index);
         int v = qnfactor / item;
         set_snap(v);
     }
@@ -2470,7 +2439,7 @@ qseqeditframe64::update_note_length (int index)
     if (index >= 0 && index < s_snap_count)
     {
         int qnfactor = perf().ppqn() * 4;
-        int item = s_snap_items[index];
+        int item = m_snap_list.ctoi(index);
         int v = qnfactor / item;
         set_note_length(v);
     }
@@ -3383,14 +3352,7 @@ void
 qseqeditframe64::remove_lfo_frame ()
 {
     if (not_nullptr(m_lfo_wnd))
-    {
-#if defined USE_OLD_CODE
-        delete m_lfo_wnd;
-        m_lfo_wnd = nullptr;
-#else
         m_lfo_wnd->close();
-#endif
-    }
 }
 
 /**
@@ -3401,14 +3363,7 @@ void
 qseqeditframe64::remove_patternfix_frame ()
 {
     if (not_nullptr(m_patternfix_wnd))
-    {
-#if defined USE_OLD_CODE
-        delete m_patternfix_wnd;
-        m_patternfix_wnd = nullptr;
-#else
         m_patternfix_wnd->close();
-#endif
-    }
 }
 
 QWidget *

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-08
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -117,7 +117,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     m_live_song_buttons     (nullptr),
     m_parent_widget         (dynamic_cast<qsmainwnd *>(parent)),
     m_perf                  (p),
-    m_ppqn_list             (default_ppqns()),  /* see the settings module  */
+    m_ppqn_list             (default_ppqns(), true), /* add a blank slot    */
     m_is_initialized        (false),
     m_backup_rc             (),
     m_backup_usr            (),
@@ -816,25 +816,8 @@ qseditoptions::~qseditoptions ()
 bool
 qseditoptions::set_ppqn_combo ()
 {
-    bool result = false;
-    int count = m_ppqn_list.count();
-    if (count > 0)
-    {
-        std::string p = std::to_string(usr().default_ppqn());
-        QString combo_text = qt(p);
-        ui->combo_box_ppqn->clear();
-        ui->combo_box_ppqn->insertItem(0, combo_text);
-        for (int i = 1; i < count; ++i)
-        {
-            p = m_ppqn_list.at(i);
-            combo_text = qt(p);
-            ui->combo_box_ppqn->insertItem(i, combo_text);
-            if (string_to_int(p) == perf().ppqn())
-                result = true;
-        }
-        ui->combo_box_ppqn->setCurrentIndex(0);
-    }
-    return result;
+    m_ppqn_list.current(std::to_string(int(perf().ppqn())));
+    return fill_combobox(ui->combo_box_ppqn, m_ppqn_list);
 }
 
 void

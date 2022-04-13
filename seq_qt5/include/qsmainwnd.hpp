@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-05
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -41,7 +41,7 @@
 #include <QMainWindow>
 #include <QList>
 
-#include "cfg/settings.hpp"             /* seq66::combo helper class        */
+#include "cfg/settings.hpp"             /* seq66::combolist helper class    */
 #include "midi/midibytes.hpp"           /* alias midibpm                    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 
@@ -294,7 +294,8 @@ private:
     qsessionframe * m_session_frame;
     qsetmaster * m_set_master;
     qmutemaster * m_mute_master;
-    combo m_ppqn_list;
+    combolist m_ppqn_list;
+    combolist m_beatwidth_list;
 
     /**
      *  Holds the last value of the MIDI-control-in status, used in displaying

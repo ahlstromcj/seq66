@@ -27,13 +27,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-12
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "qscrollmaster.h"              /* qscrollmaster::dir enum class    */
 #include "qseqframe.hpp"                /* QFrame and seq66::qseqframe      */
+#include "cfg/settings.hpp"             /* seq66::combolist class, helpers  */
 #include "play/performer.hpp"           /* seq66::performer::callbacks      */
 #include "play/setmapper.hpp"           /* seq66::setmapper and others      */
 
@@ -351,16 +352,35 @@ private:
     QMenu * m_minidata_popup;
 
     /**
+     *  Holds the measure selection for the beats-per-measure combo-box.
+     */
+
+    combolist m_measures_list;
+
+    /**
      *  Holds the current beats-per-measure selection.
      */
 
     int m_beats_per_bar;
 
     /**
+     *  Holds the beat-width selection for the beats-width combo-box.
+     */
+
+    combolist m_beatwidth_list;
+
+    /**
      *  Holds the current beat-width selection.
      */
 
     int m_beat_width;
+
+    /**
+     *  Holds the list for the snap settings.  These also apply to the note
+     *  settings.
+     */
+
+    combolist m_snap_list;
 
     /**
      *  Used in setting the snap-to value in pulses, off = 1.

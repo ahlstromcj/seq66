@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-12
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -166,7 +166,7 @@ static const int Tab_Session            =  7;
  */
 
 static const int s_beat_measure_count   = 16;
-static const int s_beat_length_count    = 16;
+// static const int s_beat_length_count    = 16;
 
 /**
  *  Given a display coordinate, looks up the screen and returns its geometry.
@@ -235,7 +235,8 @@ qsmainwnd::qsmainwnd
     m_session_frame         (nullptr),
     m_set_master            (nullptr),
     m_mute_master           (nullptr),
-    m_ppqn_list             (default_ppqns()),  /* see the settings module  */
+    m_ppqn_list             (default_ppqns(), true), /* add a blank slot    */
+    m_beatwidth_list        (beatwidth_items()),     /* see settings module */
     m_control_status        (automation::ctrlstatus::none),
     m_song_mode             (false),
     m_is_looping            (false),
@@ -339,12 +340,16 @@ qsmainwnd::qsmainwnd
      * story.
      */
 
+#if defined USE_OLD_CODE
     for (int i = 0; i < s_beat_length_count; ++i)
     {
         QString combo_text = QString::number(i + 1);
         ui->cmb_beat_length->insertItem(i, combo_text);
     }
     ui->cmb_beat_length->insertItem(s_beat_length_count, thirtytwo);
+#else
+    (void) fill_combobox(ui->cmb_beat_length, m_beatwidth_list);
+#endif
 
     m_msg_save_changes = new QMessageBox(this);
     m_msg_save_changes->setText(tr("Unsaved changes detected."));
@@ -1012,25 +1017,8 @@ qsmainwnd::set_song_mode (bool /*songmode*/)
 bool
 qsmainwnd::set_ppqn_combo ()
 {
-    bool result = false;
-    int count = m_ppqn_list.count();
-    if (count > 0)
-    {
-        std::string p = std::to_string(cb_perf().ppqn());
-        QString combo_text = qt(p);
-        ui->cmb_ppqn->clear();
-        ui->cmb_ppqn->insertItem(0, combo_text);
-        for (int i = 1; i < count; ++i)
-        {
-            p = m_ppqn_list.at(i);
-            combo_text = qt(p);
-            ui->cmb_ppqn->insertItem(i, combo_text);
-            if (std::stoi(p) == cb_perf().ppqn())
-                result = true;
-        }
-        ui->cmb_ppqn->setCurrentIndex(0);
-    }
-    return result;
+    m_ppqn_list.current(std::to_string(int(cb_perf().ppqn())));
+    return fill_combobox(ui->cmb_ppqn, m_ppqn_list);
 }
 
 void
@@ -2503,7 +2491,11 @@ qsmainwnd::update_midi_bus (int index)
 void
 qsmainwnd::update_beat_length (int blindex)
 {
+#if defined USE_OLD_CODE
     int bl = blindex == s_beat_length_count ? 32 : blindex + 1 ;
+#else
+    int bl = m_beatwidth_list.ctoi(blindex);
+#endif
     if (cb_perf().set_beat_width(bl))
     {
         enable_save();

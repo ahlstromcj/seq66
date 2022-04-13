@@ -18,6 +18,10 @@ Ports:
 
     -   Investigate deinit_in() and _out().
 
+Document:
+
+    -   Make sure the Key/Scale note analysis is documented.
+
 UI:
 
     Additional, oft-used configuration items to consider adding to the

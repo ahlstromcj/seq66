@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2022-02-08
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -35,6 +35,7 @@
  *      -   qt_timer(). Encapsulates creating and starting a timer, with a
  *          callback given by a Qt slot-name.
  *      -   enable_combobox_item(). Handles the appearance of a combo box.
+ *      -   fill_combobox (). Fills a combo box from a combolist.
  *      -   show_open_midi_file_dialog()
  *      -   show_import_midi_file_dialog()
  *      -   show_import_project_dialog()
@@ -50,9 +51,8 @@
 #include <QStandardItemModel>
 #include <QTimer>
 
-#include "cfg/settings.hpp"             /* seq66::rc().home_config_dir...() */
 #include "util/filefunctions.hpp"       /* seq66 file-name manipulations    */
-#include "qt5_helpers.hpp"
+#include "qt5_helpers.hpp"              /* these cool helper functions!     */
 
 /*
  * Don't document the namespace.
@@ -235,6 +235,46 @@ enable_combobox_item (QComboBox * box, int index, bool enabled)
         item->setFlags(item->flags() | Qt::ItemIsEnabled);
     else
         item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+}
+
+bool
+fill_combobox
+(
+    QComboBox * box,
+    const combolist & clist,
+    int currentindex,
+    const std::string & prefix,
+    const std::string & suffix
+)
+{
+    bool result = false;
+    int count = clist.count();
+    if (count > 0)
+    {
+        box->clear();
+        for (int i = 0; i < count; ++i)
+        {
+            std::string item = clist.at(i);
+            if (! item.empty())
+            {
+                if (! prefix.empty())       /* for example, "1/" for widths */
+                    item = prefix + item;
+
+                if (! suffix.empty())
+                    item = item + suffix;
+
+                QString text = qt(item);
+                result = true;
+                if (item == "-")
+                    box->insertSeparator(8);
+                else
+                    box->insertItem(i, text);
+            }
+        }
+        if (result)
+            box->setCurrentIndex(currentindex);
+    }
+    return result;
 }
 
 /**

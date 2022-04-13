@@ -342,7 +342,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     m_edit_mode = perf().edit_mode(seq_pointer()->seq_number());
 
     /*
-     * Draw the border.  See the banner notes about width and height.
+     * Draw the border and grid. See the banner notes about width and height.
      * Doesn't seem to be needed: painter.drawRect(0, 0, ww, wh);
      */
 
@@ -458,6 +458,11 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     painter.setPen(pen);
     painter.drawRect(r);
     pen.setWidth(c_pen_width);                          /* line thickness   */
+
+    /*
+     * Horizontal (note) lines.
+     */
+
     for (int key = 1; key <= c_notes_count; ++key)      /* each note row    */
     {
         int remkeys = c_notes_count - key;              /* remaining keys   */
@@ -489,6 +494,8 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     }
 
     /*
+     * Vertical (time) lines.
+     *
      * The ticks_per_step value needs to be figured out.  Why 6 * zoom()?  6
      * is the number of pixels in the smallest divisions in the default
      * seqroll background.
@@ -502,8 +509,6 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
     midipulse ticks_per_bar = bpbar * ticks_per_beat;
     midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
-
-    midipulse increment = ticks_per_step;       /* ticks_per_step           */
     midipulse endtick = pix_to_tix(r.x() + r.width());
     midipulse starttick = pix_to_tix(r.x());
     starttick -= starttick % ticks_per_step;
@@ -517,7 +522,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
      * for (int tick = starttick; tick < endtick; ++tick)
      */
 
-    for (int tick = starttick; tick < endtick; tick += increment)
+    for (int tick = starttick; tick < endtick; tick += ticks_per_step)
     {
         int x_offset = xoffset(tick) - scroll_offset_x();
         int penwidth = 1;

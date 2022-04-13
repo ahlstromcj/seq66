@@ -28,11 +28,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2022-01-10
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  */
 
+#include "cfg/settings.hpp"             /* seq66::rc().home_config_dir...() */
 #include "ctrl/keymap.hpp"              /* seq66::qt_modkey_ordinal()       */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke wrapper class   */
 
@@ -79,6 +80,14 @@ extern QTimer * qt_timer
     const char * slotname
 );
 extern void enable_combobox_item (QComboBox * box, int index, bool enabled);
+extern bool fill_combobox
+(
+    QComboBox * box,
+    const combolist & clist,
+    int currentindex            = 0,
+    const std::string & prefix  = "",
+    const std::string & suffix  = ""
+);
 extern bool show_open_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_import_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_import_project_dialog
