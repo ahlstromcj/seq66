@@ -146,6 +146,12 @@ beatwidth_items ()
     return s_beatwidth_list;
 }
 
+/**
+ *  These static items are used to fill in and select the proper snap values for
+ *  the grids.  These values are also used for note length.  See
+ *  update_grid_snap() and update_note_length() in qseqeditframe.
+ */
+
 const tokenization &
 snap_items ()
 {
