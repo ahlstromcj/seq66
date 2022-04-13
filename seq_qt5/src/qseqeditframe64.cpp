@@ -96,6 +96,7 @@
 
 #include "midi/controllers.hpp"         /* seq66::controller_name()         */
 #include "play/performer.hpp"           /* seq66::performer reference       */
+#include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 #include "qlfoframe.hpp"                /* seq66::qlfoframe dialog class    */
 #include "qpatternfix.hpp"              /* seq66::qpatternfix dialog class  */
 #include "qseqdata.hpp"                 /* seq66::qseqdata panel            */
@@ -456,17 +457,7 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_bw, SIGNAL(clicked(bool)),
         this, SLOT(reset_beat_width())
     );
-
-#if defined USE_OLD_CODE
-    for (int i = 0; i < s_beat_width_count; ++i)
-    {
-        int w = s_beat_width_items[i];
-        QString combo_text = QString::number(w);
-        ui->m_combo_bw->insertItem(w, combo_text);
-    }
-#else
     (void) fill_combobox(ui->m_combo_bw, m_beatwidth_list);
-#endif
 
     int bwindex = m_beatwidth_list.index(m_beat_width);
     int bw = m_beat_width;              /* seq_pointer()->get_beat_width() */
@@ -496,16 +487,7 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_length, SIGNAL(clicked(bool)),
         this, SLOT(reset_measures())
     );
-#if defined USE_OLD_CODE
-    for (int m = 0; m < s_measures_count; ++m)
-    {
-        std::string itext = std::to_string(s_measures_items[m]);
-        QString combo_text = qt(itext);
-        ui->m_combo_length->insertItem(m, combo_text);
-    }
-#else
     (void) fill_combobox(ui->m_combo_length, m_measures_list);
-#endif
 
     int len_index = m_measures_list.index(m_measures);
     int measures = not_nullptr(s) ? s->calculate_measures() : 1 ;
@@ -721,33 +703,8 @@ qseqeditframe64::qseqeditframe64
      *  adapted to Qt 5.
      */
 
-#if defined USE_OLD_CODE
-    for (int si = 0; si < s_snap_count; ++si)
-    {
-        int item = s_snap_items[si];
-        std::string itext = item > 1 ?
-            "1/" + std::to_string(item) : std::to_string(item);
-
-        QString combo_text = qt(itext);
-        if (item == 0)
-        {
-            ui->m_combo_snap->insertSeparator(8);   // why 8?
-            ui->m_combo_note->insertSeparator(8);   // why 8?
-            continue;
-        }
-        else
-        {
-            ui->m_combo_snap->insertItem(si, combo_text);
-            ui->m_combo_note->insertItem(si, combo_text);
-        }
-    }
-    ui->m_combo_snap->setCurrentIndex(4);               /* 16th-note entry  */
-    ui->m_combo_note->setCurrentIndex(4);               /* ditto            */
-#else
     (void) fill_combobox(ui->m_combo_snap, m_snap_list, 4, "1/"); /* 1/16th */
     (void) fill_combobox(ui->m_combo_note, m_snap_list, 4, "1/"); /* ditto  */
-#endif
-
     connect
     (
         ui->m_combo_snap, SIGNAL(currentIndexChanged(int)),
@@ -1392,7 +1349,7 @@ qseqeditframe64::text_beats_per_measure (const QString & text)
     std::string temp = text.toStdString();
     if (! temp.empty())
     {
-        int beats = std::stoi(temp);
+        int beats = string_to_int(temp); // std::stoi(temp);
         if (usr().bpb_is_valid(beats))
             set_beats_per_measure(beats);
         else
@@ -1480,13 +1437,7 @@ qseqeditframe64::get_measures ()
 void
 qseqeditframe64::update_beat_width (int index)
 {
-#if defined USE_OLD_CODE
-    ++index;
-
-    int bw = index == s_beat_width_count ? 32 : index ;
-#else
     int bw = m_beatwidth_list.ctoi(index);
-#endif
     if (bw != m_beat_width)
     {
         set_beat_width(bw);
@@ -1500,7 +1451,7 @@ qseqeditframe64::text_beat_width (const QString & text)
     std::string temp = text.toStdString();
     if (! temp.empty())
     {
-        int width = std::stoi(temp);
+        int width = string_to_int(temp);
         if (usr().bw_is_valid(width))
             set_beat_width(width);
         else
@@ -1546,11 +1497,7 @@ qseqeditframe64::set_beat_width (int bw)
 void
 qseqeditframe64::update_measures (int index)
 {
-#if defined USE_OLD_CODE
-    int m = s_measures_items[index];
-#else
     int m = m_measures_list.ctoi(index);
-#endif
     if (m != m_measures)
     {
         set_measures(m);
@@ -1564,7 +1511,7 @@ qseqeditframe64::text_measures (const QString & text)
     std::string temp = text.toStdString();
     if (! temp.empty())
     {
-        int measures = std::stoi(temp);
+        int measures = string_to_int(temp);
         if (measures >= 1 && measures <= 99999)        /* sanity check only */
             set_measures(measures);
     }
@@ -2382,7 +2329,7 @@ qseqeditframe64::scroll_to_note (int note)
 void
 qseqeditframe64::update_grid_snap (int index)
 {
-    if (index >= 0 && index < s_snap_count)
+    if (index >= 0 && index < m_snap_list.count())
     {
         int qnfactor = perf().ppqn() * 4;
         int item = m_snap_list.ctoi(index);
@@ -2436,7 +2383,7 @@ qseqeditframe64::reset_grid_snap ()
 void
 qseqeditframe64::update_note_length (int index)
 {
-    if (index >= 0 && index < s_snap_count)
+    if (index >= 0 && index < m_snap_list.count())
     {
         int qnfactor = perf().ppqn() * 4;
         int item = m_snap_list.ctoi(index);

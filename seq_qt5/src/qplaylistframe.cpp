@@ -770,7 +770,7 @@ qplaylistframe::handle_song_add_click ()
             if (ok)
             {
                 std::string nstr = ui->editSongNumber->text().toStdString();
-                int midinumber = std::stoi(nstr);
+                int midinumber = string_to_int(nstr);
                 int index = perf().song_count() + 1;
                 if (perf().add_song(index, midinumber, basename, directory))
                 {
@@ -798,7 +798,7 @@ qplaylistframe::handle_song_modify_click ()
         std::string name = ui->editSongFilename->text().toStdString();
         std::string directory = ui->editSongPath->text().toStdString();
         std::string nstr = ui->editSongNumber->text().toStdString();
-        int midinumber = std::stoi(nstr);
+        int midinumber = string_to_int(nstr);
         int songindex = m_current_song_index;
         if (perf().modify_song(songindex, midinumber, name, directory))
         {

@@ -1530,7 +1530,7 @@ qseditoptions::slot_progress_box_width ()
     const std::string wtext = qs.toStdString();
     if (! wtext.empty())
     {
-        double w = std::stod(wtext);
+        double w = string_to_double(wtext);
         double h = usr().progress_box_height();
         if (usr().progress_box_size(w, h))
             modify_usr();
@@ -1547,7 +1547,7 @@ qseditoptions::slot_progress_box_height ()
     if (! htext.empty())
     {
         double w = usr().progress_box_width();
-        double h = std::stod(htext);
+        double h = string_to_double(htext);
         if (usr().progress_box_size(w, h))
             modify_usr();
         else

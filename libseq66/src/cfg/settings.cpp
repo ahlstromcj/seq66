@@ -47,19 +47,19 @@ namespace seq66
  *  qsmainwnd.
  */
 
-combolist::combolist (bool use_default) :
+combolist::combolist (bool use_current) :
     m_list_items    (),
-    m_use_default   (use_default)
+    m_use_current   (use_current)
 {
-    if (m_use_default)
+    if (m_use_current)
         m_list_items.push_back("");
 }
 
-combolist::combolist (const tokenization & slist, bool use_default) :
+combolist::combolist (const tokenization & slist, bool use_current) :
     m_list_items    (),
-    m_use_default   (use_default)
+    m_use_current   (use_current)
 {
-    if (m_use_default)
+    if (m_use_current)
         m_list_items.push_back("");
 
     for (const auto & s : slist)
@@ -99,7 +99,7 @@ combolist::index (const std::string & target) const
     int counter = 0;
     for (const auto & s : m_list_items)
     {
-        if (counter == 0 && m_use_default)
+        if (counter == 0 && m_use_current)
         {
             ++counter;
             continue;
@@ -136,12 +136,18 @@ measure_items ()
     return s_measure_list;
 }
 
+/**
+ *  MIDI cannot store any beat-width values that are not powers of 2.
+ *  So we do not show them.  The user can still enter such values, but
+ *  problems will ensue.
+ */
+
 const tokenization &
 beatwidth_items ()
 {
     static const tokenization s_beatwidth_list
     {
-        "1", "2", "4", "6", "8", "16", "32"
+        "1", "2", "4", "8", "16", "32"
     };
     return s_beatwidth_list;
 }
@@ -159,6 +165,22 @@ snap_items ()
     {
         "1", "2", "4", "8", "16", "32", "64", "128", "-",
         "3", "6", "12", "24", "48", "96", "192"
+    };
+    return s_snap_list;
+}
+
+/**
+ *  Snap values for the performance/song editor.  The editor will fill in
+ *  the first value with the word "Lenght", to indicate that we snap to the
+ *  length of the pattern.
+ */
+
+const tokenization &
+perf_snap_items ()
+{
+    static const tokenization s_snap_list
+    {
+        "1", "2", "3", "4", "8", "16", "32"
     };
     return s_snap_list;
 }

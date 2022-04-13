@@ -88,6 +88,8 @@ Windows, and using a conventional source tarball.
         *   Removed odd beat-widths from time signature dropdowns.  The user can
             still enter odd values manually.
         *   Refactored all drop-down lists to use the settings module.
+        *   Tightend string_to_xxx() functions and used them in lieu of the
+        *   std::stoxxx() functions.
     *   Version 0.98.6:
         *   Revisited issue #41 to make sure "Quit" is "Hide" under NSM. Also
             fixed issue with the "newtune.midi" default name.

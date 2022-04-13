@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-18
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *  The set-master controls the existence and usage of all sets.  For control
@@ -38,6 +38,7 @@
 
 #include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
+#include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 #include "qsetmaster.hpp"               /* seq66::qsetmaster tab class      */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd main window     */
 #include "qt5_helpers.hpp"              /* seq66::qt_keystroke() etc.       */
@@ -475,12 +476,12 @@ qsetmaster::move_helper (int oldrow, int newrow)
     if (not_nullptr(c0))
     {
         std::string snstring = c0->text().toStdString();
-        int set0 = std::stoi(snstring);
+        int set0 = string_to_int(snstring);
         QTableWidgetItem * c1 = cell(newrow, column_id::set_number);
         if (not_nullptr(c1))
         {
             std::string snstring = c1->text().toStdString();
-            int set1 = std::stoi(snstring);
+            int set1 = string_to_int(snstring);
             if (cb_perf().swap_sets(set0, set1))    /* a modify action      */
             {
                 (void) initialize_table();          /* refill with sets     */
@@ -509,7 +510,7 @@ qsetmaster::slot_delete ()
             if (not_nullptr(qtip))
             {
                 std::string snstr = qtip->text().toStdString();
-                int setno = std::stoi(snstr);
+                int setno = string_to_int(snstr);
                 if (setno > 0)
                 {
                     if (cb_perf().remove_set(setno))

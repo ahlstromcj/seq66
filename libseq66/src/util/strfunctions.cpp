@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-02-28
+ * \updates       2022-04-13
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -497,6 +497,8 @@ string_replace
     return result;
 }
 
+#if defined USE_HAS_DIGIT                   /* we now use try/catch         */
+
 static bool
 has_digit (const std::string & s, bool floating = false)
 {
@@ -536,6 +538,8 @@ has_digit (const std::string & s, bool floating = false)
     }
     return result;
 }
+
+#endif
 
 /**
  *  Converts a string value to a boolean.  Note that an empty string returns
@@ -585,7 +589,20 @@ string_to_bool (const std::string & s, bool defalt)
 double
 string_to_double (const std::string & s, double defalt)
 {
+#if defined USE_OLD_CODE
     return has_digit(s, true) ? std::stod(s, nullptr) : defalt ;
+#else
+    double result = defalt;
+    try
+    {
+        result = std::stod(s, nullptr);
+    }
+    catch (std::invalid_argument const &)
+    {
+        // no code
+    }
+    return result;
+#endif
 }
 
 /**
@@ -614,7 +631,20 @@ string_to_double (const std::string & s, double defalt)
 long
 string_to_long (const std::string & s, long defalt)
 {
+#if defined USE_OLD_CODE
     return has_digit(s) ? std::stol(s, nullptr, 0) : defalt ;
+#else
+    long result = defalt;
+    try
+    {
+        result = std::stol(s, nullptr, 0);
+    }
+    catch (std::invalid_argument const &)
+    {
+        // no code
+    }
+    return result;
+#endif
 }
 
 /**
@@ -624,7 +654,20 @@ string_to_long (const std::string & s, long defalt)
 unsigned long
 string_to_unsigned_long (const std::string & s, unsigned long defalt)
 {
+#if defined USE_OLD_CODE
     return has_digit(s) ? std::stoul(s, nullptr, 0) : defalt ;
+#else
+    double result = defalt;
+    try
+    {
+        result = std::stoul(s, nullptr, 0);
+    }
+    catch (std::invalid_argument const &)
+    {
+        // no code
+    }
+    return result;
+#endif
 }
 
 /**

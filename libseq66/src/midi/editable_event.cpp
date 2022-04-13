@@ -687,7 +687,7 @@ editable_event::set_status_from_string
             set_meta_status(value);
             if (value == EVENT_META_SET_TEMPO)                      /* 0x51 */
             {
-                double bpm = std::stof(sd0);
+                double bpm = string_to_double(sd0);
                 if (bpm > 0.0f)
                     (void) set_tempo(bpm);
             }
@@ -696,7 +696,7 @@ editable_event::set_status_from_string
                 auto pos = sd0.find_first_of("/");
                 if (pos != std::string::npos)
                 {
-                    int nn = std::stoi(sd0);
+                    int nn = string_to_int(sd0);
                     int dd = nn;
                     int cc = 0x18;
                     int bb = 0x08;
@@ -704,7 +704,7 @@ editable_event::set_status_from_string
 
                     std::string sd0_partial = sd0.substr(pos);  // drop "nn/"
                     if (! sd0_partial.empty())
-                        dd = std::stoi(sd0_partial);
+                        dd = string_to_int(sd0_partial);
 
                     if (dd > 0)
                     {
@@ -774,7 +774,7 @@ editable_event::modify_channel_status_from_string
 )
 {
     midibyte status = mask_status(get_status());
-    midibyte c = midibyte(std::stoi(chan) - 1);
+    midibyte c = midibyte(string_to_int(chan) - 1);
     set_channel_status(status, c);          /* pass in status and channel   */
     if (is_one_byte_msg(status) || is_pitchbend_msg(status))
     {

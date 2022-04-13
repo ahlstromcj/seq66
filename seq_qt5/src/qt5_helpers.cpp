@@ -257,11 +257,16 @@ fill_combobox
             std::string item = clist.at(i);
             if (! item.empty())
             {
-                if (! prefix.empty())       /* for example, "1/" for widths */
-                    item = prefix + item;
+                bool nopadding = clist.use_current() && i == 0;
+                bool addpadding = (item != "-") && ! nopadding;
+                if (addpadding)
+                {
+                    if (! prefix.empty())   /* for example, "1/" for widths */
+                        item = prefix + item;
 
-                if (! suffix.empty())
-                    item = item + suffix;
+                    if (! suffix.empty())
+                        item = item + suffix;
+                }
 
                 QString text = qt(item);
                 result = true;

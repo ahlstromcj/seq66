@@ -224,7 +224,7 @@ usrfile::parse ()
                 tokenization instpair = tokenize(line(), " ");
                 if (instpair.size() >= 1)
                 {
-                    int c = std::stoi(instpair[0]);
+                    int c = string_to_int(instpair[0]);
                     std::string name;
                     for (int i = 1; i < int(instpair.size()); ++i)
                     {

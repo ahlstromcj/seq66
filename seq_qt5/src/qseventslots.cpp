@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-09-29
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -386,7 +386,7 @@ qseventslots::string_to_channel (const std::string & channel)
 {
     midibyte result = m_seq->seq_midi_channel();
     if (! channel.empty())
-        result = midibyte(std::stoi(channel) - 1);
+        result = midibyte(string_to_int(channel) - 1);
 
     return result;
 }
@@ -1180,12 +1180,7 @@ qseventslots::increment_bottom ()
 int
 qseventslots::calculate_measures () const
 {
-#if defined USE_OLD_CODE
-    midipulse unitmeasure = seq_pointer()->unit_measure();
-    return 1 + get_length() / unitmeasure;
-#else
     return seq_pointer()->calculate_measures();
-#endif
 }
 
 }           // namespace seq66

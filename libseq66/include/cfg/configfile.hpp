@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-01-09
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -39,6 +39,7 @@
 #include <string>                       /* std::string, the ubiquitous one  */
 
 #include "util/basic_macros.hpp"        /* seq66::tokenization vector       */
+#include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -230,7 +231,7 @@ public:
 
     int version_number () const
     {
-        return version().empty() ? 0 : std::stoi(version()) ;
+        return version().empty() ? 0 : string_to_int(version()) ;
     }
 
     const std::string & file_version () const
@@ -240,7 +241,7 @@ public:
 
     int file_version_number () const
     {
-        return file_version().empty() ? 0 : std::stoi(file_version()) ;
+        return file_version().empty() ? 0 : string_to_int(file_version()) ;
     }
 
     bool bad_position (int p) const

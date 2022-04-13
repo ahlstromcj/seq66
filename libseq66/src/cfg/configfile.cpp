@@ -180,7 +180,7 @@ bool
 configfile::file_version_old (std::ifstream & file)
 {
     std::string file_version_string = parse_version(file);
-    int file_version = std::stoi(file_version_string);
+    int file_version = string_to_int(file_version_string);
     int code_version = version_number();
     return file_version < code_version;
 }
@@ -855,7 +855,7 @@ configfile::get_tag_value (const std::string & tag)
     if (pos != std::string::npos)
     {
         std::string buff = tag.substr(pos);     /* "35]" */
-        result = std::stoi(buff);
+        result = string_to_int(buff);
     }
     else
     {

@@ -1026,10 +1026,10 @@ usrsettings::parse_window_scale (const std::string & source)
     tokenization tokens = seq66::tokenize(source, "x ");
     if (tokens.size() > 0)
     {
-        double value1 = std::stod(tokens[0]);
+        double value1 = string_to_double(tokens[0]);
         if (tokens.size() > 1)
         {
-            double value2 = std::stod(tokens[1]);
+            double value2 = string_to_double(tokens[1]);
             result = window_scale(value1, value2, true);
         }
         else
@@ -1039,7 +1039,7 @@ usrsettings::parse_window_scale (const std::string & source)
     {
         if (! source.empty())
         {
-            double value = std::stod(source);
+            double value = string_to_double(source);
             result = window_scale(value);
         }
     }

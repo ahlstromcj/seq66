@@ -61,23 +61,23 @@ private:
 
     /**
      *  The list of values.  Starts out at size 1, with the first item being an
-     *  empty string that can be replaced with a default value.  Items apart from
-     *  the first item can only be added, not changed or removed.  caller.
+     *  empty string that can be replaced with a default value.  Items apart
+     *  from the first item can only be added, not changed or removed.  caller.
      */
 
     tokenization m_list_items;
 
     /**
-     *  If true, use the first item as a blank item, to be filled in later as the
-     *  default or current value.
+     *  If true, use the first item as a blank item, to be filled in later as
+     *  the default or current value.
      */
 
-    bool m_use_default;
+    bool m_use_current;
 
 public:
 
-    combolist (bool use_default = false);
-    combolist (const tokenization & slist, bool use_default = false);
+    combolist (bool use_current = false);
+    combolist (const tokenization & slist, bool use_current = false);
     combolist (const combolist &) = default;
     combolist & operator = (const combolist &) = default;
     ~combolist () = default;
@@ -87,6 +87,11 @@ public:
         return int(m_list_items.size());
     }
 
+    bool use_current () const
+    {
+        return m_use_current;
+    }
+
     std::string current () const
     {
         return m_list_items[0];
@@ -94,13 +99,13 @@ public:
 
     void current (const std::string & s)
     {
-        if (m_use_default)
+        if (m_use_current)
             m_list_items[0] = s;
     }
 
     void current (int v)
     {
-        if (m_use_default)
+        if (m_use_current)
             m_list_items[0] = std::to_string(v);
     }
 
@@ -141,6 +146,7 @@ extern const tokenization & default_ppqns ();
 extern const tokenization & measure_items ();
 extern const tokenization & beatwidth_items ();
 extern const tokenization & snap_items ();
+extern const tokenization & perf_snap_items ();
 extern void set_configuration_defaults ();
 
 /**

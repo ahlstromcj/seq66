@@ -446,7 +446,12 @@ pulses_to_time_string (midipulse p, midibpm bpm, int ppqn, bool showus)
          */
 
         if (hours > 0)
-            snprintf(tmp, sizeof tmp, "%d:%02d:%02d   ", hours, minutes, seconds);
+        {
+            snprintf
+            (
+                tmp, sizeof tmp, "%d:%02d:%02d   ", hours, minutes, seconds
+            );
+        }
         else
             snprintf(tmp, sizeof tmp, "%02d:%02d   ", minutes, seconds);
     }
@@ -686,7 +691,7 @@ string_to_pulses
 
 /**
  *  The first call is seeded with the current time, then a pseudo-random
- *  number is returned.
+ *  number is returned.  This is a simplistic linear generator.
  */
 
 int

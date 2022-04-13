@@ -758,7 +758,7 @@ gui_palette_qt5::add_color_stanza (const std::string & stanza, bool inverse)
         unsigned backargb;
         std::string textname;
         unsigned textargb;
-        int number = std::stoi(stanza);     /* gets first column value  */
+        int number = string_to_int(stanza);     /* gets first column value  */
         std::string argb;
         std::string::size_type lpos = 0;
         backname = next_quoted_string(stanza);

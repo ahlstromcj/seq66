@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-10-20
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -87,15 +87,6 @@ static const int c_trigger_transpose_min    = (-60);
 static const int c_trigger_transpose_max    =   60;
 
 /**
- *  The number of Snap entries in the combo-box:
- *
- *      "Length", "1/1", "1/2", "1/3", "1/4", "1/8", "1/16", and "1/32"
- */
-
-static const int c_snap_entry [] = { 0, 1, 2, 3, 4, 8, 16, 32 };
-static const int c_snap_entry_count = 8;
-
-/**
  *  Principal constructor, has a reference to a performer object.
  *
  * \param p
@@ -123,6 +114,7 @@ qperfeditframe64::qperfeditframe64
     m_palette               (nullptr),
     m_is_external           (isexternal),
     m_duration_mode         (true),
+    m_snap_list             (perf_snap_items(), true),  /* "Length" is 1st  */
     m_snap                  (8),
     m_beats_per_measure     (4),
     m_beat_width            (4),
@@ -139,15 +131,8 @@ qperfeditframe64::qperfeditframe64
      * We need an obvious macro for "6".
      */
 
-    for (int i = 0; i < c_snap_entry_count; ++i)
-    {
-        QString combo_text = "1/" + QString::number(c_snap_entry[i]);
-        if (i == 0)
-            combo_text = "Length";
-
-        ui->cmbGridSnap->insertItem(i, combo_text);
-    }
-    ui->cmbGridSnap->setCurrentIndex(3);
+    m_snap_list.current("Length");
+    (void) fill_combobox(ui->cmbGridSnap, m_snap_list, 3, "1/");
     connect
     (
         ui->cmbGridSnap, SIGNAL(currentIndexChanged(int)),
@@ -474,7 +459,6 @@ qperfeditframe64::follow_progress ()
     }
 }
 
-
 /**
  *  Sets the snap value per the given index.
  *
@@ -487,9 +471,9 @@ qperfeditframe64::follow_progress ()
 void
 qperfeditframe64::update_grid_snap (int snapindex)
 {
-    if (snapindex >= 0 && snapindex < c_snap_entry_count)
+    if (snapindex >= 0 && snapindex < m_snap_list.count())
     {
-        m_snap = c_snap_entry[snapindex];
+        m_snap = m_snap_list.ctoi(snapindex);
         set_guides();
     }
 }

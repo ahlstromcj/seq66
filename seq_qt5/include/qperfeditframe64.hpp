@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-12-27
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll),
@@ -37,8 +37,9 @@
 
 #include <QFrame>
 
-#include "qscrollmaster.h"              /* qscrollmaster::dir enum class    */
+#include "cfg/settings.hpp"             /* seq66::combolist class, helpers  */
 #include "midi/midibytes.hpp"           /* seq66::midipulse alias           */
+#include "qscrollmaster.h"              /* qscrollmaster::dir enum class    */
 
 /*
  * Do not document namespaces, it breaks Doxygen.
@@ -154,6 +155,7 @@ private:
     QPalette * m_palette;
     bool m_is_external;
     bool m_duration_mode;               /* true == H:M:S.fraction       */
+    combolist m_snap_list;
     int m_snap;                         /* set snap-to in pulses/ticks  */
     int m_beats_per_measure;
     int m_beat_width;

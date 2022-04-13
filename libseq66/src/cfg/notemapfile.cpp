@@ -111,7 +111,7 @@ notemapfile::parse_stream (std::ifstream & file)
 
     s = get_variable(file, "[notemap-flags]", "gm-channel");
     if (! s.empty())
-        mapper().gm_channel(std::stoi(s));
+        mapper().gm_channel(string_to_int(s));
 
     bool flag = get_boolean(file, "[notemap-flags]", "reverse");
     mapper().map_reversed(flag);
@@ -143,13 +143,13 @@ notemapfile::parse_stream (std::ifstream & file)
                 good = ! tmp.empty();
                 if (good)
                 {
-                    int gmnote = std::stoi(tmp);
+                    int gmnote = string_to_int(tmp);
                     std::string devname = get_variable(file, tag, "dev-name");
                     tmp = get_variable(file, tag, "dev-note");
                     good = ! tmp.empty();
                     if (good)
                     {
-                        int devnote = std::stoi(tmp);
+                        int devnote = string_to_int(tmp);
                         good = mapper().add(devnote, gmnote, devname, gmname);
                     }
                 }

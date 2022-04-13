@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-12
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -745,15 +745,8 @@ sequence::progress_value () const
 int
 sequence::calculate_measures (bool reset) const
 {
-#if defined USE_OLD_CODE
-    if (m_unit_measure == 0)
-        calculate_unit_measure();
-
-    return 1 + (get_length() - 1) / m_unit_measure;
-#else
     midipulse um = unit_measure(reset);
     return 1 + (get_length() - 1) / um;
-#endif
 }
 
 /**
@@ -4689,14 +4682,7 @@ sequence::extend_length ()
     bool result = len > get_length();
     if (len > get_length())
     {
-
-#if defined USE_OLD_CODE
-        calculate_unit_measure();               /* redo m_unit_measure      */
-
-        int measures = int(double(len) / m_unit_measure + 0.5);
-#else
         int measures = int(double(len) / unit_measure(true) + 0.5); /* TIME */
-#endif
         len = m_unit_measure * measures;
         result = set_length(len, false, false); /* no trig adjust or verify */
     }

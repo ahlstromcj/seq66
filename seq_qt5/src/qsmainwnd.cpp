@@ -84,6 +84,7 @@
 #include "midi/songsummary.hpp"         /* seq66::write_song_summary()      */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
 #include "os/daemonize.hpp"             /* seq66::signal_for_restart()      */
+#include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 #include "qliveframeex.hpp"             /* seq66::qliveframeex container    */
 #include "qmutemaster.hpp"              /* shows a map of mute-groups       */
 #include "qperfeditex.hpp"              /* seq66::qperfeditex container     */
@@ -340,17 +341,7 @@ qsmainwnd::qsmainwnd
      * story.
      */
 
-#if defined USE_OLD_CODE
-    for (int i = 0; i < s_beat_length_count; ++i)
-    {
-        QString combo_text = QString::number(i + 1);
-        ui->cmb_beat_length->insertItem(i, combo_text);
-    }
-    ui->cmb_beat_length->insertItem(s_beat_length_count, thirtytwo);
-#else
     (void) fill_combobox(ui->cmb_beat_length, m_beatwidth_list);
-#endif
-
     m_msg_save_changes = new QMessageBox(this);
     m_msg_save_changes->setText(tr("Unsaved changes detected."));
     m_msg_save_changes->setInformativeText(tr("Do you want to save them?"));
@@ -2282,11 +2273,7 @@ qsmainwnd::remove_all_editors ()
         m_open_editors.erase(ei++);         /* remove pointer, inc iterator */
         if (not_nullptr(qep))
         {
-#if defined USE_OLD_CODE
-            delete qep;                     /* delete the pointer           */
-#else
             qep->close();                   /* just signal to close         */
-#endif
         }
     }
 }
@@ -2444,7 +2431,7 @@ qsmainwnd::update_ppqn_by_text (const QString & text)
     std::string temp = text.toStdString();
     if (! temp.empty())
     {
-        int p = std::stoi(temp);
+        int p = string_to_int(temp);
         if (cb_perf().change_ppqn(p))
         {
             set_ppqn_text(temp);
@@ -2491,11 +2478,7 @@ qsmainwnd::update_midi_bus (int index)
 void
 qsmainwnd::update_beat_length (int blindex)
 {
-#if defined USE_OLD_CODE
-    int bl = blindex == s_beat_length_count ? 32 : blindex + 1 ;
-#else
     int bl = m_beatwidth_list.ctoi(blindex);
-#endif
     if (cb_perf().set_beat_width(bl))
     {
         enable_save();
