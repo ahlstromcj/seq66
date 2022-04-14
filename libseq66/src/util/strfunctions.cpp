@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-04-13
+ * \updates       2022-04-14
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -575,11 +575,13 @@ string_to_bool (const std::string & s, bool defalt)
  *  string_to_int() as well.
  *
  * \param s
- *      Provides the string to convert to a signed long integer.
+ *      Provides the string to convert to a double value. Integers, numbers
+ *      with a decimal point, and simple, but strictly formatted, fractions
+ *      (e.g. "1/4") are supported.
  *
  * \param defalt
- *      The desired default for an empty string.  The default \a defalt value is
- *      0.0.
+ *      The desired default for an empty string.  The default \a defalt value
+ *      is 0.0.
  *
  * \return
  *      Returns the signed long integer value represented by the string.
@@ -589,20 +591,27 @@ string_to_bool (const std::string & s, bool defalt)
 double
 string_to_double (const std::string & s, double defalt)
 {
-#if defined USE_OLD_CODE
-    return has_digit(s, true) ? std::stod(s, nullptr) : defalt ;
-#else
     double result = defalt;
     try
     {
-        result = std::stod(s, nullptr);
+        if (s.find_first_of("/") != std::string::npos)
+        {
+            tokenization numbers = tokenize(s, "/");
+            if (numbers.size() == 2)
+            {
+                double numerator = std::stod(numbers[0]);
+                double denominator = std::stod(numbers[1]);
+                result = numerator / denominator;
+            }
+        }
+        else
+            result = std::stod(s, nullptr);
     }
     catch (std::invalid_argument const &)
     {
         // no code
     }
     return result;
-#endif
 }
 
 /**
@@ -631,9 +640,6 @@ string_to_double (const std::string & s, double defalt)
 long
 string_to_long (const std::string & s, long defalt)
 {
-#if defined USE_OLD_CODE
-    return has_digit(s) ? std::stol(s, nullptr, 0) : defalt ;
-#else
     long result = defalt;
     try
     {
@@ -644,7 +650,6 @@ string_to_long (const std::string & s, long defalt)
         // no code
     }
     return result;
-#endif
 }
 
 /**
@@ -654,9 +659,6 @@ string_to_long (const std::string & s, long defalt)
 unsigned long
 string_to_unsigned_long (const std::string & s, unsigned long defalt)
 {
-#if defined USE_OLD_CODE
-    return has_digit(s) ? std::stoul(s, nullptr, 0) : defalt ;
-#else
     double result = defalt;
     try
     {
@@ -667,7 +669,6 @@ string_to_unsigned_long (const std::string & s, unsigned long defalt)
         // no code
     }
     return result;
-#endif
 }
 
 /**

@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2022-04-09
+# \update      2022-04-13
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -328,7 +328,6 @@ libseq_qt5_la_SOURCES = \
  qseqframe.cpp \
  qseqkeys.cpp \
  qseqroll.cpp \
- qseqstyle.cpp \
  qsessionframe.cpp \
  qseqtime.cpp \
  qsetmaster.cpp \

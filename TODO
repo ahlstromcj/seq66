@@ -1,6 +1,6 @@
 TO DO for Seq66 0.98.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-04-08
+2019-04-13 to 2022-04-14
 
 Windows:
 
@@ -18,9 +18,32 @@ Ports:
 
     -   Investigate deinit_in() and _out().
 
-Document:
+Test and Document:
 
     -   Make sure the Key/Scale note analysis is documented.
+    -   Main window:
+        -   PPQN
+        -   Beats/bar
+        -   Beat width (length)
+    -   Pattern editor:
+        -   Recording velocity
+        -   Zoom
+        -   Snap
+        -   Beats/bar
+        -   Beat width (length)
+        -   How to handle when we have 4/4 with 4 notes, then change it to
+            3/4. The 4th note is not shown, but the event editor shows it is
+            still there. After a fix, the note is now deleted.  Proper?
+            FEATURE: Should we compress the 4 notes?
+            We can use pattern fix for that.
+    -   Song editor:
+        -   Snap
+        -   Add width to Snap button
+
+External Live Grid:
+
+    -   Show Recording-style and Quantization buttons in it.
+
 
 UI:
 

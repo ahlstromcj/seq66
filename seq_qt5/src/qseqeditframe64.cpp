@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-13
+ * \updates       2022-04-14
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -215,45 +215,10 @@ static const int s_beat_measure_count   = 16;
  * \todo
  *      We still need to figure out what to do with a zoom of 0, which
  *      is supposed to tell Seq66 to auto-adjust to the current PPQN.
+ *
+ *  Please note that the list of zooms is now maintained in the settings
+ *  module.
  */
-
-static const int s_zoom_items [] =
-{
-    1, 2, 4, 8, 16, 32, 64, 128, 256, 512
-};
-static const int s_zoom_count = sizeof(s_zoom_items) / sizeof(int);
-static const int s_zoom_default = 1;                    /* the array index  */
-
-/**
- *  Looks up a zoom value and returns its index.
- */
-
-static int
-s_lookup_zoom (int zoom)
-{
-    int result = 0;
-    for (int zi = 0; zi < s_zoom_count; ++zi)
-    {
-        if (s_zoom_items[zi] == zoom)
-        {
-            result = zi;
-            break;
-        }
-    }
-    return result;
-}
-
-/**
- *  Hold the entries in the "Vel" drop-down.  The first value matches
- *  usr().preserve_velocity().  It corresponds to the "Free" recording-volume
- *  entry.
- */
-
-static const int s_rec_vol_items [] =
-{
-    -1, 127, 112, 96, 80, 64, 48, 32, 16
-};
-static const int s_rec_vol_count = sizeof(s_rec_vol_items) / sizeof(int);
 
 /*
  * For set_event_entry calls.
@@ -319,6 +284,8 @@ qseqeditframe64::qseqeditframe64
     m_beat_width            (0),                    /* set in ctor body     */
     m_snap_list             (snap_items()),         /* see settings module  */
     m_snap                  (sm_initial_snap),
+    m_zoom_list             (zoom_items()),         /* see settings module  */
+    m_rec_vol_list          (rec_vol_items()),      /* see settings module  */
     m_note_length           (sm_initial_note_length),
     m_scale                 (0),                    /* set in ctor body     */
     m_chord                 (0),
@@ -457,9 +424,9 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_bw, SIGNAL(clicked(bool)),
         this, SLOT(reset_beat_width())
     );
-    (void) fill_combobox(ui->m_combo_bw, m_beatwidth_list);
+    (void) fill_combobox(ui->m_combo_bw, beatwidth_list());
 
-    int bwindex = m_beatwidth_list.index(m_beat_width);
+    int bwindex = beatwidth_list().index(m_beat_width);
     int bw = m_beat_width;              /* seq_pointer()->get_beat_width() */
     std::string bstring = std::to_string(bw);
     ui->m_combo_bw->setCurrentIndex(bwindex);
@@ -703,8 +670,8 @@ qseqeditframe64::qseqeditframe64
      *  adapted to Qt 5.
      */
 
-    (void) fill_combobox(ui->m_combo_snap, m_snap_list, 4, "1/"); /* 1/16th */
-    (void) fill_combobox(ui->m_combo_note, m_snap_list, 4, "1/"); /* ditto  */
+    (void) fill_combobox(ui->m_combo_snap, snap_list(), 4, "1/"); /* 1/16th */
+    (void) fill_combobox(ui->m_combo_note, snap_list(), 4, "1/"); /* ditto  */
     connect
     (
         ui->m_combo_snap, SIGNAL(currentIndexChanged(int)),
@@ -746,7 +713,8 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_zoom, SIGNAL(clicked(bool)),
         this, SLOT(slot_reset_zoom())
     );
-    for (int zi = 0; zi < s_zoom_count; ++zi)
+#if defined USE_OLD_CODE
+    for (int zi = 0; zi < m_zoom_list.count(); ++zi)
     {
         int zoom = s_zoom_items[zi];
         std::string itext = "1:" + std::to_string(zoom);
@@ -754,6 +722,9 @@ qseqeditframe64::qseqeditframe64
         ui->m_combo_zoom->insertItem(zi, combo_text);
     }
     ui->m_combo_zoom->setCurrentIndex(1);
+#else
+    (void) fill_combobox(ui->m_combo_zoom, zoom_list(), 1, "1:");
+#endif
     connect
     (
         ui->m_combo_zoom, SIGNAL(currentIndexChanged(int)),
@@ -1008,13 +979,17 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_rec_vol, SIGNAL(clicked(bool)),
         this, SLOT(reset_recording_volume())
     );
-    for (int v = 0; v < s_rec_vol_count; ++v)
+#if defined USE_OLD_CODE
+    for (int v = 0; v < rec_vol_list().count(); ++v)
     {
         int item = s_rec_vol_items[v];
         std::string text = v == 0 ? "Free" : std::to_string(item) ;
         QString combo_text = qt(text);
         ui->m_combo_rec_vol->insertItem(v, combo_text);
     }
+#else
+    (void) fill_combobox(ui->m_combo_rec_vol, rec_vol_list());
+#endif
     connect
     (
         ui->m_combo_rec_vol, SIGNAL(currentIndexChanged(int)),
@@ -1437,7 +1412,7 @@ qseqeditframe64::get_measures ()
 void
 qseqeditframe64::update_beat_width (int index)
 {
-    int bw = m_beatwidth_list.ctoi(index);
+    int bw = beatwidth_list().ctoi(index);
     if (bw != m_beat_width)
     {
         set_beat_width(bw);
@@ -1466,7 +1441,7 @@ qseqeditframe64::text_beat_width (const QString & text)
 void
 qseqeditframe64::reset_beat_width ()
 {
-    int index = m_beatwidth_list.index(usr().bw_default());
+    int index = beatwidth_list().index(usr().bw_default());
     ui->m_combo_bw->setCurrentIndex(index);
     update_draw_geometry();
 }
@@ -2329,10 +2304,10 @@ qseqeditframe64::scroll_to_note (int note)
 void
 qseqeditframe64::update_grid_snap (int index)
 {
-    if (index >= 0 && index < m_snap_list.count())
+    if (index >= 0 && index < snap_list().count())
     {
         int qnfactor = perf().ppqn() * 4;
-        int item = m_snap_list.ctoi(index);
+        int item = snap_list().ctoi(index);
         int v = qnfactor / item;
         set_snap(v);
     }
@@ -2383,10 +2358,10 @@ qseqeditframe64::reset_grid_snap ()
 void
 qseqeditframe64::update_note_length (int index)
 {
-    if (index >= 0 && index < m_snap_list.count())
+    if (index >= 0 && index < snap_list().count())
     {
         int qnfactor = perf().ppqn() * 4;
-        int item = m_snap_list.ctoi(index);
+        int item = snap_list().ctoi(index);
         int v = qnfactor / item;
         set_note_length(v);
     }
@@ -2473,7 +2448,7 @@ qseqeditframe64::change_ppqn (int ppqn)
 void
 qseqeditframe64::slot_update_zoom (int index)
 {
-    int z = s_zoom_items[index];
+    int z = zoom_list().ctoi(index);
     (void) set_zoom(z);
     update_draw_geometry();
 }
@@ -2481,7 +2456,7 @@ qseqeditframe64::slot_update_zoom (int index)
 bool
 qseqeditframe64::zoom_in ()
 {
-    int index = s_lookup_zoom(zoom());
+    int index = zoom_list().index(zoom());      // s_lookup_zoom(zoom());
     ui->m_combo_zoom->setCurrentIndex(index);
     return true;
 }
@@ -2491,7 +2466,7 @@ qseqeditframe64::zoom_out ()
 {
     if (zoom() >= usr().max_zoom())
     {
-        int v = s_zoom_items[0];        /* wrap around to beginning */
+        int v = zoom_list().ctoi(0);                /* wrap to beginning    */
         set_zoom(v);
     }
     return true;
@@ -2505,7 +2480,7 @@ qseqeditframe64::set_zoom (int z)
     if (result)
     {
         float factor = float(zprevious) / float(zoom());
-        int index = s_lookup_zoom(zoom());
+        int index = zoom_list().index(zoom());      // s_lookup_zoom(zoom());
         ui->m_combo_zoom->setCurrentIndex(index);
         update_draw_geometry();
         ui->rollScrollArea->scroll_x_by_factor(factor);
@@ -3202,9 +3177,12 @@ qseqeditframe64::update_record_type (int index)
 void
 qseqeditframe64::update_recording_volume (int index)
 {
-    if (index >= 0 && index < s_rec_vol_count)
+    if (index >= 0 && index < rec_vol_list().count())
     {
-        int recvol = s_rec_vol_items[index];
+        int recvol = rec_vol_list().ctoi(index);
+        if (index == 0)
+            recvol = (-1);              /* force use of preserve-velocity   */
+
         set_recording_volume(recvol);
         set_dirty();
     }

@@ -59,13 +59,10 @@
 #include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
 
 /**
- *  An attempt to use the inverse of the background color for drawing text.
- *  It doesn't work with some GTK themes.  Use Qt style sheets or a 'palette'
- *  file instead.  The background border can look garish, too.
+ *  Removed an attempt to use the inverse of the background color for drawing
+ *  text.  It doesn't work with some GTK themes.  Use Qt style sheets or a
+ *  'palette' file instead.  The background border can look garish, too.
  */
-
-#undef SEQ66_USE_BACKGROUND_ROLE_COLOR
-#undef SEQ66_COLOR_BUTTON_BORDERS
 
 /**
  *  Alpha values for various states, not yet members, not yet configurable.
@@ -192,18 +189,7 @@ qloopbutton::qloopbutton
     make_active();
     make_checkable();
     set_checked(m_is_checked);
-
-#if defined SEQ66_FOLLOW_THEME_TEXT_COLOR
-    /*
-     * To mitigate issue #50, where the white text of a dark theme cannot be seen
-     * against a yellow background.  Instead, we beefed up the palette mechanism.
-     */
-
-    QWidget tmp;
-    text_color(tmp.palette().color(QPalette::ButtonText));
-#else
     text_color(foreground_paint());
-#endif
 
     int c = loop() ? loop()->color() : palette_to_int(none) ;
     pen_color(get_pen_color(PaletteColor(c)));
@@ -415,23 +401,17 @@ qloopbutton::initialize_fingerprint ()
 
 /**
  *  Sets up the foreground and background colors of the button and the
- *  appropriate setAutoFillBackground() setting. We've macroed out the garish
+ *  appropriate setAutoFillBackground() setting. We've removed the garish
  *  painting of the pattern color on the button borders.
  */
 
 void
 qloopbutton::setup ()
 {
-#if defined SEQ66_COLOR_BUTTON_BORDERS
-    QPalette pal = palette();
-#endif
     int c = loop() ? loop()->color() : palette_to_int(none) ;
     if (c == palette_to_int(black))
     {
-#if defined SEQ66_COLOR_BUTTON_BORDERS
-        pal.setColor(QPalette::Button, QColor(Qt::black));
-        pal.setColor(QPalette::ButtonText, QColor(Qt::yellow)); /* useless  */
-#endif
+        // no coloring on the button borders
     }
     else
     {
@@ -441,15 +421,8 @@ qloopbutton::setup ()
          */
 
         Color backcolor = get_color_fix(PaletteColor(c));
-#if defined SEQ66_COLOR_BUTTON_BORDERS
-        pal.setColor(QPalette::Button, backcolor);
-#endif
         m_prog_back_color = backcolor;
     }
-#if defined SEQ66_COLOR_BUTTON_BORDERS
-    setAutoFillBackground(true);
-    setPalette(pal);
-#endif
     setEnabled(true);
     setCheckable(is_checkable());
     setAttribute(Qt::WA_Hover, false);              /* avoid nasty repaints */
@@ -552,27 +525,9 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             painter.setPen(label_color());      /* text issue #50   */
             painter.setFont(m_text_font);
 
-#if defined SEQ66_USE_BACKGROUND_ROLE_COLOR
-            QPen pen(text_color());             /* label_color()    */
-            QBrush brush(Qt::black);
-            painter.setBrush(brush);
-
             /*
-             * This call gets the background we painted, not the background
-             * actually shown by the current Qt 5 theme.
-             *
-             *      QColor trueback = this->palette().button().color();
+             * Removed the "background role color" code that was here.
              */
-
-            QWidget * rent = this->parentWidget();
-            if (not_nullptr(rent))
-            {
-                QColor trueback = rent->palette().color(QPalette::Background);
-                trueback = gui_palette_qt5::calculate_inverse(trueback);
-                pen.setColor(trueback);
-            }
-            painter.setPen(pen);
-#endif
 
             painter.drawText(box, m_top_left.m_flags, title);
             title = qt(m_top_right.m_label);
@@ -591,7 +546,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 int tly = cly + radius - usr().scale_size(2);
                 QPen pen2(drum_paint());
                 QBrush brush(drum_paint(), Qt::SolidPattern);
-                painter.save();         // NEW
+                painter.save();
                 painter.setPen(pen2);
                 painter.setBrush(brush);
                 painter.drawEllipse(clx, cly, radius, radius);
@@ -608,7 +563,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                     else if (loop()->tightening())
                         painter.drawText(tlx + 2, tly, "T");
                 }
-                painter.restore();      // NEW
+                painter.restore();
             }
             title = qt(m_bottom_left.m_label);
             box.setRect

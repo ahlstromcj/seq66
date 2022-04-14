@@ -74,20 +74,15 @@ namespace seq66
  *      to null.
  */
 
-qseqframe::qseqframe
-(
-    performer & p,
-    int seqid,
-    QWidget * parent
-) :
-    QFrame                  (parent),
-    qbase                   (p, c_default_zoom),
-    m_seq                   (perf().sequence_pointer(seqid)),
-    m_seqkeys               (nullptr),
-    m_seqtime               (nullptr),
-    m_seqroll               (nullptr),
-    m_seqdata               (nullptr),
-    m_seqevent              (nullptr)
+qseqframe::qseqframe (performer & p, int seqid, QWidget * parent) :
+    QFrame      (parent),
+    qbase       (p, c_default_zoom),
+    m_seq       (perf().sequence_pointer(seqid)),
+    m_seqkeys   (nullptr),
+    m_seqtime   (nullptr),
+    m_seqroll   (nullptr),
+    m_seqdata   (nullptr),
+    m_seqevent  (nullptr)
 {
     // No code needed
 }

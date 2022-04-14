@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-12
+ * \updates       2022-04-14
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -108,7 +108,7 @@ qpatternfix::qpatternfix
     m_edit_frame        (editparent),
     m_length_type       (lengthfix::none),
     m_quan_type         (quantization::none),
-    m_measures          (seqp()->get_measures()),
+    m_measures          (double(m_backup_measures)),
     m_scale_factor      (1.0),
     m_align_left        (false),
     m_is_modified       (false)
@@ -349,8 +349,8 @@ qpatternfix::slot_set ()
     fixeffect efx;                                  /* set in fix_pattern() */
     bool success = seqp()->fix_pattern
     (
-        m_length_type, m_measures, m_scale_factor,
-        m_quan_type, m_align_left, efx
+        m_length_type, m_quan_type, m_align_left,
+        m_measures, m_scale_factor, efx
     );
     if (success)
     {

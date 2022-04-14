@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-13
+ * \updates       2022-04-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -185,6 +185,33 @@ private:
     void remove_lfo_frame ();
     void remove_patternfix_frame ();
     QIcon * create_menu_image (bool state);
+
+private:        /* combo-box list accessors */
+
+    const combolist & measures_list () const
+    {
+        return m_measures_list;
+    }
+
+    const combolist & beatwidth_list () const
+    {
+        return m_beatwidth_list;
+    }
+
+    const combolist & snap_list () const
+    {
+        return m_snap_list;
+    }
+
+    const combolist & zoom_list () const
+    {
+        return m_zoom_list;
+    }
+
+    const combolist & rec_vol_list () const
+    {
+        return m_rec_vol_list;
+    }
 
 signals:
 
@@ -387,6 +414,18 @@ private:
      */
 
     int m_snap;
+
+    /**
+     *  Holds the list for the zoom settings.
+     */
+
+    combolist m_zoom_list;
+
+    /**
+     *  Holds the list for the zoom settings.
+     */
+
+    combolist m_rec_vol_list;
 
     /**
      *  The default length of a note to be inserted by a right-left-click

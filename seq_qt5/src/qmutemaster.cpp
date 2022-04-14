@@ -110,8 +110,7 @@ qmutemaster::qmutemaster
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     clear_pattern_mutes();              /* empty the pattern bits           */
-
-    create_group_buttons();     // EXPERIMENTAL UP HERE
+    create_group_buttons();
     create_pattern_buttons();
     setup_table();                      /* row and column sizing            */
     (void) initialize_table();          /* fill with mute-group information */
@@ -257,18 +256,10 @@ qmutemaster::qmutemaster
     m_timer = qt_timer(this, "qmutemaster", 3, SLOT(conditional_update()));
 }
 
-/**
- *
- * \todo
- *      We can fold the unregister() call into performer::callbacks at sme
- *      point.  However, we would have to deal with the issues of multiple
- *      inheritance and the exact value of the "this" pointer.
- */
-
 qmutemaster::~qmutemaster()
 {
     m_timer->stop();
-    cb_perf().unregister(this);            /* unregister this immediately      */
+    cb_perf().unregister(this);         /* unregister this immediately      */
     delete ui;
 }
 
@@ -618,10 +609,9 @@ qmutemaster::slot_trigger ()
 }
 
 /**
- *  The calls to set mutes:  Fills midibooleans bit and calls
- *  performer::set_mutes(), with a parameter of true so that the mutes are
- *  also copied to rcsettings for when the user of the Mutes tab wants to save
- *  the file.
+ *  The calls to set mutes:  Fills midibooleans bit and calls performer ::
+ *  set_mutes(), with a parameter of true so that the mutes are also copied to
+ *  rcsettings for when the user of the Mutes tab wants to save the file.
  */
 
 void
@@ -665,8 +655,8 @@ qmutemaster::slot_up ()
 
 /**
  *  This looks goofy, but we offload the dialog handling to qsmainwnd, which
- *  has the boolean function qsmainwnd::open_mutes_dialog(), which returns true
- *  if the user clicked OK and the call to qmutemaster::load_mutegroups()
+ *  has the boolean function qsmainwnd::open_mutes_dialog(), which returns
+ *  true if the user clicked OK and the call to qmutemaster::load_mutegroups()
  *  succeeded.  Circular!
  */
 
@@ -876,7 +866,7 @@ qmutemaster::on_mutes_change (mutegroup::number group)
  *  hot-key).
  *
  *  Plus, here, we have no real purpose for the code, so we macro it out.
- *  What's up with that, Spunky?
+ *  What's up with that, Spanky?
  */
 
 void
@@ -947,6 +937,7 @@ qmutemaster::changeEvent (QEvent * event)
     QWidget::changeEvent(event);
     if (event->type() == QEvent::ActivationChange)
     {
+        // no code
     }
 }
 
@@ -1004,8 +995,6 @@ qmutemaster::create_pattern_buttons ()
 /**
  *  Updates the bottom buttons that indicate the mute-groups present during
  *  this run of the current MIDI file.
- *
- * \todo
  */
 
 void

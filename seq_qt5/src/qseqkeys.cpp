@@ -28,9 +28,9 @@
  * \updates       2021-08-04
  * \license       GNU GPLv2 or above
  *
- *      We've added the feature of a right-click toggling between showing the
- *      main octave values (e.g. "C1" or "C#1") versus the numerical MIDI
- *      values of the keys.
+ *  We've added the feature of a right-click toggling between showing the main
+ *  octave values (e.g. "C1" or "C#1") versus the numerical MIDI values of the
+ *  keys.
  */
 
 #include <QMouseEvent>
@@ -87,22 +87,22 @@ qseqkeys::qseqkeys
     int keyheight,
     int keyareaheight
 ) :
-    QWidget                 (parent),
+    QWidget             (parent),
     qseqbase
     (
         p, seqp, frame, c_default_zoom, c_default_snap,
         keyheight, keyareaheight
     ),
-    m_seq                   (seqp),                 /* seq_pointer()        */
-    m_font                  (),
-    m_show_key_names        (usr().key_view()),     /* initial default      */
-    m_key                   (0),
-    m_key_y                 (keyheight),            /* note_height()        */
-    m_key_area_y            (keyareaheight),        /* total_height()       */
-    m_preview_color         (progress_paint()),     /* extra_paint())       */
-    m_is_previewing         (false),                /* previewing()         */
-    m_preview_on            (false),                /* preview_on()         */
-    m_preview_key           (sc_null_key)           /* preview_key()        */
+    m_seq               (seqp),                 /* seq_pointer()        */
+    m_font              (),
+    m_show_key_names    (usr().key_view()),     /* initial default      */
+    m_key               (0),
+    m_key_y             (keyheight),            /* note_height()        */
+    m_key_area_y        (keyareaheight),        /* total_height()       */
+    m_preview_color     (progress_paint()),     /* extra_paint())       */
+    m_is_previewing     (false),                /* previewing()         */
+    m_preview_on        (false),                /* preview_on()         */
+    m_preview_key       (sc_null_key)           /* preview_key()        */
 {
     /*
      * This policy is necessary in order to allow the vertical scrollbar to

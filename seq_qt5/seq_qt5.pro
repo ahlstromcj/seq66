@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2022-04-10
+# \update         2022-04-13
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -112,7 +112,6 @@ HEADERS += include/gui_palette_qt5.hpp \
  include/qseqframe.hpp \
  include/qseqkeys.hpp \
  include/qseqroll.hpp \
- include/qseqstyle.hpp \
  include/qseqtime.hpp \
  include/qsessionframe.hpp \
  include/qsetmaster.hpp \
@@ -158,7 +157,6 @@ SOURCES += src/gui_palette_qt5.cpp \
  src/qseqframe.cpp \
  src/qseqkeys.cpp \
  src/qseqroll.cpp \
- src/qseqstyle.cpp \
  src/qseqtime.cpp \
  src/qsessionframe.cpp \
  src/qsetmaster.cpp \

@@ -41,8 +41,6 @@
 namespace seq66
 {
 
-static const size_t c_max_name_length = 40;    /* 32 */
-
 /**
  *  Creates a single line in the MIDI Clocks "Clock" group-box.  We will use
  *  the words "clock" or "port" for the MIDI output port represented by this

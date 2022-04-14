@@ -32,18 +32,18 @@
  *
  *  -#  Control the scroll bars by setting their range, value, page step, and
  *      tracking their movements.
- *  -#  Draw the contents of the area in the viewport according to the values of
- *      the scroll bars.
+ *  -#  Draw the contents of the area in the viewport according to the values
+ *      of the scroll bars.
  *  -#  Handle events received by the viewport in viewportEvent() - notably
  *      resize events.
- *  -#  Use viewport->update() to update the contents of the viewport instead of
- *      update() as all painting operations take place on the viewport.
+ *  -#  Use viewport->update() to update the contents of the viewport instead
+ *      of update() as all painting operations take place on the viewport.
  *
  *  In order to track scroll bar movements, reimplement the virtual function
  *  scrollContentsBy().
  *
- *  For convenience, QAbstractScrollArea makes all viewport events available in
- *  the virtual viewportEvent() handler. QWidget's specialized handlers are
+ *  For convenience, QAbstractScrollArea makes all viewport events available
+ *  in the virtual viewportEvent() handler. QWidget's specialized handlers are
  *  remapped to viewport events in the cases where this makes sense. The
  *  remapped specialized handlers are:
  *

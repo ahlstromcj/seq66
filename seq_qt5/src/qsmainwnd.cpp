@@ -167,7 +167,6 @@ static const int Tab_Session            =  7;
  */
 
 static const int s_beat_measure_count   = 16;
-// static const int s_beat_length_count    = 16;
 
 /**
  *  Given a display coordinate, looks up the screen and returns its geometry.
@@ -190,7 +189,8 @@ desktop_rectangle (const QPoint & p)
  *  Provides the main window for the application.
  *
  * \param p
- *      Provides the performer object to use for interacting with this sequence.
+ *      Provides the performer object to use for interacting with this
+ *      sequence.
  *
  * \param midifilename
  *      Provides an optional MIDI file-name.  If provided, the file is opened

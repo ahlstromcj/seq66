@@ -480,7 +480,7 @@ double_ticks_from_ppqn (int ppqn)
  */
 
 inline int
-pulses_per_measure (int ppqn)
+default_pulses_per_measure (int ppqn)
 {
     return 4 * ppqn;
 }
@@ -509,7 +509,7 @@ pulses_per_measure (int ppqn)
  *  So p = 100 * 4 * 4 * 192 / 4 = 76800 ticks.
  *
  *  Note that 4 * P is a constraint encapsulated by the inline function
- *  pulses_per_measure().
+ *  default_pulses_per_measure().
  *
  * \param bpb
  *      The B value in the equation, beats/measure or beats/bar.

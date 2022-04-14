@@ -159,7 +159,7 @@ qstriggereditor::paintEvent (QPaintEvent *)
     QPen pen(Qt::black);
     painter.setPen(pen);
     painter.setBrush(brush);
-    painter.drawRect(1, 0, width(), height() - 1); /* draw the background       */
+    painter.drawRect(1, 0, width(), height() - 1);  /* draw the background  */
 
     seq::pointer s = seq_pointer();
     int bpbar = s->get_beats_per_bar();
@@ -196,7 +196,7 @@ qstriggereditor::paintEvent (QPaintEvent *)
             }
             else
             {
-                pen.setStyle(Qt::DashLine);     // Gdk::LINE_ON_OFF_DASH
+                pen.setStyle(Qt::DashLine);
                 pen.setColor(Qt::lightGray);    // faint step lines
             }
         }
@@ -272,8 +272,8 @@ qstriggereditor::resizeEvent (QResizeEvent * qrep)
 }
 
 /**
- *  We cannot call frame64()::set_dirty() without creating an infinite
- *  loop and seqfault.  So we make a private function to do that.
+ *  We cannot call frame64()::set_dirty() without creating an infinite loop
+ *  and seqfault.  So we make a private function to do that.
  */
 
 void

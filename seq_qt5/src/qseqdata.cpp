@@ -58,7 +58,7 @@ namespace seq66
 static const int sc_dataarea_y = 128;
 
 /*
- * Tweaks
+ * Tweaks.
  */
 
 static const int s_x_data_fix   = 2;    /* adjusts x-value for the events   */

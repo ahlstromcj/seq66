@@ -68,8 +68,8 @@ namespace seq66
  */
 
 qinputcheckbox::qinputcheckbox (QWidget * parent, performer & p, int bus) :
-    qportwidget                 (parent, p, bus),
-    m_chkbox_inputactive        (nullptr)
+    qportwidget             (parent, p, bus),
+    m_chkbox_inputactive    (nullptr)
 {
     setup_ui();
     connect

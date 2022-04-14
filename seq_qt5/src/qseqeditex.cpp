@@ -75,12 +75,12 @@ namespace seq66
  */
 
 qseqeditex::qseqeditex (performer & p, int seqid, qsmainwnd * parent) :
-    QWidget             (nullptr),
-    ui                  (new Ui::qseqeditex),
-    m_performer         (p),
-    m_seq_id            (seqid),
-    m_edit_parent       (parent),
-    m_edit_frame        (nullptr)
+    QWidget         (nullptr),
+    ui              (new Ui::qseqeditex),
+    m_performer     (p),
+    m_seq_id        (seqid),
+    m_edit_parent   (parent),
+    m_edit_frame    (nullptr)
 {
     ui->setupUi(this);
 

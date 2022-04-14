@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-12
+ * \updates       2022-04-14
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -211,10 +211,11 @@ private:
     quantization m_quan_type;
 
     /**
-     *  The current number of measures for the adjustment.
+     *  The current number of measures for the adjustment.  This is a double
+     *  so that it can be fractional, such as "3/4" --> 0.75.
      */
 
-    int m_measures;
+    double m_measures;
 
     /**
      *  The current scale factor in the user-interface.

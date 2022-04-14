@@ -237,6 +237,11 @@ enable_combobox_item (QComboBox * box, int index, bool enabled)
         item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
 }
 
+/**
+ *  Helper to fill a combo-box.  Also sets the current index, and can bracket
+ *  each line-item with optional prefix and suffix text.
+ */
+
 bool
 fill_combobox
 (

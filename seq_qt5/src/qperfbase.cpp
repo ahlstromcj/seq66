@@ -66,10 +66,7 @@ qperfbase::qperfbase
     // no code needed
 }
 
-/*
- * int hint = perf().get_max_trigger() / scale_zoom() + 2000;
- * return tix_to_pix(perf().get_max_trigger()) + 200;
- *
+/**
  * performer::get_max_extent() gets the longest of the lengthiest trigger or
  * lengthiest pattern.  We pad it to 2000 or the result + 200, whichever is
  * greater.  This should cover most use cases.
@@ -110,8 +107,8 @@ qperfbase::convert_x (int x, midipulse & tick)
 }
 
 /**
- *  Converts an (x, y) point on the user interface to the corresponding tick and
- *  patter number.
+ *  Converts an (x, y) point on the user interface to the corresponding tick
+ *  and patter number.
  */
 
 void

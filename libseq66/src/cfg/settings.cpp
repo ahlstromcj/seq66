@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2022-04-13
+ * \updates       2022-04-14
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -183,6 +183,37 @@ perf_snap_items ()
         "1", "2", "3", "4", "8", "16", "32"
     };
     return s_snap_list;
+}
+
+/**
+ *  Zoom values for the pattern editor.
+ */
+
+const tokenization &
+zoom_items ()
+{
+    static const tokenization s_zoom_list
+    {
+        "1", "2", "4", "8", "16", "32", "64", "128", "256", "512"
+    };
+    return s_zoom_list;
+}
+
+/**
+ *  Recording-volume values for the pattern editor.  Holds the entries for the
+ *  "Vel" drop-down.  The first value matches usr().preserve_velocity().  It
+ *  corresponds to the "Free" recording-volume entry where the incoming velocity
+ *  is kept.
+ */
+
+const tokenization &
+rec_vol_items ()
+{
+    static const tokenization s_rec_vol_list
+    {
+        "Free", "127", "112", "96", "80", "64", "48", "32", "16"
+    };
+    return s_rec_vol_list;
 }
 
 /**

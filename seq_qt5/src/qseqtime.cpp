@@ -65,12 +65,12 @@ qseqtime::qseqtime
     seq::pointer seqp,
     qseqeditframe64 * frame,
     int zoom,
-    QWidget * parent                        /* QScrollArea */
+    QWidget * parent /* QScrollArea */
 ) :
-    QWidget                 (parent),
-    qseqbase                (p, seqp, frame, zoom, c_default_snap),
-    m_timer                 (nullptr),
-    m_font                  ()
+    QWidget     (parent),
+    qseqbase    (p, seqp, frame, zoom, c_default_snap),
+    m_timer     (nullptr),
+    m_font      ()
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_font.setBold(true);

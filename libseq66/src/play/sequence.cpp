@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-13
+ * \updates       2022-04-14
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2450,15 +2450,17 @@ sequence::change_event_data_lfo
  *  Here's the process:
  *
  *      -#  If alignleft is set, all events timestamps are decreased by the
- *          offset of the first event.
+ *          offset of the first event, so that the pattern starts at time 0.
+ *      -#  If the fixtype is lengthfix::measures, then the scale-factor is
+ *          calculated by the desired measures divided by the pattern's
+ *          current measure value. The pattern length is scaled, too.
  *      -#  If the fixtype is lengthfix::rescale, then the scale factor is
- *          used directly.
+ *          used directly. What should happen?
+ *          -   All event timestamps are moved according to the expansion or
+ *              compression scale factor.
+ *          -   The measure count and time signature remain the same.
  *      -#  If quantization or tightened are supplied, these operations are
  *          performed.
- *      -#  If the fixtype is lengthfix::measures, then the scale-factor is
- *          calculated for display purposes. The pattern length is updated;
- *          if shorter than the maximum timestamp, then hanging events are
- *          trimmed.
  *      -#  The maximum timestamp is calculated, and the measures (and hence
  *          length) may end up being modified.
  *
@@ -2468,7 +2470,7 @@ sequence::change_event_data_lfo
  *      of those cases, the timestamps of all events will be adjusted
  *      accordingly.
  *
- * \param [inout] measures
+ * \param [inout] newmeasures
  *      The final length of the pattern,  Ignored if the fixtype is not
  *      lengthfix::measures, but the new bar count is returned here for display
  *      purposes.
@@ -2496,16 +2498,18 @@ bool
 sequence::fix_pattern
 (
     lengthfix fixtype,
-    int & measures,
-    double & scalefactor,
     quantization quantype,
-    bool alignleft, fixeffect & efx                         /* side-effect  */
+    bool alignleft,
+    double & newmeasures,
+    double & scalefactor,
+    fixeffect & efx
 )
 {
     automutex locker(m_mutex);
     bool result = true;
     int currentbars = get_measures();
     midipulse currentlen = get_length();
+    midipulse newlength = 0;
     fixeffect tempefx = fixeffect::none;
     push_undo();
     if (alignleft)
@@ -2518,9 +2522,26 @@ sequence::fix_pattern
     }
     if (result)
     {
-        if (fixtype == lengthfix::rescale)
+        if (fixtype == lengthfix::measures)
         {
-            result = m_events.apply_time_factor(scalefactor);
+            if (newmeasures != double(currentbars))
+            {
+                scalefactor = newmeasures > 1.0 ?
+                    (newmeasures / double(currentbars)) :
+                    (newmeasures * double(currentbars)) ;
+
+                currentbars = int(newmeasures);
+                newlength = m_events.apply_time_factor(scalefactor);
+            }
+        }
+        else if (fixtype == lengthfix::rescale)
+        {
+            newlength = m_events.apply_time_factor(scalefactor);
+        }
+        if (newlength > 0 && newlength != currentlen)
+        {
+            set_length(newlength);
+            newmeasures = double(get_measures());
         }
         if (quantype == quantization::tighten)
         {
@@ -2529,18 +2550,6 @@ sequence::fix_pattern
         else if (quantype == quantization::full)
         {
             result = m_events.quantize_all_events(snap(), 1);
-        }
-        if (result)
-        {
-            if (fixtype == lengthfix::measures)
-            {
-                if (measures != currentbars && measures > 0)
-                {
-                    scalefactor = double(measures) / double(currentbars);
-                    currentbars = measures;
-                    result = m_events.apply_time_factor(scalefactor);
-                }
-            }
         }
         if (result)
         {
@@ -2557,7 +2566,7 @@ sequence::fix_pattern
             if (result)
             {
                 if (fixtype == lengthfix::rescale)
-                    measures = calculate_measures();
+                    newmeasures = calculate_measures();
 
                 if (len > currentlen)
                     tempefx = bit_set(tempefx, fixeffect::expanded);
@@ -5373,9 +5382,7 @@ sequence::change_ppqn (int p)
             (
                  get_beats_per_bar(), p, get_beat_width(), get_measures()
             );
-            // m_events.set_length(len);                // see set_length()
             m_triggers.change_ppqn(p);
-            // m_triggers.set_length(m_length);         // see set_length()
         }
     }
     return result;
@@ -5445,6 +5452,11 @@ sequence::show_events () const
  *  effectively replacing all of its events.  Compare this function to the
  *  remove_all() function.  Copying the container is a lot of work, but fast.
  *  Also note that we have to recalculate the length of the sequence.
+ * Another option, if we have a new sequence length value (in pulses)
+ * would be to call sequence::set_length(len, adjust_triggers).  We
+ * need to make sure the length is rounded up to the next quarter note.
+ * Actually, should make it a full measure size!  Or do we always want to
+ * preserve the pattern length no matter how many trailing events are deleted?
  *
  * \threadsafe
  *      Note that we had to consolidate the replacement of all the events in
@@ -5462,10 +5474,11 @@ sequence::show_events () const
  *      editor, via the eventslots class.
  */
 
-void
+bool
 sequence::copy_events (const eventlist & newevents)
 {
     automutex locker(m_mutex);
+    bool result = false;
     m_events.clear();
     m_events = newevents;
     if (m_events.empty())
@@ -5481,24 +5494,32 @@ sequence::copy_events (const eventlist & newevents)
     }
     else
     {
-        /*
-         * Another option, if we have a new sequence length value (in pulses)
-         * would be to call sequence::set_length(len, adjust_triggers).  We
-         * need to make sure the length is rounded up to the next quarter note.
-         * Actually, should make it a full measure size!
-         */
-
         midipulse len = m_events.get_max_timestamp();
+        bool change_length = false;
         if (len < get_ppqn())
         {
             double qn_per_beat = 4.0 / get_beat_width();
             int qnnum = int(get_beats_per_bar() * qn_per_beat);
             len = qnnum * get_ppqn();
+            change_length = true;
         }
-        m_length = len;
+        else if (len < m_length)                /* trimmed trailing note(s) */
+        {
+            // leave the length as it was
+        }
+        else if (len > m_length)
+        {
+            // calculate measures and the resulting length.
+            change_length = true;
+        }
+        if (change_length)
+            set_length(len);                    /* m_length = len           */
+
         verify_and_link();                      /* function uses m_length   */
+        result = true;
     }
     modify();
+    return result;
 }
 
 /**

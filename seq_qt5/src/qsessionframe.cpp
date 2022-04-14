@@ -72,10 +72,10 @@ qsessionframe::qsessionframe
     qsmainwnd * mainparent,
     QWidget * parent
 ) :
-    QFrame                  (parent),
-    ui                      (new Ui::qsessionframe),
-    m_main_window           (mainparent),
-    m_performer             (p)
+    QFrame          (parent),
+    ui              (new Ui::qsessionframe),
+    m_main_window   (mainparent),
+    m_performer     (p)
 {
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

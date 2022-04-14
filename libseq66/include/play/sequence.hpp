@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-04-12
+ * \updates       2022-04-14
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1085,7 +1085,7 @@ public:
     {
         set_length
         (
-            measures * get_beats_per_bar() * (m_ppqn * 4) / get_beat_width()
+            measures * get_beats_per_bar() * (get_ppqn() * 4) / get_beat_width()
         );
     }
 
@@ -1544,9 +1544,12 @@ public:
     );
     bool fix_pattern                        /* for the qpatternfix dialog   */
     (
-        lengthfix fixtype, int & measures, double & scalefactor,
+        lengthfix fixtype,
         quantization quantype,
-        bool alignleft, fixeffect & effect  /* note the side-effect         */
+        bool alignleft,
+        double & measures,
+        double & scalefactor,
+        fixeffect & effect
     );
     void increment_selected (midibyte status, midibyte /*control*/);
     void decrement_selected (midibyte status, midibyte /*control*/);
@@ -1679,7 +1682,7 @@ public:
     void musical_scale (int scale, bool user_change = false);
     void background_sequence (int bs, bool user_change = false);
     void show_events () const;
-    void copy_events (const eventlist & newevents);
+    bool copy_events (const eventlist & newevents);
     midipulse unit_measure (bool reset = false) const;
     midipulse expand_threshold () const;
     midipulse progress_value () const;

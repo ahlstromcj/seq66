@@ -390,15 +390,15 @@ gui_palette_qt5::load_static_colors (bool inverse)
         m_color_20     = Color("light blue");
         m_color_21     = Color("violet");
         m_color_22     = Color("turquoise");
-        m_grey         = Color(128, 128, 128);      // Color("grey");
+        m_grey         = Color(128, 128, 128);      /* "grey"               */
         m_dk_orange    = Color("dark orange");
         m_dk_pink      = Color("deep pink");
         m_color_26     = Color("sea green");
         m_color_27     = Color("dark khaki");
         m_color_28     = Color("dark slate blue");
         m_color_29     = Color("dark violet");
-        m_lt_grey      = Color(192, 192, 192);      // Color("light slate grey");
-        m_dk_grey      = Color( 72,  72,  72);      // Color("dark slate grey");
+        m_lt_grey      = Color(192, 192, 192);      /* "light slate grey"   */
+        m_dk_grey      = Color( 72,  72,  72);      /* "dark slate grey"    */
     }
 }
 
@@ -1015,7 +1015,6 @@ gui_palette_qt5::get_brush (brush index)
         default:                return s_dummy;             break;
     }
 }
-
 
 }           // namespace seq66
 

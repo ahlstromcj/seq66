@@ -902,11 +902,28 @@ eventlist::align_left (bool relink)
     return result;
 }
 
-bool
+/**
+ *  Scales the time of all event by the given factor.
+ *
+ *  -   If the factor <= 1.0:
+ *      -#  Scale all events.
+ *      -#  Leave the length of the pattern (in measures) the same; the
+ *          user can manually reduce the length in the pattern editor, if
+ *          desired.
+ *  -   if the factor is > 1.0:
+ *      -#  Scale all events.
+ *      -#  Find the new maximum timestamp.
+ *      -#  Increase it to the next full measure, then set the length.
+ *      -#  Return a non-zero so that the sequence (the caller) can update
+ *          the measures count.
+ */
+
+midipulse
 eventlist::apply_time_factor (double factor, bool relink)
 {
-    bool result = ! empty() && factor > 0.001;
-    if (result)
+    midipulse result = 0;
+    bool ok = ! empty() && factor > 0.001;
+    if (ok)
     {
         for (auto & ev : m_events)
         {
@@ -928,14 +945,19 @@ eventlist::apply_time_factor (double factor, bool relink)
             }
             else
             {
-                result = false;
+                ok = false;
                 break;
             }
         }
-        if (result && relink)
+        if (ok)
         {
-            sort();
-            verify_and_link();
+            if (relink)
+            {
+                sort();
+                verify_and_link();
+            }
+            if (factor > 1.0)
+                result = get_max_timestamp();
         }
     }
     return result;

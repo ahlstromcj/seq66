@@ -78,12 +78,12 @@ namespace seq66
  */
 
 qliveframeex::qliveframeex (performer & p, int ssnum, qsmainwnd * parent) :
-    QWidget             (nullptr),
-    ui                  (new Ui::qliveframeex),
-    m_performer         (p),
-    m_screenset         (ssnum),
-    m_live_parent       (parent),
-    m_live_frame        (nullptr)
+    QWidget         (nullptr),
+    ui              (new Ui::qliveframeex),
+    m_performer     (p),
+    m_screenset     (ssnum),
+    m_live_parent   (parent),
+    m_live_frame    (nullptr)
 {
     ui->setupUi(this);
 

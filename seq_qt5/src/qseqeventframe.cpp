@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-03-03
+ * \updates       2022-04-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -114,7 +114,9 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     ts_ppqn += std::to_string(m_seq->get_beat_width());
     ts_ppqn += " at ";
     ts_ppqn += std::to_string(m_seq->get_ppqn());
-    ts_ppqn += " PPQN";
+    ts_ppqn += " PPQN (";
+    ts_ppqn += std::to_string(m_seq->get_length());
+    ts_ppqn += " total)";
     set_seq_time_sig_and_ppqn(ts_ppqn);
 
     std::string channelstr = "Channel ";
@@ -490,7 +492,8 @@ qseqeventframe::update_seq_name ()
 
 /**
  *  Sets ui->label_time_sig to the time-signature string.
- *  Also adds the parts-per-quarter-note string.
+ *  Also adds the parts-per-quarter-note string, and now also the length in
+ *  ticks.
  *
  *  Combines the set_seq_time_sig() and set_seq_ppqn() from the old
  *  user-interface.

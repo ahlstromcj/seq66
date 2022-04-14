@@ -363,10 +363,10 @@ private:                                /* functions for friend sequence    */
     );
     bool quantize_all_events (int snap, int divide);
     midipulse adjust_timestamp (event & er, midipulse deltatick);
+    midipulse apply_time_factor (double factor, bool relink = false);
     bool move_selected_notes (midipulse delta_tick, int delta_note);
     bool move_selected_events (midipulse delta_tick);
     bool align_left (bool relink = false);
-    bool apply_time_factor (double factor, bool relink = false);
     bool randomize_selected (midibyte status, int plus_minus);
     bool randomize_selected_notes (int jitter, int range);
     bool link_notes

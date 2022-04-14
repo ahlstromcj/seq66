@@ -83,8 +83,8 @@ static const int c_progress_page_overlap = 80;
  *  Trigger transpose ranges.
  */
 
-static const int c_trigger_transpose_min    = (-60);
-static const int c_trigger_transpose_max    =   60;
+static const int c_trigger_transpose_min = (-60);
+static const int c_trigger_transpose_max =   60;
 
 /**
  *  Principal constructor, has a reference to a performer object.
@@ -108,20 +108,20 @@ qperfeditframe64::qperfeditframe64
     QWidget * parent,
     bool isexternal
 ) :
-    QFrame                  (parent),
-    ui                      (new Ui::qperfeditframe64),
-    m_mainperf              (p),
-    m_palette               (nullptr),
-    m_is_external           (isexternal),
-    m_duration_mode         (true),
-    m_snap_list             (perf_snap_items(), true),  /* "Length" is 1st  */
-    m_snap                  (8),
-    m_beats_per_measure     (4),
-    m_beat_width            (4),
-    m_trigger_transpose     (0),
-    m_perfroll              (nullptr),
-    m_perfnames             (nullptr),
-    m_perftime              (nullptr)
+    QFrame              (parent),
+    ui                  (new Ui::qperfeditframe64),
+    m_mainperf          (p),
+    m_palette           (nullptr),
+    m_is_external       (isexternal),
+    m_duration_mode     (true),
+    m_snap_list         (perf_snap_items(), true),  /* "Length" is 1st  */
+    m_snap              (8),
+    m_beats_per_measure (4),
+    m_beat_width        (4),
+    m_trigger_transpose (0),
+    m_perfroll          (nullptr),
+    m_perfnames         (nullptr),
+    m_perftime          (nullptr)
 {
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -140,22 +140,22 @@ qperfeditframe64::qperfeditframe64
     );
 
     /*
-     * Create and add the scroll-area and widget-container for this frame.
-     * If we're using the qscrollmaster (a QScrollArea), the scroll-area will
+     * Create and add the scroll-area and widget-container for this frame.  If
+     * we're using the qscrollmaster (a QScrollArea), the scroll-area will
      * contain only the qperfoll.  Otherwise, it will contain the qperfroll,
-     * qperfnames, and qperftime.  In either case the widget-container contains
-     * all three panels.
+     * qperfnames, and qperftime.  In either case the widget-container
+     * contains all three panels.
      *
-     * Create the piano roll panel, the names panel, and time panel of the song
-     * editor frame.
+     * Create the piano roll panel, the names panel, and time panel of the
+     * song editor frame.
      */
 
     m_perfnames = new qperfnames(m_mainperf, ui->namesScrollArea);
     ui->namesScrollArea->setWidget(m_perfnames);
 
     /*
-     * EXPERIMENTAL. Leave the useless horizontal scrollbar in place
-     * in order to match the qperfroll's vertical dimensions.
+     * Leave the useless horizontal scrollbar in place in order to match the
+     * qperfroll's vertical dimensions.
      *
      * ui->namesScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
      */

@@ -115,6 +115,10 @@ qlfoframe::qlfoframe
     connect(ui->m_button_reset, SIGNAL(clicked()), this, SLOT(reset()));
     connect(ui->m_button_close, SIGNAL(clicked()), this, SLOT(close()));
 
+    /*
+     * Wave type radio buttons.
+     */
+
     m_wave_group = new QButtonGroup(this);
     m_wave_group->addButton(ui->m_radio_wave_none, cast(waveform::none));
     m_wave_group->addButton(ui->m_radio_wave_sine, cast(waveform::sine));
@@ -137,18 +141,10 @@ qlfoframe::qlfoframe
     );
 
     /*
-     * ui->m_wave_type_group->setToolTip
-     * (
-     *     "Wave type: 1 = sine; 2 = ramp sawtooth; 3 = decay sawtooth; "
-     *     "4 = triangle."
-     * );
-     */
-
-    /*
      * Order of calls is important here.
      */
 
-    ui->m_value_slider->setToolTip("The DC offset for modulation, 0 to 127.");
+    ui->m_value_slider->setToolTip("DC offset for modulation, 0 to 127.");
     ui->m_value_slider->setMinimum(to_slider(s_value_min));
     ui->m_value_slider->setMaximum(to_slider(s_value_max));
     ui->m_value_slider->setValue(to_slider(m_value));
@@ -185,7 +181,8 @@ qlfoframe::qlfoframe
     );
 
     /*
-     * Order of calls is important here. Also we replace the hardwired tool-tip.
+     * Order of calls is important here. Also we replace the hardwired
+     * tool-tip.
      */
 
     ui->m_speed_slider->setToolTip
