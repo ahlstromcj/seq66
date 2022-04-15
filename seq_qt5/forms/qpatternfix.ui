@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>572</width>
-    <height>301</height>
+    <width>557</width>
+    <height>329</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>24</x>
      <y>8</y>
      <width>505</width>
-     <height>31</height>
+     <height>38</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -109,7 +109,7 @@
       <x>12</x>
       <y>36</y>
       <width>217</width>
-      <height>109</height>
+      <height>122</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -274,8 +274,8 @@
     <rect>
      <x>24</x>
      <y>220</y>
-     <width>241</width>
-     <height>57</height>
+     <width>233</width>
+     <height>89</height>
     </rect>
    </property>
    <property name="font">
@@ -290,24 +290,37 @@
    <widget class="QCheckBox" name="btn_align_left">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>30</y>
-      <width>149</width>
-      <height>21</height>
+      <x>12</x>
+      <y>28</y>
+      <width>201</width>
+      <height>25</height>
      </rect>
     </property>
     <property name="text">
-     <string>Align Left</string>
+     <string>Align left</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="btn_save_note_length">
+    <property name="geometry">
+     <rect>
+      <x>12</x>
+      <y>56</y>
+      <width>197</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Preserve note length</string>
     </property>
    </widget>
   </widget>
   <widget class="QWidget" name="layoutWidgetAlignLeft">
    <property name="geometry">
     <rect>
-     <x>260</x>
-     <y>244</y>
-     <width>269</width>
-     <height>31</height>
+     <x>280</x>
+     <y>272</y>
+     <width>253</width>
+     <height>38</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">

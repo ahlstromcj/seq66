@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2022-04-11
+ * \updates       2022-04-15
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -903,6 +903,20 @@ eventlist::align_left (bool relink)
 }
 
 /**
+ *  Helper function for scaling note-off events properly..
+ */
+
+void
+eventlist::scale_note_off (event & noteoff, double factor)
+{
+    midipulse stamp = noteoff.timestamp();
+    stamp += note_off_margin();                     /* remove the margin    */
+    stamp *= factor;                                /* scale the note off   */
+    stamp -= note_off_margin();                     /* put back the margin  */
+    noteoff.set_timestamp(stamp);
+}
+
+/**
  *  Scales the time of all event by the given factor.
  *
  *  -   If the factor <= 1.0:
@@ -916,32 +930,67 @@ eventlist::align_left (bool relink)
  *      -#  Increase it to the next full measure, then set the length.
  *      -#  Return a non-zero so that the sequence (the caller) can update
  *          the measures count.
+ *
+ * \param factor
+ *      The multiplier for each timestamp.
+ *
+ * \param savenotelength
+ *      If true (the default is false), then we have to keep track of note
+ *      events (on, off, but not aftertouch), to preserve the length of each
+ *      note.
+ *
+ * \param relink
+ *      If true (the default is false), then sort, verify, and link.
+ *      Not sure if this is useful at this point.
  */
 
 midipulse
-eventlist::apply_time_factor (double factor, bool relink)
+eventlist::apply_time_factor
+(
+    double factor,
+    bool savenotelength,
+    bool relink
+)
 {
     midipulse result = 0;
-    bool ok = ! empty() && factor > 0.001;
+    bool ok = ! empty() && factor > 0.01;
     if (ok)
     {
         for (auto & ev : m_events)
         {
-            midipulse newstamp = ev.timestamp();
-            if (newstamp >= 0)
+            midipulse stamp = ev.timestamp();
+            if (stamp >= 0)
             {
-                if (ev.is_note_off())
-                    newstamp += note_off_margin();
-
-                newstamp *= factor;
-                if (ev.is_note_off())
-                    newstamp -= note_off_margin();
-
-                /*
-                 * Useful?  if (relink) newstamp %= get_length();
-                 */
-
-                ev.set_timestamp(newstamp);
+                bool linked = ev.is_linked();       /* do note on and off   */
+                if (ev.is_note_on())
+                {
+                    midipulse newstamp = midipulse(stamp * factor);
+                    if (linked)
+                    {
+                        midipulse offstamp = ev.link()->timestamp();
+                        if (savenotelength)
+                        {
+                            midipulse len = offstamp - stamp;
+                            ev.link()->set_timestamp(newstamp + len);
+                        }
+                        else
+                        {
+                            offstamp = midipulse(offstamp * factor);
+                            scale_note_off(*ev.link(), factor);
+                        }
+                    }
+                    ev.set_timestamp(newstamp);
+                }
+                else if (ev.is_note_off())
+                {
+                    if (! ev.is_linked())           /* correction needed    */
+                        scale_note_off(ev, factor);
+                }
+                else
+                {
+                    midipulse newstamp = midipulse(stamp * factor);
+                    ev.set_timestamp(newstamp);
+                }
             }
             else
             {

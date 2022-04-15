@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-14
+ * \updates       2022-04-15
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -53,6 +53,7 @@
 #include "qt5_helper.h"                 /* QT5_HELPER_RADIO_SIGNAL macro    */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 #include "util/calculations.hpp"        /* seq66::wave enum class values    */
+#include "util/strfunctions.hpp"        /* seq66::string_to_double()        */
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -76,8 +77,8 @@ namespace seq66
  *  Static members.
  */
 
-static const double c_scale_min = 0.001;
-static const double c_scale_max = 1000.0;
+static const double c_scale_min =   0.01;
+static const double c_scale_max = 100.00;
 
 /*
  *  Signal buttonClicked(int) is overloaded in this class. To connect to this
@@ -111,6 +112,7 @@ qpatternfix::qpatternfix
     m_measures          (double(m_backup_measures)),
     m_scale_factor      (1.0),
     m_align_left        (false),
+    m_save_note_length  (false),
     m_is_modified       (false)
 {
     ui->setupUi(this);
@@ -212,6 +214,12 @@ qpatternfix::qpatternfix
         ui->btn_align_left, SIGNAL(stateChanged(int)),
         this, SLOT(slot_align_change(int))
     );
+    ui->btn_save_note_length->setChecked(false);
+    connect
+    (
+        ui->btn_save_note_length, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_save_note_length(int))
+    );
 
     /*
      * Bottom buttons.
@@ -273,40 +281,33 @@ qpatternfix::slot_length_fix (int fixlengthid)
 void
 qpatternfix::slot_measure_change ()
 {
-    bool ok;
     QString t = ui->line_edit_pick->text();
-    int m = t.toInt(&ok);
-    if (ok)
+    std::string tc = t.toStdString();
+    double m = string_to_double(tc, 1.0);
+    if (m != m_measures)
     {
-        bool changed = m != m_measures;         /* seqp()->get_measures()   */
-        if (changed)
-        {
-            ui->btn_change_pick->setChecked(true);
-            m_measures = m;
-            m_length_type = lengthfix::measures;
-            modify();
-        }
+        ui->btn_change_pick->setChecked(true);
+        m_measures = m;
+        m_length_type = lengthfix::measures;
+        modify();
     }
 }
 
 void
 qpatternfix::slot_scale_change ()
 {
-    bool ok;
     QString t = ui->line_edit_scale->text();
-    double v = t.toDouble(&ok);
+    std::string tc = t.toStdString();
+    double v = string_to_double(tc, 1.0);
+    bool ok = v >= c_scale_min && v <= c_scale_max;
     if (ok)
     {
-        ok = v >= c_scale_min && v <= c_scale_max;
-        if (ok)
+        bool changed = v != m_scale_factor;
+        if (changed)
         {
-            bool changed = v != m_scale_factor;
-            if (changed)
-            {
-                ui->btn_change_scale->setChecked(true);
-                m_scale_factor = v;
-                modify();
-            }
+            ui->btn_change_scale->setChecked(true);
+            m_scale_factor = v;
+            modify();
         }
     }
 }
@@ -331,6 +332,18 @@ qpatternfix::slot_align_change (int state)
     }
 }
 
+void
+qpatternfix::slot_save_note_length (int state)
+{
+    bool is_set = state == Qt::Checked;
+    bool changed = is_set != m_save_note_length;
+    if (changed)
+    {
+        m_save_note_length = is_set;
+        modify();
+    }
+}
+
 /**
  *  A convenience/encapsulation function.
  */
@@ -346,10 +359,11 @@ qpatternfix::set_dirty ()
 void
 qpatternfix::slot_set ()
 {
-    fixeffect efx;                                  /* set in fix_pattern() */
-    bool success = seqp()->fix_pattern
+    fixeffect efx;
+    bool success = seqp()->fix_pattern                  /* side-effects     */
     (
-        m_length_type, m_quan_type, m_align_left,
+        m_length_type, m_quan_type,
+        m_align_left, m_save_note_length,
         m_measures, m_scale_factor, efx
     );
     if (success)

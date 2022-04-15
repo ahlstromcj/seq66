@@ -47,6 +47,8 @@ External Live Grid:
 
 UI:
 
+    Try to handle odd beat-widths in the piano rolls, data pane and time-lines.
+
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-04-14
+ * \updates       2022-04-15
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -951,7 +951,7 @@ public:
     void pop_trigger_redo ();
     void set_name (const std::string & name = "");
     int calculate_measures (bool reset = false) const;
-    int get_measures () const;
+    int get_measures (midipulse newlength = 0) const;
 
     bool event_threshold () const
     {
@@ -1547,6 +1547,7 @@ public:
         lengthfix fixtype,
         quantization quantype,
         bool alignleft,
+        bool savenotelength,
         double & measures,
         double & scalefactor,
         fixeffect & effect

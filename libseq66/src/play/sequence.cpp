@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-14
+ * \updates       2022-04-15
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -766,17 +766,24 @@ sequence::calculate_measures (bool reset) const
  *  If we change 4/4 to 4/8, then playback slows down by half.  Be aware of
  *  this feature.
  *
+ * \param newlength
+ *      If 0 (the default), then the current pattern length is used in the
+ *      calculation of measures.  Otherwise, this parameter is used, and is
+ *      useful in the process of changing the number of measures in the
+ *      fix_pattern() function.
+ *
  * \return
  *      Returns the whole number of measure in the current length of the
  *      sequence.  Essentially rounds up if there is some leftover ticks.
  */
 
 int
-sequence::get_measures () const
+sequence::get_measures (midipulse newlength) const
 {
+    midipulse len = newlength > 0 ? newlength : get_length() ;
     int units = get_beats_per_bar() * get_ppqn() * 4 / get_beat_width();
-    int measures = get_length() / units;
-    if (get_length() % units != 0)
+    int measures = len / units;
+    if (len % units != 0)
         ++measures;
 
     return measures;
@@ -2500,6 +2507,7 @@ sequence::fix_pattern
     lengthfix fixtype,
     quantization quantype,
     bool alignleft,
+    bool savenotelength,
     double & newmeasures,
     double & scalefactor,
     fixeffect & efx
@@ -2526,21 +2534,28 @@ sequence::fix_pattern
         {
             if (newmeasures != double(currentbars))
             {
-                scalefactor = newmeasures > 1.0 ?
-                    (newmeasures / double(currentbars)) :
-                    (newmeasures * double(currentbars)) ;
+                if (newmeasures > 1.0)
+                    scalefactor = newmeasures / double(currentbars);
+                else
+                    scalefactor = newmeasures * double(currentbars);
 
-                currentbars = int(newmeasures);
-                newlength = m_events.apply_time_factor(scalefactor);
+                newlength = m_events.apply_time_factor
+                (
+                    scalefactor, savenotelength
+                );
             }
         }
         else if (fixtype == lengthfix::rescale)
         {
-            newlength = m_events.apply_time_factor(scalefactor);
+            newlength = m_events.apply_time_factor
+            (
+                scalefactor, savenotelength
+            );
         }
         if (newlength > 0 && newlength != currentlen)
         {
-            set_length(newlength);
+            int measures = get_measures(newlength);
+            result = apply_length(measures);
             newmeasures = double(get_measures());
         }
         if (quantype == quantization::tighten)
@@ -2562,7 +2577,9 @@ sequence::fix_pattern
             if (fixtype == lengthfix::rescale)
                 len = midipulse(len * scalefactor + 0.5);
 
-            result = set_length(len);
+            if (len != currentlen)
+                result = set_length(len);
+
             if (result)
             {
                 if (fixtype == lengthfix::rescale)

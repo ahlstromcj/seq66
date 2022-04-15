@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-14
+ * \updates       2022-04-15
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -131,6 +131,7 @@ private slots:
     void slot_scale_change ();
     void slot_quan_change (int quanid);
     void slot_align_change (int dummy);
+    void slot_save_note_length (int dummy);
     void slot_set ();
     void slot_reset ();
 
@@ -228,6 +229,13 @@ private:
      */
 
     bool m_align_left;
+
+    /**
+     *  Indicates to preserve note length when rescaling. Otherwise, the
+     *  end-time of the note is scaled as well.
+     */
+
+    bool m_save_note_length;
 
     /**
      *  Indicates the LFO modified status.
