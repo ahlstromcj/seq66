@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-15
+ * \updates       2022-04-16
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -113,6 +113,9 @@ qpatternfix::qpatternfix
     m_scale_factor      (1.0),
     m_align_left        (false),
     m_save_note_length  (false),
+    m_use_time_sig      (false),
+    m_time_sig_beats    (0),
+    m_time_sig_width    (0),
     m_is_modified       (false)
 {
     ui->setupUi(this);
@@ -161,7 +164,7 @@ qpatternfix::qpatternfix
         [=](int id) { slot_length_fix(id); }        /* lambda slot function */
     );
 
-    std::string temp = std::to_string(m_measures);
+    std::string temp = std::to_string(int(m_measures));
     ui->line_edit_pick->setText(qt(temp));
     connect
     (
@@ -172,7 +175,7 @@ qpatternfix::qpatternfix
     ui->line_edit_scale->setText(qt(temp));
     connect
     (
-        ui->line_edit_pick, SIGNAL(editingFinished()),
+        ui->line_edit_scale, SIGNAL(editingFinished()),
         this, SLOT(slot_scale_change())
     );
     ui->line_edit_none->hide();                     /* not used, hide it    */
@@ -286,9 +289,14 @@ qpatternfix::slot_measure_change ()
     double m = string_to_double(tc, 1.0);
     if (m != m_measures)
     {
+        int beats, width;
+        bool is_time_sig = string_to_time_signature(tc, beats, width);
         ui->btn_change_pick->setChecked(true);
         m_measures = m;
         m_length_type = lengthfix::measures;
+        m_time_sig_beats = beats;
+        m_time_sig_width = width;
+        m_use_time_sig = is_time_sig;
         modify();
     }
 }
@@ -302,14 +310,16 @@ qpatternfix::slot_scale_change ()
     bool ok = v >= c_scale_min && v <= c_scale_max;
     if (ok)
     {
-        bool changed = v != m_scale_factor;
-        if (changed)
+        if (v != m_scale_factor)
         {
             ui->btn_change_scale->setChecked(true);
             m_scale_factor = v;
+            m_length_type = lengthfix::rescale;
             modify();
         }
     }
+    m_time_sig_beats = m_time_sig_width = 0;
+    m_use_time_sig = false;
 }
 
 void
@@ -360,12 +370,14 @@ void
 qpatternfix::slot_set ()
 {
     fixeffect efx;
-    bool success = seqp()->fix_pattern                  /* side-effects     */
-    (
+    fixparameters fp =                                  /* value structure  */
+    {
         m_length_type, m_quan_type,
         m_align_left, m_save_note_length,
+        m_use_time_sig, m_time_sig_beats, m_time_sig_width,
         m_measures, m_scale_factor, efx
-    );
+    };
+    bool success = seqp()->fix_pattern(fp);             /* side-effects     */
     if (success)
     {
         bool bitshifted = bit_test(efx, fixeffect::shifted);
@@ -373,7 +385,15 @@ qpatternfix::slot_set ()
         bool bitexpanded = bit_test(efx, fixeffect::expanded);
         std::string temp = std::to_string(int(seqp()->get_length()));
         ui->line_edit_pulses->setText(qt(temp));
-        temp = std::to_string(m_measures);
+        if (m_use_time_sig)
+        {
+            temp = std::to_string(m_time_sig_beats);
+            temp += "/";
+            temp += std::to_string(m_time_sig_width);
+        }
+        else
+            temp = double_to_string(m_measures);
+
         ui->line_edit_pick->setText(qt(temp));
         temp = std::to_string(m_scale_factor);
         ui->line_edit_scale->setText(qt(temp));

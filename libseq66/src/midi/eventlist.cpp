@@ -1005,8 +1005,8 @@ eventlist::apply_time_factor
                 sort();
                 verify_and_link();
             }
-            if (factor > 1.0)
-                result = get_max_timestamp();
+////        if (factor > 1.0)
+            result = get_max_timestamp();
         }
     }
     return result;

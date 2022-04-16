@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-04-14
+ * \updates       2022-04-16
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -564,6 +564,26 @@ string_to_bool (const std::string & s, bool defalt)
     );
 }
 
+bool
+string_to_time_signature (const std::string & s, int & beats, int & width)
+{
+    bool result = s.find_first_of("/") != std::string::npos;
+    if (result)
+    {
+        tokenization numbers = tokenize(s, "/");
+        result = numbers.size() == 2;
+        if (result)
+        {
+            beats = string_to_int(numbers[0]);
+            width = string_to_int(numbers[1]);
+            result = beats > 0 && width > 0;
+        }
+        else
+            beats = width = 0;
+    }
+    return result;
+}
+
 /**
  *  Converts a string to a double value.  This function bypasses
  *  characters until it finds a digit (whether part of the number or a "0x"
@@ -594,15 +614,13 @@ string_to_double (const std::string & s, double defalt)
     double result = defalt;
     try
     {
-        if (s.find_first_of("/") != std::string::npos)
+        int beats, width;
+        bool is_time_sig = string_to_time_signature(s, beats, width);
+        if (is_time_sig)
         {
-            tokenization numbers = tokenize(s, "/");
-            if (numbers.size() == 2)
-            {
-                double numerator = std::stod(numbers[0]);
-                double denominator = std::stod(numbers[1]);
-                result = numerator / denominator;
-            }
+            double numerator = double(beats);
+            double denominator = double(width);
+            result = numerator / denominator;
         }
         else
             result = std::stod(s, nullptr);
@@ -612,6 +630,18 @@ string_to_double (const std::string & s, double defalt)
         // no code
     }
     return result;
+}
+
+std::string
+double_to_string (double value, int precision)
+{
+    char temp[32];
+    if (precision == 0)
+        (void) snprintf(temp, sizeof temp, "%g", value);
+    else
+        (void) snprintf(temp, sizeof temp, "%*g", precision, value);
+
+    return std::string(temp);
 }
 
 /**

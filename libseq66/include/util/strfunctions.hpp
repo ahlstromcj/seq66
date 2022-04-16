@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-21
+ * \updates       2022-04-16
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -103,7 +103,13 @@ extern std::string string_replace
     int n = -1
 );
 extern bool string_to_bool (const std::string & s, bool defalt = false);
+extern bool string_to_time_signature
+(
+    const std::string & s,
+    int & beats, int & width
+);
 extern double string_to_double (const std::string & s, double defalt = 0.0);
+extern std::string double_to_string(double value, int precision = 0);
 extern long string_to_long (const std::string & s, long defalt = 0L);
 extern unsigned long string_to_unsigned_long
 (

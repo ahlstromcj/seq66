@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-15
+ * \updates       2022-04-16
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -236,6 +236,25 @@ private:
      */
 
     bool m_save_note_length;
+
+    /**
+     *  Indicates to treat the measures text like a time signature.
+     *  Triggered by the presence of a "/" and valid beats and width.
+     */
+
+    bool m_use_time_sig;
+
+    /**
+     *  Time signature beats.
+     */
+
+    int m_time_sig_beats;
+
+    /**
+     *  Time signature beats.
+     */
+
+    int m_time_sig_width;
 
     /**
      *  Indicates the LFO modified status.

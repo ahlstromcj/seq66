@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-15
+ * \updates       2022-04-16
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -49,6 +49,7 @@
  */
 
 #include <cstring>                      /* std::memset()                    */
+#include <cmath>                        /* std::trunc()                     */
 
 #include "seq66_features.hpp"           /* various feature #defines         */
 #include "cfg/scales.hpp"               /* seq66 scales functions, values   */
@@ -2456,12 +2457,12 @@ sequence::change_event_data_lfo
  *
  *  Here's the process:
  *
- *      -#  If alignleft is set, all events timestamps are decreased by the
+ *      -#  If align_left is set, all events timestamps are decreased by the
  *          offset of the first event, so that the pattern starts at time 0.
- *      -#  If the fixtype is lengthfix::measures, then the scale-factor is
+ *      -#  If the fix_type is lengthfix::measures, then the scale-factor is
  *          calculated by the desired measures divided by the pattern's
  *          current measure value. The pattern length is scaled, too.
- *      -#  If the fixtype is lengthfix::rescale, then the scale factor is
+ *      -#  If the fix_type is lengthfix::rescale, then the scale factor is
  *          used directly. What should happen?
  *          -   All event timestamps are moved according to the expansion or
  *              compression scale factor.
@@ -2471,47 +2472,12 @@ sequence::change_event_data_lfo
  *      -#  The maximum timestamp is calculated, and the measures (and hence
  *          length) may end up being modified.
  *
- * \param fixtype
- *      Indicates if the length of the pattern is to be affected, either by
- *      setting the number of measures, or by scaling the pattern.  In either
- *      of those cases, the timestamps of all events will be adjusted
- *      accordingly.
- *
- * \param [inout] newmeasures
- *      The final length of the pattern,  Ignored if the fixtype is not
- *      lengthfix::measures, but the new bar count is returned here for display
- *      purposes.
- *
- * \param [inout] scalefactor
- *      The factor used to change the length of the pattern,  Ignored if the
- *      fixtype is not lengthfix::rescale. Sanity checked to not too small,
- *      not too large, and not 0.  Might be changed according to process, so that
- *      the final value can be displayed.
- *
- * \param quantype
- *      Indicates if all events are to be tighted or quantized.
- *
- * \param alignleft
- *      Indicates if the offset of the first event or, preferably first note
- *      event, is to be adjusted to 0, shifting all events by the same ammount
- *      of time.
- *
- * \param [out] effect
- *      Indicate the effect(s) of the change, using the fixeffect enumeration
- *      in the calculations module.
+ *  See the documentation for the fixparameters structure in the sequence.hpp
+ *  module.
  */
 
 bool
-sequence::fix_pattern
-(
-    lengthfix fixtype,
-    quantization quantype,
-    bool alignleft,
-    bool savenotelength,
-    double & newmeasures,
-    double & scalefactor,
-    fixeffect & efx
-)
+sequence::fix_pattern (fixparameters & params)
 {
     automutex locker(m_mutex);
     bool result = true;
@@ -2519,50 +2485,57 @@ sequence::fix_pattern
     midipulse currentlen = get_length();
     midipulse newlength = 0;
     fixeffect tempefx = fixeffect::none;
+    double newmeasures = params.fp_measures;
+    double newscalefactor = params.fp_scale_factor;
     push_undo();
-    if (alignleft)
+    if (params.fp_align_left)
     {
-        alignleft = m_events.align_left();                  /* realigned?   */
-        if (alignleft)
+        params.fp_align_left = m_events.align_left();        /* realigned?   */
+        if (params.fp_align_left)
             tempefx = bit_set(tempefx, fixeffect::shifted);
         else
             result = false;                                 /* op failed    */
     }
     if (result)
     {
-        if (fixtype == lengthfix::measures)
+        if (params.fp_fix_type == lengthfix::measures)
         {
-            if (newmeasures != double(currentbars))
+            if (params.fp_measures != double(currentbars))
             {
-                if (newmeasures > 1.0)
-                    scalefactor = newmeasures / double(currentbars);
+                if (newmeasures >= 1.0)
+                {
+                    newscalefactor = newmeasures / double(currentbars);
+                    newmeasures = std::trunc(newmeasures) + 1;
+                }
                 else
-                    scalefactor = newmeasures * double(currentbars);
-
+                {
+                    newscalefactor = newmeasures * double(currentbars);
+                    newmeasures = 1.0;
+                }
                 newlength = m_events.apply_time_factor
                 (
-                    scalefactor, savenotelength
+                    newscalefactor, params.fp_save_note_length
                 );
             }
         }
-        else if (fixtype == lengthfix::rescale)
+        else if (params.fp_fix_type == lengthfix::rescale)
         {
             newlength = m_events.apply_time_factor
             (
-                scalefactor, savenotelength
+                newscalefactor, params.fp_save_note_length
             );
         }
         if (newlength > 0 && newlength != currentlen)
         {
             int measures = get_measures(newlength);
             result = apply_length(measures);
-            newmeasures = double(get_measures());
+            params.fp_measures = double(get_measures());
         }
-        if (quantype == quantization::tighten)
+        if (params.fp_quan_type == quantization::tighten)
         {
             result = m_events.quantize_all_events(snap(), 2);
         }
-        else if (quantype == quantization::full)
+        else if (params.fp_quan_type == quantization::full)
         {
             result = m_events.quantize_all_events(snap(), 1);
         }
@@ -2574,23 +2547,31 @@ sequence::fix_pattern
              */
 
             midipulse len = unit_measure() * currentbars;
-            if (fixtype == lengthfix::rescale)
-                len = midipulse(len * scalefactor + 0.5);
+            if (params.fp_fix_type == lengthfix::rescale)
+                len = midipulse(len * params.fp_scale_factor + 0.5);
 
             if (len != currentlen)
                 result = set_length(len);
 
             if (result)
             {
-                if (fixtype == lengthfix::rescale)
-                    newmeasures = calculate_measures();
+                if (params.fp_fix_type == lengthfix::rescale)
+                    params.fp_measures = calculate_measures();
 
                 if (len > currentlen)
                     tempefx = bit_set(tempefx, fixeffect::expanded);
                 else if (len < currentlen)
                     tempefx = bit_set(tempefx, fixeffect::shrunk);
 
-                efx = tempefx;
+                params.fp_measures = newmeasures;
+                params.fp_scale_factor = newscalefactor;
+                params.fp_effect = tempefx;
+                if (params.fp_use_time_signature)
+                {
+                    set_beats_per_bar(params.fp_beats_per_bar);
+                    set_beat_width(params.fp_beat_width);
+                    result = apply_length(int(newmeasures));
+                }
                 set_dirty();
                 verify_and_link();
                 modify(true);                       /* call notify_change() */

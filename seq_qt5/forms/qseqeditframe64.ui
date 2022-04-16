@@ -637,8 +637,8 @@ the '0' key in the piano roll.</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>48</width>
-            <height>134</height>
+            <width>38</width>
+            <height>136</height>
            </rect>
           </property>
          </widget>
@@ -702,8 +702,8 @@ the '0' key in the piano roll.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>718</width>
-          <height>139</height>
+          <width>714</width>
+          <height>144</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -789,6 +789,9 @@ the '0' key in the piano roll.</string>
        <property name="text">
         <string>Q</string>
        </property>
+       <property name="shortcut">
+        <string>Ctrl+Q</string>
+       </property>
       </widget>
      </item>
      <item>
@@ -811,6 +814,9 @@ the '0' key in the piano roll.</string>
        <property name="text">
         <string>T</string>
        </property>
+       <property name="shortcut">
+        <string>Ctrl+T</string>
+       </property>
       </widget>
      </item>
      <item>
@@ -832,6 +838,9 @@ the '0' key in the piano roll.</string>
        </property>
        <property name="text">
         <string>F</string>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+F</string>
        </property>
       </widget>
      </item>
@@ -1187,7 +1196,7 @@ zooms 'in'.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>710</width>
+          <width>714</width>
           <height>24</height>
          </rect>
         </property>

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-04-15
+ * \updates       2022-04-16
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -66,9 +66,74 @@ const int c_seq_color_none = (-1);
 
 namespace seq66
 {
-    class mastermidibus;
-    class notemapper;
-    class performer;
+
+class mastermidibus;
+class notemapper;
+class performer;
+
+/**
+ *  A structure for encapsulating the many parameters of sequence ::
+ *  fix_pattern().  Must be created using an initializer list.
+ *
+ * \var fp_fix_type
+ *      Indicates if the length of the pattern is to be affected, either by
+ *      setting the number of measures, or by scaling the pattern.  In either
+ *      of those cases, the timestamps of all events will be adjusted
+ *      accordingly.
+ *
+ * \var fp_quan_type
+ *      Indicates if all events are to be tighted or quantized.
+ *
+ * \var fp_align_left
+ *      Indicates if the offset of the first event or, preferably first note
+ *      event, is to be adjusted to 0, shifting all events by the same ammount
+ *      of time.
+ *
+ * \var fp_save_note_length
+ *      If true, do not scale the note-off timestamps.  Keep them at the same
+ *      offset against the linked note-on event.
+ *
+ * \var fp_use_time_signature
+ *      If true, try to alter the time signature.  This occurs if the measures
+ *      string is a fraction (e.g. "3/4" or "5/4").
+ *
+ * \var fp_beats_per_bar
+ *      If fp_use_time_signature is true, then this value is assumed to be the
+ *      (possibly new) beats per bar.
+ *
+ * \var fp_beat_width
+ *      If fp_use_time_signature is true, then this value is assumed to be the
+ *      (possibly new) beat width.
+ *
+ * \var [inout] fp_measures
+ *      The final length of the pattern,  Ignored if the fix_type is not
+ *      lengthfix::measures, but the new bar count is returned here for
+ *      display purposes.
+ *
+ * \var [inout] fp_scale_factor
+ *      The factor used to change the length of the pattern,  Ignored if the
+ *      fix_type is not lengthfix::rescale. Sanity checked to not too small,
+ *      not too large, and not 0.  Might be changed according to process, so
+ *      that the final value can be displayed.
+ *
+ * \var [out] fp_effect
+ *      Indicate the effect(s) of the change, using the fixeffect enumeration
+ *      in the calculations module.
+ */
+
+struct fixparameters
+{
+    lengthfix fp_fix_type;
+    quantization fp_quan_type;
+    bool fp_align_left;
+    bool fp_save_note_length;
+    bool fp_use_time_signature;
+    int & fp_beats_per_bar;
+    int & fp_beat_width;
+    double & fp_measures;
+    double & fp_scale_factor;
+    fixeffect & fp_effect;
+};
 
 /**
  *  The sequence class is firstly a receptable for a single track of MIDI
@@ -1542,16 +1607,7 @@ public:
         double dcoffset, double range, double speed, double phase,
         waveform w, midibyte status, midibyte cc, bool usemeasure = false
     );
-    bool fix_pattern                        /* for the qpatternfix dialog   */
-    (
-        lengthfix fixtype,
-        quantization quantype,
-        bool alignleft,
-        bool savenotelength,
-        double & measures,
-        double & scalefactor,
-        fixeffect & effect
-    );
+    bool fix_pattern (fixparameters & param);   /* for qpatternfix dialog   */
     void increment_selected (midibyte status, midibyte /*control*/);
     void decrement_selected (midibyte status, midibyte /*control*/);
     bool grow_selected (midipulse deltatick);
