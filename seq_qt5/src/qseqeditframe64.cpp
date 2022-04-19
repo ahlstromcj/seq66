@@ -1819,7 +1819,15 @@ qseqeditframe64::popup_tool_menu ()
     QMenu * menutiming = new QMenu(tr("&Timing..."), m_tools_popup);
     QMenu * menupitch  = new QMenu(tr("&Pitch transpose..."), m_tools_popup);
     QMenu * menuharmonic = new QMenu(tr("&Harmonic transpose..."), m_tools_popup);
+
+#if defined USE_MORE_TOOLS
+    /*
+     * Can enable this if we get much more than the 2 current extra tools.
+     */
+
     QMenu * menumore = new QMenu(tr("&More tools..."), m_tools_popup);
+#endif
+
     QAction * selectall = new QAction(tr("Select &all"), m_tools_popup);
     connect
     (
@@ -1846,11 +1854,15 @@ qseqeditframe64::popup_tool_menu ()
 
     QAction * lfobox = new QAction(tr("&LFO..."), m_tools_popup);
     connect(lfobox, SIGNAL(triggered(bool)), this, SLOT(show_lfo_frame()));
+#if defined USE_MORE_TOOLS
     menumore->addAction(lfobox);
+#endif
 
     QAction * fixbox = new QAction(tr("Pattern &fix..."), m_tools_popup);
     connect(fixbox, SIGNAL(triggered(bool)), this, SLOT(show_pattern_fix()));
+#if defined USE_MORE_TOOLS
     menumore->addAction(fixbox);
+#endif
 
     QAction * transpose[2 * c_octave_size];     /* plain pitch transposings */
     QAction * harmonic[2 * c_harmonic_size];    /* harmonic transpositions  */
@@ -1911,7 +1923,12 @@ qseqeditframe64::popup_tool_menu ()
     m_tools_popup->addMenu(menutiming);
     m_tools_popup->addMenu(menupitch);
     m_tools_popup->addMenu(menuharmonic);
+#if defined USE_MORE_TOOLS
     m_tools_popup->addMenu(menumore);
+#else
+    m_tools_popup->addAction(lfobox);
+    m_tools_popup->addAction(fixbox);
+#endif
     m_tools_harmonic = menuharmonic;
     m_tools_harmonic->setEnabled(m_scale > 0);
 }
@@ -3049,9 +3066,11 @@ void
 qseqeditframe64::show_lfo_frame ()
 {
     if (is_nullptr(m_lfo_wnd))
+    {
         m_lfo_wnd = new qlfoframe(perf(), seq_pointer(), *m_seqdata);
-
-    m_lfo_wnd->show();
+        if (not_nullptr(m_lfo_wnd))
+            m_lfo_wnd->show();
+    }
 }
 
 void
@@ -3059,10 +3078,7 @@ qseqeditframe64::show_pattern_fix ()
 {
     if (is_nullptr(m_patternfix_wnd))
     {
-        m_patternfix_wnd = new qpatternfix
-        (
-            perf(), seq_pointer(), *m_seqdata, *m_seqevent
-        );
+        m_patternfix_wnd = new qpatternfix (perf(), seq_pointer(), this);
         if (not_nullptr(m_patternfix_wnd))
             m_patternfix_wnd->show();
     }

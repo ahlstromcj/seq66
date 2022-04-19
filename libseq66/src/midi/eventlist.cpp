@@ -945,12 +945,7 @@ eventlist::scale_note_off (event & noteoff, double factor)
  */
 
 midipulse
-eventlist::apply_time_factor
-(
-    double factor,
-    bool savenotelength,
-    bool relink
-)
+eventlist::apply_time_factor (double factor, bool savenotelength, bool relink)
 {
     midipulse result = 0;
     bool ok = ! empty() && factor > 0.01;
@@ -1005,7 +1000,6 @@ eventlist::apply_time_factor
                 sort();
                 verify_and_link();
             }
-////        if (factor > 1.0)
             result = get_max_timestamp();
         }
     }

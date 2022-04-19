@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-16
+ * \updates       2022-04-19
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -91,8 +91,6 @@ qpatternfix::qpatternfix
 (
     performer & p,
     seq::pointer seqptr,
-    qseqdata & sdata,
-    qstriggereditor & sevents,
     qseqeditframe64 * editparent,
     QWidget * parent
 ) :
@@ -102,10 +100,10 @@ qpatternfix::qpatternfix
     m_quan_group        (nullptr),
     m_performer         (p),
     m_seq               (seqptr),
-    m_seqdata           (sdata),
-    m_qstriggereditor   (sevents),
     m_backup_events     (seqp()->events()),             /* for slot_reset() */
     m_backup_measures   (seqp()->get_measures()),
+    m_backup_beats      (seqp()->get_beats_per_bar()),
+    m_backup_width      (seqp()->get_beat_width()),
     m_edit_frame        (editparent),
     m_length_type       (lengthfix::none),
     m_quan_type         (quantization::none),
@@ -119,122 +117,7 @@ qpatternfix::qpatternfix
     m_is_modified       (false)
 {
     ui->setupUi(this);
-
-    /*
-     * Pattern Number.  Make this editable or a drop-down as well?
-     */
-
-    std::string number = std::to_string(int(seqp()->seq_number()));
-    ui->line_edit_pattern->setText(qt(number));
-    ui->line_edit_pattern->setEnabled(false);           /* no user-edit yet */
-    number = std::to_string(int(seqp()->get_length()));
-    ui->line_edit_pulses->setText(qt(number));
-    ui->line_edit_pulses->setEnabled(false);            /* no user-edit yet */
-
-    /*
-     *  connect
-     *  (
-     *      ui->line_edit_pattern, SIGNAL(editingFinished()),
-     *      this, SLOT(slot_pattern_number())
-     *  );
-     */
-
-    std::string plabel = "Pattern #";
-    plabel += number;
-    setWindowTitle(qt(plabel));
-
-    /*
-     * Length Change.
-     */
-
-    m_fixlength_group = new QButtonGroup(this);
-    m_fixlength_group->addButton(ui->btn_change_none, cast(lengthfix::none));
-    m_fixlength_group->addButton
-    (
-        ui->btn_change_pick, cast(lengthfix::measures)
-    );
-    m_fixlength_group->addButton
-    (
-        ui->btn_change_scale, cast(lengthfix::rescale)
-    );
-    ui->btn_change_none->setChecked(true);
-    connect
-    (
-        m_fixlength_group, QT5_HELPER_RADIO_SIGNAL,
-        [=](int id) { slot_length_fix(id); }        /* lambda slot function */
-    );
-
-    std::string temp = std::to_string(int(m_measures));
-    ui->line_edit_pick->setText(qt(temp));
-    connect
-    (
-        ui->line_edit_pick, SIGNAL(editingFinished()),
-        this, SLOT(slot_measure_change())
-    );
-    temp = std::to_string(1);                       /* actually a float     */
-    ui->line_edit_scale->setText(qt(temp));
-    connect
-    (
-        ui->line_edit_scale, SIGNAL(editingFinished()),
-        this, SLOT(slot_scale_change())
-    );
-    ui->line_edit_none->hide();                     /* not used, hide it    */
-
-    /*
-     * Effect.  Meant to be read-only, to show the "effect" of the current
-     * settings.  Enforced in the qpatternfix.ui form.
-     */
-
-     ui->group_box_effect->setEnabled(true);
-     ui->btn_effect_shift->setChecked(false);
-     ui->btn_effect_shrink->setChecked(false);
-     ui->btn_effect_expand->setChecked(false);
-
-    /*
-     * Quantization.
-     */
-
-    m_quan_group = new QButtonGroup(this);
-    ui->group_box_quantize->setEnabled(true);
-    m_quan_group->addButton(ui->btn_quan_none, cast(quantization::none));
-    m_quan_group->addButton(ui->btn_quan_tighten, cast(quantization::tighten));
-    m_quan_group->addButton(ui->btn_quan_full, cast(quantization::full));
-    ui->btn_quan_none->setChecked(true);
-    connect
-    (
-        m_quan_group, QT5_HELPER_RADIO_SIGNAL,
-        [=](int id) { slot_quan_change(id); }       /* lambda slot function */
-    );
-
-    /*
-     * Other Fixes.
-     */
-
-    ui->group_box_other->setEnabled(true);
-    ui->btn_align_left->setChecked(false);
-    connect
-    (
-        ui->btn_align_left, SIGNAL(stateChanged(int)),
-        this, SLOT(slot_align_change(int))
-    );
-    ui->btn_save_note_length->setChecked(false);
-    connect
-    (
-        ui->btn_save_note_length, SIGNAL(stateChanged(int)),
-        this, SLOT(slot_save_note_length(int))
-    );
-
-    /*
-     * Bottom buttons.
-     */
-
-    ui->btn_set->setEnabled(false);
-    ui->btn_reset->setEnabled(false);
-    ui->btn_close->setEnabled(true);
-
-    connect(ui->btn_set, SIGNAL(clicked()), this, SLOT(slot_set()));
-    connect(ui->btn_reset, SIGNAL(clicked()), this, SLOT(slot_reset()));
-    connect(ui->btn_close, SIGNAL(clicked()), this, SLOT(close()));
+    initialize(true);
 }
 
 /**
@@ -249,12 +132,158 @@ qpatternfix::~qpatternfix()
 }
 
 void
+qpatternfix::initialize (bool startup)
+{
+    std::string value = std::to_string(int(seqp()->get_length()));
+    ui->label_pulses->setText(qt(value));
+    value = std::to_string(int(m_measures));
+    ui->line_edit_pick->setText(qt(value));
+    value = std::to_string(1);                          /* actually a float */
+    ui->line_edit_scale->setText(qt(value));
+    ui->btn_effect_shift->setChecked(false);
+    ui->btn_effect_shrink->setChecked(false);
+    ui->btn_effect_expand->setChecked(false);
+    ui->btn_effect_time_sig->setChecked(false);
+    ui->btn_align_left->setChecked(false);
+    ui->btn_save_note_length->setChecked(false);
+    ui->btn_set->setEnabled(false);
+    ui->btn_reset->setEnabled(false);
+    if (startup)
+    {
+        /*
+         * Read-only labelling. Pattern number and pattern length.
+         */
+
+        std::string value = std::to_string(int(seqp()->seq_number()));
+        ui->label_pattern->setText(qt(value));
+
+        std::string plabel = "Pattern #";
+        plabel += value;
+        setWindowTitle(qt(plabel));
+
+        /*
+         * Length (Measures or Scaling) Change.
+         */
+
+        m_fixlength_group = new QButtonGroup(this);
+        m_fixlength_group->addButton(ui->btn_change_none, cast(lengthfix::none));
+        m_fixlength_group->addButton
+        (
+            ui->btn_change_pick, cast(lengthfix::measures)
+        );
+        m_fixlength_group->addButton
+        (
+            ui->btn_change_scale, cast(lengthfix::rescale)
+        );
+        ui->btn_change_none->setChecked(true);
+        connect
+        (
+            m_fixlength_group, QT5_HELPER_RADIO_SIGNAL,
+            [=](int id) { slot_length_fix(id); }        /* lambda function  */
+        );
+
+        connect
+        (
+            ui->line_edit_pick, SIGNAL(editingFinished()),
+            this, SLOT(slot_measure_change())
+        );
+        connect
+        (
+            ui->line_edit_scale, SIGNAL(editingFinished()),
+            this, SLOT(slot_scale_change())
+        );
+        ui->line_edit_none->hide();                     /* unused, hide it  */
+
+        /*
+         * Quantization.
+         */
+
+        m_quan_group = new QButtonGroup(this);
+        ui->group_box_quantize->setEnabled(true);
+        m_quan_group->addButton(ui->btn_quan_none, cast(quantization::none));
+        m_quan_group->addButton(ui->btn_quan_tighten, cast(quantization::tighten));
+        m_quan_group->addButton(ui->btn_quan_full, cast(quantization::full));
+        ui->btn_quan_none->setChecked(true);
+        connect
+        (
+            m_quan_group, QT5_HELPER_RADIO_SIGNAL,
+            [=](int id) { slot_quan_change(id); }       /* lambda function  */
+        );
+
+        /*
+         * The "read-only" Effect group.  The slot here merely keeps them from
+         * being checked by the user.  If we make them readonly they text is
+         * difficult to read in many Qt themes.
+         */
+
+        connect
+        (
+            ui->btn_effect_shift, SIGNAL(clicked()), this, SLOT(slot_effect())
+        );
+        connect
+        (
+            ui->btn_effect_shrink, SIGNAL(clicked()), this, SLOT(slot_effect())
+        );
+        connect
+        (
+            ui->btn_effect_expand, SIGNAL(clicked()), this, SLOT(slot_effect())
+        );
+        connect
+        (
+            ui->btn_effect_time_sig, SIGNAL(clicked()), this, SLOT(slot_effect())
+        );
+
+        /*
+         * Other Fixes.
+         */
+
+        ui->group_box_effect->setEnabled(true);
+        ui->group_box_other->setEnabled(true);
+        connect
+        (
+            ui->btn_align_left, SIGNAL(stateChanged(int)),
+            this, SLOT(slot_align_change(int))
+        );
+        connect
+        (
+            ui->btn_save_note_length, SIGNAL(stateChanged(int)),
+            this, SLOT(slot_save_note_length(int))
+        );
+
+        /*
+         * Bottom buttons.
+         */
+
+        ui->btn_close->setEnabled(true);
+        connect(ui->btn_set, SIGNAL(clicked()), this, SLOT(slot_set()));
+        connect(ui->btn_reset, SIGNAL(clicked()), this, SLOT(slot_reset()));
+        connect(ui->btn_close, SIGNAL(clicked()), this, SLOT(close()));
+    }
+    else
+    {
+        /*
+         * Grouped buttons.
+         */
+
+        ui->btn_change_none->setChecked(true);
+        ui->btn_quan_none->setChecked(true);
+    }
+
+}
+
+void
 qpatternfix::modify ()
 {
     ui->btn_set->setEnabled(true);
     ui->btn_reset->setEnabled(true);
     m_is_modified = true;
 }
+
+/**
+ *  All this does is ...
+ *  because we don't want to force the user to have to modify anything to
+ *  Set the values again.
+ */
 
 void
 qpatternfix::unmodify (bool reset_fields)
@@ -269,8 +298,19 @@ qpatternfix::unmodify (bool reset_fields)
         ui->btn_effect_expand->setChecked(false);
         ui->btn_reset->setEnabled(false);
     }
-    ui->btn_set->setEnabled(false);                     /* correct?         */
+    /*
+     * ui->btn_set->setEnabled(false);
+     */
     m_is_modified = false;
+}
+
+void
+qpatternfix::slot_effect ()
+{
+    ui->btn_effect_shift->setChecked(false);
+    ui->btn_effect_shrink->setChecked(false);
+    ui->btn_effect_expand->setChecked(false);
+    ui->btn_effect_time_sig->setChecked(false);
 }
 
 void
@@ -297,7 +337,14 @@ qpatternfix::slot_measure_change ()
         m_time_sig_beats = beats;
         m_time_sig_width = width;
         m_use_time_sig = is_time_sig;
+        ui->btn_effect_time_sig->setChecked(is_time_sig);
         modify();
+    }
+    else
+    {
+        int beats, width;
+        bool is_time_sig = string_to_time_signature(tc, beats, width);
+        ui->btn_effect_time_sig->setChecked(is_time_sig);
     }
 }
 
@@ -307,19 +354,19 @@ qpatternfix::slot_scale_change ()
     QString t = ui->line_edit_scale->text();
     std::string tc = t.toStdString();
     double v = string_to_double(tc, 1.0);
-    bool ok = v >= c_scale_min && v <= c_scale_max;
-    if (ok)
+    if (v >= c_scale_min && v <= c_scale_max)
     {
         if (v != m_scale_factor)
         {
             ui->btn_change_scale->setChecked(true);
             m_scale_factor = v;
             m_length_type = lengthfix::rescale;
+            m_time_sig_beats = m_time_sig_width = 0;
+            m_use_time_sig = false;
+            ui->btn_effect_time_sig->setChecked(false);
             modify();
         }
     }
-    m_time_sig_beats = m_time_sig_width = 0;
-    m_use_time_sig = false;
 }
 
 void
@@ -355,15 +402,15 @@ qpatternfix::slot_save_note_length (int state)
 }
 
 /**
- *  A convenience/encapsulation function.
+ *  A convenience/encapsulation function to trigger redrawing.
  */
 
 void
 qpatternfix::set_dirty ()
 {
-    seqp()->set_dirty();                                /* for redrawing    */
-    m_seqdata.set_dirty();                              /* for redrawing    */
-    m_qstriggereditor.set_dirty();                      /* tritto           */
+    seqp()->set_dirty();
+    if (not_nullptr(m_edit_frame))
+        m_edit_frame->set_dirty();
 }
 
 void
@@ -384,7 +431,7 @@ qpatternfix::slot_set ()
         bool bitshrunk = bit_test(efx, fixeffect::shrunk);
         bool bitexpanded = bit_test(efx, fixeffect::expanded);
         std::string temp = std::to_string(int(seqp()->get_length()));
-        ui->line_edit_pulses->setText(qt(temp));
+        ui->label_pulses->setText(qt(temp));
         if (m_use_time_sig)
         {
             temp = std::to_string(m_time_sig_beats);
@@ -408,10 +455,24 @@ qpatternfix::slot_set ()
 void
 qpatternfix::slot_reset ()
 {
+    seqp()->set_beats_per_bar(m_backup_beats);          /* restore original */
+    seqp()->set_beat_width(m_backup_width);             /* ditto            */
     seqp()->apply_length(m_backup_measures);            /* simple overload  */
-    seqp()->events() = m_backup_events;
-    set_dirty();                                        /* for redrawing    */
+    seqp()->events() = m_backup_events;                 /* restore events   */
+
+    m_measures = double(m_backup_measures);
+    m_align_left = m_save_note_length = m_use_time_sig = false;
+    m_time_sig_beats = m_time_sig_width = 0;
+    m_scale_factor = 1.0;
+
+    initialize(false);
+
+    slot_length_fix(cast(lengthfix::none));
+    slot_quan_change(cast(quantization::none));
+    m_measures = m_backup_measures;
+
     unmodify();                                         /* change fields    */
+    set_dirty();                                        /* for redrawing    */
 }
 
 void

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>557</width>
-    <height>329</height>
+    <width>565</width>
+    <height>331</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <rect>
      <x>24</x>
      <y>8</y>
-     <width>505</width>
+     <width>511</width>
      <height>38</height>
     </rect>
    </property>
@@ -38,9 +38,28 @@
      </widget>
     </item>
     <item>
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
      <widget class="QLabel" name="label_pattern_no">
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="text">
-       <string>Pattern Number  </string>
+       <string>Pattern No. </string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -48,22 +67,38 @@
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="line_edit_pattern">
-      <property name="maximumSize">
+     <widget class="QLabel" name="label_pattern">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="minimumSize">
        <size>
-        <width>56</width>
-        <height>16777215</height>
+        <width>48</width>
+        <height>0</height>
        </size>
       </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="line_edit_pulses">
       <property name="maximumSize">
        <size>
         <width>56</width>
-        <height>16777215</height>
+        <height>28</height>
        </size>
+      </property>
+      <property name="font">
+       <font>
+        <italic>true</italic>
+       </font>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="lineWidth">
+       <number>2</number>
+      </property>
+      <property name="midLineWidth">
+       <number>1</number>
       </property>
       <property name="text">
        <string/>
@@ -72,6 +107,12 @@
     </item>
     <item>
      <widget class="QLabel" name="label">
+      <property name="minimumSize">
+       <size>
+        <width>64</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
         <width>64</width>
@@ -81,6 +122,39 @@
       <property name="text">
        <string>Pulses</string>
       </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_pulses">
+      <property name="minimumSize">
+       <size>
+        <width>64</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>64</width>
+        <height>28</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <italic>true</italic>
+       </font>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
      </widget>
     </item>
    </layout>
@@ -89,7 +163,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>52</y>
+     <y>56</y>
      <width>245</width>
      <height>165</height>
     </rect>
@@ -107,9 +181,9 @@
     <property name="geometry">
      <rect>
       <x>12</x>
-      <y>36</y>
+      <y>24</y>
       <width>217</width>
-      <height>122</height>
+      <height>125</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -143,7 +217,7 @@
      <item row="2" column="0">
       <widget class="QRadioButton" name="btn_change_scale">
        <property name="text">
-        <string>Scale Factor</string>
+        <string>Scale &amp;Factor</string>
        </property>
       </widget>
      </item>
@@ -156,8 +230,8 @@
   <widget class="QGroupBox" name="group_box_quantize">
    <property name="geometry">
     <rect>
-     <x>392</x>
-     <y>52</y>
+     <x>260</x>
+     <y>56</y>
      <width>153</width>
      <height>165</height>
     </rect>
@@ -175,9 +249,9 @@
     <property name="geometry">
      <rect>
       <x>16</x>
-      <y>32</y>
+      <y>24</y>
       <width>121</width>
-      <height>113</height>
+      <height>125</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -191,14 +265,14 @@
      <item>
       <widget class="QRadioButton" name="btn_quan_tighten">
        <property name="text">
-        <string>Tighten</string>
+        <string>&amp;Tighten</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QRadioButton" name="btn_quan_full">
        <property name="text">
-        <string>Full</string>
+        <string>F&amp;ull</string>
        </property>
       </widget>
      </item>
@@ -211,15 +285,16 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>268</x>
-     <y>52</y>
-     <width>120</width>
+     <x>416</x>
+     <y>56</y>
+     <width>125</width>
      <height>165</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <weight>75</weight>
+     <italic>true</italic>
      <bold>true</bold>
     </font>
    </property>
@@ -230,9 +305,9 @@
     <property name="geometry">
      <rect>
       <x>8</x>
-      <y>28</y>
-      <width>101</width>
-      <height>117</height>
+      <y>24</y>
+      <width>117</width>
+      <height>125</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -240,6 +315,11 @@
       <widget class="QCheckBox" name="btn_effect_shift">
        <property name="enabled">
         <bool>true</bool>
+       </property>
+       <property name="font">
+        <font>
+         <italic>true</italic>
+        </font>
        </property>
        <property name="text">
         <string>Shift</string>
@@ -251,6 +331,11 @@
        <property name="enabled">
         <bool>true</bool>
        </property>
+       <property name="font">
+        <font>
+         <italic>true</italic>
+        </font>
+       </property>
        <property name="text">
         <string>Shrin&amp;k</string>
        </property>
@@ -261,8 +346,25 @@
        <property name="enabled">
         <bool>true</bool>
        </property>
+       <property name="font">
+        <font>
+         <italic>true</italic>
+        </font>
+       </property>
        <property name="text">
         <string>E&amp;xpand</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="btn_effect_time_sig">
+       <property name="font">
+        <font>
+         <italic>true</italic>
+        </font>
+       </property>
+       <property name="text">
+        <string>Time Sig</string>
        </property>
       </widget>
      </item>
@@ -273,7 +375,7 @@
    <property name="geometry">
     <rect>
      <x>24</x>
-     <y>220</y>
+     <y>224</y>
      <width>233</width>
      <height>89</height>
     </rect>
@@ -287,38 +389,38 @@
    <property name="title">
     <string>Other Fixes</string>
    </property>
-   <widget class="QCheckBox" name="btn_align_left">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>12</x>
       <y>28</y>
-      <width>201</width>
-      <height>25</height>
+      <width>213</width>
+      <height>54</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Align left</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="btn_save_note_length">
-    <property name="geometry">
-     <rect>
-      <x>12</x>
-      <y>56</y>
-      <width>197</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Preserve note length</string>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QCheckBox" name="btn_align_left">
+       <property name="text">
+        <string>&amp;Align left</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="btn_save_note_length">
+       <property name="text">
+        <string>&amp;Preserve note length</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QWidget" name="layoutWidgetAlignLeft">
    <property name="geometry">
     <rect>
      <x>280</x>
-     <y>272</y>
+     <y>264</y>
      <width>253</width>
      <height>38</height>
     </rect>
@@ -333,7 +435,7 @@
        </size>
       </property>
       <property name="text">
-       <string>Set</string>
+       <string>&amp;Set</string>
       </property>
      </widget>
     </item>
@@ -346,7 +448,7 @@
        </size>
       </property>
       <property name="text">
-       <string>Reset</string>
+       <string>&amp;Reset</string>
       </property>
      </widget>
     </item>
@@ -359,7 +461,7 @@
        </size>
       </property>
       <property name="text">
-       <string>Close</string>
+       <string>&amp;Close</string>
       </property>
      </widget>
     </item>
@@ -383,8 +485,6 @@
   <tabstop>btn_effect_expand</tabstop>
   <tabstop>btn_effect_shrink</tabstop>
   <tabstop>btn_effect_shift</tabstop>
-  <tabstop>line_edit_pattern</tabstop>
-  <tabstop>line_edit_pulses</tabstop>
  </tabstops>
  <resources/>
  <connections/>

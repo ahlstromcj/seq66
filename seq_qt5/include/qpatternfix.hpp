@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-16
+ * \updates       2022-04-19
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -82,10 +82,8 @@ public:
     (
         performer & p,
         seq::pointer seqp,
-        qseqdata & sdata,
-        qstriggereditor & sevents,
-        qseqeditframe64 * editparent    = nullptr,
-        QWidget * parent                = nullptr
+        qseqeditframe64 * editparent,
+        QWidget * parent = nullptr
     );
     virtual ~qpatternfix ();
 
@@ -116,6 +114,7 @@ private:
     void set_dirty ();
     void set_value_text (double value, QLineEdit * textline);
     void wave_type_change (int waveid);
+    void initialize (bool startup);
 
 signals:
 
@@ -126,6 +125,7 @@ private slots:
      *  buttonClicked() signals.
      */
 
+    void slot_effect ();
     void slot_length_fix (int fixlengthid);
     void slot_measure_change ();
     void slot_scale_change ();
@@ -169,18 +169,6 @@ private:
     seq::pointer m_seq;
 
     /**
-     *  The qseqdata associated with this window.
-     */
-
-    qseqdata & m_seqdata;
-
-    /**
-     *  The qstriggereditor associated with this window.
-     */
-
-    qstriggereditor & m_qstriggereditor;
-
-    /**
      *  Holds the original data in order to allow for a complete undo of the
      *  changes.
      */
@@ -192,6 +180,18 @@ private:
      */
 
     int m_backup_measures;
+
+    /**
+     *  Holds the original beats per bar.
+     */
+
+    int m_backup_beats;
+
+    /**
+     *  Holds the original beat width.
+     */
+
+    int m_backup_width;
 
     /**
      *  The seqedit frame that owns (sort of) this LFO window.

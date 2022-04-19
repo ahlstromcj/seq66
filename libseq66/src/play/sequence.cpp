@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-16
+ * \updates       2022-04-19
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2459,9 +2459,14 @@ sequence::change_event_data_lfo
  *
  *      -#  If align_left is set, all events timestamps are decreased by the
  *          offset of the first event, so that the pattern starts at time 0.
- *      -#  If the fix_type is lengthfix::measures, then the scale-factor is
- *          calculated by the desired measures divided by the pattern's
- *          current measure value. The pattern length is scaled, too.
+ *          This will not change pattern length, note length, measures, and
+ *          time signature.
+ *      -#  If the fix_type is lengthfix::measures:
+ *          -#  The scale-factor is calculated by the desired measures divided
+ *              by the pattern's current measure value.
+ *          -#  The pattern length is scaled to the new measure size.
+ *          -#  If a time-signature is specifed, that is applied to the
+ *              pattern.
  *      -#  If the fix_type is lengthfix::rescale, then the scale factor is
  *          used directly. What should happen?
  *          -   All event timestamps are moved according to the expansion or
@@ -2527,9 +2532,26 @@ sequence::fix_pattern (fixparameters & params)
         }
         if (newlength > 0 && newlength != currentlen)
         {
-            int measures = get_measures(newlength);
-            result = apply_length(measures);
-            params.fp_measures = double(get_measures());
+            if (params.fp_use_time_signature)
+            {
+//              set_beats_per_bar(params.fp_beats_per_bar);
+//              set_beat_width(params.fp_beat_width);
+//              result = apply_length(int(newmeasures));
+                result = apply_length
+                (
+                    params.fp_beats_per_bar, int(get_ppqn()),
+                    params.fp_beat_width, int(newmeasures)
+                );
+            }
+            else
+            {
+                int measures = get_measures(newlength);
+                result = apply_length(measures);
+            }
+            if (newscalefactor > 0.99)                              // 1.0
+                tempefx = bit_set(tempefx, fixeffect::expanded);
+            else if (newscalefactor < 0.99)                         // 1.0
+                tempefx = bit_set(tempefx, fixeffect::shrunk);
         }
         if (params.fp_quan_type == quantization::tighten)
         {
@@ -2541,41 +2563,12 @@ sequence::fix_pattern (fixparameters & params)
         }
         if (result)
         {
-            /*
-             * Set the new length (measures or scaled). This also verifies
-             * links and prunes events past the length.
-             */
-
-            midipulse len = unit_measure() * currentbars;
-            if (params.fp_fix_type == lengthfix::rescale)
-                len = midipulse(len * params.fp_scale_factor + 0.5);
-
-            if (len != currentlen)
-                result = set_length(len);
-
-            if (result)
-            {
-                if (params.fp_fix_type == lengthfix::rescale)
-                    params.fp_measures = calculate_measures();
-
-                if (len > currentlen)
-                    tempefx = bit_set(tempefx, fixeffect::expanded);
-                else if (len < currentlen)
-                    tempefx = bit_set(tempefx, fixeffect::shrunk);
-
-                params.fp_measures = newmeasures;
-                params.fp_scale_factor = newscalefactor;
-                params.fp_effect = tempefx;
-                if (params.fp_use_time_signature)
-                {
-                    set_beats_per_bar(params.fp_beats_per_bar);
-                    set_beat_width(params.fp_beat_width);
-                    result = apply_length(int(newmeasures));
-                }
-                set_dirty();
-                verify_and_link();
-                modify(true);                       /* call notify_change() */
-            }
+            params.fp_scale_factor = newscalefactor;
+            params.fp_measures = double(get_measures());
+            params.fp_effect = tempefx;
+//          params.fp_measures = calculate_measures();
+            set_dirty();
+            modify(true);                           /* call notify_change() */
         }
     }
     else
@@ -4643,24 +4636,40 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
  *      varies throughout the song.
  *
  * \param bpb
- *      Provides the beats per bar (measure).
+ *      Provides the beats per bar (measure). If 0, the current value is used.
  *
  * \param ppqn
  *      Provides the pulses-per-quarter-note to apply to the length
- *      application.
+ *      application. If 0, the current value is used.
  *
  * \param bw
- *      Provides the beatwidth (typically 4) from the time signature.
+ *      Provides the beatwidth (typically 4) from the time signature. If 0, the
+ *      current value is used.
  *
  * \param measures
  *      Provides the number of measures the sequence should cover, obtained
- *      from the user-interface.
+ *      from the user-interface. Defaults to 1 measure.
  */
 
 bool
-sequence::apply_length (int bpb, int ppqn, int bw, int measures)
+sequence::apply_length (int bpb, int ppq, int bw, int measures)
 {
-    bool result = set_length(seq66::measures_to_ticks(bpb, ppqn, bw, measures));
+    if (bpb == 0)
+        bpb = get_beats_per_bar();
+    else
+        set_beats_per_bar(bpb);
+
+    if (ppq == 0)
+        ppq = int(get_ppqn());
+    else
+        change_ppqn(ppq);                   /* rarely changed; rescales if  */
+
+    if (bw == 0)
+        bw = get_beat_width();
+    else
+        set_beat_width(bw);
+
+    bool result = set_length(seq66::measures_to_ticks(bpb, ppq, bw, measures));
     if (result)
     {
         (void) unit_measure(true);          /* for progress and redrawing   */
@@ -5361,6 +5370,10 @@ sequence::quantize_events
     return result;
 }
 
+/**
+ *  We set the beats and width to 0 to use the current values.
+ */
+
 bool
 sequence::change_ppqn (int p)
 {
@@ -5376,10 +5389,7 @@ sequence::change_ppqn (int p)
         {
             m_length = rescale_tick(m_length, p, m_ppqn);
             m_ppqn = p;
-            result = apply_length
-            (
-                 get_beats_per_bar(), p, get_beat_width(), get_measures()
-            );
+            result = apply_length(0, p, 0, get_measures());
             m_triggers.change_ppqn(p);
         }
     }

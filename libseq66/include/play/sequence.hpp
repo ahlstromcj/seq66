@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-04-16
+ * \updates       2022-04-18
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1159,10 +1159,7 @@ public:
 
     bool apply_length (int meas = 1)
     {
-        return apply_length
-        (
-            get_beats_per_bar(), int(m_ppqn), get_beat_width(), meas
-        );
+        return apply_length(0, 0, 0, meas);
     }
 
     midipulse get_length () const
