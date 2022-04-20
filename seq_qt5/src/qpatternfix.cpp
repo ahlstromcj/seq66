@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-19
+ * \updates       2022-04-20
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -42,7 +42,6 @@
  */
 
 #include <QButtonGroup>
-#include <QSlider>
 
 #include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
 #include "play/performer.hpp"           /* seq66::performer class           */
@@ -110,7 +109,7 @@ qpatternfix::qpatternfix
     m_measures          (double(m_backup_measures)),
     m_scale_factor      (1.0),
     m_align_left        (false),
-    m_save_note_length  (false),
+    m_save_note_length  (true),
     m_use_time_sig      (false),
     m_time_sig_beats    (0),
     m_time_sig_width    (0),
@@ -127,8 +126,11 @@ qpatternfix::qpatternfix
 qpatternfix::~qpatternfix()
 {
     delete ui;
-    if (m_is_modified)
-        perf().modify();
+
+    /*
+     *  if (m_is_modified)
+     *      perf().modify();
+     */
 }
 
 void
@@ -145,7 +147,7 @@ qpatternfix::initialize (bool startup)
     ui->btn_effect_expand->setChecked(false);
     ui->btn_effect_time_sig->setChecked(false);
     ui->btn_align_left->setChecked(false);
-    ui->btn_save_note_length->setChecked(false);
+    ui->btn_save_note_length->setChecked(true);
     ui->btn_set->setEnabled(false);
     ui->btn_reset->setEnabled(false);
     if (startup)
@@ -201,7 +203,10 @@ qpatternfix::initialize (bool startup)
         m_quan_group = new QButtonGroup(this);
         ui->group_box_quantize->setEnabled(true);
         m_quan_group->addButton(ui->btn_quan_none, cast(quantization::none));
-        m_quan_group->addButton(ui->btn_quan_tighten, cast(quantization::tighten));
+        m_quan_group->addButton
+        (
+            ui->btn_quan_tighten, cast(quantization::tighten)
+        );
         m_quan_group->addButton(ui->btn_quan_full, cast(quantization::full));
         ui->btn_quan_none->setChecked(true);
         connect
@@ -268,7 +273,6 @@ qpatternfix::initialize (bool startup)
         ui->btn_change_none->setChecked(true);
         ui->btn_quan_none->setChecked(true);
     }
-
 }
 
 void
@@ -298,9 +302,11 @@ qpatternfix::unmodify (bool reset_fields)
         ui->btn_effect_expand->setChecked(false);
         ui->btn_reset->setEnabled(false);
     }
+
     /*
      * ui->btn_set->setEnabled(false);
      */
+
     m_is_modified = false;
 }
 
@@ -448,6 +454,7 @@ qpatternfix::slot_set ()
         ui->btn_effect_shrink->setChecked(bitshrunk);
         ui->btn_effect_expand->setChecked(bitexpanded);
         set_dirty();                                    /* for redrawing    */
+        perf().modify();
         unmodify(false);                                /* keep fields      */
     }
 }
@@ -459,18 +466,14 @@ qpatternfix::slot_reset ()
     seqp()->set_beat_width(m_backup_width);             /* ditto            */
     seqp()->apply_length(m_backup_measures);            /* simple overload  */
     seqp()->events() = m_backup_events;                 /* restore events   */
-
     m_measures = double(m_backup_measures);
-    m_align_left = m_save_note_length = m_use_time_sig = false;
+    m_align_left = m_use_time_sig = false;
+    m_save_note_length = true;
     m_time_sig_beats = m_time_sig_width = 0;
     m_scale_factor = 1.0;
-
+    m_length_type = lengthfix::none;
+    m_quan_type = quantization::none;
     initialize(false);
-
-    slot_length_fix(cast(lengthfix::none));
-    slot_quan_change(cast(quantization::none));
-    m_measures = m_backup_measures;
-
     unmodify();                                         /* change fields    */
     set_dirty();                                        /* for redrawing    */
 }
@@ -481,8 +484,10 @@ qpatternfix::closeEvent (QCloseEvent * event)
     if (not_nullptr(m_edit_frame))
         m_edit_frame->remove_patternfix_frame();
 
-    if (m_is_modified)
-        perf().modify();
+    /*
+     * if (m_is_modified)
+     *     perf().modify();
+     */
 
     event->accept();
 }

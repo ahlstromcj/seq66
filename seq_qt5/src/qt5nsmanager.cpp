@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2022-04-04
+ * \updates       2022-04-20
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -242,17 +242,24 @@ qt5nsmanager::create_window ()
             }
         }
     }
-    if (result && usr().style_sheet_active())
+    if (result)
     {
-        std::string ssname = rc().style_sheet_filespec();
-        if (! ssname.empty())
+        std::string themename = qt_icon_theme();
+        if (! themename.empty())
+            file_message("Icon theme", themename);
+
+        if (usr().style_sheet_active())
         {
-            QFile file(qt(ssname));
-            bool ok = file.open(QFile::ReadOnly);
-            if (ok)
+            std::string ssname = rc().style_sheet_filespec();
+            if (! ssname.empty())
             {
-                QString ss = QLatin1String(file.readAll());
-                qApp->setStyleSheet(ss);
+                QFile file(qt(ssname));
+                bool ok = file.open(QFile::ReadOnly);
+                if (ok)
+                {
+                    QString ss = QLatin1String(file.readAll());
+                    qApp->setStyleSheet(ss);
+                }
             }
         }
     }

@@ -1208,6 +1208,14 @@ qseqeditframe64::initialize_panels ()
     ui->timeScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->timeScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    QPoint pos = ui->timeScrollArea->mapToGlobal
+    (
+        ui->timeScrollArea->rect().topLeft()
+    );
+    printf("time position: (%d, %d)\n", pos.x(), pos.y());
+#endif
+
     /*
      * qseqroll.  Note the "this" parameter is not really a Qt parent
      * parameter.  It simply gives qseqroll access to the qseqeditframe64 ::
@@ -1220,7 +1228,6 @@ qseqeditframe64::initialize_panels ()
         m_seqkeys, zoom(), m_snap, sequence::editmode::note,
         noteheight, height
     );
-
     ui->rollScrollArea->setWidget(m_seqroll);
     ui->rollScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     ui->rollScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);

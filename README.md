@@ -1,7 +1,7 @@
 # README for Seq66 0.98.6
 
 Chris Ahlstrom
-2015-09-10 to 2022-04-14
+2015-09-10 to 2022-04-20
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -90,6 +90,8 @@ Windows, and using a conventional source tarball.
         *   Refactored all drop-down lists to use the settings module.
         *   Tightend string_to_xxx() functions and used them in lieu of the
             std::stoxxx() functions.
+        *   Trying to get rolls, time, data, and event panes to line up no
+            matter what the Qt theme is.
     *   Version 0.98.6:
         *   Revisited issue #41 to make sure "Quit" is "Hide" under NSM. Also
             fixed issue with the "newtune.midi" default name.

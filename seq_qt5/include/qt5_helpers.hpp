@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2022-04-13
+ * \updates       2022-04-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -65,6 +65,7 @@ const bool NormalFile = false;
  */
 
 extern void qt_set_icon (const char * pixmap_array [], QPushButton * button);
+extern std::string qt_icon_theme ();
 extern keystroke qt_keystroke
 (
     QKeyEvent * event,

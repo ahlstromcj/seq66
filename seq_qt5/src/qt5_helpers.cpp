@@ -24,13 +24,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2022-04-13
+ * \updates       2022-04-20
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
  *
  *      -   qt_keystroke(). Returns an "ordinal" for Qt keystroke.
  *      -   qt_set_icon(). Sets an icon for a push-button.
+ *      -   qt_icon_theme(). Returns the name of the icon theme.
  *      -   qt().  Converts an std::sring to a QString.
  *      -   qt_timer(). Encapsulates creating and starting a timer, with a
  *          callback given by a Qt slot-name.
@@ -46,6 +47,7 @@
 
 #include <QComboBox>
 #include <QFileDialog>                  /* prompt for full MIDI file's path */
+#include <QIcon>
 #include <QKeyEvent>
 #include <QPushButton>
 #include <QStandardItemModel>
@@ -163,6 +165,17 @@ qt_set_icon (const char * pixmap_array [], QPushButton * button)
     icon.addPixmap(pixmap, QIcon::Normal, QIcon::On);
     button->setText("");
     button->setIcon(icon);
+}
+
+/**
+ *  Gets the icon theme name.
+ */
+
+std::string
+qt_icon_theme ()
+{
+    QString qs = QIcon::themeName();
+    return qs.toStdString();
 }
 
 /**

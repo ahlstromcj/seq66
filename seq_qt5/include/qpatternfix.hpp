@@ -257,7 +257,9 @@ private:
     int m_time_sig_width;
 
     /**
-     *  Indicates the LFO modified status.
+     *  Indicates the modified status of the user interface.
+     *  The performer::modify() status is called only when the Set
+     *  button is pushed.
      */
 
     bool m_is_modified;
