@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-04-04
+ * \updates       2022-04-21
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1013,10 +1013,7 @@ public:
         return m_error_pending;
     }
 
-    bool modified () const
-    {
-        return m_is_modified;
-    }
+    bool modified () const;
 
     /**
      * \setter m_is_modified

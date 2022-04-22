@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-04-16
+ * \updates       2022-04-21
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -612,22 +612,25 @@ double
 string_to_double (const std::string & s, double defalt)
 {
     double result = defalt;
-    try
+    if (! s.empty())
     {
-        int beats, width;
-        bool is_time_sig = string_to_time_signature(s, beats, width);
-        if (is_time_sig)
+        try
         {
-            double numerator = double(beats);
-            double denominator = double(width);
-            result = numerator / denominator;
+            int beats, width;
+            bool is_time_sig = string_to_time_signature(s, beats, width);
+            if (is_time_sig)
+            {
+                double numerator = double(beats);
+                double denominator = double(width);
+                result = numerator / denominator;
+            }
+            else
+                result = std::stod(s, nullptr);
         }
-        else
-            result = std::stod(s, nullptr);
-    }
-    catch (std::invalid_argument const &)
-    {
-        // no code
+        catch (std::invalid_argument const &)
+        {
+            // no code
+        }
     }
     return result;
 }

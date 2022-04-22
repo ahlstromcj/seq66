@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-12-13
+ * \updates       2022-04-21
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -579,6 +579,24 @@ screenset::exec_set_function (sethandler s, slothandler p)
     if (result)
         result = exec_slot_function(p);     /* handle set's slots/sequences */
 
+    return result;
+}
+
+bool
+screenset::any_modified_sequences () const
+{
+    bool result = false;
+    for (const auto & s : m_container)
+    {
+        if (s.active())             /* guarantees a valid pointer */
+        {
+            if (s.loop()->modified())
+            {
+                result = true;
+                break;
+            }
+        }
+    }
     return result;
 }
 

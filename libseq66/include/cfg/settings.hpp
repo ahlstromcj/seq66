@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2022-04-14
+ * \updates       2022-04-21
  * \license       GNU GPLv2 or above
  *
  *  A couple of universal helper functions remain as inline functions in the
@@ -144,6 +144,7 @@ extern int ppqn_list_value (int index = (-1));
 
 extern const tokenization & default_ppqns ();
 extern const tokenization & measure_items ();
+extern const tokenization & beats_per_bar_items ();
 extern const tokenization & beatwidth_items ();
 extern const tokenization & snap_items ();
 extern const tokenization & perf_snap_items ();

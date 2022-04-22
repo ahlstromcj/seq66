@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-12-13
+ * \updates       2022-04-21
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -95,9 +95,9 @@ public:
      *  one that calls a sethandler, and then calls a slothandler on each slot
      *  in the set.
      *
-     *  A good example of a sethander is done in
-     *  qsetmaster :: initialize_table(), which binds qsetmaster :: set_line()
-     *  to place-holder parameters.
+     *  A good example of a sethander is done in qsetmaster ::
+     *  initialize_table(), which binds qsetmaster :: set_line() to
+     *  place-holder parameters.
      *
      *  A lambda function is used in performer :: change_ppqn() and other
      *  functions that set the values used in a set.
@@ -546,6 +546,7 @@ private:
 #if defined USE_SCREENSET_RESET_SEQUENCES               /* currently unused */
     void reset_sequences (bool pause, sequence::playback mode);
 #endif
+    bool any_modified_sequences () const;
     void set_dirty (seq::number seqno = seq::all());
     void toggle (seq::number seqno = seq::all());
     void toggle_song_mute (seq::number seqno = seq::all());

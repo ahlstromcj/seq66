@@ -393,6 +393,7 @@ private:
             set_edit_sequence(seq::unassigned());
     }
 
+    bool any_modified_sequences () const;
     void set_dirty (seq::number seqno = seq::all());
 
     /**

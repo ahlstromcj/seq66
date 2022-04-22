@@ -537,11 +537,18 @@ smanager::save_session (std::string & msg, bool ok)
                 std::string filename = rc().midi_filename();
                 if (filename.empty())
                 {
-                    msg = "MIDI file-name empty";
+                    /*
+                     * Don't need this: msg = "MIDI file-name empty";
+                     */
                 }
                 else
                 {
-                    bool is_wrk = file_extension_match(filename, "wrk");
+                    /*
+                     * But generally the file-extension will already be set
+                     * to ".midi".
+                     */
+
+                    bool is_wrk = file_extension_match(filename, ".wrk");
                     if (is_wrk)
                         filename = file_extension_set(filename, ".midi");
 
@@ -608,7 +615,7 @@ smanager::save_session (std::string & msg, bool ok)
     }
     else
     {
-        msg = "no performer present to save session";
+        msg = "no performer!";
     }
     return result;
 }

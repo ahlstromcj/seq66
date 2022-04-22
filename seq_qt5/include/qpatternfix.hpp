@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-19
+ * \updates       2022-04-21
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -213,7 +213,8 @@ private:
 
     /**
      *  The current number of measures for the adjustment.  This is a double
-     *  so that it can be fractional, such as "3/4" --> 0.75.
+     *  so that it can be fractional, such as "3/4" --> 0.75. But otherwise,
+     *  it must be an integer (truncated) value.
      */
 
     double m_measures;
@@ -263,6 +264,13 @@ private:
      */
 
     bool m_is_modified;
+
+    /**
+     *  Indicates if the pattern was modified before the dialog was opened.
+     *  If not, it is safe to unmodify it in slot_reset().
+     */
+
+    bool m_was_clean;
 
 };          // class qpatternfix
 

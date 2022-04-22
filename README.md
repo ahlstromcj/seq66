@@ -1,7 +1,7 @@
-# README for Seq66 0.98.6
+# README for Seq66 0.98.7
 
 Chris Ahlstrom
-2015-09-10 to 2022-04-20
+2015-09-10 to 2022-04-22
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -34,14 +34,13 @@ with Qt Creator.  Provides a comprehensive PDF user-manual.
 
 ##  Configuration files
 
-    *   Separates MIDI control and mute-group setting into their own files;
-        some support for hex notation.
+    *   Separates MIDI control and mute-group setting into their own files.
     *   Supports configuration files: ".rc", ".usr", ".ctrl", ".mutes",
         ".playlist", ".drums" (note-mapping), ".palette", and Qt ".qss".
-    *   Unified keystroke and MIDI control in the ".ctrl" file; defines MIDI
-        In controls for automating Seq66, and MIDI Out controls for displaying
-        Seq66 status in grid controllers (e.g. LaunchPad).  Basic ".ctrl" files
-        are provided for the Launchpad Mini.
+    *   Unified keystroke and MIDI controls in the ".ctrl" file; defines MIDI
+        controls for automating Seq66 and for displaying Seq66 status in grid
+        controllers (e.g. LaunchPad).  Basic ".ctrl" files are provided for the
+        Launchpad Mini.
 
 ##  Non Session Manager
 
@@ -58,7 +57,7 @@ with Qt Creator.  Provides a comprehensive PDF user-manual.
 
 ##  More Features
 
-    *   Transposable triggers for re-using patterns more comprehensively.
+    *   Transposable triggers to re-use patterns more comprehensively.
         Works with Song Export.
     *   Improved non-U.S. keyboard support.
     *   Many demonstration and test MIDI files.
@@ -69,7 +68,7 @@ with Qt Creator.  Provides a comprehensive PDF user-manual.
 
     *   More consistent use of modern C++, auto, and lambda functions.
     *   Additional performer callbacks to reduce the need for polling.
-    *   A ton of clean-up and a lot of refactoring.
+    *   A ton of clean-up and refactoring.
 
 Seq66 uses a Qt 5 user-interface based on Kepler34 and the Seq66 *rtmidi*
 (Linux) and *portmidi* (Windows) engines.  MIDI devices are detected,
@@ -80,18 +79,21 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
-    *   Version 0.98.6:
+    *   Version 0.98.7:
         *   Added a "Pattern Fix" dialog to allow a whole pattern to be shifted,
             quantized, and changed in length all at once. Useful for fixing a
             badly played pattern or scaling the duration.
         *   Fixed issue of leftover child windows of qseqeditframe64.
-        *   Removed odd beat-widths from time signature dropdowns.  The user can
+        *   Removed odd beat-widths from time signature dropdowns.  Can
             still enter odd values manually.
-        *   Refactored all drop-down lists to use the settings module.
-        *   Tightend string_to_xxx() functions and used them in lieu of the
-            std::stoxxx() functions.
+        *   Refactored drop-down lists to use the settings module.
+        *   Tightend string_to_xxx() functions and replaced the std::stoxxx()
+        *   functions to avoid throwing exceptions.
         *   Trying to get rolls, time, data, and event panes to line up no
             matter what the Qt theme is.
+        *   Tightening the setting of performer modification when sequence
+            changes occur, to reduce unnecessary prompts to save.
+        *   Tightened the saving of WRK and MIDI files.
     *   Version 0.98.6:
         *   Revisited issue #41 to make sure "Quit" is "Hide" under NSM. Also
             fixed issue with the "newtune.midi" default name.

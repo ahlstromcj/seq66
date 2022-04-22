@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-14
+ * \updates       2022-04-21
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -279,6 +279,8 @@ qseqeditframe64::qseqeditframe64
     m_events_popup          (nullptr),
     m_minidata_popup        (nullptr),
     m_measures_list         (measure_items()),      /* see settings module  */
+    m_measures              (0),
+    m_beats_per_bar_list    (beats_per_bar_items()),
     m_beats_per_bar         (0),                    /* set in ctor body     */
     m_beatwidth_list        (beatwidth_items()),    /* see settings module  */
     m_beat_width            (0),                    /* set in ctor body     */
@@ -291,7 +293,6 @@ qseqeditframe64::qseqeditframe64
     m_chord                 (0),
     m_key                   (usr().seqedit_key()),
     m_bgsequence            (0),                    /* set in ctor body     */
-    m_measures              (0),
     m_edit_bus              (0),
     m_edit_channel          (0),                    /* 0-15, null           */
     m_first_event           (max_midibyte()),
@@ -310,7 +311,7 @@ qseqeditframe64::qseqeditframe64
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     if (not_nullptr(s))
     {
-        set_beats_per_measure(s->get_beats_per_bar());
+        set_beats_per_bar(s->get_beats_per_bar());
         set_beat_width(s->get_beat_width());
         m_scale = s->musical_scale();
         m_edit_bus = s->seq_midi_bus();
@@ -350,7 +351,7 @@ qseqeditframe64::qseqeditframe64
     }
     else
     {
-        set_beats_per_measure(usr().midi_beats_per_bar());
+        set_beats_per_bar(usr().midi_beats_per_bar());
         set_beat_width(usr().midi_beat_width());
         set_scale(usr().seqedit_scale());
         set_key(usr().seqedit_key());
@@ -386,16 +387,9 @@ qseqeditframe64::qseqeditframe64
     connect
     (
         ui->m_button_bpm, SIGNAL(clicked(bool)),
-        this, SLOT(reset_beats_per_measure())
+        this, SLOT(reset_beats_per_bar())
     );
-
-    QString thirtytwo = QString::number(32);
-    for (int b = 0; b < s_beat_measure_count; ++b)
-    {
-        QString combo_text = QString::number(b + 1);
-        ui->m_combo_bpm->insertItem(b, combo_text);
-    }
-    ui->m_combo_bpm->insertItem(s_beat_measure_count, thirtytwo);
+    (void) fill_combobox(ui->m_combo_bpm, beats_per_bar_list());
 
     int beatspm = m_beats_per_bar;  /* seq_pointer()->get_beats_per_bar()   */
     std::string beatstring = std::to_string(beatspm);
@@ -404,14 +398,14 @@ qseqeditframe64::qseqeditframe64
     connect
     (
         ui->m_combo_bpm, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(update_beats_per_measure(int))
+        this, SLOT(update_beats_per_bar(int))
     );
     connect
     (
         ui->m_combo_bpm, SIGNAL(currentTextChanged(const QString &)),
-        this, SLOT(text_beats_per_measure(const QString &))
+        this, SLOT(text_beats_per_bar(const QString &))
     );
-    set_beats_per_measure(beatspm);
+    set_beats_per_bar(beatspm);
 
     /*
      * Beat Width (denominator of time signature).  Fill the options for
@@ -426,10 +420,12 @@ qseqeditframe64::qseqeditframe64
     );
     (void) fill_combobox(ui->m_combo_bw, beatwidth_list());
 
-    int bwindex = beatwidth_list().index(m_beat_width);
     int bw = m_beat_width;              /* seq_pointer()->get_beat_width() */
     std::string bstring = std::to_string(bw);
-    ui->m_combo_bw->setCurrentIndex(bwindex);
+    int bwindex = beatwidth_list().index(m_beat_width);
+    if (bwindex >= 0)
+        ui->m_combo_bw->setCurrentIndex(bwindex);
+
     ui->m_combo_bw->setEditText(qt(bstring));
     connect
     (
@@ -456,10 +452,12 @@ qseqeditframe64::qseqeditframe64
     );
     (void) fill_combobox(ui->m_combo_length, m_measures_list);
 
-    int len_index = m_measures_list.index(m_measures);
     int measures = not_nullptr(s) ? s->calculate_measures() : 1 ;
     std::string mstring = std::to_string(measures);
-    ui->m_combo_length->setCurrentIndex(len_index);
+    int lenindex = m_measures_list.index(m_measures);
+    if (lenindex >= 0)
+        ui->m_combo_length->setCurrentIndex(lenindex);
+
     ui->m_combo_length->setEditText(qt(mstring));
     connect
     (
@@ -1272,26 +1270,59 @@ qseqeditframe64::initialize_panels ()
 void
 qseqeditframe64::conditional_update ()
 {
-    bool expandrec = seq_pointer()->expand_recording();
-    if (expandrec)
+    if (seq_pointer())
     {
-        set_measures(get_measures() + 1);
-        follow_progress(expandrec);             /* keep up with progress    */
-    }
-    else if (not_nullptr(m_seqroll) && m_seqroll->progress_follow())
-    {
-        follow_progress();
-    }
-    if (seq_pointer() && seq_pointer()->check_loop_reset())
-    {
-        /*
-         * Now we need to update the event and data panes.  Note that the
-         * notes update during the next pass through the loop only if more
-         * notes come in on the input buss.
-         */
+        bool expandrec = seq_pointer()->expand_recording();
+        if (expandrec)
+        {
+            set_measures(get_measures() + 1);
+            follow_progress(expandrec);         /* keep up with progress    */
+        }
+        else if (not_nullptr(m_seqroll) && m_seqroll->progress_follow())
+        {
+            follow_progress();
+        }
+        if (m_measures != seq_pointer()->get_measures())
+        {
+            m_measures = seq_pointer()->get_measures();
+            std::string mstring = std::to_string(m_measures);
+            int lenindex = measures_list().index(m_measures);
+            if (lenindex >= 0)
+                ui->m_combo_length->setCurrentIndex(lenindex);
 
-        set_dirty();
-        update_midi_buttons();                  /* mirror current states    */
+            ui->m_combo_length->setEditText(qt(mstring));
+        }
+        if (m_beats_per_bar != seq_pointer()->get_beats_per_bar())
+        {
+            m_beats_per_bar = seq_pointer()->get_beats_per_bar();
+            std::string mstring = std::to_string(m_beats_per_bar);
+            int lenindex = beats_per_bar_list().index(m_beats_per_bar);
+            if (lenindex >= 0)
+                ui->m_combo_bpm->setCurrentIndex(lenindex);
+
+            ui->m_combo_bpm->setEditText(qt(mstring));
+        }
+        if (m_beat_width != seq_pointer()->get_beat_width())
+        {
+            m_beat_width = seq_pointer()->get_beat_width();
+            std::string mstring = std::to_string(m_beat_width);
+            int lenindex = beatwidth_list().index(m_beat_width);
+            if (lenindex >= 0)
+                ui->m_combo_bw->setCurrentIndex(lenindex);
+
+            ui->m_combo_bw->setEditText(qt(mstring));
+        }
+        if (seq_pointer()->check_loop_reset())
+        {
+            /*
+             * Now we need to update the event and data panes.  Note that the
+             * notes update during the next pass through the loop only if more
+             * notes come in on the input buss.
+             */
+
+            set_dirty();
+            update_midi_buttons();              /* mirror current states    */
+        }
     }
 }
 
@@ -1313,37 +1344,36 @@ qseqeditframe64::update_seq_name ()
  */
 
 void
-qseqeditframe64::update_beats_per_measure (int index)
+qseqeditframe64::update_beats_per_bar (int index)
 {
-    ++index;
-
-    int bpb = index == s_beat_measure_count ? 32 : index ;
-    if (bpb != m_beats_per_bar)
+    int bpb = beats_per_bar_list().ctoi(index);
+    if (bpb > 0 && bpb != m_beats_per_bar)
     {
-        set_beats_per_measure(bpb);
+        set_beats_per_bar(bpb);
         set_dirty();
     }
 }
 
 void
-qseqeditframe64::text_beats_per_measure (const QString & text)
+qseqeditframe64::text_beats_per_bar (const QString & text)
 {
     std::string temp = text.toStdString();
     if (! temp.empty())
     {
-        int beats = string_to_int(temp); // std::stoi(temp);
+        int beats = string_to_int(temp);
         if (usr().bpb_is_valid(beats))
-            set_beats_per_measure(beats);
+            set_beats_per_bar(beats);
         else
-            reset_beats_per_measure();
+            reset_beats_per_bar();
     }
 }
 
 void
-qseqeditframe64::reset_beats_per_measure ()
+qseqeditframe64::reset_beats_per_bar ()
 {
     seq::number seqno = seq_pointer()->seq_number();
-    ui->m_combo_bpm->setCurrentIndex(usr().bpb_default() - 1);
+    int index = beats_per_bar_list().index(usr().bpb_default());
+    ui->m_combo_bpm->setCurrentIndex(index);
     perf().notify_sequence_change(seqno, performer::change::recreate);
     update_draw_geometry();
 }
@@ -1357,7 +1387,7 @@ qseqeditframe64::reset_beats_per_measure ()
  */
 
 void
-qseqeditframe64::set_beats_per_measure (int bpb)
+qseqeditframe64::set_beats_per_bar (int bpb)
 {
     sequence * s = seq_pointer().get();
     m_beats_per_bar = bpb;
@@ -1365,7 +1395,7 @@ qseqeditframe64::set_beats_per_measure (int bpb)
     {
         int measures = get_measures();
         s->set_beats_per_bar(bpb);
-        s->apply_length(bpb, perf().ppqn(), s->get_beat_width(), measures);
+        s->apply_length(bpb, 0, 0, measures);
         update_draw_geometry();
     }
 }
@@ -1420,7 +1450,7 @@ void
 qseqeditframe64::update_beat_width (int index)
 {
     int bw = beatwidth_list().ctoi(index);
-    if (bw != m_beat_width)
+    if (bw > 0 && bw != m_beat_width)
     {
         set_beat_width(bw);
         set_dirty();
@@ -1467,7 +1497,7 @@ qseqeditframe64::set_beat_width (int bw)
     {
         int measures = get_measures();
         s->set_beat_width(bw);
-        s->apply_length(s->get_beats_per_bar(), perf().ppqn(), bw, measures);
+        s->apply_length(0, 0, bw, measures);
         update_draw_geometry();
     }
 }

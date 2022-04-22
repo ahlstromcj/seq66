@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-13
+ * \updates       2022-04-22
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -205,7 +205,7 @@ private:                                // overrides of event handlers
 
 protected:
 
-    void report_message (const std::string & msg, bool good);
+    bool report_message (const std::string & msg, bool good);
 
 private:
 

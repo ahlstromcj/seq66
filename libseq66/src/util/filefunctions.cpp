@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-03-30
+ * \updates       2022-04-22
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1760,8 +1760,8 @@ filename_base (const std::string & fullpath, bool noext)
  *      Provides the file name or the full path to the file.
  *
  * \return
- *      Returns the file extension.  If there is no period, then an empty
- *      string is returned.
+ *      Returns the file extension without the period.  If there was no
+ *      period, then an empty string is returned.
  */
 
 std::string
@@ -1771,8 +1771,8 @@ file_extension (const std::string & path)
     auto ppos = path.find_last_of(".");
     if (ppos != std::string::npos)
     {
-        auto end_index = path.length() - 1;
-        result = path.substr(ppos + 1, end_index - 1);
+        auto len = path.length() - 2;
+        result = path.substr(ppos + 1, len);
     }
     return result;
 }
@@ -1825,7 +1825,8 @@ file_extension_set (const std::string & path, const std::string & ext)
  *      Provides the file name or the full path to the file.
  *
  * \param target
- *      Provides the file extension to match against, without the period.
+ *      Provides the file extension to match against, with or without the
+ *      period. The period is removed before the check.
  *
  * \return
  *      Returns true if the file extensions match.
@@ -1834,8 +1835,14 @@ file_extension_set (const std::string & path, const std::string & ext)
 bool
 file_extension_match (const std::string & path, const std::string & target)
 {
-    std::string ext = file_extension(path);
-    return strcasecompare(ext, target);
+    std::string tar = target;
+    std::string ext = file_extension(path);     /* path ext without period  */
+    if (tar[0] == '.')
+    {
+        auto len = tar.length() - 1;
+        tar = tar.substr(1, len);
+    }
+    return strcasecompare(ext, tar);
 }
 
 /**

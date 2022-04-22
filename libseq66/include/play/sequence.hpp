@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-04-18
+ * \updates       2022-04-21
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -646,6 +646,14 @@ private:
     mutable std::atomic<bool> m_dirty_names;
 
     /**
+     *  Indicates the pattern was modified.  Unlike the is_dirty_xxx flags,
+     *  this one is not reset when checked.  Useful when closing a file or the
+     *  application to cause a "Save?" prompt.
+     */
+
+    mutable bool m_is_modified;
+
+    /**
      *  Indicates that the sequence is currently being edited.
      */
 
@@ -976,18 +984,17 @@ public:
 
     bool loop_count_max (int m);
     void modify (bool notifychange = true);
+
+    void unmodify ()
+    {
+        m_is_modified = false;
+    }
+
     int event_count () const;
     int note_count () const;
     int playable_count () const;
     bool is_playable () const;
     bool minmax_notes (int & lowest, int & highest);
-
-    void set_have_undo ()
-    {
-        m_have_undo = m_events_undo.size() > 0;
-        if (m_have_undo)
-            modify();                               /* have pending changes */
-    }
 
     bool have_undo () const
     {
@@ -1008,6 +1015,7 @@ public:
         return m_have_redo;
     }
 
+    void set_have_undo ();
     void push_undo (bool hold = false);     /* adds stazed parameter    */
     void pop_undo ();
     void pop_redo ();
@@ -1375,6 +1383,11 @@ public:
 
     void resume_note_ons (midipulse tick);
     bool toggle_one_shot ();
+
+    bool modified () const
+    {
+        return m_is_modified;
+    }
 
     bool is_dirty_main () const;
     bool is_dirty_edit () const;

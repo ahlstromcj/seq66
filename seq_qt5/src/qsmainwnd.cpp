@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-13
+ * \updates       2022-04-22
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -35,12 +35,12 @@
  *
  * Menu Entries for NSM:
  *
- *  New MIDI FIle   new_session()           Clear file/playlist, set new name
+ *  New MIDI FIle   new_session()           Clear file/playlist, set new name.
  *  Import [Open]   import_midi_into_session()   Imports only a MIDI file.
- *  Save session    save_session()          Save MIDI (and config?) in session
- *  Save As         HIDDEN                  See Export from Session
- *  Export from ... save_file_as()          Copy MIDI file outside of session
- *  Close (hidden)  quit_session            Detach from session management
+ *  Save session    save_session()          Save MIDI and configs in session.
+ *  Save As         HIDDEN                  See Export from Session.
+ *  Export from ... save_file_as()          Copy MIDI file outside of session.
+ *  Close (hidden)  quit_session            Detach from session management.
  *
  * Normal Menu Entries:
  *
@@ -1589,6 +1589,7 @@ qsmainwnd::check ()
         case QMessageBox::Discard:
 
             cb_perf().unmodify();       /* avoid saving in save_session()   */
+            rc().midi_filename("");
             result = true;
             break;
 
@@ -1854,6 +1855,7 @@ qsmainwnd::save_file (const std::string & fname, bool updatemenu)
     }
     else
     {
+        bool save_it = true;
         bool is_wrk = file_extension_match(filename, "wrk");
         if (is_wrk)
         {
@@ -1861,21 +1863,23 @@ qsmainwnd::save_file (const std::string & fname, bool updatemenu)
             std::string wrkname = filename;
             filename = file_extension_set(filename, ".midi");
             os
-                << "Will save the Cakewalk WRK file " << wrkname
+                << "Saving the Cakewalk WRK file " << wrkname
                 << " in Seq66 format as " << filename
                 ;
-            report_message(os.str(), true);
+            save_it = report_message(os.str(), true);
         }
-
-        std::string errmsg;
-        result = write_midi_file(cb_perf(), filename, errmsg);
-        if (result)
+        if (save_it)
         {
-            if (updatemenu)                     /* or ! use_nsm()           */
-                update_recent_files_menu();     /* add the recent file-name */
+            std::string errmsg;
+            result = write_midi_file(cb_perf(), filename, errmsg);
+            if (result)
+            {
+                if (updatemenu)                 /* or ! use_nsm()           */
+                    update_recent_files_menu(); /* add the recent file-name */
+            }
+            else
+                show_message_box(errmsg);
         }
-        else
-            show_message_box(errmsg);
     }
     if (result)
         m_is_title_dirty = true;
@@ -1891,10 +1895,14 @@ qsmainwnd::save_file_as ()
         "Export MIDI file from session as..." : "Save MIDI file as..." ;
 
     std::string currentfile = rc().midi_filename();
+    bool is_wrk = file_extension_match(currentfile, "wrk");
+    if (is_wrk)
+        currentfile = file_extension_set(currentfile, ".midi");
+
     std::string filename = filename_prompt(prompt, currentfile);
     if (filename.empty())
     {
-        // no code, the user merely cancelled
+        // no code, the user cancelled
     }
     else
     {
@@ -3186,7 +3194,7 @@ qsmainwnd::connect_normal_slots ()
      */
 
     ui->actionSave->setText("&Save");
-    ui->actionSave->setToolTip("Save as a Seq66 MIDI file.");
+    ui->actionSave->setToolTip("Save a Seq66 MIDI file.");
     if (! file_writable(rc().midi_filename()))
         ui->actionSave->setEnabled(false);
 
@@ -3197,7 +3205,7 @@ qsmainwnd::connect_normal_slots ()
      */
 
     ui->actionSave_As->setText("Save &As...");
-    ui->actionSave_As->setToolTip("Save as a different Seq66 MIDI file.");
+    ui->actionSave_As->setToolTip("Save as another Seq66 MIDI file.");
     connect
     (
         ui->actionSave_As, SIGNAL(triggered(bool)),
@@ -3486,8 +3494,8 @@ qsmainwnd::export_file_as_smf_0 (const std::string & fname)
         else
         {
             std::string msg =
-                "Could not convert to SMF 0.  Make sure desired tracks are "
-                "unmuted and have song triggers present."
+                "Could not convert to SMF 0. Verify desired tracks are "
+                "unmuted and have song triggers."
                 ;
             show_message_box(msg);
         }
@@ -3499,18 +3507,24 @@ qsmainwnd::export_file_as_smf_0 (const std::string & fname)
     return result;
 }
 
-void
+bool
 qsmainwnd::report_message (const std::string & msg, bool good)
 {
+    bool result = false;
     if (! msg.empty())
     {
         if (good)                           /* info message     */
         {
             QMessageBox * mbox = new QMessageBox(this);
             mbox->setText(qt(msg));
-            mbox->setInformativeText(tr("Click OK to continue."));
-            mbox->setStandardButtons(QMessageBox::Ok);
-            mbox->exec();
+            mbox->setInformativeText
+            (
+                tr("Click OK to save, or Cancel (then Save As)")
+            );
+            mbox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+
+            int choice = mbox->exec();
+            result = choice == QMessageBox::Ok;
         }
         else                                /* error message    */
         {
@@ -3519,6 +3533,7 @@ qsmainwnd::report_message (const std::string & msg, bool good)
             errbox->exec();
         }
     }
+    return result;
 }
 
 bool
@@ -3551,7 +3566,7 @@ qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
             << "To add it, edit the 'ctrl' file."
            ;
     }
-    report_message(os.str(), good);
+    (void) report_message(os.str(), good);
     return good;
 }
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-20
+ * \updates       2022-04-21
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -113,7 +113,8 @@ qpatternfix::qpatternfix
     m_use_time_sig      (false),
     m_time_sig_beats    (0),
     m_time_sig_width    (0),
-    m_is_modified       (false)
+    m_is_modified       (false),
+    m_was_clean         (! seqp()->modified())
 {
     ui->setupUi(this);
     initialize(true);
@@ -126,11 +127,6 @@ qpatternfix::qpatternfix
 qpatternfix::~qpatternfix()
 {
     delete ui;
-
-    /*
-     *  if (m_is_modified)
-     *      perf().modify();
-     */
 }
 
 void
@@ -146,6 +142,10 @@ qpatternfix::initialize (bool startup)
     ui->btn_effect_shrink->setChecked(false);
     ui->btn_effect_expand->setChecked(false);
     ui->btn_effect_time_sig->setChecked(false);
+    ui->btn_effect_shift->setEnabled(false);
+    ui->btn_effect_shrink->setEnabled(false);
+    ui->btn_effect_expand->setEnabled(false);
+    ui->btn_effect_time_sig->setEnabled(false);
     ui->btn_align_left->setChecked(false);
     ui->btn_save_note_length->setChecked(true);
     ui->btn_set->setEnabled(false);
@@ -454,7 +454,11 @@ qpatternfix::slot_set ()
         ui->btn_effect_shrink->setChecked(bitshrunk);
         ui->btn_effect_expand->setChecked(bitexpanded);
         set_dirty();                                    /* for redrawing    */
-        perf().modify();
+
+        /*
+         * Let fix_pattern() do this: seqp()->modify();
+         */
+
         unmodify(false);                                /* keep fields      */
     }
 }
@@ -476,6 +480,8 @@ qpatternfix::slot_reset ()
     initialize(false);
     unmodify();                                         /* change fields    */
     set_dirty();                                        /* for redrawing    */
+    if (m_was_clean)
+        seqp()->unmodify();
 }
 
 void
@@ -483,11 +489,6 @@ qpatternfix::closeEvent (QCloseEvent * event)
 {
     if (not_nullptr(m_edit_frame))
         m_edit_frame->remove_patternfix_frame();
-
-    /*
-     * if (m_is_modified)
-     *     perf().modify();
-     */
 
     event->accept();
 }

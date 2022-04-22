@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-04-05
+ * \updates       2022-04-21
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -448,6 +448,26 @@ performer::unregister (callbacks * pfcb)
         if (it != m_notify.end())
             (void) m_notify.erase(it);
     }
+}
+
+/**
+ *  This improved version checks all of the sequences. This allow the user to
+ *  unmodify a sequence without using performer::modify(). First usage of
+ *  sequence::modify() and unmodify() is in qpatternfix.
+ */
+
+bool
+performer::modified () const
+{
+    bool result = m_is_modified;
+    if (result)
+    {
+        /* printf("MODIFIED\n");   // just for debugging */
+    }
+    else
+        result = mapper().any_modified_sequences();
+
+    return result;
 }
 
 void

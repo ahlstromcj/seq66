@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2022-04-14
+ * \updates       2022-04-21
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -81,13 +81,16 @@ combolist::ctoi (int index) const
 {
     int result = (-1);
     std::string s = at(index);
-    try
+    if (! s.empty())
     {
-        result = std::stoi(s);
-    }
-    catch (std::invalid_argument const &)
-    {
-        // no code
+        try
+        {
+            result = std::stoi(s);
+        }
+        catch (std::invalid_argument const &)
+        {
+            // no code
+        }
     }
     return result;
 }
@@ -134,6 +137,21 @@ measure_items ()
         "16", "24", "32", "64", "96", "128"
     };
     return s_measure_list;
+}
+
+/**
+ *  Beats-per-bar values.
+ */
+
+const tokenization &
+beats_per_bar_items ()
+{
+    static const tokenization s_beats_per_bar_list
+    {
+        "1", "2", "3", "4", "5", "6", "7", "8", "9",
+        "10", "11", "12", "13", "14", "15", "16", "32"
+    };
+    return s_beats_per_bar_list;
 }
 
 /**

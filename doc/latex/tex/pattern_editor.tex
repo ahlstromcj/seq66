@@ -263,6 +263,9 @@
          that all transpositions stay on the selected scale.
          If the scale selection is \textbf{Off}, this is the same as plain pitch
          transpose, and so is not shown.
+      \item \textbf{LFO} allows for modulating of control values with a
+         low-frequency oscillator.
+         See \sectionref{subsec:pattern_editor_bottom}.
       \item \textbf{Pattern fix} allows for fixing up a new pattern
          that was recorded with some timing errors.
          See the figure below.
@@ -282,24 +285,53 @@
    Once selected, the pattern number is shown in the title-bar and in a
    read-only text field.
 
-   \textbf{Length Change} allows for no change, setting the number of measures,
-   or scaling the pattern.  Changing the number of measures will shrink or
-   expand the duration of the pattern.  So will changing the scale-factor,
-   which is useful for doubling or halving the duration of the pattern.
+   \textbf{Length Change} allows for the following actions:
 
-   \textbf{Effect} does not do anything except show the effect of the
-   changes.  (Making it read-only makes it almost invisible in some themes.)
+   \begin{itemize}
+      \item \textbf{None}.
+         No length change will occur.
+         Alignment and quantization can still be done.
+      \item \textbf{Measures}.
+         Allows the measures (length) of the pattern to be changed in two ways:
+         \begin{itemize}
+            \item \textbf{Measures}.
+               Entering an integer or a floating-point scale factor will scale
+               the pattern note, and change the number of measures as
+               applicable.
+            \item \textbf{Time Signature}.
+               Entering a fraction such as \textbf{3/4} or
+               \textbf{12/8} will change the time signature of the pattern.
+         \end{itemize}
+      \item \textbf{Scale Factor}.
+         Scales the pattern.  For example, 2.0 doubles the length, and 0.5
+         halves the length.
+   \end{itemize}
 
-   \textbf{Quantization} works the same as the Tool entries of the same name,
-   but works on \textsl{all events}.
+   \textbf{Quantization} works the same as the \textbf{Tool} entries of the
+   same name, but works on \textsl{all events}.
 
-   \textbf{Other Fixes} currently allows the pattern to be aligned to the left
+   \textbf{Other Fixes} provides some minor items, as follows.
+
+   \textbf{Align left}
+   allows the pattern to be aligned to the left
    of the sequence, removing any delays.
+   This is useful when recording a pattern live and not quite hitting the first
+   beat.
 
-   The process followed is applying the left-alignment (if selected), then
-   doing the scaling (if selected), then the quantization/tightening (if
-   selected), then changing the number of measures (if selected). Lastly, the
-   effect of the change is shown, if applicable.
+   \textbf{Preserve note length}
+   prevents the Note-Offs from being scaled, which would shorten or length the
+   notes.
+
+   \textbf{Effect} does not do anything except show the effect of the changes.
+   (Making it read-only might make it almost invisible in some themes.)
+
+   The process followed is:
+   (1) applying the left-alignment (if selected);
+   (2) doing the scaling (if selected);
+   (3) the quantization/tightening (if selected)
+   (4) changing the number of measures (if selected).
+
+   Lastly, the effect of the change is shown, if applicable.
 
    Any accidental changes can be reset in this dialog, or by undone in the
    pattern-editor itself with \texttt{Ctrl-Z}.

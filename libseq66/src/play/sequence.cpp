@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-19
+ * \updates       2022-04-21
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -177,6 +177,7 @@ sequence::sequence (int ppqn) :
     m_dirty_edit                (true),
     m_dirty_perf                (true),
     m_dirty_names               (true),
+    m_is_modified               (false),
     m_seq_in_edit               (false),
     m_status                    (0),
     m_cc                        (0),
@@ -253,6 +254,7 @@ sequence::~sequence ()
 void
 sequence::modify (bool notifychange)
 {
+    m_is_modified = true;
     set_dirty();
      if (notifychange)
          notify_change();
@@ -523,6 +525,31 @@ sequence::push_undo (bool hold)
         m_events_undo.push(m_events);
 
     set_have_undo();                                /* stazed   */
+}
+
+/**
+ *  EXPERIMENTAL.
+ *
+ *  Do not modify the performer here!  First, just because we push-undo does
+ *  not mean a change will occur.  Second, we a now checking for changed
+ *  sequences at exit, so do not need (as far as we know) to modify the
+ *  performer at this point.
+ *
+ *  CAREFUL! Shucks, performer get modified somehow anyway. Must think.
+ */
+
+void
+sequence::set_have_undo ()
+{
+    m_have_undo = m_events_undo.size() > 0;
+#if USE_PERFORMER_MODIFY
+    if (m_have_undo)
+        modify();
+
+#if 0
+        modify(false);      /* "false" added to not not notify change */
+#endif
+#endif
 }
 
 /**
@@ -2534,9 +2561,6 @@ sequence::fix_pattern (fixparameters & params)
         {
             if (params.fp_use_time_signature)
             {
-//              set_beats_per_bar(params.fp_beats_per_bar);
-//              set_beat_width(params.fp_beat_width);
-//              result = apply_length(int(newmeasures));
                 result = apply_length
                 (
                     params.fp_beats_per_bar, int(get_ppqn()),
@@ -2546,7 +2570,7 @@ sequence::fix_pattern (fixparameters & params)
             else
             {
                 int measures = get_measures(newlength);
-                result = apply_length(measures);
+                (void) apply_length(measures);
             }
             if (newscalefactor > 0.99)                              // 1.0
                 tempefx = bit_set(tempefx, fixeffect::expanded);
@@ -2566,9 +2590,12 @@ sequence::fix_pattern (fixparameters & params)
             params.fp_scale_factor = newscalefactor;
             params.fp_measures = double(get_measures());
             params.fp_effect = tempefx;
-//          params.fp_measures = calculate_measures();
             set_dirty();
+#if USE_PERFORMER_MODIFY
             modify(true);                           /* call notify_change() */
+#else
+            modify(false);
+#endif
         }
     }
     else
@@ -4673,7 +4700,9 @@ sequence::apply_length (int bpb, int ppq, int bw, int measures)
     if (result)
     {
         (void) unit_measure(true);          /* for progress and redrawing   */
+#if USE_PERFORMER_MODIFY
         notify_change(true);
+#endif
     }
     return result;
 }
