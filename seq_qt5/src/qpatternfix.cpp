@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-21
+ * \updates       2022-04-23
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -71,13 +71,6 @@
 
 namespace seq66
 {
-
-/**
- *  Static members.
- */
-
-static const double c_scale_min =   0.01;
-static const double c_scale_max = 100.00;
 
 /*
  *  Signal buttonClicked(int) is overloaded in this class. To connect to this
@@ -333,18 +326,21 @@ qpatternfix::slot_measure_change ()
     QString t = ui->line_edit_pick->text();
     std::string tc = t.toStdString();
     double m = string_to_double(tc, 1.0);
-    if (m != m_measures)
+    if (sequence::valid_scale_factor(m, true))
     {
         int beats, width;
         bool is_time_sig = string_to_time_signature(tc, beats, width);
-        ui->btn_change_pick->setChecked(true);
-        m_measures = m;
-        m_length_type = lengthfix::measures;
-        m_time_sig_beats = beats;
-        m_time_sig_width = width;
-        m_use_time_sig = is_time_sig;
-        ui->btn_effect_time_sig->setChecked(is_time_sig);
-        modify();
+        if (m != m_measures || is_time_sig)
+        {
+            ui->btn_change_pick->setChecked(true);
+            m_measures = m;
+            m_length_type = lengthfix::measures;
+            m_time_sig_beats = beats;
+            m_time_sig_width = width;
+            m_use_time_sig = is_time_sig;
+            ui->btn_effect_time_sig->setChecked(is_time_sig);
+            modify();
+        }
     }
     else
     {
@@ -360,18 +356,15 @@ qpatternfix::slot_scale_change ()
     QString t = ui->line_edit_scale->text();
     std::string tc = t.toStdString();
     double v = string_to_double(tc, 1.0);
-    if (v >= c_scale_min && v <= c_scale_max)
+    if (sequence::valid_scale_factor(v) && v != m_scale_factor)
     {
-        if (v != m_scale_factor)
-        {
-            ui->btn_change_scale->setChecked(true);
-            m_scale_factor = v;
-            m_length_type = lengthfix::rescale;
-            m_time_sig_beats = m_time_sig_width = 0;
-            m_use_time_sig = false;
-            ui->btn_effect_time_sig->setChecked(false);
-            modify();
-        }
+        ui->btn_change_scale->setChecked(true);
+        m_scale_factor = v;
+        m_length_type = lengthfix::rescale;
+        m_time_sig_beats = m_time_sig_width = 0;
+        m_use_time_sig = false;
+        ui->btn_effect_time_sig->setChecked(false);
+        modify();
     }
 }
 
@@ -448,7 +441,7 @@ qpatternfix::slot_set ()
             temp = double_to_string(m_measures);
 
         ui->line_edit_pick->setText(qt(temp));
-        temp = std::to_string(m_scale_factor);
+        temp = double_to_string(m_scale_factor);
         ui->line_edit_scale->setText(qt(temp));
         ui->btn_effect_shift->setChecked(bitshifted);
         ui->btn_effect_shrink->setChecked(bitshrunk);

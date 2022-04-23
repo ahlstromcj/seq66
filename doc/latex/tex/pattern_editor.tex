@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-04-11
+% \update      2022-04-23
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -274,7 +274,7 @@
 \begin{figure}[H]
    \centering 
   \includegraphics[scale=1.0]{pattern-editor/patternfix.png}
-   \caption{Pattern Fix}
+   \caption{Pattern Fix Dialog}
    \label{fig:pattern_editor_pattern_fix}
 \end{figure}
 
@@ -285,22 +285,30 @@
    Once selected, the pattern number is shown in the title-bar and in a
    read-only text field.
 
-   \textbf{Length Change} allows for the following actions:
+   The \textbf{Length Change} selector allows for the following actions:
 
    \begin{itemize}
       \item \textbf{None}.
          No length change will occur.
          Alignment and quantization can still be done.
       \item \textbf{Measures}.
-         Allows the measures (length) of the pattern to be changed in two ways:
+         Allows the measures (length) of the pattern to be changed in two ways,
+         depending on how the number is entered: as a simple integer (e.g.
+         1, 1.0, 0.25),
+         or as a simple time-signature fraction (e.g. "3/4").
          \begin{itemize}
             \item \textbf{Measures}.
                Entering an integer or a floating-point scale factor will scale
-               the pattern note, and change the number of measures as
-               applicable.
+               the pattern events,
+               and change the number of measures, if applicable.
+               If the measure value is less than \texttt{1.0},
+               the pattern will only be compressed.
+               If less than 1 measure in length, the result will be
+               1 measure; \textsl{Seq66} cannot allow less than 1 measure.
             \item \textbf{Time Signature}.
                Entering a fraction such as \textbf{3/4} or
-               \textbf{12/8} will change the time signature of the pattern.
+               \textbf{12/8} will change the time signature of the pattern
+               \textbf{and} \textsl{compress it to 1 measure}.
          \end{itemize}
       \item \textbf{Scale Factor}.
          Scales the pattern.  For example, 2.0 doubles the length, and 0.5
@@ -326,14 +334,23 @@
    (Making it read-only might make it almost invisible in some themes.)
 
    The process followed is:
-   (1) applying the left-alignment (if selected);
-   (2) doing the scaling (if selected);
-   (3) the quantization/tightening (if selected)
-   (4) changing the number of measures (if selected).
+
+   \begin{enumerate}
+      \item Apply the left-alignment (if selected).
+      \item Modify the number of measures (if selected).
+      \item Do the scaling (if selected).
+      \item Perform the quantization/tightening (if selected).
+   \end{enumerate}
 
    Lastly, the effect of the change is shown, if applicable.
+   Note that changing the measure in this dialog is different from
+   changing the measures in the "length" dropdown, which only changes the
+   measures.
+   Changing the measures to a large number on a pattern of 1 measure will
+   greatly expand the notes!
 
-   Any accidental changes can be reset in this dialog, or by undone in the
+   Any accidental changes can be \textbg{Reset}
+   in this dialog, or be undone in the
    pattern-editor itself with \texttt{Ctrl-Z}.
 
    \itempar{Follow Progress}{pattern editor!tools}

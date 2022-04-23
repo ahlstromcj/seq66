@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-21
+ * \updates       2022-04-23
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -80,6 +80,15 @@ namespace seq66
 
 static const int c_song_record_incr = 16;
 static const int c_maxbeats         = 0xFFFF;
+
+/**
+ *  Static members for validating scale factors in pattern compression and
+ *  expanding.
+ */
+
+static const double c_scale_min     =    0.01;
+static const double c_scale_max     =  200.00;
+static const double c_measure_max   = 1000.00;
 
 /*
  * Member value.  A fingerprint size of 0 means to not use a fingerprint...
@@ -2479,6 +2488,55 @@ sequence::change_event_data_lfo
 }
 
 /**
+ *  Validates a scale-factor or measures value for scaling. A static function.
+ *
+ * \param ismeasure
+ *      If true, then a much larger value is allowed.
+ *
+ * \return
+ *      Returns true if valid.
+ */
+
+bool
+sequence::valid_scale_factor (double s, bool ismeasure)
+{
+    bool result = s >= c_scale_min;
+    if (result)
+    {
+        double maximum = ismeasure ? c_measure_max : c_scale_max ;
+        result = s <= maximum;
+    }
+    return result;
+}
+
+/**
+ *  Recalculates the number of measures, making sure that values less than 1.0
+ *  become 1, and that, otherwise, the measure count is either very close
+ *  (0.01) to the lower integer number, or moved up the next integer measure
+ *  value. A static function.
+ */
+
+int
+sequence::trunc_measures (double measures)
+{
+    static const double s_slop = 0.01;   /* allows for a little slop */
+    int result;
+    if (measures <= (1.0 + s_slop))
+    {
+        result = 1;
+    }
+    else
+    {
+        double truncated = std::trunc(measures);
+        if ((measures - truncated) <= s_slop)
+            result = int(truncated);
+        else
+            result = int(truncated) + 1;
+    }
+    return result;
+}
+
+/**
  *  Does a lot of things at once, to all events in the pattern.
  *  See the qpatternfix dialog.
  *
@@ -2512,54 +2570,51 @@ bool
 sequence::fix_pattern (fixparameters & params)
 {
     automutex locker(m_mutex);
-    bool result = true;
-    int currentbars = get_measures();
-    midipulse currentlen = get_length();
-    midipulse newlength = 0;
-    fixeffect tempefx = fixeffect::none;
     double newmeasures = params.fp_measures;
     double newscalefactor = params.fp_scale_factor;
-    push_undo();
-    if (params.fp_align_left)
-    {
-        params.fp_align_left = m_events.align_left();        /* realigned?   */
-        if (params.fp_align_left)
-            tempefx = bit_set(tempefx, fixeffect::shifted);
-        else
-            result = false;                                 /* op failed    */
-    }
+    bool result = valid_scale_factor(newscalefactor) &&
+        valid_scale_factor(newmeasures, true);
+
     if (result)
     {
-        if (params.fp_fix_type == lengthfix::measures)
+        int currentbars = get_measures();
+        midipulse currentlen = get_length();
+        midipulse newlength = 0;
+        fixeffect tempefx = fixeffect::none;
+        push_undo();
+        if (params.fp_align_left)
         {
-            if (params.fp_measures != double(currentbars))
+            params.fp_align_left = m_events.align_left();    /* realigned?   */
+            if (params.fp_align_left)
+                tempefx = bit_set(tempefx, fixeffect::shifted);
+            else
+                result = false;                             /* op failed    */
+        }
+        if (result)
+        {
+            bool fixmeasures = params.fp_fix_type == lengthfix::measures;
+            bool fixscale = params.fp_fix_type == lengthfix::rescale;
+            bool timesig = params.fp_use_time_signature;
+            if (fixmeasures)
             {
-                if (newmeasures >= 1.0)
+                if (newmeasures != double(currentbars))
                 {
                     newscalefactor = newmeasures / double(currentbars);
-                    newmeasures = std::trunc(newmeasures) + 1;
+                    newmeasures = trunc_measures(newmeasures);
+                    newlength = m_events.apply_time_factor
+                    (
+                        newscalefactor, params.fp_save_note_length
+                    );
                 }
-                else
-                {
-                    newscalefactor = newmeasures * double(currentbars);
-                    newmeasures = 1.0;
-                }
+            }
+            else if (fixscale)
+            {
                 newlength = m_events.apply_time_factor
                 (
                     newscalefactor, params.fp_save_note_length
                 );
             }
-        }
-        else if (params.fp_fix_type == lengthfix::rescale)
-        {
-            newlength = m_events.apply_time_factor
-            (
-                newscalefactor, params.fp_save_note_length
-            );
-        }
-        if (newlength > 0 && newlength != currentlen)
-        {
-            if (params.fp_use_time_signature)
+            if (timesig)
             {
                 result = apply_length
                 (
@@ -2567,40 +2622,44 @@ sequence::fix_pattern (fixparameters & params)
                     params.fp_beat_width, int(newmeasures)
                 );
             }
-            else
+            if (newlength > 0 && newlength != currentlen)
             {
                 int measures = get_measures(newlength);
+                if (fixmeasures)
+                {
+                    if (measures < int(newmeasures))
+                        measures = int(newmeasures);
+                }
                 (void) apply_length(measures);
+                if (newscalefactor > 1.00)                              // 1.0
+                    tempefx = bit_set(tempefx, fixeffect::expanded);
+                else if (newscalefactor < 1.00)                         // 1.0
+                    tempefx = bit_set(tempefx, fixeffect::shrunk);
             }
-            if (newscalefactor > 0.99)                              // 1.0
-                tempefx = bit_set(tempefx, fixeffect::expanded);
-            else if (newscalefactor < 0.99)                         // 1.0
-                tempefx = bit_set(tempefx, fixeffect::shrunk);
-        }
-        if (params.fp_quan_type == quantization::tighten)
-        {
-            result = m_events.quantize_all_events(snap(), 2);
-        }
-        else if (params.fp_quan_type == quantization::full)
-        {
-            result = m_events.quantize_all_events(snap(), 1);
-        }
-        if (result)
-        {
-            params.fp_scale_factor = newscalefactor;
-            params.fp_measures = double(get_measures());
-            params.fp_effect = tempefx;
-            set_dirty();
+            if (params.fp_quan_type == quantization::tighten)
+            {
+                result = m_events.quantize_all_events(snap(), 2);
+            }
+            else if (params.fp_quan_type == quantization::full)
+            {
+                result = m_events.quantize_all_events(snap(), 1);
+            }
+            if (result)
+            {
+                params.fp_scale_factor = newscalefactor;
+                params.fp_measures = double(get_measures());
+                params.fp_effect = tempefx;
+                set_dirty();
 #if USE_PERFORMER_MODIFY
-            modify(true);                           /* call notify_change() */
+                modify(true);                       /* call notify_change() */
 #else
-            modify(false);
+                modify(false);
 #endif
+            }
         }
+        else
+            pop_undo();
     }
-    else
-        pop_undo();
-
     return result;
 }
 

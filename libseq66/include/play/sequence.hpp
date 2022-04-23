@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-04-21
+ * \updates       2022-04-23
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1131,6 +1131,9 @@ public:
     {
         return is_default_name() && event_count() == 0;
     }
+
+    static bool valid_scale_factor (double s, bool ismeasure = false);
+    static int trunc_measures (double m);
 
     static const std::string & default_name ()
     {

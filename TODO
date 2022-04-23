@@ -1,11 +1,15 @@
 TO DO for Seq66 0.98.7 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-04-21
+2019-04-13 to 2022-04-23
 
 USE_PERFORMER_MODIFY:
 
     Keep track of issues caused by commenting out some performer::modify()
-    call in the sequence module.
+    call in the sequence module. Make sure sequence modifications are shown.
+
+Pattern Fix:
+
+    ZZ
 
 Windows:
 
