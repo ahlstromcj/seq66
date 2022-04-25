@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-22
+ * \updates       2022-04-25
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -3591,8 +3591,7 @@ qsmainwnd::on_sequence_change (seq::number seqno, bool redo)
             ip.second->update_sequence(seqno, redo);
 
         enable_save(cb_perf().modified());          /* or use redo flag?    */
-        if (redo)
-            m_is_title_dirty = true;
+        m_is_title_dirty = true;                    /* redo test removed    */
     }
     return result;
 }
@@ -3605,6 +3604,7 @@ qsmainwnd::on_trigger_change (seq::number seqno)
     {
         m_live_frame->refresh(seqno);
         enable_save(cb_perf().modified());
+        m_is_title_dirty = true;                    /* 2022-04-25           */
     }
     return result;
 }
@@ -3613,6 +3613,7 @@ bool
 qsmainwnd::on_set_change (screenset::number setno, performer::change /*ctype*/)
 {
     emit signal_set_change(int(setno));
+    m_is_title_dirty = true;                        /* 2022-04-25           */
     return true;
 }
 
@@ -3646,6 +3647,7 @@ qsmainwnd::on_resolution_change (int ppqn, midibpm bpm)
     std::string pstring = std::to_string(ppqn);
     set_ppqn_text(pstring);
     ui->spinBpm->setValue(bpm);
+    m_is_title_dirty = true;                        /* 2022-04-25           */
     return true;
 }
 

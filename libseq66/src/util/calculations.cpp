@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-04-13
+ * \updates       2022-04-25
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -704,6 +704,22 @@ randomize (int range)
         srand(unsigned(time(NULL)));
     }
     return rand() / (RAND_MAX / (2 * range + 1) + 1) - range;
+}
+
+/**
+ *  Returns true if a number is a power of 2.  MIDI's beatwidth values
+ *  provide the power of 2 needed for a valid beat width value.
+ *  First b in the below expression is for the case when b is 0.
+ *
+ *  Taken from:
+ *
+ * https://www.geeksforgeeks.org/c-program-to-find-whether-a-no-is-power-of-two/
+ */
+
+bool
+is_power_of_2 (int b)
+{
+    return b && (! (b & (b - 1)));
 }
 
 /**

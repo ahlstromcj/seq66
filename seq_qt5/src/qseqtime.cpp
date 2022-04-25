@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-18
+ * \updates       2022-04-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -123,6 +123,8 @@ qseqtime::paintEvent (QPaintEvent *)
      * The ticks_per_step value needs to be figured out.  Why 6 * m_zoom?  6
      * is the number of pixels in the smallest divisions in the default
      * seqroll background.  This code needs to be put into a function.
+     *
+     * EXPERIMENTAL.  For odd beat widths, use 1 as ticks_per_substep.
      */
 
     int bpbar = seq_pointer()->get_beats_per_bar();
@@ -134,6 +136,9 @@ qseqtime::paintEvent (QPaintEvent *)
     int ticks_per_four = ticks_per_step * 4;
     midipulse starttick = scroll_offset() - (scroll_offset() % ticks_per_step);
     midipulse endtick = pix_to_tix(width()) + scroll_offset();
+    if ((bwidth % 2) != 0)
+        ticks_per_step = zoom();                            /* EXPERIMENTAL */
+
     if (measures_per_line <= 0)
         measures_per_line = 1;
 

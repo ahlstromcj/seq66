@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-04-21
+ * \updates       2022-04-25
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -5576,8 +5576,10 @@ performer::midi_control_keystroke (const keystroke & k)
  *
  * \return
  *      Returns true if the event was valid and usable, and the call to the
- *      automation function returned true.  Returns false if the action was
- *      not processed.
+ *      automation function returned true. Also returns true if the event
+ *      came in on the control buss, so that it will not be recorded. (A fix
+ *      for issue #80.) Returns false if the action was not on the control
+ *      bus.
  */
 
 bool
@@ -5585,19 +5587,14 @@ performer::midi_control_event (const event & ev, bool recording)
 {
     bool result = m_midi_control_in.is_enabled();
     if (result)
+        result = ev.input_bus() == m_midi_control_in.true_buss();
+
+    if (result)
     {
         midicontrol::key k(ev);
         const midicontrol & incoming = m_midi_control_in.control(k);
-        result = incoming.is_usable();
-
-        /*
-         * Now done more thoroughly in midicontrolin::control() above.
-         *
-         * if (result)
-         *     result = ev.input_bus() == m_midi_control_in.true_buss();
-         */
-
-        if (result)
+        bool good = incoming.is_usable();
+        if (good)
         {
             automation::slot s = incoming.slot_number();
             const midioperation & mop = m_operations.operation(s);
@@ -5617,12 +5614,16 @@ performer::midi_control_event (const event & ev, bool recording)
                     int d0 = incoming.d0();
                     int d1 = incoming.d1();
                     int index = incoming.control_code(); /* in lieu of d1() */
-                    result = mop.call(a, d0, d1, index, invert);
+                    good = mop.call(a, d0, d1, index, invert);
                 }
                 else
-                    result = false;
+                    good = false;
             }
         }
+#if defined SEQ66_PLATFORM_DEBUG
+        if (! good)
+            printf("Control event not processed\n");
+#endif
     }
     return result;
 }

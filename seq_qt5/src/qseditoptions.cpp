@@ -971,9 +971,6 @@ qseditoptions::reload_needed (bool flag)
         setEnabled(flag);
 
     sync();
-
-//  if (flag)
-//      enable_reload_button(true);
 }
 
 void

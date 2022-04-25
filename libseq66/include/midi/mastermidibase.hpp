@@ -138,7 +138,8 @@ protected:
     /**
      *  For dumping MIDI input to a sequence for recording.  This value is set
      *  to true when a sequence editor window is open and the user has
-     *  clicked the "record MIDI" or "thru MIDI" button.
+     *  clicked the "record MIDI" or "thru MIDI" button.  See the
+     *  set_sequence_input() function.
      */
 
     bool m_dumping_input;

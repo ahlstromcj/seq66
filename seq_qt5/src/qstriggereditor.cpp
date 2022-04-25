@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-03-02
+ * \updates       2022-04-23
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -169,6 +169,9 @@ qstriggereditor::paintEvent (QPaintEvent *)
     midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
     midipulse starttick = scroll_offset() - (scroll_offset() % ticks_per_step);
     midipulse endtick = pix_to_tix(width());
+    if ((bwidth % 2) != 0)
+        ticks_per_step = zoom();                            /* EXPERIMENTAL */
+
     for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
     {
         int x_offset = xoffset(tick) - scroll_offset_x() + m_x_offset;

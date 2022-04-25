@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-04-23
+% \update      2022-04-24
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -313,6 +313,12 @@
       \item \textbf{Scale Factor}.
          Scales the pattern.  For example, 2.0 doubles the length, and 0.5
          halves the length.
+         The \textbf{Measures} is changed to be enough to contain the new length,
+         but only if the scale is greater than 1.0.
+         One thing to be aware of is that, if the pattern is expanded, the
+         new measure count depends on the location of the last event in the
+         pattern. For instance, setting the scale factor to 100 might result in
+         76 measures, not the 100 that would be set if measures was set to 100.
    \end{itemize}
 
    \textbf{Quantization} works the same as the \textbf{Tool} entries of the
@@ -327,7 +333,7 @@
    beat.
 
    \textbf{Preserve note length}
-   prevents the Note-Offs from being scaled, which would shorten or length the
+   prevents Note Offs from being scaled, which would shorten or length the
    notes.
 
    \textbf{Effect} does not do anything except show the effect of the changes.

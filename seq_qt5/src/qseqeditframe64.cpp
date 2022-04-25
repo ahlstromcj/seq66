@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-23
+ * \updates       2022-04-25
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -90,6 +90,7 @@
  */
 
 #include <QMenu>
+#include <QMessageBox>
 #include <QPaintEvent>
 #include <QScrollBar>
 #include <QStandardItemModel>           /* for disabling combobox entries   */
@@ -137,14 +138,18 @@
 #include "pixmaps/midi.xpm"
 #include "pixmaps/note_length.xpm"
 #include "pixmaps/play.xpm"
+#include "pixmaps/play_on.xpm"
 #include "pixmaps/q_rec.xpm"
+#include "pixmaps/q_rec_on.xpm"
 #include "pixmaps/quantize.xpm"
 #include "pixmaps/rec.xpm"
+#include "pixmaps/rec_on.xpm"
 #include "pixmaps/redo.xpm"
 #include "pixmaps/scale.xpm"
 #include "pixmaps/sequences.xpm"
 #include "pixmaps/snap.xpm"
 #include "pixmaps/thru.xpm"
+#include "pixmaps/thru_on.xpm"
 #include "pixmaps/tools.xpm"
 #include "pixmaps/transpose.xpm"
 #include "pixmaps/undo.xpm"
@@ -711,18 +716,7 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_zoom, SIGNAL(clicked(bool)),
         this, SLOT(slot_reset_zoom())
     );
-#if defined USE_OLD_CODE
-    for (int zi = 0; zi < m_zoom_list.count(); ++zi)
-    {
-        int zoom = s_zoom_items[zi];
-        std::string itext = "1:" + std::to_string(zoom);
-        QString combo_text = qt(itext);
-        ui->m_combo_zoom->insertItem(zi, combo_text);
-    }
-    ui->m_combo_zoom->setCurrentIndex(1);
-#else
     (void) fill_combobox(ui->m_combo_zoom, zoom_list(), 1, "1:");
-#endif
     connect
     (
         ui->m_combo_zoom, SIGNAL(currentIndexChanged(int)),
@@ -977,17 +971,7 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_rec_vol, SIGNAL(clicked(bool)),
         this, SLOT(reset_recording_volume())
     );
-#if defined USE_OLD_CODE
-    for (int v = 0; v < rec_vol_list().count(); ++v)
-    {
-        int item = s_rec_vol_items[v];
-        std::string text = v == 0 ? "Free" : std::to_string(item) ;
-        QString combo_text = qt(text);
-        ui->m_combo_rec_vol->insertItem(v, combo_text);
-    }
-#else
     (void) fill_combobox(ui->m_combo_rec_vol, rec_vol_list());
-#endif
     connect
     (
         ui->m_combo_rec_vol, SIGNAL(currentIndexChanged(int)),
@@ -1074,7 +1058,7 @@ qseqeditframe64::paintEvent (QPaintEvent * qpep)
 void
 qseqeditframe64::resizeEvent (QResizeEvent * qrep)
 {
-    update_draw_geometry();
+    update_draw_geometry();                 /* not set_dirty() ?            */
     qrep->ignore();                         /* qseqframe::resizeEvent(qrep) */
 }
 
@@ -1151,7 +1135,7 @@ qseqeditframe64::closeEvent (QCloseEvent * event)
 }
 
 /**
- *  Currently this function is not called.  To be investigated
+ *  Currently this function is not called.  To be investigated.
  */
 
 bool
@@ -1375,7 +1359,7 @@ qseqeditframe64::reset_beats_per_bar ()
     int index = beats_per_bar_list().index(usr().bpb_default());
     ui->m_combo_bpm->setCurrentIndex(index);
     perf().notify_sequence_change(seqno, performer::change::recreate);
-    update_draw_geometry();
+    set_dirty();                        // update_draw_geometry();
 }
 
 /**
@@ -1390,13 +1374,16 @@ void
 qseqeditframe64::set_beats_per_bar (int bpb)
 {
     sequence * s = seq_pointer().get();
-    m_beats_per_bar = bpb;
     if (not_nullptr(s))
     {
-        int measures = get_measures();
-        s->set_beats_per_bar(bpb);
-        s->apply_length(bpb, 0, 0, measures);
-        update_draw_geometry();
+        if (bpb != m_beats_per_bar)
+        {
+            int measures = get_measures();
+            m_beats_per_bar = bpb;
+            s->set_beats_per_bar(bpb);
+            s->apply_length(bpb, 0, 0, measures);
+            set_dirty();                        // update_draw_geometry();
+        }
     }
 }
 
@@ -1411,9 +1398,14 @@ qseqeditframe64::set_beats_per_bar (int bpb)
 void
 qseqeditframe64::set_measures (int len)
 {
-    m_measures = len;
-    seq_pointer()->apply_length(len);           /* use the simpler overload */
-    set_dirty();
+    if (len >= 1 && len <= 99999)               /* a sanity check only      */
+    {
+        bool changed = m_measures != len;
+        m_measures = len;
+        seq_pointer()->apply_length(len);       /* use the simpler overload */
+        if (changed)
+            set_dirty();
+    }
 }
 
 /**
@@ -1424,7 +1416,7 @@ void
 qseqeditframe64::reset_measures ()
 {
     ui->m_combo_length->setCurrentIndex(0);
-    update_draw_geometry();
+    set_dirty();                            // update_draw_geometry();
 }
 
 /**
@@ -1450,11 +1442,7 @@ void
 qseqeditframe64::update_beat_width (int index)
 {
     int bw = beatwidth_list().ctoi(index);
-    if (bw > 0 && bw != m_beat_width)
-    {
-        set_beat_width(bw);
-        set_dirty();
-    }
+    set_beat_width(bw);
 }
 
 void
@@ -1463,9 +1451,26 @@ qseqeditframe64::text_beat_width (const QString & text)
     std::string temp = text.toStdString();
     if (! temp.empty())
     {
-        int width = string_to_int(temp);
-        if (usr().bw_is_valid(width))
-            set_beat_width(width);
+        int bw = string_to_int(temp);
+        if (usr().bw_is_valid(bw))      /* only a range check */
+        {
+            bool rational = is_power_of_2(bw);
+            if (! rational)
+            {
+                QMessageBox temp;
+                temp.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+                temp.setText("MIDI supports only powers of 2 for beat width.");
+                temp.setInformativeText
+                (
+                    "It won't be saved properly, but you do you."
+                );
+                rational = temp.exec() == QMessageBox::Ok;
+            }
+            if (rational)
+                set_beat_width(bw);
+            else
+                reset_beat_width();
+        }
         else
             reset_beat_width();
     }
@@ -1480,7 +1485,7 @@ qseqeditframe64::reset_beat_width ()
 {
     int index = beatwidth_list().index(usr().bw_default());
     ui->m_combo_bw->setCurrentIndex(index);
-    update_draw_geometry();
+    set_dirty();                            // update_draw_geometry();
 }
 
 /**
@@ -1491,14 +1496,18 @@ qseqeditframe64::reset_beat_width ()
 void
 qseqeditframe64::set_beat_width (int bw)
 {
-    sequence * s = seq_pointer().get();
-    m_beat_width = bw;
-    if (not_nullptr(s))
+    if (bw > 0)
+    if (usr().bw_is_valid(bw) && bw != m_beat_width)
     {
-        int measures = get_measures();
-        s->set_beat_width(bw);
-        s->apply_length(0, 0, bw, measures);
-        update_draw_geometry();
+        sequence * s = seq_pointer().get();
+        if (not_nullptr(s))
+        {
+            m_beat_width = bw;
+            int measures = get_measures();
+            s->set_beat_width(bw);
+            s->apply_length(0, 0, bw, measures);
+            set_dirty();
+        }
     }
 }
 
@@ -1510,11 +1519,7 @@ void
 qseqeditframe64::update_measures (int index)
 {
     int m = m_measures_list.ctoi(index);
-    if (m != m_measures)
-    {
-        set_measures(m);
-        set_dirty();
-    }
+    set_measures(m);
 }
 
 void
@@ -1524,8 +1529,7 @@ qseqeditframe64::text_measures (const QString & text)
     if (! temp.empty())
     {
         int measures = string_to_int(temp);
-        if (measures >= 1 && measures <= 99999)        /* sanity check only */
-            set_measures(measures);
+        set_measures(measures);
     }
 }
 
@@ -1543,8 +1547,7 @@ qseqeditframe64::next_measures ()
 
     ui->m_combo_length->setCurrentIndex(index);
     int m = m_measures_list.ctoi(index);
-    if (m != m_measures)
-        set_measures(m);
+    set_measures(m);
 }
 
 /**
@@ -1605,7 +1608,7 @@ qseqeditframe64::reset_chord ()
     if (not_nullptr(m_seqroll))
         m_seqroll->set_chord(0);
 
-    update_draw_geometry();
+    set_dirty();                            // update_draw_geometry();
 }
 
 void
@@ -2398,7 +2401,7 @@ void
 qseqeditframe64::reset_grid_snap ()
 {
     ui->m_combo_snap->setCurrentIndex(4);
-    update_draw_geometry();
+    set_dirty();                            // update_draw_geometry();
 }
 
 /**
@@ -2460,7 +2463,7 @@ void
 qseqeditframe64::reset_note_length ()
 {
     ui->m_combo_note->setCurrentIndex(4);
-    update_draw_geometry();
+    set_dirty();                            // update_draw_geometry();
 }
 
 bool
@@ -2504,7 +2507,7 @@ qseqeditframe64::slot_update_zoom (int index)
 {
     int z = zoom_list().ctoi(index);
     (void) set_zoom(z);
-    update_draw_geometry();
+    set_dirty();                            // update_draw_geometry();
 }
 
 bool
@@ -2536,7 +2539,7 @@ qseqeditframe64::set_zoom (int z)
         float factor = float(zprevious) / float(zoom());
         int index = zoom_list().index(zoom());      // s_lookup_zoom(zoom());
         ui->m_combo_zoom->setCurrentIndex(index);
-        update_draw_geometry();
+        set_dirty();                            // update_draw_geometry();
         ui->rollScrollArea->scroll_x_by_factor(factor);
     }
     return result;
@@ -3132,27 +3135,32 @@ qseqeditframe64::show_pattern_fix ()
 void
 qseqeditframe64::update_midi_buttons ()
 {
+    static const char * const s_thru_on = "MIDI Thru Active";
+    static const char * const s_thru_off = "MIDI Thru Inactive";
+    static const char * const s_rec_on = "Record Active";
+    static const char * const s_rec_off = "Record Inactive";
+    static const char * const s_qrec_on = "Quantized Record Active";
+    static const char * const s_qrec_off = "Quantized Record Inactive";
+
     bool thru_active = seq_pointer()->thru();
-    bool record_active = seq_pointer()->recording();
-    bool qrecord_active = seq_pointer()->quantized_recording();
-    bool playing = seq_pointer()->playing();
     ui->m_toggle_thru->setChecked(thru_active);
-    ui->m_toggle_thru->setToolTip
-    (
-        thru_active ? "MIDI Thru Active" : "MIDI Thru Inactive"
-    );
+    ui->m_toggle_thru->setToolTip(thru_active ? s_thru_on : s_thru_off);
+    qt_set_icon(thru_active ? thru_on_xpm : thru_xpm, ui->m_toggle_thru);
+
+    bool record_active = seq_pointer()->recording();
     ui->m_toggle_record->setChecked(record_active);
-    ui->m_toggle_record->setToolTip
-    (
-        record_active ? "MIDI Record Active" : "MIDI Record Inactive"
-    );
+    ui->m_toggle_record->setToolTip(record_active ? s_rec_on : s_rec_off);
+    qt_set_icon(record_active ? rec_on_xpm : rec_xpm, ui->m_toggle_record);
+
+    bool qrecord_active = seq_pointer()->quantized_recording();
     ui->m_toggle_qrecord->setChecked(qrecord_active);
-    ui->m_toggle_qrecord->setToolTip
-    (
-        qrecord_active ? "Quantized Record Active" : "Quantized Record Inactive"
-    );
+    ui->m_toggle_qrecord->setToolTip(qrecord_active ? s_qrec_on : s_qrec_off);
+    qt_set_icon(qrecord_active ? q_rec_on_xpm : q_rec_xpm, ui->m_toggle_qrecord);
+
+    bool playing = seq_pointer()->playing();
     ui->m_toggle_play->setChecked(playing);
     ui->m_toggle_play->setToolTip(playing ? "Armed" : "Muted");
+    qt_set_icon(playing ? play_on_xpm : play_xpm, ui->m_toggle_play);
 }
 
 /**
@@ -3192,6 +3200,14 @@ qseqeditframe64::record_change (bool ischecked)
 void
 qseqeditframe64::q_record_change (bool ischecked)
 {
+    /*
+     * Tricky code.  Turn off reqular recording first. This allows the
+     * Q record button to get set, and turn both Q and regular recording on.
+     */
+
+    if (ischecked)
+        (void) (perf().set_recording(seq_pointer(), false, false));
+
     if (perf().set_quantized_recording(seq_pointer(), ischecked, false))
         update_midi_buttons();
 }
@@ -3222,9 +3238,7 @@ qseqeditframe64::update_record_type (int index)
     if (index == lrreset)                               /* oneshot reset    */
     {
         if (m_last_record_style == recordstyle::oneshot)
-        {
             ui->m_combo_rec_type->setCurrentIndex(lroneshot);
-        }
     }
     m_last_record_style = usr().grid_record_style(index);
     if (ok)
@@ -3238,7 +3252,7 @@ qseqeditframe64::update_recording_volume (int index)
     {
         int recvol = rec_vol_list().ctoi(index);
         if (index == 0)
-            recvol = (-1);              /* force use of preserve-velocity   */
+            recvol = (-1);                      /* force preserve-velocity  */
 
         set_recording_volume(recvol);
         set_dirty();
@@ -3282,11 +3296,12 @@ qseqeditframe64::set_dirty ()
 {
     if (is_initialized())
     {
-        qseqframe::set_dirty();         // roll, time, date & event panes
-        m_seqroll->set_redraw();        // also calls set_dirty();
-        m_seqdata->set_dirty();         // update(); neither cause a refresh
-        m_seqevent->set_dirty();        // how about this?
-        m_seqtime->set_dirty();
+        qseqframe::set_dirty();         /* roll, time, date & event panes   */
+        m_seqroll->set_redraw();        /* also calls set_dirty();          */
+        m_seqdata->set_dirty();         /* update(); neither cause refresh  */
+        m_seqevent->set_dirty();        /* how about this? same!            */
+        m_seqtime->set_dirty();         /* any comment?                     */
+        seq_pointer()->modify(false);   /* do NOT do notify-change!         */
     }
     update_draw_geometry();
 }

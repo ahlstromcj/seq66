@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-04-13
+ * \updates       2022-04-25
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -214,6 +214,7 @@ extern midipulse string_to_pulses
     const midi_timing & mt
 );
 extern int randomize (int range);
+extern bool is_power_of_2 (int value);
 extern int log2_time_sig_value (int tsd);
 extern int beat_power_of_2 (int logbase2);
 extern int power (int base, int exponent);

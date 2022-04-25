@@ -2029,7 +2029,7 @@ sequence::repitch (const notemapper & nmap, bool all)
     {
         if (e.is_note() && (all || e.is_selected()))
         {
-            midibyte pitch, velocity;                       /* d0 & d1  */
+            midibyte pitch, velocity;                           /* d0 & d1  */
             e.get_data(pitch, velocity);
             pitch = midibyte(nmap.convert(int(pitch)));
             e.set_data(pitch, velocity);
@@ -2037,8 +2037,10 @@ sequence::repitch (const notemapper & nmap, bool all)
         }
     }
     if (result && ! all)
+    {
         verify_and_link();
-
+        modify();                                   /* added ca 2022-04-25  */
+    }
     return result;
 }
 
@@ -2806,8 +2808,10 @@ sequence::add_note (midipulse len, const event & e)
         result = add_event(eoff);
     }
     if (result)
+    {
         verify_and_link();
-
+        modify();                                   /* added ca 2022-04-25  */
+    }
     return result;
 }
 
@@ -2926,7 +2930,10 @@ sequence::add_tempo (midipulse tick, midibpm tempo, bool repaint)
          */
 
          if (result)
+         {
             verify_and_link();
+            modify();                               /* added ca 2022-04-25  */
+         }
     }
     return result;
 }
@@ -5605,8 +5612,7 @@ sequence::copy_events (const eventlist & newevents)
         }
         else if (len > m_length)
         {
-            // calculate measures and the resulting length.
-            change_length = true;
+            change_length = true;               /* calc. measures & length  */
         }
         if (change_length)
             set_length(len);                    /* m_length = len           */

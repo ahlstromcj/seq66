@@ -1,7 +1,7 @@
 # README for Seq66 0.98.7
 
 Chris Ahlstrom
-2015-09-10 to 2022-04-23
+2015-09-10 to 2022-04-25
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -80,6 +80,7 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.98.7:
+        *   Fixed issue #80 where some MIDI controls were getting recorded.
         *   Added a "Pattern Fix" dialog to allow a whole pattern to be shifted,
             quantized, and changed in length all at once. Useful for fixing a
             badly played pattern or scaling the duration.
@@ -92,7 +93,8 @@ Windows, and using a conventional source tarball.
         *   Trying to get rolls, time, data, and event panes to line up no
             matter what the Qt theme is. Difficult.
         *   Tightening the setting of performer modification when sequence
-            changes occur, to reduce unnecessary prompts to save.
+            changes occur, to reduce unnecessary prompts to save and flag
+            modification via the asterisk change marker.
         *   Tightened the saving of WRK and MIDI files.
     *   Version 0.98.6:
         *   Revisited issue #41 to make sure "Quit" is "Hide" under NSM. Also

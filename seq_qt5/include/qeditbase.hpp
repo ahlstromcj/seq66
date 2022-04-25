@@ -862,7 +862,6 @@ protected:
 
 extern int zoom_power_of_2 (int ppqn);
 
-
 }           // namespace seq66
 
 #endif      // SEQ66_QEDITBASE_HPP

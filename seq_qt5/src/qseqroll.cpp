@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-08
+ * \updates       2022-04-23
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -498,20 +498,21 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
      *
      * The ticks_per_step value needs to be figured out.  Why 6 * zoom()?  6
      * is the number of pixels in the smallest divisions in the default
-     * seqroll background.
+     * seqroll background.  This code needs to be put into a function.
      *
-     * This code needs to be put into a function.
+     * EXPERIMENTAL.  For odd beat widths, use 1 as ticks_per_substep.
      */
 
     int bpbar = seq_pointer()->get_beats_per_bar();
     int bwidth = seq_pointer()->get_beat_width();
-
     midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
     midipulse ticks_per_bar = bpbar * ticks_per_beat;
     midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
     midipulse endtick = pix_to_tix(r.x() + r.width());
     midipulse starttick = pix_to_tix(r.x());
     starttick -= starttick % ticks_per_step;
+    if ((bwidth % 2) != 0)
+        ticks_per_step = zoom();                            /* EXPERIMENTAL */
 
     /*
      * Draw vertical grid lines.  Incrementing by ticks_per_step only works for

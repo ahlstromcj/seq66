@@ -1,15 +1,30 @@
 TO DO for Seq66 0.98.7 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-04-23
+2019-04-13 to 2022-04-25
 
 USE_PERFORMER_MODIFY:
 
     Keep track of issues caused by commenting out some performer::modify()
     call in the sequence module. Make sure sequence modifications are shown.
 
-Pattern Fix:
+Pattern Editor:
 
-    ZZ
+    -   EXPERIMENTAL code for odd (and unsaveable) beat widths.
+    -   That code causes a lot of weird effects.
+    -   Make sure changing the beat width and beats-per-bar normally causes
+        these all to update immediately (no touches):
+        -   qseqroll
+        -   qseqtime
+        -   qstriggereditor (aka seqevent)
+        -   qseqdata
+    -   Changing the beat width and beats-per-bar does not seem to set a
+        modify flag.
+    -   Make sure modification shows up as an asterisk!
+    -   Reducing beat-width can delete notes! Without noting modification!
+    -   Investigate calculations:
+        -   ticks_to_measures()
+        -   ticks_to_beats()
+        -   pulses_per_substep()
 
 Windows:
 
@@ -26,6 +41,11 @@ Windows:
 Ports:
 
     -   Investigate deinit_in() and _out().
+    -   Make the port-refresh feature work.
+    -   Editing the control busses in Preferences should be written to the
+        specified 'ctrl' file.
+    -   Enabling/disabling a port should enable the OK/Apply and restart
+        buttons.
 
 Test and Document:
 
