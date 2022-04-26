@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-04-23
+ * \updates       2022-04-26
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -125,6 +125,7 @@ struct fixparameters
 {
     lengthfix fp_fix_type;
     quantization fp_quan_type;
+    int fp_jitter;
     bool fp_align_left;
     bool fp_save_note_length;
     bool fp_use_time_signature;
@@ -1627,6 +1628,7 @@ public:
     bool stretch_selected (midipulse deltatick);
     bool randomize_selected (midibyte status, int plus_minus);
     bool randomize_selected_notes (int jitter = 8, int range = 8);
+    bool jitter_notes (int jitter = 8);
     bool mark_selected ();
     void unpaint_all ();
     void verify_and_link (bool wrap = false);

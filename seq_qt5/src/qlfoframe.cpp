@@ -243,6 +243,7 @@ qlfoframe::qlfoframe
     plabel = "LFO #";
     plabel += number;
     setWindowTitle(qt(plabel));
+    setFixedSize(width(), height());
 }
 
 /**

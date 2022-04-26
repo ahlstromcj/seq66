@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>565</width>
-    <height>310</height>
+    <width>495</width>
+    <height>282</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Frame</string>
@@ -16,9 +22,9 @@
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>24</x>
+     <x>12</x>
      <y>8</y>
-     <width>511</width>
+     <width>473</width>
      <height>38</height>
     </rect>
    </property>
@@ -165,10 +171,10 @@
   <widget class="QGroupBox" name="group_box_length">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>8</x>
      <y>56</y>
      <width>245</width>
-     <height>165</height>
+     <height>129</height>
     </rect>
    </property>
    <property name="font">
@@ -180,13 +186,16 @@
    <property name="title">
     <string>Length Change</string>
    </property>
+   <property name="flat">
+    <bool>false</bool>
+   </property>
    <widget class="QWidget" name="layoutWidgetLength">
     <property name="geometry">
      <rect>
       <x>12</x>
       <y>24</y>
-      <width>217</width>
-      <height>125</height>
+      <width>189</width>
+      <height>85</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -195,6 +204,12 @@
      </property>
      <item row="0" column="0">
       <widget class="QRadioButton" name="btn_change_none">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
        <property name="text">
         <string>&amp;None</string>
        </property>
@@ -209,6 +224,12 @@
      </item>
      <item row="1" column="0">
       <widget class="QRadioButton" name="btn_change_pick">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
        <property name="text">
         <string>&amp;Measures</string>
        </property>
@@ -219,6 +240,12 @@
      </item>
      <item row="2" column="0">
       <widget class="QRadioButton" name="btn_change_scale">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
        <property name="text">
         <string>Scale &amp;Factor</string>
        </property>
@@ -230,68 +257,16 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="group_box_quantize">
-   <property name="geometry">
-    <rect>
-     <x>260</x>
-     <y>56</y>
-     <width>153</width>
-     <height>165</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="title">
-    <string>Quantization</string>
-   </property>
-   <widget class="QWidget" name="layoutWidgetQuan">
-    <property name="geometry">
-     <rect>
-      <x>16</x>
-      <y>24</y>
-      <width>121</width>
-      <height>125</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QRadioButton" name="btn_quan_none">
-       <property name="text">
-        <string>None</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="btn_quan_tighten">
-       <property name="text">
-        <string>&amp;Tighten</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="btn_quan_full">
-       <property name="text">
-        <string>F&amp;ull</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
   <widget class="QGroupBox" name="group_box_effect">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="geometry">
     <rect>
-     <x>416</x>
+     <x>360</x>
      <y>56</y>
      <width>125</width>
-     <height>165</height>
+     <height>189</height>
     </rect>
    </property>
    <property name="font">
@@ -316,7 +291,7 @@
       <x>8</x>
       <y>24</y>
       <width>117</width>
-      <height>125</height>
+      <height>145</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -327,7 +302,9 @@
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <italic>true</italic>
+         <bold>false</bold>
         </font>
        </property>
        <property name="text">
@@ -342,7 +319,9 @@
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <italic>true</italic>
+         <bold>false</bold>
         </font>
        </property>
        <property name="text">
@@ -357,7 +336,9 @@
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <italic>true</italic>
+         <bold>false</bold>
         </font>
        </property>
        <property name="text">
@@ -369,11 +350,20 @@
       <widget class="QCheckBox" name="btn_effect_time_sig">
        <property name="font">
         <font>
+         <weight>50</weight>
          <italic>true</italic>
+         <bold>false</bold>
         </font>
        </property>
        <property name="text">
         <string>Time Sig</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="btn_effect_truncate">
+       <property name="text">
+        <string>Truncated!</string>
        </property>
       </widget>
      </item>
@@ -383,9 +373,9 @@
   <widget class="QGroupBox" name="group_box_other">
    <property name="geometry">
     <rect>
-     <x>24</x>
-     <y>216</y>
-     <width>233</width>
+     <x>8</x>
+     <y>188</y>
+     <width>201</width>
      <height>89</height>
     </rect>
    </property>
@@ -403,13 +393,19 @@
      <rect>
       <x>12</x>
       <y>28</y>
-      <width>213</width>
+      <width>185</width>
       <height>54</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
       <widget class="QCheckBox" name="btn_align_left">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
        <property name="text">
         <string>&amp;Align left</string>
        </property>
@@ -417,6 +413,12 @@
      </item>
      <item>
       <widget class="QCheckBox" name="btn_save_note_length">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
        <property name="text">
         <string>&amp;Preserve note length</string>
        </property>
@@ -428,8 +430,8 @@
   <widget class="QWidget" name="layoutWidgetAlignLeft">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>252</y>
+     <x>224</x>
+     <y>232</y>
      <width>253</width>
      <height>38</height>
     </rect>
@@ -475,6 +477,113 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QGroupBox" name="group_box_quantize">
+   <property name="geometry">
+    <rect>
+     <x>204</x>
+     <y>57</y>
+     <width>139</width>
+     <height>153</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>Quantization</string>
+   </property>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>17</x>
+      <y>24</y>
+      <width>121</width>
+      <height>113</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QRadioButton" name="btn_quan_none">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>None</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="line_edit_q_none">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QRadioButton" name="btn_quan_tighten">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>&amp;Tighten</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="line_edit_q_tighten">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QRadioButton" name="btn_quan_full">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>F&amp;ull</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="line_edit_q_full">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QRadioButton" name="btn_quan_jitter">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Jitter</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="line_edit_q_jitter"/>
+     </item>
+    </layout>
+   </widget>
   </widget>
  </widget>
  <tabstops>

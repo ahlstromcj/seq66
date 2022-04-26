@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-25
+ * \updates       2022-04-26
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -93,7 +93,6 @@
 #include <QMessageBox>
 #include <QPaintEvent>
 #include <QScrollBar>
-#include <QStandardItemModel>           /* for disabling combobox entries   */
 
 #include "midi/controllers.hpp"         /* seq66::controller_name()         */
 #include "play/performer.hpp"           /* seq66::performer reference       */
@@ -307,7 +306,7 @@ qseqeditframe64::qseqeditframe64
     m_last_record_style     (recordstyle::merge),
     m_timer                 (nullptr)
 {
-    std::string seqname = "No sequence, try again";
+    std::string seqname = "No sequence!";
     int loopcountmax = 0;
     bool isnewpattern = false;
     sequence * s = seq_pointer().get();
@@ -388,16 +387,9 @@ qseqeditframe64::qseqeditframe64
      * and set the default.  These range from 1 to 16, plus a value of 32.
      */
 
-    qt_set_icon(down_xpm, ui->m_button_bpm);
-    connect
-    (
-        ui->m_button_bpm, SIGNAL(clicked(bool)),
-        this, SLOT(reset_beats_per_bar())
-    );
-    (void) fill_combobox(ui->m_combo_bpm, beats_per_bar_list());
-
     int beatspm = m_beats_per_bar;  /* seq_pointer()->get_beats_per_bar()   */
     std::string beatstring = std::to_string(beatspm);
+    (void) fill_combobox(ui->m_combo_bpm, beats_per_bar_list());
     ui->m_combo_bpm->setCurrentIndex(beatspm - 1);
     ui->m_combo_bpm->setEditText(qt(beatstring));
     connect
@@ -409,6 +401,12 @@ qseqeditframe64::qseqeditframe64
     (
         ui->m_combo_bpm, SIGNAL(currentTextChanged(const QString &)),
         this, SLOT(text_beats_per_bar(const QString &))
+    );
+    qt_set_icon(down_xpm, ui->m_button_bpm);
+    connect
+    (
+        ui->m_button_bpm, SIGNAL(clicked(bool)),
+        this, SLOT(reset_beats_per_bar())
     );
     set_beats_per_bar(beatspm);
 
@@ -585,15 +583,7 @@ qseqeditframe64::qseqeditframe64
                 bool disabled = ec == e_clock::disabled;
                 ui->m_combo_bus->addItem(qt(busname));
                 if (disabled)
-                {
-                    QStandardItemModel * model =
-                        qobject_cast<QStandardItemModel *>
-                        (
-                            ui->m_combo_bus->model()
-                        );
-                    QStandardItem * item = model->item(bus);
-                    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
-                }
+                    enable_combobox_item(ui->m_combo_bus, bus, false);
             }
         }
         ui->m_combo_bus->setCurrentIndex(int(seqbuss));
@@ -1058,7 +1048,7 @@ qseqeditframe64::paintEvent (QPaintEvent * qpep)
 void
 qseqeditframe64::resizeEvent (QResizeEvent * qrep)
 {
-    update_draw_geometry();                 /* not set_dirty() ?            */
+    update_draw_geometry();
     qrep->ignore();                         /* qseqframe::resizeEvent(qrep) */
 }
 
@@ -1359,7 +1349,7 @@ qseqeditframe64::reset_beats_per_bar ()
     int index = beats_per_bar_list().index(usr().bpb_default());
     ui->m_combo_bpm->setCurrentIndex(index);
     perf().notify_sequence_change(seqno, performer::change::recreate);
-    set_dirty();                        // update_draw_geometry();
+    set_dirty();
 }
 
 /**
@@ -1382,7 +1372,7 @@ qseqeditframe64::set_beats_per_bar (int bpb)
             m_beats_per_bar = bpb;
             s->set_beats_per_bar(bpb);
             s->apply_length(bpb, 0, 0, measures);
-            set_dirty();                        // update_draw_geometry();
+            set_dirty();
         }
     }
 }
@@ -1416,7 +1406,7 @@ void
 qseqeditframe64::reset_measures ()
 {
     ui->m_combo_length->setCurrentIndex(0);
-    set_dirty();                            // update_draw_geometry();
+    set_dirty();
 }
 
 /**
@@ -1485,7 +1475,7 @@ qseqeditframe64::reset_beat_width ()
 {
     int index = beatwidth_list().index(usr().bw_default());
     ui->m_combo_bw->setCurrentIndex(index);
-    set_dirty();                            // update_draw_geometry();
+    set_dirty();
 }
 
 /**
@@ -1608,7 +1598,7 @@ qseqeditframe64::reset_chord ()
     if (not_nullptr(m_seqroll))
         m_seqroll->set_chord(0);
 
-    set_dirty();                            // update_draw_geometry();
+    set_dirty();
 }
 
 void
@@ -1643,7 +1633,7 @@ qseqeditframe64::update_midi_bus (int index)
 void
 qseqeditframe64::reset_midi_bus ()
 {
-    set_midi_bus(0, true);                          /* always a user-change */
+    set_midi_bus(0, false);                         /* indirect user-change */
 }
 
 /**
@@ -2401,7 +2391,7 @@ void
 qseqeditframe64::reset_grid_snap ()
 {
     ui->m_combo_snap->setCurrentIndex(4);
-    set_dirty();                            // update_draw_geometry();
+    set_dirty();
 }
 
 /**
@@ -2463,7 +2453,7 @@ void
 qseqeditframe64::reset_note_length ()
 {
     ui->m_combo_note->setCurrentIndex(4);
-    set_dirty();                            // update_draw_geometry();
+    set_dirty();
 }
 
 bool
@@ -2507,13 +2497,13 @@ qseqeditframe64::slot_update_zoom (int index)
 {
     int z = zoom_list().ctoi(index);
     (void) set_zoom(z);
-    set_dirty();                            // update_draw_geometry();
+    set_dirty();
 }
 
 bool
 qseqeditframe64::zoom_in ()
 {
-    int index = zoom_list().index(zoom());      // s_lookup_zoom(zoom());
+    int index = zoom_list().index(zoom());
     ui->m_combo_zoom->setCurrentIndex(index);
     return true;
 }
@@ -2537,9 +2527,9 @@ qseqeditframe64::set_zoom (int z)
     if (result)
     {
         float factor = float(zprevious) / float(zoom());
-        int index = zoom_list().index(zoom());      // s_lookup_zoom(zoom());
+        int index = zoom_list().index(zoom());
         ui->m_combo_zoom->setCurrentIndex(index);
-        set_dirty();                            // update_draw_geometry();
+        set_dirty();
         ui->rollScrollArea->scroll_x_by_factor(factor);
     }
     return result;

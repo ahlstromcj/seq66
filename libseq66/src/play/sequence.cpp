@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-23
+ * \updates       2022-04-26
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -537,28 +537,16 @@ sequence::push_undo (bool hold)
 }
 
 /**
- *  EXPERIMENTAL.
- *
  *  Do not modify the performer here!  First, just because we push-undo does
- *  not mean a change will occur.  Second, we a now checking for changed
+ *  not mean a change will occur.  Second, we are now checking for changed
  *  sequences at exit, so do not need (as far as we know) to modify the
  *  performer at this point.
- *
- *  CAREFUL! Shucks, performer get modified somehow anyway. Must think.
  */
 
 void
 sequence::set_have_undo ()
 {
-    m_have_undo = m_events_undo.size() > 0;
-#if USE_PERFORMER_MODIFY
-    if (m_have_undo)
-        modify();
-
-#if 0
-        modify(false);      /* "false" added to not not notify change */
-#endif
-#endif
+    m_have_undo = m_events_undo.size() > 0;     // if (m_have_undo) modify();
 }
 
 /**
@@ -1872,8 +1860,8 @@ sequence::grow_selected (midipulse delta)
 }
 
 /**
- *  Randomizes the selected notes.  Adapted from Seq32 with the unused control
- *  parameter removed.
+ *  Randomizes the selected events.  Adapted from Seq32 with the unused
+ *  control parameter removed.
  *
  * \param status
  *      The kind of events to be randomized.
@@ -1906,6 +1894,23 @@ sequence::randomize_selected_notes (int jitter, int range)
     m_events_undo.push(m_events);               /* push_undo(), no lock  */
 
     bool result = m_events.randomize_selected_notes(jitter, range);
+    if (result)
+        modify();
+
+    return result;
+}
+
+/**
+ *  For usage by fix_pattern().
+ */
+
+bool
+sequence::jitter_notes (int jitter)
+{
+    automutex locker(m_mutex);
+    m_events_undo.push(m_events);               /* push_undo(), no lock  */
+
+    bool result = m_events.jitter_notes(jitter);
     if (result)
         modify();
 
@@ -2646,17 +2651,17 @@ sequence::fix_pattern (fixparameters & params)
             {
                 result = m_events.quantize_all_events(snap(), 1);
             }
+            else if (params.fp_quan_type == quantization::jitter)
+            {
+                result = m_events.jitter_notes(params.fp_jitter);
+            }
             if (result)
             {
                 params.fp_scale_factor = newscalefactor;
                 params.fp_measures = double(get_measures());
                 params.fp_effect = tempefx;
                 set_dirty();
-#if USE_PERFORMER_MODIFY
                 modify(true);                       /* call notify_change() */
-#else
-                modify(false);
-#endif
             }
         }
         else
@@ -4766,9 +4771,6 @@ sequence::apply_length (int bpb, int ppq, int bw, int measures)
     if (result)
     {
         (void) unit_measure(true);          /* for progress and redrawing   */
-#if USE_PERFORMER_MODIFY
-        notify_change(true);
-#endif
     }
     return result;
 }

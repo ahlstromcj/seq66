@@ -1906,7 +1906,7 @@ qsmainwnd::save_file_as ()
     }
     else
     {
-        result = save_file(filename);           /* m_is_title_dirty = true  */
+        result = save_file(filename);
         if (result)
             rc().midi_filename(filename);
     }
@@ -3660,9 +3660,8 @@ qsmainwnd::on_song_action (bool signal, playlist::action act)
         emit signal_song_action(a);
     }
     else
-    {
         m_is_title_dirty = true;
-    }
+
     return true;
 }
 

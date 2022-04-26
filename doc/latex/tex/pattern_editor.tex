@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-04-24
+% \update      2022-04-26
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -323,6 +323,8 @@
 
    \textbf{Quantization} works the same as the \textbf{Tool} entries of the
    same name, but works on \textsl{all events}.
+   Also included is a \textbf{Jitter} option, with a range for the jitter.
+   This option slightly randomizes the time stamps of note events.
 
    \textbf{Other Fixes} provides some minor items, as follows.
 
@@ -338,6 +340,9 @@
 
    \textbf{Effect} does not do anything except show the effect of the changes.
    (Making it read-only might make it almost invisible in some themes.)
+   Note the \textbf{Truncated!} check-box.  If checked, then
+   the length of the pattern has reduced enough to drop some events.
+   This only happens with the time-signature option.
 
    The process followed is:
 
@@ -356,8 +361,10 @@
    greatly expand the notes!
 
    Any accidental changes can be \textbg{Reset}
-   in this dialog, or be undone in the
-   pattern-editor itself with \texttt{Ctrl-Z}.
+   in this dialog.
+   Undo in the pattern-editor itself with \texttt{Ctrl-Z} affects
+   only MIDI events, not things like changing time-signature from the
+   drop-downs.
 
    \itempar{Follow Progress}{pattern editor!tools}
    This button toggles whether or not the progress bar follows
@@ -1311,9 +1318,9 @@
          ranges from 0 to 127.
          In the diagram above, one can see that the 0-value line for the sine
          wave is at 64.
-      \item \textbf{Mod Range} (\textbf{R}).
-         Controls the depth of modulation. Starts at 64, and ranges from 1 to
-         127.
+      \item \textbf{Depth} (\textbf{R}).
+         Controls the depth of modulation.
+         Starts at 64, and ranges from 1 to 127.
          The data values range from \( y = DC - R \) to \( y = DC + R\).
          For the sine-wave shown above, the range is 0 to 128 (actually 127).
       \item \textbf{Periods}.

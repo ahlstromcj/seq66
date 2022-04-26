@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2022-04-15
+ * \updates       2022-04-26
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -1097,17 +1097,52 @@ eventlist::randomize_selected_notes (int jitter, int range)
                 if (jitter > 0)
                 {
                     int random = randomize(jitter);
-                    int tstamp = int(e.timestamp());
+                    midipulse tstamp = e.timestamp();
                     tstamp += random;
                     if (tstamp < 0)
                         tstamp = 0;
-                    else if (tstamp > int(length))
-                        tstamp = int(length);
+                    else if (tstamp > length)
+                        tstamp = length;
 
-                    e.set_timestamp(midipulse(tstamp));
+                    e.set_timestamp(tstamp);
                     if (random != 0)
                         got_jittered = true;
                 }
+            }
+        }
+        if (got_jittered)
+            verify_and_link();                      /* sort and relink      */
+    }
+    return result;
+}
+
+/**
+ *  This function jitters the timestamps of all note events.
+ */
+
+bool
+eventlist::jitter_notes (int jitter)
+{
+    bool result = false;
+    if (jitter > 0)
+    {
+        bool got_jittered = false;
+        midipulse length = get_length();
+        for (auto & e : m_events)
+        {
+            if (e.is_note())
+            {
+                int random = randomize(jitter);
+                midipulse tstamp = e.timestamp();
+                tstamp += random;
+                if (tstamp < 0)
+                    tstamp = 0;
+                else if (tstamp > length)
+                    tstamp = length;
+
+                e.set_timestamp(tstamp);
+                if (random != 0)
+                    got_jittered = true;
             }
         }
         if (got_jittered)

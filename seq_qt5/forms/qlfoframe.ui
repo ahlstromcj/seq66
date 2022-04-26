@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>590</width>
-    <height>341</height>
+    <width>495</width>
+    <height>281</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>LFO</string>
@@ -18,7 +24,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>553</width>
+     <width>473</width>
      <height>31</height>
     </rect>
    </property>
@@ -39,6 +45,11 @@
     </item>
     <item>
      <widget class="QLabel" name="m_pattern_label">
+      <property name="font">
+       <font>
+        <italic>true</italic>
+       </font>
+      </property>
       <property name="text">
        <string>Pattern #xx</string>
       </property>
@@ -53,26 +64,13 @@
     </item>
    </layout>
   </widget>
-  <widget class="QPushButton" name="m_button_close">
-   <property name="geometry">
-    <rect>
-     <x>480</x>
-     <y>296</y>
-     <width>80</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>&amp;Close</string>
-   </property>
-  </widget>
   <widget class="QGroupBox" name="m_wave_type_group">
    <property name="geometry">
     <rect>
-     <x>368</x>
-     <y>50</y>
+     <x>292</x>
+     <y>40</y>
      <width>201</width>
-     <height>241</height>
+     <height>229</height>
     </rect>
    </property>
    <property name="title">
@@ -84,10 +82,13 @@
       <x>16</x>
       <y>30</y>
       <width>173</width>
-      <height>199</height>
+      <height>165</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="m_wave_layout">
+     <property name="spacing">
+      <number>1</number>
+     </property>
      <item>
       <widget class="QRadioButton" name="m_radio_wave_none">
        <property name="text">
@@ -145,59 +146,96 @@
      </item>
     </layout>
    </widget>
+   <widget class="QPushButton" name="m_button_reset">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>204</y>
+      <width>89</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&amp;Reset</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="m_button_close">
+    <property name="geometry">
+     <rect>
+      <x>108</x>
+      <y>204</y>
+      <width>80</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&amp;Close</string>
+    </property>
+   </widget>
   </widget>
-  <widget class="QPushButton" name="m_button_reset">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>376</x>
-     <y>296</y>
-     <width>89</width>
-     <height>24</height>
+     <x>17</x>
+     <y>52</y>
+     <width>241</width>
+     <height>19</height>
     </rect>
    </property>
-   <property name="text">
-    <string>&amp;Reset</string>
-   </property>
-  </widget>
-  <widget class="QWidget" name="slidersLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>51</y>
-     <width>345</width>
-     <height>269</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="sliderGridLayout">
-    <item row="0" column="0">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
      <widget class="QLabel" name="m_value_label">
       <property name="text">
        <string>DC Offset</string>
       </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLabel" name="m_range_label">
-      <property name="text">
-       <string>Mod Range</string>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
-    <item row="0" column="2">
+    <item>
+     <widget class="QLabel" name="m_range_label">
+      <property name="text">
+       <string>Depth</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QLabel" name="m_speed_label">
       <property name="text">
        <string>Periods</string>
       </property>
-     </widget>
-    </item>
-    <item row="0" column="3">
-     <widget class="QLabel" name="m_phase_label">
-      <property name="text">
-       <string>Phase Shift</string>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
+    <item>
+     <widget class="QLabel" name="m_phase_label">
+      <property name="text">
+       <string>Phase</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>4</x>
+     <y>71</y>
+     <width>281</width>
+     <height>165</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
      <widget class="QSlider" name="m_value_slider">
       <property name="toolTip">
        <string>DC offset to add to modulating waveform.</string>
@@ -207,7 +245,7 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
+    <item>
      <widget class="QSlider" name="m_range_slider">
       <property name="toolTip">
        <string>Depth of modulation.</string>
@@ -217,7 +255,7 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="2">
+    <item>
      <widget class="QSlider" name="m_speed_slider">
       <property name="toolTip">
        <string>Number of periods per pattern. Subject to anti-aliasing.</string>
@@ -227,7 +265,7 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="3">
+    <item>
      <widget class="QSlider" name="m_phase_slider">
       <property name="toolTip">
        <string>Phase of the LFO, 0 to 1 is 0 to 360 degrees.</string>
@@ -237,28 +275,40 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>28</x>
+     <y>240</y>
+     <width>245</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <item>
      <widget class="QLineEdit" name="m_value_text">
       <property name="text">
        <string>100.0</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="1">
+    <item>
      <widget class="QLineEdit" name="m_range_text">
       <property name="text">
        <string>100.0</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="2">
+    <item>
      <widget class="QLineEdit" name="m_speed_text">
       <property name="text">
        <string>100.0</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="3">
+    <item>
      <widget class="QLineEdit" name="m_phase_text">
       <property name="text">
        <string>360.0</string>

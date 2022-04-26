@@ -74,13 +74,10 @@ qseqroll::qseqroll
     qseqkeys * seqkeys_wid,
     int zoom, int snap,
     sequence::editmode mode,
-    int unitheight, int totalheight
+    int unith, int totalh
 ) :
     QWidget                 (frame),
-    qseqbase
-    (
-        p, seqp, frame, zoom, snap, unitheight, totalheight
-    ),
+    qseqbase                ( p, seqp, frame, zoom, snap, unith, totalh),
     m_analysis_msg          (nullptr),
     m_font                  ("Monospace"),
     m_backseq_color         (backseq_paint()),

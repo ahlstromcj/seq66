@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-21
+ * \updates       2022-04-26
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -130,6 +130,7 @@ private slots:
     void slot_measure_change ();
     void slot_scale_change ();
     void slot_quan_change (int quanid);
+    void slot_jitter_change ();
     void slot_align_change (int dummy);
     void slot_save_note_length (int dummy);
     void slot_set ();
@@ -210,6 +211,14 @@ private:
      */
 
     quantization m_quan_type;
+
+    /**
+     *  The range of jitter to apply.  Here, jitter is a randomization of
+     *  the event time-stamp by plus/minus a value in the range of the jitter.
+     *  Defaults to PPQN / 12.
+     */
+
+    int m_jitter_range;
 
     /**
      *  The current number of measures for the adjustment.  This is a double

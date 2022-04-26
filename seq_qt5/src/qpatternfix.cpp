@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-23
+ * \updates       2022-04-26
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -99,6 +99,7 @@ qpatternfix::qpatternfix
     m_edit_frame        (editparent),
     m_length_type       (lengthfix::none),
     m_quan_type         (quantization::none),
+    m_jitter_range      (seqp()->get_ppqn() / 12),
     m_measures          (double(m_backup_measures)),
     m_scale_factor      (1.0),
     m_align_left        (false),
@@ -111,6 +112,7 @@ qpatternfix::qpatternfix
 {
     ui->setupUi(this);
     initialize(true);
+    setFixedSize(width(), height());
 }
 
 /**
@@ -135,10 +137,12 @@ qpatternfix::initialize (bool startup)
     ui->btn_effect_shrink->setChecked(false);
     ui->btn_effect_expand->setChecked(false);
     ui->btn_effect_time_sig->setChecked(false);
+    ui->btn_effect_truncate->setChecked(false);
     ui->btn_effect_shift->setEnabled(false);
     ui->btn_effect_shrink->setEnabled(false);
     ui->btn_effect_expand->setEnabled(false);
     ui->btn_effect_time_sig->setEnabled(false);
+    ui->btn_effect_truncate->setEnabled(false);
     ui->btn_align_left->setChecked(false);
     ui->btn_save_note_length->setChecked(true);
     ui->btn_set->setEnabled(false);
@@ -176,7 +180,6 @@ qpatternfix::initialize (bool startup)
             m_fixlength_group, QT5_HELPER_RADIO_SIGNAL,
             [=](int id) { slot_length_fix(id); }        /* lambda function  */
         );
-
         connect
         (
             ui->line_edit_pick, SIGNAL(editingFinished()),
@@ -202,10 +205,18 @@ qpatternfix::initialize (bool startup)
         );
         m_quan_group->addButton(ui->btn_quan_full, cast(quantization::full));
         ui->btn_quan_none->setChecked(true);
+        ui->line_edit_q_none->hide();
+        ui->line_edit_q_tighten->hide();
+        ui->line_edit_q_full->hide();
         connect
         (
             m_quan_group, QT5_HELPER_RADIO_SIGNAL,
             [=](int id) { slot_quan_change(id); }       /* lambda function  */
+        );
+        connect
+        (
+            ui->line_edit_q_jitter, SIGNAL(editingFinished()),
+            this, SLOT(slot_jitter_change())
         );
 
         /*
@@ -326,7 +337,7 @@ qpatternfix::slot_measure_change ()
     QString t = ui->line_edit_pick->text();
     std::string tc = t.toStdString();
     double m = string_to_double(tc, 1.0);
-    if (sequence::valid_scale_factor(m, true))
+    if (sequence::valid_scale_factor(m, true))  /* applies to measures, too */
     {
         int beats, width;
         bool is_time_sig = string_to_time_signature(tc, beats, width);
@@ -339,6 +350,12 @@ qpatternfix::slot_measure_change ()
             m_time_sig_width = width;
             m_use_time_sig = is_time_sig;
             ui->btn_effect_time_sig->setChecked(is_time_sig);
+            if (is_time_sig)
+            {
+                midipulse max = seqp()->get_max_timestamp();
+                midipulse newlength = midipulse(seqp()->get_length() * m);
+                ui->btn_effect_truncate->setChecked(newlength < max);
+            }
             modify();
         }
     }
@@ -374,6 +391,21 @@ qpatternfix::slot_quan_change (int quanid)
     m_quan_type = quantization_cast(quanid);
     if (m_quan_type != quantization::none)
         modify();
+}
+
+void
+qpatternfix::slot_jitter_change ()
+{
+    QString t = ui->line_edit_q_jitter->text();
+    std::string tc = t.toStdString();
+    int m = string_to_int(tc, 0);
+    if (m > 0 && m < seqp()->get_ppqn())
+    {
+        ui->btn_quan_jitter->setChecked(true);
+        m_jitter_range = m;
+        m_quan_type = quantization::jitter;
+        modify();
+    }
 }
 
 void
@@ -418,7 +450,7 @@ qpatternfix::slot_set ()
     fixeffect efx;
     fixparameters fp =                                  /* value structure  */
     {
-        m_length_type, m_quan_type,
+        m_length_type, m_quan_type, m_jitter_range,
         m_align_left, m_save_note_length,
         m_use_time_sig, m_time_sig_beats, m_time_sig_width,
         m_measures, m_scale_factor, efx

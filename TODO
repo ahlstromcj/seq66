@@ -1,26 +1,11 @@
 TO DO for Seq66 0.98.7 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-04-25
-
-USE_PERFORMER_MODIFY:
-
-    Keep track of issues caused by commenting out some performer::modify()
-    call in the sequence module. Make sure sequence modifications are shown.
+2019-04-13 to 2022-04-26
 
 Pattern Editor:
 
-    -   EXPERIMENTAL code for odd (and unsaveable) beat widths.
-    -   That code causes a lot of weird effects.
-    -   Make sure changing the beat width and beats-per-bar normally causes
-        these all to update immediately (no touches):
-        -   qseqroll
-        -   qseqtime
-        -   qstriggereditor (aka seqevent)
-        -   qseqdata
-    -   Changing the beat width and beats-per-bar does not seem to set a
-        modify flag.
-    -   Make sure modification shows up as an asterisk!
     -   Reducing beat-width can delete notes! Without noting modification!
+    -   Set time-sig to 3/4 in pattern-fix... 4/4 will not restore
     -   Investigate calculations:
         -   ticks_to_measures()
         -   ticks_to_beats()
@@ -37,15 +22,6 @@ Windows:
         up 2 pixels. Maybe reduce the font size by 1. Also consist the for the
         piano rolls.
     -   The default Qt theme pushes the seqtime rightward by about 6 pixels.
-
-Ports:
-
-    -   Investigate deinit_in() and _out().
-    -   Make the port-refresh feature work.
-    -   Editing the control busses in Preferences should be written to the
-        specified 'ctrl' file.
-    -   Enabling/disabling a port should enable the OK/Apply and restart
-        buttons.
 
 Test and Document:
 
@@ -73,10 +49,12 @@ External Live Grid:
 
     -   Show Recording-style and Quantization buttons in it.
 
+Undo:
+
+    -   Paint a bunch of notes.  Undo then seems to undo one event at a time,
+        thereby requiring a large number of Ctrl-Zs.
 
 UI:
-
-    Try to handle odd beat-widths in the piano rolls, data pane and time-lines.
 
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
@@ -91,13 +69,24 @@ UI:
         -   Config Options: (new)
             -   Log-file
 
-    -   Underrun display not consistent with console output with Chameleon tune.
+    -   Underrun display not consistent with console output with Chameleon
+        tune.
+    -   Finish up the extended grid-mode functions.
 
 Port-Mapping:
 
     Running qpseq66 on Linux:  "QSynth" is named "PortMidi"! See
     seq_portmidi/src/midibus.cpp.  The workaround is to specify long port
     names in the 'rc' file.
+
+Ports:
+
+    -   Investigate deinit_in() and _out().
+    -   Make the port-refresh feature work. It is a toughie!
+    -   Editing the control busses in Preferences should be written to the
+        specified 'ctrl' file.
+    -   Enabling/disabling a port should enable the OK/Apply and restart
+        buttons.
 
 MIDI:
 
@@ -112,13 +101,18 @@ MIDI:
 
         Use const char * snd_asoundlib_version () to get the ALSA version.
 
-    Fallback to ALSA if JACK is not running is broken.  Or is it that jackdbus
-    is interfering? On another computer, that seems to be the case. Seq66
-    creates virtual ports in that case, but we need to test that they are
-    useful, and consider activating the manual-port settings in the 'rc' file.
+    JACK:
 
-    Also, would it be useful to provide a way to better name each virtual
-    port?
+        Fallback to ALSA if JACK is not running is broken.  Or is it that
+        jackdbus is interfering? On another computer, that seems to be the
+        case. Seq66 creates virtual ports in that case, but we need to test
+        that they are useful, and consider activating the manual-port settings
+        in the 'rc' file.
+
+        Also, would it be useful to provide a way to better name each virtual
+        port?
+
+        Is Weak JACK worth adding?
 
 Automation:
 
