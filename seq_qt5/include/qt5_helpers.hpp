@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2022-04-20
+ * \updates       2022-04-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -66,6 +66,11 @@ const bool NormalFile = false;
 
 extern void qt_set_icon (const char * pixmap_array [], QPushButton * button);
 extern std::string qt_icon_theme ();
+extern bool qt_prompt_ok
+(
+    const std::string & text,
+    const std::string & info
+);
 extern keystroke qt_keystroke
 (
     QKeyEvent * event,
@@ -85,7 +90,7 @@ extern bool fill_combobox
 (
     QComboBox * box,
     const combolist & clist,
-    int currentindex            = 0,
+    std::string value           = "",
     const std::string & prefix  = "",
     const std::string & suffix  = ""
 );

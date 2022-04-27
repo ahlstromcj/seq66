@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2022-04-13
+ * \updates       2022-04-27
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll),
@@ -111,6 +111,11 @@ private:
 
     void set_snap (midipulse s);
     void set_guides ();
+
+    const combolist & snap_list () const
+    {
+        return m_snap_list;
+    }
 
     performer & perf ()
     {

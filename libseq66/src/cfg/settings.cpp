@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2022-04-21
+ * \updates       2022-04-27
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -64,6 +64,26 @@ combolist::combolist (const tokenization & slist, bool use_current) :
 
     for (const auto & s : slist)
         m_list_items.push_back(s);
+}
+
+void
+combolist::current (const std::string & s) const
+{
+    if (m_use_current)
+    {
+        combolist * ncthis = const_cast<combolist *>(this);
+        ncthis->m_list_items[0] = s;
+    }
+}
+
+void
+combolist::current (int v) const
+{
+    if (m_use_current)
+    {
+        combolist * ncthis = const_cast<combolist *>(this);
+        ncthis->m_list_items[0] = std::to_string(v);            // FIXME !
+    }
 }
 
 std::string

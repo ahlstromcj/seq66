@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-26
+ * \updates       2022-04-27
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -213,6 +213,8 @@ qpatternfix::initialize (bool startup)
             m_quan_group, QT5_HELPER_RADIO_SIGNAL,
             [=](int id) { slot_quan_change(id); }       /* lambda function  */
         );
+        value = std::to_string(m_jitter_range);
+        ui->line_edit_q_jitter->setText(qt(value));
         connect
         (
             ui->line_edit_q_jitter, SIGNAL(editingFinished()),

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-13
+ * \updates       2022-04-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -102,6 +102,11 @@ private:
     bool reload_needed () const
     {
         return m_reload_needed;
+    }
+
+    const combolist & ppqn_list () const
+    {
+        return m_ppqn_list;
     }
 
     const performer & perf () const

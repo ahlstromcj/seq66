@@ -779,14 +779,14 @@ sequence::calculate_measures (bool reset) const
  *  We could just assume m_unit_measures is always up-to-date and use that
  *  value.
  *
- *  Does the number of measures depend on the beat-width? What is the size of a
- *  measure in ticks? What if we change the beats-per-bar and beat-width?
+ *  Does the number of measures depend on the beat-width? What is the size of
+ *  a measure in ticks? What if we change the beats-per-bar and beat-width?
  *
- *  Let's say we have a measure of notes in a 4/4 sequence. If we want to fit it
- *  into a 3/4 measure, the number of ticks is 3/4th of the original, and we'd
- *  have to rescale the notes to that new number.  If we leave the notes alone,
- *  then the measure-count increments, and in playback an space of silence is
- *  introduced.  Better to avoid changing the numerator.
+ *  Let's say we have a measure of notes in a 4/4 sequence. If we want to fit
+ *  it into a 3/4 measure, the number of ticks is 3/4th of the original, and
+ *  we'd have to rescale the notes to that new number.  If we leave the notes
+ *  alone, then the measure-count increments, and in playback an space of
+ *  silence is introduced.  Better to avoid changing the numerator.
  *
  *  If we change 4/4 to 4/8, then playback slows down by half.  Be aware of
  *  this feature.
@@ -798,7 +798,7 @@ sequence::calculate_measures (bool reset) const
  *      fix_pattern() function.
  *
  * \return
- *      Returns the whole number of measure in the current length of the
+ *      Returns the whole number of measure in the specified length of the
  *      sequence.  Essentially rounds up if there is some leftover ticks.
  */
 

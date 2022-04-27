@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-26
+ * \updates       2022-04-27
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -90,7 +90,6 @@
  */
 
 #include <QMenu>
-#include <QMessageBox>
 #include <QPaintEvent>
 #include <QScrollBar>
 
@@ -317,6 +316,7 @@ qseqeditframe64::qseqeditframe64
     {
         set_beats_per_bar(s->get_beats_per_bar());
         set_beat_width(s->get_beat_width());
+        set_measures(s->get_measures());
         m_scale = s->musical_scale();
         m_edit_bus = s->seq_midi_bus();
         m_edit_channel = s->midi_channel();         /* 0-15, null           */
@@ -357,6 +357,7 @@ qseqeditframe64::qseqeditframe64
     {
         set_beats_per_bar(usr().midi_beats_per_bar());
         set_beat_width(usr().midi_beat_width());
+        set_measures(1);
         set_scale(usr().seqedit_scale());
         set_key(usr().seqedit_key());
         set_background_sequence(usr().seqedit_bgsequence());
@@ -385,97 +386,106 @@ qseqeditframe64::qseqeditframe64
     /*
      * Beats Per Bar.  Fill the options for the beats per measure combo-box,
      * and set the default.  These range from 1 to 16, plus a value of 32.
+     *
+     * How to handle values outside the combobox? Pass the string as a parameter
+     * to fill_combobox().
+     *
      */
 
-    int beatspm = m_beats_per_bar;  /* seq_pointer()->get_beats_per_bar()   */
-    std::string beatstring = std::to_string(beatspm);
-    (void) fill_combobox(ui->m_combo_bpm, beats_per_bar_list());
-    ui->m_combo_bpm->setCurrentIndex(beatspm - 1);
-    ui->m_combo_bpm->setEditText(qt(beatstring));
-    connect
-    (
-        ui->m_combo_bpm, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(update_beats_per_bar(int))
-    );
+    std::string bpbstring = std::to_string(m_beats_per_bar);
+    (void) fill_combobox(ui->m_combo_bpm, beats_per_bar_list(), bpbstring);
+
+    /*
+     * Doesn't seem to be needed, as changing the index also changes the text.
+     *
+     *  connect
+     *  (
+     *      ui->m_combo_bpm, SIGNAL(currentIndexChanged(int)),
+     *      this, SLOT(update_beats_per_bar(int))
+     *  );
+     */
+
+    qt_set_icon(down_xpm, ui->m_button_bpm);
+    // set_beats_per_bar(m_beats_per_bar);
     connect
     (
         ui->m_combo_bpm, SIGNAL(currentTextChanged(const QString &)),
         this, SLOT(text_beats_per_bar(const QString &))
     );
-    qt_set_icon(down_xpm, ui->m_button_bpm);
     connect
     (
         ui->m_button_bpm, SIGNAL(clicked(bool)),
         this, SLOT(reset_beats_per_bar())
     );
-    set_beats_per_bar(beatspm);
 
     /*
      * Beat Width (denominator of time signature).  Fill the options for
      * the beats per measure combo-box, and set the default.
      */
 
+    std::string bwstring = std::to_string(m_beat_width);
+    (void) fill_combobox(ui->m_combo_bw, beatwidth_list(), bwstring);
+
+    /*
+     * Doesn't seem to be needed, as changing the index also changes the text.
+     *
+     *  connect
+     *  (
+     *      ui->m_combo_bw, SIGNAL(currentIndexChanged(int)),
+     *      this, SLOT(update_beat_width(int))
+     *  );
+     */
+
     qt_set_icon(down_xpm, ui->m_button_bw);
-    connect
-    (
-        ui->m_button_bw, SIGNAL(clicked(bool)),
-        this, SLOT(reset_beat_width())
-    );
-    (void) fill_combobox(ui->m_combo_bw, beatwidth_list());
-
-    int bw = m_beat_width;              /* seq_pointer()->get_beat_width() */
-    std::string bstring = std::to_string(bw);
-    int bwindex = beatwidth_list().index(m_beat_width);
-    if (bwindex >= 0)
-        ui->m_combo_bw->setCurrentIndex(bwindex);
-
-    ui->m_combo_bw->setEditText(qt(bstring));
-    connect
-    (
-        ui->m_combo_bw, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(update_beat_width(int))
-    );
+    // set_beat_width(m_beat_width);
     connect
     (
         ui->m_combo_bw, SIGNAL(currentTextChanged(const QString &)),
         this, SLOT(text_beat_width(const QString &))
     );
-    set_beat_width(bw);
+    connect
+    (
+        ui->m_button_bw, SIGNAL(clicked(bool)),
+        this, SLOT(reset_beat_width())
+    );
 
     /*
      * Pattern Length in Measures. Fill the options for the beats per measure
      * combo-box, and set the default.
      */
 
+    std::string mstring = std::to_string(m_measures);
+    (void) fill_combobox(ui->m_combo_length, m_measures_list, mstring);
+
+    /*
+     * Doesn't seem to be needed, as changing the index also changes the text.
+     *
+     *    connect
+     *    (
+     *        ui->m_combo_length, SIGNAL(currentIndexChanged(int)),
+     *        this, SLOT(update_measures(int))
+     *    );
+     */
+
+    if (not_nullptr(s))
+        (void) s->unit_measure();        /* must precede set_measures()     */
+
     qt_set_icon(length_short_xpm, ui->m_button_length);
-    connect
-    (
-        ui->m_button_length, SIGNAL(clicked(bool)),
-        this, SLOT(reset_measures())
-    );
-    (void) fill_combobox(ui->m_combo_length, m_measures_list);
-
-    int measures = not_nullptr(s) ? s->calculate_measures() : 1 ;
-    std::string mstring = std::to_string(measures);
-    int lenindex = m_measures_list.index(m_measures);
-    if (lenindex >= 0)
-        ui->m_combo_length->setCurrentIndex(lenindex);
-
-    ui->m_combo_length->setEditText(qt(mstring));
-    connect
-    (
-        ui->m_combo_length, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(update_measures(int))
-    );
+    // set_measures(m_measures);       // set_measures(get_measures());
     connect
     (
         ui->m_combo_length, SIGNAL(currentTextChanged(const QString &)),
         this, SLOT(text_measures(const QString &))
     );
-    if (not_nullptr(s))
-        (void) s->unit_measure();        /* must precede set_measures()     */
+    connect
+    (
+        ui->m_button_length, SIGNAL(clicked(bool)),
+        this, SLOT(reset_measures())
+    );
 
-    set_measures(get_measures());
+    /*
+     * Transposable button.
+     */
 
     bool can_transpose = not_nullptr(s) ? s->transposable() : false ;
     if (shorter)
@@ -663,8 +673,8 @@ qseqeditframe64::qseqeditframe64
      *  adapted to Qt 5.
      */
 
-    (void) fill_combobox(ui->m_combo_snap, snap_list(), 4, "1/"); /* 1/16th */
-    (void) fill_combobox(ui->m_combo_note, snap_list(), 4, "1/"); /* ditto  */
+    (void) fill_combobox(ui->m_combo_snap, snap_list(), "16", "1/"); /* 1/16th */
+    (void) fill_combobox(ui->m_combo_note, snap_list(), "16", "1/"); /* ditto  */
     connect
     (
         ui->m_combo_snap, SIGNAL(currentIndexChanged(int)),
@@ -706,7 +716,7 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_zoom, SIGNAL(clicked(bool)),
         this, SLOT(slot_reset_zoom())
     );
-    (void) fill_combobox(ui->m_combo_zoom, zoom_list(), 1, "1:");
+    (void) fill_combobox(ui->m_combo_zoom, zoom_list(), "2", "1:");
     connect
     (
         ui->m_combo_zoom, SIGNAL(currentIndexChanged(int)),
@@ -1256,9 +1266,9 @@ qseqeditframe64::conditional_update ()
         {
             follow_progress();
         }
-        if (m_measures != seq_pointer()->get_measures())
+        if (m_measures != get_measures())
         {
-            m_measures = seq_pointer()->get_measures();
+            m_measures = get_measures();
             std::string mstring = std::to_string(m_measures);
             int lenindex = measures_list().index(m_measures);
             if (lenindex >= 0)
@@ -1301,6 +1311,54 @@ qseqeditframe64::conditional_update ()
 }
 
 /**
+ *  Checks if the new time-signature results in a l
+ *  Interesting: divide by 0 here yields the value "inf", not an exception.
+ */
+
+bool
+qseqeditframe64::would_truncate (int bpb, int bw)
+{
+    bool result = false;                        /* no problem by default    */
+    if (bpb > 0 && bw > 0)                      /* do only after start-up   */
+    {
+        double fraction = double(bpb) / double(bw);
+        midipulse max = seq_pointer()->get_max_timestamp();
+        midipulse newlength = midipulse(seq_pointer()->get_length() * fraction);
+        result = newlength < max;
+        if (result)
+        {
+            result = ! qt_prompt_ok             /* Cancel == ack the danger */
+            (
+                "This time-signature will cause loss of events.",
+                "Cancel to avoid event truncation."
+            );
+        }
+    }
+    return result;
+}
+
+bool
+qseqeditframe64::would_truncate (int m)
+{
+    bool result = false;                        /* no problem by default    */
+    if (m > 0 && m <= 99999)                    /* a sanity check only      */
+    {
+        midipulse max = seq_pointer()->get_max_timestamp();
+        midipulse newlength = midipulse(seq_pointer()->measures_to_ticks(m));
+        result = newlength < max;
+        if (result)
+        {
+            result = ! qt_prompt_ok             /* Cancel == ack the danger */
+            (
+                "Reducing measures here will cause loss of events.",
+                "Cancel to avoid event truncation."
+            );
+        }
+    }
+    return result;
+}
+
+/**
  *  Handles edits of the sequence title.
  */
 
@@ -1321,11 +1379,7 @@ void
 qseqeditframe64::update_beats_per_bar (int index)
 {
     int bpb = beats_per_bar_list().ctoi(index);
-    if (bpb > 0 && bpb != m_beats_per_bar)
-    {
-        set_beats_per_bar(bpb);
-        set_dirty();
-    }
+    set_beats_per_bar(bpb);
 }
 
 void
@@ -1334,21 +1388,16 @@ qseqeditframe64::text_beats_per_bar (const QString & text)
     std::string temp = text.toStdString();
     if (! temp.empty())
     {
-        int beats = string_to_int(temp);
-        if (usr().bpb_is_valid(beats))
-            set_beats_per_bar(beats);
-        else
-            reset_beats_per_bar();
+        int bpb = string_to_int(temp);
+        set_beats_per_bar(bpb);
     }
 }
 
 void
 qseqeditframe64::reset_beats_per_bar ()
 {
-    seq::number seqno = seq_pointer()->seq_number();
     int index = beats_per_bar_list().index(usr().bpb_default());
     ui->m_combo_bpm->setCurrentIndex(index);
-    perf().notify_sequence_change(seqno, performer::change::recreate);
     set_dirty();
 }
 
@@ -1363,16 +1412,23 @@ qseqeditframe64::reset_beats_per_bar ()
 void
 qseqeditframe64::set_beats_per_bar (int bpb)
 {
-    sequence * s = seq_pointer().get();
-    if (not_nullptr(s))
+    if (usr().bpb_is_valid(bpb) && bpb != m_beats_per_bar)
     {
-        if (bpb != m_beats_per_bar)
+        if (would_truncate(bpb, m_beat_width))
         {
-            int measures = get_measures();
-            m_beats_per_bar = bpb;
-            s->set_beats_per_bar(bpb);
-            s->apply_length(bpb, 0, 0, measures);
-            set_dirty();
+            reset_beat_width();
+        }
+        else
+        {
+            sequence * s = seq_pointer().get();
+            if (not_nullptr(s))
+            {
+                int measures = get_measures();
+                m_beats_per_bar = bpb;
+                s->set_beats_per_bar(bpb);
+                s->apply_length(bpb, 0, 0, measures);
+                set_dirty();
+            }
         }
     }
 }
@@ -1386,15 +1442,22 @@ qseqeditframe64::set_beats_per_bar (int bpb)
  */
 
 void
-qseqeditframe64::set_measures (int len)
+qseqeditframe64::set_measures (int m)
 {
-    if (len >= 1 && len <= 99999)               /* a sanity check only      */
+    if (m > 0 && m <= 99999)                        /* a sanity check only  */
     {
-        bool changed = m_measures != len;
-        m_measures = len;
-        seq_pointer()->apply_length(len);       /* use the simpler overload */
-        if (changed)
-            set_dirty();
+        if (would_truncate(m))
+        {
+            reset_measures();
+        }
+        else
+        {
+            bool changed = m_measures != m;
+            m_measures = m;
+            seq_pointer()->apply_length(m);
+            if (changed)
+                set_dirty();
+        }
     }
 }
 
@@ -1442,27 +1505,7 @@ qseqeditframe64::text_beat_width (const QString & text)
     if (! temp.empty())
     {
         int bw = string_to_int(temp);
-        if (usr().bw_is_valid(bw))      /* only a range check */
-        {
-            bool rational = is_power_of_2(bw);
-            if (! rational)
-            {
-                QMessageBox temp;
-                temp.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-                temp.setText("MIDI supports only powers of 2 for beat width.");
-                temp.setInformativeText
-                (
-                    "It won't be saved properly, but you do you."
-                );
-                rational = temp.exec() == QMessageBox::Ok;
-            }
-            if (rational)
-                set_beat_width(bw);
-            else
-                reset_beat_width();
-        }
-        else
-            reset_beat_width();
+        set_beat_width(bw);
     }
 }
 
@@ -1480,23 +1523,43 @@ qseqeditframe64::reset_beat_width ()
 
 /**
  *  Sets the beat-width value and then dirties the user-interface so that it
- *  will be repainted.
+ *  will be repainted. usr().bw_is_valid() is only a gross range check.
  */
 
 void
 qseqeditframe64::set_beat_width (int bw)
 {
-    if (bw > 0)
     if (usr().bw_is_valid(bw) && bw != m_beat_width)
     {
-        sequence * s = seq_pointer().get();
-        if (not_nullptr(s))
+        if (would_truncate(m_beats_per_bar, bw))
         {
-            m_beat_width = bw;
-            int measures = get_measures();
-            s->set_beat_width(bw);
-            s->apply_length(0, 0, bw, measures);
-            set_dirty();
+            reset_beat_width();
+        }
+        else
+        {
+            bool rational = is_power_of_2(bw);
+            if (! rational)
+            {
+                rational = qt_prompt_ok             /* Ok == ignore danger  */
+                (
+                    "MIDI supports only powers of 2 for beat-width.",
+                    "It won't be saved properly, but you do you."
+                );
+            }
+            if (rational)
+            {
+                sequence * s = seq_pointer().get();
+                if (not_nullptr(s))
+                {
+                    m_beat_width = bw;
+                    int measures = get_measures();
+                    s->set_beat_width(bw);
+                    s->apply_length(0, 0, bw, measures);
+                    set_dirty();
+                }
+            }
+            else
+                reset_beat_width();
         }
     }
 }

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-22
+ * \updates       2022-04-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -214,6 +214,15 @@ private:
     virtual void resizeEvent (QResizeEvent *) override;
 
 private:
+
+    const combolist & ppqn_list () const
+    {
+        return m_ppqn_list;
+    }
+    const combolist & beatwidth_list() const
+    {
+        return m_beatwidth_list;
+    }
 
     void enable_save (bool flag = true);
     void make_perf_frame_in_tab ();

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-25
+ * \updates       2022-04-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -341,7 +341,7 @@ qsmainwnd::qsmainwnd
      * story.
      */
 
-    (void) fill_combobox(ui->cmb_beat_length, m_beatwidth_list);
+    (void) fill_combobox(ui->cmb_beat_length, beatwidth_list());
     m_msg_save_changes = new QMessageBox(this);
     m_msg_save_changes->setText(tr("Unsaved changes detected."));
     m_msg_save_changes->setInformativeText(tr("Do you want to save them?"));
@@ -1008,8 +1008,8 @@ qsmainwnd::set_song_mode (bool /*songmode*/)
 bool
 qsmainwnd::set_ppqn_combo ()
 {
-    m_ppqn_list.current(std::to_string(int(cb_perf().ppqn())));
-    return fill_combobox(ui->cmb_ppqn, m_ppqn_list);
+    std::string p = std::to_string(int(cb_perf().ppqn()));
+    return fill_combobox(ui->cmb_ppqn, ppqn_list(), p);
 }
 
 void
@@ -1554,7 +1554,7 @@ qsmainwnd::conditional_update ()
         if (delta < 0)
         {
             std::string dus = std::to_string(int(-delta));
-            ui->txtUnderrun->setText(QString::fromStdString(dus));
+            ui->txtUnderrun->setText(qt(dus));
         }
     }
     else
@@ -2442,8 +2442,8 @@ qsmainwnd::update_ppqn_by_text (const QString & text)
         int p = string_to_int(temp);
         if (cb_perf().change_ppqn(p))
         {
+            ppqn_list().current(temp);
             set_ppqn_text(temp);
-            m_ppqn_list.current(temp);
             ui->cmb_ppqn->setItemText(0, text);
             usr().file_ppqn(p);
             enable_save();
@@ -2486,7 +2486,7 @@ qsmainwnd::update_midi_bus (int index)
 void
 qsmainwnd::update_beat_length (int blindex)
 {
-    int bl = m_beatwidth_list.ctoi(blindex);
+    int bl = beatwidth_list().ctoi(blindex);
     if (cb_perf().set_beat_width(bl))
     {
         enable_save();

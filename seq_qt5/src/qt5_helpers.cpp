@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2022-04-20
+ * \updates       2022-04-27
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -32,6 +32,7 @@
  *      -   qt_keystroke(). Returns an "ordinal" for Qt keystroke.
  *      -   qt_set_icon(). Sets an icon for a push-button.
  *      -   qt_icon_theme(). Returns the name of the icon theme.
+ *      -   qt_prompt_ok(). Does an OK/Cancel QMessageBox.
  *      -   qt().  Converts an std::sring to a QString.
  *      -   qt_timer(). Encapsulates creating and starting a timer, with a
  *          callback given by a Qt slot-name.
@@ -49,6 +50,7 @@
 #include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QIcon>
 #include <QKeyEvent>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QStandardItemModel>
 #include <QTimer>
@@ -179,8 +181,28 @@ qt_icon_theme ()
 }
 
 /**
- *  Encapsulates a common conversion.  We will slowly add this one in every
- *  Qt-based class.
+ *  Provide an OK/Cancel prompt and return the result, true if Ok.
+ */
+
+bool
+qt_prompt_ok
+(
+    const std::string & text,
+    const std::string & info
+)
+{
+    QMessageBox temp;
+    temp.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    temp.setText(qt(text));
+    temp.setInformativeText(qt(info));
+
+    int choice = temp.exec();
+    bool result = choice == QMessageBox::Ok;
+    return result;
+}
+
+/**
+ *  Encapsulates a common conversion from C++ string to QString.
  */
 
 QString
@@ -188,6 +210,10 @@ qt (const std::string & text)
 {
     return QString::fromStdString(text);
 }
+
+/**
+ *  Creates a QTimer in a consistent manner.
+ */
 
 QTimer *
 qt_timer
@@ -260,7 +286,7 @@ fill_combobox
 (
     QComboBox * box,
     const combolist & clist,
-    int currentindex,
+    std::string value,
     const std::string & prefix,
     const std::string & suffix
 )
@@ -280,22 +306,38 @@ fill_combobox
                 if (addpadding)
                 {
                     if (! prefix.empty())   /* for example, "1/" for widths */
+                    {
                         item = prefix + item;
-
+                        value = prefix + value;
+                    }
                     if (! suffix.empty())
+                    {
                         item = item + suffix;
+                        value = value + suffix;
+                    }
                 }
-
-                QString text = qt(item);
                 result = true;
                 if (item == "-")
+                {
                     box->insertSeparator(8);
+                }
                 else
+                {
+                    QString text = qt(item);
                     box->insertItem(i, text);
+                }
             }
         }
         if (result)
-            box->setCurrentIndex(currentindex);
+        {
+            if (! value.empty())
+            {
+                clist.current(value);
+                box->setCurrentText(qt(value));
+            }
+            else
+                box->setCurrentIndex(0);
+        }
     }
     return result;
 }
@@ -481,9 +523,9 @@ show_file_dialog
     if (f.empty())
         f = "All files (*)";
 
-    QString folder = QString::fromStdString(d);
-    QString caption = QString::fromStdString(p);
-    QString filters = QString::fromStdString(f);
+    QString folder = qt(d);
+    QString caption = qt(p);
+    QString filters = qt(f);
     QString file = saving ?
         QFileDialog::getSaveFileName(parent, caption, folder, filters) :
         QFileDialog::getOpenFileName(parent, caption, folder, filters) ;

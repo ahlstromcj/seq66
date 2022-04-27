@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2022-04-13
+ * \updates       2022-04-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -129,10 +129,11 @@ qperfeditframe64::qperfeditframe64
     /*
      * Snap.  Fill options for grid snap combo box and set the default.
      * We need an obvious macro for "6".
+     *
+     * Not needed: snap_list().current("Length");
      */
 
-    m_snap_list.current("Length");
-    (void) fill_combobox(ui->cmbGridSnap, m_snap_list, 3, "1/");
+    (void) fill_combobox(ui->cmbGridSnap, snap_list(), "4", "1/");  // "1/4"
     connect
     (
         ui->cmbGridSnap, SIGNAL(currentIndexChanged(int)),
@@ -471,9 +472,9 @@ qperfeditframe64::follow_progress ()
 void
 qperfeditframe64::update_grid_snap (int snapindex)
 {
-    if (snapindex >= 0 && snapindex < m_snap_list.count())
+    if (snapindex >= 0 && snapindex < snap_list().count())
     {
-        m_snap = m_snap_list.ctoi(snapindex);
+        m_snap = snap_list().ctoi(snapindex);
         set_guides();
     }
 }

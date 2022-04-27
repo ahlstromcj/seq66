@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-13
+ * \updates       2022-04-27
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -816,8 +816,8 @@ qseditoptions::~qseditoptions ()
 bool
 qseditoptions::set_ppqn_combo ()
 {
-    m_ppqn_list.current(std::to_string(int(perf().ppqn())));
-    return fill_combobox(ui->combo_box_ppqn, m_ppqn_list);
+    std::string p = std::to_string(int(perf().ppqn()));
+    return fill_combobox(ui->combo_box_ppqn, ppqn_list(), p);
 }
 
 void
@@ -1387,8 +1387,11 @@ qseditoptions::slot_ppqn_by_text (const QString & text)
         int p = string_to_int(temp);
         if (perf().change_ppqn(p))
         {
+            // combolist & pl = const_cast<combolist &>(ppqn_list());
+            // pl.current(temp);
+
+            ppqn_list().current(temp);
             m_parent_widget->set_ppqn_text(temp);
-            m_ppqn_list.current(temp);
             ui->combo_box_ppqn->setItemText(0, text);
             usr().default_ppqn(p);
             modify_usr();

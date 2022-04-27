@@ -82,6 +82,13 @@ public:
     combolist & operator = (const combolist &) = default;
     ~combolist () = default;
 
+    std::string at (int index) const;
+    int ctoi (int index) const;
+    int index (const std::string & target) const;
+    int index (int value) const;
+    void current (const std::string & s) const;     /* tricky */
+    void current (int v) const;                     /* tricky */
+
     int count () const
     {
         return int(m_list_items.size());
@@ -96,23 +103,6 @@ public:
     {
         return m_list_items[0];
     }
-
-    void current (const std::string & s)
-    {
-        if (m_use_current)
-            m_list_items[0] = s;
-    }
-
-    void current (int v)
-    {
-        if (m_use_current)
-            m_list_items[0] = std::to_string(v);
-    }
-
-    std::string at (int index) const;
-    int ctoi (int index) const;
-    int index (const std::string & target) const;
-    int index (int value) const;
 
     void add (const std::string & s)
     {
