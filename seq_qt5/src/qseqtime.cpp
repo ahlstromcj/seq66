@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-23
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -62,13 +62,13 @@ static const int s_end_fix     = 10;        /* adjust position of "END" box */
 qseqtime::qseqtime
 (
     performer & p,
-    seq::pointer seqp,
+    sequence & s,
     qseqeditframe64 * frame,
     int zoom,
     QWidget * parent /* QScrollArea */
 ) :
     QWidget     (parent),
-    qseqbase    (p, seqp, frame, zoom, c_default_snap),
+    qseqbase    (p, s, frame, zoom, c_default_snap),
     m_timer     (nullptr),
     m_font      ()
 {
@@ -127,8 +127,8 @@ qseqtime::paintEvent (QPaintEvent *)
      * EXPERIMENTAL.  For odd beat widths, use 1 as ticks_per_substep.
      */
 
-    int bpbar = seq_pointer()->get_beats_per_bar();
-    int bwidth = seq_pointer()->get_beat_width();
+    int bpbar = track().get_beats_per_bar();
+    int bwidth = track().get_beat_width();
     midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
     midipulse ticks_per_bar = bpbar * ticks_per_beat;
     int measures_per_line = zoom() * bwidth * bpbar * 2;
@@ -182,7 +182,7 @@ qseqtime::paintEvent (QPaintEvent *)
 
     int xoff_left = scroll_offset_x();
     int xoff_right = scroll_offset_x() + width();
-    midipulse length = seq_pointer()->get_length();
+    midipulse length = track().get_length();
     int end = position_pixel(length) - s_end_fix;
     midipulse left = position_pixel(perf().get_left_tick()) + s_time_fix;
     midipulse right = position_pixel(perf().get_right_tick());
@@ -305,7 +305,7 @@ QSize
 qseqtime::sizeHint() const
 {
     int w = frame64()->width();
-    int len = tix_to_pix(seq_pointer()->get_length());
+    int len = tix_to_pix(track().get_length());
     if (len < w)
         len = w;
 

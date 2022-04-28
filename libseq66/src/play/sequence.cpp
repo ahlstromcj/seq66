@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-26
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -265,8 +265,8 @@ sequence::modify (bool notifychange)
 {
     m_is_modified = true;
     set_dirty();
-     if (notifychange)
-         notify_change();
+    if (notifychange)
+        notify_change();
 }
 
 /**
@@ -704,6 +704,12 @@ sequence::set_beat_width (int beatwidth)
 /**
  *  Calculates and sets u = 4BP/W, where u is m_unit_measure, B is the
  *  beats/bar, P is the PPQN, and W is the beat-width.
+ *
+ * \param reset
+ *      If true (the default is false), make the calculateion anyway.
+ *
+ * \return
+ *      Returns the size of a measure.
  */
 
 midipulse
@@ -716,6 +722,16 @@ sequence::unit_measure (bool reset) const
             (get_ppqn() * 4) / get_beat_width() ;
     }
     return m_unit_measure;
+}
+
+void
+sequence::set_measures (int measures)
+{
+    (void) unit_measure();
+    set_length
+    (
+        measures * get_beats_per_bar() * (get_ppqn() * 4) / get_beat_width()
+    );
 }
 
 /**

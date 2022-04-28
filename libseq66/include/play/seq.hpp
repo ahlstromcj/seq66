@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-01-31
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -72,10 +72,11 @@ namespace seq66
  *  Holds the various additional statuses, including the pointer, for a single
  *  sequence (also known as a loop or pattern).  This small class consolidates
  *  data once held in separate arrays.  It is also generally meant to be
- *  private, to be used only by the screenset class.  However, simple accessors
- *  and the seq::pointer alias for a shared pointer are public.  Also, the
- *  destructor definitely must be public, otherwise there can be an error
- *  concerning static_assert::is_destructible.
+ *  private, to be used only by the screenset class.  However, simple
+ *  accessors, the seq::pointer alias for a shared pointer, and the seq::ref
+ *  and seq::cref reference aliases are public.  Also, the destructor
+ *  definitely must be public, otherwise there can be an error concerning
+ *  static_assert::is_destructible.
  */
 
 class seq
@@ -102,6 +103,13 @@ public:
      */
 
     using pointer = std::shared_ptr<sequence>;
+
+    /**
+     *  References to sequence objects.
+     */
+
+    using ref = sequence &;
+    using cref = const sequence &;
 
 private:
 

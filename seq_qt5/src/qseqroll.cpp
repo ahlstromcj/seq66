@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-23
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -69,7 +69,7 @@ static const int c_pen_width        = 1;
 qseqroll::qseqroll
 (
     performer & p,
-    seq::pointer seqp,
+    sequence & s,
     qseqeditframe64 * frame,
     qseqkeys * seqkeys_wid,
     int zoom, int snap,
@@ -77,7 +77,7 @@ qseqroll::qseqroll
     int unith, int totalh
 ) :
     QWidget                 (frame),
-    qseqbase                ( p, seqp, frame, zoom, snap, unith, totalh),
+    qseqbase                ( p, s, frame, zoom, snap, unith, totalh),
     m_analysis_msg          (nullptr),
     m_font                  ("Monospace"),
     m_backseq_color         (backseq_paint()),
@@ -116,7 +116,7 @@ qseqroll::qseqroll
     m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     m_font.setBold(false);
     m_font.setPointSize(6);                         /* 8 is too obtrusive   */
-    set_snap(seqp->snap());
+    set_snap(track().snap());
     show();
     m_timer = qt_timer(this, "qseqroll", 1, SLOT(conditional_update()));
 }
@@ -134,7 +134,7 @@ qseqroll::~qseqroll ()
  *  In an effort to reduce CPU usage when simply idling, this function calls
  *  update() only if necessary.  See qseqbase::check_dirty().
  *
- *  bool ok = seq_pointer()->playing();
+ *  bool ok = track().playing();
  */
 
 void
@@ -300,7 +300,7 @@ qseqroll::set_background_sequence (bool state, int seq)
 }
 
 /**
- *  Does anybody use this one?
+ *  Does anybody use this one? qseqeditframe64::on_automation_change().
  */
 
 void
@@ -336,7 +336,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     painter.setPen(pen);
     painter.setFont(m_font);
     m_frame_ticks = pix_to_tix(r.width());
-    m_edit_mode = perf().edit_mode(seq_pointer()->seq_number());
+    m_edit_mode = perf().edit_mode(track().seq_number());
 
     /*
      * Draw the border and grid. See the banner notes about width and height.
@@ -363,7 +363,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     pen.setWidth(m_progbar_width);
     painter.setPen(pen);
     old_progress_x(progress_x());
-    progress_x(xoffset(seq_pointer()->get_tick()));
+    progress_x(xoffset(track().get_tick()));
     painter.drawLine(progress_x(), r.y(), progress_x(), r.y() + r.height());
 
     /*
@@ -500,8 +500,8 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
      * EXPERIMENTAL.  For odd beat widths, use 1 as ticks_per_substep.
      */
 
-    int bpbar = seq_pointer()->get_beats_per_bar();
-    int bwidth = seq_pointer()->get_beat_width();
+    int bpbar = track().get_beats_per_bar();
+    int bwidth = track().get_beat_width();
     midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
     midipulse ticks_per_bar = bpbar * ticks_per_beat;
     midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
@@ -572,11 +572,13 @@ qseqroll::draw_notes
     painter.setPen(pen);
     painter.setBrush(brush);
 
-    midipulse seqlength = seq_pointer()->get_length();
+    midipulse seqlength = track().get_length();
     midipulse start_tick = pix_to_tix(r.x());
     midipulse end_tick = start_tick + pix_to_tix(r.width());
-    seq::pointer s = background ?
-        perf().get_sequence(m_background_sequence) : seq_pointer() ;
+    sequence * b = perf().get_sequence(m_background_sequence).get();
+    sequence * s = background ? b : &track();
+    if (is_nullptr(s))
+        return;
 
     int unitheight = unit_height();
     int unitdecr = unit_height() - 2;
@@ -719,9 +721,7 @@ qseqroll::draw_notes
                    .
                   / \
                  /   \
-                /     \
-        y0   0 .       . 2
-                \     /
+        y0   0  .     . 2
                  \   /
                   \ /
         y1         .
@@ -785,12 +785,14 @@ qseqroll::draw_drum_notes
     brush.setStyle(Qt::SolidPattern);
     painter.setPen(pen);
     painter.setBrush(brush);
-    m_edit_mode = perf().edit_mode(seq_pointer()->seq_number());
+    m_edit_mode = perf().edit_mode(track().seq_number());
 
     midipulse start_tick = pix_to_tix(r.x());
     midipulse end_tick = start_tick + pix_to_tix(r.width());
-    seq::pointer s = background ?
-        perf().get_sequence(m_background_sequence) : seq_pointer() ;
+    sequence * b = perf().get_sequence(m_background_sequence).get();
+    sequence * s = background ? b : &track();
+    if (is_nullptr(s))
+        return;
 
     int noteheight = unit_height();
     for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
@@ -873,9 +875,9 @@ qseqroll::add_painted_note (midipulse tick, int note)
     bool result;
     int n = note_off_length();
     if (m_chord > 0)
-        result = seq_pointer()->push_add_chord(m_chord, tick, n, note);
+        result = track().push_add_chord(m_chord, tick, n, note);
     else
-        result = seq_pointer()->push_add_note(tick, n, note, true /* paint */);
+        result = track().push_add_note(tick, n, note, true /* paint */);
 
     if (result)
         set_dirty();
@@ -892,7 +894,6 @@ qseqroll::resizeEvent (QResizeEvent * qrep)
 void
 qseqroll::mousePressEvent (QMouseEvent * event)
 {
-    seq::pointer s = seq_pointer();
     midipulse tick_s, tick_f;
     int note, note_l, norm_x, norm_y, snapped_x, snapped_y;
     snapped_x = norm_x = event->x() - m_keypadding_x;
@@ -904,7 +905,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
     if (paste())
     {
         convert_xy(snapped_x, snapped_y, tick_s, note);
-        s->paste_selected(tick_s, note);
+        track().paste_selected(tick_s, note);
         paste(false);
         setCursor(Qt::ArrowCursor);
         set_dirty();
@@ -945,7 +946,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                  * add, else add a note, length = little less than snap.
                  */
 
-                bool would_select = ! s->select_note_events
+                bool would_select = ! track().select_note_events
                 (
                     tick_s, note, tick_s, note, selmode
                 );
@@ -960,7 +961,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                  */
 
                 eventlist::select selmode = eventlist::select::selected;
-                bool is_selected = s->select_note_events
+                bool is_selected = track().select_note_events
                 (
                     tick_s, note, tick_f, note, selmode
                 );
@@ -971,9 +972,9 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                         moving_init(true);          /* moving; L-click only */
                         set_dirty();
                         if (is_drum_mode())
-                            s->onsets_selected_box(tick_s, note, tick_f, note_l);
+                            track().onsets_selected_box(tick_s, note, tick_f, note_l);
                         else
-                            s->selected_box(tick_s, note, tick_f, note_l);
+                            track().selected_box(tick_s, note, tick_f, note_l);
 
                         convert_tn_box_to_rect
                         (
@@ -995,7 +996,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     if (can_grow)
                     {
                         growing(true);
-                        s->selected_box(tick_s, note, tick_f, note_l);
+                        track().selected_box(tick_s, note, tick_f, note_l);
                         convert_tn_box_to_rect
                         (
                             tick_s, tick_f, note, note_l, selection()
@@ -1006,14 +1007,14 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 {
                     if (! isctrl)
                     {
-                        s->unselect();
+                        track().unselect();
                         frame64()->set_dirty();
                     }
                     selmode = is_drum_mode() ?
                         eventlist::select::onset :
                         eventlist::select::select_one ;
 
-                    int numsel = s->select_note_events
+                    int numsel = track().select_note_events
                     (
                         tick_s, note, tick_f, note, selmode
                     );
@@ -1066,7 +1067,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
              * if (is_drum_mode()) selmode = eventlist::select::onset;
              */
 
-            int numsel = seq_pointer()->select_note_events
+            int numsel = track().select_note_events
             (
                 tick_s, note_h, tick_f, note_l, selmode
             );
@@ -1096,7 +1097,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             m_last_base_note = (-1);
             if (delta_tick != 0 || delta_note != 0)
             {
-                seq_pointer()->move_selected_notes(delta_tick, delta_note);
+                track().move_selected_notes(delta_tick, delta_note);
                 set_dirty();
             }
         }
@@ -1107,9 +1108,9 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
         {
             convert_xy(delta_x, delta_y, delta_tick, delta_note);
             if (event->modifiers() & Qt::ShiftModifier)
-                seq_pointer()->stretch_selected(delta_tick);
+                track().stretch_selected(delta_tick);
             else
-                seq_pointer()->grow_selected(delta_tick);
+                track().grow_selected(delta_tick);
 
             set_dirty();
         }
@@ -1123,9 +1124,9 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
         }
     }
     clear_action_flags();               /* turn off all the action flags    */
-    seq_pointer()->unpaint_all();
+    track().unpaint_all();
     if (is_dirty())                     /* if clicked, something changed    */
-        seq_pointer()->set_dirty();
+        track().set_dirty();
 }
 
 /**
@@ -1223,11 +1224,10 @@ qseqroll::keyPressEvent (QKeyEvent * event)
     bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
     bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
     bool ismeta = bool(event->modifiers() & Qt::MetaModifier);
-    seq::pointer s = seq_pointer();
     bool done = false;
     if (key == Qt::Key_Delete || key == Qt::Key_Backspace)
     {
-        if (s->remove_selected())
+        if (track().remove_selected())
             done = true;
     }
     else
@@ -1264,13 +1264,13 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     {
                     case Qt::Key_Left:
 
-                        s->set_last_tick(s->get_last_tick() - snap());
+                        track().set_last_tick(track().get_last_tick() - snap());
                         done = true;
                         break;
 
                     case Qt::Key_Right:
 
-                        s->set_last_tick(s->get_last_tick() + snap());
+                        track().set_last_tick(track().get_last_tick() + snap());
                         done = true;
                         break;
 
@@ -1279,28 +1279,28 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         if (not_nullptr(frame64()))
                             frame64()->scroll_to_tick(0);
 
-                        s->set_last_tick(0);        /* sets it to the beginning */
+                        track().set_last_tick(0);   /* sets it to beginning */
                         done = true;
                         break;
 
                     case Qt::Key_End:
 
                         if (not_nullptr(frame64()))
-                            frame64()->scroll_to_tick(s->get_length());
+                            frame64()->scroll_to_tick(track().get_length());
 
-                        s->set_last_tick();         /* sets it to the length    */
+                        track().set_last_tick();    /* sets it to length    */
                         done = true;
                         break;
 
                     case Qt::Key_X:
 
-                        if (s->cut_selected())
+                        if (track().cut_selected())
                             done = true;
                         break;
 
                     case Qt::Key_C:
 
-                        s->copy_selected();
+                        track().copy_selected();
                         break;
 
                     case Qt::Key_V:
@@ -1318,10 +1318,10 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                              * Doesn't seem to do anything!
                              */
 
-                            s->pop_redo();
+                            track().pop_redo();
                         }
                         else
-                            s->pop_undo();
+                            track().pop_undo();
 
                         if (not_nullptr(frame64()))
                         {
@@ -1331,7 +1331,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                     case Qt::Key_A:
 
-                        s->select_all();
+                        track().select_all();
                         done = true;
                         break;
 
@@ -1342,7 +1342,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                     case Qt::Key_E:
 
-                        s->select_by_channel(frame64()->edit_channel());
+                        track().select_by_channel(frame64()->edit_channel());
                         done = true;
                         break;
 
@@ -1353,7 +1353,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                     case Qt::Key_N:
 
-                        s->select_notes_by_channel(frame64()->edit_channel());
+                        track().select_notes_by_channel(frame64()->edit_channel());
                         done = true;
                         break;
                     }
@@ -1376,7 +1376,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                 case Qt::Key_F:
 
-                    if (s->edge_fix())
+                    if (track().edge_fix())
                         done = true;
                     break;
 
@@ -1387,24 +1387,24 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                 case Qt::Key_Q:                 /* quantize selected notes  */
 
-                    if (s->push_quantize(EVENT_NOTE_ON, 0, 1, true))
+                    if (track().push_quantize(EVENT_NOTE_ON, 0, 1, true))
                         done = true;
                     break;
 
                 case Qt::Key_R:                 /* default jitter == 8      */
 
-                    if (s->randomize_selected_notes())
+                    if (track().randomize_selected_notes())
                         done = true;
                     break;
 
                 case Qt::Key_T:                 /* tighten selected notes   */
-                    if (s->push_quantize(EVENT_NOTE_ON, 0, 2, true))
+                    if (track().push_quantize(EVENT_NOTE_ON, 0, 2, true))
                         done = true;
                     break;
 
                 case Qt::Key_U:
 
-                    if (s->remove_unlinked_notes())
+                    if (track().remove_unlinked_notes())
                         done = true;
                     break;
 
@@ -1416,7 +1416,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                 case Qt::Key_Equal:
 
-                    s->verify_and_link(true);   /* verify & link with wrap  */
+                    track().verify_and_link(true);          /* with wrap    */
                     done = true;
                     break;
                 }
@@ -1439,7 +1439,7 @@ bool
 qseqroll::movement_key_press (int key)
 {
     bool result = false;
-    if (seq_pointer()->any_selected_notes())
+    if (track().any_selected_notes())
     {
         if (key == Qt::Key_Left)
         {
@@ -1504,15 +1504,14 @@ qseqroll::move_selected_notes (int dx, int dy)
     else
     {
         int snap_x = dx * snap();                   /* time-stamp snap  */
-        seq::pointer s = seq_pointer();
-        if (s->any_selected_notes())                /* redundant!       */
+        if (track().any_selected_notes())                /* redundant!       */
         {
             int snap_y = -dy;                       /* note pitch snap  */
-            s->move_selected_notes(snap_x, snap_y);
+            track().move_selected_notes(snap_x, snap_y);
         }
         else if (snap_x != 0)
         {
-            s->set_last_tick(s->get_last_tick() + snap_x);
+            track().set_last_tick(track().get_last_tick() + snap_x);
         }
     }
 }
@@ -1537,7 +1536,7 @@ qseqroll::grow_selected_notes (int dx)
     {
         int snap_x = dx * snap();                   /* time-stamp snap  */
         growing(true);
-        seq_pointer()->grow_selected(snap_x);
+        track().grow_selected(snap_x);
     }
 }
 
@@ -1554,7 +1553,7 @@ qseqroll::sizeHint () const
 {
     int w = frame64()->width();
     int h = total_height();
-    int len = tix_to_pix(seq_pointer()->get_length());
+    int len = tix_to_pix(track().get_length());
     if (len < w)
         len = w;
 
@@ -1613,7 +1612,7 @@ qseqroll::start_paste ()
 
     midipulse tick_s, tick_f;
     int note_h, note_l;
-    seq_pointer()->clipboard_box(tick_s, note_h, tick_f, note_l);
+    track().clipboard_box(tick_s, note_h, tick_f, note_l);
     convert_tn_box_to_rect(tick_s, tick_f, note_h, note_l, selection());
     selection().xy_incr(drop_x(), drop_y() - selection().y());
 }
@@ -1676,7 +1675,7 @@ qseqroll::analyze_seq_notes ()
 {
     std::vector<keys> outkeys;
     std::vector<scales> outscales;
-    int results = analyze_notes(seq_pointer()->events(), outkeys, outscales);
+    int results = analyze_notes(track().events(), outkeys, outscales);
     if (results > 0)
     {
         std::string message;

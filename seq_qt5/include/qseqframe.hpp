@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2021-02-21
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  Provides an abstract base class so that both the old and the new Qt
@@ -41,6 +41,7 @@
 
 #include "qbase.hpp"                    /* seq66:qbase super base class     */
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */
+#include "play/sequence.hpp"            /* seq66::seq::pointer & sequence   */
 
 /*
  *  Forward declarations.  Some Qt header files are in the cpp file.
@@ -85,7 +86,7 @@ public:
     qseqframe
     (
         performer & p,
-        int seqid,
+        sequence & s,                   // int seqid,
         QWidget * parent = nullptr
     );
 
@@ -96,12 +97,12 @@ public:
 
 public:     // protected:
 
-    const seq::pointer seq_pointer () const
+    const sequence & track () const
     {
         return m_seq;
     }
 
-    seq::pointer seq_pointer ()
+    sequence & track ()
     {
         return m_seq;
     }
@@ -116,7 +117,7 @@ public:
 
 private:
 
-    seq::pointer m_seq;
+    sequence & m_seq;
 
 protected:
 

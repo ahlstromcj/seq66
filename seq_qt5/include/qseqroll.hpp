@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-03
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -76,7 +76,7 @@ public:
     qseqroll
     (
         performer & perf,
-        seq::pointer seqp,
+        sequence & s,
         qseqeditframe64 * parent,
         qseqkeys * seqkeys_wid,
         int zoom                    = c_default_zoom,

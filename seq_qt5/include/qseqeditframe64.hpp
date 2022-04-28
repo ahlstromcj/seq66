@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-27
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -132,7 +132,9 @@ public:
 
     qseqeditframe64
     (
-        performer & p, int seqid, QWidget * parent,
+        performer & p,
+        sequence & s,           // int seqid
+        QWidget * parent,
         bool shorter = false
     );
     virtual ~qseqeditframe64 ();
@@ -190,6 +192,7 @@ private:
 
 private:        /* combo-box list accessors */
 
+
     const combolist & measures_list () const
     {
         return m_measures_list;
@@ -228,13 +231,19 @@ private slots:
     void slot_reset_zoom ();
     void slot_update_zoom (int index);
     void update_seq_name ();
-    void update_beats_per_bar (int index);
+
+    /*
+     * Not necessary:
+     *
+     *  void update_beats_per_bar (int index);
+     *  void update_beat_width (int index);
+     *  void update_measures (int index);
+     */
+
     void text_beats_per_bar (const QString & text);
-    void update_beat_width (int index);
     void text_beat_width (const QString & text);
     void reset_beats_per_bar ();
     void reset_beat_width ();
-    void update_measures (int index);
     void text_measures (const QString & text);
     void next_measures ();
     void reset_measures ();
@@ -362,27 +371,15 @@ private:
 
     /**
      *  Menus for Tools and it Harmonic Transpose sub-menu.
+     *  Menu for the Background Sequences button.
+     *  Menu for the Event Data button.
+     *  Menu for the "mini" Event Data button.
      */
 
     QMenu * m_tools_popup;
     QMenu * m_tools_harmonic;
-
-    /**
-     *  Menu for the Background Sequences button.
-     */
-
     QMenu * m_sequences_popup;
-
-    /**
-     *  Menu for the Event Data button.
-     */
-
     QMenu * m_events_popup;
-
-    /**
-     *  Menu for the "mini" Event Data button.
-     */
-
     QMenu * m_minidata_popup;
 
     /**

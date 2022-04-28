@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-10
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -80,7 +80,7 @@ public:
     qlfoframe
     (
         performer & p,
-        seq::pointer seqp,
+        sequence & s,
         qseqdata & sdata,
         qseqeditframe64 * editparent    = nullptr,
         QWidget * parent                = nullptr
@@ -104,7 +104,7 @@ private:
         return m_performer;
     }
 
-    seq::pointer seqp ()
+    sequence & track ()
     {
         return m_seq;
     }
@@ -174,7 +174,7 @@ private:
      *  The sequence associated with this window.
      */
 
-    seq::pointer m_seq;
+    sequence & m_seq;
 
     /**
      *  The qseqdata associated with this window.

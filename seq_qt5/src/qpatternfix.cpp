@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-27
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -82,7 +82,7 @@ namespace seq66
 qpatternfix::qpatternfix
 (
     performer & p,
-    seq::pointer seqptr,
+    sequence & s,
     qseqeditframe64 * editparent,
     QWidget * parent
 ) :
@@ -91,15 +91,15 @@ qpatternfix::qpatternfix
     m_fixlength_group   (nullptr),
     m_quan_group        (nullptr),
     m_performer         (p),
-    m_seq               (seqptr),
-    m_backup_events     (seqp()->events()),             /* for slot_reset() */
-    m_backup_measures   (seqp()->get_measures()),
-    m_backup_beats      (seqp()->get_beats_per_bar()),
-    m_backup_width      (seqp()->get_beat_width()),
+    m_seq               (s),
+    m_backup_events     (s.events()),             /* for slot_reset() */
+    m_backup_measures   (s.get_measures()),
+    m_backup_beats      (s.get_beats_per_bar()),
+    m_backup_width      (s.get_beat_width()),
     m_edit_frame        (editparent),
     m_length_type       (lengthfix::none),
     m_quan_type         (quantization::none),
-    m_jitter_range      (seqp()->get_ppqn() / 12),
+    m_jitter_range      (s.get_ppqn() / 12),
     m_measures          (double(m_backup_measures)),
     m_scale_factor      (1.0),
     m_align_left        (false),
@@ -108,7 +108,7 @@ qpatternfix::qpatternfix
     m_time_sig_beats    (0),
     m_time_sig_width    (0),
     m_is_modified       (false),
-    m_was_clean         (! seqp()->modified())
+    m_was_clean         (! s.modified())
 {
     ui->setupUi(this);
     initialize(true);
@@ -127,7 +127,7 @@ qpatternfix::~qpatternfix()
 void
 qpatternfix::initialize (bool startup)
 {
-    std::string value = std::to_string(int(seqp()->get_length()));
+    std::string value = std::to_string(int(track().get_length()));
     ui->label_pulses->setText(qt(value));
     value = std::to_string(int(m_measures));
     ui->line_edit_pick->setText(qt(value));
@@ -153,7 +153,7 @@ qpatternfix::initialize (bool startup)
          * Read-only labelling. Pattern number and pattern length.
          */
 
-        std::string value = std::to_string(int(seqp()->seq_number()));
+        std::string value = std::to_string(int(track().seq_number()));
         ui->label_pattern->setText(qt(value));
 
         std::string plabel = "Pattern #";
@@ -300,7 +300,7 @@ qpatternfix::unmodify (bool reset_fields)
 {
     if (reset_fields)
     {
-        std::string temp = std::to_string(seqp()->get_measures());
+        std::string temp = std::to_string(track().get_measures());
         ui->line_edit_pick->setText(qt(temp));
         ui->line_edit_scale->setText("1.0");
         ui->btn_effect_shift->setChecked(false);
@@ -354,8 +354,8 @@ qpatternfix::slot_measure_change ()
             ui->btn_effect_time_sig->setChecked(is_time_sig);
             if (is_time_sig)
             {
-                midipulse max = seqp()->get_max_timestamp();
-                midipulse newlength = midipulse(seqp()->get_length() * m);
+                midipulse max = track().get_max_timestamp();
+                midipulse newlength = midipulse(track().get_length() * m);
                 ui->btn_effect_truncate->setChecked(newlength < max);
             }
             modify();
@@ -401,7 +401,7 @@ qpatternfix::slot_jitter_change ()
     QString t = ui->line_edit_q_jitter->text();
     std::string tc = t.toStdString();
     int m = string_to_int(tc, 0);
-    if (m > 0 && m < seqp()->get_ppqn())
+    if (m > 0 && m < track().get_ppqn())
     {
         ui->btn_quan_jitter->setChecked(true);
         m_jitter_range = m;
@@ -441,7 +441,7 @@ qpatternfix::slot_save_note_length (int state)
 void
 qpatternfix::set_dirty ()
 {
-    seqp()->set_dirty();
+    track().set_dirty();
     if (not_nullptr(m_edit_frame))
         m_edit_frame->set_dirty();
 }
@@ -457,13 +457,13 @@ qpatternfix::slot_set ()
         m_use_time_sig, m_time_sig_beats, m_time_sig_width,
         m_measures, m_scale_factor, efx
     };
-    bool success = seqp()->fix_pattern(fp);             /* side-effects     */
+    bool success = track().fix_pattern(fp);             /* side-effects     */
     if (success)
     {
         bool bitshifted = bit_test(efx, fixeffect::shifted);
         bool bitshrunk = bit_test(efx, fixeffect::shrunk);
         bool bitexpanded = bit_test(efx, fixeffect::expanded);
-        std::string temp = std::to_string(int(seqp()->get_length()));
+        std::string temp = std::to_string(int(track().get_length()));
         ui->label_pulses->setText(qt(temp));
         if (m_use_time_sig)
         {
@@ -483,7 +483,7 @@ qpatternfix::slot_set ()
         set_dirty();                                    /* for redrawing    */
 
         /*
-         * Let fix_pattern() do this: seqp()->modify();
+         * Let fix_pattern() do this: track().modify();
          */
 
         unmodify(false);                                /* keep fields      */
@@ -493,10 +493,10 @@ qpatternfix::slot_set ()
 void
 qpatternfix::slot_reset ()
 {
-    seqp()->set_beats_per_bar(m_backup_beats);          /* restore original */
-    seqp()->set_beat_width(m_backup_width);             /* ditto            */
-    seqp()->apply_length(m_backup_measures);            /* simple overload  */
-    seqp()->events() = m_backup_events;                 /* restore events   */
+    track().set_beats_per_bar(m_backup_beats);          /* restore original */
+    track().set_beat_width(m_backup_width);             /* ditto            */
+    track().apply_length(m_backup_measures);            /* simple overload  */
+    track().events() = m_backup_events;                 /* restore events   */
     m_measures = double(m_backup_measures);
     m_align_left = m_use_time_sig = false;
     m_save_note_length = true;
@@ -508,7 +508,7 @@ qpatternfix::slot_reset ()
     unmodify();                                         /* change fields    */
     set_dirty();                                        /* for redrawing    */
     if (m_was_clean)
-        seqp()->unmodify();
+        track().unmodify();
 }
 
 void

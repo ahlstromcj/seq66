@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-04-14
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -72,10 +72,8 @@ static const int sc_event_row_height = 18;
  *      Provides the performer object to use for interacting with this sequence.
  *      Among other things, this object provides the active PPQN.
  *
- * \param seqid
- *      Provides the sequence number.  The sequence pointer is looked up using
- *      this number.  This number is also the pattern-slot number for this
- *      sequence and for this window.  Ranges from 0 to 1024.
+ * \param s
+ *      Provides the reference to the sequence represented by this seqedit.
  *
  * \param parent
  *      Provides the parent window/widget for this container window.  Defaults
@@ -83,12 +81,17 @@ static const int sc_event_row_height = 18;
  *
  */
 
-qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
+qseqeventframe::qseqeventframe
+(
+    performer & p,
+    sequence & s,
+    QWidget * parent
+) :
     QFrame                  (parent),
     performer::callbacks    (p),
     ui                      (new Ui::qseqeventframe),
-    m_seq                   (p.sequence_pointer(seqid)),
-    m_eventslots            (new qseventslots(p, *this, m_seq)),
+    m_seq                   (s),
+    m_eventslots            (new qseventslots(p, *this, s)),
     m_show_data_as_hex      (false),
     m_is_dirty              (false)
 {
@@ -106,21 +109,21 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     );
     set_seq_title(make_seq_title());
 
-    QString seqnolabel = qt(std::to_string(seqid));
+    QString seqnolabel = qt(std::to_string(int(track().seq_number())));
     ui->label_seq_number->setText(seqnolabel);
 
-    std::string ts_ppqn = std::to_string(m_seq->get_beats_per_bar());
+    std::string ts_ppqn = std::to_string(track().get_beats_per_bar());
     ts_ppqn += "/";
-    ts_ppqn += std::to_string(m_seq->get_beat_width());
+    ts_ppqn += std::to_string(track().get_beat_width());
     ts_ppqn += " at ";
-    ts_ppqn += std::to_string(m_seq->get_ppqn());
+    ts_ppqn += std::to_string(track().get_ppqn());
     ts_ppqn += " PPQN (";
-    ts_ppqn += std::to_string(m_seq->get_length());
+    ts_ppqn += std::to_string(track().get_length());
     ts_ppqn += " total)";
     set_seq_time_sig_and_ppqn(ts_ppqn);
 
     std::string channelstr = "Channel ";
-    midibyte seqchan = m_seq->seq_midi_channel();
+    midibyte seqchan = track().seq_midi_channel();
     if (is_null_channel(seqchan))
     {
         channelstr += "Free";
@@ -279,14 +282,14 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent) :
     initialize_table();
 
     /*
-     *  The event editor is now in a tab, and it is not quite as critical as the
-     *  pattern editor.  The following setting causes the "File / New" operation
-     *  to seem to mysteriously fail.
+     *  The event editor is now in a tab, and it is not quite as critical as
+     *  the pattern editor.  The following setting causes the "File / New"
+     *  operation to seem to mysteriously fail.
      *
-     *      m_seq->seq_in_edit(true);
+     *      track().seq_in_edit(true);
      */
 
-    m_seq->set_dirty_mp();
+    track().set_dirty_mp();
     cb_perf().enregister(this);
 }
 
@@ -299,7 +302,7 @@ qseqeventframe::~qseqeventframe()
 void
 qseqeventframe::populate_midich_combo ()
 {
-    int defchannel = int(m_seq->seq_midi_channel());
+    int defchannel = int(track().seq_midi_channel());
     if (is_null_channel(defchannel))
         defchannel = 0;
 
@@ -371,7 +374,7 @@ qseqeventframe::slot_hex_data_state (int state)
 bool
 qseqeventframe::on_sequence_change (seq::number seqno, bool recreate)
 {
-    bool result = m_seq && seqno == m_seq->seq_number();
+    bool result = seqno == track().seq_number();
     if (result)
     {
         if (m_is_dirty)
@@ -407,8 +410,6 @@ qseqeventframe::set_row_height (int row, int height)
 
 /**
  *  Scales the columns against the provided window width.
- *
- *  Old:    s_w [6] = { 0.15f, 0.25f, 0.1f, 0.14f, 0.14f, 0.2f };
  */
 
 void
@@ -462,7 +463,7 @@ qseqeventframe::initialize_table ()
 std::string
 qseqeventframe::make_seq_title ()
 {
-    return m_seq->name();
+    return track().name();
 }
 
 /**
@@ -486,14 +487,13 @@ void
 qseqeventframe::update_seq_name ()
 {
     std::string name = ui->m_entry_name->text().toStdString();
-    if (cb_perf().set_sequence_name(m_seq, name))
+    if (cb_perf().set_sequence_name(track(), name))
         set_dirty();
 }
 
 /**
- *  Sets ui->label_time_sig to the time-signature string.
- *  Also adds the parts-per-quarter-note string, and now also the length in
- *  ticks.
+ *  Sets ui->label_time_sig to the time-signature string.  Also adds the
+ *  parts-per-quarter-note string, and now also the length in ticks.
  *
  *  Combines the set_seq_time_sig() and set_seq_ppqn() from the old
  *  user-interface.
@@ -518,7 +518,7 @@ qseqeventframe::set_seq_channel (const std::string & ch)
 /**
  *  Sets the number of measure and the number of events string.
  *
- *      m_eventslots->m_seq->calculate_measures()
+ *      m_eventslots->track().calculate_measures()
  *
  *  Combines set_seq_count() and set_length() into one function.
  */
@@ -984,7 +984,7 @@ qseqeventframe::slot_save ()
         bool ok = m_eventslots->save_events();
         if (ok)
         {
-            seq::number seqno = m_seq->seq_number();
+            seq::number seqno = track().seq_number();
             cb_perf().notify_sequence_change(seqno);
             ui->button_save->setEnabled(false);
             m_is_dirty = false;
@@ -1021,7 +1021,7 @@ qseqeventframe::slot_dump ()
             {
                 basename = file_extension_set(basename);    /* strip .ext   */
                 basename += "-pattern-";
-                basename += std::to_string(m_seq->seq_number());
+                basename += std::to_string(track().seq_number());
                 basename = file_extension_set(basename, ".text");
                 fspec = filename_concatenate(directory, basename);
                 if (! file_write_string(fspec, dump))

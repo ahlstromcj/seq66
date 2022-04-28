@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-09
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -62,7 +62,7 @@ public:
     qseqtime
     (
         performer & p,
-        seq::pointer seqp,
+        sequence & s,
         qseqeditframe64 * frame,
         int zoom,
         QWidget * parent                                /* QScrollArea */

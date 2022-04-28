@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-04-21
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1279,8 +1279,8 @@ public:
 
 public:
 
-    bool repitch_all (const std::string & nmapfile, sequence & s);
-    bool repitch_selected (const std::string & nmapfile, sequence & s);
+    bool repitch_all (const std::string & nmapfile, seq::ref s);
+    bool repitch_selected (const std::string & nmapfile, seq::ref s);
 
     setmapper & mapper ()
     {
@@ -1907,12 +1907,12 @@ public:
 
     bool set_midi_bus (seq::number seqno, int buss);
     bool set_midi_channel (seq::number seqno, int channel);
-    bool set_sequence_name (seq::pointer s, const std::string & name);
-    bool set_recording (seq::pointer s, bool active, bool toggle);
-    bool set_quantized_recording (seq::pointer s, bool active, bool toggle);
-    bool set_tightened_recording (seq::pointer s, bool active, bool toggle);
-    bool set_overwrite_recording (seq::pointer s, bool active, bool toggle);
-    bool set_thru (seq::pointer s, bool active, bool toggle);
+    bool set_sequence_name (seq::ref s, const std::string & name);
+    bool set_recording (seq::ref s, bool active, bool toggle);
+    bool set_quantized_recording (seq::ref s, bool active, bool toggle);
+    bool set_tightened_recording (seq::ref s, bool active, bool toggle);
+    bool set_overwrite_recording (seq::ref s, bool active, bool toggle);
+    bool set_thru (seq::ref s, bool active, bool toggle);
     bool selected_trigger
     (
         seq::number seqno, midipulse droptick,
@@ -2402,7 +2402,7 @@ public:
      *      Provides a reference to the desired sequence.
      */
 
-    bool highlight (const sequence & seq) const
+    bool highlight (seq::cref seq) const
     {
         return seq.event_count() == 0;
     }
@@ -2414,7 +2414,7 @@ public:
      *      Provides a reference to the desired sequence.
      */
 
-    bool is_smf_0 (const sequence & seq) const
+    bool is_smf_0 (seq::cref seq) const
     {
         return seq.is_smf_0();
     }
@@ -2454,10 +2454,10 @@ public:
         mapper().off_sequences();
     }
 
-    std::string sequence_label (const sequence & seq) const;
+    std::string sequence_label (seq::cref seq) const;
     std::string sequence_label (seq::number seqno) const;
-    std::string sequence_title (const sequence & seq) const;
-    std::string sequence_window_title (const sequence & seq) const;
+    std::string sequence_title (seq::cref seq) const;
+    std::string sequence_window_title (seq::cref seq) const;
     std::string main_window_title (const std::string & fn = "") const;
     std::string pulses_to_measure_string (midipulse tick) const;
     std::string pulses_to_time_string (midipulse tick) const;
@@ -2944,7 +2944,7 @@ public:         /* GUI-support functions */
      * itself.
      */
 
-    sequence::editmode edit_mode (const sequence & s) const
+    sequence::editmode edit_mode (seq::cref s) const
     {
         return s.edit_mode();
     }
@@ -2969,7 +2969,7 @@ public:         /* GUI-support functions */
             sp->edit_mode(ed);
     }
 
-    void edit_mode (sequence & s, sequence::editmode ed)
+    void edit_mode (seq::ref s, sequence::editmode ed)
     {
         s.edit_mode(ed);
     }

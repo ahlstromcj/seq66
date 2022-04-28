@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-10
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  The LFO (low-frequency oscillator) provides a way to modulate the
@@ -90,7 +90,7 @@ static double s_phase_max   =   1.0;
 qlfoframe::qlfoframe
 (
     performer & p,
-    seq::pointer seqp,
+    sequence & s,
     qseqdata & sdata,
     qseqeditframe64 * editparent,
     QWidget * parent
@@ -99,9 +99,9 @@ qlfoframe::qlfoframe
     ui              (new Ui::qlfoframe),
     m_wave_group    (nullptr),
     m_performer     (p),
-    m_seq           (seqp),
+    m_seq           (s),
     m_seqdata       (sdata),
-    m_backup_events (seqp->events()),   /* copy original events for reset() */
+    m_backup_events (s.events()),       /* copy original events for reset() */
     m_edit_frame    (editparent),
     m_value         (s_value_def),
     m_range         (s_range_def),
@@ -236,7 +236,7 @@ qlfoframe::qlfoframe
     );
 
     std::string plabel = "Pattern #";
-    std::string number = std::to_string(int(seqp->seq_number()));
+    std::string number = std::to_string(int(track().seq_number()));
     plabel += number;
     ui->m_pattern_label->setText(qt(plabel));
 
@@ -338,7 +338,7 @@ qlfoframe::scale_lfo_change ()
     m_range = to_double(ui->m_range_slider->value());
     m_speed = to_double(ui->m_speed_slider->value());
     m_phase = to_double(ui->m_phase_slider->value());
-    seqp()->change_event_data_lfo
+    track().change_event_data_lfo
     (
         m_value, m_range, m_speed, m_phase, m_wave,
         m_seqdata.status(), m_seqdata.cc(), m_use_measure
@@ -371,8 +371,8 @@ qlfoframe::use_measure_clicked (int state)
 void
 qlfoframe::reset ()
 {
-    seqp()->events() = m_backup_events;
-    seqp()->set_dirty();                                /* for redrawing    */
+    track().events() = m_backup_events;
+    track().set_dirty();                                /* for redrawing    */
     m_seqdata.set_dirty();                              /* for redrawing    */
     m_is_modified = false;
 }

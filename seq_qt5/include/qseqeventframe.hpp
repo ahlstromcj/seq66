@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-03-03
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -87,7 +87,12 @@ private:
 
 public:
 
-    qseqeventframe (performer & p, int seqid, QWidget * parent = nullptr);
+    qseqeventframe
+    (
+        performer & p,
+        sequence & s,
+        QWidget * parent = nullptr
+    );
     virtual ~qseqeventframe ();
 
 protected:
@@ -132,6 +137,11 @@ private:
     std::string make_seq_title ();
     std::string get_lengths ();
 
+    sequence & track ()
+    {
+        return m_seq;
+    }
+
 private:
 
     QTableWidgetItem * cell (int row, column_id col);
@@ -172,7 +182,7 @@ private:
      *  or modify.
      */
 
-    seq::pointer m_seq;
+    sequence & m_seq;
 
     /**
      *  This object holds an editable_events container, and helps this

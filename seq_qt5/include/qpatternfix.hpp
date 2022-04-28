@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-26
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -81,7 +81,7 @@ public:
     qpatternfix
     (
         performer & p,
-        seq::pointer seqp,
+        sequence & s,
         qseqeditframe64 * editparent,
         QWidget * parent = nullptr
     );
@@ -106,7 +106,7 @@ private:
         return m_performer;
     }
 
-    seq::pointer seqp ()
+    sequence & track ()
     {
         return m_seq;
     }
@@ -167,7 +167,7 @@ private:
      *  The sequence associated with this window.
      */
 
-    seq::pointer m_seq;
+    sequence & m_seq;
 
     /**
      *  Holds the original data in order to allow for a complete undo of the

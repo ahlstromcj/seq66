@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-04-26
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1158,14 +1158,7 @@ public:
         bool verify = true
     );
 
-    void set_measures (int measures)
-    {
-        set_length
-        (
-            measures * get_beats_per_bar() * (get_ppqn() * 4) / get_beat_width()
-        );
-    }
-
+    void set_measures (int measures);
     bool extend_length ();
     bool apply_length (int bpb, int ppqn, int bw, int measures = 1);
 

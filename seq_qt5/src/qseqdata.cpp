@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-03-02
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -72,14 +72,14 @@ static const int s_circle_d     = 6;    /* diameter of tempo/prog. dots     */
 qseqdata::qseqdata
 (
     performer & p,
-    seq::pointer seqp,
+    sequence & s,
     qseqeditframe64 * frame,
     int zoom, int snap,
     QWidget * parent,
     int height
 ) :
     QWidget                 (parent),
-    qseqbase                (p, seqp, frame, zoom, snap),
+    qseqbase                (p, s, frame, zoom, snap),
     performer::callbacks    (p),
     m_timer                 (nullptr),
     m_font                  ("Monospace"),
@@ -127,7 +127,7 @@ qseqdata::conditional_update ()
 bool
 qseqdata::on_ui_change (seq::number seqno)
 {
-    if (seqno == seq_pointer()->seq_number())
+    if (seqno == track().seq_number())
         update();
 
     return true;
@@ -137,7 +137,7 @@ QSize
 qseqdata::sizeHint () const
 {
     int w = frame64()->width();
-    int len = tix_to_pix(seq_pointer()->get_length());
+    int len = tix_to_pix(track().get_length());
     if (len < w)
         len = w;
 
@@ -162,13 +162,12 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     painter.drawRect(0, 0, width() - 1, height() - 1);  /* data-box border  */
 
     char digits[4];
-    seq::pointer s = seq_pointer();
     midipulse start_tick = pix_to_tix(r.x());
     midipulse end_tick = start_tick + pix_to_tix(r.width());
-    s->draw_lock();
-    for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
+    track().draw_lock();
+    for (auto cev = track().cbegin(); ! track().cend(cev); ++cev)
     {
-        if (! s->get_next_event_match(m_status, m_cc, cev))
+        if (! track().get_next_event_match(m_status, m_cc, cev))
             break;
 
         midipulse tick = cev->timestamp();
@@ -223,7 +222,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                      * channel, iether.
                      */
 
-                    midibyte schan = s->seq_midi_channel();
+                    midibyte schan = track().seq_midi_channel();
                     if (is_null_channel(schan))
                         ok = true;
                     else
@@ -254,7 +253,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             }
         }
     }
-    s->draw_unlock();
+    track().draw_unlock();
     if (m_line_adjust)                          /* draw edit line           */
     {
         int x, y, w, h;
@@ -286,7 +285,6 @@ qseqdata::resizeEvent (QResizeEvent * qrep)
 void
 qseqdata::mousePressEvent (QMouseEvent * event)
 {
-    seq::pointer s = seq_pointer();
     midipulse tick_start, tick_finish;
     int mouse_x = event->x() - c_keyboard_padding_x + scroll_offset_x();
     int mouse_y = event->y();
@@ -298,13 +296,13 @@ qseqdata::mousePressEvent (QMouseEvent * event)
 
     tick_start = pix_to_tix(mouse_x - 2);
     tick_finish = pix_to_tix(mouse_x + 2);
-    s->push_undo();
+    track().push_undo();
 
     /*
      * Check if this tick range would select an event.
      */
 
-    bool would_select = s->select_events
+    bool would_select = track().select_events
     (
         tick_start, tick_finish, m_status, m_cc,
         eventlist::select::would_select
@@ -341,7 +339,7 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
         midipulse tick_f = pix_to_tix(current_x());
         int ds = byte_value(m_dataarea_y, m_dataarea_y - drop_y());
         int df = byte_value(m_dataarea_y, m_dataarea_y - current_y() - 1);
-        bool ok = seq_pointer()->change_event_data_range
+        bool ok = track().change_event_data_range
         (
             tick_s, tick_f, m_status, m_cc, ds, df
         );
@@ -387,7 +385,7 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
 
         int ds = byte_value(m_dataarea_y, m_dataarea_y - adj_y_min - 1);
         int df = byte_value(m_dataarea_y, m_dataarea_y - adj_y_max - 1);
-        bool ok = seq_pointer()->change_event_data_range
+        bool ok = track().change_event_data_range
         (
             tick_s, tick_f, m_status, m_cc, ds, df
         );
@@ -400,7 +398,7 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
         tick_s = pix_to_tix(drop_x() - 2);
         tick_f = pix_to_tix(drop_x() + 2);
 
-        bool ok = seq_pointer()->change_event_data_relative
+        bool ok = track().change_event_data_relative
         (
             tick_s, tick_f, m_status, m_cc, adjy
         );

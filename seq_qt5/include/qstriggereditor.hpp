@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-18
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -72,7 +72,7 @@ public:
     qstriggereditor
     (
         performer & perf,
-        seq::pointer seqp,
+        sequence & s,
         qseqeditframe64 * frame,
         int zoom, int snap, int keyheight,
         QWidget * parent, int xoffset

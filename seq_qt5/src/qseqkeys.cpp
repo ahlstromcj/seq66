@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-08-04
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  We've added the feature of a right-click toggling between showing the main
@@ -81,7 +81,7 @@ static const int sc_border_width    = 2;
 qseqkeys::qseqkeys
 (
     performer & p,
-    seq::pointer seqp,
+    sequence & s,
     qseqeditframe64 * frame,
     QWidget * parent,
     int keyheight,
@@ -90,10 +90,9 @@ qseqkeys::qseqkeys
     QWidget             (parent),
     qseqbase
     (
-        p, seqp, frame, c_default_zoom, c_default_snap,
+        p, s, frame, c_default_zoom, c_default_snap,
         keyheight, keyareaheight
     ),
-    m_seq               (seqp),                 /* seq_pointer()        */
     m_font              (),
     m_show_key_names    (usr().key_view()),     /* initial default      */
     m_key               (0),
@@ -229,7 +228,7 @@ qseqkeys::mousePressEvent (QMouseEvent * event)
         convert_y(y, note);
         preview_key(note);
         preview_on(true);
-        seq_pointer()->play_note_on(note);
+        track().play_note_on(note);
     }
     else if (event->button() == Qt::RightButton)
     {
@@ -269,7 +268,7 @@ qseqkeys::mouseReleaseEvent (QMouseEvent * event)
         {
             if (preview_on())
             {
-                seq_pointer()->play_note_off(preview_key());
+                track().play_note_off(preview_key());
                 preview_on(false);
             }
             preview_key(sc_null_key);
@@ -285,7 +284,7 @@ qseqkeys::mouseMoveEvent (QMouseEvent * /* event */)
     {
         if (preview_on())
         {
-            seq_pointer()->play_note_off(preview_key());
+            track().play_note_off(preview_key());
             preview_on(false);
         }
         preview_key(sc_null_key);
@@ -315,8 +314,8 @@ qseqkeys::convert_y (int y, int & note)
  *  occur.
  *
  *  The best solution would be to pass the event along to the qscrollmaster.
- *  But this class doesn't have access to the scroll-master.  We might also try
- *  this in the constructor:
+ *  But this class doesn't have access to the scroll-master.  We might also
+ *  try this in the constructor:
  *
  *      setMouseTracking(false);
  */

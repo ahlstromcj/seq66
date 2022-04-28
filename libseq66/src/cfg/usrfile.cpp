@@ -376,7 +376,7 @@ usrfile::parse ()
         if (count == 1)
         {
             usr().key_height(scratch);
-            (void) next_data_line(file);    // usr().use_new_seqedit()
+            (void) next_data_line(file);
         }
         else
         {

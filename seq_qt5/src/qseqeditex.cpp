@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-12
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -64,8 +64,9 @@ namespace seq66
  *      Provides the performer object to use for interacting with this sequence.
  *
  * \param seqid
- *      Provides the sequence number.  The sequence pointer is looked up using
- *      this number.
+ *      Provides the sequence number. The corresponding seq::pointer is
+ *      obtained from the performer and the reference is pass to the seqedit
+ *      constructor.
  *
  * \param parent
  *      Provides the parent window/widget for this container window.  Defaults
@@ -77,7 +78,6 @@ namespace seq66
 qseqeditex::qseqeditex (performer & p, int seqid, qsmainwnd * parent) :
     QWidget         (nullptr),
     ui              (new Ui::qseqeditex),
-    m_performer     (p),
     m_seq_id        (seqid),
     m_edit_parent   (parent),
     m_edit_frame    (nullptr)
@@ -85,14 +85,18 @@ qseqeditex::qseqeditex (performer & p, int seqid, qsmainwnd * parent) :
     ui->setupUi(this);
 
     QGridLayout * layout = new QGridLayout(this);
-    m_edit_frame = new qseqeditframe64(p, seqid, this);     // no PPQN ???
-    layout->addWidget(m_edit_frame);
+    seq::pointer s = p.sequence_pointer(seqid);
+    if (s)
+    {
+        m_edit_frame = new (std::nothrow) qseqeditframe64(p, *s, this);
+        layout->addWidget(m_edit_frame);
 
-    std::string title = "Pattern #";
-    title += std::to_string(seqid);
-    setWindowTitle(qt(title));
-    show();
-    m_edit_frame->show();
+        std::string title = "Pattern #";
+        title += std::to_string(seqid);
+        setWindowTitle(qt(title));
+        show();
+        m_edit_frame->show();
+    }
 }
 
 /**

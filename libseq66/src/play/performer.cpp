@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-04-25
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -938,7 +938,7 @@ performer::ui_set_clock (bussbyte bus, e_clock clocktype)
  */
 
 std::string
-performer::sequence_label (const sequence & seq) const
+performer::sequence_label (seq::cref seq) const
 {
     std::string result;
     int sn = seq.seq_number();
@@ -989,7 +989,7 @@ performer::sequence_label (seq::number seqno) const
  */
 
 std::string
-performer::sequence_title (const sequence & seq) const
+performer::sequence_title (seq::cref seq) const
 {
     std::string result;
     int sn = seq.seq_number();
@@ -1018,7 +1018,7 @@ performer::sequence_title (const sequence & seq) const
  */
 
 std::string
-performer::sequence_window_title (const sequence & seq) const
+performer::sequence_window_title (seq::cref seq) const
 {
     std::string result = seq_app_name();
     int sn = seq.seq_number();
@@ -2118,7 +2118,7 @@ performer::reset_sequences (bool p)
 }
 
 bool
-performer::repitch_all (const std::string & nmapfile, sequence & s)
+performer::repitch_all (const std::string & nmapfile, seq::ref s)
 {
     bool result = open_note_mapper(nmapfile);
     if (result)
@@ -2131,7 +2131,7 @@ performer::repitch_all (const std::string & nmapfile, sequence & s)
 }
 
 bool
-performer::repitch_selected (const std::string & nmapfile, sequence & s)
+performer::repitch_selected (const std::string & nmapfile, seq::ref s)
 {
     bool result = open_note_mapper(nmapfile);
     if (result)
@@ -2857,13 +2857,13 @@ performer::set_midi_channel (seq::number seqno, int channel)
  */
 
 bool
-performer::set_sequence_name (seq::pointer s, const std::string & name)
+performer::set_sequence_name (seq::ref s, const std::string & name)
 {
-    bool result = bool(s) && (name != s->name());
+    bool result = name != s.name();
     if (result)
     {
-        seq::number seqno = s->seq_number();
-        s->set_name(name);
+        seq::number seqno = s.seq_number();
+        s.set_name(name);
         notify_sequence_change(seqno, performer::change::recreate);
         set_needs_update();             /* tell GUIs to refresh. FIXME  */
     }
@@ -2892,13 +2892,9 @@ performer::set_sequence_name (seq::pointer s, const std::string & name)
  */
 
 bool
-performer::set_recording (seq::pointer s, bool recordon, bool toggle)
+performer::set_recording (seq::ref s, bool recordon, bool toggle)
 {
-    bool result = bool(s);
-    if (result)
-        result = s->set_recording(recordon, toggle);
-
-    return result;
+    return s.set_recording(recordon, toggle);
 }
 
 /**
@@ -2919,8 +2915,12 @@ performer::set_recording (seq::pointer s, bool recordon, bool toggle)
 bool
 performer::set_recording (seq::number seqno, bool recordon, bool toggle)
 {
-    seq::pointer s = get_sequence(seqno);
-    return set_recording(s, recordon, toggle);
+    sequence * s = get_sequence(seqno).get();
+    bool result = not_nullptr(s);
+    if (result)
+        result = set_recording(*s, recordon, toggle);
+
+    return result;
 }
 
 /**
@@ -2935,13 +2935,9 @@ performer::set_recording (seq::number seqno, bool recordon, bool toggle)
  */
 
 bool
-performer::set_quantized_recording (seq::pointer s, bool recordon, bool toggle)
+performer::set_quantized_recording (seq::ref s, bool recordon, bool toggle)
 {
-    bool result = bool(s);
-    if (result)
-        result = s->set_quantized_recording(recordon, toggle);
-
-    return result;
+    return s.set_quantized_recording(recordon, toggle);
 }
 
 /**
@@ -2962,25 +2958,29 @@ performer::set_quantized_recording (seq::pointer s, bool recordon, bool toggle)
 bool
 performer::set_quantized_recording (seq::number seqno, bool recordon, bool toggle)
 {
-    seq::pointer s = get_sequence(seqno);
-    return set_quantized_recording(s, recordon, toggle);
+    sequence * s = get_sequence(seqno).get();
+    bool result = not_nullptr(s);
+    if (result)
+        result = set_quantized_recording(*s, recordon, toggle);
+
+    return result;
 }
 
 bool
 performer::set_tightened_recording (seq::number seqno, bool recordon, bool toggle)
 {
-    seq::pointer s = get_sequence(seqno);
-    return set_tightened_recording(s, recordon, toggle);
+    sequence * s = get_sequence(seqno).get();
+    bool result = not_nullptr(s);
+    if (result)
+        result = set_tightened_recording(*s, recordon, toggle);
+
+    return result;
 }
 
 bool
-performer::set_tightened_recording (seq::pointer s, bool recordon, bool toggle)
+performer::set_tightened_recording (seq::ref s, bool recordon, bool toggle)
 {
-    bool result = bool(s);
-    if (result)
-        result = s->set_tightened_recording(recordon, toggle);
-
-    return result;
+    return s.set_tightened_recording(recordon, toggle);
 }
 
 /**
@@ -3003,13 +3003,9 @@ performer::set_tightened_recording (seq::pointer s, bool recordon, bool toggle)
  */
 
 bool
-performer::set_overwrite_recording (seq::pointer s, bool oactive, bool toggle)
+performer::set_overwrite_recording (seq::ref s, bool oactive, bool toggle)
 {
-    bool result = bool(s);
-    if (result)
-        result = s->set_overwrite_recording(oactive, toggle);
-
-    return result;
+    return s.set_overwrite_recording(oactive, toggle);
 }
 
 /**
@@ -3030,8 +3026,12 @@ performer::set_overwrite_recording (seq::pointer s, bool oactive, bool toggle)
 bool
 performer::set_overwrite_recording (seq::number seqno, bool oactive, bool toggle)
 {
-    seq::pointer s = get_sequence(seqno);
-    return set_overwrite_recording(s, oactive, toggle);
+    sequence * s = get_sequence(seqno).get();
+    bool result = not_nullptr(s);
+    if (result)
+        result = set_overwrite_recording(*s, oactive, toggle);
+
+    return result;
 }
 
 /**
@@ -3049,13 +3049,9 @@ performer::set_overwrite_recording (seq::number seqno, bool oactive, bool toggle
  */
 
 bool
-performer::set_thru (seq::pointer s, bool thruon, bool toggle)
+performer::set_thru (seq::ref s, bool thruon, bool toggle)
 {
-    bool result = bool(s);
-    if (result)
-        result = s->set_thru(thruon, toggle);
-
-    return result;
+    return s.set_thru(thruon, toggle);
 }
 
 /**
@@ -3077,8 +3073,12 @@ performer::set_thru (seq::pointer s, bool thruon, bool toggle)
 bool
 performer::set_thru (seq::number seqno, bool thruon, bool toggle)
 {
-    seq::pointer s = get_sequence(seqno);
-    return set_thru(s, thruon, toggle);
+    sequence * s = get_sequence(seqno).get();
+    bool result = not_nullptr(s);
+    if (result)
+        result = set_thru(*s, thruon, toggle);
+
+    return result;
 }
 
 /*
@@ -5226,7 +5226,7 @@ performer::sequence_playing_toggle (seq::number seqno)
             }
             s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
         }
-        announce_sequence(s, mapper().seq_to_offset(s));
+        announce_sequence(s, mapper().seq_to_offset(*s));
 
         /*
          * If we're in song playback, temporarily block the events until the
@@ -5301,7 +5301,7 @@ performer::replace_for_solo (seq::number seqno)
         );
         off_sequences();
         s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
-        announce_sequence(s, mapper().seq_to_offset(s));
+        announce_sequence(s, mapper().seq_to_offset(*s));
     }
     return result;
 }
@@ -6110,8 +6110,7 @@ performer::loop_control
                 }
                 else if (gm == gridmode::thru)
                 {
-                    seq::pointer s = get_sequence(seqno);
-                    result = set_thru(s, false, true);  /* true --> toggle  */
+                    result = set_thru(seqno, false, true);  /* true --> toggle  */
                 }
                 else if (gm == gridmode::solo)
                 {
@@ -6128,23 +6127,19 @@ performer::loop_control
             }
             else
             {
-                const seq::pointer s = get_sequence(seqno);
-                if (s)
-                {
-                    bool rec = false;                   /* !s->recording()  */
-                    bool toggle = false;
-                    if (a == automation::action::toggle)
-                        toggle = true;
-                    else if (a == automation::action::on)
-                        rec = true;
+                bool rec = false;                   /* !s->recording()  */
+                bool toggle = false;
+                if (a == automation::action::toggle)
+                    toggle = true;
+                else if (a == automation::action::on)
+                    rec = true;
 
-                    if (usr().record_mode() == recordmode::normal)
-                        result = set_recording(s, rec, toggle);
-                    else if (usr().record_mode() == recordmode::quantize)
-                        result = set_quantized_recording(s, rec, toggle);
-                    else if (usr().record_mode() == recordmode::tighten)
-                        result = set_tightened_recording(s, rec, toggle);
-                }
+                if (usr().record_mode() == recordmode::normal)
+                    result = set_recording(seqno, rec, toggle);
+                else if (usr().record_mode() == recordmode::quantize)
+                    result = set_quantized_recording(seqno, rec, toggle);
+                else if (usr().record_mode() == recordmode::tighten)
+                    result = set_tightened_recording(seqno, rec, toggle);
             }
         }
         if (result)

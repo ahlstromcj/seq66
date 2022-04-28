@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-08-19
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -76,7 +76,7 @@ private:
      *  or modify.
      */
 
-    seq::pointer m_seq;
+    sequence & m_seq;
 
     /**
      *  Holds the editable events for this sequence.  This container is what
@@ -195,7 +195,7 @@ private:
 
 public:
 
-    qseventslots (performer & p, qseqeventframe & parent, seq::pointer seqp);
+    qseventslots (performer & p, qseqeventframe & parent, sequence & s);
 
     /**
      *  Let's provide a do-nothing virtual destructor.
@@ -307,7 +307,12 @@ public:
 
 private:
 
-    const seq::pointer seq_pointer () const
+    const sequence & track () const
+    {
+        return m_seq;
+    }
+
+    sequence & track ()
     {
         return m_seq;
     }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-27
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -251,10 +251,8 @@ s_event_items [] =
  *      Provides the performer object to use for interacting with this
  *      sequence.  Among other things, this object provides the active PPQN.
  *
- * \param seqid
- *      Provides the sequence number.  The sequence pointer is looked up using
- *      this number.  This number is also the pattern-slot number for this
- *      sequence and for this window.  Ranges from 0 to 1024.
+ * \param s
+ *      Provides the reference to the sequence represented by this seqedit.
  *
  * \param parent
  *      Provides the parent window/widget for this container window.  Defaults
@@ -267,10 +265,12 @@ s_event_items [] =
 
 qseqeditframe64::qseqeditframe64
 (
-    performer & p, int seqid,
-    QWidget * parent, bool shorter
+    performer & p,
+    sequence & s,
+    QWidget * parent,
+    bool shorter
 ) :
-    qseqframe               (p, seqid, parent),
+    qseqframe               (p, s, parent),
     performer::callbacks    (p),
     ui                      (new Ui::qseqeditframe64),
     m_short_version         (shorter),              /* short_version()  */
@@ -301,66 +301,52 @@ qseqeditframe64::qseqeditframe64
     m_first_event           (max_midibyte()),
     m_first_event_name      ("(no events)"),
     m_have_focus            (false),
-    m_edit_mode             (perf().edit_mode(seqid)),
+    m_edit_mode             (perf().edit_mode(s.seq_number())),
     m_last_record_style     (recordstyle::merge),
     m_timer                 (nullptr)
 {
     std::string seqname = "No sequence!";
     int loopcountmax = 0;
     bool isnewpattern = false;
-    sequence * s = seq_pointer().get();
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);             /* part of issue #4     */
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    if (not_nullptr(s))
+    set_beats_per_bar(track().get_beats_per_bar());
+    set_beat_width(track().get_beat_width());
+    set_measures(track().get_measures());
+    m_scale = track().musical_scale();
+    m_edit_bus = track().seq_midi_bus();
+    m_edit_channel = track().midi_channel();    /* 0-15, null           */
+    seqname = track().name();
+    loopcountmax = track().loop_count_max();
+    initialize_panels();                        /* uses seq_pointer()   */
+    if (usr().global_seq_feature())
     {
-        set_beats_per_bar(s->get_beats_per_bar());
-        set_beat_width(s->get_beat_width());
-        set_measures(s->get_measures());
-        m_scale = s->musical_scale();
-        m_edit_bus = s->seq_midi_bus();
-        m_edit_channel = s->midi_channel();         /* 0-15, null           */
-        seqname = s->name();
-        loopcountmax = s->loop_count_max();
-        initialize_panels();                        /* uses seq_pointer()   */
-        if (usr().global_seq_feature())
-        {
-            set_scale(usr().seqedit_scale());
-            set_key(usr().seqedit_key());
-            set_background_sequence(usr().seqedit_bgsequence());
-            s->musical_scale(usr().seqedit_scale());
-            s->musical_key(usr().seqedit_key());
-            s->background_sequence(usr().seqedit_bgsequence());
-        }
-        else
-        {
-            set_scale(s->musical_scale());
-            set_key(s->musical_key());
-            set_background_sequence(s->background_sequence());
-        }
-        if (s->is_new_pattern())
-        {
-            isnewpattern = true;
-
-            /*
-             *  This check looks only for "Untitled" and no events. Causes
-             *  opening this window to unmute patterns in generic *.mid files.
-             */
-
-            play_change(usr().new_pattern_armed());
-            thru_change(usr().new_pattern_thru());
-            record_change(usr().new_pattern_record());
-            q_record_change(usr().new_pattern_qrecord());
-        }
-    }
-    else
-    {
-        set_beats_per_bar(usr().midi_beats_per_bar());
-        set_beat_width(usr().midi_beat_width());
-        set_measures(1);
         set_scale(usr().seqedit_scale());
         set_key(usr().seqedit_key());
         set_background_sequence(usr().seqedit_bgsequence());
+        track().musical_scale(usr().seqedit_scale());
+        track().musical_key(usr().seqedit_key());
+        track().background_sequence(usr().seqedit_bgsequence());
+    }
+    else
+    {
+        set_scale(track().musical_scale());
+        set_key(track().musical_key());
+        set_background_sequence(track().background_sequence());
+    }
+    if (track().is_new_pattern())
+    {
+        /*
+         *  This check looks only for "Untitled" and no events. Causes
+         *  opening this window to unmute patterns in generic *.mid files.
+         */
+
+        isnewpattern = true;
+        play_change(usr().new_pattern_armed());
+        thru_change(usr().new_pattern_thru());
+        record_change(usr().new_pattern_record());
+        q_record_change(usr().new_pattern_qrecord());
     }
 
     /*
@@ -368,7 +354,7 @@ qseqeditframe64::qseqeditframe64
      */
 
     std::string seqtext("#");
-    seqtext += std::to_string(seqid);
+    seqtext += std::to_string(track().seq_number());
     QString labeltext = qt(seqtext);
     ui->m_label_seqnumber->setText(labeltext);
 
@@ -406,7 +392,6 @@ qseqeditframe64::qseqeditframe64
      */
 
     qt_set_icon(down_xpm, ui->m_button_bpm);
-    // set_beats_per_bar(m_beats_per_bar);
     connect
     (
         ui->m_combo_bpm, SIGNAL(currentTextChanged(const QString &)),
@@ -437,7 +422,6 @@ qseqeditframe64::qseqeditframe64
      */
 
     qt_set_icon(down_xpm, ui->m_button_bw);
-    // set_beat_width(m_beat_width);
     connect
     (
         ui->m_combo_bw, SIGNAL(currentTextChanged(const QString &)),
@@ -455,7 +439,7 @@ qseqeditframe64::qseqeditframe64
      */
 
     std::string mstring = std::to_string(m_measures);
-    (void) fill_combobox(ui->m_combo_length, m_measures_list, mstring);
+    (void) fill_combobox(ui->m_combo_length, measures_list(), mstring);
 
     /*
      * Doesn't seem to be needed, as changing the index also changes the text.
@@ -467,11 +451,7 @@ qseqeditframe64::qseqeditframe64
      *    );
      */
 
-    if (not_nullptr(s))
-        (void) s->unit_measure();        /* must precede set_measures()     */
-
     qt_set_icon(length_short_xpm, ui->m_button_length);
-    // set_measures(m_measures);       // set_measures(get_measures());
     connect
     (
         ui->m_combo_length, SIGNAL(currentTextChanged(const QString &)),
@@ -487,7 +467,7 @@ qseqeditframe64::qseqeditframe64
      * Transposable button.
      */
 
-    bool can_transpose = not_nullptr(s) ? s->transposable() : false ;
+    bool can_transpose = track().transposable();
     if (shorter)
     {
         ui->m_toggle_drum->hide();      /* ui->m_toggle_transpose->hide()   */
@@ -999,15 +979,6 @@ qseqeditframe64::qseqeditframe64
     m_seqroll->progress_follow(seqwidth > scrollwidth);
     ui->m_toggle_follow->setChecked(m_seqroll->progress_follow());
     update_midi_buttons();
-
-    /*
-     *  This code was not present here, but was in the old-style editor and the
-     *  event-editor.  This comment is a reminder.  See qseqeventframe for more
-     *  information.
-     *
-     *      m_seq->seq_in_edit(true);
-     */
-
     set_initialized();
     cb_perf().enregister(this);                             /* notification */
     m_timer = qt_timer(this, "qseqeditframe64", 2, SLOT(conditional_update()));
@@ -1141,20 +1112,23 @@ qseqeditframe64::closeEvent (QCloseEvent * event)
 bool
 qseqeditframe64::on_sequence_change (seq::number seqno, bool /*recreate*/)
 {
-    bool result = seqno == seq_pointer()->seq_number();
+    bool result = seqno == track().seq_number();
     if (result)
         set_dirty();
 
     return result;
 }
 
+/**
+ *  More redraws? Data and event panes?
+ */
+
 bool
 qseqeditframe64::on_automation_change (automation::slot s)
 {
     if (s == automation::slot::start || s == automation::slot::stop)
-    {
-        m_seqroll->set_redraw();                // more? data and event panes?
-    }
+        m_seqroll->set_redraw();
+
     return true;
 }
 
@@ -1174,8 +1148,7 @@ qseqeditframe64::initialize_panels ()
     int height = noteheight * c_notes_count + 1;
     m_seqkeys = new (std::nothrow) qseqkeys
     (
-        perf(), seq_pointer(), this, ui->keysScrollArea,
-        noteheight, height
+        perf(), track(), this, ui->keysScrollArea, noteheight, height
     );
     ui->keysScrollArea->setWidget(m_seqkeys);
     ui->keysScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1183,8 +1156,7 @@ qseqeditframe64::initialize_panels ()
     ui->keysScrollArea->verticalScrollBar()->setRange(0, height);
     m_seqtime = new (std::nothrow) qseqtime
     (
-        perf(), seq_pointer(), this,
-        zoom(), ui->timeScrollArea
+        perf(), track(), this, zoom(), ui->timeScrollArea
     );
     ui->timeScrollArea->setWidget(m_seqtime);
     ui->timeScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1206,9 +1178,8 @@ qseqeditframe64::initialize_panels ()
 
     m_seqroll = new (std::nothrow) qseqroll
     (
-        perf(), seq_pointer(), this,
-        m_seqkeys, zoom(), m_snap, sequence::editmode::note,
-        noteheight, height
+        perf(), track(), this, m_seqkeys, zoom(),
+        m_snap, sequence::editmode::note, noteheight, height
     );
     ui->rollScrollArea->setWidget(m_seqroll);
     ui->rollScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -1216,8 +1187,7 @@ qseqeditframe64::initialize_panels ()
     m_seqroll->update_edit_mode(m_edit_mode);
     m_seqdata = new (std::nothrow) qseqdata
     (
-        perf(), seq_pointer(), this,
-        zoom(), m_snap, ui->dataScrollArea,
+        perf(), track(), this, zoom(), m_snap, ui->dataScrollArea,
         short_version() ? 64 : 0                /* 0 means "normal height"  */
     );
     ui->dataScrollArea->setWidget(m_seqdata);
@@ -1225,8 +1195,8 @@ qseqeditframe64::initialize_panels ()
     ui->dataScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_seqevent = new (std::nothrow) qstriggereditor
     (
-        perf(), seq_pointer(), this,
-        zoom(), m_snap, noteheight, ui->eventScrollArea, 0
+        perf(), track(), this, zoom(), m_snap,
+        noteheight, ui->eventScrollArea, 0
     );
     ui->eventScrollArea->setWidget(m_seqevent);
     ui->eventScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1254,64 +1224,64 @@ qseqeditframe64::initialize_panels ()
 void
 qseqeditframe64::conditional_update ()
 {
-    if (seq_pointer())
+    bool expandrec = track().expand_recording();
+    if (expandrec)
     {
-        bool expandrec = seq_pointer()->expand_recording();
-        if (expandrec)
-        {
-            set_measures(get_measures() + 1);
-            follow_progress(expandrec);         /* keep up with progress    */
-        }
-        else if (not_nullptr(m_seqroll) && m_seqroll->progress_follow())
-        {
-            follow_progress();
-        }
-        if (m_measures != get_measures())
-        {
-            m_measures = get_measures();
-            std::string mstring = std::to_string(m_measures);
-            int lenindex = measures_list().index(m_measures);
-            if (lenindex >= 0)
-                ui->m_combo_length->setCurrentIndex(lenindex);
+        set_measures(get_measures() + 1);
+        follow_progress(expandrec);         /* keep up with progress    */
+    }
+    else if (not_nullptr(m_seqroll) && m_seqroll->progress_follow())
+    {
+        follow_progress();
+    }
+    if (m_measures != get_measures())
+    {
+        m_measures = get_measures();
 
-            ui->m_combo_length->setEditText(qt(mstring));
-        }
-        if (m_beats_per_bar != seq_pointer()->get_beats_per_bar())
-        {
-            m_beats_per_bar = seq_pointer()->get_beats_per_bar();
-            std::string mstring = std::to_string(m_beats_per_bar);
-            int lenindex = beats_per_bar_list().index(m_beats_per_bar);
-            if (lenindex >= 0)
-                ui->m_combo_bpm->setCurrentIndex(lenindex);
+        std::string mstring = std::to_string(m_measures);
+        int lenindex = measures_list().index(m_measures);
+        if (lenindex >= 0)
+            ui->m_combo_length->setCurrentIndex(lenindex);
 
-            ui->m_combo_bpm->setEditText(qt(mstring));
-        }
-        if (m_beat_width != seq_pointer()->get_beat_width())
-        {
-            m_beat_width = seq_pointer()->get_beat_width();
-            std::string mstring = std::to_string(m_beat_width);
-            int lenindex = beatwidth_list().index(m_beat_width);
-            if (lenindex >= 0)
-                ui->m_combo_bw->setCurrentIndex(lenindex);
+        ui->m_combo_length->setEditText(qt(mstring));
+    }
+    if (m_beats_per_bar != track().get_beats_per_bar())
+    {
+        m_beats_per_bar = track().get_beats_per_bar();
 
-            ui->m_combo_bw->setEditText(qt(mstring));
-        }
-        if (seq_pointer()->check_loop_reset())
-        {
-            /*
-             * Now we need to update the event and data panes.  Note that the
-             * notes update during the next pass through the loop only if more
-             * notes come in on the input buss.
-             */
+        std::string mstring = std::to_string(m_beats_per_bar);
+        int lenindex = beats_per_bar_list().index(m_beats_per_bar);
+        if (lenindex >= 0)
+            ui->m_combo_bpm->setCurrentIndex(lenindex);
 
-            set_dirty();
-            update_midi_buttons();              /* mirror current states    */
-        }
+        ui->m_combo_bpm->setEditText(qt(mstring));
+    }
+    if (m_beat_width != track().get_beat_width())
+    {
+        m_beat_width = track().get_beat_width();
+        std::string mstring = std::to_string(m_beat_width);
+        int lenindex = beatwidth_list().index(m_beat_width);
+        if (lenindex >= 0)
+            ui->m_combo_bw->setCurrentIndex(lenindex);
+
+        ui->m_combo_bw->setEditText(qt(mstring));
+    }
+    if (track().check_loop_reset())
+    {
+        /*
+         * Now we need to update the event and data panes.  The notes update
+         * during the next pass through the loop only if more notes come in on
+         * the input buss.
+         */
+
+        set_dirty();
+        update_midi_buttons();              /* mirror current states    */
     }
 }
 
 /**
- *  Checks if the new time-signature results in a l
+ *  Checks if the new time-signature results in a dropping events.
+ *
  *  Interesting: divide by 0 here yields the value "inf", not an exception.
  */
 
@@ -1322,20 +1292,24 @@ qseqeditframe64::would_truncate (int bpb, int bw)
     if (bpb > 0 && bw > 0)                      /* do only after start-up   */
     {
         double fraction = double(bpb) / double(bw);
-        midipulse max = seq_pointer()->get_max_timestamp();
-        midipulse newlength = midipulse(seq_pointer()->get_length() * fraction);
+        midipulse max = track().get_max_timestamp();
+        midipulse newlength = midipulse(track().get_length() * fraction);
         result = newlength < max;
         if (result)
         {
             result = ! qt_prompt_ok             /* Cancel == ack the danger */
             (
-                "This time-signature will cause loss of events.",
-                "Cancel to avoid event truncation."
+                "This time-signature will drop events.",
+                "Cancel to avoid that."
             );
         }
     }
     return result;
 }
+
+/**
+ *  Checks if a change in measures would truncate events.
+ */
 
 bool
 qseqeditframe64::would_truncate (int m)
@@ -1343,15 +1317,15 @@ qseqeditframe64::would_truncate (int m)
     bool result = false;                        /* no problem by default    */
     if (m > 0 && m <= 99999)                    /* a sanity check only      */
     {
-        midipulse max = seq_pointer()->get_max_timestamp();
-        midipulse newlength = midipulse(seq_pointer()->measures_to_ticks(m));
+        midipulse max = track().get_max_timestamp();
+        midipulse newlength = midipulse(track().measures_to_ticks(m));
         result = newlength < max;
         if (result)
         {
             result = ! qt_prompt_ok             /* Cancel == ack the danger */
             (
-                "Reducing measures here will cause loss of events.",
-                "Cancel to avoid event truncation."
+                "Reducing measures here will drop events.",
+                "Cancel to avoid that."
             );
         }
     }
@@ -1366,21 +1340,21 @@ void
 qseqeditframe64::update_seq_name ()
 {
     std::string name = ui->m_entry_name->text().toStdString();
-    if (perf().set_sequence_name(seq_pointer(), name))
+    if (perf().set_sequence_name(track(), name))
         set_dirty();
 }
 
 /**
  *  Handles updates to the beats/measure for only the current sequences.
- *  See the similar function in qsmainwnd.
+ *  See the similar function in qsmainwnd.  Not needed, it seems.
+ *
+ *  void
+ *  qseqeditframe64::update_beats_per_bar (int index)
+ *  {
+ *      int bpb = beats_per_bar_list().ctoi(index);
+ *      set_beats_per_bar(bpb);
+ *  }
  */
-
-void
-qseqeditframe64::update_beats_per_bar (int index)
-{
-    int bpb = beats_per_bar_list().ctoi(index);
-    set_beats_per_bar(bpb);
-}
 
 void
 qseqeditframe64::text_beats_per_bar (const QString & text)
@@ -1416,19 +1390,15 @@ qseqeditframe64::set_beats_per_bar (int bpb)
     {
         if (would_truncate(bpb, m_beat_width))
         {
-            reset_beat_width();
+            reset_beats_per_bar();
         }
         else
         {
-            sequence * s = seq_pointer().get();
-            if (not_nullptr(s))
-            {
-                int measures = get_measures();
-                m_beats_per_bar = bpb;
-                s->set_beats_per_bar(bpb);
-                s->apply_length(bpb, 0, 0, measures);
-                set_dirty();
-            }
+            int measures = get_measures();
+            m_beats_per_bar = bpb;
+            track().set_beats_per_bar(bpb);
+            track().apply_length(bpb, 0, 0, measures);
+            set_dirty();
         }
     }
 }
@@ -1452,11 +1422,9 @@ qseqeditframe64::set_measures (int m)
         }
         else
         {
-            bool changed = m_measures != m;
             m_measures = m;
-            seq_pointer()->apply_length(m);
-            if (changed)
-                set_dirty();
+            track().apply_length(m);
+            set_dirty();
         }
     }
 }
@@ -1468,7 +1436,8 @@ qseqeditframe64::set_measures (int m)
 void
 qseqeditframe64::reset_measures ()
 {
-    ui->m_combo_length->setCurrentIndex(0);
+    int index = beatwidth_list().index(m_measures);
+    ui->m_combo_length->setCurrentIndex(index);
     set_dirty();
 }
 
@@ -1476,27 +1445,27 @@ qseqeditframe64::reset_measures ()
  *  Calculates the measures in the current sequence with its current status.
  *
  * \return
- *      Returns the calculated number of measures in the sequence managed by this
- *      object.
+ *      Returns the calculated number of measures in the sequence managed by
+ *      this object.
  */
 
 int
 qseqeditframe64::get_measures ()
 {
-    return seq_pointer()->get_measures();
+    return track().get_measures();
 }
 
 /**
  *  Handles updates to the beat width for only the current sequences.
  *  See the similar function in qsmainwnd.
+ *
+ *  void
+ *  qseqeditframe64::update_beat_width (int index)
+ *  {
+ *      int bw = beatwidth_list().ctoi(index);
+ *      set_beat_width(bw);
+ *  }
  */
-
-void
-qseqeditframe64::update_beat_width (int index)
-{
-    int bw = beatwidth_list().ctoi(index);
-    set_beat_width(bw);
-}
 
 void
 qseqeditframe64::text_beat_width (const QString & text)
@@ -1548,15 +1517,11 @@ qseqeditframe64::set_beat_width (int bw)
             }
             if (rational)
             {
-                sequence * s = seq_pointer().get();
-                if (not_nullptr(s))
-                {
-                    m_beat_width = bw;
-                    int measures = get_measures();
-                    s->set_beat_width(bw);
-                    s->apply_length(0, 0, bw, measures);
-                    set_dirty();
-                }
+                int measures = get_measures();
+                m_beat_width = bw;
+                track().set_beat_width(bw);
+                track().apply_length(0, 0, bw, measures);
+                set_dirty();
             }
             else
                 reset_beat_width();
@@ -1566,14 +1531,14 @@ qseqeditframe64::set_beat_width (int bw)
 
 /**
  *  Handles updates to the pattern length.
+ *
+ *  void
+ *  qseqeditframe64::update_measures (int index)
+ *  {
+ *      int m = measures_list().ctoi(index);
+ *      set_measures(m);
+ *  }
  */
-
-void
-qseqeditframe64::update_measures (int index)
-{
-    int m = m_measures_list.ctoi(index);
-    set_measures(m);
-}
 
 void
 qseqeditframe64::text_measures (const QString & text)
@@ -1594,12 +1559,12 @@ qseqeditframe64::text_measures (const QString & text)
 void
 qseqeditframe64::next_measures ()
 {
-    int index = m_measures_list.index(m_measures);
-    if (++index >= m_measures_list.count())
+    int index = measures_list().index(m_measures);
+    if (++index >= measures_list().count())
         index = 0;
 
     ui->m_combo_length->setCurrentIndex(index);
-    int m = m_measures_list.ctoi(index);
+    int m = measures_list().ctoi(index);
     set_measures(m);
 }
 
@@ -1610,7 +1575,7 @@ qseqeditframe64::next_measures ()
 void
 qseqeditframe64::transpose (bool ischecked)
 {
-    seq_pointer()->set_transposable(ischecked);
+    track().set_transposable(ischecked);
     set_transpose_image(ischecked);
     ui->m_map_notes->setEnabled(ischecked);
 }
@@ -1725,11 +1690,11 @@ qseqeditframe64::reset_midi_bus ()
 void
 qseqeditframe64::set_midi_bus (int bus, bool user_change)
 {
-    bussbyte initialbus = seq_pointer()->seq_midi_bus();
+    bussbyte initialbus = track().seq_midi_bus();
     bussbyte b = bussbyte(bus);
     if (b != initialbus)
     {
-        seq_pointer()->set_midi_bus(b, user_change);
+        track().set_midi_bus(b, user_change);
         m_edit_bus = bus;
         if (user_change)
         {
@@ -1785,7 +1750,7 @@ qseqeditframe64::repopulate_midich_combo (int buss)
         }
     }
 
-    int ch = seq_pointer()->midi_channel();
+    int ch = track().midi_channel();
     if (is_null_channel(ch))
         ch = c_midichannel_max;
 
@@ -1810,9 +1775,9 @@ qseqeditframe64::reset_midi_channel ()
 }
 
 /**
- *  Selects the given MIDI channel parameter in the main sequence object,
- *  so that it will use that channel.  If "Free" is selected, all that happens
- *  is that the pattern is set to "no-channel" mode for MIDI output.
+ *  Selects the given MIDI channel parameter in the main sequence object, so
+ *  that it will use that channel.  If "Free" is selected, all that happens is
+ *  that the pattern is set to "no-channel" mode for MIDI output.
  *
  * \param ch
  *      The MIDI channel value to set.
@@ -1825,7 +1790,7 @@ qseqeditframe64::reset_midi_channel ()
 void
 qseqeditframe64::set_midi_channel (int ch, bool user_change)
 {
-    int initialchan = seq_pointer()->seq_midi_channel();
+    int initialchan = track().seq_midi_channel();
     if (ch != initialchan || ! user_change)
     {
         int chindex = ch;
@@ -1835,7 +1800,7 @@ qseqeditframe64::set_midi_channel (int ch, bool user_change)
             chindex = c_midichannel_max;                    /* "Free" */
             channel = null_channel();
         }
-        if (seq_pointer()->set_midi_channel(channel, user_change))
+        if (track().set_midi_channel(channel, user_change))
         {
             m_edit_channel = channel;
             if (is_null_channel(channel))
@@ -1865,7 +1830,7 @@ qseqeditframe64::set_midi_channel (int ch, bool user_change)
 void
 qseqeditframe64::undo ()
 {
-    seq_pointer()->pop_undo();
+    track().pop_undo();
 }
 
 /**
@@ -1875,7 +1840,7 @@ qseqeditframe64::undo ()
 void
 qseqeditframe64::redo ()
 {
-    seq_pointer()->pop_redo();
+    track().pop_redo();
     set_dirty();
 }
 
@@ -2033,8 +1998,8 @@ qseqeditframe64::popup_tool_menu ()
 void
 qseqeditframe64::select_all_notes ()
 {
-    seq_pointer()->select_events(EVENT_NOTE_ON, 0);
-    seq_pointer()->select_events(EVENT_NOTE_OFF, 0);
+    track().select_events(EVENT_NOTE_ON, 0);
+    track().select_events(EVENT_NOTE_OFF, 0);
 }
 
 /**
@@ -2044,8 +2009,8 @@ qseqeditframe64::select_all_notes ()
 void
 qseqeditframe64::inverse_note_selection ()
 {
-    seq_pointer()->select_events(EVENT_NOTE_ON, 0, true);
-    seq_pointer()->select_events(EVENT_NOTE_OFF, 0, true);
+    track().select_events(EVENT_NOTE_ON, 0, true);
+    track().select_events(EVENT_NOTE_OFF, 0, true);
 }
 
 /**
@@ -2055,7 +2020,7 @@ qseqeditframe64::inverse_note_selection ()
 void
 qseqeditframe64::quantize_notes ()
 {
-    seq_pointer()->push_quantize(EVENT_NOTE_ON, 0, 1, false);
+    track().push_quantize(EVENT_NOTE_ON, 0, 1, false);
 }
 
 /**
@@ -2065,7 +2030,7 @@ qseqeditframe64::quantize_notes ()
 void
 qseqeditframe64::tighten_notes ()
 {
-    seq_pointer()->push_quantize(EVENT_NOTE_ON, 0, 2, true);
+    track().push_quantize(EVENT_NOTE_ON, 0, 2, true);
 }
 
 /**
@@ -2077,7 +2042,7 @@ qseqeditframe64::transpose_notes ()
 {
     QAction * senderAction = (QAction *) sender();
     int transposeval = senderAction->data().toInt();
-    seq_pointer()->transpose_notes(transposeval, 0);
+    track().transpose_notes(transposeval, 0);
 }
 
 void
@@ -2085,7 +2050,7 @@ qseqeditframe64::transpose_harmonic ()
 {
     QAction * senderAction = (QAction *) sender();
     int transposeval = senderAction->data().toInt();
-    seq_pointer()->transpose_notes(transposeval, m_scale, m_key);
+    track().transpose_notes(transposeval, m_scale, m_key);
 }
 
 /**
@@ -2230,7 +2195,7 @@ qseqeditframe64::set_background_sequence (int seqnum, bool user_change)
                 if (usr().global_seq_feature())
                     usr().seqedit_bgsequence(seqnum);
 
-                seq_pointer()->background_sequence(seqnum, user_change);
+                track().background_sequence(seqnum, user_change);
                 if (not_nullptr(m_seqroll))
                     m_seqroll->set_background_sequence(true, seqnum);
 
@@ -2278,8 +2243,8 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
             snprintf(type, sizeof type, "Aftertouch");
         else if (status == EVENT_CONTROL_CHANGE)
         {
-            int bus = int(seq_pointer()->seq_midi_bus());
-            int channel = int(seq_pointer()->seq_midi_channel());
+            int bus = int(track().seq_midi_bus());
+            int channel = int(track().seq_midi_channel());
             std::string ccname = usr().controller_active(bus, channel, control) ?
                 usr().controller_name(bus, channel, control) :
                 controller_name(control) ;
@@ -2304,13 +2269,7 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
 }
 
 /**
- * Follow-progress callback.
- */
-
-/**
- *  Passes the Follow status to the qseqroll object.  When qseqroll has been
- *  upgraded to support follow-progress, then enable this macro in
- *  libseq66/include/seq66_features.h.  Also applies to qperfroll.
+ * Follow-progress callback.  Passes the Follow status to the qseqroll object.
  */
 
 void
@@ -2346,15 +2305,15 @@ qseqeditframe64::follow_progress (bool expand)
     if (w > 0)              /* w is constant, e.g. around 742 by default    */
     {
         QScrollBar * hadjust = ui->rollScrollArea->h_scroll();
-        if (seq_pointer()->expanded_recording() && expand)
+        if (track().expanded_recording() && expand)
         {
-            midipulse prog = seq_pointer()->progress_value();
+            midipulse prog = track().progress_value();
             int newx = tix_to_pix(prog);
             hadjust->setValue(newx);
         }
         else                                        /* use for non-recording */
         {
-            midipulse progtick = seq_pointer()->get_last_tick();
+            midipulse progtick = track().get_last_tick();
             int progx = tix_to_pix(progtick);
             int page = progx / w;
             int oldpage = m_seqroll->scroll_page();
@@ -2362,8 +2321,8 @@ qseqeditframe64::follow_progress (bool expand)
             if (newpage)
             {
                 /*
-                 * Here, we need to set some kind of flag for
-                 * clearing the viewport before repainting.
+                 * Here, we need to set some kind of flag for clearing the
+                 * viewport before repainting.
                  */
 
                 m_seqroll->scroll_page(page);
@@ -2428,12 +2387,12 @@ qseqeditframe64::update_grid_snap (int index)
  *  interval.  It is passed to the seqroll, seqevent, and sequence objects, as
  *  well.
  *
- *  The default initial snap is the default PPQN divided by 4, or the equivalent
- *  of a 16th note (48 ticks).  The snap divisor is 192 * 4 / 48 or 16.
+ *  The default initial snap is the default PPQN divided by 4, or the
+ *  equivalent of a 16th note (48 ticks).  The snap divisor is 192 * 4 / 48 or
+ *  16.
  *
- * \param s
- *      The prospective snap value to set.  It is checked only to make sure it
- *      is greater than 0, to avoid a numeric exception.
+ * \param s The prospective snap value to set.  It is checked only to make
+ * sure it is greater than 0, to avoid a numeric exception.
  */
 
 void
@@ -2445,7 +2404,7 @@ qseqeditframe64::set_snap (midipulse s)
         if (not_nullptr(m_seqroll))
             m_seqroll->set_snap(s);
 
-        seq_pointer()->snap(s);
+        track().snap(s);
         m_seqevent->set_snap(s);
     }
 }
@@ -2458,8 +2417,8 @@ qseqeditframe64::reset_grid_snap ()
 }
 
 /**
- *  Updates the note-length values and control based on the index.  It is passed
- *  to the set_note_length() function for processing.
+ *  Updates the note-length values and control based on the index.  It is
+ *  passed to the set_note_length() function for processing.
  *
  * \param index
  *      Provides the index selected from the combo-box.
@@ -2644,8 +2603,7 @@ qseqeditframe64::update_key (int index)
 void
 qseqeditframe64::set_key (int key, bool user_change)
 {
-    sequence * s = seq_pointer().get();
-    if (legal_key(key) && not_nullptr(s))
+    if (legal_key(key))
     {
         m_key = key;
         ui->m_combo_key->setCurrentIndex(key);
@@ -2658,7 +2616,7 @@ qseqeditframe64::set_key (int key, bool user_change)
         if (usr().global_seq_feature())
             usr().seqedit_key(key);
 
-        s->musical_key(midibyte(key), user_change);
+        track().musical_key(midibyte(key), user_change);
         set_dirty();
     }
     else
@@ -2688,8 +2646,7 @@ qseqeditframe64::update_scale (int index)
 void
 qseqeditframe64::set_scale (int scale, bool user_change)
 {
-    sequence * s = seq_pointer().get();
-    if (legal_scale(scale) && not_nullptr(s))
+    if (legal_scale(scale))
     {
         m_scale = scale;
         ui->m_combo_scale->setCurrentIndex(scale);
@@ -2699,7 +2656,7 @@ qseqeditframe64::set_scale (int scale, bool user_change)
         if (usr().global_seq_feature())
             usr().seqedit_scale(scale);
 
-        s->musical_scale(midibyte(scale), user_change);
+        track().musical_scale(midibyte(scale), user_change);
         if (not_nullptr(m_tools_harmonic))
             m_tools_harmonic->setEnabled(m_scale > 0);
 
@@ -2731,7 +2688,7 @@ qseqeditframe64::set_editor_mode (sequence::editmode mode)
     if (mode != m_edit_mode)
     {
         m_edit_mode = mode;
-        perf().edit_mode(seq_pointer()->seq_number(), mode);
+        perf().edit_mode(track().seq_number(), mode);
         if (not_nullptr(m_seqroll))
             m_seqroll->update_edit_mode(mode);
 
@@ -2850,11 +2807,11 @@ qseqeditframe64::set_event_entry
 }
 
 /**
- *  Populates the event-selection menu that drops from the "Event" button
- *  in the bottom row of the Pattern editor.
+ *  Populates the event-selection menu that drops from the "Event" button in
+ *  the bottom row of the Pattern editor.
  *
- *  This menu has a large number of items.  They are filled in by
- *  code, but can also be loaded from seq66.usr, qpseq66.usr, etc.
+ *  This menu has a large number of items.  They are filled in by code, but
+ *  can also be loaded from seq66.usr, qpseq66.usr, etc.
  *
  *  This function first loops through all of the existing events in the
  *  sequence in order to determine what events exist in it.  If any of the
@@ -2888,11 +2845,10 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     bool pitch_wheel = false;
     bool tempo = false;
     midibyte status = 0, cc = 0;
-    seq::pointer s = seq_pointer();
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
-    for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
+    for (auto cev = track().cbegin(); ! track().cend(cev); ++cev)
     {
-        if (! s->get_next_event(status, cc, cev))
+        if (! track().get_next_event(status, cc, cev))
             break;
 
         status = event::normalized_status(status);      /* mask off channel */
@@ -2909,15 +2865,15 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     }
 
     /*
-     * Currently the only meta event that can be edited is tempo.
-     * The meta-match function keeps going until it finds the meta event or
-     * it ends.  All we care here is if one exists.
+     * Currently the only meta event that can be edited is tempo.  The
+     * meta-match function keeps going until it finds the meta event or it
+     * ends.  All we care here is if one exists.
      */
 
-    auto cev = s->cbegin();
-    if (! s->cend(cev))
+    auto cev = track().cbegin();
+    if (! track().cend(cev))
     {
-        if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
+        if (track().get_next_meta_match(EVENT_META_SET_TEMPO, cev))
             tempo = true;
     }
     if (not_nullptr(m_events_popup))
@@ -2950,10 +2906,10 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
         for (int item = 0; item < itemcount; ++item)
         {
             /*
-             * Do we really want the default controller name to start?
-             * There was a bug in Seq24 where the instrument number was use re
-             * 1 to get the proper instrument... it needs to be decremented to
-             * be re 0.
+             * Do we really want the default controller name to start?  There
+             * was a bug in Seq24 where the instrument number was use re 1 to
+             * get the proper instrument... it needs to be decremented to be
+             * re 0.
              */
 
             std::string cname(controller_name(offset + item));
@@ -3009,9 +2965,9 @@ qseqeditframe64::repopulate_usr_combos (int buss, int channel)
 
 /**
  *  Populates the mini event-selection menu that drops from the mini-"Event"
- *  button in the bottom row of the Pattern editor.
- *  This menu has a much smaller number of items, only the ones that actually
- *  exist in the track/pattern/loop/sequence.
+ *  button in the bottom row of the Pattern editor.  This menu has a much
+ *  smaller number of items, only the ones that actually exist in the
+ *  track/pattern/loop/sequence.
  *
  * \param buss
  *      The selected bus number.
@@ -3033,11 +2989,10 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     bool tempo = false;
     bool any_events = false;
     midibyte status = 0, cc = 0;
-    seq::pointer s = seq_pointer();
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
-    for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
+    for (auto cev = track().cbegin(); ! track().cend(cev); ++cev)
     {
-        if (! s->get_next_event(status, cc, cev))
+        if (! track().get_next_event(status, cc, cev))
             break;
 
         status = event::normalized_status(status);      /* mask off channel */
@@ -3073,10 +3028,10 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
         }
     }
 
-    auto cev = s->cbegin();
-    if (! s->cend(cev))
+    auto cev = track().cbegin();
+    if (! track().cend(cev))
     {
-        if (s->get_next_meta_match(EVENT_META_SET_TEMPO, cev))
+        if (track().get_next_meta_match(EVENT_META_SET_TEMPO, cev))
             tempo = any_events = true;
     }
     if (not_nullptr(m_minidata_popup))
@@ -3135,7 +3090,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     if (any_events)
     {
         /*
-         * Here, we would like to pre-select the first kind of event found,
+         * Here, we'd like to pre-select the first kind of event found,
          * somehow.
          */
 
@@ -3160,7 +3115,7 @@ qseqeditframe64::show_lfo_frame ()
 {
     if (is_nullptr(m_lfo_wnd))
     {
-        m_lfo_wnd = new qlfoframe(perf(), seq_pointer(), *m_seqdata);
+        m_lfo_wnd = new (std::nothrow) qlfoframe(perf(), track(), *m_seqdata);
         if (not_nullptr(m_lfo_wnd))
             m_lfo_wnd->show();
     }
@@ -3173,7 +3128,9 @@ qseqeditframe64::show_pattern_fix ()
 {
     if (is_nullptr(m_patternfix_wnd))
     {
-        m_patternfix_wnd = new qpatternfix (perf(), seq_pointer(), this);
+        m_patternfix_wnd = new (std::nothrow)
+            qpatternfix(perf(), track(), this);
+
         if (not_nullptr(m_patternfix_wnd))
             m_patternfix_wnd->show();
     }
@@ -3195,22 +3152,22 @@ qseqeditframe64::update_midi_buttons ()
     static const char * const s_qrec_on = "Quantized Record Active";
     static const char * const s_qrec_off = "Quantized Record Inactive";
 
-    bool thru_active = seq_pointer()->thru();
+    bool thru_active = track().thru();
     ui->m_toggle_thru->setChecked(thru_active);
     ui->m_toggle_thru->setToolTip(thru_active ? s_thru_on : s_thru_off);
     qt_set_icon(thru_active ? thru_on_xpm : thru_xpm, ui->m_toggle_thru);
 
-    bool record_active = seq_pointer()->recording();
+    bool record_active = track().recording();
     ui->m_toggle_record->setChecked(record_active);
     ui->m_toggle_record->setToolTip(record_active ? s_rec_on : s_rec_off);
     qt_set_icon(record_active ? rec_on_xpm : rec_xpm, ui->m_toggle_record);
 
-    bool qrecord_active = seq_pointer()->quantized_recording();
+    bool qrecord_active = track().quantized_recording();
     ui->m_toggle_qrecord->setChecked(qrecord_active);
     ui->m_toggle_qrecord->setToolTip(qrecord_active ? s_qrec_on : s_qrec_off);
     qt_set_icon(qrecord_active ? q_rec_on_xpm : q_rec_xpm, ui->m_toggle_qrecord);
 
-    bool playing = seq_pointer()->playing();
+    bool playing = track().playing();
     ui->m_toggle_play->setChecked(playing);
     ui->m_toggle_play->setToolTip(playing ? "Armed" : "Muted");
     qt_set_icon(playing ? play_on_xpm : play_xpm, ui->m_toggle_play);
@@ -3223,7 +3180,7 @@ qseqeditframe64::update_midi_buttons ()
 void
 qseqeditframe64::play_change (bool ischecked)
 {
-    if (seq_pointer()->set_playing(ischecked))
+    if (track().set_playing(ischecked))
         update_midi_buttons();
 }
 
@@ -3234,7 +3191,7 @@ qseqeditframe64::play_change (bool ischecked)
 void
 qseqeditframe64::record_change (bool ischecked)
 {
-    if (perf().set_recording(seq_pointer(), ischecked, false))
+    if (perf().set_recording(track(), ischecked, false))
         update_midi_buttons();
 }
 
@@ -3259,9 +3216,9 @@ qseqeditframe64::q_record_change (bool ischecked)
      */
 
     if (ischecked)
-        (void) (perf().set_recording(seq_pointer(), false, false));
+        (void) (perf().set_recording(track(), false, false));
 
-    if (perf().set_quantized_recording(seq_pointer(), ischecked, false))
+    if (perf().set_quantized_recording(track(), ischecked, false))
         update_midi_buttons();
 }
 
@@ -3272,7 +3229,7 @@ qseqeditframe64::q_record_change (bool ischecked)
 void
 qseqeditframe64::thru_change (bool ischecked)
 {
-    if (perf().set_thru(seq_pointer(), ischecked, false))
+    if (perf().set_thru(track(), ischecked, false))
         update_midi_buttons();
 }
 
@@ -3286,7 +3243,7 @@ qseqeditframe64::update_record_type (int index)
 {
     int lroneshot = usr().grid_record_code(recordstyle::oneshot);
     int lrreset = usr().grid_record_code(recordstyle::oneshot_reset);
-    bool ok = seq_pointer()->update_recording(index);
+    bool ok = track().update_recording(index);
     enable_combobox_item(ui->m_combo_rec_type, lrreset, index == lroneshot);
     if (index == lrreset)                               /* oneshot reset    */
     {
@@ -3315,7 +3272,7 @@ qseqeditframe64::update_recording_volume (int index)
 void
 qseqeditframe64::update_loop_count (int value)
 {
-    if (seq_pointer()->loop_count_max(value))
+    if (track().loop_count_max(value))
         set_dirty();
 }
 
@@ -3340,7 +3297,7 @@ qseqeditframe64::reset_recording_volume ()
 void
 qseqeditframe64::set_recording_volume (int recvol)
 {
-    seq_pointer()->set_rec_vol(recvol); /* save to the sequence settings    */
+    track().set_rec_vol(recvol);        /* save to the sequence settings    */
     usr().velocity_override(recvol);    /* save to the "usr" config file    */
 }
 
@@ -3354,7 +3311,7 @@ qseqeditframe64::set_dirty ()
         m_seqdata->set_dirty();         /* update(); neither cause refresh  */
         m_seqevent->set_dirty();        /* how about this? same!            */
         m_seqtime->set_dirty();         /* any comment?                     */
-        seq_pointer()->modify(false);   /* do NOT do notify-change!         */
+        track().modify(false);          /* do NOT do notify-change!         */
     }
     update_draw_geometry();
 }
@@ -3388,7 +3345,7 @@ qseqeditframe64::update_draw_geometry()
 void
 qseqeditframe64::do_action (eventlist::edit action, int var)
 {
-    seq_pointer()->handle_edit_action(action, var);
+    track().handle_edit_action(action, var);
     set_dirty();
 }
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-27
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1535,6 +1535,19 @@ qsmainwnd::conditional_update ()
             m_beat_ind->update();
         }
     }
+
+#if 0
+    /*
+     * Added 2022-04-28.  Too much?
+     * We need a flag to hold the saved status.....
+     */
+
+    bool modded = cb_perf().modified();
+    enable_save(modded);                        /* or use redo flag?    */
+    if (modded)
+        m_is_title_dirty = true;                /* redo test removed    */
+#endif
+
     if (m_is_title_dirty)
     {
         (void) refresh_captions();
@@ -2102,8 +2115,8 @@ qsmainwnd::showqsbuildinfo ()
 void
 qsmainwnd::load_editor (int seqid)
 {
-    seq::pointer seq = cb_perf().get_sequence(seqid);
-    bool ok = bool(seq);
+    seq::pointer s = cb_perf().get_sequence(seqid);
+    bool ok = bool(s);
 
 #if defined DISALLOW_EDITOR_CONFLICT
     if (ok)
@@ -2121,7 +2134,7 @@ qsmainwnd::load_editor (int seqid)
 
         m_edit_frame = new (std::nothrow) qseqeditframe64
         (
-            cb_perf(), seqid, ui->EditTab, true             /* short one    */
+            cb_perf(), *s, ui->EditTab, true                /* short frame  */
         );
         ui->EditTabLayout->addWidget(m_edit_frame);
         m_edit_frame->show();
@@ -2130,9 +2143,9 @@ qsmainwnd::load_editor (int seqid)
 }
 
 /**
- *  This function first looks to see if a piano roll editor is already open for
- *  this sequence.  If so, we will not open the event-editor frame, to avoid
- *  conflicts.
+ *  This function first looks to see if a piano roll editor is already open
+ *  for this sequence.  If so, we will not open the event-editor frame, to
+ *  avoid conflicts.
  */
 
 void
@@ -2559,8 +2572,8 @@ qsmainwnd::tabWidgetClicked (int newindex)
             }
             if (! ignore)
             {
-                seq::pointer seq = cb_perf().get_sequence(seqid);
-                if (seq)
+                seq::pointer s = cb_perf().get_sequence(seqid);
+                if (s)
                 {
                     /*
                      * This code is called when first clicking on the
@@ -2569,7 +2582,7 @@ qsmainwnd::tabWidgetClicked (int newindex)
                      */
 
                     m_edit_frame = new (std::nothrow)
-                        qseqeditframe64(cb_perf(), seqid, ui->EditTab, true);
+                        qseqeditframe64(cb_perf(), *s, ui->EditTab, true);
 
                     if (not_nullptr(m_edit_frame))
                     {
@@ -2619,8 +2632,8 @@ qsmainwnd::tabWidgetClicked (int newindex)
 bool
 qsmainwnd::make_event_frame (int seqid)
 {
-    seq::pointer seq = cb_perf().get_sequence(seqid);
-    bool result = bool(seq);
+    seq::pointer seqp = cb_perf().get_sequence(seqid);
+    bool result = bool(seqp);
     if (result)
     {
         if (not_nullptr(m_event_frame))
@@ -2629,7 +2642,7 @@ qsmainwnd::make_event_frame (int seqid)
             delete m_event_frame;
         }
         m_event_frame = new (std::nothrow)
-            qseqeventframe(cb_perf(), seqid, ui->EventTab);
+            qseqeventframe(cb_perf(), *seqp, ui->EventTab);
 
         if (not_nullptr(m_event_frame))
         {

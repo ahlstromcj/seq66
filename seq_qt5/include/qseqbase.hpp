@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-20
- * \updates       2021-07-20
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  This class is a base class for qseqroll, qseqdata, qtriggereditor, and
@@ -67,7 +67,7 @@ private:
      *  Provides a reference to the sequence represented by piano roll.
      */
 
-    seq::pointer m_seq;
+    sequence & m_seq;
 
     /**
      *  Tells where the dragging started, the x value.
@@ -92,7 +92,7 @@ public:
     qseqbase
     (
         performer & p,
-        seq::pointer seqp,
+        sequence & s,
         qseqeditframe64 * frame,
         int zoom,
         int snap            = c_default_snap,
@@ -151,12 +151,12 @@ protected:
      * We are not the owner of this shared pointer.
      */
 
-    const seq::pointer seq_pointer () const
+    const sequence & track () const
     {
         return m_seq;
     }
 
-    seq::pointer seq_pointer ()
+    sequence & track ()
     {
         return m_seq;
     }

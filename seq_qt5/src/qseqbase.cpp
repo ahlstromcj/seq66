@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-07-09
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -58,7 +58,7 @@ static const int c_key_y =  8;
 qseqbase::qseqbase
 (
     performer & p,
-    seq::pointer seqp,
+    sequence & s,
     qseqeditframe64 * frame,
     int zoom, int snap,
     int unitheight, int totalheight
@@ -68,12 +68,12 @@ qseqbase::qseqbase
         p, zoom, snap, 1, c_keyboard_padding_x, unitheight, totalheight
     ),
     m_parent_frame          (frame),
-    m_seq                   (seqp),
+    m_seq                   (s),
     m_move_delta_x          (0),
     m_move_delta_y          (0),
     m_move_snap_offset_x    (0)
 {
-    set_snap(m_seq->snap());
+    set_snap(track().snap());
 }
 
 #if defined SEQ66_USE_SCROLLING_CODE    // not ready for this class
@@ -122,7 +122,7 @@ qseqbase::check_dirty () const
     if (! dirty)
     {
         performer & ncp = const_cast<performer &>(perf());
-        dirty = ncp.needs_update(seq_pointer()->seq_number());
+        dirty = ncp.needs_update(track().seq_number());
     }
     return dirty;
 }
@@ -138,14 +138,14 @@ qseqbase::check_dirty () const
 void
 qseqbase::set_measures (int len)
 {
-    seq_pointer()->apply_length(len);
+    track().apply_length(len);
     set_dirty();
 }
 
 int
 qseqbase::get_measures ()
 {
-    return seq_pointer()->get_measures();
+    return track().get_measures();
 }
 
 void

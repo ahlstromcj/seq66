@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-11-19
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -229,9 +229,9 @@ private:
      *  But see grid_to_index() below.
      */
 
-    int seq_to_offset (seq::pointer s) const
+    int seq_to_offset (seq::cref s) const
     {
-        return s->seq_number() % m_set_size;
+        return s.seq_number() % m_set_size;
     }
 
     seq::number grid_to_index (int row, int column) const
@@ -632,9 +632,9 @@ private:
      * Current implementation:
      *
      *      Use the static function seq_set() to calculate the desired set and
-     *      offset into the set using the application-wide row and column size.
-     *      We make this work faster by calculating the set based on the
-     *      sequence number.
+     *      offset into the set using the application-wide row and column
+     *      size.  We make this work faster by calculating the set based on
+     *      the sequence number.
      *
      * Alternate implemention:
      *
@@ -642,11 +642,11 @@ private:
      *      finds the exact sequence number as set by set_active().
      *
      * \param seqno
-     *      Provides the sequence number.  Historically, this value varies from
-     *      0 to 1023, and provided the index into a number of arrays.  Although
-     *      we now use containers of screensets and seq/sequence objects, the
-     *      performer and midifile classes continue to number them as if in an
-     *      array.
+     *      Provides the sequence number.  Historically, this value varies
+     *      from 0 to 1023, and provided the index into a number of arrays.
+     *      Although we now use containers of screensets and seq/sequence
+     *      objects, the performer and midifile classes continue to number
+     *      them as if in an array.
      *
      * \return
      *      Returns a shared-pointer to the desired sequence.  This pointer

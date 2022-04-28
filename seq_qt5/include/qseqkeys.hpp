@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-08-04
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -67,7 +67,7 @@ public:
     qseqkeys
     (
         performer & perf,
-        seq::pointer seqp,
+        sequence & s,
         qseqeditframe64 * frame,
         QWidget * parent,                                   /* QScrollArea  */
         int keyheight, int keyareaheight
@@ -168,11 +168,6 @@ private:
         return m_preview_color;
     }
 
-    seq::pointer seq_pointer ()
-    {
-        return m_seq;
-    }
-
     void total_height (int y)
     {
         if (y > 0)
@@ -187,7 +182,6 @@ private:
 
 private:
 
-    seq::pointer m_seq;
     QFont m_font;
 
     /**

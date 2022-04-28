@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-04-13
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -64,11 +64,11 @@ qseventslots::qseventslots
 (
     performer & p,
     qseqeventframe & parent,
-    seq::pointer seqp
+    sequence & s
 ) :
     m_parent                (parent),
-    m_seq                   (seqp),
-    m_event_container       (*seqp.get(), p.get_beats_per_minute()),
+    m_seq                   (s),
+    m_event_container       (s, p.get_beats_per_minute()),
     m_current_event         (m_event_container),
     m_event_count           (0),
     m_last_max_timestamp    (0),
@@ -384,7 +384,7 @@ qseventslots::set_event_text
 midibyte
 qseventslots::string_to_channel (const std::string & channel)
 {
-    midibyte result = m_seq->seq_midi_channel();
+    midibyte result = track().seq_midi_channel();
     if (! channel.empty())
         result = midibyte(string_to_int(channel) - 1);
 
@@ -812,10 +812,10 @@ qseventslots::save_events ()
 
         if (result)
         {
-            m_seq->copy_events(newevents);
-            result = m_seq->event_count() == m_event_count;
-            if (result && m_last_max_timestamp > m_seq->get_length())
-                m_seq->set_length(m_last_max_timestamp);
+            track().copy_events(newevents);
+            result = track().event_count() == m_event_count;
+            if (result && m_last_max_timestamp > track().get_length())
+                track().set_length(m_last_max_timestamp);
         }
     }
     return result;
@@ -1180,7 +1180,7 @@ qseventslots::increment_bottom ()
 int
 qseventslots::calculate_measures () const
 {
-    return seq_pointer()->calculate_measures();
+    return track().calculate_measures();
 }
 
 }           // namespace seq66

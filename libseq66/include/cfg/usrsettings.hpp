@@ -1501,16 +1501,6 @@ public:
 
     std::string key_view_string () const;
 
-    /*
-     * Deprecated and hardwired to true.  We now use the new qseqeditframe64
-     * all the time, and pare it down slightly when embedded in the Edit tab.
-     */
-
-    bool use_new_seqedit () const
-    {
-        return true;
-    }
-
     bool style_sheet_active () const
     {
         return m_user_ui_style_active;

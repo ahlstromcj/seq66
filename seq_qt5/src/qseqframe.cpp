@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2022-04-02
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  Seq66 (Qt version) has two different pattern editor frames to
@@ -63,21 +63,23 @@ namespace seq66
  *      Provides the performer object to use for interacting with this sequence.
  *      Among other things, this object provides the active PPQN.
  *
- * \param seqid
- *      Provides the sequence number.  The sequence pointer is looked up using
- *      this number.  This number is also the pattern-slot number for this
- *      sequence and for this window.  Ranges from 0 to 1024.  The caller
- *      should ensure this is a valid, non-blank sequence.
+ * \param s
+ *      Provides the reference to the sequence represented by this seqedit.
  *
  * \param parent
  *      Provides the parent window/widget for this container window.  Defaults
  *      to null.
  */
 
-qseqframe::qseqframe (performer & p, int seqid, QWidget * parent) :
+qseqframe::qseqframe
+(
+    performer & p,
+    sequence & s,
+    QWidget * parent
+) :
     QFrame      (parent),
     qbase       (p, c_default_zoom),
-    m_seq       (perf().sequence_pointer(seqid)),
+    m_seq       (s),
     m_seqkeys   (nullptr),
     m_seqtime   (nullptr),
     m_seqroll   (nullptr),
@@ -95,20 +97,15 @@ qseqframe::~qseqframe ()
 bool
 qseqframe::repitch_all ()
 {
-    sequence * s = seq_pointer().get();
-    bool result = not_nullptr(s);
+    std::string filename = rc().notemap_filespec();
+    bool result = perf().repitch_all(filename, track());
     if (result)
     {
-        std::string filename = rc().notemap_filespec();
-        result = perf().repitch_all(filename, *s);
-        if (result)
-        {
-            set_dirty();
-        }
-        else
-        {
-            // need to display error message somehow
-        }
+        set_dirty();
+    }
+    else
+    {
+        // need to display error message somehow
     }
     return result;
 }
@@ -116,20 +113,15 @@ qseqframe::repitch_all ()
 bool
 qseqframe::repitch_selected ()
 {
-    sequence * s = seq_pointer().get();
-    bool result = not_nullptr(s);
+    std::string filename = rc().notemap_filespec();
+    bool result = perf().repitch_selected(filename, track());
     if (result)
     {
-        std::string filename = rc().notemap_filespec();
-        bool result = perf().repitch_selected(filename, *s);
-        if (result)
-        {
-            set_dirty();
-        }
-        else
-        {
-            // need to display error message somehow
-        }
+        set_dirty();
+    }
+    else
+    {
+        // need to display error message somehow
     }
     return result;
 }

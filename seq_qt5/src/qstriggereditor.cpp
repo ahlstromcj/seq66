@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-23
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -68,14 +68,14 @@ static const int s_x_tick_fix       =  2;
 qstriggereditor::qstriggereditor
 (
     performer & p,
-    seq::pointer seqp,
+    sequence & s,
     qseqeditframe64 * frame,
     int zoom, int snap, int keyheight,
     QWidget * parent,
     int xoffset
 ) :
     QWidget     (parent),
-    qseqbase    (p, seqp, frame, zoom, snap),
+    qseqbase    (p, s, frame, zoom, snap),
     m_timer     (nullptr),
     m_x_offset  (xoffset + s_x_tick_fix),
     m_key_y     (keyheight),
@@ -118,12 +118,8 @@ qstriggereditor::select_events
 {
     int result = 0;
     if (! event::is_note_msg(m_status))
-    {
-        result = seq_pointer()->select_events
-        (
-            start, finish, m_status, m_cc, selmode
-        );
-    }
+        result = track().select_events(start, finish, m_status, m_cc, selmode);
+
     return result;
 }
 
@@ -143,7 +139,7 @@ QSize
 qstriggereditor::sizeHint () const
 {
     int w = frame64()->width();
-    int len = tix_to_pix(seq_pointer()->get_length());
+    int len = tix_to_pix(track().get_length());
     if (len < w)
         len = w;
 
@@ -161,9 +157,8 @@ qstriggereditor::paintEvent (QPaintEvent *)
     painter.setBrush(brush);
     painter.drawRect(1, 0, width(), height() - 1);  /* draw the background  */
 
-    seq::pointer s = seq_pointer();
-    int bpbar = s->get_beats_per_bar();
-    int bwidth = s->get_beat_width();
+    int bpbar = track().get_beats_per_bar();
+    int bwidth = track().get_beat_width();
     midipulse ticks_per_beat = 4 * perf().ppqn() / bwidth;
     midipulse ticks_per_bar = bpbar * ticks_per_beat;
     midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
@@ -214,10 +209,10 @@ qstriggereditor::paintEvent (QPaintEvent *)
     pen.setColor(fore_color());                     /* Qt::black            */
     pen.setStyle(Qt::SolidLine);
     brush.setStyle(Qt::SolidPattern);
-    s->draw_lock();
-    for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
+    track().draw_lock();
+    for (auto cev = track().cbegin(); ! track().cend(cev); ++cev)
     {
-        if (! s->get_next_event_match(m_status, m_cc, cev))
+        if (! track().get_next_event_match(m_status, m_cc, cev))
             break;
 
         midipulse tick = cev->timestamp();
@@ -240,7 +235,7 @@ qstriggereditor::paintEvent (QPaintEvent *)
             painter.drawRect(x, y, qc_eventevent_x - 1, qc_eventevent_y - 1);
         }
     }
-    s->draw_unlock();
+    track().draw_unlock();
 
     int h = qc_eventevent_y;
     int y = (qc_eventarea_y - h) / 2;               /* draw selection       */
@@ -282,7 +277,7 @@ qstriggereditor::resizeEvent (QResizeEvent * qrep)
 void
 qstriggereditor::flag_dirty ()
 {
-    seq_pointer()->set_dirty();
+    track().set_dirty();
     frame64()->set_dirty();
 }
 
@@ -303,7 +298,7 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
     {
         snap_current_x();
         convert_x(current_x(), tick_s);
-        seq_pointer()->paste_selected(tick_s, 0);
+        track().paste_selected(tick_s, 0);
         paste(false);
         setCursor(Qt::ArrowCursor);
         flag_dirty();
@@ -343,7 +338,7 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                     {
                         int note, x, w;
                         moving_init(true);
-                        seq_pointer()->selected_box(tick_s, note, tick_f, note);
+                        track().selected_box(tick_s, note, tick_f, note);
                         tick_f += tick_w;
                         convert_t(tick_s, x);   /* convert box to X,Y values */
                         convert_t(tick_f, w);
@@ -374,7 +369,7 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                 {
                     if (! isctrl)
                     {
-                        seq_pointer()->unselect();
+                        track().unselect();
                         flag_dirty();
                     }
                     selmode = eventlist::select::select_one;
@@ -436,7 +431,7 @@ qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
             midipulse delta_tick;
             delta_x -= move_snap_offset_x();
             convert_x(delta_x, delta_tick);
-            seq_pointer()->move_selected_events(delta_tick);
+            track().move_selected_events(delta_tick);
         }
         set_adding(adding());
     }
@@ -449,7 +444,7 @@ qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
         }
     }
     clear_action_flags();               /* turn off */
-    seq_pointer()->unpaint_all();
+    track().unpaint_all();
     if (is_dirty())                     /* if clicked, something changed    */
         flag_dirty();
 }
@@ -486,7 +481,7 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
     int key = event->key();
     if (key == Qt::Key_Delete || key == Qt::Key_Backspace)
     {
-        seq_pointer()->remove_selected();
+        track().remove_selected();
         ret = true;
     }
     if (event->modifiers() & Qt::ControlModifier)
@@ -495,12 +490,12 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
         {
         case Qt::Key_X: /* cut */
 
-            seq_pointer()->cut_selected();
+            track().cut_selected();
             ret = true;
             break;
 
         case Qt::Key_C: /* copy */
-            seq_pointer()->copy_selected();
+            track().copy_selected();
             ret = true;
             break;
 
@@ -511,9 +506,9 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
 
         case Qt::Key_Z: /* Undo */
             if (event->modifiers() & Qt::ShiftModifier)
-                seq_pointer()->pop_redo();
+                track().pop_redo();
             else
-                seq_pointer()->pop_undo();
+                track().pop_undo();
 
             ret = true;
             break;
@@ -550,7 +545,7 @@ bool
 qstriggereditor::movement_key_press (int key)
 {
     bool result = false;
-    if (seq_pointer()->any_selected_events(m_status, m_cc))
+    if (track().any_selected_events(m_status, m_cc))
     {
         if (key == Qt::Key_Left)
         {
@@ -569,11 +564,10 @@ qstriggereditor::movement_key_press (int key)
 void
 qstriggereditor::move_selected_events (midipulse dt)
 {
-    seq::pointer s = seq_pointer();
-    if (s->any_selected_events(m_status, m_cc))
+    if (track().any_selected_events(m_status, m_cc))
     {
         midipulse snap_t = dt * snap();                 /* time-stamp snap  */
-        s->move_selected_events(snap_t);
+        track().move_selected_events(snap_t);
     }
 }
 
@@ -612,7 +606,7 @@ qstriggereditor::start_paste ()
 
     midipulse tick_s, tick_f;
     int note_h, note_l, x, w;
-    seq_pointer()->clipboard_box(tick_s, note_h, tick_f, note_l);
+    track().clipboard_box(tick_s, note_h, tick_f, note_l);
     convert_t(tick_s, x);           /* convert box to X,Y values */
     convert_t(tick_f, w);
 
@@ -645,11 +639,11 @@ qstriggereditor::convert_t (midipulse ticks, int & x)
 void
 qstriggereditor::drop_event (midipulse tick)
 {
-    seq_pointer()->push_undo();
+    track().push_undo();
     if (is_tempo())
     {
         midibpm bpm = perf().bpm();
-        (void) seq_pointer()->add_tempo(tick, bpm, true);   /* repaint true */
+        (void) track().add_tempo(tick, bpm, true);   /* repaint true */
     }
     else
     {
@@ -664,7 +658,7 @@ qstriggereditor::drop_event (midipulse tick)
         else if (m_status == EVENT_PITCH_WHEEL)
             d0 = 0;
 
-        seq_pointer()->add_event(tick, m_status, d0, d1, true); /* sorts it */
+        track().add_event(tick, m_status, d0, d1, true); /* sorts it */
     }
 }
 

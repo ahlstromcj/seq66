@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2018-07-30
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  The sequence editing window is known as the "Pattern Editor".  Kepler34
@@ -79,20 +79,9 @@ protected:
 
     virtual void closeEvent (QCloseEvent *) override;
 
-    const performer & perf () const
-    {
-        return m_performer;
-    }
-
-    performer & perf ()
-    {
-        return m_performer;
-    }
-
 private:
 
     Ui::qseqeditex * ui;
-    performer & m_performer;
     int m_seq_id;
     qsmainwnd * m_edit_parent;
     qseqeditframe64 * m_edit_frame;
