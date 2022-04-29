@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-04-21
+ * \updates       2022-04-29
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -341,7 +341,7 @@ bool
 setmapper::any_modified_sequences () const
 {
     bool result = false;
-    for (auto & sset : sets())              /* screenset reference  */
+    for (const auto & sset : sets())                /* screenset reference  */
     {
         if (sset.second.any_modified_sequences())
         {
@@ -350,6 +350,13 @@ setmapper::any_modified_sequences () const
         }
     }
     return result;
+}
+
+void
+setmapper::unmodify_all_sequences ()
+{
+    for (auto & sset : sets())                      /* screenset reference  */
+        sset.second.unmodify_all_sequences();
 }
 
 /**

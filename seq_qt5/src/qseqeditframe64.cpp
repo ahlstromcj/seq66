@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-28
+ * \updates       2022-04-29
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1397,7 +1397,7 @@ qseqeditframe64::set_beats_per_bar (int bpb)
             int measures = get_measures();
             m_beats_per_bar = bpb;
             track().set_beats_per_bar(bpb);
-            track().apply_length(bpb, 0, 0, measures);
+            track().apply_length(bpb, 0, 0);        /* no measures supplied */
             set_dirty();
         }
     }
@@ -1423,8 +1423,8 @@ qseqeditframe64::set_measures (int m)
         else
         {
             m_measures = m;
-            track().apply_length(m);
-            set_dirty();
+            if (track().apply_length(m))
+                set_dirty();
         }
     }
 }
@@ -1520,7 +1520,7 @@ qseqeditframe64::set_beat_width (int bw)
                 int measures = get_measures();
                 m_beat_width = bw;
                 track().set_beat_width(bw);
-                track().apply_length(0, 0, bw, measures);
+                track().apply_length(0, 0, bw);
                 set_dirty();
             }
             else
@@ -1575,7 +1575,7 @@ qseqeditframe64::next_measures ()
 void
 qseqeditframe64::transpose (bool ischecked)
 {
-    track().set_transposable(ischecked);
+    track().set_transposable(ischecked, true);      /* it's a user change   */
     set_transpose_image(ischecked);
     ui->m_map_notes->setEnabled(ischecked);
 }
@@ -2753,13 +2753,7 @@ qseqeditframe64::set_event_entry
     midibyte control
 )
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
-    QString mlabel(qt(text));
-    QIcon micon(*create_menu_image(present));
-    QAction * item = new QAction(micon, mlabel, nullptr);
-#else
-    QAction * item = new QAction(*create_menu_image(present), qt(text));
-#endif
+    QAction * item = create_menu_action(text, *create_menu_image(present));
     menu->addAction(item);
     connect
     (
@@ -2785,13 +2779,7 @@ qseqeditframe64::set_event_entry
     int index = static_cast<int>(ei);
     std::string text = s_event_items[index].epp_name;
     midibyte status = s_event_items[index].epp_status;
-#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
-    QString mlabel(qt(text));
-    QIcon micon(*create_menu_image(present));
-    QAction * item = new QAction(micon, mlabel, nullptr);
-#else
-    QAction * item = new QAction(*create_menu_image(present), qt(text));
-#endif
+    QAction * item = create_menu_action(text, *create_menu_image(present));
     menu->addAction(item);
     connect
     (

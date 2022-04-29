@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2022-04-27
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -37,7 +37,9 @@
 #include "ctrl/keymap.hpp"              /* seq66::qt_modkey_ordinal()       */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke wrapper class   */
 
+class QAction;
 class QComboBox;
+class QIcon;
 class QKeyEvent;
 class QPushButton;
 class QTimer;
@@ -93,6 +95,11 @@ extern bool fill_combobox
     std::string value           = "",
     const std::string & prefix  = "",
     const std::string & suffix  = ""
+);
+extern QAction * create_menu_action
+(
+    const std::string & text,
+    const QIcon & micon
 );
 extern bool show_open_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_import_midi_file_dialog (QWidget * parent, std::string & file);

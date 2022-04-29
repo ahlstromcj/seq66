@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-04
+ * \updates       2022-04-29
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1349,8 +1349,14 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 int bw = int(read_byte());
                                 s.set_beats_per_bar(bpm);
                                 s.set_beat_width(bw);
-                                p.set_beats_per_bar(bpm);
-                                p.set_beat_width(bw);
+
+                                /*
+                                 * The usr() values replaced these.
+                                 *
+                                 *      p.set_beats_per_bar(bpm);
+                                 *      p.set_beat_width(bw);
+                                 */
+
                                 len -= 2;
                             }
                             else if (seqspec == c_triggers)
