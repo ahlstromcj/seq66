@@ -1105,7 +1105,7 @@ public:
     }
 
     void apply_song_transpose ();
-    void set_transposable (bool flag);
+    void set_transposable (bool flag, bool user_change = false);
 
     bool transposable () const
     {

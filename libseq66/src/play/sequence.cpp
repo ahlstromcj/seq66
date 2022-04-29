@@ -5422,12 +5422,19 @@ sequence::apply_song_transpose ()
  *      when a sequence is being read from a MIDI file, it will not yet have a
  *      parent, so we have to check for that before setting the performer modify
  *      flag.
+ *
+ * \param flag
+ *      The value to set.
+ *
+ * \param user_change
+ *      If true (default is false), then call the change a modification.
+ *      This change can happen at load time, which is not a modification.
  */
 
 void
-sequence::set_transposable (bool flag)
+sequence::set_transposable (bool flag, bool user_change)
 {
-    if (flag != m_transposable)
+    if (flag != m_transposable && user_change)
         modify();
 
     m_transposable = flag;

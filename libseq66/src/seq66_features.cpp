@@ -46,10 +46,6 @@
 #endif
 
 /*
- * To do: get QT_VERSION_STR from qconfig.h
- */
-
-/*
  *  Do not document a namespace; it breaks Doxygen.
  */
 

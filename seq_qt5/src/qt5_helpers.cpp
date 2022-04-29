@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2022-04-27
+ * \updates       2022-04-28
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -37,7 +37,8 @@
  *      -   qt_timer(). Encapsulates creating and starting a timer, with a
  *          callback given by a Qt slot-name.
  *      -   enable_combobox_item(). Handles the appearance of a combo box.
- *      -   fill_combobox (). Fills a combo box from a combolist.
+ *      -   fill_combobox(). Fills a combo box from a combolist.
+ *      -   create_menu_action(). Creates a menu action from text and an icon.
  *      -   show_open_midi_file_dialog()
  *      -   show_import_midi_file_dialog()
  *      -   show_import_project_dialog()
@@ -46,6 +47,7 @@
  *      -   show_file_dialog()
  */
 
+#include <QAction>
 #include <QComboBox>
 #include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QIcon>
@@ -339,6 +341,22 @@ fill_combobox
                 box->setCurrentIndex(0);
         }
     }
+    return result;
+}
+
+QAction *
+create_menu_action
+(
+    const std::string & text,
+    const QIcon & micon
+)
+{
+    QString mlabel(qt(text));
+#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
+    QAction * result = new QAction(micon, mlabel, nullptr);
+#else
+    QAction * result = new QAction(micon, mlabel);
+#endif
     return result;
 }
 

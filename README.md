@@ -1,7 +1,7 @@
 # README for Seq66 0.98.7
 
 Chris Ahlstrom
-2015-09-10 to 2022-04-28
+2015-09-10 to 2022-04-29
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -83,6 +83,8 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.98.7:
+        *   Fixed issue #81, adding <stdexcept> to code catching
+            std::invalid_argument.
         *   Fixed issue #80 where some MIDI controls were getting recorded.
         *   Added a "Pattern Fix" dialog to allow a whole pattern to be shifted,
             quantized, and changed in length all at once. Useful for fixing a

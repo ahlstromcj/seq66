@@ -1575,7 +1575,7 @@ qseqeditframe64::next_measures ()
 void
 qseqeditframe64::transpose (bool ischecked)
 {
-    track().set_transposable(ischecked);
+    track().set_transposable(ischecked, true);      /* it's a user change   */
     set_transpose_image(ischecked);
     ui->m_map_notes->setEnabled(ischecked);
 }
@@ -2753,13 +2753,7 @@ qseqeditframe64::set_event_entry
     midibyte control
 )
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
-    QString mlabel(qt(text));
-    QIcon micon(*create_menu_image(present));
-    QAction * item = new QAction(micon, mlabel, nullptr);
-#else
-    QAction * item = new QAction(*create_menu_image(present), qt(text));
-#endif
+    QAction * item = create_menu_action(text, *create_menu_image(present));
     menu->addAction(item);
     connect
     (
@@ -2785,13 +2779,7 @@ qseqeditframe64::set_event_entry
     int index = static_cast<int>(ei);
     std::string text = s_event_items[index].epp_name;
     midibyte status = s_event_items[index].epp_status;
-#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
-    QString mlabel(qt(text));
-    QIcon micon(*create_menu_image(present));
-    QAction * item = new QAction(micon, mlabel, nullptr);
-#else
-    QAction * item = new QAction(*create_menu_image(present), qt(text));
-#endif
+    QAction * item = create_menu_action(text, *create_menu_image(present));
     menu->addAction(item);
     connect
     (

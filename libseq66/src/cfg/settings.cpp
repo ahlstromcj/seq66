@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2022-04-27
+ * \updates       2022-04-29
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -33,7 +33,9 @@
  *  completely replace.  The second part includes some convenience functions.
  */
 
-#include "cfg/settings.hpp"
+#include <stdexcept>                    /* std::invalid_argument            */
+
+#include "cfg/settings.hpp"             /* std::rc(), usr(), and much more  */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-04-21
+ * \updates       2022-04-29
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -34,6 +34,7 @@
  */
 
 #include <cctype>                       /* std::toupper() function          */
+#include <stdexcept>                    /* std::invalid_argument            */
 
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 
