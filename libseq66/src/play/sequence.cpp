@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-28
+ * \updates       2022-04-29
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -666,19 +666,22 @@ sequence::set_master_midi_bus (const mastermidibus * mmb)
  *
  * \threadsafe
  *
- * \param beatspermeasure
+ * \param bpb
  *      The new setting of the beats-per-bar value.
+ *
+ * \param user_change
+ *      If true (default is false), then call the change a modification.
+ *      This change can happen at load time, which is not a modification.
  */
 
 void
-sequence::set_beats_per_bar (int beatspermeasure)
+sequence::set_beats_per_bar (int bpb, bool user_change)
 {
     automutex locker(m_mutex);
-    if (beatspermeasure <= int(USHRT_MAX))
-    {
-        m_time_beats_per_measure = (unsigned short)(beatspermeasure);
-        set_dirty_mp();
-    }
+    bool modded = bpb != m_time_beats_per_measure && user_change;
+    m_time_beats_per_measure = (unsigned short)(bpb);
+    if (modded)
+        modify();
 }
 
 /**
@@ -688,17 +691,20 @@ sequence::set_beats_per_bar (int beatspermeasure)
  *
  * \param beatwidth
  *      The new setting of the beat width value.
+ *
+ * \param user_change
+ *      If true (default is false), then call the change a modification.
+ *      This change can happen at load time, which is not a modification.
  */
 
 void
-sequence::set_beat_width (int beatwidth)
+sequence::set_beat_width (int beatwidth, bool user_change)
 {
     automutex locker(m_mutex);
-    if (beatwidth <= int(USHRT_MAX))
-    {
-        m_time_beat_width = (unsigned short)(beatwidth);
-        set_dirty_mp();
-    }
+    bool modded = m_time_beat_width != beatwidth && user_change;
+    m_time_beat_width = (unsigned short)(beatwidth);
+    if (modded)
+        modify();
 }
 
 /**
@@ -728,10 +734,13 @@ void
 sequence::set_measures (int measures)
 {
     (void) unit_measure();
-    set_length
+
+    bool modded = set_length
     (
         measures * get_beats_per_bar() * (get_ppqn() * 4) / get_beat_width()
     );
+    if (modded)
+        modify(true);
 }
 
 /**
@@ -4783,6 +4792,11 @@ sequence::apply_length (int bpb, int ppq, int bw, int measures)
     else
         set_beat_width(bw);
 
+    if (measures == 0)                      /* added 2022-04-29             */
+        measures = get_measures(0);         /* calculate the current bars   */
+    else
+        set_measures(measures);
+
     bool result = set_length(seq66::measures_to_ticks(bpb, ppq, bw, measures));
     if (result)
     {
@@ -5434,10 +5448,11 @@ sequence::apply_song_transpose ()
 void
 sequence::set_transposable (bool flag, bool user_change)
 {
-    if (flag != m_transposable && user_change)
-        modify();
-
+    automutex locker(m_mutex);
+    bool modded = flag != m_transposable && user_change;
     m_transposable = flag;
+    if (modded)
+        modify();
 }
 
 /**
@@ -5509,7 +5524,7 @@ sequence::change_ppqn (int p)
         {
             m_length = rescale_tick(m_length, p, m_ppqn);
             m_ppqn = p;
-            result = apply_length(0, p, 0, get_measures());
+            result = apply_length(0, p, 0);
             m_triggers.change_ppqn(p);
         }
     }

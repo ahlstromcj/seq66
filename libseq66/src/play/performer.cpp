@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-04-28
+ * \updates       2022-04-29
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -448,6 +448,13 @@ performer::unregister (callbacks * pfcb)
         if (it != m_notify.end())
             (void) m_notify.erase(it);
     }
+}
+
+void
+performer::unmodify ()
+{
+    m_is_modified = false;                  /* m_needs_update = false;  */
+    mapper().unmodify_all_sequences();
 }
 
 /**

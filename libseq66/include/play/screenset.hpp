@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-04-21
+ * \updates       2022-04-29
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -547,6 +547,7 @@ private:
     void reset_sequences (bool pause, sequence::playback mode);
 #endif
     bool any_modified_sequences () const;
+    void unmodify_all_sequences ();
     void set_dirty (seq::number seqno = seq::all());
     void toggle (seq::number seqno = seq::all());
     void toggle_song_mute (seq::number seqno = seq::all());

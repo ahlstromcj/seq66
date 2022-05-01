@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-04-21
+ * \updates       2022-04-29
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -588,7 +588,7 @@ screenset::any_modified_sequences () const
     bool result = false;
     for (const auto & s : m_container)
     {
-        if (s.active())             /* guarantees a valid pointer */
+        if (s.active())
         {
             if (s.loop()->modified())
             {
@@ -598,6 +598,16 @@ screenset::any_modified_sequences () const
         }
     }
     return result;
+}
+
+void
+screenset::unmodify_all_sequences ()
+{
+    for (auto & s : m_container)
+    {
+        if (s.active())
+            s.loop()->unmodify();
+    }
 }
 
 /**
@@ -614,7 +624,7 @@ screenset::set_dirty (seq::number seqno)
     {
         for (auto & s : m_container)
         {
-            if (s.active())             /* guarantees a valid pointer */
+            if (s.active())
                 s.loop()->set_dirty();
         }
     }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-04-28
+ * \updates       2022-04-29
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1037,14 +1037,14 @@ public:
         return int(m_ppqn);
     }
 
-    void set_beats_per_bar (int beatspermeasure);
+    void set_beats_per_bar (int beatspermeasure, bool user_change = false);
 
     int get_beats_per_bar () const
     {
         return int(m_time_beats_per_measure);
     }
 
-    void set_beat_width (int beatwidth);
+    void set_beat_width (int beatwidth, bool user_change = false);
 
     int get_beat_width () const
     {
@@ -1160,7 +1160,7 @@ public:
 
     void set_measures (int measures);
     bool extend_length ();
-    bool apply_length (int bpb, int ppqn, int bw, int measures = 1);
+    bool apply_length (int bpb, int ppqn, int bw, int measures = 0);
 
     bool apply_length (int meas = 1)
     {

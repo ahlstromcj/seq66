@@ -1,7 +1,7 @@
 # README for Seq66 0.98.7
 
 Chris Ahlstrom
-2015-09-10 to 2022-04-29
+2015-09-10 to 2022-05-01
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -83,9 +83,9 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.98.7:
+        *   Fixed issue #80 where some MIDI controls were getting recorded.
         *   Fixed issue #81, adding <stdexcept> to code catching
             std::invalid_argument.
-        *   Fixed issue #80 where some MIDI controls were getting recorded.
         *   Added a "Pattern Fix" dialog to allow a whole pattern to be shifted,
             quantized, and changed in length all at once. Useful for fixing a
             badly played pattern or scaling the duration.
@@ -97,9 +97,10 @@ Windows, and using a conventional source tarball.
             functions to avoid throwing exceptions.
         *   Trying to get rolls, time, data, and event panes to line up no
             matter what the Qt theme is. Difficult.
-        *   Tightening the setting of performer modification when sequence
-            changes occur, to reduce unnecessary prompts to save and flag
-            modification via the asterisk change marker.
+        *   Tightening the setting/clearing of performer modification re
+            sequence changes to reduce unnecessary prompts to save, flag
+            modification via the asterisk change marker, and enable/disable the
+            File / Save option in the correct way.
         *   Tightened the saving of WRK and MIDI files.
         *   Major refactoring to replace seq::pointers with seq::refs in many
             places.
