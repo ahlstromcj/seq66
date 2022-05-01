@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-29
+ * \updates       2022-05-01
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -200,6 +200,7 @@ sequence::sequence (int ppqn) :
     m_seq_color                 (c_seq_color_none),
     m_seq_edit_mode             (sequence::editmode::note),
     m_length                    (4 * midipulse(m_ppqn)),  /* 1 bar of ticks */
+    m_measures                  (0),
     m_snap_tick                 (int(m_ppqn) / 4),
     m_time_beats_per_measure    (4),
     m_time_beat_width           (4),
@@ -678,7 +679,13 @@ void
 sequence::set_beats_per_bar (int bpb, bool user_change)
 {
     automutex locker(m_mutex);
-    bool modded = bpb != m_time_beats_per_measure && user_change;
+    bool modded = bpb != int(m_time_beats_per_measure) && user_change;
+    int m = get_measures();
+    if (m != m_measures && user_change)
+    {
+        modded = true;
+        m_measures = m;
+    }
     m_time_beats_per_measure = (unsigned short)(bpb);
     if (modded)
         modify();
@@ -689,7 +696,7 @@ sequence::set_beats_per_bar (int bpb, bool user_change)
  *
  * \threadsafe
  *
- * \param beatwidth
+ * \param bw
  *      The new setting of the beat width value.
  *
  * \param user_change
@@ -698,11 +705,17 @@ sequence::set_beats_per_bar (int bpb, bool user_change)
  */
 
 void
-sequence::set_beat_width (int beatwidth, bool user_change)
+sequence::set_beat_width (int bw, bool user_change)
 {
     automutex locker(m_mutex);
-    bool modded = m_time_beat_width != beatwidth && user_change;
-    m_time_beat_width = (unsigned short)(beatwidth);
+    bool modded = bw != int(m_time_beat_width) && user_change;
+    int m = get_measures();
+    if (m != m_measures && user_change)
+    {
+        modded = true;
+        m_measures = m;
+    }
+    m_time_beat_width = (unsigned short)(bw);
     if (modded)
         modify();
 }

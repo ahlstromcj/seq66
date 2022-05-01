@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2022-04-27
+ * \updates       2022-05-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -378,11 +378,12 @@ qperfeditframe64::qperfeditframe64
     );
 
     /*
-     * Final settings.  For snap, 8 is too small.  4, which is actually "1/4"
-     * is better at normal zoom, and also represents a single beat.
+     * Final settings.  For snap, 8 is too small.  4, which is actually "1/4",
+     * is better at normal zoom, and also represents a single beat. But
+     * let's use the actual beat length.
      */
 
-    set_snap(4);
+    set_snap(perf().get_beat_width());                      /* (4) */
     set_beats_per_measure(perf().get_beats_per_bar());
     set_beat_width(perf().get_beat_width());
 

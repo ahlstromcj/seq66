@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-04-29
+ * \updates       2022-05-01
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -732,6 +732,15 @@ private:
      */
 
     midipulse m_length;
+
+    /**
+     *  Holds the last number of measures, purely for detecting changes that
+     *  affect the measure count.  Normally, get_measures() makes a live
+     *  calculation of the current measure count.  For example, changing the
+     *  beat-width to a smaller value could increase the number of measures.
+     */
+
+    int m_measures;
 
     /**
      *  The size of snap in units of pulses (ticks).  It starts out as the

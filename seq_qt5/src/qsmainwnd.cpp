@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-28
+ * \updates       2022-05-01
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -238,6 +238,7 @@ qsmainwnd::qsmainwnd
     m_mute_master           (nullptr),
     m_ppqn_list             (default_ppqns(), true), /* add a blank slot    */
     m_beatwidth_list        (beatwidth_items()),     /* see settings module */
+    m_beats_per_bar_list    (beats_per_bar_items()), /* ditto               */
     m_control_status        (automation::ctrlstatus::none),
     m_song_mode             (false),
     m_is_looping            (false),
@@ -326,6 +327,9 @@ qsmainwnd::qsmainwnd
      * tack on an additional entry for "32".
      */
 
+    (void) fill_combobox(ui->cmb_beat_measure, beats_per_bar_list());
+
+#if 0
     QString thirtytwo = QString::number(32);
     for (int i = 0; i < s_beat_measure_count; ++i)
     {
@@ -333,6 +337,7 @@ qsmainwnd::qsmainwnd
         ui->cmb_beat_measure->insertItem(i, combo_text);
     }
     ui->cmb_beat_measure->insertItem(s_beat_measure_count, thirtytwo);
+#endif
 
     /*
      * Fill options for beat length (beat width) in the combo box, and set the
@@ -1089,7 +1094,7 @@ qsmainwnd::load_into_session (const std::string & selectedfile)
 
             msg += rc().midi_filename();
             show_message_box(msg);
-            m_is_title_dirty = false;
+            m_is_title_dirty = false;                   // refresh_captions()?
             result = true;
             if (not_nullptr(m_mute_master))
                 m_mute_master->group_needs_update();
@@ -1535,23 +1540,9 @@ qsmainwnd::conditional_update ()
             m_beat_ind->update();
         }
     }
-
-#if 0
-    /*
-     * Added 2022-04-28.  Too much?
-     * We need a flag to hold the saved status.....
-     */
-
-    bool modded = cb_perf().modified();
-    enable_save(modded);                        /* or use redo flag?    */
-    if (modded)
-        m_is_title_dirty = true;                /* redo test removed    */
-#endif
-
     if (m_is_title_dirty)
     {
         (void) refresh_captions();
-        m_is_title_dirty = false;
         update_window_title();          /* puts current MIDI file in title  */
     }
     if (m_is_playing_now != cb_perf().is_running())
@@ -1664,8 +1655,7 @@ qsmainwnd::new_file ()
 {
     if (check() && cb_perf().clear_all())           /* don't clear playlist */
     {
-        enable_save(true);
-        m_is_title_dirty = true;
+        enable_save(false);                         /* no save until change */
         redo_live_frame();
         remove_all_editors();
         (void) cb_perf().reset_mute_groups();       /* no modify() call     */
@@ -2500,7 +2490,7 @@ void
 qsmainwnd::update_beat_length (int blindex)
 {
     int bl = beatwidth_list().ctoi(blindex);
-    if (cb_perf().set_beat_width(bl))
+    if (cb_perf().set_beat_width(bl, true))             /* a user change    */
     {
         enable_save();
         if (not_nullptr(m_song_frame64))
@@ -2516,8 +2506,8 @@ qsmainwnd::update_beat_length (int blindex)
 
 /**
  *  Sets the beats-per-measure for the beat indicator and the performer.
- *  Also sets the beat length for all sequences, and
- *  resets the number of measures, causing length to adjust to new b/m.
+ *  Also sets the beat length for all sequences, and resets the number of
+ *  measures, causing length to adjust to new b/m.
  *
  * \param bmindex
  *      Provides the index into the list of beats.  This number is one less
@@ -2527,10 +2517,13 @@ qsmainwnd::update_beat_length (int blindex)
 void
 qsmainwnd::update_beats_per_measure (int bmindex)
 {
-    int bm = bmindex == s_beat_measure_count ? 32 : bmindex + 1;
-    if (cb_perf().set_beats_per_measure(bm))
+    int bm = beats_per_bar_list().ctoi(bmindex);
+    if (cb_perf().set_beats_per_measure(bm, true))      /* a user change    */
     {
         enable_save();
+        if (not_nullptr(m_song_frame64))
+            m_song_frame64->set_beats_per_measure(bm);
+
         if (not_nullptr(m_beat_ind))
             m_beat_ind->beats_per_measure(bm);
 
@@ -2993,6 +2986,7 @@ void
 qsmainwnd::enable_save (bool flag)
 {
     ui->actionSave->setEnabled(flag);
+    m_is_title_dirty = true;
 }
 
 void
@@ -3604,7 +3598,6 @@ qsmainwnd::on_sequence_change (seq::number seqno, bool redo)
             ip.second->update_sequence(seqno, redo);
 
         enable_save(cb_perf().modified());          /* or use redo flag?    */
-        m_is_title_dirty = true;                    /* redo test removed    */
     }
     return result;
 }
@@ -3617,7 +3610,6 @@ qsmainwnd::on_trigger_change (seq::number seqno)
     {
         m_live_frame->refresh(seqno);
         enable_save(cb_perf().modified());
-        m_is_title_dirty = true;                    /* 2022-04-25           */
     }
     return result;
 }
@@ -3626,7 +3618,7 @@ bool
 qsmainwnd::on_set_change (screenset::number setno, performer::change /*ctype*/)
 {
     emit signal_set_change(int(setno));
-    m_is_title_dirty = true;                        /* 2022-04-25           */
+    m_is_title_dirty = true;
     return true;
 }
 
@@ -3767,6 +3759,7 @@ bool
 qsmainwnd::refresh_captions ()
 {
     bool result = not_nullptr(m_live_frame);
+    m_is_title_dirty = false;
     if (result)
     {
         std::string newname;

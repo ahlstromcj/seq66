@@ -29,7 +29,7 @@ with Qt Creator.  Provides a comprehensive PDF user-manual.
         editing, event-editing, play-lists, and session information.
     *   Low-frequency oscillator (LFO) for modifying continuous controller
         (CC) and velocity values.
-    *   An editor for expansion/compression/alignment of note patterns.
+    *   New. An editor for expansion/compression/alignment of note patterns.
     *   Each pattern slot can be colored; the color palette for slots and
         the piano rolls can be saved and modified.
     *   Horizontal and vertical zoom in the pattern and song editors.

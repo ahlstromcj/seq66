@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-29
+ * \updates       2022-05-01
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1281,6 +1281,14 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 s.set_beat_width(bw);
                                 s.clocks_per_metronome(cc);
                                 s.set_32nds_per_quarter(bb);
+
+#if defined SEQ66_USE_TRACK_0_AS_GLOBAL_TIME_SIG
+
+                                /*
+                                 * Should use c_perf_bp_mes and c_perf_bw
+                                 * instead.
+                                 */
+
                                 if (track == 0)
                                 {
                                     p.set_beats_per_bar(bpm);
@@ -1288,6 +1296,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                     p.clocks_per_metronome(cc);
                                     p.set_32nds_per_quarter(bb);
                                 }
+#endif
 
                                 midibyte bt[4];
                                 bt[0] = midibyte(bpm);
@@ -2103,7 +2112,12 @@ midifile::parse_c_backsequence ()
 }
 
 /*
- * Store the beats/measure and beat-width values from the perfedit window.
+ *  Store the beats/measure and beat-width values from the perfedit window.
+ *
+ *  We should also calculate:
+ *
+ *      performer::clocks_per_metronome(cc);
+ *      performer::set_32nds_per_quarter(bb);
  */
 
 bool

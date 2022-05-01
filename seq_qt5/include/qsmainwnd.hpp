@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-27
+ * \updates       2022-05-01
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -219,9 +219,15 @@ private:
     {
         return m_ppqn_list;
     }
-    const combolist & beatwidth_list() const
+
+    const combolist & beatwidth_list () const
     {
         return m_beatwidth_list;
+    }
+
+    const combolist & beats_per_bar_list () const
+    {
+        return m_beats_per_bar_list;
     }
 
     void enable_save (bool flag = true);
@@ -305,6 +311,7 @@ private:
     qmutemaster * m_mute_master;
     combolist m_ppqn_list;
     combolist m_beatwidth_list;
+    combolist m_beats_per_bar_list;
 
     /**
      *  Holds the last value of the MIDI-control-in status, used in displaying

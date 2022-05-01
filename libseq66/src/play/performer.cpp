@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-04-29
+ * \updates       2022-05-01
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2461,7 +2461,7 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
  */
 
 bool
-performer::set_beats_per_measure (int bpm)
+performer::set_beats_per_measure (int bpm, bool user_change)
 {
     bool result = bpm != m_beats_per_bar;
     if (result)
@@ -2469,12 +2469,12 @@ performer::set_beats_per_measure (int bpm)
         set_beats_per_bar(bpm);         /* also sets in jack_assistant  */
         mapper().exec_set_function
         (
-            [bpm] (seq::pointer sp, seq::number /*sn*/)
+            [bpm, user_change] (seq::pointer sp, seq::number /*sn*/)
             {
                 bool result = bool(sp);
                 if (result)
                 {
-                    sp->set_beats_per_bar(bpm);
+                    sp->set_beats_per_bar(bpm, user_change);
                     sp->set_measures(sp->get_measures());
                 }
                 return result;
@@ -2493,7 +2493,7 @@ performer::set_beats_per_measure (int bpm)
  */
 
 bool
-performer::set_beat_width (int bw)
+performer::set_beat_width (int bw, bool user_change)
 {
     bool result = bw != m_beat_width;
     if (result)
@@ -2501,12 +2501,12 @@ performer::set_beat_width (int bw)
         set_beat_length(bw);            /* also sets in jack_assistant  */
         mapper().exec_set_function
         (
-            [bw] (seq::pointer sp, seq::number /*sn*/)
+            [bw, user_change] (seq::pointer sp, seq::number /*sn*/)
             {
                 bool result = bool(sp);
                 if (result)
                 {
-                    sp->set_beat_width(bw);
+                    sp->set_beat_width(bw, user_change);
                     sp->set_measures(sp->get_measures());
                 }
                 return result;

@@ -1,15 +1,22 @@
 TO DO for Seq66 0.98.7 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-04-26
+2019-04-13 to 2022-05-01
 
-Pattern Editor:
+Pattern Editor, Main Window:
 
-    -   Reducing beat-width can delete notes! Without noting modification!
     -   Set time-sig to 3/4 in pattern-fix... 4/4 will not restore
     -   Investigate calculations:
         -   ticks_to_measures()
         -   ticks_to_beats()
         -   pulses_per_substep()
+        -   set_measures() and get_measures()
+    -   Verify no bugs remaining in:
+        -   Pattern fix dialog.
+        -   File / Save handling.
+        -   Pattern modification.
+    -   "Session: Save" can occur.  Annoying.
+    -   Investigate handling of global time-signature. Do we want to save it
+        to the user-file (when the user saves the tune with the new settings)?
 
 Windows:
 

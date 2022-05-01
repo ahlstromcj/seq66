@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-04-29
+ * \updates       2022-05-01
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1448,6 +1448,11 @@ public:
         return m_beats_per_bar;
     }
 
+    /*
+     * Simple setter. for the one that iterates over patterns, see
+     * set_beats_per_measure().
+     */
+
     void set_beats_per_bar (int bpm)
     {
         m_beats_per_bar = bpm;
@@ -1456,12 +1461,22 @@ public:
 #endif
     }
 
-    bool set_beats_per_measure (int bpm);
+    /**
+     *  Iterates over patterns to make the setting. Used for the global beats
+     *  in the main window.
+     */
+
+    bool set_beats_per_measure (int bpm, bool user_change = false);
 
     int get_beat_width () const
     {
         return m_beat_width;
     }
+
+    /*
+     * Simple setter. for the one that iterates over patterns, see
+     * set_beat_length().
+     */
 
     void set_beat_length (int bl)
     {
@@ -1471,7 +1486,12 @@ public:
 #endif
     }
 
-    bool set_beat_width (int bw);
+    /**
+     *  Iterates over patterns to make the setting. Used for the global beats
+     *  in the main window.
+     */
+
+    bool set_beat_width (int bw, bool user_change = false);
 
     void clocks_per_metronome (int cpm)
     {

@@ -1387,9 +1387,6 @@ qseditoptions::slot_ppqn_by_text (const QString & text)
         int p = string_to_int(temp);
         if (perf().change_ppqn(p))
         {
-            // combolist & pl = const_cast<combolist &>(ppqn_list());
-            // pl.current(temp);
-
             ppqn_list().current(temp);
             m_parent_widget->set_ppqn_text(temp);
             ui->combo_box_ppqn->setItemText(0, text);
