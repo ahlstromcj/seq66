@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-04-28
+ * \updates       2022-05-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -97,7 +97,10 @@ public:
 
 protected:
 
-    virtual bool on_sequence_change (seq::number seqno, bool recreate) override;
+    virtual bool on_sequence_change
+    (
+        seq::number seqno, performer::change ctype  // bool recreate
+    ) override;
 
     /*
      * virtual bool on_group_learn (bool state) override;

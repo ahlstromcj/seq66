@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-28
+ * \updates       2022-05-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -153,7 +153,10 @@ public:
 private:        /* performer::callback overrides    */
 
     virtual bool on_automation_change (automation::slot s) override;
-    virtual bool on_sequence_change (seq::number seqno, bool recreate) override;
+    virtual bool on_sequence_change
+    (
+        seq::number seqno, performer::change ctype  // bool recreate
+    ) override;
     virtual bool on_resolution_change (int ppqn, midibpm bpm) override;
 
 private:        /* qbase and qseqframe overrides    */
@@ -316,18 +319,26 @@ private:        /* slot helper functions        */
 
 private:        /* setters and getters          */
 
-    void set_beats_per_bar (int bpm);
-    void set_beat_width (int bw);
-    void set_measures (int len);
+    void set_beats_per_bar (int bpm, qbase::status qs = qbase::status::edit);
+    void set_beat_width (int bw, qbase::status qs = qbase::status::edit);
+    void set_measures (int len, qbase::status qs = qbase::status::edit);
     int get_measures ();
-    void set_midi_channel (int midichannel, bool user_change = false);
-    void set_midi_bus (int midibus, bool user_change = false);
+    void set_midi_channel
+    (
+        int midichannel,
+        qbase::status qs = qbase::status::edit
+    );
+    void set_midi_bus (int midibus, qbase::status qs = qbase::status::edit);
     void set_note_length (int nlen);
     void set_snap (midipulse s);
     void set_chord (int chord);
-    void set_key (int key, bool user_change = false);
-    void set_scale (int key, bool user_change = false);
-    void set_background_sequence (int seqnum, bool user_change = false);
+    void set_key (int key, qbase::status qs = qbase::status::edit);
+    void set_scale (int key, qbase::status qs = qbase::status::edit);
+    void set_background_sequence
+    (
+        int seqnum,
+        qbase::status qs = qbase::status::edit
+    );
     void set_transpose_image (bool istransposable);
     void set_event_entry
     (

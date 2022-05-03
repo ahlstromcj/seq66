@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-05-01
+ * \updates       2022-05-03
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -265,7 +265,10 @@ public:
             return false;
         }
 
-        virtual bool on_sequence_change (seq::number, bool /* recreate */)
+        virtual bool on_sequence_change
+        (
+            seq::number, change /*ctype*/       // bool /* recreate */
+        )
         {
             return false;
         }

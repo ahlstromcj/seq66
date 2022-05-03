@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-07-22
- * \updates       2020-07-29
+ * \updates       2022-05-03
  * \license       GNU GPLv2 or above
  *
  *  Provides a abstract base class so that both the old and the new Qt
@@ -58,6 +58,19 @@ namespace seq66
 
 class qbase
 {
+
+public:
+
+    /**
+     *  We need a way to distinguish settings made at construction time versus
+     *  settings made by the user.
+     */
+
+    enum class status
+    {
+        startup,
+        edit
+    };
 
 private:
 

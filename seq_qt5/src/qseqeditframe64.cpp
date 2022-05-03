@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-05-01
+ * \updates       2022-05-03
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -311,9 +311,9 @@ qseqeditframe64::qseqeditframe64
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);             /* part of issue #4     */
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    set_beats_per_bar(track().get_beats_per_bar());
-    set_beat_width(track().get_beat_width());
-    set_measures(track().get_measures());
+    set_beats_per_bar(track().get_beats_per_bar(), qbase::status::startup);
+    set_beat_width(track().get_beat_width(), qbase::status::startup);
+    set_measures(track().get_measures(), qbase::status::startup);
     m_scale = track().musical_scale();
     m_edit_bus = track().seq_midi_bus();
     m_edit_channel = track().midi_channel();    /* 0-15, null           */
@@ -322,18 +322,24 @@ qseqeditframe64::qseqeditframe64
     initialize_panels();                        /* uses seq_pointer()   */
     if (usr().global_seq_feature())
     {
-        set_scale(usr().seqedit_scale());
-        set_key(usr().seqedit_key());
-        set_background_sequence(usr().seqedit_bgsequence());
+        set_scale(usr().seqedit_scale(), qbase::status::startup);
+        set_key(usr().seqedit_key(), qbase::status::startup);
+        set_background_sequence
+        (
+            usr().seqedit_bgsequence(), qbase::status::startup
+        );
         track().musical_scale(usr().seqedit_scale());
         track().musical_key(usr().seqedit_key());
         track().background_sequence(usr().seqedit_bgsequence());
     }
     else
     {
-        set_scale(track().musical_scale());
-        set_key(track().musical_key());
-        set_background_sequence(track().background_sequence());
+        set_scale(track().musical_scale(), qbase::status::startup);
+        set_key(track().musical_key(), qbase::status::startup);
+        set_background_sequence
+        (
+            track().background_sequence(), qbase::status::startup
+        );
     }
     if (track().is_new_pattern())
     {
@@ -971,8 +977,8 @@ qseqeditframe64::qseqeditframe64
 
     set_recording_volume(usr().velocity_override());
     repopulate_usr_combos(m_edit_bus, m_edit_channel);
-    set_midi_bus(m_edit_bus);
-    set_midi_channel(m_edit_channel);        /* 0 to 15 or Free (0x80)   */
+    set_midi_bus(m_edit_bus, qbase::status::startup);
+    set_midi_channel(m_edit_channel, qbase::status::startup);  /* 0-15/0x80 */
 
     int seqwidth = m_seqroll->width();
     int scrollwidth = ui->rollScrollArea->width();
@@ -1110,7 +1116,9 @@ qseqeditframe64::closeEvent (QCloseEvent * event)
  */
 
 bool
-qseqeditframe64::on_sequence_change (seq::number seqno, bool /*recreate*/)
+qseqeditframe64::on_sequence_change
+(
+    seq::number seqno, performer::change /* ctype */)
 {
     bool result = seqno == track().seq_number();
     if (result)
@@ -1384,11 +1392,15 @@ qseqeditframe64::reset_beats_per_bar ()
  */
 
 void
-qseqeditframe64::set_beats_per_bar (int bpb)
+qseqeditframe64::set_beats_per_bar (int bpb, qbase::status qs)
 {
     if (usr().bpb_is_valid(bpb) && bpb != m_beats_per_bar)
     {
-        if (would_truncate(bpb, m_beat_width))
+        bool reset = false;
+        if (qs == qbase::status::edit)
+            reset = would_truncate(bpb, m_beat_width);
+
+        if (reset)
         {
             reset_beats_per_bar();
         }
@@ -1411,11 +1423,15 @@ qseqeditframe64::set_beats_per_bar (int bpb)
  */
 
 void
-qseqeditframe64::set_measures (int m)
+qseqeditframe64::set_measures (int m, qbase::status qs)
 {
     if (m > 0 && m <= 99999)                        /* a sanity check only  */
     {
-        if (would_truncate(m))
+        bool reset = false;
+        if (qs == qbase::status::edit)
+            reset = would_truncate(m);
+
+        if (reset)
         {
             reset_measures();
         }
@@ -1495,11 +1511,15 @@ qseqeditframe64::reset_beat_width ()
  */
 
 void
-qseqeditframe64::set_beat_width (int bw)
+qseqeditframe64::set_beat_width (int bw, qbase::status qs)
 {
     if (usr().bw_is_valid(bw) && bw != m_beat_width)
     {
-        if (would_truncate(m_beats_per_bar, bw))
+        bool reset = false;
+        if (qs == qbase::status::edit)
+            reset = would_truncate(m_beats_per_bar, bw);
+
+        if (reset)
         {
             reset_beat_width();
         }
@@ -1516,7 +1536,6 @@ qseqeditframe64::set_beat_width (int bw)
             }
             if (rational)
             {
-                // int measures = get_measures();
                 m_beat_width = bw;
                 track().set_beat_width(bw);
                 track().apply_length(0, 0, bw);
@@ -1650,7 +1669,7 @@ qseqeditframe64::set_chord (int chord)
 void
 qseqeditframe64::update_midi_bus (int index)
 {
-    set_midi_bus(index, true);                      /* always a user-change */
+    set_midi_bus(index);
 }
 
 /**
@@ -1660,7 +1679,7 @@ qseqeditframe64::update_midi_bus (int index)
 void
 qseqeditframe64::reset_midi_bus ()
 {
-    set_midi_bus(0, false);                         /* indirect user-change */
+    set_midi_bus(0, qbase::status::startup);    /* indirect user-change */
 }
 
 /**
@@ -1687,12 +1706,13 @@ qseqeditframe64::reset_midi_bus ()
  */
 
 void
-qseqeditframe64::set_midi_bus (int bus, bool user_change)
+qseqeditframe64::set_midi_bus (int bus, qbase::status qs)
 {
     bussbyte initialbus = track().seq_midi_bus();
     bussbyte b = bussbyte(bus);
     if (b != initialbus)
     {
+        bool user_change = qs == qbase::status::edit;
         track().set_midi_bus(b, user_change);
         m_edit_bus = bus;
         if (user_change)
@@ -1764,13 +1784,13 @@ qseqeditframe64::repopulate_midich_combo (int buss)
 void
 qseqeditframe64::update_midi_channel (int index)
 {
-    set_midi_channel(index, true);                  /* always a user-change */
+    set_midi_channel(index);
 }
 
 void
 qseqeditframe64::reset_midi_channel ()
 {
-    set_midi_channel(0, true);                      /* always a user-change */
+    set_midi_channel(0);
 }
 
 /**
@@ -1787,9 +1807,10 @@ qseqeditframe64::reset_midi_channel ()
  */
 
 void
-qseqeditframe64::set_midi_channel (int ch, bool user_change)
+qseqeditframe64::set_midi_channel (int ch, qbase::status qs)
 {
     int initialchan = track().seq_midi_channel();
+    bool user_change = qs == qbase::status::edit;
     if (ch != initialchan || ! user_change)
     {
         int chindex = ch;
@@ -2105,7 +2126,7 @@ qseqeditframe64::popup_sequence_menu ()
     }
 
     QAction * off = new QAction(tr("Off"), m_sequences_popup);
-    connect(off, &QAction::triggered, SET_BG_SEQ(seq::limit(), true));
+    connect(off, &QAction::triggered, SET_BG_SEQ(seq::limit(), qbase::status::edit));
     (void) m_sequences_popup->addAction(off);
     (void) m_sequences_popup->addSeparator();
     int seqsinset = perf().screenset_size();
@@ -2130,7 +2151,11 @@ qseqeditframe64::popup_sequence_menu ()
 
                     QAction * item = new QAction(tr(name), menusset);
                     menusset->addAction(item);
-                    connect(item, &QAction::triggered, SET_BG_SEQ(s, true));
+                    connect
+                    (
+                        item, &QAction::triggered,
+                        SET_BG_SEQ(s, qbase::status::edit)
+                    );
                 }
             }
         }
@@ -2171,7 +2196,7 @@ qseqeditframe64::update_note_entry (bool on)
  */
 
 void
-qseqeditframe64::set_background_sequence (int seqnum, bool user_change)
+qseqeditframe64::set_background_sequence (int seqnum, qbase::status qs)
 {
     if (! seq::valid(seqnum))
         return;
@@ -2194,6 +2219,7 @@ qseqeditframe64::set_background_sequence (int seqnum, bool user_change)
                 if (usr().global_seq_feature())
                     usr().seqedit_bgsequence(seqnum);
 
+                bool user_change = qs == qbase::status::edit;
                 track().background_sequence(seqnum, user_change);
                 if (not_nullptr(m_seqroll))
                     m_seqroll->set_background_sequence(true, seqnum);
@@ -2594,13 +2620,13 @@ qseqeditframe64::update_key (int index)
 {
     if (index != m_key && legal_key(index))
     {
-        set_key(index, true);                       /* always a user-change */
+        set_key(index);
         set_dirty();
     }
 }
 
 void
-qseqeditframe64::set_key (int key, bool user_change)
+qseqeditframe64::set_key (int key, qbase::status qs)
 {
     if (legal_key(key))
     {
@@ -2615,6 +2641,7 @@ qseqeditframe64::set_key (int key, bool user_change)
         if (usr().global_seq_feature())
             usr().seqedit_key(key);
 
+        bool user_change = qs == qbase::status::edit;
         track().musical_key(midibyte(key), user_change);
         set_dirty();
     }
@@ -2625,7 +2652,7 @@ qseqeditframe64::set_key (int key, bool user_change)
 void
 qseqeditframe64::reset_key ()
 {
-    set_key(c_key_of_C, true);                      /* always a user-change */
+    set_key(c_key_of_C);
 }
 
 /**
@@ -2635,7 +2662,7 @@ qseqeditframe64::reset_key ()
 void
 qseqeditframe64::update_scale (int index)
 {
-    set_scale(index, true);                         /* always a user-change */
+    set_scale(index);
 }
 
 /**
@@ -2643,7 +2670,7 @@ qseqeditframe64::update_scale (int index)
  */
 
 void
-qseqeditframe64::set_scale (int scale, bool user_change)
+qseqeditframe64::set_scale (int scale, qbase::status qs)
 {
     if (legal_scale(scale))
     {
@@ -2655,6 +2682,7 @@ qseqeditframe64::set_scale (int scale, bool user_change)
         if (usr().global_seq_feature())
             usr().seqedit_scale(scale);
 
+        bool user_change = qs == qbase::status::edit;
         track().musical_scale(midibyte(scale), user_change);
         if (not_nullptr(m_tools_harmonic))
             m_tools_harmonic->setEnabled(m_scale > 0);
@@ -2668,7 +2696,7 @@ qseqeditframe64::set_scale (int scale, bool user_change)
 void
 qseqeditframe64::reset_scale ()
 {
-    set_scale(c_scales_off, true);                  /* always a user-change */
+    set_scale(c_scales_off);
 }
 
 void

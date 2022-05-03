@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-05-01
+ * \updates       2022-05-03
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -525,7 +525,7 @@ performer::notify_sequence_change (seq::number seqno, change mod)
         modify();
 
     for (auto notify : m_notify)
-        (void) notify->on_sequence_change(seqno, redo);
+        (void) notify->on_sequence_change(seqno, mod);
 }
 
 /**
@@ -1696,13 +1696,13 @@ performer::needs_update (seq::number seqno) const
 bool
 performer::set_beats_per_minute (midibpm bpm)
 {
-    if (usr().bpm_is_valid(int(bpm)))
+    bool result = usr().bpm_is_valid(int(bpm));
+    if (result)
     {
         bpm = fix_tempo(bpm);
-        return jack_set_beats_per_minute(bpm);  /* not just JACK, though    */
+        result = jack_set_beats_per_minute(bpm);    /* not just JACK though */
     }
-    else
-        return false;
+    return result;
 }
 
 /**
@@ -1733,7 +1733,8 @@ performer::jack_set_beats_per_minute (midibpm bpm)
 
         m_us_per_quarter_note = tempo_us_from_bpm(bpm);
         m_bpm = bpm;
-        notify_resolution_change(get_ppqn(), bpm, change::no);
+        change ch = rc().midi_filename().empty() ?  change::no : change:: yes;
+        notify_resolution_change(get_ppqn(), bpm, ch);
     }
     return result;
 }
@@ -1808,14 +1809,16 @@ performer::page_increment_beats_per_minute ()
     return result;
 }
 
+/**
+ *  Should we pass the current value of BPM to the set_beats_per_minute()
+ *  function?
+ */
+
 midibpm
 performer::update_tap_bpm ()
 {
     midibpm bpm = 0.0;
-    struct timespec spec;
-    clock_gettime(CLOCK_REALTIME, &spec);
-    long ms = long(spec.tv_sec) * 1000;         /* seconds to milliseconds  */
-    ms += std::round(spec.tv_nsec * 1.0e-6);    /* nanosecs to milliseconds */
+    long ms = millitime();
     if (m_current_beats == 0)
     {
         m_base_time_ms = ms;
@@ -1841,10 +1844,7 @@ performer::tap_bpm_timeout ()
     bool result = false;
     if (m_current_beats > 0 && m_last_time_ms > 0)
     {
-        struct timespec spec;
-        clock_gettime(CLOCK_REALTIME, &spec);
-        long ms = long(spec.tv_sec) * 1000;         /* seconds to ms        */
-        ms += round(spec.tv_nsec * 1.0e-6);         /* nanoseconds to ms    */
+        long ms = millitime();
         long difference = ms - m_last_time_ms;
         if (difference > usr().tap_button_timeout())
         {
@@ -5386,7 +5386,9 @@ performer::sequence_playing_change (seq::number seqno, bool on)
 {
     bool qinprogress = midi_control_in().is_queue();
     mapper().sequence_playscreen_change(seqno, on, qinprogress);
-    notify_trigger_change(seqno, change::no);
+    /*
+     * Too much maybe: notify_trigger_change(seqno, change::no);
+     */
     return true;
 }
 

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-04-28
+ * \updates       2022-05-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -372,7 +372,11 @@ qseqeventframe::slot_hex_data_state (int state)
  */
 
 bool
-qseqeventframe::on_sequence_change (seq::number seqno, bool recreate)
+qseqeventframe::on_sequence_change
+(
+    seq::number seqno,
+    performer::change ctype
+)
 {
     bool result = seqno == track().seq_number();
     if (result)
@@ -383,6 +387,7 @@ qseqeventframe::on_sequence_change (seq::number seqno, bool recreate)
         }
         else
         {
+            bool recreate = ctype == performer::change::yes;
             if (recreate)
                 initialize_table();
         }

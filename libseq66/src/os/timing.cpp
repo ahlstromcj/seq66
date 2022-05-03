@@ -260,7 +260,7 @@ microtime ()
 {
     struct timespec t;
     clock_gettime(CLOCK_MONOTONIC, &t);
-    return (t.tv_sec * 1000000) + (t.tv_nsec / 1000);
+    return (t.tv_sec * 1000000) + (t.tv_nsec * 0.0010);
 }
 
 /**
@@ -276,7 +276,7 @@ millitime ()
 {
     struct timespec t;
     clock_gettime(CLOCK_MONOTONIC, &t);
-    return (t.tv_sec * 1000) + (t.tv_nsec / 1000000);
+    return (t.tv_sec * 1000) + (t.tv_nsec * 1.0e-6);
 }
 
 #elif defined SEQ66_PLATFORM_WINDOWS

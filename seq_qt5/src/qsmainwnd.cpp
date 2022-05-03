@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-01
+ * \updates       2022-05-03
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -328,16 +328,6 @@ qsmainwnd::qsmainwnd
      */
 
     (void) fill_combobox(ui->cmb_beat_measure, beats_per_bar_list());
-
-#if 0
-    QString thirtytwo = QString::number(32);
-    for (int i = 0; i < s_beat_measure_count; ++i)
-    {
-        QString combo_text = QString::number(i + 1);
-        ui->cmb_beat_measure->insertItem(i, combo_text);
-    }
-    ui->cmb_beat_measure->insertItem(s_beat_measure_count, thirtytwo);
-#endif
 
     /*
      * Fill options for beat length (beat width) in the combo box, and set the
@@ -1094,7 +1084,6 @@ qsmainwnd::load_into_session (const std::string & selectedfile)
 
             msg += rc().midi_filename();
             show_message_box(msg);
-            m_is_title_dirty = false;                   // refresh_captions()?
             result = true;
             if (not_nullptr(m_mute_master))
                 m_mute_master->group_needs_update();
@@ -1515,17 +1504,6 @@ qsmainwnd::conditional_update ()
         ui->btnLoop->setChecked(m_is_looping);
     }
 
-    /*
-     * Currently removed from the live frame.
-     *
-     *  if (m_control_status != cb_perf().ctrl_status())
-     *  {
-     *      m_control_status = cb_perf().ctrl_status();
-     *      if (not_nullptr(m_live_frame))
-     *          m_live_frame->set_mode_text(cb_perf().ctrl_status_string());
-     *  }
-     */
-
     midipulse tick = cb_perf().get_tick();
     if (tick != m_previous_tick)
     {
@@ -1569,7 +1547,8 @@ qsmainwnd::conditional_update ()
 }
 
 /**
- *  Prompts the user to save the MIDI file.
+ *  Prompts the user to save the MIDI file.  Check if the file has been modified.
+ *  If modified, ask the user whether to save changes.
  *
  * \return
  *      Returns true if the file was saved or the changes were "discarded" by
@@ -1877,6 +1856,7 @@ qsmainwnd::save_file (const std::string & fname, bool updatemenu)
             result = write_midi_file(cb_perf(), filename, errmsg);
             if (result)
             {
+                enable_save(false);             /* disable "File / Save"    */
                 if (updatemenu)                 /* or ! use_nsm()           */
                     update_recent_files_menu(); /* add the recent file-name */
             }
@@ -1911,7 +1891,10 @@ qsmainwnd::save_file_as ()
     {
         result = save_file(filename);
         if (result)
+        {
+            enable_save(false);                 /* disable "File / Save"    */
             rc().midi_filename(filename);
+        }
     }
     return result;
 }
@@ -3588,16 +3571,18 @@ qsmainwnd::on_automation_change (automation::slot /* s */)
 }
 
 bool
-qsmainwnd::on_sequence_change (seq::number seqno, bool redo)
+qsmainwnd::on_sequence_change (seq::number seqno, performer::change ctype)
 {
     bool result = not_nullptr(m_live_frame);
     if (result)
     {
+        bool redo = ctype == performer::change::yes;
         m_live_frame->update_sequence(seqno, redo);
         for (auto ip : m_open_live_frames)
             ip.second->update_sequence(seqno, redo);
 
-        enable_save(cb_perf().modified());          /* or use redo flag?    */
+        if (redo)
+            enable_save(cb_perf().modified());
     }
     return result;
 }
@@ -3775,7 +3760,9 @@ qsmainwnd::refresh_captions ()
         std::string newname = cb_perf().playlist_song_basename();
         update_window_title(newname);
     }
-    enable_save(cb_perf().modified());
+    /*
+     * Too much maybe: enable_save(cb_perf().modified());
+     */
     return result;
 }
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-05-01
+ * \updates       2022-05-03
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -679,14 +679,21 @@ void
 sequence::set_beats_per_bar (int bpb, bool user_change)
 {
     automutex locker(m_mutex);
-    bool modded = bpb != int(m_time_beats_per_measure) && user_change;
-    int m = get_measures();
-    if (m != m_measures && user_change)
+    bool modded = false;
+    if (bpb != int(m_time_beats_per_measure))
     {
-        modded = true;
-        m_measures = m;
+        m_time_beats_per_measure = (unsigned short)(bpb);
+        if (user_change)
+            modded = true;
     }
-    m_time_beats_per_measure = (unsigned short)(bpb);
+
+    int m = get_measures();
+    if (m != m_measures)
+    {
+        m_measures = m;
+        if (user_change)
+            modded = true;
+    }
     if (modded)
         modify();
 }
@@ -708,14 +715,21 @@ void
 sequence::set_beat_width (int bw, bool user_change)
 {
     automutex locker(m_mutex);
-    bool modded = bw != int(m_time_beat_width) && user_change;
-    int m = get_measures();
-    if (m != m_measures && user_change)
+    bool modded = false;
+    if (bw != int(m_time_beat_width))
     {
-        modded = true;
-        m_measures = m;
+        m_time_beat_width = (unsigned short)(bw);
+        if (user_change)
+            modded = true;
     }
-    m_time_beat_width = (unsigned short)(bw);
+
+    int m = get_measures();
+    if (m != m_measures)
+    {
+        m_measures = m;
+        if (user_change)
+            modded = true;
+    }
     if (modded)
         modify();
 }
@@ -753,7 +767,7 @@ sequence::set_measures (int measures)
         measures * get_beats_per_bar() * (get_ppqn() * 4) / get_beat_width()
     );
     if (modded)
-        modify(true);
+        modify();
 }
 
 /**
@@ -4910,7 +4924,10 @@ sequence::set_playing (bool p)
             off_playing_notes();
 
         set_dirty();
-        notify_trigger();
+
+        /*
+         * ca 2022-05-03 This isn't a trigger change: notify_trigger();
+         */
     }
     m_queued = false;
     m_one_shot = false;

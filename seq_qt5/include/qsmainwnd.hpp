@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-01
+ * \updates       2022-05-03
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -188,7 +188,10 @@ protected:                              // performer callbacks
         const keystroke & k, bool success
     ) override;
     virtual bool on_automation_change (automation::slot s) override;
-    virtual bool on_sequence_change (seq::number seqno, bool recreate) override;
+    virtual bool on_sequence_change
+    (
+        seq::number seqno, performer::change ctype  // bool recreate
+    ) override;
     virtual bool on_trigger_change (seq::number seqno) override;
     virtual bool on_set_change
     (
@@ -232,12 +235,6 @@ private:
 
     void enable_save (bool flag = true);
     void make_perf_frame_in_tab ();
-
-    /*
-     * Check if the file has been modified.  If modified, ask the user whether
-     * to save changes.
-     */
-
     bool check ();
     std::string filename_prompt
     (
