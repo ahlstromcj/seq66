@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-03
+ * \updates       2022-05-04
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -765,7 +765,7 @@ qsmainwnd::qsmainwnd
      */
 
     if (! midifilename.empty())
-        m_is_title_dirty = true;
+        enable_save(false);
 
     load_set_master();
     load_mute_master();

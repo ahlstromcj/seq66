@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2022-02-26
+ * \updates       2022-05-04
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -32,6 +32,7 @@
  */
 
 #include <iostream>                     /* std::cout, etc.                  */
+#include <stdexcept>                    /* std::invalid_argument            */
 
 #include "cfg/settings.hpp"             /* seq66::rc() accessor             */
 #include "play/portslist.hpp"           /* seq66::portslist class           */
@@ -136,6 +137,17 @@ portslist::add
     if (result)
     {
         io ioitem;
+        int client, port;
+        if (extract_port_pair(name, client, port))
+        {
+            ioitem.io_client_number = client;
+            ioitem.io_port_number = port;
+        }
+        else
+        {
+            ioitem.io_client_number = (-1);
+            ioitem.io_port_number = (-1);
+        }
         ioitem.io_enabled = status > 0;
         ioitem.out_clock = int_to_clock(status);
         ioitem.io_name = name;
@@ -227,6 +239,8 @@ portslist::set_name (bussbyte bus, const std::string & name)
     }
 }
 
+#if defined USE_SET_NICK_NAME
+
 void
 portslist::set_nick_name (bussbyte bus, const std::string & name)
 {
@@ -234,6 +248,8 @@ portslist::set_nick_name (bussbyte bus, const std::string & name)
     if (it != m_master_io.end())
         it->second.io_nick_name = name;
 }
+
+#endif
 
 void
 portslist::set_alias (bussbyte bus, const std::string & alias)
@@ -243,44 +259,58 @@ portslist::set_alias (bussbyte bus, const std::string & alias)
         it->second.io_alias = alias;
 }
 
+static std::string
+buss_string (const std::string & name, bussbyte bus)
+{
+    std::string result;
+    if (! name.empty())
+    {
+        result = "[" + std::to_string(int(bus)) + "] " + name;
+    }
+    return result;
+}
+
 std::string
-portslist::get_name (bussbyte bus, bool addnumber) const
+portslist::get_name (bussbyte bus, portnaming style) const
 {
     static std::string s_dummy;
+    bool addnumber = style != portnaming::shortnames;
     auto it = m_master_io.find(bus);
     std::string result = it != m_master_io.end() ?
         it->second.io_name : s_dummy ;
 
-    if (addnumber && ! result.empty())
-        result = "[" + std::to_string(int(bus)) + "] " + result;
+    if (addnumber)
+        result = buss_string(result, bus);
 
     return result;
 }
 
 std::string
-portslist::get_nick_name (bussbyte bus, bool addnumber) const
+portslist::get_nick_name (bussbyte bus, portnaming style) const
 {
     static std::string s_dummy;
+    bool addnumber = style != portnaming::shortnames;
     auto it = m_master_io.find(bus);
     std::string result = it != m_master_io.end() ?
         it->second.io_nick_name : s_dummy ;
 
-    if (addnumber && ! result.empty())
-        result = "[" + std::to_string(int(bus)) + "] " + result;
+    if (addnumber)
+        result = buss_string(result, bus);
 
     return result;
 }
 
 std::string
-portslist::get_alias (bussbyte bus, bool addnumber) const
+portslist::get_alias (bussbyte bus, portnaming style) const
 {
     static std::string s_dummy;
+    bool addnumber = style != portnaming::shortnames;
     auto it = m_master_io.find(bus);
     std::string result = it != m_master_io.end() ?
         it->second.io_alias : s_dummy ;
 
-    if (addnumber && ! result.empty())
-        result = "[" + std::to_string(int(bus)) + "] " + result;
+    if (addnumber)
+        result = buss_string(result, bus);
 
     return result;
 }
@@ -400,6 +430,26 @@ portslist::extract_nickname (const std::string & name) const
     if (result.empty())
         result = name;
 
+    return result;
+}
+
+bool
+portslist::extract_port_pair
+(
+    const std::string & name,
+    int & client,
+    int & port
+) const
+{
+    int colons = count_colons(name);
+    bool result = colons >= 2;
+    if (result)
+    {
+        tokenization tokens = tokenize(name);
+        result = tokens.size() > 2;
+        if (result)
+            result = string_to_int_pair(tokens[1], client, port, ":");
+    }
     return result;
 }
 

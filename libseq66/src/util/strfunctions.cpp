@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-04-29
+ * \updates       2022-05-04
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -566,31 +566,38 @@ string_to_bool (const std::string & s, bool defalt)
 }
 
 bool
-string_to_time_signature (const std::string & s, int & beats, int & width)
+string_to_int_pair
+(
+    const std::string & s,
+    int & v1, int & v2,
+    const std::string & delimiter
+)
 {
-    bool result = s.find_first_of("/") != std::string::npos;
+    bool result = s.find_first_of(delimiter) != std::string::npos;
     if (result)
     {
-        tokenization numbers = tokenize(s, "/");
+        tokenization numbers = tokenize(s, delimiter);
         result = numbers.size() == 2;
         if (result)
         {
-            beats = string_to_int(numbers[0]);
-            width = string_to_int(numbers[1]);
-            result = beats > 0 && width > 0;
+            v1 = string_to_int(numbers[0]);
+            v2 = string_to_int(numbers[1]);
         }
-        else
-            beats = width = 0;
     }
     return result;
 }
 
+bool
+string_to_time_signature (const std::string & s, int & beats, int & width)
+{
+    return string_to_int_pair(s, beats, width, ":");
+}
+
 /**
- *  Converts a string to a double value.  This function bypasses
- *  characters until it finds a digit (whether part of the number or a "0x"
- *  construct), and then converts it.  The strtol() function is used with a
- *  base of 0 so that decimal, hexadecimal, and octal values can all be
- *  parsed.
+ *  Converts a string to a double value.  This function bypasses characters
+ *  until it finds a digit (whether part of the number or a "0x" construct),
+ *  and then converts it.  The strtol() function is used with a base of 0 so
+ *  that decimal, hexadecimal, and octal values can all be parsed.
  *
  *  This function is the base implementation for string_to_midibyte() and
  *  string_to_int() as well.
@@ -1036,19 +1043,25 @@ tokenization
 tokenize_quoted (const std::string & source)
 {
     tokenization result;
-    tokenization temp = tokenize(source, " \t");
+    tokenization temp = tokenize(source);
     if (! temp.empty())
     {
         bool quotes = false;
         std::string quoted;
         for (const auto & token : temp)
         {
-            if (token[0] == '"')
+            if (token.front() == '"')
             {
                 if (token.back() == '"')            /* single-word quote    */
                 {
-                    quoted = token.substr(1, token.length() - 2);
-                    result.push_back(quoted);
+                    if (token.size() > 1)
+                    {
+                        quoted = token.substr(1, token.length() - 2);
+                        if (! quoted.empty())
+                            result.push_back(quoted);
+                    }
+                    else                            /* isolated end quote   */
+                        result.push_back(quoted);
                 }
                 else
                 {
@@ -1058,19 +1071,24 @@ tokenize_quoted (const std::string & source)
             }
             else
             {
-                if (token.back() == '"')
+                if (token.back() == '"')            /* end of quoted string */
                 {
                     if (quotes)
                     {
                         quotes = false;
                         quoted += " ";
                         quoted += token.substr(0, token.length() - 1);
-                        result.push_back(quoted);
+                        if (! quoted.empty())
+                        {
+                            result.push_back(quoted);
+                            quoted.clear();         /* in case more quotes  */
+                            quotes = false;
+                        }
                     }
                 }
                 else
                 {
-                    if (quotes)
+                    if (quotes)                     /* append the token     */
                     {
                         quoted += " ";
                         quoted += token;

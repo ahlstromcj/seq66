@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-03-29
+ * \updates       2022-05-04
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -154,9 +154,9 @@ public:
 
     enum class interaction
     {
-        seq24,          /**< Use the normal mouse interactions.         */
-        fruity,         /**< The "fruity" mouse interactions. To do.    */
-        max             /**< Keep this last... a size value.            */
+        seq24,          /**< Use the normal mouse interactions.             */
+        fruity,         /**< The "fruity" mouse interactions. To do.        */
+        max             /**< Keep this last... a size value.                */
     };
 
     /**
@@ -166,24 +166,11 @@ public:
 
     enum class setsmode
     {
-        normal,         /**< Set change mutes current, loads new set.   */
-        autoarm,        /**< Mute current set, load and unmute new set. */
-        additive,       /**< Keep current set armed when changing sets. */
-        allsets,        /**< Arm all sets at once.                      */
-        max             /**< Keep this last... a size value.            */
-    };
-
-    /**
-     *  Indicates whether to use the short (internal) or the long (normal)
-     *  port names in visible user-interface elements.  If there is no
-     *  internal map, this option is forced to "long".
-     */
-
-    enum class portnaming
-    {
-        shortnames,     /**< Use short names: "[0] MIDI Through Port".  */
-        longnames,      /**< Long names: "[0] 36:0 MIDI Through Port".  */
-        max             /**< Keep this last... a size value.            */
+        normal,         /**< Set change mutes current, loads new set.       */
+        autoarm,        /**< Mute current set, load and unmute new set.     */
+        additive,       /**< Keep current set armed when changing sets.     */
+        allsets,        /**< Arm all sets at once.                          */
+        max             /**< Keep this last... a size value.                */
     };
 
 private:
@@ -906,6 +893,16 @@ public:
     portnaming port_naming () const
     {
         return m_port_naming;
+    }
+
+    bool is_port_naming_short () const
+    {
+        return m_port_naming == portnaming::shortnames;
+    }
+
+    bool is_port_naming_pair () const
+    {
+        return m_port_naming == portnaming::pairnames;
     }
 
     bool is_port_naming_long () const

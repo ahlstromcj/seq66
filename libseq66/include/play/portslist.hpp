@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2022-02-26
+ * \updates       2022-05-04
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -46,6 +46,20 @@
 
 namespace seq66
 {
+
+/**
+ *  Indicates whether to use the short (internal) or the long (normal)
+ *  port names in visible user-interface elements.  If there is no
+ *  internal map, this option is forced to "long".
+ */
+
+enum class portnaming
+{
+    shortnames,     /**< Use short names: "[0] midi_out".                   */
+    pairnames,      /**< Full names: "[0] fluidsynth:midi_out".             */
+    longnames,      /**< Long names: "[0] 36:0 fluidsynth:midi_out".        */
+    max             /**< Keep this last... a size value.                    */
+};
 
 /**
  *  A wrapper for a vector of clocks and inputs values, as used in
@@ -85,11 +99,13 @@ protected:
 
     using io = struct
     {
-        bool io_enabled;            /**<< The status setting for this buss. */
-        e_clock out_clock;          /**<< The clock setting for this buss.  */
-        std::string io_name;        /**<< The name of the I/O buss.         */
-        std::string io_nick_name;   /**<< The short name of the I/O buss.   */
-        std::string io_alias;       /**<< FYI only, and only for JACK.      */
+        bool io_enabled;            /**< The status setting for this buss.  */
+        e_clock out_clock;          /**< The clock setting for this buss.   */
+        std::string io_name;        /**< The name of the I/O buss.          */
+        std::string io_nick_name;   /**< The short name of the I/O buss.    */
+        std::string io_alias;       /**< FYI only, and only for JACK.       */
+        int io_client_number;       /**< The system client number.          */
+        int io_port_number;         /**< The system port number.            */
     };
 
     /**
@@ -172,11 +188,13 @@ public:
     }
 
     void set_name (bussbyte bus, const std::string & name);
+#if defined USE_SET_NICK_NAME
     void set_nick_name (bussbyte bus, const std::string & name);
+#endif
     void set_alias (bussbyte bus, const std::string & name);
-    std::string get_name (bussbyte bus, bool addnumber = false) const;
-    std::string get_nick_name (bussbyte bus, bool addnumber = false) const;
-    std::string get_alias (bussbyte bus, bool addnumber = false) const;
+    std::string get_name (bussbyte bus, portnaming style) const;
+    std::string get_nick_name (bussbyte bus, portnaming style) const;
+    std::string get_alias (bussbyte bus, portnaming style) const;
     bussbyte bus_from_name (const std::string & nick) const;
     bussbyte bus_from_nick_name (const std::string & nick) const;
     bussbyte bus_from_alias (const std::string & alias) const;
@@ -204,6 +222,12 @@ protected:
 
     std::string to_string (const std::string & tag) const;
     std::string extract_nickname (const std::string & name) const;
+    bool extract_port_pair
+    (
+        const std::string & name,
+        int & client,
+        int & port
+    ) const;
     std::string e_clock_to_string (e_clock e) const;
     std::string port_map_list (bool isclock) const;
     std::string io_line

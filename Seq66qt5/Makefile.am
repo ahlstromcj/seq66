@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2017-09-05
-# \update      2021-09-03
+# \update      2022-05-04
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -77,6 +77,7 @@ builddir = @abs_top_builddir@
 libseq66dir = $(builddir)/libseq66/src/.libs
 libsessionsdir = $(builddir)/libsessions/src/.libs
 libseq_rtmididir = $(builddir)/seq_rtmidi/src/.libs
+libseq_portmididir = $(builddir)/seq_portmidi/src/.libs
 libseq_qt5dir = $(builddir)/seq_qt5/src/.libs
 
 #******************************************************************************
@@ -87,7 +88,7 @@ libseq_qt5dir = $(builddir)/seq_qt5/src/.libs
 # 	library header files used in this project.
 #
 # 	Note that we include both the portmidi and rtmidi include directories.
-# 	There are no conflicts in name of header files, and we don't want to
+# 	There are no conflicts in names of header files, and we don't want to
 # 	try to test SEQ66_RTMIDI_SUPPORT and SEQ66_PORTMIDI_SUPPORT until we have
 # 	to.
 #
@@ -95,11 +96,22 @@ libseq_qt5dir = $(builddir)/seq_qt5/src/.libs
 #
 #------------------------------------------------------------------------------
 
+if BUILD_RTMIDI
+MIDIHDR = $(top_srcdir)/seq_rtmidi/include
+MIDILIB = -L$(libseq_rtmididir) -lseq_rtmidi
+MIDIDEP = $(libseq_rtmididir)/libseq_rtmidi.la
+MIDIAPP = qseq66
+else
+MIDIHDR = $(top_srcdir)/seq_portmidi/include
+MIDILIB = -L$(libseq_portmididir) -lseq_portmidi
+MIDIDEP = $(libseq_portmididir)/libseq_portmidi.la
+MIDIAPP = qpseq66
+endif
+
 AM_CXXFLAGS = \
  -I$(top_srcdir)/libseq66/include \
  -I$(top_srcdir)/libsessions/include \
- -I$(top_srcdir)/seq_portmidi/include \
- -I$(top_srcdir)/seq_rtmidi/include \
+ -I$(MIDIHDR) \
  -I$(top_srcdir)/seq_qt5/include \
  $(QT_CXXFLAGS) \
  $(JACK_CFLAGS) \
@@ -141,7 +153,7 @@ libraries = \
  -L$(libsessionsdir) -lsessions \
  -L$(libseq66dir) -lseq66 \
  -L$(libsessionsdir) -lsessions \
- -L$(libseq_rtmididir) -lseq_rtmidi
+ $(MIDILIB)
 
 #****************************************************************************
 # Project-specific dependency files
@@ -153,7 +165,7 @@ libraries = \
 #----------------------------------------------------------------------------
 
 dependencies = \
- $(libseq_rtmididir)/libseq_rtmidi.la \
+ $(MIDIDEP) \
  $(libseq_qt5dir)/libseq_qt5.la \
  $(libsessionsdir)/libsessions.la \
  $(libseq66dir)/libseq66.la
@@ -162,7 +174,7 @@ dependencies = \
 # The programs to build
 #------------------------------------------------------------------------------
 
-bin_PROGRAMS = qseq66
+bin_PROGRAMS = $(MIDIAPP)
 
 #******************************************************************************
 # seq66
@@ -187,6 +199,11 @@ qseq66_SOURCES = seq66qt5.cpp
 qseq66_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
 qseq66_LDFLAGS = -Wl,--copy-dt-needed-entries
 qseq66_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(AM_LDFLAGS)
+ 
+qpseq66_SOURCES = seq66qt5.cpp
+qpseq66_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
+qpseq66_LDFLAGS = -Wl,--copy-dt-needed-entries
+qpseq66_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(AM_LDFLAGS)
 
 #******************************************************************************
 #  distclean

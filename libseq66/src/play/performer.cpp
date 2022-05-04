@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-05-03
+ * \updates       2022-05-04
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -783,13 +783,12 @@ performer::ui_get_input (bussbyte bus, bool & active, std::string & n) const
 {
     const inputslist & ipm = input_port_map();
     bool disabled = false;
-    bool longform = rc().is_port_naming_long();
     std::string name;
     std::string alias;
     if (ipm.active())
     {
-        name = ipm.get_name(bus, longform);
-        alias = ipm.get_alias(bus, longform);
+        name = ipm.get_name(bus, rc().port_naming());
+        alias = ipm.get_alias(bus, rc().port_naming());
         active = ipm.get(bus);
         disabled = ipm.is_disabled(bus);
     }
@@ -849,13 +848,12 @@ bool
 performer::ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const
 {
     const clockslist & opm = output_port_map();
-    bool longform = rc().is_port_naming_long();
     std::string name;
     std::string alias;
     if (opm.active())
     {
-        name = opm.get_name(bus, longform);
-        alias = opm.get_alias(bus, longform);
+        name = opm.get_name(bus, rc().port_naming());
+        alias = opm.get_alias(bus, rc().port_naming());
         e = opm.get(bus);
     }
     else if (master_bus())

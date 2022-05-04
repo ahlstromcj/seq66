@@ -131,12 +131,9 @@ libtool: $(LIBTOOL_DEPS)
 #  Note the order of these tests is important to handling the mixing and
 #  matching of MIDI engine versus user-interface.
 #
-#     RTMIDI/GTKMM
 #     RTMIDI/QT5
-#     PORTMIDI/GTKMM
-#     Legacy ALSA/GTKMM
 #     RTMIDI/CLI
-#     PORTMIDI/WINDOWS/CLI build: QT5 Windows build is done via qmake.
+#     PORTMIDI/WINDOWS: QT5 Windows build is done via qmake.
 #
 #  See INSTALL.
 #

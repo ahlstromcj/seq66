@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2022-02-26
+ * \updates       2022-05-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -217,7 +217,10 @@ std::string
 output_port_name (bussbyte b, bool addnumber)
 {
     const clockslist & opm = output_port_map();
-    return opm.get_name(b, addnumber);
+    portnaming style = addnumber ?
+        portnaming::longnames : portnaming::shortnames ;
+
+    return opm.get_name(b, style);
 }
 
 /**
@@ -230,7 +233,7 @@ output_port_number (bussbyte b)
 {
     bussbyte result = b;
     const clockslist & opm = output_port_map();
-    std::string nickname = opm.get_nick_name(b);
+    std::string nickname = opm.get_nick_name(b, portnaming::shortnames);
     if (! nickname.empty())
         result = string_to_int(nickname);
 

@@ -208,7 +208,10 @@ std::string
 input_port_name (bussbyte b, bool addnumber)
 {
     const inputslist & ipm = input_port_map();
-    return ipm.get_name(b, addnumber);
+    portnaming style = addnumber ?
+        portnaming::longnames : portnaming::shortnames ;
+
+    return ipm.get_name(b, style);
 }
 
 /**
@@ -221,7 +224,7 @@ input_port_number (bussbyte b)
 {
     bussbyte result = b;
     const inputslist & ipm = input_port_map();
-    std::string nickname = ipm.get_nick_name(b);
+    std::string nickname = ipm.get_nick_name(b, portnaming::shortnames);
     if (! nickname.empty())
         result = string_to_int(nickname);
 

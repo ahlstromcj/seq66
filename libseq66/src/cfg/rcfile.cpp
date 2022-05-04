@@ -73,8 +73,8 @@ static const std::string c_interaction_method_names[3] =
 
 static const std::string c_interaction_method_descs[3] =
 {
-    "original seq66 method",
-    "similar to a certain fruity sequencer",
+    "Original Seq66 method",
+    "Similar to a certain Fruity sequencer",
     ""
 };
 

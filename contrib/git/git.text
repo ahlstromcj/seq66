@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2022-02-12
+2015-09-09 to 2022-05-04
 
 Creating a GitHub Repository:
 
@@ -243,10 +243,16 @@ Tag Checkout:
 
     A user can get the tagged code into a new branch via commands like the
     following. First, fetch tags from the remote repository. Then check out
-    the desired tag into a branch with the desired name:
+    the desired tag (here, "0.00.0" into a new branch with the desired name:
 
     $ git fetch --all --tags
     $ git checkout tags/0.99.9 -b newbranch
+
+    If a new branch is NOT desired (i.e. one wants to compare an old
+    version with a current buggy version in a separate copy of the
+    repository), use this:
+
+    $ git checkout 0.99.9
 
     Be careful about modifications; if committed, they represent new work
     one might need to merge later, but the new work will not be part of the

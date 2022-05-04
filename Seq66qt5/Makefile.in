@@ -21,7 +21,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2017-09-05
-# \update      2021-09-03
+# \update      2022-05-04
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -108,7 +108,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = qseq66$(EXEEXT)
+bin_PROGRAMS = $(am__EXEEXT_1)
 subdir = Seq66qt5
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/alsa.m4 \
@@ -126,15 +126,23 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/aux-files/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+@BUILD_RTMIDI_FALSE@am__EXEEXT_1 = qpseq66$(EXEEXT)
+@BUILD_RTMIDI_TRUE@am__EXEEXT_1 = qseq66$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_qseq66_OBJECTS = seq66qt5.$(OBJEXT)
-qseq66_OBJECTS = $(am_qseq66_OBJECTS)
+am_qpseq66_OBJECTS = seq66qt5.$(OBJEXT)
+qpseq66_OBJECTS = $(am_qpseq66_OBJECTS)
 am__DEPENDENCIES_1 =
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+qpseq66_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(qpseq66_LDFLAGS) $(LDFLAGS) -o $@
+am_qseq66_OBJECTS = seq66qt5.$(OBJEXT)
+qseq66_OBJECTS = $(am_qseq66_OBJECTS)
 qseq66_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(qseq66_LDFLAGS) $(LDFLAGS) -o $@
@@ -173,8 +181,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(qseq66_SOURCES)
-DIST_SOURCES = $(qseq66_SOURCES)
+SOURCES = $(qpseq66_SOURCES) $(qseq66_SOURCES)
+DIST_SOURCES = $(qpseq66_SOURCES) $(qseq66_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -428,7 +436,9 @@ CLEANFILES = *.gc*
 libseq66dir = $(builddir)/libseq66/src/.libs
 libsessionsdir = $(builddir)/libsessions/src/.libs
 libseq_rtmididir = $(builddir)/seq_rtmidi/src/.libs
+libseq_portmididir = $(builddir)/seq_portmidi/src/.libs
 libseq_qt5dir = $(builddir)/seq_qt5/src/.libs
+@BUILD_RTMIDI_FALSE@MIDIHDR = $(top_srcdir)/seq_portmidi/include
 
 #******************************************************************************
 # AM_CPPFLAGS [formerly "INCLUDES"]
@@ -438,18 +448,24 @@ libseq_qt5dir = $(builddir)/seq_qt5/src/.libs
 # 	library header files used in this project.
 #
 # 	Note that we include both the portmidi and rtmidi include directories.
-# 	There are no conflicts in name of header files, and we don't want to
+# 	There are no conflicts in names of header files, and we don't want to
 # 	try to test SEQ66_RTMIDI_SUPPORT and SEQ66_PORTMIDI_SUPPORT until we have
 # 	to.
 #
 #  -I$(top_srcdir)/libsessions/include
 #
 #------------------------------------------------------------------------------
+@BUILD_RTMIDI_TRUE@MIDIHDR = $(top_srcdir)/seq_rtmidi/include
+@BUILD_RTMIDI_FALSE@MIDILIB = -L$(libseq_portmididir) -lseq_portmidi
+@BUILD_RTMIDI_TRUE@MIDILIB = -L$(libseq_rtmididir) -lseq_rtmidi
+@BUILD_RTMIDI_FALSE@MIDIDEP = $(libseq_portmididir)/libseq_portmidi.la
+@BUILD_RTMIDI_TRUE@MIDIDEP = $(libseq_rtmididir)/libseq_rtmidi.la
+@BUILD_RTMIDI_FALSE@MIDIAPP = qpseq66
+@BUILD_RTMIDI_TRUE@MIDIAPP = qseq66
 AM_CXXFLAGS = \
  -I$(top_srcdir)/libseq66/include \
  -I$(top_srcdir)/libsessions/include \
- -I$(top_srcdir)/seq_portmidi/include \
- -I$(top_srcdir)/seq_rtmidi/include \
+ -I$(MIDIHDR) \
  -I$(top_srcdir)/seq_qt5/include \
  $(QT_CXXFLAGS) \
  $(JACK_CFLAGS) \
@@ -490,7 +506,7 @@ libraries = \
  -L$(libsessionsdir) -lsessions \
  -L$(libseq66dir) -lseq66 \
  -L$(libsessionsdir) -lsessions \
- -L$(libseq_rtmididir) -lseq_rtmidi
+ $(MIDILIB)
 
 
 #****************************************************************************
@@ -502,7 +518,7 @@ libraries = \
 #
 #----------------------------------------------------------------------------
 dependencies = \
- $(libseq_rtmididir)/libseq_rtmidi.la \
+ $(MIDIDEP) \
  $(libseq_qt5dir)/libseq_qt5.la \
  $(libsessionsdir)/libsessions.la \
  $(libseq66dir)/libseq66.la
@@ -530,6 +546,10 @@ qseq66_SOURCES = seq66qt5.cpp
 qseq66_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
 qseq66_LDFLAGS = -Wl,--copy-dt-needed-entries
 qseq66_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(AM_LDFLAGS)
+qpseq66_SOURCES = seq66qt5.cpp
+qpseq66_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
+qpseq66_LDFLAGS = -Wl,--copy-dt-needed-entries
+qpseq66_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(AM_LDFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -612,6 +632,10 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+
+qpseq66$(EXEEXT): $(qpseq66_OBJECTS) $(qpseq66_DEPENDENCIES) $(EXTRA_qpseq66_DEPENDENCIES) 
+	@rm -f qpseq66$(EXEEXT)
+	$(AM_V_CXXLD)$(qpseq66_LINK) $(qpseq66_OBJECTS) $(qpseq66_LDADD) $(LIBS)
 
 qseq66$(EXEEXT): $(qseq66_OBJECTS) $(qseq66_DEPENDENCIES) $(EXTRA_qseq66_DEPENDENCIES) 
 	@rm -f qseq66$(EXEEXT)

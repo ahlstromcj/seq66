@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-04-16
+ * \updates       2022-05-04
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -108,6 +108,12 @@ extern bool string_to_time_signature
     const std::string & s,
     int & beats, int & width
 );
+extern bool string_to_int_pair
+(
+    const std::string & s,
+    int & v1, int & v2,
+    const std::string & delimiter
+);
 extern double string_to_double (const std::string & s, double defalt = 0.0);
 extern std::string double_to_string(double value, int precision = 0);
 extern long string_to_long (const std::string & s, long defalt = 0L);
@@ -137,7 +143,7 @@ extern int tokenize_stanzas
 extern tokenization tokenize
 (
     const std::string & source,
-    const std::string & delimiter = " "
+    const std::string & delimiters = " \t"
 );
 extern tokenization tokenize_quoted (const std::string & source);
 extern std::string simplify (const std::string & source);

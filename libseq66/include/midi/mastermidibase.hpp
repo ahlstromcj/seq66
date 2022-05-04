@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2022-01-27
+ * \updates       2022-05-27
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -278,8 +278,8 @@ public:
     std::string get_midi_alias (bussbyte bus, midibase::io iotype) const
     {
         return iotype == midibase::io::input ?
-            m_master_inputs.get_alias(bus) :
-            m_master_clocks.get_alias(bus) ;
+            m_master_inputs.get_alias(bus, portnaming::shortnames) :
+            m_master_clocks.get_alias(bus, portnaming::shortnames) ;
     }
 
     int poll_for_midi ();

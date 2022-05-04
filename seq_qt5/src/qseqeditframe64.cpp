@@ -1536,8 +1536,9 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
             }
             if (rational)
             {
+                bool user_change = qs == qbase::status::edit;
                 m_beat_width = bw;
-                track().set_beat_width(bw);
+                track().set_beat_width(bw, user_change);
                 track().apply_length(0, 0, bw);
                 set_dirty();
             }

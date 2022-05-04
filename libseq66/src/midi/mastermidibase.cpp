@@ -631,14 +631,14 @@ mastermidibase::get_midi_bus_name (bussbyte bus, midibase::io iotype) const
     if (iotype == midibase::io::input)
     {
         result = longname ?
-            m_master_inputs.get_name(bus, false) :
-            m_master_inputs.get_nick_name(bus, true) ;
+            m_master_inputs.get_name(bus, portnaming::shortnames) :
+            m_master_inputs.get_nick_name(bus, portnaming::longnames) ;
     }
     else
     {
         result = longname ?
-            m_master_clocks.get_name(bus, false) :
-            m_master_clocks.get_nick_name(bus, true) ;
+            m_master_clocks.get_name(bus, portnaming::shortnames) :
+            m_master_clocks.get_nick_name(bus, portnaming::longnames) ;
     }
     return result;
 }
