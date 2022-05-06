@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-12-21
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  *  Defines some midibus constants and the seq66::clock enumeration.  In
@@ -90,7 +90,9 @@ extern bool build_output_port_map (const clockslist & lb);
 extern void clear_output_port_map ();
 extern void activate_output_port_map (bool flag);
 extern bussbyte true_output_bus (const clockslist & cl, bussbyte nominalbuss);
+#if defined USE_IOPUT_PORT_NAME_FUNCTION
 extern std::string output_port_name (bussbyte b, bool addnumber = false);
+#endif
 extern bussbyte output_port_number (bussbyte b);
 extern std::string output_port_map_list ();
 

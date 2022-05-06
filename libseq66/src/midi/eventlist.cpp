@@ -954,53 +954,87 @@ eventlist::apply_time_factor (double factor, bool savenotelength, bool relink)
         for (auto & ev : m_events)
         {
             midipulse stamp = ev.timestamp();
-            if (stamp >= 0)
+            bool linked = ev.is_linked();           /* do note on and off   */
+            if (ev.is_note_on())
             {
-                bool linked = ev.is_linked();       /* do note on and off   */
-                if (ev.is_note_on())
+                midipulse newstamp = midipulse(stamp * factor);
+                if (linked)
                 {
-                    midipulse newstamp = midipulse(stamp * factor);
-                    if (linked)
+                    midipulse offstamp = ev.link()->timestamp();
+                    if (savenotelength)
                     {
-                        midipulse offstamp = ev.link()->timestamp();
-                        if (savenotelength)
-                        {
-                            midipulse len = offstamp - stamp;
-                            ev.link()->set_timestamp(newstamp + len);
-                        }
-                        else
-                        {
-                            offstamp = midipulse(offstamp * factor);
-                            scale_note_off(*ev.link(), factor);
-                        }
+                        midipulse len = offstamp - stamp;
+                        ev.link()->set_timestamp(newstamp + len);
                     }
-                    ev.set_timestamp(newstamp);
+                    else
+                    {
+                        offstamp = midipulse(offstamp * factor);
+                        scale_note_off(*ev.link(), factor);
+                    }
                 }
-                else if (ev.is_note_off())
-                {
-                    if (! ev.is_linked())           /* correction needed    */
-                        scale_note_off(ev, factor);
-                }
-                else
-                {
-                    midipulse newstamp = midipulse(stamp * factor);
-                    ev.set_timestamp(newstamp);
-                }
+                ev.set_timestamp(newstamp);
+            }
+            else if (ev.is_note_off())
+            {
+                if (! ev.is_linked())               /* correction needed    */
+                    scale_note_off(ev, factor);
             }
             else
             {
-                ok = false;
-                break;
+                midipulse newstamp = midipulse(stamp * factor);
+                ev.set_timestamp(newstamp);
             }
         }
-        if (ok)
+        if (relink)
         {
-            if (relink)
+            sort();
+            verify_and_link();
+        }
+        result = get_max_timestamp();
+    }
+    return result;
+}
+
+/**
+ *  This function reverses the events in a sequence.  Note events are treat
+ *  specially; only the Note On gets a new-timestamp at first, and the Note
+ *  Off is placed at the original duration past the new time.
+ */
+
+bool
+eventlist::reverse_events (bool absolute, bool relink)
+{
+    bool result = ! empty();
+    if (result)
+    {
+        midipulse ending = absolute ? get_max_timestamp() + 1 : get_length() ;
+        for (auto & ev : m_events)
+        {
+            midipulse stamp = ev.timestamp();
+            midipulse newstamp = ending - stamp;
+            if (ev.is_note_on())
             {
-                sort();
-                verify_and_link();
+                bool linked = ev.is_linked();   /* do note on and off   */
+                if (linked)
+                {
+                    midipulse offstamp = ev.link()->timestamp();
+                    midipulse duration = offstamp - stamp + 1;
+                    ev.link()->set_timestamp(newstamp + duration);
+                }
+                ev.set_timestamp(newstamp);
             }
-            result = get_max_timestamp();
+            else if (ev.is_note_off())
+            {
+                if (! ev.is_linked())           /* correction needed    */
+                    ev.set_timestamp(newstamp);
+            }
+            else
+                ev.set_timestamp(newstamp);
+        }
+        if (relink)
+        {
+            sort();
+            verify_and_link();
         }
     }
     return result;

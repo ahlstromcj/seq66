@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-27
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -369,6 +369,11 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     );
     connect
     (
+        ui->checkBoxPairBussNames, SIGNAL(clicked(bool)),
+        this, SLOT(slot_pair_buss_names_click())
+    );
+    connect
+    (
         ui->checkBoxLockMainWindow, SIGNAL(clicked(bool)),
         this, SLOT(slot_lock_main_window_click())
     );
@@ -571,6 +576,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Ok),
         SIGNAL(clicked(bool)), this, SLOT(okay())
     );
+    set_enabled(QDialogButtonBox::Ok, false);
     connect
     (
         ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Cancel),
@@ -586,16 +592,18 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply),
         SIGNAL(clicked()), this, SLOT(apply())
     );
-    ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply)->
-        setEnabled(false);
+//  ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply)->
+//      setEnabled(false);
+    set_enabled(QDialogButtonBox::Apply, false);
 
     connect
     (
         ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Reset),
         SIGNAL(clicked()), this, SLOT(reset())
     );
-    ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Reset)->
-        setEnabled(false);
+//  ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Reset)->
+//      setEnabled(false);
+    set_enabled(QDialogButtonBox::Reset, false);
 
     /*
      * Set up the MIDI Clock tab.  We use the new qclocklayout class to hold
@@ -790,9 +798,9 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding
     );
     vboxinputs->addItem(spacer2);
-    ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Ok)->
-        setEnabled(false);
-
+//  ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Ok)->
+//      setEnabled(false);
+    set_enabled(QDialogButtonBox::Ok, false);
     sync();
 
     std::string clid = perf().client_id_string();
@@ -961,14 +969,17 @@ qseditoptions::reload_needed (bool flag)
 {
     m_reload_needed = flag;
     enable_reload_button(flag);
-    ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply)->
-        setEnabled(flag);
+//  ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply)->
+//      setEnabled(flag);
+    set_enabled(QDialogButtonBox::Apply, flag);
+    set_enabled(QDialogButtonBox::Reset, flag);
+    set_enabled(QDialogButtonBox::Ok, flag);
 
-    ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Reset)->
-        setEnabled(flag);
+//  ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Reset)->
+//      setEnabled(flag);
 
-    ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Ok)->
-        setEnabled(flag);
+//  ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Ok)->
+//      setEnabled(flag);
 
     sync();
 }
@@ -1180,6 +1191,13 @@ qseditoptions::reset ()
 //  enable_reload_button(false);
 }
 
+void
+qseditoptions::set_enabled (QDialogButtonBox::StandardButton bcode, bool on)
+{
+    QPushButton * button = ui->buttonBoxOptionsDialog->button(bcode);
+    button->setEnabled(on);
+}
+
 /**
  *  Backs up the JACK, Time, Key-height, and Note-Resume settings in case the
  *  user cancels. In that case, the cancel() function will put these settings
@@ -1245,7 +1263,8 @@ qseditoptions::sync_rc ()
     ui->checkBoxVerbose->setChecked(rc().verbose());
     ui->checkBoxLoadMostRecent->setChecked(rc().load_most_recent());
     ui->checkBoxShowFullRecentPaths->setChecked(rc().full_recent_paths());
-    ui->checkBoxLongBussNames->setChecked(rc().is_port_naming_long());
+    ui->checkBoxLongBussNames->setChecked(rc().port_naming() == portname::full);
+    ui->checkBoxPairBussNames->setChecked(rc().port_naming() == portname::pair);
     ui->checkBoxLockMainWindow->setChecked(usr().lock_main_window());
     ui->checkBoxSwapCoordinates->setChecked(usr().swap_coordinates());
     ui->checkBoxBoldGridSlots->setChecked(usr().progress_bar_thick());
@@ -1664,6 +1683,14 @@ qseditoptions::slot_long_buss_names_click ()
 {
     bool on = ui->checkBoxLongBussNames->isChecked();
     rc().port_naming(on ? "long" : "short");
+    modify_rc();
+}
+
+void
+qseditoptions::slot_pair_buss_names_click ()
+{
+    bool on = ui->checkBoxPairBussNames->isChecked();
+    rc().port_naming(on ? "pair" : "short");
     modify_rc();
 }
 

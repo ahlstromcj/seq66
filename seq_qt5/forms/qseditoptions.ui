@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>666</width>
-    <height>700</height>
+    <height>667</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -691,7 +691,7 @@ slot by channel number (0 to 15).</string>
          <x>10</x>
          <y>240</y>
          <width>577</width>
-         <height>293</height>
+         <height>245</height>
         </rect>
        </property>
        <property name="font">
@@ -706,32 +706,13 @@ slot by channel number (0 to 15).</string>
        <property name="flat">
         <bool>false</bool>
        </property>
-       <widget class="QLabel" name="label_7">
-        <property name="geometry">
-         <rect>
-          <x>8</x>
-          <y>10</y>
-          <width>157</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>UI Boolean Options</string>
-        </property>
-       </widget>
        <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
-          <x>9</x>
-          <y>26</y>
+          <x>8</x>
+          <y>4</y>
           <width>565</width>
-          <height>257</height>
+          <height>225</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout">
@@ -810,16 +791,23 @@ slot by channel number (0 to 15).</string>
            </property>
           </widget>
          </item>
+         <item row="3" column="1">
+          <widget class="QCheckBox" name="checkBoxPairBussNames">
+           <property name="text">
+            <string>Client:port buss names</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </widget>
       <widget class="QWidget" name="layoutWidgetGuiOptions">
        <property name="geometry">
         <rect>
-         <x>10</x>
+         <x>16</x>
          <y>38</y>
          <width>413</width>
-         <height>177</height>
+         <height>153</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayoutUiValues" columnstretch="8,2,1,2">
@@ -1059,8 +1047,8 @@ Range: 4 to 12. Default: 8.</string>
       <widget class="QWidget" name="layoutWidgetOp">
        <property name="geometry">
         <rect>
-         <x>8</x>
-         <y>220</y>
+         <x>16</x>
+         <y>196</y>
          <width>413</width>
          <height>16</height>
         </rect>
@@ -1070,7 +1058,7 @@ Range: 4 to 12. Default: 8.</string>
       <widget class="QLabel" name="label_6">
        <property name="geometry">
         <rect>
-         <x>8</x>
+         <x>12</x>
          <y>20</y>
          <width>145</width>
          <height>17</height>
@@ -1084,6 +1072,25 @@ Range: 4 to 12. Default: 8.</string>
        </property>
        <property name="text">
         <string>User UI Tweaks</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_7">
+       <property name="geometry">
+        <rect>
+         <x>12</x>
+         <y>220</y>
+         <width>157</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>UI Boolean Options</string>
        </property>
       </widget>
      </widget>
@@ -2307,11 +2314,17 @@ path added to this name is stripped.</string>
       <widget class="QPushButton" name="pushButtonReload">
        <property name="geometry">
         <rect>
-         <x>28</x>
-         <y>456</y>
+         <x>20</x>
+         <y>452</y>
          <width>129</width>
-         <height>25</height>
+         <height>56</height>
         </rect>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>56</height>
+        </size>
        </property>
        <property name="toolTip">
         <string>Restarts the whole application, reloading any changed settings.</string>
@@ -2325,8 +2338,17 @@ path added to this name is stripped.</string>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBoxOptionsDialog">
+     <property name="maximumSize">
+      <size>
+       <width>464</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
      </property>
     </widget>
    </item>

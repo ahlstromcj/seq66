@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-28
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -132,6 +132,8 @@ private slots:
     void slot_quan_change (int quanid);
     void slot_jitter_change ();
     void slot_align_change (int dummy);
+    void slot_reverse_change (int dummy);
+    void slot_reverse_absolute (int dummy);
     void slot_save_note_length (int dummy);
     void slot_set ();
     void slot_reset ();
@@ -239,6 +241,21 @@ private:
      */
 
     bool m_align_left;
+
+    /**
+     *  Reverses the timestamps of event, while preserving the duration of the
+     *  notes. The new timestamp is the distance of the event from the end
+     *  (length) of the pattern, which we call the "reference".
+     */
+
+    bool m_reverse;
+
+    /**
+     *  Similar to reverse, except that the last event is used as the
+     *  "reference" (instead of the pattern length).
+     */
+
+    bool m_reverse_absolute;
 
     /**
      *  Indicates to preserve note length when rescaling. Otherwise, the

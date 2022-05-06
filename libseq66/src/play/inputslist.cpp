@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2022-02-26
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -199,6 +199,8 @@ input_port_map ()
     return s_inputs_list;
 }
 
+#if defined USE_IOPUT_PORT_NAME_FUNCTION
+
 /**
  *  Gets the nominal port name for the given bus, from the internal port-map
  *  object for inputs.
@@ -208,11 +210,11 @@ std::string
 input_port_name (bussbyte b, bool addnumber)
 {
     const inputslist & ipm = input_port_map();
-    portnaming style = addnumber ?
-        portnaming::longnames : portnaming::shortnames ;
-
+    portname style = addnumber ?  portname::full : portname::brief ;
     return ipm.get_name(b, style);
 }
+
+#endif
 
 /**
  *  Gets the port-string (e.g. "1") from the internal port-map object for
@@ -224,7 +226,7 @@ input_port_number (bussbyte b)
 {
     bussbyte result = b;
     const inputslist & ipm = input_port_map();
-    std::string nickname = ipm.get_nick_name(b, portnaming::shortnames);
+    std::string nickname = ipm.get_nick_name(b, portname::brief);
     if (! nickname.empty())
         result = string_to_int(nickname);
 

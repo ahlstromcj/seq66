@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-05-04
+ * \updates       2022-05-06
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -33,6 +33,7 @@
  *    project.
  */
 
+#include <cstring>                      /* std::memcmp() function           */
 #include <cctype>                       /* std::toupper() function          */
 #include <stdexcept>                    /* std::invalid_argument            */
 
@@ -298,28 +299,27 @@ not_npos (std::string::size_type p)
 /**
  *  Compares two strings for equality up to the given length.  Unlike
  *  std::string::compare(), it returns only a boolean.  Meant to be a simpler
- *  alternative, and analogous to strncmp().  The comparison function is
- *  std::string::compare():
- *
- *          a.compare(position, length, b)
+ *  alternative, and analogous to strncmp().  The comparison function was
+ *  std::string::compare(), but it's semantics don't quite work here.
  *
  *  We want to see if the "comparing" string matches the "compared" string up
  *  to n characters or to the full length of the compared string.
  *
  * \param a
- *      Provides the "compared" string. False is returned if it is empty.
- *      It is the string whose contents we want to determine.
+ *      Provides the "compared" string. False is returned if it is empty.  It
+ *      is the "target", the string whose contents we want to match.  It is
+ *      generally the shorter of the two strings, but no promises.
  *
  * \param b
- *      Provides the "comparing" string. False is returned if it is empty.
- *      It is the string whose contents we want to (partially) match.
- *      It is generally the shorter of the two strings, but no promises.
+ *      Provides the "comparing" string. False is returned if it is empty.  It
+ *      is the "source" string, the string whose contents we want to
+ *      determine if it matches the "target" string.
  *
  * \param n
- *      Provides the number of characters in the "compared" string (parameter
+ *      Provides the number of characters in the "comparing" string (parameter
  *      \a a) that must match.  If equal to 0 (the default value), then
- *      the length of b is used. (Too tricky?) If n is greater than
- *      a.length(), then we cannot satisfy the semantics of this function.
+ *      the length of a is used. If n is greater than a.length(), then we
+ *      cannot satisfy the semantics of this function.
  *
  * \return
  *      Returns true if the strings compare identically for the first \a n
@@ -333,9 +333,25 @@ strncompare (const std::string & a, const std::string & b, size_t n)
     if (result)
     {
         if (n == 0)
-            n = b.length();
+            n = a.length();
 
-        result = n <= a.length() ? a.compare(0, n, b) == 0 : false ;
+        if (n <= a.length() && b.length() >= n)
+        {
+#if defined USE_SLOW_CODE
+            for (size_t i = 0; i < n; ++i)
+            {
+                if (a[i] != b[i])
+                {
+                    result = false;
+                    break;
+                }
+            }
+#else
+            result = std::memcmp(a.data(), b.data(), n) == 0;
+#endif
+        }
+        else
+            result = false;
     }
     return result;
 }
@@ -590,7 +606,7 @@ string_to_int_pair
 bool
 string_to_time_signature (const std::string & s, int & beats, int & width)
 {
-    return string_to_int_pair(s, beats, width, ":");
+    return string_to_int_pair(s, beats, width, "/");
 }
 
 /**

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-05-03
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2648,6 +2648,10 @@ sequence::fix_pattern (fixparameters & params)
                 tempefx = bit_set(tempefx, fixeffect::shifted);
             else
                 result = false;                             /* op failed    */
+        }
+        if (params.fp_reverse || params.fp_reverse_absolute)
+        {
+            result = m_events.reverse_events(params.fp_reverse_absolute);
         }
         if (result)
         {

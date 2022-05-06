@@ -278,8 +278,8 @@ public:
     std::string get_midi_alias (bussbyte bus, midibase::io iotype) const
     {
         return iotype == midibase::io::input ?
-            m_master_inputs.get_alias(bus, portnaming::shortnames) :
-            m_master_clocks.get_alias(bus, portnaming::shortnames) ;
+            m_master_inputs.get_alias(bus, portname::brief) :
+            m_master_clocks.get_alias(bus, portname::brief) ;
     }
 
     int poll_for_midi ();

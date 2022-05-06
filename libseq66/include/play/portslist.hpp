@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2022-05-04
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -53,12 +53,12 @@ namespace seq66
  *  internal map, this option is forced to "long".
  */
 
-enum class portnaming
+enum class portname
 {
-    shortnames,     /**< Use short names: "[0] midi_out".                   */
-    pairnames,      /**< Full names: "[0] fluidsynth:midi_out".             */
-    longnames,      /**< Long names: "[0] 36:0 fluidsynth:midi_out".        */
-    max             /**< Keep this last... a size value.                    */
+    brief,  /**< "short": Use short names: "[0] midi_out".              */
+    pair,   /**< "pair": Pair names: "36:0 fluidsynth:midi_out".        */
+    full,   /**< "long": Long names: "[0] 36:0 fluidsynth:midi_out".    */
+    max     /**< Keep this last... a size value.                        */
 };
 
 /**
@@ -192,9 +192,19 @@ public:
     void set_nick_name (bussbyte bus, const std::string & name);
 #endif
     void set_alias (bussbyte bus, const std::string & name);
-    std::string get_name (bussbyte bus, portnaming style) const;
-    std::string get_nick_name (bussbyte bus, portnaming style) const;
-    std::string get_alias (bussbyte bus, portnaming style) const;
+    std::string get_name (bussbyte bus) const;
+    std::string get_pair_name (bussbyte bus) const;
+    std::string get_nick_name
+    (
+        bussbyte bus,
+        portname style = portname::brief
+    ) const;
+    std::string get_alias
+    (
+        bussbyte bus,
+        portname style = portname::brief
+    ) const;
+    std::string get_display_name (bussbyte bus, portname style) const;
     bussbyte bus_from_name (const std::string & nick) const;
     bussbyte bus_from_nick_name (const std::string & nick) const;
     bussbyte bus_from_alias (const std::string & alias) const;

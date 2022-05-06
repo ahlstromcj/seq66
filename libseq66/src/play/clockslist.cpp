@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2022-05-04
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -208,6 +208,8 @@ output_port_map ()
     return s_clocks_list;
 }
 
+#if defined USE_IOPUT_PORT_NAME_FUNCTION
+
 /**
  *  Gets the nominal port name for the given bus, from the internal port-map
  *  object for clocks.
@@ -217,11 +219,11 @@ std::string
 output_port_name (bussbyte b, bool addnumber)
 {
     const clockslist & opm = output_port_map();
-    portnaming style = addnumber ?
-        portnaming::longnames : portnaming::shortnames ;
-
+    portname style = addnumber ?  portname::full : portname::brief ;
     return opm.get_name(b, style);
 }
+
+#endif
 
 /**
  *  Gets the port-string (e.g. "1") from the internal port-map object for
@@ -233,7 +235,7 @@ output_port_number (bussbyte b)
 {
     bussbyte result = b;
     const clockslist & opm = output_port_map();
-    std::string nickname = opm.get_nick_name(b, portnaming::shortnames);
+    std::string nickname = opm.get_nick_name(b, portname::brief);
     if (! nickname.empty())
         result = string_to_int(nickname);
 

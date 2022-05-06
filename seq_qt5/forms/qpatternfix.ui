@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>495</width>
-    <height>282</height>
+    <width>500</width>
+    <height>316</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -184,7 +184,7 @@
      <x>8</x>
      <y>56</y>
      <width>245</width>
-     <height>129</height>
+     <height>121</height>
     </rect>
    </property>
    <property name="font">
@@ -205,7 +205,7 @@
       <x>12</x>
       <y>24</y>
       <width>189</width>
-      <height>85</height>
+      <height>89</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -273,10 +273,10 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>360</x>
+     <x>348</x>
      <y>56</y>
-     <width>125</width>
-     <height>189</height>
+     <width>141</width>
+     <height>181</height>
     </rect>
    </property>
    <property name="font">
@@ -300,8 +300,8 @@
      <rect>
       <x>8</x>
       <y>24</y>
-      <width>117</width>
-      <height>145</height>
+      <width>125</width>
+      <height>141</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -319,6 +319,19 @@
        </property>
        <property name="text">
         <string>Shift</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="btn_effect_reverse">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Reverse</string>
        </property>
       </widget>
      </item>
@@ -384,9 +397,9 @@
    <property name="geometry">
     <rect>
      <x>8</x>
-     <y>188</y>
-     <width>201</width>
-     <height>89</height>
+     <y>180</y>
+     <width>205</width>
+     <height>125</height>
     </rect>
    </property>
    <property name="font">
@@ -402,9 +415,9 @@
     <property name="geometry">
      <rect>
       <x>12</x>
-      <y>28</y>
+      <y>20</y>
       <width>185</width>
-      <height>54</height>
+      <height>97</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -418,6 +431,32 @@
        </property>
        <property name="text">
         <string>&amp;Align left</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="btn_reverse">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Reverse</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="btn_reverse_absolute">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Reverse Absolute</string>
        </property>
       </widget>
      </item>
@@ -441,7 +480,7 @@
    <property name="geometry">
     <rect>
      <x>224</x>
-     <y>232</y>
+     <y>256</y>
      <width>253</width>
      <height>38</height>
     </rect>
@@ -494,7 +533,7 @@
      <x>204</x>
      <y>57</y>
      <width>139</width>
-     <height>153</height>
+     <height>149</height>
     </rect>
    </property>
    <property name="font">
@@ -506,13 +545,13 @@
    <property name="title">
     <string>Quantization</string>
    </property>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>17</x>
       <y>24</y>
       <width>121</width>
-      <height>113</height>
+      <height>121</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_2">

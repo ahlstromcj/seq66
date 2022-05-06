@@ -274,7 +274,7 @@ private:
     bool m_print_keys;              /**< Show hot-key in main window slot.  */
     interaction m_interaction_method; /**< Interaction method: no support.  */
     setsmode m_sets_mode;           /**< How to handle set changes.         */
-    portnaming m_port_naming;       /**< How to display port names.         */
+    portname m_port_naming;       /**< How to display port names.         */
 
     /**
      *  Provides the name of current MIDI file.  Under normal usage, it is the
@@ -890,28 +890,13 @@ public:
     std::string sets_mode_string () const;
     std::string sets_mode_string (setsmode v) const;
 
-    portnaming port_naming () const
+    portname port_naming () const
     {
         return m_port_naming;
     }
 
-    bool is_port_naming_short () const
-    {
-        return m_port_naming == portnaming::shortnames;
-    }
-
-    bool is_port_naming_pair () const
-    {
-        return m_port_naming == portnaming::pairnames;
-    }
-
-    bool is_port_naming_long () const
-    {
-        return m_port_naming == portnaming::longnames;
-    }
-
     std::string port_naming_string () const;
-    std::string port_naming_string (portnaming v) const;
+    std::string port_naming_string (portname v) const;
 
     const std::string & midi_filename () const
     {

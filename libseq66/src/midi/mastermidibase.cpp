@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2022-02-27
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -627,19 +627,12 @@ std::string
 mastermidibase::get_midi_bus_name (bussbyte bus, midibase::io iotype) const
 {
     std::string result;
-    bool longname = rc().is_port_naming_long();
+    portname p = rc().port_naming();
     if (iotype == midibase::io::input)
-    {
-        result = longname ?
-            m_master_inputs.get_name(bus, portnaming::shortnames) :
-            m_master_inputs.get_nick_name(bus, portnaming::longnames) ;
-    }
+        result = m_master_inputs.get_display_name(bus, p);
     else
-    {
-        result = longname ?
-            m_master_clocks.get_name(bus, portnaming::shortnames) :
-            m_master_clocks.get_nick_name(bus, portnaming::longnames) ;
-    }
+        result = m_master_clocks.get_display_name(bus, p);
+
     return result;
 }
 

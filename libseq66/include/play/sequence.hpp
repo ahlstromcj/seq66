@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-05-01
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -89,6 +89,15 @@ class performer;
  *      event, is to be adjusted to 0, shifting all events by the same ammount
  *      of time.
  *
+ * \var fp_reverse
+ *      Reverses the timestamps of event, while preserving the duration of the
+ *      notes. The new timestamp is the distance of the event from the end
+ *      (length) of the pattern, which we call the "reference".
+ *
+ * \var fp_absolute_reverse
+ *      Similar to fp_reverse, except that the last event is used as the
+ *      "reference" (instead of the pattern length).
+ *
  * \var fp_save_note_length
  *      If true, do not scale the note-off timestamps.  Keep them at the same
  *      offset against the linked note-on event.
@@ -127,6 +136,8 @@ struct fixparameters
     quantization fp_quan_type;
     int fp_jitter;
     bool fp_align_left;
+    bool fp_reverse;
+    bool fp_reverse_absolute;
     bool fp_save_note_length;
     bool fp_use_time_signature;
     int & fp_beats_per_bar;

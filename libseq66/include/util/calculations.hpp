@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-04-26
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -133,12 +133,14 @@ quantization_cast (int v)
 
 enum class fixeffect
 {
-    none        = 0x00,
-    shifted     = 0x01,
-    shrunk      = 0x02,
-    expanded    = 0x04,
-    truncated   = 0x08,
-    all         = 0x07
+    none            = 0x00,
+    shifted         = 0x01,
+    shrunk          = 0x02,
+    expanded        = 0x04,
+    truncated       = 0x08,
+    reversed        = 0x10,
+    reversed_abs    = 0x20,
+    all             = 0x3F
 };
 
 inline bool

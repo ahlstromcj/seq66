@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-12-21
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs, pulled out of the old perform module.
@@ -90,7 +90,9 @@ extern bool build_input_port_map (const inputslist & lb);
 extern void clear_input_port_map ();
 extern void activate_input_port_map (bool flag);
 extern bussbyte true_input_bus (const inputslist & cl, bussbyte nominalbuss);
+#if defined USE_IOPUT_PORT_NAME_FUNCTION
 extern std::string input_port_name (bussbyte b, bool addnumber = false);
+#endif
 extern bussbyte input_port_number (bussbyte b);
 extern std::string input_port_map_list ();
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-05-04
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -102,7 +102,7 @@ rcsettings::rcsettings () :
     m_print_keys                (false),
     m_interaction_method        (interaction::seq24),
     m_sets_mode                 (setsmode::normal),
-    m_port_naming               (portnaming::shortnames),
+    m_port_naming               (portname::brief),
     m_midi_filename             (),
     m_midi_filepath             (),
     m_jack_session_uuid         (),
@@ -201,7 +201,7 @@ rcsettings::set_defaults ()
     m_print_keys                = false;
     m_interaction_method        = interaction::seq24;
     m_sets_mode                 = setsmode::normal;
-    m_port_naming               = portnaming::shortnames;
+    m_port_naming               = portname::brief;
     m_midi_filename.clear();
     m_midi_filepath.clear();
     m_jack_session_uuid.clear();
@@ -1211,12 +1211,12 @@ rcsettings::sets_mode_string (setsmode v) const
 void
 rcsettings::port_naming (const std::string & v)
 {
-    if (v == "long")
-        m_port_naming = portnaming::longnames;
+    if (v == "long" || v == "full")
+        m_port_naming = portname::full;
     else if (v == "pair")
-        m_port_naming = portnaming::pairnames;
+        m_port_naming = portname::pair;
     else
-        m_port_naming = portnaming::shortnames;
+        m_port_naming = portname::brief;
 }
 
 std::string
@@ -1226,15 +1226,15 @@ rcsettings::port_naming_string () const
 }
 
 std::string
-rcsettings::port_naming_string (portnaming v) const
+rcsettings::port_naming_string (portname v) const
 {
     std::string result;
     switch (v)
     {
-        case portnaming::shortnames:    result = "short";       break;
-        case portnaming::pairnames:     result = "pair";        break;
-        case portnaming::longnames:     result = "long";        break;
-        default:                        result = "unknown";     break;
+        case portname::brief:    result = "short";       break;
+        case portname::pair:     result = "pair";        break;
+        case portname::full:     result = "long";        break;
+        default:                 result = "unknown";     break;
     }
     return result;
 }

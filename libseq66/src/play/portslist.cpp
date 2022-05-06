@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2022-05-04
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -48,23 +48,6 @@ namespace seq66
 {
 
 /**
- *  Short names.
- */
-
-static const std::string s_short_names [] =
-{
-    "midi in",
-    "midi out",
-    "input",
-    "output",
-    "midi input",
-    "midi output",
-    "in",
-    "out",
-    ""                                  /* empty string is a terminator     */
-};
-
-/**
  *  Looks for the port name in the short-name list. We are interested in
  *  seeing if it is a generic name such as "midi in".
  *
@@ -81,6 +64,16 @@ static const std::string s_short_names [] =
 static bool
 detect_short_name (const std::string & portname)
 {
+    static const std::string s_short_names [] =
+    {
+        "midi_",
+        "midi ",
+        "in",
+        "out",
+        "input",
+        "output",
+        ""                              /* empty string is a terminator     */
+    };
     bool result = portname.empty();
     if (! result)
     {
@@ -89,13 +82,13 @@ detect_short_name (const std::string & portname)
             std::string compared = s_short_names[i];
             if (compared.empty())
             {
-                break;
+                break;                              /* there is no match    */
             }
             else
             {
-                result = strncompare(compared, portname, compared.length());
+                result = strncompare(compared, portname);
                 if (result)
-                    break;
+                    break;                          /* a match was found    */
             }
         }
     }
@@ -271,25 +264,21 @@ buss_string (const std::string & name, bussbyte bus)
 }
 
 std::string
-portslist::get_name (bussbyte bus, portnaming style) const
+portslist::get_name (bussbyte bus) const
 {
     static std::string s_dummy;
-    bool addnumber = style != portnaming::shortnames;
     auto it = m_master_io.find(bus);
     std::string result = it != m_master_io.end() ?
         it->second.io_name : s_dummy ;
-
-    if (addnumber)
-        result = buss_string(result, bus);
 
     return result;
 }
 
 std::string
-portslist::get_nick_name (bussbyte bus, portnaming style) const
+portslist::get_nick_name (bussbyte bus, portname style) const
 {
     static std::string s_dummy;
-    bool addnumber = style != portnaming::shortnames;
+    bool addnumber = style != portname::brief;
     auto it = m_master_io.find(bus);
     std::string result = it != m_master_io.end() ?
         it->second.io_nick_name : s_dummy ;
@@ -301,10 +290,10 @@ portslist::get_nick_name (bussbyte bus, portnaming style) const
 }
 
 std::string
-portslist::get_alias (bussbyte bus, portnaming style) const
+portslist::get_alias (bussbyte bus, portname style) const
 {
     static std::string s_dummy;
-    bool addnumber = style != portnaming::shortnames;
+    bool addnumber = style != portname::brief;
     auto it = m_master_io.find(bus);
     std::string result = it != m_master_io.end() ?
         it->second.io_alias : s_dummy ;
@@ -312,6 +301,55 @@ portslist::get_alias (bussbyte bus, portnaming style) const
     if (addnumber)
         result = buss_string(result, bus);
 
+    return result;
+}
+
+std::string
+portslist::get_pair_name (bussbyte bus) const
+{
+    std::string result;
+    std::string name = get_name(bus);
+    std::string nick = get_nick_name(bus);
+    int client, port;
+    bool ok = extract_port_pair(name, client, port);        /* side-effects */
+    if (ok)
+    {
+        std::string pairdigits = std::to_string(client);
+        pairdigits += ":";
+        pairdigits += std::to_string(port);
+        result = pairdigits + " " + nick;
+    }
+    else
+        result = name;
+
+    return result;
+}
+
+std::string
+portslist::get_display_name (bussbyte bus, portname style) const
+{
+    std::string result;
+    switch (style)
+    {
+    case portname::brief:
+
+        result = get_nick_name(bus, style);
+        break;
+
+    case portname::pair:
+
+        result = get_pair_name(bus);
+        break;
+
+    case portname::full:
+
+        result = get_name(bus);
+        break;
+
+    default:
+
+        break;
+    }
     return result;
 }
 
@@ -446,7 +484,7 @@ portslist::extract_port_pair
     if (result)
     {
         tokenization tokens = tokenize(name);
-        result = tokens.size() > 2;
+        result = tokens.size() >= 2;
         if (result)
             result = string_to_int_pair(tokens[1], client, port, ":");
     }

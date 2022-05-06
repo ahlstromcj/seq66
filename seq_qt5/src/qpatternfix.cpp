@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-04-28
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -103,6 +103,8 @@ qpatternfix::qpatternfix
     m_measures          (double(m_backup_measures)),
     m_scale_factor      (1.0),
     m_align_left        (false),
+    m_reverse           (false),
+    m_reverse_absolute  (false),
     m_save_note_length  (true),
     m_use_time_sig      (false),
     m_time_sig_beats    (0),
@@ -144,6 +146,8 @@ qpatternfix::initialize (bool startup)
     ui->btn_effect_time_sig->setEnabled(false);
     ui->btn_effect_truncate->setEnabled(false);
     ui->btn_align_left->setChecked(false);
+    ui->btn_reverse->setChecked(false);
+    ui->btn_reverse_absolute->setChecked(false);
     ui->btn_save_note_length->setChecked(true);
     ui->btn_set->setEnabled(false);
     ui->btn_reset->setEnabled(false);
@@ -254,6 +258,16 @@ qpatternfix::initialize (bool startup)
         (
             ui->btn_align_left, SIGNAL(stateChanged(int)),
             this, SLOT(slot_align_change(int))
+        );
+        connect
+        (
+            ui->btn_reverse, SIGNAL(stateChanged(int)),
+            this, SLOT(slot_reverse_change(int))
+        );
+        connect
+        (
+            ui->btn_reverse_absolute, SIGNAL(stateChanged(int)),
+            this, SLOT(slot_reverse_absolute(int))
         );
         connect
         (
@@ -423,6 +437,30 @@ qpatternfix::slot_align_change (int state)
 }
 
 void
+qpatternfix::slot_reverse_change (int state)
+{
+    bool is_set = state == Qt::Checked;
+    bool changed = is_set != m_reverse;
+    if (changed)
+    {
+        m_reverse = is_set;
+        modify();
+    }
+}
+
+void
+qpatternfix::slot_reverse_absolute (int state)
+{
+    bool is_set = state == Qt::Checked;
+    bool changed = is_set != m_reverse_absolute;
+    if (changed)
+    {
+        m_reverse_absolute = is_set;
+        modify();
+    }
+}
+
+void
 qpatternfix::slot_save_note_length (int state)
 {
     bool is_set = state == Qt::Checked;
@@ -453,18 +491,22 @@ qpatternfix::slot_set ()
     fixparameters fp =                                  /* value structure  */
     {
         m_length_type, m_quan_type, m_jitter_range,
-        m_align_left, m_save_note_length,
-        m_use_time_sig, m_time_sig_beats, m_time_sig_width,
-        m_measures, m_scale_factor, efx
+        m_align_left, m_reverse, m_reverse_absolute,
+        m_save_note_length, m_use_time_sig, m_time_sig_beats,
+        m_time_sig_width, m_measures, m_scale_factor, efx
     };
     bool success = track().fix_pattern(fp);             /* side-effects     */
     if (success)
     {
         bool bitshifted = bit_test(efx, fixeffect::shifted);
+        bool bitreversed = bit_test(efx, fixeffect::reversed);
         bool bitshrunk = bit_test(efx, fixeffect::shrunk);
         bool bitexpanded = bit_test(efx, fixeffect::expanded);
         std::string temp = std::to_string(int(track().get_length()));
         ui->label_pulses->setText(qt(temp));
+        if (! bitreversed)
+            bitreversed = bit_test(efx, fixeffect::reversed_abs);
+
         if (m_use_time_sig)
         {
             temp = std::to_string(m_time_sig_beats);

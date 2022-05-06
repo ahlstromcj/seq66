@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2022-04-26
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -370,6 +370,7 @@ private:                                /* functions for friend sequence    */
         bool savenotelength = false,
         bool relink = false
     );
+    bool reverse_events (bool absolute = false, bool relink = false);
     bool move_selected_notes (midipulse delta_tick, int delta_note);
     bool move_selected_events (midipulse delta_tick);
     bool align_left (bool relink = false);

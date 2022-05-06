@@ -28,12 +28,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-27
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <QDialog>
+#include <QDialogButtonBox>
 
 #include "cfg/settings.hpp"             /* seq66::combolist class, helpers  */
 
@@ -78,6 +79,7 @@ public:
 
 private:
 
+    void set_enabled (QDialogButtonBox::StandardButton bcode, bool on);
     void enable_reload_button (bool flag);
     void modify_rc();
     void modify_usr();
@@ -155,6 +157,7 @@ private slots:
     void slot_load_most_recent_click ();
     void slot_show_full_paths_click ();
     void slot_long_buss_names_click ();
+    void slot_pair_buss_names_click ();
     void slot_lock_main_window_click ();
     void slot_swap_coordinates_click ();
     void slot_bold_grid_slots_click();
