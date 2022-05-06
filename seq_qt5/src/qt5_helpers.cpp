@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2022-04-28
+ * \updates       2022-05-06
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -308,15 +308,10 @@ fill_combobox
                 if (addpadding)
                 {
                     if (! prefix.empty())   /* for example, "1/" for widths */
-                    {
                         item = prefix + item;
-                        value = prefix + value;
-                    }
+
                     if (! suffix.empty())
-                    {
                         item = item + suffix;
-                        value = value + suffix;
-                    }
                 }
                 result = true;
                 if (item == "-")
@@ -334,8 +329,11 @@ fill_combobox
         {
             if (! value.empty())
             {
-                clist.current(value);
-                box->setCurrentText(qt(value));
+                std::string fullvalue = prefix;
+                fullvalue += value;
+                fullvalue += suffix;
+                clist.current(fullvalue);
+                box->setCurrentText(qt(fullvalue));
             }
             else
                 box->setCurrentIndex(0);
