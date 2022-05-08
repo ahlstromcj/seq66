@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-28
+ * \updates       2022-05-07
  * \license       GNU GPLv2 or above
  *
  *  We've added the feature of a right-click toggling between showing the main
@@ -124,13 +124,14 @@ qseqkeys::paintEvent (QPaintEvent *)
     QPainter painter(this);
     QPen pen(Qt::black);
     QBrush brush (Qt::SolidPattern);
-    int keyx = sc_keyoffset_x + 1;
+    const int keyx = sc_keyoffset_x + 1;
     int keyy = 0;
+    const int numx = 1;                                     /* was 2        */
     int numy = 8;
-    int nh = note_height();
-    int nh_1 = nh - 1;
-    int nh_4 = nh - 4;
-    int nh_5 = nh - 5;
+    const int nh = note_height();
+    const int nh_1 = nh - 1;
+    const int nh_4 = nh - 4;
+    const int nh_5 = nh - 5;
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(sc_border_width);
     brush.setColor(Qt::darkGray);
@@ -142,14 +143,14 @@ qseqkeys::paintEvent (QPaintEvent *)
     {
         int keyvalue = c_notes_count - i - 1;
         int key = keyvalue % c_octave_size;
-        pen.setColor(Qt::black);                    /* white keys           */
+        pen.setColor(Qt::black);                            /* white keys   */
         pen.setStyle(Qt::SolidLine);
         brush.setColor(Qt::white);
         brush.setStyle(Qt::SolidPattern);
         painter.setPen(pen);
         painter.setBrush(brush);
         painter.drawRect(keyx, keyy, sc_key_x, nh_1);
-        if (is_black_key(key))                      /* black keys           */
+        if (is_black_key(key))                              /* black keys   */
         {
             pen.setStyle(Qt::SolidLine);
             pen.setColor(Qt::black);
@@ -158,9 +159,9 @@ qseqkeys::paintEvent (QPaintEvent *)
             painter.setBrush(brush);
             painter.drawRect(keyx, keyy + 2, sc_key_x - 2, nh_5);
         }
-        if (is_preview_key(keyvalue))               /* preview note         */
+        if (is_preview_key(keyvalue))                       /* preview note */
         {
-            brush.setColor(preview_color());        /* Qt::red              */
+            brush.setColor(preview_color());                /* Qt::red      */
             pen.setStyle(Qt::NoPen);
             painter.setPen(pen);
             painter.setBrush(brush);
@@ -169,7 +170,7 @@ qseqkeys::paintEvent (QPaintEvent *)
 
         std::string note;
         char notebuf[8];
-        m_font.setBold(key == m_key);            /* "Cx" octave labels   */
+        m_font.setBold(key == m_key);                       /* octave label */
         painter.setFont(m_font);
         pen.setColor(Qt::black);
         pen.setStyle(Qt::SolidLine);
@@ -181,7 +182,7 @@ qseqkeys::paintEvent (QPaintEvent *)
             if (key == m_key)
             {
                 note = musical_note_name(keyvalue);
-                painter.drawText(2, numy, qt(note));
+                painter.drawText(numx, numy, qt(note));
             }
             break;
 
@@ -190,14 +191,14 @@ qseqkeys::paintEvent (QPaintEvent *)
             if ((keyvalue % 2) == 0)
             {
                 note = musical_note_name(keyvalue);
-                painter.drawText(2, numy, qt(note));
+                painter.drawText(numx, numy, qt(note));
             }
             break;
 
         case showkeys::all_letters:
 
             note = musical_note_name(keyvalue);
-            painter.drawText(2, numy, qt(note));
+            painter.drawText(numx, numy, qt(note));
             break;
 
         case showkeys::even_numbers:
@@ -205,14 +206,14 @@ qseqkeys::paintEvent (QPaintEvent *)
             if ((keyvalue % 2) == 0)
             {
                 snprintf(notebuf, sizeof notebuf, "%3d", keyvalue);
-                painter.drawText(1, numy, notebuf);
+                painter.drawText(numx, numy, notebuf);
             }
             break;
 
         case showkeys::all_numbers:
 
             snprintf(notebuf, sizeof notebuf, "%3d", keyvalue);
-            painter.drawText(1, numy, notebuf);
+            painter.drawText(numx, numy, notebuf);
             break;
         }
     }

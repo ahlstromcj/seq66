@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-05-03
+ * \updates       2022-05-08
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1235,16 +1235,16 @@ qseqeditframe64::conditional_update ()
     bool expandrec = track().expand_recording();
     if (expandrec)
     {
-        set_measures(get_measures() + 1);
+        set_measures(track().get_measures() + 1);
         follow_progress(expandrec);         /* keep up with progress    */
     }
     else if (not_nullptr(m_seqroll) && m_seqroll->progress_follow())
     {
         follow_progress();
     }
-    if (m_measures != get_measures())
+    if (m_measures != track().measures())
     {
-        m_measures = get_measures();
+        m_measures = track().get_measures();
 
         std::string mstring = std::to_string(m_measures);
         int lenindex = measures_list().index(m_measures);
@@ -1454,20 +1454,6 @@ qseqeditframe64::reset_measures ()
     int index = beatwidth_list().index(m_measures);
     ui->m_combo_length->setCurrentIndex(index);
     set_dirty();
-}
-
-/**
- *  Calculates the measures in the current sequence with its current status.
- *
- * \return
- *      Returns the calculated number of measures in the sequence managed by
- *      this object.
- */
-
-int
-qseqeditframe64::get_measures ()
-{
-    return track().get_measures();
 }
 
 /**

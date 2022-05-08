@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-05-06
+ * \updates       2022-05-08
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -751,7 +751,7 @@ private:
      *  beat-width to a smaller value could increase the number of measures.
      */
 
-    int m_measures;
+    mutable int m_measures;
 
     /**
      *  The size of snap in units of pulses (ticks).  It starts out as the
@@ -1045,7 +1045,14 @@ public:
     void pop_trigger_redo ();
     void set_name (const std::string & name = "");
     int calculate_measures (bool reset = false) const;
-    int get_measures (midipulse newlength = 0) const;
+    bool recalculate_measures (bool reset = false) const;
+    int get_measures (midipulse newlength) const;
+    int get_measures () const;
+
+    int measures () const
+    {
+        return m_measures;
+    }
 
     bool event_threshold () const
     {

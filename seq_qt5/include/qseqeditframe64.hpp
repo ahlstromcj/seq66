@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-05-03
+ * \updates       2022-05-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -322,7 +322,6 @@ private:        /* setters and getters          */
     void set_beats_per_bar (int bpm, qbase::status qs = qbase::status::edit);
     void set_beat_width (int bw, qbase::status qs = qbase::status::edit);
     void set_measures (int len, qbase::status qs = qbase::status::edit);
-    int get_measures ();
     void set_midi_channel
     (
         int midichannel,

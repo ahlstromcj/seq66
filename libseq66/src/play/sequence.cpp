@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-05-06
+ * \updates       2022-05-08
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -51,18 +51,13 @@
 #include <cstring>                      /* std::memset()                    */
 #include <cmath>                        /* std::trunc()                     */
 
-#include "seq66_features.hpp"           /* various feature #defines         */
-#include "cfg/scales.hpp"               /* seq66 scales functions, values   */
-#include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
-#include "midi/eventlist.hpp"           /* seq66::eventlist                 */
+#include "cfg/settings.hpp"             /* seq66::rc() and usr()            */
 #include "midi/mastermidibus.hpp"       /* seq66::mastermidibus             */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 #include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
-#include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
-#include "util/automutex.hpp"           /* seq66::mutex, automutex          */
 #include "util/strfunctions.hpp"        /* bool_to_string()                 */
 
 /*
@@ -736,7 +731,8 @@ sequence::set_beat_width (int bw, bool user_change)
 
 /**
  *  Calculates and sets u = 4BP/W, where u is m_unit_measure, B is the
- *  beats/bar, P is the PPQN, and W is the beat-width.
+ *  beats/bar, P is the PPQN, and W is the beat-width. When any of these
+ *  quantities change, we need to recalculate.
  *
  * \param reset
  *      If true (the default is false), make the calculateion anyway.
@@ -750,22 +746,15 @@ sequence::unit_measure (bool reset) const
 {
     automutex locker(m_mutex);
     if (m_unit_measure == 0 || reset)
-    {
-        m_unit_measure = get_beats_per_bar() *
-            (get_ppqn() * 4) / get_beat_width() ;
-    }
+        m_unit_measure = measures_to_ticks();       /* length of 1 measure  */
+
     return m_unit_measure;
 }
 
 void
 sequence::set_measures (int measures)
 {
-    (void) unit_measure();
-
-    bool modded = set_length
-    (
-        measures * get_beats_per_bar() * (get_ppqn() * 4) / get_beat_width()
-    );
+    bool modded = set_length(measures * unit_measure(true));
     if (modded)
         modify();
 }
@@ -826,6 +815,17 @@ sequence::calculate_measures (bool reset) const
     return 1 + (get_length() - 1) / um;
 }
 
+bool
+sequence::recalculate_measures (bool reset) const
+{
+    int m = calculate_measures(reset);
+    bool result = m != m_measures;
+    if (result)
+        m_measures = m;
+
+    return result;
+}
+
 /**
  *  Encapsulates a calculation needed in the qseqbase class (and elsewhere).
  *  We could just assume m_unit_measures is always up-to-date and use that
@@ -857,13 +857,23 @@ sequence::calculate_measures (bool reset) const
 int
 sequence::get_measures (midipulse newlength) const
 {
+    midipulse um = unit_measure();
     midipulse len = newlength > 0 ? newlength : get_length() ;
-    int units = get_beats_per_bar() * get_ppqn() * 4 / get_beat_width();
-    int measures = len / units;
-    if (len % units != 0)
+    int measures = int(len / um);
+    if (len % int(um) != 0)
         ++measures;
 
     return measures;
+}
+
+int
+sequence::get_measures () const
+{
+    // if (m_measures == 0)
+    //     (void) recalculate_measures();
+
+    m_measures = get_measures(0);
+    return m_measures;
 }
 
 /**
