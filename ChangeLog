@@ -1,5 +1,343 @@
+2022-05-08  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/util/calculations.hpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qpatternfix.ui, seq_qt5/include/qpatternfix.hpp,
+	seq_qt5/src/qpatternfix.cpp: Measure-detection updates, fixed
+	pattern reversal feature.
+	* libseq66/include/play/sequence.hpp,
+	libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqkeys.cpp: Improving
+	speed of measure-change detection.
+
+2022-05-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_qt5/src/qt5_helpers.cpp: Fixed fill_combobox, patternfix.midi.
+	* README.md, configure.ac, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/midi/mastermidibase.hpp,
+	libseq66/include/play/clockslist.hpp,
+	libseq66/include/play/inputslist.hpp,
+	libseq66/include/play/portslist.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/util/calculations.hpp,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/midi/eventlist.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/clockslist.cpp, libseq66/src/play/inputslist.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/portslist.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/util/strfunctions.cpp,
+	seq_qt5/forms/qpatternfix.ui, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/forms/qsessionframe.ui, seq_qt5/include/qpatternfix.hpp,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/qpatternfix.cpp,
+	seq_qt5/src/qseditoptions.cpp: Add client:port display option,
+	pattern-fix reversal option.
+
+2022-05-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.am, Makefile.in, README.md, Seq66qt5/Makefile.am,
+	Seq66qt5/Makefile.in, bootstrap, contrib/git/git.text,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/mastermidibase.hpp,
+	libseq66/include/play/portslist.hpp,
+	libseq66/include/util/strfunctions.hpp,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/clockslist.cpp, libseq66/src/play/inputslist.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/portslist.cpp,
+	libseq66/src/util/strfunctions.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsmainwnd.cpp: 
+	Refactoring portslist and adding eventual support for client/port
+	pair showing.
+
+2022-05-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp, libseq66/src/os/timing.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qbase.hpp, seq_qt5/include/qmutemaster.hpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qseqeventframe.hpp, seq_qt5/include/qsetmaster.hpp,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixes for slot flickering, slight
+	refactoring of modification detection.
+
+2022-05-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsmainwnd.cpp: Fixes to
+	modify status of time-signature in main window.
+	* : commit f813290f2a03db33f498c86aab4ad391959806c3 Author: Chris
+	Ahlstrom <ahlstromcj@gmail.com> Date:   Sun May 1 08:22:22 2022
+	-0400
+
+2022-04-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* : Fix merge conflict in sequence module.
+	* README.md, libseq66/include/play/sequence.hpp,
+	libseq66/src/cfg/settings.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/seq66_features.cpp,
+	libseq66/src/util/strfunctions.cpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qt5_helpers.cpp: Fixed issue #81 by adding stdexcept
+	header.
+
+2022-04-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/play/performer.hpp, libseq66/include/play/seq.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/setmapper.hpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qlfoframe.hpp, seq_qt5/include/qpatternfix.hpp,
+	seq_qt5/include/qseqbase.hpp, seq_qt5/include/qseqdata.hpp,
+	seq_qt5/include/qseqeditex.hpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qseqeventframe.hpp, seq_qt5/include/qseqframe.hpp,
+	seq_qt5/include/qseqkeys.hpp, seq_qt5/include/qseqroll.hpp,
+	seq_qt5/include/qseqtime.hpp, seq_qt5/include/qseventslots.hpp,
+	seq_qt5/include/qstriggereditor.hpp, seq_qt5/src/qlfoframe.cpp,
+	seq_qt5/src/qpatternfix.cpp, seq_qt5/src/qseqbase.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditex.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseqframe.cpp, seq_qt5/src/qseqkeys.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qseqtime.cpp,
+	seq_qt5/src/qseventslots.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qstriggereditor.cpp: Refactored seqedit to use seq::ref
+	instead of pointers.
+
+2022-04-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/cfg/settings.hpp, libseq66/src/cfg/settings.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/forms/qpatternfix.ui,
+	seq_qt5/include/qperfeditframe64.hpp,
+	seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/qpatternfix.cpp,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5_helpers.cpp: Refactoring fill_combobox() function.
+
+2022-04-26  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/util/calculations.hpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qlfoframe.ui, seq_qt5/forms/qpatternfix.ui,
+	seq_qt5/include/qpatternfix.hpp, seq_qt5/src/qlfoframe.cpp,
+	seq_qt5/src/qpatternfix.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qsmainwnd.cpp: Added jitter to
+	pattern-fix, GUI fixes.
+
+2022-04-25  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/midi/mastermidibase.hpp,
+	libseq66/include/util/calculations.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/util/calculations.cpp, resources/pixmaps/play_on.xpm,
+	resources/pixmaps/q_rec_on.xpm, resources/pixmaps/rec_on.xpm,
+	resources/pixmaps/thru_on.xpm, seq_qt5/include/qeditbase.hpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qseqtime.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qstriggereditor.cpp: Added
+	'on' icons for seqedit, non-power-of-2 detection, improved
+	modification detection.
+
+2022-04-23  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/play/sequence.hpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qpatternfix.cpp, seq_qt5/src/qseqeditframe64.cpp: Fixes
+	to pattern-fix, ongoing.
+
+2022-04-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/cfg/settings.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/setmapper.hpp, libseq66/src/cfg/settings.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/setmapper.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	libseq66/src/util/strfunctions.cpp, seq_qt5/forms/qpatternfix.ui,
+	seq_qt5/include/qpatternfix.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qpatternfix.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Improved perf-modified handling, adding
+	settings lists.
+
+2022-04-20  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/include/qpatternfix.hpp, seq_qt5/include/qt5_helpers.hpp,
+	seq_qt5/src/qpatternfix.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qt5_helpers.cpp, seq_qt5/src/qt5nsmanager.cpp: Added
+	QIcon theme-name retrieval, seqedit tweakage.
+
+2022-04-19  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qpatternfix.ui, seq_qt5/include/qpatternfix.hpp,
+	seq_qt5/src/qpatternfix.cpp, seq_qt5/src/qseqeditframe64.cpp: More
+	refinements to qpatternfix processing.
+
+2022-04-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/sequence.hpp,
+	libseq66/include/util/strfunctions.hpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/util/strfunctions.cpp,
+	seq_qt5/forms/qseqeditframe64.ui, seq_qt5/include/qpatternfix.hpp,
+	seq_qt5/src/qpatternfix.cpp: Added rudimentary time-signature
+	adjustment to qpatternfix, still fixing issue.
+
+2022-04-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qpatternfix.ui, seq_qt5/include/qpatternfix.hpp,
+	seq_qt5/src/qpatternfix.cpp: Augmenting qpatternfix with note-length
+	preservation.
+
+2022-04-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/cfg/settings.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/util/calculations.hpp,
+	libseq66/src/cfg/settings.cpp, libseq66/src/midi/eventlist.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/util/strfunctions.cpp,
+	seq_qt5/include/Makefile.am, seq_qt5/include/Makefile.in,
+	seq_qt5/include/qpatternfix.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qseqstyle.hpp,
+	seq_qt5/seq_qt5.pro, seq_qt5/src/Makefile.am,
+	seq_qt5/src/Makefile.in, seq_qt5/src/gui_palette_qt5.cpp,
+	seq_qt5/src/qinputcheckbox.cpp, seq_qt5/src/qlfoframe.cpp,
+	seq_qt5/src/qliveframeex.cpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qmutemaster.cpp, seq_qt5/src/qpatternfix.cpp,
+	seq_qt5/src/qperfbase.cpp, seq_qt5/src/qperfeditex.cpp,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qportwidget.cpp,
+	seq_qt5/src/qscrollmaster.cpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditex.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qseqframe.cpp,
+	seq_qt5/src/qseqkeys.cpp, seq_qt5/src/qseqstyle.cpp,
+	seq_qt5/src/qseqtime.cpp, seq_qt5/src/qsessionframe.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qstriggereditor.cpp,
+	seq_qt5/src/qt5_helpers.cpp: More work on settings, qpatternfix,
+	time signatures.
+
+2022-04-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/cfg/configfile.hpp,
+	libseq66/include/cfg/settings.hpp, libseq66/src/cfg/configfile.cpp,
+	libseq66/src/cfg/notemapfile.cpp, libseq66/src/cfg/settings.cpp,
+	libseq66/src/cfg/usrfile.cpp, libseq66/src/cfg/usrsettings.cpp,
+	libseq66/src/midi/editable_event.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/util/calculations.cpp,
+	libseq66/src/util/strfunctions.cpp,
+	seq_qt5/include/qperfeditframe64.hpp,
+	seq_qt5/src/gui_palette_qt5.cpp, seq_qt5/src/qperfeditframe64.cpp,
+	seq_qt5/src/qplaylistframe.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsetmaster.cpp,
+	seq_qt5/src/qseventslots.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5_helpers.cpp: Tightened string-to-number calls, more
+	combolist updates and usages.
+	* libseq66/src/cfg/settings.cpp: Minor settings module update.
+	* README.md, TODO, libseq66/include/cfg/settings.hpp,
+	libseq66/include/util/calculations.hpp,
+	libseq66/src/cfg/settings.cpp, libseq66/src/util/calculations.cpp,
+	seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp: Refactoring
+	combo-box handling into settings module.
+
+2022-04-12  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qlfoframe.ui, seq_qt5/forms/qmutemaster.ui,
+	seq_qt5/forms/qpatternfix.ui, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/forms/qseqeditframe64.ui, seq_qt5/forms/qseqeventframe.ui,
+	seq_qt5/forms/qsessionframe.ui, seq_qt5/forms/qsetmaster.ui,
+	seq_qt5/forms/qslivegrid.ui, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/include/qpatternfix.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/src/qpatternfix.cpp,
+	seq_qt5/src/qseqeditex.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseventslots.cpp, seq_qt5/src/qsmainwnd.cpp: qpatternfix
+	fixes, tab ordering, measure calculation improvments.
+
+2022-04-11  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/palettes.tex,
+	libseq66/include/util/calculations.hpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/forms/qpatternfix.ui,
+	seq_qt5/include/qpatternfix.hpp, seq_qt5/src/qpatternfix.cpp,
+	seq_qt5/src/qseqeditframe64.cpp: qpatternfix fixes, more progress.
+	* README.md, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/util/calculations.hpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qpatternfix.ui, seq_qt5/include/qpatternfix.hpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qstriggereditor.hpp, seq_qt5/src/qpatternfix.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qstriggereditor.cpp: 
+	qpatternfix dialog now in the debugging stage.
+
+2022-04-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* VERSION, configure, configure.ac, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/util/calculations.hpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/forms/qpatternfix.ui,
+	seq_qt5/include/Makefile.am, seq_qt5/include/Makefile.in,
+	seq_qt5/include/qlfoframe.hpp, seq_qt5/include/qpatternfix.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qt5_helper.h,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/seq_qt5.pro,
+	seq_qt5/src/qlfoframe.cpp, seq_qt5/src/qpatternfix.cpp,
+	seq_qt5/src/qseqeditframe64.cpp: qpatternfix dialog fleshed out,
+	implementation not yet in place.
+
+2022-04-09  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_qt5/forms/qlfoframe.ui, seq_qt5/forms/qpatternfix.ui,
+	seq_qt5/include/Makefile.am, seq_qt5/include/Makefile.in,
+	seq_qt5/include/qlfoframe.hpp, seq_qt5/include/qpatternfix.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/seq_qt5.pro,
+	seq_qt5/src/Makefile.am, seq_qt5/src/Makefile.in,
+	seq_qt5/src/qpatternfix.cpp, seq_qt5/src/qseqeditframe64.cpp: Added
+	qpatternfix dialog, not yet functional.
+	* ChangeLog, doc/latex/tex/menu.tex: Minor user-manual fix,
+	change-log.
+
 2022-04-08  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* README.md, seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp: Fixed
+	stupid seqedit bug setting beats/bar.
 	* README.md, seq_qt5/forms/qseqeditframe64.ui,
 	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp: Fixed
 	stupid seqedit bug setting beats/bar.
