@@ -443,12 +443,12 @@
         </font>
        </property>
        <property name="text">
-        <string>Reverse</string>
+        <string>Reverse measures</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="btn_reverse_absolute">
+      <widget class="QCheckBox" name="btn_reverse_in_place">
        <property name="font">
         <font>
          <weight>50</weight>
@@ -456,7 +456,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Reverse Absolute</string>
+        <string>Reverse in place</string>
        </property>
       </widget>
      </item>

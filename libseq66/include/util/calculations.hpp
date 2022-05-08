@@ -139,7 +139,7 @@ enum class fixeffect
     expanded        = 0x04,
     truncated       = 0x08,
     reversed        = 0x10,
-    reversed_abs    = 0x20,
+    reversed_abs    = 0x20,             /* short for "reversed in place"    */
     all             = 0x3F
 };
 

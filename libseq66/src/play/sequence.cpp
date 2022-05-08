@@ -815,17 +815,6 @@ sequence::calculate_measures (bool reset) const
     return 1 + (get_length() - 1) / um;
 }
 
-bool
-sequence::recalculate_measures (bool reset) const
-{
-    int m = calculate_measures(reset);
-    bool result = m != m_measures;
-    if (result)
-        m_measures = m;
-
-    return result;
-}
-
 /**
  *  Encapsulates a calculation needed in the qseqbase class (and elsewhere).
  *  We could just assume m_unit_measures is always up-to-date and use that
@@ -869,9 +858,6 @@ sequence::get_measures (midipulse newlength) const
 int
 sequence::get_measures () const
 {
-    // if (m_measures == 0)
-    //     (void) recalculate_measures();
-
     m_measures = get_measures(0);
     return m_measures;
 }
@@ -2659,9 +2645,9 @@ sequence::fix_pattern (fixparameters & params)
             else
                 result = false;                             /* op failed    */
         }
-        if (params.fp_reverse || params.fp_reverse_absolute)
+        if (params.fp_reverse || params.fp_reverse_in_place)
         {
-            result = m_events.reverse_events(params.fp_reverse_absolute);
+            result = m_events.reverse_events(params.fp_reverse_in_place);
         }
         if (result)
         {

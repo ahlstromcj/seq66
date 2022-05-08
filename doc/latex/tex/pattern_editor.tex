@@ -267,13 +267,14 @@
          low-frequency oscillator.
          See \sectionref{subsec:pattern_editor_bottom}.
       \item \textbf{Pattern fix} allows for fixing up a new pattern
-         that was recorded with some timing errors.
+         that was recorded with some timing errors, or transforming the
+         pattern in various ways.
          See the figure below.
    \end{enumber}
 
 \begin{figure}[H]
    \centering 
-  \includegraphics[scale=1.0]{pattern-editor/patternfix.png}
+  \includegraphics[scale=0.65]{pattern-editor/patternfix.png}
    \caption{Pattern Fix Dialog}
    \label{fig:pattern_editor_pattern_fix}
 \end{figure}
@@ -290,7 +291,7 @@
    \begin{itemize}
       \item \textbf{None}.
          No length change will occur.
-         Alignment and quantization can still be done.
+         Alignment, reversing, and quantization can still be done.
       \item \textbf{Measures}.
          Allows the measures (length) of the pattern to be changed in two ways,
          depending on how the number is entered: as a simple integer (e.g.
@@ -321,22 +322,36 @@
          76 measures, not the 100 that would be set if measures was set to 100.
    \end{itemize}
 
-   \textbf{Quantization} works the same as the \textbf{Tool} entries of the
-   same name, but works on \textsl{all events}.
+   The \textbf{Quantization} selector allows for various types of
+   quantization.
+   It works the same as the \textbf{Tool} entries of the
+   same name (see \sectionref{subsec:pattern_editor_second_row}),
+   but works on \textsl{all events}, not just selected events.
    Also included is a \textbf{Jitter} option, with a range for the jitter.
-   This option slightly randomizes the time stamps of note events.
+   This option slightly randomizes the time-stamps of note events.
 
    \textbf{Other Fixes} provides some minor items, as follows.
 
-   \textbf{Align left}
-   allows the pattern to be aligned to the left
-   of the sequence, removing any delays.
-   This is useful when recording a pattern live and not quite hitting the first
-   beat.
+   \begin{itemize}
+      \item \textbf{Align left}
+         allows the pattern to be aligned to the left of the sequence, removing
+         any delays.  This is useful when recording a pattern live and not quite
+         hitting the first beat in time.
+      \item \textbf{Preserve note length}
+         prevents Note Offs from being scaled, which would shorten or length the
+         notes.
+      \item \textbf{Reverse measures}
+         reverses all of the events in the whole pattern, flipping the measures
+         completely.  For example, if all the events occur near the end of the
+         pattern, after reversal they will all appear near the beginning of the
+         pattern.
+      \item \textbf{Reverse in place}
+         This is probably a more natural reversal method.
+         The relative location of a cluster of notes doesn't change, but the
+         notes are simply reversed in place.
+   \end{itemize}
 
-   \textbf{Preserve note length}
-   prevents Note Offs from being scaled, which would shorten or length the
-   notes.
+   Question:  would a "pattern flip" (of the note values themselves) be useful?
 
    \textbf{Effect} does not do anything except show the effect of the changes.
    (Making it read-only might make it almost invisible in some themes.)
@@ -360,7 +375,7 @@
    Changing the measures to a large number on a pattern of 1 measure will
    greatly expand the notes!
 
-   Any accidental changes can be \textbg{Reset}
+   Any accidental changes can be \textbf{Reset}
    in this dialog.
    Undo in the pattern-editor itself with \texttt{Ctrl-Z} affects
    only MIDI events, not things like changing time-signature from the

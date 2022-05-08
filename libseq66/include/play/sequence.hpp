@@ -137,7 +137,7 @@ struct fixparameters
     int fp_jitter;
     bool fp_align_left;
     bool fp_reverse;
-    bool fp_reverse_absolute;
+    bool fp_reverse_in_place;
     bool fp_save_note_length;
     bool fp_use_time_signature;
     int & fp_beats_per_bar;
@@ -1045,7 +1045,6 @@ public:
     void pop_trigger_redo ();
     void set_name (const std::string & name = "");
     int calculate_measures (bool reset = false) const;
-    bool recalculate_measures (bool reset = false) const;
     int get_measures (midipulse newlength) const;
     int get_measures () const;
 

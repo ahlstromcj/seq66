@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2022-04-26
+ * \updates       2022-05-08
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -97,12 +97,25 @@ eventlist::operator = (const eventlist & rhs)
 }
 
 /**
- *  Provides the length of the events in MIDI pulses.  This function gets the
- *  iterator for the last element and returns its length value.
+ *  Provides the minimum and maximux timestamps  of the events, in MIDI pulses.
+ *  These functions get the iterator for the first or last element and returns
+ *  its value.
  *
  * \return
- *      Returns the timestamp of the last event in the container.
+ *      Returns the timestamp of the first or last event in the container.
  */
+
+midipulse
+eventlist::get_min_timestamp () const
+{
+    midipulse result = 0;
+    if (count() > 0)
+    {
+        auto lci = m_events.begin();                    /* get 1st element  */
+        result = lci->timestamp();                      /* get length value */
+    }
+    return result;
+}
 
 midipulse
 eventlist::get_max_timestamp () const
@@ -996,22 +1009,28 @@ eventlist::apply_time_factor (double factor, bool savenotelength, bool relink)
 }
 
 /**
- *  This function reverses the events in a sequence.  Note events are treat
- *  specially; only the Note On gets a new-timestamp at first, and the Note
- *  Off is placed at the original duration past the new time.
+ *  This function reverses the events in a sequence.  Note events are treated
+ *  specially:
+ *
+ *      -#  The Note Off timestamp (reversed) has to be used as the new Note On
+ *          timestamp.
+ *      -#  Only the Note On gets that new-timestamp at first.
+ *      -#  The Note Off is placed at the original duration past the new
+ *          Note On time.
  */
 
 bool
-eventlist::reverse_events (bool absolute, bool relink)
+eventlist::reverse_events (bool inplace, bool relink)
 {
     bool result = ! empty();
     if (result)
     {
-        midipulse ending = absolute ? get_max_timestamp() + 1 : get_length() ;
+        midipulse offset = inplace ? get_min_timestamp() : 0;
+        midipulse ending = inplace ? get_max_timestamp() : get_length() - 1 ;
         for (auto & ev : m_events)
         {
             midipulse stamp = ev.timestamp();
-            midipulse newstamp = ending - stamp;
+            midipulse newstamp = ending - stamp + offset;
             if (ev.is_note_on())
             {
                 bool linked = ev.is_linked();   /* do note on and off   */
@@ -1019,9 +1038,12 @@ eventlist::reverse_events (bool absolute, bool relink)
                 {
                     midipulse offstamp = ev.link()->timestamp();
                     midipulse duration = offstamp - stamp + 1;
+                    newstamp = ending - offstamp + offset;
+                    ev.set_timestamp(newstamp);
                     ev.link()->set_timestamp(newstamp + duration);
                 }
-                ev.set_timestamp(newstamp);
+                else
+                    ev.set_timestamp(newstamp);
             }
             else if (ev.is_note_off())
             {

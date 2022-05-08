@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-05-06
+ * \updates       2022-05-08
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -133,7 +133,7 @@ private slots:
     void slot_jitter_change ();
     void slot_align_change (int dummy);
     void slot_reverse_change (int dummy);
-    void slot_reverse_absolute (int dummy);
+    void slot_reverse_in_place (int dummy);
     void slot_save_note_length (int dummy);
     void slot_set ();
     void slot_reset ();
@@ -255,7 +255,7 @@ private:
      *  "reference" (instead of the pattern length).
      */
 
-    bool m_reverse_absolute;
+    bool m_reverse_in_place;
 
     /**
      *  Indicates to preserve note length when rescaling. Otherwise, the
