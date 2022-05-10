@@ -718,6 +718,9 @@ slot by channel number (0 to 15).</string>
         <layout class="QGridLayout" name="gridLayout">
          <item row="3" column="0">
           <widget class="QCheckBox" name="checkBoxLongBussNames">
+           <property name="toolTip">
+            <string>rc: [Seq66] port-naming = long</string>
+           </property>
            <property name="text">
             <string>Long port/buss names</string>
            </property>
@@ -725,6 +728,9 @@ slot by channel number (0 to 15).</string>
          </item>
          <item row="5" column="0">
           <widget class="QCheckBox" name="checkBoxSwapCoordinates">
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] swap-coordinates</string>
+           </property>
            <property name="text">
             <string>Swap coordinates in all grids</string>
            </property>
@@ -733,7 +739,7 @@ slot by channel number (0 to 15).</string>
          <item row="2" column="0">
           <widget class="QCheckBox" name="checkBoxShowFullRecentPaths">
            <property name="toolTip">
-            <string/>
+            <string>rc: [recent-files] full-paths</string>
            </property>
            <property name="text">
             <string>Show full path of recent files</string>
@@ -742,6 +748,9 @@ slot by channel number (0 to 15).</string>
          </item>
          <item row="4" column="0">
           <widget class="QCheckBox" name="checkBoxLockMainWindow">
+           <property name="toolTip">
+            <string>usr: [user-ui-tweaks] lock-main-window</string>
+           </property>
            <property name="text">
             <string>Lock main window</string>
            </property>
@@ -750,7 +759,7 @@ slot by channel number (0 to 15).</string>
          <item row="1" column="0">
           <widget class="QCheckBox" name="checkBoxLoadMostRecent">
            <property name="toolTip">
-            <string/>
+            <string>rc: [recent-files] load-most-recent</string>
            </property>
            <property name="text">
             <string>Load most-recent file (startup)</string>
@@ -763,7 +772,7 @@ slot by channel number (0 to 15).</string>
             <bool>true</bool>
            </property>
            <property name="toolTip">
-            <string/>
+            <string>rc: [Seq66] verbose</string>
            </property>
            <property name="text">
             <string>Verbose console output</string>
@@ -772,6 +781,9 @@ slot by channel number (0 to 15).</string>
          </item>
          <item row="6" column="0">
           <widget class="QCheckBox" name="checkBoxBoldGridSlots">
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] progress-bar-thick</string>
+           </property>
            <property name="text">
             <string>Bold grid slot font/box</string>
            </property>
@@ -779,6 +791,9 @@ slot by channel number (0 to 15).</string>
          </item>
          <item row="0" column="1">
           <widget class="QCheckBox" name="checkBoxDoubleClickEdit">
+           <property name="toolTip">
+            <string>rc: [interaction-method] double-click-edit</string>
+           </property>
            <property name="text">
             <string>Double click for pattern editor</string>
            </property>
@@ -786,6 +801,9 @@ slot by channel number (0 to 15).</string>
          </item>
          <item row="1" column="1">
           <widget class="QCheckBox" name="checkBoxGlobalSeqFeature">
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] global-seq-feature</string>
+           </property>
            <property name="text">
             <string>Global background/scale/key</string>
            </property>
@@ -793,6 +811,9 @@ slot by channel number (0 to 15).</string>
          </item>
          <item row="3" column="1">
           <widget class="QCheckBox" name="checkBoxPairBussNames">
+           <property name="toolTip">
+            <string>rc: [Seq66] port-naming = pair</string>
+           </property>
            <property name="text">
             <string>Client:port buss names</string>
            </property>
@@ -807,7 +828,7 @@ slot by channel number (0 to 15).</string>
          <x>16</x>
          <y>38</y>
          <width>413</width>
-         <height>153</height>
+         <height>167</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayoutUiValues" columnstretch="8,2,1,2">
@@ -869,6 +890,9 @@ zoom vertically.</string>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="labelUiScaling">
+          <property name="toolTip">
+           <string>usr: [user-interface-settings] window-scale, -y</string>
+          </property>
           <property name="text">
            <string>Scaling of user interface</string>
           </property>
@@ -921,8 +945,7 @@ Range: 0.5 to 1.0, 0 hides the box. Default: 0.8.</string>
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Sets the height of a note key in pixels.  
-A primitive way to zoom.</string>
+           <string>usr: [user-ui-tweaks] key-height</string>
           </property>
           <property name="text">
            <string>Editor key height</string>
@@ -933,6 +956,9 @@ A primitive way to zoom.</string>
          <widget class="QLabel" name="labelSetSizeRows">
           <property name="enabled">
            <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>usr: [user-interface-settings] mainwnd-rows, -columns</string>
           </property>
           <property name="text">
            <string>Set size (rows x columns)</string>
@@ -957,6 +983,9 @@ Range: 4 to 8. Default: 4.</string>
          <widget class="QLabel" name="labelProgressBoxSize">
           <property name="enabled">
            <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>usr: [user-ui-tweaks] progress-box-width, -height</string>
           </property>
           <property name="text">
            <string>Progress boxes (fraction)</string>
@@ -991,6 +1020,9 @@ Range: 0.5 to 3.0</string>
          <widget class="QLabel" name="labelFingerprintSize">
           <property name="enabled">
            <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>usr: [user-ui-tweaks] fingerprint-size</string>
           </property>
           <property name="text">
            <string>Fingerprint size</string>
@@ -2312,6 +2344,9 @@ path added to this name is stripped.</string>
        </widget>
       </widget>
       <widget class="QPushButton" name="pushButtonReload">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>20</x>

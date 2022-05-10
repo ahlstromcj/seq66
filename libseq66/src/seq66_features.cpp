@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2022-01-06
+ * \updates       2022-05-10
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -78,6 +78,7 @@ static std::string s_qt_version;
 static std::string s_app_engine = SEQ66_APP_ENGINE;
 static std::string s_app_name = SEQ66_APP_NAME;
 static std::string s_app_type = SEQ66_APP_TYPE;
+static bool s_app_cli = false;
 static std::string s_apptag = SEQ66_APP_NAME " " SEQ66_VERSION;
 static std::string s_arg_0 = "";
 static std::string s_client_name = SEQ66_CLIENT_NAME;
@@ -131,6 +132,12 @@ void
 set_app_type (const std::string & atype)
 {
     s_app_type = atype;
+}
+
+void
+set_app_cli (bool iscli)
+{
+    s_app_cli = iscli;
 }
 
 void
@@ -194,6 +201,12 @@ const std::string &
 seq_app_type ()
 {
     return s_app_type;
+}
+
+bool
+seq_app_cli ()
+{
+    return s_app_cli;
 }
 
 const std::string &

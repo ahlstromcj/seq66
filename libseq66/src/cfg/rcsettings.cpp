@@ -43,7 +43,7 @@
 #include <algorithm>                    /* std::find()                      */
 #include <cstdlib>                      /* std::getenv()                    */
 
-#include "seq66_features.hpp"           /* seq66::set_app_name(), etc.      */
+// #include "seq66_features.hpp"           /* seq66::set_app_name(), etc.      */
 #include "cfg/settings.hpp"             /* seq66::rc(), seq66::usr()        */
 #include "play/seq.hpp"                 /* seq66::seq::maximum()            */
 #include "util/filefunctions.hpp"       /* make_directory(), etc.           */

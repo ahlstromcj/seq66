@@ -24,10 +24,28 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-06
+ * \updates       2022-05-10
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
+ *
+ *  Reset/Apply/Cancel/Ok and Restart-Session handling. The symbol 'x' means
+ *  disabled, and 'o' means enabled.
+ *
+\verbatim
+                Reset       Apply  Cancel  Ok      Restart
+    First run:   x           x       o      x       x
+    Change:      o           o       x      o       x
+    Reset:       x           x       o      x       x
+    Apply:       x           x       o      x       o
+\endverbatim
+ *
+ *  When is a restart (reload) of the application needed? When the Apply or OK
+ *  buttons are clicked, or the port statuses have changed.
+ *
+ *  When an 'rc' or 'usr' change is made, do we want to wait until the Apply/OK
+ *  are clicked?  No, they directly affect rc() and usr() and a restart is
+ *  needed/useful.
  */
 
 #include <QButtonGroup>
@@ -183,6 +201,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     ui->chkJackMaster->setEnabled(false);
     ui->chkJackNative->setEnabled(false);
     ui->chkJackAutoConnect->setEnabled(false);
+    ui->tabWidget->setTabEnabled(Tab_JACK, false);
 
 #endif  // defined SEQ66_JACK_SUPPORT
 
@@ -311,7 +330,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         ui->spinKeyHeight, SIGNAL(valueChanged(int)),
         this, SLOT(slot_key_height())
     );
-
     connect
     (
         ui->lineEditUiScaling, SIGNAL(editingFinished()),
@@ -557,15 +575,19 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     );
 
     /*
-     * Reload/restart button.
+     * Reload/restart button.  Replaced by Apply --> Restart!
      */
 
     ui->pushButtonReload->setEnabled(false);
-    connect
-    (
-        ui->pushButtonReload, SIGNAL(clicked(bool)),
-        this, SLOT(slot_flag_reload())
-    );
+    ui->pushButtonReload->hide();
+
+    /*
+     *  connect
+     *  (
+     *      ui->pushButtonReload, SIGNAL(clicked(bool)),
+     *      this, SLOT(slot_flag_reload())
+     *  );
+     */
 
     /*
      * OK/Cancel Buttons
@@ -576,7 +598,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Ok),
         SIGNAL(clicked(bool)), this, SLOT(okay())
     );
-    set_enabled(QDialogButtonBox::Ok, false);
     connect
     (
         ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Cancel),
@@ -587,23 +608,17 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
      * Apply/Reset buttons.
      */
 
+    set_text(QDialogButtonBox::Apply, "Restart Seq66!");
     connect
     (
         ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply),
         SIGNAL(clicked()), this, SLOT(apply())
     );
-//  ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply)->
-//      setEnabled(false);
-    set_enabled(QDialogButtonBox::Apply, false);
-
     connect
     (
         ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Reset),
         SIGNAL(clicked()), this, SLOT(reset())
     );
-//  ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Reset)->
-//      setEnabled(false);
-    set_enabled(QDialogButtonBox::Reset, false);
 
     /*
      * Set up the MIDI Clock tab.  We use the new qclocklayout class to hold
@@ -661,7 +676,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding
     );
     vboxclocks->addItem(spacer);
-
     connect
     (
         ui->spinBoxClockStartModulo, SIGNAL(valueChanged(int)),
@@ -672,7 +686,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         ui->lineEditTempoTrack, SIGNAL(editingFinished()),
         this, SLOT(slot_tempo_track())
     );
-
     for (int i = 0; i <= 2; ++i)            /* c_max_bpm_precision */
     {
         QString s = QString::number(i);
@@ -709,7 +722,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         ui->outPortsMappedCheck, SIGNAL(clicked(bool)),
         this, SLOT(slot_activate_output_map())
     );
-
 
     /*
      * The virtual port counts for input and output.
@@ -798,18 +810,12 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding
     );
     vboxinputs->addItem(spacer2);
-//  ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Ok)->
-//      setEnabled(false);
-    set_enabled(QDialogButtonBox::Ok, false);
     sync();
 
     std::string clid = perf().client_id_string();
     ui->lineEditClientId->setText(qt(clid));
+    state_unchanged();
     m_is_initialized = true;
-
-#if defined SEQ66_PLATFORM_WINDOWS
-    ui->tabWidget->setTabEnabled(Tab_JACK, false);
-#endif
 }
 
 /**
@@ -908,6 +914,12 @@ qseditoptions::slot_start_mode (int buttonno)
         modify_rc();
 }
 
+/**
+ *  A run-time-only setting.  No configuration modification.
+ *
+ *  TODO:  Remove this button; it's not really a configuration change.
+ */
+
 void
 qseditoptions::slot_jack_mode (int buttonno)
 {
@@ -917,11 +929,19 @@ qseditoptions::slot_jack_mode (int buttonno)
         perf().song_mode(true);
 }
 
+/**
+ *  A run-time-only setting.  No configuration modification.
+ */
+
 void
 qseditoptions::slot_jack_connect ()
 {
     perf().set_jack_mode(true);
 }
+
+/**
+ *  A run-time-only setting.  No configuration modification.
+ */
 
 void
 qseditoptions::slot_jack_disconnect ()
@@ -933,6 +953,7 @@ void
 qseditoptions::slot_master_cond ()
 {
     rc().with_jack_master_cond(ui->chkJackConditional->isChecked());
+    modify_rc();
     sync();
 }
 
@@ -940,6 +961,7 @@ void
 qseditoptions::slot_time_master ()
 {
     rc().with_jack_master(ui->chkJackMaster->isChecked());
+    modify_rc();
     sync();
 }
 
@@ -947,6 +969,7 @@ void
 qseditoptions::slot_transport_support ()
 {
     rc().with_jack_transport(ui->chkJackTransport->isChecked());
+    modify_rc();
     sync();
 }
 
@@ -954,6 +977,7 @@ void
 qseditoptions::slot_jack_midi ()
 {
     rc().with_jack_midi(ui->chkJackNative->isChecked());
+    modify_rc();
     sync();
 }
 
@@ -961,27 +985,55 @@ void
 qseditoptions::slot_jack_auto_connect ()
 {
     rc().jack_auto_connect(ui->chkJackAutoConnect->isChecked());
+    modify_rc();
     sync();
 }
 
 void
 qseditoptions::reload_needed (bool flag)
 {
-    m_reload_needed = flag;
-    enable_reload_button(flag);
-//  ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply)->
-//      setEnabled(flag);
-    set_enabled(QDialogButtonBox::Apply, flag);
-    set_enabled(QDialogButtonBox::Reset, flag);
-    set_enabled(QDialogButtonBox::Ok, flag);
-
-//  ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Reset)->
-//      setEnabled(flag);
-
-//  ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Ok)->
-//      setEnabled(flag);
+    if (flag)
+        state_changed();
+    else
+        state_unchanged();
 
     sync();
+}
+
+/**
+ *  State of buttons at startup and after Reset is clicked.  See the table
+ *  at the top of this module.
+ */
+
+void
+qseditoptions::state_unchanged ()
+{
+    set_enabled(QDialogButtonBox::Apply, false);
+    set_enabled(QDialogButtonBox::Cancel, true);
+    set_enabled(QDialogButtonBox::Reset, false);
+    set_enabled(QDialogButtonBox::Ok, false);
+    if (m_is_initialized)
+        enable_reload_button(false);
+}
+
+void
+qseditoptions::state_changed ()
+{
+    set_enabled(QDialogButtonBox::Apply, true);
+    set_enabled(QDialogButtonBox::Cancel, false);
+    set_enabled(QDialogButtonBox::Reset, true);
+    set_enabled(QDialogButtonBox::Ok, true);
+    enable_reload_button(true);
+}
+
+void
+qseditoptions::state_applied ()
+{
+    set_enabled(QDialogButtonBox::Apply, false);
+    set_enabled(QDialogButtonBox::Cancel, true);
+    set_enabled(QDialogButtonBox::Reset, false);
+    set_enabled(QDialogButtonBox::Ok, false);
+    enable_reload_button(true);
 }
 
 void
@@ -1147,15 +1199,7 @@ qseditoptions::slot_ui_scaling ()
 void
 qseditoptions::okay ()
 {
-    /*
-     * Not needed here:
-     *
-     * if (reload_needed())
-     *     enable_reload_button(true);
-     *
-     * backup();
-     */
-
+    enable_reload_button(true);
     close();
 }
 
@@ -1170,6 +1214,7 @@ void
 qseditoptions::cancel ()
 {
     reset();
+    state_unchanged();
     close();
 }
 
@@ -1178,8 +1223,8 @@ qseditoptions::apply ()
 {
     m_backup_rc = rc();
     m_backup_usr = usr();
-    reload_needed(true);
-//  enable_reload_button(true);
+    state_unchanged();
+    signal_for_restart();           /* warnprint("Session reload request"); */
 }
 
 void
@@ -1187,8 +1232,7 @@ qseditoptions::reset ()
 {
     rc() = m_backup_rc;
     usr() = m_backup_usr;
-    reload_needed(false);
-//  enable_reload_button(false);
+    reload_needed(false);   // state_unchanged();
 }
 
 void
@@ -1196,6 +1240,27 @@ qseditoptions::set_enabled (QDialogButtonBox::StandardButton bcode, bool on)
 {
     QPushButton * button = ui->buttonBoxOptionsDialog->button(bcode);
     button->setEnabled(on);
+}
+
+void
+qseditoptions::set_text
+(
+    QDialogButtonBox::StandardButton bcode,
+    const std::string & text
+)
+{
+    QPushButton * button = ui->buttonBoxOptionsDialog->button(bcode);
+    button->setText(qt(text));
+}
+
+void
+qseditoptions::show_button (QDialogButtonBox::StandardButton bcode, bool show)
+{
+    QPushButton * button = ui->buttonBoxOptionsDialog->button(bcode);
+    if (show)
+        button->show();
+    else
+        button->hide();
 }
 
 /**
@@ -1766,19 +1831,25 @@ qseditoptions::slot_rc_filename ()
 void
 qseditoptions::modify_rc ()
 {
-    rc().auto_rc_save(true);
-    rc().modify();
-    reload_needed(true);
-    ui->checkBoxSaveRc->setChecked(true);
+    if (m_is_initialized)
+    {
+        rc().auto_rc_save(true);
+        rc().modify();
+        reload_needed(true);
+        ui->checkBoxSaveRc->setChecked(true);
+    }
 }
 
 void
 qseditoptions::modify_usr ()
 {
-    rc().auto_usr_save(true);
-    usr().modify();
-    reload_needed(true);
-    ui->checkBoxSaveUsr->setChecked(true);
+    if (m_is_initialized)
+    {
+        rc().auto_usr_save(true);
+        usr().modify();
+        reload_needed(true);
+        ui->checkBoxSaveUsr->setChecked(true);
+    }
 }
 
 void

@@ -138,7 +138,16 @@ bool
 smanager::main_settings (int argc, char * argv [])
 {
     bool result = false;                /* false --> EXIT_FAILURE           */
-    set_app_name(SEQ66_APP_NAME);       /* "qseq66" by default              */
+    if (seq_app_cli())
+    {
+        set_app_name("seq66cli");
+        set_app_type("cli");
+        set_client_name("seq66cli");
+        rc().set_config_files("seq66cli");
+    }
+    else
+        set_app_name(SEQ66_APP_NAME);   /* "qseq66" by default              */
+
     set_arg_0(argv[0]);                 /* how it got started               */
 
     /**

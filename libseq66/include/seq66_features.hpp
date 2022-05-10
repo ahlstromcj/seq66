@@ -28,11 +28,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-01-06
+ * \updates       2022-05-10
  * \license       GNU GPLv2 or above
  *
  *    Provides some useful functions for displaying information about the
- *    application.
+ *    application.  More flexible than macros.
  *
  *    Also see the seq66_features.h module.
  */
@@ -86,12 +86,14 @@ extern void set_app_build_issue (const std::string & abuild_issue);
 extern void set_app_engine (const std::string & aengine);
 extern void set_app_name (const std::string & aname);
 extern void set_app_type (const std::string & atype);
+extern void set_app_cli (bool iscli);
 extern void set_arg_0 (const std::string & arg);
 extern void set_client_name (const std::string & cname);
 extern void set_package_name (const std::string & pname);
 extern const std::string & seq_app_name ();
 extern const std::string & seq_app_tag ();
 extern const std::string & seq_app_type ();
+extern bool seq_app_cli ();
 extern const std::string & seq_arg_0 ();
 extern const std::string & seq_client_name ();
 extern const std::string & seq_client_short ();

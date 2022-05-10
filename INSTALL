@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.98.0 and above
 Chris Ahlstrom
-2015-09-10 to 2022-03-13
+2015-09-10 to 2022-05-10
 
 Getting Seq66 requires building the code or going to "sequencer64-packages/seq66"
 on GitHub to get an installation package.  The bootstrap setup is primarily
@@ -88,7 +88,19 @@ Bootstrap Install:
     automake, libtool, and other standard Linux build tools.  This build
     results in the "qseq66" executable.
 
-OpenSUSE Tumbleweed:
+Qt and Command-Line Merged Build:
+
+    Per package-manager request, one can build and install both qseq66 and
+    seq66cli in one pass. Either of the following setups should work.
+
+        $ ./bootstrap --both
+
+    or
+
+        $ ./bootstrap
+        $ ./configure --enable-both
+
+OpenSUSE:
 
     Directions from the Seq66 GitHub sivecj/seq66 fork. First, install these
     packages:

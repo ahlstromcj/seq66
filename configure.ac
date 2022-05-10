@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2022-05-07
+dnl \update        2022-05-10
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -21,7 +21,7 @@ dnl ---------------------------------------------------------------------------
 
 AC_PREREQ([2.69])
 AC_REVISION($Revision: 0.96$)
-AC_INIT([Seq66], [0.98.7], [ahlstromcj@gmail.com])
+AC_INIT([Seq66], [0.98.8], [ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
@@ -85,7 +85,7 @@ AC_DEFINE_UNQUOTED(
    "Distro of build")
    AC_DEFINE(CLIENT_NAME, ["seq66"], "Name to display as client/port")
 
-VERSION="0.98.7"
+VERSION="0.98.8"
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
 AC_SUBST(VERSION)
 
@@ -357,6 +357,24 @@ else
     ac_nsm="no"
 fi
 
+dnl Can enable oth "CLI" and "rtmidi/qtsupport"
+
+AC_ARG_ENABLE(both,
+    [AS_HELP_STRING(--enable-both, [Enable Qt and command-line builds])],
+    [both=$enableval],
+    [both=no])
+
+if test "$both" != "no"; then
+    AC_MSG_RESULT([rtmidi Qt and command-line builds enabled]);
+    if test "x$mingw" != "xyes" ; then
+        build_rtcli="yes"
+        build_qtmidi="yes"
+        build_portmidi="no"
+        AC_DEFINE(RTMIDI_SUPPORT, 1, [Indicates that rtmidi is enabled])
+        AM_PATH_ALSA(0.9.0)
+    fi
+fi
+
 dnl "rtmidi" support.  This is now the default build for Seq66.
 
 AC_ARG_ENABLE(rtmidi,
@@ -366,7 +384,7 @@ AC_ARG_ENABLE(rtmidi,
 
 dnl AC_DEFINE(APP_TYPE, ["qt"], [Names the UI of the application])
 
-if test "$rtmidi" != "no"; then
+if test "$rtmidi" != "no" -o "$both" != "no"; then
     build_rtmidi="yes"
     build_portmidi="no"
     AC_DEFINE(APP_NAME, ["qseq66"], [Names the JACK/ALSA version of application])
@@ -468,8 +486,8 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2022-05-07"
-#define VERSION "0.98.7"
+#define VERSION_DATE_SHORT "2022-05-10"
+#define VERSION "0.98.8"
 
 )
 

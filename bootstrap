@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2022-05-04
+# \update         2022-05-10
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -36,9 +36,9 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2022-05-04"
+export SEQ66_SCRIPT_EDIT_DATE="2022-05-10"
 export SEQ66_LIBRARY_API_VERSION="0.98"
-export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.7"
+export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.9"
 
 #******************************************************************************
 #  Version info
@@ -124,6 +124,7 @@ passing long options to the configure script for some canned setups.
  --disable-jack, -dj Disables JACK support, enables rtmidi.
  --no-metadata       Disable JACK metadata support.
  --cli, -cli         Configure for seq66cli (command-line rtmidi version).
+ --both              Build qseq66 and seq66cli in one pass.
  --no-nsm            Disable Non Session Manager support.  Saves some code.
  --profile, -prof    Enable profiling and debugging.
  --help              Show this help text.
@@ -230,6 +231,12 @@ if [ $# -ge 1 ] ; then
             DORTCLI="yes"
             DORELEASE="yes"
             EXTRAFLAGS+=" --enable-cli"
+            ;;
+
+         --both | -both)
+            DORTCLI="yes"
+            DORELEASE="yes"
+            EXTRAFLAGS+=" --enable-rtmidi --enable-both"
             ;;
 
          --testing | -stt)
@@ -562,6 +569,7 @@ Run './configure' to configure Seq66 for compilation, or
 
       --enable-debug=gdb  --enable-calls --disable-shared  --enable-silent-rules
       --enable-rtmidi (default)  --enable-cli (no GUI)  --enable-portmidi
+      --enable-both (builds Qt and CLI versions)
 
 E_O_F
       fi

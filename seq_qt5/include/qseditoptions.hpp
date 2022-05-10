@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-06
+ * \updates       2022-05-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -80,6 +80,12 @@ public:
 private:
 
     void set_enabled (QDialogButtonBox::StandardButton bcode, bool on);
+    void set_text
+    (
+        QDialogButtonBox::StandardButton bcode,
+        const std::string & text
+    );
+    void show_button (QDialogButtonBox::StandardButton bcode, bool show);
     void enable_reload_button (bool flag);
     void modify_rc();
     void modify_usr();
@@ -100,6 +106,9 @@ private:
     void show_start_mode (sequence::playback sm);
     void show_session (usrsettings::session sm);
     void reload_needed (bool flag);
+    void state_unchanged ();
+    void state_changed ();
+    void state_applied ();
 
     bool reload_needed () const
     {
