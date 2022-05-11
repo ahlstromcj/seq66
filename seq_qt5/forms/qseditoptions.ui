@@ -23,7 +23,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -827,7 +827,7 @@ slot by channel number (0 to 15).</string>
         <rect>
          <x>16</x>
          <y>38</y>
-         <width>413</width>
+         <width>471</width>
          <height>167</height>
         </rect>
        </property>
@@ -1061,8 +1061,8 @@ Range: 4 to 12. Default: 8.</string>
       <widget class="QLabel" name="labelRestartNeeded">
        <property name="geometry">
         <rect>
-         <x>328</x>
-         <y>16</y>
+         <x>300</x>
+         <y>20</y>
          <width>265</width>
          <height>16</height>
         </rect>
@@ -1076,23 +1076,12 @@ Range: 4 to 12. Default: 8.</string>
         <string>Restart required for most settings</string>
        </property>
       </widget>
-      <widget class="QWidget" name="layoutWidgetOp">
-       <property name="geometry">
-        <rect>
-         <x>16</x>
-         <y>196</y>
-         <width>413</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout"/>
-      </widget>
       <widget class="QLabel" name="label_6">
        <property name="geometry">
         <rect>
          <x>12</x>
          <y>20</y>
-         <width>145</width>
+         <width>161</width>
          <height>17</height>
         </rect>
        </property>
@@ -1269,7 +1258,7 @@ connects to the MIDI I/O ports it finds.</string>
         <rect>
          <x>10</x>
          <y>220</y>
-         <width>591</width>
+         <width>349</width>
          <height>91</height>
         </rect>
        </property>
@@ -1284,7 +1273,7 @@ connects to the MIDI I/O ports it finds.</string>
          <rect>
           <x>8</x>
           <y>10</y>
-          <width>161</width>
+          <width>181</width>
           <height>17</height>
          </rect>
         </property>
@@ -1301,9 +1290,9 @@ connects to the MIDI I/O ports it finds.</string>
        <widget class="QLabel" name="label_14">
         <property name="geometry">
          <rect>
-          <x>200</x>
-          <y>4</y>
-          <width>181</width>
+          <x>168</x>
+          <y>32</y>
+          <width>173</width>
           <height>17</height>
          </rect>
         </property>
@@ -1313,7 +1302,7 @@ connects to the MIDI I/O ports it finds.</string>
          </font>
         </property>
         <property name="text">
-         <string>(applies only for current run)</string>
+         <string>(applies to current run)</string>
         </property>
        </widget>
       </widget>
@@ -1435,7 +1424,7 @@ the default PPQN.</string>
          </property>
          <property name="font">
           <font>
-           <family>WenQuanYi Zen Hei</family>
+           <family>Sans</family>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -1619,8 +1608,8 @@ Seq66 exits.</string>
          <widget class="QRadioButton" name="radio_startmode_live">
           <property name="geometry">
            <rect>
-            <x>20</x>
-            <y>20</y>
+            <x>24</x>
+            <y>24</y>
             <width>557</width>
             <height>23</height>
            </rect>
@@ -1638,8 +1627,8 @@ Seq66 exits.</string>
          <widget class="QRadioButton" name="radio_startmode_song">
           <property name="geometry">
            <rect>
-            <x>20</x>
-            <y>50</y>
+            <x>24</x>
+            <y>48</y>
             <width>557</width>
             <height>23</height>
            </rect>
@@ -1657,8 +1646,8 @@ Seq66 exits.</string>
          <widget class="QRadioButton" name="radio_startmode_auto">
           <property name="geometry">
            <rect>
-            <x>20</x>
-            <y>80</y>
+            <x>24</x>
+            <y>72</y>
             <width>557</width>
             <height>23</height>
            </rect>
@@ -1777,7 +1766,7 @@ Seq66 exits.</string>
       <widget class="QLabel" name="label_session">
        <property name="geometry">
         <rect>
-         <x>324</x>
+         <x>336</x>
          <y>20</y>
          <width>285</width>
          <height>189</height>
@@ -1798,15 +1787,15 @@ JACK session management will occur only
 if checked, even if Seq66 is spawned by it.
 
 As usual for many changes, a restart is
-required.  See the Session tab.</string>
+required.</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_nsm_url">
        <property name="geometry">
         <rect>
          <x>16</x>
-         <y>176</y>
-         <width>89</width>
+         <y>148</y>
+         <width>149</width>
          <height>17</height>
         </rect>
        </property>
@@ -1817,18 +1806,18 @@ required.  See the Session tab.</string>
         </font>
        </property>
        <property name="text">
-        <string>UUID</string>
+        <string>UUID/NSM URL</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLineEdit" name="lineEditNsmUrl">
        <property name="geometry">
         <rect>
-         <x>116</x>
+         <x>44</x>
          <y>172</y>
-         <width>189</width>
+         <width>233</width>
          <height>25</height>
         </rect>
        </property>
@@ -2352,7 +2341,7 @@ path added to this name is stripped.</string>
          <x>20</x>
          <y>452</y>
          <width>129</width>
-         <height>56</height>
+         <height>25</height>
         </rect>
        </property>
        <property name="maximumSize">
@@ -2375,7 +2364,7 @@ path added to this name is stripped.</string>
     <widget class="QDialogButtonBox" name="buttonBoxOptionsDialog">
      <property name="maximumSize">
       <size>
-       <width>464</width>
+       <width>580</width>
        <height>16777215</height>
       </size>
      </property>

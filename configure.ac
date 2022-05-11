@@ -357,7 +357,9 @@ else
     ac_nsm="no"
 fi
 
-dnl Can enable oth "CLI" and "rtmidi/qtsupport"
+dnl Can enable oth "CLI" and "rtmidi/qtsupport". The CLI version ignores
+dnl the macros and fills in its values with functions from the
+dnl xxx module.
 
 AC_ARG_ENABLE(both,
     [AS_HELP_STRING(--enable-both, [Enable Qt and command-line builds])],
@@ -369,8 +371,6 @@ if test "$both" != "no"; then
     if test "x$mingw" != "xyes" ; then
         build_rtcli="yes"
         build_qtmidi="yes"
-        build_portmidi="no"
-        AC_DEFINE(RTMIDI_SUPPORT, 1, [Indicates that rtmidi is enabled])
         AM_PATH_ALSA(0.9.0)
     fi
 fi
@@ -382,16 +382,13 @@ AC_ARG_ENABLE(rtmidi,
     [rtmidi=$enableval],
     [rtmidi=yes])
 
-dnl AC_DEFINE(APP_TYPE, ["qt"], [Names the UI of the application])
-
 if test "$rtmidi" != "no" -o "$both" != "no"; then
     build_rtmidi="yes"
-    build_portmidi="no"
     AC_DEFINE(APP_NAME, ["qseq66"], [Names the JACK/ALSA version of application])
     AC_DEFINE(APP_ENGINE, ["rtmidi"], [Names the MIDI engine of the application])
     AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration file name])
     AC_DEFINE(ICON_NAME, ["qseq66"], [Canonical icon name for Freedesktop])
-    AC_DEFINE(RTMIDI_SUPPORT, 1, [Indicates if rtmidi is enabled])
+    AC_DEFINE(RTMIDI_SUPPORT, 1, [Indicates the rtmidi engine is enabled])
     AM_PATH_ALSA(0.9.0)
     AC_MSG_RESULT([rtmidi engine build enabled]);
 fi
@@ -437,7 +434,6 @@ if test "$cli" != "no"; then
     if test "x$mingw" != "xyes" ; then
         build_rtcli="yes"
         build_qtmidi="no"
-        build_portmidi="no"
         AC_DEFINE(RTMIDI_SUPPORT, 1, [Indicates that rtmidi is enabled])
         AM_PATH_ALSA(0.9.0)
     fi
@@ -486,7 +482,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2022-05-10"
+#define VERSION_DATE_SHORT "2022-05-11"
 #define VERSION "0.98.8"
 
 )

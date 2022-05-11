@@ -582,14 +582,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     ui->pushButtonReload->hide();
 
     /*
-     *  connect
-     *  (
-     *      ui->pushButtonReload, SIGNAL(clicked(bool)),
-     *      this, SLOT(slot_flag_reload())
-     *  );
-     */
-
-    /*
      * OK/Cancel Buttons
      */
 
@@ -1047,7 +1039,8 @@ qseditoptions::slot_io_maps ()
     ui->outPortsMappedCheck->setChecked(outportmap);
     ui->inPortsMappedCheck->setChecked(inportmap);
     rc().portmaps_active(outportmap && inportmap);
-    reload_needed(true);
+    modify_rc();
+    // reload_needed(true);
 }
 
 void
@@ -1058,7 +1051,8 @@ qseditoptions::slot_remove_io_maps ()
     ui->outPortsMappedCheck->setChecked(false);
     ui->inPortsMappedCheck->setChecked(false);
     rc().portmaps_active(false);
-    reload_needed(true);
+    modify_rc();
+    // reload_needed(true);
 }
 
 void
@@ -1189,11 +1183,14 @@ qseditoptions::slot_ui_scaling ()
     QString qs = ui->lineEditUiScaling->text();                 /* w */
     QString qheight = ui->lineEditUiScalingHeight->text();      /* h */
     ui_scaling_helper(qs, qheight);
-    reload_needed(true);
+    modify_usr();
+    // reload_needed(true);
 }
 
 /**
  *  Just closes.  Any modifications are already in the rc() and usr() objects.
+ *  Also sets the reload buttons, but only the one in the main-window Session
+ *  tab will be available.
  */
 
 void
@@ -1217,6 +1214,11 @@ qseditoptions::cancel ()
     state_unchanged();
     close();
 }
+
+/**
+ *  The Apply button now shows "Restart Seq66!" and serves to restart the whole
+ *  application when clicked.
+ */
 
 void
 qseditoptions::apply ()
@@ -1280,8 +1282,6 @@ qseditoptions::backup ()
  *  Sync with preferences.  In other words, the current values in the various
  *  settings objects are used to set the user-interface elements in this
  *  dialog.
- *
- *  Note that "foreach" is a Qt-specific keyword, not a C++ keyword.
  */
 
 void
@@ -1292,8 +1292,9 @@ qseditoptions::sync ()
 }
 
 /*
- * Get all the settings from the 'rc' file and make the GUI controls
- * match them.
+ *  Get all the settings from the 'rc' file and make the GUI controls match them.
+ *
+ *  Note that "foreach" is a Qt-specific keyword, not a C++ keyword.
  */
 
 void
@@ -1454,10 +1455,10 @@ qseditoptions::slot_note_resume ()
         bool resumenotes = ui->chkNoteResume->isChecked();
         if (perf().resume_note_ons() != resumenotes)
         {
-            modify_usr();
             usr().resume_note_ons(resumenotes);
             perf().resume_note_ons(resumenotes);
-            sync();
+            modify_usr();
+            // sync();
         }
     }
 }
@@ -1490,8 +1491,8 @@ qseditoptions::slot_use_file_ppqn ()
         if (ufppqn != status)
         {
             usr().use_file_ppqn(ufppqn);
-            sync();
             modify_usr();
+            // sync();
         }
     }
 }
@@ -1508,9 +1509,11 @@ void
 qseditoptions::slot_key_height ()
 {
     usr().key_height(ui->spinKeyHeight->value());
-    sync();
     if (m_is_initialized)
+    {
         modify_usr();
+        sync();
+    }
 }
 
 void
@@ -1813,7 +1816,7 @@ qseditoptions::slot_rc_save_click ()
 {
     bool on = ui->checkBoxSaveRc->isChecked();
     rc().auto_rc_save(on);
-    reload_needed(true);
+    reload_needed(true);            // modify_rc();
 }
 
 void
@@ -1833,10 +1836,10 @@ qseditoptions::modify_rc ()
 {
     if (m_is_initialized)
     {
+        ui->checkBoxSaveRc->setChecked(true);
         rc().auto_rc_save(true);
         rc().modify();
         reload_needed(true);
-        ui->checkBoxSaveRc->setChecked(true);
     }
 }
 
@@ -1845,10 +1848,10 @@ qseditoptions::modify_usr ()
 {
     if (m_is_initialized)
     {
+        ui->checkBoxSaveUsr->setChecked(true);
         rc().auto_usr_save(true);
         usr().modify();
         reload_needed(true);
-        ui->checkBoxSaveUsr->setChecked(true);
     }
 }
 
@@ -1904,10 +1907,10 @@ qseditoptions::slot_mutes_filename ()
     std::string text = qs.toStdString();
     if (text != rc().mute_group_filename())
     {
+        ui->checkBoxSaveMutes->setChecked(true);
         rc().mute_group_filename(text);
         rc().auto_mutes_save(true);
         modify_rc();
-        ui->checkBoxSaveMutes->setChecked(true);
     }
 }
 
@@ -1990,9 +1993,9 @@ qseditoptions::slot_drums_filename ()
     {
         if (text != rc().notemap_filename())
         {
+            ui->checkBoxSaveDrums->setChecked(true);
             rc().notemap_filename(text);
             modify_rc();
-            ui->checkBoxSaveDrums->setChecked(true);
         }
     }
 }
@@ -2015,8 +2018,8 @@ qseditoptions::slot_stylesheet_filename ()
         if (text != usr().style_sheet())
         {
             bool check = ! qs.isEmpty();
-            usr().style_sheet(text);
             ui->checkBoxActiveStyleSheet->setChecked(check);
+            usr().style_sheet(text);
             modify_usr();
 
             /*
@@ -2024,12 +2027,6 @@ qseditoptions::slot_stylesheet_filename ()
              */
         }
     }
-}
-
-void
-qseditoptions::slot_flag_reload ()
-{
-    signal_for_restart();           /* warnprint("Session reload request"); */
 }
 
 void
@@ -2061,11 +2058,11 @@ qseditoptions::slot_input_bus (int index)
     if (index != oldindex)
     {
         bool enable = index >= 0;
+        ui->checkBoxSaveCtrl->setChecked(true);
         perf().midi_control_in().is_enabled(enable);
         perf().midi_control_in().nominal_buss(index - 1);
         rc().auto_ctrl_save(true);
         reload_needed(true);
-        ui->checkBoxSaveCtrl->setChecked(true);
     }
 }
 
@@ -2083,7 +2080,7 @@ qseditoptions::slot_tempo_track ()
         int track = string_to_int(t);
         bool ok = track >= 0 && track < seq::maximum();
         ui->pushButtonTempoTrack->setEnabled(ok);
-        reload_needed(true);
+        modify_rc();                                // reload_needed(true);
     }
 }
 

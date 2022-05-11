@@ -42,6 +42,9 @@ dnl
 dnl   Also defined are DOCOVERAGE, COVFLAGS, DOPROFILE, PROFLAGS, DODEBUG,
 dnl   and DOCALLS but normally we don't need them.
 dnl
+dnl   2022-05-11: Removed the DOCALLS/CALLFLAGS option and the c/h files, too
+dnl               impractical.
+dnl
 dnl ---------------------------------------------------------------------------
 
 AC_DEFUN([AC_XPC_DEBUGGING],
@@ -52,7 +55,6 @@ AC_DEFUN([AC_XPC_DEBUGGING],
    OPTFLAGS=""
    DBGFLAGS=""
    MORFLAGS=""
-   CALLFLAG=""
 
    if test -n "$GCC"; then
 
@@ -188,17 +190,8 @@ yes=gdb)],
          [
             calls=no
          ])
-
-      AM_CONDITIONAL(DOCALLS, test x$calls = xyes)
-      if test "x$calls" = "xyes" ; then
-         CALLFLAG="-finstrument-functions"
-         AC_MSG_RESULT(yes)
-      else
-         AC_MSG_RESULT(no)
-      fi
    fi
    AC_SUBST([DBGFLAGS])
-   AC_SUBST(CALLFLAG)
    AC_DEFINE_UNQUOTED([DBGFLAGS], [$DBGFLAGS],
    [Define DBGFLAGS=-g -O0 -DDEBUG -fno-inline if debug support is wanted.])
 

@@ -643,10 +643,7 @@ PTHREAD_LIBS
 PTHREAD_CXX
 PTHREAD_CC
 ax_pthread_config
-CALLFLAG
 DBGFLAGS
-DOCALLS_FALSE
-DOCALLS_TRUE
 DODEBUG_FALSE
 DODEBUG_TRUE
 PROFLAGS
@@ -16802,10 +16799,6 @@ $as_echo "rtmidi Qt and command-line builds enabled" >&6; };
     if test "x$mingw" != "xyes" ; then
         build_rtcli="yes"
         build_qtmidi="yes"
-        build_portmidi="no"
-
-$as_echo "#define RTMIDI_SUPPORT 1" >>confdefs.h
-
         alsa_save_CFLAGS="$CFLAGS"
 alsa_save_LDFLAGS="$LDFLAGS"
 alsa_save_LIBS="$LIBS"
@@ -17023,10 +17016,8 @@ else
 fi
 
 
-
 if test "$rtmidi" != "no" -o "$both" != "no"; then
     build_rtmidi="yes"
-    build_portmidi="no"
 
 $as_echo "#define APP_NAME \"qseq66\"" >>confdefs.h
 
@@ -18380,7 +18371,6 @@ $as_echo "#define ICON_NAME \"qseq66\"" >>confdefs.h
     if test "x$mingw" != "xyes" ; then
         build_rtcli="yes"
         build_qtmidi="no"
-        build_portmidi="no"
 
 $as_echo "#define RTMIDI_SUPPORT 1" >>confdefs.h
 
@@ -18897,7 +18887,6 @@ fi
    OPTFLAGS=""
    DBGFLAGS=""
    MORFLAGS=""
-   CALLFLAG=""
 
    if test -n "$GCC"; then
 
@@ -19081,25 +19070,7 @@ else
 
 fi
 
-
-       if test x$calls = xyes; then
-  DOCALLS_TRUE=
-  DOCALLS_FALSE='#'
-else
-  DOCALLS_TRUE='#'
-  DOCALLS_FALSE=
-fi
-
-      if test "x$calls" = "xyes" ; then
-         CALLFLAG="-finstrument-functions"
-         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-      else
-         { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-      fi
    fi
-
 
 
 cat >>confdefs.h <<_ACEOF
@@ -20786,10 +20757,6 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${DODEBUG_TRUE}" && test -z "${DODEBUG_FALSE}"; then
   as_fn_error $? "conditional \"DODEBUG\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${DOCALLS_TRUE}" && test -z "${DOCALLS_FALSE}"; then
-  as_fn_error $? "conditional \"DOCALLS\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${GNU_WIN_TRUE}" && test -z "${GNU_WIN_FALSE}"; then

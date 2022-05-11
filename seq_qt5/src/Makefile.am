@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2022-04-13
+# \update      2022-05-11
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -125,6 +125,7 @@ git_info = "$(git_version) $(git_branch)"
 #-----------------------------------------------------------------------------
 
 thisdir = $(top_srcdir)/seq_qt5
+incdir = $(top_srcdir)/seq_qt5/include
 formsdir = $(top_srcdir)/seq_qt5/forms
 resourcedir = $(top_srcdir)/resources
 libseq66_incdir = $(top_srcdir)/libseq66/include
@@ -156,6 +157,8 @@ seq_portmidi_incdir = $(top_srcdir)/seq_portmidi/include
 AM_CXXFLAGS = \
  -I../include \
  -I$(thisdir) \
+ -I$(incdir) \
+ -I$(formsdir) \
  -I$(libseq66_incdir) \
  -I$(libsessions_incdir) \
  -I$(seq_portmidi_incdir) \

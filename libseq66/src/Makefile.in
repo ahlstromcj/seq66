@@ -21,7 +21,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2022-01-22
+# \update      2022-05-11
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -157,9 +157,9 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libseq66_la_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am__dirstamp = $(am__leading_dot)dirstamp
-am_libseq66_la_OBJECTS = seq66_features.lo function_calls_gnu.lo \
-	cfg/basesettings.lo cfg/cmdlineopts.lo cfg/comments.lo \
-	cfg/configfile.lo cfg/midicontrolfile.lo cfg/mutegroupsfile.lo \
+am_libseq66_la_OBJECTS = seq66_features.lo cfg/basesettings.lo \
+	cfg/cmdlineopts.lo cfg/comments.lo cfg/configfile.lo \
+	cfg/midicontrolfile.lo cfg/mutegroupsfile.lo \
 	cfg/notemapfile.lo cfg/playlistfile.lo cfg/rcfile.lo \
 	cfg/rcsettings.lo cfg/recent.lo cfg/scales.lo \
 	cfg/sessionfile.lo cfg/settings.lo cfg/userinstrument.lo \
@@ -207,10 +207,10 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/aux-files/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/function_calls_gnu.Plo \
-	./$(DEPDIR)/seq66_features.Plo cfg/$(DEPDIR)/basesettings.Plo \
-	cfg/$(DEPDIR)/cmdlineopts.Plo cfg/$(DEPDIR)/comments.Plo \
-	cfg/$(DEPDIR)/configfile.Plo cfg/$(DEPDIR)/midicontrolfile.Plo \
+am__depfiles_remade = ./$(DEPDIR)/seq66_features.Plo \
+	cfg/$(DEPDIR)/basesettings.Plo cfg/$(DEPDIR)/cmdlineopts.Plo \
+	cfg/$(DEPDIR)/comments.Plo cfg/$(DEPDIR)/configfile.Plo \
+	cfg/$(DEPDIR)/midicontrolfile.Plo \
 	cfg/$(DEPDIR)/mutegroupsfile.Plo cfg/$(DEPDIR)/notemapfile.Plo \
 	cfg/$(DEPDIR)/playlistfile.Plo cfg/$(DEPDIR)/rcfile.Plo \
 	cfg/$(DEPDIR)/rcsettings.Plo cfg/$(DEPDIR)/recent.Plo \
@@ -254,24 +254,6 @@ am__depfiles_remade = ./$(DEPDIR)/function_calls_gnu.Plo \
 	util/$(DEPDIR)/recmutex.Plo util/$(DEPDIR)/rect.Plo \
 	util/$(DEPDIR)/strfunctions.Plo
 am__mv = mv -f
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
-AM_V_CC = $(am__v_CC_@AM_V@)
-am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
-am__v_CC_0 = @echo "  CC      " $@;
-am__v_CC_1 = 
-CCLD = $(CC)
-LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CCLD = $(am__v_CCLD_@AM_V@)
-am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
-am__v_CCLD_0 = @echo "  CCLD    " $@;
-am__v_CCLD_1 = 
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -334,7 +316,6 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
-CALLFLAG = @CALLFLAG@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -586,7 +567,6 @@ lib_LTLIBRARIES = libseq66.la
 #----------------------------------------------------------------------------
 libseq66_la_SOURCES = \
  seq66_features.cpp \
- function_calls_gnu.c \
  cfg/basesettings.cpp \
  cfg/cmdlineopts.cpp \
  cfg/comments.cpp \
@@ -669,7 +649,7 @@ libseq66_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS)
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .cpp .lo .o .obj
+.SUFFIXES: .cpp .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -909,7 +889,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/function_calls_gnu.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/seq66_features.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/basesettings.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/cmdlineopts.Plo@am__quote@ # am--include-marker
@@ -993,30 +972,6 @@ $(am__depfiles_remade):
 	@echo '# dummy' >$@-t && $(am__mv) $@-t $@
 
 am--depfiles: $(am__depfiles_remade)
-
-.c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
-
-.c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -1200,8 +1155,7 @@ clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ./$(DEPDIR)/function_calls_gnu.Plo
-	-rm -f ./$(DEPDIR)/seq66_features.Plo
+		-rm -f ./$(DEPDIR)/seq66_features.Plo
 	-rm -f cfg/$(DEPDIR)/basesettings.Plo
 	-rm -f cfg/$(DEPDIR)/cmdlineopts.Plo
 	-rm -f cfg/$(DEPDIR)/comments.Plo
@@ -1323,8 +1277,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ./$(DEPDIR)/function_calls_gnu.Plo
-	-rm -f ./$(DEPDIR)/seq66_features.Plo
+		-rm -f ./$(DEPDIR)/seq66_features.Plo
 	-rm -f cfg/$(DEPDIR)/basesettings.Plo
 	-rm -f cfg/$(DEPDIR)/cmdlineopts.Plo
 	-rm -f cfg/$(DEPDIR)/comments.Plo

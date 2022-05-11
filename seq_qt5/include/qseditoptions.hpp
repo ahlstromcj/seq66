@@ -189,7 +189,6 @@ private slots:
     void slot_drums_filename ();
     void slot_stylesheet_active_click ();
     void slot_stylesheet_filename ();
-    void slot_flag_reload ();
     void slot_palette_save_now_click ();
     void slot_palette_save_click ();
     void slot_palette_active_click ();

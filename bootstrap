@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2022-05-10
+# \update         2022-05-11
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -26,6 +26,11 @@
 #
 #     Also see the helper functions in contrib/scripts/strap_functions.
 #
+#     2022-05-11: Removed the --calls option and the c/h files:
+#
+#        --calls  Add GNU instrumentation calls for function entry. But the
+#                 trace output is much too voluminous to be useful.
+#
 #------------------------------------------------------------------------------
 
 #******************************************************************************
@@ -36,7 +41,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2022-05-10"
+export SEQ66_SCRIPT_EDIT_DATE="2022-05-11"
 export SEQ66_LIBRARY_API_VERSION="0.98"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.9"
 
@@ -67,9 +72,9 @@ checkdir libseq66
 #------------------------------------------------------------------------------
 
 DOBOOTSTRAP="yes"
+DOCONFIGURE="no"
 DONSM="yes"
 DOCLEAN="no"
-DOCALLS="no"
 DODEBUG="no"
 DOPROFILING="no"
 DOFULLCLEAN="no"
@@ -111,8 +116,6 @@ passing long options to the configure script for some canned setups.
                      bootstrap script will need to be run again.
  --debug, -ed        Configure for debugging and disable shared libraries for
                      easier debugging.  Also: --enable-debug=gdb
- --calls             Add GNU instrumentation calls for function entry. But the
-                     trace output is much too voluminous to be useful.
  --release, -er      Configure for release.  Sets up a 'silent' build as well.
                      Equivalent to --enable-release; defaults to 'release'.
  --static            Do a static release build.
@@ -156,91 +159,103 @@ if [ $# -ge 1 ] ; then
 
          --no-bootstrap | -nb)
             DOBOOTSTRAP="no"
+            DOCONFIGURE="no"
             ;;
 
          --clean | clean)
             DOBOOTSTRAP="no"
+            DOCONFIGURE="no"
             DOCLEAN="yes"
             ;;
 
          --full-clean | --super-clean)
             DOBOOTSTRAP="no"
+            DOCONFIGURE="no"
             DOFULLCLEAN="yes"
             DOCLEAN="yes"
             ;;
 
          --debug | -ed | --enable-debug)
             DODEBUG="yes"
+            DOCONFIGURE="yes"
             EXTRAFLAGS+=" --disable-shared --enable-static"
-            ;;
-
-         --calls)
-            DOCALLS="yes"
-            EXTRAFLAGS+=""
             ;;
 
          --debdebug | -dd)
             DODEBUG="yes"
+            DOCONFIGURE="yes"
             ;;
 
          --profile | -prof | --prof)
             DODEBUG="yes"
             DOPROFILING="yes"
+            DOCONFIGURE="yes"
             EXTRAFLAGS+=" --enable-profile --disable-shared"
             ;;
 
          --release | -er | --enable-release)
             DORELEASE="yes"
+            DOCONFIGURE="yes"
             ;;
 
          --static)
             DORELEASE="yes"
+            DOCONFIGURE="yes"
             EXTRAFLAGS+=" --disable-shared --enable-static"
             ;;
 
          --no-nsm)
             DONSM="no"
+            DOCONFIGURE="yes"
             EXTRAFLAGS+=" --disable-nsm"
             ;;
 
          --portmidi | -pm | --pm)
             DOPORTMIDI="yes"
+            DOCONFIGURE="yes"
             EXTRAFLAGS+=" --enable-portmidi --disable-rtmidi"
             ;;
 
          --rtmidi | -rm | --rm)
             DORTMIDI="yes"
+            DOCONFIGURE="yes"
             EXTRAFLAGS+=" --enable-rtmidi"
             ;;
 
          --port-refresh | -pr | --pr)
             DOPORTREFRESH="yes"
+            DOCONFIGURE="yes"
             EXTRAFLAGS+=" --enable-port-refresh"
             ;;
 
          --disable-jack | -dj)
             DOJACK="no"
+            DOCONFIGURE="yes"
             EXTRAFLAGS+=" --disable-jack --enable-rtmidi"
             ;;
 
          --no-metadata | --disable-jack-metadata)
+            DOCONFIGURE="yes"
             EXTRAFLAGS+=" --disable-jack-metadata"
             ;;
 
          --cli | -cli)
             DORTCLI="yes"
             DORELEASE="yes"
+            DOCONFIGURE="yes"
             EXTRAFLAGS+=" --enable-cli"
             ;;
 
          --both | -both)
             DORTCLI="yes"
             DORELEASE="yes"
+            DOCONFIGURE="yes"
             EXTRAFLAGS+=" --enable-rtmidi --enable-both"
             ;;
 
          --testing | -stt)
             DOTESTING="yes"
+            DOCONFIGURE="yes"
             EXTRAFLAGS+=" --enable-testing"
             ;;
 
@@ -362,8 +377,10 @@ if [ $DOBOOTSTRAP == "yes" ] ; then
       else
 
          rm -f configure.in
-         if [ -x configure ] ; then
-            echo The Seq66 configure script already exists.  Replacing it.
+         if [  $DOCONFIGURE == "yes" ] ; then
+            if [ -x configure ] ; then
+               echo The Seq66 configure script already exists.  Replacing it.
+            fi
          fi
       fi
 
@@ -544,21 +561,20 @@ E_O_F
 
       echo "Bootstrapping enabled...."
 
-      if [ "$DODEBUG" == "yes" ] ; then
+      if [ "$DOCONFIGURE" == "yes" ] ; then
 
-         echo "Running './configure --enable-debug=gdb $EXTRAFLAGS'"
-         ./configure --enable-debug=gdb $EXTRAFLAGS
+         if [ "$DODEBUG" == "yes" ] ; then
 
-      elif [ "$DOCALLS" == "yes" ] ; then
+            echo "Running './configure --enable-debug=gdb $EXTRAFLAGS'"
+            ./configure --enable-debug=gdb $EXTRAFLAGS
 
-         echo "Running './configure --enable-calls $EXTRAFLAGS'"
-         ./configure --enable-debug=gdb --enable-calls $EXTRAFLAGS
+         elif [ "$DORELEASE" == "yes" ] ; then
 
-      elif [ "$DORELEASE" == "yes" ] ; then
+            echo "Running './configure --enable-silent-rules $EXTRAFLAGS'"
+            ./configure --enable-silent-rules $EXTRAFLAGS
+            echo "Running 'make V=1' will turn on full command output."
 
-         echo "Running './configure --enable-silent-rules $EXTRAFLAGS'"
-         ./configure --enable-silent-rules $EXTRAFLAGS
-         echo "Running 'make V=1' will turn on full command output."
+         fi
 
       else
 
@@ -569,7 +585,7 @@ Run './configure' to configure Seq66 for compilation, or
 
       --enable-debug=gdb  --enable-calls --disable-shared  --enable-silent-rules
       --enable-rtmidi (default)  --enable-cli (no GUI)  --enable-portmidi
-      --enable-both (builds Qt and CLI versions)
+      --enable-both (both Qt and CLI versions)
 
 E_O_F
       fi
