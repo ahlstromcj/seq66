@@ -59,8 +59,8 @@
 
 /**
  *  A potential future feature, macroed to avoid issues until it is perfected.
- *  Meant to allow detecting changes in the set of MIDI ports, and disconnecting
- *  or connecting as appropriate, if not in manual/virtual mode.
+ *  Meant to allow detecting changes in the set of MIDI ports, and
+ *  disconnecting or connecting as appropriate, if not in manual/virtual mode.
  *
  *  It is now definable (currently for test purposes) in the configuration
  *  process and in the rtmidi qmake configuration, so that it may be centrally

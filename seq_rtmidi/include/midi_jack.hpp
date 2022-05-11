@@ -32,9 +32,9 @@
  *
  *    In this refactoring, we've stripped out most of the original RtMidi
  *    functionality, leaving only the method for selecting the API to use for
- *    MIDI.  The method that Seq66's mastermidibus uses to initialize
- *    port has been transplanted to this rtmidi library.  The name "rtmidi" is
- *    now somewhat misleading.
+ *    MIDI.  The method that Seq66's mastermidibus uses to initialize port has
+ *    been transplanted to this rtmidi library.  The name "rtmidi" is now
+ *    somewhat misleading.
  */
 
 #include <string>
