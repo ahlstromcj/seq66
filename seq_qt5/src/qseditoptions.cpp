@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-10
+ * \updates       2022-05-11
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1169,10 +1169,18 @@ qseditoptions::slot_session (int buttonno)
         ui->lineEditNsmUrl->setEnabled(true);
     }
     else if (buttonno == static_cast<int>(usrsettings::session::jack))
+    {
         usr().session_manager("jack");
+        ui->label_nsm_url->setEnabled(true);
+        ui->label_nsm_url->setText("JACK UUID");
+    }
     else
+    {
         usr().session_manager("none");
-
+        ui->label_nsm_url->setEnabled(false);
+        ui->label_nsm_url->setText("N/A");
+        ui->lineEditNsmUrl->setEnabled(false);
+    }
     if (usr().session_manager() != current)
         modify_usr();
 }

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-07-22
+ * \updates       2022-05-13
  * \license       GNU GPLv2 or above
  *
  *  This file used to define the array itself, but now it just declares it,
@@ -35,8 +35,6 @@
  */
 
 #include <string>
-
-#include "midibytes.hpp"                /* seq66::c_midibyte_data_max (128) */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

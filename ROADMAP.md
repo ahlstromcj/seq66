@@ -51,12 +51,20 @@ croaks. :-D
     *   Command-line/headless: `seq66cli`
     *   Windows: `qpseq66.exe`
 
+## Code Improvements
+
+    *   Untangle some of the header-file dependencies.
+    *   Create independent libraries for strings, files, midi, etc.
+    *   Add comprehensive Qt string translation.
+
 ##  Additional Features
 
     *   Limited support for audio patterns.  Clips that could compress or
         expand to fit the BPM and measures and be included in the MIDI file in a
         new SeqSpec section.  However, editing would be left to far better audio
         applications.  Perhaps best supported as a soundfont?
+    *   A comprehensive and improved system for undo/redo support for
+        configuration and for all song changes.
 
 ##  Requested Features
 

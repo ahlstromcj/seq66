@@ -34,7 +34,6 @@
 #include <iostream>                     /* std::cout (using namespace std)  */
 
 #include "ctrl/keycontrol.hpp"          /* seq66::keycontrol class          */
-#include "ctrl/keymap.hpp"              /* seq66::qt_ordinal_keyname()      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

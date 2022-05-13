@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2022-05-27
+ * \updates       2022-05-13
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -40,11 +40,9 @@
 
 #include "midi/businfo.hpp"             /* seq66::businfo & busarray        */
 #include "midi/midibase.hpp"            /* seq66::midibase::io enum class   */
-#include "midi/midibus_common.hpp"      /* enum class e_clock, etc.         */
 #include "play/clockslist.hpp"          /* list of seq66::e_clock settings  */
 #include "play/inputslist.hpp"          /* list of boolean input settings   */
 #include "util/automutex.hpp"           /* seq66::recmutex recursive mutex  */
-#include "cfg/usermidibus.hpp"          /* seq66::usermidibus class         */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-31
+ * \updates       2022-05-13
  * \license       GNU GPLv2 or above
  *
  *  This class is similar in intent to the midicontrol class, but is simpler
@@ -36,8 +36,8 @@
  *  It requires C++11 and above.
  */
 
+#include "ctrl/keymap.hpp"              /* seq66::qt_ordinal_keyname()      */
 #include "ctrl/opcontrol.hpp"           /* seq66::opcontrol & automation    */
-#include "midi/midibytes.hpp"           /* seq66::midibyte, etc. types      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

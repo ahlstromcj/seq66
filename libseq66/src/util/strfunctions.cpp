@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-05-06
+ * \updates       2022-05-13
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -615,8 +615,7 @@ string_to_time_signature (const std::string & s, int & beats, int & width)
  *  and then converts it.  The strtol() function is used with a base of 0 so
  *  that decimal, hexadecimal, and octal values can all be parsed.
  *
- *  This function is the base implementation for string_to_midibyte() and
- *  string_to_int() as well.
+ *  This function is the base implementation for string_to_int() as well.
  *
  * \param s
  *      Provides the string to convert to a double value. Integers, numbers
@@ -678,8 +677,7 @@ double_to_string (double value, int precision)
  *  base of 0 so that decimal, hexadecimal, and octal values can all be
  *  parsed.
  *
- *  This function is the base implementation for string_to_midibyte() and
- *  string_to_int() as well.
+ *  This function is the base implementation for string_to_int() as well.
  *
  * \param s
  *      Provides the string to convert to a signed long integer.
@@ -752,22 +750,6 @@ int
 string_to_int (const std::string & s, int defalt)
 {
     return int(string_to_long(s, long(defalt)));
-}
-
-/**
- *  Converts a string to a MIDI byte.  Simply calls string_to_long().
- *
- * \param s
- *      Provides the string to convert to a MIDI byte.
- *
- * \return
- *      Returns the MIDI byte value represented by the string.
- */
-
-midibyte
-string_to_midibyte (const std::string & s, midibyte defalt)
-{
-    return midibyte(string_to_long(s, long(defalt)));   /* tricky */
 }
 
 /**
@@ -1151,185 +1133,6 @@ simplify (const std::string & source)
                 result += t;
                 first_one = true;
             }
-        }
-    }
-    return result;
-}
-
-/**
- * \param bitbucket
- *      The vector of bit values to be written.  Currently, this function
- *      assumes that the number of bit values is perfectly divisible by 8.
- *      If the user makes a mistake, tough shitsky.
- *
- * \param hexstyle
- *      If true (the default), then hexadecimal values are written, in groups
- *      of 8 bits.  Hexadecimal values are better when set-size is greater than
- *      the legacy value, 32.
- *
- * \return
- *      Returns the assembled string, of the form "[ bits ]".
- */
-
-std::string
-write_stanza_bits
-(
-    const midibooleans & bitbucket,
-    bool hexstyle
-)
-{
-    std::string result("[ ");
-    int bitcount = int(bitbucket.size());
-    if (bitcount > 0)
-    {
-        if (hexstyle)
-        {
-            int bitcount = 8;                       /* group by 8 bits      */
-            unsigned hexvalue = 0x00;
-            for (auto b : bitbucket)
-            {
-                unsigned bitvalue = b != 0 ? 1 : 0 ;
-                hexvalue |= bitvalue;
-                --bitcount;
-                if (bitcount == 0)
-                {
-                    char temp[16];
-                    (void) snprintf(temp, sizeof temp, "0x%02x ", hexvalue);
-                    result += temp;
-                    bitcount = 8;
-                    hexvalue = 0x00;
-                }
-                else
-                    hexvalue <<= 1;
-            }
-
-            /*
-             * Less than 8 bits encountered, emit the number anyway, after
-             * undoing the last left-shift.
-             */
-
-            if (bitcount > 0 && bitcount < 8)
-            {
-                char temp[16];
-                (void) snprintf(temp, sizeof temp, "0x%02x ", hexvalue >> 1);
-                result += temp;
-            }
-        }
-        else
-        {
-            int counter = 0;
-            for (auto b : bitbucket)
-            {
-                result += (b != 0) ? "1" : "0" ;
-                result += " ";
-                if (++counter % 8 == 0 && counter < int(bitbucket.size()))
-                    result += "] [ ";
-            }
-        }
-    }
-    result += "]";
-    return result;
-}
-
-/**
- *  Adds the 8 bits of an unsigned value to a vector of midibools.
- *
- */
-
-void
-push_8_bits (midibooleans & target, unsigned bits)
-{
-    unsigned bitmask = 0x80;            /* start with the highest (MSB) bit */
-    for (int i = 0; i < 8; ++i)
-    {
-        midibool mb = (bits & bitmask) != 0 ? midibool(1) : midibool(0) ;
-        target.push_back(mb);
-        bitmask >>= 1;
-    }
-}
-
-/**
- *  We want to support both the legacy mute-group settings, with 4x8
- *  groups of "bits", and a newer setting, using an unsigned char (8 bits)
- *  to hold the bits.  The number of bits is based on the row and column
- *  settings for [mute-group].
- *
-\verbatim
-  --- loop 0                                                   loop 31 ---
- |                                                                        |
- v                                                                        v
-[0 0 0 0 0 0 0 0 ] [ 1 1 1 1 1 1 1 1 ] [ 0 1 0 1 0 1 0 1 ] [1 0 1 0 1 0 1 0 ]
-[      0x00      ] [       0xFF      ] [       0x55      ] [      0xAA      ]
-[ 0x00 0xFF 0x55 0xAA ]
-\endverbatim
- *
- *  NB: we need another mute-group flag to indicate how the groups will be
- *  written, in case some people don't want to deal with bit-masks.
- *
- *  The styles cannot be mixed; a single 'x' character on the line indicates
- *  the new format, and is scanned for before processing the line..
- *
- *  As with the legacy, the new style will support at least 8 bits per
- *  grouping. The groupings are purely organizational.  The bits are set in
- *  order from loop 0 on up, with no gaps or 2-D organization.
- *
- */
-
-bool
-parse_stanza_bits
-(
-    midibooleans & target,
-    const std::string & mutestanza
-)
-{
-    bool result = ! mutestanza.empty();
-    if (result)
-    {
-        midibooleans bitbucket;
-        auto p = mutestanza.find_first_of("xX");
-        auto bleft = mutestanza.find_first_of("[");
-        bool hexstyle = p != std::string::npos;
-        tokenization tokens;
-        int tokencount = tokenize_stanzas(tokens, mutestanza, bleft);
-        result = tokencount > 0;
-        if (result)
-        {
-            for (int tk = 0; tk < tokencount; ++tk)
-            {
-                std::string temp = tokens[tk];
-                if (temp == "[" || temp == "]")
-                {
-                    /* nothing to do */
-                }
-                else if (temp[0] == '"')        /* beginning of group name  */
-                {
-                    break;
-                }
-                else
-                {
-                    unsigned v = unsigned(string_to_int(temp));
-                    if (hexstyle)
-                    {
-                        if (v < 256)
-                            push_8_bits(bitbucket, v);
-                        else
-                            push_8_bits(bitbucket, 0);  /* error */
-                    }
-                    else
-                    {
-                        if (v != 0)
-                            v = 1;
-
-                        bitbucket.push_back(midibool(v));
-                    }
-                }
-            }
-            bleft = mutestanza.find_first_of("[", bleft + 1);
-            result = bitbucket.size() > 0;
-            if (result)
-                target = bitbucket;
-            else
-                target.clear();
         }
     }
     return result;

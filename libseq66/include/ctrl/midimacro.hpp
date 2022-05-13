@@ -38,7 +38,7 @@
  *      It is NOT a base class for midicontrol or midicontrolin!
  */
 
-#include "midi/midibytes.hpp"           /* seq66::bussbyte data type        */
+#include "midi/midibytes.hpp"           /* seq66::midistring data type      */
 #include "util/basic_macros.hpp"        /* seq66::tokenization container    */
 
 /*
@@ -49,8 +49,8 @@ namespace seq66
 {
 
 /**
- *  Represents a string of midibytes and provides the infrastructure for reading
- *  them.
+ *  Represents a string of midibytes and provides the infrastructure for
+ *  reading them.
  */
 
 class midimacro

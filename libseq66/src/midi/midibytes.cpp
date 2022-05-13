@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-12-04
+ * \updates       2022-05-13
  * \license       GNU GPLv2 or above
  *
  *  These classes were originally structures, but now they are "constant"
@@ -33,6 +33,7 @@
  */
 
 #include <algorithm>                    /* std::rotate() function           */
+#include <stdexcept>                    /* std::invalid_argument            */
 
 #include "midi/midibytes.hpp"           /* seq66::midi_timing, _measures    */
 #include "util/basic_macros.h"          /* not_nullptr() macro              */
@@ -301,6 +302,10 @@ midi_booleans::true_count () const
     return result;
 }
 
+/*
+ *  Free functions.
+ */
+
 std::string
 midi_bytes_string (const midistring & b, int limit)
 {
@@ -324,6 +329,34 @@ midi_bytes_string (const midistring & b, int limit)
         }
         if (len < count)
             result += " ...";
+    }
+    return result;
+}
+
+/**
+ *  Converts a string to a MIDI byte.  Similar to string_to_long() in the
+ *  strfunctions module.
+ *
+ * \param s
+ *      Provides the string to convert to a MIDI byte.
+ *
+ * \return
+ *      Returns the MIDI byte value represented by the string.
+ */
+
+midibyte
+string_to_midibyte (const std::string & s, midibyte defalt)
+{
+    midibyte result = defalt;
+    try
+    {
+        int temp = std::stoi(s, nullptr, 0);
+        if (temp >= 0 && temp <= UCHAR_MAX)
+            result = midibyte(temp);
+    }
+    catch (std::invalid_argument const &)
+    {
+        // no code
     }
     return result;
 }

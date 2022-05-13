@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-10-29
+ * \updates       2022-05-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -297,6 +297,22 @@ private:
     int grid_to_mute (int row, int column);
 
 };              // class mutegroup
+
+/*
+ * Global (free) midibyte functions.
+ */
+
+extern std::string write_stanza_bits
+(
+    const midibooleans & bitbucket,
+    bool newstyle = true
+);
+extern void push_8_bits (midibooleans & target, unsigned bits);
+extern bool parse_stanza_bits
+(
+    midibooleans & target,
+    const std::string & mutestanza
+);
 
 }               // namespace seq66
 

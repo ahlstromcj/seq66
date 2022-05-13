@@ -39,6 +39,7 @@
  */
 
 #include <map>                          /* std::map container class         */
+
 #include "ctrl/midimacro.hpp"           /* seq66::midimacro class           */
 
 /*

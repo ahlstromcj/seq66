@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-12-04
+ * \updates       2022-05-13
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -46,7 +46,7 @@
  */
 
 #include <climits>                      /* ULONG_MAX and other limits       */
-#include <string>                       /* std::string class                */
+#include <string>                       /* std::string, basic_string        */
 #include <vector>                       /* std::vector<midibool>            */
 
 /*
@@ -107,22 +107,6 @@ using miditag = uint32_t;
  */
 
 using midilong = unsigned long;
-
-/**
- *  This value is used for representing pattern, mute-group, and automation
- *  keystrokes.  It is meant to range from 0x00 to 0xff, and is also known
- *  as the "ordinal", a unique value that can map to a control operation.
- */
-
-using ctrlkey = unsigned char;
-
-/**
- *  This value can hold the result of a call to QKeyEvent::key().  It is
- *  common in GUI frameworks to have key-codes that require an unsigned value
- *  to fit.
- */
-
-using eventkey = unsigned;
 
 /**
  *  Provides a way to save a sequence palette color in a single byte.  This
@@ -605,7 +589,12 @@ midi_bytes (const midistring & b)
     return static_cast<const midibyte *>(b.data());
 }
 
+/*
+ *  More free functions, not inline.
+ */
+
 extern std::string midi_bytes_string (const midistring & b, int limit = 0);
+extern midibyte string_to_midibyte (const std::string & s, midibyte defalt = 0);
 
 /**
  *  Compares a channel value to the maximum (and illegal) value.

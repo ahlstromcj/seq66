@@ -62,7 +62,7 @@ midimacro::midimacro (const std::string & name, const std::string & values) :
     m_bytes     (),
     m_is_valid  ()
 {
-    m_is_valid = tokenize(values);
+    m_is_valid = tokenize(values);          /* the member function below    */
     if (m_is_valid)
         m_is_valid = ! m_tokens[0].empty();
 }

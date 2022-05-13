@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-05-04
+ * \updates       2022-05-13
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -126,7 +126,6 @@ extern unsigned string_to_unsigned
     const std::string & s, unsigned defalt = 0U
 );
 extern int string_to_int (const std::string & s, int defalt = 0);
-extern midibyte string_to_midibyte (const std::string & s, midibyte defalt = 0);
 extern bool string_not_void (const std::string & s);
 extern bool string_is_void (const std::string & s);
 extern bool strings_match (const std::string & target, const std::string & x);
@@ -147,17 +146,6 @@ extern tokenization tokenize
 );
 extern tokenization tokenize_quoted (const std::string & source);
 extern std::string simplify (const std::string & source);
-extern std::string write_stanza_bits
-(
-    const midibooleans & bitbucket,
-    bool newstyle = true
-);
-extern void push_8_bits (midibooleans & target, unsigned bits);
-extern bool parse_stanza_bits
-(
-    midibooleans & target,
-    const std::string & mutestanza
-);
 
 /**
  *  This function comes, slightly modified to avoid throwing an exception,

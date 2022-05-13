@@ -61,7 +61,6 @@ class sequence;
  *      -   Pitch Wheel
  */
 
-
 /**
  *  Provides for the management of an ordered collection MIDI editable events.
  */

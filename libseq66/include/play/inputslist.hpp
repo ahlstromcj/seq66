@@ -34,9 +34,6 @@
  *  Defines the list of MIDI inputs, pulled out of the old perform module.
  */
 
-#include <string>                       /* std::string                      */
-#include <vector>                       /* std::vector for input values     */
-
 #include "play/portslist.hpp"           /* seq66::portslist base class      */
 
 /*

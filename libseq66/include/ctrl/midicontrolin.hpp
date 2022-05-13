@@ -84,7 +84,7 @@ private:
     mccontainer m_container;
 
     /**
-     *  Provides the text of a "[comments]" section of the MIDI control "rc"
+     *  Provides the text of a "[comments]" section of the MIDI control "ctrl"
      *  file.  It can, for example, note the device for which the controls
      *  apply.
      */

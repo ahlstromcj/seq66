@@ -28,14 +28,28 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-12
+ * \updates       2022-05-13
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <string>                       /* std::string                      */
 
-#include "midi/midibytes.hpp"           /* ctrlkey & eventkey types         */
+/**
+ *  This value is used for representing pattern, mute-group, and automation
+ *  keystrokes.  It is meant to range from 0x00 to 0xff, and is also known
+ *  as the "ordinal", a unique value that can map to a control operation.
+ */
+
+using ctrlkey = unsigned char;
+
+/**
+ *  This value can hold the result of a call to QKeyEvent::key().  It is
+ *  common in GUI frameworks to have key-codes that require an unsigned value
+ *  to fit.
+ */
+
+using eventkey = unsigned;
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
