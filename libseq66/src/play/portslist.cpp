@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2022-05-06
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -35,8 +35,8 @@
 #include <stdexcept>                    /* std::invalid_argument            */
 
 #include "cfg/settings.hpp"             /* seq66::rc() accessor             */
+#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "play/portslist.hpp"           /* seq66::portslist class           */
-#include "util/calculations.hpp"        /* seq66::extract_port_names()      */
 #include "util/strfunctions.hpp"        /* seq66::strncompare()             */
 
 /*

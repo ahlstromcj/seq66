@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-11-27
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -76,8 +76,8 @@
 #include <cstring>                      /* std::memcpy()                    */
 
 #include "midi/event.hpp"               /* seq66::event class               */
+#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "util/basic_macros.hpp"        /* helpful debugging/build macros   */
-#include "util/calculations.hpp"        /* functions for math and stuff     */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

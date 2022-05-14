@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2022-01-09
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -35,7 +35,7 @@
 
 #include "cfg/notemapfile.hpp"          /* seq66::notemapfile class         */
 #include "cfg/settings.hpp"             /* seq66::rcsettings & seq66::rc()  */
-#include "util/calculations.hpp"        /* seq66::current_data_time()       */
+#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

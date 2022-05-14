@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-05-08
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -44,6 +44,7 @@
 #include <QButtonGroup>
 
 #include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
+#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qpatternfix.hpp"              /* seq66::qpatternfix class         */
 #include "qseqdata.hpp"                 /* seq66::qseqdata for status, CC   */
@@ -51,7 +52,6 @@
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64, parent   */
 #include "qt5_helper.h"                 /* QT5_HELPER_RADIO_SIGNAL macro    */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
-#include "util/calculations.hpp"        /* seq66::wave enum class values    */
 #include "util/strfunctions.hpp"        /* seq66::string_to_double()        */
 
 /*

@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2021-11-18
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -68,7 +68,7 @@
 
 #include "seq66_features.hpp"           /* seq66::seq_app_name()            */
 #include "os/daemonize.hpp"             /* daemonization functions & macros */
-#include "util/calculations.hpp"        /* seq66::current_date_time()       */
+#include "util/basic_macros.hpp"        /* errprint()                       */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path() etc.      */
 
 #if defined SEQ66_PLATFORM_LINUX
@@ -348,9 +348,7 @@ reroute_stdio (const std::string & logfile, bool closem)
             std::string normedpath = normalize_path(logpath);
             printf
             (
-                "\n'%s' \n'%s' \n'%s' \n",
-                seq_app_name().c_str(), normedpath.c_str(),
-                current_date_time().c_str()
+                "\n'%s' \n'%s' \n", seq_app_name().c_str(), normedpath.c_str()
             );
         }
     }

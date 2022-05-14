@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2022-05-11
+# \update      2022-05-14
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -167,6 +167,7 @@ libseq66_la_SOURCES = \
  ctrl/opcontainer.cpp \
  ctrl/opcontrol.cpp \
  midi/businfo.cpp \
+ midi/calculations.cpp \
  midi/controllers.cpp \
  midi/editable_event.cpp \
  midi/editable_events.cpp \
@@ -180,21 +181,21 @@ libseq66_la_SOURCES = \
  midi/midi_splitter.cpp \
  midi/midi_vector_base.cpp \
  midi/midi_vector.cpp \
- midi/songsummary.cpp \
  midi/wrkfile.cpp \
  play/clockslist.cpp \
  play/inputslist.cpp \
- play/portslist.cpp \
  play/mutegroup.cpp \
  play/mutegroups.cpp \
  play/notemapper.cpp \
  play/performer.cpp \
  play/playlist.cpp \
+ play/portslist.cpp \
  play/screenset.cpp \
  play/seq.cpp \
  play/sequence.cpp \
  play/setmapper.cpp \
  play/setmaster.cpp \
+ play/songsummary.cpp \
  play/triggers.cpp \
  sessions/clinsmanager.cpp \
  sessions/smanager.cpp \
@@ -202,7 +203,6 @@ libseq66_la_SOURCES = \
  os/timing.cpp \
  util/automutex.cpp \
  util/basic_macros.cpp \
- util/calculations.cpp \
  util/condition.cpp \
  util/filefunctions.cpp \
  util/named_bools.cpp \

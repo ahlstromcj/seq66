@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-03-26
+ * \updates       2022-05-14
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -44,6 +44,7 @@
 #endif
 
 #include "cfg/settings.hpp"             /* seq66::rc() configuration object */
+#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "midi/event.hpp"               /* seq66::event and other tokens    */
 #include "midi/jack_assistant.hpp"      /* seq66::create_jack_client()      */
 #include "midi/midibus_common.hpp"      /* from the libseq66 sub-project    */
@@ -52,7 +53,6 @@
 #include "midi_jack_info.hpp"           /* seq66::midi_jack_info            */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
-#include "util/calculations.hpp"        /* seq66::extract_port_names()      */
 #include "util/strfunctions.hpp"        /* seq66::contains()                */
 
 /*

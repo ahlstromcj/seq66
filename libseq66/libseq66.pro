@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2021-12-29
+# \update      2022-05-14
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -79,6 +79,7 @@ HEADERS += include/seq66_features.h \
  include/ctrl/opcontainer.hpp \
  include/ctrl/opcontrol.hpp \
  include/midi/businfo.hpp \
+ include/midi/calculations.hpp \
  include/midi/controllers.hpp \
  include/midi/editable_event.hpp \
  include/midi/editable_events.hpp \
@@ -92,21 +93,21 @@ HEADERS += include/seq66_features.h \
  include/midi/midi_splitter.hpp \
  include/midi/midi_vector_base.hpp \
  include/midi/midi_vector.hpp \
- include/midi/songsummary.hpp \
  include/midi/wrkfile.hpp \
  include/play/clockslist.hpp \
  include/play/inputslist.hpp \
- include/play/portslist.hpp \
  include/play/mutegroup.hpp \
  include/play/mutegroups.hpp \
  include/play/notemapper.hpp \
  include/play/performer.hpp \
  include/play/playlist.hpp \
+ include/play/portslist.hpp \
  include/play/screenset.hpp \
  include/play/seq.hpp \
  include/play/sequence.hpp \
  include/play/setmapper.hpp \
  include/play/setmaster.hpp \
+ include/play/songsummary.hpp \
  include/play/triggers.hpp \
  include/sessions/clinsmanager.hpp \
  include/sessions/smanager.hpp \
@@ -115,7 +116,6 @@ HEADERS += include/seq66_features.h \
  include/util/automutex.hpp \
  include/util/basic_macros.h \
  include/util/basic_macros.hpp \
- include/util/calculations.hpp \
  include/util/condition.hpp \
  include/util/filefunctions.hpp \
  include/util/named_bools.hpp \
@@ -158,6 +158,7 @@ SOURCES += src/seq66_features.cpp \
  src/ctrl/opcontainer.cpp \
  src/ctrl/opcontrol.cpp \
  src/midi/businfo.cpp \
+ src/midi/calculations.cpp \
  src/midi/controllers.cpp \
  src/midi/editable_event.cpp \
  src/midi/editable_events.cpp \
@@ -171,21 +172,21 @@ SOURCES += src/seq66_features.cpp \
  src/midi/midi_splitter.cpp \
  src/midi/midi_vector_base.cpp \
  src/midi/midi_vector.cpp \
- src/midi/songsummary.cpp \
  src/midi/wrkfile.cpp \
  src/play/clockslist.cpp \
  src/play/inputslist.cpp \
- src/play/portslist.cpp \
  src/play/mutegroup.cpp \
  src/play/mutegroups.cpp \
  src/play/notemapper.cpp \
  src/play/performer.cpp \
  src/play/playlist.cpp \
+ src/play/portslist.cpp \
  src/play/screenset.cpp \
  src/play/seq.cpp \
  src/play/sequence.cpp \
  src/play/setmapper.cpp \
  src/play/setmaster.cpp \
+ src/play/songsummary.cpp \
  src/play/triggers.cpp \
  src/sessions/clinsmanager.cpp \
  src/sessions/smanager.cpp \
@@ -193,7 +194,6 @@ SOURCES += src/seq66_features.cpp \
  src/os/timing.cpp \
  src/util/automutex.cpp \
  src/util/basic_macros.cpp \
- src/util/calculations.cpp \
  src/util/condition.cpp \
  src/util/filefunctions.cpp \
  src/util/named_bools.cpp \

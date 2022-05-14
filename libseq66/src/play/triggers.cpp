@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-05-09
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -58,6 +58,8 @@
  *      Fruity method uses middle mouse or Ctrl-Left mouse click for paste
  *      location.
  */
+
+#include <algorithm>                    /* std::sort(), std::merge()        */
 
 #include "cfg/settings.hpp"             /* seq66::rc() settings access      */
 #include "midi/midi_vector_base.hpp"    /* c_triggers_ex, c_trig_transpose  */

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-05-01
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -88,12 +88,12 @@
 #include <memory>                       /* std::unique_ptr<>                */
 
 #include "cfg/settings.hpp"             /* seq66::rc() and choose_ppqn()    */
+#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "midi/midifile.hpp"            /* seq66::midifile                  */
 #include "midi/midi_vector.hpp"         /* seq66::midi_vector container     */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
-#include "util/calculations.hpp"        /* seq66::bpm_from_tempo_us() etc.  */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
 
 /*

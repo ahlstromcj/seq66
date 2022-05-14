@@ -28,11 +28,20 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-05-03
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
  *  it!
+ *
+ * From rcsettigs.hpp:
+ *
+ *      ctrl/keycontainer.hpp
+ *      ctrl/midicontrolin.hpp
+ *      ctrl/midicontrolout.hpp
+ *      play/clockslist.hpp
+ *      play/inputslist.hpp
+ *      play/mutegroups.hpp
  */
 
 #include <set>                          /* std::set, arbitary selection     */
@@ -40,16 +49,10 @@
 #include <vector>                       /* std::vector<>                    */
 #include <thread>                       /* std::thread                      */
 
-#include "cfg/usrsettings.hpp"          /* PPQN constants                   */
-#include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */
-#include "ctrl/midicontrolin.hpp"       /* class seq66::midicontrolin       */
-#include "ctrl/midicontrolout.hpp"      /* seq66::midicontrolout            */
+#include "cfg/rcsettings.hpp"           /* lots of other files, see banner  */
 #include "ctrl/opcontainer.hpp"         /* class seq66::opcontainer         */
 #include "midi/jack_assistant.hpp"      /* optional seq66::jack_assistant   */
 #include "midi/mastermidibus.hpp"       /* seq66::mastermidibus ALSA/JACK   */
-#include "play/clockslist.hpp"          /* list of seq66::e_clock settings  */
-#include "play/inputslist.hpp"          /* list of boolean input settings   */
-#include "play/mutegroups.hpp"          /* class seq66::mutegroups          */
 #include "play/playlist.hpp"            /* seq66::playlist                  */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "play/setmapper.hpp"           /* seq66::seqmanager and seqstatus  */

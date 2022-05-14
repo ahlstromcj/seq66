@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2022-03-09
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -47,9 +47,9 @@
  */
 
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
+#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "midi/event.hpp"               /* seq66::event (MIDI event)        */
 #include "midi/midibase.hpp"            /* seq66::midibase for ALSA         */
-#include "util/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-05-08
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -43,13 +43,11 @@
 #include <string>                       /* std::string                      */
 
 #include "seq66_features.hpp"           /* various feature #defines         */
-#include "cfg/scales.hpp"               /* key and scale constants          */
 #include "cfg/usrsettings.hpp"          /* enum class record                */
+#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
-#include "midi/midibus.hpp"             /* seq66::midibus                   */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
-#include "util/calculations.hpp"        /* seq66::measures_to_ticks() etc.  */
 #include "util/palette.hpp"             /* enum class ThumbColor            */
 
 /**

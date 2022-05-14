@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-04
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -81,9 +81,9 @@
 #include <utility>                      /* std::make_pair()                 */
 
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
-#include "midi/songsummary.hpp"         /* seq66::write_song_summary()      */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
 #include "os/daemonize.hpp"             /* seq66::signal_for_restart()      */
+#include "play/songsummary.hpp"         /* seq66::write_song_summary()      */
 #include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 #include "qliveframeex.hpp"             /* seq66::qliveframeex container    */
 #include "qmutemaster.hpp"              /* shows a map of mute-groups       */

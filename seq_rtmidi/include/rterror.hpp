@@ -27,14 +27,15 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-13
+ * \updates       2022-05-14
  * \license       See above.
  *
- *    In this refactoring...
  */
 
 #include <exception>                    /* std::exception base class        */
 #include <string>                       /* std::string                      */
+
+#include "util/basic_macros.hpp"        /* infoprint()                      */
 
 /*
  * Do not document the namespace; it breaks Doxygen.

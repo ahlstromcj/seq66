@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2021-11-06
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -36,9 +36,9 @@
 
 #include "cfg/settings.hpp"             /* seq66::rc() and choose_ppqn()    */
 #include "midi/midi_vector_base.hpp"    /* seq66::c_notes, other tags       */
-#include "midi/songsummary.hpp"         /* seq66::songsummary               */
 #include "play/performer.hpp"           /* must precede songsummary.hpp !   */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
+#include "play/songsummary.hpp"         /* seq66::songsummary               */
 #include "util/strfunctions.hpp"        /* seq66::bool_to_string()          */
 
 /*

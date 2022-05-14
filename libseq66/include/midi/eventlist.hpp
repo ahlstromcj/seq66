@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2022-05-08
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -52,7 +52,6 @@
  *  we will now use std::vector for the event list.
  */
 
-#include <algorithm>                    /* std::sort(), std::merge()        */
 #include <atomic>                       /* std::atomic<bool> usage          */
 
 #include "midi/event.hpp"               /* seq66::event, event::buffer      */

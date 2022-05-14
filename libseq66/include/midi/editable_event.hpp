@@ -28,14 +28,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2021-08-18
+ * \updates       2025-05-14
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
  *  and human-readable (and editable) strings.
  */
 
-#include "util/calculations.hpp"        /* string functions                 */
+#include "midi/calculations.hpp"        /* string functions                 */
 #include "midi/event.hpp"               /* seq66::event                     */
 
 /*

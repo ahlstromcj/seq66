@@ -76,7 +76,7 @@
 #include <ctime>                        /* std::strftime()                  */
 
 #include "cfg/settings.hpp"
-#include "util/calculations.hpp"
+#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "util/strfunctions.hpp"        /* seq66::contains(), etc.          */
 
 /*

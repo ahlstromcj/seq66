@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-04
- * \updates       2021-05-26
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the WRK format, see, for example:
@@ -47,52 +47,6 @@ namespace seq66
 {
     class performer;
     class sequence;
-
-/**
- *    Record types within a WRK file.
- */
-
-enum wrk_chunk_t
-{
-    WC_NO_CHUNK         =  0, ///< Nothing.
-    WC_TRACK_CHUNK      =  1, ///< Track prefix.
-    WC_STREAM_CHUNK     =  2, ///< Events stream.
-    WC_VARS_CHUNK       =  3, ///< Global variables.
-    WC_TEMPO_CHUNK      =  4, ///< Tempo map.
-    WC_METER_CHUNK      =  5, ///< Meter map.
-    WC_SYSEX_CHUNK      =  6, ///< System exclusive bank.
-    WC_MEMRGN_CHUNK     =  7, ///< Memory region.
-    WC_COMMENTS_CHUNK   =  8, ///< Comments.
-    WC_TRKOFFS_CHUNK    =  9, ///< Track offset.
-    WC_TIMEBASE_CHUNK   = 10, ///< Timebase. If present, first chunk in file.
-    WC_TIMEFMT_CHUNK    = 11, ///< SMPTE time format.
-    WC_TRKREPS_CHUNK    = 12, ///< Track repetitions.
-    WC_TRKPATCH_CHUNK   = 14, ///< Track patch.
-    WC_NTEMPO_CHUNK     = 15, ///< New Tempo map.
-    WC_THRU_CHUNK       = 16, ///< Extended thru parameters.
-    WC_LYRICS_CHUNK     = 18, ///< Events stream with lyrics.
-    WC_TRKVOL_CHUNK     = 19, ///< Track volume.
-    WC_SYSEX2_CHUNK     = 20, ///< System exclusive bank.
-    WC_STRTAB_CHUNK     = 22, ///< Table of text event types.
-    WC_METERKEY_CHUNK   = 23, ///< Meter/Key map.
-    WC_TRKNAME_CHUNK    = 24, ///< Track name.
-    WC_VARIABLE_CHUNK   = 26, ///< Variable record chunk.
-    WC_NTRKOFS_CHUNK    = 27, ///< Track offset.
-    WC_TNUMPLUS_CHUNK   = 29, ///< Common, but unknow purpose.
-    WC_TRKBANK_CHUNK    = 30, ///< Track bank.
-    WC_NTRACK_CHUNK     = 36, ///< Track prefix.
-    WC_NSYSEX_CHUNK     = 44, ///< System exclusive bank.
-    WC_NSTREAM_CHUNK    = 45, ///< Events stream.
-    WC_SGMNT_CHUNK      = 49, ///< Segment prefix.
-    WC_SOFTVER_CHUNK    = 74, ///< Software version which saved the file.
-    WC_END_CHUNK        = 255 ///< Last chunk, end of file.
-};
-
-/**
- *  Cakewalk WRK File header id.
- */
-
-const std::string CakewalkHeader("CAKEWALK");
 
 /**
  * Cakewalk WRK file format (input only)

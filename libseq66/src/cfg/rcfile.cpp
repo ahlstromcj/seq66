@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-05-06
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -47,8 +47,8 @@
 #include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile class      */
 #include "cfg/rcfile.hpp"               /* seq66::rcfile class              */
 #include "cfg/settings.hpp"             /* seq66::rc() accessor             */
+#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "midi/midibus.hpp"             /* seq66::midibus class             */
-#include "util/calculations.hpp"        /* seq66::current_date_time()       */
 #include "util/filefunctions.hpp"       /* seq66::file_extension_set()      */
 #include "util/strfunctions.hpp"        /* seq66::strip_quotes() function   */
 

@@ -35,8 +35,8 @@
 
 #include <QFrame>
 
+#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */
-#include "util/calculations.hpp"        /* seq66::lengthfix enum class type */
 
 /*
  *  Forward declarations for Qt.

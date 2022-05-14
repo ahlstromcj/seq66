@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-03-03
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -51,7 +51,6 @@
 #include <vector>                       /* SYSEX data stored in vector      */
 
 #include "midi/midibytes.hpp"           /* seq66::midibyte alias, etc.      */
-#include "util/basic_macros.hpp"        /* not_nullptr()                    */
 
 /**
  *  Defines the number of data bytes in MIDI status data.

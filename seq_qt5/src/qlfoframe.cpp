@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-28
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  The LFO (low-frequency oscillator) provides a way to modulate the
@@ -38,13 +38,13 @@
 #include <QSlider>
 
 #include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
+#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qlfoframe.hpp"                /* seq66::qlfoframe class           */
 #include "qseqdata.hpp"                 /* seq66::qseqdata for status, CC   */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64, parent   */
 #include "qt5_helper.h"                 /* QT5_HELPER_RADIO_SIGNAL macro    */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
-#include "util/calculations.hpp"        /* seq66::wave enum class values    */
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure

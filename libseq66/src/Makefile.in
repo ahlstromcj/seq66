@@ -21,7 +21,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2022-05-11
+# \update      2022-05-14
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -169,21 +169,22 @@ am_libseq66_la_OBJECTS = seq66_features.lo cfg/basesettings.lo \
 	ctrl/midicontrolbase.lo ctrl/midicontrol.lo \
 	ctrl/midicontrolout.lo ctrl/midimacro.lo ctrl/midimacros.lo \
 	ctrl/midioperation.lo ctrl/opcontainer.lo ctrl/opcontrol.lo \
-	midi/businfo.lo midi/controllers.lo midi/editable_event.lo \
-	midi/editable_events.lo midi/event.lo midi/eventlist.lo \
-	midi/jack_assistant.lo midi/mastermidibase.lo midi/midibase.lo \
-	midi/midibytes.lo midi/midifile.lo midi/midi_splitter.lo \
-	midi/midi_vector_base.lo midi/midi_vector.lo \
-	midi/songsummary.lo midi/wrkfile.lo play/clockslist.lo \
-	play/inputslist.lo play/portslist.lo play/mutegroup.lo \
+	midi/businfo.lo midi/calculations.lo midi/controllers.lo \
+	midi/editable_event.lo midi/editable_events.lo midi/event.lo \
+	midi/eventlist.lo midi/jack_assistant.lo \
+	midi/mastermidibase.lo midi/midibase.lo midi/midibytes.lo \
+	midi/midifile.lo midi/midi_splitter.lo \
+	midi/midi_vector_base.lo midi/midi_vector.lo midi/wrkfile.lo \
+	play/clockslist.lo play/inputslist.lo play/mutegroup.lo \
 	play/mutegroups.lo play/notemapper.lo play/performer.lo \
-	play/playlist.lo play/screenset.lo play/seq.lo \
-	play/sequence.lo play/setmapper.lo play/setmaster.lo \
-	play/triggers.lo sessions/clinsmanager.lo sessions/smanager.lo \
-	os/daemonize.lo os/timing.lo util/automutex.lo \
-	util/basic_macros.lo util/calculations.lo util/condition.lo \
-	util/filefunctions.lo util/named_bools.lo util/palette.lo \
-	util/recmutex.lo util/rect.lo util/strfunctions.lo
+	play/playlist.lo play/portslist.lo play/screenset.lo \
+	play/seq.lo play/sequence.lo play/setmapper.lo \
+	play/setmaster.lo play/songsummary.lo play/triggers.lo \
+	sessions/clinsmanager.lo sessions/smanager.lo os/daemonize.lo \
+	os/timing.lo util/automutex.lo util/basic_macros.lo \
+	util/condition.lo util/filefunctions.lo util/named_bools.lo \
+	util/palette.lo util/recmutex.lo util/rect.lo \
+	util/strfunctions.lo
 libseq66_la_OBJECTS = $(am_libseq66_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -226,7 +227,8 @@ am__depfiles_remade = ./$(DEPDIR)/seq66_features.Plo \
 	ctrl/$(DEPDIR)/midicontrolout.Plo ctrl/$(DEPDIR)/midimacro.Plo \
 	ctrl/$(DEPDIR)/midimacros.Plo ctrl/$(DEPDIR)/midioperation.Plo \
 	ctrl/$(DEPDIR)/opcontainer.Plo ctrl/$(DEPDIR)/opcontrol.Plo \
-	midi/$(DEPDIR)/businfo.Plo midi/$(DEPDIR)/controllers.Plo \
+	midi/$(DEPDIR)/businfo.Plo midi/$(DEPDIR)/calculations.Plo \
+	midi/$(DEPDIR)/controllers.Plo \
 	midi/$(DEPDIR)/editable_event.Plo \
 	midi/$(DEPDIR)/editable_events.Plo midi/$(DEPDIR)/event.Plo \
 	midi/$(DEPDIR)/eventlist.Plo midi/$(DEPDIR)/jack_assistant.Plo \
@@ -235,20 +237,19 @@ am__depfiles_remade = ./$(DEPDIR)/seq66_features.Plo \
 	midi/$(DEPDIR)/midi_vector.Plo \
 	midi/$(DEPDIR)/midi_vector_base.Plo \
 	midi/$(DEPDIR)/midibase.Plo midi/$(DEPDIR)/midibytes.Plo \
-	midi/$(DEPDIR)/midifile.Plo midi/$(DEPDIR)/songsummary.Plo \
-	midi/$(DEPDIR)/wrkfile.Plo os/$(DEPDIR)/daemonize.Plo \
-	os/$(DEPDIR)/timing.Plo play/$(DEPDIR)/clockslist.Plo \
-	play/$(DEPDIR)/inputslist.Plo play/$(DEPDIR)/mutegroup.Plo \
-	play/$(DEPDIR)/mutegroups.Plo play/$(DEPDIR)/notemapper.Plo \
-	play/$(DEPDIR)/performer.Plo play/$(DEPDIR)/playlist.Plo \
-	play/$(DEPDIR)/portslist.Plo play/$(DEPDIR)/screenset.Plo \
-	play/$(DEPDIR)/seq.Plo play/$(DEPDIR)/sequence.Plo \
-	play/$(DEPDIR)/setmapper.Plo play/$(DEPDIR)/setmaster.Plo \
+	midi/$(DEPDIR)/midifile.Plo midi/$(DEPDIR)/wrkfile.Plo \
+	os/$(DEPDIR)/daemonize.Plo os/$(DEPDIR)/timing.Plo \
+	play/$(DEPDIR)/clockslist.Plo play/$(DEPDIR)/inputslist.Plo \
+	play/$(DEPDIR)/mutegroup.Plo play/$(DEPDIR)/mutegroups.Plo \
+	play/$(DEPDIR)/notemapper.Plo play/$(DEPDIR)/performer.Plo \
+	play/$(DEPDIR)/playlist.Plo play/$(DEPDIR)/portslist.Plo \
+	play/$(DEPDIR)/screenset.Plo play/$(DEPDIR)/seq.Plo \
+	play/$(DEPDIR)/sequence.Plo play/$(DEPDIR)/setmapper.Plo \
+	play/$(DEPDIR)/setmaster.Plo play/$(DEPDIR)/songsummary.Plo \
 	play/$(DEPDIR)/triggers.Plo \
 	sessions/$(DEPDIR)/clinsmanager.Plo \
 	sessions/$(DEPDIR)/smanager.Plo util/$(DEPDIR)/automutex.Plo \
-	util/$(DEPDIR)/basic_macros.Plo \
-	util/$(DEPDIR)/calculations.Plo util/$(DEPDIR)/condition.Plo \
+	util/$(DEPDIR)/basic_macros.Plo util/$(DEPDIR)/condition.Plo \
 	util/$(DEPDIR)/filefunctions.Plo \
 	util/$(DEPDIR)/named_bools.Plo util/$(DEPDIR)/palette.Plo \
 	util/$(DEPDIR)/recmutex.Plo util/$(DEPDIR)/rect.Plo \
@@ -600,6 +601,7 @@ libseq66_la_SOURCES = \
  ctrl/opcontainer.cpp \
  ctrl/opcontrol.cpp \
  midi/businfo.cpp \
+ midi/calculations.cpp \
  midi/controllers.cpp \
  midi/editable_event.cpp \
  midi/editable_events.cpp \
@@ -613,21 +615,21 @@ libseq66_la_SOURCES = \
  midi/midi_splitter.cpp \
  midi/midi_vector_base.cpp \
  midi/midi_vector.cpp \
- midi/songsummary.cpp \
  midi/wrkfile.cpp \
  play/clockslist.cpp \
  play/inputslist.cpp \
- play/portslist.cpp \
  play/mutegroup.cpp \
  play/mutegroups.cpp \
  play/notemapper.cpp \
  play/performer.cpp \
  play/playlist.cpp \
+ play/portslist.cpp \
  play/screenset.cpp \
  play/seq.cpp \
  play/sequence.cpp \
  play/setmapper.cpp \
  play/setmaster.cpp \
+ play/songsummary.cpp \
  play/triggers.cpp \
  sessions/clinsmanager.cpp \
  sessions/smanager.cpp \
@@ -635,7 +637,6 @@ libseq66_la_SOURCES = \
  os/timing.cpp \
  util/automutex.cpp \
  util/basic_macros.cpp \
- util/calculations.cpp \
  util/condition.cpp \
  util/filefunctions.cpp \
  util/named_bools.cpp \
@@ -778,6 +779,8 @@ midi/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) midi/$(DEPDIR)
 	@: > midi/$(DEPDIR)/$(am__dirstamp)
 midi/businfo.lo: midi/$(am__dirstamp) midi/$(DEPDIR)/$(am__dirstamp)
+midi/calculations.lo: midi/$(am__dirstamp) \
+	midi/$(DEPDIR)/$(am__dirstamp)
 midi/controllers.lo: midi/$(am__dirstamp) \
 	midi/$(DEPDIR)/$(am__dirstamp)
 midi/editable_event.lo: midi/$(am__dirstamp) \
@@ -799,8 +802,6 @@ midi/midi_vector_base.lo: midi/$(am__dirstamp) \
 	midi/$(DEPDIR)/$(am__dirstamp)
 midi/midi_vector.lo: midi/$(am__dirstamp) \
 	midi/$(DEPDIR)/$(am__dirstamp)
-midi/songsummary.lo: midi/$(am__dirstamp) \
-	midi/$(DEPDIR)/$(am__dirstamp)
 midi/wrkfile.lo: midi/$(am__dirstamp) midi/$(DEPDIR)/$(am__dirstamp)
 play/$(am__dirstamp):
 	@$(MKDIR_P) play
@@ -812,7 +813,6 @@ play/clockslist.lo: play/$(am__dirstamp) \
 	play/$(DEPDIR)/$(am__dirstamp)
 play/inputslist.lo: play/$(am__dirstamp) \
 	play/$(DEPDIR)/$(am__dirstamp)
-play/portslist.lo: play/$(am__dirstamp) play/$(DEPDIR)/$(am__dirstamp)
 play/mutegroup.lo: play/$(am__dirstamp) play/$(DEPDIR)/$(am__dirstamp)
 play/mutegroups.lo: play/$(am__dirstamp) \
 	play/$(DEPDIR)/$(am__dirstamp)
@@ -820,11 +820,14 @@ play/notemapper.lo: play/$(am__dirstamp) \
 	play/$(DEPDIR)/$(am__dirstamp)
 play/performer.lo: play/$(am__dirstamp) play/$(DEPDIR)/$(am__dirstamp)
 play/playlist.lo: play/$(am__dirstamp) play/$(DEPDIR)/$(am__dirstamp)
+play/portslist.lo: play/$(am__dirstamp) play/$(DEPDIR)/$(am__dirstamp)
 play/screenset.lo: play/$(am__dirstamp) play/$(DEPDIR)/$(am__dirstamp)
 play/seq.lo: play/$(am__dirstamp) play/$(DEPDIR)/$(am__dirstamp)
 play/sequence.lo: play/$(am__dirstamp) play/$(DEPDIR)/$(am__dirstamp)
 play/setmapper.lo: play/$(am__dirstamp) play/$(DEPDIR)/$(am__dirstamp)
 play/setmaster.lo: play/$(am__dirstamp) play/$(DEPDIR)/$(am__dirstamp)
+play/songsummary.lo: play/$(am__dirstamp) \
+	play/$(DEPDIR)/$(am__dirstamp)
 play/triggers.lo: play/$(am__dirstamp) play/$(DEPDIR)/$(am__dirstamp)
 sessions/$(am__dirstamp):
 	@$(MKDIR_P) sessions
@@ -852,8 +855,6 @@ util/$(DEPDIR)/$(am__dirstamp):
 	@: > util/$(DEPDIR)/$(am__dirstamp)
 util/automutex.lo: util/$(am__dirstamp) util/$(DEPDIR)/$(am__dirstamp)
 util/basic_macros.lo: util/$(am__dirstamp) \
-	util/$(DEPDIR)/$(am__dirstamp)
-util/calculations.lo: util/$(am__dirstamp) \
 	util/$(DEPDIR)/$(am__dirstamp)
 util/condition.lo: util/$(am__dirstamp) util/$(DEPDIR)/$(am__dirstamp)
 util/filefunctions.lo: util/$(am__dirstamp) \
@@ -923,6 +924,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@ctrl/$(DEPDIR)/opcontainer.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@ctrl/$(DEPDIR)/opcontrol.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/businfo.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/calculations.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/controllers.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/editable_event.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/editable_events.Plo@am__quote@ # am--include-marker
@@ -936,7 +938,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/midibase.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/midibytes.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/midifile.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/songsummary.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/wrkfile.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@os/$(DEPDIR)/daemonize.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@os/$(DEPDIR)/timing.Plo@am__quote@ # am--include-marker
@@ -953,12 +954,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@play/$(DEPDIR)/sequence.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@play/$(DEPDIR)/setmapper.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@play/$(DEPDIR)/setmaster.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@play/$(DEPDIR)/songsummary.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@play/$(DEPDIR)/triggers.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@sessions/$(DEPDIR)/clinsmanager.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@sessions/$(DEPDIR)/smanager.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/automutex.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/basic_macros.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/calculations.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/condition.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/filefunctions.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/named_bools.Plo@am__quote@ # am--include-marker
@@ -1189,6 +1190,7 @@ distclean: distclean-am
 	-rm -f ctrl/$(DEPDIR)/opcontainer.Plo
 	-rm -f ctrl/$(DEPDIR)/opcontrol.Plo
 	-rm -f midi/$(DEPDIR)/businfo.Plo
+	-rm -f midi/$(DEPDIR)/calculations.Plo
 	-rm -f midi/$(DEPDIR)/controllers.Plo
 	-rm -f midi/$(DEPDIR)/editable_event.Plo
 	-rm -f midi/$(DEPDIR)/editable_events.Plo
@@ -1202,7 +1204,6 @@ distclean: distclean-am
 	-rm -f midi/$(DEPDIR)/midibase.Plo
 	-rm -f midi/$(DEPDIR)/midibytes.Plo
 	-rm -f midi/$(DEPDIR)/midifile.Plo
-	-rm -f midi/$(DEPDIR)/songsummary.Plo
 	-rm -f midi/$(DEPDIR)/wrkfile.Plo
 	-rm -f os/$(DEPDIR)/daemonize.Plo
 	-rm -f os/$(DEPDIR)/timing.Plo
@@ -1219,12 +1220,12 @@ distclean: distclean-am
 	-rm -f play/$(DEPDIR)/sequence.Plo
 	-rm -f play/$(DEPDIR)/setmapper.Plo
 	-rm -f play/$(DEPDIR)/setmaster.Plo
+	-rm -f play/$(DEPDIR)/songsummary.Plo
 	-rm -f play/$(DEPDIR)/triggers.Plo
 	-rm -f sessions/$(DEPDIR)/clinsmanager.Plo
 	-rm -f sessions/$(DEPDIR)/smanager.Plo
 	-rm -f util/$(DEPDIR)/automutex.Plo
 	-rm -f util/$(DEPDIR)/basic_macros.Plo
-	-rm -f util/$(DEPDIR)/calculations.Plo
 	-rm -f util/$(DEPDIR)/condition.Plo
 	-rm -f util/$(DEPDIR)/filefunctions.Plo
 	-rm -f util/$(DEPDIR)/named_bools.Plo
@@ -1311,6 +1312,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ctrl/$(DEPDIR)/opcontainer.Plo
 	-rm -f ctrl/$(DEPDIR)/opcontrol.Plo
 	-rm -f midi/$(DEPDIR)/businfo.Plo
+	-rm -f midi/$(DEPDIR)/calculations.Plo
 	-rm -f midi/$(DEPDIR)/controllers.Plo
 	-rm -f midi/$(DEPDIR)/editable_event.Plo
 	-rm -f midi/$(DEPDIR)/editable_events.Plo
@@ -1324,7 +1326,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f midi/$(DEPDIR)/midibase.Plo
 	-rm -f midi/$(DEPDIR)/midibytes.Plo
 	-rm -f midi/$(DEPDIR)/midifile.Plo
-	-rm -f midi/$(DEPDIR)/songsummary.Plo
 	-rm -f midi/$(DEPDIR)/wrkfile.Plo
 	-rm -f os/$(DEPDIR)/daemonize.Plo
 	-rm -f os/$(DEPDIR)/timing.Plo
@@ -1341,12 +1342,12 @@ maintainer-clean: maintainer-clean-am
 	-rm -f play/$(DEPDIR)/sequence.Plo
 	-rm -f play/$(DEPDIR)/setmapper.Plo
 	-rm -f play/$(DEPDIR)/setmaster.Plo
+	-rm -f play/$(DEPDIR)/songsummary.Plo
 	-rm -f play/$(DEPDIR)/triggers.Plo
 	-rm -f sessions/$(DEPDIR)/clinsmanager.Plo
 	-rm -f sessions/$(DEPDIR)/smanager.Plo
 	-rm -f util/$(DEPDIR)/automutex.Plo
 	-rm -f util/$(DEPDIR)/basic_macros.Plo
-	-rm -f util/$(DEPDIR)/calculations.Plo
 	-rm -f util/$(DEPDIR)/condition.Plo
 	-rm -f util/$(DEPDIR)/filefunctions.Plo
 	-rm -f util/$(DEPDIR)/named_bools.Plo

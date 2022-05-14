@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2022-05-11
+# \update      2022-05-14
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -105,6 +105,7 @@ nobase_include_HEADERS = \
  ctrl/opcontainer.hpp \
  ctrl/opcontrol.hpp \
  midi/businfo.hpp \
+ midi/calculations.hpp \
  midi/controllers.hpp \
  midi/editable_event.hpp \
  midi/editable_events.hpp \
@@ -121,21 +122,21 @@ nobase_include_HEADERS = \
  midi/midi_splitter.hpp \
  midi/midi_vector_base.hpp \
  midi/midi_vector.hpp \
- midi/songsummary.hpp \
  midi/wrkfile.hpp \
  play/clockslist.hpp \
  play/inputslist.hpp \
- play/portslist.hpp \
+ play/mutegroup.hpp \
  play/mutegroups.hpp \
  play/notemapper.hpp \
- play/mutegroup.hpp \
  play/performer.hpp \
  play/playlist.hpp \
+ play/portslist.hpp \
  play/screenset.hpp \
  play/seq.hpp \
  play/sequence.hpp \
  play/setmapper.hpp \
  play/setmaster.hpp \
+ play/songsummary.hpp \
  play/triggers.hpp \
  sessions/clinsmanager.hpp \
  sessions/smanager.hpp \
@@ -144,7 +145,6 @@ nobase_include_HEADERS = \
  util/automutex.hpp \
  util/basic_macros.h \
  util/basic_macros.hpp \
- util/calculations.hpp \
  util/condition.hpp \
  util/filefunctions.hpp \
  util/named_bools.hpp \

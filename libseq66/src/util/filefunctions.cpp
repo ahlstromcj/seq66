@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-04-22
+ * \updates       2022-05-14
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -44,8 +44,8 @@
 #include <string.h>                     /* strlen(), strerror_r() etc.      */
 #include <sys/stat.h>
 
+#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "util/basic_macros.hpp"        /* support and platform macros      */
-#include "util/calculations.hpp"        /* seq66::current_date_time()       */
 #include "util/filefunctions.hpp"       /* free functions in seq66 n'space  */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 

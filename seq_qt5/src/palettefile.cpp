@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2022-01-09
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -34,7 +34,7 @@
 #include <iostream>                     /* std::cout                        */
 
 #include "cfg/settings.hpp"             /* seq66::rcsettings & seq66::rc()  */
-#include "util/calculations.hpp"        /* seq66::current_data_time()       */
+#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "util/strfunctions.hpp"        /* seq66::string_to_bool()          */
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */
 #include "palettefile.hpp"              /* seq66::palettefile class         */

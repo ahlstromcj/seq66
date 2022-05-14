@@ -52,6 +52,7 @@
 #include <cmath>                        /* std::trunc()                     */
 
 #include "cfg/settings.hpp"             /* seq66::rc() and usr()            */
+#include "cfg/scales.hpp"               /* key and scale constants          */
 #include "midi/mastermidibus.hpp"       /* seq66::mastermidibus             */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 #include "play/notemapper.hpp"          /* seq66::notemapper                */
