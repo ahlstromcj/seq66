@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-05-14
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -39,7 +39,6 @@
 #include "cfg/settings.hpp"             /* seq66::usr() "global" settings   */
 #include "cfg/usrfile.hpp"              /* seq66::usrfile                   */
 #include "cfg/userinstrument.hpp"       /* seq66::userinstrument            */
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "util/strfunctions.hpp"        /* seq66::strip_quotes()            */
 
 /*

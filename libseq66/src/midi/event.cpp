@@ -76,7 +76,7 @@
 #include <cstring>                      /* std::memcpy()                    */
 
 #include "midi/event.hpp"               /* seq66::event class               */
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
+#include "midi/calculations.hpp"        /* seq66::rescale_tick()            */
 #include "util/basic_macros.hpp"        /* helpful debugging/build macros   */
 
 /*

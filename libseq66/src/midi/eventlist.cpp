@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2022-05-14
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -35,7 +35,6 @@
 #include <algorithm>                    /* std::sort(), std::merge()        */
 
 #include "cfg/settings.hpp"             /* seq66::usr()                     */
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 
 /*

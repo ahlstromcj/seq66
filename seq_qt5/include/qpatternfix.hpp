@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-05-08
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -35,7 +35,7 @@
 
 #include <QFrame>
 
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
+#include "midi/calculations.hpp"        /* seq66::lengthfix, quantization   */
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */
 
 /*

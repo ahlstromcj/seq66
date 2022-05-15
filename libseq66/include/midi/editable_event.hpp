@@ -28,14 +28,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2025-05-14
+ * \updates       2025-05-15
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
  *  and human-readable (and editable) strings.
  */
 
-#include "midi/calculations.hpp"        /* string functions                 */
+#include "midi/calculations.hpp"        /* seq66::pulses_to_string() etc.   */
 #include "midi/event.hpp"               /* seq66::event                     */
 
 /*
@@ -46,24 +46,6 @@ namespace seq66
 {
 
 class editable_events;                  /* forward reference to container   */
-
-/**
- *  An enumeration of the supported (in the Event Editor) MIDI channel-event
- *  status values values in qseqeventframe, as list in s_channel_event_names[]
- *  in the editable_event module.
-
-enum class editable
-{
-    note_off,
-    note_on,
-    aftertouch,
-    control,
-    program,
-    ch_pressure,
-    pitch_wheel,
-    max
-};
- */
 
 /**
  *  Provides for the management of MIDI editable events.  It makes the

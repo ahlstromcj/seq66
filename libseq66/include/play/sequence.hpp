@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-05-14
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -44,11 +44,10 @@
 
 #include "seq66_features.hpp"           /* various feature #defines         */
 #include "cfg/usrsettings.hpp"          /* enum class record                */
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
+#include "midi/calculations.hpp"        /* seq66::lengthfix, quantization   */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
-#include "util/palette.hpp"             /* enum class ThumbColor            */
 
 /**
  *  Provides an integer value for color that matches PaletteColor::NONE.  That
@@ -68,6 +67,15 @@ namespace seq66
 class mastermidibus;
 class notemapper;
 class performer;
+
+/**
+ *  Provides a way to save a sequence palette color in a single byte.  This
+ *  value is signed since we need a value of -1 to indicate no color, and 0 to
+ *  127 to indicate the index that "points" to a palette color. (The actual
+ *  limit is currently 31, though, which ought to be enough colors.)
+ */
+
+using colorbyte = char;
 
 /**
  *  A structure for encapsulating the many parameters of sequence ::

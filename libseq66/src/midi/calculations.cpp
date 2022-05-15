@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-04-25
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -76,7 +76,7 @@
 #include <ctime>                        /* std::strftime()                  */
 
 #include "cfg/settings.hpp"
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
+#include "midi/calculations.hpp"        /* MIDI-related calculations        */
 #include "util/strfunctions.hpp"        /* seq66::contains(), etc.          */
 
 /*
@@ -1506,6 +1506,8 @@ extract_a2j_port_name (const std::string & alias)
     return result;
 }
 
+#if defined USE_EXTRACT_A2J_BUS_ID
+
 /**
  *  NOT YET USED.
  */
@@ -1531,26 +1533,7 @@ extract_a2j_bus_id (const std::string & alias)
     return result;
 }
 
-/**
- *  Gets the current date/time.
- *
- * \return
- *      Returns the current date and time as a string.
- */
-
-std::string
-current_date_time ()
-{
-    static char s_temp[64];
-    static const char * const s_format = "%Y-%m-%d %H:%M:%S";
-    time_t t;
-    std::memset(s_temp, 0, sizeof s_temp);
-    time(&t);
-
-    struct tm * tm = localtime(&t);
-    std::strftime(s_temp, sizeof s_temp - 1, s_format, tm);
-    return std::string(s_temp);
-}
+#endif
 
 }       // namespace seq66
 

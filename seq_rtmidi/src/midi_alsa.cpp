@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2022-05-14
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -110,7 +110,6 @@
  */
 
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "midi/event.hpp"               /* seq66::event (MIDI event)        */
 #include "midibus_rm.hpp"               /* seq66::midibus for rtmidi        */
 #include "midi_alsa.hpp"                /* seq66::midi_alsa for ALSA        */

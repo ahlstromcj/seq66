@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-05-14
+ * \updates       2022-05-15
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -41,10 +41,10 @@
 #include <algorithm>                    /* std::replace() function          */
 #include <cctype>                       /* std::toupper() function          */
 #include <cstdlib>                      /* realpath(3) or _fullpath()       */
-#include <string.h>                     /* strlen(), strerror_r() etc.      */
+#include <cstring>                      /* std::strlen(), strerror_r() etc. */
+#include <ctime>                        /* std::strftime()                  */
 #include <sys/stat.h>
 
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "util/basic_macros.hpp"        /* support and platform macros      */
 #include "util/filefunctions.hpp"       /* free functions in seq66 n'space  */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
@@ -218,7 +218,7 @@ s_stringcopy
 )
 {
     bool result = false;
-    size_t length = strlen(source);             /* inefficient              */
+    size_t length = std::strlen(source);        /* inefficient              */
     *destination = 0;                           /* empty out destination    */
     if (sourcelimit > length || sourcelimit == 0)
         sourcelimit = length;
@@ -257,7 +257,7 @@ s_stringcopy
         else                                     /* truncation definite     */
             warn_message("stringcopy truncation");
 
-        (void) strncpy(destination, source, destsize);
+        (void) std::strncpy(destination, source, destsize);
         destination[destsize-1] = 0;
 #endif
     }
@@ -323,7 +323,7 @@ string_errno (errno_t errnum)
 #else
 
     const char * msg = strerror(errnum);
-    (void) strncpy(dest, msg, sizeof dest - 1);
+    (void) std::strncpy(dest, msg, sizeof dest - 1);
 
 #endif
 
@@ -767,6 +767,27 @@ file_create_for_write (const std::string & filename)
 }
 
 /**
+ *  Gets the current date/time.
+ *
+ * \return
+ *      Returns the current date and time as a string.
+ */
+
+std::string
+current_date_time ()
+{
+    static char s_temp[64];
+    static const char * const s_format = "%Y-%m-%d %H:%M:%S";
+    time_t t;
+    std::memset(s_temp, 0, sizeof s_temp);
+    time(&t);
+
+    struct tm * tm = localtime(&t);
+    std::strftime(s_temp, sizeof s_temp - 1, s_format, tm);
+    return std::string(s_temp);
+}
+
+/**
  *  Appends a string to file. If it does not exist, it is appended to.
  */
 
@@ -1156,7 +1177,7 @@ make_directory_path (const std::string & directory_name)
         bool more = true;
         int slash = '/';
         char * nextptr;                         /* just what it says!       */
-        (void) strncpy(currdir, dirname.c_str(), sizeof currdir - 1);
+        (void) std::strncpy(currdir, dirname.c_str(), sizeof currdir - 1);
 
         char * endptr = &currdir[0];            /* start at the beginning   */
         char * ending = strchr(endptr, '\0');

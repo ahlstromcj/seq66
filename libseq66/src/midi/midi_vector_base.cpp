@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2022-05-14
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -113,7 +113,6 @@
 
 #include "cfg/scales.hpp"               /* seq66::scales enum class         */
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "midi/midi_vector_base.hpp"    /* seq66::midi_vector_base ABC      */
 #include "play/performer.hpp"           /* seq66::performer master class    */
 #include "play/seq.hpp"                 /* seq66::seq                       */

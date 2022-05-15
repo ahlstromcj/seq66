@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-05-14
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -53,7 +53,6 @@
 #include "cfg/configfile.hpp"           /* seq66:: configfile class         */
 #include "cfg/rcsettings.hpp"           /* seq66::rcsettings class          */
 #include "util/filefunctions.hpp"       /* seq66::filename_base() etc.      */
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "util/strfunctions.hpp"        /* strncompare() for std::string    */
 
 /*
@@ -872,7 +871,7 @@ configfile::write_date (std::ofstream & file, const std::string & tag)
     file
         << "# Seq66 " << seq_version() << " " << tag << " configuration file\n"
         << "#\n# " << name() << "\n"
-        << "# Written " << current_date_time() << "\n"
+        << "# Written " << get_current_date_time() << "\n"
         << "#\n"
         ;
 }
@@ -1009,6 +1008,12 @@ copy_configuration
         }
     }
     return result;
+}
+
+std::string
+get_current_date_time ()
+{
+    return current_date_time();
 }
 
 }           // namespace seq66

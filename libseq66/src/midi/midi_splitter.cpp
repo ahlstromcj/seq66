@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-24
- * \updates       2021-08-11
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  *  We have recently updated this module to put Set Tempo events into the
@@ -37,6 +37,7 @@
 #include "midi/midi_splitter.hpp"       /* seq66::midi_splitter             */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
+#include "util/palette.hpp"             /* seq66::palette_to_int(), colors  */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

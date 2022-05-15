@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2022-05-14
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -34,8 +34,6 @@
 #include <iostream>                     /* std::cout                        */
 
 #include "cfg/settings.hpp"             /* seq66::rcsettings & seq66::rc()  */
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
-#include "util/strfunctions.hpp"        /* seq66::string_to_bool()          */
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */
 #include "palettefile.hpp"              /* seq66::palettefile class         */
 
@@ -117,7 +115,6 @@ palettefile::parse_stream (std::ifstream & file)
         }
         if (ok)
             ok = count == gui_palette_qt5::palette_size();
-
     }
     if (ok)
     {
@@ -212,7 +209,7 @@ palettefile::write_stream (std::ofstream & file)
         << "# Seq66 0.97.1 (and above) palette configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
-        << "# Written on " << current_date_time() << "\n"
+        << "# Written on " << get_current_date_time() << "\n"
         << "#\n"
         << "# This file can be used to change the colors used by patterns\n"
         << "# and in some parts of the user-interface.\n"

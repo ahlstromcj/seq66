@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-05-06
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -608,8 +608,9 @@ extern bool extract_port_names
 extern std::string extract_bus_name (const std::string & fullname);
 extern std::string extract_port_name (const std::string & fullname);
 extern std::string extract_a2j_port_name (const std::string & alias);
+#if defined USE_EXTRACT_A2J_BUS_ID
 extern int extract_a2j_bus_id (const std::string & alias);
-extern std::string current_date_time ();
+#endif
 
 }           // namespace seq66
 

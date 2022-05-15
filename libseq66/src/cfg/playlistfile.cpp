@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2022-05-14
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -47,7 +47,6 @@
 
 #include "cfg/playlistfile.hpp"         /* seq66::playlistfile class        */
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "play/playlist.hpp"            /* seq66::playlist class            */
 #include "util/filefunctions.hpp"       /* functions for file-names         */
 #include "util/strfunctions.hpp"        /* strip_quotes()                   */

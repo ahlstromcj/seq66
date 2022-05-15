@@ -35,7 +35,6 @@
 #include <stdexcept>                    /* std::invalid_argument            */
 
 #include "cfg/settings.hpp"             /* seq66::rc() accessor             */
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "play/portslist.hpp"           /* seq66::portslist class           */
 #include "util/strfunctions.hpp"        /* seq66::strncompare()             */
 

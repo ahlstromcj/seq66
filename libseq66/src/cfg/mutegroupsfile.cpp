@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2022-05-14
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -35,7 +35,6 @@
 
 #include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile class      */
 #include "cfg/settings.hpp"             /* seq66::rc(), as rc_ref()         */
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "play/mutegroups.hpp"          /* seq66::mutegroups, etc.          */
 #include "util/strfunctions.hpp"        /* seq66::write_stanza_bits()       */
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-05-14
+ * \updates       2022-05-15
  * \license       See above.
  *
  *  API information found at:
@@ -76,7 +76,6 @@
  */
 
 #include "cfg/settings.hpp"             /* seq66::rc() configuration object */
-#include "midi/calculations.hpp"        /* clock_ticks_from_ppqn()          */
 #include "midi/event.hpp"               /* seq66::event and other tokens    */
 #include "midi/midibus_common.hpp"      /* from the libseq66 sub-project    */
 #include "midi_alsa_info.hpp"           /* seq66::midi_alsa_info            */

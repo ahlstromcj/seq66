@@ -109,15 +109,6 @@ using miditag = uint32_t;
 using midilong = unsigned long;
 
 /**
- *  Provides a way to save a sequence palette color in a single byte.  This
- *  value is signed since we need a value of -1 to indicate no color, and 0 to
- *  127 to indicate the index that "points" to a palette color. (The actual
- *  limit is currently 31, though, which ought to be enough colors.)
- */
-
-using colorbyte = char;
-
-/**
  *  Distinguishes a JACK tick from a MIDI tick (pulse).  The latter are ten
  *  times as long as the JACK tick.
  */

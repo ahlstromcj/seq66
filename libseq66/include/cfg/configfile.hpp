@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-04-13
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -463,6 +463,7 @@ extern bool copy_configuration
     const std::string & basename,
     const std::string & destination
 );
+extern std::string get_current_date_time ();
 
 }           // namespace seq66
 

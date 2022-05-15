@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2022-05-14
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -322,12 +322,6 @@ reroute_stdio (const std::string & logfile, bool closem)
             }
             else                            /* route output to log-file     */
             {
-                /*
-                 * ca 2018-04-28
-                 *  Change from "w" (O_WRONLY|O_CREAT|O_TRUNC) to
-                 *  "a" (O_WRONLY|O_CREAT|O_APPEND).  Oops!
-                 */
-
                 FILE * fp = freopen(logfile.c_str(), "a", stdout);
                 if (not_nullptr(fp))
                 {
@@ -348,7 +342,9 @@ reroute_stdio (const std::string & logfile, bool closem)
             std::string normedpath = normalize_path(logpath);
             printf
             (
-                "\n'%s' \n'%s' \n", seq_app_name().c_str(), normedpath.c_str()
+                "\n'%s' \n'%s' \n'%s' \n",
+                seq_app_name().c_str(), normedpath.c_str(),
+                current_date_time().c_str()
             );
         }
     }

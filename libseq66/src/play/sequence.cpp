@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-05-08
+ * \updates       2022-05-15
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -59,6 +59,7 @@
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
+#include "util/palette.hpp"             /* seq66::palette_to_int(), colors  */
 #include "util/strfunctions.hpp"        /* bool_to_string()                 */
 
 /*
