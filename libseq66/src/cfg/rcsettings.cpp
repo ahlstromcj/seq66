@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-05-06
+ * \updates       2022-05-16
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -43,7 +43,6 @@
 #include <algorithm>                    /* std::find()                      */
 #include <cstdlib>                      /* std::getenv()                    */
 
-// #include "seq66_features.hpp"           /* seq66::set_app_name(), etc.      */
 #include "cfg/settings.hpp"             /* seq66::rc(), seq66::usr()        */
 #include "play/seq.hpp"                 /* seq66::seq::maximum()            */
 #include "util/filefunctions.hpp"       /* make_directory(), etc.           */
@@ -287,6 +286,20 @@ rcsettings::auto_options_save () const
         auto_rc_save() || auto_usr_save() ||
         rc().is_modified() || usr().is_modified()
     );
+}
+
+void
+rcsettings::verbose (bool flag)
+{
+    m_verbose = flag;
+    set_verbose(flag);                      /* from the basic_macros module */
+}
+
+void
+rcsettings::investigate (bool flag)
+{
+    m_investigate = flag;
+    set_investigate(flag);                  /* from the basic_macros module */
 }
 
 /**

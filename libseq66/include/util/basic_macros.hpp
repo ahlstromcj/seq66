@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2022-03-20
+ * \updates       2022-05-16
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -43,7 +43,6 @@
  *  This module replaces Seq64's easy_macros.
  */
 
-#include <cstdio>                       /* std::printf()                    */
 #include <vector>                       /* std::vector                      */
 
 #include "seq66_features.hpp"           /* C++ definitions, std::string     */
@@ -77,6 +76,11 @@ using tokenization = std::vector<std::string>;
  * release mode, to speed up release mode.  It cannot do anything at
  * all, since it is used in the conditional part of if-statements.
  */
+
+extern void set_verbose (bool flag);
+extern void set_investigate (bool flag);
+extern bool verbose ();
+extern bool investigate ();
 
 #if defined SEQ66_PLATFORM_DEBUG
 #if defined __cplusplus

@@ -39,10 +39,8 @@
 
 #include "seq66_rtmidi_features.h"          /* defines what's implemented   */
 #include "midi_api.hpp"                     /* seq66::midi[_in][_out]_api   */
-#include "rterror.hpp"                      /* seq66::rterror               */
 #include "rtmidi_types.hpp"                 /* seq66::rtmidi_api etc.       */
 #include "rtmidi_info.hpp"                  /* seq66::rtmidi_info           */
-#include "util/basic_macros.hpp"            /* platform macros for compiler */
 
 /*
  * Do not document the namespace; it breaks Doxygen.

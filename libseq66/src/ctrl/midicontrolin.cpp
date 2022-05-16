@@ -76,7 +76,6 @@
 
 #include "cfg/settings.hpp"             /* seq66::rc() rcsettings getter    */
 #include "ctrl/keycontainer.hpp"        /* seq66::keycontainer class        */
-#include "ctrl/keymap.hpp"              /* seq66::qt_keyname_ordinal()      */
 #include "ctrl/midicontrolin.hpp"       /* seq66::midicontrolin class       */
 
 /*

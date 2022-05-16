@@ -33,7 +33,7 @@
 #include <iomanip>                      /* std::setw()                      */
 #include <iostream>                     /* std::cout                        */
 
-#include "cfg/settings.hpp"             /* seq66::rcsettings & seq66::rc()  */
+#include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */
 #include "palettefile.hpp"              /* seq66::palettefile class         */
 

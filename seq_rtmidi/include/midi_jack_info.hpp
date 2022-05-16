@@ -42,7 +42,6 @@
 
 #include <jack/jack.h>                  /* JACK (2) API                     */
 
-#include "mastermidibus_rm.hpp"         /* adds a rtmidi_info "MIDI master" */
 #include "midi_info.hpp"                /* seq66::midi_port_info etc.       */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2022-04-21
+ * \updates       2022-05-16
  * \license       GNU GPLv2 or above
  *
  *  A couple of universal helper functions remain as inline functions in the
@@ -36,6 +36,8 @@
  *
  *  Also note that this file really is a C++ header file, and should have
  *  the "hpp" file extension.  We will fix that Real Soon Now.
+ *
+ *  #include "util/basic_macros.hpp"    // seq66::tokenization vector
  */
 
 #include "cfg/rcsettings.hpp"           /* seq66::rcsettings, std::string   */
@@ -124,9 +126,12 @@ public:
  *  changing client code.
  */
 
+class rcsettings;
+class usrsettings;
+
 extern rcsettings & rc ();
 extern usrsettings & usr ();
-extern int choose_ppqn (int ppqn = c_use_default_ppqn);
+extern int choose_ppqn (int ppqn = (-1));           /* c_use_default_ppqn   */
 
 #if defined USE_PPQN_LIST_VALUE
 extern int ppqn_list_value (int index = (-1));
@@ -141,16 +146,7 @@ extern const tokenization & perf_snap_items ();
 extern const tokenization & zoom_items ();
 extern const tokenization & rec_vol_items ();
 extern void set_configuration_defaults ();
-
-/**
- *  Indicates if the PPQN value is in the legal range of usable PPQN values.
- */
-
-inline bool
-ppqn_in_range (int ppqn)
-{
-    return usr().use_file_ppqn() || usr().is_ppqn_valid(ppqn);
-}
+extern bool ppqn_in_range (int ppqn);
 
 }           // namespace seq66
 

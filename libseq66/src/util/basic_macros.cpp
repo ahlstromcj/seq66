@@ -25,19 +25,18 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2022-03-20
+ * \updates       2022-05-16
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of
  *  the application in color before each message that is put out.
  */
 
-#include <assert.h>
-#include <string.h>                     /* C::strlen(3)                     */
+#include <assert.h>                     /* defines the assert() macro       */
+#include <cstring>                      /* std::strlen(3)                   */
 #include <cstdarg>                      /* see "man stdarg(3)"              */
 #include <iostream>
 
-#include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "util/basic_macros.hpp"        /* basic macros-cum-functions       */
 
 #if defined SEQ66_PLATFORM_UNIX
@@ -58,6 +57,38 @@
 
 namespace seq66
 {
+
+/**
+ *  Functions to remove dependencies on the "cfg" modules. Could eventually
+ *  replace rcsettings::verbose() and investigate().
+ */
+
+static bool s_is_verbose = false;
+static bool s_is_investigate = false;
+
+void
+set_verbose (bool flag)
+{
+    s_is_verbose = flag;
+}
+
+bool
+verbose ()
+{
+    return s_is_verbose;
+}
+
+void
+set_investigate (bool flag)
+{
+    s_is_investigate = flag;
+}
+
+bool
+investigate ()
+{
+    return s_is_investigate;
+}
 
 /**
  *  Provides a way to still get the benefits of assert() output in release
@@ -143,7 +174,7 @@ async_safe_strprint (const char * msg, bool colorit)
 {
     if (not_nullptr(msg))
     {
-        size_t count = strlen(msg);
+        size_t count = std::strlen(msg);
         if (count > 0)
         {
             if (is_a_tty(STDOUT_FILENO) && colorit)
@@ -167,7 +198,7 @@ async_safe_errprint (const char * msg, bool colorit)
 {
     if (not_nullptr(msg))
     {
-        size_t count = strlen(msg);
+        size_t count = std::strlen(msg);
         if (count > 0)
         {
             if (is_a_tty(STDERR_FILENO) && colorit)
@@ -250,7 +281,7 @@ async_safe_utoa (char * destination, unsigned number, bool spacebefore)
 bool
 info_message (const std::string & msg, const std::string & data)
 {
-    if (rc().verbose())
+    if (verbose())
     {
         std::cout << seq_client_tag(msglevel::info) << " " << msg;
         if (! data.empty())
@@ -365,7 +396,7 @@ static const char * s_normal = "\033[0m";
 bool
 debug_message (const std::string & msg, const std::string & data)
 {
-    if (rc().investigate())
+    if (investigate())
     {
         std::cerr << seq_client_tag(msglevel::debug) << " ";
         if (is_a_tty(STDERR_FILENO))
@@ -574,7 +605,7 @@ msgprintf (msglevel lev, std::string fmt, ...)
 
         case msglevel::info:
 
-            if (rc().verbose())
+            if (verbose())
                 std::cout << seq_client_tag(lev) << " " << output << std::endl;
             break;
 

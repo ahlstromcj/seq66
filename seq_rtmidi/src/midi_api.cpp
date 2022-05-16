@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-03-13
+ * \updates       2022-05-16
  * \license       See above.
  *
  *  In this refactoring, we had to adapt the existing Seq66
@@ -33,8 +33,6 @@
  *  mode of the Seq66 application and libraries.
  */
 
-#include "cfg/settings.hpp"             /* seq66::rcsettings ...            */
-#include "midi/event.hpp"
 #include "midi_api.hpp"
 #include "midi_info.hpp"
 #include "midibus_rm.hpp"

@@ -109,7 +109,7 @@ public:
 
     virtual void print_message () const
     {
-       infoprint(m_message.c_str());
+       infoprint(m_message);
     }
 
     /**

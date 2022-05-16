@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-04
- * \updates       2022-02-01
+ * \updates       2022-05-16
  * \license       See above.
  *
  *    We need to have a way to get all of the ALSA information of
@@ -36,7 +36,6 @@
 
 #include <alsa/asoundlib.h>
 
-#include "mastermidibus_rm.hpp"
 #include "midi_info.hpp"                /* seq66::midi_port_info etc.       */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 

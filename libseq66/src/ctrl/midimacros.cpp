@@ -46,7 +46,7 @@
  */
 
 #include "ctrl/midimacros.hpp"          /* seq66::midimacros class          */
-#include "util/strfunctions.hpp"        /* seq66::string_to_midibyte()      */
+#include "util/strfunctions.hpp"        /* seq66::tokenize()                */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

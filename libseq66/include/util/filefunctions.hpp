@@ -27,12 +27,15 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-05-15
+ * \updates       2022-05-16
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
  *    old-school file-pointers and the new-fangled std::string.
  */
+
+#include <cstdio>                       /* std::FILE *                      */
+#include <string>                       /* std::string ubiquitous class     */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -54,9 +57,9 @@ extern bool file_executable (const std::string & targetfile);
 extern bool file_is_directory (const std::string & targetfile);
 extern bool file_name_good (const std::string & filename);
 extern bool file_mode_good (const std::string & mode);
-extern FILE * file_open (const std::string & filename, const std::string & mode);
-extern FILE * file_open_for_read (const std::string & filename);
-extern FILE * file_create_for_write (const std::string & filename);
+extern std::FILE * file_open (const std::string & filename, const std::string & mode);
+extern std::FILE * file_open_for_read (const std::string & filename);
+extern std::FILE * file_create_for_write (const std::string & filename);
 extern std::string current_date_time ();
 extern bool file_write_string
 (
@@ -65,7 +68,7 @@ extern bool file_write_string
 );
 extern bool file_close
 (
-    FILE * filehandle,
+    std::FILE * filehandle,
     const std::string & filename = ""
 );
 extern bool file_delete (const std::string & filespec);

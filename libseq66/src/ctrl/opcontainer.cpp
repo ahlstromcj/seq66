@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-07
+ * \updates       2022-05-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -33,7 +33,6 @@
 #include <iomanip>                      /* std::setw() manipulator          */
 #include <iostream>                     /* std::cout (using namespace std)  */
 
-#include "cfg/settings.hpp"             /* seq66::rc() rcsettings getter    */
 #include "ctrl/opcontainer.hpp"         /* seq66::opcontainer class         */
 
 /*

@@ -40,7 +40,7 @@
  *      -# Call create_performer(), which could delete an existing performer.
  *         It then launches the performer.  Save the unique-pointer.
  *      -# Call open_playlist().  It will open it, if specified and possible.
- *      -# Call open_note_mapper().  It will open it, if specified and possible.
+ e      -# Call open_note_mapper().  It will open it, if specified and possible.
  *      -# If the MIDI file-name is set, open it via a call to open_midi_file().
  *      -# If a user-interface is needed, create a unique-pointer to it, then
  *         show it.  This will remove any previous pointer.  The function is

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2021-08-10
+ * \updates       2022-05-16
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of many scale interval patterns if working with
@@ -62,8 +62,11 @@
 #include <cmath>                        /* for the pow() function           */
 
 #include "cfg/scales.hpp"               /* seq66::scales declarations       */
-#include "cfg/settings.hpp"             /* seq66::rc().verbose()            */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
+
+#if defined USE_SHOE_ALL_COUNTS
+#include "cfg/settings.hpp"             /* seq66::rc().verbose()            */
+#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -760,6 +763,8 @@ analyze_note (midibyte note, keys & outkey, int & outoctave)
     return result;
 }
 
+#if defined USE_SHOE_ALL_COUNTS
+
 static void
 show_all_counts
 (
@@ -805,6 +810,8 @@ show_all_counts
         printf("\n");
     }
 }
+
+#endif  // defined USE_SHOE_ALL_COUNTS
 
 /**
  *  The algorithm is simple.  Get a histogram of the 12 semitones found in the
@@ -862,8 +869,7 @@ analyze_notes
         }
         if (notecount < c_analysis_minimum)
         {
-            infoprint("Not enough notes to analyze.");
-            ok = false;
+            ok = false;     /* infoprint("Not enough notes to analyze.")    */
         }
         if (ok)
         {
@@ -916,8 +922,10 @@ analyze_notes
                 }
             }
 
+#if defined USE_SHOE_ALL_COUNTS
             if (rc().verbose())
                 show_all_counts(histogram, count_matrix);
+#endif
 
             for (int s = 0; s < c_scales_max - 1; ++s)
             {

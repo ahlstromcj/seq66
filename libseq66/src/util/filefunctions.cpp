@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-05-15
+ * \updates       2022-05-16
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -696,10 +696,10 @@ file_mode_good (const std::string & mode)
  *      proceeding to use the file-handle.
  */
 
-FILE *
+std::FILE *
 file_open (const std::string & filename, const std::string & mode)
 {
-    FILE * filehandle = nullptr;
+    std::FILE * filehandle = nullptr;
     if (file_name_good(filename) && ! mode.empty())
     {
 #if defined SEQ66_PLATFORM_WINDOWS      /* MSVC undefined in Qt on Windows  */
@@ -731,10 +731,10 @@ file_open (const std::string & filename, const std::string & mode)
  *      proceeding to use the file-handle.
  */
 
-FILE *
+std::FILE *
 file_open_for_read (const std::string & filename)
 {
-    FILE * filehandle = nullptr;
+    std::FILE * filehandle = nullptr;
     if (file_readable(filename))
         filehandle = file_open(filename, "rb");  /* open for reading only    */
 
@@ -760,7 +760,7 @@ file_open_for_read (const std::string & filename)
  *      proceeding to use the file-handle.
  */
 
-FILE *
+std::FILE *
 file_create_for_write (const std::string & filename)
 {
     return file_open(filename, "wb");
@@ -794,7 +794,7 @@ current_date_time ()
 bool
 file_write_string (const std::string & filename, const std::string & text)
 {
-    FILE * fptr = file_open(filename, "a");     /* "w": now we append   */
+    std::FILE * fptr = file_open(filename, "a");    /* "w": now we append   */
     bool result = not_nullptr(fptr);
     if (result)
     {
@@ -833,7 +833,7 @@ file_write_string (const std::string & filename, const std::string & text)
  */
 
 bool
-file_close (FILE * filehandle, const std::string & filename)
+file_close (std::FILE * filehandle, const std::string & filename)
 {
     bool result = not_nullptr_assert(filehandle, "file_close() null handle");
     if (result)
@@ -921,12 +921,12 @@ file_copy
         bool ok = get_full_path(oldfile) != get_full_path(destfilespec);
         if (result && ok)
         {
-            FILE * input = file_open_for_read(oldfile);
+            std::FILE * input = file_open_for_read(oldfile);
             if (not_nullptr(input))
             {
                 bool okinput = false;
                 bool okoutput = false;
-                FILE * output = file_create_for_write(destfilespec);
+                std::FILE * output = file_create_for_write(destfilespec);
                 if (not_nullptr(output))
                 {
                     int ci;
@@ -976,7 +976,7 @@ file_append_log
     }
     else
     {
-        FILE * fp = file_open(filename, "a");       /* open for appending   */
+        std::FILE * fp = file_open(filename, "a");  /* open for appending   */
         bool result = not_nullptr(fp);
         if (result)
         {

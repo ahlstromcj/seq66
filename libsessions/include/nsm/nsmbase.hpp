@@ -21,7 +21,7 @@
 #include <vector>                       /* std::vector                      */
 
 #include "seq66_features.hpp"           /* feature (SUPPORT) macros         */
-#include "util/basic_macros.hpp"          /* is_nullptr() & not_nullptr()     */
+#include "util/basic_macros.hpp"        /* is_nullptr() & not_nullptr()     */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm::tag                  */
 
 #if defined SEQ66_LIBLO_SUPPORT

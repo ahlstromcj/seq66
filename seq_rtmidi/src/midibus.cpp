@@ -33,7 +33,7 @@
  *  included in this library.  Currently only ALSA and JACK are supported.
  */
 
-#include "cfg/settings.hpp"             /* seq66::rcsettings ...            */
+#include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "midi/event.hpp"               /* seq66::event and macros          */
 #include "midibus_rm.hpp"               /* seq66::midibus for rtmidi        */
 #include "rtmidi.hpp"                   /* RtMidi updated API header file   */

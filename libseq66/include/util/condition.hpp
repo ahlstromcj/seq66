@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-12-10
+ * \updates       2022-05-16
  * \license       GNU GPLv2 or above
  *
  *  This module defines the class seq66::condition_var, which provides a common
@@ -38,7 +38,6 @@
  *  2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
  */
 
-#include <atomic>
 #include <condition_variable>           /* for seq66::synchronizer class    */
 
 #include "util/recmutex.hpp"            /* seq66::recmutex wrapper class    */

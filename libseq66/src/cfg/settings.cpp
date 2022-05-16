@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2022-04-29
+ * \updates       2022-05-16
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -389,6 +389,16 @@ choose_ppqn (int ppqn)
         result = usr().midi_ppqn();                 /* usr().default_ppqn() */
 
     return result;
+}
+
+/**
+ *  Indicates if the PPQN value is in the legal range of usable PPQN values.
+ */
+
+bool
+ppqn_in_range (int ppqn)
+{
+    return usr().use_file_ppqn() || usr().is_ppqn_valid(ppqn);
 }
 
 }           // namespace seq66

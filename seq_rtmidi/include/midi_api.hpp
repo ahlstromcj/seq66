@@ -37,9 +37,9 @@
  *      -   seq66::midi_out_api
  */
 
-#include "midibus_rm.hpp"
-#include "rterror.hpp"
-#include "rtmidi_types.hpp"             /* SEQ66_NO_INDEX               */
+#include "midibus_rm.hpp"               /* seq66::midibus for rtmidi        */
+#include "rterror.hpp"                  /* seq66::rterror                   */
+#include "rtmidi_types.hpp"             /* seq66::rtmidi_in_data            */
 
 /*
  * Do not document the namespace; it breaks Doxygen.

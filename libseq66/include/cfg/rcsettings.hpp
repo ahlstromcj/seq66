@@ -1125,15 +1125,8 @@ public:
             m_clock_mod = clockmod;
     }
 
-    void verbose (bool flag)
-    {
-        m_verbose = flag;
-    }
-
-    void investigate (bool flag)
-    {
-        m_investigate = flag;
-    }
+    void verbose (bool flag);
+    void investigate (bool flag);
 
     void inspection_tag (const std::string & t)
     {
