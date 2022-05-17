@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2022-03-30
+:: \update      2022-05-17
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -129,7 +129,7 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.98.6
+set PROJECT_VERSION=0.98.8
 set PROJECT_DRIVE=C:
 set PROJECT_BITS=32
 
@@ -149,7 +149,7 @@ set APP_DIR=Seq66qt5
 set RELEASE_DIR=%APP_DIR%\release
 set CONFIG_SET="CONFIG += release"
 set AUX_DIR=data
-set DOC_DIR=doc
+set DOC_DIR="data\share\doc"
 
 :: C:
 
@@ -201,6 +201,10 @@ mkdir %RELEASE_DIR%\%DOC_DIR%
 copy %PROJECT_ROOT%\%DOC_DIR%\*.pdf %RELEASE_DIR%\%DOC_DIR%
 copy %PROJECT_ROOT%\%DOC_DIR%\*.ods %RELEASE_DIR%\%DOC_DIR%
 copy %PROJECT_ROOT%\%DOC_DIR%\README %RELEASE_DIR%\%DOC_DIR%
+
+:: TO DO WHEN READY
+
+REM echo xcopy %PROJECT_ROOT%\%DOC_DIR%\tutorial %RELEASE_DIR%\%DOC_DIR% /f /s /y /i
 
 :: This section takes the generated build and data files and packs them
 :: up into a 7-zip archive.  This archive should be copied to the root

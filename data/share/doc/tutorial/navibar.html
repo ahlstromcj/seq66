@@ -1,0 +1,207 @@
+<html>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Draft//EN">
+
+<! File:       navibar.html>
+<! Library:    seq66/data/share/tutorial>
+<! Author:     Chris Ahlstrom >
+<! Date:       2022-05-16>
+<! Updates:    2022-05-17>
+<! Version:    $Revision$>
+<! License:    $XPC_SUITE_GPL_LICENSES$>
+
+<head>
+
+   <link href="css/slide.css" rel="stylesheet" type="text/css">
+
+   <script language=javascript type=text/javascript>
+
+<!--
+
+      var count=1;
+
+      // The array with the links.  you can add as many links as you 
+      // like, as long as you keep the numbers succeeding
+
+      var link_array = new Array();
+      link_array[1] = 'home.html';
+      link_array[2] = 'introduction.html';
+      link_array[3] = 'main_window.html';
+
+      function next_link()
+      {
+         if ((count + 1) >= link_array.length)
+         {
+            // alert('That was the last page');
+         }
+         else
+         {
+            count = count + 1;
+            parent.frames['home'].document.location.href = link_array[count];
+         }
+      }
+
+      function previous_link()
+      {
+         if ((count - 1) <= 0)
+         {
+            // alert('This is the first page');
+         }
+         else
+         {
+            count = count - 1;
+            parent.frames['home'].document.location.href = link_array[count];
+         }
+      }
+
+      function stat_home()
+      {
+         parent.status = "Moves to the home page of the slide-show";
+      }
+
+      function go_forward()
+      {
+         parent.frames['home'].history.forward();
+      }
+
+      function go_backward()
+      {
+         parent.frames['home'].history.back();
+      }
+
+      function home_page()
+      {
+         parent.frames['home'].location.replace("home.html"); 
+      }
+
+      function next_page()
+      {
+        var p = parent.frames['home'].document.navi.nextlocation.value;
+        parent.frames['home'].location.replace(p);
+      }
+
+      function previous_page()
+      {
+        var p = parent.frames['home'].document.navi.prevlocation.value;
+        // navtable.previous_page.src = "images/stock/back-dark.png";
+        parent.frames['home'].location.replace(p);
+      }
+
+// -->
+
+   </script>
+
+</head>
+
+<body>
+
+<!--
+   Instead of using <input type="button" etc> you can also use this: <input
+   type="image" src="image.name"> if you want to use an image instead of a
+   button.
+-->
+
+   <form name="navtable">
+
+   <table
+      align="center"
+      border="0"
+      width="400"
+      cellpadding="0"
+      cellspacing="0">
+
+      <tr>
+         <td align="center">
+               <input
+                  type="image"
+                  id="previous_page"
+                  onclick=previous_page()
+                  onmouseover="src='images/stock/back-dark.png'; return true;"
+                  onmouseout="src='images/stock/back.png'; return true;"
+                  src="images/stock/back.png"
+                  alt="Previous" 
+                  name=Previous" 
+                  value="Previous"
+                  title="Move to previous page of slide-show"> 
+         </td>
+
+         <td align="center">
+               <input
+                  type="image"
+                  id="go_backward"
+                  onclick=go_backward()
+                  onmouseover="src='images/stock/back-dull-dark.png'; return true;"
+                  onmouseout="src='images/stock/back-dull.png'; return true;"
+                  src="images/stock/back-dull.png"
+                  alt="Back" 
+                  name=Back" 
+                  value="Back"
+                  title="Same action as the browser's Back button"> 
+         </td>
+
+         <td align="center">
+               <input
+                  type=image
+                  id="home_page"
+                  onclick=home_page()
+                  onmouseover="src='images/stock/home-dark.png'; return true;"
+                  onmouseout="src='images/stock/home.png'; return true;"
+                  src="images/stock/home.png"
+                  alt="Home" 
+                  name=Home" 
+                  value="Home"
+                  title="Move to home page of slide-show">
+
+               <!--
+
+                  This can be used as a more primitive option:
+
+                  <a href= home.html
+                     target="home"
+                     alt="Home" 
+                     name=Home" 
+                     value="Home"
+                     title="Move to home page of slide-show">
+                     <img src="images/stock/home.png">
+                  </a>
+
+               -->
+
+         </td>
+
+         <td align="center">
+               <input
+                  type="image"
+                  id="go_forward"
+                  onclick=go_forward()
+                  onmouseover="src='images/stock/forw-dull-dark.png'; return true;"
+                  onmouseout="src='images/stock/forw-dull.png'; return true;"
+                  src="images/stock/forw-dull.png"
+                  alt="Forward" 
+                  name=Forward" 
+                  value="Forward"
+                  title="Same action as the browser's Forward button"> 
+         </td>
+
+         <td align="center">
+               <input
+                  type="image"
+                  id="next_page"
+                  onclick=next_page()
+                  onmouseover="src='images/stock/forw-dark.png'; return true;"
+                  onmouseout="src='images/stock/forw.png'; return true;"
+                  src="images/stock/forw.png"
+                  alt="Next" 
+                  name=Next" 
+                  value="Next"
+                  title="Move to next page of slide-show">
+         </td>
+      </tr>
+   </table>
+
+   </form>
+
+</body>
+
+</html>
+

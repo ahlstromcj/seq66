@@ -1,0 +1,210 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Draft//EN">
+
+<! File:       left-tree.html>
+<! Library:    seq66/data/share/tutorial>
+<! Author:     Chris Ahlstrom >
+<! Date:       2022-05-16>
+<! Updates:    2022-05-16>
+<! Version:    $Revision$>
+<! License:    $XPC_SUITE_GPL_LICENSES$>
+
+<head>
+
+   <meta http-equiv="Content-Type" content="text/xhtml;charset=iso-8859-1" />
+   <meta http-equiv="Content-Style-Type" content="text/css" />
+   <meta http-equiv="Content-Language" content="en" />
+   <title>TreeView</title>
+
+   <link rel="stylesheet" href="css/slide.css">
+
+   <script type="text/javascript">
+
+   <!-- // Hide script from old browsers
+    
+   function toggleFolder(id, imageNode) 
+   {
+     var folder = document.getElementById(id);
+     var l = imageNode.src.length;
+     if (imageNode.src.substring(l-20,l)=="images/ftv2folderclosed.png" || 
+         imageNode.src.substring(l-18,l)=="images/ftv2folderopen.png")
+     {
+       imageNode = imageNode.previousSibling;
+       l = imageNode.src.length;
+     }
+     if (folder == null) 
+     {
+     } 
+     else if (folder.style.display == "block") 
+     {
+       if (imageNode != null) 
+       {
+         imageNode.nextSibling.src = "images/ftv2folderclosed.png";
+         if (imageNode.src.substring(l-13,l) == "images/ftv2mnode.png")
+         {
+           imageNode.src = "images/ftv2pnode.png";
+         }
+         else if (imageNode.src.substring(l-17,l) == "images/ftv2mlastnode.png")
+         {
+           imageNode.src = "images/ftv2plastnode.png";
+         }
+       }
+       folder.style.display = "none";
+     } 
+     else 
+     {
+       if (imageNode != null) 
+       {
+         imageNode.nextSibling.src = "images/ftv2folderopen.png";
+         if (imageNode.src.substring(l-13,l) == "images/ftv2pnode.png")
+         {
+           imageNode.src = "images/ftv2mnode.png";
+         }
+         else if (imageNode.src.substring(l-17,l) == "images/ftv2plastnode.png")
+         {
+           imageNode.src = "images/ftv2mlastnode.png";
+         }
+       }
+       folder.style.display = "block";
+     }
+   }
+
+   // End script hiding -->        
+
+   </script>
+
+</head>
+
+<body class="images/ftvtree">
+
+   <!--
+
+      This file is adapted from the "tree.html" file created by Doxygen.
+
+      It has been modified in the following ways:
+
+         o  Reformatted for easy editability by humans
+         o  The target frame is no longer "home", but "home"
+
+   -->
+
+<div class="directory">
+
+   <h3> <br> </h3>
+   <h3> Seq66 Basic Tutorial </h3>
+
+   <div style="display: block;">
+
+      <p>
+         <img src="images/ftv2node.png" alt="o" width=16 height=22 />
+         <img src="images/ftv2doc.png" alt="*" width=24 height=22 />
+         <a class="el" href="home.html" target="home">
+            Home
+         </a>
+
+      </p>
+
+      <p>
+         <img src="images/ftv2node.png" alt="o" width=16 height=22 />
+         <img src="images/ftv2doc.png" alt="*" width=24 height=22 />
+         <a class="el" href="introduction.html" target="home">
+            Introduction
+         </a>
+
+      </p>
+
+<!-- ---------------------------------------- -->
+
+      <p>
+         <img src="images/ftv2pnode.png" alt="o" width=16 height=22
+            onclick="toggleFolder('folder1', this)"/>
+         <img src="images/ftv2folderclosed.png" alt="+" width=24 height=22
+            onclick="toggleFolder('folder1', this)"/>
+         <a class="el" href="main_window.html" target="home"
+            title="Main Window" alt="Section 0">
+            The Main Window (Live Grid)
+         </a>
+      </p>
+
+      <div id="folder1">
+
+         <p>
+            <img src="images/ftv2vertline.png" alt="|" width=16 height=22 />
+            <img src="images/ftv2node.png" alt="o" width=16 height=22 />
+            <img src="images/ftv2doc.png" alt="*" width=24 height=22 />
+            <a class="el" href="main_window_patterns.html" target="home"
+               title="Patterns Slots" alt="Section 0.1">
+               Patterns Slots
+            </a>
+         </p>
+
+      </div>
+
+<!-- ---------------------------------------- -->
+
+      <p>
+         <img src="images/ftv2pnode.png" alt="o" width=16 height=22
+            onclick="toggleFolder('folder2', this)"/>
+         <img src="images/ftv2folderclosed.png" alt="+" width=24 height=22
+            onclick="toggleFolder('folder2', this)"/>
+         <a class="el" href="section_01.html" target="home"
+            title="Section 1" alt="Section 1">
+               Pattern Editor
+         </a>
+      </p>
+
+      <div id="folder2">
+
+         <p>
+            <img src="images/ftv2vertline.png" alt="|" width=16 height=22 />
+            <img src="images/ftv2node.png" alt="o" width=16 height=22 />
+            <img src="images/ftv2doc.png" alt="*" width=24 height=22 />
+            <a class="el" href="section_01_1.html" target="home"
+               title="Section 1.0-1" alt="Section 1.0-1">
+               Pattern Editor Basics
+            </a>
+
+         </p>
+
+      </div>
+
+<!-- ---------------------------------------- -->
+
+      <p>
+         <img src="images/ftv2pnode.png" alt="o" width=16 height=22
+            onclick="toggleFolder('folder3', this)"/>
+         <img src="images/ftv2folderclosed.png" alt="+" width=24 height=22
+            onclick="toggleFolder('folder3', this)"/>
+         <a class="el" href="section_01.html" target="home"
+            title="Section 2" alt="Section 2">
+               Song Editor
+         </a>
+      </p>
+
+      <div id="folder3">
+
+        <p>
+           <img src="images/ftv2vertline.png" alt="|" width=16 height=22 />
+           <img src="images/ftv2vertline.png" alt="|" width=16 height=22 />
+           <img src="images/ftv2node.png" alt="o" width=16 height=22 />
+           <img src="images/ftv2doc.png" alt="*" width=24 height=22 />
+           <a class="el" href="pagenotready.html" target="home"
+              title="Section xx" alt="Section xx">
+              Song Editor Basics
+           </a>
+
+        </p>
+
+      </div>
+
+<!-- ---------------------------------------- -->
+
+   </div>
+
+</div>
+
+</body>
+
+</html>
+

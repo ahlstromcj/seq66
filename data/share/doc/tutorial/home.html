@@ -1,0 +1,246 @@
+<html>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Draft//EN">
+
+<! File:       home.html>
+<! Library:    seq66/data/share/tutorial>
+<! Author:     Chris Ahlstrom >
+<! Date:       2022-05-16>
+<! Updates:    2022-05-17>
+<! Version:    $Revision$>
+<! License:    $XPC_SUITE_GPL_LICENSES$>
+
+<head>
+
+   <title> Seq66 Basic Tutorial </title>
+      
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta http-equiv="Content-Language" content="en-us">
+   <meta name="generator" content="vim">
+   <meta name="description" content="Seq66 Basic Tutorial">
+   <meta name="keywords" content="seq66 sequencer live midi">
+
+   <!--
+      This is the starting style.  Copied this to slide.css, and then making
+      mainly additions to slide.css.
+
+      <link href="css/doxygen.css" rel="stylesheet" type="text/css">
+   -->
+
+   <link href="css/slide.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+   <!--
+
+      This table is formatted in four rows and three columns, normally laid
+      out somewhat like the following.
+
+      class
+                      **************************************
+      slideheader    |  (COLSPAN == 3)                      |
+      slidetopic     |                                      |
+                      **************************************
+                     |  (spacer)                :     :     |
+                      **************************************
+      slideintro     |  (COLSPAN == 1, 2, or 3) :     :     |
+                     |                          :     :     |
+                     |                          :     :     |
+                      **************************************
+                     |  (spacer)                :     :     |
+                      **************************************
+                     |  (COLSPAN == 1, 2, or 3) :     :     |
+      slidemain      |                          :     :     |
+                     |                          :     :     |
+                     |                          :     :     |
+                      **************************************
+                     |  (spacer)                :     :     |
+                      **************************************
+      slidenote      |  (COLSPAN == 1)          |     |     |
+      slidelabel     |                          |     |label|
+                      **************************************
+
+      The label at the bottom right is a non-clickable label that should
+      match the name of the slide in the left-tree view's index.
+
+      Feel free to adapt it, though.  The easiest way is to copy the Home
+      slide or some other slide that looks close to what you want for the
+      page, and modify it.
+
+      You can also turn the border on if you want to, or change the width of
+      the empty cells.
+
+   -->
+
+   <table
+      align="LEFT"
+      width="800"
+      height="512"
+      cellpadding="4"
+      cellspacing="0">
+
+      <tbody>
+
+      <!--
+
+         We figured out how to use image-buttons to navigate, and no longer
+         have to include this code in each slide.  However, there is a small
+         form below that has to be included, and maintained for each slide,
+         below.
+
+         <tr>
+            <td align="CENTER" valign="CENTER" width="80" height="20">
+               <a href=""> Previous </a>
+            </td>
+            <td align="CENTER" valign="CENTER" height="20">
+               <font color="GREY" size="1">
+                  <a href="home.html"> Home </a>
+               </font>
+            </td>
+            <td align="CENTER" valign="CENTER" width="80" height="20">
+               <a href=""> Next </a>
+            </td>
+         </tr>
+      -->
+
+         <tr>
+            <br>
+         </tr>
+         <tr>
+
+            <td align="CENTER" valign="CENTER" colspan="3"
+               height="80" class="slideheader">
+
+               <p class="slideheader">
+                  Seq66 Basic Tutorial
+                  <p class="slidetopic"> Chris Ahlstrom, May 17, 2022 </p>
+               </p>
+            </td>
+
+         </tr>
+
+         <tr>           <!-- Spacer row -->
+            <td align="LEFT" valign="TOP" colspan="3" height="24"> &nbsp; </td>
+         </tr>
+
+         <tr>
+
+            <td align="LEFT" valign="TOP" colspan="3" class="slideintro">
+
+               <p class="slideintro">
+                  This document is a slide-show that
+                  describes the basic workings of <i>Seq66</i>.
+                  It is a quick introduction; for the complete manual,
+                  look for <code>seq66-user-manual.pdf</code>, which
+                  can be found <code>/usr/share/doc/seq66-0.98</code>
+                  or found <code>/usr/local/share/doc/seq66-0.98</code>
+                  on <i>Linux</i>, or in
+                  <code>C:/Program Files (x86)/Seq66/doc</code>
+                  on <i>Windows</i>.
+                  It can also be found in the <i>Seq66</i> source code
+                  in the <code>seq66/data/share/doc</code> directory.
+               </p>
+               <br>
+               <p class="slideintro">
+                  This tutorial covers Seq66 basics useful to
+                  persons new to this live-grid sequencer application.
+                  It covers only the main window, the pattern-editor,
+                  and the song-editor window.
+                  The event-editor, mute-groups, sets, and session tabs,
+                  as well as the usage of MIDI controllers,
+                  are discussed in the rather extensive user's manual.
+               </p>
+
+            </td>
+
+         </tr>
+
+         <tr>           <!-- Spacer row -->
+            <td align="LEFT" valign="TOP" colspan="3" height="24"> &nbsp; </td>
+         </tr>
+
+         <tr>
+
+            <td align="LEFT" valign="TOP" colspan="2">
+
+               <p class="slidemain">
+                  This tutorial covers Seq66 basics useful to
+                  persons new to this live-grid sequencer application.
+                  It is intended to get the reader up and running
+                  quickly.
+               </p>
+
+            </td>
+
+            <!-- Spacer cell -->
+
+            <td align="CENTER" valign="CENTER" width="80"> &nbsp; </td>
+
+         </tr>
+
+         <!-- Spacer row, adjust the height to put the notes at bottom.  -->
+
+         <tr>
+            <td align="LEFT" valign="TOP" colspan="3" height="80"> &nbsp; </td>
+         </tr>
+
+         <tr>
+
+            <td align="LEFT" valign="TOP" width="405"
+               colspan="1" class="slidenote">
+
+               <p class="slidenote">
+                  As time goes on, this tutorial will be tweaked, especially
+                  as requested by user input at GitHub:
+                  <a href="https://github.com/ahlstromcj/seq66">
+                    ahlstromcj/seq66
+                  </a>
+               </p>
+
+            </td>
+
+            <td align="CENTER" valign="CENTER" width="200"> &nbsp; </td>
+
+            <!-- Name of the current slide.  -->
+
+            <td align="RIGHT" valign="BOTTOM" width="80">
+               <p class="slidelabel">
+                  Home
+                  <font size="-1">
+                     Updated 2022-05-17
+                  </font>
+               </p>
+            </td>
+
+         </tr>
+
+
+      </tbody>
+
+   </table>
+
+   <!--
+
+      Navigation form
+
+      Every slide must have this form embedded in it.  The "prevlocation"
+      and "nextlocation" fields must be edited to be correct.  Labels are
+      added for "accessibility", but not really useful here due to the
+      form elements being hidden.
+
+   -->
+
+   <form name="navi">
+      <label for="prevlocation" accesskey="P">
+         <input id="prevlocation" type=hidden value="home.html">
+      <label for="nextlocation" accesskey="N">
+         <input id="nextlocation" type=hidden value="introduction.html">
+      </label>
+   </form>
+
+</body>
+
+</html>
+
