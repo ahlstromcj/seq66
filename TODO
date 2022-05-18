@@ -76,7 +76,9 @@ UI:
 
     -   Underrun display not consistent with console output with Chameleon
         tune.
-    -   Finish up the extended grid-mode functions.
+    -   Finish up the extended grid-mode functions. Also add pattern and
+        event editor instantiation to the grid mode.
+    -   Add and "END" marker to the song editor.
 
 Port-Mapping:
 

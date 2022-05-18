@@ -1,7 +1,7 @@
 # README for Seq66 0.98.8
 
 Chris Ahlstrom
-2015-09-10 to 2022-05-13
+2015-09-10 to 2022-05-18
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -90,6 +90,7 @@ Windows, and using a conventional source tarball.
             button.  Further tightening of change detection.
         *   Moved midibyte/midiboolean functions from strfunctions to midibytes
             and mutegroup.
+        *   Added an HTML tutorial and commands to access it.
     *   Version 0.98.7:
         *   Fixed issue #80 where some MIDI controls were getting recorded.
         *   Fixed issue #81, adding <stdexcept> to code catching

@@ -1419,7 +1419,7 @@ matter what sets-mode is in force. </string>
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>25</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1462,6 +1462,9 @@ matter what sets-mode is in force. </string>
     <addaction name="actionAbout"/>
     <addaction name="actionBuildInfo"/>
     <addaction name="actionSongSummary"/>
+    <addaction name="separator"/>
+    <addaction name="actionTutorial"/>
+    <addaction name="actionUserManual"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -1744,6 +1747,16 @@ in the same directory as the original, with the extension
   <action name="actionImportMIDIIntoSession">
    <property name="text">
     <string>Import MIDI into Session</string>
+   </property>
+  </action>
+  <action name="actionTutorial">
+   <property name="text">
+    <string>&amp;Tutorial</string>
+   </property>
+  </action>
+  <action name="actionUserManual">
+   <property name="text">
+    <string>&amp;User Manual</string>
    </property>
   </action>
  </widget>

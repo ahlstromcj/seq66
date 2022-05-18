@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-05-16
+ * \updates       2022-05-18
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1941,6 +1941,35 @@ user_home ()
     else
     {
         file_error("std::getenv() failed", SEQ66_ENV_HOME);
+    }
+    return result;
+}
+
+/**
+ *  Given a list of potential directories, try to find a given file in them.
+ *
+ * \param dirlist
+ *      A list of directories to search.
+ *
+ * \param filename
+ *      The base name ("name.ext") of the file to find.
+ *
+ * \return
+ *      Returns the full file-specification to get the file, if found.
+ *      Otherwise, it returns an empty string.
+ */
+
+std::string
+find_file
+(
+    const tokenization & dirlist,
+    const std::string & filename
+)
+{
+    std::string result;
+    if (dirlist.size() > 0 && ! filename.empty())
+    {
+        // TODO
     }
     return result;
 }

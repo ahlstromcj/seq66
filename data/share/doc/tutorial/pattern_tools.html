@@ -2,17 +2,17 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Draft//EN">
 
-<! File:       main_window_patterns.html>
+<! File:       pattern_tools.html>
 <! Library:    seq66/data/share/tutorial>
 <! Author:     Chris Ahlstrom >
-<! Date:       2022-05-17>
+<! Date:       2022-05-18>
 <! Updates:    2022-05-18>
 <! Version:    $Revision$>
 <! License:    $XPC_SUITE_GPL_LICENSES$>
 
 <head>
 
-   <title> Seq66 Basic Tutorial: Main Window </title>
+   <title> Seq66 Basic Tutorial: Pattern Tools </title>
       
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta http-equiv="Content-Language" content="en-us">
@@ -46,7 +46,7 @@
                height="80" class="slideheader">
                <p class="slideheader">
                   Seq66 Basic Tutorial
-                  <p class="slidetopic"> Pattern Slots </p>
+                  <p class="slidetopic"> Pattern Tools </p>
                </p>
             </td>
          </tr>
@@ -59,18 +59,19 @@
 
             <td align="left" valign="top" colspan="3" class="slideintro">
 
-                The figure below shows the layout of patterns slots, and
-                the right-click menu for a pattern slot.
+                The <i>Tools</i> button provides for note selection, quantization,
+                pitch and harmonic transposition, an LFO generator, and a "pattern
+                fixer".
+                The figure below shows the LFO and Pattern-fix dialogs.
 
             </td>
 
          </tr>
 
-         <!-- Spacer row, usually "20" to "40"
+         <!-- Spacer row, usually "20" to "40" -->
          <tr>
             <td align="left" valign="top" colspan="3" height="0"> &nbsp; </td>
          </tr>
-         -->
 
          <tr>
 
@@ -78,69 +79,77 @@
 
                <p class="slidemain">
 
-                  <b> The Slot. </b>
-                  Pattern slots are the square buttons in the
-                  <i>Live Grid</i>. Note the following contents of a slot,
-                  if it is not an empty/blank slot:
+                  <b> LFO Generator. </b>
+                  The LFO generator allows one to apply <i>modulation</i>
+                  to the events shown in the <i>data pane</i>.
+                  The following adjustments can be made:
 
                   <ul>
 
                      <li>
-                        <b> Track Title. </b>
-                        This holds a short title for the slot's track.
+                        <b> DC Offset. </b>
+                        Provides the basic level of the adjustment.
                      </li>
 
                      <li>
-                        <b> Measures. </b>
-                        The number of measures of a pattern can be any value.
-                        Usually the patterns are short: 1, 2, 4,
-                        8 ... measures.  Whatever the song needs.
+                        <b> Depth. </b>
+                        Provides the modulation depth.
                      </li>
 
                      <li>
-                        <b> Status. </b>
-                        Most often, a track is either "Muted" (silent) or
-                        "Armed".  Other statuses are "Queued" and
-                        "One-shot", which are explained in the user's manual.
+                        <b> Period. </b>
+                        Provides the number of periods in the modulation, where
+                        period applies.
                      </li>
 
                      <li>
-                        <b> Progress Box. </b>
-                        The rectangle in the center of the slot represents
-                        the "color" of the track (if any), the events in
-                        the track, and the progress bar (if armed).
+                        <b> Phase. </b>
+                        Provides the modulation phase, if applicable.
                      </li>
 
                      <li>
-                        <b> Pattern Number. </b>
-                        Each pattern is numbered from 0 to 31.
-                        Pattern numbers vary fastest by row;
-                        unusual, but can be changed. See the user's manual.
+                        <b> Use Measures (vs Lenght). </b>
+                        Determines the duration to use.
                      </li>
 
                      <li>
-                        <b> Port-Channel Numbers. </b>
-                        Each pattern is assigned MIDI port and
-                        <i>output</i> channel numbers.
-                        Ports numbers start at 0;
-                        port names are shown in <i>Edit / Preferences</i>.
-                        Channels go from 1 to 16;
-                        "F" means there's no output channel.
+                        <b> Wave Type. </b>
+                        Determines the wave to use, such as sine and triangle
+                        waves.
+                     </li>
+
+                  </ul>
+
+               </p>
+
+               <p class="slidemain">
+
+                  <b> Pattern Fix. </b>
+                  This dialog allows for multiple was to alert/fix a
+                  pattern, useful for people with lousy timing, etc.
+                  The following adjustments can be made:
+
+                  <ul>
+
+                     <li>
+                        <b> Length Change. </b>
+                        One can change the number of measures,
+                        the time-signature (tricky), and the scale factor.
+                        Note that here, changing measures rescales the pattern,
+                        unlike changing the measure in the pattern-editor.
                      </li>
 
                      <li>
-                        <b> Time Signature. </b>
-                        The time signature of the pattern
-                        merely determines how the track looks in the
-                        pattern editor.
+                        <b> Quantization. </b>
+                        Provides tightening/full quantization, and also
+                        time jitter.
                      </li>
 
                      <li>
-                        <b> Right-click Menu. </b>
-                        This menu provides for creating/editing
-                        a pattern (also doable by a double-click or a hot-key).
-                        Patterns can be copied, moved, merged, have a
-                        color shown, etc.
+                        <b> Other Fixes. </b>
+                        Provides left-alignment, pattern reversal, and the
+                        option to preserve note length.
+                        period applies.
                      </li>
 
                   </ul>
@@ -154,10 +163,20 @@
                <p class="slidemain">
 
                   <p class="slideintro">
-                     <img src="images/app/pattern-slot.png"
-                       alt="Seq66 pattern slots in the Live grid"
+                     <img src="images/app/lfo.png"
+                       alt="Seq66 LFO generator for patterns"
                        width="300" height="auto">
                   </p>
+
+                  <br>
+
+                  <p class="slideintro">
+                     <img src="images/app/patternfix.png"
+                       alt="Seq66 pattern fix window"
+                       width="300" height="auto">
+                  </p>
+
+                  <br>
 
                </p>
 
@@ -183,9 +202,8 @@
                colspan="3" class="slidenote">
 
                <p class="slidenote">
-                    Patterns go by many names:
-                    tracks, loops, sequences (!),
-                    and slots.
+                    See the user's manual for full descriptions of the
+                    tools in the <i>Pattern Editor Tools</i> menu.
                </p>
 
             </td>
@@ -198,7 +216,7 @@
 
             <td align="left" valign="bottom" colspan="1" width="80">
                <p class="slidelabel">
-                  Pattern Slots
+                  Pattern Tools
                </p>
             </td>
             -->

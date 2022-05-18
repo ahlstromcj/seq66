@@ -1,0 +1,82 @@
+"
+" Setting up for neovim:
+"
+" mkdir -p ${XDG_CONFIG_HOME:=$HOME/.config}
+" ln -s ~/.vim $XDG_CONFIG_HOME/nvim
+" ln -s ~/.vimrc $XDG_CONFIG_HOME/nvim/init.vim
+"
+:set nocompatible
+:set autoindent
+:set smartindent
+" Try turning this off for awhile:  :set cindent
+:set formatoptions=tcroql
+:set nohlsearch
+:set expandtab
+:set noic
+:set foldmethod=manual
+:set nofoldenable
+:set ts=4
+:set wm=3
+:set sw=4
+:set noerrorbells
+:set novisualbell
+:set vb t_vb=
+:set modeline
+:set equalprg=astyle
+:filetype detect
+:syntax on
+:set background=dark
+:set mps+=<:>
+:let c_gnu=1
+:set makeef=err.t          " 'makeef' file is used with the ":make" command
+:set autowrite
+:let loaded_matchparen=1   " Inhibit loading of pi_paren plugin.  (:NoMatchParen)
+" :match Ignore /\r$/        " Don't show those nasty ^M's
+" :let c_minlines=200      " Comment out if you think it hurts performance
+:let c_space_errors=1      " Comment out if you think it hurts your eyes
+
+" Function-key mappings
+"
+" F1:  turn off annoying accidental invoking of help mode
+" F2:  quit all files
+" F3:  Like F10, for use in roxterm, which won't disable F10
+" F4:  Recode rest of document to UTF-8
+" F5:  Turn off pasting mode
+" F6:  Turn on pasting mode to avoid auto-indent disasters
+" F7:  Write the file
+" F8:  Same as F11
+" F9:  go to previous file in list (like :N)
+" F10: go to next file in list (like :n)
+" F11: toggle-key for light versus dark backgrounds
+" F12: Refresh syntax high-lighting (e.g. in long Doxygen documents)
+
+:imap <F1> <Esc>
+:map <F1>  <Esc>
+:map <F2>  :qa<CR>
+:map <F3>  :n<CR>
+:map <F4>  :.,$!recode utf8<CR>
+:map <F5>  :set nopaste<CR>
+:map <F6>  :set paste<CR>
+:map <F7>  :w<CR>
+:map <F8> :let &background = ( &background == "dark" ? "light" : "dark" )<CR>
+:map <F9>  :N<CR>
+:map <F10> :n<CR>
+:map <F11> :let &background = ( &background == "dark" ? "light" : "dark" )<CR>
+:map <F12> :syntax sync fromstart<CR>
+
+" Shift function-key mappings
+
+:map <xF3> :set fileformat=dos<CR>
+:map <xF4> :set ft=cpp<CR>
+:map <xF10> :n<CR>
+:map <xF11> :let &background = ( &background == "dark" ? "light" : "dark" )<CR>
+
+" Settings only for HTML
+
+autocmd BufRead,BufNewFile *.html setlocal tabstop=3 shiftwidth=3 softtabstop=3
+
+" Acts like plain F5!:     :map <xF5> :set fileformat=dos<CR> 
+
+:let $PAGER=''
+
+" vim: ts=3 sw=3 ft=vim

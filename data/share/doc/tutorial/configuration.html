@@ -1,0 +1,261 @@
+<html>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Draft//EN">
+
+<! File:       configuration.html>
+<! Library:    seq66/data/share/tutorial>
+<! Author:     Chris Ahlstrom >
+<! Date:       2022-05-18>
+<! Updates:    2022-05-18>
+<! Version:    $Revision$>
+<! License:    $XPC_SUITE_GPL_LICENSES$>
+
+<head>
+
+   <title> Seq66 Basic Tutorial: Configuration </title>
+      
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta http-equiv="Content-Language" content="en-us">
+   <meta name="generator" content="vim">
+   <meta name="description" content="Seq66 Basic Tutorial">
+   <meta name="keywords" content="seq66 sequencer live midi">
+   <link href="css/slide.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+   <table
+      align="left"
+      width="800"
+      height="512"
+      cellpadding="4"
+      cellspacing="0">
+
+      <tbody>
+
+         <tr>
+            <br>
+         </tr>
+         <tr>
+            <td align="center" valign="center" colspan="3"
+               height="80" class="slideheader">
+               <p class="slideheader">
+                  Seq66 Basic Tutorial
+                  <p class="slidetopic"> Configuration </p>
+               </p>
+            </td>
+         </tr>
+
+         <tr>        <!-- Spacer row, usually "24" to "40" in height  -->
+            <td align="left" valign="top" colspan="3" height="2"> &nbsp; </td>
+         </tr>
+
+         <tr>
+
+            <td align="left" valign="top" colspan="3" class="slideintro">
+
+                The figure below shows the <i>Edit / Preferences </i> window.
+                It is a bit small, so run <code>qseq66</code>
+                (<code>qpseq66.exe</code> in Windows) to see the window elements.
+                It provides a way to configure and restart <i>Seq66</i>,
+                though it does not handle all configuration items.
+            </td>
+
+         </tr>
+
+         <!-- Spacer row, usually "20" to "40"
+         <tr>
+            <td align="left" valign="top" colspan="3" height="0"> &nbsp; </td>
+         </tr>
+         -->
+
+         <tr>
+
+            <td align="left" valign="top" colspan="1">
+
+              <b>Seq66 Configuration.</b>
+              The configuration is stored in a number of files stored in
+              the user's configuration folder.
+              <i>Linux</i>: <code>/home/user/.config/seq66</code>.
+              <i>Windows</i>: <code>C:/Users/user/AppData/Local/seq66/</code>.
+              Some settings can be made in
+              <i>Edit / Preferences</i>;
+              other less-used options require editing the file.
+              The file extensions:
+
+              <ul>
+
+                 <li>
+                    <b>rc</b>.
+                    This file (e.g. <code>qseq66.rc</code>) is
+                    the main configuration file.  It specifies the MIDI I/O ports,
+                    port mapping, names and status of the
+                    other configuration files, a list of "recent files",
+                    and other settings.
+                 </li>
+
+                 <li>
+                    <b>usr</b>.
+                    This file configures options instrument and buss name
+                    overrides, many user-interface settings, some default
+                    song settings, and a few more.
+                 </li>
+
+                 <li>
+                    <b>ctrl</b>.
+                    Provides keystrokes and MIDI events to control
+                    <i>Seq66</i>.  By default, only keystrokes are provided.
+                    Edited this file to add MIDI control events, MIDI
+                    status-display events, and MIDI macros.
+                    A <i>Novation LaunchPad Mini</i> configuration is
+                    provided as an example.
+                 </li>
+
+                 <li>
+                    <b>mutes</b>.
+                    This file contains mute-group settings.
+                    These can be edited in the <i>Live</i> grid and
+                    in the <i>Mutes</i> tab.  See the user manual.
+                 </li>
+
+                 <li>
+                    <b>playlist</b>.
+                    This file contains play-lists,
+                    editable in the <i>Playlist</i> tab or
+                    in the play-list file.
+                    See the user manual.
+                 </li>
+
+                 <li>
+                    <b>drums</b>.
+                    This file contains note remappings, useful for
+                    converting from old MIDI drum sets to GM drum sets.
+                    Also called the "note mapper".
+                    See the user manual.
+                 </li>
+
+                 <li>
+                    <b>palette</b>.
+                    This file allows control of pattern colors,
+                    user-interface coloring in the <i>Seq66</i>-drawn
+                    areas, such as piano rolls.  It can change brush
+                    patterns for drawing notes, scales, and background
+                    patterns.  It must be edited by hand.
+                 </li>
+
+              </ul>
+
+            </td>
+
+            <td align="center" valign="center" width="400" colspan="2">
+
+               <table>
+
+                    <tr>
+                        <td align="left" valign="top">
+
+                            <ul>
+
+                             <li>
+                                <b>qss</b>.
+                                These files are <i>Qt</i> style sheets, which can
+                                be used to change the colors of <i>Qt</i>-drawn
+                                elements, overriding the theme settings 
+                             </li>
+                            </ul>
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+                        <td align="center" valign="center">
+
+                           <p class="slidemain">
+
+                               <p class="slideintro">
+                                  <img src="images/app/preferences.png"
+                                    alt="Seq66 preferences dialog"
+                                    width="300" height="auto">
+                               </p>
+
+                           </p>
+                        </td>
+                    </tr>
+
+               <p>
+               </p>
+
+               </table>
+
+            </td>
+
+            <!-- Spacer cell
+            <td align="center" valign="center" width="80"> &nbsp; </td>
+            -->
+
+         </tr>
+
+         <!-- Spacer row, adjust the height to put the notes at bottom.
+
+         <tr>
+            <td align="left" valign="top" colspan="3" height="2"> &nbsp; </td>
+         </tr>
+         -->
+
+         <tr>
+
+            <!-- width="405"  height="80" -->
+
+            <td align="left" valign="top" width="512"
+               colspan="2" class="slidenote">
+
+               <p class="slidenote">
+                  This editor is jam-packed with functionality.
+                  Be sure to try clicking or right clicking on the
+                  grid and the various buttons.
+                  Hover the mouse cursor over an interface item; often
+                  a tool-tip will appear.
+               </p>
+
+            </td>
+
+            <!--
+
+            <td align="center" valign="center" width="80" height="80">
+               &nbsp;
+            </td>
+
+            -->
+
+            <!-- Name of the current slide.
+
+            <td align="left" valign="bottom" width="80"> <! height="80">
+               <p class="slidelabel">
+                  Configuration
+               </p>
+            </td>
+            -->
+
+         </tr>
+
+      </tbody>
+
+   </table>
+
+   <!-- Navigation form -->
+
+   <form name="navi">
+      <label for="prevlocation" accesskey="P">
+         <input id="prevlocation" type=hidden value="introduction.html">
+      <label for="nextlocation" accesskey="N">
+         <input id="nextlocation" type=hidden value="section_00_1.html">
+      </label>
+   </form>
+
+</body>
+
+</html>
+

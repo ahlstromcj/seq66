@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-14
+ * \updates       2022-05-18
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -443,6 +443,16 @@ qsmainwnd::qsmainwnd
     (
         ui->actionSongSummary, SIGNAL(triggered(bool)),
         this, SLOT(slot_summary_save())
+    );
+    connect
+    (
+        ui->actionTutorial, SIGNAL(triggered(bool)),
+        this, SLOT(slot_tutorial())
+    );
+    connect
+    (
+        ui->actionSongSummary, SIGNAL(triggered(bool)),
+        this, SLOT(slot_user_manual())
     );
 
     /*
@@ -1036,6 +1046,16 @@ qsmainwnd::slot_summary_save ()
         if (show_text_file_dialog(this, fname))
             write_song_summary(cb_perf(), fname);
     }
+}
+
+void
+qsmainwnd::slot_tutorial ()
+{
+}
+
+void
+qsmainwnd::slot_user_manual ()
+{
 }
 
 /**

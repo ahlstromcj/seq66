@@ -2,17 +2,17 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Draft//EN">
 
-<! File:       main_window.html>
+<! File:       song_editor.html>
 <! Library:    seq66/data/share/tutorial>
 <! Author:     Chris Ahlstrom >
-<! Date:       2022-05-17>
+<! Date:       2022-05-18>
 <! Updates:    2022-05-18>
 <! Version:    $Revision$>
 <! License:    $XPC_SUITE_GPL_LICENSES$>
 
 <head>
 
-   <title> Seq66 Basic Tutorial: Main Window </title>
+   <title> Seq66 Basic Tutorial: Song Editor </title>
       
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta http-equiv="Content-Language" content="en-us">
@@ -42,7 +42,7 @@
                height="80" class="slideheader">
                <p class="slideheader">
                   Seq66 Basic Tutorial
-                  <p class="slidetopic"> Main Window </p>
+                  <p class="slidetopic"> Song Editor </p>
                </p>
             </td>
          </tr>
@@ -55,8 +55,9 @@
 
             <td align="left" valign="top" colspan="3" class="slideintro">
 
-                The figure below is an annotated version of the main
-                window.  It is a bit small, so run <code>qseq66</code>
+                The figure below shows the external (as opposed to the
+                <i>Song</i> tab) <i>Song Editor</i> window.
+                It is a bit small, so run <code>qseq66</code>
                 (<code>qpseq66.exe</code> in Windows) to see the window elements.
             </td>
 
@@ -71,53 +72,42 @@
             <td align="left" valign="top" colspan="1">
 
               <ul>
-
                  <li>
-                    <b> Menu. </b>
-                    Provides some expected functions, including opening,
-                    saving, import/export, recent files, help.... 
+                    <b> Top bar. </b>
+                    These controls support undo/redo, follow-progress,
+                    zoom, snap, entering "triggers", transposition, and editing
+                    the layout. Also shows the time duration of the layout.
                  </li>
 
                  <li>
-                    <b> Main Top bar. </b>
-                    Provides status and time information, and allows
-                    for changing the MIDI bus and time signature
-                    of the whole song.
+                    <b> Time line. </b>
+                    Provides for vertical zoom and the markers "L" and "R" for
+                    looping.
+                    The L/R markers can be moved; 
+                    a starting position can be set.
                  </li>
 
                  <li>
-                    <b> Tabs. </b>  
-                    The tabs provide compact access to various views of
-                    the song.
+                    <b> Names panel. </b>
+                    Shows much the same information as does a pattern slot.
+                    Shows the mute status.
+                    A track can be click here to toggle its mute status.
                  </li>
 
                  <li>
-                    <b> Patterns Panel (Live Grid). </b>
-                    This item show a single <b>set</b> of patterns.
-                    Patterns are also called "tracks", "loops", or
-                    "sequences". The patterns can be muted/unmuted by
-                    clicking on them.  Each pattern can also be opened for
-                    editing via a right-click menu. Keystrokes ("hot-keys")
-                    can also activate or edit a pattern.
-                 </li>
-
-                 <li>
-                    <b> Grid Mode. </b>
-                    This control selects what a click or hot-key does to
-                    a pattern.  The default ("Loop") toggles the track.
-                    "Record" mode toggles recording.  There are other modes
-                    as well.
-                 </li>
-
-                 <li>
-                    <b> Main Bottom. </b>
-                    The top row at the bottom allows for naming and change the
-                    active set.
-                    The bottom row are standard play/record buttons, plus a
-                    Song/Live toggle button and a beats-per-minute indicator.
+                    <b> Piano roll. </b>
+                    The piano roll shows the layout of the patterns in a song.
+                    It starts out empty, then one can paint layouts of
+                    each track.
+                    The layouts can snap to a given resolution, and
+                    can be split or deleted.
+                    The <i> File / Export / Export song </i> action can
+                    be used to save the song in a format that
+                    other sequencers can read.
                  </li>
 
               </ul>
+
             </td>
 
             <td align="center" valign="center" colspan="2">
@@ -125,8 +115,8 @@
                <p class="slidemain">
 
                    <p class="slideintro">
-                      <img src="images/app/main-window.png"
-                        alt="Seq66 main window with Live grid"
+                      <img src="images/app/song-editor.png"
+                        alt="Seq66 external song editor window"
                         width="400" height="auto">
                    </p>
 
@@ -179,7 +169,7 @@
 
             <td align="left" valign="bottom" width="80"> <! height="80">
                <p class="slidelabel">
-                  Main Window
+                  Song Editor
                </p>
             </td>
             -->

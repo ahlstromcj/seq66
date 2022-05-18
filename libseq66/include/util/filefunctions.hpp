@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-05-16
+ * \updates       2022-05-18
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -36,6 +36,8 @@
 
 #include <cstdio>                       /* std::FILE *                      */
 #include <string>                       /* std::string ubiquitous class     */
+
+#include "util/basic_macros.hpp"        /* seq6::tokenization vector        */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -163,6 +165,11 @@ extern std::string file_extension_set
 );
 extern std::string executable_full_path ();
 extern std::string user_home ();
+extern std::string find_file
+(
+    const tokenization & dirlist,
+    const std::string & filename
+);
 
 #endif      // SEQ66_FILEFUNCTIONS_HPP
 
