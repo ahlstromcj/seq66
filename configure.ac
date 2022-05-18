@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2022-05-10
+dnl \update        2022-05-18
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -85,7 +85,7 @@ AC_DEFINE_UNQUOTED(
    "Distro of build")
    AC_DEFINE(CLIENT_NAME, ["seq66"], "Name to display as client/port")
 
-VERSION="0.98.8"
+VERSION="$MINOR_VERSION.8"
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
 AC_SUBST(VERSION)
 
@@ -122,7 +122,8 @@ dnl 1.b. Set up the version strings.  The primary version string of interest
 dnl      is SEQ66_API_VERSION.
 
 SEQ66_API_VERSION="$SEQ66_API_MAJOR.$SEQ66_API_MINOR"
-AC_SUBST([SEQ66_API_VERSION])
+AC_DEFINE(API_VERSION, ["0.98"], [Seq66 API version])
+AC_SUBST([API_VERSION])
 
 dnl 1.c. Report the version information in the progress output.
 
@@ -482,7 +483,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2022-05-11"
+#define VERSION_DATE_SHORT "2022-05-18"
 #define VERSION "0.98.8"
 
 )

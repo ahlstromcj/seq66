@@ -68,6 +68,7 @@
  *      #include "qseqeditframe.hpp"    // Kepler34 version
  */
 
+#include <QDesktopServices>             /* used for opening a URL           */
 #include <QErrorMessage>                /* QErrorMessage                    */
 #include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QInputDialog>                 /* prompt for NSM MIDI file-name    */
@@ -76,6 +77,7 @@
 #include <QResizeEvent>                 /* QResizeEvent                     */
 #include <QScreen>                      /* Qscreen                          */
 #include <QTimer>                       /* QTimer                           */
+
 #include <iomanip>                      /* std::hex, std::setw()            */
 #include <sstream>                      /* std::ostringstream               */
 #include <utility>                      /* std::make_pair()                 */
@@ -451,7 +453,7 @@ qsmainwnd::qsmainwnd
     );
     connect
     (
-        ui->actionSongSummary, SIGNAL(triggered(bool)),
+        ui->actionUserManual, SIGNAL(triggered(bool)),
         this, SLOT(slot_user_manual())
     );
 
@@ -1051,11 +1053,23 @@ qsmainwnd::slot_summary_save ()
 void
 qsmainwnd::slot_tutorial ()
 {
+    std::string tutpath = find_file(tutorial_folder_list(), "index.html");
+    if (! tutpath.empty())
+    {
+        QString link = qt(tutpath);             /* "http://www.google.com" */
+        QDesktopServices::openUrl(QUrl(link));
+    }
 }
 
 void
 qsmainwnd::slot_user_manual ()
 {
+    std::string docpath = find_file(doc_folder_list(), "seq66-user-manual.pdf");
+    if (! docpath.empty())
+    {
+        QString link = qt(docpath);
+        QDesktopServices::openUrl(QUrl::fromLocalFile(link));
+    }
 }
 
 /**

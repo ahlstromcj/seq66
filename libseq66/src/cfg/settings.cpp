@@ -401,6 +401,68 @@ ppqn_in_range (int ppqn)
     return usr().use_file_ppqn() || usr().is_ppqn_valid(ppqn);
 }
 
+/**
+ *  This list is useful to look up the installed documentation.
+ */
+
+const tokenization &
+doc_folder_list ()
+{
+#if defined SEQ66_PLATFORM_WINDOWS
+    static tokenization s_folder_list
+    {
+        "C:/Program Files (x86)/Seq66/data/doc",
+        "C:/Program Files/Seq66/data/doc",
+        ""                              /* terminator   */
+    };
+#else
+    static bool s_uninitialized = true;
+    static tokenization s_folder_list;
+    static std::string s_usr_dir;
+    static std::string s_usr_local_dir;
+    if (s_uninitialized)
+    {
+        s_usr_dir = "/usr/share/doc/" + seq_api_subdirectory();
+        s_usr_local_dir = "/usr/local/share/doc/" + seq_api_subdirectory();
+        s_folder_list.push_back(s_usr_dir);
+        s_folder_list.push_back(s_usr_local_dir);
+        s_folder_list.push_back("data/share/doc");  /* source distro file?  */
+        s_uninitialized = false;
+    }
+#endif
+    return s_folder_list;
+}
+
+const tokenization &
+tutorial_folder_list ()
+{
+#if defined SEQ66_PLATFORM_WINDOWS
+    static tokenization s_folder_list
+    {
+        "C:/Program Files (x86)/Seq66/data/doc/tutorial",
+        "C:/Program Files/Seq66/data/doc/tutorial",
+        ""                              /* terminator   */
+    };
+#else
+    static bool s_uninitialized = true;
+    static tokenization s_folder_list;
+    static std::string s_usr_dir;
+    static std::string s_usr_local_dir;
+    if (s_uninitialized)
+    {
+        s_usr_dir = "/usr/share/doc/" + seq_api_subdirectory();
+        s_usr_local_dir = "/usr/local/share/doc/" + seq_api_subdirectory();
+        s_usr_dir += "/tutorial";
+        s_usr_local_dir += "/tutorial";
+        s_folder_list.push_back(s_usr_dir);
+        s_folder_list.push_back(s_usr_local_dir);
+        s_folder_list.push_back("data/share/doc/tutorial");
+        s_uninitialized = false;
+    }
+#endif
+    return s_folder_list;
+}
+
 }           // namespace seq66
 
 /*

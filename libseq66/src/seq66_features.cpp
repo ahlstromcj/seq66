@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2022-05-10
+ * \updates       2022-05-18
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -35,6 +35,7 @@
 
 #include <sstream>                      /* std::ostringstream               */
 
+#include "seq66-config.h"               /* automake-generated or for qmake  */
 #include "seq66_features.hpp"           /* feature macros, seq66 namespace  */
 
 #if defined SEQ66_PLATFORM_UNIX
@@ -87,6 +88,7 @@ static std::string s_client_name_tag = "[" SEQ66_CLIENT_NAME "]";
 static std::string s_icon_name = SEQ66_ICON_NAME;           /* unchanging */
 static std::string s_package_name = SEQ66_PACKAGE_NAME;
 static std::string s_session_tag = "Session";
+static std::string s_api_version = SEQ66_API_VERSION;
 static std::string s_version = SEQ66_VERSION;
 static std::string s_versiontext = SEQ66_APP_NAME " " SEQ66_VERSION " "
     SEQ66_GIT_VERSION " " SEQ66_VERSION_DATE_SHORT "\n";
@@ -356,8 +358,23 @@ session_tag (const std::string & refinement)
 }
 
 /**
- *  Returns the version of the application.
+ *  Returns the version information of the application.
  */
+
+const std::string &
+seq_api_version ()
+{
+    return s_api_version;
+}
+
+const std::string &
+seq_api_subdirectory ()
+{
+    static std::string s_subdirectory =
+        seq_package_name() + "-" + seq_api_version();
+
+    return s_subdirectory;
+}
 
 const std::string &
 seq_version ()

@@ -45,6 +45,7 @@
 #include <ctime>                        /* std::strftime()                  */
 #include <sys/stat.h>
 
+#include "cfg/settings.hpp"             /* seq66::doc_folder_list()         */
 #include "util/basic_macros.hpp"        /* support and platform macros      */
 #include "util/filefunctions.hpp"       /* free functions in seq66 n'space  */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
@@ -1969,7 +1970,22 @@ find_file
     std::string result;
     if (dirlist.size() > 0 && ! filename.empty())
     {
-        // TODO
+        for (const auto & folder : dirlist)
+        {
+            if (folder.empty())
+            {
+                break;
+            }
+            else
+            {
+                std::string fullspec = filename_concatenate(folder, filename);
+                if (file_exists(fullspec))
+                {
+                    result = fullspec;
+                    break;
+                }
+            }
+        }
     }
     return result;
 }
