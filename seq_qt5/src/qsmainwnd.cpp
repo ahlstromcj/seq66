@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-18
+ * \updates       2022-05-19
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -68,7 +68,6 @@
  *      #include "qseqeditframe.hpp"    // Kepler34 version
  */
 
-#include <QDesktopServices>             /* used for opening a URL           */
 #include <QErrorMessage>                /* QErrorMessage                    */
 #include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QInputDialog>                 /* prompt for NSM MIDI file-name    */
@@ -77,6 +76,12 @@
 #include <QResizeEvent>                 /* QResizeEvent                     */
 #include <QScreen>                      /* Qscreen                          */
 #include <QTimer>                       /* QTimer                           */
+
+#if defined USE_QDESKTOPSERVICES
+#include <QDesktopServices>             /* used for opening a URL           */
+#else
+#include "os/shellexecute.hpp"          /* seq66::open_pdf(), open_url()    */
+#endif
 
 #include <iomanip>                      /* std::hex, std::setw()            */
 #include <sstream>                      /* std::ostringstream               */
@@ -1056,8 +1061,12 @@ qsmainwnd::slot_tutorial ()
     std::string tutpath = find_file(tutorial_folder_list(), "index.html");
     if (! tutpath.empty())
     {
+#if defined USE_QDESKTOPSERVICES
         QString link = qt(tutpath);             /* "http://www.google.com" */
         QDesktopServices::openUrl(QUrl(link));
+#else
+        (void) open_url(tutpath);
+#endif
     }
 }
 
@@ -1067,8 +1076,12 @@ qsmainwnd::slot_user_manual ()
     std::string docpath = find_file(doc_folder_list(), "seq66-user-manual.pdf");
     if (! docpath.empty())
     {
+#if defined USE_QDESKTOPSERVICES
         QString link = qt(docpath);
         QDesktopServices::openUrl(QUrl::fromLocalFile(link));
+#else
+        (void) open_pdf(docpath);
+#endif
     }
 }
 

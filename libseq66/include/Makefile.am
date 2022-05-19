@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2022-05-14
+# \update      2022-05-19
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -141,6 +141,7 @@ nobase_include_HEADERS = \
  sessions/clinsmanager.hpp \
  sessions/smanager.hpp \
  os/daemonize.hpp \
+ os/shellexecute.hpp \
  os/timing.hpp \
  util/automutex.hpp \
  util/basic_macros.h \

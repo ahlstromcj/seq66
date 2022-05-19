@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2022-05-16
+ * \updates       2022-05-19
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -427,6 +427,9 @@ doc_folder_list ()
         s_folder_list.push_back(s_usr_dir);
         s_folder_list.push_back(s_usr_local_dir);
         s_folder_list.push_back("data/share/doc");  /* source distro file?  */
+#if defined SEQ66_PLATFORM_DEBUG
+        s_folder_list.push_back("../seq66/data/share/doc");  /* shadow dir  */
+#endif
         s_uninitialized = false;
     }
 #endif
@@ -457,6 +460,9 @@ tutorial_folder_list ()
         s_folder_list.push_back(s_usr_dir);
         s_folder_list.push_back(s_usr_local_dir);
         s_folder_list.push_back("data/share/doc/tutorial");
+#if defined SEQ66_PLATFORM_DEBUG
+        s_folder_list.push_back("../seq66/data/share/doc/tutorial");
+#endif
         s_uninitialized = false;
     }
 #endif

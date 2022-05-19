@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2022-05-14
+# \update      2022-05-19
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -51,6 +51,7 @@ SEQ66_API_VERSION = @SEQ66_API_VERSION@
 SEQ66_LT_CURRENT = @SEQ66_LT_CURRENT@
 SEQ66_LT_REVISION = @SEQ66_LT_REVISION@
 SEQ66_LT_AGE = @SEQ66_LT_AGE@
+SEQ66_LIBTOOL_VERSION = @SEQ66_LIBTOOL_VERSION@
 
 #******************************************************************************
 # Install directories
@@ -87,7 +88,7 @@ builddir = @abs_top_builddir@
 # libtool
 #-----------------------------------------------------------------------------
 
-version = $(SEQ66_API_MAJOR):$(SEQ66_API_MINOR):$(SEQ66_API_PATCH)
+version = $(SEQ66_LIBTOOL_VERSION)
 
 #*****************************************************************************
 # git_version
@@ -200,6 +201,7 @@ libseq66_la_SOURCES = \
  sessions/clinsmanager.cpp \
  sessions/smanager.cpp \
  os/daemonize.cpp \
+ os/shellexecute.cpp \
  os/timing.cpp \
  util/automutex.cpp \
  util/basic_macros.cpp \

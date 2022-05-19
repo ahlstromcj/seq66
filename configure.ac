@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2022-05-18
+dnl \update        2022-05-19
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -76,7 +76,9 @@ AC_DEFINE(APP_TYPE, ["qt5"], "Type of the Seq66 executable, qt/cli")
 AC_DEFINE(APP_ENGINE, ["rtmidi"], "Seq66 MIDI engine, rtmidi/portmidi")
 build_os="'$(uname -srm)'"
 
-dnl Get the value of /etc/issue.net and remove new lines.
+dnl Get the value of /etc/issue.net and remove new lines. Note that
+dnl the CLIENT_NAME macro is always "seq66" and is used as part of
+dnl the installation sub-directories.
 
 AC_DEFINE_UNQUOTED(APP_BUILD_OS, ["$build_os"], "OS/kernel where build was done")
 AC_DEFINE_UNQUOTED(
@@ -84,10 +86,6 @@ AC_DEFINE_UNQUOTED(
    "[m4_normalize(esyscmd([cat /etc/issue.net]))]",
    "Distro of build")
    AC_DEFINE(CLIENT_NAME, ["seq66"], "Name to display as client/port")
-
-VERSION="$MINOR_VERSION.8"
-AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
-AC_SUBST(VERSION)
 
 SEQ66_SUITE_NAME="SEQ66"
 AC_SUBST([SEQ66_SUITE_NAME])
@@ -103,8 +101,6 @@ AC_SUBST([SEQ66_API_MINOR])
 SEQ66_API_PATCH="0"
 AC_SUBST([SEQ66_API_PATCH])
 
-SEQ66_OFFICIAL_VERSION="$SEQ66_API_MAJOR.$SEQ66_API_MINOR.$SEQ66_API_PATCH"
-
 dnl For version 1.0.0, we will reset the libtool version information.
 
 SEQ66_LT_CURRENT="0"
@@ -116,7 +112,8 @@ AC_SUBST([SEQ66_LT_REVISION])
 SEQ66_LT_AGE="0"
 AC_SUBST([SEQ66_LT_AGE])
 
-SEQ66_LIBTOOL_VERSION="$SEQ66_LT_CURRENT.$SEQ66_LT_REVISION.$SEQ66_LT_AGE"
+SEQ66_LIBTOOL_VERSION="$SEQ66_LT_CURRENT:$SEQ66_LT_REVISION:$SEQ66_LT_AGE"
+AC_SUBST([SEQ66_LIBTOOL_VERSION])
 
 dnl 1.b. Set up the version strings.  The primary version string of interest
 dnl      is SEQ66_API_VERSION.
@@ -483,7 +480,10 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2022-05-18"
+#define VERSION_DATE_SHORT "2022-05-19"
+
+#define API_VERSION "0.98"
+
 #define VERSION "0.98.8"
 
 )

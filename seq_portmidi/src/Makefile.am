@@ -6,7 +6,7 @@
 # \library    	libseq_portmidi library
 # \author     	Chris Ahlstrom
 # \date       	2015-09-11
-# \update      2021-09-03
+# \update      2022-05-19
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -50,6 +50,7 @@ SEQ66_API_VERSION = @SEQ66_API_VERSION@
 SEQ66_LT_CURRENT = @SEQ66_LT_CURRENT@
 SEQ66_LT_REVISION = @SEQ66_LT_REVISION@
 SEQ66_LT_AGE = @SEQ66_LT_AGE@
+SEQ66_LIBTOOL_VERSION = @SEQ66_LIBTOOL_VERSION@
 
 #******************************************************************************
 # Install directories
@@ -92,7 +93,7 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 # libtool
 #-----------------------------------------------------------------------------
 
-version = $(SEQ66_API_MAJOR):$(SEQ66_API_MINOR):$(SEQ66_API_PATCH)
+version = $(SEQ66_LIBTOOL_VERSION)
 
 #******************************************************************************
 # Compiler and linker flags (later, PortMidi)

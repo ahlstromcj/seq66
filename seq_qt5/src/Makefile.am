@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2022-05-11
+# \update      2022-05-19
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -59,6 +59,7 @@ SEQ66_API_VERSION = @SEQ66_API_VERSION@
 SEQ66_LT_CURRENT = @SEQ66_LT_CURRENT@
 SEQ66_LT_REVISION = @SEQ66_LT_REVISION@
 SEQ66_LT_AGE = @SEQ66_LT_AGE@
+SEQ66_LIBTOOL_VERSION = @SEQ66_LIBTOOL_VERSION@
 
 QT_CXXFLAGS = @QT_CXXFLAGS@
 
@@ -101,7 +102,7 @@ builddir = @abs_top_builddir@
 # libtool
 #-----------------------------------------------------------------------------
 
-version = $(SEQ66_API_MAJOR):$(SEQ66_API_MINOR):$(SEQ66_API_PATCH)
+version = $(SEQ66_LIBTOOL_VERSION)
 
 #*****************************************************************************
 # git_version

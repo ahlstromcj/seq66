@@ -1,9 +1,15 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2022-05-11"
+#define VERSION_DATE_SHORT "2022-05-19"
+
+#define API_VERSION "0.98"
+
 #define VERSION "0.98.8"
 
 
+
+/* Seq66 API version */
+#undef API_VERSION
 
 /* "Distro of build" */
 #undef APP_BUILD_ISSUE

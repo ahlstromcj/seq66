@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2022-05-14
+# \update      2022-05-19
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -112,6 +112,7 @@ HEADERS += include/seq66_features.h \
  include/sessions/clinsmanager.hpp \
  include/sessions/smanager.hpp \
  include/os/daemonize.hpp \
+ include/os/shellexecute.hpp \
  include/os/timing.hpp \
  include/util/automutex.hpp \
  include/util/basic_macros.h \
@@ -191,6 +192,7 @@ SOURCES += src/seq66_features.cpp \
  src/sessions/clinsmanager.cpp \
  src/sessions/smanager.cpp \
  src/os/daemonize.cpp \
+ src/os/shellexecute.cpp \
  src/os/timing.cpp \
  src/util/automutex.cpp \
  src/util/basic_macros.cpp \

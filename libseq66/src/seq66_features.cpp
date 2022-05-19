@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2022-05-18
+ * \updates       2022-05-19
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -82,10 +82,10 @@ static std::string s_app_type = SEQ66_APP_TYPE;
 static bool s_app_cli = false;
 static std::string s_apptag = SEQ66_APP_NAME " " SEQ66_VERSION;
 static std::string s_arg_0 = "";
-static std::string s_client_name = SEQ66_CLIENT_NAME;
+static std::string s_client_name = SEQ66_CLIENT_NAME;       /* can change   */
 static std::string s_client_name_short = SEQ66_CLIENT_NAME;
 static std::string s_client_name_tag = "[" SEQ66_CLIENT_NAME "]";
-static std::string s_icon_name = SEQ66_ICON_NAME;           /* unchanging */
+static std::string s_icon_name = SEQ66_ICON_NAME;           /* unchanging   */
 static std::string s_package_name = SEQ66_PACKAGE_NAME;
 static std::string s_session_tag = "Session";
 static std::string s_api_version = SEQ66_API_VERSION;
@@ -370,9 +370,15 @@ seq_api_version ()
 const std::string &
 seq_api_subdirectory ()
 {
-    static std::string s_subdirectory =
-        seq_package_name() + "-" + seq_api_version();
-
+    static bool s_uninitialized = true;
+    static std::string s_subdirectory;
+    if (s_uninitialized)
+    {
+        s_uninitialized = false;
+        s_subdirectory = SEQ66_CLIENT_NAME;                     /* constant */
+        s_subdirectory += "-";
+        s_subdirectory += seq_api_version();
+    }
     return s_subdirectory;
 }
 
