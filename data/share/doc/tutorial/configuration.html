@@ -6,7 +6,7 @@
 <! Library:    seq66/data/share/tutorial>
 <! Author:     Chris Ahlstrom >
 <! Date:       2022-05-18>
-<! Updates:    2022-05-18>
+<! Updates:    2022-05-19>
 <! Version:    $Revision$>
 <! License:    $XPC_SUITE_GPL_LICENSES$>
 
@@ -55,11 +55,9 @@
 
             <td align="left" valign="top" colspan="3" class="slideintro">
 
-                The figure below shows the <i>Edit / Preferences </i> window.
-                It is a bit small, so run <code>qseq66</code>
-                (<code>qpseq66.exe</code> in Windows) to see the window elements.
-                It provides a way to configure and restart <i>Seq66</i>,
-                though it does not handle all configuration items.
+                The figure below shows <i>Edit / Preferences </i>;
+                it provides some configuration items; it can restart
+                the application.
             </td>
 
          </tr>
@@ -75,47 +73,45 @@
             <td align="left" valign="top" colspan="1">
 
               <b>Seq66 Configuration.</b>
-              The configuration is stored in a number of files stored in
-              the user's configuration folder.
-              <i>Linux</i>: <code>/home/user/.config/seq66</code>.
+              Configuration is stored in a number of files in:
+              <i>Linux</i>: <code>/home/user/.config/seq66</code>;
               <i>Windows</i>: <code>C:/Users/user/AppData/Local/seq66/</code>.
               Some settings can be made in
               <i>Edit / Preferences</i>;
-              other less-used options require editing the file.
+              other less-used options require editing a file.
               The file extensions:
 
               <ul>
 
                  <li>
                     <b>rc</b>.
-                    This file (e.g. <code>qseq66.rc</code>) is
-                    the main configuration file.  It specifies the MIDI I/O ports,
-                    port mapping, names and status of the
-                    other configuration files, a list of "recent files",
-                    and other settings.
+                    <code>qseq66.rc</code>:
+                    Main configuration file.  Sets MIDI I/O ports,
+                    port mapping, names/status of
+                    other configuration files, "recent files", etc.
                  </li>
 
                  <li>
                     <b>usr</b>.
-                    This file configures options instrument and buss name
-                    overrides, many user-interface settings, some default
+                    Configures instrument and buss names,
+                    user-interface settings, default
                     song settings, and a few more.
                  </li>
 
                  <li>
                     <b>ctrl</b>.
-                    Provides keystrokes and MIDI events to control
-                    <i>Seq66</i>.  By default, only keystrokes are provided.
-                    Edited this file to add MIDI control events, MIDI
-                    status-display events, and MIDI macros.
-                    A <i>Novation LaunchPad Mini</i> configuration is
-                    provided as an example.
+                    Keystrokes/MIDI events to control <i>Seq66</i>.
+                    By default, only keystrokes are set up.
+                    Edit it to add MIDI control, status-display
+                    events, and MIDI macros.
+                    A <i>Novation LaunchPad Mini</i> setup
+                    provides an example.
                  </li>
 
                  <li>
                     <b>mutes</b>.
-                    This file contains mute-group settings.
-                    These can be edited in the <i>Live</i> grid and
+                    Mute-group settings;
+                    can be edited in the <i>Live</i> grid and
                     in the <i>Mutes</i> tab.  See the user manual.
                  </li>
 
@@ -129,19 +125,18 @@
 
                  <li>
                     <b>drums</b>.
-                    This file contains note remappings, useful for
+                    Contains note mappings, useful for
                     converting from old MIDI drum sets to GM drum sets.
-                    Also called the "note mapper".
                     See the user manual.
                  </li>
 
                  <li>
                     <b>palette</b>.
-                    This file allows control of pattern colors,
-                    user-interface coloring in the <i>Seq66</i>-drawn
-                    areas, such as piano rolls.  It can change brush
+                    Control of pattern colors,
+                    user-interface coloring in <i>Seq66</i>-drawn
+                    areas (e.g. piano rolls).  It can set brush
                     patterns for drawing notes, scales, and background
-                    patterns.  It must be edited by hand.
+                    patterns.  Must be edited by hand.
                  </li>
 
               </ul>
@@ -159,7 +154,7 @@
 
                              <li>
                                 <b>qss</b>.
-                                These files are <i>Qt</i> style sheets, which can
+                                <i>Qt</i> style sheets, which can
                                 be used to change the colors of <i>Qt</i>-drawn
                                 elements, overriding the theme settings 
                              </li>
@@ -178,7 +173,7 @@
                                <p class="slideintro">
                                   <img src="images/app/preferences.png"
                                     alt="Seq66 preferences dialog"
-                                    width="300" height="auto">
+                                    width="280" height="auto">
                                </p>
 
                            </p>

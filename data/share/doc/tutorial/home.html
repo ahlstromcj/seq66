@@ -6,7 +6,7 @@
 <! Library:    seq66/data/share/tutorial>
 <! Author:     Chris Ahlstrom >
 <! Date:       2022-05-16>
-<! Updates:    2022-05-17>
+<! Updates:    2022-05-19>
 <! Version:    $Revision$>
 <! License:    $XPC_SUITE_GPL_LICENSES$>
 
@@ -23,8 +23,6 @@
    <!--
       This is the starting style.  Copied this to slide.css, and then making
       mainly additions to slide.css.
-
-      <link href="css/doxygen.css" rel="stylesheet" type="text/css">
    -->
 
    <link href="css/slide.css" rel="stylesheet" type="text/css">
@@ -34,7 +32,6 @@
 <body>
 
    <!--
-
       This table is formatted in four rows and three columns, normally laid
       out somewhat like the following.
 
@@ -71,7 +68,6 @@
 
       You can also turn the border on if you want to, or change the width of
       the empty cells.
-
    -->
 
    <table
@@ -80,11 +76,9 @@
       height="512"
       cellpadding="4"
       cellspacing="0">
-
       <tbody>
 
       <!--
-
          We figured out how to use image-buttons to navigate, and no longer
          have to include this code in each slide.  However, there is a small
          form below that has to be included, and maintained for each slide,
@@ -115,7 +109,7 @@
 
                <p class="slideheader">
                   Seq66 Basic Tutorial
-                  <p class="slidetopic"> Chris Ahlstrom, May 17, 2022 </p>
+                  <p class="slidetopic"> Chris Ahlstrom, May 19, 2022 </p>
                </p>
             </td>
 
@@ -130,24 +124,32 @@
             <td align="left" valign="top" colspan="3" class="slideintro">
 
                <p class="slideintro">
-                  This document is a slide-show that
-                  describes the basic workings of <i>Seq66</i>.
-                  It is a quick introduction; for the complete manual,
-                  look for <code>seq66-user-manual.pdf</code>, which
-                  can be found <code>/usr/share/doc/seq66-0.98</code>
-                  or found <code>/usr/local/share/doc/seq66-0.98</code>
+                  This document 
+                  describes the basic workings of <i>Seq66</i>,
+                  and includes enough to get started with creating
+                  a song and understanding the configuration.
+                  It is a quick introduction.
+                  For the complete manual,
+                  see the <i>Help / User Manual</i> command.
+                  If this fails, send an e-mail reporting this problem and
+                  your setup (operating system, default-app settings,
+                  etc.) to "ahlstromcj@gmail.com" as shown in <i>Help / About</i>,
+                  or look for the
+                  complete manual, <code>seq66-user-manual.pdf</code>, which
+                  can be found <code>/usr/share/doc/seq66-0.98</code> or
+                  <code>/usr/local/share/doc/seq66-0.98</code>
                   on <i>Linux</i>, or in
                   <code>C:/Program Files (x86)/Seq66/doc</code>
                   on <i>Windows</i>.
                   It can also be found in the <i>Seq66</i> source code
-                  in the <code>seq66/data/share/doc</code> directory.
+                  package in the <code>seq66/data/share/doc</code> directory.
                </p>
                <br>
                <p class="slideintro">
                   This tutorial covers Seq66 basics useful to
                   persons new to this live-grid sequencer application.
                   It covers only the main window, the pattern-editor,
-                  and the song-editor window.
+                  the song-editor window, and a bit about configuration.
                   The event-editor, mute-groups, sets, and session tabs,
                   as well as the usage of MIDI controllers,
                   are discussed in the rather extensive user's manual.
