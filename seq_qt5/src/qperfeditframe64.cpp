@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2022-05-01
+ * \updates       2022-05-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -458,6 +458,17 @@ qperfeditframe64::follow_progress ()
                 hadjust->setValue(progx);       // set_scroll_x() not needed
             }
         }
+    }
+}
+
+void
+qperfeditframe64::scroll_to_tick (midipulse tick)
+{
+    int w = ui->rollScrollArea->width();
+    if (w > 0)              /* w is constant, e.g. around 742 by default    */
+    {
+        int x = m_perfroll->tix_to_pix(tick);
+        ui->rollScrollArea->scroll_to_x(x);
     }
 }
 

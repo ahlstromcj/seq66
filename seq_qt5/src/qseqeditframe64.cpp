@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-05-08
+ * \updates       2022-05-20
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1389,6 +1389,10 @@ qseqeditframe64::reset_beats_per_bar ()
  *
  * \param bpb
  *      The desired beats/measure value.
+ *
+ * \param qs
+ *      Set to start or edit.  Basically, the same as user_change ==
+ *      false or true.
  */
 
 void
@@ -3274,7 +3278,7 @@ qseqeditframe64::update_recording_volume (int index)
 void
 qseqeditframe64::update_loop_count (int value)
 {
-    if (track().loop_count_max(value))
+    if (track().loop_count_max(value, true))    /* it is a user-changes     */
         set_dirty();
 }
 

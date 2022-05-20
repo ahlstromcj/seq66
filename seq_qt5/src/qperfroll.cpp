@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-01-29
+ * \updates       2022-05-20
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -706,6 +706,22 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                 {
                     perf().pop_trigger_undo();
                 }
+                break;
+
+            case Qt::Key_Home:
+
+                if (not_nullptr(frame64()))
+                    frame64()->scroll_to_tick(0);
+
+                handled = true;
+                break;
+
+            case Qt::Key_End:
+
+                if (not_nullptr(frame64()))
+                    frame64()->scroll_to_tick(perf().get_max_extent());
+
+                handled = true;
                 break;
             }
         }

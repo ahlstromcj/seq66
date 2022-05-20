@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-05-15
+ * \updates       2022-05-20
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1009,7 +1009,7 @@ public:
         m_seq_edit_mode = b == 0 ? editmode::note : editmode::drum ;
     }
 
-    bool loop_count_max (int m);
+    bool loop_count_max (int m, bool user_change = false);
     void modify (bool notifychange = true);
 
     void unmodify ()

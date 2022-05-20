@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-05-15
+ * \updates       2022-05-20
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -449,14 +449,20 @@ sequence::color (int c)
 }
 
 bool
-sequence::loop_count_max (int m)
+sequence::loop_count_max (int m, bool user_change)
 {
-    bool result = m != m_loop_count_max && m >= 0;
-    if (result)
+    automutex locker(m_mutex);
+    bool result = false;
+    if (m >= 0 && m != m_loop_count_max)
     {
         m_loop_count_max = m;
-        modify();                               /* have pending changes */
+        if (user_change)
+            result = true;
+
     }
+    if (result)
+        modify();                               /* have pending changes */
+
     return result;
 }
 

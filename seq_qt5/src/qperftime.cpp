@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-11-18
+ * \updates       2022-05-20
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -47,6 +47,13 @@
 
 namespace seq66
 {
+
+/*
+ *  Tweaks. The presence of corrections means we need to coordinate
+ *  between GUI elements better.
+ */
+
+static const int s_end_fix     = 16;        /* adjust position of "END" box */
 
 /**
  *  Principal constructor.
@@ -163,6 +170,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
 
     int xoff_left = scroll_offset_x();
     int xoff_right = scroll_offset_x() + xwidth;
+    int end = position_pixel(perf().get_max_trigger()) - s_end_fix;
     int left = position_pixel(perf().get_left_tick());
     int right = position_pixel(perf().get_right_tick());
     int now = position_pixel(perf().get_tick());
@@ -184,18 +192,30 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
         painter.drawRect(left, yheight - 12, 7, 10);
         pen.setColor(Qt::white);
         painter.setPen(pen);
-        painter.drawText(left + 2, 18, "L");
+        painter.drawText(left + 1, 20, "L");
     }
     if (right >= xoff_left && right <= xoff_right)
+    {
+        int r = right - 7;
+        pen.setColor(Qt::black);
+        brush.setColor(Qt::black);
+        painter.setBrush(brush);
+        painter.setPen(pen);
+        painter.drawRect(r, yheight - 12, 7, 10);
+        pen.setColor(Qt::white);
+        painter.setPen(pen);
+        painter.drawText(r, 20, "R");
+    }
+    if (end > right)
     {
         pen.setColor(Qt::black);
         brush.setColor(Qt::black);
         painter.setBrush(brush);
         painter.setPen(pen);
-        painter.drawRect(right - 7, yheight - 12, 7, 10);
+        painter.drawRect(end - 1, yheight - 12, 16, 10);
         pen.setColor(Qt::white);
         painter.setPen(pen);
-        painter.drawText(right - 7 + 1, 18, "R");
+        painter.drawText(end - 3, 20, "END");
     }
 }
 

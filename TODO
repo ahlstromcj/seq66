@@ -1,22 +1,17 @@
 TO DO for Seq66 0.98.8 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-05-19
+2019-04-13 to 2022-05-20
 
 Files:
 
     -   Is there a GNU function to get all of the canonical installation
         paths?  For Windows?
 
-Playback:
-
-    -   Space in editor and song windows just pauses!
-
 Pattern Editor, Main Window:
 
     -   Verify no bugs remaining in:
         -   Pattern fix dialog.
         -   File / Save handling.
-        -   Pattern modification.
     -   "Session: Save" can occur.  Annoying.
     -   Investigate handling of global time-signature. Do we want to save it
         to the user-file (when the user saves the tune with the new settings)?
@@ -83,7 +78,6 @@ UI:
         tune.
     -   Finish up the extended grid-mode functions. Also add pattern and
         event editor instantiation to the grid mode.
-    -   Add and "END" marker to the song editor.
 
 Port-Mapping:
 

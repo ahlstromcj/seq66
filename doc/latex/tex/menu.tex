@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-03-22
+% \update      2022-05-20
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -20,7 +20,8 @@
    The \textsl{Seq66} menu structure is more complex than
    that of \textsl{Seq24}.  In particular, the \textsl{File} menu has two
    variants:  a normal file menu, and a file menu when \textsl{Seq66} is
-   running under the \textsl{Non Session Manager}.
+   running under the \textsl{New/Non Session Manager}.
+   (See \sectionref{subsec:sessions_nsm}.)
 
 \subsection{Menu / File}
 \label{subsec:menu_file}
@@ -28,7 +29,7 @@
    The \textbf{File} menu is used to save and load files in
    Standard MIDI Format 0 or 1, \textsl{Cakewalk} "WRK",
    and \textsl{Seq66} MIDI files.
-   It also supports a list of recent files, and (new with versio 0.98.3)
+   It also supports a list of recent files, and (new with version 0.98.3)
    sub-menus for import and export functions, which have expanded quite a bit.
 
    The \textsl{Seq66} \textbf{File} menu contains the sub-items shown below.
@@ -37,7 +38,7 @@
    the sub-items in the \textbf{File} menu.
    Please note that these entries are different
    if \textsl{Seq66} is started under the control of the
-   \textsl{Non Session Manager}.  
+   \textsl{New/Non Session Manager}.  
    See \sectionref{subsubsec:sessions_file_menu}.
    However, the import and export menus remain the same, although there are
    slight differences in how they work.
@@ -1216,17 +1217,30 @@
    can then be modified and configured as the palette-file to use in the 'rc'
    file.
 
-\subsection{Menu / Help / About...}
-\label{subsec:menu_about}
+\subsection{Menu / Help}
+\label{subsec:menu_help}
 
+   The usual \textbf{Help} dialog is provided.
+   As of version 0.98.8, it has been beefed up with a way to access a
+   tutorial and the user manual.
+
+   These new help items are a work in progress, so please apprise
+   us of any issues; include information on the operating system and,
+   if \textsl{Linux}, the desktop/window manager in use.
+
+\subsubsection{Menu / Help / About...}
+\label{subsubsec:menu_help_about}
+
+   \index{Help!about}
    This menu entry shows the "About" dialog.
    That dialog provides access to some credits for the program as well.
-   authors and the project documentors.
+   authors and the project documentors, and active link to them.
    It also shows Git version-control information as well.
 
-\subsection{Menu / Help / Build Info...}
-\label{subsec:menu_build_info}
+\subsubsection{Menu / Help / Build Info...}
+\label{subsubsec:menu_help_build_info}
 
+   \index{Help!build info}
    This menu entry shows the "Build Info" dialog.  This list of
    build options enabled in the current application is the same list
    that it generated via this command line:
@@ -1234,6 +1248,48 @@
    \begin{verbatim}
       $ seq66 --version
    \end{verbatim}
+
+\subsubsection{Menu / Help / Song Summary File...}
+\label{subsubsec:menu_help_song_summary_file}
+
+   \index{Help!song summary}
+   This menu entry allows one to write a summary of the song data into a text
+   file. It brings up a file dialog which defaults to the name of the
+   currently-loaded MIDI file, with the extenstion \texttt{.text} and
+   the directory from where the MIDI file was loaded.
+   It shows the filename, number of sets and tracks, MIDI format (0 or 1),
+   and the PPQN.
+
+   It also shows each sequence: name, channel (128 mean there is no output
+   channel), the time signature, buss number (and any mapping), the length in
+   pulses, the event and trigger count, transposability, key and scale, and
+   color number (if any).
+
+   For each trigger in the pattern, its start, stop, offset, and transposition
+   values are shown.
+
+   This file can be helpful for trouble-shooting or solving puzzling effects in
+   the tune.
+
+\subsubsection{Menu / Help / Tutorial}
+\label{subsubsec:menu_help_tutorial}
+
+   \index{Help!tutorial}
+   This entry brings up a short tutorial of \textsl{Seq66} in the default
+   browser. This tutorial is meant only to jump-start a new user of
+   \textsl{Seq66}, and is a work in progress.
+
+   It does not cover nearly as much as the user manual, so....
+
+\subsubsection{Menu / Help / User Manual}
+\label{subsubsec:menu_help_user_manual}
+
+   \index{Help!user manual}
+   This entry brings up the full \textsl{Seq66} user manual in the default
+   PDF viewer.  It currently looks in the possible installation areas and in
+   the \textsl{Seq66} source tree to find the PDF.
+
+   It currently does not try to locate the user manual on the internet.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

@@ -547,7 +547,7 @@ midi_vector_base::fill_proprietary ()
         put(seq().edit_mode_byte());
     }
 #endif
-    if (seq().loop_count_max() != 0)
+    if (seq().loop_count_max() > 0)
     {
         put_seqspec(c_seq_loopcount, 2);                        /* short    */
         add_short(midishort(seq().loop_count_max()));

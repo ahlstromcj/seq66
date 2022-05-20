@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2022-04-27
+ * \updates       2022-05-20
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll),
@@ -103,6 +103,7 @@ public:
     }
 
     void follow_progress ();
+    void scroll_to_tick (midipulse tick);
     void update_sizes ();
     void set_dirty ();
     void set_loop_button (bool looping);

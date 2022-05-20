@@ -184,9 +184,9 @@ qseqtime::paintEvent (QPaintEvent *)
     int xoff_right = scroll_offset_x() + width();
     midipulse length = track().get_length();
     int end = position_pixel(length) - s_end_fix;
-    midipulse left = position_pixel(perf().get_left_tick()) + s_time_fix;
-    midipulse right = position_pixel(perf().get_right_tick());
-    midipulse now = position_pixel(perf().get_tick() % length) + s_o_fix;
+    int left = position_pixel(perf().get_left_tick()) + s_time_fix;
+    int right = position_pixel(perf().get_right_tick());
+    int now = position_pixel(perf().get_tick() % length) + s_o_fix;
 
     /*
      * Draw end of seq label, label background.

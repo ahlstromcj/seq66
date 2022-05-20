@@ -1,7 +1,7 @@
 # README for Seq66 0.98.8
 
 Chris Ahlstrom
-2015-09-10 to 2022-05-19
+2015-09-10 to 2022-05-20
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -89,9 +89,10 @@ Windows, and using a conventional source tarball.
         *   Changed the Apply button from Edit / Preferences to a Restart
             button.  Further tightening of change detection.
         *   Moved midibyte/midiboolean functions from strfunctions to midibytes
-            and mutegroup.
-        *   Added an HTML tutorial and commands to access it.  Add shellexecute
-            module to replace the ill-performing QDesktopServices.
+            and mutegroup. Much header-file cleanup. Do a --full-clean!
+        *   Added Ctrl-Home and Ctrl-End support to the song editor.
+        *   Added an initial HTML tutorial and commands to access it.  Add
+            shellexecute module to replace the ill-performing QDesktopServices.
         *   Important configure.ac/Makefile.am upgrades.
     *   Version 0.98.7:
         *   Fixed issue #80 where some MIDI controls were getting recorded.

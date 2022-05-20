@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2022-03-02
+ * \updates       2022-05-20
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -301,8 +301,10 @@ qloopbutton::initialize_text ()
         );
         lowerleft = std::string(tmp);
         hotkey = m_hotkey;
-        if (loop()->loop_count_max() > 0)
+        if (loop()->modified())
             lengthstr += "*";
+        else if (loop()->loop_count_max() > 0)
+            lengthstr += "+";
 
         m_top_left.set(lx, ty, lw, bh, lflags, loop()->name());
         m_top_right.set(rx, ty, rw, bh, rflags, lengthstr);

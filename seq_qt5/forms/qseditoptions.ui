@@ -23,7 +23,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -732,7 +732,7 @@ slot by channel number (0 to 15).</string>
             <string>usr: [user-interface-settings] swap-coordinates</string>
            </property>
            <property name="text">
-            <string>Swap coordinates in all grids</string>
+            <string>Swap grid coordinates (be aware!)</string>
            </property>
           </widget>
          </item>

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-28
+ * \updates       2022-05-20
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1008,7 +1008,13 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     if (! isctrl)
                     {
                         track().unselect();
-                        frame64()->set_dirty();
+
+                        /*
+                         * ca 2022-05-20: why set dirty here?
+                         * qseqeditframe64 modifies the track!
+                         *
+                         * frame64()->set_dirty();
+                         */
                     }
                     selmode = is_drum_mode() ?
                         eventlist::select::onset :
