@@ -35,9 +35,7 @@
       height="512"
       cellpadding="4"
       cellspacing="0">
-
       <tbody>
-
          <tr>
             <br>
          </tr>
@@ -51,57 +49,94 @@
             </td>
          </tr>
 
-         <tr>        <!-- Spacer row, usually "24" to "40" in height  -->
-            <td align="left" valign="top" colspan="3" height="2"> &nbsp; </td>
-         </tr>
+         <!-- Spacer row, usually "24" to "40" -->
 
          <tr>
-
+            <td align="left" valign="top" colspan="3" height="2"> &nbsp; </td>
+         </tr>
+         <tr>
             <td align="left" valign="top" colspan="3" class="slideintro">
-
                 The first startup of <i>Seq66</i> starts with default settings,
                 and creates the configuration files when <i>Seq66</i>
                 exits.
+                If one has the patience, this is a good time
+                to make sure the desktop theme, the
+                <i>Qt</i> theme, <code>qss</code> style-sheet, and the
+                <code>palette</code> are as one desires.
+                These are advanced items, so one might just want to go forward.
             </td>
-
          </tr>
 
          <!-- Spacer row, usually "20" to "40" -->
+
          <tr>
             <td align="left" valign="top" colspan="3" height="0"> &nbsp; </td>
          </tr>
-
          <tr>
-
-            <td align="left" valign="top" colspan="2">
-
-               <p class="slidemain">
-
-                  <b>Xxxx. </b>
-
-               <p class="slidemain">
-
-                  <b> Xxxx. </b>
-                  This dialog ...
-
-               </p>
-
+            <td align="left" valign="top" colspan="1">
+              <ul>
+                 <li>
+                    <b> Ports. </b>
+                    The diagram at the right shows a composite
+                    MIDI port
+                    setup on <i>Linux</i> using the <i>ALSA</i> engine (the
+                    default).  It will look different if <i>JACK</i> is used, or
+                    if running in <i>Windows</i>.
+                    The top section is "Clocks"; i.e. the MIDI-out
+                    ports, with enabled ports set to "Off" (clocking off).
+                    The bottom section is "Input"; MIDI-in ports, with
+                    check-marked ports enabled for recording.
+                 </li>
+                 <li>
+                    <b> JACK. </b>
+                    Running <code>qseq66 --jack</code> (or setting to use
+                    <i>JACK</i> in <i>Preferences / JACK</i>) will require
+                    using <code>a2jmidid</code>, or the very latest version
+                    of <i>JACK</i>, to expose USB hardware MIDI ports to
+                    <i>JACK</i>. See the user's manual.
+                 </li>
+                 <li>
+                    <b> Windows. </b>
+                    Running <code>qpseq66.exe</code> might show an
+                    error; this indicates that the
+                    <i>Microsoft MIDI Mapper</i> has grabbed the port(s).
+                    See the user's manual or
+                    <code>C:/Program Files (x86)/Seq66/data/ readme.windows</code>
+                    for advice on how to handle this situation.
+                 </li>
+                 <li>
+                    <b> First Exit. </b>
+                    Upon exit, <i>Seq66</i> saves the current configuration
+                    in the files shown <a href="configuration.html">here</a>.
+                 </li>
+                 <li>
+                    <b> Smoke Test. </b>
+                    To verify the setup, load a demo file such as
+                    <code>Peter Gunn-reconstructed.midi</code>
+                    in <code>/usr/local/share/seq66-0.98/midi/</code>
+                    (<i>Linux</i>) or
+                    <code>C:/Program Files (x86)/Seq66/data/midi</code>
+                    (<i>Windows</i>).
+                    In the main window, go to the drop-down box that shows
+                    "None" and select the desired playback device (a hardware or
+                    software synthesizer).
+                    Click the "Play" button and verify that it <i>smokes</i>
+                    (plays)!
+                    If it fails, try trouble-shooting; if that fails, ask us!
+                    Otherwise, save the song with the new output buss for
+                    later demos.
+                 </li>
+              </ul>
             </td>
-
-            <td align="center" valign="center" colspan="1">
-
-               <p class="slidemain">
-
-                  TTTTTTTTTTTTT
-                  <br>
-
-               </p>
-
+            <td align="center" valign="center" colspan="2">
+                <p class="slideintro">
+                   <img src="images/app/ports.png"
+                     alt="Seq66 preferences showing clocks/ports"
+                     width="375" height="auto">
+                </p>
                <p>
                </p>
-
             </td>
-
          </tr>
 
          <!-- Spacer row, adjust the height to put the notes at bottom.
@@ -119,8 +154,8 @@
                colspan="3" class="slidenote">
 
                <p class="slidenote">
-                    See the user's manual for full descriptions of the
-                    tools in the <i>Pattern Editor Tools</i> menu.
+                  There are many many use cases for <i>Seq66</i>.
+                  No way to cover them all, even in the user's manual.
                </p>
 
             </td>

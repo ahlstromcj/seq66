@@ -6,7 +6,7 @@
 <! Library:    seq66/data/share/tutorial>
 <! Author:     Chris Ahlstrom >
 <! Date:       2022-05-18>
-<! Updates:    2022-05-18>
+<! Updates:    2022-05-21>
 <! Version:    $Revision$>
 <! License:    $XPC_SUITE_GPL_LICENSES$>
 
@@ -91,7 +91,9 @@
                     <b> Names panel. </b>
                     Shows much the same information as does a pattern slot.
                     Shows the mute status.
-                    A track can be click here to toggle its mute status.
+                    A track can be clicked here to toggle its mute status.
+                    The pattern color selected is shown here, helpful
+                    in grokking the layouts.
                  </li>
 
                  <li>
@@ -100,31 +102,49 @@
                     It starts out empty, then one can paint layouts of
                     each track.
                     The layouts can snap to a given resolution, and
-                    can be split or deleted.
+                    can be split, moved, or deleted.
+                    They show the pattern color.
                     The <i> File / Export / Export song </i> action can
                     be used to save the song in a format that
                     other sequencers can read.
                  </li>
 
               </ul>
-
             </td>
 
-            <td align="center" valign="center" colspan="2">
-
-               <p class="slidemain">
-
-                   <p class="slideintro">
-                      <img src="images/app/song-editor.png"
-                        alt="Seq66 external song editor window"
-                        width="400" height="auto">
-                   </p>
-
-               </p>
-
-               <p>
-               </p>
-
+            <td align="center" valign="center" width="400" colspan="2">
+               <table>
+                    <tr>
+                        <td align="left" valign="top">
+                            <ul>
+                                <li>
+                                   <b> Triggers. </b>
+                                   Triggers control playback by specifying when
+                                   and how long a pattern plays, and how the
+                                   particular trigger might be transposed.
+                                   Triggers allow patterns to be reused in very
+                                   powerful ways.  See the
+                          <code>Kraftwerk-Europe_Endless-reconstructed.midi</code>
+                                   demo song in the <code>midi</code>
+                                   installation directory for a good example. It
+                                   compresses the original MIDI file by a factor
+                                   of ten.
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" valign="center">
+                            <p class="slideintro">
+                               <img src="images/app/song-editor.png"
+                                 alt="Seq66 external song editor window"
+                                 width="400" height="auto">
+                            </p>
+                        </td>
+                    </tr>
+                     <p>
+                     </p>
+               </table>
             </td>
 
             <!-- Spacer cell

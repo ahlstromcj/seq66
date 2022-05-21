@@ -6,7 +6,7 @@
 <! Library:    seq66/data/share/tutorial>
 <! Author:     Chris Ahlstrom >
 <! Date:       2022-05-18>
-<! Updates:    2022-05-19>
+<! Updates:    2022-05-21>
 <! Version:    $Revision$>
 <! License:    $XPC_SUITE_GPL_LICENSES$>
 
@@ -59,7 +59,7 @@
 
                 The figure below shows <i>Edit / Preferences </i>;
                 it provides some configuration items; it can restart
-                the application.
+                the application to load the new settings.
             </td>
 
          </tr>
@@ -75,21 +75,31 @@
             <td align="left" valign="top" colspan="1">
 
               <b>Seq66 Configuration.</b>
-              Configuration is stored in a number of files in:
-              <i>Linux</i>: <code>/home/user/.config/seq66</code>;
-              <i>Windows</i>: <code>C:/Users/user/AppData/Local/seq66/</code>.
+              Configuration is stored in a number of files, shown here with
+              wildcards:
+
+              <ul>
+                  <li>
+                    <i>Linux</i>: <code>/home/user/.config/seq66/qseq66.*</code>
+                  </li>
+                  <li>
+                    <i>Windows</i>:
+                     <code>C:/Users/user/AppData/Local/seq66/qpseq66.*</code>.
+                  </li>
+              </ul>
+
               Some settings can be made in
               <i>Edit / Preferences</i>;
-              other less-used options require editing a file.
+              other options less often modified, or very complex,
+              require editing a file.
               The file extensions:
 
               <ul>
 
                  <li>
                     <b>rc</b>.
-                    <code>qseq66.rc</code>:
-                    Main configuration file.  Sets MIDI I/O ports,
-                    port mapping, names/status of
+                    The main configuration file.  Sets MIDI I/O ports,
+                    port mapping, names/status of the
                     other configuration files, "recent files", etc.
                  </li>
 
@@ -138,7 +148,7 @@
                     user-interface coloring in <i>Seq66</i>-drawn
                     areas (e.g. piano rolls).  It can set brush
                     patterns for drawing notes, scales, and background
-                    patterns.  Must be edited by hand.
+                    patterns.  Must be edited with a text editor.
                  </li>
 
               </ul>
@@ -210,11 +220,10 @@
                colspan="2" class="slidenote">
 
                <p class="slidenote">
-                  This editor is jam-packed with functionality.
-                  Be sure to try clicking or right clicking on the
-                  grid and the various buttons.
-                  Hover the mouse cursor over an interface item; often
-                  a tool-tip will appear.
+                  The <i>Seq66</i> configuration has a large number of
+                  options. In addition to the user's manual, the
+                  configuration files contain comments that
+                  explain the options, and might be worth reading.
                </p>
 
             </td>

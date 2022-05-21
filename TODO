@@ -1,6 +1,6 @@
 TO DO for Seq66 0.98.8 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-05-20
+2019-04-13 to 2022-05-21
 
 Files:
 
@@ -49,6 +49,9 @@ Test and Document:
     -   Song editor:
         -   Snap
         -   Add width to Snap button
+        -   Consider a way to lay out a pattern from one track
+            into another tracks playback, to re-use the pattern on a differnt
+            buss and channel. ROADMAP item?
 
 External Live Grid:
 
