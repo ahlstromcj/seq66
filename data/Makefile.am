@@ -6,7 +6,7 @@
 # \library     seq66/data
 # \author      Chris Ahlstrom
 # \date        2018-01-02
-# \updates     2022-05-18
+# \updates     2022-05-20
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -147,7 +147,7 @@ install-data-local:
 	mkdir -p $(docfolder)/tutorial
 	cp -r -p $(top_srcdir)/data/share/doc/*.pdf $(docfolder)
 	cp -r -p $(top_srcdir)/data/share/doc/*.ods $(docfolder)
-	cp -r -p $(top_srcdir)/data/share/doc/tutorial/* $(docfolder)
+	cp -r -p $(top_srcdir)/data/share/doc/tutorial/* $(docfolder)/tutorial
 
 #******************************************************************************
 # uninstall-hook
