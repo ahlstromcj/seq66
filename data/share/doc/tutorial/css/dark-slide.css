@@ -12,8 +12,8 @@ body
 
    background-repeat: no-repeat;
    background-attachment: fixed;
-   background-color: #FFFFFF;
-   color: black;
+   background-color: #404040;
+   color: white;
    margin-top: 0px;
    margin-bottom: 0px;
    margin-right: 20px;
@@ -80,7 +80,7 @@ div.nav
    width: 100%;
    background-color: #e8eef2;
    border: 1px solid #84b0c7;
-   color: black;
+   color: white;
    text-align: center;
    margin: 2px;
    padding: 2px;
@@ -295,8 +295,8 @@ hr
 
 body.tree
 {
-   background-color: #FFFFFF;
-   color: black;
+   background-color: #A0A0A0;
+   color: white;
 }
 
 a.treelink
@@ -306,7 +306,6 @@ a.treelink
    font-weight: bold;
 }
 
-/* 
 a.treelink:active
 {
    color: red;
@@ -321,7 +320,6 @@ a.treelink:visited
 {
    color: purple;
 }
- */
 
 .directory
 {
@@ -387,14 +385,14 @@ p.slidetopic
 
 td.slideintro
 {
-   background-color: #e8eef2;
+   background-color: #404040;
    border: 2px solid #CCCCCC;
 }
 
 p.slideintro
 {
-   background-color: #e8eef2;
-   color: black;
+   background-color: #404040;
+   color: white;
    font-weight: normal;
    font-size: 110%;
    margin-top: 0px;
@@ -403,14 +401,14 @@ p.slideintro
 
 ul
 {
-   background-color: #FFFFF0;
-   color: black;
+   background-color: #404040;
+   color: white;
 }
 
 .slidemain
 {
-   background-color: #FFFFF0;
-   color: black;
+   background-color: #404040;
+   color: white;
    font-weight: normal;
    font-size: 110%;
    margin-bottom: 6px;
@@ -418,8 +416,8 @@ ul
 
 td.slidenote
 {
-   background-color: #e8eef2;
-   border: 1px solid #CCCCCC;
+   background-color: #c0c0d0;
+   border: 1px solid #808080;
 }
 
 .slidenote

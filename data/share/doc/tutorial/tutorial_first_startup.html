@@ -63,7 +63,7 @@
                 to make sure the desktop theme, the
                 <i>Qt</i> theme, <code>qss</code> style-sheet, and the
                 <code>palette</code> are as one desires.
-                These are advanced items, so one might just want to go forward.
+                These are advanced items, though.
             </td>
          </tr>
 
@@ -77,15 +77,14 @@
               <ul>
                  <li>
                     <b> Ports. </b>
-                    The diagram at the right shows a composite
-                    MIDI port
-                    setup on <i>Linux</i> using the <i>ALSA</i> engine (the
+                    This diagram shows the MIDI port
+                    setups on <i>Linux</i> using the <i>ALSA</i> engine (the
                     default).  It will look different if <i>JACK</i> is used, or
                     if running in <i>Windows</i>.
-                    The top section is "Clocks"; i.e. the MIDI-out
-                    ports, with enabled ports set to "Off" (clocking off).
-                    The bottom section is "Input"; MIDI-in ports, with
-                    check-marked ports enabled for recording.
+                    The top section is "Clocks" (MIDI-out ports),
+                    with enabled ports set to "Off".
+                    The bottom section is "Input" (MIDI-in ports);
+                    check-marked ports are enabled for recording.
                  </li>
                  <li>
                     <b> JACK. </b>
@@ -98,11 +97,11 @@
                  <li>
                     <b> Windows. </b>
                     Running <code>qpseq66.exe</code> might show an
-                    error; this indicates that the
+                    error; the
                     <i>Microsoft MIDI Mapper</i> has grabbed the port(s).
                     See the user's manual or
                     <code>C:/Program Files (x86)/Seq66/data/ readme.windows</code>
-                    for advice on how to handle this situation.
+                    for how to handle this situation.
                  </li>
                  <li>
                     <b> First Exit. </b>
@@ -111,31 +110,45 @@
                  </li>
                  <li>
                     <b> Smoke Test. </b>
-                    To verify the setup, load a demo file such as
+                    Load a demo file such as
                     <code>Peter Gunn-reconstructed.midi</code>
                     in <code>/usr/local/share/seq66-0.98/midi/</code>
                     (<i>Linux</i>) or
                     <code>C:/Program Files (x86)/Seq66/data/midi</code>
                     (<i>Windows</i>).
-                    In the main window, go to the drop-down box that shows
-                    "None" and select the desired playback device (a hardware or
-                    software synthesizer).
-                    Click the "Play" button and verify that it <i>smokes</i>
-                    (plays)!
-                    If it fails, try trouble-shooting; if that fails, ask us!
-                    Otherwise, save the song with the new output buss for
-                    later demos.
+                    Go to the "None" drop-down box at
                  </li>
               </ul>
             </td>
             <td align="center" valign="center" colspan="2">
-                <p class="slideintro">
-                   <img src="images/app/ports.png"
-                     alt="Seq66 preferences showing clocks/ports"
-                     width="375" height="auto">
-                </p>
-               <p>
-               </p>
+               <table>
+                    <tr>
+                         <p class="slidemain" align="left">
+                          the top and select the desired output (hardware/software
+                          synthesizer).
+                          Click the "Play" button and verify that it
+                          <i>smokes</i> (plays)!  If not, try trouble-shooting;
+                          if that fails, ask us!  Save the song with this
+                          output for later demos.
+                         </p>
+                    </tr>
+                    <tr>
+                        <td align="center" valign="center">
+                          <p class="slideintro">
+                             <img src="images/app/ports.png"
+                               alt="Seq66 preferences showing clocks/ports"
+                               width="375" height="auto">
+                          </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" valign="top">
+                        <br>
+                        <b>Output Ports ("Clocks") and Input Ports</b>
+                        </td>
+                    </tr>
+                    <p> </p>
+               </table>
             </td>
          </tr>
 
