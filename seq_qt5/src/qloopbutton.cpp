@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2022-05-20
+ * \updates       2022-05-23
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -71,8 +71,8 @@
 static const int s_alpha_playing       = 255;
 static const int s_alpha_muted         = 100;
 static const int s_alpha_qsnap         = 180;
-static const int s_alpha_queued        = 148;
-static const int s_alpha_oneshot       = 148;
+static const int s_alpha_queued        =  64;       // 148;
+static const int s_alpha_oneshot       =  64;       // 148;
 
 /**
  *  Font and annunciator sizes.  These are for normal size, and get scaled for
@@ -673,11 +673,13 @@ qloopbutton::draw_progress_box (QPainter & painter)
     }
     else if (loop()->get_queued())
     {
-        backcolor.setAlpha(s_alpha_queued);         // pen.setWidth(penwidth);
+        backcolor = Qt::gray;
+        backcolor.setAlpha(s_alpha_queued);
         pen.setStyle(Qt::SolidLine);
     }
     else if (loop()->one_shot())                   /* one-shot queued      */
     {
+        backcolor = Qt::black;
         backcolor.setAlpha(s_alpha_oneshot);
         pen.setColor(Qt::darkGray);
         pen.setStyle(Qt::DotLine);
