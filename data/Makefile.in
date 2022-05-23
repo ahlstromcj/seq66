@@ -21,7 +21,7 @@
 # \library     seq66/data
 # \author      Chris Ahlstrom
 # \date        2018-01-02
-# \updates     2022-05-20
+# \updates     2022-05-23
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -618,6 +618,7 @@ uninstall-am:
 install-data-local:
 	@echo "Copying Seq66 data to $(datafolder) ..."
 	mkdir -p $(datafolder)
+	mkdir -p $(datafolder)/icons
 	mkdir -p $(datafolder)/linux
 	mkdir -p $(datafolder)/midi
 	mkdir -p $(datafolder)/pixmaps
@@ -648,15 +649,16 @@ install-data-local:
 # uninstall-hook
 #------------------------------------------------------------------------------
 #
-# 	Also need to uninstall icons, desktop file, include files.
+# 	Also need to uninstall icons, desktop file, include files. The "icons"
+# 	directory has the "hicolor" subdirectory.
 #
 #------------------------------------------------------------------------------
 
 uninstall-hook:
-	rm -rf $(datafolder)
-	rm -rf $(docfolder)
-	rm -f $(datafolder)/applications/seq66.desktop
-	find $(datafolder)/icons/ -iname "*seq66*.png" -exec rm -f '{}' \;
+	-rm -rf $(datafolder)
+	-rm -rf $(docfolder)
+	-rm -f $(datafolder)/applications/seq66.desktop
+	-find $(datafolder)/icons/ -iname "*seq66*" -exec rm -f '{}' \;
 
 #******************************************************************************
 # Makefile.am (seq66/data)

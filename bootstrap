@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2022-05-11
+# \update         2022-05-23
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -26,11 +26,6 @@
 #
 #     Also see the helper functions in contrib/scripts/strap_functions.
 #
-#     2022-05-11: Removed the --calls option and the c/h files:
-#
-#        --calls  Add GNU instrumentation calls for function entry. But the
-#                 trace output is much too voluminous to be useful.
-#
 #------------------------------------------------------------------------------
 
 #******************************************************************************
@@ -41,7 +36,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2022-05-11"
+export SEQ66_SCRIPT_EDIT_DATE="2022-05-23"
 export SEQ66_LIBRARY_API_VERSION="0.98"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.9"
 

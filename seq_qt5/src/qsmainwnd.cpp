@@ -77,6 +77,7 @@
 #include <QScreen>                      /* Qscreen                          */
 #include <QTimer>                       /* QTimer                           */
 
+#undef USE_QDESKTOPSERVICES
 #if defined USE_QDESKTOPSERVICES
 #include <QDesktopServices>             /* used for opening a URL           */
 #else
