@@ -1,3 +1,13 @@
+/*
+ *  File:       dark-slide.css
+ *  Library:    seq66/data/share/tutorial
+ *  Author:     Chris Ahlstrom
+ *  Date:       2022-05-19
+ *  Updates:    2022-05-23
+ *  Version:    $Revision$
+ *  License:    $XPC_SUITE_GPL_LICENSES$
+ */
+
 body,h1,h2,h3,h4,h5,h6,p,td,th,ul,dl,div
 {
    font-family-xxx: Geneva, Arial, Helvetica, sans-serif;
@@ -62,6 +72,15 @@ h3
 caption
 {
    font-weight: bold;
+   font-size: 100%;
+}
+
+td.caption
+{
+   font-weight: bold;
+   font-size: 90%;
+   text-align: center;
+   padding: 10px;
 }
 
 div.qindex
@@ -362,6 +381,7 @@ a.treelink:visited
 
 td.slideheader
 {
+   height: 40px;
    background-color: #c0c0d0;
    border: 2px solid #808080;
    color: black;
@@ -377,6 +397,7 @@ p.slideheader
 
 p.slidetopic
 {
+   margin-top: 0px;
    margin-bottom: 0px;
    font-style: oblique;
    font-weight: bold;

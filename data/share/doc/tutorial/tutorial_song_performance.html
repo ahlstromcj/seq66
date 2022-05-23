@@ -1,0 +1,164 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Draft//EN">
+
+<! File:       tutorial_song_performance.html>
+<! Library:    seq66/data/share/tutorial>
+<! Author:     Chris Ahlstrom >
+<! Date:       2022-05-22>
+<! Updates:    2022-05-23>
+<! Version:    $Revision$>
+<! License:    $XPC_SUITE_GPL_LICENSES$>
+
+<head>
+
+   <title> Seq66 Basic Tutorial: Song Performance </title>
+      
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta http-equiv="Content-Style-Type" content="text" />
+   <meta http-equiv="Content-Language" content="en-us">
+   <meta name="generator" content="vim">
+   <meta name="description" content="Seq66 Basic Tutorial">
+   <meta name="keywords" content="seq66 sequencer live midi">
+
+   <link href="css/slide.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+   <!-- See home.html for more information on the layout of this page.  -->
+
+   <table
+      align="left"
+      width="800"
+      height="512"
+      cellpadding="4"
+      cellspacing="0">
+      <tbody>
+         <tr>
+            <br>
+         </tr>
+         <tr>
+            <td align="center" valign="center" colspan="3"
+               height="80" class="slideheader">
+               <p class="slideheader">
+                  Seq66 Basic Tutorial
+                  <p class="slidetopic"> Song Performance </p>
+               </p>
+            </td>
+         </tr>
+
+         <!-- Spacer row, usually "24" to "40" -->
+
+         <tr>
+            <td align="left" valign="top" colspan="3" height="2"> &nbsp; </td>
+         </tr>
+         <tr>
+            <td align="left" valign="top" colspan="3" class="slideintro">
+                Here, we discuss how to build a stand-alone song by laying
+                out existing patterns.
+                Pattern loops can be reused and transposed, as
+                shown in the demo song
+                <code>Kraftwerk-Europe_Endless-reconstructed.midi</code>.
+                Or long tracks can be used, and played without a layout or
+                with a simple layout, as in the demo song
+                <code>b4uacuse-gm-patchless.midi</code>.
+            </td>
+         </tr>
+
+         <!-- Spacer row, usually "20" to "40" -->
+
+         <tr>
+            <td align="left" valign="top" colspan="3" height="0"> &nbsp; </td>
+         </tr>
+         <tr>
+            <td align="left" valign="top" colspan="1">
+              <ul>
+                 <li>
+                    <b> Pattern creation. </b>
+                    The first step is to create a number of patterns
+                    to represent snippets of the song:
+                    drum loops (intro, main, bridge, etc.), bass loops,
+                    chord loops.
+                 </li>
+                 <li>
+                    <b> Pattern arrangement. </b>
+                    One has to decide at what measures each loop
+                    comes into play.
+                    It can help to create a text file that
+                    shows where each pattern will be played.
+                 </li>
+                 <li>
+                    <b> Lay out the triggers. </b>
+                    Each pattern's playback is represented by one or more
+                    <i>triggers</i>.
+                    See the annotated figure at the right.
+                    A trigger is created by entering edit mode (by the "hand"
+                    button), selecting a pattern and the starting location of the
+                    trigger, and dragging to the left to create as many repetitions
+                    of the loop as desired.
+                    Note that the drawing snaps to the selected snap value.
+                 </li>
+                 <li>
+                  <b> Adjust the triggers. </b>
+                  Once created, triggers can be moved, resized by grabbing and
+                  dragging a square handle at the left or right of the trigger,
+                  split in half by <code>Ctrl-left-click</code>, and
+                  deleted.
+                 </li>
+                 <li>
+                  <b> Song mode. </b>
+                  In the main window, click the <i>Live</i> button to turn on
+                  <i>Song</i> mode. Now playback will be controlled by the
+                  triggers.
+                 </li>
+              </ul>
+            </td>
+            <td align="center" valign="center" colspan="2">
+               <table>
+                    <tr>
+                        <td align="center" valign="center">
+                          <p class="slideintro">
+                             <img src="images/app/song-editor-annotated.png"
+                               alt="Seq66"
+                               width="350" height="auto">
+                          </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="caption"> Song Editor Names and Triggers</td>
+                    </tr>
+                    <p> </p>
+               </table>
+            </td>
+         </tr>
+         <tr>
+            <td align="left" valign="top" width="512"
+               colspan="3" class="slidenote">
+
+               <p class="slidenote">
+                  A <i>Seq66</i> song layout is a great way to set up
+                  a tune to play automatically, and to export it in a
+                  format other sequencers can read.
+               </p>
+
+            </td>
+         </tr>
+      </tbody>
+   </table>
+
+   <!-- Navigation form -->
+
+   <form name="navi">
+      <label for="prevlocation" accesskey="P">
+         <input id="prevlocation" type=hidden value="section_00.html">
+      <label for="nextlocation" accesskey="N">
+         <input id="nextlocation" type=hidden value="section_00_2.html">
+      </label>
+   </form>
+
+</body>
+
+</html>
+

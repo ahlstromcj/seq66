@@ -6,7 +6,7 @@
 <! Library:    seq66/data/share/tutorial>
 <! Author:     Chris Ahlstrom >
 <! Date:       2022-05-16>
-<! Updates:    2022-05-21>
+<! Updates:    2022-05-17>
 <! Version:    $Revision$>
 <! License:    $XPC_SUITE_GPL_LICENSES$>
 
@@ -18,37 +18,26 @@
 
 <!--
 
-      var count = 0;
+      var count=1;
 
       // The array with the links.  you can add as many links as you 
       // like, as long as you keep the numbers succeeding
 
       var link_array = new Array();
-      link_array[0] = 'home.html';
-      link_array[1] = 'introduction.html';
-      link_array[2] = 'main_window.html';
-      link_array[3] = 'main_window_patterns.html';
-      link_array[4] = 'pattern_editor.html';
-      link_array[5] = 'pattern_tools.html';
-      link_array[6] = 'song_editor.html';
-      link_array[7] = 'configuration.html';
-      link_array[8] = 'tutorial_main.html';
-      link_array[9] = 'tutorial_first_startup.html';
-      link_array[10] = 'faq.html';
+      link_array[1] = 'home.html';
+      link_array[2] = 'introduction.html';
+      link_array[3] = 'main_window.html';
 
       function next_link()
       {
-         if (count >= link_array.length)
+         if ((count + 1) >= link_array.length)
          {
-            alert('Last page');
-            count = 0;
+            // alert('That was the last page');
          }
          else
          {
-            // alert('Next Link');
             count = count + 1;
-            parent.frames['home'].document.location = link_array[count];
-            alert("Page: " + count + ".");
+            parent.frames['home'].document.location.href = link_array[count];
          }
       }
 
@@ -60,15 +49,14 @@
          }
          else
          {
-            // alert('Previous Link');
             count = count - 1;
-            parent.frames['home'].document.location = link_array[count];
+            parent.frames['home'].document.location.href = link_array[count];
          }
       }
 
       function stat_home()
       {
-         parent.status = "Moves to the home page";
+         parent.status = "Moves to the home page of the slide-show";
       }
 
       function go_forward()
@@ -88,15 +76,15 @@
 
       function next_page()
       {
-         var p = parent.frames['home'].document.navi.nextlocation.value;
-         parent.frames['home'].location.replace(p);
+        var p = parent.frames['home'].document.navi.nextlocation.value;
+        parent.frames['home'].location.replace(p);
       }
 
       function previous_page()
       {
-         var p = parent.frames['home'].document.navi.prevlocation.value;
-         // navtable.previous_page.src = "images/stock/back-dark.png";
-         parent.frames['home'].location.replace(p);
+        var p = parent.frames['home'].document.navi.prevlocation.value;
+        // navtable.previous_page.src = "images/stock/back-dark.png";
+        parent.frames['home'].location.replace(p);
       }
 
 // -->
@@ -116,15 +104,13 @@
    <form name="navtable">
 
    <table
-      align="left"
+      align="center"
       border="0"
       width="400"
       cellpadding="0"
       cellspacing="0">
 
       <tr>
-
-         <!--
          <td align="center">
                <input
                   type="image"
@@ -136,11 +122,9 @@
                   alt="Previous" 
                   name=Previous" 
                   value="Previous"
-                  title="Move to previous page"> 
+                  title="Move to previous page of slide-show"> 
          </td>
-         -->
 
-         <!--
          <td align="center">
                <input
                   type="image"
@@ -154,9 +138,7 @@
                   value="Back"
                   title="Same action as the browser's Back button"> 
          </td>
-         -->
 
-         <!--
          <td align="center">
                <input
                   type=image
@@ -168,8 +150,7 @@
                   alt="Home" 
                   name=Home" 
                   value="Home"
-                  title="Move to home page">
-         -->
+                  title="Move to home page of slide-show">
 
                <!--
 
@@ -180,7 +161,7 @@
                      alt="Home" 
                      name=Home" 
                      value="Home"
-                     title="Move to home page">
+                     title="Move to home page of slide-show">
                      <img src="images/stock/home.png">
                   </a>
 
@@ -188,7 +169,6 @@
 
          </td>
 
-         <!--
          <td align="center">
                <input
                   type="image"
@@ -202,23 +182,20 @@
                   value="Forward"
                   title="Same action as the browser's Forward button"> 
          </td>
-         -->
 
-         <!--
          <td align="center">
                <input
                   type="image"
-                  id="next_link"
-                  onclick=next_link()
+                  id="next_page"
+                  onclick=next_page()
                   onmouseover="src='images/stock/forw-dark.png'; return true;"
                   onmouseout="src='images/stock/forw.png'; return true;"
                   src="images/stock/forw.png"
                   alt="Next" 
                   name=Next" 
                   value="Next"
-                  title="Move to next page">
+                  title="Move to next page of slide-show">
          </td>
-         -->
       </tr>
    </table>
 

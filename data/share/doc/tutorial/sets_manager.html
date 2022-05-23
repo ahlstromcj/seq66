@@ -2,17 +2,17 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Draft//EN">
 
-<! File:       song_editor.html>
+<! File:       sets_manager.html>
 <! Library:    seq66/data/share/tutorial>
 <! Author:     Chris Ahlstrom >
-<! Date:       2022-05-18>
+<! Date:       2022-05-23>
 <! Updates:    2022-05-23>
 <! Version:    $Revision$>
 <! License:    $XPC_SUITE_GPL_LICENSES$>
 
 <head>
 
-   <title> Seq66 Basic Tutorial: Song Editor </title>
+   <title> Seq66 Basic Tutorial: Sets Manager </title>
       
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta http-equiv="Content-Language" content="en-us">
@@ -39,7 +39,7 @@
                height="80" class="slideheader">
                <p class="slideheader">
                   Seq66 Basic Tutorial
-                  <p class="slidetopic"> Song Editor </p>
+                  <p class="slidetopic"> Sets Manager </p>
                </p>
             </td>
          </tr>
@@ -52,11 +52,13 @@
          <tr>
 
             <td align="left" valign="top" colspan="3" class="slideintro">
-                The figure at right shows the external <i>Song Editor</i> window
-                (as opposed to the <i>Song</i> tab).
+                The figure at right shows the <i>Sets</i> tab.
                 It is a bit small, so run <code>qseq66</code>
                 (<i>Windows</i>: <code>qpseq66.exe</code>)
                 to see the window elements.
+                This tab is quite complex, so
+                we will not describe its operation in detail here.
+                See the user's manual.
             </td>
 
          </tr>
@@ -70,50 +72,31 @@
             <td align="left" valign="top" colspan="1">
               <ul>
                  <li>
-                    <b> Top bar. </b>
-                    These controls support undo/redo, follow-progress,
-                    zoom, snap, entering "triggers", transposition, and editing
-                    the layout. Also shows the time duration of the layout.
+                    <b> Set storage. </b>
+                    Sets are part of the song, and are thus stored in
+                    the <code>.midi</code> file.
+                    They are stored in a sequencer-specific (<i>SeqSpec</i>)
+                    section of the song, and so are not available to other
+                    sequencers.
                  </li>
                  <li>
-                    <b> Time line. </b>
-                    Provides for vertical zoom and the markers "L" and "R" for
-                    looping.
-                    The L/R markers can be moved; 
-                    a starting position can be set.
+                    <b> Number of sets. </b>
+                    Currently, up to 32 sets can be stored in a song.
+                    Sets are numbered from 0 to 31.
+                    Note that <i>Seq66</i> always starts showing
+                    set 0.
                  </li>
                  <li>
-                    <b> Names panel. </b>
-                    Shows much the same information as does a pattern slot.
-                    Shows the mute status.
-                    A track can be clicked here to toggle its mute status.
-                    The pattern color selected is shown here, helpful
-                    in grokking the layouts.
+                    <b> Set features. </b>
+                    Each set has a <i>number</i> and a <i>name</i>.
+                    The names can be entered in the bottom of the main
+                    windows.
                  </li>
                  <li>
-                    <b> Piano roll. </b>
-                    The piano roll shows the layout of the patterns in a song.
-                    It starts out empty, then one can paint layouts of
-                    each track.
-                    The layouts can snap to a given resolution, and
-                    can be split, moved, or deleted.
-                    They show the pattern color.
-                    The <i> File / Export / Export song </i> action can
-                    be used to save the song in a format that
-                    other sequencers can read.
-                 </li>
-                 <li>
-                    <b> Triggers. </b>
-                    Triggers control playback: when
-                    and how long a pattern plays, and how the
-                    pattern is transposed.
-                    Triggers allow patterns to be reused in very
-                    powerful ways.  See
-           <code>Kraftwerk-Europe_Endless-reconstructed.midi</code>
-                    in the <code>midi</code>
-                    installation directory. Triggers
-                    compress the original MIDI file by a factor
-                    of ten.
+                    <b> Sets grid. </b>
+                    In the <i>Sets</i> tab, the sets can be selected via
+                    a grid of buttons, or by selecting a row in the sets table.
+                    Sets can be moved around and deleted.
                  </li>
               </ul>
             </td>
@@ -124,10 +107,10 @@
                         <td align="left" valign="top">
                             <ul>
                                 <li>
-                                 <b> Colors. </b>
-                                 Note that the colors of each layout
-                                 match the color of the pattern, if
-                                 a color was assigned.
+                                 <b> Tricky. </b>
+                                 The sets tab is a bit tricky to use, and
+                                 probably needs some more testing.
+                                 Report bugs!
                                 </li>
                             </ul>
                         </td>
@@ -135,14 +118,14 @@
                     <tr>
                         <td align="center" valign="center">
                             <p class="slideintro">
-                               <img src="images/app/song-editor.png"
-                                 alt="Seq66 external song editor window"
-                                 width="380" height="auto">
+                               <img src="images/app/sets-tab.png"
+                                 alt="Seq66 playlist tab"
+                                 width="400" height="auto">
                             </p>
                         </td>
                     </tr>
                     <tr>
-                        <td class="caption"> Song/Performance Editor </td>
+                        <td class="caption"> Sets Tab</td>
                     </tr>
                      <p> </p>
                </table>
@@ -152,11 +135,7 @@
             <td align="left" valign="top" width="512"
                colspan="2" class="slidenote">
                <p class="slidenote">
-                  This window is packed with functionality.
-                  Be sure to try clicking or right clicking on the
-                  grid and the various buttons.
-                  Hover the mouse cursor over an interface item; often
-                  a tool-tip will appear.
+                  Have fun with your sets!
                </p>
             </td>
          </tr>

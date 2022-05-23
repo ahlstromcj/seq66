@@ -1,0 +1,213 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Draft//EN">
+
+<! File:       tutorial_new_song.html>
+<! Library:    seq66/data/share/tutorial>
+<! Author:     Chris Ahlstrom >
+<! Date:       2022-05-22>
+<! Updates:    2022-05-22>
+<! Version:    $Revision$>
+<! License:    $XPC_SUITE_GPL_LICENSES$>
+
+<head>
+
+   <title> Seq66 Basic Tutorial: New Song </title>
+      
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta http-equiv="Content-Style-Type" content="text" />
+   <meta http-equiv="Content-Language" content="en-us">
+   <meta name="generator" content="vim">
+   <meta name="description" content="Seq66 Basic Tutorial">
+   <meta name="keywords" content="seq66 sequencer live midi">
+
+   <link href="css/slide.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+   <!-- See home.html for more information on the layout of this page.  -->
+
+   <table
+      align="left"
+      width="800"
+      height="512"
+      cellpadding="4"
+      cellspacing="0">
+      <tbody>
+         <tr>
+            <br>
+         </tr>
+         <tr>
+            <td align="center" valign="center" colspan="3"
+               height="80" class="slideheader">
+               <p class="slideheader">
+                  Seq66 Basic Tutorial
+                  <p class="slidetopic"> New Song </p>
+               </p>
+            </td>
+         </tr>
+
+         <!-- Spacer row, usually "24" to "40" -->
+
+         <tr>
+            <td align="left" valign="top" colspan="3" height="2"> &nbsp; </td>
+         </tr>
+         <tr>
+            <td align="left" valign="top" colspan="3" class="slideintro">
+                The creation of a new song in <i>Seq66</i> (or any
+                sequencer) requires making a number of decisions
+                about the song.
+            </td>
+         </tr>
+
+         <!-- Spacer row, usually "20" to "40" -->
+
+         <tr>
+            <td align="left" valign="top" colspan="3" height="0"> &nbsp; </td>
+         </tr>
+         <tr>
+            <td align="left" valign="top" colspan="1">
+              <ul>
+                 <li>
+                    <b> Time precision. </b>
+                    <i>Seq66</i> has a default pulses-per-quarter-note (PPQN)
+                    value of 192.
+                    This can be changed per-song, or it can be
+                    changed globally in the 'usr' file / <i>Preferences</i>.
+                    It can range from 32 to 19200, though be aware of the
+                    potential impact of high PPQN on playback.
+                    Generally, when reading existing tunes, one wants the
+                    PPQN of that tune. <i>Seq66</i> will scale time to match.
+                 </li>
+                 <li>
+                    <b> Live loops versus tracks. </b>
+                    A simple yet satisfying song can be made
+                    by creating a set of short patterns and letting them
+                    play, turning them on and off in a live performance.
+                    Or one can make long patterns (tracks) in the same
+                    manner as other sequencers.
+                    And short patterns (bass, drums) can be combined with long
+                    solos.
+                 </li>
+                 <li>
+                    <b> Time signature. </b>
+                    The time signature of a track does not affect the MIDI
+                    timing of the track, although it can change the length (in
+                    pulses) of the track. The global time signature (in the main
+                    window) controls the display of the timing beats in the time
+                    bar.
+                 </li>
+                 <li>
+                    <b> Beats per minute (BPM). </b>
+                    This value is read from a MIDI file or specified when
+                    creating a new song (in the main window).
+                    It can also be set via a "tap BPM" button; click the button in
+                    time with some music.
+                 </li>
+                 <li>
+                    <b> MIDI subsystem. </b>
+                    Currently, there are two <i>Linux</i> MIDI subsystems,
+                    <i>ALSA</i> and <i>JACK</i>. Either can be used by using the
+                    <code>--alsa</code> and <code>--jack</code> options to start
+                    <i>qseq66</i>.
+                    There is a new subsystem called <i>Pipewire</i>, but
+                    currently <i>Seq66</i> doesn't adapt to that.
+                    In <i>Windows</i> and <i>Mac OSX</i>, our own version
+                    of <i>PortMidi</i> is used.  No one has asked about the 
+                    <i>Mac</i>, so that is not tested.
+                 </li>
+                 <li>
+                    <b> Live play versus "song performance". </b>
+                    This question is simple: does one want to control
+                    the song during a live performance, or
+                    lay it out and export it so that others can read it and
+                    play it?
+                 </li>
+                 <li>
+                    <b> Other features. </b>
+                    Other features include MIDI automation control (e.g.
+                    <i>LaunchPad</i>, MIDI status display, set management,
+                    play-lists, mute-group management, LFO generation, gross
+                    pattern fixes, coloring, style-sheets, fingerprint display, and
+                    much more as described in the user's manual.
+                 </li>
+              </ul>
+            </td>
+            <td align="center" valign="center" colspan="2">
+               <table>
+                    <tr>
+                         <p class="slidemain" align="left"> &nbsp; </p>
+                    </tr>
+                    <tr>
+                        <td align="center" valign="center">
+                          <p class="slidemain">
+                             <img src="images/stock/seq66.png"
+                               alt="Seq66"
+                               width="64" height="auto">
+                          </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" valign="top"> &nbsp; </td>
+                    </tr>
+                    <p> </p>
+               </table>
+            </td>
+         </tr>
+
+         <!-- Spacer row, adjust the height to put the notes at bottom.
+
+         <tr>
+            <td align="left" valign="top" colspan="3" height="2"> &nbsp; </td>
+         </tr>
+         -->
+
+         <tr>
+
+            <!-- width="405" -->
+
+            <td align="left" valign="top" width="512"
+               colspan="3" class="slidenote">
+
+               <p class="slidenote">
+                  There are many many use cases for <i>Seq66</i>.
+                  No way to cover them all, even in the user's manual.
+               </p>
+
+            </td>
+
+            <!-- Name of the current slide.
+
+            <td align="center" valign="center" width="80">
+               &nbsp;
+            </td>
+
+            <td align="left" valign="bottom" colspan="1" width="80">
+               <p class="slidelabel">
+                  New Song
+               </p>
+            </td>
+            -->
+
+         </tr>
+
+      </tbody>
+
+   </table>
+
+   <!-- Navigation form -->
+
+   <form name="navi">
+      <label for="prevlocation" accesskey="P">
+         <input id="prevlocation" type=hidden value="section_00.html">
+      <label for="nextlocation" accesskey="N">
+         <input id="nextlocation" type=hidden value="section_00_2.html">
+      </label>
+   </form>
+
+</body>
+
+</html>
+

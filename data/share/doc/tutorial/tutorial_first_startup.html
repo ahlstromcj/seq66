@@ -12,7 +12,7 @@
 
 <head>
 
-   <title> Seq66 Basic Tutorial: Pattern Tools </title>
+   <title> Seq66 Basic Tutorial: First Startup </title>
       
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta http-equiv="Content-Style-Type" content="text" />
@@ -44,7 +44,7 @@
                height="80" class="slideheader">
                <p class="slideheader">
                   Seq66 Basic Tutorial
-                  <p class="slidetopic"> First Start </p>
+                  <p class="slidetopic"> First Startup </p>
                </p>
             </td>
          </tr>
@@ -56,14 +56,12 @@
          </tr>
          <tr>
             <td align="left" valign="top" colspan="3" class="slideintro">
-                The first startup of <i>Seq66</i> starts with default settings,
-                and creates the configuration files when <i>Seq66</i>
-                exits.
-                If one has the patience, this is a good time
-                to make sure the desktop theme, the
+                The first startup of <i>Seq66</i> makes default settings,
+                and creates the configuration files when <i>Seq66</i> exits.
+                Now is a good time to make sure the desktop theme, the
                 <i>Qt</i> theme, <code>qss</code> style-sheet, and the
-                <code>palette</code> are as one desires.
-                These are advanced items, though.
+                <code>palette</code> all come together for a nice look.
+                See the user's manual for details.
             </td>
          </tr>
 
@@ -88,46 +86,48 @@
                  </li>
                  <li>
                     <b> JACK. </b>
-                    Running <code>qseq66 --jack</code> (or setting to use
-                    <i>JACK</i> in <i>Preferences / JACK</i>) will require
-                    using <code>a2jmidid</code>, or the very latest version
-                    of <i>JACK</i>, to expose USB hardware MIDI ports to
-                    <i>JACK</i>. See the user's manual.
+                    Running <code>qseq66 --jack</code> or setting
+                    <i>JACK</i> in <i>Preferences / JACK</i>) requires
+                    using <code>a2jmidid</code> or a recent version
+                    of <i>JACK</i> to expose USB MIDI ports to
+                    <i>JACK</i>.
                  </li>
                  <li>
                     <b> Windows. </b>
                     Running <code>qpseq66.exe</code> might show an
                     error; the
                     <i>Microsoft MIDI Mapper</i> has grabbed the port(s).
-                    See the user's manual or
-                    <code>C:/Program Files (x86)/Seq66/data/ readme.windows</code>
-                    for how to handle this situation.
+                    See the manual or
+                    <code>C:/Program Files (x86)/Seq66/data/ readme.windows</code>.
                  </li>
                  <li>
                     <b> First Exit. </b>
-                    Upon exit, <i>Seq66</i> saves the current configuration
+                    At exit, <i>Seq66</i> saves the current settings
                     in the files shown <a href="configuration.html">here</a>.
                  </li>
                  <li>
                     <b> Smoke Test. </b>
-                    Load a demo file such as
-                    <code>Peter Gunn-reconstructed.midi</code>
+                    Load a demo file like
+                    <code>Peter Gunn - reconstructed.midi</code>
                     in <code>/usr/local/share/seq66-0.98/midi/</code>
                     (<i>Linux</i>) or
-                    <code>C:/Program Files (x86)/Seq66/data/midi</code>
+                    <code>C:/Program Files (x86)/Seq66/data/midi</code>.
                     (<i>Windows</i>).
                     Go to the "None" drop-down box at
+                    the top and select the desired output (hardware/software
+                    synthesizer).
+                    Click the "Play" button and verify that it
+                    <i>smokes</i> (plays)!
                  </li>
               </ul>
             </td>
             <td align="center" valign="center" colspan="2">
                <table>
                     <tr>
-                         <p class="slidemain" align="left">
-                          the top and select the desired output (hardware/software
-                          synthesizer).
-                          Click the "Play" button and verify that it
-                          <i>smokes</i> (plays)!  If not, try trouble-shooting;
+                         <!-- <p class="slidemain" align="left"> -->
+
+                         <p align="left">
+                          If not, try trouble-shooting;
                           if that fails, ask us!  Save the song with this
                           output for later demos.
                          </p>
@@ -137,32 +137,20 @@
                           <p class="slideintro">
                              <img src="images/app/ports.png"
                                alt="Seq66 preferences showing clocks/ports"
-                               width="375" height="auto">
+                               width="350" height="auto">
                           </p>
                         </td>
                     </tr>
                     <tr>
-                        <td align="center" valign="top">
-                        <br>
-                        <b>Output Ports ("Clocks") and Input Ports</b>
+                        <td class="caption">
+                           <b>Output Ports ("Clocks") and Input Ports</b>
                         </td>
                     </tr>
                     <p> </p>
                </table>
             </td>
          </tr>
-
-         <!-- Spacer row, adjust the height to put the notes at bottom.
-
          <tr>
-            <td align="left" valign="top" colspan="3" height="2"> &nbsp; </td>
-         </tr>
-         -->
-
-         <tr>
-
-            <!-- width="405" -->
-
             <td align="left" valign="top" width="512"
                colspan="3" class="slidenote">
 
@@ -172,24 +160,8 @@
                </p>
 
             </td>
-
-            <!-- Name of the current slide.
-
-            <td align="center" valign="center" width="80">
-               &nbsp;
-            </td>
-
-            <td align="left" valign="bottom" colspan="1" width="80">
-               <p class="slidelabel">
-                  Pattern Tools
-               </p>
-            </td>
-            -->
-
          </tr>
-
       </tbody>
-
    </table>
 
    <!-- Navigation form -->
