@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2021-12-09
-:: \update      2022-03-30
+:: \update      2022-05-24
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a debug build of Seq66 for
@@ -62,7 +62,7 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.98.6
+set PROJECT_VERSION=0.98.9
 set PROJECT_DRIVE=C:
 set PROJECT_BITS=32
 set PROJECT_BASE=\Users\Chris\Documents\Home

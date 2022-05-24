@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-19
+ * \updates       2022-05-24
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1075,7 +1075,12 @@ void
 qsmainwnd::slot_user_manual ()
 {
     std::string docpath = find_file(doc_folder_list(), "seq66-user-manual.pdf");
-    if (! docpath.empty())
+    if (docpath.empty())
+    {
+        docpath = pdf_user_manual();            /* in the settings module   */
+        (void) open_url(docpath);
+    }
+    else
     {
 #if defined USE_QDESKTOPSERVICES
         QString link = qt(docpath);

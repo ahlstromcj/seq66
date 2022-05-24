@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2022-05-19
+ * \updates       2022-05-24
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -399,6 +399,19 @@ bool
 ppqn_in_range (int ppqn)
 {
     return usr().use_file_ppqn() || usr().is_ppqn_valid(ppqn);
+}
+
+/**
+ *  Returns the path to the github version of the Seq66 user's manual.
+ */
+
+const std::string &
+pdf_user_manual ()
+{
+    static std::string url =
+        "https://ahlstromcj.github.io/docs/seq66/seq66-user-manual.pdf";
+
+    return url;
 }
 
 /**
