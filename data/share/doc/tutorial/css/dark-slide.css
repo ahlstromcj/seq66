@@ -3,7 +3,7 @@
  *  Library:    seq66/data/share/tutorial
  *  Author:     Chris Ahlstrom
  *  Date:       2022-05-19
- *  Updates:    2022-05-23
+ *  Updates:    2022-05-24
  *  Version:    $Revision$
  *  License:    $XPC_SUITE_GPL_LICENSES$
  */
@@ -182,6 +182,30 @@ a:hover
 {
    text-decoration: none;
    background-color: #f2f2ff;
+}
+
+.previous
+{
+   text-decoration: none;
+   font-weight: bold;
+   background-color: cyan;
+   color: black;
+}
+
+.home
+{
+   text-decoration: none;
+   font-weight: bold;
+   background-color: #FFFFFF;
+   color: black;
+}
+
+.next
+{
+   text-decoration: none;
+   font-weight: bold;
+   background-color: #00FF00;
+   color: white;
 }
 
 dl.el

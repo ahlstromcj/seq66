@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2022-05-04
+2015-09-09 to 2022-05-24
 
 Creating a GitHub Repository:
 
@@ -423,5 +423,29 @@ Permanently delete a file and its history:
 
     This can take a long long time if the file has thousands of commits.
     Not yet sure if this really works!
+
+Creating a personal GitHub Site:
+
+    1.  In the upper-right corner of any page, use the "+" drop-down menu,
+        and select "New repository". [Note: actually, go to the
+        user-profile link (your face), then the "Your repositories" link.
+        Then click the "New" button.]
+    2.  Enter username.github.io as the repository name. Replace username
+        with the GitHub username. 
+    3.  Under your repository name, click "Settings".
+    4.  In the "Code and automation" section of the sidebar, click "Pages".
+    5.  Click "Choose a theme". Browse and pick a theme.
+    6.  Modify the new "README.md" file.  Click "Commit changes."
+    7.  The site can be changed by editing "_config.yml" in the "Code"
+        tab. Click "Commit changes".
+
+    Note that is can take up to 20 minutes for site changes to appear.
+    See https://docs.github.com/en/pages/quickstart for "Next Steps".
+
+Adding a PDF to the personal GitHub Site:
+
+    Once the site is created, clone it locally.
+
+    The PDF needs to go into https://username.github.io/folder.
 
 # vim: sw=4 ts=4 wm=8 et ft=sh
