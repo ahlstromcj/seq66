@@ -1071,13 +1071,17 @@ qsmainwnd::slot_tutorial ()
     }
 }
 
+/**
+ *  To do: tighten this up a bit.
+ */
+
 void
 qsmainwnd::slot_user_manual ()
 {
-    std::string docpath = find_file(doc_folder_list(), "seq66-user-manual.pdf");
+    std::string docpath = find_file(doc_folder_list(), pdf_user_manual());
     if (docpath.empty())
     {
-        docpath = pdf_user_manual();            /* in the settings module   */
+        docpath = pdf_user_manual_url();        /* in the settings module   */
         (void) open_url(docpath);
     }
     else

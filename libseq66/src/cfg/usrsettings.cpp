@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2022-04-05
+ * \updates       2022-05-25
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -368,6 +368,8 @@ usrsettings::usrsettings () :
     m_user_option_daemonize     (false),
     m_user_use_logfile          (false),
     m_user_option_logfile       (),
+    m_user_pdf_viewer           (),
+    m_user_browser              (),
 
     /*
      * [user-ui-tweaks]
@@ -462,6 +464,8 @@ usrsettings::set_defaults ()
     m_user_option_daemonize = false;
     m_user_use_logfile = false;
     m_user_option_logfile.clear();
+    m_user_pdf_viewer.clear();
+    m_user_browser.clear();
     m_user_ui_key_height = c_def_key_height;
     m_user_ui_key_view = showkeys::octave_letters;
     m_user_ui_seqedit_in_tab = true;

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2022-02-24
+% \update      2022-05-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1457,10 +1457,14 @@
 
    \index{usr!option-daemonize}
    \index{usr!option-logfile}
+   \index{usr!option-pdf-viewer}
+   \index{usr!option-browser}
    \begin{verbatim}
       [user-options]
       daemonize = false
       log = "seq66.log"
+      pdf-viewer = "/usr/bin/zathura"
+      browser = "/usr/bin/lynx"
    \end{verbatim}
 
    If this option is not used when running \texttt{seq66cli}, then the
@@ -1476,6 +1480,9 @@
    If empty, then a valid file-name can be specified
    in the \texttt{-{}-option log=filename.log} option.
 %  There's more to the 'usr' configuration file than we've exposed here.
+
+   The PDF viewer and browser options are used if non-empty.
+   Otherwise, the system default applications are used.
 
 \subsubsection{'usr' File / Additional Options}
 \label{subsubsec:usr_file_added_options}

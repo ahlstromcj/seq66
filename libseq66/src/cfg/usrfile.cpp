@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-05-15
+ * \updates       2022-05-25
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -355,10 +355,30 @@ usrfile::parse ()
     flag = get_boolean(file, tag, "daemonize");
     usr().option_daemonize(flag);
 
-    std::string logfile = get_variable(file, tag, "log");
-    logfile = strip_quotes(logfile);
-    if (! logfile.empty())
-        usr().option_logfile(logfile);
+    std::string fname = get_variable(file, tag, "log");
+    if (fname.empty())
+        rc().auto_usr_save(true);
+    else
+    {
+        fname = strip_quotes(fname);
+        usr().option_logfile(fname);
+    }
+    fname = get_variable(file, tag, "pdf-viewer");
+    if (fname.empty())
+        rc().auto_usr_save(true);
+    else
+    {
+        fname = strip_quotes(fname);
+        usr().user_pdf_viewer(fname);
+    }
+    fname = get_variable(file, tag, "browser");
+    if (fname.empty())
+        rc().auto_usr_save(true);
+    else
+    {
+        fname = strip_quotes(fname);
+        usr().user_browser(fname);
+    }
 
     /*
      * [user-ui-tweaks].  The variables in this section are, in this order:
@@ -738,6 +758,8 @@ usrfile::write ()
 
     write_boolean(file, "daemonize", usr().option_daemonize());
     write_string(file, "log", usr().option_logfile(), true);
+    write_string(file, "pdf-viewer", usr().user_pdf_viewer(), true);
+    write_string(file, "browser", usr().user_browser(), true);
 
     /*
      * [user-ui-tweaks]

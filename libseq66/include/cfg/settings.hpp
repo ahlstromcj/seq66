@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2022-05-24
+ * \updates       2022-05-25
  * \license       GNU GPLv2 or above
  *
  *  A couple of universal helper functions remain as inline functions in the
@@ -148,6 +148,7 @@ extern const tokenization & rec_vol_items ();
 extern void set_configuration_defaults ();
 extern bool ppqn_in_range (int ppqn);
 extern const std::string & pdf_user_manual ();
+extern const std::string & pdf_user_manual_url ();
 extern const tokenization & doc_folder_list ();
 extern const tokenization & tutorial_folder_list ();
 

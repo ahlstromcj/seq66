@@ -21,7 +21,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-05-19
- * \updates       2022-05-19
+ * \updates       2022-05-25
  * \license       GNU GPLv2 or above
  *
  *  Provides support for cross-platform time-related functions.
@@ -29,6 +29,7 @@
 
 #include <cstdlib>                      /* int std::system(commandline)     */
 
+#include "cfg/settings.hpp"             /* for usr().use_pdf_viewer() etc.  */
 #include "util/basic_macros.hpp"        /* error_message()                  */
 #include "os/shellexecute.hpp"          /* seq66::open_document(), etc.     */
 
@@ -71,30 +72,40 @@ command_line (const std::string & cmdline)
  *  Opens a PDF file.  Meant to be made more flexible later:
  *
  *      -   Add a user-configurable path to a PDF view, if specified.
+ *          Currently, qsmainwnd uses open_url() if the local file
+ *          is not found.
  *      -   Handle executable and file paths with spaces.
  */
 
 bool
 open_pdf (const std::string & pdfspec)
 {
-    std::string cmd = "/usr/bin/xdg-open";
+    std::string cmd = usr().user_pdf_viewer();
+    if (cmd.empty())
+        cmd = "/usr/bin/xdg-open";
+
     cmd += " ";
     cmd += pdfspec;
     cmd += "&";
-
     return command_line(cmd);
 }
 
 bool
 open_url (const std::string & url)
 {
-    std::string cmd = "/usr/bin/xdg-open";
+    std::string cmd = usr().user_browser();
+    if (cmd.empty())
+        cmd = "/usr/bin/xdg-open";
+
     cmd += " ";
     cmd += url;
     cmd += "&";
-
     return command_line(cmd);
 }
+
+/**
+ *  Currently not used anywhere.
+ */
 
 bool
 open_local_url (const std::string & url)

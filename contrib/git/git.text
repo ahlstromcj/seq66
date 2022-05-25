@@ -448,4 +448,19 @@ Adding a PDF to the personal GitHub Site:
 
     The PDF needs to go into https://username.github.io/folder.
 
+Cloning our personal GitHub site:
+
+    $ git clone https://github.com/ahlstromcj/ahlstromcj.github.io
+
+    Then it is good to use the existing SSH/Git access by editing
+    .git/config to set:
+
+    [remote "origin"]
+        url = git@github.com:ahlstromcj/ahlstromcj.github.io
+
+    Otherwise, GitHub now gripes about security and refuses to deal with
+    a https link.
+
+    Add an index.html file.
+
 # vim: sw=4 ts=4 wm=8 et ft=sh

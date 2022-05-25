@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-04-05
+ * \updates       2022-05-25
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -760,6 +760,14 @@ private:
 
     std::string m_user_option_logfile;
 
+    /**
+     *  The full path to PDF and browser executables, in case the system
+     *  defaults are not present or are not suitable.
+     */
+
+    std::string m_user_pdf_viewer;
+    std::string m_user_browser;
+
     /*
      *  [user-ui-tweaks]
      */
@@ -1476,9 +1484,19 @@ public:
         return m_user_use_logfile;
     }
 
-    std::string option_logfile () const
+    const std::string & option_logfile () const
     {
         return m_user_option_logfile;
+    }
+
+    const std::string & user_pdf_viewer () const
+    {
+        return m_user_pdf_viewer;
+    }
+
+    const std::string & user_browser () const
+    {
+        return m_user_browser;
     }
 
     int min_key_height () const;
@@ -1742,7 +1760,22 @@ public:         // used in main application module and the usrfile class
         }
     }
 
-    void option_logfile (const std::string & logfile);
+    void option_logfile (const std::string & file);
+
+    /*
+     *  Since these a paths to executable, probably good to provide a full
+     *  path, for now we will not enforce that.
+     */
+
+    void user_pdf_viewer (const std::string & file)
+    {
+        m_user_pdf_viewer = file;
+    }
+
+    void user_browser (const std::string & file)
+    {
+        m_user_browser = file;
+    }
 
     void key_height (int h)
     {

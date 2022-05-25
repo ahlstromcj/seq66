@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2022-05-24
+ * \updates       2022-05-25
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -402,13 +402,24 @@ ppqn_in_range (int ppqn)
 }
 
 /**
- *  Returns the path to the github version of the Seq66 user's manual.
+ *  Returns the file-name of the Seq66 user's manual.
  */
 
 const std::string &
 pdf_user_manual ()
 {
-    static std::string url =
+    static const std::string name = "seq66-user-manual.pdf";
+    return name;
+}
+
+/**
+ *  Returns the path to the github version of the Seq66 user's manual.
+ */
+
+const std::string &
+pdf_user_manual_url ()
+{
+    static const std::string url =
         "https://ahlstromcj.github.io/docs/seq66/seq66-user-manual.pdf";
 
     return url;
@@ -448,6 +459,11 @@ doc_folder_list ()
 #endif
     return s_folder_list;
 }
+
+/**
+ *  Currently, we don't store the tutorial on the web in
+ *  ahlstromcj.github.io.
+ */
 
 const tokenization &
 tutorial_folder_list ()
