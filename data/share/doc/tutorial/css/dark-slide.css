@@ -3,7 +3,7 @@
  *  Library:    seq66/data/share/tutorial
  *  Author:     Chris Ahlstrom
  *  Date:       2022-05-19
- *  Updates:    2022-05-24
+ *  Updates:    2022-05-26
  *  Version:    $Revision$
  *  License:    $XPC_SUITE_GPL_LICENSES$
  */
@@ -22,8 +22,8 @@ body
 
    background-repeat: no-repeat;
    background-attachment: fixed;
-   background-color: #404040;
-   color: white;
+   background-color: DarkSlateGrey;
+   color: White;
    margin-top: 0px;
    margin-bottom: 0px;
    margin-right: 20px;
@@ -83,85 +83,28 @@ td.caption
    padding: 10px;
 }
 
-div.qindex
-{
-   width: 100%;
-   background-color: #e8eef2;
-   border: 1px solid #84b0c7;
-   text-align: center;
-   margin: 2px;
-   padding: 2px;
-   line-height: 140%;
-}
-
 div.nav
 {
    width: 100%;
    background-color: #e8eef2;
    border: 1px solid #84b0c7;
-   color: white;
+   color: White;
    text-align: center;
    margin: 2px;
    padding: 2px;
    line-height: 140%;
 }
 
-div.navtab
+table.navtab
 {
    background-color: #e8eef2;
-   border: 1px solid #84b0c7;
+   border-style: solid;
+   border-width: 2px;
+   border-color: green;
    text-align: center;
-   margin: 2px;
+   margin: 4px;
    margin-right: 15px;
-   padding: 2px;
-}
-
-td.navtab
-{
-   font-size: 70%;
-}
-
-a.qindex
-{
-   text-decoration: none;
-   font-weight: bold;
-   color: #1A419D;
-}
-
-a.qindex:visited
-{
-   text-decoration: none;
-   font-weight: bold;
-   color: #1A419D;
-}
-
-a.qindex:hover
-{
-   text-decoration: none;
-   background-color: #ddddff;
-}
-
-a.qindexHL
-{
-   text-decoration: none;
-   font-weight: bold;
-   background-color: #6666cc;
-   color: #ffffff;
-   border: 1px double #9295C2;
-}
-
-a.qindexHL:hover
-{
-   text-decoration: none;
-   background-color: #6666cc;
-   color: #ffffff;
-}
-
-a.qindexHL:visited
-{
-   text-decoration: none;
-   background-color: #6666cc;
-   color: #ffffff;
+   padding: 4px;
 }
 
 a.code:link
@@ -178,6 +121,26 @@ a.code:visited
    color: #0000FF;
 }
 
+a
+{
+   color: #A0FFA0;
+}
+
+a:active
+{
+   color: #FFA0A0;
+}
+
+a:focus
+{
+   color: #A0A0FF;
+}
+
+a:visited
+{
+   color: #FFA0FF;
+}
+
 a:hover
 {
    text-decoration: none;
@@ -189,7 +152,7 @@ a:hover
    text-decoration: none;
    font-weight: bold;
    background-color: cyan;
-   color: black;
+   color: Black;
 }
 
 .home
@@ -197,7 +160,7 @@ a:hover
    text-decoration: none;
    font-weight: bold;
    background-color: #FFFFFF;
-   color: black;
+   color: Black;
 }
 
 .next
@@ -205,7 +168,7 @@ a:hover
    text-decoration: none;
    font-weight: bold;
    background-color: #00FF00;
-   color: white;
+   color: White;
 }
 
 dl.el
@@ -235,7 +198,7 @@ pre.fragment
 
 div.ah
 {
-   background-color: black;
+   background-color: Black;
    font-weight: bold;
    color: #ffffff;
    margin-bottom: 3px;
@@ -302,34 +265,11 @@ td.tiny
    font-size: 75%;
 }
 
-a
-{
-   color: #1A41A8;
-}
-
-a:visited
-{
-   color: #2A3798;
-}
-
-.dirtab
-{
-   padding: 4px;
-   border-collapse: collapse;
-   border: 1px solid #84b0c7;
-}
-
-th.dirtab
-{
-   background: #e8eef2;
-   font-weight: bold;
-}
-
 hr
 {
    height: 1px;
    border: none;
-   border-top: 1px solid black;
+   border-top: 1px solid Black;
 }
 
 /*
@@ -339,35 +279,45 @@ hr
 body.tree
 {
    background-color: #A0A0A0;
-   color: white;
+   color: White;
 }
 
 a.treelink
 {
-   color: blue;
+   color: White;
    text-decoration: none;
    font-weight: bold;
 }
 
 a.treelink:active
 {
+   background-color: #002020;
    color: red;
 }
 
 a.treelink:focus
 {
+   background-color: #002020;
    color: green;
 }
 
 a.treelink:visited
 {
-   color: purple;
+   background-color: #002020;
+   color: White;
 }
 
 .directory
 {
    font-size: 9pt;
    font-weight: bold;
+   background-color: DarkSlateGrey;
+   border-style: solid;
+   border-width: 2px;
+   border-color: green;
+   margin: 4px;
+   margin-right: 15px;
+   padding: 4px;
 }
 
 .directory H3
@@ -385,7 +335,7 @@ a.treelink:visited
 .directory P
 {
    margin: 0px;
-   white-space: nowrap;
+   White-space: nowrap;
 }
 
 .directory DIV
@@ -406,9 +356,9 @@ a.treelink:visited
 td.slideheader
 {
    height: 40px;
-   background-color: #c0c0d0;
+   background-color: CornflowerBlue;
    border: 2px solid #808080;
-   color: black;
+   color: Black;
 }
 
 p.slideheader
@@ -430,14 +380,14 @@ p.slidetopic
 
 td.slideintro
 {
-   background-color: #404040;
+   background-color: DarkSlateGrey;
    border: 2px solid #CCCCCC;
 }
 
 p.slideintro
 {
-   background-color: #404040;
-   color: white;
+   background-color: DarkSlateGrey;
+   color: White;
    font-weight: normal;
    font-size: 110%;
    margin-top: 0px;
@@ -446,14 +396,14 @@ p.slideintro
 
 ul
 {
-   background-color: #404040;
-   color: white;
+   background-color: DarkSlateGrey;
+   color: White;
 }
 
 .slidemain
 {
-   background-color: #404040;
-   color: white;
+   background-color: DarkSlateGrey;
+   color: White;
    font-weight: normal;
    font-size: 110%;
    margin-bottom: 6px;
@@ -461,8 +411,14 @@ ul
 
 td.slidenote
 {
-   background-color: #c0c0d0;
+   background-color: GainsBoro;
    border: 1px solid #808080;
+   color: Black;
+}
+
+a.slidenote
+{
+    color:Black;
 }
 
 .slidenote
@@ -470,8 +426,8 @@ td.slidenote
    margin-top: 0px;
    margin-bottom: 0px;
    font-style: italic;
-   font-size: 90%;
-   color: #404040
+   font-size: 100%;
+   color: Black;
 }
 
 .slidelabel
@@ -479,6 +435,6 @@ td.slidenote
    font-size: 125%;
    font-weight: bold;
    font-style: oblique;
-   color: red;
+   color: Salmon;
 }
 
