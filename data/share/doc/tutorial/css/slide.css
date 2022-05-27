@@ -1,9 +1,9 @@
 /*
- *  File:       emac-slide.css
+ *  File:       light-slide.css
  *  Library:    seq66/data/share/tutorial
  *  Author:     Chris Ahlstrom
- *  Date:       2022-05-26
- *  Updates:    2022-05-26
+ *  Date:       2022-05-17
+ *  Updates:    2022-05-27
  *  Version:    $Revision$
  *  License:    $XPC_SUITE_GPL_LICENSES$
  */
@@ -14,16 +14,32 @@ body,h1,h2,h3,h4,h5,h6,p,td,th,ul,dl,div
    font-family: Roman, Times, serif;
 }
 
+:root
+{
+    --bg-color: #FFFFFF;
+    --nav-color: #E8EEF2;
+    --dir-color: #E8EEF2;
+    --intro-color: #E8EEF2;
+    --ul-color: #F0F0F0;
+    --main-color: #F0F0F0;
+    --note-color: #EBEEF2;
+    --text-color: Black;
+    --label-color: Red;
+    --treelink-color: Blue;
+    --hdr-color: #C0C0C0;
+    --hdr-text-color: Black;
+}
+
 body
 {
     /*
      * background-image: url('../img/stock/OS5.png');
+     * background-repeat: no-repeat;
+     * background-attachment: fixed;
      */
 
-   background-repeat: no-repeat;
-   background-attachment: fixed;
-   background-color: #005050;
-   color: Wheat;
+   background-color: var(--bg-color);
+   color: var(--text-color);
    margin-top: 0px;
    margin-bottom: 0px;
    margin-right: 20px;
@@ -86,9 +102,11 @@ td.caption
 div.nav
 {
    width: 100%;
-   background-color: #e8eef2;
-   border: 1px solid #84b0c7;
-   color: Wheat;
+   background-color: var(--nav-color);
+   border-width: 1px;
+   border-style: solid;
+   border-color: #84B0C7;
+   color: var(--text-color);
    text-align: center;
    margin: 2px;
    padding: 2px;
@@ -97,9 +115,9 @@ div.nav
 
 table.navtab
 {
-   background-color: #006060;
-   border-style: solid;
+   background-color: var(--nav-color);
    border-width: 2px;
+   border-style: solid;
    border-color: green;
    text-align: center;
    margin: 4px;
@@ -121,32 +139,6 @@ a.code:visited
    color: #0000FF;
 }
 
-a
-{
-   color: #A0FFA0;
-}
-
-a:active
-{
-   color: #FFA0A0;
-}
-
-a:focus
-{
-   color: #A0A0FF;
-}
-
-a:visited
-{
-   color: #FFA0FF;
-}
-
-a:hover
-{
-   text-decoration: none;
-   background-color: #f2f2ff;
-}
-
 .previous
 {
    text-decoration: none;
@@ -159,7 +151,7 @@ a:hover
 {
    text-decoration: none;
    font-weight: bold;
-   background-color: #FFFFFF;
+   background-color: var(--bg-color);
    color: Black;
 }
 
@@ -168,7 +160,7 @@ a:hover
    text-decoration: none;
    font-weight: bold;
    background-color: #00FF00;
-   color: Wheat;
+   color: White;
 }
 
 dl.el
@@ -184,8 +176,10 @@ dl.el
 
 pre.fragment
 {
-   border: 1px solid #CCCCCC;
-   background-color: #f5f5f5;
+   border-width: 1px;
+   border-style: solid;
+   border-color: #C0C0C0;
+   background-color: var(--bg-color);
    margin-top: 4px;
    margin-bottom: 4px;
    margin-left: 2px;
@@ -269,7 +263,9 @@ hr
 {
    height: 1px;
    border: none;
-   border-top: 1px solid Black;
+   border-width: 1px;
+   border-style: solid;
+   border-color: Black;
 }
 
 /*
@@ -278,42 +274,24 @@ hr
 
 body.tree
 {
-   background-color: #004040;
-   color: Wheat;
+   background-color: var(--bg-color);
+   color: var(--text-color);
 }
 
 a.treelink
 {
-   color: White;
+   color: var(--treelink-color);
    text-decoration: none;
    font-weight: bold;
-}
-
-a.treelink:active
-{
-   background-color: #002020;
-   color: red;
-}
-
-a.treelink:focus
-{
-   background-color: #002020;
-   color: green;
-}
-
-a.treelink:visited
-{
-   background-color: #002020;
-   color: Wheat;
 }
 
 .directory
 {
    font-size: 9pt;
    font-weight: bold;
-   background-color: #004040;
-   border-style: solid;
+   background-color: var(--dir-color);
    border-width: 2px;
+   border-style: solid;
    border-color: green;
    margin: 4px;
    margin-right: 15px;
@@ -335,7 +313,7 @@ a.treelink:visited
 .directory P
 {
    margin: 0px;
-   White-space: nowrap;
+   white-space: nowrap;
 }
 
 .directory DIV
@@ -356,9 +334,11 @@ a.treelink:visited
 td.slideheader
 {
    height: 40px;
-   background-color: CornflowerBlue;
-   border: 2px solid #808080;
-   color: Black;
+   background-color: var(--hdr-color);
+   border-width: 2px;
+   border-style: solid;
+   border-color: #808080;
+   color: var(--hdr-text-color);
 }
 
 p.slideheader
@@ -367,6 +347,7 @@ p.slideheader
    margin-bottom: 0px;
    font-weight: bold;
    font-size: 150%;
+   color: var(--hdr-text-color);
 }
 
 p.slidetopic
@@ -380,14 +361,16 @@ p.slidetopic
 
 td.slideintro
 {
-   background-color: #005050;
-   border: 2px solid #CCCCCC;
+   background-color: var(--intro-color);
+   border-width: 2px;
+   border-style: solid;
+   border-color: #C0C0C0;
 }
 
 p.slideintro
 {
-   background-color: #005050;
-   color: Wheat;
+   background-color: var(--intro-color);
+   color: var(--text-color);
    font-weight: normal;
    font-size: 110%;
    margin-top: 0px;
@@ -396,14 +379,14 @@ p.slideintro
 
 ul
 {
-   background-color: #006060;
-   color: Wheat;
+   background-color: var(--ul-color);
+   color: var(--text-color);
 }
 
 .slidemain
 {
-   background-color: #005050;
-   color: Wheat;
+   background-color: var(--main-color);
+   color: var(--text-color);
    font-weight: normal;
    font-size: 110%;
    margin-bottom: 6px;
@@ -411,14 +394,11 @@ ul
 
 td.slidenote
 {
-   background-color: GainsBoro;
-   border: 1px solid #808080;
-   color: Black;
-}
-
-a.slidenote
-{
-    color:Black;
+   background-color: var(--note-color);
+   border-width: 1px;
+   border-style: solid;
+   border-color: #C0C0C0;
+   color: var(--text-color);
 }
 
 .slidenote
@@ -426,8 +406,8 @@ a.slidenote
    margin-top: 0px;
    margin-bottom: 0px;
    font-style: italic;
-   font-size: 100%;
-   color: Black;
+   font-size: 90%;
+   color: var(--text-color);
 }
 
 .slidelabel
@@ -435,6 +415,6 @@ a.slidenote
    font-size: 125%;
    font-weight: bold;
    font-style: oblique;
-   color: Salmon;
+   color: var(--label-color);
 }
 

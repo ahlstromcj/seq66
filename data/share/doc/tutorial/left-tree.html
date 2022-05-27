@@ -6,7 +6,7 @@
 <! Library:    seq66/data/share/tutorial>
 <! Author:     Chris Ahlstrom >
 <! Date:       2022-05-16>
-<! Updates:    2022-05-24>
+<! Updates:    2022-05-27>
 <! Version:    $Revision$>
 <! License:    $XPC_SUITE_GPL_LICENSES$>
 
@@ -74,6 +74,7 @@
 
    var count = 0;
    var link_array = new Array();
+   var css_array = new Array();
    link_array[0] = 'home.html';
    link_array[1] = 'introduction.html';
    link_array[2] = 'main_window.html';
@@ -93,6 +94,10 @@
    link_array[16] = 'tutorial_song_performance.html';
    link_array[17] = 'tutorial_other_features.html';
    link_array[18] = 'faq.html';
+   css_array[0] = 'css/slide.css';
+   css_array[1] = 'css/light-slide.css';
+   css_array[2] = 'css/dark-slide.css';
+   css_array[3] = 'css/emac-slide.css';
 
    function next_link()
    {
@@ -124,6 +129,26 @@
          count = count - 1;
       }
       top.frames['home'].location.href = link_array[count];
+   }
+
+   function set_index (pageindex)
+   {
+      /*
+       * Might need to do lookup
+       */
+
+      count = pageindex;
+      top.frames['home'].location.href = link_array[count];
+   }
+
+   function change_css(cssfile, linkindex)
+   {
+       var oldlink = document.getElementsByTagName("link").item(linkindex);
+       var newlink = document.createElement("link");
+       newlink.setAttribute("rel", "stylesheet");
+       newlink.setAttribute("type", "text/css");
+       newlink.setAttribute("href", cssfile);
+       document.getElementsByTagName("head").item(linkindex).replaceChild(newlink, oldlink);
    }
    
    -->
@@ -355,37 +380,56 @@
                <td align="center">
                   <input
                      type="image"
+                     accesskey="p"
                      id="previouslink"
                      onclick=previous_link()
                      src="images/stock/back.png"
                      name=Previous" 
                      value="Previous"
-                     title="Move to previous page"> 
+                     title="Move to previous page. Hot-key P."> 
                </td>
                <td align="center">
                   <input
                      type="image"
+                     accesskey="h"
                      id="homelink"
                      onclick=home_link()
                      src="images/stock/home.png"
                      name=Home" 
                      value="Home"
-                     title="Move to home page"> 
+                     title="Move to home page. Hot-key H."> 
                </td>
                <td align="center">
                   <input
                      type="image"
+                     accesskey="n"
                      id="next_link"
                      onclick=next_link()
                      src="images/stock/forw.png"
                      name=Next" 
                      value="Next"
-                     title="Move to next page"> 
+                     title="Move to next page. Hot-key N."> 
                </td>
             </tr>
          </table>
       </td>
    </tr>
+
+   <!--
+   <tr>
+      <td align="left">
+         Access keys P, H, N
+      </td>
+   </tr>
+
+   <tr>
+      <td align="center">
+        <a href="#" onclick="change_css('css/light-slide.css', 1);">Light</a> 
+        <a href="#" onclick="change_css('css/dark-slide.css', 1);">Dark</a>
+      </td>
+   </tr>
+   -->
+
 </table>
 </body>
 
