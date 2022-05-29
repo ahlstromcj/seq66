@@ -1,5 +1,137 @@
+2022-05-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, VERSION, configure.ac, data/license.text,
+	data/share/doc/tutorial/main_window_patterns.html,
+	data/share/doc/tutorial/pattern_tools.html,
+	doc/dox/doxy-common.cfg, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/qinputcheckbox.cpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixed issue #85 seqfault and some minor
+	bugs, tutorial updates.
+
+2022-05-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/share/doc/tutorial/css/dark-slide.css,
+	data/share/doc/tutorial/css/emac-slide.css,
+	data/share/doc/tutorial/css/light-slide.css,
+	data/share/doc/tutorial/css/slide.css,
+	data/share/doc/tutorial/home.html,
+	data/share/doc/tutorial/left-tree.html: Added CSS color variables to
+	style sheets.
+
+2022-05-26  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/share/doc/tutorial/css/dark-slide.css,
+	data/share/doc/tutorial/css/emac-slide.css,
+	data/share/doc/tutorial/css/light-slide.css,
+	data/share/doc/tutorial/css/slide.css,
+	data/share/doc/tutorial/faq.html,
+	data/share/doc/tutorial/home.html,
+	data/share/doc/tutorial/introduction.html: Add emac-slide.css,
+	updated HTML.
+
+2022-05-25  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, contrib/git/git.text, doc/latex/tex/configuration.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/cfg/settings.hpp,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/src/cfg/settings.cpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/os/shellexecute.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Add PDF viewer/browser options for the
+	Help functions.
+
+2022-05-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/cfg/settings.hpp,
+	libseq66/src/cfg/settings.cpp, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_debug_code.bat,
+	nsis/build_release_package.bat, seq_qt5/src/qsmainwnd.cpp: Added
+	fall back to github.io to find user manual, needs testing.
+	* contrib/git/git.text, data/share/doc/tutorial/configuration.html,
+	data/share/doc/tutorial/css/dark-slide.css,
+	data/share/doc/tutorial/css/light-slide.css,
+	data/share/doc/tutorial/css/slide.css,
+	data/share/doc/tutorial/faq.html,
+	data/share/doc/tutorial/home.html,
+	data/share/doc/tutorial/images/README,
+	data/share/doc/tutorial/index.html,
+	data/share/doc/tutorial/introduction.html,
+	data/share/doc/tutorial/left-tree.html,
+	data/share/doc/tutorial/main_window.html,
+	data/share/doc/tutorial/main_window_patterns.html,
+	data/share/doc/tutorial/mutes_manager.html,
+	data/share/doc/tutorial/navibar-saved.html,
+	data/share/doc/tutorial/navibar.html,
+	data/share/doc/tutorial/pagenotready.html,
+	data/share/doc/tutorial/pattern_editor.html,
+	data/share/doc/tutorial/pattern_tools.html,
+	data/share/doc/tutorial/playlist_manager.html,
+	data/share/doc/tutorial/sets_manager.html,
+	data/share/doc/tutorial/song_editor.html,
+	data/share/doc/tutorial/tutorial_first_startup.html,
+	data/share/doc/tutorial/tutorial_live_play.html,
+	data/share/doc/tutorial/tutorial_main.html,
+	data/share/doc/tutorial/tutorial_new_patterns.html,
+	data/share/doc/tutorial/tutorial_new_song.html,
+	data/share/doc/tutorial/tutorial_other_features.html,
+	data/share/doc/tutorial/tutorial_song_performance.html: Perfected
+	navigation buttons, trimmed PNGs and HTMLs.
+
 2022-05-23  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* data/share/doc/tutorial/configuration.html,
+	data/share/doc/tutorial/faq.html,
+	data/share/doc/tutorial/home.html,
+	data/share/doc/tutorial/introduction.html,
+	data/share/doc/tutorial/main_window.html,
+	data/share/doc/tutorial/main_window_patterns.html,
+	data/share/doc/tutorial/mutes_manager.html,
+	data/share/doc/tutorial/pattern_editor.html,
+	data/share/doc/tutorial/pattern_tools.html,
+	data/share/doc/tutorial/playlist_manager.html,
+	data/share/doc/tutorial/sets_manager.html,
+	data/share/doc/tutorial/song_editor.html,
+	data/share/doc/tutorial/tutorial_first_startup.html,
+	data/share/doc/tutorial/tutorial_live_play.html,
+	data/share/doc/tutorial/tutorial_main.html,
+	data/share/doc/tutorial/tutorial_new_patterns.html,
+	data/share/doc/tutorial/tutorial_new_song.html,
+	data/share/doc/tutorial/tutorial_other_features.html,
+	data/share/doc/tutorial/tutorial_song_performance.html,
+	seq_qt5/src/qloopbutton.cpp: Shortened Prev/Home/Next link, fixed
+	bug where queued/one-shot did not gray the progress box.
+	* VERSION, configure, configure.ac,
+	data/share/doc/tutorial/configuration.html,
+	data/share/doc/tutorial/faq.html,
+	data/share/doc/tutorial/home.html,
+	data/share/doc/tutorial/index.html,
+	data/share/doc/tutorial/introduction.html,
+	data/share/doc/tutorial/left-tree.html,
+	data/share/doc/tutorial/main_window.html,
+	data/share/doc/tutorial/main_window_patterns.html,
+	data/share/doc/tutorial/mutes_manager.html,
+	data/share/doc/tutorial/pagenotready.html,
+	data/share/doc/tutorial/pattern_editor.html,
+	data/share/doc/tutorial/pattern_tools.html,
+	data/share/doc/tutorial/playlist_manager.html,
+	data/share/doc/tutorial/sets_manager.html,
+	data/share/doc/tutorial/song_editor.html,
+	data/share/doc/tutorial/tutorial_first_startup.html,
+	data/share/doc/tutorial/tutorial_live_play.html,
+	data/share/doc/tutorial/tutorial_main.html,
+	data/share/doc/tutorial/tutorial_new_patterns.html,
+	data/share/doc/tutorial/tutorial_new_song.html,
+	data/share/doc/tutorial/tutorial_other_features.html,
+	data/share/doc/tutorial/tutorial_song_performance.html,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h: Version numbers, navigate row for
+	tutorial.
+	* ChangeLog, INSTALL, VERSION, bootstrap, configure.ac,
+	data/Makefile.am, data/Makefile.in, include/config.h.in,
+	seq_qt5/src/qsmainwnd.cpp: Minor fixes to make uninstall for 0.98.8.
 	* README.md, TODO, data/share/doc/tutorial/configuration.html,
 	data/share/doc/tutorial/css/dark-slide.css,
 	data/share/doc/tutorial/css/light-slide.css,
@@ -49,9 +181,6 @@
 	data/share/doc/tutorial/song_editor.html,
 	data/share/doc/tutorial/tutorial_first_startup.html: More tutorial
 	updates.
-
-2022-05-21  Chris Ahlstrom <ahlstromcj@gmail.com>
-
 	* data/Makefile.am, data/Makefile.in,
 	data/share/doc/tutorial/configuration.html,
 	data/share/doc/tutorial/home.html,
@@ -89,9 +218,6 @@
 	data/share/doc/tutorial/tutorial_first_startup.html,
 	data/share/doc/tutorial/tutorial_main.html: Add tutorial section,
 	broken.
-
-2022-05-19  Chris Ahlstrom <ahlstromcj@gmail.com>
-
 	* Makefile.in, README.md, Seq66cli/Makefile.in,
 	Seq66qt5/Makefile.in, TODO, configure, configure.ac,
 	data/Makefile.in, doc/Makefile.in, doc/latex/Makefile.in,
