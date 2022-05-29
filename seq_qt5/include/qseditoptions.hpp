@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-10
+ * \updates       2022-05-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -76,6 +76,7 @@ public:
     virtual ~qseditoptions();
 
     void enable_bus_item (int bus, bool enabled);
+    void reload_needed (bool flag);
 
 private:
 
@@ -105,7 +106,6 @@ private:
     void show_sets_mode (rcsettings::setsmode sm);
     void show_start_mode (sequence::playback sm);
     void show_session (usrsettings::session sm);
-    void reload_needed (bool flag);
     void state_unchanged ();
     void state_changed ();
     void state_applied ();

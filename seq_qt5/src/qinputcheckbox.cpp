@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-20
- * \updates       2022-01-20
+ * \updates       2022-05-29
  * \license       GNU GPLv2 or above
  *
  *  This class is used in the qseditoptions settings-dialog class.
@@ -35,6 +35,7 @@
 
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qinputcheckbox.hpp"           /* seq66::qinputcheckbox class      */
+#include "qseditoptions.hpp"            /* seq66::qseditoptions class       */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 /*
@@ -113,6 +114,7 @@ qinputcheckbox::input_callback_clicked (int state)
 {
     bool inputing = state == Qt::Checked;
     perf().ui_set_input(bus(), inputing);
+    parent_widget()->reload_needed(true);       /* tell parent */
 }
 
 }           // namespace seq66

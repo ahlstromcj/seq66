@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-05-20
+ * \updates       2022-05-29
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1112,18 +1112,22 @@ qseqeditframe64::closeEvent (QCloseEvent * event)
 }
 
 /**
- *  Currently this function is not called.  To be investigated.
+ *  This function now seems to be called. Yay!
  */
 
 bool
 qseqeditframe64::on_sequence_change
 (
-    seq::number seqno, performer::change /* ctype */)
+    seq::number seqno, performer::change /* ctype */
+)
 {
-    bool result = seqno == track().seq_number();
+    seq::number trackno = track().seq_number();
+    bool result = seqno == trackno;
     if (result)
+    {
         set_dirty();
-
+        update_midi_buttons();              /* mirror current states    */
+    }
     return result;
 }
 

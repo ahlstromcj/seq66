@@ -1,7 +1,7 @@
-# README for Seq66 0.98.8
+# README for Seq66 0.98.9
 
 Chris Ahlstrom
-2015-09-10 to 2022-05-23
+2015-09-10 to 2022-05-29
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -82,6 +82,14 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.98.9:
+        *   Fixed nasty issue #85 which was recreating the slot buttons, and
+            in a different thread, leading to a seqfault.
+        *   Fixed issue: Preference / MIDI Input port check did not change
+            Apply state.
+        *   Fixed mute/record/thru state display between live grid and a
+            pattern editor.
+        *   Updated/cleaned the tutorial.
     *   Version 0.98.8:
         *   Fixed issue #84, now able to build Qt and CLI version in one pass.
             Also fixed out-of-source builds and removed function call tracing.

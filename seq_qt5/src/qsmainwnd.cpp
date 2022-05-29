@@ -24,14 +24,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-24
+ * \updates       2022-05-29
  * \license       GNU GPLv2 or above
  *
- *  The main window is known as the "Patterns window" or "Patterns
- *  panel".  It holds the "Pattern Editor" or "Sequence Editor".  The main
- *  window consists of two object:  mainwnd, which provides the user-interface
- *  elements that surround the patterns, and the live-grid, which implements
- *  the behavior of the pattern slots.
+ *  The main window is known as the "Patterns window" or "Patterns panel".  It
+ *  holds the "Pattern Editor" or "Sequence Editor".  The main window consists
+ *  of two object:  mainwnd, which provides the user-interface elements that
+ *  surround the patterns, and the live-grid, which implements the behavior of
+ *  the pattern slots.
  *
  * Menu Entries for NSM:
  *
@@ -3633,7 +3633,19 @@ qsmainwnd::on_sequence_change (seq::number seqno, performer::change ctype)
     bool result = not_nullptr(m_live_frame);
     if (result)
     {
-        bool redo = ctype == performer::change::yes;
+        /*
+         * Issue #85:  segfault on recording events (not when drawing them).
+         *
+         *  This code would result in a recreation and the following error a
+         *  few times, then a segfault.
+         *
+         *  QObject::setParent: Cannot set parent, new parent is in a
+         *  different thread
+         *
+         *      bool redo = ctype == performer::change::yes;
+         */
+
+        bool redo = ctype == performer::change::recreate;
         m_live_frame->update_sequence(seqno, redo);
         for (auto ip : m_open_live_frames)
             ip.second->update_sequence(seqno, redo);

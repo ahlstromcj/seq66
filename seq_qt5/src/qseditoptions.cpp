@@ -642,9 +642,10 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         out->addItem("Disabled");
         for (int bus = 0; bus < buses; ++bus)
         {
-            e_clock ec;
             std::string busname;
-            if (perf().ui_get_clock(bussbyte(bus), ec, busname))
+            e_clock ec;
+            bool good = perf().ui_get_clock(bussbyte(bus), ec, busname);
+            if (good)
             {
                 bool enabled = ec != e_clock::disabled;
                 out->addItem(qt(busname));
@@ -763,12 +764,15 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
             std::string busname;
             bool inputing;
             bool good = perf().ui_get_input(bus, inputing, busname);
-            bool enabled = ! perf().is_input_system_port(bus);
-            in->addItem(qt(busname));
-            if (good && enabled)
-                enabled = true;
+            if (good)
+            {
+                bool enabled = ! perf().is_input_system_port(bus);
+                in->addItem(qt(busname));
+                if (good && enabled)
+                    enabled = true;
 
-            enable_combobox_item(in, bus + 1, enabled);
+                enable_combobox_item(in, bus + 1, enabled);
+            }
         }
 
         bool active = perf().midi_control_in().is_enabled();

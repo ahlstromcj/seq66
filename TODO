@@ -1,6 +1,6 @@
 TO DO for Seq66 0.98.9 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-05-25
+2019-04-13 to 2022-05-29
 
 Pattern Editor, Main Window:
 
@@ -77,6 +77,7 @@ UI:
             -   Add song-start-mode radio buttons.
         -   Config Options: (new)
             -   Log-file
+        -   Reset does not update the GUI elements.
 
     -   Underrun display not consistent with console output with Chameleon
         tune.
