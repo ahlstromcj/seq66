@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-05-15
+ * \updates       2022-05-30
  * \license       See above.
  *
  *  API information found at:
@@ -638,7 +638,17 @@ midi_alsa_info::api_get_midi_event (event * inev)
     int remcount = snd_seq_event_input(m_alsa_seq, &ev);
     if (remcount < 0 || is_nullptr(ev))
     {
-        errprint("snd_seq_event_input() failure");
+        if (remcount == -EAGAIN)
+        {
+            // no input in non-blocking mode
+        }
+        else if (remcount == -ENOSPC)
+        {
+            errprint("input FIFO overrun");
+        }
+        else
+            errprint("snd_seq_event_input() failure");
+
         return false;
     }
     if (! rc().manual_ports())
