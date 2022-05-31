@@ -113,18 +113,6 @@ MIDI:
         number gets created.  Looks like this bug has been around for awhile.
         It also yields an ALSA unsubscribe error when disabling an input.
     -   Use const char * snd_asoundlib_version () to get the ALSA version.
-    -   When using vmpk for input, we get the following messages, though
-        recording seems to work, and no issues with nanoKEY2 input until
-        vmpk input occurs... these errors stick. Even enabling the vmpk input
-        screws up:
-
-        Seq66:  snd_seq_event_input() failure
-        VMPK:   RtMidiOut::sendMessage: error sending MIDI message to port.
-                RtMidiIn::alsaMidiHandler: unknown MIDI input error!
-
-        After adding more debug code, this error in Seq66 is an input FIFO
-        overrun. And the pattern has 350 note events! Our fault or
-        is VMPK spamming seq66?
 
     JACK:
 

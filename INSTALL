@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.98.8 and above
+INSTALL for Seq66 v. 0.98.10 and above
 Chris Ahlstrom
-2015-09-10 to 2022-05-23
+2015-09-10 to 2022-05-30
 
 Getting Seq66 requires building the code or going to "sequencer64-packages/seq66"
 on GitHub to get an installation package.  The bootstrap setup is primarily
@@ -249,11 +249,8 @@ Pipe Option:
     on some systems where the assembler is unable to read from a pipe; the
     GNU assembler can do it.
 
-    $ CFLAGS="-pipe" ./bootstrap -ed
-
-        or
-
-    $ CFLAGS="-pipe" ./configure --enable-debug --disable-shared
+        $ CFLAGS="-pipe" ./bootstrap -ed
+        $ CFLAGS="-pipe" ./configure --enable-debug --disable-shared
 
     Then do the normal make.
 
@@ -265,11 +262,11 @@ Debugging:
     one can either use a qmake debug build or the following sequence of
     commands:
 
-    $ ./bootstrap --full-clean
-    $ ./bootstrap
-    $ ./configure --enable-debug    [note the lack of "--disable-shared"]
-    $ make &> make.log              [verify that there are no errors]
-    $ libtool --mode=execute gdb ./Seq66qt5/qseq66
+        $ ./bootstrap --full-clean
+        $ ./bootstrap
+        $ ./configure --enable-debug    [note the lack of "--disable-shared"]
+        $ make &> make.log              [verify that there are no errors]
+        $ libtool --mode=execute gdb ./Seq66qt5/qseq66
 
     We use cgdb instead of gdb for debugging.
 
@@ -443,12 +440,12 @@ DEPENDENCIES:
 
    Code:
 
-      -  libasound2-dev
-      -  libjack-jackd2-dev
-      -  liblo-dev (needed for NSM/OSC support, but not optional)
-      -  libpng-dev (replaces libpng12-dev with libpng16, latest Debian Sid,
-         and brings in libpng-tools)
-      -  libpthread (normally already included in a Linux distro)
+    -   libasound2-dev
+    -   libjack-jackd2-dev
+    -   liblo-dev (needed for NSM/OSC support, but not optional)
+    -   libpng-dev (replaces libpng12-dev with libpng16, latest Debian Sid,
+        and brings in libpng-tools)
+    -   libpthread (normally already included in a Linux distro)
 
     Qt Builds:
 
@@ -462,45 +459,45 @@ DEPENDENCIES:
       all installed if your attempt to build qseq66 fails.  See "Build tools"
       below.
 
-      - Core *
-      - Gui *
-      - Widgets  *
-      - Xml
-      - OpenGL 
-      - PrintSupport 
-      - QuickTest 
-      - Concurrent 
-      - DBus 
-      - Qml 
-      - Network 
-      - Test 
-      - Sql
+    -   Core *
+    -   Gui *
+    -   Widgets  *
+    -   Xml
+    -   OpenGL 
+    -   PrintSupport 
+    -   QuickTest 
+    -   Concurrent 
+    -   DBus 
+    -   Qml 
+    -   Network 
+    -   Test 
+    -   Sql
 
    Build tools:
 
-      -  automake and autoconf
-      -  autoconf-archive
-      -  g++
-      -  make
-      -  libtool
-      -  Qt 5.  Install qtcreator only if you want it, as it installs 650 Mb
-         worth of files.  One can just install the bare minimum:
+    -   automake and autoconf
+    -   autoconf-archive
+    -   g++
+    -   make
+    -   libtool
+    -   Qt 5.  Install qtcreator only if you want it, as it installs 650 Mb
+        worth of files.  One can just install the bare minimum:
 
-         -  qt5-default (Important!)
-         -  qtbase5-dev (might be installed after installedin qt5-default)
-         -  qtbase5-dev-tools (ditto)
-         -  qtdeclarative-dev-tools or qtdeclarative5-dev-tools
+        -   qt5-default (Important!)
+        -   qtbase5-dev (might be installed after installedin qt5-default)
+        -   qtbase5-dev-tools (ditto)
+        -   qtdeclarative-dev-tools or qtdeclarative5-dev-tools
             (qtdeclarative5-dev?)
-         -  qtchooser
-         -  qt5-qmake
-         -  qtdesigner; optional if you want to tweak the GUIs, not huge,
+        -   qtchooser
+        -   qt5-qmake
+        -   qtdesigner; optional if you want to tweak the GUIs, not huge,
             provided by the qtttools5-dev-tools package in Debian.
-         -  qtcreator; also optional, but handy.  Unmark/uninstall the
+        -   qtcreator; also optional, but handy.  Unmark/uninstall the
             "clang" packages that are recommended unless you want clang.
 
-         To setup Qt, first run the command "qtchooser -l".  If more than one
-         version of Qt is installed, their numbers are all listed.  Make sure
-         that "5" is in the list, and then add this line to your .bashrc file:
+        To setup Qt, first run the command "qtchooser -l".  If more than one
+        version of Qt is installed, their numbers are all listed.  Make sure
+        that "5" is in the list, and then add this line to your .bashrc file:
 
             export QT_SELECT=5
 
@@ -512,10 +509,10 @@ DEPENDENCIES:
 
    Runtime:
 
-      -  libatk-adaptor (and its dependencies)
-      -  libgail-common (and its dependencies)
-      -  Some distros (Arch?) may need a gambas3-gb-qt5-opengl package to be
-         installed.  Not sure what is up with that.
+        -   libatk-adaptor (and its dependencies)
+        -   libgail-common (and its dependencies)
+        -   Some distros (Arch?) may need a gambas3-gb-qt5-opengl package to
+            be installed.  Not sure what is up with that.
 
    Documentation (now optional, must be built manually):
 
@@ -527,15 +524,16 @@ DEPENDENCIES:
       "./make_dox notes".  Be aware that the PDF files will always be present
       and installed, even if not necessarily up-to-date with the latest code.
 
-      - Source-code documentation:
-        - doxygen and doxygen-latex
-        - graphviz
-        - texlive
-      - User manual (additional packages):
-        - latexmk
+        -   Source-code documentation:
+            -   doxygen and doxygen-latex
+            -   graphviz
+            -   texlive
+        -   User manual (additional packages):
+            -   latexmk
+            -   pdf2latex
 
-      To build the documentation manually, change to the doc/dox
-      directory and run:
+      To build the documentation manually, change to the doc/dox directory and
+      run:
 
          ./make_dox reference
          ./make_dox clean
@@ -548,9 +546,9 @@ DEPENDENCIES:
 
       See the README file in the Debian directory.
 
-      -  debhelper
-      -  dh-autoreconf (Perl)
-      -  fakeroot
+        -   debhelper
+        -   dh-autoreconf (Perl)
+        -   fakeroot
 
    MingW:
 
@@ -559,18 +557,18 @@ DEPENDENCIES:
 
    Other:
 
-     -  git
-     -  vim or emacs
+        -   git
+        -   vim or emacs
 
    Testing (optional):
 
-      - qjackctl
-      - hydrogen
-      - klick (a command-line metronome)
-      - qtractor or other MIDI sequencers
-      - gmidimonitor or (better) midisnoop
-      - sendmidi
-      - python-dbus (for contrib/scripts/startjack usage)
-      - a2jmidid (exposes Seq24 ALSA MIDI ports to JACK)
+        -   qjackctl
+        -   hydrogen
+        -   klick (a command-line metronome)
+        -   qtractor or other MIDI sequencers
+        -   gmidimonitor or (better) midisnoop
+        -   sendmidi
+        -   python-dbus (for contrib/scripts/startjack usage)
+        -   a2jmidid (exposes Seq24 ALSA MIDI ports to JACK)
 
 # vim: sw=4 ts=4 wm=4 et ft=sh
