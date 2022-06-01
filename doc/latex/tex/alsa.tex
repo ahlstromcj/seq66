@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-06-16
-% \update      2021-12-05
+% \update      2022-05-30
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -171,6 +171,30 @@
    Now start playback in \textsl{Seq24}.
    \textsl{Seq66} should display a rapid stream of MIDI Clock messages.
    If not, check the setup and, if correct, report a bug!
+
+\paragraph{VMPK Issues}
+\label{paragraph:alsa_testing_vmpk_issues}
+
+   \index{VMPK}
+   On our \textsl{Ubuntu 18} system, the \textsl{VMPK} virtual keyboard
+   (version to be determined) has issues:
+
+   \begin{verbatim}
+        Seq66:  input FIFO overrun
+        VMPK:   RtMidiOut::sendMessage: error sending MIDI message to port.
+                RtMidiIn::alsaMidiHandler: unknown MIDI input error!
+   \end{verbatim}
+
+   In addition, we find a massive spewage of events in the pattern.
+   This does not occur on our \textsl{Ubuntu 20} system with
+   \textsl{VMPK v. 0.7.2}.
+
+   However, with that version, one must go to its \textbf{Edit / Preferences}
+   dialog and make sure that MIDI I/O is enabled and that both input
+   and output are set to ALSA.
+
+   See the \textsl{VMPK} website (\cite{vmpk}).
+   The current version one can download there is 0.8.7!
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

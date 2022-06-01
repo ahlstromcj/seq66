@@ -1,7 +1,7 @@
 # ROADMAP for a Possible Seq66 v. 2
 
 Chris Ahlstrom
-2022-05-11 to 2022-05-11
+2022-05-11 to 2022-06-01
 
 This file is simply some thoughts about the future of __Seq66__ and
 a version 2...  if we decide to keep updating this project until Ahlstrom
@@ -68,8 +68,11 @@ croaks. :-D
 
 ##  Requested Features
 
-    These items are requests.  Not sure if they are worth doing in version 2.
+    These items are requests.  Not sure if all are worth doing in version 2.
 
+    *   Break libraries into Git submodules.
+    *   Full OSC support for automation.
+    *   MIDI clips launched by a note.
     *   MIDINAM.  See issue #1 and the TODO file for this request.
     *   Ableton Live transport support.  See issue #16 and the TODO file for
         this request.

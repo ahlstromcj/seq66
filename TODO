@@ -1,6 +1,6 @@
-TO DO for Seq66 0.98.9 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.98.10 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-05-29
+2019-04-13 to 2022-05-30
 
 Pattern Editor, Main Window:
 
@@ -54,9 +54,10 @@ Test and Document:
             into another tracks playback, to re-use the pattern on a differnt
             buss and channel. ROADMAP item?
 
-External Live Grid:
+(External) Live Grid:
 
     -   Show Recording-style and Quantization buttons in it.
+    -   Upon File / New, set to Live mode.
 
 Undo:
 
@@ -108,24 +109,21 @@ MIDI:
 
     ALSA:
 
-        When toggling a virtual input port, another port with the same
+    -   When toggling a virtual input port, another port with the same
         number gets created.  Looks like this bug has been around for awhile.
         It also yields an ALSA unsubscribe error when disabling an input.
-
-        Use const char * snd_asoundlib_version () to get the ALSA version.
+    -   Use const char * snd_asoundlib_version () to get the ALSA version.
 
     JACK:
 
-        Fallback to ALSA if JACK is not running is broken.  Or is it that
+    -   Fallback to ALSA if JACK is not running is broken.  Or is it that
         jackdbus is interfering? On another computer, that seems to be the
         case. Seq66 creates virtual ports in that case, but we need to test
         that they are useful, and consider activating the manual-port settings
         in the 'rc' file.
-
-        Also, would it be useful to provide a way to better name each virtual
+    -   Also, would it be useful to provide a way to better name each virtual
         port?
-
-        Is Weak JACK worth adding?
+    -   Is Weak JACK worth adding?
 
 Automation:
 
