@@ -1,7 +1,7 @@
-# README for Seq66 0.98.9
+# README for Seq66 0.98.10
 
 Chris Ahlstrom
-2015-09-10 to 2022-05-29
+2015-09-10 to 2022-06-01
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -16,6 +16,11 @@ with modern C++ and new features.  Linux users can build this application from
 the source code.  See the INSTALL file; it has notes on many types on
 installation.  Windows users can get an installer package on GitHub or build it
 with Qt Creator.  Provides a comprehensive PDF user-manual.
+
+Support sites (still in progress):
+
+    *   https://ahlstromcj.github.io/
+    *   https://github.com/ahlstromcj/ahlstromcj.github.io/wiki
 
 ![Alt text](doc/latex/images/main-window/main-windows.png?raw=true "Seq66")
 
@@ -82,6 +87,9 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.98.9.1:
+        *   Added files needed for ./configure.
+        *   Documentation and tutorial updates.
     *   Version 0.98.9:
         *   Fixed nasty issue #85 which was recreating the slot buttons, and
             in a different thread, leading to a seqfault.
