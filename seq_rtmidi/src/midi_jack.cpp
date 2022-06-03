@@ -490,6 +490,8 @@ jack_port_connect_callback
  * Desired activity steps:
  *
  *      -#  Startup.
+ *          -#  Enable port-refresh (callback, processing) only if
+ *              port-mapping is enabled.
  *          -#  As done now, gather the input and output ports into these
  *              containers (midi_port_info).
  *          -#  Also make copies of these containers.

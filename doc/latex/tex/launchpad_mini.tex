@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-24
-% \update      2021-06-11
+% \update      2022-06-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -452,21 +452,25 @@
    \textsl{JACK}, including the last section there that describes how to set up
    \textsl{ALSA}-to-\textsl{JACK} bridging.
 
-   Run the following command, verify the ports in
+   Run one of the following commands (they are identical in function),
+   then verify the ports in
    \textbf{Edit / Preferences / MIDI Clock} and \textbf{MIDI Input}, and then
    exit.
 
    \begin{verbatim}
       $ qseq66 --jack-midi
+      $ qseq66 --jack
    \end{verbatim}
 
-   In \texttt{qseq66.rc}, one will find this setting:
+   In \texttt{qseq66.rc}, in section \texttt{[jack-transport]},
+   one will find this setting:
 
    \begin{verbatim}
-      1     # with_jack_midi
+      jack-midi = true
    \end{verbatim}
 
-   The MIDI inputs are shown, decorated with the "a2j" designation:
+   In \texttt{qseq66.rc}, in section \texttt{[midi-input]},
+   the MIDI inputs are shown, decorated with the "a2j" designation:
 
    \begin{verbatim}
    [midi-input]
@@ -478,7 +482,8 @@
    4 0 "[4] 0:4 a2j:USB Midi [40] (capture): USB Midi MIDI 1"
    \end{verbatim}
 
-   This is very similar to the \textsl{ALSA} setup, except that there is no
+   This is very similar to the \textsl{ALSA} setup, except that there is
+   \textsl{no}
    "announce" port in \textsl{JACK}.  The Mini's input buss has shifted from
    port 2 to port 1.  And, of course, the port names are a lot
    longer.  Similarly, for the MIDI outputs:

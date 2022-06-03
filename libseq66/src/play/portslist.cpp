@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2022-05-14
+ * \updates       2022-06-02
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -479,7 +479,7 @@ portslist::extract_port_pair
 ) const
 {
     int colons = count_colons(name);
-    bool result = colons >= 2;
+    bool result = colons >= 1;                          /* was 2, too much! */
     if (result)
     {
         tokenization tokens = tokenize(name);

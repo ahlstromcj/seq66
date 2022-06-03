@@ -1,6 +1,6 @@
 TO DO for Seq66 0.98.10 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-05-30
+2019-04-13 to 2022-06-01
 
 Pattern Editor, Main Window:
 
@@ -31,6 +31,7 @@ Windows:
 
 Test and Document:
 
+    -   Test and verify MIDI clock handling via ametro.
     -   Make sure the Key/Scale note analysis is documented.
     -   Main window:
         -   PPQN

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-28
-% \update      2022-03-13
+% \update      2022-06-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -28,20 +28,31 @@
    \textsl{However}, if the \texttt{jack-dbus} is running, then a pair of virtual
    ports are created.
 
+   \index{jack!transport}
    To enable the JACK transport support at run-time on
    \textsl{Linux}, the options
    \texttt{-j}/\texttt{-{}-jack-transport} (deprecated, a legacy option),
    \texttt{-S}/\texttt{-{}-jack-slave} (the new version of the transport
    option),
    \texttt{-J}/\texttt{-{}-jack-master},
-   \texttt{-C}/\texttt{-{}-jack-master-cond},
-   and \texttt{-t}/\texttt{-{}-jack-midi} are available.
+   and \texttt{-C}/\texttt{-{}-jack-master-cond} are available.
    Also see \sectionref{subsubsec:configuration_rc_jack_transport}.
 
+   Note that the JACK transport options are \textsl{separate} from JACK MIDI.
+   \index{jack!midi}
+   To enable JACK MIDI, the options \texttt{-t}, \texttt{-{}-jack-midi},
+   and \texttt{--jack} are available.
+   Note that the \texttt{--jack-midi} and \texttt{--jack} options both
+   enable JACK MIDI.
+
    If one wants to use \textsl{Seq66} and USB devices
-   with JACK MIDI, one needs to expose the USB ports to JACK using
-   \texttt{a2jmidid -{}-export-hw}, and connect the resultant MIDI JACK ports
-   oneself, using \textsl{QJackCtl}, for example.
+   with JACK MIDI, one needs to expose the USB ports to JACK using the
+   command \texttt{a2jmidid -{}-export-hw}.
+
+%  This is wrong:
+%
+%  and connect the resultant MIDI JACK ports
+%  oneself, using \textsl{QJackCtl}, for example.
 
    The following sections discuss the JACK transport support and the native
    JACK MIDI support.
@@ -49,7 +60,8 @@
 \subsection{JACK / Transport}
 \label{subsec:jack_transport}
 
-   JACK transport support is \textsl{separate} from native JACK MIDI support.
+   JACK transport support is \textsl{separate} from native JACK MIDI support,
+   and uses a separate JACK client.
    The JACK transport client is an invisible client with the
    name "seq66master" or "seq66slave", while the JACK MIDI client is visible in
    \textsl{QJackCtl}, and the ports created are part of the
@@ -364,6 +376,9 @@
    Then start playback.
    \textsl{seq66debug} should display a rapid stream of MIDI Clock messages.
    If not, check the setup and, if correct, report a bug!
+
+   Note that the \texttt{--jack-midi} and \texttt{--jack} options both
+   enable JACK MIDI.
 
 \subsubsection{JACK / Trouble-Shooting / JACK Ports}
 \label{subsubsec:jack_trouble_shooting_jack_ports}

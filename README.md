@@ -1,7 +1,7 @@
 # README for Seq66 0.98.10
 
 Chris Ahlstrom
-2015-09-10 to 2022-06-01
+2015-09-10 to 2022-06-02
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -87,6 +87,8 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.98.10:
+        *   Fixed minor issue with port-naming.
     *   Version 0.98.9.1:
         *   Added files needed for ./configure.
         *   Documentation and tutorial updates.
@@ -137,50 +139,6 @@ Windows, and using a conventional source tarball.
             places.
         *   Updated the bootstrap script to make 'release' the default, and
             fixed the portmidi automake build process for Linux.
-    *   Version 0.98.6:
-        *   Revisited issue #41 to make sure "Quit" is "Hide" under NSM. Also
-            fixed issue with the "newtune.midi" default name.
-        *   Fixed a minor bug involving setting input aliases.
-        *   Fixed bug with setting last-used-directory to "".
-        *   Fixed handling of Live/Song mode in performer and in 'rc' saving.
-        *   Fixed stupid seqedit bug for selecting beats/bar.
-        *   Disabling/enabling JACK input and output on the fly in Preferences
-            works, as long as they had been enabled at startup.
-        *   Added Preferences options to toggle the double-click edit feature
-            and select the Live/Song/Auto mode.  Added Apply/Reset buttons.
-        *   Removed long-unused "rtmidi callback" code and other disabled code.
-        *   Got user-manual screenshots up-to-date.
-        *   Upgraded and fixed file-name splitting and rebuilding.
-        *   Modify flag now set when painting notes in seqroll.
-        *   Improved appearance of Loop/Record/Quantize buttons in main grid.
-        *   Improved modification detection of sequences and main window.
-        *   Refactored global SeqSpecs for better robustness, fewer surprises.
-        *   Added a file-changed check before restarting the application.
-        *   More code/macro cleanup.
-    *   Version 0.98.5:
-        *   Added locking for the event-drawing loops to prevent segfaults.
-            Active only when recording; prevents iterator invalidation.
-        *   Added an underrun indicator to the main window.
-        *   The client name ("seq66") is no longer shown, nor saved in the 'rc'
-            file. Easier to use multiple Seq66's with the --client-name option.
-        *   Updating Dia diagram, finding and fixing issues and dead code.
-        *   Added global internal check for both portmaps being active.
-        *   Fixed bad slot connection for import_midi_into_session().
-        *   Bad command-line options now cause an exit. This includes JACK
-            options when Seq66 is built without JACK support.
-        *   Improve the coherence of JACK-less builds. Some related NSM tweaks.
-        *   Adding JACK access functions for the future. Improved internal
-            port initialization code. Removed some non-useful rtmidi code.
-        *   Adding the ability to disable/enable input and output on the fly in
-            the MIDI Clock and Input tabs.  Still in progress, though.
-    *   Version 0.98.4:
-        *   Fixed bug in recording-type selector in seqedit. Added a one-shot
-            reset option.
-        *   Fixed some metadata problems as per issue #75.
-        *   Fixed an issue with the H:M:S display being changed by changing the
-            beat-width, a bug going back to Seq24's JACK transport support.
-        *   MIDI API refactoring for the future; detecting JACK port
-            registration.
 
     See the "NEWS" file for changes in earlier versions.
 

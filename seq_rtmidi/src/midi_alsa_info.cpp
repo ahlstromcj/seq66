@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-05-30
+ * \updates       2022-06-03
  * \license       See above.
  *
  *  API information found at:
@@ -80,6 +80,8 @@
 #include "midi/midibus_common.hpp"      /* from the libseq66 sub-project    */
 #include "midi_alsa_info.hpp"           /* seq66::midi_alsa_info            */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
+
+#undef   USE_ALSA_API_CONNECT           /* VERY EXPERIMENTAL, not working   */
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -138,11 +140,11 @@ midi_alsa_info::midi_alsa_info
     m_poll_descriptors      (nullptr)       /* ditto                        */
 {
     snd_seq_t * seq;                        /* point to member              */
-    int result = snd_seq_open               /* set up ALSA sequencer client */
+    int rcode = snd_seq_open                /* set up ALSA sequencer client */
     (
         &seq, "default", SND_SEQ_OPEN_DUPLEX, c_open_block_mode
     );
-    if (result < 0)
+    if (rcode < 0)
     {
         m_error_string = "error opening ALSA seq client";
         error(rterror::kind::driver_error, m_error_string);
@@ -150,10 +152,9 @@ midi_alsa_info::midi_alsa_info
     else
     {
         /*
-         * Save the ALSA "handle".  Set the client's name for ALSA.  Then set
-         * up the ALSA client queue.  We're going to replace
-         * rc().application_name() to get a name that is not based on the
-         * executable name.
+         * Save the ALSA "handle".  Set the client's name for ALSA.  Then set up
+         * the ALSA client queue.  rc().app_client_name() gets a name that is not
+         * necessarily on the executable name.
          */
 
         m_alsa_seq = seq;
@@ -191,7 +192,7 @@ midi_alsa_info::~midi_alsa_info ()
  *  before creating all the MIDI busses?  If not, we'll put them in a separate
  *  function to call later.
  *
- *  This is done in the constructor, too!
+ *  This function is called in the constructor and in api_port_start().
  */
 
 void
@@ -226,9 +227,10 @@ midi_alsa_info::remove_poll_descriptors ()
 {
     if (not_nullptr(m_poll_descriptors))
     {
-        delete [] m_poll_descriptors;
+        struct pollfd * pds = m_poll_descriptors;
         m_poll_descriptors = nullptr;
         m_num_poll_descriptors = 0;
+        delete [] pds;
     }
 }
 
@@ -295,7 +297,7 @@ midi_alsa_info::get_all_port_info
         while (snd_seq_query_next_client(m_alsa_seq, cinfo) >= 0)
         {
             int client = snd_seq_client_info_get_client(cinfo);
-            if (client == SND_SEQ_CLIENT_SYSTEM)    /* i.e. 0 in seq.h      */
+            if (client == SND_SEQ_CLIENT_SYSTEM)    /* i.e. 0 in alsa/seq.h */
             {
                 /*
                  * Client 0 won't have ports (timer and announce) that match

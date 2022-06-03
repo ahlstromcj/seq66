@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2022-01-19
+ * \updates       2022-06-02
  * \license       GNU GPLv2 or above
  *
  *  The midi_alsa module is the Linux version of the midi_alsa module.
@@ -156,6 +156,7 @@ protected:
         return 0;
     }
 
+    virtual bool api_connect () override;
     virtual void api_play (const event * e24, midibyte channel) override;
     virtual void api_sysex (const event * e24) override;
     virtual void api_flush () override;

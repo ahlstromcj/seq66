@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2022-05-15
+ * \updates       2022-06-03
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -124,6 +124,12 @@
 namespace seq66
 {
 
+/*
+ * --------------------------------------------------------------------------
+ *  midi_alsa
+ * --------------------------------------------------------------------------
+ */
+
 /**
  *  Provides a constructor with client number, port number, ALSA sequencer
  *  support, name of client, name of port, etc., mostly contained within an
@@ -207,7 +213,7 @@ midi_alsa::api_init_out ()
         SND_SEQ_PORT_TYPE_APPLICATION;
 
     std::string busname = parent_bus().bus_name();
-    int rc = snd_seq_create_simple_port         /* create ports     */
+    int rc = snd_seq_create_simple_port                 /* create ports     */
     (
         m_seq, busname.c_str(), s_caps, s_apps
     );
@@ -217,7 +223,8 @@ midi_alsa::api_init_out ()
         error_message("ALSA create output port failed");
         return false;
     }
-    rc = snd_seq_connect_to                     /* connect to port  */
+#if 0
+    rc = snd_seq_connect_to                             /* connect to port  */
     (
         m_seq, m_local_addr_port, m_dest_addr_client, m_dest_addr_port
     );
@@ -232,8 +239,9 @@ midi_alsa::api_init_out ()
     }
     else
         set_port_open();
+#endif
 
-    return true;
+    return api_connect();
 }
 
 /**
@@ -477,34 +485,32 @@ midi_alsa::api_deinit_in ()
 }
 
 /**
- *  This function is supposed to poll for MIDI data, but the current ALSA
- *  implementation DOES NOT USE THIS FUNCTION.  Commented out.
- *
- *  Instead, this function, called indirectly via mastermidibase ::
- *  is_more_input(), always returns 0.  And if we try to return the ALSA poll
- *  via master_info().api_poll_for_midi(), note input from a keyboard is
- *  problematic.
+ *  Trying to rearrange the ALSA code to be more like the JACK code.
+ *  However, currently midi_alsa_info::api_connect() is what is called, and
+ *  it currently doesn't do anything.
  */
 
-#if defined SEQ66_USE_MIDI_ALSA_POLL                    /* LEAVE UNDEFINED  */
-
-int
-midi_in_alsa::api_poll_for_midi ()
+bool
+midi_alsa::api_connect ()
 {
-    rtmidi_in_data * rtindata = m_alsa_data.m_alsa_rtmidiin;    /* BOGUS    */
-    (void) microsleep(std_sleep_us());
-    return rtindata->queue().count();
+    int rc = snd_seq_connect_to                         /* connect to port  */
+    (
+        m_seq, m_local_addr_port, m_dest_addr_client, m_dest_addr_port
+    );
+    if (rc < 0)
+    {
+        msgprintf
+        (
+            msglevel::error, "ALSA connect to %d:%d error",
+            m_dest_addr_client, m_dest_addr_port
+        );
+        return false;
+    }
+    else
+        set_port_open();
+
+    return true;
 }
-
-#else
-
-int
-midi_in_alsa::api_poll_for_midi ()
-{
-    return 0;                       /* master_info().api_poll_for_midi();   */
-}
-
-#endif  // defined SEQ66_USE_MIDI_ALSA_POLL
 
 /**
  *  Defines the size of the MIDI event buffer, which should be large enough to
@@ -855,6 +861,12 @@ midi_alsa::remove_queued_on_events (int tag)
 
 #endif      // REMOVE_QUEUED_ON_EVENTS_CODE
 
+/*
+ * --------------------------------------------------------------------------
+ *  midi_in_alsa
+ * --------------------------------------------------------------------------
+ */
+
 /**
  *  ALSA MIDI input normal port or virtual port constructor.  The kind of port
  *  is determine by which port-initialization function the mastermidibus
@@ -866,6 +878,42 @@ midi_in_alsa::midi_in_alsa (midibus & parentbus, midi_info & masterinfo) :
 {
     // Empty body
 }
+
+/**
+ *  This function is supposed to poll for MIDI data, but the current ALSA
+ *  implementation DOES NOT USE THIS FUNCTION.  Commented out.
+ *
+ *  Instead, this function, called indirectly via mastermidibase ::
+ *  is_more_input(), always returns 0.  And if we try to return the ALSA poll
+ *  via master_info().api_poll_for_midi(), note input from a keyboard is
+ *  problematic.
+ */
+
+#if defined SEQ66_USE_MIDI_ALSA_POLL                    /* LEAVE UNDEFINED  */
+
+int
+midi_in_alsa::api_poll_for_midi ()
+{
+    rtmidi_in_data * rtindata = m_alsa_data.m_alsa_rtmidiin;    /* BOGUS    */
+    (void) microsleep(std_sleep_us());
+    return rtindata->queue().count();
+}
+
+#else
+
+int
+midi_in_alsa::api_poll_for_midi ()
+{
+    return 0;                       /* master_info().api_poll_for_midi();   */
+}
+
+#endif  // defined SEQ66_USE_MIDI_ALSA_POLL
+
+/*
+ * --------------------------------------------------------------------------
+ *  midi_out_alsa
+ * --------------------------------------------------------------------------
+ */
 
 /**
  *  ALSA MIDI output normal port or virtual port constructor.  The kind of

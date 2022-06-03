@@ -1,10 +1,54 @@
-NEWS for Seq66 0.98.0 and above
+NEWS for Seq66 0.98.6 and above
 Chris Ahlstrom
-2015-07-10 to 2022-03-29
+2015-07-10 to 2022-06-02
 
 This file collects major changes that are older and clutter up
 the README.md file.  This file should be called "OLD NEWS".
 
+    -   Version 0.98.6:
+        -   Revisited issue #41 to make sure "Quit" is "Hide" under NSM. Also
+            fixed issue with the "newtune.midi" default name.
+        -   Fixed a minor bug involving setting input aliases.
+        -   Fixed bug with setting last-used-directory to "".
+        -   Fixed handling of Live/Song mode in performer and in 'rc' saving.
+        -   Fixed stupid seqedit bug for selecting beats/bar.
+        -   Disabling/enabling JACK input and output on the fly in Preferences
+            works, as long as they had been enabled at startup.
+        -   Added Preferences options to toggle the double-click edit feature
+            and select the Live/Song/Auto mode.  Added Apply/Reset buttons.
+        -   Removed long-unused "rtmidi callback" code and other disabled code.
+        -   Got user-manual screenshots up-to-date.
+        -   Upgraded and fixed file-name splitting and rebuilding.
+        -   Modify flag now set when painting notes in seqroll.
+        -   Improved appearance of Loop/Record/Quantize buttons in main grid.
+        -   Improved modification detection of sequences and main window.
+        -   Refactored global SeqSpecs for better robustness, fewer surprises.
+        -   Added a file-changed check before restarting the application.
+        -   More code/macro cleanup.
+    -   Version 0.98.5:
+        -   Added locking for the event-drawing loops to prevent segfaults.
+            Active only when recording; prevents iterator invalidation.
+        -   Added an underrun indicator to the main window.
+        -   The client name ("seq66") is no longer shown, nor saved in the 'rc'
+            file. Easier to use multiple Seq66's with the --client-name option.
+        -   Updating Dia diagram, finding and fixing issues and dead code.
+        -   Added global internal check for both portmaps being active.
+        -   Fixed bad slot connection for import_midi_into_session().
+        -   Bad command-line options now cause an exit. This includes JACK
+            options when Seq66 is built without JACK support.
+        -   Improve the coherence of JACK-less builds. Some related NSM tweaks.
+        -   Adding JACK access functions for the future. Improved internal
+            port initialization code. Removed some non-useful rtmidi code.
+        -   Adding the ability to disable/enable input and output on the fly in
+            the MIDI Clock and Input tabs.  Still in progress, though.
+    -   Version 0.98.4:
+        -   Fixed bug in recording-type selector in seqedit. Added a one-shot
+            reset option.
+        -   Fixed some metadata problems as per issue #75.
+        -   Fixed an issue with the H:M:S display being changed by changing the
+            beat-width, a bug going back to Seq24's JACK transport support.
+        -   MIDI API refactoring for the future; detecting JACK port
+            registration.
     -   Version 0.98.3.1:
         -   Revisited issue #45. Doh!
         -   Cleaned up the Makefiles, fixed minor issues.

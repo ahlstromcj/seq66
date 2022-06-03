@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-05-13
+ * \updates       2022-06-02
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -596,8 +596,12 @@ string_to_int_pair
         result = numbers.size() == 2;
         if (result)
         {
-            v1 = string_to_int(numbers[0]);
-            v2 = string_to_int(numbers[1]);
+            result = std::isdigit(numbers[0][0]) && std::isdigit(numbers[1][0]);
+            if (result)
+            {
+                v1 = string_to_int(numbers[0]);
+                v2 = string_to_int(numbers[1]);
+            }
         }
     }
     return result;

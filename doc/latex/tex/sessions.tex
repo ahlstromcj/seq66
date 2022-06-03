@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2022-03-21
+% \update      2022-06-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -176,10 +176,12 @@
    Then start \textsl{Qsynth} so it uses \textsl{jack} for MIDI and
    \textsl{jack} (or \textsl{pulseaudio}) for audio.
 
-   Then run \textsl{Seq66} with \textsl{JACK} for slave transport and for MIDI:
+   Then run \textsl{Seq66} with \textsl{JACK} for slave transport and for MIDI
+   (either command works the same):
 
    \begin{verbatim}
       $ qseq66 --jack-slave --jack-midi
+      $ qseq66 --jack-slave --jack
    \end{verbatim}
 
    Load a file, make sure its MIDI output goes to "fluidsynth" or "qsynth", and
@@ -197,8 +199,8 @@
    something like:
 
    \begin{verbatim}
-qseq66 --jack-midi --jack-master --jack-session-uuid 84670 --home ${SESSION_DIR}
-qseq66 --jack-midi --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
+qseq66 --jack --jack-master --jack-session-uuid 84670 --home ${SESSION_DIR}
+qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    \end{verbatim}
 
    In the \textbf{Connections} dialog of \textsl{QjackCtl}, all of these ports
