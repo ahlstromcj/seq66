@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2022-05-13
+ * \updates       2022-06-03
  * \license       GNU GPLv2 or above
  *
  *  These classes were originally structures, but now they are "constant"
@@ -32,7 +32,6 @@
  *  functions.
  */
 
-#include <algorithm>                    /* std::rotate() function           */
 #include <stdexcept>                    /* std::invalid_argument            */
 
 #include "midi/midibytes.hpp"           /* seq66::midi_timing, _measures    */
@@ -132,174 +131,6 @@ midi_timing::midi_timing
     m_ppqn                  (ppqn)
 {
     // Empty body
-}
-
-/*
- * -------------------------------------------------------------------------
- *  midi_booleans
- * -------------------------------------------------------------------------
- */
-
-/**
- *  Constructs either an empty set or a set of false values.
- */
-
-midi_booleans::midi_booleans (int count) :
-    m_booleans  ()
-{
-    if (count > 0)
-    {
-        for (int i = 0; i < count; ++i)
-            m_booleans.push_back(midibool(false));
-    }
-}
-
-/**
- *  Construct from an array of booleans.
- */
-
-midi_booleans::midi_booleans (const bool * barray, int count) :
-    m_booleans  ()
-{
-    if (not_nullptr(barray) && count > 0)
-    {
-        for (int i = 0; i < count; ++i)
-            m_booleans.push_back(midibool(barray[i]));
-    }
-}
-
-
-/**
- *  Constructs a vector and fills it.
- */
-
-midi_booleans::midi_booleans (const midibooleans & mbs) :
-    m_booleans  ()
-{
-    for (size_t i = 0; i < mbs.size(); ++i)
-        m_booleans.push_back(mbs[i]);
-}
-
-/**
- *  Copies a vector.
- */
-
-midi_booleans::midi_booleans (const midi_booleans & mbs) :
-    m_booleans  (mbs.m_booleans)
-{
-    // no code
-}
-
-/**
- *  Assigns a vector.
- */
-
-midi_booleans &
-midi_booleans::operator = (const midi_booleans & rhs)
-{
-    if (this != &rhs)
-    {
-        m_booleans = rhs.m_booleans;
-    }
-    return *this;
-}
-
-/**
- *  Rotates the boolean vector by the given count.  Turns out the good old STL
- *  has an easy solution to this task.
- *
- * \param count
- *      If positive, the vector is rotated leftward (subtracts from the index
- *      of higher elements).  If negative, the vector is rotated rightward
- *      (low index items move to a higher index).
- */
-
-void
-midi_booleans::rotate (int count)
-{
-    if (count != 0)
-    {
-        if (count > 0)
-        {
-            std::rotate                 /* rotate left  */
-            (
-                m_booleans.begin(),
-                m_booleans.begin() + std::size_t(count),
-                m_booleans.end()
-            );
-        }
-        else
-        {
-            std::rotate                 /* rotate left  */
-            (
-                m_booleans.begin(),
-                m_booleans.begin() + m_booleans.size() - std::size_t(count),
-                m_booleans.end()
-            );
-        }
-    }
-}
-
-midibool &
-midi_booleans::operator [] (std::size_t index)
-{
-    static midibool s_default_value = midibool(false);
-    return index < m_booleans.size() ? m_booleans[index] : s_default_value ;
-}
-
-midibool
-midi_booleans::operator [] (std::size_t index) const
-{
-    static midibool s_default_value = midibool(false);
-    return index < m_booleans.size() ? m_booleans[index] : s_default_value ;
-}
-
-bool
-midi_booleans::match (const midi_booleans & rhs, int count) const
-{
-    if (count > 0)
-    {
-        int actualcount = 0;
-        for (std::size_t i = 0; i < m_booleans.size(); ++i)
-        {
-            bool target = bool(m_booleans[i]);
-            bool policy = bool(rhs.m_booleans[i]);
-            if (target)                             /* a note exists here   */
-            {
-                if (policy)
-                    ++actualcount;                  /* note matches policy  */
-            }
-        }
-        return actualcount >= count;
-    }
-    else
-        return m_booleans == rhs.m_booleans;
-}
-
-std::string
-midi_booleans::fingerprint () const
-{
-    std::string result;
-    for (auto mb : m_booleans)
-    {
-        bool bit = bool(mb);
-        result += bit ? "1" : "0" ;
-    }
-    result += "\n";
-    return result;
-}
-
-int
-midi_booleans::true_count () const
-{
-    int result = 0;
-    for (auto mb : m_booleans)
-    {
-        bool bit = bool(mb);
-        if (bit)
-            ++result;
-    }
-    return result;
 }
 
 /*

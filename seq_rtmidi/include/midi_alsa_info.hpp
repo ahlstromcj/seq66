@@ -27,11 +27,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-04
- * \updates       2022-05-16
+ * \updates       2022-06-03
  * \license       See above.
  *
  *    We need to have a way to get all of the ALSA information of
- *    the midi_alsa
+ *    the midi_alsa objects...?
  */
 
 #include <alsa/asoundlib.h>
@@ -106,8 +106,9 @@ public:
     }
 
     virtual bool api_get_midi_event (event * inev) override;
-    virtual int api_poll_for_midi () override;
+    virtual bool api_connect () override;
     virtual void api_set_ppqn (int p) override;
+    virtual int api_poll_for_midi () override;
     virtual void api_set_beats_per_minute (midibpm b) override;
     virtual void api_port_start
     (

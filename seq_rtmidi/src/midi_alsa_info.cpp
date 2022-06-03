@@ -367,6 +367,43 @@ midi_alsa_info::api_flush ()
     snd_seq_drain_output(m_alsa_seq);
 }
 
+bool
+midi_alsa_info::api_connect ()
+{
+#if defined USE_ALSA_API_CONNECT                    /* VERY EXPERIMENTAL    */
+
+    bool result = not_nullptr(seq());               /* ALSA midi_handle()   */
+    if (result)
+    {
+        int rc = ::jack_activate(client_handle());
+        result = rc == 0;
+    }
+    if (result && rc().jack_auto_connect())         /* issue #60            */
+    {
+        for (auto m : bus_container())              /* midibus pointers     */
+        {
+            if (m->is_port_connectable())
+            {
+                result = m->api_connect();
+                if (! result)
+                    break;
+            }
+        }
+    }
+    if (! result)
+    {
+        m_error_string = "JACK cannot activate/connect I/O";
+        error(rterror::kind::warning, m_error_string);
+    }
+    return result;
+
+#else
+
+    return true;
+
+#endif  // defined  USE_ALSA_API_CONNECT
+}
+
 /**
  *  Sets the PPQN numeric value, then makes ALSA calls to set up the PPQN
  *  tempo.  The steps are:

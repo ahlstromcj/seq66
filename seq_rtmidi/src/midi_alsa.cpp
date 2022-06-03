@@ -115,8 +115,6 @@
 #include "midi_alsa.hpp"                /* seq66::midi_alsa for ALSA        */
 #include "midi_info.hpp"                /* seq66::midi_info                 */
 
-#define USE_SND_SEQ_CONNECT_FROM        /* EXPERIMENTAL, seems to work      */
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -213,22 +211,23 @@ midi_alsa::api_init_out ()
         SND_SEQ_PORT_TYPE_APPLICATION;
 
     std::string busname = parent_bus().bus_name();
-    int rc = snd_seq_create_simple_port                 /* create ports     */
+    int rcode = snd_seq_create_simple_port                 /* create ports     */
     (
         m_seq, busname.c_str(), s_caps, s_apps
     );
-    m_local_addr_port = rc;
-    if (rc < 0)
+    if (rcode < 0)
     {
         error_message("ALSA create output port failed");
         return false;
     }
-#if 0
-    rc = snd_seq_connect_to                             /* connect to port  */
+    else
+        m_local_addr_port = rcode;
+
+    rcode = snd_seq_connect_to
     (
         m_seq, m_local_addr_port, m_dest_addr_client, m_dest_addr_port
     );
-    if (rc < 0)
+    if (rcode < 0)
     {
         msgprintf
         (
@@ -239,9 +238,8 @@ midi_alsa::api_init_out ()
     }
     else
         set_port_open();
-#endif
 
-    return api_connect();
+    return true;
 }
 
 /**
@@ -261,48 +259,25 @@ bool
 midi_alsa::api_init_in ()
 {
     std::string portname = parent_bus().port_name();
-    int rc = snd_seq_create_simple_port             /* create ports */
+    int rcode = snd_seq_create_simple_port
     (
         m_seq, portname.c_str(),
         SND_SEQ_PORT_CAP_NO_EXPORT | SND_SEQ_PORT_CAP_WRITE,
         SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION
     );
-    m_local_addr_port = rc;
-    if (rc < 0)
+    if (rcode < 0)
     {
         error_message("ALSA create input port failed");
         return false;
     }
+    else
+        m_local_addr_port = rcode;
 
-#if defined USE_SND_SEQ_CONNECT_FROM
-    rc = snd_seq_connect_from
+    rcode = snd_seq_connect_from
     (
         m_seq, m_local_addr_port, m_dest_addr_client, m_dest_addr_port
     );
-#else
-    snd_seq_port_subscribe_t * subs;
-    snd_seq_port_subscribe_alloca(&subs);
-
-    snd_seq_addr_t sender;
-    sender.client = m_dest_addr_client;                 /* MIDI input client  */
-    sender.port = m_dest_addr_port;                     /* MIDI input port    */
-    snd_seq_port_subscribe_set_sender(subs, &sender);   /* destination        */
-
-    snd_seq_addr_t dest;
-    dest.client = m_local_addr_client;                  /* my client          */
-    dest.port = m_local_addr_port;                      /* my port            */
-    snd_seq_port_subscribe_set_dest(subs, &dest);       /* local              */
-
-    /*
-     * Use the master queue, and get ticks, then subscribe.
-     */
-
-    int queue = parent_bus().queue_number();
-    snd_seq_port_subscribe_set_queue(subs, queue);
-    snd_seq_port_subscribe_set_time_update(subs, 1);
-    rc = snd_seq_subscribe_port(m_seq, subs);
-#endif
-    if (rc < 0)
+    if (rcode < 0)
     {
         msgprintf
         (
@@ -493,22 +468,6 @@ midi_alsa::api_deinit_in ()
 bool
 midi_alsa::api_connect ()
 {
-    int rc = snd_seq_connect_to                         /* connect to port  */
-    (
-        m_seq, m_local_addr_port, m_dest_addr_client, m_dest_addr_port
-    );
-    if (rc < 0)
-    {
-        msgprintf
-        (
-            msglevel::error, "ALSA connect to %d:%d error",
-            m_dest_addr_client, m_dest_addr_port
-        );
-        return false;
-    }
-    else
-        set_port_open();
-
     return true;
 }
 

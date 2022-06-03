@@ -1,7 +1,7 @@
 # ROADMAP for a Possible Seq66 v. 2
 
 Chris Ahlstrom
-2022-05-11 to 2022-06-01
+2022-05-11 to 2022-06-03
 
 This file is simply some thoughts about the future of __Seq66__ and
 a version 2...  if we decide to keep updating this project until Ahlstrom
@@ -65,12 +65,14 @@ croaks. :-D
         applications.  Perhaps best supported as a soundfont?
     *   A comprehensive and improved system for undo/redo support for
         configuration and for all song changes.
+    *   Use "rtmidi" for Windows/Mac; removed "portmidi".
 
 ##  Requested Features
 
     These items are requests.  Not sure if all are worth doing in version 2.
 
     *   Break libraries into Git submodules.
+    *   Pipewire support
     *   Full OSC support for automation.
     *   MIDI clips launched by a note.
     *   MIDINAM.  See issue #1 and the TODO file for this request.

@@ -1,6 +1,6 @@
 #!/usr/bin/sed -i -f
 #
-## \file          midi_control.hpp
+## \file          seq66.sed
 #
 #     Quick fixes to some stock changes in going from seq64 to seq66.
 # 

@@ -163,7 +163,7 @@ using rterror_callback = void (*)
 
 }           // namespace seq66
 
-#endif      // SEQ66_RTEXERROR_HPP
+#endif      // SEQ66_RTERROR_HPP
 
 /*
  * rterror.hpp

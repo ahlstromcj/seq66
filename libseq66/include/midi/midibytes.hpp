@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2022-05-13
+ * \updates       2022-06-03
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -447,44 +447,6 @@ public:
     }
 
 };              // class midi_timing
-
-/*
- * -------------------------------------------------------------------------
- *  midi_booleans
- * -------------------------------------------------------------------------
- */
-
-/**
- *  Provides a more functional wrapper for the midibooleans vector.
- */
-
-class midi_booleans
-{
-private:
-
-    /**
-     *  The vector of midibools
-     */
-
-    midibooleans m_booleans;
-
-public:
-
-    midi_booleans (int count = 0);
-    midi_booleans (const bool * barray, int count);
-    midi_booleans (const midibooleans & mbs);
-    midi_booleans (const midi_booleans & mbs);
-    midi_booleans & operator = (const midi_booleans & rhs);
-
-    midibool & operator [] (std::size_t index);
-    midibool operator [] (std::size_t index) const;
-
-    void rotate (int count);
-    bool match (const midi_booleans & rhs, int count = 0) const;
-    std::string fingerprint () const;
-    int true_count () const;
-
-};              // class midi_booleans
 
 /**
  *  Compares a midipulse value to c_null_midipulse.  By "null" in this
