@@ -4,7 +4,7 @@
 "
 "  Language:      C
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-08-04 to 2021-06-10
+"  Last Change:   2006-08-04 to 2022-06-11
 "  Project:       XPC Suite library project
 "  License:       None.  Use it in any manner whatsover, and don't blame me.
 "  Usage:
@@ -47,7 +47,7 @@ syn keyword XPCC atomic_int_t bool_to_string bool_to_code debugprint_func
 syn keyword XPCC EXTERN_C_DEC EXTERN_C_END find_data_t
 syn keyword XPCC find_function_t find_type_t ftw_function_t
 syn keyword XPCC is_invalid_handle is_invalid_thread
-syn keyword XPCC is_NULL is_nullptr is_nullptr_2 is_nullptr_3 is_nullptr_4
+syn keyword XPCC is_NULL is_nullptr is_nullptr_2 both_are_nullptr
 syn keyword XPCC is_nullfunc
 syn keyword XPCC is_posix_error is_posix_success is_socket_error is_thisptr
 syn keyword XPCC is_valid_handle is_valid_socket is_valid_thread not_thisptr

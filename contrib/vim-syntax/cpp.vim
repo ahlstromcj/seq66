@@ -34,7 +34,7 @@
 " Our type definitions for new classes and types added by the XPCC++ library
 "------------------------------------------------------------------------------
 
-syn keyword XPCC midistring seq64 seq66 tokenization
+syn keyword XPCC midibytes midistring seq64 seq66 tokenization
 
 "------------------------------------------------------------------------------
 " Our type definition for inside comments
