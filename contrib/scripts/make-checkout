@@ -4,13 +4,14 @@
 # \file        make-checkout
 # \library     bin
 # \author      Chris Ahlstrom
-# \date        2020-10-10 to 2022-01-04
+# \date        2020-10-10 to 2022-06-27
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
 #  This script removes the changed or deleted status of the configure and
 #  Makefile.in files that can happen when the project is built on a different
-#  system.  Not a big fan of this Makefile.in crap.
+#  system.  Not a big fan of this Makefile.in crap, though I generally like
+#  GNU Autotools.
 #
 #------------------------------------------------------------------------------
 
@@ -18,7 +19,10 @@ git checkout Makefile.in
 git checkout Seq66cli/Makefile.in
 git checkout Seq66qt5/Makefile.in
 git checkout configure
+git checkout aux-files/compile
+git checkout aux-files/depcomp
 git checkout aux-files/ltmain.sh
+git checkout aux-files/missing
 git checkout data/Makefile.in
 git checkout doc/Makefile.in
 git checkout data/share/doc/seq66-user-manual.pdf

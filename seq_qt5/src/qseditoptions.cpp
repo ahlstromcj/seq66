@@ -1167,6 +1167,7 @@ qseditoptions::slot_session (int buttonno)
     usrsettings::session current = usr().session_manager();
     if (buttonno == static_cast<int>(usrsettings::session::nsm))
     {
+        usr().clear_option_bits();          /* see usrsettings::option_bits */
         usr().session_manager("nsm");
         ui->label_nsm_url->setEnabled(true);
         ui->label_nsm_url->setText("NSM URL");
@@ -1174,12 +1175,14 @@ qseditoptions::slot_session (int buttonno)
     }
     else if (buttonno == static_cast<int>(usrsettings::session::jack))
     {
+        usr().clear_option_bits();          /* see usrsettings::option_bits */
         usr().session_manager("jack");
         ui->label_nsm_url->setEnabled(true);
         ui->label_nsm_url->setText("JACK UUID");
     }
     else
     {
+        usr().clear_option_bits();          /* see usrsettings::option_bits */
         usr().session_manager("none");
         ui->label_nsm_url->setEnabled(false);
         ui->label_nsm_url->setText("N/A");
@@ -1230,6 +1233,8 @@ qseditoptions::cancel ()
 /**
  *  The Apply button now shows "Restart Seq66!" and serves to restart the whole
  *  application when clicked.
+ *
+ *  Aren't the backup calls useless at this point???
  */
 
 void
@@ -1487,6 +1492,7 @@ qseditoptions::slot_ppqn_by_text (const QString & text)
             ppqn_list().current(temp);
             m_parent_widget->set_ppqn_text(temp);
             ui->combo_box_ppqn->setItemText(0, text);
+            usr().clear_option_bits();      /* see usrsettings::option_bits */
             usr().default_ppqn(p);
             modify_usr();
         }
@@ -1502,9 +1508,9 @@ qseditoptions::slot_use_file_ppqn ()
         bool status = usr().use_file_ppqn();
         if (ufppqn != status)
         {
+            usr().clear_option_bits();      /* see usrsettings::option_bits */
             usr().use_file_ppqn(ufppqn);
             modify_usr();
-            // sync();
         }
     }
 }
@@ -1556,6 +1562,7 @@ qseditoptions::ui_scaling_helper
     {
         std::string tuple = wtext + "x" + htext;
         usr().clear_option_bit(usrsettings::option_bits::option_scale);
+        usr().clear_option_bits();          /* see usrsettings::option_bits */
         if (usr().parse_window_scale(tuple))
             modify_usr();
     }
@@ -1587,6 +1594,7 @@ qseditoptions::slot_set_size_rows ()
     if (! valuetext.empty())
     {
         int rows = string_to_int(valuetext);
+        usr().clear_option_bits();          /* see usrsettings::option_bits */
         if (usr().mainwnd_rows(rows))
             modify_usr();
         else
@@ -1602,6 +1610,7 @@ qseditoptions::slot_set_size_columns ()
     if (! valuetext.empty())
     {
         int columns = string_to_int(valuetext);
+        usr().clear_option_bits();          /* see usrsettings::option_bits */
         if (usr().mainwnd_cols(columns))
             modify_usr();
         else

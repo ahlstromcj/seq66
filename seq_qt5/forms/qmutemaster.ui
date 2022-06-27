@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>776</width>
-    <height>428</height>
+    <width>824</width>
+    <height>651</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,297 +25,36 @@
   <property name="frameShadow">
    <enum>QFrame::Plain</enum>
   </property>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>391</x>
-     <y>6</y>
-     <width>402</width>
-     <height>401</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QTableWidget" name="m_group_table">
-      <property name="minimumSize">
-       <size>
-        <width>400</width>
-        <height>280</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>400</width>
-        <height>340</height>
-       </size>
-      </property>
-      <property name="alternatingRowColors">
-       <bool>true</bool>
-      </property>
-      <property name="rowCount">
-       <number>32</number>
-      </property>
-      <property name="columnCount">
-       <number>4</number>
-      </property>
-      <attribute name="horizontalHeaderVisible">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="verticalHeaderVisible">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="verticalHeaderMinimumSectionSize">
-       <number>16</number>
-      </attribute>
-      <attribute name="verticalHeaderDefaultSectionSize">
-       <number>18</number>
-      </attribute>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <column/>
-      <column/>
-      <column/>
-      <column/>
-     </widget>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <property name="spacing">
-       <number>2</number>
-      </property>
-      <item>
-       <widget class="QSpinBox" name="m_pattern_offset_spinbox">
-        <property name="maximumSize">
-         <size>
-          <width>48</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>When set-size is 64 and 96 instead of 32,
-allows paging patterns keys.</string>
-        </property>
-        <property name="wrapping">
-         <bool>true</bool>
-        </property>
-        <property name="maximum">
-         <number>2</number>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="m_button_save">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>64</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Saves mute groups to a file in the session
-configuration.</string>
-        </property>
-        <property name="text">
-         <string>Save All</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="m_button_load">
-        <property name="maximumSize">
-         <size>
-          <width>64</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Load File</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="m_button_up">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>52</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Move the selected set up in the list.</string>
-        </property>
-        <property name="text">
-         <string>Up</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="m_button_down">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>52</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Move to the next mute group.</string>
-        </property>
-        <property name="text">
-         <string>Down</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget_2">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>0</y>
-     <width>376</width>
-     <height>275</height>
+     <width>782</width>
+     <height>501</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <property name="spacing">
-     <number>4</number>
-    </property>
-    <property name="sizeConstraint">
-     <enum>QLayout::SetMinimumSize</enum>
-    </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_6">
     <item>
-     <widget class="QLabel" name="label_4">
-      <property name="minimumSize">
-       <size>
-        <width>120</width>
-        <height>22</height>
-       </size>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>4</number>
       </property>
-      <property name="maximumSize">
-       <size>
-        <width>120</width>
-        <height>22</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>DejaVu Sans</family>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Mute-Groups</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <layout class="QGridLayout" name="setGridLayout" rowminimumheight="0">
-      <property name="sizeConstraint">
-       <enum>QLayout::SetMinAndMaxSize</enum>
-      </property>
-      <property name="verticalSpacing">
-       <number>2</number>
-      </property>
-     </layout>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_5">
-      <property name="minimumSize">
-       <size>
-        <width>120</width>
-        <height>22</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>120</width>
-        <height>22</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>DejaVu Sans</family>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Group Patterns</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <layout class="QGridLayout" name="patternGridLayout" rowminimumheight="0">
       <property name="sizeConstraint">
        <enum>QLayout::SetMinimumSize</enum>
       </property>
-      <property name="verticalSpacing">
-       <number>2</number>
-      </property>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLabel" name="label">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
+       <widget class="QLabel" name="label_4">
         <property name="minimumSize">
          <size>
-          <width>64</width>
-          <height>32</height>
+          <width>120</width>
+          <height>22</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>80</width>
-          <height>28</height>
+          <width>120</width>
+          <height>22</height>
          </size>
         </property>
         <property name="font">
@@ -326,129 +65,250 @@ configuration.</string>
          </font>
         </property>
         <property name="text">
-         <string>Mutes File</string>
+         <string>Mute-Groups</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPlainTextEdit" name="m_mute_basename">
-        <property name="enabled">
-         <bool>false</bool>
+       <layout class="QGridLayout" name="setGridLayout" rowminimumheight="0">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetMinAndMaxSize</enum>
         </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+        <property name="verticalSpacing">
+         <number>2</number>
         </property>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_5">
         <property name="minimumSize">
          <size>
-          <width>200</width>
-          <height>28</height>
+          <width>120</width>
+          <height>22</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>200</width>
-          <height>28</height>
+          <width>120</width>
+          <height>22</height>
          </size>
         </property>
-        <property name="toolTip">
-         <string>Go to Edit / Preferences / Session
+        <property name="font">
+         <font>
+          <family>DejaVu Sans</family>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Group Patterns</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="patternGridLayout" rowminimumheight="0">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetMinimumSize</enum>
+        </property>
+        <property name="verticalSpacing">
+         <number>2</number>
+        </property>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>64</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>80</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Mutes File</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPlainTextEdit" name="m_mute_basename">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Go to Edit / Preferences / Session
 to edit this name.</string>
-        </property>
-        <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
-        </property>
-       </widget>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QLabel" name="label_2">
-        <property name="font">
-         <font>
-          <family>DejaVu Sans</family>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Read/Write
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Read/Write
 and Format</string>
-        </property>
-       </widget>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="2">
+           <widget class="QCheckBox" name="m_check_to_midi">
+            <property name="toolTip">
+             <string>Mute-groups are saved in the MIDI file.</string>
+            </property>
+            <property name="text">
+             <string>To MIDI </string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QCheckBox" name="m_check_to_mutes">
+            <property name="toolTip">
+             <string>Mute-groups are saved to the
+&quot;mutes&quot; file at exit.</string>
+            </property>
+            <property name="text">
+             <string>To Mutes</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QRadioButton" name="m_radio_hex">
+            <property name="maximumSize">
+             <size>
+              <width>80</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Mute statuses are saved as hexadecimal (e.g. 0xFF).
+Useful if set-size is larger than 4 x 8.</string>
+            </property>
+            <property name="text">
+             <string>He&amp;x</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QRadioButton" name="m_radio_binary">
+            <property name="maximumSize">
+             <size>
+              <width>80</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Mute statuses are saved as stanzas of 1's
+and 0's. Default setting.</string>
+            </property>
+            <property name="text">
+             <string>Binar&amp;y</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="m_check_from_midi">
+            <property name="text">
+             <string>From MIDI</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="m_check_from_mutes">
+            <property name="text">
+             <string>From Mutes</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </item>
       <item>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="2">
-         <widget class="QCheckBox" name="m_check_to_midi">
-          <property name="toolTip">
-           <string>Mute-groups are saved in the MIDI file.</string>
-          </property>
-          <property name="text">
-           <string>To MIDI </string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QCheckBox" name="m_check_to_mutes">
-          <property name="toolTip">
-           <string>Mute-groups are saved to the
-&quot;mutes&quot; file at exit.</string>
-          </property>
-          <property name="text">
-           <string>To Mutes</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QRadioButton" name="m_radio_hex">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QCheckBox" name="m_check_toggle_active">
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>160</width>
             <height>16777215</height>
            </size>
           </property>
           <property name="toolTip">
-           <string>Mute statuses are saved as hexadecimal (e.g. 0xFF).
-Useful if set-size is larger than 4 x 8.</string>
+           <string>Toggling off a mute-group toggles only patterns
+active in that group; patterns unmuted by the user stay on.
+Legacy behavior adheres strictly to the mute-group.</string>
           </property>
           <property name="text">
-           <string>He&amp;x</string>
+           <string>Toggle Only Active</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QRadioButton" name="m_radio_binary">
+        <item>
+         <widget class="QCheckBox" name="m_check_strip_empty">
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>170</width>
             <height>16777215</height>
            </size>
           </property>
           <property name="toolTip">
-           <string>Mute statuses are saved as stanzas of 1's
-and 0's. Default setting.</string>
+           <string>If there are no non-zero mute-group values,
+do not save them to the MIDI file.</string>
           </property>
           <property name="text">
-           <string>Binar&amp;y</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QCheckBox" name="m_check_from_midi">
-          <property name="text">
-           <string>From MIDI</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="m_check_from_mutes">
-          <property name="text">
-           <string>From Mutes</string>
+           <string>Strip If No Mutes</string>
           </property>
          </widget>
         </item>
@@ -457,84 +317,238 @@ and 0's. Default setting.</string>
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QCheckBox" name="m_check_toggle_active">
-        <property name="maximumSize">
+       <widget class="QTableWidget" name="m_group_table">
+        <property name="minimumSize">
          <size>
-          <width>160</width>
-          <height>16777215</height>
+          <width>400</width>
+          <height>280</height>
          </size>
         </property>
-        <property name="toolTip">
-         <string>Toggling off a mute-group toggles only patterns
-active in that group; patterns unmuted by the user stay on.
-Legacy behavior adheres strictly to the mute-group.</string>
-        </property>
-        <property name="text">
-         <string>Toggle Only Active</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="m_check_strip_empty">
         <property name="maximumSize">
          <size>
-          <width>170</width>
-          <height>16777215</height>
+          <width>400</width>
+          <height>340</height>
          </size>
         </property>
-        <property name="toolTip">
-         <string>If there are no non-zero mute-group values,
-do not save them to the MIDI file.</string>
+        <property name="alternatingRowColors">
+         <bool>true</bool>
         </property>
-        <property name="text">
-         <string>Strip If No Mutes</string>
+        <property name="rowCount">
+         <number>32</number>
         </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <item>
-       <widget class="QPushButton" name="m_button_trigger">
-        <property name="enabled">
+        <property name="columnCount">
+         <number>4</number>
+        </property>
+        <attribute name="horizontalHeaderVisible">
          <bool>false</bool>
-        </property>
-        <property name="toolTip">
-         <string>When active, the mute-group button here
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>18</number>
+        </attribute>
+        <attribute name="verticalHeaderMinimumSectionSize">
+         <number>16</number>
+        </attribute>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QPushButton" name="m_button_trigger">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>120</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>When active, the mute-group button here
 can toggle the mute-groups.</string>
-        </property>
-        <property name="text">
-         <string>Trigger Mode</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="m_button_clear_all">
-        <property name="toolTip">
-         <string>Removes all mute-groups from the mute-group setup.</string>
-        </property>
-        <property name="text">
-         <string>Clear All Mutes</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="m_button_set_mutes">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="toolTip">
-         <string>Save mute-group modifications to the configuration.
+          </property>
+          <property name="text">
+           <string>Trigger Mode</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="m_button_clear_all">
+          <property name="maximumSize">
+           <size>
+            <width>120</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Removes all mute-groups from the mute-group setup.</string>
+          </property>
+          <property name="text">
+           <string>Clear Mutes</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="m_button_set_mutes">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>120</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Save mute-group modifications to the configuration.
 Still need to save the MIDI or 'mutes' file,
 as applicable, to preserve this mute-group.</string>
+          </property>
+          <property name="text">
+           <string>Update Group</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <property name="spacing">
+         <number>2</number>
         </property>
-        <property name="text">
-         <string>Update Group</string>
-        </property>
-       </widget>
+        <item>
+         <widget class="QSpinBox" name="m_pattern_offset_spinbox">
+          <property name="maximumSize">
+           <size>
+            <width>48</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>When set-size is 64 and 96 instead of 32,
+allows paging patterns keys.</string>
+          </property>
+          <property name="wrapping">
+           <bool>true</bool>
+          </property>
+          <property name="maximum">
+           <number>2</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="m_button_save">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>64</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Saves mute groups to a file in the session
+configuration.</string>
+          </property>
+          <property name="text">
+           <string>Save All</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="m_button_load">
+          <property name="maximumSize">
+           <size>
+            <width>64</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Load File</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="m_button_up">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>52</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Move the selected set up in the list.</string>
+          </property>
+          <property name="text">
+           <string>Up</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="m_button_down">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>52</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Move to the next mute group.</string>
+          </property>
+          <property name="text">
+           <string>Down</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-05-25
+ * \updates       2022-06-27
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -1319,6 +1319,11 @@ protected:
         m_option_bits &= ~b;
     }
 
+    void clear_option_bits ()
+    {
+        m_option_bits = 0;
+    }
+
     bool mainwnd_rows (int value);
     bool mainwnd_cols (int value);
 
@@ -1720,6 +1725,10 @@ public:         // used in main application module and the usrfile class
     {
         m_lock_main_window = flag;
     }
+
+    /*
+     * Not yet part of Edit / Preferences.
+     */
 
     void inverse_colors (bool flag)
     {
