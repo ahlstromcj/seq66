@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-05-15
+ * \updates       2022-06-16
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -582,20 +582,6 @@ ticks_to_beats (midipulse p, int P, int B, int W)
 
 extern int pulses_per_substep (midipulse ppqn, int zoom = 1);
 extern int pulses_per_pixel (midipulse ppqn, int zoom = 1);
-
-#if defined USE_PULSES_SCALED
-extern midipulse pulses_scaled (midipulse tick, midipulse ppqn, int zoom = 1);
-#endif
-
-#if defined USE_PULSE_DIVIDE
-extern midipulse pulse_divide
-(
-    midipulse numerator,
-    midipulse denominator,
-    midipulse & remainder
-);
-#endif
-
 extern double wave_func (double angle, waveform wavetype);
 extern double unit_truncation (double angle);
 extern double exp_normalize (double angle, bool negate = false);
@@ -608,9 +594,6 @@ extern bool extract_port_names
 extern std::string extract_bus_name (const std::string & fullname);
 extern std::string extract_port_name (const std::string & fullname);
 extern std::string extract_a2j_port_name (const std::string & alias);
-#if defined USE_EXTRACT_A2J_BUS_ID
-extern int extract_a2j_bus_id (const std::string & alias);
-#endif
 
 }           // namespace seq66
 

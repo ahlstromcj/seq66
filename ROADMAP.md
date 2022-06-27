@@ -1,7 +1,7 @@
 # ROADMAP for a Possible Seq66 v. 2
 
 Chris Ahlstrom
-2022-05-11 to 2022-06-03
+2022-05-11 to 2022-06-21
 
 This file is simply some thoughts about the future of __Seq66__ and
 a version 2...  if we decide to keep updating this project until Ahlstrom
@@ -67,18 +67,22 @@ croaks. :-D
         configuration and for all song changes.
     *   Use "rtmidi" for Windows/Mac; removed "portmidi".
 
-##  Requested Features
+##  Requested Features / Suggestions
 
     These items are requests.  Not sure if all are worth doing in version 2.
 
-    *   Break libraries into Git submodules.
-    *   Pipewire support
+    *   Replace GNU Autotools.  Candidates: meson and cmake.  Meson seems
+        preferable at this time.
+    *   Use a true RtMidi-compatible library; dump the portmidi implementation.
+    *   Add Pipewire support.
     *   Full OSC support for automation.
+    *   Break libraries into Git submodules.
     *   MIDI clips launched by a note.
     *   MIDINAM.  See issue #1 and the TODO file for this request.
     *   Ableton Live transport support.  See issue #16 and the TODO file for
         this request.
     *   Support RELNOTEs.md better, as per issue #24 and the TODO.
     *   Beef up recording live sequence changes as per issue #44 and the TODO.
+    *   Weak JACK.
 
 // vim: sw=4 ts=4 wm=2 et ft=markdown

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-05-15
+ * \updates       2022-06-16
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -823,17 +823,6 @@ pulses_per_pixel (midipulse ppqn, int zoom)
     return result;
 }
 
-#if defined USE_PULSES_SCALED
-
-midipulse
-pulses_scaled (midipulse tick, midipulse ppqn, int zoom)
-{
-    double factor = (double(ppqn) * zoom) / usr().base_ppqn();
-    return midipulse(tick * factor + 0.5);
-}
-
-#endif
-
 /**
  *  Internal function for simple calculation of a power of 2 without a lot of
  *  math.  Use for calculating the denominator of a time signature.
@@ -1119,47 +1108,6 @@ note_value_to_tempo (midibyte note)
     return slope;
 }
 
-#if defined USE_PULSE_DIVIDE
-
-/**
- *  Calculates the quotient and remainder of a midipulse division, which is a
- *  common operation in Seq66.  This function also avoids division by
- *  zero (and currently ignores negative denominators, which are still
- *  possible with the current definition of the midipulse type definition
- *  (alias).
- *
- * \param numerator
- *      Provides the numerator in the division operation.
- *
- * \param denominator
- *      Provides the denominator in the division operation.
- *
- * \param [out] remainder
- *      The remainder is written here.  If the division cannot be done, it is
- *      set to 0.
- *
- * \return
- *      Returns the result of the division.
- */
-
-midipulse
-pulse_divide (midipulse numerator, midipulse denominator, midipulse & remainder)
-{
-    midipulse result = 0;
-    if (denominator > 0)
-    {
-        ldiv_t temp = ldiv(numerator, denominator);
-        result = temp.quot;
-        remainder = temp.rem;
-    }
-    else
-        remainder = 0;
-
-    return result;
-}
-
-#endif  // defined USE_PULSE_DIVIDE
-
 /**
  *  Calculates a wave function for use as an LFO (low-frequency oscillator)
  *  for modifying data values in a sequence.  We extracted this function from
@@ -1337,7 +1285,7 @@ wave_type_name (waveform wavetype)
 
     case waveform::reverse_exponential:
 
-        result = "Exponential Rise";
+        result = "Exponential Fall";
         break;
 
     default:
@@ -1505,35 +1453,6 @@ extract_a2j_port_name (const std::string & alias)
     }
     return result;
 }
-
-#if defined USE_EXTRACT_A2J_BUS_ID
-
-/**
- *  NOT YET USED.
- */
-
-int
-extract_a2j_bus_id (const std::string & alias)
-{
-    int result = (-1);
-    if (contains(alias, "a2j"))
-    {
-        auto lpos = alias.find_first_of("[");
-        auto rpos = alias.find_first_of("]");
-        bool ok = lpos != std::string::npos && rpos != std::string::npos;
-        if (ok)
-            ok = rpos > lpos;
-
-        if (ok)
-        {
-            std::string temp = alias.substr(lpos, rpos - lpos - 1);
-            result = string_to_int(temp);
-        }
-    }
-    return result;
-}
-
-#endif
 
 }       // namespace seq66
 

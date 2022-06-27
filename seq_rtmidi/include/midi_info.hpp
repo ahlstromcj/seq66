@@ -25,9 +25,9 @@
  *  A class for holding the current status of the MIDI system on the host.
  *
  * \library       seq66 application
- * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
+ * \author        Chris Ahlstrom
  * \date          2016-12-05
- * \updates       2022-03-27
+ * \updates       2022-06-15
  * \license       See above.
  *
  *  We need to have a way to get all of the API information from each

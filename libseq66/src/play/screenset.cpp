@@ -64,13 +64,10 @@ namespace seq66
  *      to whatever the maximum set size is (normally this is 32 - 1.)
  *
  * \param rows
- *      Provides the number of virtual rows in the set, which must match what
- *      the user-interface uses and the number of "rows" in the mutegroups.
+ *      Provides the number of virtual rows in the set.
  *
  * \param columns
- *      Provides the number of virtual columns in the set, which must match
- *      what the user-interface uses and the number of "columns" in the
- *      mutegroups.
+ *      Provides the number of virtual columns in the set.
  */
 
 screenset::screenset (screenset::number setnum, int rows, int columns) :

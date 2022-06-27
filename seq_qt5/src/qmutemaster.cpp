@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-11-18
+ * \updates       2022-06-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -60,7 +60,7 @@
 
 static const int c_table_row_height = 18;
 static const int c_table_fix        = 16;
-static const int c_button_size      = 24;
+static const int c_button_size      = 26; // 24;
 
 /*
  * Don't document the namespace.
@@ -96,7 +96,11 @@ qmutemaster::qmutemaster
     m_timer                 (nullptr),
     m_main_window           (mainparent),
     m_group_buttons         (mutegroups::Size(), nullptr),  /* "2-D" arrary */
+#if defined MUST_USE_ONLY_32_MUTES
     m_pattern_buttons       (mutegroups::Size(), nullptr),  /* "2-D" arrary */
+#else
+    m_pattern_buttons       (p.screenset_size(), nullptr),  /* group_count()*/
+#endif
     m_current_group         (seq::unassigned()),            /* important    */
     m_group_count           (cb_perf().mutegroup_count()),
     m_button_row            (seq::unassigned()),
@@ -566,9 +570,16 @@ qmutemaster::set_bin_hex (bool bin_checked)
 }
 
 void
+qmutemaster::mutes_file_change (bool flag)
+{
+    ui->m_button_save->setEnabled(flag);
+    rc().auto_mutes_save(flag);
+}
+
+void
 qmutemaster::slot_mutes_file_modify ()
 {
-    ui->m_button_save->setEnabled(true);
+    mutes_file_change(true);
 }
 
 void
@@ -576,7 +587,7 @@ qmutemaster::slot_bin_mode (bool ischecked)
 {
     cb_perf().group_format_hex(! ischecked);
     set_bin_hex(ischecked);
-    ui->m_button_save->setEnabled(true);
+    mutes_file_change(true);
 }
 
 void
@@ -584,7 +595,7 @@ qmutemaster::slot_hex_mode (bool ischecked)
 {
     cb_perf().group_format_hex(ischecked);
     set_bin_hex(! ischecked);
-    ui->m_button_save->setEnabled(true);
+    mutes_file_change(true);
 }
 
 void
@@ -719,9 +730,16 @@ qmutemaster::slot_save ()
         midibooleans bits = m_pattern_mutes;
         bool ok = cb_perf().put_mutes();
         if (ok)
+        {
             m_main_window->save_mutes_dialog(rc().mute_group_filespec());
+            mutes_file_change(false);
+        }
     }
 }
+
+/**
+ *  Currently not in use!
+ */
 
 bool
 qmutemaster::save_mutegroups (const std::string & mutefile)
@@ -738,11 +756,17 @@ qmutemaster::save_mutegroups (const std::string & mutefile)
     return result;
 }
 
+/**
+ *  For MIDI save only.
+ */
+
 void
 qmutemaster::enable_save ()
 {
     if (not_nullptr(m_main_window))
+    {
         m_main_window->enable_save(true);
+    }
 }
 
 void
@@ -972,8 +996,15 @@ qmutemaster::create_pattern_buttons ()
     int tracks = cb_perf().screenset_size();
     for (int t = 0; t < tracks; ++t)
     {
+        /*
+         * Issue #87.  This is the wrong mapper, it is a set mapper, not
+         * a seqence mapper:
+         *
+         *  if (cb_perf().master_index_to_grid(t, row, column))
+         */
+
         int row, column;
-        if (cb_perf().master_index_to_grid(t, row, column))
+        if (cb_perf().seq_to_grid(t, row, column))
         {
             std::string gstring = std::to_string(t);
             QPushButton * temp = new QPushButton(qt(gstring));
@@ -1005,6 +1036,11 @@ qmutemaster::update_pattern_buttons (enabling tomodify)
     {
         m_pattern_mutes = mutes;
         int tracks = cb_perf().screenset_size();
+        if (size_t(tracks) > m_pattern_buttons.size())
+        {
+            file_message("too many tracks to mute", std::to_string(tracks));
+            tracks = int(m_pattern_buttons.size());
+        }
         for (int t = 0; t < tracks; ++t)
         {
             QPushButton * temp = m_pattern_buttons[t];
@@ -1032,12 +1068,7 @@ qmutemaster::handle_pattern_button (int row, int column)
     {
         m_pattern_mutes[s] = midibool(enabled);
         ui->m_button_set_mutes->setEnabled(true);
-
-        /*
-         * Do not enable until the "Update Group" button is pressed.
-         *
-         * ui->m_button_save->setEnabled(true);
-         */
+        mutes_file_change(true);
     }
 }
 

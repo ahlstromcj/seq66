@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-31
- * \updates       2022-05-30
+ * \updates       2022-06-26
  * \license       GNU GPLv2 or above
  *
  *  Qt Rtmidi Linux and Windows versions, hardwired for use with
@@ -336,10 +336,12 @@
  * Define to enable JACK port refresh
  */
 
-/* #undef MIDI_PORT_REFRESH */
+#undef MIDI_PORT_REFRESH
 
+#if 0
 #ifndef SEQ66_MIDI_PORT_REFRESH
 #define SEQ66_MIDI_PORT_REFRESH 1
+#endif
 #endif
 
 /*

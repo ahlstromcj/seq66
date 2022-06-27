@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2021-11-08
+ * \updates       2022-06-27
  * \license       GNU GPLv2 or above
  *
  *  Implements setmaster.  The difference between the setmaster and setmapper
@@ -136,7 +136,8 @@ setmaster::grid_to_set (int row, int column) const
 }
 
 /**
- *  Compare to screenset::index_to_grid().
+ *  Compare to screenset::index_to_grid().  Fixes found while fixing
+ *  issue #87.
  */
 
 bool
@@ -147,13 +148,13 @@ setmaster::index_to_grid (screenset::number setno, int & row, int & column)
     {
         if (swap_coordinates())
         {
-            row = setno / m_screenset_columns;
-            column = setno % m_screenset_columns;
+            row = setno / m_columns;                // not m_screenset_columns
+            column = setno % m_columns;             // not m_screenset_columns
         }
         else
         {
-            row = setno % m_screenset_rows;
-            column = setno / m_screenset_rows;
+            row = setno % m_rows;                   // not m_screenset_rows
+            column = setno / m_rows;                // not m_screenset_rows
         }
     }
     return result;

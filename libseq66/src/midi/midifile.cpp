@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-05-15
+ * \updates       2022-06-27
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -2036,7 +2036,21 @@ midifile::parse_c_mutegroups (performer & p)
                         bool status = gmutestate != 0;
                         mutebits.push_back(midibool(status));
                     }
-                    if (! mutes.load(group, mutebits))
+                    if (mutes.load(group, mutebits))
+                    {
+                        /*
+                         * Related to issue #87.
+                         */
+
+                        if (mutebits.size() != size_t(p.group_count()))
+                        {
+                            mutebits = fix_midibooleans
+                            (
+                                mutebits, p.group_count()
+                            );
+                        }
+                    }
+                    else
                         break;                              /* a duplicate? */
                 }
             }
@@ -2071,7 +2085,21 @@ midifile::parse_c_mutegroups (performer & p)
                         --m_pos;                            /* put it back  */
 
                     if (mutes.load(group, mutebits))
+                    {
                         mutes.group_name(group, gname);
+
+                        /*
+                         * Related to issue #87.
+                         */
+
+                        if (mutebits.size() != size_t(p.group_count()))
+                        {
+                            mutebits = fix_midibooleans
+                            (
+                                mutebits, p.group_count()
+                            );
+                        }
+                    }
                     else
                         break;                              /* often duplicate  */
                 }
@@ -2977,7 +3005,7 @@ midifile::write_seqspec_track (performer & p)
     if (mutes.saveable_to_midi())
     {
         groupcount = unsigned(mutes.count());   /* includes unused groups   */
-        groupsize = unsigned(mutes.group_size());
+        groupsize = unsigned(mutes.group_count());
         if (rc().save_old_mutes())
             gmutesz = 4 + groupcount * (4 + groupsize * 4); /* 4-->longs    */
         else

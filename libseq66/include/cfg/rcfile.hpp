@@ -70,11 +70,13 @@ public:
 
     virtual bool parse () override;
     virtual bool write () override;
+#if defined MUST_USE_ONLY_32_MUTES
     bool parse_mute_group_section
     (
         const std::string & fname,
         bool separatefile = false
     );
+#endif
     bool parse_midi_control_section
     (
         const std::string & fname,

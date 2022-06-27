@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2022-06-03
+ * \updates       2022-06-27
  * \license       GNU GPLv2 or above
  *
  *  These classes were originally structures, but now they are "constant"
@@ -188,6 +188,35 @@ string_to_midibyte (const std::string & s, midibyte defalt)
     catch (std::invalid_argument const &)
     {
         // no code
+    }
+    return result;
+}
+
+/**
+ *  Fix up the size of a midibooleans vector.  It copies as many midibool
+ *  values as is correct from the old vector.  Then, if it needs to be longer,
+ *  additional 0 values are pushed into the result.
+ */
+
+midibooleans
+fix_midibooleans (const midibooleans & mbs, int newsz)
+{
+    midibooleans result;
+    int sz = int(mbs.size());
+    if (newsz >= sz)
+    {
+        result = mbs;
+        if (newsz > sz)
+        {
+            int diff = newsz - sz;
+            for (int i = 0; i < diff; ++i)
+                result.push_back(0);
+        }
+    }
+    else
+    {
+        for (int i = 0; i < newsz; ++i)
+            result.push_back(mbs[i]);
     }
     return result;
 }

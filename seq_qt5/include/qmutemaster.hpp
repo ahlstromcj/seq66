@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-11-05
+ * \updates       2022-06-27
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -173,6 +173,7 @@ private:
     }
 
     void set_bin_hex (bool bin_checked);
+    void mutes_file_change (bool flag);
     void set_column_widths (int total_width);
     void setup_table ();
     bool initialize_table ();

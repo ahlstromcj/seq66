@@ -71,7 +71,7 @@ rtmidi_info::get_version ()
 
 /**
  *  Gets the list of APIs compiled into the application.  Note that we make
- *  ALSA versus JACK a runtime option as it is in the legacy Seq66
+ *  ALSA versus JACK a runtime option as it is in the legacy Sequencer64
  *  application.
  *
  *  This is a static function to replace the midi_api version.

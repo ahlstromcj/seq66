@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-05-14
+ * \updates       2022-06-26
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1373,6 +1373,11 @@ public:
     int mute_columns () const
     {
         return mutes().columns();
+    }
+
+    int mute_count () const
+    {
+        return mutes().count();
     }
 
     screenset::number master_grid_to_set (int row, int column) const
@@ -3101,9 +3106,9 @@ public:         /* GUI-support functions */
         return mutes().is_group_learn();
     }
 
-    int group_size () const
+    int group_count () const
     {
-        return mutes().group_size();
+        return mutes().group_count();
     }
 
     bool group_event () const

@@ -53,8 +53,8 @@ namespace seq66
 {
 
 /**
- *  Provides a class for managing screensets and mutegroups.  Much of the
- *  action will occur in the selected play-screen.
+ *  Provides a class for managing screensets.  Much of the action will occur
+ *  in the selected play-screen.
  */
 
 class setmaster

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-05-15
+ * \updates       2022-06-27
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -44,7 +44,9 @@
 #include <iomanip>                      /* std::setw() I/O manipulator      */
 
 #include "cfg/midicontrolfile.hpp"      /* seq66::midicontrolfile class     */
+#if defined MUST_USE_ONLY_32_MUTES
 #include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile class      */
+#endif
 #include "cfg/rcfile.hpp"               /* seq66::rcfile class              */
 #include "cfg/settings.hpp"             /* seq66::rc() accessor             */
 #include "midi/midibus.hpp"             /* seq66::midibus class             */
@@ -247,6 +249,7 @@ rcfile::parse ()
     rc_ref().mute_group_filename(pfname);   /* [[/]path/] basename.ext  */
     fullpath = rc_ref().mute_group_filespec();
     file_message("Reading mutes", fullpath);
+#if defined MUST_USE_ONLY_32_MUTES
     ok = parse_mute_group_section(fullpath, true);
     if (! ok)
     {
@@ -255,6 +258,7 @@ rcfile::parse ()
         info += "'";
         return make_error_message(tag, info);
     }
+#endif
 
     tag = "[usr-file]";
     active = get_file_status(file, tag, pfname);
@@ -648,6 +652,8 @@ rcfile::parse_midi_control_section
     return mcf.parse();
 }
 
+#if defined MUST_USE_ONLY_32_MUTES
+
 /**
  *  Parses the [mute-group] section.  This function is used both in the
  *  original reading of the "rc" file, and for reloading the original
@@ -674,6 +680,8 @@ rcfile::parse_mute_group_section
     mutegroupsfile mgf(separatefile ? fname : name(), rc_ref());
     return mgf.parse();
 }
+
+#endif
 
 /**
  *  This options-writing function is just about as complex as the
@@ -757,6 +765,7 @@ rcfile::write ()
         rc_ref().midi_control_filename(), rc_ref().midi_control_active()
     );
 
+#if defined MUST_USE_ONLY_32_MUTES
     std::string mgfname = rc_ref().mute_group_filespec();
     mutegroupsfile mgf(mgfname, rc_ref());
     mgfname = rc_ref().trim_home_directory(mgfname);
@@ -764,6 +773,7 @@ rcfile::write ()
     const mutegroups & mgroups = rc_ref().mute_groups();
     if (mgroups.group_save_to_mutes())
         ok = mgf.write();
+#endif
 
     file << "\n"
 "# Provides a flag and file-name for mute-groups settings. '\"\"' means no\n"

@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2022-05-13
+ * \updates       2022-06-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -305,7 +305,8 @@ private:
 extern std::string write_stanza_bits
 (
     const midibooleans & bitbucket,
-    bool newstyle = true
+    int grouping    = 8,
+    bool newstyle   = true
 );
 extern void push_8_bits (midibooleans & target, unsigned bits);
 extern bool parse_stanza_bits

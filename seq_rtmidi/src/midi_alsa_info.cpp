@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-06-03
+ * \updates       2022-06-20
  * \license       See above.
  *
  *  API information found at:
@@ -80,8 +80,6 @@
 #include "midi/midibus_common.hpp"      /* from the libseq66 sub-project    */
 #include "midi_alsa_info.hpp"           /* seq66::midi_alsa_info            */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
-
-#undef   USE_ALSA_API_CONNECT           /* VERY EXPERIMENTAL, not working   */
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -370,38 +368,7 @@ midi_alsa_info::api_flush ()
 bool
 midi_alsa_info::api_connect ()
 {
-#if defined USE_ALSA_API_CONNECT                    /* VERY EXPERIMENTAL    */
-
-    bool result = not_nullptr(seq());               /* ALSA midi_handle()   */
-    if (result)
-    {
-        int rc = ::jack_activate(client_handle());
-        result = rc == 0;
-    }
-    if (result && rc().jack_auto_connect())         /* issue #60            */
-    {
-        for (auto m : bus_container())              /* midibus pointers     */
-        {
-            if (m->is_port_connectable())
-            {
-                result = m->api_connect();
-                if (! result)
-                    break;
-            }
-        }
-    }
-    if (! result)
-    {
-        m_error_string = "JACK cannot activate/connect I/O";
-        error(rterror::kind::warning, m_error_string);
-    }
-    return result;
-
-#else
-
     return true;
-
-#endif  // defined  USE_ALSA_API_CONNECT
 }
 
 /**

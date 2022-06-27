@@ -49,7 +49,85 @@
 namespace seq66
 {
 
+/*
+ *  Static members
+ */
+
 bool mutegroups::s_swap_coordinates = false;
+
+mutegroups::saving
+mutegroups::string_to_group_save (const std::string & v)
+{
+    if (v == "both" || v == "stomp")
+        return saving::both;
+    else if (v == "mutes")
+        return saving::mutes;
+    else if (v == "midi" || v == "preserve")
+        return saving::midi;
+    else
+        return saving::max;             /* an illegal value */
+}
+
+/**
+ *  The "inverse" of grid_to_group().  This function is static.
+ *
+ *  Compare this to the non-static function mutegroup::mute_to_grid().
+ */
+
+bool
+mutegroups::group_to_grid (mutegroup::number group, int & row, int & column)
+{
+    bool result = group >= 0 && group < Size();
+    if (result)
+    {
+        if (Swap())
+        {
+            row = group / Columns();
+            column = group % Columns();
+        }
+        else
+        {
+            row = group % Rows();
+            column = group / Rows();
+        }
+    }
+    return result;
+}
+
+/**
+ *  Returns the mute group number for the given row and column.  Remember that
+ *  the layout of mutes doesn't match that of sets and sequences.  The row and
+ *  column here currently match the 4 x 8 mute-group grid in the qmutemaster
+ *  module.  This function is static.
+ *
+ * \param row
+ *      Provides the desired row of the virtual mute-group grid, clamped to a
+ *      legal value.
+ *
+ * \param column
+ *      Provides the desired column of the virtual mute-group grid, clamped to
+ *      a legal value.
+ *
+ * \return
+ *      Returns the calculated mute-group value, which will range from 0 to
+ *      (m_rows * m_columns) - 1 = m_set_count.
+ */
+
+mutegroup::number
+mutegroups::grid_to_group (int row, int column)
+{
+    if (row < 0)
+        row = 0;
+    else if (row >= Rows())
+        row = Rows() - 1;
+
+    if (column < 0)
+        column = 0;
+    else if (column >= Columns())
+        column = Columns() - 1;
+
+    return Swap() ? (column + row * Columns()) : (row + column * Rows());
+}
 
 /**
  *  Creates an empty, default mutegroups object.  The default size is 4 x 8,
@@ -476,12 +554,9 @@ mutegroups::group_save (saving mgh)
 bool
 mutegroups::group_save (const std::string & v)
 {
-    if (v == "both" || v == "stomp")
-        return group_save(saving::both);
-    else if (v == "mutes")
-        return group_save(saving::mutes);
-    else if (v == "midi" || v == "preserve")
-        return group_save(saving::midi);
+    saving value = string_to_group_save(v);
+    if (value != saving::max)
+        return group_save(value);
     else
         return false;
 }
@@ -618,67 +693,6 @@ mutegroups::reset_defaults ()
         result = add(gmute, m);
         if (! result)
             break;
-    }
-    return result;
-}
-
-/**
- *  Returns the mute group number for the given row and column.  Remember that
- *  the layout of mutes doesn't match that of sets and sequences.  The row and
- *  column here currently match the 4 x 8 mute-group grid in the qmutemaster
- *  module.  This function is static.
- *
- * \param row
- *      Provides the desired row of the virtual mute-group grid, clamped to a
- *      legal value.
- *
- * \param column
- *      Provides the desired column of the virtual mute-group grid, clamped to
- *      a legal value.
- *
- * \return
- *      Returns the calculated mute-group value, which will range from 0 to
- *      (m_rows * m_columns) - 1 = m_set_count.
- */
-
-mutegroup::number
-mutegroups::grid_to_group (int row, int column)
-{
-    if (row < 0)
-        row = 0;
-    else if (row >= Rows())
-        row = Rows() - 1;
-
-    if (column < 0)
-        column = 0;
-    else if (column >= Columns())
-        column = Columns() - 1;
-
-    return Swap() ? (column + row * Columns()) : (row + column * Rows());
-}
-
-/**
- *  The "inverse" of grid_to_group().  This function is static.
- *
- *  Compare this to the non-static function mutegroup::mute_to_grid().
- */
-
-bool
-mutegroups::group_to_grid (mutegroup::number group, int & row, int & column)
-{
-    bool result = group >= 0 && group < Size();
-    if (result)
-    {
-        if (Swap())
-        {
-            row = group / Columns();
-            column = group % Columns();
-        }
-        else
-        {
-            row = group % Rows();
-            column = group / Rows();
-        }
     }
     return result;
 }

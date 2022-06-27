@@ -262,13 +262,16 @@ mutegroup::armed (int index, bool flag)
 }
 
 /**
- *  Just a simple display of a mute group.
+ *  Just a simple display of a mute group. The get() function gets the
+ *  midibooleans vector, and we tell write_stanza_bits to group by the
+ *  actuall number of columns in a mute-group (which is the same as in a
+ *  screenset).
  */
 
 void
 mutegroup::show () const
 {
-    std::string stanzabits = write_stanza_bits(get());  /* get midibooleans */
+    std::string stanzabits = write_stanza_bits(get(), columns());
     std::cout
         << "Group #" << group()
         << " " << stanzabits
@@ -288,6 +291,10 @@ mutegroup::show () const
  *      assumes that the number of bit values is perfectly divisible by 8.
  *      If the user makes a mistake, tough shitsky.
  *
+ *  \param grouping
+ *      The number of values between each "[ ]" pair.  Normally 8, it is
+ *      whatever the number of columns have been specified for a screenset.
+ *
  * \param hexstyle
  *      If true (the default), then hexadecimal values are written, in groups
  *      of 8 bits.  Hexadecimal values are better when set-size is greater than
@@ -301,6 +308,7 @@ std::string
 write_stanza_bits
 (
     const midibooleans & bitbucket,
+    int grouping,
     bool hexstyle
 )
 {
@@ -310,7 +318,7 @@ write_stanza_bits
     {
         if (hexstyle)
         {
-            int bitcount = 8;                       /* group by 8 bits      */
+            int bitcount = grouping;                /* group by 8 bits, ... */
             unsigned hexvalue = 0x00;
             for (auto b : bitbucket)
             {
@@ -334,7 +342,7 @@ write_stanza_bits
              * undoing the last left-shift.
              */
 
-            if (bitcount > 0 && bitcount < 8)
+            if (bitcount > 0 && bitcount < grouping)
             {
                 char temp[16];
                 (void) snprintf(temp, sizeof temp, "0x%02x ", hexvalue >> 1);
@@ -346,9 +354,12 @@ write_stanza_bits
             int counter = 0;
             for (auto b : bitbucket)
             {
+                bool ender = ++counter % grouping == 0 &&
+                    counter < int(bitbucket.size());
+
                 result += (b != 0) ? "1" : "0" ;
                 result += " ";
-                if (++counter % 8 == 0 && counter < int(bitbucket.size()))
+                if (ender)
                     result += "] [ ";
             }
         }

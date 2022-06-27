@@ -408,7 +408,7 @@ songsummary::write_mutes
     if (mutes.any())
     {
         groupcount = unsigned(mutes.count());   /* no. of existing groups  */
-        setsize = unsigned(mutes.group_size());
+        setsize = unsigned(mutes.group_count());
     }
 
     file << "Mute Groups: " << groupcount << " of size " << setsize << "\n";

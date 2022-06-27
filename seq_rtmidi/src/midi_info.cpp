@@ -19,12 +19,12 @@
 /**
  * \file          midi_info.cpp
  *
- *    A class for obrtaining system MIDI information
+ *    A class for obtaining system MIDI information
  *
  * \library       seq66 application
- * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
+ * \author        Chris Ahlstrom
  * \date          2016-12-06
- * \updates       2022-02-21
+ * \updates       2022-06-26
  * \license       See above.
  *
  * Classes defined:
@@ -52,6 +52,10 @@
 #include "cfg/settings.hpp"             /* access to rc() configuration     */
 #include "midi/midibus.hpp"             /* select portmidi/rtmidi headers   */
 #include "midi_info.hpp"                /* seq66::midi_info etc.            */
+
+#if defined SEQ66_MIDI_PORT_REFRESH_BROKEN
+#include "midi_ports.hpp"                /* seq66::midi_ports classes       */
+#endif
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -229,6 +233,11 @@ midi_port_info::get_port_index (int client, int port)
 /*
  * class midi_info
  */
+
+#if defined SEQ66_MIDI_PORT_REFRESH_BROKEN
+midi_ports midi_info::m_previous_input;
+midi_ports midi_info::m_previous_output;
+#endif
 
 /**
  *  Principal constructor.

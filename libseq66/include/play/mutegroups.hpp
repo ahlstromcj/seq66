@@ -368,6 +368,7 @@ public:
 
     static mutegroup::number grid_to_group (int row, int column);
     static bool group_to_grid(mutegroup::number g, int & row, int & column);
+    static saving string_to_group_save (const std::string & value);
 
     const std::string & name () const
     {
@@ -415,7 +416,7 @@ public:
         return m_container.empty();
     }
 
-    int group_size () const
+    int group_count () const
     {
         return m_rows * m_columns;
     }

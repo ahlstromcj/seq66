@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-03-29
+ * \updates       2022-06-27
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -745,7 +745,11 @@ cmdlineopts::parse_o_mutes (const std::string & arg)
     bool result = arg == "mutes" || arg == "midi" || arg == "both";
     if (result)
     {
-        rc().mute_groups().group_save(arg);
+        // rc().mute_groups().group_save(arg);
+
+        mutegroups::saving v = mutegroups::string_to_group_save(arg);
+        if (v != mutegroups::saving::max)
+            rc().mute_group_save(v);
     }
     return result;
 }
@@ -766,6 +770,8 @@ cmdlineopts::parse_o_virtual (const std::string & arg)
     rc().manual_in_port_count(in);
     return true;
 }
+
+#if defined MUST_USE_ONLY_32_MUTES
 
 /**
  *  Like parse_options_files(), but reads only the [mute-group] section.
@@ -803,6 +809,8 @@ cmdlineopts::parse_mute_groups
     }
     return result;
 }
+
+#endif
 
 /**
  *  Parses the command-line options on behalf of the application.  Note that,

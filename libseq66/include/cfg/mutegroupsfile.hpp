@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-30
- * \updates       2021-04-27
+ * \updates       2022-06-27
  * \license       GNU GPLv2 or above
  *
  *  Provides support for a mute-groups configuration file.
@@ -60,50 +60,27 @@ class mutegroupsfile final : public configfile
 private:
 
     /**
-     *  Indicates to use the old 4 x 8 format for a mute-groups stanza.
+     *  The mute group object to work on.
      */
 
-    bool m_legacy_format;
-
-    /**
-     *  Indicates if empty mute-group stanzas are to be read in.  An empty
-     *  stanza is all 0's (all false).  This option is useful in conversion to
-     *  the new format.
-     */
-
-    bool m_allow_inactive;
-
-    /**
-     *  Similar to mutegroup::m_rows_in_group.  The default value is 4.
-     */
-
-    const int m_section_count;
-
-    /**
-     *  Similar to mutegroup::m_columns_in_group.  The default value is 8.
-     */
-
-    const int m_mute_count;
+    mutegroups & m_mute_groups;
 
 public:
 
+#if defined MUST_USE_ONLY_32_MUTES
     mutegroupsfile
     (
         const std::string & filename,
         rcsettings & rcs,
         bool allowinactive = false
     );
+#else
+    mutegroupsfile (const std::string & filename, mutegroups & mutes);
+#endif
 
     mutegroupsfile () = delete;
     mutegroupsfile (const mutegroupsfile &) = delete;
     mutegroupsfile & operator = (const mutegroupsfile &) = delete;
-
-    /*
-     * WTF?
-     *
-    mutegroupsfile (mutegroupsfile &&) = default;
-    mutegroupsfile & operator = (mutegroupsfile &&) = default;
-     */
 
     virtual ~mutegroupsfile ();
 
@@ -118,14 +95,32 @@ private:
     bool parse_mutes_stanza (mutegroups & mutes);
     bool write_mute_groups (std::ofstream & file);
 
+    mutegroups & mutes ()
+    {
+        return m_mute_groups;
+    }
+
+    const mutegroups & mutes () const
+    {
+        return m_mute_groups;
+    }
+
 };              // class mutegroupsfile
 
 /*
  * Free functions in the seq66 namespace.
  */
 
-extern bool open_mutegroups (const std::string & source);
-extern bool save_mutegroups (const std::string & destfile);
+extern bool open_mutegroups
+(
+    const std::string & source,
+    mutegroups & mutes
+);
+extern bool save_mutegroups
+(
+    const std::string & destfile,
+    const mutegroups & mutes
+);
 
 }               // namespace seq66
 

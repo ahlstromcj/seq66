@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2022-05-15
+ * \updates       2022-06-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -73,20 +73,30 @@ internal_mutegroups ()
  *      to be read and stored.
  */
 
+#if defined MUST_USE_ONLY_32_MUTES
 mutegroupsfile::mutegroupsfile
 (
     const std::string & filename,
     rcsettings & rcs,
     bool allowinactive
 ) :
-    configfile              (filename, rcs, ".mutes"),
-    m_legacy_format         (true),                 // true only for now
-    m_allow_inactive        (allowinactive),
-    m_section_count         (mutegroup::c_default_rows),
-    m_mute_count            (mutegroup::c_default_columns)
+    configfile  (filename, rcs, ".mutes")
 {
     // Empty body
 }
+#else
+mutegroupsfile::mutegroupsfile
+(
+    const std::string & filename,
+    mutegroups & mutes
+) :
+    configfile  (filename, rc(), ".mutes"), // don't need an rc now
+    m_mute_groups   (mutes)
+{
+    // Empty body
+}
+
+#endif
 
 /**
  *  A rote destructor.
@@ -119,9 +129,11 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     (void) parse_version(file);
 
     std::string s = parse_comments(file);
+#if defined MUST_USE_ONLY_32_MUTES
     mutegroups & mutes = rc_ref().mute_groups();
+#endif
     if (! s.empty())
-        mutes.comments_block().set(s);
+        mutes().comments_block().set(s);
 
     std::string tag = "[mute-group-flags]";
     s = get_variable(file, tag, "load-mute-groups");
@@ -129,9 +141,9 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     bool update_needed = s.empty();
     if (update_needed)
     {
-        mutes.toggle_active_only(false);
-        mutes.group_save("mutes");
-        mutes.group_load("none");
+        mutes().toggle_active_only(false);
+        mutes().group_save("mutes");
+        mutes().group_load("none");
     }
     else
     {
@@ -141,35 +153,56 @@ mutegroupsfile::parse_stream (std::ifstream & file)
             s = "midi";
 
         if (! s.empty())
-            mutes.group_load(s);
+            mutes().group_load(s);
 
         s = get_variable(file, tag, "save-mutes-to");
-        mutes.group_save(s);
+        mutes().group_save(s);
 
         bool flag = get_boolean(file, tag, "strip-empty");
-        mutes.strip_empty(flag);
+        mutes().strip_empty(flag);
+
+#if defined USE_MUTE_GROUP_ROWS_COLUMNS
+
+        /*
+         * For issue #87, we see that the mute-group size (number of
+         * patterns that can be set by a mute-group) must match the
+         * mainwnd_rows() and mainwnd_columns() setting in usrsettings.
+         * These are now passed to the performer, who then creates the
+         * mutegroups object with the correct set size.
+         *
+         * So we disable these settings here.
+         */
 
         int value = get_integer(file, tag, "mute-group-rows");
-        mutes.rows(value);
+        mutes().rows(value);
         value = get_integer(file, tag, "mute-group-columns");
-        mutes.columns(value);
+        mutes().columns(value);
         value = get_integer(file, tag, "mute-group-selected");
-        mutes.group_selected(value);
+
+#else
+        s = get_variable(file, tag, "mute-group-rows");
+        if (! s.empty())
+            rc_ref().auto_mutes_save(true);
+
+        int value = get_integer(file, tag, "mute-group-selected");
+#endif
+
+        mutes().group_selected(value);
         s = get_variable(file, tag, "groups-format");
         if (! s.empty())
         {
             bool usehex = (s == "hex");
-            mutes.group_format_hex(usehex);     /* otherwise it is binary   */
+            mutes().group_format_hex(usehex);   /* otherwise it is binary   */
         }
         flag = get_boolean(file, tag, "toggle-active-only");
-        mutes.toggle_active_only(flag);
+        mutes().toggle_active_only(flag);
     }
 
-    bool load = mutes.group_load_from_mutes();
-    mutegroups & mutestorage = load ? mutes : internal_mutegroups() ;
+    bool load = mutes().group_load_from_mutes();
+    mutegroups & mutestorage = load ? mutes() : internal_mutegroups() ;
     bool good = line_after(file, "[mute-groups]");
     if (! load)
-        internal_mutegroups() = mutes;
+        internal_mutegroups() = mutes();
 
     mutestorage.clear();
     if (good)
@@ -207,10 +240,6 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     if (good)
     {
         mutestorage.loaded_from_mutes(load);    /* loaded to non-internal?  */
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        if (rc().investigate())
-            mutestorage.show("read from 'mutes'");
-#endif
     }
     else
     {
@@ -270,31 +299,38 @@ mutegroupsfile::write_stream (std::ofstream & file)
         ;
     write_seq66_header(file, "mutes", version());
 
+#if defined MUST_USE_ONLY_32_MUTES
     std::string c = rc_ref().mute_groups().comments_block().text();
+#else
+    std::string c = mutes().comments_block().text();
+#endif
     write_comment(file, c);
     file <<
 "\n"
-"# load-mute-groups: set to 'none', or 'mutes' to load from the 'mutes' file,\n"
-"# 'midi' to load from the song, or 'both' to try to to read from 'mutes' first,\n"
+"# load-mute-groups: Set to 'none' or 'mutes' to load from the 'mutes' file,\n"
+"# 'midi' to load from the song, or 'both' to try to read from 'mutes' first,\n"
 "# then the 'midi' file.\n"
 "#\n"
-"# save-mutes-to: 'both' writes the mutes to the 'mutes' and MIDI file; 'midi'\n"
+"# save-mutes-to: 'both' writes mutes to the 'mutes' and MIDI file; 'midi'\n"
 "# writes only to the MIDI file; and the mutes only to the 'mutes' file.\n"
 "#\n"
 "# strip-empty: If true, all-zero mute-groups are not written to the MIDI file.\n"
 "#\n"
-"# mute-group-rows and mute-group-columns: Specifies the size of the grid. Keep\n"
-"# these values at 4 and 8; mute-group-count is only for sanity-checking.\n"
+#if defined USE_MUTE_GROUP_ROWS_COLUMNS
+"# mute-group-rows and mute-group-columns: Specifies the size of the mute-group\n"
+"# grid, not the number of mutes in a group (which matches the screenset size).\n"
+"# Keep these values at 4x8 and 32; mute-group-count is for sanity-checking.\n"
 "#\n"
-"# groups-format: 'binary' means write mutes as 0 or 1; 'hex' means write them as\n"
+#endif
+"# groups-format: 'binary' means write mutes as 0/1; 'hex' means write them as\n"
 "# hexadecimal numbers (e.g. 0xff), useful for larger set sizes.\n"
 "#\n"
-"# mute-group-selected: if 0 to 31, and mutes are available either from this file\n"
+"# mute-group-selected: If 0 to 31, and mutes are available from this file\n"
 "# or from the MIDI file, then this mute-group is applied at startup; useful in\n"
 "# restoring a session. Set to -1 to disable.\n"
 "#\n"
-"# toggle-active-only: when a mute-group is toggled off, all patterns, even those\n"
-"# outside the mute-group, are muted.  If this flag is set, only patterns in the\n"
+"# toggle-active-only: When a group is toggled off, all patterns, even those\n"
+"# outside the mute-group, are muted.  With this flag, only patterns in the\n"
 "# mute-group are muted. Patterns unmuted directly by the user remain unmuted.\n"
         ;
 
@@ -356,31 +392,35 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
     bool result = file.is_open();
     if (result)
     {
+#if defined MUST_USE_ONLY_32_MUTES
         const mutegroups & mutes = rc_ref().mute_groups();
-        bool usehex = mutes.group_format_hex();
+#endif
+        bool usehex = mutes().group_format_hex();
         std::string gf = usehex ? "hex" : "binary" ;
         file << "\n[mute-group-flags]\n\n";
-        write_string(file, "load-mute-groups", mutes.group_load_label());
-        write_string(file, "save-mutes-to", mutes.group_save_label());
-        write_boolean(file, "strip-empty", mutes.strip_empty());
-        write_integer(file, "mute-group-rows", mutes.rows());
-        write_integer(file, "mute-group-columns", mutes.columns());
-        write_integer(file, "mute-group-count", mutes.count());
-        write_integer(file, "mute-group-selected", mutes.group_selected());
+        write_string(file, "load-mute-groups", mutes().group_load_label());
+        write_string(file, "save-mutes-to", mutes().group_save_label());
+        write_boolean(file, "strip-empty", mutes().strip_empty());
+#if defined USE_MUTE_GROUP_ROWS_COLUMNS
+        write_integer(file, "mute-group-rows", mutes().rows());
+        write_integer(file, "mute-group-columns", mutes().columns());
+        write_integer(file, "mute-group-count", mutes().count());
+#endif
+        write_integer(file, "mute-group-selected", mutes().group_selected());
         write_string(file, "groups-format", gf);
-        write_boolean(file, "toggle-active-only", mutes.toggle_active_only());
+        write_boolean(file, "toggle-active-only", mutes().toggle_active_only());
         file << "\n[mute-groups]\n\n" <<
-"# Mute-group values are saved in the 'mutes' file, even if all zeroes. They can\n"
-"# be stripped out of the MIDI file by 'strip-empty-mutes'. A hex value indicates\n"
-"# a bit-mask, not a single bit. An  quoted group name can be placed at the end\n"
+"# We save mute-group values in the 'mutes' file, even if all zeroes. They can\n"
+"# be stripped out of the MIDI file by 'strip-empty-mutes'. Hex values indicate\n"
+"# a bit-mask, not a single bit. A quoted group name can be placed at the end\n"
 "# of the line.\n\n"
         ;
 
-        bool load = mutes.group_load_from_mutes();
-        const mutegroups & mutestorage = load ? mutes : internal_mutegroups() ;
+        bool load = mutes().group_load_from_mutes();
+        const mutegroups & mutestorage = load ? mutes() : internal_mutegroups() ;
         if (mutestorage.empty())
         {
-            if (mutes.group_format_hex())
+            if (mutes().group_format_hex())
             {
                 for (int m = 0; m < mutegroups::Size(); ++m)
                 {
@@ -412,7 +452,10 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
             {
                 int gmute = stz.first;
                 const mutegroup & m = stz.second;
-                std::string stanza = write_stanza_bits(m.get(), usehex);
+                std::string stanza = write_stanza_bits
+                (
+                    m.get(), m.columns(), usehex
+                );
                 if (! stanza.empty())
                 {
                     std::string groupname = m.name();
@@ -453,8 +496,22 @@ mutegroupsfile::parse_mutes_stanza (mutegroups & mutes)
         midibooleans groupmutes;
         result = parse_stanza_bits(groupmutes, line());
         if (result)
-            result = mutes.load(group, groupmutes);
+        {
+            if (groupmutes.size() != size_t(mutes.group_count()))
+            {
+                /*
+                 * Here, the user changed the dimensions of a set, but
+                 * we're reading an old mute-group file.  So we must adjust.
+                 *
+                 * TODO: ALSO MUST DO when reading mutes-groups from the
+                 * MIDI file: midifile::parse_c_mutegroups(), and activate
+                 * MIDI file saving if necessary.
+                 */
 
+                groupmutes = fix_midibooleans(groupmutes, mutes.group_count());
+            }
+            result = mutes.load(group, groupmutes);
+        }
         if (result)
         {
             std::string quoted = next_quoted_string(line());    /* tricky */
@@ -464,6 +521,8 @@ mutegroupsfile::parse_mutes_stanza (mutegroups & mutes)
     }
     return result;
 }
+
+#if defined MUST_USE_ONLY_32_MUTES
 
 bool
 open_mutegroups (const std::string & source)
@@ -477,12 +536,30 @@ open_mutegroups (const std::string & source)
     return result;
 }
 
+#else
+
+bool
+open_mutegroups (const std::string & source, mutegroups & mutes)
+{
+    bool result = ! source.empty();
+    if (result)
+    {
+        mutegroupsfile mgf(source, mutes);
+        result = mgf.parse();
+    }
+    return result;
+}
+
+#endif
+
 /**
  *  This is tricky, as mutegroupsfile always references the
  *  rc().mute_groups() object when reading and writing.
  *
  *      const mutegroups & mg = rc().mute_groups();
  */
+
+#if defined MUST_USE_ONLY_32_MUTES
 
 bool
 save_mutegroups (const std::string & destination)
@@ -504,6 +581,32 @@ save_mutegroups (const std::string & destination)
     }
     return result;
 }
+
+#else
+
+bool
+save_mutegroups (const std::string & destination, const mutegroups & mutes)
+{
+    bool result = ! destination.empty();
+    if (result)
+    {
+        mutegroups & ncmutes = const_cast<mutegroups &>(mutes);
+        mutegroupsfile mgf(destination, ncmutes);
+        file_message("Mute-groups save", destination);
+        result = mgf.write();
+        if (! result)
+        {
+            file_error("Mute-groups write failed", destination);
+        }
+    }
+    else
+    {
+        file_error("Mute-groups file to save", "none");
+    }
+    return result;
+}
+
+#endif
 
 }           // namespace seq66
 

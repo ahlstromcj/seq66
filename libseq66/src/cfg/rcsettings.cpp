@@ -63,7 +63,10 @@ rcsettings::rcsettings () :
     basesettings                (),
     m_clocks                    (),         /* vector wrapper class     */
     m_inputs                    (),         /* vector wrapper class     */
+#if defined MUST_USE_ONLY_32_MUTES
     m_mute_groups               (),
+#endif
+    m_mute_group_save           (mutegroups::saving::both),
     m_keycontainer              ("rc"),
     m_drop_empty_in_controls    (false),    /* the legacy value         */
     m_midi_control_buss         (null_buss()),
@@ -161,6 +164,7 @@ rcsettings::set_defaults ()
      * m_keycontainer.clear();              // what is best?
      */
 
+    m_mute_group_save           = mutegroups::saving::both;
     m_drop_empty_in_controls    = false;
     m_midi_control_buss         = null_buss();
 
@@ -644,7 +648,9 @@ rcsettings::create_config_names (const std::string & base)
     rc().playlist_filename(pl);
     rc().notemap_filename(nm);
     rc().palette_filename(pa);
+#if defined MUST_USE_ONLY_32_MUTES
     rc().mute_groups().reset_defaults();
+#endif
     file_message("Configuration files", af);
 }
 

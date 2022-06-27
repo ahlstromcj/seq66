@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-05-04
+ * \updates       2022-06-27
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -187,11 +187,15 @@ private:
 
     inputslist m_inputs;
 
+#if defined MUST_USE_ONLY_32_MUTES
     /**
      *  Holds a set of mute-groups ("mutes") read from a configuration file.
      */
 
     mutegroups m_mute_groups;
+#endif
+
+    mutegroups::saving m_mute_group_save;
 
     /**
      *  Holds the key-container.
@@ -558,6 +562,7 @@ public:
         return m_inputs;
     }
 
+#if defined MUST_USE_ONLY_32_MUTES
     const mutegroups & mute_groups () const
     {
         return m_mute_groups;
@@ -566,6 +571,12 @@ public:
     mutegroups & mute_groups ()
     {
         return m_mute_groups;
+    }
+#endif
+
+    mutegroups::saving mute_group_save () const
+    {
+        return m_mute_group_save;
     }
 
     const keycontainer & key_controls () const
@@ -1100,6 +1111,11 @@ public:
     }
 
 public:
+
+    void mute_group_save (mutegroups::saving ms)
+    {
+        m_mute_group_save = ms;
+    }
 
     void drop_empty_in_controls (bool flag)
     {

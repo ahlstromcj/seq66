@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-03-20
+ * \updates       2022-06-24
  * \license       See above.
  *
  *    We need to have a way to get all of the JACK information of
@@ -215,8 +215,8 @@ private:
  * Free functions in the seq66 namespace
  */
 
-void silence_jack_errors (bool silent = true);
-void silence_jack_info (bool silent = true);
+extern void silence_jack_errors (bool silent = true);
+extern void silence_jack_info (bool silent = true);
 
 }           // namespace seq66
 

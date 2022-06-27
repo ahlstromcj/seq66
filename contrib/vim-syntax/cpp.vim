@@ -4,7 +4,7 @@
 "
 "  Language:      C/C++
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-09-04 to 2021-11-22
+"  Last Change:   2006-09-04 to 2022-06-26
 "  Project:       XPC Suite library project
 "  Usage:
 "
@@ -63,6 +63,7 @@ syn keyword cType ofstream ostream ostringstream pair promise reverse_iterator
 syn keyword cType second set shared_ptr size size_type stack std string
 syn keyword cType stringstream
 syn keyword cType thread unique_ptr value_type vector wstring
+syn keyword cType midi rtl seq66
 
 "------------------------------------------------------------------------------
 " Operators, language constants, or manipulators
