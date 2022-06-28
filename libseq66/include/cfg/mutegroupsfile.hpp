@@ -28,13 +28,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-30
- * \updates       2022-06-27
+ * \updates       2022-06-28
  * \license       GNU GPLv2 or above
  *
  *  Provides support for a mute-groups configuration file.
  */
-
-#include <fstream>                      /* std::ofstream and ifstream       */
 
 #include "cfg/configfile.hpp"           /* seq66::configfile class          */
 
@@ -67,18 +65,8 @@ private:
 
 public:
 
-#if defined MUST_USE_ONLY_32_MUTES
-    mutegroupsfile
-    (
-        const std::string & filename,
-        rcsettings & rcs,
-        bool allowinactive = false
-    );
-#else
-    mutegroupsfile (const std::string & filename, mutegroups & mutes);
-#endif
-
     mutegroupsfile () = delete;
+    mutegroupsfile (const std::string & filename, mutegroups & mutes);
     mutegroupsfile (const mutegroupsfile &) = delete;
     mutegroupsfile & operator = (const mutegroupsfile &) = delete;
 

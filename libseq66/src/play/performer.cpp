@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-06-27
+ * \updates       2022-06-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -244,10 +244,6 @@
 #include <iostream>                     /* std::cout                        */
 #include <sstream>                      /* std::ostringstream               */
 
-#if defined MUST_USE_ONLY_32_MUTES
-#include "cfg/cmdlineopts.hpp"          /* cmdlineopts::parse_mute_groups   */
-#endif
-
 #include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile            */
 #include "cfg/notemapfile.hpp"          /* seq66::notemapfile               */
 #include "cfg/playlistfile.hpp"         /* seq66::playlistfile              */
@@ -451,6 +447,13 @@ performer::unregister (callbacks * pfcb)
         if (it != m_notify.end())
             (void) m_notify.erase(it);
     }
+}
+
+void
+performer::set_error_message (const std::string & msg)
+{
+    m_error_pending = true;
+    error_message("performer", msg);
 }
 
 void
@@ -668,19 +671,15 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
      * during the 'ctrl' file save at exit, which is surprising to the poor
      * user.  See issue #47.
      */
+
     m_midi_control_in = rcs.midi_control_in();
     if (micount == 0 && kcount > 0)
         m_midi_control_in.add_blank_controls(m_key_controls);
 
     m_midi_control_out = rcs.midi_control_out();
 
-#if defined MUST_USE_ONLY_32_MUTES
-    m_mute_groups = rcs.mute_groups();              /* could be 0-sized     */
-#else
     const std::string & mgf = rc().mute_group_filespec();
     (void) open_mutegroups(mgf);
-#endif
-
     if (! rc().song_start_auto())
         song_start_mode(rcs.get_song_start_mode());      /* force the mode   */
 
@@ -728,21 +727,17 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     rcs.key_controls() = m_key_controls;
     rcs.midi_control_in() = m_midi_control_in;
     rcs.midi_control_out() = m_midi_control_out;
-#if defined MUST_USE_ONLY_32_MUTES
-    rcs.mute_groups() = m_mute_groups;
-#else
     if (mutes().is_modified())
     {
         const std::string & mgf = rc().mute_group_filespec();
         (void) save_mutegroups(mgf);
     }
-#endif
     rcs.filter_by_channel(m_filter_by_channel);
     usrs.resume_note_ons(m_resume_note_ons);
 
     /*
-     * We also need to update the playlist file-name in case the user loaded or
-     * removed the playlist.
+     * We also need to update the playlist file-name in case the user loaded
+     * or removed the playlist.
      */
 
     rcs.playlist_filename(playlist_filename());
@@ -778,23 +773,18 @@ performer::playlist_filename (const std::string & basename)
 bool
 performer::reload_mute_groups (std::string & errmessage)
 {
-#if defined MUST_USE_ONLY_32_MUTES
-    bool result = cmdlineopts::parse_mute_groups(rc(), errmessage);
-#else
     const std::string filename = rc().mute_group_filespec();
     bool result = open_mutegroups(filename);
-#endif
     if (result)
     {
         result = get_settings(rc(), usr());     /* re-investigate usage     */
-
     }
     else
     {
         std::string msg = filename;
         msg += ": reading mutes failed";
         errmessage = msg;
-        error_message(errmessage);              /* show it on the console   */
+        set_error_message(errmessage);          /* show it on the console   */
     }
     return result;
 }
@@ -1428,7 +1418,7 @@ performer::set_ppqn (int p)
         }
         else
         {
-            (void) error_message("performer::set_ppqn(): master bus is null");
+            set_error_message("set_ppqn() null master bus");
             result = false;
         }
     }
@@ -1496,7 +1486,7 @@ performer::ui_change_set_bus (int buss)
             if (seqi)
                 seqi->set_midi_bus(b, true);    /* calls notify function    */
             else
-                error_message("set bus on null sequence");
+                set_error_message("set bus on null sequence");
         }
 
         screenset::number setno = mapper().playscreen_number();
@@ -4104,7 +4094,7 @@ performer::play (midipulse tick)
             if (seqi)
                 seqi->play_queue(tick, songmode, resume_note_ons());
             else
-                error_message("play found null sequence");
+                set_error_message("play() on null sequence");
         }
         m_master_bus->flush();                          /* flush MIDI buss  */
     }
@@ -5767,7 +5757,7 @@ performer::populate_default_ops ()
             {
                 std::string errmsg = "Failed to insert automation function #";
                 errmsg += std::to_string(index);
-                error_message(errmsg);
+                set_error_message(errmsg);
                 break;
             }
         }
@@ -5867,25 +5857,11 @@ performer::set_mutes
                 change::yes : change:: no ;
 
             notify_mutes_change(mutegroup::unassigned(), c);
-#if defined MUST_USE_ONLY_32_MUTES
-            if (putmutes)
-                rc().mute_groups().set(gmute, bits);
-#else
             if (putmutes)
                 mutes().set(gmute, bits);
-#endif
         }
     }
     return result;
-}
-
-bool
-performer::put_mutes ()
-{
-#if defined MUST_USE_ONLY_32_MUTES
-    rc().mute_groups() = m_mute_groups;
-#endif
-    return true;
 }
 
 /**
@@ -7086,7 +7062,7 @@ performer::open_note_mapper (const std::string & notefile)
             notemapfile nmf(*m_note_mapper, notefile, rc());
             result = nmf.parse();
             if (! result)
-                (void) error_message(nmf.get_error_message());
+                set_error_message(nmf.get_error_message());
         }
     }
     return result;
@@ -7111,7 +7087,7 @@ performer::save_note_mapper (const std::string & notefile)
             notemapfile nmf(*m_note_mapper, nfname, rc());
             result = nmf.write();
             if (! result)
-                (void) error_message(nmf.get_error_message());
+                set_error_message(nmf.get_error_message());
         }
     }
     return result;
@@ -7284,19 +7260,6 @@ performer::open_previous_song (bool opensong)
     return result;
 }
 
-#if defined MUST_USE_ONLY_32_MUTES
-bool
-performer::open_mutegroups (const std::string & mgf)
-{
-    bool result = seq66::open_mutegroups(mgf);  /* fills rcsettings groups  */
-    if (result)
-    {
-        m_mute_groups = rc().mute_groups();     /* copy to performer's      */
-    }
-    return result;
-}
-#else
-
 bool
 performer::open_mutegroups (const std::string & mgf)
 {
@@ -7307,18 +7270,16 @@ performer::open_mutegroups (const std::string & mgf)
 
     if (mgfname.empty())
     {
-        // what to do?
+        set_error_message("no mute-group filename");
     }
+    else
     {
         result = seq66::open_mutegroups(mgfname, mutes());
         if (result)
-        {
-            // Anything to do?
-        }
+            mutes().group_save(rc().mute_group_save());
     }
     return result;
 }
-#endif
 
 bool
 performer::save_mutegroups (const std::string & mgf)
@@ -7334,13 +7295,7 @@ performer::save_mutegroups (const std::string & mgf)
     }
     else
     {
-
-#if defined MUST_USE_ONLY_32_MUTES
-        rc().mute_groups() = m_mute_groups;     /* copy to rcsettings       */
-        result = seq66::save_mutegroups(mgf);   /* saves rcsettings groups  */
-#else
         result = seq66::save_mutegroups(mgfname, mutes());
-#endif
         if (result)
         {
             // Anything to do?
@@ -7465,7 +7420,7 @@ performer::open_playlist (const std::string & pl, bool show_on_stdout)
         else
         {
             /*
-             * (void) error_message(m_play_list->error_message());
+             * set_error_message(m_play_list->error_message());
              */
         }
     }
@@ -7499,7 +7454,7 @@ performer::save_playlist (const std::string & pl)
          * TODO
          *
         if (! result)
-            (void) error_message(m_play_list->error_message());
+            set_error_message(m_play_list->error_message());
          */
     }
     else

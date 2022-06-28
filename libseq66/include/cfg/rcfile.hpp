@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-12-03
+ * \updates       2022-06-28
  * \license       GNU GPLv2 or above
  *
  *  The ~/.seq66rc or ~/.config/seq66.rc files are
@@ -61,28 +61,19 @@ private:
 
 public:
 
-    rcfile (const std::string & name, rcsettings & rcs);
-
     rcfile () = delete;
+    rcfile (const std::string & name, rcsettings & rcs);
     rcfile (const rcfile &) = delete;
     rcfile & operator = (const rcfile &) = delete;
     virtual ~rcfile () = default;
 
     virtual bool parse () override;
     virtual bool write () override;
-#if defined MUST_USE_ONLY_32_MUTES
-    bool parse_mute_group_section
-    (
-        const std::string & fname,
-        bool separatefile = false
-    );
-#endif
     bool parse_midi_control_section
     (
         const std::string & fname,
         bool separatefile = false
     );
-
 
 };          // class rcfile
 

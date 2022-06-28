@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-06-27
+ * \updates       2022-06-28
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -187,13 +187,10 @@ private:
 
     inputslist m_inputs;
 
-#if defined MUST_USE_ONLY_32_MUTES
     /**
-     *  Holds a set of mute-groups ("mutes") read from a configuration file.
+     *  Holds the saving type on behalf of the mutegroups, which is now
+     *  owned by performer.
      */
-
-    mutegroups m_mute_groups;
-#endif
 
     mutegroups::saving m_mute_group_save;
 
@@ -561,18 +558,6 @@ public:
     {
         return m_inputs;
     }
-
-#if defined MUST_USE_ONLY_32_MUTES
-    const mutegroups & mute_groups () const
-    {
-        return m_mute_groups;
-    }
-
-    mutegroups & mute_groups ()
-    {
-        return m_mute_groups;
-    }
-#endif
 
     mutegroups::saving mute_group_save () const
     {

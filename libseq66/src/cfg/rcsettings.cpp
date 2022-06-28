@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-05-16
+ * \updates       2022-06-28
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -63,9 +63,6 @@ rcsettings::rcsettings () :
     basesettings                (),
     m_clocks                    (),         /* vector wrapper class     */
     m_inputs                    (),         /* vector wrapper class     */
-#if defined MUST_USE_ONLY_32_MUTES
-    m_mute_groups               (),
-#endif
     m_mute_group_save           (mutegroups::saving::both),
     m_keycontainer              ("rc"),
     m_drop_empty_in_controls    (false),    /* the legacy value         */
@@ -648,9 +645,6 @@ rcsettings::create_config_names (const std::string & base)
     rc().playlist_filename(pl);
     rc().notemap_filename(nm);
     rc().palette_filename(pa);
-#if defined MUST_USE_ONLY_32_MUTES
-    rc().mute_groups().reset_defaults();
-#endif
     file_message("Configuration files", af);
 }
 

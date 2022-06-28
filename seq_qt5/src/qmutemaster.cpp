@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2022-06-27
+ * \updates       2022-06-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -96,11 +96,7 @@ qmutemaster::qmutemaster
     m_timer                 (nullptr),
     m_main_window           (mainparent),
     m_group_buttons         (mutegroups::Size(), nullptr),  /* "2-D" arrary */
-#if defined MUST_USE_ONLY_32_MUTES
-    m_pattern_buttons       (mutegroups::Size(), nullptr),  /* "2-D" arrary */
-#else
     m_pattern_buttons       (p.screenset_size(), nullptr),  /* group_count()*/
-#endif
     m_current_group         (seq::unassigned()),            /* important    */
     m_group_count           (cb_perf().mutegroup_count()),
     m_button_row            (seq::unassigned()),
@@ -723,17 +719,11 @@ qmutemaster::slot_save ()
         }
 
         /*
-         *  Set the base-name of the 'mutes' files, then pass the mute-group
-         *  bits to performer to update the group and its rcsettings copy.
+         *  Set the base-name of the 'mutes' files.
          */
 
-        midibooleans bits = m_pattern_mutes;
-        bool ok = cb_perf().put_mutes();
-        if (ok)
-        {
-            m_main_window->save_mutes_dialog(rc().mute_group_filespec());
-            mutes_file_change(false);
-        }
+        m_main_window->save_mutes_dialog(rc().mute_group_filespec());
+        mutes_file_change(false);
     }
 }
 

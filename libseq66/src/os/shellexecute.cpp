@@ -21,7 +21,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-05-19
- * \updates       2022-05-25
+ * \updates       2022-06-28
  * \license       GNU GPLv2 or above
  *
  *  Provides support for cross-platform time-related functions.
@@ -32,14 +32,6 @@
 #include "cfg/settings.hpp"             /* for usr().use_pdf_viewer() etc.  */
 #include "util/basic_macros.hpp"        /* error_message()                  */
 #include "os/shellexecute.hpp"          /* seq66::open_document(), etc.     */
-
-#if defined SEQ66_PLATFORM_LINUX
-
-#elif defined SEQ66_PLATFORM_WINDOWS
-
-// #include <windows.h>                 /* ShellExecute()                   */
-
-#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

@@ -1,6 +1,6 @@
 TO DO for Seq66 0.98.10 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-06-01
+2019-04-13 to 2022-06-28
 
 Pattern Editor, Main Window:
 
@@ -16,6 +16,14 @@ Pattern Editor, Main Window:
         -   The event and data panes do not update.
     -   Queueing shows "Queued", but not a grey progress box. Also verify
         how MIDI display of queuing works.
+    -   With a 12x12 grid, we need to:
+        -   Shrink the font to about 1/2.
+        -   Move the top 2 lines up almost 1 line.
+        -   Move the bottom 2 lines up almost 2 lines.
+        -   Proportional shrink the progress box.
+    -   The main window, when the size changes, retains that size.
+        How can we make this optional or prevent it?
+    -   Verify setmapper/setmaster for odd set sizes.
 
 Windows:
 

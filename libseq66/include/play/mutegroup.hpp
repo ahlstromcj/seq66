@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2022-06-27
+ * \updates       2022-06-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -292,8 +292,6 @@ private:
      *      legal value.
      */
 
-    // WAS CALLED index()
-
     int grid_to_mute (int row, int column);
 
 };              // class mutegroup
@@ -305,10 +303,9 @@ private:
 extern std::string write_stanza_bits
 (
     const midibooleans & bitbucket,
-    int grouping    = 8,
+    int grouping    = mutegroup::c_default_columns,
     bool newstyle   = true
 );
-extern void push_8_bits (midibooleans & target, unsigned bits);
 extern bool parse_stanza_bits
 (
     midibooleans & target,

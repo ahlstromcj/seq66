@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2022-05-24
+2015-09-09 to 2022-06-28
 
 Creating a GitHub Repository:
 
@@ -423,6 +423,57 @@ Permanently delete a file and its history:
 
     This can take a long long time if the file has thousands of commits.
     Not yet sure if this really works!
+
+Git Submodules:
+
+    Submodules allow one to keep a Git repository as a subdirectory of another
+    Git repository; one can clone another repository into a project and keep
+    the commits separate.  One can add an absolute or relative URL of the
+    project to track:
+
+    $ cd my_git_repo
+    $ git checkout master
+    $ git submodule add https://github.com/chaconinc/DbConnector
+
+    This creates a .gitmodules file (which is tracked in Git) and a DbConnector
+    directory.
+
+    $ git commit -am "Add SbConnector project as a submodule."
+    $ git push origin master
+
+    To get an existing project that has submodules:
+
+    $ git clone --recurse-submodules https://github.com/chaconinc/MainProject 
+
+    For details, see https://git-scm.com/book/en/v2/Git-Tools-Submodules, it
+    discusses many more submodule commands.
+
+    To update:
+
+    $ git submodule update --remote DbConnector
+
+    Leave off the submodule name to update all of them. To pull upstream
+    changes:
+
+    $ git pull
+    $ git submodule update --init --recursive
+
+    The "--init" covers the case that the main project added more submodules.
+
+    To push submodules, and then the main project, use:
+
+    $ git push --recurse-submodules=check
+
+    To run a command for all submodules:
+
+    $ git submodule foreach 'git stash'
+    $ git submodule foreach 'git checkout -b NewFeatureA'
+
+    To delete a submodule:
+
+    $ git submodule deinit -f -- DbConnector
+    $ rm -rf .git/modules/DbConnector
+    $ git rm -f DbConnector
 
 Creating a personal GitHub Site:
 

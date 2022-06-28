@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2022-05-13
+ * \updates       2022-06-28
  * \license       GNU GPLv2 or above
  *
  *  This class manages one of the lines in the "[mute-group]" section of the
@@ -373,7 +373,7 @@ write_stanza_bits
  *
  */
 
-void
+static void
 push_8_bits (midibooleans & target, unsigned bits)
 {
     unsigned bitmask = 0x80;            /* start with the highest (MSB) bit */

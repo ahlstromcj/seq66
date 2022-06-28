@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-06-26
+ * \updates       2022-06-28
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2378,7 +2378,6 @@ public:
         const midibooleans & bits,
         bool putmutes = false
     );
-    bool put_mutes ();
     bool learn_mutes (mutegroup::number group);
     bool clear_mutes ();                /* can cause a modify()             */
     bool apply_session_mutes ();
@@ -3158,6 +3157,7 @@ private:
 
     void show_cpu ();
     void playlist_activate (bool on);
+    void set_error_message (const std::string & msg);
     bool set_recording (seq::number seqno, bool active, bool toggle);
     bool set_quantized_recording (seq::number seqno, bool active, bool toggle);
     bool set_tightened_recording (seq::number seqno, bool active, bool toggle);

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-06-27
+ * \updates       2022-06-28
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -2048,6 +2048,7 @@ midifile::parse_c_mutegroups (performer & p)
                             (
                                 mutebits, p.group_count()
                             );
+                            rc().auto_mutes_save(true);
                         }
                     }
                     else
@@ -2065,12 +2066,12 @@ midifile::parse_c_mutegroups (performer & p)
                     gname.clear();
                     for (unsigned s = 0; s < groupsize; ++s)
                     {
-                        midibyte gmutestate = read_byte();  /* byte for a bit */
+                        midibyte gmutestate = read_byte();  /* byte for bit */
                         bool status = gmutestate != 0;
                         mutebits.push_back(midibool(status));
                     }
                     char letter = (char) read_byte();
-                    if (letter == '"')                     /* next a quote?  */
+                    if (letter == '"')                      /* next a quote? */
                     {
                         for (;;)
                         {
@@ -2086,22 +2087,22 @@ midifile::parse_c_mutegroups (performer & p)
 
                     if (mutes.load(group, mutebits))
                     {
-                        mutes.group_name(group, gname);
-
                         /*
                          * Related to issue #87.
                          */
 
+                        mutes.group_name(group, gname);
                         if (mutebits.size() != size_t(p.group_count()))
                         {
                             mutebits = fix_midibooleans
                             (
                                 mutebits, p.group_count()
                             );
+                            rc().auto_mutes_save(true);
                         }
                     }
                     else
-                        break;                              /* often duplicate  */
+                        break;                              /* a duplicate  */
                 }
             }
         }

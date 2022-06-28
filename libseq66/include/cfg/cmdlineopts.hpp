@@ -27,7 +27,7 @@
  *
  * \author  Chris Ahlstrom
  * \date    2015-11-20
- * \updates 2022-06-27
+ * \updates 2022-06-28
  * \version $Revision$
  *
  *    Also see the filefunctions.cpp and strfunctions modules.
@@ -91,13 +91,6 @@ public:
         const std::string & filespec,
         std::string & errmessage
     );
-#if defined MUST_USE_ONLY_32_MUTES
-    static bool parse_mute_groups
-    (
-        rcsettings & rcs,
-        std::string & errmessage
-    );
-#endif
     static bool parse_o_options (int argc, char * argv []);
     static bool parse_o_sets (const std::string & arg);
     static bool parse_o_mutes (const std::string & arg);

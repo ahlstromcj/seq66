@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-06-27
+ * \updates       2022-06-28
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -739,14 +739,17 @@ cmdlineopts::parse_o_sets (const std::string & arg)
     return result;
 }
 
+/**
+ *  The performer object will grab this setting and pass it to the mutegroups
+ *  object that it owns.  See performer::open_mutegroup().
+ */
+
 bool
 cmdlineopts::parse_o_mutes (const std::string & arg)
 {
     bool result = arg == "mutes" || arg == "midi" || arg == "both";
     if (result)
     {
-        // rc().mute_groups().group_save(arg);
-
         mutegroups::saving v = mutegroups::string_to_group_save(arg);
         if (v != mutegroups::saving::max)
             rc().mute_group_save(v);
@@ -770,47 +773,6 @@ cmdlineopts::parse_o_virtual (const std::string & arg)
     rc().manual_in_port_count(in);
     return true;
 }
-
-#if defined MUST_USE_ONLY_32_MUTES
-
-/**
- *  Like parse_options_files(), but reads only the [mute-group] section.
- *
- * \param errmessage
- *      A return parameter for any error message that might occur.
- *
- * \return
- *      Returns true if no errors occurred in reading the mute-groups.
- *      If not true, the caller should output the error message.
- */
-
-bool
-cmdlineopts::parse_mute_groups
-(
-    rcsettings & rcs,
-    std::string & errmessage
-)
-{
-    bool result = true;
-    std::string rcn = rc().config_filespec();
-    if (file_read_writable(rcn))
-    {
-        rcfile options(rcn, rcs);
-        file_message("Reading mutes", rcn);
-        if (options.parse_mute_group_section(rcn, true))
-        {
-            // Nothing to do?
-        }
-        else
-        {
-            errmessage = options.get_error_message();
-            result = false;
-        }
-    }
-    return result;
-}
-
-#endif
 
 /**
  *  Parses the command-line options on behalf of the application.  Note that,
