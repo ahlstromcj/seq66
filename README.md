@@ -1,7 +1,7 @@
 # README for Seq66 0.98.10
 
 Chris Ahlstrom
-2015-09-10 to 2022-06-28
+2015-09-10 to 2022-07-05
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -92,6 +92,8 @@ Windows, and using a conventional source tarball.
             inability to modify some usr options in Edit / Preferences, and
             related bugs found during these fixes. Made performer the owner of
             mutegroups.
+        *   Fixes for issue #88: 4/16 pattern not shown/played properly until
+            opened in editor.
         *   Fixed minor issue with port-naming, port-lists.
         *   Many tweaks to documentation, vim files, midibytes....
     *   Version 0.98.9.1:

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-05-03
+ * \updates       2022-07-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -173,6 +173,7 @@ private slots:
     void slot_midi_channel (int index);
     void slot_event_name (int index);
     void slot_hex_data_state (int state);
+    void slot_pulse_time_state (int state);
 
 private:
 
@@ -195,10 +196,16 @@ private:
     std::unique_ptr<qseventslots> m_eventslots;
 
     /**
-     *  If true, show data in hexadecimal format.
+     *  If true, show the data bytes in hexadecimal format.
      */
 
     bool m_show_data_as_hex;
+
+    /**
+     *  If true, show the time as pulses instead of B:B:T.
+     */
+
+    bool m_show_time_as_pulses;
 
     /**
      *  Indicates a modification is active.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-05-20
+ * \updates       2022-07-05
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4726,6 +4726,12 @@ sequence::set_midi_bus (bussbyte nominalbus, bool user_change)
  *  P can be 192 (but we want to support higher values), and W is 4.
  *  So L = 100 * 4 * 4 * 192 / 4 = 76800 ticks.  Seems small.
  *
+ * Issue #88:
+ *
+ *      If the time signature is something like 4/16, then the pattern length
+ *      will be much less than PPQN * 4.   This affects the set_parent()
+ *      function.
+ *
  * \threadsafe
  *
  * \param len
@@ -5711,6 +5717,12 @@ sequence::copy_events (const eventlist & newevents)
  *  Add the buss override, if specified.  We can't set it until after
  *  assigning the master MIDI buss, otherwise we get a segfault.
  *
+ * Issue #88:
+ *
+ *      If the time signature is something like 4/16, then the beat length
+ *      will be much less than PPQN.  It will be the quarter note size / 4.
+ *      Also check out pulses_to_midi_measures().
+ *
  * \param p
  *      A pointer to the parent, assigned only if not already assigned.
  */
@@ -5720,7 +5732,8 @@ sequence::set_parent (performer * p)
 {
     if (not_nullptr(p))
     {
-        midipulse barlength = get_ppqn() * get_beats_per_bar();
+        midipulse ppnote = 4 * get_ppqn() / get_beat_width();
+        midipulse barlength = ppnote * get_beats_per_bar();
         bussbyte buss_override = usr().midi_buss_override();
         m_parent = p;
         set_master_midi_bus(p->master_bus());

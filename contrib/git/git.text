@@ -12,6 +12,10 @@ project:
     $ git add .
     $ git commit -m "Created this new and wonderful project."
 
+Or, to use a large pre-written message file:
+
+    $ git commit -F RELNOTE.md
+
 In GitHub, create the new repository (without the LICENSE and README
 files, which one can create locally).  Then copy the repository URL to the
 system clipboard.  We will call it $MY_GITHUB_URL.  Add the remote

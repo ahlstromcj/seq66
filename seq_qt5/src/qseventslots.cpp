@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-04-28
+ * \updates       2022-07-05
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -83,7 +83,8 @@ qseventslots::qseventslots
     m_bottom_iterator       (),
     m_current_iterator      (),
     m_pager_index           (0),
-    m_show_data_as_hex      (false)                     /* hexadecimal()    */
+    m_show_data_as_hex      (false),                    /* hexadecimal()    */
+    m_show_time_as_pulses   (false)                     /* pulses()         */
 {
     load_events();
 }
@@ -259,6 +260,9 @@ qseventslots::set_table_event (editable_event & ev, int row)
     std::string data_0;
     std::string data_1;
     std::string linktime;
+    std::string tstring = m_show_time_as_pulses ?
+        std::to_string(long(ev.timestamp())) : ev.timestamp_string() ;
+
     if (ev.is_ex_data())
     {
         data_0 = ev.ex_data_string();
@@ -272,14 +276,24 @@ qseventslots::set_table_event (editable_event & ev, int row)
         if (ev.is_linked())
         {
             midipulse lt = ev.link_time();
-            linktime = pulses_to_measurestring(lt, m_event_container.timing());
+            if (m_show_time_as_pulses)
+            {
+                linktime = std::to_string(long(lt));
+            }
+            else
+            {
+                linktime = pulses_to_measurestring
+                (
+                    lt, m_event_container.timing()
+                );
+            }
         }
         else
             linktime = "None";
     }
     m_parent.set_event_line
     (
-        row, ev.timestamp_string(), ev.status_string(),
+        row, tstring, ev.status_string(),
         ev.channel_string(), data_0, data_1, linktime
     );
 }

@@ -990,13 +990,9 @@ copy_configuration
         file_message(msg, destination);
         for (const auto & ext : configfile::sm_file_extensions)
         {
-            // std::string srcname = filename_concatenate(source, base);
-            // srcname = file_extension_set(srcname, ext);
             std::string srcname = file_extension_set(sourcename, ext);
             if (file_exists(srcname))
             {
-                // std::string destname = filename_concatenate(destination, base);
-                // destname = file_extension_set(destname, ext);
                 std::string destname = file_extension_set(destinationname, ext);
                 bool ok = file_copy(srcname, destname);
                 if (! ok)

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2022-03-13
+ * \updates       2022-06-30
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -157,9 +157,16 @@ public:
 
     midi_message (double ts = 0.0);
 
-    midibyte operator [] (int i) const
+    midibyte & operator [] (size_t i)
     {
-        return (i >= 0 && i < int(m_bytes.size())) ? m_bytes[i] : 0 ;
+        static midibyte s_zero = 0;
+        return (i < m_bytes.size()) ? m_bytes[i] : s_zero ;
+    }
+
+    const midibyte & operator [] (size_t i) const
+    {
+        static midibyte s_zero = 0;
+        return (i < m_bytes.size()) ? m_bytes[i] : s_zero ;
     }
 
     const char * array () const

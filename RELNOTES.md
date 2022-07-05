@@ -1,37 +1,48 @@
-# Seq66 Release Notes 0.98.6
-==============================
-Chris Ahlstrom
-2020-11-15 to 2022-03-29
+# Seq66 Release Notes 0.98.10
 
-This file lists only the major changes for this version from the previous
-version.  Also see the README.md, ChangeLog, NEWS, and INSTALL files.
+__2022-07-05__
 
-## Feature List
+This file lists __major__ changes from version 9.98.0 to 0.98.10 (to catch up).
 
-    *   Non Session Manager (NSM) protocol support.
-    *   JACK Session support. Deprecated, but still useful for some.
-    *   JACK Metadata Support. Works on systems with a version of JACK
-        that supports it. JACK aliases also supported if available.
-    *   Port mapping. Each pattern holds a port number, which can be mapped to
-        a specific system MIDI device or application.
-    *   Mute groups. Enable/disable a complete set of patterns at once.
-    *   Playlist. Allow easy navigation between tunes in a list.
-    *   Windows build. Uses an internal implementaton of PortMidi. NSIS
-        installer.
-    *   Automation. Allows a MIDI device to be used for control of most
-        functions. Status displays to a MIDI device as well.
-    *   Support for SMF 0 and SMF 1 files, plus sequencer-specific information.
+## Changes
 
-## Documentation
-
-LaTeX/pdflatex is used for generation of the PDF manual in "data/share/doc".  To
-rebuild this document, change the the "doc/latex" directory and run "make".  The
-file "seq66-user-manual.pdf" is generated in the "data/share/doc" directory.
+*   Version 0.98.10:
+    *   Fixed issue #87: Segfault due to mute-group on larger set-sizes.
+    *   Fixed issue #88: 4/16 pattern not shown/played properly at first.
+*   Version 0.98.9:
+    *   Fixed issue #85: Seqfault from recreating slot buttons in thread.
+    *   Improved: Change-detection in Edit / Preferences.
+    *   Improved: Cross-dialog change detection (e.g.  mute/record/thru display)
+*   Version 0.98.8:
+    *   Fixed issue #84: Now able to build Qt and CLI version in one pass.
+    *   Added: "Restart" button to Edit / Preferences.
+    *   Added: Ctrl-Home and Ctrl-End support to the song editor.
+    *   Added: An HTML tutorial and buttons to access it and the user manual.
+        See [Ahlstrom Projects](https://ahlstromcj.github.io/).
+*   Version 0.98.7:
+    *   Fixed issue #80: some MIDI controls were getting recorded.
+    *   Fixed issue #81: added code to catch bad numeric conversions.
+    *   Fixed issue #83: parsing 'rc' port lines with trailing space failed.
+    *   Added: "Pattern Fix" tool to allow a multiple changes to a pattern.
+*   Version 0.98.6:
+    *   Revisited issue #41: to make sure "Quit" is "Hide" under NSM.
+*   Version 0.98.5:
+    *   Added: Locking for the event-drawing loops to prevent segfaults.
+*   Version 0.98.4:
+    *   Fixed issue #75: some metadata problems preventing use of app icons.
+*   Version 0.98.3:
+    *   Fixed issue #76: broken MIDI Start handling.
+*   Version 0.98.2:
+    *   Fixed issue #74: -1 for "no buss-override" was being converted to 0.
+*   Version 0.98.1:
+    *   Fixes: Song-editor set-names display; segfault in --help option; more.
+*   Version 0.98.0:
+    *   Fixed issue #41: Hide Seq66 on closing window in an NSM session.
+    *   Fixed issue #73: Compile error because of jack_get_version_string.
+    *   Added: "MIDI macros" to the 'ctrl' file.  Can send SysEx, etc.
 
 ## Final Notes
 
-All too many bug fixes and minor improvements.  Never-ending!
+All too many bug fixes, code refactoring, minor improvements, too many to
+cover. Read the NEWS and README files.  Never-ending!
 
-/*
- * vim: sw=4 ts=4 wm=4 et ft=markdown
- */

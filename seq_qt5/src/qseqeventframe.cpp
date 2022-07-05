@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-05-03
+ * \updates       2022-07-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -93,6 +93,7 @@ qseqeventframe::qseqeventframe
     m_seq                   (s),
     m_eventslots            (new qseventslots(p, *this, s)),
     m_show_data_as_hex      (false),
+    m_show_time_as_pulses   (false),
     m_is_dirty              (false)
 {
     ui->setupUi(this);
@@ -195,18 +196,21 @@ qseqeventframe::qseqeventframe
         ui->channel_combo_box, SIGNAL(currentIndexChanged(int)),
         this, SLOT(slot_midi_channel(int))
     );
-
     populate_status_combo();
     connect
     (
         ui->combo_ev_name, SIGNAL(currentIndexChanged(int)),
         this, SLOT(slot_event_name(int))
     );
-
     connect
     (
         ui->hex_data_check_box, SIGNAL(stateChanged(int)),
         this, SLOT(slot_hex_data_state(int))
+    );
+    connect
+    (
+        ui->pulse_time_check_box, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_pulse_time_state(int))
     );
 
     /*
@@ -363,6 +367,15 @@ qseqeventframe::slot_hex_data_state (int state)
     bool is_true = state != Qt::Unchecked;
     m_show_data_as_hex = is_true;
     m_eventslots->hexadecimal(is_true);
+    initialize_table();
+}
+
+void
+qseqeventframe::slot_pulse_time_state (int state)
+{
+    bool is_true = state != Qt::Unchecked;
+    m_show_time_as_pulses = is_true;
+    m_eventslots->pulses(is_true);
     initialize_table();
 }
 

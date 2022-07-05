@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-04-28
+ * \updates       2022-07-05
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -193,6 +193,12 @@ private:
 
     bool m_show_data_as_hex;
 
+    /**
+     *  If true, show the time as pulses instead of B:B:T.
+     */
+
+    bool m_show_time_as_pulses;
+
 public:
 
     qseventslots (performer & p, qseqeventframe & parent, sequence & s);
@@ -320,6 +326,11 @@ private:
     void hexadecimal (bool flag)
     {
         m_show_data_as_hex = flag;
+    }
+
+    void pulses (bool flag)
+    {
+        m_show_time_as_pulses = flag;
     }
 
     bool load_events ();

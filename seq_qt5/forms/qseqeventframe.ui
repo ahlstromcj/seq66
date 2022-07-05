@@ -452,10 +452,17 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0" colspan="4">
+     <item row="1" column="0" colspan="2">
       <widget class="QCheckBox" name="hex_data_check_box">
        <property name="text">
-        <string>Show data in hex format</string>
+        <string>Data in hex</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2" colspan="2">
+      <widget class="QCheckBox" name="pulse_time_check_box">
+       <property name="text">
+        <string>Time in pulses</string>
        </property>
       </widget>
      </item>
@@ -769,6 +776,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
   <tabstop>entry_ev_data_0</tabstop>
   <tabstop>entry_ev_data_1</tabstop>
   <tabstop>hex_data_check_box</tabstop>
+  <tabstop>pulse_time_check_box</tabstop>
   <tabstop>button_del</tabstop>
   <tabstop>button_clear</tabstop>
   <tabstop>button_ins</tabstop>
