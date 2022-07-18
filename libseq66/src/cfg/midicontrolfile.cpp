@@ -786,14 +786,13 @@ midicontrolfile::write_midi_control (std::ofstream & file)
     if (result)
     {
         const midicontrolin & mci = rc_ref().midi_control_in();
-        bool enabled = ! mci.is_disabled();
         bussbyte bb = mci.nominal_buss();
         file <<
 "\n[midi-control-settings]\n\n"
 "# Input settings to control Seq66. 'control-buss' ranges from 0 to the highest\n"
 "# system input buss. If set, that buss can send MIDI control. 255 (0xFF) means\n"
 "# any enabled input device can send control. ALSA provides an extra 'announce'\n"
-"# buss, altering port numbering vice JACK. If port-mapping is enabled, the port\n"
+"# buss, altering port numbering vice JACK. With port-mapping enabled, the port\n"
 "# nick-name can be provided.\n"
 "#\n"
 "# 'midi-enabled' applies to the MIDI controls; keystroke controls are always\n"
@@ -814,7 +813,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         if (defaultcolumns == 0)
             defaultcolumns = usr().mainwnd_cols();
 
-        write_boolean(file, "midi-enabled", enabled);
+        write_boolean(file, "midi-enabled", mci.is_enabled());
         write_integer(file, "button-offset", mci.offset());
         write_integer(file, "button-rows", defaultrows);
         write_integer(file, "button-columns", defaultcolumns);
@@ -823,12 +822,11 @@ midicontrolfile::write_midi_control (std::ofstream & file)
             file, "keyboard-layout",
             rc_ref().key_controls().kbd_layout_to_string()
         );
-
         file <<
 "\n"
-"# A control stanza incorporates key control and MIDI. Keys support 'toggle', and\n"
+"# A control stanza sets key and MIDI control. Keys support 'toggle', and\n"
 "# key-release is 'invert'. The leftmost number on each line is the loop number\n"
-"# (0 to 31), the mutes number (same range), or an automation number. 3 groups of\n"
+"# (0 to 31), mutes number (same range), or an automation number. 3 groups of\n"
 "# of bracketed numbers follow, each providing a type of control:\n"
 "#\n"
 "#    Normal:         [toggle]    [on]        [off]\n"
@@ -845,7 +843,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
 "#\n"
 "# A valid status (> 0x00) enables the control; 'invert' (1/0) inverts the,\n"
 "# the action, but not all support this.  'status' is the MIDI event to match\n"
-"# (channel is NOT ignored); 'd0' is the first data value (eg. if 0x90, Note On,\n"
+"# (channel is NOT ignored); 'd0' is the status value (eg. if 0x90, Note On,\n"
 "# d0 is the note number; d1min to d1max is the range of d1 values detectable.\n"
 "# Hex values can be used; precede with '0x'.\n"
 "#\n"
@@ -1009,7 +1007,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         file << "\n[midi-control-out-settings]\n\n";
         write_integer(file, "set-size", setsize);
         write_buss_info(file, true, "output-buss", bb);
-        write_boolean(file, "midi-enabled", ! mco.is_disabled());
+        write_boolean(file, "midi-enabled", mco.is_enabled());
         write_integer(file, "button-offset", mco.offset());
         write_integer(file, "button-rows", mco.rows());
         write_integer(file, "button-columns", mco.columns());

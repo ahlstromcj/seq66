@@ -1,12 +1,12 @@
-# Seq66 Release Notes 0.98.10
-
-__2022-07-05__
+# Seq66 Release Notes 0.98.10 - 2022-07-18
 
 This file lists __major__ changes from version 9.98.0 to 0.98.10 (to catch up).
 
 ## Changes
 
 *   Version 0.98.10:
+    *   Revisited issue #83: [midi-input]: in-bus data line error, to improve
+        GUI editing of automation port.
     *   Fixed issue #87: Segfault due to mute-group on larger set-sizes.
     *   Fixed issue #88: 4/16 pattern not shown/played properly at first.
 *   Version 0.98.9:

@@ -1229,7 +1229,7 @@ midi_jack::api_get_port_name ()
 {
     std::string result;
     if (not_nullptr(port_handle()))
-        result = std::string(jack_port_name(port_handle()));
+        result = std::string(::jack_port_name(port_handle()));
 
     return result;
 }

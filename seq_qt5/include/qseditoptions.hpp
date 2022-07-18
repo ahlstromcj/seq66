@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-29
+ * \updates       2022-07-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -89,6 +89,7 @@ private:
     void show_button (QDialogButtonBox::StandardButton bcode, bool show);
     void enable_reload_button (bool flag);
     void modify_rc();
+    void modify_ctrl();
     void modify_usr();
     void sync ();               /* makes dialog reflect internal settings   */
     void sync_rc ();            /* makes dialog reflect internal settings   */
@@ -195,7 +196,9 @@ private slots:
     void slot_palette_filename ();
     void slot_clock_start_modulo (int arg);
     void slot_output_bus (int arg);
+    void slot_output_bus_enable ();
     void slot_input_bus (int arg);
+    void slot_input_bus_enable ();
     void slot_bpm_precision (int index);
     void slot_tempo_track ();
     void slot_tempo_track_set ();

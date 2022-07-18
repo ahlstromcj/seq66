@@ -35,6 +35,9 @@
 "------------------------------------------------------------------------------
 
 syn keyword XPCC midibytes midistring seq64 seq66 tokenization
+syn keyword XPCC boolean booleans bpm buffer byte bytes bytestring ppqn pulse
+syn keyword XPCC ctrl meta seqspec status tag ulong ushort
+syn keyword XPCC cfg cfg66 midi rtl rtl66 seq66 util xpc xpc66
 
 "------------------------------------------------------------------------------
 " Our type definition for inside comments
@@ -63,7 +66,6 @@ syn keyword cType ofstream ostream ostringstream pair promise reverse_iterator
 syn keyword cType second set shared_ptr size size_type stack std string
 syn keyword cType stringstream
 syn keyword cType thread unique_ptr value_type vector wstring
-syn keyword cType midi rtl seq66
 
 "------------------------------------------------------------------------------
 " Operators, language constants, or manipulators

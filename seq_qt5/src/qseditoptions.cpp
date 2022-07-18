@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-11
+ * \updates       2022-07-18
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -613,7 +613,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     );
 
     /*
-     * Set up the MIDI Clock tab.  We use the new qclocklayout class to hold
+     * Set up the MIDI Clock tab.  We use the qclocklayout class to hold
      * most of the complex code needed to handle the list of output ports and
      * clock radio-buttons.
      */
@@ -636,10 +636,12 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         }
 
         /*
-         * Output MIDI control buss combo-box population.
+         * Output MIDI control buss combo-box population. We now use a
+         * check-box instead of a "Disabled" item, as per issue #83 revisited.
+         *
+         * out->addItem("Disabled");
          */
 
-        out->addItem("Disabled");
         for (int bus = 0; bus < buses; ++bus)
         {
             std::string busname;
@@ -649,18 +651,23 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
             {
                 bool enabled = ec != e_clock::disabled;
                 out->addItem(qt(busname));
-                enable_combobox_item(out, bus + 1, enabled);
+                enable_combobox_item(out, bus /* + 1 */, enabled);
             }
         }
 
         bool active = perf().midi_control_out().is_enabled();
         int buss = perf().midi_control_out().nominal_buss();
-        int activebuss = active ? buss + 1 : 0 ;
-        out->setCurrentIndex(activebuss);
+        out->setCurrentIndex(buss);
         connect
         (
             out, SIGNAL(currentIndexChanged(int)),
             this, SLOT(slot_output_bus(int))
+        );
+        ui->checkBoxMidiOutBuss->setChecked(active);
+        connect
+        (
+            ui->checkBoxMidiOutBuss, SIGNAL(clicked(bool)),
+            this, SLOT(slot_output_bus_enable())
         );
     }
 
@@ -755,10 +762,12 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         }
 
         /*
-         * Input MIDI control buss combo-box population.
+         * Input MIDI control buss combo-box population. We now use a
+         * check-box instead of a "Disabled" item, as per issue #83 revisited.
+         *
+         * in->addItem("Disabled");
          */
 
-        in->addItem("Disabled");
         for (int bus = 0; bus < buses; ++bus)
         {
             std::string busname;
@@ -771,18 +780,23 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
                 if (good && enabled)
                     enabled = true;
 
-                enable_combobox_item(in, bus + 1, enabled);
+                enable_combobox_item(in, bus /* + 1 */, enabled);
             }
         }
 
         bool active = perf().midi_control_in().is_enabled();
         int buss = perf().midi_control_in().nominal_buss();
-        int activebuss = active ? buss  + 1 : 0 ;
-        in->setCurrentIndex(activebuss);
+        in->setCurrentIndex(buss);
         connect
         (
             in, SIGNAL(currentIndexChanged(int)),
             this, SLOT(slot_input_bus(int))
+        );
+        ui->checkBoxMidiInBuss->setChecked(active);
+        connect
+        (
+            ui->checkBoxMidiInBuss, SIGNAL(clicked(bool)),
+            this, SLOT(slot_input_bus_enable())
         );
     }
 
@@ -1865,6 +1879,17 @@ qseditoptions::modify_rc ()
 }
 
 void
+qseditoptions::modify_ctrl ()
+{
+    if (m_is_initialized)
+    {
+        ui->checkBoxSaveCtrl->setChecked(true);
+        rc().auto_ctrl_save(true);                  // ctrl().modify();
+        reload_needed(true);
+    }
+}
+
+void
 qseditoptions::modify_usr ()
 {
     if (m_is_initialized)
@@ -1990,9 +2015,7 @@ qseditoptions::slot_ctrl_filename ()
         if (text != rc().midi_control_filename())
         {
             rc().midi_control_filename(text);
-            rc().auto_ctrl_save(true);
-            modify_rc();
-            ui->checkBoxSaveCtrl->setChecked(true);
+            modify_rc();        // needed?  modify_ctrl();
         }
     }
 }
@@ -2060,31 +2083,47 @@ qseditoptions::slot_clock_start_modulo (int ticks)
 void
 qseditoptions::slot_output_bus (int index)
 {
-    int oldindex = perf().midi_control_out().nominal_buss() + 1;
+    int oldindex = perf().midi_control_out().nominal_buss() /* + 1 */;
     if (index != oldindex)
     {
         bool enable = index >= 0;
-        perf().midi_control_out().is_enabled(enable);
-        perf().midi_control_out().nominal_buss(index - 1);
-        rc().auto_ctrl_save(true);
-        reload_needed(true);
-        ui->checkBoxSaveCtrl->setChecked(true);
+        if (enable)
+        {
+            perf().midi_control_out().is_enabled(enable);
+            perf().midi_control_out().nominal_buss(index /* - 1 */);
+            modify_ctrl();
+        }
     }
+}
+
+void
+qseditoptions::slot_output_bus_enable ()
+{
+    bool enable = ui->checkBoxMidiOutBuss->isChecked();
+    modify_ctrl();
+    perf().midi_control_out().is_enabled(enable);
 }
 
 void
 qseditoptions::slot_input_bus (int index)
 {
-    int oldindex = perf().midi_control_in().nominal_buss() + 1;
+    int oldindex = perf().midi_control_in().nominal_buss();
     if (index != oldindex)
     {
         bool enable = index >= 0;
         ui->checkBoxSaveCtrl->setChecked(true);
         perf().midi_control_in().is_enabled(enable);
-        perf().midi_control_in().nominal_buss(index - 1);
-        rc().auto_ctrl_save(true);
-        reload_needed(true);
+        perf().midi_control_in().nominal_buss(index);
+        modify_ctrl();
     }
+}
+
+void
+qseditoptions::slot_input_bus_enable ()
+{
+    bool enable = ui->checkBoxMidiInBuss->isChecked();
+    modify_ctrl();
+    perf().midi_control_in().is_enabled(enable);
 }
 
 void

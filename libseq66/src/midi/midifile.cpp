@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-06-28
+ * \updates       2022-07-07
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -651,7 +651,8 @@ midifile::grab_input_stream (const std::string & tag)
     {
         try
         {
-            m_file_size = file.tellg();             /* get the end offset   */
+            (void) file.seekg(0, file.end);     /* seek to the file's end   */
+            m_file_size = file.tellg();         /* get the end offset       */
         }
         catch (...)
         {
@@ -663,10 +664,10 @@ midifile::grab_input_stream (const std::string & tag)
         }
         else
         {
-            file.seekg(0, std::ios::beg);           /* seek to start        */
+            file.seekg(0, std::ios::beg);       /* seek to the file's start */
             try
             {
-                m_data.resize(m_file_size);         /* allocate more data   */
+                m_data.resize(m_file_size);     /* allocate the data        */
                 file.read((char *)(&m_data[0]), m_file_size);
             }
             catch (const std::bad_alloc & ex)

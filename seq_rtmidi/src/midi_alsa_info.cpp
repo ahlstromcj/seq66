@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-06-20
+ * \updates       2022-07-18
  * \license       See above.
  *
  *  API information found at:
@@ -287,7 +287,7 @@ midi_alsa_info::get_all_port_info
         inputports.add
         (
             SND_SEQ_CLIENT_SYSTEM, "system",
-            SND_SEQ_PORT_SYSTEM_ANNOUNCE, "announce",
+            SND_SEQ_PORT_SYSTEM_ANNOUNCE, "ALSA Announce",
             midibase::io::input, midibase::port::system,
             global_queue()
         );
