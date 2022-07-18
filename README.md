@@ -1,4 +1,4 @@
-# README for Seq66 0.98.10
+# README for Seq66 0.98.11
 
 Chris Ahlstrom
 2015-09-10 to 2022-07-18
@@ -87,6 +87,8 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.98.11:
+        *   To do.
     *   Version 0.98.10:
         *   Revisited issue #83, improved GUI editing of control/display
             automation.
