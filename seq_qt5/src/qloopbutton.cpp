@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2022-05-23
+ * \updates       2022-07-21
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -184,6 +184,7 @@ qloopbutton::qloopbutton
     m_progress_box          (),
     m_event_box             ()
 {
+    sm_draw_progress_box = usr().progress_box_shown();
     m_text_font.setBold(usr().progress_bar_thick());
     m_text_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     make_active();
@@ -223,18 +224,11 @@ qloopbutton::boxes_initialized (bool reset)
 void
 qloopbutton::progress_box_size (double w, double h)
 {
-    if (w == 0.0 || h == 0.0)
-    {
-        sm_draw_progress_box = false;
-    }
-    else
-    {
-        if (w >= 0.50 && w <=1.0)
-            sm_progress_w_fraction = w;
+    if (w >= 0.50 && w <= 1.0)
+        sm_progress_w_fraction = w;
 
-        if (h >= 0.10 && h <=1.0)
-            sm_progress_h_fraction = h;
-    }
+    if (h >= 0.10 && h <= 1.0)
+        sm_progress_h_fraction = h;
 }
 
 /**

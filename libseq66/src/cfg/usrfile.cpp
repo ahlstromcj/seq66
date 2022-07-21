@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-05-25
+ * \updates       2022-07-21
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -50,7 +50,7 @@ namespace seq66
 
 static const int s_usr_legacy = 5;
 static const int s_usr_smf_1 = 8;
-static const int s_usr_file_version = 9;
+static const int s_usr_file_version = 10;       /* from 9 on 2022-07-21     */
 
 /**
  *  Principal constructor.
@@ -65,6 +65,7 @@ static const int s_usr_file_version = 9;
  *          flags.
  *      8:  2021-10-06: Added "convert-to-smf-1".
  *      9:  2021-10-26: Added "swap-coordinates".
+ *     10:  2022-07-21: Added "pattern-box-shown" (issue #78).
  *
  * \param name
  *      Provides the full file path specification to the configuration file.
@@ -357,7 +358,16 @@ usrfile::parse ()
 
     std::string fname = get_variable(file, tag, "log");
     if (fname.empty())
-        rc().auto_usr_save(true);
+    {
+        /*
+         * Why did we put this feature in? To cause the usr()
+         * file to be saved if the setting was not found. But it can
+         * be empty normally.  We need a better way to flag the
+         * user's configuration files for upgrading. Commenting it out!
+         *
+         * rc().auto_usr_save(true);
+         */
+    }
     else
     {
         fname = strip_quotes(fname);
@@ -365,7 +375,11 @@ usrfile::parse ()
     }
     fname = get_variable(file, tag, "pdf-viewer");
     if (fname.empty())
-        rc().auto_usr_save(true);
+    {
+        /*
+         * See above.  rc().auto_usr_save(true);
+         */
+    }
     else
     {
         fname = strip_quotes(fname);
@@ -373,7 +387,11 @@ usrfile::parse ()
     }
     fname = get_variable(file, tag, "browser");
     if (fname.empty())
-        rc().auto_usr_save(true);
+    {
+        /*
+         * See above.  rc().auto_usr_save(true);
+         */
+    }
     else
     {
         fname = strip_quotes(fname);
@@ -423,6 +441,8 @@ usrfile::parse ()
         double w = double(get_float(file, tag, "progress-box-width"));
         double h = double(get_float(file, tag, "progress-box-height"));
         usr().progress_box_size(w, h);
+        flag = get_boolean(file, tag, "progress-box-shown");
+        usr().progress_box_shown(flag);
         v = get_integer(file, tag, "progress-note-min");
 
         int x = get_integer(file, tag, "progress-note-max");
@@ -787,8 +807,8 @@ usrfile::write ()
 "#\n"
 "# progress-box-width and -height settings change the scaled size of the\n"
 "# progress box in the live-grid buttons.  Width ranges from 0.50 to 1.0, and\n"
-"# the height from 0.10 to 1.0.  If either is 0, the box isn't drawn.\n"
-"# If either is 'default', defaults (0.8 x 0.3) are used.\n"
+"# the height from 0.10 to 1.0.  If either is 'default', defaults (0.8 x 0.3)\n"
+"# are used.  progress-box-shown controls if the boxes are shown at all.\n"
 "#\n"
 "# progress-note-min and progress-note-max set the progress-box note range so\n"
 "# that notes aren't centered in the box, but shown at their position by pitch.\n"
@@ -798,22 +818,24 @@ usrfile::write ()
         "\n[user-ui-tweaks]\n\n"
         ;
 
+
     write_integer(file, "key-height", usr().key_height());
     write_string(file, "key-view", usr().key_view_string());
     write_boolean(file, "note-resume", usr().resume_note_ons());
     write_boolean(file, "style-sheet-active", usr().style_sheet_active());
     write_string(file, "style-sheet", usr().style_sheet(), true);
     write_integer(file, "fingerprint-size", usr().fingerprint_size());
-    if (usr().progress_box_width() < 0.0)
+    if (usr().progress_box_width() <= 0.0)
         file << "progress-box-width = default\n";
     else
         write_float(file, "progress-box-width", usr().progress_box_width());
 
-    if (usr().progress_box_height() < 0.0)
+    if (usr().progress_box_height() <= 0.0)
         file << "progress-box-height = default\n";
     else
         write_float(file, "progress-box-height", usr().progress_box_height());
 
+    write_boolean(file, "progress-box-shown", usr().progress_box_shown());
     write_integer(file, "progress-note-min", usr().progress_note_min());
     write_integer(file, "progress-note-max", usr().progress_note_max());
     write_boolean(file, "lock-main-window", usr().lock_main_window());

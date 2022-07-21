@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-05-16
+ * \updates       2022-07-21
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -114,7 +114,12 @@ extern bool string_to_int_pair
     int & v1, int & v2,
     const std::string & delimiter
 );
-extern double string_to_double (const std::string & s, double defalt = 0.0);
+extern double string_to_double
+(
+    const std::string & s,
+    double defalt = 0.0,
+    int rounding = 0
+);
 extern std::string double_to_string(double value, int precision = 0);
 extern long string_to_long (const std::string & s, long defalt = 0L);
 extern unsigned long string_to_unsigned_long

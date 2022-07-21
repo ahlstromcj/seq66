@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-07-18
+ * \updates       2022-07-21
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -359,6 +359,11 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     (
         ui->lineEditProgressBoxHeight, SIGNAL(editingFinished()),
         this, SLOT(slot_progress_box_height())
+    );
+    connect
+    (
+        ui->checkBoxProgressBoxShown, SIGNAL(clicked(bool)),
+        this, SLOT(slot_progress_box_shown())
     );
     connect
     (
@@ -1552,9 +1557,9 @@ void
 qseditoptions::set_scaling_fields ()
 {
     char tmp[32];
-    snprintf(tmp, sizeof tmp, "%.1f", usr().window_scale());
+    snprintf(tmp, sizeof tmp, "%.2f", usr().window_scale());
     ui->lineEditUiScaling->setText(tmp);
-    snprintf(tmp, sizeof tmp, "%.1f", usr().window_scale_y());
+    snprintf(tmp, sizeof tmp, "%.2f", usr().window_scale_y());
     ui->lineEditUiScalingHeight->setText(tmp);
 }
 
@@ -1636,10 +1641,11 @@ void
 qseditoptions::set_progress_box_fields ()
 {
     char tmp[32];
-    snprintf(tmp, sizeof tmp, "%.1f", usr().progress_box_width());
+    snprintf(tmp, sizeof tmp, "%.2f", usr().progress_box_width());
     ui->lineEditProgressBox->setText(tmp);
-    snprintf(tmp, sizeof tmp, "%.1f", usr().progress_box_height());
+    snprintf(tmp, sizeof tmp, "%.2f", usr().progress_box_height());
     ui->lineEditProgressBoxHeight->setText(tmp);
+    ui->checkBoxProgressBoxShown->setChecked(usr().progress_box_shown());
 }
 
 void
@@ -1649,7 +1655,7 @@ qseditoptions::slot_progress_box_width ()
     const std::string wtext = qs.toStdString();
     if (! wtext.empty())
     {
-        double w = string_to_double(wtext);
+        double w = string_to_double(wtext, 0.0, 2);
         double h = usr().progress_box_height();
         if (usr().progress_box_size(w, h))
             modify_usr();
@@ -1666,12 +1672,20 @@ qseditoptions::slot_progress_box_height ()
     if (! htext.empty())
     {
         double w = usr().progress_box_width();
-        double h = string_to_double(htext);
+        double h = string_to_double(htext, 0.0, 2);
         if (usr().progress_box_size(w, h))
             modify_usr();
         else
             set_progress_box_fields();
     }
+}
+
+void
+qseditoptions::slot_progress_box_shown ()
+{
+    bool on = ui->checkBoxProgressBoxShown->isChecked();
+    usr().progress_box_shown(on);
+    modify_usr();
 }
 
 void

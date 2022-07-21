@@ -23,7 +23,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -705,7 +705,7 @@ slot by channel number (0 to 15).</string>
          <x>10</x>
          <y>240</y>
          <width>577</width>
-         <height>245</height>
+         <height>237</height>
         </rect>
        </property>
        <property name="font">
@@ -841,33 +841,137 @@ slot by channel number (0 to 15).</string>
         <rect>
          <x>16</x>
          <y>38</y>
-         <width>471</width>
+         <width>445</width>
          <height>167</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayoutUiValues" columnstretch="8,2,1,2">
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="lineEditFingerprintSize">
+       <layout class="QGridLayout" name="gridLayoutUiValues" columnstretch="8,2,1,2,4">
+        <item row="1" column="3">
+         <widget class="QLineEdit" name="lineEditUiScalingHeight">
+          <property name="toolTip">
+           <string>Scales the height of main window at startup.
+Range: 0.5 to 3.0</string>
+          </property>
+          <property name="text">
+           <string>1.0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="3">
+         <widget class="QLineEdit" name="lineEditProgressBoxHeight">
           <property name="enabled">
            <bool>true</bool>
           </property>
           <property name="toolTip">
-           <string>An abbreviated display of a long pattern to save CPU time.
-If more notes than this value, a fingerprint is shown.
-Range: 32 to 128, 0 disables.  Default: 32.</string>
+           <string>Heights of the progress box as a fraction of button height. Range: 0.1 to 1.0. Default: 0.4.</string>
           </property>
           <property name="text">
-           <string>32</string>
+           <string>0.4</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
-         <widget class="QLabel" name="label_x">
+        <item row="4" column="0">
+         <widget class="QLabel" name="labelFingerprintSize">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>usr: [user-ui-tweaks] fingerprint-size</string>
+          </property>
+          <property name="text">
+           <string>Fingerprint size</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QLabel" name="label_x3">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="text">
            <string>X</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelUiScaling">
+          <property name="toolTip">
+           <string>usr: [user-interface-settings] window-scale, -y</string>
+          </property>
+          <property name="text">
+           <string>Scaling of user interface</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelEditorKeyHeight">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>usr: [user-ui-tweaks] key-height</string>
+          </property>
+          <property name="text">
+           <string>Editor key height</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QLineEdit" name="lineEditSetSizeColumns">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Set the set-size columns.
+Range: 4 to 12. Default: 8.</string>
+          </property>
+          <property name="text">
+           <string>8</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="labelProgressBoxSize">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>usr: [user-ui-tweaks] progress-box-width, -height</string>
+          </property>
+          <property name="text">
+           <string>Progress boxes (fraction)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="labelSetSizeRows">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>usr: [user-interface-settings] mainwnd-rows, -columns</string>
+          </property>
+          <property name="text">
+           <string>Set size (rows x columns)</string>
           </property>
          </widget>
         </item>
@@ -889,51 +993,13 @@ zoom vertically.</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="2">
-         <widget class="QLabel" name="label_x3">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
+        <item row="1" column="2">
+         <widget class="QLabel" name="label_x">
           <property name="text">
            <string>X</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="labelUiScaling">
-          <property name="toolTip">
-           <string>usr: [user-interface-settings] window-scale, -y</string>
-          </property>
-          <property name="text">
-           <string>Scaling of user interface</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3">
-         <widget class="QLineEdit" name="lineEditUiScalingHeight">
-          <property name="toolTip">
-           <string>Scales the height of main window at startup.
-Range: 0.5 to 3.0</string>
-          </property>
-          <property name="text">
-           <string>1.0</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="lineEditProgressBox">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="toolTip">
-           <string>Width of the progress box as a fraction of button width.
-Range: 0.5 to 1.0, 0 hides the box. Default: 0.8.</string>
-          </property>
-          <property name="text">
-           <string>0.8</string>
           </property>
          </widget>
         </item>
@@ -950,32 +1016,32 @@ Range: 0.5 to 1.0, 0 hides the box. Default: 0.8.</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="labelEditorKeyHeight">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>usr: [user-ui-tweaks] key-height</string>
-          </property>
-          <property name="text">
-           <string>Editor key height</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="labelSetSizeRows">
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="lineEditProgressBox">
           <property name="enabled">
            <bool>true</bool>
           </property>
           <property name="toolTip">
-           <string>usr: [user-interface-settings] mainwnd-rows, -columns</string>
+           <string>Width of the progress box as a fraction of button width.
+Range: 0.5 to 1.0. Default: 0.8.</string>
           </property>
           <property name="text">
-           <string>Set size (rows x columns)</string>
+           <string>0.8</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="lineEditFingerprintSize">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>An abbreviated display of a long pattern to save CPU time.
+If more notes than this value, a fingerprint is shown.
+Range: 32 to 128, 0 disables.  Default: 32.</string>
+          </property>
+          <property name="text">
+           <string>32</string>
           </property>
          </widget>
         </item>
@@ -993,32 +1059,6 @@ Range: 4 to 8. Default: 4.</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="labelProgressBoxSize">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="toolTip">
-           <string>usr: [user-ui-tweaks] progress-box-width, -height</string>
-          </property>
-          <property name="text">
-           <string>Progress boxes (fraction)</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="3">
-         <widget class="QLineEdit" name="lineEditProgressBoxHeight">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="toolTip">
-           <string>Heights of the progress box as a fraction of button height. Range: 0.1 to 0.5, 0 hides the box. Default: 0.4.</string>
-          </property>
-          <property name="text">
-           <string>0.4</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="1">
          <widget class="QLineEdit" name="lineEditUiScaling">
           <property name="toolTip">
@@ -1030,45 +1070,12 @@ Range: 0.5 to 3.0</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="labelFingerprintSize">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="toolTip">
-           <string>usr: [user-ui-tweaks] fingerprint-size</string>
-          </property>
+        <item row="3" column="4">
+         <widget class="QCheckBox" name="checkBoxProgressBoxShown">
           <property name="text">
-           <string>Fingerprint size</string>
+           <string>Shown</string>
           </property>
          </widget>
-        </item>
-        <item row="2" column="3">
-         <widget class="QLineEdit" name="lineEditSetSizeColumns">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="toolTip">
-           <string>Set the set-size columns.
-Range: 4 to 12. Default: 8.</string>
-          </property>
-          <property name="text">
-           <string>8</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <spacer name="verticalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </widget>
@@ -1851,7 +1858,7 @@ required.</string>
        <widget class="QCheckBox" name="checkBoxSaveRc">
         <property name="geometry">
          <rect>
-          <x>56</x>
+          <x>44</x>
           <y>70</y>
           <width>101</width>
           <height>23</height>
@@ -1867,7 +1874,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>56</x>
+          <x>44</x>
           <y>100</y>
           <width>101</width>
           <height>23</height>
@@ -1880,7 +1887,7 @@ required.</string>
        <widget class="QCheckBox" name="checkBoxSaveMutes">
         <property name="geometry">
          <rect>
-          <x>56</x>
+          <x>44</x>
           <y>130</y>
           <width>101</width>
           <height>23</height>
@@ -1893,7 +1900,7 @@ required.</string>
        <widget class="QCheckBox" name="checkBoxSavePlaylist">
         <property name="geometry">
          <rect>
-          <x>56</x>
+          <x>44</x>
           <y>160</y>
           <width>101</width>
           <height>23</height>
@@ -1909,7 +1916,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>344</x>
+          <x>332</x>
           <y>70</y>
           <width>101</width>
           <height>23</height>
@@ -1925,7 +1932,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>344</x>
+          <x>332</x>
           <y>100</y>
           <width>101</width>
           <height>23</height>
@@ -2055,7 +2062,7 @@ required.</string>
        <widget class="QLabel" name="label_cfg_save">
         <property name="geometry">
          <rect>
-          <x>70</x>
+          <x>52</x>
           <y>36</y>
           <width>81</width>
           <height>17</height>
@@ -2076,9 +2083,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>160</x>
+          <x>136</x>
           <y>70</y>
-          <width>125</width>
+          <width>153</width>
           <height>24</height>
          </rect>
         </property>
@@ -2089,9 +2096,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>160</x>
+          <x>136</x>
           <y>100</y>
-          <width>125</width>
+          <width>153</width>
           <height>24</height>
          </rect>
         </property>
@@ -2102,9 +2109,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>160</x>
+          <x>136</x>
           <y>130</y>
-          <width>125</width>
+          <width>153</width>
           <height>24</height>
          </rect>
         </property>
@@ -2115,9 +2122,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>160</x>
+          <x>136</x>
           <y>160</y>
-          <width>125</width>
+          <width>153</width>
           <height>24</height>
          </rect>
         </property>
@@ -2128,9 +2135,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>448</x>
+          <x>420</x>
           <y>70</y>
-          <width>125</width>
+          <width>153</width>
           <height>24</height>
          </rect>
         </property>
@@ -2141,9 +2148,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>448</x>
+          <x>420</x>
           <y>100</y>
-          <width>125</width>
+          <width>153</width>
           <height>24</height>
          </rect>
         </property>
@@ -2151,7 +2158,7 @@ required.</string>
        <widget class="QLabel" name="label_cfg_basename">
         <property name="geometry">
          <rect>
-          <x>170</x>
+          <x>146</x>
           <y>36</y>
           <width>113</width>
           <height>17</height>
@@ -2169,9 +2176,9 @@ required.</string>
        <widget class="QLineEdit" name="lineEditPalette">
         <property name="geometry">
          <rect>
-          <x>160</x>
+          <x>136</x>
           <y>190</y>
-          <width>125</width>
+          <width>153</width>
           <height>24</height>
          </rect>
         </property>
@@ -2201,7 +2208,7 @@ path added to this name is stripped.</string>
        <widget class="QCheckBox" name="checkBoxSavePalette">
         <property name="geometry">
          <rect>
-          <x>56</x>
+          <x>44</x>
           <y>190</y>
           <width>101</width>
           <height>23</height>
@@ -2232,7 +2239,7 @@ path added to this name is stripped.</string>
        <widget class="QLabel" name="label_cfg_save_2">
         <property name="geometry">
          <rect>
-          <x>360</x>
+          <x>340</x>
           <y>36</y>
           <width>81</width>
           <height>17</height>
@@ -2250,7 +2257,7 @@ path added to this name is stripped.</string>
        <widget class="QLabel" name="label_cfg_basename_2">
         <property name="geometry">
          <rect>
-          <x>460</x>
+          <x>432</x>
           <y>36</y>
           <width>113</width>
           <height>17</height>
@@ -2287,7 +2294,7 @@ path added to this name is stripped.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>344</x>
+          <x>332</x>
           <y>130</y>
           <width>101</width>
           <height>23</height>
@@ -2303,9 +2310,9 @@ path added to this name is stripped.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>448</x>
+          <x>420</x>
           <y>130</y>
-          <width>125</width>
+          <width>153</width>
           <height>24</height>
          </rect>
         </property>
@@ -2313,7 +2320,7 @@ path added to this name is stripped.</string>
        <widget class="QPushButton" name="pushButtonSavePalette">
         <property name="geometry">
          <rect>
-          <x>300</x>
+          <x>340</x>
           <y>190</y>
           <width>173</width>
           <height>25</height>

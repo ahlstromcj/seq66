@@ -235,6 +235,10 @@ midi_alsa_info::remove_poll_descriptors ()
 /**
  *  Checks the port type for not being the "generic" types
  *  SND_SEQ_PORT_TYPE_MIDI_GENERIC and SND_SEQ_PORT_TYPE_SYNTH.
+ *
+ *  We might need to add this check!!!
+ *
+ *      ((alsatype & SND_SEQ_PORT_TYPE_APPLICATION) == 0)
  */
 
 bool

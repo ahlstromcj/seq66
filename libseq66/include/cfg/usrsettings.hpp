@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-06-27
+ * \updates       2022-07-21
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -826,11 +826,13 @@ private:
     /**
      *  Lets the progress-box in the loop-buttons be tailored in size, or even
      *  not drawn at all.  The defaults are -1, which means use the internal
-     *  defaults in qloopbutton.
+     *  defaults in qloopbutton.  We add a boolean for showing the progress
+     *  boxes, as the 0.0 juggling causes confusion.
      */
 
     double m_progress_box_width;
     double m_progress_box_height;
+    bool m_progress_box_shown;
 
     /**
      *  Lets the range (in pitch) of the progress box be tailored. If the
@@ -1554,6 +1556,11 @@ public:
         return m_progress_box_height;
     }
 
+    bool progress_box_shown () const
+    {
+        return m_progress_box_shown;
+    }
+
     int progress_note_min () const
     {
         return m_progress_note_min;
@@ -1809,9 +1816,15 @@ public:         // used in main application module and the usrfile class
         m_resume_note_ons = f;
     }
 
-    bool fingerprint_size (int sz);
-    bool  progress_box_size (double w, double h);
     void session_manager (const std::string & sm);
+
+    bool fingerprint_size (int sz);
+    bool progress_box_size (double w, double h);
+
+    void progress_box_shown (bool flag)
+    {
+        m_progress_box_shown = flag;
+    }
 
     void in_nsm_session (bool f)
     {

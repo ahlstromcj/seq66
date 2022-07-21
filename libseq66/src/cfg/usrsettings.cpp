@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2022-05-25
+ * \updates       2022-07-21
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -280,7 +280,6 @@ static const int c_mainwnd_spacing = 2;            // try 4 or 6 instead of 2
  *  interesting, and now valid.
  */
 
-static const float c_progress_box_none       = 0.00;
 static const float c_progress_box_width_min  = 0.50;
 static const float c_progress_box_width      = 0.80;
 static const float c_progress_box_width_max  = 1.00;
@@ -384,6 +383,7 @@ usrsettings::usrsettings () :
     m_fingerprint_size          (c_fingerprint_size),
     m_progress_box_width        (c_progress_box_width),
     m_progress_box_height       (c_progress_box_height),
+    m_progress_box_shown        (true),
     m_progress_note_min         (0),
     m_progress_note_max         (127),
     m_lock_main_window          (false),
@@ -475,6 +475,7 @@ usrsettings::set_defaults ()
     m_fingerprint_size = c_fingerprint_size;
     m_progress_box_width = c_progress_box_width;
     m_progress_box_height = c_progress_box_height;
+    m_progress_box_shown = true;
     m_progress_note_min = 0;
     m_progress_note_max = 127;
     m_lock_main_window = false;
@@ -807,33 +808,23 @@ usrsettings::mainwnd_y_min () const
 }
 
 /**
- *  Ultimately validated in the qloopbutton class.  Ignored if either is
- *  less than 0.0.
+ *  Validated in the qloopbutton class as well.  Now forces reasonable sizes.
  */
 
 bool
 usrsettings::progress_box_size (double w, double h)
 {
-    bool result = (w == c_progress_box_none) || (h == c_progress_box_none);
+    bool result = (w != m_progress_box_width) || (h != m_progress_box_height);
     if (result)
     {
-        m_progress_box_width = m_progress_box_height = 0;
-    }
-    else
-    {
-        result =
-        (
-            (w >= c_progress_box_width_min) && (w <= c_progress_box_width_max) &&
-            (h >= c_progress_box_height_min) && (h <= c_progress_box_height_max)
-        );
-        if (result)
-            result = (w != m_progress_box_width) || (h != m_progress_box_height);
+        if (w < c_progress_box_width_min || w > c_progress_box_width_max)
+            w = c_progress_box_width;
 
-        if (result)
-        {
-            m_progress_box_width = w;
-            m_progress_box_height = h;
-        }
+        if (h < c_progress_box_height_min || h > c_progress_box_height_max)
+            h = c_progress_box_height;
+
+        m_progress_box_width = w;
+        m_progress_box_height = h;
     }
     return result;
 }

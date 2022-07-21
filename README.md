@@ -1,7 +1,7 @@
 # README for Seq66 0.98.11
 
 Chris Ahlstrom
-2015-09-10 to 2022-07-18
+2015-09-10 to 2022-07-21
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -88,7 +88,10 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.98.11:
-        *   To do.
+        *   Revisited issue #78 (pattern-box sizes would become 0, making
+            the button progress boxes disappear). Now the 'usr' show option is
+            boolean ("pattern-boxes-shown", default = true), and the sizes
+            are kept within reasonable limits.
     *   Version 0.98.10:
         *   Revisited issue #83, improved GUI editing of control/display
             automation.

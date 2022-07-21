@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-06-02
+ * \updates       2022-07-21
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -33,8 +33,9 @@
  *    project.
  */
 
-#include <cstring>                      /* std::memcmp() function           */
 #include <cctype>                       /* std::toupper() function          */
+#include <cmath>                        /* std::floor(), std::pow()         */
+#include <cstring>                      /* std::memcmp() function           */
 #include <stdexcept>                    /* std::invalid_argument            */
 
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
@@ -630,13 +631,18 @@ string_to_time_signature (const std::string & s, int & beats, int & width)
  *      The desired default for an empty string.  The default \a defalt value
  *      is 0.0.
  *
+ * \param rounding
+ *      If not 0 (the default), then round the value to the given number of
+ *      decimal places.  This prevents values with messy extra digits past the
+ *      decimal.
+ *
  * \return
  *      Returns the signed long integer value represented by the string.
  *      If the string is empty or has no digits, then 0.0 is returned.
  */
 
 double
-string_to_double (const std::string & s, double defalt)
+string_to_double (const std::string & s, double defalt, int rounding)
 {
     double result = defalt;
     if (! s.empty())
@@ -653,6 +659,12 @@ string_to_double (const std::string & s, double defalt)
             }
             else
                 result = std::stod(s, nullptr);
+
+            if (rounding > 0)
+            {
+                double power = std::pow(10.0, rounding);
+                result = std::floor(result * power) / power;
+            }
         }
         catch (std::invalid_argument const &)
         {
