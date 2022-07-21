@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2022-05-25
+% \update      2022-07-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1505,6 +1505,7 @@
       fingerprint-size = 128
       progress-box-width = 0.8
       progress-box-height = 0.4
+      progress-box-shown = true
       progress-note-min = 20
       progress-note-max = 100
       lock-main-window = true
@@ -1576,9 +1577,14 @@
    It is purely a user preference.
    The width ranges from 0.5 to 1.0 (full size), with a default of 0.8.
    The height ranges from 0.1 to 1.0 (full size), with a default 0f 0.3.
-   If either is 0, then the box isn't drawn, and the pattern appears directly
-   on the button.
    Try setting both the width and height to 0.9 for an interesting effect.
+
+%  If either is 0, then the box isn't drawn, and the pattern appears directly
+%  on the button.
+
+   \index{progress box!shown}
+   If  \texttt{progress-box-shown} is false, then the progress boxes are not
+   drawn, and the pattern appears directly on the button.
 
    \index{progress-note-min}
    \index{progress!note-min}

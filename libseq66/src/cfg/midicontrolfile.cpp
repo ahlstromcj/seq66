@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2022-01-09
+ * \updates       2022-07-21
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -518,10 +518,10 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                  *  Offset to avoid the deprecated enabled and channel values.
                  */
 
-                mco.set_seq_event(i, midicontrolout::seqaction::arm, a);
-                mco.set_seq_event(i, midicontrolout::seqaction::mute, b);
-                mco.set_seq_event(i, midicontrolout::seqaction::queue, c);
-                mco.set_seq_event(i, midicontrolout::seqaction::remove, d);
+                mco.set_seq_event(i, midicontrolout::seqaction::armed, a);
+                mco.set_seq_event(i, midicontrolout::seqaction::muted, b);
+                mco.set_seq_event(i, midicontrolout::seqaction::queued, c);
+                mco.set_seq_event(i, midicontrolout::seqaction::removed, d);
                 if (i < (sequences - 1) && ! next_data_line(file))
                 {
                     make_error_message("midi-control-out", "insufficient data");
@@ -1015,6 +1015,8 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
 "\n"
 "[midi-control-out]\n"
 "\n"
+"This section determines how pattern statuses are to be displayed.\n"
+"\n"
 "#   ---------------- Pattern or device-button number)\n"
 "#  |     ----------- MIDI status+channel (eg. Note On)\n"
 "#  |    |    ------- data 1 (eg. note number)\n"
@@ -1022,12 +1024,12 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
 "#  |    |   | |\n"
 "#  v    v   v v\n"
 "# 31 [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0]\n"
-"#      Arm          Mute         Queue        Delete\n"
+"#      Armed        Muted        (Un)queued   Empty/Deleted\n"
 "#\n"
 "# A test of the status byte determines the enabled status, and channel is\n"
 "# included in the status.\n"
 "\n"
-            ;
+            ;   /* heh heh */
 
         if (mco.is_blank())
         {

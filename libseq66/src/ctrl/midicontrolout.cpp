@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with refactoring by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2022-03-03
+ * \updates       2022-07-21
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -159,11 +159,11 @@ seqaction_to_string (midicontrolout::seqaction a)
 {
     switch (a)
     {
-    case midicontrolout::seqaction::arm:    return "arm";
-    case midicontrolout::seqaction::mute:   return "mute";
-    case midicontrolout::seqaction::queue:  return "queue";
-    case midicontrolout::seqaction::remove: return "delete";
-    default:                                return "unknown";
+    case midicontrolout::seqaction::armed:          return "Armed";
+    case midicontrolout::seqaction::muted:          return "Muted";
+    case midicontrolout::seqaction::queued:         return "Queued";
+    case midicontrolout::seqaction::removed:        return "Empty";
+    default:                                        return "Unknown";
     }
 }
 
@@ -285,7 +285,7 @@ midicontrolout::clear_sequences (bool flush)
     if (is_enabled())
     {
         for (int seq = 0; seq < screenset_size(); ++seq)
-            send_seq_event(seq, midicontrolout::seqaction::remove, false);
+            send_seq_event(seq, midicontrolout::seqaction::removed, false);
 
         if (flush && not_nullptr(m_master_bus))
             m_master_bus->flush();

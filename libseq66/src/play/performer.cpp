@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-06-28
+ * \updates       2022-07-21
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1257,7 +1257,7 @@ performer::remove_sequence (seq::number seqno)
     if (result)
     {
         seq::number buttonno = seqno - playscreen_offset();
-        send_seq_event(buttonno, midicontrolout::seqaction::remove);
+        send_seq_event(buttonno, midicontrolout::seqaction::removed);
         notify_sequence_change(seqno, change::recreate);            /* NEW */
         modify();
     }
@@ -2428,6 +2428,10 @@ performer::announce_mutes ()
  *  parameter set to false, in order to keep the slot number below the
  *  set-size, otherwise a crash occurs.
  *
+ * Issue #89:
+ *
+ *      Had not added code to send the "queue" status!  Fixed.
+ *
  * \param s
  *      Provides the pointer to the sequence.
  *
@@ -2446,18 +2450,23 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
 {
     bool ok = not_nullptr(s);
     midicontrolout::seqaction what;
-
-    /*
-     * infoprintfunc();
-     */
-
     if (ok)
     {
-        what = s->playing() ?
-            midicontrolout::seqaction::arm : midicontrolout::seqaction::mute ;
+        if (s->playing())
+        {
+            what = s->get_queued() ?
+                midicontrolout::seqaction::queued :
+                midicontrolout::seqaction::armed ;
+        }
+        else if (s->get_queued())
+            what = midicontrolout::seqaction::queued;
+        else if (s->one_shot())
+            what = midicontrolout::seqaction::queued;
+        else
+            what = midicontrolout::seqaction::muted;
     }
     else
-        what = midicontrolout::seqaction::remove;
+        what = midicontrolout::seqaction::removed;
 
     send_seq_event(sn, what);
     return true;
@@ -5395,9 +5404,16 @@ performer::sequence_playing_change (seq::number seqno, bool on)
 {
     bool qinprogress = midi_control_in().is_queue();
     mapper().sequence_playscreen_change(seqno, on, qinprogress);
+
+    /* TEST CODE EXPERIMENTAL */
+
+//  seq::pointer s = get_sequence(seqno);
+//  announce_sequence(s, mapper().seq_to_offset(*s));
+
     /*
      * Too much maybe: notify_trigger_change(seqno, change::no);
      */
+
     return true;
 }
 

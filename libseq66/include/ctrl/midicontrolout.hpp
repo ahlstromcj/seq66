@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-11-27
+ * \updates       2022-07-21
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -81,8 +81,8 @@ public:
      * \var queue
      *      Sequence is queued.
      *
-     * \var delete
-     *      Sequence is deleted from its slot.
+     * \var removed
+     *      Sequence is deleted from its slot, or the slot is already empty.
      *
      * \var max
      *      Marker for the maximum value of actions.
@@ -90,10 +90,10 @@ public:
 
     enum class seqaction
     {
-        arm,
-        mute,
-        queue,
-        remove,
+        armed,
+        muted,
+        queued,
+        removed,
         max
     };
 
@@ -294,7 +294,7 @@ public:
 
     static void seqaction_range (int & minimum, int & maximum)
     {
-        minimum = static_cast<int>(midicontrolout::seqaction::arm);
+        minimum = static_cast<int>(midicontrolout::seqaction::armed);
         maximum = static_cast<int>(midicontrolout::seqaction::max);
     }
 

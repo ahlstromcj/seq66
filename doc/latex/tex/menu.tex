@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-05-20
+% \update      2022-07-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -883,8 +883,14 @@
    \itempar{Progress Boxes}{progress-box size}
    Provides a way to change the size of the progress box in each button.
    Values are width and height fractions (up to 1.0) re the button size.
-   If set to 0, the progress box (and its internal pattern color) are not
-   drawn.
+   This is a 'usr' option.
+
+   \itempar{Progress Box Shown}{progress-box shown}
+   If the \textbf{Shown} check-box
+   (not shown in this old diagram)
+   is \textsl{unchecked}, then the progress boxes and pattern color are not
+   shown.
+   This is a 'usr' option.
 
    \itempar{Fingerprint Size}{fingerprint size}
    This value, if set from 32 to 128, indicates the number of events above
@@ -897,8 +903,8 @@
    console/terminal. It will also increase the amount of data logged to the log
    file, if activated.
 
-   \itempar{Load Most Recent File at Startup}{load most-recent}
-   The file at the top of the \texttt{[recent-files]}
+   \itempar{Load Most Recent File (startup)}{load most-recent}
+   If checked, the file at the top of the \texttt{[recent-files]}
    list in the 'rc' file is loaded at startup.
 
    \itempar{Show Full Path of Recent Files in Menu}{full paths}
@@ -944,6 +950,23 @@
 
    It is the same as the \texttt{progress-bar-thick = true} option in the 'usr'
    file. See \sectionref{subsubsec:usr_file_user_interface_settings}.
+
+   \itempar{Double click for pattern editor}{grid!bold}
+   \index{double-click!pattern slot}
+   If set, a double-click on a grid button brings up the pattern for editing.
+   Disable it if the effect is confusing.
+
+   \itempar{Global background/scale/key}{globals!background etc.}
+   \index{global pattern setting!background}
+   \index{global pattern setting!key}
+   \index{global pattern setting!scale}
+   If set, setting the background sequence, scale to show, or the key of the
+   track will apply to all pattern windows that are opened.
+
+   \itempar{Client:port buss names}{buss!naming}
+   \index{bus!naming}
+   If checked the MIDI engine's "client:port" numbers are shown in the port
+   listings.
  
 \paragraph{Menu / Edit / Preferences / JACK}
 \label{paragraph:menu_edit_preferences_jack}

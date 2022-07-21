@@ -1,24 +1,19 @@
-# Seq66 0.94.1 (and above) MIDI control configuration file
+# Seq66 0.98.11 MIDI control configuration file
 #
-# /home/user/.config/seq66/qseq66-lp-mini-alt.ctrl
-# Written 2021-12-10 14:27:31
+# /home/ahlstrom/.config/seq66/qseq66-lp-mini-alt.ctrl
+# Written 2022-07-21 15:00:33
 #
-# Sets up MIDI I/O control. The format is like the 'rc' file, in the
-# HOME configuration directory. To use it, set it active in the 'rc'
-# [midi-control-file] section. It adds loop, mute, & automation buttons,
-# MIDI display, new settings, and macros.
-# Use the base-name (e.g. nanomap.ctrl).
-
-# Version 1 adds the [mute-control-out] and [automation-control-out]
-# sections. Versions 2 and 3 simplify the data items.
+# Sets up MIDI I/O control. The format is like the 'rc' file. To use it, set it
+# active in the 'rc' [midi-control-file] section. It adds loop, mute, &
+# automation buttons, MIDI display, new settings, and macros.
 
 [Seq66]
 
 config-type = "ctrl"
 version = 6
 
-# [comments] holds user documentation for this file. The first empty,
-# hash-commented, or tag line ends the comment.
+# [comments] holds user documentation for this file. The first empty, hash-
+# commented, or tag line ends the comment.
 
 [comments]
 
@@ -30,44 +25,42 @@ See doc/launchpad-mini.ods for the mappings implemented by this 'ctrl' file.
 
 [midi-control-settings]
 
-# 'control-buss' values range from 0 to the highest systeminput buss. If set,
-# that buss can send MIDI control. 255 (0xFF) means any enabled input file can
-# send control. ALSA provides an extra 'announce' buss, altering port numbering
-# re JACK. If port-mapping is enabled, the port nick-name can be provided.
+# Input settings to control Seq66. 'control-buss' ranges from 0 to the highest
+# system input buss. If set, that buss can send MIDI control. 255 (0xFF) means
+# any enabled input device can send control. ALSA provides an extra 'announce'
+# buss, altering port numbering vice JACK. With port-mapping enabled, the port
+# nick-name can be provided.
 #
 # 'midi-enabled' applies to the MIDI controls; keystroke controls are always
 # enabled. Supported keyboard layouts are 'qwerty' (default), 'qwertz', and
-# 'azerty'. AZERTY turns off the auto-shift feature for group-learn.
+# 'azerty'. AZERTY turns off auto-shift for group-learn.
 
 drop-empty-controls = false
-control-buss = 1
+control-buss = 4
 midi-enabled = true
 button-offset = 0
 button-rows = 4
 button-columns = 8
 keyboard-layout = qwerty
 
-# A control stanza incorporates key control and MIDI. Keys support
-# 'toggle' and key-release is 'invert'. The leftmost number on each
-# line is the loop number (eg. 0 to 31), the mutes number (same
-# range), or an automation number. Three groups of bracketed numbers
-# follow, each providing a type of control:
+# A control stanza sets key and MIDI control. Keys support 'toggle', and
+# key-release is 'invert'. The leftmost number on each line is the loop number
+# (0 to 31), mutes number (same range), or an automation number. 3 groups of
+# of bracketed numbers follow, each providing a type of control:
 #
-#    Normal:           [toggle]    [on]        [off]
-#    Increment/Decr:   [increment] [increment] [decrement]
-#    Playback:         [pause]     [start]     [stop]
-#    Playlist/Song:    [by-value]  [next]      [previous]
+#    Normal:         [toggle]    [on]        [off]
+#    Increment/Decr: [increment] [increment] [decrement]
+#    Playback:       [pause]     [start]     [stop]
+#    Playlist/Song:  [by-value]  [next]      [previous]
 #
 # In each group, there are 5 numbers:
 #
 #    [invert status d0 d1min d1max]
 #
-# A valid status (> 0x00) enables the control; 'invert' (1/0) inverts
-# the action, but not all support this; keystroke-release inverts.
-# 'status' is the MIDI event to match (channel is NOT ignored); 'd0'
-# is the first data value (eg. if 0x90, Note On, d0 is the note
-# number; d1min to d1max is the range of d1 values detectable (eg.
-# 1 to 127 indicates any non-zero velocity invokes the control.
+# A valid status (> 0x00) enables the control; 'invert' (1/0) inverts the,
+# the action, but not all support this.  'status' is the MIDI event to match
+# (channel is NOT ignored); 'd0' is the status value (eg. if 0x90, Note On,
+# d0 is the note number; d1min to d1max is the range of d1 values detectable.
 # Hex values can be used; precede with '0x'.
 #
 #  ------------------------ Loop/group/automation-slot number
@@ -82,10 +75,10 @@ keyboard-layout = qwerty
 # 0 "F1"   [0 0x90 0 1 127] [0 0x00 0 0 0] [0 0x00 0 0 0]
 #             Toggle           On              Off
 #
-# Note that MIDI controls can send a Note On upon a press, and a Note
-# Off on release. To use a control as a toggle, define only the
-# Toggle stanza.  For the control to act only while held, define the
-# On and Off stanzas with appropriate statuses for press-and-release.
+# MIDI controls often send a Note On upon a press and a Note Off on release.
+# To use a control as a toggle, define only the Toggle stanza. For the control
+# to act only while held, define the On and Off stanzas with appropriate
+# statuses for press-and-release.
 
 [loop-control]
 
@@ -244,13 +237,15 @@ keyboard-layout = qwerty
 [midi-control-out-settings]
 
 set-size = 32
-output-buss = 1
+output-buss = 3
 midi-enabled = true
 button-offset = 0
 button-rows = 4
 button-columns = 8
 
 [midi-control-out]
+
+This section determines how pattern statuses are to be displayed.
 
 #   ---------------- Pattern or device-button number)
 #  |     ----------- MIDI status+channel (eg. Note On)
@@ -259,12 +254,10 @@ button-columns = 8
 #  |    |   | |
 #  v    v   v v
 # 31 [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0]
-#      Arm          Mute         Queue        Delete
+#      Armed        Muted        (Un)queued   Empty/Deleted
 #
-# In a change from version 1 of this file, a test of the
-# status/event byte determines the enabled status, and channel
-# is incorporated into the status.  The order of the lines must
-# be preserved.
+# A test of the status byte determines the enabled status, and channel is
+# included in the status.
 
  0 [ 0x90   0  60 ] [ 0x90   0  15 ] [ 0x90   0  62 ] [ 0x90   0  12 ]
  1 [ 0x90  16  60 ] [ 0x90  16  15 ] [ 0x90  16  62 ] [ 0x90  16  12 ]
@@ -301,7 +294,7 @@ button-columns = 8
 
 [mute-control-out]
 
-# The format of the mute and automation output events is simpler:
+# The format of the mute and automation output events is similar:
 #
 #  ----------------- mute-group number
 # |    ------------- MIDI status+channel (eg. Note On)
@@ -312,8 +305,8 @@ button-columns = 8
 # 1 [0x00 0 0 ] [0x00 0 0] [0x00 0 0]
 #       On         Off      Empty (dark)
 #
-# The mute-controls have an additional stanza for non-populated
-# ("deleted") mute-groups.
+# The mute-controls have an additional stanza for non-populated ("deleted")
+# mute-groups.
 
  0 [ 0x90  64  60 ] [ 0x90  64  15 ] [ 0x90  64  12 ]
  1 [ 0x90  80  60 ] [ 0x90  80  15 ] [ 0x90  80  12 ]
@@ -350,10 +343,9 @@ button-columns = 8
 
 [automation-control-out]
 
-# This format is similar to [mute-control-out], but the first
-# number is an active-flag, not an index number. The stanzas
-# are on / off / inactive, except for 'snap', which is store /
-# restore / inactive.
+# This format is similar to [mute-control-out], but the first number is an
+# active-flag, not an index number. The stanzas are are on / off / inactive,
+# except for 'snap', which is store /  restore / inactive.
 
 1 [ 0xb0 104  60 ] [ 0xb0 104  15 ] [ 0xb0 104  12 ]  # Panic
 1 [ 0xb0 105  60 ] [ 0xb0 105  15 ] [ 0xb0 105  12 ]  # Stop
@@ -390,11 +382,9 @@ button-columns = 8
 
 [macro-control-out]
 
-# This format is 'macroname = [ hex bytes | macro-references]'.
-# Macro references are macro-names preceded by a '$'. If a macro
-# starts with 0, it is disabled. See the user manual. Some values
-# should always be define: footer, header, reset, startup, and
-# shutdown.
+# This format is 'macroname = [ hex bytes | macro-references]'. Macro references
+# are macro-names preceded by a '$'.  Some values should always be defined, even
+# if empty: footer, header, reset, startup, and shutdown.
 
 footer = 0xF7
 header = 0xF0 0x00 0x00
@@ -403,6 +393,6 @@ shutdown = $header 0x00 $footer
 startup = $header 0x00 $footer
 
 
-# End of /home/user/.config/seq66/qseq66-lp-mini-alt.ctrl
+# End of /home/ahlstrom/.config/seq66/qseq66-lp-mini-alt.ctrl
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

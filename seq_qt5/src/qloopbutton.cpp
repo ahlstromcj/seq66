@@ -500,6 +500,11 @@ qloopbutton::reupdate (bool all)
  *  Note that we first call QPushButton::paintEvent(pev) to make sure that the
  *  click highlights/unhighlight this checkable button.  And this call must be
  *  done first, otherwise the application segfaults.
+ *
+ * Issue #89:
+ *
+ *      Added showing "Unqueued" if queueing enabled while the pattern was
+ *      playing.
  */
 
 void
@@ -578,7 +583,9 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             painter.drawText(box, m_bottom_right.m_flags, title);
             set_checked(loop()->playing()); /* gets hot-key toggle to show  */
             if (loop()->playing())
-                title = "Armed";
+            {
+                title = loop()->get_queued() ? "Unqueued" : "Armed" ;
+            }
             else if (loop()->get_queued())
                 title = "Queued";
             else if (loop()->one_shot())

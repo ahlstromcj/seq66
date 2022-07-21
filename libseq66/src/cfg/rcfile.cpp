@@ -708,8 +708,15 @@ rcfile::write ()
      * with blanks.
      */
 
+    ///// Work related to issue #89
+
+
     std::string mcfname = rc_ref().midi_control_filespec();
+
+    ////// if (rc_ref().auto_ctrl_save())
+
     ok = write_midi_control_file(mcfname, rc_ref());
+
     file << "\n"
 "# Provides a flag and file-name for MIDI-control I/O settings. '\"\"' means\n"
 "# no 'ctrl' file. If none, default keystrokes are used, with no MIDI control.\n"
