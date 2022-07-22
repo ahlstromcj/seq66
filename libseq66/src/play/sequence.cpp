@@ -1144,10 +1144,12 @@ sequence::play
         }
     }
     if (trigger_turning_off)                        /* triggers: "turn off" */
+    {
         set_playing(false);
-
+    }
     m_last_tick = end_tick + 1;                     /* for next frame       */
     m_was_playing = m_playing;
+    perf()->announce_pattern(seq_number());         /* for issue #89        */
 }
 
 /**
@@ -4938,10 +4940,7 @@ sequence::set_playing (bool p)
             off_playing_notes();
 
         set_dirty();
-
-        /*
-         * ca 2022-05-03 This isn't a trigger change: notify_trigger();
-         */
+        perf()->announce_pattern(seq_number());     /* for issue #89        */
     }
     m_queued = false;
     m_one_shot = false;

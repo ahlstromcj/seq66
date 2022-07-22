@@ -1383,7 +1383,7 @@ performer::finish_move (seq::number seqno)
 
 /*
  * -------------------------------------------------------------------------
- *  NEXT
+ *  More settings
  * -------------------------------------------------------------------------
  */
 
@@ -2363,10 +2363,6 @@ performer::announce_exit (bool playstatesoff)
 {
     if (midi_control_out().is_enabled())
     {
-        /*
-         * infoprintfunc();
-         */
-
         midi_control_out().clear_sequences();
         if (playstatesoff)
         {
@@ -2389,10 +2385,6 @@ performer::announce_exit (bool playstatesoff)
 void
 performer::announce_automation (bool activate)
 {
-    /*
-     * infoprintfunc();
-     */
-
     midi_control_out().send_automation(activate);
 }
 
@@ -2404,10 +2396,6 @@ performer::announce_automation (bool activate)
 void
 performer::announce_mutes ()
 {
-    /*
-     * infoprintfunc();
-     */
-
     for (int g = 0; g < mutegroups::Size(); ++g)
     {
         bool hasany = mutes().any(mutegroup::number(g));
@@ -2470,6 +2458,13 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
 
     send_seq_event(sn, what);
     return true;
+}
+
+bool
+performer::announce_pattern (seq::number seqno)
+{
+    seq::pointer s = get_sequence(seqno);
+    return announce_sequence(s, mapper().seq_to_offset(*s));
 }
 
 /**
@@ -2992,7 +2987,10 @@ performer::set_quantized_recording (seq::number seqno, bool recordon, bool toggl
 }
 
 bool
-performer::set_tightened_recording (seq::number seqno, bool recordon, bool toggle)
+performer::set_tightened_recording
+(
+    seq::number seqno, bool recordon, bool toggle
+)
 {
     sequence * s = get_sequence(seqno).get();
     bool result = not_nullptr(s);
@@ -3012,9 +3010,9 @@ performer::set_tightened_recording (seq::ref s, bool recordon, bool toggle)
  *  Set recording for overwrite.  This feature was obtained from jfrey-xx on
  *  GitHub.
  *
- *  Pull request #150: Ask for a reset explicitly upon toggle-on, since we don't
- *  have the GUI to control for progress.  This is implemented in sequence's
- *  version of this function.
+ *  Pull request #150: Ask for a reset explicitly upon toggle-on, since we
+ *  don't have the GUI to control for progress.  This is implemented in
+ *  sequence's version of this function.
  *
  * \param s
  *      The sequence pointer, which is checked.
@@ -3049,7 +3047,10 @@ performer::set_overwrite_recording (seq::ref s, bool oactive, bool toggle)
  */
 
 bool
-performer::set_overwrite_recording (seq::number seqno, bool oactive, bool toggle)
+performer::set_overwrite_recording
+(
+    seq::number seqno, bool oactive, bool toggle
+)
 {
     sequence * s = get_sequence(seqno).get();
     bool result = not_nullptr(s);
@@ -3650,20 +3651,19 @@ performer::poll_cycle ()
  *
  *      Example: If a Song Position value of 8 is received, then a sequencer
  *      (or drum box) should cue playback to the third quarter note of the
- *      song.  (8 MIDI beats * 6 MIDI clocks per MIDI beat = 48 MIDI Clocks.
- *      Since there are 24 MIDI Clocks in a quarter note, the first quarter
- *      occurs on a time of 0 MIDI Clocks, the second quarter note occurs upon
- *      the 24th MIDI Clock, and the third quarter note occurs on the 48th
- *      MIDI Clock).
+ *      song.  Since there are 24 MIDI Clocks in a quarter note, the first
+ *      quarter occurs on a time of 0 MIDI Clocks, the second quarter note
+ *      occurs upon the 24th MIDI Clock, and the third quarter note occurs on
+ *      the 48th MIDI Clock).
  *
  *      8 MIDI beats * 6 MIDI clocks per MIDI beat = 48 MIDI Clocks.
  *
- *      The MIDI-control check will limit the controls to start, stop and record
- *      only. The function returns a a bool flag indicating whether the event was
- *      used or not. The flag is used to exclude from recording the events that
- *      are used for control purposes and should not be recorded (dumping).  If
- *      the used event is a note on, then the linked note off will also be
- *      excluded.
+ *      The MIDI-control check will limit the controls to start, stop and
+ *      record only. The function returns a a bool flag indicating whether the
+ *      event was used or not. The flag is used to exclude from recording the
+ *      events that are used for control purposes and should not be recorded
+ *      (dumping).  If the used event is a note on, then the linked note off
+ *      will also be excluded.
  *
  * http://midi.teragonaudio.com/tech/midispec/seq.htm
  *
@@ -3864,9 +3864,9 @@ performer::midi_sysex (const event & ev)
  *
  * Playback use cases:
  *
- *      These use cases are meant to apply to either a Seq32 or a regular build
- *      of Sequencer64, eventually.  Currently, the regular build does not have
- *      a concept of a "global" perform song-mode flag.
+ *      These use cases are meant to apply to either a Seq32 or a regular
+ *      build of Sequencer64, eventually.  Currently, the regular build does
+ *      not have a concept of a "global" perform song-mode flag.
  *
  *      -#  mainwnd.
  *          -#  Play.  If the perform song-mode is "Song", then use that mode.
@@ -3951,8 +3951,8 @@ performer::start_playing ()
  *  We still need to make restarting pick up at the same place in ALSA mode;
  *  in JACK mode, JACK transport takes care of that feature.
  *
- *  User layk noted this call, and it makes sense to not do this here, since it
- *  is unknown at this point what the actual status is.  Note that we STILL
+ *  User layk noted this call, and it makes sense to not do this here, since
+ *  it is unknown at this point what the actual status is.  Note that we STILL
  *  need to FOLLOW UP on calls to pause_playing() and stop_playing() in
  *  perfedit, mainwnd, etc.
  *
@@ -5230,13 +5230,16 @@ performer::sequence_playing_toggle (seq::number seqno)
                     }
                 }
                 else
+                {
                     save_queued(seqno);
-
+                }
                 unqueue_sequences(seqno);
                 m_queued_replace_slot = seqno;
             }
             else
+            {
                 s->toggle_queued();
+            }
         }
         else
         {
@@ -5405,10 +5408,9 @@ performer::sequence_playing_change (seq::number seqno, bool on)
     bool qinprogress = midi_control_in().is_queue();
     mapper().sequence_playscreen_change(seqno, on, qinprogress);
 
-    /* TEST CODE EXPERIMENTAL */
-
-//  seq::pointer s = get_sequence(seqno);
-//  announce_sequence(s, mapper().seq_to_offset(*s));
+    // TEST for issue #89:
+    // seq::pointer s = get_sequence(seqno);
+    // announce_sequence(s, mapper().seq_to_offset(*s));
 
     /*
      * Too much maybe: notify_trigger_change(seqno, change::no);

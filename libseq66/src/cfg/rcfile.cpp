@@ -483,7 +483,11 @@ rcfile::parse ()
 
     fullpath = rc_ref().midi_control_filespec();
     file_message("Reading ctrl", fullpath);
-//  ok = parse_midi_control_section(fullpath);
+
+    /*
+     * While researching issue #89, moved all this to the smanager.
+     *
+    // ok = parse_midi_control_section(fullpath);
     ok = read_midi_control_file(fullpath, rc_ref());
     if (! ok)
     {
@@ -492,6 +496,7 @@ rcfile::parse ()
         info += "'";
         return make_error_message(tag, info);
     }
+    */
 
     int ticks = 64;
     bool recordbychannel = false;

@@ -245,7 +245,7 @@ button-columns = 8
 
 [midi-control-out]
 
-This section determines how pattern statuses are to be displayed.
+# This section determines how pattern statuses are to be displayed.
 
 #   ---------------- Pattern or device-button number)
 #  |     ----------- MIDI status+channel (eg. Note On)

@@ -2730,6 +2730,7 @@ public:
     void announce_automation (bool activate = true);
     void announce_exit (bool playstatesoff = true);
     bool announce_sequence (seq::pointer s, seq::number sn);
+    bool announce_pattern (seq::number sn);
     void announce_mutes ();
     void set_midi_control_out ();
 

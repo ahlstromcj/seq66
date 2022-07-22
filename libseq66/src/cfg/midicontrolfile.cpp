@@ -265,9 +265,14 @@ midicontrolfile::parse_stream (std::ifstream & file)
 
     bool good = line_after(file, "[loop-control]");
     int count = 0;
-    bool keep_empties = ! rc_ref().drop_empty_in_controls();
-    if (keep_empties)
-        status_message("Keeping empty MIDI-In controls");
+
+    /*
+     * Not important enough to cause concern.
+     *
+     * bool keep_empties = ! rc_ref().drop_empty_in_controls();
+     * if (keep_empties)
+     *     status_message("Keeping empty MIDI-In controls");
+     */
 
     while (good)                                /* not at end of section?   */
     {
@@ -1015,7 +1020,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
 "\n"
 "[midi-control-out]\n"
 "\n"
-"This section determines how pattern statuses are to be displayed.\n"
+"# This section determines how pattern statuses are to be displayed.\n"
 "\n"
 "#   ---------------- Pattern or device-button number)\n"
 "#  |     ----------- MIDI status+channel (eg. Note On)\n"

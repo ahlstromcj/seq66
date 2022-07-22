@@ -340,6 +340,22 @@ smanager::create_performer ()
 }
 
 /**
+ *  Code moved from rcfile to here while researching issue #89.
+ */
+
+bool
+smanager::open_midi_control_file ()
+{
+    std::string fullpath = rc().midi_control_filespec();
+    bool result = ! fullpath.empty();
+    if (result)
+    {
+        result = read_midi_control_file(fullpath, rc());
+    }
+    return result;
+}
+
+/**
  *  Opens a playlist, if specified.  It is opened and read if there is an
  *  empty or non-empty play-list filename, even if specified to be inactive.
  *  An empty filename results in a basically empty, but ultimately populable,
@@ -794,7 +810,8 @@ smanager::create (int argc, char * argv [])
     bool result = main_settings(argc, argv);
     if (result)
     {
-        if (create_session(argc, argv))     /* get path, client ID, etc.    */
+        bool ok = create_session(argc, argv);   /* get path, client ID, etc */
+        if (ok)
         {
             std::string homedir = manager_path();
             if (homedir == "None")
@@ -803,13 +820,16 @@ smanager::create (int argc, char * argv [])
             file_message("Session manager path", homedir);
             (void) create_project(argc, argv, homedir);
         }
+        if (ok)
+            (void) open_midi_control_file();
+
         result = create_performer();        /* fails if performer not made  */
         if (result)
+        {
             result = open_playlist();
-
-        if (result)
-            result = open_note_mapper();
-
+            if (result)
+                result = open_note_mapper();
+        }
         if (result)
         {
             std::string fname = midi_filename();
@@ -1180,17 +1200,18 @@ smanager::import_into_session
 
 /**
  *  This function is like create_configuration(), but the source is not the
- *  standard configuration=file directory, but a directory chosen by the user.
- *  This function should be called only for importing a configuration into an NSM
- *  session directory.
+ *  standard configuration-file directory, but a directory chosen by the user.
+ *  This function should be called only for importing a configuration into an
+ *  NSM session directory.
  *
  * \param sourcepath
  *      The source path is the path to the configuration files chosen for
  *      import by the user.  Often it is the usual ~/.config/seq66 directory.
  *
  * \param sourcebase
- *      This is the actual configuration file chosen by the user.  It can be any
- *      file qseq66.*, only the first part of the name (e.g. "qseq66") is used.
+ *      This is the actual configuration file chosen by the user.  It can be
+ *      any file qseq66.*, only the first part of the name (e.g. "qseq66") is
+ *      used.
  *
  * \param cfgfilepath
  *      This is the configuration directory used in this NSM session.  It is
@@ -1199,9 +1220,9 @@ smanager::import_into_session
  *
  * \param midifilepath
  *      This is the MIDI directory used in this NSM session.  It is often
- *      something like "~/NSM Sessions/MySession/seq66.nLTQC/midi.
- *      This is the destination for the imported MIDI files (due to being
- *      part of an imported play-list.
+ *      something like "~/NSM Sessions/MySession/seq66.nLTQC/midi.  This is
+ *      the destination for the imported MIDI files (due to being part of an
+ *      imported play-list.
  *
  * \return
  *      Returns true if the import succeeded.
