@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-12-15
+ * \updates       2022-07-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -253,6 +253,11 @@ private:
  *  Free functions for the control file.
  */
 
+extern bool read_midi_control_file
+(
+    const std::string & fname,
+    rcsettings & rcs
+);
 extern bool write_midi_control_file
 (
     const std::string & mcfname,

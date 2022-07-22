@@ -69,11 +69,7 @@ public:
 
     virtual bool parse () override;
     virtual bool write () override;
-    bool parse_midi_control_section
-    (
-        const std::string & fname,
-        bool separatefile = false
-    );
+    bool parse_midi_control_section (const std::string & fname);
 
 };          // class rcfile
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2022-03-26
+ * \updates       2022-07-21
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -51,8 +51,16 @@
 
 #include "seq66_features.hpp"           /* set_app_name()                   */
 #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
+#include "cfg/midicontrolfile.hpp"      /* seq66::midicontrolfile functions */
+
+/*
+ * These files are handled by performer, but also by "global" functions
+ * in this module. Probably something to tighten up.
+ */
+
 #include "cfg/notemapfile.hpp"          /* seq66::notemapfile functions     */
 #include "cfg/playlistfile.hpp"         /* seq66::playlistfile functions    */
+
 #include "cfg/sessionfile.hpp"          /* seq66::sessionfile               */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "midi/midifile.hpp"            /* seq66::write_midi_file()         */
@@ -546,17 +554,10 @@ smanager::save_session (std::string & msg, bool ok)
                 std::string filename = rc().midi_filename();
                 if (filename.empty())
                 {
-                    /*
-                     * Don't need this: msg = "MIDI file-name empty";
-                     */
+                    /* Don't need this: msg = "MIDI file-name empty"; */
                 }
                 else
                 {
-                    /*
-                     * But generally the file-extension will already be set
-                     * to ".midi".
-                     */
-
                     bool is_wrk = file_extension_match(filename, ".wrk");
                     if (is_wrk)
                         filename = file_extension_set(filename, ".midi");
@@ -574,19 +575,16 @@ smanager::save_session (std::string & msg, bool ok)
             bool save = rc().auto_options_save();
             if (save)
             {
-                /*
-                 * Saves the 'rc' file and, the 'usr' file, conditionally.
-                 */
-
                 file_message("Save session", "Options");
                 if (! cmdlineopts::write_options_files())
                     msg = "Config writes failed";
             }
-
-            /*
-             * Too much: else msg = "config auto-save option off";
-             */
-
+            if (rc().auto_ctrl_save())
+            {
+                std::string mcfname = rc().midi_control_filespec();
+                file_message("Save session", "Controls");
+                result = write_midi_control_file(mcfname, rc());
+            }
             if (rc().auto_mutes_save())
             {
                 file_message("Save session", "Mutes");
@@ -602,11 +600,6 @@ smanager::save_session (std::string & msg, bool ok)
                 file_message("Save session", "Notemapper");
                 result = perf()->save_note_mapper();        // add msg return?
             }
-
-            /*
-             * Anything else to save?  Currently, the 'ctrl' file is saved by
-             * the rcfile class.
-             */
         }
         else
         {

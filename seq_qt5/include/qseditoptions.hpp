@@ -186,6 +186,7 @@ private slots:
     void slot_playlist_active_click ();
     void slot_playlist_filename ();
     void slot_ctrl_active_click ();
+    void slot_ctrl_save_click ();
     void slot_ctrl_filename ();
     void slot_drums_active_click ();
     void slot_drums_filename ();

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2022-07-21
+ * \updates       2022-07-22
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -1154,6 +1154,33 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             file << lines << std::endl;
     }
     return result;
+}
+
+/**
+ *  Parses the [midi-control] section.  This function is used both in the
+ *  original reading of the "rc" file, and for reloading the original
+ *  midi-control data from the "rc".
+ *
+ *  We used to throw the midi-control count value away, since it was always
+ *  1024, but it is useful if no mute groups have been created.  So, if it
+ *  reads 0 (instead of 1024), we will assume there are no midi-control
+ *  settings.  We also have to be sure to go to the next data line even if the
+ *  strip-empty-mutes option is on.
+ *
+ * \return
+ *      Returns true if the file was able to be opened for reading, and the
+ *      desired data successfully extracted.
+ */
+
+bool
+read_midi_control_file
+(
+    const std::string & fname,
+    rcsettings & rcs
+)
+{
+    midicontrolfile mcf(fname, rcs);
+    return mcf.parse();
 }
 
 /**

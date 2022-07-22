@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-06-28
+ * \updates       2022-07-22
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -483,7 +483,8 @@ rcfile::parse ()
 
     fullpath = rc_ref().midi_control_filespec();
     file_message("Reading ctrl", fullpath);
-    ok = parse_midi_control_section(fullpath, true);
+//  ok = parse_midi_control_section(fullpath);
+    ok = read_midi_control_file(fullpath, rc_ref());
     if (! ok)
     {
         std::string info = "'";
@@ -611,32 +612,16 @@ rcfile::parse ()
     return true;
 }
 
-/**
- *  Parses the [midi-control] section.  This function is used both in the
- *  original reading of the "rc" file, and for reloading the original
- *  midi-control data from the "rc".
+/*
+ * Moved to midicontrolfile as read_midi_control_file().
  *
- *  We used to throw the midi-control count value away, since it was always
- *  1024, but it is useful if no mute groups have been created.  So, if it
- *  reads 0 (instead of 1024), we will assume there are no midi-control
- *  settings.  We also have to be sure to go to the next data line even if the
- *  strip-empty-mutes option is on.
- *
- * \return
- *      Returns true if the file was able to be opened for reading, and the
- *      desired data successfully extracted.
- */
-
 bool
-rcfile::parse_midi_control_section
-(
-    const std::string & fname,
-    bool separatefile
-)
+rcfile::parse_midi_control_section (const std::string & fname)
 {
-    midicontrolfile mcf(separatefile ? fname : name(), rc_ref());
+    midicontrolfile mcf(fname, rc_ref());
     return mcf.parse();
 }
+ */
 
 /**
  *  This options-writing function is just about as complex as the
@@ -703,19 +688,12 @@ rcfile::write ()
     /*
      * [midi-control-file]
      *
-     * Note that, if there are no controls (e.g. there were none to read, as
-     * occurs the first time Seq66 is run), then we create one and populate it
-     * with blanks.
+     * Work related to issue #89: We now write the 'ctrl' file in
+     * smanager::save_session().
+     *
+     *  std::string mcfname = rc_ref().midi_control_filespec();
+     *  ok = write_midi_control_file(mcfname, rc_ref());
      */
-
-    ///// Work related to issue #89
-
-
-    std::string mcfname = rc_ref().midi_control_filespec();
-
-    ////// if (rc_ref().auto_ctrl_save())
-
-    ok = write_midi_control_file(mcfname, rc_ref());
 
     file << "\n"
 "# Provides a flag and file-name for MIDI-control I/O settings. '\"\"' means\n"

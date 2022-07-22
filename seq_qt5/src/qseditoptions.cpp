@@ -446,13 +446,13 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
 
     connect
     (
-        ui->checkBoxSaveUsr, SIGNAL(clicked(bool)),
-        this, SLOT(slot_usr_save_click())
+        ui->checkBoxActiveUsr, SIGNAL(clicked(bool)),
+        this, SLOT(slot_usr_active_click())
     );
     connect
     (
-        ui->checkBoxActiveUsr, SIGNAL(clicked(bool)),
-        this, SLOT(slot_usr_active_click())
+        ui->checkBoxSaveUsr, SIGNAL(clicked(bool)),
+        this, SLOT(slot_usr_save_click())
     );
     connect
     (
@@ -466,13 +466,13 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
 
     connect
     (
-        ui->checkBoxSaveMutes, SIGNAL(clicked(bool)),
-        this, SLOT(slot_mutes_save_click())
+        ui->checkBoxActiveMutes, SIGNAL(clicked(bool)),
+        this, SLOT(slot_mutes_active_click())
     );
     connect
     (
-        ui->checkBoxActiveMutes, SIGNAL(clicked(bool)),
-        this, SLOT(slot_mutes_active_click())
+        ui->checkBoxSaveMutes, SIGNAL(clicked(bool)),
+        this, SLOT(slot_mutes_save_click())
     );
     connect
     (
@@ -486,13 +486,13 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
 
     connect
     (
-        ui->checkBoxSavePlaylist, SIGNAL(clicked(bool)),
-        this, SLOT(slot_playlist_save_click())
+        ui->checkBoxActivePlaylist, SIGNAL(clicked(bool)),
+        this, SLOT(slot_playlist_active_click())
     );
     connect
     (
-        ui->checkBoxActivePlaylist, SIGNAL(clicked(bool)),
-        this, SLOT(slot_playlist_active_click())
+        ui->checkBoxSavePlaylist, SIGNAL(clicked(bool)),
+        this, SLOT(slot_playlist_save_click())
     );
     connect
     (
@@ -509,6 +509,11 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     (
         ui->checkBoxActiveCtrl, SIGNAL(clicked(bool)),
         this, SLOT(slot_ctrl_active_click())
+    );
+    connect
+    (
+        ui->checkBoxSaveCtrl, SIGNAL(clicked(bool)),
+        this, SLOT(slot_ctrl_save_click())
     );
     connect
     (
@@ -2016,6 +2021,14 @@ qseditoptions::slot_ctrl_active_click ()
 {
     bool on = ui->checkBoxActiveCtrl->isChecked();
     rc().midi_control_active(on);
+    modify_rc();
+}
+
+void
+qseditoptions::slot_ctrl_save_click ()
+{
+    bool on = ui->checkBoxSaveCtrl->isChecked();
+    rc().auto_ctrl_save(on);
     modify_rc();
 }
 
