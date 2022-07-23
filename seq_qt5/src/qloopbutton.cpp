@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2022-07-21
+ * \updates       2022-07-23
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -246,15 +246,15 @@ qloopbutton::initialize_text ()
     {
         int w = width();
         int h = height();
-        int dx = usr().scale_size(6);
+        int dx = usr().scale_size(4);
         int dy = usr().scale_size_y(2);
         int lw = int(0.70 * w);
         int rw = int(0.50 * w);
-        int lx = dx + 1;
-        int ty = dy + 2;                                // ty = dy;
+        int lx = dx;
+        int ty = dy + 2;
         int bh = usr().scale_size_y(12);
-        int rx = int(0.50 * w) + lx - 2 * dx - 2;       // - 2 added
-        int by = int(0.85 * h) + dy;
+        int rx = int(0.50 * w) + lx - dx - 1;
+        int by = int(0.85 * h) + dy - 3;
         int fontsize = usr().scale_font_size(s_fontsize_main);
         if (vert_compressed())
         {
@@ -290,11 +290,11 @@ qloopbutton::initialize_text ()
         char tmp[32];
         snprintf
         (
-            tmp, sizeof tmp, "%-3d %d-%s %d/%d",
+            tmp, sizeof tmp, "%-2d %d-%s %d/%d",
             sn, bus, chanstr.c_str(), bpb, bw
         );
         lowerleft = std::string(tmp);
-        hotkey = m_hotkey;
+        hotkey = "[" + m_hotkey + "]";
         if (loop()->modified())
             lengthstr += "*";
         else if (loop()->loop_count_max() > 0)
@@ -606,8 +606,9 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             draw_progress_box(painter);
 
         draw_pattern(painter);
-        if (loop()->is_playable() && loop()->armed())
-            draw_progress(painter, tick);
+
+        bool tiny = ! (loop()->is_playable() && loop()->armed());
+        draw_progress(painter, tick, tiny);
     }
     else
     {
@@ -628,7 +629,12 @@ qloopbutton::paintEvent (QPaintEvent * pev)
  */
 
 void
-qloopbutton::draw_progress (QPainter & painter, midipulse tick)
+qloopbutton::draw_progress
+(
+    QPainter & painter,
+    midipulse tick,
+    bool tiny
+)
 {
     midipulse t1 = loop()->get_length();
     if (t1 > 0)
@@ -637,8 +643,20 @@ qloopbutton::draw_progress (QPainter & painter, midipulse tick)
         QPen pen(progress_color());                         /* Qt::black */
         int x = m_event_box.x();
         int w = m_event_box.w();
-        int y0 = m_event_box.y() + 1;
-        int yh = m_event_box.h() - 2;
+        int yh;
+        int yoffset;
+        if (tiny)
+        {
+            yh = 6;
+            yoffset = m_event_box.h() - 6;
+        }
+        else
+        {
+            yh = m_event_box.h() - 2;
+            yoffset = 1 ;
+        }
+
+        int y0 = m_event_box.y() + yoffset;
         int y1 = y0 + yh;
         x += int(w * tick / t1);
         pen.setWidth(m_prog_thickness);

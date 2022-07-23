@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-10-04
+ * \updates       2022-07-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -235,10 +235,7 @@ public:
 
 protected:
 
-    virtual void draw_progress (QPainter & p, midipulse tick) override;
-
-protected:
-
+    void draw_progress (QPainter & p, midipulse tick, bool tiny = false);
     void draw_progress_box (QPainter & painter);
     void draw_pattern (QPainter & painter);
     void initialize_fingerprint ();

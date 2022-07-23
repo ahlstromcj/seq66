@@ -721,9 +721,12 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
      *  rcs.song_start_mode(pb);
      */
 
-    m_master_bus->get_port_statuses(m_clocks, m_inputs);
-    rcs.clocks() = m_clocks;
-    rcs.inputs() = m_inputs;
+    if (m_master_bus)
+    {
+        m_master_bus->get_port_statuses(m_clocks, m_inputs);
+        rcs.clocks() = m_clocks;
+        rcs.inputs() = m_inputs;
+    }
     rcs.key_controls() = m_key_controls;
     rcs.midi_control_in() = m_midi_control_in;
     rcs.midi_control_out() = m_midi_control_out;

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-09-19
- * \updates       2021-11-14
+ * \updates       2022-07-22
  * \license       GNU GPLv2 or above
  *
  *  All this button can do is enable a new pattern to be created.  It is
@@ -307,11 +307,6 @@ protected:
     virtual void reupdate (bool /*all*/)
     {
         // no code, handles empty button
-    }
-
-    virtual void draw_progress (QPainter & /*p*/, midipulse /*tick*/)
-    {
-        // no code yet
     }
 
 protected:

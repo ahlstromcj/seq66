@@ -1,9 +1,12 @@
-TO DO for Seq66 0.98.10 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.98.11 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-06-28
+2019-04-13 to 2022-07-22
 
 Pattern Editor, Main Window:
 
+    -   Handle the european "decimal point" on usage and display.
+    -   Upon a button restart, the 'ctrl' file does not work.  Works fine
+        when stopped, then restarted manually.
     -   Verify no bugs remaining in:
         -   Pattern fix dialog.
         -   File / Save handling.
