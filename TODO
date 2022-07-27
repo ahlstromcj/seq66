@@ -6,7 +6,12 @@ Hot:
 
     -   Issue #89 revisited: MIDI control output queue events
     -   Issue #90: seq66 does not recognize some changes for the save entry in
-        the file menu.
+        the file menu.  Also needs to set modify asterisk.
+        -   Fix pattern.
+        -   LFO.
+        -   Add painted note.
+        -   Velocity change.
+        -   Delete trigger, etc.
     -   Issue #91 No colors in live view with xfce/xubuntu.
         Create a bash script for setting the locales to "en_US.UTF-8" before
         starting qseq66 

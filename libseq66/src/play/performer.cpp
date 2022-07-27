@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-07-21
+ * \updates       2022-07-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1569,6 +1569,11 @@ performer::inner_start ()
     {
         if (! is_running())
         {
+            /*
+             * Issue #89.  This happens all the time! Thus announce_pattern()
+             * spews events! However, the cause is not here.
+             */
+
             if (song_mode())
                 off_sequences();                /* mute for song playback   */
 
@@ -5257,7 +5262,13 @@ performer::sequence_playing_toggle (seq::number seqno)
             }
             s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
         }
-        announce_sequence(s, mapper().seq_to_offset(*s));
+
+        /*
+         * For issue #89, sequence::toggle_playing() already announces the
+         * sequence change, so don't do it here.
+         *
+         * announce_sequence(s, mapper().seq_to_offset(*s));
+         */
 
         /*
          * If we're in song playback, temporarily block the events until the
@@ -5410,10 +5421,6 @@ performer::sequence_playing_change (seq::number seqno, bool on)
 {
     bool qinprogress = midi_control_in().is_queue();
     mapper().sequence_playscreen_change(seqno, on, qinprogress);
-
-    // TEST for issue #89:
-    // seq::pointer s = get_sequence(seqno);
-    // announce_sequence(s, mapper().seq_to_offset(*s));
 
     /*
      * Too much maybe: notify_trigger_change(seqno, change::no);

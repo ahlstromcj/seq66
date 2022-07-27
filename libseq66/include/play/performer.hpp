@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-06-28
+ * \updates       2022-07-27
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -135,10 +135,11 @@ public:
     };
 
     /**
-     *  A visible representation of whether to "modify" the tune.  Some changes
-     *  do not require the tune to be saved before closing. The "recreate"
-     *  value is a stronger form of "yes", and additionally requests that key
-     *  elements of the notified object need to be recreated.
+     *  A visible representation of whether to "modify" the tune.  Some
+     *  changes do not require the tune to be saved before closing. The
+     *  "recreate" value is a stronger form of "yes", and additionally
+     *  requests that key elements of the notified object need to be
+     *  recreated.
      */
 
     enum class change
@@ -1031,7 +1032,26 @@ public:
     void modify ()
     {
         m_is_modified = true;
-        m_needs_update = true;
+
+        /*
+         * Relating to the fix for issue #90, do not use this (silly) flag.
+         * Needs testing!
+         *
+         * m_needs_update = true;
+         */
+    }
+
+    /*
+     * Added 2022-07-27 for issue #90.  See usage in qsmainwnd.
+     */
+
+    bool modification (change ctype)
+    {
+        return
+        (
+            ctype == change::yes || ctype == change::recreate ||
+            ctype == change::removed
+        );
     }
 
     void unmodify ();                           /* for write_midi_file()    */

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-05-20
+ * \updates       2022-07-27
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -449,10 +449,10 @@ private:
     /**
      *  Indicates if the sequence was playing.  This value is set at the end
      *  of the play() function.  It is used to continue playing after changing
-     *  the pattern length.
+     *  the pattern length. Turns out to be unused in both Seq24 and Seq66.
+     *
+     *      bool m_was_playing;
      */
-
-    bool m_was_playing;
 
     /**
      *  True if sequence playback currently is in progress for this sequence.

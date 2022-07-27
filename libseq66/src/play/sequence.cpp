@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-07-05
+ * \updates       2022-07-27
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -156,7 +156,6 @@ sequence::sequence (int ppqn) :
     m_notes_on                  (0),
     m_master_bus                (nullptr),
     m_playing_notes             (),
-    m_was_playing               (false),
     m_playing                   (false),
     m_recording                 (false),
     m_draw_locked               (false),
@@ -314,7 +313,6 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
          *  These values are set fine for this purpose by the constructor
          *
          *  m_playing_notes
-         *  m_was_playing
          *  m_playing
          *  m_recording
          *  m_draw_locked
@@ -996,6 +994,7 @@ sequence::toggle_queued ()
     m_queued = ! m_queued;
     m_queued_tick = m_last_tick - mod_last_tick() + get_length();
     m_off_from_snap = true;
+    perf()->announce_pattern(seq_number());     /* for issue #89        */
     return true;
 }
 
@@ -1148,8 +1147,17 @@ sequence::play
         set_playing(false);
     }
     m_last_tick = end_tick + 1;                     /* for next frame       */
-    m_was_playing = m_playing;
-    perf()->announce_pattern(seq_number());         /* for issue #89        */
+
+    /*
+     * This causes control-output spewage during playback, but we need to
+     * send an announcement when queuing is in force. At that point there
+     * is a quick burst of events (all Note 2, Vel 62 we still have to figure
+     * out.  They all apply to the slot being queued/unqueued. So we move this
+     * code to toggle_queued().
+     *
+     *  if (get_queued())
+     *      perf()->announce_pattern(seq_number()); // for issue #89        //
+     */
 }
 
 /**
@@ -1284,7 +1292,10 @@ void
 sequence::remove_all ()
 {
     automutex locker(m_mutex);
+    int count = m_events.count();
     m_events.clear();
+    if (count > 0)
+        modify();                       /* issue #90 */
 }
 
 /**
@@ -2031,16 +2042,25 @@ void
 sequence::increment_selected (midibyte astat, midibyte /*acontrol*/)
 {
     automutex locker(m_mutex);
+    bool modded = false;
     for (auto & e : m_events)
     {
         if (e.is_selected_status(astat))   /* && er.get_control == acontrol */
         {
             if (event::is_two_byte_msg(astat))
+            {
                 e.increment_data2();
+                modded = true;
+            }
             else if (event::is_one_byte_msg(astat))
+            {
                 e.increment_data1();
+                modded = true;
+            }
         }
     }
+    if (modded)
+        modify();                           /* issue #90 */
 }
 
 /**
@@ -2070,16 +2090,25 @@ void
 sequence::decrement_selected (midibyte astat, midibyte /*acontrol*/)
 {
     automutex locker(m_mutex);
+    bool modded = false;
     for (auto & e : m_events)
     {
         if (e.is_selected_status(astat))   /* && er.get_control == acontrol */
         {
             if (event::is_two_byte_msg(astat))
+            {
                 e.decrement_data2();
+                modded = true;
+            }
             else if (event::is_one_byte_msg(astat))
+            {
                 e.decrement_data1();
+                modded = true;
+            }
         }
     }
+    if (modded)
+        modify();                           /* issue #90 */
 }
 
 bool
@@ -4155,7 +4184,7 @@ sequence::copy_selected_trigger ()
 void
 sequence::paste_trigger (midipulse paste_tick)
 {
-    automutex locker(m_mutex);          /* @new ca 2016-08-03   */
+    automutex locker(m_mutex);
     m_triggers.paste(paste_tick);
 }
 

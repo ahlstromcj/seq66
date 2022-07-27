@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-29
+ * \updates       2022-07-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -3642,15 +3642,17 @@ qsmainwnd::on_sequence_change (seq::number seqno, performer::change ctype)
          *  QObject::setParent: Cannot set parent, new parent is in a
          *  different thread
          *
-         *      bool redo = ctype == performer::change::yes;
+         *  Using modification() to fix issue #90 causes flickering as
+         *  changes are made that cause performer to notify its clients.
          */
 
         bool redo = ctype == performer::change::recreate;
+        bool domod = cb_perf().modification(ctype);      /* issue #90 */
         m_live_frame->update_sequence(seqno, redo);
         for (auto ip : m_open_live_frames)
             ip.second->update_sequence(seqno, redo);
 
-        if (redo)
+        if (domod)
             enable_save(cb_perf().modified());
     }
     return result;

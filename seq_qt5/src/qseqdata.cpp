@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-28
+ * \updates       2022-07-27
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -39,6 +39,26 @@
 #include "qseqdata.hpp"                 /* seq66::qseqdata class            */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
+
+/*
+ * The fixes for issue #90 cause a lot of redrawing during mouse movement
+ * while using a line to edit (for example) velocity. So we do not call
+ * change_event_data_range() or change_event_data_relative() during mouse
+ * movement.  The orange edit line still appears, but doesn't take effect until
+ * the mouse button is released.
+ *
+ * This also disables the "relative adjust" feature we copped from Kepler34.
+ * However, we have never been able to get that feature to turn on. In
+ * Kepler34, all it seems to do is allow modifying a single event by moving
+ * the mouse up and down. Obviously, our implementation is buggy, but does
+ * it matter?  We will still see if we can get it to work at some point.
+ *
+ * To revert to the old behavior, define this macro.We leave the old behavior
+ * in since other edits also cause flickering and we haven't figured out why
+ * yet.
+ */
+
+#define SEQ66_TRACK_DATA_EDITING_MOVEMENTS
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -294,8 +314,8 @@ qseqdata::mousePressEvent (QMouseEvent * event)
      * push-undo here?  Not sure, won't change for now.
      */
 
-    tick_start = pix_to_tix(mouse_x - 2);
-    tick_finish = pix_to_tix(mouse_x + 2);
+    tick_start = pix_to_tix(mouse_x - 8);       // 2; never get it to fire!
+    tick_finish = pix_to_tix(mouse_x + 8);      // 2; ditto
     track().push_undo();
 
     /*
@@ -308,7 +328,7 @@ qseqdata::mousePressEvent (QMouseEvent * event)
         eventlist::select::would_select
     );
     if (would_select)
-        m_relative_adjust = true;
+        m_relative_adjust = true;               /* printf("rel adjust\n");  */
     else
         m_line_adjust = true;                   /* set ev values under line */
 
@@ -361,9 +381,12 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
 
     current_x(int(event->x()) - c_keyboard_padding_x);
     current_y(int(event->y()));
+#if defined SEQ66_TRACK_DATA_EDITING_MOVEMENTS
     midipulse tick_s, tick_f;
+#endif
     if (m_line_adjust)
     {
+#if defined SEQ66_TRACK_DATA_EDITING_MOVEMENTS
         int adj_x_min, adj_x_max, adj_y_min, adj_y_max;
         if (current_x() < drop_x())
         {
@@ -391,9 +414,13 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
         );
         if (ok)
             set_dirty();
+#else
+        set_dirty();
+#endif
     }
     else if (m_relative_adjust)
     {
+#if defined SEQ66_TRACK_DATA_EDITING_MOVEMENTS
         int adjy = byte_value(m_dataarea_y, drop_y() - current_y());
         tick_s = pix_to_tix(drop_x() - 2);
         tick_f = pix_to_tix(drop_x() + 2);
@@ -404,6 +431,9 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
         );
         if (ok)
             set_dirty();
+#else
+        set_dirty();
+#endif
 
         /*
          * Move the drop location so we increment properly on next mouse move.
