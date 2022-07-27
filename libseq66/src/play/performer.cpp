@@ -2451,15 +2451,21 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
         if (s->playing())
         {
             what = s->get_queued() ?
-                midicontrolout::seqaction::queued :
+                midicontrolout::seqaction::queued :     // unqueueing pending
                 midicontrolout::seqaction::armed ;
         }
+#if 0
         else if (s->get_queued())
             what = midicontrolout::seqaction::queued;
         else if (s->one_shot())
             what = midicontrolout::seqaction::queued;
         else
             what = midicontrolout::seqaction::muted;
+#else
+        what = midicontrolout::seqaction::muted;
+        if (s->get_queued() || s->one_shot())
+            what = midicontrolout::seqaction::queued;
+#endif
     }
     else
         what = midicontrolout::seqaction::removed;

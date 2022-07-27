@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2021-11-20
+ * \updates       2022-07-27
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the old mainwid class.
@@ -32,7 +32,8 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr().mainwnd_spacing()   */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
-#include "qslivebase.hpp"
+#include "qslivebase.hpp"               /* seq66:qslivebase class, this one */
+#include "qsmainwnd.hpp"                /* the parent class of this window  */
 
 /*
  * Do not document a namespace, it breaks Doxygen.
@@ -203,7 +204,7 @@ qslivebase::copy_seq ()
 
 /**
  * Need a dialog warning that the editor is the reason this sequence cannot be
- * cut.
+ * cut. Or delete it. For issue #93, we delete the pattern editor.
  */
 
 bool
@@ -211,21 +212,30 @@ qslivebase::cut_seq ()
 {
     bool result = perf().cut_sequence(m_current_seq);
     if (result)
+    {
         m_can_paste = true;
-
+        m_parent->remove_editor(m_current_seq);
+    }
     return result;
 }
 
 /**
- *  If the sequence/pattern is delete-able (valid and not being edited), then
- *  it is deleted via the performer object.  Note that in seq66 the
+ *  If the sequence/pattern is delete-able (valid and not being edited), then it
+ *  is deleted via the performer object.  Note that in seq66 the
  *  screenset::remove() function makes this check now.
+ *
+ *  For issue #93, we delete the pattern editor.
  */
 
 bool
 qslivebase::delete_seq ()
 {
-    return perf().remove_sequence(m_current_seq);
+    bool result = perf().remove_sequence(m_current_seq);
+    if (result)
+    {
+        m_parent->remove_editor(m_current_seq);
+    }
+    return result;
 }
 
 bool

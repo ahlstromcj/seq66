@@ -2283,7 +2283,10 @@ qsmainwnd::remove_editor (int seqno)
     auto ei = m_open_editors.find(seqno);
     if (ei != m_open_editors.end())
     {
+        qseqeditex * qep = ei->second;      /* save the pointer             */
         m_open_editors.erase(ei);
+        if (not_nullptr(qep))
+            qep->close();                   /* just signal to close         */
 
         /*
          * Deleting this pointer makes qseq66 segfault, and valgrind doesn't
@@ -2323,9 +2326,7 @@ qsmainwnd::remove_all_editors ()
         qseqeditex * qep = ei->second;      /* save the pointer             */
         m_open_editors.erase(ei++);         /* remove pointer, inc iterator */
         if (not_nullptr(qep))
-        {
             qep->close();                   /* just signal to close         */
-        }
     }
 }
 

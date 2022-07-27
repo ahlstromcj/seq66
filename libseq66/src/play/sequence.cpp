@@ -1151,7 +1151,7 @@ sequence::play
     /*
      * This causes control-output spewage during playback, but we need to
      * send an announcement when queuing is in force. At that point there
-     * is a quick burst of events (all Note 2, Vel 62 we still have to figure
+     * is a quick burst of events (all Note 2, Vel 62) we still have to figure
      * out.  They all apply to the slot being queued/unqueued. So we move this
      * code to toggle_queued().
      *

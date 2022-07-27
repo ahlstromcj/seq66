@@ -4,20 +4,23 @@ Chris Ahlstrom
 
 Hot:
 
-    -   Issue #89 revisited: MIDI control output queue events
-    -   Issue #90: seq66 does not recognize some changes for the save entry in
+    ?   Issue #89 revisited: MIDI control output queue events
+        The other way round (unqueueing) gives me one queue event when I dequeue
+        (this is correct) and *another queue event* when the sequence actually
+        goes mute
+    ?   Issue #90: seq66 does not recognize some changes for the save entry in
         the file menu.  Also needs to set modify asterisk.
         -   Fix pattern.
         -   LFO.
         -   Add painted note.
         -   Velocity change.
         -   Delete trigger, etc.
-    -   Issue #91 No colors in live view with xfce/xubuntu.
+    x   Issue #91 No colors in live view with xfce/xubuntu.
         Create a bash script for setting the locales to "en_US.UTF-8" before
         starting qseq66 
     -   Issue #92 Segfault when recording to a 32 beat pattern.
         2021-02-16  or issue #85.
-    -   Issue #93 The window of a deleted pattern remains open
+    x   Issue #93 The window of a deleted pattern remains open
     -   Issue #94 Long song cannot be scrolled to the right 
     -   Issue #95 Velocity screen does not fully refresh when scrolling 
         left or right.
