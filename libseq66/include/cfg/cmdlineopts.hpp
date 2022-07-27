@@ -27,7 +27,7 @@
  *
  * \author  Chris Ahlstrom
  * \date    2015-11-20
- * \updates 2022-06-28
+ * \updates 2022-07-27
  * \version $Revision$
  *
  *    Also see the filefunctions.cpp and strfunctions modules.
@@ -97,6 +97,8 @@ public:
     static bool parse_o_virtual (const std::string & arg);
     static bool parse_log_option (int argc, char * argv []);
     static int parse_command_line_options (int argc, char * argv []);
+    static void show_locale ();
+    static bool set_global_locale (const std::string & lname = "");
     static bool write_options_files (const std::string & filename = "");
     static bool write_rc_file (const std::string & filename = "");
     static bool write_usr_file (const std::string & filename = "");

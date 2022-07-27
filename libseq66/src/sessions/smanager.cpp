@@ -50,7 +50,7 @@
 #include <cstring>                      /* std::strlen()                    */
 
 #include "seq66_features.hpp"           /* set_app_name()                   */
-#include "cfg/cmdlineopts.hpp"          /* command-line functions           */
+#include "cfg/cmdlineopts.hpp"          /* static command-line functions    */
 #include "cfg/midicontrolfile.hpp"      /* seq66::midicontrolfile functions */
 
 /*
@@ -807,6 +807,8 @@ smanager::error_handling ()
 bool
 smanager::create (int argc, char * argv [])
 {
+    cmdlineopts::show_locale();
+
     bool result = main_settings(argc, argv);
     if (result)
     {

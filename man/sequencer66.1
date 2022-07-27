@@ -1,4 +1,4 @@
-.TH Sequencer66 "December 2021" "Version 0.98.0" "Seq66 Manual Page"
+.TH Sequencer66 "July 2022" "Version 0.98.11" "Seq66 Manual Page"
 
 .SH NAME
 Seq66 (qseq66) - Real-time live MIDI loop sequencer refactored from
@@ -269,6 +269,10 @@ no extension is present in the filename.
 Use a different configuration file base name for the 'rc' and 'usr' files.
 For example, one can specify a full configuration for "testing", for "jack",
 or for "alsa".
+.TP 8
+.B \-L, \-\-locale localename
+Set a different locale for running seq66. If the current locale uses the
+comma as a decimal point, then try --locale en_US.UTF-8 (for example).
 .TP 8
 .B \-o, \-\-option opvalue
 Provides additional options, including the no-GUI version of

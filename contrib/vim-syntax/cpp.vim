@@ -4,7 +4,7 @@
 "
 "  Language:      C/C++
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-09-04 to 2022-06-26
+"  Last Change:   2006-09-04 to 2022-07-27
 "  Project:       XPC Suite library project
 "  Usage:
 "
@@ -64,7 +64,7 @@ syn keyword cType ifstream insert istream istringstream iterator
 syn keyword cType length list make_pair map multimap
 syn keyword cType ofstream ostream ostringstream pair promise reverse_iterator
 syn keyword cType second set shared_ptr size size_type stack std string
-syn keyword cType stringstream
+syn keyword cType stringstream locale
 syn keyword cType thread unique_ptr value_type vector wstring
 
 "------------------------------------------------------------------------------

@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2021-10-27
+ * \updates       2022-07-27
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -37,7 +37,7 @@
 #include "qt5nsmanager.hpp"             /* an seq66::smanager for Qt 5      */
 #include "os/daemonize.hpp"             /* seq66::session_close(), etc.     */
 
-#define SEQ66_LOCALE_SUPPORT            /* needs more testing               */
+#undef  SEQ66_LOCALE_SUPPORT
 #undef  SEQ66_TRANSLATOR_SUPPORT
 
 /**
@@ -72,6 +72,12 @@ main (int argc, char * argv [])
     QApplication app(argc, argv);           /* main application object      */
 
 #if defined SEQ66_LOCALE_SUPPORT
+
+    /*
+     * No longer used, it conflicts with getopt processing.  Instead, see
+     * the --locale option in the cmdlineopts module.
+     */
+
     Q_FOREACH(QString a, app.arguments())
     {
         const static QString s_locale_arg = "--locale:";

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-06-28
+ * \updates       2022-07-27
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -46,6 +46,7 @@
  */
 
 #include <iostream>                     /* std::cout, etc.                  */
+#include <locale>                       /* std::locale, etc.                */
 #include <string.h>                     /* strlen() <gasp!>                 */
 
 #include "cfg/cmdlineopts.hpp"          /* this module's header file        */
@@ -139,8 +140,15 @@ cmdlineopts::s_long_options [] =
     {"config",              required_argument, 0, 'c'},
     {"rc",                  required_argument, 0, 'f'},
     {"usr",                 required_argument, 0, 'F'},
-    {"load-recent",         0, 0, 'L'},
-    {"no-load-recent",      0, 0, 'L'},
+
+    /*
+     * Never implemented!
+     *
+     * {"load-recent",         0, 0, 'L'},
+     * {"no-load-recent",      0, 0, 'L'},
+     */
+
+    {"locale",              required_argument, 0, 'L'},
     {"User",                0, 0, 'Z'},
     {"Native",              0, 0, 'z'},
 
@@ -166,7 +174,7 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         0123456789#@AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz
-        x         x xx::x:xx  :: x:x:xxxxx :xxxx *xx :xxxxxxx:xxxx::  aa
+        x         x xx::x:xx  :: x:x:xxxxx::xxxx *xx :xxxxxxx:xxxx::  aa
 \endverbatim
  *
  *  * Note that 'o' options arguments cannot be included here due to issues
@@ -188,9 +196,9 @@ cmdlineopts::s_long_options [] =
  */
 
 #if defined SEQ66_JACK_SUPPORT      // how to handle no SEQ66_NSM_SUPPORT?
-#define CMD_OPTS "09#AaB:b:Cc:DdF:f:gH:hI:iJjKkl:M:mNnoPpq:RrSsTtU:uVvWwX:x:Zz#"
+#define CMD_OPTS "09#AaB:b:Cc:DdF:f:gH:hI:iJjKkL:l:M:mNnoPpq:RrSsTtU:uVvWwX:x:Zz#"
 #else
-#define CMD_OPTS "0#AaB:b:c:DdF:f:H:hI:iKkl:M:mnoPpq:RrsTuVvX:x:Zz#"
+#define CMD_OPTS "0#AaB:b:c:DdF:f:H:hI:iKkL:l:M:mnoPpq:RrsTuVvX:x:Zz#"
 #endif
 
 const std::string cmdlineopts::s_arg_list = CMD_OPTS;
@@ -289,6 +297,7 @@ static const std::string s_help_3 =
 "                            rules as for the --rc option.\n"
 "   -c, --config basename    Change 'rc', 'usr', ... base file names. Any\n"
 "                            extension is stripped starting at the last period.\n"
+"   -L, --locale lname       Set the global locale, if installed on the system.\n"
 "   -o, --option optoken     Provides app-specific options for expansion.  The\n"
 "                            options supported are:\n"
 "\n"
@@ -936,12 +945,16 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 #endif
 
+        case 'K':
+            usr().inverse_colors(true);
+            break;
+
         case 'k':
             rc().print_keys(true);
             break;
 
-        case 'K':
-            usr().inverse_colors(true);
+        case 'L':
+            (void) set_global_locale(soptarg);
             break;
 
         case 'l':
@@ -1102,6 +1115,43 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             printf("\n");
         }
 #endif
+    }
+    return result;
+}
+
+/**
+ *  Locale-related functions.
+ */
+
+void
+cmdlineopts::show_locale ()
+{
+    std::locale loc {""};               /* get the user's preferred locale  */
+    std::string msg = loc.name();
+    status_message("Locale", msg);
+}
+
+bool
+cmdlineopts::set_global_locale (const std::string & lname)
+{
+    bool result = ! lname.empty();
+    if (result)
+    {
+        try
+        {
+            std::locale oldlocale = std::locale::global(std::locale{lname});
+            std::locale newlocale;      /* default ctor yields global loc.  */
+            std::string oldname = oldlocale.name();
+            std::string newname = newlocale.name();
+            std::string msg = oldname + " ---> " + newname;
+            status_message("Locale", msg);
+        }
+        catch (std::runtime_error & re)
+        {
+            std::string tag = "Locale '" + lname + "'";
+            error_message(tag, re.what());
+            result = false;
+        }
     }
     return result;
 }

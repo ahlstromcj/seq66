@@ -1,6 +1,21 @@
 TO DO for Seq66 0.98.11 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-07-22
+2019-04-13 to 2022-07-27
+
+Hot:
+
+    -   Issue #89 revisited: MIDI control output queue events
+    -   Issue #90: seq66 does not recognize some changes for the save entry in
+        the file menu.
+    -   Issue #91 No colors in live view with xfce/xubuntu.
+        Create a bash script for setting the locales to "en_US.UTF-8" before
+        starting qseq66 
+    -   Issue #92 Segfault when recording to a 32 beat pattern.
+        2021-02-16  or issue #85.
+    -   Issue #93 The window of a deleted pattern remains open
+    -   Issue #94 Long song cannot be scrolled to the right 
+    -   Issue #95 Velocity screen does not fully refresh when scrolling 
+        left or right.
 
 Pattern Editor, Main Window:
 
@@ -9,7 +24,7 @@ Pattern Editor, Main Window:
         when stopped, then restarted manually.
     -   Verify no bugs remaining in:
         -   Pattern fix dialog.
-        -   File / Save handling.
+        -   File / Save handling. See above.
     -   "Session: Save" can occur.  Annoying.
     -   Investigate handling of global time-signature.
         -   Save global time-signature to the user-file or the song?

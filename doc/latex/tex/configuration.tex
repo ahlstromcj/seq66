@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2022-07-21
+% \update      2022-07-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -439,6 +439,11 @@
       \texttt{testing.rc} and \texttt{testing.usr},
       \texttt{jack.rc} and \texttt{jack.usr},
       \texttt{alsa.rc} and \texttt{alsa.usr}.
+
+   \optionline{-L}{-{}-locale localename}
+      Set a different locale for running \textsl{Seq66}.
+      If the current locale uses the comma as a decimal point,
+      then try to use \texttt{en\_US.UTF-8} (for example).
 
    \optionline{-o}{-{}-option opvalue}
       Provides additional options, since the application is running out of
