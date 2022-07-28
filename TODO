@@ -1,6 +1,6 @@
 TO DO for Seq66 0.98.11 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-07-27
+2019-04-13 to 2022-07-28
 
 Hot:
 
@@ -15,6 +15,8 @@ Hot:
         -   Add painted note.
         -   Velocity change.
         -   Delete trigger, etc.
+        -   There is a difference between the active state of the save menu and
+            the save prompt when the program is closed.
     x   Issue #91 No colors in live view with xfce/xubuntu.
         Create a bash script for setting the locales to "en_US.UTF-8" before
         starting qseq66 
@@ -22,6 +24,10 @@ Hot:
         2021-02-16  or issue #85.
     x   Issue #93 The window of a deleted pattern remains open
     -   Issue #94 Long song cannot be scrolled to the right 
+        When I have a song with 60 bars (in song view) und add 5 more patterns
+        to one track, then i cannot add more, because i cannot scroll further.
+        Resizing the Window helps (after that there is more room to scroll
+        further).
     -   Issue #95 Velocity screen does not fully refresh when scrolling 
         left or right.
 
