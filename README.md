@@ -88,16 +88,18 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.98.11:
-        *   Revisited issue #78 (pattern-box sizes would become 0, making
-            the button progress boxes disappear). Now the 'usr' show option is
-            boolean ("pattern-boxes-shown", default = true), and the sizes
-            are kept within reasonable limits.  Also added a "--locale" option
-            so that the user can, for example, set the Seq66 global locale to
-            "en_US.UTF-8".
+        *   Revisited issue #78 (pattern-box sizes would become 0 and the
+            progress boxes disappeared). Now the 'usr' show option is boolean
+            ("pattern-boxes-shown", default = true), and the sizes are kept within
+            reasonable limits.  Also added a "--locale" option so that the user
+            can, for example, set the Seq66 global locale to "en_US.UTF-8".
         *   Fixed issue #89, where MIDI control display was not always
             reflecting the status of each pattern, especially during queuing.
         *   Improvements for issue #90, where Save does not get enabled.
         *   Fixed issue #93, the window of a deleted pattern remains open.
+        *   Mitigation of issue #94, long song cannot be scrolled to the right.
+            For the pattern editor, the workaround is to increase the length in
+            the pattern editor.
         *   Muted pattern slots show a short progress bar, to aid in the timing
             of queuing.
         *   Improved the handling of the MIDI 'ctrl' file.

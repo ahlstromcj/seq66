@@ -4,10 +4,8 @@ Chris Ahlstrom
 
 Hot:
 
-    ?   Issue #89 revisited: MIDI control output queue events
-        The other way round (unqueueing) gives me one queue event when I dequeue
-        (this is correct) and *another queue event* when the sequence actually
-        goes mute
+    x   Issue #89 revisited: MIDI control output queue events.  Done, but need
+        to look-deeper into the one-shot functionality at some point.
     ?   Issue #90: seq66 does not recognize some changes for the save entry in
         the file menu.  Also needs to set modify asterisk.
         -   Fix pattern.

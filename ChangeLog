@@ -1,5 +1,198 @@
+2022-07-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/src/play/performer.cpp: Interim safety
+	check-in for the road.
+
+2022-07-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/src/qslivebase.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixed issue #93, pattern editor open
+	after pattern cut/delete.
+	* TODO, libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qsmainwnd.cpp: Good progress
+	on issues #89 and #90, but need to resolve grid-flicker for #89.
+	* README.md, Seq66qt5/seq66qt5.cpp, TODO,
+	contrib/vim-syntax/cpp.vim, doc/latex/tex/configuration.tex,
+	libseq66/include/cfg/cmdlineopts.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/sessions/smanager.cpp, man/seq66.1, man/seq66cli.1,
+	man/sequencer66.1: Revisited issues #78 and #91 and added a locale
+	setting option.
+
+2022-07-23  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/src/play/performer.cpp,
+	seq_qt5/include/qloopbutton.hpp, seq_qt5/include/qslotbutton.hpp,
+	seq_qt5/src/qloopbutton.cpp: Minor tweaks to the slot-button
+	display.
+
+2022-07-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/linux/qseq66-lp-mini-alt.ctrl,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/sessions/smanager.cpp: More work on issue #89, nearly
+	complete.
+	* libseq66/include/cfg/midicontrolfile.hpp,
+	libseq66/include/cfg/rcfile.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/qseditoptions.cpp: 
+	Interim check-in of light refactoring of control-file I/O.
+
+2022-07-21  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/linux/qseq66-lp-mini-alt.ctrl,
+	doc/latex/tex/configuration.tex, doc/latex/tex/menu.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/ctrl/midicontrolout.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/ctrl/midicontrolout.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/qloopbutton.cpp: 
+	Interim check-in.
+	* README.md, configure, include/config.h.in,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/util/strfunctions.hpp,
+	libseq66/src/cfg/usrfile.cpp, libseq66/src/cfg/usrsettings.cpp,
+	libseq66/src/util/strfunctions.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qseditoptions.cpp, seq_rtmidi/src/midi_alsa_info.cpp: 
+	Upgrades for issue #78.
+
+2022-07-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, VERSION, configure.ac, contrib/git/git.text,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h: Prep for version 0.98.11.
+	* VERSION, configure.ac, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h: Version 0.98.10 pending.
+	* README.md, RELNOTES.md, contrib/vim-syntax/c.vim,
+	contrib/vim-syntax/cpp.vim, libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/midi/midifile.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/qseditoptions.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp, seq_rtmidi/src/midi_jack.cpp: 
+	Revisited issue #83 re automation/display controls.
+	* README.md, RELNOTES.md, contrib/git/git.text,
+	contrib/vim-syntax/c.vim, doc/latex/tex/seq66-user-manual.tex,
+	libseq66/src/cfg/configfile.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qseqeventframe.ui,
+	seq_qt5/include/qseqeventframe.hpp,
+	seq_qt5/include/qseventslots.hpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseventslots.cpp, seq_rtmidi/include/rtmidi_types.hpp: 
+	Fixed issue #88, updated RELNOTES for next version.
+
+2022-06-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, VERSION, configure.ac, contrib/git/git.text,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/cfg/cmdlineopts.hpp,
+	libseq66/include/cfg/mutegroupsfile.hpp,
+	libseq66/include/cfg/rcfile.hpp,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/mutegroup.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/mutegroupsfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/os/shellexecute.cpp, libseq66/src/play/mutegroup.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/qmutemaster.cpp: Fixed
+	issue #87, more testing needed.
+
+2022-06-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/scripts/make-checkout,
+	libseq66/include/cfg/usrsettings.hpp, seq_qt5/forms/qmutemaster.ui,
+	seq_qt5/src/qseditoptions.cpp: Improved layout of qmutemaster, fixed
+	non-changing usr options as per issue #87.
+	* ROADMAP.md, contrib/vim-syntax/c.vim, contrib/vim-syntax/cpp.vim,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/cfg/cmdlineopts.hpp,
+	libseq66/include/cfg/mutegroupsfile.hpp,
+	libseq66/include/cfg/rcfile.hpp,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/include/play/mutegroup.hpp,
+	libseq66/include/play/mutegroups.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/setmaster.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/mutegroupsfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/midi/calculations.cpp,
+	libseq66/src/midi/midibytes.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/mutegroup.cpp, libseq66/src/play/mutegroups.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/setmaster.cpp, libseq66/src/play/songsummary.cpp,
+	seq_qt5/include/qmutemaster.hpp, seq_qt5/src/qmutemaster.cpp,
+	seq_rtmidi/include/midi_info.hpp,
+	seq_rtmidi/include/midi_jack_info.hpp,
+	seq_rtmidi/src/midi_alsa_info.cpp, seq_rtmidi/src/midi_info.cpp,
+	seq_rtmidi/src/rtmidi_info.cpp: Many tweaks, work on issue #87 well
+	underway.
+
+2022-06-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/vim-syntax/c.vim, contrib/vim-syntax/cpp.vim: Updated vim
+	syntax files.
+
+2022-06-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* ROADMAP.md, contrib/scripts/seq66.sed,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/src/midi/midibytes.cpp,
+	seq_rtmidi/include/midi_alsa_info.hpp,
+	seq_rtmidi/include/rterror.hpp, seq_rtmidi/src/midi_alsa.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp: Removed unused midi_booleans
+	class, minor tweaks.
+	* NEWS, README.md, TODO, VERSION, configure, configure.ac,
+	configure.help, doc/latex/tex/jack.tex,
+	doc/latex/tex/launchpad_mini.tex,
+	doc/latex/tex/seq66-user-manual.tex, doc/latex/tex/sessions.tex,
+	include/config.h.in, libseq66/src/play/portslist.cpp,
+	libseq66/src/util/strfunctions.cpp,
+	seq_rtmidi/include/midi_alsa.hpp, seq_rtmidi/src/midi_alsa.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp, seq_rtmidi/src/midi_jack.cpp: 
+	Version increment, doc updates, port-naming fix, alsa experiments.
+
+2022-06-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure, include/config.h.in: Version bump to 0.98.9.1.
+	* : Fixed config.h.in merge conflict.
+
+2022-05-31  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, TODO, configure, doc/latex/tex/alsa.tex,
+	include/config.h.in: Minor config updates, added VMPK documentation
+	to user manual.
+
+2022-05-30  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, VERSION, configure.ac, doc/latex/tex/seq66-user-manual.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, seq_rtmidi/src/midi_alsa_info.cpp: 
+	Bumped the version and added note about vmpk input weirdness.
+
 2022-05-29  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* ChangeLog, include/config.h.in: Updating to quick release 0.98.9.
+	* README.md, TODO, VERSION, configure.ac, data/license.text,
+	data/share/doc/tutorial/main_window_patterns.html,
+	data/share/doc/tutorial/pattern_tools.html,
+	doc/dox/doxy-common.cfg, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/qinputcheckbox.cpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixed issue #85 seqfault and some minor
+	bugs, tutorial updates.
 	* README.md, TODO, VERSION, configure.ac, data/license.text,
 	data/share/doc/tutorial/main_window_patterns.html,
 	data/share/doc/tutorial/pattern_tools.html,

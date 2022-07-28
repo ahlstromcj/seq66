@@ -286,7 +286,8 @@ qperfroll::reset_v_zoom ()
 }
 
 /**
- *  The scale_zoom() function is the zoom value times the scale value.
+ *  The scale_zoom() function is the zoom value times the scale value. At some
+ *  point, might override horizSizeHint() a la qperfbase.
  */
 
 QSize

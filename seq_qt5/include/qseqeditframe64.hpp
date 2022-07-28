@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-05-08
+ * \updates       2022-07-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -148,6 +148,21 @@ public:
     int edit_channel () const
     {
         return m_edit_channel;
+    }
+
+protected:
+
+    /*
+     * For issue #90, we had to remove the track-change marking from
+     * set_dirty().  But some of the locations where that function was
+     * called need to mark the sequence as modified.  This function
+     * replaces set_dirty() for those places.
+     */
+
+    void set_track_change ()
+    {
+        set_dirty();
+        track().modify(false);  /* modify, but do not change-notify */
     }
 
 private:        /* performer::callback overrides    */

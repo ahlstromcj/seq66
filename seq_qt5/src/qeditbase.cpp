@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2022-01-29
+ * \updates       2022-07-28
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -44,6 +44,12 @@
 
 namespace seq66
 {
+
+/*
+ * See qeditbase::horizSizeHint().
+ */
+
+static const float c_horizontal_factor = 1.25f;
 
 /**
  *  Principal constructor.
@@ -110,15 +116,20 @@ qeditbase::qeditbase
 }
 
 /**
- * int hint = perf().get_max_trigger() / scale_zoom() + 2000;
+ *  int hint = perf().get_max_trigger() / scale_zoom() + 2000;
+ *  Why 2000?  I forget!  Let's use a factor instead. Also see
+ *  qperfbase::horizSizeHint().
  *
- *  Why 2000?  I forget!
  */
 
 int
 qeditbase::horizSizeHint () const
 {
+#if defined USE_OLD_CODE
     return tix_to_pix(perf().get_max_trigger()) + 200;
+#else
+    return int(tix_to_pix(perf().get_max_trigger())) * c_horizontal_factor;
+#endif
 }
 
 bool

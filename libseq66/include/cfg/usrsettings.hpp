@@ -685,7 +685,7 @@ private:
     int m_mainwnd_x;
 
     /**
-     *  The hardwired base height of the whole main window.  Llike
+     *  The hardwired base height of the whole main window.  Like
      *  m_mainwnd_x, this value is scaled by the accessor, however, only if
      *  less than 1.0; otherwise, the top buttons expand way too much.
      */

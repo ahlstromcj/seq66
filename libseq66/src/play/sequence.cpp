@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-07-27
+ * \updates       2022-07-28
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -983,6 +983,10 @@ sequence::toggle_song_mute ()
  *  Toggles the queued flag and sets the dirty-mp flag.  Also calculates the
  *  queued tick based on m_last_tick.
  *
+ *  Issue #89: This function is called only when queing is turned on! To fix
+ *  this for status announcements, see set_playing() below.  Perhaps this
+ *  function should merely be "set_queued()".
+ *
  * \threadsafe
  */
 
@@ -992,6 +996,11 @@ sequence::toggle_queued ()
     automutex locker(m_mutex);
     set_dirty_mp();
     m_queued = ! m_queued;
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    printf("seq %d: queuing %s\n", int(seq_number()), m_queued ? "on" : "off");
+#endif
+
     m_queued_tick = m_last_tick - mod_last_tick() + get_length();
     m_off_from_snap = true;
     perf()->announce_pattern(seq_number());     /* for issue #89        */
@@ -4964,15 +4973,28 @@ sequence::set_playing (bool p)
     {
         m_playing = p;
         if (p)
-            set_song_mute(false);   /* see banner notes */
+            set_song_mute(false);                   /* see banner notes     */
         else
             off_playing_notes();
 
         set_dirty();
+        m_queued = false;
+        m_one_shot = false;
         perf()->announce_pattern(seq_number());     /* for issue #89        */
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf("seq %d: playing %s\n", int(seq_number()), p ? "on" : "off");
+#endif
     }
-    m_queued = false;
-    m_one_shot = false;
+
+    /*
+     * Let's move these above so that announce_pattern() behaves properly.
+     * Whenever playing state changes, we are unqueued.  Not yet sure
+     * about one-shot.
+     *
+     * m_queued = false;
+     * m_one_shot = false;
+     */
+
     return result;
 }
 
@@ -5862,13 +5884,15 @@ sequence::toggle_one_shot ()
     set_dirty_mp();
     m_one_shot = ! m_one_shot;
     m_one_shot_tick = m_last_tick - mod_last_tick() + get_length();
+    perf()->announce_pattern(seq_number());     /* for issue #89        */
     m_off_from_snap = true;
     return m_one_shot;
 }
 
 /**
  *  Sets the dirty flag, sets m_one_shot to false, and m_off_from_snap to
- *  true. This function remains unused here and in Kepler34.
+ *  true. This function remains unused here and in Kepler34. Instead, see
+ *  the set_playing() function above.
  */
 
 void
@@ -5878,6 +5902,7 @@ sequence::off_one_shot ()
     set_dirty_mp();
     m_one_shot = false;
     m_off_from_snap = true;
+    perf()->announce_pattern(seq_number());     /* for issue #89        */
 }
 
 /**

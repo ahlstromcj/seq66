@@ -44,18 +44,19 @@
  * The fixes for issue #90 cause a lot of redrawing during mouse movement
  * while using a line to edit (for example) velocity. So we do not call
  * change_event_data_range() or change_event_data_relative() during mouse
- * movement.  The orange edit line still appears, but doesn't take effect until
- * the mouse button is released.
+ * movement.  The orange edit line still appears, but doesn't take effect
+ * until the mouse button is released.
  *
  * This also disables the "relative adjust" feature we copped from Kepler34.
  * However, we have never been able to get that feature to turn on. In
  * Kepler34, all it seems to do is allow modifying a single event by moving
- * the mouse up and down. Obviously, our implementation is buggy, but does
- * it matter?  We will still see if we can get it to work at some point.
+ * the mouse up and down. Obviously, our implementation is buggy, but does it
+ * matter?  We will still see if we can get it to work at some point.
  *
- * To revert to the old behavior, define this macro.We leave the old behavior
- * in since other edits also cause flickering and we haven't figured out why
- * yet.
+ * To revert to the old behavior, define this macro. We leave the old behavior
+ * in since we figured out that constant title-dirtying in
+ * qsmainwnd::enable_save() was causing continuous flickering during editing
+ * mouse movements.
  */
 
 #define SEQ66_TRACK_DATA_EDITING_MOVEMENTS

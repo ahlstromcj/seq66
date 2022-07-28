@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-05-29
+ * \updates       2022-07-28
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -316,10 +316,10 @@ qseqeditframe64::qseqeditframe64
     set_measures(track().get_measures(), qbase::status::startup);
     m_scale = track().musical_scale();
     m_edit_bus = track().seq_midi_bus();
-    m_edit_channel = track().midi_channel();    /* 0-15, null           */
+    m_edit_channel = track().midi_channel();        /* 0-15, null           */
     seqname = track().name();
     loopcountmax = track().loop_count_max();
-    initialize_panels();                        /* uses seq_pointer()   */
+    initialize_panels();                            /* uses seq_pointer()   */
     if (usr().global_seq_feature())
     {
         set_scale(usr().seqedit_scale(), qbase::status::startup);
@@ -379,8 +379,8 @@ qseqeditframe64::qseqeditframe64
      * Beats Per Bar.  Fill the options for the beats per measure combo-box,
      * and set the default.  These range from 1 to 16, plus a value of 32.
      *
-     * How to handle values outside the combobox? Pass the string as a parameter
-     * to fill_combobox().
+     * How to handle values outside the combobox? Pass the string as a
+     * parameter to fill_combobox().
      *
      */
 
@@ -980,6 +980,14 @@ qseqeditframe64::qseqeditframe64
     set_midi_bus(m_edit_bus, qbase::status::startup);
     set_midi_channel(m_edit_channel, qbase::status::startup);  /* 0-15/0x80 */
 
+    /*
+     * For issue #94, both here and in the perf-edit frame, we may need to
+     * allocate more width.  To be determined. See:
+     *
+     *      qseqroll::scroll_offset()
+     *      qperfroll::sizeHint()
+     */
+
     int seqwidth = m_seqroll->width();
     int scrollwidth = ui->rollScrollArea->width();
     m_seqroll->progress_follow(seqwidth > scrollwidth);
@@ -1125,8 +1133,8 @@ qseqeditframe64::on_sequence_change
     bool result = seqno == trackno;
     if (result)
     {
-        set_dirty();
-        update_midi_buttons();              /* mirror current states    */
+        set_dirty();                            /* modified for issue #90   */
+        update_midi_buttons();                  /* mirror current states    */
     }
     return result;
 }
@@ -1271,6 +1279,7 @@ qseqeditframe64::conditional_update ()
     if (m_beat_width != track().get_beat_width())
     {
         m_beat_width = track().get_beat_width();
+
         std::string mstring = std::to_string(m_beat_width);
         int lenindex = beatwidth_list().index(m_beat_width);
         if (lenindex >= 0)
@@ -1286,8 +1295,8 @@ qseqeditframe64::conditional_update ()
          * the input buss.
          */
 
-        set_dirty();
-        update_midi_buttons();              /* mirror current states    */
+        set_dirty();                            /* modified for issue #90   */
+        update_midi_buttons();                  /* mirror current states    */
     }
 }
 
@@ -1346,6 +1355,8 @@ qseqeditframe64::would_truncate (int m)
 
 /**
  *  Handles edits of the sequence title.
+ *
+ *  We need to revisit sequence::set_name() in light of issue #90.
  */
 
 void
@@ -1353,7 +1364,7 @@ qseqeditframe64::update_seq_name ()
 {
     std::string name = ui->m_entry_name->text().toStdString();
     if (perf().set_sequence_name(track(), name))
-        set_dirty();
+        set_track_change();             /* added to solve issue #90         */
 }
 
 /**
@@ -1384,7 +1395,7 @@ qseqeditframe64::reset_beats_per_bar ()
 {
     int index = beats_per_bar_list().index(usr().bpb_default());
     ui->m_combo_bpm->setCurrentIndex(index);
-    set_dirty();
+    set_track_change();                 /* added to solve issue #90         */
 }
 
 /**
@@ -1417,7 +1428,7 @@ qseqeditframe64::set_beats_per_bar (int bpb, qbase::status qs)
             m_beats_per_bar = bpb;
             track().set_beats_per_bar(bpb);
             track().apply_length(bpb, 0, 0);        /* no measures supplied */
-            set_dirty();
+            set_track_change();         /* added to solve issue #90         */
         }
     }
 }
@@ -1447,7 +1458,7 @@ qseqeditframe64::set_measures (int m, qbase::status qs)
         {
             m_measures = m;
             if (track().apply_length(m))
-                set_dirty();
+                set_track_change();     /* added to solve issue #90         */
         }
     }
 }
@@ -1461,7 +1472,7 @@ qseqeditframe64::reset_measures ()
 {
     int index = beatwidth_list().index(m_measures);
     ui->m_combo_length->setCurrentIndex(index);
-    set_dirty();
+    set_track_change();                 /* added to solve issue #90         */
 }
 
 /**
@@ -1496,7 +1507,7 @@ qseqeditframe64::reset_beat_width ()
 {
     int index = beatwidth_list().index(usr().bw_default());
     ui->m_combo_bw->setCurrentIndex(index);
-    set_dirty();
+    set_track_change();                 /* added to solve issue #90         */
 }
 
 /**
@@ -1533,8 +1544,8 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
                 bool user_change = qs == qbase::status::edit;
                 m_beat_width = bw;
                 track().set_beat_width(bw, user_change);
-                track().apply_length(0, 0, bw);
-                set_dirty();
+                (void) track().apply_length(0, 0, bw);
+                set_track_change();     /* added to solve issue #90         */
             }
             else
                 reset_beat_width();
@@ -1624,7 +1635,7 @@ qseqeditframe64::update_chord (int index)
     if (index != m_chord && chord_number_valid(index))
     {
         set_chord(index);
-        set_dirty();
+        set_dirty();                    /* modified for issue #90           */
     }
 }
 
@@ -1639,7 +1650,7 @@ qseqeditframe64::reset_chord ()
     if (not_nullptr(m_seqroll))
         m_seqroll->set_chord(0);
 
-    set_dirty();
+    set_dirty();                        /* modified for issue #90           */
 }
 
 void
@@ -1651,6 +1662,8 @@ qseqeditframe64::set_chord (int chord)
         m_chord = sm_initial_chord = chord;
         if (not_nullptr(m_seqroll))
             m_seqroll->set_chord(chord);
+
+        set_dirty();                    /* modified for issue #90           */
     }
 }
 
@@ -1713,7 +1726,7 @@ qseqeditframe64::set_midi_bus (int bus, qbase::status qs)
         if (user_change)
         {
             repopulate_usr_combos(m_edit_bus, m_edit_channel);
-            set_dirty();
+            set_track_change();         /* added to solve issue #90         */
         }
         else
             ui->m_combo_bus->setCurrentIndex(bus);
@@ -1829,7 +1842,7 @@ qseqeditframe64::set_midi_channel (int ch, qbase::status qs)
                 {
                     repopulate_event_menu(m_edit_bus, m_edit_channel);
                     repopulate_mini_event_menu(m_edit_bus, m_edit_channel);
-                    set_dirty();
+                    set_track_change(); /* added to solve issue #90         */
                 }
                 else
                     ui->m_combo_channel->setCurrentIndex(chindex);
@@ -1850,6 +1863,7 @@ qseqeditframe64::undo ()
 
 /**
  *  Does a pop-redo on the sequence object and then sets the dirty flag.
+ *  We can't reliably call this a track change, however.
  */
 
 void
@@ -2219,7 +2233,7 @@ qseqeditframe64::set_background_sequence (int seqnum, qbase::status qs)
                 if (not_nullptr(m_seqroll))
                     m_seqroll->set_background_sequence(true, seqnum);
 
-                set_dirty();
+                set_track_change();     /* added to solve issue #90         */
             }
         }
     }
@@ -2433,7 +2447,7 @@ void
 qseqeditframe64::reset_grid_snap ()
 {
     ui->m_combo_snap->setCurrentIndex(4);
-    set_dirty();
+    set_dirty();                                /* modified for issue #90   */
 }
 
 /**
@@ -2495,7 +2509,7 @@ void
 qseqeditframe64::reset_note_length ()
 {
     ui->m_combo_note->setCurrentIndex(4);
-    set_dirty();
+    set_dirty();                                /* modified for issue #90   */
 }
 
 bool
@@ -2539,7 +2553,7 @@ qseqeditframe64::slot_update_zoom (int index)
 {
     int z = zoom_list().ctoi(index);
     (void) set_zoom(z);
-    set_dirty();
+    set_dirty();                                /* modified for issue #90   */
 }
 
 bool
@@ -2571,7 +2585,7 @@ qseqeditframe64::set_zoom (int z)
         float factor = float(zprevious) / float(zoom());
         int index = zoom_list().index(zoom());
         ui->m_combo_zoom->setCurrentIndex(index);
-        set_dirty();
+        set_dirty();                            /* modified for issue #90   */
         ui->rollScrollArea->scroll_x_by_factor(factor);
     }
     return result;
@@ -2614,10 +2628,7 @@ void
 qseqeditframe64::update_key (int index)
 {
     if (index != m_key && legal_key(index))
-    {
         set_key(index);
-        set_dirty();
-    }
 }
 
 void
@@ -2638,7 +2649,7 @@ qseqeditframe64::set_key (int key, qbase::status qs)
 
         bool user_change = qs == qbase::status::edit;
         track().musical_key(midibyte(key), user_change);
-        set_dirty();
+        set_track_change();             /* added to solve issue #90         */
     }
     else
         errprint("null pattern");
@@ -2682,7 +2693,7 @@ qseqeditframe64::set_scale (int scale, qbase::status qs)
         if (not_nullptr(m_tools_harmonic))
             m_tools_harmonic->setEnabled(m_scale > 0);
 
-        set_dirty();
+        set_track_change();             /* added to solve issue #90         */
     }
     else
         errprint("null pattern");
@@ -2701,7 +2712,7 @@ qseqeditframe64::editor_mode (bool ischecked)
     (
         ischecked ? sequence::editmode::drum : sequence::editmode::note
     );
-    set_dirty();
+    set_dirty();                        /* modified for issue #90           */
 }
 
 void
@@ -2714,7 +2725,7 @@ qseqeditframe64::set_editor_mode (sequence::editmode mode)
         if (not_nullptr(m_seqroll))
             m_seqroll->update_edit_mode(mode);
 
-        set_dirty();
+        set_dirty();                    /* modified for issue #90           */
     }
 }
 
@@ -3262,7 +3273,7 @@ qseqeditframe64::update_record_type (int index)
     }
     m_last_record_style = usr().grid_record_style(index);
     if (ok)
-        set_dirty();
+        set_dirty();                            /* modified for issue #90   */
 }
 
 void
@@ -3275,21 +3286,22 @@ qseqeditframe64::update_recording_volume (int index)
             recvol = (-1);                      /* force preserve-velocity  */
 
         set_recording_volume(recvol);
-        set_dirty();
+        set_dirty();                            /* modified for issue #90   */
     }
 }
 
 void
 qseqeditframe64::update_loop_count (int value)
 {
-    if (track().loop_count_max(value, true))    /* it is a user-changes     */
-        set_dirty();
+    if (track().loop_count_max(value, true))    /* it is a user-change      */
+        set_track_change();                     /* added for issue #90      */
 }
 
 void
 qseqeditframe64::reset_recording_volume ()
 {
     ui->m_combo_rec_vol->setCurrentIndex(0);
+    set_dirty();                                /* modified for issue #90   */
 }
 
 /**
@@ -3309,6 +3321,7 @@ qseqeditframe64::set_recording_volume (int recvol)
 {
     track().set_rec_vol(recvol);        /* save to the sequence settings    */
     usr().velocity_override(recvol);    /* save to the "usr" config file    */
+    set_dirty();                                /* modified for issue #90   */
 }
 
 void
@@ -3318,10 +3331,20 @@ qseqeditframe64::set_dirty ()
     {
         qseqframe::set_dirty();         /* roll, time, date & event panes   */
         m_seqroll->set_redraw();        /* also calls set_dirty();          */
-        m_seqdata->set_dirty();         /* update(); neither cause refresh  */
-        m_seqevent->set_dirty();        /* how about this? same!            */
-        m_seqtime->set_dirty();         /* any comment?                     */
-        track().modify(false);          /* do NOT do notify-change!         */
+
+        /*
+         * These are done in qseqframe::set_dirty().
+         *
+         * m_seqdata->set_dirty();      // update(); neither cause refresh  //
+         * m_seqevent->set_dirty();     // how about this? same!            //
+         * m_seqtime->set_dirty();      // any comment?                     //
+         *
+         * Make each location of change call this, if the action is indeed
+         * a sequence change.  Too tricky!  See the new set_track_change()
+         * function.
+         *
+         * track().modify(false);       // do NOT do notify-change!         //
+         */
     }
     update_draw_geometry();
 }
@@ -3356,7 +3379,7 @@ void
 qseqeditframe64::do_action (eventlist::edit action, int var)
 {
     track().handle_edit_action(action, var);
-    set_dirty();
+    set_dirty();                                /* modified for issue #90   */
 }
 
 /**

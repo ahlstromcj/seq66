@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-07-27
+ * \updates       2022-07-28
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -3023,11 +3023,21 @@ qsmainwnd::show_message_box (const std::string & msg_text)
     }
 }
 
+/**
+ *  ca 2022-07-28
+ *  Check for an actual flag change before dirtying the title, which prevents
+ *  a lot of flickering.
+ */
+
 void
 qsmainwnd::enable_save (bool flag)
 {
-    ui->actionSave->setEnabled(flag);
-    m_is_title_dirty = true;
+    bool enabled = ui->actionSave->isEnabled();
+    if (flag != enabled)
+    {
+        ui->actionSave->setEnabled(flag);
+        m_is_title_dirty = true;
+    }
 }
 
 void

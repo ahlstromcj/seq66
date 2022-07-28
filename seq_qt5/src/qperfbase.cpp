@@ -46,6 +46,12 @@
 namespace seq66
 {
 
+/*
+ * See qeditbase::horizSizeHint().
+ */
+
+static const float c_horizontal_factor = 1.25f;
+
 /**
  *  Primary constructor.
  */
@@ -76,9 +82,13 @@ int
 qperfbase::horizSizeHint () const
 {
     int result = tix_to_pix(perf().get_max_extent());
+#if defined USE_OLD_CODE
     result += 200;
     if (result < 2000)
         result = 2000;
+#else
+    result = int(result * c_horizontal_factor);
+#endif
 
     return result;
 }

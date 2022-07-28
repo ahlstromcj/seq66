@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-07-27
+ * \updates       2022-07-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2465,6 +2465,11 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
     else
         what = midicontrolout::seqaction::removed;
 
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    std::string wstr = seqaction_to_string(what);
+    printf("announce seq %d: %s\n", int(sn), wstr.c_str());
+#endif
+
     send_seq_event(sn, what);
     return true;
 }
@@ -3471,11 +3476,6 @@ performer::output_func ()
                         stderr, "Play underrun %ld us          \r",
                         delta_us
                     );
-                    /*
-                     * 2022-03-03 Why do we sleep here?
-                     *
-                     * (void) microsleep(1);
-                     */
                 }
 #endif
                 m_delta_us = delta_us;
@@ -5669,7 +5669,7 @@ performer::midi_control_event (const event & ev, bool recording)
         }
 #if defined SEQ66_PLATFORM_DEBUG
         if (! good)
-            printf("Control event not processed\n");
+            warnprint("control event not processed");
 #endif
     }
     return result;
@@ -5679,7 +5679,7 @@ void
 performer::signal_save ()
 {
     stop_playing();
-    signal_for_save();              /* provided by the daemonize module */
+    signal_for_save();                  /* provided by the daemonize module */
 }
 
 void

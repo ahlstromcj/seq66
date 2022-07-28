@@ -42,11 +42,13 @@ namespace seq66
 {
 
 /**
- *  Creates a single line in the MIDI Clocks "Clock" group-box.  We will use
- *  the words "clock" or "port" for the MIDI output port represented by this
- *  widget.  Here are the jobs we have to do:
+ *  Creates a single line in the MIDI Clocks "Clock" group-box or in the MIDI
+ *  Inputs group-box. It is the base class for qclocklayout and
+ *  qinputcheckbox. We use the words "clock", "input", or "port" for the MIDI
+ *  input/output ports represented by this widget.  Here are the jobs we have
+ *  to do:
  *
- *      -#    Get the label for the port and set it.
+ *      -#  Get the label for the port and set it.
  *      -#  Add the tooltips for the clock radio-buttons.
  *      -#  Add the clock radio-buttons to m_horizlayout_clocklive.
  *        -#    Connect to the radio-button slots:
