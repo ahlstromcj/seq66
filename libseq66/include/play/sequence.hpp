@@ -1496,7 +1496,7 @@ public:
     void notify_change (bool userchange = true);
     void notify_trigger ();
     void print_triggers () const;
-    void add_trigger
+    bool add_trigger
     (
         midipulse tick, midipulse len,
         midipulse offset    = 0,
@@ -1504,8 +1504,9 @@ public:
         bool adjust_offset  = true
     );
     bool split_trigger (midipulse tick, trigger::splitpoint splittype);
-    void grow_trigger (midipulse tick_from, midipulse tick_to, midipulse len);
-    void delete_trigger (midipulse tick);
+    bool grow_trigger (midipulse tick_from, midipulse tick_to, midipulse len);
+    bool delete_trigger (midipulse tick);
+    bool clear_triggers ();
     bool get_trigger_state (midipulse tick) const;
     bool transpose_trigger (midipulse tick, int transposition);
     bool select_trigger (midipulse tick);
@@ -1529,9 +1530,10 @@ public:
 #endif
 
     bool delete_selected_triggers ();
-    bool cut_selected_trigger ();
-    void copy_selected_trigger ();
-    void paste_trigger (midipulse paste_tick = c_no_paste_trigger);
+    bool cut_selected_triggers ();
+    bool copy_selected_triggers ();
+    bool paste_trigger (midipulse paste_tick = c_no_paste_trigger);
+    void move_triggers (midipulse start_tick, midipulse distance, bool direction);
     bool move_triggers
     (
         midipulse tick, bool adjust_offset,
@@ -1550,9 +1552,7 @@ public:
     midipulse selected_trigger_end ();
     midipulse get_max_timestamp () const;
     midipulse get_max_trigger () const;
-    void move_triggers (midipulse start_tick, midipulse distance, bool direction);
     void copy_triggers (midipulse start_tick, midipulse distance);
-    void clear_triggers ();
 
     midipulse get_trigger_offset () const
     {

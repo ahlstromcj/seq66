@@ -192,7 +192,6 @@ qseqtime::paintEvent (QPaintEvent *)
      * Draw end of seq label, label background.
      */
 
-//  if (! perf().is_running() && (now != left) && (now != right))
     if (! perf().is_pattern_playing() && (now != left) && (now != right))
     {
         if (now >= xoff_left && now <= xoff_right)

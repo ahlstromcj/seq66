@@ -332,7 +332,8 @@ qperfroll::mousePressEvent(QMouseEvent *event)
     {
         if (on_pattern)
         {
-            bool state = dropseq->get_trigger_state(m_drop_tick);
+//          bool state = dropseq->get_trigger_state(m_drop_tick);
+            bool state = perf().get_trigger_state(m_drop_sequence, m_drop_tick);
             if (state)
             {
                 /*
@@ -381,7 +382,13 @@ qperfroll::mousePressEvent(QMouseEvent *event)
         if (isshift)
         {
             if (on_pattern)
-                dropseq->transpose_trigger(m_drop_tick, m_trigger_transpose);
+            {
+                perf().transpose_trigger
+                (
+                    m_drop_sequence, m_drop_tick, m_trigger_transpose
+                );
+            }
+//              dropseq->transpose_trigger(m_drop_tick, m_trigger_transpose);
         }
         else
         {
@@ -542,7 +549,12 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
         if (perf().song_record_snap())
             tick -= tick % s;
 
-        dropseq->grow_trigger(m_drop_tick, tick, seqlength);
+//      dropseq->grow_trigger(m_drop_tick, tick, seqlength);
+
+        (void) perf().grow_trigger
+        (
+            m_drop_sequence, m_drop_tick, tick, seqlength
+        );
     }
     else if (moving() || growing())
     {
@@ -566,7 +578,8 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
                 }
             }
 #else
-            dropseq->move_triggers(tick, true);
+//          dropseq->move_triggers(tick, true);
+            perf().move_triggers(m_drop_sequence, tick, true);
 #endif
         }
         if (growing())
@@ -661,7 +674,8 @@ qperfroll::keyPressEvent (QKeyEvent * event)
             {
                 if (perf().is_seq_active(seqid))
                 {
-                    if (perf().get_sequence(seqid)->delete_selected_triggers())
+//                  if (perf().get_sequence(seqid)->delete_selected_triggers())
+                    if (perf().delete_triggers(seqid))
                         dirty = true;
                 }
             }
@@ -675,24 +689,28 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                 handled = true;
                 if (not_nullptr(dropseq))
                 {
-                    perf().push_trigger_undo();
-                    if (dropseq->cut_selected_trigger())
+//                  perf().push_trigger_undo();
+//                  if (dropseq->cut_selected_trigger())
+                    if (perf().cut_triggers(m_drop_sequence))
                         dirty = true;
                 }
                 break;
 
             case Qt::Key_C:
                 handled = true;
-                if (not_nullptr(dropseq))
-                    dropseq->copy_selected_trigger();
+//              if (not_nullptr(dropseq))
+//                  dropseq->copy_selected_trigger();
+
+                perf().copy_triggers(m_drop_sequence);
                 break;
 
             case Qt::Key_V:
                 handled = dirty = true;
                 if (not_nullptr(dropseq))
                 {
-                    perf().push_trigger_undo();
-                    dropseq->paste_trigger();
+//                  perf().push_trigger_undo();
+//                  dropseq->paste_trigger();
+                    perf().paste_trigger(m_drop_sequence);
                 }
                 break;
 
@@ -781,13 +799,13 @@ qperfroll::keyReleaseEvent (QKeyEvent * /*event*/)
 void
 qperfroll::add_trigger(int seq, midipulse tick)
 {
-    perf().add_trigger(seq, tick, snap());
+    (void) perf().add_trigger(seq, tick, snap());
 }
 
 void
 qperfroll::delete_trigger(int seq, midipulse tick)
 {
-    perf().delete_trigger(seq, tick);
+    (void) perf().delete_trigger(seq, tick);
 }
 
 /*

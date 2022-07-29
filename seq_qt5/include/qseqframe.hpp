@@ -86,7 +86,7 @@ public:
     qseqframe
     (
         performer & p,
-        sequence & s,                   // int seqid,
+        sequence & s,
         QWidget * parent = nullptr
     );
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-07-27
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1973,11 +1973,6 @@ public:
     bool set_tightened_recording (seq::ref s, bool active, bool toggle);
     bool set_overwrite_recording (seq::ref s, bool active, bool toggle);
     bool set_thru (seq::ref s, bool active, bool toggle);
-    bool selected_trigger
-    (
-        seq::number seqno, midipulse droptick,
-        midipulse & tick0, midipulse & tick1
-    );
 
     bool selection_operation (SeqOperation func);
     void box_insert (seq::number dropseq, midipulse droptick);
@@ -2628,15 +2623,49 @@ public:
     bool perfroll_key_event (const keystroke & k, int drop_sequence);
 
     /*
-     * More trigger functions.
+     * Track-specific pass-along trigger functions.
      */
 
-    void clear_sequence_triggers (int seq);
-    void print_triggers () const;
+    bool select_trigger (seq::number seqno, midipulse droptick);
+    bool selected_trigger
+    (
+        seq::number seqno, midipulse droptick,
+        midipulse & tick0, midipulse & tick1
+    );
 
-    void move_triggers (bool direction)
+    bool clear_triggers (seq::number seqno);
+    bool print_triggers (seq::number seqno) const;
+    bool copy_triggers (seq::number seqno);
+    bool cut_triggers (seq::number seqno);
+    bool delete_triggers (seq::number seqno);
+    bool get_trigger_state (seq::number seqno, midipulse tick) const;
+    bool add_trigger (seq::number seqno, midipulse tick, midipulse snap);
+    bool delete_trigger (seq::number seqno, midipulse tick);
+    bool transpose_trigger (seq::number, midipulse droptick, int tranposition);
+    bool add_or_delete_trigger (seq::number seqno, midipulse tick);
+    bool split_trigger
+    (
+        seq::number seqno,
+        midipulse tick,
+        trigger::splitpoint splittype
+    );
+    bool grow_trigger
+    (
+        seq::number seqno,
+        midipulse tickfrom, midipulse tickto,
+        midipulse len
+    );
+    bool paste_trigger (seq::number seqno, midipulse tick = c_no_paste_trigger);
+    bool paste_or_split_trigger (seq::number seqno, midipulse tick);
+
+#if defined USE_INTERSECT_FUNCTIONS
+    bool intersect_triggers (seq::number seqno, midipulse tick);
+#endif
+    bool move_triggers (seq::number seqno, midipulse tick, bool adjust_offset);
+    bool move_triggers (bool direction)
     {
         mapper().move_triggers(m_left_tick, m_right_tick, direction);
+        return true;
     }
 
     void copy_triggers ()
@@ -2644,45 +2673,9 @@ public:
         mapper().copy_triggers(m_left_tick, m_right_tick);
     }
 
-    void push_trigger_undo (seq::number track = seq::all());
+    void push_trigger_undo (seq::number seqno = seq::all());
     void pop_trigger_undo ();
     void pop_trigger_redo ();
-
-    /**
-     *  Pass-along to sequence::get_trigger_state().
-     *
-     * \param seqno
-     *      The index to the desired sequence.
-     *
-     * \param tick
-     *      The time-location at which to get the trigger state.
-     *
-     * \return
-     *      Returns true if the sequence indicated by \a seqno exists and it's
-     *      trigger state is true.
-     */
-
-    bool get_trigger_state (seq::number seqno, midipulse tick) const
-    {
-        const seq::pointer s = get_sequence(seqno);
-        return not_nullptr(s) ? s->get_trigger_state(tick) : false ;
-    }
-
-    void add_trigger (seq::number seqno, midipulse tick, midipulse snap);
-    void delete_trigger (seq::number seqno, midipulse tick);
-    void add_or_delete_trigger (seq::number seqno, midipulse tick);
-    bool split_trigger
-    (
-        seq::number seqno,
-        midipulse tick,
-        trigger::splitpoint splittype
-    );
-    bool paste_trigger (seq::number seqno, midipulse tick);
-    bool paste_or_split_trigger (seq::number seqno, midipulse tick);
-
-#if defined USE_INTERSECT_FUNCTIONS
-    bool intersect_triggers (seq::number seqno, midipulse tick);
-#endif
 
     midipulse get_max_timestamp () const
     {
@@ -2873,8 +2866,6 @@ public:
             seqlow, seqhigh, tickstart, tickfinish
         );
     }
-
-    bool select_trigger (seq::number dropseq, midipulse droptick);
 
     void unselect_all_triggers ()
     {

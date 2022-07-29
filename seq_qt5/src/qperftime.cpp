@@ -174,7 +174,6 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
     int left = position_pixel(perf().get_left_tick());
     int right = position_pixel(perf().get_right_tick());
     int now = position_pixel(perf().get_tick());
-//  if (! perf().is_running() && (now != left) && (now != right))
     if (! perf().is_pattern_playing() && (now != left) && (now != right))
     {
         if (now >= xoff_left && now <= xoff_right)

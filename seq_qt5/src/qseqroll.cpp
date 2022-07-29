@@ -956,8 +956,9 @@ qseqroll::mousePressEvent (QMouseEvent * event)
             else                                    /* we're selecting anew */
             {
                 /*
-                 *  In drum mode, were using "is_onset", but this breaks moving
-                 *  the selected drum events. So we leave it at "selected".
+                 *  In drum mode, were using "is_onset", but this breaks
+                 *  moving the selected drum events. So we leave it at
+                 *  "selected".
                  */
 
                 eventlist::select selmode = eventlist::select::selected;
@@ -972,7 +973,12 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                         moving_init(true);          /* moving; L-click only */
                         set_dirty();
                         if (is_drum_mode())
-                            track().onsets_selected_box(tick_s, note, tick_f, note_l);
+                        {
+                            track().onsets_selected_box
+                            (
+                                tick_s, note, tick_f, note_l
+                            );
+                        }
                         else
                             track().selected_box(tick_s, note, tick_f, note_l);
 

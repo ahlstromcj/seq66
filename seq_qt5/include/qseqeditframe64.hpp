@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-07-28
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -102,6 +102,7 @@ class qseqeditframe64 final : public qseqframe, protected performer::callbacks
 {
     friend class qlfoframe;
     friend class qpatternfix;
+    friend class qperfroll;
     friend class qseqeditex;
     friend class qseqkeys;
     friend class qseqroll;
@@ -152,18 +153,7 @@ public:
 
 protected:
 
-    /*
-     * For issue #90, we had to remove the track-change marking from
-     * set_dirty().  But some of the locations where that function was
-     * called need to mark the sequence as modified.  This function
-     * replaces set_dirty() for those places.
-     */
-
-    void set_track_change ()
-    {
-        set_dirty();
-        track().modify(false);  /* modify, but do not change-notify */
-    }
+    void set_track_change ();
 
 private:        /* performer::callback overrides    */
 

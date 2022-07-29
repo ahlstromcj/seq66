@@ -3550,17 +3550,29 @@ sequence::play_note_off (int note)
     master_bus()->play_and_flush(m_true_bus, &e, midi_channel(e));
 }
 
-/**
- *  Clears the whole list of triggers.
- *
- * \threadsafe
+/*
+ * Track-specific trigger functions. The performer object calls these functions
+ * on behalf of the user-interface.
  */
 
-void
+bool
 sequence::clear_triggers ()
 {
     automutex locker(m_mutex);
+    int count = m_triggers.count();
+    bool result = count > 0;
     m_triggers.clear();
+    if (result)
+        modify(false);                  /* issue #90 flag change w/o notify */
+
+    return result;
+}
+
+void
+sequence::print_triggers () const
+{
+    automutex locker(m_mutex);
+    m_triggers.print(m_name);
 }
 
 /**
@@ -3582,7 +3594,7 @@ sequence::clear_triggers ()
  *      If true, adjust the offset. Defaults to true.
  */
 
-void
+bool
 sequence::add_trigger
 (
     midipulse tick, midipulse len, midipulse offset,
@@ -3592,6 +3604,8 @@ sequence::add_trigger
 {
     automutex locker(m_mutex);
     m_triggers.add(tick, len, offset, tpose, fixoffset);
+    modify(false);                      /* issue #90 flag change w/o notify */
+    return true;
 }
 
 #if defined USE_INTERSECT_FUNCTIONS
@@ -3788,11 +3802,13 @@ sequence::intersect_events
  * \threadsafe
  */
 
-void
+bool
 sequence::grow_trigger (midipulse tickfrom, midipulse tickto, midipulse len)
 {
     automutex locker(m_mutex);
     m_triggers.grow_trigger(tickfrom, tickto, len);
+    modify(false);                      /* issue #90 flag change w/o notify */
+    return true;
 }
 
 /**
@@ -3805,11 +3821,15 @@ sequence::grow_trigger (midipulse tickfrom, midipulse tickto, midipulse len)
  *      Provides the tick to be used for finding the trigger to be erased.
  */
 
-void
+bool
 sequence::delete_trigger (midipulse tick)
 {
     automutex locker(m_mutex);
-    m_triggers.remove(tick);
+    bool result = m_triggers.remove(tick);
+    if (result)
+        modify(false);                  /* issue #90 flag change w/o notify */
+
+    return result;
 }
 
 /**
@@ -3834,6 +3854,8 @@ sequence::set_trigger_offset (midipulse trigger_offset)
     }
     else
         m_trigger_offset = trigger_offset;
+
+//  modify(false);                      /* issue #90 flag change w/o notify */
 }
 
 /**
@@ -3852,7 +3874,11 @@ bool
 sequence::split_trigger (midipulse splittick, trigger::splitpoint splittype)
 {
     automutex locker(m_mutex);
-    return m_triggers.split(splittick, splittype);
+    bool result =  m_triggers.split(splittick, splittype);
+    if (result)
+        modify(false);                  /* issue #90 flag change w/o notify */
+
+    return result;
 }
 
 /**
@@ -3919,6 +3945,7 @@ sequence::move_triggers (midipulse starttick, midipulse distance, bool direction
 {
     automutex locker(m_mutex);
     m_triggers.move(starttick, distance, direction);
+    modify(false);                      /* issue #90 flag change w/o notify */
 }
 
 bool
@@ -4006,7 +4033,11 @@ sequence::move_triggers
 )
 {
     automutex locker(m_mutex);
-    return m_triggers.move_selected(tick, adjustoffset, which);
+    bool result =  m_triggers.move_selected(tick, adjustoffset, which);
+    if (result)
+        modify(false);                  /* issue #90 flag change w/o notify */
+
+    return result;
 }
 
 /**
@@ -4043,17 +4074,6 @@ sequence::get_max_timestamp () const
     return m_events.get_max_timestamp();
 }
 
-/**
- *  Checks the list of triggers against the given tick.  If any
- *  trigger is found to bracket that tick, then true is returned.
- *
- * \param tick
- *      Provides the tick of interest.
- *
- * \return
- *      Returns true if a trigger is found that brackets the given tick.
- */
-
 bool
 sequence::get_trigger_state (midipulse tick) const
 {
@@ -4067,7 +4087,7 @@ sequence::transpose_trigger (midipulse tick, int transposition)
     automutex locker(m_mutex);
     bool result = m_triggers.transpose(tick, transposition);
     if (result)
-        modify();                               /* no easy way to undo this */
+        modify(false);                          /* no easy way to undo this */
 
     return result;
 }
@@ -4146,7 +4166,11 @@ bool
 sequence::delete_selected_triggers ()
 {
     automutex locker(m_mutex);
-    return m_triggers.remove_selected();
+    bool result = m_triggers.remove_selected();
+    if (result)
+        modify(false);                  /* issue #90 flag change w/o notify */
+
+    return result;
 }
 
 /**
@@ -4157,10 +4181,10 @@ sequence::delete_selected_triggers ()
  */
 
 bool
-sequence::cut_selected_trigger ()
+sequence::cut_selected_triggers ()
 {
     automutex locker(m_mutex);
-    copy_selected_trigger();                    /* locks itself (recursive) */
+    copy_selected_triggers();                   /* locks itself (recursive) */
     return m_triggers.remove_selected();
 }
 
@@ -4169,12 +4193,13 @@ sequence::cut_selected_trigger ()
  *  Then it copies the first selected trigger that is found.
  */
 
-void
-sequence::copy_selected_trigger ()
+bool
+sequence::copy_selected_triggers ()
 {
     automutex locker(m_mutex);
     set_trigger_paste_tick(c_no_paste_trigger);
     m_triggers.copy_selected();
+    return true;
 }
 
 /**
@@ -4190,11 +4215,12 @@ sequence::copy_selected_trigger ()
  *      c_no_paste_trigger (-1) if there is none.
  */
 
-void
+bool
 sequence::paste_trigger (midipulse paste_tick)
 {
     automutex locker(m_mutex);
     m_triggers.paste(paste_tick);
+    return true;
 }
 
 /**
@@ -5334,18 +5360,6 @@ sequence::to_string () const
 }
 
 /**
- *  Prints a list of the currently-held triggers.
- *
- * \threadunsafe
- */
-
-void
-sequence::print_triggers () const
-{
-    m_triggers.print(m_name);
-}
-
-/**
  *  Takes an event that this sequence is holding, and places it on the MIDI
  *  buss.  This function does not bother checking if m_master_bus is a null
  *  pointer.
@@ -5803,6 +5817,8 @@ sequence::set_parent (performer * p)
             (void) set_midi_bus(m_nominal_bus);
         else
             (void) set_midi_bus(buss_override);
+
+        unmodify();                         /* for issue #90                */
     }
 }
 

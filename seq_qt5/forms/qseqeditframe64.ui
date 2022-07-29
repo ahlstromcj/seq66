@@ -162,8 +162,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>718</width>
-          <height>147</height>
+          <width>720</width>
+          <height>149</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -1358,7 +1358,7 @@ the '0' key in the piano roll.</string>
        </property>
        <property name="minimumSize">
         <size>
-         <width>24</width>
+         <width>32</width>
          <height>28</height>
         </size>
        </property>

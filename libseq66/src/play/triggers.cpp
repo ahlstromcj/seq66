@@ -636,18 +636,21 @@ triggers::grow_trigger (midipulse tickfrom, midipulse tickto, midipulse len)
  *      Provides the tick to be examined.
  */
 
-void
+bool
 triggers::remove (midipulse tick)
 {
+    bool result = false;
     for (auto i = m_triggers.begin(); i != m_triggers.end(); ++i)
     {
         if (i->tick_start() <= tick && tick <= i->tick_end())
         {
             unselect(*i);                       /* adjust selection count   */
             m_triggers.erase(i);
+            result = true;
             break;
         }
     }
+    return result;
 }
 
 void

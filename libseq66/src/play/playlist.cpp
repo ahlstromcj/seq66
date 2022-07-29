@@ -177,7 +177,6 @@ playlist::open_song (const std::string & fname, bool verifymode)
     bool result = not_nullptr(m_performer);
     if (result)
     {
-//      if (m_performer->is_running())
         if (m_performer->is_pattern_playing())
             m_performer->stop_playing();
 

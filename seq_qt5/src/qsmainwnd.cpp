@@ -782,6 +782,7 @@ qsmainwnd::qsmainwnd
      *      open_file(midifilename);
      */
 
+    update_window_title();
     if (! midifilename.empty())
         enable_save(false);
 
@@ -821,7 +822,6 @@ qsmainwnd::qsmainwnd
 
         rc().session_midi_filename(tune_name);
     }
-    (void) refresh_captions();
 
 #if defined SEQ66_PORTMIDI_SUPPORT
     ui->alsaJackButton->setText("PortMidi");
@@ -843,6 +843,7 @@ qsmainwnd::qsmainwnd
 
     show();
     show_song_mode(m_song_mode);
+    (void) refresh_captions();
     cb_perf().enregister(this);
     m_timer = qt_timer(this, "qsmainwnd", 3, SLOT(conditional_update()));
 }
@@ -955,7 +956,6 @@ void
 qsmainwnd::pause_playing ()
 {
     cb_perf().auto_pause();
-//  ui->btnPlay->setChecked(cb_perf().is_running());
     ui->btnPlay->setChecked(cb_perf().is_pattern_playing());
 }
 
@@ -1581,7 +1581,6 @@ qsmainwnd::conditional_update ()
         (void) refresh_captions();
         update_window_title();          /* puts current MIDI file in title  */
     }
-//  if (m_is_playing_now != cb_perf().is_running())
     if (m_is_playing_now != cb_perf().is_pattern_playing())
     {
         m_is_playing_now = cb_perf().is_pattern_playing();
@@ -3387,7 +3386,6 @@ qsmainwnd::clear_mute_groups ()
         if (check())
         {
             enable_save();
-//          if (cb_perf().is_running())
             if (cb_perf().is_pattern_playing())
                 stop_playing();
         }

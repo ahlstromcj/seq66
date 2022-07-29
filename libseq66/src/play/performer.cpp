@@ -4557,6 +4557,40 @@ performer::selected_trigger
     return result;
 }
 
+bool
+performer::clear_triggers (seq::number seqno)
+{
+    bool result = false;
+    seq::pointer s = get_sequence(seqno);
+    if (s)
+    {
+        result = s->clear_triggers();
+        if (result)
+            notify_trigger_change(seqno);
+    }
+    return result;
+}
+
+bool
+performer::print_triggers (seq::number seqno) const
+{
+    bool result = false;
+    seq::pointer s = get_sequence(seqno);
+    if (s)
+    {
+        s->print_triggers();
+        result = true;
+    }
+    return result;
+}
+
+bool
+performer::get_trigger_state (seq::number seqno, midipulse tick) const
+{
+    const seq::pointer s = get_sequence(seqno);
+    return not_nullptr(s) ? s->get_trigger_state(tick) : false ;
+}
+
 /**
  *  Adds a trigger on behalf of a sequence. The Seq24 behavior is that
  *  the beginning of the sequence is snapped to the nearest value that is a
@@ -4578,9 +4612,10 @@ performer::selected_trigger
  *      The MIDI pulse number at which the trigger should be handled.
  */
 
-void
+bool
 performer::add_trigger (seq::number seqno, midipulse tick, midipulse snap)
 {
+    bool result = false;
     seq::pointer s = get_sequence(seqno);
     if (s)
     {
@@ -4590,13 +4625,27 @@ performer::add_trigger (seq::number seqno, midipulse tick, midipulse snap)
             if (snap == 0)
                 snap = seqlength;
 
-            tick -= tick % snap;            // seqlength;
+            tick -= tick % snap;
         }
-
         push_trigger_undo(seqno);
-        s->add_trigger(tick, seqlength);    /* offset = 0, fixoffset = true */
-        notify_trigger_change(seqno);
+        result = s->add_trigger(tick, seqlength); /* offset=0, fixoff=true  */
+        if (result)
+            notify_trigger_change(seqno);
     }
+    return result;
+}
+
+bool
+performer::copy_triggers (seq::number seqno)
+{
+    bool result = false;
+    seq::pointer s = get_sequence(seqno);
+    if (s)
+    {
+        push_trigger_undo(seqno);
+        result = s->copy_selected_triggers();
+    }
+    return result;
 }
 
 /**
@@ -4609,16 +4658,69 @@ performer::add_trigger (seq::number seqno, midipulse tick, midipulse snap)
  *      The MIDI pulse number at which the trigger should be handled.
  */
 
-void
-performer::delete_trigger (seq::number seqno, midipulse tick)
+bool
+performer::cut_triggers (seq::number seqno)
 {
+    bool result = false;
     seq::pointer s = get_sequence(seqno);
     if (s)
     {
         push_trigger_undo(seqno);
-        s->delete_trigger(tick);
-        notify_trigger_change(seqno);
+        result = s->cut_selected_triggers();
+        if (result)
+            notify_trigger_change(seqno);
     }
+    return result;
+}
+
+bool
+performer::delete_triggers (seq::number seqno)
+{
+    bool result = false;
+    seq::pointer s = get_sequence(seqno);
+    if (s)
+    {
+        push_trigger_undo(seqno);
+        result = s->delete_selected_triggers();
+        if (result)
+            notify_trigger_change(seqno);
+    }
+    return result;
+}
+
+bool
+performer::delete_trigger (seq::number seqno, midipulse tick)
+{
+    bool result = false;
+    seq::pointer s = get_sequence(seqno);
+    if (s)
+    {
+        push_trigger_undo(seqno);
+        result = s->delete_trigger(tick);
+        if (result)
+            notify_trigger_change(seqno);
+    }
+    return result;
+}
+
+bool
+performer::transpose_trigger
+(
+    seq::number seqno, midipulse tick, int transposition)
+{
+    bool result = false;
+    if (transposition != 0)
+    {
+        seq::pointer s = get_sequence(seqno);
+        if (s)
+        {
+            push_trigger_undo(seqno);
+            result = s->transpose_trigger(tick, transposition);
+            if (result)
+                notify_trigger_change(seqno);
+        }
+    }
+    return result;
 }
 
 /**
@@ -4632,9 +4734,10 @@ performer::delete_trigger (seq::number seqno, midipulse tick)
  *      The MIDI pulse number at which the trigger should be handled.
  */
 
-void
+bool
 performer::add_or_delete_trigger (seq::number seqno, midipulse tick)
 {
+    bool result = false;
     seq::pointer s = get_sequence(seqno);
     if (s)
     {
@@ -4642,15 +4745,17 @@ performer::add_or_delete_trigger (seq::number seqno, midipulse tick)
         push_trigger_undo(seqno);
         if (state)
         {
-            s->delete_trigger(tick);
+            result = s->delete_trigger(tick);
         }
         else
         {
             midipulse seqlength = s->get_length();
-            s->add_trigger(tick, seqlength);
+            result = s->add_trigger(tick, seqlength);
         }
-        notify_trigger_change(seqno);
+        if (result)
+            notify_trigger_change(seqno);
     }
+    return result;
 }
 
 /**
@@ -4689,6 +4794,26 @@ performer::split_trigger
     return result;
 }
 
+bool
+performer::grow_trigger
+(
+    seq::number seqno,
+    midipulse tickfrom, midipulse tickto,
+    midipulse len
+)
+{
+    bool result = false;
+    seq::pointer s = get_sequence(seqno);
+    if (s)
+    {
+        push_trigger_undo(seqno);
+        result = s->grow_trigger(tickfrom, tickto, len);
+        if (result)
+            notify_trigger_change(seqno);
+    }
+    return result;
+}
+
 /**
  *  Convenience function for perfroll's paste-trigger functionality.
  *
@@ -4706,10 +4831,10 @@ performer::paste_trigger (seq::number seqno, midipulse tick)
     seq::pointer s = get_sequence(seqno);
     if (s)
     {
-        result = true;
         push_trigger_undo(seqno);
-        s->paste_trigger(tick);
-        notify_trigger_change(seqno);
+        result = s->paste_trigger(tick);
+        if (result)
+            notify_trigger_change(seqno);
     }
     return result;
 }
@@ -4739,11 +4864,27 @@ performer::paste_or_split_trigger (seq::number seqno, midipulse tick)
         }
         else
         {
-            result = true;
-            s->paste_trigger(tick);
+            result = s->paste_trigger(tick);
         }
         if (result)
             notify_trigger_change(seqno);
+    }
+    return result;
+}
+
+bool
+performer::move_triggers
+(
+    seq::number seqno, midipulse tick, bool adjust_offset
+)
+{
+    bool result = false;
+    seq::pointer s = get_sequence(seqno);
+    if (s)
+    {
+        s->move_triggers(tick, adjust_offset);
+        notify_trigger_change(seqno);
+        return true;
     }
     return result;
 }
