@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-04-28
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -351,13 +351,13 @@ public:
 
     void save_snapshot ()
     {
-        m_snapshot_status = active () ? m_seq->playing() : false ;
+        m_snapshot_status = active () ? m_seq->armed() : false ;
     }
 
     void restore_snapshot ()
     {
         if (active())
-            m_seq->set_playing(m_snapshot_status);
+            m_seq->set_armed(m_snapshot_status);
     }
 
 private:

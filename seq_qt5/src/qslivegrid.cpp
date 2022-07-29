@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2022-05-03
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -331,7 +331,7 @@ qslivegrid::conditional_update ()
                 seq::pointer s = pb->loop();
                 if (s)
                 {
-                    pb->set_checked(s->playing());
+                    pb->set_checked(s->armed());
                     pb->reupdate(true);
                 }
                 else
@@ -738,7 +738,7 @@ qslivegrid::refresh_all_slots ()
             seq::pointer s = perf().get_sequence(offset);
             if (not_nullptr(s))
             {
-                pb->set_checked(s->playing());
+                pb->set_checked(s->armed());
                 pb->reupdate(true);
             }
             ++offset;

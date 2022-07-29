@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-07-28
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2448,7 +2448,7 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
     midicontrolout::seqaction what;
     if (ok)
     {
-        if (s->playing())
+        if (s->armed())
         {
             what = s->get_queued() ?
                 midicontrolout::seqaction::queued :     // unqueueing pending
@@ -4063,8 +4063,11 @@ performer::auto_pause ()
 void
 performer::auto_stop ()
 {
-    stop_playing();
-    is_pattern_playing(false);
+    if (is_pattern_playing())
+    {
+        stop_playing();
+        is_pattern_playing(false);
+    }
 }
 
 void
@@ -5222,7 +5225,7 @@ performer::sequence_playing_toggle (seq::number seqno)
         bool is_keep_q = midi_control_in().is_keep_queue();
         bool is_replace = midi_control_in().is_replace();
         bool is_oneshot = midi_control_in().is_oneshot();
-        if (is_oneshot && ! s->playing())
+        if (is_oneshot && ! s->armed())
         {
             s->toggle_one_shot();                   /* why not just turn on */
         }
@@ -5667,10 +5670,14 @@ performer::midi_control_event (const event & ev, bool recording)
                     good = false;
             }
         }
-#if defined SEQ66_PLATFORM_DEBUG
-        if (! good)
-            warnprint("control event not processed");
-#endif
+        /*
+         *  This warning can be misleading, as often the release of a control
+         *  button emits an event (e.g. Note Off) that the user has not
+         *  bothered to define in the 'ctrl' file.
+         *
+         *      if (! good)
+         *          warnprint("control event not processed");
+         */
     }
     return result;
 }
@@ -5686,7 +5693,7 @@ void
 performer::signal_quit ()
 {
     stop_playing();
-    signal_for_exit();              /* provided by the daemonize module */
+    signal_for_exit();                  /* provided by the daemonize module */
 }
 
 /**

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-07-27
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -455,11 +455,11 @@ private:
      */
 
     /**
-     *  True if sequence playback currently is in progress for this sequence.
+     *  True if sequence playback currently is possible for this sequence.
      *  In other words, the sequence is armed.
      */
 
-    bool m_playing;
+    bool m_armed;
 
     /**
      *  True if sequence recording currently is in progress for this sequence.
@@ -1229,16 +1229,18 @@ public:
      * Documented at the definition point in the cpp module.
      */
 
-    bool set_playing (bool p);
+    bool set_armed (bool p);
 
+#if defined USE_OLD_CODE
     bool playing () const
     {
         return m_playing;
     }
+#endif
 
     bool armed () const
     {
-        return m_playing;
+        return m_armed;
     }
 
     bool sequence_playing_toggle ();
@@ -1392,7 +1394,7 @@ public:
 
     bool snap_it () const
     {
-        return playing() && (get_queued() || off_from_snap());
+        return armed() && (get_queued() || off_from_snap());
     }
 
     bool song_playback_block () const
@@ -1864,6 +1866,11 @@ private:
     performer * perf ()
     {
         return m_parent;
+    }
+
+    void armed (bool flag)
+    {
+        m_armed = flag;
     }
 
     bool quantize_events

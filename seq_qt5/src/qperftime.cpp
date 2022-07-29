@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-20
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -174,7 +174,8 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
     int left = position_pixel(perf().get_left_tick());
     int right = position_pixel(perf().get_right_tick());
     int now = position_pixel(perf().get_tick());
-    if (! perf().is_running() && (now != left) && (now != right))
+//  if (! perf().is_running() && (now != left) && (now != right))
+    if (! perf().is_pattern_playing() && (now != left) && (now != right))
     {
         if (now >= xoff_left && now <= xoff_right)
         {

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-07-28
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -156,7 +156,7 @@ sequence::sequence (int ppqn) :
     m_notes_on                  (0),
     m_master_bus                (nullptr),
     m_playing_notes             (),
-    m_playing                   (false),
+    m_armed                     (false),
     m_recording                 (false),
     m_draw_locked               (false),
     m_auto_step_reset           (false),
@@ -313,7 +313,7 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
          *  These values are set fine for this purpose by the constructor
          *
          *  m_playing_notes
-         *  m_playing
+         *  m_armed
          *  m_recording
          *  m_draw_locked
          *  m_auto_step_reset
@@ -943,12 +943,12 @@ sequence::toggle_playing ()
 bool
 sequence::toggle_playing (midipulse tick, bool resumenoteons)
 {
-    set_playing(! playing());
-    if (playing() && resumenoteons)
+    set_armed(! armed());
+    if (armed() && resumenoteons)
         resume_note_ons(tick);
 
     m_off_from_snap = false;
-    return playing();
+    return armed();
 }
 
 /**
@@ -960,7 +960,7 @@ sequence::toggle_playing (midipulse tick, bool resumenoteons)
  * \param mute
  *      True if the sequence is to be muted.
  *
- *  For Seq66, this function also calls set_playing() to the opposite of the
+ *  For Seq66, this function also calls set_armed() to the opposite of the
  *  mute value.
  */
 
@@ -968,7 +968,7 @@ void
 sequence::set_song_mute (bool mute)
 {
     m_song_mute = mute;
-    set_playing(! mute);
+    set_armed(! mute);
     set_dirty_mp();
 }
 
@@ -984,7 +984,7 @@ sequence::toggle_song_mute ()
  *  queued tick based on m_last_tick.
  *
  *  Issue #89: This function is called only when queing is turned on! To fix
- *  this for status announcements, see set_playing() below.  Perhaps this
+ *  this for status announcements, see set_armed() below.  Perhaps this
  *  function should merely be "set_queued()".
  *
  * \threadsafe
@@ -1065,7 +1065,7 @@ sequence::play
     m_trigger_offset = 0;                   /* NEW from Seq24 (!)           */
     if (m_song_mute)
     {
-        set_playing(false);
+        set_armed(false);
     }
     else
     {
@@ -1087,7 +1087,7 @@ sequence::play
             );
         }
     }
-    if (playing())                          /* play notes in the frame      */
+    if (armed())                            /* play notes in the frame      */
     {
         midipulse length = get_length() > 0 ? get_length() : m_ppqn ;
         midipulse offset = length - m_trigger_offset;
@@ -1153,7 +1153,7 @@ sequence::play
     }
     if (trigger_turning_off)                        /* triggers: "turn off" */
     {
-        set_playing(false);
+        set_armed(false);
     }
     m_last_tick = end_tick + 1;                     /* for next frame       */
 
@@ -4210,21 +4210,27 @@ sequence::paste_trigger (midipulse paste_tick)
  */
 
 void
-sequence::stop (bool song_mode)
+sequence::stop (bool songmode)
 {
+#if defined USE_OLD_CODE
     bool state = playing();
     off_playing_notes();
     set_playing(false);
     zero_markers();                         /* sets the "last-tick" value   */
     if (! song_mode)
         set_playing(state);
+#else
+    bool state = armed();
+    off_playing_notes();
+    zero_markers();                         /* sets the "last-tick" value   */
+    set_armed(songmode ? false : state);
+#endif
 }
 
 /**
  *  A pause version of stop().  It still includes the note-shutoff capability
- *  to prevent notes from lingering.  Note that we do not call
- *  set_playing(false)... it disarms the sequence, which we do not want upon
- *  pausing.
+ *  to prevent notes from lingering.  Note that we do not call set_arm(false);
+ *  it disarms the sequence, which we do not want upon pausing.
  *
  * \param song_mode
  *      Set to true if song mode is in force.  This setting corresponds to
@@ -4235,10 +4241,10 @@ sequence::stop (bool song_mode)
 void
 sequence::pause (bool song_mode)
 {
-    bool state = playing();
+    bool state = armed();
     off_playing_notes();
     if (! song_mode)
-        set_playing(state);
+        set_armed(state);
 }
 
 /**
@@ -4800,8 +4806,8 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
     bool result = len != m_length;
     if (result)
     {
-        bool was_playing = playing();
-        set_playing(false);                 /* turn everything off          */
+        bool was_playing = armed();             /* was it armed?            */
+        set_armed(false);                       /* mute the pattern         */
         if (len > 0)
         {
             if (len < midipulse(m_ppqn / 4))
@@ -4814,15 +4820,15 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
             len = get_length();
 
         m_events.set_length(len);
-        m_triggers.set_length(len);         /* must precede adjust call     */
+        m_triggers.set_length(len);             /* must precede adjustment  */
         if (adjust_triggers)
             m_triggers.adjust_offsets_to_length(len);
 
         if (verify)
             verify_and_link();
 
-        if (was_playing)                    /* start up and refresh         */
-            set_playing(true);
+        if (was_playing)                        /* start up and refresh     */
+            set_armed(true);
     }
     return result;
 }
@@ -4965,13 +4971,13 @@ sequence::notify_trigger ()
  */
 
 bool
-sequence::set_playing (bool p)
+sequence::set_armed (bool p)
 {
     automutex locker(m_mutex);
-    bool result = p != playing();
+    bool result = p != armed();
     if (result)
     {
-        m_playing = p;
+        armed(p);
         if (p)
             set_song_mute(false);                   /* see banner notes     */
         else
@@ -5892,7 +5898,7 @@ sequence::toggle_one_shot ()
 /**
  *  Sets the dirty flag, sets m_one_shot to false, and m_off_from_snap to
  *  true. This function remains unused here and in Kepler34. Instead, see
- *  the set_playing() function above.
+ *  the set_armed() function above.
  */
 
 void

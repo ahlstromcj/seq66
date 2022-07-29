@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2022-05-14
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -353,7 +353,7 @@ triggers::pop_redo ()
  * \sideeffect
  *      -   start_tick and end_tick as noted above
  *      -   sequence::song_playback_block() [in]
- *      -   sequence::set_playing() and playing() [in]
+ *      -   sequence::set_armed() and armed() [in]
  *      -   sequence::resume_note_ons()
  *      -   sequence::set_trigger_offset();
  *      -   sequence::last_tick(); [in]
@@ -410,7 +410,7 @@ triggers::play
      * we are not improvising (i.e. playing "Live").
      */
 
-    bool ok = trigger_state != m_parent.playing();
+    bool ok = trigger_state != m_parent.armed();
     if (ok)
         ok = ! m_parent.song_playback_block();
 
@@ -423,7 +423,7 @@ triggers::play
             else
                 start_tick = trigger_tick;              /* side-effect      */
 
-            m_parent.set_playing(true);                 /* side-effect      */
+            m_parent.set_armed(true);                   /* side-effect      */
 
             /*
              * If triggered between a Note On and a Note Off, then play it.
@@ -440,12 +440,12 @@ triggers::play
         }
     }
 
-    bool offplay = m_triggers.empty() && m_parent.playing();
+    bool offplay = m_triggers.empty() && m_parent.armed();
     if (offplay)
         offplay = ! m_parent.song_playback_block();
 
     if (offplay)
-        m_parent.set_playing(false);                    /* stop playing     */
+        m_parent.set_armed(false);                      /* stop playing     */
     else
         transpose = tp;                                 /* side-effect      */
 

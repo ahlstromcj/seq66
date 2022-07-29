@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2021-05-28
+ * \updates       2021-07-29
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -177,7 +177,8 @@ playlist::open_song (const std::string & fname, bool verifymode)
     bool result = not_nullptr(m_performer);
     if (result)
     {
-        if (m_performer->is_running())
+//      if (m_performer->is_running())
+        if (m_performer->is_pattern_playing())
             m_performer->stop_playing();
 
         result = m_performer->clear_song();

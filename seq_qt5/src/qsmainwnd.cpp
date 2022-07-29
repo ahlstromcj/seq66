@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-07-28
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -955,7 +955,8 @@ void
 qsmainwnd::pause_playing ()
 {
     cb_perf().auto_pause();
-    ui->btnPlay->setChecked(cb_perf().is_running());
+//  ui->btnPlay->setChecked(cb_perf().is_running());
+    ui->btnPlay->setChecked(cb_perf().is_pattern_playing());
 }
 
 /**
@@ -1580,9 +1581,10 @@ qsmainwnd::conditional_update ()
         (void) refresh_captions();
         update_window_title();          /* puts current MIDI file in title  */
     }
-    if (m_is_playing_now != cb_perf().is_running())
+//  if (m_is_playing_now != cb_perf().is_running())
+    if (m_is_playing_now != cb_perf().is_pattern_playing())
     {
-        m_is_playing_now = cb_perf().is_running();
+        m_is_playing_now = cb_perf().is_pattern_playing();
         ui->btnStop->setChecked(false);
         ui->btnPause->setChecked(false);
         ui->btnPlay->setChecked(m_is_playing_now);
@@ -3385,7 +3387,8 @@ qsmainwnd::clear_mute_groups ()
         if (check())
         {
             enable_save();
-            if (cb_perf().is_running())
+//          if (cb_perf().is_running())
+            if (cb_perf().is_pattern_playing())
                 stop_playing();
         }
     }

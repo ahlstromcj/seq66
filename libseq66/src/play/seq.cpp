@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2019-05-24
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  We added three classes:  seq, screenset, and setmapper, which replace a
@@ -329,14 +329,14 @@ seq::sequence_playing_change (bool on, bool qinprogress)
                     m_seq->toggle_queued();
             }
             else
-                m_seq->set_playing(on);
+                m_seq->set_armed(on);
         }
         else
         {
             if (queued && qinprogress)
                 m_seq->toggle_queued();
             else
-                m_seq->set_playing(on);
+                m_seq->set_armed(on);
         }
     }
 }

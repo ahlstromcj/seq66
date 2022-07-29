@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-07-28
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -3188,7 +3188,7 @@ qseqeditframe64::update_midi_buttons ()
     ui->m_toggle_qrecord->setToolTip(qrecord_active ? s_qrec_on : s_qrec_off);
     qt_set_icon(qrecord_active ? q_rec_on_xpm : q_rec_xpm, ui->m_toggle_qrecord);
 
-    bool playing = track().playing();
+    bool playing = track().armed();
     ui->m_toggle_play->setChecked(playing);
     ui->m_toggle_play->setToolTip(playing ? "Armed" : "Muted");
     qt_set_icon(playing ? play_on_xpm : play_xpm, ui->m_toggle_play);
@@ -3201,7 +3201,7 @@ qseqeditframe64::update_midi_buttons ()
 void
 qseqeditframe64::play_change (bool ischecked)
 {
-    if (track().set_playing(ischecked))
+    if (track().set_armed(ischecked))
         update_midi_buttons();
 }
 

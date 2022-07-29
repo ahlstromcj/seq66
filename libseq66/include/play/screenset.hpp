@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-04-29
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -435,7 +435,7 @@ public:
     bool armed (seq::number seqno) const
     {
         const seq::pointer track = seqinfo(seqno).loop();
-        return track ? track->playing() : false ;
+        return track ? track->armed() : false ;
     }
 
     bool armed_status (seq::number seqno) const

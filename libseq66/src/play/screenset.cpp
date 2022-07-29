@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-04-29
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -187,7 +187,7 @@ screenset::remove (seq::number seqno)
     if (sp && ! sp->seq_in_edit())
     {
         seq newseq;                         /* non-functional pattern       */
-        sp->set_playing(false);             /* turns off all notes as well  */
+        sp->set_armed(false);               /* turns off all notes as well  */
         m_container[seqno - offset()] = newseq;
         result = true;
     }
@@ -378,7 +378,7 @@ screenset::armed () const
 {
     for (auto & s : m_container)
     {
-        if (s.active() && s.loop()->playing())
+        if (s.active() && s.loop()->armed())
             return true;
     }
     return false;
@@ -421,7 +421,7 @@ screenset::off_sequences ()
     for (auto & s : m_container)
     {
         if (s.active())
-            s.loop()->set_playing(false);
+            s.loop()->set_armed(false);
     }
 }
 
@@ -529,7 +529,7 @@ screenset::armed (seq::number seqno, bool flag)
 {
     const seq::pointer track = seqinfo(seqno).loop();
     if (track)
-        track->set_playing(flag);
+        track->set_armed(flag);
 }
 
 /**
@@ -817,7 +817,7 @@ screenset::arm (seq::number seqno)
 {
     const seq::pointer track = seqinfo(seqno).loop();
     if (track)
-        track->set_playing(true);
+        track->set_armed(true);
 }
 
 /**
@@ -829,7 +829,7 @@ screenset::mute (seq::number seqno)
 {
     const seq::pointer track = seqinfo(seqno).loop();
     if (track)
-        track->set_playing(false);
+        track->set_armed(false);
 }
 
 void
@@ -1045,7 +1045,7 @@ screenset::arm ()
         if (s.active())                     /* guarantees a valid pointer */
         {
             seq::pointer sp = s.loop();
-            sp->set_playing(true);          /* NEED ONLY ONE FUNCTION???  */
+            sp->set_armed(true);
         }
     }
 }
@@ -1058,7 +1058,7 @@ screenset::mute ()
         if (s.active())                     /* guarantees a valid pointer */
         {
             seq::pointer sp = s.loop();
-            sp->set_playing(false);
+            sp->set_armed(false);
         }
     }
 }
@@ -1073,8 +1073,8 @@ screenset::toggle (seq::number seqno)
             if (s.active())                     /* guarantees valid pointer */
             {
                 seq::pointer sp = s.loop();
-                bool playing = sp->playing();
-                sp->set_playing(! playing);     /* or toggle_playing()      */
+                bool armed = sp->armed();
+                sp->set_armed(! armed);
             }
         }
     }
@@ -1083,8 +1083,8 @@ screenset::toggle (seq::number seqno)
         const seq::pointer track = seqinfo(seqno).loop();
         if (track)
         {
-            bool playing = track->playing();
-            track->set_playing(! playing);
+            bool armed = track->armed();
+            track->set_armed(! armed);
         }
     }
 }
@@ -1161,7 +1161,7 @@ screenset::learn_armed_statuses ()
         if (seqstatus.active())             /* guarantees a valid pointer */
         {
             seq::pointer sp = seqstatus.loop();
-            bool armed = sp->playing();
+            bool armed = sp->armed();
             seqstatus.armed_status(armed);
             if (armed)
             {
@@ -1260,7 +1260,7 @@ screenset::save_queued (seq::number repseq)
         {
             seq::pointer sp = s.loop();
             seq::number seqno = sp->seq_number();
-            bool on = sp->playing() || (seqno == repseq);
+            bool on = sp->armed() || (seqno == repseq);
             s.queued(on);
         }
     }
@@ -1296,7 +1296,7 @@ screenset::unqueue (seq::number hotseq)
             seq::number seqno = sp->seq_number();
             if (seqno == hotseq)
             {
-                if (! sp->playing())
+                if (! sp->armed())
                     sp->toggle_queued();
             }
             else if (s.queued())
@@ -1337,7 +1337,7 @@ screenset::apply_bits (const midibooleans & bits)
             if (sp)
             {
                 bool armed = bits[bit];
-                sp->set_song_mute(! armed);         /* calls set_playing()  */
+                sp->set_song_mute(! armed);         /* calls set_armed()    */
             }
         }
     }
@@ -1368,7 +1368,7 @@ screenset::learn_bits (midibooleans & bits)
             seq::pointer sp = find_by_number(s);
             if (sp)
             {
-                bool armed = sp->playing();
+                bool armed = sp->armed();
                 bits.push_back(midibool(armed));
             }
             else

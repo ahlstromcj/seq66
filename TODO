@@ -1,12 +1,10 @@
 TO DO for Seq66 0.98.11 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-07-28
+2019-04-13 to 2022-07-29
 
 Hot:
 
-    x   Issue #89 revisited: MIDI control output queue events.  Done, but need
-        to look-deeper into the one-shot functionality at some point.
-    ?   Issue #90: seq66 does not recognize some changes for the save entry in
+    x   Issue #90: seq66 does not recognize some changes for the save entry in
         the file menu.  Also needs to set modify asterisk.
         -   Fix pattern.
         -   LFO.
@@ -15,13 +13,9 @@ Hot:
         -   Delete trigger, etc.
         -   There is a difference between the active state of the save menu and
             the save prompt when the program is closed.
-    x   Issue #91 No colors in live view with xfce/xubuntu.
-        Create a bash script for setting the locales to "en_US.UTF-8" before
-        starting qseq66 
     -   Issue #92 Segfault when recording to a 32 beat pattern.
         2021-02-16  or issue #85.
-    x   Issue #93 The window of a deleted pattern remains open
-    -   Issue #94 Long song cannot be scrolled to the right 
+    x   Issue #94 Long song cannot be scrolled to the right 
         When I have a song with 60 bars (in song view) und add 5 more patterns
         to one track, then i cannot add more, because i cannot scroll further.
         Resizing the Window helps (after that there is more room to scroll
@@ -31,7 +25,6 @@ Hot:
 
 Pattern Editor, Main Window:
 
-    -   Handle the european "decimal point" on usage and display.
     -   Upon a button restart, the 'ctrl' file does not work.  Works fine
         when stopped, then restarted manually.
     -   Verify no bugs remaining in:

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2022-07-23
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -170,7 +170,7 @@ qloopbutton::qloopbutton
     m_note_min              (usr().progress_note_min()),
     m_note_max              (usr().progress_note_max()),
     m_seq                   (seqp),                 /* loop()               */
-    m_is_checked            (loop()->playing()),
+    m_is_checked            (loop()->armed()),
     m_prog_thickness        (usr().progress_bar_thick() ? 2 : 1),
     m_prog_back_color       (Qt::black),
     m_prog_fore_color       (Qt::green),
@@ -445,7 +445,7 @@ qloopbutton::toggle_checked ()
     bool result = loop()->sequence_playing_toggle();
     if (result)
     {
-        bool checked = loop()->playing();
+        bool checked = loop()->armed();
         set_checked(checked);
         reupdate(true);
     }
@@ -581,8 +581,8 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 m_bottom_right.m_w, m_bottom_right.m_h
             );
             painter.drawText(box, m_bottom_right.m_flags, title);
-            set_checked(loop()->playing()); /* gets hot-key toggle to show  */
-            if (loop()->playing())
+            set_checked(loop()->armed());   /* gets hot-key toggle to show  */
+            if (loop()->armed())
             {
                 title = loop()->get_queued() ? "Unqueued" : "Armed" ;
             }
@@ -686,7 +686,7 @@ qloopbutton::draw_progress_box (QPainter & painter)
         pen.setColor(Qt::gray);                     /* instead of Qt::black */
         pen.setStyle(Qt::SolidLine);
     }
-    else if (loop()->playing())                     /* armed, playing       */
+    else if (loop()->armed())                       /* armed, playing       */
     {
         backcolor.setAlpha(s_alpha_playing);
     }

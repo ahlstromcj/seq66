@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-20
+ * \updates       2022-07-29
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -907,7 +907,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
 
             int c = perf().color(seqid);
             Color backcolor = get_color_fix(PaletteColor(c));
-            if (s->playing())
+            if (s->armed())
                 backcolor.setAlpha(c_alpha_playing);
             else
                 backcolor.setAlpha(c_alpha_muted);

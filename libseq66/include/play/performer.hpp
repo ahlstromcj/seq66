@@ -154,8 +154,10 @@ public:
     };
 
     /**
-     *  A nest class to provide an implementation of the synchronizer
-     *  class.
+     *  A nested class to provide an implementation of the synchronizer
+     *  class.  This small class is used to simplify the usage of a condition
+     *  variable to coordinate the output function and the inner-start
+     *  function.
      */
 
     class synch : public synchronizer
@@ -1578,10 +1580,20 @@ public:
             m_master_bus->filter_by_channel(flag);
     }
 
-    bool is_running () const            /* is_playing()!!!                  */
+    /*
+     *  Used in synchronizing starting/stopping playback and in coordination
+     *  with jack_assistant (transport).
+     */
+
+    bool is_running () const
     {
         return m_is_running;
     }
+
+    /*
+     *  Used in conjunction with user-interface control of playback (start,
+     *  stop, pause).
+     */
 
     bool is_pattern_playing () const
     {
