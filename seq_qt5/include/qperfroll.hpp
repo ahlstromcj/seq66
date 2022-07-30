@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-09-12
+ * \updates       2022-07-30
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -177,11 +177,11 @@ private:
     int m_prog_thickness;
     int m_measure_length;
     int m_trigger_transpose;
-    int m_drop_sequence;                    // sequence selection
     midipulse m_tick_s;                     // start of tick window
     midipulse m_tick_f;                     // end of tick window
     int m_seq_h;                            // highest seq in window
     int m_seq_l;                            // lowest seq in window
+    int m_drop_track;                       // sequence selection
     midipulse m_drop_tick;
     midipulse m_drop_tick_offset;           // ticks clicked from trigger
     midipulse m_last_tick;                  // tick using at last mouse event

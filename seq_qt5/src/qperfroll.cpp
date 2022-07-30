@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-07-29
+ * \updates       2022-07-30
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -109,11 +109,11 @@ qperfroll::qperfroll
     m_prog_thickness    (usr().progress_bar_thick() ? 2 : 1),
     m_measure_length    (0),
     m_trigger_transpose (0),
-    m_drop_sequence     (-1),
     m_tick_s            (0),
     m_tick_f            (0),
     m_seq_h             (-1),
     m_seq_l             (-1),
+    m_drop_track        (-1),
     m_drop_tick         (0),
     m_drop_tick_offset  (0),
     m_last_tick         (0),
@@ -308,8 +308,8 @@ qperfroll::in_selection_area (midipulse tick)
 {
     return
     (
-        m_drop_sequence >= 0 &&
-        m_drop_sequence >= m_seq_l && m_drop_sequence <= m_seq_h &&
+        m_drop_track >= 0 &&
+        m_drop_track >= m_seq_l && m_drop_track <= m_seq_h &&
         tick >= m_tick_s && tick <= m_tick_f
     );
 }
@@ -324,16 +324,15 @@ qperfroll::mousePressEvent(QMouseEvent *event)
     bool mbutton = event->button() == Qt::MiddleButton || (lbutton && isctrl);
     drop_x(event->x());
     drop_y(event->y());
-    convert_xy(drop_x(), drop_y(), m_drop_tick, m_drop_sequence);
+    convert_xy(drop_x(), drop_y(), m_drop_tick, m_drop_track);
 
-    seq::pointer dropseq = perf().get_sequence(m_drop_sequence);
+    seq::pointer dropseq = perf().get_sequence(m_drop_track);
     bool on_pattern = not_nullptr(dropseq);
     if (mbutton)                                    /* split loop at cursor */
     {
         if (on_pattern)
         {
-//          bool state = dropseq->get_trigger_state(m_drop_tick);
-            bool state = perf().get_trigger_state(m_drop_sequence, m_drop_tick);
+            bool state = perf().get_trigger_state(m_drop_track, m_drop_tick);
             if (state)
             {
                 /*
@@ -350,7 +349,7 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                     if (snap() > 0)
                         tick -= tick % snap();
                 }
-                (void) perf().split_trigger(m_drop_sequence, tick, sp);
+                (void) perf().split_trigger(m_drop_track, tick, sp);
             }
         }
     }
@@ -360,9 +359,8 @@ qperfroll::mousePressEvent(QMouseEvent *event)
         {
             /*
              * See Shift-Left-Click instead.
-             *
              * if (on_pattern)
-             *    dropseq->transpose_trigger(m_drop_tick, m_trigger_transpose);
+             *    perf().transpose_trigger(...);
              */
         }
         else
@@ -385,10 +383,9 @@ qperfroll::mousePressEvent(QMouseEvent *event)
             {
                 perf().transpose_trigger
                 (
-                    m_drop_sequence, m_drop_tick, m_trigger_transpose
+                    m_drop_track, m_drop_tick, m_trigger_transpose
                 );
             }
-//              dropseq->transpose_trigger(m_drop_tick, m_trigger_transpose);
         }
         else
         {
@@ -398,11 +395,14 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                 m_adding_pressed = true;
                 if (on_pattern)
                 {
-                    bool trigger_state = dropseq->get_trigger_state(tick);
+                    bool trigger_state = perf().get_trigger_state
+                    (
+                        m_drop_track, tick
+                    );
                     if (trigger_state)
-                        delete_trigger(m_drop_sequence, tick);
+                        delete_trigger(m_drop_track, tick);
                     else
-                        add_trigger(m_drop_sequence, tick);
+                        add_trigger(m_drop_track, tick);
                 }
             }
             else                                    /* not in paint mode    */
@@ -423,12 +423,15 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                     if (! in_selection_area(tick))
                     {
                         perf().unselect_all_triggers();
-                        m_seq_h = m_seq_l = m_drop_sequence;
+                        m_seq_h = m_seq_l = m_drop_track;
                     }
-                    dropseq->select_trigger(tick);
+                    perf().select_trigger(m_drop_track, tick);
 
-                    midipulse start_tick = dropseq->selected_trigger_start();
-                    midipulse end_tick = dropseq->selected_trigger_end();
+                    midipulse start_tick, end_tick;
+                    (void) perf().selected_trigger
+                    (
+                        m_drop_track, tick, start_tick, end_tick
+                    );
 
                     /*
                      * Check for corner drag to grow sequence start.
@@ -529,7 +532,7 @@ qperfroll::mouseReleaseEvent (QMouseEvent * event)
 void
 qperfroll::mouseMoveEvent (QMouseEvent * event)
 {
-    seq::pointer dropseq = perf().get_sequence(m_drop_sequence);
+    seq::pointer dropseq = perf().get_sequence(m_drop_track);
     int x = event->x();
     int y = event->y();
     int row;
@@ -549,11 +552,9 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
         if (perf().song_record_snap())
             tick -= tick % s;
 
-//      dropseq->grow_trigger(m_drop_tick, tick, seqlength);
-
         (void) perf().grow_trigger
         (
-            m_drop_sequence, m_drop_tick, tick, seqlength
+            m_drop_track, m_drop_tick, tick, seqlength
         );
     }
     else if (moving() || growing())
@@ -567,24 +568,24 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
         if (moving())                           /* move selected triggers   */
         {
 #if defined USE_SONG_BOX_SELECT
-            midipulse lastoffset = tick - m_last_tick;
-            for (int seqid = m_seq_l; seqid <= m_seq_h; ++seqid)
-            {
-                seq::pointer seq = perf().get_sequence(seqid);
-                if (not_nullptr(seq))
-                {
-                    if (m_last_tick != 0)
-                        seq->offset_triggers(lastoffset);
-                }
-            }
+            if (m_last_tick != 0)
+                perf().box_move_triggers(tick - m_last_tick);
 #else
-//          dropseq->move_triggers(tick, true);
-            perf().move_triggers(m_drop_sequence, tick, true);
+            perf().move_triggers(m_drop_track, tick, true);
 #endif
         }
         if (growing())
         {
-            midipulse lastoffset = tick - m_last_tick;
+            if (m_last_tick != 0)
+            {
+                midipulse lastoffset = tick - m_last_tick;
+                triggers::grow ts = m_grow_direction ?
+                    triggers::grow::start : triggers::grow::end ;
+
+                (void) perf().offset_triggers(ts, m_seq_l, m_seq_h, lastoffset);
+            }
+
+#if USE_OLD_CODE
             if (m_grow_direction)               /* grow start & trigger(s)  */
             {
                 triggers::grow ts = triggers::grow::start;
@@ -611,6 +612,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
                     }
                 }
             }
+#endif
         }
     }
     else if (m_box_select)
@@ -618,7 +620,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
         current_x(event->x());
         current_y(event->y());
         snap_current_y();
-        convert_xy(0, current_y(), tick, m_drop_sequence);
+        convert_xy(0, current_y(), tick, m_drop_track);
     }
     m_last_tick = tick;
     set_dirty();                                    /* force a redraw       */
@@ -630,6 +632,8 @@ qperfroll::keyPressEvent (QKeyEvent * event)
 {
     bool handled = false;
     bool dirty = false;
+    seq::pointer dropseq = perf().get_sequence(m_drop_track);
+    bool on_pattern = not_nullptr(dropseq);
     if (perf().is_pattern_playing())
     {
         if (event->key() == Qt::Key_Space)
@@ -666,7 +670,11 @@ qperfroll::keyPressEvent (QKeyEvent * event)
             handled = true;
             set_adding(false);
         }
-        if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
+        else if
+        (
+            event->key() == Qt::Key_Delete ||
+            event->key() == Qt::Key_Backspace
+        )
         {
             handled = true;
             perf().push_trigger_undo();         /* delete selected notes    */
@@ -674,73 +682,77 @@ qperfroll::keyPressEvent (QKeyEvent * event)
             {
                 if (perf().is_seq_active(seqid))
                 {
-//                  if (perf().get_sequence(seqid)->delete_selected_triggers())
                     if (perf().delete_triggers(seqid))
                         dirty = true;
                 }
             }
         }
+        else if
+        (
+            event->key() == Qt::Key_Left ||
+            event->key() == Qt::Key_Right
+        )
+        {
+            if (on_pattern)
+            {
+                handled = true;
+#if THIS_CODE_IS_READY
+                bool forward = true;
+                if (event->key() == Qt::Key_Left)
+                    forward = false;
+
+                perf().move_triggers(m_drop_track, starttick, snap(), forward);
+#endif
+            }
+        }
         if (isctrl)
         {
-            seq::pointer dropseq = perf().get_sequence(m_drop_sequence);
             switch (event->key())
             {
             case Qt::Key_X:
                 handled = true;
-                if (not_nullptr(dropseq))
+                if (on_pattern)
                 {
-//                  perf().push_trigger_undo();
-//                  if (dropseq->cut_selected_trigger())
-                    if (perf().cut_triggers(m_drop_sequence))
+                    if (perf().cut_triggers(m_drop_track))
                         dirty = true;
                 }
                 break;
 
             case Qt::Key_C:
                 handled = true;
-//              if (not_nullptr(dropseq))
-//                  dropseq->copy_selected_trigger();
-
-                perf().copy_triggers(m_drop_sequence);
+                if (on_pattern)
+                    perf().copy_triggers(m_drop_track);
                 break;
 
             case Qt::Key_V:
-                handled = dirty = true;
-                if (not_nullptr(dropseq))
+                handled = true;
+                if (on_pattern)
                 {
-//                  perf().push_trigger_undo();
-//                  dropseq->paste_trigger();
-                    perf().paste_trigger(m_drop_sequence);
+                    if (perf().paste_trigger(m_drop_track))
+                        dirty = true;
                 }
                 break;
 
             case Qt::Key_Z:
-                handled = true;
+                handled = dirty = true;
                 if (event->modifiers() & Qt::ShiftModifier)
-                {
-                    dirty = true;
                     perf().pop_trigger_redo();
-                }
                 else
-                {
                     perf().pop_trigger_undo();
-                }
                 break;
 
             case Qt::Key_Home:
 
+                handled = true;
                 if (not_nullptr(frame64()))
                     frame64()->scroll_to_tick(0);
-
-                handled = true;
                 break;
 
             case Qt::Key_End:
 
+                handled = true;
                 if (not_nullptr(frame64()))
                     frame64()->scroll_to_tick(perf().get_max_extent());
-
-                handled = true;
                 break;
             }
         }

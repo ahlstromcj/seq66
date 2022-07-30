@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-07-29
+ * \updates       2022-07-30
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -44,7 +44,10 @@
  *      play/mutegroups.hpp
  */
 
+#if defined USE_SONG_BOX_SELECT
 #include <set>                          /* std::set, arbitary selection     */
+#endif
+
 #include <memory>                       /* std::shared_ptr<>, unique_ptr<>  */
 #include <vector>                       /* std::vector<>                    */
 #include <thread>                       /* std::thread                      */
@@ -318,6 +321,8 @@ public:
 
 public:
 
+#if defined USE_SONG_BOX_SELECT
+
     /**
      *  Provides a type to hold the unique shift-selected sequence numbers.
      *  Although this can be considered a GUI function, it makes sense to
@@ -337,6 +342,8 @@ public:
      */
 
     using SeqOperation = std::function<void(int)>;
+
+#endif  // defined USE_SONG_BOX_SELECT
 
 private:
 
@@ -855,6 +862,8 @@ private:                            /* key, midi, and op container section  */
 
     bool m_is_modified;
 
+#if defined USE_SONG_BOX_SELECT
+
     /**
      *  Provides a set holding all of the sequences numbers that have been
      *  shift-selected.  If we ever enable box-selection, this container will
@@ -862,6 +871,8 @@ private:                            /* key, midi, and op container section  */
      */
 
     selection m_selected_seqs;
+
+#endif
 
     /**
      *  A condition variable to protect playback.  It is signalled if playback
@@ -1974,13 +1985,15 @@ public:
     bool set_overwrite_recording (seq::ref s, bool active, bool toggle);
     bool set_thru (seq::ref s, bool active, bool toggle);
 
+#if defined USE_SONG_BOX_SELECT
+
     bool selection_operation (SeqOperation func);
     void box_insert (seq::number dropseq, midipulse droptick);
     void box_delete (seq::number dropseq, midipulse droptick);
     void box_toggle_sequence (seq::number dropseq, midipulse droptick);
     void box_unselect_sequences (seq::number dropseq);
     void box_move_triggers (midipulse tick);
-    void box_offset_triggers (midipulse offset);
+    void box_move_triggers (midipulse offset);
 
     bool box_selection_empty () const
     {
@@ -1991,6 +2004,8 @@ public:
     {
         m_selected_seqs.clear();
     }
+
+#endif  // defined USE_SONG_BOX_SELECT
 
     bool clear_all (bool clearplaylist = false);
     bool clear_song ();
@@ -2661,7 +2676,17 @@ public:
 #if defined USE_INTERSECT_FUNCTIONS
     bool intersect_triggers (seq::number seqno, midipulse tick);
 #endif
+
+    bool offset_triggers
+    (
+        triggers::grow ts, int seqlow, int seqhigh, midipulse offset
+    );
     bool move_triggers (seq::number seqno, midipulse tick, bool adjust_offset);
+
+    /*
+     * Used in collapse() and expand().
+     */
+
     bool move_triggers (bool direction)
     {
         mapper().move_triggers(m_left_tick, m_right_tick, direction);

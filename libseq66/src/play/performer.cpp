@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-07-29
+ * \updates       2022-07-30
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -373,7 +373,9 @@ performer::performer (int ppqn, int rows, int columns) :
     m_midiclockpos          (0),
     m_dont_reset_ticks      (false),            /* support for pausing      */
     m_is_modified           (false),
+#if defined USE_SONG_BOX_SELECT
     m_selected_seqs         (),
+#endif
     m_condition_var         (*this),            /* private access via cv()  */
 #if defined SEQ66_JACK_SUPPORT
     m_jack_asst
@@ -4323,6 +4325,8 @@ performer::visibility (automation::action a)
  * -------------------------------------------------------------------------
  */
 
+#if defined USE_SONG_BOX_SELECT
+
 /**
  *  A prosaic implementation of calling a function on the set of stored
  *  sequences.  Used for redrawing selected sequences in the graphical user
@@ -4347,6 +4351,12 @@ performer::selection_operation (SeqOperation func)
 
     return result;
 }
+
+/*
+ * -------------------------------------------------------------------------
+ *  Box selection of multiple tracks/triggers.
+ * -------------------------------------------------------------------------
+ */
 
 /**
  *  Selects the desired trigger for this sequence.  If this is the first
@@ -4459,7 +4469,7 @@ performer::box_move_triggers (midipulse tick)
  */
 
 void
-performer::box_offset_triggers (midipulse offset)
+performer::box_move_triggers (midipulse offset)
 {
     for (auto s : m_selected_seqs)
     {
@@ -4468,6 +4478,8 @@ performer::box_offset_triggers (midipulse offset)
             selseq->offset_triggers(offset);
     }
 }
+
+#endif  // defined USE_SONG_BOX_SELECT
 
 /*
  * -------------------------------------------------------------------------
@@ -4869,6 +4881,34 @@ performer::paste_or_split_trigger (seq::number seqno, midipulse tick)
         if (result)
             notify_trigger_change(seqno);
     }
+    return result;
+}
+
+bool
+performer::offset_triggers
+(
+    triggers::grow tg,
+    int seqlow, int seqhigh,
+    midipulse offset
+)
+{
+    bool result = false;
+    if (tg == triggers::grow::end)
+        --offset;
+
+    for (int seqid = seqlow; seqid <= seqhigh; ++seqid)
+    {
+        seq::pointer seq = get_sequence(seqid);
+        if (seq)
+        {
+            result = true;
+            seq->offset_triggers(offset, tg);
+            // notify_trigger_change(seqid); ???
+        }
+    }
+    if (result)
+        notify_trigger_change(seqlow);
+
     return result;
 }
 
