@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-07-30
+ * \updates       2022-07-31
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2670,6 +2670,7 @@ public:
         midipulse tickfrom, midipulse tickto,
         midipulse len
     );
+    const trigger & find_trigger (seq::number seqno, midipulse tick) const;
     bool paste_trigger (seq::number seqno, midipulse tick = c_no_paste_trigger);
     bool paste_or_split_trigger (seq::number seqno, midipulse tick);
 
@@ -2682,22 +2683,12 @@ public:
         triggers::grow ts, int seqlow, int seqhigh, midipulse offset
     );
     bool move_triggers (seq::number seqno, midipulse tick, bool adjust_offset);
-
-    /*
-     * Used in collapse() and expand().
-     */
-
-    bool move_triggers (bool direction)
-    {
-        mapper().move_triggers(m_left_tick, m_right_tick, direction);
-        return true;
-    }
-
-    void copy_triggers ()
-    {
-        mapper().copy_triggers(m_left_tick, m_right_tick);
-    }
-
+    bool move_trigger
+    (
+        seq::number seqno,
+        midipulse starttick, midipulse distance,
+        bool direction
+    );
     void push_trigger_undo (seq::number seqno = seq::all());
     void pop_trigger_undo ();
     void pop_trigger_redo ();
@@ -3215,6 +3206,13 @@ private:
     bool log_current_tempo ();
     bool create_master_bus ();
     void reset_sequences (bool pause = false);
+
+    void copy_triggers ()
+    {
+        mapper().copy_triggers(m_left_tick, m_right_tick);
+    }
+
+    bool move_triggers (bool direction);
 
     /**
      *  Convenience function for perfedit's collapse functionality.

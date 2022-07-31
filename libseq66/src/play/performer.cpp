@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-07-30
+ * \updates       2022-07-31
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -4826,6 +4826,17 @@ performer::grow_trigger
     return result;
 }
 
+const trigger &
+performer::find_trigger (seq::number seqno, midipulse tick) const
+{
+    static trigger s_dummy;
+    seq::pointer s = get_sequence(seqno);
+    if (s)
+        return s->find_trigger(tick);
+
+    return s_dummy;
+}
+
 /**
  *  Convenience function for perfroll's paste-trigger functionality.
  *
@@ -4923,6 +4934,35 @@ performer::move_triggers
     if (s)
     {
         s->move_triggers(tick, adjust_offset);
+        notify_trigger_change(seqno);
+        return true;
+    }
+    return result;
+}
+
+bool
+performer::move_triggers (bool direction)
+{
+    bool result = mapper().move_triggers(m_left_tick, m_right_tick, direction);
+    if (result)
+        notify_trigger_change(seq::all());
+
+    return result;
+}
+
+bool
+performer::move_trigger
+(
+    seq::number seqno,
+    midipulse starttick, midipulse distance,
+    bool direction
+)
+{
+    bool result = false;
+    seq::pointer s = get_sequence(seqno);
+    if (s)
+    {
+        s->move_triggers(starttick, distance, direction);
         notify_trigger_change(seqno);
         return true;
     }

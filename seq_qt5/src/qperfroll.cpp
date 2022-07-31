@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-07-30
+ * \updates       2022-07-31
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -293,13 +293,14 @@ qperfroll::reset_v_zoom ()
 QSize
 qperfroll::sizeHint () const
 {
-    int count = perf().sequences_in_sets();         // perf().sequence_max()
+    int count = perf().sequences_in_sets();
     int height = track_height() * count;
     int width = horizSizeHint();
     int w = frame64()->width();
     if (width < w)
         width = w;
 
+    width *= width_factor();
     return QSize(width, height);
 }
 
@@ -695,14 +696,19 @@ qperfroll::keyPressEvent (QKeyEvent * event)
         {
             if (on_pattern)
             {
-                handled = true;
-#if THIS_CODE_IS_READY
-                bool forward = true;
-                if (event->key() == Qt::Key_Left)
-                    forward = false;
+                trigger t = perf().find_trigger(m_drop_track, m_drop_tick);
+                if (t.is_valid())
+                {
+                    bool forward = true;
+                    handled = true;
+                    if (event->key() == Qt::Key_Left)
+                        forward = false;
 
-                perf().move_triggers(m_drop_track, starttick, snap(), forward);
-#endif
+                    perf().move_trigger
+                    (
+                        m_drop_track, t.tick_start(), snap(), forward
+                    );
+                }
             }
         }
         if (isctrl)

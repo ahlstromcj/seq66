@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-07-29
+ * \updates       2022-07-31
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -721,32 +721,39 @@ screenset::max_trigger () const
 }
 
 /**
- *
  * \param seqno
  *      Either a track number or seq::all() (the default value).
  */
 
-void
+bool
 screenset::move_triggers
 (
     midipulse lefttick, midipulse distance,
     bool direction, seq::number seqno
 )
 {
+    bool result = false;
     if (seqno == seq::all())
     {
         for (auto & s : m_container)
         {
             if (s.active())             /* guarantees a valid pointer */
-                s.loop()->move_triggers(lefttick, distance, direction);
+            {
+                if (s.loop()->move_triggers(lefttick, distance, direction))
+                    result = true;
+            }
         }
     }
     else
     {
         seq::pointer sp = find_by_number(seqno);
         if (sp)
-            sp->move_triggers(lefttick, distance, direction);
+        {
+            if (sp->move_triggers(lefttick, distance, direction))
+                result = true;
+        }
     }
+    return result;
 }
 
 void

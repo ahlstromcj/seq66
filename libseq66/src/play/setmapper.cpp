@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-04-29
+ * \updates       2022-07-31
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -738,22 +738,29 @@ setmapper::unselect_triggers (seq::number seqno)
  *
  * \param seqno
  *      Either a track number or seq::all() (the default value).
+ *
+ * \return
+ *      Returns true if a change was made.
  */
 
-void
+bool
 setmapper::move_triggers
 (
     midipulse lefttick, midipulse righttick,
     bool direction, seq::number seqno
 )
 {
+    bool result = false;
     if (righttick > lefttick)
     {
         midipulse distance = righttick - lefttick;
         if (seqno == seq::all())
         {
             for (auto & sset : sets())     /* screenset reference  */
-                sset.second.move_triggers(lefttick, distance, direction);
+            {
+                if (sset.second.move_triggers(lefttick, distance, direction))
+                    result = true;
+            }
         }
         else
         {
@@ -761,13 +768,14 @@ setmapper::move_triggers
             auto setiterator = sets().find(setno);
             if (setiterator != sets().end())
             {
-                setiterator->second.move_triggers
+                result = setiterator->second.move_triggers
                 (
                     lefttick, distance, direction, seqno
                 );
             }
         }
     }
+    return result;
 }
 
 /**

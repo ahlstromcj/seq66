@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2022-05-20
+ * \updates       2022-07-31
  * \license       GNU GPLv2 or above
  *
  */
@@ -59,11 +59,11 @@
 #include "pixmaps/collapse.xpm"
 #include "pixmaps/copy.xpm"
 #include "pixmaps/expand.xpm"
+#include "pixmaps/expandgrid.xpm"                   /* "pixmaps/right.xpm"  */
 #include "pixmaps/finger.xpm"
 #include "pixmaps/follow.xpm"
 #include "pixmaps/loop.xpm"
 #include "pixmaps/redo.xpm"
-#include "pixmaps/right.xpm"
 #include "pixmaps/transpose.xpm"
 #include "pixmaps/undo.xpm"
 #include "pixmaps/zoom_in.xpm"
@@ -320,12 +320,14 @@ qperfeditframe64::qperfeditframe64
      *  on the maximum trigger in all of the sequences in all sets.  At the
      *  moment, we're not sure how to deal with this, so the grow button is
      *  hidden.
+     *
+     *      ui->btnGrow->hide();
+     *      qt_set_icon(right_xpm, ui->btnGrow);
+     *      ui->btnGrow->setEnabled(false);
      */
 
     connect(ui->btnGrow, SIGNAL(clicked(bool)), this, SLOT(grow()));
-    qt_set_icon(right_xpm, ui->btnGrow);
-    ui->btnGrow->setEnabled(false);
-    ui->btnGrow->hide();
+    qt_set_icon(expandgrid_xpm, ui->btnGrow);
 
     /*
      *  Trigger transpose button and spin-box.
@@ -720,8 +722,9 @@ qperfeditframe64::marker_expand_copy ()
 void
 qperfeditframe64::grow ()
 {
-    m_perfroll->increment_size();
-    m_perftime->increment_size();
+    m_perfroll->increment_width();
+    m_perftime->increment_width();
+    update_sizes();                 // EXPERIMENTAL
 }
 
 void

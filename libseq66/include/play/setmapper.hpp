@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-04-29
+ * \updates       2022-07-31
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -598,7 +598,7 @@ private:
         midipulse tickstart, midipulse tickfinish
     );
     void unselect_triggers (seq::number seqno = seq::all());
-    void move_triggers
+    bool move_triggers
     (
         midipulse lefttick, midipulse righttick,
         bool direction, seq::number seqno = seq::all()

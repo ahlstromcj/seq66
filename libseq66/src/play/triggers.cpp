@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2022-07-29
+ * \updates       2022-07-31
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -794,8 +794,44 @@ triggers::copy (midipulse starttick, midipulse distance)
 }
 
 /**
+ *  Find the first trigger that brackets the given tick from the
+ *  trigger-list. Then return a reference to the trigger.
+ *
+ * \param tick
+ *      Provides the "x" location of the drop-click in the song-editor piano
+ *      roll, in units of pulses.
+ *
+ * \return
+ *      Returns a reference to the trigger, if found.  Otherwise, a
+ *      reference to a default trigger is returned.  Use the is_valid()
+ *      function before doing something with the trigger.
+ */
+
+const trigger &
+triggers::find_trigger (midipulse tick) const
+{
+    static trigger s_dummy;
+    for (auto i = m_triggers.begin(); i != m_triggers.end(); ++i)
+    {
+        if (i->tick_start() <= tick && tick <= i->tick_end())
+            return *i;
+    }
+    return s_dummy;
+}
+
+/**
  *  Moves triggers in the trigger-list.  There's no way to optimize this by
  *  saving tick values, as they are potentially modified at each step.
+ *
+\verbatim
+    tick_start()            tick_end()
+         -----------------------
+        |                       |
+        |     x                 |
+        |                       |
+         -----------------------
+           starttick
+\endverbatim
  *
  * \param starttick
  *      The current location of the triggers.
@@ -807,10 +843,67 @@ triggers::copy (midipulse starttick, midipulse distance)
  * \param direction
  *      If true, the triggers are moved forward. If false, the triggers are
  *      moved backward.
+ *
+ * \param single
+ *      If true (the default), then only the selected trigger will move.
+ *      Other wise, that trigger and all subsequent triggers will be moved.
+ *      The definition of "subsequent" depends on the direction parameter.
  */
 
 void
-triggers::move (midipulse starttick, midipulse distance, bool direction)
+triggers::move
+(
+    midipulse starttick, midipulse distance,
+    bool direction, bool single
+)
+{
+    for (auto & t : m_triggers)
+    {
+        if (direction)                                  /* forward */
+        {
+            if (t.tick_start() >= starttick)
+            {
+                midipulse added = t.tick_start() + distance;
+                t.tick_start(added);
+                added = t.tick_end() + distance;
+                t.tick_end(added);
+                added = (t.offset() + distance) % m_length;
+                t.offset(added);
+                t.offset(adjust_offset(t.offset()));
+                if (single)
+                    break;
+            }
+        }
+        else                                            /* back    */
+        {
+            midipulse endtick = starttick + distance;
+            if (t.tick_start() >= endtick)
+            {
+                midipulse deducted = t.tick_start() - distance;
+                t.tick_start(deducted);
+                deducted = t.tick_end() - distance;
+                t.tick_end(deducted);
+                deducted = (m_length - (distance % m_length)) % m_length;
+                t.offset(deducted);
+                t.offset(adjust_offset(t.offset()));
+                if (single)
+                    break;
+            }
+        }
+    }
+}
+
+/**
+ *  The following code was removed from the move() function.  Kept around in
+ *  case it matters; it is a feature from Seq24.  It causes a trigger moved
+ *  by a key to get split.
+ */
+
+void
+triggers::move_split
+(
+    midipulse starttick, midipulse distance, bool direction
+)
 {
     midipulse endtick = starttick + distance;
     for (auto i = m_triggers.begin(); i != m_triggers.end(); ++i)
@@ -845,34 +938,7 @@ triggers::move (midipulse starttick, midipulse distance, bool direction)
                 i->tick_start(endtick);
         }
     }
-    for (auto & t : m_triggers)
-    {
-        if (direction)                                  /* forward */
-        {
-            if (t.tick_start() >= starttick)
-            {
-                midipulse added = t.tick_start() + distance;
-                t.tick_start(added);
-                added = t.tick_end() + distance;
-                t.tick_end(added);
-                added = (t.offset() + distance) % m_length;
-                t.offset(added);
-            }
-        }
-        else                                            /* back    */
-        {
-            if (t.tick_start() >= endtick)
-            {
-                midipulse deducted = t.tick_start() - distance;
-                t.tick_start(deducted);
-                deducted = t.tick_end() - distance;
-                t.tick_end(deducted);
-                deducted = (m_length - (distance % m_length)) % m_length;
-                t.offset(deducted);
-            }
-        }
-        t.offset(adjust_offset(t.offset()));
-    }
+    move(starttick, distance, direction, false /* ? */);
 }
 
 /**

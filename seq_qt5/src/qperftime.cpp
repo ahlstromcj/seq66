@@ -228,6 +228,7 @@ qperftime::sizeHint () const
     if (width < w)
         width = w;
 
+    width *= width_factor();
     return QSize(width, height);
 }
 

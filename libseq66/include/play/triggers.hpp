@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-07-29
+ * \updates       2021-07-31
  * \license       GNU GPLv2 or above
  *
  *  By segregating trigger support into its own module, the sequence class is
@@ -507,6 +507,7 @@ public:
     void adjust_offsets_to_length (midipulse newlen);
     bool split (midipulse tick, trigger::splitpoint splittype);
     void grow_trigger (midipulse tickfrom, midipulse tickto, midipulse length);
+    const trigger & find_trigger (midipulse tick) const;
     bool remove (midipulse tick);
     bool get_state (midipulse tick) const;
     bool transpose (midipulse tick, int transposition);
@@ -524,11 +525,19 @@ public:
         midipulse tick, bool adjustoffset,
         triggers::grow which = triggers::grow::move
     );
-
     midipulse get_selected_start ();
     midipulse get_selected_end ();
     midipulse get_maximum () const;
-    void move (midipulse starttick, midipulse distance, bool direction);
+    void move
+    (
+        midipulse starttick, midipulse distance,
+        bool direction, bool single = true
+    );
+    void move_split
+    (
+        midipulse starttick, midipulse distance,
+        bool direction
+    );
     void copy (midipulse starttick, midipulse distance);
 
     /**

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-07-29
+ * \updates       2022-07-31
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1505,6 +1505,7 @@ public:
     );
     bool split_trigger (midipulse tick, trigger::splitpoint splittype);
     bool grow_trigger (midipulse tick_from, midipulse tick_to, midipulse len);
+    const trigger & find_trigger (midipulse tick) const;
     bool delete_trigger (midipulse tick);
     bool clear_triggers ();
     bool get_trigger_state (midipulse tick) const;
@@ -1533,7 +1534,7 @@ public:
     bool cut_selected_triggers ();
     bool copy_selected_triggers ();
     bool paste_trigger (midipulse paste_tick = c_no_paste_trigger);
-    void move_triggers (midipulse start_tick, midipulse distance, bool direction);
+    bool move_triggers (midipulse start_tick, midipulse distance, bool direction);
     bool move_triggers
     (
         midipulse tick, bool adjust_offset,

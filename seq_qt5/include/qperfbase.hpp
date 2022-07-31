@@ -69,6 +69,13 @@ class qperfbase : public qeditbase
 private:
 
     /**
+     *  Allows for expansion of the song-editor horizontally.  Starts out
+     *  at 1.25. See qperfbase::horizSizeHint().
+     */
+
+    float m_width_factor = 1.25f;
+
+    /**
      *  Provides the height of the track and names displays.  Starts at
      *  c_name_y, and can be halved or doubled from that.  We could allow it
      *  to be more than doubled, but that doesn't seem necessary.  A height
@@ -113,6 +120,16 @@ public:
     int track_height () const
     {
         return m_track_height;
+    }
+
+    void increment_width ()
+    {
+        m_width_factor += 0.50f;
+    }
+
+    float width_factor () const
+    {
+        return m_width_factor;
     }
 
 protected:

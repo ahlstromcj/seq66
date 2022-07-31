@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-07-29
+ * \updates       2022-07-30
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3811,6 +3811,13 @@ sequence::grow_trigger (midipulse tickfrom, midipulse tickto, midipulse len)
     return true;
 }
 
+const trigger &
+sequence::find_trigger (midipulse tick) const
+{
+    automutex locker(m_mutex);
+    return m_triggers.find_trigger(tick);
+}
+
 /**
  *  Deletes a trigger, that brackets the given tick, from the trigger-list.
  *  See triggers::remove().
@@ -3920,34 +3927,6 @@ sequence::copy_triggers (midipulse starttick, midipulse distance)
     m_triggers.copy(starttick, distance);
 }
 
-/**
- *  Moves triggers in the trigger-list.
- *
- *  Note the dependence on the m_length member being kept in sync with the
- *  parent's value of m_length.
- *
- * \threadsafe
- *
- * \param starttick
- *      The current location of the triggers.
- *
- * \param distance
- *      The distance away from the current location to which to move the
- *      triggers.
- *
- * \param direction
- *      If true, the triggers are moved forward. If false, the triggers are
- *      moved backward.
- */
-
-void
-sequence::move_triggers (midipulse starttick, midipulse distance, bool direction)
-{
-    automutex locker(m_mutex);
-    m_triggers.move(starttick, distance, direction);
-    modify(false);                      /* issue #90 flag change w/o notify */
-}
-
 bool
 sequence::selected_trigger
 (
@@ -3993,6 +3972,35 @@ sequence::selected_trigger_end ()
 {
     automutex locker(m_mutex);
     return m_triggers.get_selected_end();
+}
+
+/**
+ *  Moves triggers in the trigger-list.
+ *
+ *  Note the dependence on the m_length member being kept in sync with the
+ *  parent's value of m_length.
+ *
+ * \threadsafe
+ *
+ * \param starttick
+ *      The current location of the triggers.
+ *
+ * \param distance
+ *      The distance away from the current location to which to move the
+ *      triggers.
+ *
+ * \param direction
+ *      If true, the triggers are moved forward. If false, the triggers are
+ *      moved backward.
+ */
+
+bool
+sequence::move_triggers (midipulse starttick, midipulse distance, bool direction)
+{
+    automutex locker(m_mutex);
+    m_triggers.move(starttick, distance, direction);
+    modify(false);                      /* issue #90 flag change w/o notify */
+    return true;
 }
 
 /**

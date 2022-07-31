@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-07-29
+ * \updates       2022-07-31
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -512,7 +512,7 @@ private:
         seq::number seqlow, seq::number seqhigh,
         midipulse tick_start, midipulse tick_finish
     );
-    void move_triggers
+    bool move_triggers
     (
         midipulse lefttick, midipulse distance,
         bool direction, seq::number seqno = seq::all()

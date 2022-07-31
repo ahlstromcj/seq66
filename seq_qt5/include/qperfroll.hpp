@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-07-30
+ * \updates       2022-07-31
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -97,11 +97,6 @@ private:
     bool in_selection_area (midipulse tick);
     void draw_grid (QPainter & painter, const QRect & r);
     void draw_triggers (QPainter & painter, const QRect & r);
-
-    void increment_size ()
-    {
-        // TODO
-    }
 
     void resize ()
     {
