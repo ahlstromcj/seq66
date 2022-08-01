@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-05-15
+ * \updates       2022-08-01
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -323,11 +323,6 @@ qpatternfix::unmodify (bool reset_fields)
         ui->btn_effect_expand->setChecked(false);
         ui->btn_reset->setEnabled(false);
     }
-
-    /*
-     * ui->btn_set->setEnabled(false);
-     */
-
     m_is_modified = false;
 }
 
@@ -502,7 +497,7 @@ qpatternfix::slot_set ()
         m_save_note_length, m_use_time_sig, m_time_sig_beats,
         m_time_sig_width, m_measures, m_scale_factor, efx
     };
-    bool success = track().fix_pattern(fp);             /* side-effects     */
+    bool success = perf().fix_sequence(track().seq_number(), fp);
     if (success)
     {
         bool bitshifted = bit_test(efx, fixeffect::shifted);
@@ -530,11 +525,6 @@ qpatternfix::slot_set ()
         ui->btn_effect_shrink->setChecked(bitshrunk);
         ui->btn_effect_expand->setChecked(bitexpanded);
         set_dirty();                                    /* for redrawing    */
-
-        /*
-         * Let fix_pattern() do this: track().modify();
-         */
-
         unmodify(false);                                /* keep fields      */
     }
 }

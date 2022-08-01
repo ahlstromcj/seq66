@@ -1534,7 +1534,11 @@ public:
     bool cut_selected_triggers ();
     bool copy_selected_triggers ();
     bool paste_trigger (midipulse paste_tick = c_no_paste_trigger);
-    bool move_triggers (midipulse start_tick, midipulse distance, bool direction);
+    bool move_triggers
+    (
+        midipulse start_tick, midipulse distance,
+        bool direction, bool single = true
+    );
     bool move_triggers
     (
         midipulse tick, bool adjust_offset,

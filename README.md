@@ -1,7 +1,7 @@
 # README for Seq66 0.98.11
 
 Chris Ahlstrom
-2015-09-10 to 2022-07-31
+2015-09-10 to 2022-08-01
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -96,16 +96,19 @@ Windows, and using a conventional source tarball.
         *   Fixed issue #89, where MIDI control display was not always
             reflecting the status of each pattern, especially during queuing.
             Tightened up pattern arming/disarming processing.
-        *   Improvements for issue #90, where Save does not get enabled.
+        *   Improvements for issue #90, where Save does not get enabled. Surely
+            some remain.  Also, in some cases there is no way to "unmodify".
         *   Fixed issue #93, the window of a deleted pattern remains open.
-        *   Mitigation of issue #94, long song cannot be scrolled to the right.
-            Added more padding, and a button to expand the grid when desired.
-            For the pattern editor, the workaround is to increase the length in
-            the pattern editor.
+        *   Mitigation of issue #94, long song in song editor cannot be scrolled
+            to the right.  Added more padding, and a button to expand the grid
+            when desired.  For the pattern editor, the workaround is to increase
+            the length in the pattern editor.
         *   Muted pattern slots show a short progress bar, to aid in the timing
             of queuing.
         *   Improved the handling of the MIDI 'ctrl' file.
-        *   Implemented left/right arrow keys to move triggers.
+        *   Implemented left/right arrow keys to move the selected trigger in
+            the song editor. Ctrl moves multiple triggers. Moving a trigger past
+            END moves END.
     *   Version 0.98.10:
         *   Revisited issue #83, improved GUI editing of control/display
             automation.

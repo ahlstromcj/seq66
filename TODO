@@ -1,18 +1,14 @@
 TO DO for Seq66 0.98.11 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-07-29
+2019-04-13 to 2022-08-01
 
 Hot:
 
     x   Issue #90: seq66 does not recognize some changes for the save entry in
         the file menu.  Also needs to set modify asterisk.
-        -   Fix pattern.
-        -   LFO.
-        -   Add painted note.
-        -   Velocity change.
-        -   Delete trigger, etc.
-        -   There is a difference between the active state of the save menu and
-            the save prompt when the program is closed.
+        -   Fix pattern. Needs a way to allow user to back out more easily.
+        -   LFO. Reset needs to undo modify, but only no modification already
+            in place.
     -   Issue #92 Segfault when recording to a 32 beat pattern.
         2021-02-16  or issue #85.
     x   Issue #94 Long song cannot be scrolled to the right 
@@ -22,6 +18,8 @@ Hot:
         further).
     -   Issue #95 Velocity screen does not fully refresh when scrolling 
         left or right.
+    -   Arrows keys on trigger: Works, but need to move drop-tick along with
+        the pattern.
 
 Pattern Editor, Main Window:
 

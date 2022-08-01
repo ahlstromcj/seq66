@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-07-31
+ * \updates       2022-08-01
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -694,22 +694,8 @@ qperfroll::keyPressEvent (QKeyEvent * event)
             event->key() == Qt::Key_Right
         )
         {
-            if (on_pattern)
-            {
-                trigger t = perf().find_trigger(m_drop_track, m_drop_tick);
-                if (t.is_valid())
-                {
-                    bool forward = true;
-                    handled = true;
-                    if (event->key() == Qt::Key_Left)
-                        forward = false;
-
-                    perf().move_trigger
-                    (
-                        m_drop_track, t.tick_start(), snap(), forward
-                    );
-                }
-            }
+            if (on_pattern && ! isctrl)
+                handled = move_by_key(event->key() == Qt::Key_Right);
         }
         if (isctrl)
         {
@@ -759,6 +745,12 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                 handled = true;
                 if (not_nullptr(frame64()))
                     frame64()->scroll_to_tick(perf().get_max_extent());
+                break;
+
+            case Qt::Key_Left:
+            case Qt::Key_Right:
+
+                handled = move_by_key(event->key() == Qt::Key_Right, false);
                 break;
             }
         }
@@ -812,6 +804,33 @@ void
 qperfroll::keyReleaseEvent (QKeyEvent * /*event*/)
 {
     // no code
+}
+
+bool
+qperfroll::move_by_key (bool forward, bool single)
+{
+    trigger t = perf().find_trigger(m_drop_track, m_drop_tick);
+    bool result = t.is_valid();
+    if (result)
+    {
+        m_drop_tick = t.tick_start();
+
+        bool ok = perf().move_trigger
+        (
+            m_drop_track, m_drop_tick, snap(), forward, single
+        );
+        if (ok)
+        {
+            if (forward)
+                m_drop_tick += snap();
+            else
+                m_drop_tick -= snap();
+        }
+    }
+    else
+        m_drop_tick = 0;
+
+    return result;
 }
 
 void

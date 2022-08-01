@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-07-31
+ * \updates       2021-08-01
  * \license       GNU GPLv2 or above
  *
  *  By segregating trigger support into its own module, the sequence class is
@@ -107,7 +107,7 @@ private:
      *  to implement the new c_trig_transpose SeqSpec tag.  The values range
      *  from 0 to 0x80.  0x00 indicates that transposition is not in effect.
      *  0x40 indicates that it is in effect, but has a value of 0.  Values
-     *  from 0x41 to 0x80 indicate tranposition from +1 to +63.  Values from
+     *  from 0x41 to 0x80 indicate transposition from +1 to +63.  Values from
      *  0x3F to 0x01 indicate transposition from -1 to -63.
      */
 
@@ -254,9 +254,10 @@ public:
 
     /**
      *  This function maps 0x00 to 0, values less than 0x40 to transposing
-     *  downward in semitones, and values greater than 0x40, but less than 0x80,
-     *  to transposing upward in semitones. Value 0x40 is not used.  We can
-     *  tranpose up and down by 63 semitones, or a little more than 5 octaves.
+     *  downward in semitones, and values greater than 0x40, but less than
+     *  0x80, to transposing upward in semitones. Value 0x40 is not used.  We
+     *  can transpose up and down by 63 semitones, or a little more than 5
+     *  octaves.
      */
 
     midibyte transpose_byte () const
@@ -508,6 +509,7 @@ public:
     bool split (midipulse tick, trigger::splitpoint splittype);
     void grow_trigger (midipulse tickfrom, midipulse tickto, midipulse length);
     const trigger & find_trigger (midipulse tick) const;
+    const trigger & find_trigger_by_index (int index) const;
     bool remove (midipulse tick);
     bool get_state (midipulse tick) const;
     bool transpose (midipulse tick, int transposition);
@@ -528,7 +530,7 @@ public:
     midipulse get_selected_start ();
     midipulse get_selected_end ();
     midipulse get_maximum () const;
-    void move
+    bool move
     (
         midipulse starttick, midipulse distance,
         bool direction, bool single = true

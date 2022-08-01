@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-07-29
+ * \updates       2022-08-01
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1321,7 +1321,7 @@ qseqeditframe64::would_truncate (int bpb, int bw)
             result = ! qt_prompt_ok             /* Cancel == ack the danger */
             (
                 "This time-signature will drop events.",
-                "Cancel to avoid that."
+                "No way to cancel at present."  /* "Cancel to avoid that."  */
             );
         }
     }
@@ -1345,7 +1345,7 @@ qseqeditframe64::would_truncate (int m)
         {
             result = ! qt_prompt_ok             /* Cancel == ack the danger */
             (
-                "Reducing measures here will drop events.",
+                "This change will drop events.",
                 "Cancel to avoid that."
             );
         }

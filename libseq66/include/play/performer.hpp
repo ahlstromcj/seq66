@@ -2031,6 +2031,7 @@ public:
     bool merge_sequence (seq::number seq);
     bool move_sequence (seq::number seq);
     bool finish_move (seq::number seq);
+    bool fix_sequence (seq::number seqno, fixparameters & params);
     bool remove_set (screenset::number setno);
     bool swap_sets (seq::number set0, seq::number set1);
 
@@ -2687,7 +2688,7 @@ public:
     (
         seq::number seqno,
         midipulse starttick, midipulse distance,
-        bool direction
+        bool direction, bool single = true
     );
     void push_trigger_undo (seq::number seqno = seq::all());
     void pop_trigger_undo ();

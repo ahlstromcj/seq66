@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2022-07-31
+ * \updates       2022-08-01
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -819,17 +819,33 @@ triggers::find_trigger (midipulse tick) const
     return s_dummy;
 }
 
+const trigger &
+triggers::find_trigger_by_index (int index) const
+{
+    static trigger s_dummy;
+    if (count() > index)
+    {
+        int counter = 0;
+        for (auto i = m_triggers.begin(); i != m_triggers.end(); ++i)
+        {
+            if (counter++ == index)
+                return *i;
+        }
+    }
+    return s_dummy;
+}
+
 /**
  *  Moves triggers in the trigger-list.  There's no way to optimize this by
  *  saving tick values, as they are potentially modified at each step.
  *
 \verbatim
     tick_start()            tick_end()
-         -----------------------
-        |                       |
-        |     x                 |
-        |                       |
-         -----------------------
+         -----------------------        -----------------------
+        |                       |      |                       |
+        |     x                 |      |                       |
+        |                       |      |                       |
+         -----------------------        -----------------------
            starttick
 \endverbatim
  *
@@ -850,47 +866,71 @@ triggers::find_trigger (midipulse tick) const
  *      The definition of "subsequent" depends on the direction parameter.
  */
 
-void
+bool
 triggers::move
 (
     midipulse starttick, midipulse distance,
     bool direction, bool single
 )
 {
-    for (auto & t : m_triggers)
+    bool result = false;
+    int counter = 0;
+    for (auto & t : m_triggers)                             /* ++counter    */
     {
-        if (direction)                                  /* forward */
+        if (t.tick_start() >= starttick)
         {
-            if (t.tick_start() >= starttick)
+            if (direction)                                  /* forward      */
             {
-                midipulse added = t.tick_start() + distance;
-                t.tick_start(added);
-                added = t.tick_end() + distance;
-                t.tick_end(added);
-                added = (t.offset() + distance) % m_length;
-                t.offset(added);
-                t.offset(adjust_offset(t.offset()));
+                midipulse stopper = (-1);
+                const trigger & tnext = find_trigger_by_index(counter + 1);
+                if (tnext.is_valid())
+                    stopper = tnext.tick_start();
+
+                midipulse added_end = t.tick_end() + distance;
+                result = stopper == (-1) || added_end < stopper;
+                if (result)
+                {
+                    midipulse added = t.tick_start() + distance;
+                    t.tick_start(added);
+                    t.tick_end(added_end);
+                    added = (t.offset() + distance) % m_length;
+                    t.offset(added);
+                    t.offset(adjust_offset(t.offset()));    // ???
+                }
+                if (single)
+                    break;
+            }
+            else                                            /* backward     */
+            {
+                midipulse stopper = (-1);
+                const trigger & tprev = find_trigger_by_index(counter - 1);
+                if (tprev.is_valid())
+                    stopper = tprev.tick_end();
+
+                midipulse deducted_start = t.tick_start() - distance;
+                result = stopper == (-1) || deducted_start > stopper;
+                if (result)
+                    result = deducted_start >= 0;
+
+                if (result)
+                {
+                    midipulse deducted_end = t.tick_end() - distance;
+
+                    result = true;
+
+                    t.tick_start(deducted_start);
+                    t.tick_end(deducted_end);
+                    deducted_end = (m_length - (distance % m_length)) % m_length;
+                    t.offset(deducted_end);
+                    t.offset(adjust_offset(t.offset()));    // ???
+                }
                 if (single)
                     break;
             }
         }
-        else                                            /* back    */
-        {
-            midipulse endtick = starttick + distance;
-            if (t.tick_start() >= endtick)
-            {
-                midipulse deducted = t.tick_start() - distance;
-                t.tick_start(deducted);
-                deducted = t.tick_end() - distance;
-                t.tick_end(deducted);
-                deducted = (m_length - (distance % m_length)) % m_length;
-                t.offset(deducted);
-                t.offset(adjust_offset(t.offset()));
-                if (single)
-                    break;
-            }
-        }
+        ++counter;
     }
+    return result;
 }
 
 /**
@@ -910,16 +950,16 @@ triggers::move_split
     {
         if (i->tick_start() < starttick && starttick < i->tick_end())
         {
-            if (direction)                              /* forward */
+            if (direction)                              /* forward          */
                 split(*i, starttick);
-            else                                        /* back    */
+            else                                        /* backward         */
                 split(*i, endtick);
         }
         if (i->tick_start() < starttick && starttick < i->tick_end())
         {
-            if (direction)                              /* forward */
+            if (direction)                              /* forward          */
                 split(*i, starttick);
-            else                                        /* back    */
+            else                                        /* backward         */
                 i->tick_end(starttick - 1);
         }
         if
@@ -928,13 +968,13 @@ triggers::move_split
             i->tick_end() <= endtick && ! direction
         )
         {
-            unselect(*i);                       /* adjust selection count    */
+            unselect(*i);                               /* adjust sel count */
             m_triggers.erase(i);
-            i = m_triggers.begin();                     /* A BETTER WAY? */
+            i = m_triggers.begin();                     /* A BETTER WAY?    */
         }
         if (i->tick_start() < endtick && endtick < i->tick_end())
         {
-            if (! direction)                            /* forward */
+            if (! direction)                            /* forward          */
                 i->tick_start(endtick);
         }
     }

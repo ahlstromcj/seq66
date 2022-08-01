@@ -2760,8 +2760,8 @@ sequence::fix_pattern (fixparameters & params)
                 params.fp_scale_factor = newscalefactor;
                 params.fp_measures = double(get_measures());
                 params.fp_effect = tempefx;
-                set_dirty();
-                modify(true);                       /* call notify_change() */
+//              set_dirty();
+//              modify(true);                       /* call notify_change() */
             }
         }
         else
@@ -3992,13 +3992,23 @@ sequence::selected_trigger_end ()
  * \param direction
  *      If true, the triggers are moved forward. If false, the triggers are
  *      moved backward.
+ *
+ * \param single
+ *      If true, move only the first trigger encountered.
+ *
+ * \return
+ *      Currently just returns true.
  */
 
 bool
-sequence::move_triggers (midipulse starttick, midipulse distance, bool direction)
+sequence::move_triggers
+(
+    midipulse starttick, midipulse distance,
+    bool direction, bool single
+)
 {
     automutex locker(m_mutex);
-    m_triggers.move(starttick, distance, direction);
+    m_triggers.move(starttick, distance, direction, single);
     modify(false);                      /* issue #90 flag change w/o notify */
     return true;
 }

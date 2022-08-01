@@ -1386,6 +1386,20 @@ performer::finish_move (seq::number seqno)
     return result;
 }
 
+bool
+performer::fix_sequence (seq::number seqno, fixparameters & params)
+{
+    bool result = false;
+    seq::pointer s = get_sequence(seqno);
+    if (s)
+    {
+        result = s->fix_pattern(params);
+        if (result)
+            notify_trigger_change(seqno);
+    }
+    return result;
+}
+
 /*
  * -------------------------------------------------------------------------
  *  More settings
@@ -4955,14 +4969,14 @@ performer::move_trigger
 (
     seq::number seqno,
     midipulse starttick, midipulse distance,
-    bool direction
+    bool direction, bool single
 )
 {
     bool result = false;
     seq::pointer s = get_sequence(seqno);
     if (s)
     {
-        s->move_triggers(starttick, distance, direction);
+        s->move_triggers(starttick, distance, direction, single);
         notify_trigger_change(seqno);
         return true;
     }
