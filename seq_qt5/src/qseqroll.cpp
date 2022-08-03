@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-20
+ * \updates       2022-08-03
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -387,6 +387,16 @@ qseqroll::paintEvent (QPaintEvent * qpep)
         pen.setColor(sel_color());
         painter.setPen(pen);
         painter.drawRect(x, y, w, h);
+    }
+    else if (paste())                       /* issue #97, draw a paste box  */
+    {
+        pen.setColor(Qt::gray);
+        painter.setPen(pen);
+        painter.drawRect
+        (
+            current_x(), current_y(),
+            old_rect().width(), old_rect().height()
+        );
     }
 
     int selw = selection().width();
@@ -1267,41 +1277,41 @@ qseqroll::keyPressEvent (QKeyEvent * event)
             {
                 if (isctrl)
                 {
-                    /*
-                     * We want to ignore Ctrl sequences here, so that Ctrl-Z's
-                     * can be used for "undo".
-                     */
-
+                    midipulse tick = perf().get_tick();
+                    midipulse len = track().get_length();
                     switch (key)
                     {
                     case Qt::Key_Left:
 
-                        track().set_last_tick(track().get_last_tick() - snap());
                         done = true;
+                        perf().set_tick(tick - snap(), true);   // no reset
+                        track().set_last_tick(tick - snap());
                         break;
 
                     case Qt::Key_Right:
 
-                        track().set_last_tick(track().get_last_tick() + snap());
                         done = true;
+                        perf().set_tick(tick + snap(), true);   // no reset
+                        track().set_last_tick(tick + snap());
                         break;
 
                     case Qt::Key_Home:
 
+
+                        done = true;
+                        //perf().set_tick(0, true);   /* no reset will occur  */
+                        track().set_last_tick(0);   /* sets it to beginning */
                         if (not_nullptr(frame64()))
                             frame64()->scroll_to_tick(0);
-
-                        track().set_last_tick(0);   /* sets it to beginning */
-                        done = true;
                         break;
 
                     case Qt::Key_End:
 
-                        if (not_nullptr(frame64()))
-                            frame64()->scroll_to_tick(track().get_length());
-
-                        track().set_last_tick();    /* sets it to length    */
                         done = true;
+                        // perf().set_tick(len, true); /* no reset will occur  */
+                        track().set_last_tick();    /* sets it to length    */
+                        if (not_nullptr(frame64()))
+                            frame64()->scroll_to_tick(len);
                         break;
 
                     case Qt::Key_X:
@@ -1312,18 +1322,20 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                     case Qt::Key_C:
 
+                        done = true;
                         track().copy_selected();
                         break;
 
                     case Qt::Key_V:
 
-                        start_paste();
                         done = true;
+                        start_paste();
                         setCursor(Qt::CrossCursor);
                         break;
 
                     case Qt::Key_Z:
 
+                        done = true;
                         if (event->modifiers() & Qt::ShiftModifier)
                         {
                             /*
@@ -1336,37 +1348,37 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                             track().pop_undo();
 
                         if (not_nullptr(frame64()))
-                        {
                             frame64()->set_dirty();     /* set_dirty()      */
-                        }
                         break;
 
                     case Qt::Key_A:
 
-                        track().select_all();
                         done = true;
+                        track().select_all();
                         break;
 
                     case Qt::Key_D:
 
+                        done = true;
                         sequence::clear_clipboard();    /* drop clipboard   */
                         break;
 
                     case Qt::Key_E:
 
-                        track().select_by_channel(frame64()->edit_channel());
                         done = true;
+                        track().select_by_channel(frame64()->edit_channel());
                         break;
 
                     case Qt::Key_K:
 
+                        done = true;
                         analyze_seq_notes();
                         break;
 
                     case Qt::Key_N:
 
-                        track().select_notes_by_channel(frame64()->edit_channel());
                         done = true;
+                        track().select_notes_by_channel(frame64()->edit_channel());
                         break;
                     }
                 }
@@ -1394,6 +1406,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                 case Qt::Key_P:
 
+                    done = true;
                     set_adding(true);
                     break;
 
@@ -1422,14 +1435,14 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                 case Qt::Key_X:
 
-                    set_adding(false);
                     done = true;
+                    set_adding(false);
                     break;
 
                 case Qt::Key_Equal:
 
+                    set_adding(false);
                     track().verify_and_link(true);          /* with wrap    */
-                    done = true;
                     break;
                 }
             }

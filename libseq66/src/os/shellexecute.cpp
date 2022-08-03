@@ -21,7 +21,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-05-19
- * \updates       2022-06-28
+ * \updates       2022-08-02
  * \license       GNU GPLv2 or above
  *
  *  Provides support for cross-platform time-related functions.
@@ -110,7 +110,7 @@ open_local_url (const std::string & url)
 bool
 open_pdf (const std::string & pdfspec)
 {
-    return command_line(cmd);
+    return command_line(pdfspec);
 }
 
 bool

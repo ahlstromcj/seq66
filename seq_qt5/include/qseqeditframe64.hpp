@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-07-29
+ * \updates       2022-08-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -293,6 +293,7 @@ private slots:
     void update_scale (int index);
     void reset_scale ();
     void editor_mode (bool ischecked);
+    void loop_mode (bool ischecked);
     void events ();
     void data ();
     void show_lfo_frame ();
@@ -371,6 +372,12 @@ private:
      */
 
     bool m_short_version;
+
+    /**
+     *  Hold the current L/R looping status.
+     */
+
+    bool m_is_looping;
 
     /**
      *  The LFO window object that might used by the pattern editor.

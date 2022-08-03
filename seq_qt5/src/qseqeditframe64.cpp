@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-08-01
+ * \updates       2022-08-03
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -128,6 +128,7 @@
 #include "pixmaps/finger.xpm"
 #include "pixmaps/follow.xpm"
 #include "pixmaps/key.xpm"
+#include "pixmaps/loop.xpm"
 #include "pixmaps/length_short.xpm"     /* not length.xpm, it is too long   */
 #include "pixmaps/menu_empty.xpm"
 #include "pixmaps/menu_empty_inv.xpm"
@@ -274,6 +275,7 @@ qseqeditframe64::qseqeditframe64
     performer::callbacks    (p),
     ui                      (new Ui::qseqeditframe64),
     m_short_version         (shorter),              /* short_version()  */
+    m_is_looping            (false),
     m_lfo_wnd               (nullptr),
     m_patternfix_wnd        (nullptr),
     m_tools_popup           (nullptr),
@@ -480,20 +482,29 @@ qseqeditframe64::qseqeditframe64
         ui->m_map_notes->hide();
         ui->spacer_button_4->hide();
         ui->spacer_button_5->hide();
+        ui->m_button_loop->hide();
     }
     else
     {
         /*
          * Drum-Mode Button.  Qt::NoFocus is the default focus policy.
+         * Also includes the new loop button, which does the same function
+         * as in the main window.
          */
 
         ui->m_toggle_drum->setAutoDefault(false);
         ui->m_toggle_drum->setCheckable(true);
         qt_set_icon(drum_xpm, ui->m_toggle_drum);
+        qt_set_icon(loop_xpm, ui->m_button_loop);
         connect
         (
             ui->m_toggle_drum, SIGNAL(toggled(bool)),
             this, SLOT(editor_mode(bool))
+        );
+        connect
+        (
+            ui->m_button_loop, SIGNAL(toggled(bool)),
+            this, SLOT(loop_mode(bool))
         );
         connect
         (
@@ -1286,6 +1297,11 @@ qseqeditframe64::conditional_update ()
             ui->m_combo_bw->setCurrentIndex(lenindex);
 
         ui->m_combo_bw->setEditText(qt(mstring));
+    }
+    if (m_is_looping != perf().looping())
+    {
+        m_is_looping = perf().looping();
+        ui->m_button_loop->setChecked(m_is_looping);
     }
     if (track().check_loop_reset())
     {
@@ -2713,6 +2729,13 @@ qseqeditframe64::editor_mode (bool ischecked)
         ischecked ? sequence::editmode::drum : sequence::editmode::note
     );
     set_dirty();                        /* modified for issue #90           */
+}
+
+void
+qseqeditframe64::loop_mode (bool ischecked)
+{
+    perf().looping(ischecked);
+    set_dirty();
 }
 
 void

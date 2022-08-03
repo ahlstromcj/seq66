@@ -1,6 +1,6 @@
 TO DO for Seq66 0.98.11 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-08-01
+2019-04-13 to 2022-08-02
 
 Hot:
 
@@ -18,8 +18,27 @@ Hot:
         further).
     -   Issue #95 Velocity screen does not fully refresh when scrolling 
         left or right.
-    -   Arrows keys on trigger: Works, but need to move drop-tick along with
-        the pattern.
+    -   Issue #96 MIDI learn (and wizard) for creating controller maps?
+    -   Issue #97 Investigate/resolve differences from Seq24:
+        - When copying and pasting notes in the piano roll. I take it you
+          should see a selection box after hitting ctrl+v as is supposed to
+          happen in sequencer64. I don't see the box and can also only use the
+          mouse for changing the paste location. Arrow buttons do nothing. Is
+          that something that will come back?
+        - I would like to advance the red cursor in the piano roll as I
+          did with seq24. As the arrow buttons are newly assigned, is there
+          another way to do this with keys? Also when I input a note with my
+          midi keyboard the cursor doesn't advance forward which it should
+          if I read the manual correctly.
+    -   Issue #98: More features.
+        -   Metronome
+        -   Count-in note recording
+
+    1.  Seq24: L/R arrow keys move progress bar by snap size.
+    2.  Seq24: Ctrl-V shows a selection box matching the extent of the copied
+        notes.
+    3.  Seq24: Input from a keyboard when not playing advances like one-shot
+        mode, but doesn't stop when looped back.
 
 Pattern Editor, Main Window:
 

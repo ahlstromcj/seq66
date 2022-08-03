@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2022-06-28
+2015-09-09 to 2022-08-02
 
 Creating a GitHub Repository:
 
@@ -242,10 +242,13 @@ Tagging:
 
     He also notes the the GitHub "Create Release" feature can be used.
     Install the "hub" app; it is the official command-line version of GitHub.
+    (It also pays to install "gitsome", which adds the "gh" application
+    also useful in creating releases.
     Then:
 
     $ hub release create --copy -F RELNOTES.md v2.3.0
     $ hub release create -a 0.9.9  -F RELNOTES.md v2.3.0
+    $ gh release -F RELNOTES.md create <tag> <assetfiles>
 
     See https://hub.github.com/ for more information.
 

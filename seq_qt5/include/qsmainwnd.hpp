@@ -325,7 +325,7 @@ private:
     bool m_song_mode;
 
     /**
-     *  Hold the current looping status.
+     *  Hold the current L/R looping status.
      */
 
     bool m_is_looping;

@@ -91,20 +91,14 @@ public:
         return m_x;
     }
 
-    /**
-     * \setter m_x
-     *      The width is assumed to be unchanged by this function.
-     */
-
     void x (int v)
     {
         m_x = v;
     }
 
     /**
-     * \setter m_x
-     *      Provides a setter that uses the parameter to increment the member.
-     *      The width is assumed to be unchanged by this function.
+     *  Provides a setter that uses the parameter to increment the member.
+     *  The width is assumed to be unchanged by this function.
      */
 
     void x_incr (int v)
@@ -117,20 +111,14 @@ public:
         return m_y;
     }
 
-    /**
-     * \setter m_y
-     *      The height is assumed to be unchanged by this function.
-     */
-
     void y (int v)
     {
         m_y = v;
     }
 
     /**
-     * \setter m_y
-     *      Provides a setter that uses the parameter to increment the member.
-     *      The height is assumed to be unchanged by this function.
+     *  Provides a setter that uses the parameter to increment the member.
+     *  The height is assumed to be unchanged by this function.
      */
 
     void y_incr (int v)

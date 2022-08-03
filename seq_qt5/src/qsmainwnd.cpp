@@ -2119,13 +2119,9 @@ qsmainwnd::showqsbuildinfo ()
 }
 
 /**
- *  Loads a slightly less functional qseqeditframe64 for the selected
- *  sequence into the "Edit" tab.
- *
- *  We wanted to load the newer version, which has more functions, but it
- *  works somewhat differently, and cannot be fit into the current main window
- *  without enlarging it.  Therefore, we use the new version, qsegeditframe64,
- *  only in the external mode.
+ *  Loads a slightly compressed qseqeditframe64 for the selected
+ *  sequence into the "Edit" tab.  It is compressed by hiding some of
+ *  the buttons and by halving the height of the seqdata frame.
  *
  * \param seqid
  *      The slot value (0 to 1024) of the sequence to be edited.
@@ -2256,9 +2252,10 @@ qsmainwnd::load_qseqedit (int seqid)
         auto ei = m_open_editors.find(seqid);
         if (ei == m_open_editors.end())
         {
-            qseqeditex * ex = new (std::nothrow)
-                qseqeditex(cb_perf(), seqid, this);
-
+            qseqeditex * ex = new (std::nothrow) qseqeditex
+            (
+                cb_perf(), seqid, this
+            );
             if (not_nullptr(ex))
             {
                 auto p = std::make_pair(seqid, ex);
@@ -2616,9 +2613,10 @@ qsmainwnd::tabWidgetClicked (int newindex)
                      * pattern to open in this tab, see load_editor() above.
                      */
 
-                    m_edit_frame = new (std::nothrow)
-                        qseqeditframe64(cb_perf(), *s, ui->EditTab, true);
-
+                    m_edit_frame = new (std::nothrow) qseqeditframe64
+                    (
+                        cb_perf(), *s, ui->EditTab, true
+                    );
                     if (not_nullptr(m_edit_frame))
                     {
                         ui->EditTabLayout->addWidget(m_edit_frame);

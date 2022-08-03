@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-07-31
+ * \updates       2022-08-03
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2741,12 +2741,15 @@ performer::activate ()
 void
 performer::set_tick (midipulse tick, bool dontreset)
 {
-    m_tick = tick;
-    if (dontreset)
+    if (tick >= 0)
     {
-        m_dont_reset_ticks = true;
-        set_start_tick(tick);
-        set_needs_update();
+        m_tick = tick;
+        if (dontreset)
+        {
+            m_dont_reset_ticks = true;
+            set_start_tick(tick);
+            set_needs_update();
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 # README for Seq66 0.98.11
 
 Chris Ahlstrom
-2015-09-10 to 2022-08-01
+2015-09-10 to 2022-08-03
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -88,24 +88,28 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.98.11:
-        *   Revisited issue #78 (pattern-box sizes would become 0 and the
-            progress boxes disappeared). Now the 'usr' show option is boolean
-            ("pattern-boxes-shown", default = true), and the sizes are kept within
-            reasonable limits.  Also added a "--locale" option so that the user
-            can, for example, set the Seq66 global locale to "en_US.UTF-8".
-        *   Fixed issue #89, where MIDI control display was not always
-            reflecting the status of each pattern, especially during queuing.
-            Tightened up pattern arming/disarming processing.
-        *   Improvements for issue #90, where Save does not get enabled. Surely
-            some remain.  Also, in some cases there is no way to "unmodify".
-        *   Fixed issue #93, the window of a deleted pattern remains open.
-        *   Mitigation of issue #94, long song in song editor cannot be scrolled
-            to the right.  Added more padding, and a button to expand the grid
-            when desired.  For the pattern editor, the workaround is to increase
-            the length in the pattern editor.
+        *   Issue #78 revisited. Pattern-box sizes would become 0 and the
+            progress boxes disappear. Now the 'usr' show option is boolean
+            ("pattern-boxes-shown", default = true), and the sizes are kept
+            within reasonable limits.  Also added a "--locale" option so that
+            the user can, for example, set the Seq66 global locale to
+            "en_US.UTF-8".
+        *   Issue #89 fixed. The MIDI control display not quite reflecting the
+            status of each pattern, especially during queuing.
+        *   Issue #90 improvements. Save was not always enabled. Surely some
+            issues remain.  Also, in some cases there is no way to "unmodify".
+        *   Issue #93 fixed. The window of a deleted pattern now closes.
+        *   Issue #94. Long song in song editor could not be scrolled to the
+            right.  Added more padding and a button to expand the grid when
+            when desired. For the pattern editor, the workaround is to increase
+            the "length" in the pattern editor.
+        *   Issue #97. Pattern editor fixes. Added paste box when pasting notes,
+            an oversight from the Seq24 reboot. Added Ctrl-Left/Right to move
+            the progress bar in the pattern editor.
         *   Muted pattern slots show a short progress bar, to aid in the timing
             of queuing.
         *   Improved the handling of the MIDI 'ctrl' file.
+        *   Tightened up pattern arming/disarming processing.
         *   Implemented left/right arrow keys to move the selected trigger in
             the song editor. Ctrl moves multiple triggers. Moving a trigger past
             END moves END.
