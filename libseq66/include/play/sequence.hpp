@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-07-31
+ * \updates       2022-08-05
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -824,7 +824,8 @@ private:
     /**
      *  The Note On velocity used, set to usr().note_on_velocity().  If the
      *  recording velocity (m_rec_vol) is non-zero, this value will be set to
-     *  the desired recording velocity.  A "stazed" feature.
+     *  the desired recording velocity.  A "stazed" feature.  Note that
+     *  we use (-1) for flagging preserving the velocity of incoming notes.
      */
 
     short m_note_on_velocity;
@@ -882,9 +883,34 @@ private:
 public:
 
     sequence (int ppqn = c_use_default_ppqn);
-    ~sequence ();
+
+    /*
+     * What is the cost of adding virtual here, at runtime?
+     */
+
+    virtual ~sequence ();
 
     void partial_assign (const sequence & rhs, bool toclipboard = false);
+
+    static int maximum ()
+    {
+        return 1024;
+    }
+
+    static int metronome ()
+    {
+        return 2047;
+    }
+
+    static int limit ()
+    {
+        return 2048;    /* 0x0800 */
+    }
+
+    static int unassigned ()
+    {
+        return (-1);
+    }
 
     eventlist & events ()
     {
@@ -970,6 +996,11 @@ public:
         return int(m_seq_number);
     }
 
+    bool is_metronome () const
+    {
+        return m_seq_number == metronome();
+    }
+
     std::string seq_number_string () const
     {
         return std::to_string(seq_number());
@@ -977,7 +1008,7 @@ public:
 
     void seq_number (int seqno)
     {
-        if (seqno >= 0 && seqno <= int(SHRT_MAX))
+        if (seqno >= 0 && seqno <= limit())
             m_seq_number = short(seqno);
     }
 
@@ -1847,16 +1878,6 @@ public:
     }
 
 private:
-
-    static int unassigned ()
-    {
-        return (-1);
-    }
-
-    static int limit ()
-    {
-        return 2048;                    /* 0x0800   */
-    }
 
     mastermidibus * master_bus ()
     {

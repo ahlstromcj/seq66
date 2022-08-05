@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-07-31
+ * \updates       2022-08-05
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -184,9 +184,8 @@ setmapper::add_to_play_set (playset & p, sequence * s)
     screenset & sset = screen(seqno);                   /* tricky !!!   */
     bool result = sset.usable();
     if (result)
-    {
         result = sset.add_to_play_set(p, seqno);
-    }
+
     return result;
 }
 

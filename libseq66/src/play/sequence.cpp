@@ -885,10 +885,7 @@ void
 sequence::set_rec_vol (int recvol)
 {
     automutex locker(m_mutex);
-    bool valid = recvol > 0;
-    if (valid)
-        valid = recvol <= usr().max_note_on_velocity();
-
+    bool valid = recvol > 0 && recvol <= usr().max_note_on_velocity();
     if (! valid)
         valid = recvol == usr().preserve_velocity();
 
@@ -4902,7 +4899,8 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
  *
  * \param measures
  *      Provides the number of measures the sequence should cover, obtained
- *      from the user-interface. Defaults to 1 measure.
+ *      from the user-interface. Defaults to 0, which means we calculate the
+ *      current measures.
  */
 
 bool

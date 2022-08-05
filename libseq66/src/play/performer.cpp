@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-08-03
+ * \updates       2022-08-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -306,6 +306,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_play_set              (),
     m_play_list             (),
     m_note_mapper           (new notemapper()),
+    m_metronome             (),                 /* no metronome by default  */
     m_song_start_mode       (sequence::playback::automatic),
     m_reposition            (false),
     m_excell_FF_RW          (1.0),
@@ -1187,6 +1188,44 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
             modify();
     }
     return result;
+}
+
+/**
+ *  We start with a default metronome while we figure out a good way to
+ *  configure it.
+ *
+ *  The initialize() function fills the metro pattern with metronomic events.
+ *  Then is sets the sequence number to the special value metro().
+ *  It also makes the metro pattern active.
+ */
+
+bool
+performer::install_metronome ()
+{
+    m_metronome.reset(new (std::nothrow) metro());
+    bool result = bool(m_metronome);
+    if (result)
+    {
+        result = m_metronome->initialize();
+        if (result)
+        {
+            result = mapper().add_to_play_set(m_play_set, m_metronome.get());
+        }
+        else
+            m_metronome.reset();
+    }
+    return result;
+}
+
+void
+performer::remove_metronome ()
+{
+    if (m_metronome)
+    {
+        seq::number seqno =  m_metronome->seq_number();
+        m_play_set.remove(seqno);
+        m_metronome.reset();
+    }
 }
 
 /**

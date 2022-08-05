@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-07-31
+ * \updates       2022-08-05
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -278,7 +278,7 @@ public:
 
     static number limit ()
     {
-        return 2048;
+        return seq::limit();
     }
 
     /**
@@ -684,6 +684,7 @@ public:
     bool set_found (screenset::number setno) const;
     bool fill (const screenset & sset, bool clearit = true);
     bool add (const screenset & sset, seq::number seqno);
+    void remove (seq::number seqno);
 
 };              // class playset
 

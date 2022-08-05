@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2022-06-03
+ * \updates       2022-08-05
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -760,9 +760,13 @@ midi_alsa::api_set_ppqn (int ppqn)
     int queue = parent_bus().queue_number();
     snd_seq_queue_tempo_t * tempo;
     snd_seq_queue_tempo_alloca(&tempo);
-    snd_seq_get_queue_tempo(m_seq, queue, tempo);
-    snd_seq_queue_tempo_set_ppq(tempo, ppqn);
-    snd_seq_set_queue_tempo(m_seq, queue, tempo);
+
+    int rc = snd_seq_get_queue_tempo(m_seq, queue, tempo);
+    if (rc == 0)
+    {
+        snd_seq_queue_tempo_set_ppq(tempo, ppqn);
+        snd_seq_set_queue_tempo(m_seq, queue, tempo);
+    }
 }
 
 /**
@@ -791,9 +795,13 @@ midi_alsa::api_set_beats_per_minute (midibpm bpm)
     int queue = parent_bus().queue_number();
     snd_seq_queue_tempo_t * tempo;
     snd_seq_queue_tempo_alloca(&tempo);          /* allocate tempo struct */
-    snd_seq_get_queue_tempo(m_seq, queue, tempo);
-    snd_seq_queue_tempo_set_tempo(tempo, unsigned(tempo_us_from_bpm(bpm)));
-    snd_seq_set_queue_tempo(m_seq, queue, tempo);
+
+    int rc = snd_seq_get_queue_tempo(m_seq, queue, tempo);
+    if (rc == 0)
+    {
+        snd_seq_queue_tempo_set_tempo(tempo, unsigned(tempo_us_from_bpm(bpm)));
+        snd_seq_set_queue_tempo(m_seq, queue, tempo);
+    }
 }
 
 #if defined REMOVE_QUEUED_ON_EVENTS_CODE

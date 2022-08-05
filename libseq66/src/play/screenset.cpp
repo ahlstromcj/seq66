@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-07-31
+ * \updates       2022-08-05
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -1464,6 +1464,21 @@ playset::add (const screenset & sset, seq::number seqno)
         m_sequence_array.push_back(s.loop());
 
     return result;
+}
+
+void
+playset::remove (seq::number seqno)
+{
+    auto seqit = std::find_if
+    (
+        m_sequence_array.begin(), m_sequence_array.end(),
+        [ & seqno ] (const seq::pointer & sp)
+        {
+            return sp->seq_number() == seqno;
+        }
+    );
+    if (seqit != m_sequence_array.end())
+        (void) m_sequence_array.erase(seqit);
 }
 
 }               // namespace seq66

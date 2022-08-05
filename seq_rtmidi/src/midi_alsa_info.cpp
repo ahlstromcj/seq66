@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-07-18
+ * \updates       2022-08-05
  * \license       See above.
  *
  *  API information found at:
@@ -395,9 +395,13 @@ midi_alsa_info::api_set_ppqn (int p)
     midi_info::api_set_ppqn(p);
     snd_seq_queue_tempo_t * tempo;
     snd_seq_queue_tempo_alloca(&tempo);                 /* allocate struct  */
-    snd_seq_get_queue_tempo(m_alsa_seq, queue, tempo);
-    snd_seq_queue_tempo_set_ppq(tempo, p);
-    snd_seq_set_queue_tempo(m_alsa_seq, queue, tempo);
+
+    int rc = snd_seq_get_queue_tempo(m_alsa_seq, queue, tempo);
+    if (rc == 0)
+    {
+        snd_seq_queue_tempo_set_ppq(tempo, p);
+        snd_seq_set_queue_tempo(m_alsa_seq, queue, tempo);
+    }
 }
 
 /**
@@ -420,9 +424,13 @@ midi_alsa_info::api_set_beats_per_minute (midibpm b)
     midi_info::api_set_beats_per_minute(b);
     snd_seq_queue_tempo_t * tempo;
     snd_seq_queue_tempo_alloca(&tempo);          /* allocate tempo struct */
-    snd_seq_get_queue_tempo(m_alsa_seq, queue, tempo);
-    snd_seq_queue_tempo_set_tempo(tempo, unsigned(tempo_us_from_bpm(b)));
-    snd_seq_set_queue_tempo(m_alsa_seq, queue, tempo);
+
+    int rc = snd_seq_get_queue_tempo(m_alsa_seq, queue, tempo);
+    if (rc == 0)
+    {
+        snd_seq_queue_tempo_set_tempo(tempo, unsigned(tempo_us_from_bpm(b)));
+        snd_seq_set_queue_tempo(m_alsa_seq, queue, tempo);
+    }
 }
 
 /**

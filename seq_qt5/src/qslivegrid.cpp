@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2022-07-29
+ * \updates       2022-08-05
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -178,6 +178,7 @@ qslivegrid::qslivegrid
         );
         ui->buttonLoopMode->hide();
         ui->buttonRecordMode->hide();
+        ui->buttonMetronome->hide();
     }
     else
     {
@@ -186,6 +187,9 @@ qslivegrid::qslivegrid
         ui->buttonActivate->hide();
         ui->buttonLoopMode->setEnabled(true);
         ui->buttonRecordMode->setEnabled(true);
+        ui->buttonMetronome->setEnabled(false);
+        // ui->buttonMetronome->setEnabled(true);
+        // set icon!!!! ui->buttonMetronome
         show_grid_record_style();
         show_record_mode();
         connect
@@ -197,6 +201,11 @@ qslivegrid::qslivegrid
         (
             ui->buttonRecordMode, SIGNAL(clicked(bool)),
             this, SLOT(slot_record_mode(bool))
+        );
+        connect
+        (
+            ui->buttonMetronome, SIGNAL(clicked(bool)),
+            this, SLOT(slot_toggle_metronome(bool))
         );
     }
     ui->labelPlaylistSong->setText("");
@@ -1351,6 +1360,20 @@ void
 qslivegrid::slot_record_mode (bool /*clicked*/)
 {
     perf().next_record_mode();
+}
+
+void
+qslivegrid::slot_toggle_metronome (bool /*clicked*/)
+{
+    bool on = ui->buttonMetronome->isChecked();
+    if (on)
+    {
+        // 
+    }
+    else
+    {
+        // 
+    }
 }
 
 void

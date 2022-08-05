@@ -21,7 +21,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2022-05-19
+# \update      2022-08-05
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -175,16 +175,16 @@ am_libseq66_la_OBJECTS = seq66_features.lo cfg/basesettings.lo \
 	midi/mastermidibase.lo midi/midibase.lo midi/midibytes.lo \
 	midi/midifile.lo midi/midi_splitter.lo \
 	midi/midi_vector_base.lo midi/midi_vector.lo midi/wrkfile.lo \
-	play/clockslist.lo play/inputslist.lo play/mutegroup.lo \
-	play/mutegroups.lo play/notemapper.lo play/performer.lo \
-	play/playlist.lo play/portslist.lo play/screenset.lo \
-	play/seq.lo play/sequence.lo play/setmapper.lo \
-	play/setmaster.lo play/songsummary.lo play/triggers.lo \
-	sessions/clinsmanager.lo sessions/smanager.lo os/daemonize.lo \
-	os/shellexecute.lo os/timing.lo util/automutex.lo \
-	util/basic_macros.lo util/condition.lo util/filefunctions.lo \
-	util/named_bools.lo util/palette.lo util/recmutex.lo \
-	util/rect.lo util/strfunctions.lo
+	play/clockslist.lo play/inputslist.lo play/metro.lo \
+	play/mutegroup.lo play/mutegroups.lo play/notemapper.lo \
+	play/performer.lo play/playlist.lo play/portslist.lo \
+	play/screenset.lo play/seq.lo play/sequence.lo \
+	play/setmapper.lo play/setmaster.lo play/songsummary.lo \
+	play/triggers.lo sessions/clinsmanager.lo sessions/smanager.lo \
+	os/daemonize.lo os/shellexecute.lo os/timing.lo \
+	util/automutex.lo util/basic_macros.lo util/condition.lo \
+	util/filefunctions.lo util/named_bools.lo util/palette.lo \
+	util/recmutex.lo util/rect.lo util/strfunctions.lo
 libseq66_la_OBJECTS = $(am_libseq66_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -240,13 +240,14 @@ am__depfiles_remade = ./$(DEPDIR)/seq66_features.Plo \
 	midi/$(DEPDIR)/midifile.Plo midi/$(DEPDIR)/wrkfile.Plo \
 	os/$(DEPDIR)/daemonize.Plo os/$(DEPDIR)/shellexecute.Plo \
 	os/$(DEPDIR)/timing.Plo play/$(DEPDIR)/clockslist.Plo \
-	play/$(DEPDIR)/inputslist.Plo play/$(DEPDIR)/mutegroup.Plo \
-	play/$(DEPDIR)/mutegroups.Plo play/$(DEPDIR)/notemapper.Plo \
-	play/$(DEPDIR)/performer.Plo play/$(DEPDIR)/playlist.Plo \
-	play/$(DEPDIR)/portslist.Plo play/$(DEPDIR)/screenset.Plo \
-	play/$(DEPDIR)/seq.Plo play/$(DEPDIR)/sequence.Plo \
-	play/$(DEPDIR)/setmapper.Plo play/$(DEPDIR)/setmaster.Plo \
-	play/$(DEPDIR)/songsummary.Plo play/$(DEPDIR)/triggers.Plo \
+	play/$(DEPDIR)/inputslist.Plo play/$(DEPDIR)/metro.Plo \
+	play/$(DEPDIR)/mutegroup.Plo play/$(DEPDIR)/mutegroups.Plo \
+	play/$(DEPDIR)/notemapper.Plo play/$(DEPDIR)/performer.Plo \
+	play/$(DEPDIR)/playlist.Plo play/$(DEPDIR)/portslist.Plo \
+	play/$(DEPDIR)/screenset.Plo play/$(DEPDIR)/seq.Plo \
+	play/$(DEPDIR)/sequence.Plo play/$(DEPDIR)/setmapper.Plo \
+	play/$(DEPDIR)/setmaster.Plo play/$(DEPDIR)/songsummary.Plo \
+	play/$(DEPDIR)/triggers.Plo \
 	sessions/$(DEPDIR)/clinsmanager.Plo \
 	sessions/$(DEPDIR)/smanager.Plo util/$(DEPDIR)/automutex.Plo \
 	util/$(DEPDIR)/basic_macros.Plo util/$(DEPDIR)/condition.Plo \
@@ -620,6 +621,7 @@ libseq66_la_SOURCES = \
  midi/wrkfile.cpp \
  play/clockslist.cpp \
  play/inputslist.cpp \
+ play/metro.cpp \
  play/mutegroup.cpp \
  play/mutegroups.cpp \
  play/notemapper.cpp \
@@ -816,6 +818,7 @@ play/clockslist.lo: play/$(am__dirstamp) \
 	play/$(DEPDIR)/$(am__dirstamp)
 play/inputslist.lo: play/$(am__dirstamp) \
 	play/$(DEPDIR)/$(am__dirstamp)
+play/metro.lo: play/$(am__dirstamp) play/$(DEPDIR)/$(am__dirstamp)
 play/mutegroup.lo: play/$(am__dirstamp) play/$(DEPDIR)/$(am__dirstamp)
 play/mutegroups.lo: play/$(am__dirstamp) \
 	play/$(DEPDIR)/$(am__dirstamp)
@@ -948,6 +951,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@os/$(DEPDIR)/timing.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@play/$(DEPDIR)/clockslist.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@play/$(DEPDIR)/inputslist.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@play/$(DEPDIR)/metro.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@play/$(DEPDIR)/mutegroup.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@play/$(DEPDIR)/mutegroups.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@play/$(DEPDIR)/notemapper.Plo@am__quote@ # am--include-marker
@@ -1215,6 +1219,7 @@ distclean: distclean-am
 	-rm -f os/$(DEPDIR)/timing.Plo
 	-rm -f play/$(DEPDIR)/clockslist.Plo
 	-rm -f play/$(DEPDIR)/inputslist.Plo
+	-rm -f play/$(DEPDIR)/metro.Plo
 	-rm -f play/$(DEPDIR)/mutegroup.Plo
 	-rm -f play/$(DEPDIR)/mutegroups.Plo
 	-rm -f play/$(DEPDIR)/notemapper.Plo
@@ -1338,6 +1343,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f os/$(DEPDIR)/timing.Plo
 	-rm -f play/$(DEPDIR)/clockslist.Plo
 	-rm -f play/$(DEPDIR)/inputslist.Plo
+	-rm -f play/$(DEPDIR)/metro.Plo
 	-rm -f play/$(DEPDIR)/mutegroup.Plo
 	-rm -f play/$(DEPDIR)/mutegroups.Plo
 	-rm -f play/$(DEPDIR)/notemapper.Plo

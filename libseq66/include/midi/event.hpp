@@ -411,7 +411,7 @@ private:
 public:
 
     event ();
-    event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1);
+    event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1 = 0);
     event (midipulse tstamp, midibpm tempo);
     event
     (

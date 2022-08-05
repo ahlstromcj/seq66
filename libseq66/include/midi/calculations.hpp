@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-06-16
+ * \updates       2022-08-05
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -479,15 +479,26 @@ double_ticks_from_ppqn (int ppqn)
 /**
  *  Calculates the pulses per measure.  This calculation is extremely simple,
  *  and it provides an important constraint to pulse (ticks) calculations:
- *  the number of pulses in a measure is always 4 times the PPQN value,
+ *  the default number of pulses in a measure is always 4 times the PPQN value,
  *  regardless of the time signature.  The number pulses in a 7/8 measure is
- *  the the same as in a 4/4 measure.
+ *  *not* the same as in a 4/4 measure.
  */
 
 inline int
 default_pulses_per_measure (int ppqn)
 {
     return 4 * ppqn;
+}
+
+/**
+ *  Calculates the pulses in a beat. For a 4/4 time signature, this is the
+ *  same as PPQN.
+ */
+
+inline int
+pulses_per_beat (int ppqn, int beatwidth)
+{
+    return 4 * ppqn / beatwidth;
 }
 
 /**

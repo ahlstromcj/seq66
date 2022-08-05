@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-07-31
+ * \updates       2022-08-05
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -56,6 +56,7 @@
 #include "ctrl/opcontainer.hpp"         /* class seq66::opcontainer         */
 #include "midi/jack_assistant.hpp"      /* optional seq66::jack_assistant   */
 #include "midi/mastermidibus.hpp"       /* seq66::mastermidibus ALSA/JACK   */
+#include "play/metro.hpp"               /* seq66::metro metronome pattern   */
 #include "play/playlist.hpp"            /* seq66::playlist                  */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "play/setmapper.hpp"           /* seq66::seqmanager and seqstatus  */
@@ -416,6 +417,13 @@ private:
      */
 
     std::unique_ptr<notemapper> m_note_mapper;
+
+    /**
+     *  Provides an optional pointer to a metronome pattern, owned and managed
+     *  only by performer.
+     */
+
+    std::unique_ptr<metro> m_metronome;
 
     /**
      *  If true, playback is done in Song mode, not Live mode.  This option is
@@ -2331,6 +2339,8 @@ public:
     (
         sequence * seq, seq::number & seqno, bool fileload = false
     );
+    bool install_metronome ();
+    void remove_metronome ();
     void inner_start ();
     void inner_stop (bool midiclock = false);
 

@@ -101,7 +101,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>80</width>
+         <width>32</width>
          <height>28</height>
         </size>
        </property>
@@ -112,7 +112,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Set Name</string>
+        <string>Set</string>
        </property>
       </widget>
      </item>
@@ -120,7 +120,7 @@
       <widget class="QLineEdit" name="txtBankName">
        <property name="minimumSize">
         <size>
-         <width>300</width>
+         <width>184</width>
          <height>0</height>
         </size>
        </property>
@@ -142,6 +142,28 @@
        </property>
        <property name="text">
         <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonMetronome">
+       <property name="minimumSize">
+        <size>
+         <width>48</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>48</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>M</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

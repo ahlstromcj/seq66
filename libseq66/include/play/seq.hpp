@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-07-29
+ * \updates       2022-08-05
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -210,21 +210,6 @@ public:
     ~seq ();
 
     /**
-     *  The limiting sequence number, in macro form.  This value indicates
-     *  that no background sequence value has been assigned yet.  However, we
-     *  have issues saving a negative number in MIDI, so we will use the
-     *  "proprietary" track's bogus sequence number, which doubles the 1024
-     *  sequences we can support.  Values between 0 (inclusive) and 2048
-     *  (exclusive) are valid.  But 2048 is a <i> legal</i> value, used only
-     *  for disabling the selection of a background sequence.
-     */
-
-    static number limit ()
-    {
-        return 2048;    /* 0x0800 */
-    }
-
-    /**
      *  The maximum number of patterns supported is given by the number of
      *  patterns supported in the panel (32) times the maximum number of sets
      *  (32), or 1024 patterns.  However, this value is now independent of the
@@ -239,7 +224,41 @@ public:
 
     static int maximum ()
     {
-        return 1024;
+        return sequence::maximum();             /* 1024 */
+    }
+
+    /**
+     *  A pattern number that indicates the pattern is to be used as a
+     *  metronome.
+     */
+
+    static number metronome ()
+    {
+        return sequence::metronome();           /* 2047 */
+    }
+
+    /**
+     *  The limiting sequence number, in macro form.  This value indicates
+     *  that no background sequence value has been assigned yet.  However, we
+     *  have issues saving a negative number in MIDI, so we will use the
+     *  "proprietary" track's bogus sequence number, which doubles the 1024
+     *  sequences we can support.  Values between 0 (inclusive) and 2048
+     *  (exclusive) are valid.  But 2048 is a <i> legal</i> value, used only
+     *  for disabling the selection of a background sequence.
+     */
+
+    static number limit ()
+    {
+        return sequence::limit();               /* 2048 */  /* 0x0800 */
+    }
+
+    /**
+     *  Indicates that a sequence number has not been assigned.
+     */
+
+    static number unassigned ()
+    {
+        return sequence::unassigned();          /* (-1) */
     }
 
     /**
@@ -250,15 +269,6 @@ public:
     static number all ()
     {
         return (-2);
-    }
-
-    /**
-     *  Indicates that a sequence number has not been assigned.
-     */
-
-    static number unassigned ()
-    {
-        return (-1);
     }
 
     /**
@@ -360,6 +370,12 @@ public:
             m_seq->set_armed(m_snapshot_status);
     }
 
+    seq::number seq_number () const
+    {
+        return active() ?
+            seq::number(m_seq->seq_number()) : seq::unassigned() ;
+    }
+
 private:
 
     bool activate (sequence * s, number seqno);
@@ -373,12 +389,6 @@ private:
     void sequence_playing_change (bool on, bool q_in_progress);
     std::string to_string (int index) const;
     void show (int index = 0) const;
-
-    seq::number seq_number () const
-    {
-        return active() ?
-            seq::number(m_seq->seq_number()) : seq::unassigned() ;
-    }
 
     void change_seq_number (seq::number seqno)
     {

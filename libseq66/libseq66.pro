@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2022-05-19
+# \update      2022-08-05
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -96,6 +96,7 @@ HEADERS += include/seq66_features.h \
  include/midi/wrkfile.hpp \
  include/play/clockslist.hpp \
  include/play/inputslist.hpp \
+ include/play/metro.hpp \
  include/play/mutegroup.hpp \
  include/play/mutegroups.hpp \
  include/play/notemapper.hpp \
@@ -176,6 +177,7 @@ SOURCES += src/seq66_features.cpp \
  src/midi/wrkfile.cpp \
  src/play/clockslist.cpp \
  src/play/inputslist.cpp \
+ src/play/metro.cpp \
  src/play/mutegroup.cpp \
  src/play/mutegroups.cpp \
  src/play/notemapper.cpp \
