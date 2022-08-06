@@ -24,15 +24,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-05
+ * \updates       2022-08-06
  * \license       GNU GPLv2 or above
  *
  */
 
-//nclude "cfg/settings.hpp"             /* seq66::rc() and usr()            */
-//nclude "cfg/scales.hpp"               /* key and scale constants          */
-//nclude "play/performer.hpp"           /* seq66::performer                 */
-#include "play/metro.hpp"            /* seq66::metro                  */
+#include "play/metro.hpp"               /* seq66::metro sequence class      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -85,7 +82,7 @@ metro::metro
      * The caller must call the following functions and () and check the
      * return values for the ones that have boolean returns *.
      *
-     *      set_midi_bus(metro()) *
+     *      set_midi_bus(bus) *
      *      set_midi_channel(chan, false) *
      *      set_beats_per_bar(bpb)
      *      set_beat_width(bw)
@@ -131,63 +128,60 @@ metro::~metro ()
 bool
 metro::initialize ()
 {
-    bool result = m_main_note > 0 && m_sub_note > 0;    /* sanity check   */
+    bool result = m_main_note > 0 && m_sub_note > 0;    /* a sanity check   */
     if (result)
     {
         int bpb = get_beats_per_bar();
         int ppq = get_ppqn();
         int bw = get_beat_width();
         int measures = 1;
-        result = apply_length(bpb, ppq, bw, measures);
+        (void) apply_length(bpb, ppq, bw, measures);    /* might not change */
+
+        int increment = pulses_per_beat(ppq, bw);
+        midipulse mainlen = m_main_note_length == 0 ?
+            midipulse(increment / 2) : m_main_note_length;
+
+        midipulse sublen = m_sub_note_length == 0 ?
+            midipulse(increment / 2) : m_sub_note_length;
+
+        midipulse tick = 0;
+        midibyte channel = seq_midi_channel();
+        for (int count = 0; count < bpb; ++count, tick += increment)
+        {
+            midibyte patch, note, vel, len;
+            if (count == 0)
+            {
+                patch = m_main_patch;
+                note = m_main_note;
+                vel = m_main_note_velocity;
+                len = mainlen;
+            }
+            else
+            {
+                patch = m_sub_patch;
+                note = m_sub_note;
+                vel = m_sub_note_velocity;
+                len = sublen;
+            }
+            event prog(tick, EVENT_PROGRAM_CHANGE, channel, patch);
+            event on(tick + 1, EVENT_NOTE_ON, channel, note, vel);
+            event off(tick + len, EVENT_NOTE_OFF, channel, note, vel);
+            result = add_event(prog);
+            if (result)
+                result = add_event(on);
+
+            if (result)
+                result = add_event(off);
+
+            if (! result)
+                break;
+        }
         if (result)
         {
-            int increment = pulses_per_beat(ppq, bw);
-            midipulse mainlen = m_main_note_length == 0 ?
-                midipulse(increment / 2) : m_main_note_length;
-
-            midipulse sublen = m_sub_note_length == 0 ?
-                midipulse(increment / 2) : m_sub_note_length;
-
-            midipulse tick = 0;
-            midibyte channel = seq_midi_channel();
-            for (int count = 0; count < bpb; ++count, tick += increment)
-            {
-                midibyte patch, note, vel, len;
-                if (count == 0)
-                {
-                    patch = m_main_patch;
-                    note = m_main_note;
-                    vel = m_main_note_velocity;
-                    len = mainlen;
-                }
-                else
-                {
-                    patch = m_sub_patch;
-                    note = m_sub_note;
-                    vel = m_sub_note_velocity;
-                    len = sublen;
-                }
-                event prog(tick, EVENT_PROGRAM_CHANGE, channel, patch);
-                event on(tick + 1, EVENT_NOTE_ON, channel, note, vel);
-                event off(tick + len, EVENT_NOTE_OFF, channel, note, vel);
-                result = add_event(prog);
-                if (result)
-                    result = add_event(on);
-
-                if (result)
-                    result = add_event(off);
-
-                if (! result)
-                    break;
-            }
-            if (result)
-            {
-                sort_events();
-                seq_number(metronome());    /* magic number for metro class */
-
-                ////////
-                //TODO:  activate the pattern!!!!!
-            }
+            sort_events();
+            seq_number(metronome());    /* magic number for metro class */
+            set_name("Metronome");
+            armed(true);
         }
     }
     return result;

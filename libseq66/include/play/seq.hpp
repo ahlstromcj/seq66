@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-08-05
+ * \updates       2022-08-06
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -82,7 +82,7 @@ namespace seq66
 class seq
 {
     friend class performer;
-    friend class playset_temp;
+    friend class playset;
     friend class screenset;
     friend class setmapper;
 

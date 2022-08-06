@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-08-05
+ * \updates       2022-08-06
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -162,7 +162,7 @@ struct fixparameters
 class sequence
 {
     friend class performer;             /* access to set_parent()   */
-    friend class triggers;              /* will unfriend later      */
+    friend class triggers;
 
 public:
 
@@ -1262,13 +1262,6 @@ public:
 
     bool set_armed (bool p);
 
-#if defined USE_OLD_CODE
-    bool playing () const
-    {
-        return m_playing;
-    }
-#endif
-
     bool armed () const
     {
         return m_armed;
@@ -1877,6 +1870,13 @@ public:
         return dt == sequence::draw::note_on || dt == sequence::draw::note_off;
     }
 
+protected:
+
+    void armed (bool flag)
+    {
+        m_armed = flag;
+    }
+
 private:
 
     mastermidibus * master_bus ()
@@ -1892,11 +1892,6 @@ private:
     performer * perf ()
     {
         return m_parent;
-    }
-
-    void armed (bool flag)
-    {
-        m_armed = flag;
     }
 
     bool quantize_events

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-07-29
+ * \updates       2022-08-06
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -678,7 +678,7 @@ qsmainwnd::qsmainwnd
      * to it to allow for the "None" entry.
      */
 
-    midibyte buss_override = usr().midi_buss_override();
+    bussbyte buss_override = usr().midi_buss_override();
     if (is_good_buss(buss_override))
         ui->cmb_global_bus->setCurrentIndex(int(buss_override) + 1);
 
@@ -1000,7 +1000,6 @@ qsmainwnd::show_song_mode (bool songmode)
         ui->btnSongPlay->setText("Live");
     }
 }
-
 
 /**
  *  Sets the song mode, which is actually the JACK start mode.  If true, we
@@ -1695,7 +1694,15 @@ qsmainwnd::new_file ()
         enable_save(false);                         /* no save until change */
         redo_live_frame();
         remove_all_editors();
+
+        /*
+         * TODO: consolidate
+         */
+
         (void) cb_perf().reset_mute_groups();       /* no modify() call     */
+        cb_perf().song_mode(false);
+        m_song_mode = cb_perf().song_mode();
+        show_song_mode(m_song_mode);
         if (! usr().is_buss_override())
             ui->cmb_global_bus->setCurrentIndex(0);
 
@@ -1751,7 +1758,16 @@ qsmainwnd::new_session ()
                 m_is_title_dirty = true;
                 redo_live_frame();
                 remove_all_editors();
+
+                /*
+                 * TODO: consolidate
+                 */
+
                 (void) cb_perf().reset_mute_groups();  /* no modify() call  */
+                cb_perf().song_mode(false);
+                m_song_mode = cb_perf().song_mode();
+                show_song_mode(m_song_mode);
+
                 if (not_nullptr(m_mute_master))
                     m_mute_master->group_needs_update();
             }
@@ -2516,6 +2532,7 @@ qsmainwnd::update_midi_bus (int index)
         else
         {
             (void) cb_perf().ui_change_set_bus(index - 1);
+            usr().midi_buss_override(bussbyte(index - 1));
             enable_save();
         }
     }

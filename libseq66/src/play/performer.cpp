@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-08-05
+ * \updates       2022-08-06
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1202,14 +1202,33 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
 bool
 performer::install_metronome ()
 {
-    m_metronome.reset(new (std::nothrow) metro());
+    m_metronome.reset(new (std::nothrow) metro());  /* TODO: parameters */
     bool result = bool(m_metronome);
     if (result)
     {
-        result = m_metronome->initialize();
+        /*
+         * Eventually configurable.
+         */
+
+        bussbyte bus = usr().midi_buss_override();
+        midibyte channel = 0;
+        int bpb = 4;
+        int bw = 4;
+        m_metronome->set_midi_bus(bus);
+        m_metronome->set_midi_channel(channel);
+        m_metronome->set_beats_per_bar(bpb);
+        m_metronome->set_beat_width(bw);
+        result = m_metronome->initialize();         /* add events and arm   */
         if (result)
         {
-            result = mapper().add_to_play_set(m_play_set, m_metronome.get());
+            result = m_play_set.add(m_metronome.get());
+
+            /*
+             * Debugging.
+             */
+
+            std::string statusstr = result ? "Succeeded" : "Failed" ;
+            status_message(statusstr, m_play_set.to_string());
         }
         else
             m_metronome.reset();

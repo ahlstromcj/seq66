@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-08-05
+ * \updates       2022-08-06
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -41,6 +41,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() and rc()            */
 #include "play/screenset.hpp"           /* seq66::screenset class           */
+#include "util/strfunctions.hpp"        /* seq66::bool_to_string()          */
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -1466,6 +1467,18 @@ playset::add (const screenset & sset, seq::number seqno)
     return result;
 }
 
+bool
+playset::add (sequence * sp)
+{
+    bool result = not_nullptr(sp);
+    if (result)
+    {
+        seq::pointer s(sp);
+        m_sequence_array.push_back(s);
+    }
+    return result;
+}
+
 void
 playset::remove (seq::number seqno)
 {
@@ -1479,6 +1492,24 @@ playset::remove (seq::number seqno)
     );
     if (seqit != m_sequence_array.end())
         (void) m_sequence_array.erase(seqit);
+}
+
+std::string
+playset::to_string () const
+{
+    std::string result = "Playset:\n";
+    for (const auto & sp : m_sequence_array)
+    {
+        std::string seqno = std::to_string(int(sp->seq_number()));
+        result += "  Seq ";
+        result += seqno;
+        result += ": '";
+        result += sp->name();
+        result += "' armed = ";
+        result += bool_to_string(sp->armed());
+        result += "\n";
+    }
+    return result;
 }
 
 }               // namespace seq66

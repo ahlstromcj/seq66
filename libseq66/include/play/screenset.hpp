@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-08-05
+ * \updates       2022-08-06
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -684,7 +684,9 @@ public:
     bool set_found (screenset::number setno) const;
     bool fill (const screenset & sset, bool clearit = true);
     bool add (const screenset & sset, seq::number seqno);
+    bool add (sequence * sp);
     void remove (seq::number seqno);
+    std::string to_string () const;
 
 };              // class playset
 

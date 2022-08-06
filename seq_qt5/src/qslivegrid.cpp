@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2022-08-05
+ * \updates       2022-08-06
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -71,6 +71,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
+#include "pixmaps/metro.xpm"            /* a metroname icon                 */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "os/timing.hpp"                /* seq66::millisleep()              */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
@@ -187,9 +188,8 @@ qslivegrid::qslivegrid
         ui->buttonActivate->hide();
         ui->buttonLoopMode->setEnabled(true);
         ui->buttonRecordMode->setEnabled(true);
-        ui->buttonMetronome->setEnabled(false);
-        // ui->buttonMetronome->setEnabled(true);
-        // set icon!!!! ui->buttonMetronome
+        ui->buttonMetronome->setEnabled(true);
+        qt_set_icon(metro_xpm, ui->buttonMetronome);
         show_grid_record_style();
         show_record_mode();
         connect
@@ -1368,11 +1368,11 @@ qslivegrid::slot_toggle_metronome (bool /*clicked*/)
     bool on = ui->buttonMetronome->isChecked();
     if (on)
     {
-        // 
+        (void) perf().install_metronome();
     }
     else
     {
-        // 
+        (void) perf().remove_metronome();   /* or just mute it instead? */
     }
 }
 
