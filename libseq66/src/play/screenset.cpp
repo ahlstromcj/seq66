@@ -1468,14 +1468,12 @@ playset::add (const screenset & sset, seq::number seqno)
 }
 
 bool
-playset::add (sequence * sp)
+playset::add (seq::pointer s)
 {
-    bool result = not_nullptr(sp);
+    bool result = bool(s);
     if (result)
-    {
-        seq::pointer s(sp);
         m_sequence_array.push_back(s);
-    }
+
     return result;
 }
 

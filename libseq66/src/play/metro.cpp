@@ -40,10 +40,6 @@ namespace seq66
 
 /**
  *  Principal constructor.
- *
- * \param ppqn
- *      Provides the PPQN parameter to perhaps alter the default PPQN value of
- *      this metro.
  */
 
 metro::metro () :
@@ -57,7 +53,9 @@ metro::metro () :
     m_sub_note_velocity     (84),
     m_sub_note_length       (0)
 {
-    (void) initialize();
+    /*
+     * See the principal constructor below.
+     */
 }
 
 metro::metro

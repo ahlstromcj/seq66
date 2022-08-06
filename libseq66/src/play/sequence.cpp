@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-07-30
+ * \updates       2022-08-06
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -5431,7 +5431,8 @@ sequence::off_playing_notes ()
             --m_playing_notes[x];
         }
     }
-    master_bus()->flush();
+    if (not_nullptr(master_bus()))
+        master_bus()->flush();
 }
 
 /**

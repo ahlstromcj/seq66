@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-07-21
+ * \updates       2022-08-06
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -1888,7 +1888,7 @@ public:         // used in main application module and the usrfile class
 
     void default_ppqn (int ppqn);
     void midi_ppqn (int ppqn);
-    void midi_buss_override (bussbyte buss);
+    void midi_buss_override (bussbyte buss, bool userchange = false);
     void velocity_override (int vel);
     void bpm_precision (int precision);
     void bpm_step_increment (midibpm increment);

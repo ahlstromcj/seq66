@@ -2532,7 +2532,7 @@ qsmainwnd::update_midi_bus (int index)
         else
         {
             (void) cb_perf().ui_change_set_bus(index - 1);
-            usr().midi_buss_override(bussbyte(index - 1));
+            usr().midi_buss_override(bussbyte(index - 1), true);   /* user  */
             enable_save();
         }
     }

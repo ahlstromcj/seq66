@@ -420,10 +420,10 @@ private:
 
     /**
      *  Provides an optional pointer to a metronome pattern, owned and managed
-     *  only by performer.
+     *  by performer, but shared with the playset.
      */
 
-    std::unique_ptr<metro> m_metronome;
+    std::shared_ptr<metro> m_metronome;
 
     /**
      *  If true, playback is done in Song mode, not Live mode.  This option is

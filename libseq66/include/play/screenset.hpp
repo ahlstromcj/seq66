@@ -684,7 +684,7 @@ public:
     bool set_found (screenset::number setno) const;
     bool fill (const screenset & sset, bool clearit = true);
     bool add (const screenset & sset, seq::number seqno);
-    bool add (sequence * sp);
+    bool add (seq::pointer sp);
     void remove (seq::number seqno);
     std::string to_string () const;
 

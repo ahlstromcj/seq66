@@ -1171,9 +1171,9 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
              */
 
             if (is_running())
-                result = mapper().add_to_play_set(m_play_set, s);
+                result = mapper().add_to_play_set(play_set(), s);
             else
-                result = mapper().fill_play_set(m_play_set);
+                result = mapper().fill_play_set(play_set());
         }
         else if (rc().is_setsmode_allsets())
         {
@@ -1182,7 +1182,7 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
              * changing the current set.
              */
 
-            result = mapper().add_to_play_set(m_play_set, s);
+            result = mapper().add_to_play_set(play_set(), s);
         }
         if (! fileload)
             modify();
@@ -1214,21 +1214,20 @@ performer::install_metronome ()
         midibyte channel = 0;
         int bpb = 4;
         int bw = 4;
-        m_metronome->set_midi_bus(bus);
-        m_metronome->set_midi_channel(channel);
-        m_metronome->set_beats_per_bar(bpb);
-        m_metronome->set_beat_width(bw);
+        m_metronome->set_parent(this);              /* must come first...   */
+        (void) m_metronome->set_midi_bus(bus);      /* ...uses master-bus   */
+        (void) m_metronome->set_midi_channel(channel);
+        m_metronome->set_beats_per_bar(bpb);        /* hmm, add bool return */
+        m_metronome->set_beat_width(bw);            /* ditto                */
         result = m_metronome->initialize();         /* add events and arm   */
         if (result)
         {
-            result = m_play_set.add(m_metronome.get());
+            result = play_set().add(m_metronome);
 
-            /*
-             * Debugging.
-             */
-
+#if defined SEQ66_PLATFORM_DEBUG
             std::string statusstr = result ? "Succeeded" : "Failed" ;
-            status_message(statusstr, m_play_set.to_string());
+            status_message(statusstr, play_set().to_string());
+#endif
         }
         else
             m_metronome.reset();
@@ -1242,8 +1241,13 @@ performer::remove_metronome ()
     if (m_metronome)
     {
         seq::number seqno =  m_metronome->seq_number();
-        m_play_set.remove(seqno);
-        m_metronome.reset();
+        play_set().remove(seqno);
+        if (m_metronome)
+            m_metronome.reset();
+
+#if defined SEQ66_PLATFORM_DEBUG
+        status_message("Removed metronome", play_set().to_string());
+#endif
     }
 }
 
@@ -1558,7 +1562,7 @@ performer::ui_change_set_bus (int buss)
     bool result = is_good_buss(b);
     if (result)
     {
-        for (auto seqi : m_play_set.seq_container())
+        for (auto seqi : play_set().seq_container())
         {
             if (seqi)
                 seqi->set_midi_bus(b, true);    /* calls notify function    */
@@ -2000,7 +2004,7 @@ performer::set_playing_screenset (screenset::number setno)
         bool clearit = rc().is_setsmode_clear();    /* remove all patterns? */
         announce_exit(false);                       /* blank the device     */
         unset_queued_replace();                     /* clear queueing       */
-        mapper().fill_play_set(m_play_set, clearit);
+        mapper().fill_play_set(play_set(), clearit);
         if (rc().is_setsmode_autoarm())
         {
             set_song_mute(mutegroups::action::off); /* unmute them all      */
@@ -2028,7 +2032,7 @@ performer::reset_playset ()
 {
     announce_exit(false);                           /* blank the device     */
     unset_queued_replace();                         /* clear queueing       */
-    mapper().fill_play_set(m_play_set, true);       /* true: clear it first */
+    mapper().fill_play_set(play_set(), true);       /* true: clear it first */
     if (rc().is_setsmode_autoarm())
         set_song_mute(mutegroups::action::off);     /* unmute them all      */
 
@@ -2137,7 +2141,7 @@ performer::clear_all (bool /* clearplaylist */ )
     usr().clear_global_seq_features();
     if (result)
     {
-        m_play_set.clear();             /* dump active patterns             */
+        play_set().clear();             /* dump active patterns             */
 
 #if defined WE_REALLY_NEED_TO_RESET_PLAYLIST
         if (m_play_list)
@@ -2204,7 +2208,7 @@ performer::reset_sequences (bool p)
 {
     void (sequence::* f) (bool) = p ? &sequence::pause : &sequence::stop ;
     bool songmode = song_mode();
-    for (auto & seqi : m_play_set.seq_container())
+    for (auto & seqi : play_set().seq_container())
         (seqi.get()->*f)(songmode);
 
     /*
@@ -2522,6 +2526,9 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
     midicontrolout::seqaction what;
     if (ok)
     {
+        if (s->is_metronome())
+            return true;
+
         if (s->armed())
         {
             what = s->get_queued() ?
@@ -2552,7 +2559,16 @@ bool
 performer::announce_pattern (seq::number seqno)
 {
     seq::pointer s = get_sequence(seqno);
-    return announce_sequence(s, mapper().seq_to_offset(*s));
+    bool result = bool(s);
+    if (result)
+    {
+        if (! s->is_metronome())            /* not part of normal patterns  */
+            result = announce_sequence(s, mapper().seq_to_offset(*s));
+    }
+    else
+        result = false;
+
+    return result;
 }
 
 /**
@@ -4014,7 +4030,7 @@ performer::start_playing ()
 
         if (resume_note_ons())                              /* for issue #5 */
         {
-            for (auto seqi : m_play_set.seq_container())
+            for (auto seqi : play_set().seq_container())
                 seqi->resume_note_ons(get_tick());
         }
     }
@@ -4187,7 +4203,7 @@ performer::play (midipulse tick)
             return;
         }
         set_tick(tick);
-        for (auto seqi : m_play_set.seq_container())
+        for (auto seqi : play_set().seq_container())
         {
             if (seqi)
                 seqi->play_queue(tick, songmode, resume_note_ons());

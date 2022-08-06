@@ -1403,11 +1403,11 @@ usrsettings::midi_beat_width (int bw)
  */
 
 void
-usrsettings::midi_buss_override (bussbyte buss)
+usrsettings::midi_buss_override (bussbyte buss, bool userchange)
 {
     if (is_valid_buss(buss))                /* good value or a null value   */
     {
-        if (! test_option_bit(option_buss))
+        if (userchange || ! test_option_bit(option_buss))
         {
             m_midi_buss_override = buss;
             set_option_bit(option_buss);
