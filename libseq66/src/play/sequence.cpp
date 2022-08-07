@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-08-06
+ * \updates       2022-08-07
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1164,6 +1164,64 @@ sequence::play
      *  if (get_queued())
      *      perf()->announce_pattern(seq_number()); // for issue #89        //
      */
+}
+
+/**
+ *  This function plays without supporting song-mode, triggers, transposing,
+ *  resuming notes, loop count, meta events, and song recording.  It is
+ *  meant to be used for a metronome pattern.
+ *
+ *  Do we want to support tempo in a metronome pattern?
+ *
+ *  One issue is in removing the metronome, and we end up with a null event,
+ *  causing a segfault.  We should just mute the metronome.
+ */
+
+void
+sequence::live_play (midipulse tick)
+{
+    automutex locker(m_mutex);
+    midipulse start_tick = m_last_tick;     /* modified in triggers::play() */
+    midipulse end_tick = tick;              /* ditto                        */
+    if (m_song_mute)
+        set_armed(false);
+
+    if (armed())                            /* play notes in the frame      */
+    {
+        midipulse length = get_length() > 0 ? get_length() : m_ppqn ;
+        midipulse start_tick_offset = start_tick + length;
+        midipulse end_tick_offset = end_tick + length;
+        midipulse times_played = m_last_tick / length;
+        midipulse offset_base = times_played * length;
+        auto e = m_events.begin();
+        while (e != m_events.end())
+        {
+            event & er = eventlist::dref(e);
+            midipulse stamp = er.timestamp() + offset_base;
+            if (stamp >= start_tick_offset && stamp <= end_tick_offset)
+            {
+#if defined SUPPORT_TEMPO_IN_LIVE_PLAY
+                if (er.is_tempo())
+                {
+                    if (not_nullptr(perf()))
+                        perf()->set_beats_per_minute(er.tempo());
+                }
+#endif
+                put_event_on_bus(er);               /* frame still going    */
+            }
+            else if (stamp > end_tick_offset)
+                break;                              /* frame is done        */
+
+            ++e;                                    /* go to next event     */
+            if (e == m_events.end())                /* did we hit the end ? */
+            {
+                e = m_events.begin();               /* yes, start over      */
+                offset_base += length;              /* for another go at it */
+                (void) microsleep(1);
+            }
+        }
+    }
+    m_last_tick = end_tick + 1;                     /* for next frame       */
 }
 
 /**
@@ -5876,7 +5934,10 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
             automation::action::off, automation::ctrlstatus::oneshot
         );
     }
-    play(tick, playbackmode, resumenoteons);
+    if (is_metronome())
+        live_play(tick);
+    else
+        play(tick, playbackmode, resumenoteons);
 }
 
 /**

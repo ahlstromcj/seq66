@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-08-06
+ * \updates       2022-08-07
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1483,6 +1483,7 @@ public:
 
     std::string to_string () const;
     void play (midipulse tick, bool playback_mode, bool resume = false);
+    void live_play (midipulse tick);
     void play_queue (midipulse tick, bool playbackmode, bool resume);
     bool push_add_note
     (

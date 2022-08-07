@@ -46,6 +46,156 @@ namespace seq66
 {
 
 /**
+ *  Configuration class for the metro class. It covers the members of the
+ *  metro class pluse the bus, channel, beats, and beat width.
+ */
+
+class metro_config
+{
+private:
+
+    bussbyte m_buss;
+    midibyte m_channel;
+    int m_beats_per_bar;
+    int m_beat_width;
+    midibyte m_main_patch;
+    midibyte m_sub_patch;
+    midibyte m_main_note;
+    midibyte m_main_note_velocity;
+    midipulse m_main_note_length;
+    midibyte m_sub_note;
+    midibyte m_sub_note_velocity;
+    midipulse m_sub_note_length;
+
+public:
+
+    metro_config ();
+
+    bussbyte buss () const
+    {
+        return m_buss;
+    }
+
+    midibyte channel () const
+    {
+        return m_channel;
+    }
+
+    int beats_per_bar () const
+    {
+        return m_beats_per_bar;
+    }
+
+    int beat_width () const
+    {
+        return m_beat_width;
+    }
+
+    midibyte main_patch () const
+    {
+        return m_main_patch;
+    }
+
+    midibyte sub_patch () const
+    {
+        return m_sub_patch;
+    }
+
+    midibyte main_note () const
+    {
+        return m_main_note;
+    }
+
+    midibyte main_note_velocity () const
+    {
+        return m_main_note_velocity;
+    }
+
+    midipulse main_note_length () const
+    {
+        return m_main_note_length;
+    }
+
+    midibyte sub_note () const
+    {
+        return m_sub_note;
+    }
+
+    midibyte sub_note_velocity () const
+    {
+        return m_sub_note_velocity;
+    }
+
+    midipulse sub_note_length () const
+    {
+        return m_sub_note_length;
+    }
+
+public:
+
+    void buss (int b)
+    {
+        m_buss = bussbyte(b);
+    }
+
+    void channel (int ch)
+    {
+        m_channel = midibyte(ch);
+    }
+
+    void beats_per_bar (int bpb)
+    {
+        m_beats_per_bar = bpb;
+    }
+
+    void beat_width (int bw)
+    {
+        m_beat_width = bw;
+    }
+
+    void main_patch (int patch)
+    {
+        m_main_patch = midibyte(patch);
+    }
+
+    void sub_patch (int patch)
+    {
+        m_sub_patch = midibyte(patch);
+    }
+
+    void main_note (int note)
+    {
+        m_main_note = midibyte(note);
+    }
+
+    void main_note_velocity (int vel)
+    {
+        m_main_note_velocity = midibyte(vel);
+    }
+
+    void main_note_length (long len)
+    {
+        m_main_note_length = midipulse(len);
+    }
+
+    void sub_note (int note)
+    {
+        m_sub_note = midibyte(note);
+    }
+
+    void sub_note_velocity (int vel)
+    {
+        m_sub_note_velocity = midibyte(vel);
+    }
+
+    void sub_note_length (long len)
+    {
+        m_sub_note_length = midipulse(len);
+    }
+
+};          // class metro_config
+
+/**
  *  The metro class is just a sequence used for implementing a metronome
  *  functionality.
  */

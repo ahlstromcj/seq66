@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-08-06
+ * \updates       2022-08-07
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1202,6 +1202,9 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
 bool
 performer::install_metronome ()
 {
+    if (bool(m_metronome))
+        arm_metronome(true);
+
     m_metronome.reset(new (std::nothrow) metro());  /* TODO: parameters */
     bool result = bool(m_metronome);
     if (result)
@@ -1224,7 +1227,7 @@ performer::install_metronome ()
         {
             result = play_set().add(m_metronome);
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
             std::string statusstr = result ? "Succeeded" : "Failed" ;
             status_message(statusstr, play_set().to_string());
 #endif
@@ -1245,10 +1248,21 @@ performer::remove_metronome ()
         if (m_metronome)
             m_metronome.reset();
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         status_message("Removed metronome", play_set().to_string());
 #endif
     }
+}
+
+/**
+ *  This sometimes fails to turn off the metronome.
+ */
+
+void
+performer::arm_metronome (bool on)
+{
+    if (m_metronome)
+        m_metronome->set_armed(on);
 }
 
 /**

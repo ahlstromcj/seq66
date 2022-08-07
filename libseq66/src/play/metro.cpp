@@ -38,6 +38,37 @@
 namespace seq66
 {
 
+/*
+ *---------------------------------------------------------------------
+ *  metro_config
+ *---------------------------------------------------------------------
+ */
+
+metro_config::metro_config () :
+    m_buss                  (0),
+    m_channel               (0),
+    m_beats_per_bar         (4),
+    m_beat_width            (4),
+    m_main_patch            (0),
+    m_sub_patch             (0),
+    m_main_note             (72),       /* middle C + 12 */
+    m_main_note_velocity    (120),
+    m_main_note_length      (0),
+    m_sub_note              (60),       /* middle C      */
+    m_sub_note_velocity     (84),
+    m_sub_note_length       (0)
+{
+    /*
+     * See the principal constructor below.
+     */
+}
+
+/*
+ *---------------------------------------------------------------------
+ *  metro
+ *---------------------------------------------------------------------
+ */
+
 /**
  *  Principal constructor.
  */
@@ -133,6 +164,12 @@ metro::initialize ()
         int ppq = get_ppqn();
         int bw = get_beat_width();
         int measures = 1;
+
+//      (void) m_metronome->set_midi_bus(bus);      /* ...uses master-bus   */
+//      (void) m_metronome->set_midi_channel(channel);
+//      m_metronome->set_beats_per_bar(bpb);        /* hmm, add bool return */
+//      m_metronome->set_beat_width(bw);            /* ditto                */
+
         (void) apply_length(bpb, ppq, bw, measures);    /* might not change */
 
         int increment = pulses_per_beat(ppq, bw);

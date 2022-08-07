@@ -1,7 +1,7 @@
 # README for Seq66 0.98.11
 
 Chris Ahlstrom
-2015-09-10 to 2022-08-03
+2015-09-10 to 2022-08-07
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -103,9 +103,13 @@ Windows, and using a conventional source tarball.
             right.  Added more padding and a button to expand the grid when
             when desired. For the pattern editor, the workaround is to increase
             the "length" in the pattern editor.
-        *   Issue #97. Pattern editor fixes. Added paste box when pasting notes,
-            an oversight from the Seq24 reboot. Added Ctrl-Left/Right to move
-            the progress bar in the pattern editor.
+        *   Issue #97.
+            *   Pattern editor fixes.
+            *   Added paste box when pasting notes, an oversight from the Seq24
+                reboot.
+            *   Added Ctrl-Left/Right to move the progress bar in the pattern
+                editor. (Left/Right scrolls the piano roll.)
+            *   Added an initial metronome facility.
         *   Muted pattern slots show a short progress bar, to aid in the timing
             of queuing.
         *   Improved the handling of the MIDI 'ctrl' file.

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2022-08-06
+ * \updates       2022-08-07
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1368,11 +1368,17 @@ qslivegrid::slot_toggle_metronome (bool /*clicked*/)
     bool on = ui->buttonMetronome->isChecked();
     if (on)
     {
-        (void) perf().install_metronome();
+        (void) perf().install_metronome();  /* arms it if already existing  */
     }
     else
     {
-        (void) perf().remove_metronome();   /* or just mute it instead? */
+        /*
+         * This can cause the occasional segfault.
+         *
+         * (void) perf().remove_metronome();
+         */
+
+        (void) perf().arm_metronome(false); /* mutes the metronome          */
     }
 }
 
