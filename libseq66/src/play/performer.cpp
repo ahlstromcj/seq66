@@ -1203,26 +1203,26 @@ bool
 performer::install_metronome ()
 {
     if (bool(m_metronome))
+    {
         arm_metronome(true);
+        return true;
+    }
 
-    m_metronome.reset(new (std::nothrow) metro());  /* TODO: parameters */
+    /*
+     * Eventually configurable.
+     *
+     * metrosettings & ms = rc().metro_settings();
+     */
+
+    metrosettings ms;                               /* sets the defaults    */
+    bussbyte bus = usr().midi_buss_override();
+    ms.buss(bus);
+
+    m_metronome.reset(new (std::nothrow) metro(ms));
     bool result = bool(m_metronome);
     if (result)
     {
-        /*
-         * Eventually configurable.
-         */
-
-        bussbyte bus = usr().midi_buss_override();
-        midibyte channel = 0;
-        int bpb = 4;
-        int bw = 4;
-        m_metronome->set_parent(this);              /* must come first...   */
-        (void) m_metronome->set_midi_bus(bus);      /* ...uses master-bus   */
-        (void) m_metronome->set_midi_channel(channel);
-        m_metronome->set_beats_per_bar(bpb);        /* hmm, add bool return */
-        m_metronome->set_beat_width(bw);            /* ditto                */
-        result = m_metronome->initialize();         /* add events and arm   */
+        result = m_metronome->initialize(this);     /* add events and arm   */
         if (result)
         {
             result = play_set().add(m_metronome);
@@ -4254,7 +4254,7 @@ performer::count_exportable () const
 
 /**
  *  Seq66 can split an SMF 0 file into multiple tracks, effectively converting
- *  it to SMF 1, via midi_splitter.  This fucntion performers the opposite
+ *  it to SMF 1, via midi_splitter.  This function performers the opposite
  *  process, creating an SMF 0 track from all the other tracks, for saving as
  *  an SMF 0 file.
  *

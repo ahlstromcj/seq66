@@ -503,7 +503,7 @@ is_good_busscount (int b)
 }
 
 inline bool
-is_good_midibyte (midibyte b)
+is_good_data_byte (midibyte b)
 {
     return b < c_midibyte_data_max;
 }

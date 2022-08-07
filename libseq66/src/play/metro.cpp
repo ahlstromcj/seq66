@@ -24,12 +24,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-06
+ * \updates       2022-08-07
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "play/metro.hpp"               /* seq66::metro sequence class      */
+#include "play/performer.hpp"           /* seq66::performer class functions */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -40,11 +41,11 @@ namespace seq66
 
 /*
  *---------------------------------------------------------------------
- *  metro_config
+ *  metrosettings
  *---------------------------------------------------------------------
  */
 
-metro_config::metro_config () :
+metrosettings::metrosettings () :
     m_buss                  (0),
     m_channel               (0),
     m_beats_per_bar         (4),
@@ -56,11 +57,37 @@ metro_config::metro_config () :
     m_main_note_length      (0),
     m_sub_note              (60),       /* middle C      */
     m_sub_note_velocity     (84),
-    m_sub_note_length       (0)
+    m_sub_note_length       (0),
+    m_main_note_fraction    (0.0),
+    m_sub_note_fraction     (0.0)
 {
     /*
      * See the principal constructor below.
      */
+}
+
+/**
+ *  A helper function for metro::initialize().
+ */
+
+midipulse
+metrosettings::calculate_length (int increment, float fraction)
+{
+    midipulse result;
+    if (fraction > 0.1)             /* sanity float check   */
+        result = midipulse(increment * fraction);
+    else
+        result = increment / 2;
+
+    return result;
+}
+
+bool
+metrosettings::initialize (int increment)
+{
+    m_main_note_length = calculate_length(increment, m_main_note_fraction);
+    m_sub_note_length = calculate_length(increment, m_sub_note_fraction);
+    return true;
 }
 
 /*
@@ -70,71 +97,29 @@ metro_config::metro_config () :
  */
 
 /**
- *  Principal constructor.
+ *  Default constructor.
  */
 
 metro::metro () :
-    sequence                (),
-    m_main_patch            (0),
-    m_sub_patch             (0),
-    m_main_note             (72),       /* middle C + 12 */
-    m_main_note_velocity    (120),
-    m_main_note_length      (0),
-    m_sub_note              (60),       /* middle C      */
-    m_sub_note_velocity     (84),
-    m_sub_note_length       (0)
+    sequence            (),
+    m_metro_settings    ()
 {
     /*
-     * See the principal constructor below.
+     * See the initialize() function below.
      */
 }
 
-metro::metro
-(
-    int mainpatch, int subpatch,
-    int mainnote, int mainnote_velocity,
-    int subnote, int subnote_velocity,
-    midipulse mainnote_len,
-    midipulse subnote_len
-) :
-    sequence                (),
-    m_main_patch            (0),
-    m_sub_patch             (0),
-    m_main_note             (0),
-    m_main_note_velocity    (0),
-    m_main_note_length      (0),
-    m_sub_note              (0),
-    m_sub_note_velocity     (mainnote_len),
-    m_sub_note_length       (subnote_len)
+/**
+ *  Principal constructor.
+ */
+
+metro::metro (const metrosettings & mc) :
+    sequence            (),
+    m_metro_settings    (mc)
 {
     /*
-     * The caller must call the following functions and () and check the
-     * return values for the ones that have boolean returns *.
-     *
-     *      set_midi_bus(bus) *
-     *      set_midi_channel(chan, false) *
-     *      set_beats_per_bar(bpb)
-     *      set_beat_width(bw)
-     *      initialize() *
+     * See the initialize() function below.
      */
-
-    if (mainpatch >= 0 && mainpatch <= c_midibyte_value_max)
-        m_main_patch = midibyte(mainpatch);
-
-    if (subpatch >= 0 && subpatch <= c_midibyte_value_max)
-        m_sub_patch = midibyte(subpatch);
-
-    if (mainnote >= 0 && mainnote <= c_midibyte_value_max)
-        m_main_note = midibyte(mainnote);
-
-    if (mainnote_velocity >= 0 && mainnote_velocity <= c_midibyte_value_max)
-        m_main_note_velocity = midibyte(mainnote_velocity);
-
-    if (subnote >= 0 && subnote <= c_midibyte_value_max)
-        m_sub_note = midibyte(subnote);
-
-    if (subnote_velocity >= 0 && subnote_velocity <= c_midibyte_value_max)
-        m_sub_note_velocity = midibyte(subnote_velocity);
 }
 
 /**
@@ -155,48 +140,47 @@ metro::~metro ()
  */
 
 bool
-metro::initialize ()
+metro::initialize (performer * p)
 {
-    bool result = m_main_note > 0 && m_sub_note > 0;    /* a sanity check   */
+    bool result = not_nullptr(p);
     if (result)
     {
-        int bpb = get_beats_per_bar();
-        int ppq = get_ppqn();
-        int bw = get_beat_width();
+        result = settings().sanity_check();
+        if (result)
+            set_parent(p);
+    }
+    if (result)
+    {
+        int ppq = p->get_ppqn();
+        int bpb = settings().beats_per_bar();       /* get_beats_per_bar()  */
+        int bw = settings().beat_width();           /* get_beat_width()     */
+        midibyte channel = settings().channel();    /* seq_midi_channel()   */
         int measures = 1;
-
-//      (void) m_metronome->set_midi_bus(bus);      /* ...uses master-bus   */
-//      (void) m_metronome->set_midi_channel(channel);
-//      m_metronome->set_beats_per_bar(bpb);        /* hmm, add bool return */
-//      m_metronome->set_beat_width(bw);            /* ditto                */
-
-        (void) apply_length(bpb, ppq, bw, measures);    /* might not change */
-
         int increment = pulses_per_beat(ppq, bw);
-        midipulse mainlen = m_main_note_length == 0 ?
-            midipulse(increment / 2) : m_main_note_length;
-
-        midipulse sublen = m_sub_note_length == 0 ?
-            midipulse(increment / 2) : m_sub_note_length;
+        (void) set_midi_bus(settings().buss());     /* ...uses master-bus   */
+        (void) set_midi_channel(channel);
+        set_beats_per_bar(bpb);                     /* hmm, add bool return */
+        set_beat_width(bw);                         /* ditto                */
+        (void) apply_length(bpb, ppq, bw, measures);
+        (void) settings().initialize(increment);
 
         midipulse tick = 0;
-        midibyte channel = seq_midi_channel();
         for (int count = 0; count < bpb; ++count, tick += increment)
         {
             midibyte patch, note, vel, len;
             if (count == 0)
             {
-                patch = m_main_patch;
-                note = m_main_note;
-                vel = m_main_note_velocity;
-                len = mainlen;
+                patch = settings().main_patch();
+                note = settings().main_note();
+                vel = settings().main_note_velocity();
+                len = settings().main_note_length();
             }
             else
             {
-                patch = m_sub_patch;
-                note = m_sub_note;
-                vel = m_sub_note_velocity;
-                len = sublen;
+                patch = settings().sub_patch();
+                note = settings().sub_note();
+                vel = settings().sub_note_velocity();
+                len = settings().sub_note_length();
             }
             event prog(tick, EVENT_PROGRAM_CHANGE, channel, patch);
             event on(tick + 1, EVENT_NOTE_ON, channel, note, vel);

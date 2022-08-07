@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-08-03
+ * \updates       2022-08-07
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2404,7 +2404,7 @@ qseqeditframe64::scroll_to_note (int note)
     int h = ui->rollScrollArea->height();
     if (h > 0)
     {
-        if (is_good_midibyte(midibyte(note)))
+        if (is_good_data_byte(midibyte(note)))
         {
             int y = tix_to_pix(note);
             ui->rollScrollArea->scroll_to_y(y);

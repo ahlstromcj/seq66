@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-05
+ * \updates       2022-08-07
  * \license       GNU GPLv2 or above
  *
  *  The metro is a sequence with a special configuration.  It can be added
@@ -50,26 +50,76 @@ namespace seq66
  *  metro class pluse the bus, channel, beats, and beat width.
  */
 
-class metro_config
+class metrosettings
 {
 private:
 
+    /**
+     *  Provides the desired MIDI buss and channel to play the metronome.
+     */
+
     bussbyte m_buss;
     midibyte m_channel;
+
+    /**
+     *  Provides the desired time-signature of the metronome.
+     */
+
     int m_beats_per_bar;
     int m_beat_width;
+
+    /**
+     *  Provides the patch/program number to use.  This selects the
+     *  sound the metronome should have.  It is played at the start of each
+     *  loop; added first in the event list.
+     */
+
     midibyte m_main_patch;
+
+    /**
+     *  Optionally, the other beats can be played with a different patch.
+     */
+
     midibyte m_sub_patch;
+
+    /**
+     *  The highlight (measure) note to play, its velocity, and its length.
+     *  The length ends up being calculated using the beat width, PPQN, and
+     *  the note-fraction members below.
+     */
+
     midibyte m_main_note;
     midibyte m_main_note_velocity;
     midipulse m_main_note_length;
+
+    /**
+     *  The sub-measure (beat) notes to play, their velocity, and their
+     *  lengths.
+     */
+
     midibyte m_sub_note;
     midibyte m_sub_note_velocity;
     midipulse m_sub_note_length;
 
+    /**
+     *  Provides the fraction of beat width used for the length of the main
+     *  and sub notes.
+     */
+
+    float m_main_note_fraction;
+    float m_sub_note_fraction;
+
 public:
 
-    metro_config ();
+    metrosettings ();
+
+    midipulse calculate_length (int increment, float fraction);
+    bool initialize (int increment);
+
+    bool sanity_check () const
+    {
+        return m_main_note > 0 && m_sub_note > 0;
+    }
 
     bussbyte buss () const
     {
@@ -111,6 +161,11 @@ public:
         return m_main_note_velocity;
     }
 
+    float main_note_fraction () const
+    {
+        return m_main_note_fraction;
+    }
+
     midipulse main_note_length () const
     {
         return m_main_note_length;
@@ -126,6 +181,11 @@ public:
         return m_sub_note_velocity;
     }
 
+    float sub_note_fraction () const
+    {
+        return m_sub_note_fraction;
+    }
+
     midipulse sub_note_length () const
     {
         return m_sub_note_length;
@@ -135,18 +195,25 @@ public:
 
     void buss (int b)
     {
-        m_buss = bussbyte(b);
+        if (! is_null_buss(b))
+            m_buss = bussbyte(b);
     }
 
     void channel (int ch)
     {
-        m_channel = midibyte(ch);
+        if (is_good_channel(ch))
+            m_channel = midibyte(ch);
     }
 
     void beats_per_bar (int bpb)
     {
         m_beats_per_bar = bpb;
     }
+
+    /*
+     * Since this is not saved, we don't care if it is not a power of
+     * two.
+     */
 
     void beat_width (int bw)
     {
@@ -155,45 +222,53 @@ public:
 
     void main_patch (int patch)
     {
-        m_main_patch = midibyte(patch);
+        if (is_good_data_byte(patch))
+            m_main_patch = midibyte(patch);
     }
 
     void sub_patch (int patch)
     {
-        m_sub_patch = midibyte(patch);
+        if (is_good_data_byte(patch))
+            m_sub_patch = midibyte(patch);
     }
 
     void main_note (int note)
     {
-        m_main_note = midibyte(note);
+        if (is_good_data_byte(note))
+            m_main_note = midibyte(note);
     }
 
     void main_note_velocity (int vel)
     {
-        m_main_note_velocity = midibyte(vel);
+        if (is_good_data_byte(vel))
+            m_main_note_velocity = midibyte(vel);
     }
 
-    void main_note_length (long len)
+    void main_note_fraction (float fraction)
     {
-        m_main_note_length = midipulse(len);
+        if (fraction == 0.0 || (fraction >= 0.125 && fraction <= 2.0))
+            m_main_note_fraction = fraction;
     }
 
     void sub_note (int note)
     {
-        m_sub_note = midibyte(note);
+        if (is_good_data_byte(note))
+            m_sub_note = midibyte(note);
     }
 
     void sub_note_velocity (int vel)
     {
-        m_sub_note_velocity = midibyte(vel);
+        if (is_good_data_byte(vel))
+            m_sub_note_velocity = midibyte(vel);
     }
 
-    void sub_note_length (long len)
+    void sub_note_fraction (float fraction)
     {
-        m_sub_note_length = midipulse(len);
+        if (fraction == 0.0 || (fraction >= 0.125 && fraction <= 2.0))
+            m_sub_note_fraction = fraction;
     }
 
-};          // class metro_config
+};          // class metrosettings
 
 /**
  *  The metro class is just a sequence used for implementing a metronome
@@ -206,36 +281,7 @@ class metro : public sequence
 
 private:
 
-    /**
-     *  Provides the patch/program number to use.  This selects the
-     *  sound the metronome should have.  It is played at the start of each
-     *  loop; added first in the event list.
-     */
-
-    midibyte m_main_patch;
-
-    /**
-     *  Optionally, the other beats can be played with a different patch.
-     */
-
-    midibyte m_sub_patch;
-
-    /**
-     *  The highlight (measure) note to play, its velocity, and its length.
-     */
-
-    midibyte m_main_note;
-    midibyte m_main_note_velocity;
-    midipulse m_main_note_length;
-
-    /**
-     *  The sub-measure (beat) notes to play, their velocity, and their
-     *  lengths.
-     */
-
-    midibyte m_sub_note;
-    midibyte m_sub_note_velocity;
-    midipulse m_sub_note_length;
+    metrosettings m_metro_settings;
 
 private:
 
@@ -244,19 +290,14 @@ private:
 public:
 
     metro ();
-
-    metro
-    (
-        int mainpatch, int subpatch,
-        int mainnote, int mainnote_velocity,
-        int subnote, int subnote_velocity,
-        midipulse mainnote_len  = 0,
-        midipulse subnote_len   = 0
-    );
-
+    metro (const metrosettings & ms);
     virtual ~metro ();
 
-    bool initialize ();
+    bool initialize (performer * p);
+    metrosettings & settings ()
+    {
+        return m_metro_settings;
+    }
 
 };          // class metro
 

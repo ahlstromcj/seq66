@@ -1873,6 +1873,8 @@ public:
 
 protected:
 
+    void set_parent (performer * p);
+
     void armed (bool flag)
     {
         m_armed = flag;
@@ -1900,7 +1902,6 @@ private:
         midibyte status, midibyte cc, int divide, bool linked = false
     );
     bool change_ppqn (int p);
-    void set_parent (performer * p);
     void put_event_on_bus (event & ev);
     void reset_loop ();
     void set_trigger_offset (midipulse trigger_offset);
