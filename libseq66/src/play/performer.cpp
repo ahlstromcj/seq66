@@ -1208,16 +1208,7 @@ performer::install_metronome ()
         return true;
     }
 
-    /*
-     * Eventually configurable.
-     *
-     * metrosettings & ms = rc().metro_settings();
-     */
-
-    metrosettings ms;                               /* sets the defaults    */
-    bussbyte bus = usr().midi_buss_override();
-    ms.buss(bus);
-
+    metrosettings & ms = rc().metro_settings();
     m_metronome.reset(new (std::nothrow) metro(ms));
     bool result = bool(m_metronome);
     if (result)

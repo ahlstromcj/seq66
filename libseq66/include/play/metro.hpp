@@ -115,6 +115,7 @@ public:
 
     midipulse calculate_length (int increment, float fraction);
     bool initialize (int increment);
+    void set_defaults ();
 
     bool sanity_check () const
     {

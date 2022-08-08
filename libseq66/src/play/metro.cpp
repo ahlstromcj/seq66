@@ -82,6 +82,25 @@ metrosettings::calculate_length (int increment, float fraction)
     return result;
 }
 
+void
+metrosettings::set_defaults ()
+{
+    m_buss                  = 0;
+    m_channel               = 0;
+    m_beats_per_bar         = 4;
+    m_beat_width            = 4;
+    m_main_patch            = 0;
+    m_sub_patch             = 0;
+    m_main_note             = 72;       /* middle C + 12 */
+    m_main_note_velocity    = 120;
+    m_main_note_length      = 0;
+    m_sub_note              = 60;       /* middle C      */
+    m_sub_note_velocity     = 84;
+    m_sub_note_length       = 0;
+    m_main_note_fraction    = 0.0;
+    m_sub_note_fraction     = 0.0;
+}
+
 bool
 metrosettings::initialize (int increment)
 {

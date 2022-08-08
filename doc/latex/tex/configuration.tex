@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2022-07-27
+% \update      2022-08-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -906,6 +906,48 @@
    \texttt{user-midi-bus-definitions} and \texttt{user-midi-bus-N} sections.
    If this option is turned on, the definitions in the
    'usr' configuration file are \textsl{not} read from that file.
+
+\subsubsection{'rc' File / Metronome}
+\label{subsubsec:configuration_rc_metronome}
+
+   As of \textsl{Seq66} version 0.98.11, a very configurable metronome is
+   supported.  After running that version for the first time, and then
+   exiting, the following new section is present:
+
+   \begin{verbatim}
+      [metronome]
+      output-buss = 1
+      output-channel = 0
+      beats-per-bar = 4
+      beat-width = 4
+      main-patch = 0
+      main-note = 72
+      main-note-velocity = 120
+      main-note-length = 0
+      sub-patch = 0
+      sub-note = 60
+      sub-note-velocity = 84
+      sub-note-length = 0
+   \end{verbatim}
+
+   The 'main' settings apply to the first note of the metronome.
+   The type of tone is given by the patch (program) number.
+   The actual note is given by a MIDI note number.
+   The velocity can be set.
+   The note-length is controlled by a scale factor:  0 means an automatic
+   calculation based on the beat width which equates to a value of 0.5;
+   1.0 means the note length is exactly equal to the beat width.
+   The minimum is 0.125, and the maximum is 2.0.
+   Try different values and see.
+
+   The 'sub' settings apply to the rest of the notes of the metronome,
+   but are otherwise the same.
+
+   Coming in the future is a user-interface in
+   \textbf{Edit / Preferences} to configure the settings
+
+   There are a few minor issues to work out, and eventually we want to add a
+   count-in feature.
 
 \subsubsection{'rc' File / Interaction Method}
 \label{subsubsec:configuration_rc_interaction}

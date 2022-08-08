@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-07-22
+ * \updates       2022-08-07
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -523,6 +523,42 @@ rcfile::parse ()
         rc_ref().reveal_ports(bool(flag));
     }
 
+    /*
+     * New for issue #97, add a configurable metronome function.
+     */
+
+    tag = "[metronome]";
+    if (line_after(file, tag))
+    {
+        int temp = get_integer(file, tag, "output-buss");
+        rc().metro_settings().buss(temp);
+        temp = get_integer(file, tag, "output-channel");
+        rc().metro_settings().channel(temp);
+        temp = get_integer(file, tag, "beats-per-bar");
+        rc().metro_settings().beats_per_bar(temp);
+        temp = get_integer(file, tag, "beat-width");
+        rc().metro_settings().beat_width(temp);
+
+        temp = get_integer(file, tag, "main-patch");
+        rc().metro_settings().main_patch(temp);
+        temp = get_integer(file, tag, "main-note");
+        rc().metro_settings().main_note(temp);
+        temp = get_integer(file, tag, "main-note-velocity");
+        rc().metro_settings().main_note_velocity(temp);
+
+        double v = get_float(file, tag, "main-note-length");
+        rc().metro_settings().main_note_fraction(v);
+
+        temp = get_integer(file, tag, "sub-patch");
+        rc().metro_settings().sub_patch(temp);
+        temp = get_integer(file, tag, "sub-note");
+        rc().metro_settings().sub_note(temp);
+        temp = get_integer(file, tag, "sub-note-velocity");
+        rc().metro_settings().sub_note_velocity(temp);
+        v = get_float(file, tag, "sub-note-length");
+        rc().metro_settings().sub_note_fraction(v);
+    }
+
     tag = "[interaction-method]";
 
     flag = get_boolean(file, tag, "snap-split");
@@ -920,6 +956,52 @@ rcfile::write ()
 "\n[reveal-ports]\n\n"
        ;
     write_boolean(file, "show-system-ports", rc_ref().reveal_ports());
+
+    /*
+     * Metronome
+     */
+
+    file << "\n"
+"# This section sets up a metronome that can be activated from the main live\n"
+"# grid. It consists of a 'main' note on the first beat, then 'sub' notes on\n"
+"# the rest of the beats.  The patch/program, note value, velocity, and\n"
+"# fraction length relative to the beat width (can be specified. The length\n"
+"# ranges from about 0.125 (one-eight) to 1.0 (the same length as the beat\n"
+"# width) to 2.0).\n"
+"\n[metronome]\n\n"
+    ;
+    write_integer(file, "output-buss", int(rc().metro_settings().buss()));
+    write_integer(file, "output-channel", int(rc().metro_settings().channel()));
+    write_integer
+    (
+        file, "beats-per-bar", int(rc().metro_settings().beats_per_bar())
+    );
+    write_integer
+    (
+        file, "beat-width", int(rc().metro_settings().beat_width())
+    );
+    write_integer(file, "main-patch", int(rc().metro_settings().main_patch()));
+    write_integer(file, "main-note", int(rc().metro_settings().main_note()));
+    write_integer
+    (
+        file, "main-note-velocity",
+        int(rc().metro_settings().main_note_velocity())
+    );
+    write_float
+    (
+        file, "main-note-length", rc().metro_settings().main_note_length()
+    );
+    write_integer(file, "sub-patch", int(rc().metro_settings().sub_patch()));
+    write_integer(file, "sub-note", int(rc().metro_settings().sub_note()));
+    write_integer
+    (
+        file, "sub-note-velocity",
+        int(rc().metro_settings().sub_note_velocity())
+    );
+    write_float
+    (
+        file, "sub-note-length", rc().metro_settings().sub_note_length()
+    );
 
     /*
      * Interaction-method

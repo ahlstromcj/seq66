@@ -63,6 +63,7 @@ rcsettings::rcsettings () :
     basesettings                (),
     m_clocks                    (),         /* vector wrapper class     */
     m_inputs                    (),         /* vector wrapper class     */
+    m_metro_settings            (),
     m_mute_group_save           (mutegroups::saving::both),
     m_keycontainer              ("rc"),
     m_drop_empty_in_controls    (false),    /* the legacy value         */
@@ -157,6 +158,11 @@ rcsettings::set_defaults ()
     /*
      * m_clocks.clear();
      * m_inputs.clear();
+     */
+
+    m_metro_settings.set_defaults();
+
+    /*
      * m_mute_groups.clear();
      * m_keycontainer.clear();              // what is best?
      */

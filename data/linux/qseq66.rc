@@ -1,20 +1,24 @@
 # Seq66 0.98.0 main ('rc') configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written 2021-12-10 14:52:44
+# Written 2022-08-07 19:37:49
 #
-# This file holds the main configuration for Seq66. It no longer
-# follows the format of the seq24rc configuration file much.
+# This file holds the main configuration for Seq66. It no longer follows the
+# format of the seq24rc configuration file.
 #
-# 'version' is set by Seq66; it is used to detect older configuration
-# files, which are upgraded to the new version when saved.
+# 'version' is set by Seq66; it is used to detect older configuration files,
+# which are upgraded to the new version when saved.
 #
 # 'verbose' just indicates the status of --verbose at exit.
 #
-# 'sets-mode' affects set muting when moving to the next set. 'normal'
-# leaves the next set muted. 'auto-arm' unmutes it. 'additive' keeps
-# the previous set armed when moving to the next set. 'all-sets' arms
-# all sets at once.
+# 'sets-mode' affects set muting when moving to the next set. 'normal' leaves
+# the next set muted. 'auto-arm' unmutes it. 'additive' keeps the previous set
+# armed when moving to the next set. 'all-sets' arms all sets at once.
+#
+# 'port-naming' is 'short', 'pair', or 'long'. If 'short', the port name shows
+# the name of the device. If the name is generic, the client name is added for
+# clarity. If 'pair', the client:port number is prepended. If 'long', the full
+# name (index, client:port, client name, and port name is shown.
 #
 # 'port-naming' values are 'short' or 'long'.  'short' shows the
 # number and short name; 'long' shows the long name.
@@ -26,6 +30,7 @@ version = 2
 verbose = false
 sets-mode = normal
 port-naming = short
+init-disabled-ports = false
 
 # [comments] holds user documentation for this file. The first empty,
 # hash-commented, or tag line ends the comment.
@@ -34,39 +39,37 @@ port-naming = short
 
 Add your comment block here
 
-# Provides a flag and file-name for MIDI-control I/O settings.
-# '""' means no 'ctrl' file. If none, the default keystrokes
-# are used, with no MIDI control.
+# Provides a flag and file-name for MIDI-control I/O settings. '""' means
+# no 'ctrl' file. If none, default keystrokes are used, with no MIDI control.
 
 [midi-control-file]
 
 active = true
 name = "qseq66-lp-mini-alt.ctrl"
 
-# Provides a flag and file-name for mute-groups settings.
-# '""' means no 'mutes' file. If none, there are no mute
-# groups, unless the MIDI file contains some.
+# Provides a flag and file-name for mute-groups settings. '""' means no
+# 'mutes' file. If none, there are no mute groups, unless the MIDI file
+# contains some.
 
 [mute-group-file]
 
 active = false
 name = "qseq66.mutes"
 
-# Provides a flag and file-name for 'user' settings. '""'
-# means no 'usr' file. If none, there are no special user
-# settings.  Using no 'usr' file should be considered experimental.
+# Provides a flag and file-name for 'user' settings. '""' means no 'usr'
+# file. If none, there are no special user settings. Using no 'usr' file
+# should be considered experimental.
 
 [usr-file]
 
 active = true
 name = "qseq66.usr"
 
-# Provides a flag and play-list file. If no list, use
-# '""' and set active = false. Use the extension '.playlist'. Even
-# if not active, the play-list file is read. 'base-directory' sets the
-# sets the directory holding all MIDI files in all play-lists, useful
-# when copying play-lists/tunes from one place to another; it
-# preserves sub-directories (e.g. in creating an NSM session).
+# Provides a flag and play-list file. If no list, use '""' and set active
+# = false. Use the extension '.playlist'. Even if not active, the play-list
+# file is read. 'base-directory' sets the directory holding all MIDI files
+# in all play-lists, useful when copying play-lists/tunes from one place to
+# another; it preserves sub-directories (e.g. in creating an NSM session).
 
 [playlist]
 
@@ -74,39 +77,38 @@ active = false
 name = "qseq66.playlist"
 base-directory = ""
 
-# Provides a flag and file-name for note-mapping. '""' means no
-# 'drums' file. Use the extension '.drums'. This file is used when the
-# user invokes the note-conversion operation in the pattern editor of a
-# transposable pattern. Make the pattern temporarily transposable to
-# allow this operation.
+# Provides a flag and file-name for note-mapping. '""' means no 'drums' file.
+# This file is used when the user invokes the note-conversion operation in
+# the pattern editor of a transposable pattern. Make the pattern temporarily
+# transposable to allow this operation.
 
 [note-mapper]
 
 active = false
 name = "qseq66.drums"
 
-# Provides a flag and a file-name to allow modifying the palette
-# using the file given below.  Use '""' to indicate no 'palette'
-# file. If none or not active, the internal palette is used.
+# Provides a flag and a file-name to allow modifying the palette using the file
+# specified. Use '""' to indicate no 'palette' file. If none or not active,
+# the internal palette is used.
 
 [palette-file]
 
 active = false
 name = "qseq66.palette"
 
-# Defines features of MIDI meta-event handling. Tempo events occur in
-# the first track (pattern 0), but one can move tempo elsewhere. It
-# It changes where tempo events are recorded.  The default is 0, the
-# maximum is 1023. A pattern must exist at this number.
+# Defines features of MIDI meta-event handling. Tempo events occur in the first
+# track (pattern 0), but one can move tempo elsewhere. It changes where tempo
+# events are recorded. The default is 0, the maximum is 1023. A pattern must
+# exist at this number.
 
 [midi-meta-events]
 
 tempo-track = 0
 
-# Set to true to have Seq66 create virtual ALSA/JACK I/O ports and not
-# auto-connect to other clients.  It allows up to 48 output ports and
-# 48 input ports (defaults to 8 and 4). Set to false to auto-connect
-# Seq66 to the system's existing ALSA/JACK MIDI ports.
+# Set to true to create virtual ALSA/JACK I/O ports and not auto-connect
+# to other clients. It allows up to 48 output or input ports (defaults to 8
+# and 4). Set to false to auto-connect Seq66 to the existing ALSA/JACK MIDI
+# ports.
 
 [manual-ports]
 
@@ -165,11 +167,10 @@ input-port-count = 4
 #   1 = MIDI Clock on; Song Position and MIDI Continue are sent.
 #   2 = MIDI Clock Modulo.
 #
-# With Clock Modulo, MIDI clocking doesn't begin until song position
-# reaches the start modulo value [midi-clock-mod-ticks]. One can
-# disable a port manually for devices that are present, but not
-# available (because another application, e.g. Windows MIDI Mapper,
-# has exclusive access to the device.
+# With Clock Modulo, clocking doesn't begin until song position reaches the
+# start-modulo value [midi-clock-mod-ticks]. One can disable a port manually
+# for devices that are present, but unavailable (because another application,
+# e.g. Windows MIDI Mapper, has exclusive access to the device.
 
 [midi-clock]
 
@@ -216,13 +217,34 @@ input-port-count = 4
 ticks = 64
 record-by-channel = false
 
-# Set to true to have Seq66 ignore port names defined in the 'usr'
-# file.  Use this option to to see the system ports as detected
-# by ALSA/JACK.
+# Set to true to have Seq66 ignore port names defined in the 'usr' file. Use
+# this option to to see the system ports as detected by ALSA/JACK.
 
 [reveal-ports]
 
 show-system-ports = false
+
+# This section sets up a metronome that can be activated from the main live
+# grid. It consists of a 'main' note on the first beat, then 'sub' notes on
+# the rest of the beats.  The patch/program, note value, velocity, and
+# fraction length relative to the beat width (can be specified. The length
+# ranges from about 0.125 (one-eight) to 1.0 (the same length as the beat
+# width) to 2.0).
+
+[metronome]
+
+output-buss = 1
+output-channel = 0
+beats-per-bar = 4
+beat-width = 4
+main-patch = 0
+main-note = 72
+main-note-velocity = 120
+main-note-length = 0
+sub-patch = 0
+sub-note = 60
+sub-note-velocity = 84
+sub-note-length = 0
 
 # Sets mouse usage for drawing/editing patterns. 'Fruity' mode is NOT
 # supported in Seq66. Also obsolete is the Mod4 feature. Other settings

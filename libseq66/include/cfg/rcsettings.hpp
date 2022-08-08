@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-06-28
+ * \updates       2022-08-07
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -42,9 +42,9 @@
 #include "ctrl/keycontainer.hpp"        /* seq66::keycontainer class        */
 #include "ctrl/midicontrolin.hpp"       /* seq66::midicontrolin class       */
 #include "ctrl/midicontrolout.hpp"      /* seq66::midicontrolout class      */
-#include "play/mutegroups.hpp"          /* list of mute groups              */
 #include "play/clockslist.hpp"          /* list of seq66::e_clock settings  */
 #include "play/inputslist.hpp"          /* list of boolean input settings   */
+#include "play/metro.hpp"               /* seq66::metrosettings class       */
 #include "play/mutegroups.hpp"          /* map of seqq66::mutes stanzas     */
 #include "util/named_bools.hpp"         /* map of booleans keyed by strings */
 
@@ -186,6 +186,12 @@ private:
      */
 
     inputslist m_inputs;
+
+    /**
+     *  Settings for the metronome.
+     */
+
+    metrosettings m_metro_settings;
 
     /**
      *  Holds the saving type on behalf of the mutegroups, which is now
@@ -557,6 +563,16 @@ public:
     inputslist & inputs ()
     {
         return m_inputs;
+    }
+
+    metrosettings & metro_settings ()
+    {
+        return m_metro_settings;
+    }
+
+    const metrosettings & metro_settings () const
+    {
+        return m_metro_settings;
     }
 
     mutegroups::saving mute_group_save () const
