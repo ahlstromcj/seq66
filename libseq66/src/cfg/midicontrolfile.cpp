@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2022-07-22
+ * \updates       2022-08-08
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -252,6 +252,9 @@ midicontrolfile::parse_stream (std::ifstream & file)
     result = parse_control_sizes(file, mctag, offset, rows, columns);
     if (! result)
         enabled = false;
+
+    if (enabled)
+        enabled = rc_ref().midi_control_active();       /* ca 2022-08-08    */
 
     if (m_temp_midi_ctrl_in.initialize(buss, rows, columns))
     {
@@ -488,6 +491,9 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
     if (! result)
         enabled = false;
 
+    if (enabled)
+        enabled = rc_ref().midi_control_active();       /* ca 2022-08-08    */
+
     if (line_after(file, "[midi-control-out]"))
     {
         /*
@@ -598,7 +604,8 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
             }
             if (ok)
             {
-                ok = line_after(file, "[macro-control-out]");
+                const std::string tag{"[macro-control-out]"};
+                ok = line_after(file, tag);
                 if (ok)
                 {
                     int count = 0;
@@ -622,6 +629,12 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                 }
                 else
                     ok = mco.make_macro_defaults();
+
+                ok = get_boolean(file, tag, "active", 0, true);
+                if (ok)
+                    ok = rc_ref().midi_control_active();/* ca 2022-08-08    */
+
+                mco.macros_active(ok);
             }
             else
                 make_error_message("midi-control-out", "read-triple error");

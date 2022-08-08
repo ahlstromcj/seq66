@@ -204,7 +204,7 @@ p, li { white-space: pre-wrap; }
      <x>30</x>
      <y>240</y>
      <width>137</width>
-     <height>64</height>
+     <height>56</height>
     </rect>
    </property>
    <property name="minimumSize">
@@ -455,9 +455,9 @@ p, li { white-space: pre-wrap; }
   <widget class="QComboBox" name="macroComboBox">
    <property name="geometry">
     <rect>
-     <x>180</x>
+     <x>208</x>
      <y>144</y>
-     <width>481</width>
+     <width>453</width>
      <height>25</height>
     </rect>
    </property>
@@ -466,6 +466,19 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="insertPolicy">
     <enum>QComboBox::InsertAlphabetically</enum>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxMacrosActive">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>144</y>
+     <width>33</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
    </property>
   </widget>
  </widget>

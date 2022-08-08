@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-07-21
+ * \updates       2022-08-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -79,6 +79,14 @@ public:
     void reload_needed (bool flag);
 
 private:
+
+    void setup_tab_midi_clock ();
+    void setup_tab_midi_input ();
+    void setup_tab_display ();
+    void setup_tab_jack ();
+    void setup_tab_play_options ();
+    void setup_tab_metronome ();
+    void setup_tab_session ();
 
     void set_enabled (QDialogButtonBox::StandardButton bcode, bool on);
     void set_text

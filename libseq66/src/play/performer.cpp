@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-08-07
+ * \updates       2022-08-08
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -809,15 +809,15 @@ performer::ui_get_input (bussbyte bus, bool & active, std::string & n) const
         active = ipm.get(bus);
         disabled = ipm.is_disabled(bus);
     }
-    else if (master_bus())
+    else if (m_master_bus)
     {
         /*
          * Should we do this in one call?
          */
 
-        name = master_bus()->get_midi_bus_name(bus, midibase::io::input);
-        alias = master_bus()->get_midi_alias(bus, midibase::io::input);
-        active = master_bus()->get_input(bus);
+        name = m_master_bus->get_midi_bus_name(bus, midibase::io::input);
+        alias = m_master_bus->get_midi_alias(bus, midibase::io::input);
+        active = m_master_bus->get_input(bus);
     }
     if (! alias.empty())
     {
@@ -873,11 +873,11 @@ performer::ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const
         alias = opm.get_alias(bus, rc().port_naming());
         e = opm.get(bus);
     }
-    else if (master_bus())
+    else if (m_master_bus)
     {
-        name = master_bus()->get_midi_bus_name(bus, midibase::io::output);
-        alias = master_bus()->get_midi_alias(bus, midibase::io::output);
-        e = master_bus()->get_clock(bus);
+        name = m_master_bus->get_midi_bus_name(bus, midibase::io::output);
+        alias = m_master_bus->get_midi_alias(bus, midibase::io::output);
+        e = m_master_bus->get_clock(bus);
     }
     if (! alias.empty())
     {
@@ -1516,6 +1516,38 @@ performer::set_ppqn (int p)
     return result;
 }
 
+int
+performer::get_ppqn_from_master_bus () const
+{
+    int result = ppqn();
+    if (m_master_bus)
+    {
+        int mbppq = master_bus()->get_ppqn();
+        if (mbppq != result)
+        {
+            warnprint("master PPQN != performer PPQN");
+        }
+        result = mbppq;
+    }
+    return result;
+}
+
+int
+performer::ppqn () const
+{
+    int result = m_ppqn;
+    if (c_use_file_ppqn)
+    {
+        int fileppq = m_file_ppqn;
+        if (fileppq != result)
+        {
+            warnprint("file PPQN != performer PPQN");
+        }
+        result = fileppq;
+    }
+    return result;
+}
+
 /**
  *  Goes through all sets and sequences, updating the PPQN of the events and
  *  triggers.  It also, via notify_resolution_change(), sets the modify flag.
@@ -1545,7 +1577,7 @@ performer::change_ppqn (int p)
             change ch = rc().midi_filename().empty() ?
                 change::no : change:: yes;
 
-            notify_resolution_change(get_ppqn(), get_beats_per_minute(), ch);
+            notify_resolution_change(ppqn(), get_beats_per_minute(), ch);
         }
     }
     return result;
@@ -1788,19 +1820,19 @@ performer::needs_update (seq::number seqno) const
  *  by user action in the main window (and, later, by incoming MIDI Set Tempo
  *  events).
  *
- * \param bpm
+ * \param bp
  *      Provides the beats/minute value to be set.  Checked for validity.  It
  *      is a wide range of speeds, well beyond what normal music needs.
  */
 
 bool
-performer::set_beats_per_minute (midibpm bpm)
+performer::set_beats_per_minute (midibpm bp)
 {
-    bool result = usr().bpm_is_valid(int(bpm));
+    bool result = usr().bpm_is_valid(int(bp));
     if (result)
     {
-        bpm = fix_tempo(bpm);
-        result = jack_set_beats_per_minute(bpm);    /* not just JACK though */
+        bp = fix_tempo(bp);
+        result = jack_set_beats_per_minute(bp);     /* not just JACK though */
     }
     return result;
 }
@@ -1815,26 +1847,30 @@ performer::set_beats_per_minute (midibpm bpm)
  *  Note that the JACK server, especially when transport is stopped,
  *  sends some artifacts (really low BPM), so we avoid dealing with low
  *  values.
+ *
+ *  Also, and this is weird, if we put the call to get_ppqn() in the
+ *  parameter list of notify_resolution_change(), the master-bus pointer is
+ *  bad and we get a segfault. And this, only in debug code!  Valgrind does
+ *  not help in tracking this down.
  */
 
 bool
-performer::jack_set_beats_per_minute (midibpm bpm)
+performer::jack_set_beats_per_minute (midibpm bp)
 {
-    bool result = bpm != m_bpm && usr().bpm_is_valid(bpm);
+    bool result = bp != m_bpm && usr().bpm_is_valid(bp);
     if (result)
     {
-
 #if defined SEQ66_JACK_SUPPORT
-        m_jack_asst.set_beats_per_minute(bpm);  /* see banner note */
+        m_jack_asst.set_beats_per_minute(bp);           /* see banner note  */
 #endif
-
+        int ppq = ppqn();                               /* was get_ppqn()   */
         if (m_master_bus)
-            m_master_bus->set_beats_per_minute(bpm);
+            m_master_bus->set_beats_per_minute(bp);
 
-        m_us_per_quarter_note = tempo_us_from_bpm(bpm);
-        m_bpm = bpm;
-        change ch = rc().midi_filename().empty() ?  change::no : change:: yes;
-        notify_resolution_change(get_ppqn(), bpm, ch);
+        m_bpm = bp;
+        m_us_per_quarter_note = tempo_us_from_bpm(bp);  /* seqfault cause?  */
+        change ch = rc().midi_filename().empty() ? change::no : change::yes ;
+        notify_resolution_change(ppq, bp, ch);          /* get_ppqn()       */
     }
     return result;
 }
@@ -2327,7 +2363,8 @@ performer::create_master_bus ()
     if (! m_master_bus)                 /* no master buss yet?  */
     {
         /*
-         * \todo Use std::make_shared()
+         * Cannot use std::make_unique<mastermidibus> because its copy
+         * constructor is deleted.
          *
          *  Also, at this point, do we have the actual complement of inputs and
          *  clocks, as opposed to what's in the rc file?

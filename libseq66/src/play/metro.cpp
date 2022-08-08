@@ -170,7 +170,7 @@ metro::initialize (performer * p)
     }
     if (result)
     {
-        int ppq = p->get_ppqn();
+        int ppq = p->ppqn();                        /* p->get_ppqn()        */
         int bpb = settings().beats_per_bar();       /* get_beats_per_bar()  */
         int bw = settings().beat_width();           /* get_beat_width()     */
         midibyte channel = settings().channel();    /* seq_midi_channel()   */
@@ -217,9 +217,10 @@ metro::initialize (performer * p)
         if (result)
         {
             sort_events();
-            seq_number(metronome());    /* magic number for metro class */
+            seq_number(metronome());        /* magic number for metro class */
             set_name("Metronome");
             armed(true);
+            unmodify();                     /* it's not part of the song    */
         }
     }
     return result;

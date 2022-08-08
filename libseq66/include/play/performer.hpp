@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-08-07
+ * \updates       2022-08-08
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -704,15 +704,15 @@ private:                            /* key, midi, and op container section  */
     long m_last_time_ms;
 
     /**
-     *  Holds the beats/bar value as obtained from the MIDI file.
-     *  The default value is 4. See usrsettings.
+     *  Holds the beats/bar value as obtained from the MIDI file.  The default
+     *  value is 4. See usrsettings.
      */
 
     int m_beats_per_bar;
 
     /**
-     *  Holds the beat width value as obtained from the MIDI file.
-     *  The default value is 4.  See usrsettings.
+     *  Holds the beat width value as obtained from the MIDI file.  The
+     *  default value is 4.  See usrsettings.
      */
 
     int m_beat_width;
@@ -746,15 +746,17 @@ private:                            /* key, midi, and op container section  */
     /**
      *  Provides our MIDI buss.  We changed this item to a pointer so that we
      *  can delay the creation of this object until after all settings have
-     *  been read.  Use a smart pointer!
+     *  been read.  Use a smart pointer! Seems like unique_ptr<> is best
+     *  here.  See the master_bus() accessors below.
+     *
+     *      std::shared_ptr<mastermidibus> m_master_bus;
      */
 
-    std::shared_ptr<mastermidibus> m_master_bus;
+    std::unique_ptr<mastermidibus> m_master_bus;
 
     /**
      *  Provides storage for this "rc" configuration option so that the
-     *  performer can set it in the master buss once that has been
-     *  created.
+     *  performer can set it in the master buss once that has been created.
      */
 
     bool m_filter_by_channel;
@@ -1376,9 +1378,11 @@ public:
         return mapper().sequences_in_sets();
     }
 
-    int ppqn () const
+    int ppqn () const;
+
+    int file_ppqn () const
     {
-        return m_ppqn == c_use_file_ppqn ? m_file_ppqn : m_ppqn ;
+        return m_file_ppqn;
     }
 
     void file_ppqn (int p)
@@ -1589,14 +1593,14 @@ public:
 
     int client_id () const
     {
-        return m_master_bus->client_id();
+        return master_bus() ? master_bus()->client_id() : (-1) ;
     }
 
     void filter_by_channel (bool flag)
     {
         m_filter_by_channel = flag;
-        if (m_master_bus)
-            m_master_bus->filter_by_channel(flag);
+        if (master_bus())
+            master_bus()->filter_by_channel(flag);
     }
 
     /*
@@ -2059,8 +2063,8 @@ public:
 
     void print_busses () const
     {
-        if (m_master_bus)
-            m_master_bus->print();
+        if (master_bus())
+            master_bus()->print();
     }
 
     void delay_stop ();
@@ -2187,11 +2191,8 @@ public:
     }
 
     /**
-     * \getter m_master_bus.get_beats_per_minute
-     *      Retrieves the BPM setting of the master MIDI buss.
-     *
+     *  Retrieves the BPM setting of the master MIDI buss.
      *  This result should be the same as the value of the m_bpm member.
-     *  This function returns that value in a roundabout way.
      *
      * \return
      *      Returns the value of beats/minute from the master buss.
@@ -2199,13 +2200,10 @@ public:
 
     midibpm get_beats_per_minute () const
     {
-        return m_master_bus ? m_master_bus->get_beats_per_minute() : bpm() ;
+        return master_bus() ? master_bus()->get_beats_per_minute() : bpm() ;
     }
 
-    int get_ppqn () const
-    {
-        return m_master_bus ? m_master_bus->get_ppqn() : ppqn() ;
-    }
+    int get_ppqn_from_master_bus () const;
 
     midibpm update_tap_bpm ();
     bool tap_bpm_timeout ();
@@ -2637,8 +2635,8 @@ public:
 
     bool is_input_system_port (bussbyte bus)
     {
-        return not_nullptr(m_master_bus) ?
-            m_master_bus->is_input_system_port(bus) : false ;
+        return master_bus() ?
+            master_bus()->is_input_system_port(bus) : false ;
     }
 
     bool mainwnd_key_event (const keystroke & k);
@@ -2810,6 +2808,16 @@ public:
     void send_macro (const std::string & name)
     {
         midi_control_out().send_macro(name);
+    }
+
+    bool macros_active () const
+    {
+        return midi_control_out().macros_active();
+    }
+
+    void macros_active (bool flag)
+    {
+        midi_control_out().macros_active(flag);
     }
 
     tokenization macro_names () const

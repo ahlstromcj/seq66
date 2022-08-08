@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-07-21
+ * \updates       2022-08-08
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -90,7 +90,8 @@ static const int Tab_MIDI_Input     =  1;
 static const int Tab_Display        =  2;
 static const int Tab_JACK           =  3;
 static const int Tab_Play_Options   =  4;
-static const int Tab_Session        =  5;
+static const int Tab_Metronome      =  5;
+static const int Tab_Session        =  6;
 
 /**
  *  Button numbering for JACK Start Mode radio-buttons.
@@ -142,187 +143,302 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     m_reload_needed         (false)
 {
     ui->setupUi(this);
-    m_live_song_buttons = new QButtonGroup(this);
     backup();
-
-#if defined SEQ66_JACK_SUPPORT
+    setup_tab_midi_clock();
+    setup_tab_midi_input();
+    setup_tab_display();
+    setup_tab_jack();
+    setup_tab_play_options();
+    setup_tab_metronome();
+    setup_tab_session();
 
     /*
-     * Jack Sync tab.  JACK Transport Connect/Disconnect buttons.
+     * Reload/restart button.  Replaced by Apply --> Restart!
+     */
+
+    ui->pushButtonReload->setEnabled(false);
+    ui->pushButtonReload->hide();
+
+    /*
+     * OK/Cancel Buttons
      */
 
     connect
     (
-        ui->btnJackConnect, SIGNAL(clicked(bool)),
-        this, SLOT(slot_jack_connect())
+        ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Ok),
+        SIGNAL(clicked(bool)), this, SLOT(okay())
     );
     connect
     (
-        ui->btnJackDisconnect, SIGNAL(clicked(bool)),
-        this, SLOT(slot_jack_disconnect())
+        ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Cancel),
+        SIGNAL(clicked(bool)), this, SLOT(cancel())
     );
 
     /*
-     * Jack Sync tab.  JACK Transport/MIDI tab.
+     * Apply/Reset buttons.
+     */
+
+    set_text(QDialogButtonBox::Apply, "Restart Seq66!");
+    connect
+    (
+        ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply),
+        SIGNAL(clicked()), this, SLOT(apply())
+    );
+    connect
+    (
+        ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Reset),
+        SIGNAL(clicked()), this, SLOT(reset())
+    );
+    sync();
+    state_unchanged();
+    m_is_initialized = true;
+}
+
+/**
+ *  A stock Qt GUI destructor.
+ */
+
+qseditoptions::~qseditoptions ()
+{
+    delete ui;
+}
+
+/**
+ *  MIDI Clock tab.
+ */
+
+void
+qseditoptions::setup_tab_midi_clock ()
+{
+    /*
+     * Set up the MIDI Clock tab.  We use the qclocklayout class to hold
+     * most of the complex code needed to handle the list of output ports and
+     * clock radio-buttons.
+     */
+
+    QWidget * central = new QWidget;
+    QVBoxLayout * vboxclocks = new QVBoxLayout(central);
+    mastermidibus * mmb = perf().master_bus();
+    const clockslist & opm = output_port_map();
+    bool outportmap = opm.active();
+    QComboBox * out = ui->comboBoxMidiOutBuss;
+    if (not_nullptr(mmb))
+    {
+        int buses = outportmap ? opm.count() : mmb->get_num_out_buses() ;
+        ui->clocksScrollArea->setWidget(central);
+        ui->clocksScrollArea->setWidgetResizable(true);
+        for (int bus = 0; bus < buses; ++bus)
+        {
+            qclocklayout * tempqc = new qclocklayout(this, perf(), bus);
+            vboxclocks->addLayout(tempqc->layout());
+        }
+
+        /*
+         * Output MIDI control buss combo-box population. We now use a
+         * check-box instead of a "Disabled" item, as per issue #83 revisited.
+         *
+         * out->addItem("Disabled");
+         */
+
+        for (int bus = 0; bus < buses; ++bus)
+        {
+            std::string busname;
+            e_clock ec;
+            bool good = perf().ui_get_clock(bussbyte(bus), ec, busname);
+            if (good)
+            {
+                bool enabled = ec != e_clock::disabled;
+                out->addItem(qt(busname));
+                enable_combobox_item(out, bus /* + 1 */, enabled);
+            }
+        }
+
+        bool active = perf().midi_control_out().is_enabled();
+        int buss = perf().midi_control_out().nominal_buss();
+        out->setCurrentIndex(buss);
+        connect
+        (
+            out, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(slot_output_bus(int))
+        );
+        ui->checkBoxMidiOutBuss->setChecked(active);
+        connect
+        (
+            ui->checkBoxMidiOutBuss, SIGNAL(clicked(bool)),
+            this, SLOT(slot_output_bus_enable())
+        );
+    }
+
+    QSpacerItem * spacer = new QSpacerItem
+    (
+        40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding
+    );
+    vboxclocks->addItem(spacer);
+    connect
+    (
+        ui->spinBoxClockStartModulo, SIGNAL(valueChanged(int)),
+        this, SLOT(slot_clock_start_modulo(int))
+    );
+    connect
+    (
+        ui->lineEditTempoTrack, SIGNAL(editingFinished()),
+        this, SLOT(slot_tempo_track())
+    );
+    for (int i = 0; i <= 2; ++i)            /* c_max_bpm_precision */
+    {
+        QString s = QString::number(i);
+        ui->comboBoxBpmPrecision->insertItem(i, s);
+    }
+    ui->comboBoxBpmPrecision->setCurrentIndex(usr().bpm_precision());
+    connect
+    (
+        ui->comboBoxBpmPrecision, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(slot_bpm_precision(int))
+    );
+    connect
+    (
+        ui->pushButtonTempoTrack, SIGNAL(clicked(bool)),
+        this, SLOT(slot_tempo_track_set())
+    );
+    connect
+    (
+        ui->pushButtonStoreMap, SIGNAL(clicked(bool)),
+        this, SLOT(slot_io_maps())
+    );
+    connect
+    (
+        ui->pushButtonRemoveMap, SIGNAL(clicked(bool)),
+        this, SLOT(slot_remove_io_maps())
+    );
+    connect
+    (
+        ui->inPortsMappedCheck, SIGNAL(clicked(bool)),
+        this, SLOT(slot_activate_input_map())
+    );
+    connect
+    (
+        ui->outPortsMappedCheck, SIGNAL(clicked(bool)),
+        this, SLOT(slot_activate_output_map())
+    );
+
+    /*
+     * The virtual port counts for input and output.
      */
 
     connect
     (
-        ui->chkJackTransport, SIGNAL(stateChanged(int)),
-        this, SLOT(slot_transport_support())
+        ui->lineEditOutputCount, SIGNAL(editingFinished()),
+        this, SLOT(slot_virtual_out_count())
     );
     connect
     (
-        ui->chkJackConditional, SIGNAL(stateChanged(int)),
-        this, SLOT(slot_master_cond())
-    );
-    connect
-    (
-        ui->chkJackMaster, SIGNAL(stateChanged(int)),
-        this, SLOT(slot_time_master())
-    );
-    connect
-    (
-        ui->chkJackNative, SIGNAL(stateChanged(int)),
-        this, SLOT(slot_jack_midi())
-    );
-    connect
-    (
-        ui->chkJackAutoConnect, SIGNAL(stateChanged(int)),
-        this, SLOT(slot_jack_auto_connect())
+        ui->lineEditInputCount, SIGNAL(editingFinished()),
+        this, SLOT(slot_virtual_in_count())
     );
 
-#else
+    std::string clid = perf().client_id_string();
+    ui->lineEditClientId->setText(qt(clid));
+}
 
-    ui->btnJackConnect->setEnabled(false);
-    ui->btnJackDisconnect->setEnabled(false);
-    ui->chkJackTransport->setEnabled(false);
-    ui->chkJackConditional->setEnabled(false);
-    ui->chkJackMaster->setEnabled(false);
-    ui->chkJackNative->setEnabled(false);
-    ui->chkJackAutoConnect->setEnabled(false);
-    ui->tabWidget->setTabEnabled(Tab_JACK, false);
+/**
+ *  MIDI Input tab.
+ */
 
-#endif  // defined SEQ66_JACK_SUPPORT
+void
+qseditoptions::setup_tab_midi_input ()
+{
+    /*
+     * Set up the MIDI Input tab.  It is simpler, just a list of check-boxes
+     * in the groupBoxInputs widget.  No need for a separate class.  However,
+     * note that our qinputcheckbox class controls the activation, in the GUI,
+     * of each input port, based on its buss status.
+     */
+
+    QWidget * central2 = new QWidget;
+    QVBoxLayout * vboxinputs = new QVBoxLayout(central2);
+    mastermidibus * mmb = perf().master_bus();
+    const inputslist & ipm = input_port_map();
+    bool inportmap = ipm.active();
+    QComboBox * in = ui->comboBoxMidiInBuss;
+    if (not_nullptr(mmb))
+    {
+        int buses = inportmap ? ipm.count() : mmb->get_num_in_buses() ;
+        ui->inputsScrollArea->setWidget(central2);
+        ui->inputsScrollArea->setWidgetResizable(true);
+        for (int bus = 0; bus < buses; ++bus)
+        {
+            qinputcheckbox * tempqi = new qinputcheckbox(this, perf(), bus);
+            vboxinputs->addWidget(tempqi->input_checkbox());
+        }
+
+        /*
+         * Input MIDI control buss combo-box population. We now use a
+         * check-box instead of a "Disabled" item, as per issue #83 revisited.
+         *
+         * in->addItem("Disabled");
+         */
+
+        for (int bus = 0; bus < buses; ++bus)
+        {
+            std::string busname;
+            bool inputing;
+            bool good = perf().ui_get_input(bus, inputing, busname);
+            if (good)
+            {
+                bool enabled = ! perf().is_input_system_port(bus);
+                in->addItem(qt(busname));
+                if (good && enabled)
+                    enabled = true;
+
+                enable_combobox_item(in, bus /* + 1 */, enabled);
+            }
+        }
+
+        bool active = perf().midi_control_in().is_enabled();
+        int buss = perf().midi_control_in().nominal_buss();
+        in->setCurrentIndex(buss);
+        connect
+        (
+            in, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(slot_input_bus(int))
+        );
+        ui->checkBoxMidiInBuss->setChecked(active);
+        connect
+        (
+            ui->checkBoxMidiInBuss, SIGNAL(clicked(bool)),
+            this, SLOT(slot_input_bus_enable())
+        );
+    }
 
     /*
-     * Play Options tab
+     * I/O Port Boolean options.
      */
 
     connect
     (
-        ui->chkNoteResume, SIGNAL(stateChanged(int)),
-        this, SLOT(slot_note_resume())
-    );
-
-    connect
-    (
-        ui->chkUseFilesPPQN, SIGNAL(stateChanged(int)),
-        this, SLOT(slot_use_file_ppqn())
-    );
-
-    /*
-     *  Group-box for changing the "sets mode".
-     */
-
-    QButtonGroup * rgroup = new QButtonGroup(this);
-    rgroup->addButton(ui->radio_setsmode_normal, setsmode_button_normal);
-    rgroup->addButton(ui->radio_setsmode_autoarm, setsmode_button_autoarm);
-    rgroup->addButton(ui->radio_setsmode_additive, setsmode_button_additive);
-    rgroup->addButton(ui->radio_setsmode_allsets, setsmode_button_allsets);
-    connect
-    (
-        rgroup, SIGNAL(buttonClicked(int)),
-        this, SLOT(slot_sets_mode(int))
-    );
-
-    /*
-     *  Group-box for changing the "start mode".
-     */
-
-    QButtonGroup * rgroup2 = new QButtonGroup(this);
-    rgroup2->addButton(ui->radio_startmode_live, startmode_button_live);
-    rgroup2->addButton(ui->radio_startmode_song, startmode_button_song);
-    rgroup2->addButton(ui->radio_startmode_auto, startmode_button_auto);
-    connect
-    (
-        rgroup2, SIGNAL(buttonClicked(int)),
-        this, SLOT(slot_start_mode(int))
-    );
-
-    /*
-     *  Group-box for changing the session.
-     */
-
-    QButtonGroup * sgroup = new QButtonGroup(this);
-    sgroup->addButton
-    (
-        ui->radio_session_none, static_cast<int>(usrsettings::session::none)
-    );
-    sgroup->addButton
-    (
-        ui->radio_session_nsm, static_cast<int>(usrsettings::session::nsm)
-    );
-    sgroup->addButton
-    (
-        ui->radio_session_jack, static_cast<int>(usrsettings::session::jack)
+        ui->checkBoxRecordByChannel, SIGNAL(clicked(bool)),
+        this, SLOT(slot_record_by_channel())
     );
     connect
     (
-        sgroup, SIGNAL(buttonClicked(int)),
-        this, SLOT(slot_session(int))
+        ui->checkBoxVirtualPorts, SIGNAL(clicked(bool)),
+        this, SLOT(slot_virtual_ports())
     );
 
-#if ! defined SEQ66_JACK_SESSION
-    ui->radio_session_jack->setEnabled(false);
-#endif
-
-#if ! defined SEQ66_NSM_SUPPORT
-    ui->radio_session_nsm->setEnabled(false);
-#endif
-
-    /*
-     * The URL text-edit.
-     */
-
-    connect
+    QSpacerItem * spacer2 = new QSpacerItem
     (
-        ui->lineEditNsmUrl, SIGNAL(editingFinished()),
-        this, SLOT(slot_nsm_url())
+        40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding
     );
+    vboxinputs->addItem(spacer2);
+}
 
-    /*
-     *  Combo-box for changing the default PPQN.
-     */
+/*
+ * Display tab.
+ */
 
-    (void) set_ppqn_combo();
-    connect
-    (
-        ui->combo_box_ppqn, SIGNAL(currentTextChanged(const QString &)),
-        this, SLOT(slot_ppqn_by_text(const QString &))
-    );
-
-    /*
-     * JACK tab
-     */
-
-    /*
-     * Create a button group to manage the mutual status of the JACK Live and
-     * Song Mode buttons.
-     */
-
-    m_live_song_buttons->addButton(ui->radio_live_mode, playmode_button_live);
-    m_live_song_buttons->addButton(ui->radio_song_mode, playmode_button_song);
-    connect
-    (
-        m_live_song_buttons, SIGNAL(buttonClicked(int)),
-        this, SLOT(slot_jack_mode(int))
-    );
-
-    /*
-     * Display tab.
-     */
-
+void
+qseditoptions::setup_tab_display ()
+{
     ui->spinKeyHeight->setMinimum(usr().min_key_height());
     ui->spinKeyHeight->setMaximum(usr().max_key_height());
     connect
@@ -420,9 +536,211 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         ui->checkBoxGlobalSeqFeature, SIGNAL(clicked(bool)),
         this, SLOT(slot_global_seq_feature())
     );
+}
+
+/*
+ * Jack Sync tab.  JACK Transport Connect/Disconnect buttons.
+ */
+
+void
+qseditoptions::setup_tab_jack ()
+{
+
+#if defined SEQ66_JACK_SUPPORT
 
     /*
-     * Session tab.
+     * JACK Transport Connect/Disconnect buttons.
+     */
+
+    connect
+    (
+        ui->btnJackConnect, SIGNAL(clicked(bool)),
+        this, SLOT(slot_jack_connect())
+    );
+    connect
+    (
+        ui->btnJackDisconnect, SIGNAL(clicked(bool)),
+        this, SLOT(slot_jack_disconnect())
+    );
+
+    /*
+     * JACK Transport/MIDI tab.
+     */
+
+    connect
+    (
+        ui->chkJackTransport, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_transport_support())
+    );
+    connect
+    (
+        ui->chkJackConditional, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_master_cond())
+    );
+    connect
+    (
+        ui->chkJackMaster, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_time_master())
+    );
+    connect
+    (
+        ui->chkJackNative, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_jack_midi())
+    );
+    connect
+    (
+        ui->chkJackAutoConnect, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_jack_auto_connect())
+    );
+
+    /*
+     * Create a button group to manage the mutual status of the JACK Live and
+     * Song Mode buttons.
+     */
+
+    m_live_song_buttons = new QButtonGroup(this);
+    m_live_song_buttons->addButton(ui->radio_live_mode, playmode_button_live);
+    m_live_song_buttons->addButton(ui->radio_song_mode, playmode_button_song);
+    connect
+    (
+        m_live_song_buttons, SIGNAL(buttonClicked(int)),
+        this, SLOT(slot_jack_mode(int))
+    );
+
+#else
+
+    ui->btnJackConnect->setEnabled(false);
+    ui->btnJackDisconnect->setEnabled(false);
+    ui->chkJackTransport->setEnabled(false);
+    ui->chkJackConditional->setEnabled(false);
+    ui->chkJackMaster->setEnabled(false);
+    ui->chkJackNative->setEnabled(false);
+    ui->chkJackAutoConnect->setEnabled(false);
+    ui->tabWidget->setTabEnabled(Tab_JACK, false);
+
+#endif  // defined SEQ66_JACK_SUPPORT
+}
+
+/*
+ * Play Options tab.
+ */
+
+void
+qseditoptions::setup_tab_play_options ()
+{
+    connect
+    (
+        ui->chkNoteResume, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_note_resume())
+    );
+
+    connect
+    (
+        ui->chkUseFilesPPQN, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_use_file_ppqn())
+    );
+
+    /*
+     *  Combo-box for changing the default PPQN.
+     */
+
+    (void) set_ppqn_combo();
+    connect
+    (
+        ui->combo_box_ppqn, SIGNAL(currentTextChanged(const QString &)),
+        this, SLOT(slot_ppqn_by_text(const QString &))
+    );
+
+    /*
+     *  Group-box for changing the "sets mode".
+     */
+
+    QButtonGroup * rgroup = new QButtonGroup(this);
+    rgroup->addButton(ui->radio_setsmode_normal, setsmode_button_normal);
+    rgroup->addButton(ui->radio_setsmode_autoarm, setsmode_button_autoarm);
+    rgroup->addButton(ui->radio_setsmode_additive, setsmode_button_additive);
+    rgroup->addButton(ui->radio_setsmode_allsets, setsmode_button_allsets);
+    connect
+    (
+        rgroup, SIGNAL(buttonClicked(int)),
+        this, SLOT(slot_sets_mode(int))
+    );
+
+    /*
+     *  Group-box for changing the "start mode".
+     */
+
+    QButtonGroup * rgroup2 = new QButtonGroup(this);
+    rgroup2->addButton(ui->radio_startmode_live, startmode_button_live);
+    rgroup2->addButton(ui->radio_startmode_song, startmode_button_song);
+    rgroup2->addButton(ui->radio_startmode_auto, startmode_button_auto);
+    connect
+    (
+        rgroup2, SIGNAL(buttonClicked(int)),
+        this, SLOT(slot_start_mode(int))
+    );
+}
+
+/*
+ * Metronome tab.
+ */
+
+void
+qseditoptions::setup_tab_metronome ()
+{
+}
+
+/*
+ *  Session tab.
+ */
+
+void
+qseditoptions::setup_tab_session ()
+{
+
+    /*
+     *  Group-box for changing the session.
+     */
+
+    QButtonGroup * sgroup = new QButtonGroup(this);
+    sgroup->addButton
+    (
+        ui->radio_session_none, static_cast<int>(usrsettings::session::none)
+    );
+    sgroup->addButton
+    (
+        ui->radio_session_nsm, static_cast<int>(usrsettings::session::nsm)
+    );
+    sgroup->addButton
+    (
+        ui->radio_session_jack, static_cast<int>(usrsettings::session::jack)
+    );
+    connect
+    (
+        sgroup, SIGNAL(buttonClicked(int)),
+        this, SLOT(slot_session(int))
+    );
+
+#if ! defined SEQ66_JACK_SESSION
+    ui->radio_session_jack->setEnabled(false);
+#endif
+
+#if ! defined SEQ66_NSM_SUPPORT
+    ui->radio_session_nsm->setEnabled(false);
+#endif
+
+    /*
+     * The URL text-edit.
+     */
+
+    connect
+    (
+        ui->lineEditNsmUrl, SIGNAL(editingFinished()),
+        this, SLOT(slot_nsm_url())
+    );
+
+    /*
+     * The Configuration Files section.
      */
 
     /*
@@ -583,269 +901,8 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
         ui->lineEditStyleSheet, SIGNAL(editingFinished()),
         this, SLOT(slot_stylesheet_filename())
     );
-
-    /*
-     * Reload/restart button.  Replaced by Apply --> Restart!
-     */
-
-    ui->pushButtonReload->setEnabled(false);
-    ui->pushButtonReload->hide();
-
-    /*
-     * OK/Cancel Buttons
-     */
-
-    connect
-    (
-        ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Ok),
-        SIGNAL(clicked(bool)), this, SLOT(okay())
-    );
-    connect
-    (
-        ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Cancel),
-        SIGNAL(clicked(bool)), this, SLOT(cancel())
-    );
-
-    /*
-     * Apply/Reset buttons.
-     */
-
-    set_text(QDialogButtonBox::Apply, "Restart Seq66!");
-    connect
-    (
-        ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply),
-        SIGNAL(clicked()), this, SLOT(apply())
-    );
-    connect
-    (
-        ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Reset),
-        SIGNAL(clicked()), this, SLOT(reset())
-    );
-
-    /*
-     * Set up the MIDI Clock tab.  We use the qclocklayout class to hold
-     * most of the complex code needed to handle the list of output ports and
-     * clock radio-buttons.
-     */
-
-    QWidget * central = new QWidget;
-    QVBoxLayout * vboxclocks = new QVBoxLayout(central);
-    mastermidibus * mmb = perf().master_bus();
-    const clockslist & opm = output_port_map();
-    bool outportmap = opm.active();
-    QComboBox * out = ui->comboBoxMidiOutBuss;
-    if (not_nullptr(mmb))
-    {
-        int buses = outportmap ? opm.count() : mmb->get_num_out_buses() ;
-        ui->clocksScrollArea->setWidget(central);
-        ui->clocksScrollArea->setWidgetResizable(true);
-        for (int bus = 0; bus < buses; ++bus)
-        {
-            qclocklayout * tempqc = new qclocklayout(this, perf(), bus);
-            vboxclocks->addLayout(tempqc->layout());
-        }
-
-        /*
-         * Output MIDI control buss combo-box population. We now use a
-         * check-box instead of a "Disabled" item, as per issue #83 revisited.
-         *
-         * out->addItem("Disabled");
-         */
-
-        for (int bus = 0; bus < buses; ++bus)
-        {
-            std::string busname;
-            e_clock ec;
-            bool good = perf().ui_get_clock(bussbyte(bus), ec, busname);
-            if (good)
-            {
-                bool enabled = ec != e_clock::disabled;
-                out->addItem(qt(busname));
-                enable_combobox_item(out, bus /* + 1 */, enabled);
-            }
-        }
-
-        bool active = perf().midi_control_out().is_enabled();
-        int buss = perf().midi_control_out().nominal_buss();
-        out->setCurrentIndex(buss);
-        connect
-        (
-            out, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(slot_output_bus(int))
-        );
-        ui->checkBoxMidiOutBuss->setChecked(active);
-        connect
-        (
-            ui->checkBoxMidiOutBuss, SIGNAL(clicked(bool)),
-            this, SLOT(slot_output_bus_enable())
-        );
-    }
-
-    QSpacerItem * spacer = new QSpacerItem
-    (
-        40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding
-    );
-    vboxclocks->addItem(spacer);
-    connect
-    (
-        ui->spinBoxClockStartModulo, SIGNAL(valueChanged(int)),
-        this, SLOT(slot_clock_start_modulo(int))
-    );
-    connect
-    (
-        ui->lineEditTempoTrack, SIGNAL(editingFinished()),
-        this, SLOT(slot_tempo_track())
-    );
-    for (int i = 0; i <= 2; ++i)            /* c_max_bpm_precision */
-    {
-        QString s = QString::number(i);
-        ui->comboBoxBpmPrecision->insertItem(i, s);
-    }
-    ui->comboBoxBpmPrecision->setCurrentIndex(usr().bpm_precision());
-    connect
-    (
-        ui->comboBoxBpmPrecision, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(slot_bpm_precision(int))
-    );
-    connect
-    (
-        ui->pushButtonTempoTrack, SIGNAL(clicked(bool)),
-        this, SLOT(slot_tempo_track_set())
-    );
-    connect
-    (
-        ui->pushButtonStoreMap, SIGNAL(clicked(bool)),
-        this, SLOT(slot_io_maps())
-    );
-    connect
-    (
-        ui->pushButtonRemoveMap, SIGNAL(clicked(bool)),
-        this, SLOT(slot_remove_io_maps())
-    );
-    connect
-    (
-        ui->inPortsMappedCheck, SIGNAL(clicked(bool)),
-        this, SLOT(slot_activate_input_map())
-    );
-    connect
-    (
-        ui->outPortsMappedCheck, SIGNAL(clicked(bool)),
-        this, SLOT(slot_activate_output_map())
-    );
-
-    /*
-     * The virtual port counts for input and output.
-     */
-
-    connect
-    (
-        ui->lineEditOutputCount, SIGNAL(editingFinished()),
-        this, SLOT(slot_virtual_out_count())
-    );
-    connect
-    (
-        ui->lineEditInputCount, SIGNAL(editingFinished()),
-        this, SLOT(slot_virtual_in_count())
-    );
-
-    /*
-     * Set up the MIDI Input tab.  It is simpler, just a list of check-boxes
-     * in the groupBoxInputs widget.  No need for a separate class.  However,
-     * note that our qinputcheckbox class controls the activation, in the GUI,
-     * of each input port, based on its buss status.
-     */
-
-    QWidget * central2 = new QWidget;
-    QVBoxLayout * vboxinputs = new QVBoxLayout(central2);
-    const inputslist & ipm = input_port_map();
-    bool inportmap = ipm.active();
-    QComboBox * in = ui->comboBoxMidiInBuss;
-    if (not_nullptr(mmb))
-    {
-        int buses = inportmap ? ipm.count() : mmb->get_num_in_buses() ;
-        ui->inputsScrollArea->setWidget(central2);
-        ui->inputsScrollArea->setWidgetResizable(true);
-        for (int bus = 0; bus < buses; ++bus)
-        {
-            qinputcheckbox * tempqi = new qinputcheckbox(this, perf(), bus);
-            vboxinputs->addWidget(tempqi->input_checkbox());
-        }
-
-        /*
-         * Input MIDI control buss combo-box population. We now use a
-         * check-box instead of a "Disabled" item, as per issue #83 revisited.
-         *
-         * in->addItem("Disabled");
-         */
-
-        for (int bus = 0; bus < buses; ++bus)
-        {
-            std::string busname;
-            bool inputing;
-            bool good = perf().ui_get_input(bus, inputing, busname);
-            if (good)
-            {
-                bool enabled = ! perf().is_input_system_port(bus);
-                in->addItem(qt(busname));
-                if (good && enabled)
-                    enabled = true;
-
-                enable_combobox_item(in, bus /* + 1 */, enabled);
-            }
-        }
-
-        bool active = perf().midi_control_in().is_enabled();
-        int buss = perf().midi_control_in().nominal_buss();
-        in->setCurrentIndex(buss);
-        connect
-        (
-            in, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(slot_input_bus(int))
-        );
-        ui->checkBoxMidiInBuss->setChecked(active);
-        connect
-        (
-            ui->checkBoxMidiInBuss, SIGNAL(clicked(bool)),
-            this, SLOT(slot_input_bus_enable())
-        );
-    }
-
-    /*
-     * I/O Port Boolean options.
-     */
-
-    connect
-    (
-        ui->checkBoxRecordByChannel, SIGNAL(clicked(bool)),
-        this, SLOT(slot_record_by_channel())
-    );
-    connect
-    (
-        ui->checkBoxVirtualPorts, SIGNAL(clicked(bool)),
-        this, SLOT(slot_virtual_ports())
-    );
-
-    QSpacerItem * spacer2 = new QSpacerItem
-    (
-        40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding
-    );
-    vboxinputs->addItem(spacer2);
-    sync();
-
-    std::string clid = perf().client_id_string();
-    ui->lineEditClientId->setText(qt(clid));
-    state_unchanged();
-    m_is_initialized = true;
 }
 
-/**
- *  A stock Qt GUI destructor.
- */
-
-qseditoptions::~qseditoptions ()
-{
-    delete ui;
-}
 
 bool
 qseditoptions::set_ppqn_combo ()
@@ -1870,7 +1927,7 @@ qseditoptions::slot_rc_save_click ()
 {
     bool on = ui->checkBoxSaveRc->isChecked();
     rc().auto_rc_save(on);
-    reload_needed(true);            // modify_rc();
+    reload_needed(true);
 }
 
 void
@@ -1903,7 +1960,7 @@ qseditoptions::modify_ctrl ()
     if (m_is_initialized)
     {
         ui->checkBoxSaveCtrl->setChecked(true);
-        rc().auto_ctrl_save(true);                  // ctrl().modify();
+        rc().auto_ctrl_save(true);
         reload_needed(true);
     }
 }

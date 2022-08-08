@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2021-11-24
+ * \updates       2022-08-08
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -77,6 +77,13 @@ private:
 
     container m_macros;
 
+    /**
+     *  We need a way to not emit startup and exit macros if the user doesn't
+     *  want that.
+     */
+
+    bool m_active;
+
 public:
 
     midimacros ();
@@ -96,6 +103,16 @@ public:
     int count () const
     {
         return int(m_macros.size());
+    }
+
+    bool active () const
+    {
+        return m_active;
+    }
+
+    void active (bool flag)
+    {
+        m_active = flag;
     }
 
     bool expand ();

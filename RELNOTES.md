@@ -1,4 +1,4 @@
-# Seq66 Release Notes 0.98.10 - 2022-08-03
+# Seq66 Release Notes 0.98.10 - 2022-08-08
 
 This file lists __major__ changes from version 9.98.0 to 0.98.11 (to catch up).
 
@@ -12,7 +12,7 @@ This file lists __major__ changes from version 9.98.0 to 0.98.11 (to catch up).
     *   Issue #93 fixed. The window of a deleted pattern now closes.
     *   Issue #94. Improvements to scrolling in the song editor.
     *   Added a button to expand the song editor in time.
-    *   Issue #97. Added a paste box when pasting notes.
+    *   Issue #97. Added a paste box when pasting notes. Added a metronome.
     *   Added L/R arrow keys to move the selected trigger in song editor.
     *   Improved the handling of the MIDI 'ctrl' file.
     *   Tightened up pattern arming/disarming processing.

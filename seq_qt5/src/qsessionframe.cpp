@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2022-01-16
+ * \updates       2022-08-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -94,11 +94,6 @@ qsessionframe::qsessionframe
         this, SLOT(slot_flag_reload())
     );
     populate_macro_combo();
-    connect
-    (
-        ui->macroComboBox, SIGNAL(currentTextChanged(const QString &)),
-        this, SLOT(slot_macro_pick(const QString &))
-    );
 }
 
 qsessionframe::~qsessionframe()
@@ -122,6 +117,10 @@ void
 qsessionframe::populate_macro_combo ()
 {
     tokenization t = perf().macro_names();
+    bool macrosactive = perf().macros_active();
+    if (macrosactive)
+        macrosactive = ! t.empty();
+
     if (! t.empty())
     {
         int counter = 0;
@@ -143,7 +142,38 @@ qsessionframe::populate_macro_combo ()
                 ui->macroComboBox->insertItem(counter++, combotext);
             }
         }
+        connect
+        (
+            ui->macroComboBox, SIGNAL(currentTextChanged(const QString &)),
+            this, SLOT(slot_macro_pick(const QString &))
+        );
     }
+    if (macrosactive)
+    {
+        ui->checkBoxMacrosActive->setChecked(true);
+        connect
+        (
+            ui->checkBoxMacrosActive, SIGNAL(clicked(bool)),
+            this, SLOT(slot_macros_active())
+        );
+    }
+    else
+    {
+        ui->checkBoxMacrosActive->setChecked(false);
+        ui->macroComboBox->setEnabled(false);
+        if (t.empty())
+            ui->checkBoxMacrosActive->setEnabled(false);
+    }
+}
+
+void
+qsessionframe::slot_macros_active()
+{
+    bool active = ui->checkBoxMacrosActive->isChecked();
+    perf().macros_active(active);
+    ui->macroComboBox->setEnabled(active);
+    rc().auto_ctrl_save(true);
+    ui->pushButtonReload->setEnabled(true);
 }
 
 void

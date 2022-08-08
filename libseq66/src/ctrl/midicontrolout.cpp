@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with refactoring by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2022-07-21
+ * \updates       2022-08-08
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -429,7 +429,11 @@ midicontrolout::send_automation (bool activate)
 void
 midicontrolout::send_macro (const std::string & name, bool flush)
 {
-    if (is_enabled() && not_nullptr(m_master_bus))
+    bool enabled = is_enabled() && not_nullptr(m_master_bus);
+    if (enabled)
+        enabled = m_macro_events.active();              /* ca 2022-08-08    */
+
+    if (enabled)
     {
         midistring byts = m_macro_events.bytes(name);
         if (! byts.empty())

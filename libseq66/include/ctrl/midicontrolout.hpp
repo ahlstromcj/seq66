@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2022-07-21
+ * \updates       2022-08-08
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -351,6 +351,16 @@ public:
     int macro_count () const
     {
         return m_macro_events.count();
+    }
+
+    bool macros_active () const
+    {
+        return m_macro_events.active();
+    }
+
+    void macros_active (bool flag)
+    {
+        m_macro_events.active(flag);
     }
 
     bool expand_macros ()

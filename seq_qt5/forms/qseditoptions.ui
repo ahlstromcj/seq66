@@ -19,11 +19,17 @@
      <property name="enabled">
       <bool>true</bool>
      </property>
+     <property name="font">
+      <font>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
      <property name="toolTip">
       <string/>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -110,7 +116,7 @@
          <string>Set Tempo Track</string>
         </property>
        </widget>
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="label_meta_events">
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -139,7 +145,7 @@
          </rect>
         </property>
        </widget>
-       <widget class="QLabel" name="label_13">
+       <widget class="QLabel" name="label_clock_precision">
         <property name="geometry">
          <rect>
           <x>288</x>
@@ -1090,7 +1096,9 @@ Range: 0.5 to 3.0</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <italic>true</italic>
+         <bold>false</bold>
         </font>
        </property>
        <property name="text">
@@ -1319,7 +1327,9 @@ connects to the MIDI I/O ports it finds.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
+          <bold>false</bold>
          </font>
         </property>
         <property name="text">
@@ -1703,6 +1713,321 @@ Seq66 exits.</string>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabMetronome">
+      <attribute name="title">
+       <string>&amp;Metronome</string>
+      </attribute>
+      <widget class="QLabel" name="label_metro_timesig">
+       <property name="geometry">
+        <rect>
+         <x>24</x>
+         <y>28</y>
+         <width>129</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Time Signature</string>
+       </property>
+      </widget>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>204</x>
+         <y>28</y>
+         <width>305</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2" columnstretch="3,1,1">
+        <property name="horizontalSpacing">
+         <number>8</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_output_specs">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Output Specs</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_metro_main_note">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Main Note</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="label_metro_sub_notes">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Sub Notes</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_metro_patch">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Patch</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEditMetroPatchMain"/>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLineEdit" name="lineEditMetroPatchSub"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_metro_note">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Note</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="lineEditMetroNoteMain"/>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLineEdit" name="lineEditMetroNoteSub"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_metro_velocity">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Velocity</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="lineEditMetroVelocityMain"/>
+        </item>
+        <item row="3" column="2">
+         <widget class="QLineEdit" name="lineEditMetroVelocitySub"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_metro_length_fraction">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Length Fraction</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="lineEditMetroFractionMain"/>
+        </item>
+        <item row="4" column="2">
+         <widget class="QLineEdit" name="lineEditMetroFractionSub"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>204</y>
+         <width>489</width>
+         <height>29</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,4,1,2">
+        <item>
+         <widget class="QLabel" name="label_metro_buss">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>MIDI Buss</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBoxMetroMidiBus"/>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_metro_channel">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>MIDI Channel</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBoxMetroMidiChannel"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>52</y>
+         <width>173</width>
+         <height>62</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3" columnstretch="6,2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_metro_bpb">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Beats/bar</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEditMetroBpb"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_metro_beat_width">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Beat width</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEditMetroBeatWidth"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>124</y>
+         <width>173</width>
+         <height>52</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_metro_count_in">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Count-In</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_metro_count">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Count</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="checkBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Enabled</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEdit">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
      <widget class="QWidget" name="tabSession">
       <attribute name="title">
        <string>&amp;Session</string>
@@ -1795,7 +2120,9 @@ Seq66 exits.</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <italic>true</italic>
+         <bold>false</bold>
         </font>
        </property>
        <property name="text">
@@ -2052,7 +2379,9 @@ required.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
+          <bold>false</bold>
          </font>
         </property>
         <property name="text">
@@ -2070,7 +2399,9 @@ required.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
+          <bold>false</bold>
          </font>
         </property>
         <property name="text">
@@ -2166,7 +2497,9 @@ required.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
+          <bold>false</bold>
          </font>
         </property>
         <property name="text">
@@ -2229,7 +2562,9 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
+          <bold>false</bold>
          </font>
         </property>
         <property name="text">
@@ -2247,7 +2582,9 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
+          <bold>false</bold>
          </font>
         </property>
         <property name="text">
@@ -2265,7 +2602,9 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
+          <bold>false</bold>
          </font>
         </property>
         <property name="text">

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-12
+ * \updates       2022-08-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -64,6 +64,9 @@ keycontainer::keycontainer () :
 /**
  *  This constructor assigns the basic values of control name, number, and
  *  action code.  The rest of the members can be set via the set() function.
+ *
+ *  ca 2022-08-08: Found that the last four members were not in the
+ *  initializer list! Thank you valgrind!
  */
 
 keycontainer::keycontainer (const std::string & name) :
@@ -71,7 +74,10 @@ keycontainer::keycontainer (const std::string & name) :
     m_container_name    (name),
     m_pattern_keys      (),
     m_mute_keys         (),
-    m_loaded_from_rc    (false)
+    m_loaded_from_rc    (false),
+    m_use_auto_shift    (true),
+    m_kbd_layout        (keyboard::layout::qwerty),
+    m_defaults_loaded   (false)
 {
     add_defaults();
 }
