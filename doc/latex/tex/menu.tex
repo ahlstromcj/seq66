@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-07-21
+% \update      2022-08-09
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -448,8 +448,8 @@
    editor.
    \textsl{Seq66} does not support the 'fruity' mouse mode at this time.
 
-   Not (yet) shown in any of the screenshots are the \textbf{Apply}
-   and \textbf{Reset} button.
+   In the diagrams that follow, the new \textbf{Metronome} tab is not
+   shown; but it is discussed in its own section.
 
 \paragraph{Menu / Edit / Preferences / MIDI Clock}
 \label{paragraph:menu_edit_preferences_midi_clock}
@@ -1166,6 +1166,76 @@
    One can clear the out play-set, and set only the current set active, by
    clicking the exclamation point button to the left of the "Active" label at
    the bottom of the main windows.
+
+\paragraph{Menu / Edit / Preferences / Metronome Options}
+\label{paragraph:menu_edit_preferences_metronom_options}
+
+   This new tab contains options for the new "metronome" feature
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_metro_options_tab.png}
+   \caption{Metronome Options}
+   \label{fig:midi_metro_options_tab}
+\end{figure}
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
+
+   The metronome feature is enabled in the main live grid via a metronome
+   button.
+   The metronome is a standard \textsl{Seq66} pattern, but it is never seen
+   nor edited by the user.
+   It is not saved with a song, so changing the metronome does not modify the
+   song.
+   The settings shown above are saved to a "metronome" section in the 'rc'
+   file.
+   The metronome is a pattern that first plays a main note once, and then
+   plays "sub" notes for the rest of the measure.
+   Here are the settings:
+
+   \itempar{Beats/bar}{metronome!beats/bar}
+   This setting sets the beats-per-measure for the metronome only.
+   It currently does not affect the time-bar in the main window.
+   Should it? There is a global beats/bar as well as beats/bar for
+   each pattern.
+
+   \itempar{Beat width}{metronome!beat width}
+   This setting sets the beat width for the metronome only.
+
+   The following setting are provided for the main note and the "sub" notes:
+
+   \itempar{Patch}{metronome!patch}
+   This item sets the program (patch) number for the note, which sets the
+   instrument to be play for the notes.
+   We currently do not have a drop-down box to select the patch by name.
+
+   \itempar{Note}{metronome!note}
+   This item provides the note value to be played.  Recall that 60 is the same
+   as "middle C".
+
+   \itempar{Velocity}{metronome!velocity}
+   This item provides the note velocity to be played, to provide an accent on
+   the main note.
+
+   \itempar{Length Fraction}{metronome!length fraction}
+   The length of the notes are specified as a fraction of the beat width, and
+   this value ranges from 0.125 to 1.0 to 2.0.
+   If set to 0, the length is half of the beat width.
+
+   \itempar{Reload Metronome}{metronome!reload}
+   This button pauses playback (if playing),
+   loads in the new metronome settings, and
+   continues playing (if it was playing).
+
+   \itempar{MIDI Buss}{metronome!buss}
+   This value select the device to use to play the metronome.
+
+   \itempar{Channel}{metronome!channel}
+   This value select the channedevicel to use to play the metronome.
+
+   We still have some more work to do to refine the metronome and its
+   configuration.
+   Notably, the count-in feature is not ready.
 
 \paragraph{Menu / Edit / Preferences / Session}
 \label{paragraph:menu_edit_preferences_session}

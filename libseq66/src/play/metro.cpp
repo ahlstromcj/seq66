@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-07
+ * \updates       2022-08-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -181,7 +181,16 @@ metro::initialize (performer * p)
         set_beats_per_bar(bpb);                     /* hmm, add bool return */
         set_beat_width(bw);                         /* ditto                */
         (void) apply_length(bpb, ppq, bw, measures);
-        (void) settings().initialize(increment);
+        if (settings().initialize(increment))
+        {
+            /*
+             * Must set this before the possibility of raising the modify
+             * flag.
+             */
+
+            seq_number(metronome());                /* magic metro number   */
+            set_name("Metronome");
+        }
 
         midipulse tick = 0;
         for (int count = 0; count < bpb; ++count, tick += increment)
@@ -217,8 +226,6 @@ metro::initialize (performer * p)
         if (result)
         {
             sort_events();
-            seq_number(metronome());        /* magic number for metro class */
-            set_name("Metronome");
             armed(true);
             unmodify();                     /* it's not part of the song    */
         }

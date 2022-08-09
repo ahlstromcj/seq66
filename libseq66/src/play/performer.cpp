@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-08-08
+ * \updates       2022-08-09
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1229,12 +1229,28 @@ performer::install_metronome ()
     return result;
 }
 
+bool
+performer::reload_metronome ()
+{
+    bool wasrunning = is_running();
+    if (wasrunning)
+        auto_stop();            /* or pause? */
+
+    remove_metronome();
+    bool result = install_metronome();
+    if (wasrunning)
+        auto_play();
+
+    return result;
+}
+
 void
 performer::remove_metronome ()
 {
     if (m_metronome)
     {
         seq::number seqno =  m_metronome->seq_number();
+        auto_stop();            /* or pause? */
         play_set().remove(seqno);
         if (m_metronome)
             m_metronome.reset();

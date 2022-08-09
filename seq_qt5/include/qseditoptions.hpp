@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-08
+ * \updates       2022-08-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -96,7 +96,9 @@ private:
     );
     void show_button (QDialogButtonBox::StandardButton bcode, bool show);
     void enable_reload_button (bool flag);
+    void repopulate_channel_menu (int buss);
     void modify_rc();
+    void modify_metronome();
     void modify_ctrl();
     void modify_usr();
     void sync ();               /* makes dialog reflect internal settings   */
@@ -157,10 +159,6 @@ private slots:
     void slot_activate_output_map ();
     void slot_session (int buttonno);
     void slot_nsm_url ();
-    void okay ();
-    void cancel ();
-    void apply ();
-    void reset ();
     void slot_note_resume ();
     void slot_ppqn_by_text (const QString & text);
     void slot_use_file_ppqn ();
@@ -216,6 +214,25 @@ private slots:
     void slot_virtual_ports ();
     void slot_virtual_out_count ();
     void slot_virtual_in_count ();
+
+    void slot_metro_beats_per_bar ();
+    void slot_metro_beat_width ();
+    void slot_metro_main_patch ();
+    void slot_metro_main_note ();
+    void slot_metro_main_velocity ();
+    void slot_metro_main_fraction ();
+    void slot_metro_sub_patch ();
+    void slot_metro_sub_note ();
+    void slot_metro_sub_velocity ();
+    void slot_metro_sub_fraction ();
+    void slot_metro_buss (int index);
+    void slot_metro_channel (int index);
+    void slot_metro_reload ();
+
+    void okay ();
+    void cancel ();
+    void apply ();
+    void reset ();
 
 private:
 

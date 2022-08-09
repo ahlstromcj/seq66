@@ -252,6 +252,10 @@ sequence::~sequence ()
  *  notification function for sequence-changes, which notifies all subscribers
  *  and also calls modify().
  *
+ *  Lastly, the metronome pattern (#2047) is set up programmatically, and
+ *  we will rebuild it if its configuration is changed on the fly. So
+ *  no flag-raising needed.
+ *
  * \param notifychange
  *      If true (the default), then notification is done (via a
  *      performer::callbacks function).
@@ -260,10 +264,13 @@ sequence::~sequence ()
 void
 sequence::modify (bool notifychange)
 {
-    m_is_modified = true;
-    set_dirty();
-    if (notifychange)
-        notify_change();
+    if (! is_metronome())
+    {
+        m_is_modified = true;
+        set_dirty();
+        if (notifychange)
+            notify_change();
+    }
 }
 
 /**

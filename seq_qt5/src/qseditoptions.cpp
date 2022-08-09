@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-08
+ * \updates       2022-08-09
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -203,8 +203,10 @@ qseditoptions::~qseditoptions ()
     delete ui;
 }
 
-/**
+/*
+ *---------------------------------------------------------------------
  *  MIDI Clock tab.
+ *---------------------------------------------------------------------
  */
 
 void
@@ -340,8 +342,10 @@ qseditoptions::setup_tab_midi_clock ()
     ui->lineEditClientId->setText(qt(clid));
 }
 
-/**
+/*
+ *---------------------------------------------------------------------
  *  MIDI Input tab.
+ *---------------------------------------------------------------------
  */
 
 void
@@ -433,7 +437,9 @@ qseditoptions::setup_tab_midi_input ()
 }
 
 /*
+ *---------------------------------------------------------------------
  * Display tab.
+ *---------------------------------------------------------------------
  */
 
 void
@@ -539,7 +545,9 @@ qseditoptions::setup_tab_display ()
 }
 
 /*
- * Jack Sync tab.  JACK Transport Connect/Disconnect buttons.
+ *---------------------------------------------------------------------
+ * Jack Sync tab.
+ *---------------------------------------------------------------------
  */
 
 void
@@ -622,7 +630,9 @@ qseditoptions::setup_tab_jack ()
 }
 
 /*
+ *---------------------------------------------------------------------
  * Play Options tab.
+ *---------------------------------------------------------------------
  */
 
 void
@@ -682,16 +692,370 @@ qseditoptions::setup_tab_play_options ()
 }
 
 /*
+ *---------------------------------------------------------------------
  * Metronome tab.
+ *---------------------------------------------------------------------
  */
 
 void
 qseditoptions::setup_tab_metronome ()
 {
+    int metrotemp = rc().metro_settings().beats_per_bar();
+    QString qmetrotemp = qt(std::to_string(metrotemp));
+    ui->lineedit_metro_beats_per_bar->setText(qmetrotemp);
+    connect
+    (
+        ui->lineedit_metro_beats_per_bar, SIGNAL(editingFinished()),
+        this, SLOT(slot_metro_beats_per_bar())
+    );
+
+    metrotemp = rc().metro_settings().beat_width();
+    qmetrotemp = qt(std::to_string(metrotemp));
+    ui->lineedit_metro_beat_width->setText(qmetrotemp);
+    connect
+    (
+        ui->lineedit_metro_beat_width, SIGNAL(editingFinished()),
+        this, SLOT(slot_metro_beat_width())
+    );
+
+    metrotemp = rc().metro_settings().main_patch();
+    qmetrotemp = qt(std::to_string(metrotemp));
+    ui->lineedit_metro_main_patch->setText(qmetrotemp);
+    connect
+    (
+        ui->lineedit_metro_main_patch, SIGNAL(editingFinished()),
+        this, SLOT(slot_metro_main_patch())
+    );
+
+    metrotemp = rc().metro_settings().main_note();
+    qmetrotemp = qt(std::to_string(metrotemp));
+    ui->lineedit_metro_main_note->setText(qmetrotemp);
+    connect
+    (
+        ui->lineedit_metro_main_note, SIGNAL(editingFinished()),
+        this, SLOT(slot_metro_main_note())
+    );
+
+    metrotemp = rc().metro_settings().main_note_velocity();
+    qmetrotemp = qt(std::to_string(metrotemp));
+    ui->lineedit_metro_main_velocity->setText(qmetrotemp);
+    connect
+    (
+        ui->lineedit_metro_main_velocity, SIGNAL(editingFinished()),
+        this, SLOT(slot_metro_main_velocity())
+    );
+
+    float metrofrac = rc().metro_settings().main_note_fraction();
+    QString qmetrofrac = qt(std::to_string(metrofrac));
+    ui->lineedit_metro_main_fraction->setText(qmetrofrac);
+    connect
+    (
+        ui->lineedit_metro_main_fraction, SIGNAL(editingFinished()),
+        this, SLOT(slot_metro_main_fraction())
+    );
+
+    metrotemp = rc().metro_settings().sub_patch();
+    qmetrotemp = qt(std::to_string(metrotemp));
+    ui->lineedit_metro_sub_patch->setText(qmetrotemp);
+    connect
+    (
+        ui->lineedit_metro_sub_patch, SIGNAL(editingFinished()),
+        this, SLOT(slot_metro_sub_patch())
+    );
+
+    metrotemp = rc().metro_settings().sub_note();
+    qmetrotemp = qt(std::to_string(metrotemp));
+    ui->lineedit_metro_sub_note->setText(qmetrotemp);
+    connect
+    (
+        ui->lineedit_metro_sub_note, SIGNAL(editingFinished()),
+        this, SLOT(slot_metro_sub_note())
+    );
+
+    metrotemp = rc().metro_settings().sub_note_velocity();
+    qmetrotemp = qt(std::to_string(metrotemp));
+    ui->lineedit_metro_sub_velocity->setText(qmetrotemp);
+    connect
+    (
+        ui->lineedit_metro_sub_velocity, SIGNAL(editingFinished()),
+        this, SLOT(slot_metro_sub_velocity())
+    );
+
+    metrofrac = rc().metro_settings().sub_note_fraction();
+    qmetrofrac = qt(std::to_string(metrofrac));
+    ui->lineedit_metro_sub_fraction->setText(qmetrofrac);
+    connect
+    (
+        ui->lineedit_metro_sub_fraction, SIGNAL(editingFinished()),
+        this, SLOT(slot_metro_sub_fraction())
+    );
+
+    ui->button_metro_reload->setEnabled(false);
+    connect
+    (
+        ui->button_metro_reload, SIGNAL(clicked(bool)),
+        this, SLOT(slot_metro_reload())
+    );
+
+    /*
+     * combobox_metro_buss:
+     *
+     *  Code similar to that in qsmainwnd.  Output MIDI control
+     *  buss combo-box population.
+     */
+
+    const clockslist & opm = output_port_map();
+    mastermidibus * mmb = perf().master_bus();
+    ui->combobox_metro_buss->clear();
+    if (not_nullptr(mmb))
+    {
+        int metrobus = int(rc().metro_settings().buss());
+        int buses = opm.active() ? opm.count() : mmb->get_num_out_buses() ;
+        for (int bus = 0; bus < buses; ++bus)
+        {
+            e_clock ec;
+            std::string busname;
+            if (perf().ui_get_clock(bussbyte(bus), ec, busname))
+            {
+                bool disabled = ec == e_clock::disabled;
+                ui->combobox_metro_buss->addItem(qt(busname));
+                if (disabled)
+                    enable_bus_item(bus, false);
+            }
+        }
+
+        ui->combobox_metro_buss->setCurrentIndex(metrobus);
+        connect
+        (
+            ui->combobox_metro_buss, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(slot_metro_buss(int))
+        );
+    }
+
+    /*
+     * combobox_metro_channel:
+     *
+     *  Code similar to qseqeditframe64::repopulate_midich_combo().
+     *
+     *  This will need to be updated when the buss number is changed!
+     */
+
+    repopulate_channel_menu(int(rc().metro_settings().buss()));
 }
 
+void
+qseditoptions::repopulate_channel_menu (int buss)
+{
+    disconnect
+    (
+        ui->combobox_metro_channel, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(slot_metro_channel(int))
+    );
+    ui->combobox_metro_channel->clear();
+    for (int channel = 0; channel < c_midichannel_max; ++channel)
+    {
+        char b[4];                                      /* 2 digits or less */
+        snprintf(b, sizeof b, "%2d", channel);
+        std::string name = std::string(b);
+        std::string s = usr().instrument_name(buss, channel);
+        if (! s.empty())
+        {
+            name += " [";
+            name += s;
+            name += "]";
+        }
+
+        QString combo_text(qt(name));
+        ui->combobox_metro_channel->insertItem(channel, combo_text);
+    }
+
+    int ch = rc().metro_settings().channel();
+    if (is_null_channel(ch))
+        ch = c_midichannel_max;
+
+    ui->combobox_metro_channel->setCurrentIndex(ch);
+    connect
+    (
+        ui->combobox_metro_channel, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(slot_metro_channel(int))
+    );
+}
+
+void
+qseditoptions::modify_metronome ()
+{
+    ui->button_metro_reload->setEnabled(true);
+    modify_rc();
+}
+
+void
+qseditoptions::slot_metro_beats_per_bar ()
+{
+    QString text = ui->lineedit_metro_beats_per_bar->text();
+    std::string b = text.toStdString();
+    int bpb = string_to_int(b);
+    if (bpb != rc().metro_settings().beats_per_bar())
+    {
+        rc().metro_settings().beats_per_bar(bpb);
+        modify_metronome();
+    }
+}
+
+void
+qseditoptions::slot_metro_beat_width ()
+{
+    QString text = ui->lineedit_metro_beat_width->text();
+    std::string b = text.toStdString();
+    int bw = string_to_int(b);
+    if (bw != rc().metro_settings().beat_width())
+    {
+        rc().metro_settings().beat_width(bw);
+        modify_metronome();
+    }
+}
+
+void
+qseditoptions::slot_metro_main_patch ()
+{
+    QString text = ui->lineedit_metro_main_patch->text();
+    std::string p = text.toStdString();
+    int patch = string_to_int(p);
+    if (patch != rc().metro_settings().main_patch())
+    {
+        rc().metro_settings().main_patch(patch);
+        modify_metronome();
+    }
+}
+
+void
+qseditoptions::slot_metro_main_note ()
+{
+    QString text = ui->lineedit_metro_main_note->text();
+    std::string n = text.toStdString();
+    int note = string_to_int(n);
+    if (note != rc().metro_settings().main_note())
+    {
+        rc().metro_settings().main_note(note);
+        modify_metronome();
+    }
+}
+
+void
+qseditoptions::slot_metro_main_velocity ()
+{
+    QString text = ui->lineedit_metro_main_velocity->text();
+    std::string v = text.toStdString();
+    int vel = string_to_int(v);
+    if (vel != rc().metro_settings().main_note_velocity())
+    {
+        rc().metro_settings().main_note_velocity(vel);
+        modify_metronome();
+    }
+}
+
+void
+qseditoptions::slot_metro_main_fraction ()
+{
+    QString text = ui->lineedit_metro_main_fraction->text();
+    std::string f = text.toStdString();
+    float fraction = string_to_double(f);
+    if (fraction != rc().metro_settings().main_note_fraction())
+    {
+        rc().metro_settings().main_note_fraction(fraction);
+        modify_metronome();
+    }
+}
+
+void
+qseditoptions::slot_metro_sub_patch ()
+{
+    QString text = ui->lineedit_metro_sub_patch->text();
+    std::string p = text.toStdString();
+    int patch = string_to_int(p);
+    if (patch != rc().metro_settings().sub_patch())
+    {
+        rc().metro_settings().sub_patch(patch);
+        modify_metronome();
+    }
+}
+
+void
+qseditoptions::slot_metro_sub_note ()
+{
+    QString text = ui->lineedit_metro_sub_note->text();
+    std::string n = text.toStdString();
+    int note = string_to_int(n);
+    if (note != rc().metro_settings().sub_note())
+    {
+        rc().metro_settings().sub_note(note);
+        modify_metronome();
+    }
+}
+
+void
+qseditoptions::slot_metro_sub_velocity ()
+{
+    QString text = ui->lineedit_metro_sub_velocity->text();
+    std::string v = text.toStdString();
+    int vel = string_to_int(v);
+    if (vel != rc().metro_settings().sub_note_velocity())
+    {
+        rc().metro_settings().sub_note_velocity(vel);
+        modify_metronome();
+    }
+}
+
+void
+qseditoptions::slot_metro_sub_fraction ()
+{
+    QString text = ui->lineedit_metro_sub_fraction->text();
+    std::string f = text.toStdString();
+    float fraction = string_to_double(f);
+    if (fraction != rc().metro_settings().sub_note_fraction())
+    {
+        rc().metro_settings().sub_note_fraction(fraction);
+        modify_metronome();
+    }
+}
+
+void
+qseditoptions::slot_metro_reload ()
+{
+    ui->button_metro_reload->setEnabled(false);
+    perf().reload_metronome();
+}
+
+void
+qseditoptions::slot_metro_buss (int index)
+{
+    int b = int(rc().metro_settings().buss());
+    if (index != b)
+    {
+        rc().metro_settings().buss(midibyte(index));
+        repopulate_channel_menu(int(rc().metro_settings().buss()));
+        modify_metronome();
+    }
+}
+
+void
+qseditoptions::slot_metro_channel (int index)
+{
+    int c = int(rc().metro_settings().channel());
+    if (index != c)
+    {
+        rc().metro_settings().channel(midibyte(index));
+        modify_metronome();
+    }
+}
+
+// TODO:
+// checkbox_metro_count_in
+// lineedit_metro_count_in
+
 /*
+ *---------------------------------------------------------------------
  *  Session tab.
+ *---------------------------------------------------------------------
  */
 
 void

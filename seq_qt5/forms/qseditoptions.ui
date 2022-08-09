@@ -726,7 +726,7 @@ slot by channel number (0 to 15).</string>
        <property name="flat">
         <bool>false</bool>
        </property>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidgetBooleanOptions">
         <property name="geometry">
          <rect>
           <x>8</x>
@@ -1720,7 +1720,7 @@ Seq66 exits.</string>
       <widget class="QLabel" name="label_metro_timesig">
        <property name="geometry">
         <rect>
-         <x>24</x>
+         <x>20</x>
          <y>28</y>
          <width>129</width>
          <height>17</height>
@@ -1736,7 +1736,7 @@ Seq66 exits.</string>
         <string>Time Signature</string>
        </property>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidgetMetroTimeSig">
        <property name="geometry">
         <rect>
          <x>204</x>
@@ -1759,6 +1759,9 @@ Seq66 exits.</string>
           </property>
           <property name="text">
            <string>Output Specs</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -1805,10 +1808,10 @@ Seq66 exits.</string>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="lineEditMetroPatchMain"/>
+         <widget class="QLineEdit" name="lineedit_metro_main_patch"/>
         </item>
         <item row="1" column="2">
-         <widget class="QLineEdit" name="lineEditMetroPatchSub"/>
+         <widget class="QLineEdit" name="lineedit_metro_sub_patch"/>
         </item>
         <item row="2" column="0">
          <widget class="QLabel" name="label_metro_note">
@@ -1827,10 +1830,10 @@ Seq66 exits.</string>
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QLineEdit" name="lineEditMetroNoteMain"/>
+         <widget class="QLineEdit" name="lineedit_metro_main_note"/>
         </item>
         <item row="2" column="2">
-         <widget class="QLineEdit" name="lineEditMetroNoteSub"/>
+         <widget class="QLineEdit" name="lineedit_metro_sub_note"/>
         </item>
         <item row="3" column="0">
          <widget class="QLabel" name="label_metro_velocity">
@@ -1849,10 +1852,10 @@ Seq66 exits.</string>
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QLineEdit" name="lineEditMetroVelocityMain"/>
+         <widget class="QLineEdit" name="lineedit_metro_main_velocity"/>
         </item>
         <item row="3" column="2">
-         <widget class="QLineEdit" name="lineEditMetroVelocitySub"/>
+         <widget class="QLineEdit" name="lineedit_metro_sub_velocity"/>
         </item>
         <item row="4" column="0">
          <widget class="QLabel" name="label_metro_length_fraction">
@@ -1871,20 +1874,20 @@ Seq66 exits.</string>
          </widget>
         </item>
         <item row="4" column="1">
-         <widget class="QLineEdit" name="lineEditMetroFractionMain"/>
+         <widget class="QLineEdit" name="lineedit_metro_main_fraction"/>
         </item>
         <item row="4" column="2">
-         <widget class="QLineEdit" name="lineEditMetroFractionSub"/>
+         <widget class="QLineEdit" name="lineedit_metro_sub_fraction"/>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidgetMetroValues">
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>204</y>
+         <y>240</y>
          <width>489</width>
-         <height>29</height>
+         <height>31</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,4,1,2">
@@ -1902,7 +1905,20 @@ Seq66 exits.</string>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="comboBoxMetroMidiBus"/>
+         <widget class="QComboBox" name="combobox_metro_buss">
+          <property name="minimumSize">
+           <size>
+            <width>266</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>268</width>
+            <height>28</height>
+           </size>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QLabel" name="label_metro_channel">
@@ -1913,16 +1929,29 @@ Seq66 exits.</string>
            </font>
           </property>
           <property name="text">
-           <string>MIDI Channel</string>
+           <string>Channel</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="comboBoxMetroMidiChannel"/>
+         <widget class="QComboBox" name="combobox_metro_channel">
+          <property name="minimumSize">
+           <size>
+            <width>64</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>64</width>
+            <height>28</height>
+           </size>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidgetMetroChannel">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -1946,7 +1975,7 @@ Seq66 exits.</string>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLineEdit" name="lineEditMetroBpb"/>
+         <widget class="QLineEdit" name="lineedit_metro_beats_per_bar"/>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="label_metro_beat_width">
@@ -1962,11 +1991,11 @@ Seq66 exits.</string>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="lineEditMetroBeatWidth"/>
+         <widget class="QLineEdit" name="lineedit_metro_beat_width"/>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidgetMetroBW">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -2009,7 +2038,7 @@ Seq66 exits.</string>
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QCheckBox" name="checkBox">
+         <widget class="QCheckBox" name="checkbox_metro_count_in">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -2019,13 +2048,32 @@ Seq66 exits.</string>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="lineEdit">
+         <widget class="QLineEdit" name="lineedit_metro_count_in">
           <property name="enabled">
            <bool>false</bool>
           </property>
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QPushButton" name="button_metro_reload">
+       <property name="geometry">
+        <rect>
+         <x>164</x>
+         <y>196</y>
+         <width>225</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>225</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Reload Metronome</string>
+       </property>
       </widget>
      </widget>
      <widget class="QWidget" name="tabSession">
