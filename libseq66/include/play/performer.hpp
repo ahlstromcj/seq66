@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-08-09
+ * \updates       2022-08-10
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2162,6 +2162,8 @@ public:
         return mapper().is_seq_active(seqno);
     }
 
+    bool is_metronome (seq::number seqno) const;
+
     seq::number first_seq () const
     {
         return mapper().first_seq();
@@ -2970,49 +2972,8 @@ public:
         m_have_redo = redo;
     }
 
-    /**
-     *  Retrieves the actual sequence, based on the pattern/sequence number.
-     *  This is the const version.  Note that it is more efficient to call
-     *  this function and check the result than to call is_active() and then
-     *  call this function.
-     *
-     *  \deprecated
-     *      We will replace this with loop() eventually.
-     *
-     * \param seq
-     *      The prospective sequence number.
-     *
-     * \return
-     *      Returns the value of "m_seqs[seq]" if seq is valid.  Otherwise, a
-     *      null pointer is returned.
-     */
-
-    const seq::pointer get_sequence (seq::number seqno) const
-    {
-        return mapper().loop(seqno);
-    }
-
-    /**
-     *  The non-const version of get_sequence().  Let the caller beware!
-     *
-     *  \deprecated
-     *      We will replace this with loop() eventually.
-     */
-
-    seq::pointer get_sequence (seq::number seqno)
-    {
-        return mapper().loop(seqno);
-    }
-
-    const seq::pointer sequence_pointer (seq::number seqno) const
-    {
-        return mapper().loop(seqno);
-    }
-
-    seq::pointer sequence_pointer (seq::number seqno)
-    {
-        return mapper().loop(seqno);
-    }
+    const seq::pointer get_sequence (seq::number seqno) const;
+    seq::pointer get_sequence (seq::number seqno);
 
 public:         /* GUI-support functions */
 

@@ -1,6 +1,6 @@
 TO DO for Seq66 0.98.11 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-08-07
+2019-04-13 to 2022-08-10
 
 Hot:
 
@@ -50,6 +50,7 @@ Pattern Editor, Main Window:
     -   The main window, when the size changes, retains that size.
         How can we make this optional or prevent it?
     -   Verify setmapper/setmaster for odd set sizes.
+    -   Live note mapping?
 
 Windows:
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2022-08-07
+ * \updates       2022-08-10
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1365,20 +1365,40 @@ qslivegrid::slot_record_mode (bool /*clicked*/)
 void
 qslivegrid::slot_toggle_metronome (bool /*clicked*/)
 {
-    bool on = ui->buttonMetronome->isChecked();
-    if (on)
+    Qt::KeyboardModifiers qkm = QGuiApplication::keyboardModifiers();
+    if (qkm & Qt::ControlModifier)
     {
-        (void) perf().install_metronome();  /* arms it if already existing  */
+        bool on = ui->buttonMetronome->isChecked();
+        if (on)
+            ui->buttonMetronome->setChecked(false);
+
+        signal_call_editor_ex(sequence::metronome());
+    }
+    else if (qkm & Qt::AltModifier)
+    {
+        bool on = ui->buttonMetronome->isChecked();
+        if (on)
+            ui->buttonMetronome->setChecked(false);
+
+        signal_call_edit_events(sequence::metronome());
     }
     else
     {
-        /*
-         * This can cause the occasional segfault.
-         *
-         * (void) perf().remove_metronome();
-         */
+        bool on = ui->buttonMetronome->isChecked();
+        if (on)
+        {
+            (void) perf().install_metronome();  /* arms if already existing */
+        }
+        else
+        {
+            /*
+             * This can cause the occasional segfault.
+             *
+             * (void) perf().remove_metronome();
+             */
 
-        (void) perf().arm_metronome(false); /* mutes the metronome          */
+            (void) perf().arm_metronome(false); /* mutes the metronome      */
+        }
     }
 }
 

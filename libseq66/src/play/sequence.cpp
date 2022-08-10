@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-08-07
+ * \updates       2022-08-10
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -264,7 +264,7 @@ sequence::~sequence ()
 void
 sequence::modify (bool notifychange)
 {
-    if (! is_metronome())
+    if (! is_metro())
     {
         m_is_modified = true;
         set_dirty();
@@ -5941,7 +5941,7 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
             automation::action::off, automation::ctrlstatus::oneshot
         );
     }
-    if (is_metronome())
+    if (is_metro())
         live_play(tick);
     else
         play(tick, playbackmode, resumenoteons);

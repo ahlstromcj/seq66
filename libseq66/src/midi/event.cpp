@@ -123,6 +123,7 @@ event::event () :
  * \param status
  *      Provides the status value.  The channel nybble is cleared, since the
  *      channel is generally provided by the settings of the sequence.
+ *      However, this value should include the channel if applicable!
  *
  * \param d0
  *      Provides the first data byte.  There is no default value.
@@ -174,7 +175,7 @@ event::event (midipulse tstamp, midibpm tempo) :
 event::event
 (
     midipulse tstamp,
-    midibyte notekind,
+    midibyte notekind,              /* must not include channel (ch == 0)   */
     midibyte channel,
     int note,
     int velocity

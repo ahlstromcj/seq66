@@ -85,7 +85,7 @@ qseqeditex::qseqeditex (performer & p, int seqid, qsmainwnd * parent) :
     ui->setupUi(this);
 
     QGridLayout * layout = new QGridLayout(this);
-    seq::pointer s = p.sequence_pointer(seqid);
+    seq::pointer s = p.get_sequence(seqid);
     if (s)
     {
         m_edit_frame = new (std::nothrow) qseqeditframe64(p, *s, this);
@@ -125,7 +125,9 @@ qseqeditex::closeEvent (QCloseEvent *)
 {
     if (not_nullptr(m_edit_parent))
     {
-        m_edit_frame->close();
+        if (not_nullptr(m_edit_frame))
+            m_edit_frame->close();
+
         m_edit_parent->remove_editor(m_seq_id);
     }
 }

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-08-09
+ * \updates       2022-08-10
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1191,6 +1191,36 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
 }
 
 /**
+ *  Retrieves the actual sequence, based on the pattern/sequence number.
+ *  This is the const version.  Note that it is more efficient to call
+ *  this function and check the result than to call is_active() and then
+ *  call this function.
+ *
+ *  \deprecated
+ *      We will replace this with loop() eventually.
+ *
+ * \param seq
+ *      The prospective sequence number.
+ *
+ * \return
+ *      Returns the value of "m_seqs[seq]" if seq is valid.  Otherwise, a
+ *      null pointer is returned.  Now also can return the metronome pointer if it
+ *      exists.
+ */
+
+const seq::pointer
+performer::get_sequence (seq::number seqno) const
+{
+    return sequence::is_metronome(seqno) ? m_metronome : mapper().loop(seqno) ;
+}
+
+seq::pointer
+performer::get_sequence (seq::number seqno)
+{
+    return sequence::is_metronome(seqno) ? m_metronome : mapper().loop(seqno) ;
+}
+
+/**
  *  We start with a default metronome while we figure out a good way to
  *  configure it.
  *
@@ -1226,6 +1256,16 @@ performer::install_metronome ()
         else
             m_metronome.reset();
     }
+    return result;
+}
+
+bool
+performer::is_metronome (seq::number seqno) const
+{
+    bool result = sequence::is_metronome(seqno);
+    if (result)
+        result = bool(m_metronome);
+
     return result;
 }
 
@@ -2584,7 +2624,7 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
     midicontrolout::seqaction what;
     if (ok)
     {
-        if (s->is_metronome())
+        if (s->is_metro())
             return true;
 
         if (s->armed())
@@ -2620,7 +2660,7 @@ performer::announce_pattern (seq::number seqno)
     bool result = bool(s);
     if (result)
     {
-        if (! s->is_metronome())            /* not part of normal patterns  */
+        if (! s->is_metro())                /* not part of normal patterns  */
             result = announce_sequence(s, mapper().seq_to_offset(*s));
     }
     else

@@ -855,7 +855,7 @@ qseditoptions::repopulate_channel_menu (int buss)
     for (int channel = 0; channel < c_midichannel_max; ++channel)
     {
         char b[4];                                      /* 2 digits or less */
-        snprintf(b, sizeof b, "%2d", channel);
+        snprintf(b, sizeof b, "%2d", channel + 1);      /* user-style no.   */
         std::string name = std::string(b);
         std::string s = usr().instrument_name(buss, channel);
         if (! s.empty())

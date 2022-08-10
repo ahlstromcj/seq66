@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-08-07
+ * \updates       2022-08-10
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -902,6 +902,11 @@ public:
         return 2047;
     }
 
+    static int is_metronome (int s)
+    {
+        return s == 2047;
+    }
+
     static int limit ()
     {
         return 2048;    /* 0x0800 */
@@ -996,7 +1001,7 @@ public:
         return int(m_seq_number);
     }
 
-    bool is_metronome () const
+    bool is_metro () const
     {
         return m_seq_number == metronome();
     }

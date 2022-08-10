@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-06
+ * \updates       2022-08-10
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -2263,7 +2263,11 @@ qsmainwnd::load_mute_master ()
 void
 qsmainwnd::load_qseqedit (int seqid)
 {
-    if (cb_perf().is_seq_active(seqid))
+    bool isactive = cb_perf().is_seq_active(seqid);
+    if (! isactive)
+        isactive = cb_perf().is_metronome(seqid);       /* a special case   */
+
+    if (isactive)
     {
         auto ei = m_open_editors.find(seqid);
         if (ei == m_open_editors.end())

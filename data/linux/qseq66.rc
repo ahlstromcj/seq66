@@ -1,7 +1,7 @@
 # Seq66 0.98.0 main ('rc') configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written 2022-08-07 19:37:49
+# Written 2022-08-10 13:28:05
 #
 # This file holds the main configuration for Seq66. It no longer follows the
 # format of the seq24rc configuration file.
@@ -20,8 +20,7 @@
 # clarity. If 'pair', the client:port number is prepended. If 'long', the full
 # name (index, client:port, client name, and port name is shown.
 #
-# 'port-naming' values are 'short' or 'long'.  'short' shows the
-# number and short name; 'long' shows the long name.
+# 'init-disabled-ports' is experimental. It allows live toggle of port state.
 
 [Seq66]
 
@@ -32,8 +31,8 @@ sets-mode = normal
 port-naming = short
 init-disabled-ports = false
 
-# [comments] holds user documentation for this file. The first empty,
-# hash-commented, or tag line ends the comment.
+# [comments] holds user documentation for this file. The first empty, hash-
+# commented, or tag line ends the comment.
 
 [comments]
 
@@ -116,10 +115,10 @@ virtual-ports = false
 output-port-count = 8
 input-port-count = 4
 
-# These system ports are available for input. From JACK's view, these
-# are 'playback' devices. The first number is a buss number, and the
-# second number is the input status, disabled (0) or
-# enabled (1). The item in quotes is the input-buss name.
+# These system ports are available for input. From JACK's view, these are
+# 'playback' devices. The first number is the bus, the second number is the
+# input status, disabled (0) or enabled (1). The item in quotes is the full
+# input bus name.
 #
 #  -1 = The output port is disabled.
 #   0 = MIDI Clock is off. The output port is enabled.
@@ -233,16 +232,16 @@ show-system-ports = false
 
 [metronome]
 
-output-buss = 1
-output-channel = 0
+output-buss = 4
+output-channel = 9
 beats-per-bar = 4
 beat-width = 4
-main-patch = 0
-main-note = 72
+main-patch = 15
+main-note = 75
 main-note-velocity = 120
 main-note-length = 0
-sub-patch = 0
-sub-note = 60
+sub-patch = 33
+sub-note = 76
 sub-note-velocity = 84
 sub-note-length = 0
 
@@ -271,8 +270,8 @@ double-click-edit = true
 # auto: If the loaded tune has song triggers, use Song mode.
 #
 # jack-midi sets/unsets JACK MIDI, separate from JACK transport.
-# jack-auto-connect sets connecting to JACK ports found. Default =
-# true; use false to have a session manager make the connections.
+# jack-auto-connect sets connecting to JACK ports found. Default = true; use
+# false to have a session manager make the connections.
 
 [jack-transport]
 
