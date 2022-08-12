@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-08-10
+ * \updates       2022-08-12
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -403,6 +403,7 @@ private:
      */
 
     playset m_play_set;
+    playset m_play_set_storage;
 
     /**
      *  Provides an optional play-list, loosely patterned after Stazed's Seq32
@@ -424,6 +425,12 @@ private:
      */
 
     std::shared_ptr<metro> m_metronome;
+
+    /**
+     *  A quick indication that count-in is requested and able to be used.
+     */
+
+    bool m_metronome_count_in;
 
     /**
      *  If true, playback is done in Song mode, not Live mode.  This option is
@@ -1106,12 +1113,12 @@ public:
 
     const playset & play_set () const
     {
-        return m_play_set;
+        return m_metronome_count_in ? m_play_set_storage : m_play_set ;
     }
 
     playset & play_set ()
     {
-        return m_play_set;
+        return m_metronome_count_in ? m_play_set_storage : m_play_set ;
     }
 
     /*
@@ -2386,6 +2393,9 @@ public:
 public:
 
     void start_playing ();
+#if defined METRO_COUNT_IN_ENABLED
+    void play_count_in ();
+#endif
     void pause_playing ();
     void stop_playing ();
     void group_learn (bool flag);
@@ -3382,6 +3392,10 @@ private:
     void midi_clock ();
     void midi_song_pos (const event & ev);
     void midi_sysex (const event & ev);
+#if defined METRO_COUNT_IN_ENABLED
+    bool start_count_in ();
+    bool finish_count_in ();
+#endif
 
     synch & cv ()
     {

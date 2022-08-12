@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-08-10
+ * \updates       2022-08-12
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -304,9 +304,11 @@ performer::performer (int ppqn, int rows, int columns) :
     m_smf_format            (1),
     m_error_pending         (false),
     m_play_set              (),
+    m_play_set_storage      (),
     m_play_list             (),
     m_note_mapper           (new notemapper()),
     m_metronome             (),                 /* no metronome by default  */
+    m_metronome_count_in    (false),
     m_song_start_mode       (sequence::playback::automatic),
     m_reposition            (false),
     m_excell_FF_RW          (1.0),
@@ -1299,6 +1301,7 @@ performer::remove_metronome ()
         status_message("Removed metronome", play_set().to_string());
 #endif
     }
+    m_metronome_count_in = false;
 }
 
 /**
@@ -1311,6 +1314,69 @@ performer::arm_metronome (bool on)
     if (m_metronome)
         m_metronome->set_armed(on);
 }
+
+#if defined METRO_COUNT_IN_ENABLED
+
+/**
+ *  When Live playback is requested:
+ *
+ *  -   Verify that the metronome pattern and count-in status are set. This
+ *      means that the metronome pattern is part of the current playset.
+ *      The user must have enabled the metronome.
+ *  -   Copy the current playset into the storage playset.
+ *  -   Clear the current playset and add the metronome alone.
+ *  -   Set the loop-count for the metronome to the count-in value.
+ *  -   Start playback.
+ *  -   Play until the desired number of bars have happened. This is detected
+ *      via the metronome pattern.
+ *  -   Stop the playback.
+ *  -   Repopulate the playset with the stored patterns (current set or
+ *      all sets) and the metronome pattern.
+ *  -   Start playback (again).
+ */
+
+bool
+performer::start_count_in ()
+{
+    bool result = rc().metro_settings().count_in_active();
+    if (result)
+        result = bool(m_metronome);         /* the metronome pattern exists */
+
+    if (result)
+    {
+        m_play_set_storage.clear();
+        result = m_play_set_storage.add(m_metronome);
+        if (result)
+        {
+            (void) m_metronome->
+                loop_count_max(rc().metro_settings().count_in_measures());
+
+            m_dont_reset_ticks = false;
+            m_metronome_count_in = true;
+        }
+    }
+    return result;
+}
+
+bool
+performer::finish_count_in ()
+{
+    bool result = m_metronome_count_in;
+    if (result)
+    {
+        stop_playing();                     /* halt playback                */
+        set_tick(0);
+        (void) m_metronome->loop_count_max(0);
+        m_play_set_storage.clear();         /* don't keep it around         */
+        m_metronome_count_in = false;
+        is_pattern_playing(true);
+        start_playing();                    /* resume normal playback       */
+    }
+    return result;
+}
+
+#endif  // defined METRO_COUNT_IN_ENABLED
+
 
 /**
  *  Creates a new pattern/sequence for the given slot, and sets the new
@@ -1658,7 +1724,10 @@ performer::ui_change_set_bus (int buss)
         for (auto seqi : play_set().seq_container())
         {
             if (seqi)
-                seqi->set_midi_bus(b, true);    /* calls notify function    */
+            {
+                if (! seqi->is_metro())
+                    seqi->set_midi_bus(b, true);        /* calls notify()   */
+            }
             else
                 set_error_message("set bus on null sequence");
         }
@@ -2238,7 +2307,7 @@ performer::clear_all (bool /* clearplaylist */ )
     usr().clear_global_seq_features();
     if (result)
     {
-        play_set().clear();             /* dump active patterns             */
+        play_set().clear();                     /* dump active patterns     */
 
 #if defined WE_REALLY_NEED_TO_RESET_PLAYLIST
         if (m_play_list)
@@ -4098,6 +4167,15 @@ performer::midi_sysex (const event & ev)
  *  we pass true in this parameter if we're starting playback from the
  *  perfedit window.  It alters the m_start_from_perfedit member, not the
  *  m_song_start_mode member (which replaces the global flag now).
+ *
+ * Flicker:
+ *
+ *      Allow to start at key-p position if set; for cosmetic reasons, to stop
+ *      transport line flicker on start, position to the left tick.
+ *
+ *          m_jack_asst.position(true, m_left_tick);    // position_jack()
+ *
+ *      The "! m_reposition" doesn't seem to make sense.
  */
 
 void
@@ -4105,28 +4183,18 @@ performer::start_playing ()
 {
     if (song_mode())
     {
-       /*
-        * Allow to start at key-p position if set; for cosmetic reasons,
-        * to stop transport line flicker on start, position to the left
-        * tick.
-        *
-        *   m_jack_asst.position(true, m_left_tick);        // position_jack()
-        *
-        * The "! m_reposition" doesn't seem to make sense.
-        */
-
         if (! song_recording())
             m_max_extent = get_max_extent();
 
-       if (is_jack_master() && ! m_reposition)
+       if (is_jack_master() && ! m_reposition)      /* see "Flicker" above  */
            position_jack(true, get_left_tick());
     }
     else
     {
-        if (is_jack_master() && ! m_dont_reset_ticks)       // ca 2021-05-20
+        if (is_jack_master() && ! m_dont_reset_ticks)
             position_jack(false, 0);
 
-        if (resume_note_ons())                              /* for issue #5 */
+        if (resume_note_ons())
         {
             for (auto seqi : play_set().seq_container())
                 seqi->resume_note_ons(get_tick());
@@ -4137,6 +4205,24 @@ performer::start_playing ()
     for (auto notify : m_notify)
         (void) notify->on_automation_change(automation::slot::start);
 }
+
+#if defined METRO_COUNT_IN_ENABLED
+
+void
+performer::play_count_in ()
+{
+    if (start_count_in())
+    {
+        if (is_jack_master() && ! m_dont_reset_ticks)
+            position_jack(false, 0);
+    }
+    start_jack();
+    start();
+    for (auto notify : m_notify)
+        (void) notify->on_automation_change(automation::slot::start);
+}
+
+#endif  // defined METRO_COUNT_IN_ENABLED
 
 /**
  *  Pause playback, so that progress bars stay where they are, and playback
@@ -4219,13 +4305,25 @@ performer::auto_play ()
         }
         else
         {
-            start_playing();
+#if defined METRO_COUNT_IN_ENABLED
+            if (rc().metro_settings().count_in_active())
+                play_count_in();
+            else
+#endif
+                start_playing();
+
             isplaying = true;
         }
     }
     else if (! is_running())
     {
-        start_playing();
+#if defined METRO_COUNT_IN_ENABLED
+        if (rc().metro_settings().count_in_active())
+            play_count_in();
+        else
+#endif
+            start_playing();
+
         isplaying = true;
     }
     is_pattern_playing(isplaying);
@@ -4300,6 +4398,7 @@ performer::play (midipulse tick)
             auto_stop();
             return;
         }
+
         set_tick(tick);
         for (auto seqi : play_set().seq_container())
         {

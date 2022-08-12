@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-08-10
+ * \updates       2022-08-12
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -48,6 +48,12 @@
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
+
+/*
+ * Causes issues currently.
+ */
+
+#undef METRO_COUNT_IN_ENABLED
 
 /**
  *  Provides an integer value for color that matches PaletteColor::NONE.  That

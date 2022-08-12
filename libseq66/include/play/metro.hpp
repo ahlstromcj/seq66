@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-07
+ * \updates       2022-08-10
  * \license       GNU GPLv2 or above
  *
  *  The metro is a sequence with a special configuration.  It can be added
@@ -108,6 +108,18 @@ private:
 
     float m_main_note_fraction;
     float m_sub_note_fraction;
+
+    /**
+     *  Support for count-in.  This involves a boolean to indicate it is active,
+     *  the number of measures to count in, and whether recording (to a hidden
+     *  record pattern is activated.
+     *
+     *  We may need to add a recording buss number to the configuration.
+     */
+
+    bool m_count_in_active;
+    int m_count_in_measures;
+    bool m_count_in_recording;
 
 public:
 
@@ -192,6 +204,21 @@ public:
         return m_sub_note_length;
     }
 
+    bool count_in_active () const
+    {
+        return m_count_in_active;
+    }
+
+    int count_in_measures () const
+    {
+        return m_count_in_measures;
+    }
+
+    bool count_in_recording () const
+    {
+        return m_count_in_recording;
+    }
+
 public:
 
     void buss (int b)
@@ -267,6 +294,21 @@ public:
     {
         if (fraction == 0.0 || (fraction >= 0.125 && fraction <= 2.0))
             m_sub_note_fraction = fraction;
+    }
+
+    void count_in_active (bool flag)
+    {
+        m_count_in_active = flag;
+    }
+
+    void count_in_measures (int count)
+    {
+        m_count_in_measures = count;
+    }
+
+    void count_in_recording (bool flag)
+    {
+        m_count_in_recording = flag;
     }
 
 };          // class metrosettings

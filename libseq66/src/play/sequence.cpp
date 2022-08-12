@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-08-10
+ * \updates       2022-08-12
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1091,7 +1091,7 @@ sequence::play
             );
         }
     }
-    if (armed())                            /* play notes in the frame      */
+    if (armed())                                    /* play notes in frame  */
     {
         midipulse length = get_length() > 0 ? get_length() : m_ppqn ;
         midipulse offset = length - m_trigger_offset;
@@ -1102,7 +1102,13 @@ sequence::play
         if (loop_count_max() > 0)
         {
             if (times_played >= loop_count_max())
+            {
+#if defined METRO_COUNT_IN_ENABLED
+                if (is_metro())                     /* count-in is complete */
+                    m_parent->finish_count_in();
+#endif
                 return;
+            }
         }
 
         int transpose = trigtranspose;
@@ -1200,6 +1206,18 @@ sequence::live_play (midipulse tick)
         midipulse end_tick_offset = end_tick + length;
         midipulse times_played = m_last_tick / length;
         midipulse offset_base = times_played * length;
+        if (loop_count_max() > 0)
+        {
+            if (times_played >= loop_count_max())
+            {
+#if defined METRO_COUNT_IN_ENABLED
+                if (is_metro())                     /* count-in is complete */
+                    m_parent->finish_count_in();
+#endif
+                return;
+            }
+        }
+
         auto e = m_events.begin();
         while (e != m_events.end())
         {

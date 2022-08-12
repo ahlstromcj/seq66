@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-08-07
+ * \updates       2022-08-10
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -557,6 +557,13 @@ rcfile::parse ()
         rc().metro_settings().sub_note_velocity(temp);
         v = get_float(file, tag, "sub-note-length");
         rc().metro_settings().sub_note_fraction(v);
+
+        bool countin = get_boolean(file, tag, "count-in-active");
+        rc().metro_settings().count_in_active(countin);
+        temp = get_integer(file, tag, "count-in-measures");
+        rc().metro_settings().count_in_measures(temp);
+        countin = get_boolean(file, tag, "count-in-recording");
+        rc().metro_settings().count_in_recording(countin);
     }
 
     tag = "[interaction-method]";
@@ -1002,13 +1009,27 @@ rcfile::write ()
     (
         file, "sub-note-length", rc().metro_settings().sub_note_length()
     );
+    write_boolean
+    (
+        file, "count-in-active", rc().metro_settings().count_in_active()
+    );
+    write_integer
+    (
+        file, "count-in-measures",
+        int(rc().metro_settings().count_in_measures())
+    );
+    write_boolean
+    (
+        file, "count-in-recording",
+        rc().metro_settings().count_in_recording()
+    );
 
     /*
      * Interaction-method
      */
 
     file << "\n"
-"# Sets mouse usage for drawing/editing patterns. 'Fruity' mode is NOT present in\n"
+"# Sets mouse usage for drawing/editing patterns. 'Fruity' mode is NOT in\n"
 "# Seq66. Other settings are available: 'snap-split' enables splitting\n"
 "# song-editor triggers at a snap position instead of in its middle. Split is\n"
 "# done by a middle-click or ctrl-left click. 'double-click-edit' allows double-\n"

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-08-06
+ * \updates       2022-08-12
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -1490,6 +1490,16 @@ playset::remove (seq::number seqno)
     );
     if (seqit != m_sequence_array.end())
         (void) m_sequence_array.erase(seqit);
+}
+
+/**
+ *  Moved here because sometimes gdb cannot evaluate it.
+ */
+
+int
+playset::count () const
+{
+    return seq_count();
 }
 
 std::string

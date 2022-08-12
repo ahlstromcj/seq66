@@ -43,23 +43,29 @@ namespace seq66
  *---------------------------------------------------------------------
  *  metrosettings
  *---------------------------------------------------------------------
+ *
+ *  See https://music.arts.uci.edu/dobrian/maxcookbook/
+ *          metronome-using-general-midi-sounds
  */
 
 metrosettings::metrosettings () :
     m_buss                  (0),
-    m_channel               (0),
+    m_channel               (9),            /* MIDI channel 10, drums   */
     m_beats_per_bar         (4),
     m_beat_width            (4),
-    m_main_patch            (0),
-    m_sub_patch             (0),
-    m_main_note             (72),       /* middle C + 12 */
-    m_main_note_velocity    (120),
+    m_main_patch            (0),            /* Standard drum kit        */
+    m_sub_patch             (0),            /* Standard drum kit        */
+    m_main_note             (75),           /* Claves                   */
+    m_main_note_velocity    (96),
     m_main_note_length      (0),
-    m_sub_note              (60),       /* middle C      */
+    m_sub_note              (76),           /* High Wood Block          */
     m_sub_note_velocity     (84),
     m_sub_note_length       (0),
     m_main_note_fraction    (0.0),
-    m_sub_note_fraction     (0.0)
+    m_sub_note_fraction     (0.0),
+    m_count_in_active       (false),
+    m_count_in_measures     (1),
+    m_count_in_recording    (false)
 {
     /*
      * See the principal constructor below.
@@ -102,8 +108,8 @@ metrosettings::set_defaults ()
     m_channel               = 9;        /* Channel 10, Percussion           */
     m_beats_per_bar         = 4;
     m_beat_width            = 4;
-    m_main_patch            = 0;
-    m_sub_patch             = 0;
+    m_main_patch            = 0;        /* Standard drum kit                */
+    m_sub_patch             = 0;        /* Standard drum kit                */
     m_main_note             = 75;       /* Claves. 72 = middle C + 12       */
     m_main_note_velocity    = 96;
     m_main_note_length      = 0;
@@ -112,6 +118,9 @@ metrosettings::set_defaults ()
     m_sub_note_length       = 0;
     m_main_note_fraction    = 0.0;      /* same as 0.5                      */
     m_sub_note_fraction     = 0.0;      /* ditto                            */
+    m_count_in_active       = false;
+    m_count_in_measures     = 1;
+    m_count_in_recording    = false;
 }
 
 bool
