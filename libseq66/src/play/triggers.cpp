@@ -439,6 +439,10 @@ triggers::play
             result = true;                              /* done, ditto      */
         }
     }
+    else
+    {
+        // Add probe code here
+    }
 
     bool offplay = m_triggers.empty() && m_parent.armed();
     if (offplay)

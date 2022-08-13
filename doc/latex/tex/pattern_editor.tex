@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-04-26
+% \update      2022-08-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1395,6 +1395,8 @@
    pattern acts like a "one-shot" loop.  This can save having to use
    queuing quickly to handle an intro phrase.
    To loop \textsl{endlessly}, set this value to 0.
+   Also set it to 0 when playing the MIDI tune in \textbf{Song} mode.
+   Otherwise, weird behavior will be observed.
 
    \itempar{Armed/Mute Toggle}{pattern editor!data to midi buss}
    This button causes the pattern to be output to the

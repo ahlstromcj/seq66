@@ -109,7 +109,9 @@ Windows, and using a conventional source tarball.
                 reboot.
             *   Added Ctrl-Left/Right to move the progress bar in the pattern
                 editor. (Left/Right scrolls the piano roll.)
+        *   Issue #97.
             *   Added an initial metronome facility and 'rc' configuration.
+            *   Metronome count-in added.
         *   Muted pattern slots show a short progress bar, to aid in the timing
             of queuing.
         *   Improved the handling of the MIDI 'ctrl' file and inactive states.

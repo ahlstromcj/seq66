@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-08-12
+ * \updates       2022-08-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1236,7 +1236,7 @@ performer::install_metronome ()
 {
     if (bool(m_metronome))
     {
-        arm_metronome(true);
+        arm_metronome();
         return true;
     }
 
@@ -1312,7 +1312,10 @@ void
 performer::arm_metronome (bool on)
 {
     if (m_metronome)
+    {
         m_metronome->set_armed(on);
+        (void) m_metronome->loop_count_max(0);
+    }
 }
 
 #if defined METRO_COUNT_IN_ENABLED
@@ -1364,13 +1367,13 @@ performer::finish_count_in ()
     bool result = m_metronome_count_in;
     if (result)
     {
-        stop_playing();                     /* halt playback                */
+        auto_stop();                        /* halt playback                */
         set_tick(0);
-        (void) m_metronome->loop_count_max(0);
+        arm_metronome();
         m_play_set_storage.clear();         /* don't keep it around         */
         m_metronome_count_in = false;
-        is_pattern_playing(true);
         start_playing();                    /* resume normal playback       */
+        is_pattern_playing(true);
     }
     return result;
 }
@@ -4295,8 +4298,9 @@ performer::stop_playing ()
 void
 performer::auto_play ()
 {
-    bool onekey = false;                /* keys().start() == keys().stop(); */
     bool isplaying = false;
+#if defined USE_THIS_NONFUNCTIONAL_CODE /* it does not do anything!!!       */
+    bool onekey = false;                /* keys().start() == keys().stop(); */
     if (onekey)
     {
         if (is_running())
@@ -4315,7 +4319,9 @@ performer::auto_play ()
             isplaying = true;
         }
     }
-    else if (! is_running())
+    else
+#endif
+    if (! is_running())
     {
 #if defined METRO_COUNT_IN_ENABLED
         if (rc().metro_settings().count_in_active())

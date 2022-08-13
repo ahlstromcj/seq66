@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-08-12
+ * \updates       2022-08-13
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2349,7 +2349,7 @@ public:
     bool install_metronome ();
     bool reload_metronome ();
     void remove_metronome ();
-    void arm_metronome (bool on);
+    void arm_metronome (bool on = true);
     void inner_start ();
     void inner_stop (bool midiclock = false);
 

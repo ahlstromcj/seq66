@@ -5960,9 +5960,13 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
         );
     }
     if (is_metro())
+    {
         live_play(tick);
+    }
     else
+    {
         play(tick, playbackmode, resumenoteons);
+    }
 }
 
 /**

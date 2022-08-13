@@ -53,7 +53,7 @@
  * Causes issues currently.
  */
 
-#undef METRO_COUNT_IN_ENABLED
+#define METRO_COUNT_IN_ENABLED          /* EXPERIMENTAL !!! */
 
 /**
  *  Provides an integer value for color that matches PaletteColor::NONE.  That

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2021-11-06
+% \update      2022-08-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -192,7 +192,7 @@
          \texttt{c\_tempo\_track}    & Global        & 8                 & \texttt{0x2424001A track:L} \\
          \texttt{c\_seq\_color}      & Track         & 5                 & \texttt{0x2424001B color} \\
          \texttt{c\_seq\_edit\_mode} & Kepler34      & 0                 & \texttt{0x2424001C} \\
-         \texttt{c\_seq\_loopcount}  & To-do         & 6                 & \texttt{0x2424001D 00 00} \\
+         \texttt{c\_seq\_loopcount}  & Track         & 6                 & \texttt{0x2424001D 00 00} \\
          \texttt{c\_reserved\_3}     & TBD           & 0                 & \texttt{0x2424001E} \\
          \texttt{c\_reserved\_4}     & TBD           & 0                 & \texttt{0x2424001F} \\
          \texttt{c\_trig\_transpose} & Track     & 4+triggercount*(12+1) & \texttt{0x24240020 triggers...} \\
@@ -716,15 +716,17 @@
       \item \textsl{Format}: \texttt{0x2424001D count:S}
    \end{description}
 
-   This item is a future feature to provide a user's request for a one-shot
-   pattern, a pattern that plays once and never plays again.  A count value of
-   0 would yield
+   This item is a feature to provide a user's request for a one-shot
+   pattern, a pattern that plays once (or a few times)
+   and never plays again.  A count value of 0 would yield
    the normal behavior, playing endlessly during \textbf{Live} mode.
    Any other value would repeat the pattern the specified number of times.
-   Not yet read nor written.  
-   However, a loop-count is used in the one-shot step-edit feature used in
+   A loop-count is used in the one-shot step-edit feature used in
    recording a device's drum pattern.
    See \sectionref{subsec:pattern_editor_bottom}.
+
+   Note that setting a non-zero loop-count for a pattern is
+   not compatible with playing the tune in \textbf{Song} mode.
 
 \subsection{MIDI Information}
 \label{subsec:midi_information}
