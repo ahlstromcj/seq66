@@ -841,6 +841,23 @@ qseditoptions::setup_tab_metronome ()
      */
 
     repopulate_channel_menu(int(rc().metro_settings().buss()));
+
+    bool count_in_active = rc().metro_settings().count_in_active();
+    ui->checkbox_metro_count_in->setChecked(count_in_active);
+    connect
+    (
+        ui->checkbox_metro_count_in, SIGNAL(clicked(bool)),
+        this, SLOT(slot_metro_count_in())
+    );
+
+    metrotemp = rc().metro_settings().count_in_measures();
+    qmetrotemp = qt(std::to_string(metrotemp));
+    ui->lineedit_metro_count_in->setText(qmetrotemp);
+    connect
+    (
+        ui->lineedit_metro_count_in, SIGNAL(editingFinished()),
+        this, SLOT(slot_metro_count_in_measures())
+    );
 }
 
 void
@@ -1048,9 +1065,26 @@ qseditoptions::slot_metro_channel (int index)
     }
 }
 
-// TODO:
-// checkbox_metro_count_in
-// lineedit_metro_count_in
+void
+qseditoptions::slot_metro_count_in ()
+{
+    bool on = ui->checkbox_metro_count_in->isChecked();
+    rc().metro_settings().count_in_active(on);
+    modify_metronome();
+}
+
+void
+qseditoptions::slot_metro_count_in_measures ()
+{
+    QString text = ui->lineedit_metro_count_in->text();
+    std::string m = text.toStdString();
+    int measures = string_to_int(m);
+    if (measures != rc().metro_settings().count_in_measures())
+    {
+        rc().metro_settings().count_in_measures(measures);
+        modify_metronome();
+    }
+}
 
 /*
  *---------------------------------------------------------------------

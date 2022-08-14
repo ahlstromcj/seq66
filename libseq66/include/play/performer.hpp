@@ -427,6 +427,15 @@ private:
     std::shared_ptr<metro> m_metronome;
 
     /**
+     *  Provides an optional pointer to a single recorder pattern, owned and
+     *  managed by performer.  Coding for this is still in progress.
+     *  Not sure we need a separate "recorder" class for this yet, as the
+     *  settings overlap with metro_settings.
+     */
+
+    std::shared_ptr<metro> m_recorder;
+
+    /**
      *  A quick indication that count-in is requested and able to be used.
      */
 
@@ -2393,9 +2402,7 @@ public:
 public:
 
     void start_playing ();
-#if defined METRO_COUNT_IN_ENABLED
     void play_count_in ();
-#endif
     void pause_playing ();
     void stop_playing ();
     void group_learn (bool flag);
@@ -3392,10 +3399,8 @@ private:
     void midi_clock ();
     void midi_song_pos (const event & ev);
     void midi_sysex (const event & ev);
-#if defined METRO_COUNT_IN_ENABLED
     bool start_count_in ();
     bool finish_count_in ();
-#endif
 
     synch & cv ()
     {

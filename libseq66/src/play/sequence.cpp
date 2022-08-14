@@ -264,7 +264,7 @@ sequence::~sequence ()
 void
 sequence::modify (bool notifychange)
 {
-    if (! is_metro())
+    if (is_normal_seq())                /* currently, a seq-number < 1024   */
     {
         m_is_modified = true;
         set_dirty();
@@ -1103,8 +1103,8 @@ sequence::play
         {
             if (times_played >= loop_count_max())
             {
-#if defined METRO_COUNT_IN_ENABLED
-                if (is_metro())                     /* count-in is complete */
+#if defined SEQ66_METRO_COUNT_IN_ENABLED
+                if (is_metro_seq())                 /* count-in is complete */
                     m_parent->finish_count_in();
 #endif
                 return;
@@ -1210,8 +1210,8 @@ sequence::live_play (midipulse tick)
         {
             if (times_played >= loop_count_max())
             {
-#if defined METRO_COUNT_IN_ENABLED
-                if (is_metro())                     /* count-in is complete */
+#if defined SEQ66_METRO_COUNT_IN_ENABLED
+                if (is_metro_seq())                 /* count-in is complete */
                     m_parent->finish_count_in();
 #endif
                 return;
@@ -5959,7 +5959,7 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
             automation::action::off, automation::ctrlstatus::oneshot
         );
     }
-    if (is_metro())
+    if (is_metro_seq())
     {
         live_play(tick);
     }

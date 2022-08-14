@@ -2008,7 +2008,7 @@ Seq66 exits.</string>
         <item row="0" column="0">
          <widget class="QLabel" name="label_metro_count_in">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="font">
            <font>
@@ -2024,7 +2024,7 @@ Seq66 exits.</string>
         <item row="0" column="1">
          <widget class="QLabel" name="label_metro_count">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="font">
            <font>
@@ -2040,7 +2040,7 @@ Seq66 exits.</string>
         <item row="1" column="0">
          <widget class="QCheckBox" name="checkbox_metro_count_in">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="text">
            <string>Enabled</string>
@@ -2050,7 +2050,7 @@ Seq66 exits.</string>
         <item row="1" column="1">
          <widget class="QLineEdit" name="lineedit_metro_count_in">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
          </widget>
         </item>

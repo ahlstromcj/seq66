@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-08-13
+ * \updates       2022-08-14
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1206,20 +1206,34 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
  *
  * \return
  *      Returns the value of "m_seqs[seq]" if seq is valid.  Otherwise, a
- *      null pointer is returned.  Now also can return the metronome pointer if it
- *      exists.
+ *      null pointer is returned.  Now also can return a special pointer
+ *      (the metronome or recording pointer) if it exists.
  */
 
 const seq::pointer
 performer::get_sequence (seq::number seqno) const
 {
-    return sequence::is_metronome(seqno) ? m_metronome : mapper().loop(seqno) ;
+    if (sequence::is_normal(seqno))
+        return mapper().loop(seqno);
+    else if (sequence::is_metronome(seqno))
+        return m_metronome;
+    else if (sequence::is_recorder(seqno))
+        return m_recorder;
+
+    return mapper().loop(seqno);
 }
 
 seq::pointer
 performer::get_sequence (seq::number seqno)
 {
-    return sequence::is_metronome(seqno) ? m_metronome : mapper().loop(seqno) ;
+    if (sequence::is_normal(seqno))
+        return mapper().loop(seqno);
+    else if (sequence::is_metronome(seqno))
+        return m_metronome;
+    else if (sequence::is_recorder(seqno))
+        return m_recorder;
+
+    return mapper().loop(seqno);
 }
 
 /**
@@ -1318,8 +1332,6 @@ performer::arm_metronome (bool on)
     }
 }
 
-#if defined METRO_COUNT_IN_ENABLED
-
 /**
  *  When Live playback is requested:
  *
@@ -1377,9 +1389,6 @@ performer::finish_count_in ()
     }
     return result;
 }
-
-#endif  // defined METRO_COUNT_IN_ENABLED
-
 
 /**
  *  Creates a new pattern/sequence for the given slot, and sets the new
@@ -1728,7 +1737,7 @@ performer::ui_change_set_bus (int buss)
         {
             if (seqi)
             {
-                if (! seqi->is_metro())
+                if (seqi->is_normal_seq())              /* not a hidden one */
                     seqi->set_midi_bus(b, true);        /* calls notify()   */
             }
             else
@@ -2696,13 +2705,13 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
     midicontrolout::seqaction what;
     if (ok)
     {
-        if (s->is_metro())
-            return true;
+        if (! s->is_normal_seq())
+            return true;                                /* pretend success  */
 
         if (s->armed())
         {
             what = s->get_queued() ?
-                midicontrolout::seqaction::queued :     // unqueueing pending
+                midicontrolout::seqaction::queued :     /* unq'ing pending  */
                 midicontrolout::seqaction::armed ;
         }
         else
@@ -2731,12 +2740,7 @@ performer::announce_pattern (seq::number seqno)
     seq::pointer s = get_sequence(seqno);
     bool result = bool(s);
     if (result)
-    {
-        if (! s->is_metro())                /* not part of normal patterns  */
-            result = announce_sequence(s, mapper().seq_to_offset(*s));
-    }
-    else
-        result = false;
+        result = announce_sequence(s, mapper().seq_to_offset(*s));
 
     return result;
 }
@@ -4209,8 +4213,6 @@ performer::start_playing ()
         (void) notify->on_automation_change(automation::slot::start);
 }
 
-#if defined METRO_COUNT_IN_ENABLED
-
 void
 performer::play_count_in ()
 {
@@ -4224,8 +4226,6 @@ performer::play_count_in ()
     for (auto notify : m_notify)
         (void) notify->on_automation_change(automation::slot::start);
 }
-
-#endif  // defined METRO_COUNT_IN_ENABLED
 
 /**
  *  Pause playback, so that progress bars stay where they are, and playback
@@ -4309,7 +4309,7 @@ performer::auto_play ()
         }
         else
         {
-#if defined METRO_COUNT_IN_ENABLED
+#if defined SEQ66_METRO_COUNT_IN_ENABLED
             if (rc().metro_settings().count_in_active())
                 play_count_in();
             else
@@ -4323,7 +4323,7 @@ performer::auto_play ()
 #endif
     if (! is_running())
     {
-#if defined METRO_COUNT_IN_ENABLED
+#if defined SEQ66_METRO_COUNT_IN_ENABLED
         if (rc().metro_settings().count_in_active())
             play_count_in();
         else

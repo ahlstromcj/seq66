@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-08-12
+ * \updates       2022-08-14
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -53,7 +53,7 @@
  * Causes issues currently.
  */
 
-#define METRO_COUNT_IN_ENABLED          /* EXPERIMENTAL !!! */
+#define SEQ66_METRO_COUNT_IN_ENABLED    /* EXPERIMENTAL, seems to work      */
 
 /**
  *  Provides an integer value for color that matches PaletteColor::NONE.  That
@@ -898,24 +898,39 @@ public:
 
     void partial_assign (const sequence & rhs, bool toclipboard = false);
 
-    static int maximum ()
+    static short maximum ()
     {
         return 1024;
     }
 
-    static int metronome ()
+    static short recorder ()
+    {
+        return 2040;
+    }
+
+    static short is_recorder (int s)
+    {
+        return short(s) == 2040;
+    }
+
+    static short metronome ()
     {
         return 2047;
     }
 
-    static int is_metronome (int s)
+    static bool is_metronome (int s)
     {
         return s == 2047;
     }
 
     static int limit ()
     {
-        return 2048;    /* 0x0800 */
+        return 2048;                                /* 0x0800               */
+    }
+
+    static bool is_normal (int s)
+    {
+        return s < 1024;                            /* see maximum() above  */
     }
 
     static int unassigned ()
@@ -1002,14 +1017,30 @@ public:
         return m_triggers.get_trigger_paste_tick();
     }
 
+    bool is_recorder_seq () const
+    {
+        return m_seq_number == recorder();
+    }
+
+    bool is_metro_seq () const
+    {
+        return m_seq_number == metronome();
+    }
+
+    /*
+     * Indicates a normal, modifiable sequence. The sequence is not one of
+     * our hidden workhorses for metronome and auto-recording functions.
+     * It is normally not visible and not modifiable.
+     */
+
+    bool is_normal_seq () const
+    {
+        return m_seq_number < maximum();
+    }
+
     int seq_number () const
     {
         return int(m_seq_number);
-    }
-
-    bool is_metro () const
-    {
-        return m_seq_number == metronome();
     }
 
     std::string seq_number_string () const
