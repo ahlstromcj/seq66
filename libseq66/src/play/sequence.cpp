@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-08-12
+ * \updates       2022-08-15
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -6223,7 +6223,7 @@ sequence::update_recording (int index)
         {
         case recordstyle::merge:
 
-            set_overwrite_recording(false, false);
+            set_overwrite_recording(false);
             expanded_recording(false);
             auto_step_reset(false);
             oneshot_recording(false);
@@ -6231,7 +6231,7 @@ sequence::update_recording (int index)
 
         case recordstyle::overwrite:
 
-            set_overwrite_recording(true, false);
+            set_overwrite_recording(true);
             expanded_recording(false);
             auto_step_reset(false);
             oneshot_recording(false);
@@ -6239,7 +6239,7 @@ sequence::update_recording (int index)
 
         case recordstyle::expand:
 
-            set_overwrite_recording(false, false);
+            set_overwrite_recording(false);
             expanded_recording(true);
             auto_step_reset(false);
             oneshot_recording(false);
@@ -6247,7 +6247,7 @@ sequence::update_recording (int index)
 
         case recordstyle::oneshot:
 
-            set_overwrite_recording(false, false);
+            set_overwrite_recording(false);
             auto_step_reset(true);
             oneshot_recording(true);
             break;

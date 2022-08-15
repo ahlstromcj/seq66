@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2022-08-05
+ * \updates       2022-08-15
  * \license       GNU GPLv2 or above
  *
  *
@@ -201,6 +201,7 @@ private slots:
     void slot_grid_record_style (bool clicked);
     void slot_record_mode (bool clicked);
     void slot_toggle_metronome (bool clicked);
+    void slot_toggle_background_record (bool clicked);
     void slot_grid_mode (int index);
 
 private:

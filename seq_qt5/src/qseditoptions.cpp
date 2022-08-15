@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-09
+ * \updates       2022-08-15
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -251,7 +251,7 @@ qseditoptions::setup_tab_midi_clock ()
             {
                 bool enabled = ec != e_clock::disabled;
                 out->addItem(qt(busname));
-                enable_combobox_item(out, bus /* + 1 */, enabled);
+                enable_combobox_item(out, bus, enabled);
             }
         }
 
@@ -391,10 +391,7 @@ qseditoptions::setup_tab_midi_input ()
             {
                 bool enabled = ! perf().is_input_system_port(bus);
                 in->addItem(qt(busname));
-                if (good && enabled)
-                    enabled = true;
-
-                enable_combobox_item(in, bus /* + 1 */, enabled);
+                enable_combobox_item(in, bus, enabled);
             }
         }
 
@@ -708,7 +705,6 @@ qseditoptions::setup_tab_metronome ()
         ui->lineedit_metro_beats_per_bar, SIGNAL(editingFinished()),
         this, SLOT(slot_metro_beats_per_bar())
     );
-
     metrotemp = rc().metro_settings().beat_width();
     qmetrotemp = qt(std::to_string(metrotemp));
     ui->lineedit_metro_beat_width->setText(qmetrotemp);
@@ -717,7 +713,6 @@ qseditoptions::setup_tab_metronome ()
         ui->lineedit_metro_beat_width, SIGNAL(editingFinished()),
         this, SLOT(slot_metro_beat_width())
     );
-
     metrotemp = rc().metro_settings().main_patch();
     qmetrotemp = qt(std::to_string(metrotemp));
     ui->lineedit_metro_main_patch->setText(qmetrotemp);
@@ -726,7 +721,6 @@ qseditoptions::setup_tab_metronome ()
         ui->lineedit_metro_main_patch, SIGNAL(editingFinished()),
         this, SLOT(slot_metro_main_patch())
     );
-
     metrotemp = rc().metro_settings().main_note();
     qmetrotemp = qt(std::to_string(metrotemp));
     ui->lineedit_metro_main_note->setText(qmetrotemp);
@@ -735,7 +729,6 @@ qseditoptions::setup_tab_metronome ()
         ui->lineedit_metro_main_note, SIGNAL(editingFinished()),
         this, SLOT(slot_metro_main_note())
     );
-
     metrotemp = rc().metro_settings().main_note_velocity();
     qmetrotemp = qt(std::to_string(metrotemp));
     ui->lineedit_metro_main_velocity->setText(qmetrotemp);
@@ -753,7 +746,6 @@ qseditoptions::setup_tab_metronome ()
         ui->lineedit_metro_main_fraction, SIGNAL(editingFinished()),
         this, SLOT(slot_metro_main_fraction())
     );
-
     metrotemp = rc().metro_settings().sub_patch();
     qmetrotemp = qt(std::to_string(metrotemp));
     ui->lineedit_metro_sub_patch->setText(qmetrotemp);
@@ -762,7 +754,6 @@ qseditoptions::setup_tab_metronome ()
         ui->lineedit_metro_sub_patch, SIGNAL(editingFinished()),
         this, SLOT(slot_metro_sub_patch())
     );
-
     metrotemp = rc().metro_settings().sub_note();
     qmetrotemp = qt(std::to_string(metrotemp));
     ui->lineedit_metro_sub_note->setText(qmetrotemp);
@@ -771,7 +762,6 @@ qseditoptions::setup_tab_metronome ()
         ui->lineedit_metro_sub_note, SIGNAL(editingFinished()),
         this, SLOT(slot_metro_sub_note())
     );
-
     metrotemp = rc().metro_settings().sub_note_velocity();
     qmetrotemp = qt(std::to_string(metrotemp));
     ui->lineedit_metro_sub_velocity->setText(qmetrotemp);
@@ -780,7 +770,6 @@ qseditoptions::setup_tab_metronome ()
         ui->lineedit_metro_sub_velocity, SIGNAL(editingFinished()),
         this, SLOT(slot_metro_sub_velocity())
     );
-
     metrofrac = rc().metro_settings().sub_note_fraction();
     qmetrofrac = qt(std::to_string(metrofrac));
     ui->lineedit_metro_sub_fraction->setText(qmetrofrac);
@@ -789,7 +778,6 @@ qseditoptions::setup_tab_metronome ()
         ui->lineedit_metro_sub_fraction, SIGNAL(editingFinished()),
         this, SLOT(slot_metro_sub_fraction())
     );
-
     ui->button_metro_reload->setEnabled(false);
     connect
     (
@@ -806,7 +794,8 @@ qseditoptions::setup_tab_metronome ()
 
     const clockslist & opm = output_port_map();
     mastermidibus * mmb = perf().master_bus();
-    ui->combobox_metro_buss->clear();
+    QComboBox * out = ui->combobox_metro_buss;
+    out->clear();
     if (not_nullptr(mmb))
     {
         int metrobus = int(rc().metro_settings().buss());
@@ -817,13 +806,13 @@ qseditoptions::setup_tab_metronome ()
             std::string busname;
             if (perf().ui_get_clock(bussbyte(bus), ec, busname))
             {
-                bool disabled = ec == e_clock::disabled;
-                ui->combobox_metro_buss->addItem(qt(busname));
-                if (disabled)
-                    enable_bus_item(bus, false);
+                bool enabled = ec != e_clock::disabled;
+                out->addItem(qt(busname));
+//              if (disabled)
+//                  enable_bus_item(bus, false);
+                enable_combobox_item(out, bus, enabled);
             }
         }
-
         ui->combobox_metro_buss->setCurrentIndex(metrobus);
         connect
         (
@@ -849,7 +838,6 @@ qseditoptions::setup_tab_metronome ()
         ui->checkbox_metro_count_in, SIGNAL(clicked(bool)),
         this, SLOT(slot_metro_count_in())
     );
-
     metrotemp = rc().metro_settings().count_in_measures();
     qmetrotemp = qt(std::to_string(metrotemp));
     ui->lineedit_metro_count_in->setText(qmetrotemp);
@@ -858,6 +846,63 @@ qseditoptions::setup_tab_metronome ()
         ui->lineedit_metro_count_in, SIGNAL(editingFinished()),
         this, SLOT(slot_metro_count_in_measures())
     );
+    count_in_active = rc().metro_settings().count_in_recording();
+    ui->checkbox_metro_recording->setChecked(count_in_active);
+    connect
+    (
+        ui->checkbox_metro_recording, SIGNAL(clicked(bool)),
+        this, SLOT(slot_metro_recording())
+    );
+    metrotemp = rc().metro_settings().recording_measures();
+    qmetrotemp = qt(std::to_string(metrotemp));
+    ui->lineedit_metro_recording_measures->setText(qmetrotemp);
+    connect
+    (
+        ui->lineedit_metro_count_in, SIGNAL(editingFinished()),
+        this, SLOT(slot_metro_recording_measures())
+    );
+
+    /*
+     * combobox_metro_record_buss:
+     *
+     *  Code similar to that in qsmainwnd.  Output MIDI control
+     *  buss combo-box population.
+     */
+
+    const inputslist & ipm = input_port_map();
+    QComboBox * in = ui->combobox_metro_record_buss;
+    in->clear();
+    if (not_nullptr(mmb))
+    {
+        int last_input = 0;
+        int buses = ipm.active() ? ipm.count() : mmb->get_num_in_buses() ;
+        for (int bus = 0; bus < buses; ++bus)
+        {
+            std::string busname;
+            bool inputing;
+            bool good = perf().ui_get_input(bus, inputing, busname);
+            if (good)
+            {
+                /*
+                 * For this dialog, we want to allow the selection of
+                 * a buss that is enabled for input, except for system
+                 * ports, which should never be used..
+                 */
+
+                bool enabled = inputing && ! perf().is_input_system_port(bus);
+                in->addItem(qt(busname));
+                enable_combobox_item(in, bus, enabled);
+                if (enabled)
+                    last_input = bus;
+            }
+        }
+        ui->combobox_metro_record_buss->setCurrentIndex(last_input);
+        connect
+        (
+            ui->combobox_metro_record_buss, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(slot_metro_record_buss(int))
+        );
+    }
 }
 
 void
@@ -1082,6 +1127,38 @@ qseditoptions::slot_metro_count_in_measures ()
     if (measures != rc().metro_settings().count_in_measures())
     {
         rc().metro_settings().count_in_measures(measures);
+        modify_metronome();
+    }
+}
+
+void
+qseditoptions::slot_metro_recording ()
+{
+    bool on = ui->checkbox_metro_recording->isChecked();
+    rc().metro_settings().count_in_recording(on);
+    modify_metronome();
+}
+
+void
+qseditoptions::slot_metro_recording_measures ()
+{
+    QString text = ui->lineedit_metro_recording_measures->text();
+    std::string m = text.toStdString();
+    int measures = string_to_int(m);
+    if (measures != rc().metro_settings().recording_measures())
+    {
+        rc().metro_settings().recording_measures(measures);
+        modify_metronome();
+    }
+}
+
+void
+qseditoptions::slot_metro_record_buss (int index)
+{
+    int b = int(rc().metro_settings().recording_buss());
+    if (index != b)
+    {
+        rc().metro_settings().recording_buss(midibyte(index));
         modify_metronome();
     }
 }
@@ -1920,6 +1997,8 @@ qseditoptions::sync_usr ()
  *  Instead of this sequence of calls, we could send a Qt signal from
  *  qclocklayout to eventually call the qsmainwnd slot.  We need to make this
  *  item cause immediate action.
+ *
+ *  \deprecated
  */
 
 void

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-10
+ * \updates       2022-08-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -65,7 +65,8 @@ metrosettings::metrosettings () :
     m_sub_note_fraction     (0.0),
     m_count_in_active       (false),
     m_count_in_measures     (1),
-    m_count_in_recording    (false)
+    m_count_in_recording    (false),
+    m_recording_measures    (0)
 {
     /*
      * See the principal constructor below.
@@ -121,6 +122,7 @@ metrosettings::set_defaults ()
     m_count_in_active       = false;
     m_count_in_measures     = 1;
     m_count_in_recording    = false;
+    m_recording_measures    = 0;
 }
 
 bool
@@ -173,15 +175,11 @@ metro::~metro ()
 }
 
 /**
- *  Fills the event list for the metronome.  Requires that all the setting
- *  functions noted above be called first.
- *
- *  For finding the length, can use measures_to_ticks() or
- *  sequence::apply_length().
+ *  Helper function for initialize() and its overrides.
  */
 
 bool
-metro::initialize (performer * p)
+metro::init_setup (performer * p, int measures)
 {
     bool result = not_nullptr(p);
     if (result)
@@ -196,13 +194,36 @@ metro::initialize (performer * p)
         int bpb = settings().beats_per_bar();       /* get_beats_per_bar()  */
         int bw = settings().beat_width();           /* get_beat_width()     */
         midibyte channel = settings().channel();    /* seq_midi_channel()   */
-        int measures = 1;
-        int increment = pulses_per_beat(ppq, bw);
+//      int increment = pulses_per_beat(ppq, bw);
         (void) set_midi_bus(settings().buss());     /* ...uses master-bus   */
         (void) set_midi_channel(channel);
         set_beats_per_bar(bpb);                     /* hmm, add bool return */
         set_beat_width(bw);                         /* ditto                */
-        (void) apply_length(bpb, ppq, bw, measures);
+        if (measures > 0)
+            (void) apply_length(bpb, ppq, bw, measures);
+    }
+    return result;
+}
+
+/**
+ *  Fills the event list for the metronome.  Requires that all the setting
+ *  functions noted above be called first.
+ *
+ *  For finding the length, can use measures_to_ticks() or
+ *  sequence::apply_length().
+ */
+
+bool
+metro::initialize (performer * p)
+{
+    bool result = init_setup(p, 1);                 /* set up one measure   */
+    if (result)
+    {
+        int ppq = p->ppqn();                        /* p->get_ppqn()        */
+        int bpb = settings().beats_per_bar();       /* get_beats_per_bar()  */
+        int bw = settings().beat_width();           /* get_beat_width()     */
+        midibyte channel = settings().channel();    /* seq_midi_channel()   */
+        int increment = pulses_per_beat(ppq, bw);
         if (settings().initialize(increment))
         {
             /*
@@ -250,7 +271,86 @@ metro::initialize (performer * p)
         {
             sort_events();
             armed(true);
-            unmodify();                     /* it's not part of the song    */
+            unmodify();                             /* not part of song     */
+        }
+    }
+    return result;
+}
+
+/*
+ *---------------------------------------------------------------------
+ *  recorder
+ *---------------------------------------------------------------------
+ */
+
+/**
+ *  Default constructor.
+ */
+
+recorder::recorder () : metro ()
+{
+    /*
+     * See metro constructor.
+     */
+}
+
+/**
+ *  Principal constructor.
+ */
+
+recorder::recorder (const metrosettings & mc) : metro (mc)
+{
+    /*
+     * See metro constructor.
+     */
+}
+
+/**
+ *  A rote destructor.
+ */
+
+recorder::~recorder ()
+{
+    // Empty body
+}
+
+/**
+ *  Fills the event list for the recordernome.  Requires that all the setting
+ *  functions noted above be called first.
+ *
+ *  For finding the length, can use measures_to_ticks() or
+ *  sequence::apply_length().
+ */
+
+bool
+recorder::initialize (performer * p)
+{
+    bool result = init_setup(p, settings().recording_measures());
+    if (result)
+    {
+        int ppq = p->ppqn();                        /* p->get_ppqn()        */
+        int bw = settings().beat_width();           /* get_beat_width()     */
+        int increment = pulses_per_beat(ppq, bw);
+        bussbyte buss = settings().recording_buss();;
+        if (settings().initialize(increment))
+        {
+            /*
+             * Must set this before the possibility of raising the modify
+             * flag.
+             */
+
+            seq_number(sequence::recorder());       /* magic recorder seq   */
+            set_name("Background Recording");
+            set_midi_bus(buss);
+            free_channel(true);
+            set_overwrite_recording(false);
+            set_quantized_recording(false);
+            set_tightened_recording(false);
+            set_recording(true);
+            oneshot_recording(false);
+            expanded_recording(true);
+            armed(false);
+            unmodify();                             /* not part of song     */
         }
     }
     return result;
@@ -259,7 +359,7 @@ metro::initialize (performer * p)
 }           // namespace seq66
 
 /*
- * metro.cpp
+ * recorder.cpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

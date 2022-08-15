@@ -29,7 +29,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -1717,363 +1717,411 @@ Seq66 exits.</string>
       <attribute name="title">
        <string>&amp;Metronome</string>
       </attribute>
-      <widget class="QLabel" name="label_metro_timesig">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>20</x>
          <y>28</y>
-         <width>129</width>
-         <height>17</height>
+         <width>177</width>
+         <height>185</height>
         </rect>
        </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Time Signature</string>
-       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_metro_timesig">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Time Signature</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_3" columnstretch="6,2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_metro_bpb">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Beats/bar</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineedit_metro_beats_per_bar"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_metro_beat_width">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Beat width</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineedit_metro_beat_width"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_metro_count">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Measures</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_metro_count_in">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Count-In</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineedit_metro_count_in">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="checkbox_metro_count_in">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Enabled</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="checkbox_metro_recording">
+            <property name="text">
+             <string>Recording</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="lineedit_metro_recording_measures"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
-      <widget class="QWidget" name="layoutWidgetMetroTimeSig">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>204</x>
          <y>28</y>
-         <width>305</width>
-         <height>151</height>
+         <width>329</width>
+         <height>187</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_2" columnstretch="3,1,1">
-        <property name="horizontalSpacing">
-         <number>8</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_output_specs">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <layout class="QGridLayout" name="gridLayout_2" columnstretch="3,1,1">
+          <property name="horizontalSpacing">
+           <number>8</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_output_specs">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Output Specs</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_metro_main_note">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Main Note</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_metro_sub_notes">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Sub Notes</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_metro_patch">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Patch</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineedit_metro_main_patch"/>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLineEdit" name="lineedit_metro_sub_patch"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_metro_note">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Note</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="lineedit_metro_main_note"/>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLineEdit" name="lineedit_metro_sub_note"/>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_metro_velocity">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Velocity</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="lineedit_metro_main_velocity"/>
+          </item>
+          <item row="3" column="2">
+           <widget class="QLineEdit" name="lineedit_metro_sub_velocity"/>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_metro_length_fraction">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Length Fraction</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="lineedit_metro_main_fraction"/>
+          </item>
+          <item row="4" column="2">
+           <widget class="QLineEdit" name="lineedit_metro_sub_fraction"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="button_metro_reload">
+          <property name="minimumSize">
+           <size>
+            <width>225</width>
+            <height>28</height>
+           </size>
           </property>
           <property name="text">
-           <string>Output Specs</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <string>Reload Metronome</string>
           </property>
          </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label_metro_main_note">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Main Note</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="label_metro_sub_notes">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Sub Notes</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_metro_patch">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Patch</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="lineedit_metro_main_patch"/>
-        </item>
-        <item row="1" column="2">
-         <widget class="QLineEdit" name="lineedit_metro_sub_patch"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_metro_note">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Note</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="lineedit_metro_main_note"/>
-        </item>
-        <item row="2" column="2">
-         <widget class="QLineEdit" name="lineedit_metro_sub_note"/>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_metro_velocity">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Velocity</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="lineedit_metro_main_velocity"/>
-        </item>
-        <item row="3" column="2">
-         <widget class="QLineEdit" name="lineedit_metro_sub_velocity"/>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_metro_length_fraction">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Length Fraction</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="lineedit_metro_main_fraction"/>
-        </item>
-        <item row="4" column="2">
-         <widget class="QLineEdit" name="lineedit_metro_sub_fraction"/>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="layoutWidgetMetroValues">
+      <widget class="QWidget" name="">
        <property name="geometry">
         <rect>
          <x>20</x>
          <y>240</y>
-         <width>489</width>
-         <height>31</height>
+         <width>495</width>
+         <height>68</height>
         </rect>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,4,1,2">
+       <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
-         <widget class="QLabel" name="label_metro_buss">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>MIDI Buss</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,4,1,2">
+          <item>
+           <widget class="QLabel" name="label_metro_buss">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Metro Buss</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="combobox_metro_buss">
+            <property name="minimumSize">
+             <size>
+              <width>266</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>268</width>
+              <height>28</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_metro_channel">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Channel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="combobox_metro_channel">
+            <property name="minimumSize">
+             <size>
+              <width>64</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>64</width>
+              <height>28</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QComboBox" name="combobox_metro_buss">
-          <property name="minimumSize">
-           <size>
-            <width>266</width>
-            <height>28</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>268</width>
-            <height>28</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_metro_channel">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Channel</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="combobox_metro_channel">
-          <property name="minimumSize">
-           <size>
-            <width>64</width>
-            <height>28</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>64</width>
-            <height>28</height>
-           </size>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLabel" name="label_record_bus">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Record Buss</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="combobox_metro_record_buss">
+            <property name="minimumSize">
+             <size>
+              <width>266</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>266</width>
+              <height>28</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
        </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidgetMetroChannel">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>52</y>
-         <width>173</width>
-         <height>62</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_3" columnstretch="6,2">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_metro_bpb">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Beats/bar</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="lineedit_metro_beats_per_bar"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_metro_beat_width">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Beat width</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="lineedit_metro_beat_width"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidgetMetroBW">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>124</y>
-         <width>173</width>
-         <height>52</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_metro_count_in">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Count-In</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label_metro_count">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Count</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="checkbox_metro_count_in">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="text">
-           <string>Enabled</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="lineedit_metro_count_in">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QPushButton" name="button_metro_reload">
-       <property name="geometry">
-        <rect>
-         <x>164</x>
-         <y>196</y>
-         <width>225</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>225</width>
-         <height>28</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Reload Metronome</string>
-       </property>
       </widget>
      </widget>
      <widget class="QWidget" name="tabSession">

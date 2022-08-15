@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-10
+ * \updates       2022-08-15
  * \license       GNU GPLv2 or above
  *
  *  The metro is a sequence with a special configuration.  It can be added
@@ -60,6 +60,14 @@ private:
 
     bussbyte m_buss;
     midibyte m_channel;
+
+    /**
+     *  Provides the desired MIDI buss to record from when doing
+     *  background recording. No channel is forced on the pattern;
+     *  the user can apply the desired channel later.
+     */
+
+    bussbyte m_recording_buss;
 
     /**
      *  Provides the desired time-signature of the metronome.
@@ -119,7 +127,13 @@ private:
 
     bool m_count_in_active;
     int m_count_in_measures;
+
+    /**
+     *  Additional support for background recording.
+     */
+
     bool m_count_in_recording;
+    int m_recording_measures;
 
 public:
 
@@ -142,6 +156,11 @@ public:
     midibyte channel () const
     {
         return m_channel;
+    }
+
+    bussbyte recording_buss () const
+    {
+        return m_recording_buss;
     }
 
     int beats_per_bar () const
@@ -219,6 +238,16 @@ public:
         return m_count_in_recording;
     }
 
+    int recording_measures () const
+    {
+        return m_recording_measures;
+    }
+
+    bool expand_recording () const
+    {
+        return m_recording_measures == 0;
+    }
+
 public:
 
     void buss (int b)
@@ -231,6 +260,12 @@ public:
     {
         if (is_good_channel(ch))
             m_channel = midibyte(ch);
+    }
+
+    void recording_buss (int b)
+    {
+        if (! is_null_buss(b))
+            m_recording_buss = bussbyte(b);
     }
 
     void beats_per_bar (int bpb)
@@ -311,6 +346,11 @@ public:
         m_count_in_recording = flag;
     }
 
+    void recording_measures (int m)
+    {
+        m_recording_measures = m;
+    }
+
 };          // class metrosettings
 
 /**
@@ -336,20 +376,46 @@ public:
     metro (const metrosettings & ms);
     virtual ~metro ();
 
-    bool initialize (performer * p);
+    virtual bool initialize (performer * p);
     metrosettings & settings ()
     {
         return m_metro_settings;
     }
 
+protected:
+
+    bool init_setup (performer * p, int measures);
+
 };          // class metro
+
+/**
+ *  An extension of metro for recording in the backbround.
+ */
+
+class recorder : public metro
+{
+    friend class performer;
+
+private:
+
+    recorder & operator = (const recorder & rhs);
+
+public:
+
+    recorder ();
+    recorder (const metrosettings & ms);
+    virtual ~recorder ();
+
+    virtual bool initialize (performer * p) override;
+
+};          // class recorder
 
 }           // namespace seq66
 
 #endif      // SEQ66_METRO_HPP
 
 /*
- * metro.hpp
+ * recorder.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

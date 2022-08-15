@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-08-14
+ * \updates       2022-08-15
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -491,8 +491,8 @@ private:
     bool m_expanded_recording;
 
     /**
-     *  Indicates if overwrite recording of notes in a loop is in force.
-     *  In this mode, shortly after then end of the pattern length, the existing
+     *  Indicates if overwrite recording of notes in a loop is in force.  In
+     *  this mode, shortly after then end of the pattern length, the existing
      *  notes are erased.  This lets the player try again and again to get the
      *  pattern perfect.
      */
@@ -1920,6 +1920,11 @@ protected:
     void armed (bool flag)
     {
         m_armed = flag;
+    }
+
+    void free_channel (bool flag)
+    {
+        m_free_channel = flag;
     }
 
 private:

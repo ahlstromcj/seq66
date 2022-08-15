@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-08-10
+ * \updates       2022-08-15
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -564,10 +564,12 @@ rcfile::parse ()
         rc().metro_settings().count_in_measures(temp);
         countin = get_boolean(file, tag, "count-in-recording");
         rc().metro_settings().count_in_recording(countin);
+        temp = get_integer(file, tag, "recording-buss");
+        rc().metro_settings().recording_buss(temp);
+        temp = get_integer(file, tag, "recording-measures");
+        rc().metro_settings().recording_measures(temp);
     }
-
     tag = "[interaction-method]";
-
     flag = get_boolean(file, tag, "snap-split");
     rc_ref().allow_snap_split(flag);
     flag = get_boolean(file, tag, "double-click-edit");
@@ -1022,6 +1024,15 @@ rcfile::write ()
     (
         file, "count-in-recording",
         rc().metro_settings().count_in_recording()
+    );
+    write_integer
+    (
+        file, "recording-buss", int(rc().metro_settings().recording_buss())
+    );
+    write_integer
+    (
+        file, "recording-measures",
+        int(rc().metro_settings().recording_measures())
     );
 
     /*

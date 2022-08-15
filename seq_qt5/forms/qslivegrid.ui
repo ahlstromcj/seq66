@@ -146,10 +146,32 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="buttonBackgroundRecord">
+       <property name="minimumSize">
+        <size>
+         <width>36</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>36</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>AR</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="buttonMetronome">
        <property name="minimumSize">
         <size>
-         <width>48</width>
+         <width>36</width>
          <height>28</height>
         </size>
        </property>

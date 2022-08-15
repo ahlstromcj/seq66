@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-10
+ * \updates       2022-08-15
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -2809,7 +2809,8 @@ qsmainwnd::open_recent_file ()
 void
 qsmainwnd::enable_reload_button (bool flag)
 {
-    m_session_frame->enable_reload_button(flag);
+    if (not_nullptr(m_session_frame))
+        m_session_frame->enable_reload_button(flag);
 }
 
 /**

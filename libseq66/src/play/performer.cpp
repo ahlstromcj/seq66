@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-08-14
+ * \updates       2022-08-15
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -308,6 +308,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_play_list             (),
     m_note_mapper           (new notemapper()),
     m_metronome             (),                 /* no metronome by default  */
+    m_recorder              (),                 /* no background recording  */
     m_metronome_count_in    (false),
     m_song_start_mode       (sequence::playback::automatic),
     m_reposition            (false),
@@ -806,7 +807,7 @@ performer::ui_get_input (bussbyte bus, bool & active, std::string & n) const
     std::string alias;
     if (ipm.active())
     {
-        name = ipm.get_name(bus);       // , rc().port_naming());
+        name = ipm.get_name(bus);
         alias = ipm.get_alias(bus, rc().port_naming());
         active = ipm.get(bus);
         disabled = ipm.is_disabled(bus);
@@ -1329,6 +1330,67 @@ performer::arm_metronome (bool on)
     {
         m_metronome->set_armed(on);
         (void) m_metronome->loop_count_max(0);
+    }
+}
+
+bool
+performer::install_recorder ()
+{
+    if (bool(m_recorder))
+    {
+        return true;
+    }
+
+    metrosettings & ms = rc().metro_settings();
+    m_recorder.reset(new (std::nothrow) recorder(ms));
+    bool result = bool(m_recorder);
+    if (result)
+    {
+        result = m_recorder->initialize(this);     /* add events and arm   */
+        if (result)
+        {
+            result = play_set().add(m_recorder);
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+            std::string statusstr = result ? "Succeeded" : "Failed" ;
+            status_message(statusstr, play_set().to_string());
+#endif
+        }
+        else
+            m_recorder.reset();
+    }
+    return result;
+}
+
+bool
+performer::reload_recorder ()
+{
+//  bool wasrunning = is_running();
+//  if (wasrunning)
+//      auto_stop();            /* or pause? */
+
+    remove_recorder();
+    bool result = install_recorder();
+//  if (wasrunning)
+//      auto_play();
+
+    return result;
+}
+
+void
+performer::remove_recorder ()
+{
+    if (m_recorder)
+    {
+        seq::number seqno =  m_recorder->seq_number();
+//      auto_stop();            /* or pause? */
+//      play_set().remove(seqno);
+        if (m_recorder)
+            m_recorder.reset();
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        status_message("Removed recorder", play_set().to_string());
+#endif
     }
 }
 

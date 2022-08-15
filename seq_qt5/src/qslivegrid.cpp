@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2022-08-10
+ * \updates       2022-08-15
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -71,7 +71,6 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
-#include "pixmaps/metro.xpm"            /* a metroname icon                 */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "os/timing.hpp"                /* seq66::millisleep()              */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
@@ -80,6 +79,10 @@
 #include "qslivegrid.hpp"               /* seq66::qslivegrid                */
 #include "qsmainwnd.hpp"                /* the true parent of this class    */
 #include "qt5_helpers.hpp"              /* seq66::qt_keystroke() etc.       */
+
+#include "pixmaps/metro.xpm"            /* a metroname icon                 */
+#include "pixmaps/rec.xpm"              /* recording off                    */
+#include "pixmaps/rec_on.xpm"           /* recording on                     */
 
 #if defined SEQ66_PLATFORM_DEBUG
 #include "util/strfunctions.hpp"        /* seq66::pointer_to_string()       */
@@ -190,6 +193,11 @@ qslivegrid::qslivegrid
         ui->buttonRecordMode->setEnabled(true);
         ui->buttonMetronome->setEnabled(true);
         qt_set_icon(metro_xpm, ui->buttonMetronome);
+
+        // TODO: ENABLE LATER
+        ui->buttonBackgroundRecord->setEnabled(false);
+        qt_set_icon(rec_xpm, ui->buttonBackgroundRecord);
+
         show_grid_record_style();
         show_record_mode();
         connect
@@ -206,6 +214,11 @@ qslivegrid::qslivegrid
         (
             ui->buttonMetronome, SIGNAL(clicked(bool)),
             this, SLOT(slot_toggle_metronome(bool))
+        );
+        connect
+        (
+            ui->buttonBackgroundRecord, SIGNAL(clicked(bool)),
+            this, SLOT(slot_toggle_background_record(bool))
         );
     }
     ui->labelPlaylistSong->setText("");
@@ -1399,6 +1412,22 @@ qslivegrid::slot_toggle_metronome (bool /*clicked*/)
 
             (void) perf().arm_metronome(false); /* mutes the metronome      */
         }
+    }
+}
+
+void
+qslivegrid::slot_toggle_background_record (bool /*clicked*/)
+{
+    bool on = ui->buttonMetronome->isChecked();
+    if (on)
+    {
+        qt_set_icon(rec_on_xpm, ui->buttonBackgroundRecord);
+        (void) perf().install_recorder();       /* arms if already existing */
+    }
+    else
+    {
+        qt_set_icon(rec_xpm, ui->buttonBackgroundRecord);
+        (void) perf().remove_recorder();        /* cancels the recorder     */
     }
 }
 

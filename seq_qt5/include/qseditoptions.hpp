@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-13
+ * \updates       2022-08-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -229,8 +229,10 @@ private slots:
     void slot_metro_channel (int index);
     void slot_metro_count_in ();
     void slot_metro_count_in_measures ();
+    void slot_metro_recording ();
+    void slot_metro_recording_measures ();
+    void slot_metro_record_buss (int index);
     void slot_metro_reload ();
-
     void okay ();
     void cancel ();
     void apply ();
