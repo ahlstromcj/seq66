@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-08-15
+ * \updates       2022-08-16
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -308,7 +308,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_play_list             (),
     m_note_mapper           (new notemapper()),
     m_metronome             (),                 /* no metronome by default  */
-    m_recorder              (),                 /* no background recording  */
+    m_recorder              (nullptr),          /* no background recording  */
     m_metronome_count_in    (false),
     m_song_start_mode       (sequence::playback::automatic),
     m_reposition            (false),
@@ -1199,6 +1199,8 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
  *  this function and check the result than to call is_active() and then
  *  call this function.
  *
+ *  This function is not used for the background recorder track.
+ *
  *  \deprecated
  *      We will replace this with loop() eventually.
  *
@@ -1218,8 +1220,6 @@ performer::get_sequence (seq::number seqno) const
         return mapper().loop(seqno);
     else if (sequence::is_metronome(seqno))
         return m_metronome;
-    else if (sequence::is_recorder(seqno))
-        return m_recorder;
 
     return mapper().loop(seqno);
 }
@@ -1231,8 +1231,6 @@ performer::get_sequence (seq::number seqno)
         return mapper().loop(seqno);
     else if (sequence::is_metronome(seqno))
         return m_metronome;
-    else if (sequence::is_recorder(seqno))
-        return m_recorder;
 
     return mapper().loop(seqno);
 }
@@ -1262,14 +1260,7 @@ performer::install_metronome ()
     {
         result = m_metronome->initialize(this);     /* add events and arm   */
         if (result)
-        {
             result = play_set().add(m_metronome);
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            std::string statusstr = result ? "Succeeded" : "Failed" ;
-            status_message(statusstr, play_set().to_string());
-#endif
-        }
         else
             m_metronome.reset();
     }
@@ -1311,10 +1302,6 @@ performer::remove_metronome ()
         play_set().remove(seqno);
         if (m_metronome)
             m_metronome.reset();
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        status_message("Removed metronome", play_set().to_string());
-#endif
     }
     m_metronome_count_in = false;
 }
@@ -1342,22 +1329,17 @@ performer::install_recorder ()
     }
 
     metrosettings & ms = rc().metro_settings();
-    m_recorder.reset(new (std::nothrow) recorder(ms));
-    bool result = bool(m_recorder);
+    m_recorder = new (std::nothrow) recorder(ms);
+    bool result = not_nullptr(m_recorder);
     if (result)
     {
-        result = m_recorder->initialize(this);     /* add events and arm   */
+        result = m_recorder->initialize(this);     /* make settings & mute  */
         if (result)
         {
-            result = play_set().add(m_recorder);
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            std::string statusstr = result ? "Succeeded" : "Failed" ;
-            status_message(statusstr, play_set().to_string());
-#endif
+            // Maybe not needed // // result = play_set().add(m_recorder);
         }
         else
-            m_recorder.reset();
+            remove_recorder();
     }
     return result;
 }
@@ -1365,33 +1347,50 @@ performer::install_recorder ()
 bool
 performer::reload_recorder ()
 {
-//  bool wasrunning = is_running();
-//  if (wasrunning)
-//      auto_stop();            /* or pause? */
-
     remove_recorder();
-    bool result = install_recorder();
-//  if (wasrunning)
-//      auto_play();
-
-    return result;
+    return install_recorder();
 }
 
 void
 performer::remove_recorder ()
 {
-    if (m_recorder)
+    if (not_nullptr(m_recorder))
     {
-        seq::number seqno =  m_recorder->seq_number();
-//      auto_stop();            /* or pause? */
-//      play_set().remove(seqno);
-        if (m_recorder)
-            m_recorder.reset();
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        status_message("Removed recorder", play_set().to_string());
-#endif
+        delete m_recorder;
+        m_recorder = nullptr;
     }
+}
+
+bool
+performer::finish_recorder ()
+{
+    bool result = not_nullptr(m_recorder);
+    if (result)
+        result = m_recorder->event_count() > 0;
+
+    if (result)
+    {
+        seq::number seqno = 0;
+        result = install_sequence(m_recorder, seqno);   /* side-effect      */
+        if (result)
+        {
+            std::ostringstream os;
+            os << "Added background recording as sequence #"
+                << int(seqno) << std::endl
+                ;
+            (void) info_message(os.str());
+            m_recorder->uninitialize();
+            notify_sequence_change(seqno, change::recreate);
+        }
+        else
+            delete m_recorder;                          /* remove bad one   */
+
+        m_recorder = nullptr;                           /* nullify          */
+    }
+    else
+        remove_recorder();
+
+    return result;
 }
 
 /**
@@ -2787,11 +2786,6 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
     else
         what = midicontrolout::seqaction::removed;
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    std::string wstr = seqaction_to_string(what);
-    printf("announce seq %d: %s\n", int(sn), wstr.c_str());
-#endif
-
     send_seq_event(sn, what);
     return true;
 }
@@ -3912,10 +3906,6 @@ performer::poll_cycle ()
             {
                 if (ev.below_sysex())                       /* below 0xF0   */
                 {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                    std::string estr = ev.to_string();
-                    status_message("MIDI event", estr);
-#endif
                     if (m_master_bus->is_dumping())         /* see banner   */
                     {
                         if (midi_control_event(ev, true))   /* quick check  */

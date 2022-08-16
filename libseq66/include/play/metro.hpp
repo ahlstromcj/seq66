@@ -22,18 +22,23 @@
 /**
  * \file          metro.hpp
  *
- *  Provides a configurable pattern that can be used as a metro.
+ *      Provides a configurable pattern that can be used as a metronome,
+ *      plus add addition pattern class that can be used for background
+ *      recording.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-15
+ * \updates       2022-08-16
  * \license       GNU GPLv2 or above
  *
  *  The metro is a sequence with a special configuration.  It can be added
  *  to the performer's playset to be played along with the rest of the
  *  patterns.  It is not visible and it is not editable once created.
  *  There is also a lot of stuff in seq66::sequence not needed here.
+ *
+ *  The recorder class extends the metro class for recording in the background
+ *  automatically.
  */
 
 #include "play/sequence.hpp"            /* seq66::sequence                  */
@@ -377,6 +382,11 @@ public:
     virtual ~metro ();
 
     virtual bool initialize (performer * p);
+    virtual bool uninitialize ()
+    {
+        return true;
+    }
+
     metrosettings & settings ()
     {
         return m_metro_settings;
@@ -392,7 +402,7 @@ protected:
  *  An extension of metro for recording in the backbround.
  */
 
-class recorder : public metro
+class recorder final : public metro
 {
     friend class performer;
 
@@ -407,6 +417,7 @@ public:
     virtual ~recorder ();
 
     virtual bool initialize (performer * p) override;
+    virtual bool uninitialize () override;
 
 };          // class recorder
 

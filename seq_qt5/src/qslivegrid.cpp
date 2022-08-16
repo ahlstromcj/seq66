@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2022-08-15
+ * \updates       2022-08-16
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -191,13 +191,12 @@ qslivegrid::qslivegrid
         ui->buttonActivate->hide();
         ui->buttonLoopMode->setEnabled(true);
         ui->buttonRecordMode->setEnabled(true);
-        ui->buttonMetronome->setEnabled(true);
         qt_set_icon(metro_xpm, ui->buttonMetronome);
-
-        // TODO: ENABLE LATER
-        ui->buttonBackgroundRecord->setEnabled(false);
+        ui->buttonMetronome->setEnabled(true);
         qt_set_icon(rec_xpm, ui->buttonBackgroundRecord);
 
+        bool background_record = rc().metro_settings().count_in_recording();
+        ui->buttonBackgroundRecord->setEnabled(background_record);
         show_grid_record_style();
         show_record_mode();
         connect
@@ -1418,7 +1417,7 @@ qslivegrid::slot_toggle_metronome (bool /*clicked*/)
 void
 qslivegrid::slot_toggle_background_record (bool /*clicked*/)
 {
-    bool on = ui->buttonMetronome->isChecked();
+    bool on = ui->buttonBackgroundRecord->isChecked();
     if (on)
     {
         qt_set_icon(rec_on_xpm, ui->buttonBackgroundRecord);
@@ -1427,7 +1426,7 @@ qslivegrid::slot_toggle_background_record (bool /*clicked*/)
     else
     {
         qt_set_icon(rec_xpm, ui->buttonBackgroundRecord);
-        (void) perf().remove_recorder();        /* cancels the recorder     */
+        (void) perf().finish_recorder();
     }
 }
 

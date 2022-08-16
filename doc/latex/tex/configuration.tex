@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2022-08-07
+% \update      2022-08-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -928,9 +928,14 @@
       sub-note = 60
       sub-note-velocity = 84
       sub-note-length = 0
+      count-in-active = false
+      count-in-measures = 1
+      count-in-recording = true
+      recording-buss = 2
+      recording-measures = 0
    \end{verbatim}
 
-   The 'main' settings apply to the first note of the metronome.
+   The \texttt{main} settings apply to the first note of the metronome.
    The type of tone is given by the patch (program) number.
    The actual note is given by a MIDI note number.
    The velocity can be set.
@@ -940,14 +945,50 @@
    The minimum is 0.125, and the maximum is 2.0.
    Try different values and see.
 
-   The 'sub' settings apply to the rest of the notes of the metronome,
+   The \texttt{sub} settings apply to the rest of the notes of the metronome,
    but are otherwise the same.
 
-   Coming in the future is a user-interface in
-   \textbf{Edit / Preferences} to configure the settings
+   The settings \texttt{count-in-active} and \texttt{count-in-measures}
+   control metronome count-in, where the metronome starts playing before the
+   song.
 
-   There are a few minor issues to work out, and eventually we want to add a
-   count-in feature.
+   The rest of the settings are discussed in the following section on
+   \textbf{Background Recording}.
+
+   There is a user-interface in
+   \textbf{Edit / Preferences} to configure the settings of the metronome (and
+   the recorder).
+   See \sectionref{paragraph:menu_edit_preferences_metronom_options}.
+
+\subsubsection{'rc' File / Background Recording}
+\label{subsubsec:configuration_rc_background_recording}
+
+   Background recording allows recording to be made without having to create a
+   pattern and turn on recording.  The following setting activate this feature
+   and determine the input port to be used.
+
+   \begin{verbatim}
+      [metronome]
+      . . .
+      count-in-recording = true
+      recording-buss = 2
+      recording-measures = 0
+   \end{verbatim}
+
+   The \texttt{count-in-recording}
+   setting enables or disables background recording.
+   The \texttt{recording-buss}
+   setting specifies the input buss/port. That
+   buss \textsl{must be enabled} (in the 'rc' file).
+
+   The \texttt{recording-measures} sets the number of measures to
+   record.  The style of recording is currently \textsl{merged},
+   where notes accumulate as each loop occurs.
+   We might adjust that feaure per user feedback.
+
+   If \texttt{recording-measures} is set to 0, then the
+   \textsl{expanding} mode of recording is used, where
+   the sequence gets longer and longers as playback and playing continues.
 
 \subsubsection{'rc' File / Interaction Method}
 \label{subsubsec:configuration_rc_interaction}

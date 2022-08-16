@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-15
+ * \updates       2022-08-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -97,10 +97,10 @@ private:
     void show_button (QDialogButtonBox::StandardButton bcode, bool show);
     void enable_reload_button (bool flag);
     void repopulate_channel_menu (int buss);
-    void modify_rc();
-    void modify_metronome();
-    void modify_ctrl();
-    void modify_usr();
+    void modify_rc ();
+    void modify_metronome (bool enablereload = true);
+    void modify_ctrl ();
+    void modify_usr ();
     void sync ();               /* makes dialog reflect internal settings   */
     void sync_rc ();            /* makes dialog reflect internal settings   */
     void sync_usr ();           /* makes dialog reflect internal settings   */

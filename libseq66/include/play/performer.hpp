@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-08-15
+ * \updates       2022-08-16
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -433,7 +433,9 @@ private:
      *  settings overlap with metro_settings.
      */
 
-    std::shared_ptr<metro> m_recorder;
+    // std::shared_ptr<recorder> m_recorder;
+
+    recorder * m_recorder;
 
     /**
      *  A quick indication that count-in is requested and able to be used.
@@ -2362,6 +2364,7 @@ public:
     bool install_recorder ();
     bool reload_recorder ();
     void remove_recorder ();
+    bool finish_recorder ();
     void inner_start ();
     void inner_stop (bool midiclock = false);
 

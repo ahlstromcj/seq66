@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-08-09
+% \update      2022-08-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -447,9 +447,6 @@
    been consolidated into a 'ctrl' file and are fairly easy to edit with a text
    editor.
    \textsl{Seq66} does not support the 'fruity' mouse mode at this time.
-
-   In the diagrams that follow, the new \textbf{Metronome} tab is not
-   shown; but it is discussed in its own section.
 
 \paragraph{Menu / Edit / Preferences / MIDI Clock}
 \label{paragraph:menu_edit_preferences_midi_clock}
@@ -1172,11 +1169,11 @@
 \label{paragraph:menu_edit_preferences_metronom_options}
 
    This new tab contains options for the new (v. 0.98.11)
-   "metronome" feature:
+   "metronome" and "background recording" features:
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_metro_options_tab.png}
+   \includegraphics[scale=0.80]{main-menu/edit/preferences/midi_metro_options_tab.png}
    \caption{Metronome Options}
    \label{fig:midi_metro_options_tab}
 \end{figure}
@@ -1210,10 +1207,14 @@
    This item sets the program (patch) number for the note, which sets the
    instrument to be play for the notes.
    We currently do not have a drop-down box to select the patch by name.
+   The default patch is 0.
+   As noted below, the default channel is 10, so this
+   patch is the "Standard Drum Kit" for the device.
 
    \itempar{Note}{metronome!note}
    This item provides the note value to be played.  Recall that 60 is the same
-   as "middle C".
+   as "middle C".  By default, the main note is 75, the "Clave" for the drum
+   kit, and the sub note is 76, the "High Wood Block" for the drum kit.
 
    \itempar{Velocity}{metronome!velocity}
    This item provides the note velocity to be played, to provide an accent on
@@ -1228,16 +1229,22 @@
    This button pauses playback (if playing),
    loads in the new metronome settings, and
    continues playing (if it was playing).
+   It is \textsl{not} enabled when the status/configuration of background
+   recording changes.
 
    \itempar{MIDI Buss}{metronome!buss}
-   This value select the device to use to play the metronome.
+   This value selects the output MIDI device to use to play the metronome.
 
    \itempar{Channel}{metronome!channel}
-   This value select the channedevicel to use to play the metronome.
+   This value selects the channe to use to play the metronome.
 
-   We still have some more work to do to refine the metronome and its
-   configuration.
-   Notably, the count-in feature is not ready.
+   \itempar{Record Buss}{recorder!buss}
+   \index{background recorder}
+   This value selects the input device to use to record events into the
+   background pattern.
+
+   We still have some more work to do to refine the metronome, the
+   background recorder, and their configuration.
 
 \paragraph{Menu / Edit / Preferences / Session}
 \label{paragraph:menu_edit_preferences_session}

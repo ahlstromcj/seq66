@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-15
+ * \updates       2022-08-16
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -808,8 +808,6 @@ qseditoptions::setup_tab_metronome ()
             {
                 bool enabled = ec != e_clock::disabled;
                 out->addItem(qt(busname));
-//              if (disabled)
-//                  enable_bus_item(bus, false);
                 enable_combobox_item(out, bus, enabled);
             }
         }
@@ -874,7 +872,8 @@ qseditoptions::setup_tab_metronome ()
     in->clear();
     if (not_nullptr(mmb))
     {
-        int last_input = 0;
+        int enabled_count = 0;
+        int last_input = (-1);
         int buses = ipm.active() ? ipm.count() : mmb->get_num_in_buses() ;
         for (int bus = 0; bus < buses; ++bus)
         {
@@ -886,17 +885,23 @@ qseditoptions::setup_tab_metronome ()
                 /*
                  * For this dialog, we want to allow the selection of
                  * a buss that is enabled for input, except for system
-                 * ports, which should never be used..
+                 * ports, which should never be used.
                  */
 
                 bool enabled = inputing && ! perf().is_input_system_port(bus);
                 in->addItem(qt(busname));
                 enable_combobox_item(in, bus, enabled);
                 if (enabled)
+                {
+                    ++enabled_count;
                     last_input = bus;
+                }
             }
         }
         ui->combobox_metro_record_buss->setCurrentIndex(last_input);
+        if (enabled_count == 1)
+            rc().metro_settings().recording_buss(midibyte(last_input));
+
         connect
         (
             ui->combobox_metro_record_buss, SIGNAL(currentIndexChanged(int)),
@@ -944,9 +949,11 @@ qseditoptions::repopulate_channel_menu (int buss)
 }
 
 void
-qseditoptions::modify_metronome ()
+qseditoptions::modify_metronome (bool enablereload)
 {
-    ui->button_metro_reload->setEnabled(true);
+    if (enablereload)
+        ui->button_metro_reload->setEnabled(true);
+
     modify_rc();
 }
 
@@ -1136,7 +1143,7 @@ qseditoptions::slot_metro_recording ()
 {
     bool on = ui->checkbox_metro_recording->isChecked();
     rc().metro_settings().count_in_recording(on);
-    modify_metronome();
+    modify_metronome(false);                    /* no reload button */
 }
 
 void
@@ -1148,7 +1155,7 @@ qseditoptions::slot_metro_recording_measures ()
     if (measures != rc().metro_settings().recording_measures())
     {
         rc().metro_settings().recording_measures(measures);
-        modify_metronome();
+        modify_metronome(false);                    /* no reload button */
     }
 }
 
@@ -1159,7 +1166,7 @@ qseditoptions::slot_metro_record_buss (int index)
     if (index != b)
     {
         rc().metro_settings().recording_buss(midibyte(index));
-        modify_metronome();
+        modify_metronome(false);                    /* no reload button */
     }
 }
 
@@ -2033,7 +2040,6 @@ qseditoptions::slot_note_resume ()
             usr().resume_note_ons(resumenotes);
             perf().resume_note_ons(resumenotes);
             modify_usr();
-            // sync();
         }
     }
 }

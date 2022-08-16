@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-15
+ * \updates       2022-08-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -194,9 +194,8 @@ metro::init_setup (performer * p, int measures)
         int bpb = settings().beats_per_bar();       /* get_beats_per_bar()  */
         int bw = settings().beat_width();           /* get_beat_width()     */
         midibyte channel = settings().channel();    /* seq_midi_channel()   */
-//      int increment = pulses_per_beat(ppq, bw);
         (void) set_midi_bus(settings().buss());     /* ...uses master-bus   */
-        (void) set_midi_channel(channel);
+        (void) set_midi_channel(channel);           /* metro output channel */
         set_beats_per_bar(bpb);                     /* hmm, add bool return */
         set_beat_width(bw);                         /* ditto                */
         if (measures > 0)
@@ -320,6 +319,13 @@ recorder::~recorder ()
  *
  *  For finding the length, can use measures_to_ticks() or
  *  sequence::apply_length().
+ *
+ * Life-cycle:
+ *
+ *      -   Create the recorder sequence and call this initialize() function.
+ *      -   It sets a few things up for recording.  Note especially the
+ *          set_recording() function. It calls mastermidibus ::
+ *          set_sequence_input() to log this pattern as the recording pattern.
  */
 
 bool
@@ -346,14 +352,31 @@ recorder::initialize (performer * p)
             set_overwrite_recording(false);
             set_quantized_recording(false);
             set_tightened_recording(false);
-            set_recording(true);
+            set_recording(true);                    /* see banner notes     */
             oneshot_recording(false);
-            expanded_recording(true);
+            if (settings().expand_recording())
+                expanded_recording(true);
+
             armed(false);
             unmodify();                             /* not part of song     */
         }
     }
     return result;
+}
+
+bool
+recorder::uninitialize ()
+{
+    set_recording(false);
+
+    /*
+     * Probably want the user to remember to modify these settings.
+     *
+     * set_midi_bus(0);
+     * set_midi_channel(0);
+     */
+
+    return true;
 }
 
 }           // namespace seq66

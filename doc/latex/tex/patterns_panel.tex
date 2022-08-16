@@ -768,14 +768,45 @@
 \paragraph{Metronome}
 \label{paragraph:patterns_metronome}
 
-Not shown yet in the figure is a \textbf{Metronome} button.
+\index{metronome}
+Also shown in the figure is a \textbf{Metronome} button.
 This is a feature new with \textsl{Seq66} version 0.98.11, and still has a few
-minor issues to work out.
+minor issues to work out, but it works.
 
 The metronome has a number of configurable items.
 See \sectionref{subsubsec:configuration_rc_metronome}.
 
 Clicking the metronome button turns the metronome on and off.
+To use the metronome (once configured), click the button to enable it,
+then start playback.
+It can be turned on and off during playback.
+It is always available.
+
+\paragraph{Background Recording}
+\label{paragraph:patterns_background_recording}
+
+\index{background recording}
+Also shown in the figure is a \textbf{Background Recording} button.
+This is a feature new with \textsl{Seq66} version 0.98.11, and still has a few
+minor issues to work out, but it works.
+
+The recorder has a number of configurable items.
+See \sectionref{subsubsec:configuration_rc_background_recording}.
+Background recording needs to be enabled in the configuration.
+Otherwise, the background-recording button is disabled.
+
+When enabled, press the background-recording button.
+Now all events on the given input buss will be recorded, even if playback is
+not started.  Better to start playback after enabling recording!
+
+Once one is satisfied with the recording, stop playback, then
+click the background-recording button again.
+If any events have been recorded, then they are pasted into a new pattern in
+the next available pattern slot.
+There, they can be edited or deleted.
+
+Note that the background pattern is muted while recording.
+We will change how it works based on user feedback.
 
 \paragraph{Pattern Recording Modes}
 \label{paragraph:patterns_recording_modes}
