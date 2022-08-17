@@ -70,7 +70,7 @@ qperftime::qperftime
     m_parent_frame      (frame),                /* frame64() accessor   */
     m_timer             (nullptr),              /* refresh/redraw timer */
     m_font              (),
-    m_move_left         (false)
+    m_move_L_marker     (false)
 {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setFocusPolicy(Qt::StrongFocus);
@@ -235,7 +235,7 @@ qperftime::sizeHint () const
 void
 qperftime::keyPressEvent (QKeyEvent * event)
 {
-    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);   /* Ctrl */
+    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
     if (isctrl)
     {
         /* no code yet */
@@ -245,7 +245,7 @@ qperftime::keyPressEvent (QKeyEvent * event)
         midipulse s = snap() > 0 ? snap() : 1 ;
         if (event->key() == Qt::Key_Left)
         {
-            if (m_move_left)
+            if (m_move_L_marker)
             {
                 midipulse tick = perf().get_left_tick() - s;
                 perf().set_left_tick(tick);
@@ -260,7 +260,7 @@ qperftime::keyPressEvent (QKeyEvent * event)
         }
         else if (event->key() == Qt::Key_Right)
         {
-            if (m_move_left)
+            if (m_move_L_marker)
             {
                 midipulse tick = perf().get_left_tick() + s;
                 perf().set_left_tick(tick);
@@ -274,9 +274,13 @@ qperftime::keyPressEvent (QKeyEvent * event)
             event->accept();
         }
         else if (event->key() == Qt::Key_L)
-            m_move_left = true;
+        {
+            m_move_L_marker = true;         /* case doesn't matter  */
+        }
         else if (event->key() == Qt::Key_R)
-            m_move_left = false;
+        {
+            m_move_L_marker = false;        /* case doesn't matter  */
+        }
     }
 }
 

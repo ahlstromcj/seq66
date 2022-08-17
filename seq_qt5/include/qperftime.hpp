@@ -113,11 +113,11 @@ protected:      // override Qt event handlers
 
 private:
 
-    qperfeditframe64 * m_parent_frame;      // NEW
+    qperfeditframe64 * m_parent_frame;
     QTimer * m_timer;
     QFont m_font;
     midipulse m_measure_length;
-    bool m_move_left;
+    bool m_move_L_marker;
 
 signals:
 

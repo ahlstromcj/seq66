@@ -67,10 +67,11 @@ qseqtime::qseqtime
     int zoom,
     QWidget * parent /* QScrollArea */
 ) :
-    QWidget     (parent),
-    qseqbase    (p, s, frame, zoom, c_default_snap),
-    m_timer     (nullptr),
-    m_font      ()
+    QWidget         (parent),
+    qseqbase        (p, s, frame, zoom, c_default_snap),
+    m_timer         (nullptr),
+    m_font          (),
+    m_move_L_marker (false)
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_font.setBold(true);
@@ -299,6 +300,67 @@ qseqtime::mouseMoveEvent(QMouseEvent * event)
     (
         event->y() > height() / 2 ? Qt::PointingHandCursor : Qt::UpArrowCursor
     );
+}
+
+void
+qseqtime::keyPressEvent (QKeyEvent * event)
+{
+    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
+    if (isctrl)
+    {
+        /* no code yet */
+    }
+    else
+    {
+        bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
+        midipulse s = snap() > 0 ? snap() : 1 ;
+        if (event->key() == Qt::Key_Left)
+        {
+            if (m_move_L_marker)
+            {
+                midipulse tick = perf().get_left_tick() - s;
+                perf().set_left_tick_seq(tick, snap());     /* ca 2022-08-17 */
+            }
+            else
+            {
+                midipulse tick = perf().get_right_tick() - s;
+                perf().set_right_tick_seq(tick, snap());    /* ca 2022-08-17 */
+            }
+            set_dirty();
+            event->accept();
+        }
+        else if (event->key() == Qt::Key_Right)
+        {
+            if (m_move_L_marker)
+            {
+                midipulse tick = perf().get_left_tick() + s;
+                perf().set_left_tick_seq(tick, snap());     /* ca 2022-08-17 */
+            }
+            else
+            {
+                midipulse tick = perf().get_right_tick() + s;
+                perf().set_right_tick_seq(tick, snap());    /* ca 2022-08-17 */
+            }
+            set_dirty();
+            event->accept();
+        }
+        else if (event->key() == Qt::Key_L)
+        {
+            if (isshift)
+            {
+                m_move_L_marker = true;
+                event->accept();
+            }
+        }
+        else if (event->key() == Qt::Key_R)
+        {
+            if (isshift)
+            {
+                m_move_L_marker = false;
+                event->accept();
+            }
+        }
+    }
 }
 
 QSize

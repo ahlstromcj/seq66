@@ -67,10 +67,10 @@
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::Box</enum>
        </property>
        <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
+        <enum>QFrame::Raised</enum>
        </property>
        <property name="widgetResizable">
         <bool>true</bool>
@@ -81,7 +81,7 @@
           <x>0</x>
           <y>0</y>
           <width>16</width>
-          <height>313</height>
+          <height>309</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -115,8 +115,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>689</width>
-          <height>311</height>
+          <width>687</width>
+          <height>309</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -236,7 +236,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>668</width>
+          <width>666</width>
           <height>16</height>
          </rect>
         </property>

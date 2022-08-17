@@ -1706,7 +1706,13 @@ performer::set_ppqn (int p)
     if (m_one_measure == 0)
     {
         m_one_measure = p * 4;                  /* simplistic!  */
-        m_right_tick = m_one_measure * 4;       /* ditto        */
+
+        /*
+         * ca 2022-08-17 This seems wrong, and makes the R in
+         * the seqedit unseen. But it works for the perfedit.
+         */
+
+         m_right_tick = m_one_measure * 4;
     }
     return result;
 }
@@ -3093,7 +3099,7 @@ performer::set_left_tick (midipulse tick)
 /**
  *  Set the right marker at the given tick.  This setting is made only if the
  *  tick parameter is at or beyond the first measure.  We let the caller
- *  determine is this setting is a modification.
+ *  determine if this setting is a modification.
  *
  * \param tick
  *      The tick (MIDI pulse) at which to place the right tick.  If less than

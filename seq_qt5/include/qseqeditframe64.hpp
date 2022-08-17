@@ -58,10 +58,10 @@
  *      -   qsmainwnd_height = 580, qsmainwnd.ui
  */
 
-#define QSEQEDITFRAME64_WIDTH         680
-#define QSEQEDITFRAME64_HEIGHT        920
-#define QSEQEDITFRAME64_BASE_HEIGHT   572
-#define QSEQEDITFRAME64_ROLL_HEIGHT   250
+// #define QSEQEDITFRAME64_WIDTH         680
+// #define QSEQEDITFRAME64_HEIGHT        920
+// #define QSEQEDITFRAME64_BASE_HEIGHT   572
+// #define QSEQEDITFRAME64_ROLL_HEIGHT   250
 
 /*
  *  A few forward declarations.  The Qt header files are in the cpp file.

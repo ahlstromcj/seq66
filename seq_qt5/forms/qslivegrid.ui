@@ -124,6 +124,9 @@
          <height>0</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Edit the set/bank name in this field.</string>
+       </property>
       </widget>
      </item>
      <item>
@@ -159,6 +162,9 @@
          <height>28</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Activates/deactivates background recording.</string>
+       </property>
        <property name="text">
         <string>AR</string>
        </property>
@@ -180,6 +186,9 @@
          <width>36</width>
          <height>28</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>Loads and activates/deactivates the metronome.</string>
        </property>
        <property name="text">
         <string>M</string>
@@ -208,6 +217,9 @@
          <width>120</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>Determines the function of each slot, normally just loop control.</string>
        </property>
        <property name="currentText">
         <string/>
@@ -247,6 +259,9 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Makes this the active set.</string>
+       </property>
        <property name="text">
         <string>Activate</string>
        </property>
@@ -266,6 +281,9 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Cycles through the recording styles.</string>
+       </property>
        <property name="text">
         <string>Mode</string>
        </property>
@@ -284,6 +302,9 @@
          <width>80</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>Cycles through quantization modes for recording.</string>
        </property>
        <property name="text">
         <string>RMode</string>

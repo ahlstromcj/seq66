@@ -1,7 +1,7 @@
 # README for Seq66 0.98.11
 
 Chris Ahlstrom
-2015-09-10 to 2022-08-08
+2015-09-10 to 2022-08-17
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -109,7 +109,7 @@ Windows, and using a conventional source tarball.
                 reboot.
             *   Added Ctrl-Left/Right to move the progress bar in the pattern
                 editor. (Left/Right scrolls the piano roll.)
-        *   Issue #97.
+        *   Issue #98.
             *   Added an initial metronome facility and 'rc' configuration.
             *   Metronome count-in added.
         *   Muted pattern slots show a short progress bar, to aid in the timing
@@ -119,6 +119,8 @@ Windows, and using a conventional source tarball.
         *   Implemented left/right arrow keys to move the selected trigger in
             the song editor. Ctrl moves multiple triggers. Moving a trigger past
             END moves END.
+        *   Improved keystroke movement of "L"/"R" markers in song and pattern
+            editor time bars.
     *   Version 0.98.10:
         *   Revisited issue #83, improved GUI editing of control/display
             automation.

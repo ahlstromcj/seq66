@@ -143,7 +143,7 @@
         </size>
        </property>
        <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
+        <enum>QFrame::Sunken</enum>
        </property>
        <property name="verticalScrollBarPolicy">
         <enum>Qt::ScrollBarAlwaysOn</enum>
@@ -162,8 +162,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>720</width>
-          <height>149</height>
+          <width>718</width>
+          <height>147</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -317,10 +317,10 @@ the note-map, if any, to the note events in this pattern.</string>
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::StyledPanel</enum>
        </property>
        <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
+        <enum>QFrame::Sunken</enum>
        </property>
        <property name="widgetResizable">
         <bool>true</bool>
@@ -330,8 +330,8 @@ the note-map, if any, to the note events in this pattern.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>712</width>
-          <height>128</height>
+          <width>708</width>
+          <height>124</height>
          </rect>
         </property>
        </widget>
@@ -1317,10 +1317,10 @@ the '0' key in the piano roll.</string>
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::StyledPanel</enum>
        </property>
        <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
+        <enum>QFrame::Sunken</enum>
        </property>
        <property name="widgetResizable">
         <bool>true</bool>
@@ -1330,8 +1330,8 @@ the '0' key in the piano roll.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>716</width>
-          <height>24</height>
+          <width>712</width>
+          <height>20</height>
          </rect>
         </property>
        </widget>
@@ -1812,10 +1812,10 @@ the '0' key in the piano roll.</string>
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::StyledPanel</enum>
        </property>
        <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
+        <enum>QFrame::Sunken</enum>
        </property>
        <property name="widgetResizable">
         <bool>true</bool>
@@ -1825,8 +1825,8 @@ the '0' key in the piano roll.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>714</width>
-          <height>24</height>
+          <width>710</width>
+          <height>20</height>
          </rect>
         </property>
        </widget>

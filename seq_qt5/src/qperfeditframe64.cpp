@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2022-07-31
+ * \updates       2022-08-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -114,6 +114,7 @@ qperfeditframe64::qperfeditframe64
     m_palette           (nullptr),
     m_is_external       (isexternal),
     m_duration_mode     (true),
+    m_move_L_marker     (false),
     m_snap_list         (perf_snap_items(), true),  /* "Length" is 1st  */
     m_snap              (8),
     m_beats_per_measure (4),
@@ -769,16 +770,39 @@ qperfeditframe64::keyPressEvent (QKeyEvent * event)
     bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
     if (! isctrl)
     {
-        if (key == Qt::Key_J)
-            scroll_by_step(qscrollmaster::dir::Down);
-        else if (key == Qt::Key_K)
-            scroll_by_step(qscrollmaster::dir::Up);
-        else if (key == Qt::Key_H)
-            scroll_by_step(qscrollmaster::dir::Left);
-        else if (key == Qt::Key_L)
-            scroll_by_step(qscrollmaster::dir::Right);
+        bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
+        if (isshift)
+        {
+            if (key == Qt::Key_L)
+            {
+                m_perftime->setFocus();
+                m_perftime->m_move_L_marker = true;
+            }
+            else if (key == Qt::Key_R)
+            {
+                m_perftime->setFocus();
+                m_perftime->m_move_L_marker = false;
+            }
+            else
+                event->accept();
+        }
         else
-            event->accept();
+        {
+            /*
+             * vi-style scrolling keystrokes
+             */
+
+            if (key == Qt::Key_J)
+                scroll_by_step(qscrollmaster::dir::Down);
+            else if (key == Qt::Key_K)
+                scroll_by_step(qscrollmaster::dir::Up);
+            else if (key == Qt::Key_H)
+                scroll_by_step(qscrollmaster::dir::Left);
+            else if (key == Qt::Key_L)
+                scroll_by_step(qscrollmaster::dir::Right);
+            else
+                event->accept();
+        }
     }
     else
         event->accept();

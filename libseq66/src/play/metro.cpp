@@ -24,11 +24,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-16
+ * \updates       2022-08-17
  * \license       GNU GPLv2 or above
  *
  */
 
+#include "cfg/settings.hpp"             /* seq66::usr() config accessor     */
 #include "play/metro.hpp"               /* seq66::metro sequence class      */
 #include "play/performer.hpp"           /* seq66::performer class functions */
 
@@ -342,19 +343,25 @@ recorder::initialize (performer * p)
         {
             /*
              * Must set this before the possibility of raising the modify
-             * flag.
+             * flag. Also note we select the active recordmode (normal,
+             * quantize, or tighten).
              */
 
+            bool quantize = usr().record_mode() == recordmode::quantize;
+            bool tighten = usr().record_mode() == recordmode::tighten;
+            bool overwrite = usr().grid_record_style() == recordstyle::overwrite;
+            bool oneshot = usr().grid_record_style() == recordstyle::oneshot;
+            bool expand = usr().grid_record_style() == recordstyle::expand;
             seq_number(sequence::recorder());       /* magic recorder seq   */
             set_name("Background Recording");
             set_midi_bus(buss);
             free_channel(true);
-            set_overwrite_recording(false);
-            set_quantized_recording(false);
-            set_tightened_recording(false);
+            set_overwrite_recording(overwrite);
+            oneshot_recording(oneshot);
+            set_quantized_recording(quantize);
+            set_tightened_recording(tighten);
             set_recording(true);                    /* see banner notes     */
-            oneshot_recording(false);
-            if (settings().expand_recording())
+            if (expand || settings().expand_recording())
                 expanded_recording(true);
 
             armed(false);

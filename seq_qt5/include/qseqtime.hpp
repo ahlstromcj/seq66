@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-28
+ * \updates       2022-08-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -55,6 +55,8 @@ namespace seq66
 
 class qseqtime final : public QWidget, public qseqbase
 {
+    friend class qseqeditframe64;   /* for scrolling a horizontal page  */
+
     Q_OBJECT
 
 public:
@@ -65,7 +67,7 @@ public:
         sequence & s,
         qseqeditframe64 * frame,
         int zoom,
-        QWidget * parent                                /* QScrollArea */
+        QWidget * parent    /* QScrollArea */
     );
 
     virtual ~qseqtime ();
@@ -77,6 +79,7 @@ protected:
     virtual void mousePressEvent (QMouseEvent *) override;
     virtual void mouseReleaseEvent (QMouseEvent *) override;
     virtual void mouseMoveEvent (QMouseEvent *) override;
+    virtual void keyPressEvent (QKeyEvent *) override;
     virtual QSize sizeHint() const override;
 
 private:
@@ -96,6 +99,7 @@ private:
 
     QTimer * m_timer;
     QFont m_font;
+    bool m_move_L_marker;
 
 };          // class qseqtime
 

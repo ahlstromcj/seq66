@@ -161,6 +161,7 @@ private:
     QPalette * m_palette;
     bool m_is_external;
     bool m_duration_mode;               /* true == H:M:S.fraction       */
+    bool m_move_L_marker;
     combolist m_snap_list;
     int m_snap;                         /* set snap-to in pulses/ticks  */
     int m_beats_per_measure;
