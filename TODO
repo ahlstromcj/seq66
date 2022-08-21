@@ -1,30 +1,24 @@
-TO DO for Seq66 0.98.11 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.99.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-08-10
+2019-04-13 to 2022-08-21
 
 Hot:
 
     x   Issue #90: seq66 does not recognize some changes for the save entry in
         the file menu.  Also needs to set modify asterisk.
         -   Fix pattern. Needs a way to allow user to back out more easily.
-        -   LFO. Reset needs to undo modify, but only no modification already
-            in place.
+        -   LFO. Reset needs to undo modify, but only with no modification
+            already in place.
     -   Issue #92 Segfault when recording to a 32 beat pattern.
-        2021-02-16  or issue #85.
-    x   Issue #94 Long song cannot be scrolled to the right 
-        When I have a song with 60 bars (in song view) und add 5 more patterns
-        to one track, then i cannot add more, because i cannot scroll further.
-        Resizing the Window helps (after that there is more room to scroll
-        further).
+        2021-02-16 or issue #85. Still need to duplicate.
     -   Issue #95 Velocity screen does not fully refresh when scrolling 
-        left or right.
+        left or right. Still need to duplicate.
     -   Issue #96 MIDI learn (and wizard) for creating controller maps?
-    -   Issue #97 Investigate/resolve differences from Seq24. Done
+        If we do this, it will be a separate application.  A lot of
+        potential issues in getting this right.
+    -   Issue #97 Investigate/resolve differences from Seq24.
             Seq24: Input from a keyboard when not playing advances like one-shot
             mode, but does not stop when looped back.
-    -   Issue #98: More features.
-        -   Metronome. Still needs configuration code.
-        -   Count-in note recording.  Need to learn the specifics.
 
 Pattern Editor, Main Window:
 

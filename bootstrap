@@ -37,7 +37,7 @@ export LANG
 CYGWIN=binmode
 export CYGWIN
 export SEQ66_SCRIPT_EDIT_DATE="2022-05-23"
-export SEQ66_LIBRARY_API_VERSION="0.98"
+export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.9"
 
 #******************************************************************************

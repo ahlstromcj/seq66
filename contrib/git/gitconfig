@@ -1,18 +1,41 @@
 [user]
-	name = User Ahlstrom
-	email = userahlstrom@gmail.com
+	name = User
+	email = user@gmail.com
+
 [core]
 	excludesfile = /home/user/.gitignore
 	editor = vim
+
 [diff]
 	tool = gvimdiff
+#	tool = nvim-qt -d
+
 [difftool]
 	prompt = false
+
 [alias]
+	dn = diff --name-only
 	dt = difftool
 	last = log -1 HEAD
     changes = diff --name-only
+
 [color]
+    diff = auto
+#   status = auto
+    branch = auto
+    interactive = auto
 	ui = true
+    pager = true
+
+[color "status"]
+    added = green bold
+    changed = red bold
+    untracked = magenta
+
+[color "branch"]
+    remote = yellow
+
 [pull]
 	rebase = false
+
+# vim: filetype=gitconfig

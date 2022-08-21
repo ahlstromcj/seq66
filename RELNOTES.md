@@ -1,10 +1,10 @@
-# Seq66 Release Notes 0.98.10 - 2022-08-08
+# Seq66 Release Notes 0.99.0 2022-08-21
 
-This file lists __major__ changes from version 9.98.0 to 0.98.11 (to catch up).
+This file lists __major__ changes from version 9.98.0 to 0.99.0 (to catch up).
 
 ## Changes
 
-*   Version 0.98.11:
+*   Version 0.99.0:
     *   Issue #78 revisited to tighten pattern box display.
     *   Added a --locale option.
     *   Issue #89 fixed so that MIDI control display reflects queuing status.
@@ -16,6 +16,9 @@ This file lists __major__ changes from version 9.98.0 to 0.98.11 (to catch up).
     *   Added L/R arrow keys to move the selected trigger in song editor.
     *   Improved the handling of the MIDI 'ctrl' file.
     *   Tightened up pattern arming/disarming processing.
+    *   Issue #98.
+        *   Added a metronome with count-in and 'rc' configuration.
+        *   Background automatic recording added.
 *   Version 0.98.10:
     *   Revisited issue #83: [midi-input]: in-bus data line error, to improve
         GUI editing of automation port.

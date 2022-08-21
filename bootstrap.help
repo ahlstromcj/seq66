@@ -1,4 +1,4 @@
-Usage: ./bootstrap [options]                             (0.98.3-2022-03-17)
+Usage: ./bootstrap [options]    (0.98.9-2022-05-23)
 
 'bootstrap' sets up GNU automake and libtool support for the Seq66 project
 and creates the 'configure' script.  It can super-clean the project, removing
@@ -10,26 +10,23 @@ passing long options to the configure script for some canned setups.
                      bootstrap script will need to be run again.
  --debug, -ed        Configure for debugging and disable shared libraries for
                      easier debugging.  Also: --enable-debug=gdb
- --calls             Add GNU instrumentation calls for function entry. But the
-                     trace output is much too voluminous to be useful.
- --profile, -prof    Enable profiling and debugging.
  --release, -er      Configure for release.  Sets up a 'silent' build as well.
-                     Either --debug or --release must be specified.
-                     Also: --enable-release.
+                     Equivalent to --enable-release; defaults to 'release'.
  --static            Do a static release build.
- --portmidi, -pm     Configure for qpseq66.  Implies --enable-portmidi.
+ --portmidi, -pm     Configure for qpseq66 (--enable-portmidi).
  --rtmidi, -rm       Configure for qseq66 (ALSA/JACK version, the default).
                      Implies --enable-rtmidi.  The official GUI is Qt 5.
- --refresh, -pr      Enables the port-refresh feature for JACK.  Will be
+ --port-refresh, -pr Enables the port-refresh feature for JACK.  Will be
                      the default once it works.
  --disable-jack, -dj Disables JACK support, enables rtmidi.
  --no-metadata       Disable JACK metadata support.
  --cli, -cli         Configure for seq66cli (command-line rtmidi version).
+ --both              Build qseq66 and seq66cli in one pass.
  --no-nsm            Disable Non Session Manager support.  Saves some code.
- --manual            Build the user manual.
+ --profile, -prof    Enable profiling and debugging.
  --help              Show this help text.
 
-There are some options too rare to document here. Read the bootstrap script.
+There are other options too rare to document here. Read the bootstrap script.
 The default (no options) bootstraps the project (e.g. runs 'autoheader'.)
 Then one must run 'configure', which sets up for a normal release build.
 A common option for 'bootstrap' is --enable-debug (-ed), which adds

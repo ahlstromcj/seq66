@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-08-15
+ * \updates       2022-08-20
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2840,8 +2840,6 @@ sequence::fix_pattern (fixparameters & params)
                 params.fp_scale_factor = newscalefactor;
                 params.fp_measures = double(get_measures());
                 params.fp_effect = tempefx;
-//              set_dirty();
-//              modify(true);                       /* call notify_change() */
             }
         }
         else
@@ -3378,7 +3376,7 @@ sequence::stream_event (event & ev)
             if (overwriting())
             {
                 loop_reset(false);
-                remove_all();                   /* vice m_events.clear()    */
+                remove_all();                       /* vs m_events.clear()  */
                 set_dirty();
             }
             else if (oneshot_recording())
@@ -3388,7 +3386,21 @@ sequence::stream_event (event & ev)
                 set_dirty();
             }
         }
-        ev.mod_timestamp(get_length());                 /* adjust tick      */
+
+        /*
+         *  ca 2022-08-19
+         *  If we are in expand mode, we do not want to wrap the timestamp.
+         */
+
+        if (expanded_recording())
+        {
+            int m = get_measures(perf()->get_tick());   /* ca 2022-08-20    */
+            if (m != m_measures)
+                (void) apply_length(m);
+        }
+        else
+            ev.mod_timestamp(get_length());             /* adjust tick      */
+
         if (recording())
         {
             if (perf()->is_pattern_playing())

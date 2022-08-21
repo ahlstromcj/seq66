@@ -4,7 +4,7 @@
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
 ; Updated:      2022-05-24
-; Version:      0.98.9
+; Version:      0.99.0
 ;
 ; Usage of this Windows build script:
 ;

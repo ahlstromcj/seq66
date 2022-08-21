@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-08-17
+ * \updates       2022-08-20
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1277,6 +1277,7 @@ qseqeditframe64::initialize_panels ()
 
 /**
  *  We need to set the dirty state while the sequence has been changed.
+ *
  */
 
 void
@@ -1285,8 +1286,16 @@ qseqeditframe64::conditional_update ()
     bool expandrec = track().expand_recording();
     if (expandrec)
     {
-        set_measures(track().get_measures() + 1);
-        follow_progress(expandrec);         /* keep up with progress    */
+        /*
+         *  Question: how can the expansion work here without constantly
+         *  increasing the length before the end of the measures is reached???
+         *  We have moved this operation out of the user-interface and into
+         * sequence::stream_event()
+         *
+         * set_measures(track().get_measures() + 1);
+         */
+
+        follow_progress(expandrec);             /* keep up with progress    */
     }
     else if (not_nullptr(m_seqroll) && m_seqroll->progress_follow())
     {
@@ -1480,7 +1489,7 @@ qseqeditframe64::set_beats_per_bar (int bpb, qbase::status qs)
  *  Set the measures value, using the given parameter, and some internal
  *  values passed to apply_length().
  *
- * \param len
+ * \param m
  *      Provides the sequence length, in measures.
  */
 
@@ -1491,8 +1500,10 @@ qseqeditframe64::set_measures (int m, qbase::status qs)
     {
         bool reset = false;
         if (qs == qbase::status::edit)
-            reset = would_truncate(m);
-
+        {
+            if (! perf().is_pattern_playing())      /* ca 2022-08-20        */
+                reset = would_truncate(m);
+        }
         if (reset)
         {
             reset_measures();
@@ -1500,8 +1511,11 @@ qseqeditframe64::set_measures (int m, qbase::status qs)
         else
         {
             m_measures = m;
-            if (track().apply_length(m))
-                set_track_change();                 /* to solve issue #90   */
+            if (! perf().is_pattern_playing())      /* ca 2022-08-20        */
+            {
+                if (track().apply_length(m))
+                    set_track_change();             /* to solve issue #90   */
+            }
         }
     }
 }

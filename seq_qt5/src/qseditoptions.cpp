@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-16
+ * \updates       2022-08-18
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -820,14 +820,14 @@ qseditoptions::setup_tab_metronome ()
     }
 
     /*
-     * combobox_metro_channel:
-     *
-     *  Code similar to qseqeditframe64::repopulate_midich_combo().
-     *
-     *  This will need to be updated when the buss number is changed!
+     * combobox_metro_channel
      */
 
     repopulate_channel_menu(int(rc().metro_settings().buss()));
+
+    /*
+     *  Count-in and recorder settings.
+     */
 
     bool count_in_active = rc().metro_settings().count_in_active();
     ui->checkbox_metro_count_in->setChecked(count_in_active);
@@ -908,6 +908,43 @@ qseditoptions::setup_tab_metronome ()
             this, SLOT(slot_metro_record_buss(int))
         );
     }
+
+    /*
+     * combobox_metro_thru_buss
+     */
+
+//  const clockslist & opm = output_port_map();
+//  mastermidibus * mmb = perf().master_bus();
+    out = ui->combobox_metro_thru_buss;
+    out->clear();
+    if (not_nullptr(mmb))
+    {
+        int thrubus = int(rc().metro_settings().thru_buss());
+        int buses = opm.active() ? opm.count() : mmb->get_num_out_buses() ;
+        for (int bus = 0; bus < buses; ++bus)
+        {
+            e_clock ec;
+            std::string busname;
+            if (perf().ui_get_clock(bussbyte(bus), ec, busname))
+            {
+                bool enabled = ec != e_clock::disabled;
+                out->addItem(qt(busname));
+                enable_combobox_item(out, bus, enabled);
+            }
+        }
+        ui->combobox_metro_buss->setCurrentIndex(thrubus);
+        connect
+        (
+            ui->combobox_metro_buss, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(slot_metro_thru_buss(int))
+        );
+    }
+
+    /*
+     * combobox_metro_thru_channel
+     */
+
+    repopulate_thru_channel_menu(int(rc().metro_settings().thru_buss()));
 }
 
 void
@@ -945,6 +982,44 @@ qseditoptions::repopulate_channel_menu (int buss)
     (
         ui->combobox_metro_channel, SIGNAL(currentIndexChanged(int)),
         this, SLOT(slot_metro_channel(int))
+    );
+}
+
+void
+qseditoptions::repopulate_thru_channel_menu (int buss)
+{
+    disconnect
+    (
+        ui->combobox_metro_thru_channel, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(slot_metro_thru_channel(int))
+    );
+    ui->combobox_metro_thru_channel->clear();
+    for (int channel = 0; channel < c_midichannel_max; ++channel)
+    {
+        char b[4];                                      /* 2 digits or less */
+        snprintf(b, sizeof b, "%2d", channel + 1);      /* user-style no.   */
+        std::string name = std::string(b);
+        std::string s = usr().instrument_name(buss, channel);
+        if (! s.empty())
+        {
+            name += " [";
+            name += s;
+            name += "]";
+        }
+
+        QString combo_text(qt(name));
+        ui->combobox_metro_channel->insertItem(channel, combo_text);
+    }
+
+    int ch = rc().metro_settings().thru_channel();
+    if (is_null_channel(ch))
+        ch = c_midichannel_max;
+
+    ui->combobox_metro_thru_channel->setCurrentIndex(ch);
+    connect
+    (
+        ui->combobox_metro_thru_channel, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(slot_metro_thru_channel(int))
     );
 }
 
@@ -1167,6 +1242,29 @@ qseditoptions::slot_metro_record_buss (int index)
     {
         rc().metro_settings().recording_buss(midibyte(index));
         modify_metronome(false);                    /* no reload button */
+    }
+}
+
+void
+qseditoptions::slot_metro_thru_buss (int index)
+{
+    int b = int(rc().metro_settings().thru_buss());
+    if (index != b)
+    {
+        rc().metro_settings().thru_buss(midibyte(index));
+        repopulate_thru_channel_menu(int(rc().metro_settings().thru_buss()));
+        modify_metronome();
+    }
+}
+
+void
+qseditoptions::slot_metro_thru_channel (int index)
+{
+    int c = int(rc().metro_settings().thru_channel());
+    if (index != c)
+    {
+        rc().metro_settings().thru_channel(midibyte(index));
+        modify_metronome();
     }
 }
 

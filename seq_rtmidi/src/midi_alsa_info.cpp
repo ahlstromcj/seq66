@@ -633,6 +633,13 @@ midi_alsa_info::show_event (snd_seq_event_t * ev, const char * tag)
  *
  *  We will add more special events here as we find them.
  *
+ * VMPK:
+ *
+ *      This ALSA-based application is weird and causes weird behavior.
+ *      Running it, letting Seq66 auto-connect, then hitting a piano key in
+ *      VMPK, causes a Seq66 message "input FIFO overrun".  Later, VMPK
+ *      crashes.
+ *
  * \todo
  *      Also, we need to consider using the new remcount return code to loop
  *      on receiving events as long as we are getting them.
@@ -662,7 +669,7 @@ midi_alsa_info::api_get_midi_event (event * inev)
         }
         else if (remcount == -ENOSPC)
         {
-            errprint("input FIFO overrun");
+            errprint("input FIFO overrun");             /* see VMPK note    */
         }
         else
             errprint("snd_seq_event_input() failure");

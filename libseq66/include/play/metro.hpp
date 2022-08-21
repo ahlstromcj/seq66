@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-16
+ * \updates       2022-08-18
  * \license       GNU GPLv2 or above
  *
  *  The metro is a sequence with a special configuration.  It can be added
@@ -73,6 +73,14 @@ private:
      */
 
     bussbyte m_recording_buss;
+
+    /**
+     *  Provides the desired MIDI buss and channel to send the background
+     *  recording events out to be heard.
+     */
+
+    bussbyte m_thru_buss;
+    midibyte m_thru_channel;
 
     /**
      *  Provides the desired time-signature of the metronome.
@@ -166,6 +174,16 @@ public:
     bussbyte recording_buss () const
     {
         return m_recording_buss;
+    }
+
+    bussbyte thru_buss () const
+    {
+        return m_thru_buss;
+    }
+
+    midibyte thru_channel () const
+    {
+        return m_thru_channel;
     }
 
     int beats_per_bar () const
@@ -271,6 +289,18 @@ public:
     {
         if (! is_null_buss(b))
             m_recording_buss = bussbyte(b);
+    }
+
+    void thru_buss (int b)
+    {
+        if (! is_null_buss(b))
+            m_thru_buss = bussbyte(b);
+    }
+
+    void thru_channel (int ch)
+    {
+        if (is_good_channel(ch))
+            m_thru_channel = midibyte(ch);
     }
 
     void beats_per_bar (int bpb)

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-16
+ * \updates       2022-08-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -97,6 +97,7 @@ private:
     void show_button (QDialogButtonBox::StandardButton bcode, bool show);
     void enable_reload_button (bool flag);
     void repopulate_channel_menu (int buss);
+    void repopulate_thru_channel_menu (int buss);
     void modify_rc ();
     void modify_metronome (bool enablereload = true);
     void modify_ctrl ();
@@ -232,6 +233,8 @@ private slots:
     void slot_metro_recording ();
     void slot_metro_recording_measures ();
     void slot_metro_record_buss (int index);
+    void slot_metro_thru_buss (int index);
+    void slot_metro_thru_channel (int index);
     void slot_metro_reload ();
     void okay ();
     void cancel ();

@@ -1325,6 +1325,9 @@ performer::install_recorder ()
 {
     if (bool(m_recorder))
     {
+#if defined SEQ66_PLATFORM_DEBUG
+        printf("[-----] Recorder already exists\n");
+#endif
         return true;
     }
 
@@ -1336,7 +1339,12 @@ performer::install_recorder ()
         result = m_recorder->initialize(this);     /* make settings & mute  */
         if (result)
         {
-            // Maybe not needed // // result = play_set().add(m_recorder);
+            /*
+             * Not needed: result = play_set().add(m_recorder);
+             */
+#if defined SEQ66_PLATFORM_DEBUG
+            printf("[-----] Installed recorder\n");
+#endif
         }
         else
             remove_recorder();
@@ -1356,6 +1364,9 @@ performer::remove_recorder ()
 {
     if (not_nullptr(m_recorder))
     {
+#if defined SEQ66_PLATFORM_DEBUG
+        printf("[-----] Removed recorder\n");
+#endif
         delete m_recorder;
         m_recorder = nullptr;
     }
@@ -1380,6 +1391,8 @@ performer::finish_recorder ()
                 ;
             (void) info_message(os.str());
             m_recorder->uninitialize();
+
+            // INVESTIGATE:  Can cause segfault??
             notify_sequence_change(seqno, change::recreate);
         }
         else
@@ -1388,7 +1401,12 @@ performer::finish_recorder ()
         m_recorder = nullptr;                           /* nullify          */
     }
     else
+    {
+#if defined SEQ66_PLATFORM_DEBUG
+        printf("[-----] No background events recorded\n");
+#endif
         remove_recorder();
+    }
 
     return result;
 }
@@ -1441,6 +1459,8 @@ performer::finish_count_in ()
     if (result)
     {
         auto_stop();                        /* halt playback                */
+//      stop_playing();                     /* halt playback                */
+//      is_pattern_playing(false);
         set_tick(0);
         arm_metronome();
         m_play_set_storage.clear();         /* don't keep it around         */
@@ -4420,6 +4440,11 @@ performer::auto_stop ()
     {
         stop_playing();
         is_pattern_playing(false);
+
+        /*
+         * Is problematic because metronome count-in calls auto_stop().
+         * (void) finish_recorder();
+         */
     }
 }
 

@@ -568,6 +568,10 @@ rcfile::parse ()
         rc().metro_settings().recording_buss(temp);
         temp = get_integer(file, tag, "recording-measures");
         rc().metro_settings().recording_measures(temp);
+        temp = get_integer(file, tag, "thru-buss");
+        rc().metro_settings().thru_buss(temp);
+        temp = get_integer(file, tag, "thru-channel");
+        rc().metro_settings().thru_channel(temp);
     }
     tag = "[interaction-method]";
     flag = get_boolean(file, tag, "snap-split");
@@ -1033,6 +1037,11 @@ rcfile::write ()
     (
         file, "recording-measures",
         int(rc().metro_settings().recording_measures())
+    );
+    write_integer(file, "thru-buss", int(rc().metro_settings().thru_buss()));
+    write_integer
+    (
+        file, "thru-channel", int(rc().metro_settings().thru_channel())
     );
 
     /*

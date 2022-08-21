@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-17
+ * \updates       2022-08-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -52,6 +52,9 @@ namespace seq66
 metrosettings::metrosettings () :
     m_buss                  (0),
     m_channel               (9),            /* MIDI channel 10, drums   */
+    m_recording_buss        (0),
+    m_thru_buss             (0),
+    m_thru_channel          (0),
     m_beats_per_bar         (4),
     m_beat_width            (4),
     m_main_patch            (0),            /* Standard drum kit        */
@@ -338,7 +341,7 @@ recorder::initialize (performer * p)
         int ppq = p->ppqn();                        /* p->get_ppqn()        */
         int bw = settings().beat_width();           /* get_beat_width()     */
         int increment = pulses_per_beat(ppq, bw);
-        bussbyte buss = settings().recording_buss();;
+        bussbyte buss = settings().thru_buss();     /* recording_buss()     */
         if (settings().initialize(increment))
         {
             /*
@@ -347,6 +350,7 @@ recorder::initialize (performer * p)
              * quantize, or tighten).
              */
 
+            midibyte channel = settings().thru_channel();
             bool quantize = usr().record_mode() == recordmode::quantize;
             bool tighten = usr().record_mode() == recordmode::tighten;
             bool overwrite = usr().grid_record_style() == recordstyle::overwrite;
@@ -355,15 +359,18 @@ recorder::initialize (performer * p)
             seq_number(sequence::recorder());       /* magic recorder seq   */
             set_name("Background Recording");
             set_midi_bus(buss);
-            free_channel(true);
+            free_channel(true);                     /* keep recorded chan   */
             set_overwrite_recording(overwrite);
             oneshot_recording(oneshot);
             set_quantized_recording(quantize);
             set_tightened_recording(tighten);
             set_recording(true);                    /* see banner notes     */
+            set_thru(true);
+            set_midi_channel(channel);
             if (expand || settings().expand_recording())
+            {
                 expanded_recording(true);
-
+            }
             armed(false);
             unmodify();                             /* not part of song     */
         }

@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2022-07-18
+dnl \update        2022-08-21
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -21,7 +21,7 @@ dnl ---------------------------------------------------------------------------
 
 AC_PREREQ([2.69])
 AC_REVISION($Revision: 0.96$)
-AC_INIT([Seq66], [0.98.11], [ahlstromcj@gmail.com])
+AC_INIT([Seq66], [0.99.0], [ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
@@ -95,7 +95,7 @@ dnl Set up version information for this project.
 SEQ66_API_MAJOR="0"
 AC_SUBST([SEQ66_API_MAJOR])
 
-SEQ66_API_MINOR="98"
+SEQ66_API_MINOR="99"
 AC_SUBST([SEQ66_API_MINOR])
 
 SEQ66_API_PATCH="0"
@@ -119,7 +119,7 @@ dnl 1.b. Set up the version strings.  The primary version string of interest
 dnl      is SEQ66_API_VERSION.
 
 SEQ66_API_VERSION="$SEQ66_API_MAJOR.$SEQ66_API_MINOR"
-AC_DEFINE(API_VERSION, ["0.98"], [Seq66 API version])
+AC_DEFINE(API_VERSION, ["0.99"], [Seq66 API version])
 AC_SUBST([API_VERSION])
 
 dnl 1.c. Report the version information in the progress output.
@@ -480,11 +480,9 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2022-07-18"
-
-#define API_VERSION "0.98"
-
-#define VERSION "0.98.11"
+#define VERSION_DATE_SHORT "2022-08-21"
+#define API_VERSION "0.99"
+#define VERSION "0.99.0"
 
 )
 
