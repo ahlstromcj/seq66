@@ -337,6 +337,7 @@ am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
+am_have_qt_qmexe = @am_have_qt_qmexe@
 ax_pthread_config = @ax_pthread_config@
 bindir = @bindir@
 build = @build@
