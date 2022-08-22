@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-08-17
+% \update      2022-08-22
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -152,7 +152,9 @@
    A feature from user \textsl{stazed} allows the pattern to expand
    indefinitely while the user inputs MIDI from a controller, via the
    \textbf{Expand} option of the \textbf{Loop Record Type}.
-   This works best in \textbf{Live} mode.
+   This works in \textbf{Live} mode or \textbf{Song} mode.
+   The pattern is not extended until events come in.
+   Thus, the pattern is only as long as the last measure when a note comes in.
 
 %  See \sectionref{subsec:pattern_editor_bottom} below.
 

@@ -2003,12 +2003,12 @@ Seq66 exits.</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>21</x>
          <y>241</y>
-         <width>508</width>
+         <width>535</width>
          <height>105</height>
         </rect>
        </property>
@@ -2017,6 +2017,12 @@ Seq66 exits.</string>
          <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,4,1,2">
           <item>
            <widget class="QLabel" name="label_metro_buss">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>28</height>
+             </size>
+            </property>
             <property name="font">
              <font>
               <weight>75</weight>
@@ -2055,6 +2061,9 @@ Seq66 exits.</string>
             <property name="text">
              <string>Channel</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
            </widget>
           </item>
           <item>
@@ -2079,6 +2088,12 @@ Seq66 exits.</string>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
            <widget class="QLabel" name="label_record_bus">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>28</height>
+             </size>
+            </property>
             <property name="font">
              <font>
               <weight>75</weight>
@@ -2125,6 +2140,12 @@ Seq66 exits.</string>
          <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,4,1,2">
           <item>
            <widget class="QLabel" name="label_metro_thru_buss">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>28</height>
+             </size>
+            </property>
             <property name="font">
              <font>
               <weight>75</weight>
@@ -2163,10 +2184,26 @@ Seq66 exits.</string>
             <property name="text">
              <string>Channel</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="combobox_metro_thru_channel"/>
+           <widget class="QComboBox" name="combobox_metro_thru_channel">
+            <property name="minimumSize">
+             <size>
+              <width>64</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>64</width>
+              <height>28</height>
+             </size>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>

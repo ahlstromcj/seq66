@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-18
+ * \updates       2022-08-22
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -739,7 +739,7 @@ qseditoptions::setup_tab_metronome ()
     );
 
     float metrofrac = rc().metro_settings().main_note_fraction();
-    QString qmetrofrac = qt(std::to_string(metrofrac));
+    QString qmetrofrac = qt(double_to_string(metrofrac, 3));
     ui->lineedit_metro_main_fraction->setText(qmetrofrac);
     connect
     (
@@ -771,7 +771,7 @@ qseditoptions::setup_tab_metronome ()
         this, SLOT(slot_metro_sub_velocity())
     );
     metrofrac = rc().metro_settings().sub_note_fraction();
-    qmetrofrac = qt(std::to_string(metrofrac));
+    qmetrofrac = qt(double_to_string(metrofrac, 3));
     ui->lineedit_metro_sub_fraction->setText(qmetrofrac);
     connect
     (
@@ -913,8 +913,6 @@ qseditoptions::setup_tab_metronome ()
      * combobox_metro_thru_buss
      */
 
-//  const clockslist & opm = output_port_map();
-//  mastermidibus * mmb = perf().master_bus();
     out = ui->combobox_metro_thru_buss;
     out->clear();
     if (not_nullptr(mmb))
@@ -975,7 +973,7 @@ qseditoptions::repopulate_channel_menu (int buss)
 
     int ch = rc().metro_settings().channel();
     if (is_null_channel(ch))
-        ch = c_midichannel_max;
+        ch = 0;
 
     ui->combobox_metro_channel->setCurrentIndex(ch);
     connect
@@ -1008,12 +1006,12 @@ qseditoptions::repopulate_thru_channel_menu (int buss)
         }
 
         QString combo_text(qt(name));
-        ui->combobox_metro_channel->insertItem(channel, combo_text);
+        ui->combobox_metro_thru_channel->insertItem(channel, combo_text);
     }
 
     int ch = rc().metro_settings().thru_channel();
     if (is_null_channel(ch))
-        ch = c_midichannel_max;
+        ch = 0;
 
     ui->combobox_metro_thru_channel->setCurrentIndex(ch);
     connect

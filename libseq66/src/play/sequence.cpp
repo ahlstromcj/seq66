@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-08-20
+ * \updates       2022-08-22
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3388,8 +3388,8 @@ sequence::stream_event (event & ev)
         }
 
         /*
-         *  ca 2022-08-19
          *  If we are in expand mode, we do not want to wrap the timestamp.
+         *  Expansion will occur only here, when an event is received.
          */
 
         if (expanded_recording())

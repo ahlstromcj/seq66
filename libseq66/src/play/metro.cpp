@@ -369,6 +369,14 @@ recorder::initialize (performer * p)
             set_midi_channel(channel);
             if (expand || settings().expand_recording())
             {
+                /*
+                 *  The record-style is only a run-time status of a pattern,
+                 *  and here it should apply only to the background recording;
+                 *  This setting is a run-time global setting:
+                 *
+                 * usr().grid_record_style(recordstyle::expand);
+                 */
+
                 expanded_recording(true);
             }
             armed(false);
@@ -381,7 +389,7 @@ recorder::initialize (performer * p)
 bool
 recorder::uninitialize ()
 {
-    set_recording(false);
+    set_recording(false);               /* also clears expanded rec, etc.   */
 
     /*
      * Probably want the user to remember to modify these settings.

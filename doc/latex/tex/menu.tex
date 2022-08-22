@@ -1234,17 +1234,29 @@
 
    \itempar{MIDI Buss}{metronome!buss}
    This value selects the output MIDI device to use to play the metronome.
+   It \textsl{must} be enabled in the \textbf{MIDI Clock} list.
 
    \itempar{Channel}{metronome!channel}
-   This value selects the channe to use to play the metronome.
+   This value selects the channel to use to play the metronome.
 
    \itempar{Record Buss}{recorder!buss}
    \index{background recorder}
    This value selects the input device to use to record events into the
    background pattern.
+   Note that this device \textsl{must} be enabled in the \textbf{MIDI Input}
+   buss list.
+
+   \itempar{MIDI Buss}{record!thru buss}
+   This value selects the output MIDI device to use to play the incoming
+   background record notes.  Otherwise they will not be heard.
+   It \textsl{must} be enabled in the \textbf{MIDI Clock} list.
+
+   \itempar{Thru Channel}{recorder!thru channel}
+   This value selects the channel to use to play the recorded notes as
+   they come in.
 
    We still have some more work to do to refine the metronome, the
-   background recorder, and their configuration.
+   background recorder, and their configuration, pending user input.
 
 \paragraph{Menu / Edit / Preferences / Session}
 \label{paragraph:menu_edit_preferences_session}
