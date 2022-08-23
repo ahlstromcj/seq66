@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-08-22
+ * \updates       2022-08-23
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3421,7 +3421,12 @@ sequence::stream_event (event & ev)
                     if (m_notes_on > 0)
                         --m_notes_on;
 
-                    if (oneshot_recording() && m_notes_on == 0)
+                    /*
+                     * For issue #97, don't need one-shot recording to allow
+                     * this: if (oneshot_recording() && m_notes_on == 0)
+                     */
+
+                    if (m_notes_on == 0)
                     {
                         if (mod_last_tick() < snap() / 2)
                         {
@@ -3438,12 +3443,22 @@ sequence::stream_event (event & ev)
                 }
                 else if (ev.is_note_on())
                 {
-                    if (m_last_tick < get_length())
+                    /*
+                     * For issue #97, check the last time-stamp only when
+                     * one-shot is in force.  This allows normal Seq24
+                     * looping-back when the end is reached.
+                     */
+
+                    bool add = true;
+                    if (oneshot_recording())
+                        add = m_last_tick < get_length();
+
+                    if (add)
                     {
                         if (m_rec_vol != usr().preserve_velocity())
                             ev.note_velocity(m_rec_vol);    /* keep veloc.  */
 
-                        ev.set_timestamp(mod_last_tick());
+                        ev.set_timestamp(mod_last_tick());  /* loop back    */
                         if (auto_step_reset() && m_step_count == 0)
                             m_last_tick = 0;
 
@@ -3463,16 +3478,14 @@ sequence::stream_event (event & ev)
             }
         }
         if (m_thru)
-        {
-            put_event_on_bus(ev);                       /* removed locking  */
-        }
+            put_event_on_bus(ev);
 
         /*
          * We don't need to link note events until a note-off comes in.
          */
 
         if (ev.is_note_off())
-            link_new();                                 /* removed locking  */
+            link_new();
 
         if (quantizing_or_tightening() && perf()->is_pattern_playing())
         {

@@ -67,12 +67,12 @@
 
    \begin{itemize}
       \item Some of the keystrokes are hard-wired, such as 
-         "arrow" keys (for controlling play-lists), "page up/down" keys, or
-         the "zoom" keys.
+         "arrow" keys (for controlling play-lists), "page up/down" keys,
+         the "zoom" keys, and some of the "Ctrl" keys.
       \item \textsl{Seq66} has appropriated the
          \index{keys!shift} Shift key so that a a Shift-left-click on a pattern
          slot opens up the corresponding set (based on pattern number)
-         in an external live grid.
+         in an external live grid, and a Ctrl-left-click requests a new pattern.
          \index{auto-shift}
          For the group-learn feature, the \texttt{Shift} key is 
          automatically enabled, using an "auto-shift" feature.
@@ -86,19 +86,20 @@
    \texttt{[keyboard-control]}.
    We won't attempt to cover every key-control item,
    just the categories.  Some items might be discussed in other parts
-   of this manual. Remember that key and MIDI control have been consolidated.
+   of this manual. Remember that most keys have been consolidated with
+   the MIDI controls.
    Also remember that the 'ctrl' file contains comments and an orderly layout
    to make it easier to understand and to edit.
 
    \index{pause}
    An additional key definition is shown for the pause key.
    By default, the pause key is the period
-   ("\texttt{.}."), but that can be changed.
+   ("\texttt{.}."), but that can be changed in the 'ctrl' file.
 
    \index{pattern edit}
    A goal of \textsl{Seq66} is being able to edit a pattern using mainly the
    computer keyboard.
-   \textsl{Seq66} supports two modifier keys.
+   \textsl{Seq66} supports two pattern-slot modifier keys.
    The first modifier key causes the usual pattern-toggle key (hot-key) for a
    given slot to instead bring up the pattern editor.  By default, this key is
    the equals ("\texttt{=}") key.
@@ -143,8 +144,8 @@
    a pattern means to ready it for playback upon the next repeat
    of a pattern.  A pattern can be armed immediately with a hot-key,
    or it can be queued to play back the next time the pattern repeats.
-   A pattern can be queued by holding the queue key (defined in
-   \textbf{File / Options / Keyboard / queue}) and pressing a pattern-slot
+   A pattern can be queued by holding the queue key (defined in the 'ctrl'
+   file) and pressing a pattern-slot
    hot-key.  Instead of the pattern turning on
    immediately, it turns on at the next repeat of the pattern.
    The default key is the "\texttt{o}" key.
@@ -209,7 +210,7 @@
    configured Learn key (the "el", "\texttt{l}" key by default,
    the hard-wired \texttt{Ctrl-L} key, or the "\textbf{L}"
    button in the user-interface.
-   Then pressing one of the mute group keys
+   Then pressing one of the mute group keys (\textsl{lower case} version)
    will save the currently-playing pattern slots into the corresponding mute
    group.
    \index{auto-shift}
@@ -219,7 +220,8 @@
    \texttt{Shift} activated.
 
    Note that, once in learn-mode, there is no way to cancel learn-mode
-   except by selecting an illegal mute-group keystroke.
+   except by selecting a mute-group keystroke or toggling the
+   \textbf{Learn} ("L") button.
    Also see \sectionref{sec:mutes_master}.
 
 %  TO BE FIXED
@@ -258,7 +260,7 @@
    \index{toggle JACK}
    \index{JACK toggle}
    The \textsl{JACK mode} is set via the
-   \textbf{File / Options / JACK / JACK Connect} or 
+   \textbf{Edit / Preferences / JACK / JACK Connect} or 
    \textbf{JACK Disconnect} buttons.
    This keystroke will toggle between JACK connect and JACK disconnect.
    The \textbf{Song Editor} will also have a \textbf{JACK} button.

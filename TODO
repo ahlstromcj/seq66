@@ -1,24 +1,6 @@
 TO DO for Seq66 0.99.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-08-21
-
-Hot:
-
-    x   Issue #90: seq66 does not recognize some changes for the save entry in
-        the file menu.  Also needs to set modify asterisk.
-        -   Fix pattern. Needs a way to allow user to back out more easily.
-        -   LFO. Reset needs to undo modify, but only with no modification
-            already in place.
-    -   Issue #92 Segfault when recording to a 32 beat pattern.
-        2021-02-16 or issue #85. Still need to duplicate.
-    -   Issue #95 Velocity screen does not fully refresh when scrolling 
-        left or right. Still need to duplicate.
-    -   Issue #96 MIDI learn (and wizard) for creating controller maps?
-        If we do this, it will be a separate application.  A lot of
-        potential issues in getting this right.
-    -   Issue #97 Investigate/resolve differences from Seq24.
-            Seq24: Input from a keyboard when not playing advances like one-shot
-            mode, but does not stop when looped back.
+2019-04-13 to 2022-08-23
 
 Pattern Editor, Main Window:
 
@@ -228,13 +210,15 @@ Others to Consider:
     pattern editor!  This occurs during the buss flush after the event is
     sent.  Does not seem to be due to the MIDI thru ALSA port.
 
-EXTANT ISSUES:
+ISSUES:
 
 #1  JACK Metadata MIDINAM support.  LV2 MIDNAM has been around for a
     while. There has been discussion on #lad, and, now JACK 2 has metadata
     implemented, Carla has started offering that MIDNAM information as
     metadata on the midi-in port for a connecting sequencer to use.
-    STATUS: Not yet started.  Much study needed. A low priority.
+    STATUS: Will push off to version 2
+
+#2  Closed.
 
 #3  Open loop Pattern Editor window.
     On mouse wheel scroll event we expect the piano-roll and notes sheet to
@@ -246,44 +230,49 @@ EXTANT ISSUES:
     this issue might be to some pass child scrolling up to the qscrollmaster
     class.
 
+#4-11 Closed.
+
+#12 Note rendering problem
+    STATUS: Need to investigate.  See GitHub for the video.
+
 #16 Ableton Live transport support?
     Go to this issue in Github to see the thread.
+    STATUS: Will push off to version 2, if it is worth doing. At least the
+    protocol is "open".
+
+#17 Connect MIDI devices by name
+    STATUS: Not an issue, fixed by the portmap feature.
 
 #18 Mute Group does not toggle
-    Also I have noticed that when I activate a mute group I am not able to
-    activate patterns that do not belong to the activated mute group. It is
-    normal?
-    STATUS: I want to double-check this one.  This may now be fixed via
-    fixes for issue #49.
+    STATUS: Fixed.
+
+#19-23 Closed.
 
 #24 Release notes in release tag message?
-    I would like to add seq66 to https://libreav.org/updates
-    Could I request that the release change notes are used in the release
-    message? Then they could be syndicated via the releases.atom.
-    Either using the release description box in the Create Release feature on
-    GitHub (which can accept markdown) or with something like git tag -a v0.4
-    -m "$(cat RELNOTES.md)" (which GH does not detect markdown from).
-    Might it be possible to edit
-    (https://github.com/ahlstromcj/seq66/releases) to pop the release notes
-    in?  It's just that it's time sensitive as GitHub has [malformed
-    releases.atom feeds] (https://github.com/isaacs/github/issues/1892) that
-    only have an updated  date not a published date, so any change to the
-    release details will change the date in the feed that is used by
-    libreav.org.
-    STATUS: Not sure this is worth doing. Do not know about "atom".
+    STATUS: Will try to create a GitHub release using the "hub" program and
+    the RELNOTES.md file.
 
-#29 Play patterns from different sets at the same time
-    STATUS: Provisional support in 0.91.3.  See Edit / Preferences / Play /
-    Sets Mode.
+#25-36 Closed.
 
 #37 Song editor scrolling?
     STATUS: To be investigated.
+
+#38-39 Closed.
 
 #40 NSM: seq66 in a new session should provide a blank project
     Currently it imports the previously used MIDI file.
     STATUS: If an existing HOME configuration exists, it is copied to the new
     session directory.  This is by design.  If you want a new configuration,
     then move or hide the HOME configuration.
+    STATUS: Fixed.
+
+#41 NSM: hide seq66 on closing window, don't exit?
+    STATUS: Fixed.
+
+#42 Closed.
+
+#43 Extended MIDI Format / Type?
+    STATUS: Fixed in documentation.
 
 #44 "Record live sequence changes" functionality
     Currently the "record live sequence changes" only adds patterns into the
@@ -299,8 +288,13 @@ EXTANT ISSUES:
     so it seems like this should already be possible. Thoughts?
     STATUS: to examine.
 
+#45 Closed.
+
 #46 JACK port groups / order?
-    STATUS: to examine.
+    STATUS: To examine.
+
+#47 change key map
+    STATUS: Fixed for now.
 
 #48 JACK-midi self connections
     With NSM and [manual ports] enabled, inputs ports are not created when I
@@ -327,8 +321,32 @@ EXTANT ISSUES:
 #49 Unable to unmute loops after group learn.
     STATUS: Done.  Needs more testing.
 
+#50-51 Closed.
+
+#52 Community / discussion place?
+    STATUS: Partly supported now by using github.io, but much more to be done.
+
 #53 MIDI CC sequencing
-    STATUS: See the thread on GitHub.
+    STATUS: See the thread on GitHub. Verify that CCs can be used.
+
+#54 Qt5 include errors
+    STATUS: Fixed (probably)
+
+#55-61 Closed.
+
+#62 PipeWire compatibility
+    STATUS: Will push off to version 2
+
+#63 Option to rotate pattern numbers?
+    STATUS: It works for the live grid.
+    New issue: Verify that it works in other settings.
+
+#64 NSM: UI show up after restarting the app
+    STATUS: Fixed.
+
+#65 Control pattern length via MIDI CC
+    STATUS: Nothing done yet, though the Expand option for recording works
+    better now.
 
 #66 Toggle MIDI Recording via CC message
     
@@ -352,13 +370,14 @@ EXTANT ISSUES:
     set up a control that cycles through the options or set up a control that
     instantly activates a specific mode.
 
+    STATUS: Partly fulfilled.
+
+#67 Closed.
+
 #68 MIDI controller initialization step
     The Launchpad Pro MK3 needs to be put in a special programmer mode before
-    it can  work nicely with Seq66.  This is done by sending a SysEx message
-    that is documented in the programmers manual.  There could be other
-    controllers with similar needs as well.  It would be nice if there would
-    be a way to send a list of MIDI messages to the   controller on the
-    application startup and a separate list on shutdown.
+    it can  work nicely with Seq66.
+    STATUS: Fixed, some follow-on suggestions:
 
     Actually I have been thinking about the mode transition logic and it would
     be nice to have support for temporary transition.
@@ -394,6 +413,92 @@ EXTANT ISSUES:
     functions to a single button.  It would also fit nicely with a Launchpad
     where apart from the grid buttons, there are "mode" buttons on the side.
 
+#69-74 Closed.
+
+#75 JACK_METADATA_ICON_NAME icon?
+    STATUS: Need to finalize and close this one out.
+
+#76 MIDI Tempo Sync & Real Time Messages Not Behaving As Expected When SEQ66
+    is a MIDI Slave
+    STATUS: Some fix(es) made, needs more testing.
+
+#77 For building without JACK
+    STATUS: Will push off to version 2
+
+#78 Closed.
+
+#79 NSM: starts always with a blank pattern
+    STATUS: Fixed.
+
+#80 Launchpad MIDI on input bus
+    ..., in order to use my Launchpad Mini with Seq66, it needs to be both
+    checked in the "Input Buses" list and selected in the "MIDI Control
+    Input", which works fine except that it means that the MIDI messages from
+    the Launchpad also end up getting recorded into any loop that I try to
+    record.  Particularly arming/disarming loops via the Launchpad in "record"
+    mode has a tendency to write an unwanted note into the loop.
+    STATUS: Fixed in 0.98.7!
+
+#81 Closed.
+
+#82 Tabs don't scale to window
+    STATUS: Considering going through all the GUIs and setting the max width
+    and height to 999 for all buttons and tabs.
+
+#83 MIDI Input not possible: "[midi-input]: in-bus data line error"
+    STATUS: Seems to be fixed. Will spawn another new issue out the
+    
+    New Issue: "Get control/display ports to work without auto-connect".
+    This involves being able to set up the controls after the fact without
+    being stymied by start-up errors. An ALSA issue.
+
+#84 Closed.
+
+#85 Segfaults and extra windows
+    STATUS: Fixed.
+
+#86 The mousewheel doesn't works to scroll or zoom in Editor.
+    STATUS: Still have not thought up a way around this with the
+    scroll-master.
+
+#87-88 Closed.
+
+#89 MIDI control output queue events
+    STATUS: Fixed.
+
+#90 seq66 does not recognize some changes for the save entry in the file menu.
+    STATUS: Ongoing improvements.
+    Fix pattern is DONE, but needs a way to allow user to back out more easily.
+    LFO: Reset needs to undo modify, if no modification already in place.
+
+#91 No colors in live view with xfce/xubuntu
+    STATUS: Mitigated by adding a --locale option to handling numbers.
+
+#92 Segfault when recording to a 32 beat pattern.
+    STATUS: See 2021-02-16 or issue #85. Still need to duplicate.
+
+#93 The window of a deleted pattern remains open
+    STATUS: Fixed.
+
+#94 Long song cannot be scrolled to the right
+    STATUS: Mitigated by adding an expansion button to the Song editor.
+
+#95 Velocity screen does not fully refresh when scrolling left or right.
+    STATUS: Still need to duplicate.
+
+#96 MIDI learn (and wizard) for creating controller maps?
+    STATUS: If we do this, it will be a separate application.  A lot of
+    potential issues in getting this right.
+    STATUS: Will push off to version 2
+
+#97 Investigate/resolve differences from Seq24.
+    Seq24: Input from a keyboard when not playing advances like one-shot
+    mode, but does not stop when looped back as in Seq66.
+    STATUS: Fixed.
+
+#98 Feature requests (metronome and background recording).
+    STATUS: Basically done.
+
 PATTERNS:
 
     -   Set pattern editor focus to grid at start unless it is a new one.
@@ -407,5 +512,37 @@ Tons of TO DOs in performer!
     qperf GUIs from qperfbase.  Actually, they both clear, only if clicked on.
 
     Implement solo, FF, rewind, and many more.  Investigate!!!
+
+To close as fixed (and remove from TODO):
+
+    17 Connect MIDI devices by name
+    18 Mute Group does not toggle
+    24 Release notes in release tag message?
+    40 NSM: seq66 in a new session should provide a blank project
+    41 NSM: hide seq66 on closing window, do not exit?
+    43 Extended MIDI Format / Type?
+    47 change key map
+    54 Qt5 include errors
+    63 Option to rotate pattern numbers?
+    64 NSM: UI show up after restarting the app
+    68 MIDI controller initialization step
+    79 NSM: starts always with a blank pattern
+    80 Launchpad MIDI on input bus
+    83 MIDI Input not possible: "[midi-input]: in-bus data line error"
+    85 Segfaults and extra windows
+    89 MIDI control output queue events
+    91 No colors in live view with xfce/xubuntu
+    93 The window of a deleted pattern remains open
+    94 Added Song editor expansion button
+    97 Seq24 differences
+    98 Metronome and background recording
+
+To close as pushed off to version 2:
+
+     1 JACK Metadata MIDINAM support
+    62 PipeWire compatibility
+    68 MIDI controller initialization step
+    77 For building without JACK
+    96 MIDI Learn/Wizard as separate app
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

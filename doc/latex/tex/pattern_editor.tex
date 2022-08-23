@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-08-22
+% \update      2022-08-23
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -661,20 +661,27 @@
    \index{keys!ctrl-end} \texttt{Ctrl-End} key,
 
    \index{keys!arrows}
-   If no notes are selected, the arrow keys will move the piano row up, down,
-   left, and right.
+   \textsl{If no notes are selected}, the arrow keys will move the piano row
+   up, down, left, and right.
+   Otherwise, selected notes are moved.
+
    \index{keys!hjkl}
    In addition, the "vi" keys \texttt{h}, \texttt{j}, \texttt{k}, and
    \texttt{l} will act like the arrow keys. This can be convenient, especially
    if the arrow-keys are unwieldly.  For example, the
    \textsl{Microsoft Arc} keyboard puts all four arrows on one button!
 
+   \index{keys!ctrl-arrows}
+   \textsl{If no notes are selected}, then \texttt{Ctrl-Left-Arrow}
+   and \texttt{Ctrl-Right-Arrow} will move the progress bar to the left or
+   right by one snap value.
+
    \index{step}
    \index{note step}
    With the note-step feature, if one paints notes with the mouse,
    the note position advances with each click.
    If one paints notes via an external MIDI keyboard, the notes are painted and
-   advanced.
+   the note position advances.
    To preview notes entered via a MIDI device, click the
    \textbf{MIDI Thru} button to activate so that they will be
    passed to the sound generator or software synthesizer.
@@ -916,11 +923,7 @@
                the note using a keystroke.
          \end{itemize}
       \item \index{pattern editor!deselect notes} \index{selection!deselect}
-         \textbf{Deselect Notes}.
-         To deselect the notes, click somewhere else in the piano roll, and the
-         notes should change back to white.  There is no way to deselect a
-         single note, with, say, a \texttt{Shift-click} or
-         \texttt{Ctrl-click} action.
+         \textbf{Deselect Notes}
    \end{itemize}
 
    \index{note!selection box}
@@ -1479,11 +1482,12 @@
       \item \textbf{Expand}.
          \index{expand}
          \index{recording!expand}
-         Once the end of the loop is near, whether or
-         not any notes are being input, another measure is added to the length
+         Expansion operates when playing and recording.
+         Once the end of the loop is near, when
+         notes are being input, another measure is added to the length
          of the loop.
-         This continues indefinitely, whether or not any notes are
-         being played/recorded.
+         This continues indefinitely, whenever any notes are
+         being played and recorded.
          \index{recording!expand issue}
          This works best in \textbf{Live} mode.
          In \textbf{Song} mode, only one measure is added each time play is
