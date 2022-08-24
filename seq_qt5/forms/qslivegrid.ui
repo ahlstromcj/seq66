@@ -107,12 +107,15 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>16777215</width>
+         <width>324</width>
          <height>28</height>
         </size>
        </property>
        <property name="text">
-        <string>Set</string>
+        <string>Set  </string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
@@ -121,7 +124,13 @@
        <property name="minimumSize">
         <size>
          <width>184</width>
-         <height>0</height>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>999</width>
+         <height>28</height>
         </size>
        </property>
        <property name="toolTip">
@@ -133,7 +142,7 @@
       <widget class="QLabel" name="labelPlaylistSong">
        <property name="minimumSize">
         <size>
-         <width>32</width>
+         <width>400</width>
          <height>28</height>
         </size>
        </property>
@@ -142,6 +151,12 @@
          <width>800</width>
          <height>28</height>
         </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
        </property>
        <property name="text">
         <string/>
@@ -158,7 +173,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>36</width>
+         <width>164</width>
          <height>28</height>
         </size>
        </property>
@@ -166,7 +181,7 @@
         <string>Activates/deactivates background recording.</string>
        </property>
        <property name="text">
-        <string>AR</string>
+        <string>BG</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -183,7 +198,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>36</width>
+         <width>164</width>
          <height>28</height>
         </size>
        </property>
@@ -214,8 +229,8 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>120</width>
-         <height>16777215</height>
+         <width>164</width>
+         <height>28</height>
         </size>
        </property>
        <property name="toolTip">
@@ -223,25 +238,6 @@
        </property>
        <property name="currentText">
         <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Line" name="line">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="baseSize">
-        <size>
-         <width>0</width>
-         <height>20</height>
-        </size>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
@@ -255,8 +251,8 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>80</width>
-         <height>16777215</height>
+         <width>164</width>
+         <height>28</height>
         </size>
        </property>
        <property name="toolTip">
@@ -277,15 +273,15 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>80</width>
-         <height>16777215</height>
+         <width>164</width>
+         <height>28</height>
         </size>
        </property>
        <property name="toolTip">
         <string>Cycles through the recording styles.</string>
        </property>
        <property name="text">
-        <string>Mode</string>
+        <string>LMode</string>
        </property>
       </widget>
      </item>
@@ -299,8 +295,8 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>80</width>
-         <height>16777215</height>
+         <width>164</width>
+         <height>28</height>
         </size>
        </property>
        <property name="toolTip">

@@ -6,120 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>827</width>
-    <height>448</height>
+    <width>837</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Frame</string>
   </property>
-  <widget class="QTableWidget" name="tablePlaylistSections">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>110</y>
-     <width>271</width>
-     <height>225</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>Shows existing play-lists read from the play-list file.</string>
-   </property>
-   <property name="statusTip">
-    <string/>
-   </property>
-   <property name="sizeAdjustPolicy">
-    <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
-   </property>
-   <property name="alternatingRowColors">
-    <bool>true</bool>
-   </property>
-   <property name="rowCount">
-    <number>16</number>
-   </property>
-   <property name="columnCount">
-    <number>2</number>
-   </property>
-   <attribute name="horizontalHeaderStretchLastSection">
-    <bool>true</bool>
-   </attribute>
-   <attribute name="verticalHeaderDefaultSectionSize">
-    <number>21</number>
-   </attribute>
-   <attribute name="verticalHeaderMinimumSectionSize">
-    <number>18</number>
-   </attribute>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <column/>
-   <column/>
-  </widget>
-  <widget class="QTableWidget" name="tablePlaylistSongs">
-   <property name="geometry">
-    <rect>
-     <x>420</x>
-     <y>110</y>
-     <width>271</width>
-     <height>225</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>Shows MIDI tunes in the currently-selected play-list.</string>
-   </property>
-   <property name="sizeAdjustPolicy">
-    <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
-   </property>
-   <property name="alternatingRowColors">
-    <bool>true</bool>
-   </property>
-   <property name="rowCount">
-    <number>16</number>
-   </property>
-   <property name="columnCount">
-    <number>2</number>
-   </property>
-   <attribute name="verticalHeaderDefaultSectionSize">
-    <number>21</number>
-   </attribute>
-   <attribute name="verticalHeaderMinimumSectionSize">
-    <number>18</number>
-   </attribute>
-   <attribute name="verticalHeaderStretchLastSection">
-    <bool>true</bool>
-   </attribute>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <column/>
-   <column/>
-  </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
@@ -175,640 +68,733 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_1">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>300</x>
-     <y>140</y>
-     <width>101</width>
-     <height>175</height>
+     <x>20</x>
+     <y>344</y>
+     <width>789</width>
+     <height>29</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <property name="spacing">
-     <number>12</number>
-    </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <widget class="QPushButton" name="buttonPlaylistLoad">
+     <widget class="QLabel" name="midiBaseDirLabel">
+      <property name="text">
+       <string>MIDI Base Directory</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="midiBaseDirText">
       <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="toolTip">
+       <string>Base directory holding all files in all playlists.
+Read-only.</string>
+      </property>
+      <property name="text">
+       <string>None</string>
+      </property>
+      <property name="readOnly">
        <bool>true</bool>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Opens a dialog to select and open a play-list file.</string>
-      </property>
-      <property name="text">
-       <string>Load List</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="buttonPlaylistAdd">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Adds the play-list defined by the 3 text entries above to the
-current play-list set.</string>
-      </property>
-      <property name="text">
-       <string>Add List</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="buttonPlaylistModify">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Update the current list with the 3 editable fields above.</string>
-      </property>
-      <property name="text">
-       <string>Modify List</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="buttonPlaylistRemove">
-      <property name="minimumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>To do: Removes the selected playlist from this play-list set.</string>
-      </property>
-      <property name="text">
-       <string>Delete List</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="buttonPlaylistSave">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Saves the current state of the play-lists file, including song
-information.</string>
-      </property>
-      <property name="text">
-       <string>Save List</string>
       </property>
      </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_2">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>710</x>
-     <y>140</y>
-     <width>111</width>
-     <height>175</height>
+     <x>20</x>
+     <y>376</y>
+     <width>789</width>
+     <height>29</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <property name="spacing">
-     <number>12</number>
-    </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0">
     <item>
-     <widget class="QPushButton" name="buttonSongLoad">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Opens a file dialog to select a MIDI song to add to the current
-play-list; the Directory and Current values above are updated
-automatically.  In Non Session Manager mode, the file is
-imported.</string>
-      </property>
+     <widget class="QLabel" name="label">
       <property name="text">
-       <string>Load Song</string>
+       <string>Current Song Path</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="buttonSongAdd">
+     <widget class="QLineEdit" name="currentSongPath">
       <property name="enabled">
        <bool>false</bool>
       </property>
-      <property name="minimumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
       <property name="toolTip">
-       <string>Adds the song information specified above to the current
-play-list section; it is easier to use Load Song.</string>
+       <string>Full path to the currently-selected song.
+Read-only.</string>
       </property>
       <property name="text">
-       <string>Add Song</string>
+       <string>None</string>
       </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="buttonSongModify">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Modifies the information about the currently-selected song
-in the 3 entry fields above.</string>
-      </property>
-      <property name="text">
-       <string>Modify Song</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="buttonSongRemove">
-      <property name="enabled">
+      <property name="readOnly">
        <bool>true</bool>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Removes the current song from the current play-list;
-the song is not deleted from the hard drive.</string>
-      </property>
-      <property name="text">
-       <string>Delete Song</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="checkBoxPlaylistActive">
-      <property name="minimumSize">
-       <size>
-        <width>98</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>98</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>If checked, the loaded play-list file is active.  The lists and 
-songs will be loaded when the arrow keys are pressed or 
-the configured MIDI control comes in.</string>
-      </property>
-      <property name="text">
-       <string>Lists Active</string>
       </property>
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QLabel" name="midiBaseDirLabel">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>344</y>
-     <width>131</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>MIDI Base Directory</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="midiBaseDirText">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>160</x>
-     <y>344</y>
-     <width>631</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>Base directory holding all files in all playlists.
-Read-only.</string>
-   </property>
-   <property name="text">
-    <string>None</string>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>376</y>
-     <width>131</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Current Song Path</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="currentSongPath">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>160</x>
-     <y>376</y>
-     <width>631</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>Full path to the currently-selected song.
-Read-only.</string>
-   </property>
-   <property name="text">
-    <string>None</string>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
-   </property>
   </widget>
   <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>30</y>
-     <width>811</width>
-     <height>79</height>
+     <width>813</width>
+     <height>309</height>
     </rect>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0" colspan="3">
-     <widget class="QLabel" name="labelListSection">
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Playlist Selection</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="3" colspan="3">
-     <widget class="QLabel" name="labelListSong">
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Song Selection</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="labelPlaylistDirectory">
-      <property name="font">
-       <font>
-        <italic>true</italic>
-       </font>
-      </property>
-      <property name="text">
-       <string>Directory:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1" rowspan="2" colspan="2">
-     <widget class="QLineEdit" name="editPlaylistPath">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Default song directory for the current play-list
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0" colspan="3">
+       <widget class="QLabel" name="labelListSection">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Playlist Selection</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3" colspan="3">
+       <widget class="QLabel" name="labelListSong">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Song Selection</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelPlaylistDirectory">
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Directory:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" rowspan="2" colspan="2">
+       <widget class="QLineEdit" name="editPlaylistPath">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Default song directory for the current play-list
 section. Edit to enable Add List and Modify List,
 (but not in NSM mode.</string>
-      </property>
-      <property name="text">
-       <string>None</string>
-      </property>
-      <property name="readOnly">
-       <bool>false</bool>
-      </property>
-      <property name="clearButtonEnabled">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="3">
-     <widget class="QLabel" name="labelSongDirectory">
-      <property name="font">
-       <font>
-        <italic>true</italic>
-       </font>
-      </property>
-      <property name="text">
-       <string>Directory:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="4" rowspan="2" colspan="2">
-     <widget class="QLineEdit" name="editSongPath">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Directory where the selected
+        </property>
+        <property name="text">
+         <string>None</string>
+        </property>
+        <property name="readOnly">
+         <bool>false</bool>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QLabel" name="labelSongDirectory">
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Directory:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4" rowspan="2" colspan="2">
+       <widget class="QLineEdit" name="editSongPath">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Directory where the selected
 song is stored. Read-only.  Use the Load Song button
 to select an existing song.</string>
-      </property>
-      <property name="text">
-       <string>None</string>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-      <property name="clearButtonEnabled">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="6">
-     <widget class="QLabel" name="labelDirEmbedded">
-      <property name="toolTip">
-       <string>If set to an asterisk, this directory is part of the song's file-name.</string>
-      </property>
-      <property name="text">
-       <string extracomment="Indicates if directory is embedded in the file-name.">*</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="6" rowspan="2">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>*</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="labelCurrentPlaylist">
-      <property name="font">
-       <font>
-        <italic>true</italic>
-       </font>
-      </property>
-      <property name="text">
-       <string>Current:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QLineEdit" name="editPlaylistNumber">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>MIDI control number for the selected 
+        </property>
+        <property name="text">
+         <string>None</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="6">
+       <widget class="QLabel" name="labelDirEmbedded">
+        <property name="toolTip">
+         <string>If set to an asterisk, this directory is part of the song's file-name.</string>
+        </property>
+        <property name="text">
+         <string extracomment="Indicates if directory is embedded in the file-name.">*</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="6" rowspan="2">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>*</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="labelCurrentPlaylist">
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Current:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="editPlaylistNumber">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>MIDI control number for the selected 
 play-list section. Edit to enable Add List and Modify List.
     </string>
-      </property>
-      <property name="text">
-       <string>000</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="2">
-     <widget class="QLineEdit" name="editPlaylistName">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Name of the currently-selected play-list section.
+        </property>
+        <property name="text">
+         <string>000</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QLineEdit" name="editPlaylistName">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Name of the currently-selected play-list section.
 Edit to enable Add List and Modify List.</string>
-      </property>
-      <property name="text">
-       <string>None</string>
-      </property>
-      <property name="clearButtonEnabled">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="3">
-     <widget class="QLabel" name="labelCurrentSong">
-      <property name="font">
-       <font>
-        <italic>true</italic>
-       </font>
-      </property>
-      <property name="text">
-       <string>Current:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="4">
-     <widget class="QLineEdit" name="editSongNumber">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>MIDI control number for the
+        </property>
+        <property name="text">
+         <string>None</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3">
+       <widget class="QLabel" name="labelCurrentSong">
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Current:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="4">
+       <widget class="QLineEdit" name="editSongNumber">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>MIDI control number for the
 selected song. Edit to enable the Add Song
 and Modify Song buttons.  This is the only item that
 can be edited for a song.</string>
-      </property>
-      <property name="text">
-       <string>000</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="5">
-     <widget class="QLineEdit" name="editSongFilename">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Base file-name of the currently selected song. 
+        </property>
+        <property name="text">
+         <string>000</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="5">
+       <widget class="QLineEdit" name="editSongFilename">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Base file-name of the currently selected song. 
 Read-only.  Use the Load Song button to modify this entry.</string>
-      </property>
-      <property name="text">
-       <string>None</string>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-      <property name="clearButtonEnabled">
-       <bool>true</bool>
-      </property>
-     </widget>
+        </property>
+        <property name="text">
+         <string>None</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QTableWidget" name="tablePlaylistSections">
+        <property name="toolTip">
+         <string>Shows existing play-lists read from the play-list file.</string>
+        </property>
+        <property name="statusTip">
+         <string/>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+        </property>
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+        <property name="rowCount">
+         <number>16</number>
+        </property>
+        <property name="columnCount">
+         <number>2</number>
+        </property>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderMinimumSectionSize">
+         <number>18</number>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>21</number>
+        </attribute>
+        <attribute name="verticalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <column/>
+        <column/>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="buttonPlaylistLoad">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Opens a dialog to select and open a play-list file.</string>
+          </property>
+          <property name="text">
+           <string>Load List</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="buttonPlaylistAdd">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Adds the play-list defined by the 3 text entries above to the
+current play-list set.</string>
+          </property>
+          <property name="text">
+           <string>Add List</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="buttonPlaylistModify">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Update the current list with the 3 editable fields above.</string>
+          </property>
+          <property name="text">
+           <string>Modify List</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="buttonPlaylistRemove">
+          <property name="minimumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>To do: Removes the selected playlist from this play-list set.</string>
+          </property>
+          <property name="text">
+           <string>Delete List</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="buttonPlaylistSave">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Saves the current state of the play-lists file, including song
+information.</string>
+          </property>
+          <property name="text">
+           <string>Save List</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QTableWidget" name="tablePlaylistSongs">
+        <property name="toolTip">
+         <string>Shows MIDI tunes in the currently-selected play-list.</string>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+        </property>
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+        <property name="rowCount">
+         <number>16</number>
+        </property>
+        <property name="columnCount">
+         <number>2</number>
+        </property>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderMinimumSectionSize">
+         <number>18</number>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>21</number>
+        </attribute>
+        <attribute name="verticalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <column/>
+        <column/>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="buttonSongLoad">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Opens a file dialog to select a MIDI song to add to the current
+play-list; the Directory and Current values above are updated
+automatically.  In Non Session Manager mode, the file is
+imported.</string>
+          </property>
+          <property name="text">
+           <string>Load Song</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="buttonSongAdd">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Adds the song information specified above to the current
+play-list section; it is easier to use Load Song.</string>
+          </property>
+          <property name="text">
+           <string>Add Song</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="buttonSongModify">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Modifies the information about the currently-selected song
+in the 3 entry fields above.</string>
+          </property>
+          <property name="text">
+           <string>Modify Song</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="buttonSongRemove">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>92</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Removes the current song from the current play-list;
+the song is not deleted from the hard drive.</string>
+          </property>
+          <property name="text">
+           <string>Delete Song</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBoxPlaylistActive">
+          <property name="minimumSize">
+           <size>
+            <width>98</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>98</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>If checked, the loaded play-list file is active.  The lists and 
+songs will be loaded when the arrow keys are pressed or 
+the configured MIDI control comes in.</string>
+          </property>
+          <property name="text">
+           <string>Lists Active</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>

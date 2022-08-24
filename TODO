@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-08-23
+2019-04-13 to 2022-08-24
 
 Pattern Editor, Main Window:
 
@@ -442,8 +442,9 @@ ISSUES:
 #81 Closed.
 
 #82 Tabs don't scale to window
-    STATUS: Considering going through all the GUIs and setting the max width
-    and height to 999 for all buttons and tabs.
+    STATUS: Fixed for the main window, pattern editor, and song editor.
+    Am finding it impossible to get the playlist, sets, mutes, and session
+    tabs to expand vertically; have not yet looked a horizontally for those.
 
 #83 MIDI Input not possible: "[midi-input]: in-bus data line error"
     STATUS: Seems to be fixed. Will spawn another new issue out the

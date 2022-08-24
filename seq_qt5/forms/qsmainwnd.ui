@@ -1152,7 +1152,7 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>16</width>
+          <width>999</width>
           <height>28</height>
          </size>
         </property>
@@ -1177,7 +1177,7 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>52</width>
+          <width>999</width>
           <height>28</height>
          </size>
         </property>
@@ -1211,7 +1211,7 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>52</width>
+          <width>999</width>
           <height>28</height>
          </size>
         </property>
@@ -1242,13 +1242,13 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="minimumSize">
          <size>
-          <width>48</width>
+          <width>72</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>48</width>
+          <width>999</width>
           <height>28</height>
          </size>
         </property>
@@ -1259,39 +1259,23 @@ matter what sets-mode is in force. </string>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
+        <property name="toolTip">
+         <string>Shows the current PPQN</string>
+        </property>
         <property name="text">
          <string>192</string>
         </property>
         <property name="maxLength">
-         <number>5</number>
+         <number>11</number>
         </property>
         <property name="frame">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
         <property name="readOnly">
          <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_2">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>48</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>PPQN</string>
         </property>
        </widget>
       </item>
@@ -1305,7 +1289,7 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>56</width>
+          <width>999</width>
           <height>28</height>
          </size>
         </property>
@@ -1329,7 +1313,7 @@ matter what sets-mode is in force. </string>
           </property>
           <property name="maximumSize">
            <size>
-            <width>48</width>
+            <width>999</width>
             <height>28</height>
            </size>
           </property>

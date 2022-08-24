@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2022-08-16
+ * \updates       2022-08-23
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -180,9 +180,11 @@ qslivegrid::qslivegrid
             ui->buttonActivate, SIGNAL(clicked(bool)),
             this, SLOT(slot_activate_bank(bool))
         );
+        ui->labelPlaylistSong->hide();
         ui->buttonLoopMode->hide();
         ui->buttonRecordMode->hide();
         ui->buttonMetronome->hide();
+        ui->buttonBackgroundRecord->hide();
     }
     else
     {

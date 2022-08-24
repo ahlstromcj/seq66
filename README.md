@@ -1,7 +1,7 @@
 # README for Seq66 0.99.0
 
 Chris Ahlstrom
-2015-09-10 to 2022-08-22
+2015-09-10 to 2022-08-24
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -96,6 +96,7 @@ Windows, and using a conventional source tarball.
             within reasonable limits.  Also added a "--locale" option so that
             the user can, for example, set the Seq66 global locale to
             "en_US.UTF-8".
+        *   Issue #82 fixed for main window and the song & pattern editors only.
         *   Issue #89 fixed. The MIDI control display not quite reflecting the
             status of each pattern, especially during queuing.
         *   Issue #90 improvements. Save was not always enabled. Surely some

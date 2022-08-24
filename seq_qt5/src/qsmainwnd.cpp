@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-15
+ * \updates       2022-08-24
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -285,17 +285,16 @@ qsmainwnd::qsmainwnd
 
     (void) set_ppqn_combo();
 
-    int ppqn = cb_perf().ppqn();
-    std::string pstring = std::to_string(ppqn);
-    set_ppqn_text(pstring);
     if (m_shrunken)
     {
         ui->lineEditPpqn->hide();
-        ui->label_2->hide();        /* Hide the "PPQN" label too */
     }
     else
     {
+        int ppqn = cb_perf().ppqn();
+        std::string pstring = std::to_string(ppqn);
         ui->lineEditPpqn->setReadOnly(true);
+        set_ppqn_text(pstring);
         connect
         (
             ui->cmb_ppqn, SIGNAL(currentTextChanged(const QString &)),
@@ -886,8 +885,9 @@ qsmainwnd::enable_bus_item (int bus, bool enabled)
 void
 qsmainwnd::set_ppqn_text (const std::string & text)
 {
-    QString ppqnstring = qt(text);
-    ui->lineEditPpqn->setText(ppqnstring);
+    std::string t = text + " PPQN";
+    QString p = qt(t);
+    ui->lineEditPpqn->setText(p);
 }
 
 /**
