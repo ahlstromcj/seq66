@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2019-11-25
- * \updates       2021-03-14
+ * \updates       2022-08-25
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -46,9 +46,11 @@ namespace seq66
 midicontrolbase::midicontrolbase (const std::string & name) :
     m_name              (name),
     m_buss              (null_buss()),       /* 0xFF */
-    m_true_buss         (null_buss()),       /* 0xFF */
+    m_true_buss         (null_buss()),
+    m_configured_buss   (null_buss()),
     m_is_blank          (true),
     m_is_enabled        (false),
+    m_configure_enabled (false),
     m_offset            (0),
     m_rows              (0),
     m_columns           (0)

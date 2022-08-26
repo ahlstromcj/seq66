@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2021-09-12
+ * \updates       2022-08-26
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -242,16 +242,18 @@ protected:
     int m_drop_y;
 
     /**
-     *  Current x coordinate of pointer. Could move it to a base class.
+     *  Current x coordinate of pointer.
      */
 
     int m_current_x;
+    int m_last_snap_x;
 
     /**
-     *  Current y coordinate of pointer. Could move it to a base class.
+     *  Current y coordinate of pointer.
      */
 
     int m_current_y;
+    int m_last_snap_y;
 
     /**
      *  Provides the location of the progress bar.
@@ -769,25 +771,15 @@ protected:
 
 protected:
 
-    // void set_scroll_x (int x);
-    // void set_scroll_y (int y);
-
     void snap_x (int & x);
-
-    void snap_current_x ()
-    {
-        snap_x(m_current_x);
-    }
+    bool snap_current_x ();
 
     void snap_y (int & y)
     {
         y -= y % m_unit_height;             /* not c_names_y    */
     }
 
-    void snap_current_y ()
-    {
-        snap_y(m_current_y);
-    }
+    bool snap_current_y ();
 
     void swap_x ()
     {

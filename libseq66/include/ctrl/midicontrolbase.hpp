@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2019-11-25
- * \updates       2021-12-15
+ * \updates       2022-08-25
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -84,6 +84,15 @@ private:
     bussbyte m_true_buss;
 
     /**
+     *  Holds the original value read in from the 'ctrl' file.
+     *  It can be modified by an edit in Edit / Preferences, but
+     *  actually using it may need to be belayed (e.g. until application
+     *  exit completes.
+     */
+
+    bussbyte m_configured_buss;
+
+    /**
      *  Indicates that this container is "empty".
      */
 
@@ -94,6 +103,15 @@ private:
      */
 
     bool m_is_enabled;
+
+    /**
+     *  Holds the original value read in from the 'ctrl' file.
+     *  It can be modified by an edit in Edit / Preferences, but
+     *  actually using it may need to be belayed (e.g. until application
+     *  exit completes.
+     */
+
+    bool m_configure_enabled;
 
     /**
      *  Offset provides a way to utilize a different portion of a controller
@@ -140,6 +158,11 @@ public:
         return m_true_buss;
     }
 
+    bussbyte configured_buss () const
+    {
+        return m_configured_buss;
+    }
+
     bool is_blank () const
     {
         return m_is_blank;
@@ -153,6 +176,11 @@ public:
     bool is_disabled () const
     {
         return ! is_enabled();
+    }
+
+    bool configure_enabled () const
+    {
+        return m_configure_enabled;
     }
 
     int offset () const
@@ -185,6 +213,11 @@ protected:
             is_enabled(false);
     }
 
+    void configured_buss (bussbyte b)
+    {
+        m_configured_buss = b;
+    }
+
     void is_blank (bool flag)
     {
         m_is_blank = flag;
@@ -193,6 +226,11 @@ protected:
     void is_enabled (bool flag)
     {
         m_is_enabled = flag;
+    }
+
+    void configure_enabled (bool flag)
+    {
+        m_configure_enabled = flag;
     }
 
     void offset (int o)

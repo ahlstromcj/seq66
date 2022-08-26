@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-07-27
+ * \updates       2022-08-25
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -1121,14 +1121,26 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
 /**
  *  Locale-related functions.
+ *
+ *  The MingW compiler implementation may have a bug, as this fails in our
+ *  Windows 10 virtual machine development system.
  */
 
 void
 cmdlineopts::show_locale ()
 {
-    std::locale loc {""};               /* get the user's preferred locale  */
-    std::string msg = loc.name();
-    status_message("Locale", msg);
+    try
+    {
+        std::locale loc {""};           /* get the user's preferred locale  */
+        std::string msg = loc.name();
+        status_message("Locale", msg);
+    }
+    catch (const std::runtime_error &)
+    {
+        /*
+         * Can occur under Windows 10.
+         */
+    }
 }
 
 bool

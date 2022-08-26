@@ -1,7 +1,7 @@
 # README for Seq66 0.99.0
 
 Chris Ahlstrom
-2015-09-10 to 2022-08-24
+2015-09-10 to 2022-08-26
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -96,7 +96,8 @@ Windows, and using a conventional source tarball.
             within reasonable limits.  Also added a "--locale" option so that
             the user can, for example, set the Seq66 global locale to
             "en_US.UTF-8".
-        *   Issue #82 fixed for main window and the song & pattern editors only.
+        *   Issue #82 allows buttons and fields to expand better.
+            Fixed for main window and the song & pattern editors only.
         *   Issue #89 fixed. The MIDI control display not quite reflecting the
             status of each pattern, especially during queuing.
         *   Issue #90 improvements. Save was not always enabled. Surely some
@@ -116,15 +117,21 @@ Windows, and using a conventional source tarball.
             *   Added an initial metronome facility and 'rc' configuration.
             *   Metronome count-in added.
             *   Background automatic recording added.
-        *   Muted pattern slots show a short progress bar, to aid in the timing
-            of queuing.
-        *   Improved the handling of the MIDI 'ctrl' file and inactive states.
-        *   Tightened up pattern arming/disarming processing.
-        *   Implemented left/right arrow keys to move the selected trigger in
-            the song editor. Ctrl moves multiple triggers. Moving a trigger past
-            END moves END.
-        *   Improved keystroke movement of "L"/"R" markers in song and pattern
-            editor time bars.
+        *   Various fixes:
+            *   Muted pattern slots show a short progress bar, to aid in the
+                timing of queuing.
+            *   Improved the handling of the MIDI 'ctrl' file and control
+                states upon a restart.
+            *   Tightened up pattern arming/disarming processing.
+            *   Implemented left/right arrow keys to move the selected trigger
+                in the song editor. Ctrl moves multiple triggers. Moving a
+                trigger past END moves END.
+            *   Improved keystroke movement of "L"/"R" markers in song and
+                pattern editor time bars.
+            *   The global time signature is now applied to new patterns.
+            *   Added a try-catch to showing the locale.
+            *   Ctrl-Z removes all mouse-painted notes at once (like Seq24).
+                Single-note removal is macroed out.
     *   Version 0.98.10:
         *   Revisited issue #83, improved GUI editing of control/display
             automation.

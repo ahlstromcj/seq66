@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-08-16
+ * \updates       2022-08-26
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2568,9 +2568,15 @@ public:
     std::string pulses_to_time_string (midipulse tick) const;
 
     bool ui_set_input (bussbyte bus, bool active);
-    bool ui_get_input (bussbyte bus, bool & active, std::string & n) const;
+    bool ui_get_input
+    (
+        bussbyte bus, bool & active, std::string & n, bool statusshow = true
+    ) const;
     bool ui_set_clock (bussbyte bus, e_clock clocktype);
-    bool ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const;
+    bool ui_get_clock
+    (
+        bussbyte bus, e_clock & e, std::string & n, bool statusshow = true
+    ) const;
 
     void store_output_map ()
     {

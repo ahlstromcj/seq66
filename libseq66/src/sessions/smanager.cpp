@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2022-07-21
+ * \updates       2022-08-25
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -807,8 +807,6 @@ smanager::error_handling ()
 bool
 smanager::create (int argc, char * argv [])
 {
-    cmdlineopts::show_locale();
-
     bool result = main_settings(argc, argv);
     if (result)
     {
@@ -885,6 +883,8 @@ smanager::create (int argc, char * argv [])
              * TODO:  expose the error message to the user here
              */
         }
+        if (! is_help())
+            cmdlineopts::show_locale();
     }
     else
     {

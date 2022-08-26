@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2022-05-24
+:: \update      2022-08-25
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -218,6 +218,7 @@ copy %PROJECT_ROOT%\%DOC_DIR%\README %RELEASE_DIR%\%DOC_DIR%
 pushd %APP_DIR%
 cd
 echo 7z a -r %PROJECT_7ZIP% release\*
+del *.o
 7z a -r %PROJECT_7ZIP% release\*
 popd
 

@@ -1717,7 +1717,7 @@ Seq66 exits.</string>
       <attribute name="title">
        <string>&amp;Metronome</string>
       </attribute>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="metroLayoutWidget">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -1841,7 +1841,7 @@ Seq66 exits.</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="metroLayoutWidget2">
        <property name="geometry">
         <rect>
          <x>204</x>

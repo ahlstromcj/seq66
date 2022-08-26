@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-08-16
+ * \updates       2022-08-26
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -799,7 +799,10 @@ performer::reload_mute_groups (std::string & errmessage)
 }
 
 bool
-performer::ui_get_input (bussbyte bus, bool & active, std::string & n) const
+performer::ui_get_input
+(
+    bussbyte bus, bool & active, std::string & n, bool statusshow
+) const
 {
     const inputslist & ipm = input_port_map();
     bool disabled = false;
@@ -824,10 +827,13 @@ performer::ui_get_input (bussbyte bus, bool & active, std::string & n) const
     }
     if (! alias.empty())
     {
-        name += " (";
+        name += " '";
         name += alias;
-        name += ")";
+        name += "'";
     }
+    if (disabled && statusshow)
+        name += " (off)";
+
     n = name;
     return ! name.empty() && ! disabled;
 }
@@ -865,14 +871,17 @@ performer::ui_set_input (bussbyte bus, bool active)
 }
 
 bool
-performer::ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const
+performer::ui_get_clock
+(
+    bussbyte bus, e_clock & e, std::string & n, bool statusshow
+) const
 {
     const clockslist & opm = output_port_map();
     std::string name;
     std::string alias;
     if (opm.active())
     {
-        name = opm.get_name(bus);       // , rc().port_naming());
+        name = opm.get_name(bus);
         alias = opm.get_alias(bus, rc().port_naming());
         e = opm.get(bus);
     }
@@ -884,10 +893,13 @@ performer::ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const
     }
     if (! alias.empty())
     {
-        name += " (";
+        name += " '";
         name += alias;
-        name += ")";
+        name += "'";
     }
+    if ((e == e_clock::disabled) && statusshow)
+        name += " (off)";
+
     n = name;
     return ! name.empty();
 }

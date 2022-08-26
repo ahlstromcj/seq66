@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-08-23
+ * \updates       2022-08-26
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -5943,6 +5943,8 @@ sequence::set_parent (performer * p)
         else
             (void) set_midi_bus(buss_override);
 
+        set_beats_per_bar(p->get_beats_per_bar());
+        set_beat_width(p->get_beat_width());
         unmodify();                         /* for issue #90                */
     }
 }

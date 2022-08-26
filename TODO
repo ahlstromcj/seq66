@@ -1,23 +1,9 @@
 TO DO for Seq66 0.99.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-08-24
+2019-04-13 to 2022-08-26
 
-Pattern Editor, Main Window:
+Pattern Editor, Main Window, etc.:
 
-    -   Upon a button restart, the 'ctrl' file does not work.  Works fine
-        when stopped, then restarted manually.
-    -   Verify no bugs remaining in:
-        -   Pattern fix dialog.
-        -   File / Save handling. See above.
-    -   "Session: Save" can occur.  Annoying.
-    -   Investigate handling of global time-signature.
-        -   Save global time-signature to the user-file or the song?
-        -   Should it become the default time signature for a new pattern?
-    -   Note drawing undo:
-        -   Takes many ctrl-z to undo one note.
-        -   The event and data panes do not update.
-    -   Queueing shows "Queued", but not a grey progress box. Also verify
-        how MIDI display of queuing works.
     -   With a 12x12 grid, we need to:
         -   Shrink the font to about 1/2.
         -   Move the top 2 lines up almost 1 line.
@@ -26,14 +12,19 @@ Pattern Editor, Main Window:
     -   The main window, when the size changes, retains that size.
         How can we make this optional or prevent it?
     -   Verify setmapper/setmaster for odd set sizes.
-    -   Live note mapping?
+    -   Live grid: update the bank-name field with the new bank. Line 811.
+
+Ongoing efforts:
+
+    -   Verify no bugs remaining in:
+        -   Pattern fix dialog.
+        -   File / Save handling. See above.
+    -   "Session: Save" can occur.  Have not seen this lately.
 
 Windows:
 
     -   mastermidibase::activate() fails at m_outbus_array.initialize().
         Error initing port 1; it should be disabled?
-    -   Disable JACK UI elements in Windows builds (almost done).
-    -   The installer build include a *.o file!
     -   Change to creating a 64-bit installer and adjust the instructions.
     -   In the live grid, move the top text up 1 pixel.  Move the bottom text
         up 2 pixels. Maybe reduce the font size by 1. Also consist the for the
@@ -443,8 +434,12 @@ ISSUES:
 
 #82 Tabs don't scale to window
     STATUS: Fixed for the main window, pattern editor, and song editor.
-    Am finding it impossible to get the playlist, sets, mutes, and session
-    tabs to expand vertically; have not yet looked a horizontally for those.
+    Am finding it impossible to get the Events, Playlist, Sets, Mutes, and
+    Session tabs to expand vertically; have not yet looked a horizontally for
+    those. Weird behavior when trying to apply layouts to the whole frame in
+    the tabs.
+    STATUS: Will push off to version 2, and make those external QDialogs, I
+    think.
 
 #83 MIDI Input not possible: "[midi-input]: in-bus data line error"
     STATUS: Seems to be fixed. Will spawn another new issue out the
@@ -544,6 +539,18 @@ To close as pushed off to version 2:
     62 PipeWire compatibility
     68 MIDI controller initialization step
     77 For building without JACK
-    96 MIDI Learn/Wizard as separate app
+    82 Tabs do not scale to window
+    96 MIDI Learn/Wizard as separate (?) app
+
+Version 2 features:
+
+    -   Use Meson/Ninja as the build system.
+    -   See the issue noted above as "pushed off to version 2".
+    -   Port refresh in ALSA and JACK at a minimum.
+    -   Live note mapping?
+    -   Support for audio-clip patterns?
+    -   Add keyboard configuration to MIDI Learn/Wizard.
+    -   Move the Events, Playlist, Sets, and Mutes to a separate window
+        (the Preferences editor?).
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

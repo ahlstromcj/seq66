@@ -59,13 +59,6 @@
  *  Quit/Exit       quit()                  Normal Qt application closing
  *  Help            showqsabout()           Show Help About (version info)
  *                  showqsbuildinfo()       Show features of the build
- *
- * Removed:
- *
- *  We found a way to squeeze the much more functional qseqeditframe64 into
- *  the Edit tab, and so no longer need this version.
- *
- *      #include "qseqeditframe.hpp"    // Kepler34 version
  */
 
 #include <QErrorMessage>                /* QErrorMessage                    */
@@ -163,7 +156,7 @@ const std::string s_default_tune = "newtune.midi";
 
 static const int Tab_Live               =  0;
 static const int Tab_Song               =  1;
-static const int Tab_Edit               =  2;
+static const int Tab_Editor             =  2;
 static const int Tab_Events             =  3;
 static const int Tab_Playlist           =  4;
 static const int Tab_Set_Master         =  5;
@@ -2181,7 +2174,7 @@ qsmainwnd::load_editor (int seqid)
         );
         ui->EditTabLayout->addWidget(m_edit_frame);
         m_edit_frame->show();
-        ui->tabWidget->setCurrentIndex(Tab_Edit);
+        ui->tabWidget->setCurrentIndex(Tab_Editor);
     }
 }
 
@@ -2608,7 +2601,7 @@ qsmainwnd::tabWidgetClicked (int newindex)
     seq::number seqid = cb_perf().first_seq();      /* seq in playscreen?   */
     if (isnull)
     {
-        if (newindex == Tab_Edit)
+        if (newindex == Tab_Editor)
         {
             bool ignore = false;
             if (seqid == seq::unassigned())         /* no, make a new one   */

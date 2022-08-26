@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2022-08-08
+ * \updates       2022-08-26
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -250,17 +250,21 @@ midicontrolfile::parse_stream (std::ifstream & file)
     bool enabled = get_boolean(file, mctag, "midi-enabled");
     int offset = 0, rows = 0, columns = 0;
     result = parse_control_sizes(file, mctag, offset, rows, columns);
-    if (! result)
-        enabled = false;
-
-    if (enabled)
-        enabled = rc_ref().midi_control_active();       /* ca 2022-08-08    */
-
-    if (m_temp_midi_ctrl_in.initialize(buss, rows, columns))
+    if (result)
     {
-        m_temp_midi_ctrl_in.is_enabled(enabled);
-        m_temp_midi_ctrl_in.offset(offset);
+        if (enabled)
+            enabled = rc_ref().midi_control_active();
+
+        if (m_temp_midi_ctrl_in.initialize(buss, rows, columns))
+        {
+            m_temp_midi_ctrl_in.is_enabled(enabled);
+            m_temp_midi_ctrl_in.configure_enabled(enabled);
+            m_temp_midi_ctrl_in.offset(offset);
+            m_temp_midi_ctrl_in.configured_buss(buss);
+        }
     }
+    else
+        enabled = false;
 
     std::string layout = get_variable(file, mctag, "keyboard-layout");
     m_temp_key_controls.clear();
@@ -488,11 +492,13 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
 
     int offset = 0, rows = 0, columns = 0;
     result = parse_control_sizes(file, mctag, offset, rows, columns);
-    if (! result)
+    if (result)
+    {
+        if (enabled)
+            enabled = rc_ref().midi_control_active();
+    }
+    else
         enabled = false;
-
-    if (enabled)
-        enabled = rc_ref().midi_control_active();       /* ca 2022-08-08    */
 
     if (line_after(file, "[midi-control-out]"))
     {
@@ -506,7 +512,9 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         if (mco.initialize(buss, rows, columns))
         {
             mco.is_enabled(enabled);
+            mco.configure_enabled(enabled);
             mco.offset(offset);
+            mco.configured_buss(buss);
         }
         if (file_version_number() < 2)
         {
@@ -804,7 +812,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
     if (result)
     {
         const midicontrolin & mci = rc_ref().midi_control_in();
-        bussbyte bb = mci.nominal_buss();
+        bussbyte bb = mci.configured_buss();
         file <<
 "\n[midi-control-settings]\n\n"
 "# Input settings to control Seq66. 'control-buss' ranges from 0 to the highest\n"
@@ -831,7 +839,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         if (defaultcolumns == 0)
             defaultcolumns = usr().mainwnd_cols();
 
-        write_boolean(file, "midi-enabled", mci.is_enabled());
+        write_boolean(file, "midi-enabled", mci.configure_enabled());
         write_integer(file, "button-offset", mci.offset());
         write_integer(file, "button-rows", defaultrows);
         write_integer(file, "button-columns", defaultcolumns);
@@ -1010,7 +1018,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
 {
     /* const */ midicontrolout & mco = rc_ref().midi_control_out();
     int setsize = mco.screenset_size();
-    bussbyte bb = mco.nominal_buss();
+    bussbyte bb = mco.configured_buss();
     bool result = is_valid_buss(bb);            /* very light sanity check  */
     if (result)
     {
@@ -1025,7 +1033,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         file << "\n[midi-control-out-settings]\n\n";
         write_integer(file, "set-size", setsize);
         write_buss_info(file, true, "output-buss", bb);
-        write_boolean(file, "midi-enabled", mco.is_enabled());
+        write_boolean(file, "midi-enabled", mco.configure_enabled());
         write_integer(file, "button-offset", mco.offset());
         write_integer(file, "button-rows", mco.rows());
         write_integer(file, "button-columns", mco.columns());

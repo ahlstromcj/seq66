@@ -361,8 +361,7 @@ qseqeditframe64::qseqeditframe64
      *  Sequence Number Label
      */
 
-    std::string seqtext("#");
-    seqtext += std::to_string(track().seq_number());
+    std::string seqtext = std::to_string(track().seq_number());
     QString labeltext = qt(seqtext);
     ui->m_label_seqnumber->setText(labeltext);
 
@@ -578,9 +577,7 @@ qseqeditframe64::qseqeditframe64
     if (not_nullptr(mmb))
     {
         bussbyte seqbuss = m_edit_bus;  /* seq_pointer()->seq_midi_bus()    */
-        int buses = opm.active() ?
-            opm.count() : mmb->get_num_out_buses() ;
-
+        int buses = opm.active() ? opm.count() : mmb->get_num_out_buses() ;
         for (int bus = 0; bus < buses; ++bus)
         {
             e_clock ec;

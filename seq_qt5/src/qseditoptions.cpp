@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-22
+ * \updates       2022-08-26
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -255,8 +255,13 @@ qseditoptions::setup_tab_midi_clock ()
             }
         }
 
-        bool active = perf().midi_control_out().is_enabled();
-        int buss = perf().midi_control_out().nominal_buss();
+        /*
+         * bool active = perf().midi_control_out().is_enabled();
+         * int buss = perf().midi_control_out().nominal_buss();
+         */
+
+        bool active = perf().midi_control_out().configure_enabled();
+        int buss = perf().midi_control_out().configured_buss();
         out->setCurrentIndex(buss);
         connect
         (
@@ -395,8 +400,13 @@ qseditoptions::setup_tab_midi_input ()
             }
         }
 
-        bool active = perf().midi_control_in().is_enabled();
-        int buss = perf().midi_control_in().nominal_buss();
+        /*
+         * bool active = perf().midi_control_in().is_enabled();
+         * int buss = perf().midi_control_in().nominal_buss();
+         */
+
+        bool active = perf().midi_control_in().configure_enabled();
+        int buss = perf().midi_control_in().configured_buss();
         in->setCurrentIndex(buss);
         connect
         (
@@ -1991,12 +2001,14 @@ qseditoptions::sync_rc ()
     show_sets_mode(rc().sets_mode());
     show_start_mode(rc().get_song_start_mode());
 
+#if defined SEQ66_JACK_SUPPORT
     int rbid = perf().song_mode() ? playmode_button_song : playmode_button_live ;
     foreach (QAbstractButton * button, m_live_song_buttons->buttons())
     {
         int bid = m_live_song_buttons->id(button);
         button->setChecked(bid == rbid);
     }
+#endif
 
     /*
      * Sync all the settings for "UI Boolean Options.
@@ -2678,7 +2690,8 @@ qseditoptions::slot_ctrl_filename ()
         if (text != rc().midi_control_filename())
         {
             rc().midi_control_filename(text);
-            modify_rc();        // needed?  modify_ctrl();
+            modify_rc();
+            modify_ctrl();
         }
     }
 }
@@ -2746,39 +2759,76 @@ qseditoptions::slot_clock_start_modulo (int ticks)
 void
 qseditoptions::slot_output_bus (int index)
 {
-    int oldindex = perf().midi_control_out().nominal_buss() /* + 1 */;
+    int oldindex = perf().midi_control_out().configured_buss();
     if (index != oldindex)
     {
         bool enable = index >= 0;
         if (enable)
         {
-            perf().midi_control_out().is_enabled(enable);
-            perf().midi_control_out().nominal_buss(index /* - 1 */);
-            modify_ctrl();
+            /*
+             * Don't call is_enabled, as this will disable the control display
+             * at exit.
+             *
+             * perf().midi_control_out().is_enabled(enable);
+             * perf().midi_control_out().nominal_buss(index
+             *
+             * perf().midi_control_out().configure_enabled(true);
+             */
+
+            perf().midi_control_out().configured_buss(index);
+            rc().midi_control_active(true);
         }
+        modify_ctrl();
     }
 }
+
+/**
+ *  The issue here is that disabling the display MIDI means it won't
+ *  be acted on at exit/restart. We have rc().midi_control_active(), but
+ *  may need settings outside the midi_control_in/out classes for in and out
+ *  activity in the 'ctrl' file.
+ */
 
 void
 qseditoptions::slot_output_bus_enable ()
 {
     bool enable = ui->checkBoxMidiOutBuss->isChecked();
     modify_ctrl();
-    perf().midi_control_out().is_enabled(enable);
+
+    /*
+     * perf().midi_control_out().is_enabled(enable);
+     */
+
+    perf().midi_control_out().configure_enabled(enable);
 }
 
 void
 qseditoptions::slot_input_bus (int index)
 {
-    int oldindex = perf().midi_control_in().nominal_buss();
+    /*
+     * int oldindex = perf().midi_control_in().nominal_buss();
+     */
+
+    int oldindex = perf().midi_control_in().configured_buss();
     if (index != oldindex)
     {
         bool enable = index >= 0;
-        ui->checkBoxSaveCtrl->setChecked(true);
-        perf().midi_control_in().is_enabled(enable);
-        perf().midi_control_in().nominal_buss(index);
-        modify_ctrl();
+        if (enable)
+        {
+            ui->checkBoxSaveCtrl->setChecked(true);
+
+            /*
+             * perf().midi_control_in().is_enabled(enable);
+             * perf().midi_control_in().nominal_buss(index);
+             *
+             * perf().midi_control_in().configure_enabled(enable);
+             */
+
+            perf().midi_control_in().configured_buss(index);
+            rc().midi_control_active(true);
+        }
     }
+    modify_ctrl();
 }
 
 void
@@ -2786,7 +2836,12 @@ qseditoptions::slot_input_bus_enable ()
 {
     bool enable = ui->checkBoxMidiInBuss->isChecked();
     modify_ctrl();
-    perf().midi_control_in().is_enabled(enable);
+
+    /*
+     * perf().midi_control_in().is_enabled(enable);
+     */
+
+    perf().midi_control_in().configure_enabled(enable);
 }
 
 void

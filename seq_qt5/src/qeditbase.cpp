@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2022-07-28
+ * \updates       2022-08-26
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -100,7 +100,9 @@ qeditbase::qeditbase
     m_drop_x                (0),
     m_drop_y                (0),
     m_current_x             (0),
+    m_last_snap_x           (0),
     m_current_y             (0),
+    m_last_snap_y           (0),
     m_progress_x            (0),
     m_old_progress_x        (0),
     m_scroll_page           (0),
@@ -113,6 +115,30 @@ qeditbase::qeditbase
     m_total_height          (total_height)
 {
     // no other code needed
+}
+
+bool
+qeditbase::snap_current_x ()
+{
+    snap_x(m_current_x);
+
+    bool result = m_last_snap_x != m_current_x;
+    if (result)
+        m_last_snap_x = m_current_x;
+
+    return result;
+}
+
+bool
+qeditbase::snap_current_y ()
+{
+    snap_y(m_current_y);
+
+    bool result = m_last_snap_y != m_current_y;
+    if (result)
+        m_last_snap_y = m_current_y;
+
+    return result;
 }
 
 /**

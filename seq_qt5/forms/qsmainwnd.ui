@@ -450,6 +450,9 @@ It does not change Seq66's default PPQN.</string>
       <property name="currentIndex">
        <number>7</number>
       </property>
+      <property name="movable">
+       <bool>false</bool>
+      </property>
       <widget class="QWidget" name="LiveTab">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">

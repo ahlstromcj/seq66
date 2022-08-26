@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>837</width>
-    <height>650</height>
+    <height>425</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Frame</string>
   </property>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="fileLayoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -68,7 +68,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="baseDirLayoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -104,7 +104,7 @@ Read-only.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="pathLayoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -140,7 +140,7 @@ Read-only.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="selectionLayoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -449,7 +449,7 @@ Read-only.  Use the Load Song button to modify this entry.</string>
          <number>21</number>
         </attribute>
         <attribute name="verticalHeaderStretchLastSection">
-         <bool>true</bool>
+         <bool>false</bool>
         </attribute>
         <row/>
         <row/>
@@ -635,7 +635,7 @@ information.</string>
          <number>21</number>
         </attribute>
         <attribute name="verticalHeaderStretchLastSection">
-         <bool>true</bool>
+         <bool>false</bool>
         </attribute>
         <row/>
         <row/>

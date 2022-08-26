@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-03
+ * \updates       2022-08-26
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -884,10 +884,17 @@ qseqroll::add_painted_note (midipulse tick, int note)
 {
     bool result;
     int n = note_off_length();
+#if defined SEQ66_SINGLE_NOTE_UNDO
     if (m_chord > 0)
         result = track().push_add_chord(m_chord, tick, n, note);
     else
         result = track().push_add_note(tick, n, note, true /* paint */);
+#else
+    if (m_chord > 0)
+        result = track().add_chord(m_chord, tick, n, note);
+    else
+        result = track().add_painted_note(tick, n, note, true /* paint */);
+#endif
 
     if (result)
         set_dirty();
@@ -961,7 +968,12 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     tick_s, note, tick_s, note, selmode
                 );
                 if (would_select)
+                {
+#if ! defined SEQ66_SINGLE_NOTE_UNDO
+                    track().push_undo();
+#endif
                     (void) add_painted_note(tick_s, note);
+                }
             }
             else                                    /* we're selecting anew */
             {
@@ -1057,9 +1069,9 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
 {
     current_x(int(event->x()) - m_keypadding_x);
     current_y(event->y());
-    snap_current_y();
+    (void) snap_current_y();
     if (moving())
-        snap_current_x();
+        (void) snap_current_x();
 
     int delta_x = current_x() - drop_x();
     int delta_y = current_y() - drop_y();
@@ -1165,7 +1177,7 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
         moving_init(false);
         moving(true);
     }
-    snap_current_y();
+    (void) snap_current_y();
 
     int note;
     midipulse tick;
@@ -1174,13 +1186,15 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
     if (select_action())
     {
         if (drop_action())
-            snap_current_x();
+            (void) snap_current_x();
     }
     if (painting())
     {
-        snap_current_x();
-        convert_xy(current_x(), current_y(), tick, note);
-        (void) add_painted_note(tick, note);
+        if (snap_current_x())
+        {
+            convert_xy(current_x(), current_y(), tick, note);
+            (void) add_painted_note(tick, note);
+        }
     }
     set_dirty();
 }
@@ -1629,8 +1643,8 @@ qseqroll::set_adding (bool a)
 void
 qseqroll::start_paste ()
 {
-    snap_current_x();
-    snap_current_y();
+    (void) snap_current_x();
+    (void) snap_current_y();
     drop_x(current_x());
     drop_y(current_y());
     paste(true);

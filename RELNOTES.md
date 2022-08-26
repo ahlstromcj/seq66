@@ -1,12 +1,14 @@
-# Seq66 Release Notes 0.99.0 2022-08-21
+# Seq66 Release Notes 0.99.0 2022-08-26
 
 This file lists __major__ changes from version 9.98.0 to 0.99.0 (to catch up).
 
 ## Changes
 
 *   Version 0.99.0:
+    *   Issue #54. Updated ax_have_qt_min.m4 to detect qmake-qt5.
     *   Issue #78 revisited to tighten pattern box display.
     *   Added a --locale option.
+    *   Issue #82 allows buttons and fields to expand better in some tabs.
     *   Issue #89 fixed so that MIDI control display reflects queuing status.
     *   Issue #90 improvements so that Save is activated for changes.
     *   Issue #93 fixed. The window of a deleted pattern now closes.
@@ -19,6 +21,7 @@ This file lists __major__ changes from version 9.98.0 to 0.99.0 (to catch up).
     *   Issue #98.
         *   Added a metronome with count-in and 'rc' configuration.
         *   Background automatic recording added.
+    *   Various fixes, too numerous to call out here.
 *   Version 0.98.10:
     *   Revisited issue #83: [midi-input]: in-bus data line error, to improve
         GUI editing of automation port.

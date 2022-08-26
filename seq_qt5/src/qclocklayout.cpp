@@ -110,7 +110,7 @@ qclocklayout::setup_ui ()
 {
     std::string busname;
     e_clock clocking;
-    bool gotbussinfo = perf().ui_get_clock(bus(), clocking, busname);
+    bool gotbussinfo = perf().ui_get_clock(bus(), clocking, busname, false);
     if (gotbussinfo)
     {
         if (busname.length() > c_max_name_length)

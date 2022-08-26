@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>824</width>
-    <height>651</height>
+    <height>396</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,13 +25,13 @@
   <property name="frameShadow">
    <enum>QFrame::Plain</enum>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>0</y>
      <width>782</width>
-     <height>501</height>
+     <height>385</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -347,11 +347,11 @@ do not save them to the MIDI file.</string>
         <attribute name="verticalHeaderVisible">
          <bool>false</bool>
         </attribute>
-        <attribute name="verticalHeaderDefaultSectionSize">
-         <number>18</number>
-        </attribute>
         <attribute name="verticalHeaderMinimumSectionSize">
          <number>16</number>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>18</number>
         </attribute>
         <row/>
         <row/>
