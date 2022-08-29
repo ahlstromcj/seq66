@@ -1,17 +1,9 @@
 TO DO for Seq66 0.99.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-08-26
+2019-04-13 to 2022-08-29
 
 Pattern Editor, Main Window, etc.:
 
-    -   With a 12x12 grid, we need to:
-        -   Shrink the font to about 1/2.
-        -   Move the top 2 lines up almost 1 line.
-        -   Move the bottom 2 lines up almost 2 lines.
-        -   Proportional shrink the progress box.
-    -   The main window, when the size changes, retains that size.
-        How can we make this optional or prevent it?
-    -   Verify setmapper/setmaster for odd set sizes.
     -   Live grid: update the bank-name field with the new bank. Line 811.
 
 Ongoing efforts:
@@ -20,6 +12,7 @@ Ongoing efforts:
         -   Pattern fix dialog.
         -   File / Save handling. See above.
     -   "Session: Save" can occur.  Have not seen this lately.
+    -   Verify setmapper/setmaster for odd set sizes.
 
 Windows:
 
@@ -552,5 +545,8 @@ Version 2 features:
     -   Add keyboard configuration to MIDI Learn/Wizard.
     -   Move the Events, Playlist, Sets, and Mutes to a separate window
         (the Preferences editor?).
+    -   Make main menu hide-able.
+    -   Allow multiple instances of seq66.
+    -   Support more than one tune?
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

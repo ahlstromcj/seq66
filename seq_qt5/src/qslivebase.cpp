@@ -96,10 +96,7 @@ qslivebase::qslivebase
     m_is_external       (is_nullptr(parent)),
     m_needs_update      (false)
 {
-    /*
-     * TMI
-     * (void) debug_message("qlivebase bank ID", std::to_string(bank_id()));
-     */
+    // No code
 }
 
 /**

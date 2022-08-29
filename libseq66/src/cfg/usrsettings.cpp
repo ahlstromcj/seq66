@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2022-07-21
+ * \updates       2022-08-28
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -1067,8 +1067,13 @@ usrsettings::mainwnd_rows (int r)
     (
         (r >= screenset::c_min_rows) && (r <= screenset::c_max_rows)
     );
-    if (result)
-        result = r != m_mainwnd_rows;
+
+    /*
+     * This test can disable setting the option bit.
+     *
+     * if (result)
+     *     result = r != m_mainwnd_rows;
+     */
 
     if (result)
     {
@@ -1097,8 +1102,13 @@ usrsettings::mainwnd_cols (int c)
     (
         (c >= screenset::c_min_columns) && (c <= screenset::c_max_columns)
     );
-    if (result)
-        result = c != m_mainwnd_cols;
+
+    /*
+     * This test can disable setting the option bit.
+     *
+     * if (result)
+     *     result = c != m_mainwnd_cols;
+     */
 
     if (result)
     {
@@ -1537,13 +1547,13 @@ usrsettings::is_default_mainwnd_size () const
 bool
 usrsettings::vertically_compressed () const
 {
-    return m_mainwnd_rows < screenset::c_default_rows;
+    return m_mainwnd_rows > screenset::c_default_rows;
 }
 
 bool
 usrsettings::horizontally_compressed () const
 {
-    return m_mainwnd_cols < screenset::c_default_columns;
+    return m_mainwnd_cols > screenset::c_default_columns;
 }
 
 /**

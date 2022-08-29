@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2022-07-22
+ * \updates       2022-08-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -124,6 +124,12 @@ private:
     static double sm_progress_w_fraction;
     static double sm_progress_h_fraction;
     static const int scm_progress_event_margin;
+    static const int sm_vert_draw_text_threshold;
+    static const int sm_vert_compressed_threshold;
+    static const int sm_horiz_compressed_threshold;
+    static const int sm_base_height;
+    static const float sm_left_width_factor;
+    static const float sm_right_width_factor;
 
     /**
      *  Provides a buffer that represents a condensed version of long
@@ -194,6 +200,7 @@ private:
      */
 
     bool m_text_initialized;
+    bool m_draw_text;
     bool m_draw_background;
     textbox m_top_left;
     textbox m_top_right;

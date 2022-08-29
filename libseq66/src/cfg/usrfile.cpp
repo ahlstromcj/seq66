@@ -273,11 +273,13 @@ usrfile::parse ()
         bool flag = get_boolean(file, tag, "swap-coordinates");
         usr().swap_coordinates(flag);
 
-        int scratch = get_integer(file, tag, "mainwnd-rows");
-        (void) usr().mainwnd_rows(scratch);
-        scratch = get_integer(file, tag, "mainwnd-columns");
-        (void) usr().mainwnd_cols(scratch);
-        scratch = get_integer(file, tag, "mainwnd-spacing");
+        int rows = get_integer(file, tag, "mainwnd-rows");
+        (void) usr().mainwnd_rows(rows);
+
+        int cols = get_integer(file, tag, "mainwnd-columns");
+        (void) usr().mainwnd_cols(cols);
+
+        int scratch = get_integer(file, tag, "mainwnd-spacing");
         usr().mainwnd_spacing(scratch);
         scratch = get_integer(file, tag, "default-zoom");
         usr().zoom(scratch);

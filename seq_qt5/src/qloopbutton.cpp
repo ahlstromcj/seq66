@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2022-07-29
+ * \updates       2022-08-28
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -126,6 +126,21 @@ qloopbutton::progbox::progbox () :
 }
 
 /**
+ *  Progress-box values.
+ */
+
+bool qloopbutton::sm_draw_progress_box = true;
+double qloopbutton::sm_progress_w_fraction = 0.80;      /* 0.0, 0.50 - 0.80 */
+double qloopbutton::sm_progress_h_fraction = 0.25;      /* 0.0, 0.10 - 0.40 */
+const int qloopbutton::scm_progress_event_margin = 3;   /* better viewing   */
+const int qloopbutton::sm_vert_draw_text_threshold = 40;
+const int qloopbutton::sm_vert_compressed_threshold = 45;
+const int qloopbutton::sm_horiz_compressed_threshold = 45;
+const int qloopbutton::sm_base_height = 12;             /* rough font hght  */
+const float qloopbutton::sm_left_width_factor = 0.70;
+const float qloopbutton::sm_right_width_factor = 0.50;
+
+/**
  * Let's do it like seq24/seq64, but not so tall, just enough to show progress.
  */
 
@@ -137,15 +152,6 @@ qloopbutton::progbox::set (int w, int h)
     m_w = w - 2 * m_x;
     m_h = h - 2 * m_y;
 }
-
-/**
- *  Progress-box values.
- */
-
-bool qloopbutton::sm_draw_progress_box = true;
-double qloopbutton::sm_progress_w_fraction = 0.80;      /* 0.0, 0.50 - 0.80 */
-double qloopbutton::sm_progress_h_fraction = 0.25;      /* 0.0, 0.10 - 0.40 */
-const int qloopbutton::scm_progress_event_margin = 3;   /* better viewing   */
 
 /**
  *  Principal constructor.
@@ -176,6 +182,7 @@ qloopbutton::qloopbutton
     m_prog_fore_color       (Qt::green),
     m_text_font             (),
     m_text_initialized      (false),
+    m_draw_text             (true),
     m_draw_background       (true),
     m_top_left              (),
     m_top_right             (),
@@ -244,15 +251,30 @@ qloopbutton::initialize_text ()
     bool result = ! m_text_initialized;
     if (result)
     {
+#if defined SEQ66_PLATFORM_DEBUG
+        static bool sm_show_message = true;
+#endif
+
         int w = width();
         int h = height();
+        if (h < sm_vert_draw_text_threshold)
+            m_draw_text = false;
+
+#if defined SEQ66_PLATFORM_DEBUG
+        if (sm_show_message)
+        {
+            printf("button size %d x %d\n", w, h);
+            sm_show_message = false;
+        }
+#endif
+
         int dx = usr().scale_size(4);
         int dy = usr().scale_size_y(2);
-        int lw = int(0.70 * w);
-        int rw = int(0.50 * w);
+        int lw = int(sm_left_width_factor * w);
+        int rw = int(sm_right_width_factor * w);
         int lx = dx;
         int ty = dy + 2;
-        int bh = usr().scale_size_y(12);
+        int bh = usr().scale_size_y(sm_base_height);
         int rx = int(0.50 * w) + lx - dx - 1;
         int by = int(0.85 * h) + dy - 3;
         int fontsize = usr().scale_font_size(s_fontsize_main);
@@ -260,6 +282,8 @@ qloopbutton::initialize_text ()
         {
             ty += 2;
             by -= 2;
+
+            bh = bh / 2 - 2;
         }
         if (horiz_compressed())
         {
@@ -288,11 +312,18 @@ qloopbutton::initialize_text ()
         std::string chanstr = loop()->channel_string();
         std::string lowerleft, hotkey;
         char tmp[32];
-        snprintf
-        (
-            tmp, sizeof tmp, "%-2d %d-%s %d/%d",
-            sn, bus, chanstr.c_str(), bpb, bw
-        );
+        if (horiz_compressed())
+        {
+            snprintf(tmp, sizeof tmp, "%-2d %d-%s", sn, bus, chanstr.c_str());
+        }
+        else
+        {
+            snprintf
+            (
+                tmp, sizeof tmp, "%-2d %d-%s %d/%d",
+                sn, bus, chanstr.c_str(), bpb, bw
+            );
+        }
         lowerleft = std::string(tmp);
         hotkey = "[" + m_hotkey + "]";
         if (loop()->modified())
@@ -301,7 +332,9 @@ qloopbutton::initialize_text ()
             lengthstr += "+";
 
         m_top_left.set(lx, ty, lw, bh, lflags, loop()->name());
-        m_top_right.set(rx, ty, rw, bh, rflags, lengthstr);
+        if (! horiz_compressed())
+            m_top_right.set(rx, ty, rw, bh, rflags, lengthstr);
+
         m_bottom_left.set(lx, by, lw, bh, lflags, lowerleft);
         m_bottom_right.set(rx, by, rw, bh, rflags, hotkey);
         m_text_initialized = true;
@@ -530,14 +563,17 @@ qloopbutton::paintEvent (QPaintEvent * pev)
              * Removed the "background role color" code that was here.
              */
 
-            painter.drawText(box, m_top_left.m_flags, title);
-            title = qt(m_top_right.m_label);
-            box.setRect
-            (
-                m_top_right.m_x, m_top_right.m_y,
-                m_top_right.m_w, m_top_right.m_h
-            );
-            painter.drawText(box, m_top_right.m_flags, title);
+            if (m_draw_text)
+            {
+                painter.drawText(box, m_top_left.m_flags, title);
+                title = qt(m_top_right.m_label);
+                box.setRect
+                (
+                    m_top_right.m_x, m_top_right.m_y,
+                    m_top_right.m_w, m_top_right.m_h
+                );
+                painter.drawText(box, m_top_right.m_flags, title);
+            }
             if (loop()->recording())
             {
                 int radius = usr().scale_size(s_radius_record);
@@ -566,21 +602,25 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 }
                 painter.restore();
             }
-            title = qt(m_bottom_left.m_label);
-            box.setRect
-            (
-                m_bottom_left.m_x, m_bottom_left.m_y,
-                m_bottom_left.m_w, m_bottom_left.m_h
-            );
-            painter.drawText(box, m_bottom_left.m_flags, title);
+            if (m_draw_text)
+            {
+                title = qt(m_bottom_left.m_label);
+                box.setRect
+                (
+                    m_bottom_left.m_x, m_bottom_left.m_y,
+                    m_bottom_left.m_w, m_bottom_left.m_h
+                );
+                painter.drawText(box, m_bottom_left.m_flags, title);
 
-            title = qt(m_bottom_right.m_label);
-            box.setRect
-            (
-                m_bottom_right.m_x, m_bottom_right.m_y,
-                m_bottom_right.m_w, m_bottom_right.m_h
-            );
-            painter.drawText(box, m_bottom_right.m_flags, title);
+                title = qt(m_bottom_right.m_label);
+                box.setRect
+                (
+                    m_bottom_right.m_x, m_bottom_right.m_y,
+                    m_bottom_right.m_w, m_bottom_right.m_h
+                );
+                painter.drawText(box, m_bottom_right.m_flags, title);
+            }
+
             set_checked(loop()->armed());   /* gets hot-key toggle to show  */
             if (loop()->armed())
             {
@@ -593,13 +633,18 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             else
                 title = "Muted";
 
-            int line2y = 2 * usr().scale_font_size(6);
-            box.setRect
-            (
-                m_top_left.m_x, m_top_left.m_y + line2y,
-                m_top_left.m_w, m_top_left.m_h
-            );
-            painter.drawText(box, m_top_left.m_flags, title);
+            if (m_draw_text)
+            {
+                // TODO: If vertically compressed, smaller font size needed
+
+                int line2y = 2 * usr().scale_font_size(6);
+                box.setRect
+                (
+                    m_top_left.m_x, m_top_left.m_y + line2y,
+                    m_top_left.m_w, m_top_left.m_h
+                );
+                painter.drawText(box, m_top_left.m_flags, title);
+            }
             initialize_fingerprint();
         }
         if (sm_draw_progress_box)
@@ -860,15 +905,16 @@ void
 qloopbutton::resizeEvent (QResizeEvent * qrep)
 {
     QSize s = qrep->size();
-    vert_compressed(s.height() < 90);       // hardwired for now
-    horiz_compressed(s.width() < 90);
+    vert_compressed(s.height() < sm_vert_compressed_threshold);
+    horiz_compressed(s.width() < sm_horiz_compressed_threshold);
 
     /*
-     * Weird, makes use re-init every damn time.
+     * Weird, makes us re-init every damn time.
      *
-     * boxes_initialized(true);        // reset to false //
+     * boxes_initialized(true);             // reset to false //
      */
 
+    m_text_initialized = false;
     QWidget::resizeEvent(qrep);
 }
 
