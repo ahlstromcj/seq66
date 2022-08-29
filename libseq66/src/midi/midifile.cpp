@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-07-07
+ * \updates       2022-08-29
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -859,7 +859,7 @@ midifile::parse_smf_0 (performer & p, int screenset)
         if (s)
         {
             s->set_midi_channel(null_channel());
-            s->color(palette_to_int(cyan));
+            s->set_color(palette_to_int(cyan));
             p.smf_format(0);
         }
     }
@@ -1423,7 +1423,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             }
                             else if (seqspec == c_seq_color)
                             {
-                                s.color(read_byte());
+                                s.set_color(read_byte());
                                 --len;
                             }
 #if defined SEQ66_SEQUENCE_EDIT_MODE        /* same as "not transposable"?  */

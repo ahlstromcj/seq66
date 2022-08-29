@@ -340,13 +340,13 @@ It does not change Seq66's default PPQN.</string>
        <widget class="QLabel" name="label_HMS">
         <property name="minimumSize">
          <size>
-          <width>84</width>
+          <width>90</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>84</width>
+          <width>90</width>
           <height>24</height>
          </size>
         </property>
@@ -682,7 +682,7 @@ It does not change Seq66's default PPQN.</string>
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,20,1,0,1,1,1,0,1">
       <item>
        <widget class="QLabel" name="setNameLabel">
         <property name="minimumSize">
@@ -697,6 +697,12 @@ It does not change Seq66's default PPQN.</string>
           <height>28</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>Set Name</string>
         </property>
@@ -706,13 +712,13 @@ It does not change Seq66's default PPQN.</string>
        <widget class="QLineEdit" name="txtBankName">
         <property name="minimumSize">
          <size>
-          <width>300</width>
+          <width>280</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>1800</width>
           <height>28</height>
          </size>
         </property>
@@ -776,6 +782,24 @@ matter what sets-mode is in force. </string>
       </item>
       <item>
        <widget class="QLabel" name="labelActiveSet">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>Active</string>
         </property>
@@ -791,13 +815,13 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="minimumSize">
          <size>
-          <width>72</width>
+          <width>64</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>72</width>
+          <width>64</width>
           <height>28</height>
          </size>
         </property>
@@ -824,6 +848,9 @@ matter what sets-mode is in force. </string>
           <height>28</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Immediately make set 0 active.</string>
+        </property>
         <property name="text">
          <string>Set 0</string>
         </property>
@@ -842,6 +869,12 @@ matter what sets-mode is in force. </string>
           <width>40</width>
           <height>28</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
         </property>
         <property name="text">
          <string>Set</string>
@@ -871,6 +904,9 @@ matter what sets-mode is in force. </string>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
+        </property>
+        <property name="toolTip">
+         <string>Selects the active set.</string>
         </property>
        </widget>
       </item>
@@ -1341,6 +1377,12 @@ matter what sets-mode is in force. </string>
             <width>30</width>
             <height>28</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
           </property>
           <property name="text">
            <string>BPM</string>

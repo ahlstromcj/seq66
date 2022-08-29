@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-08-26
+ * \updates       2022-08-29
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2963,14 +2963,7 @@ public:
         return mapper().color(seqno);
     }
 
-    bool color (seq::number seqno, int c)
-    {
-        bool result = mapper().color(seqno, c);
-        if (result)
-            modify();
-
-        return result;
-    }
+    bool set_color (seq::number seqno, int c);
 
     bool have_undo () const
     {

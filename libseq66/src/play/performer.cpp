@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-08-26
+ * \updates       2022-08-29
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1471,8 +1471,6 @@ performer::finish_count_in ()
     if (result)
     {
         auto_stop();                        /* halt playback                */
-//      stop_playing();                     /* halt playback                */
-//      is_pattern_playing(false);
         set_tick(0);
         arm_metronome();
         m_play_set_storage.clear();         /* don't keep it around         */
@@ -3204,6 +3202,23 @@ performer::set_right_tick_seq (midipulse tick, midipulse snap)
     }
 }
 
+/*
+ * Old code:
+ *
+ *      bool result = mapper().color(seqno, c); if (result) modify();
+ */
+
+bool
+performer::set_color (seq::number seqno, int c)
+{
+    seq::pointer s = get_sequence(seqno);
+    bool result = bool(s);
+    if (result)
+        result = s->set_color(c, true);                 /* a user change    */
+
+    return result;
+}
+
 bool
 performer::set_midi_bus (seq::number seqno, int buss)
 {
@@ -4053,14 +4068,38 @@ performer::poll_cycle ()
  * Issue #76:
  *
  *      Somehow auto_stop() was placed after auto_play().  Brain fart?
+ *
+ * Unreported Issue:
+ *
+ *      MIDI clock works, but when stopped, continue reverts to 0. Now fixed.
+ *
+ * To test:
+ *
+ *      -#  Run seq66 with virtual ports and with ALSA.
+ *      -#  Use "aplaymidi -l" to determine the client:port to use.  For
+ *          example, use the virtual port "128:0".
+ *      -#  Also use a song that plays on that port.
+ *      -#  Build contrib/code ametro:  "./make_ametro".
+ *      -#  Run "./ametro -M -o 128:0".
+ *      -#  Use these keystrokes in ametro to control the MIDI clock:
+ *          -   s = START
+ *          -   c = CONTINUE
+ *          -   x = STOP
+ *          -   . = CLOCK
+ *          -   Esc = quit
  */
 
 void
 performer::midi_start ()
 {
+#if defined USE_OLD_MIDI_CLOCK_CODE
     auto_stop();
     song_start_mode(sequence::playback::live);
     auto_play();
+#else
+    start_playing();        // m_dont_reset_ticks needed ?
+#endif
+
     m_midiclockrunning = m_usemidiclock = true;
     m_midiclocktick = m_midiclockpos = 0;
     if (rc().verbose())
@@ -4070,11 +4109,16 @@ performer::midi_start ()
 /**
  * EVENT_MIDI_CONTINUE:
  *
- *      MIDI continue: start from current position.  Sent immediately
- *      after EVENT_MIDI_SONG_POS, and is used for starting from other than
- *      beginning of the song, or for starting from previous location at
- *      EVENT_MIDI_STOP. Again, converted to Kepler34 mode of setting the
- *      playback mode to Live mode.
+ *      MIDI continue: start from current position.  Some master device that
+ *      controls sequence playback sends this message to make a slave device
+ *      resume playback from its current "Song Position". The current Song
+ *      Position is the point when the song/sequence was previously stopped,
+ *      or previously cued with a Song Position Pointer message.
+ *
+ *      Sent immediately after EVENT_MIDI_SONG_POS, and is used for starting
+ *      from other than beginning of the song, or for starting from previous
+ *      location at EVENT_MIDI_STOP. Again, converted to Kepler34 mode of
+ *      setting the playback mode to Live mode.
  */
 
 void
@@ -4084,13 +4128,7 @@ performer::midi_continue ()
     m_midiclockpos = get_tick();
     m_dont_reset_ticks = true;
     m_midiclockrunning = m_usemidiclock = true;
-
-    /*
-     * Not sure why, but doing this twice works.
-     */
-
-    auto_pause(); auto_play();
-    auto_pause(); auto_play();
+    start_playing();
     if (rc().verbose())
         infoprint("MIDI Continue");
 }
@@ -4118,6 +4156,7 @@ performer::midi_stop ()
     m_usemidiclock = true;
     m_midiclockrunning = false;
     m_midiclockpos = get_tick();
+    m_dont_reset_ticks = false;
     auto_stop();
     if (rc().verbose())
         infoprint("MIDI Stop");

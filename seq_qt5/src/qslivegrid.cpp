@@ -805,11 +805,6 @@ qslivegrid::update_bank ()
     m_timer->stop();
     (void) recreate_all_slots();        /* sets m_redraw_buttons to true    */
     m_timer->start();
-
-    // TODO
-    // Need to update the bank-name field with the new bank.
-    // if (is_external())
-    //     ui->txtBankName->setText(qt(name));
 }
 
 /**
@@ -1563,28 +1558,27 @@ qslivegrid::popup_menu ()
      *  pretty tricky, but might be reasonable. Note that we want to allow
      *  opening an external live frame only from the Live grid in the main
      *  window, and only if the 0th set is shown... we allow only 32 sets for
-     *  this purpose.
+     *  this purpose. However, we now allow the external frame menu entry on
+     *  any set, but modded to be within the screenset size.
      */
 
     if (! is_external())
     {
-        if (m_current_seq < perf().screenset_max())
-        {
-            char temp[48];
-            snprintf
-            (
-                temp, sizeof temp, "External &live frame for set %d",
-                m_current_seq
-            );
-            QAction * livegrid = new QAction(tr(temp), m_popup);
-            m_popup->addAction(livegrid);
-            m_popup->addSeparator();
-            QObject::connect
-            (
-                livegrid, SIGNAL(triggered(bool)),
-                this, SLOT(new_live_frame())
-            );
-        }
+        seq::number mcs = m_current_seq % perf().screenset_max();
+        char temp[48];
+        snprintf
+        (
+            temp, sizeof temp, "External &live frame for set %d",
+            mcs
+        );
+        QAction * livegrid = new QAction(tr(temp), m_popup);
+        m_popup->addAction(livegrid);
+        m_popup->addSeparator();
+        QObject::connect
+        (
+            livegrid, SIGNAL(triggered(bool)),
+            this, SLOT(new_live_frame())
+        );
         if (perf().is_seq_active(m_current_seq))
         {
             QAction * editseq = new QAction

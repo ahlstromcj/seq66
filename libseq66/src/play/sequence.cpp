@@ -434,13 +434,19 @@ sequence::background_sequence (int bs, bool user_change)
  *      that -1 represents no color or a default color, and values of zero
  *      and above (to an unknown limit) represent a legal palette color.
  *
+ * \param user_change
+ *      If true (the default value is false), the user has decided to change
+ *      this value, and we might need to modify the performer's dirty flag, so
+ *      that the user gets prompted for a change.
+ *
  * \return
  *      Returns true if the color actually changed.
  */
 
 bool
-sequence::color (int c)
+sequence::set_color (int c, bool user_change)
 {
+    automutex locker(m_mutex);
     bool result = false;
     if (c >= 0 || c == c_seq_color_none)
     {
@@ -448,6 +454,8 @@ sequence::color (int c)
         {
             m_seq_color = colorbyte(c);
             result = true;
+            if (user_change)
+                modify();                   /* no easy way to undo this     */
         }
     }
     return result;
@@ -480,7 +488,7 @@ void
 sequence::empty_coloring ()
 {
     if (event_count() == 0)
-        (void) color(palette_to_int(yellow));
+        (void) set_color(palette_to_int(yellow));
 }
 
 /**
@@ -4846,7 +4854,7 @@ sequence::get_last_tick () const
  * \param user_change
  *      If true (the default value is false), the user has decided to change
  *      this value, and we might need to modify the performer's dirty flag, so
- *      that the user gets prompted for a change,  This is a response to
+ *      that the user gets prompted for a change.  This is a response to
  *      GitHub issue #47, where buss changes do not cause a prompt to save the
  *      sequence.
  */

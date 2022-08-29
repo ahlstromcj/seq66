@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-24
+ * \updates       2022-08-29
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1537,7 +1537,7 @@ qsmainwnd::conditional_update ()
     int active_screenset = int(cb_perf().playscreen_number());
     std::string b = "#";
     b += std::to_string(active_screenset);
-    b += " of ";
+    b += " / ";
     b += std::to_string(cb_perf().screenset_count());
     ui->entry_active_set->setText(qt(b));
     if (ui->button_keep_queue->isChecked() != cb_perf().is_keep_queue())
@@ -1687,6 +1687,8 @@ qsmainwnd::new_file ()
         enable_save(false);                         /* no save until change */
         redo_live_frame();
         remove_all_editors();
+        if (not_nullptr(m_song_frame64))
+            m_song_frame64->set_dirty();            /* refresh empty song   */
 
         /*
          * TODO: consolidate

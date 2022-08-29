@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-08-15
+ * \updates       2022-08-29
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1059,7 +1059,7 @@ public:
         return int(m_seq_color);
     }
 
-    bool color (int c);
+    bool set_color (int c, bool user_change = false);
     void empty_coloring ();
 
     editmode edit_mode () const

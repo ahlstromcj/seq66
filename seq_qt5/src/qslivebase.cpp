@@ -174,7 +174,7 @@ qslivebase::seq_offset () const
 void
 qslivebase::color_by_number (int i)
 {
-    perf().color(m_current_seq, i);
+    perf().set_color(m_current_seq, i);
 }
 
 void

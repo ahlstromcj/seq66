@@ -30,13 +30,14 @@
  *  "Only trick I don't get in first place was to put -m flag to send master
  *  clock to my sequencer which was necessary in this point to do so."
  *
- *  Modified by C. Ahlstrom 2022-01-16 to 2022-01-17:
+ *  Modified by C. Ahlstrom 2022-01-16 to 2022-08-29:
  *
  *      -   Changed tabs to spaces.
  *      -   White space alignment.
  *      -   Tweaks to coding conventions.
  *      -   Added ability to output start, stop, and continue clock events.
  *      -   More comprehensive error detection.
+ *      -   More verbosity.
  *
  *  Further research:
  *
@@ -103,13 +104,19 @@ typedef enum
 
 void make_clock_event (int tick, clock_type ct);
 
-void
+static void
 show_error (const char * msg)
 {
     fprintf(stderr, "Error: %s\n", msg);
 }
 
-void
+static void
+show_info (const char * msg)
+{
+    fprintf(stdout, "%s\n", msg);
+}
+
+static void
 show_error_string (const char * msg, int rc)
 {
     fprintf(stderr, "%s (%s)\n", msg, snd_strerror(rc));
@@ -269,10 +276,10 @@ quick_read ()
 
                 /*
                  * Debugging only:
-                 *
-                 * if (verbose)
-                 *     printf("char 0x%02x returned\n", c);
                  */
+
+                 if (verbose)
+                     printf("char 0x%02x returned\n", c);
             }
 
             /*
@@ -286,10 +293,10 @@ quick_read ()
 
                 /*
                  * Debugging only:
-                 *
-                 * if (verbose)
-                 *     printf("Discarding char 0x%02x\n", c);
                  */
+
+                 if (verbose)
+                     printf("Discarding char 0x%02x\n", c);
             }
         }
 	}
@@ -308,11 +315,11 @@ handle_char (int ch, int tick)
     int result = 0;         /* 1 == 'Esc' */
     switch (ch)
     {
-    case 's':   make_clock_event(0, CT_START);      break;
-    case 'c':   make_clock_event(0, CT_CONTINUE);   break;
-    case 'x':   make_clock_event(0, CT_STOP);       break;
-    case '.':   make_clock_event(0, CT_CLOCK);      break;
-    case 033:   result = 1;                         break;
+    case 's':   make_clock_event(tick, CT_START);      break;
+    case 'c':   make_clock_event(tick, CT_CONTINUE);   break;
+    case 'x':   make_clock_event(tick, CT_STOP);       break;
+    case '.':   make_clock_event(tick, CT_CLOCK);      break;
+    case 033:   result = 1;                            break;
     }
     return result;
 }
@@ -448,6 +455,8 @@ clear_queue ()
         remove_ev, SND_SEQ_REMOVE_OUTPUT | SND_SEQ_REMOVE_IGNORE_OFF
     );
     snd_seq_remove_events(seq_handle, remove_ev);
+    if (verbose)
+        show_info("Clear");
 }
 
 void
@@ -455,6 +464,8 @@ start_queue ()
 {
     snd_seq_start_queue(seq_handle, queue_id, NULL);
     snd_seq_drain_output(seq_handle);
+    if (verbose)
+        show_info("Start");
 }
 
 void
@@ -462,6 +473,8 @@ stop_queue ()
 {
     snd_seq_stop_queue(seq_handle, queue_id, NULL);
     snd_seq_drain_output(seq_handle);
+    if (verbose)
+        show_info("Stop");
 }
 
 void
@@ -469,6 +482,8 @@ continue_queue ()
 {
     snd_seq_continue_queue(seq_handle, queue_id, NULL);
     snd_seq_drain_output(seq_handle);
+    if (verbose)
+        show_info("Continue");
 }
 
 /**
@@ -573,6 +588,9 @@ pattern ()
         duration = resolution / 24;
         for (tick = 0; tick < maxtick; tick += duration)
             make_clock(tick);
+
+        if (verbose)
+            show_info("Clock");
     }
 
     /*
@@ -590,7 +608,7 @@ pattern ()
     }
     make_echo(tick);
     if (verbose)
-        printf("Measure: %5d\r", ++measure);
+        printf("               measure: %5d\r", ++measure);
 }
 
 void
@@ -749,14 +767,14 @@ parse_options (int argc, char * argv [])
             x = strtol(optarg, &sep, 10);
             if ((x < 1) | (x > 32) | (*sep != ':'))
             {
-                show_error("Invalid time signature");
+                show_error("invalid time signature");
                 return 1;
             }
             num_parts = x;
             x = strtol(++sep, NULL, 10);
             if ((x < 1) | (x > 32))
             {
-                show_error("Invalid time signature");
+                show_error("invalid time signature");
                 return 1;
             }
             part_fig = x;
@@ -860,12 +878,14 @@ main (int argc, char * argv [])
     for (;;)
     {
         int ch = quick_read();
+        int rc;
         if (ch > 0)
         {
             if (handle_char(ch, 0) == 1)
                 break;
         }
-        if (poll(pfd, npfd, 1000) > 0)
+        rc = poll(pfd, npfd, 500) > 0;
+        if (rc > 0)
         {
             for (j = 0; j < npfd; ++j)
             {
@@ -875,7 +895,10 @@ main (int argc, char * argv [])
         }
         else
         {
-            show_error("Poll failed");
+            if (rc == 0)
+                show_error("poll timeout");
+            else
+                show_error_string("poll failed", rc);
         }
     }
 }

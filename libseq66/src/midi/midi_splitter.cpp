@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-24
- * \updates       2022-05-15
+ * \updates       2022-08-29
  * \license       GNU GPLv2 or above
  *
  *  We have recently updated this module to put Set Tempo events into the
@@ -116,7 +116,7 @@ midi_splitter::log_main_sequence (sequence & seq, int seqnum)
     if (is_nullptr(m_smf0_main_sequence))
     {
         seq.sort_events();                          /* really necessary?    */
-        seq.color(palette_to_int(cyan));
+        seq.set_color(palette_to_int(cyan));
         m_smf0_main_sequence = &seq;
         m_smf0_seq_number = seqnum;
         infoprint("SMF 0 main sequence logged");

@@ -255,6 +255,14 @@ Tagging:
     Note that each tag to be published needs to be pushed as well.
     Also note that, if the commit hash is missing, HEAD is assumed.
 
+    $ hub release create -a prebuilt.zip -m 'release title' tag-name
+
+        -   PRompts for your password the first time, and then automatically.
+        -   Creates and stores an API token locally.
+        -   Creates a non-annotated tag on the remote called tag-name.
+        -   Creates a release associated to that tag.
+        -   Uploads prebuilt.zip as an attachment.
+
 Tag Checkout:
 
     A user can get the tagged code into a new branch via commands like the

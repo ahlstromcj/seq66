@@ -2,15 +2,11 @@ TO DO for Seq66 0.99.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
 2019-04-13 to 2022-08-29
 
-Pattern Editor, Main Window, etc.:
-
-    -   Live grid: update the bank-name field with the new bank. Line 811.
-
 Ongoing efforts:
 
     -   Verify no bugs remaining in:
         -   Pattern fix dialog.
-        -   File / Save handling. See above.
+        -   File / Save handling with various modifications.
     -   "Session: Save" can occur.  Have not seen this lately.
     -   Verify setmapper/setmaster for odd set sizes.
 
@@ -26,39 +22,11 @@ Windows:
 
 Test and Document:
 
-    -   Test and verify MIDI clock handling via ametro.
-    -   Make sure the Key/Scale note analysis is documented.
-    -   Main window:
-        -   PPQN
-        -   Beats/bar
-        -   Beat width (length)
-    -   Pattern editor:
-        -   Recording velocity
-        -   Zoom
-        -   Snap
-        -   Beats/bar
-        -   Beat width (length)
-        -   How to handle when we have 4/4 with 4 notes, then change it to
-            3/4. The 4th note is not shown, but the event editor shows it is
-            still there. After a fix, the note is now deleted.  Proper?
-            FEATURE: Should we compress the 4 notes?
-            We can use pattern fix for that.
-    -   Song editor:
-        -   Snap
-        -   Add width to Snap button
-        -   Consider a way to lay out a pattern from one track
-            into another tracks playback, to re-use the pattern on a differnt
-            buss and channel. ROADMAP item?
+    -   Next?
 
 (External) Live Grid:
 
-    -   Show Recording-style and Quantization buttons in it.
-    -   Upon File / New, set to Live mode.
-
-Undo:
-
-    -   Paint a bunch of notes.  Undo then seems to undo one event at a time,
-        thereby requiring a large number of Ctrl-Zs.
+    -   Show only the Activate button?
 
 UI:
 
@@ -88,15 +56,6 @@ Port-Mapping:
     Running qpseq66 on Linux:  "QSynth" is named "PortMidi"! See
     seq_portmidi/src/midibus.cpp.  The workaround is to specify long port
     names in the 'rc' file.
-
-Ports:
-
-    -   Investigate deinit_in() and _out().
-    -   Make the port-refresh feature work. It is a toughie!
-    -   Editing the control busses in Preferences should be written to the
-        specified 'ctrl' file.
-    -   Enabling/disabling a port should enable the OK/Apply and restart
-        buttons.
 
 MIDI:
 
@@ -148,7 +107,6 @@ Build:
 
     -   Try using Clang as the compiler.
     -   Investigate Qt 6 Clazy. (https://invent.kde.org/sdk/clazy)
-    -   Independently investigate meson and cmake.
 
 Macros to "finalize":
 
@@ -461,7 +419,7 @@ ISSUES:
     LFO: Reset needs to undo modify, if no modification already in place.
 
 #91 No colors in live view with xfce/xubuntu
-    STATUS: Mitigated by adding a --locale option to handling numbers.
+    STATUS: Mitigated by adding a --locale option to handle numbers.
 
 #92 Segfault when recording to a 32 beat pattern.
     STATUS: See 2021-02-16 or issue #85. Still need to duplicate.
@@ -493,14 +451,6 @@ PATTERNS:
     -   Set pattern editor focus to grid at start unless it is a new one.
     -   Make it center on notes if not visible.
     -   Consider adding start/stop buttons to external windows (song & pattern).
-
-Tons of TO DOs in performer!
-
-    Load a song with Song triggers; go to the song tab; select File/New. Note
-    that the perfroll clears, but not the perfnames!  We need to derive all
-    qperf GUIs from qperfbase.  Actually, they both clear, only if clicked on.
-
-    Implement solo, FF, rewind, and many more.  Investigate!!!
 
 To close as fixed (and remove from TODO):
 
@@ -547,6 +497,12 @@ Version 2 features:
         (the Preferences editor?).
     -   Make main menu hide-able.
     -   Allow multiple instances of seq66.
+    -   More consistent support for undo / redo / unmodify.
+    -   Clean up kruft in setmapper/screenset.
     -   Support more than one tune?
+    -   A way to lay out a pattern from one track into another tracks
+        playback, to re-use the pattern on a differnt buss and channel.
+    -   Support manual reconnecting, including of the control/display busses.
+    -   Implement solo, FF, rewind, etc.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

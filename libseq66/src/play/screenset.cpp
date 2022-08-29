@@ -799,7 +799,7 @@ screenset::color (seq::number seqno, int c)
     bool result = false;
     seq::pointer track = seqinfo(seqno).loop();
     if (track)
-        result = track->color(c);
+        result = track->set_color(c);
 
     return result;
 }
