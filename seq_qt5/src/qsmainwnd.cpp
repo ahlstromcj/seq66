@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-29
+ * \updates       2022-08-30
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -883,6 +883,17 @@ qsmainwnd::set_ppqn_text (const std::string & text)
     ui->lineEditPpqn->setText(p);
 }
 
+void
+qsmainwnd::set_ppqn_text (int ppq)
+{
+    std::string temp = std::to_string(ppq);
+    QString ppqntext = qt(temp);
+    ppqn_list().current(temp);
+    set_ppqn_text(temp);
+    ui->cmb_ppqn->setItemText(0, ppqntext);
+    usr().file_ppqn(ppq);
+}
+
 /**
  *  Handles closing this window by calling check(), and, if it returns false,
  *  ignoring the close event.
@@ -1388,6 +1399,8 @@ qsmainwnd::open_file (const std::string & fn)
          */
 
         remove_all_editors();
+        set_ppqn_text(cb_perf().ppqn());
+
 #endif
 
         if (! use_nsm())                        /* does this menu exist?    */
@@ -2499,10 +2512,7 @@ qsmainwnd::update_ppqn_by_text (const QString & text)
         int p = string_to_int(temp);
         if (cb_perf().change_ppqn(p))
         {
-            ppqn_list().current(temp);
-            set_ppqn_text(temp);
-            ui->cmb_ppqn->setItemText(0, text);
-            usr().file_ppqn(p);
+            set_ppqn_text(p);
             enable_save();
         }
     }

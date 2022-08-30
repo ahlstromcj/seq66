@@ -164,6 +164,11 @@ public:
         m_is_initialized = flag;
     }
 
+    void uninitialize ()
+    {
+        m_is_initialized = false;
+    }
+
     const performer & perf () const
     {
         return m_performer;

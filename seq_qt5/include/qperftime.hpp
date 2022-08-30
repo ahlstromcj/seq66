@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-05-20
+ * \updates       2022-08-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -78,7 +78,7 @@ public:
 
     virtual ~qperftime ();
 
-    void set_guides (midipulse snap, midipulse measure);
+    void set_guides (midipulse snap, midipulse measure, midipulse beat);
 
     void resize ()
     {
@@ -116,7 +116,6 @@ private:
     qperfeditframe64 * m_parent_frame;
     QTimer * m_timer;
     QFont m_font;
-    midipulse m_measure_length;
     bool m_move_L_marker;
 
 signals:

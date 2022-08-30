@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2022-08-23
+ * \updates       2022-08-29
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -185,6 +185,7 @@ qslivegrid::qslivegrid
         ui->buttonRecordMode->hide();
         ui->buttonMetronome->hide();
         ui->buttonBackgroundRecord->hide();
+        ui->comboGridMode->hide();
     }
     else
     {
@@ -221,24 +222,24 @@ qslivegrid::qslivegrid
             ui->buttonBackgroundRecord, SIGNAL(clicked(bool)),
             this, SLOT(slot_toggle_background_record(bool))
         );
+
+        /*
+         * Live grid mode settings.
+         */
+
+        populate_grid_mode();
+        set_grid_mode();
+        connect
+        (
+            ui->comboGridMode, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(slot_grid_mode(int))
+        );
     }
     ui->labelPlaylistSong->setText("");
     qloopbutton::progress_box_size
     (
         usr().progress_box_width(),
         usr().progress_box_height()
-    );
-
-    /*
-     * Live grid mode settings.
-     */
-
-    populate_grid_mode();
-    set_grid_mode();
-    connect
-    (
-        ui->comboGridMode, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(slot_grid_mode(int))
     );
     m_timer = qt_timer(this, "qslivegrid", 2, SLOT(conditional_update()));
 }

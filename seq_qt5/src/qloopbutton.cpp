@@ -251,7 +251,7 @@ qloopbutton::initialize_text ()
     bool result = ! m_text_initialized;
     if (result)
     {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         static bool sm_show_message = true;
 #endif
 
@@ -260,7 +260,7 @@ qloopbutton::initialize_text ()
         if (h < sm_vert_draw_text_threshold)
             m_draw_text = false;
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         if (sm_show_message)
         {
             printf("button size %d x %d\n", w, h);

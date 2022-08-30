@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-01
+ * \updates       2022-08-30
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -171,7 +171,6 @@ private:
     QTimer * m_timer;
     QFont m_font;
     int m_prog_thickness;
-    int m_measure_length;
     int m_trigger_transpose;
     midipulse m_tick_s;                     // start of tick window
     midipulse m_tick_f;                     // end of tick window

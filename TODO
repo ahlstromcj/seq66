@@ -24,10 +24,6 @@ Test and Document:
 
     -   Next?
 
-(External) Live Grid:
-
-    -   Show only the Activate button?
-
 UI:
 
     Additional, oft-used configuration items to consider adding to the
@@ -50,6 +46,9 @@ UI:
         event editor instantiation to the grid mode.
     -   Use the global time signature to set the time signature of a new
         pattern.
+    -   In pattern editor, if the global PPQN is changed (e.g. from 192 to
+        1920), then the length changes (e.g. from 8 measures to 80).
+    -   Also, PPQN change can mess up note placement.
 
 Port-Mapping:
 
@@ -71,14 +70,7 @@ MIDI:
 
     JACK:
 
-    -   Fallback to ALSA if JACK is not running is broken.  Or is it that
-        jackdbus is interfering? On another computer, that seems to be the
-        case. Seq66 creates virtual ports in that case, but we need to test
-        that they are useful, and consider activating the manual-port settings
-        in the 'rc' file.
-    -   Also, would it be useful to provide a way to better name each virtual
-        port?
-    -   Is Weak JACK worth adding?
+    -   Would it be useful to provide a way to better name each virtual port?
 
 Automation:
 
@@ -175,7 +167,7 @@ ISSUES:
 #4-11 Closed.
 
 #12 Note rendering problem
-    STATUS: Need to investigate.  See GitHub for the video.
+    STATUS: Cannot duplicate at this time.
 
 #16 Ableton Live transport support?
     Go to this issue in Github to see the thread.
@@ -504,5 +496,7 @@ Version 2 features:
         playback, to re-use the pattern on a differnt buss and channel.
     -   Support manual reconnecting, including of the control/display busses.
     -   Implement solo, FF, rewind, etc.
+    -   Weak JACK support.  Seq66 dependence on the JACK ringbuffer is an
+        issue here.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-01
+ * \updates       2022-08-30
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -107,7 +107,6 @@ qperfroll::qperfroll
     m_timer             (nullptr),
     m_font              ("Monospace"),
     m_prog_thickness    (usr().progress_bar_thick() ? 2 : 1),
-    m_measure_length    (0),
     m_trigger_transpose (0),
     m_tick_s            (0),
     m_tick_f            (0),
@@ -316,7 +315,7 @@ qperfroll::in_selection_area (midipulse tick)
 }
 
 void
-qperfroll::mousePressEvent(QMouseEvent *event)
+qperfroll::mousePressEvent(QMouseEvent * event)
 {
     bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
     bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
@@ -453,8 +452,9 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                     }
                     else if     // check for corner drag to grow sequence end
                     (
-                        tick >= end_tick - clickbox && tick <= end_tick &&
-                        (drop_y() % track_height()) >= track_height() - clickminus
+                        tick >= (end_tick - clickbox) && tick <= end_tick &&
+                        (drop_y() % track_height()) >=
+                            (track_height() - clickminus)
                     )
                     {
                         growing(true);

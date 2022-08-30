@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2022-08-17
+ * \updates       2022-08-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -526,8 +526,10 @@ qperfeditframe64::set_guides ()
         midipulse measticks = pp * m_beats_per_measure / m_beat_width;
         midipulse beatticks = pp / m_beat_width;
         midipulse snapticks = m_snap == 0 ? 0 : measticks / m_snap ;
+//      m_perfroll->uninitialize();     // EXPERIMENTAL
         m_perfroll->set_guides(snapticks, measticks, beatticks);
-        m_perftime->set_guides(snapticks, measticks);
+//      m_perftime->uninitialize();     // EXPERIMENTAL
+        m_perftime->set_guides(snapticks, measticks, beatticks);
     }
 }
 
@@ -677,6 +679,9 @@ qperfeditframe64::update_sizes ()
 {
     std::string dur = perf().duration(m_duration_mode);
     ui->btnDuration->setText(qt(dur));
+
+    set_guides();               // EXPERIMENTAL
+
     m_perfnames->resize();
     m_perfnames->updateGeometry();
     m_perfroll->resize();

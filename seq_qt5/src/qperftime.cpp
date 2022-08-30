@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-07-29
+ * \updates       2022-08-30
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -353,10 +353,11 @@ qperftime::mouseMoveEvent (QMouseEvent * event)
 }
 
 void
-qperftime::set_guides (midipulse snap, midipulse measure)
+qperftime::set_guides (midipulse snap, midipulse measure, midipulse beat)
 {
     set_snap(snap);
     m_measure_length = measure;
+    m_beat_length = beat;
     if (is_initialized())
         set_dirty();
 }

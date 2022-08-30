@@ -807,7 +807,7 @@ pulses_per_substep (midipulse ppqn, int zoom)
  * \param zoom
  *      Provides the current zoom value.  Defaults to 1, which can be used
  *      to simply get the ratio between the actual PPQN, but only when PPQN >=
- *      usr().base_ppqn().  Use pulses_scaled() instead.
+ *      usr().base_ppqn().
  *
  * \return
  *      The result of the above equation is returned.

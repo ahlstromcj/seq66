@@ -157,7 +157,6 @@ qseqbase::convert_xy (int x, int y, midipulse & tick, int & note)
         note = c_note_max;
     else if (note < 0)
         note = 0;
-
 }
 
 void

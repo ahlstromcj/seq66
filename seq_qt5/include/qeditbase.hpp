@@ -802,12 +802,12 @@ protected:
      * qbase::pix_to_tix().
      */
 
-    virtual midipulse pix_to_tix (int x) const
+    virtual midipulse pix_to_tix (int x) const override
     {
         return x * pulses_per_pixel(perf().ppqn(), m_scale_zoom);
     }
 
-    virtual int tix_to_pix (midipulse ticks) const
+    virtual int tix_to_pix (midipulse ticks) const override
     {
         return ticks / pulses_per_pixel(perf().ppqn(), m_scale_zoom);
     }

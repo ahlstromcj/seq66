@@ -237,9 +237,6 @@ extern midibpm note_value_to_tempo (midibyte note);
  *  is 2147483647.  At the highest PPQN that's almost 28000 measures.  64-bit
  *  code maxes at over 9E18.
  *
- *  This function is similar to pulses_scaled(), but that other function
- *  always scales against usr().base_ppqn() and allows for a zoom factor.
- *
  * \param tick
  *      The tick value to be rescaled.
  *

@@ -215,7 +215,9 @@ qeditbase::change_ppqn (int p)
 
 /**
  *  Snap = number pulses to snap to.  Zoom = number of pulses per pixel.  Thus
- *  snap / zoom  = number pixels to snap to.
+ *  snap / zoom  = number pixels to snap to.  However, while looking into
+ *  issue #12, discovered that we need to scale by the actual PPQN versus the
+ *  base PPQN (192).
  */
 
 void
@@ -223,7 +225,7 @@ qeditbase::snap_x (int & x)
 {
     if (m_scale_zoom > 0)
     {
-        int mod = m_snap / m_scale_zoom;
+        int mod = usr().base_ppqn() * m_snap / m_scale_zoom / ppqn();
         if (mod <= 0)
             mod = 1;
 
