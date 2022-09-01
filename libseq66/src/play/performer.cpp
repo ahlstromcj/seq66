@@ -2838,7 +2838,9 @@ performer::announce_pattern (seq::number seqno)
 }
 
 /**
- *  Sets the beats per measure.
+ *  Sets the beats per measure and measures for all existing patterns.
+ *  Compare this to set_beats_per_bar(), which merely sets a performer
+ *  member.
  *
  *  Note that a lambda function is used to make the changes.
  */
@@ -2846,10 +2848,10 @@ performer::announce_pattern (seq::number seqno)
 bool
 performer::set_beats_per_measure (int bpm, bool user_change)
 {
-    bool result = bpm != m_beats_per_bar;
+    bool result = bpm != m_beats_per_bar;   /* the current performer value  */
     if (result)
     {
-        set_beats_per_bar(bpm);         /* also sets in jack_assistant  */
+        set_beats_per_bar(bpm);             /* also sets in jack_assistant  */
         mapper().exec_set_function
         (
             [bpm, user_change] (seq::pointer sp, seq::number /*sn*/)

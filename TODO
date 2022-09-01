@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-08-29
+2019-04-13 to 2022-09-01
 
 Ongoing efforts:
 
@@ -48,7 +48,8 @@ UI:
         pattern.
     -   In pattern editor, if the global PPQN is changed (e.g. from 192 to
         1920), then the length changes (e.g. from 8 measures to 80).
-    -   Also, PPQN change can mess up note placement.
+        Also, the song editor display is still incorrect (need to call
+        set_guides()).  Also see performer.cpp line 1738.
 
 Port-Mapping:
 
@@ -83,13 +84,10 @@ From Testing:
     for horizontal seqroll and perfroll, but not for vertical (refactoring
     needed).  Try to center vertically on notes in the viewport.
 
-    When muting/unmuting a pattern in the song editor, when focus changes
-    the tracks are shown in the bright color.
-
     Can we distinguish note-insertion from movement snap, to avoid the
     "L"-then-snap-then-move mamba?
 
-    Tempo display needs to be worked on for the perfroll and qloopbuttons.
+    Tempo display needs to be worked on for the perfroll.
 
 CLI:
 
@@ -125,24 +123,9 @@ Macros to "finalize":
     USE_ADJUST_DATA_HANDLE
     USE_INTERSECT_FUNCTIONS
     ENABLE_PROPOSED_FUNCTIONS
-
     USE_STAZED_SHIFT_SUPPORT
     USE_STAZED_COMPANDING
     USE_THIS_STAZED_CODE_WHEN_READY
-
-    function_calls_gnu.c/h
-
-Others to Consider:
-
-    In main frame, try to highlight the start/stop/pause buttons
-    appropriately.
-
-    On a Debian Sid box, ALSA puts out *two* events into Qsynth for every note
-    event. On an Ubuntu box, just one event is emitted. Why?  Try it under JACK
-    at some point on Debian Sid (it also puts out two events).  Two events are
-    emitted even when just clicking on the virtual piano keyboard in the
-    pattern editor!  This occurs during the buss flush after the event is
-    sent.  Does not seem to be due to the MIDI thru ALSA port.
 
 ISSUES:
 
@@ -167,7 +150,8 @@ ISSUES:
 #4-11 Closed.
 
 #12 Note rendering problem
-    STATUS: Cannot duplicate at this time.
+    STATUS: Cannot duplicate at this time. Made some unrelated fixes found
+    during investigation.
 
 #16 Ableton Live transport support?
     Go to this issue in Github to see the thread.
@@ -225,7 +209,8 @@ ISSUES:
 #45 Closed.
 
 #46 JACK port groups / order?
-    STATUS: To examine.
+    STATUS: To examine. Probably will push off to version 2 depending on
+    research.
 
 #47 change key map
     STATUS: Fixed for now.
@@ -498,5 +483,6 @@ Version 2 features:
     -   Implement solo, FF, rewind, etc.
     -   Weak JACK support.  Seq66 dependence on the JACK ringbuffer is an
         issue here.
+    -   JACK port groups / order.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

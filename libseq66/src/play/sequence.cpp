@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-08-26
+ * \updates       2022-09-01
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -5038,7 +5038,10 @@ sequence::apply_length (int bpb, int ppq, int bw, int measures)
         set_beat_width(bw);
 
     if (measures == 0)                      /* added 2022-04-29             */
+    {
+        (void) unit_measure(true);          /* reset the unit-measure       */
         measures = get_measures(0);         /* calculate the current bars   */
+    }
     else
         set_measures(measures);
 
@@ -5771,7 +5774,7 @@ sequence::change_ppqn (int p)
         {
             m_length = rescale_tick(m_length, p, m_ppqn);
             m_ppqn = p;
-            result = apply_length(0, p, 0);
+            result = apply_length();                    /* use new PPQN     */
             m_triggers.change_ppqn(p);
         }
     }

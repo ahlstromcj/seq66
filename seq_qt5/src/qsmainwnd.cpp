@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-30
+ * \updates       2022-09-01
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -278,23 +278,6 @@ qsmainwnd::qsmainwnd
 
     (void) set_ppqn_combo();
 
-    if (m_shrunken)
-    {
-        ui->lineEditPpqn->hide();
-    }
-    else
-    {
-        int ppqn = cb_perf().ppqn();
-        std::string pstring = std::to_string(ppqn);
-        ui->lineEditPpqn->setReadOnly(true);
-        set_ppqn_text(pstring);
-        connect
-        (
-            ui->cmb_ppqn, SIGNAL(currentTextChanged(const QString &)),
-            this, SLOT(update_ppqn_by_text(const QString &))
-        );
-    }
-
     /*
      * Global output buss items.  Connected later on in this constructor.
      */
@@ -539,12 +522,13 @@ qsmainwnd::qsmainwnd
     qt_set_icon(play2_xpm, ui->btnPlay);
 
     /*
-     * L/R Loop button.
+     * L/R Loop button (and Text Underrun button hiding).
      */
 
     if (m_shrunken)
     {
         ui->btnLoop->hide();
+        ui->txtUnderrun->hide();
     }
     else
     {
@@ -792,19 +776,25 @@ qsmainwnd::qsmainwnd
     if (rc().investigate_disabled())
     {
         /*
-         * Enable to test SMF 0 conversion.
+         * Test button.
          */
 
         ui->testButton->setEnabled(true);
-        ui->testButton->setToolTip("Converts patterns into one SMF 0 track.");
+        ui->testButton->setToolTip("No Test functionality at present.");
         connect(ui->testButton, SIGNAL(clicked(bool)), this, SLOT(slot_test()));
     }
     else
     {
-        ui->testButton->setEnabled(false);
-        ui->testButton->setToolTip("Developer test button, disabled.");
+        if (m_shrunken)
+        {
+            ui->testButton->hide();
+        }
+        else
+        {
+            ui->testButton->setEnabled(false);
+            ui->testButton->setToolTip("Developer test button disabled.");
+        }
     }
-
     if (use_nsm())
     {
         std::string tune_name = s_default_tune;
@@ -1026,7 +1016,23 @@ bool
 qsmainwnd::set_ppqn_combo ()
 {
     std::string p = std::to_string(int(cb_perf().ppqn()));
-    return fill_combobox(ui->cmb_ppqn, ppqn_list(), p);
+    bool result = fill_combobox(ui->cmb_ppqn, ppqn_list(), p);
+    if (result)
+    {
+        if (m_shrunken)
+            ui->lineEditPpqn->hide();
+
+        int ppqn = cb_perf().ppqn();
+        std::string pstring = std::to_string(ppqn);
+        ui->lineEditPpqn->setReadOnly(true);
+        set_ppqn_text(pstring);
+        connect
+        (
+            ui->cmb_ppqn, SIGNAL(currentTextChanged(const QString &)),
+            this, SLOT(update_ppqn_by_text(const QString &))
+        );
+    }
+    return result;
 }
 
 void
@@ -1405,7 +1411,14 @@ qsmainwnd::open_file (const std::string & fn)
 
         if (! use_nsm())                        /* does this menu exist?    */
         {
-            enable_save(file_writable(fn));
+            /*
+             * This is wrong.  A file just loaded doesn't need to be saved
+             * until it is altered.
+             *
+             * enable_save(file_writable(fn));
+             */
+
+            enable_save(false);
             update_recent_files_menu();
         }
         m_is_title_dirty = true;
@@ -1593,18 +1606,20 @@ qsmainwnd::conditional_update ()
         ui->btnPause->setChecked(false);
         ui->btnPlay->setChecked(m_is_playing_now);
     }
-    if (m_is_playing_now)
+    if (! m_shrunken)
     {
-        long delta = cb_perf().delta_us();
-        if (delta < 0)
+        if (m_is_playing_now)
         {
-            std::string dus = std::to_string(int(-delta));
-            ui->txtUnderrun->setText(qt(dus));
+            long delta = cb_perf().delta_us();
+            if (delta < 0)
+            {
+                std::string dus = std::to_string(int(-delta));
+                ui->txtUnderrun->setText(qt(dus));
+            }
         }
+        else
+            ui->txtUnderrun->setText(" ");
     }
-    else
-        ui->txtUnderrun->setText(" ");
-
     if (cb_perf().tap_bpm_timeout())
         set_tap_button(0);
 }
@@ -2513,6 +2528,9 @@ qsmainwnd::update_ppqn_by_text (const QString & text)
         if (cb_perf().change_ppqn(p))
         {
             set_ppqn_text(p);
+            if (not_nullptr(m_song_frame64))
+                m_song_frame64->set_guides();
+
             enable_save();
         }
     }
@@ -3050,20 +3068,27 @@ qsmainwnd::show_message_box (const std::string & msg_text)
 }
 
 /**
- *  ca 2022-07-28
  *  Check for an actual flag change before dirtying the title, which prevents
- *  a lot of flickering.
+ *  a lot of flickering. However, it often prevent dirtying the main title.
  */
 
 void
 qsmainwnd::enable_save (bool flag)
 {
+#if defined USE_TRIAL_CODE
+    if (! m_is_title_dirty)
+    {
+        ui->actionSave->setEnabled(flag);
+        m_is_title_dirty = true;
+    }
+#else
     bool enabled = ui->actionSave->isEnabled();
     if (flag != enabled)
     {
         ui->actionSave->setEnabled(flag);
         m_is_title_dirty = true;
     }
+#endif
 }
 
 void
@@ -3142,7 +3167,7 @@ qsmainwnd::connect_nsm_slots ()
     ui->actionSave->setText("&Save");
     ui->actionSave->setToolTip
     (
-        "Save the current MIDI file and configuration in the session."
+        "Save current MIDI file and configuration in the session."
     );
     connect
     (

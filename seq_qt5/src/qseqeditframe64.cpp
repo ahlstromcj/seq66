@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-08-20
+ * \updates       2022-08-31
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1351,6 +1351,9 @@ qseqeditframe64::conditional_update ()
 
 /**
  *  Checks if the new time-signature results in a dropping events.
+ *  However, this check is now not needed under recent fixes which increase
+ *  the number of measures if necessary, so we just return false, indicating
+ *  no truncation.
  *
  *  Interesting: divide by 0 here yields the value "inf", not an exception.
  */
@@ -1361,6 +1364,7 @@ qseqeditframe64::would_truncate (int bpb, int bw)
     bool result = false;                        /* no problem by default    */
     if (bpb > 0 && bw > 0)                      /* do only after start-up   */
     {
+#if defined USE_WOULD_TRUNCATE_BPB_BW
         double fraction = double(bpb) / double(bw);
         midipulse max = track().get_max_timestamp();
         midipulse newlength = midipulse(track().get_length() * fraction);
@@ -1369,16 +1373,17 @@ qseqeditframe64::would_truncate (int bpb, int bw)
         {
             result = ! qt_prompt_ok             /* Cancel == ack the danger */
             (
-                "This time-signature will drop events.",
-                "No way to cancel at present."  /* "Cancel to avoid that."  */
+                "This time-signature might drop events.",
+                "Cancel to avoid that."
             );
         }
+#endif
     }
     return result;
 }
 
 /**
- *  Checks if a change in measures would truncate events.
+ *  Checks if a direct change in measures would truncate events.
  */
 
 bool
@@ -1394,8 +1399,7 @@ qseqeditframe64::would_truncate (int m)
         {
             result = ! qt_prompt_ok             /* Cancel == ack the danger */
             (
-                "This change will drop events.",
-                "Cancel to avoid that."
+                "This change will drop events.", "Cancel to avoid that."
             );
         }
     }
@@ -1475,7 +1479,7 @@ qseqeditframe64::set_beats_per_bar (int bpb, qbase::status qs)
         else
         {
             m_beats_per_bar = bpb;
-            track().set_beats_per_bar(bpb);
+            track().set_beats_per_bar(bpb, is_initialized());
             track().apply_length(bpb, 0, 0);        /* no measures supplied */
             set_track_change();                     /* to solve issue #90   */
         }

@@ -1267,7 +1267,7 @@ public:
     bool extend_length ();
     bool apply_length (int bpb, int ppqn, int bw, int measures = 0);
 
-    bool apply_length (int meas = 1)
+    bool apply_length (int meas = 0)
     {
         return apply_length(0, 0, 0, meas);
     }
