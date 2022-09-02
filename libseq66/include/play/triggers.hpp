@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-08-01
+ * \updates       2021-09-02
  * \license       GNU GPLv2 or above
  *
  *  By segregating trigger support into its own module, the sequence class is
@@ -507,7 +507,7 @@ public:
     );
     void adjust_offsets_to_length (midipulse newlen);
     bool split (midipulse tick, trigger::splitpoint splittype);
-    void grow_trigger (midipulse tickfrom, midipulse tickto, midipulse length);
+    bool grow_trigger (midipulse tickfrom, midipulse tickto, midipulse length);
     const trigger & find_trigger (midipulse tick) const;
     const trigger & find_trigger_by_index (int index) const;
     bool remove (midipulse tick);

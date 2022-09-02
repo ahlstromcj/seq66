@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-08-21
+% \update      2022-09-01
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -127,7 +127,7 @@
    An empty box is a slot for a pattern.
    If a pattern is present in the slot, text information and notes are drawn on
    the button.
-   For example, the top line will show
+   The top line will show
    the title of the pattern, the number of measures in the pattern, and
    indicate if the pattern has a loop-count (indicated by a
    \textbf{+} sign.
@@ -386,7 +386,10 @@
          \index{pattern!length}
          The length of the pattern, in measures, is shown in the upper
          right corner of the pattern slot.
-         Also, if the loop-count for the pattern is greater than 0, 
+         If the pattern has been modified, an \textbf{asterisk}
+         appears after the
+         number.
+         Otherwise, if the loop-count for the pattern is greater than 0, 
          then an \textbf{plus sign} is shown.
          Remember that a pattern loop-count of 0 means the pattern can repeat
          "forever".
@@ -437,12 +440,17 @@
          This pair of numbers is the standard time-signature of the pattern,
          such as "4/4" or "3/4".  The first number is the beats-per-measure,
          and the second is the size of the beat, here, a quarter note.
-      \item \textbf{Shortcut Key}.  Bottom right.
+      \item \textbf{Shortcut Key}.  Also known as the
+         \textbf{hot key}, this symbol is shown at the bottom right of the
+         slot, in square brackets for better visibility.
          The key noted in the lower-right corner of the pattern is a "hot-key"
          that can be pressed to toggle the mute/unmute status of that pattern.
          This action is an alternative to left-click on the pattern.
          This hot-key can also be used to open the pattern in a pattern editor
          or in the event editor.
+         Other actions are supported by changing the 
+         \textbf{loop mode} 
+         (see \sectionref{paragraph:patterns_recording_modes}).
       \item \textbf{Armed}. Highlight color of button.
          Button highlighting indicates that the pattern is armed
          (unmuted), and will play if playback is initiated in the pattern

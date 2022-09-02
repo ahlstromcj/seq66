@@ -610,9 +610,10 @@ triggers::intersect (midipulse position)
  *      The additional length to append to tickto for the check.
  */
 
-void
+bool
 triggers::grow_trigger (midipulse tickfrom, midipulse tickto, midipulse len)
 {
+    bool result = false;
     for (auto & t : m_triggers)
     {
         midipulse start = t.tick_start();
@@ -627,9 +628,11 @@ triggers::grow_trigger (midipulse tickfrom, midipulse tickto, midipulse len)
                 ender = calcend;
 
             add(start, ender - start + 1, t.offset());
+            result = true;
             break;
         }
     }
+    return result;
 }
 
 /**

@@ -613,7 +613,7 @@ qseqroll::draw_notes
             painter.setPen(pen);
             painter.setBrush(brush);
             draw_tempo(painter, x, y, ni.velocity());
-#endif  // SEQ66_SHOW_TEMPO_IN_PIANO_ROLL
+#endif
             continue;
         }
 
@@ -1579,7 +1579,7 @@ qseqroll::grow_selected_notes (int dx)
     }
 }
 
-#endif // defined USE_GROW_SELECTED_NOTES_FUNCTION
+#endif
 
 /**
  *  Provides the base sizing of the piano roll.  If less than the width of the

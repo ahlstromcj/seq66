@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-30
+ * \updates       2022-09-02
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -1052,40 +1052,43 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                             if (dt == sequence::draw::finish)
                                 break;
 
+                            midipulse tick_s = ni.start();
+                            int sx = tick_s * lenw / lens + marker_x;
                             if (dt == sequence::draw::tempo)
                             {
-                                midipulse tick_s = ni.start();
-                                int sx = tick_s * lenw / lens + marker_x;
                                 midibpm max = usr().midi_bpm_maximum();
                                 midibpm min = usr().midi_bpm_minimum();
                                 double tempo = double(ni.velocity());
                                 int yt = int(cny * (max-tempo) / (max-min)) + y;
-                                painter.drawEllipse(sx, yt, 3, 3);
-                                continue;
+                                if (sx < x)
+                                    sx = x;
+
+                                if (sx <= xmax)
+                                    painter.drawEllipse(sx, yt, 3, 3);
                             }
+                            else
+                            {
+                                midipulse tick_f = ni.finish();
+                                int note_y =
+                                (
+                                    cny - (cny * (ni.note() - note0)) / height
+                                ) + 1 + y;
+                                int fx = tick_f * lenw / lens + marker_x;
+                                if (sequence::is_draw_note_onoff(dt))
+                                    fx = sx + 1;
 
-                            midipulse tick_s = ni.start();
-                            midipulse tick_f = ni.finish();
-                            int note_y =
-                            (
-                                cny - (cny * (ni.note() - note0)) / height
-                            ) + 1 + y;
-                            int sx = tick_s * lenw / lens + marker_x;
-                            int fx = tick_f * lenw / lens + marker_x;
-                            if (sequence::is_draw_note_onoff(dt))
-                                fx = sx + 1;
+                                if (fx <= sx)
+                                    fx = sx + 1;
 
-                            if (fx <= sx)
-                                fx = sx + 1;
+                                if (sx < x)
+                                    sx = x;
 
-                            if (sx < x)
-                                sx = x;
+                                if (fx > xmax)
+                                    fx = xmax;
 
-                            if (fx > xmax)
-                                fx = xmax;
-
-                            if (fx >= x && sx <= xmax)
-                                painter.drawLine(sx, note_y, fx, note_y);
+                                if (fx >= x && sx <= xmax)
+                                    painter.drawLine(sx, note_y, fx, note_y);
+                            }
                         }
                         t += lens;
                     }

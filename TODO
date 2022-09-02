@@ -1,12 +1,13 @@
 TO DO for Seq66 0.99.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-09-01
+2019-04-13 to 2022-09-02
 
 Ongoing efforts:
 
     -   Verify no bugs remaining in:
         -   Pattern fix dialog.
-        -   File / Save handling with various modifications.
+        -   File / Save handling with various modifications. Current issue:
+            song-recording.
     -   "Session: Save" can occur.  Have not seen this lately.
     -   Verify setmapper/setmaster for odd set sizes.
 
@@ -46,10 +47,9 @@ UI:
         event editor instantiation to the grid mode.
     -   Use the global time signature to set the time signature of a new
         pattern.
-    -   In pattern editor, if the global PPQN is changed (e.g. from 192 to
-        1920), then the length changes (e.g. from 8 measures to 80).
-        Also, the song editor display is still incorrect (need to call
-        set_guides()).  Also see performer.cpp line 1738.
+    -   Song-record snap change should enable OK at least.
+        -   Also add to record-button tooltip: "Ctrl disables record snap".
+        -   Also somehow feed it back to Edit / Preferences / Play.
 
 Port-Mapping:
 
@@ -84,10 +84,13 @@ From Testing:
     for horizontal seqroll and perfroll, but not for vertical (refactoring
     needed).  Try to center vertically on notes in the viewport.
 
+    When muting/unmuting a pattern in the song editor, when focus changes
+    the tracks are shown in the bright color.
+
     Can we distinguish note-insertion from movement snap, to avoid the
     "L"-then-snap-then-move mamba?
 
-    Tempo display needs to be worked on for the perfroll.
+    Tempo display needs to be worked on for the perfroll and qloopbuttons.
 
 CLI:
 
@@ -123,9 +126,24 @@ Macros to "finalize":
     USE_ADJUST_DATA_HANDLE
     USE_INTERSECT_FUNCTIONS
     ENABLE_PROPOSED_FUNCTIONS
+
     USE_STAZED_SHIFT_SUPPORT
     USE_STAZED_COMPANDING
     USE_THIS_STAZED_CODE_WHEN_READY
+
+    function_calls_gnu.c/h
+
+Others to Consider:
+
+    In main frame, try to highlight the start/stop/pause buttons
+    appropriately.
+
+    On a Debian Sid box, ALSA puts out *two* events into Qsynth for every note
+    event. On an Ubuntu box, just one event is emitted. Why?  Try it under JACK
+    at some point on Debian Sid (it also puts out two events).  Two events are
+    emitted even when just clicking on the virtual piano keyboard in the
+    pattern editor!  This occurs during the buss flush after the event is
+    sent.  Does not seem to be due to the MIDI thru ALSA port.
 
 ISSUES:
 
@@ -150,8 +168,7 @@ ISSUES:
 #4-11 Closed.
 
 #12 Note rendering problem
-    STATUS: Cannot duplicate at this time. Made some unrelated fixes found
-    during investigation.
+    STATUS: Cannot duplicate at this time.
 
 #16 Ableton Live transport support?
     Go to this issue in Github to see the thread.
@@ -209,8 +226,7 @@ ISSUES:
 #45 Closed.
 
 #46 JACK port groups / order?
-    STATUS: To examine. Probably will push off to version 2 depending on
-    research.
+    STATUS: To examine.
 
 #47 change key map
     STATUS: Fixed for now.
@@ -483,6 +499,5 @@ Version 2 features:
     -   Implement solo, FF, rewind, etc.
     -   Weak JACK support.  Seq66 dependence on the JACK ringbuffer is an
         issue here.
-    -   JACK port groups / order.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

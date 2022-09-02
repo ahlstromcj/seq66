@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-09-01
+ * \updates       2022-09-02
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1088,8 +1088,32 @@ sequence::play
 
         if (song_recording())               /* song record of triggers      */
         {
-            grow_trigger(song_record_tick(), end_tick, c_song_record_incr);
-            set_dirty_mp();                 /* force redraw                 */
+            bool added = grow_trigger
+            (
+                song_record_tick(), end_tick, c_song_record_incr
+            );
+            if (added)
+            {
+                set_dirty_mp();             /* force redraw                 */
+                modify(false);              /* modify without notify        */
+
+                /*
+                 * Indicate that we're modified.  Tricky, because if
+                 * modify(true) were called above, that would call
+                 * on_sequence_change(), which causes a segfault.  Here,we
+                 * need to modify the performer, but call a different
+                 * notification function.
+                 */
+
+                if (not_nullptr(perf()))
+                {
+                    perf()->notify_trigger_change
+                    (
+                        seq_number(), performer::change::no
+                    );
+                }
+
+            }
         }
         if (playback_mode)                  /* song mode: use triggers      */
         {
@@ -5774,7 +5798,8 @@ sequence::change_ppqn (int p)
         {
             m_length = rescale_tick(m_length, p, m_ppqn);
             m_ppqn = p;
-            result = apply_length();                    /* use new PPQN     */
+//          result = apply_length(0, p, 0);
+            result = apply_length(0, 0, 0);             /* use new PPQN     */
             m_triggers.change_ppqn(p);
         }
     }

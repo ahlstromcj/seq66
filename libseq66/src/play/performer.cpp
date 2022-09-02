@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-08-29
+ * \updates       2022-09-02
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -481,7 +481,9 @@ performer::modified () const
     bool result = m_is_modified;
     if (result)
     {
-        /* printf("MODIFIED\n");   // just for debugging */
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf("Modified\n");
+#endif
     }
     else
         result = mapper().any_modified_sequences();
@@ -1403,8 +1405,6 @@ performer::finish_recorder ()
                 ;
             (void) info_message(os.str());
             m_recorder->uninitialize();
-
-            // INVESTIGATE:  Can cause segfault??
             notify_sequence_change(seqno, change::recreate);
         }
         else
@@ -3295,8 +3295,8 @@ performer::set_sequence_name (seq::ref s, const std::string & name)
  * \param recordon
  *      Provides the current status of the Record button.
  *
- * \param thruon  CHANGING TO TOGGLE!
- *      Provides the current status of the Thru button.
+ * \param toggle
+ *      If true, toggle the record status.
  *
  * \param s
  *      The sequence that the seqedit window represents.  This pointer is
@@ -6076,11 +6076,6 @@ performer::sequence_playing_change (seq::number seqno, bool on)
 {
     bool qinprogress = midi_control_in().is_queue();
     mapper().sequence_playscreen_change(seqno, on, qinprogress);
-
-    /*
-     * Too much maybe: notify_trigger_change(seqno, change::no);
-     */
-
     return true;
 }
 

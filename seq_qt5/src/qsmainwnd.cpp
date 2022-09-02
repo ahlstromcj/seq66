@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-09-01
+ * \updates       2022-09-02
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -131,6 +131,8 @@
 #include "pixmaps/pause.xpm"
 #include "pixmaps/perfedit.xpm"
 #include "pixmaps/play2.xpm"
+#include "pixmaps/song_rec_no_snap.xpm"
+#include "pixmaps/song_rec_off.xpm"
 #include "pixmaps/song_rec_on.xpm"      /* #include "pixmaps/song_rec.xpm" */
 #include "pixmaps/stop.xpm"
 
@@ -549,7 +551,7 @@ qsmainwnd::qsmainwnd
     ui->btnSongPlay->setCheckable(false);
 
     /*
-     * Record-Song button.
+     * Record-Song button. What about the song_rec_off_xpm file?
      */
 
     connect
@@ -557,7 +559,7 @@ qsmainwnd::qsmainwnd
         ui->btnRecord, SIGNAL(clicked(bool)),
         this, SLOT(song_recording(bool))
     );
-    qt_set_icon(song_rec_on_xpm, ui->btnRecord);
+    qt_set_icon(song_rec_off_xpm, ui->btnRecord);
 
     /*
      * Performance Editor button.
@@ -976,6 +978,23 @@ qsmainwnd::set_loop (bool looping)
 void
 qsmainwnd::song_recording (bool record)
 {
+    bool dosnap = true;
+    const char ** pixmap = song_rec_on_xpm;
+    if (record)
+    {
+        Qt::KeyboardModifiers qkm = QGuiApplication::keyboardModifiers();
+        if (qkm & Qt::ControlModifier)
+        {
+            dosnap = false;
+            pixmap = song_rec_no_snap_xpm;
+        }
+    }
+    else
+    {
+        pixmap = song_rec_off_xpm;
+    }
+    qt_set_icon(pixmap , ui->btnRecord);
+    cb_perf().song_record_snap(dosnap);
     cb_perf().song_recording(record);
 }
 
@@ -1412,8 +1431,8 @@ qsmainwnd::open_file (const std::string & fn)
         if (! use_nsm())                        /* does this menu exist?    */
         {
             /*
-             * This is wrong.  A file just loaded doesn't need to be saved
-             * until it is altered.
+             * Just because we open a file doesn't mean it needs to be
+             * saved.
              *
              * enable_save(file_writable(fn));
              */
@@ -3893,9 +3912,6 @@ qsmainwnd::refresh_captions ()
         std::string newname = cb_perf().playlist_song_basename();
         update_window_title(newname);
     }
-    /*
-     * Too much maybe: enable_save(cb_perf().modified());
-     */
     return result;
 }
 

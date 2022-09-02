@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-26
+ * \updates       2022-09-01
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -655,6 +655,12 @@ qseditoptions::setup_tab_play_options ()
     (
         ui->chkUseFilesPPQN, SIGNAL(stateChanged(int)),
         this, SLOT(slot_use_file_ppqn())
+    );
+
+    connect
+    (
+        ui->chkSongRecordSnap, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_song_record_snap())
     );
 
     /*
@@ -2096,6 +2102,7 @@ qseditoptions::sync_usr ()
     ui->lineEditUiScalingHeight->setText(tmp);
     ui->chkNoteResume->setChecked(usr().resume_note_ons());
     ui->chkUseFilesPPQN->setChecked(usr().use_file_ppqn());
+    ui->chkSongRecordSnap->setChecked(perf().song_record_snap());
     ui->spinKeyHeight->setValue(usr().key_height());
 
     show_session(usr().session_manager());
@@ -2183,6 +2190,25 @@ qseditoptions::slot_use_file_ppqn ()
             usr().clear_option_bits();      /* see usrsettings::option_bits */
             usr().use_file_ppqn(ufppqn);
             modify_usr();
+        }
+    }
+}
+
+/**
+ *  Fixed issue #44 "Record live sequence changes" functionality, which
+ *  was already in place, but had no runtime user-interface setting.
+ */
+
+void
+qseditoptions::slot_song_record_snap ()
+{
+    if (m_is_initialized)
+    {
+        bool snappit = ui->chkSongRecordSnap->isChecked();
+        bool snapstat = perf().song_record_snap();
+        if (snappit != snapstat)
+        {
+            perf().song_record_snap(snappit);
         }
     }
 }
