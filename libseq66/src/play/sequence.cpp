@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-09-02
+ * \updates       2022-09-03
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1094,17 +1094,15 @@ sequence::play
             );
             if (added)
             {
-                set_dirty_mp();             /* force redraw                 */
-                modify(false);              /* modify without notify        */
-
                 /*
-                 * Indicate that we're modified.  Tricky, because if
-                 * modify(true) were called above, that would call
-                 * on_sequence_change(), which causes a segfault.  Here,we
-                 * need to modify the performer, but call a different
-                 * notification function.
+                 * Indicate we're modified.  Tricky, because if modify(true)
+                 * were called, that would call on_sequence_change(),
+                 * which causes a segfault.  Here, we need to modify the
+                 * performer, but call a different notification function.
                  */
 
+                set_dirty_mp();             /* force redraw                 */
+                modify(false);              /* modify without notify        */
                 if (not_nullptr(perf()))
                 {
                     perf()->notify_trigger_change
@@ -1112,7 +1110,6 @@ sequence::play
                         seq_number(), performer::change::no
                     );
                 }
-
             }
         }
         if (playback_mode)                  /* song mode: use triggers      */
@@ -5100,6 +5097,20 @@ sequence::extend_length ()
         int measures = int(double(len) / unit_measure(true) + 0.5); /* TIME */
         len = m_unit_measure * measures;
         result = set_length(len, false, false); /* no trig adjust or verify */
+    }
+    return result;
+}
+
+bool
+sequence::double_length ()
+{
+    automutex locker(m_mutex);
+    int m = get_measures();
+    bool result = m > 0;
+    if (result)
+    {
+        m *= 2;
+        result = apply_length(m);
     }
     return result;
 }

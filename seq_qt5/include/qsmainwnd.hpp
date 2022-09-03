@@ -408,6 +408,7 @@ signals:
 
 private slots:
 
+    void slot_open_edit_prefs ();
     void slot_summary_save ();
     void slot_tutorial ();
     void slot_user_manual ();

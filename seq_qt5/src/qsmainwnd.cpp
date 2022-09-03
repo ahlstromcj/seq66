@@ -443,16 +443,25 @@ qsmainwnd::qsmainwnd
     /*
      * Edit Menu.  First connect the preferences dialog to the main window's
      * Edit / Preferences menu entry.  Then connect all the new Edit menu
-     * entries.
+     * entries. Update: rather than wire in show() directly, we wire in another
+     * slot to allow syncing the Preferences dialog with the current status.
      */
 
     if (not_nullptr(m_dialog_prefs))
     {
+#if USE_DIRECT_SHOW_CONNECT
         connect
         (
             ui->actionPreferences, SIGNAL(triggered(bool)),
             m_dialog_prefs, SLOT(show())
         );
+#else
+        connect
+        (
+            ui->actionPreferences, SIGNAL(triggered(bool)),
+            this, SLOT(slot_open_edit_prefs())
+        );
+#endif
     }
     connect
     (
@@ -1067,6 +1076,13 @@ qsmainwnd::edit_bpm ()
     midibpm bpm = ui->spinBpm->value();
     cb_perf().set_beats_per_minute(bpm);
     enable_save();
+}
+
+void
+qsmainwnd::slot_open_edit_prefs ()
+{
+    m_dialog_prefs->show();
+    m_dialog_prefs->sync();
 }
 
 void

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2022-08-29
+ * \updates       2022-009-03
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -276,7 +276,7 @@ qslivegrid::populate_grid_mode ()
     for (int counter = 0; counter <= ending; ++counter)
     {
         gridmode gm = usr().grid_mode(counter);
-        bool enabled = gm != gridmode::clear && gm != gridmode::double_length;
+        bool enabled = true;                /* gm != gridmode::double_length */
         std::string modename = usr().grid_mode_label(gm);
         QString combotext(qt(modename));
         ui->comboGridMode->insertItem(counter, combotext);

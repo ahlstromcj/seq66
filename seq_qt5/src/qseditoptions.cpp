@@ -2205,11 +2205,8 @@ qseditoptions::slot_song_record_snap ()
     if (m_is_initialized)
     {
         bool snappit = ui->chkSongRecordSnap->isChecked();
-        bool snapstat = perf().song_record_snap();
-        if (snappit != snapstat)
-        {
-            perf().song_record_snap(snappit);
-        }
+        perf().song_record_snap(snappit);
+        set_enabled(QDialogButtonBox::Ok, true);    /* for appearances only */
     }
 }
 

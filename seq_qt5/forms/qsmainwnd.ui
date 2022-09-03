@@ -1113,7 +1113,9 @@ matter what sets-mode is in force. </string>
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
-           <string>Record live sequence changes into the Song Editor.</string>
+           <string>Record live sequence changes into the Song Editor.
+Hold the Ctrl key while clicking to disable snap during
+recording.</string>
           </property>
           <property name="text">
            <string>Rec</string>

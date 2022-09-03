@@ -1529,6 +1529,36 @@ performer::new_sequence (seq::number & finalseq, seq::number seq)
 }
 
 /**
+ *  Simply clears the event from the pattern.  That is all.
+ */
+
+bool
+performer::clear_sequence (seq::number seqno)
+{
+    const seq::pointer s = get_sequence(seqno);
+    bool result = bool(s);
+    if (result)
+        s->clear_events();
+
+    return result;
+}
+
+/**
+ *  Doubles the length of the sequence.
+ */
+
+bool
+performer::double_sequence (seq::number seqno)
+{
+    const seq::pointer s = get_sequence(seqno);
+    bool result = bool(s);
+    if (result)
+        s->double_length();
+
+    return result;
+}
+
+/**
  *  Deletes a pattern/sequence by number.  We now also solidify the deletion
  *  by setting the pointer to null after deletion, so it will blow up if
  *  accidentally accessed.  The final act is to raise the "is modified" flag,
@@ -1555,7 +1585,7 @@ performer::remove_sequence (seq::number seqno)
     {
         seq::number buttonno = seqno - playscreen_offset();
         send_seq_event(buttonno, midicontrolout::seqaction::removed);
-        notify_sequence_change(seqno, change::recreate);            /* NEW */
+        notify_sequence_change(seqno, change::recreate);
         modify();
     }
     return result;
@@ -1564,16 +1594,17 @@ performer::remove_sequence (seq::number seqno)
 bool
 performer::copy_sequence (seq::number seqno)
 {
-    bool result = is_seq_active(seqno);
+    const seq::pointer s = get_sequence(seqno);
+    bool result = bool(s);
     if (result)
-    {
-        const seq::pointer s = get_sequence(seqno);
-        result = bool(s);
-        if (result)
-            m_seq_clipboard.partial_assign(*s, true);
-    }
+        m_seq_clipboard.partial_assign(*s, true);
+
     return result;
 }
+
+/**
+ *  TODO: make this work more like remove_sequence().
+ */
 
 bool
 performer::cut_sequence (seq::number seqno)
@@ -6794,8 +6825,7 @@ performer::loop_control
                 }
                 else if (gm == gridmode::clear)
                 {
-                    // TODO:  need a clear_sequence() function and an
-                    //        entry in qslivebase and the qslivegrid macro
+                    result = clear_sequence(seqno);
                 }
                 else if (gm == gridmode::remove)
                 {
@@ -6815,7 +6845,7 @@ performer::loop_control
                 }
                 else if (gm == gridmode::double_length)
                 {
-                    // TODO
+                    result = double_sequence(seqno);
                 }
             }
             else

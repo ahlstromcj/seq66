@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-09-01
+ * \updates       2022-09-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -64,6 +64,9 @@ namespace seq66
 
 class qseditoptions final : public QDialog
 {
+
+    friend class qsmainwnd;
+
     Q_OBJECT
 
 public:

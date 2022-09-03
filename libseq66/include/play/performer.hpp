@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-08-29
+ * \updates       2022-09-03
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2054,6 +2054,8 @@ public:
         return new_sequence(s_dummy, seq);
     }
 
+    bool clear_sequence (seq::number seq);
+    bool double_sequence (seq::number seq);
     bool remove_sequence (seq::number seq);
     bool copy_sequence (seq::number seq);
     bool cut_sequence (seq::number seq);

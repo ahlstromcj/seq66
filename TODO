@@ -1,13 +1,12 @@
 TO DO for Seq66 0.99.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-09-02
+2019-04-13 to 2022-09-03
 
 Ongoing efforts:
 
     -   Verify no bugs remaining in:
         -   Pattern fix dialog.
-        -   File / Save handling with various modifications. Current issue:
-            song-recording.
+        -   File / Save handling with various modifications.
     -   "Session: Save" can occur.  Have not seen this lately.
     -   Verify setmapper/setmaster for odd set sizes.
 
@@ -43,13 +42,8 @@ UI:
 
     -   Underrun display not consistent with console output with Chameleon
         tune.
-    -   Finish up the extended grid-mode functions. Also add pattern and
-        event editor instantiation to the grid mode.
-    -   Use the global time signature to set the time signature of a new
-        pattern.
-    -   Song-record snap change should enable OK at least.
-        -   Also add to record-button tooltip: "Ctrl disables record snap".
-        -   Also somehow feed it back to Edit / Preferences / Play.
+    -   Add pattern and event editor instantiation to the grid mode?
+        Probably not worth the effort.
 
 Port-Mapping:
 
