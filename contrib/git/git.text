@@ -227,7 +227,7 @@ Tagging:
     requires a commit message, and is meant for public consumption.
 
     $ git log               # to get the commit hash, abcd1234 (for example)
-    $ git tag -a 0.99.9 -m "New version 0.99.9.xx tagged" abcd1234
+    $ git tag -a 0.99.9 -m "Version 0.99.9" abcd1234
     $ git push origin 0.99.9                 - or -
     $ git push origin --tags
 
@@ -247,17 +247,27 @@ Tagging:
     Then:
 
     $ hub release create --copy -F RELNOTES.md v2.3.0
+
     $ hub release create -a 0.9.9  -F RELNOTES.md v2.3.0
+
     $ gh release -F RELNOTES.md create <tag> <assetfiles>
 
-    See https://hub.github.com/ for more information.
+    $ git tag -a 0.99.0 -m "Version 0.99.0" abcd1234
+    $ git push origin --tags
+    $ gh release create 0.99.0 -F RELNOTES.md
+
+    For the first command, the URL of the new release is copied to the
+    clipboard.
+
+    See https://hub.github.com/ for more information. For example, one can
+    start a discussion with gh.
 
     Note that each tag to be published needs to be pushed as well.
     Also note that, if the commit hash is missing, HEAD is assumed.
 
     $ hub release create -a prebuilt.zip -m 'release title' tag-name
 
-        -   PRompts for your password the first time, and then automatically.
+        -   Prompts for your password the first time, and then automatically.
         -   Creates and stores an API token locally.
         -   Creates a non-annotated tag on the remote called tag-name.
         -   Creates a release associated to that tag.

@@ -18,7 +18,10 @@ installation.  Windows users can get an installer package on GitHub or build it
 with Qt Creator.  Provides a comprehensive PDF user-manual.
 
 For version 0.99.0, a raft of updates and fixes were made as we work through
-some of the items in the TODO file.
+some of the items in the TODO file. This version series will add no new major
+features, but will follow up on the remaining issues and any new issues that
+come up. New features will be pushed off to Seq66v2; see the bottom of the TODO
+file.
 
 Support sites (still in progress):
 

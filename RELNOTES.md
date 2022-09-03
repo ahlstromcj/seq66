@@ -1,6 +1,12 @@
-# Seq66 Release Notes 0.99.0 2022-08-26
+# Seq66 Release Notes 0.99.0 2022-09-03
 
 This file lists __major__ changes from version 9.98.0 to 0.99.0 (to catch up).
+
+For version 0.99.0, a raft of updates and fixes were made as we work through
+some of the items in the TODO file. This version series will add no new major
+features, but will follow up on the remaining issues and any new issues that
+come up. New features will be pushed off to Seq66v2; see the bottom of the TODO
+file.
 
 ## Changes
 
