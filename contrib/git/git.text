@@ -247,10 +247,10 @@ Tagging:
     Then:
 
     $ hub release create --copy -F RELNOTES.md v2.3.0
-
     $ hub release create -a 0.9.9  -F RELNOTES.md v2.3.0
-
     $ gh release -F RELNOTES.md create <tag> <assetfiles>
+
+    Here is what we will use:
 
     $ git tag -a 0.99.0 -m "Version 0.99.0" abcd1234
     $ git push origin --tags

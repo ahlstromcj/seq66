@@ -1,5 +1,379 @@
-2022-07-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+2022-09-03  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* README.md, RELNOTES.md, contrib/git/git.text: Added some notes on
+	releases.
+	* README.md, TODO, libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Implemented clear and double grid modes,
+	tweaked song recording.
+
+2022-09-02  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/latex/tex/patterns_panel.tex,
+	libseq66/include/play/triggers.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/play/triggers.cpp,
+	resources/pixmaps/song_rec_no_snap.xpm,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/forms/qseqeventframe.ui,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qsmainwnd.cpp: For issue #44,
+	updates to song recording and snapping.
+
+2022-09-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/play/sequence.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsmainwnd.cpp: Fixed
+	handling/saving measure changes.
+
+2022-08-30  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/midi/calculations.hpp,
+	libseq66/src/midi/calculations.cpp, seq_qt5/include/qbase.hpp,
+	seq_qt5/include/qeditbase.hpp, seq_qt5/include/qperfroll.hpp,
+	seq_qt5/include/qperftime.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qeditbase.cpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qperftime.cpp, seq_qt5/src/qseqbase.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Fixes to PPQN
+	handling in seqroll, perfroll, perftime, and mainwnd.
+
+2022-08-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, contrib/code/ametro.c, contrib/git/git.text,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/midi_splitter.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/screenset.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qsmainwnd.ui, seq_qt5/src/qslivebase.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Fixed
+	detecting color change, MIDI Continue.
+	* README.md, TODO, libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/usrfile.cpp, libseq66/src/cfg/usrsettings.cpp,
+	seq_qt5/include/qloopbutton.hpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qslivebase.cpp: Fixed sets option parsing and improved
+	grid text sizing.
+
+2022-08-26  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES.md, TODO,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/ctrl/midicontrolbase.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/midicontrolbase.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/sessions/smanager.cpp, nsis/build_release_package.bat,
+	seq_qt5/forms/qmutemaster.ui, seq_qt5/forms/qperfeditframe64.ui,
+	seq_qt5/forms/qplaylistframe.ui, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/forms/qseqeditframe64.ui, seq_qt5/forms/qseqeventframe.ui,
+	seq_qt5/forms/qsmainwnd.ui, seq_qt5/include/qeditbase.hpp,
+	seq_qt5/src/qclocklayout.cpp, seq_qt5/src/qeditbase.cpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qsmainwnd.cpp: Fixed note
+	Ctrl-Z, 'ctrl' options, other to-dos.
+
+2022-08-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, seq_qt5/forms/qperfeditframe64.ui,
+	seq_qt5/forms/qplaylistframe.ui, seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/forms/qslivegrid.ui, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Partial fixes
+	for issue #82 horizontal scaling.
+
+2022-08-23  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, doc/latex/tex/kbd_mouse.tex, doc/latex/tex/menu.tex,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/patterns_panel.tex,
+	libseq66/src/play/sequence.cpp: Finished issue #97 so that note
+	entry behaves like Seq24.
+
+2022-08-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, doc/latex/tex/menu.tex,
+	doc/latex/tex/pattern_editor.tex, libseq66/src/play/metro.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/src/qseditoptions.cpp: Fix for issue #54 Qt detection, doc
+	update.
+
+	* Makefile.in, Seq66cli/Makefile.in, Seq66qt5/Makefile.in,
+	configure, data/Makefile.in, doc/Makefile.in,
+	doc/latex/Makefile.in, doc/latex/tex/Makefile.in,
+	include/config.h.in, libseq66/Makefile.in,
+	libseq66/include/Makefile.in, libseq66/src/Makefile.in,
+	libsessions/Makefile.in, libsessions/include/Makefile.in,
+	libsessions/src/Makefile.in, m4/Makefile.in, m4/ax_have_qt.m4,
+	m4/ax_have_qt_min.m4, man/Makefile.in,
+	resources/pixmaps/Makefile.in, seq_portmidi/Makefile.in,
+	seq_portmidi/include/Makefile.in, seq_portmidi/src/Makefile.in,
+	seq_qt5/Makefile.in, seq_qt5/forms/Makefile.in,
+	seq_qt5/include/Makefile.in, seq_qt5/src/Makefile.in,
+	seq_rtmidi/Makefile.in, seq_rtmidi/include/Makefile.in,
+	seq_rtmidi/src/Makefile.in: Incorporated ax_have_qt serial 19
+	updates to fix issue #54.
+
+2022-08-21  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES.md, TODO, VERSION, bootstrap, bootstrap.help,
+	configure.ac, contrib/git/gitconfig,
+	data/share/doc/tutorial/home.html,
+	data/share/doc/tutorial/tutorial_first_startup.html,
+	data/share/metainfo/seq66.appdata.xml, doc/dox/doxy-common.cfg,
+	doc/latex/tex/configuration.tex, doc/latex/tex/menu.tex,
+	doc/latex/tex/patterns_panel.tex,
+	doc/latex/tex/seq66-user-manual.tex, include/cli/seq66-config.h,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/include/play/metro.hpp,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/play/metro.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	man/seq66.1, man/seq66cli.1, man/sequencer66.1,
+	nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
+	nsis/build_debug_code.bat, nsis/build_release_package.bat,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp: Version bump to 0.99, fixes to
+	background recording.
+
+2022-08-17  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, doc/latex/tex/pattern_editor.tex,
+	doc/latex/tex/patterns_panel.tex, libseq66/src/play/metro.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qperfeditframe64.ui,
+	seq_qt5/forms/qseqeditframe64.ui, seq_qt5/forms/qslivegrid.ui,
+	seq_qt5/include/qperfeditframe64.hpp,
+	seq_qt5/include/qperftime.hpp, seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qseqtime.hpp, seq_qt5/src/qperfeditframe64.cpp,
+	seq_qt5/src/qperftime.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqtime.cpp: Fixed L/R marker handling, background
+	recording follow Grid and Quan modes.
+
+2022-08-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/configuration.tex, doc/latex/tex/menu.tex,
+	doc/latex/tex/patterns_panel.tex, libseq66/include/play/metro.hpp,
+	libseq66/include/play/performer.hpp, libseq66/src/play/metro.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qslivegrid.cpp: 
+	Background recording essentially works for issue #98, some tweaks
+	might be needed.
+
+2022-08-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/metro.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/play/metro.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/forms/qslivegrid.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/include/qslivegrid.hpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Groundwork
+	for issue #98 background recording laid.
+
+2022-08-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/src/qseditoptions.cpp: Interim check-in for auto-recording,
+	in its infancy.
+
+2022-08-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, doc/latex/tex/midi_formats.tex,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/patterns_panel.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/play/triggers.cpp: Metronome count-in essentially
+	works.
+
+2022-08-12  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/metro.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/play/metro.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/screenset.cpp, libseq66/src/play/sequence.cpp: 
+	Provisional macroed code for metro count-in.
+
+2022-08-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, contrib/vim-syntax/meson.vim, data/linux/qseq66.rc,
+	doc/latex/tex/menu.tex, doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/midi/event.cpp,
+	libseq66/src/play/metro.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseqeditex.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixed some bugs in the metronome code,
+	added more documentation.
+
+2022-08-09  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* : Added image for new Metronome tab, issue #98.
+	* doc/latex/tex/menu.tex, libseq66/include/play/performer.hpp,
+	libseq66/src/play/metro.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/qseditoptions.cpp: 
+	Metronome feature and configuration essentially working now.
+
+2022-08-08  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES.md, libseq66/include/ctrl/midicontrolout.hpp,
+	libseq66/include/ctrl/midimacros.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/keycontainer.cpp,
+	libseq66/src/ctrl/midicontrolout.cpp, libseq66/src/play/metro.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/forms/qsessionframe.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/include/qsessionframe.hpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qsessionframe.cpp: Metro GUI config in progress, weird
+	debug seqfault fixed.
+	* README.md, data/linux/qseq66.rc, doc/latex/tex/configuration.tex,
+	doc/latex/tex/patterns_panel.tex,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/metro.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/play/metro.cpp,
+	libseq66/src/play/performer.cpp: Added metronome configuration to
+	'rc' file.
+
+2022-08-07  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/midi/midibytes.hpp,
+	libseq66/include/play/metro.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/play/metro.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/qseqeditframe64.cpp: 
+	Added configuration class for metronome support, need to add code
+	for the rc file.
+	* README.md, TODO, libseq66/include/play/metro.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/play/metro.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qslivegrid.cpp: More metronome work, niggling issues and
+	configuration needed.
+
+2022-08-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/play/metro.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/src/qsmainwnd.cpp: Metronome
+	works, need to get it going in Song mode still.
+	* libseq66/include/play/screenset.hpp,
+	libseq66/include/play/seq.hpp, libseq66/include/play/sequence.hpp,
+	libseq66/src/play/metro.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/screenset.cpp, resources/pixmaps/metro.xpm,
+	seq_qt5/forms/qslivegrid.ui, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp: More progress on a metronome....
+
+2022-08-05  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/Makefile.am, libseq66/include/Makefile.in,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/include/midi/event.hpp, libseq66/include/play/metro.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp, libseq66/include/play/seq.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/setmapper.hpp, libseq66/libseq66.pro,
+	libseq66/src/Makefile.am, libseq66/src/Makefile.in,
+	libseq66/src/play/metro.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/screenset.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/play/setmapper.cpp, resources/pixmaps/metro.xpm,
+	seq_qt5/forms/qslivegrid.ui, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/src/qslivegrid.cpp, seq_rtmidi/src/midi_alsa.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp: For issue #98, initial metronome
+	code, still in progress.
+
+2022-08-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES.md, TODO, contrib/git/git.text,
+	libseq66/include/util/rect.hpp, libseq66/src/os/shellexecute.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qpatternfix.ui,
+	seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Some fixes to issue #97, added paste box
+	and progress-bar Ctrl-arrow movement to pattern editor.
+
+2022-08-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/triggers.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/play/triggers.cpp, seq_qt5/include/qperfroll.hpp,
+	seq_qt5/src/qpatternfix.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qseqeditframe64.cpp: L/R keys now work to move triggers,
+	and Pattern Fix now modifies.
+
+2022-07-31  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, doc/latex/tex/song_editor.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/include/play/triggers.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/setmapper.cpp,
+	libseq66/src/play/triggers.cpp, resources/pixmaps/expandgrid.xpm,
+	seq_qt5/forms/qperfeditframe64.ui, seq_qt5/include/qperfbase.hpp,
+	seq_qt5/include/qperfroll.hpp, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/src/qperfbase.cpp, seq_qt5/src/qperfeditframe64.cpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qperftime.cpp: Added an
+	expand-grid button to the song editor for issue #94.
+
+2022-07-30  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, seq_qt5/include/qperfroll.hpp,
+	seq_qt5/src/qperfroll.cpp: More work on issue #90 for song-editor
+	improvements, still in progress.
+
+2022-07-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/triggers.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/playlist.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/triggers.cpp,
+	seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qseqframe.hpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qperftime.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qseqtime.cpp, seq_qt5/src/qsmainwnd.cpp: Issue #90 for
+	the song editor triggers, still in flux.
+	* README.md, TODO, libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp, libseq66/include/play/seq.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/playlist.cpp,
+	libseq66/src/play/screenset.cpp, libseq66/src/play/seq.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/triggers.cpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qperftime.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqtime.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Tightened up display message and playback
+	control in regard to issue #89.
+	* ChangeLog, README.md, TODO, libseq66/include/cfg/usrsettings.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/src/qeditbase.cpp,
+	seq_qt5/src/qperfbase.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qportwidget.cpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsmainwnd.cpp: Good
+	progress on issues #89, #90, and #94, more testing needed.
 	* README.md, TODO, libseq66/src/play/performer.cpp: Interim safety
 	check-in for the road.
 
