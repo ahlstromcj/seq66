@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2022-08-02
+2015-09-09 to 2022-09-04
 
 Creating a GitHub Repository:
 
@@ -252,9 +252,11 @@ Tagging:
 
     Here is what we will use:
 
+    $ git config --global hub.protocol ssh
+
     $ git tag -a 0.99.0 -m "Version 0.99.0" abcd1234
     $ git push origin --tags
-    $ gh release create 0.99.0 -F RELNOTES.md
+    $ hub release create 0.99.0 -F RELNOTES.md abcd1234
 
     For the first command, the URL of the new release is copied to the
     clipboard.

@@ -1,6 +1,6 @@
-TO DO for Seq66 0.99.0 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.99.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-09-03
+2019-04-13 to 2022-09-04
 
 Ongoing efforts:
 
@@ -412,7 +412,10 @@ ISSUES:
     STATUS: See 2021-02-16 or issue #85. Still need to duplicate.
 
 #93 The window of a deleted pattern remains open
-    STATUS: Fixed.
+    STATUS: The deleted pattern window closes now.  Unfortunately I discovered
+    a similar problem with the "new pattern" function.  Again, the old pattern
+    content remains in an open window and can still be edited.  But all (new)
+    changes are lost if the window is closed afterwards.
 
 #94 Long song cannot be scrolled to the right
     STATUS: Mitigated by adding an expansion button to the Song editor.
@@ -432,6 +435,13 @@ ISSUES:
 
 #98 Feature requests (metronome and background recording).
     STATUS: Basically done.
+
+#99 How is seq66 different from seq64?
+    STATUS: Explained in the issue report.  README.md changes needed?
+
+#100 Seq66's MIDI timing completely falls apart at JACK buffer sizer larger
+     than 128.
+     STATUS: Under investigation.
 
 PATTERNS:
 

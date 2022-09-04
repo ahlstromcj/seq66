@@ -1,7 +1,7 @@
-# README for Seq66 0.99.0
+# README for Seq66 0.99.1
 
 Chris Ahlstrom
-2015-09-10 to 2022-09-03
+2015-09-10 to 2022-09-04
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -93,6 +93,11 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.99.1:
+        *   Issue #93. Revisited to fix related open pattern-editor issues.
+        *   Issue #100. TODO.
+        *   Various fixes:
+            *   Fixed partial breakage of pattern-merge function.
     *   Version 0.99.0:
         *   Issue #44. Record live sequence changes functionality beefed up
             to handle recording without snapping.
@@ -147,67 +152,6 @@ Windows, and using a conventional source tarball.
             *   PPQN != 192 : handle snapping when adding notes; bugs in
                 perfroll and perftime.
             *   Implement clear-events and double-length grid modes.
-    *   Version 0.98.10:
-        *   Revisited issue #83, improved GUI editing of control/display
-            automation.
-        *   Fixes for issue #87: segfault due to mute-group on larger set-sizes,
-            inability to modify some usr options in Edit / Preferences, and
-            related bugs found during these fixes. Made performer the owner of
-            mutegroups.
-        *   Fixes for issue #88: 4/16 pattern not shown/played properly until
-            opened in editor.
-        *   Fixed minor issue with port-naming, port-lists.
-        *   Many tweaks to documentation, vim files, midibytes....
-    *   Version 0.98.9.1:
-        *   Added files needed for ./configure.
-        *   Documentation and tutorial updates.
-    *   Version 0.98.9:
-        *   Fixed nasty issue #85 which was recreating the slot buttons, and
-            in a different thread, leading to a seqfault.
-        *   Fixed issue: Preference / MIDI Input port check did not change
-            Apply state.
-        *   Fixed mute/record/thru state display between live grid and a
-            pattern editor.
-        *   Updated/cleaned the tutorial.
-    *   Version 0.98.8:
-        *   Fixed issue #84, now able to build Qt and CLI version in one pass.
-            Also fixed out-of-source builds and removed function call tracing.
-            Streamlined the bootstrap script; it was always "configuring".
-        *   Changed the Apply button from Edit / Preferences to a Restart
-            button.  Further tightening of change detection.
-        *   Moved midibyte/midiboolean functions from strfunctions to midibytes
-            and mutegroup. Much header-file cleanup. Do a --full-clean!
-        *   Added Ctrl-Home and Ctrl-End support to the song editor.
-        *   Added an initial HTML tutorial and commands to access it.  Add
-            shellexecute module to replace the ill-performing QDesktopServices.
-        *   Important configure.ac/Makefile.am upgrades.
-    *   Version 0.98.7:
-        *   Fixed issue #80 where some MIDI controls were getting recorded.
-        *   Fixed issue #81, adding <stdexcept> to code catching
-            std::invalid_argument.
-        *   Fixed issue #83 where parsing 'rc' port lines failed with a
-            port name having a trailing space. Also fixed short-port-name
-            detection.
-        *   Added a "Pattern Fix" dialog to allow a whole pattern to be shifted,
-            quantized, and changed in length all at once. Useful for fixing a
-            badly played pattern or scaling the duration.
-        *   Fixed the issue of leftover child windows of qseqeditframe64.
-        *   Removed odd beat-widths from time signature dropdowns.  Can
-            still enter odd values manually, but unsupported by MIDI format.
-        *   Refactored drop-down lists to use the settings module.
-        *   Tightend string_to_xxx() functions and replaced the std::stoxxx()
-            functions to avoid throwing exceptions.
-        *   Trying to get rolls, time, data, and event panes to line up no
-            matter what the Qt theme is. Difficult.
-        *   Tightening the setting/clearing of performer modification re
-            sequence changes to reduce unnecessary prompts to save, flag
-            modification via the asterisk change marker, and enable/disable the
-            File / Save option in the correct way.
-        *   Tightened the saving of WRK and MIDI files.
-        *   Major refactoring to replace seq::pointers with seq::refs in many
-            places.
-        *   Updated the bootstrap script to make 'release' the default, and
-            fixed the portmidi automake build process for Linux.
 
     See the "NEWS" file for changes in earlier versions.
 

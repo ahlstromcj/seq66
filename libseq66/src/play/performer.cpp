@@ -2475,7 +2475,7 @@ performer::clear_song ()
     {
         m_is_busy = true;
         reset_sequences();
-        rc().midi_filename("");
+        rc().clear_midi_filename();
         set_have_undo(false);
         m_undo_vect.clear();
         set_have_redo(false);

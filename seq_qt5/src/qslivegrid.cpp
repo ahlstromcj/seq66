@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2022-009-03
+ * \updates       2022-09-04
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1109,6 +1109,12 @@ qslivegrid::new_sequence ()
         {
             msgprintf(msglevel::status, "New Pattern %d", int(current));
             alter_sequence(current);
+
+            /*
+             * ca 2022-09-04 An additional fix for issue #93.
+             */
+
+            m_parent->remove_editor(m_current_seq);
         }
     }
 }
@@ -1242,7 +1248,7 @@ qslivegrid::keyPressEvent (QKeyEvent * event)
     if (done)
         update();
     else
-        QWidget::keyPressEvent(event);              /* event->ignore()?     */
+        QWidget::keyPressEvent(event);
 }
 
 void
@@ -1254,7 +1260,7 @@ qslivegrid::keyReleaseEvent (QKeyEvent * event)
     if (done)
         update();
     else
-        QWidget::keyReleaseEvent(event);            /* event->ignore()?     */
+        QWidget::keyReleaseEvent(event);
 }
 
 void
@@ -1329,7 +1335,10 @@ void
 qslivegrid::delete_sequence ()
 {
     if (qslivebase::delete_seq())
+    {
         alter_sequence(m_current_seq);
+        can_paste(false);
+    }
 }
 
 void
@@ -1724,15 +1733,18 @@ qslivegrid::popup_menu ()
             this, SLOT(delete_sequence())
         );
 
-        QAction * actionMerge = new QAction(tr("&Merge into pattern"), m_popup);
-        m_popup->addAction(actionMerge);
-        connect
-        (
-            actionMerge, SIGNAL(triggered(bool)),
-            this, SLOT(merge_sequence())
-        );
+        if (can_paste())
+        {
+            QAction * actionMerge = new QAction(tr("&Merge into pattern"), m_popup);
+            m_popup->addAction(actionMerge);
+            connect
+            (
+                actionMerge, SIGNAL(triggered(bool)),
+                this, SLOT(merge_sequence())
+            );
+        }
     }
-    else if (perf().can_paste())
+    else if (perf().can_paste() && can_paste())
     {
         QAction * actionPaste = new QAction(tr("&Paste to pattern"), m_popup);
         m_popup->addAction(actionPaste);
@@ -1750,6 +1762,9 @@ qslivegrid::popup_menu ()
             this, SLOT(merge_sequence())
         );
     }
+    else
+        can_paste(false);
+
     if (perf().is_seq_active(m_current_seq))
     {
         /**

@@ -15,7 +15,7 @@
     </p>
   </description>
   <releases>
-    <release version="0.99.0" date="2022-08-21" />
+    <release version="0.99.1" date="2022-09-04" />
     </releases>
   <provides>
     <binary>seq66</binary>

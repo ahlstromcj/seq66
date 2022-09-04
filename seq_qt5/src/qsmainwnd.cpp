@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-09-02
+ * \updates       2022-09-04
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1685,7 +1685,7 @@ qsmainwnd::check ()
         case QMessageBox::Discard:
 
             cb_perf().unmodify();       /* avoid saving in save_session()   */
-            rc().midi_filename("");
+            rc().clear_midi_filename();
             result = true;
             break;
 
@@ -1747,6 +1747,13 @@ qsmainwnd::new_file ()
 {
     if (check() && cb_perf().clear_all())           /* don't clear playlist */
     {
+        /*
+         * Instead of the following, should we call performer::song()?
+         * No, clear_all does that as well.
+         *
+         * rc().clear_midi_filename();              // no file in force yet //
+         */
+
         enable_save(false);                         /* no save until change */
         redo_live_frame();
         remove_all_editors();
@@ -1766,6 +1773,8 @@ qsmainwnd::new_file ()
 
         if (not_nullptr(m_mute_master))
             m_mute_master->group_needs_update();
+
+        m_is_title_dirty = true;
     }
 }
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2022-07-27
+ * \updates       2022-09-04
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the old mainwid class.
@@ -194,7 +194,7 @@ qslivebase::copy_seq ()
 {
     bool result = perf().copy_sequence(m_current_seq);
     if (result)
-        m_can_paste = true;
+        can_paste(true);
 
     return result;
 }
@@ -210,15 +210,15 @@ qslivebase::cut_seq ()
     bool result = perf().cut_sequence(m_current_seq);
     if (result)
     {
-        m_can_paste = true;
+        can_paste(true);
         m_parent->remove_editor(m_current_seq);
     }
     return result;
 }
 
 /**
- *  If the sequence/pattern is delete-able (valid and not being edited), then it
- *  is deleted via the performer object.  Note that in seq66 the
+ *  If the sequence/pattern is delete-able (valid and not being edited), then
+ *  it is deleted via the performer object.  Note that in seq66 the
  *  screenset::remove() function makes this check now.
  *
  *  For issue #93, we delete the pattern editor.
@@ -231,6 +231,7 @@ qslivebase::delete_seq ()
     if (result)
     {
         m_parent->remove_editor(m_current_seq);
+        can_paste(false);
     }
     return result;
 }
@@ -238,13 +239,27 @@ qslivebase::delete_seq ()
 bool
 qslivebase::paste_seq ()
 {
-    return perf().can_paste() ? perf().paste_sequence(m_current_seq) : false ;
+    bool result = perf().can_paste() && can_paste();
+    if (result)
+        result = perf().paste_sequence(m_current_seq);
+
+    if (! result)
+        can_paste(false);
+
+    return result;
 }
 
 bool
 qslivebase::merge_seq ()
 {
-    return perf().can_paste() ? perf().merge_sequence(m_current_seq) : false ;
+    bool result = perf().can_paste() && can_paste();
+    if (result)
+        result = perf().merge_sequence(m_current_seq);
+
+    if (! result)
+        can_paste(false);
+
+    return result;
 }
 
 }           // namespace seq66

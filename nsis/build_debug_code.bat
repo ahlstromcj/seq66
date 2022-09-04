@@ -62,7 +62,7 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.99.0
+set PROJECT_VERSION=0.99.1
 set PROJECT_DRIVE=C:
 set PROJECT_BITS=32
 set PROJECT_BASE=\Users\Chris\Documents\Home

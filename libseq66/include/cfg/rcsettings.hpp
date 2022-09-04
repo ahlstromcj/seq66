@@ -28,11 +28,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-08-07
+ * \updates       2022-09-04
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
- *  accessible from the command-line or from the "rc" file.
+ *  accessible from the command-line or from the 'rc' file.
  */
 
 #include <string>
@@ -84,7 +84,7 @@ const int c_output_buss_default =  8;
 
 /**
  *  Maximum number of groups that can be supported.  Basically, the number of
- *  groups set in the "rc" file.  32 groups can be filled.  This is a permanent
+ *  groups set in the 'rc' file.  32 groups can be filled.  This is a permanent
  *  maximum because we really can't support more than 32 keystrokes to support
  *  selecting a mute-group.
  */
@@ -105,7 +105,7 @@ const int c_max_sets   = 32;
  *  defined.  Even if we end up adding more slots to a set, this would be about
  *  the maximum number of keys we could really support.  Maximum number of set
  *  keys that can be supported.  32 keys can be assigned in the Options /
- *  Keyboard tab and "rc" file.  This value applies to the "[keyboard-group]"
+ *  Keyboard tab and 'rc' file.  This value applies to the "[keyboard-group]"
  *  and "[keyboard-control]" sections.
  */
 
@@ -137,7 +137,7 @@ enum class timebase
 };
 
 /**
- *  This class contains "global" options that can be read from the "rc" file
+ *  This class contains "global" options that can be read from the 'rc' file
  *  (class rcfile) and its related "mutes" and "ctrl" files.
  */
 
@@ -321,7 +321,7 @@ private:
     std::string m_last_used_dir;
 
     /**
-     *  Holds the current "rc" and "user" configuration base directory.  This
+     *  Holds the current 'rc' and 'usr' configuration base directory.  This
      *  value is ".config/seq66" by default.  For usage, it is normally
      *  expanded.
      */
@@ -329,7 +329,7 @@ private:
     std::string m_config_directory;
 
     /**
-     *  Holds the current "rc" configuration filename.  This value is
+     *  Holds the current 'rc' configuration filename.  This value is
      *  "qseq66.rc" by default.
      */
 
@@ -353,7 +353,7 @@ private:
     bool m_user_file_active;
 
     /**
-     *  Holds the current "user" configuration filename.  This value is
+     *  Holds the current 'usr' configuration filename.  This value is
      *  "qseq66.usr" by default.
      */
 
@@ -376,7 +376,7 @@ private:
 
     /**
      *  The base name of the MIDI control file, if applicable.  This file is
-     *  located only in the specific "rc"/"usr" HOME directory,
+     *  located only in the specific 'rc'/'usr' HOME directory,
      *  m_config_directory.
      */
 
@@ -401,14 +401,14 @@ private:
 
     /**
      *  The base name of the mute-group file, if applicable.  This file is
-     *  located only in the specific "rc"/"usr" HOME directory,
+     *  located only in the specific 'rc'/'usr' HOME directory,
      *  m_config_directory.
      */
 
     std::string m_mute_group_filename;
 
     /**
-     *  Indicates if the user wants to use the play-list stored in the "rc"
+     *  Indicates if the user wants to use the play-list stored in the 'rc'
      *  file.  This value is stored as well.  It is cleared if there was a
      *  problem such as the play-list file-name not existing.
      */
@@ -435,7 +435,7 @@ private:
     std::string m_playlist_midi_base;
 
     /**
-     *  Indicates if the user wants to use the note-mapper stored in the "rc"
+     *  Indicates if the user wants to use the note-mapper stored in the 'rc'
      *  file.  This value is stored as well.
      */
 
@@ -449,7 +449,7 @@ private:
     std::string m_notemap_filename;
 
     /**
-     *  Indicates if the user wants to use the palette file stored in the "rc"
+     *  Indicates if the user wants to use the palette file stored in the 'rc'
      *  file value.
      */
 
@@ -476,7 +476,7 @@ private:
      *  track other than the first track (#0) as the MIDI tempo track.
      *  Holds the number of the official tempo track for this performance.
      *  Normally 0, it can be changed to any value from 1 to 1023 via the
-     *  tempo-track-number setting in the "rc" file, and that can be overriden
+     *  tempo-track-number setting in the 'rc' file, and that can be overriden
      *  by the c_tempo_track SeqSpec possibly present in the song's MIDI file.
      */
 
@@ -918,6 +918,11 @@ public:
     void midi_filename (const std::string & value)
     {
         m_midi_filename = value;
+    }
+
+    void clear_midi_filename ()
+    {
+        m_midi_filename.clear();
     }
 
     void session_midi_filename (const std::string & value);

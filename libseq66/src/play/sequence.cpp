@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-09-03
+ * \updates       2022-09-04
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2400,7 +2400,10 @@ sequence::merge_events (const sequence & source)
     set_beat_width(bw);
     set_beats_per_bar(bpb);
 
-    bool result = set_length(len, false, false);
+    bool result = len == get_length();              /* no change no problem */
+    if (! result)
+        result = set_length(len, false, false);
+
     if (result)
     {
         push_undo();                                /* push undo, no lock   */
