@@ -24,12 +24,14 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-01
- * \updates       2022-03-13
+ * \updates       2022-09-07
  * \license       See above.
  *
  *  Provides some basic types for the (heavily-factored) rtmidi library, very
  *  loosely based on Gary Scavone's RtMidi library.
  */
+
+#include <cstring>                      /* std::memcpy()                    */
 
 #include "rtmidi_types.hpp"             /* seq66::rtmidi, etc.              */
 #include "util/basic_macros.hpp"        /* errprintfunc() macro, etc.       */
@@ -42,18 +44,128 @@ namespace seq66
 {
 
 /*
- * class midimessage
+ * class midi_message
  */
 
 /**
- *  Constructs an empty MIDI message.
+ *  Constructs an empty MIDI message.  Well, empty except for the timestamp
+ *  bytes.
  */
 
-midi_message::midi_message (double ts) :
+midi_message::midi_message (double ts) :            // WHY DOUBLE?
     m_bytes     (),
     m_timestamp (ts)
 {
-    // Empty body
+#if defined USE_ISSUE_100_FIX
+    (void) push_timestamp(midipulse(ts));
+#endif
+}
+
+/**
+ *  Also sets the timestamp member.
+ */
+
+midi_message::midi_message (const midibyte * mbs, size_t sz) :
+    m_bytes     (),
+#if defined USE_ISSUE_100_FIX
+    m_timestamp (extract_timestamp(mbs, sz))
+#else
+    m_timestamp (0)
+#endif
+{
+    for (size_t i = 0; i < sz; ++i)
+    {
+        m_bytes.push_back(*mbs++);
+    }
+}
+
+void
+midi_message::copy (midibyte * mbs, size_t sz)
+{
+    if (sz > 0)
+    {
+        const char * source = array();
+        (void) std::memcpy(mbs, source, sz);
+    }
+}
+
+/**
+ *  These function handle adding a time-stamp to the message as bytes.
+ *  The format of the midi_message is now:
+ *
+ *      -   4 bytes of a long integer timestamp.
+ *      -   The rest of the message bytes.
+ *
+ *  These implementations are based on midifile::write_long() and
+ *  midifile::read_long().
+ *
+ *  Remember that the bytes are pushed to the back of the vector.
+ *
+ *  The pop_timestamp() function removes the timestamp bytes, leaving the
+ *  vector 4 bytes shorter, which will leave it with at least 1 byte.
+ *
+ * \return
+ *      Returns true if the message was empty.  Otherwise, we cannot push a
+ *      timestamp.
+ */
+
+bool
+midi_message::push_timestamp (midipulse b)
+{
+    bool result = empty();
+    if (result)
+    {
+        push((b & 0xFF000000) >> 24);
+        push((b & 0x00FF0000) >> 16);
+        push((b & 0x0000FF00) >> 8);
+        push((b & 0x000000FF));
+    }
+    return result;
+}
+
+midipulse
+midi_message::pop_timestamp ()
+{
+    midipulse result = extract_timestamp();
+    container temp;
+    int c = count();
+    for (int i = 4; i < c; ++i)
+        temp.push_back(m_bytes[i]);
+
+    m_bytes = temp;
+    return result;
+}
+
+midipulse
+midi_message::extract_timestamp () const
+{
+    midipulse result = 0;
+    if (count() > 4)
+    {
+        result = m_bytes[0] << 24;
+        result += m_bytes[1] << 16;
+        result += m_bytes[2] << 8;
+        result += m_bytes[3];
+    }
+    return result;
+}
+
+/**
+ *  Static function.
+ */
+
+midipulse
+midi_message::extract_timestamp (const midibyte * mbs, size_t sz)
+{
+    midipulse result = 0;
+    if (sz >= 4)
+    {
+        result = mbs[0] << 24;
+        result += mbs[1] << 16;
+        result += mbs[2] << 8;
+        result += mbs[3];
+    }
+    return result;
 }
 
 /**
@@ -70,7 +182,7 @@ midi_message::show () const
     }
     else
     {
-        fprintf(stderr, "midi_message:\n");
+        fprintf(stderr, "midi_message (ts %ld):", long(timestamp()));
         for (auto c : m_bytes)
         {
             fprintf(stderr, " 0x%2x", int(c));

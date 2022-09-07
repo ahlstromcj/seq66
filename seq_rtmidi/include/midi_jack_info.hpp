@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-06-24
+ * \updates       2022-09-06
  * \license       See above.
  *
  *    We need to have a way to get all of the JACK information of
@@ -97,6 +97,30 @@ private:
 
     jack_client_t * m_jack_client;
 
+    /**
+     * jack_nframes_t jack_get_buffer_size(jack_client_t *)
+     *
+     *  Returns the current maximum size that is passed to the process callback.
+     *  It should only be used before the client has been activated.
+     *  This size may change, clients that depend on it must register a
+     *  bufsize callback to be notified if it does.
+     *
+     *  Part of issue #100.
+     */
+
+    jack_nframes_t m_jack_buffer_size;
+
+    /**
+     * jack_nframes_t jack_get_sample_rate(jack_client_t *)
+     *
+     *  Returns the sample rate of the JACK system as set by the user when jackd
+     *  started.
+     *
+     *  Part of issue #100.
+     */
+
+    jack_nframes_t m_jack_sample_rate;
+
 public:
 
     midi_jack_info () = delete;
@@ -110,6 +134,16 @@ public:
     jack_client_t * client_handle ()
     {
         return m_jack_client;
+    }
+
+    int jack_buffer_size () const
+    {
+        return int(m_jack_buffer_size);
+    }
+
+    int jack_sample_rate () const
+    {
+        return int(m_jack_sample_rate);
     }
 
     virtual bool api_get_midi_event (event * inev) override;

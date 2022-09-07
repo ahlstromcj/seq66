@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-02
- * \updates       2022-02-18
+ * \updates       2022-09-06
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -147,7 +147,8 @@ struct midi_jack_data
 
     bool valid_buffer () const
     {
-        return not_nullptr(m_jack_buffsize) && not_nullptr(m_jack_buffmessage);
+        return not_nullptr(m_jack_buffmessage);
+            /* not_nullptr(m_jack_buffsize) && */
     }
 
 #if defined SEQ66_MIDI_PORT_REFRESH

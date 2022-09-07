@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2022-06-30
+ * \updates       2022-09-07
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -49,6 +49,12 @@
  */
 
 #define SEQ66_RTMIDI_VERSION "2.1.1"        /* the revision at fork time    */
+
+/*
+ * EXPERIMENTAL.  Doesn't break playback !
+ */
+
+#define USE_ISSUE_100_FIX
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -156,6 +162,11 @@ private:
 public:
 
     midi_message (double ts = 0.0);
+    midi_message (const midibyte * mbs, size_t sz);
+
+    static midipulse extract_timestamp (const midibyte * mbs, size_t sz);
+
+    void copy (midibyte * mbs, size_t sz);
 
     midibyte & operator [] (size_t i)
     {
@@ -193,6 +204,10 @@ public:
     {
         m_bytes.push_back(b);
     }
+
+    bool push_timestamp (midipulse b);
+    midipulse pop_timestamp ();
+    midipulse extract_timestamp () const;
 
     double timestamp () const
     {

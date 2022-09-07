@@ -279,7 +279,7 @@ jack_dummy_callback (jack_nframes_t nframes, void * arg)
 int
 jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
 {
-    jack_assistant * j = static_cast<jack_assistant *>(arg);
+    jack_assistant * j = reinterpret_cast<jack_assistant *>(arg);
     if (not_nullptr(j))
     {
         jack_position_t pos;
@@ -1840,6 +1840,8 @@ jack_assistant::show_position (const jack_position_t & pos)
 
 /**
  *  A member wrapper function for the new free function create_jack_client().
+ *  This function is used for creating a JACK transport client and a JACK
+ *  sequencer (MIDI) client.
  *
  * \param name
  *      Provides the name of the client, used in the call to

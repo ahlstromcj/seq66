@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-05-15
+ * \updates       2022-09-06
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -159,7 +159,9 @@ midi_jack_info::midi_jack_info
 ) :
     midi_info               (appname, ppqn, bpm),
     m_jack_ports            (),
-    m_jack_client           (nullptr)               /* inited for connect() */
+    m_jack_client           (nullptr),              /* inited for connect() */
+    m_jack_buffer_size      (0),
+    m_jack_sample_rate      (0)
 {
     silence_jack_info();
     m_jack_client = connect();
@@ -805,8 +807,11 @@ midi_jack_info::api_connect ()
     bool result = not_nullptr(client_handle());
     if (result)
     {
+        m_jack_buffer_size = jack_get_buffer_size(client_handle());
         int rc = ::jack_activate(client_handle());
         result = rc == 0;
+        if (result)
+            m_jack_sample_rate = jack_get_sample_rate(client_handle());
     }
     if (result && rc().jack_auto_connect())         /* issue #60        */
     {

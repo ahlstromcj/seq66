@@ -5547,7 +5547,8 @@ sequence::to_string () const
  */
 
 void
-sequence::put_event_on_bus (event & ev)
+// sequence::put_event_on_bus (event & ev)
+sequence::put_event_on_bus (event ev)
 {
     midibyte note = ev.get_note();
     bool skip = false;
@@ -5563,7 +5564,10 @@ sequence::put_event_on_bus (event & ev)
             --m_playing_notes[note];
     }
     if (! skip)
+    {
+        ev.set_timestamp(m_parent->get_tick());     /* issue #100   */
         master_bus()->play_and_flush(m_true_bus, &ev, midi_channel(ev));
+    }
 }
 
 /**
