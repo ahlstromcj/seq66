@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-04
- * \updates       2022-05-14
+ * \updates       2022-09-11
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the WRK format, see, for example:
@@ -1443,7 +1443,7 @@ wrkfile::MeterKeyChunk ()
  */
 
 double
-wrkfile::get_real_time (long ticks) const
+wrkfile::get_real_time (midipulse ticks) const
 {
     double division = 1.0 * m_wrk_data.m_division;
     RecTempo last;
@@ -1520,7 +1520,8 @@ wrkfile::TempoChunk (int factor)
 
         if (rc().show_midi())
         {
-            printf("Tempo       : tick %ld tempo %ld\n", time, tempo/100);
+            long t = tempo / 100;
+            printf("Tempo       : tick %ld tempo %ld\n", long(time), t);
         }
 
         if (is_nullptr(m_current_seq))

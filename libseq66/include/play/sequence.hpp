@@ -1950,8 +1950,7 @@ private:
         midibyte status, midibyte cc, int divide, bool linked = false
     );
     bool change_ppqn (int p);
-//  void put_event_on_bus (event & ev);
-    void put_event_on_bus (event ev);
+    void put_event_on_bus (const event & ev);
     void reset_loop ();
     void set_trigger_offset (midipulse trigger_offset);
     void adjust_trigger_offsets_to_length (midipulse newlen);

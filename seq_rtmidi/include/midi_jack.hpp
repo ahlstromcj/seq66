@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-28
+ * \updates       2022-09-10
  * \license       See above.
  *
  *    In this refactoring, we've stripped out most of the original RtMidi
@@ -222,8 +222,14 @@ protected:
 
 private:
 
-    void send_byte (midibyte evbyte);
-    void send_realtime_message (midibyte evbyte);
+    void send_byte (midipulse tick, midibyte evbyte);
+
+    /*
+     * Not used!
+     *
+     * void send_realtime_message (midibyte evbyte);
+     */
+
     bool send_message (const midi_message & message);
     bool set_virtual_name (int portid, const std::string & portname);
     std::string details () const;

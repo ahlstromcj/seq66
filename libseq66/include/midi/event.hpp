@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-05-14
+ * \updates       2022-09-10
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -421,6 +421,8 @@ public:
     event (const event & rhs);
     event & operator = (const event & rhs);
     virtual ~event ();
+
+    void prep_for_send (midipulse tick, const event & source);
 
     /*
      * Operator overload, the only one needed for sorting events in a list
@@ -1031,7 +1033,7 @@ public:
     {
         if (len == 0)
             m_sysex.clear();
-        else
+        else if (len > 0)
             m_sysex.resize(len);
     }
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2022-08-01
+ * \updates       2022-09-11
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -1481,7 +1481,7 @@ triggers::print (const std::string & seqname) const
         printf
         (
             "  tick_start = %ld; tick_end = %ld; offset = %ld; selected = %s\n",
-            t.tick_start(), t.tick_end(), t.offset(),
+            long(t.tick_start()), long(t.tick_end()), long(t.offset()),
             bool_to_string(t.selected()).c_str()
         );
     }

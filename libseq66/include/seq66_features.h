@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2021-01-12
+ * \updates       2022-09-11
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -49,6 +49,29 @@
 
 #include "seq66-config.h"               /* automake-generated or for qmake  */
 #include "seq66_platform_macros.h"      /* indicates the build platform     */
+
+/**
+ *  For issue #100, this macro enables:
+ *
+ *      -   Adding the current tick to the time-stamp of all event emitted.
+ *          This is done in sequence::put_event_on_bus().
+ *      -   Adding a 4-byte encoding of the time-stamp to the midi_message
+ *          object.
+ *      -   Extracting this time-stamp in the JACK process output callback.
+ *      -   Using it to calculate the frame-number offset (sample offset) to
+ *          be used in reserving the event.
+ */
+
+#define SEQ66_ENCODE_TIMESTAMP_FOR_JACK
+
+/**
+ *  Related to issue #100 changes, we want the option to use 8-byte MIDI
+ *  timestamps (ticks, pulses).  Enable this macro to support hours-long tunes
+ *  at the highest supported PPQN, 19200.  Most likely, will never needs this
+ *  macro to be defined. Applies wherever the "midipulse" type is used.
+ */
+
+#undef  SEQ66_8_BYTE_TIMESTAMPS
 
 /**
  *  Choose between C++ or bare pthreads.  Affects only the performer class.

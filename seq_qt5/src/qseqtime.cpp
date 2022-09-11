@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-07-29
+ * \updates       2022-09-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -160,7 +160,7 @@ qseqtime::paintEvent (QPaintEvent *)
             pen.setStyle(Qt::SolidLine);
             painter.setPen(pen);
             painter.drawLine(x_offset, 0, x_offset, size().height());
-            snprintf(bar, sizeof bar, "%ld", tick / ticks_per_bar + 1);
+            snprintf(bar, sizeof bar, "%ld", long(tick / ticks_per_bar + 1));
 
             QString qbar(bar);
             painter.drawText(x_offset + 3, 10, qbar);

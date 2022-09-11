@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2022-06-27
+ * \updates       2022-09-11
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -46,8 +46,11 @@
  */
 
 #include <climits>                      /* ULONG_MAX and other limits       */
+#include <cstdint>                      /* uint64_t and other types         */
 #include <string>                       /* std::string, basic_string        */
 #include <vector>                       /* std::vector<midibool>            */
+
+#include "seq66_features.hpp"           /* seq66::seq_version_text(), etc.  */
 
 /*
  *  Since we're using unsigned variables for counting pulses, we can't do the
@@ -131,7 +134,19 @@ using jacktick = long;
  *  this type currently depend upon it being a signed value.
  */
 
-using midipulse = long;
+#if defined SEQ66_8_BYTE_TIMESTAMPS
+using midipulse = int64_t;
+#else
+using midipulse = int32_t;
+#endif
+
+/**
+ *  JACK encodes jack_time_t as a uint64_t (8-byte) value.  We will use our own
+ *  alias, of course.  The unsigned long long type is guaranteed to be at least
+ *  8 bytes long on all platforms, but could be longer.
+ */
+
+using microsec = uint64_t;
 
 /**
  *  Provides the data type for BPM (beats per minute) values.  This value used
@@ -169,7 +184,12 @@ using midibooleans = std::vector<midibool>;
  */
 
 const midipulse c_null_midipulse = -1;              /* ULONG_MAX later?     */
-const midipulse c_midipulse_max = LONG_MAX;         /* for sanity checks    */
+
+#if defined SEQ66_8_BYTE_TIMESTAMPS
+const midipulse c_midipulse_max = INT64_MAX;        /* for sanity checks    */
+#else
+const midipulse c_midipulse_max = INT32_MAX;        /* for sanity checks    */
+#endif
 
 /**
  *  Defines the maximum number of MIDI values, and one more than the

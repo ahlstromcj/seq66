@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-09-07
+ * \updates       2022-09-11
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -162,7 +162,7 @@
  *  section causes midi_jack member functions to be unresolved!
  */
 
-#include "seq66-config.h"               /* SEQ66_JACK_SUPPORT                */
+#include "seq66-config.h"               /* SEQ66_JACK_SUPPORT               */
 
 #if defined SEQ66_JACK_SUPPORT
 
@@ -261,7 +261,7 @@ jack_process_rtmidi_input (jack_nframes_t framect, void * arg)
         int rc = ::jack_midi_event_get(&jmevent, buf, j);
         if (rc == 0)                                /* ENODATA if buf empty */
         {
-            jack_time_t jtime = ::jack_get_time();  /* compute delta time   */
+            jack_time_t jtime = ::jack_get_time();  /* time in microsec (!) */
             jack_time_t delta_jtime;                /* uint64_t             */
             if (rtindata->first_message())
             {
@@ -271,13 +271,13 @@ jack_process_rtmidi_input (jack_nframes_t framect, void * arg)
             else
             {
                 jtime -= jackdata->m_jack_lasttime;
-                delta_jtime = jack_time_t(jtime * 0.000001);
+                delta_jtime = jack_time_t(jtime * 0.000001);    /* secs???  */
             }
             jackdata->m_jack_lasttime = jtime;
 
             midi_message message(delta_jtime);      /* issue #100           */
-            int eventsize = int(jmevent.size);
-            for (int i = 0; i < eventsize; ++i)
+            size_t eventsize = jmevent.size;
+            for (size_t i = 0; i < eventsize; ++i)
                 message.push(jmevent.buffer[i]);
 
             if (! rtindata->continue_sysex())
@@ -309,28 +309,132 @@ jack_process_rtmidi_input (jack_nframes_t framect, void * arg)
     return 0;
 }
 
-#if defined USE_ISSUE_100_FIX
+#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
+
+/**
+ *  Attempts to convert ticks to a frame offset (0 to framect).
+ *
+ * The problem (issue #100):
+ *
+ *  Our RtMidi-based process handles output by first pushing the current
+ *  playback tick (pulse) and the message bytes to the JACK ringubffer.
+ *  This happens at frame f0 and time t1.  In the JACK output callback,
+ *  the message data is plucked from the ringbuffer at later frame f1 and time
+ *  t1.  There, we need an offset from the current frame to the actual frame, so
+ *  that the messages don't jitter to much with large frame sizes.
+ *
+ * The solution:
+ *
+ *  -#  We assume that the tick position p is in the same relative location
+ *      relative to the current frame when placed into the ringbuffer and when
+ *      retrieved from the ring buffer.
+ *  -#  We can use the calculations modules pulse_length_us() function to
+ *      get the length of a tick in seconds:  60 / ppqn / bpm. Therefore the
+ *      tick time t(p) = p * 60 / ppqn / bpm.
+ *  -#  What is the number of frames at at given time?  The duration of each
+ *      frame is D = F / R. So the time at the end of frame Fn is
+ *      T(n) = n * F / R.
+ *
+ *  The latency L of a frame is given by the number of frames, F, the sampling
+ *  rate R (e.g. 48000), and the number of periods P: L = P * F / R.  Here is a
+ *  brief table for 48000, 2 periods:
+ *
+\verbatim
+        Frames      Latency
+          16        0.667 ms
+          32        1.333 ms
+          64        2.667 ms
+         128        5.333 ms
+         256       10.667 ms
+         512       21.333 ms
+        1024       42.667 ms
+        2048       85.333 ms
+        4096      170.667 ms
+\endverbatim
+ *
+ *  The jackd arguments from its man apge:
+ *
+ *      -   --rate:     The sample rate, R.  Defaults 48000.
+ *      -   --period:   The number of frames between the process callback
+ *                      calls, F.  Must be a power of 2, defaults to 1024. Set
+ *                      as low as possible to avoid xruns.
+ *      -   --nperiods: The number of periods of playback latency, P. Defaults
+ *                      to the minimum, 2.  For USB audio, 3 is recommended.
+ *
+ *  So, given a tick position p, what is the frame offset needed?
+ *
+\verbatim
+        t(p) = 60 * p / ppqn / bpm, but ppqn = ticks_per_beat / 10, so
+        t(p) = 60 * p / (Tpb / 10) / bpm
+        T(n) = n * F / R
+        60 * 10 * p / (Tpb * bpm) = n * F / R
+        n = 60 * 10 * p * R / (Tpb * bpm * F)
+
+                               seconds          beats    minutes
+        frame = tick * 10 * 60 ------- * tick * ------ * ------- * frames
+                               minute           ticks     beat
+
+\endverbatim
+ *
+\verbatim
+        frame_rate          = 48000
+        beats_per_bar       = 4
+        beat_type           = 4
+        ticks_per_beat      = 1920
+        beats_per_minute    = 120
+\endverbatim
+ *
+ * \param F
+ *      The current frame count (the jack_nframes framect) parameter to the
+ *      callback.
+ *
+ * \param p
+ *      The running timestamp, in pulses, of the event being emitted.
+ *
+ * \param pos
+ *      Provides the current JACK position parameters.  Some of the important
+ *      parameters, with sample value, are:
+ *
+ * \return
+ *      Returns a putative offset value to use in reserving the event.
+ */
 
 static jack_nframes_t
 jack_frame_offset
 (
-    jack_nframes_t n, midipulse tick, const jack_position_t & pos
+    jack_nframes_t F,
+    midipulse p,
+    const jack_position_t & pos
 )
 {
-    static jack_nframes_t s_frame_rate = 48000;
-    static double s_ticks_per_beat = 1920;
+    static jack_nframes_t s_frame_rate = 0;             /* 48000    */
+    static double s_ticks_per_beat = 0;                 /*  1920    */
     static double s_beats_per_minute = 0;
     static double s_factor = 1.0;
-    if (s_beats_per_minute != pos.beats_per_minute)
+    bool redo =
+        (s_frame_rate != pos.frame_rate) ||
+        (s_ticks_per_beat != pos.ticks_per_beat) ||
+        (s_beats_per_minute != pos.beats_per_minute)
+        ;
+
+    if (redo)                           /* may need locking */
     {
-        s_frame_rate        = pos.frame_rate;
-        s_ticks_per_beat    = pos.ticks_per_beat;
-        s_beats_per_minute  = pos.beats_per_minute;
-        s_factor = (s_frame_rate * 60) /
+        s_frame_rate        = pos.frame_rate;           /* R        */
+        s_ticks_per_beat    = pos.ticks_per_beat;       /* Tpb      */
+        s_beats_per_minute  = pos.beats_per_minute;     /* bpm      */
+        s_factor = (s_frame_rate * 600) /
             (s_ticks_per_beat * s_beats_per_minute);
     }
-    return jack_nframes_t(int(tick * s_factor) % n);
+    jack_nframes_t result = jack_nframes_t(int(p * s_factor));
+    if (F > 1)
+        result = result % F;
+
+    return result;
 }
+
+#endif
+
+#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
 
 /**
  *  Defines the JACK process output callback.  It is the JACK process callback
@@ -386,10 +490,15 @@ jack_process_rtmidi_output (jack_nframes_t framect, void * arg)
     char * sp = reinterpret_cast<char *>(&space);
     void * buf = ::jack_port_get_buffer(jackport, framect);
     jack_client_t * client = jackdata->m_jack_client;
-    jack_position_t pos;
-    /* jack_transport_state_t */ (void) ::jack_transport_query(client, &pos);
 
-    ::jack_midi_clear_buffer(buf);                  /* no nullptr test      */
+    /*
+     * Could consider using JACK callbacks to detect changes.  That would
+     * be more robust.
+     */
+
+    jack_position_t pos;
+    (void) ::jack_transport_query(client, &pos);  /* jack_transport_state_t */
+    ::jack_midi_clear_buffer(buf);
     for (;;)
     {
         size_t msgsz = ::jack_ringbuffer_read_space(buffsz) > 0;
@@ -401,20 +510,25 @@ jack_process_rtmidi_output (jack_nframes_t framect, void * arg)
                 char * mbuf = new (std::nothrow) char[space];
                 if (not_nullptr(mbuf))
                 {
-                    int ct = ::jack_ringbuffer_read(buffmsg, mbuf, size_t(space));
-                    midi_message mmsg(reinterpret_cast<const midibyte *>(mbuf), ct);
-                    midipulse ts = mmsg.pop_timestamp();
-                    jack_nframes_t offset = jack_frame_offset(framect, ts, pos);
-                    jack_midi_data_t * md =
-                        ::jack_midi_event_reserve(buf, offset, space - 4);
+                    const midibyte * sbuf =
+                        reinterpret_cast<const midibyte *>(mbuf);
 
-                    if (not_nullptr(md))
+                    int ct = ::jack_ringbuffer_read
+                    (
+                        buffmsg, mbuf, size_t(space)
+                    );
+                    midi_message mmsg(sbuf, ct);
+
+                    midipulse ts = mmsg.timestamp();
+                    jack_nframes_t offset = jack_frame_offset(framect, ts, pos);
+                    space = mmsg.event_count();
+
+                    const jack_midi_data_t * data = mmsg.event_bytes();
+                    int rc = ::jack_midi_event_write(buf, offset, data, space);
+                    if (rc != 0)
                     {
-                        midibyte * mididata = reinterpret_cast<midibyte *>(md);
-                        mmsg.copy(mididata, space - 4);
+                        async_safe_errprint("JACK MIDI buffer overflow");
                     }
-                    else
-                        async_safe_errprint("JACK event reserve null pointer");
                 }
             }
         }
@@ -462,7 +576,7 @@ jack_process_rtmidi_output (jack_nframes_t framect, void * arg)
     return 0;
 }
 
-#endif  // defined USE_ISSUE_100_FIX
+#endif  // defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
 
 /**
  *  This callback is to shut down JACK by clearing the jack_assistant ::
@@ -1054,12 +1168,10 @@ midi_jack::api_deinit_in ()
 void
 midi_jack::api_play (const event * e24, midibyte channel)
 {
-    midipulse ts = e24->timestamp();
+    midi_message message(e24->timestamp());             /* issue #100       */
     midibyte status = e24->get_status(channel);
     midibyte d0, d1;
     e24->get_data(d0, d1);
-
-    midi_message message(ts);                               /* issue #100   */
     message.push(status);
     message.push(d0);
     if (e24->is_two_bytes())
@@ -1076,7 +1188,10 @@ midi_jack::api_play (const event * e24, midibyte channel)
 
 /**
  *  Sends a JACK MIDI output message.  It writes the full message size and
- *  the message itself to the JACK ring buffer.
+ *  the message itself to the JACK ring buffer.  The message size consists
+ *  of the pulse timestamp and the status+data bytes. The timestamp was not
+ *  provided by the original "rtmidi" implementation.  This new data is
+ *  added for issue #100.
  *
  * \param message
  *      Provides the MIDI message object, which contains the bytes to send.
@@ -1089,14 +1204,14 @@ midi_jack::api_play (const event * e24, midibyte channel)
 bool
 midi_jack::send_message (const midi_message & message)
 {
-    int nbytes = message.count();
+    int nbytes = message.buffer_count();
     bool result = nbytes > 0;
     if (result)
     {
 #if defined USE_OLD_CODE
         int count1 = ::jack_ringbuffer_write    /* write the message bytes  */
         (
-            jack_data().m_jack_buffmessage, message.array(), nbytes
+            jack_data().m_jack_buffmessage, message.buffer(), nbytes
         );
         int count2 = ::jack_ringbuffer_write    /* write raw message size ! */
         (
@@ -1109,7 +1224,7 @@ midi_jack::send_message (const midi_message & message)
         );
         int count2 = ::jack_ringbuffer_write    /* write the message bytes  */
         (
-            jack_data().m_jack_buffmessage, message.array(), nbytes
+            jack_data().m_jack_buffmessage, message.buffer(), nbytes
         );
 #endif
         result = (count1 > 0) && (count2 > 0);
@@ -1128,12 +1243,17 @@ midi_jack::send_message (const midi_message & message)
  *  This SysEx capability is also used in the midicontrolout class to create
  *  an event that contains the MIDI bytes of a control macro, which can then
  *  be sent out via mastermidibus :: sysex().
+ *
+ * \param e24
+ *      Provides a pointer to the event.  Currently we do not use the normal
+ *      event time-stamp, which is in units of ticks, but instead insert
+ *      the current JACK time in microseconds.
  */
 
 void
 midi_jack::api_sysex (const event * e24)
 {
-    midi_message message(e24->timestamp());
+    midi_message message(e24->timestamp());             /* issue #100       */
     const event::sysex & data = e24->get_sysex();
     int data_size = e24->sysex_size();
     for (int offset = 0; offset < data_size; ++offset)
@@ -1192,9 +1312,9 @@ midi_jack::api_continue_from (midipulse tick, midipulse /*beats*/)
      * then sends Song Position, so we will match that here.
      */
 
-    send_byte(EVENT_MIDI_CONTINUE);
+    send_byte(tick, EVENT_MIDI_CONTINUE);
     api_flush();                                /* currently does nothing   */
-    send_byte(EVENT_MIDI_SONG_POS);
+    send_byte(tick, EVENT_MIDI_SONG_POS);
 }
 
 /**
@@ -1207,7 +1327,7 @@ void
 midi_jack::api_start ()
 {
     ::jack_transport_start(client_handle());
-    send_byte(EVENT_MIDI_START);
+    send_byte(0, EVENT_MIDI_START);             /* is tick 0 always good    */
 }
 
 /**
@@ -1220,7 +1340,7 @@ void
 midi_jack::api_stop ()
 {
     ::jack_transport_stop(client_handle());
-    send_byte(EVENT_MIDI_STOP);
+    send_byte(0, EVENT_MIDI_STOP);              /* do we need real tick?    */
 }
 
 /**
@@ -1238,7 +1358,7 @@ midi_jack::api_clock (midipulse tick)
 #if defined SEQ66_PLATFORM_DEBUG_TMI
         midibase::show_clock("JACK", tick);
 #endif
-        send_byte(EVENT_MIDI_CLOCK);
+        send_byte(tick, EVENT_MIDI_CLOCK);
     }
 }
 
@@ -1268,9 +1388,9 @@ midi_jack::api_clock (midipulse tick)
  */
 
 void
-midi_jack::send_byte (midibyte evbyte)
+midi_jack::send_byte (midipulse tick, midibyte evbyte)
 {
-    midi_message message;         // e24->timestamp());
+    midi_message message(tick);
     message.push(evbyte);
     if (jack_data().valid_buffer())
     {
@@ -1657,7 +1777,10 @@ midi_in_jack::api_get_midi_event (event * inev)
     if (result)
     {
         midi_message mm = rtindata->queue().pop_front();
-        result = inev->set_midi_event(mm.timestamp(), mm.data(), mm.count());
+        result = inev->set_midi_event
+        (
+            mm.timestamp(), mm.event_bytes(), mm.event_count()
+        );
         if (result)
         {
             /*

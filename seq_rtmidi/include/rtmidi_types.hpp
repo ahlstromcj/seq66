@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2022-09-07
+ * \updates       2022-09-11
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -49,12 +49,6 @@
  */
 
 #define SEQ66_RTMIDI_VERSION "2.1.1"        /* the revision at fork time    */
-
-/*
- * EXPERIMENTAL.  Doesn't break playback !
- */
-
-#define USE_ISSUE_100_FIX
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -125,6 +119,18 @@ api_to_int (rtmidi_api api)
  *  Provides a handy capsule for a MIDI message, based on the
  *  std::vector<unsigned char> data type from the RtMidi project.
  *
+ *  For issue #100, we add the timestamp (in units of MIDI ticks, also
+ *  known as pulses) to the data.  We then provide functions to
+ *  handle the array of data in two different ways:
+ *
+ *      -#  Buffer: Access the data buffer for all bytes, in order to put
+ *          them on the JACK ringbuffer for the process callback to use:
+ *          -   MIDI timestamp bytes (4)
+ *          -   Status byte
+ *          -   Data bytes
+ *      -#  Event: Access the status and data bytes as a unit to pass them
+ *          to the JACK engine for transmitting.
+ *
  *  Please note that the ALSA module in seq66's rtmidi infrastructure
  *  uses the seq66::event rather than the seq66::midi_message object.
  *  For the moment, we will translate between them until we have the
@@ -154,19 +160,30 @@ private:
     container m_bytes;
 
     /**
-     *  Holds the (optional) timestamp of the MIDI message.
+     *  Holds the (optional) timestamp of the MIDI message.  Non-zero only
+     *  in the JACK implementation.
      */
 
-    double m_timestamp;
+    midipulse m_timestamp;
 
 public:
 
-    midi_message (double ts = 0.0);
+    midi_message (midipulse ts = 0);
     midi_message (const midibyte * mbs, size_t sz);
 
     static midipulse extract_timestamp (const midibyte * mbs, size_t sz);
-
-    void copy (midibyte * mbs, size_t sz);
+    static size_t size_of_timestamp ()
+    {
+#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
+#if defined SEQ66_8_BYTE_TIMESTAMPS
+        return 8;
+#else
+        return 4;
+#endif
+#else
+        return 0;
+#endif
+    }
 
     midibyte & operator [] (size_t i)
     {
@@ -180,24 +197,36 @@ public:
         return (i < m_bytes.size()) ? m_bytes[i] : s_zero ;
     }
 
-    const char * array () const
+    const char * buffer () const                // was "array"
     {
         return reinterpret_cast<const char *>(&m_bytes[0]);
     }
 
-    const midibyte * data () const
-    {
-        return m_bytes.data();
-    }
-
-    int count () const
+    int buffer_count () const
     {
         return int(m_bytes.size());
     }
 
-    bool empty () const
+    bool buffer_empty () const
     {
         return m_bytes.empty();
+    }
+
+    bool event_copy (midibyte * destination, size_t sz) const;
+
+    const midibyte * event_bytes () const       // bypasses timestamp
+    {
+        return m_bytes.data() + size_of_timestamp();
+    }
+
+    int event_count () const                    // was "count"
+    {
+#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
+        return m_bytes.size() <= size_of_timestamp() ?
+            0 : int(m_bytes.size() - size_of_timestamp()) ;
+#else
+        return int(m_bytes.size());
+#endif
     }
 
     void push (midibyte b)
@@ -206,25 +235,25 @@ public:
     }
 
     bool push_timestamp (midipulse b);
-    midipulse pop_timestamp ();
     midipulse extract_timestamp () const;
 
-    double timestamp () const
+    midipulse timestamp () const
     {
         return m_timestamp;
     }
 
-    void timestamp (double t)
-    {
-        m_timestamp = t;
-    }
+    void timestamp (midipulse t);
 
     bool is_sysex () const
     {
-        return m_bytes.size() > 0 ? event::is_sysex_msg(m_bytes[0]) : false ;
+        int index = int(size_of_timestamp());
+        return m_bytes.size() > 0 ?
+            event::is_sysex_msg(m_bytes[index]) : false ;
     }
 
     void show () const;
+
+private:
 
 };          // class midi_message
 

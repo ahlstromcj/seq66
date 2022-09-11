@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-05-14
+ * \updates       2022-09-11
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -296,6 +296,41 @@ event::operator = (const event & rhs)
 event::~event ()
 {
     // Automatic destruction of members is enough
+}
+
+/**
+ *  Copies a subset of data to the calling event.  Used in the
+ *  sequence::put_event_on_bus() function to add a timestamp to outgoing
+ *  events, a lapse in earlier versions of the SeqXX series. We don't
+ *  need the following settings in an event merely to be played.
+ *
+ *      m_channel       = source.m_channel;
+ *      m_linked        = source.m_linked;
+ *      m_has_link      = source.m_has_link;
+ *      m_selected      = source.m_selected;
+ *      m_marked        = source.m_marked;
+ *      m_painted       = source.m_painted;
+ *
+ *  It is assumed that "this" event has been default constructed.
+ *
+ * \param tick
+ *      Provides the current tick (pulse) time of playback.  This always
+ *      increases, and never loops back.
+ *
+ * \param source
+ *      The event to be sent.  We need just some items from this
+ *      event.
+ */
+
+void
+event::prep_for_send (midipulse tick, const event & source)
+{
+    m_input_buss    = source.m_input_buss;
+    m_timestamp     = tick;
+    m_status        = source.m_status;
+    m_data[0]       = source.m_data[0];
+    m_data[1]       = source.m_data[1];
+    m_sysex         = source.m_sysex;
 }
 
 /**
@@ -842,7 +877,7 @@ event::print_note (bool showlink) const
             printf
             (
                 "%06ld Note %s:%s %3d Vel %02X",
-                m_timestamp, type.c_str(), channel,
+                long(m_timestamp), type.c_str(), channel,
                 int(m_data[0]), int(m_data[1])
             );
             if (is_linked() && showlink)

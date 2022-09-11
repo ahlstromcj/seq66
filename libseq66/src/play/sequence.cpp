@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-09-04
+ * \updates       2022-09-11
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -125,7 +125,7 @@ sequence::note_info::show () const
     printf
     (
         "note_info %d: ticks %ld to %ld, velocity %d\n",
-        ni_note, ni_tick_start, ni_tick_finish, ni_velocity
+        ni_note, long(ni_tick_start), long(ni_tick_finish), ni_velocity
     );
 }
 
@@ -5547,8 +5547,7 @@ sequence::to_string () const
  */
 
 void
-// sequence::put_event_on_bus (event & ev)
-sequence::put_event_on_bus (event ev)
+sequence::put_event_on_bus (const event & ev)
 {
     midibyte note = ev.get_note();
     bool skip = false;
@@ -5565,8 +5564,9 @@ sequence::put_event_on_bus (event ev)
     }
     if (! skip)
     {
-        ev.set_timestamp(m_parent->get_tick());     /* issue #100   */
-        master_bus()->play_and_flush(m_true_bus, &ev, midi_channel(ev));
+        event evout;
+        evout.prep_for_send(m_parent->get_tick(), ev);      /* issue #100   */
+        master_bus()->play_and_flush(m_true_bus, &evout, midi_channel(ev));
     }
 }
 
