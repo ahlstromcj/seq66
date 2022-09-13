@@ -6,7 +6,7 @@
 # \library    	qpseq66 application
 # \author     	Chris Ahlstrom
 # \date       	2020-05-29
-# \update      2022-02-22
+# \update      2022-09-13
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -64,6 +64,7 @@ SOURCES += \
  src/midi_api.cpp \
  src/midi_info.cpp \
  src/midi_jack.cpp \
+ src/midi_jack_data.cpp \
  src/midi_jack_info.cpp \
  src/midi_probe.cpp \
  src/rtmidi.cpp \

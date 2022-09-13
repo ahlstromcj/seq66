@@ -27,18 +27,21 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-02
- * \updates       2022-09-06
+ * \updates       2022-09-13
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
  */
 
+#include "util/basic_macros.h"          /* nullptr and other macros         */
 #include "midi/midibytes.hpp"           /* seq66::midibyte, other aliases   */
+#include "rtmidi_types.hpp"             /* seq66::rtmidi_in_data class      */
 
 #if defined SEQ66_JACK_SUPPORT
 
 #include <jack/jack.h>
 #include <jack/ringbuffer.h>
+
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -53,7 +56,7 @@ namespace seq66
  *  pointer.
  */
 
-struct midi_jack_data
+class midi_jack_data
 {
     /**
      *  Holds the JACK sequencer client pointer so that it can be used by the
@@ -114,41 +117,86 @@ struct midi_jack_data
     rtmidi_in_data * m_jack_rtmidiin;
 
     /**
-     * \ctor midi_jack_data
+     *  Holds data about JACK transport, to be used in midi_jack ::
+     *  jack_frame_offset(). These values are a subset of what appears in the
+     *  jack_position_t structure in jack/types.h.
      */
 
-    midi_jack_data () :
-        m_jack_client       (nullptr),
-        m_jack_port         (nullptr),
-        m_jack_buffsize     (nullptr),
-        m_jack_buffmessage  (nullptr),
-        m_jack_lasttime     (0),
-#if defined SEQ66_MIDI_PORT_REFRESH
-        m_internal_port_id  (null_system_port_id()),
-#endif
-        m_jack_rtmidiin     (nullptr)
+    jack_nframes_t m_jack_frame_rate;
+    double m_jack_ticks_per_beat;
+    double m_jack_beats_per_minute;
+    double m_jack_frame_factor;
+
+public:
+
+    midi_jack_data ();
+    ~midi_jack_data ();
+
+    jack_nframes_t jack_frame_offset (jack_nframes_t F, midipulse p);
+
+    jack_client_t * jack_client ()
     {
-        // Empty body
+        return m_jack_client;
     }
 
-    /**
-     *  This destructor currently does nothing.  We rely on the enclosing class
-     *  to close out the things that it created.
-     */
-
-    ~midi_jack_data ()
+    void jack_client (jack_client_t * jc)
     {
-        // Empty body
+        m_jack_client = jc;
     }
 
-    /**
-     *  Tests that the buffer is good.
-     */
+    jack_port_t * jack_port ()
+    {
+        return m_jack_port;
+    }
+
+    void  jack_port (jack_port_t * jp)
+    {
+        m_jack_port = jp;
+    }
 
     bool valid_buffer () const
     {
         return not_nullptr(m_jack_buffmessage);
-            /* not_nullptr(m_jack_buffsize) && */
+    }
+
+    rtmidi_in_data * jack_rtmidiin () const
+    {
+        return m_jack_rtmidiin;
+    }
+
+    void jack_rtmidiin (rtmidi_in_data * rid)
+    {
+        m_jack_rtmidiin = rid;
+    }
+
+    jack_ringbuffer_t * jack_buffsize ()
+    {
+        return m_jack_buffsize;
+    }
+
+    void jack_buffsize (jack_ringbuffer_t * jrb)
+    {
+        m_jack_buffsize = jrb;
+    }
+
+    jack_ringbuffer_t * jack_buffmessage ()
+    {
+        return m_jack_buffmessage;
+    }
+
+    void jack_buffmessage (jack_ringbuffer_t * jrb)
+    {
+        m_jack_buffmessage = jrb;
+    }
+
+    jack_time_t jack_lasttime () const
+    {
+        return m_jack_lasttime;
+    }
+
+    void jack_lasttime (jack_time_t jt)
+    {
+        m_jack_lasttime = jt;
     }
 
 #if defined SEQ66_MIDI_PORT_REFRESH
@@ -164,6 +212,43 @@ struct midi_jack_data
     }
 
 #endif
+
+    jack_nframes_t jack_frame_rate () const
+    {
+        return m_jack_frame_rate;
+    }
+
+    double jack_ticks_per_beat () const
+    {
+        return m_jack_ticks_per_beat;
+    }
+
+    double jack_beats_per_minute () const
+    {
+        return m_jack_beats_per_minute;
+    }
+
+    double jack_frame_factor () const
+    {
+        return m_jack_frame_factor;
+    }
+
+    bool recalculate_frame_factor (const jack_position_t & pos);
+
+    void jack_frame_rate (jack_nframes_t nf)
+    {
+        m_jack_frame_rate = nf;
+    }
+
+    void jack_ticks_per_beat (double tpb)
+    {
+        m_jack_ticks_per_beat = tpb;
+    }
+
+    void jack_beats_per_minute (double bp)
+    {
+        m_jack_beats_per_minute = bp;
+    }
 
 };          // class midi_jack_data
 

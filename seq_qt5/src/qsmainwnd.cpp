@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-09-04
+ * \updates       2022-09-12
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1646,14 +1646,14 @@ qsmainwnd::conditional_update ()
         if (m_is_playing_now)
         {
             long delta = cb_perf().delta_us();
-            if (delta < 0)
+            if (delta != 0)
             {
-                std::string dus = std::to_string(int(-delta));
+                std::string dus = std::to_string(int(delta));
                 ui->txtUnderrun->setText(qt(dus));
             }
         }
         else
-            ui->txtUnderrun->setText(" ");
+            ui->txtUnderrun->setText("-");
     }
     if (cb_perf().tap_bpm_timeout())
         set_tap_button(0);

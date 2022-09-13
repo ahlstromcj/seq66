@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-09-02
+ * \updates       2022-09-12
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -4461,7 +4461,6 @@ void
 performer::auto_play ()
 {
     bool isplaying = false;
-#if defined USE_THIS_NONFUNCTIONAL_CODE /* it does not do anything!!!       */
     bool onekey = false;                /* keys().start() == keys().stop(); */
     if (onekey)
     {
@@ -4481,9 +4480,7 @@ performer::auto_play ()
             isplaying = true;
         }
     }
-    else
-#endif
-    if (! is_running())
+    else if (! is_running())
     {
 #if defined SEQ66_METRO_COUNT_IN_ENABLED
         if (rc().metro_settings().count_in_active())

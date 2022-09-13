@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-09-04
+2019-04-13 to 2022-09-12
 
 Ongoing efforts:
 
@@ -441,7 +441,12 @@ ISSUES:
 
 #100 Seq66's MIDI timing completely falls apart at JACK buffer sizer larger
      than 128.
-     STATUS: Under investigation.
+     STATUS: In progress. Added a timestamp to each message in the JACK
+     ringbuffer (enabled by a C macro in libseq66/include/seq_features.h).
+     This addes a notable burden on process and we can get buffer overflow
+     errors.  Even with message timestamps disabled, the b4uacuse-stress.midi
+     file can cause failure, especially when the next set is chosen.
+     At minimum we should stop, clear out JACK, and panic.
 
 PATTERNS:
 

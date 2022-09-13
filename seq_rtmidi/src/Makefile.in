@@ -21,7 +21,7 @@
 # \library    	seq_rtmidi library
 # \author     	Chris Ahlstrom
 # \date       	2016-11-19
-# \update      2022-05-19
+# \update      2022-09-13
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -159,8 +159,8 @@ libseq_rtmidi_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am_libseq_rtmidi_la_OBJECTS = mastermidibus.lo midibus.lo midi_alsa.lo \
 	midi_alsa_info.lo midi_api.lo midi_info.lo midi_jack.lo \
-	midi_jack_info.lo midi_probe.lo rtmidi.lo rtmidi_info.lo \
-	rtmidi_types.lo
+	midi_jack_data.lo midi_jack_info.lo midi_probe.lo rtmidi.lo \
+	rtmidi_info.lo rtmidi_types.lo
 libseq_rtmidi_la_OBJECTS = $(am_libseq_rtmidi_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -188,10 +188,10 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/mastermidibus.Plo \
 	./$(DEPDIR)/midi_alsa.Plo ./$(DEPDIR)/midi_alsa_info.Plo \
 	./$(DEPDIR)/midi_api.Plo ./$(DEPDIR)/midi_info.Plo \
-	./$(DEPDIR)/midi_jack.Plo ./$(DEPDIR)/midi_jack_info.Plo \
-	./$(DEPDIR)/midi_probe.Plo ./$(DEPDIR)/midibus.Plo \
-	./$(DEPDIR)/rtmidi.Plo ./$(DEPDIR)/rtmidi_info.Plo \
-	./$(DEPDIR)/rtmidi_types.Plo
+	./$(DEPDIR)/midi_jack.Plo ./$(DEPDIR)/midi_jack_data.Plo \
+	./$(DEPDIR)/midi_jack_info.Plo ./$(DEPDIR)/midi_probe.Plo \
+	./$(DEPDIR)/midibus.Plo ./$(DEPDIR)/rtmidi.Plo \
+	./$(DEPDIR)/rtmidi_info.Plo ./$(DEPDIR)/rtmidi_types.Plo
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -515,6 +515,7 @@ libseq_rtmidi_la_SOURCES = \
 	midi_api.cpp \
 	midi_info.cpp \
 	midi_jack.cpp \
+	midi_jack_data.cpp \
 	midi_jack_info.cpp \
 	midi_probe.cpp \
 	rtmidi.cpp \
@@ -607,6 +608,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/midi_api.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/midi_info.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/midi_jack.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/midi_jack_data.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/midi_jack_info.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/midi_probe.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/midibus.Plo@am__quote@ # am--include-marker
@@ -784,6 +786,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/midi_api.Plo
 	-rm -f ./$(DEPDIR)/midi_info.Plo
 	-rm -f ./$(DEPDIR)/midi_jack.Plo
+	-rm -f ./$(DEPDIR)/midi_jack_data.Plo
 	-rm -f ./$(DEPDIR)/midi_jack_info.Plo
 	-rm -f ./$(DEPDIR)/midi_probe.Plo
 	-rm -f ./$(DEPDIR)/midibus.Plo
@@ -841,6 +844,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/midi_api.Plo
 	-rm -f ./$(DEPDIR)/midi_info.Plo
 	-rm -f ./$(DEPDIR)/midi_jack.Plo
+	-rm -f ./$(DEPDIR)/midi_jack_data.Plo
 	-rm -f ./$(DEPDIR)/midi_jack_info.Plo
 	-rm -f ./$(DEPDIR)/midi_probe.Plo
 	-rm -f ./$(DEPDIR)/midibus.Plo

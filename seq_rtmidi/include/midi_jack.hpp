@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-09-10
+ * \updates       2022-09-13
  * \license       See above.
  *
  *    In this refactoring, we've stripped out most of the original RtMidi
@@ -78,8 +78,7 @@ protected:
 
     /**
      *  This reference is needed in order for this midi_jack object to add
-     *  itself to the main midi_jack_info list when running in single-JACK
-     *  client mode.
+     *  itself to the main midi_jack_info list.
      */
 
     midi_jack_info & m_jack_info;
@@ -107,7 +106,7 @@ public:
 
     jack_client_t * client_handle ()
     {
-        return jack_data().m_jack_client;
+        return jack_data().jack_client();
     }
 
     const midi_jack_data & jack_data () const
@@ -137,19 +136,19 @@ public:
 
     jack_port_t * port_handle ()
     {
-        return jack_data().m_jack_port;
+        return jack_data().jack_port();
     }
 
 protected:
 
     void client_handle (jack_client_t * handle)
     {
-        jack_data().m_jack_client = handle;
+        jack_data().jack_client(handle);
     }
 
     void port_handle (jack_port_t * handle)
     {
-        jack_data().m_jack_port = handle;
+        jack_data().jack_port(handle);
     }
 
     const midi_jack_info & jack_info () const
