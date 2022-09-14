@@ -4514,10 +4514,18 @@ performer::auto_pause ()
     is_pattern_playing(isplaying);
 }
 
+/**
+ *  ca 2022-09-14:
+ *
+ *  Added an is_running() check for when JACK transport is running at startup,
+ *  which sets that flag, but not is_pattern_playing(); the result was that
+ *  we could not stop playback with Seq66's Stop button.
+ */
+
 void
 performer::auto_stop ()
 {
-    if (is_pattern_playing())
+    if (is_pattern_playing() || is_running())       /* normal & JACK, hmmmm */
     {
         stop_playing();
         is_pattern_playing(false);

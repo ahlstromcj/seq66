@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-13
- * \updates       2022-09-13
+ * \updates       2022-09-14
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -41,6 +41,15 @@
 namespace seq66
 {
 
+/**
+ *  Static members used for calculating frame offsets in the Seq66 JACK
+ *  output callback.
+ */
+
+jack_nframes_t midi_jack_data::sm_jack_frame_rate   = 0;
+double midi_jack_data::sm_jack_ticks_per_beat       = 1920.0;
+double midi_jack_data::sm_jack_beats_per_minute     = 120.0;
+double midi_jack_data::sm_jack_frame_factor         = 1.0;
 
 /**
  * \ctor midi_jack_data
@@ -55,11 +64,7 @@ midi_jack_data::midi_jack_data () :
 #if defined SEQ66_MIDI_PORT_REFRESH
     m_internal_port_id      (null_system_port_id()),
 #endif
-    m_jack_rtmidiin         (nullptr),
-    m_jack_frame_rate       (0),
-    m_jack_ticks_per_beat   (1920.0),
-    m_jack_beats_per_minute (120.0),
-    m_jack_frame_factor     (1.0)
+    m_jack_rtmidiin         (nullptr)
 {
     // Empty body
 }
@@ -74,22 +79,43 @@ midi_jack_data::~midi_jack_data ()
     // Empty body
 }
 
+/**
+ *  Emobdies the calculation of the pulse factor reasoned out in the
+ *  jack_frame_offset() function below.
+ *
+ * TODO:
+ *
+ *      -   The jack_position_t's ticks_per_beat and beats_per_minute are
+ *          currently zero if seq66 is not transport (slave or master).  Then
+ *          we need to make sure the beats-per-minute is set from the
+ *          tune settings, and the ticks-per-beat is set to PPQN * 10.
+ *      -   It would be good to call this function during a settings change as
+ *          indicated by calls to the jack_set_buffer_size(frames, arg) or
+ *          jack_set_sample_rate(frames, arg) callbacks.
+ *      -   Current these data are owned by each port, but we probably
+ *          need to make them static.
+ */
+
 bool
 midi_jack_data::recalculate_frame_factor (const jack_position_t & pos)
 {
-    bool result =
-        (jack_frame_rate() != pos.frame_rate) ||
-        (jack_ticks_per_beat() != pos.ticks_per_beat) ||
-        (jack_beats_per_minute() != pos.beats_per_minute);
-
+    bool R_changed      = (jack_frame_rate() != pos.frame_rate);
+    bool Tpb_changed    = (jack_ticks_per_beat() != pos.ticks_per_beat);
+    bool bpm_changed    = (jack_beats_per_minute() != pos.beats_per_minute);
+    bool result = R_changed || Tpb_changed || bpm_changed;
     if (result)
     {
-        result = (pos.ticks_per_beat > 1.0) && (pos.beats_per_minute > 1.0);
-        if (result)
-        {
-            m_jack_frame_factor = (m_jack_frame_rate * 600) /
-                (m_jack_ticks_per_beat * m_jack_beats_per_minute);
-        }
+        if (R_changed)
+            jack_frame_rate(pos.frame_rate);
+
+        if (Tpb_changed && pos.ticks_per_beat > 1.0)    /* sanity check */
+            jack_ticks_per_beat(pos.ticks_per_beat);
+
+        if (bpm_changed && pos.beats_per_minute > 1.0)  /* sanity check */
+            jack_beats_per_minute(pos.beats_per_minute);
+
+        sm_jack_frame_factor = (jack_frame_rate() * 600) /
+            (jack_ticks_per_beat() * jack_beats_per_minute());
     }
     return result;
 }

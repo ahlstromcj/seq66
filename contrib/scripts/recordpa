@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+#******************************************************************************
+# recordpa
+#------------------------------------------------------------------------------
+##
+# \file           recordpa
+# \library        Any project
+# \author         Chris Ahlstrom
+# \date           2022-09-14
+# \update         2022-09-14
+# \version        $Revision$
+# \license        $XPC_SUITE_GPL_LICENSE$
+#
+#     The above is modified by the following to remove even the mild GPL
+#     restrictions:
+#
+#     Use this script in any manner whatsoever.  You don't even need to give
+#     me any credit.  However, keep in mind the value of the GPL in keeping
+#     software and its descendant modifications available to the community
+#     for all time.
+#
+#     Simply records the output of our USB audio device as received through
+#     PulseAudio.
+#
+#------------------------------------------------------------------------------
+
+parecord --channels=1 --record --device=alsa_output.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00.analog-stereo.monitor $1
+
+#******************************************************************************
+# recordpa
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 et ft=sh
+#------------------------------------------------------------------------------

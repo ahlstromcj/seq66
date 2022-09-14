@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-02
- * \updates       2022-09-13
+ * \updates       2022-09-14
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -58,6 +58,17 @@ namespace seq66
 
 class midi_jack_data
 {
+    /**
+     *  Holds data about JACK transport, to be used in midi_jack ::
+     *  jack_frame_offset(). These values are a subset of what appears in the
+     *  jack_position_t structure in jack/types.h.
+     */
+
+    static jack_nframes_t sm_jack_frame_rate;
+    static double sm_jack_ticks_per_beat;
+    static double sm_jack_beats_per_minute;
+    static double sm_jack_frame_factor;
+
     /**
      *  Holds the JACK sequencer client pointer so that it can be used by the
      *  midibus objects.  This is actually an opaque pointer; there is no way
@@ -116,23 +127,56 @@ class midi_jack_data
 
     rtmidi_in_data * m_jack_rtmidiin;
 
-    /**
-     *  Holds data about JACK transport, to be used in midi_jack ::
-     *  jack_frame_offset(). These values are a subset of what appears in the
-     *  jack_position_t structure in jack/types.h.
-     */
-
-    jack_nframes_t m_jack_frame_rate;
-    double m_jack_ticks_per_beat;
-    double m_jack_beats_per_minute;
-    double m_jack_frame_factor;
-
 public:
 
     midi_jack_data ();
     ~midi_jack_data ();
 
-    jack_nframes_t jack_frame_offset (jack_nframes_t F, midipulse p);
+    /*
+     *  Frame offset-related functions.
+     */
+
+    static bool recalculate_frame_factor (const jack_position_t & pos);
+    static jack_nframes_t jack_frame_offset (jack_nframes_t F, midipulse p);
+
+    static jack_nframes_t jack_frame_rate ()
+    {
+        return sm_jack_frame_rate;
+    }
+
+    static double jack_ticks_per_beat ()
+    {
+        return sm_jack_ticks_per_beat;
+    }
+
+    static double jack_beats_per_minute ()
+    {
+        return sm_jack_beats_per_minute;
+    }
+
+    static double jack_frame_factor ()
+    {
+        return sm_jack_frame_factor;
+    }
+
+    static void jack_frame_rate (jack_nframes_t nf)
+    {
+        sm_jack_frame_rate = nf;
+    }
+
+    static void jack_ticks_per_beat (double tpb)
+    {
+        sm_jack_ticks_per_beat = tpb;
+    }
+
+    static void jack_beats_per_minute (double bp)
+    {
+        sm_jack_beats_per_minute = bp;
+    }
+
+    /*
+     *  Basic member access. Getters and setters.
+     */
 
     jack_client_t * jack_client ()
     {
@@ -212,43 +256,6 @@ public:
     }
 
 #endif
-
-    jack_nframes_t jack_frame_rate () const
-    {
-        return m_jack_frame_rate;
-    }
-
-    double jack_ticks_per_beat () const
-    {
-        return m_jack_ticks_per_beat;
-    }
-
-    double jack_beats_per_minute () const
-    {
-        return m_jack_beats_per_minute;
-    }
-
-    double jack_frame_factor () const
-    {
-        return m_jack_frame_factor;
-    }
-
-    bool recalculate_frame_factor (const jack_position_t & pos);
-
-    void jack_frame_rate (jack_nframes_t nf)
-    {
-        m_jack_frame_rate = nf;
-    }
-
-    void jack_ticks_per_beat (double tpb)
-    {
-        m_jack_ticks_per_beat = tpb;
-    }
-
-    void jack_beats_per_minute (double bp)
-    {
-        m_jack_beats_per_minute = bp;
-    }
 
 };          // class midi_jack_data
 

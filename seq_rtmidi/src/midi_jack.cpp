@@ -402,13 +402,13 @@ jack_process_rtmidi_output (jack_nframes_t framect, void * arg)
                             midi_message::size_of_timestamp();
 
                     space -= midi_message::size_of_timestamp();
-                    if (jackdata->recalculate_frame_factor(pos))
+                    if (midi_jack_data::recalculate_frame_factor(pos))
                     {
                         async_safe_errprint("JACK transport settings changed");
                     }
 
                     jack_nframes_t offset =
-                        jackdata->jack_frame_offset(framect, ts);
+                        midi_jack_data::jack_frame_offset(framect, ts);
 
                     int rc = ::jack_midi_event_write(buf, offset, data, space);
                     if (rc != 0)
@@ -743,6 +743,13 @@ midi_jack::midi_jack (midibus & parentbus, midi_info & masterinfo) :
 {
     client_handle(reinterpret_cast<jack_client_t *>(masterinfo.midi_handle()));
     (void) jack_info().add(*this);
+
+    /*
+     * New for issue #100.
+     */
+
+    jack_data().jack_ticks_per_beat(ppqn() * 10.0);
+    jack_data().jack_beats_per_minute(bpm());
 }
 
 /**
