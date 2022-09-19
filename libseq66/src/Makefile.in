@@ -21,7 +21,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2022-08-05
+# \update      2022-09-19
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -184,7 +184,8 @@ am_libseq66_la_OBJECTS = seq66_features.lo cfg/basesettings.lo \
 	os/daemonize.lo os/shellexecute.lo os/timing.lo \
 	util/automutex.lo util/basic_macros.lo util/condition.lo \
 	util/filefunctions.lo util/named_bools.lo util/palette.lo \
-	util/recmutex.lo util/rect.lo util/strfunctions.lo
+	util/recmutex.lo util/rect.lo util/ring_buffer.lo \
+	util/strfunctions.lo
 libseq66_la_OBJECTS = $(am_libseq66_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -254,7 +255,7 @@ am__depfiles_remade = ./$(DEPDIR)/seq66_features.Plo \
 	util/$(DEPDIR)/filefunctions.Plo \
 	util/$(DEPDIR)/named_bools.Plo util/$(DEPDIR)/palette.Plo \
 	util/$(DEPDIR)/recmutex.Plo util/$(DEPDIR)/rect.Plo \
-	util/$(DEPDIR)/strfunctions.Plo
+	util/$(DEPDIR)/ring_buffer.Plo util/$(DEPDIR)/strfunctions.Plo
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -649,6 +650,7 @@ libseq66_la_SOURCES = \
  util/palette.cpp \
  util/recmutex.cpp \
  util/rect.cpp \
+ util/ring_buffer.cpp \
  util/strfunctions.cpp
 
 libseq66_la_LDFLAGS = -version-info $(version)
@@ -872,6 +874,8 @@ util/named_bools.lo: util/$(am__dirstamp) \
 util/palette.lo: util/$(am__dirstamp) util/$(DEPDIR)/$(am__dirstamp)
 util/recmutex.lo: util/$(am__dirstamp) util/$(DEPDIR)/$(am__dirstamp)
 util/rect.lo: util/$(am__dirstamp) util/$(DEPDIR)/$(am__dirstamp)
+util/ring_buffer.lo: util/$(am__dirstamp) \
+	util/$(DEPDIR)/$(am__dirstamp)
 util/strfunctions.lo: util/$(am__dirstamp) \
 	util/$(DEPDIR)/$(am__dirstamp)
 
@@ -976,6 +980,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/palette.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/recmutex.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/rect.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/ring_buffer.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/strfunctions.Plo@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
@@ -1244,6 +1249,7 @@ distclean: distclean-am
 	-rm -f util/$(DEPDIR)/palette.Plo
 	-rm -f util/$(DEPDIR)/recmutex.Plo
 	-rm -f util/$(DEPDIR)/rect.Plo
+	-rm -f util/$(DEPDIR)/ring_buffer.Plo
 	-rm -f util/$(DEPDIR)/strfunctions.Plo
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
@@ -1368,6 +1374,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f util/$(DEPDIR)/palette.Plo
 	-rm -f util/$(DEPDIR)/recmutex.Plo
 	-rm -f util/$(DEPDIR)/rect.Plo
+	-rm -f util/$(DEPDIR)/ring_buffer.Plo
 	-rm -f util/$(DEPDIR)/strfunctions.Plo
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic

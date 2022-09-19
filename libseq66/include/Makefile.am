@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2022-08-05
+# \update      2022-09-19
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -153,6 +153,7 @@ nobase_include_HEADERS = \
  util/palette.hpp \
  util/recmutex.hpp \
  util/rect.hpp \
+ util/ring_buffer.hpp \
  util/strfunctions.hpp
 
 #******************************************************************************

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-09-11
+ * \updates       2022-09-16
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -69,6 +69,7 @@
  *  timestamps (ticks, pulses).  Enable this macro to support hours-long tunes
  *  at the highest supported PPQN, 19200.  Most likely, will never needs this
  *  macro to be defined. Applies wherever the "midipulse" type is used.
+ *  See the midipulse alias defined in libseq66/include/midi/midibytes.h.
  */
 
 #undef  SEQ66_8_BYTE_TIMESTAMPS

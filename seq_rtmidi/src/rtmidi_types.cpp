@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-01
- * \updates       2022-09-11
+ * \updates       2022-09-17
  * \license       See above.
  *
  *  Provides some basic types for the (heavily-factored) rtmidi library, very
@@ -87,6 +87,8 @@ midi_message::midi_message (const midibyte * mbs, size_t sz) :
         m_bytes.push_back(*mbs++);
 }
 
+#if defined USE_EVENT_COPY_FUNCTION         // not yet needed
+
 /**
  *  Copies only the event bytes to the destination buffer.
  *
@@ -118,6 +120,8 @@ midi_message::event_copy (midibyte * destination, size_t sz) const
     }
     return result;
 }
+
+#endif
 
 /**
  *  These function handle adding a time-stamp to the message as bytes.

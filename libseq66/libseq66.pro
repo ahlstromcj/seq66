@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2022-08-05
+# \update      2022-09-19
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -124,6 +124,7 @@ HEADERS += include/seq66_features.h \
  include/util/palette.hpp \
  include/util/recmutex.hpp \
  include/util/rect.hpp \
+ include/util/ring_buffer.hpp \
  include/util/strfunctions.hpp
 
 SOURCES += src/seq66_features.cpp \
@@ -204,6 +205,7 @@ SOURCES += src/seq66_features.cpp \
  src/util/palette.cpp \
  src/util/recmutex.cpp \
  src/util/rect.cpp \
+ src/util/ring_buffer.cpp \
  src/util/strfunctions.cpp
 
 INCLUDEPATH = \

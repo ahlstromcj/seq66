@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-02
- * \updates       2022-09-14
+ * \updates       2022-09-17
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -41,7 +41,6 @@
 
 #include <jack/jack.h>
 #include <jack/ringbuffer.h>
-
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -64,10 +63,11 @@ class midi_jack_data
      *  jack_position_t structure in jack/types.h.
      */
 
-    static jack_nframes_t sm_jack_frame_rate;
-    static double sm_jack_ticks_per_beat;
-    static double sm_jack_beats_per_minute;
-    static double sm_jack_frame_factor;
+    static jack_nframes_t sm_jack_frame_rate;   /* e.g. 48000 or 96000 Hz   */
+    static jack_nframes_t sm_jack_start_frame;  /* 0 or large number?       */
+    static double sm_jack_ticks_per_beat;       /* seems to be 10 * PPQN    */
+    static double sm_jack_beats_per_minute;     /* the BPM for the song     */
+    static double sm_jack_frame_factor;         /* frames per PPQN tick     */
 
     /**
      *  Holds the JACK sequencer client pointer so that it can be used by the
@@ -88,14 +88,9 @@ class midi_jack_data
 
     /**
      *  Holds the size of data for communicating between the client
-     *  ring-buffer and the JACK port's internal buffer.
-     */
-
-    jack_ringbuffer_t * m_jack_buffsize;
-
-    /**
-     *  Holds the data for communicating between the client ring-buffer and
-     *  the JACK port's internal buffer.
+     *  ring-buffer and the JACK port's internal buffer, plus the data
+     *  for communicating between the client ring-buffer and the JACK
+     *  port's internal buffer.
      */
 
     jack_ringbuffer_t * m_jack_buffmessage;
@@ -138,10 +133,16 @@ public:
 
     static bool recalculate_frame_factor (const jack_position_t & pos);
     static jack_nframes_t jack_frame_offset (jack_nframes_t F, midipulse p);
+    static jack_nframes_t jack_frame_estimate (midipulse p);
 
     static jack_nframes_t jack_frame_rate ()
     {
         return sm_jack_frame_rate;
+    }
+
+    static jack_nframes_t jack_start_frame ()
+    {
+        return sm_jack_start_frame;
     }
 
     static double jack_ticks_per_beat ()
@@ -162,6 +163,11 @@ public:
     static void jack_frame_rate (jack_nframes_t nf)
     {
         sm_jack_frame_rate = nf;
+    }
+
+    static void jack_start_frame (jack_nframes_t nf)
+    {
+        sm_jack_start_frame = nf;
     }
 
     static void jack_ticks_per_beat (double tpb)
@@ -211,16 +217,6 @@ public:
     void jack_rtmidiin (rtmidi_in_data * rid)
     {
         m_jack_rtmidiin = rid;
-    }
-
-    jack_ringbuffer_t * jack_buffsize ()
-    {
-        return m_jack_buffsize;
-    }
-
-    void jack_buffsize (jack_ringbuffer_t * jrb)
-    {
-        m_jack_buffsize = jrb;
     }
 
     jack_ringbuffer_t * jack_buffmessage ()

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2022-09-11
+ * \updates       2022-09-16
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -129,9 +129,12 @@ using jacktick = long;
  *  Distinguishes a long value from the unsigned long values implicit in MIDI
  *  time measurements.
  *
- *  HOWEVER, CURRENTLY, if you make this value unsigned, then perfroll won't
- *  show any notes in the sequence bars!!!  Also, a number of manipulations of
- *  this type currently depend upon it being a signed value.
+ *  However, if you make this value unsigned, then perfroll won't show any
+ *  notes in the sequence bars!!!  Also, a number of manipulations of this
+ *  type currently depend upon it being a signed value.
+ *
+ *  By default we use only 4 bytes to encode the timestamp (e.g. for the
+ *  JACK ringbuffer).  See this macro in seq66_features.h.
  */
 
 #if defined SEQ66_8_BYTE_TIMESTAMPS

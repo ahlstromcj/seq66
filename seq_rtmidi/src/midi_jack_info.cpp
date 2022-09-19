@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-09-06
+ * \updates       2022-09-17
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -102,37 +102,34 @@ extern void jack_port_register_callback
 int
 jack_process_io (jack_nframes_t nframes, void * arg)
 {
-    if (nframes > 0)
+    midi_jack_info * self = reinterpret_cast<midi_jack_info *>(arg);
+    if (not_nullptr(self))
     {
-        midi_jack_info * self = reinterpret_cast<midi_jack_info *>(arg);
-        if (not_nullptr(self))
-        {
-            /*
-             * Go through the I/O ports and route the data appropriately.
-             */
+        /*
+         * Go through the I/O ports and route the data appropriately.
+         */
 
-            for (auto mj : self->jack_ports())  /* midi_jack pointers       */
+        for (auto mj : self->jack_ports())  /* midi_jack pointers       */
+        {
+            if (mj->enabled())
             {
-                if (mj->enabled())
-                {
 #if defined SEQ66_PLATFORM_DEBUG_TMI            /* printf() asynch unsafe   */
-                    if (mj->is_input_port())
-                        printf("Enabled: %s\n", mj->port_name().c_str());
+                if (mj->is_input_port())
+                    printf("Enabled: %s\n", mj->port_name().c_str());
 #endif
-                    midi_jack_data * mjp = &mj->jack_data();
-                    if (mj->parent_bus().is_input_port())
-                        (void) jack_process_rtmidi_input(nframes, mjp);
-                    else
-                        (void) jack_process_rtmidi_output(nframes, mjp);
-                }
-#if defined SEQ66_PLATFORM_DEBUG_TMI            /* printf() asynch unsafe   */
+                midi_jack_data * mjp = &mj->jack_data();
+                if (mj->parent_bus().is_input_port())
+                    (void) jack_process_rtmidi_input(nframes, mjp);
                 else
-                {
-                    if (mj->is_input_port())
-                        printf("Disabled: %s\n", mj->port_name().c_str());
-                }
-#endif
+                    (void) jack_process_rtmidi_output(nframes, mjp);
             }
+#if defined SEQ66_PLATFORM_DEBUG_TMI            /* printf() asynch unsafe   */
+            else
+            {
+                if (mj->is_input_port())
+                    printf("Disabled: %s\n", mj->port_name().c_str());
+            }
+#endif
         }
     }
     return 0;
@@ -201,7 +198,7 @@ jack_client_t *
 midi_jack_info::connect ()
 {
     jack_client_t * result = m_jack_client;
-    if (is_nullptr(result))
+    if (is_nullptr(result))                         /* do not connect again */
     {
         const char * clientname = seq_client_name().c_str();
         result = create_jack_client(clientname);    /* see jack_assistant   */
@@ -285,6 +282,11 @@ midi_jack_info::connect ()
                 m_error_string = "JACK cannot set I/O callback";
                 error(rterror::kind::warning, m_error_string);
             }
+
+            /*
+             * TODO: set the position to 0
+             */
+
         }
         else
         {

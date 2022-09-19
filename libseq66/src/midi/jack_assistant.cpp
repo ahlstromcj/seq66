@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2022-02-11
+ * \updates       2022-09-17
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -285,6 +285,9 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
         jack_position_t pos;
         jack_transport_state_t s = ::jack_transport_query(j->client(), &pos);
         performer & p = j->parent();
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf("Transport frame %u\n", unsigned(pos.frame));
+#endif
         if (p.is_running())
         {
             if (j->is_slave())
@@ -337,6 +340,15 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
     }
     return 0;
 }
+
+/*
+ * -------------------------------------------------------------------------
+ *  JACK Helper Functions
+ * -------------------------------------------------------------------------
+ *
+ *      These functions can be call by jack_assistant or the midi_jack
+ *      classes.
+ */
 
 /**
  *  A more full-featured initialization for a JACK client, which is meant to
@@ -436,6 +448,76 @@ create_jack_client (std::string clientname, std::string uuid)
         (void) error_message("JACK server not running");
 
     return result;                      /* bad result handled by caller     */
+}
+
+/**
+ *  Computing the BBT information from the frame number is relatively simple
+ *  here, but would become complex if we supported tempo or time signature
+ *  changes at specific locations in the transport timeline.
+ *
+ \verbatim
+        ticks * 10 = jack ticks;
+        jack ticks / ticks per beat = num beats;
+        num beats / beats per minute = num minutes
+        num minutes * 60 = num seconds
+        num secords * frame_rate  = frame
+ \endverbatim
+ *
+ *  Modifying frame rate and frame cannot be set from clients, the server
+ *  sets them; see transport.h of JACK.
+ *
+\verbatim
+        jack_nframes_t rate = jack_get_sample_rate(m_jack_client);
+        pos.frame_rate = rate;
+        pos.frame = (jack_nframes_t)
+        (
+            (tick * rate * 60.0) /
+            (pos.ticks_per_beat * pos.beats_per_minute)
+        );
+\endverbatim
+ *
+ * \param pos
+ *      Provides the beats/bar, beat-width, ppqn (later modified), etc.
+ *      See jack_assistant::set_position() for a usage example.
+ *
+ * \param tick
+ *      Provides the current position to be set.
+ */
+
+void
+jack_set_position
+(
+    jack_client_t * client,
+    jack_position_t & pos,
+    midipulse tick
+)
+{
+    pos.ticks_per_beat *= c_jack_factor;
+    tick *= c_jack_factor;
+
+    long beattype = long(pos.beat_type);            /* for mod operation    */
+    long ticksperbeat = long(pos.ticks_per_beat);   /* for mod operation    */
+
+    pos.valid = JackPositionBBT;                    /* BBT to be modified   */
+    pos.bar = int32_t(tick / long(pos.ticks_per_beat) / pos.beats_per_bar);
+    pos.beat = int32_t(((tick / long(pos.ticks_per_beat)) % beattype));
+    pos.tick = int32_t((tick % ticksperbeat));
+    pos.bar_start_tick = pos.bar * pos.beats_per_bar * pos.ticks_per_beat;
+    ++pos.bar;
+    ++pos.beat;
+
+    /*
+     * Modifying frame rate and frame is a server function. See the banner.
+     */
+
+    pos.valid = (jack_position_bits_t)(pos.valid | JackBBTFrameOffset);
+    pos.bbt_offset = 0;
+
+    int jackcode = ::jack_transport_reposition(client, &pos);
+    if (jackcode != 0)
+    {
+        errprint("JACK reposition bad position structure");
+    }
 }
 
 /**
@@ -1191,12 +1273,6 @@ jack_assistant::position (bool songmode, midipulse tick)
 }
 
 /**
- *  This function is currently unused, and has been macroed out.
- *
- *  Provides the code that was effectively commented out in the
- *  performer::position_jack() function.  We might be able to use it in other
- *  functions.
- *
  *  Computing the BBT information from the frame number is relatively simple
  *  here, but would become complex if we supported tempo or time signature
  *  changes at specific locations in the transport timeline.
@@ -1217,45 +1293,11 @@ void
 jack_assistant::set_position (midipulse tick)
 {
     jack_position_t pos;
-    pos.valid = JackPositionBBT;                // flag what will be modified
     pos.beats_per_bar = m_beats_per_measure;
     pos.beat_type = m_beat_width;
-    pos.ticks_per_beat = m_ppqn * c_jack_factor;
+    pos.ticks_per_beat = m_ppqn;                        /* only at first    */
     pos.beats_per_minute = get_beats_per_minute();
-
-    /*
-     * pos.frame = frame;
-     */
-
-    tick *= c_jack_factor;          /* compute BBT info from frame number */
-    pos.bar = int32_t(tick / long(pos.ticks_per_beat) / pos.beats_per_bar);
-    pos.beat = int32_t(((tick / long(pos.ticks_per_beat)) % m_beat_width));
-    pos.tick = int32_t((tick % (m_ppqn * c_jack_factor)));
-    pos.bar_start_tick = pos.bar * pos.beats_per_bar * pos.ticks_per_beat;
-    ++pos.bar;
-    ++pos.beat;
-
-    /*
-     * Modifying frame rate and frame cannot be set from clients, the server
-     * sets them; see transport.h of JACK.
-     *
-     *  jack_nframes_t rate = jack_get_sample_rate(m_jack_client);
-     *  pos.frame_rate = rate;
-     *  pos.frame = (jack_nframes_t)
-     *  (
-     *      (tick * rate * 60.0) /
-     *      (pos.ticks_per_beat * pos.beats_per_minute)
-     *  );
-     */
-
-    pos.valid = (jack_position_bits_t)(pos.valid | JackBBTFrameOffset);
-    pos.bbt_offset = 0;
-
-    int jackcode = ::jack_transport_reposition(m_jack_client, &pos);
-    if (jackcode != 0)
-    {
-        errprint("JACK set position bad position structure");
-    }
+    jack_set_position(m_jack_client, pos, tick);
 }
 
 #if defined SEQ66_USE_JACK_SYNC_CALLBACK

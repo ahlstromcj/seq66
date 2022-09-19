@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2022-09-11
+ * \updates       2022-09-16
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -116,6 +116,21 @@ api_to_int (rtmidi_api api)
 }
 
 /**
+ *  The size of a Seq66 MIDI timestamp in bytes, or 0 if we're
+ *  not encoding timestamps in the JACK ringbuffer.
+ */
+
+#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
+#if defined SEQ66_8_BYTE_TIMESTAMPS
+const size_t c_timestamp_size = 8;
+#else
+const size_t c_timestamp_size = 4;
+#endif
+#else
+const size_t c_timestamp_size = 0;
+#endif
+
+/**
  *  Provides a handy capsule for a MIDI message, based on the
  *  std::vector<unsigned char> data type from the RtMidi project.
  *
@@ -174,15 +189,7 @@ public:
     static midipulse extract_timestamp (const midibyte * mbs, size_t sz);
     static size_t size_of_timestamp ()
     {
-#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
-#if defined SEQ66_8_BYTE_TIMESTAMPS
-        return 8;
-#else
-        return 4;
-#endif
-#else
-        return 0;
-#endif
+        return c_timestamp_size;
     }
 
     midibyte & operator [] (size_t i)
@@ -212,7 +219,9 @@ public:
         return m_bytes.empty();
     }
 
+#if defined USE_EVENT_COPY_FUNCTION         // not yet needed
     bool event_copy (midibyte * destination, size_t sz) const;
+#endif
 
     const midibyte * event_bytes () const       // bypasses timestamp
     {

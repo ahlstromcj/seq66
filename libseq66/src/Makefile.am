@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2022-08-05
+# \update      2022-09-19
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -212,6 +212,7 @@ libseq66_la_SOURCES = \
  util/palette.cpp \
  util/recmutex.cpp \
  util/rect.cpp \
+ util/ring_buffer.cpp \
  util/strfunctions.cpp
 
 libseq66_la_LDFLAGS = -version-info $(version)

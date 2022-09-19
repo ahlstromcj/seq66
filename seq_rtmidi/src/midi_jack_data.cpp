@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-13
- * \updates       2022-09-14
+ * \updates       2022-09-17
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -58,7 +58,6 @@ double midi_jack_data::sm_jack_frame_factor         = 1.0;
 midi_jack_data::midi_jack_data () :
     m_jack_client           (nullptr),
     m_jack_port             (nullptr),
-    m_jack_buffsize         (nullptr),
     m_jack_buffmessage      (nullptr),
     m_jack_lasttime         (0),
 #if defined SEQ66_MIDI_PORT_REFRESH
@@ -212,7 +211,7 @@ midi_jack_data::recalculate_frame_factor (const jack_position_t & pos)
 jack_nframes_t
 midi_jack_data::jack_frame_offset (jack_nframes_t F, midipulse p)
 {
-    double temp = p * jack_frame_factor() + 0.5;
+    double temp = p * jack_frame_factor();
     jack_nframes_t result = jack_nframes_t(temp);
     if (F > 1)
         result = result % F;
@@ -220,13 +219,20 @@ midi_jack_data::jack_frame_offset (jack_nframes_t F, midipulse p)
     return result;
 }
 
+jack_nframes_t
+midi_jack_data::jack_frame_estimate (midipulse p)
+{
+    double temp = p * jack_frame_factor() + 0.5;
+    return jack_nframes_t(temp);
+}
+
 }           // namespace seq66
 
 #endif      // SEQ66_JACK_SUPPORT
 
 /*
-* midi_jack_data.cpp
-*
-* vim: sw=4 ts=4 wm=4 et ft=cpp
-*/
+ * midi_jack_data.cpp
+ *
+ * vim: sw=4 ts=4 wm=4 et ft=cpp
+ */
 
