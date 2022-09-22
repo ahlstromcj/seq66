@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-19
- * \updates       2022-09-19
+ * \updates       2022-09-21
  * \license       GNU GPLv2 or above
  */
 
@@ -38,6 +38,8 @@
 
 #include "seq66_features.h"             /* SEQ66_PLATFORM_DEBUG macro       */
 
+#undef  SEQ66_USE_MEMORY_LOCK           /* TODO: needs a lot of work !      */
+
 #if defined SEQ66_USE_MEMORY_LOCK
 #include <sys/mman.h>
 #endif
@@ -45,7 +47,7 @@
 namespace seq66
 {
 
-template <class TYPE>
+template <typename TYPE>
 class ring_buffer
 {
 
@@ -59,40 +61,84 @@ public:
 
 private:
 
-    container m_buffer;
-    size_type m_buffer_size;
-    size_type m_contents_size;
-    volatile size_type m_tail;
-    volatile size_type m_head;
-    size_type m_size_mask;
-    bool m_locked;
+    container m_buffer;         /**< Container for all push/popped items.   */
+    size_type m_buffer_size;    /**< Constant power-of-two container size.  */
+    size_type m_contents_size;  /**< Number of active entries in container. */
+    volatile size_type m_tail;  /**< Index where next item is written.      */
+    volatile size_type m_head;  /**< Index where next item is read.         */
+    size_type m_size_mask;      /**< Restricts index to < buffer size.      */
+    bool m_locked;              /**< Is memory locked? NOT YET SUPPORTED.   */
+    int m_dropped;              /**< Number of items overwritten in run.    */
 
 public:
 
-    ring_buffer (size_type sz);
+    explicit ring_buffer (size_type sz);
     ~ring_buffer ();
 
     bool mlock ();
-    void reset ();
+
+    /**
+     *  Reset the read and write pointers to zero. This is not thread safe.
+     *  Neither is the clear() function.
+     */
+
+    void reset ()
+    {
+        m_head = m_tail = 0;
+    }
+
+    void clear ()
+    {
+        m_dropped = m_contents_size = 0;
+        reset();
+        initialize();
+    }
+
+    int count () const
+    {
+        return int(m_contents_size);
+    }
+
+    bool empty () const
+    {
+        return count() == 0;
+    }
+
+    /*
+     * Useful?
+     */
+
+    bool default_slot (const_reference item)
+    {
+        static TYPE empty_value;
+        return item == empty_value;
+    }
+
+    int dropped () const
+    {
+        return m_dropped;
+    }
+
     void write_advance ();
     void read_advance ();
     size_type write_space () const;
     size_type read_space () const;
-
-    size_type read (TYPE & dest);
-    size_type write (const TYPE & src);
-
-    void clear ()
-    {
-        m_head = m_tail = m_contents_size = 0;
-    }
+    size_type read (reference dest);
+    size_type write (const_reference src);
 
     void push_back (const value_type & value);
-    void pop_front ();
+    void pop_front ()
+    {
+        if (m_contents_size > 0)
+            increment_head();
+    }
 
     /*
      * Returns reference to the first element in the queue. This element will
-     * be the first element to be removed on a call to pop().
+     * be the first element to be removed on a call to pop().  The return
+     * value might not be valid, either a default-constructed object or an
+     * old and "overwritten" value. An alternative is to call the read()
+     * function and check the return value.
      */
 
     reference front ()
@@ -105,14 +151,47 @@ public:
         return m_buffer[m_head];
     }
 
+    /**
+     *  Currently there's no way to be sure that the back item is a
+     *  valid item.
+     */
+
     reference back ()
     {
-        return m_buffer[m_tail];
+        return m_buffer[previous_tail()];           // return m_buffer[m_tail];
     }
 
     const_reference back () const
     {
-        return m_buffer[m_tail];
+        return m_buffer[previous_tail()];           // return m_buffer[m_tail];
+    }
+
+private:    // helper functions
+
+    void initialize ();
+
+    void increment_head ()
+    {
+        if (m_contents_size > 0)
+        {
+            ++m_head;
+            --m_contents_size;
+            if (m_head == m_buffer_size)
+                m_head = 0;                                 /* wrap around  */
+        }
+    }
+
+    void increment_tail ()
+    {
+        ++m_tail;
+        ++m_contents_size;
+        if (m_tail == m_buffer_size)
+            m_tail = 0;                                     /* wrap around  */
+    }
+
+    size_t previous_tail ()
+    {
+        return m_tail > 0 ? m_tail - 1 : m_buffer_size -1  ;
     }
 
 };          // class ring_buffer<TYPE>
@@ -122,24 +201,26 @@ public:
  *  The actual buffer size is rounded up to the next power of two.
  */
 
-template<class TYPE>
+template<typename TYPE>
 ring_buffer<TYPE>::ring_buffer (size_type sz) :
     m_buffer        (),
     m_buffer_size   (0),
     m_contents_size (0),
-    m_size_mask     (0),
     m_tail          (0),
-    m_head          (0),
-    m_locked        (false)
+    m_head          (0),                    /* supports empty buffer case   */
+    m_size_mask     (0),
+    m_locked        (false),
+    m_dropped       (0)
 {
-    size_type power_of_two;
-    for (power_of_two = 1; 1 << power_of_two < sz; ++power_of_two)
+    int power_of_two;
+    for (power_of_two = 1; 1 << power_of_two < int(sz); ++power_of_two)
         ;
 
-    size_type psize = 1 << power_of_two;
+    size_type psize = size_t(1 << power_of_two);
     m_buffer.reserve(psize);
     m_buffer_size = psize;
-    m_size_mask = psize - 1;
+    m_size_mask = psize - 1;                /* 0xFF... for index safety     */
+    initialize();
 }
 
 /**
@@ -149,7 +230,7 @@ ring_buffer<TYPE>::ring_buffer (size_type sz) :
  *  an unswappable block of memory for the vector data) if we define this macro.
  */
 
-template<class TYPE>
+template<typename TYPE>
 ring_buffer<TYPE>::~ring_buffer ()
 {
 #if defined SEQ66_USE_MEMORY_LOCK
@@ -158,11 +239,23 @@ ring_buffer<TYPE>::~ring_buffer ()
 #endif
 }
 
+template<typename TYPE>
+void
+ring_buffer<TYPE>::initialize ()
+{
+    TYPE empty_value;
+    m_buffer.clear();
+    m_buffer.reserve(m_buffer_size);
+    for (size_t i = 0; i < m_buffer_size; ++i)
+        m_buffer.push_back(empty_value);        /* prepare buffer for usage */
+}
+
 /**
  *  Lock the data block of `rb' using the system call 'mlock'.
+ *  Not nearly ready for prime time!
  */
 
-template<class TYPE>
+template<typename TYPE>
 bool
 ring_buffer<TYPE>::mlock ()
 {
@@ -178,41 +271,35 @@ ring_buffer<TYPE>::mlock ()
 }
 
 /**
- *  Reset the read and write pointers to zero. This is not thread safe.
+ *  Return the number of elements available for writing.  This is the number
+ *  of elements in front of the write/tail pointer and behind the read/head
+ *  pointer.
  */
 
-template<class TYPE>
-void
-ring_buffer<TYPE>::reset ()
-{
-    m_head = m_tail = 0;
-}
-
-/**
- *  Return the number of elements available for writing.  This is the number of
- *  elements in front of the write/tail pointer and behind the read/head pointer.
- */
-
-template<class TYPE>
+template<typename TYPE>
 std::size_t
 ring_buffer<TYPE>::write_space () const
 {
-    size_type w = m_tail;
-    size_type r = m_head;
-    if (w > r)
-        return ((r - w + m_buffer_size) & m_size_mask) - 1;
-    else if (w < r)
-        return (r - w) - 1;
-
-    return m_buffer_size - 1;
+    size_type t = m_tail;                           /* index for writing    */
+    size_type h = m_head;                           /* index for reading    */
+    if (t > h)
+        return ((h - t + m_buffer_size) & m_size_mask) - 1;
+    else if (t < h)
+        return (h - t) - 1;
+    else
+        return m_buffer_size - m_contents_size;
 }
 
-template<class TYPE>
+template<typename TYPE>
 void
 ring_buffer<TYPE>::write_advance ()
 {
+#if defined USE_OLD_CODE
     ++m_tail;
     m_tail &= m_size_mask;
+#else
+    increment_tail();
+#endif
 }
 
 /**
@@ -221,13 +308,13 @@ ring_buffer<TYPE>::write_advance ()
  *  returned, which indicates an error (no space left).
  */
 
-template<class TYPE>
+template<typename TYPE>
 std::size_t
-ring_buffer<TYPE>::write (const TYPE & src)
+ring_buffer<TYPE>::write (const_reference src)
 {
     size_type result = 0;
-    size_type free_cnt = write_space();
-    if (free_cnt > 0)
+    size_type write_cnt = write_space();
+    if (write_cnt > 0)
     {
         push_back(src);
         result = m_contents_size;
@@ -241,19 +328,26 @@ ring_buffer<TYPE>::write (const TYPE & src)
  *  pointer.
  */
 
-template<class TYPE>
+template<typename TYPE>
 std::size_t
 ring_buffer<TYPE>::read_space () const
 {
-    size_type w = m_tail;
-    size_type r = m_head;
-    if (w > r)
-        return w - r;
-
-    return (w - r + m_buffer_size) & m_size_mask;
+    if (count() > 0)
+    {
+        size_type t = m_tail;                       /* index for writing    */
+        size_type h = m_head;                       /* index for reading    */
+        if (t > h)
+            return t - h;
+        else if (t == h)
+            return m_contents_size;
+        else
+            return (t - h + m_buffer_size) & m_size_mask;
+    }
+    else
+        return 0;
 }
 
-template<class TYPE>
+template<typename TYPE>
 void
 ring_buffer<TYPE>::read_advance ()
 {
@@ -270,61 +364,49 @@ ring_buffer<TYPE>::read_advance ()
  *  The result return is the number of elements still stored.
  */
 
-template<class TYPE>
+template<typename TYPE>
 std::size_t
-ring_buffer<TYPE>::read (TYPE & dest)
+ring_buffer<TYPE>::read (reference dest)
 {
     size_t result = 0;
-    size_type free_cnt = read_space();
-    if (free_cnt > 0)
+    size_type read_cnt = read_space();
+    if (read_cnt > 0)
     {
         dest = m_buffer[m_head];
-        result = ++m_contents_size;
+        pop_front();
+        result = m_contents_size;
     }
     return result;
 }
 
 /**
- *  Increment the tail, then increment the head.
+ *  Increment the tail, then increment the head. This function supports the
+ *  special case of an empty buffer.
  */
 
-template<class TYPE>
+template<typename TYPE>
 void
 ring_buffer<TYPE>::push_back (const value_type & item)
 {
-    ++m_tail;
-    ++m_contents_size;
-    if (m_tail == m_buffer_size)
-        m_tail = 0;                                 /* wrap around  */
-
-    if (m_contents_size > m_buffer_size)
-    {
-        ++m_head;
-        --m_contents_size;
-        if (m_head == m_buffer_size)
-            m_head = 0;
-    }
-    m_buffer[m_tail] = item;
-}
-
-/**
- * Increment the head.
- */
-
-template<class TYPE>
-void
-ring_buffer<TYPE>::pop_front ()
-{
     if (m_contents_size == 0)
-        return;
-
-    ++m_head;
-    --m_contents_size;
-    if (m_head == m_buffer_size)
-        m_head = 0;
+    {
+        m_tail = m_head;
+        m_buffer[m_tail] = item;
+        increment_tail();
+    }
+    else if (m_contents_size < m_buffer_size)
+    {
+        m_buffer[m_tail] = item;
+        increment_tail();
+    }
+    else                                    /* accept item and drop front() */
+    {
+        increment_head();
+        m_buffer[m_tail] = item;
+        increment_tail();
+        ++m_dropped;
+    }
 }
-
-}           // namespace seq66
 
 /*
  *  Free functions (for testing).
@@ -335,6 +417,8 @@ ring_buffer<TYPE>::pop_front ()
 extern bool run_ring_test ();
 
 #endif
+
+}           // namespace seq66
 
 #endif      // SEQ66_RING_BUFFER_HPP
 

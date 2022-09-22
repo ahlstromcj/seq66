@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-09-16
+ * \updates       2022-09-22
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -51,6 +51,17 @@
 #include "seq66_platform_macros.h"      /* indicates the build platform     */
 
 /**
+ *  For issue #100, this macro enables using our new ring_buffer instead of
+ *  jack_ringbuffer_t.
+ */
+
+#define SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
+
+#if defined SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
+#undef SEQ66_ENCODE_TIMESTAMP_FOR_JACK
+#else
+
+/**
  *  For issue #100, this macro enables:
  *
  *      -   Adding the current tick to the time-stamp of all event emitted.
@@ -63,6 +74,7 @@
  */
 
 #define SEQ66_ENCODE_TIMESTAMP_FOR_JACK
+#endif
 
 /**
  *  Related to issue #100 changes, we want the option to use 8-byte MIDI

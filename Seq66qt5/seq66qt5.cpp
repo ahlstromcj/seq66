@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2022-07-27
+ * \updates       2022-09-21
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -39,6 +39,12 @@
 
 #undef  SEQ66_LOCALE_SUPPORT
 #undef  SEQ66_TRANSLATOR_SUPPORT
+
+#undef  USE_RING_BUFFER_TEST            /* enable to check ring_buffer ops  */
+
+#if defined USE_RING_BUFFER_TEST        /* requires a debug build           */
+#include "util/ring_buffer.hpp"
+#endif
 
 /**
  *  The standard C/C++ entry point to this application.  The first thing is to
@@ -70,6 +76,16 @@ int
 main (int argc, char * argv [])
 {
     QApplication app(argc, argv);           /* main application object      */
+
+#if defined USE_RING_BUFFER_TEST && defined SEQ66_PLATFORM_DEBUG
+    if (! seq66::run_ring_test())
+    {
+        printf("ring_buffer test FAILED\n");
+        exit(1);
+    }
+    else
+        exit(0);
+#endif
 
 #if defined SEQ66_LOCALE_SUPPORT
 

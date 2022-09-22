@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2022-09-16
+ * \updates       2022-09-21
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -186,11 +186,13 @@ public:
     midi_message (midipulse ts = 0);
     midi_message (const midibyte * mbs, size_t sz);
 
+#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
     static midipulse extract_timestamp (const midibyte * mbs, size_t sz);
     static size_t size_of_timestamp ()
     {
         return c_timestamp_size;
     }
+#endif
 
     midibyte & operator [] (size_t i)
     {
@@ -219,13 +221,18 @@ public:
         return m_bytes.empty();
     }
 
-#if defined USE_EVENT_COPY_FUNCTION         // not yet needed
-    bool event_copy (midibyte * destination, size_t sz) const;
-#endif
-
     const midibyte * event_bytes () const       // bypasses timestamp
     {
+#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
         return m_bytes.data() + size_of_timestamp();
+#else
+        return m_bytes.data();
+#endif
+    }
+
+    bool empty () const
+    {
+        return event_count() == 0;
     }
 
     int event_count () const                    // was "count"
@@ -243,8 +250,10 @@ public:
         m_bytes.push_back(b);
     }
 
+#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
     bool push_timestamp (midipulse b);
     midipulse extract_timestamp () const;
+#endif
 
     midipulse timestamp () const
     {
@@ -255,7 +264,11 @@ public:
 
     bool is_sysex () const
     {
+#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
         int index = int(size_of_timestamp());
+#else
+        int index = 0;
+#endif
         return m_bytes.size() > 0 ?
             event::is_sysex_msg(m_bytes[index]) : false ;
     }

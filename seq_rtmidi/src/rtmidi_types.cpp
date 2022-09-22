@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-01
- * \updates       2022-09-17
+ * \updates       2022-09-22
  * \license       See above.
  *
  *  Provides some basic types for the (heavily-factored) rtmidi library, very
@@ -87,41 +87,7 @@ midi_message::midi_message (const midibyte * mbs, size_t sz) :
         m_bytes.push_back(*mbs++);
 }
 
-#if defined USE_EVENT_COPY_FUNCTION         // not yet needed
-
-/**
- *  Copies only the event bytes to the destination buffer.
- *
- * \param destination
- *      The place to put the bytes.
- *
- * \param sz
- *      The size the caller allocated to the buffer.
- *
- * \return
- *      Returns true if the bytes could be copied.
- */
-
-bool
-midi_message::event_copy (midibyte * destination, size_t sz) const
-{
-    bool result = false;
-    if (not_nullptr(destination) && (sz > 0))
-    {
-        if (size_t(event_count()) <= sz)
-        {
-            const midibyte * source = event_bytes();
-            if (not_nullptr(source))
-            {
-                (void) std::memcpy(destination, source, sz);
-                result = true;
-            }
-        }
-    }
-    return result;
-}
-
-#endif
+#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
 
 /**
  *  These function handle adding a time-stamp to the message as bytes.
@@ -226,6 +192,8 @@ midi_message::extract_timestamp (const midibyte * mbs, size_t sz)
     }
     return result;
 }
+
+#endif  //defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
 
 void
 midi_message::timestamp (midipulse t)

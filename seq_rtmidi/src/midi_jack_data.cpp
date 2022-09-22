@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-13
- * \updates       2022-09-17
+ * \updates       2022-09-22
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -58,7 +58,11 @@ double midi_jack_data::sm_jack_frame_factor         = 1.0;
 midi_jack_data::midi_jack_data () :
     m_jack_client           (nullptr),
     m_jack_port             (nullptr),
+#if defined SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
+    m_jack_buffer           (nullptr), // ring_buffer<midi_message>
+#else
     m_jack_buffmessage      (nullptr),
+#endif
     m_jack_lasttime         (0),
 #if defined SEQ66_MIDI_PORT_REFRESH
     m_internal_port_id      (null_system_port_id()),
@@ -91,32 +95,41 @@ midi_jack_data::~midi_jack_data ()
  *      -   It would be good to call this function during a settings change as
  *          indicated by calls to the jack_set_buffer_size(frames, arg) or
  *          jack_set_sample_rate(frames, arg) callbacks.
- *      -   Current these data are owned by each port, but we probably
- *          need to make them static.
  */
 
 bool
 midi_jack_data::recalculate_frame_factor (const jack_position_t & pos)
 {
-    bool R_changed      = (jack_frame_rate() != pos.frame_rate);
-    bool Tpb_changed    = (jack_ticks_per_beat() != pos.ticks_per_beat);
-    bool bpm_changed    = (jack_beats_per_minute() != pos.beats_per_minute);
-    bool result = R_changed || Tpb_changed || bpm_changed;
-    if (result)
+    bool changed = false;
+    if
+    (
+        (pos.ticks_per_beat > 1.0) &&                       /* sanity check */
+        (jack_ticks_per_beat() != pos.ticks_per_beat)
+    )
     {
-        if (R_changed)
-            jack_frame_rate(pos.frame_rate);
-
-        if (Tpb_changed && pos.ticks_per_beat > 1.0)    /* sanity check */
-            jack_ticks_per_beat(pos.ticks_per_beat);
-
-        if (bpm_changed && pos.beats_per_minute > 1.0)  /* sanity check */
-            jack_beats_per_minute(pos.beats_per_minute);
-
+        jack_ticks_per_beat(pos.ticks_per_beat);
+        changed = true;
+    }
+    if
+    (
+        (pos.beats_per_minute > 1.0) &&                     /* sanity check */
+        (jack_beats_per_minute() != pos.beats_per_minute)
+    )
+    {
+        jack_beats_per_minute(pos.beats_per_minute);
+        changed = true;
+    }
+    if (jack_frame_rate() != pos.frame_rate)
+    {
+        jack_frame_rate(pos.frame_rate);
+        changed = true;
+    }
+    if (changed)
+    {
         sm_jack_frame_factor = (jack_frame_rate() * 600) /
             (jack_ticks_per_beat() * jack_beats_per_minute());
     }
-    return result;
+    return changed;
 }
 
 /**

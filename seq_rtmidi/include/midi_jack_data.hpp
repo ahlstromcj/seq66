@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-02
- * \updates       2022-09-17
+ * \updates       2022-09-22
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -40,7 +40,12 @@
 #if defined SEQ66_JACK_SUPPORT
 
 #include <jack/jack.h>
+
+#if defined SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
+#include "util/ring_buffer.hpp"         /* seq66::ring_buffer<> template    */
+#else
 #include <jack/ringbuffer.h>
+#endif
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -91,9 +96,16 @@ class midi_jack_data
      *  ring-buffer and the JACK port's internal buffer, plus the data
      *  for communicating between the client ring-buffer and the JACK
      *  port's internal buffer.
+     *
+     *  We are in the process of replacing the character buffer with our
+     *  MIDI message ring buffer.  (See issue #100).
      */
 
+#if defined SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
+    ring_buffer<midi_message> * m_jack_buffer;
+#else
     jack_ringbuffer_t * m_jack_buffmessage;
+#endif
 
     /**
      *  The last time-stamp obtained.  Use for calculating the delta time, I
@@ -204,11 +216,6 @@ public:
         m_jack_port = jp;
     }
 
-    bool valid_buffer () const
-    {
-        return not_nullptr(m_jack_buffmessage);
-    }
-
     rtmidi_in_data * jack_rtmidiin () const
     {
         return m_jack_rtmidiin;
@@ -217,6 +224,27 @@ public:
     void jack_rtmidiin (rtmidi_in_data * rid)
     {
         m_jack_rtmidiin = rid;
+    }
+
+#if defined SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
+    bool valid_buffer () const
+    {
+        return not_nullptr(m_jack_buffer);
+    }
+
+    ring_buffer<midi_message> * jack_buffer ()
+    {
+        return m_jack_buffer;
+    }
+
+    void jack_buffer (ring_buffer<midi_message> * rb)
+    {
+        m_jack_buffer = rb;
+    }
+#else
+    bool valid_buffer () const
+    {
+        return not_nullptr(m_jack_buffmessage);
     }
 
     jack_ringbuffer_t * jack_buffmessage ()
@@ -228,6 +256,7 @@ public:
     {
         m_jack_buffmessage = jrb;
     }
+#endif
 
     jack_time_t jack_lasttime () const
     {

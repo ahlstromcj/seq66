@@ -523,6 +523,7 @@ typename ring_buffer<TYPE>::const_iterator ring_buffer<TYPE>::rend() const
 }
 
 #if 0
+
 template<class TYPE>
 void ring_buffer<TYPE>::increment_tail ()
 {
@@ -543,6 +544,7 @@ void ring_buffer<TYPE>::increment_head()
     if (m_head == m_array_size)
         m_head = 0;
 }
+
 #endif
 
 
