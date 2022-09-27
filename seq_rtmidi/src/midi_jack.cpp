@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-09-22
+ * \updates       2022-09-27
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -193,10 +193,16 @@
  *  we play the Sequencer64 MIDI tune "b4uacuse-stress.midi", we can fail to
  *  write to the ringbuffer.  So we've doubled the size. Without timestamps,
  *  that allows about 10K events. With time-stamps, about 4.7K events.
+ *
+ *  For the new midi_message ringbuffer, running the stress file from the
+ *  Sequencer64 project, the maximum number of events in the ring buffer
+ *  is about 200 at 192 PPQN.  At 960 PPQN, thousands of events are dropped
+ *  and the buffer maxes out (1024 events).  Let's try 4096 instead.
+ *  Weird, now that tune yields the max of 196!
  */
 
 #if defined SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
-static const size_t c_jack_ringbuffer_size = 1024;          /* tentative    */
+static const size_t c_jack_ringbuffer_size = 4096;          /* tentative    */
 #else
 static const size_t c_jack_ringbuffer_size = 32768;         /* was 16384    */
 #endif
@@ -207,6 +213,12 @@ static const size_t c_jack_ringbuffer_size = 32768;         /* was 16384    */
 
 namespace seq66
 {
+
+/*
+ ----------------------------------------------------------------------------
+  Static items and JACK callback functions.
+ ----------------------------------------------------------------------------
+ */
 
 /**
  *  The buffer size for basic MIDI messages.  Probably excludes SysEx
@@ -338,10 +350,9 @@ jack_process_rtmidi_input (jack_nframes_t framect, void * arg)
     return 0;
 }
 
-#undef  USE_FRAME_OFFSET_PEEKING
-
 /**
- *  Handles peeking and reading data from the JACK ringbuffer.
+ *  Handles peeking and reading data from our replacement for the JACK
+ *  ringbuffer.
  *
  * \param buffmsg
  *      The ringbuffer to check.  It is expected to hold two bytes (a short)
@@ -373,7 +384,7 @@ jack_process_rtmidi_input (jack_nframes_t framect, void * arg)
 
 #if defined SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
 
-jack_nframes_t
+static jack_nframes_t
 jack_get_event_data
 (
     ring_buffer<midi_message> * buffmsg,
@@ -389,7 +400,7 @@ jack_get_event_data
         const midi_message & msg = buffmsg->front();
         midipulse ts = msg.timestamp();
         result = midi_jack_data::jack_frame_offset(framect, ts);
-        process = result >= lastoffset;
+        process = result >= lastoffset;             /* next process cycle?  */
         if (process)
         {
             size_t datasz = size_t(msg.event_count());
@@ -398,58 +409,24 @@ jack_get_event_data
                 memcpy(dest, msg.event_bytes(), datasz);
                 destsz = datasz;
             }
+#if defined SEQ66_PLATFORM_DEBUG
+            double Tpms = 1000.0 * 60.0 / (double(192) * double(200));
+            int fn = int(midi_jack_data::jack_frame_estimate(ts));
+            printf
+            (
+                "[debug] ts %ld (%g ms) frame %i played #%u offset %d\n",
+                long(ts), ts * Tpms, fn, msg.msg_number(), int(result)
+            );
+#endif
             buffmsg->pop_front();
         }
         else
-            result = UINT32_MAX;        /* belay handling until next frame  */
-    }
-    return result;
-}
-
-#else
-
-jack_nframes_t
-jack_get_event_data
-(
-    jack_ringbuffer_t * buffmsg,
-    jack_nframes_t framect,
-    jack_nframes_t lastoffset,
-    char * dest, size_t & destsz
-)
-{
-    jack_nframes_t result = UINT32_MAX;
-    short space = 0;
-    const size_t sz = sizeof(space);
-    char * sp = reinterpret_cast<char *>(&space);
-    bool process = ::jack_ringbuffer_peek(buffmsg, sp, sz) >= sz;
-    char test[16];
-    if (process)
-    {
-        char temp[s_message_buffer_size];           /* hardwired for now    */
-        size_t amount = space + sz;                 /* data + size of data  */
-        size_t ct = ::jack_ringbuffer_peek(buffmsg, temp, amount) == amount;
-        process = ct == amount;
-        if (process)
         {
-            size_t tssize = midi_message::size_of_timestamp();
-            const char * next = &temp[0] + sz;
-            const midibyte * mbytes = reinterpret_cast<const midibyte *>(next);
-            midipulse ts = midi_message::extract_timestamp(mbytes, ct);
-            result = midi_jack_data::jack_frame_offset(framect, ts);
-            process = result >= lastoffset;
-            if (process)
-            {
-                size_t datasz = amount - sz - tssize;
-                if (datasz <= destsz)
-                {
-                    next += tssize;
-                    memcpy(dest, next, datasz);
-                    destsz = datasz;
-                }
-                ::jack_ringbuffer_read_advance(buffmsg, amount);
-            }
-            else
-                result = UINT32_MAX;
+#if defined SEQ66_PLATFORM_DEBUG
+            printf("[debug] ts %ld BELAYED #%u offset %d\n",
+                long(ts), msg.msg_number(), int(result));
+#endif
+            result = UINT32_MAX;                    /* belay to next cycle  */
         }
     }
     return result;
@@ -458,7 +435,7 @@ jack_get_event_data
 #endif  // defined SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
 
 /**
- *  Defines the JACK process output callback.  It is the JACK process callback
+ *  Defines the JACK output process callback.  It is the JACK process callback
  *  for a MIDI output port (a midi_out_jack object associated with, for
  *  example, "system:midi_playback_1", representing, for example, a Korg
  *  nanoKEY2 to which we can send information), also known as a "Writable
@@ -468,10 +445,12 @@ jack_get_event_data
  *      -#  Loop while the number of bytes available for reading [via
  *          jack_ringbuffer_read_space()] is non-zero.  Note that the second
  *          parameter is where the data is copied.
+ *          NOTE: This byte buffer has been replaced by a midi_message
+ *          ring-buffer.
  *      -#  Get the size of each event, and allocate space for an event to be
  *          written to an event port buffer (JACK reserve/write functions).
  *      -#  Read the data from the ringbuffer into this port buffer.  JACK
- *          should then send it to the remote port.
+ *          will then send it to the remote port.
  *
  *  Since this is an output port, "buff" is the area to which we can write
  *  data, to send it to the "remote" (i.e. outside our application) port.  The
@@ -481,21 +460,13 @@ jack_get_event_data
  *  We were wondering if, like the JACK midiseq example program, we need to
  *  wrap the out-process in a for-loop over the number of frames.  In our
  *  tests, we are getting 1024 frames, and the code seems to work without that
- *  loop.
+ *  loop.  A for-loop over the number of frames?  See discussion above.
  *
- *  A for-loop over the number of frames?  See discussion above.
- *
- *  Note that we now access midi_message data through static functions,
- *  otherwise the overhead induces buffer overruns.
- *
- *  Why are we reading here?  That's where our app has dumped the next set
- *  of MIDI events to output.
- *
- *  Could consider using JACK callbacks to detect changes.  That would be more
- *  robust.
+ *  Could consider using JACK callbacks to detect server-setting changes.
+ *  That would be more robust.
  *
  * \param framect
- *    The number of frames to be processes
+ *    The number of frames to be processed.
  *
  * \param arg
  *    A pointer to the midi_jack_data object, which holds basic information
@@ -512,15 +483,37 @@ jack_process_rtmidi_output (jack_nframes_t framect, void * arg)
 {
     char mbuffer[s_message_buffer_size];
     char * mbuf = &mbuffer[0];
-
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
-    jack_client_t * client = jackdata->jack_client();   /* for JACK state   */
     jack_port_t * jackport = jackdata->jack_port();
     void * buf = ::jack_port_get_buffer(jackport, framect);
-    jack_position_t pos;                                /* holds JACK state */
-    (void) ::jack_transport_query(client, &pos);        /* transport state  */
+    jack_position_t pos = jack_assistant::get_jack_parameters().position;
     if (midi_jack_data::recalculate_frame_factor(pos))
-        async_safe_errprint("JACK transport settings changed");
+        async_safe_errprint("JACK settings changed");
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI                    /* jack_assistant   */
+    jack_client_t * client = jackdata->jack_client();   /* for JACK state   */
+    jack_position_t realpos;                            /* holds JACK state */
+    (void) ::jack_transport_query(client, &realpos);    /* transport state  */
+    if (realpos.frame > 0)
+    {
+        static bool s_inited = false;
+        static jack_time_t s_last = 0;
+        jack_time_t timeus = ::jack_get_time();
+        if (! s_inited)
+        {
+            s_last = timeus;
+            s_inited = true;
+            printf("[test] initial time %d\n", unsigned(s_last) / 1000);
+        }
+        unsigned time = unsigned(timeus - s_last) / 1000;  /* us to ms */
+        printf
+        (
+            "[test] time %u dur %u ms, frame %u\n",
+            unsigned(timeus) / 1000, unsigned(time), unsigned(realpos.frame)
+        );
+        s_last = timeus;
+    }
+#endif
 
     jack_nframes_t last_offset = 0;
     ::jack_midi_clear_buffer(buf);
@@ -536,11 +529,11 @@ jack_process_rtmidi_output (jack_nframes_t framect, void * arg)
             const jack_midi_data_t * data =
                 reinterpret_cast<const jack_midi_data_t *>(mbuf);
 
-            int rc = ::jack_midi_event_write(buf, offset, data, destsz);
+            int rc = ::jack_midi_event_write(buf, offset /* 0 */, data, destsz);
             if (rc != 0)
             {
                 async_safe_errprint("JACK MIDI buffer overflow");
-                ::jack_midi_clear_buffer(buf);  // or "break'?
+                break;                  /* ::jack_midi_clear_buffer(buf) */
             }
             last_offset = offset;
         }
@@ -558,7 +551,7 @@ jack_process_rtmidi_output (jack_nframes_t framect, void * arg)
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
     jack_port_t * jackport = jackdata->jack_port();
     jack_ringbuffer_t * buffmsg = jackdata->jack_buffmessage();
-    int space = 0;
+    short space = 0;
     const size_t sz = sizeof(space);
     char * sp = reinterpret_cast<char *>(&space);
     void * buf = ::jack_port_get_buffer(jackport, framect);
@@ -566,7 +559,12 @@ jack_process_rtmidi_output (jack_nframes_t framect, void * arg)
     for (;;)
     {
         size_t msgsz = ::jack_ringbuffer_read_space(buffmsg);
-        if (msgsz > 0)
+        if (msgsz > 32000)
+        {
+            async_safe_errprint("Impossible event size");
+            break;
+        }
+        else if (msgsz > 0)
         {
             (void) ::jack_ringbuffer_read(buffmsg, sp, sz);
             jack_midi_data_t * md = ::jack_midi_event_reserve(buf, 0, space);
@@ -835,7 +833,9 @@ jack_port_register_callback (jack_port_id_t portid, int regv, void * arg)
 }
 
 /*
- * MIDI JACK base class
+ ----------------------------------------------------------------------------
+  MIDI JACK base class
+ ----------------------------------------------------------------------------
  */
 
 /**
@@ -869,7 +869,8 @@ midi_jack::midi_jack (midibus & parentbus, midi_info & masterinfo) :
     (void) jack_info().add(*this);
 
     /*
-     * New for issue #100.
+     * New for issue #100. These are only tentative values, and are replaced
+     * once transport is active.
      */
 
     jack_data().jack_ticks_per_beat(ppqn() * 10.0);
@@ -886,7 +887,20 @@ midi_jack::~midi_jack ()
 {
 #if defined SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
     if (not_nullptr(jack_data().jack_buffer()))
-        delete jack_data().jack_buffer();
+    {
+        ring_buffer<midi_message> * rb = jack_data().jack_buffer();
+        if (rb->dropped() > 0)
+        {
+            char tmp[64];
+            snprintf
+            (
+                tmp, sizeof tmp, "%d events dropped, %d max/%d\n",
+                rb->dropped(), rb->count_max(), rb->buffer_size()
+            );
+            (void) warn_message("ring-buffer", tmp);
+            delete jack_data().jack_buffer();
+        }
+    }
 #else
     if (not_nullptr(jack_data().jack_buffmessage()))
         ::jack_ringbuffer_free(jack_data().jack_buffmessage());
@@ -1054,7 +1068,7 @@ midi_jack::details () const
     std::string result = parent_bus().bus_name();
     result += ":";
     result += parent_bus().port_name();
-    result += "--->";
+    result += "-->";
     result += m_remote_port_name;
     return result;
 }
@@ -1197,11 +1211,8 @@ midi_jack::api_play (const event * e24, midibyte channel)
     jack_nframes_t estimate = midi_jack_data::jack_frame_estimate(p);
     jack_position_t pos;                                /* holds JACK state */
     (void) ::jack_transport_query(client, &pos);        /* transport state  */
-
     if (midi_jack_data::recalculate_frame_factor(pos))
         async_safe_strprint("JACK transport settings changed");
-
-    jack_nframes_t offset = midi_jack_data::jack_frame_offset(p);
 #endif
 
     midi_message message(e24->timestamp());             /* issue #100       */
@@ -1245,7 +1256,7 @@ midi_jack::send_message (const midi_message & message)
     jack_data().jack_buffer()->push_back(message); // ring_buffer<midi_message>
     return true;
 #else
-    int nbytes = message.buffer_count();
+    int nbytes = message.event_count();
     bool result = nbytes > 0 && nbytes < int(s_message_buffer_size);
     if (result)
     {
@@ -1721,7 +1732,6 @@ midi_jack::create_ringbuffer (size_t rbsize)
         if (result)
             jack_data().jack_buffmessage(rb);
 #endif
-
         if (! result)
         {
             m_error_string = "JACK ringbuffer create error";

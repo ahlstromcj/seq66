@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2022-09-17
+ * \updates       2022-09-26
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -190,6 +190,20 @@ class jack_assistant
     friend void jack_session_callback (jack_session_event_t * ev, void * arg);
 #endif
 
+public:
+
+    /**
+     *  p_position_structure holds frame_rate, ticks_per_beat, and
+     *  beats/minute.
+     */
+
+    using parameters = struct
+    {
+        jack_position_t position;
+        int period_size;                        /* frames per cycle */
+        int alsa_nperiod;                       /* usually 2 or 3   */
+    };
+
 private:
 
     /**
@@ -198,6 +212,14 @@ private:
      */
 
     static jack_status_pair_t sm_status_pairs [];
+
+    /**
+     *  For issue #100, storage for the true JACK transport position, etc.
+     *  Store the current JACK parameters, currently for display only.
+     *  Tired of being fooled about the actual parameters.
+     */
+
+    static parameters sm_jack_parameters;
 
     /**
      *  Provides the performer object that needs this JACK assistant/scratchpad
@@ -352,6 +374,13 @@ public:
     ~jack_assistant ();
 
     static void show_position (const jack_position_t & pos);
+    static bool save_jack_parameters
+    (
+        const jack_position_t & p,
+        int periodsize  = 0,
+        int alsanperiod = 0
+    );
+    static const parameters & get_jack_parameters ();
 
     performer & parent ()       /* getter needed for external callbacks.    */
     {
@@ -456,7 +485,7 @@ public:
 
     bool activate ();
     void start ();
-    void stop ();
+    void stop (bool rewind = false);
     void position (bool state, midipulse tick = 0);
     bool output (jack_scratchpad & pad);
 

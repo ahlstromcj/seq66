@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2022-09-16
+ * \updates       2022-09-22
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -132,16 +132,9 @@ using jacktick = long;
  *  However, if you make this value unsigned, then perfroll won't show any
  *  notes in the sequence bars!!!  Also, a number of manipulations of this
  *  type currently depend upon it being a signed value.
- *
- *  By default we use only 4 bytes to encode the timestamp (e.g. for the
- *  JACK ringbuffer).  See this macro in seq66_features.h.
  */
 
-#if defined SEQ66_8_BYTE_TIMESTAMPS
-using midipulse = int64_t;
-#else
-using midipulse = int32_t;
-#endif
+using midipulse = long;
 
 /**
  *  JACK encodes jack_time_t as a uint64_t (8-byte) value.  We will use our own
@@ -187,12 +180,7 @@ using midibooleans = std::vector<midibool>;
  */
 
 const midipulse c_null_midipulse = -1;              /* ULONG_MAX later?     */
-
-#if defined SEQ66_8_BYTE_TIMESTAMPS
-const midipulse c_midipulse_max = INT64_MAX;        /* for sanity checks    */
-#else
-const midipulse c_midipulse_max = INT32_MAX;        /* for sanity checks    */
-#endif
+const midipulse c_midipulse_max = LONG_MAX;         /* for sanity checks    */
 
 /**
  *  Defines the maximum number of MIDI values, and one more than the

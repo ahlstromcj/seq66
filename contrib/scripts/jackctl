@@ -1,0 +1,102 @@
+#!/bin/bash
+#
+#******************************************************************************
+# jackctl
+#------------------------------------------------------------------------------
+##
+# \file           jackctl
+# \library        Any project
+# \author         Chris Ahlstrom
+# \date           2022-09-25
+# \update         2022-09-26
+# \version        $Revision$
+# \license        $XPC_SUITE_GPL_LICENSE$
+#
+#     The above is modified by the following to remove even the mild GPL
+#     restrictions:
+#
+#     Use this script in any manner whatsoever.  You don't even need to give
+#     me any credit.  However, keep in mind the value of the GPL in keeping
+#     software and its descendant modifications available to the community
+#     for all time.
+#
+#     See "jack_control --help" for a list of options.
+#
+# ALSA parameters partial list:
+#
+#     device:        ALSA device name (type:isset:default:value).
+#     capture:       Optionally set port (str:notset:none:none).
+#     playback:      Optionally set port (str:notset:none:none).
+#     rate:          Set the sample rate (48000).
+#     period:        Frames per period (the "cycle", time between process
+#                    callback calls (1024).
+#     nperiod:       Number of periods (cycles) of latency (2).
+#     midi-driver:   ALSA MIDI driver.
+#
+# /proc/asound/cards (on our system):
+#
+#     0: CODEC       USB audio box.
+#     1: nanoKEY2    Korg keyboard.
+#     2: HDMI        Onboard HDMI.
+#     3: PCH         Intel on-board sound.
+#     4: NVidia      Onboard NVidia card.
+#     5: Midi        A generic USB MIDI cable.
+#     6: Mini        LaunchPad Mini.
+#
+#------------------------------------------------------------------------------
+
+JCTL_OPERATION="start"
+JCTL_DRIVER="alsa"
+JCTL_DEVICE="hw:CODEC"  # see "cat /proc/asound/cards"
+JCTL_RATE="48000"
+JCTL_LATENCY="2"
+JCTL_PERIOD="2048"      # for TESTING
+
+if [ "$1" == "--list" ] ; then
+   echo "Available drivers:"
+   jack_control dl
+   echo "Selecting ALSA (seq). Available parameters:"
+   jack_control ds $JCTL_DRIVER
+   jack_control dp
+elif [ "$1" == "--help" ] ; then
+   cat << E_O_F
+Usage:
+   jackctl              Start with the usual parameters (TBD).
+   jackctl --list       List the drivers and the ALSA parameters.
+   jackctl --start      Start the JACK server, that's it.
+   jackctl --stop       Stop the JACK server.
+   jackctl --kill       Stop the JACK server and exit jackdbus.
+   jackctl --period F   Change the period of the JACK server.
+   jackctl --nperiod P  Change ALSA period (playback latency, 2 or 3).
+   jackctl --help       Show this message.
+
+Getting tired of qjackctl and jackdbus wrestling with each other on
+a newer Ubuntu system that runs jackdbus.
+E_O_F
+elif [ "$1" == "--start" ] ; then
+   jack_control start
+elif [ "$1" == "--stop" ] ; then
+   jack_control stop
+elif [ "$1" == "--kill" ] ; then
+   jack_control stop
+   jack_control exit
+elif [ "$1" == "--period" ] ; then
+   JCTL_PERIOD="$2"
+   jack_control dps period $JCTL_PERIOD
+elif [ "$1" == "--nperiod" ] ; then
+   JCTL_LATENCY="$2"
+   jack_control dps nperiod $JCTL_LATENCY
+else
+   jack_control start
+   jack_control ds $JCTL_DRIVER
+   jack_control dps device $JCTL_DEVICE
+   jack_control dps rate $JCTL_RATE
+   jack_control dps nperiods $JCTL_LATENCY
+   jack_control dps period $JCTL_PERIOD
+fi
+
+#******************************************************************************
+# jackctl
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 et ft=sh
+#------------------------------------------------------------------------------

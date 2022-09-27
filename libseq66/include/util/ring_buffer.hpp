@@ -20,7 +20,7 @@
  */
 
 /**
- * \file          ring_buffer.cpp
+ * \file          ring_buffer.hpp
  *
  *  This module defines our own ringbuffer that support objects, not just
  *  characters.
@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-19
- * \updates       2022-09-21
+ * \updates       2022-09-27
  * \license       GNU GPLv2 or above
  */
 
@@ -68,6 +68,7 @@ private:
     volatile size_type m_head;  /**< Index where next item is read.         */
     size_type m_size_mask;      /**< Restricts index to < buffer size.      */
     bool m_locked;              /**< Is memory locked? NOT YET SUPPORTED.   */
+    size_type m_contents_max;   /**< Useful in trouble-shooting.            */
     int m_dropped;              /**< Number of items overwritten in run.    */
 
 public:
@@ -94,9 +95,19 @@ public:
         initialize();
     }
 
+    int buffer_size () const
+    {
+        return int(m_buffer_size);
+    }
+
     int count () const
     {
         return int(m_contents_size);
+    }
+
+    int count_max () const
+    {
+        return int(m_contents_max);
     }
 
     bool empty () const
@@ -185,6 +196,9 @@ private:    // helper functions
     {
         ++m_tail;
         ++m_contents_size;
+        if (m_contents_size > m_contents_max)
+            m_contents_max = m_contents_size;
+
         if (m_tail == m_buffer_size)
             m_tail = 0;                                     /* wrap around  */
     }
@@ -210,6 +224,7 @@ ring_buffer<TYPE>::ring_buffer (size_type sz) :
     m_head          (0),                    /* supports empty buffer case   */
     m_size_mask     (0),
     m_locked        (false),
+    m_contents_max  (0),
     m_dropped       (0)
 {
     int power_of_two;
@@ -226,8 +241,9 @@ ring_buffer<TYPE>::ring_buffer (size_type sz) :
 /**
  *  Free all data associated with the ringbuffer `m_rb'.
  *
- *  Note that we will have some work to do (like writing an allocator that uses
- *  an unswappable block of memory for the vector data) if we define this macro.
+ *  Note that we will have some work to do (like writing an allocator that
+ *  uses an unswappable block of memory for the vector data) if we define this
+ *  macro.
  */
 
 template<typename TYPE>
@@ -409,7 +425,7 @@ ring_buffer<TYPE>::push_back (const value_type & item)
 }
 
 /*
- *  Free functions (for testing).
+ *  Free functions (for testing the ring_buffer).
  */
 
 #if defined SEQ66_PLATFORM_DEBUG
@@ -423,7 +439,7 @@ extern bool run_ring_test ();
 #endif      // SEQ66_RING_BUFFER_HPP
 
 /*
- * ring_buffer.cpp
+ * ring_buffer.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

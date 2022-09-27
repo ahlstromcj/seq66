@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2022-09-21
+ * \updates       2022-09-22
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -116,21 +116,6 @@ api_to_int (rtmidi_api api)
 }
 
 /**
- *  The size of a Seq66 MIDI timestamp in bytes, or 0 if we're
- *  not encoding timestamps in the JACK ringbuffer.
- */
-
-#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
-#if defined SEQ66_8_BYTE_TIMESTAMPS
-const size_t c_timestamp_size = 8;
-#else
-const size_t c_timestamp_size = 4;
-#endif
-#else
-const size_t c_timestamp_size = 0;
-#endif
-
-/**
  *  Provides a handy capsule for a MIDI message, based on the
  *  std::vector<unsigned char> data type from the RtMidi project.
  *
@@ -169,6 +154,19 @@ public:
 private:
 
     /**
+     *  Provide a static counter to keep track of events. Currently needed for
+     *  trouble-shooting.  We don't care about wraparound.
+     */
+
+    static unsigned sm_msg_number;
+
+    /**
+     *  Provides the message counter value when this event was created.
+     */
+
+    unsigned m_msg_number;
+
+    /**
      *  Holds the event status and data bytes.
      */
 
@@ -184,23 +182,15 @@ private:
 public:
 
     midi_message (midipulse ts = 0);
-    midi_message (const midibyte * mbs, size_t sz);
+    midi_message (const midibyte * mbs, std::size_t sz);
 
-#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
-    static midipulse extract_timestamp (const midibyte * mbs, size_t sz);
-    static size_t size_of_timestamp ()
-    {
-        return c_timestamp_size;
-    }
-#endif
-
-    midibyte & operator [] (size_t i)
+    midibyte & operator [] (std::size_t i)
     {
         static midibyte s_zero = 0;
         return (i < m_bytes.size()) ? m_bytes[i] : s_zero ;
     }
 
-    const midibyte & operator [] (size_t i) const
+    const midibyte & operator [] (std::size_t i) const
     {
         static midibyte s_zero = 0;
         return (i < m_bytes.size()) ? m_bytes[i] : s_zero ;
@@ -211,23 +201,14 @@ public:
         return reinterpret_cast<const char *>(&m_bytes[0]);
     }
 
-    int buffer_count () const
-    {
-        return int(m_bytes.size());
-    }
-
-    bool buffer_empty () const
-    {
-        return m_bytes.empty();
-    }
-
     const midibyte * event_bytes () const       // bypasses timestamp
     {
-#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
-        return m_bytes.data() + size_of_timestamp();
-#else
         return m_bytes.data();
-#endif
+    }
+
+    unsigned msg_number () const
+    {
+        return m_msg_number;
     }
 
     bool empty () const
@@ -237,23 +218,13 @@ public:
 
     int event_count () const                    // was "count"
     {
-#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
-        return m_bytes.size() <= size_of_timestamp() ?
-            0 : int(m_bytes.size() - size_of_timestamp()) ;
-#else
         return int(m_bytes.size());
-#endif
     }
 
     void push (midibyte b)
     {
         m_bytes.push_back(b);
     }
-
-#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
-    bool push_timestamp (midipulse b);
-    midipulse extract_timestamp () const;
-#endif
 
     midipulse timestamp () const
     {
@@ -264,13 +235,7 @@ public:
 
     bool is_sysex () const
     {
-#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
-        int index = int(size_of_timestamp());
-#else
-        int index = 0;
-#endif
-        return m_bytes.size() > 0 ?
-            event::is_sysex_msg(m_bytes[index]) : false ;
+        return m_bytes.size() > 0 ? event::is_sysex_msg(m_bytes[0]) : false ;
     }
 
     void show () const;

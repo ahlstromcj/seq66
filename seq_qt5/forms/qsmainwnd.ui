@@ -1382,13 +1382,13 @@ recording.</string>
          <widget class="QLabel" name="label">
           <property name="minimumSize">
            <size>
-            <width>30</width>
+            <width>32</width>
             <height>28</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>30</width>
+            <width>36</width>
             <height>28</height>
            </size>
           </property>

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-09-01
+ * \updates       2022-09-26
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -50,6 +50,7 @@
 
 #include <QButtonGroup>
 
+#include "midi/jack_assistant.hpp"      /* seq66::jack_assistant statics    */
 #include "os/daemonize.hpp"             /* seq66::signal_for_restart()      */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "util/filefunctions.hpp"       /* seq66::filename_base()           */
@@ -607,6 +608,27 @@ qseditoptions::setup_tab_jack ()
         ui->chkJackAutoConnect, SIGNAL(stateChanged(int)),
         this, SLOT(slot_jack_auto_connect())
     );
+
+    /*
+     * Display of current JACK Server settings.
+     */
+
+    jack_assistant::parameters pos = jack_assistant::get_jack_parameters();
+    std::string temp = std::to_string(int(pos.position.frame_rate));
+    ui->lineEditFrameRate->setText(qt(temp));
+
+    temp = std::to_string(pos.period_size);                     /* int      */
+    ui->lineEditPeriod->setText(qt(temp));
+
+    temp = std::to_string(pos.alsa_nperiod);                    /* int      */
+    ui->lineEditNperiod->setText(qt(temp));
+
+    char tmp[32];
+    snprintf(tmp, sizeof tmp, "%.2f", pos.position.ticks_per_beat);
+    ui->lineEditTicksPerBeat->setText(tmp);
+
+    snprintf(tmp, sizeof tmp, "%.2f", pos.position.beats_per_minute);
+    ui->lineEditBeatsPerMinute->setText(tmp);
 
     /*
      * Create a button group to manage the mutual status of the JACK Live and
@@ -1874,7 +1896,6 @@ qseditoptions::slot_ui_scaling ()
     QString qheight = ui->lineEditUiScalingHeight->text();      /* h */
     ui_scaling_helper(qs, qheight);
     modify_usr();
-    // reload_needed(true);
 }
 
 /**
@@ -2095,9 +2116,9 @@ void
 qseditoptions::sync_usr ()
 {
     char tmp[32];
-    snprintf(tmp, sizeof tmp, "%g", usr().window_scale());
+    snprintf(tmp, sizeof tmp, "%.2f", usr().window_scale());
     ui->lineEditUiScaling->setText(tmp);
-    snprintf(tmp, sizeof tmp, "%g", usr().window_scale_y());
+    snprintf(tmp, sizeof tmp, "%.2f", usr().window_scale_y());
 
     ui->lineEditUiScalingHeight->setText(tmp);
     ui->chkNoteResume->setChecked(usr().resume_note_ons());

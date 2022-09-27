@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-09-03
+ * \updates       2022-09-25
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1741,12 +1741,17 @@ public:
 #endif
     }
 
-    void stop_jack ()
-    {
 #if defined SEQ66_JACK_SUPPORT
-        m_jack_asst.stop();
-#endif
+    void stop_jack (bool rewind = false)
+    {
+        m_jack_asst.stop(rewind);
     }
+#else
+    void stop_jack (bool /* rewind */)
+    {
+        // No JACK code available
+    }
+#endif
 
     /**
      *  Initializes JACK support, if defined.  The launch() function and
@@ -2088,7 +2093,7 @@ public:
     }
 
     void delay_stop ();
-    void auto_stop ();
+    void auto_stop (bool rewind = false);
     void auto_pause ();
     void auto_play ();
     void play_all_sets (midipulse tick);
@@ -2412,7 +2417,7 @@ public:
     void start_playing ();
     void play_count_in ();
     void pause_playing ();
-    void stop_playing ();
+    void stop_playing (bool rewind = false);
     void group_learn (bool flag);
     void group_learn_complete (const keystroke & k, bool good = true);
     bool needs_update (seq::number seqno = seq::all()) const;

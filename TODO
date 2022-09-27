@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-09-12
+2019-04-13 to 2022-09-27
 
 Ongoing efforts:
 
@@ -500,6 +500,8 @@ Version 2 features:
     -   Make main menu hide-able.
     -   Allow multiple instances of seq66.
     -   More consistent support for undo / redo / unmodify.
+    -   Add console output for every user action.
+    -   Add scripting language?
     -   Clean up kruft in setmapper/screenset.
     -   Support more than one tune?
     -   A way to lay out a pattern from one track into another tracks

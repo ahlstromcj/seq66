@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-02
- * \updates       2022-09-22
+ * \updates       2022-09-26
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -146,6 +146,8 @@ public:
     static bool recalculate_frame_factor (const jack_position_t & pos);
     static jack_nframes_t jack_frame_offset (jack_nframes_t F, midipulse p);
     static jack_nframes_t jack_frame_estimate (midipulse p);
+    static double cycle (jack_nframes_t f, jack_nframes_t F);
+    static double pulse_cycle (midipulse p, jack_nframes_t F);
 
     static jack_nframes_t jack_frame_rate ()
     {

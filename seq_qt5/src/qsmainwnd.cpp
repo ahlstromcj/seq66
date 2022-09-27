@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-09-12
+ * \updates       2022-09-25
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -948,7 +948,12 @@ qsmainwnd::make_perf_frame_in_tab ()
 void
 qsmainwnd::stop_playing ()
 {
-    cb_perf().auto_stop();
+    Qt::KeyboardModifiers qkm = QGuiApplication::keyboardModifiers();
+    if (qkm & Qt::ShiftModifier)
+        cb_perf().auto_stop(true);                          /* rewind to 0  */
+    else
+        cb_perf().auto_stop();
+
     ui->btnPause->setChecked(false);
     ui->btnPlay->setChecked(false);
 }

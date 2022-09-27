@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-07-05
+ * \updates       2022-09-24
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -164,7 +164,7 @@ qseventslots::events_to_string () const
     {
         int row = 0;
         result +=
-            " No. Timestamp      Event Status Ch.      D0    D1    "
+            " No. Ticks  Timestamp      Event Status Ch.      D0    D1    "
             "Link-time   Rank\n"
             ;
         for (const auto & ei : m_event_container)
@@ -349,10 +349,11 @@ qseventslots::event_to_string
 
     snprintf
     (
-        line, sizeof line, "%4d %s %12s 0x%02x Ch %2s %5s %5s %12s 0x%04x\n",
-        index, ev.timestamp_string().c_str(), ev.status_string().c_str(),
-        rawstatus, ev.channel_string().c_str(), data_0.c_str(),
-        data_1.c_str(), linktime.c_str(), ev.get_rank()
+        line, sizeof line,
+        "%4d %6ld %s %12s 0x%02x Ch %2s %5s %5s %12s 0x%04x\n",
+        index, long(ev.timestamp()), ev.timestamp_string().c_str(),
+        ev.status_string().c_str(), rawstatus, ev.channel_string().c_str(),
+        data_0.c_str(), data_1.c_str(), linktime.c_str(), ev.get_rank()
     );
     return std::string(line);
 }

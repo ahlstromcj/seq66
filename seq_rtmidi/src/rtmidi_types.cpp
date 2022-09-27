@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-01
- * \updates       2022-09-22
+ * \updates       2022-09-23
  * \license       See above.
  *
  *  Provides some basic types for the (heavily-factored) rtmidi library, very
@@ -47,6 +47,8 @@ namespace seq66
  * class midi_message
  */
 
+unsigned midi_message::sm_msg_number = 0;
+
 /**
  *  Constructs an empty MIDI message.  Well, empty except for the timestamp
  *  bytes.  The caller will then push the data bytes for the MIDI event.
@@ -56,12 +58,11 @@ namespace seq66
  */
 
 midi_message::midi_message (midipulse ts) :
-    m_bytes     (),
-    m_timestamp (ts)
+    m_msg_number    (sm_msg_number++),
+    m_bytes         (),
+    m_timestamp     (ts)
 {
-#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
-    (void) push_timestamp(ts);
-#endif
+    // No code
 }
 
 /**
@@ -76,145 +77,18 @@ midi_message::midi_message (midipulse ts) :
  *      The putative size of the byte array.
  */
 
-midi_message::midi_message (const midibyte * mbs, size_t sz) :
-    m_bytes     (),
-    m_timestamp (0)
+midi_message::midi_message (const midibyte * mbs, std::size_t sz) :
+    m_msg_number    (sm_msg_number++),
+    m_bytes         (),
+    m_timestamp     (0)
 {
-#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
-    m_timestamp = extract_timestamp(mbs, sz);
-#endif
-    for (size_t i = 0; i < sz; ++i)
+    for (std::size_t i = 0; i < sz; ++i)
         m_bytes.push_back(*mbs++);
 }
-
-#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
-
-/**
- *  These function handle adding a time-stamp to the message as bytes.
- *  The format of the midi_message is now:
- *
- *      -   4 bytes of a pulse (tick).
- *      -   The rest of the message bytes.
- *
- *  These implementations are based on midifile::write_long() and
- *  midifile::read_long().
- *
- *  However, using sizeof(midipulse) [i.e. sizeof(long)] is tricky, because,
- *  according to section 6.2.8 of Stroustrop's C++ 11 book, the size of a long
- *  is 4 at a minimum, but it is NOT guaranteed that it must be less than
- *  the size of a long long (8 bytes).  And in gcc/g++ the size of a long is
- *  8 bytes.  Do we want to encode the 4 MSB's that will always be 0?
- *
- *  The maximum 4-byte signed value is M = 2,147,483,648.  At our highest PPQN,
- *  P = 19200, this M / (P * 4) = 27962 measures.  At 320 beats/minutes, this
- *  would be almost 350 minutes of music.
- *
- *  For now, we will make it configurable to support 8 byte timestamps in
- *  a midi_message.
- *
- *  Remember that the bytes are pushed to the back of the vector.
- *
- * \return
- *      Returns true if the message was empty.  Otherwise, we cannot push a
- *      timestamp.
- */
-
-bool
-midi_message::push_timestamp (midipulse b)
-{
-    bool result = buffer_empty();
-    if (result)
-    {
-#if defined SEQ66_8_BYTE_TIMESTAMPS
-        push((b & 0xFF00000000000000) >> 56);
-        push((b & 0xFF00000000000000) >> 48);
-        push((b & 0xFF00000000000000) >> 40);
-        push((b & 0xFF00000000000000) >> 32);
-#endif
-        push((b & 0x00000000FF000000) >> 24);
-        push((b & 0x0000000000FF0000) >> 16);
-        push((b & 0x000000000000FF00) >> 8);
-        push((b & 0x00000000000000FF));
-    }
-    return result;
-}
-
-midipulse
-midi_message::extract_timestamp () const
-{
-    midipulse result = 0;
-    if (buffer_count() > int(size_of_timestamp()))
-    {
-#if defined SEQ66_8_BYTE_TIMESTAMPS
-        result  = (midipulse(m_bytes[0]) << 56);
-        result += (midipulse(m_bytes[1]) << 48);
-        result += (midipulse(m_bytes[2]) << 40);
-        result += (midipulse(m_bytes[3]) << 32);
-        result += (midipulse(m_bytes[4]) << 24);
-        result += (midipulse(m_bytes[5]) << 16);
-        result += (midipulse(m_bytes[6]) << 8);
-        result +=  midipulse(m_bytes[7]);
-#else
-        result  = (midipulse(m_bytes[0]) << 24);
-        result += (midipulse(m_bytes[1]) << 16);
-        result += (midipulse(m_bytes[2]) << 8);
-        result +=  midipulse(m_bytes[3]);
-#endif
-    }
-    return result;
-}
-
-/**
- *  Static function.
- */
-
-midipulse
-midi_message::extract_timestamp (const midibyte * mbs, size_t sz)
-{
-    midipulse result = 0;
-    if (sz >= size_of_timestamp())
-    {
-#if defined SEQ66_8_BYTE_TIMESTAMPS
-        result  = (midipulse(mbs[0]) << 56);
-        result += (midipulse(mbs[1]) << 48);
-        result += (midipulse(mbs[2]) << 40);
-        result += (midipulse(mbs[3]) << 32);
-        result += (midipulse(mbs[4]) << 24);
-        result += (midipulse(mbs[5]) << 16);
-        result += (midipulse(mbs[6]) << 8);
-        result +=  midipulse(mbs[7]);
-#else
-        result  = (midipulse(mbs[0]) << 24);
-        result += (midipulse(mbs[1]) << 16);
-        result += (midipulse(mbs[2]) << 8);
-        result +=  midipulse(mbs[3]);
-#endif
-    }
-    return result;
-}
-
-#endif  //defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
 
 void
 midi_message::timestamp (midipulse t)
 {
-#if defined SEQ66_ENCODE_TIMESTAMP_FOR_JACK
-    container temp;
-    int c = buffer_count() - int(size_of_timestamp());
-    bool havedata = c >= int(size_of_timestamp());
-    if (havedata)
-    {
-        for (size_t i = size_of_timestamp(); i < size_t(c); ++i)
-            temp.push_back(m_bytes[i]);
-    }
-    m_bytes.clear();
-    if (push_timestamp(t) && havedata)
-    {
-        for (size_t i = 0; i < temp.size(); ++i)
-            push(temp[i]);
-    }
-    m_bytes = temp;
-#endif
     m_timestamp = t;
 }
 

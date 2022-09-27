@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2022-09-17
+ * \updates       2022-09-26
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -144,6 +144,46 @@ namespace seq66
  *  JACK Transport Callbacks
  * -------------------------------------------------------------------------
  */
+
+/**
+ *  For issue #100, storage for the true JACK transport position
+ *  Also might was well save them all, if only for display (later).
+ *  We are concerned only with the settings germane to JACK offset
+ *  calculations. We leave out beats_per_bar and beat_type for now.
+ */
+
+jack_assistant::parameters jack_assistant::sm_jack_parameters;
+
+bool
+jack_assistant::save_jack_parameters
+(
+    const jack_position_t & p,
+    int periodsize,
+    int alsanperiod
+)
+{
+    jack_position_t & currpos = sm_jack_parameters.position;
+    bool result =
+    (
+        (p.ticks_per_beat != currpos.ticks_per_beat) ||
+        (p.beats_per_minute != currpos.beats_per_minute) ||
+        (p.frame_rate != currpos.frame_rate)
+    );
+    if (result)
+    {
+        currpos = p;
+        sm_jack_parameters.period_size = periodsize;
+        sm_jack_parameters.alsa_nperiod = alsanperiod;
+        async_safe_errprint("JACK transport changed");
+    }
+    return result;
+}
+
+const jack_assistant::parameters &
+jack_assistant::get_jack_parameters ()
+{
+    return sm_jack_parameters;
+}
 
 /**
  *  Apparently, MIDI pulses are 10 times the size of JACK ticks. So we need,
@@ -285,8 +325,24 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
         jack_position_t pos;
         jack_transport_state_t s = ::jack_transport_query(j->client(), &pos);
         performer & p = j->parent();
+        int psize = ::jack_get_buffer_size(j->client());
+
+        /*
+         *  Save changes for potential display.
+         */
+
+        (void) jack_assistant::save_jack_parameters(pos, psize);
+
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("Transport frame %u\n", unsigned(pos.frame));
+    static jack_time_t s_last = 0;
+    jack_time_t timeus = ::jack_get_time();
+    unsigned delta = unsigned(timeus - s_last);
+    if (pos.frame > 0)
+    {
+        printf("[debug] us %u, delta %u, frame %u\n",
+            unsigned(timeus), delta, unsigned(pos.frame));
+    }
+    s_last = timeus;
 #endif
         if (p.is_running())
         {
@@ -750,7 +806,7 @@ show_jack_statuses (unsigned bits)
 
 /*
  * -------------------------------------------------------------------------
- *  JACK helper functions
+ *  More JACK helper functions
  * -------------------------------------------------------------------------
  */
 
@@ -1149,13 +1205,20 @@ jack_assistant::start ()
 /**
  *  If JACK is supported, stops the JACK transport.  This function assumes
  *  that m_jack_client is not null, if m_jack_running is true.
+ *
+ * \param rewind
+ *      If true (the default is false), then set the JACK position to 0.
  */
 
 void
-jack_assistant::stop ()
+jack_assistant::stop (bool rewind)
 {
     if (m_jack_running)
+    {
         ::jack_transport_stop(m_jack_client);
+        if (rewind)
+            set_position(0);
+    }
     else if (rc().with_jack())
         (void) error_message("Sync stop: JACK not running");
 }
@@ -1655,6 +1718,7 @@ jack_assistant::output (jack_scratchpad & pad)
             midipulse midi_ticks;
             m_frame_current = ::jack_get_current_transport_frame(m_jack_client);
             m_frame_last = m_frame_current;
+            jack_assistant::set_position(m_frame_current);
             pad.js_dumping = true;              /* "[Start JACK Playback]"  */
 
             /*

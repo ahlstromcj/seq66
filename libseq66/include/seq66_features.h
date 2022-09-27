@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-09-22
+ * \updates       2022-09-23
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -52,39 +52,12 @@
 
 /**
  *  For issue #100, this macro enables using our new ring_buffer instead of
- *  jack_ringbuffer_t.
+ *  jack_ringbuffer_t. We no longer attempt to add the timestamp to the
+ *  JACK ringbuffer, even if this macro is disabled.  Too many side issues,
+ *  too much code, so disabling this macro preserves the old behavior.
  */
 
 #define SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
-
-#if defined SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
-#undef SEQ66_ENCODE_TIMESTAMP_FOR_JACK
-#else
-
-/**
- *  For issue #100, this macro enables:
- *
- *      -   Adding the current tick to the time-stamp of all event emitted.
- *          This is done in sequence::put_event_on_bus().
- *      -   Adding a 4-byte encoding of the time-stamp to the midi_message
- *          object.
- *      -   Extracting this time-stamp in the JACK process output callback.
- *      -   Using it to calculate the frame-number offset (sample offset) to
- *          be used in reserving the event.
- */
-
-#define SEQ66_ENCODE_TIMESTAMP_FOR_JACK
-#endif
-
-/**
- *  Related to issue #100 changes, we want the option to use 8-byte MIDI
- *  timestamps (ticks, pulses).  Enable this macro to support hours-long tunes
- *  at the highest supported PPQN, 19200.  Most likely, will never needs this
- *  macro to be defined. Applies wherever the "midipulse" type is used.
- *  See the midipulse alias defined in libseq66/include/midi/midibytes.h.
- */
-
-#undef  SEQ66_8_BYTE_TIMESTAMPS
 
 /**
  *  Choose between C++ or bare pthreads.  Affects only the performer class.

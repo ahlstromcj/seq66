@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 #******************************************************************************
 # recordpa
@@ -8,7 +8,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2022-09-14
-# \update         2022-09-14
+# \update         2022-09-24
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -23,9 +23,33 @@
 #     Simply records the output of our USB audio device as received through
 #     PulseAudio.
 #
+#     parecord is equivalent to "pacat -r --file-format".  Refer to the pacat(1)
+#     man page for pacat's flags. To get the sources for audio record.
+#
+#     $ pactl list sources short
+#
+#      The following two lines produce the same result.
+#
+#      $ parecord -d alsa_input.pci-0000_00_1f.3.analog-stereo speech.flac
+#      $ parecord -d 1 speech.flac
+#
 #------------------------------------------------------------------------------
 
-parecord --channels=1 --record --device=alsa_output.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00.analog-stereo.monitor $1
+if [ "$1" == "--list" ] ; then
+   pactl list sources short
+elif [ "$1" == "--help" ] ; then
+   cat << E_O_F
+Usage:
+   recordpa --help
+   recordpa --list
+   recordpa x.wav
+   record <device ID or name> x.wav
+E_O_F
+elif [ "$2" == "" ] ; then
+   parecord --channels=1 --record --device=alsa_output.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00.analog-stereo.monitor $1
+else
+   parecord --channels=1 --record --device=$1 $2
+fi
 
 #******************************************************************************
 # recordpa

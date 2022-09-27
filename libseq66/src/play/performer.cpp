@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-09-12
+ * \updates       2022-09-25
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -4436,10 +4436,14 @@ performer::pause_playing ()
  *  to false.  With stop, reset the start-tick to either the left-tick or the
  *  0th tick (to be determined, currently resets to 0).  If looping, act like
  *  pause_playing(), but allow reset to the left tick (as opposed to 0).
+ *
+ * \param rewind
+ *      If true (the default is false), then set the performer and JACK positions
+ *      to 0.
  */
 
 void
-performer::stop_playing ()
+performer::stop_playing (bool rewind)
 {
     m_max_extent = 0;
     if (looping())
@@ -4449,9 +4453,12 @@ performer::stop_playing ()
     }
     else
     {
-        stop_jack();
+        stop_jack(rewind);
         stop();
         m_dont_reset_ticks = false;
+        if (rewind)
+            set_tick(0);                                /* ca 2022-09-25    */
+
         for (auto notify : m_notify)
             (void) notify->on_automation_change(automation::slot::stop);
     }
@@ -4520,14 +4527,18 @@ performer::auto_pause ()
  *  Added an is_running() check for when JACK transport is running at startup,
  *  which sets that flag, but not is_pattern_playing(); the result was that
  *  we could not stop playback with Seq66's Stop button.
+ *
+ * \param rewind
+ *      If true (the default is false), then reset the performer and JACK
+ *      positions to 0.
  */
 
 void
-performer::auto_stop ()
+performer::auto_stop (bool rewind)
 {
     if (is_pattern_playing() || is_running())       /* normal & JACK, hmmmm */
     {
-        stop_playing();
+        stop_playing(rewind);
         is_pattern_playing(false);
 
         /*

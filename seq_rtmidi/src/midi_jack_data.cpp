@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-13
- * \updates       2022-09-22
+ * \updates       2022-09-27
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -33,6 +33,10 @@
 #include "midi_jack_data.hpp"           /* seq66::midi_jack_data class      */
 
 #if defined SEQ66_JACK_SUPPORT
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+#include "midi/calculations.hpp"        /* srq66::pulse_length_us()         */
+#endif
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -59,7 +63,7 @@ midi_jack_data::midi_jack_data () :
     m_jack_client           (nullptr),
     m_jack_port             (nullptr),
 #if defined SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
-    m_jack_buffer           (nullptr), // ring_buffer<midi_message>
+    m_jack_buffer           (nullptr),      /* ring_buffer<midi_message>    */
 #else
     m_jack_buffmessage      (nullptr),
 #endif
@@ -126,8 +130,22 @@ midi_jack_data::recalculate_frame_factor (const jack_position_t & pos)
     }
     if (changed)
     {
-        sm_jack_frame_factor = (jack_frame_rate() * 600) /
+        /*
+         * This is the ALSA period, said not to matter but it does in some
+         * enviroments.  Weird.  If we prove that, we will have deal with it.
+         */
+
+        const double bpmtbpfactor = 600.0;         /* no dividing by "periods" */
+        sm_jack_frame_factor = (jack_frame_rate() * bpmtbpfactor) /
             (jack_ticks_per_beat() * jack_beats_per_minute());
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        double pl = pulse_length_us
+        (
+            jack_beats_per_minute(), 0.1 * jack_ticks_per_beat()
+        );
+        printf("[debug] frames/tick = %g; ticks/beat = %g; pulse = %g us\n",
+            sm_jack_frame_factor, jack_ticks_per_beat(), pl);
+#endif
     }
     return changed;
 }
@@ -153,24 +171,23 @@ midi_jack_data::recalculate_frame_factor (const jack_position_t & pos)
  *      get the length of a tick in seconds:  60 / ppqn / bpm. Therefore the
  *      tick time t(p) = p * 60 / ppqn / bpm.
  *  -#  What is the number of frames at at given time?  The duration of each
- *      frame is D = F / R. So the time at the end of frame Fn is
- *      T(n) = n * F / R.
+ *      frame is D = 1 / R. So the time at the end of frame Fn is
+ *      T(n) = n / R.
  *
  *  The latency L of a frame is given by the number of frames, F, the sampling
  *  rate R (e.g. 48000), and the number of periods P: L = P * F / R.  Here is a
  *  brief table for 48000, 2 periods:
  *
 \verbatim
-        Frames      Latency
-          16        0.667 ms
-          32        1.333 ms
-          64        2.667 ms
-         128        5.333 ms
-         256       10.667 ms
-         512       21.333 ms
-        1024       42.667 ms
-        2048       85.333 ms
-        4096      170.667 ms
+        Frames      Latency     Qjackctl P=2    Qjackctl P-3
+          32        0.667 ms    (doubles them)  (triples them)
+          64        1.333 ms
+         128        2.667 ms
+         256        5.333 ms
+         512       10.667 ms
+        1024       21.333 ms
+        2048       42.667 ms
+        4096       85.333 ms
 \endverbatim
  *
  *  The jackd arguments from its man apge:
@@ -181,6 +198,9 @@ midi_jack_data::recalculate_frame_factor (const jack_position_t & pos)
  *                      as low as possible to avoid xruns.
  *      -   --nperiods: The number of periods of playback latency, P. Defaults
  *                      to the minimum, 2.  For USB audio, 3 is recommended.
+ *                      This an ALSA engine parameter, but it might contribute
+ *                      to the duration of a process callback cycle [proved
+ *                      using probe code to calculate microseconds.]
  *
  *  So, given a tick position p, what is the frame offset needed?
  *
@@ -213,10 +233,6 @@ midi_jack_data::recalculate_frame_factor (const jack_position_t & pos)
  * \param p
  *      The running timestamp, in pulses, of the event being emitted.
  *
- * \param pos
- *      Provides the current JACK position parameters.  Some of the important
- *      parameters, with sample value, are:
- *
  * \return
  *      Returns a putative offset value to use in reserving the event.
  */
@@ -224,10 +240,17 @@ midi_jack_data::recalculate_frame_factor (const jack_position_t & pos)
 jack_nframes_t
 midi_jack_data::jack_frame_offset (jack_nframes_t F, midipulse p)
 {
-    double temp = p * jack_frame_factor();
-    jack_nframes_t result = jack_nframes_t(temp);
+    jack_nframes_t result = jack_frame_estimate(p);
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    double temp = result;
+#endif
     if (F > 1)
         result = result % F;
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    printf("[debug] ts %ld * %g --> frame %g; offset %u\n",
+        long(p), jack_frame_factor(), temp, unsigned(result));
+#endif
 
     return result;
 }
@@ -235,8 +258,34 @@ midi_jack_data::jack_frame_offset (jack_nframes_t F, midipulse p)
 jack_nframes_t
 midi_jack_data::jack_frame_estimate (midipulse p)
 {
-    double temp = p * jack_frame_factor() + 0.5;
+    double temp = p * jack_frame_factor();
     return jack_nframes_t(temp);
+}
+
+/**
+ *  Calculates the putative cycle number, without truncation, because we want
+ *  the fractional part.
+ *
+ * \param f
+ *      The current frame number.
+ *
+ * \param F
+ *      The number of frames in a cycle.  (A power of 2.)
+ *
+ * \return
+ *      The cycle number with fractional portion.
+ */
+
+double
+midi_jack_data::cycle (jack_nframes_t f, jack_nframes_t F)
+{
+    return double(f) / double(F);
+}
+
+double
+midi_jack_data::pulse_cycle (midipulse p, jack_nframes_t F)
+{
+    return p * jack_frame_factor() / double(F);
 }
 
 }           // namespace seq66
