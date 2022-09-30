@@ -24,11 +24,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-13
- * \updates       2022-09-27
+ * \updates       2022-09-30
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
  */
+
+#include <cmath>                        /* std::trunc(double) functions     */
 
 #include "midi_jack_data.hpp"           /* seq66::midi_jack_data class      */
 
@@ -54,6 +56,10 @@ jack_nframes_t midi_jack_data::sm_jack_frame_rate   = 0;
 double midi_jack_data::sm_jack_ticks_per_beat       = 1920.0;
 double midi_jack_data::sm_jack_beats_per_minute     = 120.0;
 double midi_jack_data::sm_jack_frame_factor         = 1.0;
+
+jack_nframes_t midi_jack_data::sm_cycle_frame_count = 0;
+jack_time_t midi_jack_data::sm_cycle_time_us        = 0;
+jack_time_t midi_jack_data::sm_pulse_time_us        = 0;
 
 /**
  * \ctor midi_jack_data
@@ -88,7 +94,7 @@ midi_jack_data::~midi_jack_data ()
 
 /**
  *  Emobdies the calculation of the pulse factor reasoned out in the
- *  jack_frame_offset() function below.
+ *  frame_offset() function below.
  *
  * TODO:
  *
@@ -102,49 +108,59 @@ midi_jack_data::~midi_jack_data ()
  */
 
 bool
-midi_jack_data::recalculate_frame_factor (const jack_position_t & pos)
+midi_jack_data::recalculate_frame_factor
+(
+    const jack_position_t & pos,
+    jack_nframes_t F
+)
 {
     bool changed = false;
     if
     (
         (pos.ticks_per_beat > 1.0) &&                       /* sanity check */
-        (jack_ticks_per_beat() != pos.ticks_per_beat)
+        (ticks_per_beat() != pos.ticks_per_beat)
     )
     {
-        jack_ticks_per_beat(pos.ticks_per_beat);
+        ticks_per_beat(pos.ticks_per_beat);
         changed = true;
     }
     if
     (
         (pos.beats_per_minute > 1.0) &&                     /* sanity check */
-        (jack_beats_per_minute() != pos.beats_per_minute)
+        (beats_per_minute() != pos.beats_per_minute)
     )
     {
-        jack_beats_per_minute(pos.beats_per_minute);
+        beats_per_minute(pos.beats_per_minute);
         changed = true;
     }
-    if (jack_frame_rate() != pos.frame_rate)
+    if (frame_rate() != pos.frame_rate)
     {
-        jack_frame_rate(pos.frame_rate);
+        frame_rate(pos.frame_rate);
         changed = true;
     }
     if (changed)
     {
-        /*
-         * This is the ALSA period, said not to matter but it does in some
-         * enviroments.  Weird.  If we prove that, we will have deal with it.
-         */
+        const double tpbfactor = 600.0;         /* no dividing by "periods" */
+        cycle_frame_count(F);
+        cycle_time_us(1000000.0 * double(F) / frame_rate());
+        pulse_time_us(1000000.0 * tpbfactor /
+            (ticks_per_beat() * beats_per_minute()));
 
-        const double bpmtbpfactor = 600.0;         /* no dividing by "periods" */
-        sm_jack_frame_factor = (jack_frame_rate() * bpmtbpfactor) /
-            (jack_ticks_per_beat() * jack_beats_per_minute());
+#if defined USE_ORIGINAL_CALCULATION
+        frame_factor((frame_rate() * tpbfactor) /
+            (ticks_per_beat() * beats_per_minute()));
+#else
+        frame_factor((frame_rate() * 60.0) /
+            (10.0 * ticks_per_beat() * beats_per_minute()));
+#endif
+
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-        double pl = pulse_length_us
+        printf
         (
-            jack_beats_per_minute(), 0.1 * jack_ticks_per_beat()
+"[debug] frames/cycle %u, %u us; frames/tick %g; ticks/beat %g; pulse %u us\n",
+            cycle_frame_count(), unsigned(cycle_time_us()), frame_factor(),
+            ticks_per_beat(), unsigned(pulse_time_us())
         );
-        printf("[debug] frames/tick = %g; ticks/beat = %g; pulse = %g us\n",
-            sm_jack_frame_factor, jack_ticks_per_beat(), pl);
 #endif
     }
     return changed;
@@ -238,28 +254,80 @@ midi_jack_data::recalculate_frame_factor (const jack_position_t & pos)
  */
 
 jack_nframes_t
-midi_jack_data::jack_frame_offset (jack_nframes_t F, midipulse p)
+midi_jack_data::frame_offset (jack_nframes_t F, midipulse p)
 {
-    jack_nframes_t result = jack_frame_estimate(p);
+    jack_nframes_t result = frame_estimate(p);
 #if defined SEQ66_PLATFORM_DEBUG_TMI
     double temp = result;
 #endif
-    if (F > 1)
-        result = result % F;
+       if (F > 1)
+           result = result % F;
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
     printf("[debug] ts %ld * %g --> frame %g; offset %u\n",
-        long(p), jack_frame_factor(), temp, unsigned(result));
+        long(p), frame_factor(), temp, unsigned(result));
 #endif
 
     return result;
 }
 
 jack_nframes_t
-midi_jack_data::jack_frame_estimate (midipulse p)
+midi_jack_data::frame_estimate (midipulse p)
 {
-    double temp = p * jack_frame_factor();
+    double temp = p * frame_factor();
     return jack_nframes_t(temp);
+}
+
+/**
+ *  Function to adjust a MIDI event timestamp for lag when calculating what
+ *  frame offset it needs.
+ *
+ *  Do we need the base time in microseconds when playback starts?
+ *
+ *      -#  Get the microseconds at push time (the time just before pushing
+ *          the message onto the ringbuffer. This is Tpush.
+ *      -#  Set this time in the MIDI message, then push the message.
+ *      -#  In the process callback, get the message, and get the microseconds
+ *          at pop (front) time, Tpop.
+ *      -#  Compute the lag as Lpushpop = Tpop - Tpush.
+ *      -#  Convert the event timestamp p into microseconds, Tp.
+ *      -#  Add the lag to this time: Treal = Tp + Lpushpop.
+ *      -#  Get the duration of a single callback cycle, Tcycle.
+ *      -#  Convert the Treal time to a frame offset. Calculate a floating-
+ *          point frame number f = Treal / Tcycle.
+ *      -#  Truncate it to get an integer number of cycles.
+ *      -#  Deduct that from f.
+ *      -#  Use the fractional remainder to calculate the offset:
+ *          result = Foffset = F * fraction.
+ *
+ *  However, this function yields very bad playback at 4096 frames/cycle.
+ *  It acts like the events are piling up in the ringbuffer. Removing the
+ *  lag calculation make it play normally (but badly).
+ */
+
+jack_nframes_t
+midi_jack_data::time_offset
+(
+    jack_nframes_t F, midipulse p,
+    jack_time_t Tpop, jack_time_t Tpush
+)
+{
+    double Lpushpop = double(Tpop - Tpush);
+    double Tcycle = 1000000.0 * double(F) / frame_rate();
+    double Tp = p * 1000000.0 * 600.0 / (ticks_per_beat() * beats_per_minute());
+    double Treal = Tp + Lpushpop;   /* double Treal = Tp; (see banner) */
+    double f = Treal / Tcycle;
+    double truncation = std::trunc(f);
+    double fraction = f - truncation;
+    jack_nframes_t result = jack_nframes_t(F * fraction);
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    printf("frame %g, ts %ld --> offset %u\n", f, long(p), int(result));
+#endif
+    if (result >= F)
+    {
+        // todo?
+    }
+    return result;
 }
 
 /**
@@ -285,7 +353,7 @@ midi_jack_data::cycle (jack_nframes_t f, jack_nframes_t F)
 double
 midi_jack_data::pulse_cycle (midipulse p, jack_nframes_t F)
 {
-    return p * jack_frame_factor() / double(F);
+    return p * frame_factor() / double(F);
 }
 
 }           // namespace seq66

@@ -334,15 +334,15 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
         (void) jack_assistant::save_jack_parameters(pos, psize);
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-    static jack_time_t s_last = 0;
-    jack_time_t timeus = ::jack_get_time();
-    unsigned delta = unsigned(timeus - s_last);
-    if (pos.frame > 0)
-    {
-        printf("[debug] us %u, delta %u, frame %u\n",
-            unsigned(timeus), delta, unsigned(pos.frame));
-    }
-    s_last = timeus;
+        static jack_time_t s_last = 0;
+        jack_time_t timeus = ::jack_get_time();
+        unsigned delta = unsigned(timeus - s_last);
+        if (pos.frame > 0)
+        {
+            printf("[debug] us %u, delta %u, frame %u\n",
+                unsigned(timeus), delta, unsigned(pos.frame));
+        }
+        s_last = timeus;
 #endif
         if (p.is_running())
         {

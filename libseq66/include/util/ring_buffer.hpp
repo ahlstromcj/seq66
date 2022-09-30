@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-19
- * \updates       2022-09-27
+ * \updates       2022-09-30
  * \license       GNU GPLv2 or above
  */
 
@@ -54,7 +54,7 @@ class ring_buffer
 public:
 
     using value_type = TYPE;
-    using reference = TYPE & ;
+    using reference = TYPE &;
     using const_reference = const TYPE &;
     using size_type = std::size_t;
     using container = std::vector<value_type>;
@@ -115,16 +115,6 @@ public:
         return count() == 0;
     }
 
-    /*
-     * Useful?
-     */
-
-    bool default_slot (const_reference item)
-    {
-        static TYPE empty_value;
-        return item == empty_value;
-    }
-
     int dropped () const
     {
         return m_dropped;
@@ -136,8 +126,8 @@ public:
     size_type read_space () const;
     size_type read (reference dest);
     size_type write (const_reference src);
-
     void push_back (const value_type & value);
+
     void pop_front ()
     {
         if (m_contents_size > 0)
@@ -169,39 +159,19 @@ public:
 
     reference back ()
     {
-        return m_buffer[previous_tail()];           // return m_buffer[m_tail];
+        return m_buffer[previous_tail()];
     }
 
     const_reference back () const
     {
-        return m_buffer[previous_tail()];           // return m_buffer[m_tail];
+        return m_buffer[previous_tail()];
     }
 
 private:    // helper functions
 
     void initialize ();
-
-    void increment_head ()
-    {
-        if (m_contents_size > 0)
-        {
-            ++m_head;
-            --m_contents_size;
-            if (m_head == m_buffer_size)
-                m_head = 0;                                 /* wrap around  */
-        }
-    }
-
-    void increment_tail ()
-    {
-        ++m_tail;
-        ++m_contents_size;
-        if (m_contents_size > m_contents_max)
-            m_contents_max = m_contents_size;
-
-        if (m_tail == m_buffer_size)
-            m_tail = 0;                                     /* wrap around  */
-    }
+    void increment_head ();
+    void increment_tail ();
 
     size_t previous_tail ()
     {
@@ -232,7 +202,6 @@ ring_buffer<TYPE>::ring_buffer (size_type sz) :
         ;
 
     size_type psize = size_t(1 << power_of_two);
-    m_buffer.reserve(psize);
     m_buffer_size = psize;
     m_size_mask = psize - 1;                /* 0xFF... for index safety     */
     initialize();
@@ -264,6 +233,32 @@ ring_buffer<TYPE>::initialize ()
     m_buffer.reserve(m_buffer_size);
     for (size_t i = 0; i < m_buffer_size; ++i)
         m_buffer.push_back(empty_value);        /* prepare buffer for usage */
+}
+
+template<typename TYPE>
+void
+ring_buffer<TYPE>::increment_head ()
+{
+    if (m_contents_size > 0)
+    {
+        ++m_head;
+        --m_contents_size;
+        if (m_head == m_buffer_size)
+            m_head = 0;                                 /* wrap around  */
+    }
+}
+
+template<typename TYPE>
+void
+ring_buffer<TYPE>::increment_tail ()
+{
+    ++m_tail;
+    ++m_contents_size;
+    if (m_contents_size > m_contents_max)               /* for checking */
+        m_contents_max = m_contents_size;
+
+    if (m_tail == m_buffer_size)
+        m_tail = 0;                                     /* wrap around  */
 }
 
 /**
@@ -310,12 +305,7 @@ template<typename TYPE>
 void
 ring_buffer<TYPE>::write_advance ()
 {
-#if defined USE_OLD_CODE
-    ++m_tail;
-    m_tail &= m_size_mask;
-#else
     increment_tail();
-#endif
 }
 
 /**
@@ -420,7 +410,7 @@ ring_buffer<TYPE>::push_back (const value_type & item)
         increment_head();
         m_buffer[m_tail] = item;
         increment_tail();
-        ++m_dropped;
+        ++m_dropped;                        /* for future use in expansion  */
     }
 }
 

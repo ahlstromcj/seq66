@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2022-09-22
+ * \updates       2022-09-30
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -173,8 +173,15 @@ private:
     container m_bytes;
 
     /**
-     *  Holds the (optional) timestamp of the MIDI message.  Non-zero only
-     *  in the JACK implementation.
+     *  Holds the time at which the message was sent to the ring-buffer, in
+     *  microseconds.
+     */
+
+    microsec m_push_time_us;
+
+    /**
+     *  Holds the (optional) timestamp of the MIDI message. Non-zero only
+     *  in the JACK implementation at present.
      */
 
     midipulse m_timestamp;
@@ -183,6 +190,9 @@ public:
 
     midi_message (midipulse ts = 0);
     midi_message (const midibyte * mbs, std::size_t sz);
+    midi_message (const midi_message & rhs) = default;
+    midi_message & operator = (const midi_message & rhs) = default;
+    ~midi_message () = default;
 
     midibyte & operator [] (std::size_t i)
     {
@@ -226,12 +236,25 @@ public:
         m_bytes.push_back(b);
     }
 
+    microsec push_time_us () const
+    {
+        return m_push_time_us;
+    }
+
+    void push_time_us (microsec ptus)
+    {
+        m_push_time_us = ptus;
+    }
+
     midipulse timestamp () const
     {
         return m_timestamp;
     }
 
-    void timestamp (midipulse t);
+    void timestamp (midipulse t)
+    {
+        m_timestamp = t;
+    }
 
     bool is_sysex () const
     {

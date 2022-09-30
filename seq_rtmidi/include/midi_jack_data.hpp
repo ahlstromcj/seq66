@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-02
- * \updates       2022-09-26
+ * \updates       2022-09-29
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -73,6 +73,10 @@ class midi_jack_data
     static double sm_jack_ticks_per_beat;       /* seems to be 10 * PPQN    */
     static double sm_jack_beats_per_minute;     /* the BPM for the song     */
     static double sm_jack_frame_factor;         /* frames per PPQN tick     */
+
+    static jack_nframes_t sm_cycle_frame_count; /* progress callback param  */
+    static jack_time_t sm_cycle_time_us;        /* time between callbacks   */
+    static jack_time_t sm_pulse_time_us;        /* duration of a MIDI pulse */
 
     /**
      *  Holds the JACK sequencer client pointer so that it can be used by the
@@ -143,55 +147,99 @@ public:
      *  Frame offset-related functions.
      */
 
-    static bool recalculate_frame_factor (const jack_position_t & pos);
-    static jack_nframes_t jack_frame_offset (jack_nframes_t F, midipulse p);
-    static jack_nframes_t jack_frame_estimate (midipulse p);
+    static bool recalculate_frame_factor
+    (
+        const jack_position_t & pos,
+        jack_nframes_t F
+    );
+    static jack_nframes_t frame_offset (jack_nframes_t F, midipulse p);
+    static jack_nframes_t time_offset
+    (
+        jack_nframes_t F, midipulse p,
+        jack_time_t Tpop, jack_time_t Tpush
+    );
+    static jack_nframes_t frame_estimate (midipulse p);
     static double cycle (jack_nframes_t f, jack_nframes_t F);
     static double pulse_cycle (midipulse p, jack_nframes_t F);
 
-    static jack_nframes_t jack_frame_rate ()
+    static jack_nframes_t frame_rate ()
     {
         return sm_jack_frame_rate;
     }
 
-    static jack_nframes_t jack_start_frame ()
+    static jack_nframes_t start_frame ()
     {
         return sm_jack_start_frame;
     }
 
-    static double jack_ticks_per_beat ()
+    static double ticks_per_beat ()
     {
         return sm_jack_ticks_per_beat;
     }
 
-    static double jack_beats_per_minute ()
+    static double beats_per_minute ()
     {
         return sm_jack_beats_per_minute;
     }
 
-    static double jack_frame_factor ()
+    static double frame_factor ()
     {
         return sm_jack_frame_factor;
     }
 
-    static void jack_frame_rate (jack_nframes_t nf)
+    static jack_nframes_t cycle_frame_count ()
+    {
+        return sm_cycle_frame_count;
+    }
+
+    static jack_time_t cycle_time_us ()
+    {
+        return sm_cycle_time_us;
+    }
+
+    static jack_time_t pulse_time_us ()
+    {
+        return sm_pulse_time_us;
+    }
+
+    static void frame_rate (jack_nframes_t nf)
     {
         sm_jack_frame_rate = nf;
     }
 
-    static void jack_start_frame (jack_nframes_t nf)
+    static void start_frame (jack_nframes_t nf)
     {
         sm_jack_start_frame = nf;
     }
 
-    static void jack_ticks_per_beat (double tpb)
+    static void ticks_per_beat (double tpb)
     {
         sm_jack_ticks_per_beat = tpb;
     }
 
-    static void jack_beats_per_minute (double bp)
+    static void beats_per_minute (double bp)
     {
         sm_jack_beats_per_minute = bp;
+    }
+
+    static void frame_factor (double ff)
+    {
+        sm_jack_frame_factor = ff;
+    }
+
+    static void cycle_frame_count (jack_nframes_t cfc)
+    {
+        sm_cycle_frame_count = cfc;
+    }
+
+    static void cycle_time_us (jack_time_t jt)
+    {
+        sm_cycle_time_us = jt;
+    }
+
+    static void pulse_time_us (jack_time_t jt)
+    {
+        sm_pulse_time_us = jt;
     }
 
     /*

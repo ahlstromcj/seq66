@@ -720,10 +720,10 @@ midi_jack_info::lookup_midi_jack
         const portlist & ports = jack_ports();      /* midi_jack pointers   */
 
 #if defined SEQ66_PLATFORM_DEBUG
-        char value[c_async_safe_utoa_size];
-        char temp[512];
         if (rc().investigate())
         {
+            char value[c_async_safe_utoa_size];
+            char temp[512];
             async_safe_utoa(value, unsigned(count()));
             std::strcpy(temp, "!! Port lookup: ");
             std::strcat(temp, value);
@@ -740,6 +740,7 @@ midi_jack_info::lookup_midi_jack
 #if defined SEQ66_PLATFORM_DEBUG
             if (rc().investigate())
             {
+                char temp[512];
                 temp[0] = 0;
                 std::strcpy(temp, "jack port: ");
                 std::strcat(temp, mj->port_name().c_str());

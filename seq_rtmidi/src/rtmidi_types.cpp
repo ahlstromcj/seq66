@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-01
- * \updates       2022-09-23
+ * \updates       2022-09-28
  * \license       See above.
  *
  *  Provides some basic types for the (heavily-factored) rtmidi library, very
@@ -60,6 +60,7 @@ unsigned midi_message::sm_msg_number = 0;
 midi_message::midi_message (midipulse ts) :
     m_msg_number    (sm_msg_number++),
     m_bytes         (),
+    m_push_time_us  (0),
     m_timestamp     (ts)
 {
     // No code
@@ -67,7 +68,6 @@ midi_message::midi_message (midipulse ts) :
 
 /**
  *  Constructs a midi_message from an array of bytes.
- *  Also sets the timestamp member based on the first few (4 or 8) bytes.
  *
  * \param mbs
  *      Provides the data, which should start with the timestamp bytes, and
@@ -80,16 +80,11 @@ midi_message::midi_message (midipulse ts) :
 midi_message::midi_message (const midibyte * mbs, std::size_t sz) :
     m_msg_number    (sm_msg_number++),
     m_bytes         (),
+    m_push_time_us  (0),
     m_timestamp     (0)
 {
     for (std::size_t i = 0; i < sz; ++i)
         m_bytes.push_back(*mbs++);
-}
-
-void
-midi_message::timestamp (midipulse t)
-{
-    m_timestamp = t;
 }
 
 /**
