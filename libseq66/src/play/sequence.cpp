@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-09-11
+ * \updates       2022-10-06
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -959,7 +959,7 @@ sequence::toggle_playing (midipulse tick, bool resumenoteons)
     if (armed() && resumenoteons)
         resume_note_ons(tick);
 
-    m_off_from_snap = false;
+    off_from_snap(false);
     return armed();
 }
 
@@ -1014,7 +1014,7 @@ sequence::toggle_queued ()
 #endif
 
     m_queued_tick = m_last_tick - mod_last_tick() + get_length();
-    m_off_from_snap = true;
+    off_from_snap(true);
     perf()->announce_pattern(seq_number());     /* for issue #89        */
     return true;
 }
@@ -3735,8 +3735,7 @@ bool
 sequence::add_trigger
 (
     midipulse tick, midipulse len, midipulse offset,
-    midibyte tpose,
-    bool fixoffset
+    midibyte tpose, bool fixoffset
 )
 {
     automutex locker(m_mutex);
@@ -6095,7 +6094,7 @@ sequence::toggle_one_shot ()
     m_one_shot = ! m_one_shot;
     m_one_shot_tick = m_last_tick - mod_last_tick() + get_length();
     perf()->announce_pattern(seq_number());     /* for issue #89        */
-    m_off_from_snap = true;
+    off_from_snap(true);
     return m_one_shot;
 }
 
@@ -6111,8 +6110,19 @@ sequence::off_one_shot ()
     automutex locker(m_mutex);
     set_dirty_mp();
     m_one_shot = false;
-    m_off_from_snap = true;
+    off_from_snap(true);
     perf()->announce_pattern(seq_number());     /* for issue #89        */
+}
+
+midipulse
+sequence::calculate_snap (midipulse tick, int snap)
+{
+    midipulse result = tick;
+    if (snap > 0)
+    {
+        tick = closest_snap(snap, tick);    /* calculations */
+    }
+    return result;
 }
 
 /**
@@ -6135,10 +6145,13 @@ sequence::off_one_shot ()
 void
 sequence::song_recording_start (midipulse tick, bool snap)
 {
+    song_recording(true);
+    song_record_tick(tick);
+    song_recording_snap(snap > 0);
+#if defined THIS_IS_READY
+    calculate_snap(tick, snap);                     /* for issue #44 redux  */
+#endif
     add_trigger(tick, c_song_record_incr);
-    m_song_recording_snap = snap;
-    m_song_record_tick = tick;
-    m_song_recording = true;
 }
 
 /**
@@ -6146,12 +6159,15 @@ sequence::song_recording_start (midipulse tick, bool snap)
  *  recording, we snap the end of the trigger segment to the next whole
  *  sequence interval.
  *
+ *  However, for issue #44, we'd like to have the trigger stop at the snap
+ *  point for the actual tick at which muting turns on.
+ *
  * \question
  *      Do we need to call set_dirty_mp() here?
  *
  * \param tick
  *      Provides the current tick, which helps set the recorded block's
- *      boundaries.
+ *      boundaries. It is the tick at which the current trigger ends.
  */
 
 void
@@ -6161,12 +6177,24 @@ sequence::song_recording_stop (midipulse tick)
     m_song_playback_block = m_song_recording = false;
     if (len > 0)
     {
-        if (m_song_recording_snap)
-            len -= tick % len;
+#if 0
+        if (m_parent->calculate_snap(tick))         /* issue #44 redux  */
+            len = tick - song_record_tick();        /* shorter snap     */
+        else
+            len -= tick % len;                      /* ???              */
+#else
+        if (m_parent->calculate_snap(tick))         /* issue #44 redux  */
+        {
+            len = 0;
+        }
+        else
+        {
+        }
+#endif
 
-        m_triggers.grow_trigger(m_song_record_tick, tick, len);
-        if (m_song_recording_snap)
-            m_off_from_snap = true;
+        m_triggers.grow_trigger(song_record_tick(), tick, len);
+        if (song_recording_snap())
+            off_from_snap(true);
     }
 }
 

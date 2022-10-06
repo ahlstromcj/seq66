@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-09-17
+ * \updates       2022-10-02
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -811,10 +811,21 @@ midi_jack_info::api_connect ()
     if (result)
     {
         m_jack_buffer_size = jack_get_buffer_size(client_handle());
-        int rc = ::jack_activate(client_handle());
-        result = rc == 0;
+        int rcode = ::jack_activate(client_handle());
+        result = rcode == 0;
         if (result)
+        {
+            int bsize = rc().jack_buffer_size();
+            if (bsize > 0)
+            {
+                jack_nframes_t sz = jack_nframes_t(bsize);
+                rcode = ::jack_set_buffer_size(client_handle(), sz);
+                result = rcode == 0;
+                if (result)
+                    status_message("JACK buffer size", std::to_string(bsize));
+            }
             m_jack_sample_rate = jack_get_sample_rate(client_handle());
+        }
     }
     if (result && rc().jack_auto_connect())         /* issue #60        */
     {

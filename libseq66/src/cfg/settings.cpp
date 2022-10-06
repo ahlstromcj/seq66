@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2022-05-25
+ * \updates       2022-10-04
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -210,9 +210,10 @@ snap_items ()
 }
 
 /**
- *  Snap values for the performance/song editor.  The editor will fill in
- *  the first value with the word "Lenght", to indicate that we snap to the
- *  length of the pattern.
+ *  Snap values for the performance/song editor when snap is enabled.
+ *  These values are converted to 1/1, 1/2, etc. and represent fractions
+ *  of a meansure.  With snap disabled, the full length of the pattern is
+ *  applicable, and trigger sliding is arbitrary.
  */
 
 const tokenization &
@@ -242,8 +243,8 @@ zoom_items ()
 /**
  *  Recording-volume values for the pattern editor.  Holds the entries for the
  *  "Vel" drop-down.  The first value matches usr().preserve_velocity().  It
- *  corresponds to the "Free" recording-volume entry where the incoming velocity
- *  is kept.
+ *  corresponds to the "Free" recording-volume entry where the incoming
+ *  velocity is kept.
  */
 
 const tokenization &
@@ -344,7 +345,8 @@ ppqn_list_value (int index)
 
 /**
  *  This list is useful in the user-interface.  Also see ppqn_list_value()
- *  below for internal integer versions.
+ *  below for internal integer versions. Used in qsmainwnd and in
+ *  qseditoptions.
  */
 
 const tokenization &
@@ -357,6 +359,27 @@ default_ppqns ()
         "3840", "7680", "9600", "19200"
     };
     return s_default_ppqn_list;
+}
+
+/**
+ *  Used for overriding the JACK server's buffer size.  The first entry
+ *  translates to 0, and disables this override.
+ */
+
+const tokenization &
+jack_buffer_size_list ()
+{
+    static tokenization s_buffer_size_list
+    {
+        "0",                              /* do not override the JACK server  */
+        "16",                             /* might not work on many systems   */
+        "32",                             /* might not work on some systems   */
+        "64",                             /* might not work on a few systems  */
+        "128", "256", "512",
+        "1024", "2048", "4096",
+        "8192"
+    };
+    return s_buffer_size_list;
 }
 
 /**

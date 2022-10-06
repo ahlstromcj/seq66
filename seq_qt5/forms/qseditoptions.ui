@@ -1156,8 +1156,8 @@ Range: 0.5 to 3.0</string>
         <rect>
          <x>10</x>
          <y>10</y>
-         <width>591</width>
-         <height>197</height>
+         <width>601</width>
+         <height>251</height>
         </rect>
        </property>
        <property name="title">
@@ -1207,28 +1207,17 @@ Range: 0.5 to 3.0</string>
        <widget class="QWidget" name="">
         <property name="geometry">
          <rect>
-          <x>360</x>
-          <y>32</y>
-          <width>226</width>
-          <height>161</height>
+          <x>350</x>
+          <y>29</y>
+          <width>241</width>
+          <height>211</height>
          </rect>
         </property>
-        <layout class="QGridLayout" name="gridLayout_5" columnstretch="4,3">
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_15">
+        <layout class="QGridLayout" name="gridLayout_5" columnstretch="7,8">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_12">
            <property name="text">
-            <string>N periods</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLineEdit" name="lineEditTicksPerBeat">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="toolTip">
-            <string>Indicates the number of JACK ticks per
-beat, normally PPQN/10.</string>
+            <string>Frame rate</string>
            </property>
           </widget>
          </item>
@@ -1250,13 +1239,6 @@ beat, normally PPQN/10.</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_16">
-           <property name="text">
-            <string>JACK ticks/beat</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="1">
           <widget class="QLineEdit" name="lineEditPeriod">
            <property name="enabled">
@@ -1267,6 +1249,13 @@ beat, normally PPQN/10.</string>
 is a &quot;cycle&quot;, and is the number of frames in
 a period and the number frames between
 JACK process callbacks.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_15">
+           <property name="text">
+            <string>N periods</string>
            </property>
           </widget>
          </item>
@@ -1283,10 +1272,21 @@ callbacks.</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_12">
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_16">
            <property name="text">
-            <string>Frame rate</string>
+            <string>JACK ticks/beat</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="lineEditTicksPerBeat">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>Indicates the number of JACK ticks per
+beat, normally PPQN/10.</string>
            </property>
           </widget>
          </item>
@@ -1307,6 +1307,16 @@ callbacks.</string>
            </property>
           </widget>
          </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_18">
+           <property name="text">
+            <string>Period Override</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QComboBox" name="combo_box_buffer_size"/>
+         </item>
         </layout>
        </widget>
       </widget>
@@ -1314,7 +1324,7 @@ callbacks.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>328</y>
+         <y>380</y>
          <width>281</width>
          <height>23</height>
         </rect>
@@ -1330,7 +1340,7 @@ callbacks.</string>
        <property name="geometry">
         <rect>
          <x>310</x>
-         <y>328</y>
+         <y>380</y>
          <width>291</width>
          <height>23</height>
         </rect>
@@ -1410,7 +1420,7 @@ connects to the MIDI I/O ports it finds.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>220</y>
+         <y>250</y>
          <width>349</width>
          <height>91</height>
         </rect>
@@ -1425,7 +1435,7 @@ connects to the MIDI I/O ports it finds.</string>
         <property name="geometry">
          <rect>
           <x>8</x>
-          <y>10</y>
+          <y>32</y>
           <width>181</width>
           <height>17</height>
          </rect>
@@ -1444,7 +1454,7 @@ connects to the MIDI I/O ports it finds.</string>
         <property name="geometry">
          <rect>
           <x>168</x>
-          <y>32</y>
+          <y>54</y>
           <width>173</width>
           <height>17</height>
          </rect>
@@ -1465,7 +1475,7 @@ connects to the MIDI I/O ports it finds.</string>
        <property name="geometry">
         <rect>
          <x>31</x>
-         <y>248</y>
+         <y>302</y>
          <width>141</width>
          <height>54</height>
         </rect>

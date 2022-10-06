@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-09-02
+ * \updates       2022-10-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -110,6 +110,7 @@ private:
     void sync_usr ();           /* makes dialog reflect internal settings   */
     void backup ();             /* backup preferences for cancel-changes    */
     bool set_ppqn_combo ();
+    bool set_buffer_size_combo ();
     void set_scaling_fields ();
     void set_set_size_fields ();
     void set_progress_box_fields ();
@@ -133,6 +134,11 @@ private:
     const combolist & ppqn_list () const
     {
         return m_ppqn_list;
+    }
+
+    const combolist & buffer_size_list () const
+    {
+        return m_buffer_size_list;
     }
 
     const performer & perf () const
@@ -165,6 +171,7 @@ private slots:
     void slot_nsm_url ();
     void slot_note_resume ();
     void slot_ppqn_by_text (const QString & text);
+    void slot_buffer_size_by_text (const QString & text);
     void slot_use_file_ppqn ();
     void slot_song_record_snap ();
     void slot_key_height ();
@@ -252,6 +259,7 @@ private:
     qsmainwnd * m_parent_widget;
     performer & m_perf;
     combolist m_ppqn_list;
+    combolist m_buffer_size_list;
     bool m_is_initialized;
 
     /*

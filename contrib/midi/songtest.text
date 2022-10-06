@@ -1,0 +1,107 @@
+File name:      /home/ahlstrom/Home/ca/mls/git/seq66/contrib/midi/songtest.text
+No. of sets:    1
+No. of tracks:  4
+MIDI format:    1
+PPQN:           192
+Sequence #0 'Snap 1'
+        Channel: 0
+          Beats: 4/4
+         Busses: 0-->0
+ Length (ticks): 768
+Events;triggers: 28; 2
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 1
+2 triggers:
+   trigger: 0 to 767 at 768 transpose by 0
+   trigger: 1728 to 2495 at 768 transpose by 0
+
+Sequence #1 'Snap 2'
+        Channel: 128
+          Beats: 4/4
+         Busses: 0-->0
+ Length (ticks): 1536
+Events;triggers: 64; 2
+   Transposable: false
+  Key and scale: 0; 0
+          Color: 2
+2 triggers:
+   trigger: 0 to 1535 at 1536 transpose by 0
+   trigger: 3264 to 4799 at 1536 transpose by 0
+
+Sequence #2 'Unsnap 1'
+        Channel: 0
+          Beats: 4/4
+         Busses: 0-->0
+ Length (ticks): 768
+Events;triggers: 28; 2
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 1
+2 triggers:
+   trigger: 528 to 1295 at 0 transpose by 0
+   trigger: 2368 to 3135 at 0 transpose by 0
+
+Sequence #3 'Unsnap 2'
+        Channel: 128
+          Beats: 4/4
+         Busses: 0-->0
+ Length (ticks): 1536
+Events;triggers: 64; 2
+   Transposable: false
+  Key and scale: 0; 0
+          Color: 2
+2 triggers:
+   trigger: 288 to 1823 at 0 transpose by 0
+   trigger: 3344 to 4879 at 0 transpose by 0
+
+Start of SeqSpecs:
+0xFF 0x7F 24240010 (MIDI control) = 0
+0xFF 0x7F 24240003 (Track clocking) = 0
+Screen-set Notes:
+0xFF 0x7F 24240005 (Set notes) = 1
+   Set #0: 'New'
+0xFF 0x7F 24240007 (Main beats/minute) = 200
+        BPM: 200
+Mute Groups: 32 of size 32
+0xFF 0x7F 24240009 (Song mute group data) = 32
+Mute group # 0: 00000000 00000000 00000000 00000000  "Group 0"
+Mute group # 1: 00000000 00000000 00000000 00000000  "Group 1"
+Mute group # 2: 00000000 00000000 00000000 00000000  "Group 2"
+Mute group # 3: 00000000 00000000 00000000 00000000  "Group 3"
+Mute group # 4: 00000000 00000000 00000000 00000000  "Group 4"
+Mute group # 5: 00000000 00000000 00000000 00000000  "Group 5"
+Mute group # 6: 00000000 00000000 00000000 00000000  "Group 6"
+Mute group # 7: 00000000 00000000 00000000 00000000  "Group 7"
+Mute group # 8: 00000000 00000000 00000000 00000000  "Group 8"
+Mute group # 9: 00000000 00000000 00000000 00000000  "Group 9"
+Mute group #10: 00000000 00000000 00000000 00000000  "Group 10"
+Mute group #11: 00000000 00000000 00000000 00000000  "Group 11"
+Mute group #12: 00000000 00000000 00000000 00000000  "Group 12"
+Mute group #13: 00000000 00000000 00000000 00000000  "Group 13"
+Mute group #14: 00000000 00000000 00000000 00000000  "Group 14"
+Mute group #15: 00000000 00000000 00000000 00000000  "Group 15"
+Mute group #16: 00000000 00000000 00000000 00000000  "Group 16"
+Mute group #17: 00000000 00000000 00000000 00000000  "Group 17"
+Mute group #18: 00000000 00000000 00000000 00000000  "Group 18"
+Mute group #19: 00000000 00000000 00000000 00000000  "Group 19"
+Mute group #20: 00000000 00000000 00000000 00000000  "Group 20"
+Mute group #21: 00000000 00000000 00000000 00000000  "Group 21"
+Mute group #22: 00000000 00000000 00000000 00000000  "Group 22"
+Mute group #23: 00000000 00000000 00000000 00000000  "Group 23"
+Mute group #24: 00000000 00000000 00000000 00000000  "Group 24"
+Mute group #25: 00000000 00000000 00000000 00000000  "Group 25"
+Mute group #26: 00000000 00000000 00000000 00000000  "Group 26"
+Mute group #27: 00000000 00000000 00000000 00000000  "Group 27"
+Mute group #28: 00000000 00000000 00000000 00000000  "Group 28"
+Mute group #29: 00000000 00000000 00000000 00000000  "Group 29"
+Mute group #30: 00000000 00000000 00000000 00000000  "Group 30"
+Mute group #31: 00000000 00000000 00000000 00000000  "Group 31"
+Global key, scale, and background sequence:
+0xFF 0x7F 24240011 (Track key) = 0
+0xFF 0x7F 24240012 (Track scale) = 0
+0xFF 0x7F 24240013 (Track background sequence) = 2048
+Global beats, beat width, and tempo track:
+0xFF 0x7F 24240015 (Perfedit beats/measure) = 4
+0xFF 0x7F 24240016 (Perfedit beat-width) = 4
+0xFF 0x7F 2424001a (Alternate tempo track number) = 0

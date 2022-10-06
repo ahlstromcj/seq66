@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-09-30
+ * \updates       2022-10-01
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -182,12 +182,6 @@
 #if defined SEQ66_JACK_METADATA_TEST
 #include <jack/metadata.h>
 #endif
-
-/*
- *  Enables our attempt to adjust for lag. Doesn't work worth a carp.
- */
-
-#undef  USE_TIME_OFFSET_FUNCTION
 
 #include "cfg/settings.hpp"             /* seq66::rc() accessor function    */
 #include "midi/event.hpp"               /* seq66::event from main library   */
@@ -402,29 +396,21 @@ jack_get_event_data
     char * dest, size_t & destsz
 )
 {
+    static bool s_use_offset = rc().jack_use_offset();
     jack_nframes_t result = UINT32_MAX;
     bool process = buffmsg->read_space() > 0;
     if (process)
     {
         const midi_message & msg = buffmsg->front();
         midipulse ts = msg.timestamp();
-
-#if defined USE_TIME_OFFSET_FUNCTION
-        jack_time_t Tpush = msg.push_time_us();
-        if (Tpush > 0)                                  /* tricky code  */
+        if (s_use_offset)
         {
-            jack_time_t Tpop = ::jack_get_time();
-            result = midi_jack_data::time_offset(framect, ts, Tpop, Tpush);
+            result = midi_jack_data::frame_offset(framect, ts);
+            process = result >= lastoffset;             /* next cycle?  */
         }
         else
-        {
-            result = jack_nframes_t(ts);                /* tricky code  */
-        }
-#else
-        result = midi_jack_data::frame_offset(framect, ts);
-#endif
+            result = 0;
 
-        process = result >= lastoffset;                 /* next cycle?  */
         if (process)
         {
             size_t datasz = size_t(msg.event_count());
@@ -438,13 +424,8 @@ jack_get_event_data
         else
         {
             async_safe_errprint("MIDI event belayed");
-
-#if defined USE_TIME_OFFSET_FUNCTION
-            midi_message & msg = buffmsg->front();
-            msg.timestamp(result);                      /* tricky code  */
-            msg.push_time_us(0);                        /* tricky code  */
-#endif
-            result = UINT32_MAX;                        /* next cycle   */
+            result = lastoffset;                        /* UINT32_MAX   */
+            destsz = 0;
         }
     }
     return result;
@@ -508,16 +489,16 @@ jack_process_rtmidi_output (jack_nframes_t framect, void * arg)
     if (midi_jack_data::recalculate_frame_factor(pos, framect))
         async_safe_errprint("JACK settings changed");
 
-    jack_nframes_t last_offset = 0;
+    jack_nframes_t lastoffset = 0;
     ::jack_midi_clear_buffer(buf);
     for (;;)
     {
         size_t destsz = s_message_buffer_size;
         jack_nframes_t offset = jack_get_event_data
         (
-            jackdata->jack_buffer(), framect, last_offset, mbuf, destsz
+            jackdata->jack_buffer(), framect, lastoffset, mbuf, destsz
         );
-        if (valid_frame_offset(offset))
+        if (destsz > 0 && valid_frame_offset(offset))
         {
             const jack_midi_data_t * data =
                 reinterpret_cast<const jack_midi_data_t *>(mbuf);
@@ -528,7 +509,7 @@ jack_process_rtmidi_output (jack_nframes_t framect, void * arg)
                 async_safe_errprint("JACK MIDI write error");
                 break;                  /* ::jack_midi_clear_buffer(buf) */
             }
-            last_offset = offset;
+            lastoffset = offset;
         }
         else
             break;

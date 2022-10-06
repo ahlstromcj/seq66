@@ -328,6 +328,10 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
         int psize = ::jack_get_buffer_size(j->client());
 
         /*
+         * jack_nframes_t rate = ::jack_get_sample_rate(j->client());
+         */
+
+        /*
          *  Save changes for potential display.
          */
 

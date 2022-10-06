@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-09-25
+ * \updates       2022-10-05
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -652,10 +652,19 @@ private:                            /* key, midi, and op container section  */
     bool m_song_recording;
 
     /**
-     *  Snap recorded playback changes to the sequence length.
+     *  Snap recorded playback changes to the sequence length or the
+     *  snap value.
      */
 
     bool m_song_record_snap;
+
+    /**
+     *  If record-snap is on, this supplies the selected grid-snap as
+     *  translated to ticks.  Otherwise, the snap value for recording is
+     *  the length of the pattern.
+     */
+
+    midipulse m_record_snap_length;
 
     /**
      *  Indicates to resume notes if the sequence is toggled after a Note On.
@@ -2920,6 +2929,11 @@ public:
         return m_song_record_snap;
     }
 
+    midipulse record_snap_length () const
+    {
+        return m_record_snap_length;
+    }
+
     bool resume_note_ons () const
     {
         return m_resume_note_ons;
@@ -3114,22 +3128,12 @@ public:         /* GUI-support functions */
         return mapper().name(setno);
     }
 
-    void song_recording_start ()
-    {
-        mapper().song_recording_start(pad().js_current_tick);
-    }
-
-    void song_recording_stop ()
-    {
-        mapper().song_recording_stop(pad().js_current_tick);
-    }
-
     bool seq_in_playing_screen (int seq)
     {
         return mapper().seq_in_playscreen(seq);
     }
 
-    void song_recording (bool f);
+    void song_recording (bool on, bool atstart = false);
 
     void song_record_snap (bool f)
     {
@@ -3139,6 +3143,11 @@ public:         /* GUI-support functions */
     void toggle_record_snap ()
     {
         m_song_record_snap = ! m_song_record_snap;
+    }
+
+    void record_snap_length (midipulse snap)
+    {
+        m_record_snap_length = snap;
     }
 
     mutegroup::number group_selected () const
@@ -3206,6 +3215,7 @@ private:
         m_show_hide_pending = false;                /* tricky code          */
     }
 
+    bool calculate_snap (midipulse & tick);
     void show_cpu ();
     void playlist_activate (bool on);
     void set_error_message (const std::string & msg);

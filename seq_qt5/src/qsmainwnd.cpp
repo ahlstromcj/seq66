@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-09-25
+ * \updates       2022-10-05
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -989,10 +989,16 @@ qsmainwnd::set_loop (bool looping)
         m_perfedit->set_loop_button(looping);
 }
 
+/**
+ *  Note the usage of the Ctrl and Shift keys, when clicking, in relation to
+ *  issue #44.
+ */
+
 void
 qsmainwnd::song_recording (bool record)
 {
     bool dosnap = true;
+    bool atstart = false;
     const char ** pixmap = song_rec_on_xpm;
     if (record)
     {
@@ -1002,6 +1008,8 @@ qsmainwnd::song_recording (bool record)
             dosnap = false;
             pixmap = song_rec_no_snap_xpm;
         }
+        if (qkm & Qt::ShiftModifier)
+            atstart = true;
     }
     else
     {
@@ -1009,7 +1017,7 @@ qsmainwnd::song_recording (bool record)
     }
     qt_set_icon(pixmap , ui->btnRecord);
     cb_perf().song_record_snap(dosnap);
-    cb_perf().song_recording(record);
+    cb_perf().song_recording(record, atstart);
 }
 
 void

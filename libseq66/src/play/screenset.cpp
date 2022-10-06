@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-08-12
+ * \updates       2022-10-05
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -427,22 +427,22 @@ screenset::off_sequences ()
 }
 
 void
-screenset::song_recording_start (midipulse current_tick)
+screenset::song_recording_start (midipulse tick, bool snap)
 {
     for (auto & s : m_container)
     {
         if (s.active())
-            s.loop()->song_recording_start(current_tick);   /* snap = true  */
+            s.loop()->song_recording_start(tick, snap);     /* issue #44    */
     }
 }
 
 void
-screenset::song_recording_stop (midipulse current_tick)
+screenset::song_recording_stop (midipulse tick)
 {
     for (auto & s : m_container)
     {
         if (s.active())
-            s.loop()->song_recording_stop(current_tick);
+            s.loop()->song_recording_stop(tick);
     }
 }
 

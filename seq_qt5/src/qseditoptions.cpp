@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-09-26
+ * \updates       2022-09-30
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -138,6 +138,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     m_parent_widget         (dynamic_cast<qsmainwnd *>(parent)),
     m_perf                  (p),
     m_ppqn_list             (default_ppqns(), true), /* add a blank slot    */
+    m_buffer_size_list      (jack_buffer_size_list()),
     m_is_initialized        (false),
     m_backup_rc             (),
     m_backup_usr            (),
@@ -620,8 +621,13 @@ qseditoptions::setup_tab_jack ()
     temp = std::to_string(pos.period_size);                     /* int      */
     ui->lineEditPeriod->setText(qt(temp));
 
-    temp = std::to_string(pos.alsa_nperiod);                    /* int      */
+    /*
+     * Need a way to determine this.
+     *
+    temp = std::to_string(pos.alsa_nperiod);                    // int      //
     ui->lineEditNperiod->setText(qt(temp));
+     */
+    ui->lineEditNperiod->setText("?");
 
     char tmp[32];
     snprintf(tmp, sizeof tmp, "%.2f", pos.position.ticks_per_beat);
@@ -672,13 +678,11 @@ qseditoptions::setup_tab_play_options ()
         ui->chkNoteResume, SIGNAL(stateChanged(int)),
         this, SLOT(slot_note_resume())
     );
-
     connect
     (
         ui->chkUseFilesPPQN, SIGNAL(stateChanged(int)),
         this, SLOT(slot_use_file_ppqn())
     );
-
     connect
     (
         ui->chkSongRecordSnap, SIGNAL(stateChanged(int)),
@@ -694,6 +698,12 @@ qseditoptions::setup_tab_play_options ()
     (
         ui->combo_box_ppqn, SIGNAL(currentTextChanged(const QString &)),
         this, SLOT(slot_ppqn_by_text(const QString &))
+    );
+    (void) set_buffer_size_combo();
+    connect
+    (
+        ui->combo_box_buffer_size, SIGNAL(currentTextChanged(const QString &)),
+        this, SLOT(slot_buffer_size_by_text(const QString &))
     );
 
     /*
@@ -1519,12 +1529,18 @@ qseditoptions::setup_tab_session ()
     );
 }
 
-
 bool
 qseditoptions::set_ppqn_combo ()
 {
     std::string p = std::to_string(int(perf().ppqn()));
     return fill_combobox(ui->combo_box_ppqn, ppqn_list(), p);
+}
+
+bool
+qseditoptions::set_buffer_size_combo ()
+{
+    std::string sz = std::to_string(rc().jack_buffer_size());
+    return fill_combobox(ui->combo_box_buffer_size, buffer_size_list(), sz);
 }
 
 void
@@ -2211,6 +2227,24 @@ qseditoptions::slot_use_file_ppqn ()
             usr().clear_option_bits();      /* see usrsettings::option_bits */
             usr().use_file_ppqn(ufppqn);
             modify_usr();
+        }
+    }
+}
+
+void
+qseditoptions::slot_buffer_size_by_text (const QString & text)
+{
+    std::string temp = text.toStdString();
+    if (! temp.empty())
+    {
+        int bsize = string_to_int(temp);
+        int oldsize = rc().jack_buffer_size();
+        if (bsize != oldsize)
+        {
+            buffer_size_list().current(temp);
+            rc().jack_buffer_size(bsize);
+            if (rc().jack_buffer_size() == bsize)
+                modify_rc();
         }
     }
 }

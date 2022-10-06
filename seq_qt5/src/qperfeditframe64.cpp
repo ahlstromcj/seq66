@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2022-08-30
+ * \updates       2022-10-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -115,7 +115,7 @@ qperfeditframe64::qperfeditframe64
     m_is_external       (isexternal),
     m_duration_mode     (true),
     m_move_L_marker     (false),
-    m_snap_list         (perf_snap_items(), true),  /* "Length" is 1st  */
+    m_snap_list         (perf_snap_items()),    /* issue #44, no "current"   */
     m_snap              (8),
     m_beats_per_measure (4),
     m_beat_width        (4),
@@ -479,9 +479,9 @@ qperfeditframe64::scroll_to_tick (midipulse tick)
  *  Sets the snap value per the given index.
  *
  * \param snapindex
- *      The order of the value in the menu. For 0 to 5, this is the exponent
- *      of 2 that yields the snap value.  The default is 4, which sets snap to
- *      16.
+ *      The order of the value in the menu. For 0 to 5, this is essentially
+ *      the exponent of 2 that yields the snap value.  The default is 4, which
+ *      sets snap to 16.
  */
 
 void
@@ -524,12 +524,11 @@ qperfeditframe64::set_guides ()
     {
         midipulse pp = perf().ppqn() * 4;
         midipulse measticks = pp * m_beats_per_measure / m_beat_width;
-        midipulse beatticks = pp / m_beat_width;
         midipulse snapticks = m_snap == 0 ? 0 : measticks / m_snap ;
-//      m_perfroll->uninitialize();     // EXPERIMENTAL
+        midipulse beatticks = pp / m_beat_width;
         m_perfroll->set_guides(snapticks, measticks, beatticks);
-//      m_perftime->uninitialize();     // EXPERIMENTAL
         m_perftime->set_guides(snapticks, measticks, beatticks);
+        perf().record_snap_length(snapticks);
     }
 }
 
@@ -679,9 +678,7 @@ qperfeditframe64::update_sizes ()
 {
     std::string dur = perf().duration(m_duration_mode);
     ui->btnDuration->setText(qt(dur));
-
-    set_guides();               // EXPERIMENTAL
-
+    set_guides();
     m_perfnames->resize();
     m_perfnames->updateGeometry();
     m_perfroll->resize();
@@ -730,7 +727,7 @@ qperfeditframe64::grow ()
 {
     m_perfroll->increment_width();
     m_perftime->increment_width();
-    update_sizes();                 // EXPERIMENTAL
+    update_sizes();
 }
 
 void
@@ -744,7 +741,7 @@ qperfeditframe64::set_trigger_transpose (int tpose)
 {
     if (tpose >= c_trigger_transpose_min && tpose <= c_trigger_transpose_max)
     {
-        ui->spinBoxTT->setValue(tpose);     // m_trigger_transpose
+        ui->spinBoxTT->setValue(tpose);
         m_perfroll->set_trigger_transpose(tpose);
     }
 }

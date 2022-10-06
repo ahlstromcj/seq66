@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-08-15
+ * \updates       2022-10-02
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -302,16 +302,14 @@ rcfile::parse ()
 
         bool flag = get_boolean(file, tag, "jack-midi");
         rc_ref().with_jack_midi(flag);
-        s = get_variable(file, tag, "jack-auto-connect");
-        if (s.empty())
-        {
-            rc_ref().jack_auto_connect(true);           /* legacy default   */
-        }
-        else
-        {
-            flag = get_boolean(file, tag, "jack-auto-connect");
-            rc_ref().jack_auto_connect(flag);
-        }
+        flag = get_boolean(file, tag, "jack-auto-connect", 0, true);
+        rc_ref().jack_auto_connect(flag);
+        flag = get_boolean(file, tag, "jack-use-offset", 0, true);
+        rc_ref().jack_use_offset(flag);
+
+        int buffersize = rc().jack_buffer_size();
+        buffersize = get_integer(file, tag, "jack-buffer-size", 0);
+        rc().jack_buffer_size(buffersize);
     }
 
     tag = "[manual-ports]";
@@ -1103,12 +1101,17 @@ rcfile::write ()
 "# jack-midi sets/unsets JACK MIDI, separate from JACK transport.\n"
 "# jack-auto-connect sets connecting to JACK ports found. Default = true; use\n"
 "# false to have a session manager make the connections.\n"
+"# jack-use-offset attempts to calculate timestamp offsets to improve accuracy\n"
+"# at high-buffer sizes. Still a work in progress.\n"
+"# jack-buffer-size allows for changing the frame-count, a power of 2.\n"
 "\n[jack-transport]\n\n"
         << "transport-type = " << jacktransporttype << "\n"
         << "song-start-mode = " << rc_ref().song_mode_string() << "\n"
         ;
     write_boolean(file, "jack-midi", rc_ref().with_jack_midi());
     write_boolean(file, "jack-auto-connect", rc_ref().jack_auto_connect());
+    write_boolean(file, "jack-use-offset", rc_ref().jack_use_offset());
+    write_integer(file, "jack-buffer-size", rc_ref().jack_buffer_size());
     file << "\n"
 "# 'auto-save-rc' sets automatic saving of the  'rc' and other files. If set,\n"
 "# many command-line settings are saved to configuration files.\n"

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2022-09-11
+ * \updates       2022-10-03
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -117,7 +117,7 @@ trigger::to_string () const
     result += std::to_string(tick_start());
     result += " to ";
     result += std::to_string(tick_end());
-    result += " at ";
+    result += " offset ";
     result += std::to_string(offset());
     result += " transpose by ";
     result += std::to_string(transpose());
@@ -614,6 +614,10 @@ bool
 triggers::grow_trigger (midipulse tickfrom, midipulse tickto, midipulse len)
 {
     bool result = false;
+#if defined SEQ66_PLATFORM_DEBUG
+    printf("Growing trigger from %ld to %ld, length %ld\n",
+        long(tickfrom), long(tickto), long(len));
+#endif
     for (auto & t : m_triggers)
     {
         midipulse start = t.tick_start();
@@ -1075,12 +1079,8 @@ triggers::move_selected (midipulse tick, bool fixoffset, grow which)
     {
         if (i->selected())
         {
-            /*
-             * Too tricky.  Beware the side-effect of incrementing i.
-             */
-
             s = i;
-            if (++i != m_triggers.end())                    /* side-effect  */
+            if (++i != m_triggers.end())
                 maxtick = i->tick_start() - 1;
 
             midipulse deltatick = 0;

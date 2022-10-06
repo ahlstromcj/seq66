@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-09-25
+ * \updates       2022-10-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -346,6 +346,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_looping               (false),
     m_song_recording        (false),
     m_song_record_snap      (true),
+    m_record_snap_length    (0),
     m_resume_note_ons       (usr().resume_note_ons()),
     m_ppqn                  (choose_ppqn(ppqn)),
     m_file_ppqn             (0),
@@ -984,11 +985,22 @@ performer::sequence_label (seq::cref seq) const
     if (is_seq_active(sn))
     {
         bussbyte bus = seq.seq_midi_bus();
-        int chan = seq.is_smf_0() ? 0 : int(seq.seq_midi_channel()) + 1;
         int bpb = int(seq.get_beats_per_bar());
         int bw = int(seq.get_beat_width());
+        int chanvar = int(seq.midi_channel());
         char tmp[32];
-        snprintf(tmp, sizeof tmp, "%-3d %d-%d %d/%d", sn, bus, chan, bpb, bw);
+        if (is_null_channel(chanvar))
+        {
+            snprintf(tmp, sizeof tmp, "%-3d %d-F %d/%d", sn, bus, bpb, bw);
+        }
+        else
+        {
+            int chan = seq.is_smf_0() ? 0 : int(seq.seq_midi_channel()) + 1;
+            snprintf
+            (
+                tmp, sizeof tmp, "%-3d %d-%d %d/%d", sn, bus, chan, bpb, bw
+            );
+        }
         result = std::string(tmp);
     }
     return result;
@@ -1883,23 +1895,19 @@ performer::ui_change_set_bus (int buss)
  *  loaded song has triggers or not.  If there are no triggers, then all
  *  tracks are unmuted automatically.  This feature is useful for headless
  *  play.
+ *
+ *  Note that turning on song_recording() is a user function, and not set by
+ *  the presence of triggers.
  */
 
 void
 performer::next_song_mode ()
 {
     bool has_triggers = mapper().trigger_count() > 0;
-    (void) set_playing_screenset(screenset::number(0)); /* ca 2021-12-13    */
+    (void) set_playing_screenset(screenset::number(0));
     if (rc().song_start_auto())
     {
         song_mode(has_triggers);
-
-        /*
-         * No, the user has to turn this on!
-         *
-         * song_recording(has_triggers);
-         */
-
         if (has_triggers)
             set_song_mute(mutegroups::action::off);
     }
@@ -1909,12 +1917,6 @@ performer::next_song_mode ()
         bool songmode = rc().song_start_mode();     /* song vs live here    */
         mute_all_tracks(mutem);
         song_mode(songmode);
-
-        /*
-         * No, the user has to turn this on!
-         *
-         * song_recording(songmode && has_triggers);
-         */
     }
 }
 
@@ -5099,7 +5101,21 @@ performer::get_trigger_state (seq::number seqno, midipulse tick) const
  *
  * \param tick
  *      The MIDI pulse number at which the trigger should be handled.
+ *
+ * \param snap
+ *      Provides the snap value to use for snapping start of the tick.
  */
+
+bool
+performer::calculate_snap (midipulse & tick)
+{
+    bool result = song_record_snap() && record_snap_length() > 0;
+    if (result)
+    {
+        tick -= tick % record_snap_length();
+    }
+    return result;
+}
 
 bool
 performer::add_trigger (seq::number seqno, midipulse tick, midipulse snap)
@@ -5109,6 +5125,9 @@ performer::add_trigger (seq::number seqno, midipulse tick, midipulse snap)
     if (s)
     {
         midipulse seqlength = s->get_length();
+        if (snap == 0 || ! calculate_snap(tick))    /* side-effect on tick  */
+            snap = seqlength;
+
         if (song_record_snap())
         {
             if (snap == 0)
@@ -5117,7 +5136,7 @@ performer::add_trigger (seq::number seqno, midipulse tick, midipulse snap)
             tick -= tick % snap;
         }
         push_trigger_undo(seqno);
-        result = s->add_trigger(tick, seqlength); /* offset=0, fixoff=true  */
+        result = s->add_trigger(tick, seqlength);   /* offset=0 fixoff=true */
         if (result)
             notify_trigger_change(seqno);
     }
@@ -5999,6 +6018,12 @@ performer::sequence_playing_toggle (seq::number seqno)
 
                 if (s->song_recording())
                 {
+                    /*
+                     * For issue #44 part deux, snap at end of trigger as
+                     * well as at the beginning.  Handled by the parent of the
+                     * pattern (performer).
+                     */
+
                     s->song_recording_stop(tick);
                 }
                 else        /* ...else need to trim block already in place  */
@@ -6014,15 +6039,15 @@ performer::sequence_playing_toggle (seq::number seqno)
             }
             else            /* if not playing, start recording a new strip  */
             {
-                if (song_record_snap())         /* see Seq64 issue #171 !   */
-                    tick -= tick % seq_length;
-
                 /*
-                 * Why is this needed? It leads to a modify() when just
-                 * double-clicking on an existing pattern.
+                 * Issue #44 part deux.  Fix by using the method from issue
+                 * #171 in Seq64.
                  *
-                 * push_trigger_undo();
+                 * if (song_record_snap())
                  */
+
+                if (! calculate_snap(tick))         /* possible side-effect */
+                    tick -= tick % seq_length;
 
                 s->song_recording_start(tick, song_record_snap());
             }
@@ -6064,14 +6089,32 @@ performer::toggle_song_start_mode ()
     return m_song_start_mode;
 }
 
+/**
+ * Hmmmm, this stops recording on all patterns, but does not start it.
+ * Re issue #44.
+ *
+ * song_recording_stop();      // stops recording on all sequences
+ *
+ * \param on
+ *      If true, turn song-recording on, otherwise turn it off.
+ *
+ * \param atstart
+ *      If true, recording on all patterns begin as soon as playback starts.
+ */
+
 void
-performer::song_recording (bool f)
+performer::song_recording (bool on, bool atstart)
 {
-    if (f != m_song_recording)
+    if (on != m_song_recording)
     {
-        m_song_recording = f;
-        if (! f)
-            song_recording_stop();      /* stops recording on all sequences */
+        m_song_recording = on;
+        if (on)
+        {
+            if (atstart)
+                mapper().song_recording_start(pad().js_current_tick);
+        }
+        else
+            mapper().song_recording_stop(pad().js_current_tick);
     }
 }
 
@@ -6102,7 +6145,16 @@ performer::toggle_other_names (seq::number seqno, bool isshiftkey)
         if (isshiftkey)
             mapper().toggle_song_mute();
         else
-            mapper().toggle_song_mute(seqno);
+        {
+            /*
+             * Relating to issue #44, here we want the same functionality as
+             * toggling the grid button. Yields better visual feedback.
+             *
+             * mapper().toggle_song_mute(seqno);
+             */
+
+            result = sequence_playing_toggle(seqno);
+        }
     }
     return result;
 }
@@ -7376,7 +7428,7 @@ performer::automation_song_record
     if (! inverse)
     {
         if (a == automation::action::toggle)
-            song_recording(! song_recording());
+            song_recording(! song_recording());     /* at-start is false    */
         else if (a == automation::action::on)
             song_recording(true);
         else if (a == automation::action::off)

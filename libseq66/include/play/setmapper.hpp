@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-08-05
+ * \updates       2022-10-05
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -481,18 +481,16 @@ private:
     }
 
     /**
-     *  Calls sequence::song_recording_start(m_current_tick) for all sequences.
-     *  Should be called only when not recording the performance data.  This is
-     *  a Kepler34 feature.  However, rather than operating on all sets, it will
-     *  operate on the play-screen only.
-     *
-     *  for (auto & sset : sets())
-     *      sset.second.song_recording_stop(current_tick);
+     *  Calls sequence::song_recording_start(m_current_tick) for all
+     *  sequences.  Should be called only when not recording the performance
+     *  data.  This is a Kepler34 feature.  However, rather than operating on
+     *  all sets, it will operate on the play-screen only.  Added the snap
+     *  parameter for issue #44.
      */
 
-    void song_recording_start (midipulse tick)
+    void song_recording_start (midipulse tick, bool snap = true)
     {
-        play_screen()->song_recording_start(tick);
+        play_screen()->song_recording_start(tick, snap);
     }
 
     void song_recording_stop (midipulse tick)

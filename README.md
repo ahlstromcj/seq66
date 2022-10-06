@@ -1,7 +1,7 @@
 # README for Seq66 0.99.1
 
 Chris Ahlstrom
-2015-09-10 to 2022-09-27
+2015-09-10 to 2022-10-05
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -94,10 +94,14 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.99.1:
+        *   Issue #44. Revisited to fix related additional issues. Can now
+            toggle a pattern's song record in perfnames. Record button:
+            Ctrl disables snap, Shift enables record at playback start.
         *   Issue #93. Revisited to fix related open pattern-editor issues.
         *   Issue #100. In progress. Added custom ringbuffer for MIDI message
             objects to replace JACK's ringbuffer. Issue still somewhat
-            intractable :-(
+            intractable :-(. Also added configuration to calculate the sample
+            offset and set the buffer size.
         *   Various fixes:
             *   Fixed partial breakage of pattern-merge function.
             *   Fixed odd breakage of ALSA playback in release mode.
@@ -105,6 +109,9 @@ Windows, and using a conventional source tarball.
             *   Shift-click on Stop button rewinds JACK transport when running
                 as JACK Slave.
             *   Display of some JACK server settings in Edit / Preferences.
+            *   Fixed handling of Ctrl vs non-Ctrl zoom keys in perfroll.
+            *   The pernames panel now matches the layout of a grid button
+                better.
     *   Version 0.99.0:
         *   Issue #44. Record live sequence changes functionality beefed up
             to handle recording without snapping.

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-09-03
+ * \updates       2022-10-06
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -590,7 +590,7 @@ private:
 
     /**
      *  This value indicates that the following feature is active: the number
-     *  of tick to snap recorded improvisations.
+     *  of ticks to snap recorded improvisations and manually-added triggers.
      */
 
     bool m_song_recording_snap;
@@ -1473,6 +1473,8 @@ public:
     {
         return m_song_recording_snap;
     }
+
+    midipulse calculate_snap (midipulse tick, int snap = 0);
 
     midipulse song_record_tick () const
     {

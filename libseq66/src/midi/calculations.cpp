@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-06-16
+ * \updates       2022-10-04
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1450,6 +1450,34 @@ extract_a2j_port_name (const std::string & alias)
                 result = "A2J " + result;
             }
         }
+    }
+    return result;
+}
+
+/**
+ *  Calculates the closest snap value.
+ *
+ * \param S
+ *      Provides the snap value to be applied.  Ignored it it is 0.
+ *
+ * \param p
+ *      Provide the value to be snapped.
+ *
+ * \return
+ *      Returns the snapped value.
+ */
+
+midipulse
+closest_snap (int S, midipulse p)
+{
+    midipulse result = p;
+    if (S > 0)
+    {
+        int Sn0 = p - (p % S);
+        int Sn1 = Sn0 + S;
+        int deltalo = p - Sn0;                  /* do we need to use abs()? */
+        int deltahi = Sn1 - p;
+        result = deltalo <= deltahi ? Sn0 : Sn1 ;
     }
     return result;
 }

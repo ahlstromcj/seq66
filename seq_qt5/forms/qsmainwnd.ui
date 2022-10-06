@@ -1126,8 +1126,8 @@ matter what sets-mode is in force. </string>
           </property>
           <property name="toolTip">
            <string>Record live sequence changes into the Song Editor.
-Hold the Ctrl key while clicking to disable snap during
-recording.</string>
+Ctrl key disables snap for the recording.
+Shift key enables recording at start of playback.</string>
           </property>
           <property name="text">
            <string>Rec</string>

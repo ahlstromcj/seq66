@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-08-12
+ * \updates       2022-10-05
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -494,7 +494,7 @@ private:
     seq::number play_seq (seq::number seqno);
 
     void off_sequences ();
-    void song_recording_start (midipulse current_tick);
+    void song_recording_start (midipulse current_tick, bool snap = true);
     void song_recording_stop (midipulse current_tick);
     void clear_snapshot ();
     void save_snapshot ();

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-03-22
+% \update      2022-10-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -181,9 +181,10 @@
    \texttt{x}.
 
    \itempar{Record Snap}{song editor!record snap}
-   If enabled, it allows only full clips of a pattern to be added.
+   If enabled, it allows not only full clips of a pattern to be added,
+   but smaller intervals listed below.
    It turns on record-snap for recording live performance triggers,
-   and it also enables the grid snap functionality noted below.
+   and it also enables the grid snap functionality.
    If disabled, it allows the trigger to be placed and to be smoothly extended
    in either direction, without snapping, when the mouse is moved left or
    right.
@@ -195,17 +196,16 @@
    of the song editor snap value are in fractions of a measure length.
    The following values are supported:
 
-   \textsl{Length, 1/1, 1/2, 1/4, 1/8, 1/16, and 1/32}
+   \textsl{1/1, 1/2, 1/4, 1/8, 1/16, and 1/32}
 
-   The fractions represent fractions of measures.
+%  When \textbf{Snap} is on, causes the addition of
+%  a trigger to act as in \textsl{Seq24}:  the pattern is added, but snaps to
+%  the length of the pattern so that the new trigger is always an integral
+%  number of pattern lengths from the beginning.  For long patterns, this
+%  feature can result in the trigger beginning well before the click.
 
-   The \texttt{Length} entry, when \textbf{Snap} is on, causes the addition of
-   a trigger to act as in \textsl{Seq24}:  the pattern is added, but snaps to
-   the length of the pattern so that the new trigger is always an integral
-   number of pattern lengths from the beginning.  For long patterns, this
-   feature can result in the trigger beginning well before the click.
-
-   Also, in patterns longer than a measure, if \texttt{Length} is not selected,
+   In patterns longer than a measure,
+%  if \texttt{Length} is not selected,
    the pattern may wrap, so that beginning notes appear at the end of the
    trigger, and notes can wrap around.  When this happens, a trick is needed:
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-09-04
+ * \updates       2022-10-02
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -270,6 +270,8 @@ private:
     bool m_with_jack_master_cond;   /**< Serve as JACK Master if possible.  */
     bool m_with_jack_midi;          /**< Use JACK MIDI.                     */
     bool m_jack_auto_connect;       /**< Connect JACK ports in normal mode. */
+    bool m_jack_use_offset;         /**< Try to calculate output offset.    */
+    int m_jack_buffer_size;         /**< The desired power-of-2 size, or 0. */
     sequence::playback m_song_start_mode; /**< Song mode versus Live mode.  */
     bool m_song_start_is_auto;      /**< True if "auto" read from 'rc'.     */
     bool m_filter_by_channel;       /**< Record only sequence channel data. */
@@ -757,6 +759,16 @@ public:
         return m_jack_auto_connect;
     }
 
+    bool jack_use_offset () const
+    {
+        return m_jack_use_offset;
+    }
+
+    int jack_buffer_size () const
+    {
+        return m_jack_buffer_size;
+    }
+
     bool song_start_mode () const
     {
         return m_song_start_mode == sequence::playback::song;
@@ -807,6 +819,21 @@ public:
     void jack_auto_connect (bool flag)
     {
         m_jack_auto_connect = flag;
+    }
+
+    void jack_use_offset (bool flag)
+    {
+        m_jack_use_offset = flag;
+    }
+
+    /*
+     * Same as is_power_of_2() in the calculations module.
+     */
+
+    void jack_buffer_size (int sz)
+    {
+        if (((sz != 0) && (! (sz & (sz - 1)))) || (sz == 0))
+            m_jack_buffer_size = sz;
     }
 
     /**

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-09-02
+ * \updates       2022-10-04
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -563,7 +563,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
         convert_x(x, tick);
         tick -= m_drop_tick_offset;
         if (perf().song_record_snap())          /* apply to move/grow too   */
-            if (snap() > 0)
+            if (snap() > 0)                     /* compare Seq64 issue #171 */
                 tick -= tick % snap();
 
         if (moving())                           /* move selected triggers   */
@@ -635,6 +635,8 @@ qperfroll::keyPressEvent (QKeyEvent * event)
     bool dirty = false;
     seq::pointer dropseq = perf().get_sequence(m_drop_track);
     bool on_pattern = not_nullptr(dropseq);
+    bool isshift = event->modifiers() & Qt::ShiftModifier;
+    bool isctrl = event->modifiers() & Qt::ControlModifier;
     if (perf().is_pattern_playing())
     {
         if (event->key() == Qt::Key_Space)
@@ -655,7 +657,6 @@ qperfroll::keyPressEvent (QKeyEvent * event)
     }
     else
     {
-        bool isctrl = event->modifiers() & Qt::ControlModifier;
         if (event->key() == Qt::Key_Space || event->key() == Qt::Key_Period)
         {
             handled = true;
@@ -761,8 +762,7 @@ qperfroll::keyPressEvent (QKeyEvent * event)
      * redrawn.
      */
 
-    bool isshift = event->modifiers() & Qt::ShiftModifier;
-    if (isshift)
+    if (isshift && ! isctrl)
     {
         if (event->key() == Qt::Key_Z)
         {
@@ -775,20 +775,23 @@ qperfroll::keyPressEvent (QKeyEvent * event)
             v_zoom_in();
         }
     }
-    else if (event->key() == Qt::Key_Z)
+    else if (! isctrl)
     {
-        handled = true;
-        frame64()->zoom_out();
-    }
-    else if (event->key() == Qt::Key_V)
-    {
-        handled = true;
-        v_zoom_out();
-    }
-    else if (event->key() == Qt::Key_0)
-    {
-        handled = true;
-        reset_v_zoom();
+        if (event->key() == Qt::Key_Z)
+        {
+            handled = true;
+            frame64()->zoom_out();
+        }
+        else if (event->key() == Qt::Key_V)
+        {
+            handled = true;
+            v_zoom_out();
+        }
+        else if (event->key() == Qt::Key_0)
+        {
+            handled = true;
+            reset_v_zoom();
+        }
     }
     if (handled)
     {

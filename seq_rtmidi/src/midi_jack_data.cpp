@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-13
- * \updates       2022-09-30
+ * \updates       2022-10-01
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -105,6 +105,13 @@ midi_jack_data::~midi_jack_data ()
  *      -   It would be good to call this function during a settings change as
  *          indicated by calls to the jack_set_buffer_size(frames, arg) or
  *          jack_set_sample_rate(frames, arg) callbacks.
+ *
+ *  Adjustment number:
+ *
+ *      The lower this number, the faster the calculated offsets vary.
+ *      Not sure why, but using the "adjustment" factor makes playback
+ *      better behaved at 2048 and 4096 buffer sizes.  A really low number
+ *      (0.1) causes "belays", with glitches at each one.
  */
 
 bool
@@ -140,18 +147,23 @@ midi_jack_data::recalculate_frame_factor
     }
     if (changed)
     {
-        const double tpbfactor = 600.0;         /* no dividing by "periods" */
+        /*
+         * A value of 2 or 3 would represent the period.
+         */
+
+////    const double adjustment = 20.0;         /* 10.0 also works. Hmmmm?  */
+        const double adjustment = 2.0;          /* nperiod???               */
         cycle_frame_count(F);
         cycle_time_us(1000000.0 * double(F) / frame_rate());
-        pulse_time_us(1000000.0 * tpbfactor /
+        pulse_time_us(1000000.0 * 600.0 /
             (ticks_per_beat() * beats_per_minute()));
 
 #if defined USE_ORIGINAL_CALCULATION
-        frame_factor((frame_rate() * tpbfactor) /
-            (ticks_per_beat() * beats_per_minute()));
+        frame_factor((frame_rate() * 600.0) /
+            (ticks_per_beat() * beats_per_minute()));       /* P in denom?  */
 #else
         frame_factor((frame_rate() * 60.0) /
-            (10.0 * ticks_per_beat() * beats_per_minute()));
+            (adjustment * ticks_per_beat() * beats_per_minute()));
 #endif
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
@@ -264,8 +276,8 @@ midi_jack_data::frame_offset (jack_nframes_t F, midipulse p)
            result = result % F;
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("[debug] ts %ld * %g --> frame %g; offset %u\n",
-        long(p), frame_factor(), temp, unsigned(result));
+    printf("[debug] ts %ld --> frame %g; offset %u\n",
+        long(p), temp, unsigned(result));
 #endif
 
     return result;
