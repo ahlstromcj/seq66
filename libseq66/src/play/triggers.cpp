@@ -614,10 +614,6 @@ bool
 triggers::grow_trigger (midipulse tickfrom, midipulse tickto, midipulse len)
 {
     bool result = false;
-#if defined SEQ66_PLATFORM_DEBUG
-    printf("Growing trigger from %ld to %ld, length %ld\n",
-        long(tickfrom), long(tickto), long(len));
-#endif
     for (auto & t : m_triggers)
     {
         midipulse start = t.tick_start();
@@ -629,8 +625,13 @@ triggers::grow_trigger (midipulse tickfrom, midipulse tickto, midipulse len)
                 start = tickto;
 
             if (calcend > ender)
+            {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+                printf("Growing trigger from %ld to %ld (%ld), length %ld\n",
+                    long(tickfrom), long(tickto), long(calcend), long(len));
+#endif
                 ender = calcend;
-
+            }
             add(start, ender - start + 1, t.offset());
             result = true;
             break;

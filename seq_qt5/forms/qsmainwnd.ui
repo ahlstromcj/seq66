@@ -995,7 +995,7 @@ matter what sets-mode is in force. </string>
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
-           <string>Stop playback.</string>
+           <string>Stop playback. With Shift, also rewind transport.</string>
           </property>
           <property name="text">
            <string>Stop</string>

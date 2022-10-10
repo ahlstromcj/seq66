@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-10-05
+ * \updates       2022-10-10
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -5112,7 +5112,7 @@ performer::calculate_snap (midipulse & tick)
     bool result = song_record_snap() && record_snap_length() > 0;
     if (result)
     {
-        tick -= tick % record_snap_length();
+        tick = closest_snap(record_snap_length(), tick);
     }
     return result;
 }
@@ -5301,6 +5301,10 @@ performer::split_trigger
     }
     return result;
 }
+
+/**
+ *  This version of grow_trigger() is used for manual growing in the perfroll.
+ */
 
 bool
 performer::grow_trigger
@@ -6006,7 +6010,6 @@ performer::sequence_playing_toggle (seq::number seqno)
 
         if (song_recording())
         {
-            midipulse seq_length = s->get_length();
             midipulse tick = get_tick();
             bool trigger_state = s->get_trigger_state(tick);
             if (trigger_state)              /* if sequence already playing  */
@@ -6040,15 +6043,10 @@ performer::sequence_playing_toggle (seq::number seqno)
             else            /* if not playing, start recording a new strip  */
             {
                 /*
-                 * Issue #44 part deux.  Fix by using the method from issue
-                 * #171 in Seq64.
-                 *
-                 * if (song_record_snap())
+                 * Issue #44 part deux.
                  */
 
-                if (! calculate_snap(tick))         /* possible side-effect */
-                    tick -= tick % seq_length;
-
+                (void) calculate_snap(tick);         /* possible side-effect */
                 s->song_recording_start(tick, song_record_snap());
             }
         }
@@ -6111,7 +6109,12 @@ performer::song_recording (bool on, bool atstart)
         if (on)
         {
             if (atstart)
-                mapper().song_recording_start(pad().js_current_tick);
+            {
+                mapper().song_recording_start               /* issue #44    */
+                (
+                    pad().js_current_tick, song_record_snap()
+                );
+            }
         }
         else
             mapper().song_recording_stop(pad().js_current_tick);

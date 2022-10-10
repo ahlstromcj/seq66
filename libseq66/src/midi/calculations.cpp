@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-10-04
+ * \updates       2022-10-10
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1473,11 +1473,33 @@ closest_snap (int S, midipulse p)
     midipulse result = p;
     if (S > 0)
     {
-        int Sn0 = p - (p % S);
-        int Sn1 = Sn0 + S;
+        midipulse Sn0 = p - (p % S);
+        midipulse Sn1 = Sn0 + S;
         int deltalo = p - Sn0;                  /* do we need to use abs()? */
         int deltahi = Sn1 - p;
         result = deltalo <= deltahi ? Sn0 : Sn1 ;
+    }
+    return result;
+}
+
+midipulse
+down_snap (int S, midipulse p)
+{
+    midipulse result = p;
+    if (S > 0)
+        result = midipulse(p - (p % S));
+
+    return result;
+}
+
+midipulse
+up_snap (int S, midipulse p)
+{
+    midipulse result = p;
+    if (S > 0)
+    {
+        midipulse Sn0 = p - (p % S);
+        result = Sn0 + midipulse(S);
     }
     return result;
 }

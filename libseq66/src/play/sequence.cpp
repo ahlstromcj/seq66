@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-10-06
+ * \updates       2022-10-10
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1073,7 +1073,6 @@ sequence::play
     bool trigger_turning_off = false;       /* turn off after in-frame play */
     int trigtranspose = 0;                  /* used with c_trig_transpose   */
     midipulse start_tick = m_last_tick;     /* modified in triggers::play() */
-    midipulse end_tick = tick;              /* ditto                        */
     m_trigger_offset = 0;                   /* NEW from Seq24 (!)           */
     if (m_song_mute)
     {
@@ -1086,37 +1085,19 @@ sequence::play
          *  mode now. From Sequencer64 on 2021-05-06.
          */
 
-        if (song_recording())               /* song record of triggers      */
+        if (song_recording())                       /* song-record triggers */
         {
-            bool added = grow_trigger
-            (
-                song_record_tick(), end_tick, c_song_record_incr
-            );
-            if (added)
-            {
-                /*
-                 * Indicate we're modified.  Tricky, because if modify(true)
-                 * were called, that would call on_sequence_change(),
-                 * which causes a segfault.  Here, we need to modify the
-                 * performer, but call a different notification function.
-                 */
+            (void) m_parent->calculate_snap(tick);  /* issue #44 redux      */
 
-                set_dirty_mp();             /* force redraw                 */
-                modify(false);              /* modify without notify        */
-                if (not_nullptr(perf()))
-                {
-                    perf()->notify_trigger_change
-                    (
-                        seq_number(), performer::change::no
-                    );
-                }
-            }
+            bool added = grow_trigger(song_record_tick(), tick);
+            if (added)
+                notify_trigger();
         }
-        if (playback_mode)                  /* song mode: use triggers      */
+        if (playback_mode)                          /* song mode: triggers  */
         {
             trigger_turning_off = m_triggers.play   /* side-effects !!!     */
             (
-                start_tick, end_tick, trigtranspose, resumenoteons
+                start_tick, tick, trigtranspose, resumenoteons
             );
         }
     }
@@ -1125,7 +1106,7 @@ sequence::play
         midipulse length = get_length() > 0 ? get_length() : m_ppqn ;
         midipulse offset = length - m_trigger_offset;
         midipulse start_tick_offset = start_tick + offset;
-        midipulse end_tick_offset = end_tick + offset;
+        midipulse end_tick_offset = tick + offset;
         midipulse times_played = m_last_tick / length;
         midipulse offset_base = times_played * length;
         if (loop_count_max() > 0)
@@ -1161,8 +1142,7 @@ sequence::play
                 {
                     if (er.is_tempo())
                     {
-                        if (not_nullptr(perf()))
-                            perf()->set_beats_per_minute(er.tempo());
+                        perf()->set_beats_per_minute(er.tempo());
                     }
                     else if (! er.is_ex_data())
                     {
@@ -1194,7 +1174,7 @@ sequence::play
     {
         set_armed(false);
     }
-    m_last_tick = end_tick + 1;                     /* for next frame       */
+    m_last_tick = tick + 1;                         /* for next frame       */
 
     /*
      * This causes control-output spewage during playback, but we need to
@@ -1257,8 +1237,7 @@ sequence::live_play (midipulse tick)
 #if defined SUPPORT_TEMPO_IN_LIVE_PLAY
                 if (er.is_tempo())
                 {
-                    if (not_nullptr(perf()))
-                        perf()->set_beats_per_minute(er.tempo());
+                    perf()->set_beats_per_minute(er.tempo());
                 }
 #endif
                 put_event_on_bus(er);               /* frame still going    */
@@ -3922,9 +3901,12 @@ sequence::intersect_events
 #endif  // defined USE_INTERSECT_FUNCTIONS
 
 /**
- *  Grows a trigger.  See triggers::grow_trigger() for more information.
- *  We need to keep the automutex here because qperfroll calls this function
- *  directly.
+ *  Grows a trigger.  See triggers::grow_trigger() for more information.  Also
+ *  indicate we're modified.  Tricky, because if modify(true) were called, that
+ *  would call on_sequence_change(), which causes a segfault.  Here, we need to
+ *  modify the performer, but call a different notification function.
+ *
+ * \threadsafe
  *
  * \param tickfrom
  *      The desired from-value back which to expand the trigger, if necessary.
@@ -3935,7 +3917,6 @@ sequence::intersect_events
  * \param len
  *      The additional length to append to tickto for the check.
  *
- * \threadsafe
  */
 
 bool
@@ -3944,8 +3925,24 @@ sequence::grow_trigger (midipulse tickfrom, midipulse tickto, midipulse len)
     automutex locker(m_mutex);
     m_triggers.grow_trigger(tickfrom, tickto, len);
     modify(false);                      /* issue #90 flag change w/o notify */
+    set_dirty_mp();                     /* force redraw                     */
     return true;
 }
+
+/**
+ *  This grows a trigger continuously.
+ */
+
+bool
+sequence::grow_trigger (midipulse tickfrom, midipulse tickto)
+{
+    automutex locker(m_mutex);
+    m_triggers.grow_trigger(tickfrom, tickto, c_song_record_incr);
+    modify(false);                      /* issue #90 flag change w/o notify */
+    set_dirty_mp();                     /* force redraw                     */
+    return true;
+}
+
 
 const trigger &
 sequence::find_trigger (midipulse tick) const
@@ -6114,17 +6111,6 @@ sequence::off_one_shot ()
     perf()->announce_pattern(seq_number());     /* for issue #89        */
 }
 
-midipulse
-sequence::calculate_snap (midipulse tick, int snap)
-{
-    midipulse result = tick;
-    if (snap > 0)
-    {
-        tick = closest_snap(snap, tick);    /* calculations */
-    }
-    return result;
-}
-
 /**
  *  Starts the growing of the sequence for Song recording.  This process
  *  starts by adding a chunk of c_song_record_incr ticks to the
@@ -6139,18 +6125,19 @@ sequence::calculate_snap (midipulse tick, int snap)
  *
  * \param snap
  *      If true, trigger recording will snap.  Defaults to the preferred
- *      state, true.
+ *      state, true. Note that the performer actually does the snapping on
+ *      behalf of all patterns.
  */
 
 void
 sequence::song_recording_start (midipulse tick, bool snap)
 {
     song_recording(true);
-    song_record_tick(tick);
-    song_recording_snap(snap > 0);
-#if defined THIS_IS_READY
-    calculate_snap(tick, snap);                     /* for issue #44 redux  */
-#endif
+    song_recording_snap(snap);
+    if (snap)
+        (void) m_parent->calculate_snap(tick);      /* issue #44 redux  */
+
+    song_record_tick(tick);                         /* snapped or not   */
     add_trigger(tick, c_song_record_incr);
 }
 
@@ -6161,6 +6148,15 @@ sequence::song_recording_start (midipulse tick, bool snap)
  *
  *  However, for issue #44, we'd like to have the trigger stop at the snap
  *  point for the actual tick at which muting turns on.
+ *
+ *  In Kepler34, these were the grow_trigger() call parameters:
+ *
+ *      -   Song-recording start tick.
+ *      -   Current tick, "tick".
+ *      -   Length:  len = seq_length() - (tick % seq_length()).
+ *
+ *  That length snaps the end of the trigger to the next whole sequence
+ *  interval.
  *
  * \question
  *      Do we need to call set_dirty_mp() here?
@@ -6173,29 +6169,12 @@ sequence::song_recording_start (midipulse tick, bool snap)
 void
 sequence::song_recording_stop (midipulse tick)
 {
-    midipulse len = get_length();
-    m_song_playback_block = m_song_recording = false;
-    if (len > 0)
-    {
-#if 0
-        if (m_parent->calculate_snap(tick))         /* issue #44 redux  */
-            len = tick - song_record_tick();        /* shorter snap     */
-        else
-            len -= tick % len;                      /* ???              */
-#else
-        if (m_parent->calculate_snap(tick))         /* issue #44 redux  */
-        {
-            len = 0;
-        }
-        else
-        {
-        }
-#endif
+    (void) m_parent->calculate_snap(tick);      /* issue #44 redux  */
+    grow_trigger(song_record_tick(), tick, 1);
+    if (song_recording_snap())
+        off_from_snap(true);
 
-        m_triggers.grow_trigger(song_record_tick(), tick, len);
-        if (song_recording_snap())
-            off_from_snap(true);
-    }
+    m_song_playback_block = m_song_recording = false;
 }
 
 /**

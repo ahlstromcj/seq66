@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2022-10-06
+ * \updates       2022-10-08
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1474,8 +1474,6 @@ public:
         return m_song_recording_snap;
     }
 
-    midipulse calculate_snap (midipulse tick, int snap = 0);
-
     midipulse song_record_tick () const
     {
         return m_song_record_tick;
@@ -1575,6 +1573,7 @@ public:
     );
     bool split_trigger (midipulse tick, trigger::splitpoint splittype);
     bool grow_trigger (midipulse tick_from, midipulse tick_to, midipulse len);
+    bool grow_trigger (midipulse tick_from, midipulse tick_to);
     const trigger & find_trigger (midipulse tick) const;
     bool delete_trigger (midipulse tick);
     bool clear_triggers ();

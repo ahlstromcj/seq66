@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-10-04
+ * \updates       2022-10-10
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -603,6 +603,8 @@ extern std::string extract_bus_name (const std::string & fullname);
 extern std::string extract_port_name (const std::string & fullname);
 extern std::string extract_a2j_port_name (const std::string & alias);
 extern midipulse closest_snap (int S, midipulse p);
+extern midipulse down_snap (int S, midipulse p);
+extern midipulse up_snap (int S, midipulse p);
 
 }           // namespace seq66
 

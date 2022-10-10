@@ -1,7 +1,7 @@
 # README for Seq66 0.99.1
 
 Chris Ahlstrom
-2015-09-10 to 2022-10-05
+2015-09-10 to 2022-10-10
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -97,6 +97,7 @@ Windows, and using a conventional source tarball.
         *   Issue #44. Revisited to fix related additional issues. Can now
             toggle a pattern's song record in perfnames. Record button:
             Ctrl disables snap, Shift enables record at playback start.
+            Still minor issues.
         *   Issue #93. Revisited to fix related open pattern-editor issues.
         *   Issue #100. In progress. Added custom ringbuffer for MIDI message
             objects to replace JACK's ringbuffer. Issue still somewhat

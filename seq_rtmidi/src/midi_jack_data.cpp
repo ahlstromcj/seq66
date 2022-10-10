@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-13
- * \updates       2022-10-01
+ * \updates       2022-10-10
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -152,7 +152,8 @@ midi_jack_data::recalculate_frame_factor
          */
 
 ////    const double adjustment = 20.0;         /* 10.0 also works. Hmmmm?  */
-        const double adjustment = 2.0;          /* nperiod???               */
+////    const double adjustment = 2.0;          /* nperiod???               */
+        const double adjustment = 1.0;          /* nperiod???               */
         cycle_frame_count(F);
         cycle_time_us(1000000.0 * double(F) / frame_rate());
         pulse_time_us(1000000.0 * 600.0 /

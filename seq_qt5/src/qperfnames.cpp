@@ -167,70 +167,46 @@ qperfnames::paintEvent (QPaintEvent *)
                 seq::pointer s = perf().get_sequence(seq_id);
                 bool muted = s->get_song_mute();
                 char name[64];
-
-#if defined USE_OLD_CODE
-
-                /*
-                 * This code shows the channel at the top-right, redundantly.
-                 * To be consistent with the grid slots, whe need to show the
-                 * pattern length instead.
-                 */
-
-                int channel = int(s->seq_midi_channel());
-                if (is_null_channel(channel))
-                {
-                    snprintf
-                    (
-                        name, sizeof name, "%-14.14s   F",
-                        s->name().c_str()
-                    );
-                }
-                else
-                {
-                    snprintf
-                    (
-                        name, sizeof name, "%-14.14s %3d",
-                        s->name().c_str(), channel + 1
-                    );
-                }
-#else
                 snprintf
                 (
                     name, sizeof name, "%-14.14s %3d",
                     s->name().c_str(), s->measures()
                 );
-#endif
 
-            QString chinfo(name);
-            if (muted)
-            {
-                brush.setColor(grey_color());
-                brush.setStyle(Qt::SolidPattern);
-                painter.setBrush(brush);
-                painter.drawRect(rect_x, rect_y, rect_w, track_height());
-                pen.setColor(fore_color());
-            }
-            else
-            {
-                int c = s->color();
-                Color backcolor = get_color_fix(PaletteColor(c));
-                int alpha = seq_id == m_preview_row ?
-                    s_alpha_bright : s_alpha_normal ;
+                QString chinfo(name);
+                if (muted)
+                {
+                    brush.setColor(grey_color());
+                    brush.setStyle(Qt::SolidPattern);
+                    painter.setBrush(brush);
+                    painter.drawRect(rect_x, rect_y, rect_w, track_height());
+                    pen.setColor(fore_color());
+                }
+                else
+                {
+                    int c = s->color();
+                    Color backcolor = get_color_fix(PaletteColor(c));
+                    int alpha = seq_id == m_preview_row ?
+                        s_alpha_bright : s_alpha_normal ;
 
-                backcolor.setAlpha(alpha);
-                brush.setColor(backcolor);
-                brush.setStyle(Qt::SolidPattern);
-                painter.setBrush(brush);
-                painter.drawRect(rect_x, rect_y, rect_w, track_height());
-                pen.setColor(fore_color());
-            }
-            painter.setPen(pen);
-            painter.drawText(18, rect_y + 9, chinfo);
-            if (! track_thin())
-                painter.drawText(18, rect_y + 19, qt(sname));
-
-            painter.drawRect(name_x(2), name_y(seq_id), 9, track_height());
-            painter.drawText(name_x(4), name_y(seq_id) + 9, QString("M"));
+                    backcolor.setAlpha(alpha);
+                    brush.setColor(backcolor);
+                    brush.setStyle(Qt::SolidPattern);
+                    painter.setBrush(brush);
+                    painter.drawRect(rect_x, rect_y, rect_w, track_height());
+                    pen.setColor(fore_color());
+                }
+                painter.setPen(pen);
+                painter.drawText(18, rect_y + 9, chinfo);
+                if (! track_thin())
+                {
+                    char temp[8];
+                    snprintf(temp, sizeof temp, "%3d", s->trigger_count());
+                    painter.drawText(18, rect_y + 19, qt(sname));
+                    painter.drawText(114, rect_y + 19, temp);
+                }
+                painter.drawRect(name_x(2), name_y(seq_id), 9, track_height());
+                painter.drawText(name_x(4), name_y(seq_id) + 9, QString("M"));
         }
         else
         {

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-10-04
+ * \updates       2022-10-10
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -52,6 +52,13 @@
 #include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 
 /*
+ * Just for fun, we are trying linear gradients, to give the triggers a
+ * rounded look. Not ready for prime time.
+ */
+
+#undef  SEQ66_USE_LINEAR_GRADIENT
+
+/*
  *  Do not document a namespace; it breaks Doxygen.
  */
 
@@ -74,7 +81,7 @@ static const int c_ycorrection      = (-1);     /* horizontal grid line fix */
 static const int c_border_width     = 2;
 static const int c_pen_width        = 2;
 static const int c_background_x     = (c_base_ppqn * 4 * 16) / c_perf_scale_x;
-static const int c_size_box_w       = 6;
+static const int c_size_box_w       = 8;    // 6;
 static const int c_size_box_click_w = c_size_box_w + 1 ;
 
 /**
@@ -946,8 +953,13 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
     painter.setPen(pen);
     painter.setBrush(brush);
     pen.setWidth(1);
-    if (track_thick())
-        cbw *= 2;
+
+    /*
+     * No real need to enlarge the corner handles, IMHO.
+     *
+     *  if (track_thick())
+     *      cbw *= 2;
+     */
 
     for (int y = y_s; y <= y_f; ++y)
     {
@@ -986,27 +998,46 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     int x = x_on;
                     int xmax = x_off + 1;               /* same as x + w    */
                     int y = track_height() * seqid - 1;
+#if defined SEQ66_USE_LINEAR_GRADIENT
+                    QLinearGradient grad(x, y, x, y + h + 1);
+#endif
                     if (trig.selected())
                     {
+#if defined SEQ66_USE_LINEAR_GRADIENT
+                        grad.setColorAt(0.05, sel_color());
+                        grad.setColorAt(0.5, sel_color());
+                        grad.setColorAt(0.95, sel_color());
+#else
                         pen.setColor(sel_color());      /* orange, Qt::red  */
                         brush.setColor(grey_color());   /* make it obvious  */
+#endif
                     }
                     else
                     {
+#if defined SEQ66_USE_LINEAR_GRADIENT
+                        grad.setColorAt(0.01, grey_color());
+                        grad.setColorAt(0.5, backcolor);
+                        grad.setColorAt(0.99, grey_color());
+#else
                         pen.setColor(fore_color());
                         brush.setColor(backcolor);
+#endif
                     }
                     pen.setStyle(Qt::SolidLine);        /* seq trigger box  */
                     pen.setWidth(2);
+#if defined SEQ66_USE_LINEAR_GRADIENT
+                    painter.fillRect(x, y, w, h + 1, grad);
+#else
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.setPen(pen);
-                    painter.drawRect(x, y - 1, w, h + 1);
+                    painter.drawRect(x, y, w, h + 1);   /* flush with grid  */
+#endif
                     brush.setStyle(Qt::NoBrush);        /* grab handle L    */
                     painter.setBrush(brush);
                     pen.setColor(fore_color());
                     painter.setPen(pen);
-                    painter.drawRect(x, y, cbw, cbw);
+                    painter.drawRect(x, y + 2, cbw, cbw);
                     painter.drawRect                    /* grab handle R    */
                     (
                         xmax - cbw, y + h - cbw, cbw, cbw
@@ -1030,11 +1061,10 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         painter.drawText(tx, y + cbwoffset, temp);
                     }
 
-                    midipulse t = trig.trigger_marker(lens);
+                    midipulse t = trig.trigger_marker(lens);    /* offset   */
                     while (t < trig.tick_end())
                     {
-                        int note0;
-                        int note1;
+                        int note0, note1;
                         (void) s->minmax_notes(note0, note1);
 
                         int height = note1 - note0;
