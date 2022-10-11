@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-12-25
+ * \updates       2022-10-11
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -112,8 +112,9 @@ qperfnames::reupdate ()
 void
 qperfnames::paintEvent (QPaintEvent *)
 {
+    int h = track_height();
     int y_s = 0;
-    int y_f = height() / track_height();
+    int y_f = height() / h;
     int set_count = setmaster::Size();                  /* number of rows   */
     QPainter painter(this);
     QPen pen(fore_color());
@@ -125,14 +126,14 @@ qperfnames::paintEvent (QPaintEvent *)
     painter.setBrush(brush);
     painter.setFont(m_font);
     painter.drawRect(0, 0, width(), height() - 1);      // rectangle border
-    int set_y = track_height() * set_count / 2;
+    int set_y = h * set_count / 2;
     for (int y = y_s; y <= y_f; ++y)
     {
         int seq_id = y;
         if (seq_id < int(perf().sequence_max()))        // or use set_count?
         {
             int rect_x = 6 * 2 + 2;
-            int rect_y = track_height() * seq_id;
+            int rect_y = h * seq_id;
             int rect_w = c_names_x - 15;
             if ((seq_id % set_count) == 0)              // 1st seq in bank?
             {
@@ -144,7 +145,7 @@ qperfnames::paintEvent (QPaintEvent *)
                 brush.setStyle(Qt::SolidPattern);
                 painter.setPen(pen);
                 painter.setBrush(brush);
-                painter.drawRect(1, name_y(seq_id) + 1, 13, track_height() - 1);
+                painter.drawRect(1, name_y(seq_id) + 1, 13, h - 1);
 
                 int text_y = rect_y + set_y;
                 QString bankss(ss);
@@ -163,9 +164,9 @@ qperfnames::paintEvent (QPaintEvent *)
             }
             if (perf().is_seq_active(seq_id))
             {
-                std::string sname = perf().sequence_label(seq_id); // seq name
+                std::string seq_name = perf().sequence_label(seq_id);
                 seq::pointer s = perf().get_sequence(seq_id);
-                bool muted = s->get_song_mute();
+                bool muted = ! s->armed();              // s->get_song_mute()
                 char name[64];
                 snprintf
                 (
@@ -174,12 +175,44 @@ qperfnames::paintEvent (QPaintEvent *)
                 );
 
                 QString chinfo(name);
+
+#if defined SEQ66_USE_LINEAR_GRADIENT
+
+                QLinearGradient grad
+                (
+                    rect_x, rect_y, rect_x, rect_y + h + 1
+                );
+                if (muted)
+                {
+                    Color backcolor = grey_color();
+                    grad.setColorAt(0.01, backcolor.darker());
+                    grad.setColorAt(0.5, backcolor.lighter());
+                    grad.setColorAt(0.99, backcolor.darker());
+                    pen.setColor(fore_color());
+                }
+                else
+                {
+                    int c = s->color();
+                    Color backcolor = get_color_fix(PaletteColor(c));
+                    int alpha = seq_id == m_preview_row ?
+                        s_alpha_bright : s_alpha_normal ;
+
+                    backcolor.setAlpha(alpha);
+                    grad.setColorAt(0.01, backcolor.darker(150));
+                    grad.setColorAt(0.5, backcolor.lighter());
+                    grad.setColorAt(0.99, backcolor.darker(150));
+                    pen.setColor(fore_color());
+                }
+                painter.fillRect(rect_x, rect_y, rect_w, h + 1, grad);
+
+#else   // ! defined SEQ66_USE_LINEAR_GRADIENT
+
                 if (muted)
                 {
                     brush.setColor(grey_color());
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
-                    painter.drawRect(rect_x, rect_y, rect_w, track_height());
+                    painter.drawRect(rect_x, rect_y, rect_w, h);
                     pen.setColor(fore_color());
                 }
                 else
@@ -193,32 +226,55 @@ qperfnames::paintEvent (QPaintEvent *)
                     brush.setColor(backcolor);
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
-                    painter.drawRect(rect_x, rect_y, rect_w, track_height());
+                    painter.drawRect(rect_x, rect_y, rect_w, h);
                     pen.setColor(fore_color());
                 }
+
+#endif  // defined SEQ66_USE_LINEAR_GRADIENT
+
                 painter.setPen(pen);
                 painter.drawText(18, rect_y + 9, chinfo);
                 if (! track_thin())
                 {
                     char temp[8];
                     snprintf(temp, sizeof temp, "%3d", s->trigger_count());
-                    painter.drawText(18, rect_y + 19, qt(sname));
+                    painter.drawText(18, rect_y + 19, qt(seq_name));
                     painter.drawText(114, rect_y + 19, temp);
                 }
-                painter.drawRect(name_x(2), name_y(seq_id), 9, track_height());
+#if defined SEQ66_USE_LINEAR_GRADIENT
+                if (muted)
+                {
+                    brush.setColor(grey_color());
+                    brush.setStyle(Qt::SolidPattern);
+                    painter.setBrush(brush);
+                }
+                else
+                {
+                    int c = s->color();
+                    Color backcolor = get_color_fix(PaletteColor(c));
+                    int alpha = seq_id == m_preview_row ?
+                        s_alpha_bright : s_alpha_normal ;
+
+                    backcolor.setAlpha(alpha);
+                    brush.setColor(backcolor);
+                    brush.setStyle(Qt::SolidPattern);
+                    painter.setBrush(brush);
+                }
+#endif
+                painter.drawRect(name_x(2), name_y(seq_id), 9, h);
                 painter.drawText(name_x(4), name_y(seq_id) + 9, QString("M"));
-        }
-        else
-        {
-            pen.setStyle(Qt::SolidLine);
-            pen.setColor(fore_color());
-            brush.setColor(Qt::lightGray);
-            painter.setPen(pen);        /* fill seq label background    */
-            painter.setBrush(brush);
-            painter.drawRect(rect_x, rect_y, rect_w, track_height());
+            }
+            else
+            {
+                pen.setStyle(Qt::SolidLine);
+                pen.setColor(fore_color());
+                brush.setColor(Qt::lightGray);
+                painter.setPen(pen);        /* fill seq label background    */
+                painter.setBrush(brush);
+                painter.drawRect(rect_x, rect_y, rect_w, h);
+            }
         }
     }
-}
 }
 
 QSize

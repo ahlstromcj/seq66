@@ -810,7 +810,8 @@ midi_jack_info::api_connect ()
     bool result = not_nullptr(client_handle());
     if (result)
     {
-        m_jack_buffer_size = jack_get_buffer_size(client_handle());
+        m_jack_buffer_size = ::jack_get_buffer_size(client_handle());
+
         int rcode = ::jack_activate(client_handle());
         result = rcode == 0;
         if (result)

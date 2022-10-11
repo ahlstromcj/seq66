@@ -8,7 +8,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2022-09-25
-# \update         2022-10-03
+# \update         2022-10-11
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -55,7 +55,7 @@ JCTL_PERIOD="2048"      # for TESTING
 if [ "$1" == "--help" ] ; then
 
    cat << E_O_F
-Usage:
+Usage v. 2022-10-11:
 
    jackctl [--start] [options]    Start with the usual parameters (TBD).
 
@@ -73,6 +73,8 @@ Options:
 Getting tired of qjackctl and jackdbus wrestling with each other on
 a newer Ubuntu system that runs jackdbus.
 E_O_F
+
+exit 0
 
 else
 

@@ -665,6 +665,17 @@ qseqroll::draw_notes
                 painter.setBrush(note_brush());
             }
             painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
+
+#if defined SEQ66_USE_LINEAR_GRADIENT
+            QLinearGradient grad
+            (
+                m_note_x, m_note_y, m_note_x, m_note_y + noteheight
+            );
+            grad.setColorAt(0.05, fore_color());
+            grad.setColorAt(0.5,  note_in_color());
+            grad.setColorAt(0.95, fore_color());
+            painter.fillRect(m_note_x, m_note_y, m_note_width, noteheight, grad);
+#endif
             if (m_link_wraparound)
             {
                 if (ni.finish() < ni.start())       /* shadow these notes   */
@@ -697,6 +708,10 @@ qseqroll::draw_notes
                 {
                     int x_shift = m_note_x + in_shift;
                     int h_minus = noteheight - 1;
+#if defined SEQ66_USE_LINEAR_GRADIENT
+                    if (ni.selected())
+                    {
+#endif
                     if (ni.finish() >= ni.start())      /* note highlight   */
                     {
                         painter.drawRect
@@ -714,6 +729,9 @@ qseqroll::draw_notes
                         );
                         painter.drawRect(m_keypadding_x, m_note_y, w, h_minus);
                     }
+#if defined SEQ66_USE_LINEAR_GRADIENT
+                    }
+#endif
                 }
             }
         }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-09-23
+ * \updates       2022-10-11
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -49,6 +49,14 @@
 
 #include "seq66-config.h"               /* automake-generated or for qmake  */
 #include "seq66_platform_macros.h"      /* indicates the build platform     */
+
+/*
+ * Just for fun, we are trying linear gradients, to give the triggers a
+ * rounded look.  Disable and rebuild if it seems to add too much to CPU
+ * usage.
+ */
+
+#define SEQ66_USE_LINEAR_GRADIENT
 
 /**
  *  For issue #100, this macro enables using our new ring_buffer instead of
@@ -77,7 +85,7 @@
 
 /**
  *  Kepler34 has a drum edit mode that we are still exploring and adding,
- *  marked by the following macro to keep it out of the way until the feature
+ *  marke by the following macro to keep it out of the way until the feature
  *  is ready for prime time.  Currently builds but is incomplete and not
  *  tested.
  */

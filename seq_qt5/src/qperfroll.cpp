@@ -52,13 +52,6 @@
 #include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 
 /*
- * Just for fun, we are trying linear gradients, to give the triggers a
- * rounded look. Not ready for prime time.
- */
-
-#undef  SEQ66_USE_LINEAR_GRADIENT
-
-/*
  *  Do not document a namespace; it breaks Doxygen.
  */
 
@@ -998,41 +991,47 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     int x = x_on;
                     int xmax = x_off + 1;               /* same as x + w    */
                     int y = track_height() * seqid - 1;
+
 #if defined SEQ66_USE_LINEAR_GRADIENT
+
                     QLinearGradient grad(x, y, x, y + h + 1);
-#endif
                     if (trig.selected())
                     {
-#if defined SEQ66_USE_LINEAR_GRADIENT
-                        grad.setColorAt(0.05, sel_color());
-                        grad.setColorAt(0.5, sel_color());
-                        grad.setColorAt(0.95, sel_color());
-#else
-                        pen.setColor(sel_color());      /* orange, Qt::red  */
-                        brush.setColor(grey_color());   /* make it obvious  */
-#endif
+                        grad.setColorAt(0.01, sel_color().darker());
+                        grad.setColorAt(0.5, sel_color().lighter());
+                        grad.setColorAt(0.99, sel_color().darker());
                     }
                     else
                     {
-#if defined SEQ66_USE_LINEAR_GRADIENT
-                        grad.setColorAt(0.01, grey_color());
-                        grad.setColorAt(0.5, backcolor);
-                        grad.setColorAt(0.99, grey_color());
-#else
-                        pen.setColor(fore_color());
-                        brush.setColor(backcolor);
-#endif
+                        grad.setColorAt(0.01, backcolor.darker(150));
+                        grad.setColorAt(0.5, backcolor.lighter());
+                        grad.setColorAt(0.99, backcolor.darker(150));
                     }
                     pen.setStyle(Qt::SolidLine);        /* seq trigger box  */
                     pen.setWidth(2);
-#if defined SEQ66_USE_LINEAR_GRADIENT
                     painter.fillRect(x, y, w, h + 1, grad);
-#else
+
+#else   // ! defined SEQ66_USE_LINEAR_GRADIENT
+
+                    if (trig.selected())
+                    {
+                        pen.setColor(sel_color());      /* orange, Qt::red  */
+                        brush.setColor(grey_color());   /* make it obvious  */
+                    }
+                    else
+                    {
+                        pen.setColor(fore_color());
+                        brush.setColor(backcolor);
+                    }
+                    pen.setStyle(Qt::SolidLine);        /* seq trigger box  */
+                    pen.setWidth(2);
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.setPen(pen);
                     painter.drawRect(x, y, w, h + 1);   /* flush with grid  */
-#endif
+
+#endif  // defined SEQ66_USE_LINEAR_GRADIENT
+
                     brush.setStyle(Qt::NoBrush);        /* grab handle L    */
                     painter.setBrush(brush);
                     pen.setColor(fore_color());
@@ -1040,7 +1039,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     painter.drawRect(x, y + 2, cbw, cbw);
                     painter.drawRect                    /* grab handle R    */
                     (
-                        xmax - cbw, y + h - cbw, cbw, cbw
+                        xmax - cbw - 1, y + h - cbw, cbw, cbw
                     );
                     pen.setColor(fore_color());
                     pen.setWidth(1);

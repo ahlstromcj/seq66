@@ -1,7 +1,7 @@
 # README for Seq66 0.99.1
 
 Chris Ahlstrom
-2015-09-10 to 2022-10-10
+2015-09-10 to 2022-10-11
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -113,6 +113,8 @@ Windows, and using a conventional source tarball.
             *   Fixed handling of Ctrl vs non-Ctrl zoom keys in perfroll.
             *   The pernames panel now matches the layout of a grid button
                 better.
+        *   Added linear-gradient compile-time option (seq_features.h) for
+            displaying notes and triggers. Enabled by default, edit to disable.
     *   Version 0.99.0:
         *   Issue #44. Record live sequence changes functionality beefed up
             to handle recording without snapping.

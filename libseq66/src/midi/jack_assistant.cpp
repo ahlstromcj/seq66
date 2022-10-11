@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2022-09-26
+ * \updates       2022-10-11
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -325,17 +325,12 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
         jack_position_t pos;
         jack_transport_state_t s = ::jack_transport_query(j->client(), &pos);
         performer & p = j->parent();
-        int psize = ::jack_get_buffer_size(j->client());
 
         /*
+         * int psize = ::jack_get_buffer_size(j->client());
          * jack_nframes_t rate = ::jack_get_sample_rate(j->client());
+         * (void) jack_assistant::save_jack_parameters(pos, psize);
          */
-
-        /*
-         *  Save changes for potential display.
-         */
-
-        (void) jack_assistant::save_jack_parameters(pos, psize);
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
         static jack_time_t s_last = 0;
@@ -1173,7 +1168,12 @@ jack_assistant::activate ()
     bool result = true;
     if (not_nullptr(m_jack_client))
     {
+        int psize = ::jack_get_buffer_size(m_jack_client);
         int rc = ::jack_activate(m_jack_client);
+        jack_position_t pos;
+        (void) ::jack_transport_query(m_jack_client, &pos);
+        (void) jack_assistant::save_jack_parameters(pos, psize);
+
         result = rc == 0;
         if (result)
         {
