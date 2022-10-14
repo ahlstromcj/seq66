@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-13
- * \updates       2022-10-10
+ * \updates       2022-10-14
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -53,13 +53,15 @@ namespace seq66
  */
 
 jack_nframes_t midi_jack_data::sm_jack_frame_rate   = 0;
+jack_nframes_t midi_jack_data::sm_jack_start_frame  = 0;
+jack_nframes_t midi_jack_data::sm_cycle_frame_count = 0;
+jack_nframes_t midi_jack_data::sm_size_compensation = 0;
+jack_time_t midi_jack_data::sm_cycle_time_us        = 0;
+jack_time_t midi_jack_data::sm_pulse_time_us        = 0;
 double midi_jack_data::sm_jack_ticks_per_beat       = 1920.0;
 double midi_jack_data::sm_jack_beats_per_minute     = 120.0;
 double midi_jack_data::sm_jack_frame_factor         = 1.0;
 
-jack_nframes_t midi_jack_data::sm_cycle_frame_count = 0;
-jack_time_t midi_jack_data::sm_cycle_time_us        = 0;
-jack_time_t midi_jack_data::sm_pulse_time_us        = 0;
 
 /**
  * \ctor midi_jack_data
@@ -83,8 +85,7 @@ midi_jack_data::midi_jack_data () :
 }
 
 /**
- *  This destructor currently does nothing.  We rely on the enclosing class
- *  to close out the things that it created.
+ *  This destructor currently does nothing, as it owns nothing.
  */
 
 midi_jack_data::~midi_jack_data ()
@@ -148,29 +149,26 @@ midi_jack_data::recalculate_frame_factor
     if (changed)
     {
         /*
-         * A value of 2 or 3 would represent the period.
+         * A value of 2 or 3 would represent the ALSA nperiod, which does
+         * not affect (purportedly) the calculations.
          */
 
-////    const double adjustment = 20.0;         /* 10.0 also works. Hmmmm?  */
-////    const double adjustment = 2.0;          /* nperiod???               */
-        const double adjustment = 1.0;          /* nperiod???               */
+        const double adjustment = 1.0;                  /* nperiod?         */
+        double factor = 600.0 /                         /* seconds/pulse    */
+        (
+            adjustment * ticks_per_beat() * beats_per_minute()
+        );
         cycle_frame_count(F);
         cycle_time_us(1000000.0 * double(F) / frame_rate());
-        pulse_time_us(1000000.0 * 600.0 /
-            (ticks_per_beat() * beats_per_minute()));
-
-#if defined USE_ORIGINAL_CALCULATION
-        frame_factor((frame_rate() * 600.0) /
-            (ticks_per_beat() * beats_per_minute()));       /* P in denom?  */
-#else
-        frame_factor((frame_rate() * 60.0) /
-            (adjustment * ticks_per_beat() * beats_per_minute()));
-#endif
+        pulse_time_us(1000000.0 * factor);              /* microsec/pulse   */
+        frame_factor(frame_rate() * factor);            /* frames/pulse     */
+        size_compensation(jack_nframes_t(double(F)* 0.10 + 0.5));
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
         printf
         (
-"[debug] frames/cycle %u, %u us; frames/tick %g; ticks/beat %g; pulse %u us\n",
+            "[debug] frames/cycle %u, %u us; frames/tick %g; "
+            "ticks/beat %g; pulse %u us\n",
             cycle_frame_count(), unsigned(cycle_time_us()), frame_factor(),
             ticks_per_beat(), unsigned(pulse_time_us())
         );
@@ -195,7 +193,8 @@ midi_jack_data::recalculate_frame_factor
  *
  *  -#  We assume that the tick position p is in the same relative location
  *      relative to the current frame when placed into the ringbuffer and when
- *      retrieved from the ring buffer.
+ *      retrieved from the ring buffer. Actually, this is unlikely, but
+ *      all events spacing should still be preserved.
  *  -#  We can use the calculations modules pulse_length_us() function to
  *      get the length of a tick in seconds:  60 / ppqn / bpm. Therefore the
  *      tick time t(p) = p * 60 / ppqn / bpm.
@@ -269,17 +268,9 @@ midi_jack_data::recalculate_frame_factor
 jack_nframes_t
 midi_jack_data::frame_offset (jack_nframes_t F, midipulse p)
 {
-    jack_nframes_t result = frame_estimate(p);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    double temp = result;
-#endif
-       if (F > 1)
-           result = result % F;
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("[debug] ts %ld --> frame %g; offset %u\n",
-        long(p), temp, unsigned(result));
-#endif
+    jack_nframes_t result = frame_estimate(p) + start_frame();
+    if (F > 1)
+        result = result % F;
 
     return result;
 }
@@ -287,9 +278,11 @@ midi_jack_data::frame_offset (jack_nframes_t F, midipulse p)
 jack_nframes_t
 midi_jack_data::frame_estimate (midipulse p)
 {
-    double temp = p * frame_factor();
+    double temp = double(p) * frame_factor();
     return jack_nframes_t(temp);
 }
+
+#if defined USE_JACK_TIME_OFFSET_FUNCTION
 
 /**
  *  Function to adjust a MIDI event timestamp for lag when calculating what
@@ -313,9 +306,11 @@ midi_jack_data::frame_estimate (midipulse p)
  *      -#  Use the fractional remainder to calculate the offset:
  *          result = Foffset = F * fraction.
  *
- *  However, this function yields very bad playback at 4096 frames/cycle.
- *  It acts like the events are piling up in the ringbuffer. Removing the
- *  lag calculation make it play normally (but badly).
+ * However:
+ *
+ *  This function yields very bad playback at 4096 frames/cycle.  It acts like
+ *  the events are piling up in the ringbuffer. Removing the lag calculation
+ *  make it play normally (but badly).
  */
 
 jack_nframes_t
@@ -333,15 +328,14 @@ midi_jack_data::time_offset
     double truncation = std::trunc(f);
     double fraction = f - truncation;
     jack_nframes_t result = jack_nframes_t(F * fraction);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("frame %g, ts %ld --> offset %u\n", f, long(p), int(result));
-#endif
     if (result >= F)
     {
         // todo?
     }
     return result;
 }
+
+#endif  // defined USE_JACK_TIME_OFFSET_FUNCTION
 
 /**
  *  Calculates the putative cycle number, without truncation, because we want

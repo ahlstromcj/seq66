@@ -58,11 +58,6 @@
  *      -   qsmainwnd_height = 580, qsmainwnd.ui
  */
 
-// #define QSEQEDITFRAME64_WIDTH         680
-// #define QSEQEDITFRAME64_HEIGHT        920
-// #define QSEQEDITFRAME64_BASE_HEIGHT   572
-// #define QSEQEDITFRAME64_ROLL_HEIGHT   250
-
 /*
  *  A few forward declarations.  The Qt header files are in the cpp file.
  */
@@ -133,9 +128,7 @@ public:
 
     qseqeditframe64
     (
-        performer & p,
-        sequence & s,           // int seqid
-        QWidget * parent,
+        performer & p, sequence & s, QWidget * parent,
         bool shorter = false
     );
     virtual ~qseqeditframe64 ();
@@ -392,7 +385,7 @@ private:
     qpatternfix * m_patternfix_wnd;
 
     /**
-     *  Menus for Tools and it Harmonic Transpose sub-menu.
+     *  Menus for Tools and its Harmonic Transpose sub-menu.
      *  Menu for the Background Sequences button.
      *  Menu for the Event Data button.
      *  Menu for the "mini" Event Data button.

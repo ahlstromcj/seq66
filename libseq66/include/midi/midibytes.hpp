@@ -132,14 +132,22 @@ using jacktick = long;
  *  However, if you make this value unsigned, then perfroll won't show any
  *  notes in the sequence bars!!!  Also, a number of manipulations of this
  *  type currently depend upon it being a signed value.
+ *
+ *  JACK timestamps are in units of "frames":
+ *
+ *      typedef uint32_t jack_nframes_t;
+ *      #define JACK_MAX_FRAMES (4294967295U)   // UINT32_MAX
+ *
+ *  A long value is the same size in 32-bit code, and longer in 64-bit code,
+ *  so we can use a midipulse to hold a frame number.
  */
 
 using midipulse = long;
 
 /**
- *  JACK encodes jack_time_t as a uint64_t (8-byte) value.  We will use our own
- *  alias, of course.  The unsigned long long type is guaranteed to be at least
- *  8 bytes long on all platforms, but could be longer.
+ *  JACK encodes jack_time_t as a uint64_t (8-byte) value.  We will use our
+ *  own alias, of course.  The unsigned long long type is guaranteed to be at
+ *  least 8 bytes long on all platforms, but could be longer.
  */
 
 using microsec = uint64_t;

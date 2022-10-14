@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-10-02
+ * \updates       2022-10-13
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -113,23 +113,12 @@ jack_process_io (jack_nframes_t nframes, void * arg)
         {
             if (mj->enabled())
             {
-#if defined SEQ66_PLATFORM_DEBUG_TMI            /* printf() asynch unsafe   */
-                if (mj->is_input_port())
-                    printf("Enabled: %s\n", mj->port_name().c_str());
-#endif
                 midi_jack_data * mjp = &mj->jack_data();
                 if (mj->parent_bus().is_input_port())
                     (void) jack_process_rtmidi_input(nframes, mjp);
                 else
                     (void) jack_process_rtmidi_output(nframes, mjp);
             }
-#if defined SEQ66_PLATFORM_DEBUG_TMI            /* printf() asynch unsafe   */
-            else
-            {
-                if (mj->is_input_port())
-                    printf("Disabled: %s\n", mj->port_name().c_str());
-            }
-#endif
         }
     }
     return 0;

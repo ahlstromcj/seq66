@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2022-09-30
+ * \updates       2022-10-14
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -174,14 +174,15 @@ private:
 
     /**
      *  Holds the time at which the message was sent to the ring-buffer, in
-     *  microseconds.
+     *  microseconds. This is an unsigned 64-bit integer.
      */
 
     microsec m_push_time_us;
 
     /**
      *  Holds the (optional) timestamp of the MIDI message. Non-zero only
-     *  in the JACK implementation at present.
+     *  in the JACK implementation at present.  It can also hold a JACK
+     *  frame number. The caller can know this only by context at present.
      */
 
     midipulse m_timestamp;
@@ -239,6 +240,11 @@ public:
     microsec push_time_us () const
     {
         return m_push_time_us;
+    }
+
+    long push_time_ms () const
+    {
+        return long(m_push_time_us / 1000);
     }
 
     void push_time_us (microsec ptus)

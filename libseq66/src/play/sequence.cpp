@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-10-10
+ * \updates       2022-10-12
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3994,8 +3994,6 @@ sequence::set_trigger_offset (midipulse trigger_offset)
     }
     else
         m_trigger_offset = trigger_offset;
-
-//  modify(false);                      /* issue #90 flag change w/o notify */
 }
 
 /**
@@ -5812,7 +5810,6 @@ sequence::change_ppqn (int p)
         {
             m_length = rescale_tick(m_length, p, m_ppqn);
             m_ppqn = p;
-//          result = apply_length(0, p, 0);
             result = apply_length(0, 0, 0);             /* use new PPQN     */
             m_triggers.change_ppqn(p);
         }

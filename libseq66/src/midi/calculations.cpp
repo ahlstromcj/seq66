@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-10-10
+ * \updates       2022-10-12
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1471,6 +1471,9 @@ midipulse
 closest_snap (int S, midipulse p)
 {
     midipulse result = p;
+    if (p < 0)
+        return 0;
+
     if (S > 0)
     {
         midipulse Sn0 = p - (p % S);
@@ -1486,6 +1489,9 @@ midipulse
 down_snap (int S, midipulse p)
 {
     midipulse result = p;
+    if (p < 0)
+        return 0;
+
     if (S > 0)
         result = midipulse(p - (p % S));
 
@@ -1496,6 +1502,9 @@ midipulse
 up_snap (int S, midipulse p)
 {
     midipulse result = p;
+    if (p < 0)
+        return 0;
+
     if (S > 0)
     {
         midipulse Sn0 = p - (p % S);
