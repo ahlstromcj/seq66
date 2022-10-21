@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-10-11
+ * \updates       2022-10-20
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -166,7 +166,7 @@ qperfnames::paintEvent (QPaintEvent *)
             {
                 std::string seq_name = perf().sequence_label(seq_id);
                 seq::pointer s = perf().get_sequence(seq_id);
-                bool muted = ! s->armed();              // s->get_song_mute()
+                bool muted = s->get_song_mute();        // ! s->armed()
                 char name[64];
                 snprintf
                 (
@@ -188,7 +188,6 @@ qperfnames::paintEvent (QPaintEvent *)
                     grad.setColorAt(0.01, backcolor.darker());
                     grad.setColorAt(0.5, backcolor.lighter());
                     grad.setColorAt(0.99, backcolor.darker());
-                    pen.setColor(fore_color());
                 }
                 else
                 {
@@ -201,9 +200,20 @@ qperfnames::paintEvent (QPaintEvent *)
                     grad.setColorAt(0.01, backcolor.darker(150));
                     grad.setColorAt(0.5, backcolor.lighter());
                     grad.setColorAt(0.99, backcolor.darker(150));
-                    pen.setColor(fore_color());
                 }
-                painter.fillRect(rect_x, rect_y, rect_w, h + 1, grad);
+                painter.fillRect(rect_x +2 , rect_y +1, rect_w -2, h - 1, grad);
+                pen.setColor(fore_color());
+
+                /*
+                 * 0.99.1: Draw a rectangle around the gradient.
+                 */
+
+                pen.setStyle(Qt::SolidLine);
+                pen.setColor(fore_color());
+                painter.setPen(pen);
+                brush.setStyle(Qt::NoBrush);
+                painter.setBrush(brush);
+                painter.drawRect(rect_x, rect_y, rect_w, h);
 
 #else   // ! defined SEQ66_USE_LINEAR_GRADIENT
 
@@ -353,8 +363,13 @@ qperfnames::mousePressEvent (QMouseEvent * ev)
     {
         bool isshiftkey = (ev->modifiers() & Qt::ShiftModifier) != 0;
         (void) perf().toggle_sequences(seqnum, isshiftkey);
+        update();
     }
-    update();
+    else if (ev->button() == Qt::RightButton)
+    {
+        (void) perf().sequence_playing_toggle(seqnum);
+        update();
+    }
 }
 
 void

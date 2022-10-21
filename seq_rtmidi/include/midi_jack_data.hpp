@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-02
- * \updates       2022-10-14
+ * \updates       2022-10-17
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -77,6 +77,7 @@ class midi_jack_data
     static double sm_jack_ticks_per_beat;       /* seems to be 10 * PPQN    */
     static double sm_jack_beats_per_minute;     /* the BPM for the song     */
     static double sm_jack_frame_factor;         /* frames per PPQN tick     */
+    static bool sm_use_offset;                  /* requires JACK transport  */
 
     /**
      *  Holds the JACK sequencer client pointer so that it can be used by the
@@ -165,6 +166,10 @@ public:
     );
 #endif
     static jack_nframes_t frame_estimate (midipulse p);
+    static void cycle_frame
+    (
+        midipulse p, jack_nframes_t & cycle, jack_nframes_t & offset
+    );
     static double cycle (jack_nframes_t f, jack_nframes_t F);
     static double pulse_cycle (midipulse p, jack_nframes_t F);
 
@@ -198,6 +203,11 @@ public:
         return sm_jack_frame_factor;
     }
 
+    static bool use_offset ()
+    {
+        return sm_use_offset;
+    }
+
     static jack_nframes_t cycle_frame_count ()
     {
         return sm_cycle_frame_count;
@@ -213,10 +223,22 @@ public:
         return sm_cycle_time_us;
     }
 
+    static unsigned cycle_time_ms ()
+    {
+        return sm_cycle_time_us / 1000;
+    }
+
     static jack_time_t pulse_time_us ()
     {
         return sm_pulse_time_us;
     }
+
+    static unsigned pulse_time_ms ()
+    {
+        return sm_pulse_time_us / 1000;
+    }
+
+    static unsigned delta_time_ms (midipulse p);
 
     static void frame_rate (jack_nframes_t nf)
     {
@@ -241,6 +263,11 @@ public:
     static void frame_factor (double ff)
     {
         sm_jack_frame_factor = ff;
+    }
+
+    static void use_offset (bool flag)
+    {
+        sm_use_offset = flag;
     }
 
     static void cycle_frame_count (jack_nframes_t cfc)

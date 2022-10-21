@@ -515,30 +515,33 @@ triggers::add
     midibyte transpose, bool fixoffset
 )
 {
-    midipulse adjusted_offset = fixoffset ? adjust_offset(offset) : offset;
-    trigger t(tick, len, adjusted_offset, transpose);
-    for (auto ti = m_triggers.begin(); ti != m_triggers.end(); /* ++ti */)
+    if (tick >= 0 && len >= 0)
     {
-        midipulse tickstart = ti->tick_start();
-        midipulse tickend = ti->tick_end();
-        if (tickstart >= t.tick_start() && tickend <= t.tick_end())
+        midipulse adjusted_offset = fixoffset ? adjust_offset(offset) : offset;
+        trigger t(tick, len, adjusted_offset, transpose);
+        for (auto ti = m_triggers.begin(); ti != m_triggers.end(); /* ++ti */)
         {
-            unselect(*ti);                      /* adjust selection count   */
-            ti = m_triggers.erase(ti);          /* inside new one? erase.   */
-            continue;                           /* skip the ++ti            */
+            midipulse tickstart = ti->tick_start();
+            midipulse tickend = ti->tick_end();
+            if (tickstart >= t.tick_start() && tickend <= t.tick_end())
+            {
+                unselect(*ti);                  /* adjust selection count   */
+                ti = m_triggers.erase(ti);      /* inside new one? erase.   */
+                continue;                       /* skip the ++ti            */
+            }
+            else if (tickend >= t.tick_end() && tickstart <= t.tick_end())
+            {
+                ti->tick_start(t.tick_end() + 1);   /* event's end inside?  */
+            }
+            else if (tickend >= t.tick_start() && tickstart <= t.tick_start())
+            {
+                ti->tick_end(t.tick_start() - 1);   /* last start, new end  */
+            }
+            ++ti;                                   /* tricky code          */
         }
-        else if (tickend >= t.tick_end() && tickstart <= t.tick_end())
-        {
-            ti->tick_start(t.tick_end() + 1);   /* is event's end inside?   */
-        }
-        else if (tickend >= t.tick_start() && tickstart <= t.tick_start())
-        {
-            ti->tick_end(t.tick_start() - 1);   /* last start in new end    */
-        }
-        ++ti;                                   /* tricky code              */
+        m_triggers.push_back(t);
+        sort();
     }
-    m_triggers.push_back(t);
-    sort();                                     /* m_triggers.sort()        */
 }
 
 /**
@@ -885,62 +888,67 @@ triggers::move
     bool direction, bool single
 )
 {
-    bool result = false;
-    int counter = 0;
-    for (auto & t : m_triggers)                             /* ++counter    */
+    bool result = (starttick + distance) > 0;
+    if (result)
     {
-        if (t.tick_start() >= starttick)
+        int counter = 0;
+        for (auto & t : m_triggers)                         /* ++counter    */
         {
-            if (direction)                                  /* forward      */
+            if (t.tick_start() >= starttick)
             {
-                midipulse stopper = (-1);
-                const trigger & tnext = find_trigger_by_index(counter + 1);
-                if (tnext.is_valid())
-                    stopper = tnext.tick_start();
-
-                midipulse added_end = t.tick_end() + distance;
-                result = stopper == (-1) || added_end < stopper;
-                if (result)
+                if (direction)                              /* forward      */
                 {
-                    midipulse added = t.tick_start() + distance;
-                    t.tick_start(added);
-                    t.tick_end(added_end);
-                    added = (t.offset() + distance) % m_length;
-                    t.offset(added);
-                    t.offset(adjust_offset(t.offset()));    // ???
+                    midipulse stopper = (-1);
+                    const trigger & tnext = find_trigger_by_index(counter + 1);
+                    if (tnext.is_valid())
+                        stopper = tnext.tick_start();
+
+                    midipulse added_end = t.tick_end() + distance;
+                    result = stopper == (-1) || added_end < stopper;
+                    if (result)
+                    {
+                        midipulse added = t.tick_start() + distance;
+                        t.tick_start(added);
+                        t.tick_end(added_end);
+                        added = (t.offset() + distance) % m_length;
+                        t.offset(added);
+                        t.offset(adjust_offset(t.offset()));
+                    }
+                    if (single)
+                        break;
                 }
-                if (single)
-                    break;
-            }
-            else                                            /* backward     */
-            {
-                midipulse stopper = (-1);
-                const trigger & tprev = find_trigger_by_index(counter - 1);
-                if (tprev.is_valid())
-                    stopper = tprev.tick_end();
-
-                midipulse deducted_start = t.tick_start() - distance;
-                result = stopper == (-1) || deducted_start > stopper;
-                if (result)
-                    result = deducted_start >= 0;
-
-                if (result)
+                else                                        /* backward     */
                 {
-                    midipulse deducted_end = t.tick_end() - distance;
+                    midipulse stopper = (-1);
+                    const trigger & tprev = find_trigger_by_index(counter - 1);
+                    if (tprev.is_valid())
+                        stopper = tprev.tick_end();
 
-                    result = true;
+                    midipulse deducted_start = t.tick_start() - distance;
+                    result = stopper == (-1) || deducted_start > stopper;
+                    if (result)
+                        result = deducted_start >= 0;
 
-                    t.tick_start(deducted_start);
-                    t.tick_end(deducted_end);
-                    deducted_end = (m_length - (distance % m_length)) % m_length;
-                    t.offset(deducted_end);
-                    t.offset(adjust_offset(t.offset()));    // ???
+                    if (result)
+                    {
+                        midipulse deducted_end = t.tick_end() - distance;
+
+                        result = true;
+
+                        t.tick_start(deducted_start);
+                        t.tick_end(deducted_end);
+                        deducted_end =
+                            (m_length - (distance % m_length)) % m_length;
+
+                        t.offset(deducted_end);
+                        t.offset(adjust_offset(t.offset()));
+                    }
+                    if (single)
+                        break;
                 }
-                if (single)
-                    break;
             }
+            ++counter;
         }
-        ++counter;
     }
     return result;
 }

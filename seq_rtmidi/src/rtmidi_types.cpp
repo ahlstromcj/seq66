@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-01
- * \updates       2022-09-28
+ * \updates       2022-10-18
  * \license       See above.
  *
  *  Provides some basic types for the (heavily-factored) rtmidi library, very
@@ -47,7 +47,9 @@ namespace seq66
  * class midi_message
  */
 
+#if defined SEQ66_PLATFORM_DEBUG
 unsigned midi_message::sm_msg_number = 0;
+#endif
 
 /**
  *  Constructs an empty MIDI message.  Well, empty except for the timestamp
@@ -58,9 +60,10 @@ unsigned midi_message::sm_msg_number = 0;
  */
 
 midi_message::midi_message (midipulse ts) :
+#if defined SEQ66_PLATFORM_DEBUG
     m_msg_number    (sm_msg_number++),
+#endif
     m_bytes         (),
-    m_push_time_us  (0),
     m_timestamp     (ts)
 {
     // No code
@@ -78,9 +81,10 @@ midi_message::midi_message (midipulse ts) :
  */
 
 midi_message::midi_message (const midibyte * mbs, std::size_t sz) :
+#if defined SEQ66_PLATFORM_DEBUG
     m_msg_number    (sm_msg_number++),
+#endif
     m_bytes         (),
-    m_push_time_us  (0),
     m_timestamp     (0)
 {
     for (std::size_t i = 0; i < sz; ++i)
@@ -88,28 +92,41 @@ midi_message::midi_message (const midibyte * mbs, std::size_t sz) :
 }
 
 /**
- *  Shows the bytes in a message, for trouble-shooting.
+ *  Shows the bytes in a string, for trouble-shooting.  It includes only the
+ *  timestamp and the first few bytes.
  */
 
-void
-midi_message::show () const
+std::string
+midi_message::to_string () const
 {
-    if (m_bytes.empty())
+    unsigned long ts = (unsigned long)(timestamp());    /* pulse or frame   */
+#if defined SEQ66_PLATFORM_DEBUG
+    std::string result = "Event #";
+    result += std::to_string(msg_number());
+    result += " @ ";
+#else
+    std::string result = "Event @ ";
+#endif
+    result += std::to_string(ts);
+    result += ":";
+
+    int counter = 8;
+    if (event_count() < counter)
+        counter = event_count();
+
+    for (int i = 0; i < counter; ++i)
     {
-        std::fprintf(stderr, "midi_message: empty\n");
-        fflush(stderr);
-    }
-    else
-    {
-        midipulse ts = timestamp();
-        std::fprintf(stderr, "midi_message (ts %ld):", long(ts));
-        for (auto c : m_bytes)
+        result += " ";
+        if (i == 0)
         {
-            std::fprintf(stderr, " 0x%2x", int(c));
+            char temp[8];
+            snprintf(temp, sizeof temp, "0x%2x", m_bytes[i]);
+            result += temp;
         }
-        std::fprintf(stderr, "\n");
-        fflush(stderr);
+        else
+            result += std::to_string(m_bytes[i]);
     }
+    return result;
 }
 
 /*

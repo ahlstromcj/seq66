@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2022-10-14
+ * \updates       2022-10-18
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -153,6 +153,8 @@ public:
 
 private:
 
+#if defined SEQ66_PLATFORM_DEBUG
+
     /**
      *  Provide a static counter to keep track of events. Currently needed for
      *  trouble-shooting.  We don't care about wraparound.
@@ -166,6 +168,8 @@ private:
 
     unsigned m_msg_number;
 
+#endif
+
     /**
      *  Holds the event status and data bytes.
      */
@@ -173,16 +177,9 @@ private:
     container m_bytes;
 
     /**
-     *  Holds the time at which the message was sent to the ring-buffer, in
-     *  microseconds. This is an unsigned 64-bit integer.
-     */
-
-    microsec m_push_time_us;
-
-    /**
-     *  Holds the (optional) timestamp of the MIDI message. Non-zero only
-     *  in the JACK implementation at present.  It can also hold a JACK
-     *  frame number. The caller can know this only by context at present.
+     *  Holds the timestamp of the MIDI message. Non-zero only in the JACK
+     *  implementation at present.  It can also hold a JACK frame number. The
+     *  caller can know this only by context at present.
      */
 
     midipulse m_timestamp;
@@ -217,10 +214,12 @@ public:
         return m_bytes.data();
     }
 
+#if defined SEQ66_PLATFORM_DEBUG
     unsigned msg_number () const
     {
         return m_msg_number;
     }
+#endif
 
     bool empty () const
     {
@@ -235,21 +234,6 @@ public:
     void push (midibyte b)
     {
         m_bytes.push_back(b);
-    }
-
-    microsec push_time_us () const
-    {
-        return m_push_time_us;
-    }
-
-    long push_time_ms () const
-    {
-        return long(m_push_time_us / 1000);
-    }
-
-    void push_time_us (microsec ptus)
-    {
-        m_push_time_us = ptus;
     }
 
     midipulse timestamp () const
@@ -267,7 +251,7 @@ public:
         return m_bytes.size() > 0 ? event::is_sysex_msg(m_bytes[0]) : false ;
     }
 
-    void show () const;
+    std::string to_string () const;
 
 private:
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2022-05-06
+ * \updates       2022-10-19
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -550,7 +550,9 @@ show_file_dialog
     if (result)
     {
         selectedfile = file.toStdString();
-        if (saving && ! extension.empty())
+
+        std::string ext = file_extension(selectedfile);
+        if (saving && ext.empty() && ! extension.empty())
             selectedfile = file_extension_set(selectedfile, extension);
 
         file_message(saving ? "Saving" : "Opening", selectedfile);

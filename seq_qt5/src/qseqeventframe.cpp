@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-07-05
+ * \updates       2022-10-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -1023,6 +1023,30 @@ qseqeventframe::slot_clear ()
     set_selection_multi(false);
 }
 
+std::string
+qseqeventframe::filename_prompt
+(
+    const std::string & prompt,
+    const std::string & file
+)
+{
+    std::string result = file;
+    bool ok = show_file_dialog
+    (
+        this, result, prompt,
+        "Text files (*.text *.txt);;All files (*)", SavingFile, NormalFile,
+        ".text"
+    );
+    if (ok)
+    {
+        // nothing yet
+    }
+    else
+        result.clear();
+
+    return result;
+}
+
 void
 qseqeventframe::slot_dump ()
 {
@@ -1042,8 +1066,23 @@ qseqeventframe::slot_dump ()
                 basename += std::to_string(track().seq_number());
                 basename = file_extension_set(basename, ".text");
                 fspec = filename_concatenate(directory, basename);
-                if (! file_write_string(fspec, dump))
-                    msgprintf(msglevel::status, "%s", dump.c_str());
+
+                /*
+                 * Before writing, give the user a chance to save it
+                 * elsewhere, or at least see where it will be saved.
+                 */
+
+                std::string prompt = "Dump events to text file";
+                std::string filename = filename_prompt(prompt, fspec);
+                if (filename.empty())
+                {
+                    // no code, the user cancelled
+                }
+                else
+                {
+                    if (! file_write_string(fspec, dump))
+                        msgprintf(msglevel::status, "%s", dump.c_str());
+                }
             }
             else
                 msgprintf(msglevel::status, "%s", dump.c_str());

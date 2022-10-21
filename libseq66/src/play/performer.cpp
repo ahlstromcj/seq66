@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-10-10
+ * \updates       2022-10-15
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -6152,11 +6152,14 @@ performer::toggle_other_names (seq::number seqno, bool isshiftkey)
             /*
              * Relating to issue #44, here we want the same functionality as
              * toggling the grid button. Yields better visual feedback.
+             * Uh, no, it disables showning the muting in perfnames, even if
+             * accompanied by the toggle_song_mute() call.  Song mute and pattern
+             * mute are bit conflicted at this time.
              *
-             * mapper().toggle_song_mute(seqno);
+             *      result = sequence_playing_toggle(seqno);
              */
 
-            result = sequence_playing_toggle(seqno);
+            mapper().toggle_song_mute(seqno);
         }
     }
     return result;

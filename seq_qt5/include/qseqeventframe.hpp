@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-07-05
+ * \updates       2022-10-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -152,6 +152,11 @@ private:
     int current_row () const;
     void populate_midich_combo ();
     void populate_status_combo ();
+    std::string filename_prompt
+    (
+        const std::string & prompt,
+        const std::string & file
+    );
 
 protected:                          // overrides of event handlers
 

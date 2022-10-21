@@ -1025,10 +1025,11 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     }
                     pen.setStyle(Qt::SolidLine);        /* seq trigger box  */
                     pen.setWidth(2);
+
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.setPen(pen);
-                    painter.drawRect(x, y, w, h + 1);   /* flush with grid  */
+                    painter.drawRect(x + 1, y + 1, w - 2, h - 1);
 
 #endif  // defined SEQ66_USE_LINEAR_GRADIENT
 
@@ -1036,7 +1037,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     painter.setBrush(brush);
                     pen.setColor(fore_color());
                     painter.setPen(pen);
-                    painter.drawRect(x, y + 2, cbw, cbw);
+                    painter.drawRect(x + 1, y + 2, cbw, cbw);
                     painter.drawRect                    /* grab handle R    */
                     (
                         xmax - cbw - 1, y + h - cbw, cbw, cbw
@@ -1053,9 +1054,9 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         else
                             snprintf(temp, sizeof temp, "-%d", -t);
 
-                        int tx = x + 4;
+                        int tx = x + 6;
                         if (track_thin())
-                            tx += 8;
+                            tx += 6;
 
                         painter.drawText(tx, y + cbwoffset, temp);
                     }

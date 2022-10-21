@@ -424,7 +424,6 @@ midibase::initialize (bool initdisabled)
     return result;
 }
 
-
 /**
  *  Prints m_name.
  */

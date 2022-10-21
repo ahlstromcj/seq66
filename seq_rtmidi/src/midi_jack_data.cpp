@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-13
- * \updates       2022-10-14
+ * \updates       2022-10-17
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -33,6 +33,7 @@
 #include <cmath>                        /* std::trunc(double) functions     */
 
 #include "midi_jack_data.hpp"           /* seq66::midi_jack_data class      */
+#include "cfg/settings.hpp"             /* seq66::rc() config accessor      */
 
 #if defined SEQ66_JACK_SUPPORT
 
@@ -52,16 +53,16 @@ namespace seq66
  *  output callback.
  */
 
-jack_nframes_t midi_jack_data::sm_jack_frame_rate   = 0;
+jack_nframes_t midi_jack_data::sm_jack_frame_rate   = 1;    /* impossible   */
 jack_nframes_t midi_jack_data::sm_jack_start_frame  = 0;
 jack_nframes_t midi_jack_data::sm_cycle_frame_count = 0;
 jack_nframes_t midi_jack_data::sm_size_compensation = 0;
 jack_time_t midi_jack_data::sm_cycle_time_us        = 0;
 jack_time_t midi_jack_data::sm_pulse_time_us        = 0;
 double midi_jack_data::sm_jack_ticks_per_beat       = 1920.0;
-double midi_jack_data::sm_jack_beats_per_minute     = 120.0;
-double midi_jack_data::sm_jack_frame_factor         = 1.0;
-
+double midi_jack_data::sm_jack_beats_per_minute     = 1.0;  /* 120.0        */
+double midi_jack_data::sm_jack_frame_factor         = 0.0;
+bool midi_jack_data::sm_use_offset                  = false;
 
 /**
  * \ctor midi_jack_data
@@ -158,11 +159,15 @@ midi_jack_data::recalculate_frame_factor
         (
             adjustment * ticks_per_beat() * beats_per_minute()
         );
+        double cycletime = double(F) / frame_rate();
+        double compensation = double(F) * 0.10 + 0.5;
+        bool useoffset = rc().with_jack_transport() && rc().jack_use_offset();
         cycle_frame_count(F);
-        cycle_time_us(1000000.0 * double(F) / frame_rate());
+        cycle_time_us(1000000.0 * cycletime);           /* microsec/cycle   */
         pulse_time_us(1000000.0 * factor);              /* microsec/pulse   */
         frame_factor(frame_rate() * factor);            /* frames/pulse     */
-        size_compensation(jack_nframes_t(double(F)* 0.10 + 0.5));
+        size_compensation(jack_nframes_t(compensation));
+        use_offset(useoffset);
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
         printf
@@ -275,11 +280,44 @@ midi_jack_data::frame_offset (jack_nframes_t F, midipulse p)
     return result;
 }
 
+/**
+ *  Calculates pulses * frames / pulse to estimate the frame value.
+ *  This value is rounded and truncated.
+ */
+
 jack_nframes_t
 midi_jack_data::frame_estimate (midipulse p)
 {
-    double temp = double(p) * frame_factor();
+    double temp = double(p) * frame_factor() + 0.5;
     return jack_nframes_t(temp);
+}
+
+void
+midi_jack_data::cycle_frame
+(
+    midipulse p, jack_nframes_t & cycle, jack_nframes_t & offset
+)
+{
+    double f = double(p) * frame_factor() + 0.5;        /* frame estimate   */
+    double c = f / double(cycle_frame_count());         /* cycle + fraction */
+    double fullc = std::trunc(c);
+    double fraction = c - fullc;
+    cycle = jack_nframes_t(c);                          /* cycle number     */
+    offset = jack_nframes_t(fraction * cycle_frame_count());
+}
+
+unsigned
+midi_jack_data::delta_time_ms (midipulse p)
+{
+    unsigned result = 0;
+    double tpb = ticks_per_beat();
+    double bpm = beats_per_minute();
+    if (tpb > 10.0 && bpm > 1.0)
+    {
+        double ms = 0.001 * ticks_to_delta_time_us(p, tpb / 10.0, bpm);
+        result = unsigned(ms + 0.5);
+    }
+    return result;
 }
 
 #if defined USE_JACK_TIME_OFFSET_FUNCTION

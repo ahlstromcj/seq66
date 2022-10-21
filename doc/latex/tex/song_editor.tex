@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-10-08
+% \update      2022-10-20
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -396,16 +396,24 @@
          This number shows the number of triggers present in the pattern.
       \item \textbf{Mute Indicator}.
          \index{song editor!mute indicator}
-         The letter \textbf{M} is in a grey box if the track/pattern is muted,
-         and a white (or colored) box if it is unmuted.
+         The letter \textbf{M} is in a grey box if the track/pattern
+         is muted via song playback,
+         and a white (or colored) box if it is unmuted in song playback.
          Left-clicking on the "M" (or the name of the pattern)
          mutes/unmutes the pattern.
+         \index{left click}
+         Song muting is effected via a left-click on the pattern name.
          This is also useful in song-recording (where the triggers are recorded).
          \index{shift left click}
          If the Shift key is held while left-clicking on the M or the pattern
          name, then
          the mute/unmute state of every other active pattern is toggled.
          This feature is useful for isolating a single track or pattern.
+         \index{right click}
+         Normally, one records song triggers using the grid buttons or MIDI
+         control to turn patterns on and off.
+         One can also right-click on the pattern name during song-record and
+         thereby see the trigger(s) being created.
       \item \textbf{Empty Track}.
          Completely empty tracks (no track events or meta events)
          are indicated by a dark-gray filling in the pattern column.

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-10-14
+ * \updates       2022-10-20
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -189,6 +189,15 @@
 #include "midibus_rm.hpp"               /* seq66::midibus for rtmidi        */
 #include "midi_jack.hpp"                /* seq66::midi_jack                 */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
+
+/*
+ * For testing.  If enabled, we put the frame number in the midi_message and
+ * use that, otherwise we use the MIDI pulse time-stamp and calculate a frame
+ * offset. One odd thing about this features is the buffer-size compensation
+ * value from ttymidi.c.
+ */
+
+#undef  SEQ66_ENCODE_JACK_FRAME_TIME
 
 /**
  *  Delimits the size of the JACK ringbuffer. Related to issue #100, when
@@ -359,18 +368,15 @@ jack_process_rtmidi_input (jack_nframes_t framect, void * arg)
  *  Handles peeking and reading data from our replacement for the JACK
  *  ringbuffer.
  *
- * \param buffmsg
- *      The ringbuffer to check.  It is expected to hold two bytes (a short)
- *      of message size, plus the message itself.
+ * \param jackdata
+ *      The source of JACK information for this port.
  *
  * \param framect
  *      The size of the JACK buffer in "samples".  Needed to calculate the
  *      offset, it also provides the limit for the offset value.
  *
- * \param lastoffset
- *      Provides the calculated offset of the previous message.  If the
- *      calculated offset is less than this value, this means that the
- *      event should be put off until the next process callback call.
+ * \param lastvalue
+ *      Provides the last frame offset.
  *
  * \param [out] dest
  *      The bytes from the ringbuffer that are to be written to MIDI are
@@ -387,52 +393,129 @@ jack_process_rtmidi_input (jack_nframes_t framect, void * arg)
  *      callback cycle.
  */
 
-#if defined USE_THIS_CODE
-
 static jack_nframes_t
 jack_get_event_data
 (
-    ring_buffer<midi_message> * buffmsg,
+    midi_jack_data * jackdata,
     jack_nframes_t framect,
-    jack_nframes_t lastoffset,
+    jack_nframes_t cycle_start,
+    jack_nframes_t & lastvalue,
     char * dest, size_t & destsz
 )
 {
-    static bool s_use_offset = rc().jack_use_offset();
     jack_nframes_t result = UINT32_MAX;
-    bool process = buffmsg->read_space() > 0;
+    ring_buffer<midi_message> * buffmsg = jackdata->jack_buffer();
+    int count = int(buffmsg->read_space());
+    bool process = count > 0;
     if (process)
     {
-        static unsigned s_last_msg_number = 0;
+        static bool s_use_offset = midi_jack_data::use_offset();
         const midi_message & msg = buffmsg->front();
-        midipulse ts = msg.timestamp();
+#if defined SEQ66_PLATFORM_DEBUG
+        static unsigned s_last_msg_number = 0;
         unsigned msgno = msg.msg_number();
         if (msgno < s_last_msg_number)
             async_safe_errprint("ring_buffer wraparound?");
 
         s_last_msg_number = msgno;
+#endif
+
+#if defined SEQ66_ENCODE_JACK_FRAME_TIME
+
+        /*
+         * ---------------------- Frame Time -----------------------
+         */
+
         if (s_use_offset)
         {
-            result = midi_jack_data::frame_offset(framect, ts);
-
-            /*
-             * Sort of helps to just not belay.
-             *
-             * process = result >= lastoffset;             // next cycle?
-             */
-
-            if (result < lastoffset)
-                result = framect - 1;
-
-#if defined SEQ66_PLATFORM_DEBUG_NOT_READY
-            char value[c_async_safe_utoa_size];
-            char text[c_async_safe_utoa_size + 32];
-
-            async_safe_strprint("~");
+            jack_nframes_t frame = jack_nframes_t(msg.timestamp());
+            unsigned delta = unsigned(cycle_start) - unsigned(frame);
+            double ms = 1000.0 * double(delta) / midi_jack_data::frame_rate();
+#if defined SEQ66_PLATFORM_DEBUG
+            printf("CyStart - EvFrame %u (%.1f ms) --> ", delta, ms);
 #endif
+            frame += framect - (framect / 4);  // midi_jack_data::size_compensation();
+            if (lastvalue > frame)
+                frame = lastvalue;
+            else
+                lastvalue = frame;
+
+            if (frame > cycle_start)
+            {
+                result = frame - cycle_start;
+                if (result >= framect)
+                    result = framect - 1;
+            }
+            else
+                result = 0;
         }
         else
             result = 0;
+
+#if defined SEQ66_PLATFORM_DEBUG
+        printf("offset %u\n", unsigned(result));
+#endif
+
+#else
+
+        /*
+         * ---------------------- Pulse Time -----------------------
+         */
+
+        midipulse ts = msg.timestamp();
+        if (s_use_offset)
+        {
+            result = midi_jack_data::frame_offset(framect, ts);
+            process = result >= lastvalue;             /* next cycle?  */
+            if (midi_jack_data::frame_estimate(ts) != cycle_start)
+            {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+                printf("Break\n");
+#endif
+            }
+        }
+        else
+            result = 0;
+
+#if defined SEQ66_PLATFORM_DEBUG
+        static bool s_gotfirst = false;
+        static jack_nframes_t s_first_cycle_time = 0;
+        if (! s_gotfirst)
+        {
+            s_first_cycle_time = cycle_start;
+            s_gotfirst = true;
+        }
+        static bool s_gotcycle = false;
+        static double s_last_milliseconds = 0.0;
+        unsigned start = unsigned(cycle_start);
+        unsigned cycleoffset = start - unsigned(s_first_cycle_time);
+        unsigned cycle = cycleoffset / unsigned(framect);
+        unsigned frameoffset = unsigned(result);
+        double cycletime = 1000.0 *
+            (double(cycleoffset) + double(frameoffset)) /
+            midi_jack_data::frame_rate();
+
+        if (! s_gotcycle)
+        {
+            s_last_milliseconds = cycletime;
+            s_gotcycle = true;
+        }
+        cycletime -= s_last_milliseconds; // midi_jack_data::cycle_time_ms();
+
+        std::string info = msg.to_string();
+        unsigned ms = midi_jack_data::delta_time_ms(ts);
+        printf
+        (
+            "Ct %d %s (%u ms, offset %u): cycle %u (fr %u); at %.f ms\n",
+            count, info.c_str(), ms, frameoffset, cycle, cycleoffset, cycletime
+        );
+#endif
+
+        /*
+         * ---------------------------------------------------------
+         */
+
+#endif  // defined SEQ66_ENCODE_JACK_FRAME_TIME
 
         if (process)
         {
@@ -446,68 +529,19 @@ jack_get_event_data
         }
         else
         {
-            char value[c_async_safe_utoa_size];
-            char text[c_async_safe_utoa_size + 32];
-            std::strcpy(text, "Event #");
-            async_safe_utoa(value, msg.msg_number());
-            std::strcat(text, value);
-            std::strcat(text, " belayed offset ");
-            async_safe_utoa(value, unsigned(result));
-            std::strcat(text, value);
-            async_safe_errprint(text);
-            result = lastoffset;                        /* UINT32_MAX   */
-            destsz = 0;                                 /* also a flag  */
+#if defined SEQ66_PLATFORM_DEBUG
+                char value[c_async_safe_utoa_size];
+                char text[c_async_safe_utoa_size + 32];
+                std::strcpy(text, "Event ");
+                async_safe_utoa(value, msg.msg_number());
+                std::strcat(text, value);
+                std::strcat(text, " belayed");
+                async_safe_errprint(text);
+#else
+                async_safe_errprint("Event belayed");
+#endif
+                result = UINT32_MAX;
         }
-    }
-    return result;
-}
-
-#endif  // defined USE_THIS_CODE
-
-/**
- * \return
- *      Returns
- */
-
-static jack_nframes_t
-jack_get_event_data
-(
-    midi_jack_data * jackdata,
-    jack_nframes_t framect,
-    jack_nframes_t cycle_start,
-    jack_nframes_t & last_frame,
-    char * dest, size_t & destsz
-)
-{
-    jack_nframes_t result = UINT32_MAX;
-    ring_buffer<midi_message> * buffmsg = jackdata->jack_buffer();
-    bool process = buffmsg->read_space() > 0;
-    if (process)
-    {
-        const midi_message & msg = buffmsg->front();
-        jack_nframes_t frame = jack_nframes_t(msg.timestamp());
-        frame += framect - midi_jack_data::size_compensation();
-        if (last_frame > frame)
-            frame = last_frame;
-        else
-            last_frame = frame;
-
-        if (frame > cycle_start)
-        {
-            result = frame - cycle_start;
-            if (result >= framect)
-                result = framect - 1;
-        }
-        else
-            result = 0;
-
-        size_t datasz = size_t(msg.event_count());
-        if (datasz <= destsz)
-        {
-            memcpy(dest, msg.event_bytes(), datasz);
-            destsz = datasz;
-        }
-        buffmsg->pop_front();
     }
     return result;
 }
@@ -565,37 +599,23 @@ jack_process_rtmidi_output (jack_nframes_t framect, void * arg)
     char * mbuf = &mbuffer[0];
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
     jack_port_t * jackport = jackdata->jack_port();
-#if ! defined USE_PULSE_TIMESTAMP
     const jack_nframes_t cycle_start =
         ::jack_last_frame_time(jackdata->jack_client());
-#endif
-    void * buf = ::jack_port_get_buffer(jackport, framect);
 
+    jack_nframes_t lastvalue = 0;
+    void * buf = ::jack_port_get_buffer(jackport, framect);
     jack_position_t pos = jack_assistant::get_jack_parameters().position;
     if (midi_jack_data::recalculate_frame_factor(pos, framect))
         async_safe_errprint("JACK settings changed");
-
-#if defined USE_PULSE_TIMESTAMP
-    jack_nframes_t lastoffset = 0;
-#else
-    jack_nframes_t last_frame = 0;
-#endif
 
     ::jack_midi_clear_buffer(buf);
     for (;;)
     {
         size_t destsz = s_message_buffer_size;
-#if defined USE_PULSE_TIMESTAMP
         jack_nframes_t offset = jack_get_event_data
         (
-            jackdata->jack_buffer(), framect, lastoffset, mbuf, destsz
+            jackdata, framect, cycle_start, lastvalue, mbuf, destsz
         );
-#else
-        jack_nframes_t offset = jack_get_event_data
-        (
-            jackdata, framect, cycle_start, last_frame, mbuf, destsz
-        );
-#endif
         if (destsz > 0 && valid_frame_offset(offset))
         {
             const jack_midi_data_t * data =
@@ -605,11 +625,9 @@ jack_process_rtmidi_output (jack_nframes_t framect, void * arg)
             if (rc != 0)
             {
                 async_safe_errprint("JACK MIDI write error");
-                break;                  /* ::jack_midi_clear_buffer(buf) */
+                break;
             }
-#if defined USE_PULSE_TIMESTAMP
-            lastoffset = offset;
-#endif
+            lastvalue = offset;            /* tricky code */
         }
         else
             break;
@@ -1290,7 +1308,17 @@ midi_jack::api_play (const event * e24, midibyte channel)
 
     if (jack_data().valid_buffer())
     {
-        if (! send_message(message))
+        if (send_message(message))
+        {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+            static unsigned s_jack_time_ms = 0;
+            jack_time_t jtime = ::jack_get_time() / 1000;   /* rough ms */
+            unsigned delta = unsigned(jtime) - s_jack_time_ms;
+            s_jack_time_ms = unsigned(jtime);
+            printf("Sent 0x%2x at %u ms\n", status, delta);
+#endif
+        }
+        else
         {
             errprint("JACK send event failed");
         }
@@ -1303,6 +1331,9 @@ midi_jack::api_play (const event * e24, midibyte channel)
  *  template. The timestamp was not provided by the original "rtmidi"
  *  implementation.  This new data and the custom ringbuffer are
  *  added for issue #100.
+ *
+ *  Let's try the frame count instead of the timestamp.  See the ttymidi.c
+ *  module.
  *
  * \param message
  *      Provides the MIDI message object, which contains the bytes to send.
@@ -1319,30 +1350,22 @@ midi_jack::send_message (const midi_message & message)
 
     ring_buffer<midi_message> * rb = jack_data().jack_buffer();
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    midi_message & ncmessage = const_cast<midi_message &>(message);
-    ncmessage.push_time_us(::jack_get_time());  /* Tpush */
-    printf
-    (
-        "#%u: Tpush = %lu ms\n",
-        message.msg_number(), message.push_time_ms()
-    );
-#endif
-
-    /*
-     * Let's try the frame count instead of the timestamp.  See the ttymidi.c
-     * module.
-     */
-
-#if ! defined USE_PULSE_TIMESTAMP
+#if defined SEQ66_ENCODE_JACK_FRAME_TIME
     midi_message & ncmessage = const_cast<midi_message &>(message);
     ncmessage.timestamp(midipulse(::jack_frame_time(jack_data().jack_client())));
+#else
+#if defined SEQ66_PLATFORM_DEBUG
+    jack_nframes_t cycle, offset;
+    midi_jack_data::cycle_frame(message.timestamp(), cycle, offset);
+    printf("%s: cycle %u frame %u\n",
+        message.to_string().c_str(), unsigned(cycle), unsigned(offset));
+#endif
 #endif
 
     rb->push_back(message);
     return rb->read_space() > 0;
 
-#else
+#else   // ! defined SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
 
     int nbytes = message.event_count();
     bool result = nbytes > 0 && nbytes < int(s_message_buffer_size);
