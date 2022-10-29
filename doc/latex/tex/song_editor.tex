@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2022-10-20
+% \update      2022-10-29
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -45,10 +45,12 @@
    one in an external window.
    The \textbf{Song} tab and a \textbf{Song} window can be shown at the
    same time.
+
 %  The \textbf{Song} editor activates
 %  the \textbf{Song} mode of \textsl{Seq66}.
 %  When the song editor has the focus of the application, it
 %  takes over control from the patterns panel, and controls playback.
+
    Once playback is started in the song editor (using the \texttt{Space} or
    \texttt{.} keys), live mode is disabled.
    The song editor takes over the arming/unarming (unmuting/muting)
@@ -180,18 +182,20 @@
    This mode can alsp be changed via the keystrokes \texttt{p} and
    \texttt{x}.
 
-   \itempar{Record Snap}{song editor!record snap}
-   If enabled, it allows not only full clips of a pattern to be added,
+   \itempar{Grid/Record Snap}{song editor!grid/record snap}
+   The \textbf{Movement Sizing/Snap} setting,
+   if enabled, allows not only full clips of a pattern to be added,
    but smaller intervals listed below.
-   It turns on record-snap for recording live performance triggers,
-   and it also enables the grid snap functionality.
+   It turns on record-snap for recording live performance triggers.
+   It also enables the grid snap functionality,
+   which ndicates the horizontal grid snap for movement actions and trigger
+   drawing.
+
    If disabled, it allows the trigger to be placed and to be smoothly extended
    in either direction, without snapping, when the mouse is moved left or
-   right.
+   right. It allows exact recording of the musician's arming/muting of
+   patterns.
 
-   \itempar{Grid Snap}{song editor!grid snap}
-   Indicates the horizontal grid snap for movement actions and trigger drawing.
-   Grid snap determine where the pattern boundaries are drawn.
    Unlike the \textbf{Grid Snap} of the pattern editor, the units
    of the song editor snap value are in fractions of a measure length.
    The following values are supported:
@@ -222,7 +226,6 @@
 
    This trick is annoying, and we're not sure if note wrap-around
    is a feature or a bug.
-   It is something on our "to-do" list.
 
    \itempar{Transpose}{song editor!transpose}
    \index{song transpose}

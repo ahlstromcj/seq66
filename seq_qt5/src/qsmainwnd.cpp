@@ -992,6 +992,10 @@ qsmainwnd::set_loop (bool looping)
 /**
  *  Note the usage of the Ctrl and Shift keys, when clicking, in relation to
  *  issue #44.
+ *
+ *      -   No modifier key. Turn snap on for recording.
+ *      -   Control key. Turn snap off for recording.
+ *      -   Shift. Arm the patterns as soon as play starts.
  */
 
 void

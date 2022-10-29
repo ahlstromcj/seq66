@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-10-20
+ * \updates       2022-10-29
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -431,10 +431,7 @@ jack_get_event_data
             jack_nframes_t frame = jack_nframes_t(msg.timestamp());
             unsigned delta = unsigned(cycle_start) - unsigned(frame);
             double ms = 1000.0 * double(delta) / midi_jack_data::frame_rate();
-#if defined SEQ66_PLATFORM_DEBUG
-            printf("CyStart - EvFrame %u (%.1f ms) --> ", delta, ms);
-#endif
-            frame += framect - (framect / 4);  // midi_jack_data::size_compensation();
+            frame += framect - midi_jack_data::size_compensation();
             if (lastvalue > frame)
                 frame = lastvalue;
             else
@@ -451,13 +448,7 @@ jack_get_event_data
         }
         else
             result = 0;
-
-#if defined SEQ66_PLATFORM_DEBUG
-        printf("offset %u\n", unsigned(result));
-#endif
-
 #else
-
         /*
          * ---------------------- Pulse Time -----------------------
          */
@@ -467,17 +458,11 @@ jack_get_event_data
         {
             result = midi_jack_data::frame_offset(framect, ts);
             process = result >= lastvalue;             /* next cycle?  */
-            if (midi_jack_data::frame_estimate(ts) != cycle_start)
-            {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                printf("Break\n");
-#endif
-            }
         }
         else
             result = 0;
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         static bool s_gotfirst = false;
         static jack_nframes_t s_first_cycle_time = 0;
         if (! s_gotfirst)
@@ -510,11 +495,9 @@ jack_get_event_data
             count, info.c_str(), ms, frameoffset, cycle, cycleoffset, cycletime
         );
 #endif
-
         /*
          * ---------------------------------------------------------
          */
-
 #endif  // defined SEQ66_ENCODE_JACK_FRAME_TIME
 
         if (process)
@@ -537,8 +520,6 @@ jack_get_event_data
                 std::strcat(text, value);
                 std::strcat(text, " belayed");
                 async_safe_errprint(text);
-#else
-                async_safe_errprint("Event belayed");
 #endif
                 result = UINT32_MAX;
         }
@@ -1353,13 +1334,6 @@ midi_jack::send_message (const midi_message & message)
 #if defined SEQ66_ENCODE_JACK_FRAME_TIME
     midi_message & ncmessage = const_cast<midi_message &>(message);
     ncmessage.timestamp(midipulse(::jack_frame_time(jack_data().jack_client())));
-#else
-#if defined SEQ66_PLATFORM_DEBUG
-    jack_nframes_t cycle, offset;
-    midi_jack_data::cycle_frame(message.timestamp(), cycle, offset);
-    printf("%s: cycle %u frame %u\n",
-        message.to_string().c_str(), unsigned(cycle), unsigned(offset));
-#endif
 #endif
 
     rb->push_back(message);

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-13
- * \updates       2022-10-17
+ * \updates       2022-10-23
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -36,10 +36,6 @@
 #include "cfg/settings.hpp"             /* seq66::rc() config accessor      */
 
 #if defined SEQ66_JACK_SUPPORT
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-#include "midi/calculations.hpp"        /* srq66::pulse_length_us()         */
-#endif
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -168,16 +164,6 @@ midi_jack_data::recalculate_frame_factor
         frame_factor(frame_rate() * factor);            /* frames/pulse     */
         size_compensation(jack_nframes_t(compensation));
         use_offset(useoffset);
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf
-        (
-            "[debug] frames/cycle %u, %u us; frames/tick %g; "
-            "ticks/beat %g; pulse %u us\n",
-            cycle_frame_count(), unsigned(cycle_time_us()), frame_factor(),
-            ticks_per_beat(), unsigned(pulse_time_us())
-        );
-#endif
     }
     return changed;
 }

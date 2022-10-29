@@ -129,11 +129,6 @@ public:
         m_remote_port_name = s;
     }
 
-    /**
-     * \getter m_jack_port
-     *      This is the platform-specific version of midi_handle().
-     */
-
     jack_port_t * port_handle ()
     {
         return jack_data().jack_port();
