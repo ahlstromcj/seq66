@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-10-05
+ * \updates       2022-10-31
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1750,17 +1750,14 @@ public:
 #endif
     }
 
-#if defined SEQ66_JACK_SUPPORT
     void stop_jack (bool rewind = false)
     {
+#if defined SEQ66_JACK_SUPPORT
         m_jack_asst.stop(rewind);
-    }
 #else
-    void stop_jack (bool /* rewind */)
-    {
-        // No JACK code available
-    }
+        (void) rewind;
 #endif
+    }
 
     /**
      *  Initializes JACK support, if defined.  The launch() function and

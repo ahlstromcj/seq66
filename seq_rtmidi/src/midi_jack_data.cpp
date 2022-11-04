@@ -164,6 +164,13 @@ midi_jack_data::recalculate_frame_factor
         frame_factor(frame_rate() * factor);            /* frames/pulse     */
         size_compensation(jack_nframes_t(compensation));
         use_offset(useoffset);
+#if defined SEQ66_PLATFORM_DEBUG
+        printf
+        (
+            "cycle = %u ms, pulse = %u ms\n",
+            unsigned(cycle_time_us() / 1000), unsigned(pulse_time_us() / 1000)
+        );
+#endif
     }
     return changed;
 }
@@ -185,7 +192,7 @@ midi_jack_data::recalculate_frame_factor
  *  -#  We assume that the tick position p is in the same relative location
  *      relative to the current frame when placed into the ringbuffer and when
  *      retrieved from the ring buffer. Actually, this is unlikely, but
- *      all events spacing should still be preserved.
+ *      all event spacing should still roughly be preserved.
  *  -#  We can use the calculations modules pulse_length_us() function to
  *      get the length of a tick in seconds:  60 / ppqn / bpm. Therefore the
  *      tick time t(p) = p * 60 / ppqn / bpm.

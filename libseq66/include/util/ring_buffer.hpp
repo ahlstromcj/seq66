@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-19
- * \updates       2022-09-30
+ * \updates       2022-10-31
  * \license       GNU GPLv2 or above
  */
 
@@ -126,7 +126,7 @@ public:
     size_type read_space () const;
     size_type read (reference dest);
     size_type write (const_reference src);
-    void push_back (const value_type & value);
+    bool push_back (const value_type & value);
 
     void pop_front ()
     {
@@ -232,7 +232,7 @@ ring_buffer<TYPE>::initialize ()
     m_buffer.clear();
     m_buffer.reserve(m_buffer_size);
     for (size_t i = 0; i < m_buffer_size; ++i)
-        m_buffer.push_back(empty_value);        /* prepare buffer for usage */
+        (void) m_buffer.push_back(empty_value); /* prepare buffer for usage */
 }
 
 template<typename TYPE>
@@ -309,9 +309,9 @@ ring_buffer<TYPE>::write_advance ()
 }
 
 /**
- *  Since we only push one element at a time, the return code is used to determine
- *  the number of elements currently active in the ring_buffer, unless 0 is
- *  returned, which indicates an error (no space left).
+ *  Since we only push one element at a time, the return code is used to
+ *  determine the number of elements currently active in the ring_buffer,
+ *  unless 0 is returned, which indicates an error (no space left).
  */
 
 template<typename TYPE>
@@ -322,7 +322,7 @@ ring_buffer<TYPE>::write (const_reference src)
     size_type write_cnt = write_space();
     if (write_cnt > 0)
     {
-        push_back(src);
+        (void) push_back(src);
         result = m_contents_size;
     }
     return result;
@@ -391,7 +391,7 @@ ring_buffer<TYPE>::read (reference dest)
  */
 
 template<typename TYPE>
-void
+bool
 ring_buffer<TYPE>::push_back (const value_type & item)
 {
     if (m_contents_size == 0)
@@ -412,6 +412,7 @@ ring_buffer<TYPE>::push_back (const value_type & item)
         increment_tail();
         ++m_dropped;                        /* for future use in expansion  */
     }
+    return true;
 }
 
 /*

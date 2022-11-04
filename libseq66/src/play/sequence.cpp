@@ -1129,7 +1129,8 @@ sequence::play
         while (e != m_events.end())
         {
             event & er = eventlist::dref(e);
-            midipulse stamp = er.timestamp() + offset_base;
+            midipulse ts = er.timestamp();
+            midipulse stamp = ts + offset_base;
             if (stamp >= start_tick_offset && stamp <= end_tick_offset)
             {
                 if (transpose != 0 && er.is_note()) /* includes Aftertouch  */

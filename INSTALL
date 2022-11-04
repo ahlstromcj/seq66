@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.98.10 and above
 Chris Ahlstrom
-2015-09-10 to 2022-05-30
+2015-09-10 to 2022-10-30
 
 Getting Seq66 requires building the code or going to "sequencer64-packages/seq66"
 on GitHub to get an installation package.  The bootstrap setup is primarily
@@ -440,7 +440,7 @@ DEPENDENCIES:
 
    Code:
 
-    -   libasound2-dev
+    -   libasound2-dev (alsa-devel on OpenSUSE)
     -   libjack-jackd2-dev
     -   liblo-dev (needed for NSM/OSC support, but not optional)
     -   libpng-dev (replaces libpng12-dev with libpng16, latest Debian Sid,
@@ -506,6 +506,13 @@ DEPENDENCIES:
 
         -   Installing the qt5ct package (Debian/Ubuntu)
         -   Adding "export QT_QPA_PLATFORMTHEME=qt5ct" to .bashrc.
+
+   Raspberry Pi:
+
+    A few notes while trying to get Seq66 built on a Raspberry Pi 3 Model
+    B+.  The Raspian on this board, installed via NOOB, could ultimately not
+    load some Qt dependences.  Ended up installing OpenSUSE, and installed
+    Qt Creator to save time.
 
    Runtime:
 

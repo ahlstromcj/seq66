@@ -1025,7 +1025,6 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     }
                     pen.setStyle(Qt::SolidLine);        /* seq trigger box  */
                     pen.setWidth(2);
-
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.setPen(pen);

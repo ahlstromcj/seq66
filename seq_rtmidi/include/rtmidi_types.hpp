@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2022-10-18
+ * \updates       2022-11-01
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -244,6 +244,11 @@ public:
     void timestamp (midipulse t)
     {
         m_timestamp = t;
+    }
+
+    midibyte status () const
+    {
+        return event_count() > 0 ? m_bytes[0] : 0 ;
     }
 
     bool is_sysex () const

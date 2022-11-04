@@ -442,6 +442,9 @@ midibase::print ()
  *
  * \threadsafe
  *
+ *      However, do we really need this? Playback seems to work fine without
+ *      it.
+ *
  * \param e24
  *      The event to be played on this bus.  For speed, we don't bother to
  *      check the pointer.

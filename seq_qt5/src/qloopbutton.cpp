@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2022-08-28
+ * \updates       2022-10-30
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -753,8 +753,31 @@ qloopbutton::draw_progress_box (QPainter & painter)
         backcolor.setAlpha(s_alpha_muted);
         pen.setStyle(Qt::SolidLine);
     }
-    brush.setColor(backcolor);
     pen.setWidth(penwidth);
+#if defined SEQ66_USE_LINEAR_GRADIENT
+#if defined SIDEWAYS_GRADIENT
+    QLinearGradient grad
+    (
+        m_progress_box.x(), m_progress_box.y(),
+        m_progress_box.w(), m_progress_box.h()
+    );
+#else
+    QLinearGradient grad
+    (
+        m_progress_box.x(), m_progress_box.y(),
+        m_progress_box.x(), m_progress_box.y() + m_progress_box.h()
+    );
+#endif
+    grad.setColorAt(0.01, backcolor.darker());
+    grad.setColorAt(0.5, backcolor.lighter());
+    grad.setColorAt(0.99, backcolor.darker());
+    painter.fillRect
+    (
+        m_progress_box.x(), m_progress_box.y(),
+        m_progress_box.w(), m_progress_box.h(), grad
+    );
+#else
+    brush.setColor(backcolor);
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.drawRect
@@ -762,6 +785,7 @@ qloopbutton::draw_progress_box (QPainter & painter)
         m_progress_box.x(), m_progress_box.y(),
         m_progress_box.w(), m_progress_box.h()
     );
+#endif
 }
 
 /**

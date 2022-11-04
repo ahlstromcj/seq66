@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-10-29
+ * \updates       2022-11-01
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -362,6 +362,22 @@ jack_process_rtmidi_input (jack_nframes_t framect, void * arg)
     return 0;
 }
 
+#if defined SEQ66_PLATFORM_DEBUG
+
+static void
+message_time (bool sent, const midi_message & msg)
+{
+    const char * tag = sent ? "Sent" : "Rcvd" ;
+    unsigned jtime = unsigned(::jack_get_time() / 1000);        /* rough ms */
+    printf
+    (
+        "%s #%u (0x%2x) at %u ms\n",
+        tag, msg.msg_number(), msg.status(), jtime
+    );
+}
+
+#endif
+
 #if defined SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
 
 /**
@@ -411,6 +427,7 @@ jack_get_event_data
     {
         static bool s_use_offset = midi_jack_data::use_offset();
         const midi_message & msg = buffmsg->front();
+
 #if defined SEQ66_PLATFORM_DEBUG
         static unsigned s_last_msg_number = 0;
         unsigned msgno = msg.msg_number();
@@ -418,6 +435,7 @@ jack_get_event_data
             async_safe_errprint("ring_buffer wraparound?");
 
         s_last_msg_number = msgno;
+        message_time(false, msg);
 #endif
 
 #if defined SEQ66_ENCODE_JACK_FRAME_TIME
@@ -454,50 +472,27 @@ jack_get_event_data
          */
 
         midipulse ts = msg.timestamp();
+        (void) cycle_start;             /* avoid unused parameter warning   */
         if (s_use_offset)
         {
             result = midi_jack_data::frame_offset(framect, ts);
             process = result >= lastvalue;             /* next cycle?  */
+
+#if defined DO_NOT_BELAY                // test code only
+            if (! process)
+            {
+                result = framect - 1;
+                process = true;
+            }
+#endif
         }
         else
             result = 0;
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        static bool s_gotfirst = false;
-        static jack_nframes_t s_first_cycle_time = 0;
-        if (! s_gotfirst)
-        {
-            s_first_cycle_time = cycle_start;
-            s_gotfirst = true;
-        }
-        static bool s_gotcycle = false;
-        static double s_last_milliseconds = 0.0;
-        unsigned start = unsigned(cycle_start);
-        unsigned cycleoffset = start - unsigned(s_first_cycle_time);
-        unsigned cycle = cycleoffset / unsigned(framect);
-        unsigned frameoffset = unsigned(result);
-        double cycletime = 1000.0 *
-            (double(cycleoffset) + double(frameoffset)) /
-            midi_jack_data::frame_rate();
-
-        if (! s_gotcycle)
-        {
-            s_last_milliseconds = cycletime;
-            s_gotcycle = true;
-        }
-        cycletime -= s_last_milliseconds; // midi_jack_data::cycle_time_ms();
-
-        std::string info = msg.to_string();
-        unsigned ms = midi_jack_data::delta_time_ms(ts);
-        printf
-        (
-            "Ct %d %s (%u ms, offset %u): cycle %u (fr %u); at %.f ms\n",
-            count, info.c_str(), ms, frameoffset, cycle, cycleoffset, cycletime
-        );
-#endif
         /*
          * ---------------------------------------------------------
          */
+
 #endif  // defined SEQ66_ENCODE_JACK_FRAME_TIME
 
         if (process)
@@ -513,15 +508,15 @@ jack_get_event_data
         else
         {
 #if defined SEQ66_PLATFORM_DEBUG
-                char value[c_async_safe_utoa_size];
-                char text[c_async_safe_utoa_size + 32];
-                std::strcpy(text, "Event ");
-                async_safe_utoa(value, msg.msg_number());
-                std::strcat(text, value);
-                std::strcat(text, " belayed");
-                async_safe_errprint(text);
+            char value[c_async_safe_utoa_size];
+            char text[c_async_safe_utoa_size + 32];
+            std::strcpy(text, "Event ");
+            async_safe_utoa(value, msg.msg_number());
+            std::strcat(text, value);
+            std::strcat(text, " belayed");
+            async_safe_errprint(text);
 #endif
-                result = UINT32_MAX;
+            result = UINT32_MAX;
         }
     }
     return result;
@@ -1291,18 +1286,12 @@ midi_jack::api_play (const event * e24, midibyte channel)
     {
         if (send_message(message))
         {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            static unsigned s_jack_time_ms = 0;
-            jack_time_t jtime = ::jack_get_time() / 1000;   /* rough ms */
-            unsigned delta = unsigned(jtime) - s_jack_time_ms;
-            s_jack_time_ms = unsigned(jtime);
-            printf("Sent 0x%2x at %u ms\n", status, delta);
+#if defined SEQ66_PLATFORM_DEBUG
+            message_time(true, message);
 #endif
         }
         else
-        {
-            errprint("JACK send event failed");
-        }
+            async_safe_errprint("JACK send event failed");
     }
 }
 
@@ -1336,8 +1325,20 @@ midi_jack::send_message (const midi_message & message)
     ncmessage.timestamp(midipulse(::jack_frame_time(jack_data().jack_client())));
 #endif
 
-    rb->push_back(message);
-    return rb->read_space() > 0;
+#if defined SEQ66_PLATFORM_DEBUG
+    bool result = rb->push_back(message);
+    if (result)
+    {
+        size_t space = size_t(rb->read_space());
+        result = space > 0 && space < c_jack_ringbuffer_size;
+    }
+    if (! result)
+        printf("send_message() failed\n");
+
+    return result;
+#else
+    return rb->push_back(message);
+#endif
 
 #else   // ! defined SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
 
