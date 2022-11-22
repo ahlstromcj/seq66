@@ -284,6 +284,9 @@ public:
     /**
      *  Provides a key value for an event.  Its types match the
      *  m_timestamp and get_rank() function of the event class.
+     *  It is not needed in the eventlist class, which uses a vector as a
+     *  container, but it is needed in the editable_events class, which
+     *  uses a multimap.
      */
 
     class key

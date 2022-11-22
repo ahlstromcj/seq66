@@ -190,15 +190,6 @@
 #include "midi_jack.hpp"                /* seq66::midi_jack                 */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
 
-/*
- * For testing.  If enabled, we put the frame number in the midi_message and
- * use that, otherwise we use the MIDI pulse time-stamp and calculate a frame
- * offset. One odd thing about this features is the buffer-size compensation
- * value from ttymidi.c.
- */
-
-#undef  SEQ66_ENCODE_JACK_FRAME_TIME
-
 /**
  *  Delimits the size of the JACK ringbuffer. Related to issue #100, when
  *  we play the Sequencer64 MIDI tune "b4uacuse-stress.midi", we can fail to
@@ -362,7 +353,7 @@ jack_process_rtmidi_input (jack_nframes_t framect, void * arg)
     return 0;
 }
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
 
 static void
 message_time (bool sent, const midi_message & msg)
@@ -428,7 +419,7 @@ jack_get_event_data
         static bool s_use_offset = midi_jack_data::use_offset();
         const midi_message & msg = buffmsg->front();
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         static unsigned s_last_msg_number = 0;
         unsigned msgno = msg.msg_number();
         if (msgno < s_last_msg_number)
@@ -438,17 +429,11 @@ jack_get_event_data
         message_time(false, msg);
 #endif
 
-#if defined SEQ66_ENCODE_JACK_FRAME_TIME
-
-        /*
-         * ---------------------- Frame Time -----------------------
-         */
-
+        midipulse ts = msg.timestamp();
         if (s_use_offset)
         {
-            jack_nframes_t frame = jack_nframes_t(msg.timestamp());
-            unsigned delta = unsigned(cycle_start) - unsigned(frame);
-            double ms = 1000.0 * double(delta) / midi_jack_data::frame_rate();
+#if defined USE_THIS_CODE
+            jack_nframes_t frame = midi_jack_data::frame_estimate(ts);
             frame += framect - midi_jack_data::size_compensation();
             if (lastvalue > frame)
                 frame = lastvalue;
@@ -463,37 +448,13 @@ jack_get_event_data
             }
             else
                 result = 0;
-        }
-        else
-            result = 0;
 #else
-        /*
-         * ---------------------- Pulse Time -----------------------
-         */
-
-        midipulse ts = msg.timestamp();
-        (void) cycle_start;             /* avoid unused parameter warning   */
-        if (s_use_offset)
-        {
-            result = midi_jack_data::frame_offset(framect, ts);
-            process = result >= lastvalue;             /* next cycle?  */
-
-#if defined DO_NOT_BELAY                // test code only
-            if (! process)
-            {
-                result = framect - 1;
-                process = true;
-            }
+            result = midi_jack_data::frame_offset(cycle_start, framect, ts);
 #endif
+
         }
         else
             result = 0;
-
-        /*
-         * ---------------------------------------------------------
-         */
-
-#endif  // defined SEQ66_ENCODE_JACK_FRAME_TIME
 
         if (process)
         {
@@ -1286,7 +1247,7 @@ midi_jack::api_play (const event * e24, midibyte channel)
     {
         if (send_message(message))
         {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
             message_time(true, message);
 #endif
         }

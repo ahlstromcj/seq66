@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-02
- * \updates       2022-10-17
+ * \updates       2022-11-22
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -156,7 +156,9 @@ public:
     static jack_nframes_t frame_offset (jack_nframes_t F, midipulse p);
     static jack_nframes_t frame_offset
     (
-        jack_nframes_t fbase, jack_nframes_t F, midipulse p
+        jack_nframes_t cyclestart,
+        jack_nframes_t F,
+        midipulse p
     );
 #if defined USE_JACK_TIME_OFFSET_FUNCTION
     static jack_nframes_t time_offset

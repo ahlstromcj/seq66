@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-13
- * \updates       2022-10-23
+ * \updates       2022-11-22
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
@@ -164,7 +164,7 @@ midi_jack_data::recalculate_frame_factor
         frame_factor(frame_rate() * factor);            /* frames/pulse     */
         size_compensation(jack_nframes_t(compensation));
         use_offset(useoffset);
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         printf
         (
             "cycle = %u ms, pulse = %u ms\n",
@@ -269,6 +269,46 @@ midi_jack_data::frame_offset (jack_nframes_t F, midipulse p)
     jack_nframes_t result = frame_estimate(p) + start_frame();
     if (F > 1)
         result = result % F;
+
+    return result;
+}
+
+/**
+ *  This method is an adaptation of the ttymidi.c module's method.
+ *  How it works:
+ *
+ *  1.  Get the cycle_start frame-number, fc.
+ *  2.  bufsize_compensation, b = jack_get_buffer_size() / 10.0 + 0.5)
+ *  3.  Read the ringbuffer data into bufc in the old rtmidi way. New
+ *      wrinkle format: [data, data_size, frame].  The frame is set this way:
+ *      a.  Clock messages. The frame = jack_frame_time().
+ *      b.  Other MIDI.  Same.
+ *  4.  We have the frame, f, from the data, and the frame-count, F.
+ *      f += F - b.
+ *  5.  If last_buf_frame > f, f = last_buf_frame else last_buf_frame = f.
+ *  6.  If f >= fc offset = f - fc else 0.  If offset > F, offset = F-1
+ *
+ *  The implementation here currently leaves out Step 5, but seems to work
+ *  well anyway. It seems to avoid the delay of an event to a later cyle
+ *  at random times.
+ */
+
+jack_nframes_t
+midi_jack_data::frame_offset
+(
+    jack_nframes_t fc,                              /* Step 1, cycle-start  */
+    jack_nframes_t F,
+    midipulse p                                     /* Step 3, sort of      */
+)
+{
+    jack_nframes_t result = 0;
+    jack_nframes_t b = size_compensation();         /* Step 2.              */
+    jack_nframes_t f = frame_estimate(p) + F - b;   /* Step 4.              */
+    if (f > fc)
+        result = f - fc;
+
+    if (result > F)
+        result = F - 1;
 
     return result;
 }

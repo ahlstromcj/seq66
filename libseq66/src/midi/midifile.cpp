@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-08-29
+ * \updates       2022-11-20
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -38,7 +38,7 @@
  *  (https://github.com/ahlstromcj/midicvt, derived from midicomp, midi2text,
  *  and mf2t/t2mf) does not ignore this lack of a SeqSpec wrapper, and hence
  *  we decided to provide a new, more strict input and output format for the
- *  the proprietary/SeqSpec track in Seq66.
+ *  the "proprietary"/SeqSpec track in Seq66.
  *
  *  Elements written:
  *
@@ -48,7 +48,7 @@
  *          the track size.
  *          -   Sequence number.
  *          -   Sequence name.
- *          -   Time-signature and tempo (sequence 0 only)
+ *          -   Time-signature and tempo (track 0 only)
  *          -   Sequence events.
  *
  *  Items handled in midi_vector_base:
@@ -60,9 +60,9 @@
  *      -   Tempo.
  *      -   Sequence number.
  *      -   Track end.
- *      -   Proprietary SeqSpec data.
+ *      -   Seq66-specific SeqSpec data.
  *
- *  Uses the new format for the proprietary footer section of the Seq24 MIDI
+ *  Uses the new format for the Seq66 footer section of the Seq24 MIDI
  *  file.
  *
  *  In the new format, each sequencer-specfic value (0x242400xx) is preceded
@@ -161,10 +161,10 @@ static const miditag c_mtrk_tag  = 0x4D54726B;      /* magic number 'MTrk'  */
 static const miditag c_prop_chunk_tag = c_mtrk_tag;
 
 /**
- *  Provides the sequence number for the proprietary/SeqSpec data when using
- *  the new format.  (There is no sequence number for the legacy format.)
+ *  Provides the track number for the proprietary/SeqSpec data when using
+ *  the new format.
  *  Can't use numbers, such as 0xFFFF, that have MIDI meta tags in them,
- *  confuses our "proprietary" track parser.
+ *  confuses the "SeqSpec" track parser.
  */
 
 static const midishort c_prop_seq_number     = 0x3FFF;
@@ -250,7 +250,7 @@ const std::string midifile::sm_meta_text_labels[8] =
  *          -   Otherwise, the ppqn value is used as is.  If the file uses a
  *              different PPQN than the default, PPQN rescaling is done to
  *              make it so.  The PPQN value read from the MIDI file is used to
- *              scale the running-time of the sequence relative to
+ *              scale the running-time of the track relative to
  *              usr().default_ppqn().
  *      -   Writing.  This value is written to the MIDI file in the header
  *          chunk of the song.  Note that the caller must query for the
@@ -781,11 +781,12 @@ midifile::parse (performer & p, int screenset, bool importing)
         m_smf0_splitter.initialize();                   /* SMF 0 support    */
         if (Format == 0)
         {
-            result = parse_smf_0(p, screenset);         /* convert SMF 0?   */
+            result = parse_smf_0(p, screenset);
+            p.smf_format(0);
         }
         else if (Format == 1)
         {
-            result = parse_smf_1(p, screenset);         /* definitely SMF 1 */
+            result = parse_smf_1(p, screenset);
             p.smf_format(1);
         }
         else
@@ -2711,7 +2712,7 @@ midifile::write (performer & p, bool doseqspec)
             if (result)
             {
                 std::string temp = "Writing ";
-                temp += doseqspec ? "Seq66" : "normal" ;
+                temp += doseqspec ? "Seq66" : "Normal" ;
                 temp += " SMF ";
                 temp += std::to_string(smfformat);
                 temp += " MIDI file ";
