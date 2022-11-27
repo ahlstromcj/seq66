@@ -1,5 +1,244 @@
+2022-11-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, contrib/scripts/jackctl, doc/latex/tex/jack.tex,
+	libseq66/include/cfg/rcsettings.hpp,
+	seq_qt5/forms/qseditoptions.ui, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_info.cpp: Readying for version 0.99.1.
+
+2022-11-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/midi/event.hpp,
+	libseq66/src/midi/midifile.cpp,
+	seq_rtmidi/include/midi_jack_data.hpp,
+	seq_rtmidi/src/midi_jack.cpp, seq_rtmidi/src/midi_jack_data.cpp: 
+	Tweaked the frame offset calculation in midi_jack_data to more
+	closely match the ttymidi.c module.
+
+2022-11-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* : Added contrib/tests/testnumbers.ods.
+
+2022-11-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, doc/latex/tex/song_editor.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/util/ring_buffer.hpp,
+	libseq66/src/midi/midibase.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_rtmidi/include/rtmidi_types.hpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_data.cpp: Add gradient styling to grid
+	progress boxes.
+
+2022-10-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/seq66-user-manual.tex,
+	doc/latex/tex/song_editor.tex, seq_qt5/src/qsmainwnd.cpp,
+	seq_rtmidi/include/midi_jack.hpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_data.cpp: Very minor changes, mostly
+	documentation.
+
+2022-10-21  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/latex/tex/song_editor.tex,
+	libseq66/src/midi/midibase.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/triggers.cpp, seq_qt5/include/qseqeventframe.hpp,
+	seq_qt5/src/qperfnames.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qt5_helpers.cpp,
+	seq_rtmidi/include/midi_jack_data.hpp,
+	seq_rtmidi/include/rtmidi_types.hpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_data.cpp, seq_rtmidi/src/rtmidi_types.cpp: 
+	Safety check-in, various minor fixes/tweaks.
+
+2022-10-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/midi/midibytes.hpp,
+	libseq66/src/midi/calculations.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_rtmidi/include/midi_jack_data.hpp,
+	seq_rtmidi/include/rtmidi_types.hpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_data.cpp,
+	seq_rtmidi/src/midi_jack_info.cpp: Interim safety check-in related
+	to issue #100.
+
+2022-10-11  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, contrib/scripts/jackctl, include/config.h.in,
+	libseq66/include/seq66_features.h,
+	libseq66/src/midi/jack_assistant.cpp, seq_qt5/src/qperfnames.cpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_rtmidi/src/midi_jack_info.cpp: Added lineargradient look to the
+	piano rolls, to take a break from troubleshooting.
+
+2022-10-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, VERSION, configure.ac,
+	contrib/midi/songtest.text, doc/latex/tex/song_editor.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/calculations.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/play/triggers.cpp, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/src/qperfnames.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_rtmidi/src/midi_jack_data.cpp: Issue #44 almost worked out.
+
+2022-10-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, contrib/midi/songtest.text,
+	contrib/scripts/jackctl, doc/latex/tex/song_editor.tex,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/cfg/settings.hpp,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/setmapper.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/cfg/settings.cpp,
+	libseq66/src/midi/calculations.cpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/triggers.cpp,
+	resources/pixmaps/song_rec_no_snap.xpm,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qperfnames.cpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_data.cpp,
+	seq_rtmidi/src/midi_jack_info.cpp: Hacking at issues #44 and #100,
+	issues still.
+
+2022-09-30  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/util/ring_buffer.hpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	seq_rtmidi/include/midi_jack_data.hpp,
+	seq_rtmidi/include/rtmidi_types.hpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_data.cpp,
+	seq_rtmidi/src/midi_jack_info.cpp, seq_rtmidi/src/rtmidi_types.cpp: 
+	For issue #100, fixed a calculation error and playback at 4096 is
+	reasonable, not yet perfect.
+
+2022-09-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, contrib/scripts/jackctl,
+	contrib/scripts/recordpa, contrib/scripts/ystart,
+	libseq66/include/midi/jack_assistant.hpp,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/seq66_features.h,
+	libseq66/include/util/ring_buffer.hpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/forms/qsmainwnd.ui, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseventslots.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_rtmidi/include/midi_jack_data.hpp,
+	seq_rtmidi/include/rtmidi_types.hpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_data.cpp, seq_rtmidi/src/rtmidi_types.cpp: 
+	Still whacking at issue #100, calculations look correct but still
+	glitches at 4096 frames per cycle.
+
+2022-09-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Seq66qt5/seq66qt5.cpp, contrib/code/ring_buffer.hpp,
+	libseq66/include/seq66_features.h,
+	libseq66/include/util/ring_buffer.hpp,
+	libseq66/src/util/ring_buffer.cpp,
+	seq_rtmidi/include/midi_jack_data.hpp,
+	seq_rtmidi/include/rtmidi_types.hpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_data.cpp, seq_rtmidi/src/rtmidi_types.cpp: 
+	Initial smoke test of midi_message ring_buffer works.
+
+2022-09-19  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/code/ring_buffer.hpp, contrib/vim-syntax/cpp.vim,
+	libseq66/include/Makefile.am, libseq66/include/Makefile.in,
+	libseq66/include/midi/jack_assistant.hpp,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/include/seq66_features.h,
+	libseq66/include/util/ring_buffer.hpp, libseq66/libseq66.pro,
+	libseq66/src/Makefile.am, libseq66/src/Makefile.in,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/util/ring_buffer.cpp,
+	seq_rtmidi/include/midi_jack_data.hpp,
+	seq_rtmidi/include/rtmidi_types.hpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_data.cpp,
+	seq_rtmidi/src/midi_jack_info.cpp, seq_rtmidi/src/rtmidi_types.cpp: 
+	Adding ring_buffer to support midi_message directly.
+
+2022-09-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, contrib/scripts/recordpa,
+	libseq66/src/play/performer.cpp,
+	seq_rtmidi/include/midi_jack_data.hpp,
+	seq_rtmidi/src/midi_jack.cpp, seq_rtmidi/src/midi_jack_data.cpp: 
+	Made frame offset values static, fixed Stop/Master bug.
+
+2022-09-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_rtmidi/src/midi_jack_data.cpp: Forgot to add new
+	midi_jack_data cpp file.
+	* README.md, TODO, contrib/notes/RELNOTES-0_99_0.md,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/src/qsmainwnd.cpp, seq_rtmidi/include/midi_jack.hpp,
+	seq_rtmidi/include/midi_jack_data.hpp, seq_rtmidi/seq_rtmidi.pro,
+	seq_rtmidi/src/Makefile.am, seq_rtmidi/src/Makefile.in,
+	seq_rtmidi/src/midi_jack.cpp: Moved jack_frame_offset() code to
+	midi_jack_data, added default JACK frame-related data members, still
+	need to adjust to changes when transport is running.
+
+2022-09-11  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/vim-syntax/c.vim, contrib/vim-syntax/cpp.vim,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/seq66_features.h, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/wrkfile.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/play/triggers.cpp, seq_qt5/src/qseqtime.cpp,
+	seq_rtmidi/include/midi_jack.hpp,
+	seq_rtmidi/include/rtmidi_types.hpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/rtmidi_types.cpp: Added macros for using midi_message
+	timestamps and 8-byte timestamps, have issue of JACK buffer overruns
+	if active.
+
+2022-09-07  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure, libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/play/sequence.cpp,
+	seq_rtmidi/include/midi_jack_data.hpp,
+	seq_rtmidi/include/midi_jack_info.hpp,
+	seq_rtmidi/include/rtmidi_types.hpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_info.cpp, seq_rtmidi/src/rtmidi_types.cpp: 
+	For issue #100, added current tick value to each output event and to
+	the ringbuffer data, seems to work, need further verification.
+
+2022-09-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES.md, TODO, VERSION, configure.ac,
+	contrib/git/git.text, data/share/metainfo/seq66.appdata.xml,
+	doc/dox/doxy-common.cfg, doc/latex/tex/seq66-user-manual.tex,
+	include/cli/seq66-config.h, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	man/seq66.1, man/seq66cli.1, man/sequencer66.1,
+	nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
+	nsis/build_debug_code.bat, nsis/build_release_package.bat,
+	seq_qt5/include/qslivebase.hpp, seq_qt5/src/qslivebase.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Revisited
+	issue #93 and fixed pattern pasting and merging.
+
 2022-09-03  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* ChangeLog, VERSION, configure, configure.ac,
+	contrib/git/git.text, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h: Updating for version 0.99.0
+	release.
 	* README.md, RELNOTES.md, contrib/git/git.text: Added some notes on
 	releases.
 	* README.md, TODO, libseq66/include/play/performer.hpp,

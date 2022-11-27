@@ -116,6 +116,7 @@ Windows, and using a conventional source tarball.
             *   Event-dump now prompts for a text-file name.
         *   Added linear-gradient compile-time option (seq_features.h) for
             displaying notes and triggers. Enabled by default, edit to disable.
+            Does not seem to add noticeable overhead.
     *   Version 0.99.0:
         *   Issue #44. Record live sequence changes functionality beefed up
             to handle recording without snapping.
