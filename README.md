@@ -1,7 +1,7 @@
 # README for Seq66 0.99.1
 
 Chris Ahlstrom
-2015-09-10 to 2022-11-22
+2015-09-10 to 2022-11-27
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets and playlists for song management, a scale and
@@ -99,10 +99,10 @@ Windows, and using a conventional source tarball.
             Ctrl disables snap, Shift enables record at playback start.
             Still minor issues.
         *   Issue #93. Revisited to fix related open pattern-editor issues.
-        *   Issue #100. In progress. Added custom ringbuffer for MIDI message
-            objects to replace JACK's ringbuffer. Adapted work from ttymidi.c
-            to greatly mitigate this problem.  Also added configuration to
-            calculate the sample offset and set the buffer size.
+        *   Issue #100. Partly mitigated. Added a custom ringbuffer for MIDI
+            message objects to replace JACK's ringbuffer. Adapted work from
+            the ttymidi.c module.  Also added configuration to
+            calculate the sample offset.
         *   Various fixes:
             *   Fixed partial breakage of pattern-merge function.
             *   Fixed odd breakage of ALSA playback in release mode.

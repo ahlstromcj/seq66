@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-11-01
+ * \updates       2022-11-27
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -432,7 +432,12 @@ jack_get_event_data
         midipulse ts = msg.timestamp();
         if (s_use_offset)
         {
-#if defined USE_THIS_CODE
+#if defined USE_FULL_TTYMIDI_METHOD
+
+            /*
+             * Handling the "lastvalue" doesn't seem to help at all.
+             */
+
             jack_nframes_t frame = midi_jack_data::frame_estimate(ts);
             frame += framect - midi_jack_data::size_compensation();
             if (lastvalue > frame)
@@ -449,6 +454,7 @@ jack_get_event_data
             else
                 result = 0;
 #else
+            (void) lastvalue;
             result = midi_jack_data::frame_offset(cycle_start, framect, ts);
 #endif
 

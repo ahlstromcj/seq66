@@ -827,7 +827,7 @@ public:
     }
 
     /*
-     * Same as is_power_of_2() in the calculations module.
+     * This check is the same as is_power_of_2() in the calculations module.
      */
 
     void jack_buffer_size (int sz)

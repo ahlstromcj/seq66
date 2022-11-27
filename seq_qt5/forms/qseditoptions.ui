@@ -1204,7 +1204,7 @@ Range: 0.5 to 3.0</string>
          <string>JACK Server Settings</string>
         </property>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>350</x>
@@ -1315,7 +1315,11 @@ beat, normally PPQN/10.</string>
           </widget>
          </item>
          <item row="5" column="1">
-          <widget class="QComboBox" name="combo_box_buffer_size"/>
+          <widget class="QComboBox" name="combo_box_buffer_size">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

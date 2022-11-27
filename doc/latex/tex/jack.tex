@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-28
-% \update      2022-06-02
+% \update      2022-11-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -21,7 +21,7 @@
    \textsl{Seq66}.
    As with \textsl{Seq24}, \textsl{Seq66} has JACK transport support.
    JACK supposedly works with \textsl{Windows}, but we do not provide a JACK
-   MIDI engine for that system.
+   MIDI engine for that system at this time.
    The JACK support is very loosely based on the RtMIDI project
    \cite{rtmidi}.
    This mode also supports fallback to ALSA if the JACK server is not running.
@@ -36,6 +36,8 @@
    option),
    \texttt{-J}/\texttt{-{}-jack-master},
    and \texttt{-C}/\texttt{-{}-jack-master-cond} are available.
+   \texttt{-g}/\texttt{-{}-no-jack-transport}
+   disables JACK transport even it JACK is running.
    Also see \sectionref{subsubsec:configuration_rc_jack_transport}.
 
    Note that the JACK transport options are \textsl{separate} from JACK MIDI.
@@ -48,6 +50,10 @@
    If one wants to use \textsl{Seq66} and USB devices
    with JACK MIDI, one needs to expose the USB ports to JACK using the
    command \texttt{a2jmidid -{}-export-hw}.
+
+   If \texttt{jackdbus} (Linux) is installed on the system, it is recommend
+   to use \texttt{jack\_control} or the wrapper script \texttt{jackctl}
+   provided by \textsl{Seq66}.
 
 %  This is wrong:
 %

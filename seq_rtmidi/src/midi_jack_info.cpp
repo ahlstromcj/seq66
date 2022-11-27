@@ -813,6 +813,8 @@ midi_jack_info::api_connect ()
                 result = rcode == 0;
                 if (result)
                     status_message("JACK buffer size", std::to_string(bsize));
+                else
+                    error_message("JACK set buffer size failed");
             }
             m_jack_sample_rate = jack_get_sample_rate(client_handle());
         }
