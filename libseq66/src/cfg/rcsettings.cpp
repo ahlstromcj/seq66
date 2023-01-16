@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-10-02
+ * \updates       2023-01-01
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -41,7 +41,6 @@
  */
 
 #include <algorithm>                    /* std::find()                      */
-#include <cstdlib>                      /* std::getenv()                    */
 
 #include "cfg/settings.hpp"             /* seq66::rc(), seq66::usr()        */
 #include "play/seq.hpp"                 /* seq66::seq::maximum()            */
@@ -438,14 +437,6 @@ rcsettings::app_client_name (const std::string & n) const
  *  We shall see.  No, it does not.  But all we have to do is replace
  *  Window's HOMEPATH with its LOCALAPPDATA value.
  *
- * getenv(HOME):
- *
- *      -   Linux returns "/home/ahlstrom".  Append "/.config/seq66".
- *      -   Windows returns "\Users\ahlstrom".  A better value than HOMEPATH
- *          is LOCALAPPDATA, which gives us most of what we want:
- *          "C:\Users\ahlstrom\AppData\local", and then we append simply
- *          "seq66".
- *
  * \return
  *      Returns the selected home configuration directory.  If it does not
  *      exist, or could not be created, then an empty string is returned.
@@ -481,7 +472,7 @@ rcsettings::home_config_directory () const
         }
         else
         {
-            std::string temp = "std::getenv(HOME/LOCALAPPDATA) failed";
+            std::string temp = "Cannot find HOME!";
             result = set_error_message(temp);
         }
         return result;

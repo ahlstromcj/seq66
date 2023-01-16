@@ -4,7 +4,7 @@
 "
 "  Language:      C
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-08-04 to 2022-09-09
+"  Last Change:   2006-08-04 to 2022-12-09
 "  Project:       XPC Suite library project
 "  License:       None.  Use it in any manner whatsover, and don't blame me.
 "  Usage:
@@ -149,7 +149,7 @@ highlight todo term=standout cterm=NONE ctermfg=DarkGreen ctermbg=NONE gui=NONE 
 "
 "------------------------------------------------------------------------------
 
-syn keyword cTodo contained FIXME WARNING WTF XXX TBD unknown HUH __func__
+syn keyword cTodo contained FIXME WARNING WTF XXX TBD FUTURE unknown HUH __func__
 syn keyword cTodo contained abc abstract accessor algorithm application
 syn keyword cTodo contained assumptions author
 syn keyword cTodo contained background bit32 bit64 brief bug

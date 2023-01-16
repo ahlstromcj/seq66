@@ -1,3 +1,12 @@
+"******************************************************************************
+"  vim.rc (.vimrc)
+"------------------------------------------------------------------------------
+"
+"  Language:      C
+"  Maintainer:    Chris Ahlstrom <ahlstromcj@gmail.com>
+"  Last Change:   2006-08-04 to 2022-12-07
+"  Project:       Any
+"  License:       None.  Use it in any manner whatsover, and don't blame me.
 "
 " Setting up for neovim:
 "
@@ -5,10 +14,14 @@
 " ln -s ~/.vim $XDG_CONFIG_HOME/nvim
 " ln -s ~/.vimrc $XDG_CONFIG_HOME/nvim/init.vim
 "
+"------------------------------------------------------------------------------
+
 :set nocompatible
 :set autoindent
 :set smartindent
+
 " Try turning this off for awhile:  :set cindent
+
 :set formatoptions=tcroql
 :set nohlsearch
 :set expandtab
@@ -64,6 +77,11 @@
 :map <F11> :let &background = ( &background == "dark" ? "light" : "dark" )<CR>
 :map <F12> :syntax sync fromstart<CR>
 
+" Useful to avoid using the Fn key on small keyboards.
+
+:map <Down> <PageDown>
+:map <Up> <PageUp>
+
 " Shift function-key mappings
 
 :map <xF3> :set fileformat=dos<CR>
@@ -79,4 +97,8 @@ autocmd BufRead,BufNewFile *.html setlocal tabstop=3 shiftwidth=3 softtabstop=3
 
 :let $PAGER=''
 
-" vim: ts=3 sw=3 ft=vim
+"------------------------------------------------------------------------------
+" vim.rc (.vimrc)
+"------------------------------------------------------------------------------
+" vim: ts=3 sw=3 et ft=vim
+"------------------------------------------------------------------------------

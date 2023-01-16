@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2021-11-30
+ * \updates       2023-01-01
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -106,7 +106,6 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() global object       */
 #include "util/basic_macros.hpp"        /* not_nullptr(), warnprint(), etc. */
-#include "util/filefunctions.hpp"       /* seq66::executable_full_path()    */
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase class             */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm new message functions */
 

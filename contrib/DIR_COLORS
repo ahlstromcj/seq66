@@ -5,7 +5,7 @@
 # \file            DIR_COLORS
 # \author          Chris Ahlstrom
 # \date            2008-02-26
-# \updates         2021-12-12
+# \updates         2022-12-14
 # \version         $Revision$
 # \license         $XPC_SUITE_GPL_LICENSE$
 #
@@ -217,6 +217,7 @@ EXEC 01;32
 .log 00;32
 .lst 00;32
 .lyx 00;32
+.md 00;32
 .mib 00;32
 .odg 00;32
 .odp 00;32
@@ -343,6 +344,7 @@ EXEC 01;32
 
 .avi 01;35
 .flc 01;35  # AutoDesk Animator
+.flv 01;35  # Apple?
 .m2v 01;35  # MPEG-2 Video only
 .mkv 01;35  # Matroska (http://matroska.org/)
 .m4v 01;35  # MPEG-4 Video only
@@ -401,6 +403,7 @@ EXEC 01;32
 .bpr 00;31
 .bpk 00;31
 .bpg 00;31
+.build 00;31
 .cfg 00;31
 .ctrl 00;31
 .def 00;31
@@ -412,6 +415,8 @@ EXEC 01;32
 .ini 00;31
 .keymap 00;31
 .mutes 00;31
+.opts 00;31
+.options 00;31
 .pc 00;31
 .PL 00;31
 .palette 00;31
@@ -425,9 +430,11 @@ EXEC 01;32
 .rc 00;31
 .rh 00;31
 .resp 00;31
+.session 00;31
 .state 00;31
 .sub 00;31
 .ui 00;31
+.user 00;31
 .usr 00;31
 .vim 00;31
 

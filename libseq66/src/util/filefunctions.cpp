@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-05-18
+ * \updates       2023-01-01
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -76,10 +76,6 @@
 
 #if SEQ66_HAVE_LIMITS_H
 #include <limits.h>                     /* PATH_MAX                         */
-#endif
-
-#if defined SEQ66_PLATFORM_GLIBC        /* TO DO!!!!                        */
-#include <sys/auxv.h>                   /* getauxvalue() glibc function     */
 #endif
 
 #if defined SEQ66_PLATFORM_WINDOWS      /* Microsoft platform               */
@@ -1895,39 +1891,22 @@ set_current_directory (const std::string & path)
     return result;
 }
 
-
-/**
- *  An alternative on Linux to using either /proc/self/exe or argv[0] is using
- *  the information passed by the ELF interpreter, made available by glibc.
- *  The getauxval() function is a glibc extension; check so that it doesn't
- *  return NULL (indicating that the ELF interpreter hasn't provided the
- *  AT_EXECFN parameter). This is never actually a problem on Linux.
- */
-
-std::string
-executable_full_path ()
-{
-    std::string result;
-
-#if defined SEQ66_PLATFORM_GLIBC        /* TO DO!!!!                        */
-    const char * p = (const char *) getauxval(AT_EXECFN);
-    if (not_nullptr(p))
-    {
-        result = p;
-    }
-#endif
-
-    return result;
-}
-
 /**
  *  Gets the user's $HOME (Linux) or $LOCALAPPDAT (Windows) directory from the
  *  current environment.
  *
+ * getenv(HOME):
+ *
+ *      -   Linux returns "/home/ahlstrom".  Append "/.config/seq66".
+ *      -   Windows returns "\Users\ahlstrom".  A better value than HOMEPATH
+ *          is LOCALAPPDATA, which gives us most of what we want:
+ *          "C:\Users\ahlstrom\AppData\Local", and then we append simply
+ *          "seq66".
+ *
  * \return
- *      Returns the value of $HOME, such as "/home/ahlstromcj" or
- *      "C:\Users\ahlstromcj\AppData\local".  Notice the lack of a terminating
- *      path-slash.  If getenv() fails, an empty string is returned.
+ *      Returns the value of $HOME, such as "/home/user" or
+ *      "C:\Users\user\AppData\Local".  Notice the lack of a terminating
+ *      path-slash.  If std::getenv() fails, an empty string is returned.
  */
 
 std::string

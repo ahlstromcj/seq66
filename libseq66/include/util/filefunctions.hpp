@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-05-18
+ * \updates       2023-01-01
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -163,7 +163,6 @@ extern std::string file_extension_set
     const std::string & path,
     const std::string & ext = ""
 );
-extern std::string executable_full_path ();
 extern std::string user_home ();
 extern std::string find_file
 (
