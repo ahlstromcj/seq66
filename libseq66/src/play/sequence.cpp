@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-10-12
+ * \updates       2023-01-17
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1044,6 +1044,20 @@ sequence::toggle_queued ()
  *  function.  Its return value and side-effects tell if there's a change in
  *  playing based on triggers, and provides the ticks that bracket it.
  *
+ * Issue #103:
+ *
+ *  No problem with running in ALSA.  However, if unmuted, the progress bar
+ *  kept going after the loop-count.  Fixed that.
+ *
+ *  Running as a JACK Transport Slave, the count works the first time, but
+ *  then the Master's time confuses the loop-count mechanism and the progress
+ *  stops at odd spots.  Rewinding the Master (e.g. qjackctl) makes the
+ *  loop-count work again.
+ *
+ *  Running as JACK Master, no problem with the loop-count.
+ *
+ *  Can we somehow reset the times-played?
+ *
  * \param tick
  *      Provides the current end-tick value.  The tick comes in as a global
  *      tick.
@@ -1073,6 +1087,16 @@ sequence::play
     bool trigger_turning_off = false;       /* turn off after in-frame play */
     int trigtranspose = 0;                  /* used with c_trig_transpose   */
     midipulse start_tick = m_last_tick;     /* modified in triggers::play() */
+    midipulse length = get_length() > 0 ? get_length() : m_ppqn ;
+
+    /*
+     * Issue #103. This fix allows the progress bar to behave well under
+     * JACK Slave transport.
+     *
+     *      midipulse times_played = m_last_tick / length;
+     */
+
+    midipulse times_played = tick / length;
     m_trigger_offset = 0;                   /* NEW from Seq24 (!)           */
     if (m_song_mute)
     {
@@ -1103,11 +1127,9 @@ sequence::play
     }
     if (armed())                                    /* play notes in frame  */
     {
-        midipulse length = get_length() > 0 ? get_length() : m_ppqn ;
         midipulse offset = length - m_trigger_offset;
         midipulse start_tick_offset = start_tick + offset;
         midipulse end_tick_offset = tick + offset;
-        midipulse times_played = m_last_tick / length;
         midipulse offset_base = times_played * length;
         if (loop_count_max() > 0)
         {
@@ -1170,6 +1192,11 @@ sequence::play
                 (void) microsleep(1);
             }
         }
+    }
+    else
+    {
+        if (loop_count_max() > 0 && times_played >= loop_count_max())
+            return;                                 /* issue #103           */
     }
     if (trigger_turning_off)                        /* triggers: "turn off" */
     {
