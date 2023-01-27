@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-26
+ * \updates       2023-01-27
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -667,14 +667,20 @@ qseqroll::draw_notes
             painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
 
 #if defined SEQ66_USE_LINEAR_GRADIENT
-            QLinearGradient grad
-            (
-                m_note_x, m_note_y, m_note_x, m_note_y + noteheight
-            );
-            grad.setColorAt(0.05, fore_color());
-            grad.setColorAt(0.5,  note_in_color());
-            grad.setColorAt(0.95, fore_color());
-            painter.fillRect(m_note_x, m_note_y, m_note_width, noteheight, grad);
+            if (! background)
+            {
+                QLinearGradient grad
+                (
+                    m_note_x, m_note_y, m_note_x, m_note_y + noteheight
+                );
+                grad.setColorAt(0.05, fore_color());
+                grad.setColorAt(0.5,  note_in_color());
+                grad.setColorAt(0.95, fore_color());
+                painter.fillRect
+                (
+                    m_note_x, m_note_y, m_note_width, noteheight, grad
+                );
+            }
 #endif
             if (m_link_wraparound)
             {
@@ -711,7 +717,20 @@ qseqroll::draw_notes
 #if defined SEQ66_USE_LINEAR_GRADIENT
                     if (ni.selected())
                     {
-#endif
+                        QLinearGradient grad
+                        (
+                            x_shift, m_note_y, m_note_x, m_note_y + h_minus
+                        );
+                        grad.setColorAt(0.01, fore_color());
+                        grad.setColorAt(0.5,  sel_color());
+                        grad.setColorAt(0.99, fore_color());
+                        painter.fillRect
+                        (
+                            x_shift, m_note_y,
+                            m_note_width + length_add - 1, h_minus, grad
+                        );
+                    }
+#else
                     if (ni.finish() >= ni.start())      /* note highlight   */
                     {
                         painter.drawRect
@@ -728,8 +747,6 @@ qseqroll::draw_notes
                             x_shift, m_note_y, m_note_width, h_minus
                         );
                         painter.drawRect(m_keypadding_x, m_note_y, w, h_minus);
-                    }
-#if defined SEQ66_USE_LINEAR_GRADIENT
                     }
 #endif
                 }
