@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2022-09-04
+ * \updates       2023-02-26
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -61,6 +61,9 @@
 \endverbatim
  *
  *  The fastest varying index is the row: m_loop_buttons[column][row].
+ *
+ * Issue #106: "Mark the selected MIDI bus and channel in the pattern dropdown
+ *             menu." Code supplied by phuel 2023-02-26.
  */
 
 #include <QMenu>
@@ -1789,7 +1792,7 @@ qslivegrid::popup_menu ()
                     bool disabled = ec == e_clock::disabled;
                     QString bname = qt(busname);
                     QAction * a = new QAction(bname, menubuss);
-                    a->setCheckable(true);
+                    a->setCheckable(true);                  /* issue #106   */
                     a->setChecked(seq->true_bus() == bus);
                     connect
                     (
@@ -1831,7 +1834,7 @@ qslivegrid::popup_menu ()
                         a, &QAction::triggered,
                         [this, buss, channel] { set_midi_channel(channel); }
                     );
-                    a->setCheckable(true);
+                    a->setCheckable(true);                  /* issue #106   */
                     a->setChecked(seq->midi_channel() == channel);
                     menuchan->addAction(a);
                 }
@@ -1844,7 +1847,7 @@ qslivegrid::popup_menu ()
                         a, &QAction::triggered,
                         [this, buss, channel] { set_midi_channel(channel); }
                     );
-                    a->setCheckable(true);
+                    a->setCheckable(true);                  /* issue #106   */
                     a->setChecked(seq->midi_channel() == channel);
                     menuchan->addAction(a);
                 }
