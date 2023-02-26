@@ -1772,7 +1772,7 @@ qslivegrid::popup_menu ()
          */
 
         mastermidibus * mmb = perf().master_bus();
-        seq::pointer s = perf().get_sequence(m_current_seq);
+        seq::pointer seq = perf().get_sequence(m_current_seq);
         if (not_nullptr(mmb))
         {
             QMenu * menubuss = new QMenu(tr("Output Bus"));
@@ -1789,6 +1789,8 @@ qslivegrid::popup_menu ()
                     bool disabled = ec == e_clock::disabled;
                     QString bname = qt(busname);
                     QAction * a = new QAction(bname, menubuss);
+                    a->setCheckable(true);
+                    a->setChecked(seq->true_bus() == bus);
                     connect
                     (
                         a, &QAction::triggered,
@@ -1807,7 +1809,7 @@ qslivegrid::popup_menu ()
              */
 
             QMenu * menuchan = new QMenu(tr("Output Channel"));
-            int buss = s->true_bus();
+            int buss = seq->true_bus();
             for (int channel = 0; channel <= c_midichannel_max; ++channel)
             {
                 char b[4];                              /* 2 digits or less */
@@ -1829,6 +1831,8 @@ qslivegrid::popup_menu ()
                         a, &QAction::triggered,
                         [this, buss, channel] { set_midi_channel(channel); }
                     );
+                    a->setCheckable(true);
+                    a->setChecked(seq->midi_channel() == channel);
                     menuchan->addAction(a);
                 }
                 else
@@ -1840,6 +1844,8 @@ qslivegrid::popup_menu ()
                         a, &QAction::triggered,
                         [this, buss, channel] { set_midi_channel(channel); }
                     );
+                    a->setCheckable(true);
+                    a->setChecked(seq->midi_channel() == channel);
                     menuchan->addAction(a);
                 }
             }
