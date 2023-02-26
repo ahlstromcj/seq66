@@ -992,6 +992,11 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     int xmax = x_off + 1;               /* same as x + w    */
                     int y = track_height() * seqid - 1;
 
+/*
+ * TODO: Use the actually setting of the "trigger" brush.  We would need to
+ *       add a "trigger" brush setting.
+ */
+
 #if defined SEQ66_USE_LINEAR_GRADIENT
 
                     QLinearGradient grad(x, y, x, y + h + 1);

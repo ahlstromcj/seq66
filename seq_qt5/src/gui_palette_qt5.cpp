@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2021-04-29
+ * \updates       2023-02-25
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -340,7 +340,7 @@ gui_palette_qt5::gui_palette_qt5 (const std::string & filename) :
     m_empty_brush           (),
     m_empty_brush_style     (Qt::NoBrush),
     m_note_brush            (),
-    m_note_brush_style      (Qt::SolidPattern),
+    m_note_brush_style      (Qt::LinearGradientPattern),    // Qt::SolidPattern
     m_scale_brush           (),
     m_scale_brush_style     (Qt::Dense3Pattern),
     m_backseq_brush         (),

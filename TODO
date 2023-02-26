@@ -1,6 +1,6 @@
-TO DO for Seq66 0.99.1 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.99.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2022-10-20
+2019-04-13 to 2023-02-17
 
 Ongoing efforts:
 
@@ -522,5 +522,6 @@ Version 2 features:
     -   Implement solo, FF, rewind, etc.
     -   Weak JACK support.  Seq66 dependence on the JACK ringbuffer is an
         issue here.
+    -   Use std::numeric_limits instead of macros.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

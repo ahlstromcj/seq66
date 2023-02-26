@@ -666,6 +666,10 @@ qseqroll::draw_notes
             }
             painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
 
+/*
+ * TODO: Use the actually setting of the "note" brush.
+ */
+
 #if defined SEQ66_USE_LINEAR_GRADIENT
             if (! background)
             {

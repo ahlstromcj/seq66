@@ -106,7 +106,9 @@
    and has better handling of sets, mute-groups, sessions, configuration files,
    play-lists, and automation control.
    It supports the \textsl{Non Session Manager},
-   modifying the color palette, and Qt style-sheets.
+   a metronome function,
+   modifying the color palette,
+   and Qt style-sheets.
    Be prepared to note some significant differences
    between \textsl{Seq66} and \textsl{Sequencer64}.
 
@@ -206,20 +208,30 @@
 \label{subsec:introduction_lets_go}
 
    Make sure no other sound application is running, for the first run.
+   \textsl{Seq66} requires ALSA or JACK on Linux.
+   \textsl{Seq66} does not support
+   \index{pipewire}
+   Pipewire.
+   It may work with a Pipewire-JACK setup, but that usage has not been
+   tested.
+
+   On Windows, \textsl{Seq66} uses the MultiMedia API.
+   This manual assumes that one is running \textsl{Seq66} on Linux, for the most
+   part.
+
    Start \textsl{Seq66} to use JACK for MIDI, or
    on \textsl{Windows}, just run it (\texttt{qseq66}, or \texttt{qpseq66.exe}
    on \textsl{Windows}); for better trouble-shooting, run it from
    the command-line at first.
    The port settings will depend on your system.
    Provide a MIDI file.
-   On our system, the synthesizer (\textsl{Yoshimi}) comes up on MIDI buss 5;
-   on \textsl{Windows}, buss 0 is the "MIDI Mapper", while buss 1 is the
-   built-in wavetable synthesizer, which is normally under control of buss 0.
+   On our system, the synthesizer (\textsl{Yoshimi}) comes up on MIDI buss 5.
+   (On \textsl{Windows}, buss 0 is the "MIDI Mapper", while buss 1 is the
+   built-in wavetable synthesizer, which is normally under control of buss 0.)
    The \texttt{-{}-buss} option remaps all events to the desired buss:
 
    \begin{verbatim}
       $ qseq66 --jack-midi --buss 5 data/midi/b4uacuse-gm-patchless.midi
-      C:\> qpseq66 --buss 1  data/midi/b4uacuse-gm-patchless.midi
    \end{verbatim}
 
    If the \texttt{-{}-alsa} option is used instead of
@@ -233,7 +245,6 @@
 
    \begin{verbatim}
       /usr/share/seq66-0.90/                       (Linux)
-      C:/Program Files (x86)/Seq66/data            (Windows)
    \end{verbatim}
 
    Some of the files in those directories apply to both operating systems, so
@@ -242,7 +253,6 @@
 
    \begin{verbatim}
       /home/user/.config/seq66/qseq66.*            (Linux)
-      C:/Users/user/AppData/Local/seq66/qpseq66.*  (Windows)
    \end{verbatim}
 
    The configuration files in the "home" directory

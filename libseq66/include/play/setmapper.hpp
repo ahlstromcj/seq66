@@ -142,7 +142,7 @@ private:
     /**
      *  To save set lookup during a number of operations, this pointer, owned
      *  by no one, really, stores a painter to the playing screen-set
-     *  (play-screen) in the containter.
+     *  (play-screen) in the container.
      */
 
     screenset * m_playscreen_pointer;
