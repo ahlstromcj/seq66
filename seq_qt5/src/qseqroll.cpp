@@ -666,7 +666,11 @@ qseqroll::draw_notes
             }
             painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
 
-#if defined SEQ66_USE_LINEAR_GRADIENT
+/*
+ * TODO: Use the actually setting of the "note" brush.
+ */
+
+#if defined SEQ66_USE_LINEAR_GRADIENT_TEMP_DISABLE
             if (! background)
             {
                 QLinearGradient grad
@@ -714,7 +718,7 @@ qseqroll::draw_notes
                 {
                     int x_shift = m_note_x + in_shift;
                     int h_minus = noteheight - 1;
-#if defined SEQ66_USE_LINEAR_GRADIENT
+#if defined SEQ66_USE_LINEAR_GRADIENT_TEMP_DISABLE
                     if (ni.selected())
                     {
                         QLinearGradient grad

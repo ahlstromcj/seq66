@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2022-03-07
+ * \updates       2023-02-26
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -37,6 +37,7 @@
  *  Note that the color names come from /usr/share/X11/rgb.txt as Qt requires.
  */
 
+#include <memory>                       /* std::unique_ptr<>                */
 #include <QBrush>
 #include <QColor>
 
@@ -82,13 +83,15 @@ public:
 
     enum class brush
     {
-        empty,
-        note,
-        scale,
-        backseq
+        empty,      /**< Brush for empty space, usually "no brush".         */
+        note,       /**< Brush for drawing notes in pattern editor.         */
+        scale,      /**< Brush for drawing lines denoting musical scale.    */
+        backseq     /**< Brush for drawing lines denoting background seq.   */
     };
 
 private:
+
+    using BrushPtr = std::unique_ptr<Brush>;
 
     /**
      *  Holds the color palette for drawing on slot backgrounds.
@@ -131,16 +134,17 @@ private:
     bool m_is_inverse;
 
     /**
-     *  Stock brushes to increase speed.
+     *  Stock brushes to increase speed. As of 2023-02-26, we use
+     *  pointers to be able to reassign brushes property for Qt.
      */
 
-    Brush m_empty_brush;
+    BrushPtr m_empty_brush;
     BrushStyle m_empty_brush_style;
-    Brush m_note_brush;
+    BrushPtr m_note_brush;
     BrushStyle m_note_brush_style;
-    Brush m_scale_brush;
+    BrushPtr m_scale_brush;
     BrushStyle m_scale_brush_style;
-    Brush m_backseq_brush;
+    BrushPtr m_backseq_brush;
     BrushStyle m_backseq_brush_style;
 
 public:
@@ -286,6 +290,12 @@ public:
 
 private:
 
+    bool make_brush
+    (
+        BrushPtr & brush,
+        BrushStyle & brushstyle,
+        BrushStyle temp
+    );
     bool add
     (
         int index,

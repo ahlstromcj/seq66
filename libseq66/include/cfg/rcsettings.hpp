@@ -208,7 +208,7 @@ private:
 
     /**
      *  New.  If true, leave empty (inactive) MIDI control entries out of the
-     *  "[midi-control-settings]" containter.  This has the side effect of
+     *  "[midi-control-settings]" container.  This has the side effect of
      *  causing empty entries to not be written to the 'ctrl' file,
      *  potentially confusing. However, it can reduce the size of the control
      *  container dramatically, saving look-up time and memory.

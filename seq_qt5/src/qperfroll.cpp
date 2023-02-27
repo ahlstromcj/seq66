@@ -992,6 +992,11 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     int xmax = x_off + 1;               /* same as x + w    */
                     int y = track_height() * seqid - 1;
 
+/*
+ * TODO: Use the actually setting of the "trigger" brush.  We would need to
+ *       add a "trigger" brush setting.
+ */
+
 #if defined SEQ66_USE_LINEAR_GRADIENT
 
                     QLinearGradient grad(x, y, x, y + h + 1);
@@ -1007,9 +1012,19 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         grad.setColorAt(0.5, backcolor.lighter());
                         grad.setColorAt(0.99, backcolor.darker(150));
                     }
+
+
                     pen.setStyle(Qt::SolidLine);        /* seq trigger box  */
                     pen.setWidth(2);
+#if defined USE_OLD
                     painter.fillRect(x, y, w, h + 1, grad);
+#else
+                    QBrush gradbrush(grad);
+                    gradbrush.setStyle(Qt::LinearGradientPattern);
+                    painter.setBrush(gradbrush);
+                    painter.setPen(pen);
+                    painter.drawRect(x + 1, y + 1, w - 2, h - 1);
+#endif
 
 #else   // ! defined SEQ66_USE_LINEAR_GRADIENT
 
