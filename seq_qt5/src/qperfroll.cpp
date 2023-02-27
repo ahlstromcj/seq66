@@ -1012,9 +1012,19 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         grad.setColorAt(0.5, backcolor.lighter());
                         grad.setColorAt(0.99, backcolor.darker(150));
                     }
+
+
                     pen.setStyle(Qt::SolidLine);        /* seq trigger box  */
                     pen.setWidth(2);
+#if defined USE_OLD
                     painter.fillRect(x, y, w, h + 1, grad);
+#else
+                    QBrush gradbrush(grad);
+                    gradbrush.setStyle(Qt::LinearGradientPattern);
+                    painter.setBrush(gradbrush);
+                    painter.setPen(pen);
+                    painter.drawRect(x + 1, y + 1, w - 2, h - 1);
+#endif
 
 #else   // ! defined SEQ66_USE_LINEAR_GRADIENT
 

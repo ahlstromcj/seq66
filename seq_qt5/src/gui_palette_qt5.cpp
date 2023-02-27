@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-02-25
+ * \updates       2023-02-26
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -337,13 +337,13 @@ gui_palette_qt5::gui_palette_qt5 (const std::string & filename) :
     m_inv_palette           (),
     m_statics_are_loaded    (false),
     m_is_inverse            (false),
-    m_empty_brush           (),
+    m_empty_brush           (new (std::nothrow) Brush(Qt::NoBrush)),
     m_empty_brush_style     (Qt::NoBrush),
-    m_note_brush            (),
-    m_note_brush_style      (Qt::LinearGradientPattern),    // Qt::SolidPattern
-    m_scale_brush           (),
+    m_note_brush            (new (std::nothrow) Brush(Qt::SolidPattern)),
+    m_note_brush_style      (Qt::SolidPattern),
+    m_scale_brush           (new (std::nothrow) Brush(Qt::Dense3Pattern)),
     m_scale_brush_style     (Qt::Dense3Pattern),
-    m_backseq_brush         (),
+    m_backseq_brush         (new (std::nothrow) Brush(Qt::Dense2Pattern)),
     m_backseq_brush_style   (Qt::Dense2Pattern)
 {
     load_static_colors(usr().inverse_colors());     /* this must come first */
@@ -588,14 +588,14 @@ gui_palette_qt5::reset_invertibles ()
     m_inv_palette.add(InvertibleColor::lt_grey,     m_lt_grey,  "Step Line");
     m_inv_palette.add(InvertibleColor::extra,       m_dk_green, "Extra");
 
-    m_empty_brush.setColor(get_color(InvertibleColor::white));
-    m_empty_brush.setStyle(m_empty_brush_style);
-    m_note_brush.setColor(get_color(InvertibleColor::white));
-    m_note_brush.setStyle(m_note_brush_style);
-    m_scale_brush.setColor(get_color(InvertibleColor::lt_grey));
-    m_scale_brush.setStyle(m_scale_brush_style);
-    m_backseq_brush.setColor(get_color(InvertibleColor::backseq));
-    m_backseq_brush.setStyle(m_backseq_brush_style);
+    m_empty_brush->setColor(get_color(InvertibleColor::white));
+    m_empty_brush->setStyle(m_empty_brush_style);
+    m_note_brush->setColor(get_color(InvertibleColor::white));
+    m_note_brush->setStyle(m_note_brush_style);
+    m_scale_brush->setColor(get_color(InvertibleColor::lt_grey));
+    m_scale_brush->setStyle(m_scale_brush_style);
+    m_backseq_brush->setColor(get_color(InvertibleColor::backseq));
+    m_backseq_brush->setStyle(m_backseq_brush_style);
 }
 
 /**
@@ -917,6 +917,85 @@ gui_palette_qt5::get_brush_name (BrushStyle b) const
     return result;
 }
 
+/**
+ * QBrush constructors:
+ *
+ *      QBrush(const QGradient & gradient)
+ *      QBrush(Qt::BrushStyle style)
+ *
+ *      QBrush(const QBrush & other)
+ *      QBrush(const QImage & image)
+ *      QBrush(const QPixmap & pixmap)
+ *      QBrush(Qt::GlobalColor color, const QPixmap & pixmap)
+ *      QBrush(const QColor &color, const QPixmap & pixmap)
+ *      QBrush(Qt::GlobalColor color, Qt::BrushStyle style = Qt::SolidPattern)
+ *      QBrush(const QColor & color, Qt::BrushStyle style = Qt::SolidPattern)
+ *      QBrush()
+ *
+ */
+
+bool
+gui_palette_qt5::make_brush
+(
+    BrushPtr & brush,
+    BrushStyle & brushstyle,
+    BrushStyle temp
+)
+{
+    bool result = false;
+    switch (temp)
+    {
+    case Qt::NoBrush:
+    case Qt::SolidPattern:
+    case Qt::Dense1Pattern:
+    case Qt::Dense2Pattern:
+    case Qt::Dense3Pattern:
+    case Qt::Dense4Pattern:
+    case Qt::Dense5Pattern:
+    case Qt::Dense6Pattern:
+    case Qt::Dense7Pattern:
+    case Qt::HorPattern:
+    case Qt::VerPattern:
+    case Qt::CrossPattern:
+    case Qt::BDiagPattern:
+    case Qt::FDiagPattern:
+    case Qt::DiagCrossPattern:
+
+        brush.reset(new (std::nothrow) Brush(temp));
+        if (brush)
+        {
+            result = true;
+            brush->setStyle(temp);
+            brushstyle = temp;
+        }
+        break;
+
+    case Qt::LinearGradientPattern:
+        {
+            QLinearGradient qlg;                        /* (0, 0) to (1, 1) */
+            brush.reset(new (std::nothrow) Brush(qlg));
+            if (brush)
+            {
+                result = true;
+                brush->setStyle(temp);
+                brushstyle = temp;
+            }
+        }
+        break;
+
+    case Qt::RadialGradientPattern:
+        break;
+
+    case Qt::ConicalGradientPattern:
+        break;
+
+    case Qt::TexturePattern:
+        break;
+    }
+    return result;
+}
+
+
 bool
 gui_palette_qt5::set_brushes
 (
@@ -931,37 +1010,30 @@ gui_palette_qt5::set_brushes
     if (result)
     {
         if (temp != Qt::NoBrush)
-        {
-            m_empty_brush_style = temp;
-            m_empty_brush.setStyle(temp);
-        }
+            (void) make_brush(m_empty_brush, m_empty_brush_style, temp);
+
         temp = get_brush_style(notebrush);
         result = temp != Qt::TexturePattern;
         if (result)
         {
             if (temp != Qt::NoBrush)
-            {
-                m_note_brush_style = temp;
-                m_note_brush.setStyle(temp);
-            }
+                (void) make_brush(m_note_brush, m_note_brush_style, temp);
+
             temp = get_brush_style(scalebrush);
             result = temp != Qt::TexturePattern;
             if (result)
             {
                 if (temp != Qt::NoBrush)
-                {
-                    m_scale_brush_style = temp;
-                    m_scale_brush.setStyle(temp);
-                }
+                    (void) make_brush(m_scale_brush, m_scale_brush_style, temp);
+
                 temp = get_brush_style(backseqbrush);
                 result = temp != Qt::TexturePattern;
                 if (result)
                 {
-                    if (temp != Qt::NoBrush)
-                    {
-                        m_backseq_brush_style = temp;
-                        m_backseq_brush.setStyle(temp);
-                    }
+                    (void) make_brush
+                    (
+                        m_backseq_brush, m_backseq_brush_style, temp
+                    );
                 }
             }
         }
@@ -1008,10 +1080,10 @@ gui_palette_qt5::get_brush (brush index)
     static Brush s_dummy;
     switch (index)
     {
-        case brush::empty:      return m_empty_brush;       break;
-        case brush::note:       return m_note_brush;        break;
-        case brush::scale:      return m_scale_brush;       break;
-        case brush::backseq:    return m_backseq_brush;     break;
+        case brush::empty:      return *m_empty_brush;      break;
+        case brush::note:       return *m_note_brush;       break;
+        case brush::scale:      return *m_scale_brush;      break;
+        case brush::backseq:    return *m_backseq_brush;    break;
         default:                return s_dummy;             break;
     }
 }
