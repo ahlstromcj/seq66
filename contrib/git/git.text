@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2022-09-04
+2015-09-09 to 2023-01-27
 
 Creating a GitHub Repository:
 
@@ -60,6 +60,20 @@ directory in the code base (e.g. the "proj") directory.  Then:
     $ git push --all origin   -or-   git push -u origin master
 
 This process is very similar to what done does for GitHub.
+
+A simpler process can be used if one just wants to share a home repository
+between various local Linux computers where SSH has already been set up
+with keys.
+
+    Main computer (server):
+
+        $ git init
+        $ git add .
+        $ git commit -m "Created this new and wonderful project."
+
+    Other computers:
+
+        $ git clone ssh://user@maincomputer/pathtomycode/git/projectdir
 
 Repository Management:
 
