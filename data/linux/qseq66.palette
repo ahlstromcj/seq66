@@ -1,7 +1,7 @@
-# Seq66 0.91.5 (and above) palette configuration file
+# Seq66 0.97.1 (and above) palette configuration file
 #
-# /home/user/.config/seq66/qseq66.palette
-# Written on 2021-11-04 14:00:24
+# /home/ahlstrom/.config/seq66/qseq66.palette
+# Written on 2023-02-28 09:01:20
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface.
@@ -18,10 +18,11 @@ version = 0
 
 Add your comment block here
 
-# First is the color number from 0 to 31. Next is the name of the
-# background color. The first stanza [square brackets] are the ARGB
-# values for the background. The second provides the foreground
-# color name and ARGB values. The alpha values should be set to FF.
+# [palette] affects the pattern colors selected (by number). First is
+# the color number, 0 to 31. Next is the name of the background color.
+# The first stanza [square brackets] are the background ARGB values.
+# The second provides the foreground color name and ARGB values. The
+# alpha values should be set to FF.
 
 [palette]
 
@@ -58,15 +59,16 @@ Add your comment block here
 30       "Light Grey" [ 0xFFC0C0C0 ]            "Black" [ 0xFF000000 ]
 31        "Dark Grey" [ 0xFF484848 ]            "Black" [ 0xFF000000 ]
 
-# Similar to the [palette] section, but applies to UI elements and to
-# the --inverse color option.  The first integer is the color number,
-# ranging from 0 to 12. The names are feature names, not color names.
+# Similar to the [palette] section, but applies to the custom-drawn
+# piano rolls and the --inverse option. The first value is the color
+# number, from 0 to 12. The names are feature names, not color names.
+# The second column is the inverse color.
 
 [ui-palette]
 
  0       "Foreground" [ 0xFF000000 ]       "Foreground" [ 0xFFFFFFFF ]
  1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF484848 ]
- 2            "Label" [ 0xDEADBEEF ]            "Label" [ 0xFFFFFFFF ]
+ 2            "Label" [ 0xFF000000 ]            "Label" [ 0xFFFFFFFF ]
  3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00FF ]
  4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF000080 ]
  5            "Tempo" [ 0xFFFFFF00 ]            "Tempo" [ 0xFFFFFF00 ]
@@ -81,7 +83,7 @@ Add your comment block here
 14        "Step Line" [ 0xFFC0C0C0 ]        "Step Line" [ 0xFFC0C0C0 ]
 15            "Extra" [ 0xFF8B0000 ]            "Extra" [ 0xFF000064 ]
 
-# This section defines brush styles to use.  The names are based on the
+# This section defines brush styles to use. The names are based on the
 # names in the Qt::BrushStyle enumeration. The names are:
 #
 #    nobrush, solid, dense1, dense2, dense3, dense4, dense5, dense6,
@@ -95,10 +97,10 @@ Add your comment block here
 [brushes]
 
 empty = solid
-note = solid
+note = lineargradient
 scale = dense3
 backseq = dense2
 
-# End of /home/user/.config/seq66/qseq66.palette
+# End of /home/ahlstrom/.config/seq66/qseq66.palette
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

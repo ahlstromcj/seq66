@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-02-27
+ * \updates       2023-02-28
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -337,6 +337,12 @@ static Color m_dk_grey;
  *  Note that Qt::NoBrush will yield a black background, while
  *  Qt::SolidPattern will yield a background using the background color (such
  *  as white).
+ *
+ *  Also note that we want the note/trigger brush to be a linear gradient by
+ *  default, but we do not create a gradient to be used by the constructor.
+ *  Instead, we create the gradient in the qloopbutton, qseqroll, qperfnames,
+ *  and qperfroll class via a "use gradient" flag.  We pass Qt::SolidPattern
+ *  below to avoid a Qt warning. *
  */
 
 gui_palette_qt5::gui_palette_qt5 (const std::string & filename) :
@@ -349,7 +355,7 @@ gui_palette_qt5::gui_palette_qt5 (const std::string & filename) :
     m_is_inverse            (false),
     m_empty_brush           (new (std::nothrow) Brush(Qt::SolidPattern)),
     m_empty_brush_style     (Qt::SolidPattern),
-    m_note_brush            (new (std::nothrow) Brush(Qt::LinearGradientPattern)),
+    m_note_brush            (new (std::nothrow) Brush(Qt::SolidPattern)), // *
     m_note_brush_style      (Qt::LinearGradientPattern),
     m_scale_brush           (new (std::nothrow) Brush(Qt::Dense3Pattern)),
     m_scale_brush_style     (Qt::Dense3Pattern),
@@ -602,7 +608,9 @@ gui_palette_qt5::reset_invertibles ()
     m_empty_brush->setColor(get_color(InvertibleColor::white));
     m_empty_brush->setStyle(m_empty_brush_style);
     m_note_brush->setColor(get_color(InvertibleColor::white));
-    m_note_brush->setStyle(m_note_brush_style);
+    if (! m_use_gradient_brush)                     /* avoid Qt warning     */
+        m_note_brush->setStyle(m_note_brush_style);
+
     m_scale_brush->setColor(get_color(InvertibleColor::lt_grey));
     m_scale_brush->setStyle(m_scale_brush_style);
     m_backseq_brush->setColor(get_color(InvertibleColor::backseq));
