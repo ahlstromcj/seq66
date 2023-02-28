@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2022-10-30
+ * \updates       2023-02-27
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -55,6 +55,7 @@
 #include <cmath>                        /* std::sin(radians)                */
 
 #include "cfg/settings.hpp"             /* seq66::usr().scale_size(), etc.  */
+#include "gui_palette_qt5.hpp"          /* gui_pallete_qt5::Color etc.      */
 #include "qloopbutton.hpp"              /* seq66::qloopbutton slot          */
 #include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
 
@@ -189,7 +190,8 @@ qloopbutton::qloopbutton
     m_bottom_left           (),
     m_bottom_right          (),
     m_progress_box          (),
-    m_event_box             ()
+    m_event_box             (),
+    m_use_gradient          (gui_use_gradient_brush())
 {
     sm_draw_progress_box = usr().progress_box_shown();
     m_text_font.setBold(usr().progress_bar_thick());
@@ -754,38 +756,33 @@ qloopbutton::draw_progress_box (QPainter & painter)
         pen.setStyle(Qt::SolidLine);
     }
     pen.setWidth(penwidth);
-#if defined SEQ66_USE_LINEAR_GRADIENT
-#if defined SIDEWAYS_GRADIENT
-    QLinearGradient grad
-    (
-        m_progress_box.x(), m_progress_box.y(),
-        m_progress_box.w(), m_progress_box.h()
-    );
-#else
-    QLinearGradient grad
-    (
-        m_progress_box.x(), m_progress_box.y(),
-        m_progress_box.x(), m_progress_box.y() + m_progress_box.h()
-    );
-#endif
-    grad.setColorAt(0.01, backcolor.darker());
-    grad.setColorAt(0.5, backcolor.lighter());
-    grad.setColorAt(0.99, backcolor.darker());
-    painter.fillRect
-    (
-        m_progress_box.x(), m_progress_box.y(),
-        m_progress_box.w(), m_progress_box.h(), grad
-    );
-#else
-    brush.setColor(backcolor);
-    painter.setPen(pen);
-    painter.setBrush(brush);
-    painter.drawRect
-    (
-        m_progress_box.x(), m_progress_box.y(),
-        m_progress_box.w(), m_progress_box.h()
-    );
-#endif
+    if (use_gradient())
+    {
+        QLinearGradient grad
+        (
+            m_progress_box.x(), m_progress_box.y(),
+            m_progress_box.x(), m_progress_box.y() + m_progress_box.h()
+        );
+        grad.setColorAt(0.01, backcolor.darker());
+        grad.setColorAt(0.5, backcolor.lighter());
+        grad.setColorAt(0.99, backcolor.darker());
+        painter.fillRect
+        (
+            m_progress_box.x(), m_progress_box.y(),
+            m_progress_box.w(), m_progress_box.h(), grad
+        );
+    }
+    else
+    {
+        brush.setColor(backcolor);
+        painter.setPen(pen);
+        painter.setBrush(brush);
+        painter.drawRect
+        (
+            m_progress_box.x(), m_progress_box.y(),
+            m_progress_box.w(), m_progress_box.h()
+        );
+    }
 }
 
 /**

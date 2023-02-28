@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2022-08-26
+ * \updates       2022-08-27
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -78,6 +78,7 @@ qeditbase::qeditbase
     m_note_brush            (gui_note_brush()),
     m_scale_brush           (gui_scale_brush()),
     m_backseq_brush         (gui_backseq_brush()),
+    m_use_gradient          (gui_use_gradient_brush()),
     m_old                   (),                     /* past selection box   */
     m_selected              (),                     /* current sel box      */
     m_scale                 (scalex > 4 ? scalex / 4 : 1),

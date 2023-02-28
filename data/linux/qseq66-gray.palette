@@ -91,11 +91,15 @@ look empty with a space.
 #    nobrush, solid, dense1, dense2, dense3, dense4, dense5, dense6,
 #    dense7, horizontal, vertical, cross, bdiag, fdiag, diagcross,
 #    lineargradient, radialgradient, and conicalgradient.
+#
+# For 'empty', best to just use 'solid' (try others and see why).
+# For 'note', use 'solid' or the default, 'lineargradient'. These
+# also apply to the progress box and triggers.
 
 [brushes]
 
-empty = nobrush
-note = solid
+empty = solid
+note = lineargradient
 scale = dense3
 backseq = dense2
 

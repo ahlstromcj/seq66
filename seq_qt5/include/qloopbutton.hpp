@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2022-08-28
+ * \updates       2023-02-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -208,6 +208,7 @@ private:
     textbox m_bottom_right;
     progbox m_progress_box;
     progbox m_event_box;
+    bool m_use_gradient;
 
 public:
 
@@ -224,6 +225,11 @@ public:
     virtual ~qloopbutton ()
     {
         // no code needed
+    }
+
+    bool use_gradient () const
+    {
+        return m_use_gradient;
     }
 
     static bool boxes_initialized (bool reset = false);

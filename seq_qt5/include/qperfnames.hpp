@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-15
+ * \updates       2023-02-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -69,6 +69,11 @@ public:
     void resize ()
     {
         force_resize(this);
+    }
+
+    bool use_gradient () const
+    {
+        return m_use_gradient;
     }
 
 protected:
@@ -120,6 +125,7 @@ private:
     Color m_preview_color;                  /* will reduce its alpha value  */
     bool m_is_previewing;
     int m_preview_row;
+    bool m_use_gradient;
 
 };          // class qperfnames
 

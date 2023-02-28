@@ -329,7 +329,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     QRect r = qpep->rect();
     QRect view(0, 0, width(), height());
     QPainter painter(this);
-    QBrush brush(Qt::white, Qt::NoBrush);
+    QBrush brush(blank_brush());    // QBrush brush(Qt::white, Qt::NoBrush);
     QPen pen(Qt::lightGray);
     pen.setStyle(Qt::SolidLine);
     pen.setColor(Qt::lightGray);
@@ -456,6 +456,13 @@ void
 qseqroll::draw_grid (QPainter & painter, const QRect & r)
 {
     int octkey = c_octave_size - m_key;             /* used three times     */
+
+    /*
+     * This really looks good only with the default "SolidPattern" style.
+     *
+     * QBrush brush(back_color(), blank_brush().style());
+     */
+
     QBrush brush(back_color());                     /* brush(Qt::NoBrush)   */
     QPen pen(grey_color());                         /* pen(Qt::lightGray)   */
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
@@ -573,7 +580,8 @@ qseqroll::draw_notes
     bool background
 )
 {
-    QBrush brush(Qt::white);            /* Qt::NoBrush  breaks selection    */
+//  QBrush brush(Qt::white);            /* Qt::NoBrush  breaks selection    */
+    QBrush brush(note_brush());
     QBrush error_brush(Qt::magenta);    /* for unlinked notes               */
     QPen pen(fore_color());
     QPen error_pen(Qt::magenta);
@@ -665,13 +673,7 @@ qseqroll::draw_notes
                 painter.setBrush(note_brush());
             }
             painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
-
-/*
- * TODO: Use the actually setting of the "note" brush.
- */
-
-#if defined SEQ66_USE_LINEAR_GRADIENT_TEMP_DISABLE
-            if (! background)
+            if (use_gradient() && ! background)
             {
                 QLinearGradient grad
                 (
@@ -685,7 +687,6 @@ qseqroll::draw_notes
                     m_note_x, m_note_y, m_note_width, noteheight, grad
                 );
             }
-#endif
             if (m_link_wraparound)
             {
                 if (ni.finish() < ni.start())       /* shadow these notes   */
@@ -718,41 +719,44 @@ qseqroll::draw_notes
                 {
                     int x_shift = m_note_x + in_shift;
                     int h_minus = noteheight - 1;
-#if defined SEQ66_USE_LINEAR_GRADIENT_TEMP_DISABLE
-                    if (ni.selected())
+                    if (use_gradient())
                     {
-                        QLinearGradient grad
-                        (
-                            x_shift, m_note_y, m_note_x, m_note_y + h_minus
-                        );
-                        grad.setColorAt(0.01, fore_color());
-                        grad.setColorAt(0.5,  sel_color());
-                        grad.setColorAt(0.99, fore_color());
-                        painter.fillRect
-                        (
-                            x_shift, m_note_y,
-                            m_note_width + length_add - 1, h_minus, grad
-                        );
-                    }
-#else
-                    if (ni.finish() >= ni.start())      /* note highlight   */
-                    {
-                        painter.drawRect
-                        (
-                            x_shift, m_note_y,
-                            m_note_width + length_add - 1, h_minus
-                        );
+                        if (ni.selected())
+                        {
+                            QLinearGradient grad
+                            (
+                                x_shift, m_note_y, m_note_x, m_note_y + h_minus
+                            );
+                            grad.setColorAt(0.01, fore_color());
+                            grad.setColorAt(0.5,  sel_color());
+                            grad.setColorAt(0.99, fore_color());
+                            painter.fillRect
+                            (
+                                x_shift, m_note_y,
+                                m_note_width + length_add - 1, h_minus, grad
+                            );
+                        }
                     }
                     else
                     {
-                        int w = tix_to_pix(ni.finish()) + length_add - 3;
-                        painter.drawRect
-                        (
-                            x_shift, m_note_y, m_note_width, h_minus
-                        );
-                        painter.drawRect(m_keypadding_x, m_note_y, w, h_minus);
+                        if (ni.finish() >= ni.start())  /* note highlight   */
+                        {
+                            painter.drawRect
+                            (
+                                x_shift, m_note_y,
+                                m_note_width + length_add - 1, h_minus
+                            );
+                        }
+                        else
+                        {
+                            int w = tix_to_pix(ni.finish()) + length_add - 3;
+                            painter.drawRect
+                            (
+                                x_shift, m_note_y, m_note_width, h_minus
+                            );
+                            painter.drawRect(m_keypadding_x, m_note_y, w, h_minus);
+                        }
                     }
-#endif
                 }
             }
         }

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-02-26
+ * \updates       2023-02-27
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -140,12 +140,19 @@ private:
 
     BrushPtr m_empty_brush;
     BrushStyle m_empty_brush_style;
-    BrushPtr m_note_brush;
-    BrushStyle m_note_brush_style;
+    BrushPtr m_note_brush;                  /* for both notes and triggers  */
+    BrushStyle m_note_brush_style;          /* ditto                        */
     BrushPtr m_scale_brush;
     BrushStyle m_scale_brush_style;
     BrushPtr m_backseq_brush;
     BrushStyle m_backseq_brush_style;
+
+    /**
+     *  A convenience to indicate that the linear gradient pattern brush
+     *  is in used.
+     */
+
+    bool m_use_gradient_brush;
 
 public:
 
@@ -288,6 +295,11 @@ public:
         std::string & backseqbrush
     );
 
+    bool use_gradient_brush () const
+    {
+        return m_use_gradient_brush;
+    }
+
 private:
 
     bool make_brush
@@ -339,7 +351,8 @@ extern std::string get_color_name_ex (PaletteColor index);
 extern bool is_theme_color (const Color & c);
 extern bool no_color (int c);
 extern Brush gui_empty_brush ();
-extern Brush gui_note_brush ();
+extern Brush gui_note_brush ();                 /* for notes and triggers   */
+extern bool gui_use_gradient_brush ();          /* ditto                    */
 extern Brush gui_scale_brush ();
 extern Brush gui_backseq_brush ();
 

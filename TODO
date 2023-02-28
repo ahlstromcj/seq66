@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-02-17
+2019-04-13 to 2023-02-27
 
 Ongoing efforts:
 
@@ -97,7 +97,6 @@ Build:
 
 Macros to "finalize":
 
-    SEQ66_USE_LINEAR_GRADIENT
     SEQ66_USE_MIDI_ALSA_POLL
     SEQ66_USE_SCROLLING_CODE
     SEQ66_SHOW_TEMPO_IN_PIANO_ROLL

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-10-10
+ * \updates       2023-02-27
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -991,62 +991,54 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     int x = x_on;
                     int xmax = x_off + 1;               /* same as x + w    */
                     int y = track_height() * seqid - 1;
-
-/*
- * TODO: Use the actually setting of the "trigger" brush.  We would need to
- *       add a "trigger" brush setting.
- */
-
-#if defined SEQ66_USE_LINEAR_GRADIENT
-
-                    QLinearGradient grad(x, y, x, y + h + 1);
-                    if (trig.selected())
+                    if (use_gradient())
                     {
-                        grad.setColorAt(0.01, sel_color().darker());
-                        grad.setColorAt(0.5, sel_color().lighter());
-                        grad.setColorAt(0.99, sel_color().darker());
+                        QLinearGradient grad(x, y, x, y + h + 1);
+                        if (trig.selected())
+                        {
+                            grad.setColorAt(0.01, sel_color().darker());
+                            grad.setColorAt(0.5, sel_color().lighter());
+                            grad.setColorAt(0.99, sel_color().darker());
+                        }
+                        else
+                        {
+                            grad.setColorAt(0.01, backcolor.darker(150));
+                            grad.setColorAt(0.5, backcolor.lighter());
+                            grad.setColorAt(0.99, backcolor.darker(150));
+                        }
+                        pen.setStyle(Qt::SolidLine);    /* seq trigger box  */
+                        pen.setWidth(2);
+
+                        /*
+                         * painter.fillRect(x, y, w, h + 1, grad);
+                         */
+
+                        QBrush gradbrush(grad);
+                        gradbrush.setStyle(Qt::LinearGradientPattern);
+                        painter.setBrush(gradbrush);
+                        pen.setColor(fore_color());     /* use box color    */
+                        painter.setPen(pen);
+                        painter.drawRect(x + 1, y + 1, w - 2, h - 1);
                     }
                     else
                     {
-                        grad.setColorAt(0.01, backcolor.darker(150));
-                        grad.setColorAt(0.5, backcolor.lighter());
-                        grad.setColorAt(0.99, backcolor.darker(150));
+                        if (trig.selected())
+                        {
+                            pen.setColor(sel_color());
+                            brush.setColor(grey_color());
+                        }
+                        else
+                        {
+                            pen.setColor(fore_color());
+                            brush.setColor(backcolor);
+                        }
+                        pen.setStyle(Qt::SolidLine);    /* seq trigger box  */
+                        pen.setWidth(2);
+                        brush.setStyle(Qt::SolidPattern);
+                        painter.setBrush(brush);
+                        painter.setPen(pen);
+                        painter.drawRect(x + 1, y + 1, w - 2, h - 1);
                     }
-
-
-                    pen.setStyle(Qt::SolidLine);        /* seq trigger box  */
-                    pen.setWidth(2);
-#if defined USE_OLD
-                    painter.fillRect(x, y, w, h + 1, grad);
-#else
-                    QBrush gradbrush(grad);
-                    gradbrush.setStyle(Qt::LinearGradientPattern);
-                    painter.setBrush(gradbrush);
-                    painter.setPen(pen);
-                    painter.drawRect(x + 1, y + 1, w - 2, h - 1);
-#endif
-
-#else   // ! defined SEQ66_USE_LINEAR_GRADIENT
-
-                    if (trig.selected())
-                    {
-                        pen.setColor(sel_color());      /* orange, Qt::red  */
-                        brush.setColor(grey_color());   /* make it obvious  */
-                    }
-                    else
-                    {
-                        pen.setColor(fore_color());
-                        brush.setColor(backcolor);
-                    }
-                    pen.setStyle(Qt::SolidLine);        /* seq trigger box  */
-                    pen.setWidth(2);
-                    brush.setStyle(Qt::SolidPattern);
-                    painter.setBrush(brush);
-                    painter.setPen(pen);
-                    painter.drawRect(x + 1, y + 1, w - 2, h - 1);
-
-#endif  // defined SEQ66_USE_LINEAR_GRADIENT
-
                     brush.setStyle(Qt::NoBrush);        /* grab handle L    */
                     painter.setBrush(brush);
                     pen.setColor(fore_color());

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2022-08-26
+ * \updates       2022-08-27
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -116,6 +116,7 @@ private:
     const Brush m_note_brush;       /* also for perfroll trigger boxes?     */
     const Brush m_scale_brush;      /* background, usually hatched          */
     const Brush m_backseq_brush;    /* another background, usually hatched  */
+    const bool m_use_gradient;      /* paint notes/triggers with gradient   */
 
 protected:
 
@@ -379,6 +380,11 @@ public:
     const Color & note_out_color () const
     {
         return m_note_out_color;
+    }
+
+    bool use_gradient () const
+    {
+        return m_use_gradient;      /* paint notes/triggers with gradient   */
     }
 
     const Color & tempo_color () const

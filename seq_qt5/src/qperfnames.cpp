@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-10-20
+ * \updates       2023-02-27
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -79,7 +79,8 @@ qperfnames::qperfnames (performer & p, QWidget * parent) :
     m_nametext_x        (6 * 2 + 6 * 20),                   /* see name_x() */
     m_preview_color     (progress_paint()),
     m_is_previewing     (false),
-    m_preview_row       (-1)
+    m_preview_row       (-1),
+    m_use_gradient      (gui_use_gradient_brush())
 {
     /*
      * This policy is necessary in order to allow the vertical scrollbar to
@@ -175,73 +176,70 @@ qperfnames::paintEvent (QPaintEvent *)
                 );
 
                 QString chinfo(name);
-
-#if defined SEQ66_USE_LINEAR_GRADIENT
-
-                QLinearGradient grad
-                (
-                    rect_x, rect_y, rect_x, rect_y + h + 1
-                );
-                if (muted)
+                if (use_gradient())
                 {
-                    Color backcolor = grey_color();
-                    grad.setColorAt(0.01, backcolor.darker());
-                    grad.setColorAt(0.5, backcolor.lighter());
-                    grad.setColorAt(0.99, backcolor.darker());
+                    QLinearGradient grad
+                    (
+                        rect_x, rect_y, rect_x, rect_y + h + 1
+                    );
+                    if (muted)
+                    {
+                        Color backcolor = grey_color();
+                        grad.setColorAt(0.01, backcolor.darker());
+                        grad.setColorAt(0.5, backcolor.lighter());
+                        grad.setColorAt(0.99, backcolor.darker());
+                    }
+                    else
+                    {
+                        int c = s->color();
+                        Color backcolor = get_color_fix(PaletteColor(c));
+                        int alpha = seq_id == m_preview_row ?
+                            s_alpha_bright : s_alpha_normal ;
+
+                        backcolor.setAlpha(alpha);
+                        grad.setColorAt(0.01, backcolor.darker(150));
+                        grad.setColorAt(0.5, backcolor.lighter());
+                        grad.setColorAt(0.99, backcolor.darker(150));
+                    }
+                    painter.fillRect(rect_x +2 , rect_y +1, rect_w -2, h - 1, grad);
+                    pen.setColor(fore_color());
+
+                    /*
+                     * 0.99.1: Draw a rectangle around the gradient.
+                     */
+
+                    pen.setStyle(Qt::SolidLine);
+                    pen.setColor(fore_color());
+                    painter.setPen(pen);
+                    brush.setStyle(Qt::NoBrush);
+                    painter.setBrush(brush);
+                    painter.drawRect(rect_x, rect_y, rect_w, h);
                 }
                 else
                 {
-                    int c = s->color();
-                    Color backcolor = get_color_fix(PaletteColor(c));
-                    int alpha = seq_id == m_preview_row ?
-                        s_alpha_bright : s_alpha_normal ;
+                    if (muted)
+                    {
+                        brush.setColor(grey_color());
+                        brush.setStyle(Qt::SolidPattern);
+                        painter.setBrush(brush);
+                        painter.drawRect(rect_x, rect_y, rect_w, h);
+                        pen.setColor(fore_color());
+                    }
+                    else
+                    {
+                        int c = s->color();
+                        Color backcolor = get_color_fix(PaletteColor(c));
+                        int alpha = seq_id == m_preview_row ?
+                            s_alpha_bright : s_alpha_normal ;
 
-                    backcolor.setAlpha(alpha);
-                    grad.setColorAt(0.01, backcolor.darker(150));
-                    grad.setColorAt(0.5, backcolor.lighter());
-                    grad.setColorAt(0.99, backcolor.darker(150));
+                        backcolor.setAlpha(alpha);
+                        brush.setColor(backcolor);
+                        brush.setStyle(Qt::SolidPattern);
+                        painter.setBrush(brush);
+                        painter.drawRect(rect_x, rect_y, rect_w, h);
+                        pen.setColor(fore_color());
+                    }
                 }
-                painter.fillRect(rect_x +2 , rect_y +1, rect_w -2, h - 1, grad);
-                pen.setColor(fore_color());
-
-                /*
-                 * 0.99.1: Draw a rectangle around the gradient.
-                 */
-
-                pen.setStyle(Qt::SolidLine);
-                pen.setColor(fore_color());
-                painter.setPen(pen);
-                brush.setStyle(Qt::NoBrush);
-                painter.setBrush(brush);
-                painter.drawRect(rect_x, rect_y, rect_w, h);
-
-#else   // ! defined SEQ66_USE_LINEAR_GRADIENT
-
-                if (muted)
-                {
-                    brush.setColor(grey_color());
-                    brush.setStyle(Qt::SolidPattern);
-                    painter.setBrush(brush);
-                    painter.drawRect(rect_x, rect_y, rect_w, h);
-                    pen.setColor(fore_color());
-                }
-                else
-                {
-                    int c = s->color();
-                    Color backcolor = get_color_fix(PaletteColor(c));
-                    int alpha = seq_id == m_preview_row ?
-                        s_alpha_bright : s_alpha_normal ;
-
-                    backcolor.setAlpha(alpha);
-                    brush.setColor(backcolor);
-                    brush.setStyle(Qt::SolidPattern);
-                    painter.setBrush(brush);
-                    painter.drawRect(rect_x, rect_y, rect_w, h);
-                    pen.setColor(fore_color());
-                }
-
-#endif  // defined SEQ66_USE_LINEAR_GRADIENT
-
                 painter.setPen(pen);
                 painter.drawText(18, rect_y + 9, chinfo);
                 if (! track_thin())
@@ -251,26 +249,27 @@ qperfnames::paintEvent (QPaintEvent *)
                     painter.drawText(18, rect_y + 19, qt(seq_name));
                     painter.drawText(114, rect_y + 19, temp);
                 }
-#if defined SEQ66_USE_LINEAR_GRADIENT
-                if (muted)
+                if (use_gradient())
                 {
-                    brush.setColor(grey_color());
-                    brush.setStyle(Qt::SolidPattern);
-                    painter.setBrush(brush);
-                }
-                else
-                {
-                    int c = s->color();
-                    Color backcolor = get_color_fix(PaletteColor(c));
-                    int alpha = seq_id == m_preview_row ?
-                        s_alpha_bright : s_alpha_normal ;
+                    if (muted)
+                    {
+                        brush.setColor(grey_color());
+                        brush.setStyle(Qt::SolidPattern);
+                        painter.setBrush(brush);
+                    }
+                    else
+                    {
+                        int c = s->color();
+                        Color backcolor = get_color_fix(PaletteColor(c));
+                        int alpha = seq_id == m_preview_row ?
+                            s_alpha_bright : s_alpha_normal ;
 
-                    backcolor.setAlpha(alpha);
-                    brush.setColor(backcolor);
-                    brush.setStyle(Qt::SolidPattern);
-                    painter.setBrush(brush);
+                        backcolor.setAlpha(alpha);
+                        brush.setColor(backcolor);
+                        brush.setStyle(Qt::SolidPattern);
+                        painter.setBrush(brush);
+                    }
                 }
-#endif
                 painter.drawRect(name_x(2), name_y(seq_id), 9, h);
                 painter.drawText(name_x(4), name_y(seq_id) + 9, QString("M"));
             }

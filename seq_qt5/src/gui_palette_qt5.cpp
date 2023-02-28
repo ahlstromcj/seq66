@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-02-26
+ * \updates       2023-02-27
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -255,6 +255,12 @@ gui_note_brush ()
     return global_palette().get_brush(gui_palette_qt5::brush::note);
 }
 
+bool
+gui_use_gradient_brush ()
+{
+    return global_palette().use_gradient_brush();
+}
+
 Brush
 gui_scale_brush ()
 {
@@ -327,6 +333,10 @@ static Color m_dk_grey;
  *  get_window() returns 0 because this window has not yet been realized.
  *  Also note that the possible color names that can be used are found in
  *  /usr/share/X11/rgb.txt.
+ *
+ *  Note that Qt::NoBrush will yield a black background, while
+ *  Qt::SolidPattern will yield a background using the background color (such
+ *  as white).
  */
 
 gui_palette_qt5::gui_palette_qt5 (const std::string & filename) :
@@ -337,14 +347,15 @@ gui_palette_qt5::gui_palette_qt5 (const std::string & filename) :
     m_inv_palette           (),
     m_statics_are_loaded    (false),
     m_is_inverse            (false),
-    m_empty_brush           (new (std::nothrow) Brush(Qt::NoBrush)),
-    m_empty_brush_style     (Qt::NoBrush),
-    m_note_brush            (new (std::nothrow) Brush(Qt::SolidPattern)),
-    m_note_brush_style      (Qt::SolidPattern),
+    m_empty_brush           (new (std::nothrow) Brush(Qt::SolidPattern)),
+    m_empty_brush_style     (Qt::SolidPattern),
+    m_note_brush            (new (std::nothrow) Brush(Qt::LinearGradientPattern)),
+    m_note_brush_style      (Qt::LinearGradientPattern),
     m_scale_brush           (new (std::nothrow) Brush(Qt::Dense3Pattern)),
     m_scale_brush_style     (Qt::Dense3Pattern),
     m_backseq_brush         (new (std::nothrow) Brush(Qt::Dense2Pattern)),
-    m_backseq_brush_style   (Qt::Dense2Pattern)
+    m_backseq_brush_style   (Qt::Dense2Pattern),
+    m_use_gradient_brush    (true)
 {
     load_static_colors(usr().inverse_colors());     /* this must come first */
     reset();
@@ -932,6 +943,8 @@ gui_palette_qt5::get_brush_name (BrushStyle b) const
  *      QBrush(const QColor & color, Qt::BrushStyle style = Qt::SolidPattern)
  *      QBrush()
  *
+ *  Note that we will actually support only the linear gradient for use in most
+ *  applications, but we leave the other gradients in place for now.
  */
 
 bool
@@ -971,6 +984,8 @@ gui_palette_qt5::make_brush
         break;
 
     case Qt::LinearGradientPattern:
+    case Qt::RadialGradientPattern:
+    case Qt::ConicalGradientPattern:
         {
             QLinearGradient qlg;                        /* (0, 0) to (1, 1) */
             brush.reset(new (std::nothrow) Brush(qlg));
@@ -981,12 +996,6 @@ gui_palette_qt5::make_brush
                 brushstyle = temp;
             }
         }
-        break;
-
-    case Qt::RadialGradientPattern:
-        break;
-
-    case Qt::ConicalGradientPattern:
         break;
 
     case Qt::TexturePattern:
@@ -1009,23 +1018,18 @@ gui_palette_qt5::set_brushes
     bool result = temp != Qt::TexturePattern;   /* used as illegal value    */
     if (result)
     {
-        if (temp != Qt::NoBrush)
-            (void) make_brush(m_empty_brush, m_empty_brush_style, temp);
-
+        (void) make_brush(m_empty_brush, m_empty_brush_style, temp);
         temp = get_brush_style(notebrush);
         result = temp != Qt::TexturePattern;
         if (result)
         {
-            if (temp != Qt::NoBrush)
-                (void) make_brush(m_note_brush, m_note_brush_style, temp);
-
+            m_use_gradient_brush = temp == Qt::LinearGradientPattern;
+            (void) make_brush(m_note_brush, m_note_brush_style, temp);
             temp = get_brush_style(scalebrush);
             result = temp != Qt::TexturePattern;
             if (result)
             {
-                if (temp != Qt::NoBrush)
-                    (void) make_brush(m_scale_brush, m_scale_brush_style, temp);
-
+                (void) make_brush(m_scale_brush, m_scale_brush_style, temp);
                 temp = get_brush_style(backseqbrush);
                 result = temp != Qt::TexturePattern;
                 if (result)

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2022-10-15
+ * \updates       2023-02-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -7839,16 +7839,24 @@ performer::open_note_mapper (const std::string & notefile)
     m_note_mapper.reset(new notemapper());
     if (m_note_mapper)
     {
-        if (notefile.empty())
+        if (notefile.empty() || ! rc().notemap_active())
         {
             // anything to do?
         }
         else
         {
-            notemapfile nmf(*m_note_mapper, notefile, rc());
-            result = nmf.parse();
-            if (! result)
-                set_error_message(nmf.get_error_message());
+            if (file_readable(notefile))
+            {
+                notemapfile nmf(*m_note_mapper, notefile, rc());
+                result = nmf.parse();
+                if (! result)
+                    set_error_message(nmf.get_error_message());
+            }
+            else
+            {
+                std::string msg = "Cannot read: " + notefile;
+                set_error_message(msg);
+            }
         }
     }
     return result;

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-10-11
+ * \updates       2023-02-27
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -49,14 +49,6 @@
 
 #include "seq66-config.h"               /* automake-generated or for qmake  */
 #include "seq66_platform_macros.h"      /* indicates the build platform     */
-
-/*
- * Just for fun, we are trying linear gradients, to give the triggers a
- * rounded look.  Disable and rebuild if it seems to add too much to CPU
- * usage.
- */
-
-#define SEQ66_USE_LINEAR_GRADIENT
 
 /**
  *  For issue #100, this macro enables using our new ring_buffer instead of

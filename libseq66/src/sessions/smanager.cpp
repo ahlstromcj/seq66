@@ -744,8 +744,8 @@ smanager::internal_error_check (std::string & errmsg) const
     if (result)
     {
         pmerrmsg +=
-            " Check Edit / Preferences / MIDI Clock and MIDI Input to "
-            "see which devices are disabled. Check seq66.log."
+            " Check Edit / Preferences / MIDI Clock & MIDI Input to "
+            "see which devices are disabled."
             ;
         append_error_message(pmerrmsg);
         errmsg = pmerrmsg;
