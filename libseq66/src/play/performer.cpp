@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-02-27
+ * \updates       2023-03-01
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3778,20 +3778,7 @@ performer::output_func ()
                 // No additional code needed besides the output() call above.
             }
             else
-            {
-#if defined USE_THIS_STAZED_CODE_WHEN_READY
-                if (song_mode() && ! m_usemidiclock && m_reposition)
-                {
-                    current_tick = clock_tick;
-                    delta_tick = m_start_tick - clock_tick;
-                    init_clock = true;
-                    m_start_tick = get_left_tick();
-                    m_reposition = false;
-                    m_reset_tempo_list = true;
-                }
-#endif
                 pad().add_delta_tick(delta_tick);   /* add to current ticks */
-            }
 
             /*
              * pad().js_init_clock will be true when we run for the first time,

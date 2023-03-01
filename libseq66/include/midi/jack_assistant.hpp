@@ -622,7 +622,7 @@ private:
 #if defined SEQ66_USE_JACK_SYNC_CALLBACK
     int sync (jack_transport_state_t state = (jack_transport_state_t)(-1));
 #endif
-#if defined ENABLE_PROPOSED_FUNCTIONS
+#if defined USE_TIMEBASE_MASTER
     void update_timebase_master (jack_transport_state_t s);
 #endif
     void set_position (midipulse currenttick);

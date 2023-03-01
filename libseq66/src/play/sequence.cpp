@@ -2114,7 +2114,8 @@ sequence::jitter_notes (int jitter)
 #if defined USE_ADJUST_DATA_HANDLE
 
 /*
- * Unused.  Has issue(s) to correct before enabling.
+ * Unused.  Has issue(s) to correct before enabling. Such as "what was this
+ * function meant to do?"
  */
 
 void

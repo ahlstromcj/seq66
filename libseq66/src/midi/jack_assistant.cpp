@@ -881,7 +881,7 @@ jack_assistant::jack_assistant
     m_jack_tick                 (0.0),
     m_jack_running              (false),
     m_timebase                  (timebase::none),   /* or slave, master...  */
-#if defined ENABLE_PROPOSED_FUNCTIONS
+#if defined USE_TIMEBASE_MASTER
     m_timebase_tracking         (-1),
 #endif
     m_frame_rate                (0),
@@ -1811,7 +1811,7 @@ jack_assistant::output (jack_scratchpad & pad)
     return m_jack_running;
 }
 
-#if defined ENABLE_PROPOSED_FUNCTIONS
+#if defined USE_TIMEBASE_MASTER
 
 /**
  *  Adapted from Hydrogen source code.  If transport is not stopped, check the
@@ -1847,7 +1847,7 @@ jack_assistant::update_timebase_master (jack_transport_state_t s)
     }
 }
 
-#endif  // defined ENABLE_PROPOSED_FUNCTIONS
+#endif  // defined USE_TIMEBASE_MASTER
 
 /**
  *  Shows a one-line summary of a JACK position structure.  This function is

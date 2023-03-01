@@ -99,7 +99,6 @@ Macros to "finalize":
     SEQ66_SEQUENCE_EDIT_MODE and
     SEQ66_SEQUENCE_EDIT_MODE_GLOBAL: Kepler34, but may be pattern-specific.
     SEQ66_USE_JACK_SYNC_CALLBACK (saved only for reference).
-
     USE_C_MILLISLEEP (related to high CPU in Windows/portmidi builds).
     USE_SONG_BOX_SELECT (this will require a lot of work to perfect).
     USE_FILL_TIME_SIG_AND_TEMPO (see sequencer64 issue 141).
@@ -108,17 +107,12 @@ Macros to "finalize":
     USE_THESE_SEQSPECS (unimplemented Seq32/Stazed SeqSpecs)
     USE_SETMAPPER_RESET_SEQUENCES (no code uses this function yet).
     USE_SCREENSET_RESET_SEQUENCES (no code uses this function yet).
-    USE_ACTIVE_SENSE_AND_RESET
-    USE_SEQUENCE_REMOVE_EVENTS
-    USE_ADJUST_DATA_HANDLE
-    USE_INTERSECT_FUNCTIONS
-    ENABLE_PROPOSED_FUNCTIONS
-
-    USE_STAZED_SHIFT_SUPPORT
-    USE_STAZED_COMPANDING
-    USE_THIS_STAZED_CODE_WHEN_READY
-
-    function_calls_gnu.c/h
+    USE_ACTIVE_SENSE_AND_RESET (handled in JACK, but not ALSA or portmidi).
+    USE_SEQUENCE_REMOVE_EVENTS (no code uses this function yet).
+    USE_ADJUST_DATA_HANDLE (no code uses this function yet).
+    USE_INTERSECT_FUNCTIONS (could be used for trigger lookup at some point).
+    USE_TIMEBASE_MASTER (functionality from Hydrogen, not used).
+    USE_STAZED_SHIFT_SUPPORT (investigate and understand at some point).
 
 Others to Consider:
 
@@ -444,14 +438,43 @@ ISSUES:
     STATUS: Explained in the issue report.  README.md changes needed?
 
 #100 Seq66's MIDI timing completely falls apart at JACK buffer sizer larger
-     than 128.
-     STATUS: In progress. Added a timestamp to each message in the JACK
-     ringbuffer (enabled by a C macro in libseq66/include/seq_features.h).
-     This addes a notable burden on process and we can get buffer overflow
-     errors.  Even with message timestamps disabled, the b4uacuse-stress.midi
-     file can cause failure, especially when the next set is chosen.
-     At minimum we should stop, clear out JACK, and panic.
+    than 128.
+    STATUS: In progress. Added a timestamp to each message in the JACK
+    ringbuffer (enabled by a C macro in libseq66/include/seq_features.h).
+    This addes a notable burden on process and we can get buffer overflow
+    errors.  Even with message timestamps disabled, the b4uacuse-stress.midi
+    file can cause failure, especially when the next set is chosen.
+    At minimum we should stop, clear out JACK, and panic. We found that
+    there seems to be no way (using methods culled from other apps such as
+    Ardour) to completely eliminate hiccups in the synchronization of
+    note input and playback, due to the unavoidable lag between putting the
+    note in the ringbuffer and taking it out in the JACK process callback.
 
+#101 Totally unstable playback
+    Further investigation leads me to believe it might be something with the
+    realtime kernel and video drivers! bloody annoying! I wonder where to
+    start looking...
+
+#102 How can I use mutes?
+    After some additional experimentation I found out that Seq66 has these
+    features too with Windows build. However I am not able to to mute patterns
+    using computer keyboard no matter what I try to do. I discovered mute tab,
+    but I don't understand what's going on here and I am pretty sure that
+    plain muting (with queue functionality) is good enough for me.
+    Muting using mouse works reasonably well.
+    I am using Windows 7 if this helps with platform specific bugs.
+    STATUS: Need to improve documentation and testing, including on Windows.
+
+#103 One-shot (repetitions != 0) patterns do not play
+    This feature works, but requires the pattern to be armed before
+    playback begins, either in Live or Song mode.  Should we make the loop
+    auto-arm, or make this an option somehow?
+
+#104 Really confusing usage
+    This requires some improvements to the LaTeX documentation and the HTML
+    tutorial.  One issue is Pipewire, which is unsupported; the user system
+    employs pulseaudio-pw.
+     
 PATTERNS:
 
     -   Set pattern editor focus to grid at start unless it is a new one.
