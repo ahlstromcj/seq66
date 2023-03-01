@@ -1,6 +1,8 @@
 TO DO for Seq66 0.99.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-02-27
+2019-04-13 to 2023-03-01
+
+Some of these issues will be pushed of until the distant Seq66v2.
 
 Ongoing efforts:
 
@@ -19,10 +21,6 @@ Windows:
         up 2 pixels. Maybe reduce the font size by 1. Also consist the for the
         piano rolls.
     -   The default Qt theme pushes the seqtime rightward by about 6 pixels.
-
-Test and Document:
-
-    -   Next?
 
 UI:
 
@@ -97,24 +95,19 @@ Build:
 
 Macros to "finalize":
 
-    SEQ66_USE_MIDI_ALSA_POLL
-    SEQ66_USE_SCROLLING_CODE
-    SEQ66_SHOW_TEMPO_IN_PIANO_ROLL
-    SEQ66_SEQUENCE_EDIT_MODE_GLOBAL
-    SEQ66_USE_JACK_SYNC_CALLBACK
-    SEQ66_DAEMON_SUPPORT
-    SEQ66_SEQUENCE_EDIT_MODE
+    SEQ66_SHOW_TEMPO_IN_PIANO_ROLL: leave code in place just in case.
+    SEQ66_SEQUENCE_EDIT_MODE and
+    SEQ66_SEQUENCE_EDIT_MODE_GLOBAL: Kepler34, but may be pattern-specific.
+    SEQ66_USE_JACK_SYNC_CALLBACK (saved only for reference).
 
-    USE_SND_SEQ_CONNECT_FROM
-    USE_C_MILLISLEEP (related to high CPU in Windows builds)
-    USE_SONG_BOX_SELECT
-    USE_GROW_SELECTED_NOTE_FUNCTION
-    USE_FILL_TIME_SIG_AND_TEMPO (see sequencer64 issue 141)
-    USE_WRITE_START_TEMPO and USE_WRITE_TIME_SIG
-    USE_UNICODE_SUPPORT
-    USE_THESE_SEQSPECS
-    USE_SETMAPPER_RESET_SEQUENCES
-    USE_SCREENSET_RESET_SEQUENCES
+    USE_C_MILLISLEEP (related to high CPU in Windows/portmidi builds).
+    USE_SONG_BOX_SELECT (this will require a lot of work to perfect).
+    USE_FILL_TIME_SIG_AND_TEMPO (see sequencer64 issue 141).
+    USE_WRITE_START_TEMPO and USE_WRITE_TIME_SIG (midifile only).
+    USE_UNICODE_SUPPORT (used only in Cakewalk WRK file support).
+    USE_THESE_SEQSPECS (unimplemented Seq32/Stazed SeqSpecs)
+    USE_SETMAPPER_RESET_SEQUENCES (no code uses this function yet).
+    USE_SCREENSET_RESET_SEQUENCES (no code uses this function yet).
     USE_ACTIVE_SENSE_AND_RESET
     USE_SEQUENCE_REMOVE_EVENTS
     USE_ADJUST_DATA_HANDLE

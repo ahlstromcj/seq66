@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-02-27
+ * \updates       2023-02-28
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -70,16 +70,8 @@
  */
 
 /**
- *  A future feature to more flexibly handle a daemonizable build.
- */
-
-#undef SEQ66_DAEMON_SUPPORT
-
-/**
- *  Kepler34 has a drum edit mode that we are still exploring and adding,
- *  marke by the following macro to keep it out of the way until the feature
- *  is ready for prime time.  Currently builds but is incomplete and not
- *  tested.
+ *  Kepler34 has a drum edit mode that we have added, but it is also
+ *  tied to the pattern being non-transposable.
  */
 
 #undef SEQ66_SEQUENCE_EDIT_MODE

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-28
+ * \updates       2023-02-28
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -75,37 +75,6 @@ qseqbase::qseqbase
 {
     set_snap(track().snap());
 }
-
-#if defined SEQ66_USE_SCROLLING_CODE    // not ready for this class
-
-/**
- *  Sets the horizontal scroll value according to the current value of the
- *  horizontal scroll-bar.
- */
-
-void
-qseqbase::set_scroll_x (int x)
-{
-    m_scroll_offset_x = x;
-    m_scroll_offset = pix_to_tix(x);
-}
-
-/**
- *  Sets the vertical scroll value according to the current value of the
- *  vertical scroll-bar.
- *
- *  Use the height member? See cppcheck as well.
- */
-
-void
-qseqbase::set_scroll_y (int y)
-{
-    m_scroll_offset_y = y;
-    m_scroll_offset_key *= c_key_y;         // m_unit_height
-    m_scroll_offset_key = y / c_key_y;      // m_unit_height
-}
-
-#endif  // SEQ66_USE_SCROLLING_CODE
 
 /**
  *  Checks for the dirtiness of the user-interface or the current sequence.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2022-05-14
+ * \updates       2023-02-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -78,7 +78,7 @@ s_tag_names_container
     { c_reserved_2   ,  "Reserved 2" },
     { c_tempo_track  ,  "Alternate tempo track number" },
     { c_seq_color    ,  "Color" },
-    { c_seq_edit_mode,  "Normal/drum edit mode" },
+    { c_seq_edit_mode,  "Normal/drum edit mode, not implemented" },
     { c_seq_loopcount,  "Future: N-play pattern" },
     { c_reserved_3,     "Reserved 3" },
     { c_reserved_4,     "Reserved 4" },
@@ -272,50 +272,6 @@ songsummary::write_header (std::ofstream & file, const performer & p)
     }
     return result;
 }
-
-#if defined USE_WRITE_START_TEMPO
-
-/**
- *  Writes the initial or only tempo, occurring at the beginning of a MIDI
- *  song.  Compare this function to midi_vector_base::fill_time_sig_and_tempo().
- *
- * \param start_tempo
- *      The beginning tempo value.
- */
-
-void
-songsummary::write_start_tempo (std::ofstream & file, midibpm start_tempo)
-{
-    file << "Initial tempo:  " << start_tempo << "\n" ;
-}
-
-#endif  // USE_WRITE_START_TEMPO
-
-#if defined USE_WRITE_TIME_SIG
-
-/**
- *  Note that the cc value (MIDI ticks per metronome click) is hardwired to
- *  0x18 (24) and the bb value (32nd notes per quarter note) is hardwired
- *  to 0x08 (8).
- *
- * \param beatsperbar
- *      The numerator of the time signature.
- *
- * \param beatwidth
- *      The denominator of the time signature.
- */
-
-void
-songsummary::write_time_sig (std::ofstream & file, int beatsperbar, int beatwidth)
-{
-    file
-        << "Time signature: " << beatsperbar << "/" << beatwidth << "\n"
-        << "Clocks/metro:   " << 24 << "\n"
-        << "32nds/beats:    " << 8 << "\n"
-        ;
-}
-
-#endif  // USE_WRITE_TIME_SIG
 
 /**
  *  Writes a "proprietary" (SeqSpec) Seq24 header item.

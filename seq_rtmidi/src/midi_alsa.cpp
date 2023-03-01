@@ -846,35 +846,11 @@ midi_in_alsa::midi_in_alsa (midibus & parentbus, midi_info & masterinfo) :
     // Empty body
 }
 
-/**
- *  This function is supposed to poll for MIDI data, but the current ALSA
- *  implementation DOES NOT USE THIS FUNCTION.  Commented out.
- *
- *  Instead, this function, called indirectly via mastermidibase ::
- *  is_more_input(), always returns 0.  And if we try to return the ALSA poll
- *  via master_info().api_poll_for_midi(), note input from a keyboard is
- *  problematic.
- */
-
-#if defined SEQ66_USE_MIDI_ALSA_POLL                    /* LEAVE UNDEFINED  */
-
-int
-midi_in_alsa::api_poll_for_midi ()
-{
-    rtmidi_in_data * rtindata = m_alsa_data.m_alsa_rtmidiin;    /* BOGUS    */
-    (void) microsleep(std_sleep_us());
-    return rtindata->queue().count();
-}
-
-#else
-
 int
 midi_in_alsa::api_poll_for_midi ()
 {
     return 0;                       /* master_info().api_poll_for_midi();   */
 }
-
-#endif  // defined SEQ66_USE_MIDI_ALSA_POLL
 
 /*
  * --------------------------------------------------------------------------

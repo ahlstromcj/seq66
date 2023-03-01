@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2022-03-06
+ * \updates     2023-02-28
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -229,6 +229,14 @@ c_millisleep (int ms)
 #else
 #error c_millisleep not defined for this platform
 #endif
+}
+
+#else
+
+void
+c_millisleep (int ms)
+{
+    (void) ms;
 }
 
 #endif  // USE_C_MILLISLEEP

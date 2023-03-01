@@ -77,12 +77,6 @@ protected:
     bool write_sequence (std::ofstream & file, seq::pointer s);
     bool write_header (std::ofstream & file, const performer & p);
     void write_mute_groups (std::ofstream & file, const performer & p);
-#if defined USE_WRITE_START_TEMPO
-    void write_start_tempo (std::ofstream & file, midibpm start_tempo);
-#endif
-#if defined USE_WRITE_TIME_SIG
-    void write_time_sig (std::ofstream & file, int beatsperbar, int beatwidth);
-#endif
     void write_prop_header
     (
         std::ofstream & file,

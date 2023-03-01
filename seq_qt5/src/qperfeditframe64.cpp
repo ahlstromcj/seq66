@@ -458,7 +458,7 @@ qperfeditframe64::follow_progress ()
             if (newpage)
             {
                 m_perfroll->scroll_page(page);  // scrollmaster updates the rest
-                hadjust->setValue(progx);       // set_scroll_x() not needed
+                hadjust->setValue(progx);
             }
         }
     }

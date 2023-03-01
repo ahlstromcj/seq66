@@ -30,7 +30,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2021-12-09
+ * \updates     2023-02-28
  * \license     GNU GPLv2 or above
  *
  * Copyright (c) 1999-2000 Ross Bencina and Phil Burk
@@ -112,9 +112,7 @@ PMEXPORT PmError Pm_OpenOutput
     int32_t latency
 );
 
-#if defined USE_C_MILLISLEEP
 PMEXPORT void c_millisleep (int ms);
-#endif
 
 /*
  * Filter bit-mask definitions

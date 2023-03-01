@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.98.10 and above
+INSTALL for Seq66 v. 0.99.2 and above
 Chris Ahlstrom
-2015-09-10 to 2022-10-30
+2015-09-10 to 2023-02-28
 
 Getting Seq66 requires building the code or going to "sequencer64-packages/seq66"
 on GitHub to get an installation package.  The bootstrap setup is primarily
@@ -410,10 +410,6 @@ MANUALLY-DEFINED MACROS IN CODE:
 
         Also, the GitHub project "Kepler34" has some features we want to adopt
         before we make our version of its conversion to the Qt library.
-
-        SEQ66_SEQUENCE_EDIT_MODE
-
-        See libseq66/src/midi/midifile.cpp for details.
 
 REPORTING ISSUES:
 

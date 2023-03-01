@@ -51,7 +51,7 @@
             c_backsequence (ditto)
             c_transpose
             c_seq_color (performance colors for a sequence)
-            c_seq_edit_mode
+            c_seq_edit_mode (currently macroed out, SEQ66_SEQUENCE_EDIT_MODE)
             c_seq_loopcount
 \endverbatim
  *

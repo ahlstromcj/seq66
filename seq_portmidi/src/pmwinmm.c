@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2021-12-09
+ * \updates     2023-02-28
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -781,9 +781,7 @@ get_free_output_buffer (PmInternal * midi)
                 LPMIDIHDR * new_buffers = (LPMIDIHDR *) pm_alloc(sz);
                 if (is_nullptr(new_buffers))        /* 3. No Memory         */
                 {
-#if defined USE_C_MILLISLEEP
                     c_millisleep(1);
-#endif
                     continue;
                 }
 
@@ -808,9 +806,7 @@ get_free_output_buffer (PmInternal * midi)
                 r = allocate_buffer(EXPANSION_BUFFER_LEN);
                 if (is_nullptr(r))                  /* 3. No Memory (again) */
                 {
-#if defined USE_C_MILLISLEEP
                     c_millisleep(1);
-#endif
                     continue;
                 }
                 m->buffers[m->num_buffers++] = r;
@@ -822,9 +818,7 @@ get_free_output_buffer (PmInternal * midi)
              *    to see if we can reduce CPU usage.
              */
 
-#if defined USE_C_MILLISLEEP
             c_millisleep(1);
-#endif
         }
     }
 
