@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-03-01
+2019-04-13 to 2023-03-02
 
 Some of these issues will be pushed of until the distant Seq66v2.
 
@@ -11,6 +11,7 @@ Ongoing efforts:
         -   File / Save handling with various modifications.
     -   "Session: Save" can occur.  Have not seen this lately.
     -   Verify setmapper/setmaster for odd set sizes.
+    -   Perfect the "background recording" feature.
 
 Windows:
 

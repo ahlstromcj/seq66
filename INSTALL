@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.99.2 and above
 Chris Ahlstrom
-2015-09-10 to 2023-02-28
+2015-09-10 to 2023-03-02
 
 Getting Seq66 requires building the code or going to "sequencer64-packages/seq66"
 on GitHub to get an installation package.  The bootstrap setup is primarily
@@ -117,7 +117,7 @@ OpenSUSE:
     Directions from the Seq66 GitHub sivecj/seq66 fork. First, install these
     packages:
 
-    $ zypper in libjack-devel liblo-devel alsa-devel libqt5-qtbase-devel \
+    $ sudo zypper in libjack-devel liblo-devel alsa-devel libqt5-qtbase-devel \
         libqt5-linguist-devel
 
     Next, link the binary files from Qt5 without the "-qt5" at the end. Link them
@@ -141,7 +141,10 @@ OpenSUSE:
 
 Fedora:
 
-    Same as for OpenSUSE above.
+    Similar to OpenSUSE above.
+
+    $ sudo dnf install qt5-qtbase qt5-qtbase-devel qt5-linguist \
+            jack-audio-connection-kit-devel liblo-devel alsa-lib-devel
 
 Advanced Steps:
 
@@ -442,6 +445,8 @@ DEPENDENCIES:
     -   libpng-dev (replaces libpng12-dev with libpng16, latest Debian Sid,
         and brings in libpng-tools)
     -   libpthread (normally already included in a Linux distro)
+
+        Also see the sections on OpenSUSE and Fedora below.
 
     Qt Builds:
 

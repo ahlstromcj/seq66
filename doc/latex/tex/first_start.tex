@@ -1,0 +1,94 @@
+%-------------------------------------------------------------------------------
+% first_start
+%-------------------------------------------------------------------------------
+%
+% \file        first_start.tex
+% \library     Documents
+% \author      Chris Ahlstrom
+% \date        2015-11-01
+% \update      2023-03-02
+% \version     $Revision$
+% \license     $XPC_GPL_LICENSE$
+%
+%     This document provides LaTeX documentation for Seq66.
+%
+%-------------------------------------------------------------------------------
+
+\section{Let's Go!}
+\label{sec:introduction_lets_go}
+
+   \textsl{Seq66} requires ALSA or JACK on Linux;
+   it does not support
+   \index{pipewire}
+   Pipewire.
+   It might work with a Pipewire-JACK setup, but that usage has not been
+   tested.
+   On Windows, \textsl{Seq66} uses the MultiMedia API.
+   This manual assumes that one is running \textsl{Seq66} on Linux, for the most
+   part.
+
+   For the first run, make sure all desired MIDI devices are plugged in and
+   that all desired software synthesizers are running.
+   Only ports present at startup will appear; this version of
+   \textsl{Seq66} does not
+   really support automatic detection of port changes at run-time.
+   Start \textsl{Seq66}, verify that it comes up, and then exit it
+   immediately.
+   This first start creates the configuration files in
+   \texttt{/home/user/.config/seq66/} (Linux) or
+   \texttt{C:/Users/your\_user\_name/AppData/Local/seq66} (Windows).
+   The main configuration file is
+   \texttt{qseq66.rc} (Linux) or
+   \texttt{qpseq66.rc} (Windows).
+
+   Now start \textsl{Seq66} to use JACK or ALSA for MIDI.
+   For USB MIDI devices on JACK, the \texttt{a2jmidid} program must be running
+   (see \sectionref{sec:jack}, for details.)
+   On \textsl{Windows}, just run it \texttt{qpseq66.exe};
+   see \sectionref{sec:windows}.
+
+   For better trouble-shooting, run it from the command-line at first and
+   provide a MIDI file.
+   The port settings will depend on your system.
+   On our system, the synthesizer (\textsl{Yoshimi}) comes up on MIDI buss 5.
+   (On \textsl{Windows}, buss 0 is the "MIDI Mapper", while buss 1 is the
+   built-in wavetable synthesizer, which is normally under control of buss 0.)
+   The \texttt{-{}-buss} option remaps all events to the desired buss:
+
+   \begin{verbatim}
+      $ qseq66 --alsa --buss 5 /usr/share/seq66/midi/b4uacuse-gm-patchless.midi
+      $ qseq66 --jack --buss 5 /usr/share/seq66/midi/b4uacuse-gm-patchless.midi
+   \end{verbatim}
+
+   The buss-override setting can also be made via the port drop-down control
+   in the main window. It will modify the MIDI file.
+
+   The "data" directory is a directory created upon installation of the
+   application:
+
+   \begin{verbatim}
+      /usr/share/seq66-0.90/                          (Linux)
+      C:/Program Files (x86)/Seq66/data/              (Windows)
+   \end{verbatim}
+
+   It sample MIDI files and configuration files.
+   Some of the files in those directories apply to both operating systems, so
+   be sure to look at them.
+   The user configration files are stored in the user's "home" area:
+
+   \begin{verbatim}
+      /home/user/.config/seq66/qseq66.*               (Linux)
+      C:/Users/username/AppData/Local/seq66           (Windows)
+   \end{verbatim}
+
+   The configuration files in the "home" directory
+   are created after the first run of \textsl{Seq66}.
+
+   If all is well, the "play" button will start playback and the tune sounds.
+   If not, look into \textbf{Edit / Preferences} or the configuration files.
+   Don't change the configuration files while \textsl{Seq66} is running, as
+   they are generally re-saved at application exit.
+
+%-------------------------------------------------------------------------------
+% vim: ts=3 sw=3 et ft=tex
+%-------------------------------------------------------------------------------
